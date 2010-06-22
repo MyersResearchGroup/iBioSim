@@ -520,8 +520,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		viewCoverage = new JMenuItem("Coverage Report"); // SB
 		viewVHDL = new JMenuItem("VHDL-AMS Model"); // SB
 		viewVerilog = new JMenuItem("Verilog Model"); // SB //Being generic for
-														// System Verilog and
-														// Verilog-AMS
+		// System Verilog and
+		// Verilog-AMS
 		viewLHPN = new JMenuItem("LPN Model"); // SB
 		viewModGraph = new JMenuItem("Model");
 		viewModBrowser = new JMenuItem("Model in Browser");
@@ -2192,7 +2192,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 		}
 		else if (e.getSource() == viewVerilog) { // SB should change to
-													// systemverilog??
+			// systemverilog??
 			Component comp = tab.getSelectedComponent();
 			if (treeSelected) {
 				try {
@@ -2216,31 +2216,31 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						scrolls.setViewportView(messageArea);
 						JOptionPane.showMessageDialog(this.frame(), scrolls, "Verilog Model",
 								JOptionPane.INFORMATION_MESSAGE); // Being
-																	// generic
-																	// for
-																	// System
-																	// Verilog
-																	// and
-																	// Verilog-AMS
+						// generic
+						// for
+						// System
+						// Verilog
+						// and
+						// Verilog-AMS
 					}
 					else {
 						JOptionPane
 								.showMessageDialog(this.frame(), "Verilog model does not exist.",
 										"Error", JOptionPane.ERROR_MESSAGE);// Being
-																			// generic
-																			// for
-																			// System
-																			// Verilog
-																			// and
-																			// Verilog-AMS
+						// generic
+						// for
+						// System
+						// Verilog
+						// and
+						// Verilog-AMS
 					}
 				}
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(this.frame(), "Unable to view Verilog model.",
 							"Error", JOptionPane.ERROR_MESSAGE);// Being generic
-																// for System
-																// Verilog and
-																// Verilog-AMS
+					// for System
+					// Verilog and
+					// Verilog-AMS
 				}
 			}
 			else if (comp instanceof JTabbedPane) {
@@ -8171,1514 +8171,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 		}
 		else {
-			if (e.isPopupTrigger() && tree.getFile() != null) {
-				frame.getGlassPane().setVisible(false);
-				popup.removeAll();
-				if (tree.getFile().length() > 4
-						&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
-						|| tree.getFile().length() > 3
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
-					JMenuItem edit = new JMenuItem("View/Edit");
-					edit.addActionListener(this);
-					edit.addMouseListener(this);
-					edit.setActionCommand("sbmlEditor");
-					JMenuItem graph = new JMenuItem("View Model");
-					graph.addActionListener(this);
-					graph.addMouseListener(this);
-					graph.setActionCommand("graph");
-					JMenuItem browse = new JMenuItem("View Model in Browser");
-					browse.addActionListener(this);
-					browse.addMouseListener(this);
-					browse.setActionCommand("browse");
-					JMenuItem simulate = new JMenuItem("Create Analysis View");
-					simulate.addActionListener(this);
-					simulate.addMouseListener(this);
-					simulate.setActionCommand("simulate");
-					JMenuItem createLearn = new JMenuItem("Create Learn View");
-					createLearn.addActionListener(this);
-					createLearn.addMouseListener(this);
-					createLearn.setActionCommand("createLearn");
-					JMenuItem delete = new JMenuItem("Delete");
-					delete.addActionListener(this);
-					delete.addMouseListener(this);
-					delete.setActionCommand("delete");
-					JMenuItem copy = new JMenuItem("Copy");
-					copy.addActionListener(this);
-					copy.addMouseListener(this);
-					copy.setActionCommand("copy");
-					JMenuItem rename = new JMenuItem("Rename");
-					rename.addActionListener(this);
-					rename.addMouseListener(this);
-					rename.setActionCommand("rename");
-					popup.add(simulate);
-					popup.add(createLearn);
-					popup.addSeparator();
-					popup.add(graph);
-					popup.add(browse);
-					popup.addSeparator();
-					popup.add(edit);
-					popup.add(copy);
-					popup.add(rename);
-					popup.add(delete);
-				}
-				else if (tree.getFile().length() > 3
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
-					JMenuItem create = new JMenuItem("Create Analysis View");
-					create.addActionListener(this);
-					create.addMouseListener(this);
-					create.setActionCommand("createSim");
-					JMenuItem createLearn = new JMenuItem("Create Learn View");
-					createLearn.addActionListener(this);
-					createLearn.addMouseListener(this);
-					createLearn.setActionCommand("createLearn");
-					JMenuItem createSBML = new JMenuItem("Create SBML File");
-					createSBML.addActionListener(this);
-					createSBML.addMouseListener(this);
-					createSBML.setActionCommand("createSBML");
-					// JMenuItem createLHPN = new JMenuItem("Create LPN File");
-					// createLHPN.addActionListener(this);
-					// createLHPN.addMouseListener(this);
-					// createLHPN.setActionCommand("createLHPN");
-					JMenuItem edit = new JMenuItem("View/Edit");
-					edit.addActionListener(this);
-					edit.addMouseListener(this);
-					edit.setActionCommand("dotEditor");
-					JMenuItem graph = new JMenuItem("View Model");
-					graph.addActionListener(this);
-					graph.addMouseListener(this);
-					graph.setActionCommand("graph");
-					JMenuItem delete = new JMenuItem("Delete");
-					delete.addActionListener(this);
-					delete.addMouseListener(this);
-					delete.setActionCommand("delete");
-					JMenuItem copy = new JMenuItem("Copy");
-					copy.addActionListener(this);
-					copy.addMouseListener(this);
-					copy.setActionCommand("copy");
-					JMenuItem rename = new JMenuItem("Rename");
-					rename.addActionListener(this);
-					rename.addMouseListener(this);
-					rename.setActionCommand("rename");
-					popup.add(create);
-					popup.add(createLearn);
-					popup.add(createSBML);
-					// popup.add(createLHPN);
-					popup.addSeparator();
-					popup.add(graph);
-					popup.addSeparator();
-					popup.add(edit);
-					popup.add(copy);
-					popup.add(rename);
-					popup.add(delete);
-				}
-				else if (tree.getFile().length() > 3
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
-					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-					createSynthesis.addActionListener(this);
-					createSynthesis.addMouseListener(this);
-					createSynthesis.setActionCommand("createSynthesis");
-					JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-					createAnalysis.addActionListener(this);
-					createAnalysis.addMouseListener(this);
-					createAnalysis.setActionCommand("createSim");
-					JMenuItem createLearn = new JMenuItem("Create Learn View");
-					createLearn.addActionListener(this);
-					createLearn.addMouseListener(this);
-					createLearn.setActionCommand("createLearn");
-					JMenuItem createVerification = new JMenuItem("Create Verification View");
-					createVerification.addActionListener(this);
-					createVerification.addMouseListener(this);
-					createVerification.setActionCommand("createVerify");
-					JMenuItem viewModel = new JMenuItem("View Model");
-					viewModel.addActionListener(this);
-					viewModel.addMouseListener(this);
-					viewModel.setActionCommand("viewModel");
-					JMenuItem delete = new JMenuItem("Delete");
-					delete.addActionListener(this);
-					delete.addMouseListener(this);
-					delete.setActionCommand("delete");
-					JMenuItem copy = new JMenuItem("Copy");
-					copy.addActionListener(this);
-					copy.addMouseListener(this);
-					copy.setActionCommand("copy");
-					JMenuItem rename = new JMenuItem("Rename");
-					rename.addActionListener(this);
-					rename.addMouseListener(this);
-					rename.setActionCommand("rename");
-					if (atacs) {
-						popup.add(createSynthesis);
-					}
-					// popup.add(createAnalysis);
-					if (lema) {
-						popup.add(createLearn);
-					}
-					popup.add(createVerification);
-					popup.addSeparator();
-					popup.add(viewModel);
-					popup.addSeparator();
-					popup.add(copy);
-					popup.add(rename);
-					popup.add(delete);
-				}
-				else if (tree.getFile().length() > 4
-						&& tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) { // SB
-					JMenuItem viewModel = new JMenuItem("View Model");
-					viewModel.addActionListener(this);
-					viewModel.addMouseListener(this);
-					viewModel.setActionCommand("viewModel");
-					JMenuItem delete = new JMenuItem("Delete");
-					delete.addActionListener(this);
-					delete.addMouseListener(this);
-					delete.setActionCommand("delete");
-					JMenuItem copy = new JMenuItem("Copy");
-					copy.addActionListener(this);
-					copy.addMouseListener(this);
-					copy.setActionCommand("copy");
-					JMenuItem rename = new JMenuItem("Rename");
-					rename.addActionListener(this);
-					rename.addMouseListener(this);
-					rename.setActionCommand("rename");
-					if (lema) {
-						popup.add(viewModel);
-						popup.addSeparator();
-						popup.add(copy);
-						popup.add(rename);
-						popup.add(delete);
-					}
-				}
-				else if (tree.getFile().length() > 2
-						&& tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) { // SB
-					JMenuItem viewModel = new JMenuItem("View Model");
-					viewModel.addActionListener(this);
-					viewModel.addMouseListener(this);
-					viewModel.setActionCommand("viewModel");
-					JMenuItem delete = new JMenuItem("Delete");
-					delete.addActionListener(this);
-					delete.addMouseListener(this);
-					delete.setActionCommand("delete");
-					JMenuItem copy = new JMenuItem("Copy");
-					copy.addActionListener(this);
-					copy.addMouseListener(this);
-					copy.setActionCommand("copy");
-					JMenuItem rename = new JMenuItem("Rename");
-					rename.addActionListener(this);
-					rename.addMouseListener(this);
-					rename.setActionCommand("rename");
-					if (lema) {
-						popup.add(viewModel);
-						popup.addSeparator();
-						popup.add(copy);
-						popup.add(rename);
-						popup.add(delete);
-					}
-				}
-				else if (tree.getFile().length() > 1
-						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
-					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-					createSynthesis.addActionListener(this);
-					createSynthesis.addMouseListener(this);
-					createSynthesis.setActionCommand("createSynthesis");
-					JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-					createAnalysis.addActionListener(this);
-					createAnalysis.addMouseListener(this);
-					createAnalysis.setActionCommand("createSim");
-					JMenuItem createLearn = new JMenuItem("Create Learn View");
-					createLearn.addActionListener(this);
-					createLearn.addMouseListener(this);
-					createLearn.setActionCommand("createLearn");
-					JMenuItem createVerification = new JMenuItem("Create Verification View");
-					createVerification.addActionListener(this);
-					createVerification.addMouseListener(this);
-					createVerification.setActionCommand("createVerify");
-					JMenuItem viewModel = new JMenuItem("View Model");
-					viewModel.addActionListener(this);
-					viewModel.addMouseListener(this);
-					viewModel.setActionCommand("viewModel");
-					JMenuItem delete = new JMenuItem("Delete");
-					delete.addActionListener(this);
-					delete.addMouseListener(this);
-					delete.setActionCommand("delete");
-					JMenuItem copy = new JMenuItem("Copy");
-					copy.addActionListener(this);
-					copy.addMouseListener(this);
-					copy.setActionCommand("copy");
-					JMenuItem rename = new JMenuItem("Rename");
-					rename.addActionListener(this);
-					rename.addMouseListener(this);
-					rename.setActionCommand("rename");
-					if (atacs) {
-						popup.add(createSynthesis);
-					}
-					// popup.add(createAnalysis);
-					// if (lema) {
-					// popup.add(createLearn);
-					// }
-					popup.add(createVerification);
-					popup.addSeparator();
-					popup.add(viewModel);
-					popup.addSeparator();
-					popup.add(copy);
-					popup.add(rename);
-					popup.add(delete);
-				}
-				else if (tree.getFile().length() > 3
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
-					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-					createSynthesis.addActionListener(this);
-					createSynthesis.addMouseListener(this);
-					createSynthesis.setActionCommand("createSynthesis");
-					// //////// TODO
-					JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-					createAnalysis.addActionListener(this);
-					createAnalysis.addMouseListener(this);
-					createAnalysis.setActionCommand("createAnalysis");
-					// createAnalysis.setActionCommand("simulate");
-
-					// JMenuItem simulate = new
-					// JMenuItem("Create Analysis View");
-					// simulate.addActionListener(this);
-					// simulate.addMouseListener(this);
-					// simulate.setActionCommand("simulate");
-					// /////////////
-					JMenuItem createLearn = new JMenuItem("Create Learn View");
-					createLearn.addActionListener(this);
-					createLearn.addMouseListener(this);
-					createLearn.setActionCommand("createLearn");
-					JMenuItem createVerification = new JMenuItem("Create Verification View");
-					createVerification.addActionListener(this);
-					createVerification.addMouseListener(this);
-					createVerification.setActionCommand("createVerify");
-					JMenuItem convertToSBML = new JMenuItem("Convert To SBML");
-					convertToSBML.addActionListener(this);
-					convertToSBML.addMouseListener(this);
-					convertToSBML.setActionCommand("convertToSBML");
-					JMenuItem convertToVerilog = new JMenuItem("Convert To Verilog");
-					convertToVerilog.addActionListener(this);
-					convertToVerilog.addMouseListener(this);
-					convertToVerilog.setActionCommand("convertToVerilog");
-					JMenuItem viewModel = new JMenuItem("View Model");
-					viewModel.addActionListener(this);
-					viewModel.addMouseListener(this);
-					viewModel.setActionCommand("viewModel");
-					JMenuItem viewStateGraph = new JMenuItem("View State Graph");
-					viewStateGraph.addActionListener(this);
-					viewStateGraph.addMouseListener(this);
-					viewStateGraph.setActionCommand("viewState");
-					JMenuItem markovAnalysis = new JMenuItem("Perform Markovian Analysis");
-					markovAnalysis.addActionListener(this);
-					markovAnalysis.addMouseListener(this);
-					markovAnalysis.setActionCommand("markov");
-					JMenuItem delete = new JMenuItem("Delete");
-					delete.addActionListener(this);
-					delete.addMouseListener(this);
-					delete.setActionCommand("delete");
-					JMenuItem copy = new JMenuItem("Copy");
-					copy.addActionListener(this);
-					copy.addMouseListener(this);
-					copy.setActionCommand("copy");
-					JMenuItem rename = new JMenuItem("Rename");
-					rename.addActionListener(this);
-					rename.addMouseListener(this);
-					rename.setActionCommand("rename");
-					if (atacs) {
-						popup.add(createSynthesis);
-					}
-					if (LPN2SBML) {
-						popup.add(createAnalysis);
-					}
-					if (lema) {
-						popup.add(createLearn);
-					}
-					if (atacs || lema) {
-						popup.add(createVerification);
-					}
-					popup.addSeparator();
-					// popup.add(createAnalysis); // TODO
-					popup.add(viewModel);
-					// popup.add(viewStateGraph);
-					if (!atacs && !lema && LPN2SBML) {
-						popup.add(convertToSBML); // changed the order. SB
-					}
-					if (atacs || lema) {
-						popup.add(convertToVerilog);
-					}
-					// popup.add(markovAnalysis);
-					popup.addSeparator();
-					popup.add(copy);
-					popup.add(rename);
-					popup.add(delete);
-				}
-				else if (tree.getFile().length() > 1
-						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".s")) {
-					// JMenuItem createAnalysis = new
-					// JMenuItem("Create Analysis View");
-					// createAnalysis.addActionListener(this);
-					// createAnalysis.addMouseListener(this);
-					// createAnalysis.setActionCommand("createSim");
-					// JMenuItem createVerification = new
-					// JMenuItem("Create Verification View");
-					// createVerification.addActionListener(this);
-					// createVerification.addMouseListener(this);
-					// createVerification.setActionCommand("createVerify");
-					// JMenuItem viewModel = new JMenuItem("View Model");
-					// viewModel.addActionListener(this);
-					// viewModel.addMouseListener(this);
-					// viewModel.setActionCommand("viewModel");
-					JMenuItem delete = new JMenuItem("Delete");
-					delete.addActionListener(this);
-					delete.addMouseListener(this);
-					delete.setActionCommand("delete");
-					JMenuItem copy = new JMenuItem("Copy");
-					copy.addActionListener(this);
-					copy.addMouseListener(this);
-					copy.setActionCommand("copy");
-					JMenuItem rename = new JMenuItem("Rename");
-					rename.addActionListener(this);
-					rename.addMouseListener(this);
-					rename.setActionCommand("rename");
-					// popup.add(createVerification);
-					// popup.addSeparator();
-					// popup.add(viewModel);
-					// popup.addSeparator();
-					popup.add(copy);
-					popup.add(rename);
-					popup.add(delete);
-				}
-				else if (tree.getFile().length() > 4
-						&& tree.getFile().substring(tree.getFile().length() - 5).equals(".inst")) {
-					// JMenuItem createAnalysis = new
-					// JMenuItem("Create Analysis View");
-					// createAnalysis.addActionListener(this);
-					// createAnalysis.addMouseListener(this);
-					// createAnalysis.setActionCommand("createSim");
-					// JMenuItem createVerification = new
-					// JMenuItem("Create Verification View");
-					// createVerification.addActionListener(this);
-					// createVerification.addMouseListener(this);
-					// createVerification.setActionCommand("createVerify");
-					// JMenuItem viewModel = new JMenuItem("View Model");
-					// viewModel.addActionListener(this);
-					// viewModel.addMouseListener(this);
-					// viewModel.setActionCommand("viewModel");
-					JMenuItem delete = new JMenuItem("Delete");
-					delete.addActionListener(this);
-					delete.addMouseListener(this);
-					delete.setActionCommand("delete");
-					JMenuItem copy = new JMenuItem("Copy");
-					copy.addActionListener(this);
-					copy.addMouseListener(this);
-					copy.setActionCommand("copy");
-					JMenuItem rename = new JMenuItem("Rename");
-					rename.addActionListener(this);
-					rename.addMouseListener(this);
-					rename.setActionCommand("rename");
-					// popup.add(createVerification);
-					// popup.addSeparator();
-					// popup.add(viewModel);
-					// popup.addSeparator();
-					popup.add(copy);
-					popup.add(rename);
-					popup.add(delete);
-				}
-				else if (tree.getFile().length() > 3
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
-					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-					createSynthesis.addActionListener(this);
-					createSynthesis.addMouseListener(this);
-					createSynthesis.setActionCommand("createSynthesis");
-					JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-					createAnalysis.addActionListener(this);
-					createAnalysis.addMouseListener(this);
-					createAnalysis.setActionCommand("createSim");
-					JMenuItem createLearn = new JMenuItem("Create Learn View");
-					createLearn.addActionListener(this);
-					createLearn.addMouseListener(this);
-					createLearn.setActionCommand("createLearn");
-					JMenuItem createVerification = new JMenuItem("Create Verification View");
-					createVerification.addActionListener(this);
-					createVerification.addMouseListener(this);
-					createVerification.setActionCommand("createVerify");
-					JMenuItem viewModel = new JMenuItem("View Model");
-					viewModel.addActionListener(this);
-					viewModel.addMouseListener(this);
-					viewModel.setActionCommand("viewModel");
-					JMenuItem delete = new JMenuItem("Delete");
-					delete.addActionListener(this);
-					delete.addMouseListener(this);
-					delete.setActionCommand("delete");
-					JMenuItem copy = new JMenuItem("Copy");
-					copy.addActionListener(this);
-					copy.addMouseListener(this);
-					copy.setActionCommand("copy");
-					JMenuItem rename = new JMenuItem("Rename");
-					rename.addActionListener(this);
-					rename.addMouseListener(this);
-					rename.setActionCommand("rename");
-					if (atacs) {
-						popup.add(createSynthesis);
-					}
-					// popup.add(createAnalysis);
-					if (lema) {
-						popup.add(createLearn);
-					}
-					popup.add(createVerification);
-					popup.addSeparator();
-					popup.add(viewModel);
-					popup.addSeparator();
-					popup.add(copy);
-					popup.add(rename);
-					popup.add(delete);
-				}
-				else if (tree.getFile().length() > 3
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
-					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-					createSynthesis.addActionListener(this);
-					createSynthesis.addMouseListener(this);
-					createSynthesis.setActionCommand("createSynthesis");
-					JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-					createAnalysis.addActionListener(this);
-					createAnalysis.addMouseListener(this);
-					createAnalysis.setActionCommand("createSim");
-					JMenuItem createLearn = new JMenuItem("Create Learn View");
-					createLearn.addActionListener(this);
-					createLearn.addMouseListener(this);
-					createLearn.setActionCommand("createLearn");
-					JMenuItem createVerification = new JMenuItem("Create Verification View");
-					createVerification.addActionListener(this);
-					createVerification.addMouseListener(this);
-					createVerification.setActionCommand("createVerify");
-					JMenuItem viewModel = new JMenuItem("View Model");
-					viewModel.addActionListener(this);
-					viewModel.addMouseListener(this);
-					viewModel.setActionCommand("viewModel");
-					JMenuItem delete = new JMenuItem("Delete");
-					delete.addActionListener(this);
-					delete.addMouseListener(this);
-					delete.setActionCommand("delete");
-					JMenuItem copy = new JMenuItem("Copy");
-					copy.addActionListener(this);
-					copy.addMouseListener(this);
-					copy.setActionCommand("copy");
-					JMenuItem rename = new JMenuItem("Rename");
-					rename.addActionListener(this);
-					rename.addMouseListener(this);
-					rename.setActionCommand("rename");
-					if (atacs) {
-						popup.add(createSynthesis);
-					}
-					// popup.add(createAnalysis);
-					if (lema) {
-						popup.add(createLearn);
-					}
-					popup.add(createVerification);
-					popup.addSeparator();
-					popup.add(viewModel);
-					popup.addSeparator();
-					popup.add(copy);
-					popup.add(rename);
-					popup.add(delete);
-				}
-				else if (tree.getFile().length() > 3
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
-					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-					createSynthesis.addActionListener(this);
-					createSynthesis.addMouseListener(this);
-					createSynthesis.setActionCommand("createSynthesis");
-					JMenuItem viewModel = new JMenuItem("View Model");
-					viewModel.addActionListener(this);
-					viewModel.addMouseListener(this);
-					viewModel.setActionCommand("viewModel");
-					JMenuItem delete = new JMenuItem("Delete");
-					delete.addActionListener(this);
-					delete.addMouseListener(this);
-					delete.setActionCommand("delete");
-					JMenuItem copy = new JMenuItem("Copy");
-					copy.addActionListener(this);
-					copy.addMouseListener(this);
-					copy.setActionCommand("copy");
-					JMenuItem rename = new JMenuItem("Rename");
-					rename.addActionListener(this);
-					rename.addMouseListener(this);
-					rename.setActionCommand("rename");
-					popup.add(createSynthesis);
-					popup.addSeparator();
-					popup.add(viewModel);
-					popup.addSeparator();
-					popup.add(copy);
-					popup.add(rename);
-					popup.add(delete);
-				}
-				else if (tree.getFile().length() > 3
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
-					JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-					createSynthesis.addActionListener(this);
-					createSynthesis.addMouseListener(this);
-					createSynthesis.setActionCommand("createSynthesis");
-					JMenuItem viewModel = new JMenuItem("View Model");
-					viewModel.addActionListener(this);
-					viewModel.addMouseListener(this);
-					viewModel.setActionCommand("viewModel");
-					JMenuItem delete = new JMenuItem("Delete");
-					delete.addActionListener(this);
-					delete.addMouseListener(this);
-					delete.setActionCommand("delete");
-					JMenuItem copy = new JMenuItem("Copy");
-					copy.addActionListener(this);
-					copy.addMouseListener(this);
-					copy.setActionCommand("copy");
-					JMenuItem rename = new JMenuItem("Rename");
-					rename.addActionListener(this);
-					rename.addMouseListener(this);
-					rename.setActionCommand("rename");
-					popup.add(createSynthesis);
-					popup.addSeparator();
-					popup.add(viewModel);
-					popup.addSeparator();
-					popup.add(copy);
-					popup.add(rename);
-					popup.add(delete);
-				}
-				else if (tree.getFile().length() > 3
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
-					JMenuItem edit = new JMenuItem("View/Edit");
-					edit.addActionListener(this);
-					edit.addMouseListener(this);
-					edit.setActionCommand("openGraph");
-					JMenuItem delete = new JMenuItem("Delete");
-					delete.addActionListener(this);
-					delete.addMouseListener(this);
-					delete.setActionCommand("delete");
-					JMenuItem copy = new JMenuItem("Copy");
-					copy.addActionListener(this);
-					copy.addMouseListener(this);
-					copy.setActionCommand("copy");
-					JMenuItem rename = new JMenuItem("Rename");
-					rename.addActionListener(this);
-					rename.addMouseListener(this);
-					rename.setActionCommand("rename");
-					popup.add(edit);
-					popup.add(copy);
-					popup.add(rename);
-					popup.add(delete);
-				}
-				else if (tree.getFile().length() > 3
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
-					JMenuItem edit = new JMenuItem("View/Edit");
-					edit.addActionListener(this);
-					edit.addMouseListener(this);
-					edit.setActionCommand("openGraph");
-					JMenuItem delete = new JMenuItem("Delete");
-					delete.addActionListener(this);
-					delete.addMouseListener(this);
-					delete.setActionCommand("delete");
-					JMenuItem copy = new JMenuItem("Copy");
-					copy.addActionListener(this);
-					copy.addMouseListener(this);
-					copy.setActionCommand("copy");
-					JMenuItem rename = new JMenuItem("Rename");
-					rename.addActionListener(this);
-					rename.addMouseListener(this);
-					rename.setActionCommand("rename");
-					popup.add(edit);
-					popup.add(copy);
-					popup.add(rename);
-					popup.add(delete);
-				}
-				else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
-					boolean sim = false;
-					boolean synth = false;
-					boolean ver = false;
-					boolean learn = false;
-					for (String s : new File(tree.getFile()).list()) {
-						if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
-							sim = true;
-						}
-						if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
-							synth = true;
-						}
-						if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
-							ver = true;
-						}
-						if (s.length() > 3 && s.substring(s.length() - 4).equals(".lrn")) {
-							learn = true;
-						}
-					}
-					JMenuItem open;
-					if (sim) {
-						open = new JMenuItem("Open Analysis View");
-						open.addActionListener(this);
-						open.addMouseListener(this);
-						open.setActionCommand("openSim");
-						popup.add(open);
-					}
-					else if (synth) {
-						open = new JMenuItem("Open Synthesis View");
-						open.addActionListener(this);
-						open.addMouseListener(this);
-						open.setActionCommand("openSynth");
-						popup.add(open);
-					}
-					else if (ver) {
-						open = new JMenuItem("Open Verification View");
-						open.addActionListener(this);
-						open.addMouseListener(this);
-						open.setActionCommand("openVerification");
-						popup.add(open);
-					}
-					else if (learn) {
-						open = new JMenuItem("Open Learn View");
-						open.addActionListener(this);
-						open.addMouseListener(this);
-						open.setActionCommand("openLearn");
-						popup.add(open);
-					}
-					if (sim || ver || synth || learn) {
-						JMenuItem delete = new JMenuItem("Delete");
-						delete.addActionListener(this);
-						delete.addMouseListener(this);
-						delete.setActionCommand("deleteSim");
-						JMenuItem copy = new JMenuItem("Copy");
-						copy.addActionListener(this);
-						copy.addMouseListener(this);
-						copy.setActionCommand("copy");
-						JMenuItem rename = new JMenuItem("Rename");
-						rename.addActionListener(this);
-						rename.addMouseListener(this);
-						rename.setActionCommand("rename");
-						popup.addSeparator();
-						popup.add(copy);
-						popup.add(rename);
-						popup.add(delete);
-					}
-				}
-				if (popup.getComponentCount() != 0) {
-					popup.show(e.getComponent(), e.getX(), e.getY());
-				}
-			}
-			else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-				if (tree.getFile() != null) {
-					int index = tab.getSelectedIndex();
-					enableTabMenu(index);
-					if (tree.getFile().length() >= 5
-							&& tree.getFile().substring(tree.getFile().length() - 5)
-									.equals(".sbml") || tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
-						try {
-							boolean done = false;
-							for (int i = 0; i < tab.getTabCount(); i++) {
-								if (tab.getTitleAt(i).equals(
-										tree.getFile().split(separator)[tree.getFile().split(
-												separator).length - 1])) {
-									tab.setSelectedIndex(i);
-									done = true;
-								}
-							}
-							if (!done) {
-								SBML_Editor sbml = new SBML_Editor(tree.getFile(), null, log, this,
-										null, null);
-								// sbml.addMouseListener(this);
-								addTab(tree.getFile().split(separator)[tree.getFile().split(
-										separator).length - 1], sbml, "SBML Editor");
-							}
-						}
-						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame,
-									"You must select a valid sbml file.", "Error",
-									JOptionPane.ERROR_MESSAGE);
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
-						try {
-
-							String filename = tree.getFile();
-							String directory = "";
-							String theFile = "";
-							if (filename.lastIndexOf('/') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-								theFile = filename.substring(filename.lastIndexOf('/') + 1);
-							}
-							if (filename.lastIndexOf('\\') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-							}
-							File work = new File(directory);
-							int i = getTab(theFile);
-							if (i != -1) {
-								tab.setSelectedIndex(i);
-							}
-							else {
-								GCM2SBMLEditor gcm = new GCM2SBMLEditor(work.getAbsolutePath(),
-										theFile, this, log, false, null, null, null);
-								// gcm.addMouseListener(this);
-								addTab(theFile, gcm, "GCM Editor");
-							}
-						}
-						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to view this gcm file.",
-									"Error", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
-						try {
-							String filename = tree.getFile();
-							String directory = "";
-							String theFile = "";
-							if (filename.lastIndexOf('/') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-								theFile = filename.substring(filename.lastIndexOf('/') + 1);
-							}
-							if (filename.lastIndexOf('\\') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-							}
-							File work = new File(directory);
-							int i = getTab(theFile);
-							if (i != -1) {
-								tab.setSelectedIndex(i);
-							}
-							else {
-								if (!viewer.equals("")) {
-									String command = viewer + " " + directory + separator + theFile;
-									Runtime exec = Runtime.getRuntime();
-									try {
-										exec.exec(command);
-									}
-									catch (Exception e1) {
-										JOptionPane.showMessageDialog(frame,
-												"Unable to open external editor.",
-												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-									}
-								}
-								else {
-									File file = new File(work + separator + theFile);
-									String input = "";
-									FileReader in = new FileReader(file);
-									int read = in.read();
-									while (read != -1) {
-										input += (char) read;
-										read = in.read();
-									}
-									in.close();
-									JTextArea text = new JTextArea(input);
-									text.setEditable(true);
-									text.setLineWrap(true);
-									JScrollPane scroll = new JScrollPane(text);
-									// gcm.addMouseListener(this);
-									addTab(theFile, scroll, "VHDL Editor");
-								}
-							}
-							// String[] command = { "emacs", filename };
-							// Runtime.getRuntime().exec(command);
-						}
-						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to view this vhdl file.",
-									"Error", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-					else if (tree.getFile().length() >= 2
-							&& tree.getFile().substring(tree.getFile().length() - 2).equals(".s")) {
-						try {
-							String filename = tree.getFile();
-							String directory = "";
-							String theFile = "";
-							if (filename.lastIndexOf('/') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-								theFile = filename.substring(filename.lastIndexOf('/') + 1);
-							}
-							if (filename.lastIndexOf('\\') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-							}
-							File work = new File(directory);
-							int i = getTab(theFile);
-							if (i != -1) {
-								tab.setSelectedIndex(i);
-							}
-							else {
-								if (!viewer.equals("")) {
-									String command = viewer + " " + directory + separator + theFile;
-									Runtime exec = Runtime.getRuntime();
-									try {
-										exec.exec(command);
-									}
-									catch (Exception e1) {
-										JOptionPane.showMessageDialog(frame,
-												"Unable to open external editor.",
-												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-									}
-								}
-								else {
-									File file = new File(work + separator + theFile);
-									String input = "";
-									FileReader in = new FileReader(file);
-									int read = in.read();
-									while (read != -1) {
-										input += (char) read;
-										read = in.read();
-									}
-									in.close();
-									JTextArea text = new JTextArea(input);
-									text.setEditable(true);
-									text.setLineWrap(true);
-									JScrollPane scroll = new JScrollPane(text);
-									// gcm.addMouseListener(this);
-									addTab(theFile, scroll, "Assembly File Editor");
-								}
-							}
-							// String[] command = { "emacs", filename };
-							// Runtime.getRuntime().exec(command);
-						}
-						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame,
-									"Unable to view this assembly file.", "Error",
-									JOptionPane.ERROR_MESSAGE);
-						}
-					}
-					else if (tree.getFile().length() >= 5
-							&& tree.getFile().substring(tree.getFile().length() - 5)
-									.equals(".inst")) {
-						try {
-							String filename = tree.getFile();
-							String directory = "";
-							String theFile = "";
-							if (filename.lastIndexOf('/') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-								theFile = filename.substring(filename.lastIndexOf('/') + 1);
-							}
-							if (filename.lastIndexOf('\\') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-							}
-							File work = new File(directory);
-							int i = getTab(theFile);
-							if (i != -1) {
-								tab.setSelectedIndex(i);
-							}
-							else {
-								if (!viewer.equals("")) {
-									String command = viewer + " " + directory + separator + theFile;
-									Runtime exec = Runtime.getRuntime();
-									try {
-										exec.exec(command);
-									}
-									catch (Exception e1) {
-										JOptionPane.showMessageDialog(frame,
-												"Unable to open external editor.",
-												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-									}
-								}
-								else {
-									File file = new File(work + separator + theFile);
-									String input = "";
-									FileReader in = new FileReader(file);
-									int read = in.read();
-									while (read != -1) {
-										input += (char) read;
-										read = in.read();
-									}
-									in.close();
-									JTextArea text = new JTextArea(input);
-									text.setEditable(true);
-									text.setLineWrap(true);
-									JScrollPane scroll = new JScrollPane(text);
-									// gcm.addMouseListener(this);
-									addTab(theFile, scroll, "Instruction File Editor");
-								}
-							}
-							// String[] command = { "emacs", filename };
-							// Runtime.getRuntime().exec(command);
-						}
-						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame,
-									"Unable to view this instruction file.", "Error",
-									JOptionPane.ERROR_MESSAGE);
-						}
-					}
-					else if (tree.getFile().length() >= 5
-							&& tree.getFile().substring(tree.getFile().length() - 5)
-									.equals(".vams")) {
-						try {
-							String filename = tree.getFile();
-							String directory = "";
-							String theFile = "";
-							if (filename.lastIndexOf('/') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-								theFile = filename.substring(filename.lastIndexOf('/') + 1);
-							}
-							if (filename.lastIndexOf('\\') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-							}
-							File work = new File(directory);
-							int i = getTab(theFile);
-							if (i != -1) {
-								tab.setSelectedIndex(i);
-							}
-							else {
-								if (!viewer.equals("")) {
-									String command = viewer + " " + directory + separator + theFile;
-									Runtime exec = Runtime.getRuntime();
-									try {
-										exec.exec(command);
-									}
-									catch (Exception e1) {
-										JOptionPane.showMessageDialog(frame,
-												"Unable to open external editor.",
-												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-									}
-								}
-								else {
-									File file = new File(work + separator + theFile);
-									String input = "";
-									FileReader in = new FileReader(file);
-									int read = in.read();
-									while (read != -1) {
-										input += (char) read;
-										read = in.read();
-									}
-									in.close();
-									JTextArea text = new JTextArea(input);
-									text.setEditable(true);
-									text.setLineWrap(true);
-									JScrollPane scroll = new JScrollPane(text);
-									// gcm.addMouseListener(this);
-									addTab(theFile, scroll, "Verilog-AMS Editor");
-								}
-							}
-							// String[] command = { "emacs", filename };
-							// Runtime.getRuntime().exec(command);
-						}
-						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame,
-									"Unable to view this Verilog-AMS file.", "Error",
-									JOptionPane.ERROR_MESSAGE);
-						}
-					}
-					else if (tree.getFile().length() >= 3
-							&& tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) {
-						try {
-							String filename = tree.getFile();
-							String directory = "";
-							String theFile = "";
-							if (filename.lastIndexOf('/') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-								theFile = filename.substring(filename.lastIndexOf('/') + 1);
-							}
-							if (filename.lastIndexOf('\\') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-							}
-							File work = new File(directory);
-							int i = getTab(theFile);
-							if (i != -1) {
-								tab.setSelectedIndex(i);
-							}
-							else {
-								if (!viewer.equals("")) {
-									String command = viewer + " " + directory + separator + theFile;
-									Runtime exec = Runtime.getRuntime();
-									try {
-										exec.exec(command);
-									}
-									catch (Exception e1) {
-										JOptionPane.showMessageDialog(frame,
-												"Unable to open external editor.",
-												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-									}
-								}
-								else {
-									File file = new File(work + separator + theFile);
-									String input = "";
-									FileReader in = new FileReader(file);
-									int read = in.read();
-									while (read != -1) {
-										input += (char) read;
-										read = in.read();
-									}
-									in.close();
-									JTextArea text = new JTextArea(input);
-									text.setEditable(true);
-									text.setLineWrap(true);
-									JScrollPane scroll = new JScrollPane(text);
-									// gcm.addMouseListener(this);
-									addTab(theFile, scroll, "SystemVerilog Editor");
-								}
-							}
-							// String[] command = { "emacs", filename };
-							// Runtime.getRuntime().exec(command);
-						}
-						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame,
-									"Unable to view this SystemVerilog file.", "Error",
-									JOptionPane.ERROR_MESSAGE);
-						}
-					}
-					else if (tree.getFile().length() >= 2
-							&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
-						try {
-							String filename = tree.getFile();
-							String directory = "";
-							String theFile = "";
-							if (filename.lastIndexOf('/') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-								theFile = filename.substring(filename.lastIndexOf('/') + 1);
-							}
-							if (filename.lastIndexOf('\\') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-							}
-							File work = new File(directory);
-							int i = getTab(theFile);
-							if (i != -1) {
-								tab.setSelectedIndex(i);
-							}
-							else {
-								if (!viewer.equals("")) {
-									String command = viewer + " " + directory + separator + theFile;
-									Runtime exec = Runtime.getRuntime();
-									try {
-										exec.exec(command);
-									}
-									catch (Exception e1) {
-										JOptionPane.showMessageDialog(frame,
-												"Unable to open external editor.",
-												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-									}
-								}
-								else {
-									File file = new File(work + separator + theFile);
-									String input = "";
-									FileReader in = new FileReader(file);
-									int read = in.read();
-									while (read != -1) {
-										input += (char) read;
-										read = in.read();
-									}
-									in.close();
-									JTextArea text = new JTextArea(input);
-									text.setEditable(true);
-									text.setLineWrap(true);
-									JScrollPane scroll = new JScrollPane(text);
-									// gcm.addMouseListener(this);
-									addTab(theFile, scroll, "Petri Net Editor");
-								}
-							}
-							// String[] command = { "emacs", filename };
-							// Runtime.getRuntime().exec(command);
-						}
-						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to view this .g file.",
-									"Error", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
-						try {
-							String filename = tree.getFile();
-							String directory = "";
-							String theFile = "";
-							if (filename.lastIndexOf('/') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-								theFile = filename.substring(filename.lastIndexOf('/') + 1);
-							}
-							if (filename.lastIndexOf('\\') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-							}
-							LhpnFile lhpn = new LhpnFile(log);
-							//if (new File(directory + theFile).length() > 0) {
-								// log.addText("here");
-							//	lhpn.load(directory + theFile);
-								// log.addText("there");
-							//}
-							// log.addText("load completed");
-							File work = new File(directory);
-							int i = getTab(theFile);
-							if (i != -1) {
-								tab.setSelectedIndex(i);
-							}
-							else {
-								// log.addText("make Editor");
-								LHPNEditor editor = new LHPNEditor(work.getAbsolutePath(), theFile,
-										lhpn, this, log);
-								// editor.addMouseListener(this);
-								addTab(theFile, editor, "LHPN Editor");
-								// log.addText("Editor made");
-							}
-							// String[] cmd = { "emacs", filename };
-							// Runtime.getRuntime().exec(cmd);
-						}
-						catch (Exception e1) {
-							e1.printStackTrace();
-							JOptionPane.showMessageDialog(frame, "Unable to view this LPN file.",
-									"Error", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
-						try {
-							String filename = tree.getFile();
-							String directory = "";
-							String theFile = "";
-							if (filename.lastIndexOf('/') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-								theFile = filename.substring(filename.lastIndexOf('/') + 1);
-							}
-							if (filename.lastIndexOf('\\') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-							}
-							File work = new File(directory);
-							int i = getTab(theFile);
-							if (i != -1) {
-								tab.setSelectedIndex(i);
-							}
-							else {
-								if (!viewer.equals("")) {
-									String command = viewer + " " + directory + separator + theFile;
-									Runtime exec = Runtime.getRuntime();
-									try {
-										exec.exec(command);
-									}
-									catch (Exception e1) {
-										JOptionPane.showMessageDialog(frame,
-												"Unable to open external editor.",
-												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-									}
-								}
-								else {
-									File file = new File(work + separator + theFile);
-									String input = "";
-									FileReader in = new FileReader(file);
-									int read = in.read();
-									while (read != -1) {
-										input += (char) read;
-										read = in.read();
-									}
-									in.close();
-									JTextArea text = new JTextArea(input);
-									text.setEditable(true);
-									text.setLineWrap(true);
-									JScrollPane scroll = new JScrollPane(text);
-									// gcm.addMouseListener(this);
-									addTab(theFile, scroll, "CSP Editor");
-								}
-							}
-						}
-						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to view this csp file.",
-									"Error", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
-						try {
-							String filename = tree.getFile();
-							String directory = "";
-							String theFile = "";
-							if (filename.lastIndexOf('/') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-								theFile = filename.substring(filename.lastIndexOf('/') + 1);
-							}
-							if (filename.lastIndexOf('\\') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-							}
-							File work = new File(directory);
-							int i = getTab(theFile);
-							if (i != -1) {
-								tab.setSelectedIndex(i);
-							}
-							else {
-								if (!viewer.equals("")) {
-									String command = viewer + " " + directory + separator + theFile;
-									Runtime exec = Runtime.getRuntime();
-									try {
-										exec.exec(command);
-									}
-									catch (Exception e1) {
-										JOptionPane.showMessageDialog(frame,
-												"Unable to open external editor.",
-												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-									}
-								}
-								else {
-									File file = new File(work + separator + theFile);
-									String input = "";
-									FileReader in = new FileReader(file);
-									int read = in.read();
-									while (read != -1) {
-										input += (char) read;
-										read = in.read();
-									}
-									in.close();
-									JTextArea text = new JTextArea(input);
-									text.setEditable(true);
-									text.setLineWrap(true);
-									JScrollPane scroll = new JScrollPane(text);
-									// gcm.addMouseListener(this);
-									addTab(theFile, scroll, "HSE Editor");
-								}
-							}
-						}
-						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to view this hse file.",
-									"Error", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
-						try {
-							String filename = tree.getFile();
-							String directory = "";
-							String theFile = "";
-							if (filename.lastIndexOf('/') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-								theFile = filename.substring(filename.lastIndexOf('/') + 1);
-							}
-							if (filename.lastIndexOf('\\') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-							}
-							File work = new File(directory);
-							int i = getTab(theFile);
-							if (i != -1) {
-								tab.setSelectedIndex(i);
-							}
-							else {
-								if (!viewer.equals("")) {
-									String command = viewer + " " + directory + separator + theFile;
-									Runtime exec = Runtime.getRuntime();
-									try {
-										exec.exec(command);
-									}
-									catch (Exception e1) {
-										JOptionPane.showMessageDialog(frame,
-												"Unable to open external editor.",
-												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-									}
-								}
-								else {
-									File file = new File(work + separator + theFile);
-									String input = "";
-									FileReader in = new FileReader(file);
-									int read = in.read();
-									while (read != -1) {
-										input += (char) read;
-										read = in.read();
-									}
-									in.close();
-									JTextArea text = new JTextArea(input);
-									text.setEditable(true);
-									text.setLineWrap(true);
-									JScrollPane scroll = new JScrollPane(text);
-									// gcm.addMouseListener(this);
-									addTab(theFile, scroll, "UNC Editor");
-								}
-							}
-						}
-						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to view this unc file.",
-									"Error", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
-						try {
-							String filename = tree.getFile();
-							String directory = "";
-							String theFile = "";
-							if (filename.lastIndexOf('/') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-								theFile = filename.substring(filename.lastIndexOf('/') + 1);
-							}
-							if (filename.lastIndexOf('\\') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-							}
-							File work = new File(directory);
-							int i = getTab(theFile);
-							if (i != -1) {
-								tab.setSelectedIndex(i);
-							}
-							else {
-								if (!viewer.equals("")) {
-									String command = viewer + " " + directory + separator + theFile;
-									Runtime exec = Runtime.getRuntime();
-									try {
-										exec.exec(command);
-									}
-									catch (Exception e1) {
-										JOptionPane.showMessageDialog(frame,
-												"Unable to open external editor.",
-												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-									}
-								}
-								else {
-									File file = new File(work + separator + theFile);
-									String input = "";
-									FileReader in = new FileReader(file);
-									int read = in.read();
-									while (read != -1) {
-										input += (char) read;
-										read = in.read();
-									}
-									in.close();
-									JTextArea text = new JTextArea(input);
-									text.setEditable(true);
-									text.setLineWrap(true);
-									JScrollPane scroll = new JScrollPane(text);
-									// gcm.addMouseListener(this);
-									addTab(theFile, scroll, "RSG Editor");
-								}
-							}
-						}
-						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to view this rsg file.",
-									"Error", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".cir")) {
-						try {
-							String filename = tree.getFile();
-							String directory = "";
-							String theFile = "";
-							if (filename.lastIndexOf('/') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-								theFile = filename.substring(filename.lastIndexOf('/') + 1);
-							}
-							if (filename.lastIndexOf('\\') >= 0) {
-								directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-								theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-							}
-							File work = new File(directory);
-							int i = getTab(theFile);
-							if (i != -1) {
-								tab.setSelectedIndex(i);
-							}
-							else {
-								if (!viewer.equals("")) {
-									String command = viewer + " " + directory + separator + theFile;
-									Runtime exec = Runtime.getRuntime();
-									try {
-										exec.exec(command);
-									}
-									catch (Exception e1) {
-										JOptionPane.showMessageDialog(frame,
-												"Unable to open external editor.",
-												"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-									}
-								}
-								else {
-									File file = new File(work + separator + theFile);
-									String input = "";
-									FileReader in = new FileReader(file);
-									int read = in.read();
-									while (read != -1) {
-										input += (char) read;
-										read = in.read();
-									}
-									in.close();
-									JTextArea text = new JTextArea(input);
-									text.setEditable(true);
-									text.setLineWrap(true);
-									JScrollPane scroll = new JScrollPane(text);
-									// gcm.addMouseListener(this);
-									addTab(theFile, scroll, "Spice Editor");
-								}
-							}
-						}
-						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to view this spice file.",
-									"Error", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
-						boolean done = false;
-						for (int i = 0; i < tab.getTabCount(); i++) {
-							if (tab.getTitleAt(i)
-									.equals(
-											tree.getFile().split(separator)[tree.getFile().split(
-													separator).length - 1])) {
-								tab.setSelectedIndex(i);
-								done = true;
-							}
-						}
-						if (!done) {
-							addTab(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-									new Graph(null, "Number of molecules", "title", "tsd.printer",
-											root, "Time", this, tree.getFile(), log, tree.getFile()
-													.split(separator)[tree.getFile().split(
-													separator).length - 1], true, false),
-									"TSD Graph");
-						}
-					}
-					else if (tree.getFile().length() >= 4
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
-						boolean done = false;
-						for (int i = 0; i < tab.getTabCount(); i++) {
-							if (tab.getTitleAt(i)
-									.equals(
-											tree.getFile().split(separator)[tree.getFile().split(
-													separator).length - 1])) {
-								tab.setSelectedIndex(i);
-								done = true;
-							}
-						}
-						if (!done) {
-							addTab(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-									new Graph(null, "Percent", "title", "tsd.printer", root,
-											"Time", this, tree.getFile(), log, tree.getFile()
-													.split(separator)[tree.getFile().split(
-													separator).length - 1], false, false),
-									"Probability Graph");
-						}
-					}
-					else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
-						boolean sim = false;
-						boolean synth = false;
-						boolean ver = false;
-						boolean learn = false;
-						for (String s : new File(tree.getFile()).list()) {
-							if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
-								sim = true;
-							}
-							else if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
-								synth = true;
-							}
-							else if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
-								ver = true;
-							}
-							else if (s.length() > 3 && s.substring(s.length() - 4).equals(".lrn")) {
-								learn = true;
-							}
-						}
-						if (sim) {
-							openSim();
-						}
-						else if (synth) {
-							openSynth();
-						}
-						else if (ver) {
-							openVerify();
-						}
-						else if (learn) {
-							if (lema) {
-								openLearnLHPN();
-							}
-							else {
-								openLearn();
-							}
-						}
-					}
-				}
-			}
+			executeMouseClickEvent(e);
 		}
 	}
 
@@ -9725,527 +8218,1513 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 		}
 		else {
-			if (tree.getFile() != null) {
-				if (e.isPopupTrigger() && tree.getFile() != null) {
-					frame.getGlassPane().setVisible(false);
-					popup.removeAll();
-					if (tree.getFile().length() > 4
-							&& tree.getFile().substring(tree.getFile().length() - 5)
-									.equals(".sbml") || tree.getFile().length() > 3
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
-						JMenuItem edit = new JMenuItem("View/Edit");
-						edit.addActionListener(this);
-						edit.addMouseListener(this);
-						edit.setActionCommand("sbmlEditor");
-						JMenuItem graph = new JMenuItem("View Model");
-						graph.addActionListener(this);
-						graph.addMouseListener(this);
-						graph.setActionCommand("graph");
-						JMenuItem browse = new JMenuItem("View Model in Browser");
-						browse.addActionListener(this);
-						browse.addMouseListener(this);
-						browse.setActionCommand("browse");
-						// TODO
-						JMenuItem simulate = new JMenuItem("Create Analysis View");
-						simulate.addActionListener(this);
-						simulate.addMouseListener(this);
-						simulate.setActionCommand("simulate");
-						JMenuItem createLearn = new JMenuItem("Create Learn View");
-						createLearn.addActionListener(this);
-						createLearn.addMouseListener(this);
-						createLearn.setActionCommand("createLearn");
-						JMenuItem delete = new JMenuItem("Delete");
-						delete.addActionListener(this);
-						delete.addMouseListener(this);
-						delete.setActionCommand("delete");
-						JMenuItem copy = new JMenuItem("Copy");
-						copy.addActionListener(this);
-						copy.addMouseListener(this);
-						copy.setActionCommand("copy");
-						JMenuItem rename = new JMenuItem("Rename");
-						rename.addActionListener(this);
-						rename.addMouseListener(this);
-						rename.setActionCommand("rename");
-						popup.add(simulate);
-						popup.add(createLearn);
-						popup.addSeparator();
-						popup.add(graph);
-						popup.add(browse);
-						popup.addSeparator();
-						popup.add(edit);
-						popup.add(copy);
-						popup.add(rename);
-						popup.add(delete);
+			executeMouseClickEvent(e);
+		}
+	}
+
+	public void executeMouseClickEvent(MouseEvent e) {
+		if (tree.getFile() != null && e.isPopupTrigger()) {
+			frame.getGlassPane().setVisible(false);
+			popup.removeAll();
+			if (tree.getFile().length() > 4
+					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+					|| tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+				JMenuItem edit = new JMenuItem("View/Edit");
+				edit.addActionListener(this);
+				edit.addMouseListener(this);
+				edit.setActionCommand("sbmlEditor");
+				JMenuItem graph = new JMenuItem("View Model");
+				graph.addActionListener(this);
+				graph.addMouseListener(this);
+				graph.setActionCommand("graph");
+				JMenuItem browse = new JMenuItem("View Model in Browser");
+				browse.addActionListener(this);
+				browse.addMouseListener(this);
+				browse.setActionCommand("browse");
+				JMenuItem simulate = new JMenuItem("Create Analysis View");
+				simulate.addActionListener(this);
+				simulate.addMouseListener(this);
+				simulate.setActionCommand("simulate");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.addMouseListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				popup.add(simulate);
+				popup.add(createLearn);
+				popup.addSeparator();
+				popup.add(graph);
+				popup.add(browse);
+				popup.addSeparator();
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+				JMenuItem create = new JMenuItem("Create Analysis View");
+				create.addActionListener(this);
+				create.addMouseListener(this);
+				create.setActionCommand("createSim");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.addMouseListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem createSBML = new JMenuItem("Create SBML File");
+				createSBML.addActionListener(this);
+				createSBML.addMouseListener(this);
+				createSBML.setActionCommand("createSBML");
+				// JMenuItem createLHPN = new JMenuItem("Create LPN File");
+				// createLHPN.addActionListener(this);
+				// createLHPN.addMouseListener(this);
+				// createLHPN.setActionCommand("createLHPN");
+				JMenuItem edit = new JMenuItem("View/Edit");
+				edit.addActionListener(this);
+				edit.addMouseListener(this);
+				edit.setActionCommand("dotEditor");
+				JMenuItem graph = new JMenuItem("View Model");
+				graph.addActionListener(this);
+				graph.addMouseListener(this);
+				graph.setActionCommand("graph");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				popup.add(create);
+				popup.add(createLearn);
+				popup.add(createSBML);
+				// popup.add(createLHPN);
+				popup.addSeparator();
+				popup.add(graph);
+				popup.addSeparator();
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.addMouseListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.addMouseListener(this);
+				createAnalysis.setActionCommand("createSim");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.addMouseListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.addMouseListener(this);
+				createVerification.setActionCommand("createVerify");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				if (atacs) {
+					popup.add(createSynthesis);
+				}
+				// popup.add(createAnalysis);
+				if (lema) {
+					popup.add(createLearn);
+				}
+				popup.add(createVerification);
+				popup.addSeparator();
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 4
+					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) { // SB
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				if (lema) {
+					popup.add(viewModel);
+					popup.addSeparator();
+					popup.add(copy);
+					popup.add(rename);
+					popup.add(delete);
+				}
+			}
+			else if (tree.getFile().length() > 2
+					&& tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) { // SB
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				if (lema) {
+					popup.add(viewModel);
+					popup.addSeparator();
+					popup.add(copy);
+					popup.add(rename);
+					popup.add(delete);
+				}
+			}
+			else if (tree.getFile().length() > 1
+					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.addMouseListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.addMouseListener(this);
+				createAnalysis.setActionCommand("createSim");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.addMouseListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.addMouseListener(this);
+				createVerification.setActionCommand("createVerify");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				if (atacs) {
+					popup.add(createSynthesis);
+				}
+				// popup.add(createAnalysis);
+				// if (lema) {
+				// popup.add(createLearn);
+				// }
+				popup.add(createVerification);
+				popup.addSeparator();
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.addMouseListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				// //////// TODO
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.addMouseListener(this);
+				createAnalysis.setActionCommand("createAnalysis");
+				// createAnalysis.setActionCommand("simulate");
+
+				// JMenuItem simulate = new
+				// JMenuItem("Create Analysis View");
+				// simulate.addActionListener(this);
+				// simulate.addMouseListener(this);
+				// simulate.setActionCommand("simulate");
+				// /////////////
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.addMouseListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.addMouseListener(this);
+				createVerification.setActionCommand("createVerify");
+				JMenuItem convertToSBML = new JMenuItem("Convert To SBML");
+				convertToSBML.addActionListener(this);
+				convertToSBML.addMouseListener(this);
+				convertToSBML.setActionCommand("convertToSBML");
+				JMenuItem convertToVerilog = new JMenuItem("Convert To Verilog");
+				convertToVerilog.addActionListener(this);
+				convertToVerilog.addMouseListener(this);
+				convertToVerilog.setActionCommand("convertToVerilog");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem viewStateGraph = new JMenuItem("View State Graph");
+				viewStateGraph.addActionListener(this);
+				viewStateGraph.addMouseListener(this);
+				viewStateGraph.setActionCommand("viewState");
+				JMenuItem markovAnalysis = new JMenuItem("Perform Markovian Analysis");
+				markovAnalysis.addActionListener(this);
+				markovAnalysis.addMouseListener(this);
+				markovAnalysis.setActionCommand("markov");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				if (atacs) {
+					popup.add(createSynthesis);
+				}
+				if (LPN2SBML) {
+					popup.add(createAnalysis);
+				}
+				if (lema) {
+					popup.add(createLearn);
+				}
+				if (atacs || lema) {
+					popup.add(createVerification);
+				}
+				popup.addSeparator();
+				// popup.add(createAnalysis); // TODO
+				popup.add(viewModel);
+				// popup.add(viewStateGraph);
+				if (!atacs && !lema && LPN2SBML) {
+					popup.add(convertToSBML); // changed the order. SB
+				}
+				if (atacs || lema) {
+					popup.add(convertToVerilog);
+				}
+				// popup.add(markovAnalysis);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 1
+					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".s")) {
+				// JMenuItem createAnalysis = new
+				// JMenuItem("Create Analysis View");
+				// createAnalysis.addActionListener(this);
+				// createAnalysis.addMouseListener(this);
+				// createAnalysis.setActionCommand("createSim");
+				// JMenuItem createVerification = new
+				// JMenuItem("Create Verification View");
+				// createVerification.addActionListener(this);
+				// createVerification.addMouseListener(this);
+				// createVerification.setActionCommand("createVerify");
+				// JMenuItem viewModel = new JMenuItem("View Model");
+				// viewModel.addActionListener(this);
+				// viewModel.addMouseListener(this);
+				// viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				// popup.add(createVerification);
+				// popup.addSeparator();
+				// popup.add(viewModel);
+				// popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 4
+					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".inst")) {
+				// JMenuItem createAnalysis = new
+				// JMenuItem("Create Analysis View");
+				// createAnalysis.addActionListener(this);
+				// createAnalysis.addMouseListener(this);
+				// createAnalysis.setActionCommand("createSim");
+				// JMenuItem createVerification = new
+				// JMenuItem("Create Verification View");
+				// createVerification.addActionListener(this);
+				// createVerification.addMouseListener(this);
+				// createVerification.setActionCommand("createVerify");
+				// JMenuItem viewModel = new JMenuItem("View Model");
+				// viewModel.addActionListener(this);
+				// viewModel.addMouseListener(this);
+				// viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				// popup.add(createVerification);
+				// popup.addSeparator();
+				// popup.add(viewModel);
+				// popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.addMouseListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.addMouseListener(this);
+				createAnalysis.setActionCommand("createSim");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.addMouseListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.addMouseListener(this);
+				createVerification.setActionCommand("createVerify");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				if (atacs) {
+					popup.add(createSynthesis);
+				}
+				// popup.add(createAnalysis);
+				if (lema) {
+					popup.add(createLearn);
+				}
+				popup.add(createVerification);
+				popup.addSeparator();
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.addMouseListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.addMouseListener(this);
+				createAnalysis.setActionCommand("createSim");
+				JMenuItem createLearn = new JMenuItem("Create Learn View");
+				createLearn.addActionListener(this);
+				createLearn.addMouseListener(this);
+				createLearn.setActionCommand("createLearn");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.addMouseListener(this);
+				createVerification.setActionCommand("createVerify");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				if (atacs) {
+					popup.add(createSynthesis);
+				}
+				// popup.add(createAnalysis);
+				if (lema) {
+					popup.add(createLearn);
+				}
+				popup.add(createVerification);
+				popup.addSeparator();
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.addMouseListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				popup.add(createSynthesis);
+				popup.addSeparator();
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
+				createSynthesis.addActionListener(this);
+				createSynthesis.addMouseListener(this);
+				createSynthesis.setActionCommand("createSynthesis");
+				JMenuItem viewModel = new JMenuItem("View Model");
+				viewModel.addActionListener(this);
+				viewModel.addMouseListener(this);
+				viewModel.setActionCommand("viewModel");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				popup.add(createSynthesis);
+				popup.addSeparator();
+				popup.add(viewModel);
+				popup.addSeparator();
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
+				JMenuItem edit = new JMenuItem("View/Edit");
+				edit.addActionListener(this);
+				edit.addMouseListener(this);
+				edit.setActionCommand("openGraph");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
+				JMenuItem edit = new JMenuItem("View/Edit");
+				edit.addActionListener(this);
+				edit.addMouseListener(this);
+				edit.setActionCommand("openGraph");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				popup.add(edit);
+				popup.add(copy);
+				popup.add(rename);
+				popup.add(delete);
+			}
+			else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
+				boolean sim = false;
+				boolean synth = false;
+				boolean ver = false;
+				boolean learn = false;
+				for (String s : new File(tree.getFile()).list()) {
+					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
+						sim = true;
 					}
-					else if (tree.getFile().length() > 3
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
-						JMenuItem create = new JMenuItem("Create Analysis View");
-						create.addActionListener(this);
-						create.addMouseListener(this);
-						create.setActionCommand("createSim");
-						JMenuItem createLearn = new JMenuItem("Create Learn View");
-						createLearn.addActionListener(this);
-						createLearn.addMouseListener(this);
-						createLearn.setActionCommand("createLearn");
-						JMenuItem createSBML = new JMenuItem("Create SBML File");
-						createSBML.addActionListener(this);
-						createSBML.addMouseListener(this);
-						createSBML.setActionCommand("createSBML");
-						// JMenuItem createLHPN = new
-						// JMenuItem("Create LPN File");
-						// createLHPN.addActionListener(this);
-						// createLHPN.addMouseListener(this);
-						// createLHPN.setActionCommand("createLHPN");
-						JMenuItem edit = new JMenuItem("View/Edit");
-						edit.addActionListener(this);
-						edit.addMouseListener(this);
-						edit.setActionCommand("dotEditor");
-						JMenuItem graph = new JMenuItem("View Model");
-						graph.addActionListener(this);
-						graph.addMouseListener(this);
-						graph.setActionCommand("graph");
-						JMenuItem delete = new JMenuItem("Delete");
-						delete.addActionListener(this);
-						delete.addMouseListener(this);
-						delete.setActionCommand("delete");
-						JMenuItem copy = new JMenuItem("Copy");
-						copy.addActionListener(this);
-						copy.addMouseListener(this);
-						copy.setActionCommand("copy");
-						JMenuItem rename = new JMenuItem("Rename");
-						rename.addActionListener(this);
-						rename.addMouseListener(this);
-						rename.setActionCommand("rename");
-						popup.add(create);
-						popup.add(createLearn);
-						popup.add(createSBML);
-						// popup.add(createLHPN);
-						popup.addSeparator();
-						popup.add(graph);
-						popup.addSeparator();
-						popup.add(edit);
-						popup.add(copy);
-						popup.add(rename);
-						popup.add(delete);
+					if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
+						synth = true;
 					}
-					else if (tree.getFile().length() > 3
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
-						JMenuItem edit = new JMenuItem("View/Edit");
-						edit.addActionListener(this);
-						edit.addMouseListener(this);
-						edit.setActionCommand("openGraph");
-						JMenuItem delete = new JMenuItem("Delete");
-						delete.addActionListener(this);
-						delete.addMouseListener(this);
-						delete.setActionCommand("delete");
-						JMenuItem copy = new JMenuItem("Copy");
-						copy.addActionListener(this);
-						copy.addMouseListener(this);
-						copy.setActionCommand("copy");
-						JMenuItem rename = new JMenuItem("Rename");
-						rename.addActionListener(this);
-						rename.addMouseListener(this);
-						rename.setActionCommand("rename");
-						popup.add(edit);
-						popup.add(copy);
-						popup.add(rename);
-						popup.add(delete);
+					if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
+						ver = true;
 					}
-					else if (tree.getFile().length() > 3
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
-						JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-						createSynthesis.addActionListener(this);
-						createSynthesis.addMouseListener(this);
-						createSynthesis.setActionCommand("createSynthesis");
-						JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-						createAnalysis.addActionListener(this);
-						createAnalysis.addMouseListener(this);
-						createAnalysis.setActionCommand("createSim");
-						JMenuItem createLearn = new JMenuItem("Create Learn View");
-						createLearn.addActionListener(this);
-						createLearn.addMouseListener(this);
-						createLearn.setActionCommand("createLearn");
-						JMenuItem createVerification = new JMenuItem("Create Verification View");
-						createVerification.addActionListener(this);
-						createVerification.addMouseListener(this);
-						createVerification.setActionCommand("createVerify");
-						JMenuItem viewModel = new JMenuItem("View Model");
-						viewModel.addActionListener(this);
-						viewModel.addMouseListener(this);
-						viewModel.setActionCommand("viewModel");
-						JMenuItem delete = new JMenuItem("Delete");
-						delete.addActionListener(this);
-						delete.addMouseListener(this);
-						delete.setActionCommand("delete");
-						JMenuItem copy = new JMenuItem("Copy");
-						copy.addActionListener(this);
-						copy.addMouseListener(this);
-						copy.setActionCommand("copy");
-						JMenuItem rename = new JMenuItem("Rename");
-						rename.addActionListener(this);
-						rename.addMouseListener(this);
-						rename.setActionCommand("rename");
-						if (atacs) {
-							popup.add(createSynthesis);
-						}
-						// popup.add(createAnalysis);
-						if (lema) {
-							popup.add(createLearn);
-						}
-						popup.add(createVerification);
-						popup.addSeparator();
-						popup.add(viewModel);
-						popup.addSeparator();
-						popup.add(copy);
-						popup.add(rename);
-						popup.add(delete);
-					}
-					else if (tree.getFile().length() > 1
-							&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
-						JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-						createSynthesis.addActionListener(this);
-						createSynthesis.addMouseListener(this);
-						createSynthesis.setActionCommand("createSynthesis");
-						JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-						createAnalysis.addActionListener(this);
-						createAnalysis.addMouseListener(this);
-						createAnalysis.setActionCommand("createSim");
-						JMenuItem createLearn = new JMenuItem("Create Learn View");
-						createLearn.addActionListener(this);
-						createLearn.addMouseListener(this);
-						createLearn.setActionCommand("createLearn");
-						JMenuItem createVerification = new JMenuItem("Create Verification View");
-						createVerification.addActionListener(this);
-						createVerification.addMouseListener(this);
-						createVerification.setActionCommand("createVerify");
-						JMenuItem viewModel = new JMenuItem("View Model");
-						viewModel.addActionListener(this);
-						viewModel.addMouseListener(this);
-						viewModel.setActionCommand("viewModel");
-						JMenuItem delete = new JMenuItem("Delete");
-						delete.addActionListener(this);
-						delete.addMouseListener(this);
-						delete.setActionCommand("delete");
-						JMenuItem copy = new JMenuItem("Copy");
-						copy.addActionListener(this);
-						copy.addMouseListener(this);
-						copy.setActionCommand("copy");
-						JMenuItem rename = new JMenuItem("Rename");
-						rename.addActionListener(this);
-						rename.addMouseListener(this);
-						rename.setActionCommand("rename");
-						if (atacs) {
-							popup.add(createSynthesis);
-						}
-						// popup.add(createAnalysis);
-						// if (lema) {
-						// popup.add(createLearn);
-						// }
-						popup.add(createVerification);
-						popup.addSeparator();
-						popup.add(viewModel);
-						popup.addSeparator();
-						popup.add(copy);
-						popup.add(rename);
-						popup.add(delete);
-					}
-					else if (tree.getFile().length() > 3
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
-						JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-						createSynthesis.addActionListener(this);
-						createSynthesis.addMouseListener(this);
-						createSynthesis.setActionCommand("createSynthesis");
-						JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-						createAnalysis.addActionListener(this);
-						createAnalysis.addMouseListener(this);
-						createAnalysis.setActionCommand("createSim");
-						JMenuItem createLearn = new JMenuItem("Create Learn View");
-						createLearn.addActionListener(this);
-						createLearn.addMouseListener(this);
-						createLearn.setActionCommand("createLearn");
-						JMenuItem createVerification = new JMenuItem("Create Verification View");
-						createVerification.addActionListener(this);
-						createVerification.addMouseListener(this);
-						createVerification.setActionCommand("createVerify");
-						JMenuItem viewModel = new JMenuItem("View Model");
-						viewModel.addActionListener(this);
-						viewModel.addMouseListener(this);
-						viewModel.setActionCommand("viewModel");
-						JMenuItem viewStateGraph = new JMenuItem("View State Graph");
-						viewStateGraph.addActionListener(this);
-						viewStateGraph.addMouseListener(this);
-						viewStateGraph.setActionCommand("viewState");
-						JMenuItem convertToVerilog = new JMenuItem("Convert To Verilog");
-						convertToVerilog.addActionListener(this);
-						convertToVerilog.addMouseListener(this);
-						convertToVerilog.setActionCommand("convertToVerilog");
-						JMenuItem markovAnalysis = new JMenuItem("Perform Markovian Analysis");
-						markovAnalysis.addActionListener(this);
-						markovAnalysis.addMouseListener(this);
-						markovAnalysis.setActionCommand("markov");
-						JMenuItem delete = new JMenuItem("Delete");
-						delete.addActionListener(this);
-						delete.addMouseListener(this);
-						delete.setActionCommand("delete");
-						JMenuItem copy = new JMenuItem("Copy");
-						copy.addActionListener(this);
-						copy.addMouseListener(this);
-						copy.setActionCommand("copy");
-						JMenuItem rename = new JMenuItem("Rename");
-						rename.addActionListener(this);
-						rename.addMouseListener(this);
-						rename.setActionCommand("rename");
-						if (atacs) {
-							popup.add(createSynthesis);
-						}
-						// popup.add(createAnalysis);
-						if (lema) {
-							popup.add(createLearn);
-						}
-						if (atacs || lema) {
-							popup.add(createVerification);
-							popup.addSeparator();
-						}
-						popup.add(viewModel);
-						// popup.add(viewStateGraph);
-						popup.add(convertToVerilog);
-						// popup.add(markovAnalysis);
-						popup.addSeparator();
-						popup.add(copy);
-						popup.add(rename);
-						popup.add(delete);
-					}
-					else if (tree.getFile().length() > 3
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
-						JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-						createSynthesis.addActionListener(this);
-						createSynthesis.addMouseListener(this);
-						createSynthesis.setActionCommand("createSynthesis");
-						JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-						createAnalysis.addActionListener(this);
-						createAnalysis.addMouseListener(this);
-						createAnalysis.setActionCommand("createSim");
-						JMenuItem createLearn = new JMenuItem("Create Learn View");
-						createLearn.addActionListener(this);
-						createLearn.addMouseListener(this);
-						createLearn.setActionCommand("createLearn");
-						JMenuItem createVerification = new JMenuItem("Create Verification View");
-						createVerification.addActionListener(this);
-						createVerification.addMouseListener(this);
-						createVerification.setActionCommand("createVerify");
-						JMenuItem viewModel = new JMenuItem("View Model");
-						viewModel.addActionListener(this);
-						viewModel.addMouseListener(this);
-						viewModel.setActionCommand("viewModel");
-						JMenuItem delete = new JMenuItem("Delete");
-						delete.addActionListener(this);
-						delete.addMouseListener(this);
-						delete.setActionCommand("delete");
-						JMenuItem copy = new JMenuItem("Copy");
-						copy.addActionListener(this);
-						copy.addMouseListener(this);
-						copy.setActionCommand("copy");
-						JMenuItem rename = new JMenuItem("Rename");
-						rename.addActionListener(this);
-						rename.addMouseListener(this);
-						rename.setActionCommand("rename");
-						if (atacs) {
-							popup.add(createSynthesis);
-						}
-						// popup.add(createAnalysis);
-						if (lema) {
-							popup.add(createLearn);
-						}
-						popup.add(createVerification);
-						popup.addSeparator();
-						popup.add(viewModel);
-						popup.addSeparator();
-						popup.add(copy);
-						popup.add(rename);
-						popup.add(delete);
-					}
-					else if (tree.getFile().length() > 3
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
-						JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-						createSynthesis.addActionListener(this);
-						createSynthesis.addMouseListener(this);
-						createSynthesis.setActionCommand("createSynthesis");
-						JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
-						createAnalysis.addActionListener(this);
-						createAnalysis.addMouseListener(this);
-						createAnalysis.setActionCommand("createSim");
-						JMenuItem createLearn = new JMenuItem("Create Learn View");
-						createLearn.addActionListener(this);
-						createLearn.addMouseListener(this);
-						createLearn.setActionCommand("createLearn");
-						JMenuItem createVerification = new JMenuItem("Create Verification View");
-						createVerification.addActionListener(this);
-						createVerification.addMouseListener(this);
-						createVerification.setActionCommand("createVerify");
-						JMenuItem viewModel = new JMenuItem("View Model");
-						viewModel.addActionListener(this);
-						viewModel.addMouseListener(this);
-						viewModel.setActionCommand("viewModel");
-						JMenuItem delete = new JMenuItem("Delete");
-						delete.addActionListener(this);
-						delete.addMouseListener(this);
-						delete.setActionCommand("delete");
-						JMenuItem copy = new JMenuItem("Copy");
-						copy.addActionListener(this);
-						copy.addMouseListener(this);
-						copy.setActionCommand("copy");
-						JMenuItem rename = new JMenuItem("Rename");
-						rename.addActionListener(this);
-						rename.addMouseListener(this);
-						rename.setActionCommand("rename");
-						if (atacs) {
-							popup.add(createSynthesis);
-						}
-						// popup.add(createAnalysis);
-						if (lema) {
-							popup.add(createLearn);
-						}
-						popup.add(createVerification);
-						popup.addSeparator();
-						popup.add(viewModel);
-						popup.addSeparator();
-						popup.add(copy);
-						popup.add(rename);
-						popup.add(delete);
-					}
-					else if (tree.getFile().length() > 3
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
-						JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-						createSynthesis.addActionListener(this);
-						createSynthesis.addMouseListener(this);
-						createSynthesis.setActionCommand("createSynthesis");
-						JMenuItem viewModel = new JMenuItem("View Model");
-						viewModel.addActionListener(this);
-						viewModel.addMouseListener(this);
-						viewModel.setActionCommand("viewModel");
-						JMenuItem delete = new JMenuItem("Delete");
-						delete.addActionListener(this);
-						delete.addMouseListener(this);
-						delete.setActionCommand("delete");
-						JMenuItem copy = new JMenuItem("Copy");
-						copy.addActionListener(this);
-						copy.addMouseListener(this);
-						copy.setActionCommand("copy");
-						JMenuItem rename = new JMenuItem("Rename");
-						rename.addActionListener(this);
-						rename.addMouseListener(this);
-						rename.setActionCommand("rename");
-						popup.add(createSynthesis);
-						popup.addSeparator();
-						popup.add(viewModel);
-						popup.addSeparator();
-						popup.add(copy);
-						popup.add(rename);
-						popup.add(delete);
-					}
-					else if (tree.getFile().length() > 3
-							&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
-						JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
-						createSynthesis.addActionListener(this);
-						createSynthesis.addMouseListener(this);
-						createSynthesis.setActionCommand("createSynthesis");
-						JMenuItem viewModel = new JMenuItem("View Model");
-						viewModel.addActionListener(this);
-						viewModel.addMouseListener(this);
-						viewModel.setActionCommand("viewModel");
-						JMenuItem delete = new JMenuItem("Delete");
-						delete.addActionListener(this);
-						delete.addMouseListener(this);
-						delete.setActionCommand("delete");
-						JMenuItem copy = new JMenuItem("Copy");
-						copy.addActionListener(this);
-						copy.addMouseListener(this);
-						copy.setActionCommand("copy");
-						JMenuItem rename = new JMenuItem("Rename");
-						rename.addActionListener(this);
-						rename.addMouseListener(this);
-						rename.setActionCommand("rename");
-						popup.add(createSynthesis);
-						popup.addSeparator();
-						popup.add(viewModel);
-						popup.addSeparator();
-						popup.add(copy);
-						popup.add(rename);
-						popup.add(delete);
-					}
-					else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
-						boolean sim = false;
-						boolean synth = false;
-						boolean ver = false;
-						boolean learn = false;
-						for (String s : new File(tree.getFile()).list()) {
-							if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
-								sim = true;
-							}
-							else if (s.length() > 4 && s.substring(s.length() - 4).equals(".syn")) {
-								synth = true;
-							}
-							else if (s.length() > 4 && s.substring(s.length() - 4).equals(".ver")) {
-								ver = true;
-							}
-							else if (s.length() > 4 && s.substring(s.length() - 4).equals(".lrn")) {
-								learn = true;
-							}
-						}
-						JMenuItem open;
-						if (sim) {
-							open = new JMenuItem("Open Analysis View");
-							open.addActionListener(this);
-							open.addMouseListener(this);
-							open.setActionCommand("openSim");
-							popup.add(open);
-						}
-						else if (synth) {
-							open = new JMenuItem("Open Synthesis View");
-							open.addActionListener(this);
-							open.addMouseListener(this);
-							open.setActionCommand("openSynth");
-							popup.add(open);
-						}
-						else if (ver) {
-							open = new JMenuItem("Open Verification View");
-							open.addActionListener(this);
-							open.addMouseListener(this);
-							open.setActionCommand("openVerification");
-							popup.add(open);
-						}
-						else if (learn) {
-							open = new JMenuItem("Open Learn View");
-							open.addActionListener(this);
-							open.addMouseListener(this);
-							open.setActionCommand("openLearn");
-							popup.add(open);
-						}
-						if (sim || ver | learn | synth) {
-							JMenuItem delete = new JMenuItem("Delete");
-							delete.addActionListener(this);
-							delete.addMouseListener(this);
-							delete.setActionCommand("deleteSim");
-							JMenuItem copy = new JMenuItem("Copy");
-							copy.addActionListener(this);
-							copy.addMouseListener(this);
-							copy.setActionCommand("copy");
-							JMenuItem rename = new JMenuItem("Rename");
-							rename.addActionListener(this);
-							rename.addMouseListener(this);
-							rename.setActionCommand("rename");
-							popup.addSeparator();
-							popup.add(copy);
-							popup.add(rename);
-							popup.add(delete);
-						}
-					}
-					if (popup.getComponentCount() != 0) {
-						popup.show(e.getComponent(), e.getX(), e.getY());
+					if (s.length() > 3 && s.substring(s.length() - 4).equals(".lrn")) {
+						learn = true;
 					}
 				}
-				else if (!popup.isVisible()) {
-					frame.getGlassPane().setVisible(true);
+				JMenuItem open;
+				if (sim) {
+					open = new JMenuItem("Open Analysis View");
+					open.addActionListener(this);
+					open.addMouseListener(this);
+					open.setActionCommand("openSim");
+					popup.add(open);
+				}
+				else if (synth) {
+					open = new JMenuItem("Open Synthesis View");
+					open.addActionListener(this);
+					open.addMouseListener(this);
+					open.setActionCommand("openSynth");
+					popup.add(open);
+				}
+				else if (ver) {
+					open = new JMenuItem("Open Verification View");
+					open.addActionListener(this);
+					open.addMouseListener(this);
+					open.setActionCommand("openVerification");
+					popup.add(open);
+				}
+				else if (learn) {
+					open = new JMenuItem("Open Learn View");
+					open.addActionListener(this);
+					open.addMouseListener(this);
+					open.setActionCommand("openLearn");
+					popup.add(open);
+				}
+				if (sim || ver || synth || learn) {
+					JMenuItem delete = new JMenuItem("Delete");
+					delete.addActionListener(this);
+					delete.addMouseListener(this);
+					delete.setActionCommand("deleteSim");
+					JMenuItem copy = new JMenuItem("Copy");
+					copy.addActionListener(this);
+					copy.addMouseListener(this);
+					copy.setActionCommand("copy");
+					JMenuItem rename = new JMenuItem("Rename");
+					rename.addActionListener(this);
+					rename.addMouseListener(this);
+					rename.setActionCommand("rename");
+					popup.addSeparator();
+					popup.add(copy);
+					popup.add(rename);
+					popup.add(delete);
+				}
+			}
+			if (popup.getComponentCount() != 0) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		}
+		else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+			if (tree.getFile() != null) {
+				int index = tab.getSelectedIndex();
+				enableTabMenu(index);
+				if (tree.getFile().length() >= 5
+						&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+						|| tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+					try {
+						boolean done = false;
+						for (int i = 0; i < tab.getTabCount(); i++) {
+							if (tab.getTitleAt(i)
+									.equals(
+											tree.getFile().split(separator)[tree.getFile().split(
+													separator).length - 1])) {
+								tab.setSelectedIndex(i);
+								done = true;
+							}
+						}
+						if (!done) {
+							SBML_Editor sbml = new SBML_Editor(tree.getFile(), null, log, this,
+									null, null);
+							// sbml.addMouseListener(this);
+							addTab(
+									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+									sbml, "SBML Editor");
+						}
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+					try {
+
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						File work = new File(directory);
+						int i = getTab(theFile);
+						if (i != -1) {
+							tab.setSelectedIndex(i);
+						}
+						else {
+							GCM2SBMLEditor gcm = new GCM2SBMLEditor(work.getAbsolutePath(),
+									theFile, this, log, false, null, null, null);
+							// gcm.addMouseListener(this);
+							addTab(theFile, gcm, "GCM Editor");
+						}
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this gcm file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						File work = new File(directory);
+						int i = getTab(theFile);
+						if (i != -1) {
+							tab.setSelectedIndex(i);
+						}
+						else {
+							if (!viewer.equals("")) {
+								String command = viewer + " " + directory + separator + theFile;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								File file = new File(work + separator + theFile);
+								String input = "";
+								FileReader in = new FileReader(file);
+								int read = in.read();
+								while (read != -1) {
+									input += (char) read;
+									read = in.read();
+								}
+								in.close();
+								JTextArea text = new JTextArea(input);
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(theFile, scroll, "VHDL Editor");
+							}
+						}
+						// String[] command = { "emacs", filename };
+						// Runtime.getRuntime().exec(command);
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this vhdl file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 2
+						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".s")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						File work = new File(directory);
+						int i = getTab(theFile);
+						if (i != -1) {
+							tab.setSelectedIndex(i);
+						}
+						else {
+							if (!viewer.equals("")) {
+								String command = viewer + " " + directory + separator + theFile;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								File file = new File(work + separator + theFile);
+								String input = "";
+								FileReader in = new FileReader(file);
+								int read = in.read();
+								while (read != -1) {
+									input += (char) read;
+									read = in.read();
+								}
+								in.close();
+								JTextArea text = new JTextArea(input);
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(theFile, scroll, "Assembly File Editor");
+							}
+						}
+						// String[] command = { "emacs", filename };
+						// Runtime.getRuntime().exec(command);
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this assembly file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 5
+						&& tree.getFile().substring(tree.getFile().length() - 5).equals(".inst")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						File work = new File(directory);
+						int i = getTab(theFile);
+						if (i != -1) {
+							tab.setSelectedIndex(i);
+						}
+						else {
+							if (!viewer.equals("")) {
+								String command = viewer + " " + directory + separator + theFile;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								File file = new File(work + separator + theFile);
+								String input = "";
+								FileReader in = new FileReader(file);
+								int read = in.read();
+								while (read != -1) {
+									input += (char) read;
+									read = in.read();
+								}
+								in.close();
+								JTextArea text = new JTextArea(input);
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(theFile, scroll, "Instruction File Editor");
+							}
+						}
+						// String[] command = { "emacs", filename };
+						// Runtime.getRuntime().exec(command);
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame,
+								"Unable to view this instruction file.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 5
+						&& tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						File work = new File(directory);
+						int i = getTab(theFile);
+						if (i != -1) {
+							tab.setSelectedIndex(i);
+						}
+						else {
+							if (!viewer.equals("")) {
+								String command = viewer + " " + directory + separator + theFile;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								File file = new File(work + separator + theFile);
+								String input = "";
+								FileReader in = new FileReader(file);
+								int read = in.read();
+								while (read != -1) {
+									input += (char) read;
+									read = in.read();
+								}
+								in.close();
+								JTextArea text = new JTextArea(input);
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(theFile, scroll, "Verilog-AMS Editor");
+							}
+						}
+						// String[] command = { "emacs", filename };
+						// Runtime.getRuntime().exec(command);
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame,
+								"Unable to view this Verilog-AMS file.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 3
+						&& tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						File work = new File(directory);
+						int i = getTab(theFile);
+						if (i != -1) {
+							tab.setSelectedIndex(i);
+						}
+						else {
+							if (!viewer.equals("")) {
+								String command = viewer + " " + directory + separator + theFile;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								File file = new File(work + separator + theFile);
+								String input = "";
+								FileReader in = new FileReader(file);
+								int read = in.read();
+								while (read != -1) {
+									input += (char) read;
+									read = in.read();
+								}
+								in.close();
+								JTextArea text = new JTextArea(input);
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(theFile, scroll, "SystemVerilog Editor");
+							}
+						}
+						// String[] command = { "emacs", filename };
+						// Runtime.getRuntime().exec(command);
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame,
+								"Unable to view this SystemVerilog file.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 2
+						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						File work = new File(directory);
+						int i = getTab(theFile);
+						if (i != -1) {
+							tab.setSelectedIndex(i);
+						}
+						else {
+							if (!viewer.equals("")) {
+								String command = viewer + " " + directory + separator + theFile;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								File file = new File(work + separator + theFile);
+								String input = "";
+								FileReader in = new FileReader(file);
+								int read = in.read();
+								while (read != -1) {
+									input += (char) read;
+									read = in.read();
+								}
+								in.close();
+								JTextArea text = new JTextArea(input);
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(theFile, scroll, "Petri Net Editor");
+							}
+						}
+						// String[] command = { "emacs", filename };
+						// Runtime.getRuntime().exec(command);
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this .g file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						LhpnFile lhpn = new LhpnFile(log);
+						// if (new File(directory + theFile).length() > 0) {
+						// log.addText("here");
+						// lhpn.load(directory + theFile);
+						// log.addText("there");
+						// }
+						// log.addText("load completed");
+						File work = new File(directory);
+						int i = getTab(theFile);
+						if (i != -1) {
+							tab.setSelectedIndex(i);
+						}
+						else {
+							// log.addText("make Editor");
+							LHPNEditor editor = new LHPNEditor(work.getAbsolutePath(), theFile,
+									lhpn, this, log);
+							// editor.addMouseListener(this);
+							addTab(theFile, editor, "LHPN Editor");
+							// log.addText("Editor made");
+						}
+						// String[] cmd = { "emacs", filename };
+						// Runtime.getRuntime().exec(cmd);
+					}
+					catch (Exception e1) {
+						e1.printStackTrace();
+						JOptionPane.showMessageDialog(frame, "Unable to view this LPN file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						File work = new File(directory);
+						int i = getTab(theFile);
+						if (i != -1) {
+							tab.setSelectedIndex(i);
+						}
+						else {
+							if (!viewer.equals("")) {
+								String command = viewer + " " + directory + separator + theFile;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								File file = new File(work + separator + theFile);
+								String input = "";
+								FileReader in = new FileReader(file);
+								int read = in.read();
+								while (read != -1) {
+									input += (char) read;
+									read = in.read();
+								}
+								in.close();
+								JTextArea text = new JTextArea(input);
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(theFile, scroll, "CSP Editor");
+							}
+						}
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this csp file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						File work = new File(directory);
+						int i = getTab(theFile);
+						if (i != -1) {
+							tab.setSelectedIndex(i);
+						}
+						else {
+							if (!viewer.equals("")) {
+								String command = viewer + " " + directory + separator + theFile;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								File file = new File(work + separator + theFile);
+								String input = "";
+								FileReader in = new FileReader(file);
+								int read = in.read();
+								while (read != -1) {
+									input += (char) read;
+									read = in.read();
+								}
+								in.close();
+								JTextArea text = new JTextArea(input);
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(theFile, scroll, "HSE Editor");
+							}
+						}
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this hse file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						File work = new File(directory);
+						int i = getTab(theFile);
+						if (i != -1) {
+							tab.setSelectedIndex(i);
+						}
+						else {
+							if (!viewer.equals("")) {
+								String command = viewer + " " + directory + separator + theFile;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								File file = new File(work + separator + theFile);
+								String input = "";
+								FileReader in = new FileReader(file);
+								int read = in.read();
+								while (read != -1) {
+									input += (char) read;
+									read = in.read();
+								}
+								in.close();
+								JTextArea text = new JTextArea(input);
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(theFile, scroll, "UNC Editor");
+							}
+						}
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this unc file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						File work = new File(directory);
+						int i = getTab(theFile);
+						if (i != -1) {
+							tab.setSelectedIndex(i);
+						}
+						else {
+							if (!viewer.equals("")) {
+								String command = viewer + " " + directory + separator + theFile;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								File file = new File(work + separator + theFile);
+								String input = "";
+								FileReader in = new FileReader(file);
+								int read = in.read();
+								while (read != -1) {
+									input += (char) read;
+									read = in.read();
+								}
+								in.close();
+								JTextArea text = new JTextArea(input);
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(theFile, scroll, "RSG Editor");
+							}
+						}
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this rsg file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".cir")) {
+					try {
+						String filename = tree.getFile();
+						String directory = "";
+						String theFile = "";
+						if (filename.lastIndexOf('/') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+							theFile = filename.substring(filename.lastIndexOf('/') + 1);
+						}
+						if (filename.lastIndexOf('\\') >= 0) {
+							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+						}
+						File work = new File(directory);
+						int i = getTab(theFile);
+						if (i != -1) {
+							tab.setSelectedIndex(i);
+						}
+						else {
+							if (!viewer.equals("")) {
+								String command = viewer + " " + directory + separator + theFile;
+								Runtime exec = Runtime.getRuntime();
+								try {
+									exec.exec(command);
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(frame,
+											"Unable to open external editor.",
+											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								File file = new File(work + separator + theFile);
+								String input = "";
+								FileReader in = new FileReader(file);
+								int read = in.read();
+								while (read != -1) {
+									input += (char) read;
+									read = in.read();
+								}
+								in.close();
+								JTextArea text = new JTextArea(input);
+								text.setEditable(true);
+								text.setLineWrap(true);
+								JScrollPane scroll = new JScrollPane(text);
+								// gcm.addMouseListener(this);
+								addTab(theFile, scroll, "Spice Editor");
+							}
+						}
+					}
+					catch (Exception e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view this spice file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
+					boolean done = false;
+					for (int i = 0; i < tab.getTabCount(); i++) {
+						if (tab.getTitleAt(i)
+								.equals(
+										tree.getFile().split(separator)[tree.getFile().split(
+												separator).length - 1])) {
+							tab.setSelectedIndex(i);
+							done = true;
+						}
+					}
+					if (!done) {
+						addTab(
+								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+								new Graph(null, "Number of molecules", "title", "tsd.printer",
+										root, "Time", this, tree.getFile(), log,
+										tree.getFile().split(separator)[tree.getFile().split(
+												separator).length - 1], true, false), "TSD Graph");
+					}
+				}
+				else if (tree.getFile().length() >= 4
+						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
+					boolean done = false;
+					for (int i = 0; i < tab.getTabCount(); i++) {
+						if (tab.getTitleAt(i)
+								.equals(
+										tree.getFile().split(separator)[tree.getFile().split(
+												separator).length - 1])) {
+							tab.setSelectedIndex(i);
+							done = true;
+						}
+					}
+					if (!done) {
+						addTab(
+								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+								new Graph(null, "Percent", "title", "tsd.printer", root, "Time",
+										this, tree.getFile(), log,
+										tree.getFile().split(separator)[tree.getFile().split(
+												separator).length - 1], false, false),
+								"Probability Graph");
+					}
+				}
+				else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
+					boolean sim = false;
+					boolean synth = false;
+					boolean ver = false;
+					boolean learn = false;
+					for (String s : new File(tree.getFile()).list()) {
+						if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
+							sim = true;
+						}
+						else if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
+							synth = true;
+						}
+						else if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
+							ver = true;
+						}
+						else if (s.length() > 3 && s.substring(s.length() - 4).equals(".lrn")) {
+							learn = true;
+						}
+					}
+					if (sim) {
+						openSim();
+					}
+					else if (synth) {
+						openSynth();
+					}
+					else if (ver) {
+						openVerify();
+					}
+					else if (learn) {
+						if (lema) {
+							openLearnLHPN();
+						}
+						else {
+							openLearn();
+						}
+					}
 				}
 			}
 		}
@@ -10280,6 +9759,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
 					.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
 					.isPopupTrigger()));
+			if (deepComponent instanceof JComponent) {
+				frame.getGlassPane().setVisible(false);
+			}
 		}
 	}
 
@@ -10532,11 +10014,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 				// abstraction.addMouseListener(this);
 				if (fileType == 2) {
-					simTab.addTab("Abstraction Options", new AbstPane(root, sbml1[sbml1.length - 1], log, this, false,
-							false));
+					simTab.addTab("Abstraction Options", new AbstPane(root,
+							sbml1[sbml1.length - 1], log, this, false, false));
 				}
 				else {
-					//System.out.println(fileType);
+					// System.out.println(fileType);
 					simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
 				}
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
@@ -11518,35 +11000,35 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 
 	public void mouseEntered(MouseEvent e) {
-//		if (e.getSource() == tree.tree) {
-//			setGlassPane(false);
-//		}
-//		else if (e.getSource() == popup) {
-//			popupFlag = true;
-//			setGlassPane(false);
-//		}
-//		else if (e.getSource() instanceof JMenuItem) {
-//			menuFlag = true;
-//			setGlassPane(false);
-//		}
+		// if (e.getSource() == tree.tree) {
+		// setGlassPane(false);
+		// }
+		// else if (e.getSource() == popup) {
+		// popupFlag = true;
+		// setGlassPane(false);
+		// }
+		// else if (e.getSource() instanceof JMenuItem) {
+		// menuFlag = true;
+		// setGlassPane(false);
+		// }
 	}
 
 	public void mouseExited(MouseEvent e) {
-//		if (e.getSource() == tree.tree && !popupFlag && !menuFlag) {
-//			setGlassPane(true);
-//		}
-//		else if (e.getSource() == popup) {
-//			popupFlag = false;
-//			if (!menuFlag) {
-//				setGlassPane(true);
-//			}
-//		}
-//		else if (e.getSource() instanceof JMenuItem) {
-//			menuFlag = false;
-//			if (!popupFlag) {
-//				setGlassPane(true);
-//			}
-//		}
+		// if (e.getSource() == tree.tree && !popupFlag && !menuFlag) {
+		// setGlassPane(true);
+		// }
+		// else if (e.getSource() == popup) {
+		// popupFlag = false;
+		// if (!menuFlag) {
+		// setGlassPane(true);
+		// }
+		// }
+		// else if (e.getSource() instanceof JMenuItem) {
+		// menuFlag = false;
+		// if (!popupFlag) {
+		// setGlassPane(true);
+		// }
+		// }
 	}
 
 	public void mouseDragged(MouseEvent e) {
