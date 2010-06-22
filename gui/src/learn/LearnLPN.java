@@ -601,8 +601,8 @@ public class LearnLPN extends JPanel {
 	//		addMetaBins();
 	//		addMetaBinTransitions();
 			g.save(directory + separator + lhpnFile);
-			writeVHDLAMSFile(lhpnFile.replace(".lpn",".vhd"));
-			writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
+		//	writeVHDLAMSFile(lhpnFile.replace(".lpn",".vhd"));
+		//	writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
 			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 		} catch (IOException e) {
 			e.printStackTrace();
