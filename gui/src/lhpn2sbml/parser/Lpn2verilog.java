@@ -10,6 +10,7 @@ import javax.swing.JOptionPane;
 
 public class Lpn2verilog {
 	private String separator;
+	private HashMap<String,Boolean> visitedPlaces;
 	
 	public Lpn2verilog(String lpnFileName) {
 		try{
@@ -30,9 +31,6 @@ public class Lpn2verilog {
 			BufferedWriter sv = new BufferedWriter(new FileWriter(svFile));
 			StringBuffer initBuffer = new StringBuffer();
 			StringBuffer markedPlaceBuffer = new StringBuffer();
-			StringBuffer alwaysBuffer = new StringBuffer();
-			StringBuffer prioritiesBuffer = new StringBuffer();
-			StringBuffer assignmentsBuffer = new StringBuffer();
 			StringBuffer assertionBuffer = new StringBuffer();
 			sv.write("`timescale 1ps/1ps\n\n");		//TODO: THIS IS ASSUMPTION
 			Boolean first = true;
@@ -108,7 +106,7 @@ public class Lpn2verilog {
 			//		initBuffer.append("; " + st + " <= 0");
 				}
 			}
-			sv.write(";\n\tint unsigned pr[string],prMax;\n");
+			sv.write(";\n");
 			first = true;
 			for (String v: varsList){
 				if (!lpn.isInput(v) && !lpn.isOutput(v)){
@@ -122,6 +120,9 @@ public class Lpn2verilog {
 			}
 			sv.write(";\n");
 			//initBuffer.append(";\n");
+			HashMap<String,Integer> tag = new HashMap<String,Integer>();
+			visitedPlaces = new HashMap<String,Boolean>();
+			int netCount = 0;
 			first = true;
 			for (String st: placeList){
 				if (first){
@@ -129,6 +130,8 @@ public class Lpn2verilog {
 					if (lpn.getPlace(st).isMarked()){
 						initBuffer.append("\t\t" + st + " <= 0");
 						markedPlaceBuffer.append("\t\t" + st + " <= #1 1; //Initially Marked\n");
+						tag = tagNet(lpn,st,netCount,tag);
+						netCount++;
 					}
 					else
 						initBuffer.append("\t\t" + st + " <= 0");
@@ -138,12 +141,29 @@ public class Lpn2verilog {
 					if (lpn.getPlace(st).isMarked()){
 						initBuffer.append("; " + st + " <= 0");
 						markedPlaceBuffer.append("\t\t" + st + " <= #1 1; //Initially Marked\n");
+						tagNet(lpn,st,netCount,tag);
+						netCount++;
 					}
 					else
 						initBuffer.append("; " + st + " <= 0");
 				}
+				if (lpn.getPreset(st) == null){
+					//TODO: traverse all the non-repeating transitions from here and assign a tag to them   
+				}
 			}
 			sv.write(";\n");
+			if (netCount >=1){
+				sv.write("\tint unsigned ");
+				Boolean firstPr = true;
+				for (int j = 0; j < netCount; j++)
+					if (firstPr){
+						sv.write("pr" + j + "[string],prMax" + j);
+						firstPr = false;
+					}
+					else
+						sv.write(",pr" + j + "[string],prMax" + j);
+				sv.write(";\n");
+			}
 			initBuffer.append(";\n");
 			initBuffer.append(markedPlaceBuffer);
 			for (String v: varsList){
@@ -228,7 +248,16 @@ public class Lpn2verilog {
 			sv.write("\tinitial begin\n");
 			sv.write(initBuffer.toString());
 			sv.write("\tend\n");
-			Boolean firstTransition = true;
+			Boolean[] firstTransition = new Boolean[netCount];
+			StringBuffer[] alwaysBuffer = new StringBuffer[netCount];
+			StringBuffer[] prioritiesBuffer = new StringBuffer[netCount];
+			StringBuffer[] assignmentsBuffer = new StringBuffer[netCount];
+			for (int j = 0; j < netCount; j++){
+				firstTransition[j] = true;
+				alwaysBuffer[j] = new StringBuffer();
+				prioritiesBuffer[j] = new StringBuffer();
+				assignmentsBuffer[j] = new StringBuffer(); 
+			}
 			for (String st : transitionList){
 				sv.write("\tassign ");
 				String delay = lpn.getTransition(st).getDelay();
@@ -283,19 +312,20 @@ public class Lpn2verilog {
 					assertionBuffer.append("\t\telse\n");
 					assertionBuffer.append("\t\t\t$error(\"Error! Assertion " + st + " failed at time %t\",$time);\n\tend\n");
 				} else {
-					if (firstTransition){
-						firstTransition = false;
-						alwaysBuffer.append("\talways @(posedge(" + st + ")");
+					if (firstTransition[tag.get(st)]){
+						firstTransition[tag.get(st)] = false;
+					//	alwaysBuffer[tag.get(st)].append("\talways @(posedge(" + st + ")");
+						alwaysBuffer[tag.get(st)].append("\talways @(" + st);
 					} else {
-						alwaysBuffer.append(" or posedge(" + st + ")");
+						alwaysBuffer[tag.get(st)].append(" or " + st);
 					}
-					prioritiesBuffer.append("\t\tpr[\"" + st +"\"] = (" + st + " && (pr[\"" + st +"\"] == 0)) ? $unsigned($random) : 0;\n");
-					assignmentsBuffer.append("\t\tif (pr[\"" + st + "\"]==prMax) begin\n");
+					prioritiesBuffer[tag.get(st)].append("\t\tpr" + tag.get(st) + "[\"" + st +"\"] = (" + st + " && (pr" + tag.get(st) + "[\"" + st +"\"] == 0)) ? $unsigned($random) : 0;\n");
+					assignmentsBuffer[tag.get(st)].append("\t\tif (pr" + tag.get(st) + "[\"" + st + "\"]==prMax" + tag.get(st) + ") begin\n");
 					for (String st2 : lpn.getPreset(st)){
-						assignmentsBuffer.append("\t\t\t" + st2 + " <= 0;\n");
+						assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= 0;\n");
 					}
 					for (String st2 : lpn.getPostset(st)){
-						assignmentsBuffer.append("\t\t\t" + st2 + " <= 1;\n");
+						assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= 1;\n");
 					}
 					HashMap<String,String> assignments = lpn.getTransition(st).getAssignments(); 
 					if (assignments.size() != 0){
@@ -311,35 +341,37 @@ public class Lpn2verilog {
 									//System.out.println("Error in value assignments. Considering required part only");
 								}
 								if (asgnmtBounds[0].equalsIgnoreCase(asgnmtBounds[1])){
-									assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] + ";\n");
+									assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] + ";\n");
 								} else{
 									if (Double.valueOf(asgnmtBounds[0]) > 0)
-										assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] +" + $signed((($unsigned($random))%(" + asgnmtBounds[1] + "-" + asgnmtBounds[0]+ "+1)));\n");
+										assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] +" + $signed((($unsigned($random))%(" + asgnmtBounds[1] + "-" + asgnmtBounds[0]+ "+1)));\n");
 									else if (Double.valueOf(asgnmtBounds[0]) < 0)
-										assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] +" + $signed((($unsigned($random))%(" + asgnmtBounds[1] + "+" + Math.abs(Integer.valueOf(asgnmtBounds[0]))+ "+1)));\n");
+										assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] +" + $signed((($unsigned($random))%(" + asgnmtBounds[1] + "+" + Math.abs(Integer.valueOf(asgnmtBounds[0]))+ "+1)));\n");
 									else
-										assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] +" + $signed((($unsigned($random))%(" + asgnmtBounds[1] + "+1)));\n");
+										assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= " + asgnmtBounds[0] +" + $signed((($unsigned($random))%(" + asgnmtBounds[1] + "+1)));\n");
 								}
 							} else{
-								assignmentsBuffer.append("\t\t\t" + st2 + " <= " + asgnmt + ";\n");
+								assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= " + asgnmt + ";\n");
 							}
 						}
 					}
-					assignmentsBuffer.append("\t\tend\n");
+					assignmentsBuffer[tag.get(st)].append("\t\tend\n");
 				}
 			}
 			if (transitionList.length > 0){
 				if ((assertionBuffer != null) && (assertionBuffer.length()!= 0)){
 					sv.write(assertionBuffer.toString());
 				}
-				if ((alwaysBuffer != null) && (alwaysBuffer.length() != 0)){
-					alwaysBuffer.append(") begin\n");
-					sv.write(alwaysBuffer.toString());
-					sv.write(prioritiesBuffer.toString());
-					sv.write("\t\tprMax = pr.max[0];\n");
-					sv.write("\t\tif (prMax == 0)\n\t\t\tprMax=1;\n");
-					sv.write(assignmentsBuffer.toString());
+				for (int j = 0; j < netCount; j++){
+				if ((alwaysBuffer[j] != null) && (alwaysBuffer[j].length() != 0)){
+					alwaysBuffer[j].append(") begin\n");
+					sv.write(alwaysBuffer[j].toString());
+					sv.write(prioritiesBuffer[j].toString());
+					sv.write("\t\tprMax" + j + " = pr" + j + ".max[0];\n");
+					sv.write("\t\tif (prMax" + j + " == 0)\n\t\t\tprMax" + j + "=1;\n");
+					sv.write(assignmentsBuffer[j].toString());
 					sv.write("\tend\n");
+				}
 				}
 			}
 			sv.write("endmodule");
@@ -348,5 +380,19 @@ public class Lpn2verilog {
 			e.printStackTrace();
 			//System.out.println("ERROR: Verilog file could not be created/written.");
 		}
+	}
+	
+	private HashMap<String,Integer> tagNet(LhpnFile g, String place, int id, HashMap<String,Integer> tag){
+		if (!visitedPlaces.containsKey(place)){
+			visitedPlaces.put(place,true);
+			for (String postsetTrans : g.getPostset(place)){
+				tag.put(postsetTrans, id);
+				//System.out.println("Tagged transition " + postsetTrans + " with " + id);
+				for (String postsetPlace : g.getPostset(postsetTrans)){
+					tag = tagNet(g, postsetPlace, id, tag);
+				}
+			}
+		}
+		return tag;
 	}
 }

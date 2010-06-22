@@ -195,7 +195,19 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	
 	private HashMap<String,ArrayList<Double>> dmvcValuesUnique;
 	
-	Double dsFactor, vsFactor;
+	private Double dsFactor, vsFactor;
+	
+	private String currentPlace;
+	
+	private String[] currPlaceBin;
+	
+	private ArrayList<Integer> inputs;
+	
+	private LhpnFile lpnWithPseudo;
+	
+	private int pseudoTransNum = 0;
+	
+	private HashMap<String,Boolean> pseudoVars;
 	
 	// Pattern lParenR = Pattern.compile("\\(+"); //SB
 	
@@ -3242,7 +3254,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			out.close();
 	//		addMetaBins();
 	//		addMetaBinTransitions();
-			
+			g.save(directory + separator + lhpnFile);
+			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 			if (new File(learnFile).exists()){ //directory + separator + "complete.lpn").exists()){//
 				LhpnFile l1 = new LhpnFile();
 				l1.load(learnFile);
@@ -3252,8 +3265,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			} //else {
 			//	g.save(directory + separator + "complete.lpn");
 			//}
+//			addPseudo(scaledThresholds);
 			g.save(directory + separator + lhpnFile);
-			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
+//			lpnWithPseudo.save(directory + separator + "pseudo" + lhpnFile);
+//			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 			//writeVHDLAMSFile(lhpnFile.replace(".lpn",".vhd"));
 			//writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
 			if (defaultStim){
@@ -4774,17 +4789,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	
 	public ArrayList<Integer> diff(String pre_bin, String post_bin) {
 		ArrayList<Integer> diffL = new ArrayList<Integer>();
-		// String p_bin[] = p.getBinEncoding();
-//		String[] preset_encoding = pre_bin.split("");
-//		String[] postset_encoding = post_bin.split("");
 		String[] preset_encoding = pre_bin.split(",");
 		String[] postset_encoding = post_bin.split(",");
-		for (int j = 0; j < preset_encoding.length; j++) { // to account for ""
-			// being created in the array
-			if (Integer.parseInt(preset_encoding[j]) != Integer
-					.parseInt(postset_encoding[j])) {
-				diffL.add(j);// to account for "" being created in the
-				// array
+		for (int j = 0; j < preset_encoding.length; j++) { // to account for "" being created in the array
+			if (Integer.parseInt(preset_encoding[j]) != Integer.parseInt(postset_encoding[j])) {
+				diffL.add(j);// to account for "" being created in the array
 			}
 		}
 		return (diffL);
@@ -5483,6 +5492,95 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 		}
 		return true;
+	}
+	
+	public void addPseudo(HashMap<String,ArrayList<Double>> scaledThresholds){
+		lpnWithPseudo = new LhpnFile();
+		lpnWithPseudo = mergeLhpns(lpnWithPseudo,g);
+		//inputs = new ArrayList<Integer>();
+		pseudoVars = new HashMap<String,Boolean>();
+		pseudoVars.put("ctl",true);
+		//for (int i = 0; i < reqdVarsL.size(); i++) {
+		//	if (reqdVarsL.get(i).isInput()){
+		//		inputs.add(i);
+		//	}
+		//}
+		for (String st : g.getPlaceList()){
+			currentPlace = st;
+			//TODO: do this only if not prop type place
+			if (getPlaceInfoIndex(st) != null)
+				currPlaceBin = getPlaceInfoIndex(st).split(",");
+			else 
+				currPlaceBin = getTransientNetPlaceIndex(st).split(",");
+//			visitedPlaces = new HashMap<String,Boolean>();
+//			visitedPlaces.put(currentPlace, true);
+			traverse(scaledThresholds);
+		}
+	}
+	
+	private void traverse(HashMap<String,ArrayList<Double>> scaledThresholds){
+		for (String nextPlace : g.getPlaceList()){
+			if ((!nextPlace.equalsIgnoreCase(currentPlace)) && (getPlaceInfoIndex(nextPlace) != null)){
+				if ((getPlaceInfoIndex(currentPlace) != null) && (!transitionInfo.containsKey(getPlaceInfoIndex(currentPlace) + getPlaceInfoIndex(nextPlace)))){
+					addPseudoTrans(nextPlace, scaledThresholds);
+				} else if ((getTransientNetPlaceIndex(currentPlace) != null) && (!transientNetTransitions.containsKey(getTransientNetPlaceIndex(currentPlace) + getPlaceInfoIndex(nextPlace)))){
+					addPseudoTrans(nextPlace, scaledThresholds);
+				}
+			}
+		}
+	}
+	
+	private void addPseudoTrans(String nextPlace, HashMap<String, ArrayList<Double>> scaledThresholds){ // Adds pseudo transition b/w currentPlace and nextPlace
+		String[] nextPlaceBin = getPlaceInfoIndex(nextPlace).split(",");
+		String enabling = "";
+		int bin;
+		String st; 
+		Boolean pseudo = false;
+		for (int i = 0; i < reqdVarsL.size(); i++) {
+			if (reqdVarsL.get(i).isInput()){
+				if (Integer.valueOf(currPlaceBin[i]) == Integer.valueOf(nextPlaceBin[i])){
+					continue;
+				} else {
+					if (!pseudoVars.containsKey(reqdVarsL.get(i).getName())){
+						pseudo = false;
+						break;
+					}
+					if (Math.abs(Integer.valueOf(currPlaceBin[i]) - Integer.valueOf(nextPlaceBin[i])) > 1){
+						pseudo = false;
+						break;
+					}
+					pseudo = true;
+					bin = Integer.valueOf(nextPlaceBin[i]);
+					st = reqdVarsL.get(i).getName();
+					if (bin == 0){
+						if (!enabling.equalsIgnoreCase(""))
+							enabling += "&";
+						enabling += "~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
+					} else if (bin == (scaledThresholds.get(st).size())){
+						if (!enabling.equalsIgnoreCase(""))
+							enabling += "&";
+						enabling += "(" + st + ">="	+ (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")";
+					} else{
+						if (!enabling.equalsIgnoreCase(""))
+							enabling += "&";
+						enabling += "(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")&~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
+					}
+				}
+			} else {
+				if (Integer.valueOf(currPlaceBin[i]) != Integer.valueOf(nextPlaceBin[i])){
+					pseudo = false;
+					break;
+				}
+			}
+		}
+		if (pseudo){
+			System.out.println("Adding pseudo-transition pt"  + pseudoTransNum + " between " + currentPlace + " and " + nextPlace + " with enabling " + enabling + "\n");
+			lpnWithPseudo.addTransition("pt" + pseudoTransNum);
+			lpnWithPseudo.addMovement(currentPlace, "pt" + pseudoTransNum); 
+			lpnWithPseudo.addMovement("pt" + pseudoTransNum, nextPlace);
+			lpnWithPseudo.addEnabling("pt" + pseudoTransNum, enabling);
+			pseudoTransNum++;
+		}
 	}
 	
 	public void addMetaBins(){ // TODO: DIDN'T REPLACE divisionsL by thresholds IN THIS METHOD
