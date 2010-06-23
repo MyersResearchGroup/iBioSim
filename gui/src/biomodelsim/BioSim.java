@@ -80,6 +80,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JViewport; //import javax.swing.tree.TreePath;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 import tabs.CloseAndMaxTabbedPane;
 
@@ -8168,6 +8169,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
 						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
 						.isPopupTrigger()));
+				if ((deepComponent instanceof JTree) && (e.getClickCount() != 2)) {
+					enableTreeMenu();
+				}
+				else if (deepComponent instanceof JComponent) {
+					enableTabMenu(tab.getSelectedIndex());
+					if (!(deepComponent instanceof JPanel)) {
+						frame.getGlassPane().setVisible(false);
+					}
+				}
 			}
 		}
 		else {
@@ -8200,16 +8210,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							containerPoint.x, containerPoint.y);
 					Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
 							deepComponent);
-					if (e != null) {
-						deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e
-								.getWhen(), e.getModifiers(), componentPoint.x, componentPoint.y, e
-								.getClickCount(), e.isPopupTrigger()));
-					}
+					deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e
+							.getWhen(), e.getModifiers(), componentPoint.x, componentPoint.y, e
+							.getClickCount(), e.isPopupTrigger()));
 					if ((deepComponent instanceof JTree) && (e.getClickCount() != 2)) {
 						enableTreeMenu();
 					}
-					else {
+					else if (deepComponent instanceof JComponent) {
 						enableTabMenu(tab.getSelectedIndex());
+						if (!(deepComponent instanceof JPanel)) {
+							frame.getGlassPane().setVisible(false);
+						}
 					}
 				}
 				catch (Exception e1) {
@@ -8223,8 +8234,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 
 	public void executeMouseClickEvent(MouseEvent e) {
-		if (tree.getFile() != null && e.isPopupTrigger()) {
-			frame.getGlassPane().setVisible(false);
+		if (e.getSource() instanceof JComponent && !(e.getSource() instanceof JTree)) {
+			enableTabMenu(tab.getSelectedIndex());
+			frame.getGlassPane().setVisible(true);
+		}
+		if (e.getSource() instanceof JTree && tree.getFile() != null && e.isPopupTrigger()) {
 			popup.removeAll();
 			if (tree.getFile().length() > 4
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
@@ -8907,823 +8921,818 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
-		else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
-			if (tree.getFile() != null) {
-				int index = tab.getSelectedIndex();
-				enableTabMenu(index);
-				if (tree.getFile().length() >= 5
-						&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
-						|| tree.getFile().length() >= 4
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
-					try {
-						boolean done = false;
-						for (int i = 0; i < tab.getTabCount(); i++) {
-							if (tab.getTitleAt(i)
-									.equals(
-											tree.getFile().split(separator)[tree.getFile().split(
-													separator).length - 1])) {
-								tab.setSelectedIndex(i);
-								done = true;
-							}
-						}
-						if (!done) {
-							SBML_Editor sbml = new SBML_Editor(tree.getFile(), null, log, this,
-									null, null);
-							// sbml.addMouseListener(this);
-							addTab(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-									sbml, "SBML Editor");
+		else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2
+				&& e.getSource() instanceof JTree && tree.getFile() != null) {
+			int index = tab.getSelectedIndex();
+			enableTabMenu(index);
+			if (tree.getFile().length() >= 5
+					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+					|| tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+				try {
+					boolean done = false;
+					for (int i = 0; i < tab.getTabCount(); i++) {
+						if (tab.getTitleAt(i)
+								.equals(
+										tree.getFile().split(separator)[tree.getFile().split(
+												separator).length - 1])) {
+							tab.setSelectedIndex(i);
+							done = true;
 						}
 					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.",
-								"Error", JOptionPane.ERROR_MESSAGE);
+					if (!done) {
+						SBML_Editor sbml = new SBML_Editor(tree.getFile(), null, log, this, null,
+								null);
+						// sbml.addMouseListener(this);
+						addTab(
+								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+								sbml, "SBML Editor");
 					}
 				}
-				else if (tree.getFile().length() >= 4
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
-					try {
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+				try {
 
-						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
-						File work = new File(directory);
-						int i = getTab(theFile);
-						if (i != -1) {
-							tab.setSelectedIndex(i);
+					String filename = tree.getFile();
+					String directory = "";
+					String theFile = "";
+					if (filename.lastIndexOf('/') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+						theFile = filename.substring(filename.lastIndexOf('/') + 1);
+					}
+					if (filename.lastIndexOf('\\') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+						theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+					}
+					File work = new File(directory);
+					int i = getTab(theFile);
+					if (i != -1) {
+						tab.setSelectedIndex(i);
+					}
+					else {
+						GCM2SBMLEditor gcm = new GCM2SBMLEditor(work.getAbsolutePath(), theFile,
+								this, log, false, null, null, null);
+						// gcm.addMouseListener(this);
+						addTab(theFile, gcm, "GCM Editor");
+					}
+				}
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to view this gcm file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+				try {
+					String filename = tree.getFile();
+					String directory = "";
+					String theFile = "";
+					if (filename.lastIndexOf('/') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+						theFile = filename.substring(filename.lastIndexOf('/') + 1);
+					}
+					if (filename.lastIndexOf('\\') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+						theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+					}
+					File work = new File(directory);
+					int i = getTab(theFile);
+					if (i != -1) {
+						tab.setSelectedIndex(i);
+					}
+					else {
+						if (!viewer.equals("")) {
+							String command = viewer + " " + directory + separator + theFile;
+							Runtime exec = Runtime.getRuntime();
+							try {
+								exec.exec(command);
+							}
+							catch (Exception e1) {
+								JOptionPane.showMessageDialog(frame,
+										"Unable to open external editor.", "Error Opening Editor",
+										JOptionPane.ERROR_MESSAGE);
+							}
 						}
 						else {
-							GCM2SBMLEditor gcm = new GCM2SBMLEditor(work.getAbsolutePath(),
-									theFile, this, log, false, null, null, null);
+							File file = new File(work + separator + theFile);
+							String input = "";
+							FileReader in = new FileReader(file);
+							int read = in.read();
+							while (read != -1) {
+								input += (char) read;
+								read = in.read();
+							}
+							in.close();
+							JTextArea text = new JTextArea(input);
+							text.setEditable(true);
+							text.setLineWrap(true);
+							JScrollPane scroll = new JScrollPane(text);
 							// gcm.addMouseListener(this);
-							addTab(theFile, gcm, "GCM Editor");
+							addTab(theFile, scroll, "VHDL Editor");
 						}
 					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to view this gcm file.",
-								"Error", JOptionPane.ERROR_MESSAGE);
-					}
+					// String[] command = { "emacs", filename };
+					// Runtime.getRuntime().exec(command);
 				}
-				else if (tree.getFile().length() >= 4
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
-					try {
-						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
-						File work = new File(directory);
-						int i = getTab(theFile);
-						if (i != -1) {
-							tab.setSelectedIndex(i);
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to view this vhdl file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (tree.getFile().length() >= 2
+					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".s")) {
+				try {
+					String filename = tree.getFile();
+					String directory = "";
+					String theFile = "";
+					if (filename.lastIndexOf('/') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+						theFile = filename.substring(filename.lastIndexOf('/') + 1);
+					}
+					if (filename.lastIndexOf('\\') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+						theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+					}
+					File work = new File(directory);
+					int i = getTab(theFile);
+					if (i != -1) {
+						tab.setSelectedIndex(i);
+					}
+					else {
+						if (!viewer.equals("")) {
+							String command = viewer + " " + directory + separator + theFile;
+							Runtime exec = Runtime.getRuntime();
+							try {
+								exec.exec(command);
+							}
+							catch (Exception e1) {
+								JOptionPane.showMessageDialog(frame,
+										"Unable to open external editor.", "Error Opening Editor",
+										JOptionPane.ERROR_MESSAGE);
+							}
 						}
 						else {
-							if (!viewer.equals("")) {
-								String command = viewer + " " + directory + separator + theFile;
-								Runtime exec = Runtime.getRuntime();
-								try {
-									exec.exec(command);
-								}
-								catch (Exception e1) {
-									JOptionPane.showMessageDialog(frame,
-											"Unable to open external editor.",
-											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-								}
+							File file = new File(work + separator + theFile);
+							String input = "";
+							FileReader in = new FileReader(file);
+							int read = in.read();
+							while (read != -1) {
+								input += (char) read;
+								read = in.read();
 							}
-							else {
-								File file = new File(work + separator + theFile);
-								String input = "";
-								FileReader in = new FileReader(file);
-								int read = in.read();
-								while (read != -1) {
-									input += (char) read;
-									read = in.read();
-								}
-								in.close();
-								JTextArea text = new JTextArea(input);
-								text.setEditable(true);
-								text.setLineWrap(true);
-								JScrollPane scroll = new JScrollPane(text);
-								// gcm.addMouseListener(this);
-								addTab(theFile, scroll, "VHDL Editor");
-							}
+							in.close();
+							JTextArea text = new JTextArea(input);
+							text.setEditable(true);
+							text.setLineWrap(true);
+							JScrollPane scroll = new JScrollPane(text);
+							// gcm.addMouseListener(this);
+							addTab(theFile, scroll, "Assembly File Editor");
 						}
-						// String[] command = { "emacs", filename };
-						// Runtime.getRuntime().exec(command);
 					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to view this vhdl file.",
-								"Error", JOptionPane.ERROR_MESSAGE);
-					}
+					// String[] command = { "emacs", filename };
+					// Runtime.getRuntime().exec(command);
 				}
-				else if (tree.getFile().length() >= 2
-						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".s")) {
-					try {
-						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
-						File work = new File(directory);
-						int i = getTab(theFile);
-						if (i != -1) {
-							tab.setSelectedIndex(i);
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to view this assembly file.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (tree.getFile().length() >= 5
+					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".inst")) {
+				try {
+					String filename = tree.getFile();
+					String directory = "";
+					String theFile = "";
+					if (filename.lastIndexOf('/') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+						theFile = filename.substring(filename.lastIndexOf('/') + 1);
+					}
+					if (filename.lastIndexOf('\\') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+						theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+					}
+					File work = new File(directory);
+					int i = getTab(theFile);
+					if (i != -1) {
+						tab.setSelectedIndex(i);
+					}
+					else {
+						if (!viewer.equals("")) {
+							String command = viewer + " " + directory + separator + theFile;
+							Runtime exec = Runtime.getRuntime();
+							try {
+								exec.exec(command);
+							}
+							catch (Exception e1) {
+								JOptionPane.showMessageDialog(frame,
+										"Unable to open external editor.", "Error Opening Editor",
+										JOptionPane.ERROR_MESSAGE);
+							}
 						}
 						else {
-							if (!viewer.equals("")) {
-								String command = viewer + " " + directory + separator + theFile;
-								Runtime exec = Runtime.getRuntime();
-								try {
-									exec.exec(command);
-								}
-								catch (Exception e1) {
-									JOptionPane.showMessageDialog(frame,
-											"Unable to open external editor.",
-											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-								}
+							File file = new File(work + separator + theFile);
+							String input = "";
+							FileReader in = new FileReader(file);
+							int read = in.read();
+							while (read != -1) {
+								input += (char) read;
+								read = in.read();
 							}
-							else {
-								File file = new File(work + separator + theFile);
-								String input = "";
-								FileReader in = new FileReader(file);
-								int read = in.read();
-								while (read != -1) {
-									input += (char) read;
-									read = in.read();
-								}
-								in.close();
-								JTextArea text = new JTextArea(input);
-								text.setEditable(true);
-								text.setLineWrap(true);
-								JScrollPane scroll = new JScrollPane(text);
-								// gcm.addMouseListener(this);
-								addTab(theFile, scroll, "Assembly File Editor");
-							}
+							in.close();
+							JTextArea text = new JTextArea(input);
+							text.setEditable(true);
+							text.setLineWrap(true);
+							JScrollPane scroll = new JScrollPane(text);
+							// gcm.addMouseListener(this);
+							addTab(theFile, scroll, "Instruction File Editor");
 						}
-						// String[] command = { "emacs", filename };
-						// Runtime.getRuntime().exec(command);
 					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to view this assembly file.",
-								"Error", JOptionPane.ERROR_MESSAGE);
-					}
+					// String[] command = { "emacs", filename };
+					// Runtime.getRuntime().exec(command);
 				}
-				else if (tree.getFile().length() >= 5
-						&& tree.getFile().substring(tree.getFile().length() - 5).equals(".inst")) {
-					try {
-						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
-						File work = new File(directory);
-						int i = getTab(theFile);
-						if (i != -1) {
-							tab.setSelectedIndex(i);
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to view this instruction file.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (tree.getFile().length() >= 5
+					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
+				try {
+					String filename = tree.getFile();
+					String directory = "";
+					String theFile = "";
+					if (filename.lastIndexOf('/') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+						theFile = filename.substring(filename.lastIndexOf('/') + 1);
+					}
+					if (filename.lastIndexOf('\\') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+						theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+					}
+					File work = new File(directory);
+					int i = getTab(theFile);
+					if (i != -1) {
+						tab.setSelectedIndex(i);
+					}
+					else {
+						if (!viewer.equals("")) {
+							String command = viewer + " " + directory + separator + theFile;
+							Runtime exec = Runtime.getRuntime();
+							try {
+								exec.exec(command);
+							}
+							catch (Exception e1) {
+								JOptionPane.showMessageDialog(frame,
+										"Unable to open external editor.", "Error Opening Editor",
+										JOptionPane.ERROR_MESSAGE);
+							}
 						}
 						else {
-							if (!viewer.equals("")) {
-								String command = viewer + " " + directory + separator + theFile;
-								Runtime exec = Runtime.getRuntime();
-								try {
-									exec.exec(command);
-								}
-								catch (Exception e1) {
-									JOptionPane.showMessageDialog(frame,
-											"Unable to open external editor.",
-											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-								}
+							File file = new File(work + separator + theFile);
+							String input = "";
+							FileReader in = new FileReader(file);
+							int read = in.read();
+							while (read != -1) {
+								input += (char) read;
+								read = in.read();
 							}
-							else {
-								File file = new File(work + separator + theFile);
-								String input = "";
-								FileReader in = new FileReader(file);
-								int read = in.read();
-								while (read != -1) {
-									input += (char) read;
-									read = in.read();
-								}
-								in.close();
-								JTextArea text = new JTextArea(input);
-								text.setEditable(true);
-								text.setLineWrap(true);
-								JScrollPane scroll = new JScrollPane(text);
-								// gcm.addMouseListener(this);
-								addTab(theFile, scroll, "Instruction File Editor");
-							}
+							in.close();
+							JTextArea text = new JTextArea(input);
+							text.setEditable(true);
+							text.setLineWrap(true);
+							JScrollPane scroll = new JScrollPane(text);
+							// gcm.addMouseListener(this);
+							addTab(theFile, scroll, "Verilog-AMS Editor");
 						}
-						// String[] command = { "emacs", filename };
-						// Runtime.getRuntime().exec(command);
 					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame,
-								"Unable to view this instruction file.", "Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
+					// String[] command = { "emacs", filename };
+					// Runtime.getRuntime().exec(command);
 				}
-				else if (tree.getFile().length() >= 5
-						&& tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
-					try {
-						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
-						File work = new File(directory);
-						int i = getTab(theFile);
-						if (i != -1) {
-							tab.setSelectedIndex(i);
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to view this Verilog-AMS file.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (tree.getFile().length() >= 3
+					&& tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) {
+				try {
+					String filename = tree.getFile();
+					String directory = "";
+					String theFile = "";
+					if (filename.lastIndexOf('/') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+						theFile = filename.substring(filename.lastIndexOf('/') + 1);
+					}
+					if (filename.lastIndexOf('\\') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+						theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+					}
+					File work = new File(directory);
+					int i = getTab(theFile);
+					if (i != -1) {
+						tab.setSelectedIndex(i);
+					}
+					else {
+						if (!viewer.equals("")) {
+							String command = viewer + " " + directory + separator + theFile;
+							Runtime exec = Runtime.getRuntime();
+							try {
+								exec.exec(command);
+							}
+							catch (Exception e1) {
+								JOptionPane.showMessageDialog(frame,
+										"Unable to open external editor.", "Error Opening Editor",
+										JOptionPane.ERROR_MESSAGE);
+							}
 						}
 						else {
-							if (!viewer.equals("")) {
-								String command = viewer + " " + directory + separator + theFile;
-								Runtime exec = Runtime.getRuntime();
-								try {
-									exec.exec(command);
-								}
-								catch (Exception e1) {
-									JOptionPane.showMessageDialog(frame,
-											"Unable to open external editor.",
-											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-								}
+							File file = new File(work + separator + theFile);
+							String input = "";
+							FileReader in = new FileReader(file);
+							int read = in.read();
+							while (read != -1) {
+								input += (char) read;
+								read = in.read();
 							}
-							else {
-								File file = new File(work + separator + theFile);
-								String input = "";
-								FileReader in = new FileReader(file);
-								int read = in.read();
-								while (read != -1) {
-									input += (char) read;
-									read = in.read();
-								}
-								in.close();
-								JTextArea text = new JTextArea(input);
-								text.setEditable(true);
-								text.setLineWrap(true);
-								JScrollPane scroll = new JScrollPane(text);
-								// gcm.addMouseListener(this);
-								addTab(theFile, scroll, "Verilog-AMS Editor");
-							}
+							in.close();
+							JTextArea text = new JTextArea(input);
+							text.setEditable(true);
+							text.setLineWrap(true);
+							JScrollPane scroll = new JScrollPane(text);
+							// gcm.addMouseListener(this);
+							addTab(theFile, scroll, "SystemVerilog Editor");
 						}
-						// String[] command = { "emacs", filename };
-						// Runtime.getRuntime().exec(command);
 					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame,
-								"Unable to view this Verilog-AMS file.", "Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
+					// String[] command = { "emacs", filename };
+					// Runtime.getRuntime().exec(command);
 				}
-				else if (tree.getFile().length() >= 3
-						&& tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) {
-					try {
-						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
-						File work = new File(directory);
-						int i = getTab(theFile);
-						if (i != -1) {
-							tab.setSelectedIndex(i);
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to view this SystemVerilog file.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (tree.getFile().length() >= 2
+					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+				try {
+					String filename = tree.getFile();
+					String directory = "";
+					String theFile = "";
+					if (filename.lastIndexOf('/') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+						theFile = filename.substring(filename.lastIndexOf('/') + 1);
+					}
+					if (filename.lastIndexOf('\\') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+						theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+					}
+					File work = new File(directory);
+					int i = getTab(theFile);
+					if (i != -1) {
+						tab.setSelectedIndex(i);
+					}
+					else {
+						if (!viewer.equals("")) {
+							String command = viewer + " " + directory + separator + theFile;
+							Runtime exec = Runtime.getRuntime();
+							try {
+								exec.exec(command);
+							}
+							catch (Exception e1) {
+								JOptionPane.showMessageDialog(frame,
+										"Unable to open external editor.", "Error Opening Editor",
+										JOptionPane.ERROR_MESSAGE);
+							}
 						}
 						else {
-							if (!viewer.equals("")) {
-								String command = viewer + " " + directory + separator + theFile;
-								Runtime exec = Runtime.getRuntime();
-								try {
-									exec.exec(command);
-								}
-								catch (Exception e1) {
-									JOptionPane.showMessageDialog(frame,
-											"Unable to open external editor.",
-											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-								}
+							File file = new File(work + separator + theFile);
+							String input = "";
+							FileReader in = new FileReader(file);
+							int read = in.read();
+							while (read != -1) {
+								input += (char) read;
+								read = in.read();
 							}
-							else {
-								File file = new File(work + separator + theFile);
-								String input = "";
-								FileReader in = new FileReader(file);
-								int read = in.read();
-								while (read != -1) {
-									input += (char) read;
-									read = in.read();
-								}
-								in.close();
-								JTextArea text = new JTextArea(input);
-								text.setEditable(true);
-								text.setLineWrap(true);
-								JScrollPane scroll = new JScrollPane(text);
-								// gcm.addMouseListener(this);
-								addTab(theFile, scroll, "SystemVerilog Editor");
-							}
+							in.close();
+							JTextArea text = new JTextArea(input);
+							text.setEditable(true);
+							text.setLineWrap(true);
+							JScrollPane scroll = new JScrollPane(text);
+							// gcm.addMouseListener(this);
+							addTab(theFile, scroll, "Petri Net Editor");
 						}
-						// String[] command = { "emacs", filename };
-						// Runtime.getRuntime().exec(command);
 					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame,
-								"Unable to view this SystemVerilog file.", "Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
+					// String[] command = { "emacs", filename };
+					// Runtime.getRuntime().exec(command);
 				}
-				else if (tree.getFile().length() >= 2
-						&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
-					try {
-						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
-						File work = new File(directory);
-						int i = getTab(theFile);
-						if (i != -1) {
-							tab.setSelectedIndex(i);
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to view this .g file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
+				try {
+					String filename = tree.getFile();
+					String directory = "";
+					String theFile = "";
+					if (filename.lastIndexOf('/') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+						theFile = filename.substring(filename.lastIndexOf('/') + 1);
+					}
+					if (filename.lastIndexOf('\\') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+						theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+					}
+					LhpnFile lhpn = new LhpnFile(log);
+					// if (new File(directory + theFile).length() > 0) {
+					// log.addText("here");
+					// lhpn.load(directory + theFile);
+					// log.addText("there");
+					// }
+					// log.addText("load completed");
+					File work = new File(directory);
+					int i = getTab(theFile);
+					if (i != -1) {
+						tab.setSelectedIndex(i);
+					}
+					else {
+						// log.addText("make Editor");
+						LHPNEditor editor = new LHPNEditor(work.getAbsolutePath(), theFile, lhpn,
+								this, log);
+						// editor.addMouseListener(this);
+						addTab(theFile, editor, "LHPN Editor");
+						// log.addText("Editor made");
+					}
+					// String[] cmd = { "emacs", filename };
+					// Runtime.getRuntime().exec(cmd);
+				}
+				catch (Exception e1) {
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(frame, "Unable to view this LPN file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+				try {
+					String filename = tree.getFile();
+					String directory = "";
+					String theFile = "";
+					if (filename.lastIndexOf('/') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+						theFile = filename.substring(filename.lastIndexOf('/') + 1);
+					}
+					if (filename.lastIndexOf('\\') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+						theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+					}
+					File work = new File(directory);
+					int i = getTab(theFile);
+					if (i != -1) {
+						tab.setSelectedIndex(i);
+					}
+					else {
+						if (!viewer.equals("")) {
+							String command = viewer + " " + directory + separator + theFile;
+							Runtime exec = Runtime.getRuntime();
+							try {
+								exec.exec(command);
+							}
+							catch (Exception e1) {
+								JOptionPane.showMessageDialog(frame,
+										"Unable to open external editor.", "Error Opening Editor",
+										JOptionPane.ERROR_MESSAGE);
+							}
 						}
 						else {
-							if (!viewer.equals("")) {
-								String command = viewer + " " + directory + separator + theFile;
-								Runtime exec = Runtime.getRuntime();
-								try {
-									exec.exec(command);
-								}
-								catch (Exception e1) {
-									JOptionPane.showMessageDialog(frame,
-											"Unable to open external editor.",
-											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-								}
+							File file = new File(work + separator + theFile);
+							String input = "";
+							FileReader in = new FileReader(file);
+							int read = in.read();
+							while (read != -1) {
+								input += (char) read;
+								read = in.read();
 							}
-							else {
-								File file = new File(work + separator + theFile);
-								String input = "";
-								FileReader in = new FileReader(file);
-								int read = in.read();
-								while (read != -1) {
-									input += (char) read;
-									read = in.read();
-								}
-								in.close();
-								JTextArea text = new JTextArea(input);
-								text.setEditable(true);
-								text.setLineWrap(true);
-								JScrollPane scroll = new JScrollPane(text);
-								// gcm.addMouseListener(this);
-								addTab(theFile, scroll, "Petri Net Editor");
-							}
+							in.close();
+							JTextArea text = new JTextArea(input);
+							text.setEditable(true);
+							text.setLineWrap(true);
+							JScrollPane scroll = new JScrollPane(text);
+							// gcm.addMouseListener(this);
+							addTab(theFile, scroll, "CSP Editor");
 						}
-						// String[] command = { "emacs", filename };
-						// Runtime.getRuntime().exec(command);
-					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to view this .g file.",
-								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
-				else if (tree.getFile().length() >= 4
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
-					try {
-						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
-						LhpnFile lhpn = new LhpnFile(log);
-						// if (new File(directory + theFile).length() > 0) {
-						// log.addText("here");
-						// lhpn.load(directory + theFile);
-						// log.addText("there");
-						// }
-						// log.addText("load completed");
-						File work = new File(directory);
-						int i = getTab(theFile);
-						if (i != -1) {
-							tab.setSelectedIndex(i);
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to view this csp file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+				try {
+					String filename = tree.getFile();
+					String directory = "";
+					String theFile = "";
+					if (filename.lastIndexOf('/') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+						theFile = filename.substring(filename.lastIndexOf('/') + 1);
+					}
+					if (filename.lastIndexOf('\\') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+						theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+					}
+					File work = new File(directory);
+					int i = getTab(theFile);
+					if (i != -1) {
+						tab.setSelectedIndex(i);
+					}
+					else {
+						if (!viewer.equals("")) {
+							String command = viewer + " " + directory + separator + theFile;
+							Runtime exec = Runtime.getRuntime();
+							try {
+								exec.exec(command);
+							}
+							catch (Exception e1) {
+								JOptionPane.showMessageDialog(frame,
+										"Unable to open external editor.", "Error Opening Editor",
+										JOptionPane.ERROR_MESSAGE);
+							}
 						}
 						else {
-							// log.addText("make Editor");
-							LHPNEditor editor = new LHPNEditor(work.getAbsolutePath(), theFile,
-									lhpn, this, log);
-							// editor.addMouseListener(this);
-							addTab(theFile, editor, "LHPN Editor");
-							// log.addText("Editor made");
+							File file = new File(work + separator + theFile);
+							String input = "";
+							FileReader in = new FileReader(file);
+							int read = in.read();
+							while (read != -1) {
+								input += (char) read;
+								read = in.read();
+							}
+							in.close();
+							JTextArea text = new JTextArea(input);
+							text.setEditable(true);
+							text.setLineWrap(true);
+							JScrollPane scroll = new JScrollPane(text);
+							// gcm.addMouseListener(this);
+							addTab(theFile, scroll, "HSE Editor");
 						}
-						// String[] cmd = { "emacs", filename };
-						// Runtime.getRuntime().exec(cmd);
-					}
-					catch (Exception e1) {
-						e1.printStackTrace();
-						JOptionPane.showMessageDialog(frame, "Unable to view this LPN file.",
-								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
-				else if (tree.getFile().length() >= 4
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
-					try {
-						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
-						File work = new File(directory);
-						int i = getTab(theFile);
-						if (i != -1) {
-							tab.setSelectedIndex(i);
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to view this hse file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+				try {
+					String filename = tree.getFile();
+					String directory = "";
+					String theFile = "";
+					if (filename.lastIndexOf('/') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+						theFile = filename.substring(filename.lastIndexOf('/') + 1);
+					}
+					if (filename.lastIndexOf('\\') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+						theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+					}
+					File work = new File(directory);
+					int i = getTab(theFile);
+					if (i != -1) {
+						tab.setSelectedIndex(i);
+					}
+					else {
+						if (!viewer.equals("")) {
+							String command = viewer + " " + directory + separator + theFile;
+							Runtime exec = Runtime.getRuntime();
+							try {
+								exec.exec(command);
+							}
+							catch (Exception e1) {
+								JOptionPane.showMessageDialog(frame,
+										"Unable to open external editor.", "Error Opening Editor",
+										JOptionPane.ERROR_MESSAGE);
+							}
 						}
 						else {
-							if (!viewer.equals("")) {
-								String command = viewer + " " + directory + separator + theFile;
-								Runtime exec = Runtime.getRuntime();
-								try {
-									exec.exec(command);
-								}
-								catch (Exception e1) {
-									JOptionPane.showMessageDialog(frame,
-											"Unable to open external editor.",
-											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-								}
+							File file = new File(work + separator + theFile);
+							String input = "";
+							FileReader in = new FileReader(file);
+							int read = in.read();
+							while (read != -1) {
+								input += (char) read;
+								read = in.read();
 							}
-							else {
-								File file = new File(work + separator + theFile);
-								String input = "";
-								FileReader in = new FileReader(file);
-								int read = in.read();
-								while (read != -1) {
-									input += (char) read;
-									read = in.read();
-								}
-								in.close();
-								JTextArea text = new JTextArea(input);
-								text.setEditable(true);
-								text.setLineWrap(true);
-								JScrollPane scroll = new JScrollPane(text);
-								// gcm.addMouseListener(this);
-								addTab(theFile, scroll, "CSP Editor");
-							}
+							in.close();
+							JTextArea text = new JTextArea(input);
+							text.setEditable(true);
+							text.setLineWrap(true);
+							JScrollPane scroll = new JScrollPane(text);
+							// gcm.addMouseListener(this);
+							addTab(theFile, scroll, "UNC Editor");
 						}
-					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to view this csp file.",
-								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
-				else if (tree.getFile().length() >= 4
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
-					try {
-						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
-						File work = new File(directory);
-						int i = getTab(theFile);
-						if (i != -1) {
-							tab.setSelectedIndex(i);
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to view this unc file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+				try {
+					String filename = tree.getFile();
+					String directory = "";
+					String theFile = "";
+					if (filename.lastIndexOf('/') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+						theFile = filename.substring(filename.lastIndexOf('/') + 1);
+					}
+					if (filename.lastIndexOf('\\') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+						theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+					}
+					File work = new File(directory);
+					int i = getTab(theFile);
+					if (i != -1) {
+						tab.setSelectedIndex(i);
+					}
+					else {
+						if (!viewer.equals("")) {
+							String command = viewer + " " + directory + separator + theFile;
+							Runtime exec = Runtime.getRuntime();
+							try {
+								exec.exec(command);
+							}
+							catch (Exception e1) {
+								JOptionPane.showMessageDialog(frame,
+										"Unable to open external editor.", "Error Opening Editor",
+										JOptionPane.ERROR_MESSAGE);
+							}
 						}
 						else {
-							if (!viewer.equals("")) {
-								String command = viewer + " " + directory + separator + theFile;
-								Runtime exec = Runtime.getRuntime();
-								try {
-									exec.exec(command);
-								}
-								catch (Exception e1) {
-									JOptionPane.showMessageDialog(frame,
-											"Unable to open external editor.",
-											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-								}
+							File file = new File(work + separator + theFile);
+							String input = "";
+							FileReader in = new FileReader(file);
+							int read = in.read();
+							while (read != -1) {
+								input += (char) read;
+								read = in.read();
 							}
-							else {
-								File file = new File(work + separator + theFile);
-								String input = "";
-								FileReader in = new FileReader(file);
-								int read = in.read();
-								while (read != -1) {
-									input += (char) read;
-									read = in.read();
-								}
-								in.close();
-								JTextArea text = new JTextArea(input);
-								text.setEditable(true);
-								text.setLineWrap(true);
-								JScrollPane scroll = new JScrollPane(text);
-								// gcm.addMouseListener(this);
-								addTab(theFile, scroll, "HSE Editor");
-							}
+							in.close();
+							JTextArea text = new JTextArea(input);
+							text.setEditable(true);
+							text.setLineWrap(true);
+							JScrollPane scroll = new JScrollPane(text);
+							// gcm.addMouseListener(this);
+							addTab(theFile, scroll, "RSG Editor");
 						}
-					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to view this hse file.",
-								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
-				else if (tree.getFile().length() >= 4
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
-					try {
-						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
-						File work = new File(directory);
-						int i = getTab(theFile);
-						if (i != -1) {
-							tab.setSelectedIndex(i);
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to view this rsg file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".cir")) {
+				try {
+					String filename = tree.getFile();
+					String directory = "";
+					String theFile = "";
+					if (filename.lastIndexOf('/') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+						theFile = filename.substring(filename.lastIndexOf('/') + 1);
+					}
+					if (filename.lastIndexOf('\\') >= 0) {
+						directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+						theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+					}
+					File work = new File(directory);
+					int i = getTab(theFile);
+					if (i != -1) {
+						tab.setSelectedIndex(i);
+					}
+					else {
+						if (!viewer.equals("")) {
+							String command = viewer + " " + directory + separator + theFile;
+							Runtime exec = Runtime.getRuntime();
+							try {
+								exec.exec(command);
+							}
+							catch (Exception e1) {
+								JOptionPane.showMessageDialog(frame,
+										"Unable to open external editor.", "Error Opening Editor",
+										JOptionPane.ERROR_MESSAGE);
+							}
 						}
 						else {
-							if (!viewer.equals("")) {
-								String command = viewer + " " + directory + separator + theFile;
-								Runtime exec = Runtime.getRuntime();
-								try {
-									exec.exec(command);
-								}
-								catch (Exception e1) {
-									JOptionPane.showMessageDialog(frame,
-											"Unable to open external editor.",
-											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-								}
+							File file = new File(work + separator + theFile);
+							String input = "";
+							FileReader in = new FileReader(file);
+							int read = in.read();
+							while (read != -1) {
+								input += (char) read;
+								read = in.read();
 							}
-							else {
-								File file = new File(work + separator + theFile);
-								String input = "";
-								FileReader in = new FileReader(file);
-								int read = in.read();
-								while (read != -1) {
-									input += (char) read;
-									read = in.read();
-								}
-								in.close();
-								JTextArea text = new JTextArea(input);
-								text.setEditable(true);
-								text.setLineWrap(true);
-								JScrollPane scroll = new JScrollPane(text);
-								// gcm.addMouseListener(this);
-								addTab(theFile, scroll, "UNC Editor");
-							}
+							in.close();
+							JTextArea text = new JTextArea(input);
+							text.setEditable(true);
+							text.setLineWrap(true);
+							JScrollPane scroll = new JScrollPane(text);
+							// gcm.addMouseListener(this);
+							addTab(theFile, scroll, "Spice Editor");
 						}
-					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to view this unc file.",
-								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
-				else if (tree.getFile().length() >= 4
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
-					try {
-						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
-						File work = new File(directory);
-						int i = getTab(theFile);
-						if (i != -1) {
-							tab.setSelectedIndex(i);
-						}
-						else {
-							if (!viewer.equals("")) {
-								String command = viewer + " " + directory + separator + theFile;
-								Runtime exec = Runtime.getRuntime();
-								try {
-									exec.exec(command);
-								}
-								catch (Exception e1) {
-									JOptionPane.showMessageDialog(frame,
-											"Unable to open external editor.",
-											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-								}
-							}
-							else {
-								File file = new File(work + separator + theFile);
-								String input = "";
-								FileReader in = new FileReader(file);
-								int read = in.read();
-								while (read != -1) {
-									input += (char) read;
-									read = in.read();
-								}
-								in.close();
-								JTextArea text = new JTextArea(input);
-								text.setEditable(true);
-								text.setLineWrap(true);
-								JScrollPane scroll = new JScrollPane(text);
-								// gcm.addMouseListener(this);
-								addTab(theFile, scroll, "RSG Editor");
-							}
-						}
-					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to view this rsg file.",
-								"Error", JOptionPane.ERROR_MESSAGE);
+				catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to view this spice file.",
+							"Error", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
+				boolean done = false;
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (tab
+							.getTitleAt(i)
+							.equals(
+									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+						tab.setSelectedIndex(i);
+						done = true;
 					}
 				}
-				else if (tree.getFile().length() >= 4
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".cir")) {
-					try {
-						String filename = tree.getFile();
-						String directory = "";
-						String theFile = "";
-						if (filename.lastIndexOf('/') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-							theFile = filename.substring(filename.lastIndexOf('/') + 1);
-						}
-						if (filename.lastIndexOf('\\') >= 0) {
-							directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-							theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-						}
-						File work = new File(directory);
-						int i = getTab(theFile);
-						if (i != -1) {
-							tab.setSelectedIndex(i);
-						}
-						else {
-							if (!viewer.equals("")) {
-								String command = viewer + " " + directory + separator + theFile;
-								Runtime exec = Runtime.getRuntime();
-								try {
-									exec.exec(command);
-								}
-								catch (Exception e1) {
-									JOptionPane.showMessageDialog(frame,
-											"Unable to open external editor.",
-											"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
-								}
-							}
-							else {
-								File file = new File(work + separator + theFile);
-								String input = "";
-								FileReader in = new FileReader(file);
-								int read = in.read();
-								while (read != -1) {
-									input += (char) read;
-									read = in.read();
-								}
-								in.close();
-								JTextArea text = new JTextArea(input);
-								text.setEditable(true);
-								text.setLineWrap(true);
-								JScrollPane scroll = new JScrollPane(text);
-								// gcm.addMouseListener(this);
-								addTab(theFile, scroll, "Spice Editor");
-							}
-						}
-					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to view this spice file.",
-								"Error", JOptionPane.ERROR_MESSAGE);
+				if (!done) {
+					addTab(
+							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+							new Graph(null, "Number of molecules", "title", "tsd.printer", root,
+									"Time", this, tree.getFile(), log, tree.getFile().split(
+											separator)[tree.getFile().split(separator).length - 1],
+									true, false), "TSD Graph");
+				}
+			}
+			else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
+				boolean done = false;
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (tab
+							.getTitleAt(i)
+							.equals(
+									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+						tab.setSelectedIndex(i);
+						done = true;
 					}
 				}
-				else if (tree.getFile().length() >= 4
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
-					boolean done = false;
-					for (int i = 0; i < tab.getTabCount(); i++) {
-						if (tab.getTitleAt(i)
-								.equals(
-										tree.getFile().split(separator)[tree.getFile().split(
-												separator).length - 1])) {
-							tab.setSelectedIndex(i);
-							done = true;
-						}
+				if (!done) {
+					addTab(
+							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+							new Graph(null, "Percent", "title", "tsd.printer", root, "Time", this,
+									tree.getFile(), log, tree.getFile().split(separator)[tree
+											.getFile().split(separator).length - 1], false, false),
+							"Probability Graph");
+				}
+			}
+			else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
+				boolean sim = false;
+				boolean synth = false;
+				boolean ver = false;
+				boolean learn = false;
+				for (String s : new File(tree.getFile()).list()) {
+					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
+						sim = true;
 					}
-					if (!done) {
-						addTab(
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-								new Graph(null, "Number of molecules", "title", "tsd.printer",
-										root, "Time", this, tree.getFile(), log,
-										tree.getFile().split(separator)[tree.getFile().split(
-												separator).length - 1], true, false), "TSD Graph");
+					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
+						synth = true;
+					}
+					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
+						ver = true;
+					}
+					else if (s.length() > 3 && s.substring(s.length() - 4).equals(".lrn")) {
+						learn = true;
 					}
 				}
-				else if (tree.getFile().length() >= 4
-						&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
-					boolean done = false;
-					for (int i = 0; i < tab.getTabCount(); i++) {
-						if (tab.getTitleAt(i)
-								.equals(
-										tree.getFile().split(separator)[tree.getFile().split(
-												separator).length - 1])) {
-							tab.setSelectedIndex(i);
-							done = true;
-						}
-					}
-					if (!done) {
-						addTab(
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-								new Graph(null, "Percent", "title", "tsd.printer", root, "Time",
-										this, tree.getFile(), log,
-										tree.getFile().split(separator)[tree.getFile().split(
-												separator).length - 1], false, false),
-								"Probability Graph");
-					}
+				if (sim) {
+					openSim();
 				}
-				else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
-					boolean sim = false;
-					boolean synth = false;
-					boolean ver = false;
-					boolean learn = false;
-					for (String s : new File(tree.getFile()).list()) {
-						if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
-							sim = true;
-						}
-						else if (s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
-							synth = true;
-						}
-						else if (s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
-							ver = true;
-						}
-						else if (s.length() > 3 && s.substring(s.length() - 4).equals(".lrn")) {
-							learn = true;
-						}
+				else if (synth) {
+					openSynth();
+				}
+				else if (ver) {
+					openVerify();
+				}
+				else if (learn) {
+					if (lema) {
+						openLearnLHPN();
 					}
-					if (sim) {
-						openSim();
-					}
-					else if (synth) {
-						openSynth();
-					}
-					else if (ver) {
-						openVerify();
-					}
-					else if (learn) {
-						if (lema) {
-							openLearnLHPN();
-						}
-						else {
-							openLearn();
-						}
+					else {
+						openLearn();
 					}
 				}
 			}
@@ -9731,38 +9740,30 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 
 	public void mouseMoved(MouseEvent e) {
-		Component glassPane = frame.getGlassPane();
-		Point glassPanePoint = e.getPoint();
-		// Component component = e.getComponent();
-		Container container = frame.getContentPane();
-		Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, frame
-				.getContentPane());
-		if (containerPoint.y < 0) { // we're not in the content pane
-			if (containerPoint.y + menuBar.getHeight() >= 0) {
-				Component component = menuBar.getComponentAt(glassPanePoint);
-				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
-						component);
-				component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e
-						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
-						.isPopupTrigger()));
-				frame.getGlassPane().setVisible(false);
-			}
-		}
-		else {
-			Component deepComponent = SwingUtilities.getDeepestComponentAt(container,
-					containerPoint.x, containerPoint.y);
-			Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
-					deepComponent);
-			// if (deepComponent instanceof ScrollableTabPanel) {
-			// deepComponent = tab.findComponentAt(componentPoint);
-			// }
-			deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
-					.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
-					.isPopupTrigger()));
-			if (deepComponent instanceof JComponent) {
-				frame.getGlassPane().setVisible(false);
-			}
-		}
+		/*
+		 * Component glassPane = frame.getGlassPane(); Point glassPanePoint =
+		 * e.getPoint(); // Component component = e.getComponent(); Container
+		 * container = frame.getContentPane(); Point containerPoint =
+		 * SwingUtilities.convertPoint(glassPane, glassPanePoint, frame
+		 * .getContentPane()); if (containerPoint.y < 0) { // we're not in the
+		 * content pane if (containerPoint.y + menuBar.getHeight() >= 0) {
+		 * Component component = menuBar.getComponentAt(glassPanePoint); Point
+		 * componentPoint = SwingUtilities.convertPoint(glassPane,
+		 * glassPanePoint, component); component.dispatchEvent(new
+		 * MouseEvent(component, e.getID(), e.getWhen(), e .getModifiers(),
+		 * componentPoint.x, componentPoint.y, e.getClickCount(), e
+		 * .isPopupTrigger())); frame.getGlassPane().setVisible(false); } } else
+		 * { Component deepComponent =
+		 * SwingUtilities.getDeepestComponentAt(container, containerPoint.x,
+		 * containerPoint.y); Point componentPoint =
+		 * SwingUtilities.convertPoint(glassPane, glassPanePoint,
+		 * deepComponent); // if (deepComponent instanceof ScrollableTabPanel) {
+		 * // deepComponent = tab.findComponentAt(componentPoint); // }
+		 * deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(),
+		 * e.getWhen(), e .getModifiers(), componentPoint.x, componentPoint.y,
+		 * e.getClickCount(), e .isPopupTrigger())); if (deepComponent
+		 * instanceof JComponent) { frame.getGlassPane().setVisible(false); } }
+		 */
 	}
 
 	public void mouseWheelMoved(MouseWheelEvent e) {
@@ -10992,10 +10993,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				if ((deepComponent instanceof JTree) && (e.getClickCount() != 2)) {
 					enableTreeMenu();
 				}
-				else {
+				else if (deepComponent instanceof JComponent) {
 					enableTabMenu(tab.getSelectedIndex());
+					if (!(deepComponent instanceof JPanel)) {
+						frame.getGlassPane().setVisible(false);
+					}
 				}
 			}
+		}
+		else {
+			executeMouseClickEvent(e);
 		}
 	}
 
