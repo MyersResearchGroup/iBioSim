@@ -8239,6 +8239,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			frame.getGlassPane().setVisible(true);
 		}
 		if (e.getSource() instanceof JTree && tree.getFile() != null && e.isPopupTrigger()) {
+			frame.getGlassPane().setVisible(false);
 			popup.removeAll();
 			if (tree.getFile().length() > 4
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
