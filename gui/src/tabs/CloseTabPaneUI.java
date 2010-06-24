@@ -142,6 +142,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	protected JMenuItem closeItem;
 	
+	private BioSim biosim;
+	
 	public CloseTabPaneUI(BioSim biosim) {
 
 		super();
@@ -154,6 +156,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			separator = File.separator;
 		}
 
+		this.biosim = biosim;
+		
 		closeImgB = new BufferedImage(BUTTONSIZE, BUTTONSIZE, BufferedImage.TYPE_4BYTE_ABGR);
 
 		closeImgI = new BufferedImage(BUTTONSIZE, BUTTONSIZE, BufferedImage.TYPE_4BYTE_ABGR);
@@ -239,7 +243,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	}
 
 	protected MouseListener createMouseListener() {
-		return new MyMouseHandler();
+		return new MyMouseHandler(biosim);
 	}
 
 	protected ScrollableTabButton createScrollableTabButton(int direction) {
@@ -1487,11 +1491,15 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	}
 
 	class MyMouseHandler extends MouseHandler {
-		public MyMouseHandler() {
+		private BioSim biosim;
+
+		public MyMouseHandler(BioSim biosim) {
 			super();
+			this.biosim = biosim;
 		}
 
 		public void mousePressed(MouseEvent e) {
+			biosim.enableTabMenu(biosim.getTab().getSelectedIndex());
 			if (closeIndexStatus == OVER) {
 				closeIndexStatus = PRESSED;
 				tabScroller.tabPanel.repaint();
@@ -1508,6 +1516,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 		public void mouseClicked(MouseEvent e) {
 			super.mousePressed(e);
+			biosim.enableTabMenu(biosim.getTab().getSelectedIndex());
 			if (e.getClickCount() > 1 && overTabIndex != -1) {
 				((CloseAndMaxTabbedPane) tabPane).fireDoubleClickTabEvent(e, overTabIndex);
 			}
@@ -1515,6 +1524,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 		public void mouseReleased(MouseEvent e) {
 
+			biosim.enableTabMenu(biosim.getTab().getSelectedIndex());
 			updateOverTab(e.getX(), e.getY());
 
 			if (overTabIndex == -1) {

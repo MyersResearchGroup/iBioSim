@@ -299,10 +299,7 @@ public class StateGraph implements Runnable {
 				for (String state : stateGraph.keySet()) {
 					for (State m : stateGraph.get(state)) {
 						double transitionSum = m.getTransitionSum();
-						if (transitionSum == 0.0) {
-							m.setCurrentProb(0.0);
-						}
-						else {
+						if (transitionSum != 0.0) {
 							m.setCurrentProb((m.getCurrentProb() / period) / transitionSum);
 						}
 						totalProb += m.getCurrentProb();
@@ -316,10 +313,7 @@ public class StateGraph implements Runnable {
 				}
 				for (String state : stateGraph.keySet()) {
 					for (State m : stateGraph.get(state)) {
-						if (totalProb == 0.0) {
-							m.setCurrentProb(0.0);
-						}
-						else {
+						if (totalProb != 0.0) {
 							m.setCurrentProb(m.getCurrentProb() / totalProb);
 						}
 						if (stop) {
