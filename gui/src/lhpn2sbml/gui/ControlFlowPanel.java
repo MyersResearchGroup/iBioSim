@@ -71,6 +71,10 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 			System.arraycopy(transitionList, 0, flowStringList, 0, transitionList.length);
 		}
 		// JOptionPane.showMessageDialog(this, flowStringList.length);
+		
+		sort(placeList);
+		sort(transitionList);
+		sort(flowStringList);
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -253,6 +257,20 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 			}
 		}
 		return false;
+	}
+	
+	private static void sort(String[] sort) {
+		int i, j;
+		String index;
+		for (i = 1; i < sort.length; i++) {
+			index = sort[i];
+			j = i;
+			while ((j > 0) && (sort[j - 1]).compareToIgnoreCase(index) > 0) {
+				sort[j] = sort[j - 1];
+				j = j - 1;
+			}
+			sort[j] = index;
+		}
 	}
 
 	public void actionPerformed(ActionEvent e) {
