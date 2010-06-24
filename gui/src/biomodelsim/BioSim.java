@@ -1214,7 +1214,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		log = new Log();
 		tab = new CloseAndMaxTabbedPane(false, this);
 		tab.setPreferredSize(new Dimension(1100, 550));
-		tab.getPaneUI().addMouseListener(this);
+		//tab.getPaneUI().addMouseListener(this);
 		mainPanel.add(tree, "West");
 		mainPanel.add(tab, "Center");
 		mainPanel.add(log, "South");
@@ -8172,11 +8172,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				if ((deepComponent instanceof JTree) && (e.getClickCount() != 2)) {
 					enableTreeMenu();
 				}
-				else if (deepComponent instanceof JComponent) {
+				else {
 					enableTabMenu(tab.getSelectedIndex());
-					if (!(deepComponent instanceof JPanel)) {
-						frame.getGlassPane().setVisible(false);
-					}
+					frame.getGlassPane().setVisible(false);
 				}
 			}
 		}
@@ -8216,11 +8214,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					if ((deepComponent instanceof JTree) && (e.getClickCount() != 2)) {
 						enableTreeMenu();
 					}
-					else if (deepComponent instanceof JComponent) {
+					else {
 						enableTabMenu(tab.getSelectedIndex());
-						if (!(deepComponent instanceof JPanel)) {
-							frame.getGlassPane().setVisible(false);
-						}
+						frame.getGlassPane().setVisible(false);
 					}
 				}
 				catch (Exception e1) {
@@ -8234,11 +8230,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 
 	public void executeMouseClickEvent(MouseEvent e) {
-		if (e.getSource() instanceof JComponent && !(e.getSource() instanceof JTree)) {
+		if (!(e.getSource() instanceof JTree)) {
 			enableTabMenu(tab.getSelectedIndex());
 			frame.getGlassPane().setVisible(true);
 		}
-		if (e.getSource() instanceof JTree && tree.getFile() != null && e.isPopupTrigger()) {
+		else if (e.getSource() instanceof JTree && tree.getFile() != null && e.isPopupTrigger()) {
 			frame.getGlassPane().setVisible(false);
 			popup.removeAll();
 			if (tree.getFile().length() > 4
@@ -10994,11 +10990,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				if ((deepComponent instanceof JTree) && (e.getClickCount() != 2)) {
 					enableTreeMenu();
 				}
-				else if (deepComponent instanceof JComponent) {
+				else {
 					enableTabMenu(tab.getSelectedIndex());
-					if (!(deepComponent instanceof JPanel)) {
-						frame.getGlassPane().setVisible(false);
-					}
+					frame.getGlassPane().setVisible(false);
 				}
 			}
 		}
