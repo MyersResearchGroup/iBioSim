@@ -2439,6 +2439,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 
 			}
+			out.close();
 			running.setCursor(null);
 			running.dispose();
 			if (fail) {
@@ -2774,6 +2775,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				//System.out.println("delayScaleFactor " + delayScaleFactor);
 			} else
 				delayScaleFactor = -1.0;
+			out.write("epsilon = " + epsilon + "; ratesampling = " + rateSampling + "; pathLength = " + pathLength + "; percent = " + percent + "; runlength = " + runLength + "; runtime = " + runTime + "; absoluteTime = " + absoluteTime + "; delayscalefactor = " + delayScaleFactor + "; valuescalefactor = " + valScaleFactor + "\n");
 			dsFactor = delayScaleFactor;
 			vsFactor = valScaleFactor;
 			dmvcValuesUnique = new HashMap<String, Properties>();
@@ -3419,13 +3421,16 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							condStr += "(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()) + ")&~(" + st2 + ">=" + (int) Math.ceil(scaledThresholds.get(st2).get(bin).doubleValue()) + ")";
 						}
 					} else {
-						int minv = (int) Math.floor(Double.parseDouble(transientNetPlaces.get(st).getProperty(st2 + "_vMin")));
-						int maxv = (int) Math.ceil(Double.parseDouble(transientNetPlaces.get(st).getProperty(st2 + "_vMax"))); 
-						if (minv != maxv)
-							g.addIntAssign("t" + numTransitions,st2,"uniform(" + minv  + ","+ maxv + ")");
-						else
-							g.addIntAssign("t" + numTransitions,st2,String.valueOf(minv));
-						out.write("Added assignment to " + st2 + " at transition t" + numTransitions + "\n");
+						if (reqdVarsL.get(j).isDmvc()){
+							int minv = (int) Math.floor(Double.parseDouble(transientNetPlaces.get(st).getProperty(st2 + "_vMin")));
+							int maxv = (int) Math.ceil(Double.parseDouble(transientNetPlaces.get(st).getProperty(st2 + "_vMax"))); 
+							if (minv != maxv)
+								g.addIntAssign("t" + numTransitions,st2,"uniform(" + minv  + ","+ maxv + ")");
+							else
+								g.addIntAssign("t" + numTransitions,st2,String.valueOf(minv));
+							out.write("Added assignment to " + st2 + " at transition t" + numTransitions + "\n");
+						}
+						// deal with rates for continuous here
 					}
 				}
 				out.write("Changed enabling of t" + numTransitions + " to " + condStr + "\n");
@@ -3446,6 +3451,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Log file couldn't be opened in addInitPlace.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
+		} catch (NullPointerException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Null exception in addInitPlace.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -3941,6 +3951,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					runLength = Integer.parseInt(runLengthG.getText().trim());
 					runTime = Double.parseDouble(runTimeG.getText().trim());
 					absoluteTime = absTimeG.isSelected();
+					out.write("epsilon = " + epsilon + "; percent = " + percent + "; runlength = " + runLength + "; runtime = " + runTime + "; absoluteTime = " + absoluteTime + "\n");
 					for (int j = 0; j <= data.get(0).size(); j++) {
 						if (j < mark) // not reqd??
 							continue;
@@ -3980,65 +3991,68 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							mark = endPoint;
 						}
 					}
-				}
-				numPoints = runs.getNumPoints();
-				if ((absoluteTime && (((absTime + lastRunTimeWithoutTransition)/ (data.get(0).get(data.get(0).size() - 1) - data
-						.get(0).get(0))) < percent)) || (!absoluteTime && (((numPoints + lastRunPointsWithoutTransition)/ (double) data.get(0).size()) < percent)))  {
-					runs.clearAll();
-					reqdVarsL.get(i).setDmvc(false);
-					out.write(reqdVarsL.get(i).getName()
-							+ " is not a dmvc \n");
-				} else {
-					reqdVarsL.get(i).setDmvc(true);
-					Double[] dmvcValues;
-					if (lastRunValueWithoutTransition != null ){
-						Double[] dVals = reqdVarsL.get(i).getRuns().getAvgVals();
-						dmvcValues = new Double[dVals.length + 1];
-						for (int j = 0; j < dVals.length; j++){
-							dmvcValues[j] = dVals[j];
-						}
-						dmvcValues[dVals.length] = lastRunValueWithoutTransition;
-					} else
-						dmvcValues = reqdVarsL.get(i).getRuns().getAvgVals();
-					Arrays.sort(dmvcValues);
-					//System.out.println("Sorted DMV values of " + reqdVarsL.get(i).getName() + " are ");
-					//for (Double l : dmvcValues){
-					//	System.out.print(l + " ");
-					//}
-					if (!dmvcValuesUnique.containsKey(reqdVarsL.get(i).getName()))
-						dmvcValuesUnique.put(reqdVarsL.get(i).getName(),new Properties());
-					ArrayList<Double> dmvSplits = new ArrayList<Double>();
-					out.write("Final DMV values of " + reqdVarsL.get(i).getName() + " are ");
-					int l = 0;
-					for (int j = 0; j < dmvcValues.length; j++){
-						dmvcValuesUnique.get(reqdVarsL.get(i).getName()).put(String.valueOf(l),dmvcValues[j].toString());
-						out.write(dmvcValues[j] + " ");
-						if (dmvcValuesUnique.get(reqdVarsL.get(i).getName()).size() > 1){
-							Properties p3 = dmvcValuesUnique.get(reqdVarsL.get(i).getName());
-							double d1 = (Double.valueOf(p3.getProperty(String.valueOf(p3.size() - 1))) + Double.valueOf(p3.getProperty(String.valueOf(p3.size() - 2))))/2.0;
-							d1 = d1*10000;
-							int d2 = (int) d1; 
-							//System.out.println(d2);
-							//System.out.println(((double)d2)/10000.0);
-							dmvSplits.add(((double)d2)/10000.0); // truncating to 4 decimal places
-							//dmvSplits.add((dmvcValuesUnique.get(reqdVarsL.get(i).getName()).get(dmvcValuesUnique.get(reqdVarsL.get(i).getName()).size() - 1) + dmvcValuesUnique.get(reqdVarsL.get(i).getName()).get(dmvcValuesUnique.get(reqdVarsL.get(i).getName()).size() - 2))/2);
-						}
-						l++;
-						for (int k = j+1; k < dmvcValues.length; k++){
-							if (Math.abs((dmvcValues[j] - dmvcValues[k])) > epsilon){
-								j = k-1;
-								break;
+					numPoints = runs.getNumPoints();
+					if ((absoluteTime && (((absTime + lastRunTimeWithoutTransition)/ (data.get(0).get(data.get(0).size() - 1) - data
+							.get(0).get(0))) < percent)) || (!absoluteTime && (((numPoints + lastRunPointsWithoutTransition)/ (double) data.get(0).size()) < percent)))  {
+						runs.clearAll();
+						reqdVarsL.get(i).setDmvc(false);
+						out.write(reqdVarsL.get(i).getName() + " is not a dmvc \n");
+					} else {
+						reqdVarsL.get(i).setDmvc(true);
+						Double[] dmvcValues;
+						if (lastRunValueWithoutTransition != null ){
+							Double[] dVals = reqdVarsL.get(i).getRuns().getAvgVals();
+							dmvcValues = new Double[dVals.length + 1];
+							for (int j = 0; j < dVals.length; j++){
+								dmvcValues[j] = dVals[j];
 							}
-							else if (k >= (dmvcValues.length -1)){
-								j = k;
+							dmvcValues[dVals.length] = lastRunValueWithoutTransition;
+						} else
+							dmvcValues = reqdVarsL.get(i).getRuns().getAvgVals();
+						Arrays.sort(dmvcValues);
+						//System.out.println("Sorted DMV values of " + reqdVarsL.get(i).getName() + " are ");
+						//for (Double l : dmvcValues){
+						//	System.out.print(l + " ");
+						//}
+						if (!dmvcValuesUnique.containsKey(reqdVarsL.get(i).getName()))
+							dmvcValuesUnique.put(reqdVarsL.get(i).getName(),new Properties());
+						ArrayList<Double> dmvSplits = new ArrayList<Double>();
+						out.write("Final DMV values of " + reqdVarsL.get(i).getName() + " are ");
+						int l = 0;
+						for (int j = 0; j < dmvcValues.length; j++){
+							dmvcValuesUnique.get(reqdVarsL.get(i).getName()).put(String.valueOf(l),dmvcValues[j].toString());
+							out.write(dmvcValues[j] + ", ");
+							if (dmvcValuesUnique.get(reqdVarsL.get(i).getName()).size() > 1){
+								Properties p3 = dmvcValuesUnique.get(reqdVarsL.get(i).getName());
+								double d1 = (Double.valueOf(p3.getProperty(String.valueOf(p3.size() - 1))) + Double.valueOf(p3.getProperty(String.valueOf(p3.size() - 2))))/2.0;
+								d1 = d1*10000;
+								int d2 = (int) d1; 
+								//System.out.println(d2);
+								//System.out.println(((double)d2)/10000.0);
+								dmvSplits.add(((double)d2)/10000.0); // truncating to 4 decimal places
+								//dmvSplits.add((dmvcValuesUnique.get(reqdVarsL.get(i).getName()).get(dmvcValuesUnique.get(reqdVarsL.get(i).getName()).size() - 1) + dmvcValuesUnique.get(reqdVarsL.get(i).getName()).get(dmvcValuesUnique.get(reqdVarsL.get(i).getName()).size() - 2))/2);
 							}
-						}	
+							l++;
+							for (int k = j+1; k < dmvcValues.length; k++){
+								if (Math.abs((dmvcValues[j] - dmvcValues[k])) > epsilon){
+									j = k-1;
+									break;
+								}
+								else if (k >= (dmvcValues.length -1)){
+									j = k;
+								}
+							}	
+						}
+						out.write("\n");
+						dmvDivisions.put(reqdVarsL.get(i).getName(), dmvSplits);
+						out.write(reqdVarsL.get(i).getName() + " is  a dmvc in detectDMV. Final check will be done using the generated thresholds \n");
+						
 					}
-					dmvDivisions.put(reqdVarsL.get(i).getName(), dmvSplits);
-					out.write(reqdVarsL.get(i).getName() + " is  a dmvc \n");
 				}
 			}
-		} catch (IOException e) {
+			if (callFromAutogen)
+				checkthresholds(data,dmvDivisions);
+		}catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Log file couldn't be opened for writing rates and bins.",
@@ -4047,6 +4061,91 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		return(dmvDivisions);
 	}
 
+	public void checkthresholds(ArrayList<ArrayList<Double>> data, HashMap<String, ArrayList<Double>> localThresholds){
+		//	ArrayList<Integer> reqdVarIndices = new ArrayList<Integer>();
+		int[][] bins = new int[reqdVarsL.size()][data.get(0).size()];
+		for (int i = 0; i < reqdVarsL.size(); i++) {
+			String currentVar = reqdVarsL.get(i).getName();
+			for (int k = 0; k < data.get(i+1).size(); k++) {
+				for (int l = 0; l < localThresholds.get(currentVar).size(); l++) {
+					if (data.get(i+1).get(k) <= localThresholds.get(currentVar).get(l)) {
+						bins[i][k] = l;
+						break;
+					} else {
+						bins[i][k] = l + 1; // indices of bins not same as that of the variable. i here. not j; if j
+						// wanted, then size of bins array should be varNames not reqdVars
+					}
+				}
+			}
+		}
+		int startPoint, endPoint, mark, numPoints;
+		double absTime;
+		//dmvcValuesUnique = new HashMap<String, ArrayList<Double>>();
+		try{
+			for (int i = 0; i < reqdVarsL.size(); i++) {
+				if (reqdVarsL.get(i).isDmvc()){ // recheck with new thresholds has to be done only for those variables which are detected as dmv already.
+					absTime = 0;
+					mark = 0;
+					DMVCrun runs = reqdVarsL.get(i).getRuns();
+					runs.clearAll(); // flush all the runs from previous dat file.
+					int lastRunPointsWithoutTransition = 0;
+					Double lastRunTimeWithoutTransition = 0.0;
+					for (int j = 0; j <= data.get(0).size(); j++) {
+						if (j < mark) // not reqd??
+							continue;
+						if (((j+1) < data.get(i+1).size()) && 
+								Math.abs(data.get(i+1).get(j) - data.get(i+1).get(j + 1)) <= epsilon) { //i+1 and not i bcoz 0th col is time
+							startPoint = j;
+							runs.addValue(data.get(i+1).get(j)); // chk carefully reqdVarIndices.get(i)
+							while (((j + 1) < data.get(0).size()) && (bins[i][startPoint] == bins[i][j+1]) && (Math.abs(data.get(i+1).get(startPoint) - data.get(i+1).get(j + 1)) <= epsilon)) {
+								// VERY IMP: add condition data.get(0).get(startPoint) < data.get(0).get(j+1) to make sure that you don't run into the next data file.. 
+								runs.addValue(data.get(i+1).get(j + 1)); // chk carefully
+								// reqdVarIndices.get(i)
+								j++;
+							}
+							endPoint = j;
+							if (!absoluteTime) {
+								if ((endPoint < (data.get(0).size() - 1)) && ((endPoint - startPoint) + 1) >= runLength) {
+									runs.addStartPoint(startPoint);
+									runs.addEndPoint(endPoint);
+								} else if (((endPoint - startPoint) + 1) >= runLength) {
+									lastRunPointsWithoutTransition = endPoint - startPoint + 1;
+								} else {
+									runs.removeValue();
+								}
+							} else {
+								if ((endPoint < (data.get(0).size() - 1)) && (calcDelayWithData(startPoint, endPoint, data) >= runTime)) {
+									runs.addStartPoint(startPoint);
+									runs.addEndPoint(endPoint);
+									absTime += calcDelayWithData(startPoint, endPoint, data);
+								} else if (((endPoint - startPoint) + 1) >= runLength) {
+									lastRunTimeWithoutTransition = calcDelayWithData(startPoint, endPoint, data);
+								} else {
+									runs.removeValue();
+								}
+							}
+							mark = endPoint;
+						}
+					}
+					numPoints = runs.getNumPoints();
+					if ((absoluteTime && (((absTime + lastRunTimeWithoutTransition)/ (data.get(0).get(data.get(0).size() - 1) - data
+							.get(0).get(0))) < percent)) || (!absoluteTime && (((numPoints + lastRunPointsWithoutTransition)/ (double) data.get(0).size()) < percent)))  {
+						runs.clearAll();
+						reqdVarsL.get(i).setDmvc(false);
+						out.write("After checking with the generated thresholds " + reqdVarsL.get(i).getName() + " is not a dmv \n");
+					} else {
+						out.write("After checking with the generated thresholds " + reqdVarsL.get(i).getName() + " is a dmv \n");
+					}
+				}
+			}
+		}catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Log file couldn't be opened for writing rates and bins.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
+		}
+	}
+	
 	public double calcDelay(int i, int j) {
 		return (data.get(0).get(j) - data.get(0).get(i));
 		// should add some next run logic later..?
@@ -5135,7 +5234,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		//int iterations = Integer.parseInt(iteration.getText());
 		ArrayList<ArrayList<Double>> fullData = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> singleFileData = new ArrayList<ArrayList<Double>>();
-		//ArrayList<ArrayList<Double>> divisions = new ArrayList<ArrayList<Double>>(); //changed for replacing divisionsL by threholds
 		HashMap<String, ArrayList<Double>> localThresholds = new HashMap<String, ArrayList<Double>>();
 		//ArrayList<String> allVars;
 		int i = 1;
@@ -5167,6 +5265,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			HashMap<String, ArrayList<Double>> dmvDivs = detectDMV(fullData,true);
 			HashMap<String, Integer> varThresholds = new HashMap<String, Integer>();
 			if (!suggestIsSource){
+				out.write("suggest is not the source\n");
 				numThresholds = Integer.parseInt(numBins.getSelectedItem().toString()) - 1;	//after adding 0 to comboboxes
 				if (numThresholds == -1){
 					for (String k : dmvDivs.keySet()){
@@ -5175,25 +5274,26 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								JOptionPane.showMessageDialog(biosim.frame(),
 										"Can't generate the number of thresholds for continuous variables.",
 										"ERROR!", JOptionPane.ERROR_MESSAGE);
-								try {
-									out.write("ERROR! Can't generate the number of thresholds for continuous variables.");
-									out.close();
-								} catch (IOException e2) {
-									// TODO Auto-generated catch block
-									e2.printStackTrace();
-								}
+								out.write(reqdVarsL.get(l).getName() + " is not a dmv. So.. ");
+								out.write("ERROR! Can't generate the number of thresholds for continuous variables.");
+								out.close();
 								running.setCursor(null);
 								running.dispose();
 								return(localThresholds);
+							} else {
+								out.write(reqdVarsL.get(l).getName() + " is a dmv in autogenT.");
 							}
 							if (k.equalsIgnoreCase(reqdVarsL.get(l).getName())){
 								localThresholds.put(k,dmvDivs.get(k));
 							}
 						}
 					}
+				} else {
+					out.write("auto generate. All variables get " + numThresholds + " threholds \n");
 				}
 			}
 			else{
+				out.write("suggest is the source\n");
 				for (int k = 0; k < reqdVarsL.size(); k++){
 					for (int j = 1; j < variablesPanel.getComponentCount(); j++){
 						if ((((JTextField)((JPanel)variablesPanel.getComponent(j)).getComponent(0)).getText().trim()).equalsIgnoreCase(reqdVarsL.get(k).getName())){
@@ -5204,18 +5304,18 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									JOptionPane.showMessageDialog(biosim.frame(),
 											"Can't generate the number of thresholds for continuous variables.",
 											"ERROR!", JOptionPane.ERROR_MESSAGE);
-									try {
-										out.write("ERROR! Can't generate the number of thresholds for continuous variables.");
-										out.close();
-									} catch (IOException e2) {
-										// TODO Auto-generated catch block
-										e2.printStackTrace();
-									}
+
+									out.write(reqdVarsL.get(k).getName() + " is not a dmv. So.. ");
+									out.write("ERROR! Can't generate the number of thresholds for continuous variables.");
+									out.close();
 									running.setCursor(null);
 									running.dispose();
 									return(localThresholds);
 								}
+								out.write("saving auto generated thresholds for " + reqdVarsL.get(k).getName() + " whether or not it is a dmv\n");
 								localThresholds.put(reqdVarsL.get(k).getName(),dmvDivs.get(reqdVarsL.get(k).getName()));
+							} else {
+								out.write(reqdVarsL.get(k).getName() + " is a dmv in autogenT.");
 							}
 							break;
 						}	
@@ -5223,21 +5323,17 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}	
 			}
 			if ((suggestIsSource && (Collections.max(varThresholds.values()) == -1)) || (!suggestIsSource && (numThresholds == -1))){
-				
+
 			}
 			else{
 				HashMap<String, Double[]> extrema = getDataExtrema(fullData); //CHANGE THIS TO HASHMAP for replacing divisionsL by threholds
 				//divisions = initDivisions(extrema,divisions);
-				//divisions = initDivisions(extrema); //changed for replacing divisionsL by threholds
-				//divisions = greedyOpt(divisions,fullData,extrema); //changed for replacing divisionsL by threholds
 				localThresholds = initDivisions(extrema);
 				localThresholds = greedyOpt(localThresholds,fullData,extrema);
 				// Overwriting dmv divisions calculated above with those that come from detectDMV here.
 				for (int l = 0; l < reqdVarsL.size(); l++){
 					for (String k : dmvDivs.keySet()){
 						if ((k.equalsIgnoreCase(reqdVarsL.get(l).getName())) && (varThresholds.get(k) == -1)){
-							//divisions.get(l).clear();
-							//divisions.get(l).addAll(dmvDivs.get(k));
 							localThresholds.get(reqdVarsL.get(l).getName()).clear();
 							localThresholds.get(reqdVarsL.get(l).getName()).addAll(dmvDivs.get(k));
 							// System.out.println("Divisions for " + k + " are ");
@@ -5255,15 +5351,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Unable to calculate rates.\nThresholds could not be generated\nWindow size or pathlength must be reduced.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
-			try {
-				out.write("ERROR! Unable to calculate rates.\nThresholds could not be generated\nIf Window size = -1, pathlength must be reduced;\nElse, reduce windowsize\nLearning unsuccessful.");
-				out.close();
-			} catch (IOException e2) {
-				// TODO Auto-generated catch block
-				e2.printStackTrace();
-			}
 			running.setCursor(null);
 			running.dispose();
+		} catch (IOException e2) {
+			e2.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Unable to write into log file in autogenT.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 		//return divisions; //changed for replacing divisionsL by threholds
 		return localThresholds;
@@ -5487,26 +5581,26 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		//	ArrayList<Integer> reqdVarIndices = new ArrayList<Integer>();
 			int[][] bins = new int[reqdVarsL.size()][data.get(0).size()];
 			for (int i = 0; i < reqdVarsL.size(); i++) {
-			//	for (int j = 1; j < varNames.size(); j++) {
-			//		if (reqdVarsL.get(i).getName().equalsIgnoreCase(varNames.get(j))) {
-						// System.out.println(reqdVarsL.get(i) + " matched "+
-						// varNames.get(j) + " i = " + i + " j = " + j);
-			//			reqdVarIndices.add(j);
+				//	for (int j = 1; j < varNames.size(); j++) {
+				//		if (reqdVarsL.get(i).getName().equalsIgnoreCase(varNames.get(j))) {
+				// System.out.println(reqdVarsL.get(i) + " matched "+
+				// varNames.get(j) + " i = " + i + " j = " + j);
+				//			reqdVarIndices.add(j);
 				//changes made here for replacing divisionsL with thresholds
-						String currentVar = reqdVarsL.get(i).getName();
-						for (int k = 0; k < data.get(i+1).size(); k++) {
-							for (int l = 0; l < localThresholds.get(currentVar).size(); l++) {
-								if (data.get(i+1).get(k) <= localThresholds.get(currentVar).get(l)) {
-									bins[i][k] = l;
-									break;
-								} else {
-									bins[i][k] = l + 1; // indices of bins not same as that of the variable. i here. not j; if j
-									// wanted, then size of bins array should be varNames not reqdVars
-								}
-							}
+				String currentVar = reqdVarsL.get(i).getName();
+				for (int k = 0; k < data.get(i+1).size(); k++) {
+					for (int l = 0; l < localThresholds.get(currentVar).size(); l++) {
+						if (data.get(i+1).get(k) <= localThresholds.get(currentVar).get(l)) {
+							bins[i][k] = l;
+							break;
+						} else {
+							bins[i][k] = l + 1; // indices of bins not same as that of the variable. i here. not j; if j
+							// wanted, then size of bins array should be varNames not reqdVars
 						}
 					}
-		//		}
+				}
+			}
+			//		}
 		//	}
 			/*
 			 * System.out.println("array bins is :"); for (int i = 0; i <
