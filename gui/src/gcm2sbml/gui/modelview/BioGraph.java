@@ -121,15 +121,18 @@ public class BioGraph extends mxGraph {
 		this.influencesToMxCellMap.put(id, (mxCell)ret);
 		return ret;
 	}
-	public Object get_influence(String id){
-		return influencesToMxCellMap.get(id);
+	public mxCell get_influence(String id){
+		return (mxCell)(influencesToMxCellMap.get(id));
 	}
 	
 	/**
 	 * Builds the graph based on the internal representation
 	 * @return
 	 */
+	public boolean is_building = false;
 	public boolean buildGraph(){
+		this.is_building = true;
+		
 		BioGraph graph = this;
 		
 		// remove all the components from the graph if there are any
@@ -182,29 +185,55 @@ public class BioGraph extends mxGraph {
 			String id = prop.getProperty(GlobalConstants.NAME) != null ? 
 					prop.getProperty(GlobalConstants.NAME) : prop.getProperty("label");
 			
-			// build the edge style
-			// Look in mxConstants to see all the pre-built styles.
-			String style = "defaultEdge;" + mxConstants.STYLE_ENDARROW + "=";
-			if(prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION))
-				style += mxConstants.ARROW_CLASSIC;
-			else if(prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.REPRESSION))
-				style += mxConstants.ARROW_OVAL;
-			else
-				style += mxConstants.ARROW_OPEN; // This should never happen.
-//			=[';p']
-			String label = prop.getProperty(GlobalConstants.PROMOTER, "");
+
 					
-			Object edge = graph.insertEdge(parent, id, label, 
+			Object edge = graph.insertEdge(parent, id, "", 
 					graph.getSpeciesCell(GCMFile.getInput(inf)), 
-					graph.getSpeciesCell(GCMFile.getOutput(inf)), 
-					style
+					graph.getSpeciesCell(GCMFile.getOutput(inf))
 					);
+			
+			updateInfluenceVisuals(id);
 			
 		}
 		
 		graph.getModel().endUpdate();
 		
+		this.is_building = false;
 		return unpositioned_species_count == species_count;
+	}
+	
+	/**
+	 * Given an id, update the style of the influence.
+	 */
+	private void updateInfluenceVisuals(String id){
+		Properties prop = internalModel.get("influences").get(id);
+		// build the edge style
+		// Look in mxConstants to see all the pre-built styles.
+		String style = "defaultEdge;" + mxConstants.STYLE_ENDARROW + "=";
+		if(prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION))
+			style += mxConstants.ARROW_CLASSIC;
+		else if(prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.REPRESSION))
+			style += mxConstants.ARROW_OVAL;
+		else
+			style += mxConstants.ARROW_OPEN; // This should never happen.
+//		=[';p']
+		String label = prop.getProperty(GlobalConstants.PROMOTER, "");
+		
+		mxCell cell = this.get_influence(id);
+		cell.setStyle(style);
+		
+	}
+	
+	/**
+	 * Creates an influence based on an already created edge.
+	 */
+	public void addInfluence(mxCell cell, String id, String constType){
+		Properties prop = new Properties();
+		prop.setProperty(GlobalConstants.NAME, id);
+		prop.setProperty(GlobalConstants.TYPE, constType);
+		internalModel.get("influences").put(id, prop);
+		this.influencesToMxCellMap.put(id, cell);
+		updateInfluenceVisuals(id);
 	}
 	
 	public void applyLayout(String ident, mxGraphComponent graphComponent){

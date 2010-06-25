@@ -64,4 +64,9 @@ public class PropertiesLauncher {
 //		public InfluencePanel(String selected, PropertyList list, GCMFile gcm, boolean paramsOnly, BioSim biosim)
 		InfluencePanel panel = new InfluencePanel(selected, influencesList, gcmFile, paramsOnly, biosim);
 	}
+	
+	public void addInfluenceToList(String id){
+		influencesList.addItem(id);
+		influencesList.setSelectedValue(id, true);
+	}
 }
