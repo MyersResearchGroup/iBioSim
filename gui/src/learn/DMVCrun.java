@@ -55,7 +55,6 @@ public class DMVCrun {
 		return numPoints;
 	}
 	
-	
 	public int getEndPoint(int i) {
 		return endPoints.get(i);
 	}
@@ -77,12 +76,30 @@ public class DMVCrun {
 		}
 	}
 	
+	public Double getLastValue(){ // removes the most recent set of dmv values
+		Double total = 0.0;
+		for (Double d:this.valueL.get(valueL.size() -1)){
+			total+=d;
+		}
+		return (total/(double) this.valueL.get(valueL.size() -1).size());
+	}
+	
 	public void clearAll(){
 		startPoints.clear();
 		endPoints.clear();
 		valueL.clear();
 		avgVals.clear();
 	}
+	
+	public Double getConstVal(){ //for the most recently added set of values by default
+		//ArrayList<Double> vals = this.valueL.get(valueL.size() -1);
+		Double total = 0.0;
+		for (Double d:this.valueL.get(valueL.size() -1)){
+			total+=d;
+		}
+		return (total/(double) this.valueL.get(valueL.size() -1).size());
+	}
+	
 /*	
 	public boolean belongsToRuns(int i){
 		for (int j = 0; j<startPoints.size(); j++){
