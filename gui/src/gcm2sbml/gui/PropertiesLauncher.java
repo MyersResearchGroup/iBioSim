@@ -69,4 +69,12 @@ public class PropertiesLauncher {
 		influencesList.addItem(id);
 		influencesList.setSelectedValue(id, true);
 	}
+	
+	public void removeInfluenceFromList(String id){
+		influencesList.removeItem(id);
+	}
+	
+	public void removeSpeciesFromList(String id){
+		speciesList.removeItem(id);
+	}
 }

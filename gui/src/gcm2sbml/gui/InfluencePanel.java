@@ -382,14 +382,14 @@ public class InfluencePanel extends JPanel implements ActionListener {
 
 	/**
 	 * Builds the influence name
-	 * @param parentId
-	 * @param childId
+	 * @param sourceId
+	 * @param targetId
 	 * @param type
 	 * @param isBio: has to be "yes" or "no"
 	 * @param promoter
 	 * @return
 	 */
-	public static String buildName(String parentId, String childId, String type, String isBio, String promoter){
+	public static String buildName(String sourceId, String targetId, String type, String isBio, String promoter){
 		String arrow = " -> ";
 		if ((type==types[0]) && (isBio.equals(bio[0]))) {
 			arrow = " -| ";
@@ -401,7 +401,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			arrow = " x> ";
 		}
 		
-		String out = parentId + arrow + childId + ", Promoter " + promoter;
+		String out = sourceId + arrow + targetId + ", Promoter " + promoter;
 		
 		return out;
 	}
