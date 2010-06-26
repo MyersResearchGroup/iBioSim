@@ -5,8 +5,11 @@ import gcm2sbml.gui.PropertiesLauncher;
 import gcm2sbml.util.GlobalConstants;
 
 import java.awt.BorderLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -14,15 +17,19 @@ import java.util.HashMap;
 import java.util.Properties;
 
 
+import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
+import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.ButtonModel;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
 import javax.swing.JToolBar;
+import javax.swing.SwingUtilities;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
@@ -34,16 +41,22 @@ public class ModelView extends JPanel implements ActionListener {
 		
 	private static final long serialVersionUID = 1L;
 	BioGraph graph;
-	mxGraphComponent graphComponent;
+	private mxGraphComponent graphComponent;
+	public mxGraphComponent getGraphComponent(){return graphComponent;};
 	
 	/**
 	 * Store a reference to the species, influences, etc that make up the graph.
 	 */
 	private HashMap<String, HashMap<String, Properties>> internalModel;
 	
+	/**
+	 * Constructor
+	 * @param internalModel
+	 */
 	public ModelView(HashMap<String, HashMap<String, Properties>> internalModel){
 		super(new BorderLayout());
 		this.internalModel = internalModel;
+		
 	}
 	
 	/**
@@ -70,6 +83,32 @@ public class ModelView extends JPanel implements ActionListener {
 					
 				}
 			});
+			
+			// Listen for deleted cells
+			graph.addListener(mxEvent.CELLS_REMOVED, new mxEventSource.mxIEventListener() {
+				
+				@Override
+				public void invoke(Object arg0, mxEventObject event) {
+
+					// if the graph isn't being built and this event
+					// comes through, remove all the cells from the 
+					// internal model that were specified.
+					if(graph.is_building == false){
+						Object cells[] = (Object [])event.getProperties().get("cells");
+						for(Object ocell:cells){
+							mxCell cell = (mxCell)ocell;
+							System.out.print(cell.getId() + " Deleting.\n");
+							if(cell.isEdge()){
+								internalModel.get("influences").remove(cell.getId());
+								PropertiesLauncher.getInstance().removeInfluenceFromList(cell.getId());
+							}else if(cell.isVertex()){
+								internalModel.get("species").remove(cell.getId());
+								PropertiesLauncher.getInstance().removeSpeciesFromList(cell.getId());
+							}
+						}
+					}
+				}
+			});
 
 //			// listener for added verticies
 			graph.addListener(mxEvent.CELLS_ADDED, new mxEventSource.mxIEventListener() {
@@ -79,11 +118,22 @@ public class ModelView extends JPanel implements ActionListener {
 					// if the graph is building, ignore the creation of edges.
 					if(graph.is_building == false){
 					
-						Object cells[] = (Object [])event.getProperties().get("cells");
+  						Object cells[] = (Object [])event.getProperties().get("cells");
 						
 						if(cells.length == 1 && ((mxCell)(cells[0])).isEdge()){
 		
 							mxCell edge = (mxCell)(cells[0]);
+							
+							// make sure there is a target cell. If there isn't it is because
+							// the user dragged an edge and let it go when it wasn't connected
+							// to anything. Remove it and return if this is the case.
+							if(edge.getTarget() == null){
+								graph.removeCells(cells);
+								return;
+							}
+							
+							String sourceId = edge.getSource().getId();
+							String targetId = edge.getTarget().getId();
 							
 							String isBio;
 							String type;
@@ -102,10 +152,12 @@ public class ModelView extends JPanel implements ActionListener {
 								throw(new Error("No influence button was pressed!"));
 							}
 							
+							// TODO: If the user drags an influence onto nothing, it is intended that a new 
+							// species will be created and the influence attached to it. We need to handle 
+							// that eventuality.
+							
 							String promoter = "default";
-							String parentId = edge.getSource().getId();
-							String childId = edge.getTarget().getId();
-							String name = InfluencePanel.buildName(parentId, childId, type, isBio, promoter);
+							String name = InfluencePanel.buildName(sourceId, targetId, type, isBio, promoter);
 							
 							graph.addInfluence(edge, name, constType);
 							PropertiesLauncher.getInstance().addInfluenceToList(name);
@@ -142,6 +194,8 @@ public class ModelView extends JPanel implements ActionListener {
 							refreshGraph();
 							
 						}
+					}else if (e.isPopupTrigger()){
+						showGraphPopupMenu(e);
 					}
 				}
 			});
@@ -156,7 +210,7 @@ public class ModelView extends JPanel implements ActionListener {
 		
 	}
 	
-	
+
 	/**
 	 * Refreshes the graph.
 	 */
@@ -234,5 +288,37 @@ public class ModelView extends JPanel implements ActionListener {
 			throw(new Error("Invalid actionCommand: " + command));
 		}
 	}
+	
+	
+	////// Coppied from mxGraph example file BasicGraphEditor.java
+	
+	/**
+	 * Displays the right-click menu
+	 * @param e
+	 */
+	protected void showGraphPopupMenu(MouseEvent e)
+	{
+		Point pt = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(),
+				graphComponent);
+		EditorPopupMenu menu = new EditorPopupMenu(ModelView.this);
+		menu.show(graphComponent, pt.x, pt.y);
+
+		e.consume();
+	}
+	@SuppressWarnings("serial")
+	public Action bind(String name, final Action action)
+	{
+		return new AbstractAction(name, null)
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				action.actionPerformed(new ActionEvent(getGraphComponent(), e
+						.getID(), e.getActionCommand()));
+			}
+		};
+	}
+	
+	
+	
 
 }
