@@ -13,7 +13,7 @@ import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Properties;
 
-import javax.xml.bind.JAXBElement.GlobalScope;
+//import javax.xml.bind.JAXBElement.GlobalScope;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;

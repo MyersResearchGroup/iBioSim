@@ -71,7 +71,7 @@ public class ModelView extends JPanel implements ActionListener {
 			// Listen for moved cells
 			graph.addListener(mxEvent.CELLS_MOVED, new mxEventSource.mxIEventListener() {
 				
-				@Override
+//				@Override
 				public void invoke(Object arg0, mxEventObject event) {
 
 					Object cells[] = (Object [])event.getProperties().get("cells");
@@ -87,7 +87,7 @@ public class ModelView extends JPanel implements ActionListener {
 			// Listen for deleted cells
 			graph.addListener(mxEvent.CELLS_REMOVED, new mxEventSource.mxIEventListener() {
 				
-				@Override
+//				@Override
 				public void invoke(Object arg0, mxEventObject event) {
 
 					// if the graph isn't being built and this event
@@ -112,7 +112,7 @@ public class ModelView extends JPanel implements ActionListener {
 
 //			// listener for added verticies
 			graph.addListener(mxEvent.CELLS_ADDED, new mxEventSource.mxIEventListener() {
-				@Override
+//				@Override
 				public void invoke(Object arg0, mxEventObject event) {
 					
 					// if the graph is building, ignore the creation of edges.
