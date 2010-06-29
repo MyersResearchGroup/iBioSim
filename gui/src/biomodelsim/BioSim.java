@@ -5931,6 +5931,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						refreshTree();
 						JTabbedPane lrnTab = new JTabbedPane();
+						lrnTab.addMouseListener(this);
 						DataManager data = new DataManager(root + separator + lrnName, this, lema);
 						lrnTab.addTab("Data Manager", data);
 						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
@@ -7269,6 +7270,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									}
 									else if (tab.getComponentAt(i) instanceof JTabbedPane) {
 										JTabbedPane t = new JTabbedPane();
+										t.addMouseListener(this);
 										int selected = ((JTabbedPane) tab.getComponentAt(i))
 												.getSelectedIndex();
 										boolean analysis = false;
@@ -10005,6 +10007,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				 */
 				refreshTree();
 				JTabbedPane simTab = new JTabbedPane();
+				simTab.addMouseListener(this);
 				Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFileProp, root, this, simName.trim(),
 						log, simTab, null, sbml1[sbml1.length - 1], null);
 				// reb2sac.addMouseListener(this);
@@ -10102,6 +10105,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		if (!done) {
 			JTabbedPane lrnTab = new JTabbedPane();
+			lrnTab.addMouseListener(this);
 			// String graphFile = "";
 			String open = null;
 			if (new File(tree.getFile()).isDirectory()) {
@@ -10228,6 +10232,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		if (!done) {
 			JTabbedPane lrnTab = new JTabbedPane();
+			lrnTab.addMouseListener(this);
 			// String graphFile = "";
 			String open = null;
 			if (new File(tree.getFile()).isDirectory()) {
@@ -10719,6 +10724,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 						}
 						JTabbedPane simTab = new JTabbedPane();
+						simTab.addMouseListener(this);
 						AbstPane lhpnAbstraction = new AbstPane(root, gcmFile, log, this, false,
 								false);
 						Reb2Sac reb2sac = new Reb2Sac(sbmlLoadFile, getAFile, root, this,
@@ -11280,6 +11286,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			refreshTree();
 			JTabbedPane simTab = new JTabbedPane();
+			simTab.addMouseListener(this);
 			Reb2Sac reb2sac = new Reb2Sac(sbmlLoadFile, sbmlFile, root, this, newSim, log, simTab,
 					propertiesFile, gcmFile, null);
 			simTab.addTab("Simulation Options", reb2sac);
