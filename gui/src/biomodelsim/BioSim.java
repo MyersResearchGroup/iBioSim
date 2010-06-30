@@ -1214,17 +1214,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		log = new Log();
 		tab = new CloseAndMaxTabbedPane(false, this);
 		tab.setPreferredSize(new Dimension(1100, 550));
-		//tab.getPaneUI().addMouseListener(this);
+		// tab.getPaneUI().addMouseListener(this);
 		mainPanel.add(tree, "West");
 		mainPanel.add(tab, "Center");
 		mainPanel.add(log, "South");
 		mainPanel.add(toolbar, "North");
 		frame.setContentPane(mainPanel);
 		frame.setJMenuBar(menuBar);
-		frame.getGlassPane().setVisible(true);
-		frame.getGlassPane().addMouseListener(this);
-		frame.getGlassPane().addMouseMotionListener(this);
-		frame.getGlassPane().addMouseWheelListener(this);
+		// frame.getGlassPane().setVisible(true);
+		// frame.getGlassPane().addMouseListener(this);
+		// frame.getGlassPane().addMouseMotionListener(this);
+		// frame.getGlassPane().addMouseWheelListener(this);
 		frame.addMouseListener(this);
 		menuBar.addMouseListener(this);
 		frame.pack();
@@ -8234,10 +8234,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	public void executeMouseClickEvent(MouseEvent e) {
 		if (!(e.getSource() instanceof JTree)) {
 			enableTabMenu(tab.getSelectedIndex());
-			frame.getGlassPane().setVisible(true);
+			// frame.getGlassPane().setVisible(true);
 		}
 		else if (e.getSource() instanceof JTree && tree.getFile() != null && e.isPopupTrigger()) {
-			frame.getGlassPane().setVisible(false);
+			// frame.getGlassPane().setVisible(false);
 			popup.removeAll();
 			if (tree.getFile().length() > 4
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
@@ -12143,9 +12143,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveTemp.setEnabled(false);
 			}
 			else if (component instanceof Learn) {
-				if (((Learn) component).isComboSelected()) {
-					frame.getGlassPane().setVisible(false);
-				}
+				// if (((Learn) component).isComboSelected()) {
+				// frame.getGlassPane().setVisible(false);
+				// }
 				// saveButton.setEnabled(((Learn)
 				// component).getSaveGcmEnabled());
 				saveButton.setEnabled(true);
@@ -12187,9 +12187,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveTemp.setEnabled(false);
 			}
 			else if (component instanceof LearnLHPN) {
-				if (((LearnLHPN) component).isComboSelected()) {
-					frame.getGlassPane().setVisible(false);
-				}
+				// if (((LearnLHPN) component).isComboSelected()) {
+				// frame.getGlassPane().setVisible(false);
+				// }
 				// saveButton.setEnabled(((LearnLHPN)
 				// component).getSaveLhpnEnabled());
 				saveButton.setEnabled(true);
@@ -12965,7 +12965,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 
 	public void setGlassPane(boolean visible) {
-		frame.getGlassPane().setVisible(visible);
+		// frame.getGlassPane().setVisible(visible);
 	}
 
 	public boolean overwrite(String fullPath, String name) {
