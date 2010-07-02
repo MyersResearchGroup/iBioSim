@@ -567,6 +567,9 @@ public class Abstraction extends LhpnFile {
 						else if (tP.getEnablingTree().implies(t.getEnablingTree())) {
 							flag = true;
 						}
+						if (!t.getDelay().contains("uniform") && !t.getDelay().matches("[\\d-]+")) {
+							continue;
+						}
 					}
 					if (flag) {
 						String delayT = t.getDelay();
@@ -627,6 +630,9 @@ public class Abstraction extends LhpnFile {
 					if (!t.equals(tP) && t.getDelay() != null && tP.getDelay() != null) {
 						String delayT = t.getDelay();
 						String delayTP = tP.getDelay();
+						if (!delayT.contains("uniform") && !delayT.matches("[\\d-]+")) {
+							continue;
+						}
 						Pattern rangePattern = Pattern.compile("uniform\\(([\\d]+),([\\d]+)\\)");
 						Matcher delayTMatcher = rangePattern.matcher(delayT);
 						Matcher delayTpMatcher = rangePattern.matcher(delayTP);
@@ -1551,6 +1557,9 @@ public class Abstraction extends LhpnFile {
 
 	private boolean removeTrans3(Transition transition) {
 		// Remove a transition with a single place in the postset
+		if (!transition.getDelay().contains("uniform") && !transition.getDelay().matches("[\\d-]+")) {
+			return false;
+		}
 		Place place = transition.getPostset()[0];
 		Place[] preset = transition.getPreset();
 		Transition[] postset = place.getPostset();
@@ -1638,6 +1647,9 @@ public class Abstraction extends LhpnFile {
 
 	private boolean removeTrans4(Transition transition) {
 		// Remove a transition with a single place in the preset
+		if (!transition.getDelay().contains("uniform") && !transition.getDelay().matches("[\\d-]+")) {
+			return false;
+		}
 		Place place = transition.getPreset()[0];
 		Transition[] preset = place.getPreset();
 		Place[] postset = transition.getPostset();
@@ -1713,6 +1725,9 @@ public class Abstraction extends LhpnFile {
 	}
 
 	private boolean removeVacTrans(Transition transition) {
+		if (!transition.getDelay().contains("uniform") && !transition.getDelay().matches("[\\d-]+")) {
+			return false;
+		}
 		Place place = transition.getPostset()[0];
 		Place[] preset = transition.getPreset();
 		Transition[] postset = place.getPostset();
@@ -1800,6 +1815,9 @@ public class Abstraction extends LhpnFile {
 	}
 
 	private boolean removeVacTransAbs(Transition transition) {
+		if (!transition.getDelay().contains("uniform") && !transition.getDelay().matches("[\\d-]+")) {
+			return false;
+		}
 		Place place = transition.getPostset()[0];
 		Place[] preset = transition.getPreset();
 		Transition[] postset = place.getPostset();
@@ -1891,6 +1909,12 @@ public class Abstraction extends LhpnFile {
 			return;
 		}
 		if (trans1.containsDelay() && trans2.containsDelay()) {
+			if (!trans1.getDelay().contains("uniform") && !trans1.getDelay().matches("[\\d-]+")) {
+				return;
+			}
+			if (!trans2.getDelay().contains("uniform") && !trans2.getDelay().matches("[\\d-]+")) {
+				return;
+			}
 			String[] delay = { trans1.getDelay(), trans2.getDelay() };
 			String[][] delayRange = new String[2][2];
 			Pattern pattern = Pattern.compile("uniform\\((\\S+?),(\\S+?)\\)");
@@ -2778,6 +2802,12 @@ public class Abstraction extends LhpnFile {
 	}
 
 	private void mergeTransitions(Transition[] tArray, boolean abstraction) {
+		if (!tArray[0].getDelay().contains("uniform") && !tArray[1].getDelay().matches("[\\d-]+")) {
+			return;
+		}
+		if (!tArray[1].getDelay().contains("uniform") && !tArray[1].getDelay().matches("[\\d-]+")) {
+			return;
+		}
 		if (abstraction) {
 			if (transitions.containsKey(tArray[0].getName())
 					&& transitions.containsKey(tArray[1].getName())) {
