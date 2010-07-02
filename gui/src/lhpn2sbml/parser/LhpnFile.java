@@ -406,7 +406,7 @@ public class LhpnFile {
 	}
 
 	public void addInput(String name, String ic) {
-		Variable var = new Variable(name, "boolean", ic, false);
+		Variable var = new Variable(name, "boolean", ic, Variable.INPUT);
 		booleans.put(name, var);
 		if (!variables.contains(var)) {
 			variables.add(var);
@@ -414,7 +414,7 @@ public class LhpnFile {
 	}
 
 	public void addOutput(String name, String ic) {
-		Variable var = new Variable(name, "boolean", ic, true);
+		Variable var = new Variable(name, "boolean", ic, Variable.OUTPUT);
 		booleans.put(name, var);
 		if (!variables.contains(var)) {
 			variables.add(var);

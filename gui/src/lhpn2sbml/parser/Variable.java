@@ -12,7 +12,7 @@ public class Variable {
 	
 	private String initRate;
 	
-	private boolean output = true;
+	private String port;
 	
 	public Variable(String name, String type) {
 		this.name = name;
@@ -34,11 +34,11 @@ public class Variable {
 		}
 	}
 	
-	public Variable(String name, String type, String initValue, boolean output) {
+	public Variable(String name, String type, String initValue, String port) {
 		this.name = name;
 		this.type = type;
 		this.initValue = initValue;
-		this.output = output;
+		this.port = port;
 	}
 	
 	public void addInitValue(String initValue) {
@@ -68,8 +68,16 @@ public class Variable {
 		return initRate;
 	}
 	
+	public boolean isInput() {
+		return port.equals(INPUT);
+	}
+	
 	public boolean isOutput() {
-		return output;
+		return port.equals(OUTPUT);
+	}
+
+	public boolean isInternal() {
+		return port.equals(INTERNAL);
 	}
 	
 	public String toString() {
@@ -85,5 +93,11 @@ public class Variable {
 	public static final String INTEGER = "integer";
 	
 	public static final String CONTINUOUS = "continuous";
+	
+	public static final String INPUT = "input";
+	
+	public static final String OUTPUT = "output";
+	
+	public static final String INTERNAL = "internal";
 	
 }
