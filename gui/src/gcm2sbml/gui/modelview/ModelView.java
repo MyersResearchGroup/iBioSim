@@ -68,6 +68,7 @@ public class ModelView extends JPanel implements ActionListener {
 		if(graph == null){
 			graph = new BioGraph(internalModel);
 			
+			
 			// Listen for moved cells
 			graph.addListener(mxEvent.CELLS_MOVED, new mxEventSource.mxIEventListener() {
 				
@@ -93,7 +94,7 @@ public class ModelView extends JPanel implements ActionListener {
 					// if the graph isn't being built and this event
 					// comes through, remove all the cells from the 
 					// internal model that were specified.
-					if(graph.is_building == false){
+					if(graph.isBuilding == false){
 						Object cells[] = (Object [])event.getProperties().get("cells");
 						for(Object ocell:cells){
 							mxCell cell = (mxCell)ocell;
@@ -116,7 +117,7 @@ public class ModelView extends JPanel implements ActionListener {
 				public void invoke(Object arg0, mxEventObject event) {
 					
 					// if the graph is building, ignore the creation of edges.
-					if(graph.is_building == false){
+					if(graph.isBuilding == false){
 					
   						Object cells[] = (Object [])event.getProperties().get("cells");
 						
