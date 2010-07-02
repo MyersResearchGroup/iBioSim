@@ -104,7 +104,7 @@ public class BioGraph extends mxGraph {
 		this.speciesToMxCellMap.put(id, (mxCell)ret);
 		return ret;
 	}
-	public Object getSpeciesCell(String id){
+	public mxCell getSpeciesCell(String id){
 		return speciesToMxCellMap.get(id);
 	}
 	
@@ -121,7 +121,7 @@ public class BioGraph extends mxGraph {
 		this.influencesToMxCellMap.put(id, (mxCell)ret);
 		return ret;
 	}
-	public mxCell get_influence(String id){
+	public mxCell getInfluence(String id){
 		return (mxCell)(influencesToMxCellMap.get(id));
 	}
 	
@@ -129,9 +129,9 @@ public class BioGraph extends mxGraph {
 	 * Builds the graph based on the internal representation
 	 * @return
 	 */
-	public boolean is_building = false;
+	public boolean isBuilding = false;
 	public boolean buildGraph(){
-		this.is_building = true;
+		this.isBuilding = true;
 		
 		BioGraph graph = this;
 		
@@ -150,8 +150,8 @@ public class BioGraph extends mxGraph {
 		// Keep track of how many elements did not have positioning info.
 		// This allows us to stack them in the topleft corner until they
 		// are positioned by the user or a layout algorithm.
-		int unpositioned_species_count = 0;
-		int species_count = 0;
+		int unpositionedSpeciesCount = 0;
+		int speciesCount = 0;
 		for(String sp:internalModel.get("species").keySet()){ // SPECIES
 			Properties prop = internalModel.get("species").get(sp);
 			
@@ -165,17 +165,20 @@ public class BioGraph extends mxGraph {
 									prop.getProperty("label");
 						
 			if(x < -9998 || y < -9998){
-				unpositioned_species_count += 1;
+				unpositionedSpeciesCount += 1;
 				// Line the unpositioned species up nicely. The mod is there as a rough
 				// and dirty way to prevent
 				// them going off the bottom or right hand side of the screen.
-				x = (unpositioned_species_count%50) * 20;
-				y = (unpositioned_species_count%10) * (DEFAULT_SPECIES_HEIGHT + 10);
+				x = (unpositionedSpeciesCount%50) * 20;
+				y = (unpositionedSpeciesCount%10) * (DEFAULT_SPECIES_HEIGHT + 10);
 			}
 						
-			species_count += 1;
-			
+			speciesCount += 1;
+						
 			graph.insertVertex(parent, id, id, x, y, width, height);
+			
+			this.setSpeciesStyles(id);
+
 		}
 
 		// add all the edges
@@ -198,8 +201,8 @@ public class BioGraph extends mxGraph {
 		
 		graph.getModel().endUpdate();
 		
-		this.is_building = false;
-		return unpositioned_species_count == species_count;
+		this.isBuilding = false;
+		return unpositionedSpeciesCount == speciesCount;
 	}
 	
 	/**
@@ -217,11 +220,23 @@ public class BioGraph extends mxGraph {
 		else
 			style += mxConstants.ARROW_OPEN; // This should never happen.
 //		=[';p']
-		String label = prop.getProperty(GlobalConstants.PROMOTER, "");
 		
-		mxCell cell = this.get_influence(id);
+		// apply the style
+		mxCell cell = this.getInfluence(id);
 		cell.setStyle(style);
+
+		// apply the label
+		String label = prop.getProperty(GlobalConstants.PROMOTER, "");
+		cell.setValue(label);
+	}
+	
+	private void setSpeciesStyles(String id){
+		String style="";
 		
+		style += mxConstants.STYLE_SHAPE + "=" + mxConstants.SHAPE_ELLIPSE;
+		
+		mxCell cell = this.getSpeciesCell(id);
+		cell.setStyle(style);		
 	}
 	
 	/**
