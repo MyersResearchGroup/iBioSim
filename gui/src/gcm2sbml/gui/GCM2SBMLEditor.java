@@ -1179,7 +1179,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						selected = selected.split(" ")[0];
 					}
 				}
-				SpeciesPanel panel = new SpeciesPanel(selected, list, influences, gcm, paramsOnly, biosim);
+				SpeciesPanel panel = new SpeciesPanel(selected, list, influences, conditions, gcm, paramsOnly, biosim);
 				if (paramsOnly) {
 					String updates = panel.updates();
 					if (!updates.equals("")) {

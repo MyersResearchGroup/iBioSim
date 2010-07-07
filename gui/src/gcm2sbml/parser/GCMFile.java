@@ -282,7 +282,11 @@ public class GCMFile {
 		for (String s : comps) {
 			GCMFile file = new GCMFile(path);
 			file.load(path + separator + components.get(s).getProperty("gcm"));
-			file.setParameters(parameters);
+			for (String p : globalParameters.keySet()) {
+				if (!file.globalParameters.containsKey(p)) {
+					file.setParameter(p, globalParameters.get(p));
+				}
+			}
 			unionGCM(this, file, s);
 		}
 		components = new HashMap<String, Properties>();
@@ -293,7 +297,11 @@ public class GCMFile {
 		for (String s : mod) {
 			GCMFile file = new GCMFile(path);
 			file.load(path + separator + bottomLevel.components.get(s).getProperty("gcm"));
-			file.setParameters(bottomLevel.parameters);
+			for (String p : bottomLevel.globalParameters.keySet()) {
+				if (!file.globalParameters.containsKey(p)) {
+					file.setParameter(p, bottomLevel.globalParameters.get(p));
+				}
+			}
 			unionGCM(bottomLevel, file, s);
 		}
 		mod = setToArrayList(bottomLevel.promoters.keySet());
@@ -1054,6 +1062,27 @@ public class GCMFile {
 				influences.remove(s);
 			}
 		}
+		ArrayList<String> newConditions = new ArrayList<String>();
+		for (String condition : conditions) {
+			int index = condition.indexOf(oldName, 0);
+			if (index != -1) {
+				while (index <= condition.length() && index != -1) {
+					if (index != 0 && !Character.isDigit(condition.charAt(index - 1))
+							&& !Character.isLetter(condition.charAt(index - 1))
+							&& condition.charAt(index - 1) != '_'
+							&& index + oldName.length() != condition.length()
+							&& !Character.isDigit(condition.charAt(index + oldName.length()))
+							&& !Character.isLetter(condition.charAt(index + oldName.length()))
+							&& condition.charAt(index + oldName.length()) != '_') {
+						condition = condition.substring(0, index) + condition.substring(index, condition.length()).replace(oldName, newName);
+					}
+					index ++;
+					index = condition.indexOf(oldName, index);
+				}
+			}
+			newConditions.add(condition);
+		}
+		conditions = newConditions;
 		species.put(newName, species.get(oldName));
 		species.remove(oldName);
 	}
@@ -1107,36 +1136,119 @@ public class GCMFile {
 		components.put(name, properties);
 	}
 	
-	public boolean addCondition(String condition) {
+	public String addCondition(String condition) {
 		boolean retval = true;
-		for (String cond : condition.split("&&")) {
+		String finalCond = "";
+		ArrayList<String> split = new ArrayList<String>();
+		String splitting = condition;
+		while (splitting.contains("||")) {
+			split.add(splitting.substring(0, splitting.indexOf("||")));
+			splitting = splitting.substring(splitting.indexOf("||") + 2);
+		}
+		split.add(splitting);
+		for (String cond : split) {
+			finalCond += "(";
 			if (cond.split("->").length > 2) {
-				return false;
+				return null;
 			}
-			for (String part : cond.split("->")) {
-				ArrayList<String> specs = new ArrayList<String>();
-				ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
-				for (String spec : species.keySet()) {
-					specs.add(spec);
-					ArrayList<String> level = new ArrayList<String>();
-					level.add("0");
-					conLevel.add(level.toArray());
+			String[] split2 = cond.split("->");
+			int countLeft1 = 0;
+			int countRight1 = 0;
+			int countLeft2 = 0;
+			int countRight2 = 0;
+			int index = 0;
+			while (index <= split2[0].length()) {
+				index = split2[0].indexOf('(', index);
+				if (index == -1) {
+					break;
 				}
-				ExprTree expr = new ExprTree(convertToLHPN(specs, conLevel));
-				expr.token = expr.intexpr_gettok(part);
-				if (!part.equals("")) {
-					retval = (expr.intexpr_L(part) && retval);
+				countLeft1 ++;
+				index ++;
+			}
+			index = 0;
+			while (index <= split2[0].length()) {
+				index = split2[0].indexOf(')', index);
+				if (index == -1) {
+					break;
+				}
+				countRight1 ++;
+				index ++;
+			}
+			if (split2.length > 1) {
+				index = 0;
+				while (index <= split2[0].length()) {
+					index = split2[1].indexOf('(', index);
+					if (index == -1) {
+						break;
+					}
+					countLeft2 ++;
+					index ++;
+				}
+				index = 0;
+				while (index <= split2[0].length()) {
+					index = split2[1].indexOf(')', index);
+					if (index == -1) {
+						break;
+					}
+					countRight2 ++;
+					index ++;
+				}
+			}
+			if ((countLeft1 - countRight1) == (countRight2 - countLeft2)) {
+				for (int i = 0; i  < countLeft1 - countRight1; i ++) {
+					split2[0] += ")";
+					split2[1] = "(" + split2[1];
+				}
+			}
+			ArrayList<String> specs = new ArrayList<String>();
+			ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
+			for (String spec : species.keySet()) {
+				specs.add(spec);
+				ArrayList<String> level = new ArrayList<String>();
+				level.add("0");
+				conLevel.add(level.toArray());
+			}
+			ExprTree expr = new ExprTree(convertToLHPN(specs, conLevel));
+			expr.token = expr.intexpr_gettok(split2[0]);
+			if (!split2[0].equals("")) {
+				retval = (expr.intexpr_L(split2[0]) && retval);
+			}
+			else {
+				expr = null;
+				retval = false;
+			}
+			if (split2.length > 1) {
+				if (retval) {
+					finalCond += "(" + expr.toString() + ")->";
+				}
+				expr = new ExprTree(convertToLHPN(specs, conLevel));
+				expr.token = expr.intexpr_gettok(split2[0]);
+				if (!split2[0].equals("")) {
+					retval = (expr.intexpr_L(split2[0]) && retval);
 				}
 				else {
 					expr = null;
 					retval = false;
 				}
+				if (retval) {
+					finalCond += "(" + expr.toString() + ")";
+				}
 			}
+			else if (retval) {
+				finalCond += expr.toString();
+			}
+			finalCond += ")||";
+		}
+		finalCond = finalCond.substring(0, finalCond.length() - 2);
+		if (retval) {
+			conditions.add(finalCond);
 		}
 		if (retval) {
-			conditions.add(condition);
+			return finalCond;
 		}
-		return retval;
+		else {
+			return null;
+		}
 	}
 	
 	public void removeCondition(String condition) {
