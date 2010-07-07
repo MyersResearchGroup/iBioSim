@@ -464,6 +464,9 @@ public class GCMFile {
 		for (String infl : bottomLevel.influences.keySet()) {
 			topLevel.addInfluences(infl, bottomLevel.influences.get(infl));
 		}
+		for (String cond : bottomLevel.conditions) {
+			topLevel.addCondition(cond);
+		}
 	}
 
 	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
