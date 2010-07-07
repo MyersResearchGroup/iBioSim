@@ -96,6 +96,9 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 
 		// this.directory = directory;
 		lhpnFile = lhpn;
+		if (lhpnFile == null) {
+			lhpnFile = new LhpnFile();
+		}
 		this.directory = directory;
 		if (filename != null) {
 			File f = new File(directory + separator + filename);
