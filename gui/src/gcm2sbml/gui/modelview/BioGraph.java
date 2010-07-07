@@ -11,6 +11,7 @@ import gcm2sbml.util.GlobalConstants;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.Properties;
 
 //import javax.xml.bind.JAXBElement.GlobalScope;
@@ -23,6 +24,7 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
 import com.mxgraph.view.mxGraph;
+import com.mxgraph.view.mxStylesheet;
 
 /**
  * @author tyler
@@ -31,7 +33,7 @@ import com.mxgraph.view.mxGraph;
 public class BioGraph extends mxGraph {
 
 	private static final int DEFAULT_SPECIES_WIDTH = 100;
-	private static final int DEFAULT_SPECIES_HEIGHT = 20;
+	private static final int DEFAULT_SPECIES_HEIGHT = 30;
 	
 	/**
 	 * Map species to their graph nodes by id. This map is
@@ -63,6 +65,7 @@ public class BioGraph extends mxGraph {
 		this.initializeMaps();
 		this.internalModel = internalModel;
 	
+		createStyleSheets();
 	}
 	
 	public void cellClickHandler(mxCell cell){
@@ -132,53 +135,21 @@ public class BioGraph extends mxGraph {
 	public boolean isBuilding = false;
 	public boolean buildGraph(){
 		this.isBuilding = true;
-		
-		BioGraph graph = this;
-		
+
 		// remove all the components from the graph if there are any
-		graph.selectAll();
-		graph.removeCells();
+		this.selectAll();
+		this.removeCells();
 		initializeMaps();
 		
 		assert(this.internalModel != null);
 		
-		Object parent = graph.getDefaultParent();
-		
 		// Start an undo transaction
-		graph.getModel().beginUpdate();
+		this.getModel().beginUpdate();
 		
-		// Keep track of how many elements did not have positioning info.
-		// This allows us to stack them in the topleft corner until they
-		// are positioned by the user or a layout algorithm.
-		int unpositionedSpeciesCount = 0;
-		int speciesCount = 0;
+		boolean needsPositioning = false;
 		for(String sp:internalModel.get("species").keySet()){ // SPECIES
-			Properties prop = internalModel.get("species").get(sp);
-			
-			double x = Double.parseDouble(prop.getProperty("graphx", "-9999"));
-			double y = Double.parseDouble(prop.getProperty("graphy", "-9999"));;
-			double width = Double.parseDouble(prop.getProperty("graphwidth", String.valueOf(DEFAULT_SPECIES_WIDTH)));;
-			double height = Double.parseDouble(prop.getProperty("graphheight", String.valueOf(DEFAULT_SPECIES_HEIGHT)));
-			String id = !(prop.getProperty(GlobalConstants.NAME, "").equals("")) ? 
-							prop.getProperty(GlobalConstants.NAME) : 
-								!prop.getProperty("ID", "").equals("") ? prop.getProperty("ID", ""):
-									prop.getProperty("label");
-						
-			if(x < -9998 || y < -9998){
-				unpositionedSpeciesCount += 1;
-				// Line the unpositioned species up nicely. The mod is there as a rough
-				// and dirty way to prevent
-				// them going off the bottom or right hand side of the screen.
-				x = (unpositionedSpeciesCount%50) * 20;
-				y = (unpositionedSpeciesCount%10) * (DEFAULT_SPECIES_HEIGHT + 10);
-			}
-						
-			speciesCount += 1;
-						
-			graph.insertVertex(parent, id, id, x, y, width, height);
-			
-			this.setSpeciesStyles(id);
-
+			if(createVertexFromModel(sp))
+				needsPositioning = true;
 		}
 
 		// add all the edges
@@ -190,23 +161,63 @@ public class BioGraph extends mxGraph {
 			
 
 					
-			Object edge = graph.insertEdge(parent, id, "", 
-					graph.getSpeciesCell(GCMFile.getInput(inf)), 
-					graph.getSpeciesCell(GCMFile.getOutput(inf))
+			this.insertEdge(this.getDefaultParent(), id, "", 
+					this.getSpeciesCell(GCMFile.getInput(inf)), 
+					this.getSpeciesCell(GCMFile.getOutput(inf))
 					);
 			
 			updateInfluenceVisuals(id);
 			
 		}
 		
-		graph.getModel().endUpdate();
+		this.getModel().endUpdate();
 		
 		this.isBuilding = false;
-		return unpositionedSpeciesCount == speciesCount;
+		return needsPositioning;
+	}
+	
+	// Keep track of how many elements did not have positioning info.
+	// This allows us to stack them in the topleft corner until they
+	// are positioned by the user or a layout algorithm.
+	int unpositionedSpeciesCount = 0;
+	
+	/**
+	 * creates a vertex on the graph using the internal model.
+	 * @param id
+	 * 
+	 * @return: A bool, true if the species had to be positioned.
+	 */
+	private boolean createVertexFromModel(String sp){
+		Properties prop = internalModel.get("species").get(sp);
+		
+		double x = Double.parseDouble(prop.getProperty("graphx", "-9999"));
+		double y = Double.parseDouble(prop.getProperty("graphy", "-9999"));;
+		double width = Double.parseDouble(prop.getProperty("graphwidth", String.valueOf(DEFAULT_SPECIES_WIDTH)));;
+		double height = Double.parseDouble(prop.getProperty("graphheight", String.valueOf(DEFAULT_SPECIES_HEIGHT)));
+		String id = !(prop.getProperty(GlobalConstants.NAME, "").equals("")) ? 
+						prop.getProperty(GlobalConstants.NAME) : 
+							!prop.getProperty("ID", "").equals("") ? prop.getProperty("ID", ""):
+								prop.getProperty("label");
+		boolean needsPositioning = false;	
+		if(x < -9998 || y < -9998){
+			unpositionedSpeciesCount += 1;
+			needsPositioning = true;
+			// Line the unpositioned species up nicely. The mod is there as a rough
+			// and dirty way to prevent
+			// them going off the bottom or right hand side of the screen.
+			x = (unpositionedSpeciesCount%50) * 20;
+			y = (unpositionedSpeciesCount%10) * (DEFAULT_SPECIES_HEIGHT + 10);
+		}
+
+		this.insertVertex(this.getDefaultParent(), id, id, x, y, width, height);
+		
+		this.setSpeciesStyles(sp);
+		
+		return needsPositioning;
 	}
 	
 	/**
-	 * Given an id, update the style of the influence.
+	 * Given an id, update the style of the influence based on the internal model.
 	 */
 	private void updateInfluenceVisuals(String id){
 		Properties prop = internalModel.get("influences").get(id);
@@ -230,10 +241,22 @@ public class BioGraph extends mxGraph {
 		cell.setValue(label);
 	}
 	
+	/**
+	 * Builds the style sheets that will be used by the graph.
+	 */
+	public void createStyleSheets(){
+		mxStylesheet stylesheet = this.getStylesheet();
+		Hashtable<String, Object> style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+		style.put(mxConstants.STYLE_OPACITY, 50);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#774400");
+		//style.put(mxConstants.RECTANGLE_ROUNDING_FACTOR, .2);
+		style.put(mxConstants.STYLE_ROUNDED, true);
+		stylesheet.putCellStyle("ROUNDED", style);
+	}
+	
 	private void setSpeciesStyles(String id){
-		String style="";
-		
-		style += mxConstants.STYLE_SHAPE + "=" + mxConstants.SHAPE_ELLIPSE;
+		String style="ROUNDED;";
 		
 		mxCell cell = this.getSpeciesCell(id);
 		cell.setStyle(style);		
@@ -249,6 +272,36 @@ public class BioGraph extends mxGraph {
 		internalModel.get("influences").put(id, prop);
 		this.influencesToMxCellMap.put(id, cell);
 		updateInfluenceVisuals(id);
+	}
+	
+	/**
+	 * creates and adds a new species.
+	 * @param id: the new id. If null the id will be generated
+	 * @param x
+	 * @param y
+	 */
+	private int creatingSpeciesID = 0;
+	public void createSpecies(String id, float x, float y){
+		if(id == null){
+			do{
+				creatingSpeciesID++;
+				id = "S" + String.valueOf(creatingSpeciesID);
+			}while(internalModel.get("species").containsKey(id));
+		}
+		Properties prop = new Properties();
+		prop.setProperty(GlobalConstants.NAME, "");
+		prop.setProperty("label", id);
+		prop.setProperty("ID", id);
+		prop.setProperty("Type", "normal");
+		prop.setProperty("graphwidth", String.valueOf(DEFAULT_SPECIES_WIDTH));
+		prop.setProperty("graphheight", String.valueOf(DEFAULT_SPECIES_HEIGHT));
+		prop.setProperty("graphx", String.valueOf(x - DEFAULT_SPECIES_WIDTH/2));
+		prop.setProperty("graphy", String.valueOf(y - DEFAULT_SPECIES_HEIGHT/2));
+		internalModel.get("species").put(id, prop);
+		
+		this.getModel().beginUpdate();
+		this.createVertexFromModel(id);
+		this.getModel().endUpdate();
 	}
 	
 	public void applyLayout(String ident, mxGraphComponent graphComponent){
