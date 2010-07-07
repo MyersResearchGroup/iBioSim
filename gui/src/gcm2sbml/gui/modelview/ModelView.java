@@ -28,7 +28,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
+import javax.swing.JSeparator;
 import javax.swing.JToolBar;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 
 import com.mxgraph.model.mxCell;
@@ -68,107 +70,7 @@ public class ModelView extends JPanel implements ActionListener {
 		if(graph == null){
 			graph = new BioGraph(internalModel);
 			
-			
-			// Listen for moved cells
-			graph.addListener(mxEvent.CELLS_MOVED, new mxEventSource.mxIEventListener() {
-				
-//				@Override
-				public void invoke(Object arg0, mxEventObject event) {
-
-					Object cells[] = (Object [])event.getProperties().get("cells");
-
-					for(int i=0; i<cells.length; i++){
-						mxCell cell = (mxCell)cells[i];
-						graph.updateInternalPosition(cell);
-					}
-					
-				}
-			});
-			
-			// Listen for deleted cells
-			graph.addListener(mxEvent.CELLS_REMOVED, new mxEventSource.mxIEventListener() {
-				
-//				@Override
-				public void invoke(Object arg0, mxEventObject event) {
-
-					// if the graph isn't being built and this event
-					// comes through, remove all the cells from the 
-					// internal model that were specified.
-					if(graph.isBuilding == false){
-						Object cells[] = (Object [])event.getProperties().get("cells");
-						for(Object ocell:cells){
-							mxCell cell = (mxCell)ocell;
-							System.out.print(cell.getId() + " Deleting.\n");
-							if(cell.isEdge()){
-								internalModel.get("influences").remove(cell.getId());
-								PropertiesLauncher.getInstance().removeInfluenceFromList(cell.getId());
-							}else if(cell.isVertex()){
-								internalModel.get("species").remove(cell.getId());
-								PropertiesLauncher.getInstance().removeSpeciesFromList(cell.getId());
-							}
-						}
-					}
-				}
-			});
-
-//			// listener for added verticies
-			graph.addListener(mxEvent.CELLS_ADDED, new mxEventSource.mxIEventListener() {
-//				@Override
-				public void invoke(Object arg0, mxEventObject event) {
-					
-					// if the graph is building, ignore the creation of edges.
-					if(graph.isBuilding == false){
-					
-  						Object cells[] = (Object [])event.getProperties().get("cells");
-						
-						if(cells.length == 1 && ((mxCell)(cells[0])).isEdge()){
-		
-							mxCell edge = (mxCell)(cells[0]);
-							
-							// make sure there is a target cell. If there isn't it is because
-							// the user dragged an edge and let it go when it wasn't connected
-							// to anything. Remove it and return if this is the case.
-							if(edge.getTarget() == null){
-								graph.removeCells(cells);
-								return;
-							}
-							
-							String sourceId = edge.getSource().getId();
-							String targetId = edge.getTarget().getId();
-							
-							String isBio;
-							String type;
-							String constType;
-							if(activation_button.isSelected()){
-								isBio = "no"; type = "activation"; constType = GlobalConstants.ACTIVATION;
-							}else if(inhibition_button.isSelected()){
-								isBio = "no"; type = "inhibition"; constType = GlobalConstants.REPRESSION;
-							}else if(bio_activation_button.isSelected()){
-								isBio = "yes"; type = "activation"; constType = GlobalConstants.ACTIVATION;
-							}else if(bio_inhibition_button.isSelected()){
-								isBio = "yes"; type = "inhibition"; constType = GlobalConstants.REPRESSION;
-							}else if(no_influence_button.isSelected()){
-								isBio = ""; type = "no influence"; constType = GlobalConstants.NOINFLUENCE;
-							}else{
-								throw(new Error("No influence button was pressed!"));
-							}
-							
-							// TODO: If the user drags an influence onto nothing, it is intended that a new 
-							// species will be created and the influence attached to it. We need to handle 
-							// that eventuality.
-							
-							String promoter = "default";
-							String name = InfluencePanel.buildName(sourceId, targetId, type, isBio, promoter);
-							
-							graph.addInfluence(edge, name, constType);
-							PropertiesLauncher.getInstance().addInfluenceToList(name);
-						}
-					}
-
-				}
-			});
-			
-			
+			addGraphListeners();
 			
 			refreshGraph();
 		}
@@ -182,25 +84,7 @@ public class ModelView extends JPanel implements ActionListener {
 			this.add(graphComponent, BorderLayout.CENTER);
 			this.add(buildToolBar(), BorderLayout.NORTH);
 			
-			// Add a listener for when cells get clicked on.
-			graphComponent.getGraphControl().addMouseListener(new MouseAdapter(){
-				public void mouseReleased(MouseEvent e)
-				{
-					if(e.getClickCount() == 2){
-						mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
-						
-						if (cell != null){
-							System.out.println("cell="+graph.getLabel(cell) + " " + e.getClickCount());
-							graph.cellClickHandler(cell);
-							refreshGraph();
-							
-						}
-					}else if (e.isPopupTrigger()){
-						showGraphPopupMenu(e);
-					}
-				}
-			});
-			
+			addGraphComponentListeners();
 		}
 	
 	
@@ -223,32 +107,50 @@ public class ModelView extends JPanel implements ActionListener {
 	 * create the toolbar.
 	 * @return
 	 */
-	AbstractButton activation_button;
-	AbstractButton inhibition_button;
-	AbstractButton bio_activation_button;
-	AbstractButton bio_inhibition_button;
-	AbstractButton no_influence_button;
+	AbstractButton selectButton;
+	AbstractButton addSpeciesButton;
+	AbstractButton addComponentButton;
+	AbstractButton editPromotorButton;
+	
+	AbstractButton activationButton;
+	AbstractButton inhibitionButton;
+	AbstractButton bioActivationButton;
+	AbstractButton bioInhibitionButton;
+	AbstractButton noInfluenceButton;
 	private JToolBar buildToolBar(){
 
 		JToolBar toolBar = new JToolBar();
+		
+		ButtonGroup modeButtonGroup = new ButtonGroup();
+		selectButton =Utils.makeRadioToolButton("select_mode.png", "", "Select Mode", this, modeButtonGroup); 
+		toolBar.add(selectButton);
+		selectButton.setSelected(true);
+		addSpeciesButton = Utils.makeRadioToolButton("add_species.png", "", "Add Species Mode", this, modeButtonGroup);
+		toolBar.add(addSpeciesButton);
+		addComponentButton = Utils.makeRadioToolButton("add_component.png", "", "Add Component Mode", this, modeButtonGroup);
+		toolBar.add(addComponentButton);
+		editPromotorButton = Utils.makeRadioToolButton("promoter_mode.png", "", "P", this, modeButtonGroup);
+		toolBar.add(editPromotorButton);
+		//toolBar.add(Utils.makeToolButton("", "addInfluence", "Add Influence", this));
 
-		toolBar.add(Utils.makeToolButton("", "showLayouts", "Apply Layout", this));
-		toolBar.add(Utils.makeToolButton("add_species.png", "addSpecies", "Add Species", this));
-		toolBar.add(Utils.makeToolButton("", "addInfluence", "Add Influence", this));
-
+		toolBar.addSeparator();
 		ButtonGroup influenceButtonGroup = new ButtonGroup();
 		
-		activation_button = Utils.makeRadioToolButton("activation.png", "", "Create Activation Influences", this, influenceButtonGroup);
-		activation_button.setSelected(true);
-		toolBar.add(activation_button);
-		inhibition_button = Utils.makeRadioToolButton("inhibition.png", "", "Create Repression Influences", this, influenceButtonGroup);
-		toolBar.add(inhibition_button);
-		bio_activation_button = Utils.makeRadioToolButton("bio_activation.png", "", "Create Biological Activation Influences", this, influenceButtonGroup);
-		toolBar.add(bio_activation_button);
-		bio_inhibition_button = Utils.makeRadioToolButton("bio_inhibition.png", "", "Create Biological Repression Influences", this, influenceButtonGroup);
-		toolBar.add(bio_inhibition_button);
-		no_influence_button = Utils.makeRadioToolButton("no_influence.png", "", "Explicitly Set No Influences", this, influenceButtonGroup);
-		toolBar.add(no_influence_button);
+		activationButton = Utils.makeRadioToolButton("activation.png", "", "Create Activation Influences", this, influenceButtonGroup);
+		activationButton.setSelected(true);
+		toolBar.add(activationButton);
+		inhibitionButton = Utils.makeRadioToolButton("inhibition.png", "", "Create Repression Influences", this, influenceButtonGroup);
+		toolBar.add(inhibitionButton);
+		bioActivationButton = Utils.makeRadioToolButton("bio_activation.png", "", "Create Biological Activation Influences", this, influenceButtonGroup);
+		toolBar.add(bioActivationButton);
+		bioInhibitionButton = Utils.makeRadioToolButton("bio_inhibition.png", "", "Create Biological Repression Influences", this, influenceButtonGroup);
+		toolBar.add(bioInhibitionButton);
+		noInfluenceButton = Utils.makeRadioToolButton("no_influence.png", "", "Explicitly Set No Influences", this, influenceButtonGroup);
+		toolBar.add(noInfluenceButton);
+		
+		toolBar.addSeparator();
+		
+		toolBar.add(Utils.makeToolButton("choose_layout.png", "showLayouts", "Apply Layout", this));
 		
 		return toolBar;
 	}
@@ -274,15 +176,16 @@ public class ModelView extends JPanel implements ActionListener {
 		}else if(command.indexOf("layout_") == 0){
 			// Layout actioncommands are prepended with "_"
 			command = command.substring(command.indexOf('_')+1);
+			graph.buildGraph(); // rebuild, quick way to clear out any edge midpoints.
 			graph.applyLayout(command, this.graphComponent);
-		}else if(command == "addSpecies"){
-			PropertiesLauncher.getInstance().launchSpeciesEditor(null);
-			
-			refreshGraph();
-		}else if(command == "addInfluence"){
-			PropertiesLauncher.getInstance().launchInfluencePanel(null);
-			
-			refreshGraph();
+//		}else if(command == "addSpecies"){
+//			PropertiesLauncher.getInstance().launchSpeciesEditor(null);
+//			
+//			refreshGraph();
+//		}else if(command == "addInfluence"){
+//			PropertiesLauncher.getInstance().launchInfluencePanel(null);
+//			
+//			refreshGraph();
 		}else if(command == ""){
 			// radio buttons don't have to do anything and have an action command of "".
 		}else{
@@ -290,6 +193,170 @@ public class ModelView extends JPanel implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Add listeners for the graph component
+	 */
+	private void addGraphComponentListeners(){
+
+		
+		// Add a listener for when cells get clicked on.
+		graphComponent.getGraphControl().addMouseListener(new MouseAdapter(){
+			public void mouseReleased(MouseEvent e)
+			{
+				if (e.isPopupTrigger()){
+					// rightclick on windows
+					showGraphPopupMenu(e);
+				}else if(e.getClickCount() == 1){
+					// single click.
+					// First check and if the user clicked on a component, let the graph lib take care of it.
+					mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
+					if(cell == null){
+						// If control gets here, the user clicked once, and not on any component.
+						if(selectButton.isSelected()){
+							// do the default graph lib behavior
+						}else if(addSpeciesButton.isSelected()){
+							// plop a species down with good default info at the mouse coordinates
+							graph.createSpecies(null, e.getX(), e.getY());
+						}else if(addComponentButton.isSelected()){
+							// Ask the user which component to add, then plop it down where the click happened
+						}else if(editPromotorButton.isSelected()){
+							// If the thing clicked on was an influence, bring up it's promotor window.
+						}else{
+							throw(new Error("No valid mode button is selected!"));
+						}
+					}
+				}else if(e.getClickCount() == 2){
+					// double click
+					mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
+					
+					if (cell != null){
+						System.out.println("cell="+graph.getLabel(cell) + " " + e.getClickCount());
+						graph.cellClickHandler(cell);
+						refreshGraph();
+						
+					}
+				}
+			}
+		});
+		
+		// Add a special listener for the MAC. Rightclick only works on mousedown,
+		// while on windows it only works on mouseup.
+		graphComponent.getGraphControl().addMouseListener(new MouseAdapter(){
+			public void mousePressed(MouseEvent e)
+			{
+				if (e.isPopupTrigger()){
+					// rightclick on mac
+					showGraphPopupMenu(e);
+				}
+			}
+		});
+	}
+	
+	/**
+	 * Adds listeners to the graph that watch for changes we are interested in.
+	 */
+	private void addGraphListeners(){
+		// Listen for moved cells
+		graph.addListener(mxEvent.CELLS_MOVED, new mxEventSource.mxIEventListener() {
+			
+//			@Override
+			public void invoke(Object arg0, mxEventObject event) {
+
+				Object cells[] = (Object [])event.getProperties().get("cells");
+
+				for(int i=0; i<cells.length; i++){
+					mxCell cell = (mxCell)cells[i];
+					graph.updateInternalPosition(cell);
+				}
+				
+			}
+		});
+		
+		// Listen for deleted cells
+		graph.addListener(mxEvent.CELLS_REMOVED, new mxEventSource.mxIEventListener() {
+			
+//			@Override
+			public void invoke(Object arg0, mxEventObject event) {
+
+				// if the graph isn't being built and this event
+				// comes through, remove all the cells from the 
+				// internal model that were specified.
+				if(graph.isBuilding == false){
+					Object cells[] = (Object [])event.getProperties().get("cells");
+					for(Object ocell:cells){
+						mxCell cell = (mxCell)ocell;
+						System.out.print(cell.getId() + " Deleting.\n");
+						if(cell.isEdge()){
+							internalModel.get("influences").remove(cell.getId());
+							PropertiesLauncher.getInstance().removeInfluenceFromList(cell.getId());
+						}else if(cell.isVertex()){
+							internalModel.get("species").remove(cell.getId());
+							PropertiesLauncher.getInstance().removeSpeciesFromList(cell.getId());
+						}
+					}
+				}
+			}
+		});
+
+//		// listener for added influences
+		graph.addListener(mxEvent.CELLS_ADDED, new mxEventSource.mxIEventListener() {
+//			@Override
+			public void invoke(Object arg0, mxEventObject event) {
+				
+				// if the graph is building, ignore the creation of edges.
+				if(graph.isBuilding == false){
+				
+						Object cells[] = (Object [])event.getProperties().get("cells");
+					
+					if(cells.length == 1 && ((mxCell)(cells[0])).isEdge()){
+	
+						mxCell edge = (mxCell)(cells[0]);
+						
+						// make sure there is a target cell. If there isn't it is because
+						// the user dragged an edge and let it go when it wasn't connected
+						// to anything. Remove it and return if this is the case.
+						if(edge.getTarget() == null){
+							graph.removeCells(cells);
+							return;
+						}
+						
+						String sourceId = edge.getSource().getId();
+						String targetId = edge.getTarget().getId();
+						
+						String isBio;
+						String type;
+						String constType;
+						if(activationButton.isSelected()){
+							isBio = "no"; type = "activation"; constType = GlobalConstants.ACTIVATION;
+						}else if(inhibitionButton.isSelected()){
+							isBio = "no"; type = "inhibition"; constType = GlobalConstants.REPRESSION;
+						}else if(bioActivationButton.isSelected()){
+							isBio = "yes"; type = "activation"; constType = GlobalConstants.ACTIVATION;
+						}else if(bioInhibitionButton.isSelected()){
+							isBio = "yes"; type = "inhibition"; constType = GlobalConstants.REPRESSION;
+						}else if(noInfluenceButton.isSelected()){
+							isBio = ""; type = "no influence"; constType = GlobalConstants.NOINFLUENCE;
+						}else{
+							throw(new Error("No influence button was pressed!"));
+						}
+						
+						// TODO: If the user drags an influence onto nothing, it is intended that a new 
+						// species will be created and the influence attached to it. We need to handle 
+						// that eventuality.
+						
+						String promoter = "default";
+						String name = InfluencePanel.buildName(sourceId, targetId, type, isBio, promoter);
+						
+						graph.addInfluence(edge, name, constType);
+						PropertiesLauncher.getInstance().addInfluenceToList(name);
+					}
+				}
+
+			}
+		});
+		
+		
+	}
 	
 	////// Coppied from mxGraph example file BasicGraphEditor.java
 	
