@@ -62,7 +62,8 @@ public class ConditionsPanel extends JPanel {
 			if (selected != null) {
 				gcm.removeCondition(oldName);
 			}
-			if (gcm.addCondition(id)) {
+			id = gcm.addCondition(id);
+			if (id != null) {
 				conditionList.removeItem(oldName);
 				conditionList.addItem(id);
 				conditionList.setSelectedValue(id, true);

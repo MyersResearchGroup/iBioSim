@@ -20,6 +20,7 @@ public class PropertiesLauncher {
 	private GCMFile gcmFile;
 	PropertyList speciesList;
 	PropertyList influencesList;
+	PropertyList conditionsList;
 	PropertyList propertyList;
 	boolean paramsOnly;
 	
@@ -41,6 +42,7 @@ public class PropertiesLauncher {
 		this.gcmFile = gcmFile;
 		this.speciesList = speciesList;
 		this.influencesList = influencesList;
+		this.conditionsList = conditionsList;
 		this.propertyList = propertyList;
 		this.paramsOnly = paramsOnly;
 		
@@ -56,7 +58,7 @@ public class PropertiesLauncher {
 	public void launchSpeciesEditor(String selected){
 		ensureInitialized();
 		
-		SpeciesPanel panel = new SpeciesPanel(selected, speciesList, influencesList, gcmFile, paramsOnly, biosim);
+		SpeciesPanel panel = new SpeciesPanel(selected, speciesList, influencesList, conditionsList, gcmFile, paramsOnly, biosim);
 	}
 	
 	public void launchInfluencePanel(String selected){
