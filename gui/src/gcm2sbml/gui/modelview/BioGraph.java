@@ -129,6 +129,18 @@ public class BioGraph extends mxGraph {
 	}
 	
 	/**
+	 * called after a species is deleted. Make sure to delete it from
+	 * the internal model.
+	 * @param id
+	 */
+	public void speciesRemoved(String id){
+		this.speciesToMxCellMap.remove(id);
+	}
+	public void influenceRemoved(String id){
+		this.influencesToMxCellMap.remove(id);
+	}
+	
+	/**
 	 * Builds the graph based on the internal representation
 	 * @return
 	 */

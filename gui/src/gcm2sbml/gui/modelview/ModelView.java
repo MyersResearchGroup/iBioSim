@@ -289,9 +289,11 @@ public class ModelView extends JPanel implements ActionListener {
 						if(cell.isEdge()){
 							internalModel.get("influences").remove(cell.getId());
 							PropertiesLauncher.getInstance().removeInfluenceFromList(cell.getId());
+							graph.influenceRemoved(cell.getId());
 						}else if(cell.isVertex()){
 							internalModel.get("species").remove(cell.getId());
 							PropertiesLauncher.getInstance().removeSpeciesFromList(cell.getId());
+							graph.speciesRemoved(cell.getId());
 						}
 					}
 				}
