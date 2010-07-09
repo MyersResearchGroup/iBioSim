@@ -2,16 +2,16 @@ package learn;
 
 //import gcm2sbml.parser.GCMFile;
 import lhpn2sbml.parser.LhpnFile;
-//import lhpn2sbml.parser.ExprTree;
+import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.Lpn2verilog;
 import parser.*;
-//import java.awt.*;
-//import java.awt.List;
-//import java.awt.event.*;
-import java.awt.Container;
+import java.awt.*;
+import java.awt.List;
+import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-//import java.util.regex.*;
+import java.util.prefs.Preferences;
+import java.util.regex.*;
 //import java.util.regex.Pattern;
 
 import javax.swing.*;
@@ -19,30 +19,37 @@ import javax.swing.*;
 //import org.sbml.libsbml.*;
 import biomodelsim.*;
 
+import org.jdesktop.layout.*;
+
 /**
-* This class is meant for learning LPNs from simulation data. 
-* It is mostly the same as LearnLHPN class, except that this is 
-* not tied to GUI. This could have been a single method in LearnLHPN 
-* class but since most of the variables are global, this is done as 
-* a separate class.
-* 
-* @author Satish Batchu
-*/
-public class LearnLPN extends JPanel {
+ * This class generates an LHPN model from the simulation traces provided
+ * in the learn view. The generated LHPN is stored in an object of type
+ * lhpn2sbml.parser.LHPNfile . It is then saved in *.lpn file using the
+ * save() method of the above class.
+ * 
+ * Rev. 1 - Kevin Jones
+ * Rev. 2 - Scott Little (data2lhpn.py) 
+ * Rev. 3 - Satish Batchu ( dataToLHPN() )
+ */
+
+
+public class LearnModel { // added ItemListener SB
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
-	private String directory;
+	private String directory, lrnFile;
 
-//	private Log log;
+	private Log log;
 
 	private String separator;
 
 	private BioSim biosim;
 
-	private String lhpnFile;
+	private String learnFile, lhpnFile;
 
 	private ArrayList<Variable> reqdVarsL;
+	
+	//private ArrayList<String> careVars;
 
 	private ArrayList<Integer> reqdVarIndices;
 
@@ -50,8 +57,12 @@ public class LearnLPN extends JPanel {
 
 	private ArrayList<String> varNames;
 
+	//private HashMap<String, int[]> careBins; 
+	
 	private int[][] bins;
 
+	private ArrayList<ArrayList<Double>> divisionsL;
+	
 	private HashMap<String, ArrayList<Double>> thresholds;
 
 	private Double[][] rates;
@@ -66,15 +77,25 @@ public class LearnLPN extends JPanel {
 
 	private LhpnFile g;
 
-	private Integer numPlaces = 0, numTransitions = 0;
+	private Integer numPlaces = 0;
 
-	private HashMap<String, Properties> placeInfo, transitionInfo;
+	private Integer numTransitions = 0;
+
+	private HashMap<String, Properties> placeInfo;
+
+	private HashMap<String, Properties> transitionInfo;
 	
 	private HashMap<String, Properties> cvgInfo;
 
-	private Double minDelayVal = 10.0, minRateVal = 10.0, minDivisionVal = 10.0;
+	private Double minDelayVal = 10.0;
 
-	private Double delayScaleFactor, valScaleFactor;
+	private Double minRateVal = 10.0;
+
+	private Double minDivisionVal = 10.0;
+
+	private Double delayScaleFactor = 1.0;
+
+	private Double valScaleFactor = 1.0;
 
 	BufferedWriter out;
 
@@ -87,8 +108,14 @@ public class LearnLPN extends JPanel {
 
 	private Double runTime ; // = 5e-12; // 10e-6 for intFixed; 5e-6 for integrator. 5e-12 for pd;// the amount of time that must pass to be considered constant when using absoluteTime
 
+	private boolean absoluteTime ; // = true; // true for intfixed //false; true for pd; false for integrator// when False time points are used to determine DMVC and when true absolutime time is used to determine DMVC
+
 	private double percent ; // = 0.8; // a decimal value representing the percent of the total trace that must be constant to qualify to become a DMVC var
 
+	private Double[] lowerLimit;
+	
+	private Double[] upperLimit; 
+	
 	private String[] transEnablingsVHDL;
 	
 	private String[][] transIntAssignVHDL;
@@ -109,13 +136,33 @@ public class LearnLPN extends JPanel {
 
 	private HashMap<String, Properties> transientNetTransitions;
 
-	private ArrayList<String> ratePlaces;
-
+	private ArrayList<String> propPlaces;
+	
 	private boolean vamsRandom = false;
 	
 	private HashMap<String,Properties> dmvcValuesUnique;
-
+	
+	private Double dsFactor, vsFactor;
+	
+	private String currentPlace;
+	
+	private String[] currPlaceBin;
+	
+	private LhpnFile lpnWithPseudo;
+	
+	private int pseudoTransNum = 0;
+	
+	private HashMap<String,Boolean> pseudoVars;
+	
 	private ArrayList<HashMap<String, String>> constVal;
+	
+	private boolean dmvDetectDone = false;
+
+	private boolean dmvStatusLoaded = false;
+	
+	private int pathLengthVar = 40;
+
+	private boolean binError;
 	
 	// Pattern lParenR = Pattern.compile("\\(+"); //SB
 	
@@ -128,27 +175,29 @@ public class LearnLPN extends JPanel {
 	 * fields, puts them on panels, adds the panels to the frame, and then
 	 * displays the frame.
 	 */
-	public LhpnFile learnLPN(String directory, Log log, BioSim biosim, int moduleNumber, HashMap<String, ArrayList<Double>> thresholds, HashMap<String,Double> tPar, ArrayList<Variable> reqdVarsL, ArrayList<String> varNames, Double valScaleFactor, Double delayScaleFactor) {
+	public LhpnFile learnModel(String directory, Log log, BioSim biosim, int moduleNumber, HashMap<String, ArrayList<Double>> thresh, HashMap<String,Double> tPar, ArrayList<Variable> rVarsL, Double vScaleFactor, Double dScaleFactor, String failProp) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		} else {
 			separator = File.separator;
 		}
 
-		//this.log = log;
-		this.directory = directory;
 		this.biosim = biosim;
-		this.reqdVarsL = reqdVarsL;
-		this.thresholds = thresholds;
-		this.valScaleFactor = valScaleFactor;
-		this.delayScaleFactor = delayScaleFactor;
-		this.varNames = varNames;
-		
+		this.log = log;
+		this.directory = directory;
+		this.reqdVarsL = rVarsL;
+		this.thresholds = thresh;
+		this.valScaleFactor = vScaleFactor;
+		this.delayScaleFactor = dScaleFactor;
 		String[] getFilename = directory.split(separator);
-		lhpnFile = getFilename[getFilename.length - 1] + moduleNumber + ".lpn";
+		if (moduleNumber == 0)
+			lhpnFile = getFilename[getFilename.length - 1] + ".lpn";
+		else
+			lhpnFile = getFilename[getFilename.length - 1] + moduleNumber + ".lpn";
 
 		epsilon = tPar.get("epsilon");
 		pathLengthBin = (int) tPar.get("pathLengthBin").doubleValue();
+		pathLengthVar = (int) tPar.get("pathLengthVar").doubleValue();
 		rateSampling = (int) tPar.get("rateSampling").doubleValue();
 		percent = tPar.get("percent");
 		if (tPar.containsKey("runTime")){
@@ -160,35 +209,59 @@ public class LearnLPN extends JPanel {
 		}
 		new File(directory + separator + lhpnFile).delete();
 		try {
+
 			logFile = new File(directory + separator + "run.log");
-//			logFile = new File(directory + separator + "run" + moduleNumber + ".log");
-//			logFile.createNewFile();
+			if (moduleNumber == 0)
+				logFile.createNewFile(); //create new file first time
 			out = new BufferedWriter(new FileWriter(logFile,true)); //appending
-//				File lhpn = new File(directory + separator + lhpnFile);
-//				lhpn.delete();
-			/* Initializations being done in resetAll method added on Aug 12,2009. These 
-			 * initializations ensure that place,transition numbers start from 0 
-			 * everytime we click play button on LEMA though compiled only once. 
-			 * Init values and rates being cleared for the same reason. 
-			 */
+			
+			//	resetAll();
 			numPlaces = 0;
 			numTransitions = 0;
+			
 			out.write("Running: dataToLHPN for module " + moduleNumber +  "\n");
 			TSDParser tsd = new TSDParser(directory + separator + "run-1.tsd",
 					biosim, false);
 			varNames = tsd.getSpecies();
+			//this.varNames = varNames;
+			//String[] learnDir = lrnFile.split("\\.");
+			//File cvgFile = new File(directory + separator + learnDir[0] + ".cvg");
 			File cvgFile = new File(directory + separator + "run.cvg");
-			cvgFile.createNewFile();
+			//cvgFile.createNewFile();
 			BufferedWriter coverage = new BufferedWriter(new FileWriter(cvgFile));
+			//FileOutputStream coverage = new FileOutputStream(cvgFile);
+			
 			int i = 1;
-
+			
 			g = new LhpnFile(); // The generated lhpn is stored in this object
 			placeInfo = new HashMap<String, Properties>();
 			transitionInfo = new HashMap<String, Properties>();
 			cvgInfo = new HashMap<String, Properties>();
 			transientNetPlaces = new HashMap<String, Properties>();
 			transientNetTransitions = new HashMap<String, Properties>();
-			//ratePlaces = new ArrayList<String>(); moved this to updateRateInfo on jun 22, 2010. See if this causes problems.
+		//	ratePlaces = new ArrayList<String>(); moved this to updateRateInfo on jun 22, 2010. See if this causes problems.
+			if ((failProp != null)){//((failProp.equals(""))){ //  && (moduleNumber == 0) ???
+				propPlaces = new ArrayList<String>();
+				//BufferedReader prop = new BufferedReader(new FileReader(directory + separator + "learn" + ".prop"));
+				Properties p0 = new Properties();
+				placeInfo.put("failProp", p0);
+				p0.setProperty("placeNum", numPlaces.toString());
+				p0.setProperty("type", "PROP");
+				p0.setProperty("initiallyMarked", "true");
+				g.addPlace("p" + numPlaces, true);
+				propPlaces.add("p" + numPlaces);
+				numPlaces++;
+				Properties p1 = new Properties();
+				transitionInfo.put("failProp", p1);
+				p1.setProperty("transitionNum", numTransitions.toString());
+				g.addTransition("t" + numTransitions); // prevTranKey+key);
+				g.addMovement("p" + placeInfo.get("failProp").getProperty("placeNum"), "t" + transitionInfo.get("failProp").getProperty("transitionNum")); 
+				g.getTransition("t" + numTransitions).setFail(true);
+				numTransitions++;
+			}
+			out.write("epsilon = " + epsilon + "; ratesampling = " + rateSampling + "; pathLengthBin = " + pathLengthBin + "; percent = " + percent + "; runlength = " + runLength + "; runtime = " + runTime + "; absoluteTime = " + absoluteTime + "; delayscalefactor = " + delayScaleFactor + "; valuescalefactor = " + valScaleFactor + "\n");
+			dsFactor = this.delayScaleFactor;
+			vsFactor = this.valScaleFactor;
 			dmvcValuesUnique = new HashMap<String, Properties>();
 			constVal = new ArrayList<HashMap<String, String>>();
 			while (new File(directory + separator + "run-" + i + ".tsd").exists()) {
@@ -201,9 +274,11 @@ public class LearnLPN extends JPanel {
 				tsd = new TSDParser(directory + separator + "run-" + i + ".tsd", biosim,false);
 				data = tsd.getData();
 //ORDER REVERSED this first then detectDMV				genBinsRates(divisionsL); // changes made here.. data being used was global before.
+				//genBinsRates("run-" + i + ".tsd", divisionsL);
 				findReqdVarIndices();
 				genBinsRates(thresholds); // moved this above detectDMV on May 11,2010 assuming this order reversal won't affect things.
 				detectDMV(data,false); // changes made here.. data being used was global before.
+			//	genBinsRates(divisionsL); commented after replacing divisionsL with thresholds 
 				updateGraph(bins, rates, i, cProp);
 				//cProp.store(coverage,  "run-" + String.valueOf(i) + ".tsd");
 				coverage.write("run-" + String.valueOf(i) + ".tsd\t");
@@ -244,7 +319,23 @@ public class LearnLPN extends JPanel {
 			}
 			//g.addOutput("fail", "false");
 			HashMap<String, ArrayList<Double>> scaledThresholds; // scaledThresholds are scaleDiv
+			// temporary
+		/*	Pattern pat = Pattern.compile("-*[0-9]+\\.*[0-9]*");
+	        Matcher m = pat.matcher(failProp);
+	        while(m.find()){
+	        	failProp = m.replaceFirst(String.valueOf(Double.parseDouble(m.group())*100.0));
+	        }
+	        System.out.println(failProp);
+			for (String t : g.getTransitionList()) {
+				if ((g.getPreset(t) != null) && (placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("PROP"))){
+					g.addEnabling(t, failProp);	
+				}
+			} */
+			// end temporary
+			
 			scaledThresholds = normalize();
+		//	globalValueScaling.setText(Double.toString(valScaleFactor));
+		//	globalDelayScaling.setText(Double.toString(delayScaleFactor));
 			initCond = new Properties(); 
 			for (Variable v : reqdVarsL) {	// Updating with scaled initial values & rates
 				if (v.isDmvc()) {
@@ -256,13 +347,11 @@ public class LearnLPN extends JPanel {
 				}
 			}
 			String[] transitionList = g.getTransitionList();
-			transEnablingsVHDL = new String[transitionList.length];
-			transDelayAssignVHDL = new String[transitionList.length];
-			transIntAssignVHDL = new String[transitionList.length][reqdVarsL.size()];
-			transEnablingsVAMS = new String[transitionList.length];
+		/*	transEnablingsVAMS = new String[transitionList.length];
 			transConditionalsVAMS = new String[transitionList.length];
 			transIntAssignVAMS = new String[transitionList.length][reqdVarsL.size()];
 			transDelayAssignVAMS = new String[transitionList.length];
+		*/
 			int transNum;
 			for (String t : transitionList) {
 				transNum = Integer.parseInt(t.split("t")[1]);
@@ -271,107 +360,111 @@ public class LearnLPN extends JPanel {
 						if ((placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))
 								&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))) {
 							// g.getPreset(t).length != 0 && g.getPostset(t).length != 0 ??
-							ArrayList<Integer> diffL = diff(getPlaceInfoIndex(g.getPreset(t)[0]), getPlaceInfoIndex(g.getPostset(t)[0]));
+							String tKey = getTransitionInfoIndex(t);
+							String prevPlaceFullKey = getPresetPlaceFullKey(tKey);
+							String nextPlaceFullKey = getPostsetPlaceFullKey(tKey);
+							
+							//ArrayList<Integer> diffL = diff(getPlaceInfoIndex(g.getPreset(t)[0]), getPlaceInfoIndex(g.getPostset(t)[0]));
+							ArrayList<Integer> diffL = diff(prevPlaceFullKey, nextPlaceFullKey);
 							String condStr = "";
-							transEnablingsVHDL[transNum] = "";
-							transEnablingsVAMS[transNum] = "";
-							String[] binIncoming = getPlaceInfoIndex(g.getPreset(t)[0]).split(",");
-							String[] binOutgoing = getPlaceInfoIndex(g.getPostset(t)[0]).split(",");
+						//	transEnablingsVAMS[transNum] = "";
+							//String[] binIncoming = getPlaceInfoIndex(g.getPreset(t)[0]).split(",");
+							//String[] binOutgoing = getPlaceInfoIndex(g.getPostset(t)[0]).split(",");
+							String[] binIncoming = prevPlaceFullKey.split(",");
+							String[] binOutgoing = nextPlaceFullKey.split(",");
 							Boolean firstInputBinChg = true;
-							Boolean opChange = false, ipChange = false;
+							Boolean firstOutputBinChg = true;
+							Boolean careOpChange = false, careIpChange = false;
 							for (int k : diffL) {
 								if (!((reqdVarsL.get(k).isDmvc()) && (!reqdVarsL.get(k).isInput()))) {
-									// the above condition means that if the bin change is on a non-input dmv variable, there won't be any enabling condition
-									ipChange = true;
+									// the above condition means that if the bin change is not on a non-input dmv variable, there won't be any enabling condition
+									if (reqdVarsL.get(k).isCare())
+										careIpChange = true;
 									if (Integer.parseInt(binIncoming[k]) < Integer.parseInt(binOutgoing[k])) {
 										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binIncoming[k])).doubleValue();
 										if (firstInputBinChg){
 											condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
-											transEnablingsVHDL[transNum] += reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
-											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),+1)";	// += temporary
-											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") >= " + ((int)val)/valScaleFactor +"))";
+									//		transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),+1)";	// += temporary
+									//		transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") >= " + ((int)val)/valScaleFactor +"))";
 										}
 										else{
 											condStr += "&(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
-											transEnablingsVHDL[transNum] += " and " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
-											transEnablingsVAMS[transNum] += " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),+1)";	// += temporary
-											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") >= " + ((int)val)/valScaleFactor +"))";
+									//		transEnablingsVAMS[transNum] += " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),+1)";	// += temporary
+									//		transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") >= " + ((int)val)/valScaleFactor +"))";
 										}
 									} else {
 										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binOutgoing[k])).doubleValue();
 										if (firstInputBinChg){
 											condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
-											transEnablingsVHDL[transNum] += "not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
-											transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
-											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") < " + ((int)val)/valScaleFactor +"))";
+									//		transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
+									//		transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") < " + ((int)val)/valScaleFactor +"))";
 										}
 										else{
 											condStr += "&~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
-											transEnablingsVHDL[transNum] += "and not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
-											transEnablingsVAMS[transNum] += " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
-											transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") < " + ((int)val)/valScaleFactor +"))";
+									//		transEnablingsVAMS[transNum] += " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
+									//		transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") < " + ((int)val)/valScaleFactor +"))";
 										}
 									}
 									//if (diffL.get(diffL.size() - 1) != k) {
 									//	condStr += "&";
-									//	transEnablingsVHDL[transNum] += " and ";
 										////COME BACK???	temporary			transEnablingsVAMS[transNum] += 
 									//}
 									firstInputBinChg = false;
 								}
 								// Enablings Till above.. Below one is dmvc delay,assignment. Whenever a transition's preset and postset places differ in dmvc vars, then this transition gets the assignment of the dmvc value in the postset place and delay assignment of the preset place's duration range. This has to be changed after taking the causal relation input
 								if ((reqdVarsL.get(k).isDmvc()) && (!reqdVarsL.get(k).isInput())) { // require few more changes here.should check for those variables that are constant over these regions and make them as causal????? thesis
-									opChange = true;
-									String pPrev = g.getPreset(t)[0];
-									String nextPlace = g.getPostset(t)[0];
+									if (reqdVarsL.get(k).isCare())
+										careOpChange = true;
+								//	String pPrev = g.getPreset(t)[0];
+								//	String nextPlace = g.getPostset(t)[0];
+									String nextPlaceKey = getPlaceInfoIndex(g.getPostset(t)[0]);
 									//if (!isTransientTransition(t)){
-							//		int mind = (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin")));
-							//		int maxd = (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax")));
-									int mind = (int) Math.floor(Double.parseDouble(transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).getProperty("dMin")));
-									int maxd = (int) Math.ceil(Double.parseDouble(transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).getProperty("dMax")));
+								//	int mind = (int) Math.floor(Double.parseDouble(transitionInfo.get(getPlaceInfoIndex(pPrev) + "," + getPlaceInfoIndex(nextPlace)).getProperty("dMin")));
+								//	int maxd = (int) Math.ceil(Double.parseDouble(transitionInfo.get(getPlaceInfoIndex(pPrev) + "," + getPlaceInfoIndex(nextPlace)).getProperty("dMax")));
+									int mind = (int) Math.floor(Double.parseDouble(transitionInfo.get(tKey).getProperty("dMin")));
+									int maxd = (int) Math.ceil(Double.parseDouble(transitionInfo.get(tKey).getProperty("dMax")));
 									if (mind != maxd)
 										g.changeDelay(t, "uniform(" + mind + "," + maxd + ")");
 									else
 										g.changeDelay(t, String.valueOf(mind));
-									int minv = (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin")));
-									int maxv = (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))); 
+									//int minv = (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin")));
+									//int maxv = (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax")));
+									int minv = (int) Math.floor(Double.parseDouble(placeInfo.get(nextPlaceKey).getProperty(reqdVarsL.get(k).getName() + "_vMin")));
+									int maxv = (int) Math.ceil(Double.parseDouble(placeInfo.get(nextPlaceKey).getProperty(reqdVarsL.get(k).getName() + "_vMax")));
 									if (minv != maxv)
 										g.addIntAssign(t,reqdVarsL.get(k).getName(),"uniform(" + minv  + ","+ maxv + ")");
 									else
 										g.addIntAssign(t,reqdVarsL.get(k).getName(), String.valueOf(minv));
 									int dmvTnum =  Integer.parseInt(t.split("t")[1]);
-									transIntAssignVHDL[dmvTnum][k] = reqdVarsL.get(k).getName() +" => span(" + (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin"))) + ".0,"+ (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))) + ".0)";
-									transDelayAssignVHDL[dmvTnum] = "delay(" + mind + "," + maxd + ")";
 									if (!vamsRandom){
-										transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = "+ ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))))/(2.0*valScaleFactor)+";\n";
-										//transDelayAssignVAMS[dmvTnum] = "#" + (int)(((Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin"))) + Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax"))))*Math.pow(10, 12))/(2.0*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
-										transDelayAssignVAMS[dmvTnum] = "#" + (int)((mind + maxd)/(2*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
+								//		transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = "+ ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))))/(2.0*valScaleFactor)+";\n";
+								//		transDelayAssignVAMS[dmvTnum] = "#" + (int)((mind + maxd)/(2*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
 									}
 									else{
-										transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = $dist_uniform(seed,"+ String.valueOf((int)Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin"))/valScaleFactor)) + "," + String.valueOf((int)Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))/valScaleFactor))+");\n";
-										//transDelayAssignVAMS[dmvTnum] = "del = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMin")))/delayScaleFactor)*Math.pow(10, 12)) + "," +(int)Math.ceil((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(pPrev)).getProperty("dMax"))/delayScaleFactor)*Math.pow(10, 12)) + ");\n\t\t\t#del";	// converting seconds to ns using math.pow(10,9)
-										transDelayAssignVAMS[dmvTnum] = "del = $dist_uniform(seed," + (int) (mind/delayScaleFactor) + "," +(int) (maxd/delayScaleFactor) + ");\n\t\t\t#del";	// converting seconds to ns using math.pow(10,9)
+								//		transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = $dist_uniform(seed,"+ String.valueOf((int)Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin"))/valScaleFactor)) + "," + String.valueOf((int)Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))/valScaleFactor))+");\n";
+								//		transDelayAssignVAMS[dmvTnum] = "del = $dist_uniform(seed," + (int) (mind/delayScaleFactor) + "," +(int) (maxd/delayScaleFactor) + ");\n\t\t\t#del";	// converting seconds to ns using math.pow(10,9)
 									}
 									/*}
 									else{
 										g.changeDelay(t, "[" + (int) Math.floor(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMin"))) + "," + (int) Math.ceil(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMax"))) + "]");
 										g.addIntAssign(t,reqdVarsL.get(k).getName(),"[" + (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin"))) + ","+ (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))) + "]");
 										int dmvTnum =  Integer.parseInt(t.split("t")[1]);
-										transIntAssignVHDL[dmvTnum][k] = reqdVarsL.get(k).getName() +" => span(" + (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin"))) + ".0,"+ (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))) + ".0)";
-										transDelayAssignVHDL[dmvTnum] = "delay(" + (int) Math.floor(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMin"))) + "," + (int) Math.ceil(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMax"))) + ")";
 										transIntAssignVAMS[dmvTnum][k] = ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))))/(2.0*valScaleFactor);
 										transDelayAssignVAMS[dmvTnum] =  (int)(((Math.floor(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMin"))) + Math.ceil(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMax"))))*Math.pow(10, 12))/(2.0*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
 									}*/
 								}
 							}
-							if (ipChange & opChange) // Both ip and op changes on same transition. Then delay should be 0. Not the previous bin duration.
-								g.changeDelay(t, "0");
-							if (diffL.size() > 1){
-								transEnablingsVHDL[transNum] = "(" + transEnablingsVHDL[transNum] + ")";
+							if (careIpChange & careOpChange){ // Both ip and op changes on same transition. Then delay should be 0. Not the previous bin duration.
+								if ((getPlaceInfoIndex(g.getPreset(t)[0]) != null) && (getPlaceInfoIndex(g.getPostset(t)[0]) != null)) 
+									//if (!(transitionInfo.get(getPlaceInfoIndex(g.getPreset(t)[0]) + "," + getPlaceInfoIndex(g.getPostset(t)[0])).containsKey("ioChangeDelay")))
+									if (!(transitionInfo.get(tKey).containsKey("ioChangeDelay"))){
+										
+										g.changeDelay(t, "0");
+									}
 							}
-							if ((transEnablingsVAMS[transNum] != "") && (transEnablingsVAMS[transNum] != null)){ 
-								transEnablingsVAMS[transNum] += ")";
-							}
+						//	if ((transEnablingsVAMS[transNum] != "") && (transEnablingsVAMS[transNum] != null)){ 
+						//		transEnablingsVAMS[transNum] += ")";
+						//	}
 							if (!condStr.equalsIgnoreCase("")){
 								//condStr += enFailAnd;
 								g.addEnabling(t, condStr);
@@ -381,114 +474,116 @@ public class LearnLPN extends JPanel {
 								//condStr = enFail;
 								//g.addEnabling(t, condStr);
 							}
-							//transEnablingsVHDL[transNum] += enFailAnd;
 						}
-					}
-					else{
+					} else {
 						if ((transientNetPlaces.get(getTransientNetPlaceIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))
 								&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))){		// transient non-dmv transition
-							ArrayList<Integer> diffL = diff(getTransientNetPlaceIndex(g.getPreset(t)[0]), getPlaceInfoIndex(g.getPostset(t)[0]));
+							String tKey = getTransientNetTransitionIndex(t);
+							String prevPlaceFullKey = getPresetPlaceFullKey(tKey);
+							String nextPlaceFullKey = getPostsetPlaceFullKey(tKey);
+							//ArrayList<Integer> diffL = diff(getTransientNetPlaceIndex(g.getPreset(t)[0]), getPlaceInfoIndex(g.getPostset(t)[0]));							
+							ArrayList<Integer> diffL = diff(prevPlaceFullKey, nextPlaceFullKey);
+							
 							String condStr = "";
-							transEnablingsVHDL[transNum] = "";
-							transEnablingsVAMS[transNum] = "";
-							String[] binIncoming = getTransientNetPlaceIndex(g.getPreset(t)[0]).split(",");
-							String[] binOutgoing = getPlaceInfoIndex(g.getPostset(t)[0]).split(",");
+						//	transEnablingsVAMS[transNum] = "";
+							//String[] binIncoming = getTransientNetPlaceIndex(g.getPreset(t)[0]).split(",");
+							//String[] binOutgoing = getPlaceInfoIndex(g.getPostset(t)[0]).split(",");
+							String[] binIncoming = prevPlaceFullKey.split(",");
+							String[] binOutgoing = nextPlaceFullKey.split(",");
 							Boolean firstInputBinChg = true;
-							Boolean opChange = false, ipChange = false;
+							Boolean careOpChange = false, careIpChange = false;
 							for (int k : diffL) {
 								if (!((reqdVarsL.get(k).isDmvc()) && (!reqdVarsL.get(k).isInput()))) {
-									ipChange = true;
+									if (reqdVarsL.get(k).isCare())
+										careIpChange = true;
 									if (Integer.parseInt(binIncoming[k]) < Integer.parseInt(binOutgoing[k])) {
 										//	double val = divisionsL.get(k).get(Integer.parseInt(binIncoming[k])).doubleValue();
 										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binIncoming[k])).doubleValue();
 										if (firstInputBinChg){
-										condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
-										transEnablingsVHDL[transNum] += reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
-										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),+1)";	// += temporary
+											condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
+								//			transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),+1)";	// += temporary
 										}
 										else{
 											condStr += "&(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
-											transEnablingsVHDL[transNum] += " and " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.floor(val)+".0)";	
-											transEnablingsVAMS[transNum] += " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),+1)";	// += temporary
+								//			transEnablingsVAMS[transNum] += " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),+1)";	// += temporary
 										}
 									} else {
 										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binOutgoing[k])).doubleValue();
 										if (firstInputBinChg){
-										condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
-										transEnablingsVHDL[transNum] += " and not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
-										transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
-										}
-										else{
+											condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
+									//		transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
+										} else {
 											condStr += "&~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
-											transEnablingsVHDL[transNum] += "not " + reqdVarsL.get(k).getName() + "'above(" + (int) Math.ceil(val)+".0)";
-											transEnablingsVAMS[transNum] = " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
+									//		transEnablingsVAMS[transNum] = " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
 										}
 									}
 									//if (diffL.get(diffL.size() - 1) != k) {
 									//	condStr += "&";
-									//	transEnablingsVHDL[transNum] += " and ";
 									//	//COME BACK???	temporary			transEnablingsVAMS[transNum] += 
 									//}
 									firstInputBinChg = false;
 								}
 								if ((reqdVarsL.get(k).isDmvc()) && (!reqdVarsL.get(k).isInput())) { // require few more changes here.should check for those variables that are constant over these regions and make them as causal????? thesis
-									opChange = true;
-									String pPrev = g.getPreset(t)[0];
-									String nextPlace = g.getPostset(t)[0];
-									//int mind = (int) Math.floor(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMin")));
-									//int maxd = (int) Math.ceil(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMax")));
-									int mind = (int) Math.floor(Double.parseDouble(transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).getProperty("dMin")));
-									int maxd = (int) Math.floor(Double.parseDouble(transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).getProperty("dMax")));
+									if (reqdVarsL.get(k).isCare())
+										careOpChange = true;
+									//String pPrev = g.getPreset(t)[0];
+									//String nextPlace = g.getPostset(t)[0];
+									String nextPlaceKey = getPlaceInfoIndex(g.getPostset(t)[0]);
+									//int mind = (int) Math.floor(Double.parseDouble(transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+ "," +getPlaceInfoIndex(nextPlace)).getProperty("dMin")));
+									//int maxd = (int) Math.floor(Double.parseDouble(transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+ "," +getPlaceInfoIndex(nextPlace)).getProperty("dMax")));
+									int mind = (int) Math.floor(Double.parseDouble(transientNetTransitions.get(tKey).getProperty("dMin")));
+									int maxd = (int) Math.floor(Double.parseDouble(transientNetTransitions.get(tKey).getProperty("dMax")));
 									if (mind != maxd)
 										g.changeDelay(t, "uniform(" + mind + "," + maxd + ")");
 									else
 										g.changeDelay(t, String.valueOf(mind));
-									int minv = (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin")));
-									int maxv = (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax")));
+									//int minv = (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin")));
+									//int maxv = (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax")));
+									int minv = (int) Math.floor(Double.parseDouble(placeInfo.get(nextPlaceKey).getProperty(reqdVarsL.get(k).getName() + "_vMin")));
+									int maxv = (int) Math.ceil(Double.parseDouble(placeInfo.get(nextPlaceKey).getProperty(reqdVarsL.get(k).getName() + "_vMax")));
 									if (minv != maxv)
 										g.addIntAssign(t,reqdVarsL.get(k).getName(),"uniform(" + minv + ","+ maxv + ")");
 									else
 										g.addIntAssign(t,reqdVarsL.get(k).getName(),String.valueOf(minv));
 									int dmvTnum =  Integer.parseInt(t.split("t")[1]);
-									transIntAssignVHDL[dmvTnum][k] = reqdVarsL.get(k).getName() +" => span(" + (int) Math.floor(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin"))) + ".0,"+ (int) Math.ceil(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))) + ".0)";
-									transDelayAssignVHDL[dmvTnum] = "delay(" + mind + "," + maxd + ")";
 									if (!vamsRandom){
-										transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = "+ ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))))/(2.0*valScaleFactor)+";\n";;
-										//											transDelayAssignVAMS[dmvTnum] =  "#" + (int)(((Math.floor(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMin"))) + Math.ceil(Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMax"))))*Math.pow(10, 12))/(2.0*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
-										transDelayAssignVAMS[dmvTnum] =  "#" + (int)((mind + maxd)/(2*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
+								//		transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = "+ ((int)(Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin")) + Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))))/(2.0*valScaleFactor)+";\n";;
+								//		transDelayAssignVAMS[dmvTnum] =  "#" + (int)((mind + maxd)/(2*delayScaleFactor));	// converting seconds to ns using math.pow(10,9)
 									}
 									else{
-										transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = $dist_uniform(seed,"+ String.valueOf(Math.floor((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin"))/valScaleFactor))) + "," + String.valueOf(Math.ceil((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))/valScaleFactor)))+");\n";
-										//transDelayAssignVAMS[dmvTnum] =  "del = $dist_uniform(seed," + (int)Math.floor(((Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMin")))/delayScaleFactor)*Math.pow(10, 12)) + "," + (int)Math.ceil((Double.parseDouble(transientNetPlaces.get(getTransientNetPlaceIndex(pPrev)).getProperty("dMax"))/delayScaleFactor)*Math.pow(10, 12)) + ");\n\t\t\t#del";	// converting seconds to ns using math.pow(10,9)
-										transDelayAssignVAMS[dmvTnum] =  "del = $dist_uniform(seed," + (int) (mind/delayScaleFactor) + "," + (int) (maxd/delayScaleFactor) + ");\n\t\t\t#del";	// converting seconds to ns using math.pow(10,9)
+								//		transIntAssignVAMS[dmvTnum][k] = reqdVarsL.get(k).getName()+"Val = $dist_uniform(seed,"+ String.valueOf(Math.floor((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMin"))/valScaleFactor))) + "," + String.valueOf(Math.ceil((Double.parseDouble(placeInfo.get(getPlaceInfoIndex(nextPlace)).getProperty(reqdVarsL.get(k).getName() + "_vMax"))/valScaleFactor)))+");\n";
+								//		transDelayAssignVAMS[dmvTnum] =  "del = $dist_uniform(seed," + (int) (mind/delayScaleFactor) + "," + (int) (maxd/delayScaleFactor) + ");\n\t\t\t#del";	// converting seconds to ns using math.pow(10,9)
 									}
 								}
 							}
-							if (ipChange & opChange) // Both ip and op changes on same transition. Then delay should be 0. Not the previous bin duration.
-								g.changeDelay(t, "0");
+							if (careIpChange & careOpChange){ // Both ip and op changes on same transition. Then delay should be 0. Not the previous bin duration.
+								if ((getTransientNetPlaceIndex(g.getPreset(t)[0]) != null) && (getPlaceInfoIndex(g.getPostset(t)[0]) != null)) 
+									//if (!(transientNetTransitions.get(getTransientNetPlaceIndex(g.getPreset(t)[0]) + "," + getPlaceInfoIndex(g.getPostset(t)[0])).containsKey("ioChangeDelay")))
+									if (!(transientNetTransitions.get(tKey).containsKey("ioChangeDelay")))
+										g.changeDelay(t, "0");
+							}
 							if (diffL.size() > 1){
-								transEnablingsVHDL[transNum] = "(" + transEnablingsVHDL[transNum] + ")";
+						//		transEnablingsVHDL[transNum] = "(" + transEnablingsVHDL[transNum] + ")";
 							}
-							if ((transEnablingsVAMS[transNum] != "") && (transEnablingsVAMS[transNum] != null)){ 
-								transEnablingsVAMS[transNum] += ")";
-							}
+						//	if ((transEnablingsVAMS[transNum] != "") && (transEnablingsVAMS[transNum] != null)){ 
+						//		transEnablingsVAMS[transNum] += ")";
+						//	}
 							if (!condStr.equalsIgnoreCase("")){
-								//condStr += enFailAnd;
 								g.addEnabling(t, condStr);
 							}
 							else{
-								//condStr = enFail;
 								//g.addEnabling(t, condStr);
 							}
-							//transEnablingsVHDL[transNum] += enFailAnd;
-							
 						}
 					}
 				}
-				//DIFFERENT FROM GUI
-//				if ((g.getPreset(t) != null) && (!isTransientTransition(t)) && (placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("PROP"))){
-//					g.addEnabling(t, failProp);
-//				}
+				if (failProp != null){ //(!failProp.equals("")){
+					if ((g.getPreset(t) != null) && (!isTransientTransition(t)) && (placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("PROP"))){
+						g.addEnabling(t, failProp);
+						//g.addBoolAssign(t, "fail", "true"); // fail would be the variable name
+						//g.addProperty(failProp);
+					}
+				}
 			}
 			ArrayList<String> placesWithoutPostsetTrans = new ArrayList<String>();
 			for (String st1 : g.getPlaceList()) {
@@ -504,8 +599,14 @@ public class LearnLPN extends JPanel {
 						}
 					}
 					for (String st2 : g.getPostset(st1)){
-						if (varsInEnabling.keySet().size() >= 1){ // && (g.getEnablingTree(st2) != null)
-							String[] binOutgoing = getPlaceInfoIndex(g.getPostset(st2)[0]).split(",");
+						if (varsInEnabling.keySet().size() >= 1){ // && (g.getEnablingTree(st2) != null))
+							//String[] binOutgoing = getPlaceInfoIndex(g.getPostset(st2)[0]).split(",");
+							String transKey;
+							if (!isTransientTransition(st2))
+								 transKey = getTransitionInfoIndex(st2);
+							else
+								 transKey = getTransientNetTransitionIndex(st2);
+							String[] binOutgoing = getPostsetPlaceFullKey(transKey).split(",");
 							String condStr = "";
 							for (String st : varsInEnabling.keySet()){
 								int bin = Integer.valueOf(binOutgoing[findReqdVarslIndex(st)]);
@@ -527,7 +628,7 @@ public class LearnLPN extends JPanel {
 							g.addEnabling(st2, condStr);
 						}
 					}
-				/*	for (String st2 : g.getPostset(st1)){
+					/*for (String st2 : g.getPostset(st1)){
 						ExprTree enableTree = g.getEnablingTree(st2);
 						if (enableTree != null){	// If enabling of a transition is null then it's obviously not mutually exclusive of any other parallel transitions from that place
 							for (String st3 : varsInEnabling.keySet()){
@@ -598,18 +699,36 @@ public class LearnLPN extends JPanel {
 					}
 				}
 			}
+			//Reversed the order of adding initPlace and removing placeswithout postset transitions.
+			//This makes sure that signals which are constant throughout a trace are not completely lost.
+			addInitPlace(scaledThresholds);
 			for (String st1 : placesWithoutPostsetTrans){
 				placeInfo.remove(getPlaceInfoIndex(st1));
 				g.removePlace(st1);
 			}
-			addInitPlace(scaledThresholds);
-			out.close();
+			
+			out.write("learning module done. Saving stuff and learning other modules.\n");
 	//		addMetaBins();
 	//		addMetaBinTransitions();
 			g.save(directory + separator + lhpnFile);
-		//	writeVHDLAMSFile(lhpnFile.replace(".lpn",".vhd"));
-		//	writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
 			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
+			out.write("Returning " + directory + separator + lhpnFile + "\n");
+			out.close();
+			/*if ((moduleNumber == 0) && (new File(learnFile).exists())){ //directory + separator + "complete.lpn").exists()){//
+				LhpnFile l1 = new LhpnFile();
+				l1.load(learnFile);
+				g = mergeLhpns(l1,g);
+				//l1.load(directory + separator + "complete.lpn");
+				//mergeLhpns(l1,g).save(directory + separator + "complete.lpn");
+			} //else {
+			//	g.save(directory + separator + "complete.lpn");
+			//}
+			 
+//			addPseudo(scaledThresholds);
+			g.save(directory + separator + lhpnFile);*/
+//			lpnWithPseudo.save(directory + separator + "pseudo" + lhpnFile);
+//			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
+			//writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
 		} catch (IOException e) {
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(biosim.frame(),
@@ -633,8 +752,7 @@ public class LearnLPN extends JPanel {
 			} catch (IOException e2) {
 				e2.printStackTrace();
 			}
-		}
-		catch (java.lang.IllegalStateException e3){
+		} catch (java.lang.IllegalStateException e3){
 			e3.printStackTrace();
 			//System.out.println("LPN file couldn't be created/written ");
 			JOptionPane.showMessageDialog(biosim.frame(),
@@ -642,6 +760,14 @@ public class LearnLPN extends JPanel {
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 		return (g);
+	}
+	
+	public Double getDelayScaleFactor(){
+		return delayScaleFactor;
+	}
+	
+	public Double getValueScaleFactor(){
+		return valScaleFactor;
 	}
 	
 	private int findReqdVarslIndex(String s) {
@@ -671,77 +797,15 @@ public class LearnLPN extends JPanel {
 		return false;
 	}
 
-	public void addInitPlace(HashMap<String,ArrayList<Double>> scaledThresholds){
-		//Properties initPlace = new Properties();
-		//placeInfo.put("initMarked", p0);
-		//initPlace.setProperty("placeNum", numPlaces.toString());
-		//initPlace.setProperty("type", "INIT");
-		//initPlace.setProperty("initiallyMarked", "true");
-		int initPlaceNum = numPlaces;
-		g.addPlace("p" + numPlaces, true);
-		//propPlaces.add("p" + numPlaces);
-		numPlaces++;
-		try{
-			for (String st : transientNetPlaces.keySet()){
-				//Properties p1 = new Properties();
-				//p1.setProperty("transitionNum", numTransitions.toString());
-				//initTransitions.put(key, p1); //from initPlaceNum to key
-				g.addTransition("t" + numTransitions); // prevTranKey+key);
-				g.addMovement("p" + initPlaceNum, "t" + numTransitions); 
-				g.addMovement("t" + numTransitions, "p" + transientNetPlaces.get(st).getProperty("placeNum"));
-				g.changeInitialMarking("p" + transientNetPlaces.get(st).getProperty("placeNum"), false);
-				out.write("Added transition t" + numTransitions + " b/w initPlace and transient place p" + transientNetPlaces.get(st).getProperty("placeNum") + "\n");
-				String[] binOutgoing = st.split(",");
-				String condStr = "";
-				for (int j = 0; j < reqdVarsL.size(); j++){
-					String st2 = reqdVarsL.get(j).getName();
-					if (reqdVarsL.get(j).isInput()){
-						int bin = Integer.valueOf(binOutgoing[j]);
-						if (bin == 0){
-							if (!condStr.equalsIgnoreCase(""))
-								condStr += "&";
-							condStr += "~(" + st2 + ">=" + (int) Math.ceil(scaledThresholds.get(st2).get(bin).doubleValue()) + ")";
-						} else if (bin == (scaledThresholds.get(st2).size())){
-							if (!condStr.equalsIgnoreCase(""))
-								condStr += "&";
-							condStr += "(" + st2 + ">="	+ (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()) + ")";
-						} else{
-							if (!condStr.equalsIgnoreCase(""))
-								condStr += "&";
-							condStr += "(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()) + ")&~(" + st2 + ">=" + (int) Math.ceil(scaledThresholds.get(st2).get(bin).doubleValue()) + ")";
-						}
-					} else {
-						if (reqdVarsL.get(j).isDmvc()){
-							int minv = (int) Math.floor(Double.parseDouble(transientNetPlaces.get(st).getProperty(st2 + "_vMin")));
-							int maxv = (int) Math.ceil(Double.parseDouble(transientNetPlaces.get(st).getProperty(st2 + "_vMax"))); 
-							if (minv != maxv)
-								g.addIntAssign("t" + numTransitions,st2,"uniform(" + minv  + ","+ maxv + ")");
-							else
-								g.addIntAssign("t" + numTransitions,st2,String.valueOf(minv));
-							out.write("Added assignment to " + st2 + " at transition t" + numTransitions + "\n");
-						}
-						// deal with rates for continuous here
-					}
-				}
-				out.write("Changed enabling of t" + numTransitions + " to " + condStr + "\n");
-				g.addEnabling("t" + numTransitions, condStr);
-				numTransitions++;
-			}
-			for (HashMap<String,String> st1 : constVal){	// for output signals that are constant throughout the trace.
-				if (st1.size() != 0){
-					g.addTransition("t" + numTransitions); // prevTranKey+key);
-					g.addMovement("p" + initPlaceNum, "t" + numTransitions);
-					for (String st2: st1.keySet()){
-						g.addIntAssign("t" + numTransitions,st2,st1.get(st2));
-					}
-					numTransitions++;
-				}
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
-					"Log file couldn't be opened in addInitPlace.",
-					"ERROR!", JOptionPane.ERROR_MESSAGE);
+
+	public void resetAll(){
+		// dmvcCnt = 0;
+		numPlaces = 0;
+		numTransitions = 0;
+		delayScaleFactor = 1.0;
+		valScaleFactor = 1.0;
+		for (Variable v: reqdVarsL){
+			v.reset();
 		}
 	}
 
@@ -755,14 +819,116 @@ public class LearnLPN extends JPanel {
 			}
 		}
 	}
+	
+	public int getCareIndex(int reqdVarsIndex){
+		int count = -1;
+		for (int j = 0; j < reqdVarsL.size(); j++){ 
+			if (reqdVarsL.get(j).isCare()){
+				count++;
+			}
+			if (j == reqdVarsIndex)
+				return count;
+		}
+		return -1;
+	}
+	
+	public void addInitPlace(HashMap<String,ArrayList<Double>> scaledThresholds){
+		//Properties initPlace = new Properties();
+		//placeInfo.put("initMarked", p0);
+		//initPlace.setProperty("placeNum", numPlaces.toString());
+		//initPlace.setProperty("type", "INIT");
+		//initPlace.setProperty("initiallyMarked", "true");
+		int initPlaceNum = numPlaces;
+		g.addPlace("p" + numPlaces, true);
+		//propPlaces.add("p" + numPlaces);
+		numPlaces++;
+		try{
+			try{
+				out.write("Transient places are : ");
+				for (String st : transientNetPlaces.keySet()){
+					out.write(st + ";");
+				}
+				out.write("\n");
+				for (String st : transientNetPlaces.keySet()){
+					//Properties p1 = new Properties();
+					//p1.setProperty("transitionNum", numTransitions.toString());
+					//initTransitions.put(key, p1); //from initPlaceNum to key
+					g.addTransition("t" + numTransitions); // prevTranKey+key);
+					g.addMovement("p" + initPlaceNum, "t" + numTransitions);
+					g.addMovement("t" + numTransitions, "p" + transientNetPlaces.get(st).getProperty("placeNum"));
+					g.changeInitialMarking("p" + transientNetPlaces.get(st).getProperty("placeNum"), false);
+					out.write("Added transition t" + numTransitions + " b/w initPlace and transient place p" + transientNetPlaces.get(st).getProperty("placeNum") + "\n");
+					String[] binOutgoing = st.split(",");
+					String condStr = "";
+					for (int j = 0; j < reqdVarsL.size(); j++){ // preserving the order by having reqdVarsL as outer loop rather than care
+						String st2 = reqdVarsL.get(j).getName();
+						if (reqdVarsL.get(j).isCare()){
+							if (reqdVarsL.get(j).isInput()){
+								int bin = Integer.valueOf(binOutgoing[getCareIndex(j)]);
+								if (bin == 0){
+									if (!condStr.equalsIgnoreCase(""))
+										condStr += "&";
+									condStr += "~(" + st2 + ">=" + (int) Math.ceil(scaledThresholds.get(st2).get(bin).doubleValue()) + ")";
+								} else if (bin == (scaledThresholds.get(st2).size())){
+									if (!condStr.equalsIgnoreCase(""))
+										condStr += "&";
+									condStr += "(" + st2 + ">="	+ (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()) + ")";
+								} else{
+									if (!condStr.equalsIgnoreCase(""))
+										condStr += "&";
+									condStr += "(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()) + ")&~(" + st2 + ">=" + (int) Math.ceil(scaledThresholds.get(st2).get(bin).doubleValue()) + ")";
+								}
+							} else {
+								if (reqdVarsL.get(j).isDmvc()){
+									int minv = (int) Math.floor(Double.parseDouble(transientNetPlaces.get(st).getProperty(st2 + "_vMin")));
+									int maxv = (int) Math.ceil(Double.parseDouble(transientNetPlaces.get(st).getProperty(st2 + "_vMax"))); 
+									if (minv != maxv)
+										g.addIntAssign("t" + numTransitions,st2,"uniform(" + minv  + ","+ maxv + ")");
+									else
+										g.addIntAssign("t" + numTransitions,st2,String.valueOf(minv));
+									out.write("Added assignment to " + st2 + " at transition t" + numTransitions + "\n");
+								}
+								// deal with rates for continuous here
+							}
+						} else {
+							out.write(st2 + " was don't care " + "\n");
+						}
+					}
+					out.write("Changed enabling of t" + numTransitions + " to " + condStr + "\n");
+					g.addEnabling("t" + numTransitions, condStr);
+					numTransitions++;
+				}
+				for (HashMap<String,String> st1 : constVal){	// for output signals that are constant throughout the trace.
+					if (st1.size() != 0){
+						g.addTransition("t" + numTransitions); // prevTranKey+key);
+						g.addMovement("p" + initPlaceNum, "t" + numTransitions);
+						for (String st2: st1.keySet()){
+							g.addIntAssign("t" + numTransitions,st2,st1.get(st2));
+						}
+						numTransitions++;
+					}
+				}
+			} catch (NullPointerException e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(biosim.frame(),
+						"Null exception in addInitPlace.",
+						"ERROR!", JOptionPane.ERROR_MESSAGE);
+				out.close();
+			}
+		}catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Log file couldn't be opened in addInitPlace.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
+		}
+	}
 
-	public void genBinsRates(HashMap<String, ArrayList<Double>> localThresholds) { // genBins
-//		public void genBinsRates(String datFile,ArrayList<ArrayList<Double>> divisionsL) { // genBins
+	public void genBinsRates(HashMap<String, ArrayList<Double>> localThresholds) { 
 //			TSDParser tsd = new TSDParser(directory + separator + datFile, biosim,false);
-			// genBins
-//			data = tsd.getData();
+			// genBins data = tsd.getData();
 		try{
 			reqdVarIndices = new ArrayList<Integer>();
+			//careBins = new HashMap<String, int[]>();//new int[reqdVarsL.size()][data.get(0).size()];
 			bins = new int[reqdVarsL.size()][data.get(0).size()];
 			for (int i = 0; i < reqdVarsL.size(); i++) {
 				// System.out.println("Divisions " + divisionsL.get(i));
@@ -774,19 +940,36 @@ public class LearnLPN extends JPanel {
 						reqdVarIndices.add(j);
 						for (int k = 0; k < data.get(j).size(); k++) {
 							// System.out.print(data.get(j).get(k) + " ");
-							for (int l = 0; l < localThresholds.get(currentVar).size(); l++) {
-								if (data.get(j).get(k) <= localThresholds.get(currentVar).get(l)) {
-									bins[i][k] = l;
-									break;
-								} else {
-									bins[i][k] = l + 1; // indices of bins not same
-									// as that of the variable.
-									// i here. not j; if j wanted, then size of bins
-									// array should be varNames not reqdVars
+							ArrayList<Double> thresh = localThresholds.get(currentVar);
+							bins[i][k] = getRegion(data.get(j).get(k),thresh);
+							if ((k != 0) && (bins[i][k] != bins[i][k-1])){
+								int length = 0;
+								for (int m = k; m < data.get(j).size(); m++) {
+									if (getRegion(data.get(j).get(m),thresh) == bins[i][k])
+										length++;
+									else 
+										break;
 								}
+								if (length < pathLengthVar){
+									out.write("Short bin for variable " + currentVar + " at " + data.get(0).get(k) + " until " + data.get(0).get(k+length-1) + " due to min pathLengthVar. Using " + bins[i][k-1] + " instead of " + bins[i][k] + " \n");
+									for (int m = k; m < k+length; m++) {
+										bins[i][m] = bins[i][k-1];
+									}
+								} else {
+									for (int m = k; m < k+length; m++) {
+										bins[i][m] = bins[i][k];
+									}
+								}
+								k = k+length-1;
 							}
 						}
+						if (binError)
+							JOptionPane.showMessageDialog(biosim.frame(),
+									"Bin couldn't be retrieved for a point. Please check thresholds.",
+									"ERROR!", JOptionPane.ERROR_MESSAGE);	
+
 						// System.out.print(" ");
+						break;
 					}
 				}
 			}
@@ -800,21 +983,31 @@ public class LearnLPN extends JPanel {
 			rates = new Double[reqdVarsL.size()][data.get(0).size()];
 			values = new double[reqdVarsL.size()][data.get(0).size()];
 			duration = new Double[data.get(0).size()];
-			int mark, k, previous = 0; // indices of rates not same as that of the variable. if
+			int mark, k, previous = 0, markFullPrev; // indices of rates not same as that of the variable. if
 			// wanted, then size of rates array should be varNames
 			// not reqdVars
 			if (rateSampling == -1) { // replacing inf with -1 since int
 				mark = 0;
+				markFullPrev = 0;
 				for (int i = 0; i < data.get(0).size(); i++) {
 					if (i < mark) {
 						continue;
 					}
-					while ((mark < data.get(0).size()) && (compareBins(i, mark))) {
-						for (int j = 0; j < reqdVarsL.size(); j++){
-							k = reqdVarIndices.get(j);
-							values[j][i] = (values[j][i]*(mark-i) + data.get(k).get(mark))/(mark-i+1);
+					markFullPrev = mark;
+					//while ((mark < data.get(0).size()) && (compareBins(i, mark))) {
+					while (mark < data.get(0).size()){
+						if (compareBins(i, mark)){
+							for (int j = 0; j < reqdVarsL.size(); j++){
+								k = reqdVarIndices.get(j);
+								values[j][i] = (values[j][i]*(mark-i) + data.get(k).get(mark))/(mark-i+1);
+							}
+							mark++;
+						} else 
+							break;
+						//Assume that only inputs can be don't care
+						if (!compareFullBinInputs(markFullPrev, mark-1)){ //mark-1 because of mark++ above
+							markFullPrev = mark-1;
 						}
-						mark++;
 					}
 					if ((data.get(0).get(mark - 1) != data.get(0).get(i)) && ((mark - i) >=  pathLengthBin) && (mark != data.get(0).size())) { 	// && (mark != (data.get(0).size() - 1 condition added on nov 23.. to avoid the last region bcoz it's not complete. rechk
 						if (!compareBins(previous,i)){
@@ -822,8 +1015,11 @@ public class LearnLPN extends JPanel {
 								k = reqdVarIndices.get(j);
 								rates[j][i] = ((data.get(k).get(mark - 1) - data.get(k).get(i)) / (data.get(0).get(mark - 1) - data.get(0).get(i)));
 							}
-							duration[i] = data.get(0).get(mark)	- data.get(0).get(i); // changed (mark - 1) to mark on may 28,2010
+							//duration[i] = data.get(0).get(mark)	- data.get(0).get(i); // changed (mark - 1) to mark on may 28,2010
+							duration[i] = data.get(0).get(mark)	- data.get(0).get(markFullPrev);
 							previous = i;
+							if (markFullPrev != i)
+								out.write("Some don't care input change in b/w a bin. So referencing off " + markFullPrev + " instead of " + i + "\n");
 						} else{	// There was a glitch and you returned to the same region
 							for (int j = 0; j < reqdVarsL.size(); j++) {
 								k = reqdVarIndices.get(j);
@@ -831,7 +1027,8 @@ public class LearnLPN extends JPanel {
 							}
 							duration[previous] = data.get(0).get(mark)	- data.get(0).get(previous); // changed (mark - 1) to mark on may 28,2010
 						}
-					} else if ((mark - i) <  pathLengthBin)  { // account for the glitch duration //  
+					} else if ((mark - i) <  pathLengthBin)  { // account for the glitch duration //
+						out.write("Short bin at " + data.get(0).get(i) + " until " + data.get(0).get(mark) + " due to min pathLengthBin. This delay being added to " + previous + " \n");
 						duration[previous] += data.get(0).get(mark)	- data.get(0).get(i); 
 					} else if (data.get(0).get(mark - 1) == data.get(0).get(i)){ // bin with only one point. Added this condition on June 9,2010
 						//Rates are meaningless here since the bin has just one point.
@@ -844,6 +1041,25 @@ public class LearnLPN extends JPanel {
 						}
 						duration[i] = data.get(0).get(mark)	- data.get(0).get(i); // changed (mark - 1) to mark on may 28,2010
 						previous = i;
+					} else if (mark == data.get(0).size()){ // long enough bin towards the end of trace.
+						if (!compareBins(previous,i)){
+							for (int j = 0; j < reqdVarsL.size(); j++) {
+								k = reqdVarIndices.get(j);
+								rates[j][i] = ((data.get(k).get(mark - 1) - data.get(k).get(i)) / (data.get(0).get(mark - 1) - data.get(0).get(i)));
+							}
+							//duration[i] = data.get(0).get(mark)	- data.get(0).get(i); // changed (mark - 1) to mark on may 28,2010
+							previous = i;
+						} else{	
+							// There was a glitch and you returned to the same region
+							//Or signal is constant through out the trace
+							for (int j = 0; j < reqdVarsL.size(); j++) {
+								k = reqdVarIndices.get(j);
+								rates[j][previous] = ((data.get(k).get(mark - 1) - data.get(k).get(previous)) / (data.get(0).get(mark - 1) - data.get(0).get(previous)));
+							}
+							//This duration shouldn't make any sense because there's no following transition
+							duration[previous] = data.get(0).get(mark - 1)	- data.get(0).get(previous); // changed (mark - 1) to mark on may 28,2010
+						}
+						out.write("Bin at end of trace starts at " + previous + "\n");
 					}
 				}
 			} else { //TODO: This may have bugs in duration calculation etc.
@@ -890,8 +1106,8 @@ public class LearnLPN extends JPanel {
 					"Log file couldn't be opened for writing genBinsRates messages.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
-		/*
-			try {
+		
+			/*try {
 				for (int i = 0; i < (data.get(0).size()); i++) {
 					for (int j = 0; j < reqdVarsL.size(); j++) {
 						k = reqdVarIndices.get(j);
@@ -913,10 +1129,56 @@ public class LearnLPN extends JPanel {
 			}*/
 	}
 
-
+	public int getRegion(double value, ArrayList<Double> varThresholds){
+		int bin = 0;
+		try{
+			for (int l = 0; l < varThresholds.size(); l++) {
+				if (value <= varThresholds.get(l)) {
+					bin = l;
+					break;
+				} else {
+					bin = l + 1; 
+				}
+			}
+		} catch (NullPointerException e){
+			e.printStackTrace();
+			binError = true;
+		}
+		return bin;
+	}
+	
 	public boolean compareBins(int j, int mark) {
-		for (int i = 0; i < reqdVarsL.size(); i++) {
+		/*for (int i = 0; i < reqdVarsL.size(); i++) {
 			if (bins[i][j] != bins[i][mark]) {
+				return false;
+			} else {
+				continue;
+			}
+		}
+		return true;*/
+		/*for (String st : careVars) { // this way only when order of cares not important. since this is a hashmap
+			if (bins[findReqdVarslIndex(st)][j]!= bins[findReqdVarslIndex(st)][mark]) {
+				return false;
+			} else {
+				continue;
+			}
+		}
+		return true;*/
+		for (int i = 0; i < reqdVarsL.size(); i++) {
+			if (reqdVarsL.get(i).isCare()){
+				if (bins[i][j] != bins[i][mark]) {
+					return false;
+				} else {
+					continue;
+				}
+			}
+		}
+		return true;
+	}
+
+	public boolean compareFullBinInputs(int j, int mark) {
+		for (int i = 0; i < reqdVarsL.size(); i++) {
+			if (reqdVarsL.get(i).isInput() && (bins[i][j] != bins[i][mark])) {
 				return false;
 			} else {
 				continue;
@@ -925,30 +1187,45 @@ public class LearnLPN extends JPanel {
 		return true;
 	}
 
+
+	
 	public void updateRateInfo(int[][] bins, Double[][] rates, int traceNum, Properties cvgProp) {
-		String prevPlaceKey = ""; // "" or " " ; rechk
-		String key = "";
+		String prevPlaceKey = "", prevPlaceFullKey = ""; // "" or " " ; rechk
+		String key = "", fullKey = "";
 		Double prevPlaceDuration = null;
+		String transId = null;
+		Boolean prevIpChange = false, prevOpChange = false, ipChange = false, opChange = false;
 		// boolean addNewPlace;
 		ArrayList<String> ratePlaces = new ArrayList<String>(); // ratePlaces can include non-input dmv places.
 		// boolean newRate = false;
-		Properties p0, p1 = null;
 		try{
+			Properties p0, p1 = null;
+			out.write("In UpdateRateInfo\n");
 			for (int i = 0; i < (data.get(0).size() - 1); i++) {
 				if (rates[0][i] != null) { // check if indices are ok. 0???? or 1???
-					prevPlaceKey = key;
-					key = "" + bins[0][i];
-					for (int j = 1; j < reqdVarsL.size(); j++) {
-//						key += "" + bins[j][i];
-						key += "," + bins[j][i];
+					prevPlaceKey = key; prevPlaceFullKey = fullKey;
+					key = ""; fullKey = "";
+					//Full keys are for transitions; Just Keys are for Places
+					for (int j = 0; j < reqdVarsL.size(); j++) {
+						if (reqdVarsL.get(j).isCare()){
+							if (key.equalsIgnoreCase(""))
+								key += bins[j][i];
+							else
+								key += "," + bins[j][i];		
+						}
+						if (fullKey.equalsIgnoreCase(""))
+							fullKey += bins[j][i];
+						else
+							fullKey += "," + bins[j][i];
 					}
+					out.write("Rates not null at " + i + "; key is " + key + "; full key is " + fullKey + ";\n");
 					if (placeInfo.containsKey(key) && (ratePlaces.size() != 0)) {
 						p0 = placeInfo.get(key);
 						out.write("Came back to existing place p" + p0.getProperty("placeNum") + " at time " + data.get(0).get(i) + " bins " + key + "\n");
 						if (traceNum > 1)
 							ratePlaces.add("p" + p0.getProperty("placeNum"));
 					} 
-					else if ((transientNetPlaces.containsKey(key)) && (((ratePlaces.size() == 1) && (traceNum == 1)) || ((ratePlaces.size() == 0) && (traceNum != 1)))){ // same transient in new trace => ratePlaces.size() < 1; same transient in same trace => ratePlaces.size() = 1 
+					else if ((transientNetPlaces.containsKey(key)) && (((ratePlaces.size() == 1) && (traceNum == 1)) || ((ratePlaces.size() == 0) && (traceNum != 1)))){ // same transient in new trace => ratePlaces.size() < 1; same transient in same trace => ratePlaces.size() = 1
 						p0 = transientNetPlaces.get(key);
 						out.write("Came back to existing transient place p" + p0.getProperty("placeNum") + " at time " + data.get(0).get(i) + " bins " + key + "\n");
 						if (ratePlaces.size() == 0){ // new trace
@@ -969,6 +1246,7 @@ public class LearnLPN extends JPanel {
 						p0.setProperty("initiallyMarked", "false");
 						p0.setProperty("metaType","false");  // REMOVE LATER?????
 						ratePlaces.add("p" + numPlaces);
+						out.write("New place p" + numPlaces + " at time " + data.get(0).get(i) + " bins " + key + "\n");
 						numPlaces++;
 						cvgProp.setProperty("places", String.valueOf(Integer.parseInt(cvgProp.getProperty("places"))+1));
 					}
@@ -977,44 +1255,139 @@ public class LearnLPN extends JPanel {
 						// continue;
 						// }
 						if (reqdVarsL.get(j).isDmvc()) { // && !reqdVarsL.get(j).isInput()){
+							//System.out.println(reqdVarsL.get(j).getName() + " " + bins[j][i] + " "  + dmvcValuesUnique.get(reqdVarsL.get(j).getName()).getProperty(String.valueOf(bins[j][i]))"\n");
+							out.write("Add value : " + reqdVarsL.get(j).getName() + " -> corresponding to bin " + bins[j][i] + " at place p" + p0.getProperty("placeNum") + "\n");
+							out.write("Add value : " + reqdVarsL.get(j).getName() + " -> " + Double.valueOf(dmvcValuesUnique.get(reqdVarsL.get(j).getName()).getProperty(String.valueOf(bins[j][i]))) + " at place p" + p0.getProperty("placeNum") + "\n");
 							addValue(p0,reqdVarsL.get(j).getName(),Double.valueOf(dmvcValuesUnique.get(reqdVarsL.get(j).getName()).getProperty(String.valueOf(bins[j][i]))));
-							out.write("Add value : " + reqdVarsL.get(j).getName() + " -> " + dmvcValuesUnique.get(reqdVarsL.get(j).getName()).get(bins[j][i]) + " at place p" + p0.getProperty("placeNum") + "\n");
+							//out.write("Add value : " + reqdVarsL.get(j).getName() + " -> " + dmvcValuesUnique.get(reqdVarsL.get(j).getName()).get(bins[j][i]) + " at place p" + p0.getProperty("placeNum") + "\n");
 							continue;
 						}
 						addRate(p0, reqdVarsL.get(j).getName(), rates[j][i]);
-						// newR, oldR, dmvc etc. left
 					}
-					if (!prevPlaceKey.equalsIgnoreCase(key)) {
-						if ((traceNum > 1) && transientNetTransitions.containsKey(prevPlaceKey + key) && (ratePlaces.size() == 2)) { // same transient transition as that from some previous trace
-							p1 = transientNetTransitions.get(prevPlaceKey + key);
-							out.write("Came back to existing transient transition t" + p1.getProperty("transitionNum") + " at time " + data.get(0).get(i) + " " + prevPlaceKey + " -> " + key);
-						} else if (transitionInfo.containsKey(prevPlaceKey + key) && (ratePlaces.size() > 2)) { // instead of tuple
-							p1 = transitionInfo.get(prevPlaceKey + key);
-							out.write("Came back to existing transition t" + p1.getProperty("transitionNum") + " at time " + data.get(0).get(i) + " " + prevPlaceKey + " -> " + key);
-						} else if (prevPlaceKey != "") {
+					boolean transientNet = false;
+					if (!prevPlaceFullKey.equalsIgnoreCase(fullKey)) {
+						if (!prevPlaceFullKey.equals("")){
+							ArrayList<Integer> diffL = diff(prevPlaceFullKey,fullKey);
+							opChange = false; 
+							ipChange = false;
+							for (int k : diffL) {
+								if (reqdVarsL.get(k).isInput()) {
+									ipChange = true;
+								} else {
+									opChange = true;
+								}
+							}
+						} else {
+							ipChange = false;
+							opChange = false;
+						}
+						if ((traceNum > 1) && transientNetTransitions.containsKey(prevPlaceFullKey + "," + fullKey) && (ratePlaces.size() == 2)) { // same transient transition as that from some previous trace
+							p1 = transientNetTransitions.get(prevPlaceFullKey + "," + fullKey);
+							transId = prevPlaceFullKey + "," + fullKey;
+							out.write("Came back to existing transient transition t" + p1.getProperty("transitionNum") + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
+						} else if (transitionInfo.containsKey(prevPlaceFullKey + "," + fullKey) && (ratePlaces.size() > 2)) { // instead of tuple
+							p1 = transitionInfo.get(prevPlaceFullKey + "," + fullKey);
+							transId = prevPlaceFullKey + "," + fullKey;
+							out.write("Came back to existing transition t" + p1.getProperty("transitionNum") + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
+						} else if (!prevPlaceFullKey.equalsIgnoreCase("")) {
 							// transition = new Transition(reqdVarsL.size(),place,prevPlace);
 							p1 = new Properties();
 							p1.setProperty("transitionNum", numTransitions.toString());
 							if (ratePlaces.size() == 2){
-								transientNetTransitions.put(prevPlaceKey + key, p1);
+								transientNetTransitions.put(prevPlaceFullKey + "," + fullKey, p1);
 								g.addTransition("t" + numTransitions); // prevTranKey+key);
-								g.addMovement("p" + transientNetPlaces.get(prevPlaceKey).getProperty("placeNum"), "t" + transientNetTransitions.get(prevPlaceKey + key).getProperty("transitionNum")); 
-								g.addMovement("t" + transientNetTransitions.get(prevPlaceKey + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+								g.addMovement("p" + transientNetPlaces.get(prevPlaceKey).getProperty("placeNum"), "t" + transientNetTransitions.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum")); 
+								g.addMovement("t" + transientNetTransitions.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+								transientNet = true;
+								transId = prevPlaceFullKey + "," + fullKey;
+								out.write("New transition t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
+								numTransitions++;
+								cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
+							} else {
+								if (prevIpChange & !prevOpChange & opChange & !ipChange){
+									out.write("Should delete the transition" + transId+ " from ");
+									if (transitionInfo.containsKey(transId)){
+										out.write("transitionInfo\n");
+										int removeTrans = Integer.valueOf(transitionInfo.get(transId).getProperty("transitionNum"));
+										String lastLastPlace = g.getTransition("t" + removeTrans).getPreset()[0].getName();
+										//String lastLastPlaceKey = getPlaceInfoIndex(lastLastPlace);
+										String lastLastPlaceFullKey = getPresetPlaceFullKey(transId);
+										if (transitionInfo.containsKey(lastLastPlaceFullKey + "," + fullKey)){
+											p1 = transitionInfo.get(lastLastPlaceFullKey + "," + fullKey);
+											p1.put("ioChangeDelay", "yes");
+											out.write("\n\n\nFound an output change follwed by a previous input change; remove transition t" + (numTransitions -1) + " between " + lastLastPlace + " and " + placeInfo.get(prevPlaceKey).getProperty("placeNum") + "; add transition t" + numTransitions + " b/w " + lastLastPlace + " and " + placeInfo.get(key).getProperty("placeNum") + "\n");
+											transitionInfo.remove(lastLastPlaceFullKey + "," + prevPlaceFullKey);
+											g.removeTransition("t" + (numTransitions -1));
+											transId = lastLastPlaceFullKey + "," + fullKey;
+										} else {
+											transitionInfo.put(lastLastPlaceFullKey + "," + fullKey, p1);
+											p1.put("ioChangeDelay", "yes");
+											out.write("\n\n\nFound an output change follwed by a previous input change; remove transition t" + (numTransitions -1) + " between " + lastLastPlace + " and " + placeInfo.get(prevPlaceKey).getProperty("placeNum") + "; add transition t" + numTransitions + " b/w " + lastLastPlace + " and " + placeInfo.get(key).getProperty("placeNum") + "\n");
+											g.addTransition("t" + numTransitions); // prevTranKey+key);
+											g.addMovement(lastLastPlace, "t" + transitionInfo.get(lastLastPlaceFullKey + "," + fullKey).getProperty("transitionNum")); 
+											g.addMovement("t" + transitionInfo.get(lastLastPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+											transitionInfo.remove(lastLastPlaceFullKey + "," + prevPlaceFullKey);
+											g.removeTransition("t" + (numTransitions -1));
+											transId = lastLastPlaceFullKey + "," + fullKey;
+											out.write("New transition t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
+											numTransitions++;
+											cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
+										}
+									} else if (transientNetTransitions.containsKey(transId)){
+										out.write("transientNetTransitions\n");
+										int removeTrans = Integer.valueOf(transientNetTransitions.get(transId).getProperty("transitionNum"));
+										String lastLastPlace = g.getTransition("t" + removeTrans).getPreset()[0].getName();
+										//String lastLastPlaceKey = getTransientNetPlaceIndex(lastLastPlace);
+										String lastLastPlaceFullKey = getPresetPlaceFullKey(transId);
+										if (transientNetTransitions.containsKey(lastLastPlaceFullKey + "," + fullKey)){
+											p1 = transientNetTransitions.get(lastLastPlaceFullKey + "," + fullKey);
+											p1.put("ioChangeDelay", "yes");
+											out.write("\n\n\nTRANSIENT:Found an output change followed by a previous input change; remove transition t" + (numTransitions -1) + " between " + lastLastPlace + " and " + placeInfo.get(prevPlaceKey).getProperty("placeNum") + "; add transition t" + numTransitions + " b/w " + lastLastPlace + " and " + placeInfo.get(key).getProperty("placeNum") + "\n");
+											transientNetTransitions.remove(lastLastPlaceFullKey + "," + prevPlaceFullKey);
+											g.removeTransition("t" + (numTransitions -1));
+											transId = lastLastPlaceFullKey + "," + fullKey;
+										} else {
+											transientNetTransitions.put(lastLastPlaceFullKey + "," + fullKey, p1);
+											p1.put("ioChangeDelay", "yes");
+											out.write("\n\n\nTRANSIENT:Found an output change followed by a previous input change; remove transition t" + (numTransitions -1) + " between " + lastLastPlace + " and " + placeInfo.get(prevPlaceKey).getProperty("placeNum") + "; add transition t" + numTransitions + " b/w " + lastLastPlace + " and " + placeInfo.get(key).getProperty("placeNum") + "\n");
+											g.addTransition("t" + numTransitions); // prevTranKey+key);
+											g.addMovement(lastLastPlace, "t" + transientNetTransitions.get(lastLastPlaceFullKey + "," + fullKey).getProperty("transitionNum")); 
+											g.addMovement("t" + transientNetTransitions.get(lastLastPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+											transientNetTransitions.remove(lastLastPlaceFullKey + "," + prevPlaceFullKey);
+											g.removeTransition("t" + (numTransitions -1));
+											transId = lastLastPlaceFullKey + "," + fullKey;
+											out.write("TRANSIENT:New transition t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
+											numTransitions++;
+											cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
+										}
+									}
+								} else {
+									transitionInfo.put(prevPlaceFullKey + "," + fullKey, p1);
+									g.addTransition("t" + numTransitions); // prevTranKey+key);
+									g.addMovement("p" + placeInfo.get(prevPlaceKey).getProperty("placeNum"), "t" + transitionInfo.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum")); 
+									g.addMovement("t" + transitionInfo.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+									transId = prevPlaceFullKey + "," + fullKey;
+									out.write("New transition t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
+									numTransitions++;
+									cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
+								}
 							}
-							else{
-								transitionInfo.put(prevPlaceKey + key, p1);
-								g.addTransition("t" + numTransitions); // prevTranKey+key);
-								g.addMovement("p" + placeInfo.get(prevPlaceKey).getProperty("placeNum"), "t" + transitionInfo.get(prevPlaceKey + key).getProperty("transitionNum")); 
-								g.addMovement("t" + transitionInfo.get(prevPlaceKey + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
-							}
-							out.write("New transition t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceKey + " -> " + key);
-							numTransitions++;
-							cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
 							// transition.setCore(true);
 						}
+						prevIpChange = ipChange;
+						prevOpChange = opChange;
+						//else if (prevPlaceKey == "") {
+						//	p1 = new Properties();
+						//	p1.setProperty("transitionNum", numTransitions.toString());
+						//	initTransitions.put(key, p1); //from initPlaceNum to key
+						//	g.addTransition("t" + numTransitions); // prevTranKey+key);
+						//	g.addMovement("p" + transientNetPlaces.get(prevPlaceKey).getProperty("placeNum"), "t" + transientNetTransitions.get(prevPlaceKey + key).getProperty("transitionNum")); 
+						//	g.addMovement("t" + transientNetTransitions.get(prevPlaceKey + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+						//	numTransitions++;
+						//}
 						if (prevPlaceDuration != null){ //Delay on a transition is the duration spent at its preceding place
 							addDuration(p1, prevPlaceDuration);
-							out.write("Update delay at transition t" + p1.getProperty("transitionNum") + " with " + prevPlaceDuration + " at time " + data.get(0).get(i) + "\n");
+							out.write(" Added duration "  + prevPlaceDuration + " to transition t" + p1.getProperty("transitionNum") + "\n");
 						} else {
 							out.write(" Not adding duration here. CHECK\n");
 						}
@@ -1044,9 +1417,40 @@ public class LearnLPN extends JPanel {
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Log file couldn't be opened for writing UpdateRateInfo messages.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
+		}catch (NullPointerException e4) {
+			e4.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Null exception during model generation in updateRate",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
+	public String getPresetPlaceFullKey(String transition){
+		//out.write("preset key for " + transition + " is ");
+		String fullKey = "";
+		String[] b = transition.split(",");
+		for (int j = 0; j < reqdVarsL.size(); j++) {
+			if (fullKey.equalsIgnoreCase(""))
+				fullKey += b[j];
+			else
+				fullKey += "," + b[j];
+		}
+		//out.write(fullKey + "\n");
+		return(fullKey);
+	}
+	
+	public String getPostsetPlaceFullKey(String transition){
+		String fullKey = "";
+		String[] b = transition.split(",");
+		for (int j = 0; j < reqdVarsL.size(); j++) {
+			if (fullKey.equalsIgnoreCase(""))
+				fullKey += b[j + reqdVarsL.size()];
+			else
+				fullKey += "," + b[j + reqdVarsL.size()];
+		}
+		return(fullKey);
+	}
+	
 	public void updateGraph(int[][] bins, Double[][] rates, int traceNum, Properties cvgProp) {
 		updateRateInfo(bins, rates, traceNum, cvgProp);
 		//updateTimeInfo(bins,cvgProp);
@@ -1055,7 +1459,6 @@ public class LearnLPN extends JPanel {
 		String key;
 		constVal.add(new HashMap<String, String>());
 		for (int i = 0; i < reqdVarsL.size(); i++) {
-			//System.out.println("finding initial bin of " + reqdVarsL.get(i).getName());
 			for (int j = 0; j < data.get(0).size(); j++) {
 				if (rates[i][j] != null) {
 					k = reqdVarIndices.get(i);
@@ -1083,8 +1486,8 @@ public class LearnLPN extends JPanel {
 				reqdVarsL.get(i).addInitRates((double)getMaxRate(key, reqdVarsL.get(i).getName()));
 			}
 /*
-			if (placeInfo.get(key).getProperty("initiallyMarked").equalsIgnoreCase("false")) {
-
+ 			if (placeInfo.get(key).getProperty("initiallyMarked").equalsIgnoreCase("false")) {
+ 
 				placeInfo.get(key).setProperty("initiallyMarked", "true");
 				g.changeInitialMarking("p" + placeInfo.get(key).getProperty("placeNum"), true);
 			}
@@ -1099,129 +1502,138 @@ public class LearnLPN extends JPanel {
 		//dmvcValuesUnique = new HashMap<String, ArrayList<Double>>();
 		try{
 			for (int i = 0; i < reqdVarsL.size(); i++) {
-				absTime = 0;
-				mark = 0;
-				DMVCrun runs = reqdVarsL.get(i).getRuns();
-				runs.clearAll(); // flush all the runs from previous dat file.
-				int lastRunPointsWithoutTransition = 0;
-				Double lastRunTimeWithoutTransition = 0.0;
-				Double lastRunValueWithoutTransition = null;
-				if (!callFromAutogen) { // This flag is required because if the call is from autogenT, then data has just the reqdVarsL but otherwise, it has all other vars too. So reqdVarIndices not reqd when called from autogen
-					for (int j = 0; j <= data.get(0).size(); j++) {
-						if (j < mark) // not reqd??
-							continue;
-						if (((j+1) < data.get(reqdVarIndices.get(i)).size()) && 
-								Math.abs(data.get(reqdVarIndices.get(i)).get(j) - data.get(reqdVarIndices.get(i)).get(j + 1)) <= epsilon) {
-							startPoint = j;
-							runs.addValue(data.get(reqdVarIndices.get(i)).get(j)); // chk carefully reqdVarIndices.get(i)
-							while (((j + 1) < data.get(0).size()) && (bins[i][startPoint] == bins[i][j+1]) && (Math.abs(data.get(reqdVarIndices.get(i)).get(startPoint) - data.get(reqdVarIndices.get(i)).get(j + 1)) <= epsilon)) {       //checking of same bins[] condition added on May 11,2010.
-								runs.addValue(data.get(reqdVarIndices.get(i)).get(j + 1)); // chk carefully
-								// reqdVarIndices.get(i)
-								j++;
-							}
-							endPoint = j;
-							if (runTime == null) {
-								if ((endPoint < (data.get(0).size() - 1)) && ((endPoint - startPoint) + 1) >= runLength) {
-									runs.addStartPoint(startPoint);
-									runs.addEndPoint(endPoint);
-								} else if (((endPoint - startPoint) + 1) >= runLength) {
-									lastRunPointsWithoutTransition = endPoint - startPoint + 1;
-									lastRunValueWithoutTransition = runs.getLastValue();
-								} else {
-									runs.removeValue();
+				if (reqdVarsL.get(i).isForcedCont()){
+					reqdVarsL.get(i).setDmvc(false);
+					out.write(reqdVarsL.get(i).getName() + " is forced to be continuous \n");
+				} else {
+					absTime = 0;
+					mark = 0;
+					DMVCrun runs = reqdVarsL.get(i).getRuns();
+					runs.clearAll(); // flush all the runs from previous dat file.
+					int lastRunPointsWithoutTransition = 0;
+					Double lastRunTimeWithoutTransition = 0.0;
+					Double lastRunValueWithoutTransition = null;
+					if (!callFromAutogen) { // This flag is required because if the call is from autogenT, then data has just the reqdVarsL but otherwise, it has all other vars too. So reqdVarIndices not reqd when called from autogen
+						for (int j = 0; j <= data.get(0).size(); j++) {
+							if (j < mark) // not reqd??
+								continue;
+							if (((j+1) < data.get(reqdVarIndices.get(i)).size()) && 
+									Math.abs(data.get(reqdVarIndices.get(i)).get(j) - data.get(reqdVarIndices.get(i)).get(j + 1)) <= epsilon) {
+								startPoint = j;
+								runs.addValue(data.get(reqdVarIndices.get(i)).get(j)); // chk carefully reqdVarIndices.get(i)
+								while (((j + 1) < data.get(0).size()) && (bins[i][startPoint] == bins[i][j+1]) && (Math.abs(data.get(reqdVarIndices.get(i)).get(startPoint) - data.get(reqdVarIndices.get(i)).get(j + 1)) <= epsilon)) {       //checking of same bins[] condition added on May 11,2010.
+									runs.addValue(data.get(reqdVarIndices.get(i)).get(j + 1)); // chk carefully
+									// reqdVarIndices.get(i)
+									j++;
 								}
-							} else {
-								if ((endPoint < (data.get(0).size() - 1)) && (calcDelay(startPoint, endPoint) >= runTime)) {
-									runs.addStartPoint(startPoint);
-									runs.addEndPoint(endPoint);
-									absTime += calcDelay(startPoint, endPoint);
-								} else if (((endPoint - startPoint) + 1) >= runLength) {
-									lastRunTimeWithoutTransition = calcDelay(startPoint, endPoint);
-									lastRunValueWithoutTransition = runs.getLastValue();
+								endPoint = j;
+								if (!absoluteTime) {
+									if ((endPoint < (data.get(0).size() - 1)) && ((endPoint - startPoint) + 1) >= runLength) {
+										runs.addStartPoint(startPoint);
+										runs.addEndPoint(endPoint);
+									} else if (((endPoint - startPoint) + 1) >= runLength) {
+										lastRunPointsWithoutTransition = endPoint - startPoint + 1;
+										lastRunValueWithoutTransition = runs.getLastValue();
+									} else {
+										runs.removeValue();
+									}
 								} else {
-									runs.removeValue();
-								}
-							}
-							mark = endPoint;
-						}
-					}
-					numPoints = runs.getNumPoints();
-					if (((runTime != null) && (((absTime + lastRunTimeWithoutTransition)/ (data.get(0).get(data.get(0).size() - 1) - data
-							.get(0).get(0))) < percent)) || ((runTime == null) && (((numPoints + lastRunPointsWithoutTransition)/ (double) data.get(0).size()) < percent)))  {
-						runs.clearAll();
-						reqdVarsL.get(i).setDmvc(false);
-						out.write(reqdVarsL.get(i).getName() + " is not a dmvc \n");
-					} else {
-						reqdVarsL.get(i).setDmvc(true);
-						Double[] dmvcValues;
-						if (lastRunValueWithoutTransition != null ){
-							Double[] dVals = reqdVarsL.get(i).getRuns().getAvgVals();
-							dmvcValues = new Double[dVals.length + 1];
-							for (int j = 0; j < dVals.length; j++){
-								dmvcValues[j] = dVals[j];
-							}
-							dmvcValues[dVals.length] = lastRunValueWithoutTransition;
-						} else
-							dmvcValues = reqdVarsL.get(i).getRuns().getAvgVals();
-						Arrays.sort(dmvcValues);
-						//System.out.println("Sorted DMV values of " + reqdVarsL.get(i).getName() + " are ");
-						//for (Double l : dmvcValues){
-						//	System.out.print(l + " ");
-						//}
-						//System.out.println();
-						if (!dmvcValuesUnique.containsKey(reqdVarsL.get(i).getName()))
-							dmvcValuesUnique.put(reqdVarsL.get(i).getName(),new Properties());
-						out.write("DMV values of " + reqdVarsL.get(i).getName() + " are ");
-						if (dmvcValues.length == 0){// constant value throughout the trace
-							dmvcValues = new Double[1];
-							dmvcValues[0]= reqdVarsL.get(i).getRuns().getConstVal();
-						}
-						for (int j = 0; j < dmvcValues.length; j++){
-							if (dmvcValues[j] < thresholds.get(reqdVarsL.get(i).getName()).get(0)){
-								dmvcValuesUnique.get(reqdVarsL.get(i).getName()).put("0",dmvcValues[j].toString());
-								//System.out.println("For variable " + reqdVarsL.get(i).getName() + " value for bin 0 is " + dmvcValues[j] + "\n");
-							}
-							else if (dmvcValues[j] >= thresholds.get(reqdVarsL.get(i).getName()).get(thresholds.get(reqdVarsL.get(i).getName()).size() - 1)){
-								dmvcValuesUnique.get(reqdVarsL.get(i).getName()).put(String.valueOf(thresholds.get(reqdVarsL.get(i).getName()).size()),dmvcValues[j].toString());
-								//System.out.println("For variable " + reqdVarsL.get(i).getName() + " value for bin " + thresholds.get(reqdVarsL.get(i).getName()).size() + " is " + dmvcValues[j] + "\n");
-							}
-							else{
-								for (int k = 0; k < thresholds.get(reqdVarsL.get(i).getName()).size()-1; k++){
-									if ((dmvcValues[j] >= thresholds.get(reqdVarsL.get(i).getName()).get(k)) && (dmvcValues[j] < thresholds.get(reqdVarsL.get(i).getName()).get(k+1))){
-										dmvcValuesUnique.get(reqdVarsL.get(i).getName()).put(String.valueOf(k+1),dmvcValues[j].toString());
-										//System.out.println("For variable " + reqdVarsL.get(i).getName() + " value for bin " + String.valueOf(k+1) + " is " + dmvcValues[j] + "\n");
-										break;
+									if ((endPoint < (data.get(0).size() - 1)) && (calcDelay(startPoint, endPoint) >= runTime)) {
+										runs.addStartPoint(startPoint);
+										runs.addEndPoint(endPoint);
+										absTime += calcDelay(startPoint, endPoint);
+									} else if (calcDelay(startPoint, endPoint) >= runTime) {
+										lastRunTimeWithoutTransition = calcDelay(startPoint, endPoint);
+										lastRunValueWithoutTransition = runs.getLastValue();
+									} else {
+										runs.removeValue();
 									}
 								}
+								mark = endPoint;
 							}
-							out.write(dmvcValues[j] + " ");
-							//following not needed for calls from data2lhpn
-							//	dmvSplits.add((dmvcValuesUnique.get(reqdVarsL.get(i).getName()).get(dmvcValuesUnique.get(reqdVarsL.get(i).getName()).size() - 1) + dmvcValuesUnique.get(reqdVarsL.get(i).getName()).get(dmvcValuesUnique.get(reqdVarsL.get(i).getName()).size() - 2))/2);
-							//}
-							//for (int k = j+1; k < dmvcValues.length; k++){
-							//	if (Math.abs((dmvcValues[j] - dmvcValues[k])) > epsilon){
-							//		j = k-1;
-							//		break;
-							//	}
-							//	else if (k >= (dmvcValues.length -1)){
-							//		j = k;
-							//	}
-							//}	
 						}
-						//dmvDivisions.put(reqdVarsL.get(i).getName(), dmvSplits);
-						out.write(reqdVarsL.get(i).getName() + " is  a dmvc \n");
+						numPoints = runs.getNumPoints();
+						if (!reqdVarsL.get(i).isForcedDmv() && ((absoluteTime && (((absTime + lastRunTimeWithoutTransition)/ (data.get(0).get(data.get(0).size() - 1) - data
+								.get(0).get(0))) < percent)) || (!absoluteTime && (((numPoints + lastRunPointsWithoutTransition)/ (double) data.get(0).size()) < percent)))){ // isForced condition added on may 28
+							runs.clearAll();
+							reqdVarsL.get(i).setDmvc(false);
+							out.write(reqdVarsL.get(i).getName() + " is not a dmvc \n");
+						} else {
+							reqdVarsL.get(i).setDmvc(true);
+							Double[] dmvcValues;
+							if (lastRunValueWithoutTransition != null ){
+								Double[] dVals = reqdVarsL.get(i).getRuns().getAvgVals();
+								dmvcValues = new Double[dVals.length + 1];
+								for (int j = 0; j < dVals.length; j++){
+									dmvcValues[j] = dVals[j];
+								}
+								dmvcValues[dVals.length] = lastRunValueWithoutTransition;
+							} else
+								dmvcValues = reqdVarsL.get(i).getRuns().getAvgVals();
+							Arrays.sort(dmvcValues);
+							//System.out.println("Sorted DMV values of " + reqdVarsL.get(i).getName() + " are ");
+							//for (Double l : dmvcValues){
+							//	System.out.print(l + " ");
+							//}
+							//System.out.println();
+							if (!dmvcValuesUnique.containsKey(reqdVarsL.get(i).getName()))
+								dmvcValuesUnique.put(reqdVarsL.get(i).getName(),new Properties());
+							out.write("DMV values of " + reqdVarsL.get(i).getName() + " are : ");
+							if (dmvcValues.length == 0){// constant value throughout the trace
+								dmvcValues = new Double[1];
+								dmvcValues[0]= reqdVarsL.get(i).getRuns().getConstVal();
+							}
+							for (int j = 0; j < dmvcValues.length; j++){
+								if (dmvcValues[j] < thresholds.get(reqdVarsL.get(i).getName()).get(0)){
+									dmvcValuesUnique.get(reqdVarsL.get(i).getName()).put("0",dmvcValues[j].toString());
+									//System.out.println("For variable " + reqdVarsL.get(i).getName() + " value for bin 0 is " + dmvcValues[j] + "\n");
+									out.write("bin 0 -> " + dmvcValues[j] + "; ");
+								}
+								else if (dmvcValues[j] >= thresholds.get(reqdVarsL.get(i).getName()).get(thresholds.get(reqdVarsL.get(i).getName()).size() - 1)){
+									dmvcValuesUnique.get(reqdVarsL.get(i).getName()).put(String.valueOf(thresholds.get(reqdVarsL.get(i).getName()).size()),dmvcValues[j].toString());
+									//System.out.println("For variable " + reqdVarsL.get(i).getName() + " value for bin " + thresholds.get(reqdVarsL.get(i).getName()).size() + " is " + dmvcValues[j] + "\n");
+									out.write("bin " + thresholds.get(reqdVarsL.get(i).getName()).size() + " -> " + dmvcValues[j] + "; ");
+								} else {
+									for (int k = 0; k < thresholds.get(reqdVarsL.get(i).getName()).size()-1; k++){
+										if ((dmvcValues[j] >= thresholds.get(reqdVarsL.get(i).getName()).get(k)) && (dmvcValues[j] < thresholds.get(reqdVarsL.get(i).getName()).get(k+1))){
+											dmvcValuesUnique.get(reqdVarsL.get(i).getName()).put(String.valueOf(k+1),dmvcValues[j].toString());
+											//System.out.println("For variable " + reqdVarsL.get(i).getName() + " value for bin " + String.valueOf(k+1) + " is " + dmvcValues[j] + "\n");
+											out.write("bin " + (k+1) + " -> " + dmvcValues[j] + "; ");
+											break;
+										}
+									}
+								}
+								//out.write(dmvcValues[j] + " ");
+								//following not needed for calls from data2lhpn
+								//	dmvSplits.add((dmvcValuesUnique.get(reqdVarsL.get(i).getName()).get(dmvcValuesUnique.get(reqdVarsL.get(i).getName()).size() - 1) + dmvcValuesUnique.get(reqdVarsL.get(i).getName()).get(dmvcValuesUnique.get(reqdVarsL.get(i).getName()).size() - 2))/2);
+								//}
+								//for (int k = j+1; k < dmvcValues.length; k++){
+								//	if (Math.abs((dmvcValues[j] - dmvcValues[k])) > epsilon){
+								//		j = k-1;
+								//		break;
+								//	}
+								//	else if (k >= (dmvcValues.length -1)){
+								//		j = k;
+								//	}
+								//}	
+							}
+							//dmvDivisions.put(reqdVarsL.get(i).getName(), dmvSplits);
+							out.write("\n" + reqdVarsL.get(i).getName() + " is  a dmvc \n");
+						}
 					}
 				}
 			}
-		} catch (IOException e) {
+		}catch (IOException e) {
 			e.printStackTrace();
+			//System.out.println("LPN file couldn't be created/written ");
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Log file couldn't be opened for writing rates and bins.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
+		dmvDetectDone = true;
 		return(dmvDivisions);
 	}
-
+	
 	public double calcDelay(int i, int j) {
 		return (data.get(0).get(j) - data.get(0).get(i));
 		// should add some next run logic later..?
@@ -1252,8 +1664,7 @@ public class LearnLPN extends JPanel {
 		p.setProperty(name + "_vMax", vMax.toString());
 	}
 
-	public void addRate(Properties p, String name, Double r) { // latest
-		// change.. above one working fine if this doesn't
+	public void addRate(Properties p, String name, Double r) { 
 		Double rMin;
 		Double rMax;
 		if ((p.getProperty(name + "_rMin") == null)
@@ -1274,6 +1685,36 @@ public class LearnLPN extends JPanel {
 		p.setProperty(name + "_rMax", rMax.toString());
 	}
 
+	public void deleteInvalidDmvcTime(Properties p, Double t) {
+		String[] times = null;
+		String name = p.getProperty("DMVCVariable");
+		String s = p.getProperty("dmvcTime_" + name);
+		String newS = null;
+		Double dMin = null, dMax = null;
+		if (s != null) {
+			times = s.split(" ");
+			for (int i = 0; i < times.length; i++) {
+				if (Double.parseDouble(times[i]) != t) {
+					if (newS == null){
+						newS = times[i];
+						dMin = Double.parseDouble(times[i]);
+						dMax = Double.parseDouble(times[i]);
+					}
+					else{
+						newS += " " + times[i];
+						dMin = (Double.parseDouble(times[i]) < dMin) ? Double.parseDouble(times[i]) : dMin;
+						dMax = (Double.parseDouble(times[i]) > dMax) ? Double.parseDouble(times[i]) : dMax;
+					}
+				}
+			}
+			p.setProperty("dmvcTime_" + name, newS);
+		}
+		if (dMin != null){
+			p.setProperty("dMin", dMin.toString());
+			p.setProperty("dMax", dMax.toString());
+		}
+	}
+	
 	public HashMap<String,ArrayList<Double>> normalize() {
 		HashMap<String,ArrayList<Double>> scaledThresholds = new HashMap<String,ArrayList<Double>>();
 		Boolean contVarExists = false;
@@ -1340,6 +1781,14 @@ public class LearnLPN extends JPanel {
 						out.write("minimum rate is " + minRate * scaleFactor + " after scaling by " + scaleFactor + "\n");
 						valScaleFactor = scaleFactor;
 						scaledThresholds = scaleValue(scaleFactor,scaledThresholds);
+						// TEMPORARY
+						/*		for (String p : g.getPlaceList()){
+						if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
+						String s = g.scaleEnabling(g.getPostset(p)[0],scaleFactor);
+						System.out.println(s);
+					}
+					} */
+						// end TEMPORARY
 					}
 				}
 				minDivision = getMinDiv(scaledThresholds);
@@ -1359,6 +1808,14 @@ public class LearnLPN extends JPanel {
 					out.write("minimum division is " + minDivision * scaleFactor + " after scaling by " + scaleFactor + "\n");
 					valScaleFactor *= scaleFactor;
 					scaledThresholds = scaleValue(scaleFactor,scaledThresholds);
+					// TEMPORARY
+					/*		for (String p : g.getPlaceList()){
+					if ((placeInfo.get(getPlaceInfoIndex(p)).getProperty("type")).equals("PROP")){
+						String s = g.scaleEnabling(g.getPostset(p)[0],scaleFactor);
+						System.out.println(s);
+					}
+				}*/
+					// END TEMPORARY
 				}
 			} else if (valScaleFactor == -1.0){ //force delayScaling; automatic varScaling
 				out.write("\nAuto determining value scale factor; Forcing delay scale factor\n");
@@ -1539,7 +1996,7 @@ public class LearnLPN extends JPanel {
 					scaleDelay(delayScaleFactor);
 				}
 			} else { //User forces both delay and value scaling factors.
-				out.write("\nForcing delay and value scale factors\n");
+				out.write("\nForcing delay and value scale factors by " + delayScaleFactor + " and " + valScaleFactor + " respectively \n");
 				minDivision = getMinDiv(scaledThresholds);
 				out.write("minimum division is " + minDivision + " before scaling for division.\n");
 				scaledThresholds = scaleValue(valScaleFactor, scaledThresholds);
@@ -1644,8 +2101,9 @@ public class LearnLPN extends JPanel {
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
+			//System.out.println("LPN file couldn't be created/written ");
 			JOptionPane.showMessageDialog(biosim.frame(),
-					"LPN file couldn't be created/written",
+					"Log file couldn't be opened for writing rates and bins.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 		return(scaledThresholds);
@@ -1716,6 +2174,7 @@ public class LearnLPN extends JPanel {
 			//commented above for replacing divisionsL with thresholds
 			for (Variable v : reqdVarsL) {
 				v.scaleInitByVar(scaleFactor);
+				//System.out.println("After scaling init Val of " + v.getName() + " by factor " + scaleFactor + ", it is " + v.getInitValue() + "\n");
 				for (int j = 0; j < localThresholds.get(v.getName()).size(); j++) {
 					localThresholds.get(v.getName()).set(j,localThresholds.get(v.getName()).get(j) * scaleFactor);
 				}
@@ -1728,6 +2187,7 @@ public class LearnLPN extends JPanel {
 		}
 		catch (NullPointerException e){
 			e.printStackTrace();
+			//System.out.println("LPN file couldn't be created/written ");
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Not all regions have values for all dmv variables",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
@@ -1744,22 +2204,32 @@ public class LearnLPN extends JPanel {
 					if (!isTransientTransition(t)){
 						if ((placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))
 								&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))) {
-							String pPrev = g.getPreset(t)[0];
-							String nextPlace = g.getPostset(t)[0];
-							Double mind = Double.parseDouble(transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).getProperty("dMin"));
-							Double maxd = Double.parseDouble(transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).getProperty("dMax"));
-							transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).setProperty("dMin",Double.toString(mind*scaleFactor));
-							transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).setProperty("dMax",Double.toString(maxd*scaleFactor));
+							String tKey = getTransitionInfoIndex(t);
+							if (tKey != null){
+								String pPrev = getPresetPlaceFullKey(tKey);
+								String nextPlace = getPostsetPlaceFullKey(tKey);
+								Double mind = Double.parseDouble(transitionInfo.get(pPrev + "," + nextPlace).getProperty("dMin"));
+								Double maxd = Double.parseDouble(transitionInfo.get(pPrev + "," + nextPlace).getProperty("dMax"));
+								transitionInfo.get(pPrev + "," + nextPlace).setProperty("dMin",Double.toString(mind*scaleFactor));
+								transitionInfo.get(pPrev + "," + nextPlace).setProperty("dMax",Double.toString(maxd*scaleFactor));
+							} else {
+								System.out.println("Transition " + t + " has no index in transitionInfo. CHECK");
+							}
 						}
 					} else {
 						if ((transientNetPlaces.get(getTransientNetPlaceIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))
 								&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))){		// transient non-dmv transition
-							String pPrev = g.getPreset(t)[0];
-							String nextPlace = g.getPostset(t)[0];
-							Double mind = Double.parseDouble(transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).getProperty("dMin"));
-							Double maxd = Double.parseDouble(transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).getProperty("dMax"));
-							transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).setProperty("dMin",Double.toString(mind*scaleFactor));
-							transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).setProperty("dMax",Double.toString(maxd*scaleFactor));
+							String tKey = getTransientNetTransitionIndex(t);
+							if (tKey != null){
+								String pPrev = getPresetPlaceFullKey(tKey);
+								String nextPlace = getPostsetPlaceFullKey(tKey);
+								Double mind = Double.parseDouble(transientNetTransitions.get(pPrev+ "," +nextPlace).getProperty("dMin"));
+								Double maxd = Double.parseDouble(transientNetTransitions.get(pPrev+ "," +nextPlace).getProperty("dMax"));
+								transientNetTransitions.get(pPrev+ "," +nextPlace).setProperty("dMin",Double.toString(mind*scaleFactor));
+								transientNetTransitions.get(pPrev+ "," +nextPlace).setProperty("dMax",Double.toString(maxd*scaleFactor));
+							} else {
+								System.out.println("Transient transition " + t + " has no index in transientNetTransitions. CHECK");
+							}
 						}
 					}
 				}
@@ -1774,32 +2244,6 @@ public class LearnLPN extends JPanel {
 					p = transientNetPlaces.get(place);
 				}
 				if (place != "failProp"){
-					/* Related to the separate net for DMV input driver
-					if (p.getProperty("type").equals("DMVC")) {
-						String[] times = null;
-						String name = p.getProperty("DMVCVariable");
-						String s = p.getProperty("dmvcTime_" + name);
-						String newS = null;
-						if (s != null) {
-							times = s.split(" ");
-							for (int i = 0; i < times.length; i++) {
-								if (newS == null) {
-									// newS = Integer.toString((int)(Double.parseDouble(times[i])*scaleFactor));
-									newS = Double.toString(Double.parseDouble(times[i])
-					 * scaleFactor);
-								} else {
-									// newS = newS + Integer.toString((int)(Double.parseDouble(times[i])*scaleFactor));
-									newS = newS + " " + Double.toString(Double
-											.parseDouble(times[i]) * scaleFactor);
-								}
-							}
-							p.setProperty("dmvcTime_" + name, newS);
-						}
-						p.setProperty("dMin", Double.toString(Double.parseDouble(p
-								.getProperty("dMin")) * scaleFactor));
-						p.setProperty("dMax", Double.toString(Double.parseDouble(p
-								.getProperty("dMax")) * scaleFactor));
-					} else{*/
 					// p.setProperty("dMin",Integer.toString((int)(Double.parseDouble(p.getProperty("dMin"))*scaleFactor)));
 					// p.setProperty("dMax",Integer.toString((int)(Double.parseDouble(p.getProperty("dMax"))*scaleFactor)));
 				/* STORING DELAYS AT TRANSITIONS
@@ -1835,38 +2279,19 @@ public class LearnLPN extends JPanel {
 			// SEE IF RATES IN TRANSITIONS HAVE TO BE ADJUSTED HERE
 		}
 		catch(NullPointerException e){
-			System.out.println("Delay scaling error due to null. Check");
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Delay scaling error due to null. Check",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 		catch(java.lang.ArrayIndexOutOfBoundsException e){
-			System.out.println("Delay scaling error due to Array Index.");
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Delay scaling error due to Array Index.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
-	}
-/*
-	public Double getMinDiv(ArrayList<ArrayList<Double>> divisions) {
-		Double minDiv = divisions.get(0).get(0);
-		for (int i = 0; i < divisions.size(); i++) {
-			for (int j = 0; j < divisions.get(i).size(); j++) {
-				if (divisions.get(i).get(j) < minDiv) {
-					minDiv = divisions.get(i).get(j);
-				}
-			}
-		}
-		return minDiv;
 	}
 
-	public Double getMaxDiv(ArrayList<ArrayList<Double>> divisions) {
-		Double maxDiv = divisions.get(0).get(0);
-		for (int i = 0; i < divisions.size(); i++) {
-			for (int j = 0; j < divisions.get(i).size(); j++) {
-				if (divisions.get(i).get(j) > maxDiv) {
-					maxDiv = divisions.get(i).get(j);
-				}
-			}
-		}
-		return maxDiv;
-	}
-	Commented above for replacing divisionsL with thresholds
-*/
 	public Double getMinDiv(HashMap<String, ArrayList<Double>> divisions) {
 		Double minDiv = null;
 		for (String s : divisions.keySet()) {
@@ -1952,32 +2377,44 @@ public class LearnLPN extends JPanel {
 	public Double getMinDelay() {
 		Double minDelay = null;
 		Double mind;
+		try{
 		for (String t : g.getTransitionList()) {
 			if ((g.getPreset(t) != null) && (g.getPostset(t) != null)){
 				if (!isTransientTransition(t)){
 					if ((placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))
 							&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))) {
-						String pPrev = g.getPreset(t)[0];
-						String nextPlace = g.getPostset(t)[0];
-						if (transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).getProperty("dMin") != null){
-							 mind = Double.parseDouble(transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).getProperty("dMin"));
-							 if (minDelay == null)
-								 minDelay = mind;
-							 else if ((minDelay > mind) && (mind != 0))
-								 minDelay = mind;
+						String tKey = getTransitionInfoIndex(t);
+						if (tKey != null){
+							String pPrev = getPresetPlaceFullKey(tKey);
+							String nextPlace = getPostsetPlaceFullKey(tKey);
+							out.write("Transition " + g.getTransition(t).getName() + " b/w " + pPrev + " and " + nextPlace + " : finding delay \n");
+							if (transitionInfo.get(pPrev + "," + nextPlace).getProperty("dMin") != null){
+								mind = Double.parseDouble(transitionInfo.get(pPrev + "," + nextPlace).getProperty("dMin"));
+								if (minDelay == null)
+									minDelay = mind;
+								else if ((minDelay > mind) && (mind != 0))
+									minDelay = mind;
+							}
+						} else {
+							System.out.println("Transition " + t + " has no index in transitionInfo. CHECK");
 						}
 					}
 				} else {
 					if ((transientNetPlaces.get(getTransientNetPlaceIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))
 							&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))){		// transient non-dmv transition
-						String pPrev = g.getPreset(t)[0];
-						String nextPlace = g.getPostset(t)[0];
-						if (transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).getProperty("dMin") != null){
-							mind = Double.parseDouble(transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).getProperty("dMin"));
-							if (minDelay == null)
-								minDelay = mind;
-							else if ((minDelay > mind) && (mind != 0))
-								minDelay = mind;
+						String tKey = getTransientNetTransitionIndex(t);
+						if (tKey != null){
+							String pPrev = getPresetPlaceFullKey(tKey);
+							String nextPlace = getPostsetPlaceFullKey(tKey);
+							if (transientNetTransitions.get(pPrev+ "," +nextPlace).getProperty("dMin") != null){
+								mind = Double.parseDouble(transientNetTransitions.get(pPrev+ "," +nextPlace).getProperty("dMin"));
+								if (minDelay == null)
+									minDelay = mind;
+								else if ((minDelay > mind) && (mind != 0))
+									minDelay = mind;
+							}
+						} else {
+							System.out.println("Transient transition " + t + " has no index in transientNetTransitions. CHECK");
 						}
 					}
 				}
@@ -1995,6 +2432,9 @@ public class LearnLPN extends JPanel {
 			}
 			//}
 		}*/
+		} catch (IOException e){
+			e.printStackTrace();
+		}
 		return minDelay;
 	}
 
@@ -2006,27 +2446,37 @@ public class LearnLPN extends JPanel {
 				if (!isTransientTransition(t)){
 					if ((placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))
 							&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))) {
-						String pPrev = g.getPreset(t)[0];
-						String nextPlace = g.getPostset(t)[0];
-						if (transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).getProperty("dMax") != null){
-							 maxd = Double.parseDouble(transitionInfo.get(getPlaceInfoIndex(pPrev) + getPlaceInfoIndex(nextPlace)).getProperty("dMax"));
-							 if (maxDelay == null)
-								 maxDelay = maxd;
-							 else if ((maxDelay < maxd) && (maxd != 0))
-								 maxDelay = maxd;
+						String tKey = getTransitionInfoIndex(t);
+						if (tKey != null){
+							String pPrev = getPresetPlaceFullKey(tKey);
+							String nextPlace = getPostsetPlaceFullKey(tKey);
+							if (transitionInfo.get(pPrev + "," + nextPlace).getProperty("dMax") != null){
+								maxd = Double.parseDouble(transitionInfo.get(pPrev + "," + nextPlace).getProperty("dMax"));
+								if (maxDelay == null)
+									maxDelay = maxd;
+								else if ((maxDelay < maxd) && (maxd != 0))
+									maxDelay = maxd;
+							}
+						} else {
+							System.out.println("Transition " + t + " has no index in transitionInfo. CHECK");
 						}
 					}
 				} else {
 					if ((transientNetPlaces.get(getTransientNetPlaceIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))
 							&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))){		// transient non-dmv transition
-						String pPrev = g.getPreset(t)[0];
-						String nextPlace = g.getPostset(t)[0];
-						if (transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).getProperty("dmax") != null){
-							maxd = Double.parseDouble(transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+getPlaceInfoIndex(nextPlace)).getProperty("dmax"));
-							if (maxDelay == null)
-								maxDelay = maxd;
-							else if ((maxDelay < maxd) && (maxd != 0))
-								maxDelay = maxd;
+						String tKey = getTransientNetTransitionIndex(t);
+						if (tKey != null){
+							String pPrev = getPresetPlaceFullKey(tKey);
+							String nextPlace = getPostsetPlaceFullKey(tKey);
+							if (transientNetTransitions.get(pPrev+ "," +nextPlace).getProperty("dmax") != null){
+								maxd = Double.parseDouble(transientNetTransitions.get(pPrev+ "," +nextPlace).getProperty("dmax"));
+								if (maxDelay == null)
+									maxDelay = maxd;
+								else if ((maxDelay < maxd) && (maxd != 0))
+									maxDelay = maxd;
+							}
+						} else {
+							System.out.println("Transient transition " + t + " has no index in transientNetTransitions. CHECK");
 						}
 					}
 				}
@@ -2096,38 +2546,106 @@ public class LearnLPN extends JPanel {
 		return index;
 	}
 	
+	public String getTransitionInfoIndex(String s) {
+		String index = null;
+		for (String st2 : transitionInfo.keySet()) {
+			if (("t" + transitionInfo.get(st2).getProperty("transitionNum"))
+					.equalsIgnoreCase(s)) {
+				index = st2;
+				break;
+			}
+		}
+		return index;
+	}
+	
+	public String getTransientNetTransitionIndex(String s) {
+		String index = null;
+		for (String st2 : transientNetTransitions.keySet()) {
+			if (("t" + transientNetTransitions.get(st2).getProperty("transitionNum"))
+					.equalsIgnoreCase(s)) {
+				index = st2;
+				break;
+			}
+		}
+		return index;
+	}
+	
 	public ArrayList<Integer> diff(String pre_bin, String post_bin) {
+		//Parameters are bins formed from reqdVarsL (not just cares).
 		ArrayList<Integer> diffL = new ArrayList<Integer>();
-		// String p_bin[] = p.getBinEncoding();
-//		String[] preset_encoding = pre_bin.split("");
-//		String[] postset_encoding = post_bin.split("");
 		String[] preset_encoding = pre_bin.split(",");
 		String[] postset_encoding = post_bin.split(",");
-		for (int j = 0; j < preset_encoding.length; j++) { // to account for ""
-			// being created in the array
-			if (Integer.parseInt(preset_encoding[j]) != Integer
-					.parseInt(postset_encoding[j])) {
-				diffL.add(j);// to account for "" being created in the
-				// array
+		for (int j = 0; j < preset_encoding.length; j++) { // to account for "" being created in the array
+			if (Integer.parseInt(preset_encoding[j]) != Integer.parseInt(postset_encoding[j])) {
+				diffL.add(j);// to account for "" being created in the array
 			}
 		}
 		return (diffL);
 	}
-
-	public int getMinRate(String place, String name) {
+	
+	public Integer getMinRate(String place, String name) {
 		Properties p = placeInfo.get(place);
-		return ((int) Math.floor(Double.parseDouble(p.getProperty(name
-				+ "_rMin"))));
+		if (p.getProperty(name + "_rMin") != null)
+			return ((int) Math.floor(Double.parseDouble(p.getProperty(name
+					+ "_rMin"))));
+		else 
+			return null;
 		// return(rMin[i]);
 	}
 
-	public int getMaxRate(String place, String name) {
+	public Integer getMaxRate(String place, String name) {
 		Properties p = placeInfo.get(place);
-		return ((int) Math.floor(Double.parseDouble(p.getProperty(name
-				+ "_rMax"))));
+		if (p.getProperty(name + "_rMax") != null)
+			return ((int) Math.floor(Double.parseDouble(p.getProperty(name
+					+ "_rMax"))));
+		else 
+			return null;
 		// return(rMin[i]);
 	}
 	
+/*	public Double[][] getDataExtrema(ArrayList<ArrayList<Double>> data){
+		Double[][] extrema = new Double[reqdVarsL.size()][2];
+		for (int i=0; i<reqdVarsL.size(); i++){
+			//Object obj = Collections.min(data.get(reqdVarIndices.get(i)));
+			Object obj = Collections.min(data.get(i+1));
+			extrema[i][0] = Double.parseDouble(obj.toString());
+			//obj = Collections.max(data.get(reqdVarIndices.get(i)));
+			obj = Collections.max(data.get(i+1));
+			extrema[i][1] = Double.parseDouble(obj.toString());
+		}
+	    return extrema;
+	}
+	*/
+	public HashMap <String, Double[]> getDataExtrema(ArrayList<ArrayList<Double>> data){
+		HashMap <String, Double[]> extrema = new HashMap <String, Double[]>();
+		for (int i=0; i<reqdVarsL.size(); i++){
+			//Object obj = Collections.min(data.get(reqdVarIndices.get(i)));
+			Object obj = Collections.min(data.get(i+1));
+			extrema.put(reqdVarsL.get(i).getName(),new Double[2]);
+			extrema.get(reqdVarsL.get(i).getName())[0] = Double.parseDouble(obj.toString());
+			//obj = Collections.max(data.get(reqdVarIndices.get(i)));
+			obj = Collections.max(data.get(i+1));
+			extrema.get(reqdVarsL.get(i).getName())[1] = Double.parseDouble(obj.toString());
+		}
+	    return extrema;
+	}
+	
+	public Double[] getMinMaxRates(Double[] rateList){
+		ArrayList<Double> cmpL = new ArrayList<Double>();
+		Double[] minMax = {null,null};// new Double[2];
+		for (Double r : rateList){
+			if (r != null){
+				cmpL.add(r);
+			}
+		}
+		if (cmpL.size() > 0){
+			Object obj = Collections.min(cmpL);
+			minMax[0] = Double.parseDouble(obj.toString());
+			obj = Collections.max(cmpL);
+			minMax[1] = Double.parseDouble(obj.toString());
+		}
+		return minMax;
+	}
 	
 	public boolean compareBins(int j, int mark,int[][] bins) {
 		for (int i = 0; i < reqdVarsL.size(); i++) {
@@ -2140,6 +2658,480 @@ public class LearnLPN extends JPanel {
 		return true;
 	}
 	
+	public void addPseudo(HashMap<String,ArrayList<Double>> scaledThresholds){
+		lpnWithPseudo = new LhpnFile();
+		lpnWithPseudo = mergeLhpns(lpnWithPseudo,g);
+		//inputs = new ArrayList<Integer>();
+		pseudoVars = new HashMap<String,Boolean>();
+		pseudoVars.put("ctl",true);
+		//for (int i = 0; i < reqdVarsL.size(); i++) {
+		//	if (reqdVarsL.get(i).isInput()){
+		//		inputs.add(i);
+		//	}
+		//}
+		for (String st : g.getPlaceList()){
+			currentPlace = st;
+			//TODO: do this only if not prop type place
+			if (getPlaceInfoIndex(st) != null)
+				currPlaceBin = getPlaceInfoIndex(st).split(",");
+			else 
+				currPlaceBin = getTransientNetPlaceIndex(st).split(",");
+//			visitedPlaces = new HashMap<String,Boolean>();
+//			visitedPlaces.put(currentPlace, true);
+			traverse(scaledThresholds);
+		}
+	}
+	
+	private void traverse(HashMap<String,ArrayList<Double>> scaledThresholds){
+		for (String nextPlace : g.getPlaceList()){
+			if ((!nextPlace.equalsIgnoreCase(currentPlace)) && (getPlaceInfoIndex(nextPlace) != null)){
+				if ((getPlaceInfoIndex(currentPlace) != null) && (!transitionInfo.containsKey(getPlaceInfoIndex(currentPlace) + "," + getPlaceInfoIndex(nextPlace)))){
+					addPseudoTrans(nextPlace, scaledThresholds);
+				} else if ((getTransientNetPlaceIndex(currentPlace) != null) && (!transientNetTransitions.containsKey(getTransientNetPlaceIndex(currentPlace) + "," + getPlaceInfoIndex(nextPlace)))){
+					addPseudoTrans(nextPlace, scaledThresholds);
+				}
+			}
+		}
+	}
+	
+	private void addPseudoTrans(String nextPlace, HashMap<String, ArrayList<Double>> scaledThresholds){ // Adds pseudo transition b/w currentPlace and nextPlace
+		String[] nextPlaceBin = getPlaceInfoIndex(nextPlace).split(",");
+		String enabling = "";
+		int bin;
+		String st; 
+		Boolean pseudo = false;
+		for (int i = 0; i < reqdVarsL.size(); i++) {
+			if (reqdVarsL.get(i).isInput()){
+				if (Integer.valueOf(currPlaceBin[i]) == Integer.valueOf(nextPlaceBin[i])){
+					continue;
+				} else {
+					if (!pseudoVars.containsKey(reqdVarsL.get(i).getName())){
+						pseudo = false;
+						break;
+					}
+					if (Math.abs(Integer.valueOf(currPlaceBin[i]) - Integer.valueOf(nextPlaceBin[i])) > 1){
+						pseudo = false;
+						break;
+					}
+					pseudo = true;
+					bin = Integer.valueOf(nextPlaceBin[i]);
+					st = reqdVarsL.get(i).getName();
+					if (bin == 0){
+						if (!enabling.equalsIgnoreCase(""))
+							enabling += "&";
+						enabling += "~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
+					} else if (bin == (scaledThresholds.get(st).size())){
+						if (!enabling.equalsIgnoreCase(""))
+							enabling += "&";
+						enabling += "(" + st + ">="	+ (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")";
+					} else{
+						if (!enabling.equalsIgnoreCase(""))
+							enabling += "&";
+						enabling += "(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")&~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
+					}
+				}
+			} else {
+				if (Integer.valueOf(currPlaceBin[i]) != Integer.valueOf(nextPlaceBin[i])){
+					pseudo = false;
+					break;
+				}
+			}
+		}
+		if (pseudo){
+			System.out.println("Adding pseudo-transition pt"  + pseudoTransNum + " between " + currentPlace + " and " + nextPlace + " with enabling " + enabling + "\n");
+			lpnWithPseudo.addTransition("pt" + pseudoTransNum);
+			lpnWithPseudo.addMovement(currentPlace, "pt" + pseudoTransNum); 
+			lpnWithPseudo.addMovement("pt" + pseudoTransNum, nextPlace);
+			lpnWithPseudo.addEnabling("pt" + pseudoTransNum, enabling);
+			pseudoTransNum++;
+		}
+	}
+	
+	public void addMetaBins(){ // TODO: DIDN'T REPLACE divisionsL by thresholds IN THIS METHOD
+		boolean foundBin = false;
+		for (String st1 : g.getPlaceList()){
+			String p = getPlaceInfoIndex(st1);
+			String[] binEncoding ;
+			ArrayList<Integer> syncBinEncoding;
+			String o1;
+			// st1 w.r.t g
+			// p w.r.t placeInfo
+			if (placeInfo.get(p).getProperty("type").equalsIgnoreCase("RATE")) {
+//				String [] bE = p.split("");
+				String [] bE = p.split(",");
+				binEncoding = new String[bE.length - 1];
+				for (int i = 0; i < bE.length; i++){
+					binEncoding[i] = bE[i];    // since p.split("") gives ,0,1 if p was 01
+				}
+				for (int i = 0; i < binEncoding.length ; i++){
+					if (!reqdVarsL.get(i).isDmvc()){
+					if ((lowerLimit[i] != null) && (getMinRate(p,reqdVarsL.get(i).getName()) < 0)){
+						syncBinEncoding = new ArrayList<Integer>();
+						// deep copy of bin encoding
+						for (int n = 0; n < binEncoding.length; n++){
+							o1 = binEncoding[n];
+							if (o1 == "A"){
+								syncBinEncoding.add(-1);
+							}
+							else if (o1 == "Z"){
+								syncBinEncoding.add(divisionsL.get(n).size());
+							}
+							else{
+								syncBinEncoding.add( Integer.parseInt(o1)); // clone() not working here
+							}
+						}
+						foundBin = false;
+						while (!foundBin){
+							syncBinEncoding.set(i,syncBinEncoding.get(i) - 1);
+							String key = "";
+							for (int m = 0; m < syncBinEncoding.size(); m++){
+								if (syncBinEncoding.get(m) != -1){
+									key += syncBinEncoding.get(m).toString();
+								}
+								else{
+									key += "A"; // ***Encoding -1 as A
+								}
+							}
+							if ((syncBinEncoding.get(i) == -1) && (!placeInfo.containsKey(key))){ 
+								foundBin = true;
+								Properties p0 = new Properties();
+								placeInfo.put(key, p0);
+								p0.setProperty("placeNum", numPlaces.toString());
+								p0.setProperty("type", "RATE");
+								p0.setProperty("initiallyMarked", "false");
+								p0.setProperty("metaType","true");
+								p0.setProperty("metaVar", String.valueOf(i));
+								g.addPlace("p" + numPlaces, false);
+								//ratePlaces.add("p"+numPlaces);
+								numPlaces++;
+								if (getMaxRate(p,reqdVarsL.get(i).getName()) > 0){ // minrate is 0; maxrate remains the same if positive
+									addRate(p0, reqdVarsL.get(i).getName(), 0.0);
+									addRate(p0, reqdVarsL.get(i).getName(), (double)getMaxRate(p,reqdVarsL.get(i).getName()));
+							/*
+							 * This transition should be added only in this case but
+							 * since dotty cribs if there's no place on a transition's postset,
+							 * moving this one down so that this transition is created even if the 
+							 * min,max rate is 0 in which case it wouldn't make sense to have this
+							 * transition
+							 * 		Properties p2 = new Properties();
+									transitionInfo.put(key + p, p2);
+									p2.setProperty("transitionNum", numTransitions.toString());
+									g.addTransition("t" + numTransitions); // prevTranKey+key);
+									g.addControlFlow("p" + placeInfo.get(key).getProperty("placeNum"), "t" + transitionInfo.get(key + p).getProperty("transitionNum")); 
+									g.addControlFlow("t" + transitionInfo.get(key + p).getProperty("transitionNum"), "p" + placeInfo.get(p).getProperty("placeNum"));
+									g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")" + "&~fail");
+									numTransitions++; */
+								}
+								else{
+									addRate(p0, reqdVarsL.get(i).getName(), 0.0); // if the maximum rate was negative, then make the min & max rates both as zero
+								}
+								Properties p1 = new Properties();
+								transitionInfo.put(p + "," + key, p1);
+								p1.setProperty("transitionNum", numTransitions.toString());
+								g.addTransition("t" + numTransitions); // prevTranKey+key);
+								g.addMovement("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + "," + key).getProperty("transitionNum")); 
+								g.addMovement("t" + transitionInfo.get(p + "," + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+							//	g.addEnabling("t" + numTransitions, "~fail");
+								g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")");
+								int minr = getMinRate(key, reqdVarsL.get(i).getName());
+								int maxr = getMaxRate(key, reqdVarsL.get(i).getName());
+								if (minr != maxr)
+									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "uniform("	+ minr + "," + maxr + ")");
+								else
+									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), String.valueOf(minr));
+								numTransitions++;
+								Properties p2 = new Properties();
+								transitionInfo.put(key + "," + p, p2);
+								p2.setProperty("transitionNum", numTransitions.toString());
+								g.addTransition("t" + numTransitions); // prevTranKey+key);
+								g.addMovement("p" + placeInfo.get(key).getProperty("placeNum"), "t" + transitionInfo.get(key + "," + p).getProperty("transitionNum")); 
+								g.addMovement("t" + transitionInfo.get(key + "," + p).getProperty("transitionNum"), "p" + placeInfo.get(p).getProperty("placeNum"));
+								g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")");
+								minr = getMinRate(p, reqdVarsL.get(i).getName());
+								maxr = getMaxRate(p, reqdVarsL.get(i).getName());
+								if (minr != maxr)
+									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "uniform("	+ minr	+ "," + maxr + ")");
+								else
+									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), String.valueOf(minr));
+								numTransitions++;
+							}
+							else if (placeInfo.containsKey(key)){
+								foundBin = true;
+								//Properties syncP = placeInfo.get(key);
+								Properties p1;
+								if (!transitionInfo.containsKey(p + "," + key)) { // instead of tuple
+									p1 = new Properties();
+									transitionInfo.put(p + "," + key, p1);
+									p1.setProperty("transitionNum", numTransitions.toString());
+									g.addTransition("t" + numTransitions); // prevTranKey+key);
+									g.addMovement("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + "," + key).getProperty("transitionNum")); 
+									g.addMovement("t" + transitionInfo.get(p + "," + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+								//	g.addEnabling("t" + numTransitions, "~fail");
+									g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")");
+									int minr = getMinRate(key, reqdVarsL.get(i).getName());
+									int maxr = getMaxRate(key, reqdVarsL.get(i).getName());
+									if (minr != maxr)
+										g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "uniform("	+ minr	+ "," + maxr + ")");
+									else
+										g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), String.valueOf(minr));
+									numTransitions++;
+								}
+							}
+						}
+					}
+					if ((upperLimit[i] != null) && getMaxRate(p,reqdVarsL.get(i).getName()) > 0){
+						syncBinEncoding = new ArrayList<Integer>();
+						// deep copy of bin encoding
+						for (int n = 0; n < binEncoding.length; n++){
+							o1 = binEncoding[n];
+							if (o1 == "A"){
+								syncBinEncoding.add(-1);
+							}
+							else if (o1 == "Z"){
+								syncBinEncoding.add(divisionsL.get(n).size()+1);
+							}
+							else{
+								syncBinEncoding.add( Integer.parseInt(o1)); // clone() not working here
+							}
+						}
+						foundBin = false;
+						while (!foundBin){
+							syncBinEncoding.set(i,syncBinEncoding.get(i) + 1);
+							String key = "";
+							for (int m = 0; m < syncBinEncoding.size(); m++){
+								if (syncBinEncoding.get(m) < divisionsL.get(i).size()+1){
+									key += syncBinEncoding.get(m).toString();
+								}
+								else{
+									key += "Z"; // ***Encoding highest bin +1 as Z
+									// encoding not required here.. but may be useful to distinguish the pseudobins from normal bins in future
+								}
+							}
+							if ((syncBinEncoding.get(i) == divisionsL.get(i).size() + 1) && (!placeInfo.containsKey(key))){ 
+								// divisionsL.get(i).size() + 1 or  divisionsL.get(i).size()???
+								foundBin = true;
+								Properties p0 = new Properties();
+								placeInfo.put(key, p0);
+								p0.setProperty("placeNum", numPlaces.toString());
+								p0.setProperty("type", "RATE");
+								p0.setProperty("initiallyMarked", "false");
+								p0.setProperty("metaType","true");
+								p0.setProperty("metaVar", String.valueOf(i));
+								//ratePlaces.add("p"+numPlaces);
+								g.addPlace("p" + numPlaces, false);
+								numPlaces++;
+								if (getMinRate(p,reqdVarsL.get(i).getName()) < 0){ // maxrate is 0; minrate remains the same if negative
+									addRate(p0, reqdVarsL.get(i).getName(), 0.0);
+									addRate(p0, reqdVarsL.get(i).getName(), (double)getMinRate(p,reqdVarsL.get(i).getName()));
+									/*
+									 * This transition should be added only in this case but
+									 * since dotty cribs if there's no place on a transition's postset,
+									 * moving this one down so that this transition is created even if the 
+									 * min,max rate is 0 in which case it wouldn't make sense to have this
+									 * transition
+									 * 				
+									Properties p2 = new Properties();
+									transitionInfo.put(key + p, p2);
+									p2.setProperty("transitionNum", numTransitions.toString());
+									g.addTransition("t" + numTransitions); // prevTranKey+key);
+									g.addControlFlow("p" + placeInfo.get(key).getProperty("placeNum"), "t" + transitionInfo.get(key + p).getProperty("transitionNum")); 
+									g.addControlFlow("t" + transitionInfo.get(key + p).getProperty("transitionNum"), "p" + placeInfo.get(p).getProperty("placeNum"));
+									g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")" + "&~fail");
+									numTransitions++; 
+									*/
+								}
+								else{
+									addRate(p0, reqdVarsL.get(i).getName(), 0.0); // if the minimum rate was positive, then make the min & max rates both as zero
+								}
+								
+								Properties p1 = new Properties();
+								transitionInfo.put(p + "," + key, p1);
+								p1.setProperty("transitionNum", numTransitions.toString());
+								g.addTransition("t" + numTransitions); // prevTranKey+key);
+								g.addMovement("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + "," + key).getProperty("transitionNum")); 
+								g.addMovement("t" + transitionInfo.get(p + "," + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+							//	g.addEnabling("t" + numTransitions, "~fail");
+								int minr = getMinRate(key, reqdVarsL.get(i).getName());
+								int maxr = getMaxRate(key, reqdVarsL.get(i).getName());
+								if (minr != maxr)
+									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "uniform("	+ minr	+ "," + maxr + ")");
+								else
+									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), String.valueOf(minr));
+								g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")");
+								numTransitions++;
+								Properties p2 = new Properties();
+								transitionInfo.put(key + "," + p, p2);
+								p2.setProperty("transitionNum", numTransitions.toString());
+								g.addTransition("t" + numTransitions); // prevTranKey+key);
+								g.addMovement("p" + placeInfo.get(key).getProperty("placeNum"), "t" + transitionInfo.get(key + "," + p).getProperty("transitionNum")); 
+								g.addMovement("t" + transitionInfo.get(key + "," + p).getProperty("transitionNum"), "p" + placeInfo.get(p).getProperty("placeNum"));
+								g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")");
+								minr = getMinRate(p, reqdVarsL.get(i).getName());
+								maxr = getMaxRate(p, reqdVarsL.get(i).getName());
+								if (minr != maxr)
+									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "uniform("	+ minr	+ "," + maxr + ")");
+								else
+									g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), String.valueOf(minr));
+								numTransitions++; 
+							}
+							else if (placeInfo.containsKey(key)){
+								foundBin = true;
+								//Properties syncP = placeInfo.get(key);
+								Properties p1;
+								if (!transitionInfo.containsKey(p + "," + key)) { // instead of tuple
+									p1 = new Properties();
+									transitionInfo.put(p + "," + key, p1);
+									p1.setProperty("transitionNum", numTransitions.toString());
+									g.addTransition("t" + numTransitions); // prevTranKey+key);
+									g.addMovement("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + "," + key).getProperty("transitionNum")); 
+									g.addMovement("t" + transitionInfo.get(p + "," + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+									//	g.addEnabling("t" + numTransitions, "~fail");
+									int minr = getMinRate(key, reqdVarsL.get(i).getName());
+									int maxr = getMaxRate(key, reqdVarsL.get(i).getName());
+									if (minr != maxr)
+										g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "uniform("	+ minr	+ "," + maxr + ")");
+									else
+										g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), String.valueOf(minr));
+									g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")");
+									numTransitions++;
+								}
+							}
+						}
+					}
+					}
+				}
+			}
+		}
+	}
+	public void addMetaBinTransitions(){ 
+		// Adds transitions b/w existing metaBins. 
+		// Doesn't add any new metabins. Doesn't add transitions b/w metabins & normal bins
+		boolean foundBin = false;
+		for (String st1 : g.getPlaceList()){
+			String p = getPlaceInfoIndex(st1);
+			Properties placeP = placeInfo.get(p);
+			String[] binEncoding ;
+			ArrayList<Integer> syncBinEncoding;
+			String o1;
+			// st1 w.r.t g
+			// p w.r.t placeInfo
+			if (placeP.getProperty("type").equalsIgnoreCase("RATE") && placeP.getProperty("metaType").equalsIgnoreCase("true")) {
+//				String [] bE = p.split("");
+				String [] bE = p.split(",");
+				binEncoding = new String[bE.length - 1];
+				for (int i = 0; i < bE.length; i++){
+					binEncoding[i] = bE[i];    // since p.split("") gives ,0,1 if p was 01
+				}
+				for (int i = 0; i < binEncoding.length ; i++){
+					if ((!reqdVarsL.get(i).isDmvc()) && (Integer.parseInt(placeP.getProperty("metaVar")) != i)){
+					if ((getMinRate(p,reqdVarsL.get(i).getName()) < 0)){
+						syncBinEncoding = new ArrayList<Integer>();
+						// deep copy of bin encoding
+						for (int n = 0; n < binEncoding.length; n++){
+							o1 = binEncoding[n];
+							if (o1 == "A"){
+								syncBinEncoding.add(-1);
+							}
+							else if (o1 == "Z"){
+								syncBinEncoding.add(divisionsL.get(n).size());
+							}
+							else{
+								syncBinEncoding.add( Integer.parseInt(o1)); // clone() not working here
+							}
+						}
+						foundBin = false;
+						while (!foundBin){
+							syncBinEncoding.set(i,syncBinEncoding.get(i) - 1);
+							String key = "";
+							for (int m = 0; m < syncBinEncoding.size(); m++){
+								if (syncBinEncoding.get(m) != -1){
+									key += syncBinEncoding.get(m).toString();
+								}
+								else{
+									key += "A"; // ***Encoding -1 as A
+								}
+							}
+							if (placeInfo.containsKey(key)){
+								foundBin = true;
+								//Properties syncP = placeInfo.get(key);
+								Properties p1;
+								if (!transitionInfo.containsKey(p + "," + key)) { // instead of tuple
+									p1 = new Properties();
+									transitionInfo.put(p + "," + key, p1);
+									p1.setProperty("transitionNum", numTransitions.toString());
+									g.addTransition("t" + numTransitions); // prevTranKey+key);
+									g.addMovement("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + "," + key).getProperty("transitionNum")); 
+									g.addMovement("t" + transitionInfo.get(p + "," + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+								//	g.addEnabling("t" + numTransitions, "~fail");
+									g.addEnabling("t" + numTransitions, "~(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.floor(lowerLimit[i]) + ")");
+									int minr = getMinRate(key, reqdVarsL.get(i).getName());
+									int maxr = getMaxRate(key, reqdVarsL.get(i).getName());
+									if (minr != maxr)
+										g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "uniform("	+ minr	+ "," + maxr + ")");
+									else
+										g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), String.valueOf(minr));
+									numTransitions++;
+								}
+							}
+						}
+					}
+					if (getMaxRate(p,reqdVarsL.get(i).getName()) > 0){
+						syncBinEncoding = new ArrayList<Integer>();
+						// deep copy of bin encoding
+						for (int n = 0; n < binEncoding.length; n++){
+							o1 = binEncoding[n];
+							if (o1 == "A"){
+								syncBinEncoding.add(-1);
+							}
+							else if (o1 == "Z"){
+								syncBinEncoding.add(divisionsL.get(n).size()+1);
+							}
+							else{
+								syncBinEncoding.add( Integer.parseInt(o1)); // clone() not working here
+							}
+						}
+						foundBin = false;
+						while (!foundBin){
+							syncBinEncoding.set(i,syncBinEncoding.get(i) + 1);
+							String key = "";
+							for (int m = 0; m < syncBinEncoding.size(); m++){
+								if (syncBinEncoding.get(m) < divisionsL.get(i).size()+1){
+									key += syncBinEncoding.get(m).toString();
+								}
+								else{
+									key += "Z"; // ***Encoding highest bin +1 as Z
+									// encoding not required here.. but may be useful to distinguish the pseudobins from normal bins in future
+								}
+							}
+							if (placeInfo.containsKey(key)){
+								foundBin = true;
+								//Properties syncP = placeInfo.get(key);
+								Properties p1;
+								if (!transitionInfo.containsKey(p + "," + key)) { // instead of tuple
+									p1 = new Properties();
+									transitionInfo.put(p + "," + key, p1);
+									p1.setProperty("transitionNum", numTransitions.toString());
+									g.addTransition("t" + numTransitions); // prevTranKey+key);
+									g.addMovement("p" + placeInfo.get(p).getProperty("placeNum"), "t" + transitionInfo.get(p + "," + key).getProperty("transitionNum")); 
+									g.addMovement("t" + transitionInfo.get(p + "," + key).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
+								//	g.addEnabling("t" + numTransitions, "~fail");
+									int minr = getMinRate(key, reqdVarsL.get(i).getName());
+									int maxr = getMaxRate(key, reqdVarsL.get(i).getName());
+									if (minr != maxr)
+										g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), "uniform("	+ minr	+ "," + maxr + ")");
+									else
+										g.addRateAssign("t" + numTransitions, reqdVarsL.get(i).getName(), String.valueOf(minr));
+									g.addEnabling("t" + numTransitions, "(" + reqdVarsL.get(i).getName() + ">=" + (int) Math.ceil(upperLimit[i]) + ")");
+									numTransitions++;
+								}
+							}
+						}
+					}
+					}
+				}
+			}
+		}
+	}
 
 	public void writeVHDLAMSFile(String vhdFile){
 		try{
@@ -3074,3 +4066,315 @@ public class LearnLPN extends JPanel {
 		return l1;
 	}
 }
+
+/* 
+	private String traceBack(String place, String var){
+		String enabling = null;
+		try{
+			visitedPlaces.put(place,true);
+			for (String presetTrans : g.getPreset(place)){
+				ExprTree enableTree = g.getEnablingTree(presetTrans);
+				if ((enableTree != null) && (enableTree.containsVar(var))){
+					enabling = enableTree.toString();
+					return enabling;
+				}
+			}
+			for (String presetTrans : g.getPreset(place)){
+				for (String presetPlace : g.getPreset(presetTrans)){
+					if (!visitedPlaces.containsKey(presetPlace)){
+						enabling = traceBack(presetPlace,var);
+						if (enabling != null)
+							return enabling;
+					}
+				}
+			}
+		} catch (NullPointerException e){
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Exception while tracing back for making the enabling conditions mutually exclusive.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
+
+		}
+		return enabling;
+	}
+		
+This method is used for creating separate nets for each DMV input variable driver.
+public void updateTimeInfo(int[][] bins, Properties cvgProp) {
+	String prevPlace = null;
+	String currPlace = null;
+	Properties p3 = null;
+	//ArrayList<String> dmvcPlaceL = new ArrayList<String>(); // only dmvc inputs
+	boolean exists;
+	// int dmvcCnt = 0; making this global .. rechk
+	String[] places;
+	try {
+		for (int i = 0; i < reqdVarsL.size(); i++) {
+			if (reqdVarsL.get(i).isDmvc() && reqdVarsL.get(i).isInput()) {
+				out.write(reqdVarsL.get(i).getName() + " is a dmvc input variable \n");
+				// dmvcCnt = 0; in case of multiple tsd files, this may be a problem. may create a new distinct place with an existing key.??
+				prevPlace = null;
+				currPlace = null;
+				p3 = null;
+				Properties p2 = null;
+				String k;
+				DMVCrun runs = reqdVarsL.get(i).getRuns();
+				Double[] avgVals = runs.getAvgVals();
+				out.write("variable " + reqdVarsL.get(i).getName() + " Number of runs = " + avgVals.length + "Avg Values are : " + avgVals.toString() + "\n");
+				for (int j = 0; j < avgVals.length; j++) { // this gives number of runs/startpoints/endpoints
+					exists = false;
+					places = g.getPlaceList();
+					if (places.length > 1) {
+						for (String st : places) {
+							k = getPlaceInfoIndex(st);
+							if (!isTransientPlace(st) && (placeInfo.get(k).getProperty("type").equalsIgnoreCase("DMVC"))) {
+								if ((Math.abs(Double.parseDouble(placeInfo.get(k).getProperty("DMVCValue")) - avgVals[j]) < epsilon)
+										&& (placeInfo.get(k).getProperty("DMVCVariable").equalsIgnoreCase(reqdVarsL.get(i).getName()))) {
+				//					out.write("Place with key " + k + "already exists. so adding dmvcTime to it\n");
+									addDmvcTime(placeInfo.get(k), reqdVarsL.get(i).getName(), calcDelay(runs.getStartPoint(j), runs.getEndPoint(j)));
+									addDuration(placeInfo.get(k),calcDelay(runs.getStartPoint(j), runs.getEndPoint(j)));
+									exists = true;
+									prevPlace = currPlace;
+									currPlace = getPlaceInfoIndex(st);// k;
+									p2 = placeInfo.get(currPlace);
+	//next few lines commented to remove multiple dmv input places of same variable from being marked initially.
+									//	if (j == 0) { // adding the place corresponding to the first dmv run to initial marking. 
+									//	placeInfo.get(k).setProperty("initiallyMarked", "true");
+									//	g.changeInitialMarking("p"	+ placeInfo.get(k).getProperty("placeNum"),true);
+									//} 
+									// break ; here?
+								}
+							}
+						}
+					}
+					if (!exists) {
+						prevPlace = currPlace;
+						currPlace = "d_" + i + "_" + dmvcCnt;
+						p2 = new Properties();
+						p2.setProperty("placeNum", numPlaces.toString());
+						p2.setProperty("type", "DMVC");
+						p2.setProperty("DMVCVariable", reqdVarsL.get(i).getName());
+						p2.setProperty("DMVCValue", avgVals[j].toString());
+						p2.setProperty("initiallyMarked", "false");
+						addDmvcTime(p2, reqdVarsL.get(i).getName(),calcDelay(runs.getStartPoint(j), runs.getEndPoint(j)));
+						//placeInfo.put("d_" + i + "_" + dmvcCnt, p2);
+						if (j == 0) {
+							transientNetPlaces.put("d_" + i + "_" + dmvcCnt, p2);
+							g.addPlace("p" + numPlaces, true);
+							p2.setProperty("initiallyMarked", "true");
+						}
+						else{
+							placeInfo.put("d_" + i + "_" + dmvcCnt, p2);
+							g.addPlace("p" + numPlaces, false);
+						}
+						dmvcInputPlaces.add("p" + numPlaces);
+						if (j == 0) { // adding the place corresponding to the first dmv run to initial marking
+							p2.setProperty("initiallyMarked", "true");
+							g.changeInitialMarking("p" + p2.getProperty("placeNum"), true);
+						}
+						numPlaces++;
+						out.write("Created new place with key " + "d_" + i + "_" + dmvcCnt + "\n");
+						dmvcCnt++;
+						//dmvcPlaceL.add(currPlace);
+						cvgProp.setProperty("places", String.valueOf(Integer.parseInt(cvgProp.getProperty("places"))+1));
+					}
+					Double d = calcDelay(runs.getStartPoint(j), runs.getEndPoint(j));// data.get(0).get(runs.getEndPoint(j)) - data.get(0).get(runs.getStartPoint(j));
+						// data.get(0).get(reqdVarsL.get(prevPlace.getDmvcVar()).getRuns().getEndPoint(j-1));
+					// TEMPORARY FIX
+					//Double minTime = getMinDmvcTime(p2);
+					//if ((d > minTime*Math.pow(10.0, 4.0))){ // && (getMinDmvcTime(p2) == getMaxDmvcTime(p2))){
+					//	deleteInvalidDmvcTime(p2, getMinDmvcTime(p2));	// updates dmin,dmax too
+					//}
+					//END TEMPORARY FIX
+		// For dmv input nets, transition's delay assignment is
+		// it's preset's duration; value assgnmt is value in postset.
+					addDuration(p2,d);	
+					//boolean transientNet = false;
+					//	out.write("Delay in place p"+ p2.getProperty("placeNum")+ " after updating " + d + " is ["+ p2.getProperty("dMin") + ","+ p2.getProperty("dMax") + "]\n");
+					if (prevPlace != null) {
+						if (transitionInfo.containsKey(prevPlace + currPlace)) {
+							p3 = transitionInfo.get(prevPlace + currPlace);
+						} else {
+							p3 = new Properties();
+							p3.setProperty("transitionNum", numTransitions.toString());
+							if (transientNetPlaces.containsKey(prevPlace)){
+								transientNetTransitions.put(prevPlace + currPlace, p3);
+								g.addTransition("t" + numTransitions); // prevTranKey+key);
+								g.addMovement("p" + transientNetPlaces.get(prevPlace).getProperty("placeNum"), "t" + transientNetTransitions.get(prevPlace + currPlace).getProperty("transitionNum")); 
+								g.addMovement("t" + transientNetTransitions.get(prevPlace + currPlace).getProperty("transitionNum"), "p" + placeInfo.get(currPlace).getProperty("placeNum"));
+							//	transientNet = true;
+							}
+							else{
+								transitionInfo.put(prevPlace + currPlace, p3);
+								g.addTransition("t" + numTransitions); // prevTranKey+key);
+								g.addMovement("p"+ placeInfo.get(prevPlace).getProperty("placeNum"), "t"+ transitionInfo.get(prevPlace + currPlace).getProperty("transitionNum")); 
+								g.addMovement("t"+ transitionInfo.get(prevPlace+ currPlace).getProperty("transitionNum"),"p"+ placeInfo.get(currPlace).getProperty("placeNum"));
+							}
+							numTransitions++;
+							cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
+						}
+					}
+					//if (!transientNet){	// assuming postset duration
+					//	addDuration(p2, d);
+					//}
+					//else {
+					//	addTransientDuration(p2, d);
+					//}
+					
+				}
+			} else if (reqdVarsL.get(i).isDmvc()) { // non-input dmvc
+
+			}
+		}
+	} catch (IOException e) {
+		e.printStackTrace();
+		JOptionPane.showMessageDialog(biosim.frame(),
+				"Log file couldn't be opened for writing rates and bins.",
+				"ERROR!", JOptionPane.ERROR_MESSAGE);
+	}
+}
+*/
+
+/*
+			ArrayList<ArrayList<String>> ifL = new ArrayList<ArrayList<String>>();
+			ArrayList<ArrayList<String>> ifRateL = new ArrayList<ArrayList<String>>();
+			for (Variable v: reqdVarsL){
+				ifL.add(new ArrayList<String>());
+				ifRateL.add(new ArrayList<String>());
+			}
+			String[] tL;
+			for (String p : ratePlaces){
+				tL = g.getPreset(p);
+				for (String t : tL){
+					if ((g.getPreset(t).length != 0) && (g.getPostset(t).length != 0) && (placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))
+							&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))) {
+						ArrayList<Integer> diffL = diff(getPlaceInfoIndex(g.getPreset(t)[0]), getPlaceInfoIndex(g.getPostset(t)[0]));
+						String ifStr = "";
+						String[] binIncoming = getPlaceInfoIndex(g.getPreset(t)[0]).split("");
+						String[] binOutgoing = getPlaceInfoIndex(g.getPostset(t)[0]).split("");
+						boolean above;
+						double val;
+						for (int k : diffL) {
+							if (Integer.parseInt(binIncoming[k + 1]) < Integer.parseInt(binOutgoing[k + 1])) {
+								val = divisionsL.get(k).get(Integer.parseInt(binIncoming[k + 1])).doubleValue();
+								above = true;
+							} else {
+								val = divisionsL.get(k).get(Integer.parseInt(binOutgoing[k + 1])).doubleValue();
+								above = false;
+							}
+							if (above) {
+								ifStr = reqdVarsL.get(k).getName()+"'above("+val+")";
+							}
+							else{
+								ifStr = "not "+ reqdVarsL.get(k).getName()+"'above("+val+")";
+							}
+							for (int j = 0; j<reqdVarsL.size(); j++){
+								String rateStr = "";
+								if ((!reqdVarsL.get(j).isInput()) && (!reqdVarsL.get(j).isDmvc())){
+								//if (!(reqdVarsL.get(j).isInput() && reqdVarsL.get(j).isDmvc())){
+									rateStr = reqdVarsL.get(j).getName() + "'dot == span(" + getMinRate(getPlaceInfoIndex(p), reqdVarsL.get(j).getName())+".0,"+getMaxRate(getPlaceInfoIndex(p), reqdVarsL.get(j).getName())+".0)";
+									ifL.get(j).add(ifStr);
+									ifRateL.get(j).add(rateStr);
+								}
+							}
+						}
+					}
+				}
+			}
+			for (int i = 0; i<reqdVarsL.size(); i++){
+				for (int j = 0; j<ifL.get(i).size(); j++){
+					if (j==0){
+						vhdlAms.write("\tif "+ifL.get(i).get(j)+" use\n");
+					}
+					else{
+						vhdlAms.write("\telsif "+ifL.get(i).get(j)+" use\n");
+					}
+					vhdlAms.write("\t\t"+ ifRateL.get(i).get(j)+";\n");
+				}
+				if (ifL.get(i).size() != 0){
+					vhdlAms.write("\tend use;\n\n");
+				}
+			}
+		//	vhdlAms.write("\tprocess\n");
+		//	vhdlAms.write("\tbegin\n");
+			for (int i = 0; i < dmvcVarPlaces.size(); i++){
+				if (dmvcVarPlaces.get(i).size() != 0){
+				vhdlAms.write("\tprocess\n");
+				vhdlAms.write("\tbegin\n");
+				for (String p : dmvcVarPlaces.get(i)){
+					vhdlAms.write("\t\twait for delay("+placeInfo.get(p).getProperty("dMax")+","+placeInfo.get(p).getProperty("dMin") +");\n");
+		// recheck above line.. truncating double to int.. becomes 0 in most unscaled cases?/
+					vhdlAms.write("\t\tbreak "+reqdVarsL.get(i).getName()+ " => "+ placeInfo.get(p).getProperty("DMVCValue") + ";\n");
+				}
+				vhdlAms.write("\tend process;\n\n");
+				}
+			}
+		//	vhdlAms.write("\tend process;\n\n");
+			vhdlAms.write("end "+vhdFile.split("\\.")[0]+";\n");
+			vhdlAms.close();
+			
+		}
+		catch(IOException e){
+			
+		}
+	}
+	//T[] aux = (T[])a.clone();
+}
+*/
+/*  OBSOLETE METHODS
+public ArrayList<ArrayList<Double>> parseBinFile() {
+	reqdVarsL = new ArrayList<Variable>();
+	ArrayList<String> linesBinFileL = null;
+	int h = 0;
+	//ArrayList<ArrayList<Double>> divisionsL = new ArrayList<ArrayList<Double>>();
+	
+	try {
+		Scanner f1 = new Scanner(new File(directory + separator + binFile));
+		// log.addText(directory + separator + binFile);
+		linesBinFileL = new ArrayList<String>();
+		linesBinFileL.add(f1.nextLine());
+		while (f1.hasNextLine()) {
+			linesBinFileL.add(f1.nextLine());
+		}
+		out.write("Required variables and their levels are :");
+		for (String st : linesBinFileL) {
+			divisionsL.add(new ArrayList<Double>());
+			String[] wordsBinFileL = st.split("\\s");
+			for (int i = 0; i < wordsBinFileL.length; i++) {
+				if (i == 0) {
+					reqdVarsL.add(new Variable(wordsBinFileL[i]));
+					out.write("\n"	+ reqdVarsL.get(reqdVarsL.size() - 1).getName());
+				} else {
+					divisionsL.get(h).add(Double.parseDouble(wordsBinFileL[i]));
+
+				}
+			}
+			out.write(" " + divisionsL.get(h));
+			h++;
+			// max = Math.max(max, wordsBinFileL.length + 1);
+		}
+		f1.close();
+
+	} catch (Exception e1) {
+	}
+	return divisionsL;
+}
+
+ public String cleanRow (String row){ 
+  	String rowNS,rowTS = null; 
+  	try{ 
+  		rowNS =lParenR.matcher(row).replaceAll(""); 
+  		rowTS = rParenR.matcher(rowNS).replaceAll(""); 
+  		return rowTS; 
+  	}
+  	catch(PatternSyntaxException pse){ 
+ 	    System.out.format("There is a problem withthe regular expression!%n"); 
+	    System.out.format("The pattern in question is:%s%n",pse.getPattern()); 
+	    System.out.format("The description is:%s%n",pse.getDescription()); 
+  	    System.out.format("The message is:%s%n",pse.getMessage()); 
+ 	    System.out.format("The index is:%s%n",pse.getIndex()); 
+	    System.exit(0); 
+	    return rowTS; 
+	} 
+}
+ */
+
