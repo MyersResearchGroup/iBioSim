@@ -12,15 +12,21 @@ public class Variable implements Comparable<Variable>{
 	
 	private boolean output;
 	
+	private boolean care;
+	
 	private DMVCrun runs; // tmp
 	
 	private Double initValue_vMax,initRate_rMax;
 	
 	private Double initValue_vMin,initRate_rMin;
 	
+	private String forceType;
+	
 	public Variable(String name){
 		this.name = name;
 		this.runs = new DMVCrun();
+		this.forceType = null;
+		this.care = true;
 	}
 
 	public boolean isDmvc() {
@@ -34,9 +40,17 @@ public class Variable implements Comparable<Variable>{
 	public boolean isInput() {
 		return input;
 	}
+	
+	public boolean isCare() {
+		return care;
+	}
 
 	public void setInput(boolean input) {
 		this.input = input;
+	}
+	
+	public void setCare(boolean care) {
+		this.care = care;
 	}
 
 	public String getName() {
@@ -95,7 +109,9 @@ public class Variable implements Comparable<Variable>{
 		initValue_vMin = null;
 		initValue_vMax = null;
 		this.runs = new DMVCrun();
+		//this.care = true ???
 	}
+	
 	public String getInitValue(){
 		return ("["+(int)Math.floor(initValue_vMin)+","+(int)Math.ceil(initValue_vMax)+"]");
 	}
@@ -128,13 +144,51 @@ public class Variable implements Comparable<Variable>{
 		this.name = a.name;
 		this.runs = a.runs;
 		this.dmvc = a.dmvc;
-		this.dmvc = a.input;
+		this.input = a.input;
 		this.output = a.output;
-		this.initValue_vMax = a.initValue_vMax;
-		this.initValue_vMin = a.initValue_vMin;
-		this.initRate_rMax = a.initRate_rMax;
-		this.initRate_rMin = a.initRate_rMin;
+		this.forceType = a.forceType;
+		this.care = a.care;
+		// NOT Copying the init values and rates bcoz they get normalized every time a learn is performed on them. 
+		// So the values get multiplied by the same factor multiple times which is wrong.
+	//	this.initValue_vMax = a.initValue_vMax;
+	//	this.initValue_vMin = a.initValue_vMin;
+	//	this.initRate_rMax = a.initRate_rMax;
+	//	this.initRate_rMin = a.initRate_rMin;
 	}
+	
+	public void forceDmvc(Boolean dmvc){
+		if (dmvc == null){
+			this.forceType = null;
+		//	this.dmvc = false;
+		}
+		else if (!dmvc){
+			this.forceType = "Cont";
+			this.dmvc = false;
+		}
+		else if (dmvc){
+			this.forceType = "DMV";
+			this.dmvc = true;
+		}
+	}
+	
+	public boolean isForcedDmv(){
+		if (forceType == null)
+			return false;
+		else if (forceType.equalsIgnoreCase("DMV"))
+			return true;
+		else
+			return false;
+	}
+	
+	public boolean isForcedCont(){
+		if (forceType == null)
+			return false;
+		else if (forceType.equalsIgnoreCase("Cont"))
+			return true;
+		else
+			return false;
+	}
+	
 	/*
 	public void addInitValues(Double d, int i){
 		if (initValues.isEmpty()){
