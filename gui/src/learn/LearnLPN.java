@@ -60,7 +60,7 @@ public class LearnLPN extends JPanel {
 
 	private Double[] duration;
 
-	private int pathLength ; //= 7 ;// intFixed 25 pd 7 integrator 15;
+	private int pathLengthBin ; //= 7 ;// intFixed 25 pd 7 integrator 15;
 
 	private int rateSampling ; //= -1 ; //intFixed 250; 20; //-1;
 
@@ -148,7 +148,7 @@ public class LearnLPN extends JPanel {
 		lhpnFile = getFilename[getFilename.length - 1] + moduleNumber + ".lpn";
 
 		epsilon = tPar.get("epsilon");
-		pathLength = (int) tPar.get("pathLength").doubleValue();
+		pathLengthBin = (int) tPar.get("pathLengthBin").doubleValue();
 		rateSampling = (int) tPar.get("rateSampling").doubleValue();
 		percent = tPar.get("percent");
 		if (tPar.containsKey("runTime")){
@@ -625,10 +625,10 @@ public class LearnLPN extends JPanel {
 		catch (ArrayIndexOutOfBoundsException e1) {	// comes from initMark = -1 of updateGraph()
 			e1.printStackTrace();
 			JOptionPane.showMessageDialog(biosim.frame(),
-					"Unable to calculate rates.\nWindow size or pathlength must be reduced.\nLearning unsuccessful.",
+					"Unable to calculate rates.\nWindow size or pathLengthBin must be reduced.\nLearning unsuccessful.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 			try {
-				out.write("ERROR! Unable to calculate rates.\nIf Window size = -1, pathlength must be reduced;\nElse, reduce windowsize\nLearning unsuccessful.");
+				out.write("ERROR! Unable to calculate rates.\nIf Window size = -1, pathLengthBin must be reduced;\nElse, reduce windowsize\nLearning unsuccessful.");
 				out.close();
 			} catch (IOException e2) {
 				e2.printStackTrace();
@@ -816,7 +816,7 @@ public class LearnLPN extends JPanel {
 						}
 						mark++;
 					}
-					if ((data.get(0).get(mark - 1) != data.get(0).get(i)) && ((mark - i) >=  pathLength) && (mark != data.get(0).size())) { 	// && (mark != (data.get(0).size() - 1 condition added on nov 23.. to avoid the last region bcoz it's not complete. rechk
+					if ((data.get(0).get(mark - 1) != data.get(0).get(i)) && ((mark - i) >=  pathLengthBin) && (mark != data.get(0).size())) { 	// && (mark != (data.get(0).size() - 1 condition added on nov 23.. to avoid the last region bcoz it's not complete. rechk
 						if (!compareBins(previous,i)){
 							for (int j = 0; j < reqdVarsL.size(); j++) {
 								k = reqdVarIndices.get(j);
@@ -831,7 +831,7 @@ public class LearnLPN extends JPanel {
 							}
 							duration[previous] = data.get(0).get(mark)	- data.get(0).get(previous); // changed (mark - 1) to mark on may 28,2010
 						}
-					} else if ((mark - i) <  pathLength)  { // account for the glitch duration //  
+					} else if ((mark - i) <  pathLengthBin)  { // account for the glitch duration //  
 						duration[previous] += data.get(0).get(mark)	- data.get(0).get(i); 
 					} else if (data.get(0).get(mark - 1) == data.get(0).get(i)){ // bin with only one point. Added this condition on June 9,2010
 						//Rates are meaningless here since the bin has just one point.
