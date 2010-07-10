@@ -67,6 +67,11 @@ public class PropertiesLauncher {
 		InfluencePanel panel = new InfluencePanel(selected, influencesList, gcmFile, paramsOnly, biosim);
 	}
 	
+	public void launchPromoterEditor(String promotor_id){
+		ensureInitialized();
+		new PromoterPanel(promotor_id, propertyList, influencesList, gcmFile, paramsOnly, biosim);
+	}
+	
 	public void addInfluenceToList(String id){
 		influencesList.addItem(id);
 		influencesList.setSelectedValue(id, true);

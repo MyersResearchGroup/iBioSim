@@ -58,7 +58,6 @@ public class ModelView extends JPanel implements ActionListener {
 	public ModelView(HashMap<String, HashMap<String, Properties>> internalModel){
 		super(new BorderLayout());
 		this.internalModel = internalModel;
-		
 	}
 	
 	/**
@@ -219,10 +218,21 @@ public class ModelView extends JPanel implements ActionListener {
 							graph.createSpecies(null, e.getX(), e.getY());
 						}else if(addComponentButton.isSelected()){
 							// Ask the user which component to add, then plop it down where the click happened
-						}else if(editPromotorButton.isSelected()){
+						}
+					}else{
+						if(editPromotorButton.isSelected()){
 							// If the thing clicked on was an influence, bring up it's promotor window.
-						}else{
-							throw(new Error("No valid mode button is selected!"));
+							if(cell.isEdge()){
+								Properties prop = internalModel.get("influences").get(cell.getId());
+								String promoter = prop.getProperty("Promoter");
+								//System.out.print(promoter);
+								if(promoter != null){
+									PropertiesLauncher.getInstance().launchPromoterEditor(promoter);
+									graph.buildGraph();
+								}else{
+									
+								}
+							}
 						}
 					}
 				}else if(e.getClickCount() == 2){
@@ -231,7 +241,7 @@ public class ModelView extends JPanel implements ActionListener {
 					
 					if (cell != null){
 						System.out.println("cell="+graph.getLabel(cell) + " " + e.getClickCount());
-						graph.cellClickHandler(cell);
+						graph.bringUpEditorForCell(cell);
 						refreshGraph();
 						
 					}

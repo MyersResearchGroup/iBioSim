@@ -68,12 +68,14 @@ public class BioGraph extends mxGraph {
 		createStyleSheets();
 	}
 	
-	public void cellClickHandler(mxCell cell){
+	public void bringUpEditorForCell(mxCell cell){
 		if(cell.isVertex()){
 			PropertiesLauncher.getInstance().launchSpeciesEditor(cell.getId());
 		}else{
 			PropertiesLauncher.getInstance().launchInfluencePanel(cell.getId());
 		}
+		// refresh everything.
+		this.buildGraph();
 	}
 	
 	public void updateAllSpeciesPosition(){
@@ -171,8 +173,6 @@ public class BioGraph extends mxGraph {
 			String id = prop.getProperty(GlobalConstants.NAME) != null ? 
 					prop.getProperty(GlobalConstants.NAME) : prop.getProperty("label");
 			
-
-					
 			this.insertEdge(this.getDefaultParent(), id, "", 
 					this.getSpeciesCell(GCMFile.getInput(inf)), 
 					this.getSpeciesCell(GCMFile.getOutput(inf))
@@ -233,6 +233,10 @@ public class BioGraph extends mxGraph {
 	 */
 	private void updateInfluenceVisuals(String id){
 		Properties prop = internalModel.get("influences").get(id);
+		
+		if(prop == null)
+			throw new Error("Invalid id '"+id+"'. Valid ids were:" + String.valueOf(internalModel.get("influences").keySet()));
+		
 		// build the edge style
 		// Look in mxConstants to see all the pre-built styles.
 		String style = "defaultEdge;" + mxConstants.STYLE_ENDARROW + "=";

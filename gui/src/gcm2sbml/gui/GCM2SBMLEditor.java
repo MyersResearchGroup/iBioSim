@@ -817,6 +817,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		
 		// create the modelview2 (jgraph) panel
 		ModelView modelView = new ModelView(gcm.getInternalModel());
+		//gcm.addInfluences("ASDFASDF", new Properties());
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
