@@ -1,6 +1,5 @@
 package gcm2sbml.parser;
 
-import gcm2sbml.gui.modelview.BioGraph;
 import gcm2sbml.util.GlobalConstants;
 
 import java.awt.AWTError;
@@ -37,13 +36,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-
-import com.mxgraph.layout.mxCircleLayout;
-import com.mxgraph.layout.mxCompactTreeLayout;
-import com.mxgraph.layout.mxIGraphLayout;
-import com.mxgraph.view.mxEdgeStyle;
-import com.mxgraph.view.mxGraph;
-import com.mxgraph.view.mxLayoutManager;
 
 import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.LhpnFile;
@@ -1024,7 +1016,10 @@ public class GCMFile {
 				newInfluenceName = input + " " + arrow + " " + output + ", Promoter " + newName;
 				influences.put(newInfluenceName, influences.get(s));
 				influences.remove(s);
+				// If you don't remove the promoter, it will end up in the properties list twice, one with the old value and one with the new.
+				influences.get(newInfluenceName).remove(GlobalConstants.PROMOTER);
 				influences.get(newInfluenceName).setProperty(GlobalConstants.PROMOTER, newName);
+				influences.get(newInfluenceName).setProperty(GlobalConstants.NAME, newInfluenceName);
 			}
 		}
 
