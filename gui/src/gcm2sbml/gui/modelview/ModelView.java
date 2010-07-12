@@ -83,7 +83,6 @@ public class ModelView extends JPanel implements ActionListener {
 			graphComponent.setGraph(graph);
 			this.add(graphComponent, BorderLayout.CENTER);
 			this.add(buildToolBar(), BorderLayout.NORTH);
-			
 			addGraphComponentListeners();
 		}
 	
