@@ -1,6 +1,7 @@
 package gcm2sbml.gui.modelview;
 
 import gcm2sbml.gui.InfluencePanel;
+import gcm2sbml.gui.PromoterPanel;
 import gcm2sbml.gui.PropertiesLauncher;
 import gcm2sbml.util.GlobalConstants;
 
@@ -230,7 +231,12 @@ public class ModelView extends JPanel implements ActionListener {
 									PropertiesLauncher.getInstance().launchPromoterEditor(promoter);
 									graph.buildGraph();
 								}else{
+									PromoterPanel p = PropertiesLauncher.getInstance().launchPromoterEditor(null);
+									// set the selected influence to use the given promoter
+									internalModel.get("influences").get(cell.getId()).setProperty(GlobalConstants.PROMOTER, p.getLastUsedPromoter());
+									// now rename the influence to incorporate the new promoter
 									
+									graph.buildGraph();
 								}
 							}
 						}

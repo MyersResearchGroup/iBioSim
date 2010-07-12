@@ -173,6 +173,10 @@ public class PromoterPanel extends JPanel {
 		return true;
 	}
 	
+	// Provide a public way to query what the last used (or created) promoter was.
+	private String lastUsedPromoter;
+	public String getLastUsedPromoter(){return lastUsedPromoter;}
+	
 	private boolean openGui(String oldName) {
 		int value = JOptionPane.showOptionDialog(biosim.frame(), this,
 				"Promoter Editor", JOptionPane.YES_NO_OPTION,
@@ -208,12 +212,15 @@ public class PromoterPanel extends JPanel {
 				}
 			}
 
+			// rename all the influences that use this promoter
 			if (selected != null && !oldName.equals(id)) {
 				gcm.changePromoterName(oldName, id);
 				((DefaultListModel) influenceList.getModel()).clear();
 				influenceList.addAllItem(gcm.getInfluences().keySet());
 			}
 			gcm.addPromoter(id, property);
+			this.lastUsedPromoter = id;
+			
 			if (paramsOnly) {
 				if (fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getState().equals(PropertyField.states[1]) ||
 						fields.get(GlobalConstants.RNAP_BINDING_STRING).getState().equals(PropertyField.states[1]) ||
