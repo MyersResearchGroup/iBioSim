@@ -170,6 +170,7 @@ public class BioGraph extends mxGraph {
 		for(String inf:internalModel.get("influences").keySet()){
 			Properties prop = internalModel.get("influences").get(inf);
 			
+			// TODO: Should I take the key (inf) instead of finding the id like this?
 			String id = prop.getProperty(GlobalConstants.NAME) != null ? 
 					prop.getProperty(GlobalConstants.NAME) : prop.getProperty("label");
 			
