@@ -238,6 +238,7 @@ public class GeneticNetwork {
 				return outputSBML(filename, document);
 			}
 			else {
+				currentDocument = document;
 				return outputSBML(filename, document);
 			}
 		}
