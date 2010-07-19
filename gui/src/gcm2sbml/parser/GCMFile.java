@@ -297,6 +297,10 @@ public class GCMFile {
 		save(filename + ".temp");
 		ArrayList<String> comps = setToArrayList(components.keySet());
 		SBMLDocument sbml = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+		Model m = sbml.createModel();
+		sbml.setModel(m);
+		Utility.addCompartments(sbml, "default");
+		sbml.getModel().getCompartment("default").setSize(1);
 		if (!sbmlFile.equals("") && includeSBML) {
 			sbml = BioSim.readSBML(path + separator + sbmlFile);
 		}
@@ -340,6 +344,8 @@ public class GCMFile {
 	private SBMLDocument unionGCM(GCMFile topLevel, GCMFile bottomLevel, String compName, boolean includeSBML) {
 		ArrayList<String> mod = setToArrayList(bottomLevel.components.keySet());
 		SBMLDocument sbml = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+		Model m = sbml.createModel();
+		sbml.setModel(m);
 		if (!bottomLevel.sbmlFile.equals("") && includeSBML) {
 			sbml = BioSim.readSBML(path + separator + bottomLevel.sbmlFile);
 		}
