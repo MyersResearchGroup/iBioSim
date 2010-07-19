@@ -102,7 +102,7 @@ public class LearnModel { // added ItemListener SB
 	File logFile;
 
 	// Threshold parameters
-	private double epsilon ;//= 0.1; // What is the +/- epsilon where signals are considered to be equivalent
+//	private double epsilon ;//= 0.1; // What is the +/- epsilon where signals are considered to be equivalent
 
 	private Integer runLength ; //= 15; // the number of time points that a value must persist to be considered constant
 
@@ -195,7 +195,7 @@ public class LearnModel { // added ItemListener SB
 		else
 			lhpnFile = getFilename[getFilename.length - 1] + moduleNumber + ".lpn";
 
-		epsilon = tPar.get("epsilon");
+	//	epsilon = tPar.get("epsilon");
 		pathLengthBin = (int) tPar.get("pathLengthBin").doubleValue();
 		pathLengthVar = (int) tPar.get("pathLengthVar").doubleValue();
 		rateSampling = (int) tPar.get("rateSampling").doubleValue();
@@ -259,7 +259,7 @@ public class LearnModel { // added ItemListener SB
 				g.getTransition("t" + numTransitions).setFail(true);
 				numTransitions++;
 			}
-			out.write("epsilon = " + epsilon + "; ratesampling = " + rateSampling + "; pathLengthBin = " + pathLengthBin + "; percent = " + percent + "; runlength = " + runLength + "; runtime = " + runTime + "; absoluteTime = " + absoluteTime + "; delayscalefactor = " + delayScaleFactor + "; valuescalefactor = " + valScaleFactor + "\n");
+			out.write("epsilon = " + "; ratesampling = " + rateSampling + "; pathLengthBin = " + pathLengthBin + "; percent = " + percent + "; runlength = " + runLength + "; runtime = " + runTime + "; absoluteTime = " + absoluteTime + "; delayscalefactor = " + delayScaleFactor + "; valuescalefactor = " + valScaleFactor + "\n");
 			dsFactor = this.delayScaleFactor;
 			vsFactor = this.valScaleFactor;
 			dmvcValuesUnique = new HashMap<String, Properties>();
@@ -586,6 +586,11 @@ public class LearnModel { // added ItemListener SB
 				}
 			}
 			ArrayList<String> placesWithoutPostsetTrans = new ArrayList<String>();
+			ArrayList<String> dcVars = new ArrayList<String>();
+			for (Variable v : reqdVarsL){
+				if (!v.isCare())
+					dcVars.add(v.getName());
+			}
 			for (String st1 : g.getPlaceList()) {
 				if (g.getPostset(st1).length == 0){ // a place without a postset transition
 					placesWithoutPostsetTrans.add(st1);
@@ -599,7 +604,7 @@ public class LearnModel { // added ItemListener SB
 						}
 					}
 					for (String st2 : g.getPostset(st1)){
-						if (varsInEnabling.keySet().size() >= 1){ // && (g.getEnablingTree(st2) != null))
+						if ((varsInEnabling.keySet().size() >= 1) || (dcVars.size() > 0)){ // && (g.getEnablingTree(st2) != null))
 							//String[] binOutgoing = getPlaceInfoIndex(g.getPostset(st2)[0]).split(",");
 							String transKey;
 							if (!isTransientTransition(st2))
@@ -622,6 +627,24 @@ public class LearnModel { // added ItemListener SB
 									if (!condStr.equalsIgnoreCase(""))
 										condStr += "&";
 									condStr += "(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")&~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
+								}
+							}
+							for (String st : dcVars){
+								if(!varsInEnabling.containsKey(st)){
+									int bin = Integer.valueOf(binOutgoing[findReqdVarslIndex(st)]);
+									if (bin == 0){
+										if (!condStr.equalsIgnoreCase(""))
+											condStr += "&";
+										condStr += "~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
+									} else if (bin == (scaledThresholds.get(st).size())){
+										if (!condStr.equalsIgnoreCase(""))
+											condStr += "&";
+										condStr += "(" + st + ">="	+ (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")";
+									} else{
+										if (!condStr.equalsIgnoreCase(""))
+											condStr += "&";
+										condStr += "(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")&~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
+									}
 								}
 							}
 							out.write("Changed enabling of " + st2 + " to " + condStr + "\n");
@@ -1187,8 +1210,6 @@ public class LearnModel { // added ItemListener SB
 		return true;
 	}
 
-
-	
 	public void updateRateInfo(int[][] bins, Double[][] rates, int traceNum, Properties cvgProp) {
 		String prevPlaceKey = "", prevPlaceFullKey = ""; // "" or " " ; rechk
 		String key = "", fullKey = "";
@@ -1315,19 +1336,27 @@ public class LearnModel { // added ItemListener SB
 										if (transitionInfo.containsKey(lastLastPlaceFullKey + "," + fullKey)){
 											p1 = transitionInfo.get(lastLastPlaceFullKey + "," + fullKey);
 											p1.put("ioChangeDelay", "yes");
-											out.write("\n\n\nFound an output change follwed by a previous input change; remove transition t" + (numTransitions -1) + " between " + lastLastPlace + " and " + placeInfo.get(prevPlaceKey).getProperty("placeNum") + "; add transition t" + numTransitions + " b/w " + lastLastPlace + " and " + placeInfo.get(key).getProperty("placeNum") + "\n");
-											transitionInfo.remove(lastLastPlaceFullKey + "," + prevPlaceFullKey);
-											g.removeTransition("t" + (numTransitions -1));
+											int removeTransNum =  Integer.valueOf(transitionInfo.get(lastLastPlaceFullKey + "," +  prevPlaceFullKey).getProperty("transitionNum"));
+											if (removeTransNum == numTransitions -1){
+												out.write("\n\n\nFound an output change follwing a previous input change; remove transition t" + removeTransNum + " between " + lastLastPlace + " and " + placeInfo.get(prevPlaceKey).getProperty("placeNum") + "; add transition t" + numTransitions + " b/w " + lastLastPlace + " and " + placeInfo.get(key).getProperty("placeNum") + "\n");
+												transitionInfo.remove(lastLastPlaceFullKey + "," + prevPlaceFullKey);
+												//g.removeTransition("t" + (numTransitions -1));
+												g.removeTransition("t" + removeTransNum);
+											}
 											transId = lastLastPlaceFullKey + "," + fullKey;
 										} else {
 											transitionInfo.put(lastLastPlaceFullKey + "," + fullKey, p1);
 											p1.put("ioChangeDelay", "yes");
-											out.write("\n\n\nFound an output change follwed by a previous input change; remove transition t" + (numTransitions -1) + " between " + lastLastPlace + " and " + placeInfo.get(prevPlaceKey).getProperty("placeNum") + "; add transition t" + numTransitions + " b/w " + lastLastPlace + " and " + placeInfo.get(key).getProperty("placeNum") + "\n");
+											int removeTransNum =  Integer.valueOf(transitionInfo.get(lastLastPlaceFullKey + "," +  prevPlaceFullKey).getProperty("transitionNum"));
 											g.addTransition("t" + numTransitions); // prevTranKey+key);
 											g.addMovement(lastLastPlace, "t" + transitionInfo.get(lastLastPlaceFullKey + "," + fullKey).getProperty("transitionNum")); 
 											g.addMovement("t" + transitionInfo.get(lastLastPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
-											transitionInfo.remove(lastLastPlaceFullKey + "," + prevPlaceFullKey);
-											g.removeTransition("t" + (numTransitions -1));
+											if (removeTransNum == numTransitions -1){
+												out.write("\n\n\nFound an output change follwing a previous input change; remove transition t" + removeTransNum + " between " + lastLastPlace + " and " + placeInfo.get(prevPlaceKey).getProperty("placeNum") + "; add transition t" + numTransitions + " b/w " + lastLastPlace + " and " + placeInfo.get(key).getProperty("placeNum") + "\n");
+												transitionInfo.remove(lastLastPlaceFullKey + "," + prevPlaceFullKey);
+												//g.removeTransition("t" + (numTransitions -1));
+												g.removeTransition("t" + removeTransNum);
+											}
 											transId = lastLastPlaceFullKey + "," + fullKey;
 											out.write("New transition t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
 											numTransitions++;
@@ -1342,24 +1371,35 @@ public class LearnModel { // added ItemListener SB
 										if (transientNetTransitions.containsKey(lastLastPlaceFullKey + "," + fullKey)){
 											p1 = transientNetTransitions.get(lastLastPlaceFullKey + "," + fullKey);
 											p1.put("ioChangeDelay", "yes");
-											out.write("\n\n\nTRANSIENT:Found an output change followed by a previous input change; remove transition t" + (numTransitions -1) + " between " + lastLastPlace + " and " + placeInfo.get(prevPlaceKey).getProperty("placeNum") + "; add transition t" + numTransitions + " b/w " + lastLastPlace + " and " + placeInfo.get(key).getProperty("placeNum") + "\n");
-											transientNetTransitions.remove(lastLastPlaceFullKey + "," + prevPlaceFullKey);
-											g.removeTransition("t" + (numTransitions -1));
+											int removeTransNum =  Integer.valueOf(transientNetTransitions.get(lastLastPlaceFullKey + "," + prevPlaceFullKey).getProperty("transitionNum"));
+											if (removeTransNum == numTransitions -1){
+												out.write("\n\n\nTRANSIENT:Found an output change followed by a previous input change; remove transition t" + removeTransNum + " between " + lastLastPlace + " and " + placeInfo.get(prevPlaceKey).getProperty("placeNum") + "; add transition t" + numTransitions + " b/w " + lastLastPlace + " and " + placeInfo.get(key).getProperty("placeNum") + "\n");
+												transientNetTransitions.remove(lastLastPlaceFullKey + "," + prevPlaceFullKey);
+												//g.removeTransition("t" + (numTransitions -1));
+												g.removeTransition("t" + removeTransNum);
+											}
 											transId = lastLastPlaceFullKey + "," + fullKey;
 										} else {
 											transientNetTransitions.put(lastLastPlaceFullKey + "," + fullKey, p1);
 											p1.put("ioChangeDelay", "yes");
-											out.write("\n\n\nTRANSIENT:Found an output change followed by a previous input change; remove transition t" + (numTransitions -1) + " between " + lastLastPlace + " and " + placeInfo.get(prevPlaceKey).getProperty("placeNum") + "; add transition t" + numTransitions + " b/w " + lastLastPlace + " and " + placeInfo.get(key).getProperty("placeNum") + "\n");
+											int removeTransNum =  Integer.valueOf(transientNetTransitions.get(lastLastPlaceFullKey + "," + prevPlaceFullKey).getProperty("transitionNum"));
 											g.addTransition("t" + numTransitions); // prevTranKey+key);
 											g.addMovement(lastLastPlace, "t" + transientNetTransitions.get(lastLastPlaceFullKey + "," + fullKey).getProperty("transitionNum")); 
 											g.addMovement("t" + transientNetTransitions.get(lastLastPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
-											transientNetTransitions.remove(lastLastPlaceFullKey + "," + prevPlaceFullKey);
-											g.removeTransition("t" + (numTransitions -1));
+											if (removeTransNum == numTransitions -1){
+												out.write("\n\n\nTRANSIENT:Found an output change followed by a previous input change; remove transition t" + removeTransNum + " between " + lastLastPlace + " and " + placeInfo.get(prevPlaceKey).getProperty("placeNum") + "; add transition t" + numTransitions + " b/w " + lastLastPlace + " and " + placeInfo.get(key).getProperty("placeNum") + "\n");
+												transientNetTransitions.remove(lastLastPlaceFullKey + "," + prevPlaceFullKey);
+												//g.removeTransition("t" + (numTransitions -1));
+												g.removeTransition("t" + removeTransNum);
+											}
 											transId = lastLastPlaceFullKey + "," + fullKey;
 											out.write("TRANSIENT:New transition t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
 											numTransitions++;
 											cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
 										}
+									} else {
+										out.write("transition " + transId+ " not present to delete\n");
+										System.out.println("transition " + transId+ " not present to delete\n");
 									}
 								} else {
 									transitionInfo.put(prevPlaceFullKey + "," + fullKey, p1);
@@ -1428,27 +1468,33 @@ public class LearnModel { // added ItemListener SB
 	public String getPresetPlaceFullKey(String transition){
 		//out.write("preset key for " + transition + " is ");
 		String fullKey = "";
-		String[] b = transition.split(",");
-		for (int j = 0; j < reqdVarsL.size(); j++) {
-			if (fullKey.equalsIgnoreCase(""))
-				fullKey += b[j];
-			else
-				fullKey += "," + b[j];
-		}
-		//out.write(fullKey + "\n");
-		return(fullKey);
+		if (transition != null){
+			String[] b = transition.split(",");
+			for (int j = 0; j < reqdVarsL.size(); j++) {
+				if (fullKey.equalsIgnoreCase(""))
+					fullKey += b[j];
+				else
+					fullKey += "," + b[j];
+			}
+			//out.write(fullKey + "\n");
+			return(fullKey);
+		} else 
+			return null;
 	}
 	
 	public String getPostsetPlaceFullKey(String transition){
 		String fullKey = "";
-		String[] b = transition.split(",");
-		for (int j = 0; j < reqdVarsL.size(); j++) {
-			if (fullKey.equalsIgnoreCase(""))
-				fullKey += b[j + reqdVarsL.size()];
-			else
-				fullKey += "," + b[j + reqdVarsL.size()];
-		}
-		return(fullKey);
+		if (transition != null){
+			String[] b = transition.split(",");
+			for (int j = 0; j < reqdVarsL.size(); j++) {
+				if (fullKey.equalsIgnoreCase(""))
+					fullKey += b[j + reqdVarsL.size()];
+				else
+					fullKey += "," + b[j + reqdVarsL.size()];
+			}
+			return(fullKey);
+		} else 
+			return null;
 	}
 	
 	public void updateGraph(int[][] bins, Double[][] rates, int traceNum, Properties cvgProp) {
@@ -1513,15 +1559,16 @@ public class LearnModel { // added ItemListener SB
 					int lastRunPointsWithoutTransition = 0;
 					Double lastRunTimeWithoutTransition = 0.0;
 					Double lastRunValueWithoutTransition = null;
+					out.write("Epsilon for " + reqdVarsL.get(i).getName() + " is " + reqdVarsL.get(i).getEpsilon());
 					if (!callFromAutogen) { // This flag is required because if the call is from autogenT, then data has just the reqdVarsL but otherwise, it has all other vars too. So reqdVarIndices not reqd when called from autogen
 						for (int j = 0; j <= data.get(0).size(); j++) {
 							if (j < mark) // not reqd??
 								continue;
 							if (((j+1) < data.get(reqdVarIndices.get(i)).size()) && 
-									Math.abs(data.get(reqdVarIndices.get(i)).get(j) - data.get(reqdVarIndices.get(i)).get(j + 1)) <= epsilon) {
+									Math.abs(data.get(reqdVarIndices.get(i)).get(j) - data.get(reqdVarIndices.get(i)).get(j + 1)) <= reqdVarsL.get(i).getEpsilon()) {
 								startPoint = j;
 								runs.addValue(data.get(reqdVarIndices.get(i)).get(j)); // chk carefully reqdVarIndices.get(i)
-								while (((j + 1) < data.get(0).size()) && (bins[i][startPoint] == bins[i][j+1]) && (Math.abs(data.get(reqdVarIndices.get(i)).get(startPoint) - data.get(reqdVarIndices.get(i)).get(j + 1)) <= epsilon)) {       //checking of same bins[] condition added on May 11,2010.
+								while (((j + 1) < data.get(0).size()) && (bins[i][startPoint] == bins[i][j+1]) && (Math.abs(data.get(reqdVarIndices.get(i)).get(startPoint) - data.get(reqdVarIndices.get(i)).get(j + 1)) <= reqdVarsL.get(i).getEpsilon())) {       //checking of same bins[] condition added on May 11,2010.
 									runs.addValue(data.get(reqdVarIndices.get(i)).get(j + 1)); // chk carefully
 									// reqdVarIndices.get(i)
 									j++;
@@ -2396,7 +2443,8 @@ public class LearnModel { // added ItemListener SB
 									minDelay = mind;
 							}
 						} else {
-							System.out.println("Transition " + t + " has no index in transitionInfo. CHECK");
+							System.out.println("ERROR: Transition " + t + " has no index in transitionInfo.");
+							out.write("ERROR: Transition " + t + " has no index in transitionInfo.");
 						}
 					}
 				} else {
@@ -2415,6 +2463,7 @@ public class LearnModel { // added ItemListener SB
 							}
 						} else {
 							System.out.println("Transient transition " + t + " has no index in transientNetTransitions. CHECK");
+							out.write("ERROR: Transient transition " + t + " has no index in transientNetTransitions.");
 						}
 					}
 				}
@@ -2573,11 +2622,13 @@ public class LearnModel { // added ItemListener SB
 	public ArrayList<Integer> diff(String pre_bin, String post_bin) {
 		//Parameters are bins formed from reqdVarsL (not just cares).
 		ArrayList<Integer> diffL = new ArrayList<Integer>();
-		String[] preset_encoding = pre_bin.split(",");
-		String[] postset_encoding = post_bin.split(",");
-		for (int j = 0; j < preset_encoding.length; j++) { // to account for "" being created in the array
-			if (Integer.parseInt(preset_encoding[j]) != Integer.parseInt(postset_encoding[j])) {
-				diffL.add(j);// to account for "" being created in the array
+		if ((pre_bin != null) && (post_bin != null)){
+			String[] preset_encoding = pre_bin.split(",");
+			String[] postset_encoding = post_bin.split(",");
+			for (int j = 0; j < preset_encoding.length; j++) { // to account for "" being created in the array
+				if (Integer.parseInt(preset_encoding[j]) != Integer.parseInt(postset_encoding[j])) {
+					diffL.add(j);// to account for "" being created in the array
+				}
 			}
 		}
 		return (diffL);

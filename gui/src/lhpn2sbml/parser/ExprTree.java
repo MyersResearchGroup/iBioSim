@@ -3685,7 +3685,8 @@ public class ExprTree {
 					}
 				}
 				if (verilog){
-					result = lval + " + (($unsigned($random))%(" + uval + "-" + lval + "+1))";
+					//result = lval + " + (($unsigned($random))%(" + uval + "-" + lval + "+1))";
+					result = "uniform(" + lval + "," + uval + ")";
 				} else {
 					result = "uniform(" + lval + "," + uval + ")";
 				}
@@ -3933,7 +3934,8 @@ public class ExprTree {
 				else if (op.equals("uniform")) {
 					if (r1 != null && r2 != null) {
 						if (verilog){
-							result = r1.getElement(type) + " + (($unsigned($random))%(" + r2.getElement(type) + "-" + r1.getElement(type) + "+1))";
+							//result = r1.getElement(type) + " + (($unsigned($random))%(" + r2.getElement(type) + "-" + r1.getElement(type) + "+1))";
+							result = "uniform(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
 						} else {
 							result = "uniform(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
 						}
