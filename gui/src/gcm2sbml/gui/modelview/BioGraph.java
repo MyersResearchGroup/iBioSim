@@ -312,6 +312,8 @@ public class BioGraph extends mxGraph {
 		this.getModel().beginUpdate();
 		this.createVertexFromModel(id);
 		this.getModel().endUpdate();
+		
+		PropertiesLauncher.getInstance().refreshAllGCM2SBMLLists();
 	}
 	
 	public void applyLayout(String ident, mxGraphComponent graphComponent){

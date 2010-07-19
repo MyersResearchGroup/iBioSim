@@ -995,7 +995,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		
 		// Set up the singleton that will be used by the modelview to pop up the properteis windows.
 		PropertiesLauncher.getInstance().initialize(this.biosim, this.gcm, 
-				this.species, this.influences, this.promoters, this.paramsOnly);
+				this.species, this.influences, this.conditions, this.promoters, this.paramsOnly, this);
 
 	}
 
