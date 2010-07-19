@@ -816,7 +816,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		GCIGrappaPanel grappaPanel = new GCIGrappaPanel();
 		
 		// create the modelview2 (jgraph) panel
-		ModelView modelView = new ModelView(gcm.getInternalModel());
+		ModelView modelView = new ModelView(gcm.getInternalModel(), gcm);
 		//gcm.addInfluences("ASDFASDF", new Properties());
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
@@ -843,7 +843,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				
 				// The old ModelView (grappa panel) 
 				if(className.indexOf("GCIGrappaPanel") > 0){
-					((GCIGrappaPanel)selected_panel).display(gcm.save_to_buffer(false));
+					((GCIGrappaPanel)selected_panel).display(gcm.saveToBuffer(false));
 				}
 				// The new ModelView
 				else if(className.indexOf("ModelView") >= 0){
