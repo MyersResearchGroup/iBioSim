@@ -3,6 +3,7 @@ package gcm2sbml.gui.modelview;
 import gcm2sbml.gui.InfluencePanel;
 import gcm2sbml.gui.PromoterPanel;
 import gcm2sbml.gui.PropertiesLauncher;
+import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 
 import java.awt.BorderLayout;
@@ -52,13 +53,18 @@ public class ModelView extends JPanel implements ActionListener {
 	 */
 	private HashMap<String, HashMap<String, Properties>> internalModel;
 	
+	
+	private GCMFile gcm;
+	
 	/**
 	 * Constructor
 	 * @param internalModel
 	 */
-	public ModelView(HashMap<String, HashMap<String, Properties>> internalModel){
+	public ModelView(HashMap<String, HashMap<String, Properties>> internalModel, GCMFile gcm){
 		super(new BorderLayout());
 		this.internalModel = internalModel;
+		
+		this.gcm = gcm;
 	}
 	
 	/**
@@ -232,9 +238,9 @@ public class ModelView extends JPanel implements ActionListener {
 								}else{
 									PromoterPanel p = PropertiesLauncher.getInstance().launchPromoterEditor(null);
 									// set the selected influence to use the given promoter
-									internalModel.get("influences").get(cell.getId()).setProperty(GlobalConstants.PROMOTER, p.getLastUsedPromoter());
+									prop = internalModel.get("influences").get(cell.getId());
 									// now rename the influence to incorporate the new promoter
-									
+									gcm.changeInfluencePromoter(cell.getId(), prop.getProperty(GlobalConstants.PROMOTER), p.getLastUsedPromoter());
 									graph.buildGraph();
 								}
 							}

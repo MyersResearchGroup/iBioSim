@@ -857,7 +857,7 @@ public class GCMFile {
 	 * Save the contents to a StringBuffer. Can later be written to a file or other stream.
 	 * @return
 	 */
-	public StringBuffer save_to_buffer(Boolean includeGlobals){
+	public StringBuffer saveToBuffer(Boolean includeGlobals){
 		StringBuffer buffer = new StringBuffer("digraph G {\n");
 		for (String s : species.keySet()) {
 			buffer.append(s + " [");
@@ -1012,7 +1012,7 @@ public class GCMFile {
 		try {
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
 
-			StringBuffer buffer = save_to_buffer(true);
+			StringBuffer buffer = saveToBuffer(true);
 			
 			p.print(buffer);
 			p.close();
@@ -1450,6 +1450,25 @@ public class GCMFile {
 		}
 	}
 
+	public void changeInfluencePromoter(String oldInfluence, String oldPromoter, String newPromoter){
+		if(oldPromoter == null)
+			oldPromoter = "default";
+		String pattern = oldPromoter + "$";
+		String newInfluence = oldInfluence.replaceFirst(pattern, newPromoter);
+		Properties prop = influences.get(oldInfluence);
+		
+		prop.remove(GlobalConstants.PROMOTER);
+		prop.setProperty(GlobalConstants.PROMOTER, newPromoter);
+		if(prop.get(GlobalConstants.NAME) == oldInfluence){
+			prop.remove(GlobalConstants.NAME);
+			prop.put(GlobalConstants.NAME, newPromoter);
+		}
+		
+		removeInfluence(oldInfluence);
+		
+		influences.put(newInfluence, prop);
+	}
+	
 	public static String getInput(String name) {
 		Pattern pattern = Pattern.compile(PARSE);
 		Matcher matcher = pattern.matcher(name);
