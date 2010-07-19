@@ -23,6 +23,7 @@ import java.util.HashMap;
 import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.Constraint;
 import org.sbml.libsbml.EventAssignment;
+import org.sbml.libsbml.FunctionDefinition;
 import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Model;
@@ -155,6 +156,10 @@ public class GeneticNetwork {
 	public void setSBMLFile(String file) {
 		sbmlDocument = file;
 	}
+	
+	public void setSBML(SBMLDocument doc) {
+		document = doc;
+	}
 
 	/**
 	 * Outputs the network to an SBML file
@@ -198,7 +203,7 @@ public class GeneticNetwork {
 			printPromoterBinding(document);
 			// System.out.println(counter++);
 			//checkConsistancy(document);
-			printComponents(document, filename);
+			//printComponents(document, filename);
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
 
 			m.setName("Created from " + new File(filename).getName().replace("xml", "gcm"));
@@ -221,16 +226,22 @@ public class GeneticNetwork {
 	 * @return the sbml document
 	 */
 	public SBMLDocument mergeSBML(String filename) {
-		try {			
-			if (sbmlDocument.equals("")) {
-				return outputSBML(filename);
-			}
+		try {
+			if (document == null) {
+				if (sbmlDocument.equals("")) {
+					return outputSBML(filename);
+				}
 
-			SBMLDocument document = BioSim.readSBML(currentRoot + sbmlDocument);
-			//checkConsistancy(document);
-			currentDocument = document;
-			return outputSBML(filename, document);
-		} catch (Exception e) {
+				SBMLDocument document = BioSim.readSBML(currentRoot + sbmlDocument);
+				// checkConsistancy(document);
+				currentDocument = document;
+				return outputSBML(filename, document);
+			}
+			else {
+				return outputSBML(filename, document);
+			}
+		}
+		catch (Exception e) {
 			e.printStackTrace();
 			throw new IllegalStateException("Unable to output to SBML");
 		}
@@ -607,6 +618,21 @@ public class GeneticNetwork {
 		if (origId.equals(newId))
 			return;
 		Model model = document.getModel();
+		for (int i = 0; i < model.getNumSpecies(); i++) {
+			org.sbml.libsbml.Species species = (org.sbml.libsbml.Species) model.getListOfSpecies().get(i);
+			if (species.getCompartment().equals(origId)) {
+				species.setCompartment(newId);
+			}
+			if (species.getSpeciesType().equals(origId)) {
+				species.setSpeciesType(newId);
+			}
+		}
+		for (int i = 0; i < model.getNumCompartments(); i++) {
+			org.sbml.libsbml.Compartment compartment = (org.sbml.libsbml.Compartment) model.getListOfCompartments().get(i);
+			if (compartment.getCompartmentType().equals(origId)) {
+				compartment.setCompartmentType(newId);
+			}
+		}
 		for (int i = 0; i < model.getNumReactions(); i++) {
 			org.sbml.libsbml.Reaction reaction = (org.sbml.libsbml.Reaction) model.getListOfReactions().get(i);
 			for (int j = 0; j < reaction.getNumProducts(); j++) {
@@ -694,6 +720,51 @@ public class GeneticNetwork {
 	
 	private void unionSBML(SBMLDocument mainDoc, SBMLDocument doc, String compName) {
 		Model m = doc.getModel();
+		for (int i = 0; i < m.getNumCompartmentTypes(); i ++) {
+			org.sbml.libsbml.CompartmentType c = m.getCompartmentType(i);
+			String newName = compName + "_" + c.getId();
+			updateVarId(false, c.getId(), newName, doc);
+			c.setId(newName);
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumCompartmentTypes(); j ++) {
+				if (mainDoc.getModel().getCompartmentType(j).getId().equals(c.getId())) {
+					add = false;
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addCompartmentType(c);
+			}
+		}
+		for (int i = 0; i < m.getNumCompartments(); i ++) {
+			org.sbml.libsbml.Compartment c = m.getCompartment(i);
+			String newName = compName + "_" + c.getId();
+			updateVarId(false, c.getId(), newName, doc);
+			c.setId(newName);
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumCompartments(); j ++) {
+				if (mainDoc.getModel().getCompartment(j).getId().equals(c.getId())) {
+					add = false;
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addCompartment(c);
+			}
+		}
+		for (int i = 0; i < m.getNumSpeciesTypes(); i ++) {
+			org.sbml.libsbml.SpeciesType s = m.getSpeciesType(i);
+			String newName = compName + "_" + s.getId();
+			updateVarId(false, s.getId(), newName, doc);
+			s.setId(newName);
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumSpeciesTypes(); j ++) {
+				if (mainDoc.getModel().getSpeciesType(j).getId().equals(s.getId())) {
+					add = false;
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addSpeciesType(s);
+			}
+		}
 		for (int i = 0; i < m.getNumSpecies(); i ++) {
 			Species spec = m.getSpecies(i);
 			if (!spec.getId().equals("RNAP")) {
@@ -733,6 +804,21 @@ public class GeneticNetwork {
 				mainDoc.getModel().addSpecies(spec);
 			}
 		}
+		for (int i = 0; i < m.getNumParameters(); i ++) {
+			org.sbml.libsbml.Parameter p = m.getParameter(i);
+			String newName = compName + "_" + p.getId();
+			updateVarId(false, p.getId(), newName, doc);
+			p.setId(newName);
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumParameters(); j ++) {
+				if (mainDoc.getModel().getParameter(j).getId().equals(p.getId())) {
+					add = false;
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addParameter(p);
+			}
+		}
 		for (int i = 0; i < m.getNumReactions(); i ++) {
 			org.sbml.libsbml.Reaction r = m.getReaction(i);
 			String newName = compName + "_" + r.getId();
@@ -748,6 +834,33 @@ public class GeneticNetwork {
 				mainDoc.getModel().addReaction(r);
 			}
 		}
+		for (int i = 0; i < m.getNumInitialAssignments(); i ++) {
+			InitialAssignment init = (InitialAssignment) m.getListOfInitialAssignments().get(i);
+			mainDoc.getModel().addInitialAssignment(init);
+		}
+		for (int i = 0; i < m.getNumRules(); i++) {
+			org.sbml.libsbml.Rule r = m.getRule(i);
+			mainDoc.getModel().addRule(r);
+		}
+		for (int i = 0; i < m.getNumConstraints(); i++) {
+			Constraint constraint = (Constraint) m.getListOfConstraints().get(i);
+			mainDoc.getModel().addConstraint(constraint);
+		}
+		for (int i = 0; i < m.getNumEvents(); i++) {
+			org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) m.getListOfEvents().get(i);
+			String newName = compName + "_" + event.getId();
+			updateVarId(false, event.getId(), newName, doc);
+			event.setId(newName);
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumEvents(); j ++) {
+				if (mainDoc.getModel().getEvent(j).getId().equals(event.getId())) {
+					add = false;
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addEvent(event);
+			}
+		}
 		for (int i = 0; i < m.getNumUnitDefinitions(); i ++) {
 			UnitDefinition u = m.getUnitDefinition(i);
 			boolean add = true;
@@ -758,6 +871,18 @@ public class GeneticNetwork {
 			}
 			if (add) {
 				mainDoc.getModel().addUnitDefinition(u);
+			}
+		}
+		for (int i = 0; i < m.getNumFunctionDefinitions(); i ++) {
+			FunctionDefinition f = m.getFunctionDefinition(i);
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumFunctionDefinitions(); j ++) {
+				if (mainDoc.getModel().getFunctionDefinition(j).getId().equals(f.getId())) {
+					add = false;
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addFunctionDefinition(f);
 			}
 		}
 	}
@@ -1068,6 +1193,8 @@ public class GeneticNetwork {
 	}
 	
 	private String sbmlDocument = "";
+	
+	private SBMLDocument document = null;
 
 	private static SBMLDocument currentDocument = null;
 	

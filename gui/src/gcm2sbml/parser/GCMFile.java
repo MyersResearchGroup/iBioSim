@@ -1,6 +1,7 @@
 package gcm2sbml.parser;
 
 import gcm2sbml.util.GlobalConstants;
+import gcm2sbml.util.Utility;
 
 import java.awt.AWTError;
 import java.awt.BorderLayout;
@@ -37,6 +38,27 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
+import org.sbml.libsbml.ASTNode;
+import org.sbml.libsbml.Constraint;
+import org.sbml.libsbml.EventAssignment;
+import org.sbml.libsbml.FunctionDefinition;
+import org.sbml.libsbml.InitialAssignment;
+import org.sbml.libsbml.Model;
+import org.sbml.libsbml.ModifierSpeciesReference;
+import org.sbml.libsbml.Rule;
+import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.Species;
+import org.sbml.libsbml.SpeciesReference;
+import org.sbml.libsbml.UnitDefinition;
+import org.sbml.libsbml.libsbml;
+
+import com.mxgraph.layout.mxCircleLayout;
+import com.mxgraph.layout.mxCompactTreeLayout;
+import com.mxgraph.layout.mxIGraphLayout;
+import com.mxgraph.view.mxEdgeStyle;
+import com.mxgraph.view.mxGraph;
+import com.mxgraph.view.mxLayoutManager;
+
 import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.LhpnFile;
 
@@ -54,6 +76,8 @@ import buttons.Buttons;
 public class GCMFile {
 	
 	private String separator;
+	
+	private String filename;
 
 	public GCMFile(String path) {
 		if (File.separator.equals("\\")) {
@@ -222,7 +246,7 @@ public class GCMFile {
 		JButton naryClose = new JButton("Cancel");
 		naryRun.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				flattenGCM();
+				flattenGCM(false);
 				convertToLHPN(specs, conLevel).save(filename);
 				log.addText("Saving GCM file as LPN:\n" + path + separator + lpnName + "\n");
 				biosim.refreshTree();
@@ -269,8 +293,19 @@ public class GCMFile {
 		naryFrame.setVisible(true);
 	}
 
-	public void flattenGCM() {
+	public SBMLDocument flattenGCM(boolean includeSBML) {
+		save(filename + ".temp");
 		ArrayList<String> comps = setToArrayList(components.keySet());
+		SBMLDocument sbml = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+		if (!sbmlFile.equals("") && includeSBML) {
+			sbml = BioSim.readSBML(path + separator + sbmlFile);
+		}
+		else if (!sbmlFile.equals("") && !includeSBML) {
+			Utility.createErrorMessage("SBMLs Included",
+					"There are sbml files associated with the gcm file and its components.");
+			load(filename + ".temp");
+			return null;
+		}
 		for (String s : comps) {
 			GCMFile file = new GCMFile(path);
 			file.load(path + separator + components.get(s).getProperty("gcm"));
@@ -279,13 +314,38 @@ public class GCMFile {
 					file.setParameter(p, globalParameters.get(p));
 				}
 			}
-			unionGCM(this, file, s);
+			sbml = unionSBML(sbml, unionGCM(this, file, s, includeSBML), s);
+			if (sbml == null && includeSBML) {
+				Utility.createErrorMessage("Cannot Merge SBMLs", "Unable to merge sbml files from components.");
+				load(filename + ".temp");
+				return null;
+			}
+			else if (sbml == null && !includeSBML) {
+				Utility.createErrorMessage("SBMLs Included",
+						"There are sbml files associated with the gcm file and its components.");
+				load(filename + ".temp");
+				return null;
+			}
 		}
 		components = new HashMap<String, Properties>();
+		if (sbml != null) {
+			long numErrors = sbml.checkConsistency();
+			if (numErrors > 0) {
+				Utility.createErrorMessage("Merged SBMLs Are Inconsistent", "The merged sbml files have inconsistencies.");
+			}
+		}
+		return sbml;
 	}
 
-	private void unionGCM(GCMFile topLevel, GCMFile bottomLevel, String compName) {
+	private SBMLDocument unionGCM(GCMFile topLevel, GCMFile bottomLevel, String compName, boolean includeSBML) {
 		ArrayList<String> mod = setToArrayList(bottomLevel.components.keySet());
+		SBMLDocument sbml = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+		if (!bottomLevel.sbmlFile.equals("") && includeSBML) {
+			sbml = BioSim.readSBML(path + separator + bottomLevel.sbmlFile);
+		}
+		else if (!bottomLevel.sbmlFile.equals("") && !includeSBML) {
+			return null;
+		}
 		for (String s : mod) {
 			GCMFile file = new GCMFile(path);
 			file.load(path + separator + bottomLevel.components.get(s).getProperty("gcm"));
@@ -294,7 +354,10 @@ public class GCMFile {
 					file.setParameter(p, bottomLevel.globalParameters.get(p));
 				}
 			}
-			unionGCM(bottomLevel, file, s);
+			sbml = unionSBML(sbml, unionGCM(bottomLevel, file, s, includeSBML), s);
+			if (sbml == null) {
+				return null;
+			}
 		}
 		mod = setToArrayList(bottomLevel.promoters.keySet());
 		for (String prom : mod) {
@@ -459,6 +522,7 @@ public class GCMFile {
 		for (String cond : bottomLevel.conditions) {
 			topLevel.addCondition(cond);
 		}
+		return sbml;
 	}
 
 	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
@@ -959,6 +1023,7 @@ public class GCMFile {
 	}
 
 	public void load(String filename) {
+		this.filename = filename;
 		species = new HashMap<String, Properties>();
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
@@ -1778,6 +1843,636 @@ public class GCMFile {
 		im.put("influences", influences);
 		im.put("components", components);
 		return im;
+	}
+
+	private SBMLDocument unionSBML(SBMLDocument mainDoc, SBMLDocument doc, String compName) {
+		Model m = doc.getModel();
+		for (int i = 0; i < m.getNumCompartmentTypes(); i++) {
+			org.sbml.libsbml.CompartmentType c = m.getCompartmentType(i);
+			String newName = compName + "_" + c.getId();
+			updateVarId(false, c.getId(), newName, doc);
+			c.setId(newName);
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumCompartmentTypes(); j++) {
+				if (mainDoc.getModel().getCompartmentType(j).getId().equals(c.getId())) {
+					add = false;
+					org.sbml.libsbml.CompartmentType comp = mainDoc.getModel().getCompartmentType(j);
+					if (!c.getName().equals(comp.getName())) {
+						return null;
+					}
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addCompartmentType(c);
+			}
+		}
+		for (int i = 0; i < m.getNumCompartments(); i++) {
+			org.sbml.libsbml.Compartment c = m.getCompartment(i);
+			String newName = compName + "_" + c.getId();
+			updateVarId(false, c.getId(), newName, doc);
+			c.setId(newName);
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumCompartments(); j++) {
+				if (mainDoc.getModel().getCompartment(j).getId().equals(c.getId())) {
+					add = false;
+					org.sbml.libsbml.Compartment comp = mainDoc.getModel().getCompartment(j);
+					if (!c.getName().equals(comp.getName())) {
+						return null;
+					}
+					if (!c.getCompartmentType().equals(comp.getCompartmentType())) {
+						return null;
+					}
+					if (c.getConstant() != comp.getConstant()) {
+						return null;
+					}
+					if (!c.getOutside().equals(comp.getOutside())) {
+						return null;
+					}
+					if (c.getVolume() != comp.getVolume()) {
+						return null;
+					}
+					if (c.getSpatialDimensions() != comp.getSpatialDimensions()) {
+						return null;
+					}
+					if (c.getSize() != comp.getSize()) {
+						return null;
+					}
+					if (!c.getUnits().equals(comp.getUnits())) {
+						return null;
+					}
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addCompartment(c);
+			}
+		}
+		for (int i = 0; i < m.getNumSpeciesTypes(); i++) {
+			org.sbml.libsbml.SpeciesType s = m.getSpeciesType(i);
+			String newName = compName + "_" + s.getId();
+			updateVarId(false, s.getId(), newName, doc);
+			s.setId(newName);
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumSpeciesTypes(); j++) {
+				if (mainDoc.getModel().getSpeciesType(j).getId().equals(s.getId())) {
+					add = false;
+					org.sbml.libsbml.SpeciesType spec = mainDoc.getModel().getSpeciesType(j);
+					if (!s.getName().equals(spec.getName())) {
+						return null;
+					}
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addSpeciesType(s);
+			}
+		}
+		for (int i = 0; i < m.getNumSpecies(); i++) {
+			Species spec = m.getSpecies(i);
+			String newName = compName + "_" + spec.getId();
+			for (Object port : getComponents().get(compName).keySet()) {
+				if (spec.getId().equals((String) port)) {
+					newName = "_" + compName + "_" + getComponents().get(compName).getProperty((String) port);
+				}
+			}
+			updateVarId(true, spec.getId(), newName, doc);
+			spec.setId(newName);
+		}
+		for (int i = 0; i < m.getNumSpecies(); i++) {
+			Species spec = m.getSpecies(i);
+			boolean add = true;
+			if (spec.getId().startsWith("_" + compName + "_")) {
+				updateVarId(true, spec.getId(), spec.getId().substring(2 + compName.length()), doc);
+				spec.setId(spec.getId().substring(2 + compName.length()));
+			}
+			else {
+				for (int j = 0; j < mainDoc.getModel().getNumSpecies(); j++) {
+					if (mainDoc.getModel().getSpecies(j).getId().equals(spec.getId())) {
+						Species s = mainDoc.getModel().getSpecies(j);
+						if (!s.getName().equals(spec.getName())) {
+							return null;
+						}
+						if (!s.getCompartment().equals(spec.getCompartment())) {
+							return null;
+						}
+						if (s.getConstant() != spec.getConstant()) {
+							return null;
+						}
+						if (s.getBoundaryCondition() != spec.getBoundaryCondition()) {
+							return null;
+						}
+						if (s.getHasOnlySubstanceUnits() != spec.getHasOnlySubstanceUnits()) {
+							return null;
+						}
+						if (s.getCharge() != spec.getCharge()) {
+							return null;
+						}
+						if (!s.getSpatialSizeUnits().equals(spec.getSpatialSizeUnits())) {
+							return null;
+						}
+						if (s.getInitialAmount() != spec.getInitialAmount()) {
+							return null;
+						}
+						if (s.getInitialConcentration() != spec.getInitialConcentration()) {
+							return null;
+						}
+						if (!s.getSpeciesType().equals(spec.getSpeciesType())) {
+							return null;
+						}
+						if (!s.getSubstanceUnits().equals(spec.getSubstanceUnits())) {
+							return null;
+						}
+						if (!s.getUnits().equals(spec.getUnits())) {
+							return null;
+						}
+						add = false;
+					}
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addSpecies(spec);
+			}
+		}
+		for (int i = 0; i < m.getNumParameters(); i++) {
+			org.sbml.libsbml.Parameter p = m.getParameter(i);
+			String newName = compName + "_" + p.getId();
+			updateVarId(false, p.getId(), newName, doc);
+			p.setId(newName);
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumParameters(); j++) {
+				if (mainDoc.getModel().getParameter(j).getId().equals(p.getId())) {
+					add = false;
+					org.sbml.libsbml.Parameter param = mainDoc.getModel().getParameter(j);
+					if (!p.getName().equals(param.getName())) {
+						return null;
+					}
+					if (!p.getUnits().equals(param.getUnits())) {
+						return null;
+					}
+					if (p.getConstant() != param.getConstant()) {
+						return null;
+					}
+					if (p.getValue() != param.getValue()) {
+						return null;
+					}
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addParameter(p);
+			}
+		}
+		for (int i = 0; i < m.getNumReactions(); i++) {
+			org.sbml.libsbml.Reaction r = m.getReaction(i);
+			String newName = compName + "_" + r.getId();
+			updateVarId(false, r.getId(), newName, doc);
+			r.setId(newName);
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumReactions(); j++) {
+				if (mainDoc.getModel().getReaction(j).getId().equals(r.getId())) {
+					add = false;
+					org.sbml.libsbml.Reaction reac = mainDoc.getModel().getReaction(j);
+					if (!r.getName().equals(reac.getName())) {
+						return null;
+					}
+					if (r.getFast() != reac.getFast()) {
+						return null;
+					}
+					if (r.getReversible() != reac.getReversible()) {
+						return null;
+					}
+					if (!r.getKineticLaw().equals(reac.getKineticLaw())) {
+						return null;
+					}
+					for (int k = 0; k < reac.getNumModifiers(); k++) {
+						ModifierSpeciesReference mod = reac.getModifier(k);
+						boolean found = false;
+						for (int l = 0; l < r.getNumModifiers(); l++) {
+							ModifierSpeciesReference mod2 = r.getModifier(l);
+							if (mod.getId().equals(mod2.getId())) {
+								found = true;
+								if (!mod.getSpecies().equals(mod2.getSpecies())) {
+									return null;
+								}
+							}
+						}
+						if (!found) {
+							return null;
+						}
+					}
+					for (int k = 0; k < r.getNumModifiers(); k++) {
+						ModifierSpeciesReference mod = r.getModifier(k);
+						boolean found = false;
+						for (int l = 0; l < reac.getNumModifiers(); l++) {
+							ModifierSpeciesReference mod2 = reac.getModifier(l);
+							if (mod.getId().equals(mod2.getId())) {
+								found = true;
+								if (!mod.getSpecies().equals(mod2.getSpecies())) {
+									return null;
+								}
+							}
+						}
+						if (!found) {
+							return null;
+						}
+					}
+					for (int k = 0; k < reac.getNumProducts(); k++) {
+						SpeciesReference p = reac.getProduct(k);
+						boolean found = false;
+						for (int l = 0; l < r.getNumProducts(); l++) {
+							SpeciesReference prod = r.getProduct(l);
+							if (p.getId().equals(prod.getId())) {
+								found = true;
+								if (!p.getSpecies().equals(prod.getSpecies())) {
+									return null;
+								}
+								if (!p.getStoichiometryMath().equals(prod.getStoichiometryMath())) {
+									return null;
+								}
+								if (p.getStoichiometry() != prod.getStoichiometry()) {
+									return null;
+								}
+								if (p.getDenominator() != prod.getDenominator()) {
+									return null;
+								}
+							}
+						}
+						if (!found) {
+							return null;
+						}
+					}
+					for (int k = 0; k < r.getNumProducts(); k++) {
+						SpeciesReference p = r.getProduct(k);
+						boolean found = false;
+						for (int l = 0; l < reac.getNumProducts(); l++) {
+							SpeciesReference prod = reac.getProduct(l);
+							if (p.getId().equals(prod.getId())) {
+								found = true;
+								if (!p.getSpecies().equals(prod.getSpecies())) {
+									return null;
+								}
+								if (!p.getStoichiometryMath().equals(prod.getStoichiometryMath())) {
+									return null;
+								}
+								if (p.getStoichiometry() != prod.getStoichiometry()) {
+									return null;
+								}
+								if (p.getDenominator() != prod.getDenominator()) {
+									return null;
+								}
+							}
+						}
+						if (!found) {
+							return null;
+						}
+					}
+					for (int k = 0; k < reac.getNumReactants(); k++) {
+						SpeciesReference react = reac.getReactant(k);
+						boolean found = false;
+						for (int l = 0; l < r.getNumReactants(); l++) {
+							SpeciesReference react2 = r.getReactant(l);
+							if (react.getId().equals(react2.getId())) {
+								found = true;
+								if (!react.getSpecies().equals(react2.getSpecies())) {
+									return null;
+								}
+								if (!react.getStoichiometryMath().equals(react2.getStoichiometryMath())) {
+									return null;
+								}
+								if (react.getStoichiometry() != react2.getStoichiometry()) {
+									return null;
+								}
+								if (react.getDenominator() != react2.getDenominator()) {
+									return null;
+								}
+							}
+						}
+						if (!found) {
+							return null;
+						}
+					}
+					for (int k = 0; k < r.getNumReactants(); k++) {
+						SpeciesReference react = r.getReactant(k);
+						boolean found = false;
+						for (int l = 0; l < reac.getNumReactants(); l++) {
+							SpeciesReference react2 = reac.getReactant(l);
+							if (react.getId().equals(react2.getId())) {
+								found = true;
+								if (!react.getSpecies().equals(react2.getSpecies())) {
+									return null;
+								}
+								if (!react.getStoichiometryMath().equals(react2.getStoichiometryMath())) {
+									return null;
+								}
+								if (react.getStoichiometry() != react2.getStoichiometry()) {
+									return null;
+								}
+								if (react.getDenominator() != react2.getDenominator()) {
+									return null;
+								}
+							}
+						}
+						if (!found) {
+							return null;
+						}
+					}
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addReaction(r);
+			}
+		}
+		for (int i = 0; i < m.getNumInitialAssignments(); i++) {
+			InitialAssignment init = (InitialAssignment) m.getListOfInitialAssignments().get(i);
+			mainDoc.getModel().addInitialAssignment(init);
+		}
+		for (int i = 0; i < m.getNumRules(); i++) {
+			org.sbml.libsbml.Rule r = m.getRule(i);
+			mainDoc.getModel().addRule(r);
+		}
+		for (int i = 0; i < m.getNumConstraints(); i++) {
+			Constraint constraint = (Constraint) m.getListOfConstraints().get(i);
+			mainDoc.getModel().addConstraint(constraint);
+		}
+		for (int i = 0; i < m.getNumEvents(); i++) {
+			org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) m.getListOfEvents().get(i);
+			String newName = compName + "_" + event.getId();
+			updateVarId(false, event.getId(), newName, doc);
+			event.setId(newName);
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumEvents(); j++) {
+				if (mainDoc.getModel().getEvent(j).getId().equals(event.getId())) {
+					add = false;
+					org.sbml.libsbml.Event e = mainDoc.getModel().getEvent(j);
+					if (!e.getName().equals(event.getName())) {
+						return null;
+					}
+					if (e.getUseValuesFromTriggerTime() != event.getUseValuesFromTriggerTime()) {
+						return null;
+					}
+					if (!e.getDelay().equals(event.getDelay())) {
+						return null;
+					}
+					if (!e.getTimeUnits().equals(event.getTimeUnits())) {
+						return null;
+					}
+					if (!e.getTrigger().equals(event.getTrigger())) {
+						return null;
+					}
+					for (int k = 0; k < e.getNumEventAssignments(); k++) {
+						EventAssignment a = e.getEventAssignment(k);
+						boolean found = false;
+						for (int l = 0; l < event.getNumEventAssignments(); l++) {
+							EventAssignment assign = event.getEventAssignment(l);
+							if (a.getVariable().equals(assign.getVariable())) {
+								found = true;
+								if (!a.getMath().equals(assign.getMath())) {
+									return null;
+								}
+							}
+						}
+						if (!found) {
+							return null;
+						}
+					}
+					for (int k = 0; k < event.getNumEventAssignments(); k++) {
+						EventAssignment a = event.getEventAssignment(k);
+						boolean found = false;
+						for (int l = 0; l < e.getNumEventAssignments(); l++) {
+							EventAssignment assign = e.getEventAssignment(l);
+							if (a.getVariable().equals(assign.getVariable())) {
+								found = true;
+								if (!a.getMath().equals(assign.getMath())) {
+									return null;
+								}
+							}
+						}
+						if (!found) {
+							return null;
+						}
+					}
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addEvent(event);
+			}
+		}
+		for (int i = 0; i < m.getNumUnitDefinitions(); i++) {
+			UnitDefinition u = m.getUnitDefinition(i);
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumUnitDefinitions(); j++) {
+				if (mainDoc.getModel().getUnitDefinition(j).getId().equals(u.getId())) {
+					add = false;
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addUnitDefinition(u);
+			}
+		}
+		for (int i = 0; i < m.getNumFunctionDefinitions(); i++) {
+			FunctionDefinition f = m.getFunctionDefinition(i);
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumFunctionDefinitions(); j++) {
+				if (mainDoc.getModel().getFunctionDefinition(j).getId().equals(f.getId())) {
+					add = false;
+				}
+			}
+			if (add) {
+				mainDoc.getModel().addFunctionDefinition(f);
+			}
+		}
+		return mainDoc;
+	}
+
+	private String myFormulaToString(ASTNode mathFormula) {
+		String formula = libsbml.formulaToString(mathFormula);
+		formula = formula.replaceAll("arccot", "acot");
+		formula = formula.replaceAll("arccoth", "acoth");
+		formula = formula.replaceAll("arccsc", "acsc");
+		formula = formula.replaceAll("arccsch", "acsch");
+		formula = formula.replaceAll("arcsec", "asec");
+		formula = formula.replaceAll("arcsech", "asech");
+		formula = formula.replaceAll("arccosh", "acosh");
+		formula = formula.replaceAll("arcsinh", "asinh");
+		formula = formula.replaceAll("arctanh", "atanh");
+		String newformula = formula.replaceFirst("00e", "0e");
+		while (!(newformula.equals(formula))) {
+			formula = newformula;
+			newformula = formula.replaceFirst("0e\\+", "e+");
+			newformula = newformula.replaceFirst("0e-", "e-");
+		}
+		formula = formula.replaceFirst("\\.e\\+", ".0e+");
+		formula = formula.replaceFirst("\\.e-", ".0e-");
+		return formula;
+	}
+
+	private ASTNode myParseFormula(String formula) {
+		ASTNode mathFormula = libsbml.parseFormula(formula);
+		if (mathFormula == null)
+			return null;
+		setTimeAndTrigVar(mathFormula);
+		return mathFormula;
+	}
+
+	private String updateFormulaVar(String s, String origVar, String newVar) {
+		s = " " + s + " ";
+		s = s.replace(" " + origVar + " ", " " + newVar + " ");
+		s = s.replace(" " + origVar + "(", " " + newVar + "(");
+		s = s.replace("(" + origVar + ")", "(" + newVar + ")");
+		s = s.replace("(" + origVar + " ", "(" + newVar + " ");
+		s = s.replace("(" + origVar + ",", "(" + newVar + ",");
+		s = s.replace(" " + origVar + ")", " " + newVar + ")");
+		s = s.replace(" " + origVar + "^", " " + newVar + "^");
+		return s.trim();
+	}
+
+	private ASTNode updateMathVar(ASTNode math, String origVar, String newVar) {
+		String s = updateFormulaVar(myFormulaToString(math), origVar, newVar);
+		return myParseFormula(s);
+	}
+
+	private void updateVarId(boolean isSpecies, String origId, String newId, SBMLDocument document) {
+		if (origId.equals(newId))
+			return;
+		Model model = document.getModel();
+		for (int i = 0; i < model.getNumSpecies(); i++) {
+			org.sbml.libsbml.Species species = (org.sbml.libsbml.Species) model.getListOfSpecies().get(i);
+			if (species.getCompartment().equals(origId)) {
+				species.setCompartment(newId);
+			}
+			if (species.getSpeciesType().equals(origId)) {
+				species.setSpeciesType(newId);
+			}
+		}
+		for (int i = 0; i < model.getNumCompartments(); i++) {
+			org.sbml.libsbml.Compartment compartment = (org.sbml.libsbml.Compartment) model.getListOfCompartments().get(i);
+			if (compartment.getCompartmentType().equals(origId)) {
+				compartment.setCompartmentType(newId);
+			}
+		}
+		for (int i = 0; i < model.getNumReactions(); i++) {
+			org.sbml.libsbml.Reaction reaction = (org.sbml.libsbml.Reaction) model.getListOfReactions().get(i);
+			for (int j = 0; j < reaction.getNumProducts(); j++) {
+				if (reaction.getProduct(j).isSetSpecies()) {
+					SpeciesReference specRef = reaction.getProduct(j);
+					if (isSpecies && origId.equals(specRef.getSpecies())) {
+						specRef.setSpecies(newId);
+					}
+					if (specRef.isSetStoichiometryMath()) {
+						specRef.getStoichiometryMath().setMath(updateMathVar(specRef
+								.getStoichiometryMath().getMath(), origId, newId));
+					}
+				}
+			}
+			if (isSpecies) {
+				for (int j = 0; j < reaction.getNumModifiers(); j++) {
+					if (reaction.getModifier(j).isSetSpecies()) {
+						ModifierSpeciesReference specRef = reaction.getModifier(j);
+						if (origId.equals(specRef.getSpecies())) {
+							specRef.setSpecies(newId);
+						}
+					}
+				}
+			}
+			for (int j = 0; j < reaction.getNumReactants(); j++) {
+				if (reaction.getReactant(j).isSetSpecies()) {
+					SpeciesReference specRef = reaction.getReactant(j);
+					if (isSpecies && origId.equals(specRef.getSpecies())) {
+						specRef.setSpecies(newId);
+					}
+					if (specRef.isSetStoichiometryMath()) {
+						specRef.getStoichiometryMath().setMath(updateMathVar(specRef
+								.getStoichiometryMath().getMath(), origId, newId));
+					}
+				}
+			}
+			reaction.getKineticLaw().setMath(
+					updateMathVar(reaction.getKineticLaw().getMath(), origId, newId));
+		}
+		if (model.getNumInitialAssignments() > 0) {
+			for (int i = 0; i < model.getNumInitialAssignments(); i++) {
+				InitialAssignment init = (InitialAssignment) model.getListOfInitialAssignments().get(i);
+				if (origId.equals(init.getSymbol())) {
+					init.setSymbol(newId);
+				}
+				init.setMath(updateMathVar(init.getMath(), origId, newId));
+			}
+		}
+		if (model.getNumRules() > 0) {
+			for (int i = 0; i < model.getNumRules(); i++) {
+				Rule rule = (Rule) model.getListOfRules().get(i);
+				if (rule.isSetVariable() && origId.equals(rule.getVariable())) {
+					rule.setVariable(newId);
+				}
+				rule.setMath(updateMathVar(rule.getMath(), origId, newId));
+			}
+		}
+		if (model.getNumConstraints() > 0) {
+			for (int i = 0; i < model.getNumConstraints(); i++) {
+				Constraint constraint = (Constraint) model.getListOfConstraints().get(i);
+				constraint.setMath(updateMathVar(constraint.getMath(), origId, newId));
+			}
+		}
+		if (model.getNumEvents() > 0) {
+			for (int i = 0; i < model.getNumEvents(); i++) {
+				org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) model.getListOfEvents().get(i);
+				if (event.isSetTrigger()) {
+					event.getTrigger().setMath(updateMathVar(event.getTrigger().getMath(), origId, newId));
+				}
+				if (event.isSetDelay()) {
+					event.getDelay().setMath(updateMathVar(event.getDelay().getMath(), origId, newId));
+				}
+				for (int j = 0; j < event.getNumEventAssignments(); j++) {
+					EventAssignment ea = (EventAssignment) event.getListOfEventAssignments().get(j);
+					if (ea.getVariable().equals(origId)) {
+						ea.setVariable(newId);
+					}
+					if (ea.isSetMath()) {
+						ea.setMath(updateMathVar(ea.getMath(), origId, newId));
+					}
+				}
+			}
+		}
+	}
+
+	private void setTimeAndTrigVar(ASTNode node) {
+		if (node.getType() == libsbml.AST_NAME) {
+			if (node.getName().equals("t")) {
+				node.setType(libsbml.AST_NAME_TIME);
+			}
+			else if (node.getName().equals("time")) {
+				node.setType(libsbml.AST_NAME_TIME);
+			}
+		}
+		if (node.getType() == libsbml.AST_FUNCTION) {
+			if (node.getName().equals("acot")) {
+				node.setType(libsbml.AST_FUNCTION_ARCCOT);
+			}
+			else if (node.getName().equals("acoth")) {
+				node.setType(libsbml.AST_FUNCTION_ARCCOTH);
+			}
+			else if (node.getName().equals("acsc")) {
+				node.setType(libsbml.AST_FUNCTION_ARCCSC);
+			}
+			else if (node.getName().equals("acsch")) {
+				node.setType(libsbml.AST_FUNCTION_ARCCSCH);
+			}
+			else if (node.getName().equals("asec")) {
+				node.setType(libsbml.AST_FUNCTION_ARCSEC);
+			}
+			else if (node.getName().equals("asech")) {
+				node.setType(libsbml.AST_FUNCTION_ARCSECH);
+			}
+			else if (node.getName().equals("acosh")) {
+				node.setType(libsbml.AST_FUNCTION_ARCCOSH);
+			}
+			else if (node.getName().equals("asinh")) {
+				node.setType(libsbml.AST_FUNCTION_ARCSINH);
+			}
+			else if (node.getName().equals("atanh")) {
+				node.setType(libsbml.AST_FUNCTION_ARCTANH);
+			}
+		}
+	
+		for (int c = 0; c < node.getNumChildren(); c++)
+			setTimeAndTrigVar(node.getChild(c));
 	}
 
 	private static final String NETWORK = "digraph\\sG\\s\\{([^}]*)\\s\\}";

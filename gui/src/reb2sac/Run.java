@@ -504,7 +504,7 @@ public class Run implements ActionListener {
 					}
 				}
 				GCMFile gcm = gcmEditor.getGCM();
-				gcm.flattenGCM();
+				gcm.flattenGCM(false);
 				LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
 				lpnFile.save(root + separator + simName + separator + lpnName);
 				time1 = System.nanoTime();
@@ -604,7 +604,7 @@ public class Run implements ActionListener {
 						}
 						progress.setIndeterminate(true);
 						GCMFile gcm = gcmEditor.getGCM();
-						gcm.flattenGCM();
+						gcm.flattenGCM(false);
 						LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
 						lpnFile.save(root + separator + simName + separator + lpnName);
 						time1 = System.nanoTime();
@@ -695,7 +695,7 @@ public class Run implements ActionListener {
 						}
 						progress.setIndeterminate(true);
 						GCMFile gcm = gcmEditor.getGCM();
-						gcm.flattenGCM();
+						gcm.flattenGCM(false);
 						LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
 						lhpnFile.save(root + separator + lhpnName);
 						log.addText("Saving GCM file as LHPN:\n" + root + separator + lhpnName
@@ -785,7 +785,7 @@ public class Run implements ActionListener {
 						}
 						progress.setIndeterminate(true);
 						GCMFile gcm = gcmEditor.getGCM();
-						gcm.flattenGCM();
+						gcm.flattenGCM(false);
 						lhpnFile = gcm.convertToLHPN(specs, conLevel);
 						lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "").replace(
 								".xml", "")
