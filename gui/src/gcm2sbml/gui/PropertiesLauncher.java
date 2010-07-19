@@ -23,6 +23,7 @@ public class PropertiesLauncher {
 	PropertyList conditionsList;
 	PropertyList propertyList;
 	boolean paramsOnly;
+	GCM2SBMLEditor gcm2sbml;
 	
 	// Singleton stuff
 	private static PropertiesLauncher instance;
@@ -37,7 +38,9 @@ public class PropertiesLauncher {
 	
 	public void initialize(BioSim biosim, GCMFile gcmFile, 
 			PropertyList speciesList, PropertyList influencesList, 
-			PropertyList propertyList, boolean paramsOnly){
+			PropertyList conditionsList,
+			PropertyList propertyList, boolean paramsOnly,
+			GCM2SBMLEditor gcm2sbml){
 		this.biosim = biosim;
 		this.gcmFile = gcmFile;
 		this.speciesList = speciesList;
@@ -45,12 +48,15 @@ public class PropertiesLauncher {
 		this.conditionsList = conditionsList;
 		this.propertyList = propertyList;
 		this.paramsOnly = paramsOnly;
+		this.gcm2sbml = gcm2sbml;
 		
 		this.ensureInitialized();
 	}
 	
 	private void ensureInitialized(){
-		if(biosim == null || gcmFile == null || speciesList == null || influencesList == null || propertyList == null){
+		if(biosim == null || gcmFile == null || speciesList == null || 
+				influencesList == null || propertyList == null ||
+				gcm2sbml == null){
 			throw(new Error("PropertiesLauncher was not initialized!"));
 		}
 	}
@@ -84,5 +90,9 @@ public class PropertiesLauncher {
 	
 	public void removeSpeciesFromList(String id){
 		speciesList.removeItem(id);
+	}
+	
+	public void refreshAllGCM2SBMLLists(){
+		gcm2sbml.refresh();
 	}
 }

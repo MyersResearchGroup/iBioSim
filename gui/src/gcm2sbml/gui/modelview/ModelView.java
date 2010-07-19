@@ -115,7 +115,7 @@ public class ModelView extends JPanel implements ActionListener {
 	AbstractButton selectButton;
 	AbstractButton addSpeciesButton;
 	AbstractButton addComponentButton;
-	AbstractButton editPromotorButton;
+	AbstractButton editPromoterButton;
 	
 	AbstractButton activationButton;
 	AbstractButton inhibitionButton;
@@ -134,8 +134,8 @@ public class ModelView extends JPanel implements ActionListener {
 		toolBar.add(addSpeciesButton);
 		addComponentButton = Utils.makeRadioToolButton("add_component.png", "", "Add Component Mode", this, modeButtonGroup);
 		toolBar.add(addComponentButton);
-		editPromotorButton = Utils.makeRadioToolButton("promoter_mode.png", "", "P", this, modeButtonGroup);
-		toolBar.add(editPromotorButton);
+		editPromoterButton = Utils.makeRadioToolButton("promoter_mode.png", "", "P", this, modeButtonGroup);
+		toolBar.add(editPromoterButton);
 		//toolBar.add(Utils.makeToolButton("", "addInfluence", "Add Influence", this));
 
 		toolBar.addSeparator();
@@ -224,9 +224,10 @@ public class ModelView extends JPanel implements ActionListener {
 							graph.createSpecies(null, e.getX(), e.getY());
 						}else if(addComponentButton.isSelected()){
 							// Ask the user which component to add, then plop it down where the click happened
+							
 						}
 					}else{
-						if(editPromotorButton.isSelected()){
+						if(editPromoterButton.isSelected()){
 							// If the thing clicked on was an influence, bring up it's promotor window.
 							if(cell.isEdge()){
 								Properties prop = internalModel.get("influences").get(cell.getId());
