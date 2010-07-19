@@ -22,11 +22,14 @@ public class Variable implements Comparable<Variable>{
 	
 	private String forceType;
 	
+	private Double epsilon;
+	
 	public Variable(String name){
 		this.name = name;
 		this.runs = new DMVCrun();
 		this.forceType = null;
 		this.care = true;
+		this.epsilon = null; //default
 	}
 
 	public boolean isDmvc() {
@@ -109,6 +112,7 @@ public class Variable implements Comparable<Variable>{
 		initValue_vMin = null;
 		initValue_vMax = null;
 		this.runs = new DMVCrun();
+		//this.epsilon = null ??
 		//this.care = true ???
 	}
 	
@@ -141,6 +145,7 @@ public class Variable implements Comparable<Variable>{
 	}
 	
 	public void copy(Variable a){
+		//Private fields in a. We shouldn't access like this?
 		this.name = a.name;
 		this.runs = a.runs;
 		this.dmvc = a.dmvc;
@@ -148,6 +153,7 @@ public class Variable implements Comparable<Variable>{
 		this.output = a.output;
 		this.forceType = a.forceType;
 		this.care = a.care;
+		this.epsilon = a.epsilon;
 		// NOT Copying the init values and rates bcoz they get normalized every time a learn is performed on them. 
 		// So the values get multiplied by the same factor multiple times which is wrong.
 	//	this.initValue_vMax = a.initValue_vMax;
@@ -187,6 +193,16 @@ public class Variable implements Comparable<Variable>{
 			return true;
 		else
 			return false;
+	}
+
+	public void setEpsilon(Double v) {
+		// TODO Auto-generated method stub
+		this.epsilon = v;
+	}
+	
+	public Double getEpsilon() {
+		// TODO Auto-generated method stub
+		return(epsilon);
 	}
 	
 	/*

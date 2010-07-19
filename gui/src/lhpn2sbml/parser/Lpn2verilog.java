@@ -32,7 +32,7 @@ public class Lpn2verilog {
 			StringBuffer initBuffer = new StringBuffer();
 			StringBuffer markedPlaceBuffer = new StringBuffer();
 			StringBuffer assertionBuffer = new StringBuffer();
-			sv.write("`timescale 1ps/1ps\n\n");		//TODO: THIS IS ASSUMPTION
+			sv.write("`timescale 1ps/1fs\n\n");		//TODO: THIS IS ASSUMPTION
 			Boolean first = true;
 			String[] varsList = lpn.getVariables();
 			sv.write("module "+svModuleName + " (");
@@ -96,17 +96,32 @@ public class Lpn2verilog {
 			for (String st: placeList){
 				System.out.print(st + " ");
 			}*/
+			StringBuffer tempBuff = new StringBuffer();
+			initBuffer.append("\t\t$dumpfile(\"" + svModuleName + ".vcd\");\n");
+			initBuffer.append("\t\t$dumpvars(0," + svModuleName + ");\n");
 			for (String st: transitionList){
 				if (first){
 					sv.write("\twire " + st);
+					tempBuff.append("\tint unsigned pr_" + st);
 			//		initBuffer.append("\t\t" + st + " <= 0"); As transitions are wires, no initial values to them
+					if (lpn.getTransition(st).containsPriority())
+						initBuffer.append("\t\tpr_" + st + " = " + lpn.getTransition(st).getPriority());
+					else
+						initBuffer.append("\t\tpr_" + st + " = $urandom");
 					first = false;
 				} else{
 					sv.write(", " + st);
+					tempBuff.append(", pr_" + st);
 			//		initBuffer.append("; " + st + " <= 0");
+					if (lpn.getTransition(st).containsPriority())
+						initBuffer.append("; pr_" + st + " = " + lpn.getTransition(st).getPriority());
+					else
+						initBuffer.append("; pr_" + st + " = $urandom");
 				}
 			}
 			sv.write(";\n");
+			sv.write(tempBuff.toString() + ";\n");
+			initBuffer.append(";\n");
 			first = true;
 			for (String v: varsList){
 				if (!lpn.isInput(v) && !lpn.isOutput(v)){
@@ -153,7 +168,7 @@ public class Lpn2verilog {
 			}
 			sv.write(";\n");
 			if (netCount >=1){
-				sv.write("\tint unsigned ");
+				/*sv.write("\tint unsigned ");
 				Boolean firstPr = true;
 				for (int j = 0; j < netCount; j++)
 					if (firstPr){
@@ -162,7 +177,8 @@ public class Lpn2verilog {
 					}
 					else
 						sv.write(",pr" + j + "[string],prMax" + j);
-				sv.write(";\n");
+				sv.write(";\n");*/
+			//	sv.write("\tint unsigned pr" + "[string],prMax;\n");
 			}
 			initBuffer.append(";\n");
 			initBuffer.append(markedPlaceBuffer);
@@ -250,20 +266,28 @@ public class Lpn2verilog {
 			sv.write("\tend\n");
 			Boolean[] firstTransition = new Boolean[netCount];
 			StringBuffer[] alwaysBuffer = new StringBuffer[netCount];
-			StringBuffer[] prioritiesBuffer = new StringBuffer[netCount];
+		//	StringBuffer[] prioritiesBuffer = new StringBuffer[netCount];
 			StringBuffer[] assignmentsBuffer = new StringBuffer[netCount];
 			for (int j = 0; j < netCount; j++){
 				firstTransition[j] = true;
 				alwaysBuffer[j] = new StringBuffer();
-				prioritiesBuffer[j] = new StringBuffer();
+			//	prioritiesBuffer[j] = new StringBuffer();
 				assignmentsBuffer[j] = new StringBuffer(); 
 			}
 			for (String st : transitionList){
 				sv.write("\tassign ");
-				String delay = lpn.getTransition(st).getDelay();
-				if (delay != null){
+				ExprTree delayTree = lpn.getTransition(st).getDelayTree();
+				if (delayTree != null){
+					String delay = delayTree.getElement("Verilog");
+					if (delay.contains("uniform")){ //range
+						delay = delay.replaceAll("uniform\\(", "");
+						delay = delay.replaceAll("\\)", "");
+					} else {
+						delay = delay + "," + delay;
+					}
+					sv.write("#(delay(~" + st + "," + delay + ")) " + st + " = ");
 					//System.out.println(st + " delay " + lpn.getTransition(st).getDelay());
-					if (delay.contains(",")){
+					/*if (delay.contains(",")){
 						delay = delay.replace("uniform(","");
 						delay = delay.replace(")","");
 						String[] delayBounds = delay.split(",");
@@ -283,8 +307,7 @@ public class Lpn2verilog {
 						}
 					} else{
 						sv.write("#(~" + st + " ? " + delay + " : 0) " + st + " = ");
-					}
-					
+					}*/
 				} else{
 					sv.write(st + " = ");
 				}
@@ -312,6 +335,8 @@ public class Lpn2verilog {
 					assertionBuffer.append("\t\telse\n");
 					assertionBuffer.append("\t\t\t$error(\"Error! Assertion " + st + " failed at time %t\",$time);\n\tend\n");
 				} else {
+				//	System.out.println("transition " + st);
+				//	System.out.println("tag " + tag.get(st));
 					if (firstTransition[tag.get(st)]){
 						firstTransition[tag.get(st)] = false;
 					//	alwaysBuffer[tag.get(st)].append("\talways @(posedge(" + st + ")");
@@ -319,20 +344,22 @@ public class Lpn2verilog {
 					} else {
 						alwaysBuffer[tag.get(st)].append(" or " + st);
 					}
-					prioritiesBuffer[tag.get(st)].append("\t\tpr" + tag.get(st) + "[\"" + st +"\"] = (" + st + " && (pr" + tag.get(st) + "[\"" + st +"\"] == 0)) ? $unsigned($random) : 0;\n");
-					assignmentsBuffer[tag.get(st)].append("\t\tif (pr" + tag.get(st) + "[\"" + st + "\"]==prMax" + tag.get(st) + ") begin\n");
+			//		prioritiesBuffer[tag.get(st)].append("\t\tpr" + tag.get(st) + "[\"" + st +"\"] = (" + st + " && (pr" + tag.get(st) + "[\"" + st +"\"] == 0)) ? $unsigned($random) : 0;\n");
+			//		assignmentsBuffer[tag.get(st)].append("\t\tif (pr" + tag.get(st) + "[\"" + st + "\"]==prMax" + tag.get(st) + ") begin\n");
+					assignmentsBuffer[tag.get(st)].append("\t\tif (" + st + ") begin\n");
 					for (String st2 : lpn.getPreset(st)){
 						assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= 0;\n");
 					}
 					for (String st2 : lpn.getPostset(st)){
 						assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= 1;\n");
 					}
-					HashMap<String,String> assignments = lpn.getTransition(st).getAssignments(); 
-					if (assignments.size() != 0){
-						for (String st2 : assignments.keySet()){
+					HashMap<String,ExprTree> assignmentTrees = lpn.getTransition(st).getAssignTrees(); 
+					if (assignmentTrees.size() != 0){
+						for (String st2 : assignmentTrees.keySet()){
 							//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
-							String asgnmt = assignments.get(st2);
-							if (asgnmt.contains(",")){
+							String asgnmt = assignmentTrees.get(st2).getElement("Verilog");
+							assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= " + asgnmt + ";\n");
+						/*	if (asgnmt.contains(",")){
 								asgnmt = asgnmt.replace("uniform(","");
 								asgnmt = asgnmt.replace(")","");
 								String[] asgnmtBounds = asgnmt.split(",");
@@ -352,7 +379,7 @@ public class Lpn2verilog {
 								}
 							} else{
 								assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= " + asgnmt + ";\n");
-							}
+							}*/
 						}
 					}
 					assignmentsBuffer[tag.get(st)].append("\t\tend\n");
@@ -366,14 +393,29 @@ public class Lpn2verilog {
 				if ((alwaysBuffer[j] != null) && (alwaysBuffer[j].length() != 0)){
 					alwaysBuffer[j].append(") begin\n");
 					sv.write(alwaysBuffer[j].toString());
-					sv.write(prioritiesBuffer[j].toString());
-					sv.write("\t\tprMax" + j + " = pr" + j + ".max[0];\n");
-					sv.write("\t\tif (prMax" + j + " == 0)\n\t\t\tprMax" + j + "=1;\n");
+			//		sv.write(prioritiesBuffer[j].toString());
+			//		sv.write("\t\tprMax" + j + " = pr" + j + ".max[0];\n");
+			//		sv.write("\t\tif (prMax" + j + " == 0)\n\t\t\tprMax" + j + "=1;\n");
 					sv.write(assignmentsBuffer[j].toString());
 					sv.write("\tend\n");
 				}
 				}
 			}
+			sv.write("\tfunction real uniform(int a, int b);\n");
+			sv.write("\t\treal c;\n");
+			sv.write("\t\tif (a==b)\n");
+			sv.write("\t\t\treturn a;\n");
+			sv.write("\t\tif ((a>0)&&(b>0))\n");
+			sv.write("\t\t\tc = $urandom_range(a*1000,b*1000)/1000.0;\n");
+			sv.write("\t\telse\n");
+			sv.write("\t\t\tc = a+$urandom_range(b*1000-a*1000)/1000.0;\n");
+			sv.write("\t\treturn c;\n");
+			sv.write("\tendfunction\n");
+			sv.write("\tfunction real delay(bit tb, int l, int u);\n");
+			sv.write("\t\tif (~tb)\n\t\t\treturn 0.0;\n");
+			sv.write("\t\telse if (l == u)\n\t\t\treturn (u + 0.001*$urandom_range(1,100));\n");
+			sv.write("\t\telse return(uniform(l,u) + 0.001*$urandom_range(1,100));\n");
+			sv.write("\tendfunction\n");
 			sv.write("endmodule");
 			sv.close();
 		} catch (IOException e){
