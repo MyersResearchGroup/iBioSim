@@ -214,7 +214,8 @@ public class GCMParser {
 	private SpeciesInterface parseSpeciesData(String name, Properties property) {
 		SpeciesInterface species = null;
 
-		if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.CONSTANT)) {
+		if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.CONSTANT) ||
+				property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)) {
 			species = new ConstantSpecies();
 		} else if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.SPASTIC)) {
 			species = new SpasticSpecies();
