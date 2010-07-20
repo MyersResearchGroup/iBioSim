@@ -1572,13 +1572,19 @@ public class GCMFile {
 			}
 			// for backwards compatibility
 			if (properties.containsKey("const")) {
-				properties.setProperty(GlobalConstants.TYPE, GlobalConstants.CONSTANT);
+				properties.setProperty(GlobalConstants.TYPE, GlobalConstants.INPUT);
 			}
 			else if (!properties.containsKey(GlobalConstants.TYPE)) {
-				properties.setProperty(GlobalConstants.TYPE, GlobalConstants.NORMAL);
+				properties.setProperty(GlobalConstants.TYPE, GlobalConstants.OUTPUT);
 			}
 			if (properties.getProperty(GlobalConstants.TYPE).equals("constant")) {
-				properties.setProperty(GlobalConstants.TYPE, GlobalConstants.CONSTANT);
+				properties.setProperty(GlobalConstants.TYPE, GlobalConstants.INPUT);
+			}
+			if (properties.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.CONSTANT)) {
+				properties.setProperty(GlobalConstants.TYPE, GlobalConstants.INPUT);
+			}
+			if (properties.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.NORMAL)) {
+				properties.setProperty(GlobalConstants.TYPE, GlobalConstants.OUTPUT);
 			}
 
 			// for backwards compatibility
