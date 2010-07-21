@@ -163,6 +163,10 @@ public class LearnModel { // added ItemListener SB
 	private int pathLengthVar = 40;
 
 	private boolean binError;
+
+//	private ArrayList<String> stables;
+	
+	private HashMap<String, ArrayList<String>> destabMap, stabMap;
 	
 	// Pattern lParenR = Pattern.compile("\\(+"); //SB
 	
@@ -175,7 +179,7 @@ public class LearnModel { // added ItemListener SB
 	 * fields, puts them on panels, adds the panels to the frame, and then
 	 * displays the frame.
 	 */
-	public LhpnFile learnModel(String directory, Log log, BioSim biosim, int moduleNumber, HashMap<String, ArrayList<Double>> thresh, HashMap<String,Double> tPar, ArrayList<Variable> rVarsL, Double vScaleFactor, Double dScaleFactor, String failProp) {
+	public LhpnFile learnModel(String directory, Log log, BioSim biosim, int moduleNumber, HashMap<String, ArrayList<Double>> thresh, HashMap<String,Double> tPar, ArrayList<Variable> rVarsL, HashMap<String, ArrayList<String>> dstab, HashMap<String, ArrayList<String>> stab, Double vScaleFactor, Double dScaleFactor, String failProp) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		} else {
@@ -189,6 +193,8 @@ public class LearnModel { // added ItemListener SB
 		this.thresholds = thresh;
 		this.valScaleFactor = vScaleFactor;
 		this.delayScaleFactor = dScaleFactor;
+		this.destabMap = dstab;
+		this.stabMap = stab;
 		String[] getFilename = directory.split(separator);
 		if (moduleNumber == 0)
 			lhpnFile = getFilename[getFilename.length - 1] + ".lpn";
@@ -273,6 +279,24 @@ public class LearnModel { // added ItemListener SB
 				cProp.setProperty("delays", String.valueOf(0));
 				tsd = new TSDParser(directory + separator + "run-" + i + ".tsd", biosim,false);
 				data = tsd.getData();
+				if (((destabMap != null) && (destabMap.size() != 0)) || ((stabMap != null) && (stabMap.size() != 0))){
+					out.write("Generating data for stables \n");
+					HashMap<String, ArrayList<String>>  useMap = new HashMap<String, ArrayList<String>> ();
+					if ((destabMap != null) && (destabMap.size() != 0)){
+						for (String s : destabMap.keySet())
+							useMap.put(s, destabMap.get(s));
+					} else {
+						for (String s : stabMap.keySet())
+							useMap.put(s, stabMap.get(s));
+					}
+					addStablesToData(thresholds, useMap);
+					for (String s : varNames)
+						out.write(s + " ");
+					out.write("\n");
+					tsd.setData(data);
+					tsd.setSpecies(varNames);
+					tsd.outputDAT(directory + separator + "hello.dat");
+				}
 //ORDER REVERSED this first then detectDMV				genBinsRates(divisionsL); // changes made here.. data being used was global before.
 				//genBinsRates("run-" + i + ".tsd", divisionsL);
 				findReqdVarIndices();
@@ -380,8 +404,10 @@ public class LearnModel { // added ItemListener SB
 									// the above condition means that if the bin change is not on a non-input dmv variable, there won't be any enabling condition
 									if (reqdVarsL.get(k).isCare())
 										careIpChange = true;
+									
 									if (Integer.parseInt(binIncoming[k]) < Integer.parseInt(binOutgoing[k])) {
-										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binIncoming[k])).doubleValue();
+										//double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binIncoming[k])).doubleValue();
+										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binOutgoing[k])-1).doubleValue(); // changed on July 20, 2010
 										if (firstInputBinChg){
 											condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
 									//		transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),+1)";	// += temporary
@@ -497,8 +523,8 @@ public class LearnModel { // added ItemListener SB
 									if (reqdVarsL.get(k).isCare())
 										careIpChange = true;
 									if (Integer.parseInt(binIncoming[k]) < Integer.parseInt(binOutgoing[k])) {
-										//	double val = divisionsL.get(k).get(Integer.parseInt(binIncoming[k])).doubleValue();
-										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binIncoming[k])).doubleValue();
+										//double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binIncoming[k])).doubleValue();
+										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binOutgoing[k])-1).doubleValue(); // changed on July 20, 2010
 										if (firstInputBinChg){
 											condStr += "(" + reqdVarsL.get(k).getName() + ">=" + (int) Math.floor(val) + ")";
 								//			transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),+1)";	// += temporary
@@ -730,9 +756,39 @@ public class LearnModel { // added ItemListener SB
 				g.removePlace(st1);
 			}
 			
-			out.write("learning module done. Saving stuff and learning other modules.\n");
+			
 	//		addMetaBins();
 	//		addMetaBinTransitions();
+			if ((destabMap != null) || (destabMap.size() != 0)){
+				HashMap<String, ArrayList<String>> dMap = new HashMap<String, ArrayList<String>>();
+				int mNum = 1000;
+				for (String destabOp : destabMap.keySet()){
+					out.write("Generating stable signals with reqdVarsL as ");
+					HashMap<String, ArrayList<String>> stableSignalMap = new HashMap<String, ArrayList<String>>();
+					ArrayList <Variable> varsT = new ArrayList <Variable>();
+					stableSignalMap.put(destabOp, destabMap.get(destabOp));
+					for (String d : destabMap.get(destabOp)){
+						Variable input = new Variable("");
+						input.copy(reqdVarsL.get(findReqdVarslIndex(d)));
+						//input.setCare(true);
+						varsT.add(input);
+						out.write(input.getName() + " ");
+					}	
+					Variable output = new Variable("");
+					output.copy(reqdVarsL.get(findReqdVarslIndex("stable_" + destabOp)));
+					output.setInput(false);
+					output.setOutput(true);
+					output.setCare(true);
+					varsT.add(output);
+					out.write(output.getName() + "\n");
+					LearnModel l = new LearnModel();
+					LhpnFile moduleLPN = l.learnModel(directory, log, biosim, mNum, thresholds, tPar, varsT, dMap, stableSignalMap, valScaleFactor, delayScaleFactor, null);
+					// new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
+					g = mergeLhpns(moduleLPN,g);
+					mNum++;
+				}
+			}
+			out.write("learning module done. Saving stuff and learning other modules.\n");
 			g.save(directory + separator + lhpnFile);
 			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 			out.write("Returning " + directory + separator + lhpnFile + "\n");
@@ -785,6 +841,67 @@ public class LearnModel { // added ItemListener SB
 		return (g);
 	}
 	
+	public void addStablesToData(HashMap<String, ArrayList<Double>> localThresholds, HashMap<String, ArrayList<String>> useMap){
+		boolean sameBin = true;
+		ArrayList<String> destabIps;
+		HashMap<String, Integer> dataIndices;
+		int point;
+		for (String s : useMap.keySet()){
+		//	destabIps = new ArrayList<String>();
+		//	destabIps.add("ctl");
+			destabIps = useMap.get(s);
+			dataIndices = new HashMap<String, Integer>();
+			for (int i = 0; i < destabIps.size(); i++) {
+				String currentVar = destabIps.get(i);//reqdVarsL.get(i).getName();
+				for (int j = 1; j < varNames.size(); j++) {
+					if (currentVar.equalsIgnoreCase(varNames.get(j))) {
+						dataIndices.put(currentVar,Integer.valueOf(j));
+					}
+				}
+			}
+			int[] oldBin = new int[destabIps.size()];
+			int[] newBin = new int[destabIps.size()];
+			double unstableTime = 5960.0;
+			ArrayList<Double> dataForStable = new ArrayList<Double>();
+			point = 0;
+			dataForStable.add(0.0);	//Assume that always it starts unstable
+			for (int j = 0; j < destabIps.size(); j++){
+				String d = destabIps.get(j);
+				oldBin[j] = getRegion(data.get(dataIndices.get(d)).get(point),localThresholds.get(d));
+			}
+			for (int i = point+1; i < data.get(0).size(); i++){
+				sameBin = true;
+				for (int j = 0; j < destabIps.size(); j++){// check if all the responsible destabilizing variables are in the same bin at i as they were at point
+					String d = destabIps.get(j);
+					newBin[j] = getRegion(data.get(dataIndices.get(d)).get(i),localThresholds.get(d));
+					if (oldBin[j] != newBin[j]){
+						sameBin = false;
+						break;
+					}
+				}
+				if (sameBin){
+					if ((data.get(0).get(i) - data.get(0).get(point)) >= unstableTime){
+						//dataForStable.set(i, 1.0);
+						dataForStable.add(1.0);
+					} else {
+						//dataForStable.set(i, 0.0);
+						dataForStable.add(0.0);
+					}
+				} else {
+					//dataForStable.set(i, 0.0);
+					dataForStable.add(0.0);
+					for (int j = 0; j < destabIps.size(); j++){
+						String d = destabIps.get(j);
+						oldBin[j] = getRegion(data.get(dataIndices.get(d)).get(point),localThresholds.get(d));
+					}
+					point = i;
+				}
+			}
+			data.add(dataForStable);
+			varNames.add("stable_" + s);
+		}
+	}
+
 	public Double getDelayScaleFactor(){
 		return delayScaleFactor;
 	}
