@@ -1346,6 +1346,26 @@ public class GCMFile {
 	public HashMap<String, Properties> getSpecies() {
 		return species;
 	}
+	
+	public ArrayList<String> getInputSpecies() {
+		ArrayList<String> inputs = new ArrayList<String>();
+		for (String spec : species.keySet()) {
+			if (species.get(spec).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)) {
+				inputs.add(spec);
+			}
+		}
+		return inputs;
+	}
+	
+	public ArrayList<String> getOutputSpecies() {
+		ArrayList<String> outputs = new ArrayList<String>();
+		for (String spec : species.keySet()) {
+			if (species.get(spec).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
+				outputs.add(spec);
+			}
+		}
+		return outputs;
+	}
 
 	public HashMap<String, Properties> getComponents() {
 		return components;
