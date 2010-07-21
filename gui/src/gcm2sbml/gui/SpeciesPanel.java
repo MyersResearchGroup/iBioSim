@@ -125,8 +125,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			setType(prop.getProperty(GlobalConstants.TYPE));
 			loadProperties(prop);
 		}
-
-		setType(types[0]);
+		else {
+			setType(types[0]);
+		}
 		boolean display = false;
 		while (!display) {
 			display = openGui(oldName);
@@ -246,12 +247,17 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		if (type.equals(types[0])) {
 			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
+			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(false);
 		}
 		else if (type.equals(types[1])) {
 			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(false);
+			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
+		}
+		else if (type.equals(types[2])) {
+			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
+			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
+			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
 		}
 		else {
 			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);

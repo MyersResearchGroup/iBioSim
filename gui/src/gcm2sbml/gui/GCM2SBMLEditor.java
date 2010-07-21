@@ -1301,20 +1301,33 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 								+ selected.split(" ")[1].length() + 2);
 						selected = selected.split(" ")[0];
 					}
-					String[] specs = getSpecs.getSpecies().keySet().toArray(new String[0]);
+
+					ArrayList<String> in = getSpecs.getInputSpecies();
+					ArrayList<String> out = getSpecs.getOutputSpecies();
+					String[] inputs = in.toArray(new String[0]);
+					String[] outputs = out.toArray(new String[0]);
 					int i, j;
 					String index;
-					for (i = 1; i < specs.length; i++) {
-						index = specs[i];
+					for (i = 1; i < inputs.length; i++) {
+						index = inputs[i];
 						j = i;
-						while ((j > 0) && specs[j - 1].compareToIgnoreCase(index) > 0) {
-							specs[j] = specs[j - 1];
+						while ((j > 0) && inputs[j - 1].compareToIgnoreCase(index) > 0) {
+							inputs[j] = inputs[j - 1];
 							j = j - 1;
 						}
-						specs[j] = index;
+						inputs[j] = index;
 					}
-					ComponentsPanel panel = new ComponentsPanel(selected, list, influences, gcm, specs, comp,
-							oldPort, paramsOnly, biosim);
+					for (i = 1; i < outputs.length; i++) {
+						index = outputs[i];
+						j = i;
+						while ((j > 0) && outputs[j - 1].compareToIgnoreCase(index) > 0) {
+							outputs[j] = outputs[j - 1];
+							j = j - 1;
+						}
+						outputs[j] = index;
+					}
+					ComponentsPanel panel = new ComponentsPanel(selected, list, influences, gcm,
+							inputs, outputs, comp, oldPort, paramsOnly, biosim);
 				}
 			}
 			else if (getName().contains("Parameter")) {
