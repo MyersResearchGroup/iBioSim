@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.batik.svggen.font.table.Program;
 import org.sbml.libsbml.Compartment;
+import org.sbml.libsbml.Constraint;
 import org.sbml.libsbml.Delay;
 import org.sbml.libsbml.Event;
 import org.sbml.libsbml.EventAssignment;
@@ -498,7 +499,7 @@ public class Translator {
 							if (lhpn.getIntAssign(t, var) != null) {
 								ExprTree assignIntTree = lhpn.getIntAssignTree(t, var);
 								String assignInt = assignIntTree.toString("SBML");
-							  //System.out.println("integer assignment from LHPN: " + var + " := " + assignInt);
+							    System.out.println("integer assignment from LHPN: " + var + " := " + assignInt);
 								EventAssignment assign3 = e.createEventAssignment();
 								assign3.setVariable(var);
 								assign3.setMath(SBML_Editor.myParseFormula(assignInt));
@@ -587,9 +588,14 @@ public class Translator {
 			counter --;
 		}
 		
-		//filename.replace(".lpn", ".xml");
-		//SBMLWriter writer = new SBMLWriter();
-		//writer.writeSBML(document, filename);
+//		// translate property
+//		String prop = lhpn.getProperty();
+//		System.out.println("property:" + prop);
+		
+		
+//		Constraint constraint = m.createConstraint();
+		
+
 	}
 	
 	private void createFunction(Model model, String id, String name, String formula) {
