@@ -483,7 +483,7 @@ public class ExprTree {
 					    && ((this).lvalue != -INFIN)
 					    && (newresult.lvalue != INFIN)
 					    && (newresult.lvalue != -INFIN)) {
-					(this).isit = 'n';
+					(this).isit = 't';
 					(this).lvalue = ((int) (this).lvalue >> (int) newresult.lvalue) & 1;
 					(this).uvalue = (this).lvalue;
 				}
@@ -3635,8 +3635,9 @@ public class ExprTree {
 				
 			}
 		case 'n': // Number
-			// TODO: create a random initial value
-			// Temporary: initialize all inf, -inf, [-inf, inf] to 0
+			// long term solution: create initial assignment
+			// short term solution: initialize all inf, -inf, [-inf, inf] to 0
+			//            			initialize [l,u] to (l+u)/2
 			Double tempuval = uvalue;
 			Double templval = lvalue;
 			if ((uvalue == lvalue) || tempuval.toString().equals("")) {
@@ -4001,10 +4002,10 @@ public class ExprTree {
 						result = "rate(" + r1.getElement(type) + ")";
 					}
 				}
-				else if (op.equals("INT")) {
+				else if (op.equals("int")) {
 					if (r1 != null) {
 						if (sbmlFlag) {
-							result = "piecewise(1," + r1.getElement(type) + "0 )"; 
+							result = "piecewise(1," + r1.getElement(type) + ",0 )"; 
 						}
 						else {
 							result = "INT(" + r1.getElement(type) + ")";
