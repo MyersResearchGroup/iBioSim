@@ -65,7 +65,7 @@ public class PrintBiochemicalVisitor extends AbstractPrintVisitor {
 
 			r.addProduct(Utility.SpeciesReference(specie.getId(), 1));
 			r.setReversible(true);
-			r.setFast(true);
+			r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
 			kl.addParameter(Utility.Parameter(kbioString, newkf, GeneticNetwork.getMoleTimeParameter(specie.getInputs().size())));
 			kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork.getMoleTimeParameter(1)));
