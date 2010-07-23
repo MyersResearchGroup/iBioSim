@@ -1157,7 +1157,15 @@ public class Abstraction extends LhpnFile {
 		ArrayList<Transition[]> combine = new ArrayList<Transition[]>();
 		HashMap<Transition, boolean[]> samesets = new HashMap<Transition, boolean[]>();
 		for (Transition t1 : transitions.values()) {
+			if (!(t1.getDelayTree().isit == 'n' || (t1.getDelayTree().isit == 'a' && t1
+					.getDelayTree().op.equals("uniform")))) {
+				continue;
+			}
 			for (Transition t2 : transitions.values()) {
+				if (!(t2.getDelayTree().isit == 'n' || (t2.getDelayTree().isit == 'a' && t2
+						.getDelayTree().op.equals("uniform")))) {
+					continue;
+				}
 				if (!t1.equals(t2)) {
 					boolean samePreset = comparePreset(t1, t2);
 					boolean samePostset = comparePostset(t1, t2);
@@ -1211,7 +1219,15 @@ public class Abstraction extends LhpnFile {
 	private boolean checkTrans5b(boolean change) {
 		ArrayList<Transition[]> combine = new ArrayList<Transition[]>();
 		for (Transition t1 : transitions.values()) {
+			if (!(t1.getDelayTree().isit == 'n' || (t1.getDelayTree().isit == 'a' && t1
+					.getDelayTree().op.equals("uniform")))) {
+				continue;
+			}
 			for (Transition t2 : transitions.values()) {
+				if (!(t2.getDelayTree().isit == 'n' || (t2.getDelayTree().isit == 'a' && t2
+						.getDelayTree().op.equals("uniform")))) {
+					continue;
+				}
 				boolean transform = true;
 				if (!t1.equals(t2)) {
 					boolean assign = hasAssignments(t1) || hasAssignments(t2);
@@ -1286,6 +1302,7 @@ public class Abstraction extends LhpnFile {
 	}
 
 	private boolean checkTrans4(boolean change) {
+		// Remove a Transition with a Single Place in the Preset
 		ArrayList<Transition> remove = new ArrayList<Transition>();
 		for (Transition t : transitions.values()) {
 			Place[] preset = t.getPreset();
@@ -1319,6 +1336,10 @@ public class Abstraction extends LhpnFile {
 		// Remove Vacuous Transitions - Abstraction
 		ArrayList<Transition> remove = new ArrayList<Transition>();
 		for (Transition t : transitions.values()) {
+			if (!(t.getDelayTree().isit == 'n' || (t.getDelayTree().isit == 'a' && t
+					.getDelayTree().op.equals("uniform")))) {
+				continue;
+			}
 			Place[] postset = t.getPostset();
 			Place[] preset = t.getPreset();
 			if (postset.length == 1 && preset.length == 1) {
@@ -1372,6 +1393,10 @@ public class Abstraction extends LhpnFile {
 		// Remove Vacuous Transitions
 		ArrayList<Transition> remove = new ArrayList<Transition>();
 		for (Transition t : transitions.values()) {
+			if (!(t.getDelayTree().isit == 'n' || (t.getDelayTree().isit == 'a' && t
+					.getDelayTree().op.equals("uniform")))) {
+				continue;
+			}
 			Place[] postset = t.getPostset();
 			Place[] preset = t.getPreset();
 			if (postset.length == 1 && preset.length == 1) {
@@ -1447,6 +1472,7 @@ public class Abstraction extends LhpnFile {
 	}
 
 	private boolean checkTrans9(boolean change) {
+		// Remove Write Before Write
 		ArrayList<String[]> remove = new ArrayList<String[]>();
 		for (Transition t : transitions.values()) {
 			for (String var : t.getAssignments().keySet()) {
@@ -1604,10 +1630,10 @@ public class Abstraction extends LhpnFile {
 
 	private boolean removeTrans3(Transition transition) {
 		// Remove a transition with a single place in the postset
-		if (!transition.getDelay().contains("uniform")
-				&& !transition.getDelay().matches("[\\d-]+")) {
-			return false;
-		}
+		// if (!transition.getDelay().contains("uniform")
+		// && !transition.getDelay().matches("[\\d-]+")) {
+		// return false;
+		// }
 		Place place = transition.getPostset()[0];
 		Place[] preset = transition.getPreset();
 		Transition[] postset = place.getPostset();
@@ -1697,10 +1723,10 @@ public class Abstraction extends LhpnFile {
 
 	private boolean removeTrans4(Transition transition) {
 		// Remove a transition with a single place in the preset
-		if (!transition.getDelay().contains("uniform")
-				&& !transition.getDelay().matches("[\\d-]+")) {
-			return false;
-		}
+		// if (!transition.getDelay().contains("uniform")
+		// && !transition.getDelay().matches("[\\d-]+")) {
+		// return false;
+		// }
 		Place place = transition.getPreset()[0];
 		Transition[] preset = place.getPreset();
 		Place[] postset = transition.getPostset();
@@ -1779,10 +1805,10 @@ public class Abstraction extends LhpnFile {
 	}
 
 	private boolean removeVacTrans(Transition transition) {
-		if (!transition.getDelay().contains("uniform")
-				&& !transition.getDelay().matches("[\\d-]+")) {
-			return false;
-		}
+		// if (!transition.getDelay().contains("uniform")
+		// && !transition.getDelay().matches("[\\d-]+")) {
+		// return false;
+		// }
 		Place place = transition.getPostset()[0];
 		Place[] preset = transition.getPreset();
 		Transition[] postset = place.getPostset();
@@ -1872,10 +1898,10 @@ public class Abstraction extends LhpnFile {
 	}
 
 	private boolean removeVacTransAbs(Transition transition) {
-		if (!transition.getDelay().contains("uniform")
-				&& !transition.getDelay().matches("[\\d-]+")) {
-			return false;
-		}
+		// if (!transition.getDelay().contains("uniform")
+		// && !transition.getDelay().matches("[\\d-]+")) {
+		// return false;
+		// }
 		Place place = transition.getPostset()[0];
 		Place[] preset = transition.getPreset();
 		Transition[] postset = place.getPostset();
@@ -1969,14 +1995,14 @@ public class Abstraction extends LhpnFile {
 			return;
 		}
 		if (trans1.containsDelay() && trans2.containsDelay()) {
-			if (!trans1.getDelay().contains("uniform")
-					&& !trans1.getDelay().matches("[\\d-]+")) {
-				return;
-			}
-			if (!trans2.getDelay().contains("uniform")
-					&& !trans2.getDelay().matches("[\\d-]+")) {
-				return;
-			}
+			// if (!trans1.getDelay().contains("uniform")
+			// && !trans1.getDelay().matches("[\\d-]+")) {
+			// return;
+			// }
+			// if (!trans2.getDelay().contains("uniform")
+			// && !trans2.getDelay().matches("[\\d-]+")) {
+			// return;
+			// }
 			String[] delay = { trans1.getDelay(), trans2.getDelay() };
 			String[][] delayRange = new String[2][2];
 			Pattern pattern = Pattern.compile("uniform\\((\\S+?),(\\S+?)\\)");
@@ -2777,7 +2803,7 @@ public class Abstraction extends LhpnFile {
 	}
 
 	private boolean mergeTransitionsSimp(boolean change) {
-		ArrayList<Transition[]> toMerge = new ArrayList<Transition[]>();
+		HashMap<Transition, ArrayList<Transition>> toMerge = new HashMap<Transition, ArrayList<Transition>>();
 		for (Transition t1 : transitions.values()) {
 			for (Transition t2 : transitions.values()) {
 				if (t1.equals(t2)) {
@@ -2806,21 +2832,27 @@ public class Abstraction extends LhpnFile {
 						}
 					}
 					if (combine) {
-						Transition[] temp = { t1, t2 };
-						toMerge.add(temp);
+						if (toMerge.containsKey(t1)) {
+							toMerge.get(t1).add(t2);
+						} else {
+							toMerge.put(t1, new ArrayList<Transition>());
+							toMerge.get(t1).add(t2);
+						}
 					}
 				}
 			}
 		}
-		for (Transition[] tArray : toMerge) {
-			mergeTransitions(tArray, false);
-			change = true;
+		for (Transition t : toMerge.keySet()) {
+			if (transitions.containsValue(t)) {
+				mergeTransitions(t, toMerge.get(t), false);
+				change = true;
+			}
 		}
 		return change;
 	}
 
 	private boolean mergeTransitionsAbs(boolean change) {
-		ArrayList<Transition[]> toMerge = new ArrayList<Transition[]>();
+		HashMap<Transition, ArrayList<Transition>> toMerge = new HashMap<Transition, ArrayList<Transition>>();
 		for (Transition t1 : transitions.values()) {
 			for (Transition t2 : transitions.values()) {
 				if (t1.equals(t2)) {
@@ -2849,91 +2881,116 @@ public class Abstraction extends LhpnFile {
 						}
 					}
 					if (combine) {
-						Transition[] temp = { t1, t2 };
-						toMerge.add(temp);
+						if (toMerge.containsKey(t1)) {
+							toMerge.get(t1).add(t2);
+						} else {
+							toMerge.put(t1, new ArrayList<Transition>());
+							toMerge.get(t1).add(t2);
+						}
 					}
 				}
 			}
 		}
-		for (Transition[] tArray : toMerge) {
-			mergeTransitions(tArray, true);
-			change = true;
+		for (Transition t : toMerge.keySet()) {
+			if (transitions.containsValue(t)) {
+				mergeTransitions(t, toMerge.get(t), true);
+				change = true;
+			}
 		}
 		return change;
 	}
 
-	private void mergeTransitions(Transition[] tArray, boolean abstraction) {
-		if (!tArray[0].getDelay().contains("uniform")
-				&& !tArray[1].getDelay().matches("[\\d-]+")) {
+	private void mergeTransitions(Transition t, ArrayList<Transition> list,
+			boolean abstraction) {
+		if (!t.getDelay().contains("uniform")
+				&& !t.getDelay().matches("[\\d-]+")) {
 			return;
 		}
-		if (!tArray[1].getDelay().contains("uniform")
-				&& !tArray[1].getDelay().matches("[\\d-]+")) {
-			return;
+		for (Transition tP : list) {
+			if (!tP.getDelay().contains("uniform")
+					&& !tP.getDelay().matches("[\\d-]+")) {
+				return;
+			}
 		}
 		if (abstraction) {
-			if (transitions.containsKey(tArray[0].getName())
-					&& transitions.containsKey(tArray[1].getName())) {
-				ExprTree enabTree = new ExprTree(this);
-				ExprTree enab1 = tArray[0].getEnablingTree();
-				ExprTree enab2 = tArray[1].getEnablingTree();
-				enabTree.setNodeValues(enab1, enab2, "||", 'l');
-				tArray[0].addEnabling(enabTree.toString());
-				try {
-					Pattern pattern = Pattern.compile(RANGE);
-					Matcher matcher = pattern.matcher(tArray[0].getDelay());
-					Integer dl1, dl2, du1, du2;
-					if (matcher.find()) {
-						dl1 = Integer.parseInt(matcher.group(1));
-						du1 = Integer.parseInt(matcher.group(2));
-					} else {
-						dl1 = Integer.parseInt(tArray[0].getDelay());
-						du1 = Integer.parseInt(tArray[0].getDelay());
-					}
-					matcher = pattern.matcher(tArray[1].getDelay());
+			for (Transition tP : list) {
+				if (!transitions.containsKey(tP.getName())) {
+					return;
+				}
+			}
+			String enabling = "(" + t.getEnabling() + ")";
+			for (Transition tP : list) {
+				enabling = enabling + "|(" + tP.getEnabling() + ")";
+			}
+			t.addEnabling(enabling);
+			try {
+				Pattern pattern = Pattern.compile(RANGE);
+				Matcher matcher = pattern.matcher(t.getDelay());
+				Integer dl1, dl2, du1, du2;
+				if (matcher.find()) {
+					dl1 = Integer.parseInt(matcher.group(1));
+					du1 = Integer.parseInt(matcher.group(2));
+				} else {
+					dl1 = Integer.parseInt(t.getDelay());
+					du1 = Integer.parseInt(t.getDelay());
+				}
+				for (Transition tP : list) {
+					matcher = pattern.matcher(tP.getDelay());
 					if (matcher.find()) {
 						dl2 = Integer.parseInt(matcher.group(1));
 						du2 = Integer.parseInt(matcher.group(2));
 					} else {
-						dl2 = Integer.parseInt(tArray[1].getDelay());
-						du2 = Integer.parseInt(tArray[1].getDelay());
+						dl2 = Integer.parseInt(tP.getDelay());
+						du2 = Integer.parseInt(tP.getDelay());
 					}
-					String delay = "uniform(";
-					if (dl1.compareTo(dl2) <= 0) {
-						delay = delay + dl1.toString() + ",";
-					} else {
-						delay = delay + dl2.toString() + ",";
+					if (dl1.compareTo(dl2) > 0) {
+						dl1 = dl2;
 					}
-					if (du1.compareTo(dl2) > 0) {
-						delay = delay + du1.toString() + ")";
-					} else {
-						delay = delay + du2.toString() + ")";
+					if (du1.compareTo(dl2) <= 0) {
+						du1 = du2;
 					}
-					tArray[0].addDelay(delay);
-				} catch (Exception e) {
-					tArray[0].addDelay("uniform(0,inf)");
 				}
-				removeTransition(tArray[1].getName());
+				if (dl1.toString().equals(du1.toString())) {
+					t.addDelay(dl1.toString());
+				} else {
+					t.addDelay("uniform(" + dl1.toString() + ","
+							+ du1.toString() + ")");
+				}
+			} catch (Exception e) {
+				t.addDelay("uniform(0,inf)");
+			}
+			for (Transition tP : list) {
+				removeTransition(tP.getName());
 			}
 		} else {
-			if (transitions.containsKey(tArray[0].getName())
-					&& transitions.containsKey(tArray[1].getName())) {
-				ExprTree enabTree = new ExprTree(this);
-				ExprTree enab1 = tArray[0].getEnablingTree();
-				ExprTree enab2 = tArray[1].getEnablingTree();
-				ExprTree dl = new ExprTree(this);
-				ExprTree du = new ExprTree(this);
-				ExprTree delay = new ExprTree(this);
-				ExprTree delay1 = tArray[0].getDelayTree();
-				ExprTree delay2 = tArray[1].getDelayTree();
-				ExprTree dl1, dl2, du1, du2;
-				if (delay1.isit == 'a' & delay1.op.equals("uniform")) {
-					dl1 = delay1.r1;
-					du1 = delay1.r2;
-				} else {
-					dl1 = new ExprTree(delay1);
-					du1 = new ExprTree(delay1);
+			for (Transition tP : list) {
+				if (!transitions.containsKey(tP.getName())) {
+					return;
 				}
+			}
+			String enabling = "(" + t.getEnabling() + ")";
+			for (Transition tP : list) {
+				enabling = enabling + "|(" + tP.getEnabling() + ")";
+			}
+			ExprTree dl = new ExprTree(this);
+			ExprTree du = new ExprTree(this);
+			ExprTree delay = new ExprTree(this);
+			ExprTree delay1 = t.getDelayTree();
+			ExprTree e1 = t.getEnablingTree();
+			ExprTree dl1, dl2, du1, du2;
+			if (delay1.isit == 'a' & delay1.op.equals("uniform")) {
+				dl1 = delay1.r1;
+				du1 = delay1.r2;
+			} else {
+				dl1 = new ExprTree(delay1);
+				du1 = new ExprTree(delay1);
+			}
+			dl1.setNodeValues(e1, dl1, "*", 'a');
+			du1.setNodeValues(e1, du1, "*", 'a');
+			dl = dl1;
+			du = du1;
+			for (Transition tP : list) {
+				ExprTree delay2 = tP.getDelayTree();
 				if (delay2.isit == 'a' & delay2.op.equals("uniform")) {
 					dl2 = delay2.r1;
 					du2 = delay2.r2;
@@ -2941,24 +2998,22 @@ public class Abstraction extends LhpnFile {
 					dl2 = new ExprTree(delay2);
 					du2 = new ExprTree(delay2);
 				}
-				ExprTree e1 = tArray[0].getEnablingTree();
-				ExprTree e2 = tArray[1].getEnablingTree();
-				dl1.setNodeValues(e1, dl1, "*", 'a');
+				ExprTree e2 = tP.getEnablingTree();
 				dl2.setNodeValues(e2, dl2, "*", 'a');
-				dl.setNodeValues(dl1, dl2, "+", 'a');
-				du1.setNodeValues(e1, du1, "*", 'a');
+				dl.setNodeValues(dl, dl2, "+", 'a');
 				du2.setNodeValues(e2, du2, "*", 'a');
-				du.setNodeValues(du1, du2, "+", 'a');
+				du.setNodeValues(du, du2, "+", 'a');
 				if (!dl.isEqual(du)) {
 					delay.setNodeValues(dl, du, "uniform", 'a');
 				} else {
 					delay = dl;
 				}
-				tArray[0].addDelay(delay.toString());
-				enabTree.setNodeValues(enab1, enab2, "||", 'l');
-				tArray[0].addEnabling(enabTree.toString());
-				removeTransition(tArray[1].getName());
+				t.addDelay(delay.toString());
 			}
+			t.addEnabling(enabling);
+		}
+		for (Transition tP : list) {
+			removeTransition(tP.getName());
 		}
 	}
 
