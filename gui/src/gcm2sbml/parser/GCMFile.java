@@ -950,12 +950,12 @@ public class GCMFile {
 						&& prop.keySet().contains("type_" + propName)) {
 					if (prop.getProperty("type_" + propName).equals("Output")) {
 						buffer.append(s + " -> " + prop.getProperty(propName.toString()).toString()
-								+ " [port=" + propName.toString());
+								+ " [port=" + propName.toString() + ", type=Output");
 						buffer.append(", arrowhead=normal]\n");
 					}
 					else {
 						buffer.append(prop.getProperty(propName.toString()).toString() + " -> " + s
-								+ " [port=" + propName.toString());
+								+ " [port=" + propName.toString() + ", type=Input");
 						buffer.append(", arrowhead=normal]\n");
 					}
 				}
@@ -1767,11 +1767,35 @@ public class GCMFile {
 			if (properties.containsKey("port")) {
 				if (components.containsKey(matcher.group(2))) {
 					components.get(matcher.group(2)).put(properties.get("port"), matcher.group(5));
-					components.get(matcher.group(2)).put("type_" + properties.get("port"), "Output");
+					if (properties.containsKey("type")) {
+						components.get(matcher.group(2)).put("type_" + properties.get("port"), properties.get("type"));
+					}
+					else {
+						GCMFile file = new GCMFile(path);
+						file.load(path + separator + components.get(matcher.group(2)).getProperty("gcm"));
+						if (file.getSpecies().get(properties.get("port")).get(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)) {
+							components.get(matcher.group(2)).put("type_" + properties.get("port"), "Input");
+						}
+						else if (file.getSpecies().get(properties.get("port")).get(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
+							components.get(matcher.group(2)).put("type_" + properties.get("port"), "Output");
+						}
+					}
 				}
 				else {
 					components.get(matcher.group(5)).put(properties.get("port"), matcher.group(2));
-					components.get(matcher.group(5)).put("type_" + properties.get("port"), "Input");
+					if (properties.containsKey("type")) {
+						components.get(matcher.group(5)).put("type_" + properties.get("port"), properties.get("type"));
+					}
+					else {
+						GCMFile file = new GCMFile(path);
+						file.load(path + separator + components.get(matcher.group(5)).getProperty("gcm"));
+						if (file.getSpecies().get(properties.get("port")).get(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)) {
+							components.get(matcher.group(5)).put("type_" + properties.get("port"), "Input");
+						}
+						else if (file.getSpecies().get(properties.get("port")).get(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
+							components.get(matcher.group(5)).put("type_" + properties.get("port"), "Output");
+						}
+					}
 				}
 			}
 			else {
