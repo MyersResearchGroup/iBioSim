@@ -946,10 +946,18 @@ public class GCMFile {
 			Properties prop = components.get(s);
 			for (Object propName : prop.keySet()) {
 				if (!propName.toString().equals("gcm")
-						&& !propName.toString().equals(GlobalConstants.ID)) {
-					buffer.append(s + " -> " + prop.getProperty(propName.toString()).toString()
-							+ " [port=" + propName.toString());
-					buffer.append(", arrowhead=none]\n");
+						&& !propName.toString().equals(GlobalConstants.ID)
+						&& prop.keySet().contains("type_" + propName)) {
+					if (prop.getProperty("type_" + propName).equals("Output")) {
+						buffer.append(s + " -> " + prop.getProperty(propName.toString()).toString()
+								+ " [port=" + propName.toString());
+						buffer.append(", arrowhead=normal]\n");
+					}
+					else {
+						buffer.append(prop.getProperty(propName.toString()).toString() + " -> " + s
+								+ " [port=" + propName.toString());
+						buffer.append(", arrowhead=normal]\n");
+					}
 				}
 			}
 		}
@@ -1376,7 +1384,7 @@ public class GCMFile {
 		Properties c = components.get(s);
 		ArrayList<String> ports = new ArrayList<String>();
 		for (Object key : c.keySet()) {
-			if (!key.equals("gcm")) {
+			if (!key.equals("gcm") && c.containsKey("type_" + key)) {
 				ports.add((String) key);
 			}
 		}
@@ -1757,7 +1765,14 @@ public class GCMFile {
 			}
 
 			if (properties.containsKey("port")) {
-				components.get(matcher.group(2)).put(properties.get("port"), matcher.group(5));
+				if (components.containsKey(matcher.group(2))) {
+					components.get(matcher.group(2)).put(properties.get("port"), matcher.group(5));
+					components.get(matcher.group(2)).put("type_" + properties.get("port"), "Output");
+				}
+				else {
+					components.get(matcher.group(5)).put(properties.get("port"), matcher.group(2));
+					components.get(matcher.group(5)).put("type_" + properties.get("port"), "Input");
+				}
 			}
 			else {
 				String name = "";

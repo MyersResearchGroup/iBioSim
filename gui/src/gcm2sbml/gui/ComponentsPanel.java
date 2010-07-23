@@ -25,6 +25,8 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	private String[] options = { "Ok", "Cancel" };
 
 	private ArrayList<JComboBox> portmapBox = null;
+	
+	private ArrayList<String> types = null;
 
 	private GCMFile gcm = null;
 
@@ -63,6 +65,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 
 		fields = new HashMap<String, PropertyField>();
 		portmapBox = new ArrayList<JComboBox>();
+		types = new ArrayList<String>();
 		String[] specs = gcm.getSpecies().keySet().toArray(new String[0]);
 		int j, k;
 		String index;
@@ -104,6 +107,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			JPanel tempPanel = new JPanel();
 			JLabel tempLabel = new JLabel(s);
 			JLabel tempLabel2 = new JLabel("Input");
+			types.add("Input");
 			tempPanel.setLayout(new GridLayout(1, 3));
 			tempPanel.add(tempLabel);
 			tempPanel.add(tempLabel2);
@@ -115,6 +119,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			JPanel tempPanel = new JPanel();
 			JLabel tempLabel = new JLabel(s);
 			JLabel tempLabel2 = new JLabel("Output");
+			types.add("Output");
 			tempPanel.setLayout(new GridLayout(1, 3));
 			tempPanel.add(tempLabel);
 			tempPanel.add(tempLabel2);
@@ -193,6 +198,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			for (String s : species) {
 				if (!portmapBox.get(i).getSelectedItem().toString().equals("--none--")) {
 					property.put(s, portmapBox.get(i).getSelectedItem().toString());
+					property.put("type_" + s, types.get(i));
 				}
 				i++;
 			}
