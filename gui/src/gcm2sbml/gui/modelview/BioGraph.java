@@ -42,6 +42,7 @@ public class BioGraph extends mxGraph {
 	 */
 	private HashMap<String, mxCell> speciesToMxCellMap;
 	private HashMap<String, mxCell> influencesToMxCellMap;
+	private HashMap<String, mxCell> componentToMxCellMap;
 	
 	/**
 	 * The definitive internal model. We store a reference to it here
@@ -161,11 +162,15 @@ public class BioGraph extends mxGraph {
 		this.getModel().beginUpdate();
 		
 		boolean needsPositioning = false;
+		// add species
 		for(String sp:internalModel.get("species").keySet()){ // SPECIES
 			if(createVertexFromModel(sp))
 				needsPositioning = true;
 		}
 
+		// add all components
+		
+		
 		// add all the edges
 		for(String inf:internalModel.get("influences").keySet()){
 			this.insertEdge(this.getDefaultParent(), inf, "", 

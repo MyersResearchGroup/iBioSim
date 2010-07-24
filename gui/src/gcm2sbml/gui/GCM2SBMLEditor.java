@@ -816,7 +816,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		GCIGrappaPanel grappaPanel = new GCIGrappaPanel();
 		
 		// create the modelview2 (jgraph) panel
-		ModelView modelView = new ModelView(gcm.getInternalModel(), gcm);
+		ModelView modelView = new ModelView(gcm.getInternalModel(), gcm, biosim, this);
 		//gcm.addInfluences("ASDFASDF", new Properties());
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
@@ -1255,80 +1255,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				ConditionsPanel panel = new ConditionsPanel(selected, list, gcm, paramsOnly, biosim);
 			}
 			else if (getName().contains("Component")) {
-				String selected = null;
-				String comp = null;
-				if (list.getSelectedValue() != null && getName().contains("Edit")) {
-					selected = list.getSelectedValue().toString();
-					comp = selected.split(" ")[1] + ".gcm";
-				}
-				else {
-					ArrayList<String> components = new ArrayList<String>();
-					for (String s : new File(path).list()) {
-						if (s.endsWith(".gcm") && !s.equals(filename)) {
-							components.add(s);
-						}
-					}
-					int i, j;
-					String index;
-					for (i = 1; i < components.size(); i++) {
-						index = components.get(i);
-						j = i;
-						while ((j > 0) && components.get(j - 1).compareToIgnoreCase(index) > 0) {
-							components.set(j, components.get(j - 1));
-							j = j - 1;
-						}
-						components.set(j, index);
-					}
-					if (components.size() == 0) {
-						comp = null;
-						JOptionPane.showMessageDialog(biosim.frame(),
-								"There aren't any other gcms to use as components."
-										+ "\nCreate a new gcm or import a gcm into the project first.",
-								"Add Another GCM To The Project", JOptionPane.ERROR_MESSAGE);
-					}
-					else {
-						comp = (String) JOptionPane.showInputDialog(biosim.frame(),
-								"Choose a gcm to use as a component:", "Component Editor",
-								JOptionPane.PLAIN_MESSAGE, null, components.toArray(new String[0]), null);
-					}
-				}
-				if (comp != null && !comp.equals("")) {
-					GCMFile getSpecs = new GCMFile(path);
-					getSpecs.load(path + separator + comp);
-					String oldPort = null;
-					if (selected != null) {
-						oldPort = selected.substring(selected.split(" ")[0].length()
-								+ selected.split(" ")[1].length() + 2);
-						selected = selected.split(" ")[0];
-					}
-
-					ArrayList<String> in = getSpecs.getInputSpecies();
-					ArrayList<String> out = getSpecs.getOutputSpecies();
-					String[] inputs = in.toArray(new String[0]);
-					String[] outputs = out.toArray(new String[0]);
-					int i, j;
-					String index;
-					for (i = 1; i < inputs.length; i++) {
-						index = inputs[i];
-						j = i;
-						while ((j > 0) && inputs[j - 1].compareToIgnoreCase(index) > 0) {
-							inputs[j] = inputs[j - 1];
-							j = j - 1;
-						}
-						inputs[j] = index;
-					}
-					for (i = 1; i < outputs.length; i++) {
-						index = outputs[i];
-						j = i;
-						while ((j > 0) && outputs[j - 1].compareToIgnoreCase(index) > 0) {
-							outputs[j] = outputs[j - 1];
-							j = j - 1;
-						}
-						outputs[j] = index;
-					}
-					ComponentsPanel panel = new ComponentsPanel(selected, list, influences, gcm,
-							inputs, outputs, comp, oldPort, paramsOnly, biosim);
-				}
+				displayChooseComponentDialog(getName().contains("Edit"), list, false);
 			}
 			else if (getName().contains("Parameter")) {
 				String selected = null;
@@ -1361,6 +1288,104 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		private String name = null;
 
 		private PropertyList list = null;
+	}
+	
+	/*
+	 * Displays the "Choose Component" dialog and then adds the component afterward.
+	 * @param list: The PropertiesList. If left null then the gcm2sbmleditor's component
+	 * 				list will be used.
+	 * @param createUsingDefaults:  If true then a component will be created with a basic name and
+	 * 				no port mappings. Otherwise the user will be asked for 
+	 * 				the name and mappings.
+	 */
+	public boolean displayChooseComponentDialog(boolean tryEdit, PropertyList list, boolean createUsingDefaults){
+		
+		boolean changesMade = false;
+		
+		if(list == null)
+			list = this.components;
+		String selected = null;
+		String comp = null;
+		if (list.getSelectedValue() != null && getName().contains("Edit")) {
+			selected = list.getSelectedValue().toString();
+			comp = selected.split(" ")[1] + ".gcm";
+		}
+		else {
+			ArrayList<String> components = new ArrayList<String>();
+			for (String s : new File(path).list()) {
+				if (s.endsWith(".gcm") && !s.equals(filename)) {
+					components.add(s);
+				}
+			}
+			int i, j;
+			String index;
+			for (i = 1; i < components.size(); i++) {
+				index = components.get(i);
+				j = i;
+				while ((j > 0) && components.get(j - 1).compareToIgnoreCase(index) > 0) {
+					components.set(j, components.get(j - 1));
+					j = j - 1;
+				}
+				components.set(j, index);
+			}
+			if (components.size() == 0) {
+				comp = null;
+				JOptionPane.showMessageDialog(biosim.frame(),
+						"There aren't any other gcms to use as components."
+								+ "\nCreate a new gcm or import a gcm into the project first.",
+						"Add Another GCM To The Project", JOptionPane.ERROR_MESSAGE);
+			}
+			else {
+				comp = (String) JOptionPane.showInputDialog(biosim.frame(),
+						"Choose a gcm to use as a component:", "Component Editor",
+						JOptionPane.PLAIN_MESSAGE, null, components.toArray(new String[0]), null);
+			}
+		}
+		if (comp != null && !comp.equals("")) {
+			GCMFile getSpecs = new GCMFile(path);
+			getSpecs.load(path + separator + comp);
+			String oldPort = null;
+			if (selected != null) {
+				oldPort = selected.substring(selected.split(" ")[0].length()
+						+ selected.split(" ")[1].length() + 2);
+				selected = selected.split(" ")[0];
+			}
+
+			ArrayList<String> in = getSpecs.getInputSpecies();
+			ArrayList<String> out = getSpecs.getOutputSpecies();
+			String[] inputs = in.toArray(new String[0]);
+			String[] outputs = out.toArray(new String[0]);
+			int i, j;
+			String index;
+			for (i = 1; i < inputs.length; i++) {
+				index = inputs[i];
+				j = i;
+				while ((j > 0) && inputs[j - 1].compareToIgnoreCase(index) > 0) {
+					inputs[j] = inputs[j - 1];
+					j = j - 1;
+				}
+				inputs[j] = index;
+			}
+			for (i = 1; i < outputs.length; i++) {
+				index = outputs[i];
+				j = i;
+				while ((j > 0) && outputs[j - 1].compareToIgnoreCase(index) > 0) {
+					outputs[j] = outputs[j - 1];
+					j = j - 1;
+				}
+				outputs[j] = index;
+			}
+			
+			if(createUsingDefaults){
+				gcm.addComponent(null, null);
+			}else{
+				ComponentsPanel panel = new ComponentsPanel(selected, list, influences, gcm,
+						inputs, outputs, comp, oldPort, paramsOnly, biosim);
+			}
+			
+			changesMade = true;
+		}
+		return changesMade;
 	}
 	
 	public void setSBMLParamFile(SBML_Editor sbmlParamFile) {

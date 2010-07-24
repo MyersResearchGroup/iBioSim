@@ -1,5 +1,6 @@
 package gcm2sbml.gui.modelview;
 
+import gcm2sbml.gui.GCM2SBMLEditor;
 import gcm2sbml.gui.InfluencePanel;
 import gcm2sbml.gui.PromoterPanel;
 import gcm2sbml.gui.PropertiesLauncher;
@@ -27,6 +28,7 @@ import javax.swing.ButtonModel;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButton;
@@ -34,6 +36,8 @@ import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+
+import biomodelsim.BioSim;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.mxGraphComponent;
@@ -55,16 +59,21 @@ public class ModelView extends JPanel implements ActionListener {
 	
 	
 	private GCMFile gcm;
+	private BioSim biosim;
+	private GCM2SBMLEditor gcm2sbml;
 	
 	/**
 	 * Constructor
 	 * @param internalModel
 	 */
-	public ModelView(HashMap<String, HashMap<String, Properties>> internalModel, GCMFile gcm){
+	public ModelView(HashMap<String, HashMap<String, Properties>> internalModel, 
+			GCMFile gcm, BioSim biosim, GCM2SBMLEditor gcm2sbml){
 		super(new BorderLayout());
 		this.internalModel = internalModel;
 		
 		this.gcm = gcm;
+		this.biosim = biosim;
+		this.gcm2sbml = gcm2sbml;
 	}
 	
 	/**
@@ -183,14 +192,7 @@ public class ModelView extends JPanel implements ActionListener {
 			command = command.substring(command.indexOf('_')+1);
 			graph.buildGraph(); // rebuild, quick way to clear out any edge midpoints.
 			graph.applyLayout(command, this.graphComponent);
-//		}else if(command == "addSpecies"){
-//			PropertiesLauncher.getInstance().launchSpeciesEditor(null);
-//			
-//			refreshGraph();
-//		}else if(command == "addInfluence"){
-//			PropertiesLauncher.getInstance().launchInfluencePanel(null);
-//			
-//			refreshGraph();
+			gcm2sbml.setDirty(true);
 		}else if(command == ""){
 			// radio buttons don't have to do anything and have an action command of "".
 		}else{
@@ -222,9 +224,17 @@ public class ModelView extends JPanel implements ActionListener {
 						}else if(addSpeciesButton.isSelected()){
 							// plop a species down with good default info at the mouse coordinates
 							graph.createSpecies(null, e.getX(), e.getY());
+							gcm2sbml.setDirty(true);
 						}else if(addComponentButton.isSelected()){
 							// Ask the user which component to add, then plop it down where the click happened
-							
+//							String comp = (String) JOptionPane.showInputDialog(biosim.frame(),
+//									"Choose a gcm to use as a component:", "Component Editor",
+//									JOptionPane.PLAIN_MESSAGE, null, 
+//									gcm2sbml.getAllPossibleComponentNames().toArray(), null);
+							if(gcm2sbml.displayChooseComponentDialog(false, null, true))
+								gcm2sbml.setDirty(true);
+							graph.buildGraph();
+							PropertiesLauncher.getInstance().refreshAllGCM2SBMLLists();
 						}
 					}else{
 						if(editPromoterButton.isSelected()){
@@ -285,12 +295,11 @@ public class ModelView extends JPanel implements ActionListener {
 			public void invoke(Object arg0, mxEventObject event) {
 
 				Object cells[] = (Object [])event.getProperties().get("cells");
-
 				for(int i=0; i<cells.length; i++){
 					mxCell cell = (mxCell)cells[i];
 					graph.updateInternalPosition(cell);
 				}
-				
+				gcm2sbml.setDirty(true);
 			}
 		});
 		
@@ -318,6 +327,7 @@ public class ModelView extends JPanel implements ActionListener {
 							graph.speciesRemoved(cell.getId());
 						}
 					}
+					gcm2sbml.setDirty(true);
 				}
 			}
 		});
@@ -330,7 +340,7 @@ public class ModelView extends JPanel implements ActionListener {
 				// if the graph is building, ignore the creation of edges.
 				if(graph.isBuilding == false){
 				
-						Object cells[] = (Object [])event.getProperties().get("cells");
+					Object cells[] = (Object [])event.getProperties().get("cells");
 					
 					if(cells.length == 1 && ((mxCell)(cells[0])).isEdge()){
 	
@@ -373,6 +383,8 @@ public class ModelView extends JPanel implements ActionListener {
 						
 						graph.addInfluence(edge, name, constType);
 						PropertiesLauncher.getInstance().addInfluenceToList(name);
+						gcm2sbml.setDirty(true);
+
 					}
 				}
 

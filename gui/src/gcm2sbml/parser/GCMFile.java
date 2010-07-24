@@ -1209,8 +1209,47 @@ public class GCMFile {
 		promoters.put(name.replace("\"", ""), properties);
 	}
 
+	/**
+	 * Add a component given the specified name and properties. If
+	 * either is null then they will be created using (hopefully) sensible
+	 * defaults.
+	 *  
+	 * @param name
+	 * @param properties
+	 */
 	public void addComponent(String name, Properties properties) {
+		
+		if(name == null || properties == null){
+			name = createNewObjectName("C", components);
+			properties = new Properties();
+			properties.put("gcm", this.filename);
+		}
+		
 		components.put(name, properties);
+	}
+
+	// used by createNewObjectName
+	private HashMap<String, Integer> createdHighIds;
+	/**
+	 * builds a sensible default name for a new species, component, or promoter.
+	 * @param prefix: a string which will begin the component name. ("S", "C", or "P")
+	 * @param hash: the internal model of species or components or promoter
+	 * @return: a string name for the new component.
+	 */
+	public String createNewObjectName(String prefix, HashMap<String, Properties> hash){
+		// make sure createdHighIds exists and is initialized.
+		if(createdHighIds == null)
+			createdHighIds = new HashMap<String, Integer>();
+		if(createdHighIds.containsKey(prefix) == false)
+			createdHighIds.put(prefix, 0);
+		
+		String name;
+		do{
+			createdHighIds.put(prefix, createdHighIds.get(prefix)+1);
+			name = prefix + String.valueOf(createdHighIds.get(prefix));
+		}while(hash.containsKey(name));		
+
+		return name;
 	}
 	
 	public String addCondition(String condition) {
