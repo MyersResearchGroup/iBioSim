@@ -91,6 +91,12 @@ public class PropertiesLauncher {
 	public void removeSpeciesFromList(String id){
 		speciesList.removeItem(id);
 	}
+
+	public void removeComponentFromList(String id){
+		//componentList.removeItem(id);
+		// TODO: Remove from the components list here!
+	}
+
 	
 	public void refreshAllGCM2SBMLLists(){
 		gcm2sbml.refresh();

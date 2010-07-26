@@ -50,13 +50,7 @@ public class ModelView extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	BioGraph graph;
 	private mxGraphComponent graphComponent;
-	public mxGraphComponent getGraphComponent(){return graphComponent;};
-	
-	/**
-	 * Store a reference to the species, influences, etc that make up the graph.
-	 */
-	private HashMap<String, HashMap<String, Properties>> internalModel;
-	
+	public mxGraphComponent getGraphComponent(){return graphComponent;};	
 	
 	private GCMFile gcm;
 	private BioSim biosim;
@@ -66,10 +60,8 @@ public class ModelView extends JPanel implements ActionListener {
 	 * Constructor
 	 * @param internalModel
 	 */
-	public ModelView(HashMap<String, HashMap<String, Properties>> internalModel, 
-			GCMFile gcm, BioSim biosim, GCM2SBMLEditor gcm2sbml){
+	public ModelView(GCMFile gcm, BioSim biosim, GCM2SBMLEditor gcm2sbml){
 		super(new BorderLayout());
-		this.internalModel = internalModel;
 		
 		this.gcm = gcm;
 		this.biosim = biosim;
@@ -83,11 +75,12 @@ public class ModelView extends JPanel implements ActionListener {
 	public void display(){
 
 		if(graph == null){
-			graph = new BioGraph(internalModel);
+			graph = new BioGraph(gcm);
 			
 			addGraphListeners();
 			
-			refreshGraph();
+			// FIXME: the graph gets built twice the first time. Wasteful! 
+		//	refreshGraph();
 		}
 		
 		boolean needs_layouting = graph.buildGraph();
@@ -240,7 +233,7 @@ public class ModelView extends JPanel implements ActionListener {
 						if(editPromoterButton.isSelected()){
 							// If the thing clicked on was an influence, bring up it's promotor window.
 							if(cell.isEdge()){
-								Properties prop = internalModel.get("influences").get(cell.getId());
+								Properties prop = gcm.getInfluences().get(cell.getId());
 								String promoter = prop.getProperty("Promoter");
 								//System.out.print(promoter);
 								if(promoter != null){
@@ -249,7 +242,7 @@ public class ModelView extends JPanel implements ActionListener {
 								}else{
 									PromoterPanel p = PropertiesLauncher.getInstance().launchPromoterEditor(null);
 									// set the selected influence to use the given promoter
-									prop = internalModel.get("influences").get(cell.getId());
+									prop = gcm.getInfluences().get(cell.getId());
 									// now rename the influence to incorporate the new promoter
 									gcm.changeInfluencePromoter(cell.getId(), prop.getProperty(GlobalConstants.PROMOTER), p.getLastUsedPromoter());
 									graph.buildGraph();
@@ -317,14 +310,18 @@ public class ModelView extends JPanel implements ActionListener {
 					for(Object ocell:cells){
 						mxCell cell = (mxCell)ocell;
 						System.out.print(cell.getId() + " Deleting.\n");
-						if(cell.isEdge()){
-							internalModel.get("influences").remove(cell.getId());
+						String type = graph.getCellType(cell);
+						if(type == GlobalConstants.INFLUENCE){
+							gcm.getInfluences().remove(cell.getId());
 							PropertiesLauncher.getInstance().removeInfluenceFromList(cell.getId());
 							graph.influenceRemoved(cell.getId());
-						}else if(cell.isVertex()){
-							internalModel.get("species").remove(cell.getId());
+						}else if(type == GlobalConstants.SPECIES){
+							gcm.getSpecies().remove(cell.getId());
 							PropertiesLauncher.getInstance().removeSpeciesFromList(cell.getId());
 							graph.speciesRemoved(cell.getId());
+						}else if(type == GlobalConstants.COMPONENT){
+							gcm.getComponents().remove(cell.getId());
+							PropertiesLauncher.getInstance().removeComponentFromList(cell.getId());
 						}
 					}
 					gcm2sbml.setDirty(true);

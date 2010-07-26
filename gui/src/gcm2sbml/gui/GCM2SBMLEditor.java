@@ -816,7 +816,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		GCIGrappaPanel grappaPanel = new GCIGrappaPanel();
 		
 		// create the modelview2 (jgraph) panel
-		ModelView modelView = new ModelView(gcm.getInternalModel(), gcm, biosim, this);
+		ModelView modelView = new ModelView(gcm, biosim, this);
 		//gcm.addInfluences("ASDFASDF", new Properties());
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
@@ -1291,7 +1291,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	}
 	
 	/*
+	 * 
 	 * Displays the "Choose Component" dialog and then adds the component afterward.
+	 * @param tryEdit: if true then try to bring up the edit window if a component is selected.
 	 * @param list: The PropertiesList. If left null then the gcm2sbmleditor's component
 	 * 				list will be used.
 	 * @param createUsingDefaults:  If true then a component will be created with a basic name and
@@ -1306,7 +1308,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			list = this.components;
 		String selected = null;
 		String comp = null;
-		if (list.getSelectedValue() != null && getName().contains("Edit")) {
+		if (list.getSelectedValue() != null && tryEdit) {
 			selected = list.getSelectedValue().toString();
 			comp = selected.split(" ")[1] + ".gcm";
 		}
