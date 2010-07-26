@@ -3033,6 +3033,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					int read = source.read();
 					while (read != -1) {
 						destination.write(read);
+						read = source.read();
 					}
 					source.close();
 					destination.close();
@@ -3057,6 +3058,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					int read = source.read();
 					while (read != -1) {
 						destination.write(read);
+						read = source.read();
 					}
 					source.close();
 					destination.close();
