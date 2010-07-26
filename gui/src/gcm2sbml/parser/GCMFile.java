@@ -898,6 +898,14 @@ public class GCMFile {
 				if (propName.toString().equals("gcm")) {
 					buffer.append(checkCompabilitySave(propName.toString()) + "=\""
 							+ prop.getProperty(propName.toString()).toString() + "\"");
+					// add sizes and positions of they are present.
+					if(	prop.get("graphx")!=null && prop.get("graphy")!=null &&
+							prop.getProperty("graphwidth")!=null && prop.getProperty("graphheight")!=null){
+							buffer.append(	",graphx="+prop.get("graphx") + 
+											",graphy="+prop.get("graphy") +
+											",graphwidth="+prop.getProperty("graphwidth")+
+											",graphheight="+prop.getProperty("graphheight"));
+					}
 				}
 			}
 			buffer.append("]\n");
@@ -951,13 +959,14 @@ public class GCMFile {
 					if (prop.getProperty("type_" + propName).equals("Output")) {
 						buffer.append(s + " -> " + prop.getProperty(propName.toString()).toString()
 								+ " [port=" + propName.toString() + ", type=Output");
-						buffer.append(", arrowhead=normal]\n");
+						buffer.append(", arrowhead=normal");
 					}
 					else {
 						buffer.append(prop.getProperty(propName.toString()).toString() + " -> " + s
 								+ " [port=" + propName.toString() + ", type=Input");
-						buffer.append(", arrowhead=normal]\n");
+						buffer.append(", arrowhead=normal");
 					}
+					buffer.append("]\n");
 				}
 			}
 		}
@@ -1025,24 +1034,24 @@ public class GCMFile {
 	public void save(String filename) {
 		try {
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
-
+                                                 
 			StringBuffer buffer = saveToBuffer(true);
-			
-			p.print(buffer);
-			p.close();
-		}
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public void load(String filename) {
-		this.filename = filename;
+			                                     
+			p.print(buffer);                     
+			p.close();                           
+		}                                        
+		catch (FileNotFoundException e) {        
+			e.printStackTrace();                 
+		}                                        
+	}                                            
+                                                 
+	public void load(String filename) {          
+		this.filename = filename;                
 		species = new HashMap<String, Properties>();
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
 		components = new HashMap<String, Properties>();
-		conditions = new ArrayList<String>();
+		conditions = new ArrayList<String>();    
 		globalParameters = new HashMap<String, String>();
 		parameters = new HashMap<String, String>();
 		StringBuffer data = new StringBuffer();
@@ -1070,7 +1079,7 @@ public class GCMFile {
 			parseConditions(data);
 		}
 		catch (Exception e) {
-			throw new IllegalArgumentException("Unable to parse GCM");
+			throw new IllegalArgumentException("Unable to parse GCM" + e.toString());
 			// JOptionPane.showMessageDialog(null,
 			// "Unable to parse model, creating a blank model.", "Error",
 			// JOptionPane.ERROR_MESSAGE);
@@ -1960,18 +1969,6 @@ public class GCMFile {
 			array.add(s);
 		}
 		return array;
-	}
-	
-	/**
-	 * Returns a hash containing the inner model. 	 
-	 */
-	public HashMap<String, HashMap<String, Properties>> getInternalModel(){
-		HashMap<String, HashMap<String, Properties>> im = new HashMap<String, HashMap<String, Properties>>();
-		im.put("species", species);
-		im.put("promoters", promoters);
-		im.put("influences", influences);
-		im.put("components", components);
-		return im;
 	}
 
 	private SBMLDocument unionSBML(SBMLDocument mainDoc, SBMLDocument doc, String compName) {
