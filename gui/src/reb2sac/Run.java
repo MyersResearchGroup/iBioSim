@@ -504,25 +504,29 @@ public class Run implements ActionListener {
 					}
 				}
 				GCMFile gcm = gcmEditor.getGCM();
-				gcm.flattenGCM(false);
-				LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
-				lpnFile.save(root + separator + simName + separator + lpnName);
-				time1 = System.nanoTime();
-				Translator t1 = new Translator();
-				if (abstraction.isSelected()) {
-					LhpnFile lhpnFile = new LhpnFile();
-					lhpnFile.load(root + separator + simName + separator + lpnName);
-					Abstraction abst = new Abstraction(lhpnFile, abstPane);
-					abst.abstractSTG(false);
-					abst.save(root + separator + simName + separator + lpnName + ".temp");
-					t1.BuildTemplate(root + separator + simName + separator + lpnName + ".temp");
+
+				if (gcm.flattenGCM(false) != null) {
+					LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
+					lpnFile.save(root + separator + simName + separator + lpnName);
+					time1 = System.nanoTime();
+					Translator t1 = new Translator();
+					if (abstraction.isSelected()) {
+						LhpnFile lhpnFile = new LhpnFile();
+						lhpnFile.load(root + separator + simName + separator + lpnName);
+						Abstraction abst = new Abstraction(lhpnFile, abstPane);
+						abst.abstractSTG(false);
+						abst.save(root + separator + simName + separator + lpnName + ".temp");
+						t1
+								.BuildTemplate(root + separator + simName + separator + lpnName
+										+ ".temp");
+					}
+					else {
+						t1.BuildTemplate(root + separator + simName + separator + lpnName);
+					}
+					t1.setFilename(root + separator + simName + separator
+							+ lpnName.replace(".lpn", ".sbml"));
+					t1.outputSBML();
 				}
-				else {
-					t1.BuildTemplate(root + separator + simName + separator + lpnName);
-				}
-				t1.setFilename(root + separator + simName + separator
-						+ lpnName.replace(".lpn", ".sbml"));
-				t1.outputSBML();
 			}
 			if (nary.isSelected() && gcmEditor == null && !sim.equals("markov-chain-analysis")
 					&& !lhpn.isSelected() && naryRun == 1) {
@@ -604,25 +608,30 @@ public class Run implements ActionListener {
 						}
 						progress.setIndeterminate(true);
 						GCMFile gcm = gcmEditor.getGCM();
-						gcm.flattenGCM(false);
-						LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
-						lpnFile.save(root + separator + simName + separator + lpnName);
-						time1 = System.nanoTime();
-						Translator t1 = new Translator();
-						if (abstraction.isSelected()) {
-							LhpnFile lhpnFile = new LhpnFile();
-							lhpnFile.load(root + separator + simName + separator + lpnName);
-							Abstraction abst = new Abstraction(lhpnFile, abstPane);
-							abst.abstractSTG(false);
-							abst.save(root + separator + simName + separator + lpnName + ".temp");
-							t1.BuildTemplate(root + separator + simName + separator + lpnName
-									+ ".temp");
+						if (gcm.flattenGCM(false) != null) {
+							LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
+							lpnFile.save(root + separator + simName + separator + lpnName);
+							time1 = System.nanoTime();
+							Translator t1 = new Translator();
+							if (abstraction.isSelected()) {
+								LhpnFile lhpnFile = new LhpnFile();
+								lhpnFile.load(root + separator + simName + separator + lpnName);
+								Abstraction abst = new Abstraction(lhpnFile, abstPane);
+								abst.abstractSTG(false);
+								abst.save(root + separator + simName + separator + lpnName
+										+ ".temp");
+								t1.BuildTemplate(root + separator + simName + separator + lpnName
+										+ ".temp");
+							}
+							else {
+								t1.BuildTemplate(root + separator + simName + separator + lpnName);
+							}
+							t1.setFilename(root + separator + sbmlName);
+							t1.outputSBML();
 						}
 						else {
-							t1.BuildTemplate(root + separator + simName + separator + lpnName);
+							time1 = System.nanoTime();
 						}
-						t1.setFilename(root + separator + sbmlName);
-						t1.outputSBML();
 						exitValue = 0;
 					}
 					else {
@@ -695,11 +704,12 @@ public class Run implements ActionListener {
 						}
 						progress.setIndeterminate(true);
 						GCMFile gcm = gcmEditor.getGCM();
-						gcm.flattenGCM(false);
-						LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
-						lhpnFile.save(root + separator + lhpnName);
-						log.addText("Saving GCM file as LHPN:\n" + root + separator + lhpnName
-								+ "\n");
+						if (gcm.flattenGCM(false) != null) {
+							LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
+							lhpnFile.save(root + separator + lhpnName);
+							log.addText("Saving GCM file as LHPN:\n" + root + separator + lhpnName
+									+ "\n");
+						}
 						time1 = System.nanoTime();
 						exitValue = 0;
 					}
@@ -760,7 +770,7 @@ public class Run implements ActionListener {
 					reb2sac = exec.exec("reb2sac --target.encoding=hse2 " + theFile, null, work);
 				}
 				else if (sim.equals("markov-chain-analysis")) {
-					LhpnFile lhpnFile;
+					LhpnFile lhpnFile = null;
 					if (modelFile.contains(".lpn")) {
 						lhpnFile = new LhpnFile();
 						lhpnFile.load(root + separator + modelFile);
@@ -785,14 +795,15 @@ public class Run implements ActionListener {
 						}
 						progress.setIndeterminate(true);
 						GCMFile gcm = gcmEditor.getGCM();
-						gcm.flattenGCM(false);
-						lhpnFile = gcm.convertToLHPN(specs, conLevel);
-						lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "").replace(
-								".xml", "")
-								+ ".lpn");
-						log.addText("Saving GCM file as LHPN:\n"
-								+ filename.replace(".gcm", "").replace(".sbml", "").replace(".xml",
-										"") + ".lpn" + "\n");
+						if (gcm.flattenGCM(false) != null) {
+							lhpnFile = gcm.convertToLHPN(specs, conLevel);
+							lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "")
+									.replace(".xml", "")
+									+ ".lpn");
+							log.addText("Saving GCM file as LHPN:\n"
+									+ filename.replace(".gcm", "").replace(".sbml", "").replace(
+											".xml", "") + ".lpn" + "\n");
+						}
 					}
 					// gcmEditor.getGCM().createLogicalModel(
 					// filename.replace(".gcm", "").replace(".sbml",
@@ -817,93 +828,101 @@ public class Run implements ActionListener {
 					// "").replace(".sbml", "").replace(
 					// ".xml", "")
 					// + ".lpn");
-					sg = new StateGraph(lhpnFile);
-					BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg);
-					buildStateGraph.start();
-					buildStateGraph.join();
-					if (!sg.getStop()) {
-						log.addText("Performing Markov Chain analysis.\n");
-						PerfromMarkovAnalysisThread performMarkovAnalysis = new PerfromMarkovAnalysisThread(
-								sg);
-						if (modelFile.contains(".lpn")) {
-							performMarkovAnalysis.start(null);
-						}
-						else {
-							performMarkovAnalysis.start(gcmEditor.getGCM().getConditions());
-						}
-						performMarkovAnalysis.join();
+					if (lhpnFile != null) {
+						sg = new StateGraph(lhpnFile);
+						BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg);
+						buildStateGraph.start();
+						buildStateGraph.join();
 						if (!sg.getStop()) {
-							String simrep = sg.getMarkovResults();
-							if (simrep != null) {
-								FileOutputStream simrepstream = new FileOutputStream(new File(
-										directory + separator + "sim-rep.txt"));
-								simrepstream.write((simrep).getBytes());
-								simrepstream.close();
-							}
-							sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "")
-									.replace(".xml", "")
-									+ "_sg.dot", true);
-							biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
-						}
-					}
-					// if (sg.getNumberOfStates() > 30) {
-					// String[] options = { "Yes", "No" };
-					// int value = JOptionPane
-					// .showOptionDialog(
-					// biomodelsim.frame(),
-					// "The state graph contains more than 30 states and may not open well in dotty.\nOpen it with dotty anyway?",
-					// "More Than 30 States", JOptionPane.YES_NO_OPTION,
-					// JOptionPane.WARNING_MESSAGE, null, options, options[0]);
-					// if (value == JOptionPane.YES_OPTION) {
-					// if (System.getProperty("os.name").contentEquals("Linux"))
-					// {
-					// log.addText("Executing:\ndotty "
-					// + filename.replace(".gcm", "").replace(".sbml", "")
-					// .replace(".xml", "") + "_sg.dot" + "\n");
-					// exec.exec("dotty "
-					// + theFile.replace(".gcm", "").replace(".sbml",
-					// "").replace(
-					// ".xml", "") + "_sg.dot", null, work);
-					// }
-					// else if
-					// (System.getProperty("os.name").toLowerCase().startsWith(
-					// "mac os")) {
-					// log.addText("Executing:\nopen "
-					// + filename.replace(".gcm", "").replace(".sbml", "")
-					// .replace(".xml", "") + "_sg.dot" + "\n");
-					// exec.exec("open "
-					// + theFile.replace(".gcm", "").replace(".sbml",
-					// "").replace(
-					// ".xml", "") + "_sg.dot", null, work);
-					// }
-					// else {
-					// log.addText("Executing:\ndotty "
-					// + filename.replace(".gcm", "").replace(".sbml", "")
-					// .replace(".xml", "") + "_sg.dot" + "\n");
-					// exec.exec("dotty "
-					// + theFile.replace(".gcm", "").replace(".sbml",
-					// "").replace(
-					// ".xml", "") + "_sg.dot", null, work);
-					// }
-					// }
-					// }
-					// }
-					time1 = System.nanoTime();
-					exitValue = 0;
-					for (int i = 0; i < simTab.getComponentCount(); i++) {
-						if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
-							if (simTab.getComponentAt(i) instanceof Graph) {
-								((Graph) simTab.getComponentAt(i)).refresh();
+							log.addText("Performing Markov Chain analysis.\n");
+							PerfromMarkovAnalysisThread performMarkovAnalysis = new PerfromMarkovAnalysisThread(
+									sg);
+							if (modelFile.contains(".lpn")) {
+								performMarkovAnalysis.start(null);
 							}
 							else {
-								simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity,
-										outDir.split(separator)[outDir.split(separator).length - 1]
-												+ " simulation results", printer_id, outDir,
-										"time", biomodelsim, null, log, null, false, false));
-								simTab.getComponentAt(i).setName("ProbGraph");
+								performMarkovAnalysis.start(gcmEditor.getGCM().getConditions());
+							}
+							performMarkovAnalysis.join();
+							if (!sg.getStop()) {
+								String simrep = sg.getMarkovResults();
+								if (simrep != null) {
+									FileOutputStream simrepstream = new FileOutputStream(new File(
+											directory + separator + "sim-rep.txt"));
+									simrepstream.write((simrep).getBytes());
+									simrepstream.close();
+								}
+								sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml",
+										"").replace(".xml", "")
+										+ "_sg.dot", true);
+								biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
+							}
+						}
+						// if (sg.getNumberOfStates() > 30) {
+						// String[] options = { "Yes", "No" };
+						// int value = JOptionPane
+						// .showOptionDialog(
+						// biomodelsim.frame(),
+						// "The state graph contains more than 30 states and may not open well in dotty.\nOpen it with dotty anyway?",
+						// "More Than 30 States", JOptionPane.YES_NO_OPTION,
+						// JOptionPane.WARNING_MESSAGE, null, options,
+						// options[0]);
+						// if (value == JOptionPane.YES_OPTION) {
+						// if
+						// (System.getProperty("os.name").contentEquals("Linux"))
+						// {
+						// log.addText("Executing:\ndotty "
+						// + filename.replace(".gcm", "").replace(".sbml", "")
+						// .replace(".xml", "") + "_sg.dot" + "\n");
+						// exec.exec("dotty "
+						// + theFile.replace(".gcm", "").replace(".sbml",
+						// "").replace(
+						// ".xml", "") + "_sg.dot", null, work);
+						// }
+						// else if
+						// (System.getProperty("os.name").toLowerCase().startsWith(
+						// "mac os")) {
+						// log.addText("Executing:\nopen "
+						// + filename.replace(".gcm", "").replace(".sbml", "")
+						// .replace(".xml", "") + "_sg.dot" + "\n");
+						// exec.exec("open "
+						// + theFile.replace(".gcm", "").replace(".sbml",
+						// "").replace(
+						// ".xml", "") + "_sg.dot", null, work);
+						// }
+						// else {
+						// log.addText("Executing:\ndotty "
+						// + filename.replace(".gcm", "").replace(".sbml", "")
+						// .replace(".xml", "") + "_sg.dot" + "\n");
+						// exec.exec("dotty "
+						// + theFile.replace(".gcm", "").replace(".sbml",
+						// "").replace(
+						// ".xml", "") + "_sg.dot", null, work);
+						// }
+						// }
+						// }
+						// }
+						for (int i = 0; i < simTab.getComponentCount(); i++) {
+							if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+								if (simTab.getComponentAt(i) instanceof Graph) {
+									((Graph) simTab.getComponentAt(i)).refresh();
+								}
+								else {
+									simTab
+											.setComponentAt(i,
+													new Graph(r2s, printer_track_quantity, outDir
+															.split(separator)[outDir
+															.split(separator).length - 1]
+															+ " simulation results", printer_id,
+															outDir, "time", biomodelsim, null, log,
+															null, false, false));
+									simTab.getComponentAt(i).setName("ProbGraph");
+								}
 							}
 						}
 					}
+					time1 = System.nanoTime();
+					exitValue = 0;
 				}
 				else {
 					Preferences biosimrc = Preferences.userRoot();
