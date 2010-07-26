@@ -3024,6 +3024,22 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		int exit;
 		if (!direct.equals(".")) {
+			if (gcmEditor != null) {
+				try {
+					FileInputStream source = new FileInputStream(new File(root + separator
+							+ modelFile));
+					FileOutputStream destination = new FileOutputStream(new File(root + separator
+							+ simName + separator + direct + separator + modelFile));
+					int read = source.read();
+					while (read != -1) {
+						destination.write(read);
+					}
+					source.close();
+					destination.close();
+				}
+				catch (Exception e) {
+				}
+			}
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, biomodelsim.frame(), ODE,
 					monteCarlo, sim, printer_id, printer_track_quantity,
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
@@ -3032,6 +3048,22 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					timeLimit, runTime, modelFile, lhpnAbstraction, abstraction);
 		}
 		else {
+			if (gcmEditor != null) {
+				try {
+					FileInputStream source = new FileInputStream(new File(root + separator
+							+ modelFile));
+					FileOutputStream destination = new FileOutputStream(new File(root + separator
+							+ simName + separator + modelFile));
+					int read = source.read();
+					while (read != -1) {
+						destination.write(read);
+					}
+					source.close();
+					destination.close();
+				}
+				catch (Exception e) {
+				}
+			}
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, biomodelsim.frame(), ODE,
 					monteCarlo, sim, printer_id, printer_track_quantity,
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
@@ -4829,11 +4861,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		constructPanel.add(splitPane, "South");
 		return constructPanel;
 	}
-	
+
 	public String getSimName() {
 		return simName;
 	}
-	
+
 	public String getSimID() {
 		return fileStem.getText().trim();
 	}
