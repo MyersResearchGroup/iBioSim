@@ -143,53 +143,70 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	}
 	
 	public void refresh() {
+	
+		Set<String> prom = gcm.getPromoters().keySet();
+		ArrayList<String> proms = new ArrayList<String>();
+		for (String s : prom) {
+			proms.add(s);
+		}
 		if (paramsOnly) {
-			Set<String> prom = gcm.getPromoters().keySet();
-			ArrayList<String> proms = new ArrayList<String>();
-			for (String s : prom) {
-				proms.add(s);
-			}
 			for (String s : parameterChanges) {
 				if (s.contains("/") && proms.contains(s.split("/")[0].trim())) {
 					proms.remove(s.split("/")[0].trim());
 					proms.add(s.split("/")[0].trim() + " Modified");
 				}
 			}
-			promoters.removeAllItem();
-			promoters.addAllItem(proms);
-			Set<String> spec = gcm.getSpecies().keySet();
-			ArrayList<String> specs = new ArrayList<String>();
-			for (String s : spec) {
-				specs.add(s);
-			}
+		}
+		promoters.removeAllItem();
+		promoters.addAllItem(proms);
+		Set<String> spec = gcm.getSpecies().keySet();
+		ArrayList<String> specs = new ArrayList<String>();
+		for (String s : spec) {
+			specs.add(s);
+		}
+		if (paramsOnly) {
 			for (String s : parameterChanges) {
 				if (s.contains("/") && specs.contains(s.split("/")[0].trim())) {
 					specs.remove(s.split("/")[0].trim());
 					specs.add(s.split("/")[0].trim() + " Modified");
 				}
 			}
-			species.removeAllItem();
-			species.addAllItem(specs);
-			Set<String> influe = gcm.getInfluences().keySet();
-			ArrayList<String> influes = new ArrayList<String>();
-			for (String s : influe) {
-				influes.add(s);
-			}
+		}
+		species.removeAllItem();
+		species.addAllItem(specs);
+		Set<String> influe = gcm.getInfluences().keySet();
+		ArrayList<String> influes = new ArrayList<String>();
+		for (String s : influe) {
+			influes.add(s);
+		}
+		if (paramsOnly) {
 			for (String s : parameterChanges) {
 				if (s.contains("\"") && influes.contains(s.split("\"")[1].trim())) {
 					influes.remove(s.split("\"")[1].trim());
 					influes.add(s.split("\"")[1].trim() + " Modified");
 				}
 			}
-			influences.removeAllItem();
-			influences.addAllItem(influes);
-			reloadParameters();
+		}
+		influences.removeAllItem();
+		influences.addAllItem(influes);
+		
+		Set<String> comp = gcm.getComponents().keySet();
+		ArrayList<String> comps = new ArrayList<String>();
+		for (String c : comp) {
+			comps.add(c);
+		}
+		components.removeAllItem();
+		components.addAllItem(comps);	
+		
+		reloadParameters();
+		if (paramsOnly) {
 			GCMParser parser = new GCMParser(path + separator + refFile);
 			GeneticNetwork network = parser.buildNetwork();
 			GeneticNetwork.setRoot(path + separator);
 			network.mergeSBML(path + separator + simName + separator + gcmname + ".sbml");
 			reb2sac.updateSpeciesList();
 		}
+		
 	}
 
 	public String getGCMName() {
@@ -991,10 +1008,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		initPanel = Utility.createPanel(this, "Conditions", conditions, addInit, removeInit, editInit);
 		tabPanel.add(initPanel, "South");
 		
-		// Set up the singleton that will be used by the modelview to pop up the properteis windows.
-		PropertiesLauncher.getInstance().initialize(this.biosim, this.gcm, 
-				this.species, this.influences, this.conditions, this.promoters, this.paramsOnly, this);
-
 	}
 
 	public void reloadFiles() {
@@ -1286,6 +1299,22 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		private String name = null;
 
 		private PropertyList list = null;
+	}
+	
+	/**
+	 * launches the promoter panel to edit the promoter with the given id.
+	 * If no id is given, then it edits a new promoter.
+	 * @param id
+	 * @return
+	 */
+	public PromoterPanel launchPromoterPanel(String id){
+		return new PromoterPanel(id, promoters, influences, gcm, paramsOnly, biosim);	
+	}
+	public SpeciesPanel launchSpeciesPanel(String id){
+		return new SpeciesPanel(id, species, influences, conditions, gcm, paramsOnly, biosim);
+	}
+	public InfluencePanel launchInfluencePanel(String id){
+		return new InfluencePanel(id, influences, gcm, paramsOnly, biosim);
 	}
 	
 	/*
