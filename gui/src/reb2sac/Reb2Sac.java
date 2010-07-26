@@ -4829,4 +4829,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		constructPanel.add(splitPane, "South");
 		return constructPanel;
 	}
+	
+	public String getSimName() {
+		return simName;
+	}
+	
+	public String getSimID() {
+		return fileStem.getText().trim();
+	}
 }
