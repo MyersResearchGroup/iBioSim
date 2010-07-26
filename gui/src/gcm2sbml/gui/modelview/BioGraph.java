@@ -3,8 +3,8 @@
  */
 package gcm2sbml.gui.modelview;
 
+import gcm2sbml.gui.GCM2SBMLEditor;
 import gcm2sbml.gui.InfluencePanel;
-import gcm2sbml.gui.PropertiesLauncher;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 
@@ -48,6 +48,7 @@ public class BioGraph extends mxGraph {
 	
 	
 	private GCMFile gcm;
+	private GCM2SBMLEditor gcm2sbml; // needed to pull up editor windows
 	
 	private void initializeMaps(){
 		speciesToMxCellMap = new HashMap<String, mxCell>();
@@ -55,7 +56,7 @@ public class BioGraph extends mxGraph {
 		influencesToMxCellMap = new HashMap<String, mxCell>();
 	}
 	
-	public BioGraph(GCMFile gcm){
+	public BioGraph(GCMFile gcm, GCM2SBMLEditor gcm2sbml){
 		super();
 		
 		// Turn editing off to prevent mxGraph from letting the user change the 
@@ -63,6 +64,7 @@ public class BioGraph extends mxGraph {
 		this.setCellsEditable(false);
 		
 		this.gcm = gcm;
+		this.gcm2sbml = gcm2sbml;
 		
 		this.initializeMaps();
 	
@@ -71,9 +73,9 @@ public class BioGraph extends mxGraph {
 	
 	public void bringUpEditorForCell(mxCell cell){
 		if(cell.isVertex()){
-			PropertiesLauncher.getInstance().launchSpeciesEditor(cell.getId());
+			gcm2sbml.launchSpeciesPanel(cell.getId());
 		}else{
-			PropertiesLauncher.getInstance().launchInfluencePanel(cell.getId());
+			gcm2sbml.launchInfluencePanel(cell.getId());
 		}
 		// refresh everything.
 		this.buildGraph();
@@ -449,7 +451,8 @@ public class BioGraph extends mxGraph {
 		this.createGraphSpeciesFromModel(id);
 		this.getModel().endUpdate();
 		
-		PropertiesLauncher.getInstance().refreshAllGCM2SBMLLists();
+		gcm2sbml.refresh();
+		
 	}
 	
 	public void applyLayout(String ident, mxGraphComponent graphComponent){

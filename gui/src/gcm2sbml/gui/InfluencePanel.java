@@ -213,8 +213,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			oldName = selected;
 			Properties prop = gcm.getInfluences().get(selected);
 			fields.get(GlobalConstants.NAME).setValue(selected);
-			inputBox.setSelectedItem(gcm.getInput(selected));
-			outputBox.setSelectedItem(gcm.getOutput(selected));
+			inputBox.setSelectedItem(GCMFile.getInput(selected));
+			outputBox.setSelectedItem(GCMFile.getOutput(selected));
 			if (prop.get(GlobalConstants.TYPE).equals(
 					GlobalConstants.ACTIVATION)) {
 				typeBox.setSelectedItem(types[1]);
