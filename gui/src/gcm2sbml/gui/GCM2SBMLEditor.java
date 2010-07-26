@@ -661,10 +661,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			if (direct.equals(".") && !stem.equals("")) {
 				direct = "";
 			}
-			gcm.save(path + separator + simName + separator + stem + direct
-					+ separator + gcmname + ".gcm");
-			GCMParser parser = new GCMParser(path + separator + simName + separator + stem + direct
-					+ separator + gcmname + ".gcm");
+			gcm.save(path + separator + gcmname + ".gcm.temp");
+			GCMParser parser = new GCMParser(path + separator + gcmname + ".gcm.temp");
 			GeneticNetwork network = null;
 			try {
 				network = parser.buildNetwork();
