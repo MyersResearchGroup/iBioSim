@@ -527,6 +527,9 @@ public class Run implements ActionListener {
 							+ lpnName.replace(".lpn", ".sbml"));
 					t1.outputSBML();
 				}
+				else {
+					return 0;
+				}
 			}
 			if (nary.isSelected() && gcmEditor == null && !sim.equals("markov-chain-analysis")
 					&& !lhpn.isSelected() && naryRun == 1) {
@@ -631,6 +634,7 @@ public class Run implements ActionListener {
 						}
 						else {
 							time1 = System.nanoTime();
+							return 0;
 						}
 						exitValue = 0;
 					}
@@ -709,6 +713,9 @@ public class Run implements ActionListener {
 							lhpnFile.save(root + separator + lhpnName);
 							log.addText("Saving GCM file as LHPN:\n" + root + separator + lhpnName
 									+ "\n");
+						}
+						else {
+							return 0;
 						}
 						time1 = System.nanoTime();
 						exitValue = 0;
@@ -803,6 +810,9 @@ public class Run implements ActionListener {
 							log.addText("Saving GCM file as LHPN:\n"
 									+ filename.replace(".gcm", "").replace(".sbml", "").replace(
 											".xml", "") + ".lpn" + "\n");
+						}
+						else {
+							return 0;
 						}
 					}
 					// gcmEditor.getGCM().createLogicalModel(
