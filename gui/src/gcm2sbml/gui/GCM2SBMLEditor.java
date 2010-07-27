@@ -1412,7 +1412,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 			
 			if(createUsingDefaults){
-				outID = gcm.addComponent(null, null);
+				Properties properties = new Properties();
+				properties.put("gcm", comp);
+				outID = gcm.addComponent(null, properties);
 			}else{
 				new ComponentsPanel(selected, list, influences, gcm,
 						inputs, outputs, comp, oldPort, paramsOnly, biosim);
