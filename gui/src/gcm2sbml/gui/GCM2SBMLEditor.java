@@ -193,7 +193,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		Set<String> comp = gcm.getComponents().keySet();
 		ArrayList<String> comps = new ArrayList<String>();
 		for (String c : comp) {
-			comps.add(c);
+			String listVal = 	c + 
+								" " + 
+								gcm.getComponents().get(c).getProperty("gcm").replace(".gcm", "") + 
+								" " + gcm.getComponentPortMap(c);
+			comps.add(listVal);
 		}
 		components.removeAllItem();
 		components.addAllItem(comps);	
@@ -1326,10 +1330,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	 * @param createUsingDefaults:  If true then a component will be created with a basic name and
 	 * 				no port mappings. Otherwise the user will be asked for 
 	 * 				the name and mappings.
+	 * 
+	 * @return: the id of the component that was edited or created.
 	 */
-	public boolean displayChooseComponentDialog(boolean tryEdit, PropertyList list, boolean createUsingDefaults){
+	public String displayChooseComponentDialog(boolean tryEdit, PropertyList list, boolean createUsingDefaults){
 		
-		boolean changesMade = false;
+		String outID = null;
 		
 		if(list == null)
 			list = this.components;
@@ -1406,15 +1412,15 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 			
 			if(createUsingDefaults){
-				gcm.addComponent(null, null);
+				outID = gcm.addComponent(null, null);
 			}else{
-				ComponentsPanel panel = new ComponentsPanel(selected, list, influences, gcm,
+				new ComponentsPanel(selected, list, influences, gcm,
 						inputs, outputs, comp, oldPort, paramsOnly, biosim);
+				outID = selected;
 			}
-			
-			changesMade = true;
+
 		}
-		return changesMade;
+		return outID;
 	}
 	
 	public void setSBMLParamFile(SBML_Editor sbmlParamFile) {
