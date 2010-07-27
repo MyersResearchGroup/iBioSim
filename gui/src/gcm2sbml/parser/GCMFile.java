@@ -1230,10 +1230,8 @@ public class GCMFile {
 	 */
 	public String addComponent(String name, Properties properties) {
 		
-		if(name == null || properties == null){
+		if(name == null){
 			name = createNewObjectName("C", components);
-			properties = new Properties();
-			properties.put("gcm", this.filename);
 		}
 		
 		components.put(name, properties);

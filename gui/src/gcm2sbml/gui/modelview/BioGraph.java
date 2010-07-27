@@ -257,7 +257,8 @@ public class BioGraph extends mxGraph {
 			x = (unpositionedSpeciesComponentCount%50) * 20;
 			y = (unpositionedSpeciesComponentCount%10) * (DEFAULT_SPECIES_HEIGHT + 10);
 		}
-		CellValueObject cvo = new CellValueObject(id, prop);
+		String label = id + "\n" + prop.getProperty("gcm").replace(".gcm", "");
+		CellValueObject cvo = new CellValueObject(label, prop);
 		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, x, y, width, height);
 		this.componentsToMxCellMap.put(id, (mxCell)insertedVertex);
 		
