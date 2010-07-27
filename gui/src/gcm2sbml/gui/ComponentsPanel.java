@@ -210,6 +210,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				influences.addAllItem(gcm.getInfluences().keySet());
 			}
 			gcm.addComponent(id, property);
+			// TODO: compute the componentlist name in the GCM file.
 			String newPort = "(";
 			boolean added = false;
 			for (int j = 0; j < species.length; j++) {
@@ -251,4 +252,5 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			}
 		}
 	}
+	
 }

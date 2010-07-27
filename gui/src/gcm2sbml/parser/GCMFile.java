@@ -1225,8 +1225,10 @@ public class GCMFile {
 	 *  
 	 * @param name
 	 * @param properties
+	 * 
+	 * @return: the id of the created component.
 	 */
-	public void addComponent(String name, Properties properties) {
+	public String addComponent(String name, Properties properties) {
 		
 		if(name == null || properties == null){
 			name = createNewObjectName("C", components);
@@ -1235,6 +1237,7 @@ public class GCMFile {
 		}
 		
 		components.put(name, properties);
+		return name;
 	}
 
 	// used by createNewObjectName
@@ -1426,7 +1429,7 @@ public class GCMFile {
 	public HashMap<String, Properties> getComponents() {
 		return components;
 	}
-
+	
 	public String getComponentPortMap(String s) {
 		String portmap = "(";
 		Properties c = components.get(s);

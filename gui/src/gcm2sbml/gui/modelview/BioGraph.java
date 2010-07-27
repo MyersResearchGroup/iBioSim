@@ -443,8 +443,7 @@ public class BioGraph extends mxGraph {
 		prop.setProperty("Type", "normal");
 		prop.setProperty("graphwidth", String.valueOf(DEFAULT_SPECIES_WIDTH));
 		prop.setProperty("graphheight", String.valueOf(DEFAULT_SPECIES_HEIGHT));
-		prop.setProperty("graphx", String.valueOf(x - DEFAULT_SPECIES_WIDTH/2));
-		prop.setProperty("graphy", String.valueOf(y - DEFAULT_SPECIES_HEIGHT/2));
+		centerVertexOverPoint(prop, x, y);
 		gcm.getSpecies().put(id, prop);
 		
 		this.getModel().beginUpdate();
@@ -453,6 +452,16 @@ public class BioGraph extends mxGraph {
 		
 		gcm2sbml.refresh();
 		
+	}
+	
+	/**
+	 * Given a properties list (species or components) and some coords, center over that point.
+	 */
+	public void centerVertexOverPoint(Properties prop, double x, double y){
+		x -= Double.parseDouble(prop.getProperty("graphwidth", "60"))/2.0;
+		y -= Double.parseDouble(prop.getProperty("graphheight", "20"))/2.0;
+		prop.setProperty("graphx", String.valueOf(x));
+		prop.setProperty("graphy", String.valueOf(y));		
 	}
 	
 	public void applyLayout(String ident, mxGraphComponent graphComponent){

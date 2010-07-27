@@ -224,10 +224,14 @@ public class ModelView extends JPanel implements ActionListener {
 //									"Choose a gcm to use as a component:", "Component Editor",
 //									JOptionPane.PLAIN_MESSAGE, null, 
 //									gcm2sbml.getAllPossibleComponentNames().toArray(), null);
-							if(gcm2sbml.displayChooseComponentDialog(false, null, true))
+							String createdID = gcm2sbml.displayChooseComponentDialog(false, null, true);
+							if(createdID != null){
+								graph.centerVertexOverPoint(gcm.getComponents().get(createdID), 
+										(double)e.getX(), (double)e.getY());
 								gcm2sbml.setDirty(true);
-							graph.buildGraph();
-							gcm2sbml.refresh();
+								graph.buildGraph();
+								gcm2sbml.refresh();
+							}
 						}
 					}else{
 						if(editPromoterButton.isSelected()){
@@ -238,15 +242,15 @@ public class ModelView extends JPanel implements ActionListener {
 								//System.out.print(promoter);
 								if(promoter != null){
 									gcm2sbml.launchPromoterPanel(promoter);
-									graph.buildGraph();
 								}else{
 									PromoterPanel p = gcm2sbml.launchPromoterPanel(null);
 									// set the selected influence to use the given promoter
 									prop = gcm.getInfluences().get(cell.getId());
 									// now rename the influence to incorporate the new promoter
 									gcm.changeInfluencePromoter(cell.getId(), prop.getProperty(GlobalConstants.PROMOTER), p.getLastUsedPromoter());
-									graph.buildGraph();
 								}
+								graph.buildGraph();
+								gcm2sbml.refresh();
 							}
 						}
 					}
@@ -324,6 +328,7 @@ public class ModelView extends JPanel implements ActionListener {
 						}
 					}
 					gcm2sbml.setDirty(true);
+					gcm2sbml.refresh();
 				}
 			}
 		});
