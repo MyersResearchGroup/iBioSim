@@ -1385,7 +1385,7 @@ public class LhpnFile {
 		Pattern linePattern = Pattern.compile(DELAY_LINE);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		if (lineMatcher.find()) {
-			Pattern delayPattern = Pattern.compile(DELAY);
+			Pattern delayPattern = Pattern.compile(DELAYB);
 			Matcher delayMatcher = delayPattern.matcher(lineMatcher.group(1)
 					.replace("\\s", ""));
 			while (delayMatcher.find()) {
@@ -1403,9 +1403,11 @@ public class LhpnFile {
 					}
 				} else {
 					delay = delayMatcher.group(2);
+					/*
 					if (delay.startsWith("[") && delay.endsWith("]")) {
 						delay = delay.substring(1, delay.length() - 1);
 					}
+					*/
 				}
 				if (transition.addDelay(delay) == false) {
 					error = false;
@@ -1536,6 +1538,8 @@ public class LhpnFile {
 	private static final String DELAY_LINE = "#@\\.delay_assignments \\{([\\S[^\\}]]+?)\\}";
 
 	private static final String DELAY = "<([\\w_]+)=(\\S+?)>";
+
+	private static final String DELAYB = "<([\\w_]+)=\\[(\\S+?)\\]>";
 
 	private static final String RANGE = "\\[([\\w-]+?),([\\w-]+?)\\]";
 
