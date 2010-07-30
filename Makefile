@@ -23,7 +23,7 @@ Gui: FORCE
 clean: FORCE
 	make -C GeneNet clean
 	make -C s2lpn/src clean
-	make -C atacs clean
+	make -C atacs/src clean
 	make -C reb2sac distclean
 	rm $(shell cat .cvsignore)
 
