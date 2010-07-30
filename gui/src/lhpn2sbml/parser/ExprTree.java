@@ -533,7 +533,7 @@ public class ExprTree {
 					return false;
 				}
 				(token) = intexpr_gettok(expr);
-				if (!intexpr_R(expr))
+				if (!intexpr_L(expr))
 					return false;
 				if ((token) != ')') {
 					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
