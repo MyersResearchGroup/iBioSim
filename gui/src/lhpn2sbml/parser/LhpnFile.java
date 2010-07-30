@@ -1531,7 +1531,7 @@ public class LhpnFile {
 
 	private static final String RATE_ASSIGNMENT_LINE = "#@\\.rate_assignments \\{([.[^\\}]]+?)\\}";
 
-	private static final String ASSIGNMENT = "<([\\S[^=]]+?)=\\[([^>]+?)\\]>";
+	private static final String ASSIGNMENT = "<([\\S[^=]]+?)=\\[(\\S+?)\\]>";
 
 	private static final String ASSIGN_VAR = "([^:]+?):=(.+)";
 
