@@ -119,9 +119,11 @@ public class Lpn2verilog {
 						initBuffer.append("; pr_" + st + " = $urandom");
 				}
 			}
-			sv.write(";\n");
-			sv.write(tempBuff.toString() + ";\n");
-			initBuffer.append(";\n");
+			if (!first){
+				sv.write(";\n");
+				sv.write(tempBuff.toString() + ";\n");
+				initBuffer.append(";\n");
+			}
 			first = true;
 			for (String v: varsList){
 				if (!lpn.isInput(v) && !lpn.isOutput(v)){
@@ -133,7 +135,8 @@ public class Lpn2verilog {
 						sv.write("," + v);
 				}
 			}
-			sv.write(";\n");
+			if (!first)
+				sv.write(";\n");
 			//initBuffer.append(";\n");
 			HashMap<String,Integer> tag = new HashMap<String,Integer>();
 			visitedPlaces = new HashMap<String,Boolean>();
@@ -166,7 +169,8 @@ public class Lpn2verilog {
 					//TODO: traverse all the non-repeating transitions from here and assign a tag to them   
 				}
 			}
-			sv.write(";\n");
+			if (!first)
+				sv.write(";\n");
 			if (netCount >=1){
 				/*sv.write("\tint unsigned ");
 				Boolean firstPr = true;
@@ -180,8 +184,10 @@ public class Lpn2verilog {
 				sv.write(";\n");*/
 			//	sv.write("\tint unsigned pr" + "[string],prMax;\n");
 			}
-			initBuffer.append(";\n");
-			initBuffer.append(markedPlaceBuffer);
+			if (!first){
+				initBuffer.append(";\n");
+				initBuffer.append(markedPlaceBuffer);
+			}
 			for (String v: varsList){
 				if ((v != null) && (lpn.isOutput(v))){		//Initialize only outputs. Inputs will be initialized in their driver modules. Null condition Not Required ??
 					String initVal = lpn.getInitialVal(v);
