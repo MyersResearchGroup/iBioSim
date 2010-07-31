@@ -1678,7 +1678,7 @@ public class LearnModel { // added ItemListener SB
 					Double lastRunValueWithoutTransition = null;
 					out.write("Epsilon for " + reqdVarsL.get(i).getName() + " is " + reqdVarsL.get(i).getEpsilon());
 					if (!callFromAutogen) { // This flag is required because if the call is from autogenT, then data has just the reqdVarsL but otherwise, it has all other vars too. So reqdVarIndices not reqd when called from autogen
-						for (int j = 0; j <= data.get(0).size(); j++) {
+						for (int j = 0; j <= data.get(reqdVarIndices.get(i)).size(); j++) { // changed from data.get(0).size() to data.get(reqdVarIndices.get(i)).size() on july 31,2010.
 							if (j < mark) // not reqd??
 								continue;
 							if (((j+1) < data.get(reqdVarIndices.get(i)).size()) && 
