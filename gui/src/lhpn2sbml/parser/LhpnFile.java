@@ -1385,7 +1385,7 @@ public class LhpnFile {
 		Pattern linePattern = Pattern.compile(DELAY_LINE);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		if (lineMatcher.find()) {
-			Pattern delayPattern = Pattern.compile(DELAYB);
+			Pattern delayPattern = Pattern.compile(DELAY);
 			Matcher delayMatcher = delayPattern.matcher(lineMatcher.group(1)
 					.replace("\\s", ""));
 			while (delayMatcher.find()) {
@@ -1537,9 +1537,9 @@ public class LhpnFile {
 
 	private static final String DELAY_LINE = "#@\\.delay_assignments \\{([\\S[^\\}]]+?)\\}";
 
-	private static final String DELAY = "<([\\w_]+)=(\\S+?)>";
+//	private static final String DELAY = "<([\\w_]+)=(\\S+?)>";
 
-	private static final String DELAYB = "<([\\w_]+)=\\[(\\S+?)\\]>";
+	private static final String DELAY = "<([\\w_]+)=\\[(\\S+?)\\]>";
 
 	private static final String RANGE = "\\[([\\w-]+?),([\\w-]+?)\\]";
 
@@ -1553,8 +1553,12 @@ public class LhpnFile {
 
 	private static final String BOOLEAN_LINE = "#@\\.boolean_assignments \\{([\\S[^\\}]]+?)\\}";
 
-	private static final String BOOLEAN_TRANS = "<([\\w]+?)=([\\S[^>]]+?)>";
+	private static final String BOOLEAN_TRANS = "<([\\S[^=]]+?)=\\[(\\S+?)\\]>";
 
-	private static final String BOOLEAN_ASSIGN = "\\[([\\w_]+):=\\s?([\\S^\\]]+?)\\]";
+	private static final String BOOLEAN_ASSIGN = "([^:]+?):=(.+)";
+
+//	private static final String BOOLEAN_TRANS = "<([\\w]+?)=([\\S[^>]]+?)>";
+
+//	private static final String BOOLEAN_ASSIGN = "\\[([\\w_]+):=\\s?([\\S^\\]]+?)\\]";
 
 }
