@@ -39,6 +39,7 @@ import javax.swing.SwingUtilities;
 import biomodelsim.BioSim;
 
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
@@ -355,8 +356,47 @@ public class ModelView extends JPanel implements ActionListener {
 							return;
 						}
 						
-						String sourceId = edge.getSource().getId();
-						String targetId = edge.getTarget().getId();
+						// figure out if we need to connect to a component
+						mxCell source = (mxCell)edge.getSource();
+						mxCell target = (mxCell)edge.getTarget();
+						//string source = edge.getSource().getValue();
+						int numComponents = 0;
+						if(graph.getCellType(source)==GlobalConstants.COMPONENT)
+							numComponents++;
+						if(graph.getCellType(target)==GlobalConstants.COMPONENT)
+							numComponents++;
+						// bail out if the user tries to connect two components.
+						// TODO: tell them that this currently isn't allowed.
+						if(numComponents == 2){
+							JOptionPane.showMessageDialog(biosim.frame(), "You can't connect a component directly to another component. Go through a species please.");
+							return;
+						}
+
+						
+						String sourceId = source.getId();
+						String targetId = target.getId();
+						
+						
+						// TODO: deal with connecting components to species.
+						if(numComponents == 1){
+							Properties sourceProp = graph.getCellProperties(source);
+							Properties targetProp = graph.getCellProperties(target);
+							if(graph.getCellType(source) == GlobalConstants.COMPONENT){
+								// source is a component
+								connectComponentToSpecies(sourceProp, targetProp);
+							}else{
+								// target is a component
+								connectSpeciesToComponent(targetProp, sourceProp);
+							}
+							gcm2sbml.refresh();
+							gcm2sbml.setDirty(true);
+							graph.refresh();
+							return;
+						}
+						
+						// if flow gets here then we are connecting a species to another
+						// species.
+
 						
 						String isBio;
 						String type;
@@ -391,8 +431,40 @@ public class ModelView extends JPanel implements ActionListener {
 
 			}
 		});
-		
-		
+	}
+	
+	/**
+	 * connects an output in a component to a species.
+	 * @param comp_id
+	 * @param spec_id
+	 * @return: A boolean representing success or failure. True means it worked, false, means there was no output in the component.
+	 */
+	public boolean connectComponentToSpecies(Properties comp, Properties spec){
+		String port = selectGCMPort(comp, GlobalConstants.OUTPUT);
+		return true;
+	}
+	
+	/**
+	 * connects a species to the input of a component.
+	 * @param spec_id
+	 * @param comp_id
+	 * @return a boolean representing success or failure.
+	 */
+	public boolean connectSpeciesToComponent(Properties spec, Properties comp){
+		String port = selectGCMPort(comp, GlobalConstants.OUTPUT);
+		return true;
+	}
+	
+	/**
+	 * given a gcm and either GlobalConstants.INPUT or GlobalConstants.OUTPUT,
+	 * allow the user to select a port.
+	 * @param gcmFilename
+	 * @param type
+	 * @return
+	 */
+	String selectGCMPort(Properties comp, String type){
+		//GCMFile compGCM = new GCMFile(path)
+		return null;
 	}
 	
 	////// Coppied from mxGraph example file BasicGraphEditor.java

@@ -1172,7 +1172,7 @@ public class GCMFile {
 		species.put(newName, species.get(oldName));
 		species.remove(oldName);
 	}
-
+	
 	public void changeComponentName(String oldName, String newName) {
 		String[] sArray = new String[influences.keySet().size()];
 		sArray = influences.keySet().toArray(sArray);
