@@ -90,7 +90,7 @@ public class BioGraph extends mxGraph {
 			updateInternalPosition(cell);
 		}
 	}
-
+	
 	/**
 	 * Given a cell that must be a species, update the internal model to reflect it's coordinates.
 	 * 
@@ -136,6 +136,15 @@ public class BioGraph extends mxGraph {
 			return gcm.getInfluences();
 		else
 			throw new Error("Invalid type: " + type);
+	}
+	
+	/**
+	 * A convenience function
+	 * @param cell
+	 * @return
+	 */
+	public Properties getCellProperties(mxCell cell){
+		return getPropertiesList(cell).get(cell.getId());
 	}
 	
 //	/**
