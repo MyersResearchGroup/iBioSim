@@ -499,7 +499,7 @@ public class Translator {
 							if (lhpn.getIntAssign(t, var) != null) {
 								ExprTree assignIntTree = lhpn.getIntAssignTree(t, var);
 								String assignInt = assignIntTree.toString("SBML");
-							    System.out.println("integer assignment from LHPN: " + var + " := " + assignInt);
+//							    System.out.println("integer assignment from LHPN: " + var + " := " + assignInt);
 								EventAssignment assign3 = e.createEventAssignment();
 								assign3.setVariable(var);
 								assign3.setMath(SBML_Editor.myParseFormula(assignInt));
@@ -588,15 +588,159 @@ public class Translator {
 			counter --;
 		}
 		
-//		// translate property
-//		String prop = lhpn.getProperty();
-//		System.out.println("property:" + prop);
-		
-		
-//		Constraint constraint = m.createConstraint();
-		
+			// translate LPN property into SBML constraints
+			Constraint constraintFail = m.createConstraint();	
+			Constraint constraintSucc = m.createConstraint();
+			
+			String prop = lhpn.getProperty();
+//			System.out.println("prop = " + prop);
+			String symbol = "@";
+			if (prop != null){
+//				System.out.println("property:" + prop);
+				// detect temporal operators: AU EU EG EF AG AF PG PF PU
+				boolean temporalOpsFlag = prop.contains("AU") |
+									   prop.contains("AG") |
+									   prop.contains("AF") |
+									   prop.contains("EU") |
+									   prop.contains("EG") |
+									   prop.contains("EF") |
+									   prop.contains("PU") |
+									   prop.contains("PG") |
+									   prop.contains("PF");
+				boolean PUflag = prop.contains("PU");
+				boolean PFFlag = prop.contains("PF");
+				boolean PGFlag = prop.contains("PG");
+				boolean MultiTempFlag= false;
+				String propTemp = null;
+				propTemp = prop;
+				// test if the property specification contains temporal logic
+				if (temporalOpsFlag){
+					 String[] allTemporalOps={"AU", "AG", "AF","EU", "EG", "EF", "PU","PG", "PF",};
+					 String leftPropTemp = null;
+					 String rightPropTemp = null;
+					 String BoundPropTemp = null;
+					 String lowerBoundPropTemp = null;
+					 String upperBoundPropTemp = null;
+					 for (int i=0; i < allTemporalOps.length; i++){
+						 if (prop.contains(allTemporalOps[i])){   // if property contains temporal operator(s)
+							 propTemp = propTemp.replaceFirst(allTemporalOps[i], symbol);
+//							 System.out.println("propTemp = "+propTemp);
+							 if(propTemp.contains(allTemporalOps[i])){ // test if property contains more than one temporal operator with the same type
+								 MultiTempFlag = true;
+								 break;
+							 }
+						 }
+					 }
+					 
+					 if (!MultiTempFlag){
+						// Strip off the temporal operator and its range [1,u]
+						 if (PUflag){   // if it is PU.
+							 // Current version only deals with PU. The atacs parser requires PU to have a pair of outermost brackets 
+							 // Example: ((q_max=q_max)PU[2,3](q=q_max))
+							 // remove the outermost brackets
+							 propTemp = propTemp.substring(1, propTemp.lastIndexOf(")"));
+//							 System.out.println("propTemp = "+propTemp);
+							 
+							 // obtain the logic BEFORE the temporal operator
+							 leftPropTemp= propTemp.substring(0, propTemp.indexOf(symbol));
+//							 System.out.println("leftPropTemp = " + leftPropTemp);
+							 ExprTree leftPropTempTree = String2ExprTree(lhpn, leftPropTemp);
+							 String leftPropTempSBML = leftPropTempTree.toString("SBML");
+//							 System.out.println("leftPropTempSBML = " + leftPropTempSBML);
+							 
+							// obtain the upper and lower bounds
+							 BoundPropTemp= propTemp.substring(propTemp.indexOf("["), propTemp.indexOf("]")+1);
+//							 System.out.println("BoundPropTemp = " + BoundPropTemp);
+							 // lower bound
+							 lowerBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf("[")+1, BoundPropTemp.indexOf(","));
+//							 System.out.println("lowerBoundPropTemp = " + lowerBoundPropTemp);
+							 ExprTree lowerBoundPropTempTree = String2ExprTree(lhpn, lowerBoundPropTemp);
+							 String lowerBoundPropTempSBML = lowerBoundPropTempTree.toString("SBML");
+//							 System.out.println("lowerBoundPropTempSBML = " + lowerBoundPropTempSBML);
+							// upper bound
+							 upperBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf(",")+1, BoundPropTemp.indexOf("]"));
+//							 System.out.println("upperBoundPropTemp = " + upperBoundPropTemp);
+							 ExprTree upperBoundPropTempTree = String2ExprTree(lhpn, upperBoundPropTemp);
+							 String upperBoundPropTempSBML = upperBoundPropTempTree.toString("SBML");
+//							 System.out.println("upperBoundPropTempSBML = " + upperBoundPropTempSBML);
 
-	}
+							 // obtain the logic AFTER the temporal operator
+							 rightPropTemp= propTemp.substring(propTemp.indexOf("]")+1, propTemp.length());
+//							 System.out.println("rightPropTemp = " + rightPropTemp);
+							 ExprTree rightPropTempTree = String2ExprTree(lhpn, rightPropTemp);
+							 String rightPropTempSBML = rightPropTempTree.toString("SBML");
+//							 System.out.println("rightPropTempSBML = " + rightPropTempSBML);				 
+							 
+							// constraints for time bounds
+							 String upperConstraint = "leq(t," + upperBoundPropTemp + ")";
+							 String lowerConstraint = "leq(t," + lowerBoundPropTemp + ")";
+							 
+							 // construct the SBML constraints
+							 constraintFail.setMetaId("Fail");
+							 constraintFail.setMath(SBML_Editor.myParseFormula("and(" + leftPropTempSBML + "," + upperConstraint + ")"));
+							 constraintSucc.setMetaId("Success");
+							 constraintSucc.setMath(SBML_Editor.myParseFormula("or(not(" + rightPropTempSBML + ")," + lowerConstraint + ")"));
+						 }
+						 else if(PFFlag | PGFlag){ // if the temporal operator is one of these : PF and PG
+							// Current version only supports PF and PG
+//							// Example: PF([4,5]q=q_max)
+
+							// obtain the upper and lower bounds
+							 BoundPropTemp= propTemp.substring(propTemp.indexOf("["), propTemp.indexOf("]")+1);
+//							 System.out.println("BoundPropTemp = " + BoundPropTemp);
+							 // lower bound
+							 lowerBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf("[")+1, BoundPropTemp.indexOf(","));
+//							 System.out.println("lowerBoundPropTemp = " + lowerBoundPropTemp);
+							 ExprTree lowerBoundPropTempTree = String2ExprTree(lhpn, lowerBoundPropTemp);
+							 String lowerBoundPropTempSBML = lowerBoundPropTempTree.toString("SBML");
+//							 System.out.println("lowerBoundPropTempSBML = " + lowerBoundPropTempSBML);
+							// upper bound
+							 upperBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf(",")+1, BoundPropTemp.indexOf("]"));
+//							 System.out.println("upperBoundPropTemp = " + upperBoundPropTemp);
+							 ExprTree upperBoundPropTempTree = String2ExprTree(lhpn, upperBoundPropTemp);
+							 String upperBoundPropTempSBML = upperBoundPropTempTree.toString("SBML");
+//							 System.out.println("upperBoundPropTempSBML = " + upperBoundPropTempSBML);
+
+							 // obtain the logic AFTER the temporal operator
+							 rightPropTemp= propTemp.substring(propTemp.indexOf("]")+1, propTemp.length());
+//							 System.out.println("rightPropTemp = " + rightPropTemp);
+							 ExprTree rightPropTempTree = String2ExprTree(lhpn, rightPropTemp);
+							 String rightPropTempSBML = rightPropTempTree.toString("SBML");
+//							 System.out.println("rightPropTempSBML = " + rightPropTempSBML);				 
+							 
+							
+							 // constraints for time bounds
+							 String upperConstraint = "leq(t," + upperBoundPropTemp + ")";
+							 String lowerConstraint = "leq(t," + lowerBoundPropTemp + ")";
+							 
+							 // construct the SBML constraints
+							 if (PFFlag){
+								 constraintFail.setMetaId("Fail");
+								 constraintFail.setMath(SBML_Editor.myParseFormula(upperConstraint));
+								 constraintSucc.setMetaId("Success");
+								 constraintSucc.setMath(SBML_Editor.myParseFormula("or(not(" + rightPropTempSBML + ")," + lowerConstraint + ")"));
+							 }
+							 if (PGFlag){
+								 constraintFail.setMetaId("Fail");
+								 constraintFail.setMath(SBML_Editor.myParseFormula("or(" + rightPropTempSBML + "," + lowerConstraint + ")"));
+								 constraintSucc.setMetaId("Success");
+								 constraintSucc.setMath(SBML_Editor.myParseFormula(upperConstraint));
+							 }
+						 }
+						 else {		// AF,AG,AU,EF,EG,EU
+							 System.out.println("Currently the translator does not support one of the following temporal operators: AU,AF,AG,EU,EF,EG");
+						 } 
+					}
+					 else {    // MultiTempFlag = true
+						 System.out.println("Property does not allow nested temporal operators.");
+					 }
+				}
+				else {    // property does not include temporal operators
+						 ExprTree propTempTree = String2ExprTree(lhpn, propTemp);
+						 String propTempSBML = propTempTree.toString("SBML");
+					}
+			}
+		}
 	
 	private void createFunction(Model model, String id, String name, String formula) {
 	if (document.getModel().getFunctionDefinition(id) == null) {
@@ -618,5 +762,17 @@ public class Translator {
 
 	public String getFilename() {
 		return filename;
+	}
+	
+	public ExprTree String2ExprTree(LhpnFile lhpn, String str) {
+		boolean retVal;
+		ExprTree result = new ExprTree(lhpn);
+		ExprTree expr = new ExprTree(lhpn);
+		expr.token = expr.intexpr_gettok(str);
+		retVal = expr.intexpr_L(str);
+		if (retVal) {
+			result = expr;
+		}
+		return expr;
 	}
 }
