@@ -2921,7 +2921,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		//For every variable in stables, destabMap has an entry which maps to 
 		//to an arraylist containing ips which can destabilize that op.
 		//Add a loop here to do so 	
-				
+				/*
 				ArrayList<String> destab_out = new  ArrayList<String>();
 				destab_out.add("ctl");
 				destabMap.put("out", destab_out);
@@ -2937,7 +2937,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				ArrayList<Double> tStable = new ArrayList<Double>();
 				tStable.add(0.5);
 				thresholds.put("stable_out", tStable);
-				
+				*/
 				LhpnFile g = l.learnModel(directory, log, biosim, moduleNumber, thresholds, tPar, varsWithStables, destabMap, stabMap, valScaleFactor, delayScaleFactor, failProp);
 				g.save(directory + separator + "main.lpn");
 				if (new File(learnFile).exists()){ //directory + separator + "complete.lpn").exists()){//

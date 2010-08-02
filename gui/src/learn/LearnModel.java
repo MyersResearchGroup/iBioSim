@@ -859,27 +859,32 @@ public class LearnModel { // added ItemListener SB
 					}
 				}
 			}
-			int[] oldBin = new int[destabIps.size()];
-			int[] newBin = new int[destabIps.size()];
+			//int[] oldBin = new int[destabIps.size()];
+			//int[] newBin = new int[destabIps.size()];
+			int[] oldBin = new int[dataIndices.size()];
+			int[] newBin = new int[dataIndices.size()];
 			double unstableTime = 5960.0;
 			ArrayList<Double> dataForStable = new ArrayList<Double>();
 			point = 0;
 			dataForStable.add(0.0);	//Assume that always it starts unstable
 			for (int j = 0; j < destabIps.size(); j++){
 				String d = destabIps.get(j);
-				oldBin[j] = getRegion(data.get(dataIndices.get(d)).get(point),localThresholds.get(d));
+				if (dataIndices.containsKey(d))
+					oldBin[j] = getRegion(data.get(dataIndices.get(d)).get(point),localThresholds.get(d));
 			}
 			for (int i = point+1; i < data.get(0).size(); i++){
 				sameBin = true;
 				for (int j = 0; j < destabIps.size(); j++){// check if all the responsible destabilizing variables are in the same bin at i as they were at point
 					String d = destabIps.get(j);
-					newBin[j] = getRegion(data.get(dataIndices.get(d)).get(i),localThresholds.get(d));
-					if (oldBin[j] != newBin[j]){
-						sameBin = false;
-						break;
+					if (dataIndices.containsKey(d)){
+						newBin[j] = getRegion(data.get(dataIndices.get(d)).get(i),localThresholds.get(d));
+						if (oldBin[j] != newBin[j]){
+							sameBin = false;
+							break;
+						}
 					}
 				}
-				if (sameBin){
+				if ((sameBin) && (dataIndices.size() != 0)){
 					if ((data.get(0).get(i) - data.get(0).get(point)) >= unstableTime){
 						//dataForStable.set(i, 1.0);
 						dataForStable.add(1.0);
@@ -892,13 +897,16 @@ public class LearnModel { // added ItemListener SB
 					dataForStable.add(0.0);
 					for (int j = 0; j < destabIps.size(); j++){
 						String d = destabIps.get(j);
-						oldBin[j] = getRegion(data.get(dataIndices.get(d)).get(point),localThresholds.get(d));
+						if (dataIndices.containsKey(d))
+							oldBin[j] = getRegion(data.get(dataIndices.get(d)).get(point),localThresholds.get(d));
 					}
 					point = i;
 				}
 			}
-			data.add(dataForStable);
-			varNames.add("stable_" + s);
+			if (dataIndices.size() != 0){
+				data.add(dataForStable);
+				varNames.add("stable_" + s);
+			}
 		}
 	}
 
@@ -1543,8 +1551,14 @@ public class LearnModel { // added ItemListener SB
 						//	numTransitions++;
 						//}
 						if (prevPlaceDuration != null){ //Delay on a transition is the duration spent at its preceding place
-							addDuration(p1, prevPlaceDuration);
-							out.write(" Added duration "  + prevPlaceDuration + " to transition t" + p1.getProperty("transitionNum") + "\n");
+							if (!(ipChange & opChange)){
+								addDuration(p1, prevPlaceDuration);
+								out.write(" Added duration "  + prevPlaceDuration + " to transition t" + p1.getProperty("transitionNum") + "\n");
+							}
+							else{
+								addDuration(p1, 0.0);
+								out.write(" Added duration 0 to transition t" + p1.getProperty("transitionNum") + "\n");
+							}
 						} else {
 							out.write(" Not adding duration here. CHECK\n");
 						}
