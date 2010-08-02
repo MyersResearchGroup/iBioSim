@@ -1,6 +1,9 @@
 package biomodelsim;
 
 import gcm2sbml.gui.GCM2SBMLEditor;
+import gcm2sbml.gui.grappa.GCIGrappaPanel;
+import gcm2sbml.gui.modelview.ModelView;
+import gcm2sbml.gui.modelview.movie.MovieContainer;
 import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.parser.GCMFile;
@@ -80,6 +83,8 @@ import javax.swing.SwingUtilities;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JViewport; //import javax.swing.tree.TreePath;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
 import tabs.CloseAndMaxTabbedPane;
@@ -10233,6 +10238,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 						gcm.setSBMLParamFile(null);
 					}
+					addModelViewTab(reb2sac, simTab, gcm);
 				}
 				else if (sbml1[sbml1.length - 1].contains(".sbml")
 						|| sbml1[sbml1.length - 1].contains(".xml")) {
@@ -10955,6 +10961,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 										.setName("");
 								gcm.setSBMLParamFile(null);
 							}
+							addModelViewTab(reb2sac, simTab, gcm);
+						
 						}
 						else if (gcmFile.contains(".sbml") || gcmFile.contains(".xml")) {
 							SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this,
@@ -11012,10 +11020,43 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						 * 1).setName("ProbGraph"); }
 						 */
 						addTab(split[split.length - 1], simTab, null);
+						
+						
 					}
 				}
 			}
 		}
+	}
+	
+	/**
+	 * adds the tab for the modelview and the correct listener.
+	 * @return
+	 */
+	private void addModelViewTab(Reb2Sac reb2sac, JTabbedPane tabPane, GCM2SBMLEditor gcm2sbml){
+		
+		// Add the modelview tab
+		// TODO: Add the modelview tab
+		MovieContainer movieContainer = new MovieContainer(reb2sac, gcm2sbml.getGCM(), this, gcm2sbml);
+
+		tabPane.addTab("Model View Movie", movieContainer);
+		tabPane.getComponentAt(tabPane.getComponents().length - 1).setName(
+		"ModelViewMovie");
+		// When the Graphical View panel gets clicked on, tell it to display itself.
+		tabPane.addChangeListener(new ChangeListener(){
+			public void stateChanged(ChangeEvent e) {
+				JTabbedPane selectedTab = (JTabbedPane)(e.getSource());
+				JPanel selectedPanel = (JPanel)selectedTab.getComponent(selectedTab.getSelectedIndex());
+				String className = selectedPanel.getClass().getName();
+		
+				//if(selectedTab.getName().equals("ModelViewMovie"))
+					
+				
+				// The new ModelView
+				if(className.indexOf("MovieContainer") >= 0){
+					((MovieContainer)selectedPanel).display();
+				}
+			}
+		});
 	}
 
 	private class NewAction extends AbstractAction {
@@ -11499,6 +11540,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 					gcm.setSBMLParamFile(null);
 				}
+				addModelViewTab(reb2sac, simTab, gcm);
 			}
 			else {
 				SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root
