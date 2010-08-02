@@ -36,6 +36,7 @@ import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.Timer;
 
 import biomodelsim.BioSim;
 
@@ -370,35 +371,36 @@ public class ModelView extends JPanel implements ActionListener {
 						if(numComponents == 1){
 							Properties sourceProp = graph.getCellProperties(source);
 							Properties targetProp = graph.getCellProperties(target);
+							String port = null;
 							if(graph.getCellType(source) == GlobalConstants.COMPONENT){
 								// source is a component
 								try{
-									if(connectComponentToSpecies(sourceProp, targetID) == false)
-										graph.removeCells(cells);
+									port = connectComponentToSpecies(sourceProp, targetID);
 								}catch(PortChooser.NoPortException e){
 									JOptionPane.showMessageDialog(biosim.frame(), "Sorry, this component has no output ports.");
 									graph.removeCells(cells);
+									return;
 								}
 							}else{
 								// target is a component
 								try{
-									if(connectSpeciesToComponent(sourceID, targetProp) == false)
-										graph.removeCells(cells);
+									port = connectSpeciesToComponent(sourceID, targetProp);
 								}catch(PortChooser.NoPortException e){
 									JOptionPane.showMessageDialog(biosim.frame(), "Sorry, this component has no input ports.");	
 									graph.removeCells(cells);
+									return;
 								}
 							}
+							if(port == null){
+								graph.removeCells(cells);
+								return;
+							}
+							
 							gcm2sbml.refresh();
 							gcm2sbml.setDirty(true);
-							
-							// refreshing the graph doesn't work here but is necessary.
-							// We need to refresh it because sometimes connecting a component
-							// to a species dis-connects it from another species.
-							// This disconnect could be simply implemented by refreshing
-							// the graph, but because we are in an event listener it doesn't
-							// work. TODO: Figure out how to get it working.
-							//graph.refresh(); 
+							graph.updateComponentInfluenceVisuals((mxCell)cells[0], port);
+
+							graph.buildGraph();
 							return;
 						}
 						
@@ -427,6 +429,7 @@ public class ModelView extends JPanel implements ActionListener {
 						String name = InfluencePanel.buildName(sourceID, targetID, type, isBio, promoter);
 						
 						graph.addInfluence(edge, name, constType);
+						graph.buildGraph();
 						gcm2sbml.refresh();
 						gcm2sbml.setDirty(true);
 
@@ -443,12 +446,12 @@ public class ModelView extends JPanel implements ActionListener {
 	 * @param spec_id
 	 * @return: A boolean representing success or failure. True means it worked, false, means there was no output in the component.
 	 */
-	public boolean connectComponentToSpecies(Properties comp, String specID) throws PortChooser.NoPortException{
+	public String connectComponentToSpecies(Properties comp, String specID) throws PortChooser.NoPortException{
 		String port = PortChooser.selectGCMPort(biosim, gcm, comp, GlobalConstants.OUTPUT);
 		if(port == null)
-			return false;
+			return null;
 		gcm.connectComponentAndSpecies(comp, port, specID, "Output");
-		return true;
+		return port;
 	}
 	
 	/**
@@ -457,12 +460,12 @@ public class ModelView extends JPanel implements ActionListener {
 	 * @param comp_id
 	 * @return a boolean representing success or failure.
 	 */
-	public boolean connectSpeciesToComponent(String specID, Properties comp) throws PortChooser.NoPortException{
+	public String connectSpeciesToComponent(String specID, Properties comp) throws PortChooser.NoPortException{
 		String port = PortChooser.selectGCMPort(biosim, gcm, comp, GlobalConstants.INPUT);
 		if(port == null)
-			return false;
+			return null;
 		gcm.connectComponentAndSpecies(comp, port, specID, "Input");
-		return true;
+		return port;
 	}
 
 	
