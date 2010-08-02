@@ -18,6 +18,7 @@ import java.util.Properties;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
+import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
@@ -75,6 +76,10 @@ public class BioGraph extends mxGraph {
 		if(cell.isVertex()){
 			gcm2sbml.launchSpeciesPanel(cell.getId());
 		}else{
+			// if an edge, make sure it isn't connected
+			// to a component - which aren't really influences at all.
+			if(	getCellType(cell.getSource()) == GlobalConstants.SPECIES &&
+				getCellType(cell.getTarget()) == GlobalConstants.SPECIES)
 			gcm2sbml.launchInfluencePanel(cell.getId());
 		}
 		// refresh everything.
@@ -92,8 +97,9 @@ public class BioGraph extends mxGraph {
 	}
 	
 	/**
-	 * Given a cell that must be a species, update the internal model to reflect it's coordinates.
-	 * 
+	 * Given a cell that must be a species or component,
+	 * update the internal model to reflect it's coordinates.
+	 * Called when a cell is dragged with the GUI.
 	 */
 	public void updateInternalPosition(mxCell cell){
 		Properties prop = ((CellValueObject)cell.getValue()).prop;
@@ -121,6 +127,7 @@ public class BioGraph extends mxGraph {
 				throw new Error("The type of this cell could not be determined!");
 		}
 	}
+	public String getCellType(mxICell cell){return getCellType((mxCell)cell);}
 	
 	/**
 	 * Given a cell, return the list that it belongs to.
@@ -299,7 +306,7 @@ public class BioGraph extends mxGraph {
 //							+ " [port=" + propName.toString() + ", type=Input");
 //					buffer.append(", arrowhead=normal]\n");
 				}
-				this.updateComponentInfluenceVisuals((mxCell)createdEdge);
+				this.updateComponentInfluenceVisuals((mxCell)createdEdge, propName.toString());
 			}
 		}
 
@@ -374,8 +381,9 @@ public class BioGraph extends mxGraph {
 		cell.setValue(label);
 	}
 	
-	private void updateComponentInfluenceVisuals(mxCell cell){
+	public void updateComponentInfluenceVisuals(mxCell cell, String label){
 		cell.setStyle(mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+		cell.setValue("Port " + label);
 	}
 	
 	/**
