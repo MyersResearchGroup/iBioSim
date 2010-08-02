@@ -10,11 +10,8 @@ import java.awt.BorderLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Properties;
@@ -24,24 +21,17 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
-import javax.swing.ButtonModel;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JRadioButton;
-import javax.swing.JSeparator;
 import javax.swing.JToolBar;
-import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.Timer;
 
 import biomodelsim.BioSim;
 
 import com.mxgraph.model.mxCell;
-import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
@@ -57,17 +47,19 @@ public class ModelView extends JPanel implements ActionListener {
 	private GCMFile gcm;
 	private BioSim biosim;
 	private GCM2SBMLEditor gcm2sbml;
+	private boolean editable;
 	
 	/**
 	 * Constructor
 	 * @param internalModel
 	 */
-	public ModelView(GCMFile gcm, BioSim biosim, GCM2SBMLEditor gcm2sbml){
+	public ModelView(GCMFile gcm, BioSim biosim, GCM2SBMLEditor gcm2sbml, boolean editable){
 		super(new BorderLayout());
 		
 		this.gcm = gcm;
 		this.biosim = biosim;
 		this.gcm2sbml = gcm2sbml;
+		this.editable = editable;
 	}
 	
 	/**
@@ -89,7 +81,8 @@ public class ModelView extends JPanel implements ActionListener {
 			graphComponent = new mxGraphComponent(graph);
 			graphComponent.setGraph(graph);
 			this.add(graphComponent, BorderLayout.CENTER);
-			this.add(buildToolBar(), BorderLayout.NORTH);
+			if(this.editable)
+				this.add(buildToolBar(), BorderLayout.NORTH);
 			addGraphComponentListeners();
 		}
 	
@@ -197,7 +190,8 @@ public class ModelView extends JPanel implements ActionListener {
 			{
 				if (e.isPopupTrigger()){
 					// rightclick on windows
-					showGraphPopupMenu(e);
+					if(editable)
+						showGraphPopupMenu(e);
 				}else if(e.getClickCount() == 1){
 					// single click.
 					// First check and if the user clicked on a component, let the graph lib take care of it.
@@ -376,7 +370,7 @@ public class ModelView extends JPanel implements ActionListener {
 								// source is a component
 								try{
 									port = connectComponentToSpecies(sourceProp, targetID);
-								}catch(PortChooser.NoPortException e){
+								}catch(ListChooser.EmptyListException e){
 									JOptionPane.showMessageDialog(biosim.frame(), "Sorry, this component has no output ports.");
 									graph.removeCells(cells);
 									return;
@@ -385,7 +379,7 @@ public class ModelView extends JPanel implements ActionListener {
 								// target is a component
 								try{
 									port = connectSpeciesToComponent(sourceID, targetProp);
-								}catch(PortChooser.NoPortException e){
+								}catch(ListChooser.EmptyListException e){
 									JOptionPane.showMessageDialog(biosim.frame(), "Sorry, this component has no input ports.");	
 									graph.removeCells(cells);
 									return;
@@ -446,8 +440,13 @@ public class ModelView extends JPanel implements ActionListener {
 	 * @param spec_id
 	 * @return: A boolean representing success or failure. True means it worked, false, means there was no output in the component.
 	 */
-	public String connectComponentToSpecies(Properties comp, String specID) throws PortChooser.NoPortException{
-		String port = PortChooser.selectGCMPort(biosim, gcm, comp, GlobalConstants.OUTPUT);
+	public String connectComponentToSpecies(Properties comp, String specID) throws ListChooser.EmptyListException{
+
+		Object[] portNames = getGCMPorts(comp, GlobalConstants.OUTPUT);
+		
+		String port = ListChooser.selectFromList(biosim.frame(), portNames, 
+				"Please Choose an Output Port");
+		
 		if(port == null)
 			return null;
 		gcm.connectComponentAndSpecies(comp, port, specID, "Output");
@@ -460,14 +459,25 @@ public class ModelView extends JPanel implements ActionListener {
 	 * @param comp_id
 	 * @return a boolean representing success or failure.
 	 */
-	public String connectSpeciesToComponent(String specID, Properties comp) throws PortChooser.NoPortException{
-		String port = PortChooser.selectGCMPort(biosim, gcm, comp, GlobalConstants.INPUT);
+	public String connectSpeciesToComponent(String specID, Properties comp) throws ListChooser.EmptyListException{
+
+		Object[] portNames = getGCMPorts(comp, GlobalConstants.INPUT);
+		
+		String port = ListChooser.selectFromList(biosim.frame(), portNames, 
+				"Please Choose an Input Port");
 		if(port == null)
 			return null;
 		gcm.connectComponentAndSpecies(comp, port, specID, "Input");
 		return port;
 	}
 
+	private Object[] getGCMPorts(Properties comp, String type){
+		String fullPath = gcm.getPath() + File.separator + comp.getProperty("gcm");
+		GCMFile compGCM = new GCMFile(gcm.getPath());
+		compGCM.load(fullPath);
+		HashMap<String, Properties> ports = compGCM.getPorts(type);
+		return ports.keySet().toArray();
+	}
 	
 	////// Coppied from mxGraph example file BasicGraphEditor.java
 	

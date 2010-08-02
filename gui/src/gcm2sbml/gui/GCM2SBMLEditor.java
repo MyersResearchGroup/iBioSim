@@ -835,8 +835,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		GCIGrappaPanel grappaPanel = new GCIGrappaPanel();
 		
 		// create the modelview2 (jgraph) panel
-		ModelView modelView = new ModelView(gcm, biosim, this);
-		//gcm.addInfluences("ASDFASDF", new Properties());
+		ModelView modelView = new ModelView(gcm, biosim, this, true);
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
@@ -854,22 +853,17 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		// When the Graphical View panel gets clicked on, tell it to display itself.
 		tab.addChangeListener(new ChangeListener(){
 			public void stateChanged(ChangeEvent e) {
-				JTabbedPane selected_tab = (JTabbedPane)(e.getSource());
-				
-				JPanel selected_panel = (JPanel)selected_tab.getComponent(selected_tab.getSelectedIndex());
-				
-				String className = selected_panel.getClass().getName();
-				
+				JTabbedPane selectedTab = (JTabbedPane)(e.getSource());
+				JPanel selectedPanel = (JPanel)selectedTab.getComponent(selectedTab.getSelectedIndex());
+				String className = selectedPanel.getClass().getName();
 				// The old ModelView (grappa panel) 
 				if(className.indexOf("GCIGrappaPanel") > 0){
-					((GCIGrappaPanel)selected_panel).display(gcm.saveToBuffer(false));
+					((GCIGrappaPanel)selectedPanel).display(gcm.saveToBuffer(false));
 				}
 				// The new ModelView
 				else if(className.indexOf("ModelView") >= 0){
-					((ModelView)selected_panel).display();
+					((ModelView)selectedPanel).display();
 				}
-
-				
 			}
 		});
 

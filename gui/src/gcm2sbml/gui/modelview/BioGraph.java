@@ -382,7 +382,8 @@ public class BioGraph extends mxGraph {
 	}
 	
 	public void updateComponentInfluenceVisuals(mxCell cell, String label){
-		cell.setStyle(mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+		//cell.setStyle(mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+		cell.setStyle("COMPONENT_EDGE");
 		cell.setValue("Port " + label);
 	}
 	
@@ -409,7 +410,15 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_ROUNDED, false);
 		style.put(mxConstants.STYLE_FILLCOLOR, "#FFAA00");
 		style.put(mxConstants.STYLE_STROKECOLOR, "#AA7700");
-		stylesheet.putCellStyle("COMPONENT", style);	
+		stylesheet.putCellStyle("COMPONENT", style);
+		
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_OPACITY, 100);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#774400");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#FFAA00");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#AA7700");
+		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
+		stylesheet.putCellStyle("COMPONENT_EDGE", style);		
 	}
 	
 	private void setSpeciesStyles(String id){
