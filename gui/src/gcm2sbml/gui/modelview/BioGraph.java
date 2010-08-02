@@ -112,7 +112,6 @@ public class BioGraph extends mxGraph {
 		if(cell.isEdge())
 			return GlobalConstants.INFLUENCE;
 		else{
-			// TODO: This isn;t always right!
 			Properties prop = ((CellValueObject)(cell.getValue())).prop;
 			if(gcm.getSpecies().containsValue(prop))
 				return GlobalConstants.SPECIES;

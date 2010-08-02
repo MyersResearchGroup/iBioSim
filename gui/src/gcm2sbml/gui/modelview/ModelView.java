@@ -15,6 +15,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -78,9 +79,6 @@ public class ModelView extends JPanel implements ActionListener {
 			graph = new BioGraph(gcm, gcm2sbml);
 			
 			addGraphListeners();
-			
-			// FIXME: the graph gets built twice the first time. Wasteful! 
-		//	refreshGraph();
 		}
 		
 		boolean needs_layouting = graph.buildGraph();
@@ -102,13 +100,6 @@ public class ModelView extends JPanel implements ActionListener {
 		
 	}
 	
-
-	/**
-	 * Refreshes the graph.
-	 */
-	private void refreshGraph(){
-		graph.buildGraph();
-	}
 	
 	/**
 	 * create the toolbar.
@@ -262,7 +253,7 @@ public class ModelView extends JPanel implements ActionListener {
 					if (cell != null){
 						System.out.println("cell="+graph.getLabel(cell) + " " + e.getClickCount());
 						graph.bringUpEditorForCell(cell);
-						refreshGraph();
+						graph.buildGraph();
 						
 					}
 				}
@@ -366,31 +357,48 @@ public class ModelView extends JPanel implements ActionListener {
 						if(graph.getCellType(target)==GlobalConstants.COMPONENT)
 							numComponents++;
 						// bail out if the user tries to connect two components.
-						// TODO: tell them that this currently isn't allowed.
 						if(numComponents == 2){
-							JOptionPane.showMessageDialog(biosim.frame(), "You can't connect a component directly to another component. Go through a species please.");
+							JOptionPane.showMessageDialog(biosim.frame(), "Sorry, you can't connect a component directly to another component. Please go through a species.");
+							graph.removeCells(cells);
 							return;
 						}
 
 						
-						String sourceId = source.getId();
-						String targetId = target.getId();
+						String sourceID = source.getId();
+						String targetID = target.getId();
 						
-						
-						// TODO: deal with connecting components to species.
 						if(numComponents == 1){
 							Properties sourceProp = graph.getCellProperties(source);
 							Properties targetProp = graph.getCellProperties(target);
 							if(graph.getCellType(source) == GlobalConstants.COMPONENT){
 								// source is a component
-								connectComponentToSpecies(sourceProp, targetProp);
+								try{
+									if(connectComponentToSpecies(sourceProp, targetID) == false)
+										graph.removeCells(cells);
+								}catch(PortChooser.NoPortException e){
+									JOptionPane.showMessageDialog(biosim.frame(), "Sorry, this component has no output ports.");
+									graph.removeCells(cells);
+								}
 							}else{
 								// target is a component
-								connectSpeciesToComponent(targetProp, sourceProp);
+								try{
+									if(connectSpeciesToComponent(sourceID, targetProp) == false)
+										graph.removeCells(cells);
+								}catch(PortChooser.NoPortException e){
+									JOptionPane.showMessageDialog(biosim.frame(), "Sorry, this component has no input ports.");	
+									graph.removeCells(cells);
+								}
 							}
 							gcm2sbml.refresh();
 							gcm2sbml.setDirty(true);
-							graph.refresh();
+							
+							// refreshing the graph doesn't work here but is necessary.
+							// We need to refresh it because sometimes connecting a component
+							// to a species dis-connects it from another species.
+							// This disconnect could be simply implemented by refreshing
+							// the graph, but because we are in an event listener it doesn't
+							// work. TODO: Figure out how to get it working.
+							//graph.refresh(); 
 							return;
 						}
 						
@@ -414,13 +422,9 @@ public class ModelView extends JPanel implements ActionListener {
 						}else{
 							throw(new Error("No influence button was pressed!"));
 						}
-						
-						// TODO: If the user drags an influence onto nothing, it is intended that a new 
-						// species will be created and the influence attached to it. We need to handle 
-						// that eventuality.
-						
+												
 						String promoter = "default";
-						String name = InfluencePanel.buildName(sourceId, targetId, type, isBio, promoter);
+						String name = InfluencePanel.buildName(sourceID, targetID, type, isBio, promoter);
 						
 						graph.addInfluence(edge, name, constType);
 						gcm2sbml.refresh();
@@ -439,8 +443,11 @@ public class ModelView extends JPanel implements ActionListener {
 	 * @param spec_id
 	 * @return: A boolean representing success or failure. True means it worked, false, means there was no output in the component.
 	 */
-	public boolean connectComponentToSpecies(Properties comp, Properties spec){
-		String port = selectGCMPort(comp, GlobalConstants.OUTPUT);
+	public boolean connectComponentToSpecies(Properties comp, String specID) throws PortChooser.NoPortException{
+		String port = PortChooser.selectGCMPort(biosim, gcm, comp, GlobalConstants.OUTPUT);
+		if(port == null)
+			return false;
+		gcm.connectComponentAndSpecies(comp, port, specID, "Output");
 		return true;
 	}
 	
@@ -450,22 +457,14 @@ public class ModelView extends JPanel implements ActionListener {
 	 * @param comp_id
 	 * @return a boolean representing success or failure.
 	 */
-	public boolean connectSpeciesToComponent(Properties spec, Properties comp){
-		String port = selectGCMPort(comp, GlobalConstants.OUTPUT);
+	public boolean connectSpeciesToComponent(String specID, Properties comp) throws PortChooser.NoPortException{
+		String port = PortChooser.selectGCMPort(biosim, gcm, comp, GlobalConstants.INPUT);
+		if(port == null)
+			return false;
+		gcm.connectComponentAndSpecies(comp, port, specID, "Input");
 		return true;
 	}
-	
-	/**
-	 * given a gcm and either GlobalConstants.INPUT or GlobalConstants.OUTPUT,
-	 * allow the user to select a port.
-	 * @param gcmFilename
-	 * @param type
-	 * @return
-	 */
-	String selectGCMPort(Properties comp, String type){
-		//GCMFile compGCM = new GCMFile(path)
-		return null;
-	}
+
 	
 	////// Coppied from mxGraph example file BasicGraphEditor.java
 	

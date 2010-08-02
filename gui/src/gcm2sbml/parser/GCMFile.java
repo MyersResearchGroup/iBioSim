@@ -1428,6 +1428,32 @@ public class GCMFile {
 		return components;
 	}
 	
+	/**
+	 * returns all the ports in the gcm file matching type,
+	 * which must be either GlobalConstants.INPUT or 
+	 * GlobalConstants.OUTPUT.
+	 * @param type
+	 * @return
+	 */
+	public HashMap<String, Properties> getPorts(String type){
+		HashMap<String, Properties> out = new HashMap<String, Properties>();
+		for(Object ko:this.getSpecies().keySet()){
+			String key = (String)ko;
+			Properties prop = this.getSpecies().get(ko);
+			if(prop.getProperty(GlobalConstants.TYPE).equals(type)){
+				out.put(key, prop);
+			} 
+		}
+		return out;
+	}
+	
+	public void connectComponentAndSpecies(Properties comp, String port, String specID, String type){
+		
+		comp.put(port, specID);
+		comp.put("type_" + port, type);
+		return;
+	}
+	
 	public String getComponentPortMap(String s) {
 		String portmap = "(";
 		Properties c = components.get(s);
@@ -2600,6 +2626,10 @@ public class GCMFile {
 	
 		for (int c = 0; c < node.getNumChildren(); c++)
 			setTimeAndTrigVar(node.getChild(c));
+	}
+	
+	public String getPath(){
+		return path;
 	}
 
 	private static final String NETWORK = "digraph\\sG\\s\\{([^}]*)\\s\\}";
