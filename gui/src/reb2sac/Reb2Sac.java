@@ -4871,4 +4871,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	public String getSimID() {
 		return fileStem.getText().trim();
 	}
+	
+	public String getSimPath() {
+		if (!fileStem.getText().trim().equals("")) {
+			return root + separator + simName + separator + fileStem.getText().trim();
+		}
+		else {
+			return root + separator + simName;
+		}
+	}
 }
