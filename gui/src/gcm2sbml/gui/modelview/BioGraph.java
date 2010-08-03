@@ -19,6 +19,7 @@ import java.util.Properties;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxICell;
+import com.mxgraph.model.mxGraphModel.mxGeometryChange;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
@@ -512,6 +513,21 @@ public class BioGraph extends mxGraph {
 			this.label = label;
 			this.prop = prop;
 		}
+	}
+	
+	//////////////////////////////////////// ANIMATION TYPE STUFF ////////////////////////////////
+	public void setSpeciesAnimationValue(String s, double value){
+		mxCell cell = this.speciesToMxCellMap.get(s);
+		
+//		String newCol = String.valueOf(value / 100 * 16);
+//		
+//		cell.setStyle(mxConstants.STYLE_FILLCOLOR, "#FFAA00", newCol);
+		mxGeometry geom = cell.getGeometry();
+		
+		geom.setWidth(30+value);
+		geom.setHeight(20+value);
+		
+		cell.setGeometry(geom);
 	}
 	
 }
