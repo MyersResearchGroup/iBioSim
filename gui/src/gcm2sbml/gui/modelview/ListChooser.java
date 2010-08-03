@@ -4,6 +4,8 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -25,6 +27,38 @@ public class ListChooser extends JPanel {
 		jlist.setLayoutOrientation(JList.VERTICAL);
 		jlist.setVisibleRowCount(-1);
 		jlist.setSelectedIndex(0);
+		jlist.addMouseListener(new MouseListener() {
+			
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			public void mouseClicked(MouseEvent e) {
+				// TODO Auto-generated method stub
+				if(e.getClickCount() == 2){
+					// TODO: Figure out how to 
+					//throw new Error("BAH!");
+				}
+			}
+		});
+		
+		
 		JScrollPane listScroller = new JScrollPane(jlist);
 		listScroller.setPreferredSize(new Dimension(250, 80));
 		

@@ -508,6 +508,20 @@ public class ModelView extends JPanel implements ActionListener {
 	}
 	
 	
+	//////////////////////////////////////// ANIMATION TYPE STUFF ////////////////////////////////
+	
+	public void beginFrame(){
+	//	graph.getModel().beginUpdate(); // doesn't seem needed.
+	}
+	
+	public void setSpeciesAnimationValue(String s, double value){
+		graph.setSpeciesAnimationValue(s, value);
+	}
+	
+	public void endFrame(){
+	//	graph.getModel().endUpdate();
+		graph.refresh();
+	}
 	
 
 }

@@ -125,4 +125,13 @@ public class Parser {
 					"Error Outputting Data", JOptionPane.ERROR_MESSAGE);
 		}
 	}
+	
+	public HashMap<String, ArrayList<Double>> getHashMap(){
+		HashMap<String, ArrayList<Double>> out = new HashMap<String, ArrayList<Double>>();
+		for(int i=0; i<data.size(); i++){
+			out.put(species.get(i), data.get(i));
+		}
+		return out;
+	}
+	
 }
