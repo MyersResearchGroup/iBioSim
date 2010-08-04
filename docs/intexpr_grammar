@@ -1,0 +1,27 @@
+Expression Grammar:
+L=> M D							//Boolean expression (Conjunctive series)
+M=> N E							// AND series
+D=> cOP M |  ∅						// Conjunctive completion
+N=> O | '~'O						// Possibly  negated "atomic"proposition
+E=> '&' E | ∅						// AND completion
+cOP=> '|' | '->'					// Conjunctive operators
+O=> R P	   						// numeric value
+R=> S B							// Numeric expression (summation series)
+P=> relOP R | '['R']' | ∅				// relational completion or BIT extraction
+S=>T C	      	      					// multiply series
+B=>sumOP S |∅						// sum completion
+relOP=> '>'|'>='|'='|'<='|'<' 				// relational operators
+T=> U | '-'U		        			// Possibly  negated "atomic" number
+C=> mulOP T C | T C |∅					// multiplicative completion
+sumOP=> '+' | '-'					// additive operators
+mulOP=> '*' | '/' | '^' | '%' 				// multiplicative operators
+U=> binOP '(' R ',' R ')' | unOP '(' R ')' |
+      'INT''(' L ')' | '(' L ')' | tV | nV | ID		// "atomic" numeric value
+binOP=> 'AND' | 'OR' | 'XOR' | 'uniform' |
+ 	'gamma' | 'lognormal' | 'binomial' | 'BIT'	//binary numeric operators
+unOP=> 'normal' | 'NOT' | exponential |
+       chisq | rayleigh | poisson | laplace | 
+       cauchy | bernoulli | 'rate'			// unary numeric operators
+tV=> 't' | 'true' | 'f' | 'false'		      	// boolean constant
+nV=> int | real	    	  			   	// raw numeric value
+ID=> boolVAR | discVAR |contVAR          		// named variable
