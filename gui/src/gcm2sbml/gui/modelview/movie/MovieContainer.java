@@ -30,6 +30,9 @@ import biomodelsim.BioSim;
 
 public class MovieContainer extends JPanel implements ActionListener {
 
+	
+	public static final int FRAME_DELAY_MILLISECONDS = 50;
+	
 	private static final long serialVersionUID = 1L;
 	private ModelView modelView;
 	private Reb2Sac reb2sac;
@@ -72,6 +75,11 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 	}
 	
+	/**
+	 * Allows the user to choose from valid TSD files, then loads and parses the file.
+	 * @return
+	 * @throws ListChooser.EmptyListException
+	 */
 	private TSDParser prepareTSDFile() throws ListChooser.EmptyListException{
 		Vector<String> filenames = new Vector<String>();
 		for (String s : new File(reb2sac.getSimPath()).list()) {
@@ -85,7 +93,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		String fullFilePath = reb2sac.getSimPath() + File.separator + filename;
 		TSDParser parser = new TSDParser(fullFilePath, biosim, false);
 		
-		slider.setMaximum(parser.getData().size()-1);
+		slider.setMaximum(parser.getNumSamples()-1);
 		
 		biosim.log.addText(fullFilePath + " loaded. " + 
 				String.valueOf(parser.getData().size()) +
@@ -112,11 +120,15 @@ public class MovieContainer extends JPanel implements ActionListener {
 		this.add(mt, BorderLayout.SOUTH);
 	}
 	
+	/**
+	 * Called whenever the play/pause button is pressed, or when the system needs to 
+	 * pause the movie (such as at the end)
+	 */
 	private void playPauseButtonPress(){
 		if(playPauseButton.getText() == "Play"){
 			if(slider.getValue() >= slider.getMaximum()-1)
 				slider.setValue(0);
-			playTimer.setDelay(100);
+			playTimer.setDelay(FRAME_DELAY_MILLISECONDS);
 			playPauseButton.setText("Pause");
 			playTimer.start();
 		}else{
@@ -158,7 +170,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 */
 	private void updateVisuals(){
 		int pos = slider.getValue();
-		if(pos < 0 || pos > parser.getData().size()-1){
+		if(pos < 0 || pos > parser.getNumSamples()-1){
 			throw new Error("Invalid slider value! It is outside the data range!");
 		}
 		

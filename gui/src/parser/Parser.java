@@ -126,6 +126,18 @@ public class Parser {
 		}
 	}
 	
+	/**
+	 * returns the number of samples in the data.
+	 * @return
+	 */
+	public int getNumSamples(){
+		return this.data.get(0).size();
+	}
+	
+	/**
+	 * get the data in a different format
+	 * @return
+	 */
 	public HashMap<String, ArrayList<Double>> getHashMap(){
 		HashMap<String, ArrayList<Double>> out = new HashMap<String, ArrayList<Double>>();
 		for(int i=0; i<data.size(); i++){
