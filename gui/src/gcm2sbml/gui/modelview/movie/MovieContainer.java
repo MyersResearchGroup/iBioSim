@@ -31,7 +31,7 @@ import biomodelsim.BioSim;
 public class MovieContainer extends JPanel implements ActionListener {
 
 	
-	public static final int FRAME_DELAY_MILLISECONDS = 50;
+	public static final int FRAME_DELAY_MILLISECONDS = 20;
 	
 	private static final long serialVersionUID = 1L;
 	private ModelView modelView;
