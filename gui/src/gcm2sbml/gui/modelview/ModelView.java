@@ -222,7 +222,7 @@ public class ModelView extends JPanel implements ActionListener {
 						}
 					}else{
 						if(editPromoterButton.isSelected()){
-							// If the thing clicked on was an influence, bring up it's promotor window.
+							// If the thing clicked on was an influence, bring up it's promoter window.
 							if(cell.isEdge()){
 								Properties prop = gcm.getInfluences().get(cell.getId());
 								String promoter = prop.getProperty("Promoter");
@@ -312,6 +312,8 @@ public class ModelView extends JPanel implements ActionListener {
 							graph.speciesRemoved(cell.getId());
 						}else if(type == GlobalConstants.COMPONENT){
 							gcm.getComponents().remove(cell.getId());
+						}else if(type == GlobalConstants.COMPONENT_CONNECTION){
+							removeComponentConnection(cell);
 						}
 					}
 					gcm2sbml.setDirty(true);
@@ -392,7 +394,7 @@ public class ModelView extends JPanel implements ActionListener {
 							
 							gcm2sbml.refresh();
 							gcm2sbml.setDirty(true);
-							graph.updateComponentInfluenceVisuals((mxCell)cells[0], port);
+							graph.updateComponentConnectionVisuals((mxCell)cells[0], port);
 
 							graph.buildGraph();
 							return;
@@ -477,6 +479,25 @@ public class ModelView extends JPanel implements ActionListener {
 		compGCM.load(fullPath);
 		HashMap<String, Properties> ports = compGCM.getPorts(type);
 		return ports.keySet().toArray();
+	}
+	
+	/**
+	 * given an mxCell where either the source or target is a component, 
+	 * remove the connection.
+	 */
+	private void removeComponentConnection(mxCell cell){
+		Properties comp;
+		String speciesId;
+		if(graph.getCellType(cell.getTarget()) == GlobalConstants.COMPONENT){
+			comp = graph.getCellProperties(cell.getTarget());
+			speciesId = cell.getSource().getId();
+		}else if(graph.getCellType(cell.getSource()) == GlobalConstants.COMPONENT){
+			comp = graph.getCellProperties(cell.getSource());
+			speciesId = cell.getTarget().getId();
+		}else
+			throw new Error("removeComponentConnection was called with a cell in which neither the source nor target was a component!");
+		
+		gcm.disconnectComponentAndSpecies(comp, speciesId);
 	}
 	
 	////// Coppied from mxGraph example file BasicGraphEditor.java

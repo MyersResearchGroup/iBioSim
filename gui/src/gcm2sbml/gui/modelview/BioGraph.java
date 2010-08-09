@@ -4,12 +4,9 @@
 package gcm2sbml.gui.modelview;
 
 import gcm2sbml.gui.GCM2SBMLEditor;
-import gcm2sbml.gui.InfluencePanel;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -19,17 +16,13 @@ import java.util.Properties;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxICell;
-import com.mxgraph.model.mxGraphModel.mxGeometryChange;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
-import com.mxgraph.util.mxEvent;
-import com.mxgraph.util.mxEventObject;
-import com.mxgraph.util.mxEventSource;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 
 /**
- * @author tyler
+ * @author Tyler tpatterson80@gmail.com
  *
  */
 public class BioGraph extends mxGraph {
@@ -112,12 +105,16 @@ public class BioGraph extends mxGraph {
 	}
 
 	/**
-	 * returns GlobalConstants.SPECIES, GlobalConstants.COMPONENT, or GlobalConstants.INFLUENCE.
+	 * returns GlobalConstants.SPECIES, GlobalConstants.COMPONENT, GlobalConstants.INFLUENCE, or GlobalConstants.COMPONENT_CONNECTION.
 	 * @param cell
 	 */
 	public String getCellType(mxCell cell){
 		if(cell.isEdge())
-			return GlobalConstants.INFLUENCE;
+			if(getCellType(cell.getSource()) == GlobalConstants.COMPONENT || getCellType(cell.getTarget()) == GlobalConstants.COMPONENT){
+				return GlobalConstants.COMPONENT_CONNECTION;
+			}else{
+				return GlobalConstants.INFLUENCE;
+			}
 		else{
 			Properties prop = ((CellValueObject)(cell.getValue())).prop;
 			if(gcm.getSpecies().containsValue(prop))
@@ -141,6 +138,8 @@ public class BioGraph extends mxGraph {
 			return gcm.getComponents();
 		else if(type == GlobalConstants.INFLUENCE)
 			return gcm.getInfluences();
+		else if(type == GlobalConstants.COMPONENT_CONNECTION)
+			throw new Error("Component Connectiosn don't have properties!");
 		else
 			throw new Error("Invalid type: " + type);
 	}
@@ -152,6 +151,9 @@ public class BioGraph extends mxGraph {
 	 */
 	public Properties getCellProperties(mxCell cell){
 		return getPropertiesList(cell).get(cell.getId());
+	}
+	public Properties getCellProperties(mxICell cell){
+		return getCellProperties((mxCell)cell);
 	}
 	
 //	/**
@@ -307,7 +309,7 @@ public class BioGraph extends mxGraph {
 //							+ " [port=" + propName.toString() + ", type=Input");
 //					buffer.append(", arrowhead=normal]\n");
 				}
-				this.updateComponentInfluenceVisuals((mxCell)createdEdge, propName.toString());
+				this.updateComponentConnectionVisuals((mxCell)createdEdge, propName.toString());
 			}
 		}
 
@@ -382,7 +384,7 @@ public class BioGraph extends mxGraph {
 		cell.setValue(label);
 	}
 	
-	public void updateComponentInfluenceVisuals(mxCell cell, String label){
+	public void updateComponentConnectionVisuals(mxCell cell, String label){
 		//cell.setStyle(mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
 		cell.setStyle("COMPONENT_EDGE");
 		cell.setValue("Port " + label);
