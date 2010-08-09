@@ -34,6 +34,7 @@ public class GlobalConstants {
 	public static final String COMPONENT = "Component";
 	public static final String SPECIES = "Species";
 	public static final String INFLUENCE = "Influence";
+	public static final String COMPONENT_CONNECTION = "Component Connection";
 	public static final String PORTMAP = "Port Map";
 	public static final String NAME = "Name";
 	public static final String CONSTANT = "boundary";

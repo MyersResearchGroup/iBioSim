@@ -1448,10 +1448,28 @@ public class GCMFile {
 	}
 	
 	public void connectComponentAndSpecies(Properties comp, String port, String specID, String type){
-		
 		comp.put(port, specID);
 		comp.put("type_" + port, type);
 		return;
+	}
+	
+	/**
+	 * Given a component and the name of a species it is connected to, remove that connection.
+	 */
+	public void disconnectComponentAndSpecies(Properties comp, String speciesId){
+		// now figure out which port the species is connected to
+		for(Object p:comp.keySet()){
+			//if(p.toString().)
+			String key = p.toString();
+			String value = (String)comp.get(key);
+			if(value.equals(speciesId) && comp.containsKey("type_" + key)){
+				comp.remove(key);
+				comp.remove("type_" + key);
+				return;
+			}
+		}
+		
+		throw new Error("Could not find the given species in disconnectComponentAndSpecies()!");
 	}
 	
 	public String getComponentPortMap(String s) {
