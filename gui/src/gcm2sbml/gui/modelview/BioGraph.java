@@ -518,17 +518,22 @@ public class BioGraph extends mxGraph {
 	}
 	
 	//////////////////////////////////////// ANIMATION TYPE STUFF ////////////////////////////////
+	private static final double extraAnimationWidth = 30.0;
+	private static final double extraAnimationHeight = 20;
 	public void setSpeciesAnimationValue(String s, double value){
 		mxCell cell = this.speciesToMxCellMap.get(s);
 		
 //		String newCol = String.valueOf(value / 100 * 16);
 //		
 //		cell.setStyle(mxConstants.STYLE_FILLCOLOR, "#FFAA00", newCol);
-		mxGeometry geom = cell.getGeometry();
+		mxGeometry priorGeom = cell.getGeometry();
+		mxGeometry geom = new mxGeometry();
 		
-		geom.setWidth(30+value);
-		geom.setHeight(20+value);
-		
+		geom.setWidth(extraAnimationWidth + value*.5);
+		geom.setHeight(extraAnimationHeight + value*.5);
+		geom.setX(priorGeom.getCenterX() - geom.getWidth()*.5);
+		geom.setY(priorGeom.getCenterY() - geom.getHeight()*.5);
+
 		cell.setGeometry(geom);
 	}
 	
