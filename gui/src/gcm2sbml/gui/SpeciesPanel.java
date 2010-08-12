@@ -165,6 +165,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					return false;
 				}
 			}
+			if (oldName != null
+					&& !gcm.editSpeciesCheck(oldName, typeBox.getSelectedItem().toString())) {
+				Utility.createErrorMessage("Error", "Cannot change species type.  "
+						+ "Species is used as a port in a component.");
+				return false;
+			}
 			String id = fields.get(GlobalConstants.ID).getValue();
 
 			// Check to see if we need to add or edit

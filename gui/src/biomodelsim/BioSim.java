@@ -7295,6 +7295,29 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								reassignViews(oldName, rename);
 							}
 							new File(tree.getFile()).renameTo(new File(root + separator + rename));
+							if (rename.length() >= 4
+									&& rename.substring(rename.length() - 4).equals(".gcm")) {
+								String oldName = tree.getFile().split(separator)[tree.getFile()
+										.split(separator).length - 1];
+								for (String s : new File(root).list()) {
+									if (s.endsWith(".gcm")) {
+										BufferedReader in = new BufferedReader(new FileReader(root
+												+ separator + s));
+										String line = null;
+										String file = "";
+										while ((line = in.readLine()) != null) {
+											line = line.replace(oldName, rename);
+											file += line;
+											file += "\n";
+										}
+										in.close();
+										BufferedWriter out = new BufferedWriter(new FileWriter(root
+												+ separator + s));
+										out.write(file);
+										out.close();
+									}
+								}
+							}
 							if (modelID != null) {
 								SBMLDocument document = readSBML(root + separator + rename);
 								document.getModel().setId(modelID);
@@ -10962,7 +10985,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								gcm.setSBMLParamFile(null);
 							}
 							addModelViewTab(reb2sac, simTab, gcm);
-						
+
 						}
 						else if (gcmFile.contains(".sbml") || gcmFile.contains(".xml")) {
 							SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this,
@@ -11020,40 +11043,41 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						 * 1).setName("ProbGraph"); }
 						 */
 						addTab(split[split.length - 1], simTab, null);
-						
-						
+
 					}
 				}
 			}
 		}
 	}
-	
+
 	/**
 	 * adds the tab for the modelview and the correct listener.
+	 * 
 	 * @return
 	 */
-	private void addModelViewTab(Reb2Sac reb2sac, JTabbedPane tabPane, GCM2SBMLEditor gcm2sbml){
-		
+	private void addModelViewTab(Reb2Sac reb2sac, JTabbedPane tabPane, GCM2SBMLEditor gcm2sbml) {
+
 		// Add the modelview tab
 		// TODO: Add the modelview tab
-		MovieContainer movieContainer = new MovieContainer(reb2sac, gcm2sbml.getGCM(), this, gcm2sbml);
+		MovieContainer movieContainer = new MovieContainer(reb2sac, gcm2sbml.getGCM(), this,
+				gcm2sbml);
 
 		tabPane.addTab("Model View Movie", movieContainer);
-		tabPane.getComponentAt(tabPane.getComponents().length - 1).setName(
-		"ModelViewMovie");
-		// When the Graphical View panel gets clicked on, tell it to display itself.
-		tabPane.addChangeListener(new ChangeListener(){
+		tabPane.getComponentAt(tabPane.getComponents().length - 1).setName("ModelViewMovie");
+		// When the Graphical View panel gets clicked on, tell it to display
+		// itself.
+		tabPane.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				JTabbedPane selectedTab = (JTabbedPane)(e.getSource());
-				JPanel selectedPanel = (JPanel)selectedTab.getComponent(selectedTab.getSelectedIndex());
+				JTabbedPane selectedTab = (JTabbedPane) (e.getSource());
+				JPanel selectedPanel = (JPanel) selectedTab.getComponent(selectedTab
+						.getSelectedIndex());
 				String className = selectedPanel.getClass().getName();
-		
-				//if(selectedTab.getName().equals("ModelViewMovie"))
-					
-				
+
+				// if(selectedTab.getName().equals("ModelViewMovie"))
+
 				// The new ModelView
-				if(className.indexOf("MovieContainer") >= 0){
-					((MovieContainer)selectedPanel).display();
+				if (className.indexOf("MovieContainer") >= 0) {
+					((MovieContainer) selectedPanel).display();
 				}
 			}
 		});
