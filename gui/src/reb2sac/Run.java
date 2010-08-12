@@ -452,7 +452,7 @@ public class Run implements ActionListener {
 			String sim, String printer_id, String printer_track_quantity, String outDir,
 			JRadioButton nary, int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA,
 			String ssaFile, BioSim biomodelsim, JTabbedPane simTab, String root,
-			JProgressBar progress, int steps, String simName, GCM2SBMLEditor gcmEditor,
+			JProgressBar progress, String simName, GCM2SBMLEditor gcmEditor,
 			String direct, double timeLimit, double runTime, String modelFile, AbstPane abstPane,
 			JRadioButton abstraction) {
 		Runtime exec = Runtime.getRuntime();
