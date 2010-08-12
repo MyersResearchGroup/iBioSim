@@ -1,10 +1,13 @@
 package learn;
 
 //import gcm2sbml.parser.GCMFile;
+import lhpn2sbml.parser.Abstraction;
 import lhpn2sbml.parser.LhpnFile;
 import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.Lpn2verilog;
 import parser.*;
+import verification.AbstPane;
+
 import java.awt.*;
 import java.awt.List;
 import java.awt.event.*;
@@ -2921,7 +2924,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		//For every variable in stables, destabMap has an entry which maps to 
 		//to an arraylist containing ips which can destabilize that op.
 		//Add a loop here to do so 	
-				/*
+			/*	
 				ArrayList<String> destab_out = new  ArrayList<String>();
 				destab_out.add("ctl");
 				destabMap.put("out", destab_out);
@@ -2937,14 +2940,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				ArrayList<Double> tStable = new ArrayList<Double>();
 				tStable.add(0.5);
 				thresholds.put("stable_out", tStable);
-				*/
+			*/	
 				LhpnFile g = l.learnModel(directory, log, biosim, moduleNumber, thresholds, tPar, varsWithStables, destabMap, stabMap, valScaleFactor, delayScaleFactor, failProp);
-				g.save(directory + separator + "main.lpn");
 				if (new File(learnFile).exists()){ //directory + separator + "complete.lpn").exists()){//
 					LhpnFile seedLpn = new LhpnFile();
 					seedLpn.load(learnFile);
 					g = mergeLhpns(seedLpn,g);
-					g.save(directory + separator + "mainnseed.lpn");
 				}
 				valScaleFactor = l.getValueScaleFactor();
 				delayScaleFactor = l.getDelayScaleFactor();
@@ -2973,7 +2974,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						}	
 					}
 				}
+				
 				g.save(directory + separator + lhpnFile);
+				
+		//		Abstraction a = new Abstraction(g, new AbstPane(directory,lhpnFile,log,biosim,true,false));
+		//		a.mergeTransitionsSimp(true);
+		//		g.save(directory + separator + "abstracted" + lhpnFile);
+			
 				viewLog.setEnabled(true);
 				//System.out.println(directory + separator + lhpnFile);
 				if (new File(directory + separator + lhpnFile).exists()) {

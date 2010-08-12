@@ -421,12 +421,12 @@ public class LearnModel { // added ItemListener SB
 									} else {
 										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binOutgoing[k])).doubleValue();
 										if (firstInputBinChg){
-											condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
+											condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.floor(val) + ")"; //changed ceil to floor on aug 7,2010
 									//		transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
 									//		transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") < " + ((int)val)/valScaleFactor +"))";
 										}
 										else{
-											condStr += "&~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
+											condStr += "&~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.floor(val) + ")"; //changed ceil to floor on aug 7,2010
 									//		transEnablingsVAMS[transNum] += " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
 									//		transConditionalsVAMS[transNum] = "if ((place == " + g.getPreset(t)[0].split("p")[1] + ") && (V(" + reqdVarsL.get(k).getName() + ") < " + ((int)val)/valScaleFactor +"))";
 										}
@@ -536,10 +536,10 @@ public class LearnModel { // added ItemListener SB
 									} else {
 										double val = scaledThresholds.get(reqdVarsL.get(k).getName()).get(Integer.parseInt(binOutgoing[k])).doubleValue();
 										if (firstInputBinChg){
-											condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
+											condStr += "~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.floor(val) + ")";//changed ceil to floor on aug 7,2010
 									//		transEnablingsVAMS[transNum] = "always@(cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
 										} else {
-											condStr += "&~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.ceil(val) + ")";
+											condStr += "&~(" + reqdVarsL.get(k).getName() + ">="	+ (int) Math.floor(val) + ")";//changed ceil to floor on aug 7,2010
 									//		transEnablingsVAMS[transNum] = " and cross((V(" + reqdVarsL.get(k).getName() + ") - " + ((int)val)/valScaleFactor +"),-1)";	// +=; temporary
 										}
 									}
@@ -644,7 +644,7 @@ public class LearnModel { // added ItemListener SB
 								if (bin == 0){
 									if (!condStr.equalsIgnoreCase(""))
 										condStr += "&";
-									condStr += "~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
+									condStr += "~(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
 								} else if (bin == (scaledThresholds.get(st).size())){
 									if (!condStr.equalsIgnoreCase(""))
 										condStr += "&";
@@ -652,7 +652,7 @@ public class LearnModel { // added ItemListener SB
 								} else{
 									if (!condStr.equalsIgnoreCase(""))
 										condStr += "&";
-									condStr += "(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")&~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
+									condStr += "(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")&~(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin).doubleValue()) + ")";//changed ceil to floor on Aug7,2010
 								}
 							}
 							for (String st : dcVars){
@@ -661,7 +661,7 @@ public class LearnModel { // added ItemListener SB
 									if (bin == 0){
 										if (!condStr.equalsIgnoreCase(""))
 											condStr += "&";
-										condStr += "~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
+										condStr += "~(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
 									} else if (bin == (scaledThresholds.get(st).size())){
 										if (!condStr.equalsIgnoreCase(""))
 											condStr += "&";
@@ -669,7 +669,7 @@ public class LearnModel { // added ItemListener SB
 									} else{
 										if (!condStr.equalsIgnoreCase(""))
 											condStr += "&";
-										condStr += "(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")&~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
+										condStr += "(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")&~(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
 									}
 								}
 							}
@@ -755,8 +755,11 @@ public class LearnModel { // added ItemListener SB
 				placeInfo.remove(getPlaceInfoIndex(st1));
 				g.removePlace(st1);
 			}
-			
-			
+	//		if (moduleNumber == 0){
+	//			out.write("Adding pseudo transitions now. It'll be saved in " + directory + separator + "pseudo" + lhpnFile + "\n");
+	//			addPseudo(scaledThresholds);
+	//			lpnWithPseudo.save(directory + separator + "pseudo" + lhpnFile);
+	//		}
 	//		addMetaBins();
 	//		addMetaBinTransitions();
 			if ((destabMap != null) || (destabMap.size() != 0)){
@@ -793,20 +796,7 @@ public class LearnModel { // added ItemListener SB
 			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 			out.write("Returning " + directory + separator + lhpnFile + "\n");
 			out.close();
-			/*if ((moduleNumber == 0) && (new File(learnFile).exists())){ //directory + separator + "complete.lpn").exists()){//
-				LhpnFile l1 = new LhpnFile();
-				l1.load(learnFile);
-				g = mergeLhpns(l1,g);
-				//l1.load(directory + separator + "complete.lpn");
-				//mergeLhpns(l1,g).save(directory + separator + "complete.lpn");
-			} //else {
-			//	g.save(directory + separator + "complete.lpn");
-			//}
-			 
-//			addPseudo(scaledThresholds);
-			g.save(directory + separator + lhpnFile);*/
-//			lpnWithPseudo.save(directory + separator + "pseudo" + lhpnFile);
-//			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
+			
 			//writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -1016,7 +1006,7 @@ public class LearnModel { // added ItemListener SB
 								if (bin == 0){
 									if (!condStr.equalsIgnoreCase(""))
 										condStr += "&";
-									condStr += "~(" + st2 + ">=" + (int) Math.ceil(scaledThresholds.get(st2).get(bin).doubleValue()) + ")";
+									condStr += "~(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
 								} else if (bin == (scaledThresholds.get(st2).size())){
 									if (!condStr.equalsIgnoreCase(""))
 										condStr += "&";
@@ -1024,7 +1014,7 @@ public class LearnModel { // added ItemListener SB
 								} else{
 									if (!condStr.equalsIgnoreCase(""))
 										condStr += "&";
-									condStr += "(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()) + ")&~(" + st2 + ">=" + (int) Math.ceil(scaledThresholds.get(st2).get(bin).doubleValue()) + ")";
+									condStr += "(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()) + ")&~(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
 								}
 							} else {
 								if (reqdVarsL.get(j).isDmvc()){
@@ -1340,7 +1330,7 @@ public class LearnModel { // added ItemListener SB
 		String key = "", fullKey = "";
 		Double prevPlaceDuration = null;
 		String transId = null;
-		Boolean prevIpChange = false, prevOpChange = false, ipChange = false, opChange = false;
+		Boolean prevIpChange = false, prevOpChange = false, ipChange = false, opChange = false, careIpChange = false;
 		// boolean addNewPlace;
 		ArrayList<String> ratePlaces = new ArrayList<String>(); // ratePlaces can include non-input dmv places.
 		// boolean newRate = false;
@@ -1416,9 +1406,12 @@ public class LearnModel { // added ItemListener SB
 							ArrayList<Integer> diffL = diff(prevPlaceFullKey,fullKey);
 							opChange = false; 
 							ipChange = false;
+							careIpChange = false;
 							for (int k : diffL) {
 								if (reqdVarsL.get(k).isInput()) {
 									ipChange = true;
+									if (reqdVarsL.get(k).isCare())
+										careIpChange = true;
 								} else {
 									opChange = true;
 								}
@@ -1426,6 +1419,7 @@ public class LearnModel { // added ItemListener SB
 						} else {
 							ipChange = false;
 							opChange = false;
+							careIpChange = false;
 						}
 						if ((traceNum > 1) && transientNetTransitions.containsKey(prevPlaceFullKey + "," + fullKey) && (ratePlaces.size() == 2)) { // same transient transition as that from some previous trace
 							p1 = transientNetTransitions.get(prevPlaceFullKey + "," + fullKey);
@@ -1463,7 +1457,7 @@ public class LearnModel { // added ItemListener SB
 											p1.put("ioChangeDelay", "yes");
 											int removeTransNum =  Integer.valueOf(transitionInfo.get(lastLastPlaceFullKey + "," +  prevPlaceFullKey).getProperty("transitionNum"));
 											if (removeTransNum == numTransitions -1){
-												out.write("\n\n\nFound an output change follwing a previous input change; remove transition t" + removeTransNum + " between " + lastLastPlace + " and " + placeInfo.get(prevPlaceKey).getProperty("placeNum") + "; add transition t" + numTransitions + " b/w " + lastLastPlace + " and " + placeInfo.get(key).getProperty("placeNum") + "\n");
+												out.write("\n\n\nFound an output change follwing a previous input change; remove transition t" + removeTransNum + " between " + lastLastPlace + " and p" + placeInfo.get(prevPlaceKey).getProperty("placeNum") + "; merged transition already exists in the form of t" + p1.getProperty("transitionNum") + " b/w " + lastLastPlace + " and p" + placeInfo.get(key).getProperty("placeNum") + "\n");
 												transitionInfo.remove(lastLastPlaceFullKey + "," + prevPlaceFullKey);
 												//g.removeTransition("t" + (numTransitions -1));
 												g.removeTransition("t" + removeTransNum);
@@ -1498,7 +1492,7 @@ public class LearnModel { // added ItemListener SB
 											p1.put("ioChangeDelay", "yes");
 											int removeTransNum =  Integer.valueOf(transientNetTransitions.get(lastLastPlaceFullKey + "," + prevPlaceFullKey).getProperty("transitionNum"));
 											if (removeTransNum == numTransitions -1){
-												out.write("\n\n\nTRANSIENT:Found an output change followed by a previous input change; remove transition t" + removeTransNum + " between " + lastLastPlace + " and " + placeInfo.get(prevPlaceKey).getProperty("placeNum") + "; add transition t" + numTransitions + " b/w " + lastLastPlace + " and " + placeInfo.get(key).getProperty("placeNum") + "\n");
+												out.write("\n\n\nTRANSIENT:Found an output change followed by a previous input change; remove transition t" + removeTransNum + " between " + lastLastPlace + " and " + placeInfo.get(prevPlaceKey).getProperty("placeNum") + "; merged transition already exists in the form of t" + p1.getProperty("transitionNum") + " b/w " + lastLastPlace + " and " + placeInfo.get(key).getProperty("placeNum") + "\n");
 												transientNetTransitions.remove(lastLastPlaceFullKey + "," + prevPlaceFullKey);
 												//g.removeTransition("t" + (numTransitions -1));
 												g.removeTransition("t" + removeTransNum);
@@ -1551,13 +1545,23 @@ public class LearnModel { // added ItemListener SB
 						//	numTransitions++;
 						//}
 						if (prevPlaceDuration != null){ //Delay on a transition is the duration spent at its preceding place
-							if (!(ipChange & opChange)){
+							/*if (!(ipChange & opChange)){
 								addDuration(p1, prevPlaceDuration);
 								out.write(" Added duration "  + prevPlaceDuration + " to transition t" + p1.getProperty("transitionNum") + "\n");
 							}
 							else{
 								addDuration(p1, 0.0);
 								out.write(" Added duration 0 to transition t" + p1.getProperty("transitionNum") + "\n");
+							}*/
+							if (!opChange){ //Commented above and changed to this on Aug 5,2010. When there's no o/p bin change, then thrs no need for delay.
+								addDuration(p1, 0.0);
+								out.write(" Added duration 0 to transition t" + p1.getProperty("transitionNum") + "\n");
+							} else if (careIpChange){ // Both o/p and a care i/p changed on the same transition. So, they changed at the same time.
+								addDuration(p1, 0.0);
+								out.write(" Added duration 0 to transition t" + p1.getProperty("transitionNum") + "\n");
+							} else { //o/p change alone or (o/p change and don't care i/p change)
+								addDuration(p1, prevPlaceDuration);
+								out.write(" Added duration "  + prevPlaceDuration + " to transition t" + p1.getProperty("transitionNum") + "\n");
 							}
 						} else {
 							out.write(" Not adding duration here. CHECK\n");
@@ -2841,29 +2845,39 @@ public class LearnModel { // added ItemListener SB
 	}
 	
 	public void addPseudo(HashMap<String,ArrayList<Double>> scaledThresholds){
-		lpnWithPseudo = new LhpnFile();
-		lpnWithPseudo = mergeLhpns(lpnWithPseudo,g);
-		//inputs = new ArrayList<Integer>();
-		pseudoVars = new HashMap<String,Boolean>();
-		pseudoVars.put("ctl",true);
-		//for (int i = 0; i < reqdVarsL.size(); i++) {
-		//	if (reqdVarsL.get(i).isInput()){
-		//		inputs.add(i);
-		//	}
-		//}
-		for (String st : g.getPlaceList()){
-			currentPlace = st;
-			//TODO: do this only if not prop type place
-			if (getPlaceInfoIndex(st) != null)
-				currPlaceBin = getPlaceInfoIndex(st).split(",");
-			else 
-				currPlaceBin = getTransientNetPlaceIndex(st).split(",");
-//			visitedPlaces = new HashMap<String,Boolean>();
-//			visitedPlaces.put(currentPlace, true);
-			traverse(scaledThresholds);
+		try{
+			lpnWithPseudo = new LhpnFile();
+			lpnWithPseudo = mergeLhpns(lpnWithPseudo,g);
+			pseudoVars = new HashMap<String,Boolean>();
+			//pseudoVars.put("ctl",true);
+			for (int i = 0; i < reqdVarsL.size(); i++) {
+				if ((reqdVarsL.get(i).isInput()) && (reqdVarsL.get(i).isCare())){
+					pseudoVars.put(reqdVarsL.get(i).getName(),true);
+				}
+			}
+			if ((pseudoVars != null) && (pseudoVars.size() != 0)){
+				for (String st : g.getPlaceList()){
+					currentPlace = st;
+					//TODO: do this only if not prop type place
+					if (getPlaceInfoIndex(st) != null)
+						currPlaceBin = getPlaceInfoIndex(st).split(",");
+					else if (getTransientNetPlaceIndex(st) != null)
+						currPlaceBin = getTransientNetPlaceIndex(st).split(",");
+					else 
+						out.write("WARNING: " + st + " is not in the placelist. It should be initPlace, otherwise something wrong\n");
+					//			visitedPlaces = new HashMap<String,Boolean>();
+					//			visitedPlaces.put(currentPlace, true);
+					traverse(scaledThresholds);
+				}
+			}
+		}catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Log file couldn't be written.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	private void traverse(HashMap<String,ArrayList<Double>> scaledThresholds){
 		for (String nextPlace : g.getPlaceList()){
 			if ((!nextPlace.equalsIgnoreCase(currentPlace)) && (getPlaceInfoIndex(nextPlace) != null)){
@@ -2882,50 +2896,59 @@ public class LearnModel { // added ItemListener SB
 		int bin;
 		String st; 
 		Boolean pseudo = false;
-		for (int i = 0; i < reqdVarsL.size(); i++) {
-			if (reqdVarsL.get(i).isInput()){
-				if (Integer.valueOf(currPlaceBin[i]) == Integer.valueOf(nextPlaceBin[i])){
-					continue;
+		try{
+			for (int i = 0; i < reqdVarsL.size(); i++) {
+				if ((reqdVarsL.get(i).isInput()) && (reqdVarsL.get(i).isCare())){
+					if (Integer.valueOf(currPlaceBin[i]) == Integer.valueOf(nextPlaceBin[i])){
+						continue;
+					} else {
+						if (!pseudoVars.containsKey(reqdVarsL.get(i).getName())){
+						// If the 2 places differ in the bins of a non-pseudovar, then u can't add pseudotrans there coz other variables belong to diff bins in these 2 places
+							pseudo = false;
+							break;
+						}
+						if (Math.abs(Integer.valueOf(currPlaceBin[i]) - Integer.valueOf(nextPlaceBin[i])) > 1){
+							// If the 2 places differ in the bins of a pseudovar but are not adjacent, then u can't add pseudotrans there
+							pseudo = false;
+							break;
+						}
+						pseudo = true;
+						bin = Integer.valueOf(nextPlaceBin[i]);
+						st = reqdVarsL.get(i).getName();
+						if (bin == 0){
+							if (!enabling.equalsIgnoreCase(""))
+								enabling += "&";
+							enabling += "~(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
+						} else if (bin == (scaledThresholds.get(st).size())){
+							if (!enabling.equalsIgnoreCase(""))
+								enabling += "&";
+							enabling += "(" + st + ">="	+ (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")";
+						} else{
+							if (!enabling.equalsIgnoreCase(""))
+								enabling += "&";
+							enabling += "(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")&~(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
+						}
+					}
 				} else {
-					if (!pseudoVars.containsKey(reqdVarsL.get(i).getName())){
+					if (Integer.valueOf(currPlaceBin[i]) != Integer.valueOf(nextPlaceBin[i])){
 						pseudo = false;
 						break;
 					}
-					if (Math.abs(Integer.valueOf(currPlaceBin[i]) - Integer.valueOf(nextPlaceBin[i])) > 1){
-						pseudo = false;
-						break;
-					}
-					pseudo = true;
-					bin = Integer.valueOf(nextPlaceBin[i]);
-					st = reqdVarsL.get(i).getName();
-					if (bin == 0){
-						if (!enabling.equalsIgnoreCase(""))
-							enabling += "&";
-						enabling += "~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
-					} else if (bin == (scaledThresholds.get(st).size())){
-						if (!enabling.equalsIgnoreCase(""))
-							enabling += "&";
-						enabling += "(" + st + ">="	+ (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")";
-					} else{
-						if (!enabling.equalsIgnoreCase(""))
-							enabling += "&";
-						enabling += "(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")&~(" + st + ">=" + (int) Math.ceil(scaledThresholds.get(st).get(bin).doubleValue()) + ")";
-					}
-				}
-			} else {
-				if (Integer.valueOf(currPlaceBin[i]) != Integer.valueOf(nextPlaceBin[i])){
-					pseudo = false;
-					break;
 				}
 			}
-		}
-		if (pseudo){
-			System.out.println("Adding pseudo-transition pt"  + pseudoTransNum + " between " + currentPlace + " and " + nextPlace + " with enabling " + enabling + "\n");
-			lpnWithPseudo.addTransition("pt" + pseudoTransNum);
-			lpnWithPseudo.addMovement(currentPlace, "pt" + pseudoTransNum); 
-			lpnWithPseudo.addMovement("pt" + pseudoTransNum, nextPlace);
-			lpnWithPseudo.addEnabling("pt" + pseudoTransNum, enabling);
-			pseudoTransNum++;
+			if (pseudo){
+				out.write("Adding pseudo-transition pt"  + pseudoTransNum + " between " + currentPlace + " and " + nextPlace + " with enabling " + enabling + "\n");
+				lpnWithPseudo.addTransition("pt" + pseudoTransNum);
+				lpnWithPseudo.addMovement(currentPlace, "pt" + pseudoTransNum); 
+				lpnWithPseudo.addMovement("pt" + pseudoTransNum, nextPlace);
+				lpnWithPseudo.addEnabling("pt" + pseudoTransNum, enabling);
+				pseudoTransNum++;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Log file couldn't be written.",
+					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 	
@@ -4144,11 +4167,14 @@ public class LearnModel { // added ItemListener SB
 	//T[] aux = (T[])a.clone();
 	
 	public LhpnFile mergeLhpns(LhpnFile l1,LhpnFile l2){//(LhpnFile l1, LhpnFile l2){
+		l1.save(directory + separator + "l1.lpn"); //since there's no deep copy method
+		l2.save(directory + separator + "l2.lpn");
 		String place1 = "p([-\\d]+)", place2 = "P([-\\d]+)";
 		String transition1 = "t([-\\d]+)", transition2 = "T([-\\d]+)";
 		int placeNum, transitionNum;
 		int minPlace=0, maxPlace=0, minTransition = 0, maxTransition = 0;
 		Boolean first = true;
+		LhpnFile l3 = new LhpnFile();
 		try{
 			for (String st1: l1.getPlaceList()){
 				if ((st1.matches(place1)) || (st1.matches(place2))){
@@ -4236,7 +4262,16 @@ public class LearnModel { // added ItemListener SB
 				}
 			}
 			l2.save(directory + separator + "tmp.lpn");
-			l1.load(directory + separator + "tmp.lpn");
+			l3 = new LhpnFile();
+			l3.load(directory + separator + "l1.lpn");
+			l3.load(directory + separator + "tmp.lpn");
+			l2 = new LhpnFile();
+			l2.load(directory + separator + "l2.lpn");
+			File l1File = new File(directory + separator + "l1.lpn");
+			File l2File = new File(directory + separator + "l2.lpn");
+			l1File.delete(); l2File.delete();
+			//l2.save(directory + separator + "tmp.lpn");
+			//l1.load(directory + separator + "tmp.lpn");
 			File tmp = new File(directory + separator + "tmp.lpn");
 			tmp.delete();
 		}catch(Exception e){
@@ -4245,7 +4280,8 @@ public class LearnModel { // added ItemListener SB
 					"Problem while merging lpns",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
-		return l1;
+		//return l1;
+		return l3;
 	}
 }
 

@@ -96,32 +96,32 @@ public class Lpn2verilog {
 			for (String st: placeList){
 				System.out.print(st + " ");
 			}*/
-			StringBuffer tempBuff = new StringBuffer();
+			//StringBuffer tempBuff = new StringBuffer();
 			initBuffer.append("\t\t$dumpfile(\"" + svModuleName + ".vcd\");\n");
 			initBuffer.append("\t\t$dumpvars(0," + svModuleName + ");\n");
 			for (String st: transitionList){
 				if (first){
 					sv.write("\twire " + st);
-					tempBuff.append("\tint unsigned pr_" + st);
-			//		initBuffer.append("\t\t" + st + " <= 0"); As transitions are wires, no initial values to them
-					if (lpn.getTransition(st).containsPriority())
-						initBuffer.append("\t\tpr_" + st + " = " + lpn.getTransition(st).getPriority());
-					else
-						initBuffer.append("\t\tpr_" + st + " = $urandom");
+			//		tempBuff.append("\tint unsigned pr_" + st);
+			////		initBuffer.append("\t\t" + st + " <= 0"); As transitions are wires, no initial values to them
+			//		if (lpn.getTransition(st).containsPriority())
+			//			initBuffer.append("\t\tpr_" + st + " = " + lpn.getTransition(st).getPriority());
+			//		else
+			//			initBuffer.append("\t\tpr_" + st + " = $urandom");
 					first = false;
 				} else{
 					sv.write(", " + st);
-					tempBuff.append(", pr_" + st);
-			//		initBuffer.append("; " + st + " <= 0");
-					if (lpn.getTransition(st).containsPriority())
-						initBuffer.append("; pr_" + st + " = " + lpn.getTransition(st).getPriority());
-					else
-						initBuffer.append("; pr_" + st + " = $urandom");
+			//		tempBuff.append(", pr_" + st);
+			////		initBuffer.append("; " + st + " <= 0");
+			//		if (lpn.getTransition(st).containsPriority())
+			//			initBuffer.append("; pr_" + st + " = " + lpn.getTransition(st).getPriority());
+			//		else
+			//			initBuffer.append("; pr_" + st + " = $urandom");
 				}
 			}
 			if (!first){
 				sv.write(";\n");
-				sv.write(tempBuff.toString() + ";\n");
+			//	sv.write(tempBuff.toString() + ";\n");
 				initBuffer.append(";\n");
 			}
 			first = true;
@@ -286,8 +286,8 @@ public class Lpn2verilog {
 				if (delayTree != null){
 					String delay = delayTree.getElement("Verilog");
 					if (delay.contains("uniform")){ //range
-						delay = delay.replaceAll("uniform\\(", "");
-						delay = delay.replaceAll("\\)", "");
+						delay = delay.replaceFirst("uniform\\(", "");
+						delay = delay.substring(0, delay.length()-1); //delay = delay.replace("\\)", "");
 					} else {
 						delay = delay + "," + delay;
 					}
