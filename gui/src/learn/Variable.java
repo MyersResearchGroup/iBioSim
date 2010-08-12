@@ -24,12 +24,15 @@ public class Variable implements Comparable<Variable>{
 	
 	private Double epsilon;
 	
+	private boolean destab;
+	
 	public Variable(String name){
 		this.name = name;
 		this.runs = new DMVCrun();
 		this.forceType = null;
 		this.care = true;
 		this.epsilon = null; //default
+		this.destab = false;
 	}
 
 	public boolean isDmvc() {
@@ -154,6 +157,7 @@ public class Variable implements Comparable<Variable>{
 		this.forceType = a.forceType;
 		this.care = a.care;
 		this.epsilon = a.epsilon;
+		this.destab = a.destab;
 		// NOT Copying the init values and rates bcoz they get normalized every time a learn is performed on them. 
 		// So the values get multiplied by the same factor multiple times which is wrong.
 	//	this.initValue_vMax = a.initValue_vMax;
@@ -203,6 +207,14 @@ public class Variable implements Comparable<Variable>{
 	public Double getEpsilon() {
 		// TODO Auto-generated method stub
 		return(epsilon);
+	}
+	
+	public boolean isDestab() {
+		return destab;
+	}
+	
+	public void setDestab(boolean b) {
+		destab = b;
 	}
 	
 	/*

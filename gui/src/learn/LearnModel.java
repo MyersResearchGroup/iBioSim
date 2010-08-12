@@ -161,6 +161,8 @@ public class LearnModel { // added ItemListener SB
 	private boolean dmvStatusLoaded = false;
 	
 	private int pathLengthVar = 40;
+	
+	private double unstableTime;
 
 	private boolean binError;
 
@@ -213,6 +215,7 @@ public class LearnModel { // added ItemListener SB
 			runLength = (int) tPar.get("runLength").doubleValue();
 			runTime = null;
 		}
+		unstableTime = tPar.get("unstableTime").doubleValue();
 		new File(directory + separator + lhpnFile).delete();
 		try {
 
@@ -853,7 +856,7 @@ public class LearnModel { // added ItemListener SB
 			//int[] newBin = new int[destabIps.size()];
 			int[] oldBin = new int[dataIndices.size()];
 			int[] newBin = new int[dataIndices.size()];
-			double unstableTime = 5960.0;
+			//double unstableTime = 5960.0;
 			ArrayList<Double> dataForStable = new ArrayList<Double>();
 			point = 0;
 			dataForStable.add(0.0);	//Assume that always it starts unstable
