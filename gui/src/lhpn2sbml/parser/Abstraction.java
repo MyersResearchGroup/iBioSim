@@ -2802,7 +2802,7 @@ public class Abstraction extends LhpnFile {
 		removeVar(var2);
 	}
 
-	private boolean mergeTransitionsSimp(boolean change) {
+	public boolean mergeTransitionsSimp(boolean change) {
 		HashMap<Transition, ArrayList<Transition>> toMerge = new HashMap<Transition, ArrayList<Transition>>();
 		for (Transition t1 : transitions.values()) {
 			for (Transition t2 : transitions.values()) {
