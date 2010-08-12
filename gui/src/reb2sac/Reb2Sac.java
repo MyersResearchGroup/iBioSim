@@ -2468,7 +2468,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		try {
 			if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
 				printInterval = Double.parseDouble(interval.getText().trim());
-				if (printInterval <= 0) {
+				if (printInterval < 0) {
+					JOptionPane.showMessageDialog(biomodelsim.frame(),
+							"Must Enter A Positive Number Into The Print Interval Field.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				else if (printInterval == 0
+						&& !((String) intervalLabel.getSelectedItem()).contains("Minimum")) {
 					JOptionPane.showMessageDialog(biomodelsim.frame(),
 							"Must Enter A Positive Number Into The Print Interval Field.", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -2834,7 +2841,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		else {
 			label = new JLabel("Running " + simName);
 		}
-		int steps;
+		// int steps;
 		double runTime;
 		if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
 			if (simulators.getSelectedItem().equals("mpde")
@@ -2857,12 +2864,22 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				// JOptionPane.ERROR_MESSAGE);
 				// return;
 				// }
-				steps = (int) (timeLimit / printInterval);
+				// if (printInterval != 0.0) {
+				// steps = (int) (timeLimit / printInterval);
+				// }
+				// else {
+				// steps = ((int) timeLimit);
+				// }
 				runTime = timeLimit;
 				// progress = new JProgressBar(0, (int) timeLimit);
 			}
 			else {
-				steps = (int) ((timeLimit / printInterval) * run);
+				// if (printInterval != 0.0) {
+				// steps = (int) ((timeLimit / printInterval) * run);
+				// }
+				// else {
+				// steps = ((int) timeLimit * run);
+				// }
 				runTime = timeLimit * run;
 				// progress = new JProgressBar(0, (int) (timeLimit * run));//
 				// steps);
@@ -2873,7 +2890,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					|| simulators.getSelectedItem().equals("mp")
 					|| simulators.getSelectedItem().equals("mp-adaptive")
 					|| simulators.getSelectedItem().equals("mp-event")) {
-				steps = (int) (printInterval);
+				// steps = (int) (printInterval);
 				runTime = timeLimit;
 				// progress = new JProgressBar(0, (int) timeLimit);
 				// double interval = timeLimit / steps;
@@ -2887,7 +2904,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				// }
 			}
 			else {
-				steps = (int) (printInterval * run);
+				// steps = (int) (printInterval * run);
 				runTime = timeLimit * run;
 				// progress = new JProgressBar(0, (int) timeLimit * run);//
 				// steps);
@@ -3045,8 +3062,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					monteCarlo, sim, printer_id, printer_track_quantity,
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
-					simTab, root, progress, steps, simName + " " + direct, gcmEditor, direct,
-					timeLimit, runTime, modelFile, lhpnAbstraction, abstraction);
+					simTab, root, progress, simName + " " + direct, gcmEditor, direct, timeLimit,
+					runTime, modelFile, lhpnAbstraction, abstraction);
 		}
 		else {
 			if (gcmEditor != null) {
@@ -3070,7 +3087,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					monteCarlo, sim, printer_id, printer_track_quantity,
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
-					simTab, root, progress, steps, simName, gcmEditor, null, timeLimit, runTime,
+					simTab, root, progress, simName, gcmEditor, null, timeLimit, runTime,
 					modelFile, lhpnAbstraction, abstraction);
 		}
 		if (nary.isSelected() && gcmEditor == null && !sim.equals("markov-chain-analysis")
@@ -4871,7 +4888,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	public String getSimID() {
 		return fileStem.getText().trim();
 	}
-	
+
 	public String getSimPath() {
 		if (!fileStem.getText().trim().equals("")) {
 			return root + separator + simName + separator + fileStem.getText().trim();

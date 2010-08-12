@@ -114,9 +114,9 @@ public class Nary_Run implements ActionListener, Runnable {
 	private String direct;
 
 	private String modelFile;
-	
+
 	private JRadioButton abstraction;
-	
+
 	private AbstPane abstPane;
 
 	/**
@@ -133,7 +133,8 @@ public class Nary_Run implements ActionListener, Runnable {
 			String printer_id, String printer_track_quantity, String[] termCond,
 			String[] intSpecies, double rap1, double rap2, double qss, int con, Log log,
 			JCheckBox usingSSA, String ssaFile, BioSim biomodelsim, JTabbedPane simTab,
-			String root, String direct, String modelFile, JRadioButton abstraction, AbstPane abstPane) {
+			String root, String direct, String modelFile, JRadioButton abstraction,
+			AbstPane abstPane) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -586,7 +587,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		}
 		runProgram.execute(filename, sbml, dot, xhtml, lhpn, naryFrame, ODE, monteCarlo, sim,
 				printer_id, printer_track_quantity, outDir, nary, 2, intSpecies, log, usingSSA,
-				ssaFile, biomodelsim, simTab, root, progress, run, "", null, direct, timeLimit,
+				ssaFile, biomodelsim, simTab, root, progress, "", null, direct, timeLimit,
 				timeLimit * run, modelFile, abstPane, abstraction);
 		running.setCursor(null);
 		running.dispose();
