@@ -1106,7 +1106,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					}
 					else {
 						JOptionPane.showMessageDialog(biosim.frame(), "Cannot remove species " + name
-								+ " because it is currently in other reactions");
+								+ " because it is currently in other reactions and/or components.");
 					}
 				}
 			}
@@ -1315,6 +1315,22 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		return new InfluencePanel(id, influences, gcm, paramsOnly, biosim);
 	}
 	
+	public boolean checkNoComponentLoop(String gcm, String checkFile) {
+		boolean check = true;
+		GCMFile g = new GCMFile(path);
+		g.load(path + separator + checkFile);
+		for (String comp : g.getComponents().keySet()) {
+			String compGCM = g.getComponents().get(comp).getProperty("gcm");
+			if (compGCM.equals(gcm)) {
+				return false;
+			}
+			else {
+				check = checkNoComponentLoop(gcm, compGCM);
+			}
+		}
+		return check;
+	}
+	
 	/*
 	 * 
 	 * Displays the "Choose Component" dialog and then adds the component afterward.
@@ -1342,7 +1358,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		else {
 			ArrayList<String> components = new ArrayList<String>();
 			for (String s : new File(path).list()) {
-				if (s.endsWith(".gcm") && !s.equals(filename)) {
+				if (s.endsWith(".gcm") && !s.equals(filename) && checkNoComponentLoop(filename, s)) {
 					components.add(s);
 				}
 			}

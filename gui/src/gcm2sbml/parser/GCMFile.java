@@ -77,7 +77,7 @@ public class GCMFile {
 	
 	private String separator;
 	
-	private String filename;
+	private String filename = null;
 
 	public GCMFile(String path) {
 		if (File.separator.equals("\\")) {
@@ -292,8 +292,18 @@ public class GCMFile {
 		naryFrame.setResizable(false);
 		naryFrame.setVisible(true);
 	}
+	
+	private ArrayList<String> copyArray(ArrayList<String> original) {
+		ArrayList<String> copy = new ArrayList<String>();
+		for (String element : original) {
+			copy.add(element);
+		}
+		return copy;
+	}
 
 	public SBMLDocument flattenGCM(boolean includeSBML) {
+		ArrayList<String> gcms = new ArrayList<String>();
+		gcms.add(filename);
 		save(filename + ".temp");
 		ArrayList<String> comps = setToArrayList(components.keySet());
 		SBMLDocument sbml = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
@@ -318,8 +328,20 @@ public class GCMFile {
 					file.setParameter(p, globalParameters.get(p));
 				}
 			}
-			sbml = unionSBML(sbml, unionGCM(this, file, s, includeSBML), s);
-			if (sbml == null && includeSBML) {
+			ArrayList<String> copy = copyArray(gcms);
+			if (copy.contains(file.getFilename())) {
+				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n" + "There is a loop in the components.");
+				load(filename + ".temp");
+				return null;
+			}
+			copy.add(file.getFilename());
+			sbml = unionSBML(sbml, unionGCM(this, file, s, includeSBML, copy), s);
+			if (sbml == null && copy.isEmpty()) {
+				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n" + "There is a loop in the components.");
+				load(filename + ".temp");
+				return null;
+			}
+			else if (sbml == null && includeSBML) {
 				Utility.createErrorMessage("Cannot Merge SBMLs", "Unable to merge sbml files from components.");
 				load(filename + ".temp");
 				return null;
@@ -341,7 +363,7 @@ public class GCMFile {
 		return sbml;
 	}
 
-	private SBMLDocument unionGCM(GCMFile topLevel, GCMFile bottomLevel, String compName, boolean includeSBML) {
+	private SBMLDocument unionGCM(GCMFile topLevel, GCMFile bottomLevel, String compName, boolean includeSBML, ArrayList<String> gcms) {
 		ArrayList<String> mod = setToArrayList(bottomLevel.components.keySet());
 		SBMLDocument sbml = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		Model m = sbml.createModel();
@@ -360,7 +382,15 @@ public class GCMFile {
 					file.setParameter(p, bottomLevel.globalParameters.get(p));
 				}
 			}
-			sbml = unionSBML(sbml, unionGCM(bottomLevel, file, s, includeSBML), s);
+			ArrayList<String> copy = copyArray(gcms);
+			if (copy.contains(file.getFilename())) {
+				while (!gcms.isEmpty()) {
+					gcms.remove(0);
+				}
+				return null;
+			}
+			copy.add(file.getFilename());
+			sbml = unionSBML(sbml, unionGCM(bottomLevel, file, s, includeSBML, copy), s);
 			if (sbml == null) {
 				return null;
 			}
@@ -1046,7 +1076,9 @@ public class GCMFile {
 	}                                            
                                                  
 	public void load(String filename) {          
-		this.filename = filename;                
+		if (!filename.endsWith(".temp")) {
+			this.filename = filename;
+		}
 		species = new HashMap<String, Properties>();
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
@@ -1528,6 +1560,48 @@ public class GCMFile {
 		for (String s : influences.keySet()) {
 			if (s.contains(name)) {
 				return false;
+			}
+		}
+		if (species.get(name).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)
+				|| species.get(name).getProperty(GlobalConstants.TYPE).equals(
+						GlobalConstants.OUTPUT)) {
+			for (String s : new File(path).list()) {
+				if (s.endsWith(".gcm")) {
+					GCMFile g = new GCMFile(path);
+					g.load(path + separator + s);
+					for (String comp : g.getComponents().keySet()) {
+						String compGCM = g.getComponents().get(comp).getProperty("gcm");
+						if (filename.endsWith(compGCM)
+								&& g.getComponents().get(comp).containsKey(name)) {
+							return false;
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
+	public boolean editSpeciesCheck(String name, String newType) {
+		if (species.get(name).getProperty(GlobalConstants.TYPE).equals(newType)) {
+			return true;
+		}
+		else if ((species.get(name).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.INPUT) || species
+				.get(name).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT))
+				&& !(newType.equals(GlobalConstants.OUTPUT) || newType
+						.equals(GlobalConstants.INPUT))) {
+			for (String s : new File(path).list()) {
+				if (s.endsWith(".gcm")) {
+					GCMFile g = new GCMFile(path);
+					g.load(path + separator + s);
+					for (String comp : g.getComponents().keySet()) {
+						String compGCM = g.getComponents().get(comp).getProperty("gcm");
+						if (filename.endsWith(compGCM)
+								&& g.getComponents().get(comp).containsKey(name)) {
+							return false;
+						}
+					}
+				}
 			}
 		}
 		return true;
@@ -2644,6 +2718,10 @@ public class GCMFile {
 	
 		for (int c = 0; c < node.getNumChildren(); c++)
 			setTimeAndTrigVar(node.getChild(c));
+	}
+	
+	public String getFilename(){
+		return filename;
 	}
 	
 	public String getPath(){
