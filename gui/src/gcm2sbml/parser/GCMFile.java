@@ -1586,10 +1586,9 @@ public class GCMFile {
 		if (species.get(name).getProperty(GlobalConstants.TYPE).equals(newType)) {
 			return true;
 		}
-		else if ((species.get(name).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.INPUT) || species
-				.get(name).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT))
-				&& !(newType.equals(GlobalConstants.OUTPUT) || newType
-						.equals(GlobalConstants.INPUT))) {
+		else if (species.get(name).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)
+				|| species.get(name).getProperty(GlobalConstants.TYPE).equals(
+						GlobalConstants.OUTPUT)) {
 			for (String s : new File(path).list()) {
 				if (s.endsWith(".gcm")) {
 					GCMFile g = new GCMFile(path);
