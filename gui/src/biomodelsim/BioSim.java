@@ -2143,16 +2143,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (e.getSource() == viewCoverage) { // SB
 			Component comp = tab.getSelectedComponent();
-			if (treeSelected) {
-				JOptionPane.showMessageDialog(frame(), "No Coverage report exists.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+			//if (treeSelected) {
+			//	JOptionPane.showMessageDialog(frame(), "No Coverage report exists.", "Error",
+			//			JOptionPane.ERROR_MESSAGE);
+			//}
+			//else if (comp instanceof JTabbedPane) {
+			Component component = ((JTabbedPane) comp).getSelectedComponent();
+			if (component instanceof LearnLHPN) {
+				((LearnLHPN) component).viewCoverage();
 			}
-			else if (comp instanceof JTabbedPane) {
-				Component component = ((JTabbedPane) comp).getSelectedComponent();
-				if (component instanceof LearnLHPN) {
-					((LearnLHPN) component).viewCoverage();
-				}
-			}
+			//}
 		}
 		else if (e.getSource() == viewVHDL) { // SB
 			Component comp = tab.getSelectedComponent();
@@ -7581,8 +7581,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 			}
 		}
-		enableTreeMenu();
 		enableTabMenu(tab.getSelectedIndex());
+		enableTreeMenu();
 	}
 
 	public int getTab(String name) {
