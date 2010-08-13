@@ -54,7 +54,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		JPanel tempPanel = new JPanel();
 		JLabel tempLabel = new JLabel(GlobalConstants.TYPE);
 		typeBox = new JComboBox(types);
-		typeBox.setSelectedItem(types[0]);
+		typeBox.setSelectedItem(types[1]);
 		typeBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
