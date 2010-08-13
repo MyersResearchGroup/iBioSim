@@ -2143,16 +2143,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (e.getSource() == viewCoverage) { // SB
 			Component comp = tab.getSelectedComponent();
-			//if (treeSelected) {
-			//	JOptionPane.showMessageDialog(frame(), "No Coverage report exists.", "Error",
-			//			JOptionPane.ERROR_MESSAGE);
-			//}
-			//else if (comp instanceof JTabbedPane) {
+			// if (treeSelected) {
+			// JOptionPane.showMessageDialog(frame(),
+			// "No Coverage report exists.", "Error",
+			// JOptionPane.ERROR_MESSAGE);
+			// }
+			// else if (comp instanceof JTabbedPane) {
 			Component component = ((JTabbedPane) comp).getSelectedComponent();
 			if (component instanceof LearnLHPN) {
 				((LearnLHPN) component).viewCoverage();
 			}
-			//}
+			// }
 		}
 		else if (e.getSource() == viewVHDL) { // SB
 			Component comp = tab.getSelectedComponent();
@@ -2853,17 +2854,32 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 					else {
 						String view = "";
+						String gcms = "";
 						for (int i = 0; i < views.length; i++) {
-							if (i == views.length - 1) {
-								view += views[i];
+							if (views[i].endsWith(".gcm")) {
+								gcms += views[i] + "\n";
 							}
 							else {
 								view += views[i] + "\n";
 							}
 						}
-						String message = "Unable to delete the selected file."
-								+ "\nIt is linked to the following views:\n" + view
-								+ "\nDelete these views first.";
+						String message;
+						if (gcms.equals("")) {
+							message = "Unable to delete the selected file."
+									+ "\nIt is linked to the following views:\n" + view
+									+ "Delete these views first.";
+						}
+						else if (view.equals("")) {
+							message = "Unable to delete the selected file."
+									+ "\nIt is linked to the following gcms:\n" + gcms
+									+ "Delete these gcms first.";
+						}
+						else {
+							message = "Unable to delete the selected file."
+									+ "\nIt is linked to the following views:\n" + view
+									+ "It is also linked to the following gcms:\n" + gcms
+									+ "Delete these views and gcms first.";
+						}
 						JTextArea messageArea = new JTextArea(message);
 						messageArea.setEditable(false);
 						JScrollPane scroll = new JScrollPane();
@@ -13187,30 +13203,51 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			else {
 				String view = "";
+				String gcms = "";
 				for (int i = 0; i < views.length; i++) {
-					if (i == views.length - 1) {
-						view += views[i];
+					if (views[i].endsWith(".gcm")) {
+						gcms += views[i] + "\n";
 					}
 					else {
 						view += views[i] + "\n";
 					}
 				}
-				String message = "The file, " + name
-						+ ", aleeady exists, and\nit is linked to the following views:\n\n" + view
-						+ "\n\nAre you sure you want to overwrite?";
+				String message;
+				if (gcms.equals("")) {
+					message = "Unable to overwrite the selected file."
+							+ "\nIt is linked to the following views:\n" + view
+							+ "Delete these views first.";
+				}
+				else if (view.equals("")) {
+					message = "Unable to overwrite the selected file."
+							+ "\nIt is linked to the following gcms:\n" + gcms
+							+ "Delete these gcms first.";
+				}
+				else {
+					message = "Unable to overwrite the selected file."
+							+ "\nIt is linked to the following views:\n" + view
+							+ "It is also linked to the following gcms:\n" + gcms
+							+ "Delete these views and gcms first.";
+				}
+				// String message = "The file, " + name
+				// +
+				// ", already exists, and\nit is linked to the following views:\n\n"
+				// + view
+				// + "\n\nAre you sure you want to overwrite?";
 				JTextArea messageArea = new JTextArea(message);
 				messageArea.setEditable(false);
 				JScrollPane scroll = new JScrollPane();
 				scroll.setMinimumSize(new Dimension(300, 300));
 				scroll.setPreferredSize(new Dimension(300, 300));
 				scroll.setViewportView(messageArea);
-				value = JOptionPane.showOptionDialog(frame, scroll, "Overwrite",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-						options[0]);
-				/*
-				 * JOptionPane.showMessageDialog(frame, scroll,
-				 * "Unable To Overwrite File", JOptionPane.ERROR_MESSAGE);
-				 */
+				JOptionPane.showMessageDialog(frame, scroll, "Unable To Overwrite File",
+						JOptionPane.ERROR_MESSAGE);
+				// value = JOptionPane.showOptionDialog(frame, scroll,
+				// "Overwrite",
+				// JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+				// options,
+				// options[0]);
+				value = JOptionPane.NO_OPTION;
 			}
 			if (value == JOptionPane.YES_OPTION) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
@@ -13351,6 +13388,21 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				if (check.equals(filename)) {
 					views.add(s);
+				}
+			}
+			else if (s.endsWith(".gcm")
+					&& (filename.endsWith(".gcm") || filename.endsWith(".xml") || filename
+							.endsWith(".sbml"))) {
+				GCMFile gcm = new GCMFile(root);
+				gcm.load(root + separator + s);
+				if (gcm.getSBMLFile().equals(filename)) {
+					views.add(s);
+				}
+				for (String comp : gcm.getComponents().keySet()) {
+					if (gcm.getComponents().get(comp).getProperty("gcm").equals(filename)) {
+						views.add(s);
+						break;
+					}
 				}
 			}
 		}
