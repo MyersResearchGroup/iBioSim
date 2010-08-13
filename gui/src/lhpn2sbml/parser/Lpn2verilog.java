@@ -122,7 +122,7 @@ public class Lpn2verilog {
 			if (!first){
 				sv.write(";\n");
 			//	sv.write(tempBuff.toString() + ";\n");
-				initBuffer.append(";\n");
+			//	initBuffer.append(";\n");
 			}
 			first = true;
 			for (String v: varsList){
@@ -171,7 +171,7 @@ public class Lpn2verilog {
 			}
 			if (!first)
 				sv.write(";\n");
-			if (netCount >=1){
+			//if (netCount >=1){
 				/*sv.write("\tint unsigned ");
 				Boolean firstPr = true;
 				for (int j = 0; j < netCount; j++)
@@ -183,7 +183,7 @@ public class Lpn2verilog {
 						sv.write(",pr" + j + "[string],prMax" + j);
 				sv.write(";\n");*/
 			//	sv.write("\tint unsigned pr" + "[string],prMax;\n");
-			}
+			//}
 			if (!first){
 				initBuffer.append(";\n");
 				initBuffer.append(markedPlaceBuffer);

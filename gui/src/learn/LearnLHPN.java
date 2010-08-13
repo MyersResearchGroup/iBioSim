@@ -1380,7 +1380,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								if (reqdVarsL.get(reqdVarsL.size() - 1).getName().equalsIgnoreCase(var))
 									reqdVarsL.get(reqdVarsL.size() - 1).setCare(false);
 							}
-						}
+						} 
+					    if ((((((JComboBox) variables.get(i).get(1)).getSelectedItem()).toString()).equalsIgnoreCase("Input"))){
+					    	reqdVarsL.get(findReqdVarslIndex(var)).setInput(true);
+					    } else {
+					    	reqdVarsL.get(findReqdVarslIndex(var)).setInput(false);
+					    }
 					}
 					else{
 						((JCheckBox) variables.get(i).get(2)).setEnabled(false);
@@ -3084,9 +3089,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				
 				g.save(directory + separator + lhpnFile);
 				
-		//		Abstraction a = new Abstraction(g, new AbstPane(directory,lhpnFile,log,biosim,true,false));
-		//		a.mergeTransitionsSimp(true);
-		//		g.save(directory + separator + "abstracted" + lhpnFile);
+				Abstraction a = new Abstraction(g, new AbstPane(directory,lhpnFile,log,biosim,true,false));
+				a.mergeTransitionsSimp(true);
+				g.save(directory + separator + "abstracted" + lhpnFile);
 			
 				viewLog.setEnabled(true);
 				//System.out.println(directory + separator + lhpnFile);
@@ -5310,7 +5315,11 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	//public ArrayList<ArrayList<Double>> initDivisions(Double[][] extrema){
 	public HashMap<String, ArrayList<Double>> initDivisions(HashMap<String,Double[]> extrema){
 		// this method won't be called in auto case.. so dont worry?
-		int numThresholds = Integer.parseInt(numBins.getSelectedItem().toString()) - 1;
+		int numThresholds;
+		if (numBins.getSelectedItem().toString().equalsIgnoreCase("Auto"))
+			numThresholds = -1;
+		else
+			numThresholds = Integer.parseInt(numBins.getSelectedItem().toString()) - 1;
 		double interval;
 		//ArrayList<ArrayList<Double>> divisions = new ArrayList<ArrayList<Double>>(); //changed for replacing divisionsL by threholds
 		HashMap<String, ArrayList<Double>> localThresholds = new HashMap<String, ArrayList<Double>> ();
