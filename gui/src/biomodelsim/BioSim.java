@@ -245,7 +245,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	private Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 
-	private boolean async, treeSelected = false, popupFlag = false, menuFlag = false;
+	private boolean async, popupFlag = false, menuFlag = false, treeSelected = false;
 
 	public boolean atacs, lema;
 
@@ -3239,106 +3239,71 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getActionCommand().equals("graph")) {
 			String directory = "";
 			String theFile = "";
-			if (!treeSelected) {
-				Component comp = tab.getSelectedComponent();
-				if (comp instanceof JTabbedPane) {
-					Component component = ((JTabbedPane) comp).getSelectedComponent();
-					if (component instanceof Learn) {
-						((Learn) component).viewGcm();
+			/*
+			 * if (!treeSelected) { Component comp = tab.getSelectedComponent();
+			 * if (comp instanceof JTabbedPane) { Component component =
+			 * ((JTabbedPane) comp).getSelectedComponent(); if (component
+			 * instanceof Learn) { ((Learn) component).viewGcm(); return; } }
+			 * else if (comp instanceof LHPNEditor) { try { String filename =
+			 * tab.getTitleAt(tab.getSelectedIndex()); String[] findTheFile =
+			 * filename.split("\\."); theFile = findTheFile[0] + ".dot"; File
+			 * dot = new File(root + separator + theFile); dot.delete(); String
+			 * cmd = "atacs -cPllodpl " + filename; File work = new File(root);
+			 * Runtime exec = Runtime.getRuntime(); Process ATACS =
+			 * exec.exec(cmd, null, work); ATACS.waitFor();
+			 * log.addText("Executing:\n" + cmd); if (dot.exists()) { String
+			 * command = ""; if
+			 * (System.getProperty("os.name").contentEquals("Linux")) { //
+			 * directory = ENVVAR + "/docs/"; command = "gnome-open "; } else if
+			 * (System.getProperty("os.name").toLowerCase().startsWith(
+			 * "mac os")) { // directory = ENVVAR + "/docs/"; command = "open ";
+			 * } else { // directory = ENVVAR + "\\docs\\"; command =
+			 * "dotty start "; } log.addText(command + root + separator +
+			 * theFile + "\n"); exec.exec(command + theFile, null, work); } else
+			 * { File log = new File(root + separator + "atacs.log");
+			 * BufferedReader input = new BufferedReader(new FileReader(log));
+			 * String line = null; JTextArea messageArea = new JTextArea();
+			 * while ((line = input.readLine()) != null) {
+			 * messageArea.append(line);
+			 * messageArea.append(System.getProperty("line.separator")); }
+			 * input.close(); messageArea.setLineWrap(true);
+			 * messageArea.setWrapStyleWord(true);
+			 * messageArea.setEditable(false); JScrollPane scrolls = new
+			 * JScrollPane(); scrolls.setMinimumSize(new Dimension(500, 500));
+			 * scrolls.setPreferredSize(new Dimension(500, 500));
+			 * scrolls.setViewportView(messageArea);
+			 * JOptionPane.showMessageDialog(frame(), scrolls, "Log",
+			 * JOptionPane.INFORMATION_MESSAGE); } return; } catch (Exception
+			 * e1) { JOptionPane.showMessageDialog(frame,
+			 * "Unable to view this lpn.", "Error", JOptionPane.ERROR_MESSAGE);
+			 * return; } } else if (comp instanceof SBML_Editor) { directory =
+			 * root + separator; theFile =
+			 * tab.getTitleAt(tab.getSelectedIndex()); } else if (comp
+			 * instanceof GCM2SBMLEditor) { directory = root + separator;
+			 * theFile = tab.getTitleAt(tab.getSelectedIndex()); } } else {
+			 */
+			String filename = tree.getFile();
+			if (filename.lastIndexOf('/') >= 0) {
+				directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+				theFile = filename.substring(filename.lastIndexOf('/') + 1);
+			}
+			if (filename.lastIndexOf('\\') >= 0) {
+				directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+				theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+			}
+			for (int i = 0; i < tab.getTabCount(); i++) {
+				if (tab
+						.getTitleAt(i)
+						.equals(
+								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+					tab.setSelectedIndex(i);
+					if (save(i, 0) != 1) {
 						return;
 					}
-				}
-				else if (comp instanceof LHPNEditor) {
-					try {
-						String filename = tab.getTitleAt(tab.getSelectedIndex());
-						String[] findTheFile = filename.split("\\.");
-						theFile = findTheFile[0] + ".dot";
-						File dot = new File(root + separator + theFile);
-						dot.delete();
-						String cmd = "atacs -cPllodpl " + filename;
-						File work = new File(root);
-						Runtime exec = Runtime.getRuntime();
-						Process ATACS = exec.exec(cmd, null, work);
-						ATACS.waitFor();
-						log.addText("Executing:\n" + cmd);
-						if (dot.exists()) {
-							String command = "";
-							if (System.getProperty("os.name").contentEquals("Linux")) {
-								// directory = ENVVAR + "/docs/";
-								command = "gnome-open ";
-							}
-							else if (System.getProperty("os.name").toLowerCase().startsWith(
-									"mac os")) {
-								// directory = ENVVAR + "/docs/";
-								command = "open ";
-							}
-							else {
-								// directory = ENVVAR + "\\docs\\";
-								command = "dotty start ";
-							}
-							log.addText(command + root + separator + theFile + "\n");
-							exec.exec(command + theFile, null, work);
-						}
-						else {
-							File log = new File(root + separator + "atacs.log");
-							BufferedReader input = new BufferedReader(new FileReader(log));
-							String line = null;
-							JTextArea messageArea = new JTextArea();
-							while ((line = input.readLine()) != null) {
-								messageArea.append(line);
-								messageArea.append(System.getProperty("line.separator"));
-							}
-							input.close();
-							messageArea.setLineWrap(true);
-							messageArea.setWrapStyleWord(true);
-							messageArea.setEditable(false);
-							JScrollPane scrolls = new JScrollPane();
-							scrolls.setMinimumSize(new Dimension(500, 500));
-							scrolls.setPreferredSize(new Dimension(500, 500));
-							scrolls.setViewportView(messageArea);
-							JOptionPane.showMessageDialog(frame(), scrolls, "Log",
-									JOptionPane.INFORMATION_MESSAGE);
-						}
-						return;
-					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to view this lpn.", "Error",
-								JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-				}
-				else if (comp instanceof SBML_Editor) {
-					directory = root + separator;
-					theFile = tab.getTitleAt(tab.getSelectedIndex());
-				}
-				else if (comp instanceof GCM2SBMLEditor) {
-					directory = root + separator;
-					theFile = tab.getTitleAt(tab.getSelectedIndex());
+					break;
 				}
 			}
-			else {
-				String filename = tree.getFile();
-				if (filename.lastIndexOf('/') >= 0) {
-					directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-					theFile = filename.substring(filename.lastIndexOf('/') + 1);
-				}
-				if (filename.lastIndexOf('\\') >= 0) {
-					directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-					theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-				}
-				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab
-							.getTitleAt(i)
-							.equals(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-						tab.setSelectedIndex(i);
-						if (save(i, 0) != 1) {
-							return;
-						}
-						break;
-					}
-				}
-			}
+			// }
 			File work = new File(directory);
 			String out = theFile;
 			try {
@@ -3500,44 +3465,37 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getActionCommand().equals("browse")) {
 			String directory;
 			String theFile;
-			if (!treeSelected) {
-				Component comp = tab.getSelectedComponent();
-				if (comp instanceof SBML_Editor) {
-					if (save(tab.getSelectedIndex(), 0) != 1) {
+			/*
+			 * if (!treeSelected) { Component comp = tab.getSelectedComponent();
+			 * if (comp instanceof SBML_Editor) { if
+			 * (save(tab.getSelectedIndex(), 0) != 1) { return; } theFile =
+			 * tab.getTitleAt(tab.getSelectedIndex()); directory = root +
+			 * separator; } else { return; } } else {
+			 */
+			String filename = tree.getFile();
+			directory = "";
+			theFile = "";
+			if (filename.lastIndexOf('/') >= 0) {
+				directory = filename.substring(0, filename.lastIndexOf('/') + 1);
+				theFile = filename.substring(filename.lastIndexOf('/') + 1);
+			}
+			if (filename.lastIndexOf('\\') >= 0) {
+				directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
+				theFile = filename.substring(filename.lastIndexOf('\\') + 1);
+			}
+			for (int i = 0; i < tab.getTabCount(); i++) {
+				if (tab
+						.getTitleAt(i)
+						.equals(
+								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+					tab.setSelectedIndex(i);
+					if (save(i, 0) != 1) {
 						return;
 					}
-					theFile = tab.getTitleAt(tab.getSelectedIndex());
-					directory = root + separator;
-				}
-				else {
-					return;
+					break;
 				}
 			}
-			else {
-				String filename = tree.getFile();
-				directory = "";
-				theFile = "";
-				if (filename.lastIndexOf('/') >= 0) {
-					directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-					theFile = filename.substring(filename.lastIndexOf('/') + 1);
-				}
-				if (filename.lastIndexOf('\\') >= 0) {
-					directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-					theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-				}
-				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab
-							.getTitleAt(i)
-							.equals(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-						tab.setSelectedIndex(i);
-						if (save(i, 0) != 1) {
-							return;
-						}
-						break;
-					}
-				}
-			}
+			// }
 			File work = new File(directory);
 			String out = theFile;
 			if (out.length() > 4 && out.substring(out.length() - 5, out.length()).equals(".sbml")) {
@@ -7623,6 +7581,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 			}
 		}
+		enableTreeMenu();
+		enableTabMenu(tab.getSelectedIndex());
 	}
 
 	public int getTab(String name) {
@@ -9945,6 +9905,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 			}
 		}
+		else {
+			enableTreeMenu();
+		}
 	}
 
 	public void mouseMoved(MouseEvent e) {
@@ -12056,15 +12019,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// if (comp != null) {
 		// log.addText(comp.toString());
 		// }
-		viewModel.setEnabled(false);
-		viewModGraph.setEnabled(false);
-		viewModBrowser.setEnabled(false);
-		viewSG.setEnabled(false);
-		createAnal.setEnabled(false);
-		createLearn.setEnabled(false);
-		createSbml.setEnabled(false);
-		createSynth.setEnabled(false);
-		createVer.setEnabled(false);
+
+		/*
+		 * viewModel.setEnabled(false); viewModGraph.setEnabled(false);
+		 * viewModBrowser.setEnabled(false); viewSG.setEnabled(false);
+		 * createAnal.setEnabled(false); createLearn.setEnabled(false);
+		 * createSbml.setEnabled(false); createSynth.setEnabled(false);
+		 * createVer.setEnabled(false);
+		 */
+
 		if (comp instanceof GCM2SBMLEditor) {
 			saveButton.setEnabled(true);
 			saveasButton.setEnabled(true);
@@ -12096,7 +12059,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveModel.setEnabled(false);
 			saveSbml.setEnabled(true);
 			saveTemp.setEnabled(true);
-			viewModGraph.setEnabled(true);
+			// viewModGraph.setEnabled(true);
 		}
 		else if (comp instanceof LHPNEditor) {
 			saveButton.setEnabled(true);
@@ -12129,7 +12092,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			viewLHPN.setEnabled(false); // SB
 			// saveParam.setEnabled(false);
 			saveModel.setEnabled(false);
-			viewModGraph.setEnabled(true);
+			// viewModGraph.setEnabled(true);
 		}
 		else if (comp instanceof SBML_Editor) {
 			saveButton.setEnabled(true);
@@ -12162,8 +12125,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveModel.setEnabled(false);
 			saveSbml.setEnabled(true);
 			saveTemp.setEnabled(true);
-			viewModGraph.setEnabled(true);
-			viewModBrowser.setEnabled(true);
+			// viewModGraph.setEnabled(true);
+			// viewModBrowser.setEnabled(true);
 		}
 		else if (comp instanceof Graph) {
 			saveButton.setEnabled(true);
@@ -12416,8 +12379,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				check.setEnabled(false);
 				export.setEnabled(false);
 				exportMenu.setEnabled(false);
-				viewModel.setEnabled(true);
-				viewModGraph.setEnabled(((Learn) component).getViewGcmEnabled());
+				// viewModel.setEnabled(true);
+				// viewModGraph.setEnabled(((Learn)
+				// component).getViewGcmEnabled());
 				viewCircuit.setEnabled(((Learn) component).getViewGcmEnabled());
 				viewRules.setEnabled(false);
 				viewTrace.setEnabled(false);
@@ -12461,7 +12425,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				check.setEnabled(false);
 				export.setEnabled(false);
 				exportMenu.setEnabled(false);
-				viewModel.setEnabled(true);
+				// viewModel.setEnabled(true);
 				viewCircuit.setEnabled(((LearnLHPN) component).getViewLhpnEnabled());
 				viewRules.setEnabled(false);
 				viewTrace.setEnabled(false);
@@ -12600,9 +12564,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				check.setEnabled(false);
 				export.setEnabled(false);
 				exportMenu.setEnabled(false);
-				viewModel.setEnabled(true);
-				viewModGraph.setEnabled(true);
-				viewModBrowser.setEnabled(true);
+				// viewModel.setEnabled(true);
+				// viewModGraph.setEnabled(true);
+				// viewModBrowser.setEnabled(true);
 				viewRules.setEnabled(false); // always false??
 				// viewTrace.setEnabled(((Verification)
 				// comp).getViewTraceEnabled());
@@ -12653,9 +12617,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				check.setEnabled(false);
 				export.setEnabled(false);
 				exportMenu.setEnabled(false);
-				viewModel.setEnabled(true); // always true??
-				viewModGraph.setEnabled(true);
-				viewModBrowser.setEnabled(true);
+				// viewModel.setEnabled(true); // always true??
+				// viewModGraph.setEnabled(true);
+				// viewModBrowser.setEnabled(true);
 				// viewRules.setEnabled(((Synthesis)
 				// comp).getViewRulesEnabled());
 				// viewTrace.setEnabled(((Synthesis)
@@ -12745,32 +12709,28 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveSbml.setEnabled(false);
 			saveTemp.setEnabled(false);
 		}
-		copy.setEnabled(false);
-		rename.setEnabled(false);
-		delete.setEnabled(false);
+		// copy.setEnabled(false);
+		// rename.setEnabled(false);
+		// delete.setEnabled(false);
 	}
 
 	private void enableTreeMenu() {
 		treeSelected = true;
 		// log.addText(tree.getFile());
-		saveButton.setEnabled(false);
-		saveasButton.setEnabled(false);
-		runButton.setEnabled(false);
-		refreshButton.setEnabled(false);
-		checkButton.setEnabled(false);
-		exportButton.setEnabled(false);
-		exportMenu.setEnabled(false);
-		save.setEnabled(false);
-		run.setEnabled(false);
-		saveAs.setEnabled(false);
-		saveAsMenu.setEnabled(false);
-		saveAsGcm.setEnabled(false);
-		saveAsLhpn.setEnabled(false);
-		saveAsGraph.setEnabled(false);
-		saveAsSbml.setEnabled(false);
-		saveAsTemplate.setEnabled(false);
+
+		/*
+		 * saveButton.setEnabled(false); saveasButton.setEnabled(false);
+		 * runButton.setEnabled(false); refreshButton.setEnabled(false);
+		 * checkButton.setEnabled(false); exportButton.setEnabled(false);
+		 * exportMenu.setEnabled(false); save.setEnabled(false);
+		 * run.setEnabled(false); saveAs.setEnabled(false);
+		 * saveAsMenu.setEnabled(false); saveAsGcm.setEnabled(false);
+		 * saveAsLhpn.setEnabled(false); saveAsGraph.setEnabled(false);
+		 * saveAsSbml.setEnabled(false); saveAsTemplate.setEnabled(false);
+		 */
+
 		// saveGcmAsLhpn.setEnabled(false);
-		viewSG.setEnabled(false);
+		// viewSG.setEnabled(false);
 		if (tree.getFile() != null) {
 			if (tree.getFile().length() > 4
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
@@ -12883,7 +12843,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewVHDL.setEnabled(true);
 				viewVerilog.setEnabled(false);
 				viewLHPN.setEnabled(false);
-				save.setEnabled(true); // SB should be????
+				// save.setEnabled(true); // SB should be????
 				// saveas too ????
 				// viewLog should be available ???
 				// saveParam.setEnabled(false);
@@ -12915,7 +12875,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewVHDL.setEnabled(false);
 				viewVerilog.setEnabled(true);
 				viewLHPN.setEnabled(false);
-				save.setEnabled(true); // SB should be????
+				// save.setEnabled(true); // SB should be????
 				// saveas too ????
 				// viewLog should be available ???
 				// saveParam.setEnabled(false);
@@ -12947,7 +12907,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewVHDL.setEnabled(false);
 				viewVerilog.setEnabled(true);
 				viewLHPN.setEnabled(false);
-				save.setEnabled(true); // SB should be????
+				// save.setEnabled(true); // SB should be????
 				// saveas too ????
 				// viewLog should be available ???
 				// saveParam.setEnabled(false);
@@ -13019,7 +12979,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				viewVHDL.setEnabled(false); // SB
 				viewVerilog.setEnabled(false); // SB
 				viewLHPN.setEnabled(true); // SB true ??? since lpn
-				save.setEnabled(true); // SB should exist ???
+				// save.setEnabled(true); // SB should exist ???
 				// saveas too???
 				// saveParam.setEnabled(false);
 				saveModel.setEnabled(false);
