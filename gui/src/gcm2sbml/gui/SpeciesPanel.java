@@ -126,7 +126,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			loadProperties(prop);
 		}
 		else {
-			setType(types[0]);
+			setType(types[1]);
 		}
 		boolean display = false;
 		while (!display) {
