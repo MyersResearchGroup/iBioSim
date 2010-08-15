@@ -192,7 +192,7 @@ public class ModelView extends JPanel implements ActionListener {
 					// rightclick on windows
 					if(editable)
 						showGraphPopupMenu(e);
-				}else if(e.getClickCount() == 1){
+				}else if(e.getClickCount() == 1 && editable){
 					// single click.
 					// First check and if the user clicked on a component, let the graph lib take care of it.
 					mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
@@ -277,13 +277,45 @@ public class ModelView extends JPanel implements ActionListener {
 			
 //			@Override
 			public void invoke(Object arg0, mxEventObject event) {
-
+				boolean edgeMoved = false;
 				Object cells[] = (Object [])event.getProperties().get("cells");
 				for(int i=0; i<cells.length; i++){
+					// TODO: Disallow moving edges around.
 					mxCell cell = (mxCell)cells[i];
-					graph.updateInternalPosition(cell);
+					if(cell.isEdge()){ // If an edge gets moved ignore it then rebuild the graph from the model.
+						edgeMoved = true;
+						biosim.log.addText("Sorry, edges cann't be moved independently.");
+					}else{
+						graph.updateInternalPosition(cell);
+					}
 				}
+				if(edgeMoved)
+					graph.buildGraph();
 				gcm2sbml.setDirty(true);
+			}
+		});
+	
+		// Listen for deleted cells
+		graph.addListener(null, new mxEventSource.mxIEventListener() {
+			
+//			@Override
+			public void invoke(Object arg0, mxEventObject event) {
+				// see what events we have to work with.
+				//biosim.log.addText((event.getName()));
+			}
+		});
+
+		// TODO: Figure out how to tell when the user has moved an edge from one 
+		// cell to another. Then either undo the change (using a rebuild?) or 
+		// properly detach and re-attach the edge (tricky considering componentConnections)
+		graph.addListener(mxEvent.CELL_CONNECTED, new mxEventSource.mxIEventListener() {
+			public void invoke(Object arg0, mxEventObject event) {
+				// see what events we have to work with.
+				//biosim.log.addText((event.getName()));
+				if(graph.isBuilding == false && event.getProperties().get("source").equals(false)){
+					int a=1+1; // I needed somewhere to stick a breakpoint
+					int b=a+a;
+				}
 			}
 		});
 		
@@ -329,6 +361,12 @@ public class ModelView extends JPanel implements ActionListener {
 				
 				// if the graph is building, ignore the creation of edges.
 				if(graph.isBuilding == false){
+					
+					// if the user tries to add anything in simulation mode, stop them.
+					if(editable == false){
+						graph.buildGraph();
+						return;
+					}
 				
 					Object cells[] = (Object [])event.getProperties().get("cells");
 					
@@ -500,7 +538,7 @@ public class ModelView extends JPanel implements ActionListener {
 		gcm.disconnectComponentAndSpecies(comp, speciesId);
 	}
 	
-	////// Coppied from mxGraph example file BasicGraphEditor.java
+	////// Copied from mxGraph example file BasicGraphEditor.java
 	
 	/**
 	 * Displays the right-click menu
