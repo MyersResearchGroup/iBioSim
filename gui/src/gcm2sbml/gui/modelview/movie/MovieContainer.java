@@ -104,6 +104,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	
 	JButton playPauseButton;
 	JButton rewindButton;
+	JButton singleStepButton;
 	JSlider slider;
 	private void addUI(){
 		JToolBar mt = new JToolBar();
@@ -111,6 +112,9 @@ public class MovieContainer extends JPanel implements ActionListener {
 		rewindButton = Utils.makeToolButton("", "rewind", "Rewind", this);
 		mt.add(rewindButton);
 
+		singleStepButton = Utils.makeToolButton("", "singlestep", "Single Step", this);
+		mt.add(singleStepButton);
+		
 		playPauseButton = Utils.makeToolButton("", "playpause", "Play", this);
 		mt.add(playPauseButton);
 		
@@ -137,6 +141,11 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}		
 	}
 	
+	private void pause(){
+		if(playPauseButton.getText() == "Pause")
+			playPauseButtonPress();
+	}
+	
 	/**
 	 * event handler for when UI buttons are pressed.
 	 */
@@ -148,6 +157,10 @@ public class MovieContainer extends JPanel implements ActionListener {
 			slider.setValue(0);
 		}else if(command.equals("playpause")){
 			playPauseButtonPress();
+		}else if(command.equals("singlestep")){
+			nextFrame();
+		}else{
+			throw new Error("Unrecognized command!");
 		}
 	}
 	
@@ -156,14 +169,20 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 */
 	ActionListener playTimerEventHandler = new ActionListener() {
 		public void actionPerformed(ActionEvent evt) {
-			slider.setValue(slider.getValue()+1);
-			if(slider.getValue() >= slider.getMaximum()){
-				playPauseButtonPress();
-			}
-			updateVisuals();
+			nextFrame();
 		}
 	};
 	
+	/**
+	 * advances the movie to the next frame
+	 */
+	private void nextFrame(){
+		slider.setValue(slider.getValue()+1);
+		if(slider.getValue() >= slider.getMaximum()){
+			pause();
+		}
+		updateVisuals();
+	}
 	
 	/**
 	 * Called when the timer ticks and we need to update the colors/sizes/etc.
@@ -180,7 +199,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		for(String s:gcm.getSpecies().keySet()){
 			if(dataHash.containsKey(s)){
 				double value = dataHash.get(s).get(pos);
-				modelView.setSpeciesAnimationValue(s, value);
+				modelView.setSpeciesAnimationValue(s, value*2.0);
 			}
 		}
 		modelView.endFrame();
