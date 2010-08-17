@@ -25,7 +25,7 @@ public class LhpnFile {
 
 	protected ArrayList<Variable> variables;
 
-	protected String property;
+	protected ArrayList<String> properties;
 
 	protected Log log;
 
@@ -37,7 +37,7 @@ public class LhpnFile {
 		continuous = new HashMap<String, Variable>();
 		integers = new HashMap<String, Variable>();
 		variables = new ArrayList<Variable>();
-		property = new String();
+		properties = new ArrayList<String>();
 	}
 
 	public LhpnFile() {
@@ -47,7 +47,7 @@ public class LhpnFile {
 		continuous = new HashMap<String, Variable>();
 		integers = new HashMap<String, Variable>();
 		variables = new ArrayList<Variable>();
-		property = new String();
+		properties = new ArrayList<String>();
 	}
 
 	public void save(String filename) {
@@ -178,8 +178,11 @@ public class LhpnFile {
 					buffer.append("}\n");
 				}
 			}
-			if (property != null && !property.equals("")) {
-				buffer.append("#@.property " + property + "\n");
+			if (properties != null && !properties.isEmpty()) {
+				for (String property : properties) {
+					buffer.append("#@.property ");
+					buffer.append(property + "\n");
+				}
 			}
 			if (!continuous.isEmpty() || !integers.isEmpty()) {
 				buffer.append("#@.init_vals {");
@@ -392,7 +395,11 @@ public class LhpnFile {
 	}
 
 	public void addProperty(String prop) {
-		property = prop;
+		properties.add(prop);
+	}
+	
+	public void removeProperty(String prop) {
+		properties.remove(prop);
 	}
 
 	public void addMovement(String fromName, String toName) {
@@ -537,8 +544,8 @@ public class LhpnFile {
 		return ids;
 	}
 
-	public String getProperty() {
-		return property;
+	public ArrayList<String> getProperties() {
+		return properties;
 	}
 
 	public String[] getTransitionList() {
@@ -1006,10 +1013,15 @@ public class LhpnFile {
 	}
 
 	private void parseProperty(StringBuffer data) {
-		Pattern pattern = Pattern.compile(PROPERTY);
+		Pattern pattern = Pattern.compile(PROPERTY_LINE);
 		Matcher lineMatcher = pattern.matcher(data.toString());
 		if (lineMatcher.find()) {
-			property = lineMatcher.group(1);
+			Pattern propertyPattern = Pattern.compile(PROPERTY);
+			Matcher propertyMatcher = propertyPattern.matcher(lineMatcher.group(1)
+					.replace("\\s", ""));
+			while (propertyMatcher.find()) {
+				properties.add(propertyMatcher.group(1));
+			}
 		}
 	}
 
@@ -1490,8 +1502,10 @@ public class LhpnFile {
 			}
 		}
 	}
-
-	private static final String PROPERTY = "#@\\.property (\\S+?)\\n";
+	
+	private static final String PROPERTY_LINE = "#@\\.properties \\{([.[^\\}]]+?)\\}";
+	
+	private static final String PROPERTY = "<(\\S+?)>";
 
 	private static final String INPUT = "\\.inputs([[\\s[^\\n]]\\w+]*?)\\n";
 
