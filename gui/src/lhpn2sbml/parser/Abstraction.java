@@ -35,7 +35,7 @@ public class Abstraction extends LhpnFile {
 		continuous = lhpn.continuous;
 		integers = lhpn.integers;
 		variables = lhpn.variables;
-		property = lhpn.property;
+		properties = lhpn.properties;
 	}
 
 	public Abstraction(LhpnFile lhpn, AbstPane abst) {
@@ -47,7 +47,7 @@ public class Abstraction extends LhpnFile {
 		continuous = lhpn.continuous;
 		integers = lhpn.integers;
 		variables = lhpn.variables;
-		property = lhpn.property;
+		properties = lhpn.properties;
 	}
 
 	public void abstractSTG(boolean print) {
