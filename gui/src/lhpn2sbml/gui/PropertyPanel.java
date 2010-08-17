@@ -111,9 +111,7 @@ public class PropertyPanel extends JPanel implements ActionListener {
 						 // Example: ((q_max=q_max)PU[2,3](q=q_max))
 						 if (propTemp.startsWith("(") && propTemp.endsWith(")")){
 							// remove the outermost brackets
-							 System.out.println("It has parenths");
 							 propTemp = propTemp.substring(1, propTemp.lastIndexOf(")"));
-							 System.out.print("propTemp = " + propTemp);
 							 // obtain the logic BEFORE the temporal operator
 							 leftPropTemp= propTemp.substring(0, propTemp.indexOf(symbol));
 							 boolean isLeftValid = isValidExpr(lhpn, leftPropTemp);
