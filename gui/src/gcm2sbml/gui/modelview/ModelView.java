@@ -246,7 +246,6 @@ public class ModelView extends JPanel implements ActionListener {
 					mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
 					
 					if (cell != null){
-						System.out.println("cell="+graph.getLabel(cell) + " " + e.getClickCount());
 						graph.bringUpEditorForCell(cell);
 						graph.buildGraph();
 						
