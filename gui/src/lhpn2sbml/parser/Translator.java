@@ -41,7 +41,7 @@ public class Translator {
 	private SBMLDocument document;
 	
 	
-	public void BuildTemplate(String lhpnFilename) {
+	public void BuildTemplate(String lhpnFilename, String prop) {
 		this.filename = lhpnFilename.replace(".lpn", ".xml");
 		// load lhpn file
 		LhpnFile lhpn = new LhpnFile();
@@ -590,13 +590,8 @@ public class Translator {
 				}
 			counter --;
 		}
-		
-			// translate LPN properties into SBML constraints
-			int propIndex = 3; 
-			String prop = lhpn.getProperties().get(propIndex);
-//			String displayPropSelection= "Property on line " + String.valueOf(propIndex+1) + " is converted to SBML constraints"; 
-//			JOptionPane.showMessageDialog(null, displayPropSelection,
-//						"Property Selection", JOptionPane.INFORMATION_MESSAGE);
+
+			// translate a LPN property passed to the BuildTemplate() into SBML constraints
 			String symbol = "@";
 			if (prop!=null && !prop.equals("") && !prop.contains(" ")){
 				boolean PUflag = prop.contains("PU");
