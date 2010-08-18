@@ -230,6 +230,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	private String modelFile;
 
 	private AbstPane lhpnAbstraction;
+	
+	private JComboBox lpnProperties;
 
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
@@ -323,8 +325,22 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		fileStem = new JTextField("", 15);
 		fileStemLabel = new JLabel("Simulation ID:");
 		JPanel inputHolder = new JPanel(new BorderLayout());
-		JPanel inputHolderLeft = new JPanel(new GridLayout(10, 1));
-		JPanel inputHolderRight = new JPanel(new GridLayout(10, 1));
+		JPanel inputHolderLeft;
+		JPanel inputHolderRight;
+		if (modelFile.contains(".lpn")) {
+			JLabel prop = new JLabel("Properties:");
+			LhpnFile lpn = new LhpnFile();
+			lpn.load(root + separator + modelFile);
+			lpnProperties = new JComboBox(lpn.getProperties().toArray(new String[0]));
+			inputHolderLeft = new JPanel(new GridLayout(11, 1));
+			inputHolderRight = new JPanel(new GridLayout(11, 1));
+			inputHolderLeft.add(prop);
+			inputHolderRight.add(lpnProperties);
+		}
+		else {
+			inputHolderLeft = new JPanel(new GridLayout(10, 1));
+			inputHolderRight = new JPanel(new GridLayout(10, 1));
+		}
 		inputHolderLeft.add(simulatorsLabel);
 		inputHolderRight.add(simulators);
 		inputHolderLeft.add(explanation);
@@ -1609,10 +1625,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					Abstraction abst = new Abstraction(lhpnFile, lhpnAbstraction);
 					abst.abstractSTG(false);
 					abst.save(root + separator + simName + separator + modelFile);
-					t1.BuildTemplate(root + separator + simName + separator + modelFile);
+					t1.BuildTemplate(root + separator + simName + separator + modelFile, ((String) lpnProperties.getSelectedItem()));
 				}
 				else {
-					t1.BuildTemplate(root + separator + modelFile);
+					t1.BuildTemplate(root + separator + modelFile, ((String) lpnProperties.getSelectedItem()));
 				}
 				t1.setFilename(root + separator + simName + separator + stem + separator
 						+ modelFile.replace(".lpn", ".sbml"));
@@ -3063,7 +3079,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
 					simTab, root, progress, simName + " " + direct, gcmEditor, direct, timeLimit,
-					runTime, modelFile, lhpnAbstraction, abstraction);
+					runTime, modelFile, lhpnAbstraction, abstraction, ((String) lpnProperties.getSelectedItem()));
 		}
 		else {
 			if (gcmEditor != null) {
@@ -3088,7 +3104,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
 					simTab, root, progress, simName, gcmEditor, null, timeLimit, runTime,
-					modelFile, lhpnAbstraction, abstraction);
+					modelFile, lhpnAbstraction, abstraction, ((String) lpnProperties.getSelectedItem()));
 		}
 		if (nary.isSelected() && gcmEditor == null && !sim.equals("markov-chain-analysis")
 				&& !lhpn.isSelected() && exit == 0) {
