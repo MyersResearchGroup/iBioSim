@@ -2555,7 +2555,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (e.getActionCommand().equals("convertToSBML")) {
 			Translator t1 = new Translator();
-			t1.BuildTemplate(tree.getFile());
+			t1.BuildTemplate(tree.getFile(), "");
 			t1.outputSBML();
 			String theFile = "";
 			if (tree.getFile().lastIndexOf('/') >= 0) {
@@ -10159,7 +10159,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					sbmlFile = (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1]
 							.length() - 3) + "sbml");
 					Translator t1 = new Translator();
-					t1.BuildTemplate(tree.getFile());
+					t1.BuildTemplate(tree.getFile(), "");
 					t1.setFilename(root + separator + simName + separator + sbmlFile);
 					t1.outputSBML();
 					sbmlFileProp = root
@@ -10853,7 +10853,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									}
 									else if (sbmlLoadFile.contains(".lpn")) {
 										Translator t1 = new Translator();
-										t1.BuildTemplate(root + separator + sbmlLoadFile);
+										t1.BuildTemplate(root + separator + sbmlLoadFile, "");
 										sbmlLoadFile = root + separator
 												+ split[split.length - 1].trim() + separator
 												+ sbmlLoadFile.replace(".lpn", ".sbml");
