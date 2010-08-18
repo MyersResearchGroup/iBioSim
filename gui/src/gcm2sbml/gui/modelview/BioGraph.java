@@ -67,9 +67,9 @@ public class BioGraph extends mxGraph {
 	}
 	
 	public void bringUpEditorForCell(mxCell cell){
-		if(cell.isVertex()){
+		if(getCellType(cell) == GlobalConstants.SPECIES){
 			gcm2sbml.launchSpeciesPanel(cell.getId());
-		}else{
+		}else if(getCellType(cell) == GlobalConstants.INFLUENCE){
 			// if an edge, make sure it isn't connected
 			// to a component - which aren't really influences at all.
 			if(	getCellType(cell.getSource()) == GlobalConstants.SPECIES &&
@@ -388,6 +388,18 @@ public class BioGraph extends mxGraph {
 		//cell.setStyle(mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
 		cell.setStyle("COMPONENT_EDGE");
 		cell.setValue("Port " + label);
+		
+		// position the label as intelligently as possible
+		mxGeometry geom = cell.getGeometry();
+		
+		if(this.getCellType(cell.getSource()) == GlobalConstants.COMPONENT){
+			geom.setX(-.6);
+
+		}else{
+			geom.setX(.6);
+
+		}
+		cell.setGeometry(geom);
 	}
 	
 	/**
