@@ -454,7 +454,7 @@ public class Run implements ActionListener {
 			String ssaFile, BioSim biomodelsim, JTabbedPane simTab, String root,
 			JProgressBar progress, String simName, GCM2SBMLEditor gcmEditor,
 			String direct, double timeLimit, double runTime, String modelFile, AbstPane abstPane,
-			JRadioButton abstraction) {
+			JRadioButton abstraction, String lpnProperty) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
@@ -518,10 +518,10 @@ public class Run implements ActionListener {
 						abst.save(root + separator + simName + separator + lpnName + ".temp");
 						t1
 								.BuildTemplate(root + separator + simName + separator + lpnName
-										+ ".temp");
+										+ ".temp", lpnProperty);
 					}
 					else {
-						t1.BuildTemplate(root + separator + simName + separator + lpnName);
+						t1.BuildTemplate(root + separator + simName + separator + lpnName, lpnProperty);
 					}
 					t1.setFilename(root + separator + simName + separator
 							+ lpnName.replace(".lpn", ".sbml"));
@@ -582,10 +582,10 @@ public class Run implements ActionListener {
 							Abstraction abst = new Abstraction(lhpnFile, abstPane);
 							abst.abstractSTG(false);
 							abst.save(root + separator + simName + separator + modelFile);
-							t1.BuildTemplate(root + separator + simName + separator + modelFile);
+							t1.BuildTemplate(root + separator + simName + separator + modelFile, lpnProperty);
 						}
 						else {
-							t1.BuildTemplate(root + separator + modelFile);
+							t1.BuildTemplate(root + separator + modelFile, lpnProperty);
 						}
 						t1.setFilename(root + separator + sbmlName);
 						t1.outputSBML();
@@ -624,10 +624,10 @@ public class Run implements ActionListener {
 								abst.save(root + separator + simName + separator + lpnName
 										+ ".temp");
 								t1.BuildTemplate(root + separator + simName + separator + lpnName
-										+ ".temp");
+										+ ".temp", lpnProperty);
 							}
 							else {
-								t1.BuildTemplate(root + separator + simName + separator + lpnName);
+								t1.BuildTemplate(root + separator + simName + separator + lpnName, lpnProperty);
 							}
 							t1.setFilename(root + separator + sbmlName);
 							t1.outputSBML();
