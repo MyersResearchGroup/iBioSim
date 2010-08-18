@@ -1012,19 +1012,27 @@ public class LhpnFile {
 		return abstraction;
 	}
 
+//	private void parseProperty(StringBuffer data) {
+//		Pattern pattern = Pattern.compile(PROPERTY_LINE);
+//		Matcher lineMatcher = pattern.matcher(data.toString());
+//		if (lineMatcher.find()) {
+//			Pattern propertyPattern = Pattern.compile(PROPERTY);
+//			Matcher propertyMatcher = propertyPattern.matcher(lineMatcher.group(1)
+//					.replace("\\s", ""));
+//			while (propertyMatcher.find()) {
+//				properties.add(propertyMatcher.group(1));
+//			}
+//		}
+//	}
+
 	private void parseProperty(StringBuffer data) {
-		Pattern pattern = Pattern.compile(PROPERTY_LINE);
+		Pattern pattern = Pattern.compile(PROPERTY);
 		Matcher lineMatcher = pattern.matcher(data.toString());
-		if (lineMatcher.find()) {
-			Pattern propertyPattern = Pattern.compile(PROPERTY);
-			Matcher propertyMatcher = propertyPattern.matcher(lineMatcher.group(1)
-					.replace("\\s", ""));
-			while (propertyMatcher.find()) {
-				properties.add(propertyMatcher.group(1));
-			}
+		while (lineMatcher.find()) {
+			properties.add(lineMatcher.group(1));
 		}
 	}
-
+	
 	private void parseInOut(StringBuffer data) {
 		Properties varOrder = new Properties();
 		Pattern inLinePattern = Pattern.compile(INPUT);
@@ -1503,9 +1511,11 @@ public class LhpnFile {
 		}
 	}
 	
-	private static final String PROPERTY_LINE = "#@\\.properties \\{([.[^\\}]]+?)\\}";
+//	private static final String PROPERTY_LINE = "#@\\.properties \\{([.[^\\}]]+?)\\}";
 	
-	private static final String PROPERTY = "<(\\S+?)>";
+//	private static final String PROPERTY = "<(\\S+?)>";
+	
+	private static final String PROPERTY = "#@\\.property (\\S+?)\\n";
 
 	private static final String INPUT = "\\.inputs([[\\s[^\\n]]\\w+]*?)\\n";
 
