@@ -3003,14 +3003,14 @@ public class Abstraction extends LhpnFile {
 				dl.setNodeValues(dl, dl2, "+", 'a');
 				du2.setNodeValues(e2, du2, "*", 'a');
 				du.setNodeValues(du, du2, "+", 'a');
-				if (!dl.isEqual(du)) {
-					delay.setNodeValues(dl, du, "uniform", 'a');
-				} else {
-					delay = dl;
-				}
-				t.addDelay(delay.toString());
+			}
+			if (!dl.isEqual(du)) {
+				delay.setNodeValues(dl, du, "uniform", 'a');
+			} else {
+				delay = dl;
 			}
 			t.addEnabling(enabling);
+			t.addDelay(delay.toString());
 		}
 		for (Transition tP : list) {
 			removeTransition(tP.getName());
