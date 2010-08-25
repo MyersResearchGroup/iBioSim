@@ -303,6 +303,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		chart = ChartFactory.createXYLineChart(label, time, printer_track_quantity, dataset,
 				PlotOrientation.VERTICAL, true, true, false);
 		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
+		chart.getPlot().setOutlinePaint(java.awt.Color.LIGHT_GRAY);
 		chart.addProgressListener(this);
 		ChartPanel graph = new ChartPanel(chart);
 		graph.setLayout(new GridLayout(1, 1));
@@ -4163,6 +4164,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		chart = ChartFactory.createXYLineChart(title, x, y, dataset, PlotOrientation.VERTICAL,
 				true, true, false);
 		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
+		chart.getPlot().setOutlinePaint(java.awt.Color.LIGHT_GRAY);
 		chart.addProgressListener(this);
 		ChartPanel graph = new ChartPanel(chart);
 		if (graphed.isEmpty()) {
@@ -6153,6 +6155,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		chart = ChartFactory.createBarChart(label, "", "Percent", new DefaultCategoryDataset(),
 				PlotOrientation.VERTICAL, true, true, false);
 		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
+		chart.getPlot().setOutlinePaint(java.awt.Color.LIGHT_GRAY);
 		ChartPanel graph = new ChartPanel(chart);
 		graph.setLayout(new GridLayout(1, 1));
 		JLabel edit = new JLabel("Double click here to create graph");
@@ -7286,6 +7289,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				PlotOrientation.VERTICAL, true, true, false);
 		chart.getCategoryPlot().setRenderer(rend);
 		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
+		chart.getPlot().setOutlinePaint(java.awt.Color.LIGHT_GRAY);
 		ChartPanel graph = new ChartPanel(chart);
 		if (probGraphed.isEmpty()) {
 			graph.setLayout(new GridLayout(1, 1));
