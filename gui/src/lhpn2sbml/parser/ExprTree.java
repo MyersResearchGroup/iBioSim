@@ -4782,22 +4782,32 @@ public class ExprTree {
 	public double evaluateExp(HashMap<String, String> variables) {
 		switch (isit) {
 		case 'b': // Boolean
-			if (!variables.containsKey(variable)
-					|| variables.get(variable).toLowerCase().equals("unknown"))
-				return Double.NaN;
-			if (variables.get(variable).toLowerCase().equals("true")) {
-				return 1.0;
+			if (variables != null) {
+				if (!variables.containsKey(variable)
+						|| variables.get(variable).toLowerCase().equals("unknown"))
+					return Double.NaN;
+				if (variables.get(variable).toLowerCase().equals("true")) {
+					return 1.0;
+				}
+				else {
+					return 0.0;
+				}
 			}
 			else {
-				return 0.0;
+				return -1.0;
 			}
 		case 'i': // Integer
 		case 'c': // Continuous
-			try {
-				return Double.parseDouble(variables.get(variable));
+			if (variables != null) {
+				try {
+					return Double.parseDouble(variables.get(variable));
+				}
+				catch (Exception e) {
+					return Double.NaN;
+				}
 			}
-			catch (Exception e) {
-				return Double.NaN;
+			else {
+				return -1.0;
 			}
 		case 'n': // Number
 			if (uvalue == lvalue) {

@@ -6191,32 +6191,33 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				StateGraph sg = new StateGraph(lhpnFile);
 				sg.buildStateGraph();
 				log.addText("Performing Markov Chain analysis.");
-				sg.performMarkovianAnalysis(null);
-				sg.outputStateGraph(tree.getFile().replace(".lpn", "_sg.dot"), true);
-				String command = "";
-				if (System.getProperty("os.name").contentEquals("Linux")) {
-					// directory = ENVVAR + "/docs/";
-					command = "gnome-open ";
-				}
-				else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-					// directory = ENVVAR + "/docs/";
-					command = "open ";
-				}
-				else {
-					// directory = ENVVAR + "\\docs\\";
-					command = "dotty start ";
-				}
-				String file = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
-				log.addText("Executing:\n" + command + root + separator
-						+ (file.replace(".lpn", "_sg.dot")) + "\n");
-				Runtime exec = Runtime.getRuntime();
-				File work = new File(root);
-				try {
-					exec.exec(command + (file.replace(".lpn", "_sg.dot")), null, work);
-				}
-				catch (IOException e1) {
-					JOptionPane.showMessageDialog(frame, "Unable to view state graph.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+				if (sg.performMarkovianAnalysis(null)) {
+					sg.outputStateGraph(tree.getFile().replace(".lpn", "_sg.dot"), true);
+					String command = "";
+					if (System.getProperty("os.name").contentEquals("Linux")) {
+						// directory = ENVVAR + "/docs/";
+						command = "gnome-open ";
+					}
+					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+						// directory = ENVVAR + "/docs/";
+						command = "open ";
+					}
+					else {
+						// directory = ENVVAR + "\\docs\\";
+						command = "dotty start ";
+					}
+					String file = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
+					log.addText("Executing:\n" + command + root + separator
+							+ (file.replace(".lpn", "_sg.dot")) + "\n");
+					Runtime exec = Runtime.getRuntime();
+					File work = new File(root);
+					try {
+						exec.exec(command + (file.replace(".lpn", "_sg.dot")), null, work);
+					}
+					catch (IOException e1) {
+						JOptionPane.showMessageDialog(frame, "Unable to view state graph.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+					}
 				}
 			}
 		}

@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Stack;
+
+import javax.swing.JOptionPane;
+
 import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.LhpnFile;
 
@@ -214,14 +217,41 @@ public class StateGraph implements Runnable {
 			}
 		}
 	}
-	
+
 	public boolean canPerformMarkovianAnalysis() {
-		for(String trans : lhpn.getTransitionList()) {
+		for (String trans : lhpn.getTransitionList()) {
 			if (!lhpn.isExpTransitionRateTree(trans)) {
-				return false;
+				if (lhpn.getDelayTree(trans).evaluateExp(null) != 0) {
+					JOptionPane.showMessageDialog(null,
+							"LPN has transitions without exponential delay.",
+							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+			}
+			for (String var : lhpn.getVariables()) {
+				if (lhpn.isRandomBoolAssignTree(trans, var)) {
+					JOptionPane.showMessageDialog(null,
+							"LPN has assignments containing random functions.",
+							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				if (lhpn.isRandomContAssignTree(trans, var)) {
+					JOptionPane.showMessageDialog(null,
+							"LPN has assignments containing random functions.",
+							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				if (lhpn.isRandomIntAssignTree(trans, var)) {
+					JOptionPane.showMessageDialog(null,
+							"LPN has assignments containing random functions.",
+							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
 			}
 		}
 		if (lhpn.getContVars().length > 0) {
+			JOptionPane.showMessageDialog(null, "LPN contains continuous variables.",
+					"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		return true;
@@ -229,6 +259,7 @@ public class StateGraph implements Runnable {
 
 	public boolean performMarkovianAnalysis(ArrayList<String> conditions) {
 		if (!canPerformMarkovianAnalysis()) {
+			stop = true;
 			return false;
 		}
 		else {
@@ -254,16 +285,29 @@ public class StateGraph implements Runnable {
 									for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
 										double transProb = 0.0;
 										if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
-											transProb = lhpn.getTransitionRateTree(
-													prev.getTransition()).evaluateExp(
-													prev.getState().getVariables());
+											if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
+												if (!lhpn.isExpTransitionRateTree(prev
+														.getTransition())
+														&& lhpn.getDelayTree(prev.getTransition())
+																.evaluateExp(null) == 0) {
+													transProb = 1.0;
+												}
+												else {
+													transProb = lhpn.getTransitionRateTree(
+															prev.getTransition()).evaluateExp(
+															prev.getState().getVariables());
+												}
+											}
 										}
 										else {
 											transProb = 1.0;
 										}
-										double transitionSum = prev.getState().getTransitionSum();
+										double transitionSum = prev.getState().getTransitionSum(m);
 										if (transitionSum != 0) {
 											transProb = (transProb / transitionSum);
+										}
+										else {
+											transProb = 0.0;
 										}
 										nextProb += (prev.getState().getCurrentProb() * transProb);
 										if (stop) {
@@ -314,7 +358,7 @@ public class StateGraph implements Runnable {
 					double totalProb = 0.0;
 					for (String state : stateGraph.keySet()) {
 						for (State m : stateGraph.get(state)) {
-							double transitionSum = m.getTransitionSum();
+							double transitionSum = m.getTransitionSum(null);
 							if (transitionSum != 0.0) {
 								m.setCurrentProb((m.getCurrentProb() / period) / transitionSum);
 							}
@@ -366,7 +410,7 @@ public class StateGraph implements Runnable {
 																.getTransitionRateTree(
 																		nextState.getTransition())
 																.evaluateExp(m.getVariables()) / m
-																.getTransitionSum()));
+																.getTransitionSum(null)));
 													}
 												}
 												if (stop) {
@@ -748,13 +792,24 @@ public class StateGraph implements Runnable {
 			currentProb = nextProb;
 		}
 
-		private double getTransitionSum() {
+		private double getTransitionSum(State n) {
 			if (transitionSum == -1) {
 				transitionSum = 0;
 				for (StateTransitionPair next : nextStates) {
 					if (lhpn.getTransitionRateTree(next.getTransition()) != null) {
-						transitionSum += lhpn.getTransitionRateTree(next.getTransition())
-								.evaluateExp(variables);
+						if (!lhpn.isExpTransitionRateTree(next.getTransition())
+								&& lhpn.getDelayTree(next.getTransition()).evaluateExp(null) == 0) {
+							if (n == null || next.equals(n)) {
+								return 1.0;
+							}
+							else {
+								return 0.0;
+							}
+						}
+						else {
+							transitionSum += lhpn.getTransitionRateTree(next.getTransition())
+									.evaluateExp(variables);
+						}
 					}
 					else {
 						transitionSum += 1.0;
