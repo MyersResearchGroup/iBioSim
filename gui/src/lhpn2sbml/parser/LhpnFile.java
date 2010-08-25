@@ -561,6 +561,36 @@ public class LhpnFile {
 		return transitions.get(transition);
 	}
 	
+	public boolean isRandomBoolAssignTree(String transition, String variable) {
+		if (transitions.get(transition).getBoolAssignTree(variable) == null)
+			return false;
+		if (transitions.get(transition).getBoolAssignTree(variable).op.equals("exponential")
+				|| transitions.get(transition).getBoolAssignTree(variable).op.equals("uniform")) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isRandomContAssignTree(String transition, String variable) {
+		if (transitions.get(transition).getContAssignTree(variable) == null)
+			return false;
+		if (transitions.get(transition).getContAssignTree(variable).op.equals("exponential")
+				|| transitions.get(transition).getContAssignTree(variable).op.equals("uniform")) {
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean isRandomIntAssignTree(String transition, String variable) {
+		if (transitions.get(transition).getIntAssignTree(variable) == null)
+			return false;
+		if (transitions.get(transition).getIntAssignTree(variable).op.equals("exponential")
+				|| transitions.get(transition).getIntAssignTree(variable).op.equals("uniform")) {
+			return true;
+		}
+		return false;
+	}
+	
 	public boolean isExpTransitionRateTree(String transition) {
 		if (transitions.get(transition).getDelayTree() == null)
 			return false;
@@ -577,6 +607,15 @@ public class LhpnFile {
 			return transitions.get(transition).getDelayTree().r1;
 		}
 		return null;
+	}
+	
+	public ExprTree getDelayTree(String transition) {
+		if (transitions.get(transition).getDelayTree() == null) {
+			return null;
+		}
+		else {
+			return transitions.get(transition).getDelayTree();
+		}
 	}
 
 	public ExprTree getEnablingTree(String transition) {
