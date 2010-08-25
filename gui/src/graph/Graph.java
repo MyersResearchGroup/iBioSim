@@ -302,8 +302,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			String time) {
 		chart = ChartFactory.createXYLineChart(label, time, printer_track_quantity, dataset,
 				PlotOrientation.VERTICAL, true, true, false);
+		chart.setBackgroundPaint(java.awt.Color.LIGHT_GRAY);
 		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
 		chart.getXYPlot().setDomainGridlinePaint(java.awt.Color.LIGHT_GRAY);
+		chart.getXYPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
 		chart.addProgressListener(this);
 		ChartPanel graph = new ChartPanel(chart);
 		graph.setLayout(new GridLayout(1, 1));
@@ -4163,8 +4165,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		curData = dataset;
 		chart = ChartFactory.createXYLineChart(title, x, y, dataset, PlotOrientation.VERTICAL,
 				true, true, false);
+		chart.setBackgroundPaint(java.awt.Color.LIGHT_GRAY);
 		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
 		chart.getXYPlot().setDomainGridlinePaint(java.awt.Color.LIGHT_GRAY);
+		chart.getXYPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
 		chart.addProgressListener(this);
 		ChartPanel graph = new ChartPanel(chart);
 		if (graphed.isEmpty()) {
