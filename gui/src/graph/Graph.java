@@ -302,7 +302,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			String time) {
 		chart = ChartFactory.createXYLineChart(label, time, printer_track_quantity, dataset,
 				PlotOrientation.VERTICAL, true, true, false);
-		chart.setBackgroundPaint(java.awt.Color.LIGHT_GRAY);
+		chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
 		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
 		chart.getXYPlot().setDomainGridlinePaint(java.awt.Color.LIGHT_GRAY);
 		chart.getXYPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
@@ -4165,7 +4165,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		curData = dataset;
 		chart = ChartFactory.createXYLineChart(title, x, y, dataset, PlotOrientation.VERTICAL,
 				true, true, false);
-		chart.setBackgroundPaint(java.awt.Color.LIGHT_GRAY);
+		chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
 		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
 		chart.getXYPlot().setDomainGridlinePaint(java.awt.Color.LIGHT_GRAY);
 		chart.getXYPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
