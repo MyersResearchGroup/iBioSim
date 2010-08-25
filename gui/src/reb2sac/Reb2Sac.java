@@ -230,7 +230,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	private String modelFile;
 
 	private AbstPane lhpnAbstraction;
-	
+
 	private JComboBox lpnProperties;
 
 	/**
@@ -1625,10 +1625,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					Abstraction abst = new Abstraction(lhpnFile, lhpnAbstraction);
 					abst.abstractSTG(false);
 					abst.save(root + separator + simName + separator + modelFile);
-					t1.BuildTemplate(root + separator + simName + separator + modelFile, ((String) lpnProperties.getSelectedItem()));
+					t1.BuildTemplate(root + separator + simName + separator + modelFile,
+							((String) lpnProperties.getSelectedItem()));
 				}
 				else {
-					t1.BuildTemplate(root + separator + modelFile, ((String) lpnProperties.getSelectedItem()));
+					t1.BuildTemplate(root + separator + modelFile, ((String) lpnProperties
+							.getSelectedItem()));
 				}
 				t1.setFilename(root + separator + simName + separator + stem + separator
 						+ modelFile.replace(".lpn", ".sbml"));
@@ -3074,12 +3076,16 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				catch (Exception e) {
 				}
 			}
+			String lpnProperty = "";
+			if (lpnProperties != null) {
+				lpnProperty = ((String) lpnProperties.getSelectedItem());
+			}
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, biomodelsim.frame(), ODE,
 					monteCarlo, sim, printer_id, printer_track_quantity,
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
 					simTab, root, progress, simName + " " + direct, gcmEditor, direct, timeLimit,
-					runTime, modelFile, lhpnAbstraction, abstraction, ((String) lpnProperties.getSelectedItem()));
+					runTime, modelFile, lhpnAbstraction, abstraction, lpnProperty);
 		}
 		else {
 			if (gcmEditor != null) {
@@ -3099,12 +3105,16 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				catch (Exception e) {
 				}
 			}
+			String lpnProperty = "";
+			if (lpnProperties != null) {
+				lpnProperty = ((String) lpnProperties.getSelectedItem());
+			}
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, biomodelsim.frame(), ODE,
 					monteCarlo, sim, printer_id, printer_track_quantity,
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
 					simTab, root, progress, simName, gcmEditor, null, timeLimit, runTime,
-					modelFile, lhpnAbstraction, abstraction, ((String) lpnProperties.getSelectedItem()));
+					modelFile, lhpnAbstraction, abstraction, lpnProperty);
 		}
 		if (nary.isSelected() && gcmEditor == null && !sim.equals("markov-chain-analysis")
 				&& !lhpn.isSelected() && exit == 0) {
