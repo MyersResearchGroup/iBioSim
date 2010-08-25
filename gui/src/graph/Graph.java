@@ -6158,8 +6158,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private void probGraph(String label) {
 		chart = ChartFactory.createBarChart(label, "", "Percent", new DefaultCategoryDataset(),
 				PlotOrientation.VERTICAL, true, true, false);
+		chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
 		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
-		chart.getPlot().setOutlinePaint(java.awt.Color.LIGHT_GRAY);
+		chart.getCategoryPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
 		ChartPanel graph = new ChartPanel(chart);
 		graph.setLayout(new GridLayout(1, 1));
 		JLabel edit = new JLabel("Double click here to create graph");
@@ -7292,8 +7293,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		chart = ChartFactory.createBarChart(label, xLabel, yLabel, dataset,
 				PlotOrientation.VERTICAL, true, true, false);
 		chart.getCategoryPlot().setRenderer(rend);
+		chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
 		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
-		chart.getPlot().setOutlinePaint(java.awt.Color.LIGHT_GRAY);
+		chart.getCategoryPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
 		ChartPanel graph = new ChartPanel(chart);
 		if (probGraphed.isEmpty()) {
 			graph.setLayout(new GridLayout(1, 1));
