@@ -302,7 +302,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			String time) {
 		chart = ChartFactory.createXYLineChart(label, time, printer_track_quantity, dataset,
 				PlotOrientation.VERTICAL, true, true, false);
-		chart.getCategoryPlot().setBackgroundPaint(java.awt.Color.WHITE);
+		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
 		chart.addProgressListener(this);
 		ChartPanel graph = new ChartPanel(chart);
 		graph.setLayout(new GridLayout(1, 1));
@@ -4162,7 +4162,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		curData = dataset;
 		chart = ChartFactory.createXYLineChart(title, x, y, dataset, PlotOrientation.VERTICAL,
 				true, true, false);
-		chart.getCategoryPlot().setBackgroundPaint(java.awt.Color.WHITE);
+		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
 		chart.addProgressListener(this);
 		ChartPanel graph = new ChartPanel(chart);
 		if (graphed.isEmpty()) {
@@ -6152,7 +6152,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private void probGraph(String label) {
 		chart = ChartFactory.createBarChart(label, "", "Percent", new DefaultCategoryDataset(),
 				PlotOrientation.VERTICAL, true, true, false);
-		chart.getCategoryPlot().setBackgroundPaint(java.awt.Color.WHITE);
+		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
 		ChartPanel graph = new ChartPanel(chart);
 		graph.setLayout(new GridLayout(1, 1));
 		JLabel edit = new JLabel("Double click here to create graph");
@@ -7285,7 +7285,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		chart = ChartFactory.createBarChart(label, xLabel, yLabel, dataset,
 				PlotOrientation.VERTICAL, true, true, false);
 		chart.getCategoryPlot().setRenderer(rend);
-		chart.getCategoryPlot().setBackgroundPaint(java.awt.Color.WHITE);
+		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
 		ChartPanel graph = new ChartPanel(chart);
 		if (probGraphed.isEmpty()) {
 			graph.setLayout(new GridLayout(1, 1));
