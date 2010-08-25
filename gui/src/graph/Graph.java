@@ -303,7 +303,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		chart = ChartFactory.createXYLineChart(label, time, printer_track_quantity, dataset,
 				PlotOrientation.VERTICAL, true, true, false);
 		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
-		chart.getPlot().setOutlinePaint(java.awt.Color.LIGHT_GRAY);
+		chart.getXYPlot().setDomainGridlinePaint(java.awt.Color.LIGHT_GRAY);
 		chart.addProgressListener(this);
 		ChartPanel graph = new ChartPanel(chart);
 		graph.setLayout(new GridLayout(1, 1));
