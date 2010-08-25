@@ -214,193 +214,212 @@ public class StateGraph implements Runnable {
 			}
 		}
 	}
+	
+	public boolean canPerformMarkovianAnalysis() {
+		for(String trans : lhpn.getTransitionList()) {
+			if (!lhpn.isExpTransitionRateTree(trans)) {
+				return false;
+			}
+		}
+		if (lhpn.getContVars().length > 0) {
+			return false;
+		}
+		return true;
+	}
 
-	public void performMarkovianAnalysis(ArrayList<String> conditions) {
-		State initial = getInitialState();
-		if (initial != null && !stop) {
-			resetColorsForMarkovianAnalysis();
-			int period = findPeriod(initial);
-			if (period == 0) {
-				period = 1;
-			}
-			int step = 0;
-			initial.setCurrentProb(1.0);
-			double tolerance = 0.01;
-			boolean done = false;
-			if (!stop) {
-				do {
-					step++;
-					step = step % period;
-					for (String state : stateGraph.keySet()) {
-						for (State m : stateGraph.get(state)) {
-							if (m.getColor() % period == step) {
-								double nextProb = 0.0;
-								for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
-									double transProb = 0.0;
-									if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
-										transProb = lhpn
-												.getTransitionRateTree(prev.getTransition())
-												.evaluateExp(prev.getState().getVariables());
+	public boolean performMarkovianAnalysis(ArrayList<String> conditions) {
+		if (!canPerformMarkovianAnalysis()) {
+			return false;
+		}
+		else {
+			State initial = getInitialState();
+			if (initial != null && !stop) {
+				resetColorsForMarkovianAnalysis();
+				int period = findPeriod(initial);
+				if (period == 0) {
+					period = 1;
+				}
+				int step = 0;
+				initial.setCurrentProb(1.0);
+				double tolerance = 0.01;
+				boolean done = false;
+				if (!stop) {
+					do {
+						step++;
+						step = step % period;
+						for (String state : stateGraph.keySet()) {
+							for (State m : stateGraph.get(state)) {
+								if (m.getColor() % period == step) {
+									double nextProb = 0.0;
+									for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
+										double transProb = 0.0;
+										if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
+											transProb = lhpn.getTransitionRateTree(
+													prev.getTransition()).evaluateExp(
+													prev.getState().getVariables());
+										}
+										else {
+											transProb = 1.0;
+										}
+										double transitionSum = prev.getState().getTransitionSum();
+										if (transitionSum != 0) {
+											transProb = (transProb / transitionSum);
+										}
+										nextProb += (prev.getState().getCurrentProb() * transProb);
+										if (stop) {
+											return false;
+										}
 									}
-									else {
-										transProb = 1.0;
-									}
-									double transitionSum = prev.getState().getTransitionSum();
-									if (transitionSum != 0) {
-										transProb = (transProb / transitionSum);
-									}
-									nextProb += (prev.getState().getCurrentProb() * transProb);
-									if (stop) {
-										return;
+									if (nextProb != 0.0) {
+										m.setNextProb(nextProb);
 									}
 								}
-								if (nextProb != 0.0) {
-									m.setNextProb(nextProb);
+								if (stop) {
+									return false;
 								}
 							}
 							if (stop) {
-								return;
+								return false;
 							}
 						}
-						if (stop) {
-							return;
-						}
-					}
-					boolean change = false;
-					for (String state : stateGraph.keySet()) {
-						for (State m : stateGraph.get(state)) {
-							if (m.getColor() % period == step) {
-								if ((m.getCurrentProb() != 0)
-										&& (Math.abs(((m.getCurrentProb() - m.getNextProb()))
-												/ m.getCurrentProb()) > tolerance)) {
-									change = true;
+						boolean change = false;
+						for (String state : stateGraph.keySet()) {
+							for (State m : stateGraph.get(state)) {
+								if (m.getColor() % period == step) {
+									if ((m.getCurrentProb() != 0)
+											&& (Math.abs(((m.getCurrentProb() - m.getNextProb()))
+													/ m.getCurrentProb()) > tolerance)) {
+										change = true;
+									}
+									else if (m.getCurrentProb() == 0 && m.getNextProb() > tolerance) {
+										change = true;
+									}
+									m.setCurrentProbToNext();
 								}
-								else if (m.getCurrentProb() == 0 && m.getNextProb() > tolerance) {
-									change = true;
+								if (stop) {
+									return false;
 								}
-								m.setCurrentProbToNext();
 							}
 							if (stop) {
-								return;
+								return false;
+							}
+						}
+						if (!change) {
+							done = true;
+						}
+					}
+					while (!done && !stop);
+				}
+				if (!stop) {
+					double totalProb = 0.0;
+					for (String state : stateGraph.keySet()) {
+						for (State m : stateGraph.get(state)) {
+							double transitionSum = m.getTransitionSum();
+							if (transitionSum != 0.0) {
+								m.setCurrentProb((m.getCurrentProb() / period) / transitionSum);
+							}
+							totalProb += m.getCurrentProb();
+							if (stop) {
+								return false;
 							}
 						}
 						if (stop) {
-							return;
+							return false;
 						}
 					}
-					if (!change) {
-						done = true;
-					}
-				}
-				while (!done && !stop);
-			}
-			if (!stop) {
-				double totalProb = 0.0;
-				for (String state : stateGraph.keySet()) {
-					for (State m : stateGraph.get(state)) {
-						double transitionSum = m.getTransitionSum();
-						if (transitionSum != 0.0) {
-							m.setCurrentProb((m.getCurrentProb() / period) / transitionSum);
-						}
-						totalProb += m.getCurrentProb();
-						if (stop) {
-							return;
-						}
-					}
-					if (stop) {
-						return;
-					}
-				}
-				for (String state : stateGraph.keySet()) {
-					for (State m : stateGraph.get(state)) {
-						if (totalProb != 0.0) {
-							m.setCurrentProb(m.getCurrentProb() / totalProb);
+					for (String state : stateGraph.keySet()) {
+						for (State m : stateGraph.get(state)) {
+							if (totalProb != 0.0) {
+								m.setCurrentProb(m.getCurrentProb() / totalProb);
+							}
+							if (stop) {
+								return false;
+							}
 						}
 						if (stop) {
-							return;
+							return false;
 						}
 					}
-					if (stop) {
-						return;
-					}
-				}
-				resetColors();
-				HashMap<String, Double> output = new HashMap<String, Double>();
-				if (conditions != null && !stop) {
-					for (String s : conditions) {
-						double prob = 0;
-						for (String ss : s.split("&&")) {
-							if (ss.split("->").length == 2) {
-								String[] states = ss.split("->");
-								for (String state : stateGraph.keySet()) {
-									for (State m : stateGraph.get(state)) {
-										ExprTree expr = new ExprTree(lhpn);
-										expr.token = expr.intexpr_gettok(states[0]);
-										expr.intexpr_L(states[0]);
-										if (expr.evaluateExp(m.getVariables()) == 1.0) {
-											for (StateTransitionPair nextState : m
-													.getNextStatesWithTrans()) {
-												ExprTree nextExpr = new ExprTree(lhpn);
-												nextExpr.token = nextExpr.intexpr_gettok(states[1]);
-												nextExpr.intexpr_L(states[1]);
-												if (nextExpr.evaluateExp(nextState.getState()
-														.getVariables()) == 1.0) {
-													prob += (m.getCurrentProb() * (lhpn
-															.getTransitionRateTree(
-																	nextState.getTransition())
-															.evaluateExp(m.getVariables()) / m
-															.getTransitionSum()));
+					resetColors();
+					HashMap<String, Double> output = new HashMap<String, Double>();
+					if (conditions != null && !stop) {
+						for (String s : conditions) {
+							double prob = 0;
+							for (String ss : s.split("&&")) {
+								if (ss.split("->").length == 2) {
+									String[] states = ss.split("->");
+									for (String state : stateGraph.keySet()) {
+										for (State m : stateGraph.get(state)) {
+											ExprTree expr = new ExprTree(lhpn);
+											expr.token = expr.intexpr_gettok(states[0]);
+											expr.intexpr_L(states[0]);
+											if (expr.evaluateExp(m.getVariables()) == 1.0) {
+												for (StateTransitionPair nextState : m
+														.getNextStatesWithTrans()) {
+													ExprTree nextExpr = new ExprTree(lhpn);
+													nextExpr.token = nextExpr
+															.intexpr_gettok(states[1]);
+													nextExpr.intexpr_L(states[1]);
+													if (nextExpr.evaluateExp(nextState.getState()
+															.getVariables()) == 1.0) {
+														prob += (m.getCurrentProb() * (lhpn
+																.getTransitionRateTree(
+																		nextState.getTransition())
+																.evaluateExp(m.getVariables()) / m
+																.getTransitionSum()));
+													}
+												}
+												if (stop) {
+													return false;
 												}
 											}
 											if (stop) {
-												return;
+												return false;
 											}
 										}
 										if (stop) {
-											return;
+											return false;
 										}
 									}
-									if (stop) {
-										return;
-									}
 								}
-							}
-							else {
-								for (String state : stateGraph.keySet()) {
-									for (State m : stateGraph.get(state)) {
-										ExprTree expr = new ExprTree(lhpn);
-										expr.token = expr.intexpr_gettok(ss);
-										expr.intexpr_L(ss);
-										if (expr.evaluateExp(m.getVariables()) == 1.0) {
-											prob += m.getCurrentProb();
+								else {
+									for (String state : stateGraph.keySet()) {
+										for (State m : stateGraph.get(state)) {
+											ExprTree expr = new ExprTree(lhpn);
+											expr.token = expr.intexpr_gettok(ss);
+											expr.intexpr_L(ss);
+											if (expr.evaluateExp(m.getVariables()) == 1.0) {
+												prob += m.getCurrentProb();
+											}
+											if (stop) {
+												return false;
+											}
 										}
 										if (stop) {
-											return;
+											return false;
 										}
 									}
-									if (stop) {
-										return;
-									}
+								}
+								if (stop) {
+									return false;
 								}
 							}
+							output.put(s, prob);
 							if (stop) {
-								return;
+								return false;
 							}
 						}
-						output.put(s, prob);
-						if (stop) {
-							return;
+						String result1 = "#total";
+						String result2 = "1.0";
+						for (String s : output.keySet()) {
+							result1 += " " + s;
+							result2 += " " + output.get(s);
 						}
+						markovResults = result1 + "\n" + result2 + "\n";
 					}
-					String result1 = "#total";
-					String result2 = "1.0";
-					for (String s : output.keySet()) {
-						result1 += " " + s;
-						result2 += " " + output.get(s);
-					}
-					markovResults = result1 + "\n" + result2 + "\n";
 				}
 			}
+			return true;
 		}
 	}
 

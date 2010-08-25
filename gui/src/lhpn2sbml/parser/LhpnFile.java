@@ -560,6 +560,15 @@ public class LhpnFile {
 	public Transition getTransition(String transition) {
 		return transitions.get(transition);
 	}
+	
+	public boolean isExpTransitionRateTree(String transition) {
+		if (transitions.get(transition).getDelayTree() == null)
+			return false;
+		if (transitions.get(transition).getDelayTree().op.equals("exponential")) {
+			return true;
+		}
+		return false;
+	}
 
 	public ExprTree getTransitionRateTree(String transition) {
 		if (transitions.get(transition).getDelayTree() == null)
