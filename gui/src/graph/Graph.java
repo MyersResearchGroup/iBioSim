@@ -5277,9 +5277,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						xnumber = Integer.parseInt(graph.getProperty("species.xnumber." + next));
 					}
 					graphed.add(new GraphSpecies(shapes.get(graph.getProperty("species.shape."
-							+ next)), colors.get(graph.getProperty("species.paint." + next)),
-							filled, visible, connected, graph.getProperty("species.run.number."
-									+ next), graph.getProperty("species.id." + next), graph
+							+ next)),
+							colors.get(graph.getProperty("species.paint." + next).trim()), filled,
+							visible, connected, graph.getProperty("species.run.number." + next),
+							graph.getProperty("species.id." + next), graph
 									.getProperty("species.name." + next), xnumber, Integer
 									.parseInt(graph.getProperty("species.number." + next)), graph
 									.getProperty("species.directory." + next)));
@@ -5319,8 +5320,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				int next = 0;
 				while (graph.containsKey("species.name." + next)) {
-					probGraphed.add(new GraphProbs(colors.get(graph.getProperty("species.paint."
-							+ next)), graph.getProperty("species.paint." + next), graph
+					probGraphed.add(new GraphProbs(colors.get(graph.getProperty(
+							"species.paint." + next).trim()), graph.getProperty(
+							"species.paint." + next).trim(), graph
 							.getProperty("species.id." + next), graph.getProperty("species.name."
 							+ next), Integer.parseInt(graph.getProperty("species.number." + next)),
 							graph.getProperty("species.directory." + next)));
