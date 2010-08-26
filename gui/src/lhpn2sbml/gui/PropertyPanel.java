@@ -8,6 +8,9 @@ import gcm2sbml.util.Utility;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
@@ -58,175 +61,189 @@ public class PropertyPanel extends JPanel implements ActionListener {
 			display = openGui(oldProperty);
 		}
 	}
-
 	private boolean checkValues() {
-		String prop = field.getValue();
 		boolean goodProperty = false;
-		// Parse the string property and check to see if it is valid and set
-		// goodProperty flag
-		String symbol = "@";
-		if (prop!=null && !prop.equals("") && !prop.contains(" ")){
-//			System.out.println("property:" + prop);
-			// detect temporal operators: AU EU EG EF AG AF PG PF PU
-			boolean temporalOpsFlag = prop.contains("AU") |
-								   prop.contains("AG") |
-								   prop.contains("AF") |
-								   prop.contains("EU") |
-								   prop.contains("EG") |
-								   prop.contains("EF") |
-								   prop.contains("PU") |
-								   prop.contains("PG") |
-								   prop.contains("PF");
-			boolean PUflag = prop.contains("PU");
-			boolean PFFlag = prop.contains("PF");
-			boolean PGFlag = prop.contains("PG");
-			boolean MultiTempFlag= false;  // flag for multiple temporal operators 
-			String propTemp = null;
-			propTemp = prop;
-			// test if the property specification contains temporal logic
-			if (temporalOpsFlag){
-//				 Constraint constraintFail = m.createConstraint();	
-//				 Constraint constraintSucc = m.createConstraint();
-				 String[] allTemporalOps={"AU", "AG", "AF","EU", "EG", "EF", "PU","PG", "PF",};
-				 String leftPropTemp = null;
-				 String rightPropTemp = null;
-				 String BoundPropTemp = null;
-				 String lowerBoundPropTemp = null;
-				 String upperBoundPropTemp = null;
-				 for (int i=0; i < allTemporalOps.length; i++){
-					 if (prop.contains(allTemporalOps[i])){   
-						 // if property contains any temporal operators
-						 propTemp = propTemp.replace(allTemporalOps[i], symbol);
-					 }
-				 }
-				 // check multiple temporal logic operators
-				 if(propTemp.indexOf(symbol)!= propTemp.lastIndexOf(symbol)){ 
-					 MultiTempFlag = true;
-				 }
-				 if (!MultiTempFlag){
-					// Strip off the temporal operator and its time bound
-					 if (PUflag){   // if it is PU.
-						 // Current version only deals with PU. 
-						 // The atacs parser requires PU to have a pair of outermost brackets 
-						 // Example: ((q_max=q_max)PU[2,3](q=q_max))
-						 if (propTemp.startsWith("(") && propTemp.endsWith(")")){
-							// remove the outermost brackets
-							 propTemp = propTemp.substring(1, propTemp.lastIndexOf(")"));
-							 // obtain the logic BEFORE the temporal operator
-							 leftPropTemp= propTemp.substring(0, propTemp.indexOf(symbol));
-							 boolean isLeftValid = isValidExpr(lhpn, leftPropTemp);
-							 if (isLeftValid){
-								// obtain the logic AFTER the temporal operator
-								 rightPropTemp= propTemp.substring(propTemp.indexOf("]")+1, propTemp.length());
-								 boolean isRightValid = isValidExpr(lhpn, rightPropTemp);
-								 if(isRightValid){
-									// obtain the time bound
-									 BoundPropTemp= propTemp.substring(propTemp.indexOf("["), propTemp.indexOf("]")+1);
-									 // bound: [<= upper]
-									 if(BoundPropTemp.contains("<=")){
-										// upper bound
-										 upperBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf("<")+2, BoundPropTemp.indexOf("]"));
-										 boolean isUpperValid = isValidExpr(lhpn, upperBoundPropTemp);
-										 if(isUpperValid) goodProperty = true;
-										 else{
-											 JOptionPane.showMessageDialog(null, "Invalid expression in upper time bound.",
-														"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
-										 }
+		String propertyTempTest=field.getValue();
+		String propertyTemp = field.getValue();
+		// check the balance of parentheses and square brackets
+		short numOPAR = 0;
+		short numCPAR = 0;
+		short numOSQUARE=0;
+		short numCSQUARE=0;
+//		propertyTempTest = propertyTempTest.replaceFirst("\\(", "");
+//		if (propertyTempTest.contains(")")){
+//			System.out.println("propertyTempTest = " + propertyTempTest);
+//		}
+		for (numOPAR = 0; propertyTempTest.contains("("); numOPAR++){
+			propertyTempTest = propertyTempTest.replaceFirst("\\(", "");
+		}
+		for (numCPAR = 0; propertyTempTest.contains(")"); numCPAR++){
+			propertyTempTest = propertyTempTest.replaceFirst("\\)", "");
+		}
+		for (numOSQUARE = 0; propertyTempTest.contains("["); numOSQUARE++){
+			propertyTempTest = propertyTempTest.replaceFirst("\\[", "");
+		}
+		for (numCSQUARE = 0; propertyTempTest.contains("]"); numCSQUARE++){
+			propertyTempTest = propertyTempTest.replaceFirst("\\]", "");
+		}
+		if((numOPAR==numCPAR) && (numOSQUARE==numCSQUARE)){
+			boolean propsFlag = propertyTemp.contains("AU") |
+			   propertyTemp.contains("AG") |
+			   propertyTemp.contains("AF") |
+			   propertyTemp.contains("EU") |
+			   propertyTemp.contains("EG") |
+			   propertyTemp.contains("EF") ;
+			if (propertyTemp.contains("Pr")){
+				propertyTemp = propertyTemp.replace("Pr", "%");
+			}
+			else if(propertyTemp.contains("St")){
+				propertyTemp = propertyTemp.replace("St", "^");
+			}
+			String probpropertyTemp = propertyTemp;
+			if (!propsFlag){
+				// probproperty 
+				// currently only allow ONE Pr operator in one property spec
+				boolean MultiFlag= (propertyTemp.indexOf("%")!=propertyTemp.lastIndexOf("%"))
+							|(propertyTemp.indexOf("^")!=propertyTemp.lastIndexOf("^")
+							|(propertyTemp.contains("%") && propertyTemp.contains("^")));
+	//			System.out.println("propertyTemp = " + propertyTemp);	
+				if (!MultiFlag){
+					if (propertyTemp.startsWith("%")){
+						probpropertyTemp=probpropertyTemp.substring(1);
+						boolean relopFlag = probpropertyTemp.startsWith(">")
+											| probpropertyTemp.startsWith(">=")
+											| probpropertyTemp.startsWith("<")
+											| probpropertyTemp.startsWith("<=")
+										    | (probpropertyTemp.startsWith("=") && !probpropertyTemp.contains("?"));
+						if (relopFlag){
+							// remove the relop
+							if(probpropertyTemp.startsWith(">=") | probpropertyTemp.startsWith("<=")){
+								probpropertyTemp=probpropertyTemp.substring(2);
+							}
+							else{
+								probpropertyTemp=probpropertyTemp.substring(1);
+							}
+	//						// check the probability value after relop
+							String probabilityValue = probpropertyTemp.substring(0,probpropertyTemp.indexOf("["));
+							Pattern ProbabilityValuePattern = Pattern.compile(probValue);
+							Matcher ProbabilityValueMatcher = ProbabilityValuePattern.matcher(probabilityValue);
+							boolean correctProbabilityValue = ProbabilityValueMatcher.matches();
+							if(correctProbabilityValue) {
+								probpropertyTemp=probpropertyTemp.replaceFirst(probabilityValue, "");
+								// propertyTemp should be in this format at this stage: '[' probprop ']'
+								if (probpropertyTemp.startsWith("[")){
+									String probprop = (String) probpropertyTemp.subSequence(1, probpropertyTemp.lastIndexOf("]"));
+									goodProperty = Parseprobprop(probprop, goodProperty);
+								}
+								else{
+									JOptionPane.showMessageDialog(null, "invalid format after the first probability value ",
+											"Error in Property", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								JOptionPane.showMessageDialog(null, "invalid format of the probability value ",
+										"Error in Property", JOptionPane.ERROR_MESSAGE);
+							}
+						}
+						else if (probpropertyTemp.startsWith("=?")){
+							probpropertyTemp=probpropertyTemp.substring(2);
+							// propertyTemp should be in this format at this stage: '[' probprop ']'
+							if (probpropertyTemp.startsWith("[")){
+								String probprop = (String) probpropertyTemp.subSequence(1, probpropertyTemp.lastIndexOf("]"));
+								goodProperty = Parseprobprop(probprop, goodProperty);
+							}
+							else{
+								JOptionPane.showMessageDialog(null, "invalid format after the question mark ",
+										"Error in Property", JOptionPane.ERROR_MESSAGE);
+							}
+						}
+						else {
+							JOptionPane.showMessageDialog(null, "Missing relational operator after Pr",
+									"Error in Property", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					else if (propertyTemp.startsWith("^")){
+						probpropertyTemp=probpropertyTemp.substring(1);
+						boolean relopFlag = probpropertyTemp.startsWith(">")
+						| probpropertyTemp.startsWith(">=")
+						| probpropertyTemp.startsWith("<")
+						| probpropertyTemp.startsWith("<=")
+						|(probpropertyTemp.startsWith("=") && !probpropertyTemp.contains("?"));
+						if (relopFlag){
+							// remove the relop
+							if(probpropertyTemp.startsWith(">=") | probpropertyTemp.startsWith("<=")){
+								probpropertyTemp=probpropertyTemp.substring(2);
+							}
+							else{
+								probpropertyTemp=probpropertyTemp.substring(1);
+							}
+	//						// check the probability value after relop
+							String probabilityValue = probpropertyTemp.substring(0,probpropertyTemp.indexOf("["));
+							Pattern ProbabilityValuePattern = Pattern.compile(probValue);
+							Matcher ProbabilityValueMatcher = ProbabilityValuePattern.matcher(probabilityValue);
+							boolean correctProbabilityValue = ProbabilityValueMatcher.matches();
+							if(correctProbabilityValue) {
+								probpropertyTemp=probpropertyTemp.replaceFirst(probabilityValue, "");
+								// propertyTemp should be in this format at this stage: '[' hsf ']'
+								if (probpropertyTemp.startsWith("[")){
+									String hsf = (String) probpropertyTemp.subSequence(1, probpropertyTemp.lastIndexOf("]"));
+									boolean isHsfValid = isValidExpr(lhpn, hsf);
+									if(isHsfValid) goodProperty = true;
+									else{
+										 JOptionPane.showMessageDialog(null, "Invalid expression inside the square brackets.",
+													"Error in Property", JOptionPane.ERROR_MESSAGE);
 									 }
-									 // bound: [lower, upper]
-									 else if (BoundPropTemp.contains(",")){ 
-										 lowerBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf("[")+1, BoundPropTemp.indexOf(","));
-										 boolean isLowerValid = isValidExpr(lhpn, lowerBoundPropTemp);
-										 upperBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf(",")+1, BoundPropTemp.indexOf("]"));
-										 boolean isUpperValid = isValidExpr(lhpn, upperBoundPropTemp);	 
-										 if(isLowerValid && isUpperValid) goodProperty = true;
-										 else 
-											 JOptionPane.showMessageDialog(null, "Invalid expression in lower/upper bound.",
-														"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
-									 }
-									 // invalid expression for the time bound
-									 else {
-										 JOptionPane.showMessageDialog(null, "Invalid format in time bound. It should be either [<= upper] or [lower, upper].",
-													"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
-									 } 
-								 }
+								}
+								else{
+									JOptionPane.showMessageDialog(null, "invalid format after the first probability value ",
+											"Error in Property", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else {
+								JOptionPane.showMessageDialog(null, "invalid format of the probability value ",
+										"Error in Property", JOptionPane.ERROR_MESSAGE);
+							}
+						}
+						else if (probpropertyTemp.startsWith("=?")){
+							probpropertyTemp=probpropertyTemp.substring(2);
+							// propertyTemp should be in this format at this stage: '[' hsf ']'
+							if (probpropertyTemp.startsWith("[")){
+								String hsf = (String) probpropertyTemp.subSequence(1, probpropertyTemp.lastIndexOf("]"));
+								boolean isHsfValid = isValidExpr(lhpn, hsf);
+								if(isHsfValid) goodProperty = true;
 								 else{
-									 JOptionPane.showMessageDialog(null, "Invalid logical expression after the until operator",
+									 JOptionPane.showMessageDialog(null, "Invalid expression inside the square brackets.",
 												"Error in Property", JOptionPane.ERROR_MESSAGE);
 								 }
-							 }
-							 else {
-								 JOptionPane.showMessageDialog(null, "Invalid logical expression before the until operator",
-											"Error in Property", JOptionPane.ERROR_MESSAGE);
-							 }
-						 }
-						 else {
-							 JOptionPane.showMessageDialog(null, "Please add parenthese around the property specification.",
+							}
+							else{
+								JOptionPane.showMessageDialog(null, "invalid format after the question mark ",
 										"Error in Property", JOptionPane.ERROR_MESSAGE);
-						 }
-					 }
-					 else if(PFFlag | PGFlag){ 
-						 // if the temporal operator is one of these : PF and PG
-						// Current version only supports PF and PG
-//						// Examples: PF([4,5]q=q_max), PG([<=7]q=q_max)
-						 
-						// obtain the logic AFTER the temporal operator
-						 rightPropTemp= propTemp.substring(propTemp.indexOf("]")+1, propTemp.length());
-						 boolean isRightValid = isValidExpr(lhpn, rightPropTemp);
-						 if(isRightValid){
-							// obtain the time bound
-							 BoundPropTemp= propTemp.substring(propTemp.indexOf("["), propTemp.indexOf("]")+1);
-							 // bound: [<= upper]
-							 if (BoundPropTemp.contains("<=")){
-								 upperBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf("<")+2, BoundPropTemp.indexOf("]"));
-								 boolean isUpperValid = isValidExpr(lhpn, upperBoundPropTemp);
-								 if(isUpperValid) goodProperty = true;
-								 else{
-									 JOptionPane.showMessageDialog(null, "Invalid expression in upper time bound.",
-												"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
-								 }
-									 
-							 }
-							 else if (BoundPropTemp.contains(",")){
-								 lowerBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf("[")+1, BoundPropTemp.indexOf(","));
-								 upperBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf(",")+1, BoundPropTemp.indexOf("]"));
-								 boolean isLowerValid = isValidExpr(lhpn, lowerBoundPropTemp);
-								 boolean isUpperValid = isValidExpr(lhpn, upperBoundPropTemp);
-								 if(isLowerValid && isUpperValid) goodProperty = true;
-								 else {
-									 JOptionPane.showMessageDialog(null, "Invalid format in time bound. It should be either [<= upper] or [lower, upper].",
-												"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
-								 }	 
-							 }
-							 else {
-								 JOptionPane.showMessageDialog(null, "Invalid format in time bound. It should be either [<= upper] or [lower, upper].",
-											"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
-							 }
-							 
-						 }
-						 else {
-							 JOptionPane.showMessageDialog(null, "Invalid logical expression after the until operator",
-										"Error in Property", JOptionPane.ERROR_MESSAGE);
-						 }
-						
-					 }
-					 else {		// AF,AG,AU,EF,EG,EU
-						 JOptionPane.showMessageDialog(null, "Currently the editor does not support one of the following temporal operators: AU,AF,AG,EU,EF,EG.",
+							}
+						}
+						else {
+							JOptionPane.showMessageDialog(null, "Missing relational operator after St",
 									"Error in Property", JOptionPane.ERROR_MESSAGE);
-					 } 
+						}
+					}
+					else {
+						// hsf
+					}
 				}
-				 else {    // MultiTempFlag = true
-					 	JOptionPane.showMessageDialog(null, "Property does not allow nested temporal operators.",
-								"Error in Property", JOptionPane.ERROR_MESSAGE);
-				 }
+				else {
+					JOptionPane.showMessageDialog(null, "Nested probabilistic property is not supported",
+							"Error in Property", JOptionPane.ERROR_MESSAGE);				
+				}
 			}
-			else {    // property does not include temporal operators
-				     JOptionPane.showMessageDialog(null, "Property without temporal logic is can only be checked in their intial states. Please include a temporal logic operator.",
-						"Error in Property", JOptionPane.ERROR_MESSAGE);
-					 ExprTree propTempTree = String2ExprTree(lhpn, propTemp);
-					 String propTempSBML = propTempTree.toString("SBML");
-				}
-		}		
+			else if (propsFlag){
+				// props
+				goodProperty = true;
+			}
+		}
+		else{
+			JOptionPane.showMessageDialog(null, "Unbalanced parentheses or square brackets",
+					"Error in Property", JOptionPane.ERROR_MESSAGE);
+		}
 		return goodProperty;
 	}
 
@@ -235,7 +252,6 @@ public class PropertyPanel extends JPanel implements ActionListener {
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (!checkValues()) {
-				//Utility.createErrorMessage("Error", "Invalid property entered.");
 				return false;
 			}
 			String property = field.getValue();
@@ -271,6 +287,130 @@ public class PropertyPanel extends JPanel implements ActionListener {
 			// setType(initBox.getSelectedItem().toString());
 		}
 	}
+	public boolean Parseprobprop(String probprop, boolean goodProperty){
+//		boolean MultiTempFlag= false;  // flag for multiple temporal operators 
+		String symbol="@";
+		String probpropTemp = probprop;
+			 String hsfLeft = null;
+			 String hsfRight = null;
+			 String BoundPropTemp = null;
+			 String lowerBoundPropTemp = null;
+			 String upperBoundPropTemp = null;
+			 
+			 // Strip off the temporal operator and its time bound
+		     if (probpropTemp.startsWith("(") && probpropTemp.contains("PU")){
+					 // Current version only deals with PU. 
+					 // The atacs parser requires PU to have a pair of outermost brackets 
+					 // Example: ((q_max=q_max)PU[2,3]q=q_max)
+					 if (probpropTemp.startsWith("(") && probpropTemp.endsWith(")")){
+						// remove the outermost brackets
+						 probpropTemp = probpropTemp.substring(1, probpropTemp.lastIndexOf(")"));
+						 // obtain the logic BEFORE the temporal operator
+						 probpropTemp = probpropTemp.replace("PU", symbol);
+						 hsfLeft= probpropTemp.substring(0, probpropTemp.indexOf(symbol));
+						 boolean isLeftValid = isValidExpr(lhpn, hsfLeft);
+						 if (isLeftValid){
+							// obtain the logic AFTER the temporal operator
+							 hsfRight= probpropTemp.substring(probpropTemp.indexOf("]")+1, probpropTemp.length());
+							 boolean isRightValid = isValidExpr(lhpn, hsfRight);
+							 if(isRightValid){
+								// obtain the time bound
+								 BoundPropTemp= probpropTemp.substring(probpropTemp.indexOf("["), probpropTemp.indexOf("]")+1);
+								 // bound: [<= upper]
+								 if(BoundPropTemp.contains("<=")){
+									// upper bound
+									 upperBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf("<")+2, BoundPropTemp.indexOf("]"));
+									 boolean isUpperValid = isValidExpr(lhpn, upperBoundPropTemp);
+									 if(isUpperValid) goodProperty = true;
+									 else{
+										 JOptionPane.showMessageDialog(null, "Invalid expression in upper time bound.",
+													"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
+									 }
+								 }
+								 // bound: [lower, upper]
+								 else if (BoundPropTemp.contains(",")){ 
+									 lowerBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf("[")+1, BoundPropTemp.indexOf(","));
+									 boolean isLowerValid = isValidExpr(lhpn, lowerBoundPropTemp);
+									 upperBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf(",")+1, BoundPropTemp.indexOf("]"));
+									 boolean isUpperValid = isValidExpr(lhpn, upperBoundPropTemp);	 
+									 if(isLowerValid && isUpperValid) goodProperty = true;
+									 else 
+										 JOptionPane.showMessageDialog(null, "Invalid expression in lower/upper bound.",
+													"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
+								 }
+								 // invalid expression for the time bound
+								 else {
+									 JOptionPane.showMessageDialog(null, "Invalid format in time bound. It should be either [<= upper] or [lower, upper].",
+												"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
+								 } 
+							 }
+							 else{
+								 JOptionPane.showMessageDialog(null, "Invalid logical expression after the until operator",
+											"Error in Property", JOptionPane.ERROR_MESSAGE);
+							 }
+						 }
+						 else {
+							 JOptionPane.showMessageDialog(null, "Invalid logical expression before the until operator",
+										"Error in Property", JOptionPane.ERROR_MESSAGE);
+						 }
+					 }
+					 else {
+						 JOptionPane.showMessageDialog(null, "Please add parenthese around the PU specification.",
+									"Error in Property", JOptionPane.ERROR_MESSAGE);
+					 }
+				 }
+				 else if(probpropTemp.startsWith("PF") | probpropTemp.startsWith("PG")){ 
+					 // if the temporal operator is either PF or PG
+					 // Examples: PF([4,5]q=q_max), PG([<=7]q=q_max)
+					// obtain the logic AFTER the temporal operator
+					 hsfRight= probpropTemp.substring(probpropTemp.indexOf("]")+1, probpropTemp.length());
+					 boolean isRightValid = isValidExpr(lhpn, hsfRight);
+					 if(isRightValid){
+						// obtain the time bound
+						 BoundPropTemp= probpropTemp.substring(probpropTemp.indexOf("["), probpropTemp.indexOf("]")+1);
+						 // bound: [<= upper]
+						 if (BoundPropTemp.contains("<=")){
+							 upperBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf("<")+2, BoundPropTemp.indexOf("]"));
+							 boolean isUpperValid = isValidExpr(lhpn, upperBoundPropTemp);
+							 if(isUpperValid) goodProperty = true;
+							 else{
+								 JOptionPane.showMessageDialog(null, "Invalid expression in upper time bound.",
+											"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
+							 }
+								 
+						 }
+						 else if (BoundPropTemp.contains(",")){
+							 lowerBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf("[")+1, BoundPropTemp.indexOf(","));
+							 upperBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf(",")+1, BoundPropTemp.indexOf("]"));
+							 boolean isLowerValid = isValidExpr(lhpn, lowerBoundPropTemp);
+							 boolean isUpperValid = isValidExpr(lhpn, upperBoundPropTemp);
+							 if(isLowerValid && isUpperValid) goodProperty = true;
+							 else {
+								 JOptionPane.showMessageDialog(null, "Invalid format in time bound. It should be either [<= upper] or [lower, upper].",
+											"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
+							 }	 
+						 }
+						 else {
+							 JOptionPane.showMessageDialog(null, "Invalid format in time bound. It should be either [<= upper] or [lower, upper].",
+										"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
+						 }
+						 
+					 }
+					 else {
+						 JOptionPane.showMessageDialog(null, "Invalid logical expression after the until operator",
+									"Error in Property", JOptionPane.ERROR_MESSAGE);
+					 }
+					
+				 }
+				 else {
+					 JOptionPane.showMessageDialog(null, "Temporal logic can only be one of the following: PU, PF and PG.",
+								"Error in Property", JOptionPane.ERROR_MESSAGE);
+				 }
+		     
+		     return goodProperty;
+		
+	}
+	
 	public ExprTree String2ExprTree(LhpnFile lhpn, String str) {
 		boolean retVal;
 		ExprTree result = new ExprTree(lhpn);
@@ -289,5 +429,5 @@ public class PropertyPanel extends JPanel implements ActionListener {
 		retVal = expr.intexpr_L(str);
 		return retVal;
 	}
-
+	private static final String probValue = "(0\\.[0-9]+)";
 }
