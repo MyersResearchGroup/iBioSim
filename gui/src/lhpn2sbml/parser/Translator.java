@@ -596,359 +596,197 @@ public class Translator {
 			// translate a LPN property passed to the BuildTemplate() into SBML constraints
 			// Property check is done in PropertyPanel.java
 			// currently only allow ONE Pr operator in one property spec
-			String probpropertyTemp = property;
-			String symbol = "@";
-			boolean PUFlag = probpropertyTemp.contains("PU");
-			boolean PFFlag = probpropertyTemp.contains("PF");
-			boolean PGFlag = probpropertyTemp.contains("PG");
-			boolean hsfFlag = false; // Flag is true if probproperty => hsf
-			boolean SsFlag = false;
-			String hsfLeftTemp = null;
-			String hsfRightTemp = null;
-			String boundTemp = null;
-			String lowerBoundTemp = null;
-			String upperBoundTemp = null;
-			// probproperty 
-			if (property.contains("Pr")){
-				// remove Pr from the property spec
-				probpropertyTemp=probpropertyTemp.substring(2);
-				boolean relopFlag = probpropertyTemp.startsWith(">")
-									| probpropertyTemp.startsWith(">=")
-									| probpropertyTemp.startsWith("<")
-									| probpropertyTemp.startsWith("<=")
-									| (probpropertyTemp.startsWith("=") && !probpropertyTemp.contains("?"));
-				if (relopFlag){
-					if(probpropertyTemp.startsWith(">=") | probpropertyTemp.startsWith("<=")){
-						probpropertyTemp=probpropertyTemp.substring(2);
-					}
-					else{
-						probpropertyTemp=probpropertyTemp.substring(1);
-					}
-					// check the probability value after relop
-					String probabilityValue = probpropertyTemp.substring(0,probpropertyTemp.indexOf("["));
-					Pattern ProbabilityValuePattern = Pattern.compile(probabilityValue);
-					Matcher ProbabilityValueMatcher = ProbabilityValuePattern.matcher(probabilityValue);
-					boolean correctProbabilityValue = ProbabilityValueMatcher.matches();
-					if(correctProbabilityValue) {
-						probpropertyTemp=probpropertyTemp.replaceFirst(probabilityValue, "");
-						System.out.println("probpropTemp1 = " + probpropertyTemp);
-					}
-				}
-				else if(probpropertyTemp.startsWith("=") && probpropertyTemp.contains("?")){
+			if ((property != null) && !property.equals("")){
+				String probpropertyTemp = property;
+				String symbol = "@";
+				boolean PUFlag = probpropertyTemp.contains("PU");
+				boolean PFFlag = probpropertyTemp.contains("PF");
+				boolean PGFlag = probpropertyTemp.contains("PG");
+				boolean hsfFlag = false; // Flag is true if probproperty => hsf
+				boolean SsFlag = false;
+				String hsfLeftTemp = null;
+				String hsfRightTemp = null;
+				String boundTemp = null;
+				String lowerBoundTemp = null;
+				String upperBoundTemp = null;
+				// probproperty 
+				if (property.contains("Pr")){
+					// remove Pr from the property spec
 					probpropertyTemp=probpropertyTemp.substring(2);
-					System.out.println("probpropTemp2 = " + probpropertyTemp);
-				}
-			}
-			else if(property.contains("St")){
-				SsFlag = true;
-				// remove St from the property spec
-				probpropertyTemp=probpropertyTemp.substring(2);
-				boolean relopFlag = probpropertyTemp.startsWith(">")
-									| probpropertyTemp.startsWith(">=")
-									| probpropertyTemp.startsWith("<")
-									| probpropertyTemp.startsWith("<=")
-									| (probpropertyTemp.startsWith("=") && !probpropertyTemp.contains("?"));
-				if (relopFlag){
-					if(probpropertyTemp.startsWith(">=") | probpropertyTemp.startsWith("<=")){
+					boolean relopFlag = probpropertyTemp.startsWith(">")
+										| probpropertyTemp.startsWith(">=")
+										| probpropertyTemp.startsWith("<")
+										| probpropertyTemp.startsWith("<=")
+										| (probpropertyTemp.startsWith("=") && !probpropertyTemp.contains("?"));
+					if (relopFlag){
+						if(probpropertyTemp.startsWith(">=") | probpropertyTemp.startsWith("<=")){
+							probpropertyTemp=probpropertyTemp.substring(2);
+						}
+						else{
+							probpropertyTemp=probpropertyTemp.substring(1);
+						}
+						// check the probability value after relop
+						String probabilityValue = probpropertyTemp.substring(0,probpropertyTemp.indexOf("["));
+						Pattern ProbabilityValuePattern = Pattern.compile(probabilityValue);
+						Matcher ProbabilityValueMatcher = ProbabilityValuePattern.matcher(probabilityValue);
+						boolean correctProbabilityValue = ProbabilityValueMatcher.matches();
+						if(correctProbabilityValue) {
+							probpropertyTemp=probpropertyTemp.replaceFirst(probabilityValue, "");
+							System.out.println("probpropTemp1 = " + probpropertyTemp);
+						}
+					}
+					else if(probpropertyTemp.startsWith("=") && probpropertyTemp.contains("?")){
 						probpropertyTemp=probpropertyTemp.substring(2);
-					}
-					else{
-						probpropertyTemp=probpropertyTemp.substring(1);
-					}
-					// check the probability value after relop
-					String probabilityValue = probpropertyTemp.substring(0,probpropertyTemp.indexOf("["));
-					Pattern ProbabilityValuePattern = Pattern.compile(probabilityValue);
-					Matcher ProbabilityValueMatcher = ProbabilityValuePattern.matcher(probabilityValue);
-					boolean correctProbabilityValue = ProbabilityValueMatcher.matches();
-					if(correctProbabilityValue) {
-						probpropertyTemp=probpropertyTemp.replaceFirst(probabilityValue, "");
+						System.out.println("probpropTemp2 = " + probpropertyTemp);
 					}
 				}
-				else if(probpropertyTemp.startsWith("=") && probpropertyTemp.contains("?")){
+				else if(property.contains("St")){
+					SsFlag = true;
+					// remove St from the property spec
 					probpropertyTemp=probpropertyTemp.substring(2);
-				}				
-			}
-			else {
-				hsfFlag = true;
-				// hsf
-			}
-			if (!SsFlag & !hsfFlag){
-				Constraint constraintFail = m.createConstraint();	
-				Constraint constraintSucc = m.createConstraint();
-				// propertyTemp should be in this format at this stage: '[' probprop ']'
-				if (probpropertyTemp.startsWith("[")){
-					// remove the outermost square brackets
-					probpropertyTemp = probpropertyTemp.substring(1, probpropertyTemp.lastIndexOf("]"));
-					
-					// obtain the hsf AFTER bound
-					hsfRightTemp= probpropertyTemp.substring(probpropertyTemp.indexOf("]")+1, probpropertyTemp.length());
-					ExprTree hsfRightTempTree = String2ExprTree(lhpn, hsfRightTemp);
-					String hsfRightTempSBML = hsfRightTempTree.toString("SBML");				
-					// obtain the time bound
-					boundTemp= probpropertyTemp.substring(probpropertyTemp.indexOf("["), probpropertyTemp.indexOf("]")+1);							 
-					// bound: [<= upper]
-					if(boundTemp.contains("<=")){
-						// upper bound
-						upperBoundTemp = boundTemp.substring(boundTemp.indexOf("<")+2, boundTemp.indexOf("]"));
-						ExprTree upperBoundPropTempTree = String2ExprTree(lhpn, upperBoundTemp);
-					    String upperBoundPropTempSBML = upperBoundPropTempTree.toString("SBML");
-					    // constraints for the time bound
-					    String upperConstraint = "leq(t," + upperBoundPropTempSBML + ")";				    
-						if(PUFlag){
-							// remove the outermost parentheses for PU
-							probpropertyTemp = probpropertyTemp.substring(1, probpropertyTemp.lastIndexOf(")"));
-							System.out.println("probpropTemp3 = " + probpropertyTemp);
-							probpropertyTemp = probpropertyTemp.replace("PU",symbol);
-							// obtain the logic BEFORE the temporal operator
-							hsfLeftTemp= probpropertyTemp.substring(0, probpropertyTemp.indexOf(symbol));
-							System.out.println("leftProbpropTemp = " + hsfLeftTemp);
-							ExprTree hsfLeftTempTree = String2ExprTree(lhpn, hsfLeftTemp);
-							String hsfLeftTempSBML = hsfLeftTempTree.toString("SBML");
-							// construct the SBML constraints
-							constraintFail.setMetaId("Fail");
-							constraintFail.setMath(SBML_Editor.myParseFormula("and(" + hsfLeftTempSBML + "," + upperConstraint + ")"));
-							constraintSucc.setMetaId("Success");
-							constraintSucc.setMath(SBML_Editor.myParseFormula("not(" + hsfRightTempSBML + ")"));
-						   }						    
-						else { // PG or PF
-							// construct the SBML constraints
-							if (PFFlag){
+					boolean relopFlag = probpropertyTemp.startsWith(">")
+										| probpropertyTemp.startsWith(">=")
+										| probpropertyTemp.startsWith("<")
+										| probpropertyTemp.startsWith("<=")
+										| (probpropertyTemp.startsWith("=") && !probpropertyTemp.contains("?"));
+					if (relopFlag){
+						if(probpropertyTemp.startsWith(">=") | probpropertyTemp.startsWith("<=")){
+							probpropertyTemp=probpropertyTemp.substring(2);
+						}
+						else{
+							probpropertyTemp=probpropertyTemp.substring(1);
+						}
+						// check the probability value after relop
+						String probabilityValue = probpropertyTemp.substring(0,probpropertyTemp.indexOf("["));
+						Pattern ProbabilityValuePattern = Pattern.compile(probabilityValue);
+						Matcher ProbabilityValueMatcher = ProbabilityValuePattern.matcher(probabilityValue);
+						boolean correctProbabilityValue = ProbabilityValueMatcher.matches();
+						if(correctProbabilityValue) {
+							probpropertyTemp=probpropertyTemp.replaceFirst(probabilityValue, "");
+						}
+					}
+					else if(probpropertyTemp.startsWith("=") && probpropertyTemp.contains("?")){
+						probpropertyTemp=probpropertyTemp.substring(2);
+					}				
+				}
+				else {
+					hsfFlag = true;
+					// hsf
+				}
+				if (!SsFlag & !hsfFlag){
+					Constraint constraintFail = m.createConstraint();	
+					Constraint constraintSucc = m.createConstraint();
+					// propertyTemp should be in this format at this stage: '[' probprop ']'
+					if (probpropertyTemp.startsWith("[")){
+						// remove the outermost square brackets
+						probpropertyTemp = probpropertyTemp.substring(1, probpropertyTemp.lastIndexOf("]"));
+						
+						// obtain the hsf AFTER bound
+						hsfRightTemp= probpropertyTemp.substring(probpropertyTemp.indexOf("]")+1, probpropertyTemp.length());
+						ExprTree hsfRightTempTree = String2ExprTree(lhpn, hsfRightTemp);
+						String hsfRightTempSBML = hsfRightTempTree.toString("SBML");				
+						// obtain the time bound
+						boundTemp= probpropertyTemp.substring(probpropertyTemp.indexOf("["), probpropertyTemp.indexOf("]")+1);							 
+						// bound: [<= upper]
+						if(boundTemp.contains("<=")){
+							// upper bound
+							upperBoundTemp = boundTemp.substring(boundTemp.indexOf("<")+2, boundTemp.indexOf("]"));
+							ExprTree upperBoundPropTempTree = String2ExprTree(lhpn, upperBoundTemp);
+						    String upperBoundPropTempSBML = upperBoundPropTempTree.toString("SBML");
+						    // constraints for the time bound
+						    String upperConstraint = "leq(t," + upperBoundPropTempSBML + ")";				    
+							if(PUFlag){
+								// remove the outermost parentheses for PU
+								probpropertyTemp = probpropertyTemp.substring(1, probpropertyTemp.lastIndexOf(")"));
+								System.out.println("probpropTemp3 = " + probpropertyTemp);
+								probpropertyTemp = probpropertyTemp.replace("PU",symbol);
+								// obtain the logic BEFORE the temporal operator
+								hsfLeftTemp= probpropertyTemp.substring(0, probpropertyTemp.indexOf(symbol));
+								System.out.println("leftProbpropTemp = " + hsfLeftTemp);
+								ExprTree hsfLeftTempTree = String2ExprTree(lhpn, hsfLeftTemp);
+								String hsfLeftTempSBML = hsfLeftTempTree.toString("SBML");
+								// construct the SBML constraints
 								constraintFail.setMetaId("Fail");
-								constraintFail.setMath(SBML_Editor.myParseFormula(upperConstraint));
+								constraintFail.setMath(SBML_Editor.myParseFormula("and(" + hsfLeftTempSBML + "," + upperConstraint + ")"));
 								constraintSucc.setMetaId("Success");
 								constraintSucc.setMath(SBML_Editor.myParseFormula("not(" + hsfRightTempSBML + ")"));
-							}
-							if (PGFlag){
-								constraintFail.setMetaId("Fail");
-								constraintFail.setMath(SBML_Editor.myParseFormula(hsfRightTempSBML));
-								constraintSucc.setMetaId("Success");
-								constraintSucc.setMath(SBML_Editor.myParseFormula(upperConstraint));
+							   }						    
+							else { // PG or PF
+								// construct the SBML constraints
+								if (PFFlag){
+									constraintFail.setMetaId("Fail");
+									constraintFail.setMath(SBML_Editor.myParseFormula(upperConstraint));
+									constraintSucc.setMetaId("Success");
+									constraintSucc.setMath(SBML_Editor.myParseFormula("not(" + hsfRightTempSBML + ")"));
+								}
+								if (PGFlag){
+									constraintFail.setMetaId("Fail");
+									constraintFail.setMath(SBML_Editor.myParseFormula(hsfRightTempSBML));
+									constraintSucc.setMetaId("Success");
+									constraintSucc.setMath(SBML_Editor.myParseFormula(upperConstraint));
+								}
 							}
 						}
-					}
-					// bound: [lower, upper]
-					else if (boundTemp.contains(",")){ 
-						// lower bound
-						lowerBoundTemp = boundTemp.substring(boundTemp.indexOf("[")+1, boundTemp.indexOf(","));
-						ExprTree lowerBoundPropTempTree = String2ExprTree(lhpn, lowerBoundTemp);
-						String lowerBoundPropTempSBML = lowerBoundPropTempTree.toString("SBML");
-						// upper bound
-						upperBoundTemp = boundTemp.substring(boundTemp.indexOf(",")+1, boundTemp.indexOf("]"));
-						ExprTree upperBoundPropTempTree = String2ExprTree(lhpn, upperBoundTemp);
-						String upperBoundPropTempSBML = upperBoundPropTempTree.toString("SBML");		 
-											 
-						// constraints for time bounds
-						String upperConstraint = "leq(t," + upperBoundPropTempSBML + ")";
-						String lowerConstraint = "leq(t," + lowerBoundPropTempSBML + ")";
-							
-						if(PUFlag){
-							// remove the outermost parentheses for PU
-							probpropertyTemp = probpropertyTemp.substring(1, probpropertyTemp.lastIndexOf(")"));
-							System.out.println("probpropTemp3 = " + probpropertyTemp);
-							probpropertyTemp = probpropertyTemp.replace("PU",symbol);
-							// obtain the logic BEFORE the temporal operator
-							hsfLeftTemp= probpropertyTemp.substring(0, probpropertyTemp.indexOf(symbol));
-							ExprTree hsfLeftTempTree = String2ExprTree(lhpn, hsfLeftTemp);
-							String hsfLeftTempSBML = hsfLeftTempTree.toString("SBML");
-							// construct the SBML constraints
-							constraintFail.setMetaId("Fail");
-							constraintFail.setMath(SBML_Editor.myParseFormula("and(" + hsfLeftTempSBML + "," + upperConstraint + ")"));
-							constraintSucc.setMetaId("Success");
-							constraintSucc.setMath(SBML_Editor.myParseFormula("or(not(" + hsfRightTempSBML + ")," + lowerConstraint + ")"));
-						}
-					    else{ // PF or PG
-							// construct the SBML constraints
-							if (PFFlag){
-								constraintFail.setMetaId("Fail");
-								constraintFail.setMath(SBML_Editor.myParseFormula(upperConstraint));
-								constraintSucc.setMetaId("Success");
-								constraintSucc.setMath(SBML_Editor.myParseFormula("or(not(" + hsfRightTempSBML + ")," + lowerConstraint + ")"));
-							}
-							if (PGFlag){
-								constraintFail.setMetaId("Fail");
-								constraintFail.setMath(SBML_Editor.myParseFormula("or(" + hsfRightTempSBML + "," + lowerConstraint + ")"));
-								constraintSucc.setMetaId("Success");
-								constraintSucc.setMath(SBML_Editor.myParseFormula(upperConstraint));
-							}
-					    }
-					} 
-				}	
-			}
-			else if (SsFlag & !hsfFlag){
-				// propertyTemp should be in this format at this stage: '[' hsf ']'
-				// remove the outermost square brackets
-				probpropertyTemp = probpropertyTemp.substring(1, probpropertyTemp.lastIndexOf("]"));
-					
-			}	
-			else { // hsfFlag = true		
-				}
-	}
-			
-			
-			/*			String symbol = "@";
-			if (prop!=null && !prop.equals("") && !prop.contains(" ")){
-				boolean PUflag = prop.contains("PU");
-				boolean PFFlag = prop.contains("PF");
-				boolean PGFlag = prop.contains("PG");
-				String propTemp = null;
-				propTemp = prop;
-				Constraint constraintFail = m.createConstraint();	
-				Constraint constraintSucc = m.createConstraint();
-				String[] allTemporalOps={"AU", "AG", "AF","EU", "EG", "EF", "PU","PG", "PF"};
-				String leftProbpropTemp = null;
-				String rightPropTemp = null;
-				String BoundPropTemp = null;
-				String lowerBoundPropTemp = null;
-				String upperBoundPropTemp = null;
-			for (int i=0; i < allTemporalOps.length; i++){
-				if (prop.contains(allTemporalOps[i])){
-					propTemp = propTemp.replaceFirst(allTemporalOps[i], symbol);
-//					System.out.println("propTemp = "+propTemp);
-				}
-			}
-			// Strip off the temporal operator and its time bound
-			if (PUflag){ // Example: ((q_max=q_max)PU[2,3](q=q_max))
-				// remove the outermost brackets
-				propTemp = propTemp.substring(1, propTemp.lastIndexOf(")"));
-//				System.out.println("propTemp = "+propTemp);
-								 
-				// obtain the logic BEFORE the temporal operator
-				leftProbpropTemp= propTemp.substring(0, propTemp.indexOf(symbol));
-//				System.out.println("leftProbpropTemp = " + leftProbpropTemp);
-				ExprTree leftProbpropTempTree = String2ExprTree(lhpn, leftProbpropTemp);
-				String leftProbpropTempSBML = leftProbpropTempTree.toString("SBML");
-//				System.out.println("leftProbpropTempSBML = " + leftProbpropTempSBML);
-								 
-				// obtain the logic AFTER the temporal operator
-				rightPropTemp= propTemp.substring(propTemp.indexOf("]")+1, propTemp.length());
-//				System.out.println("rightPropTemp = " + rightPropTemp);
-				ExprTree rightPropTempTree = String2ExprTree(lhpn, rightPropTemp);
-				String rightPropTempSBML = rightPropTempTree.toString("SBML");
-//				System.out.println("rightPropTempSBML = " + rightPropTempSBML);	
-								 
-				// obtain the time bound
-				BoundPropTemp= propTemp.substring(propTemp.indexOf("["), propTemp.indexOf("]")+1);
-//				System.out.println("BoundPropTemp = " + BoundPropTemp);
-								 
-				// bound: [<= upper]
-				if(BoundPropTemp.contains("<=")){
-					// upper bound
-					upperBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf("<")+2, BoundPropTemp.indexOf("]"));
-//	     		 	System.out.println("upperBoundPropTemp = " + upperBoundPropTemp);
-					ExprTree upperBoundPropTempTree = String2ExprTree(lhpn, upperBoundPropTemp);
-				    String upperBoundPropTempSBML = upperBoundPropTempTree.toString("SBML");
-//	 	     	     System.out.println("upperBoundPropTempSBML = " + upperBoundPropTempSBML);
-
-				    // constraints for the time bound
-				    String upperConstraint = "leq(t," + upperBoundPropTempSBML + ")";
-				    // construct the SBML constraints
-					constraintFail.setMetaId("Fail");
-					constraintFail.setMath(SBML_Editor.myParseFormula("and(" + leftProbpropTempSBML + "," + upperConstraint + ")"));
-					constraintSucc.setMetaId("Success");
-					constraintSucc.setMath(SBML_Editor.myParseFormula("not(" + rightPropTempSBML + ")"));
-				}
-					// bound: [lower, upper]
-				else if (BoundPropTemp.contains(",")){ 
-					// lower bound
-					lowerBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf("[")+1, BoundPropTemp.indexOf(","));
-//					System.out.println("lowerBoundPropTemp = " + lowerBoundPropTemp);
-					ExprTree lowerBoundPropTempTree = String2ExprTree(lhpn, lowerBoundPropTemp);
-					String lowerBoundPropTempSBML = lowerBoundPropTempTree.toString("SBML");
-//					System.out.println("lowerBoundPropTempSBML = " + lowerBoundPropTempSBML);
-					// upper bound
-					upperBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf(",")+1, BoundPropTemp.indexOf("]"));
-//					System.out.println("upperBoundPropTemp = " + upperBoundPropTemp);
-					ExprTree upperBoundPropTempTree = String2ExprTree(lhpn, upperBoundPropTemp);
-					String upperBoundPropTempSBML = upperBoundPropTempTree.toString("SBML");
-//					System.out.println("upperBoundPropTempSBML = " + upperBoundPropTempSBML);		 
-									 
-					// constraints for time bounds
-					String upperConstraint = "leq(t," + upperBoundPropTempSBML + ")";
-					String lowerConstraint = "leq(t," + lowerBoundPropTempSBML + ")";
-									 
-					// construct the SBML constraints
-					constraintFail.setMetaId("Fail");
-					constraintFail.setMath(SBML_Editor.myParseFormula("and(" + leftProbpropTempSBML + "," + upperConstraint + ")"));
-					constraintSucc.setMetaId("Success");
-					constraintSucc.setMath(SBML_Editor.myParseFormula("or(not(" + rightPropTempSBML + ")," + lowerConstraint + ")"));
-				} 
-			  }
-			  else if(PFFlag | PGFlag){
-					// Current version only supports PF and PG
-	//				// Examples: PF([4,5]q=q_max), PG([<=7]q=q_max)
-					// obtain the logic AFTER the temporal operator
-					rightPropTemp= propTemp.substring(propTemp.indexOf("]")+1, propTemp.length());
-	//				System.out.println("rightPropTemp = " + rightPropTemp);
-					ExprTree rightPropTempTree = String2ExprTree(lhpn, rightPropTemp);
-					String rightPropTempSBML = rightPropTempTree.toString("SBML");
-	//				System.out.println("rightPropTempSBML = " + rightPropTempSBML);		
-
-					// obtain the time bound
-					BoundPropTemp= propTemp.substring(propTemp.indexOf("["), propTemp.indexOf("]")+1);
-//					System.out.println("BoundPropTemp = " + BoundPropTemp);
-								 
-					// bound: [<= upper]
-					if (BoundPropTemp.contains("<=")){
-						// upper bound
-						upperBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf("<")+2, BoundPropTemp.indexOf("]"));
-//						System.out.println("upperBoundPropTemp = " + upperBoundPropTemp);
-						ExprTree upperBoundPropTempTree = String2ExprTree(lhpn, upperBoundPropTemp);
-						String upperBoundPropTempSBML = upperBoundPropTempTree.toString("SBML");
-//						System.out.println("upperBoundPropTempSBML = " + upperBoundPropTempSBML);
-
-						// constraints for the time bound
-						String upperConstraint = "leq(t," + upperBoundPropTempSBML + ")";
-									 
-						// construct the SBML constraints
-						if (PFFlag){
-							constraintFail.setMetaId("Fail");
-							constraintFail.setMath(SBML_Editor.myParseFormula(upperConstraint));
-							constraintSucc.setMetaId("Success");
-							constraintSucc.setMath(SBML_Editor.myParseFormula("not(" + rightPropTempSBML + ")"));
-						}
-						if (PGFlag){
-							constraintFail.setMetaId("Fail");
-							constraintFail.setMath(SBML_Editor.myParseFormula(rightPropTempSBML));
-							constraintSucc.setMetaId("Success");
-							constraintSucc.setMath(SBML_Editor.myParseFormula(upperConstraint));
-						}
-					}
-					else if (BoundPropTemp.contains(",")){
+						// bound: [lower, upper]
+						else if (boundTemp.contains(",")){ 
 							// lower bound
-							lowerBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf("[")+1, BoundPropTemp.indexOf(","));
-//							System.out.println("lowerBoundPropTemp = " + lowerBoundPropTemp);
-							ExprTree lowerBoundPropTempTree = String2ExprTree(lhpn, lowerBoundPropTemp);
+							lowerBoundTemp = boundTemp.substring(boundTemp.indexOf("[")+1, boundTemp.indexOf(","));
+							ExprTree lowerBoundPropTempTree = String2ExprTree(lhpn, lowerBoundTemp);
 							String lowerBoundPropTempSBML = lowerBoundPropTempTree.toString("SBML");
-//							System.out.println("lowerBoundPropTempSBML = " + lowerBoundPropTempSBML);
 							// upper bound
-							upperBoundPropTemp = BoundPropTemp.substring(BoundPropTemp.indexOf(",")+1, BoundPropTemp.indexOf("]"));
-//							System.out.println("upperBoundPropTemp = " + upperBoundPropTemp);
-							ExprTree upperBoundPropTempTree = String2ExprTree(lhpn, upperBoundPropTemp);
-							String upperBoundPropTempSBML = upperBoundPropTempTree.toString("SBML");
-//							System.out.println("upperBoundPropTempSBML = " + upperBoundPropTempSBML);
-									
+							upperBoundTemp = boundTemp.substring(boundTemp.indexOf(",")+1, boundTemp.indexOf("]"));
+							ExprTree upperBoundPropTempTree = String2ExprTree(lhpn, upperBoundTemp);
+							String upperBoundPropTempSBML = upperBoundPropTempTree.toString("SBML");		 
+												 
 							// constraints for time bounds
 							String upperConstraint = "leq(t," + upperBoundPropTempSBML + ")";
 							String lowerConstraint = "leq(t," + lowerBoundPropTempSBML + ")";
-									 
-							// construct the SBML constraints
-							if (PFFlag){
+								
+							if(PUFlag){
+								// remove the outermost parentheses for PU
+								probpropertyTemp = probpropertyTemp.substring(1, probpropertyTemp.lastIndexOf(")"));
+								System.out.println("probpropTemp3 = " + probpropertyTemp);
+								probpropertyTemp = probpropertyTemp.replace("PU",symbol);
+								// obtain the logic BEFORE the temporal operator
+								hsfLeftTemp= probpropertyTemp.substring(0, probpropertyTemp.indexOf(symbol));
+								ExprTree hsfLeftTempTree = String2ExprTree(lhpn, hsfLeftTemp);
+								String hsfLeftTempSBML = hsfLeftTempTree.toString("SBML");
+								// construct the SBML constraints
 								constraintFail.setMetaId("Fail");
-								constraintFail.setMath(SBML_Editor.myParseFormula(upperConstraint));
+								constraintFail.setMath(SBML_Editor.myParseFormula("and(" + hsfLeftTempSBML + "," + upperConstraint + ")"));
 								constraintSucc.setMetaId("Success");
-								constraintSucc.setMath(SBML_Editor.myParseFormula("or(not(" + rightPropTempSBML + ")," + lowerConstraint + ")"));
+								constraintSucc.setMath(SBML_Editor.myParseFormula("or(not(" + hsfRightTempSBML + ")," + lowerConstraint + ")"));
 							}
-							if (PGFlag){
-								constraintFail.setMetaId("Fail");
-								constraintFail.setMath(SBML_Editor.myParseFormula("or(" + rightPropTempSBML + "," + lowerConstraint + ")"));
-								constraintSucc.setMetaId("Success");
-								constraintSucc.setMath(SBML_Editor.myParseFormula(upperConstraint));
-							}
-					}
-			  }
+						    else{ // PF or PG
+								// construct the SBML constraints
+								if (PFFlag){
+									constraintFail.setMetaId("Fail");
+									constraintFail.setMath(SBML_Editor.myParseFormula(upperConstraint));
+									constraintSucc.setMetaId("Success");
+									constraintSucc.setMath(SBML_Editor.myParseFormula("or(not(" + hsfRightTempSBML + ")," + lowerConstraint + ")"));
+								}
+								if (PGFlag){
+									constraintFail.setMetaId("Fail");
+									constraintFail.setMath(SBML_Editor.myParseFormula("or(" + hsfRightTempSBML + "," + lowerConstraint + ")"));
+									constraintSucc.setMetaId("Success");
+									constraintSucc.setMath(SBML_Editor.myParseFormula(upperConstraint));
+								}
+						    }
+						} 
+					}	
+				}
+				else if (SsFlag & !hsfFlag){
+					// propertyTemp should be in this format at this stage: '[' hsf ']'
+					// remove the outermost square brackets
+					probpropertyTemp = probpropertyTemp.substring(1, probpropertyTemp.lastIndexOf("]"));
+						
+				}	
+				else { // hsfFlag = true		
+				}
 			}
-		}
-	*/
+			
+	}
+			
 	private void createFunction(Model model, String id, String name, String formula) {
 	if (document.getModel().getFunctionDefinition(id) == null) {
 		FunctionDefinition f = model.createFunctionDefinition();

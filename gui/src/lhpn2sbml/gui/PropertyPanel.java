@@ -63,188 +63,196 @@ public class PropertyPanel extends JPanel implements ActionListener {
 	}
 	private boolean checkValues() {
 		boolean goodProperty = false;
-		String propertyTempTest=field.getValue();
 		String propertyTemp = field.getValue();
-		// check the balance of parentheses and square brackets
-		short numOPAR = 0;
-		short numCPAR = 0;
-		short numOSQUARE=0;
-		short numCSQUARE=0;
-//		propertyTempTest = propertyTempTest.replaceFirst("\\(", "");
-//		if (propertyTempTest.contains(")")){
-//			System.out.println("propertyTempTest = " + propertyTempTest);
-//		}
-		for (numOPAR = 0; propertyTempTest.contains("("); numOPAR++){
-			propertyTempTest = propertyTempTest.replaceFirst("\\(", "");
-		}
-		for (numCPAR = 0; propertyTempTest.contains(")"); numCPAR++){
-			propertyTempTest = propertyTempTest.replaceFirst("\\)", "");
-		}
-		for (numOSQUARE = 0; propertyTempTest.contains("["); numOSQUARE++){
-			propertyTempTest = propertyTempTest.replaceFirst("\\[", "");
-		}
-		for (numCSQUARE = 0; propertyTempTest.contains("]"); numCSQUARE++){
-			propertyTempTest = propertyTempTest.replaceFirst("\\]", "");
-		}
-		if((numOPAR==numCPAR) && (numOSQUARE==numCSQUARE)){
-			boolean propsFlag = propertyTemp.contains("AU") |
-			   propertyTemp.contains("AG") |
-			   propertyTemp.contains("AF") |
-			   propertyTemp.contains("EU") |
-			   propertyTemp.contains("EG") |
-			   propertyTemp.contains("EF") ;
-			if (propertyTemp.contains("Pr")){
-				propertyTemp = propertyTemp.replace("Pr", "%");
+		if(!propertyTemp.equals("") && propertyTemp!=null){
+			// check the balance of parentheses and square brackets
+			String propertyTempTest=field.getValue();
+			short numOPAR = 0;
+			short numCPAR = 0;
+			short numOSQUARE=0;
+			short numCSQUARE=0;
+//			propertyTempTest = propertyTempTest.replaceFirst("\\(", "");
+//			if (propertyTempTest.contains(")")){
+//				System.out.println("propertyTempTest = " + propertyTempTest);
+//			}
+			for (numOPAR = 0; propertyTempTest.contains("("); numOPAR++){
+				propertyTempTest = propertyTempTest.replaceFirst("\\(", "");
 			}
-			else if(propertyTemp.contains("St")){
-				propertyTemp = propertyTemp.replace("St", "^");
+			for (numCPAR = 0; propertyTempTest.contains(")"); numCPAR++){
+				propertyTempTest = propertyTempTest.replaceFirst("\\)", "");
 			}
-			String probpropertyTemp = propertyTemp;
-			if (!propsFlag){
-				// probproperty 
-				// currently only allow ONE Pr operator in one property spec
-				boolean MultiFlag= (propertyTemp.indexOf("%")!=propertyTemp.lastIndexOf("%"))
-							|(propertyTemp.indexOf("^")!=propertyTemp.lastIndexOf("^")
-							|(propertyTemp.contains("%") && propertyTemp.contains("^")));
-	//			System.out.println("propertyTemp = " + propertyTemp);	
-				if (!MultiFlag){
-					if (propertyTemp.startsWith("%")){
-						probpropertyTemp=probpropertyTemp.substring(1);
-						boolean relopFlag = probpropertyTemp.startsWith(">")
-											| probpropertyTemp.startsWith(">=")
-											| probpropertyTemp.startsWith("<")
-											| probpropertyTemp.startsWith("<=")
-										    | (probpropertyTemp.startsWith("=") && !probpropertyTemp.contains("?"));
-						if (relopFlag){
-							// remove the relop
-							if(probpropertyTemp.startsWith(">=") | probpropertyTemp.startsWith("<=")){
+			for (numOSQUARE = 0; propertyTempTest.contains("["); numOSQUARE++){
+				propertyTempTest = propertyTempTest.replaceFirst("\\[", "");
+			}
+			for (numCSQUARE = 0; propertyTempTest.contains("]"); numCSQUARE++){
+				propertyTempTest = propertyTempTest.replaceFirst("\\]", "");
+			}
+			if((numOPAR==numCPAR) && (numOSQUARE==numCSQUARE)){
+				boolean propsFlag = propertyTemp.contains("AU") |
+				   propertyTemp.contains("AG") |
+				   propertyTemp.contains("AF") |
+				   propertyTemp.contains("EU") |
+				   propertyTemp.contains("EG") |
+				   propertyTemp.contains("EF") ;
+				if (propertyTemp.contains("Pr")){
+					propertyTemp = propertyTemp.replace("Pr", "%");
+				}
+				else if(propertyTemp.contains("St")){
+					propertyTemp = propertyTemp.replace("St", "^");
+				}
+				String probpropertyTemp = propertyTemp;
+				if (!propsFlag){
+					// probproperty 
+					// currently only allow ONE Pr operator in one property spec
+					boolean MultiFlag= (propertyTemp.indexOf("%")!=propertyTemp.lastIndexOf("%"))
+								|(propertyTemp.indexOf("^")!=propertyTemp.lastIndexOf("^")
+								|(propertyTemp.contains("%") && propertyTemp.contains("^")));
+		//			System.out.println("propertyTemp = " + propertyTemp);	
+					if (!MultiFlag){
+						if (propertyTemp.startsWith("%")){
+							probpropertyTemp=probpropertyTemp.substring(1);
+							boolean relopFlag = probpropertyTemp.startsWith(">")
+												| probpropertyTemp.startsWith(">=")
+												| probpropertyTemp.startsWith("<")
+												| probpropertyTemp.startsWith("<=")
+											    | (probpropertyTemp.startsWith("=") && !probpropertyTemp.contains("?"));
+							if (relopFlag){
+								// remove the relop
+								if(probpropertyTemp.startsWith(">=") | probpropertyTemp.startsWith("<=")){
+									probpropertyTemp=probpropertyTemp.substring(2);
+								}
+								else{
+									probpropertyTemp=probpropertyTemp.substring(1);
+								}
+		//						// check the probability value after relop
+								String probabilityValue = probpropertyTemp.substring(0,probpropertyTemp.indexOf("["));
+								Pattern ProbabilityValuePattern = Pattern.compile(probValue);
+								Matcher ProbabilityValueMatcher = ProbabilityValuePattern.matcher(probabilityValue);
+								boolean correctProbabilityValue = ProbabilityValueMatcher.matches();
+								if(correctProbabilityValue) {
+									probpropertyTemp=probpropertyTemp.replaceFirst(probabilityValue, "");
+									// propertyTemp should be in this format at this stage: '[' probprop ']'
+									if (probpropertyTemp.startsWith("[")){
+										String probprop = (String) probpropertyTemp.subSequence(1, probpropertyTemp.lastIndexOf("]"));
+										goodProperty = Parseprobprop(probprop, goodProperty);
+									}
+									else{
+										JOptionPane.showMessageDialog(null, "invalid format after the first probability value ",
+												"Error in Property", JOptionPane.ERROR_MESSAGE);
+									}
+								}
+								else {
+									JOptionPane.showMessageDialog(null, "invalid format of the probability value ",
+											"Error in Property", JOptionPane.ERROR_MESSAGE);
+								}
+							}
+							else if (probpropertyTemp.startsWith("=?")){
 								probpropertyTemp=probpropertyTemp.substring(2);
-							}
-							else{
-								probpropertyTemp=probpropertyTemp.substring(1);
-							}
-	//						// check the probability value after relop
-							String probabilityValue = probpropertyTemp.substring(0,probpropertyTemp.indexOf("["));
-							Pattern ProbabilityValuePattern = Pattern.compile(probValue);
-							Matcher ProbabilityValueMatcher = ProbabilityValuePattern.matcher(probabilityValue);
-							boolean correctProbabilityValue = ProbabilityValueMatcher.matches();
-							if(correctProbabilityValue) {
-								probpropertyTemp=probpropertyTemp.replaceFirst(probabilityValue, "");
 								// propertyTemp should be in this format at this stage: '[' probprop ']'
 								if (probpropertyTemp.startsWith("[")){
 									String probprop = (String) probpropertyTemp.subSequence(1, probpropertyTemp.lastIndexOf("]"));
 									goodProperty = Parseprobprop(probprop, goodProperty);
 								}
 								else{
-									JOptionPane.showMessageDialog(null, "invalid format after the first probability value ",
+									JOptionPane.showMessageDialog(null, "invalid format after the question mark ",
 											"Error in Property", JOptionPane.ERROR_MESSAGE);
 								}
 							}
 							else {
-								JOptionPane.showMessageDialog(null, "invalid format of the probability value ",
+								JOptionPane.showMessageDialog(null, "Missing relational operator after Pr",
 										"Error in Property", JOptionPane.ERROR_MESSAGE);
 							}
 						}
-						else if (probpropertyTemp.startsWith("=?")){
-							probpropertyTemp=probpropertyTemp.substring(2);
-							// propertyTemp should be in this format at this stage: '[' probprop ']'
-							if (probpropertyTemp.startsWith("[")){
-								String probprop = (String) probpropertyTemp.subSequence(1, probpropertyTemp.lastIndexOf("]"));
-								goodProperty = Parseprobprop(probprop, goodProperty);
+						else if (propertyTemp.startsWith("^")){
+							probpropertyTemp=probpropertyTemp.substring(1);
+							boolean relopFlag = probpropertyTemp.startsWith(">")
+							| probpropertyTemp.startsWith(">=")
+							| probpropertyTemp.startsWith("<")
+							| probpropertyTemp.startsWith("<=")
+							|(probpropertyTemp.startsWith("=") && !probpropertyTemp.contains("?"));
+							if (relopFlag){
+								// remove the relop
+								if(probpropertyTemp.startsWith(">=") | probpropertyTemp.startsWith("<=")){
+									probpropertyTemp=probpropertyTemp.substring(2);
+								}
+								else{
+									probpropertyTemp=probpropertyTemp.substring(1);
+								}
+		//						// check the probability value after relop
+								String probabilityValue = probpropertyTemp.substring(0,probpropertyTemp.indexOf("["));
+								Pattern ProbabilityValuePattern = Pattern.compile(probValue);
+								Matcher ProbabilityValueMatcher = ProbabilityValuePattern.matcher(probabilityValue);
+								boolean correctProbabilityValue = ProbabilityValueMatcher.matches();
+								if(correctProbabilityValue) {
+									probpropertyTemp=probpropertyTemp.replaceFirst(probabilityValue, "");
+									// propertyTemp should be in this format at this stage: '[' hsf ']'
+									if (probpropertyTemp.startsWith("[")){
+										String hsf = (String) probpropertyTemp.subSequence(1, probpropertyTemp.lastIndexOf("]"));
+										boolean isHsfValid = isValidExpr(lhpn, hsf);
+										if(isHsfValid) goodProperty = true;
+										else{
+											 JOptionPane.showMessageDialog(null, "Invalid expression inside the square brackets.",
+														"Error in Property", JOptionPane.ERROR_MESSAGE);
+										 }
+									}
+									else{
+										JOptionPane.showMessageDialog(null, "invalid format after the first probability value ",
+												"Error in Property", JOptionPane.ERROR_MESSAGE);
+									}
+								}
+								else {
+									JOptionPane.showMessageDialog(null, "invalid format of the probability value ",
+											"Error in Property", JOptionPane.ERROR_MESSAGE);
+								}
 							}
-							else{
-								JOptionPane.showMessageDialog(null, "invalid format after the question mark ",
-										"Error in Property", JOptionPane.ERROR_MESSAGE);
-							}
-						}
-						else {
-							JOptionPane.showMessageDialog(null, "Missing relational operator after Pr",
-									"Error in Property", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-					else if (propertyTemp.startsWith("^")){
-						probpropertyTemp=probpropertyTemp.substring(1);
-						boolean relopFlag = probpropertyTemp.startsWith(">")
-						| probpropertyTemp.startsWith(">=")
-						| probpropertyTemp.startsWith("<")
-						| probpropertyTemp.startsWith("<=")
-						|(probpropertyTemp.startsWith("=") && !probpropertyTemp.contains("?"));
-						if (relopFlag){
-							// remove the relop
-							if(probpropertyTemp.startsWith(">=") | probpropertyTemp.startsWith("<=")){
+							else if (probpropertyTemp.startsWith("=?")){
 								probpropertyTemp=probpropertyTemp.substring(2);
-							}
-							else{
-								probpropertyTemp=probpropertyTemp.substring(1);
-							}
-	//						// check the probability value after relop
-							String probabilityValue = probpropertyTemp.substring(0,probpropertyTemp.indexOf("["));
-							Pattern ProbabilityValuePattern = Pattern.compile(probValue);
-							Matcher ProbabilityValueMatcher = ProbabilityValuePattern.matcher(probabilityValue);
-							boolean correctProbabilityValue = ProbabilityValueMatcher.matches();
-							if(correctProbabilityValue) {
-								probpropertyTemp=probpropertyTemp.replaceFirst(probabilityValue, "");
 								// propertyTemp should be in this format at this stage: '[' hsf ']'
 								if (probpropertyTemp.startsWith("[")){
 									String hsf = (String) probpropertyTemp.subSequence(1, probpropertyTemp.lastIndexOf("]"));
 									boolean isHsfValid = isValidExpr(lhpn, hsf);
 									if(isHsfValid) goodProperty = true;
-									else{
+									 else{
 										 JOptionPane.showMessageDialog(null, "Invalid expression inside the square brackets.",
 													"Error in Property", JOptionPane.ERROR_MESSAGE);
 									 }
 								}
 								else{
-									JOptionPane.showMessageDialog(null, "invalid format after the first probability value ",
+									JOptionPane.showMessageDialog(null, "invalid format after the question mark ",
 											"Error in Property", JOptionPane.ERROR_MESSAGE);
 								}
 							}
 							else {
-								JOptionPane.showMessageDialog(null, "invalid format of the probability value ",
-										"Error in Property", JOptionPane.ERROR_MESSAGE);
-							}
-						}
-						else if (probpropertyTemp.startsWith("=?")){
-							probpropertyTemp=probpropertyTemp.substring(2);
-							// propertyTemp should be in this format at this stage: '[' hsf ']'
-							if (probpropertyTemp.startsWith("[")){
-								String hsf = (String) probpropertyTemp.subSequence(1, probpropertyTemp.lastIndexOf("]"));
-								boolean isHsfValid = isValidExpr(lhpn, hsf);
-								if(isHsfValid) goodProperty = true;
-								 else{
-									 JOptionPane.showMessageDialog(null, "Invalid expression inside the square brackets.",
-												"Error in Property", JOptionPane.ERROR_MESSAGE);
-								 }
-							}
-							else{
-								JOptionPane.showMessageDialog(null, "invalid format after the question mark ",
+								JOptionPane.showMessageDialog(null, "Missing relational operator after St",
 										"Error in Property", JOptionPane.ERROR_MESSAGE);
 							}
 						}
 						else {
-							JOptionPane.showMessageDialog(null, "Missing relational operator after St",
-									"Error in Property", JOptionPane.ERROR_MESSAGE);
+							// hsf
 						}
 					}
 					else {
-						// hsf
+						JOptionPane.showMessageDialog(null, "Nested probabilistic property is not supported",
+								"Error in Property", JOptionPane.ERROR_MESSAGE);				
 					}
 				}
-				else {
-					JOptionPane.showMessageDialog(null, "Nested probabilistic property is not supported",
-							"Error in Property", JOptionPane.ERROR_MESSAGE);				
+				else if (propsFlag){
+					// props
+					goodProperty = true;
 				}
 			}
-			else if (propsFlag){
-				// props
-				goodProperty = true;
+			else{
+				JOptionPane.showMessageDialog(null, "Unbalanced parentheses or square brackets",
+						"Error in Property", JOptionPane.ERROR_MESSAGE);
 			}
+			return goodProperty;
 		}
-		else{
-			JOptionPane.showMessageDialog(null, "Unbalanced parentheses or square brackets",
-					"Error in Property", JOptionPane.ERROR_MESSAGE);
+		else
+		{
+			goodProperty = true;
+			return goodProperty;
 		}
-		return goodProperty;
+		
 	}
 
 	private boolean openGui(String oldProperty) {
