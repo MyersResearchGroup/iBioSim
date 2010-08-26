@@ -1311,13 +1311,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		colors.put("Magenta (Dark)", draw.getNextPaint());
 		colors.put("Cyan (Dark)", draw.getNextPaint());
 		colors.put("Black", draw.getNextPaint());
-		colors.put("Red ", draw.getNextPaint());
-		colors.put("Blue ", draw.getNextPaint());
-		colors.put("Green ", draw.getNextPaint());
-		colors.put("Yellow ", draw.getNextPaint());
-		colors.put("Magenta ", draw.getNextPaint());
-		colors.put("Cyan ", draw.getNextPaint());
-		colors.put("Gray (Light)", draw.getNextPaint());
+		draw.getNextPaint();
+		draw.getNextPaint();
+		draw.getNextPaint();
+		draw.getNextPaint();
+		draw.getNextPaint();
+		draw.getNextPaint();
+		// colors.put("Red ", draw.getNextPaint());
+		// colors.put("Blue ", draw.getNextPaint());
+		// colors.put("Green ", draw.getNextPaint());
+		// colors.put("Yellow ", draw.getNextPaint());
+		// colors.put("Magenta ", draw.getNextPaint());
+		// colors.put("Cyan ", draw.getNextPaint());
+		colors.put("Gray", draw.getNextPaint());
 		colors.put("Red (Extra Dark)", draw.getNextPaint());
 		colors.put("Blue (Extra Dark)", draw.getNextPaint());
 		colors.put("Green (Extra Dark)", draw.getNextPaint());
@@ -1330,6 +1336,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		colors.put("Yellow (Light)", draw.getNextPaint());
 		colors.put("Magenta (Light)", draw.getNextPaint());
 		colors.put("Cyan (Light)", draw.getNextPaint());
+		colors.put("Gray (Light)", new java.awt.Color(238, 238, 238));
 		shapes.put("Square", draw.getNextShape());
 		shapes.put("Circle", draw.getNextShape());
 		shapes.put("Triangle", draw.getNextShape());
@@ -3565,7 +3572,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						tree.repaint();
 						String s = series.get(i).getText();
 						((JCheckBox) e.getSource()).setSelected(false);
-						int[] cols = new int[34];
+						int[] cols = new int[35];
 						int[] shaps = new int[10];
 						for (int k = 0; k < boxes.size(); k++) {
 							if (boxes.get(k).isSelected()) {
@@ -3617,26 +3624,24 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								else if (colorsCombo.get(k).getSelectedItem().equals("Black")) {
 									cols[14]++;
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Red ")) {
-									cols[15]++;
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Blue ")) {
-									cols[16]++;
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Green ")) {
-									cols[17]++;
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow ")) {
-									cols[18]++;
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta ")) {
-									cols[19]++;
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan ")) {
-									cols[20]++;
-								}
-								else if (colorsCombo.get(k).getSelectedItem()
-										.equals("Gray (Light)")) {
+								/*
+								 * else if
+								 * (colorsCombo.get(k).getSelectedItem().
+								 * equals("Red ")) { cols[15]++; } else if
+								 * (colorsCombo
+								 * .get(k).getSelectedItem().equals("Blue ")) {
+								 * cols[16]++; } else if
+								 * (colorsCombo.get(k).getSelectedItem
+								 * ().equals("Green ")) { cols[17]++; } else if
+								 * (colorsCombo.get(k).getSelectedItem().equals(
+								 * "Yellow ")) { cols[18]++; } else if
+								 * (colorsCombo
+								 * .get(k).getSelectedItem().equals("Magenta "))
+								 * { cols[19]++; } else if
+								 * (colorsCombo.get(k).getSelectedItem
+								 * ().equals("Cyan ")) { cols[20]++; }
+								 */
+								else if (colorsCombo.get(k).getSelectedItem().equals("Gray")) {
 									cols[21]++;
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
@@ -3685,6 +3690,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								else if (colorsCombo.get(k).getSelectedItem()
 										.equals("Cyan (Light)")) {
 									cols[33]++;
+								}
+								else if (colorsCombo.get(k).getSelectedItem()
+										.equals("Gray (Light)")) {
+									cols[34]++;
 								}
 								if (shapesCombo.get(k).getSelectedItem().equals("Square")) {
 									shaps[0]++;
@@ -3771,25 +3780,25 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							else if (graph.getShapeAndPaint().getPaintName().equals("Black")) {
 								cols[14]++;
 							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Red ")) {
-								cols[15]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Blue ")) {
-								cols[16]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Green ")) {
-								cols[17]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Yellow ")) {
-								cols[18]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Magenta ")) {
-								cols[19]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Cyan ")) {
-								cols[20]++;
-							}
-							else if (graph.getShapeAndPaint().getPaintName().equals("Gray (Light)")) {
+							/*
+							 * else if
+							 * (graph.getShapeAndPaint().getPaintName().equals
+							 * ("Red ")) { cols[15]++; } else if
+							 * (graph.getShapeAndPaint
+							 * ().getPaintName().equals("Blue ")) { cols[16]++;
+							 * } else if
+							 * (graph.getShapeAndPaint().getPaintName()
+							 * .equals("Green ")) { cols[17]++; } else if
+							 * (graph.
+							 * getShapeAndPaint().getPaintName().equals("Yellow "
+							 * )) { cols[18]++; } else if
+							 * (graph.getShapeAndPaint
+							 * ().getPaintName().equals("Magenta ")) {
+							 * cols[19]++; } else if
+							 * (graph.getShapeAndPaint().getPaintName
+							 * ().equals("Cyan ")) { cols[20]++; }
+							 */
+							else if (graph.getShapeAndPaint().getPaintName().equals("Gray")) {
 								cols[21]++;
 							}
 							else if (graph.getShapeAndPaint().getPaintName().equals(
@@ -3837,6 +3846,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							else if (graph.getShapeAndPaint().getPaintName().equals("Cyan (Light)")) {
 								cols[33]++;
 							}
+							else if (graph.getShapeAndPaint().getPaintName().equals("Gray (Light)")) {
+								cols[34]++;
+							}
 							if (graph.getShapeAndPaint().getShapeName().equals("Square")) {
 								shaps[0]++;
 							}
@@ -3879,7 +3891,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						series.get(i).setSelectionEnd(0);
 						int colorSet = 0;
 						for (int j = 1; j < cols.length; j++) {
-							if (cols[j] < cols[colorSet]) {
+							if ((j < 15 || j > 20) && cols[j] < cols[colorSet]) {
 								colorSet = j;
 							}
 						}
@@ -3890,10 +3902,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 						}
 						DefaultDrawingSupplier draw = new DefaultDrawingSupplier();
-						for (int j = 0; j < colorSet; j++) {
-							draw.getNextPaint();
+						Paint paint;
+						if (colorSet == 34) {
+							paint = colors.get("Gray (Light)");
 						}
-						Paint paint = draw.getNextPaint();
+						else {
+							for (int j = 0; j < colorSet; j++) {
+								draw.getNextPaint();
+							}
+							paint = draw.getNextPaint();
+						}
 						Object[] set = colory.keySet().toArray();
 						for (int j = 0; j < set.length; j++) {
 							if (paint == colory.get(set[j])) {
@@ -6897,7 +6915,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						tree.repaint();
 						String s = series.get(i).getText();
 						((JCheckBox) e.getSource()).setSelected(false);
-						int[] cols = new int[34];
+						int[] cols = new int[35];
 						for (int k = 0; k < boxes.size(); k++) {
 							if (boxes.get(k).isSelected()) {
 								if (colorsCombo.get(k).getSelectedItem().equals("Red")) {
@@ -6948,26 +6966,24 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								else if (colorsCombo.get(k).getSelectedItem().equals("Black")) {
 									cols[14]++;
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Red ")) {
-									cols[15]++;
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Blue ")) {
-									cols[16]++;
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Green ")) {
-									cols[17]++;
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow ")) {
-									cols[18]++;
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta ")) {
-									cols[19]++;
-								}
-								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan ")) {
-									cols[20]++;
-								}
-								else if (colorsCombo.get(k).getSelectedItem()
-										.equals("Gray (Light)")) {
+								/*
+								 * else if
+								 * (colorsCombo.get(k).getSelectedItem().
+								 * equals("Red ")) { cols[15]++; } else if
+								 * (colorsCombo
+								 * .get(k).getSelectedItem().equals("Blue ")) {
+								 * cols[16]++; } else if
+								 * (colorsCombo.get(k).getSelectedItem
+								 * ().equals("Green ")) { cols[17]++; } else if
+								 * (colorsCombo.get(k).getSelectedItem().equals(
+								 * "Yellow ")) { cols[18]++; } else if
+								 * (colorsCombo
+								 * .get(k).getSelectedItem().equals("Magenta "))
+								 * { cols[19]++; } else if
+								 * (colorsCombo.get(k).getSelectedItem
+								 * ().equals("Cyan ")) { cols[20]++; }
+								 */
+								else if (colorsCombo.get(k).getSelectedItem().equals("Gray")) {
 									cols[21]++;
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
@@ -7017,6 +7033,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										.equals("Cyan (Light)")) {
 									cols[33]++;
 								}
+								else if (colorsCombo.get(k).getSelectedItem()
+										.equals("Gray (Light)")) {
+									cols[34]++;
+								}
 							}
 						}
 						for (GraphProbs graph : probGraphed) {
@@ -7065,25 +7085,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							else if (graph.getPaintName().equals("Black")) {
 								cols[14]++;
 							}
-							else if (graph.getPaintName().equals("Red ")) {
-								cols[15]++;
-							}
-							else if (graph.getPaintName().equals("Blue ")) {
-								cols[16]++;
-							}
-							else if (graph.getPaintName().equals("Green ")) {
-								cols[17]++;
-							}
-							else if (graph.getPaintName().equals("Yellow ")) {
-								cols[18]++;
-							}
-							else if (graph.getPaintName().equals("Magenta ")) {
-								cols[19]++;
-							}
-							else if (graph.getPaintName().equals("Cyan ")) {
-								cols[20]++;
-							}
-							else if (graph.getPaintName().equals("Gray (Light)")) {
+							/*
+							 * else if (graph.getPaintName().equals("Red ")) {
+							 * cols[15]++; } else if
+							 * (graph.getPaintName().equals("Blue ")) {
+							 * cols[16]++; } else if
+							 * (graph.getPaintName().equals("Green ")) {
+							 * cols[17]++; } else if
+							 * (graph.getPaintName().equals("Yellow ")) {
+							 * cols[18]++; } else if
+							 * (graph.getPaintName().equals("Magenta ")) {
+							 * cols[19]++; } else if
+							 * (graph.getPaintName().equals("Cyan ")) {
+							 * cols[20]++; }
+							 */
+							else if (graph.getPaintName().equals("Gray")) {
 								cols[21]++;
 							}
 							else if (graph.getPaintName().equals("Red (Extra Dark)")) {
@@ -7122,6 +7138,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							else if (graph.getPaintName().equals("Cyan (Light)")) {
 								cols[33]++;
 							}
+							else if (graph.getPaintName().equals("Gray (Light)")) {
+								cols[34]++;
+							}
 						}
 						((JCheckBox) e.getSource()).setSelected(true);
 						series.get(i).setText(s);
@@ -7129,15 +7148,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						series.get(i).setSelectionEnd(0);
 						int colorSet = 0;
 						for (int j = 1; j < cols.length; j++) {
-							if (cols[j] < cols[colorSet]) {
+							if ((j < 15 || j > 20) && cols[j] < cols[colorSet]) {
 								colorSet = j;
 							}
 						}
 						DefaultDrawingSupplier draw = new DefaultDrawingSupplier();
-						for (int j = 0; j < colorSet; j++) {
-							draw.getNextPaint();
+						Paint paint;
+						if (colorSet == 34) {
+							paint = colors.get("Gray (Light)");
 						}
-						Paint paint = draw.getNextPaint();
+						else {
+							for (int j = 0; j < colorSet; j++) {
+								draw.getNextPaint();
+							}
+							paint = draw.getNextPaint();
+						}
 						Object[] set = colory.keySet().toArray();
 						for (int j = 0; j < set.length; j++) {
 							if (paint == colory.get(set[j])) {
