@@ -78,6 +78,8 @@ import org.jfree.chart.plot.DefaultDrawingSupplier;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.category.BarRenderer;
+import org.jfree.chart.renderer.category.GradientBarPainter;
+import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -4952,6 +4954,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			graph.setProperty("title", chart.getTitle().getText());
 			graph.setProperty("x.axis", chart.getCategoryPlot().getDomainAxis().getLabel());
 			graph.setProperty("y.axis", chart.getCategoryPlot().getRangeAxis().getLabel());
+			graph.setProperty("gradient",
+					""
+							+ (((BarRenderer) chart.getCategoryPlot().getRenderer())
+									.getBarPainter() instanceof GradientBarPainter));
+			graph.setProperty("shadow", ""
+					+ ((BarRenderer) chart.getCategoryPlot().getRenderer()).getShadowsVisible());
 			for (int i = 0; i < probGraphed.size(); i++) {
 				graph.setProperty("species.number." + i, "" + probGraphed.get(i).getNumber());
 				graph.setProperty("species.name." + i, probGraphed.get(i).getSpecies());
@@ -5144,6 +5152,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				graph.setProperty("title", chart.getTitle().getText());
 				graph.setProperty("x.axis", chart.getCategoryPlot().getDomainAxis().getLabel());
 				graph.setProperty("y.axis", chart.getCategoryPlot().getRangeAxis().getLabel());
+				graph.setProperty("gradient",
+						""
+								+ (((BarRenderer) chart.getCategoryPlot().getRenderer())
+										.getBarPainter() instanceof GradientBarPainter));
+				graph
+						.setProperty("shadow", ""
+								+ ((BarRenderer) chart.getCategoryPlot().getRenderer())
+										.getShadowsVisible());
 				for (int i = 0; i < probGraphed.size(); i++) {
 					graph.setProperty("species.number." + i, "" + probGraphed.get(i).getNumber());
 					graph.setProperty("species.name." + i, probGraphed.get(i).getSpecies());
@@ -5269,6 +5285,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				chart.setTitle(graph.getProperty("title"));
 				chart.getCategoryPlot().getDomainAxis().setLabel(graph.getProperty("x.axis"));
 				chart.getCategoryPlot().getRangeAxis().setLabel(graph.getProperty("y.axis"));
+				if (graph.containsKey("gradient") && graph.getProperty("gradient").equals("true")) {
+					((BarRenderer) chart.getCategoryPlot().getRenderer())
+							.setBarPainter(new GradientBarPainter());
+				}
+				else {
+					((BarRenderer) chart.getCategoryPlot().getRenderer())
+							.setBarPainter(new StandardBarPainter());
+				}
+				if (graph.containsKey("shadow") && graph.getProperty("shadow").equals("false")) {
+					((BarRenderer) chart.getCategoryPlot().getRenderer()).setShadowVisible(false);
+				}
+				else {
+					((BarRenderer) chart.getCategoryPlot().getRenderer()).setShadowVisible(true);
+				}
 				int next = 0;
 				while (graph.containsKey("species.name." + next)) {
 					probGraphed.add(new GraphProbs(colors.get(graph.getProperty("species.paint."
@@ -6158,6 +6188,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private void probGraph(String label) {
 		chart = ChartFactory.createBarChart(label, "", "Percent", new DefaultCategoryDataset(),
 				PlotOrientation.VERTICAL, true, true, false);
+		((BarRenderer) chart.getCategoryPlot().getRenderer())
+				.setBarPainter(new StandardBarPainter());
 		chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
 		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
 		chart.getCategoryPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
@@ -6212,6 +6244,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		JLabel titleLabel = new JLabel("Title:");
 		JLabel xLabel = new JLabel("X-Axis Label:");
 		JLabel yLabel = new JLabel("Y-Axis Label:");
+		final JCheckBox gradient = new JCheckBox("Paint In Gradient Style");
+		gradient.setSelected(!(((BarRenderer) chart.getCategoryPlot().getRenderer())
+				.getBarPainter() instanceof StandardBarPainter));
+		final JCheckBox shadow = new JCheckBox("Paint Bar Shadows");
+		shadow.setSelected(((BarRenderer) chart.getCategoryPlot().getRenderer())
+				.getShadowsVisible());
 		final JTextField title = new JTextField(chart.getTitle().getText(), 5);
 		final JTextField x = new JTextField(chart.getCategoryPlot().getDomainAxis().getLabel(), 5);
 		final JTextField y = new JTextField(chart.getCategoryPlot().getRangeAxis().getLabel(), 5);
@@ -6656,8 +6694,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			JPanel deselectPanel = new JPanel();
 			deselectPanel.add(deselect);
 			titlePanel2.add(deselectPanel);
-			titlePanel2.add(new JPanel());
-			titlePanel2.add(new JPanel());
+			titlePanel2.add(gradient);
+			titlePanel2.add(shadow);
 			titlePanel2.add(new JPanel());
 			titlePanel2.add(new JPanel());
 			titlePanel.add(titlePanel1, "Center");
@@ -6674,6 +6712,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				lastSelected = selected;
 				selected = "";
 				BarRenderer rend = (BarRenderer) chart.getCategoryPlot().getRenderer();
+				if (gradient.isSelected()) {
+					rend.setBarPainter(new GradientBarPainter());
+				}
+				else {
+					rend.setBarPainter(new StandardBarPainter());
+				}
+				if (shadow.isSelected()) {
+					rend.setShadowVisible(true);
+				}
+				else {
+					rend.setShadowVisible(false);
+				}
 				int thisOne = -1;
 				for (int i = 1; i < probGraphed.size(); i++) {
 					GraphProbs index = probGraphed.get(i);
@@ -7472,35 +7522,37 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				LhpnFile lhpn = new LhpnFile(biomodelsim.log);
 				lhpn.load(background);
 				HashMap<String, Properties> speciesMap = lhpn.getContinuous();
-				/*for (String s : speciesMap.keySet()) {
-					learnSpecs.add(s);
-				}*/
-				//ADDED BY SB.
+				/*
+				 * for (String s : speciesMap.keySet()) { learnSpecs.add(s); }
+				 */
+				// ADDED BY SB.
 				TSDParser extractVars;
 				ArrayList<String> datFileVars = new ArrayList<String>();
-				//ArrayList<String> allVars = new ArrayList<String>();
+				// ArrayList<String> allVars = new ArrayList<String>();
 				Boolean varPresent = false;
-				//Finding the intersection of all the variables present in all data files.
+				// Finding the intersection of all the variables present in all
+				// data files.
 				for (int i = 1; (new File(outDir + separator + "run-" + i + ".tsd")).exists(); i++) {
-					extractVars = new TSDParser(outDir + separator + "run-" + i + ".tsd", biomodelsim,false);
+					extractVars = new TSDParser(outDir + separator + "run-" + i + ".tsd",
+							biomodelsim, false);
 					datFileVars = extractVars.getSpecies();
-					if (i == 1){
+					if (i == 1) {
 						learnSpecs.addAll(datFileVars);
 					}
-					for (String s : learnSpecs){
+					for (String s : learnSpecs) {
 						varPresent = false;
-						for (String t : datFileVars){
-							if (s.equalsIgnoreCase(t)){
+						for (String t : datFileVars) {
+							if (s.equalsIgnoreCase(t)) {
 								varPresent = true;
 								break;
 							}
 						}
-						if (!varPresent){
+						if (!varPresent) {
 							learnSpecs.remove(s);
 						}
 					}
 				}
-				//END ADDED BY SB.
+				// END ADDED BY SB.
 			}
 			else {
 				SBMLDocument document = BioSim.readSBML(background);
