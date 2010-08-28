@@ -194,63 +194,20 @@ public class Lpn2verilog {
 					if (lpn.isContinuous(v) || lpn.isInteger(v)){
 						if (lpn.isContinuous(v)){
 							// TODO: Call Verilog-AMS generation from here. No System Verilog in this case
-							double initRate = Double.parseDouble(lpn.getInitialRate(v));
-						}
-						// Assign initial values to continuous, discrete and boolean variables
-//						As per translator.java: Extract the lower and upper bounds and set the initial value to the mean. 
-//						Anything that involves infinity, take either the lower or upper bound which is not infinity.  
-//						If both are infinity, set to 0.
-						
-						String initValue = lpn.getInitialVal(v);
-						String tmp_initValue = initValue;
-						String[] subString = initValue.split(",");
-						String lowerBound = null;
-						String upperBound = null;
-						if (tmp_initValue.contains(",")){
-							tmp_initValue = tmp_initValue.replaceFirst(",", "");
-							for (int i = 0; i<subString.length; i ++)
-							{
-								if (subString[i].contains("[")){
-									lowerBound = subString[i].replace("[", "");	
-								}
-								if (subString[i].contains("uniform(")){
-									lowerBound = subString[i].replace("uniform(", "");	
-								}
-								else if(subString[i].contains("]")){
-									upperBound = subString[i].replace("]", "");
-								}
-								else if(subString[i].contains(")")){
-									upperBound = subString[i].replace(")", "");
-								}
+							//double initRate = Double.parseDouble(lpn.getInitialRate(v));
+							if (lpn.getInitialRate(v) != null){
+								String initBufferString = getInitBufferString(v, lpn.getInitialRate(v));
+								initBuffer.append("\t\trate_" + initBufferString);
 							}
-							// initial value involves infinity
-							if (lowerBound.contains("inf") || upperBound.contains("inf")){
-								if (lowerBound.contains("-inf") && upperBound.contains("inf")){
-									initValue = "0" ; // if [-inf,inf], initValue = 0
-								}
-								else if (lowerBound.contains("-inf") && !upperBound.contains("inf")){
-									initValue = upperBound; // if [-inf,a], initValue = a
-								}
-								else if (!lowerBound.contains("-inf") && upperBound.contains("inf")){
-									initValue = lowerBound; // if [a,inf], initValue = a
-								}
-								initBuffer.append("\t\t" + v + " <= " + initValue + ";\n");
+							if (lpn.getInitialVal(v) != null){
+								String initBufferString = getInitBufferString(v, lpn.getInitialVal(v));
+								initBuffer.append("\t\tchange_" + initBufferString);
 							}
-							else { // initial value is a range, not involving infinity
-								if (!lowerBound.equalsIgnoreCase(upperBound)){
-									if (Double.valueOf(lowerBound) > 0)
-										initBuffer.append("\t\t" + v + " <= " + lowerBound + " + $signed((($unsigned($random))%(" + upperBound + "-" + lowerBound + "+1)));\n");
-									else if (Double.valueOf(lowerBound) < 0)
-										initBuffer.append("\t\t" + v + " <= " + lowerBound + " + $signed((($unsigned($random))%(" + upperBound + "+" + Math.abs(Integer.valueOf(lowerBound)) + "+1)));\n");
-									else
-										initBuffer.append("\t\t" + v + " <= " + lowerBound + " + $signed((($unsigned($random))%(" + upperBound + "+1)));\n");
-								}
-								else
-									initBuffer.append("\t\t" + v + " <= " + lowerBound + ";\n");
-							}	
-						} 
-						else { // initial value is a single number
-							initBuffer.append("\t\t" + v + " <= " + initValue + ";\n");
+						} else {
+							if (lpn.getInitialVal(v) != null){
+								String initBufferString = getInitBufferString(v, lpn.getInitialVal(v));
+								initBuffer.append("\t\t" + initBufferString);
+							}
 						}
 					}
 					else { // boolean variable 
@@ -360,10 +317,12 @@ public class Lpn2verilog {
 						assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= 1;\n");
 					}
 					HashMap<String,ExprTree> assignmentTrees = lpn.getTransition(st).getAssignTrees(); 
+					HashMap<String,ExprTree> rateAssignmentTrees = lpn.getTransition(st).getRateAssignTrees();
+					HashMap<String,ExprTree> valueAssignmentTrees = lpn.getTransition(st).getIntAssignTrees();
 					if (assignmentTrees.size() != 0){
-						for (String st2 : assignmentTrees.keySet()){
+						for (String st2 : valueAssignmentTrees.keySet()){
 							//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
-							String asgnmt = assignmentTrees.get(st2).getElement("Verilog");
+							String asgnmt = valueAssignmentTrees.get(st2).getElement("Verilog");
 							assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= " + asgnmt + ";\n");
 						/*	if (asgnmt.contains(",")){
 								asgnmt = asgnmt.replace("uniform(","");
@@ -386,6 +345,12 @@ public class Lpn2verilog {
 							} else{
 								assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= " + asgnmt + ";\n");
 							}*/
+						}
+						for (String st2 : rateAssignmentTrees.keySet()){
+							//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
+							String asgnmt = rateAssignmentTrees.get(st2).getElement("Verilog");
+							assignmentsBuffer[tag.get(st)].append("\t\t\trate_" + st2 + " <= " + asgnmt + ";\n");
+							assignmentsBuffer[tag.get(st)].append("\t\t\tchange_" + st2 + " <= " + st2 + ";\n");
 						}
 					}
 					assignmentsBuffer[tag.get(st)].append("\t\tend\n");
@@ -430,6 +395,66 @@ public class Lpn2verilog {
 		}
 	}
 	
+	private String getInitBufferString(String v, String initValue) {
+		// Assign initial values/rates to continuous, discrete and boolean variables
+//		As per translator.java: Extract the lower and upper bounds and set the initial value to the mean. 
+//		Anything that involves infinity, take either the lower or upper bound which is not infinity.  
+//		If both are infinity, set to 0.
+		
+		String initBufferString = null;
+		String tmp_initValue = initValue;
+		String[] subString = initValue.split(",");
+		String lowerBound = null;
+		String upperBound = null;
+		if (tmp_initValue.contains(",")){
+			tmp_initValue = tmp_initValue.replaceFirst(",", "");
+			for (int i = 0; i<subString.length; i ++)
+			{
+				if (subString[i].contains("[")){
+					lowerBound = subString[i].replace("[", "");	
+				}
+				if (subString[i].contains("uniform(")){
+					lowerBound = subString[i].replace("uniform(", "");	
+				}
+				else if(subString[i].contains("]")){
+					upperBound = subString[i].replace("]", "");
+				}
+				else if(subString[i].contains(")")){
+					upperBound = subString[i].replace(")", "");
+				}
+			}
+			// initial value involves infinity
+			if (lowerBound.contains("inf") || upperBound.contains("inf")){
+				if (lowerBound.contains("-inf") && upperBound.contains("inf")){
+					initValue = "0" ; // if [-inf,inf], initValue = 0
+				}
+				else if (lowerBound.contains("-inf") && !upperBound.contains("inf")){
+					initValue = upperBound; // if [-inf,a], initValue = a
+				}
+				else if (!lowerBound.contains("-inf") && upperBound.contains("inf")){
+					initValue = lowerBound; // if [a,inf], initValue = a
+				}
+				initBufferString = v + " <= " + initValue + ";\n";
+			}
+			else { // initial value is a range, not involving infinity
+				if (!lowerBound.equalsIgnoreCase(upperBound)){
+					if (Double.valueOf(lowerBound) > 0)
+						initBufferString = v + " <= " + lowerBound + " + $signed((($unsigned($random))%(" + upperBound + "-" + lowerBound + "+1)));\n";
+					else if (Double.valueOf(lowerBound) < 0)
+						initBufferString = v + " <= " + lowerBound + " + $signed((($unsigned($random))%(" + upperBound + "+" + Math.abs(Integer.valueOf(lowerBound)) + "+1)));\n";
+					else
+						initBufferString = v + " <= " + lowerBound + " + $signed((($unsigned($random))%(" + upperBound + "+1)));\n";
+				}
+				else
+					initBufferString = v + " <= " + lowerBound + ";\n";
+			}	
+		} 
+		else { // initial rate is a single number
+			initBufferString = v + " <= " + initValue + ";\n";
+		}
+		return(initBufferString);
+	}
+
 	private HashMap<String,Integer> tagNet(LhpnFile g, String place, int id, HashMap<String,Integer> tag){
 		if (!visitedPlaces.containsKey(place)){
 			visitedPlaces.put(place,true);
