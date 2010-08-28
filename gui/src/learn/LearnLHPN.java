@@ -5598,6 +5598,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Unable to write into log file in autogenT.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
+		} catch (NoSuchElementException e3) {
+			e3.printStackTrace();
+			if (reqdVarsL.size() == 0){
+				JOptionPane.showMessageDialog(biosim.frame(),
+						"No input or output variables.",
+						"ERROR!", JOptionPane.ERROR_MESSAGE);
+			}
+			
 		}
 		//return divisions; //changed for replacing divisionsL by threholds
 		return localThresholds;
