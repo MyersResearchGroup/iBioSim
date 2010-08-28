@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
@@ -77,46 +78,59 @@ public class FileTree extends JPanel implements MouseListener {
 			separator = File.separator;
 		}
 
-		ICON_VHDL = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "iconVHDL.png");
+		ICON_VHDL = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "iconVHDL.png");
 
-		ICON_S = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "iconS.png");
+		ICON_S = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "iconS.png");
 
-		ICON_INST = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "iconInst.png");
+		ICON_INST = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "iconInst.png");
 
-		ICON_LHPN = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator
-				+ "icon_pnlogo.gif");
+		ICON_LHPN = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "icon_pnlogo.gif");
 
-		ICON_CSP = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "iconCSP.png");
+		ICON_CSP = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "iconCSP.png");
 
-		ICON_HSE = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "iconHSE.png");
+		ICON_HSE = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "iconHSE.png");
 
-		ICON_UNC = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "iconUNC.png");
+		ICON_UNC = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "iconUNC.png");
 
-		ICON_RSG = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "iconRSG.png");
+		ICON_RSG = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "iconRSG.png");
 
-		ICON_MODEL = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "model.png");
+		ICON_MODEL = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "model.png");
 
-		ICON_DOT = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "dot.jpg");
+		ICON_DOT = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "dot.jpg");
 
-		ICON_SBML = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "sbml.jpg");
+		ICON_SBML = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "sbml.jpg");
 
-		ICON_SIMULATION = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator
-				+ "simulation.jpg");
+		ICON_SIMULATION = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator
+				+ "icons" + separator + "simulation.jpg");
 
-		ICON_SYNTHESIS = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator
-				+ "synth.png");
+		ICON_SYNTHESIS = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "synth.png");
 
-		ICON_VERIFY = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "check.png");
+		ICON_VERIFY = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "check.png");
 
-		ICON_PROJECT = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator
-				+ "project.jpg");
+		ICON_PROJECT = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "project.jpg");
 
-		ICON_GRAPH = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "graph.jpg");
+		ICON_GRAPH = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "graph.jpg");
 
-		ICON_PROBGRAPH = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator
-				+ "probability.jpg");
+		ICON_PROBGRAPH = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "probability.jpg");
 
-		ICON_LEARN = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons" + separator + "learn.jpg");
+		ICON_LEARN = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "learn.jpg");
 
 		setLayout(new BorderLayout());
 
@@ -129,11 +143,24 @@ public class FileTree extends JPanel implements MouseListener {
 			// Add a listener
 			tree.addTreeSelectionListener(new TreeSelectionListener() {
 				public void valueChanged(TreeSelectionEvent e) {
-					DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath().getLastPathComponent();
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.getPath()
+							.getLastPathComponent();
 					fileLocation = "";
 					while (node != null) {
 						if (node.getParent() != null) {
 							fileLocation = separator + node + fileLocation;
+							String parentNode = node.getParent().toString();
+							if (parentNode.endsWith(".xml") || parentNode.endsWith(".sbml")
+									|| parentNode.endsWith(".gcm") || parentNode.endsWith(".vhd")
+									|| parentNode.endsWith(".s") || parentNode.endsWith(".inst")
+									|| parentNode.endsWith(".g") || parentNode.endsWith(".lpn")
+									|| parentNode.endsWith(".csp") || parentNode.endsWith(".hse")
+									|| parentNode.endsWith(".unc") || parentNode.endsWith(".csp")
+									|| parentNode.endsWith(".rsg") || parentNode.endsWith(".vams")
+									|| parentNode.endsWith(".sv") || parentNode.endsWith(".grf")
+									|| parentNode.endsWith(".prb")) {
+								node = (DefaultMutableTreeNode) node.getParent();
+							}
 						}
 						node = (DefaultMutableTreeNode) node.getParent();
 					}
@@ -156,7 +183,8 @@ public class FileTree extends JPanel implements MouseListener {
 	/**
 	 * Add nodes from under "dir" into curTop. Highly recursive.
 	 */
-	DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, File dir, boolean sim, boolean synth) {
+	DefaultMutableTreeNode addNodes(DefaultMutableTreeNode curTop, File dir, boolean sim,
+			boolean synth) {
 		String curPath = dir.getPath();
 		DefaultMutableTreeNode curDir;
 		if (curTop == null) {
@@ -167,10 +195,12 @@ public class FileTree extends JPanel implements MouseListener {
 				curDir = new DefaultMutableTreeNode(new IconData(ICON_VERIFY, null, dir.getName()));
 			}
 			else if (sim) {
-				curDir = new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, dir.getName()));
+				curDir = new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, dir
+						.getName()));
 			}
 			else if (synth) {
-				curDir = new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null, dir.getName()));
+				curDir = new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null, dir
+						.getName()));
 			}
 			else {
 				curDir = new DefaultMutableTreeNode(new IconData(ICON_LEARN, null, dir.getName()));
@@ -194,6 +224,7 @@ public class FileTree extends JPanel implements MouseListener {
 		Collections.sort(ol, String.CASE_INSENSITIVE_ORDER);
 		File f;
 		ArrayList<String> files = new ArrayList<String>();
+		ArrayList<String> dirs = new ArrayList<String>();
 		// Make two passes, one for Dirs and one for Files. This is #1.
 		for (int i = 0; i < ol.size(); i++) {
 			String thisObject = (String) ol.get(i);
@@ -203,72 +234,106 @@ public class FileTree extends JPanel implements MouseListener {
 			else
 				newPath = curPath + separator + thisObject;
 			if ((f = new File(newPath)).isDirectory() && !f.getName().equals("CVS")) {
-				for (String s : f.list()) {
-					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
-						addNodes(curDir, f, true, false);
-					}
-					else if (!atacs && s.length() > 3 && s.substring(s.length() - 4).equals(".lrn")) {
-						addNodes(curDir, f, false, false);
-					}
-					else if (atacs && s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
-						addNodes(curDir, f, false, true);
-					}
-					else if (async && s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
-						addNodes(curDir, f, true, true);
-					}
-				}
+				dirs.add(thisObject);
+				// for (String s : f.list()) {
+				// if (s.length() > 3 && s.substring(s.length() -
+				// 4).equals(".sim")) {
+				// addNodes(curDir, f, true, false);
+				// }
+				// else if (!atacs && s.length() > 3 && s.substring(s.length() -
+				// 4).equals(".lrn")) {
+				// addNodes(curDir, f, false, false);
+				// }
+				// else if (atacs && s.length() > 3 && s.substring(s.length() -
+				// 4).equals(".syn")) {
+				// addNodes(curDir, f, false, true);
+				// }
+				// else if (async && s.length() > 3 && s.substring(s.length() -
+				// 4).equals(".ver")) {
+				// addNodes(curDir, f, true, true);
+				// }
+				// }
 			}
 			else if (!f.getName().equals("CVS"))
 				files.add(thisObject);
 		}
 		// Pass two: for files.
 		for (int fnum = 0; fnum < files.size(); fnum++) {
+			DefaultMutableTreeNode file = null;
 			if (curDir.getParent() == null) {
-				if (!async && files.get(fnum).toString().length() > 4
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".sbml") || !async
+				if (!async
+						&& files.get(fnum).toString().length() > 4
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 5).equals(".sbml")
+						|| !async
 						&& files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".xml")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files.get(fnum))));
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".xml")) {
+					file = new DefaultMutableTreeNode(
+							new IconData(ICON_SBML, null, files.get(fnum)));
 				}
-				else if (!async && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".gcm")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files.get(fnum))));
+				else if (!async
+						&& files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".gcm")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files.get(fnum)));
 				}
-				else if (async && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".vhd")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum))));
+				else if (async
+						&& files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".vhd")) {
+					file = new DefaultMutableTreeNode(
+							new IconData(ICON_VHDL, null, files.get(fnum)));
 				}
-				else if (lema && files.get(fnum).toString().length() > 1
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".s")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_S, null, files.get(fnum))));
+				else if (lema
+						&& files.get(fnum).toString().length() > 1
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 2).equals(".s")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_S, null, files.get(fnum)));
 				}
-				else if (lema && files.get(fnum).toString().length() > 4
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".inst")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_INST, null, files.get(fnum))));
+				else if (lema
+						&& files.get(fnum).toString().length() > 4
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 5).equals(".inst")) {
+					file = new DefaultMutableTreeNode(
+							new IconData(ICON_INST, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 1
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".g")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+				else if (atacs
+						&& files.get(fnum).toString().length() > 1
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 2).equals(".g")) {
+					file = new DefaultMutableTreeNode(
+							new IconData(ICON_LHPN, null, files.get(fnum)));
 				}
 				else if (files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".lpn")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".lpn")) {
+					file = new DefaultMutableTreeNode(
+							new IconData(ICON_LHPN, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals("csp")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_CSP, null, files.get(fnum))));
+				else if (atacs
+						&& files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals("csp")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_CSP, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".hse")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_HSE, null, files.get(fnum))));
+				else if (atacs
+						&& files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".hse")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_HSE, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".unc")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_UNC, null, files.get(fnum))));
+				else if (atacs
+						&& files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".unc")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_UNC, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".rsg")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_RSG, null, files.get(fnum))));
+				else if (atacs
+						&& files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".rsg")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_RSG, null, files.get(fnum)));
 				}
 				// else if (lema && files.get(fnum).toString().length() > 3
 				// &&
@@ -278,69 +343,107 @@ public class FileTree extends JPanel implements MouseListener {
 				// curDir.add(new DefaultMutableTreeNode(new
 				// IconData(ICON_MODEL, null, files.get(fnum))));
 				// }
-				else if (lema && files.get(fnum).toString().length() > 4
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".vams")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+				else if (lema
+						&& files.get(fnum).toString().length() > 4
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 5).equals(".vams")) {
+					file = new DefaultMutableTreeNode(
+							new IconData(ICON_LHPN, null, files.get(fnum)));
 				}
-				else if (lema && files.get(fnum).toString().length() > 2
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 3).equals(".sv")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+				else if (lema
+						&& files.get(fnum).toString().length() > 2
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 3).equals(".sv")) {
+					file = new DefaultMutableTreeNode(
+							new IconData(ICON_LHPN, null, files.get(fnum)));
 				}
 				else if (files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".grf")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null, files.get(fnum))));
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".grf")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null, files
+							.get(fnum)));
 				}
 				else if (files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".prb")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_PROBGRAPH, null, files.get(fnum))));
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".prb")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_PROBGRAPH, null, files
+							.get(fnum)));
 				}
 			}
 			else if (!(curDir.getParent().toString().equals(root.toString()))) {
-				if (!async && files.get(fnum).toString().length() > 4
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".sbml") || !async
+				if (!async
+						&& files.get(fnum).toString().length() > 4
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 5).equals(".sbml")
+						|| !async
 						&& files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".xml")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files.get(fnum))));
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".xml")) {
+					file = new DefaultMutableTreeNode(
+							new IconData(ICON_SBML, null, files.get(fnum)));
 				}
-				else if (!async && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".gcm")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files.get(fnum))));
+				else if (!async
+						&& files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".gcm")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files.get(fnum)));
 				}
-				else if (async && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".vhd")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum))));
+				else if (async
+						&& files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".vhd")) {
+					file = new DefaultMutableTreeNode(
+							new IconData(ICON_VHDL, null, files.get(fnum)));
 				}
-				else if (lema && files.get(fnum).toString().length() > 1
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".s")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_S, null, files.get(fnum))));
+				else if (lema
+						&& files.get(fnum).toString().length() > 1
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 2).equals(".s")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_S, null, files.get(fnum)));
 				}
-				else if (lema && files.get(fnum).toString().length() > 4
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".inst")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_INST, null, files.get(fnum))));
+				else if (lema
+						&& files.get(fnum).toString().length() > 4
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 5).equals(".inst")) {
+					file = new DefaultMutableTreeNode(
+							new IconData(ICON_INST, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 1
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".g")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+				else if (atacs
+						&& files.get(fnum).toString().length() > 1
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 2).equals(".g")) {
+					file = new DefaultMutableTreeNode(
+							new IconData(ICON_LHPN, null, files.get(fnum)));
 				}
 				else if (files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".lpn")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".lpn")) {
+					file = new DefaultMutableTreeNode(
+							new IconData(ICON_LHPN, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".csp")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_CSP, null, files.get(fnum))));
+				else if (atacs
+						&& files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".csp")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_CSP, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".hse")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_HSE, null, files.get(fnum))));
+				else if (atacs
+						&& files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".hse")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_HSE, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".unc")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_UNC, null, files.get(fnum))));
+				else if (atacs
+						&& files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".unc")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_UNC, null, files.get(fnum)));
 				}
-				else if (atacs && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".rsg")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_RSG, null, files.get(fnum))));
+				else if (atacs
+						&& files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".rsg")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_RSG, null, files.get(fnum)));
 				}
 				// else if (lema && files.get(fnum).toString().length() > 3
 				// &&
@@ -350,21 +453,117 @@ public class FileTree extends JPanel implements MouseListener {
 				// curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN,
 				// null, files.get(fnum))));
 				// }
-				else if (lema && files.get(fnum).toString().length() > 4
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".vams")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+				else if (lema
+						&& files.get(fnum).toString().length() > 4
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 5).equals(".vams")) {
+					file = new DefaultMutableTreeNode(
+							new IconData(ICON_LHPN, null, files.get(fnum)));
 				}
-				else if (lema && files.get(fnum).toString().length() > 2
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 3).equals(".sv")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))));
+				else if (lema
+						&& files.get(fnum).toString().length() > 2
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 3).equals(".sv")) {
+					file = new DefaultMutableTreeNode(
+							new IconData(ICON_LHPN, null, files.get(fnum)));
 				}
 				else if (files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".grf")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null, files.get(fnum))));
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".grf")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null, files
+							.get(fnum)));
 				}
 				else if (files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".prb")) {
-					curDir.add(new DefaultMutableTreeNode(new IconData(ICON_PROBGRAPH, null, files.get(fnum))));
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".prb")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_PROBGRAPH, null, files
+							.get(fnum)));
+				}
+			}
+			if (file != null) {
+				for (String d : dirs) {
+					String newPath;
+					if (curPath.equals("."))
+						newPath = d;
+					else
+						newPath = curPath + separator + d;
+					f = new File(newPath);
+					for (String s : f.list()) {
+						if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
+							try {
+								Scanner scan = new Scanner(new File(newPath + separator + s));
+								String refFile = scan.nextLine();
+								if (refFile.equals(files.get(fnum))) {
+									file.add(new DefaultMutableTreeNode(new IconData(
+											ICON_SIMULATION, null, d)));
+								}
+								scan.close();
+							}
+							catch (Exception e) {
+							}
+						}
+						else if (!atacs && s.length() > 3
+								&& s.substring(s.length() - 4).equals(".lrn")) {
+							try {
+								Properties load = new Properties();
+								FileInputStream in = new FileInputStream(new File(newPath
+										+ separator + s));
+								load.load(in);
+								in.close();
+								if (load.containsKey("genenet.file")) {
+									String[] getProp = load.getProperty("genenet.file").split(
+											separator);
+									if (files.get(fnum).equals(getProp[getProp.length - 1])) {
+										file.add(new DefaultMutableTreeNode(new IconData(
+												ICON_LEARN, null, d)));
+									}
+								}
+							}
+							catch (Exception e) {
+							}
+						}
+						else if (atacs && s.length() > 3
+								&& s.substring(s.length() - 4).equals(".syn")) {
+							try {
+								Properties load = new Properties();
+								FileInputStream in = new FileInputStream(new File(newPath
+										+ separator + s));
+								load.load(in);
+								in.close();
+								if (load.containsKey("synthesis.file")) {
+									String[] getProp = load.getProperty("synthesis.file").split(
+											separator);
+									if (files.get(fnum).equals(getProp[getProp.length - 1])) {
+										file.add(new DefaultMutableTreeNode(new IconData(
+												ICON_SYNTHESIS, null, d)));
+									}
+								}
+							}
+							catch (Exception e) {
+							}
+						}
+						else if (async && s.length() > 3
+								&& s.substring(s.length() - 4).equals(".ver")) {
+							try {
+								Properties load = new Properties();
+								FileInputStream in = new FileInputStream(new File(newPath
+										+ separator + s));
+								load.load(in);
+								in.close();
+								if (load.containsKey("verification.file")) {
+									String[] getProp = load.getProperty("verification.file").split(
+											separator);
+									if (files.get(fnum).equals(getProp[getProp.length - 1])) {
+										file.add(new DefaultMutableTreeNode(new IconData(
+												ICON_VERIFY, null, d)));
+									}
+								}
+							}
+							catch (Exception e) {
+							}
+						}
+					}
+					curDir.add(file);
 				}
 			}
 		}
@@ -384,7 +583,8 @@ public class FileTree extends JPanel implements MouseListener {
 		return root;
 	}
 
-	private void fixTree(DefaultMutableTreeNode parent, DefaultMutableTreeNode current, File dir, boolean add) {
+	private void fixTree(DefaultMutableTreeNode parent, DefaultMutableTreeNode current, File dir,
+			boolean add) {
 		String curPath = dir.getPath();
 		if (add) {
 			if (parent == null || parent.getParent() == null) {
@@ -393,13 +593,20 @@ public class FileTree extends JPanel implements MouseListener {
 					if (parent.getChildAt(i).toString().compareToIgnoreCase(current.toString()) > 0) {
 						break;
 					}
-					if (parent.getChildAt(i).toString().contains(".sbml") || parent.getChildAt(i).toString().contains(".xml")
-							|| parent.getChildAt(i).toString().contains(".gcm") || parent.getChildAt(i).toString().contains(".vhd")
-							|| parent.getChildAt(i).toString().contains(".s") || parent.getChildAt(i).toString().contains(".inst")
-							|| parent.getChildAt(i).toString().contains(".g") || parent.getChildAt(i).toString().contains(".lpn")
-							|| parent.getChildAt(i).toString().contains(".csp") || parent.getChildAt(i).toString().contains(".hse")
-							|| parent.getChildAt(i).toString().contains(".unc") || parent.getChildAt(i).toString().contains(".rsg")
-							|| parent.getChildAt(i).toString().contains(".grf") || parent.getChildAt(i).toString().contains(".vams")
+					if (parent.getChildAt(i).toString().contains(".sbml")
+							|| parent.getChildAt(i).toString().contains(".xml")
+							|| parent.getChildAt(i).toString().contains(".gcm")
+							|| parent.getChildAt(i).toString().contains(".vhd")
+							|| parent.getChildAt(i).toString().contains(".s")
+							|| parent.getChildAt(i).toString().contains(".inst")
+							|| parent.getChildAt(i).toString().contains(".g")
+							|| parent.getChildAt(i).toString().contains(".lpn")
+							|| parent.getChildAt(i).toString().contains(".csp")
+							|| parent.getChildAt(i).toString().contains(".hse")
+							|| parent.getChildAt(i).toString().contains(".unc")
+							|| parent.getChildAt(i).toString().contains(".rsg")
+							|| parent.getChildAt(i).toString().contains(".grf")
+							|| parent.getChildAt(i).toString().contains(".vams")
 							|| parent.getChildAt(i).toString().contains(".sv")) { // SB
 						break;
 					}
@@ -422,6 +629,7 @@ public class FileTree extends JPanel implements MouseListener {
 		Collections.sort(ol, String.CASE_INSENSITIVE_ORDER);
 		File f;
 		ArrayList<String> files = new ArrayList<String>();
+		ArrayList<String> dirs = new ArrayList<String>();
 		// Make two passes, one for Dirs and one for Files. This is #1.
 		for (int i = 0; i < current.getChildCount(); i++) {
 			boolean remove = true;
@@ -444,88 +652,105 @@ public class FileTree extends JPanel implements MouseListener {
 			else
 				newPath = curPath + separator + thisObject;
 			if ((f = new File(newPath)).isDirectory() && !f.getName().equals("CVS")) {
-				for (String s : f.list()) {
-					if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
-						String get = "";
-						boolean doAdd = true;
-						int getChild = 0;
-						for (int j = 0; j < current.getChildCount(); j++) {
-							get = "" + current.getChildAt(j);
-							if (get.equals(f.getName())) {
-								doAdd = false;
-								getChild = j;
-							}
-						}
-						if (doAdd) {
-							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, f.getName())), f, doAdd);
-						}
-						else {
-							current.remove(getChild);
-							doAdd = true;
-							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null, f.getName())), f, doAdd);
-						}
-					}
-					else if (!atacs && s.length() > 3 && s.substring(s.length() - 4).equals(".lrn")) {
-						String get = "";
-						boolean doAdd = true;
-						int getChild = 0;
-						for (int j = 0; j < current.getChildCount(); j++) {
-							get = "" + current.getChildAt(j);
-							if (get.equals(f.getName())) {
-								doAdd = false;
-								getChild = j;
-							}
-						}
-						if (doAdd) {
-							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_LEARN, null, f.getName())), f, doAdd);
-						}
-						else {
-							current.remove(getChild);
-							doAdd = true;
-							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_LEARN, null, f.getName())), f, doAdd);
-						}
-					}
-					else if (atacs && s.length() > 3 && s.substring(s.length() - 4).equals(".syn")) {
-						String get = "";
-						boolean doAdd = true;
-						int getChild = 0;
-						for (int j = 0; j < current.getChildCount(); j++) {
-							get = "" + current.getChildAt(j);
-							if (get.equals(f.getName())) {
-								doAdd = false;
-								getChild = j;
-							}
-						}
-						if (doAdd) {
-							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null, f.getName())), f, doAdd);
-						}
-						else {
-							current.remove(getChild);
-							doAdd = true;
-							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null, f.getName())), f, doAdd);
-						}
-					}
-					else if (async && s.length() > 3 && s.substring(s.length() - 4).equals(".ver")) {
-						String get = "";
-						boolean doAdd = true;
-						int getChild = 0;
-						for (int j = 0; j < current.getChildCount(); j++) {
-							get = "" + current.getChildAt(j);
-							if (get.equals(f.getName())) {
-								doAdd = false;
-								getChild = j;
-							}
-						}
-						if (doAdd) {
-							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_VERIFY, null, f.getName())), f, doAdd);
-						}
-						else {
-							current.remove(getChild);
-							doAdd = true;
-							fixTree(current, new DefaultMutableTreeNode(new IconData(ICON_VERIFY, null, f.getName())), f, doAdd);
-						}
-					}
-				}
+				dirs.add(thisObject);
+				// for (String s : f.list()) {
+				// if (s.length() > 3 && s.substring(s.length() -
+				// 4).equals(".sim")) {
+				// String get = "";
+				// boolean doAdd = true;
+				// int getChild = 0;
+				// for (int j = 0; j < current.getChildCount(); j++) {
+				// get = "" + current.getChildAt(j);
+				// if (get.equals(f.getName())) {
+				// doAdd = false;
+				// getChild = j;
+				// }
+				// }
+				// if (doAdd) {
+				// fixTree(current, new DefaultMutableTreeNode(new IconData(
+				// ICON_SIMULATION, null, f.getName())), f, doAdd);
+				// }
+				// else {
+				// current.remove(getChild);
+				// doAdd = true;
+				// fixTree(current, new DefaultMutableTreeNode(new IconData(
+				// ICON_SIMULATION, null, f.getName())), f, doAdd);
+				// }
+				// }
+				// else if (!atacs && s.length() > 3 && s.substring(s.length() -
+				// 4).equals(".lrn")) {
+				// String get = "";
+				// boolean doAdd = true;
+				// int getChild = 0;
+				// for (int j = 0; j < current.getChildCount(); j++) {
+				// get = "" + current.getChildAt(j);
+				// if (get.equals(f.getName())) {
+				// doAdd = false;
+				// getChild = j;
+				// }
+				// }
+				// if (doAdd) {
+				// fixTree(current, new DefaultMutableTreeNode(new
+				// IconData(ICON_LEARN,
+				// null, f.getName())), f, doAdd);
+				// }
+				// else {
+				// current.remove(getChild);
+				// doAdd = true;
+				// fixTree(current, new DefaultMutableTreeNode(new
+				// IconData(ICON_LEARN,
+				// null, f.getName())), f, doAdd);
+				// }
+				// }
+				// else if (atacs && s.length() > 3 && s.substring(s.length() -
+				// 4).equals(".syn")) {
+				// String get = "";
+				// boolean doAdd = true;
+				// int getChild = 0;
+				// for (int j = 0; j < current.getChildCount(); j++) {
+				// get = "" + current.getChildAt(j);
+				// if (get.equals(f.getName())) {
+				// doAdd = false;
+				// getChild = j;
+				// }
+				// }
+				// if (doAdd) {
+				// fixTree(current, new DefaultMutableTreeNode(new IconData(
+				// ICON_SYNTHESIS, null, f.getName())), f, doAdd);
+				// }
+				// else {
+				// current.remove(getChild);
+				// doAdd = true;
+				// fixTree(current, new DefaultMutableTreeNode(new IconData(
+				// ICON_SYNTHESIS, null, f.getName())), f, doAdd);
+				// }
+				// }
+				// else if (async && s.length() > 3 && s.substring(s.length() -
+				// 4).equals(".ver")) {
+				// String get = "";
+				// boolean doAdd = true;
+				// int getChild = 0;
+				// for (int j = 0; j < current.getChildCount(); j++) {
+				// get = "" + current.getChildAt(j);
+				// if (get.equals(f.getName())) {
+				// doAdd = false;
+				// getChild = j;
+				// }
+				// }
+				// if (doAdd) {
+				// fixTree(current, new DefaultMutableTreeNode(new
+				// IconData(ICON_VERIFY,
+				// null, f.getName())), f, doAdd);
+				// }
+				// else {
+				// current.remove(getChild);
+				// doAdd = true;
+				// fixTree(current, new DefaultMutableTreeNode(new
+				// IconData(ICON_VERIFY,
+				// null, f.getName())), f, doAdd);
+				// }
+				// }
+				// }
 			}
 			else if (!f.getName().equals("CVS"))
 				files.add(thisObject);
@@ -541,8 +766,10 @@ public class FileTree extends JPanel implements MouseListener {
 				}
 			}
 			if (doAdd) {
+				DefaultMutableTreeNode file = null;
+				int insert = -1;
 				if (parent == null) {
-					int insert = 0;
+					insert = 0;
 					for (int i = 0; i < current.getChildCount(); i++) {
 						if (!current.getChildAt(i).toString().contains(".sbml")
 								&& !current.getChildAt(i).toString().contains(".xml")
@@ -557,67 +784,109 @@ public class FileTree extends JPanel implements MouseListener {
 								&& !current.getChildAt(i).toString().contains(".unc")
 								&& !current.getChildAt(i).toString().contains(".rsg")
 								&& !current.getChildAt(i).toString().contains(".grf")
+								&& !current.getChildAt(i).toString().contains(".prb")
 								&& !current.getChildAt(i).toString().contains(".vams")
 								&& !current.getChildAt(i).toString().contains(".sv")) {
 						}
-						else if (current.getChildAt(i).toString().compareToIgnoreCase(files.get(fnum).toString()) > 0) {
+						else if (current.getChildAt(i).toString().compareToIgnoreCase(
+								files.get(fnum).toString()) > 0) {
 							break;
 						}
 						insert++;
 					}
-					if (!async && files.get(fnum).toString().length() > 4
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".sbml")
-							|| !async && files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".xml")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files.get(fnum))), insert);
+					if (!async
+							&& files.get(fnum).toString().length() > 4
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 5).equals(".sbml")
+							|| !async
+							&& files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".xml")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files
+								.get(fnum)));
 					}
-					else if (!async && files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".gcm")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files.get(fnum))), insert);
+					else if (!async
+							&& files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".gcm")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files
+								.get(fnum)));
 					}
-					else if (async && files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".vhd")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum))), insert);
+					else if (async
+							&& files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".vhd")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files
+								.get(fnum)));
 					}
-					else if (lema && files.get(fnum).toString().length() > 1
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".s")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_S, null, files.get(fnum))), insert);
+					else if (lema
+							&& files.get(fnum).toString().length() > 1
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 2).equals(".s")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_S, null, files
+								.get(fnum)));
 					}
-					else if (lema && files.get(fnum).toString().length() > 4
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".inst")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_INST, null, files.get(fnum))), insert);
+					else if (lema
+							&& files.get(fnum).toString().length() > 4
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 5).equals(".inst")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_INST, null, files
+								.get(fnum)));
 					}
-					else if (atacs && files.get(fnum).toString().length() > 1
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".g")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+					else if (atacs
+							&& files.get(fnum).toString().length() > 1
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 2).equals(".g")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files
+								.get(fnum)));
 					}
 					else if (files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".lpn")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".lpn")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files
+								.get(fnum)));
 					}
-					else if (atacs && files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".csp")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_CSP, null, files.get(fnum))), insert);
+					else if (atacs
+							&& files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".csp")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_CSP, null, files
+								.get(fnum)));
 					}
-					else if (atacs && files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".hse")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_HSE, null, files.get(fnum))), insert);
+					else if (atacs
+							&& files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".hse")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_HSE, null, files
+								.get(fnum)));
 					}
-					else if (atacs && files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".unc")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_UNC, null, files.get(fnum))), insert);
+					else if (atacs
+							&& files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".unc")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_UNC, null, files
+								.get(fnum)));
 					}
-					else if (atacs && files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".rsg")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_RSG, null, files.get(fnum))), insert);
+					else if (atacs
+							&& files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".rsg")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_RSG, null, files
+								.get(fnum)));
 					}
-					else if (lema && files.get(fnum).toString().length() > 4
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".vams")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+					else if (lema
+							&& files.get(fnum).toString().length() > 4
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 5).equals(".vams")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files
+								.get(fnum)));
 					}
-					else if (lema && files.get(fnum).toString().length() > 2
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 3).equals(".sv")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+					else if (lema
+							&& files.get(fnum).toString().length() > 2
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 3).equals(".sv")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files
+								.get(fnum)));
 					}
 					// else if (lema && files.get(fnum).toString().length() > 3
 					// &&
@@ -629,16 +898,20 @@ public class FileTree extends JPanel implements MouseListener {
 					// files.get(fnum))), insert);
 					// }
 					else if (files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".grf")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null, files.get(fnum))), insert);
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".grf")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null, files
+								.get(fnum)));
 					}
 					else if (files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".prb")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_PROBGRAPH, null, files.get(fnum))), insert);
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".prb")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_PROBGRAPH, null, files
+								.get(fnum)));
 					}
 				}
 				else if (!(parent.toString().equals(root.toString()))) {
-					int insert = 0;
+					insert = 0;
 					for (int i = 0; i < current.getChildCount(); i++) {
 						if (!current.getChildAt(i).toString().contains(".sbml")
 								&& !current.getChildAt(i).toString().contains(".xml")
@@ -653,67 +926,109 @@ public class FileTree extends JPanel implements MouseListener {
 								&& !current.getChildAt(i).toString().contains(".unc")
 								&& !current.getChildAt(i).toString().contains(".rsg")
 								&& !current.getChildAt(i).toString().contains(".grf")
+								&& !current.getChildAt(i).toString().contains(".prb")
 								&& !current.getChildAt(i).toString().contains(".vams")
 								&& !current.getChildAt(i).toString().contains(".sv")) {
 						}
-						else if (current.getChildAt(i).toString().compareToIgnoreCase(files.get(fnum).toString()) > 0) {
+						else if (current.getChildAt(i).toString().compareToIgnoreCase(
+								files.get(fnum).toString()) > 0) {
 							break;
 						}
 						insert++;
 					}
-					if (!async && files.get(fnum).toString().length() > 4
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".sbml")
-							|| !async && files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".xml")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files.get(fnum))), insert);
+					if (!async
+							&& files.get(fnum).toString().length() > 4
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 5).equals(".sbml")
+							|| !async
+							&& files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".xml")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files
+								.get(fnum)));
 					}
-					else if (!async && files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".gcm")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files.get(fnum))), insert);
+					else if (!async
+							&& files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".gcm")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files
+								.get(fnum)));
 					}
-					else if (async && files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".vhd")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files.get(fnum))), insert);
+					else if (async
+							&& files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".vhd")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, files
+								.get(fnum)));
 					}
-					else if (lema && files.get(fnum).toString().length() > 1
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".s")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_S, null, files.get(fnum))), insert);
+					else if (lema
+							&& files.get(fnum).toString().length() > 1
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 2).equals(".s")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_S, null, files
+								.get(fnum)));
 					}
-					else if (lema && files.get(fnum).toString().length() > 4
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".inst")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_INST, null, files.get(fnum))), insert);
+					else if (lema
+							&& files.get(fnum).toString().length() > 4
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 5).equals(".inst")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_INST, null, files
+								.get(fnum)));
 					}
-					else if (atacs && files.get(fnum).toString().length() > 1
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 2).equals(".g")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+					else if (atacs
+							&& files.get(fnum).toString().length() > 1
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 2).equals(".g")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files
+								.get(fnum)));
 					}
 					else if (files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".lpn")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".lpn")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files
+								.get(fnum)));
 					}
-					else if (atacs && files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".csp")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_CSP, null, files.get(fnum))), insert);
+					else if (atacs
+							&& files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".csp")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_CSP, null, files
+								.get(fnum)));
 					}
-					else if (atacs && files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".hse")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_HSE, null, files.get(fnum))), insert);
+					else if (atacs
+							&& files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".hse")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_HSE, null, files
+								.get(fnum)));
 					}
-					else if (atacs && files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".unc")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_UNC, null, files.get(fnum))), insert);
+					else if (atacs
+							&& files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".unc")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_UNC, null, files
+								.get(fnum)));
 					}
-					else if (atacs && files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".rsg")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_RSG, null, files.get(fnum))), insert);
+					else if (atacs
+							&& files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".rsg")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_RSG, null, files
+								.get(fnum)));
 					}
-					else if (lema && files.get(fnum).toString().length() > 4
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".vams")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+					else if (lema
+							&& files.get(fnum).toString().length() > 4
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 5).equals(".vams")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files
+								.get(fnum)));
 					}
-					else if (lema && files.get(fnum).toString().length() > 2
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 3).equals(".sv")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files.get(fnum))), insert);
+					else if (lema
+							&& files.get(fnum).toString().length() > 2
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 3).equals(".sv")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, files
+								.get(fnum)));
 					}
 					// else if (lema && files.get(fnum).toString().length() > 3
 					// &&
@@ -725,12 +1040,207 @@ public class FileTree extends JPanel implements MouseListener {
 					// files.get(fnum))), insert);
 					// }
 					else if (files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".grf")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null, files.get(fnum))), insert);
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".grf")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null, files
+								.get(fnum)));
 					}
 					else if (files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".prb")) {
-						current.insert(new DefaultMutableTreeNode(new IconData(ICON_PROBGRAPH, null, files.get(fnum))), insert);
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".prb")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_PROBGRAPH, null, files
+								.get(fnum)));
+					}
+				}
+				if (file != null && insert != -1) {
+					current.insert(file, insert);
+					nodes.add(file);
+				}
+			}
+			for (DefaultMutableTreeNode file : nodes) {
+				String fileNode = file.toString();
+				if (fileNode.endsWith(".xml") || fileNode.endsWith(".sbml")
+						|| fileNode.endsWith(".gcm") || fileNode.endsWith(".vhd")
+						|| fileNode.endsWith(".s") || fileNode.endsWith(".inst")
+						|| fileNode.endsWith(".g") || fileNode.endsWith(".lpn")
+						|| fileNode.endsWith(".csp") || fileNode.endsWith(".hse")
+						|| fileNode.endsWith(".unc") || fileNode.endsWith(".csp")
+						|| fileNode.endsWith(".rsg") || fileNode.endsWith(".vams")
+						|| fileNode.endsWith(".sv") || fileNode.endsWith(".grf")
+						|| fileNode.endsWith(".prb")) {
+					for (int j = 0; j < file.getChildCount(); j++) {
+						if (!dirs.contains(file.getChildAt(j).toString())) {
+							file.remove(j);
+							j--;
+						}
+					}
+				}
+			}
+			for (DefaultMutableTreeNode file : nodes) {
+				for (String d : dirs) {
+					String newPath;
+					if (curPath.equals("."))
+						newPath = d;
+					else
+						newPath = curPath + separator + d;
+					f = new File(newPath);
+					for (String s : f.list()) {
+						if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
+							try {
+								Scanner scan = new Scanner(new File(newPath + separator + s));
+								String refFile = scan.nextLine();
+								if (refFile.equals(file.toString())) {
+									boolean doAddIt = true;
+									int getChild = 0;
+									int insert = 0;
+									for (int j = 0; j < file.getChildCount(); j++) {
+										if (file.getChildAt(j).toString().compareToIgnoreCase(d) < 0) {
+											insert++;
+										}
+										if (f.getName().equals("" + file.getChildAt(j))) {
+											doAddIt = false;
+											getChild = j;
+										}
+									}
+									if (doAddIt) {
+										file.insert(new DefaultMutableTreeNode(new IconData(
+												ICON_SIMULATION, null, d)), insert);
+									}
+									else {
+										file.remove(getChild);
+										doAddIt = true;
+										file.insert(new DefaultMutableTreeNode(new IconData(
+												ICON_SIMULATION, null, d)), insert);
+									}
+								}
+								scan.close();
+							}
+							catch (Exception e) {
+							}
+						}
+						else if (!atacs && s.length() > 3
+								&& s.substring(s.length() - 4).equals(".lrn")) {
+							try {
+								Properties load = new Properties();
+								FileInputStream in = new FileInputStream(new File(newPath
+										+ separator + s));
+								load.load(in);
+								in.close();
+								if (load.containsKey("genenet.file")) {
+									String[] getProp = load.getProperty("genenet.file").split(
+											separator);
+									if (file.toString().equals(getProp[getProp.length - 1])) {
+										boolean doAddIt = true;
+										int getChild = 0;
+										int insert = 0;
+										for (int j = 0; j < file.getChildCount(); j++) {
+											if (file.getChildAt(j).toString()
+													.compareToIgnoreCase(d) < 0) {
+												insert++;
+											}
+											if (f.getName().equals("" + file.getChildAt(j))) {
+												doAddIt = false;
+												getChild = j;
+											}
+										}
+										if (doAddIt) {
+											file.insert(new DefaultMutableTreeNode(new IconData(
+													ICON_LEARN, null, d)), insert);
+										}
+										else {
+											file.remove(getChild);
+											doAddIt = true;
+											file.insert(new DefaultMutableTreeNode(new IconData(
+													ICON_LEARN, null, d)), insert);
+										}
+									}
+								}
+							}
+							catch (Exception e) {
+							}
+						}
+						else if (atacs && s.length() > 3
+								&& s.substring(s.length() - 4).equals(".syn")) {
+							try {
+								Properties load = new Properties();
+								FileInputStream in = new FileInputStream(new File(newPath
+										+ separator + s));
+								load.load(in);
+								in.close();
+								if (load.containsKey("synthesis.file")) {
+									String[] getProp = load.getProperty("synthesis.file").split(
+											separator);
+									if (file.toString().equals(getProp[getProp.length - 1])) {
+										boolean doAddIt = true;
+										int getChild = 0;
+										int insert = 0;
+										for (int j = 0; j < file.getChildCount(); j++) {
+											if (file.getChildAt(j).toString()
+													.compareToIgnoreCase(d) < 0) {
+												insert++;
+											}
+											if (f.getName().equals("" + file.getChildAt(j))) {
+												doAddIt = false;
+												getChild = j;
+											}
+										}
+										if (doAddIt) {
+											file.insert(new DefaultMutableTreeNode(new IconData(
+													ICON_SYNTHESIS, null, d)), insert);
+										}
+										else {
+											file.remove(getChild);
+											doAddIt = true;
+											file.insert(new DefaultMutableTreeNode(new IconData(
+													ICON_SYNTHESIS, null, d)), insert);
+										}
+									}
+								}
+							}
+							catch (Exception e) {
+							}
+						}
+						else if (async && s.length() > 3
+								&& s.substring(s.length() - 4).equals(".ver")) {
+							try {
+								Properties load = new Properties();
+								FileInputStream in = new FileInputStream(new File(newPath
+										+ separator + s));
+								load.load(in);
+								in.close();
+								if (load.containsKey("verification.file")) {
+									String[] getProp = load.getProperty("verification.file").split(
+											separator);
+									if (file.toString().equals(getProp[getProp.length - 1])) {
+										boolean doAddIt = true;
+										int getChild = 0;
+										int insert = 0;
+										for (int j = 0; j < file.getChildCount(); j++) {
+											if (file.getChildAt(j).toString()
+													.compareToIgnoreCase(d) < 0) {
+												insert++;
+											}
+											if (f.getName().equals("" + file.getChildAt(j))) {
+												doAddIt = false;
+												getChild = j;
+											}
+										}
+										if (doAddIt) {
+											file.insert(new DefaultMutableTreeNode(new IconData(
+													ICON_VERIFY, null, d)), insert);
+										}
+										else {
+											file.remove(getChild);
+											doAddIt = true;
+											file.insert(new DefaultMutableTreeNode(new IconData(
+													ICON_VERIFY, null, d)), insert);
+										}
+									}
+								}
+							}
+							catch (Exception e) {
+							}
+						}
 					}
 				}
 			}
@@ -806,8 +1316,8 @@ public class FileTree extends JPanel implements MouseListener {
 			setOpaque(false);
 		}
 
-		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded,
-				boolean leaf, int row, boolean hasFocus)
+		public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
+				boolean expanded, boolean leaf, int row, boolean hasFocus)
 
 		{
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
