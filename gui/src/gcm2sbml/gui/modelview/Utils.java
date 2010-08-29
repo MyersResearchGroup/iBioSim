@@ -33,29 +33,39 @@ public class Utils {
 			// No icon, just set the text to the tooltip
 			button.setText(tooltip);
 		}else{
-			
-			// Use an icon.
-			String ENVVAR = System.getenv("BIOSIM");
-			String separator;
-			if (File.separator.equals("\\")) {
-				separator = "\\\\";
-			}
-			else {
-				separator = File.separator;
-			}
-			String path = ENVVAR + separator
-			+ "gui" + separator + "icons" + separator + "modelview" + separator
-			+ iconFilename;
-
-			// set the icon
-			button.setIcon(new ImageIcon(path));
+			String path = Utils.setIcon(button, iconFilename);
 
 			// set a selected icon if it exists
 			String selectedPath = path.replaceAll(".png", "_selected.png");
 			if(new File(selectedPath).exists())
 				button.setSelectedIcon(new ImageIcon(selectedPath));
-			
 		}
+	}
+	
+	/**
+	 * Sets the button's icon and returns the path to it.
+	 * @param button
+	 * @param icon
+	 * @return
+	 */
+	public static String setIcon(AbstractButton button, String icon){
+		// Use an icon.
+		String ENVVAR = System.getenv("BIOSIM");
+		String separator;
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		}
+		else {
+			separator = File.separator;
+		}
+		String path = ENVVAR + separator
+		+ "gui" + separator + "icons" + separator + "modelview" + separator
+		+ icon;
+
+		// set the icon
+		button.setIcon(new ImageIcon(path));
+		
+		return path;
 	}
 	
 	public static JRadioButton makeRadioToolButton(String iconFilename, String actionCommand, String tooltip, ActionListener listener, final ButtonGroup buttonGroup){
