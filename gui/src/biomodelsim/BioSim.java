@@ -7720,7 +7720,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	 * This method refreshes the tree.
 	 */
 	public void refreshTree() {
-		tree.fixTree();
+		refresh();
 		updateGCM();
 		mainPanel.validate();
 	}
