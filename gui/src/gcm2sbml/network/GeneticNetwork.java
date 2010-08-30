@@ -1110,7 +1110,7 @@ public class GeneticNetwork {
 				if (reaction.isBiochemical()) {
 					reactions.add(reaction);
 					SpeciesInterface bioSpecie = stateMap.get(reaction.getInputState());
-					bioSpecie.addProperty(GlobalConstants.KBIO_STRING, "" + reaction.getProperty(GlobalConstants.KBIO_STRING));
+					//bioSpecie.addProperty(GlobalConstants.KBIO_STRING, "" + reaction.getProperty(GlobalConstants.KBIO_STRING));
 					biochem.add(bioSpecie);
 				}
 			}
@@ -1133,7 +1133,7 @@ public class GeneticNetwork {
 				if (reaction.isBiochemical()) {
 					reactions.add(reaction);
 					SpeciesInterface bioSpecie = stateMap.get(reaction.getInputState());
-					bioSpecie.addProperty(GlobalConstants.KBIO_STRING, "" + reaction.getProperty(GlobalConstants.KBIO_STRING));
+					//bioSpecie.addProperty(GlobalConstants.KBIO_STRING, "" + reaction.getProperty(GlobalConstants.KBIO_STRING));
 					biochem.add(bioSpecie);
 				}
 			}
