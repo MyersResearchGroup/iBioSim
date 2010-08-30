@@ -488,79 +488,81 @@ public class FileTree extends JPanel implements MouseListener {
 					else
 						newPath = curPath + separator + d;
 					f = new File(newPath);
-					for (String s : f.list()) {
-						if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
-							try {
-								Scanner scan = new Scanner(new File(newPath + separator + s));
-								String refFile = scan.nextLine();
-								if (refFile.equals(files.get(fnum))) {
+					if (new File(newPath + separator + d + ".sim").exists()) {
+						try {
+							Scanner scan = new Scanner(new File(newPath + separator + d + ".sim"));
+							String refFile = scan.nextLine();
+							if (refFile.equals(files.get(fnum))) {
+								file.add(new DefaultMutableTreeNode(new IconData(ICON_SIMULATION,
+										null, d)));
+							}
+							scan.close();
+						}
+						catch (Exception e) {
+						}
+					}
+					else if (new File(newPath + separator + d + ".lrn").exists()) {
+						try {
+							Properties load = new Properties();
+							FileInputStream in = new FileInputStream(new File(newPath + separator
+									+ d + ".lrn"));
+							load.load(in);
+							in.close();
+							if (load.containsKey("genenet.file")) {
+								String[] getProp = load.getProperty("genenet.file")
+										.split(separator);
+								if (files.get(fnum).equals(getProp[getProp.length - 1])) {
+									file.add(new DefaultMutableTreeNode(new IconData(ICON_LEARN,
+											null, d)));
+								}
+							}
+							else if (load.containsKey("learn.file")) {
+								String[] getProp = load.getProperty("learn.file").split(separator);
+								if (files.get(fnum).equals(getProp[getProp.length - 1])) {
+									file.add(new DefaultMutableTreeNode(new IconData(ICON_LEARN,
+											null, d)));
+								}
+							}
+						}
+						catch (Exception e) {
+						}
+					}
+					else if (new File(newPath + separator + d + ".syn").exists()) {
+						try {
+							Properties load = new Properties();
+							FileInputStream in = new FileInputStream(new File(newPath + separator
+									+ d + ".syn"));
+							load.load(in);
+							in.close();
+							if (load.containsKey("synthesis.file")) {
+								String[] getProp = load.getProperty("synthesis.file").split(
+										separator);
+								if (files.get(fnum).equals(getProp[getProp.length - 1])) {
 									file.add(new DefaultMutableTreeNode(new IconData(
-											ICON_SIMULATION, null, d)));
+											ICON_SYNTHESIS, null, d)));
 								}
-								scan.close();
-							}
-							catch (Exception e) {
 							}
 						}
-						else if (!atacs && s.length() > 3
-								&& s.substring(s.length() - 4).equals(".lrn")) {
-							try {
-								Properties load = new Properties();
-								FileInputStream in = new FileInputStream(new File(newPath
-										+ separator + s));
-								load.load(in);
-								in.close();
-								if (load.containsKey("genenet.file")) {
-									String[] getProp = load.getProperty("genenet.file").split(
-											separator);
-									if (files.get(fnum).equals(getProp[getProp.length - 1])) {
-										file.add(new DefaultMutableTreeNode(new IconData(
-												ICON_LEARN, null, d)));
-									}
+						catch (Exception e) {
+						}
+					}
+					else if (new File(newPath + separator + d + ".ver").exists()) {
+						try {
+							Properties load = new Properties();
+							FileInputStream in = new FileInputStream(new File(newPath + separator
+									+ d + ".ver"));
+							load.load(in);
+							in.close();
+							if (load.containsKey("verification.file")) {
+								String[] getProp = load.getProperty("verification.file").split(
+										separator);
+								if (files.get(fnum).equals(getProp[getProp.length - 1])) {
+									file.add(new DefaultMutableTreeNode(new IconData(ICON_VERIFY,
+											null, d)));
 								}
-							}
-							catch (Exception e) {
 							}
 						}
-						else if (atacs && s.length() > 3
-								&& s.substring(s.length() - 4).equals(".syn")) {
-							try {
-								Properties load = new Properties();
-								FileInputStream in = new FileInputStream(new File(newPath
-										+ separator + s));
-								load.load(in);
-								in.close();
-								if (load.containsKey("synthesis.file")) {
-									String[] getProp = load.getProperty("synthesis.file").split(
-											separator);
-									if (files.get(fnum).equals(getProp[getProp.length - 1])) {
-										file.add(new DefaultMutableTreeNode(new IconData(
-												ICON_SYNTHESIS, null, d)));
-									}
-								}
-							}
-							catch (Exception e) {
-							}
-						}
-						else if (async && s.length() > 3
-								&& s.substring(s.length() - 4).equals(".ver")) {
-							try {
-								Properties load = new Properties();
-								FileInputStream in = new FileInputStream(new File(newPath
-										+ separator + s));
-								load.load(in);
-								in.close();
-								if (load.containsKey("verification.file")) {
-									String[] getProp = load.getProperty("verification.file").split(
-											separator);
-									if (files.get(fnum).equals(getProp[getProp.length - 1])) {
-										file.add(new DefaultMutableTreeNode(new IconData(
-												ICON_VERIFY, null, d)));
-									}
-								}
-							}
-							catch (Exception e) {
-							}
+						catch (Exception e) {
 						}
 					}
 					curDir.add(file);
@@ -1084,12 +1086,50 @@ public class FileTree extends JPanel implements MouseListener {
 					else
 						newPath = curPath + separator + d;
 					f = new File(newPath);
-					for (String s : f.list()) {
-						if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
-							try {
-								Scanner scan = new Scanner(new File(newPath + separator + s));
-								String refFile = scan.nextLine();
-								if (refFile.equals(file.toString())) {
+					if (new File(newPath + separator + d + ".sim").exists()) {
+						try {
+							Scanner scan = new Scanner(new File(newPath + separator + d + ".sim"));
+							String refFile = scan.nextLine();
+							if (refFile.equals(file.toString())) {
+								boolean doAddIt = true;
+								int getChild = 0;
+								int insert = 0;
+								for (int j = 0; j < file.getChildCount(); j++) {
+									if (file.getChildAt(j).toString().compareToIgnoreCase(d) < 0) {
+										insert++;
+									}
+									if (f.getName().equals("" + file.getChildAt(j))) {
+										doAddIt = false;
+										getChild = j;
+									}
+								}
+								if (doAddIt) {
+									file.insert(new DefaultMutableTreeNode(new IconData(
+											ICON_SIMULATION, null, d)), insert);
+								}
+								else {
+									file.remove(getChild);
+									doAddIt = true;
+									file.insert(new DefaultMutableTreeNode(new IconData(
+											ICON_SIMULATION, null, d)), insert);
+								}
+							}
+							scan.close();
+						}
+						catch (Exception e) {
+						}
+					}
+					else if (new File(newPath + separator + d + ".lrn").exists()) {
+						try {
+							Properties load = new Properties();
+							FileInputStream in = new FileInputStream(new File(newPath + separator
+									+ d + ".lrn"));
+							load.load(in);
+							in.close();
+							if (load.containsKey("genenet.file")) {
+								String[] getProp = load.getProperty("genenet.file")
+										.split(separator);
+								if (file.toString().equals(getProp[getProp.length - 1])) {
 									boolean doAddIt = true;
 									int getChild = 0;
 									int insert = 0;
@@ -1104,142 +1144,123 @@ public class FileTree extends JPanel implements MouseListener {
 									}
 									if (doAddIt) {
 										file.insert(new DefaultMutableTreeNode(new IconData(
-												ICON_SIMULATION, null, d)), insert);
+												ICON_LEARN, null, d)), insert);
 									}
 									else {
 										file.remove(getChild);
 										doAddIt = true;
 										file.insert(new DefaultMutableTreeNode(new IconData(
-												ICON_SIMULATION, null, d)), insert);
+												ICON_LEARN, null, d)), insert);
 									}
 								}
-								scan.close();
 							}
-							catch (Exception e) {
+							else if (load.containsKey("learn.file")) {
+								String[] getProp = load.getProperty("learn.file").split(separator);
+								if (file.toString().equals(getProp[getProp.length - 1])) {
+									boolean doAddIt = true;
+									int getChild = 0;
+									int insert = 0;
+									for (int j = 0; j < file.getChildCount(); j++) {
+										if (file.getChildAt(j).toString().compareToIgnoreCase(d) < 0) {
+											insert++;
+										}
+										if (f.getName().equals("" + file.getChildAt(j))) {
+											doAddIt = false;
+											getChild = j;
+										}
+									}
+									if (doAddIt) {
+										file.insert(new DefaultMutableTreeNode(new IconData(
+												ICON_LEARN, null, d)), insert);
+									}
+									else {
+										file.remove(getChild);
+										doAddIt = true;
+										file.insert(new DefaultMutableTreeNode(new IconData(
+												ICON_LEARN, null, d)), insert);
+									}
+								}
 							}
 						}
-						else if (!atacs && s.length() > 3
-								&& s.substring(s.length() - 4).equals(".lrn")) {
-							try {
-								Properties load = new Properties();
-								FileInputStream in = new FileInputStream(new File(newPath
-										+ separator + s));
-								load.load(in);
-								in.close();
-								if (load.containsKey("genenet.file")) {
-									String[] getProp = load.getProperty("genenet.file").split(
-											separator);
-									if (file.toString().equals(getProp[getProp.length - 1])) {
-										boolean doAddIt = true;
-										int getChild = 0;
-										int insert = 0;
-										for (int j = 0; j < file.getChildCount(); j++) {
-											if (file.getChildAt(j).toString()
-													.compareToIgnoreCase(d) < 0) {
-												insert++;
-											}
-											if (f.getName().equals("" + file.getChildAt(j))) {
-												doAddIt = false;
-												getChild = j;
-											}
+						catch (Exception e) {
+						}
+					}
+					else if (new File(newPath + separator + d + ".syn").exists()) {
+						try {
+							Properties load = new Properties();
+							FileInputStream in = new FileInputStream(new File(newPath + separator
+									+ d + ".syn"));
+							load.load(in);
+							in.close();
+							if (load.containsKey("synthesis.file")) {
+								String[] getProp = load.getProperty("synthesis.file").split(
+										separator);
+								if (file.toString().equals(getProp[getProp.length - 1])) {
+									boolean doAddIt = true;
+									int getChild = 0;
+									int insert = 0;
+									for (int j = 0; j < file.getChildCount(); j++) {
+										if (file.getChildAt(j).toString().compareToIgnoreCase(d) < 0) {
+											insert++;
 										}
-										if (doAddIt) {
-											file.insert(new DefaultMutableTreeNode(new IconData(
-													ICON_LEARN, null, d)), insert);
-										}
-										else {
-											file.remove(getChild);
-											doAddIt = true;
-											file.insert(new DefaultMutableTreeNode(new IconData(
-													ICON_LEARN, null, d)), insert);
+										if (f.getName().equals("" + file.getChildAt(j))) {
+											doAddIt = false;
+											getChild = j;
 										}
 									}
+									if (doAddIt) {
+										file.insert(new DefaultMutableTreeNode(new IconData(
+												ICON_SYNTHESIS, null, d)), insert);
+									}
+									else {
+										file.remove(getChild);
+										doAddIt = true;
+										file.insert(new DefaultMutableTreeNode(new IconData(
+												ICON_SYNTHESIS, null, d)), insert);
+									}
 								}
-							}
-							catch (Exception e) {
 							}
 						}
-						else if (atacs && s.length() > 3
-								&& s.substring(s.length() - 4).equals(".syn")) {
-							try {
-								Properties load = new Properties();
-								FileInputStream in = new FileInputStream(new File(newPath
-										+ separator + s));
-								load.load(in);
-								in.close();
-								if (load.containsKey("synthesis.file")) {
-									String[] getProp = load.getProperty("synthesis.file").split(
-											separator);
-									if (file.toString().equals(getProp[getProp.length - 1])) {
-										boolean doAddIt = true;
-										int getChild = 0;
-										int insert = 0;
-										for (int j = 0; j < file.getChildCount(); j++) {
-											if (file.getChildAt(j).toString()
-													.compareToIgnoreCase(d) < 0) {
-												insert++;
-											}
-											if (f.getName().equals("" + file.getChildAt(j))) {
-												doAddIt = false;
-												getChild = j;
-											}
+						catch (Exception e) {
+						}
+					}
+					else if (new File(newPath + separator + d + ".ver").exists()) {
+						try {
+							Properties load = new Properties();
+							FileInputStream in = new FileInputStream(new File(newPath + separator
+									+ d + ".ver"));
+							load.load(in);
+							in.close();
+							if (load.containsKey("verification.file")) {
+								String[] getProp = load.getProperty("verification.file").split(
+										separator);
+								if (file.toString().equals(getProp[getProp.length - 1])) {
+									boolean doAddIt = true;
+									int getChild = 0;
+									int insert = 0;
+									for (int j = 0; j < file.getChildCount(); j++) {
+										if (file.getChildAt(j).toString().compareToIgnoreCase(d) < 0) {
+											insert++;
 										}
-										if (doAddIt) {
-											file.insert(new DefaultMutableTreeNode(new IconData(
-													ICON_SYNTHESIS, null, d)), insert);
-										}
-										else {
-											file.remove(getChild);
-											doAddIt = true;
-											file.insert(new DefaultMutableTreeNode(new IconData(
-													ICON_SYNTHESIS, null, d)), insert);
+										if (f.getName().equals("" + file.getChildAt(j))) {
+											doAddIt = false;
+											getChild = j;
 										}
 									}
+									if (doAddIt) {
+										file.insert(new DefaultMutableTreeNode(new IconData(
+												ICON_VERIFY, null, d)), insert);
+									}
+									else {
+										file.remove(getChild);
+										doAddIt = true;
+										file.insert(new DefaultMutableTreeNode(new IconData(
+												ICON_VERIFY, null, d)), insert);
+									}
 								}
-							}
-							catch (Exception e) {
 							}
 						}
-						else if (async && s.length() > 3
-								&& s.substring(s.length() - 4).equals(".ver")) {
-							try {
-								Properties load = new Properties();
-								FileInputStream in = new FileInputStream(new File(newPath
-										+ separator + s));
-								load.load(in);
-								in.close();
-								if (load.containsKey("verification.file")) {
-									String[] getProp = load.getProperty("verification.file").split(
-											separator);
-									if (file.toString().equals(getProp[getProp.length - 1])) {
-										boolean doAddIt = true;
-										int getChild = 0;
-										int insert = 0;
-										for (int j = 0; j < file.getChildCount(); j++) {
-											if (file.getChildAt(j).toString()
-													.compareToIgnoreCase(d) < 0) {
-												insert++;
-											}
-											if (f.getName().equals("" + file.getChildAt(j))) {
-												doAddIt = false;
-												getChild = j;
-											}
-										}
-										if (doAddIt) {
-											file.insert(new DefaultMutableTreeNode(new IconData(
-													ICON_VERIFY, null, d)), insert);
-										}
-										else {
-											file.remove(getChild);
-											doAddIt = true;
-											file.insert(new DefaultMutableTreeNode(new IconData(
-													ICON_VERIFY, null, d)), insert);
-										}
-									}
-								}
-							}
-							catch (Exception e) {
-							}
+						catch (Exception e) {
 						}
 					}
 				}
