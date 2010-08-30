@@ -1077,8 +1077,6 @@ public class FileTree extends JPanel implements MouseListener {
 						}
 					}
 				}
-			}
-			for (DefaultMutableTreeNode file : nodes) {
 				for (String d : dirs) {
 					String newPath;
 					if (curPath.equals("."))
