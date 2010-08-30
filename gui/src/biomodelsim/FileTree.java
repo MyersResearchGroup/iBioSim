@@ -576,6 +576,204 @@ public class FileTree extends JPanel implements MouseListener {
 		return fileLocation;
 	}
 
+	public void addToTree(String item) {
+		String path = root + separator + item;
+		File file = new File(root + separator + item);
+		if (file.isDirectory()) {
+			if (new File(path + separator + item + ".sim").exists()) {
+				try {
+					Scanner scan = new Scanner(new File(path + separator + item + ".sim"));
+					String refFile = scan.nextLine();
+					scan.close();
+					for (int i = 0; i < root.getChildCount(); i++) {
+						if (root.getChildAt(i).toString().equals(refFile)) {
+							int insert = 0;
+							for (int j = 0; j < root.getChildAt(i).getChildCount(); j++) {
+								if (root.getChildAt(i).getChildAt(j).toString()
+										.compareToIgnoreCase(item) < 0) {
+									insert++;
+								}
+							}
+							((DefaultMutableTreeNode) root.getChildAt(i)).insert(
+									new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null,
+											item)), insert);
+							return;
+						}
+					}
+				}
+				catch (Exception e) {
+				}
+			}
+			else if (new File(path + separator + item + ".lrn").exists()) {
+				try {
+					Properties load = new Properties();
+					FileInputStream in = new FileInputStream(new File(path + separator + item
+							+ ".lrn"));
+					load.load(in);
+					in.close();
+					if (load.containsKey("genenet.file")) {
+						String[] getProp = load.getProperty("genenet.file").split(separator);
+						for (int i = 0; i < root.getChildCount(); i++) {
+							if (root.getChildAt(i).toString().equals(getProp[getProp.length - 1])) {
+								int insert = 0;
+								for (int j = 0; j < root.getChildAt(i).getChildCount(); j++) {
+									if (root.getChildAt(i).getChildAt(j).toString()
+											.compareToIgnoreCase(item) < 0) {
+										insert++;
+									}
+								}
+								((DefaultMutableTreeNode) root.getChildAt(i)).insert(
+										new DefaultMutableTreeNode(new IconData(ICON_LEARN, null,
+												item)), insert);
+								return;
+							}
+						}
+					}
+					else if (load.containsKey("learn.file")) {
+						String[] getProp = load.getProperty("learn.file").split(separator);
+						for (int i = 0; i < root.getChildCount(); i++) {
+							if (root.getChildAt(i).toString().equals(getProp[getProp.length - 1])) {
+								int insert = 0;
+								for (int j = 0; j < root.getChildAt(i).getChildCount(); j++) {
+									if (root.getChildAt(i).getChildAt(j).toString()
+											.compareToIgnoreCase(item) < 0) {
+										insert++;
+									}
+								}
+								((DefaultMutableTreeNode) root.getChildAt(i)).insert(
+										new DefaultMutableTreeNode(new IconData(ICON_LEARN, null,
+												item)), insert);
+								return;
+							}
+						}
+					}
+				}
+				catch (Exception e) {
+				}
+			}
+			else if (new File(path + separator + item + ".syn").exists()) {
+				try {
+					Properties load = new Properties();
+					FileInputStream in = new FileInputStream(new File(path + separator + item
+							+ ".syn"));
+					load.load(in);
+					in.close();
+					if (load.containsKey("synthesis.file")) {
+						String[] getProp = load.getProperty("synthesis.file").split(separator);
+						for (int i = 0; i < root.getChildCount(); i++) {
+							if (root.getChildAt(i).toString().equals(getProp[getProp.length - 1])) {
+								int insert = 0;
+								for (int j = 0; j < root.getChildAt(i).getChildCount(); j++) {
+									if (root.getChildAt(i).getChildAt(j).toString()
+											.compareToIgnoreCase(item) < 0) {
+										insert++;
+									}
+								}
+								((DefaultMutableTreeNode) root.getChildAt(i)).insert(
+										new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS,
+												null, item)), insert);
+								return;
+							}
+						}
+					}
+				}
+				catch (Exception e) {
+				}
+			}
+			else if (new File(path + separator + item + ".ver").exists()) {
+				try {
+					Properties load = new Properties();
+					FileInputStream in = new FileInputStream(new File(path + separator + item
+							+ ".ver"));
+					load.load(in);
+					in.close();
+					if (load.containsKey("verification.file")) {
+						String[] getProp = load.getProperty("verification.file").split(separator);
+						for (int i = 0; i < root.getChildCount(); i++) {
+							if (root.getChildAt(i).toString().equals(getProp[getProp.length - 1])) {
+								int insert = 0;
+								for (int j = 0; j < root.getChildAt(i).getChildCount(); j++) {
+									if (root.getChildAt(i).getChildAt(j).toString()
+											.compareToIgnoreCase(item) < 0) {
+										insert++;
+									}
+								}
+								((DefaultMutableTreeNode) root.getChildAt(i)).insert(
+										new DefaultMutableTreeNode(new IconData(ICON_VERIFY, null,
+												item)), insert);
+								return;
+							}
+						}
+					}
+				}
+				catch (Exception e) {
+				}
+			}
+		}
+		else {
+			DefaultMutableTreeNode node = null;
+			int insert = 0;
+			for (int i = 0; i < root.getChildCount(); i++) {
+				if (root.getChildAt(i).toString().compareToIgnoreCase(item) > 0) {
+					break;
+				}
+				insert++;
+			}
+			if (!async && item.endsWith(".sbml") || !async && item.endsWith(".xml")) {
+				node = new DefaultMutableTreeNode(new IconData(ICON_SBML, null, item));
+			}
+			else if (!async && item.endsWith(".gcm")) {
+				node = new DefaultMutableTreeNode(new IconData(ICON_DOT, null, item));
+			}
+			else if (async && item.endsWith(".vhd")) {
+				node = new DefaultMutableTreeNode(new IconData(ICON_VHDL, null, item));
+			}
+			else if (lema && item.endsWith(".s")) {
+				node = new DefaultMutableTreeNode(new IconData(ICON_S, null, item));
+			}
+			else if (lema && item.endsWith(".inst")) {
+				node = new DefaultMutableTreeNode(new IconData(ICON_INST, null, item));
+			}
+			else if (atacs && item.endsWith(".g")) {
+				node = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, item));
+			}
+			else if (item.endsWith(".lpn")) {
+				node = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, item));
+			}
+			else if (atacs && item.endsWith(".csp")) {
+				node = new DefaultMutableTreeNode(new IconData(ICON_CSP, null, item));
+			}
+			else if (atacs && item.endsWith(".hse")) {
+				node = new DefaultMutableTreeNode(new IconData(ICON_HSE, null, item));
+			}
+			else if (atacs && item.endsWith(".unc")) {
+				node = new DefaultMutableTreeNode(new IconData(ICON_UNC, null, item));
+			}
+			else if (atacs && item.endsWith(".rsg")) {
+				node = new DefaultMutableTreeNode(new IconData(ICON_RSG, null, item));
+			}
+			else if (lema && item.endsWith(".vams")) {
+				node = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, item));
+			}
+			else if (lema && item.endsWith(".sv")) {
+				node = new DefaultMutableTreeNode(new IconData(ICON_LHPN, null, item));
+			}
+			else if (item.endsWith(".grf")) {
+				node = new DefaultMutableTreeNode(new IconData(ICON_GRAPH, null, item));
+			}
+			else if (item.endsWith(".prb")) {
+				node = new DefaultMutableTreeNode(new IconData(ICON_PROBGRAPH, null, item));
+			}
+			if (node != null) {
+				root.insert(node, insert);
+			}
+		}
+	}
+
+	public void deleteFromTree(String item) {
+
+	}
+
 	public void fixTree() {
 		fixTree(null, root, dir, false);
 		tree.updateUI();
