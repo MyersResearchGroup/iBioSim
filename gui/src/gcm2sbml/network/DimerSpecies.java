@@ -1,5 +1,7 @@
 package gcm2sbml.network;
 
+import java.util.Properties;
+
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 import gcm2sbml.visitor.SpeciesVisitor;
@@ -19,11 +21,11 @@ public class DimerSpecies extends AbstractSpecies {
 	 * @param num
 	 *            the number of monomers necessary to make dimer
 	 */
-	public DimerSpecies(SpeciesInterface monomer, int num) {
-		super();
+	public DimerSpecies(SpeciesInterface monomer, Properties properties) {
 		this.monomer = monomer;
-		this.id = monomer.getId() + "_" + num;
-		properties.setProperty(GlobalConstants.MAX_DIMER_STRING, ""+num);
+		this.properties = properties;
+		this.id = monomer.getId() + "_"
+				+ properties.getProperty(GlobalConstants.MAX_DIMER_STRING);
 		properties.setProperty(GlobalConstants.ID, id);
 	}
 

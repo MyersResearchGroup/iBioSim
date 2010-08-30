@@ -1050,7 +1050,7 @@ public class GeneticNetwork {
 	private void buildDimers() {
 		// First go through all species list and add all dimers found to hashMap
 		HashMap<String, SpeciesInterface> dimers = new HashMap<String, SpeciesInterface>();
-		for (SpeciesInterface specie : species.values()) {
+		/*for (SpeciesInterface specie : species.values()) {
 			int dimerValue = 1;
 			if (properties != null) {
 				dimerValue = (int) Integer.parseInt((properties
@@ -1060,18 +1060,19 @@ public class GeneticNetwork {
 				dimerValue = (int) Integer.parseInt(specie
 						.getProperty(GlobalConstants.MAX_DIMER_STRING));
 			}
-			for (int i = 2; i <= dimerValue; i++) {
-				DimerSpecies dimer = new DimerSpecies(specie, i);
+			if (dimerValue >= 2) {
+				DimerSpecies dimer = new DimerSpecies(specie, specie.getProperties());
 				dimer.addProperty(GlobalConstants.KDECAY_STRING, "0");
 				dimers.put(dimer.getId(), dimer);
 			}
-		}
+		}*/
 		// Now go through reaction list to see if any are missed
 		for (Promoter promoter : promoters.values()) {
 			for (Reaction reaction : promoter.getActivatingReactions()) {
 				if (reaction.getDimer() > 1) {
-					DimerSpecies dimer = new DimerSpecies(stateMap.get(reaction
-							.getInputState()), reaction.getDimer());
+					SpeciesInterface specie = stateMap.get(reaction.getInputState());
+					specie.addProperty(GlobalConstants.MAX_DIMER_STRING, "" + reaction.getDimer());
+					DimerSpecies dimer = new DimerSpecies(specie, specie.getProperties());
 					dimers.put(dimer.getId(), dimer);
 					promoter.addToReactionMap(dimer, reaction);
 					promoter.getActivators().add(dimer);
@@ -1079,8 +1080,9 @@ public class GeneticNetwork {
 			}
 			for (Reaction reaction : promoter.getRepressingReactions()) {
 				if (reaction.getDimer() > 1) {
-					DimerSpecies dimer = new DimerSpecies(stateMap.get(reaction
-							.getInputState()), reaction.getDimer());
+					SpeciesInterface specie = stateMap.get(reaction.getInputState());
+					specie.addProperty(GlobalConstants.MAX_DIMER_STRING, "" + reaction.getDimer());
+					DimerSpecies dimer = new DimerSpecies(specie, specie.getProperties());
 					dimers.put(dimer.getId(), dimer);
 					promoter.addToReactionMap(dimer, reaction);
 					promoter.getRepressors().add(dimer);
@@ -1107,14 +1109,16 @@ public class GeneticNetwork {
 			for (Reaction reaction : promoter.getActivatingReactions()) {
 				if (reaction.isBiochemical()) {
 					reactions.add(reaction);
-					biochem.add(stateMap.get(reaction.getInputState()));
+					SpeciesInterface bioSpecie = stateMap.get(reaction.getInputState());
+					bioSpecie.addProperty(GlobalConstants.KBIO_STRING, "" + reaction.getProperty(GlobalConstants.KBIO_STRING));
+					biochem.add(bioSpecie);
 				}
 			}
 			if (biochem.size() == 1) {
 				throw new IllegalStateException(
 						"Must have more than 1 biochemical reaction");
 			} else if (biochem.size() >= 2) {
-				BiochemicalSpecies bio = new BiochemicalSpecies(biochem);
+				BiochemicalSpecies bio = new BiochemicalSpecies(biochem, biochem.get(0).getProperties());
 				promoter.addActivator(bio);
 				for (Reaction reaction : reactions) {
 					promoter.addToReactionMap(bio, reaction);
@@ -1128,14 +1132,16 @@ public class GeneticNetwork {
 			for (Reaction reaction : promoter.getRepressingReactions()) {
 				if (reaction.isBiochemical()) {
 					reactions.add(reaction);
-					biochem.add(stateMap.get(reaction.getInputState()));
+					SpeciesInterface bioSpecie = stateMap.get(reaction.getInputState());
+					bioSpecie.addProperty(GlobalConstants.KBIO_STRING, "" + reaction.getProperty(GlobalConstants.KBIO_STRING));
+					biochem.add(bioSpecie);
 				}
 			}
 			if (biochem.size() == 1) {
 				throw new IllegalStateException(
 						"Must have more than 1 biochemical reaction");
 			} else if (biochem.size() >= 2) {
-				BiochemicalSpecies bio = new BiochemicalSpecies(biochem);
+				BiochemicalSpecies bio = new BiochemicalSpecies(biochem, biochem.get(0).getProperties());
 				for (Reaction reaction : reactions) {
 					promoter.addToReactionMap(bio, reaction);
 				}
