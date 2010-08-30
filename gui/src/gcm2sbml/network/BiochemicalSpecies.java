@@ -1,7 +1,7 @@
 package gcm2sbml.network;
 
 import gcm2sbml.visitor.SpeciesVisitor;
-
+import java.util.Properties;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,9 +14,10 @@ import java.util.HashSet;
  * 
  */
 public class BiochemicalSpecies extends AbstractSpecies {
-	public BiochemicalSpecies(ArrayList<SpeciesInterface> inputs) {
+	public BiochemicalSpecies(ArrayList<SpeciesInterface> inputs, Properties properties) {
 		this.inputs = new ArrayList<SpeciesInterface>();
 		this.inputs.addAll(inputs);
+		this.properties = properties;
 		makeName();
 	}
 
