@@ -452,8 +452,8 @@ public class Run implements ActionListener {
 			String sim, String printer_id, String printer_track_quantity, String outDir,
 			JRadioButton nary, int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA,
 			String ssaFile, BioSim biomodelsim, JTabbedPane simTab, String root,
-			JProgressBar progress, String simName, GCM2SBMLEditor gcmEditor,
-			String direct, double timeLimit, double runTime, String modelFile, AbstPane abstPane,
+			JProgressBar progress, String simName, GCM2SBMLEditor gcmEditor, String direct,
+			double timeLimit, double runTime, String modelFile, AbstPane abstPane,
 			JRadioButton abstraction, String lpnProperty) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
@@ -516,12 +516,13 @@ public class Run implements ActionListener {
 						Abstraction abst = new Abstraction(lhpnFile, abstPane);
 						abst.abstractSTG(false);
 						abst.save(root + separator + simName + separator + lpnName + ".temp");
-						t1
-								.BuildTemplate(root + separator + simName + separator + lpnName
-										+ ".temp", lpnProperty);
+						t1.BuildTemplate(
+								root + separator + simName + separator + lpnName + ".temp",
+								lpnProperty);
 					}
 					else {
-						t1.BuildTemplate(root + separator + simName + separator + lpnName, lpnProperty);
+						t1.BuildTemplate(root + separator + simName + separator + lpnName,
+								lpnProperty);
 					}
 					t1.setFilename(root + separator + simName + separator
 							+ lpnName.replace(".lpn", ".sbml"));
@@ -582,7 +583,8 @@ public class Run implements ActionListener {
 							Abstraction abst = new Abstraction(lhpnFile, abstPane);
 							abst.abstractSTG(false);
 							abst.save(root + separator + simName + separator + modelFile);
-							t1.BuildTemplate(root + separator + simName + separator + modelFile, lpnProperty);
+							t1.BuildTemplate(root + separator + simName + separator + modelFile,
+									lpnProperty);
 						}
 						else {
 							t1.BuildTemplate(root + separator + modelFile, lpnProperty);
@@ -627,7 +629,8 @@ public class Run implements ActionListener {
 										+ ".temp", lpnProperty);
 							}
 							else {
-								t1.BuildTemplate(root + separator + simName + separator + lpnName, lpnProperty);
+								t1.BuildTemplate(root + separator + simName + separator + lpnName,
+										lpnProperty);
 							}
 							t1.setFilename(root + separator + sbmlName);
 							t1.outputSBML();
@@ -1098,7 +1101,7 @@ public class Run implements ActionListener {
 						if (!biomodelsim.updateOpenSBML(sbmlName)) {
 							biomodelsim.addTab(sbmlName, new SBML_Editor(root + separator
 									+ sbmlName, null, log, biomodelsim, null, null), "SBML Editor");
-							biomodelsim.refreshTree();
+							biomodelsim.addToTree(sbmlName);
 						}
 						else {
 							biomodelsim.getTab().setSelectedIndex(biomodelsim.getTab(sbmlName));
@@ -1110,7 +1113,7 @@ public class Run implements ActionListener {
 						if (!biomodelsim.updateOpenLHPN(lhpnName)) {
 							biomodelsim.addTab(lhpnName, new LHPNEditor(root, lhpnName, null,
 									biomodelsim, log), "LHPN Editor");
-							biomodelsim.refreshTree();
+							biomodelsim.addToTree(lhpnName);
 						}
 						else {
 							biomodelsim.getTab().setSelectedIndex(biomodelsim.getTab(lhpnName));

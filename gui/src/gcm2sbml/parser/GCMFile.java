@@ -249,7 +249,7 @@ public class GCMFile {
 				flattenGCM(false);
 				convertToLHPN(specs, conLevel).save(filename);
 				log.addText("Saving GCM file as LPN:\n" + path + separator + lpnName + "\n");
-				biosim.refreshTree();
+				biosim.addToTree(lpnName);
 				naryFrame.dispose();
 				new File(filename + ".temp").delete();
 			}

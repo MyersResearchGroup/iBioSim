@@ -5102,7 +5102,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					store.close();
 					log.addText("Creating graph file:\n" + f.getAbsolutePath() + "\n");
 					change = false;
-					biomodelsim.refreshTree();
+					biomodelsim.addToTree(f.getName());
 				}
 				catch (Exception except) {
 					JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable To Save Graph!",
@@ -5205,7 +5205,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					store.close();
 					log.addText("Creating probability graph file:\n" + f.getAbsolutePath() + "\n");
 					change = false;
-					biomodelsim.refreshTree();
+					biomodelsim.addToTree(f.getName());
 				}
 				catch (Exception except) {
 					JOptionPane

@@ -123,7 +123,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JTextField eventID, eventName, eventTrigger, eventDelay, eventPriority; // event
 
-	private JCheckBox assignTime,disableTrigger,initialTrigger;
+	private JCheckBox assignTime, disableTrigger, initialTrigger;
 	// fields;
 
 	private JComboBox eaID; // event assignment fields;
@@ -2190,7 +2190,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						tab.getComponentAt(i).setName("SBML Editor");
 					}
 				}
-				biosim.refreshTree();
+				biosim.addToTree(simName);
 			}
 			catch (Exception e1) {
 				JOptionPane.showMessageDialog(biosim.frame(), "Unable to save sbml file.",
@@ -2212,14 +2212,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				Reaction reaction = document.getModel().getReaction(
 						((String) reactions.getSelectedValue()).split(" ")[0]);
 				String[] vars = myFormulaToString(reaction.getKineticLaw().getMath()).split(
-				" |\\(|\\)|\\,");
+						" |\\(|\\)|\\,");
 				for (int j = 0; j < vars.length; j++) {
 					if (vars[j].equals(v)) {
 						JOptionPane
-						.showMessageDialog(
-								biosim.frame(),
-								"Cannot remove reaction parameter because it is used in the kinetic law.",
-								"Cannot Remove Parameter", JOptionPane.ERROR_MESSAGE);
+								.showMessageDialog(
+										biosim.frame(),
+										"Cannot remove reaction parameter because it is used in the kinetic law.",
+										"Cannot Remove Parameter", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
@@ -2234,7 +2234,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								if (vars[k].equals(v)) {
 									JOptionPane.showMessageDialog(biosim.frame(),
 											"Cannot remove reaction parameter because it is used in the stoichiometry math for product "
-											+ specRef + ".", "Cannot Remove Parameter",
+													+ specRef + ".", "Cannot Remove Parameter",
 											JOptionPane.ERROR_MESSAGE);
 									return;
 								}
@@ -2247,13 +2247,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						String specRef = reaction.getReactant(j).getSpecies();
 						if (reaction.getReactant(j).isSetStoichiometryMath()) {
 							vars = myFormulaToString(
-									reaction.getReactant(j).getStoichiometryMath().getMath()).split(
-									" |\\(|\\)|\\,");
+									reaction.getReactant(j).getStoichiometryMath().getMath())
+									.split(" |\\(|\\)|\\,");
 							for (int k = 0; k < vars.length; k++) {
 								if (vars[k].equals(v)) {
 									JOptionPane.showMessageDialog(biosim.frame(),
 											"Cannot remove reaction parameter because it is used in the stoichiometry math for reactant "
-											+ specRef + ".", "Cannot Remove Parameter",
+													+ specRef + ".", "Cannot Remove Parameter",
 											JOptionPane.ERROR_MESSAGE);
 									return;
 								}
@@ -4869,20 +4869,24 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					eventTrigger.setText(myFormulaToString(event.getTrigger().getMath()));
 					if (event.isSetDelay()) {
 						ASTNode delay = event.getDelay().getMath();
-						if ((delay.getType()==libsbml.AST_FUNCTION) && (delay.getName().equals("priority"))) {
+						if ((delay.getType() == libsbml.AST_FUNCTION)
+								&& (delay.getName().equals("priority"))) {
 							eventDelay.setText(myFormulaToString(delay.getLeftChild()));
 							eventPriority.setText(myFormulaToString(delay.getRightChild()));
-						} else {
+						}
+						else {
 							eventDelay.setText(myFormulaToString(delay));
 						}
 					}
 					if (event.getUseValuesFromTriggerTime()) {
 						assignTime.setSelected(true);
 					}
-					if (event.getTrigger().getAnnotationString().contains("<TriggerCanBeDisabled/>")) {
+					if (event.getTrigger().getAnnotationString()
+							.contains("<TriggerCanBeDisabled/>")) {
 						disableTrigger.setSelected(true);
 					}
-					if (event.getTrigger().getAnnotationString().contains("<TriggerInitiallyFalse/>")) {
+					if (event.getTrigger().getAnnotationString().contains(
+							"<TriggerInitiallyFalse/>")) {
 						initialTrigger.setSelected(true);
 					}
 					assign = new String[(int) event.getNumEventAssignments()];
@@ -5027,7 +5031,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				if (!error) {
-					invalidVars = getInvalidVariables(eventPriority.getText().trim(), false, "", false);
+					invalidVars = getInvalidVariables(eventPriority.getText().trim(), false, "",
+							false);
 					if (invalidVars.size() > 0) {
 						String invalid = "";
 						for (int i = 0; i < invalidVars.size(); i++) {
@@ -5103,7 +5108,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						if (eventPriority.getText().trim().equals("")) {
 							if (eventDelay.getText().trim().equals("")) {
 								e.unsetDelay();
-							}	
+							}
 							else {
 								String oldDelayStr = "";
 								if (e.isSetDelay()) {
@@ -5121,21 +5126,24 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 										e.getDelay().setMath(myParseFormula(oldDelayStr));
 									}
 								}
-							}	
-						} else {
+							}
+						}
+						else {
 							if (eventDelay.getText().trim().equals("")) {
 								e.createDelay();
-								e.getDelay().setMath(myParseFormula("priority(0," +
-																	eventPriority.getText().trim() + ")"));
-							}	
+								e.getDelay().setMath(
+										myParseFormula("priority(0,"
+												+ eventPriority.getText().trim() + ")"));
+							}
 							else {
 								String oldDelayStr = "";
 								if (e.isSetDelay()) {
 									oldDelayStr = myFormulaToString(e.getDelay().getMath());
 								}
 								e.createDelay();
-								e.getDelay().setMath(myParseFormula("priority(" + eventDelay.getText().trim() + "," +
-																	eventPriority.getText().trim() + ")"));
+								e.getDelay().setMath(
+										myParseFormula("priority(" + eventDelay.getText().trim()
+												+ "," + eventPriority.getText().trim() + ")"));
 								error = checkEventDelayUnits(e.getDelay());
 								if (error) {
 									if (oldDelayStr.equals("")) {
@@ -5146,34 +5154,42 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 										e.getDelay().setMath(myParseFormula(oldDelayStr));
 									}
 								}
-							}	
+							}
 						}
 					}
 					if (!error) {
 						e.createTrigger();
 						if (disableTrigger.isSelected()) {
-							if (!e.getTrigger().getAnnotationString().contains("<TriggerCanBeDisabled/>")) {
+							if (!e.getTrigger().getAnnotationString().contains(
+									"<TriggerCanBeDisabled/>")) {
 								if (e.getTrigger().isSetAnnotation()) {
 									e.getTrigger().appendAnnotation("<TriggerCanBeDisabled/>");
-								} else {
+								}
+								else {
 									e.getTrigger().setAnnotation("<TriggerCanBeDisabled/>");
 								}
 							}
-						} else {
-							if (e.getTrigger().getAnnotationString().contains("<TriggerCanBeDisabled/>")) {
+						}
+						else {
+							if (e.getTrigger().getAnnotationString().contains(
+									"<TriggerCanBeDisabled/>")) {
 								e.getTrigger().unsetAnnotation();
 							}
 						}
 						if (initialTrigger.isSelected()) {
-							if (!e.getTrigger().getAnnotationString().contains("<TriggerInitiallyFalse/>")) {
+							if (!e.getTrigger().getAnnotationString().contains(
+									"<TriggerInitiallyFalse/>")) {
 								if (e.getTrigger().isSetAnnotation()) {
 									e.getTrigger().appendAnnotation("<TriggerInitiallyFalse/>");
-								} else {
+								}
+								else {
 									e.getTrigger().setAnnotation("<TriggerInitiallyFalse/>");
 								}
 							}
-						} else {
-							if (e.getTrigger().getAnnotationString().contains("<TriggerInitiallyFalse/>")) {
+						}
+						else {
+							if (e.getTrigger().getAnnotationString().contains(
+									"<TriggerInitiallyFalse/>")) {
 								e.getTrigger().unsetAnnotation();
 							}
 						}
@@ -5223,28 +5239,36 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						e.setName(eventName.getText().trim());
 					}
 					if (disableTrigger.isSelected()) {
-						if (!e.getTrigger().getAnnotationString().contains("<TriggerCanBeDisabled/>")) {
+						if (!e.getTrigger().getAnnotationString().contains(
+								"<TriggerCanBeDisabled/>")) {
 							if (e.getTrigger().isSetAnnotation()) {
 								e.getTrigger().appendAnnotation("<TriggerCanBeDisabled/>");
-							} else {
+							}
+							else {
 								e.getTrigger().setAnnotation("<TriggerCanBeDisabled/>");
 							}
 						}
-					} else {
-						if (e.getTrigger().getAnnotationString().contains("<TriggerCanBeDisabled/>")) {
+					}
+					else {
+						if (e.getTrigger().getAnnotationString()
+								.contains("<TriggerCanBeDisabled/>")) {
 							e.getTrigger().unsetAnnotation();
 						}
 					}
 					if (initialTrigger.isSelected()) {
-						if (!e.getTrigger().getAnnotationString().contains("<TriggerInitiallyFalse/>")) {
+						if (!e.getTrigger().getAnnotationString().contains(
+								"<TriggerInitiallyFalse/>")) {
 							if (e.getTrigger().isSetAnnotation()) {
 								e.getTrigger().appendAnnotation("<TriggerInitiallyFalse/>");
-							} else {
+							}
+							else {
 								e.getTrigger().setAnnotation("<TriggerInitiallyFalse/>");
 							}
 						}
-					} else {
-						if (e.getTrigger().getAnnotationString().contains("<TriggerInitiallyFalse/>")) {
+					}
+					else {
+						if (e.getTrigger().getAnnotationString().contains(
+								"<TriggerInitiallyFalse/>")) {
 							e.getTrigger().unsetAnnotation();
 						}
 					}
@@ -5255,16 +5279,20 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							e.getDelay().setMath(myParseFormula(eventDelay.getText().trim()));
 							error = checkEventDelayUnits(e.getDelay());
 						}
-					} else {
+					}
+					else {
 						if (!eventDelay.getText().trim().equals("")) {
 							e.createDelay();
-							e.getDelay().setMath(myParseFormula("priority(" + eventDelay.getText().trim() + "," +
-																eventPriority.getText().trim() + ")"));
+							e.getDelay().setMath(
+									myParseFormula("priority(" + eventDelay.getText().trim() + ","
+											+ eventPriority.getText().trim() + ")"));
 							error = checkEventDelayUnits(e.getDelay());
-						} else {
+						}
+						else {
 							e.createDelay();
-							e.getDelay().setMath(myParseFormula("priority(0," +
-																eventPriority.getText().trim() + ")"));
+							e.getDelay().setMath(
+									myParseFormula("priority(0," + eventPriority.getText().trim()
+											+ ")"));
 						}
 					}
 					if (!error) {
@@ -9843,9 +9871,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					log.addText("Saving SBML file:\n" + file + "\n");
 				}
 				document.getModel().setName(modelName.getText().trim());
-				/*for (int i=0;i<document.getModel().getNumEvents();i++) {
-					System.out.println(i + " " + document.getModel().getEvent(i).getId());
-				}*/
+				/*
+				 * for (int i=0;i<document.getModel().getNumEvents();i++) {
+				 * System.out.println(i + " " +
+				 * document.getModel().getEvent(i).getId()); }
+				 */
 				SBMLWriter writer = new SBMLWriter();
 				writer.writeSBML(document, file);
 				dirty = false;

@@ -284,7 +284,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		//lhpnFile.addProperty(propertyField.getText());
 		lhpnFile.save(directory + separator + newName);
 		reload(newName);
-		biosim.refreshTree();
+		biosim.addToTree(newName);
 		biosim.updateAsyncViews(newName);
 	}
 
@@ -511,7 +511,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				}
 				// abst.abstractSTG();
 				// abst.save(directory + separator + abstFilename);
-				biosim.refreshTree();
+				// biosim.refreshTree();
 			}
 		}
 	}

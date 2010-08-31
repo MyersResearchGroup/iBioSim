@@ -2554,11 +2554,18 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('\\') + 1);
 			}
 			updateOpenSBML(theFile.replace(".lpn", ".xml"));
-			refreshTree();
+			addToTree(theFile.replace(".lpn", ".xml"));
 		}
 		else if (e.getActionCommand().equals("convertToVerilog")) {
 			new Lpn2verilog(tree.getFile());
-			refreshTree();
+			String theFile = "";
+			if (tree.getFile().lastIndexOf('/') >= 0) {
+				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('/') + 1);
+			}
+			if (tree.getFile().lastIndexOf('\\') >= 0) {
+				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('\\') + 1);
+			}
+			addToTree(theFile.replace(".lpn", ".sv"));
 		}
 		else if (e.getActionCommand().equals("createAnalysis")) {
 			// TODO
@@ -2659,7 +2666,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 										"Unable to copy circuit file!", "Error Saving File",
 										JOptionPane.ERROR_MESSAGE);
 							}
-							refreshTree();
+							addToTree(synthName.trim());
 							String work = root + separator + synthName;
 							String circuitFile = root + separator + synthName.trim() + separator
 									+ circuitFileNoPath;
@@ -2754,7 +2761,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						 * circuit file!", "Error Saving File",
 						 * JOptionPane.ERROR_MESSAGE); }
 						 */
-						refreshTree();
+						addToTree(verName.trim());
 						// String work = root + separator + verName;
 						// log.addText(circuitFile);
 						// JTabbedPane verTab = new JTabbedPane();
@@ -2807,11 +2814,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getActionCommand().contains("delete") || e.getSource() == delete) {
 			if (!tree.getFile().equals(root)) {
 				if (new File(tree.getFile()).isDirectory()) {
+					String dirName = tree.getFile().split(separator)[tree.getFile()
+							.split(separator).length - 1];
 					for (int i = 0; i < tab.getTabCount(); i++) {
-						if (tab.getTitleAt(i)
-								.equals(
-										tree.getFile().split(separator)[tree.getFile().split(
-												separator).length - 1])) {
+						if (tab.getTitleAt(i).equals(dirName)) {
 							tab.remove(i);
 						}
 					}
@@ -2823,23 +2829,22 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						System.gc();
 						dir.delete();
 					}
-					refreshTree();
+					deleteFromTree(dirName);
 				}
 				else {
 					String[] views = canDelete(tree.getFile().split(separator)[tree.getFile()
 							.split(separator).length - 1]);
 					if (views.length == 0) {
+						String fileName = tree.getFile().split(separator)[tree.getFile().split(
+								separator).length - 1];
 						for (int i = 0; i < tab.getTabCount(); i++) {
-							if (tab.getTitleAt(i)
-									.equals(
-											tree.getFile().split(separator)[tree.getFile().split(
-													separator).length - 1])) {
+							if (tab.getTitleAt(i).equals(fileName)) {
 								tab.remove(i);
 							}
 						}
 						System.gc();
 						new File(tree.getFile()).delete();
-						refreshTree();
+						deleteFromTree(fileName);
 					}
 					else {
 						String view = "";
@@ -2916,7 +2921,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						network.mergeSBML(root + separator + theFile.replace(".gcm", "") + ".xml");
 						log.addText("Saving GCM file as SBML file:\n" + root + separator
 								+ theFile.replace(".gcm", "") + ".xml\n");
-						refreshTree();
+						addToTree(theFile.replace(".gcm", "") + ".xml");
 						updateOpenSBML(theFile.replace(".gcm", "") + ".xml");
 					}
 					else {
@@ -2928,7 +2933,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					network.mergeSBML(root + separator + theFile.replace(".gcm", "") + ".xml");
 					log.addText("Saving GCM file as SBML file:\n" + root + separator
 							+ theFile.replace(".gcm", "") + ".xml\n");
-					refreshTree();
+					addToTree(theFile.replace(".gcm", "") + ".xml");
 				}
 			}
 			catch (Exception e1) {
@@ -3233,7 +3238,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				System.gc();
 				new File(remove).delete();
-				refreshTree();
 			}
 			catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Error graphing sbml file.", "Error",
@@ -3459,7 +3463,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				System.gc();
 				new File(remove).delete();
-				refreshTree();
 			}
 			catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Error graphing sbml file.", "Error",
@@ -3837,7 +3840,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					File oldFile = new File(root + separator + fileName);
 					oldFile.delete();
 					tab.setTitleAt(tab.getSelectedIndex(), newName);
-					refreshTree();
+					addToTree(newName);
 				}
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(frame, "Error saving file " + newName, "Error",
@@ -4193,7 +4196,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 										.getName(), this, log, false, null, null, null);
 								// gcm.addMouseListener(this);
 								addTab(f.getName(), gcm, "GCM Editor");
-								refreshTree();
+								addToTree(f.getName());
 							}
 						}
 					}
@@ -4254,7 +4257,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								// sbml.addMouseListener(this);
 								addTab(f.split(separator)[f.split(separator).length - 1], sbml,
 										"SBML Editor");
-								refreshTree();
+								addToTree(f.split(separator)[f.split(separator).length - 1]);
 							}
 						}
 					}
@@ -4304,7 +4307,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else {
 							File f = new File(root + separator + vhdlName);
 							f.createNewFile();
-							refreshTree();
+							addToTree(vhdlName);
 							if (!viewer.equals("")) {
 								String command = viewer + " " + root + separator + vhdlName;
 								Runtime exec = Runtime.getRuntime();
@@ -4369,7 +4372,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else {
 							File f = new File(root + separator + SName);
 							f.createNewFile();
-							refreshTree();
+							addToTree(SName);
 							if (!viewer.equals("")) {
 								String command = viewer + " " + root + separator + SName;
 								Runtime exec = Runtime.getRuntime();
@@ -4435,7 +4438,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else {
 							File f = new File(root + separator + InstName);
 							f.createNewFile();
-							refreshTree();
+							addToTree(InstName);
 							if (!viewer.equals("")) {
 								String command = viewer + " " + root + separator + InstName;
 								Runtime exec = Runtime.getRuntime();
@@ -4500,7 +4503,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else {
 							File f = new File(root + separator + vhdlName);
 							f.createNewFile();
-							refreshTree();
+							addToTree(vhdlName);
 							if (!viewer.equals("")) {
 								String command = viewer + " " + root + separator + vhdlName;
 								Runtime exec = Runtime.getRuntime();
@@ -4590,7 +4593,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 										null, this, log);
 								// lhpn.addMouseListener(this);
 								addTab(f.getName(), lhpn, "LHPN Editor");
-								refreshTree();
+								addToTree(f.getName());
 							}
 							// File f = new File(root + separator + lhpnName);
 							// f.createNewFile();
@@ -4645,7 +4648,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else {
 							File f = new File(root + separator + cspName);
 							f.createNewFile();
-							refreshTree();
+							addToTree(cspName);
 							if (!viewer.equals("")) {
 								String command = viewer + " " + root + separator + cspName;
 								Runtime exec = Runtime.getRuntime();
@@ -4715,7 +4718,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else {
 							File f = new File(root + separator + hseName);
 							f.createNewFile();
-							refreshTree();
+							addToTree(hseName);
 							if (!viewer.equals("")) {
 								String command = viewer + " " + root + separator + hseName;
 								Runtime exec = Runtime.getRuntime();
@@ -4785,7 +4788,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else {
 							File f = new File(root + separator + uncName);
 							f.createNewFile();
-							refreshTree();
+							addToTree(uncName);
 							if (!viewer.equals("")) {
 								String command = viewer + " " + root + separator + uncName;
 								Runtime exec = Runtime.getRuntime();
@@ -4855,7 +4858,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else {
 							File f = new File(root + separator + rsgName);
 							f.createNewFile();
-							refreshTree();
+							addToTree(rsgName);
 							if (!viewer.equals("")) {
 								String command = viewer + " " + root + separator + rsgName;
 								Runtime exec = Runtime.getRuntime();
@@ -4924,7 +4927,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else {
 							File f = new File(root + separator + spiceName);
 							f.createNewFile();
-							refreshTree();
+							addToTree(spiceName);
 							if (!viewer.equals("")) {
 								String command = viewer + " " + root + separator + spiceName;
 								Runtime exec = Runtime.getRuntime();
@@ -5008,8 +5011,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 											"Error", JOptionPane.ERROR_MESSAGE);
 								}
 							}
+							addToTree(s);
 						}
-						refreshTree();
 						if (display) {
 							final JFrame f = new JFrame("SBML Errors and Warnings");
 							messageArea.setLineWrap(true);
@@ -5114,7 +5117,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								writer
 										.writeSBML(document, root + separator
 												+ file[file.length - 1]);
-								refreshTree();
+								addToTree(file[file.length - 1]);
 							}
 						}
 						catch (Exception e1) {
@@ -5339,7 +5342,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							SBMLWriter writer = new SBMLWriter();
 							writer.writeSBML(document, root + separator + file[file.length - 1]);
-							refreshTree();
+							addToTree(file[file.length - 1]);
 						}
 					}
 					catch (MalformedURLException e1) {
@@ -5402,7 +5405,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									}
 									in.close();
 									out.close();
-									refreshTree();
+									addToTree(s);
 								}
 							}
 							catch (Exception e1) {
@@ -5438,7 +5441,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								}
 								in.close();
 								out.close();
-								refreshTree();
+								addToTree(file[file.length - 1]);
 							}
 						}
 						catch (Exception e1) {
@@ -5488,7 +5491,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						in.close();
 						out.close();
-						refreshTree();
+						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
@@ -5535,7 +5538,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						in.close();
 						out.close();
-						refreshTree();
+						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
@@ -5582,7 +5585,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						in.close();
 						out.close();
-						refreshTree();
+						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
@@ -5632,6 +5635,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							in.close();
 							out.close();
+							addToTree(file[file.length - 1]);
 						}
 						if (filename.substring(filename.length() - 2, filename.length()).equals(
 								".g")) {
@@ -5657,8 +5661,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							in.close();
 							out.close();
 							new File(newName).delete();
+							addToTree(file[file.length - 1].replace(".g", ".lpn"));
 						}
-						refreshTree();
 					}
 					catch (Exception e1) {
 						e1.printStackTrace();
@@ -5706,7 +5710,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						in.close();
 						out.close();
-						refreshTree();
+						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						e1.printStackTrace();
@@ -5755,7 +5759,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						in.close();
 						out.close();
-						refreshTree();
+						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
@@ -5803,7 +5807,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						in.close();
 						out.close();
-						refreshTree();
+						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
@@ -5851,7 +5855,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						in.close();
 						out.close();
-						refreshTree();
+						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
@@ -5899,7 +5903,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						in.close();
 						out.close();
-						refreshTree();
+						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
@@ -5947,7 +5951,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						}
 						in.close();
 						out.close();
-						refreshTree();
+						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
@@ -5982,7 +5986,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								this, null, log, graphName.trim(), true, false);
 						addTab(graphName.trim(), g, "TSD Graph");
 						g.save();
-						refreshTree();
+						addToTree(graphName.trim());
 					}
 				}
 			}
@@ -6012,7 +6016,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								this, null, log, graphName.trim(), false, false);
 						addTab(graphName.trim(), g, "Probability Graph");
 						g.save();
-						refreshTree();
+						addToTree(graphName.trim());
 					}
 				}
 			}
@@ -6078,7 +6082,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
 									"Error Saving File", JOptionPane.ERROR_MESSAGE);
 						}
-						refreshTree();
+						addToTree(lrnName);
 						JTabbedPane lrnTab = new JTabbedPane();
 						lrnTab.addMouseListener(this);
 						DataManager data = new DataManager(root + separator + lrnName, this, lema);
@@ -7017,7 +7021,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								}
 							}
 						}
-						refreshTree();
+						addToTree(copy);
 					}
 				}
 				catch (Exception e1) {
@@ -7028,6 +7032,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (e.getActionCommand().equals("rename") || e.getSource() == rename) {
 			if (!tree.getFile().equals(root)) {
+				String oldName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 				try {
 					for (int i = 0; i < tab.getTabCount(); i++) {
 						if (tab.getTitleAt(i)
@@ -7254,15 +7259,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									|| tree.getFile().length() >= 4
 									&& tree.getFile().substring(tree.getFile().length() - 4)
 											.equals(".rsg")) {
-								String oldName = tree.getFile().split(separator)[tree.getFile()
-										.split(separator).length - 1];
 								reassignViews(oldName, rename);
 							}
 							new File(tree.getFile()).renameTo(new File(root + separator + rename));
 							if (rename.length() >= 4
 									&& rename.substring(rename.length() - 4).equals(".gcm")) {
-								String oldName = tree.getFile().split(separator)[tree.getFile()
-										.split(separator).length - 1];
 								for (String s : new File(root).list()) {
 									if (s.endsWith(".gcm")) {
 										BufferedReader in = new BufferedReader(new FileReader(root
@@ -7580,7 +7581,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							}
 							// updateAsyncViews(rename);
 							updateViewNames(tree.getFile(), rename);
-							refreshTree();
+							deleteFromTree(oldName);
+							addToTree(rename);
 						}
 					}
 				}
@@ -7723,6 +7725,18 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		mainPanel.remove(tree);
 		tree = new FileTree(new File(root), this, lema, atacs);
 		mainPanel.add(tree, "West");
+		updateGCM();
+		mainPanel.validate();
+	}
+
+	public void addToTree(String item) {
+		tree.addToTree(item, root);
+		updateGCM();
+		mainPanel.validate();
+	}
+
+	public void deleteFromTree(String item) {
+		tree.deleteFromTree(item);
 		updateGCM();
 		mainPanel.validate();
 	}
@@ -8268,7 +8282,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				in.close();
 				out.close();
-				refreshTree();
+				addToTree(filename);
 			}
 		}
 		catch (Exception e1) {
@@ -8329,7 +8343,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				 * "module " + cktPath[cktPath.length - 1].replace(".lpn",
 				 * "_top")); out.write(str + "\n"); } in.close(); out.close();
 				 */
-				refreshTree();
+				addToTree(filename);
 			}
 		}
 		catch (IOException e1) {
@@ -10220,7 +10234,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				 * to copy sbml file to output location.", "Error",
 				 * JOptionPane.ERROR_MESSAGE); }
 				 */
-				refreshTree();
+				addToTree(simName);
 				JTabbedPane simTab = new JTabbedPane();
 				simTab.addMouseListener(this);
 				Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFileProp, root, this, simName.trim(),
@@ -11536,7 +11550,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 			}
-			refreshTree();
+			addToTree(newSim);
 			JTabbedPane simTab = new JTabbedPane();
 			simTab.addMouseListener(this);
 			Reb2Sac reb2sac = new Reb2Sac(sbmlLoadFile, sbmlFile, root, this, newSim, log, simTab,

@@ -576,9 +576,10 @@ public class FileTree extends JPanel implements MouseListener {
 		return fileLocation;
 	}
 
-	public void addToTree(String item) {
-		String path = root + separator + item;
-		File file = new File(root + separator + item);
+	public void addToTree(String item, String dir) {
+		deleteFromTree(item);
+		String path = dir + separator + item;
+		File file = new File(dir + separator + item);
 		if (file.isDirectory()) {
 			if (new File(path + separator + item + ".sim").exists()) {
 				try {
@@ -597,6 +598,7 @@ public class FileTree extends JPanel implements MouseListener {
 							((DefaultMutableTreeNode) root.getChildAt(i)).insert(
 									new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null,
 											item)), insert);
+							tree.updateUI();
 							return;
 						}
 					}
@@ -625,6 +627,7 @@ public class FileTree extends JPanel implements MouseListener {
 								((DefaultMutableTreeNode) root.getChildAt(i)).insert(
 										new DefaultMutableTreeNode(new IconData(ICON_LEARN, null,
 												item)), insert);
+								tree.updateUI();
 								return;
 							}
 						}
@@ -643,6 +646,7 @@ public class FileTree extends JPanel implements MouseListener {
 								((DefaultMutableTreeNode) root.getChildAt(i)).insert(
 										new DefaultMutableTreeNode(new IconData(ICON_LEARN, null,
 												item)), insert);
+								tree.updateUI();
 								return;
 							}
 						}
@@ -672,6 +676,7 @@ public class FileTree extends JPanel implements MouseListener {
 								((DefaultMutableTreeNode) root.getChildAt(i)).insert(
 										new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS,
 												null, item)), insert);
+								tree.updateUI();
 								return;
 							}
 						}
@@ -701,6 +706,7 @@ public class FileTree extends JPanel implements MouseListener {
 								((DefaultMutableTreeNode) root.getChildAt(i)).insert(
 										new DefaultMutableTreeNode(new IconData(ICON_VERIFY, null,
 												item)), insert);
+								tree.updateUI();
 								return;
 							}
 						}
@@ -714,10 +720,9 @@ public class FileTree extends JPanel implements MouseListener {
 			DefaultMutableTreeNode node = null;
 			int insert = 0;
 			for (int i = 0; i < root.getChildCount(); i++) {
-				if (root.getChildAt(i).toString().compareToIgnoreCase(item) > 0) {
-					break;
+				if (root.getChildAt(i).toString().compareToIgnoreCase(item) < 0) {
+					insert++;
 				}
-				insert++;
 			}
 			if (!async && item.endsWith(".sbml") || !async && item.endsWith(".xml")) {
 				node = new DefaultMutableTreeNode(new IconData(ICON_SBML, null, item));
@@ -766,6 +771,8 @@ public class FileTree extends JPanel implements MouseListener {
 			}
 			if (node != null) {
 				root.insert(node, insert);
+				tree.updateUI();
+				return;
 			}
 		}
 	}
@@ -774,10 +781,14 @@ public class FileTree extends JPanel implements MouseListener {
 		for (int i = 0; i < root.getChildCount(); i++) {
 			if (root.getChildAt(i).toString().equals(item)) {
 				root.remove(i);
+				tree.updateUI();
+				return;
 			}
 			for (int j = 0; j < root.getChildAt(i).getChildCount(); j++) {
 				if (root.getChildAt(i).getChildAt(j).toString().equals(item)) {
 					((DefaultMutableTreeNode) root.getChildAt(i)).remove(j);
+					tree.updateUI();
+					return;
 				}
 			}
 		}
