@@ -330,7 +330,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 							+ separator + templateName);
 					log.addText("Saving GCM file as SBML template:\n" + path + separator + templateName
 							+ "\n");
-					biosim.refreshTree();
+					biosim.addToTree(templateName);
 					biosim.updateOpenSBML(templateName);
 				}
 				else {
@@ -342,7 +342,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						+ separator + templateName);
 				log.addText("Saving GCM file as SBML template:\n" + path + separator + templateName
 						+ "\n");
-				biosim.refreshTree();
+				biosim.addToTree(templateName);
 			}
 		}
 		else if (command.contains("LHPN")) {
@@ -388,7 +388,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					network.mergeSBML(path + separator + gcmname + ".xml");
 					log.addText("Saving GCM file as SBML file:\n" + path + separator + gcmname
 							+ ".xml\n");
-					biosim.refreshTree();
+					biosim.addToTree(gcmname + ".xml");
 					biosim.updateOpenSBML(gcmname + ".xml");
 				}
 				else {
@@ -400,7 +400,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				log
 						.addText("Saving GCM file as SBML file:\n" + path + separator + gcmname
 								+ ".xml\n");
-				biosim.refreshTree();
+				biosim.addToTree(gcmname + ".xml");
 			}
 		}
 		biosim.updateViews(gcmname + ".gcm");
@@ -415,6 +415,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			if (value == JOptionPane.YES_OPTION) {
 				gcm.save(path + separator + newName + ".gcm");
 				log.addText("Saving GCM file as:\n" + path + separator + newName + ".gcm\n");
+				biosim.addToTree(newName + ".gcm");
 			}
 			else {
 				// Do nothing
@@ -424,9 +425,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		else {
 			gcm.save(path + separator + newName + ".gcm");
 			log.addText("Saving GCM file as:\n" + path + separator + newName + ".gcm\n");
+			biosim.addToTree(newName + ".gcm");
 		}
 		reload(newName);
-		biosim.refreshTree();
 	}
 
 	public void saveParams(boolean run, String stem) {

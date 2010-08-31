@@ -3565,7 +3565,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					"Unable to add properties to property file.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
-		biomodelsim.refreshTree();
 		change = false;
 	}
 

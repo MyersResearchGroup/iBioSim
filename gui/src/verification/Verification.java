@@ -1378,7 +1378,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		else {
 			if (lhpn.isSelected()) {
 				abstraction.save(tempDir + separator + abstFilename);
-				biosim.refreshTree();
+				biosim.addToTree(abstFilename);
 			}
 			else if (view.isSelected()) {
 				abstraction.save(directory + separator + abstFilename);
