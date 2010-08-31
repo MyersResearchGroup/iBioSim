@@ -771,7 +771,16 @@ public class FileTree extends JPanel implements MouseListener {
 	}
 
 	public void deleteFromTree(String item) {
-
+		for (int i = 0; i < root.getChildCount(); i++) {
+			if (root.getChildAt(i).toString().equals(item)) {
+				root.remove(i);
+			}
+			for (int j = 0; j < root.getChildAt(i).getChildCount(); j++) {
+				if (root.getChildAt(i).getChildAt(j).toString().equals(item)) {
+					((DefaultMutableTreeNode) root.getChildAt(i)).remove(j);
+				}
+			}
+		}
 	}
 
 	public void fixTree() {
