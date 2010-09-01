@@ -180,18 +180,34 @@ public class GCMParser {
 			r.setCoop(1);
 		}
 		
+		if (property.containsKey(GlobalConstants.KBIO_STRING)) {
+			r.setKbio(Double.parseDouble(property.getProperty(GlobalConstants.KBIO_STRING)));
+		} else if (gcm != null) {
+			r.setKbio(Double.parseDouble(gcm.getParameter((GlobalConstants.KBIO_STRING))));
+		} else {
+			r.setKbio(0.05);
+		}
+		
 		r.setInputState(gcm.getInput(reaction));
 		r.setOutputState(gcm.getOutput(reaction));
 		if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
 			r.setType("vee");
 			if (property.containsKey(GlobalConstants.KACT_STRING)) {
 				r.setBindingConstant(Double.parseDouble(property.getProperty(GlobalConstants.KACT_STRING)));
-			}		
+			} else if (gcm != null) {
+				r.setBindingConstant(Double.parseDouble(gcm.getParameter((GlobalConstants.KACT_STRING))));
+			} else {
+				r.setBindingConstant(0.0033);
+			}
 		} else if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.REPRESSION)) {
 			r.setType("tee");
 			if (property.containsKey(GlobalConstants.KREP_STRING)) {
 				r.setBindingConstant(Double.parseDouble(property.getProperty(GlobalConstants.KREP_STRING)));
-			}					
+			} else if (gcm != null) {
+				r.setBindingConstant(Double.parseDouble(gcm.getParameter((GlobalConstants.KREP_STRING))));
+			} else {
+				r.setBindingConstant(0.5);
+			}			
 		} else {
 			r.setType("dot");
 			if (property.containsKey(GlobalConstants.KREP_STRING)) {

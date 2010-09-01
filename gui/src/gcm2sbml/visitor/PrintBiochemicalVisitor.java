@@ -51,12 +51,8 @@ public class PrintBiochemicalVisitor extends AbstractPrintVisitor {
 		loadValues(specie.getProperties());
 		// Check if we are running abstraction, if not, then don't allow decay
 		if (!biochemicalAbstraction) {
-			double newkf = kbio;
-			if (specie.getRateConstant() != -1) {
-				newkf = specie.getRateConstant();
-			}
 			Reaction r = Utility.Reaction("Biochemical_" + specie.getId());
-			String multi = kbioString+"*";
+			String multi = "kr*" + kbioString + "*";
 			for (SpeciesInterface s : specie.getInputs()) {
 				r.addReactant(Utility.SpeciesReference(s.getId(), 1));
 				multi = multi + s.getId() + "*";
@@ -67,7 +63,7 @@ public class PrintBiochemicalVisitor extends AbstractPrintVisitor {
 			r.setReversible(true);
 			r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
-			kl.addParameter(Utility.Parameter(kbioString, newkf, GeneticNetwork.getMoleTimeParameter(specie.getInputs().size())));
+			kl.addParameter(Utility.Parameter(kbioString, kbio, GeneticNetwork.getMoleParameter(specie.getInputs().size())));
 			kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork.getMoleTimeParameter(1)));
 			kl.setFormula(multi + "-kr*" + specie.getId());
 
