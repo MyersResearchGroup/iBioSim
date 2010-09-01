@@ -257,8 +257,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	private JMenuItem copy, rename, delete, save, saveAs, saveAsGcm, saveAsGraph, saveAsSbml,
 			saveAsTemplate, saveAsLhpn, check, run, export, refresh, viewCircuit, viewRules,
 			viewTrace, viewLog, viewCoverage, viewVHDL, viewVerilog, viewLHPN, saveSbml, saveTemp,
-			saveModel, viewSG, viewModGraph, viewModBrowser, createAnal, createLearn, createSbml,
-			createSynth, createVer, close, closeAll;
+			saveModel, viewSG, viewModGraph, viewLearnedModel, viewModBrowser, createAnal,
+			createLearn, createSbml, createSynth, createVer, close, closeAll;
 
 	public String ENVVAR;
 
@@ -535,6 +535,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// Verilog-AMS
 		viewLHPN = new JMenuItem("LPN Model"); // SB
 		viewModGraph = new JMenuItem("Model");
+		viewLearnedModel = new JMenuItem("Learned Model");
 		viewModBrowser = new JMenuItem("Model in Browser");
 		viewSG = new JMenuItem("State Graph");
 		createAnal = new JMenuItem("Analysis Tool");
@@ -610,6 +611,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		viewVerilog.addActionListener(this); // SB
 		viewLHPN.addActionListener(this); // SB
 		viewModGraph.addActionListener(this);
+		viewLearnedModel.addActionListener(this);
 		viewModBrowser.addActionListener(this);
 		viewSG.addActionListener(this);
 		createAnal.addActionListener(this);
@@ -835,6 +837,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		viewLHPN.setEnabled(false); // SB
 		viewModel.setEnabled(false);
 		viewModGraph.setEnabled(false);
+		viewLearnedModel.setEnabled(false);
 		viewModBrowser.setEnabled(false);
 		viewSG.setEnabled(false);
 		createAnal.setEnabled(false);
@@ -974,6 +977,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			view.add(viewVerilog);
 			view.add(viewLHPN);
 			view.addSeparator();
+			view.add(viewLearnedModel);
 			view.add(viewCoverage);
 			view.add(viewLog);
 			view.add(viewTrace);
@@ -988,6 +992,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else {
 			view.add(viewModGraph);
 			view.add(viewModBrowser);
+			view.add(viewLearnedModel);
 			view.add(viewSG);
 			view.add(viewLog);
 			view.addSeparator();
@@ -1082,9 +1087,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else {
 			checkUnits = true;
-		}
-		if (biosimrc.get("biosim.general.tree_icons", "").equals("")) {
-			biosimrc.put("biosim.general.tree_icons", "default");
 		}
 		if (biosimrc.get("biosim.general.file_browser", "").equals("")) {
 			biosimrc.put("biosim.general.file_browser", "JFileChooser");
@@ -1224,6 +1226,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// Packs the frame and displays it
 		mainPanel = new JPanel(new BorderLayout());
 		tree = new FileTree(null, this, lema, atacs);
+		if (biosimrc.get("biosim.general.tree_icons", "").equals("")) {
+			biosimrc.put("biosim.general.tree_icons", "default");
+		}
+		else if (biosimrc.get("biosim.general.tree_icons", "").equals("plus_minus")) {
+			tree.setExpandibleIcons(false);
+		}
 		log = new Log();
 		tab = new CloseAndMaxTabbedPane(false, this);
 		tab.setPreferredSize(new Dimension(1100, 550));
@@ -3290,6 +3298,20 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			catch (Exception e1) {
 				JOptionPane.showMessageDialog(frame, "Error graphing sbml file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		else if (e.getSource() == viewLearnedModel) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof JTabbedPane) {
+				Component component = ((JTabbedPane) comp).getSelectedComponent();
+				if (component instanceof Learn) {
+					((Learn) component).viewGcm();
+					return;
+				}
+				else if (component instanceof LearnLHPN) {
+					((LearnLHPN) component).viewLhpn();
+					return;
+				}
 			}
 		}
 		// if the graph popup menu is selected on an sbml file
@@ -12164,6 +12186,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveModel.setEnabled(false);
 			saveSbml.setEnabled(true);
 			saveTemp.setEnabled(true);
+			viewLearnedModel.setEnabled(false);
 			// viewModGraph.setEnabled(true);
 		}
 		else if (comp instanceof LHPNEditor) {
@@ -12197,6 +12220,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			viewLHPN.setEnabled(false); // SB
 			// saveParam.setEnabled(false);
 			saveModel.setEnabled(false);
+			viewLearnedModel.setEnabled(false);
 			// viewModGraph.setEnabled(true);
 		}
 		else if (comp instanceof SBML_Editor) {
@@ -12230,6 +12254,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveModel.setEnabled(false);
 			saveSbml.setEnabled(true);
 			saveTemp.setEnabled(true);
+			viewLearnedModel.setEnabled(false);
 			// viewModGraph.setEnabled(true);
 			// viewModBrowser.setEnabled(true);
 		}
@@ -12265,6 +12290,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				exportTsd.setEnabled(false);
 			}
 			exportEps.setEnabled(true);
+			viewLearnedModel.setEnabled(false);
 			exportJpg.setEnabled(true);
 			exportPdf.setEnabled(true);
 			exportPng.setEnabled(true);
@@ -12296,6 +12322,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			// int index = tab.getSelectedIndex();
 			if (component instanceof Graph) {
+				viewLearnedModel.setEnabled(false);
 				saveButton.setEnabled(true);
 				saveasButton.setEnabled(true);
 				if (learn) {
@@ -12356,6 +12383,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveTemp.setEnabled(false);
 			}
 			else if (component instanceof Reb2Sac) {
+				viewLearnedModel.setEnabled(false);
 				saveButton.setEnabled(true);
 				saveasButton.setEnabled(false);
 				runButton.setEnabled(true);
@@ -12390,6 +12418,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveTemp.setEnabled(false);
 			}
 			else if (component instanceof SBML_Editor) {
+				viewLearnedModel.setEnabled(false);
 				saveButton.setEnabled(true);
 				saveasButton.setEnabled(false);
 				runButton.setEnabled(true);
@@ -12424,6 +12453,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveTemp.setEnabled(false);
 			}
 			else if (component instanceof GCM2SBMLEditor) {
+				viewLearnedModel.setEnabled(false);
 				saveButton.setEnabled(true);
 				saveasButton.setEnabled(false);
 				runButton.setEnabled(true);
@@ -12484,6 +12514,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				check.setEnabled(false);
 				export.setEnabled(false);
 				exportMenu.setEnabled(false);
+				viewLearnedModel.setEnabled(true);
 				// viewModel.setEnabled(true);
 				// viewModGraph.setEnabled(((Learn)
 				// component).getViewGcmEnabled());
@@ -12530,6 +12561,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				check.setEnabled(false);
 				export.setEnabled(false);
 				exportMenu.setEnabled(false);
+				viewLearnedModel.setEnabled(true);
 				// viewModel.setEnabled(true);
 				viewCircuit.setEnabled(((LearnLHPN) component).getViewLhpnEnabled());
 				viewRules.setEnabled(false);
@@ -12545,6 +12577,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveTemp.setEnabled(false);
 			}
 			else if (component instanceof DataManager) {
+				viewLearnedModel.setEnabled(false);
 				saveButton.setEnabled(true);
 				saveasButton.setEnabled(false);
 				runButton.setEnabled(false);
@@ -12579,6 +12612,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveTemp.setEnabled(false);
 			}
 			else if (component instanceof JPanel) {
+				viewLearnedModel.setEnabled(false);
 				saveButton.setEnabled(true);
 				saveasButton.setEnabled(false);
 				runButton.setEnabled(true);
@@ -12613,6 +12647,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveTemp.setEnabled(false);
 			}
 			else if (component instanceof JScrollPane) {
+				viewLearnedModel.setEnabled(false);
 				saveButton.setEnabled(true);
 				saveasButton.setEnabled(false);
 				runButton.setEnabled(true);
@@ -12649,6 +12684,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (comp instanceof JPanel) {
 			if (comp.getName().equals("Verification")) {
+				viewLearnedModel.setEnabled(false);
 				saveButton.setEnabled(true);
 				saveasButton.setEnabled(true);
 				runButton.setEnabled(true);
@@ -12702,6 +12738,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveModel.setEnabled(false);
 			}
 			else if (comp.getName().equals("Synthesis")) {
+				viewLearnedModel.setEnabled(false);
 				saveButton.setEnabled(true);
 				saveasButton.setEnabled(true);
 				runButton.setEnabled(true);
@@ -12747,6 +12784,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 		}
 		else if (comp instanceof JScrollPane) {
+			viewLearnedModel.setEnabled(false);
 			saveButton.setEnabled(true);
 			saveasButton.setEnabled(true);
 			runButton.setEnabled(false);
@@ -12781,6 +12819,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			saveTemp.setEnabled(false);
 		}
 		else {
+			viewLearnedModel.setEnabled(false);
 			saveButton.setEnabled(false);
 			saveasButton.setEnabled(false);
 			runButton.setEnabled(false);
