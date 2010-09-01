@@ -137,6 +137,10 @@ public class FileTree extends JPanel implements MouseListener {
 		this.dir = dir;
 		// Make a tree list with all the nodes, and make it a JTree
 		if (dir != null) {
+			UIManager.put("Tree.expandedIcon", new ImageIcon(biomodelsim.ENVVAR + separator + "gui"
+					+ separator + "icons" + separator + "treeMinus.gif"));
+			UIManager.put("Tree.collapsedIcon", new ImageIcon(biomodelsim.ENVVAR + separator
+					+ "gui" + separator + "icons" + separator + "treePlus.gif"));
 			tree = new JTree(addNodes(null, dir, true, false));
 			TreeCellRenderer renderer = new IconCellRenderer();
 			tree.setCellRenderer(renderer);
