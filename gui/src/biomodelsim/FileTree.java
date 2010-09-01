@@ -64,6 +64,10 @@ public class FileTree extends JPanel implements MouseListener {
 
 	public static ImageIcon ICON_LEARN;
 
+	public static ImageIcon ICON_MINUS;
+
+	public static ImageIcon ICON_PLUS;
+
 	/**
 	 * Construct a FileTree
 	 */
@@ -132,15 +136,17 @@ public class FileTree extends JPanel implements MouseListener {
 		ICON_LEARN = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
 				+ separator + "learn.jpg");
 
+		ICON_MINUS = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "treeMinus.gif");
+
+		ICON_PLUS = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "treePlus.gif");
+
 		setLayout(new BorderLayout());
 
 		this.dir = dir;
 		// Make a tree list with all the nodes, and make it a JTree
 		if (dir != null) {
-			UIManager.put("Tree.expandedIcon", new ImageIcon(biomodelsim.ENVVAR + separator + "gui"
-					+ separator + "icons" + separator + "treeMinus.gif"));
-			UIManager.put("Tree.collapsedIcon", new ImageIcon(biomodelsim.ENVVAR + separator
-					+ "gui" + separator + "icons" + separator + "treePlus.gif"));
 			tree = new JTree(addNodes(null, dir, true, false));
 			TreeCellRenderer renderer = new IconCellRenderer();
 			tree.setCellRenderer(renderer);
@@ -182,6 +188,18 @@ public class FileTree extends JPanel implements MouseListener {
 		JScrollPane scrollpane = new JScrollPane();
 		scrollpane.getViewport().add(tree);
 		add(BorderLayout.CENTER, scrollpane);
+	}
+
+	public void setExpandibleIcons(boolean defaults) {
+		if (defaults) {
+			UIManager.put("Tree.expandedIcon", BioSim.ICON_EXPAND);
+			UIManager.put("Tree.collapsedIcon", BioSim.ICON_COLLAPSE);
+		}
+		else {
+			UIManager.put("Tree.expandedIcon", ICON_MINUS);
+			UIManager.put("Tree.collapsedIcon", ICON_PLUS);
+		}
+		tree.updateUI();
 	}
 
 	/**

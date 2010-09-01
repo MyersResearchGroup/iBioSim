@@ -83,6 +83,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JViewport; //import javax.swing.tree.TreePath;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
@@ -276,6 +277,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	public static final int NO_TO_ALL_OPTION = 3;
 
 	public static final int CANCEL_OPTION = 4;
+
+	public static Object ICON_EXPAND = UIManager.get("Tree.expandedIcon");
+
+	public static Object ICON_COLLAPSE = UIManager.get("Tree.collapsedIcon");
 
 	public class MacOSAboutHandler extends Application {
 
@@ -1078,6 +1083,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else {
 			checkUnits = true;
 		}
+		if (biosimrc.get("biosim.general.tree_icons", "").equals("")) {
+			biosimrc.put("biosim.general.tree_icons", "default");
+		}
 		if (biosimrc.get("biosim.general.file_browser", "").equals("")) {
 			biosimrc.put("biosim.general.file_browser", "JFileChooser");
 		}
@@ -1299,6 +1307,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			else {
 				dialog.setSelected(false);
+			}
+			JCheckBox icons = new JCheckBox("Use Plus/Minus For Expanding/Collapsing File Tree");
+			if (biosimrc.get("biosim.general.tree_icons", "").equals("default")) {
+				icons.setSelected(false);
+			}
+			else {
+				icons.setSelected(true);
 			}
 			final JTextField ACTIVED_VALUE = new JTextField(biosimrc.get(
 					"biosim.gcm.ACTIVED_VALUE", ""));
@@ -1616,8 +1631,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			JPanel learnPrefs = new JPanel(new GridLayout(1, 2));
 			learnPrefs.add(learnLabels);
 			learnPrefs.add(learnFields);
-			JPanel generalPrefs = new JPanel(new BorderLayout());
-			generalPrefs.add(dialog, "North");
+			JPanel generalPrefsBordered = new JPanel(new BorderLayout());
+			JPanel generalPrefs = new JPanel();
+			generalPrefsBordered.add(dialog, "North");
+			generalPrefsBordered.add(icons, "Center");
+			generalPrefs.add(generalPrefsBordered);
+			((FlowLayout) generalPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
 			JPanel sbmlPrefsBordered = new JPanel(new BorderLayout());
 			JPanel sbmlPrefs = new JPanel();
 			sbmlPrefsBordered.add(Undeclared, "North");
@@ -1625,7 +1644,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			sbmlPrefs.add(sbmlPrefsBordered);
 			((FlowLayout) sbmlPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
 			JTabbedPane prefTabs = new JTabbedPane();
-			prefTabs.addTab("General Preferences", dialog);
+			prefTabs.addTab("General Preferences", generalPrefs);
 			prefTabs.addTab("SBML Preferences", sbmlPrefs);
 			prefTabs.addTab("GCM Preferences", gcmPrefs);
 			prefTabs.addTab("Analysis Preferences", analysisPrefs);
@@ -1640,6 +1659,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				else {
 					biosimrc.put("biosim.general.file_browser", "JFileChooser");
+				}
+				if (icons.isSelected()) {
+					biosimrc.put("biosim.general.tree_icons", "plus_minus");
+					tree.setExpandibleIcons(false);
+				}
+				else {
+					biosimrc.put("biosim.general.tree_icons", "default");
+					tree.setExpandibleIcons(true);
 				}
 				if (Undeclared.isSelected()) {
 					checkUndeclared = true;
@@ -1914,7 +1941,20 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			else {
 				dialog.setSelected(false);
 			}
-			prefPanel.add(dialog);
+			JCheckBox icons = new JCheckBox("Use Plus/Minus For Expanding/Collapsing File Tree");
+			if (biosimrc.get("biosim.general.tree_icons", "").equals("default")) {
+				icons.setSelected(false);
+			}
+			else {
+				icons.setSelected(true);
+			}
+			JPanel generalPrefsBordered = new JPanel(new BorderLayout());
+			JPanel generalPrefs = new JPanel();
+			generalPrefsBordered.add(dialog, "North");
+			generalPrefsBordered.add(icons, "Center");
+			generalPrefs.add(generalPrefsBordered);
+			((FlowLayout) generalPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
+			prefPanel.add(generalPrefs);
 			Object[] options = { "Save", "Cancel" };
 			int value = JOptionPane
 					.showOptionDialog(frame, prefPanel, "Preferences", JOptionPane.YES_NO_OPTION,
@@ -1928,6 +1968,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				else {
 					biosimrc.put("biosim.general.file_browser", "JFileChooser");
+				}
+				if (icons.isSelected()) {
+					biosimrc.put("biosim.general.tree_icons", "plus_minus");
+					tree.setExpandibleIcons(false);
+				}
+				else {
+					biosimrc.put("biosim.general.tree_icons", "default");
+					tree.setExpandibleIcons(true);
 				}
 			}
 		}
@@ -12789,7 +12837,33 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// saveGcmAsLhpn.setEnabled(false);
 		// viewSG.setEnabled(false);
 		if (tree.getFile() != null) {
-			if (tree.getFile().length() > 4
+			if (tree.getFile().equals(root)) {
+				viewModGraph.setEnabled(false);
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(false);
+				createLearn.setEnabled(false);
+				createSbml.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				copy.setEnabled(false);
+				rename.setEnabled(false);
+				delete.setEnabled(false);
+				viewModel.setEnabled(false);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				// viewLog.setEnabled(false);
+				viewCoverage.setEnabled(false); // SB
+				viewVHDL.setEnabled(false); // SB
+				viewVerilog.setEnabled(false); // SB
+				viewLHPN.setEnabled(false); // SB
+				// saveParam.setEnabled(false);
+				saveModel.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (tree.getFile().length() > 4
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
 					|| tree.getFile().length() > 3
 					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
@@ -13151,7 +13225,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
 			}
-			else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
+			else if (new File(tree.getFile()).isDirectory()) {
 				boolean sim = false;
 				boolean synth = false;
 				boolean ver = false;
@@ -13221,6 +13295,32 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
 			}
+		}
+		else {
+			viewModGraph.setEnabled(false);
+			viewModBrowser.setEnabled(false);
+			createAnal.setEnabled(false);
+			createLearn.setEnabled(false);
+			createSbml.setEnabled(false);
+			refresh.setEnabled(false);
+			check.setEnabled(false);
+			export.setEnabled(false);
+			copy.setEnabled(false);
+			rename.setEnabled(false);
+			delete.setEnabled(false);
+			viewModel.setEnabled(false);
+			viewRules.setEnabled(false);
+			viewTrace.setEnabled(false);
+			viewCircuit.setEnabled(false);
+			// viewLog.setEnabled(false);
+			viewCoverage.setEnabled(false); // SB
+			viewVHDL.setEnabled(false); // SB
+			viewVerilog.setEnabled(false); // SB
+			viewLHPN.setEnabled(false); // SB
+			// saveParam.setEnabled(false);
+			saveModel.setEnabled(false);
+			saveSbml.setEnabled(false);
+			saveTemp.setEnabled(false);
 		}
 	}
 
