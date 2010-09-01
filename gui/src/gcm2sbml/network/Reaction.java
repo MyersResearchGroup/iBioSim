@@ -139,6 +139,14 @@ public class Reaction {
 		this.dimer = dimer;
 	}	
 	
+	public double getKbio() {
+		return kbio;
+	}
+	
+	public void setKbio (double kbio) {
+		this.kbio = kbio;
+	}
+	
 	
 	public void setProperties(Properties properties) {
 		this.properties = properties;
@@ -169,19 +177,21 @@ public class Reaction {
 	//The output state
 	private String outputState= null;
 	//Binding constant
-	private double bindingConstant = -1;
+	private double bindingConstant;
 	//Activation or repression
 	private String type = "";
 	//The name of the reaction
 	private String name = null;		
 	//The production constant
-	private double productionConstant = -1;
+	private double productionConstant = 0.0001;
 	//Cooperativity factor
-	private double coop = 1;
+	private double coop;
 	//dimer value 
-	private int dimer = 0;	
+	private int dimer;	
 	//Biochemical reaction
 	private boolean isBiochemical = false;
+	//Biochemical rate constant
+	private double kbio;
 	
 	//Number property
 	private Properties properties = null;

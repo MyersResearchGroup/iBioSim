@@ -1008,6 +1008,7 @@ public class GeneticNetwork {
 		buildDimers();
 		buildPromoters();
 		buildBiochemical();
+		addProperties();
 	}
 
 	/**
@@ -1048,25 +1049,9 @@ public class GeneticNetwork {
 	 * promoter as input.
 	 */
 	private void buildDimers() {
-		// First go through all species list and add all dimers found to hashMap
 		HashMap<String, SpeciesInterface> dimers = new HashMap<String, SpeciesInterface>();
-		/*for (SpeciesInterface specie : species.values()) {
-			int dimerValue = 1;
-			if (properties != null) {
-				dimerValue = (int) Integer.parseInt((properties
-						.getParameter(GlobalConstants.MAX_DIMER_STRING)));
-			}
-			if (specie.getProperty(GlobalConstants.MAX_DIMER_STRING) != null) {
-				dimerValue = (int) Integer.parseInt(specie
-						.getProperty(GlobalConstants.MAX_DIMER_STRING));
-			}
-			if (dimerValue >= 2) {
-				DimerSpecies dimer = new DimerSpecies(specie, specie.getProperties());
-				dimer.addProperty(GlobalConstants.KDECAY_STRING, "0");
-				dimers.put(dimer.getId(), dimer);
-			}
-		}*/
-		// Now go through reaction list to see if any are missed
+		
+		// Go through reaction list to see if any are missed
 		for (Promoter promoter : promoters.values()) {
 			for (Reaction reaction : promoter.getActivatingReactions()) {
 				if (reaction.getDimer() > 1) {
@@ -1109,9 +1094,9 @@ public class GeneticNetwork {
 			for (Reaction reaction : promoter.getActivatingReactions()) {
 				if (reaction.isBiochemical()) {
 					reactions.add(reaction);
-					SpeciesInterface bioSpecie = stateMap.get(reaction.getInputState());
-					//bioSpecie.addProperty(GlobalConstants.KBIO_STRING, "" + reaction.getProperty(GlobalConstants.KBIO_STRING));
-					biochem.add(bioSpecie);
+					SpeciesInterface specie = stateMap.get(reaction.getInputState());
+					specie.addProperty(GlobalConstants.KBIO_STRING, "" + reaction.getKbio());
+					biochem.add(specie);
 				}
 			}
 			if (biochem.size() == 1) {
@@ -1132,9 +1117,9 @@ public class GeneticNetwork {
 			for (Reaction reaction : promoter.getRepressingReactions()) {
 				if (reaction.isBiochemical()) {
 					reactions.add(reaction);
-					SpeciesInterface bioSpecie = stateMap.get(reaction.getInputState());
-					//bioSpecie.addProperty(GlobalConstants.KBIO_STRING, "" + reaction.getProperty(GlobalConstants.KBIO_STRING));
-					biochem.add(bioSpecie);
+					SpeciesInterface specie = stateMap.get(reaction.getInputState());
+					specie.addProperty(GlobalConstants.KBIO_STRING, "" + reaction.getKbio());
+					biochem.add(specie);
 				}
 			}
 			if (biochem.size() == 1) {
@@ -1151,6 +1136,26 @@ public class GeneticNetwork {
 			}
 		}
 
+	}
+	
+	/**
+	 * Adds activating/repressing binding constant and degree of cooperativity to species 
+	 * properties
+	 */
+	private void addProperties() {
+		for (Promoter promoter : promoters.values()) {
+			for (Reaction reaction : promoter.getActivatingReactions()) {
+				SpeciesInterface specie = stateMap.get(reaction.getInputState());
+				specie.addProperty(GlobalConstants.KACT_STRING, "" + reaction.getBindingConstant());
+				specie.addProperty(GlobalConstants.COOPERATIVITY_STRING, "" + reaction.getCoop());
+			}
+			for (Reaction reaction : promoter.getRepressingReactions()) {
+				SpeciesInterface specie = stateMap.get(reaction.getInputState());
+				specie.addProperty(GlobalConstants.KREP_STRING, "" + reaction.getBindingConstant());
+				specie.addProperty(GlobalConstants.COOPERATIVITY_STRING, "" + reaction.getCoop());
+			}
+
+		}
 	}
 
 	public HashMap<String, SpeciesInterface> getSpecies() {

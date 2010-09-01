@@ -55,30 +55,29 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction("R_RNAP_binding_" + promoter.getId() + "_"
 				+ specie);
-		gcm2sbml.network.Reaction reaction = promoter.getReactionMap().get(
-				specie).get(0);
-		double coop = reaction.getCoop();
 		r.addReactant(Utility.SpeciesReference("RNAP", 1));
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		KineticLaw kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.addParameter(Utility.Parameter(kcoopString, coop, "dimensionless"));
+		kl.addParameter(Utility.Parameter("Krnap", 1, GeneticNetwork
+				.getMoleParameter(2)));
+		kl.addParameter(Utility.Parameter(kcoopString, kcoop, "dimensionless"));
 		String actName = "";
 		if (dimerizationAbstraction) {
 			kl.addParameter(Utility.Parameter(kdimerString, kdimer, GeneticNetwork
 					.getMoleParameter((int) dimer)));
 			kl.addParameter(Utility.Parameter(dimerString, dimer, "dimensionless"));
-			actName = "("+ kdimerString + "*" + "(" + specie.getMonomer() + ")^"
-					+ dimerString + ")";
+			actName = kdimerString + "*" + "(" + specie.getMonomer() + ")^"
+					+ dimerString;
 			r.addReactant(Utility.SpeciesReference(specie.getMonomer().getId(),
-					dimer * coop));
+					dimer * kcoop));
 		} else {
 			actName = specie.getId();
-			r.addReactant(Utility.SpeciesReference(actName, coop));
+			r.addReactant(Utility.SpeciesReference(actName, kcoop));
 		}
-		kl.addParameter(Utility.Parameter(actString, Math.pow(act, coop),
-				GeneticNetwork.getMoleTimeParameter((int) (coop) + 2)));
+		kl.addParameter(Utility.Parameter(actString, act,
+				GeneticNetwork.getMoleParameter(2)));
 		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
 		r.setReversible(true);
@@ -91,32 +90,31 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction("R_RNAP_binding_" + promoter.getId() + "_"
 				+ specie);
-		gcm2sbml.network.Reaction reaction = promoter.getReactionMap().get(
-				specie).get(0);
-		double coop = reaction.getCoop();
 		r.addReactant(Utility.SpeciesReference("RNAP", 1));
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		KineticLaw kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork
 				.getMoleTimeParameter(1)));
+		kl.addParameter(Utility.Parameter("Krnap", 1, GeneticNetwork
+				.getMoleParameter(2)));
+		kl.addParameter(Utility.Parameter(kcoopString, kcoop, "dimensionless"));
 		String actName = "";
-		kl.addParameter(Utility.Parameter(kcoopString, coop, "dimensionless"));
 		if (biochemicalAbstraction) {
 			String names = "";
 			for (SpeciesInterface s : specie.getInputs()) {
-				r.addReactant(Utility.SpeciesReference(s.getId(), coop));
+				r.addReactant(Utility.SpeciesReference(s.getId(), kcoop));
 				names = names + "*" + s.getId();
 			}
 
 			kl.addParameter(Utility.Parameter(kbioString, kbio, GeneticNetwork
 					.getMoleParameter((int) specie.getInputs().size())));
-			actName = "(" + kbioString + names + ")";
+			actName = kbioString + names;
 		} else {
 			actName = specie.getId();
-			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
+			r.addReactant(Utility.SpeciesReference(specie.getId(), kcoop));
 		}
-		kl.addParameter(Utility.Parameter(actString, Math.pow(act, coop),
-				GeneticNetwork.getMoleTimeParameter((int) (coop) + 2)));
+		kl.addParameter(Utility.Parameter(actString, act,
+				GeneticNetwork.getMoleParameter(2)));
 		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
 		r.setReversible(true);
@@ -129,19 +127,18 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction("R_RNAP_binding_" + promoter.getId() + "_"
 				+ specie);
-		gcm2sbml.network.Reaction reaction = promoter.getReactionMap().get(
-				specie).get(0);
-		double coop = reaction.getCoop();
 		r.addReactant(Utility.SpeciesReference("RNAP", 1));
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		KineticLaw kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.addParameter(Utility.Parameter(kcoopString, coop, "dimensionless"));
+		kl.addParameter(Utility.Parameter("Krnap", 1, GeneticNetwork
+				.getMoleParameter(2)));
+		kl.addParameter(Utility.Parameter(kcoopString, kcoop, "dimensionless"));
 		String actName = specie.getId();
-		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
-		kl.addParameter(Utility.Parameter(actString, Math.pow(act, coop),
-				GeneticNetwork.getMoleTimeParameter((int) (coop) + 2)));
+		r.addReactant(Utility.SpeciesReference(specie.getId(), kcoop));
+		kl.addParameter(Utility.Parameter(actString, act,
+				GeneticNetwork.getMoleParameter(2)));
 		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
 		r.setReversible(true);
@@ -154,19 +151,18 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction("R_RNAP_binding_" + promoter.getId() + "_"
 				+ specie);
-		gcm2sbml.network.Reaction reaction = promoter.getReactionMap().get(
-				specie).get(0);
-		double coop = reaction.getCoop();
 		r.addReactant(Utility.SpeciesReference("RNAP", 1));
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		KineticLaw kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.addParameter(Utility.Parameter(kcoopString, coop, "dimensionless"));
+		kl.addParameter(Utility.Parameter("Krnap", 1, GeneticNetwork
+				.getMoleParameter(2)));
+		kl.addParameter(Utility.Parameter(kcoopString, kcoop, "dimensionless"));
 		String actName = specie.getId();
-		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
-		kl.addParameter(Utility.Parameter(actString, Math.pow(act, coop),
-				GeneticNetwork.getMoleTimeParameter((int) (coop) + 2)));
+		r.addReactant(Utility.SpeciesReference(specie.getId(), kcoop));
+		kl.addParameter(Utility.Parameter(actString, act,
+				GeneticNetwork.getMoleParameter(2)));
 		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
 		r.setReversible(true);
@@ -179,19 +175,18 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction("R_RNAP_binding_" + promoter.getId() + "_"
 				+ specie);
-		gcm2sbml.network.Reaction reaction = promoter.getReactionMap().get(
-				specie).get(0);
-		double coop = reaction.getCoop();
 		r.addReactant(Utility.SpeciesReference("RNAP", 1));
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		KineticLaw kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.addParameter(Utility.Parameter(kcoopString, coop, "dimensionless"));
+		kl.addParameter(Utility.Parameter("Krnap", 1, GeneticNetwork
+				.getMoleParameter(2)));
+		kl.addParameter(Utility.Parameter(kcoopString, kcoop, "dimensionless"));
 		String actName = specie.getId();
-		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
-		kl.addParameter(Utility.Parameter(actString, Math.pow(act, coop),
-				GeneticNetwork.getMoleTimeParameter((int) (coop) + 2)));
+		r.addReactant(Utility.SpeciesReference(specie.getId(), kcoop));
+		kl.addParameter(Utility.Parameter(actString, act,
+				GeneticNetwork.getMoleParameter(2)));
 		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
 		r.setReversible(true);
@@ -221,8 +216,8 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	 * @return
 	 */
 	private String generateLaw(String specieName, String actMolecule) {
-		String law = actString + "*" + "RNAP*" + actMolecule + "^"
-				+ kcoopString + "*" + promoter.getId() + "-kr*" + "RNAP_"
+		String law = "kr*" + "Krnap*" + "(" + actString + "*" + actMolecule + ")" + "^"
+				+ kcoopString + "*RNAP" + "*" + promoter.getId() + "-kr*" + "RNAP_"
 				+ promoter.getId() + "_" + specieName;
 		return law;
 	}

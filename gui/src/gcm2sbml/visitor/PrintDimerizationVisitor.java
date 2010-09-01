@@ -59,10 +59,11 @@ public class PrintDimerizationVisitor extends AbstractPrintVisitor {
 			r.setReversible(true);
 			r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
-			kl.addParameter(Utility.Parameter(kdimerString, kdimer, GeneticNetwork.getMoleTimeParameter((int)dimer)));
+			kl.addParameter(Utility.Parameter(kdimerString, kdimer, GeneticNetwork.getMoleParameter((int)dimer)));
 			kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork.getMoleTimeParameter(1)));
 			kl.addParameter(Utility.Parameter(dimerString, dimer, "dimensionless"));
-			kl.setFormula(kdimerString+"*" + specie.getMonomer().getId() + " ^"+dimerString+"-kr*"+specie.getId());
+			kl.setFormula("kr*" + kdimerString + "*" + specie.getMonomer().getId() +
+					"^"+dimerString+"-kr*"+specie.getId());
 			
 			Utility.addReaction(document, r);		
 		}
