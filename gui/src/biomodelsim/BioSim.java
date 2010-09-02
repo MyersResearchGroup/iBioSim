@@ -509,7 +509,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		exportTsd = new JMenuItem("Time Series Data (tsd)");
 		save = new JMenuItem("Save");
 		if (async) {
-			saveModel = new JMenuItem("Save Models");
+			saveModel = new JMenuItem("Save Learned LPN");
 		}
 		else {
 			saveModel = new JMenuItem("Save GCM");
@@ -13358,39 +13358,53 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				}
 				String message;
 				if (gcms.equals("")) {
+					message = "The file, " + name +
+					", already exists, and\nit is linked to the following views:\n\n" +
+					view + "\n\nAre you sure you want to overwrite?";
+					/*
 					message = "Unable to overwrite the selected file."
 							+ "\nIt is linked to the following views:\n" + view
 							+ "Delete these views first.";
+							*/
 				}
 				else if (view.equals("")) {
+					message = "The file, " + name +
+					", already exists, and\nit is linked to the following gcms:\n\n" +
+					gcms + "\n\nAre you sure you want to overwrite?";
+					/*
 					message = "Unable to overwrite the selected file."
 							+ "\nIt is linked to the following gcms:\n" + gcms
 							+ "Delete these gcms first.";
+							*/
 				}
 				else {
+					message = "The file, " + name +
+					", already exists, and\nit is linked to the following views:\n\n" +
+					views + "\n\nand\nit is linked to the following gcms:\n\n" +
+					gcms + "\n\nAre you sure you want to overwrite?";
+					/*
 					message = "Unable to overwrite the selected file."
 							+ "\nIt is linked to the following views:\n" + view
 							+ "It is also linked to the following gcms:\n" + gcms
 							+ "Delete these views and gcms first.";
+							*/
 				}
-				// String message = "The file, " + name
-				// +
-				// ", already exists, and\nit is linked to the following views:\n\n"
-				// + view
-				// + "\n\nAre you sure you want to overwrite?";
+
 				JTextArea messageArea = new JTextArea(message);
 				messageArea.setEditable(false);
 				JScrollPane scroll = new JScrollPane();
 				scroll.setMinimumSize(new Dimension(300, 300));
 				scroll.setPreferredSize(new Dimension(300, 300));
 				scroll.setViewportView(messageArea);
+				/*
 				JOptionPane.showMessageDialog(frame, scroll, "Unable To Overwrite File",
-						JOptionPane.ERROR_MESSAGE);
-				// value = JOptionPane.showOptionDialog(frame, scroll,
-				// "Overwrite",
-				// JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-				// options,
-				// options[0]);
+						JOptionPane.ERROR_MESSAGE); 
+						*/
+				value = JOptionPane.showOptionDialog(frame, scroll,
+						"Overwrite",
+						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+						options,
+						options[0]);
 				value = JOptionPane.NO_OPTION;
 			}
 			if (value == JOptionPane.YES_OPTION) {
