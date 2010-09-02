@@ -42,14 +42,14 @@ public class Lpn2verilog {
 						if (!lpn.isBoolean(v)){
 							sv.write("output real " + v);	//TODO: Integer if dmv?
 						} else{
-							sv.write("output reg " + v);
+							sv.write("output logic " + v);
 						}
 						first = false;
 					} else{
 						if (!lpn.isBoolean(v)){
 							sv.write(", output real " + v);
 						} else{
-							sv.write(", output reg " + v);
+							sv.write(", output logic " + v);
 						}
 					}
 				}
@@ -144,7 +144,7 @@ public class Lpn2verilog {
 			first = true;
 			for (String st: placeList){
 				if (first){
-					sv.write("\treg " + st);
+					sv.write("\tlogic " + st);
 					if (lpn.getPlace(st).isMarked()){
 						initBuffer.append("\t\t" + st + " <= 0");
 						markedPlaceBuffer.append("\t\t" + st + " <= #1 1; //Initially Marked\n");
@@ -188,6 +188,7 @@ public class Lpn2verilog {
 				initBuffer.append(";\n");
 				initBuffer.append(markedPlaceBuffer);
 			}
+			boolean firstCont = true;
 			for (String v: varsList){
 				if ((v != null) && (lpn.isOutput(v))){		//Initialize only outputs. Inputs will be initialized in their driver modules. Null condition Not Required ??
 					String initVal = lpn.getInitialVal(v);
@@ -195,6 +196,12 @@ public class Lpn2verilog {
 						if (lpn.isContinuous(v)){
 							// TODO: Call Verilog-AMS generation from here. No System Verilog in this case
 							//double initRate = Double.parseDouble(lpn.getInitialRate(v));
+							if (firstCont){
+								firstCont = false;
+								initBuffer.append("\t\tentryTime=$time;\n");
+								sv.write("\treal entryTime;\n");
+							}
+							sv.write("\treal rate_" + v + ", change_" + v + ";\n");
 							if (lpn.getInitialRate(v) != null){
 								String initBufferString = getInitBufferString(v, lpn.getInitialRate(v));
 								initBuffer.append("\t\trate_" + initBufferString);
@@ -349,8 +356,11 @@ public class Lpn2verilog {
 						for (String st2 : rateAssignmentTrees.keySet()){
 							//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
 							String asgnmt = rateAssignmentTrees.get(st2).getElement("Verilog");
-							assignmentsBuffer[tag.get(st)].append("\t\t\trate_" + st2 + " <= " + asgnmt + ";\n");
-							assignmentsBuffer[tag.get(st)].append("\t\t\tchange_" + st2 + " <= " + st2 + ";\n");
+							if (asgnmt != null){
+								assignmentsBuffer[tag.get(st)].append("\t\t\tentryTime <= $time;\n");
+								assignmentsBuffer[tag.get(st)].append("\t\t\trate_" + st2 + " <= " + asgnmt + ";\n");
+								assignmentsBuffer[tag.get(st)].append("\t\t\tchange_" + st2 + " <= " + st2 + ";\n");
+							}
 						}
 					}
 					assignmentsBuffer[tag.get(st)].append("\t\tend\n");
