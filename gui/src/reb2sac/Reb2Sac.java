@@ -667,9 +667,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		append.setEnabled(true);
 		choose3.setEnabled(true);
 		JPanel overwritePanel = new JPanel();
-		overwritePanel.add(choose3);
-		overwritePanel.add(overwrite);
-		overwritePanel.add(append);
+		reportPanel.add(choose3);
+		reportPanel.add(overwrite);
+		reportPanel.add(append);
 		overwrite.addActionListener(this);
 		append.addActionListener(this);
 		ButtonGroup over = new ButtonGroup();
@@ -681,7 +681,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		radioButtonPanel.add(topPanel, "North");
 		radioButtonPanel.add(odeMonteAndMarkovPanel, "Center");
 		JPanel bottomPanel = new JPanel(new BorderLayout());
-		bottomPanel.add(overwritePanel, "North");
+		//bottomPanel.add(overwritePanel, "North");
 		bottomPanel.add(reportPanel, "South");
 		radioButtonPanel.add(bottomPanel, "South");
 
