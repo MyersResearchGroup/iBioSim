@@ -11084,15 +11084,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		tabPane.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				JTabbedPane selectedTab = (JTabbedPane) (e.getSource());
-				JPanel selectedPanel = (JPanel) selectedTab.getComponent(selectedTab
-						.getSelectedIndex());
-				String className = selectedPanel.getClass().getName();
+				if (!(selectedTab.getComponent(selectedTab.getSelectedIndex()) instanceof JScrollPane)) {
+					JPanel selectedPanel = (JPanel) selectedTab.getComponent(selectedTab
+							.getSelectedIndex());
+					String className = selectedPanel.getClass().getName();
 
-				// if(selectedTab.getName().equals("ModelViewMovie"))
+					// if(selectedTab.getName().equals("ModelViewMovie"))
 
-				// The new ModelView
-				if (className.indexOf("MovieContainer") >= 0) {
-					((MovieContainer) selectedPanel).display();
+					// The new ModelView
+					if (className.indexOf("MovieContainer") >= 0) {
+						((MovieContainer) selectedPanel).display();
+					}
 				}
 			}
 		});
