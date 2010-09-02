@@ -587,8 +587,8 @@ public class FileTree extends JPanel implements MouseListener {
 						catch (Exception e) {
 						}
 					}
-					curDir.add(file);
 				}
+				curDir.add(file);
 			}
 		}
 		return curDir;
