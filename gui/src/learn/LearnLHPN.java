@@ -113,12 +113,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	
 	private HashMap<String, Properties> cvgInfo;
 
-	private Double minDelayVal = 10.0;
-
-	private Double minRateVal = 10.0;
-
-	private Double minDivisionVal = 10.0;
-
 	private Double delayScaleFactor = 1.0;
 
 	private Double valScaleFactor = 1.0;
@@ -190,12 +184,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 	private HashMap<String, Properties> transientNetTransitions;
 
-	private ArrayList<String> ratePlaces;
-
-	private ArrayList<String> dmvcInputPlaces;
-
-	private ArrayList<String> propPlaces;
-	
 	private boolean vamsRandom = false;
 	
 	private ArrayList<String> allVars;
@@ -204,13 +192,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	
 	private HashMap<String,Properties> dmvcValuesUnique;
 	
-	private Double dsFactor, vsFactor;
-	
 	private String currentPlace;
 	
 	private String[] currPlaceBin;
-	
-	private ArrayList<Integer> inputs;
 	
 	private LhpnFile lpnWithPseudo;
 	
@@ -411,185 +395,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		panel3.add(defaultEnvG);
 		panel3.add(unstableTimeLabel);
 		panel3.add(unstableTimeG);
-/*
-        org.jdesktop.layout.GroupLayout jPanel1Layout = new org.jdesktop.layout.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(jPanel1Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(jPanel1Layout.createSequentialGroup()
-                                .add(epsilonLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 85, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 104, Short.MAX_VALUE)
-                                .add(epsilonG, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
-                            .add(jPanel1Layout.createSequentialGroup()
-                                .add(rateSamplingLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                                .add(129, 129, 129)
-                                .add(rateSamplingG, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
-                            .add(jPanel1Layout.createSequentialGroup()
-                                .add(pathLengthBinLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
-                                .add(68, 68, 68)
-                                .add(pathLengthBinG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 81, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))))
-                    .add(jPanel1Layout.createSequentialGroup()
-                        .add(60, 60, 60)
-                        .add(rateLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 186, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
 
-        jPanel1Layout.linkSize(new java.awt.Component[] {epsilonG, pathLengthBinG, rateSamplingG}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .add(rateLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(51, 51, 51)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(epsilonLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(epsilonG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(18, 18, 18)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(rateSamplingLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(rateSamplingG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(18, 18, 18)
-                .add(jPanel1Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(pathLengthBinLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(pathLengthBinG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(35, 35, 35))
-        );
-
-        jPanel1Layout.linkSize(new java.awt.Component[] {epsilonG, epsilonLabel, pathLengthBinG, pathLengthBinLabel, rateSamplingG, rateSamplingLabel}, org.jdesktop.layout.GroupLayout.VERTICAL);
-       
-        org.jdesktop.layout.GroupLayout jPanel2Layout = new org.jdesktop.layout.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jPanel2Layout.createSequentialGroup()
-                    .addContainerGap(140, Short.MAX_VALUE)
-                    .add(dmvcLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 206, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(85, 85, 85))
-                .add(jPanel2Layout.createSequentialGroup()
-                    .add(83, 83, 83)
-                    .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                        .add(jPanel2Layout.createSequentialGroup()
-                            .add(percentLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 112, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                            .add(percentG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .addContainerGap())
-                        .add(jPanel2Layout.createSequentialGroup()
-                            .add(absTimeLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 85, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                            .add(31, 31, 31)
-                            .add(absTimeG)
-                            .add(30, 30, 30))))
-                .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
-                    .add(73, 73, 73)
-                    .add(runTimeLabel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 251, Short.MAX_VALUE)
-                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                    .add(runTimeG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 46, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap())
-                .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
-                	.addContainerGap(73, Short.MAX_VALUE)
-                    .add(runLengthLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 103, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                    .add(runLengthG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 81, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap())
-        );
-
-        jPanel2Layout.linkSize(new java.awt.Component[] {percentG, runLengthG, runTimeG}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-        jPanel2Layout.linkSize(new java.awt.Component[] {absTimeLabel, percentLabel, runLengthLabel, runTimeLabel}, org.jdesktop.layout.GroupLayout.HORIZONTAL);
-
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, jPanel2Layout.createSequentialGroup()
-                .add(53, 53, 53)
-                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                .add(jPanel2Layout.createSequentialGroup()
-                .add(dmvcLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(35, 35, 35)
-                    .add(absTimeLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                    .add(absTimeG))
-                .add(18, 18, 18)
-                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, percentLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, percentG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(18, 18, 18)
-                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, runTimeLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, runTimeG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(18, 18, 18)
-                .add(jPanel2Layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, runLengthLabel, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 17, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                    .add(org.jdesktop.layout.GroupLayout.TRAILING, runLengthG, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .add(63, 63, 63))
-        );
-        jPanel2Layout.linkSize(new java.awt.Component[] {absTimeLabel, percentG, percentLabel, runLengthG, runLengthLabel, runTimeG, runTimeLabel}, org.jdesktop.layout.GroupLayout.VERTICAL);
-
-        org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(newPanel);
-        newPanel.setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-                .add(72, 72, 72)
-                .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 256, Short.MAX_VALUE)
-                .add(jPanel2, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(157, 157, 157))
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(layout.createSequentialGroup()
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(layout.createSequentialGroup()
-                        .addContainerGap()
-                        .add(jPanel2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .add(layout.createSequentialGroup()
-                        .add(56, 56, 56)
-                        .add(jPanel1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-*/
-		// divisionsL = new ArrayList<ArrayList<Double>>(); // SB
 		thresholds = new HashMap<String, ArrayList<Double>>();
 		reqdVarsL = new ArrayList<Variable>();
-		/*
-		 * JLabel activationLabel = new JLabel("Ratio For Activation (Ta):");
-		 * thresholdPanel2.add(activationLabel); activation = new
-		 * JTextField(biosimrc.get("biosim.learn.ta", "")); //
-		 * activation.addActionListener(this); thresholdPanel2.add(activation);
-		 * JLabel repressionLabel = new JLabel("Ratio For Repression (Tr):");
-		 * thresholdPanel2.add(repressionLabel); repression = new
-		 * JTextField(biosimrc.get("biosim.learn.tr", "")); //
-		 * repression.addActionListener(this); thresholdPanel2.add(repression);
-		 * JLabel influenceLevelLabel = new JLabel("Merge Influence Vectors
-		 * Delta (Tm):"); thresholdPanel2.add(influenceLevelLabel);
-		 * influenceLevel = new JTextField(biosimrc.get("biosim.learn.tm", "")); //
-		 * influenceLevel.addActionListener(this);
-		 * thresholdPanel2.add(influenceLevel); JLabel letNThroughLabel = new
-		 * JLabel("Minimum Number Of Initial Vectors (Tn): ");
-		 * thresholdPanel1.add(letNThroughLabel); letNThrough = new
-		 * JTextField(biosimrc.get("biosim.learn.tn", "")); //
-		 * letNThrough.addActionListener(this);
-		 * thresholdPanel1.add(letNThrough); JLabel maxVectorSizeLabel = new
-		 * JLabel("Maximum Influence Vector Size (Tj):");
-		 * thresholdPanel1.add(maxVectorSizeLabel); maxVectorSize = new
-		 * JTextField(biosimrc.get("biosim.learn.tj", "")); //
-		 * maxVectorSize.addActionListener(this);
-		 * thresholdPanel1.add(maxVectorSize); JLabel parentLabel = new
-		 * JLabel("Score For Empty Influence Vector (Ti):");
-		 * thresholdPanel1.add(parentLabel); parent = new
-		 * JTextField(biosimrc.get("biosim.learn.ti", ""));
-		 * parent.addActionListener(this); thresholdPanel1.add(parent); JLabel
-		 * relaxIPDeltaLabel = new JLabel("Relax Thresholds Delta (Tt):");
-		 * thresholdPanel2.add(relaxIPDeltaLabel); relaxIPDelta = new
-		 * JTextField(biosimrc.get("biosim.learn.tt", "")); //
-		 * relaxIPDelta.addActionListener(this);
-		 * thresholdPanel2.add(relaxIPDelta);
-		 */
-
+	
 		numBinsLabel = new JLabel("Number of Bins:");
 		String[] bins = { "Auto", "2", "3", "4", "5", "6", "7", "8", "16", "32"};//, "10", "11", "12", "13", "14", "15", "16", "17", "33", "65", "129", "257" };
 		numBins = new JComboBox(bins);
@@ -663,32 +472,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		// JPanel thresholdPanelHold2 = new JPanel();
 		// thresholdPanelHold2.add(thresholdPanel2);
 
-		/*
-		 * JLabel windowRisingLabel = new JLabel("Window Rising Amount:");
-		 * windowRising = new JTextField("1");
-		 * thresholdPanel2.add(windowRisingLabel);
-		 * thresholdPanel2.add(windowRising); JLabel windowSizeLabel = new
-		 * JLabel("Window Size:"); windowSize = new JTextField("1");
-		 * thresholdPanel2.add(windowSizeLabel);
-		 * thresholdPanel2.add(windowSize); harshenBoundsOnTie = new
-		 * JCheckBox("Harshen Bounds On Tie");
-		 * harshenBoundsOnTie.setSelected(true); donotInvertSortOrder = new
-		 * JCheckBox("Do Not Invert Sort Order");
-		 * donotInvertSortOrder.setSelected(true); seedParents = new
-		 * JCheckBox("Parents Should Be Ranked By Score");
-		 * seedParents.setSelected(true); mustNotWinMajority = new
-		 * JCheckBox("Must Not Win Majority");
-		 * mustNotWinMajority.setSelected(true); donotTossSingleRatioParents =
-		 * new JCheckBox("Single Ratio Parents Should Be Kept");
-		 * donotTossChangedInfluenceSingleParents = new JCheckBox( "Parents That
-		 * Change Influence Should Not Be Tossed");
-		 * thresholdPanel2.add(harshenBoundsOnTie);
-		 * thresholdPanel2.add(donotInvertSortOrder);
-		 * thresholdPanel2.add(seedParents);
-		 * thresholdPanel2.add(mustNotWinMajority);
-		 * thresholdPanel2.add(donotTossSingleRatioParents);
-		 * thresholdPanel2.add(donotTossChangedInfluenceSingleParents);
-		 */
 
 		// load parameters
 		// reading lrnFile twice. On the first read, only learnFile (the initial lpn) is processed.
