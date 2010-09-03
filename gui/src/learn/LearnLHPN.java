@@ -5115,7 +5115,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			else{
 				for (int j = 1; j < variablesPanel.getComponentCount(); j++){
 					if ((((JTextField)((JPanel)variablesPanel.getComponent(j)).getComponent(0)).getText().trim()).equalsIgnoreCase(reqdVarsL.get(i).getName())){
-						numThresholds = Integer.parseInt((String)((JComboBox)((JPanel)variablesPanel.getComponent(j)).getComponent(6)).getSelectedItem())-1; // changed 2 to 3 after required
+						if (((String)((JComboBox)((JPanel)variablesPanel.getComponent(j)).getComponent(6)).getSelectedItem()).equalsIgnoreCase("Auto"))
+							numThresholds = -1;
+						else
+							numThresholds = Integer.parseInt((String)((JComboBox)((JPanel)variablesPanel.getComponent(j)).getComponent(6)).getSelectedItem())-1; // changed 2 to 3 after required
 						break;
 					}
 				}
