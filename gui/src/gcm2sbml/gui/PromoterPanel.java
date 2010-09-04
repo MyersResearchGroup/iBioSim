@@ -18,7 +18,7 @@ import biomodelsim.BioSim;
 
 public class PromoterPanel extends JPanel {
 	public PromoterPanel(String selected, PropertyList promoterList,
-			PropertyList influencesList, GCMFile gcm, boolean paramsOnly, BioSim biosim) {
+			PropertyList influencesList, GCMFile gcm, boolean paramsOnly, BioSim biosim, GCMFile refGCM) {
 		super(new GridLayout(8, 1));
 		this.selected = selected;
 		this.promoterList = promoterList;
@@ -52,10 +52,13 @@ public class PromoterPanel extends JPanel {
 		
 		// promoter count
 		if (paramsOnly) {
+			String defaultValue = refGCM.getParameter(GlobalConstants.PROMOTER_COUNT_STRING);
+			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.PROMOTER_COUNT_STRING)) {
+				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.PROMOTER_COUNT_STRING);
+			}
 			field = new PropertyField(GlobalConstants.PROMOTER_COUNT_STRING, gcm
 					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING),
-					PropertyField.paramStates[0], gcm
-					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING), Utility.SWEEPstring, paramsOnly);
+					PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
 		} else {
 			field = new PropertyField(GlobalConstants.PROMOTER_COUNT_STRING, gcm
 					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING),
@@ -75,10 +78,13 @@ public class PromoterPanel extends JPanel {
 
 		// RNAP binding
 		if (paramsOnly) {
+			String defaultValue = refGCM.getParameter(GlobalConstants.RNAP_BINDING_STRING);
+			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.RNAP_BINDING_STRING)) {
+				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.RNAP_BINDING_STRING);
+			}
 			field = new PropertyField(GlobalConstants.RNAP_BINDING_STRING, gcm
 					.getParameter(GlobalConstants.RNAP_BINDING_STRING),
-					PropertyField.paramStates[0], gcm
-					.getParameter(GlobalConstants.RNAP_BINDING_STRING), Utility.SWEEPstring, paramsOnly);
+					PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
 		} else {
 			field = new PropertyField(GlobalConstants.RNAP_BINDING_STRING, gcm
 					.getParameter(GlobalConstants.RNAP_BINDING_STRING),
@@ -90,10 +96,13 @@ public class PromoterPanel extends JPanel {
 		
 		// kocr
 		if (paramsOnly) {
+			String defaultValue = refGCM.getParameter(GlobalConstants.OCR_STRING);
+			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.OCR_STRING)) {
+				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.OCR_STRING);
+			}
 			field = new PropertyField(GlobalConstants.OCR_STRING, gcm
 					.getParameter(GlobalConstants.OCR_STRING),
-					PropertyField.paramStates[0], gcm
-					.getParameter(GlobalConstants.OCR_STRING), Utility.SWEEPstring, paramsOnly);
+					PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
 		} else {
 			field = new PropertyField(GlobalConstants.OCR_STRING, gcm
 					.getParameter(GlobalConstants.OCR_STRING),
@@ -105,10 +114,13 @@ public class PromoterPanel extends JPanel {
 		
 		// stoichiometry
 		if (paramsOnly) {
+			String defaultValue = refGCM.getParameter(GlobalConstants.STOICHIOMETRY_STRING);
+			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.STOICHIOMETRY_STRING)) {
+				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.STOICHIOMETRY_STRING);
+			}
 			field = new PropertyField(GlobalConstants.STOICHIOMETRY_STRING, gcm
 					.getParameter(GlobalConstants.STOICHIOMETRY_STRING),
-					PropertyField.paramStates[0], gcm
-					.getParameter(GlobalConstants.STOICHIOMETRY_STRING), Utility.SWEEPstring, paramsOnly);
+					PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
 		} else {
 			field = new PropertyField(GlobalConstants.STOICHIOMETRY_STRING, gcm
 					.getParameter(GlobalConstants.STOICHIOMETRY_STRING),
@@ -120,10 +132,13 @@ public class PromoterPanel extends JPanel {
 		
 		// kbasal
 		if (paramsOnly) {
+			String defaultValue = refGCM.getParameter(GlobalConstants.KBASAL_STRING);
+			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.KBASAL_STRING)) {
+				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.KBASAL_STRING);
+			}
 			field = new PropertyField(GlobalConstants.KBASAL_STRING, gcm
 					.getParameter(GlobalConstants.KBASAL_STRING),
-					PropertyField.paramStates[0], gcm
-							.getParameter(GlobalConstants.KBASAL_STRING),
+					PropertyField.paramStates[0], defaultValue,
 					Utility.SWEEPstring, paramsOnly);
 		} else {
 			field = new PropertyField(GlobalConstants.KBASAL_STRING, gcm
@@ -137,10 +152,13 @@ public class PromoterPanel extends JPanel {
 		
 		// kactived production
 		if (paramsOnly) {
+			String defaultValue = refGCM.getParameter(GlobalConstants.ACTIVED_STRING);
+			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.ACTIVED_STRING)) {
+				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.ACTIVED_STRING);
+			}
 			field = new PropertyField(GlobalConstants.ACTIVED_STRING, gcm
 					.getParameter(GlobalConstants.ACTIVED_STRING),
-					PropertyField.paramStates[0], gcm
-					.getParameter(GlobalConstants.ACTIVED_STRING), Utility.SWEEPstring, paramsOnly);
+					PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
 		} else {
 			field = new PropertyField(GlobalConstants.ACTIVED_STRING, gcm
 					.getParameter(GlobalConstants.ACTIVED_STRING),
@@ -204,7 +222,8 @@ public class PromoterPanel extends JPanel {
 			Properties property = new Properties();
 			for (PropertyField f : fields.values()) {
 				if (f.getState() == null
-						|| f.getState().equals(PropertyField.states[1])) {
+						|| f.getState().equals(PropertyField.states[1])
+						|| f.getState().equals(PropertyField.paramStates[1])) {
 					property.put(f.getKey(), f.getValue());
 //					if (f.getKey().equals("ID")) {
 //						property.put(GlobalConstants.NAME, f.getValue());
@@ -222,12 +241,12 @@ public class PromoterPanel extends JPanel {
 			this.lastUsedPromoter = id;
 			
 			if (paramsOnly) {
-				if (fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getState().equals(PropertyField.states[1]) ||
-						fields.get(GlobalConstants.RNAP_BINDING_STRING).getState().equals(PropertyField.states[1]) ||
-						fields.get(GlobalConstants.OCR_STRING).getState().equals(PropertyField.states[1]) ||
-						fields.get(GlobalConstants.STOICHIOMETRY_STRING).getState().equals(PropertyField.states[1]) ||
-						fields.get(GlobalConstants.KBASAL_STRING).getState().equals(PropertyField.states[1]) ||
-						fields.get(GlobalConstants.ACTIVED_STRING).getState().equals(PropertyField.states[1])) {
+				if (fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getState().equals(PropertyField.paramStates[1]) ||
+						fields.get(GlobalConstants.RNAP_BINDING_STRING).getState().equals(PropertyField.paramStates[1]) ||
+						fields.get(GlobalConstants.OCR_STRING).getState().equals(PropertyField.paramStates[1]) ||
+						fields.get(GlobalConstants.STOICHIOMETRY_STRING).getState().equals(PropertyField.paramStates[1]) ||
+						fields.get(GlobalConstants.KBASAL_STRING).getState().equals(PropertyField.paramStates[1]) ||
+						fields.get(GlobalConstants.ACTIVED_STRING).getState().equals(PropertyField.paramStates[1])) {
 					id += " Modified";
 				}
 			}
@@ -246,13 +265,13 @@ public class PromoterPanel extends JPanel {
 	public String updates() {
 		String updates = "";
 		if (paramsOnly) {
-			if (fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getState().equals(PropertyField.states[1])) {
+			if (fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getState().equals(PropertyField.paramStates[1])) {
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
 						+ CompatibilityFixer.getSBMLName(GlobalConstants.PROMOTER_COUNT_STRING) + " "
 						+ fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.RNAP_BINDING_STRING).getState()
-					.equals(PropertyField.states[1])) {
+					.equals(PropertyField.paramStates[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
@@ -260,7 +279,7 @@ public class PromoterPanel extends JPanel {
 				+ CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_BINDING_STRING) + " "
 				+ fields.get(GlobalConstants.RNAP_BINDING_STRING).getValue();
 			}
-			if (fields.get(GlobalConstants.OCR_STRING).getState().equals(PropertyField.states[1])) {
+			if (fields.get(GlobalConstants.OCR_STRING).getState().equals(PropertyField.paramStates[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
@@ -268,7 +287,7 @@ public class PromoterPanel extends JPanel {
 				+ CompatibilityFixer.getSBMLName(GlobalConstants.OCR_STRING) + " "
 				+ fields.get(GlobalConstants.OCR_STRING).getValue();
 			}
-			if (fields.get(GlobalConstants.STOICHIOMETRY_STRING).getState().equals(PropertyField.states[1])) {
+			if (fields.get(GlobalConstants.STOICHIOMETRY_STRING).getState().equals(PropertyField.paramStates[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
@@ -276,7 +295,7 @@ public class PromoterPanel extends JPanel {
 				+ CompatibilityFixer.getSBMLName(GlobalConstants.STOICHIOMETRY_STRING) + " "
 				+ fields.get(GlobalConstants.STOICHIOMETRY_STRING).getValue();
 			}
-			if (fields.get(GlobalConstants.KBASAL_STRING).getState().equals(PropertyField.states[1])) {
+			if (fields.get(GlobalConstants.KBASAL_STRING).getState().equals(PropertyField.paramStates[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
@@ -284,7 +303,7 @@ public class PromoterPanel extends JPanel {
 				+ CompatibilityFixer.getSBMLName(GlobalConstants.KBASAL_STRING) + " "
 				+ fields.get(GlobalConstants.KBASAL_STRING).getValue();
 			}
-			if (fields.get(GlobalConstants.ACTIVED_STRING).getState().equals(PropertyField.states[1])) {
+			if (fields.get(GlobalConstants.ACTIVED_STRING).getState().equals(PropertyField.paramStates[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}

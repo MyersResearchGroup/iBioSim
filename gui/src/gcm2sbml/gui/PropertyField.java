@@ -270,7 +270,7 @@ public class PropertyField extends JPanel implements ActionListener,
 
 	public static final String[] states = new String[] { "default", "custom" };
 	
-	public static final String[] paramStates = new String[] { "original", "custom" };
+	public static final String[] paramStates = new String[] { "original", "modified" };
 
 	private String defaultValue = null;
 	

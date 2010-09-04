@@ -21,7 +21,7 @@ import biomodelsim.BioSim;
 
 public class SpeciesPanel extends JPanel implements ActionListener {
 	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList influencesList,
-			PropertyList conditionsList, GCMFile gcm, boolean paramsOnly, BioSim biosim) {
+			PropertyList conditionsList, GCMFile gcm, boolean paramsOnly, BioSim biosim, GCMFile refGCM) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.speciesList = speciesList;
@@ -67,9 +67,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		// Initial field
 		if (paramsOnly) {
+			String defaultValue = refGCM.getParameter(GlobalConstants.INITIAL_STRING);
+			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.INITIAL_STRING)) {
+				defaultValue = refGCM.getSpecies().get(selected).getProperty(GlobalConstants.INITIAL_STRING);
+			}
 			field = new PropertyField(GlobalConstants.INITIAL_STRING, gcm
-					.getParameter(GlobalConstants.INITIAL_STRING), PropertyField.paramStates[0], gcm
-					.getParameter(GlobalConstants.INITIAL_STRING), Utility.SWEEPstring, paramsOnly);
+					.getParameter(GlobalConstants.INITIAL_STRING), PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
 		}
 		else {
 			field = new PropertyField(GlobalConstants.INITIAL_STRING, gcm
@@ -90,9 +93,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		// Dimerization field
 		if (paramsOnly) {
+			String defaultValue = refGCM.getParameter(GlobalConstants.KASSOCIATION_STRING);
+			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.KASSOCIATION_STRING)) {
+				defaultValue = refGCM.getSpecies().get(selected).getProperty(GlobalConstants.KASSOCIATION_STRING);
+			}
 			field = new PropertyField(GlobalConstants.KASSOCIATION_STRING, gcm
-					.getParameter(GlobalConstants.KASSOCIATION_STRING), PropertyField.paramStates[0], gcm
-					.getParameter(GlobalConstants.KASSOCIATION_STRING), Utility.SWEEPstring, paramsOnly);
+					.getParameter(GlobalConstants.KASSOCIATION_STRING), PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
 		}
 		else {
 			field = new PropertyField(GlobalConstants.KASSOCIATION_STRING, gcm
@@ -104,9 +110,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		// Decay field
 		if (paramsOnly) {
+			String defaultValue = refGCM.getParameter(GlobalConstants.KDECAY_STRING);
+			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.KDECAY_STRING)) {
+				defaultValue = refGCM.getSpecies().get(selected).getProperty(GlobalConstants.KDECAY_STRING);
+			}
 			field = new PropertyField(GlobalConstants.KDECAY_STRING, gcm
-					.getParameter(GlobalConstants.KDECAY_STRING), PropertyField.paramStates[0], gcm
-					.getParameter(GlobalConstants.KDECAY_STRING), Utility.SWEEPstring, paramsOnly);
+					.getParameter(GlobalConstants.KDECAY_STRING), PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
 		}
 		else {
 			field = new PropertyField(GlobalConstants.KDECAY_STRING, gcm
@@ -176,7 +185,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			// Check to see if we need to add or edit
 			Properties property = new Properties();
 			for (PropertyField f : fields.values()) {
-				if (f.getState() == null || f.getState().equals(PropertyField.states[1])) {
+				if (f.getState() == null || f.getState().equals(PropertyField.states[1]) || f.getState().equals(PropertyField.paramStates[1])) {
 					property.put(f.getKey(), f.getValue());
 				}
 			}
@@ -191,10 +200,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			gcm.addSpecies(id, property);
 			if (paramsOnly) {
-				if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(PropertyField.states[1])
+				if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(PropertyField.paramStates[1])
 						|| fields.get(GlobalConstants.KASSOCIATION_STRING).getState().equals(
-								PropertyField.states[1])
-						|| fields.get(GlobalConstants.KDECAY_STRING).getState().equals(PropertyField.states[1])) {
+								PropertyField.paramStates[1])
+						|| fields.get(GlobalConstants.KDECAY_STRING).getState().equals(PropertyField.paramStates[1])) {
 					id += " Modified";
 				}
 			}
@@ -214,13 +223,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	public String updates() {
 		String updates = "";
 		if (paramsOnly) {
-			if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(PropertyField.states[1])) {
+			if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(PropertyField.paramStates[1])) {
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
 						+ CompatibilityFixer.getSBMLName(GlobalConstants.INITIAL_STRING) + " "
 						+ fields.get(GlobalConstants.INITIAL_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.KASSOCIATION_STRING).getState()
-					.equals(PropertyField.states[1])) {
+					.equals(PropertyField.paramStates[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
@@ -228,7 +237,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				+ CompatibilityFixer.getSBMLName(GlobalConstants.KASSOCIATION_STRING) + " "
 				+ fields.get(GlobalConstants.KASSOCIATION_STRING).getValue();
 			}
-			if (fields.get(GlobalConstants.KDECAY_STRING).getState().equals(PropertyField.states[1])) {
+			if (fields.get(GlobalConstants.KDECAY_STRING).getState().equals(PropertyField.paramStates[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}

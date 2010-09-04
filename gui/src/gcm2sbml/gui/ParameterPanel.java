@@ -14,11 +14,12 @@ import biomodelsim.BioSim;
 
 public class ParameterPanel extends JPanel {
 	public ParameterPanel(String totalSelected, PropertyList parameterList,
-			GCMFile gcm, boolean paramsOnly, BioSim biosim) {
+			GCMFile gcm, boolean paramsOnly, BioSim biosim, GCMFile refGCM) {
 		super(new GridLayout(1, 2));
 		this.totalSelected = totalSelected;
 		this.parameterList = parameterList;
 		this.gcm = gcm;
+		this.refGCM = refGCM;
 		this.paramsOnly = paramsOnly;
 		this.biosim = biosim;
 		changedParam = "";
@@ -31,8 +32,7 @@ public class ParameterPanel extends JPanel {
 		PropertyField field;
 		if (paramsOnly) {
 			field = new PropertyField(selected, gcm
-					.getParameter(selected), PropertyField.paramStates[0], gcm
-					.getDefaultParameters().get(selected), Utility.SWEEPstring, paramsOnly);
+					.getParameter(selected), PropertyField.paramStates[0], refGCM.getParameter(selected), Utility.SWEEPstring, paramsOnly);
 		} else {
 			field = new PropertyField(selected, gcm
 					.getParameter(selected), PropertyField.states[0], gcm
@@ -72,7 +72,8 @@ public class ParameterPanel extends JPanel {
 				return false;
 			}
 			String newItem = CompatibilityFixer.getGuiName(selected);
-			if (fields.get(selected).getState().equals(PropertyField.states[1])) {
+			if (fields.get(selected).getState().equals(PropertyField.states[1])
+					|| fields.get(selected).getState().equals(PropertyField.paramStates[1])) {
 				gcm.setParameter(selected, fields.get(selected).getValue());
 				newItem = newItem +  " ("+CompatibilityFixer.getSBMLName(selected)+"), ";
 				if (paramsOnly && fields.get(selected).getValue().trim().startsWith("(")) {
@@ -87,7 +88,7 @@ public class ParameterPanel extends JPanel {
 				newItem = newItem + " ("+CompatibilityFixer.getSBMLName(selected)+"), Default, " + gcm.getParameter(selected);
 			} else if (fields.get(selected).getState().equals(PropertyField.paramStates[0])) {
 				gcm.removeParameter(selected);
-				newItem = newItem + " ("+CompatibilityFixer.getSBMLName(selected)+"), Default, " + gcm.getParameter(selected);
+				newItem = newItem + " ("+CompatibilityFixer.getSBMLName(selected)+"), Default, " + refGCM.getParameter(selected);
 				changedParam += CompatibilityFixer.getSBMLName(selected);
 			}
 			parameterList.removeItem(totalSelected);
@@ -111,6 +112,7 @@ public class ParameterPanel extends JPanel {
 	private String totalSelected = "";
 	private String selected = "";
 	private GCMFile gcm = null;
+	private GCMFile refGCM = null;
 	private PropertyList parameterList = null;
 	private HashMap<String, PropertyField> fields = null;
 	private BioSim biosim;

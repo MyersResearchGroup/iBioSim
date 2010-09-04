@@ -4,6 +4,7 @@ import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.parser.GCMParser;
+import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
 import java.awt.BorderLayout;
@@ -16,6 +17,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Scanner;
@@ -139,11 +141,18 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		filename = newName + ".gcm";
 		gcmname = newName;
 		gcm.load(path + separator + newName + ".gcm");
+		if (paramsOnly) {
+			GCMFile refGCM = new GCMFile(path);
+			refGCM.load(path + separator + refFile);
+			HashMap<String, String> params = refGCM.getGlobalParameters();
+			for (String key : params.keySet()) {
+				gcm.setDefaultParameter(key, params.get(key));
+			}
+		}
 		GCMNameTextField.setText(newName);
 	}
 	
 	public void refresh() {
-	
 		Set<String> prom = gcm.getPromoters().keySet();
 		ArrayList<String> proms = new ArrayList<String>();
 		for (String s : prom) {
@@ -555,6 +564,57 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 
 	public void loadParams() {
 		if (paramsOnly) {
+			HashMap<String, Properties> elements = gcm.getSpecies();
+			for (String key : elements.keySet()) {
+				ArrayList<Object> remove = new ArrayList<Object>();
+				for (Object prop : elements.get(key).keySet()) {
+					if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID) && !prop.equals(GlobalConstants.TYPE)) {
+						remove.add(prop);
+					}
+				}
+				for (Object prop : remove) {
+					elements.get(key).remove(prop);
+				}
+				
+			}
+			elements = gcm.getInfluences();
+			for (String key : elements.keySet()) {
+				ArrayList<Object> remove = new ArrayList<Object>();
+				for (Object prop : elements.get(key).keySet()) {
+					if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.PROMOTER) && !prop.equals(GlobalConstants.BIO) && !prop.equals(GlobalConstants.TYPE)) {
+						remove.add(prop);
+					}
+				}
+				for (Object prop : remove) {
+					elements.get(key).remove(prop);
+				}
+			}
+			elements = gcm.getPromoters();
+			for (String key : elements.keySet()) {
+				ArrayList<Object> remove = new ArrayList<Object>();
+				for (Object prop : elements.get(key).keySet()) {
+					if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID)) {
+						remove.add(prop);
+					}
+				}
+				for (Object prop : remove) {
+					elements.get(key).remove(prop);
+				}
+			}
+			HashMap<String, String> params = gcm.getGlobalParameters();
+			ArrayList<Object> remove = new ArrayList<Object>();
+			for (String key : params.keySet()) {
+				remove.add(key);
+			}
+			for (Object prop : remove) {
+				params.remove(prop);
+			}
+			GCMFile refGCM = new GCMFile(path);
+			refGCM.load(path + separator + refFile);
+			params = refGCM.getGlobalParameters();
+			for (String key : params.keySet()) {
+				gcm.setDefaultParameter(key, params.get(key));
+			}
 			try {
 				Scanner scan = new Scanner(new File(paramFile));
 				if (scan.hasNextLine()) {
@@ -783,7 +843,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		JPanel mainPanelCenter = new JPanel(new BorderLayout());
 		JPanel mainPanelCenterUp = new JPanel();
 		JPanel mainPanelCenterCenter = new JPanel(new GridLayout(2, 2));
-		JPanel mainPanelCenterDown = new JPanel(new BorderLayout());
+		//JPanel mainPanelCenterDown = new JPanel(new BorderLayout());
 		JPanel tabPanel = new JPanel(new BorderLayout());
 		mainPanelCenter.add(mainPanelCenterUp, BorderLayout.NORTH);
 		mainPanelCenter.add(mainPanelCenterCenter, BorderLayout.CENTER);
@@ -848,8 +908,13 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		tab.addTab("Model View", grappaPanel);
 		tab.addTab("Model View 2", modelView);
 		setLayout(new BorderLayout());
-		add(tab, BorderLayout.CENTER);
-		add(mainPanelCenterDown, BorderLayout.SOUTH);
+		if (paramsOnly) {
+			add(mainPanel, BorderLayout.CENTER);
+		}
+		else {
+			add(tab, BorderLayout.CENTER);
+		}
+		//add(mainPanelCenterDown, BorderLayout.SOUTH);
 		
 		// When the Graphical View panel gets clicked on, tell it to display itself.
 		tab.addChangeListener(new ChangeListener(){
@@ -1046,6 +1111,24 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 
 	private Set<String> generateParameters() {
 		HashSet<String> results = new HashSet<String>();
+		if (paramsOnly) {
+			HashMap<String, String> params = gcm.getGlobalParameters();
+			ArrayList<Object> remove = new ArrayList<Object>();
+			for (String key : params.keySet()) {
+				remove.add(key);
+			}
+			for (Object prop : remove) {
+				params.remove(prop);
+			}
+			for (String update : parameterChanges) {
+				String id;
+				if (!update.contains("/")) {
+					id = update.split(" ")[0];
+					String value = update.split(" ")[1].trim();
+					gcm.setParameter(CompatibilityFixer.convertSBMLName(id), value);
+				}
+			}
+		}
 		for (String s : gcm.getParameters().keySet()) {
 			if (gcm.getGlobalParameters().containsKey(s)) {
 				if (gcm.getParameter(s).contains("(")) {
@@ -1190,7 +1273,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						selected = selected.split(" ")[0];
 					}
 				}
-				SpeciesPanel panel = new SpeciesPanel(selected, list, influences, conditions, gcm, paramsOnly, biosim);
+				GCMFile refGCM = null;
+				if (paramsOnly) {
+					refGCM = new GCMFile(path);
+					refGCM.load(path + separator + refFile);
+				}
+				SpeciesPanel panel = new SpeciesPanel(selected, list, influences, conditions, gcm, paramsOnly, biosim, refGCM);
 				if (paramsOnly) {
 					String updates = panel.updates();
 					if (!updates.equals("")) {
@@ -1215,7 +1303,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						selected = selected.substring(0, selected.length() - 9);
 					}
 				}
-				InfluencePanel panel = new InfluencePanel(selected, list, gcm, paramsOnly, biosim);
+				GCMFile refGCM = null;
+				if (paramsOnly) {
+					refGCM = new GCMFile(path);
+					refGCM.load(path + separator + refFile);
+				}
+				InfluencePanel panel = new InfluencePanel(selected, list, gcm, paramsOnly, biosim, refGCM);
 				if (paramsOnly) {
 					String updates = panel.updates();
 					if (!updates.equals("")) {
@@ -1240,7 +1333,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						selected = selected.split(" ")[0];
 					}
 				}
-				PromoterPanel panel = new PromoterPanel(selected, list, influences, gcm, paramsOnly, biosim);
+				GCMFile refGCM = null;
+				if (paramsOnly) {
+					refGCM = new GCMFile(path);
+					refGCM.load(path + separator + refFile);
+				}
+				PromoterPanel panel = new PromoterPanel(selected, list, influences, gcm, paramsOnly, biosim, refGCM);
 				if (paramsOnly) {
 					String updates = panel.updates();
 					if (!updates.equals("")) {
@@ -1272,7 +1370,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				ParameterPanel panel = new ParameterPanel(selected, list, gcm, paramsOnly, biosim);
+				GCMFile refGCM = null;
+				if (paramsOnly) {
+					refGCM = new GCMFile(path);
+					refGCM.load(path + separator + refFile);
+				}
+				ParameterPanel panel = new ParameterPanel(selected, list, gcm, paramsOnly, biosim, refGCM);
 				if (paramsOnly) {
 					String updates = panel.updates();
 					if (!updates.equals("")) {
@@ -1307,13 +1410,28 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	 * @return
 	 */
 	public PromoterPanel launchPromoterPanel(String id){
-		return new PromoterPanel(id, promoters, influences, gcm, paramsOnly, biosim);	
+		GCMFile refGCM = null;
+		if (paramsOnly) {
+			refGCM = new GCMFile(path);
+			refGCM.load(path + separator + refFile);
+		}
+		return new PromoterPanel(id, promoters, influences, gcm, paramsOnly, biosim, refGCM);	
 	}
 	public SpeciesPanel launchSpeciesPanel(String id){
-		return new SpeciesPanel(id, species, influences, conditions, gcm, paramsOnly, biosim);
+		GCMFile refGCM = null;
+		if (paramsOnly) {
+			refGCM = new GCMFile(path);
+			refGCM.load(path + separator + refFile);
+		}
+		return new SpeciesPanel(id, species, influences, conditions, gcm, paramsOnly, biosim, refGCM);
 	}
 	public InfluencePanel launchInfluencePanel(String id){
-		return new InfluencePanel(id, influences, gcm, paramsOnly, biosim);
+		GCMFile refGCM = null;
+		if (paramsOnly) {
+			refGCM = new GCMFile(path);
+			refGCM.load(path + separator + refFile);
+		}
+		return new InfluencePanel(id, influences, gcm, paramsOnly, biosim, refGCM);
 	}
 	
 	public boolean checkNoComponentLoop(String gcm, String checkFile) {
