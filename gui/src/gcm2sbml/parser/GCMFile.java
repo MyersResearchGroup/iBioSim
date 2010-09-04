@@ -1740,6 +1740,10 @@ public class GCMFile {
 		globalParameters.put(parameter, value);
 		parameters.put(parameter, value);
 	}
+	
+	public void setDefaultParameter(String parameter, String value) {
+		defaultParameters.put(parameter, value);
+	}
 
 	public void removeParameter(String parameter) {
 		globalParameters.remove(parameter);

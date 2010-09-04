@@ -20,7 +20,7 @@ import javax.swing.JPanel;
 import biomodelsim.BioSim;
 
 public class InfluencePanel extends JPanel implements ActionListener {
-	public InfluencePanel(String selected, PropertyList list, GCMFile gcm, boolean paramsOnly, BioSim biosim) {
+	public InfluencePanel(String selected, PropertyList list, GCMFile gcm, boolean paramsOnly, BioSim biosim, GCMFile refGCM) {
 		super(new GridLayout(11, 1));
 		this.selected = selected;
 		this.list = list;
@@ -119,13 +119,16 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		fields.get(GlobalConstants.NAME).setValue(inputBox.getSelectedItem() + " -| "
 				+ outputBox.getSelectedItem() + ", Promoter "
 				+ promoterBox.getSelectedItem());
-
+		
 		// coop
 		if (paramsOnly) {
+			String defaultValue = refGCM.getParameter(GlobalConstants.COOPERATIVITY_STRING);
+			if (refGCM.getInfluences().get(selected).containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
+				defaultValue = refGCM.getInfluences().get(selected).getProperty(GlobalConstants.COOPERATIVITY_STRING);
+			}
 			field = new PropertyField(GlobalConstants.COOPERATIVITY_STRING, gcm
 					.getParameter(GlobalConstants.COOPERATIVITY_STRING),
-					PropertyField.paramStates[0], gcm
-							.getParameter(GlobalConstants.COOPERATIVITY_STRING),
+					PropertyField.paramStates[0], defaultValue,
 					Utility.SWEEPstring, paramsOnly);
 		} else {
 			field = new PropertyField(GlobalConstants.COOPERATIVITY_STRING, gcm
@@ -139,10 +142,13 @@ public class InfluencePanel extends JPanel implements ActionListener {
 
 		// dimer
 		if (paramsOnly) {
+			String defaultValue = refGCM.getParameter(GlobalConstants.MAX_DIMER_STRING);
+			if (refGCM.getInfluences().get(selected).containsKey(GlobalConstants.MAX_DIMER_STRING)) {
+				defaultValue = refGCM.getInfluences().get(selected).getProperty(GlobalConstants.MAX_DIMER_STRING);
+			}
 			field = new PropertyField(GlobalConstants.MAX_DIMER_STRING, gcm
 					.getParameter(GlobalConstants.MAX_DIMER_STRING),
-					PropertyField.paramStates[0], gcm
-							.getParameter(GlobalConstants.MAX_DIMER_STRING),
+					PropertyField.paramStates[0], defaultValue,
 					Utility.SWEEPstring, paramsOnly);
 		} else {
 			field = new PropertyField(GlobalConstants.MAX_DIMER_STRING, gcm
@@ -156,10 +162,13 @@ public class InfluencePanel extends JPanel implements ActionListener {
 
 		// krep
 		if (paramsOnly) {
+			String defaultValue = refGCM.getParameter(GlobalConstants.KREP_STRING);
+			if (refGCM.getInfluences().get(selected).containsKey(GlobalConstants.KREP_STRING)) {
+				defaultValue = refGCM.getInfluences().get(selected).getProperty(GlobalConstants.KREP_STRING);
+			}
 			field = new PropertyField(GlobalConstants.KREP_STRING, gcm
 					.getParameter(GlobalConstants.KREP_STRING),
-					PropertyField.paramStates[0], gcm
-							.getParameter(GlobalConstants.KREP_STRING),
+					PropertyField.paramStates[0], defaultValue,
 					Utility.SWEEPstring, paramsOnly);
 		} else {
 			field = new PropertyField(GlobalConstants.KREP_STRING, gcm
@@ -173,10 +182,13 @@ public class InfluencePanel extends JPanel implements ActionListener {
 
 		// kact
 		if (paramsOnly) {
+			String defaultValue = refGCM.getParameter(GlobalConstants.KACT_STRING);
+			if (refGCM.getInfluences().get(selected).containsKey(GlobalConstants.KACT_STRING)) {
+				defaultValue = refGCM.getInfluences().get(selected).getProperty(GlobalConstants.KACT_STRING);
+			}
 			field = new PropertyField(GlobalConstants.KACT_STRING, gcm
 					.getParameter(GlobalConstants.KACT_STRING),
-					PropertyField.paramStates[0], gcm
-							.getParameter(GlobalConstants.KACT_STRING),
+					PropertyField.paramStates[0], defaultValue,
 					Utility.SWEEPstring, paramsOnly);
 		} else {
 			field = new PropertyField(GlobalConstants.KACT_STRING, gcm
@@ -191,10 +203,13 @@ public class InfluencePanel extends JPanel implements ActionListener {
 
 		// kbio
 		if (paramsOnly) {
+			String defaultValue = refGCM.getParameter(GlobalConstants.KBIO_STRING);
+			if (refGCM.getInfluences().get(selected).containsKey(GlobalConstants.KBIO_STRING)) {
+				defaultValue = refGCM.getInfluences().get(selected).getProperty(GlobalConstants.KBIO_STRING);
+			}
 			field = new PropertyField(GlobalConstants.KBIO_STRING, gcm
 					.getParameter(GlobalConstants.KBIO_STRING),
-					PropertyField.paramStates[0], gcm
-							.getParameter(GlobalConstants.KBIO_STRING),
+					PropertyField.paramStates[0], defaultValue,
 					Utility.SWEEPstring, paramsOnly);
 		} else {
 			field = new PropertyField(GlobalConstants.KBIO_STRING, gcm
@@ -288,7 +303,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			Properties property = new Properties();
 			for (PropertyField f : fields.values()) {
 				if (f.getState() == null
-						|| f.getState().equals(PropertyField.states[1])) {
+						|| f.getState().equals(PropertyField.states[1])
+						|| f.getState().equals(PropertyField.paramStates[1])) {
 					property.put(f.getKey(), f.getValue());
 				}
 			}
@@ -315,11 +331,11 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			list.removeItem(id + " Modified");
 			gcm.addInfluences(id, property);
 			if (paramsOnly) {
-				if (fields.get(GlobalConstants.COOPERATIVITY_STRING).getState().equals(PropertyField.states[1]) ||
-						fields.get(GlobalConstants.MAX_DIMER_STRING).getState().equals(PropertyField.states[1]) ||
-						fields.get(GlobalConstants.KREP_STRING).getState().equals(PropertyField.states[1]) ||
-						fields.get(GlobalConstants.KACT_STRING).getState().equals(PropertyField.states[1]) ||
-						fields.get(GlobalConstants.KBIO_STRING).getState().equals(PropertyField.states[1])) {
+				if (fields.get(GlobalConstants.COOPERATIVITY_STRING).getState().equals(PropertyField.paramStates[1]) ||
+						fields.get(GlobalConstants.MAX_DIMER_STRING).getState().equals(PropertyField.paramStates[1]) ||
+						fields.get(GlobalConstants.KREP_STRING).getState().equals(PropertyField.paramStates[1]) ||
+						fields.get(GlobalConstants.KACT_STRING).getState().equals(PropertyField.paramStates[1]) ||
+						fields.get(GlobalConstants.KBIO_STRING).getState().equals(PropertyField.paramStates[1])) {
 					id += " Modified";
 				}
 			}
@@ -335,13 +351,13 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	public String updates() {
 		String updates = "";
 		if (paramsOnly) {
-			if (fields.get(GlobalConstants.COOPERATIVITY_STRING).getState().equals(PropertyField.states[1])) {
+			if (fields.get(GlobalConstants.COOPERATIVITY_STRING).getState().equals(PropertyField.paramStates[1])) {
 				updates += "\"" + fields.get(GlobalConstants.NAME).getValue() + "\"/"
 						+ CompatibilityFixer.getSBMLName(GlobalConstants.COOPERATIVITY_STRING) + " "
 						+ fields.get(GlobalConstants.COOPERATIVITY_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.MAX_DIMER_STRING).getState()
-					.equals(PropertyField.states[1])) {
+					.equals(PropertyField.paramStates[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
@@ -349,7 +365,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				+ CompatibilityFixer.getSBMLName(GlobalConstants.MAX_DIMER_STRING) + " "
 				+ fields.get(GlobalConstants.MAX_DIMER_STRING).getValue();
 			}
-			if (fields.get(GlobalConstants.KREP_STRING).getState().equals(PropertyField.states[1])) {
+			if (fields.get(GlobalConstants.KREP_STRING).getState().equals(PropertyField.paramStates[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
@@ -357,7 +373,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				+ CompatibilityFixer.getSBMLName(GlobalConstants.KREP_STRING) + " "
 				+ fields.get(GlobalConstants.KREP_STRING).getValue();
 			}
-			if (fields.get(GlobalConstants.KACT_STRING).getState().equals(PropertyField.states[1])) {
+			if (fields.get(GlobalConstants.KACT_STRING).getState().equals(PropertyField.paramStates[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
@@ -365,7 +381,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				+ CompatibilityFixer.getSBMLName(GlobalConstants.KACT_STRING) + " "
 				+ fields.get(GlobalConstants.KACT_STRING).getValue();
 			}
-			if (fields.get(GlobalConstants.KBIO_STRING).getState().equals(PropertyField.states[1])) {
+			if (fields.get(GlobalConstants.KBIO_STRING).getState().equals(PropertyField.paramStates[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
