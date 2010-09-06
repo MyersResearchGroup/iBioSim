@@ -2330,18 +2330,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 		}
 		else if (e.getSource() == saveAsVerilog) {
-			Component comp = tab.getSelectedComponent();
-			String theFile = null;
-			if (comp instanceof JTabbedPane) {
-				theFile = comp.getName();
-				for (Component component : ((JTabbedPane) comp).getComponents()) {
-					if (component instanceof LearnLHPN) {
-						new Lpn2verilog(root + separator + theFile + separator + theFile + ".lpn");
-						if (theFile != null)
-							addToTree(theFile + ".sv");
-					}
-				}
+			new Lpn2verilog(tree.getFile());
+			String theFile = "";
+			if (tree.getFile().lastIndexOf('/') >= 0) {
+				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('/') + 1);
 			}
+			if (tree.getFile().lastIndexOf('\\') >= 0) {
+				theFile = tree.getFile().substring(tree.getFile().lastIndexOf('\\') + 1);
+			}
+			addToTree(theFile.replace(".lpn", ".sv"));
 		}
 		else if (e.getSource() == saveSbml) {
 			Component comp = tab.getSelectedComponent();
@@ -12287,7 +12284,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				if (learn) {
 					run.setEnabled(false);
 					saveModel.setEnabled(true);
-					saveAsVerilog.setEnabled(true);
+					//saveAsVerilog.setEnabled(true);
+					saveAsVerilog.setEnabled(false);
 				}
 				else {
 					run.setEnabled(true);
@@ -12531,7 +12529,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				// component).getViewLhpnEnabled());
 				// saveParam.setEnabled(true);
 				saveModel.setEnabled(true);
-				saveAsVerilog.setEnabled(true);
+				//saveAsVerilog.setEnabled(true);
+				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
 			}
@@ -13127,7 +13126,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				// saveas too???
 				// saveParam.setEnabled(false);
 				saveModel.setEnabled(false);
-				saveAsVerilog.setEnabled(false);
+				saveAsVerilog.setEnabled(true);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
 			}
