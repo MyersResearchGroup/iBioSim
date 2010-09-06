@@ -166,8 +166,6 @@ public class LearnModel { // added ItemListener SB
 
 	private boolean binError;
 
-//	private ArrayList<String> stables;
-	
 	private HashMap<String, ArrayList<String>> destabMap, stabMap;
 	
 	// Pattern lParenR = Pattern.compile("\\(+"); //SB
@@ -177,17 +175,23 @@ public class LearnModel { // added ItemListener SB
 	// Pattern falseR = Pattern.compile("false",Pattern.CASE_INSENSITIVE); //pass the I flag to be case insensitive
 
 	/**
-	 * This is the constructor for the Learn class. It initializes all the input
-	 * fields, puts them on panels, adds the panels to the frame, and then
-	 * displays the frame.
+	 * This is a constructor for learning LPN models from simulation data. This could
+	 * have been just a method in LearnLHPN class but because it started with 
+	 * a lot of global variables/fields, it ended up being a constructor in a 
+	 * separate class.
+	 * 
+	 *  Version 1 : Kevin Jones (Perl)
+	 *  Version 2 : Scott Little (data2lhpn.py)
+	 *  Version 3 : Satish Batchu (LearnModel.java)
 	 */
+	
 	public LhpnFile learnModel(String directory, Log log, BioSim biosim, int moduleNumber, HashMap<String, ArrayList<Double>> thresh, HashMap<String,Double> tPar, ArrayList<Variable> rVarsL, HashMap<String, ArrayList<String>> dstab, HashMap<String, ArrayList<String>> stab, Double vScaleFactor, Double dScaleFactor, String failProp) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		} else {
 			separator = File.separator;
 		}
-
+		// Assign the parameters received from the call to the fields of this class
 		this.biosim = biosim;
 		this.log = log;
 		this.directory = directory;
@@ -202,13 +206,12 @@ public class LearnModel { // added ItemListener SB
 			lhpnFile = getFilename[getFilename.length - 1] + ".lpn";
 		else
 			lhpnFile = getFilename[getFilename.length - 1] + moduleNumber + ".lpn";
-
-	//	epsilon = tPar.get("epsilon");
+		//	epsilon = tPar.get("epsilon");
 		pathLengthBin = (int) tPar.get("pathLengthBin").doubleValue();
 		pathLengthVar = (int) tPar.get("pathLengthVar").doubleValue();
 		rateSampling = (int) tPar.get("rateSampling").doubleValue();
 		percent = tPar.get("percent");
-		if (tPar.containsKey("runTime")){
+		if (tPar.containsKey("runTime")){ //only runTime or runLength is required based on gui selection
 			runTime = tPar.get("runTime");
 			runLength = null;
 		} else{ 
@@ -238,20 +241,14 @@ public class LearnModel { // added ItemListener SB
 			File cvgFile = new File(directory + separator + "run.cvg");
 			//cvgFile.createNewFile();
 			BufferedWriter coverage = new BufferedWriter(new FileWriter(cvgFile));
-			//FileOutputStream coverage = new FileOutputStream(cvgFile);
-			
-			int i = 1;
-			
 			g = new LhpnFile(); // The generated lhpn is stored in this object
 			placeInfo = new HashMap<String, Properties>();
 			transitionInfo = new HashMap<String, Properties>();
 			cvgInfo = new HashMap<String, Properties>();
 			transientNetPlaces = new HashMap<String, Properties>();
 			transientNetTransitions = new HashMap<String, Properties>();
-		//	ratePlaces = new ArrayList<String>(); moved this to updateRateInfo on jun 22, 2010. See if this causes problems.
-			if ((failProp != null)){//((failProp.equals(""))){ //  && (moduleNumber == 0) ???
+			if ((failProp != null)){ //Construct a property net with single place and a fail trans
 				propPlaces = new ArrayList<String>();
-				//BufferedReader prop = new BufferedReader(new FileReader(directory + separator + "learn" + ".prop"));
 				Properties p0 = new Properties();
 				placeInfo.put("failProp", p0);
 				p0.setProperty("placeNum", numPlaces.toString());
@@ -273,14 +270,15 @@ public class LearnModel { // added ItemListener SB
 			vsFactor = this.valScaleFactor;
 			dmvcValuesUnique = new HashMap<String, Properties>();
 			constVal = new ArrayList<HashMap<String, String>>();
-			while (new File(directory + separator + "run-" + i + ".tsd").exists()) {
+			int tsdFileNum = 1;
+			while (new File(directory + separator + "run-" + tsdFileNum + ".tsd").exists()) {
 				Properties cProp = new Properties();
-				cvgInfo.put(String.valueOf(i), cProp);
+				cvgInfo.put(String.valueOf(tsdFileNum), cProp);
 				cProp.setProperty("places", String.valueOf(0));
 				cProp.setProperty("transitions", String.valueOf(0));
 				cProp.setProperty("rates", String.valueOf(0));
 				cProp.setProperty("delays", String.valueOf(0));
-				tsd = new TSDParser(directory + separator + "run-" + i + ".tsd", biosim,false);
+				tsd = new TSDParser(directory + separator + "run-" + tsdFileNum + ".tsd", biosim,false);
 				data = tsd.getData();
 				if (((destabMap != null) && (destabMap.size() != 0)) || ((stabMap != null) && (stabMap.size() != 0))){
 					out.write("Generating data for stables \n");
@@ -300,18 +298,15 @@ public class LearnModel { // added ItemListener SB
 					tsd.setSpecies(varNames);
 					tsd.outputDAT(directory + separator + "hello.dat");
 				}
-//ORDER REVERSED this first then detectDMV				genBinsRates(divisionsL); // changes made here.. data being used was global before.
-				//genBinsRates("run-" + i + ".tsd", divisionsL);
 				findReqdVarIndices();
-				genBinsRates(thresholds); // moved this above detectDMV on May 11,2010 assuming this order reversal won't affect things.
-				detectDMV(data,false); // changes made here.. data being used was global before.
-			//	genBinsRates(divisionsL); commented after replacing divisionsL with thresholds 
-				updateGraph(bins, rates, i, cProp);
+				genBinsRates(thresholds); 
+				detectDMV(data,false); 
+				updateGraph(bins, rates, tsdFileNum, cProp);
 				//cProp.store(coverage,  "run-" + String.valueOf(i) + ".tsd");
-				coverage.write("run-" + String.valueOf(i) + ".tsd\t");
+				coverage.write("run-" + String.valueOf(tsdFileNum) + ".tsd\t");
 				coverage.write("places : " + cProp.getProperty("places"));
 				coverage.write("\ttransitions : " + cProp.getProperty("transitions") + "\n");
-				i++;
+				tsdFileNum++;
 			}
 			coverage.close();
 			for (String st1 : g.getTransitionList()) {
@@ -344,25 +339,10 @@ public class LearnModel { // added ItemListener SB
 					g.addContinuous(v.getName(), initCond);
 				}
 			}
-			//g.addOutput("fail", "false");
-			HashMap<String, ArrayList<Double>> scaledThresholds; // scaledThresholds are scaleDiv
-			// temporary
-		/*	Pattern pat = Pattern.compile("-*[0-9]+\\.*[0-9]*");
-	        Matcher m = pat.matcher(failProp);
-	        while(m.find()){
-	        	failProp = m.replaceFirst(String.valueOf(Double.parseDouble(m.group())*100.0));
-	        }
-	        System.out.println(failProp);
-			for (String t : g.getTransitionList()) {
-				if ((g.getPreset(t) != null) && (placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("PROP"))){
-					g.addEnabling(t, failProp);	
-				}
-			} */
-			// end temporary
-			
+			HashMap<String, ArrayList<Double>> scaledThresholds; 
 			scaledThresholds = normalize();
-		//	globalValueScaling.setText(Double.toString(valScaleFactor));
-		//	globalDelayScaling.setText(Double.toString(delayScaleFactor));
+			//	globalValueScaling.setText(Double.toString(valScaleFactor));
+			//	globalDelayScaling.setText(Double.toString(delayScaleFactor));
 			initCond = new Properties(); 
 			for (Variable v : reqdVarsL) {	// Updating with scaled initial values & rates
 				if (v.isDmvc()) {
@@ -606,11 +586,9 @@ public class LearnModel { // added ItemListener SB
 						}
 					}
 				}
-				if (failProp != null){ //(!failProp.equals("")){
+				if (failProp != null){
 					if ((g.getPreset(t) != null) && (!isTransientTransition(t)) && (placeInfo.get(getPlaceInfoIndex(g.getPreset(t)[0])).getProperty("type").equalsIgnoreCase("PROP"))){
 						g.addEnabling(t, failProp);
-						//g.addBoolAssign(t, "fail", "true"); // fail would be the variable name
-						//g.addProperty(failProp);
 					}
 				}
 			}
