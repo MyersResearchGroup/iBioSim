@@ -4253,10 +4253,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else {
 							if (overwrite(root + separator + simName, simName)) {
 								String f = new String(root + separator + simName);
-								SBMLDocument document = new SBMLDocument();
+								SBMLDocument document = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 								document.createModel();
 								// document.setLevel(2);
-								document.setLevelAndVersion(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 								Compartment c = document.getModel().createCompartment();
 								c.setId("default");
 								c.setSize(1.0);

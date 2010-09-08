@@ -409,8 +409,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			createFunction(model, "priority", "Priority expression", "lambda(d,p,d)");
 		}
 		else {
-			document = new SBMLDocument();
-			document.setLevelAndVersion(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+			document = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 			model = document.createModel();
 		}
 
