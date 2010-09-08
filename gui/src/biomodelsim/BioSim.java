@@ -2885,6 +2885,18 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("createSBML")) {
 			try {
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (tab
+							.getTitleAt(i)
+							.equals(
+									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+						tab.setSelectedIndex(i);
+						if (save(i, 0) == 0) {
+							return;
+						}
+						break;
+					}
+				}
 				String theFile = "";
 				String filename = tree.getFile();
 				GCMFile gcm = new GCMFile(root);
@@ -2939,6 +2951,18 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		else if (e.getActionCommand().equals("createLHPN")) {
 			try {
+				for (int i = 0; i < tab.getTabCount(); i++) {
+					if (tab
+							.getTitleAt(i)
+							.equals(
+									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+						tab.setSelectedIndex(i);
+						if (save(i, 0) == 0) {
+							return;
+						}
+						break;
+					}
+				}
 				String theFile = "";
 				String filename = tree.getFile();
 				GCMFile gcm = new GCMFile(root);
@@ -4253,7 +4277,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						else {
 							if (overwrite(root + separator + simName, simName)) {
 								String f = new String(root + separator + simName);
-								SBMLDocument document = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+								SBMLDocument document = new SBMLDocument(BioSim.SBML_LEVEL,
+										BioSim.SBML_VERSION);
 								document.createModel();
 								// document.setLevel(2);
 								Compartment c = document.getModel().createCompartment();
@@ -12283,7 +12308,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				if (learn) {
 					run.setEnabled(false);
 					saveModel.setEnabled(true);
-					//saveAsVerilog.setEnabled(true);
+					// saveAsVerilog.setEnabled(true);
 					saveAsVerilog.setEnabled(false);
 				}
 				else {
@@ -12528,7 +12553,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				// component).getViewLhpnEnabled());
 				// saveParam.setEnabled(true);
 				saveModel.setEnabled(true);
-				//saveAsVerilog.setEnabled(true);
+				// saveAsVerilog.setEnabled(true);
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
