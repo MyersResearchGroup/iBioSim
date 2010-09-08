@@ -8,6 +8,7 @@ import java.util.regex.*;
 import javax.swing.*;
 
 import org.sbml.libsbml.*;
+
 import biomodelsim.*;
 import reb2sac.*;
 import buttons.*;
@@ -402,7 +403,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			createFunction(model, "chisq", "Chi-squared distribution", "lambda(nu,nu)");
 			createFunction(model, "laplace", "Laplace distribution", "lambda(a,a)");
 			createFunction(model, "cauchy", "Cauchy distribution", "lambda(a,a)");
-			//createFunction(model, "rayleigh", "Rayleigh distribution", "lambda(s,s*sqrt(pi/2))");
+			// createFunction(model, "rayleigh", "Rayleigh distribution",
+			// "lambda(s,s*sqrt(pi/2))");
 			createFunction(model, "poisson", "Poisson distribution", "lambda(mu,mu)");
 			createFunction(model, "binomial", "Binomial distribution", "lambda(p,n,p*n)");
 			createFunction(model, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
@@ -2208,10 +2210,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		if (reacParameters.getSelectedIndex() != -1) {
 			String v = ((String) reacParameters.getSelectedValue()).split(" ")[0];
 			if (reactions.getSelectedIndex() != -1) {
-				Reaction reaction = document.getModel().getReaction(
-						((String) reactions.getSelectedValue()).split(" ")[0]);
-				String[] vars = myFormulaToString(reaction.getKineticLaw().getMath()).split(
-						" |\\(|\\)|\\,");
+				String kinetic = kineticLaw.getText().trim();
+				String[] vars = new String[0];
+				if (!kinetic.equals("")) {
+					vars = myFormulaToString(myParseFormula(kineticLaw.getText().trim())).split(
+							" |\\(|\\)|\\,");
+				}
 				for (int j = 0; j < vars.length; j++) {
 					if (vars[j].equals(v)) {
 						JOptionPane
@@ -2222,12 +2226,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						return;
 					}
 				}
-				for (int j = 0; j < reaction.getNumProducts(); j++) {
-					if (reaction.getProduct(j).isSetSpecies()) {
-						String specRef = reaction.getProduct(j).getSpecies();
-						if (reaction.getProduct(j).isSetStoichiometryMath()) {
-							vars = myFormulaToString(
-									reaction.getProduct(j).getStoichiometryMath().getMath()).split(
+				for (SpeciesReference p : changedProducts) {
+					if (p.isSetSpecies()) {
+						String specRef = p.getSpecies();
+						if (p.isSetStoichiometryMath()) {
+							vars = myFormulaToString(p.getStoichiometryMath().getMath()).split(
 									" |\\(|\\)|\\,");
 							for (int k = 0; k < vars.length; k++) {
 								if (vars[k].equals(v)) {
@@ -2241,13 +2244,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 					}
 				}
-				for (int j = 0; j < reaction.getNumReactants(); j++) {
-					if (reaction.getReactant(j).isSetSpecies()) {
-						String specRef = reaction.getReactant(j).getSpecies();
-						if (reaction.getReactant(j).isSetStoichiometryMath()) {
-							vars = myFormulaToString(
-									reaction.getReactant(j).getStoichiometryMath().getMath())
-									.split(" |\\(|\\)|\\,");
+				for (SpeciesReference r : changedReactants) {
+					if (r.isSetSpecies()) {
+						String specRef = r.getSpecies();
+						if (r.isSetStoichiometryMath()) {
+							vars = myFormulaToString(r.getStoichiometryMath().getMath()).split(
+									" |\\(|\\)|\\,");
 							for (int k = 0; k < vars.length; k++) {
 								if (vars[k].equals(v)) {
 									JOptionPane.showMessageDialog(biosim.frame(),
