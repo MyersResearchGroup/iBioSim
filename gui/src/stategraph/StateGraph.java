@@ -221,12 +221,10 @@ public class StateGraph implements Runnable {
 	public boolean canPerformMarkovianAnalysis() {
 		for (String trans : lhpn.getTransitionList()) {
 			if (!lhpn.isExpTransitionRateTree(trans)) {
-				if (lhpn.getDelayTree(trans).evaluateExp(null) != 0) {
-					JOptionPane.showMessageDialog(null,
-							"LPN has transitions without exponential delay.",
-							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
-					return false;
-				}
+				JOptionPane.showMessageDialog(null,
+						"LPN has transitions without exponential delay.",
+						"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
+				return false;
 			}
 			for (String var : lhpn.getVariables()) {
 				if (lhpn.isRandomBoolAssignTree(trans, var)) {
@@ -286,17 +284,19 @@ public class StateGraph implements Runnable {
 										double transProb = 0.0;
 										if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
 											if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
-												if (!lhpn.isExpTransitionRateTree(prev
-														.getTransition())
-														&& lhpn.getDelayTree(prev.getTransition())
-																.evaluateExp(null) == 0) {
-													transProb = 1.0;
-												}
-												else {
-													transProb = lhpn.getTransitionRateTree(
-															prev.getTransition()).evaluateExp(
-															prev.getState().getVariables());
-												}
+												// if
+												// (!lhpn.isExpTransitionRateTree(prev
+												// .getTransition())
+												// &&
+												// lhpn.getDelayTree(prev.getTransition())
+												// .evaluateExp(null) == 0) {
+												// transProb = 1.0;
+												// }
+												// else {
+												transProb = lhpn.getTransitionRateTree(
+														prev.getTransition()).evaluateExp(
+														prev.getState().getVariables());
+												// }
 											}
 										}
 										else {
@@ -797,19 +797,22 @@ public class StateGraph implements Runnable {
 				transitionSum = 0;
 				for (StateTransitionPair next : nextStates) {
 					if (lhpn.getTransitionRateTree(next.getTransition()) != null) {
-						if (!lhpn.isExpTransitionRateTree(next.getTransition())
-								&& lhpn.getDelayTree(next.getTransition()).evaluateExp(null) == 0) {
-							if (n == null || next.equals(n)) {
-								return 1.0;
-							}
-							else {
-								return 0.0;
-							}
-						}
-						else {
-							transitionSum += lhpn.getTransitionRateTree(next.getTransition())
-									.evaluateExp(variables);
-						}
+						// if
+						// (!lhpn.isExpTransitionRateTree(next.getTransition())
+						// &&
+						// lhpn.getDelayTree(next.getTransition()).evaluateExp(null)
+						// == 0) {
+						// if (n == null || next.equals(n)) {
+						// return 1.0;
+						// }
+						// else {
+						// return 0.0;
+						// }
+						// }
+						// else {
+						transitionSum += lhpn.getTransitionRateTree(next.getTransition())
+								.evaluateExp(variables);
+						// }
 					}
 					else {
 						transitionSum += 1.0;
