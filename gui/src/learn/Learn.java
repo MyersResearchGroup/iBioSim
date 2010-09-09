@@ -1339,6 +1339,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				if (new File(directory + separator + "run.log").exists()) {
 					viewLog.setEnabled(true);
 				}
+				biosim.enableTabMenu(biosim.getTab().getSelectedIndex());
 			}
 		}
 		catch (Exception e1) {
