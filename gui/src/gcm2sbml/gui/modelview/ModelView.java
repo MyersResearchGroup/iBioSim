@@ -445,15 +445,15 @@ public class ModelView extends JPanel implements ActionListener {
 						String type;
 						String constType;
 						if(activationButton.isSelected()){
-							isBio = "no"; type = "activation"; constType = GlobalConstants.ACTIVATION;
+							isBio = "no"; type = InfluencePanel.types[1]; constType = GlobalConstants.ACTIVATION;
 						}else if(inhibitionButton.isSelected()){
-							isBio = "no"; type = "inhibition"; constType = GlobalConstants.REPRESSION;
+							isBio = "no"; type = InfluencePanel.types[0]; constType = GlobalConstants.REPRESSION;
 						}else if(bioActivationButton.isSelected()){
-							isBio = "yes"; type = "activation"; constType = GlobalConstants.ACTIVATION;
+							isBio = "yes"; type = InfluencePanel.types[1]; constType = GlobalConstants.ACTIVATION;
 						}else if(bioInhibitionButton.isSelected()){
-							isBio = "yes"; type = "inhibition"; constType = GlobalConstants.REPRESSION;
+							isBio = "yes"; type = InfluencePanel.types[0]; constType = GlobalConstants.REPRESSION;
 						}else if(noInfluenceButton.isSelected()){
-							isBio = ""; type = "no influence"; constType = GlobalConstants.NOINFLUENCE;
+							isBio = ""; type = InfluencePanel.types[2]; constType = GlobalConstants.NOINFLUENCE;
 						}else{
 							throw(new Error("No influence button was pressed!"));
 						}
