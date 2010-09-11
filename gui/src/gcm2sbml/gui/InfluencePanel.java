@@ -496,7 +496,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	}
 
 	private String[] options = { "Ok", "Cancel" };
-	private static String[] types = { "repression", "activation", "no influence" };
+	public static String[] types = { "repression", "activation", "no influence" };
 	private static String[] bio = { "no", "yes" };
 	private HashMap<String, PropertyField> fields = null;
 	private GCMFile gcm = null;
