@@ -103,6 +103,7 @@ public class ModelView extends JPanel implements ActionListener {
 	AbstractButton addSpeciesButton;
 	AbstractButton addComponentButton;
 	AbstractButton editPromoterButton;
+	AbstractButton selfInfluenceButton;
 	
 	AbstractButton activationButton;
 	AbstractButton inhibitionButton;
@@ -123,6 +124,8 @@ public class ModelView extends JPanel implements ActionListener {
 		toolBar.add(addComponentButton);
 		editPromoterButton = Utils.makeRadioToolButton("promoter_mode.png", "", "P", this, modeButtonGroup);
 		toolBar.add(editPromoterButton);
+		selfInfluenceButton = Utils.makeRadioToolButton("self_influence.png", "", "Create Self Influences", this, modeButtonGroup);
+		toolBar.add(selfInfluenceButton);
 		//toolBar.add(Utils.makeToolButton("", "addInfluence", "Add Influence", this));
 
 		toolBar.addSeparator();
@@ -238,6 +241,17 @@ public class ModelView extends JPanel implements ActionListener {
 								}
 								graph.buildGraph();
 								gcm2sbml.refresh();
+							}
+						}else if(selfInfluenceButton.isSelected()){
+							if(cell.isEdge() == false){
+								// the user clicked to add a self-influence to a component.
+								//Object parent, String id, Object value, Object source, Object target, String style
+								mxCell edge = new mxCell();
+								edge.setEdge(true);
+								edge.setSource(cell);
+								edge.setTarget(cell);
+								tryAddAssociationBetweenCells(edge);
+								
 							}
 						}
 					}
@@ -398,102 +412,113 @@ public class ModelView extends JPanel implements ActionListener {
 							return;
 						}
 						
-						// figure out if we need to connect to a component
-						mxCell source = (mxCell)edge.getSource();
-						mxCell target = (mxCell)edge.getTarget();
-						//string source = edge.getSource().getValue();
-						int numComponents = 0;
-						if(graph.getCellType(source)==GlobalConstants.COMPONENT)
-							numComponents++;
-						if(graph.getCellType(target)==GlobalConstants.COMPONENT)
-							numComponents++;
-						// bail out if the user tries to connect two components.
-						if(numComponents == 2){
-							JOptionPane.showMessageDialog(biosim.frame(), "Sorry, you can't connect a component directly to another component. Please go through a species.");
-							//graph.removeCells(cells);
-							graph.buildGraph();
-							return;
-						}
-
-						
-						String sourceID = source.getId();
-						String targetID = target.getId();
-						
-						if(numComponents == 1){
-							Properties sourceProp = graph.getCellProperties(source);
-							Properties targetProp = graph.getCellProperties(target);
-							String port = null;
-							if(graph.getCellType(source) == GlobalConstants.COMPONENT){
-								// source is a component
-								try{
-									port = connectComponentToSpecies(sourceProp, targetID);
-								}catch(ListChooser.EmptyListException e){
-									JOptionPane.showMessageDialog(biosim.frame(), "Sorry, this component has no output ports.");
-									graph.removeCells(cells);
-									return;
-								}
-							}else{
-								// target is a component
-								try{
-									port = connectSpeciesToComponent(sourceID, targetProp);
-								}catch(ListChooser.EmptyListException e){
-									JOptionPane.showMessageDialog(biosim.frame(), "Sorry, this component has no input ports.");	
-									//graph.removeCells(cells);
-									// rebuild the graph to get rid of the edge that was created.
-									// Better then explicitly removing the edge because that will
-									// call an event to disconnect the edge and throw an exception 
-									// due to the edge not really being connected.
-									graph.buildGraph();
-									return;
-								}
-							}
-							if(port == null){
-								graph.removeCells(cells);
-								return;
-							}
-							
-							gcm2sbml.refresh();
-							gcm2sbml.setDirty(true);
-							graph.updateComponentConnectionVisuals((mxCell)cells[0], port);
-
-							graph.buildGraph();
-							return;
-						}
-						
-						// if flow gets here then we are connecting a species to another
-						// species.
-
-						
-						String isBio;
-						String type;
-						String constType;
-						if(activationButton.isSelected()){
-							isBio = "no"; type = InfluencePanel.types[1]; constType = GlobalConstants.ACTIVATION;
-						}else if(inhibitionButton.isSelected()){
-							isBio = "no"; type = InfluencePanel.types[0]; constType = GlobalConstants.REPRESSION;
-						}else if(bioActivationButton.isSelected()){
-							isBio = "yes"; type = InfluencePanel.types[1]; constType = GlobalConstants.ACTIVATION;
-						}else if(bioInhibitionButton.isSelected()){
-							isBio = "yes"; type = InfluencePanel.types[0]; constType = GlobalConstants.REPRESSION;
-						}else if(noInfluenceButton.isSelected()){
-							isBio = ""; type = InfluencePanel.types[2]; constType = GlobalConstants.NOINFLUENCE;
-						}else{
-							throw(new Error("No influence button was pressed!"));
-						}
-												
-						String promoter = "default";
-						String name = InfluencePanel.buildName(sourceID, targetID, type, isBio, promoter);
-						
-						graph.addInfluence(edge, name, constType);
-						graph.buildGraph();
-						gcm2sbml.refresh();
-						gcm2sbml.setDirty(true);
-
+						tryAddAssociationBetweenCells(edge);
+					
 					}
 				}
 
 			}
 		});
+	}
+	
+	/**
+	 * Tries to properly connect an edge that is connected in the graph. Called 
+	 * right after the graph library adds an edge, this function will remove
+	 * that edge if it cannot be connected properly (for instance, if it is
+	 * connected between two components).
+	 * @param edge
+	 */
+	private void tryAddAssociationBetweenCells(mxCell edge){
+		// figure out if we need to connect to a component
+		mxCell source = (mxCell)edge.getSource();
+		mxCell target = (mxCell)edge.getTarget();
+		//string source = edge.getSource().getValue();
+		int numComponents = 0;
+		if(graph.getCellType(source)==GlobalConstants.COMPONENT)
+			numComponents++;
+		if(graph.getCellType(target)==GlobalConstants.COMPONENT)
+			numComponents++;
+		// bail out if the user tries to connect two components.
+		if(numComponents == 2){
+			JOptionPane.showMessageDialog(biosim.frame(), "Sorry, you can't connect a component directly to another component. Please go through a species.");
+			//graph.removeCells(cells);
+			graph.buildGraph();
+			return;
+		}
+
+		
+		String sourceID = source.getId();
+		String targetID = target.getId();
+		
+		if(numComponents == 1){
+			Properties sourceProp = graph.getCellProperties(source);
+			Properties targetProp = graph.getCellProperties(target);
+			String port = null;
+			if(graph.getCellType(source) == GlobalConstants.COMPONENT){
+				// source is a component
+				try{
+					port = connectComponentToSpecies(sourceProp, targetID);
+				}catch(ListChooser.EmptyListException e){
+					JOptionPane.showMessageDialog(biosim.frame(), "Sorry, this component has no output ports.");
+					graph.buildGraph();
+					return;
+				}
+			}else{
+				// target is a component
+				try{
+					port = connectSpeciesToComponent(sourceID, targetProp);
+				}catch(ListChooser.EmptyListException e){
+					JOptionPane.showMessageDialog(biosim.frame(), "Sorry, this component has no input ports.");	
+					//graph.removeCells(cells);
+					// rebuild the graph to get rid of the edge that was created.
+					// Better then explicitly removing the edge because that will
+					// call an event to disconnect the edge and throw an exception 
+					// due to the edge not really being connected.
+					graph.buildGraph();
+					return;
+				}
+			}
+			if(port == null){
+				graph.buildGraph();
+				return;
+			}
+			
+			gcm2sbml.refresh();
+			gcm2sbml.setDirty(true);
+			graph.updateComponentConnectionVisuals(edge, port);
+
+			graph.buildGraph();
+			return;
+		}
+		
+		// if flow gets here then we are connecting a species to another
+		// species.
+
+		
+		String isBio;
+		String type;
+		String constType;
+		if(activationButton.isSelected()){
+			isBio = "no"; type = InfluencePanel.types[1]; constType = GlobalConstants.ACTIVATION;
+		}else if(inhibitionButton.isSelected()){
+			isBio = "no"; type = InfluencePanel.types[0]; constType = GlobalConstants.REPRESSION;
+		}else if(bioActivationButton.isSelected()){
+			isBio = "yes"; type = InfluencePanel.types[1]; constType = GlobalConstants.ACTIVATION;
+		}else if(bioInhibitionButton.isSelected()){
+			isBio = "yes"; type = InfluencePanel.types[0]; constType = GlobalConstants.REPRESSION;
+		}else if(noInfluenceButton.isSelected()){
+			isBio = ""; type = InfluencePanel.types[2]; constType = GlobalConstants.NOINFLUENCE;
+		}else{
+			throw(new Error("No influence button was pressed!"));
+		}
+								
+		String promoter = "default";
+		String name = InfluencePanel.buildName(sourceID, targetID, type, isBio, promoter);
+		
+		graph.addInfluence(edge, name, constType);
+		graph.buildGraph();
+		gcm2sbml.refresh();
+		gcm2sbml.setDirty(true);
 	}
 	
 	/**
