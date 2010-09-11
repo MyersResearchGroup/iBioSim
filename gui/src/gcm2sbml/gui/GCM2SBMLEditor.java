@@ -673,6 +673,38 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	}
 
 	public void createSBML(String stem, String direct) {
+		GCMFile gcm = new GCMFile(path);
+		gcm.load(path + separator + refFile);
+		HashMap<String, Properties> elements = this.gcm.getSpecies();
+		for (String key : elements.keySet()) {
+			for (Object prop : elements.get(key).keySet()) {
+				if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID) && !prop.equals(GlobalConstants.TYPE)) {
+					gcm.getSpecies().get(key).put(prop, elements.get(key).get(prop));
+				}
+			}			
+		}
+		elements = this.gcm.getInfluences();
+		for (String key : elements.keySet()) {
+			for (Object prop : elements.get(key).keySet()) {
+				if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.PROMOTER) && !prop.equals(GlobalConstants.BIO) && !prop.equals(GlobalConstants.TYPE)) {
+					gcm.getInfluences().get(key).put(prop, elements.get(key).get(prop));
+				}
+			}
+		}
+		elements = this.gcm.getPromoters();
+		for (String key : elements.keySet()) {
+			for (Object prop : elements.get(key).keySet()) {
+				if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID)) {
+					gcm.getPromoters().get(key).put(prop, elements.get(key).get(prop));
+				}
+			}
+		}
+		HashMap<String, String> params = this.gcm.getGlobalParameters();
+		ArrayList<Object> remove = new ArrayList<Object>();
+		for (String key : params.keySet()) {
+			gcm.setParameter(key, params.get(key));
+			remove.add(key);
+		}
 		try {
 			FileOutputStream out = new FileOutputStream(new File(paramFile));
 			out.write((refFile + "\n").getBytes());
