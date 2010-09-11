@@ -182,8 +182,19 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			String id = fields.get(GlobalConstants.ID).getValue();
 
-			// Check to see if we need to add or edit
+			
 			Properties property = new Properties();
+			
+			// copy the old values into the new property. Some will then be overwritten , 
+			// but others (such as positioning info) will not and need to be preserved.
+			if(oldName != null){
+				for(Object s:gcm.getSpecies().get(oldName).keySet()){
+					String k = s.toString();
+					String v = (gcm.getSpecies().get(oldName).getProperty(k)).toString();
+					property.put(k, v);
+				}
+			}
+			
 			for (PropertyField f : fields.values()) {
 				if (f.getState() == null || f.getState().equals(PropertyField.states[1]) || f.getState().equals(PropertyField.paramStates[1])) {
 					property.put(f.getKey(), f.getValue());
