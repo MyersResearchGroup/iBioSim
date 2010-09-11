@@ -45,6 +45,10 @@ public class BioGraph extends mxGraph {
 	private GCMFile gcm;
 	private GCM2SBMLEditor gcm2sbml; // needed to pull up editor windows
 	
+	public final String CELL_NOT_FULLY_CONNECTED = "cell not fully connected";
+	private final String CELL_VALUE_NOT_FOUND = "cell value not found";
+	
+	
 	private void initializeMaps(){
 		speciesToMxCellMap = new HashMap<String, mxCell>();
 		componentsToMxCellMap = new HashMap<String, mxCell>();
@@ -109,20 +113,24 @@ public class BioGraph extends mxGraph {
 	 * @param cell
 	 */
 	public String getCellType(mxCell cell){
-		if(cell.isEdge())
-			if(getCellType(cell.getSource()) == GlobalConstants.COMPONENT || getCellType(cell.getTarget()) == GlobalConstants.COMPONENT){
+		if(cell.isEdge()){
+			String sourceType = getCellType(cell.getSource());
+			String targetType = getCellType(cell.getTarget());
+			if(sourceType == CELL_VALUE_NOT_FOUND || targetType == CELL_VALUE_NOT_FOUND){
+				return CELL_NOT_FULLY_CONNECTED;
+			}else if(sourceType == GlobalConstants.COMPONENT || targetType == GlobalConstants.COMPONENT){
 				return GlobalConstants.COMPONENT_CONNECTION;
 			}else{
 				return GlobalConstants.INFLUENCE;
 			}
-		else{
+		}else{
 			Properties prop = ((CellValueObject)(cell.getValue())).prop;
 			if(gcm.getSpecies().containsValue(prop))
 				return GlobalConstants.SPECIES;
 			else if(gcm.getComponents().containsValue(prop))
 				return GlobalConstants.COMPONENT;
 			else
-				throw new Error("The type of this cell could not be determined!");
+				return CELL_VALUE_NOT_FOUND;
 		}
 	}
 	public String getCellType(mxICell cell){return getCellType((mxCell)cell);}

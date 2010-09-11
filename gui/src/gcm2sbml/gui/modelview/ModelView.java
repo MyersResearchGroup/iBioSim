@@ -332,23 +332,39 @@ public class ModelView extends JPanel implements ActionListener {
 					for(Object ocell:cells){
 						mxCell cell = (mxCell)ocell;
 						System.out.print(cell.getId() + " Deleting.\n");
+						
 						String type = graph.getCellType(cell);
 						if(type == GlobalConstants.INFLUENCE){
-							gcm.getInfluences().remove(cell.getId());
-							gcm.getInfluences().remove(cell.getId());
-							graph.influenceRemoved(cell.getId());
+							//gcm.getInfluences().remove(cell.getId()); // why am I doing this twice? Was this a CVS glitch, is this really intentional, or was I up too late when I wrote it? TODO: get rid of this or put in a comment explaining whats up.
+							//gcm.getInfluences().remove(cell.getId());
+							gcm.removeInfluence(cell.getId());
+							//graph.influenceRemoved(cell.getId());
 						}else if(type == GlobalConstants.SPECIES){
-							gcm.getSpecies().remove(cell.getId());
-							gcm.getSpecies().remove(cell.getId());
-							graph.speciesRemoved(cell.getId());
+							//gcm.getSpecies().remove(cell.getId());
+							//gcm.getSpecies().remove(cell.getId());
+							if(gcm.speciesUsedInOtherGCM(cell.getId())){
+								JOptionPane.showMessageDialog(biosim.frame(), "Sorry, the species \""+cell.getId()+"\" is used in another component and cannot be removed.");
+								continue;
+							}
+							gcm.removeSpeciesAndAssociations(cell.getId());
+							//gcm.removeSpecies(cell.getId());
+							//graph.speciesRemoved(cell.getId());
+							//graph.buildGraph();
 						}else if(type == GlobalConstants.COMPONENT){
 							gcm.getComponents().remove(cell.getId());
 						}else if(type == GlobalConstants.COMPONENT_CONNECTION){
 							removeComponentConnection(cell);
+						}else if(type == graph.CELL_NOT_FULLY_CONNECTED){
+							// do nothing. This can happen if the user deletes a species that is connected
+							// to influences or connections. The influences or connections will be 
+							// removed, but then the graph library will still fire an event to remove
+							// the now defunct edge. In that case this branch will be called and should
+							// do nothing.
 						}
 					}
 					gcm2sbml.setDirty(true);
 					gcm2sbml.refresh();
+					graph.buildGraph();
 				}
 			}
 		});
@@ -377,7 +393,8 @@ public class ModelView extends JPanel implements ActionListener {
 						// the user dragged an edge and let it go when it wasn't connected
 						// to anything. Remove it and return if this is the case.
 						if(edge.getTarget() == null){
-							graph.removeCells(cells);
+							//graph.removeCells(cells);
+							graph.buildGraph();
 							return;
 						}
 						
@@ -393,7 +410,8 @@ public class ModelView extends JPanel implements ActionListener {
 						// bail out if the user tries to connect two components.
 						if(numComponents == 2){
 							JOptionPane.showMessageDialog(biosim.frame(), "Sorry, you can't connect a component directly to another component. Please go through a species.");
-							graph.removeCells(cells);
+							//graph.removeCells(cells);
+							graph.buildGraph();
 							return;
 						}
 
@@ -420,7 +438,12 @@ public class ModelView extends JPanel implements ActionListener {
 									port = connectSpeciesToComponent(sourceID, targetProp);
 								}catch(ListChooser.EmptyListException e){
 									JOptionPane.showMessageDialog(biosim.frame(), "Sorry, this component has no input ports.");	
-									graph.removeCells(cells);
+									//graph.removeCells(cells);
+									// rebuild the graph to get rid of the edge that was created.
+									// Better then explicitly removing the edge because that will
+									// call an event to disconnect the edge and throw an exception 
+									// due to the edge not really being connected.
+									graph.buildGraph();
 									return;
 								}
 							}
@@ -534,7 +557,8 @@ public class ModelView extends JPanel implements ActionListener {
 		}else
 			throw new Error("removeComponentConnection was called with a cell in which neither the source nor target was a component!");
 		
-		gcm.disconnectComponentAndSpecies(comp, speciesId);
+		if(gcm.checkDisconnectComponentAndSpecies(comp, speciesId, true) == false)
+			throw new Error("Species was not connected to the given component!");
 	}
 	
 	////// Copied from mxGraph example file BasicGraphEditor.java

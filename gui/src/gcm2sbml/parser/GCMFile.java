@@ -1431,6 +1431,10 @@ public class GCMFile {
 			species.remove(name);
 		}
 	}
+	public void removeSpeciesAndAssociations(String name){
+		checkRemoveSpeciesAssociations(name, true);
+		removeSpecies(name);
+	}
 
 	public HashMap<String, Properties> getSpecies() {
 		return species;
@@ -1486,22 +1490,23 @@ public class GCMFile {
 	}
 	
 	/**
-	 * Given a component and the name of a species it is connected to, remove that connection.
+	 * Given a component and the name of a species, return true if that species is connected
+	 * to that component. Optionally disconnect them as well.
 	 */
-	public void disconnectComponentAndSpecies(Properties comp, String speciesId){
+	public boolean checkDisconnectComponentAndSpecies(Properties comp, String speciesId, boolean disconnect){
 		// now figure out which port the species is connected to
 		for(Object p:comp.keySet()){
-			//if(p.toString().)
 			String key = p.toString();
 			String value = (String)comp.get(key);
 			if(value.equals(speciesId) && comp.containsKey("type_" + key)){
-				comp.remove(key);
-				comp.remove("type_" + key);
-				return;
+				if(disconnect){
+					comp.remove(key);
+					comp.remove("type_" + key);
+				}
+				return true;
 			}
 		}
-		
-		throw new Error("Could not find the given species in disconnectComponentAndSpecies()!");
+		return false;
 	}
 	
 	public String getComponentPortMap(String s) {
@@ -1550,18 +1555,39 @@ public class GCMFile {
 	}
 
 	/**
-	 * Checks to see if removing specie is okay
-	 * 
-	 * @param name
-	 *            specie to remove
-	 * @return true if specie is in no influences
+	 * looks everywhere to see if the given species is connected to anything.
+	 * Returns true if it is. Also will delete the connections if remove parameter is true.
+	 * NOTE: This function does not check outside GCM files. Use speciesUsedInOtherGCM() for that.
+	 * @param remove
+	 * @return
 	 */
-	public boolean removeSpeciesCheck(String name) {
-		for (String s : influences.keySet()) {
-			if (s.contains(name)) {
-				return false;
+	private boolean checkRemoveSpeciesAssociations(String name, boolean remove){
+		boolean ret = false;
+		
+		boolean changed;
+		do{
+			changed = false;
+			for (String s : influences.keySet()) {
+				if (s.contains(name)) {
+					ret = true;
+					if(remove){
+						influences.remove(s);
+						// start over because the keyset changed and the forloop could be broken.
+						changed = true;
+						break;
+					}
+				}
 			}
+		}while(changed == true);
+		for(String c:getComponents().keySet()){
+			if(checkDisconnectComponentAndSpecies(getComponents().get(c), name, remove))
+				ret = true;
 		}
+		// TODO: also make sure speciesUsedInOtherGCM() gets called when needed.
+		return ret;
+	}
+	
+	public boolean speciesUsedInOtherGCM(String name){
 		if (species.get(name).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)
 				|| species.get(name).getProperty(GlobalConstants.TYPE).equals(
 						GlobalConstants.OUTPUT)) {
@@ -1573,13 +1599,24 @@ public class GCMFile {
 						String compGCM = g.getComponents().get(comp).getProperty("gcm");
 						if (filename.endsWith(compGCM)
 								&& g.getComponents().get(comp).containsKey(name)) {
-							return false;
+							return true;
 						}
 					}
 				}
 			}
 		}
-		return true;
+		return false;
+	}
+	
+	/**
+	 * Checks to see if removing specie is okay
+	 * 
+	 * @param name
+	 *            specie to remove
+	 * @return true if specie is in no influences
+	 */
+	public boolean removeSpeciesCheck(String name) {
+		return !checkRemoveSpeciesAssociations(name, false);
 	}
 	
 	public boolean editSpeciesCheck(String name, String newType) {
