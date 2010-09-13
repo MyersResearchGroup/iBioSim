@@ -60,6 +60,9 @@ public class ModelView extends JPanel implements ActionListener {
 		this.biosim = biosim;
 		this.gcm2sbml = gcm2sbml;
 		this.editable = editable;
+		
+		// initialize everything on creation.
+		display();
 	}
 	
 	/**
