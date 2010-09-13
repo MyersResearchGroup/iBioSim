@@ -558,6 +558,7 @@ public class ModelView extends JPanel implements ActionListener {
 		return port;
 	}
 
+	// TODO: This should probably be moved to GCMFile.java, maybe as a static method?
 	private Object[] getGCMPorts(Properties comp, String type){
 		String fullPath = gcm.getPath() + File.separator + comp.getProperty("gcm");
 		GCMFile compGCM = new GCMFile(gcm.getPath());
