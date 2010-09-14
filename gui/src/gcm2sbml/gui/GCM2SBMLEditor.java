@@ -935,9 +935,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		mainPanel.add(mainPanelNorth, "North");
 		mainPanel.add(mainPanelCenter, "Center");
 		JTabbedPane tab = new JTabbedPane();
-		tab.addTab("Main Elements", mainPanel);
-		tab.addTab("Parameters/Properties", tabPanel);
 		tab.addTab("Schematic", modelView);
+		tab.addTab("Parameters/Properties", tabPanel);
+		tab.addTab("Main Elements", mainPanel);
  		//tab.addTab("Model View", grappaPanel);
 		setLayout(new BorderLayout());
 		if (paramsOnly) {
