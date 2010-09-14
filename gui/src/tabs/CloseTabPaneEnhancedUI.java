@@ -50,10 +50,12 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 		return new CloseTabPaneEnhancedUI(biosim);
 	}
 
+	@Override
 	protected void paintFocusIndicator(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex,
 			Rectangle iconRect, Rectangle textRect, boolean isSelected) {
 	}
 
+	@Override
 	protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w,
 			int h, boolean isSelected) {
 		g.setColor(shadow);
@@ -76,6 +78,7 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 
 	}
 
+	@Override
 	protected void paintContentBorderTopEdge(Graphics g, int tabPlacement, int selectedIndex, int x,
 			int y, int w, int h) {
 
@@ -86,6 +89,7 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 		g.drawLine(x, y, x + w - 2, y);
 	}
 
+	@Override
 	protected void paintContentBorderLeftEdge(Graphics g, int tabPlacement, int selectedIndex, int x,
 			int y, int w, int h) {
 
@@ -97,6 +101,7 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 		g.drawLine(x, y, x, y + h - 3);
 	}
 
+	@Override
 	protected void paintContentBorderBottomEdge(Graphics g, int tabPlacement, int selectedIndex,
 			int x, int y, int w, int h) {
 
@@ -111,6 +116,7 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 
 	}
 
+	@Override
 	protected void paintContentBorderRightEdge(Graphics g, int tabPlacement, int selectedIndex,
 			int x, int y, int w, int h) {
 
@@ -126,6 +132,7 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 
 	}
 
+	@Override
 	protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y,
 			int w, int h, boolean isSelected) {
 		if (isSelected) {
@@ -160,6 +167,7 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 		}
 	}
 
+	@Override
 	protected void paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics,
 			int tabIndex, String title, Rectangle textRect, boolean isSelected) {
 
@@ -204,10 +212,12 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 			setRolloverEnabled(true);
 		}
 
+		@Override
 		public Dimension getPreferredSize() {
 			return new Dimension(16, calculateMaxTabHeight(0));
 		}
 
+		@Override
 		public void paint(Graphics g) {
 			Color origColor;
 			boolean isPressed, isRollOver, isEnabled;
@@ -293,6 +303,7 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 
 	}
 
+	@Override
 	protected CloseTabPaneUI.ScrollableTabButton createScrollableTabButton(int direction) {
 		return new ScrollableTabButton(direction);
 	}

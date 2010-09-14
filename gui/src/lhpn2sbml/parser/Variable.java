@@ -80,10 +80,12 @@ public class Variable {
 		return port.equals(INTERNAL);
 	}
 	
+	@Override
 	public String toString() {
 		return name;
 	}
 	
+	@Override
 	public boolean equals(Object var) {
 		return name.equals(var.toString());
 	}

@@ -33,6 +33,7 @@ public class FieldPanel extends JPanel implements NamedObject, FocusListener {
 		 
 	}
 
+	@Override
 	public String getName() {
 		return super.getName();
 	}

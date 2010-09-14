@@ -188,13 +188,14 @@ public class BioGraph extends mxGraph {
                          Object target,
                          String style)
 	 */
+	@Override
 	public Object insertEdge(Object parent, String id, Object value, Object source, Object target, String style){
 		Object ret = super.insertEdge(parent, id, value, source, target, style);
 		this.influencesToMxCellMap.put(id, (mxCell)ret);
 		return ret;
 	}
 	public mxCell getInfluence(String id){
-		return (mxCell)(influencesToMxCellMap.get(id));
+		return (influencesToMxCellMap.get(id));
 	}
 	
 	/**
@@ -524,6 +525,7 @@ public class BioGraph extends mxGraph {
 	public class CellValueObject extends Object{
 		public Properties prop;
 		public String label;
+		@Override
 		public String toString(){
 			return this.label;
 		}

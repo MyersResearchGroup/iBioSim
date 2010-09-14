@@ -192,6 +192,7 @@ public class ModelView extends JPanel implements ActionListener {
 		
 		// Add a listener for when cells get clicked on.
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter(){
+			@Override
 			public void mouseReleased(MouseEvent e)
 			{
 				if (e.isPopupTrigger()){
@@ -220,7 +221,7 @@ public class ModelView extends JPanel implements ActionListener {
 							String createdID = gcm2sbml.displayChooseComponentDialog(false, null, true);
 							if(createdID != null){
 								graph.centerVertexOverPoint(gcm.getComponents().get(createdID), 
-										(double)e.getX(), (double)e.getY());
+										e.getX(), e.getY());
 								gcm2sbml.setDirty(true);
 								graph.buildGraph();
 								gcm2sbml.refresh();
@@ -274,6 +275,7 @@ public class ModelView extends JPanel implements ActionListener {
 		// Add a special listener for the MAC. Rightclick only works on mousedown,
 		// while on windows it only works on mouseup.
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter(){
+			@Override
 			public void mousePressed(MouseEvent e)
 			{
 				if (e.isPopupTrigger()){

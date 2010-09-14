@@ -4,7 +4,6 @@ import gcm2sbml.visitor.SpeciesVisitor;
 import java.util.Properties;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * This class describes a series of species that can bind together to form a

@@ -24,15 +24,15 @@ public class ConditionsPanel extends JPanel {
 		fields = new HashMap<String, PropertyField>();
 
 		// Condition field
-		PropertyField field = new PropertyField("Condition", "", null, null, "Condition",
+		PropertyField field = new PropertyField("Property", "", null, null, "Property",
 				paramsOnly);
-		fields.put("Condition", field);
+		fields.put("Property", field);
 		add(field);
 
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
-			fields.get("Condition").setValue(selected);
+			fields.get("Property").setValue(selected);
 		}
 
 		boolean display = false;
@@ -42,22 +42,22 @@ public class ConditionsPanel extends JPanel {
 	}
 
 	private boolean openGui(String oldName) {
-		int value = JOptionPane.showOptionDialog(biosim.frame(), this, "Condition Editor",
+		int value = JOptionPane.showOptionDialog(biosim.frame(), this, "Property Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (oldName == null) {
-				if (gcm.getConditions().contains(fields.get("Condition").getValue())) {
-					Utility.createErrorMessage("Error", "Condition already exists.");
+				if (gcm.getConditions().contains(fields.get("Property").getValue())) {
+					Utility.createErrorMessage("Error", "Property already exists.");
 					return false;
 				}
 			}
-			else if (!oldName.equals(fields.get("Condition").getValue())) {
-				if (gcm.getConditions().contains(fields.get("Condition").getValue())) {
-					Utility.createErrorMessage("Error", "Condition already exists.");
+			else if (!oldName.equals(fields.get("Property").getValue())) {
+				if (gcm.getConditions().contains(fields.get("Property").getValue())) {
+					Utility.createErrorMessage("Error", "Property already exists.");
 					return false;
 				}
 			}
-			String id = fields.get("Condition").getValue();
+			String id = fields.get("Property").getValue();
 
 			if (selected != null) {
 				gcm.removeCondition(oldName);

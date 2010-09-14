@@ -1,8 +1,6 @@
 package biomodelsim;
 
 import gcm2sbml.gui.GCM2SBMLEditor;
-import gcm2sbml.gui.grappa.GCIGrappaPanel;
-import gcm2sbml.gui.modelview.ModelView;
 import gcm2sbml.gui.modelview.movie.MovieContainer;
 import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.parser.CompatibilityFixer;
@@ -86,8 +84,6 @@ import javax.swing.JViewport; //import javax.swing.tree.TreePath;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.plaf.basic.BasicTabbedPaneUI;
-
 import tabs.CloseAndMaxTabbedPane;
 
 import com.apple.eawt.ApplicationAdapter;
@@ -101,7 +97,6 @@ import synthesis.Synthesis;
 
 import verification.*;
 
-import org.apache.batik.svggen.font.table.DirectoryEntry;
 import org.sbml.libsbml.*;
 
 import reb2sac.Reb2Sac;
@@ -111,7 +106,6 @@ import buttons.Buttons;
 import datamanager.DataManager;
 import java.net.*;
 import uk.ac.ebi.biomodels.*;
-import att.grappa.*;
 
 //import datamanager.DataManagerLHPN;
 
@@ -239,8 +233,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	public boolean checkUndeclared, checkUnits;
 
+	public static String SBMLLevelVersion;
+	
 	private JCheckBox Undeclared, Units, viewerCheck;
 
+	private JComboBox LevelVersion;
+	
 	private JTextField viewerField;
 
 	private JLabel viewerLabel;
@@ -268,9 +266,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	public String ENVVAR;
 
-	public static final int SBML_LEVEL = 2;
+	public static int SBML_LEVEL = 3;
 
-	public static final int SBML_VERSION = 4;
+	public static int SBML_VERSION = 1;
 
 	public static final Object[] OPTIONS = { "Yes", "No", "Yes To All", "No To All", "Cancel" };
 
@@ -1088,6 +1086,16 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			// file.add(exit);
 			help.add(about);
 		}
+		if (biosimrc.get("biosim.sbml.level_version", "").equals("L2V4")) {
+			SBMLLevelVersion = "L2V4";
+			SBML_LEVEL=2;
+			SBML_VERSION=4;
+		}
+		else {
+			SBMLLevelVersion = "L3V1";
+			SBML_LEVEL=3;
+			SBML_VERSION=1;
+		}
 		if (biosimrc.get("biosim.check.undeclared", "").equals("false")) {
 			checkUndeclared = false;
 		}
@@ -1306,6 +1314,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 	public void preferences() {
 		if (!async) {
+			String [] Versions = { "L2V4", "L3V1" };
+			JLabel SBMLlabel = new JLabel("SBML Level/Version");
+			LevelVersion = new JComboBox(Versions);
+			if (SBMLLevelVersion.equals("L2V4")) {
+				LevelVersion.setSelectedItem("L2V4");
+			} else {
+				LevelVersion.setSelectedItem("L3V1");
+			}
 			Undeclared = new JCheckBox("Check for undeclared units in SBML");
 			if (checkUndeclared) {
 				Undeclared.setSelected(true);
@@ -1659,8 +1675,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			((FlowLayout) generalPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
 			JPanel sbmlPrefsBordered = new JPanel(new BorderLayout());
 			JPanel sbmlPrefs = new JPanel();
-			sbmlPrefsBordered.add(Undeclared, "North");
-			sbmlPrefsBordered.add(Units, "Center");
+			JPanel levelPrefs = new JPanel(new GridLayout(1, 2));
+			levelPrefs.add(SBMLlabel);
+			levelPrefs.add(LevelVersion);
+			sbmlPrefsBordered.add(levelPrefs,"North");
+			sbmlPrefsBordered.add(Undeclared, "Center");
+			sbmlPrefsBordered.add(Units, "South");
 			sbmlPrefs.add(sbmlPrefsBordered);
 			((FlowLayout) sbmlPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
 			JTabbedPane prefTabs = new JTabbedPane();
@@ -1687,6 +1707,18 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				else {
 					biosimrc.put("biosim.general.tree_icons", "default");
 					tree.setExpandibleIcons(true);
+				}
+				if (LevelVersion.getSelectedItem().equals("L2V4")) {
+					SBMLLevelVersion = "L2V4";
+					SBML_LEVEL=2;
+					SBML_VERSION=4;
+					biosimrc.put("biosim.sbml.level_version", "L2V4");
+				}
+				else {
+					SBMLLevelVersion = "L3V1";
+					SBML_LEVEL=3;
+					SBML_VERSION=1;
+					biosimrc.put("biosim.sbml.level_version", "L3V1");
 				}
 				if (Undeclared.isSelected()) {
 					checkUndeclared = true;
@@ -2013,22 +2045,22 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		final String developers;
 		if (lema) {
 			name = new JLabel("LEMA", JLabel.CENTER);
-			version = new JLabel("Version 1.4", JLabel.CENTER);
+			version = new JLabel("Version 1.4.1", JLabel.CENTER);
 			developers = "Satish Batchu\nKevin Jones\nScott Little\nCurtis Madsen\nChris Myers\nNicholas Seegmiller\n"
 					+ "Robert Thacker\nDavid Walter";
 		}
 		else if (atacs) {
 			name = new JLabel("ATACS", JLabel.CENTER);
-			version = new JLabel("Version 6.4", JLabel.CENTER);
+			version = new JLabel("Version 6.4.1", JLabel.CENTER);
 			developers = "Wendy Belluomini\nJeff Cuthbert\nHans Jacobson\nKevin Jones\nSung-Tae Jung\n"
 					+ "Christopher Krieger\nScott Little\nCurtis Madsen\nEric Mercer\nChris Myers\n"
 					+ "Curt Nelson\nEric Peskin\nNicholas Seegmiller\nDavid Walter\nHao Zheng";
 		}
 		else {
 			name = new JLabel("iBioSim", JLabel.CENTER);
-			version = new JLabel("Version 1.4", JLabel.CENTER);
+			version = new JLabel("Version 1.4.1", JLabel.CENTER);
 			developers = "Nathan Barker\nKevin Jones\nHiroyuki Kuwahara\n"
-					+ "Curtis Madsen\nChris Myers\nNam Nguyen\nTyler Patterson";
+					+ "Curtis Madsen\nChris Myers\nNam Nguyen\nNicolas Roehner\nTyler Patterson";
 		}
 		Font font = name.getFont();
 		font = font.deriveFont(Font.BOLD, 36.0f);
@@ -13704,7 +13736,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		messageArea
 				.append("It is recommended that you fix them before using these models or you may get unexpected results.\n\n");
 		boolean display = false;
-		long numErrors = document.checkL2v4Compatibility();
+		long numErrors = 0;
+		if (SBMLLevelVersion.equals("L2V4")) {
+			numErrors = document.checkL2v4Compatibility();
+		} else {
+			numErrors = document.checkL3v1Compatibility();
+		}
 		if (numErrors > 0) {
 			display = true;
 			messageArea
@@ -13758,7 +13795,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			f.setLocation(x, y);
 			f.setVisible(true);
 		}
-		document.setLevelAndVersion(SBML_LEVEL, SBML_VERSION);
+		if (document.getLevel() < 3) {
+			document.setLevelAndVersion(SBML_LEVEL, SBML_VERSION);
+		}
 		return document;
 	}
 

@@ -77,18 +77,21 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	/**
 	 * Override JTabbedPane method. Does nothing.
 	 */
+	@Override
 	public void setTabLayoutPolicy(int tabLayoutPolicy) {
 	}
 
 	/**
 	 * Override JTabbedPane method. Does nothing.
 	 */
+	@Override
 	public void setTabPlacement(int tabPlacement) {
 	}
 
 	/**
 	 * Override JTabbedPane method. Does nothing.
 	 */
+	@Override
 	public void setUI(TabbedPaneUI ui) {
 	}
 
@@ -136,6 +139,7 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 		frame.pack();
 
 		frame.addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent event) {
 				frame.dispose();
 

@@ -12,9 +12,6 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 //import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -245,7 +242,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 					prop = lhpn.getTransition(selected).getContAssignments();
 				}
 				if (prop != null) {
-					if (prop.containsKey((String) varBox.getSelectedItem())) {
+					if (prop.containsKey(varBox.getSelectedItem())) {
 						Utility.createErrorMessage("Error", "Assignment id already exists.");
 						return false;
 					}

@@ -88,6 +88,7 @@ public class Place {
 		return array;
 	}
 	
+	@Override
 	public String toString() {
 		return name;
 	}

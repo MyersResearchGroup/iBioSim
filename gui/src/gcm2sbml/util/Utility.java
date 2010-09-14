@@ -88,6 +88,8 @@ public class Utility {
 	public static Reaction Reaction(String id) {
 		Reaction r = new Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		r.setId(id);
+		r.setReversible(false);
+		r.setFast(false);
 		return r;
 	}
 
@@ -95,6 +97,7 @@ public class Utility {
 		SpeciesReference sr = new SpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		sr.setSpecies(id);
 		sr.setStoichiometry(stoichiometry);
+		sr.setConstant(true);
 		return sr;
 	}
 
@@ -125,7 +128,11 @@ public class Utility {
 		specie.setId(id);
 		specie.setName(id);
 		specie.setCompartment(compartment);
-		specie.setInitialAmount(amount);		
+		specie.setInitialAmount(amount);	
+		specie.setHasOnlySubstanceUnits(true);
+		specie.setConstant(false);
+		specie.setBoundaryCondition(false);
+		specie.setSubstanceUnits("mole");
 		return specie;
 	}
 
@@ -378,6 +385,7 @@ public class Utility {
 		if (document.getModel().getCompartment(compartment) == null) {
 			Compartment comp = document.getModel().createCompartment();
 			comp.setId(compartment);
+			comp.setUnits("litre");
 			return true;
 		}
 		else {
@@ -389,6 +397,7 @@ public class Utility {
 			}
 			Compartment comp = document.getModel().createCompartment();
 			comp.setId(compartment);
+			comp.setUnits("litre");
 			return true;
 			//Give warning
 		}

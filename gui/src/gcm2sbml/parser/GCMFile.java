@@ -52,13 +52,6 @@ import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
 
-import com.mxgraph.layout.mxCircleLayout;
-import com.mxgraph.layout.mxCompactTreeLayout;
-import com.mxgraph.layout.mxIGraphLayout;
-import com.mxgraph.view.mxEdgeStyle;
-import com.mxgraph.view.mxGraph;
-import com.mxgraph.view.mxLayoutManager;
-
 import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.LhpnFile;
 

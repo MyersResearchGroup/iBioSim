@@ -10,8 +10,6 @@ import java.util.regex.Pattern;
 //import javax.swing.JOptionPane;
 import biomodelsim.Log;
 
-import verification.Verification;
-
 /**
  * This class describes an LHPN file
  * 

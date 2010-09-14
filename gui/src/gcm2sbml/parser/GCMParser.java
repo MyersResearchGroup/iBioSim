@@ -16,8 +16,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Properties;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * This class parses a genetic circuit model.
@@ -147,7 +145,7 @@ public class GCMParser {
 		if (property.containsKey(GlobalConstants.PROMOTER)) {
 			promoterName = property.getProperty(GlobalConstants.PROMOTER);
 		} else {
-			promoterName = "Promoter_" + gcm.getOutput(reaction);
+			promoterName = "Promoter_" + GCMFile.getOutput(reaction);
 		}
 
 		// Check if promoter exists. If not, create it.
@@ -188,8 +186,8 @@ public class GCMParser {
 			r.setKbio(0.05);
 		}
 		
-		r.setInputState(gcm.getInput(reaction));
-		r.setOutputState(gcm.getOutput(reaction));
+		r.setInputState(GCMFile.getInput(reaction));
+		r.setOutputState(GCMFile.getOutput(reaction));
 		if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
 			r.setType("vee");
 			if (property.containsKey(GlobalConstants.KACT_STRING)) {

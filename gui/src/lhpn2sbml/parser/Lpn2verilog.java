@@ -5,8 +5,6 @@ import java.util.*;
 import java.util.Collections;
 import java.util.Comparator;
 
-import javax.swing.JOptionPane;
-
 
 public class Lpn2verilog {
 	private String separator;

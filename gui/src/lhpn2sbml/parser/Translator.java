@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 //import org.apache.batik.svggen.font.table.Program;
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.Constraint;

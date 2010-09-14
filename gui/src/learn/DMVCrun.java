@@ -40,7 +40,7 @@ public class DMVCrun {
 		for (Double d:this.valueL.get(valueL.size() -1)){
 			total+=d;
 		}
-		avgVals.add(total/(double) this.valueL.get(valueL.size() -1).size());
+		avgVals.add(total/this.valueL.get(valueL.size() -1).size());
 	}
 	
 	public Double[] getAvgVals() { // think.. if entire avgVals or just an indexed one
@@ -81,7 +81,7 @@ public class DMVCrun {
 		for (Double d:this.valueL.get(valueL.size() -1)){
 			total+=d;
 		}
-		return (total/(double) this.valueL.get(valueL.size() -1).size());
+		return (total/this.valueL.get(valueL.size() -1).size());
 	}
 	
 	public void clearAll(){
@@ -97,7 +97,7 @@ public class DMVCrun {
 		for (Double d:this.valueL.get(valueL.size() -1)){
 			total+=d;
 		}
-		return (total/(double) this.valueL.get(valueL.size() -1).size());
+		return (total/this.valueL.get(valueL.size() -1).size());
 	}
 	
 /*	

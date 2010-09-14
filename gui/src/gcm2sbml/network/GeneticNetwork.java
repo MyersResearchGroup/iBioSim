@@ -319,6 +319,7 @@ public class GeneticNetwork {
 			r.addReactant(Utility.SpeciesReference(p.getId(), 1));
 			r.addProduct(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
 			r.setReversible(true);
+			r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
 			kl.addParameter(Utility.Parameter("kf", rnap, getMoleTimeParameter(2)));
 			kl.addParameter(Utility.Parameter("kr", 1, getMoleTimeParameter(1)));
@@ -1307,12 +1308,12 @@ public class GeneticNetwork {
 		if (numMolecules > 1) {
 			unitS.add("mole");
 			unitE.add(new Integer(-(numMolecules - 1)));
-			unitM.add(new Integer(0));
+			unitM.add(new Integer(1));
 		}
 
 		unitS.add("second");
 		unitE.add(new Integer(-1));
-		unitM.add(new Integer(0));
+		unitM.add(new Integer(1));
 
 		return GeneticNetwork.getUnitString(unitS, unitE, unitM,
 				currentDocument.getModel());
@@ -1333,7 +1334,7 @@ public class GeneticNetwork {
 
 		unitS.add("mole");
 		unitE.add(new Integer(-(numMolecules - 1)));
-		unitM.add(new Integer(0));
+		unitM.add(new Integer(1));
 
 		return GeneticNetwork.getUnitString(unitS, unitE, unitM,
 				currentDocument.getModel());

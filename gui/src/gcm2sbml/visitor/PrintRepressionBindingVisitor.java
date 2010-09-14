@@ -12,14 +12,11 @@ import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
-import java.util.Collection;
 import java.util.Properties;
 
 import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SpeciesReference;
 
 public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 
@@ -48,11 +45,13 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		}
 	}
 
+	@Override
 	public void visitSpecies(SpeciesInterface specie) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void visitDimer(DimerSpecies specie) {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction(reactionName);
@@ -83,6 +82,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);
 	}
 
+	@Override
 	public void visitBiochemical(BiochemicalSpecies specie) {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction(reactionName);
@@ -105,7 +105,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			}
 
 			kl.addParameter(Utility.Parameter(kbioString, kbio, GeneticNetwork
-					.getMoleParameter((int) specie.getInputs().size())));
+					.getMoleParameter(specie.getInputs().size())));
 			repMolecule = kbioString + names;
 		} else {
 			repMolecule = specie.getId();
@@ -115,6 +115,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);
 	}
 
+	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction(reactionName);
@@ -133,6 +134,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);
 	}
 
+	@Override
 	public void visitConstantSpecies(ConstantSpecies specie) {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction(reactionName);
@@ -151,6 +153,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);
 	}
 
+	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction(reactionName);

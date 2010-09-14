@@ -1,9 +1,5 @@
 package gcm2sbml.gui;
 
-import java.util.ArrayList;
-
-import javax.swing.JComponent;
-
 /**
  * Objects that implement this interface provide
  * a key/value pair.

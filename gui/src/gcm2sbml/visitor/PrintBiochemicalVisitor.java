@@ -15,10 +15,8 @@ import java.util.Collection;
 import java.util.Properties;
 
 import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SpeciesReference;
 
 public class PrintBiochemicalVisitor extends AbstractPrintVisitor {
 
@@ -39,14 +37,17 @@ public class PrintBiochemicalVisitor extends AbstractPrintVisitor {
 		}
 	}
 
+	@Override
 	public void visitSpecies(SpeciesInterface specie) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void visitDimer(DimerSpecies specie) {
 	}
 
+	@Override
 	public void visitBiochemical(BiochemicalSpecies specie) {
 		loadValues(specie.getProperties());
 		// Check if we are running abstraction, if not, then don't allow decay
@@ -71,12 +72,15 @@ public class PrintBiochemicalVisitor extends AbstractPrintVisitor {
 		}
 	}
 
+	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
 	}
 
+	@Override
 	public void visitConstantSpecies(ConstantSpecies specie) {
 	}
 
+	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 	}
 	
