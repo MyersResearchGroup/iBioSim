@@ -1,6 +1,6 @@
 #Makefile for tools
 
-all: geneNet atacs Reb2Sac s2lpn Gui
+all: geneNet Reb2Sac s2lpn Gui atacs 
 
 geneNet: FORCE
 	make -C GeneNet
