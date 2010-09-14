@@ -56,6 +56,7 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.event.ChangeEvent;
@@ -118,9 +119,9 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	protected static final int WIDTHDELTA = 5;
 
-	private static final Border PRESSEDBORDER = new SoftBevelBorder(SoftBevelBorder.LOWERED);
+	private static final Border PRESSEDBORDER = new SoftBevelBorder(BevelBorder.LOWERED);
 
-	private static final Border OVERBORDER = new SoftBevelBorder(SoftBevelBorder.RAISED);
+	private static final Border OVERBORDER = new SoftBevelBorder(BevelBorder.RAISED);
 
 	private BufferedImage closeImgB;
 
@@ -206,6 +207,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			actionPopupMenu.add(closeItem);
 	}
 
+	@Override
 	protected int calculateTabWidth(int tabPlacement, int tabIndex, FontMetrics metrics) {
 		int delta = 2;
 		if (!isOneActionButtonEnabled())
@@ -218,11 +220,13 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		return super.calculateTabWidth(tabPlacement, tabIndex, metrics) + delta;
 	}
 
+	@Override
 	protected int calculateTabHeight(int tabPlacement, int tabIndex, int fontHeight) {
 
 		return super.calculateTabHeight(tabPlacement, tabIndex, fontHeight) + 5;
 	}
 
+	@Override
 	protected void layoutLabel(int tabPlacement, FontMetrics metrics, int tabIndex, String title,
 			Icon icon, Rectangle tabRect, Rectangle iconRect, Rectangle textRect, boolean isSelected) {
 		textRect.x = textRect.y = iconRect.x = iconRect.y = 0;
@@ -232,8 +236,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			tabPane.putClientProperty("html", v);
 		}
 
-		SwingUtilities.layoutCompoundLabel((JComponent) tabPane, metrics, title, icon,
-				SwingUtilities.CENTER, SwingUtilities.LEFT, SwingUtilities.CENTER, SwingUtilities.CENTER,
+		SwingUtilities.layoutCompoundLabel(tabPane, metrics, title, icon,
+				SwingConstants.CENTER, SwingConstants.LEFT, SwingConstants.CENTER, SwingConstants.CENTER,
 				tabRect, iconRect, textRect, textIconGap);
 
 		tabPane.putClientProperty("html", null);
@@ -242,6 +246,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		textRect.x = iconRect.x + iconRect.width + textIconGap;
 	}
 
+	@Override
 	protected MouseListener createMouseListener() {
 		return new MyMouseHandler(biosim);
 	}
@@ -322,6 +327,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	 * @see TabbedPaneLayout
 	 * @see javax.swing.JTabbedPane#getTabLayoutPolicy
 	 */
+	@Override
 	protected LayoutManager createLayoutManager() {
 
 		return new TabbedPaneScrollLayout();
@@ -341,6 +347,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	 * 
 	 * @since 1.4
 	 */
+	@Override
 	protected void installComponents() {
 
 		if (tabScroller == null) {
@@ -358,6 +365,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	 * 
 	 * @since 1.4
 	 */
+	@Override
 	protected void uninstallComponents() {
 
 		tabPane.remove(tabScroller.viewport);
@@ -367,6 +375,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	}
 
+	@Override
 	protected void installListeners() {
 		if ((propertyChangeListener = createPropertyChangeListener()) != null) {
 			tabPane.addPropertyChangeListener(propertyChangeListener);
@@ -396,6 +405,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	}
 
+	@Override
 	protected void uninstallListeners() {
 		if (mouseListener != null) {
 			tabScroller.tabPanel.removeMouseListener(mouseListener);
@@ -432,10 +442,12 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	}
 
+	@Override
 	protected ChangeListener createChangeListener() {
 		return new TabSelectionHandler();
 	}
 
+	@Override
 	protected void installKeyboardActions() {
 		InputMap km = getMyInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
 
@@ -480,6 +492,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		return map;
 	}
 
+	@Override
 	protected void uninstallKeyboardActions() {
 		SwingUtilities.replaceUIActionMap(tabPane, null);
 		SwingUtilities.replaceUIInputMap(tabPane, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, null);
@@ -536,6 +549,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	// UI Rendering
 
+	@Override
 	public void paint(Graphics g, JComponent c) {
 		int tc = tabPane.getTabCount();
 
@@ -554,6 +568,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	}
 
+	@Override
 	protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex,
 			Rectangle iconRect, Rectangle textRect) {
 		Rectangle tabRect = rects[tabIndex];
@@ -712,6 +727,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	 * @since 1.4
 	 */
 
+	@Override
 	protected Rectangle getTabBounds(int tabIndex, Rectangle dest) {
 		dest.width = rects[tabIndex].width;
 		dest.height = rects[tabIndex].height;
@@ -966,11 +982,11 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 				String command = e.getActionCommand();
 
 				if (command != null && command.length() > 0) {
-					int mnemonic = (int) e.getActionCommand().charAt(0);
+					int mnemonic = e.getActionCommand().charAt(0);
 					if (mnemonic >= 'a' && mnemonic <= 'z') {
 						mnemonic -= ('a' - 'A');
 					}
-					Integer index = (Integer) ui.mnemonicToIndexMap.get(new Integer(mnemonic));
+					Integer index = ui.mnemonicToIndexMap.get(new Integer(mnemonic));
 					if (index != null && pane.isEnabledAt(index.intValue())) {
 						pane.setSelectedIndex(index.intValue());
 					}
@@ -1037,14 +1053,17 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	private class TabbedPaneScrollLayout extends TabbedPaneLayout {
 
+		@Override
 		protected int preferredTabAreaHeight(int tabPlacement, int width) {
 			return calculateMaxTabHeight(tabPlacement);
 		}
 
+		@Override
 		protected int preferredTabAreaWidth(int tabPlacement, int height) {
 			return calculateMaxTabWidth(tabPlacement);
 		}
 
+		@Override
 		public void layoutContainer(Container parent) {
 			int tabPlacement = tabPane.getTabPlacement();
 			int tabCount = tabPane.getTabCount();
@@ -1166,6 +1185,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			}
 		}
 
+		@Override
 		protected void calculateTabRects(int tabPlacement, int tabCount) {
 			FontMetrics metrics = getFontMetrics();
 			Insets tabAreaInsets = getTabAreaInsets(tabPlacement);
@@ -1313,6 +1333,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 		}
 
+		@Override
 		public String toString() {
 			return new String("viewport.viewSize=" + viewport.getViewSize() + "\n"
 					+ "viewport.viewRectangle=" + viewport.getViewRect() + "\n" + "leadingTabIndex="
@@ -1343,6 +1364,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			setLayout(null);
 		}
 
+		@Override
 		public void paintComponent(Graphics g) {
 			super.paintComponent(g);
 			CloseTabPaneUI.this.paintTabArea(g, tabPane.getTabPlacement(), tabPane.getSelectedIndex());
@@ -1498,6 +1520,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			this.biosim = biosim;
 		}
 
+		@Override
 		public void mousePressed(MouseEvent e) {
 			biosim.enableTabMenu(biosim.getTab().getSelectedIndex());
 			if (closeIndexStatus == OVER) {
@@ -1514,6 +1537,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 		}
 
+		@Override
 		public void mouseClicked(MouseEvent e) {
 			super.mousePressed(e);
 			biosim.enableTabMenu(biosim.getTab().getSelectedIndex());
@@ -1522,6 +1546,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			}
 		}
 
+		@Override
 		public void mouseReleased(MouseEvent e) {
 
 			biosim.enableTabMenu(biosim.getTab().getSelectedIndex());
@@ -1559,6 +1584,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 		}
 
+		@Override
 		public void mouseExited(MouseEvent e) {
 			if (!mousePressed) {
 				overTabIndex = -1;

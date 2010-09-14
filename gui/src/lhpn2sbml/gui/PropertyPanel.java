@@ -14,12 +14,6 @@ import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
-import org.sbml.libsbml.Constraint;
-
-import com.sun.org.apache.bcel.internal.generic.ISUB;
-
-import sbmleditor.SBML_Editor;
-
 import biomodelsim.BioSim;
 
 public class PropertyPanel extends JPanel implements ActionListener {

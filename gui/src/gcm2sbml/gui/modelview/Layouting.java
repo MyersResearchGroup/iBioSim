@@ -2,9 +2,9 @@ package gcm2sbml.gui.modelview;
 
 import java.awt.event.ActionListener;
 
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.SwingConstants;
 
 import com.mxgraph.layout.mxCircleLayout;
 import com.mxgraph.layout.mxCompactTreeLayout;
@@ -79,7 +79,7 @@ public class Layouting {
 			}
 			else if (ident.equals("horizontalHierarchical"))
 			{
-				layout = new mxHierarchicalLayout(graph, JLabel.WEST);
+				layout = new mxHierarchicalLayout(graph, SwingConstants.WEST);
 			}
 			else if (ident.equals("verticalTree"))
 			{
@@ -109,6 +109,7 @@ public class Layouting {
 					 * Overrides the empty implementation to return the size of the
 					 * graph control.
 					 */
+					@Override
 					public mxRectangle getContainerSize()
 					{
 						return graphComponent.getLayoutAreaSize();
@@ -123,6 +124,7 @@ public class Layouting {
 					 * Overrides the empty implementation to return the size of the
 					 * graph control.
 					 */
+					@Override
 					public mxRectangle getContainerSize()
 					{
 						return graphComponent.getLayoutAreaSize();
@@ -137,6 +139,7 @@ public class Layouting {
 					 * Overrides the empty implementation to return the size of the
 					 * graph control.
 					 */
+					@Override
 					public mxRectangle getContainerSize()
 					{
 						return graphComponent.getLayoutAreaSize();
@@ -151,6 +154,7 @@ public class Layouting {
 					 * Overrides the empty implementation to return the size of the
 					 * graph control.
 					 */
+					@Override
 					public mxRectangle getContainerSize()
 					{
 						return graphComponent.getLayoutAreaSize();

@@ -2,7 +2,6 @@ package gcm2sbml.network;
 
 import java.util.Properties;
 
-import gcm2sbml.util.Utility;
 import gcm2sbml.visitor.SpeciesVisitor;
 
 /**

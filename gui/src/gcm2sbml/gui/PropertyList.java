@@ -62,6 +62,7 @@ public class PropertyList extends JList implements EnableElement, NamedObject,
 		}
 	}
 
+	@Override
 	public String getName() {
 		return this.name;
 	}

@@ -2,12 +2,6 @@ package gcm2sbml.network;
 
 import java.util.Properties;
 
-import gcm2sbml.parser.GCMFile;
-import gcm2sbml.util.GlobalConstants;
-import gcm2sbml.util.Utility;
-import gcm2sbml.visitor.SpeciesVisitor;
-import gcm2sbml.visitor.VisitableSpecies;
-
 /**
  * This class describes an abstract species class. Species are nodes in the
  * graph. All species are derived from this class.

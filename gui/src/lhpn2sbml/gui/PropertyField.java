@@ -32,6 +32,7 @@ public class PropertyField extends JPanel implements ActionListener {
 		this(name, value, state, defaultValue, null);
 	}
 
+	@Override
 	public void setEnabled(boolean state) {
 		// super.setEnabled(state);
 		isEnabled = state;

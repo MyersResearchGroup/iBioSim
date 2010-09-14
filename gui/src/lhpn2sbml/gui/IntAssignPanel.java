@@ -143,7 +143,7 @@ public class IntAssignPanel extends JPanel implements ActionListener {
 			if (oldName == null) {
 				HashMap<String, String> prop = lhpn.getTransition(selected).getIntAssignments();
 				if (prop != null) {
-				if (prop.containsKey((String) varBox.getSelectedItem())) {
+				if (prop.containsKey(varBox.getSelectedItem())) {
 					Utility.createErrorMessage("Error", "Assignment id already exists.");
 					return false;
 				}

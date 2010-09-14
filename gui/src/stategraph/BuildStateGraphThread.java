@@ -9,10 +9,12 @@ public class BuildStateGraphThread extends Thread {
 		this.sg = sg;
 	}
 
+	@Override
 	public void start() {
 		super.start();
 	}
 
+	@Override
 	public void run() {
 		sg.buildStateGraph();
 	}

@@ -2,24 +2,14 @@ package learn;
 
 //import gcm2sbml.parser.GCMFile;
 import lhpn2sbml.parser.LhpnFile;
-import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.Lpn2verilog;
 import parser.*;
-import java.awt.*;
-import java.awt.List;
-import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-import java.util.prefs.Preferences;
-import java.util.regex.*;
-//import java.util.regex.Pattern;
-
 import javax.swing.*;
 
 //import org.sbml.libsbml.*;
 import biomodelsim.*;
-
-import org.jdesktop.layout.*;
 
 /**
  * This class generates an LHPN model from the simulation traces provided

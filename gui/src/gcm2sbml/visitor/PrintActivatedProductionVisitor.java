@@ -1,15 +1,11 @@
 package gcm2sbml.visitor;
 
-import java.io.PrintStream;
 import java.util.Collection;
 import java.util.Properties;
 
 import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
-import org.sbml.libsbml.SpeciesReference;
-
 import gcm2sbml.network.BaseSpecies;
 import gcm2sbml.network.BiochemicalSpecies;
 import gcm2sbml.network.ConstantSpecies;
@@ -43,11 +39,13 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		}
 	}
 
+	@Override
 	public void visitSpecies(SpeciesInterface specie) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void visitDimer(DimerSpecies specie) {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
@@ -68,6 +66,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 
 	}
 
+	@Override
 	public void visitBiochemical(BiochemicalSpecies specie) {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
@@ -87,6 +86,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);
 	}
 
+	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
@@ -106,6 +106,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);
 	}
 
+	@Override
 	public void visitConstantSpecies(ConstantSpecies specie) {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
@@ -125,6 +126,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);
 	}
 
+	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie.getProperties());
 		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"

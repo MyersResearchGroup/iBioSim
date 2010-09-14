@@ -936,9 +936,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		mainPanel.add(mainPanelCenter, "Center");
 		JTabbedPane tab = new JTabbedPane();
 		tab.addTab("Main Elements", mainPanel);
-		tab.addTab("Components", tabPanel);
-		tab.addTab("Model View", grappaPanel);
-		tab.addTab("Model View 2", modelView);
+		tab.addTab("Parameters/Properties", tabPanel);
+		tab.addTab("Schematic", modelView);
+ 		//tab.addTab("Model View", grappaPanel);
 		setLayout(new BorderLayout());
 		if (paramsOnly) {
 			add(mainPanel, BorderLayout.CENTER);
@@ -1072,14 +1072,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		initPanel = Utility.createPanel(this, "Influences", influences, addInit, removeInit, editInit);
 		mainPanelCenterCenter.add(initPanel);
 
-		parameters = new PropertyList("Parameter List");
-		editInit = new EditButton("Edit Parameter", parameters);
-		// parameters.addAllItem(gcm.getParameters().keySet());
-		parameters.addAllItem(generateParameters());
-		initPanel = Utility.createPanel(this, "Parameters", parameters, null, null, editInit);
-
-		mainPanelCenterCenter.add(initPanel);
-
 		components = new PropertyList("Component List");
 		addInit = new EditButton("Add Component", components);
 		removeInit = new RemoveButton("Remove Component", components);
@@ -1092,16 +1084,29 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 		}
 		initPanel = Utility.createPanel(this, "Components", components, addInit, removeInit, editInit);
-		tabPanel.add(initPanel, "Center");
+		if (!paramsOnly) {
+			mainPanelCenterCenter.add(initPanel);
+		}
 		
-		conditions = new PropertyList("Condition List");
-		addInit = new EditButton("Add Condition", conditions);
-		removeInit = new RemoveButton("Remove Condition", conditions);
-		editInit = new EditButton("Edit Condition", conditions);
+		parameters = new PropertyList("Parameter List");
+		editInit = new EditButton("Edit Parameter", parameters);
+		// parameters.addAllItem(gcm.getParameters().keySet());
+		parameters.addAllItem(generateParameters());
+		initPanel = Utility.createPanel(this, "Parameters", parameters, null, null, editInit);
+		if (paramsOnly) {
+			mainPanelCenterCenter.add(initPanel);
+		} else {
+			tabPanel.add(initPanel, "Center");
+		}
+		
+		conditions = new PropertyList("Property List");
+		addInit = new EditButton("Add Property", conditions);
+		removeInit = new RemoveButton("Remove Property", conditions);
+		editInit = new EditButton("Edit Property", conditions);
 		for (String s : gcm.getConditions()) {
 			conditions.addItem(s);
 		}
-		initPanel = Utility.createPanel(this, "Conditions", conditions, addInit, removeInit, editInit);
+		initPanel = Utility.createPanel(this, "Properties", conditions, addInit, removeInit, editInit);
 		tabPanel.add(initPanel, "South");
 		
 	}
@@ -1240,7 +1245,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					}
 				}
 			}
-			else if (getName().contains("Condition")) {
+			else if (getName().contains("Property")) {
 				String name = null;
 				if (list.getSelectedValue() != null) {
 					name = list.getSelectedValue().toString();
@@ -1387,7 +1392,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					}
 				}
 			}
-			else if (getName().contains("Condition")) {
+			else if (getName().contains("Property")) {
 				String selected = null;
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();

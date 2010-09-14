@@ -137,6 +137,7 @@ public class ExampleFileFilter extends FileFilter {
 	 * @see #getExtension
 	 * @see FileFilter#accepts
 	 */
+	@Override
 	public boolean accept(File f) {
 		if (f != null) {
 			if (f.isDirectory()) {
@@ -197,6 +198,7 @@ public class ExampleFileFilter extends FileFilter {
 	 * @see isExtensionListInDescription
 	 * @see FileFilter#getDescription
 	 */
+	@Override
 	public String getDescription() {
 		if (fullDescription == null) {
 			if (description == null || isExtensionListInDescription()) {
@@ -204,9 +206,9 @@ public class ExampleFileFilter extends FileFilter {
 				// build the description from the extension list
 				Enumeration<String> extensions = filters.keys();
 				if (extensions != null) {
-					fullDescription += (String) extensions.nextElement();
+					fullDescription += extensions.nextElement();
 					while (extensions.hasMoreElements()) {
-						fullDescription += ", " + (String) extensions.nextElement();
+						fullDescription += ", " + extensions.nextElement();
 					}
 				}
 				fullDescription += " )";

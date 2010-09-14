@@ -4,11 +4,8 @@ import java.util.Collection;
 import java.util.Properties;
 
 import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
-import org.sbml.libsbml.SpeciesReference;
-
 import biomodelsim.BioSim;
 
 import gcm2sbml.network.BaseSpecies;
@@ -40,11 +37,13 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		}
 	}
 
+	@Override
 	public void visitSpecies(SpeciesInterface specie) {
 		// TODO Auto-generated method stub
 
 	}
 
+	@Override
 	public void visitDimer(DimerSpecies specie) {
 		loadValues(specie.getProperties());
 		if (!dimerizationAbstraction) {
@@ -55,6 +54,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 
 	}
 
+	@Override
 	public void visitBiochemical(BiochemicalSpecies specie) {
 		loadValues(specie.getProperties());
 		if (!biochemicalAbstraction) {
@@ -65,6 +65,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 
 	}
 
+	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues(specie.getProperties());
 		Species s = Utility.makeSpecies(specie.getId(), compartment, init);
@@ -73,6 +74,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		Utility.addSpecies(document, s);
 	}
 
+	@Override
 	public void visitConstantSpecies(ConstantSpecies specie) {
 		loadValues(specie.getProperties());
 		Species s = Utility.makeSpecies(specie.getId(), compartment, init);
@@ -83,6 +85,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		Utility.addSpecies(document, s);
 	}
 
+	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie.getProperties());
 		Species s = Utility.makeSpecies(specie.getId(), compartment, init);
