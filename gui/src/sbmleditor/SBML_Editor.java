@@ -3219,7 +3219,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
-				if ((!error)
+				if ((!error) && (document.getLevel()<3) 
 						&& ((addUnit.equals("substance")) || (addUnit.equals("length"))
 								|| (addUnit.equals("area")) || (addUnit.equals("volume")) || (addUnit
 								.equals("time")))) {
@@ -6645,7 +6645,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				if ((unit.getNumUnits() == 1)
 						&& (unit.getUnit(0).isLitre() && unit.getUnit(0).getExponent() == 1)
 						|| (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 3)) {
-					if (!unit.getId().equals("volume")) {
+					if (!(document.getLevel()<3 && unit.getId().equals("volume"))) {
 						compUnits.addItem(unit.getId());
 					}
 				}
@@ -6802,7 +6802,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem()
 							|| unit.getUnit(0).isGram() || unit.getUnit(0).isKilogram())
 					&& (unit.getUnit(0).getExponent() == 1)) {
-				if (!unit.getId().equals("substance")) {
+				if (!(document.getLevel()<3 && unit.getId().equals("substance"))) {
 					specUnits.addItem(unit.getId());
 				}
 			}
@@ -7090,7 +7090,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				String unit = (String) specUnits.getSelectedItem();
-				String convFactor = (String) specConv.getSelectedItem();
+				String convFactor = null;
+				if (document.getLevel()>2) {
+					convFactor = (String) specConv.getSelectedItem();
+				}
 				String addSpec = "";
 				String selSpecType = (String) specTypeBox.getSelectedItem();
 				if (paramsOnly && !((String) type.getSelectedItem()).equals("Original")) {
@@ -8388,9 +8391,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		paramUnits = new JComboBox();
 		paramUnits.addItem("( none )");
 		for (int i = 0; i < units.length; i++) {
-			if (!units[i].equals("substance") && !units[i].equals("volume")
+			if (document.getLevel()>2 || 
+					(!units[i].equals("substance") && !units[i].equals("volume")
 					&& !units[i].equals("area") && !units[i].equals("length")
-					&& !units[i].equals("time")) {
+					&& !units[i].equals("time"))) {
 				paramUnits.addItem(units[i]);
 			}
 		}
@@ -8792,9 +8796,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		reacParamUnits = new JComboBox();
 		reacParamUnits.addItem("( none )");
 		for (int i = 0; i < units.length; i++) {
-			if (!units[i].equals("substance") && !units[i].equals("volume")
+			if (document.getLevel()>2 || 
+					(!units[i].equals("substance") && !units[i].equals("volume")
 					&& !units[i].equals("area") && !units[i].equals("length")
-					&& !units[i].equals("time")) {
+					&& !units[i].equals("time"))) {
 				reacParamUnits.addItem(units[i]);
 			}
 		}
