@@ -145,6 +145,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JComboBox compTypeBox, dimBox; // compartment type combo box
 
+	private JTextField dimText;
+	
 	private JComboBox specTypeBox, specBoundary, specConstant, specHasOnly; // species
 	// combo
 
@@ -4017,7 +4019,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		for (int i = 0; i < model.getNumCompartments(); i++) {
 			String id = ((Compartment) ids.get(i)).getId();
 			if (keepVar(selected.split(" ")[0], id, true, false, false, false)
-					&& ((Compartment) ids.get(i)).getSpatialDimensions() != 0) {
+					&& (document.getLevel()>2 || ((Compartment) ids.get(i)).getSpatialDimensions() != 0)) {
 				initVar.addItem(id);
 			}
 		}
@@ -5965,6 +5967,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		Object[] dims = { "0", "1", "2", "3" };
 		dimBox = new JComboBox(dims);
 		dimBox.setSelectedItem("3");
+		dimText = new JTextField(12);
+		dimText.setText("3.0");
 		compSize = new JTextField(12);
 		compSize.setText("1.0");
 		compUnits = new JComboBox();
@@ -6039,6 +6043,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			compName.setEnabled(false);
 			compTypeBox.setEnabled(false);
 			dimBox.setEnabled(false);
+			dimText.setEnabled(false);
 			compUnits.setEnabled(false);
 			compOutside.setEnabled(false);
 			compConstant.setEnabled(false);
@@ -6056,6 +6061,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					compTypeBox.setSelectedItem(compartment.getCompartmentType());
 				}
 				dimBox.setSelectedItem(String.valueOf(compartment.getSpatialDimensions()));
+				dimText.setText(String.valueOf(compartment.getSpatialDimensionsAsDouble()));
 				setCompartOptions(((String) compartments.getSelectedValue()).split(" ")[0], String
 						.valueOf(compartment.getSpatialDimensions()));
 				if (compartment.isSetSize()) {
@@ -6120,7 +6126,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			compPanel.add(compTypeBox);
 		}
 		compPanel.add(dimLabel);
-		compPanel.add(dimBox);
+		if (document.getLevel()<3) {
+			compPanel.add(dimBox);
+		} else {
+			compPanel.add(dimText);
+		}
 		if (document.getLevel()<3) {
 			compPanel.add(outsideLabel);
 			compPanel.add(compOutside);
@@ -6173,7 +6183,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				String val = ((String) compartments.getSelectedValue()).split(" ")[0];
 				error = checkConstant("Compartment", val);
 			}
-			if (!error && option.equals("OK") && dimBox.getSelectedItem().equals("0")) {
+			if (!error && document.getLevel()<3 && option.equals("OK") && dimBox.getSelectedItem().equals("0")) {
 				String val = ((String) compartments.getSelectedValue()).split(" ")[0];
 				for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
 					Species species = document.getModel().getSpecies(i);
@@ -6323,7 +6333,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						else {
 							c.unsetCompartmentType();
 						}
-						c.setSpatialDimensions(Integer.parseInt((String) dimBox.getSelectedItem()));
+						if (document.getLevel()<3) {
+							c.setSpatialDimensions(Integer.parseInt((String) dimBox.getSelectedItem()));
+						} else {
+							c.setSpatialDimensions(Double.parseDouble((String) dimText.getText()));
+						}
 						if (compSize.getText().trim().equals("")
 								|| compSize.getText().trim().startsWith("(")) {
 							c.unsetSize();
@@ -6432,7 +6446,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						if (!selCompType.equals("( none )")) {
 							c.setCompartmentType(selCompType);
 						}
-						c.setSpatialDimensions(Integer.parseInt((String) dimBox.getSelectedItem()));
+						if (document.getLevel()<3) {
+							c.setSpatialDimensions(Integer.parseInt((String) dimBox.getSelectedItem()));
+						} else {
+							c.setSpatialDimensions(Double.parseDouble((String) dimText.getText()));
+						}
 						if (!compSize.getText().trim().equals("")) {
 							c.setSize(Double.parseDouble(compSize.getText().trim()));
 						}
@@ -6748,8 +6766,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					compOutside.addItem(compartment.getId());
 				}
 			}
-			compConstant.setEnabled(false);
-			compSize.setEnabled(false);
+			if (document.getLevel()<3) {
+				compConstant.setEnabled(false);
+				compSize.setEnabled(false);
+			}
 		}
 		if (!selected.equals("")) {
 			Compartment compartment = document.getModel().getCompartment(selected);
@@ -7161,7 +7181,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					Compartment compartment = document.getModel().getCompartment(
 							(String) comp.getSelectedItem());
 					if (initLabel.getSelectedItem().equals("Initial Concentration")
-							&& compartment.getSpatialDimensions() == 0) {
+							&& document.getLevel()<3 && compartment.getSpatialDimensions() == 0) {
 						JOptionPane
 								.showMessageDialog(
 										biosim.frame(),
@@ -8279,7 +8299,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		else {
 			sbml = document.getModel().getListOfCompartments();
 			for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
-				if (((Compartment) sbml.get(i)).getSpatialDimensions() != 0) {
+				if (document.getLevel()>2 || ((Compartment) sbml.get(i)).getSpatialDimensions() != 0) {
 					validVars.add(((Compartment) sbml.get(i)).getId());
 				}
 			}
