@@ -1315,7 +1315,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					refGCM = new GCMFile(path);
 					refGCM.load(path + separator + refFile);
 				}
-				SpeciesPanel panel = new SpeciesPanel(selected, list, influences, conditions, gcm, paramsOnly, biosim, refGCM);
+				SpeciesPanel panel = new SpeciesPanel(selected, list, influences, conditions, components, gcm, paramsOnly, biosim, refGCM);
 				if (paramsOnly) {
 					String updates = panel.updates();
 					if (!updates.equals("")) {
@@ -1460,7 +1460,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			refGCM = new GCMFile(path);
 			refGCM.load(path + separator + refFile);
 		}
-		return new SpeciesPanel(id, species, influences, conditions, gcm, paramsOnly, biosim, refGCM);
+		return new SpeciesPanel(id, species, influences, conditions, components, gcm, paramsOnly, biosim, refGCM);
 	}
 	public InfluencePanel launchInfluencePanel(String id){
 		GCMFile refGCM = null;
