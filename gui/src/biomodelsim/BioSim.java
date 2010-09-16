@@ -2747,7 +2747,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							.equals(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
-						if (save(i, 0) != 1) {
+						if (save(i, 0) == 0) {
 							return;
 						}
 						break;
@@ -3134,7 +3134,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						.equals(
 								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.setSelectedIndex(i);
-					if (save(i, 0) != 1) {
+					if (save(i, 0) == 0) {
 						return;
 					}
 					break;
@@ -3372,7 +3372,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						.equals(
 								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.setSelectedIndex(i);
-					if (save(i, 0) != 1) {
+					if (save(i, 0) == 0) {
 						return;
 					}
 					break;
@@ -3542,7 +3542,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			/*
 			 * if (!treeSelected) { Component comp = tab.getSelectedComponent();
 			 * if (comp instanceof SBML_Editor) { if
-			 * (save(tab.getSelectedIndex(), 0) != 1) { return; } theFile =
+			 * (save(tab.getSelectedIndex(), 0) == 0) { return; } theFile =
 			 * tab.getTitleAt(tab.getSelectedIndex()); directory = root +
 			 * separator; } else { return; } } else {
 			 */
@@ -3563,7 +3563,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						.equals(
 								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.setSelectedIndex(i);
-					if (save(i, 0) != 1) {
+					if (save(i, 0) == 0) {
 						return;
 					}
 					break;
@@ -6099,7 +6099,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							.equals(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
-						if (save(i, 0) != 1) {
+						if (save(i, 0) == 0) {
 							return;
 						}
 						break;
@@ -6751,7 +6751,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							.equals(
 									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
-						if (save(i, 0) != 1) {
+						if (save(i, 0) == 0) {
 							return;
 						}
 						break;
@@ -7106,7 +7106,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 										tree.getFile().split(separator)[tree.getFile().split(
 												separator).length - 1])) {
 							tab.setSelectedIndex(i);
-							if (save(i, 0) != 1) {
+							if (save(i, 0) == 0) {
 								return;
 							}
 							break;
