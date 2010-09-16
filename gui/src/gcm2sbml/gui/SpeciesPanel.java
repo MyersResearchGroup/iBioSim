@@ -21,12 +21,13 @@ import biomodelsim.BioSim;
 
 public class SpeciesPanel extends JPanel implements ActionListener {
 	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList influencesList,
-			PropertyList conditionsList, GCMFile gcm, boolean paramsOnly, BioSim biosim, GCMFile refGCM) {
+			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly, BioSim biosim, GCMFile refGCM) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.speciesList = speciesList;
 		this.influences = influencesList;
 		this.conditions = conditionsList;
+		this.components = componentsList;
 		this.gcm = gcm;
 		this.paramsOnly = paramsOnly;
 		this.biosim = biosim;
@@ -208,6 +209,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				influences.addAllItem(gcm.getInfluences().keySet());
 				((DefaultListModel) conditions.getModel()).clear();
 				conditions.addAllItem(gcm.getConditions());
+				((DefaultListModel) components.getModel()).clear();
+				for (String c : gcm.getComponents().keySet()) {
+					components.addItem(c + " "
+							+ gcm.getComponents().get(c).getProperty("gcm").replace(".gcm", "")
+							+ " " + gcm.getComponentPortMap(c));
+				}
 			}
 			gcm.addSpecies(id, property);
 			if (paramsOnly) {
@@ -308,6 +315,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private PropertyList influences = null;
 	
 	private PropertyList conditions = null;
+	
+	private PropertyList components = null;
 
 	private String[] options = { "Ok", "Cancel" };
 

@@ -1193,6 +1193,13 @@ public class GCMFile {
 			}
 			newConditions.add(condition);
 		}
+		for (String c : components.keySet()) {
+			for (Object key : components.get(c).keySet()) {
+				if (components.get(c).getProperty((String) key).equals(oldName)) {
+					components.get(c).put(key, newName);
+				}
+			}
+		}
 		conditions = newConditions;
 		species.put(newName, species.get(oldName));
 		species.remove(oldName);
