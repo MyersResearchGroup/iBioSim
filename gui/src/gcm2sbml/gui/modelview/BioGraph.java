@@ -522,7 +522,7 @@ public class BioGraph extends mxGraph {
 	 * The object that gets set as the mxCell value object.
 	 * It is basically a way to store a property and label.
 	 */
-	public class CellValueObject extends Object{
+	public class CellValueObject extends Object {
 		public Properties prop;
 		public String label;
 		@Override

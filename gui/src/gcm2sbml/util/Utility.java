@@ -386,6 +386,7 @@ public class Utility {
 			Compartment comp = document.getModel().createCompartment();
 			comp.setId(compartment);
 			comp.setUnits("litre");
+			comp.setSpatialDimensions(3);
 			return true;
 		}
 		else {
@@ -398,6 +399,7 @@ public class Utility {
 			Compartment comp = document.getModel().createCompartment();
 			comp.setId(compartment);
 			comp.setUnits("litre");
+			comp.setSpatialDimensions(3);
 			return true;
 			//Give warning
 		}
