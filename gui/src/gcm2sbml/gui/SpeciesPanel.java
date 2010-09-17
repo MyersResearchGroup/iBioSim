@@ -202,6 +202,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				if (f.getState() == null || f.getState().equals(PropertyField.states[1]) || f.getState().equals(PropertyField.paramStates[1])) {
 					property.put(f.getKey(), f.getValue());
 				}
+				else {
+					property.remove(f.getKey());
+				}
 			}
 			property.put(GlobalConstants.TYPE, typeBox.getSelectedItem().toString());
 
