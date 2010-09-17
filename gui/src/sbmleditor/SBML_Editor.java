@@ -3801,15 +3801,15 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			else if (selected.contains("*")) {
 				return selected.substring(2, selected.indexOf("*") - 1);
 			}
-			else if (selected.contains("10^")) {
-				String multStr = selected.substring(0, selected.indexOf("*") - 1);
-				if (!multStr.contains("10^")) {
-					return multStr;
-				}
+		}
+		else if (selected.contains("10^")) {
+			String multStr = selected.substring(0, selected.indexOf("*") - 1);
+			if (!multStr.contains("10^")) {
+				return multStr;
 			}
-			else if (selected.contains("*")) {
-				return selected.substring(0, selected.indexOf("*") - 1);
-			}
+		}
+		else if (selected.contains("*")) {
+			return selected.substring(0, selected.indexOf("*") - 1);
 		}
 		return "1.0";
 	}
