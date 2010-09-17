@@ -72,6 +72,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.INITIAL_STRING)) {
 				defaultValue = refGCM.getSpecies().get(selected).getProperty(GlobalConstants.INITIAL_STRING);
 			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.INITIAL_STRING)) {
+				defaultValue = gcm.getParameter(GlobalConstants.INITIAL_STRING);
+			}
 			field = new PropertyField(GlobalConstants.INITIAL_STRING, gcm
 					.getParameter(GlobalConstants.INITIAL_STRING), PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
 		}
@@ -98,6 +101,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.KASSOCIATION_STRING)) {
 				defaultValue = refGCM.getSpecies().get(selected).getProperty(GlobalConstants.KASSOCIATION_STRING);
 			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.KASSOCIATION_STRING)) {
+				defaultValue = gcm.getParameter(GlobalConstants.KASSOCIATION_STRING);
+			}
 			field = new PropertyField(GlobalConstants.KASSOCIATION_STRING, gcm
 					.getParameter(GlobalConstants.KASSOCIATION_STRING), PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
 		}
@@ -114,6 +120,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			String defaultValue = refGCM.getParameter(GlobalConstants.KDECAY_STRING);
 			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.KDECAY_STRING)) {
 				defaultValue = refGCM.getSpecies().get(selected).getProperty(GlobalConstants.KDECAY_STRING);
+			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.KDECAY_STRING)) {
+				defaultValue = gcm.getParameter(GlobalConstants.KDECAY_STRING);
 			}
 			field = new PropertyField(GlobalConstants.KDECAY_STRING, gcm
 					.getParameter(GlobalConstants.KDECAY_STRING), PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);

@@ -126,6 +126,9 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			if (refGCM.getInfluences().get(selected).containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
 				defaultValue = refGCM.getInfluences().get(selected).getProperty(GlobalConstants.COOPERATIVITY_STRING);
 			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.COOPERATIVITY_STRING)) {
+				defaultValue = gcm.getParameter(GlobalConstants.COOPERATIVITY_STRING);
+			}
 			field = new PropertyField(GlobalConstants.COOPERATIVITY_STRING, gcm
 					.getParameter(GlobalConstants.COOPERATIVITY_STRING),
 					PropertyField.paramStates[0], defaultValue,
@@ -145,6 +148,9 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			String defaultValue = refGCM.getParameter(GlobalConstants.MAX_DIMER_STRING);
 			if (refGCM.getInfluences().get(selected).containsKey(GlobalConstants.MAX_DIMER_STRING)) {
 				defaultValue = refGCM.getInfluences().get(selected).getProperty(GlobalConstants.MAX_DIMER_STRING);
+			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.MAX_DIMER_STRING)) {
+				defaultValue = gcm.getParameter(GlobalConstants.MAX_DIMER_STRING);
 			}
 			field = new PropertyField(GlobalConstants.MAX_DIMER_STRING, gcm
 					.getParameter(GlobalConstants.MAX_DIMER_STRING),
@@ -166,6 +172,9 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			if (refGCM.getInfluences().get(selected).containsKey(GlobalConstants.KREP_STRING)) {
 				defaultValue = refGCM.getInfluences().get(selected).getProperty(GlobalConstants.KREP_STRING);
 			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.KREP_STRING)) {
+				defaultValue = gcm.getParameter(GlobalConstants.KREP_STRING);
+			}
 			field = new PropertyField(GlobalConstants.KREP_STRING, gcm
 					.getParameter(GlobalConstants.KREP_STRING),
 					PropertyField.paramStates[0], defaultValue,
@@ -185,6 +194,9 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			String defaultValue = refGCM.getParameter(GlobalConstants.KACT_STRING);
 			if (refGCM.getInfluences().get(selected).containsKey(GlobalConstants.KACT_STRING)) {
 				defaultValue = refGCM.getInfluences().get(selected).getProperty(GlobalConstants.KACT_STRING);
+			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.KACT_STRING)) {
+				defaultValue = gcm.getParameter(GlobalConstants.KACT_STRING);
 			}
 			field = new PropertyField(GlobalConstants.KACT_STRING, gcm
 					.getParameter(GlobalConstants.KACT_STRING),
@@ -206,6 +218,9 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			String defaultValue = refGCM.getParameter(GlobalConstants.KBIO_STRING);
 			if (refGCM.getInfluences().get(selected).containsKey(GlobalConstants.KBIO_STRING)) {
 				defaultValue = refGCM.getInfluences().get(selected).getProperty(GlobalConstants.KBIO_STRING);
+			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.KBIO_STRING)) {
+				defaultValue = gcm.getParameter(GlobalConstants.KBIO_STRING);
 			}
 			field = new PropertyField(GlobalConstants.KBIO_STRING, gcm
 					.getParameter(GlobalConstants.KBIO_STRING),

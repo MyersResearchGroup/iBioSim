@@ -56,6 +56,9 @@ public class PromoterPanel extends JPanel {
 			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.PROMOTER_COUNT_STRING)) {
 				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.PROMOTER_COUNT_STRING);
 			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.PROMOTER_COUNT_STRING)) {
+				defaultValue = gcm.getParameter(GlobalConstants.PROMOTER_COUNT_STRING);
+			}
 			field = new PropertyField(GlobalConstants.PROMOTER_COUNT_STRING, gcm
 					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING),
 					PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
@@ -82,6 +85,9 @@ public class PromoterPanel extends JPanel {
 			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.RNAP_BINDING_STRING)) {
 				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.RNAP_BINDING_STRING);
 			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.RNAP_BINDING_STRING)) {
+				defaultValue = gcm.getParameter(GlobalConstants.RNAP_BINDING_STRING);
+			}
 			field = new PropertyField(GlobalConstants.RNAP_BINDING_STRING, gcm
 					.getParameter(GlobalConstants.RNAP_BINDING_STRING),
 					PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
@@ -99,6 +105,9 @@ public class PromoterPanel extends JPanel {
 			String defaultValue = refGCM.getParameter(GlobalConstants.OCR_STRING);
 			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.OCR_STRING)) {
 				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.OCR_STRING);
+			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.OCR_STRING)) {
+				defaultValue = gcm.getParameter(GlobalConstants.OCR_STRING);
 			}
 			field = new PropertyField(GlobalConstants.OCR_STRING, gcm
 					.getParameter(GlobalConstants.OCR_STRING),
@@ -118,6 +127,9 @@ public class PromoterPanel extends JPanel {
 			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.STOICHIOMETRY_STRING)) {
 				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.STOICHIOMETRY_STRING);
 			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.STOICHIOMETRY_STRING)) {
+				defaultValue = gcm.getParameter(GlobalConstants.STOICHIOMETRY_STRING);
+			}
 			field = new PropertyField(GlobalConstants.STOICHIOMETRY_STRING, gcm
 					.getParameter(GlobalConstants.STOICHIOMETRY_STRING),
 					PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
@@ -135,6 +147,9 @@ public class PromoterPanel extends JPanel {
 			String defaultValue = refGCM.getParameter(GlobalConstants.KBASAL_STRING);
 			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.KBASAL_STRING)) {
 				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.KBASAL_STRING);
+			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.KBASAL_STRING)) {
+				defaultValue = gcm.getParameter(GlobalConstants.KBASAL_STRING);
 			}
 			field = new PropertyField(GlobalConstants.KBASAL_STRING, gcm
 					.getParameter(GlobalConstants.KBASAL_STRING),
@@ -155,6 +170,9 @@ public class PromoterPanel extends JPanel {
 			String defaultValue = refGCM.getParameter(GlobalConstants.ACTIVED_STRING);
 			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.ACTIVED_STRING)) {
 				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.ACTIVED_STRING);
+			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.ACTIVED_STRING)) {
+				defaultValue = gcm.getParameter(GlobalConstants.ACTIVED_STRING);
 			}
 			field = new PropertyField(GlobalConstants.ACTIVED_STRING, gcm
 					.getParameter(GlobalConstants.ACTIVED_STRING),
