@@ -1763,6 +1763,10 @@ public class GCMFile {
 	public HashMap<String, String> getParameters() {
 		return parameters;
 	}
+	
+	public boolean globalParameterIsSet(String parameter) {
+		return globalParameters.containsKey(parameter);
+	}
 
 	public String getParameter(String parameter) {
 		if (globalParameters.containsKey(parameter)) {
