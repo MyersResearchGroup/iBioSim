@@ -6741,7 +6741,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					"Invalid Spatial Dimensions", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		System.out.println(dim);
 		if (dim==3) {
 			compUnits.removeAllItems();
 			compUnits.addItem("( none )");
