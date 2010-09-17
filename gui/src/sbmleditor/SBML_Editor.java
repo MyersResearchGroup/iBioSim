@@ -6061,6 +6061,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 		});
+		dimText.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (editComp) {
+					setCompartOptions(((String) compartments.getSelectedValue()).split(" ")[0],
+							dimText.getText());
+				}
+				else {
+					setCompartOptions("", (String) dimText.getText());
+				}
+			}
+		});
 		String[] list = { "Original", "Custom" };
 		String[] list1 = { "1", "2" };
 		final JComboBox type = new JComboBox(list);
@@ -6129,7 +6140,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				dimBox.setSelectedItem(String.valueOf(compartment.getSpatialDimensions()));
 				dimText.setText(String.valueOf(compartment.getSpatialDimensionsAsDouble()));
 				setCompartOptions(((String) compartments.getSelectedValue()).split(" ")[0], String
-						.valueOf(compartment.getSpatialDimensions()));
+						.valueOf(compartment.getSpatialDimensionsAsDouble()));
 				if (compartment.isSetSize()) {
 					compSize.setText("" + compartment.getSize());
 				}
@@ -6703,11 +6714,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 						else {
 							JOptionPane
-									.showMessageDialog(
-											biosim.frame(),
-											"Species cannot be product if constant and not a boundary condition.",
-											"Invalid Species Attributes", JOptionPane.ERROR_MESSAGE);
-						}
+							.showMessageDialog(
+									biosim.frame(),
+									"Species cannot be product if constant and not a boundary condition.",
+									"Invalid Species Attributes", JOptionPane.ERROR_MESSAGE);
+				}
 						return true;
 					}
 				}
@@ -6719,16 +6730,27 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	/**
 	 * Set compartment options based on number of dimensions
 	 */
-	private void setCompartOptions(String selected, String dim) {
-		if (dim.equals("3")) {
+	private void setCompartOptions(String selected, String dimStr) {
+		double dim = 3;
+		try {
+			dim = Double.parseDouble(dimStr);
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(
+					biosim.frame(),
+					"Compartment spatial dimensions must be a real number.",
+					"Invalid Spatial Dimensions", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		System.out.println(dim);
+		if (dim==3) {
 			compUnits.removeAllItems();
 			compUnits.addItem("( none )");
 			ListOf listOfUnits = document.getModel().getListOfUnitDefinitions();
 			for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
 				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 				if ((unit.getNumUnits() == 1)
-						&& (unit.getUnit(0).isLitre() && unit.getUnit(0).getExponent() == 1)
-						|| (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 3)) {
+						&& (unit.getUnit(0).isLitre() && unit.getUnit(0).getExponentAsDouble() == 1)
+						|| (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == 3)) {
 					if (!(document.getLevel()<3 && unit.getId().equals("volume"))) {
 						compUnits.addItem(unit.getId());
 					}
@@ -6754,14 +6776,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				compSize.setEnabled(true);
 			}
 		}
-		else if (dim.equals("2")) {
+		else if (dim==2) {
 			compUnits.removeAllItems();
 			compUnits.addItem("( none )");
 			ListOf listOfUnits = document.getModel().getListOfUnitDefinitions();
 			for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
 				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 				if ((unit.getNumUnits() == 1)
-						&& (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 2)) {
+						&& (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == 2)) {
 					if (!(document.getLevel()<3 && unit.getId().equals("area"))) {
 						compUnits.addItem(unit.getId());
 					}
@@ -6786,14 +6808,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				compSize.setEnabled(true);
 			}
 		}
-		else if (dim.equals("1")) {
+		else if (dim==1) {
 			compUnits.removeAllItems();
 			compUnits.addItem("( none )");
 			ListOf listOfUnits = document.getModel().getListOfUnitDefinitions();
 			for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
 				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 				if ((unit.getNumUnits() == 1)
-						&& (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 1)) {
+						&& (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == 1)) {
 					if (!(document.getLevel()<3 && unit.getId().equals("length"))) {
 						compUnits.addItem(unit.getId());
 					}
@@ -6819,7 +6841,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				compSize.setEnabled(true);
 			}
 		}
-		else if (dim.equals("0")) {
+		else if (dim==0) {
 			compSize.setText("");
 			compUnits.removeAllItems();
 			compUnits.addItem("( none )");
@@ -6835,6 +6857,23 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (document.getLevel()<3) {
 				compConstant.setEnabled(false);
 				compSize.setEnabled(false);
+			}
+		}
+		else {
+			compUnits.removeAllItems();
+			compUnits.addItem("( none )");
+			ListOf listOfUnits = document.getModel().getListOfUnitDefinitions();
+			for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
+				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+				if ((unit.getNumUnits() == 1) &&
+					(unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == dim)) {
+					compUnits.addItem(unit.getId());
+				}
+			}
+			compUnits.addItem("dimensionless");
+			if (!paramsOnly) {
+				compConstant.setEnabled(true);
+				compSize.setEnabled(true);
 			}
 		}
 		if (!selected.equals("")) {
@@ -6887,7 +6926,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if ((unit.getNumUnits() == 1)
 					&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem()
 							|| unit.getUnit(0).isGram() || unit.getUnit(0).isKilogram())
-					&& (unit.getUnit(0).getExponent() == 1)) {
+					&& (unit.getUnit(0).getExponentAsDouble() == 1)) {
 				if (!(document.getLevel()<3 && unit.getId().equals("substance"))) {
 					specUnits.addItem(unit.getId());
 				}
@@ -8518,26 +8557,26 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if ((unit.getNumUnits() == 1)
 					&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem()
 							|| unit.getUnit(0).isGram() || unit.getUnit(0).isKilogram())
-					&& (unit.getUnit(0).getExponent() == 1)) {
+					&& (unit.getUnit(0).getExponentAsDouble() == 1)) {
 				substanceUnits.addItem(unit.getId());
 				extentUnits.addItem(unit.getId());
 			}
 			if ((unit.getNumUnits() == 1)
 					&& (unit.getUnit(0).isSecond())
-					&& (unit.getUnit(0).getExponent() == 1)) {
+					&& (unit.getUnit(0).getExponentAsDouble() == 1)) {
 				timeUnits.addItem(unit.getId());
 			}
 			if ((unit.getNumUnits() == 1)
-					&& (unit.getUnit(0).isLitre() && unit.getUnit(0).getExponent() == 1)
-					|| (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 3)) {
+					&& (unit.getUnit(0).isLitre() && unit.getUnit(0).getExponentAsDouble() == 1)
+					|| (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == 3)) {
 				volumeUnits.addItem(unit.getId());
 			}
 			if ((unit.getNumUnits() == 1)
-					&& (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 2)) {
+					&& (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == 2)) {
 				areaUnits.addItem(unit.getId());
 			}
 			if ((unit.getNumUnits() == 1)
-					&& (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 1)) {
+					&& (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == 1)) {
 				lengthUnits.addItem(unit.getId());
 			}
 		}	
