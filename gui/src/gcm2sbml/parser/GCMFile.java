@@ -1823,7 +1823,7 @@ public class GCMFile {
 			}
 
 			// for backwards compatibility
-			if (properties.containsKey("label")) {
+			if (!properties.containsKey("ID") && properties.containsKey("label")) {
 				properties.put(GlobalConstants.ID, properties.getProperty("label")
 						.replace("\"", ""));
 			}

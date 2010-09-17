@@ -192,7 +192,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				for(Object s:gcm.getSpecies().get(oldName).keySet()){
 					String k = s.toString();
 					String v = (gcm.getSpecies().get(oldName).getProperty(k)).toString();
-					property.put(k, v);
+					if (!k.equals("label")) {
+						property.put(k, v);
+					}	
 				}
 			}
 			

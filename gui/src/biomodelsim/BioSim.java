@@ -9274,7 +9274,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				catch (Exception e1) {
-					JOptionPane.showMessageDialog(frame, "Unable to view this gcm file.", "Error",
+					JOptionPane.showMessageDialog(frame, "Unable to open this gcm file.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
