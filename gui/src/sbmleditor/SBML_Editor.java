@@ -34,6 +34,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	/*
 	 * compartment buttons
 	 */
+	private JButton modelUnits;
+	
+	private JComboBox substanceUnits, timeUnits, volumeUnits, areaUnits, lengthUnits, extentUnits, conversionFactor;
+	
 	private JButton addCompart, removeCompart, editCompart;
 
 	private JButton addFunction, removeFunction, editFunction;
@@ -795,12 +799,21 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		modelName = new JTextField(model.getName(), 40);
 		JLabel modelIDLabel = new JLabel("Model ID:");
 		JLabel modelNameLabel = new JLabel("Model Name:");
+		modelUnits = new JButton("Model Units");
+		modelUnits.addActionListener(this);
 		modelID.setEditable(false);
 		mainPanelNorth.add(modelIDLabel);
 		mainPanelNorth.add(modelID);
 		mainPanelNorth.add(modelNameLabel);
 		mainPanelNorth.add(modelName);
-
+		if (document.getLevel()>2) {
+			mainPanelNorth.add(modelUnits);
+		}
+		if (paramsOnly) {
+			modelName.setEnabled(false);
+			modelUnits.setEnabled(false);
+		}
+			
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(mainPanelNorth, "North");
@@ -1255,6 +1268,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		// if the save as button is clicked
 		else if (e.getSource() == saveAs) {
 			saveAs();
+		}
+		// if the add function button is clicked
+		else if (e.getSource() == modelUnits) {
+			modelUnitsEditor("OK");
 		}
 		// if the add function button is clicked
 		else if (e.getSource() == addFunction) {
@@ -2321,6 +2338,33 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	private boolean unitsInUse(String unit) {
 		Model model = document.getModel();
 		boolean inUse = false;
+		ArrayList<String> modelUnitsUsing = new ArrayList<String>();
+		if (document.getLevel()>2) {
+			if (model.isSetSubstanceUnits() && model.getSubstanceUnits().equals(unit)) {
+				inUse = true;
+				modelUnitsUsing.add("substance");
+			}
+			if (model.isSetTimeUnits() && model.getTimeUnits().equals(unit)) {
+				inUse = true;
+				modelUnitsUsing.add("time");
+			}
+			if (model.isSetVolumeUnits() && model.getVolumeUnits().equals(unit)) {
+				inUse = true;
+				modelUnitsUsing.add("volume");
+			}
+			if (model.isSetAreaUnits() && model.getAreaUnits().equals(unit)) {
+				inUse = true;
+				modelUnitsUsing.add("area");
+			}
+			if (model.isSetLengthUnits() && model.getLengthUnits().equals(unit)) {
+				inUse = true;
+				modelUnitsUsing.add("length");
+			}
+			if (model.isSetExtentUnits() && model.getExtentUnits().equals(unit)) {
+				inUse = true;
+				modelUnitsUsing.add("extent");
+			}
+		}
 		ArrayList<String> compartmentsUsing = new ArrayList<String>();
 		for (int i = 0; i < model.getNumCompartments(); i++) {
 			Compartment compartment = (Compartment) model.getListOfCompartments().get(i);
@@ -2360,6 +2404,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		if (inUse) {
 			String message = "Unable to remove the selected unit.";
 			String[] ids;
+			if (modelUnitsUsing.size() != 0) {
+				ids = modelUnitsUsing.toArray(new String[0]);
+				sort(ids);
+				message += "\n\nIt is used by the following model units:\n";
+				for (int i = 0; i < ids.length; i++) {
+					if (i == ids.length - 1) {
+						message += ids[i];
+					}
+					else {
+						message += ids[i] + "\n";
+					}
+				}
+			}
 			if (compartmentsUsing.size() != 0) {
 				ids = compartmentsUsing.toArray(new String[0]);
 				sort(ids);
@@ -2433,6 +2490,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		if (species.equals("")) {
 			return inUse;
 		}
+		boolean usedInModelConversionFactor = false;
+		
 		ArrayList<String> stoicMathUsing = new ArrayList<String>();
 		ArrayList<String> reactantsUsing = new ArrayList<String>();
 		ArrayList<String> productsUsing = new ArrayList<String>();
@@ -2444,6 +2503,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		ArrayList<String> eventsUsing = new ArrayList<String>();
 		ArrayList<String> speciesUsing = new ArrayList<String>();
 		if (document.getLevel()>2) {
+			if (model.isSetConversionFactor() && model.getConversionFactor().equals(species)) {
+				inUse = true;
+				usedInModelConversionFactor = true;
+			}
 			for (int i = 0; i < model.getNumSpecies(); i++) {
 				Species speciesConv = (Species) model.getListOfSpecies().get(i);
 				if (speciesConv.isSetConversionFactor()) {
@@ -2685,6 +2748,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			else {
 				message = "Unable to remove the selected variable.";
+			}
+			if (usedInModelConversionFactor) {
+				message += "\n\nIt is used as the model conversion factor.\n";
 			}
 			if (speciesUsing.size() != 0) {
 				message += "\n\nIt is used as a conversion factor in the following species:\n" + speciesConvFac;
@@ -6696,7 +6762,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 				if ((unit.getNumUnits() == 1)
 						&& (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 2)) {
-					if (!unit.getId().equals("area")) {
+					if (!(document.getLevel()<3 && unit.getId().equals("area"))) {
 						compUnits.addItem(unit.getId());
 					}
 				}
@@ -6728,7 +6794,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 				if ((unit.getNumUnits() == 1)
 						&& (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 1)) {
-					if (!unit.getId().equals("length")) {
+					if (!(document.getLevel()<3 && unit.getId().equals("length"))) {
 						compUnits.addItem(unit.getId());
 					}
 				}
@@ -6827,6 +6893,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 		}
+		if (document.getLevel()<3) {
+			specUnits.addItem("substance");
+		}
+		String[] unitIds = { "dimensionless", "gram", "item", "kilogram", "mole" };
+		for (int i = 0; i < unitIds.length; i++) {
+			specUnits.addItem(unitIds[i]);
+		}
 		if (document.getLevel()>2) {	
 			specConv = new JComboBox();
 			specConv.addItem("( none )");
@@ -6837,13 +6910,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					specConv.addItem(param.getId());
 				}
 			}
-		}
-		if (document.getLevel()<3) {
-			specUnits.addItem("substance");
-		}
-		String[] unitIds = { "dimensionless", "gram", "item", "kilogram", "mole" };
-		for (int i = 0; i < unitIds.length; i++) {
-			specUnits.addItem(unitIds[i]);
 		}
 		String[] optionsTF = { "true", "false" };
 		specBoundary = new JComboBox(optionsTF);
@@ -7413,6 +7479,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					updateMathVar(reaction.getKineticLaw().getMath(), origId, newId));
 		}
 		if (document.getLevel()>2) {
+			if (model.isSetConversionFactor() && origId.equals(model.getConversionFactor())) {
+				model.setConversionFactor(newId);
+			}
 			if (model.getNumSpecies() > 0) {
 				for (int i = 0; i < model.getNumSpecies(); i++) {
 					Species species = (Species) model.getListOfSpecies().get(i);
@@ -7561,6 +7630,38 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		if (origId.equals(newId))
 			return;
 		Model model = document.getModel();
+		if (document.getLevel()>2) {
+			if (model.isSetSubstanceUnits()) {
+				if (model.getSubstanceUnits().equals(origId)) {
+					model.setSubstanceUnits(newId);
+				}	
+			}
+			if (model.isSetTimeUnits()) {
+				if (model.getTimeUnits().equals(origId)) {
+					model.setTimeUnits(newId);
+				}	
+			}
+			if (model.isSetVolumeUnits()) {
+				if (model.getVolumeUnits().equals(origId)) {
+					model.setVolumeUnits(newId);
+				}	
+			}
+			if (model.isSetAreaUnits()) {
+				if (model.getAreaUnits().equals(origId)) {
+					model.setAreaUnits(newId);
+				}	
+			}
+			if (model.isSetLengthUnits()) {
+				if (model.getLengthUnits().equals(origId)) {
+					model.setLengthUnits(newId);
+				}	
+			}
+			if (model.isSetExtentUnits()) {
+				if (model.getExtentUnits().equals(origId)) {
+					model.setExtentUnits(newId);
+				}	
+			}
+		}
 		if (model.getNumCompartments() > 0) {
 			for (int i = 0; i < model.getNumCompartments(); i++) {
 				Compartment compartment = (Compartment) model.getListOfCompartments().get(i);
@@ -8384,6 +8485,169 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		return invalidVars;
 	}
 
+	/**
+	 * Creates a frame used to edit parameters or create new ones.
+	 */
+	private void modelUnitsEditor(String option) {
+		JPanel modelUnitsPanel;
+		modelUnitsPanel = new JPanel(new GridLayout(7, 2));
+		JLabel substanceUnitsLabel = new JLabel("Substance Units:");
+		JLabel timeUnitsLabel = new JLabel("Time Units:");
+		JLabel volumeUnitsLabel = new JLabel("Volume Units:");
+		JLabel areaUnitsLabel = new JLabel("Area Units:");
+		JLabel lengthUnitsLabel = new JLabel("Length Units:");
+		JLabel extentUnitsLabel = new JLabel("Extent Units:");
+		JLabel conversionFactorLabel = new JLabel("Conversion Factor:");
+		substanceUnits = new JComboBox();
+		substanceUnits.addItem("( none )");
+		timeUnits = new JComboBox();
+		timeUnits.addItem("( none )");
+		volumeUnits = new JComboBox();
+		volumeUnits.addItem("( none )");
+		areaUnits = new JComboBox();
+		areaUnits.addItem("( none )");
+		lengthUnits = new JComboBox();
+		lengthUnits.addItem("( none )");
+		extentUnits = new JComboBox();
+		extentUnits.addItem("( none )");
+		conversionFactor = new JComboBox();
+		conversionFactor.addItem("( none )");
+		ListOf listOfUnits = document.getModel().getListOfUnitDefinitions();
+		for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
+			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+			if ((unit.getNumUnits() == 1)
+					&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem()
+							|| unit.getUnit(0).isGram() || unit.getUnit(0).isKilogram())
+					&& (unit.getUnit(0).getExponent() == 1)) {
+				substanceUnits.addItem(unit.getId());
+				extentUnits.addItem(unit.getId());
+			}
+			if ((unit.getNumUnits() == 1)
+					&& (unit.getUnit(0).isSecond())
+					&& (unit.getUnit(0).getExponent() == 1)) {
+				timeUnits.addItem(unit.getId());
+			}
+			if ((unit.getNumUnits() == 1)
+					&& (unit.getUnit(0).isLitre() && unit.getUnit(0).getExponent() == 1)
+					|| (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 3)) {
+				volumeUnits.addItem(unit.getId());
+			}
+			if ((unit.getNumUnits() == 1)
+					&& (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 2)) {
+				areaUnits.addItem(unit.getId());
+			}
+			if ((unit.getNumUnits() == 1)
+					&& (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponent() == 1)) {
+				lengthUnits.addItem(unit.getId());
+			}
+		}	
+		substanceUnits.addItem("dimensionless");
+		substanceUnits.addItem("gram");
+		substanceUnits.addItem("item");
+		substanceUnits.addItem("kilogram");
+		substanceUnits.addItem("mole");
+		timeUnits.addItem("dimensionless");
+		timeUnits.addItem("second");
+		volumeUnits.addItem("dimensionless");
+		volumeUnits.addItem("litre");
+		areaUnits.addItem("dimensionless");
+		lengthUnits.addItem("dimensionless");
+		lengthUnits.addItem("metre");
+		extentUnits.addItem("dimensionless");
+		extentUnits.addItem("gram");
+		extentUnits.addItem("item");
+		extentUnits.addItem("kilogram");
+		extentUnits.addItem("mole");
+		ListOf listOfParameters = document.getModel().getListOfParameters();
+		for (int i = 0; i < document.getModel().getNumParameters(); i++) {
+			Parameter param = (Parameter) listOfParameters.get(i);
+			if (param.getConstant()) {
+				conversionFactor.addItem(param.getId());
+			}
+		}
+		if (option.equals("OK")) {
+			substanceUnits.setSelectedItem(document.getModel().getSubstanceUnits());
+			timeUnits.setSelectedItem(document.getModel().getTimeUnits());
+			volumeUnits.setSelectedItem(document.getModel().getVolumeUnits());
+			areaUnits.setSelectedItem(document.getModel().getAreaUnits());
+			lengthUnits.setSelectedItem(document.getModel().getLengthUnits());
+			extentUnits.setSelectedItem(document.getModel().getExtentUnits());
+			conversionFactor.setSelectedItem(document.getModel().getConversionFactor());
+		}
+		modelUnitsPanel.add(substanceUnitsLabel);
+		modelUnitsPanel.add(substanceUnits);
+		modelUnitsPanel.add(timeUnitsLabel);
+		modelUnitsPanel.add(timeUnits);
+		modelUnitsPanel.add(volumeUnitsLabel);
+		modelUnitsPanel.add(volumeUnits);
+		modelUnitsPanel.add(areaUnitsLabel);
+		modelUnitsPanel.add(areaUnits);
+		modelUnitsPanel.add(lengthUnitsLabel);
+		modelUnitsPanel.add(lengthUnits);
+		modelUnitsPanel.add(extentUnitsLabel);
+		modelUnitsPanel.add(extentUnits);
+		modelUnitsPanel.add(conversionFactorLabel);
+		modelUnitsPanel.add(conversionFactor);
+		Object[] options = { option, "Cancel" };
+		int value = JOptionPane.showOptionDialog(biosim.frame(), modelUnitsPanel,
+				"Model Units Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+				options, options[0]);
+		boolean error = true;
+		while (error && value == JOptionPane.YES_OPTION) {
+			error = false;
+			if (substanceUnits.getSelectedItem().equals("( none )")) {
+				document.getModel().unsetSubstanceUnits();
+			}
+			else {
+				document.getModel().setSubstanceUnits((String) substanceUnits.getSelectedItem());
+			}
+			if (timeUnits.getSelectedItem().equals("( none )")) {
+				document.getModel().unsetTimeUnits();
+			}
+			else {
+				document.getModel().setTimeUnits((String) timeUnits.getSelectedItem());
+			}
+			if (volumeUnits.getSelectedItem().equals("( none )")) {
+				document.getModel().unsetVolumeUnits();
+			}
+			else {
+				document.getModel().setVolumeUnits((String) volumeUnits.getSelectedItem());
+			}
+			if (areaUnits.getSelectedItem().equals("( none )")) {
+				document.getModel().unsetAreaUnits();
+			}
+			else {
+				document.getModel().setAreaUnits((String) areaUnits.getSelectedItem());
+			}
+			if (lengthUnits.getSelectedItem().equals("( none )")) {
+				document.getModel().unsetLengthUnits();
+			}
+			else {
+				document.getModel().setLengthUnits((String) lengthUnits.getSelectedItem());
+			}
+			if (extentUnits.getSelectedItem().equals("( none )")) {
+				document.getModel().unsetExtentUnits();
+			}
+			else {
+				document.getModel().setExtentUnits((String) extentUnits.getSelectedItem());
+			}
+			if (conversionFactor.getSelectedItem().equals("( none )")) {
+				document.getModel().unsetConversionFactor();
+			}
+			else {
+				document.getModel().setConversionFactor((String) conversionFactor.getSelectedItem());
+			}
+			dirty = true;
+			if (error) {
+				value = JOptionPane.showOptionDialog(biosim.frame(), modelUnitsPanel,
+						"Model Units Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+						null, options, options[0]);
+			}
+		}
+		if (value == JOptionPane.NO_OPTION) {
+			return;
+		}
+	}
 	/**
 	 * Creates a frame used to edit parameters or create new ones.
 	 */
