@@ -339,10 +339,13 @@ public class BioGraph extends mxGraph {
 		double y = Double.parseDouble(prop.getProperty("graphy", "-9999"));;
 		double width = Double.parseDouble(prop.getProperty("graphwidth", String.valueOf(DEFAULT_SPECIES_WIDTH)));;
 		double height = Double.parseDouble(prop.getProperty("graphheight", String.valueOf(DEFAULT_SPECIES_HEIGHT)));
+		String id = prop.getProperty("ID", "");
+		/*
 		String id = !(prop.getProperty(GlobalConstants.NAME, "").equals("")) ? 
 						prop.getProperty(GlobalConstants.NAME) : 
 							!prop.getProperty("ID", "").equals("") ? prop.getProperty("ID", ""):
 								prop.getProperty("label");
+								*/
 		boolean needsPositioning = false;	
 		if(x < -9998 || y < -9998){
 			unpositionedSpeciesComponentCount += 1;
