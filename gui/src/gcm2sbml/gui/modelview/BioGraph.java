@@ -340,6 +340,9 @@ public class BioGraph extends mxGraph {
 		double width = Double.parseDouble(prop.getProperty("graphwidth", String.valueOf(DEFAULT_SPECIES_WIDTH)));;
 		double height = Double.parseDouble(prop.getProperty("graphheight", String.valueOf(DEFAULT_SPECIES_HEIGHT)));
 		String id = prop.getProperty("ID", "");
+		if (id==null) {
+			id = prop.getProperty("label", "");
+		}
 		/*
 		String id = !(prop.getProperty(GlobalConstants.NAME, "").equals("")) ? 
 						prop.getProperty(GlobalConstants.NAME) : 
