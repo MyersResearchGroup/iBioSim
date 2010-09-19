@@ -304,6 +304,7 @@ public class GCMFile {
 		sbml.setModel(m);
 		Utility.addCompartments(sbml, "default");
 		sbml.getModel().getCompartment("default").setSize(1);
+		m.setVolumeUnits("litre");
 		if (!sbmlFile.equals("") && includeSBML) {
 			sbml = BioSim.readSBML(path + separator + sbmlFile);
 		}

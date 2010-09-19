@@ -131,7 +131,9 @@ public class GeneticNetwork {
 		try {
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
 			m.setName("Created from " + gcm);
-			m.setId(new File(filename).getName().replace(".xml", ""));			
+			m.setId(new File(filename).getName().replace(".xml", ""));	
+			m.setVolumeUnits("litre");
+			m.setSubstanceUnits("mole");
 			p.print(writer.writeToString(document));
 			p.close();
 		} catch (FileNotFoundException e) {
@@ -208,6 +210,8 @@ public class GeneticNetwork {
 
 			m.setName("Created from " + new File(filename).getName().replace("xml", "gcm"));
 			m.setId(new File(filename).getName().replace(".xml", ""));			
+			m.setVolumeUnits("litre");
+			m.setSubstanceUnits("mole");
 
 			p.print(writer.writeToString(document));
 

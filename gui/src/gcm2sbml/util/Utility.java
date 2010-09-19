@@ -132,7 +132,6 @@ public class Utility {
 		specie.setHasOnlySubstanceUnits(true);
 		specie.setConstant(false);
 		specie.setBoundaryCondition(false);
-		specie.setSubstanceUnits("mole");
 		return specie;
 	}
 
@@ -385,7 +384,6 @@ public class Utility {
 		if (document.getModel().getCompartment(compartment) == null) {
 			Compartment comp = document.getModel().createCompartment();
 			comp.setId(compartment);
-			comp.setUnits("litre");
 			comp.setSpatialDimensions(3);
 			return true;
 		}
