@@ -7621,9 +7621,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 													}
 												}
 												else if (c instanceof MovieContainer) {
-													t.addTab("Model View Movie", c);
-													t.getComponentAt(t.getComponents().length - 1)
-															.setName("ModelViewMovie");
+													// TODO Tyler: put this back
+//													t.addTab("Model View Movie", c);
+//													t.getComponentAt(t.getComponents().length - 1)
+//															.setName("ModelViewMovie");
 												}
 												else {
 													t.addTab("Abstraction Options", c);
@@ -11145,12 +11146,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	private void addModelViewTab(Reb2Sac reb2sac, JTabbedPane tabPane, GCM2SBMLEditor gcm2sbml) {
 
 		// Add the modelview tab
-		// TODO: Add the modelview tab
 		MovieContainer movieContainer = new MovieContainer(reb2sac, gcm2sbml.getGCM(), this,
 				gcm2sbml);
 
-		tabPane.addTab("Model View Movie", movieContainer);
-		tabPane.getComponentAt(tabPane.getComponents().length - 1).setName("ModelViewMovie");
+		// TODO Tyler: put this back
+//		tabPane.addTab("Model View Movie", movieContainer);
+//		tabPane.getComponentAt(tabPane.getComponents().length - 1).setName("ModelViewMovie");
 		// When the Graphical View panel gets clicked on, tell it to display
 		// itself.
 		tabPane.addChangeListener(new ChangeListener() {
