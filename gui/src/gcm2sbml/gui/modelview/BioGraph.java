@@ -7,6 +7,10 @@ import gcm2sbml.gui.GCM2SBMLEditor;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
@@ -79,6 +83,9 @@ public class BioGraph extends mxGraph {
 			if(	getCellType(cell.getSource()) == GlobalConstants.SPECIES &&
 				getCellType(cell.getTarget()) == GlobalConstants.SPECIES)
 			gcm2sbml.launchInfluencePanel(cell.getId());
+		}else if(getCellType(cell) == GlobalConstants.COMPONENT){
+			//gcm2sbml.displayChooseComponentDialog(true, null, false, cell.getId());
+			gcm2sbml.launchComponentPanel(cell.getId());
 		}
 		// refresh everything.
 		this.buildGraph();
@@ -528,12 +535,24 @@ public class BioGraph extends mxGraph {
 	 * The object that gets set as the mxCell value object.
 	 * It is basically a way to store a property and label.
 	 */
-	public class CellValueObject extends Object {
+	public class CellValueObject extends Object implements Serializable{
 		public Properties prop;
 		public String label;
 		@Override
 		public String toString(){
 			return this.label;
+		}
+		
+		private void writeObject(ObjectOutputStream oos)
+	    throws IOException {
+			oos.writeObject(label);
+			oos.writeObject(prop);
+		}
+
+		private void readObject(ObjectInputStream ois)
+		    throws ClassNotFoundException, IOException {
+			label = ois.readObject().toString();
+			prop = (Properties)ois.readObject();
 		}
 		
 		public CellValueObject(String label, Properties prop){

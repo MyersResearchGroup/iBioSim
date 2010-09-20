@@ -1470,6 +1470,25 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		}
 		return new InfluencePanel(id, influences, gcm, paramsOnly, biosim, refGCM);
 	}
+	public String launchComponentPanel(String id){
+		GCMFile refGCM = null;
+		if (paramsOnly) {
+			refGCM = new GCMFile(path);
+			refGCM.load(path + separator + refFile);
+		}
+		// TODO: This is a messy way to do things. We set the selected component in the list
+		// and then call displayChooseComponentDialog(). This makes for tight coupling with the
+		// component list.
+		for(int i=0; i<this.components.getModel().getSize(); i++){
+			String componentsListRow = this.components.getModel().getElementAt(i).toString();
+			String componentsListId = componentsListRow.split(" ")[0];
+			if(componentsListId.equals(id)){
+				this.components.setSelectedIndex(i);
+				break;
+			}
+		}
+		return displayChooseComponentDialog(true, this.components, false);
+	}
 	
 	public boolean checkNoComponentLoop(String gcm, String checkFile) {
 		boolean check = true;
