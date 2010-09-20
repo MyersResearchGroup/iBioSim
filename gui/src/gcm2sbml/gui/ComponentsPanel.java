@@ -189,6 +189,18 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 
 			// Check to see if we need to add or edit
 			Properties property = new Properties();
+			
+			// copy the old positioning values.
+			if(oldName != null){
+				for(Object s:gcm.getComponents().get(oldName).keySet()){
+					String k = s.toString();
+					String v = (gcm.getComponents().get(oldName).getProperty(k)).toString();
+					if (k.contains("graph")) {
+						property.put(k, v);
+					}	
+				}
+			}
+			
 			for (PropertyField f : fields.values()) {
 				if (f.getState() == null || f.getState().equals(PropertyField.states[1])) {
 					property.put(f.getKey(), f.getValue());

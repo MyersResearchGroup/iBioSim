@@ -21,17 +21,17 @@ import com.mxgraph.util.mxRectangle;
 public class Layouting {
 
 	public static final String[][] LAYOUTS = {
-		{"verticalHierarchical", "Vertical Hierarchial"},
-		{"horizontalHierarchical", "Horizontal Hierarchical"},
-		{"verticalTree", "Vertical Tree"},
-		{"horizontalTree", "Horizontal Tree"},
-		{"parallelEdges", "Parallel Edges"},
-		{"placeEdgeLabels", "Place Edge Labels"},
+		{"verticalHierarchical", "Vertical Hierarchial (acyclic only)"},
+		{"horizontalHierarchical", "Horizontal Hierarchical (acyclic only)"},
+		{"verticalTree", "Vertical Tree (acyclic only)"},
+		{"horizontalTree", "Horizontal Tree (acyclic only)"},
+		//{"parallelEdges", "Parallel Edges"},
+		//{"placeEdgeLabels", "Place Edge Labels"},
 		{"organicLayout", "Organic Layout"},
-		{"verticalPartition", "Vertical Partition"},
-		{"horizontalPartition", "Horizontal Partition"},
-		{"verticalStack", "Vertical Stack"},
-		{"horizontalStack", "Horizontal Stack"},
+		//{"verticalPartition", "Vertical Partition"},
+		//{"horizontalPartition", "Horizontal Partition"},
+		//{"verticalStack", "Vertical Stack"},
+		//{"horizontalStack", "Horizontal Stack"},
 		{"circleLayout", "Circle Layout"},
 	};
 	
