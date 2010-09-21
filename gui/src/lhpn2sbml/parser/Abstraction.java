@@ -1590,6 +1590,9 @@ public class Abstraction extends LhpnFile {
 			switch (delay.isit) {
 			case 'n':
 				double val = delay.lvalue;
+				if (val%N==0) {
+					continue;
+				}
 				int lower = (int) (val / N) * N;
 				Integer lInt = (Integer) lower;
 				String lVal = lInt.toString();
@@ -1603,6 +1606,9 @@ public class Abstraction extends LhpnFile {
 					lInt = (Integer) lower;
 					int upper = (int) delay.r2.uvalue;
 					uInt = (Integer) upper;
+					if (lower == upper) {
+						continue;
+					}
 					if (lower != INFIN) {
 						lInt = (lInt / N) * N;
 						lVal = lInt.toString();
@@ -2550,15 +2556,6 @@ public class Abstraction extends LhpnFile {
 			trans.addEnabling(trans.getEnablingTree().toString("LHPN"));
 			flag = true;
 		}
-		if (isInteger(var)) {
-			if (!trans.getIntAssignments().containsKey(var)) {
-				trans.addIntAssign(var, expr.toString());
-			}
-		} else if (isBoolean(var)) {
-			if (!trans.getBoolAssignments().containsKey(var)) {
-				trans.addBoolAssign(var, expr.toString());
-			}
-		}
 		for (String v : trans.getAssignTrees().keySet()) {
 			ExprTree e1 = trans.getAssignTree(v);
 			if (e1 != null) {
@@ -2576,6 +2573,15 @@ public class Abstraction extends LhpnFile {
 			} else {
 				trans.addRateAssign(v.split("\\s")[0], e1.toString(
 						"continuous", "LHPN"));
+			}
+		}
+		if (isInteger(var)) {
+			if (!trans.getIntAssignments().containsKey(var)) {
+				trans.addIntAssign(var, expr.toString());
+			}
+		} else if (isBoolean(var)) {
+			if (!trans.getBoolAssignments().containsKey(var)) {
+				trans.addBoolAssign(var, expr.toString());
 			}
 		}
 		return flag;
