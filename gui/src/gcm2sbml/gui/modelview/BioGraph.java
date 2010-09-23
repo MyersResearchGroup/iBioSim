@@ -536,6 +536,7 @@ public class BioGraph extends mxGraph {
 	 * It is basically a way to store a property and label.
 	 */
 	public class CellValueObject extends Object implements Serializable{
+		private static final long serialVersionUID = 918273645;
 		public Properties prop;
 		public String label;
 		@Override
