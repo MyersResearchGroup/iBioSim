@@ -13798,6 +13798,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		if (document.getLevel() < 3) {
 			document.setLevelAndVersion(SBML_LEVEL, SBML_VERSION);
+			SBMLWriter writer = new SBMLWriter();
+			writer.writeSBML(document,filename);
+			document = reader.readSBML(filename);
 		}
 		return document;
 	}
