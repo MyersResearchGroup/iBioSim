@@ -5069,6 +5069,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 											}
 										}
 										SBMLWriter writer = new SBMLWriter();
+										s = s.replaceAll("[^a-zA-Z0-9_.]+","_");
 										writer.writeSBML(document, root + separator + s);
 									}
 								}
@@ -5180,10 +5181,10 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									f.setVisible(true);
 								}
 								SBMLWriter writer = new SBMLWriter();
-								writer
-										.writeSBML(document, root + separator
-												+ file[file.length - 1]);
-								addToTree(file[file.length - 1]);
+								String newFile = file[file.length - 1];
+								newFile = newFile.replaceAll("[^a-zA-Z0-9_.]+","_");
+								writer.writeSBML(document, root + separator + newFile);
+								addToTree(newFile);
 							}
 						}
 						catch (Exception e1) {
@@ -5458,6 +5459,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							try {
 								// GCMParser parser =
 								new GCMParser((filename.trim() + separator + s));
+								s = s.replaceAll("[^a-zA-Z0-9_.]+","_");
 								if (overwrite(root + separator + s, s)) {
 									FileOutputStream out = new FileOutputStream(new File(root
 											+ separator + s));
@@ -5495,6 +5497,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						try {
 							// GCMParser parser =
 							new GCMParser(filename.trim());
+							file[file.length-1]=file[file.length-1].replaceAll("[^a-zA-Z0-9_.]+","_");
 							if (overwrite(root + separator + file[file.length - 1],
 									file[file.length - 1])) {
 								FileOutputStream out = new FileOutputStream(new File(root
@@ -5547,6 +5550,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
+						file[file.length-1]=file[file.length-1].replaceAll("[^a-zA-Z0-9_.]+","_");
 						FileOutputStream out = new FileOutputStream(new File(root + separator
 								+ file[file.length - 1]));
 						FileInputStream in = new FileInputStream(new File(filename));
@@ -5594,6 +5598,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
+						file[file.length-1]=file[file.length-1].replaceAll("[^a-zA-Z0-9_.]+","_");
 						FileOutputStream out = new FileOutputStream(new File(root + separator
 								+ file[file.length - 1]));
 						FileInputStream in = new FileInputStream(new File(filename));
@@ -5641,6 +5646,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
+						file[file.length-1]=file[file.length-1].replaceAll("[^a-zA-Z0-9_.]+","_");
 						FileOutputStream out = new FileOutputStream(new File(root + separator
 								+ file[file.length - 1]));
 						FileInputStream in = new FileInputStream(new File(filename));
@@ -5690,6 +5696,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					String[] file = filename.split(separator);
 					try {
 						if (new File(filename).exists()) {
+							file[file.length-1]=file[file.length-1].replaceAll("[^a-zA-Z0-9_.]+","_");
 							FileOutputStream out = new FileOutputStream(new File(root + separator
 									+ file[file.length - 1]));
 							FileInputStream in = new FileInputStream(new File(filename));
@@ -5717,6 +5724,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							String newName = oldName.replace(".g", "_NEW.lpn");
 							atacs = Runtime.getRuntime().exec("atacs -llsl " + lpnName, null, work);
 							atacs.waitFor();
+							lpnName=lpnName.replaceAll("[^a-zA-Z0-9_.]+","_");
 							FileOutputStream out = new FileOutputStream(new File(lpnName));
 							FileInputStream in = new FileInputStream(new File(newName));
 							int read = in.read();
@@ -5766,6 +5774,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
+						file[file.length-1]=file[file.length-1].replaceAll("[^a-zA-Z0-9_.]+","_");
 						FileOutputStream out = new FileOutputStream(new File(root + separator
 								+ file[file.length - 1]));
 						FileInputStream in = new FileInputStream(new File(filename));
@@ -5815,6 +5824,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
+						file[file.length-1]=file[file.length-1].replaceAll("[^a-zA-Z0-9_.]+","_");
 						FileOutputStream out = new FileOutputStream(new File(root + separator
 								+ file[file.length - 1]));
 						FileInputStream in = new FileInputStream(new File(filename));
@@ -5863,6 +5873,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
+						file[file.length-1]=file[file.length-1].replaceAll("[^a-zA-Z0-9_.]+","_");
 						FileOutputStream out = new FileOutputStream(new File(root + separator
 								+ file[file.length - 1]));
 						FileInputStream in = new FileInputStream(new File(filename));
@@ -5911,6 +5922,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
+						file[file.length-1]=file[file.length-1].replaceAll("[^a-zA-Z0-9_.]+","_");
 						FileOutputStream out = new FileOutputStream(new File(root + separator
 								+ file[file.length - 1]));
 						FileInputStream in = new FileInputStream(new File(filename));
@@ -5959,6 +5971,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
+						file[file.length-1]=file[file.length-1].replaceAll("[^a-zA-Z0-9_.]+","_");
 						FileOutputStream out = new FileOutputStream(new File(root + separator
 								+ file[file.length - 1]));
 						FileInputStream in = new FileInputStream(new File(filename));
@@ -6007,6 +6020,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
+						file[file.length-1]=file[file.length-1].replaceAll("[^a-zA-Z0-9_.]+","_");
 						FileOutputStream out = new FileOutputStream(new File(root + separator
 								+ file[file.length - 1]));
 						FileInputStream in = new FileInputStream(new File(filename));
