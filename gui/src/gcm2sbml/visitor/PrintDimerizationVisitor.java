@@ -21,11 +21,11 @@ import org.sbml.libsbml.SBMLDocument;
 public class PrintDimerizationVisitor extends AbstractPrintVisitor {
 
 	public PrintDimerizationVisitor(SBMLDocument document,
-			Collection<SpeciesInterface> species, double kdimer, double dimer) {
+			SpeciesInterface specie, double kdimer, double dimer) {
 		super(document);
-		this.defaultkdimer = kdimer;
-		this.species = species;
-		this.defaultdimer = dimer;
+		this.kdimer = kdimer;
+		this.specie = specie;
+		this.dimer = dimer;
 	}
 
 	/**
@@ -33,63 +33,29 @@ public class PrintDimerizationVisitor extends AbstractPrintVisitor {
 	 * 
 	 */
 	public void run() {
-		for (SpeciesInterface specie : species) {
-			specie.accept(this);
-		}
+		specie.accept(this);
 	}
-	
-	@Override
-	public void visitSpecies(SpeciesInterface specie) {
-		// TODO Auto-generated method stub
 
-	}		
 
 	@Override
 	public void visitDimer(DimerSpecies specie) {
-		loadValues(specie.getProperties());
-		// Check if we are running abstraction, if not, then don't allow decay
-		if (!dimerizationAbstraction) {
-			Reaction r = Utility.Reaction("Dimerization_"+specie.getId());
-			r.addReactant(Utility.SpeciesReference(specie.getMonomer().getId(), dimer));
-			r.addProduct(Utility.SpeciesReference(specie.getId(), 1));
-			r.setReversible(true);
-			r.setFast(false);
-			KineticLaw kl = r.createKineticLaw();
-			kl.addParameter(Utility.Parameter(kdimerString, kdimer, GeneticNetwork.getMoleParameter((int)dimer)));
-			kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork.getMoleTimeParameter(1)));
-			kl.addParameter(Utility.Parameter(dimerString, dimer, "dimensionless"));
-			kl.setFormula("kr*" + kdimerString + "*" + specie.getMonomer().getId() +
+		
+		Reaction r = Utility.Reaction("Dimerization_"+specie.getId());
+		r.addReactant(Utility.SpeciesReference(specie.getMonomer().getId(), dimer));
+		r.addProduct(Utility.SpeciesReference(specie.getId(), 1));
+		r.setReversible(true);
+		r.setFast(false);
+		KineticLaw kl = r.createKineticLaw();
+		kl.addParameter(Utility.Parameter(kdimerString, kdimer, GeneticNetwork.getMoleParameter((int)dimer)));
+		kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork.getMoleTimeParameter(1)));
+		kl.addParameter(Utility.Parameter(dimerString, dimer, "dimensionless"));
+		kl.setFormula("kr*" + kdimerString + "*" + specie.getMonomer().getId() +
 					"^"+dimerString+"-kr*"+specie.getId());
-			
-			Utility.addReaction(document, r);		
-		}
+		Utility.addReaction(document, r);		
 	}
 
-	@Override
-	public void visitBiochemical(BiochemicalSpecies specie) {
-	}
-
-	@Override
-	public void visitBaseSpecies(BaseSpecies specie) {
-	}
-
-	@Override
-	public void visitConstantSpecies(ConstantSpecies specie) {
-	}
-
-	@Override
-	public void visitSpasticSpecies(SpasticSpecies specie) {
-	}
-	
-	private void loadValues(Properties property) {
-		kdimer = getProperty(GlobalConstants.KASSOCIATION_STRING, property, defaultkdimer);
-		dimer = getProperty(GlobalConstants.MAX_DIMER_STRING, property, defaultdimer);
-	}
-
-	private double kdimer = 1;
-	private double defaultkdimer = 1;
-	private double dimer = 2;
-	private double defaultdimer = 2;
+	private double kdimer;
+	private double dimer;
 	
 	private String kdimerString = CompatibilityFixer
 	.getSBMLName(GlobalConstants.KASSOCIATION_STRING);
@@ -97,6 +63,6 @@ public class PrintDimerizationVisitor extends AbstractPrintVisitor {
 	.getSBMLName(GlobalConstants.MAX_DIMER_STRING);
 
 
-	private Collection<SpeciesInterface> species = null;
+	private SpeciesInterface specie;
 
 }

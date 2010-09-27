@@ -21,9 +21,8 @@ import org.sbml.libsbml.SBMLDocument;
 public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 
 	public PrintDecaySpeciesVisitor(SBMLDocument document,
-			Collection<SpeciesInterface> species, double decay) {
+			Collection<SpeciesInterface> species) {
 		super(document);
-		this.defaultdecay = decay;
 		this.species = species;
 		addDecayUnit();
 	}
@@ -50,39 +49,19 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitDimer(DimerSpecies specie) {
-		loadValues(specie.getProperties());
-		//Check if they have decay rates, if not, then don't allow decay
-//		if (!dimerizationAbstraction && decay > 0) {
-		if (false) {
-			Reaction r = Utility.Reaction("Degradation_"+specie.getId());
-			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
-			r.setReversible(false);
-			r.setFast(false);
-			KineticLaw kl = r.createKineticLaw();
-			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
-			kl.setFormula(decayString + "*" + specie.getId());
-			Utility.addReaction(document, r);
-		}
+		//do nothing, dimer species decay much more slowly than their
+		//constituent species
 	}
 
 	@Override
 	public void visitBiochemical(BiochemicalSpecies specie) {
-		loadValues(specie.getProperties());
-		if (!biochemicalAbstraction && decay > 0) {
-			Reaction r = Utility.Reaction("Degradation_"+specie.getId());
-			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
-			r.setReversible(false);
-			r.setFast(false);
-			KineticLaw kl = r.createKineticLaw();
-			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
-			kl.setFormula(decayString + "*" + specie.getId());
-			Utility.addReaction(document, r);
-		}
+		//do nothing, biochemical species decay much more slowly than their
+		// constituent species
 	}
 
 	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
-		loadValues(specie.getProperties());
+		loadValues(specie);
 		Reaction r = Utility.Reaction("Degradation_"+specie.getId());
 		r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
 		r.setReversible(false);
@@ -100,7 +79,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {
-		loadValues(specie.getProperties());
+		loadValues(specie);
 		Reaction r = Utility.Reaction("Degradation_"+specie.getId());
 		r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
 		r.setReversible(false);
@@ -111,16 +90,15 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);
 	}
 	
-	private void loadValues(Properties property) {
-		decay = getProperty(GlobalConstants.KDECAY_STRING, property, defaultdecay);
+	private void loadValues(SpeciesInterface specie) {
+		decay = specie.getDecay();
 	}
 	
-	private double defaultdecay = .0075;
-	private double decay = .0075;
-	private String decayUnitString = "";
+	private double decay;
+	private String decayUnitString;
 	private String decayString = CompatibilityFixer.getSBMLName(GlobalConstants.KDECAY_STRING);
 	
-	private Collection<SpeciesInterface> species = null;
+	private Collection<SpeciesInterface> species;
 	
 
 }

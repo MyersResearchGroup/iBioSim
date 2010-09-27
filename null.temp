@@ -1,0 +1,21 @@
+digraph G {
+CI [Type="internal",graphwidth="100.0",graphheight="30.0",graphy="200.0",graphx="100.0",Name="",shape="ellipse",ID="CI",label="CI"]
+LacI [Type="internal",graphwidth="100.0",graphheight="30.0",graphy="50.00000000000002",graphx="186.60254037844388",Name="",shape="ellipse",ID="LacI",label="LacI"]
+TetR [Type="internal",graphwidth="100.0",graphheight="30.0",graphy="49.99999999999996",graphx="13.397459621556152",Name="",shape="ellipse",ID="TetR",label="TetR"]
+LacI -> TetR [Name="LacI -| TetR, Promoter P2",Type=repression,label=P2,Promoter=P2,arrowhead=tee]
+LacI -> CI [Name="LacI -| CI, Promoter P4",Type=repression,label=P4,Promoter=P4,arrowhead=tee]
+CI -> LacI [Name="CI -> LacI, Promoter P1",Type=activation,label=P1,Promoter=P1,arrowhead=vee,maxDimer=2]
+TetR -> LacI [Name="TetR -| LacI, Promoter P3",Type=repression,label=P3,Promoter=P3,arrowhead=tee]
+}
+Global {
+Krep=.25
+}
+Promoters {
+P4 [Name="",ID=P4]
+P1 [Name="",ID=P1]
+P3 [Name="",ID=P3]
+P2 [Name="",ID=P2]
+}
+Conditions {
+}
+SBML file=""

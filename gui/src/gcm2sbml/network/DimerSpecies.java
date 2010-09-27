@@ -20,12 +20,14 @@ public class DimerSpecies extends AbstractSpecies {
 	 * @param num
 	 *            the number of monomers necessary to make dimer
 	 */
-	public DimerSpecies(SpeciesInterface monomer, Properties properties) {
+	public DimerSpecies(SpeciesInterface monomer, String kDimer, double nDimer) {
 		this.monomer = monomer;
-		this.properties = properties;
 		this.id = monomer.getId() + "_"
-				+ properties.getProperty(GlobalConstants.MAX_DIMER_STRING);
+				+ (int) nDimer;
 		properties.setProperty(GlobalConstants.ID, id);
+		properties.setProperty(GlobalConstants.KDECAY_STRING, "" + 0);
+		properties.setProperty(GlobalConstants.INITIAL_STRING, "" + 0);
+		properties.setProperty(GlobalConstants.KASSOCIATION_STRING, kDimer);
 	}
 
 	/**
@@ -35,6 +37,7 @@ public class DimerSpecies extends AbstractSpecies {
 		return monomer;
 	}
 
+	
 	/**
 	 * @param monomer
 	 *            The monomer to set.
@@ -47,6 +50,10 @@ public class DimerSpecies extends AbstractSpecies {
 		visitor.visitDimer(this);
 	}
 
+	public double getKdimer() {
+		return Double.parseDouble(getProperty(GlobalConstants.KASSOCIATION_STRING));
+	}
+	
 	// The monomer that makes this species
 	private SpeciesInterface monomer = null;
 }

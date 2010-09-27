@@ -25,24 +25,7 @@ public class Reaction {
 	public void setProductionConstant(double productionConstant) {
 		this.productionConstant = productionConstant;
 	}
-	/**
-	 * @return Returns the bindingConstant.
-	 */
-	public double getBindingConstant() {
-		if (getType().equals("vee") && getProperty(GlobalConstants.KACT_STRING) != null) {
-			return Double.parseDouble(getProperty(GlobalConstants.KACT_STRING));
-		} else if (getType().equals("tee") && getProperty(GlobalConstants.KREP_STRING) != null) {
-			return Double.parseDouble(getProperty(GlobalConstants.KREP_STRING));
-		}
-		return bindingConstant;
-	}
 	
-	/**
-	 * @param bindingConstant The bindingConstant to set.
-	 */
-	public void setBindingConstant(double bindingConstant) {
-		this.bindingConstant = bindingConstant;
-	}
 	/**
 	 * @return Returns the name.
 	 */
@@ -101,22 +84,6 @@ public class Reaction {
 		this.name = "Reaction_" + uid;
 		uid++;
 	}
-	
-	/**
-	 * @return Returns the coop.
-	 */
-	public double getCoop() {		
-		if (getProperty(GlobalConstants.COOPERATIVITY_STRING) != null) {
-			return Double.parseDouble(getProperty(GlobalConstants.COOPERATIVITY_STRING));
-		}
-		return coop;
-	}
-	/**
-	 * @param coop The coop to set.
-	 */
-	public void setCoop(double coop) {
-		this.coop = coop;
-	}
 
 	public boolean isBiochemical() {
 		return isBiochemical;
@@ -129,24 +96,25 @@ public class Reaction {
 	/**
 	 * @return Returns the dimer.
 	 */
-	public int getDimer() {
-		return dimer;
+	public double getCoop() {
+		return Double.parseDouble(getProperty(GlobalConstants.COOPERATIVITY_STRING));
 	}
-	/**
-	 * @param dimer The dimer to set.
-	 */
-	public void setDimer(int dimer) {
-		this.dimer = dimer;
-	}	
+	
+	public double getDimer() {
+		return Double.parseDouble(getProperty(GlobalConstants.MAX_DIMER_STRING));
+	}
 	
 	public double getKbio() {
-		return kbio;
+		return Double.parseDouble(getProperty(GlobalConstants.KBIO_STRING));
 	}
 	
-	public void setKbio (double kbio) {
-		this.kbio = kbio;
+	public double getAct() {
+		return Double.parseDouble(getProperty(GlobalConstants.KACT_STRING));
 	}
 	
+	public double getRep() {
+		return Double.parseDouble(getProperty(GlobalConstants.KREP_STRING));
+	}
 	
 	public void setProperties(Properties properties) {
 		this.properties = properties;
@@ -164,10 +132,7 @@ public class Reaction {
 	}
 	
 	public String getProperty(String key) {
-		if (properties == null || !properties.contains(key)) {
-			return null;
-		}
-		return properties.get(key).toString();
+		return properties.getProperty(key);
 	}	
 	
 	private static int uid = 0;
@@ -184,14 +149,9 @@ public class Reaction {
 	private String name = null;		
 	//The production constant
 	private double productionConstant = 0.0001;
-	//Cooperativity factor
-	private double coop;
-	//dimer value 
-	private int dimer;	
 	//Biochemical reaction
 	private boolean isBiochemical = false;
-	//Biochemical rate constant
-	private double kbio;
+	
 	
 	//Number property
 	private Properties properties = null;

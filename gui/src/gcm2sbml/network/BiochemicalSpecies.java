@@ -1,5 +1,6 @@
 package gcm2sbml.network;
 
+import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.visitor.SpeciesVisitor;
 import java.util.Properties;
 import java.util.ArrayList;
@@ -13,11 +14,12 @@ import java.util.HashMap;
  * 
  */
 public class BiochemicalSpecies extends AbstractSpecies {
-	public BiochemicalSpecies(ArrayList<SpeciesInterface> inputs, Properties properties) {
+	public BiochemicalSpecies(ArrayList<SpeciesInterface> inputs) {
 		this.inputs = new ArrayList<SpeciesInterface>();
 		this.inputs.addAll(inputs);
-		this.properties = properties;
 		makeName();
+		properties.setProperty(GlobalConstants.KDECAY_STRING, "" + 0);
+		properties.setProperty(GlobalConstants.INITIAL_STRING, "" + 0);
 	}
 
 	/**
@@ -79,28 +81,13 @@ public class BiochemicalSpecies extends AbstractSpecies {
 		visitor.visitBiochemical(this);
 	}
 
-	/**
-	 * @return Returns the rateConstant.
-	 */
-	public double getRateConstant() {
-		return rateConstant;
-	}
-
 	public ArrayList<SpeciesInterface> getInputs() {
 		return inputs;
 	}
 
-	/**
-	 * @param rateConstant
-	 *            The rateConstant to set.
-	 */
-	public void setRateConstant(double rateConstant) {
-		this.rateConstant = rateConstant;
-	}
-
+	
 	private ArrayList<SpeciesInterface> inputs = null;
 
 	private HashMap<String, Reaction> reactions = null;
 
-	private double rateConstant = -1;
 }

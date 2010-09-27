@@ -20,9 +20,8 @@ import gcm2sbml.util.Utility;
 public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 
 	public PrintSpeciesVisitor(SBMLDocument document,
-			Collection<SpeciesInterface> species, String compartment, double init) {
+			Collection<SpeciesInterface> species, String compartment) {
 		super(document);
-		this.defaultinit = init;
 		this.species = species;
 		this.compartment = compartment;
 	}
@@ -37,17 +36,10 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		}
 	}
 
-	@Override
-	public void visitSpecies(SpeciesInterface specie) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void visitDimer(DimerSpecies specie) {
-		loadValues(specie.getProperties());
+		loadValues(specie);
 		if (!dimerizationAbstraction) {
-			Species s = Utility.makeSpecies(specie.getId(), compartment, init);
+			Species s = Utility.makeSpecies(specie.getId(), compartment, 0);
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);
 		}
@@ -56,9 +48,9 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitBiochemical(BiochemicalSpecies specie) {
-		loadValues(specie.getProperties());
+		loadValues(specie);
 		if (!biochemicalAbstraction) {
-			Species s = Utility.makeSpecies(specie.getId(), compartment, init);
+			Species s = Utility.makeSpecies(specie.getId(), compartment, 0);
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);
 		}
@@ -67,7 +59,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
-		loadValues(specie.getProperties());
+		loadValues(specie);
 		Species s = Utility.makeSpecies(specie.getId(), compartment, init);
 		s.setName(specie.getName());
 		s.setHasOnlySubstanceUnits(true);
@@ -76,7 +68,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitConstantSpecies(ConstantSpecies specie) {
-		loadValues(specie.getProperties());
+		loadValues(specie);
 		Species s = Utility.makeSpecies(specie.getId(), compartment, init);
 		s.setName(specie.getName());
 		s.setHasOnlySubstanceUnits(true);
@@ -87,7 +79,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {
-		loadValues(specie.getProperties());
+		loadValues(specie);
 		Species s = Utility.makeSpecies(specie.getId(), compartment, init);
 		s.setName(specie.getName());
 		s.setHasOnlySubstanceUnits(true);
@@ -107,14 +99,13 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);		
 	}
 	
-	private void loadValues(Properties property) {
-		init = getProperty(GlobalConstants.INITIAL_STRING, property, defaultinit);
+	private void loadValues(SpeciesInterface specie) {
+		init = specie.getInit();
 	}
 
-
-	private double defaultinit = 0;
-	private double init = 0;
-	private Collection<SpeciesInterface> species = null;
-	private String compartment = null;
+	
+	private double init;
+	private Collection<SpeciesInterface> species;
+	private String compartment;
 
 }

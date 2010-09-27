@@ -1,5 +1,6 @@
 package gcm2sbml.network;
 
+import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.visitor.SpeciesVisitor;
 
 /**
@@ -15,6 +16,7 @@ public class ConstantSpecies extends AbstractSpecies {
 	
 	public ConstantSpecies() {
 	}
+	
 	
 	public void accept(SpeciesVisitor visitor) {
 		visitor.visitConstantSpecies(this);

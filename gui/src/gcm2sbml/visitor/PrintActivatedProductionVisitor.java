@@ -20,13 +20,9 @@ import gcm2sbml.util.Utility;
 
 public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 
-	public PrintActivatedProductionVisitor(SBMLDocument document, Promoter p,
-			Collection<SpeciesInterface> species, double act, double stoc) {
+	public PrintActivatedProductionVisitor(SBMLDocument document, Promoter p) {
 		super(document);
-		this.defaultact = act;
 		this.promoter = p;
-		this.species = species;
-		this.defaultstoc = stoc;
 	}
 
 	/**
@@ -34,7 +30,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	 * 
 	 */
 	public void run() {
-		for (SpeciesInterface specie : species) {
+		for (SpeciesInterface specie : promoter.getActivators()) {
 			specie.accept(this);
 		}
 	}
@@ -47,7 +43,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitDimer(DimerSpecies specie) {
-		loadValues(specie.getProperties());
+		loadValues();
 		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
 				+ specie.getId());
 		r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + promoter.getId() + "_"
@@ -68,7 +64,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitBiochemical(BiochemicalSpecies specie) {
-		loadValues(specie.getProperties());
+		loadValues();
 		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
 				+ specie.getId());
 		r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + promoter.getId() + "_"
@@ -88,7 +84,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
-		loadValues(specie.getProperties());
+		loadValues();
 		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
 				+ specie.getId());
 		r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + promoter.getId() + "_"
@@ -108,7 +104,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitConstantSpecies(ConstantSpecies specie) {
-		loadValues(specie.getProperties());
+		loadValues();
 		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
 				+ specie.getId());
 		r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + promoter.getId() + "_"
@@ -128,7 +124,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {
-		loadValues(specie.getProperties());
+		loadValues();
 		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
 				+ specie.getId());
 		r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + "_" + promoter.getId()
@@ -146,25 +142,20 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);
 	}
 
-	private void loadValues(Properties property) {
-		stoc = getProperty(GlobalConstants.STOICHIOMETRY_STRING, property,
-				defaultstoc);
-		act = getProperty(GlobalConstants.ACTIVED_STRING, property, defaultact);
+	private void loadValues() {
+		stoc = promoter.getStoich();
+		act = promoter.getKact();
 	}
 
-	private Promoter promoter = null;
+	private Promoter promoter;
 
-	private double act = .25;
-	private double stoc = 1;
-
-	private double defaultact = .25;
-	private double defaultstoc = 1;
+	private double act;
+	private double stoc;
 
 	private String actString = CompatibilityFixer
 			.getSBMLName(GlobalConstants.ACTIVED_STRING);
-	private String stocString = CompatibilityFixer
-			.getSBMLName(GlobalConstants.STOICHIOMETRY_STRING);
+	
 
-	private Collection<SpeciesInterface> species = null;
+	
 
 }

@@ -2,6 +2,7 @@ package gcm2sbml.visitor;
 
 import gcm2sbml.network.BaseSpecies;
 import gcm2sbml.network.BiochemicalSpecies;
+//import gcm2sbml.network.ComplexSpecies;
 import gcm2sbml.network.ConstantSpecies;
 import gcm2sbml.network.DimerSpecies;
 import gcm2sbml.network.NullSpecies;
@@ -14,6 +15,12 @@ public interface SpeciesVisitor {
 	 * @param specie specie to visit
 	 */
 	public void visitSpecies(SpeciesInterface specie);
+	
+	/**
+	 * Visits a dimer
+	 * @param specie specie to visit
+	 *//*
+	public void visitComplex(ComplexSpecies specie);*/
 	
 	/**
 	 * Visits a dimer

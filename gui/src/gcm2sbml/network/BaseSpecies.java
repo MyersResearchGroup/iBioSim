@@ -1,7 +1,6 @@
 package gcm2sbml.network;
 
 import java.util.Properties;
-
 import gcm2sbml.visitor.SpeciesVisitor;
 
 /**
@@ -38,6 +37,7 @@ public class BaseSpecies extends AbstractSpecies {
 	public BaseSpecies() {
 		super();
 	}
+	
 	
 	public void accept(SpeciesVisitor visitor) {
 		visitor.visitBaseSpecies(this);
