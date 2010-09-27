@@ -1,4 +1,4 @@
-package gcm2sbml.gui.modelview;
+package gcm2sbml.gui.schematic;
 
 import javax.swing.JPopupMenu;
 //import com.mxgraph.examples.swing.editor.EditorActions.HistoryAction;
@@ -13,7 +13,7 @@ public class EditorPopupMenu extends JPopupMenu
 	private static final long serialVersionUID = -3132749140550242191L;
 
 //	public EditorPopupMenu(BasicGraphEditor editor)
-	public EditorPopupMenu(ModelView editor)
+	public EditorPopupMenu(Schematic editor)
 	{
 		boolean selected = !editor.getGraphComponent().getGraph()
 				.isSelectionEmpty();

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package gcm2sbml.gui.modelview;
+package gcm2sbml.gui.schematic;
 
 import gcm2sbml.gui.GCM2SBMLEditor;
 import gcm2sbml.parser.GCMFile;

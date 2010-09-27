@@ -1,9 +1,9 @@
 package gcm2sbml.gui.modelview.movie;
 
 import gcm2sbml.gui.GCM2SBMLEditor;
-import gcm2sbml.gui.modelview.ListChooser;
-import gcm2sbml.gui.modelview.ModelView;
-import gcm2sbml.gui.modelview.Utils;
+import gcm2sbml.gui.schematic.ListChooser;
+import gcm2sbml.gui.schematic.Schematic;
+import gcm2sbml.gui.schematic.Utils;
 import gcm2sbml.parser.GCMFile;
 
 import java.awt.BorderLayout;
@@ -34,7 +34,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	public static final int FRAME_DELAY_MILLISECONDS = 20;
 	
 	private static final long serialVersionUID = 1L;
-	private ModelView modelView;
+	private Schematic schematic;
 	private Reb2Sac reb2sac;
 	
 	private GCMFile gcm;
@@ -49,8 +49,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 	
 	public MovieContainer(Reb2Sac reb2sac_, GCMFile gcm, BioSim biosim, GCM2SBMLEditor gcm2sbml){
 		super(new BorderLayout());
-		modelView = new ModelView(gcm, biosim, gcm2sbml, false);
-		this.add(modelView, BorderLayout.CENTER);
+		schematic = new Schematic(gcm, biosim, gcm2sbml, false);
+		this.add(schematic, BorderLayout.CENTER);
 		
 		this.gcm = gcm;
 		this.biosim = biosim;
@@ -62,7 +62,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	
 	private boolean isUIInitialized;
 	public void display(){
-		modelView.display();
+		schematic.display();
 
 		if(isUIInitialized == false){
 			this.addUI();
@@ -217,14 +217,14 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		HashMap<String, ArrayList<Double>> dataHash = parser.getHashMap();
 		
-		modelView.beginFrame();
+		schematic.beginFrame();
 		for(String s:gcm.getSpecies().keySet()){
 			if(dataHash.containsKey(s)){
 				double value = dataHash.get(s).get(pos);
-				modelView.setSpeciesAnimationValue(s, value*2.0);
+				schematic.setSpeciesAnimationValue(s, value*2.0);
 			}
 		}
-		modelView.endFrame();
+		schematic.endFrame();
 		
 	}
 

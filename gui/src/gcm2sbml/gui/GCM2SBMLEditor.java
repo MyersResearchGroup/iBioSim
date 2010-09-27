@@ -44,7 +44,7 @@ import biomodelsim.BioSim;
 import biomodelsim.Log;
 
 import gcm2sbml.gui.grappa.GCIGrappaPanel;
-import gcm2sbml.gui.modelview.ModelView;
+import gcm2sbml.gui.schematic.Schematic;
 
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
@@ -928,14 +928,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		GCIGrappaPanel grappaPanel = new GCIGrappaPanel();
 		
 		// create the modelview2 (jgraph) panel
-		ModelView modelView = new ModelView(gcm, biosim, this, true);
+		Schematic schematic = new Schematic(gcm, biosim, this, true);
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(mainPanelNorth, "North");
 		mainPanel.add(mainPanelCenter, "Center");
 		JTabbedPane tab = new JTabbedPane();
-		tab.addTab("Schematic", modelView);
+		tab.addTab("Schematic", schematic);
 		tab.addTab("Parameters/Properties", tabPanel);
 		tab.addTab("Main Elements", mainPanel);
  		//tab.addTab("Model View", grappaPanel);
@@ -954,13 +954,13 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				JTabbedPane selectedTab = (JTabbedPane)(e.getSource());
 				JPanel selectedPanel = (JPanel)selectedTab.getComponent(selectedTab.getSelectedIndex());
 				String className = selectedPanel.getClass().getName();
-				// The old ModelView (grappa panel) 
+				// The old Schematic (grappa panel) 
 				if(className.indexOf("GCIGrappaPanel") > 0){
 					((GCIGrappaPanel)selectedPanel).display(gcm.saveToBuffer(false));
 				}
-				// The new ModelView
-				else if(className.indexOf("ModelView") >= 0){
-					((ModelView)selectedPanel).display();
+				// The new Schematic
+				else if(className.indexOf("Schematic") >= 0){
+					((Schematic)selectedPanel).display();
 				}
 			}
 		});

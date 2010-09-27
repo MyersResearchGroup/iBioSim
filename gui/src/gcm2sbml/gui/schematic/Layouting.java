@@ -1,4 +1,4 @@
-package gcm2sbml.gui.modelview;
+package gcm2sbml.gui.schematic;
 
 import java.awt.event.ActionListener;
 

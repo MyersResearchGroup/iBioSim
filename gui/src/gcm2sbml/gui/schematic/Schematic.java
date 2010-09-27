@@ -1,4 +1,4 @@
-package gcm2sbml.gui.modelview;
+package gcm2sbml.gui.schematic;
 
 import gcm2sbml.gui.GCM2SBMLEditor;
 import gcm2sbml.gui.InfluencePanel;
@@ -37,7 +37,7 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
 
-public class ModelView extends JPanel implements ActionListener {
+public class Schematic extends JPanel implements ActionListener {
 		
 	private static final long serialVersionUID = 1L;
 	BioGraph graph;
@@ -53,7 +53,7 @@ public class ModelView extends JPanel implements ActionListener {
 	 * Constructor
 	 * @param internalModel
 	 */
-	public ModelView(GCMFile gcm, BioSim biosim, GCM2SBMLEditor gcm2sbml, boolean editable){
+	public Schematic(GCMFile gcm, BioSim biosim, GCM2SBMLEditor gcm2sbml, boolean editable){
 		super(new BorderLayout());
 		
 		this.gcm = gcm;
@@ -606,7 +606,7 @@ public class ModelView extends JPanel implements ActionListener {
 	{
 		Point pt = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(),
 				graphComponent);
-		EditorPopupMenu menu = new EditorPopupMenu(ModelView.this);
+		EditorPopupMenu menu = new EditorPopupMenu(Schematic.this);
 		menu.show(graphComponent, pt.x, pt.y);
 
 		e.consume();
