@@ -1,5 +1,6 @@
 package gcm2sbml.network;
 
+import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.parser.GCMParser;
 import gcm2sbml.util.GlobalConstants;
@@ -19,6 +20,8 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.Constraint;
@@ -189,23 +192,11 @@ public class GeneticNetwork {
 			printPromoters(document);
 			printRNAP(document);
 			printDecay(document);
-			// System.out.println(counter++);
-			//checkConsistancy(document);
-			if (!dimerizationAbstraction) {
-				printDimerization(document);
-			}
-			if (!biochemicalAbstraction) {
-				printBiochemical(document);
-			}
-			// System.out.println(counter++);
-			//checkConsistancy(document);
+			
 			printPromoterProduction(document);
-			// System.out.println(counter++);
-			//checkConsistancy(document);
+			
 			printPromoterBinding(document);
-			// System.out.println(counter++);
-			//checkConsistancy(document);
-			//printComponents(document, filename);
+			
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
 
 			m.setName("Created from " + new File(filename).getName().replace("xml", "gcm"));
@@ -267,19 +258,6 @@ public class GeneticNetwork {
 			throw new IllegalStateException("Unable to output to SBML");
 		}
 	}
-	
-	/**
-	 * Prints the parameters to the SBMLDocument
-	 * @param document the document to print to
-	 */
-	private void printParameters(SBMLDocument document) {
-		if (properties != null) {
-			for (String s : properties.getGlobalParameters().keySet()) {
-				String param = properties.getParameter(s);
-				//Utility.addGlobalParameter(document, new Parameter())
-			}
-		}
-	}
 
 	/**
 	 * Prints each promoter binding
@@ -288,31 +266,6 @@ public class GeneticNetwork {
 	 *            the SBMLDocument to print to
 	 */
 	private void printPromoterBinding(SBMLDocument document) {
-		double rnap = .033;
-		double rep = .05;
-		double act = .0033;
-		double kdimer = .05;
-		double kbio = .05;
-		double kcoop = 1;
-		double dimer = 1;
-
-		if (properties != null) {
-			kbio = Double.parseDouble(properties
-					.getParameter(GlobalConstants.KBIO_STRING));
-			kdimer = Double.parseDouble(properties
-					.getParameter(GlobalConstants.KASSOCIATION_STRING));
-			rnap = Double.parseDouble(properties
-					.getParameter(GlobalConstants.RNAP_BINDING_STRING));
-			rep = Double.parseDouble(properties
-					.getParameter(GlobalConstants.KREP_STRING));
-			act = Double.parseDouble(properties
-					.getParameter(GlobalConstants.KACT_STRING));
-			kcoop = Double.parseDouble(properties
-					.getParameter(GlobalConstants.COOPERATIVITY_STRING));
-			dimer = Double.parseDouble(properties
-					.getParameter(GlobalConstants.MAX_DIMER_STRING));
-
-		}
 
 		for (Promoter p : promoters.values()) {
 			// First setup RNAP binding
@@ -325,16 +278,15 @@ public class GeneticNetwork {
 			r.setReversible(true);
 			r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
-			kl.addParameter(Utility.Parameter("kf", rnap, getMoleTimeParameter(2)));
+			kl.addParameter(Utility.Parameter(kRnapString, p.getKrnap(), getMoleParameter(2)));
 			kl.addParameter(Utility.Parameter("kr", 1, getMoleTimeParameter(1)));
-			kl.setFormula("kf*" + "RNAP*" + p.getId() + "-kr*RNAP_"
+			kl.setFormula("kr*" + kRnapString + "*" + "RNAP*" + p.getId() + "-kr*RNAP_"
 					+ p.getId());		
 			Utility.addReaction(document, r);
 
 			// Next setup activated binding
 			PrintActivatedBindingVisitor v = new PrintActivatedBindingVisitor(
-					document, p, act, kdimer, kcoop, kbio,
-					dimer);
+					document, p);
 			
 			v.setBiochemicalAbstraction(biochemicalAbstraction);
 			v.setDimerizationAbstraction(dimerizationAbstraction);
@@ -344,8 +296,7 @@ public class GeneticNetwork {
 			// Next setup repression binding
 			p.getRepressors();
 			PrintRepressionBindingVisitor v2 = new PrintRepressionBindingVisitor(
-					document, p, rep, kdimer, kcoop, kbio,
-					dimer);
+					document, p);
 			v2.setBiochemicalAbstraction(biochemicalAbstraction);
 			v2.setDimerizationAbstraction(dimerizationAbstraction);
 			v2.setCooperationAbstraction(cooperationAbstraction);
@@ -361,21 +312,7 @@ public class GeneticNetwork {
 	 *            the SBMLDocument to print to
 	 */
 	private void printPromoterProduction(SBMLDocument document) {
-		double basal = .0001;
-		double koc = .25;
-		int stoc = 1;
-		double act = .25;
-		if (properties != null) {
-			basal = Double.parseDouble(properties
-					.getParameter(GlobalConstants.KBASAL_STRING));
-			koc = Double.parseDouble(properties
-					.getParameter(GlobalConstants.OCR_STRING));
-			stoc = Integer.parseInt(properties
-					.getParameter(GlobalConstants.STOICHIOMETRY_STRING));
-			act = Double.parseDouble(properties
-					.getParameter(GlobalConstants.ACTIVED_STRING));
-		}
-
+		
 		for (Promoter p : promoters.values()) {
 			if (p.getOutputs().size()==0) continue;
 			if (p.getActivators().size() > 0 && p.getRepressors().size() == 0) {
@@ -383,71 +320,53 @@ public class GeneticNetwork {
 				r.setId("R_basal_production_" + p.getId());
 				r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + p.getId()));
 				for (SpeciesInterface species : p.getOutputs()) {
-					r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
+					r.addProduct(Utility.SpeciesReference(species.getId(), p.getStoich()));
 				}
 				r.setReversible(false);
 				r.setFast(false);
 				KineticLaw kl = r.createKineticLaw();
-				if (p.getProperty(GlobalConstants.KBASAL_STRING) != null) {
-					kl.addParameter(Utility.Parameter("basal", Double.parseDouble(p
-							.getProperty(GlobalConstants.KBASAL_STRING)),
+				kl.addParameter(Utility.Parameter(kBasalString, p.getKbasal(),
 							getMoleTimeParameter(1)));
-				} else {
-					kl.addParameter(Utility.Parameter("basal", basal,
-							getMoleTimeParameter(1)));
-				}
-				kl.setFormula("basal*" + "RNAP_" + p.getId());
+				kl.setFormula(kBasalString + "*" + "RNAP_" + p.getId());
 				Utility.addReaction(document, r);
 
 				PrintActivatedProductionVisitor v = new PrintActivatedProductionVisitor(
-						document, p, p.getActivators(), act, stoc);
+						document, p);
 				v.run();
 			} else if (p.getActivators().size() == 0
 					&& p.getRepressors().size() >= 0) {
 				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-				r.setId("R_production_" + p.getId());
+				r.setId("R_constitutive_production_" + p.getId());
 				r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + p.getId()));
 				for (SpeciesInterface species : p.getOutputs()) {
-					r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
+					r.addProduct(Utility.SpeciesReference(species.getId(), p.getStoich()));
 				}
 				r.setReversible(false);
 				r.setFast(false);
 				KineticLaw kl = r.createKineticLaw();
-				if (p.getProperty(GlobalConstants.OCR_STRING) != null) {
-					kl.addParameter(Utility.Parameter("koc", Double.parseDouble(p
-							.getProperty(GlobalConstants.OCR_STRING)),
+				kl.addParameter(Utility.Parameter(kOcString, p.getKoc(),
 							getMoleTimeParameter(1)));
-				} else {
-					kl.addParameter(Utility.Parameter("koc", koc,
-							getMoleTimeParameter(1)));
-				}
-				kl.setFormula("koc*" + "RNAP_" + p.getId());
+				kl.setFormula(kOcString + "*" + "RNAP_" + p.getId());
 				Utility.addReaction(document, r);
 			} else {
 				// TODO: Should ask Chris how to handle
 				// Both activated and repressed
 				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-				r.setId("R_basal_production_" + p.getId());
+				r.setId("R_constitutive_production_" + p.getId());
 				r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + p.getId()));
 				for (SpeciesInterface species : p.getOutputs()) {
-					r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
+					r.addProduct(Utility.SpeciesReference(species.getId(), p.getStoich()));
 				}
 				r.setReversible(false);
 				r.setFast(false);
 				KineticLaw kl = r.createKineticLaw();
-				if (p.getProperty(GlobalConstants.KBASAL_STRING) != null) {
-					kl.addParameter(Utility.Parameter("basal", Double.parseDouble(p
-							.getProperty(GlobalConstants.KBASAL_STRING)),
+				kl.addParameter(Utility.Parameter(kOcString, p.getKoc(),
 							getMoleTimeParameter(1)));
-				} else {
-					kl.addParameter(Utility.Parameter("basal", basal,
-							getMoleTimeParameter(1)));
-				}
-				kl.setFormula("basal*" + "RNAP_" + p.getId());
+				kl.setFormula(kOcString + "*" + "RNAP_" + p.getId());
 				Utility.addReaction(document, r);
 
 				PrintActivatedProductionVisitor v = new PrintActivatedProductionVisitor(
-						document, p, p.getActivators(), act, stoc);
+						document, p);
 				v.run();
 			}
 		}
@@ -460,52 +379,10 @@ public class GeneticNetwork {
 	 *            the SBML document
 	 */
 	private void printDecay(SBMLDocument document) {
-		// Check to see if number of promoters is a property, if not, default to
-		// 1
-		double decay = .0075;
-		if (properties != null) {
-			decay = Double.parseDouble(properties
-					.getParameter(GlobalConstants.KDECAY_STRING));
-		}
+		
 
 		PrintDecaySpeciesVisitor visitor = new PrintDecaySpeciesVisitor(
-				document, species.values(), decay);
-		visitor.setBiochemicalAbstraction(biochemicalAbstraction);
-		visitor.setDimerizationAbstraction(dimerizationAbstraction);
-		visitor.run();
-	}
-
-	/**
-	 * Prints the dimerization reactions
-	 * 
-	 * @param document
-	 *            the SBML document to print to
-	 */
-	private void printDimerization(SBMLDocument document) {
-		double kdimer = .05;
-		double dimer = 2;
-		if (properties != null) {
-			kdimer = Double.parseDouble(properties
-					.getParameter(GlobalConstants.KASSOCIATION_STRING));
-			dimer = Double.parseDouble(properties
-					.getParameter(GlobalConstants.MAX_DIMER_STRING));
-
-		}
-		PrintDimerizationVisitor visitor = new PrintDimerizationVisitor(
-				document, species.values(), kdimer, dimer);
-		visitor.setBiochemicalAbstraction(biochemicalAbstraction);
-		visitor.setDimerizationAbstraction(dimerizationAbstraction);
-		visitor.run();
-	}
-
-	private void printBiochemical(SBMLDocument document) {
-		double kbio = .05;
-		if (properties != null) {
-			kbio = Double.parseDouble(properties
-					.getParameter(GlobalConstants.KBIO_STRING));
-		}
-		PrintBiochemicalVisitor visitor = new PrintBiochemicalVisitor(document,
-				species.values(), kbio);
+				document, species.values());
 		visitor.setBiochemicalAbstraction(biochemicalAbstraction);
 		visitor.setDimerizationAbstraction(dimerizationAbstraction);
 		visitor.run();
@@ -518,13 +395,8 @@ public class GeneticNetwork {
 	 *            the SBML document
 	 */
 	private void printSpecies(SBMLDocument document) {
-		double init = 0;
-		if (properties != null) {
-			init = Double.parseDouble(properties
-					.getParameter(GlobalConstants.INITIAL_STRING));
-		}
 		PrintSpeciesVisitor visitor = new PrintSpeciesVisitor(document, species
-				.values(), compartment, init);
+				.values(), compartment);
 		visitor.setBiochemicalAbstraction(biochemicalAbstraction);
 		visitor.setDimerizationAbstraction(dimerizationAbstraction);
 		visitor.run();
@@ -911,45 +783,34 @@ public class GeneticNetwork {
 	 *            the SBML document
 	 */
 	private void printPromoters(SBMLDocument document) {
-		// Check to see if number of promoters is a property, if not, default to
-		// 1
-		String numPromoters = "1";
-		if (properties != null) {
-			numPromoters = properties
-					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING);
-		}
-
-		for (Promoter promoter : promoters.values()) {
-			if (promoter.getOutputs().size()==0) continue;
+		
+		for (Promoter p : promoters.values()) {
+			if (p.getOutputs().size()==0) continue;
 			// First print out the promoter, and promoter bound to RNAP
-			String tempPromoters = numPromoters;
-			if (promoter.getProperty(GlobalConstants.PROMOTER_COUNT_STRING) != null) {
-				tempPromoters = promoter
-						.getProperty(GlobalConstants.PROMOTER_COUNT_STRING);
-			}
-			Species s = Utility.makeSpecies(promoter.getId(), compartment,
-					Double.parseDouble(tempPromoters));
-		    if ((promoter.getProperties() != null) &&
-		    	(promoter.getProperties().containsKey(GlobalConstants.NAME))) {
-		    	s.setName(promoter.getProperty(GlobalConstants.NAME));
+			
+			Species s = Utility.makeSpecies(p.getId(), compartment,
+					p.getPcount());
+		    if ((p.getProperties() != null) &&
+		    	(p.getProperties().containsKey(GlobalConstants.NAME))) {
+		    	s.setName(p.getProperty(GlobalConstants.NAME));
 		    }
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);			
-			s = Utility.makeSpecies("RNAP_" + promoter.getId(), compartment,
+			s = Utility.makeSpecies("RNAP_" + p.getId(), compartment,
 					0);
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);
 			// Now cycle through all activators and repressors and add those
 			// bindings
-			for (SpeciesInterface species : promoter.getActivators()) {
-				s = Utility.makeSpecies("RNAP_" + promoter.getId() + "_"
-						+ species.getId(), compartment, 0);
+			for (SpeciesInterface specie : p.getActivators()) {
+				s = Utility.makeSpecies("RNAP_" + p.getId() + "_"
+						+ specie.getId(), compartment, 0);
 				s.setHasOnlySubstanceUnits(true);
 				Utility.addSpecies(document, s);
 			}
-			for (SpeciesInterface species : promoter.getRepressors()) {
-				s = Utility.makeSpecies("bound_" + promoter.getId() + "_"
-						+ species.getId(), compartment, 0);
+			for (SpeciesInterface specie : p.getRepressors()) {
+				s = Utility.makeSpecies("bound_" + p.getId() + "_"
+						+ specie.getId(), compartment, 0);
 				s.setHasOnlySubstanceUnits(true);
 				Utility.addSpecies(document, s);
 			}
@@ -964,23 +825,10 @@ public class GeneticNetwork {
 	 *            the SBML document
 	 */
 	private void printOnlyPromoters(SBMLDocument document) {
-		// Check to see if number of promoters is a property, if not, default to
-		// 1
-		String numPromoters = "1";
-		if (properties != null) {
-			numPromoters = properties
-					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING);
-		}
 
-		for (Promoter promoter : promoters.values()) {
-			// First print out the promoter, and promoter bound to RNAP
-			String tempPromoters = numPromoters;
-			if (promoter.getProperty(GlobalConstants.PROMOTER_COUNT_STRING) != null) {
-				tempPromoters = promoter
-						.getProperty(GlobalConstants.PROMOTER_COUNT_STRING);
-			}
-			Species s = Utility.makeSpecies(promoter.getId(), compartment,
-					Double.parseDouble(tempPromoters));
+		for (Promoter p : promoters.values()) {
+			Species s = Utility.makeSpecies(p.getId(), compartment,
+					p.getPcount());
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);			
 		}
@@ -1010,10 +858,9 @@ public class GeneticNetwork {
 	 * 
 	 */
 	private void initialize() {
-		buildDimers();
 		buildPromoters();
+		buildDimers();
 		buildBiochemical();
-		addProperties();
 	}
 
 	/**
@@ -1023,8 +870,7 @@ public class GeneticNetwork {
 	private void buildPromoters() {
 		for (Promoter promoter : promoters.values()) {
 			for (Reaction reaction : promoter.getActivatingReactions()) {
-				if (!reaction.isBiochemical() && reaction.getDimer() <= 1 &&
-						!reaction.getInputState().equals("none")) {
+				if (!reaction.isBiochemical() && reaction.getDimer() <= 1) {
 					promoter.addActivator(stateMap
 							.get(reaction.getInputState()));
 					promoter.addToReactionMap(stateMap.get(reaction
@@ -1035,8 +881,7 @@ public class GeneticNetwork {
 				}
 			}
 			for (Reaction reaction : promoter.getRepressingReactions()) {
-				if (!reaction.isBiochemical() && reaction.getDimer() <= 1 &&
-				!reaction.getInputState().equals("none")) {
+				if (!reaction.isBiochemical() && reaction.getDimer() <= 1) {
 					promoter.addRepressor(stateMap
 							.get(reaction.getInputState()));
 					promoter.addToReactionMap(stateMap.get(reaction
@@ -1054,35 +899,29 @@ public class GeneticNetwork {
 	 * promoter as input.
 	 */
 	private void buildDimers() {
-		HashMap<String, SpeciesInterface> dimers = new HashMap<String, SpeciesInterface>();
-		
 		// Go through reaction list to see if any are missed
 		for (Promoter promoter : promoters.values()) {
 			for (Reaction reaction : promoter.getActivatingReactions()) {
-				if (reaction.getDimer() > 1) {
+				double nDimer = reaction.getDimer();
+				if (nDimer > 1) {
 					SpeciesInterface specie = stateMap.get(reaction.getInputState());
-					specie.addProperty(GlobalConstants.MAX_DIMER_STRING, "" + reaction.getDimer());
-					DimerSpecies dimer = new DimerSpecies(specie, specie.getProperties());
-					dimers.put(dimer.getId(), dimer);
+					DimerSpecies dimer = new DimerSpecies(specie, specie.getProperty(GlobalConstants.KASSOCIATION_STRING), nDimer);
 					promoter.addToReactionMap(dimer, reaction);
-					promoter.getActivators().add(dimer);
+					promoter.addActivator(dimer);
+					species.put(dimer.getId(), dimer);
 				}
 			}
 			for (Reaction reaction : promoter.getRepressingReactions()) {
-				if (reaction.getDimer() > 1) {
+				double nDimer = reaction.getDimer();
+				if (nDimer > 1) {
 					SpeciesInterface specie = stateMap.get(reaction.getInputState());
-					specie.addProperty(GlobalConstants.MAX_DIMER_STRING, "" + reaction.getDimer());
-					DimerSpecies dimer = new DimerSpecies(specie, specie.getProperties());
-					dimers.put(dimer.getId(), dimer);
+					DimerSpecies dimer = new DimerSpecies(specie, specie.getProperty(GlobalConstants.KASSOCIATION_STRING), nDimer);
 					promoter.addToReactionMap(dimer, reaction);
-					promoter.getRepressors().add(dimer);
+					promoter.addRepressor(dimer);
+					species.put(dimer.getId(), dimer);
 				}
 			}
 
-		}
-		// Now put dimers back into network
-		for (SpeciesInterface specie : dimers.values()) {
-			species.put(specie.getId(), specie);
 		}
 	}
 
@@ -1100,7 +939,6 @@ public class GeneticNetwork {
 				if (reaction.isBiochemical()) {
 					reactions.add(reaction);
 					SpeciesInterface specie = stateMap.get(reaction.getInputState());
-					specie.addProperty(GlobalConstants.KBIO_STRING, "" + reaction.getKbio());
 					biochem.add(specie);
 				}
 			}
@@ -1108,12 +946,17 @@ public class GeneticNetwork {
 				throw new IllegalStateException(
 						"Must have more than 1 biochemical reaction");
 			} else if (biochem.size() >= 2) {
-				BiochemicalSpecies bio = new BiochemicalSpecies(biochem, biochem.get(0).getProperties());
+				BiochemicalSpecies bio = null;
+				String unique = isUnique(biochem);
+				if (unique.equals("unique")) {
+					bio = new BiochemicalSpecies(biochem);
+				} else {
+					bio = (BiochemicalSpecies) species.get(unique);
+				}
 				promoter.addActivator(bio);
 				for (Reaction reaction : reactions) {
 					promoter.addToReactionMap(bio, reaction);
 				}
-				bio.addProperty(GlobalConstants.KDECAY_STRING, "0");
 				species.put(bio.getId(), bio);
 			}
 
@@ -1123,7 +966,6 @@ public class GeneticNetwork {
 				if (reaction.isBiochemical()) {
 					reactions.add(reaction);
 					SpeciesInterface specie = stateMap.get(reaction.getInputState());
-					specie.addProperty(GlobalConstants.KBIO_STRING, "" + reaction.getKbio());
 					biochem.add(specie);
 				}
 			}
@@ -1131,12 +973,17 @@ public class GeneticNetwork {
 				throw new IllegalStateException(
 						"Must have more than 1 biochemical reaction");
 			} else if (biochem.size() >= 2) {
-				BiochemicalSpecies bio = new BiochemicalSpecies(biochem, biochem.get(0).getProperties());
+				BiochemicalSpecies bio = null;
+				String unique = isUnique(biochem);
+				if (unique.equals("unique")) {
+					bio = new BiochemicalSpecies(biochem);
+				} else {
+					bio = (BiochemicalSpecies) species.get(unique);
+				}
+				promoter.addRepressor(bio);
 				for (Reaction reaction : reactions) {
 					promoter.addToReactionMap(bio, reaction);
 				}
-				promoter.addRepressor(bio);
-				bio.addProperty(GlobalConstants.KDECAY_STRING, "0");
 				species.put(bio.getId(), bio);
 			}
 		}
@@ -1144,23 +991,28 @@ public class GeneticNetwork {
 	}
 	
 	/**
-	 * Adds activating/repressing binding constant and degree of cooperativity to species 
-	 * properties
+	 * Identifies whether biochemical species to be constructed has
+	 * already been constructed or not
 	 */
-	private void addProperties() {
-		for (Promoter promoter : promoters.values()) {
-			for (Reaction reaction : promoter.getActivatingReactions()) {
-				SpeciesInterface specie = stateMap.get(reaction.getInputState());
-				specie.addProperty(GlobalConstants.KACT_STRING, "" + reaction.getBindingConstant());
-				specie.addProperty(GlobalConstants.COOPERATIVITY_STRING, "" + reaction.getCoop());
+	private String isUnique(ArrayList<SpeciesInterface> biochem) {
+		Set<String> keys = species.keySet();
+		Iterator<String> bob = keys.iterator();
+		while (bob.hasNext()) {
+			String key = bob.next();
+			if (key.startsWith("Biochemical")) {
+				String name = key.substring(11);
+				int count = 0;
+				for (SpeciesInterface s : biochem) {
+					if (name.contains(s.getId())) {
+						count++;
+					}
+				}
+				if (count == biochem.size()) {
+					return key;
+				}
 			}
-			for (Reaction reaction : promoter.getRepressingReactions()) {
-				SpeciesInterface specie = stateMap.get(reaction.getInputState());
-				specie.addProperty(GlobalConstants.KREP_STRING, "" + reaction.getBindingConstant());
-				specie.addProperty(GlobalConstants.COOPERATIVITY_STRING, "" + reaction.getCoop());
-			}
-
 		}
+		return "unique";
 	}
 
 	public HashMap<String, SpeciesInterface> getSpecies() {
@@ -1232,6 +1084,15 @@ public class GeneticNetwork {
 	private GCMFile properties = null;
 
 	private String compartment = "default";
+	
+	private String kRnapString = CompatibilityFixer
+	.getSBMLName(GlobalConstants.RNAP_BINDING_STRING);
+	
+	private String kBasalString = CompatibilityFixer
+	.getSBMLName(GlobalConstants.KBASAL_STRING);
+	
+	private String kOcString = CompatibilityFixer
+	.getSBMLName(GlobalConstants.OCR_STRING);
 
 	/**
 	 * Returns the curent SBML document being built

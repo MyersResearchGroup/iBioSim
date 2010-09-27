@@ -1,7 +1,6 @@
 package gcm2sbml.network;
 
 import java.util.Properties;
-
 import gcm2sbml.visitor.VisitableSpecies;
 
 
@@ -81,5 +80,10 @@ public interface SpeciesInterface extends VisitableSpecies {
 	 * @return
 	 */
 	public String getProperty(String key);
+	
+	public double getInit();
+	
+	public double getDecay();
+	
 	
 }

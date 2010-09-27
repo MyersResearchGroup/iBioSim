@@ -1,5 +1,7 @@
 package gcm2sbml.network;
 
+import gcm2sbml.util.GlobalConstants;
+
 import java.util.Properties;
 
 /**
@@ -101,7 +103,7 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		if (properties == null || !properties.containsKey(key)) {
 			return null;
 		}
-		return properties.get(key).toString();
+		return properties.getProperty(key);
 	}
 	
 	public boolean containsKey(String key) {
@@ -110,7 +112,15 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		}
 		return true;
 	}
-		
+	
+	public double getInit() {
+		return Double.parseDouble(getProperty(GlobalConstants.INITIAL_STRING));
+	}
+	
+	public double getDecay() {
+		return Double.parseDouble(getProperty(GlobalConstants.KDECAY_STRING));
+	}
+	
 	protected Properties properties = null;
 	
 	// The id of the species

@@ -73,17 +73,12 @@ public class GCMParser {
 			stateMap.put(specie.getStateName(), specie);
 		}
 		
-		for (String s : reactionMap.keySet()) {
-			Reaction reaction = parseReactionData(s, reactionMap.get(s));			
+		for (String s : promoterMap.keySet()) {
+			parsePromoterData(s, promoterMap.get(s));	
 		}
 		
-		for (String s : promoterMap.keySet()) {
-			if (!promoters.containsKey(s)) {
-				Promoter p = new Promoter();
-				p.setId(s);
-				promoters.put(s, p);
-			}
-			promoters.get(s).addProperties(promoterMap.get(s));
+		for (String s : reactionMap.keySet()) {
+			parseReactionData(s, reactionMap.get(s));			
 		}
 		
 		GeneticNetwork network = new GeneticNetwork(species, stateMap,
@@ -125,6 +120,51 @@ public class GCMParser {
 		this.promoters = promoters;
 	}
 
+	private void parsePromoterData(String promoterID, Properties property) {
+		Promoter p = new Promoter();
+		p.setId(promoterID);
+		promoters.put(promoterID, p);
+		
+		if (property.containsKey(GlobalConstants.PROMOTER_COUNT_STRING)) {
+			p.addProperty(GlobalConstants.PROMOTER_COUNT_STRING, property.getProperty(GlobalConstants.PROMOTER_COUNT_STRING));
+		} else {
+			p.addProperty(GlobalConstants.PROMOTER_COUNT_STRING, gcm.getParameter(GlobalConstants.PROMOTER_COUNT_STRING));
+		} 
+		
+		if (property.containsKey(GlobalConstants.ACTIVED_STRING)) {
+			p.addProperty(GlobalConstants.ACTIVED_STRING, property.getProperty(GlobalConstants.ACTIVED_STRING));
+		} else {
+			p.addProperty(GlobalConstants.ACTIVED_STRING, gcm.getParameter(GlobalConstants.ACTIVED_STRING));
+		} 
+		
+		if (property.containsKey(GlobalConstants.STOICHIOMETRY_STRING)) {
+			p.addProperty(GlobalConstants.STOICHIOMETRY_STRING, property.getProperty(GlobalConstants.STOICHIOMETRY_STRING));
+		} else {
+			p.addProperty(GlobalConstants.STOICHIOMETRY_STRING, gcm.getParameter(GlobalConstants.STOICHIOMETRY_STRING));
+		} 
+		
+		if (property.containsKey(GlobalConstants.OCR_STRING)) {
+			p.addProperty(GlobalConstants.OCR_STRING, property.getProperty(GlobalConstants.OCR_STRING));
+		} else {
+			p.addProperty(GlobalConstants.OCR_STRING, gcm.getParameter(GlobalConstants.OCR_STRING));
+		} 
+		
+		if (property.containsKey(GlobalConstants.KBASAL_STRING)) {
+			p.addProperty(GlobalConstants.KBASAL_STRING, property.getProperty(GlobalConstants.KBASAL_STRING));
+		} else {
+			p.addProperty(GlobalConstants.KBASAL_STRING, gcm.getParameter(GlobalConstants.KBASAL_STRING));
+		} 
+		
+
+		if (property.containsKey(GlobalConstants.RNAP_BINDING_STRING)) {
+			p.addProperty(GlobalConstants.RNAP_BINDING_STRING, property.getProperty(GlobalConstants.RNAP_BINDING_STRING));
+		} else {
+			p.addProperty(GlobalConstants.RNAP_BINDING_STRING, gcm.getParameter(GlobalConstants.RNAP_BINDING_STRING));
+		} 
+		
+	}
+	
+	
 	/**
 	 * Parses the reactions in the network
 	 * 
@@ -135,7 +175,7 @@ public class GCMParser {
 	 * 
 	 */
 	// TODO: Match rate constants
-	private Reaction parseReactionData(String reaction, Properties property) {
+	private void parseReactionData(String reaction, Properties property) {
 
 		String promoterName = "";
 		Promoter promoter = null;
@@ -160,60 +200,48 @@ public class GCMParser {
 		if (property.containsKey(GlobalConstants.BIO) && property.get(GlobalConstants.BIO).equals("yes")) {
 			Utility.print(debug, "GCMParser: Biochemical");
 			r.setBiochemical(true);
+			if (property.containsKey(GlobalConstants.KBIO_STRING)) {
+				r.addProperty(GlobalConstants.KBIO_STRING, property.getProperty(GlobalConstants.KBIO_STRING));
+			} else {
+				r.addProperty(GlobalConstants.KBIO_STRING, gcm.getParameter(GlobalConstants.KBIO_STRING));
+			} 
 		}
 		
 		if (property.containsKey(GlobalConstants.MAX_DIMER_STRING)) {
-			r.setDimer(Integer.parseInt(property.getProperty(GlobalConstants.MAX_DIMER_STRING)));
-		} else if (gcm != null) {
-			r.setDimer(Integer.parseInt(gcm.getParameter((GlobalConstants.MAX_DIMER_STRING))));
+			r.addProperty(GlobalConstants.MAX_DIMER_STRING, property.getProperty(GlobalConstants.MAX_DIMER_STRING));
 		} else {
-			r.setDimer(1);
-		}
+			r.addProperty(GlobalConstants.MAX_DIMER_STRING, gcm.getParameter(GlobalConstants.MAX_DIMER_STRING));
+		} 
 		
 		if (property.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
-			r.setCoop(Double.parseDouble(property.getProperty(GlobalConstants.COOPERATIVITY_STRING)));
-		} else if (gcm != null) {
-			r.setCoop(Double.parseDouble(gcm.getParameter((GlobalConstants.COOPERATIVITY_STRING))));
+			r.addProperty(GlobalConstants.COOPERATIVITY_STRING, property.getProperty(GlobalConstants.COOPERATIVITY_STRING));
 		} else {
-			r.setCoop(1);
-		}
-		
-		if (property.containsKey(GlobalConstants.KBIO_STRING)) {
-			r.setKbio(Double.parseDouble(property.getProperty(GlobalConstants.KBIO_STRING)));
-		} else if (gcm != null) {
-			r.setKbio(Double.parseDouble(gcm.getParameter((GlobalConstants.KBIO_STRING))));
-		} else {
-			r.setKbio(0.05);
-		}
+			r.addProperty(GlobalConstants.COOPERATIVITY_STRING, gcm.getParameter(GlobalConstants.COOPERATIVITY_STRING));
+		} 
 		
 		r.setInputState(GCMFile.getInput(reaction));
 		r.setOutputState(GCMFile.getOutput(reaction));
 		if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
 			r.setType("vee");
 			if (property.containsKey(GlobalConstants.KACT_STRING)) {
-				r.setBindingConstant(Double.parseDouble(property.getProperty(GlobalConstants.KACT_STRING)));
-			} else if (gcm != null) {
-				r.setBindingConstant(Double.parseDouble(gcm.getParameter((GlobalConstants.KACT_STRING))));
+				r.addProperty(GlobalConstants.KACT_STRING, property.getProperty(GlobalConstants.KACT_STRING));
 			} else {
-				r.setBindingConstant(0.0033);
-			}
+				r.addProperty(GlobalConstants.KACT_STRING, gcm.getParameter(GlobalConstants.KACT_STRING));
+			} 
 		} else if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.REPRESSION)) {
 			r.setType("tee");
 			if (property.containsKey(GlobalConstants.KREP_STRING)) {
-				r.setBindingConstant(Double.parseDouble(property.getProperty(GlobalConstants.KREP_STRING)));
-			} else if (gcm != null) {
-				r.setBindingConstant(Double.parseDouble(gcm.getParameter((GlobalConstants.KREP_STRING))));
+				r.addProperty(GlobalConstants.KREP_STRING, property.getProperty(GlobalConstants.KREP_STRING));
 			} else {
-				r.setBindingConstant(0.5);
-			}			
+				r.addProperty(GlobalConstants.KREP_STRING, gcm.getParameter(GlobalConstants.KREP_STRING));
+			} 	
 		} else {
 			r.setType("dot");
 			if (property.containsKey(GlobalConstants.KREP_STRING)) {
-				r.setBindingConstant(Double.parseDouble(property.getProperty(GlobalConstants.KREP_STRING)));
+				r.addProperty(GlobalConstants.KREP_STRING, property.getProperty(GlobalConstants.KREP_STRING));
 			}					
 		}
 		promoter.addReaction(r);
-		return r;
 	}
 	
 
@@ -226,23 +254,47 @@ public class GCMParser {
 	 *            the properties of the species
 	 */
 	private SpeciesInterface parseSpeciesData(String name, Properties property) {
-		SpeciesInterface species = null;
+		SpeciesInterface specie = null;
 
 		if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.CONSTANT) ||
 				property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)) {
-			species = new ConstantSpecies();
+			specie = new ConstantSpecies();
 		} else if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.SPASTIC)) {
-			species = new SpasticSpecies();
+			specie = new SpasticSpecies();
 		} else {
-			species = new BaseSpecies();
+			specie = new BaseSpecies();
 		}
 
-		species.setId(property.getProperty(GlobalConstants.ID));
-		species.setName(property.getProperty(GlobalConstants.NAME,
+		if (property.containsKey(GlobalConstants.KASSOCIATION_STRING)) {
+			specie.addProperty(GlobalConstants.KASSOCIATION_STRING, property.getProperty(GlobalConstants.KASSOCIATION_STRING));
+		} else {
+			specie.addProperty(GlobalConstants.KASSOCIATION_STRING, gcm.getParameter(GlobalConstants.KASSOCIATION_STRING));
+		}
+		
+		if (property.containsKey(GlobalConstants.INITIAL_STRING)) {
+			specie.addProperty(GlobalConstants.INITIAL_STRING, property.getProperty(GlobalConstants.INITIAL_STRING));
+		} else {
+			specie.addProperty(GlobalConstants.INITIAL_STRING, gcm.getParameter(GlobalConstants.INITIAL_STRING));
+		}
+		
+		if (property.containsKey(GlobalConstants.KDECAY_STRING)) {
+			specie.addProperty(GlobalConstants.KDECAY_STRING, property.getProperty(GlobalConstants.KDECAY_STRING));
+		} else {
+			specie.addProperty(GlobalConstants.KDECAY_STRING, gcm.getParameter(GlobalConstants.KDECAY_STRING));
+		}
+		
+		if (property.containsKey(GlobalConstants.TYPE)) {
+			specie.addProperty(GlobalConstants.TYPE, property.getProperty(GlobalConstants.TYPE));
+		} else {
+			specie.addProperty(GlobalConstants.TYPE, gcm.getParameter(GlobalConstants.TYPE));
+		}
+		
+		specie.setId(property.getProperty(GlobalConstants.ID));
+		specie.setName(property.getProperty(GlobalConstants.NAME,
 				property.getProperty(GlobalConstants.ID)));
-		species.setStateName(property.getProperty(GlobalConstants.ID));
-		species.setProperties(property);
-		return species;
+		specie.setStateName(property.getProperty(GlobalConstants.ID));
+		
+		return specie;
 	}
 	
 	public void setParameters(HashMap<String, String> parameters) {

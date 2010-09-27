@@ -1,5 +1,7 @@
 package gcm2sbml.network;
 
+import gcm2sbml.util.GlobalConstants;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -146,7 +148,41 @@ public class Promoter {
 	public ArrayList<Reaction> getActivatingReactions() {
 		return activatingReactions;
 	}
-
+	
+	public double getPcount() {
+		return Double.parseDouble(getProperty(GlobalConstants.PROMOTER_COUNT_STRING));
+	}
+	
+	/**
+	 * Get the activated, open complex (constitutive), and basal production
+	 * rate constants
+	 */
+	public double getKact() {
+		return Double.parseDouble(getProperty(GlobalConstants.ACTIVED_STRING));
+	}
+	
+	public double getKoc() {
+		return Double.parseDouble(getProperty(GlobalConstants.OCR_STRING));
+	}
+	
+	public double getKbasal() {
+		return Double.parseDouble(getProperty(GlobalConstants.KBASAL_STRING));
+	}
+	
+	/**
+	 * Gets the production stoichiometry
+	 */
+	public double getStoich() {
+		return Double.parseDouble(getProperty(GlobalConstants.STOICHIOMETRY_STRING));
+	}
+	
+	/**
+	 * Gets the equilibrium constant for RNAP binding to an open promoter
+	 */
+	public double getKrnap() {
+		return Double.parseDouble(getProperty(GlobalConstants.RNAP_BINDING_STRING));
+	}
+	
 	/**
 	 * @param reactions
 	 *            The reactions to set.
@@ -250,4 +286,9 @@ public class Promoter {
 	protected static int uniqueID = 0;
 
 	protected HashMap<SpeciesInterface, ArrayList<Reaction>> reactionMap = null;
+	
+	private double act;
+	
+	private int stoich;
+	
 }

@@ -7,29 +7,21 @@ import gcm2sbml.network.DimerSpecies;
 import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.NullSpecies;
 import gcm2sbml.network.Promoter;
+import gcm2sbml.network.Reaction;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
 import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
-
-import java.util.Properties;
-
+import java.util.ArrayList;
 import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
 
 public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 
-	public PrintActivatedBindingVisitor(SBMLDocument document, Promoter p,
-			double act, double kdimer, double kcoop, double kbio, double dimer) {
+	public PrintActivatedBindingVisitor(SBMLDocument document, Promoter p) {
 		super(document);
 		this.promoter = p;
-		this.defaultact = act;
-		this.defaultkdimer = kdimer;
-		this.defaultkcoop = kcoop;
-		this.defaultkbio = kbio;
-		this.defaultdimer = dimer;
 	}
 
 	/**
@@ -52,8 +44,9 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitDimer(DimerSpecies specie) {
-		loadValues(specie.getProperties());
-		Reaction r = Utility.Reaction("R_RNAP_binding_" + promoter.getId() + "_"
+		loadValues(specie);
+		kdimer = specie.getKdimer();
+		org.sbml.libsbml.Reaction r = Utility.Reaction("R_RNAP_binding_" + promoter.getId() + "_"
 				+ specie);
 		r.addReactant(Utility.SpeciesReference("RNAP", 1));
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
@@ -62,7 +55,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 				.getMoleTimeParameter(1)));
 		kl.addParameter(Utility.Parameter("Krnap", 1, GeneticNetwork
 				.getMoleParameter(2)));
-		kl.addParameter(Utility.Parameter(kcoopString, kcoop, "dimensionless"));
+		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String actName = "";
 		if (dimerizationAbstraction) {
 			kl.addParameter(Utility.Parameter(kdimerString, kdimer, GeneticNetwork
@@ -71,12 +64,15 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 			actName = kdimerString + "*" + "(" + specie.getMonomer() + ")^"
 					+ dimerString;
 			r.addReactant(Utility.SpeciesReference(specie.getMonomer().getId(),
-					dimer * kcoop));
+					dimer * coop));
 		} else {
 			actName = specie.getId();
-			r.addReactant(Utility.SpeciesReference(actName, kcoop));
+			r.addReactant(Utility.SpeciesReference(actName, coop));
+			PrintDimerizationVisitor visitor = new PrintDimerizationVisitor(
+					document, specie, kdimer, dimer);
+			visitor.run();
 		}
-		kl.addParameter(Utility.Parameter(actString, act,
+		kl.addParameter(Utility.Parameter(kactString, kact,
 				GeneticNetwork.getMoleParameter(2)));
 		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
@@ -88,8 +84,8 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitBiochemical(BiochemicalSpecies specie) {
-		loadValues(specie.getProperties());
-		Reaction r = Utility.Reaction("R_RNAP_binding_" + promoter.getId() + "_"
+		loadValues(specie);
+		org.sbml.libsbml.Reaction r = Utility.Reaction("R_RNAP_binding_" + promoter.getId() + "_"
 				+ specie);
 		r.addReactant(Utility.SpeciesReference("RNAP", 1));
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
@@ -98,12 +94,12 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 				.getMoleTimeParameter(1)));
 		kl.addParameter(Utility.Parameter("Krnap", 1, GeneticNetwork
 				.getMoleParameter(2)));
-		kl.addParameter(Utility.Parameter(kcoopString, kcoop, "dimensionless"));
+		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String actName = "";
 		if (biochemicalAbstraction) {
 			String names = "";
 			for (SpeciesInterface s : specie.getInputs()) {
-				r.addReactant(Utility.SpeciesReference(s.getId(), kcoop));
+				r.addReactant(Utility.SpeciesReference(s.getId(), coop));
 				names = names + "*" + s.getId();
 			}
 
@@ -112,9 +108,12 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 			actName = kbioString + names;
 		} else {
 			actName = specie.getId();
-			r.addReactant(Utility.SpeciesReference(specie.getId(), kcoop));
+			r.addReactant(Utility.SpeciesReference(actName, coop));
+			PrintBiochemicalVisitor visitor = new PrintBiochemicalVisitor(document,
+					specie, kbio);
+			visitor.run();
 		}
-		kl.addParameter(Utility.Parameter(actString, act,
+		kl.addParameter(Utility.Parameter(kactString, kact,
 				GeneticNetwork.getMoleParameter(2)));
 		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
@@ -126,8 +125,8 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
-		loadValues(specie.getProperties());
-		Reaction r = Utility.Reaction("R_RNAP_binding_" + promoter.getId() + "_"
+		loadValues(specie);
+		org.sbml.libsbml.Reaction r = Utility.Reaction("R_RNAP_binding_" + promoter.getId() + "_"
 				+ specie);
 		r.addReactant(Utility.SpeciesReference("RNAP", 1));
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
@@ -136,10 +135,10 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 				.getMoleTimeParameter(1)));
 		kl.addParameter(Utility.Parameter("Krnap", 1, GeneticNetwork
 				.getMoleParameter(2)));
-		kl.addParameter(Utility.Parameter(kcoopString, kcoop, "dimensionless"));
+		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String actName = specie.getId();
-		r.addReactant(Utility.SpeciesReference(specie.getId(), kcoop));
-		kl.addParameter(Utility.Parameter(actString, act,
+		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
+		kl.addParameter(Utility.Parameter(kactString, kact,
 				GeneticNetwork.getMoleParameter(2)));
 		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
@@ -151,8 +150,8 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitConstantSpecies(ConstantSpecies specie) {
-		loadValues(specie.getProperties());
-		Reaction r = Utility.Reaction("R_RNAP_binding_" + promoter.getId() + "_"
+		loadValues(specie);
+		org.sbml.libsbml.Reaction r = Utility.Reaction("R_RNAP_binding_" + promoter.getId() + "_"
 				+ specie);
 		r.addReactant(Utility.SpeciesReference("RNAP", 1));
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
@@ -161,10 +160,10 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 				.getMoleTimeParameter(1)));
 		kl.addParameter(Utility.Parameter("Krnap", 1, GeneticNetwork
 				.getMoleParameter(2)));
-		kl.addParameter(Utility.Parameter(kcoopString, kcoop, "dimensionless"));
+		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String actName = specie.getId();
-		r.addReactant(Utility.SpeciesReference(specie.getId(), kcoop));
-		kl.addParameter(Utility.Parameter(actString, act,
+		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
+		kl.addParameter(Utility.Parameter(kactString, kact,
 				GeneticNetwork.getMoleParameter(2)));
 		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
@@ -176,8 +175,8 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {
-		loadValues(specie.getProperties());
-		Reaction r = Utility.Reaction("R_RNAP_binding_" + promoter.getId() + "_"
+		loadValues(specie);
+		org.sbml.libsbml.Reaction r = Utility.Reaction("R_RNAP_binding_" + promoter.getId() + "_"
 				+ specie);
 		r.addReactant(Utility.SpeciesReference("RNAP", 1));
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
@@ -186,10 +185,10 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 				.getMoleTimeParameter(1)));
 		kl.addParameter(Utility.Parameter("Krnap", 1, GeneticNetwork
 				.getMoleParameter(2)));
-		kl.addParameter(Utility.Parameter(kcoopString, kcoop, "dimensionless"));
+		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String actName = specie.getId();
-		r.addReactant(Utility.SpeciesReference(specie.getId(), kcoop));
-		kl.addParameter(Utility.Parameter(actString, act,
+		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
+		kl.addParameter(Utility.Parameter(kactString, kact,
 				GeneticNetwork.getMoleParameter(2)));
 		r.addProduct(Utility.SpeciesReference("RNAP_" + promoter.getId() + "_"
 				+ specie.getId(), 1));
@@ -199,15 +198,17 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);
 	}
 
-	private void loadValues(Properties property) {
-		kdimer = getProperty(GlobalConstants.KASSOCIATION_STRING, property,
-				defaultkdimer);
-		kbio = getProperty(GlobalConstants.KBIO_STRING, property, defaultkbio);
-		kcoop = getProperty(GlobalConstants.COOPERATIVITY_STRING, property,
-				defaultkcoop);
-		act = getProperty(GlobalConstants.KACT_STRING, property, defaultact);
-		dimer = getProperty(GlobalConstants.MAX_DIMER_STRING, property,
-				defaultdimer);
+	private void loadValues(SpeciesInterface specie) {
+		ArrayList<Reaction> rlist = promoter.getReactionMap().get(specie);
+		Reaction r = rlist.get(0);
+		if (!r.getType().equals("vee"))
+			r = rlist.get(1);
+		coop = r.getCoop();
+		kact = r.getAct();
+		dimer = r. getDimer();
+		if (r.isBiochemical()) {
+			kbio = r.getKbio();
+		}
 	}
 
 	/**
@@ -220,8 +221,8 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	 * @return
 	 */
 	private String generateLaw(String specieName, String actMolecule) {
-		String law = "kr*" + "Krnap*" + "(" + actString + "*" + actMolecule + ")" + "^"
-				+ kcoopString + "*RNAP" + "*" + promoter.getId() + "-kr*" + "RNAP_"
+		String law = "kr*" + "Krnap*" + "(" + kactString + "*" + actMolecule + ")" + "^"
+				+ coopString + "*RNAP" + "*" + promoter.getId() + "-kr*" + "RNAP_"
 				+ promoter.getId() + "_" + specieName;
 		return law;
 	}
@@ -230,24 +231,18 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 			.getSBMLName(GlobalConstants.KASSOCIATION_STRING);
 	private String kbioString = CompatibilityFixer
 			.getSBMLName(GlobalConstants.KBIO_STRING);
-	private String kcoopString = CompatibilityFixer
+	private String coopString = CompatibilityFixer
 			.getSBMLName(GlobalConstants.COOPERATIVITY_STRING);
-	private String actString = CompatibilityFixer
+	private String kactString = CompatibilityFixer
 			.getSBMLName(GlobalConstants.KACT_STRING);
 	private String dimerString = CompatibilityFixer
 			.getSBMLName(GlobalConstants.MAX_DIMER_STRING);
 
-	private Promoter promoter = null;
+	private Promoter promoter;
 
-	private double defaultkdimer = .5;
-	private double defaultkbio = .05;
-	private double defaultkcoop = 1;
-	private double defaultact = .033;
-	private double defaultdimer = 1;
-
-	private double dimer = 1;
-	private double kdimer = .5;
-	private double kbio = .05;
-	private double kcoop = 1;
-	private double act = .033;
+	private double dimer;
+	private double kdimer;
+	private double kbio;
+	private double coop;
+	private double kact;
 }
