@@ -44,6 +44,7 @@ public class BioGraph extends mxGraph {
 	
 
 	private double DIS_BETWEEN_NEIGHBORING_EDGES = 35.0;
+	private double SECOND_SELF_INFLUENCE_DISTANCE = 20;
 	
 	/**
 	 * Map species to their graph nodes by id. This map is
@@ -337,19 +338,44 @@ public class BioGraph extends mxGraph {
 		for(Vector<mxCell> vec:edgeHash.values()){
 			if(vec.size() > 1){
 				
+				mxCell source = (mxCell)vec.get(0).getSource();
+				mxCell target = (mxCell)vec.get(0).getTarget();
+				
 				// find the end and center points
 				mxGeometry t;
-				t = vec.get(0).getSource().getGeometry();
+				t = source.getGeometry();
 				mxPoint sp = new mxPoint(t.getCenterX(), t.getCenterY());
-				t = vec.get(0).getTarget().getGeometry();
+				t = target.getGeometry();
 				mxPoint tp = new mxPoint(t.getCenterX(), t.getCenterY());
 				mxPoint cp = new mxPoint((tp.getX()+sp.getX())/2.0, (tp.getY()+sp.getY())/2.0);
+				
+				// check for self-influence
+				if(source == target){
+					mxCell c = vec.get(0);
+					mxGeometry geom = c.getGeometry();
+					
+					// set the self-influence's point to the left of the influence.
+					// This causes the graph library to draw it rounded in that direction.
+					mxPoint p = new mxPoint(
+							cp.getX() - t.getWidth()/2-SECOND_SELF_INFLUENCE_DISTANCE, 
+							cp.getY()
+							);
+					Vector<mxPoint> points = new Vector<mxPoint>();
+					points.add(p);
+					geom.setPoints(points);
+					c.setGeometry(geom);
+					continue;
+				}
+				
 				
 				// make a unit vector that points in the direction perpendicular to the
 				// direction from one endpoint to the other. 90 degrees rotated means flip
 				// the x and y coordinates.
 				mxPoint dVec = new mxPoint(-(sp.getY()-tp.getY()), sp.getX()-tp.getX());
 				double magnitude = Math.sqrt(dVec.getX()*dVec.getX() + dVec.getY()*dVec.getY());
+				// avoid divide-by-zero errors
+				magnitude = Math.max(magnitude, .1);
+				
 				// normalize
 				dVec.setX(dVec.getX()/magnitude);
 				dVec.setY(dVec.getY()/magnitude);
