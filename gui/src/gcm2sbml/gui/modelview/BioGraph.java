@@ -292,11 +292,11 @@ public class BioGraph extends mxGraph {
 		
 		// build a temporary structure mapping sets of edge endpoints to edges 
 		
-		// map species
+		// map influences
 		for(String inf:gcm.getInfluences().keySet()){
 			String endA = GCMFile.getInput(inf);
 			String endB = GCMFile.getOutput(inf);
-			if(endA.compareToIgnoreCase(endB) == 1){
+			if(endA.compareTo(endB) > 0){
 				// swap the strings
 				String t = endA;
 				endA = endB;
