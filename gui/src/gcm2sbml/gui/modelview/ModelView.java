@@ -305,6 +305,10 @@ public class ModelView extends JPanel implements ActionListener {
 						biosim.log.addText("Sorry, edges cann't be moved independently.");
 					}else{
 						graph.updateInternalPosition(cell);
+						// need to rebuild the graph to update the midpoint geometry of edges.
+						// TODO: do this in a more optimal way, like by only updating
+						// the geometry of the edges that were moved.
+						graph.buildGraph();
 					}
 				}
 				if(edgeMoved)
