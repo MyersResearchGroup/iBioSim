@@ -128,7 +128,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 
 	private JTextField eventID, eventName, eventTrigger, eventDelay, eventPriority; // event
 
-	private JCheckBox assignTime, disableTrigger, initialTrigger;
+	private JCheckBox assignTime, persistentTrigger, initialTrigger;
 	// fields;
 
 	private JComboBox eaID; // event assignment fields;
@@ -419,8 +419,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			createFunction(model, "chisq", "Chi-squared distribution", "lambda(nu,nu)");
 			createFunction(model, "laplace", "Laplace distribution", "lambda(a,a)");
 			createFunction(model, "cauchy", "Cauchy distribution", "lambda(a,a)");
-			// createFunction(model, "rayleigh", "Rayleigh distribution",
-			// "lambda(s,s*sqrt(pi/2))");
+			createFunction(model, "rayleigh", "Rayleigh distribution",
+				"lambda(s,s*sqrt(pi/2))");
 			createFunction(model, "poisson", "Poisson distribution", "lambda(mu,mu)");
 			createFunction(model, "binomial", "Binomial distribution", "lambda(p,n,p*n)");
 			createFunction(model, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
@@ -3368,6 +3368,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 					}
 				}
+				/* PROBLEM, NEED TO FIRST ADD THE UNIT THEN CHECK
+				if ((!error) && (option.equals("OK"))) {
+					error = checkUnits();
+				}
+				*/
 				if (!error) {
 					if (option.equals("OK")) {
 						int index = unitDefs.getSelectedIndex();
@@ -3376,6 +3381,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						units = Buttons.getList(units, unitDefs);
 						unitDefs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						UnitDefinition u = document.getModel().getUnitDefinition(val);
+						UnitDefinition uCopy = u.cloneObject();
 						u.setId(unitID.getText().trim());
 						u.setName(unitName.getText().trim());
 						for (int i = 0; i < usedIDs.size(); i++) {
@@ -3398,11 +3404,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							unit.setMultiplier(Double.valueOf(extractUnitMult(uList[i]))
 									.doubleValue());
 						}
-						units[index] = addUnit;
-						sort(units);
-						unitDefs.setListData(units);
-						unitDefs.setSelectedIndex(index);
-						updateUnitId(val, unitID.getText().trim());
+						error = checkUnits();
+						if (!error) {
+							units[index] = addUnit;
+							sort(units);
+							unitDefs.setListData(units);
+							unitDefs.setSelectedIndex(index);
+							updateUnitId(val, unitID.getText().trim());
+						} else {
+							u = uCopy;
+							unitDefs.setSelectedIndex(index);
+						}
 					}
 					else {
 						int index = unitDefs.getSelectedIndex();
@@ -5089,16 +5101,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		JLabel triggerLabel = new JLabel("Trigger:");
 		JLabel delayLabel = new JLabel("Delay:");
 		JLabel priorityLabel = new JLabel("Priority:");
-		JLabel assignTimeLabel = new JLabel("Use values at trigger time");
-		JLabel disableTriggerLabel = new JLabel("Trigger can be disabled");
-		JLabel initialTriggerLabel = new JLabel("Trigger initially false");
+		JLabel assignTimeLabel = new JLabel("Use values at trigger time:");
+		JLabel persistentTriggerLabel = new JLabel("Trigger is persistent:");
+		JLabel initialTriggerLabel = new JLabel("Trigger initially true:");
 		eventID = new JTextField(12);
 		eventName = new JTextField(12);
 		eventTrigger = new JTextField(12);
 		eventDelay = new JTextField(12);
 		eventPriority = new JTextField(12);
 		assignTime = new JCheckBox("");
-		disableTrigger = new JCheckBox("");
+		persistentTrigger = new JCheckBox("");
 		initialTrigger = new JCheckBox("");
 		JPanel eventAssignPanel = new JPanel(new BorderLayout());
 		JPanel addEventAssign = new JPanel();
@@ -5142,18 +5154,34 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						else {
 							eventDelay.setText(myFormulaToString(delay));
 						}
-					}
+					}					
 					if (event.getUseValuesFromTriggerTime()) {
 						assignTime.setSelected(true);
 					}
 					if (event.getTrigger().getAnnotationString()
 							.contains("<TriggerCanBeDisabled/>")) {
-						disableTrigger.setSelected(true);
+						persistentTrigger.setSelected(false);
+					} else {
+						persistentTrigger.setSelected(true);
 					}
 					if (event.getTrigger().getAnnotationString().contains(
 							"<TriggerInitiallyFalse/>")) {
+						initialTrigger.setSelected(false);
+					} else {
 						initialTrigger.setSelected(true);
 					}
+
+					/* new libsbml */
+					if (event.isSetPriority()) {
+						eventPriority.setText(myFormulaToString(event.getPriority().getMath()));
+					}
+					if (event.getTrigger().isSetPersistent()) {
+						persistentTrigger.setSelected(event.getTrigger().getPersistent());
+					}	
+					if (event.getTrigger().isSetInitialValue()) {
+						initialTrigger.setSelected(event.getTrigger().getInitialValue());
+					}	
+
 					assign = new String[(int) event.getNumEventAssignments()];
 					origAssign = new String[(int) event.getNumEventAssignments()];
 					for (int j = 0; j < event.getNumEventAssignments(); j++) {
@@ -5193,8 +5221,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		evPanel.add(eventPriority);
 		evPanel.add(assignTimeLabel);
 		evPanel.add(assignTime);
-		evPanel.add(disableTriggerLabel);
-		evPanel.add(disableTrigger);
+		evPanel.add(persistentTriggerLabel);
+		evPanel.add(persistentTrigger);
 		evPanel.add(initialTriggerLabel);
 		evPanel.add(initialTrigger);
 		eventPanel.add(evPanel, "North");
@@ -5392,6 +5420,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									}
 								}
 							}
+							/* new libsbml */
+							e.unsetPriority();
 						}
 						else {
 							if (eventDelay.getText().trim().equals("")) {
@@ -5420,11 +5450,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									}
 								}
 							}
+							/* new libsbml */
+							e.createPriority();
+							e.getPriority().setMath(myParseFormula(eventPriority.getText().trim()));
 						}
 					}
 					if (!error) {
 						e.createTrigger();
-						if (disableTrigger.isSelected()) {
+						if (!persistentTrigger.isSelected()) {
 							if (!e.getTrigger().getAnnotationString().contains(
 									"<TriggerCanBeDisabled/>")) {
 								if (e.getTrigger().isSetAnnotation()) {
@@ -5434,14 +5467,18 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									e.getTrigger().setAnnotation("<TriggerCanBeDisabled/>");
 								}
 							}
+							/* new libsbml */
+							e.getTrigger().setPersistent(false);
 						}
 						else {
 							if (e.getTrigger().getAnnotationString().contains(
 									"<TriggerCanBeDisabled/>")) {
 								e.getTrigger().unsetAnnotation();
 							}
+							/* new libsbml */
+							e.getTrigger().setPersistent(true);
 						}
-						if (initialTrigger.isSelected()) {
+						if (!initialTrigger.isSelected()) {
 							if (!e.getTrigger().getAnnotationString().contains(
 									"<TriggerInitiallyFalse/>")) {
 								if (e.getTrigger().isSetAnnotation()) {
@@ -5451,12 +5488,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									e.getTrigger().setAnnotation("<TriggerInitiallyFalse/>");
 								}
 							}
+							/* new libsbml */
+							e.getTrigger().setInitialValue(false);
 						}
 						else {
 							if (e.getTrigger().getAnnotationString().contains(
 									"<TriggerInitiallyFalse/>")) {
 								e.getTrigger().unsetAnnotation();
 							}
+							/* new libsbml */
+							e.getTrigger().setInitialValue(true);
 						}
 						e.getTrigger().setMath(myParseFormula(eventTrigger.getText().trim()));
 						if (eventID.getText().trim().equals("")) {
@@ -5503,7 +5544,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (!eventName.getText().trim().equals("")) {
 						e.setName(eventName.getText().trim());
 					}
-					if (disableTrigger.isSelected()) {
+					if (!persistentTrigger.isSelected()) {
 						if (!e.getTrigger().getAnnotationString().contains(
 								"<TriggerCanBeDisabled/>")) {
 							if (e.getTrigger().isSetAnnotation()) {
@@ -5513,14 +5554,18 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								e.getTrigger().setAnnotation("<TriggerCanBeDisabled/>");
 							}
 						}
+						/* new libsbml */
+						e.getTrigger().setPersistent(false);
 					}
 					else {
 						if (e.getTrigger().getAnnotationString()
 								.contains("<TriggerCanBeDisabled/>")) {
 							e.getTrigger().unsetAnnotation();
 						}
+						/* new libsbml */
+						e.getTrigger().setPersistent(true);
 					}
-					if (initialTrigger.isSelected()) {
+					if (!initialTrigger.isSelected()) {
 						if (!e.getTrigger().getAnnotationString().contains(
 								"<TriggerInitiallyFalse/>")) {
 							if (e.getTrigger().isSetAnnotation()) {
@@ -5530,12 +5575,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								e.getTrigger().setAnnotation("<TriggerInitiallyFalse/>");
 							}
 						}
+						/* new libsbml */
+						e.getTrigger().setInitialValue(false);
 					}
 					else {
 						if (e.getTrigger().getAnnotationString().contains(
 								"<TriggerInitiallyFalse/>")) {
 							e.getTrigger().unsetAnnotation();
 						}
+						/* new libsbml */
+						e.getTrigger().setInitialValue(true);
 					}
 					e.getTrigger().setMath(myParseFormula(eventTrigger.getText().trim()));
 					if (eventPriority.getText().trim().equals("")) {
@@ -5552,12 +5601,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									myParseFormula("priority(" + eventDelay.getText().trim() + ","
 											+ eventPriority.getText().trim() + ")"));
 							error = checkEventDelayUnits(e.getDelay());
+							/* new libsbml */
+							e.unsetPriority();
 						}
 						else {
 							e.createDelay();
 							e.getDelay().setMath(
 									myParseFormula("priority(0," + eventPriority.getText().trim()
 											+ ")"));
+							/* new libsbml */
+							e.createPriority();
+							e.getPriority().setMath(myParseFormula(eventPriority.getText().trim()));
 						}
 					}
 					if (!error) {
@@ -6061,8 +6115,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 		});
-		dimText.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
+		dimText.addKeyListener(new KeyListener() {
+			public void keyTyped(KeyEvent e) {
+			}
+			public void keyPressed(KeyEvent e) {
+			}
+			public void keyReleased(KeyEvent e) {
 				if (editComp) {
 					setCompartOptions(((String) compartments.getSelectedValue()).split(" ")[0],
 							dimText.getText());
@@ -6327,19 +6385,39 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			if (!error) {
-				if (!compOutside.getSelectedItem().equals("( none )")) {
-					if (checkOutsideCycle(compID.getText().trim(), (String) compOutside
-							.getSelectedItem(), 0)) {
-						JOptionPane.showMessageDialog(biosim.frame(),
-								"Compartment contains itself through outside references.",
-								"Cycle in Outside References", JOptionPane.ERROR_MESSAGE);
-						error = true;
+				if (document.getLevel()<3) {
+					if (!compOutside.getSelectedItem().equals("( none )")) {
+						if (checkOutsideCycle(compID.getText().trim(), (String) compOutside
+								.getSelectedItem(), 0)) {
+							JOptionPane.showMessageDialog(biosim.frame(),
+									"Compartment contains itself through outside references.",
+									"Cycle in Outside References", JOptionPane.ERROR_MESSAGE);
+							error = true;
+						}
 					}
 				}
 			}
 			if (!error) {
-				if (((String) dimBox.getSelectedItem()).equals("0")
-						&& (variableInUse(selected, true))) {
+				if (document.getLevel()<3) {
+					if (((String) dimBox.getSelectedItem()).equals("0")
+							&& (variableInUse(selected, true))) {
+						error = true;
+					}
+				}
+			}
+			double dim = 3;
+			if (!error) {
+				try {
+					if (document.getLevel()<3) {
+						dim = Integer.parseInt((String) dimBox.getSelectedItem());
+					} else {
+						dim = Double.parseDouble((String) dimText.getText());
+					}
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(
+							biosim.frame(),
+							"Compartment spatial dimensions must be a real number.",
+							"Invalid Spatial Dimensions", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 			}
@@ -6411,9 +6489,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							c.unsetCompartmentType();
 						}
 						if (document.getLevel()<3) {
-							c.setSpatialDimensions(Integer.parseInt((String) dimBox.getSelectedItem()));
+							c.setSpatialDimensions(dim);
 						} else {
-							c.setSpatialDimensions(Double.parseDouble((String) dimText.getText()));
+							c.setSpatialDimensions(dim);
 						}
 						if (compSize.getText().trim().equals("")
 								|| compSize.getText().trim().startsWith("(")) {
@@ -6524,9 +6602,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							c.setCompartmentType(selCompType);
 						}
 						if (document.getLevel()<3) {
-							c.setSpatialDimensions(Integer.parseInt((String) dimBox.getSelectedItem()));
+							c.setSpatialDimensions(dim);
 						} else {
-							c.setSpatialDimensions(Double.parseDouble((String) dimText.getText()));
+							c.setSpatialDimensions(dim);
 						}
 						if (!compSize.getText().trim().equals("")) {
 							c.setSize(Double.parseDouble(compSize.getText().trim()));
@@ -6735,10 +6813,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		try {
 			dim = Double.parseDouble(dimStr);
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(
-					biosim.frame(),
-					"Compartment spatial dimensions must be a real number.",
-					"Invalid Spatial Dimensions", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		if (dim==3) {
@@ -6841,21 +6915,21 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 		}
 		else if (dim==0) {
-			compSize.setText("");
 			compUnits.removeAllItems();
 			compUnits.addItem("( none )");
-			compOutside.removeAllItems();
-			compOutside.addItem("( none )");
-			ListOf listOfComps = document.getModel().getListOfCompartments();
-			for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
-				Compartment compartment = (Compartment) listOfComps.get(i);
-				if (!compartment.getId().equals(selected)) {
-					compOutside.addItem(compartment.getId());
-				}
-			}
 			if (document.getLevel()<3) {
+				compSize.setText("");
 				compConstant.setEnabled(false);
 				compSize.setEnabled(false);
+				compOutside.removeAllItems();
+				compOutside.addItem("( none )");
+				ListOf listOfComps = document.getModel().getListOfCompartments();
+				for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
+					Compartment compartment = (Compartment) listOfComps.get(i);
+					if (!compartment.getId().equals(selected)) {
+						compOutside.addItem(compartment.getId());
+					}
+				}
 			}
 		}
 		else {
@@ -10563,6 +10637,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		document.setConsistencyChecks(libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
 		document.setConsistencyChecks(libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
 		document.setConsistencyChecks(libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
+		document.setConsistencyChecks(libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
 		long numErrors = document.checkConsistency();
 		String message = "";
 		for (long i = 0; i < numErrors; i++) {
@@ -10575,6 +10650,33 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					"Algebraic rules make model overdetermined.", "Model is Overdetermined",
 					JOptionPane.WARNING_MESSAGE);
 		}
+	}
+
+	/**
+	 * Checks consistency of the sbml file.
+	 */
+	public boolean checkUnits() {
+		document.setConsistencyChecks(libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, false);
+		document.setConsistencyChecks(libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, false);
+		document.setConsistencyChecks(libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, true);
+		document.setConsistencyChecks(libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
+		document.setConsistencyChecks(libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
+		document.setConsistencyChecks(libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
+		document.setConsistencyChecks(libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, false);
+		long numErrors = document.checkConsistency();
+		String message = "";
+		for (long i = 0; i < numErrors; i++) {
+			String error = document.getError(i).getMessage(); // .replace(". ",
+			// ".\n");
+			message += i + ":" + error + "\n";
+		}
+		if (numErrors > 0) {
+			JOptionPane.showMessageDialog(biosim.frame(),
+					"Change in unit definition causes unit errors.", "Unit Errors in Model",
+					JOptionPane.WARNING_MESSAGE);
+			return true;
+		}
+		return false;
 	}
 
 	/**
