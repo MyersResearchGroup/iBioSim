@@ -7,13 +7,18 @@ import gcm2sbml.gui.GCM2SBMLEditor;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 
+import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Properties;
+import java.util.Vector;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 //import javax.xml.bind.JAXBElement.GlobalScope;
 
@@ -22,6 +27,7 @@ import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxConstants;
+import com.mxgraph.util.mxPoint;
 import com.mxgraph.view.mxGraph;
 import com.mxgraph.view.mxStylesheet;
 
@@ -36,6 +42,9 @@ public class BioGraph extends mxGraph {
 	private static final int DEFAULT_COMPONENT_WIDTH = 80;
 	private static final int DEFAULT_COMPONENT_HEIGHT = 40;
 	
+
+	private double DIS_BETWEEN_NEIGHBORING_EDGES = 35.0;
+	
 	/**
 	 * Map species to their graph nodes by id. This map is
 	 * (or at least, should always be) kept up-to-date whenever
@@ -44,6 +53,7 @@ public class BioGraph extends mxGraph {
 	private HashMap<String, mxCell> speciesToMxCellMap;
 	private HashMap<String, mxCell> influencesToMxCellMap;
 	private HashMap<String, mxCell> componentsToMxCellMap;
+	private HashMap<String, mxCell> componentsConnectionsToMxCellMap;
 	
 	
 	private GCMFile gcm;
@@ -57,6 +67,7 @@ public class BioGraph extends mxGraph {
 		speciesToMxCellMap = new HashMap<String, mxCell>();
 		componentsToMxCellMap = new HashMap<String, mxCell>();
 		influencesToMxCellMap = new HashMap<String, mxCell>();
+		componentsConnectionsToMxCellMap = new HashMap<String, mxCell>();
 	}
 	
 	public BioGraph(GCMFile gcm, GCM2SBMLEditor gcm2sbml){
@@ -204,7 +215,7 @@ public class BioGraph extends mxGraph {
 	public mxCell getInfluence(String id){
 		return (influencesToMxCellMap.get(id));
 	}
-	
+		
 	/**
 	 * called after a species is deleted. Make sure to delete it from
 	 * the internal model.
@@ -257,11 +268,135 @@ public class BioGraph extends mxGraph {
 			
 			updateInfluenceVisuals(inf);
 		}
-		
+		addEdgeOffsets();
 		this.getModel().endUpdate();
 		
 		this.isBuilding = false;
 		return needsPositioning;
+	}
+	
+	
+	/**
+	 * Loop through all the edges and add control points to reposition them
+	 * if they are laying over the top of any other edges.
+	 */
+	public void addEdgeOffsets(){
+		
+		// Make a hash where the key is a string built from the ids of the source and destination
+		// of all the edges. The source and destination will be sorted so that the same two
+		// source-destination pair will always map to the same key. The value is a list
+		// of edges. That way if there are ever more then one edge between pairs, 
+		// we can modify the geometry so they don't overlap.
+		HashMap<String, Vector<mxCell>> edgeHash = new HashMap<String, Vector<mxCell>>();
+		
+		// build a temporary structure mapping sets of edge endpoints to edges 
+		
+		// map species
+		for(String inf:gcm.getInfluences().keySet()){
+			String endA = GCMFile.getInput(inf);
+			String endB = GCMFile.getOutput(inf);
+			if(endA.compareToIgnoreCase(endB) == 1){
+				// swap the strings
+				String t = endA;
+				endA = endB;
+				endB = t;
+			}
+			String key = endA + " " + endB;
+			mxCell cell = this.getInfluence(inf);
+			if(edgeHash.containsKey(key) == false)
+				edgeHash.put(key, new Vector<mxCell>());
+			edgeHash.get(key).add(cell);
+		}
+		
+		// map components edges
+		Pattern getPropNamePattern = Pattern.compile("^type_([\\w\\_\\d]+)");
+		for(String compName:gcm.getComponents().keySet()){
+
+			Properties comp = gcm.getComponents().get(compName);
+			
+			for(Object propNameO:comp.keySet()){
+				String propName = propNameO.toString();
+				if(propName.startsWith("type_")){
+					Matcher matcher = getPropNamePattern.matcher(propName);
+					matcher.find();
+					String t = matcher.group(0);
+					String compInternalName = matcher.group(1);
+					String targetName = comp.get(compInternalName).toString();
+					String type = comp.get(propName).toString(); // Input or Output
+					String key = compName + " "+type+" " + targetName;
+					mxCell cell = componentsConnectionsToMxCellMap.get(key);
+					String simpleKey = compName + " " + targetName;
+					if(edgeHash.containsKey(simpleKey) == false)
+						edgeHash.put(simpleKey, new Vector<mxCell>());
+					edgeHash.get(simpleKey).add(cell);
+				}
+			}
+		}
+		
+		// loop through every set of edge endpoints and then move them if needed.
+		for(Vector<mxCell> vec:edgeHash.values()){
+			if(vec.size() > 1){
+				
+				// find the end and center points
+				mxGeometry t;
+				t = vec.get(0).getSource().getGeometry();
+				mxPoint sp = new mxPoint(t.getCenterX(), t.getCenterY());
+				t = vec.get(0).getTarget().getGeometry();
+				mxPoint tp = new mxPoint(t.getCenterX(), t.getCenterY());
+				mxPoint cp = new mxPoint((tp.getX()+sp.getX())/2.0, (tp.getY()+sp.getY())/2.0);
+				
+				// make a unit vector that points in the direction perpendicular to the
+				// direction from one endpoint to the other. 90 degrees rotated means flip
+				// the x and y coordinates.
+				mxPoint dVec = new mxPoint(-(sp.getY()-tp.getY()), sp.getX()-tp.getX());
+				double magnitude = Math.sqrt(dVec.getX()*dVec.getX() + dVec.getY()*dVec.getY());
+				// normalize
+				dVec.setX(dVec.getX()/magnitude);
+				dVec.setY(dVec.getY()/magnitude);
+				
+				// loop through all the edges, create a new midpoint and apply it. 
+				// also move the edge center to the midpoint so that labels won't be
+				// on top of each other.
+				for(int i=0; i<vec.size(); i++){
+					double offset = i-(vec.size()-1.0)/2.0;
+					mxCell edge = vec.get(i);
+					//cell.setGeometry(new mxGeometry(0, 0, 100, 100));
+					mxGeometry geom = edge.getGeometry();
+					Vector<mxPoint> points = new Vector<mxPoint>();
+			
+					mxPoint p = new mxPoint(
+							cp.getX()+dVec.getX()*offset*DIS_BETWEEN_NEIGHBORING_EDGES, 
+							cp.getY()+dVec.getY()*offset*DIS_BETWEEN_NEIGHBORING_EDGES
+							);
+					points.add(p);
+					geom.setPoints(points);
+//					geom.setX(p.getX());
+//					geom.setY(p.getY());
+					edge.setGeometry(geom);
+				}
+			}
+		}
+		
+		
+//		for(Object edgeo:this.getSelectionCell()){
+//			mxCell edge = (mxCell)edgeo;
+//			int s = edge.getSource().getEdgeCount();
+//			int t = edge.getTarget().getEdgeCount()
+//			
+//			if(edge.getSource().getEdgeCount() > 1 && edge.getTarget().getEdgeCount() > 1){
+//				// the source and target have multiple edges, now loop through them all...
+//				
+//				
+//				//cell.setGeometry(new mxGeometry(0, 0, 100, 100));
+//				mxGeometry geom = new mxGeometry();
+//				Vector<mxPoint> points = new Vector<mxPoint>();
+//				mxPoint p = new mxPoint(50.0, 50.0);
+//				points.add(p);
+//				geom.setPoints(points);
+//				edge.setGeometry(geom);
+//			}
+//		}
+		
 	}
 	
 	// Keep track of how many elements did not have positioning info.
@@ -311,9 +446,8 @@ public class BioGraph extends mxGraph {
 							this.getSpeciesCell(prop.getProperty(propName.toString()).toString())
 							);
 
-//					buffer.append(s + " -> " + prop.getProperty(propName.toString()).toString()
-//							+ " [port=" + propName.toString() + ", type=Output");
-//					buffer.append(", arrowhead=normal]\n");
+					String key = id + " Output " + prop.getProperty(propName.toString()).toString();
+					componentsConnectionsToMxCellMap.put(key, (mxCell)createdEdge);
 				}
 				else {
 					// input, the arrow should point in from the species
@@ -321,9 +455,9 @@ public class BioGraph extends mxGraph {
 							this.getSpeciesCell(prop.getProperty(propName.toString()).toString()),
 							insertedVertex
 							);
-//					buffer.append(prop.getProperty(propName.toString()).toString() + " -> " + s
-//							+ " [port=" + propName.toString() + ", type=Input");
-//					buffer.append(", arrowhead=normal]\n");
+
+					String key = id + " Input " + prop.getProperty(propName.toString()).toString();
+					componentsConnectionsToMxCellMap.put(key, (mxCell)createdEdge);
 				}
 				this.updateComponentConnectionVisuals((mxCell)createdEdge, propName.toString());
 			}
@@ -332,6 +466,17 @@ public class BioGraph extends mxGraph {
 		
 		return needsPositioning;
 	}
+	
+	/**
+	 * returns the name of the component-to-species connection
+	 * @param compName
+	 * @param speciesName
+	 * @return
+	 */
+	private String getComponentConnectionName(String compName, String speciesName){
+		return compName + " (component connection) " + speciesName;
+	}
+
 	
 	/**
 	 * creates a vertex on the graph using the internal model.
@@ -404,7 +549,9 @@ public class BioGraph extends mxGraph {
 		// apply the label
 		String label = prop.getProperty(GlobalConstants.PROMOTER, "");
 		cell.setValue(label);
-	}
+		
+	};
+
 	
 	public void updateComponentConnectionVisuals(mxCell cell, String label){
 		//cell.setStyle(mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
