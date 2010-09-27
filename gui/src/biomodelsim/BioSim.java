@@ -11179,7 +11179,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 					// if(selectedTab.getName().equals("ModelViewMovie"))
 
-					// The new ModelView
+					// The new Schematic
 					if (className.indexOf("MovieContainer") >= 0) {
 						((MovieContainer) selectedPanel).display();
 					}
