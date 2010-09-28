@@ -75,6 +75,7 @@ public class Schematic extends JPanel implements ActionListener {
 			graph = new BioGraph(gcm, gcm2sbml);
 			
 			addGraphListeners();
+			gcm.makeUndoPoint();
 		}
 		
 		boolean needs_layouting = graph.buildGraph();
@@ -150,6 +151,9 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		toolBar.add(Utils.makeToolButton("choose_layout.png", "showLayouts", "Apply Layout", this));
 		
+		toolBar.add(Utils.makeToolButton("", "undo", "Undo", this));
+		toolBar.add(Utils.makeToolButton("", "redo", "Redo", this));
+		
 		return toolBar;
 	}
 
@@ -174,10 +178,21 @@ public class Schematic extends JPanel implements ActionListener {
 		}else if(command.indexOf("layout_") == 0){
 			// Layout actioncommands are prepended with "_"
 			command = command.substring(command.indexOf('_')+1);
-			graph.buildGraph(); // rebuild, quick way to clear out any edge midpoints.
 			graph.applyLayout(command, this.graphComponent);
+			graph.buildGraph(); // rebuild, quick way to clear out any edge midpoints.
 			gcm2sbml.setDirty(true);
-		}else if(command == ""){
+			gcm.makeUndoPoint();
+		}else if(command == "undo"){
+			gcm.undo();
+			graph.buildGraph();
+			gcm2sbml.refresh();
+			gcm2sbml.setDirty(true);
+		}else if(command == "redo"){
+			gcm.redo();
+			graph.buildGraph();
+			gcm2sbml.refresh();
+			gcm2sbml.setDirty(true);
+			}else if(command == ""){
 			// radio buttons don't have to do anything and have an action command of "".
 		}else{
 			throw(new Error("Invalid actionCommand: " + command));
@@ -212,6 +227,7 @@ public class Schematic extends JPanel implements ActionListener {
 							graph.createSpecies(null, e.getX(), e.getY());
 							gcm2sbml.refresh();
 							gcm2sbml.setDirty(true);
+							gcm.makeUndoPoint();
 						}else if(addComponentButton.isSelected()){
 							// Ask the user which component to add, then plop it down where the click happened
 //							String comp = (String) JOptionPane.showInputDialog(biosim.frame(),
@@ -225,6 +241,7 @@ public class Schematic extends JPanel implements ActionListener {
 								gcm2sbml.setDirty(true);
 								graph.buildGraph();
 								gcm2sbml.refresh();
+								gcm.makeUndoPoint();
 							}
 						}
 					}else{
@@ -245,6 +262,8 @@ public class Schematic extends JPanel implements ActionListener {
 								}
 								graph.buildGraph();
 								gcm2sbml.refresh();
+								// no need to set dirty bit because the property window will do it for us.
+								gcm.makeUndoPoint();
 							}
 						}else if(selfInfluenceButton.isSelected()){
 							if(cell.isEdge() == false){
@@ -266,6 +285,7 @@ public class Schematic extends JPanel implements ActionListener {
 					if (cell != null){
 						graph.bringUpEditorForCell(cell);
 						graph.buildGraph();
+						gcm.makeUndoPoint();
 						
 					}
 				}
@@ -295,24 +315,18 @@ public class Schematic extends JPanel implements ActionListener {
 			
 //			@Override
 			public void invoke(Object arg0, mxEventObject event) {
-				boolean edgeMoved = false;
 				Object cells[] = (Object [])event.getProperties().get("cells");
 				for(int i=0; i<cells.length; i++){
 					// TODO: Disallow moving edges around.
 					mxCell cell = (mxCell)cells[i];
 					if(cell.isEdge()){ // If an edge gets moved ignore it then rebuild the graph from the model.
-						edgeMoved = true;
 						biosim.log.addText("Sorry, edges cann't be moved independently.");
 					}else{
 						graph.updateInternalPosition(cell);
-						// need to rebuild the graph to update the midpoint geometry of edges.
-						// TODO: do this in a more optimal way, like by only updating
-						// the geometry of the edges that were moved.
-						graph.buildGraph();
 					}
 				}
-				if(edgeMoved)
-					graph.buildGraph();
+				graph.buildGraph();
+				gcm.makeUndoPoint();
 				gcm2sbml.setDirty(true);
 			}
 		});
@@ -388,6 +402,7 @@ public class Schematic extends JPanel implements ActionListener {
 					gcm2sbml.setDirty(true);
 					gcm2sbml.refresh();
 					graph.buildGraph();
+					gcm.makeUndoPoint();
 				}
 			}
 		});
@@ -497,6 +512,7 @@ public class Schematic extends JPanel implements ActionListener {
 			graph.updateComponentConnectionVisuals(edge, port);
 
 			graph.buildGraph();
+			gcm.makeUndoPoint();
 			return;
 		}
 		
@@ -528,6 +544,7 @@ public class Schematic extends JPanel implements ActionListener {
 		graph.buildGraph();
 		gcm2sbml.refresh();
 		gcm2sbml.setDirty(true);
+		gcm.makeUndoPoint();
 	}
 	
 	/**

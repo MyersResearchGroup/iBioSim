@@ -1,6 +1,7 @@
 package gcm2sbml.parser;
 
 import gcm2sbml.util.GlobalConstants;
+import gcm2sbml.util.UndoManager;
 import gcm2sbml.util.Utility;
 
 import java.awt.AWTError;
@@ -72,7 +73,10 @@ public class GCMFile {
 	
 	private String filename = null;
 
+	private UndoManager undoManager;
+	
 	public GCMFile(String path) {
+		undoManager = new UndoManager();
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -1068,11 +1072,12 @@ public class GCMFile {
 			e.printStackTrace();                 
 		}                                        
 	}                                            
-                                                 
-	public void load(String filename) {          
-		if (!filename.endsWith(".temp")) {
-			this.filename = filename;
-		}
+	
+	/**
+	 *  load the GCM file from a buffer.
+	 */
+	private void loadFromBuffer(StringBuffer data){
+		
 		species = new HashMap<String, Properties>();
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
@@ -1080,20 +1085,7 @@ public class GCMFile {
 		conditions = new ArrayList<String>();    
 		globalParameters = new HashMap<String, String>();
 		parameters = new HashMap<String, String>();
-		StringBuffer data = new StringBuffer();
 		loadDefaultParameters();
-		try {
-			BufferedReader in = new BufferedReader(new FileReader(filename));
-			String str;
-			while ((str = in.readLine()) != null) {
-				data.append(str + "\n");
-			}
-			in.close();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-			throw new IllegalStateException("Error opening file");
-		}
 		try {
 			parseStates(data);
 			parseInfluences(data);
@@ -1114,6 +1106,29 @@ public class GCMFile {
 			// promoters = new HashMap<String, Properties>();
 			// globalParameters = new HashMap<String, String>();
 		}
+	}
+	
+	public void load(String filename) {          
+		if (!filename.endsWith(".temp")) {
+			this.filename = filename;
+		}
+
+		StringBuffer data = new StringBuffer();
+		
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(filename));
+			String str;
+			while ((str = in.readLine()) != null) {
+				data.append(str + "\n");
+			}
+			in.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			throw new IllegalStateException("Error opening file");
+		}
+		loadFromBuffer(data);
+
 	}
 
 	public void changePromoterName(String oldName, String newName) {
@@ -2773,6 +2788,21 @@ public class GCMFile {
 		return path;
 	}
 
+	public void makeUndoPoint(){
+		StringBuffer up = this.saveToBuffer(true);
+		undoManager.makeUndoPoint(up);
+	}
+	public void undo(){
+		StringBuffer p = (StringBuffer)undoManager.undo();
+		if(p != null)
+			this.loadFromBuffer(p);
+	}
+	public void redo(){
+		StringBuffer p = (StringBuffer)undoManager.redo();
+		if(p != null)
+			this.loadFromBuffer(p);
+	}	
+	
 	private static final String NETWORK = "digraph\\sG\\s\\{([^}]*)\\s\\}";
 
 	private static final String STATE = "(^|\\n) *([^- \\n]*) *\\[(.*)\\]";
