@@ -474,6 +474,7 @@ public class Schematic extends JPanel implements ActionListener {
 		String sourceID = source.getId();
 		String targetID = target.getId();
 		
+		// see if we are connecting a component to a species
 		if(numComponents == 1){
 			Properties sourceProp = graph.getCellProperties(source);
 			Properties targetProp = graph.getCellProperties(target);
@@ -538,7 +539,16 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 								
 		String promoter = "default";
+		
 		String name = InfluencePanel.buildName(sourceID, targetID, type, isBio, promoter);
+		String iia = gcm.isInfluenceAllowed(name);
+		if(iia != null){
+			JOptionPane.showMessageDialog(biosim.frame(), "Sorry, the influence could not be added because " + iia);
+			graph.buildGraph();
+			gcm2sbml.refresh();
+			return;
+		}
+		
 		
 		graph.addInfluence(edge, name, constType);
 		graph.buildGraph();

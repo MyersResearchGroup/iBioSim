@@ -37,7 +37,7 @@ public class UndoManager {
 	
 	/**
 	 * Pops an undo operation off the undo stack and returns it.
-	 * Puts it onto the redo stack.
+	 * Put currentState onto the redo stack.
 	 */
 	public Object undo(){
 		// put the current state onto the redo stack
@@ -53,7 +53,6 @@ public class UndoManager {
 	}
 	
 	public Object redo(){
-		// put the current state onto the redo stack
 		if(currentState != null && redoStack.size() > 0){
 			undoStack.addFirst(currentState);
 		}
