@@ -2326,6 +2326,9 @@ public class Abstraction extends LhpnFile {
 		}
 		for (Place p : trans.getPostset()) {
 			for (Transition tP : p.getPostset()) {
+				if (transName.equals(tP.getName())) {
+					return change;
+				}
 				for (Place pP : tP.getPreset()) {
 					for (Transition tPP : pP.getPreset()) {
 						// if (typeAssign.containsKey(tPP)) {
