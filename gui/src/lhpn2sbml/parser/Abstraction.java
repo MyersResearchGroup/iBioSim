@@ -80,6 +80,9 @@ public class Abstraction extends LhpnFile {
 		while (change && i < abstPane.maxIterations()) {
 			change = false;
 			divideProcesses();
+			for (String v : abstPane.getIntVars()) {
+				intVars.add(v);
+			}
 			// Transform 0 - Merge Parallel Places
 			if (abstPane.absListModel.contains(abstPane.xform0)
 					&& abstPane.isSimplify()) {
@@ -804,6 +807,8 @@ public class Abstraction extends LhpnFile {
 		for (Variable var1 : booleans.values()) {
 			for (Variable var2 : booleans.values()) {
 				if (var1.equals(var2))
+					continue;
+				if (intVars.contains(var2))
 					continue;
 				boolean same = areCorrelatedBooleans(var1.getName(), var2
 						.getName());
