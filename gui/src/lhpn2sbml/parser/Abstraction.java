@@ -18,6 +18,8 @@ public class Abstraction extends LhpnFile {
 	private HashMap<String, Integer> process_read = new HashMap<String, Integer>();
 
 	private ArrayList<Transition> read = new ArrayList<Transition>();
+	
+	private ArrayList<String> intVars, newIntVars, newestIntVars;
 
 	private AbstPane abstPane;
 
@@ -199,6 +201,10 @@ public class Abstraction extends LhpnFile {
 			else if (abstPane.absListModel.contains(abstPane.xform27)
 					&& abstPane.isSimplify()) {
 				change = mergeTransitionsSimp(change);
+			}
+			// Transform 29 - Remove Uninteresting Variables (Simplification)
+			if (abstPane.absListModel.contains(abstPane.xform29) && abstPane.isSimplify()) {
+				change = removeUninterestingVariables(change);
 			}
 			i++;
 		}
@@ -1513,6 +1519,66 @@ public class Abstraction extends LhpnFile {
 		return change;
 	}
 
+	private boolean removeUninterestingVariables(boolean change) {
+		intVars = new ArrayList<String>(); // Set V
+		newIntVars = new ArrayList<String>(); // Set V''
+		newestIntVars = new ArrayList<String>(); // Set V'
+		ArrayList<Integer> intProc = new ArrayList<Integer>(); // Processes with failure transitions or transitions that have interesting variables in their enabling conditions
+		for (String v : abstPane.getIntVars()) {
+			intVars.add(v);
+			newIntVars.add(v);
+		}
+		for (Transition t : transitions.values()) {
+			if (t.isFail()) {
+				intProc.add(process_trans.get(t));
+			}
+		}
+		for (Transition t : transitions.values()) {
+			if (intProc.contains(process_trans.get(t))) {
+				for (String u : t.getEnablingTree().getVars()) {
+					if (!intVars.contains(u)) {
+						intVars.add(u);
+						newIntVars.add(u);
+					}
+				}
+			}
+		}
+		do {
+			for (Transition t : transitions.values()) { // Determine which processes are interesting
+				for (String v : newIntVars) {
+					if (t.getEnablingTree().getVars().contains(v)) {
+						intProc.add(process_trans.get(t));
+					}
+				}
+			}
+			for (Transition t : transitions.values()) {
+				for (String key : t.getAssignTrees().keySet()) {
+					if (intVars.contains(key)) {
+						for (String v : t.getAssignTree(key).getVars()) {
+							if (!intVars.contains(v)) {
+								addInterestingVariable(v);
+							}
+						}
+					}
+				}
+				if (intProc.contains(process_trans.get(t))) {
+					for (String v : t.getEnablingTree().getVars()) {
+						if (!intVars.contains(v)) {
+							addInterestingVariable(v);
+						}
+					}
+				}
+			}
+			for (String v : newestIntVars) {
+				if (!intVars.contains(v)) {
+					newIntVars.add(v);
+					intVars.add(v);
+				}
+			}
+		} while (newIntVars.size() > 0);
+		return change;
+	}
+
 	private void simplifyExpr() {
 		for (Transition t : transitions.values()) {
 			t.simplifyExpr();
@@ -1590,7 +1656,7 @@ public class Abstraction extends LhpnFile {
 			switch (delay.isit) {
 			case 'n':
 				double val = delay.lvalue;
-				if (val%N==0) {
+				if (val % N == 0) {
 					continue;
 				}
 				int lower = (int) (val / N) * N;
@@ -3047,6 +3113,13 @@ public class Abstraction extends LhpnFile {
 			}
 		}
 		return true;
+	}
+	
+	private void addInterestingVariable(String var) {
+		newestIntVars.add(var);
+		if (continuous.containsKey(var)) {
+			newestIntVars.add(var + "_rate");
+		}
 	}
 
 	private static final String RANGE = "uniform\\((\\w+?),(\\w+?)\\)";
