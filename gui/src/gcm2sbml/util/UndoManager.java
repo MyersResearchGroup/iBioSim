@@ -1,11 +1,11 @@
 package gcm2sbml.util;
 
-import java.util.Deque;
+//import java.util.Deque;
 import java.util.LinkedList;
 
 public class UndoManager {
-	private Deque<Object> undoStack;
-	private Deque<Object> redoStack;
+	private LinkedList<Object> undoStack;
+	private LinkedList<Object> redoStack;
 	private Object currentState;
 	
 	private final int MAX_UNDO_STACK_SIZE = 100;
