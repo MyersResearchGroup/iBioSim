@@ -270,6 +270,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				setType(types[2]);
 				promoterBox.setSelectedItem("default");
 				promoterBox.setEnabled(false);
+				bioBox.setSelectedItem("no");
+				bioBox.setEnabled(false);
 			}
 			loadProperties(prop);
 		}
@@ -455,8 +457,11 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			if (typeBox.getSelectedItem().equals("no influence")) {
 				promoterBox.setSelectedItem("default");
 				promoterBox.setEnabled(false);
+				bioBox.setSelectedItem("no");
+				bioBox.setEnabled(false);
 			} else {
 				promoterBox.setEnabled(true);
+				bioBox.setEnabled(true);
 			}
 
 		} else if (e.getActionCommand().equals("comboBoxChanged")
@@ -495,12 +500,18 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		if (type.equals(types[0])) {
 			fields.get(GlobalConstants.KACT_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(true);
+			fields.get(GlobalConstants.COOPERATIVITY_STRING).setEnabled(true);
+			fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
 		} else if (type.equals(types[1])) {
 			fields.get(GlobalConstants.KACT_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(false);
+			fields.get(GlobalConstants.COOPERATIVITY_STRING).setEnabled(true);
+			fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
 		} else if (type.equals(types[2])) {
 			fields.get(GlobalConstants.KACT_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(false);
+			fields.get(GlobalConstants.COOPERATIVITY_STRING).setEnabled(false);
+			fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(false);
 		} else {
 			throw new IllegalStateException("Illegal state");
 		}
