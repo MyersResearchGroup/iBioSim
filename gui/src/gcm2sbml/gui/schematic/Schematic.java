@@ -249,21 +249,26 @@ public class Schematic extends JPanel implements ActionListener {
 							// If the thing clicked on was an influence, bring up it's promoter window.
 							if(cell.isEdge()){
 								Properties prop = gcm.getInfluences().get(cell.getId());
-								String promoter = prop.getProperty("Promoter");
-								//System.out.print(promoter);
-								if(promoter != null){
-									gcm2sbml.launchPromoterPanel(promoter);
-								}else{
-									PromoterPanel p = gcm2sbml.launchPromoterPanel(null);
-									// set the selected influence to use the given promoter
-									prop = gcm.getInfluences().get(cell.getId());
-									// now rename the influence to incorporate the new promoter
-									gcm.changeInfluencePromoter(cell.getId(), prop.getProperty(GlobalConstants.PROMOTER), p.getLastUsedPromoter());
+								String type = prop.getProperty(GlobalConstants.TYPE);
+								if (!type.equals(GlobalConstants.NOINFLUENCE)) {
+									String promoter = prop.getProperty(GlobalConstants.PROMOTER);
+									//System.out.print(promoter);
+									if(promoter != null){
+										gcm2sbml.launchPromoterPanel(promoter);
+									}else{
+										PromoterPanel p = gcm2sbml.launchPromoterPanel(null);
+										// set the selected influence to use the given promoter
+										prop = gcm.getInfluences().get(cell.getId());
+										// now rename the influence to incorporate the new promoter
+										if (p.getLastUsedPromoter()!=null) {
+											gcm.changeInfluencePromoter(cell.getId(), prop.getProperty(GlobalConstants.PROMOTER), p.getLastUsedPromoter());
+										}
+									}
+									graph.buildGraph();
+									gcm2sbml.refresh();
+									// no need to set dirty bit because the property window will do it for us.
+									gcm.makeUndoPoint();
 								}
-								graph.buildGraph();
-								gcm2sbml.refresh();
-								// no need to set dirty bit because the property window will do it for us.
-								gcm.makeUndoPoint();
 							}
 						}else if(selfInfluenceButton.isSelected()){
 							if(cell.isEdge() == false){
@@ -281,7 +286,6 @@ public class Schematic extends JPanel implements ActionListener {
 				}else if(e.getClickCount() == 2){
 					// double click
 					mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
-					
 					if (cell != null){
 						graph.bringUpEditorForCell(cell);
 						graph.buildGraph();
@@ -301,6 +305,7 @@ public class Schematic extends JPanel implements ActionListener {
 				if (e.isPopupTrigger()){
 					// rightclick on mac
 					showGraphPopupMenu(e);
+					editable = false;
 				}
 			}
 		});
@@ -368,7 +373,7 @@ public class Schematic extends JPanel implements ActionListener {
 					Object cells[] = (Object [])event.getProperties().get("cells");
 					for(Object ocell:cells){
 						mxCell cell = (mxCell)ocell;
-						System.out.print(cell.getId() + " Deleting.\n");
+						//System.out.print(cell.getId() + " Deleting.\n");
 						
 						String type = graph.getCellType(cell);
 						if(type == GlobalConstants.INFLUENCE){
