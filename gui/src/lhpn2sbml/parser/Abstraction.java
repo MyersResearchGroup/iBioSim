@@ -80,6 +80,7 @@ public class Abstraction extends LhpnFile {
 		while (change && i < abstPane.maxIterations()) {
 			change = false;
 			divideProcesses();
+			intVars = new ArrayList<String>();
 			for (String v : abstPane.getIntVars()) {
 				intVars.add(v);
 			}
@@ -1539,7 +1540,7 @@ public class Abstraction extends LhpnFile {
 			}
 		}
 		for (Transition t : transitions.values()) {
-			if (intProc.contains(process_trans.get(t))) {
+			if (intProc.contains(process_trans.get(t)) && t.getEnablingTree() != null) {
 				for (String u : t.getEnablingTree().getVars()) {
 					if (!intVars.contains(u)) {
 						intVars.add(u);
@@ -1551,8 +1552,10 @@ public class Abstraction extends LhpnFile {
 		do {
 			for (Transition t : transitions.values()) { // Determine which processes are interesting
 				for (String v : newIntVars) {
-					if (t.getEnablingTree().getVars().contains(v)) {
-						intProc.add(process_trans.get(t));
+					if (t.getEnablingTree() != null) {
+						if (t.getEnablingTree().getVars().contains(v)) {
+							intProc.add(process_trans.get(t));
+						}
 					}
 				}
 			}
@@ -1566,7 +1569,7 @@ public class Abstraction extends LhpnFile {
 						}
 					}
 				}
-				if (intProc.contains(process_trans.get(t))) {
+				if (intProc.contains(process_trans.get(t)) && t.getEnablingTree() != null) {
 					for (String v : t.getEnablingTree().getVars()) {
 						if (!intVars.contains(v)) {
 							addInterestingVariable(v);
