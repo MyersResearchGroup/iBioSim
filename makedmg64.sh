@@ -10,6 +10,7 @@ cp docs/screenshots /Applications/iBioSim.app/Contents/Resources/docs/screenshot
 cp gui/lib/* /Applications/iBioSim.app/Contents/Resources/gui/lib/.
 cp gui/lib/libsbmlj64.jar /Applications/iBioSim.app/Contents/Resources/gui/lib/libsbmlj.jar
 cp gui/icons/* /Applications/iBioSim.app/Contents/Resources/gui/icons/.
+cp gui/icons/modelview/* /Applications/iBioSim.app/Contents/Resources/gui/icons/.
 cp gui/bin/* /Applications/iBioSim.app/Contents/Resources/gui/bin/.
 cp gui/dist/lib/* /Applications/iBioSim.app/Contents/Resources/gui/dist/lib/.
 cp -r gui/dist/classes/* /Applications/iBioSim.app/Contents/Resources/gui/dist/classes/.

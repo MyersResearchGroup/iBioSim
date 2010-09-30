@@ -9,6 +9,7 @@ cp docs/*.pdf /Applications/iBioSim.app/Contents/Resources/docs/.
 cp docs/screenshots /Applications/iBioSim.app/Contents/Resources/docs/screenshots/.
 cp gui/lib/* /Applications/iBioSim.app/Contents/Resources/gui/lib/.
 cp gui/icons/* /Applications/iBioSim.app/Contents/Resources/gui/icons/.
+cp gui/icons/modelview/* /Applications/iBioSim.app/Contents/Resources/gui/icons/.
 cp gui/bin/* /Applications/iBioSim.app/Contents/Resources/gui/bin/.
 cp gui/dist/lib/* /Applications/iBioSim.app/Contents/Resources/gui/dist/lib/.
 cp -r gui/dist/classes/* /Applications/iBioSim.app/Contents/Resources/gui/dist/classes/.
