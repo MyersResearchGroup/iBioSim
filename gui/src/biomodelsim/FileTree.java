@@ -792,10 +792,105 @@ public class FileTree extends JPanel implements MouseListener {
 				node = new DefaultMutableTreeNode(new IconData(ICON_PROBGRAPH, null, item));
 			}
 			if (node != null) {
+				String[] files = new File(dir).list();
+				sort(files);
+				for (String f : files) {
+					path = dir + separator + f;
+					if (new File(path).isDirectory()) {
+						if (new File(path + separator + f + ".sim").exists()) {
+							try {
+								Scanner scan = new Scanner(new File(path + separator + f + ".sim"));
+								String refFile = scan.nextLine();
+								scan.close();
+								if (item.equals(refFile)) {
+									node.add(new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null,
+											f)));
+								}
+							}
+							catch (Exception e) {
+							}
+						}
+						else if (new File(path + separator + f + ".lrn").exists()) {
+							try {
+								Properties load = new Properties();
+								FileInputStream in = new FileInputStream(new File(path + separator + f
+										+ ".lrn"));
+								load.load(in);
+								in.close();
+								if (load.containsKey("genenet.file")) {
+									String[] getProp = load.getProperty("genenet.file").split(separator);
+									if (item.equals(getProp[getProp.length - 1])) {
+										node.add(new DefaultMutableTreeNode(new IconData(ICON_LEARN, null,
+												f)));
+									}
+								}
+								else if (load.containsKey("learn.file")) {
+									String[] getProp = load.getProperty("learn.file").split(separator);
+									if (item.equals(getProp[getProp.length - 1])) {
+										node.add(new DefaultMutableTreeNode(new IconData(ICON_LEARN, null,
+												f)));
+									}
+								}
+							}
+							catch (Exception e) {
+							}
+						}
+						else if (new File(path + separator + f + ".syn").exists()) {
+							try {
+								Properties load = new Properties();
+								FileInputStream in = new FileInputStream(new File(path + separator + f
+										+ ".syn"));
+								load.load(in);
+								in.close();
+								if (load.containsKey("synthesis.file")) {
+									String[] getProp = load.getProperty("synthesis.file").split(separator);
+									if (item.equals(getProp[getProp.length - 1])) {
+										node.add(new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null,
+												f)));
+									}
+								}
+							}
+							catch (Exception e) {
+							}
+						}
+						else if (new File(path + separator + f + ".ver").exists()) {
+							try {
+								Properties load = new Properties();
+								FileInputStream in = new FileInputStream(new File(path + separator + f
+										+ ".ver"));
+								load.load(in);
+								in.close();
+								if (load.containsKey("verification.file")) {
+									String[] getProp = load.getProperty("verification.file").split(separator);
+									if (item.equals(getProp[getProp.length - 1])) {
+										node.add(new DefaultMutableTreeNode(new IconData(ICON_VERIFY, null,
+												f)));
+									}
+								}
+							}
+							catch (Exception e) {
+							}
+						}
+					}
+				}
 				root.insert(node, insert);
 				tree.updateUI();
 				return;
 			}
+		}
+	}
+	
+	private void sort(Object[] sort) {
+		int i, j;
+		String index;
+		for (i = 1; i < sort.length; i++) {
+			index = (String) sort[i];
+			j = i;
+			while ((j > 0) && ((String) sort[j - 1]).compareToIgnoreCase(index) > 0) {
+				sort[j] = sort[j - 1];
+				j = j - 1;
+			}
+			sort[j] = index;
 		}
 	}
 

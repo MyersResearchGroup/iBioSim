@@ -74,6 +74,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 	private ArrayList<String> speciesList;
 
 	private boolean firstRead;
+	
+	private JTextField backgroundField;
 
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
@@ -180,7 +182,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		// influenceLevel.addActionListener(this);
 		thresholdPanel2.add(influenceLevel);
 		JLabel backgroundLabel = new JLabel("Model File:");
-		JTextField backgroundField = new JTextField(learnFile);
+		backgroundField = new JTextField(learnFile);
 		backgroundField.setEditable(false);
 		thresholdPanel1.add(backgroundLabel);
 		thresholdPanel1.add(backgroundField);
@@ -1455,5 +1457,13 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		this.directory = directory;
 		String[] getFilename = directory.split(separator);
 		lrnFile = getFilename[getFilename.length - 1] + ".lrn";
+	}
+
+	public void updateBackgroundFile(String updatedFile) {
+		backgroundField.setText(updatedFile);
+	}
+	
+	public String getBackgroundFile() {
+		return backgroundField.getText();
 	}
 }
