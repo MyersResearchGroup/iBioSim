@@ -236,6 +236,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	private AbstPane lhpnAbstraction;
 
 	private JComboBox lpnProperties;
+	
+	private JTextField backgroundField;
 
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
@@ -582,7 +584,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		JPanel topPanel = new JPanel(new BorderLayout());
 		JPanel backgroundPanel = new JPanel();
 		JLabel backgroundLabel = new JLabel("Model File:");
-		JTextField backgroundField = new JTextField(this.modelFile);
+		backgroundField = new JTextField(this.modelFile);
 		backgroundField.setEditable(false);
 		backgroundPanel.add(backgroundLabel);
 		backgroundPanel.add(backgroundField);
@@ -4928,5 +4930,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		else {
 			return root + separator + simName;
 		}
+	}
+	
+	public void updateBackgroundFile(String updatedFile) {
+		backgroundField.setText(updatedFile);
+	}
+	
+	public String getBackgroundFile() {
+		return backgroundField.getText();
 	}
 }
