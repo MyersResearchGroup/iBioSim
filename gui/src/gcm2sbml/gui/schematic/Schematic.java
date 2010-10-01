@@ -126,7 +126,7 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(addSpeciesButton);
 		addComponentButton = Utils.makeRadioToolButton("add_component.png", "", "Add Component Mode", this, modeButtonGroup);
 		toolBar.add(addComponentButton);
-		editPromoterButton = Utils.makeRadioToolButton("promoter_mode.png", "", "P", this, modeButtonGroup);
+		editPromoterButton = Utils.makeRadioToolButton("promoter_mode.png", "", "Add Promoter Mode", this, modeButtonGroup);
 		toolBar.add(editPromoterButton);
 		selfInfluenceButton = Utils.makeRadioToolButton("self_influence.png", "", "Create Self Influences", this, modeButtonGroup);
 		toolBar.add(selfInfluenceButton);
@@ -210,11 +210,11 @@ public class Schematic extends JPanel implements ActionListener {
 			@Override
 			public void mouseReleased(MouseEvent e)
 			{
-				if (e.isPopupTrigger()){
+				if (e.isPopupTrigger() && e.getButton() == MouseEvent.BUTTON3){
 					// rightclick on windows
 					if(editable)
 						showGraphPopupMenu(e);
-				}else if(e.getClickCount() == 1 && editable){
+				}else if(e.getClickCount() == 1 && editable && e.getButton() == MouseEvent.BUTTON1){
 					// single click.
 					// First check and if the user clicked on a component, let the graph lib take care of it.
 					mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
@@ -283,7 +283,7 @@ public class Schematic extends JPanel implements ActionListener {
 							}
 						}
 					}
-				}else if(e.getClickCount() == 2){
+				}else if(e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1){
 					// double click
 					mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
 					if (cell != null){
@@ -302,10 +302,10 @@ public class Schematic extends JPanel implements ActionListener {
 			@Override
 			public void mousePressed(MouseEvent e)
 			{
-				if (e.isPopupTrigger()){
+				if (e.isPopupTrigger() && e.getButton() == MouseEvent.BUTTON3){
 					// rightclick on mac
 					showGraphPopupMenu(e);
-					editable = false;
+					//editable = false;
 				}
 			}
 		});
