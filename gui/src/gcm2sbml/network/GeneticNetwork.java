@@ -787,7 +787,6 @@ public class GeneticNetwork {
 		for (Promoter p : promoters.values()) {
 			if (p.getOutputs().size()==0) continue;
 			// First print out the promoter, and promoter bound to RNAP
-			
 			Species s = Utility.makeSpecies(p.getId(), compartment,
 					p.getPcount());
 		    if ((p.getProperties() != null) &&
