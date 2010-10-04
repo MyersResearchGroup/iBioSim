@@ -38,6 +38,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.sbml.libsbml.ASTNode;
@@ -353,12 +354,6 @@ public class GCMFile {
 			}
 		}
 		components = new HashMap<String, Properties>();
-		if (sbml != null) {
-			long numErrors = sbml.checkConsistency();
-			if (numErrors > 0) {
-				Utility.createErrorMessage("Merged SBMLs Are Inconsistent", "The merged sbml files have inconsistencies.");
-			}
-		}
 		return sbml;
 	}
 
