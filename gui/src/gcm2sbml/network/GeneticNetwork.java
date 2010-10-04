@@ -14,6 +14,7 @@ import gcm2sbml.visitor.PrintDimerizationVisitor;
 import gcm2sbml.visitor.PrintRepressionBindingVisitor;
 import gcm2sbml.visitor.PrintSpeciesVisitor;
 
+import java.awt.Dimension;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -22,6 +23,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+
+import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 
 import org.sbml.libsbml.ASTNode;
 import org.sbml.libsbml.Constraint;
@@ -203,7 +208,33 @@ public class GeneticNetwork {
 			m.setId(new File(filename).getName().replace(".xml", ""));			
 			m.setVolumeUnits("litre");
 			m.setSubstanceUnits("mole");
-
+			if (document != null) {
+				document.setConsistencyChecks(libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
+				document.setConsistencyChecks(libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
+				document.setConsistencyChecks(libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, false);
+				document.setConsistencyChecks(libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
+				document.setConsistencyChecks(libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
+				document.setConsistencyChecks(libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
+				document.setConsistencyChecks(libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
+				long numErrors = document.checkConsistency();
+				if (numErrors > 0) {
+					String message = "";
+					for (long i = 0; i < numErrors; i++) {
+						String error = document.getError(i).getMessage(); // .replace(". ",
+						// ".\n");
+						message += i + ":" + error + "\n";
+					}
+					JTextArea messageArea = new JTextArea(message);
+					messageArea.setLineWrap(true);
+					messageArea.setEditable(false);
+					JScrollPane scroll = new JScrollPane();
+					scroll.setMinimumSize(new Dimension(600, 600));
+					scroll.setPreferredSize(new Dimension(600, 600));
+					scroll.setViewportView(messageArea);
+					JOptionPane.showMessageDialog(BioSim.frame(), scroll, "Generated SBML Has Errors",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
 			p.print(writer.writeToString(document));
 
 			p.close();
