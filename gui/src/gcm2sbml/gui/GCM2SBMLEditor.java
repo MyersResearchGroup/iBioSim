@@ -327,31 +327,34 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 
 			String templateName = JOptionPane.showInputDialog(biosim.frame(),
 					"Enter SBML template name:", "SBML Template Name", JOptionPane.PLAIN_MESSAGE);
-			if (!templateName.contains(".sbml") && !templateName.contains(".xml")) {
-				templateName = templateName + ".xml";
-			}
-			if (new File(path + separator + templateName).exists()) {
-				int value = JOptionPane.showOptionDialog(biosim.frame(), templateName
-						+ " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				if (value == JOptionPane.YES_OPTION) {
-					network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname + ".gcm", path
-							+ separator + templateName);
-					log.addText("Saving GCM file as SBML template:\n" + path + separator + templateName
-							+ "\n");
-					biosim.addToTree(templateName);
-					biosim.updateOpenSBML(templateName);
+			if (templateName != null) {
+				if (!templateName.contains(".sbml") && !templateName.contains(".xml")) {
+					templateName = templateName + ".xml";
+				}
+				if (new File(path + separator + templateName).exists()) {
+					int value = JOptionPane.showOptionDialog(biosim.frame(), templateName
+							+ " already exists.  Overwrite file?", "Save file",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+							options[0]);
+					if (value == JOptionPane.YES_OPTION) {
+						network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname
+								+ ".gcm", path + separator + templateName);
+						log.addText("Saving GCM file as SBML template:\n" + path + separator
+								+ templateName + "\n");
+						biosim.addToTree(templateName);
+						biosim.updateOpenSBML(templateName);
+					}
+					else {
+						// Do nothing
+					}
 				}
 				else {
-					// Do nothing
+					network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname
+							+ ".gcm", path + separator + templateName);
+					log.addText("Saving GCM file as SBML template:\n" + path + separator
+							+ templateName + "\n");
+					biosim.addToTree(templateName);
 				}
-			}
-			else {
-				network.buildTemplate(parser.getSpecies(), parser.getPromoters(), gcmname + ".gcm", path
-						+ separator + templateName);
-				log.addText("Saving GCM file as SBML template:\n" + path + separator + templateName
-						+ "\n");
-				biosim.addToTree(templateName);
 			}
 		}
 		else if (command.contains("LHPN")) {
