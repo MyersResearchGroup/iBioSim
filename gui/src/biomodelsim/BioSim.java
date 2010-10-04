@@ -10061,6 +10061,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 			}
+			enableTabMenu(tab.getSelectedIndex());
+			enableTreeMenu();
 		}
 		else {
 			enableTreeMenu();
