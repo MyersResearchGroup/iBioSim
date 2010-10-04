@@ -3399,7 +3399,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							unit.setMultiplier(Double.valueOf(extractUnitMult(uList[i]))
 									.doubleValue());
 						}
-						error = checkUnits();
+						//error = checkUnits();
 						if (!error) {
 							units[index] = addUnit;
 							sort(units);
@@ -10678,11 +10678,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		long numErrors = 0;
 		String message = "Change in unit definition causes the following unit errors:\n";
 		for (long i = 0; i < numErrorsWarnings; i++) {
-			if (document.getError(i).isError()) {
+			//if (document.getError(i).isWarning()) {
 				String error = document.getError(i).getMessage(); 
 				message += i + ":" + error + "\n";
 				numErrors++;
-			}
+			//}
 		}
 		if (numErrors > 0) {
 			JTextArea messageArea = new JTextArea(message);
@@ -10694,15 +10694,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			scroll.setViewportView(messageArea);
 			JOptionPane.showMessageDialog(biosim.frame(), scroll, "Unit Errors in Model",
 					JOptionPane.ERROR_MESSAGE);
-		}
-		/*
-		if (numErrors > 0) {
-			JOptionPane.showMessageDialog(biosim.frame(),
-					"Change in unit definition causes unit errors.", "Unit Errors in Model",
-					JOptionPane.WARNING_MESSAGE);
 			return true;
 		}
-		*/
 		return false;
 	}
 
