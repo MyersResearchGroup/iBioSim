@@ -3368,11 +3368,6 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 					}
 				}
-				/* PROBLEM, NEED TO FIRST ADD THE UNIT THEN CHECK
-				if ((!error) && (option.equals("OK"))) {
-					error = checkUnits();
-				}
-				*/
 				if (!error) {
 					if (option.equals("OK")) {
 						int index = unitDefs.getSelectedIndex();
@@ -10679,19 +10674,35 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		document.setConsistencyChecks(libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
 		document.setConsistencyChecks(libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
 		document.setConsistencyChecks(libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, false);
-		long numErrors = document.checkConsistency();
-		String message = "";
-		for (long i = 0; i < numErrors; i++) {
-			String error = document.getError(i).getMessage(); // .replace(". ",
-			// ".\n");
-			message += i + ":" + error + "\n";
+		long numErrorsWarnings = document.checkConsistency();
+		long numErrors = 0;
+		String message = "Change in unit definition causes the following unit errors:\n";
+		for (long i = 0; i < numErrorsWarnings; i++) {
+			if (document.getError(i).isError()) {
+				String error = document.getError(i).getMessage(); 
+				message += i + ":" + error + "\n";
+				numErrors++;
+			}
 		}
+		if (numErrors > 0) {
+			JTextArea messageArea = new JTextArea(message);
+			messageArea.setLineWrap(true);
+			messageArea.setEditable(false);
+			JScrollPane scroll = new JScrollPane();
+			scroll.setMinimumSize(new Dimension(600, 600));
+			scroll.setPreferredSize(new Dimension(600, 600));
+			scroll.setViewportView(messageArea);
+			JOptionPane.showMessageDialog(biosim.frame(), scroll, "Unit Errors in Model",
+					JOptionPane.ERROR_MESSAGE);
+		}
+		/*
 		if (numErrors > 0) {
 			JOptionPane.showMessageDialog(biosim.frame(),
 					"Change in unit definition causes unit errors.", "Unit Errors in Model",
 					JOptionPane.WARNING_MESSAGE);
 			return true;
 		}
+		*/
 		return false;
 	}
 
