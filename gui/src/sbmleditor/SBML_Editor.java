@@ -5458,6 +5458,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (!error) {
 						e.createTrigger();
 						if (!persistentTrigger.isSelected()) {
+							/*
 							if (!e.getTrigger().getAnnotationString().contains(
 									"<TriggerCanBeDisabled/>")) {
 								if (e.getTrigger().isSetAnnotation()) {
@@ -5467,18 +5468,22 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									e.getTrigger().setAnnotation("<TriggerCanBeDisabled/>");
 								}
 							}
+							*/
 							/* new libsbml */
 							e.getTrigger().setPersistent(false);
 						}
 						else {
+							/*
 							if (e.getTrigger().getAnnotationString().contains(
 									"<TriggerCanBeDisabled/>")) {
 								e.getTrigger().unsetAnnotation();
 							}
+							*/
 							/* new libsbml */
 							e.getTrigger().setPersistent(true);
 						}
 						if (!initialTrigger.isSelected()) {
+							/*
 							if (!e.getTrigger().getAnnotationString().contains(
 									"<TriggerInitiallyFalse/>")) {
 								if (e.getTrigger().isSetAnnotation()) {
@@ -5488,14 +5493,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									e.getTrigger().setAnnotation("<TriggerInitiallyFalse/>");
 								}
 							}
+							*/
 							/* new libsbml */
 							e.getTrigger().setInitialValue(false);
 						}
 						else {
+							/*
 							if (e.getTrigger().getAnnotationString().contains(
 									"<TriggerInitiallyFalse/>")) {
 								e.getTrigger().unsetAnnotation();
 							}
+							*/
 							/* new libsbml */
 							e.getTrigger().setInitialValue(true);
 						}
@@ -5545,6 +5553,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						e.setName(eventName.getText().trim());
 					}
 					if (!persistentTrigger.isSelected()) {
+						/*
 						if (!e.getTrigger().getAnnotationString().contains(
 								"<TriggerCanBeDisabled/>")) {
 							if (e.getTrigger().isSetAnnotation()) {
@@ -5554,18 +5563,22 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								e.getTrigger().setAnnotation("<TriggerCanBeDisabled/>");
 							}
 						}
+						*/
 						/* new libsbml */
 						e.getTrigger().setPersistent(false);
 					}
 					else {
+						/*
 						if (e.getTrigger().getAnnotationString()
 								.contains("<TriggerCanBeDisabled/>")) {
 							e.getTrigger().unsetAnnotation();
 						}
+						*/
 						/* new libsbml */
 						e.getTrigger().setPersistent(true);
 					}
 					if (!initialTrigger.isSelected()) {
+						/*
 						if (!e.getTrigger().getAnnotationString().contains(
 								"<TriggerInitiallyFalse/>")) {
 							if (e.getTrigger().isSetAnnotation()) {
@@ -5575,14 +5588,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								e.getTrigger().setAnnotation("<TriggerInitiallyFalse/>");
 							}
 						}
+						*/
 						/* new libsbml */
 						e.getTrigger().setInitialValue(false);
 					}
 					else {
+						/*
 						if (e.getTrigger().getAnnotationString().contains(
 								"<TriggerInitiallyFalse/>")) {
 							e.getTrigger().unsetAnnotation();
 						}
+						*/
 						/* new libsbml */
 						e.getTrigger().setInitialValue(true);
 					}
@@ -10683,10 +10699,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Checks consistency of the sbml file.
 	 */
 	public void check() {
-		// Hack to avoid wierd bug.
+		// Hack to avoid weird bug.
 		// By reloading the file before consistency checks, it seems to avoid a
 		// crash when attempting to save a newly added parameter with no units
 		document = BioSim.readSBML(file);
+		document.setConsistencyChecks(libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
+		document.setConsistencyChecks(libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
+		document.setConsistencyChecks(libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, true);
+		document.setConsistencyChecks(libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, true);
+		document.setConsistencyChecks(libsbml.LIBSBML_CAT_SBO_CONSISTENCY, true);
+		document.setConsistencyChecks(libsbml.LIBSBML_CAT_MODELING_PRACTICE, true);
+		document.setConsistencyChecks(libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
 		long numErrors = document.checkConsistency();
 		String message = "";
 		for (long i = 0; i < numErrors; i++) {
