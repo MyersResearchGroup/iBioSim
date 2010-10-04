@@ -75,7 +75,7 @@ public class Translator {
 		createFunction(m, "poisson", "Poisson distribution", "lambda(mu,mu)");
 		createFunction(m, "binomial", "Binomial distribution", "lambda(p,n,p*n)");
 		createFunction(m, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
-		createFunction(m, "priority", "Priority expressions", "lambda(d,p,d)");
+		//createFunction(m, "priority", "Priority expressions", "lambda(d,p,d)");
 		
 		// translate from lhpn to sbml
 		// ----variables -> parameters-----	
@@ -399,7 +399,9 @@ public class Translator {
 					trigger.setMath(SBML_Editor.myParseFormula("and(" + CheckPreset + "," + Enabling + ")"));
 					
 					// triggerCanBeDisabled := true
-					trigger.setAnnotation("<TriggerCanBeDisabled/><TriggerInitiallyFalse/>");
+					//trigger.setAnnotation("<TriggerCanBeDisabled/><TriggerInitiallyFalse/>");
+					trigger.setPersistent(false);
+					trigger.setInitialValue(false);
 					
 					// TriggerInitiallyFalse
 //					trigger.setAnnotation("<TriggerInitiallyFalse/>");
@@ -408,6 +410,15 @@ public class Translator {
 					e.setUseValuesFromTriggerTime(false);
 				    					
 					// Priority and delay
+					if (lhpn.getTransition(t).getDelay()!=null) {
+						e.createDelay();
+						e.getDelay().setMath(SBML_Editor.myParseFormula(lhpn.getTransition(t).getDelay()));
+					}
+					if (lhpn.getTransition(t).getPriority()!=null) {
+						e.createPriority();
+						e.getPriority().setMath(SBML_Editor.myParseFormula(lhpn.getTransition(t).getPriority()));
+					}
+					/*
 					if (lhpn.getTransition(t).getPriority()==null) {
 						if (lhpn.getTransition(t).getDelay()!=null) {
 							e.createDelay();
@@ -424,7 +435,7 @@ public class Translator {
 						e.getDelay().setMath(SBML_Editor.myParseFormula("priority(0," + lhpn.getTransition(t).getPriority() + ")"));
 						}
 					}
-					
+					*/
 					
 					
 					// Check if there is any self-loop. If the intersection between lhpn.getPreset(t) and lhpn.getPostset(t)
@@ -516,6 +527,7 @@ public class Translator {
 						Parameter p = m.createParameter(); 
 						p.setConstant(false);
 						p.setId(extraVar);
+						p.setValue(0);
 						
 						EventAssignment assign4ex = e.createEventAssignment();
 						assign4ex.setVariable(extraVar);
@@ -542,7 +554,9 @@ public class Translator {
 						Trigger triggerExtra = extraEvent.createTrigger();
 						//triggerExtra.setMath(SBML_Editor.myParseFormula("and(gt(t,0),eq(" + extraVar + ",1))"));
 						triggerExtra.setMath(SBML_Editor.myParseFormula("eq(" + extraVar + ",1)"));
-						triggerExtra.setAnnotation("<TriggerInitiallyFalse/>");
+						//triggerExtra.setAnnotation("<TriggerInitiallyFalse/>");
+						triggerExtra.setPersistent(true);
+						triggerExtra.setInitialValue(false);
 						extraEvent.setUseValuesFromTriggerTime(false);
 						// assignments
 						EventAssignment assign5ex1 = extraEvent.createEventAssignment();
