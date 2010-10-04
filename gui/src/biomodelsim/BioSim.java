@@ -120,7 +120,7 @@ import uk.ac.ebi.biomodels.*;
 public class BioSim implements MouseListener, ActionListener, MouseMotionListener,
 		MouseWheelListener, WindowFocusListener {
 
-	private JFrame frame; // Frame where components of the GUI are displayed
+	private static JFrame frame; // Frame where components of the GUI are displayed
 
 	private JMenuBar menuBar;
 
@@ -8465,7 +8465,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	/**
 	 * Returns the frame.
 	 */
-	public JFrame frame() {
+	public static JFrame frame() {
 		return frame;
 	}
 
