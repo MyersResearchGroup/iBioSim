@@ -19,7 +19,7 @@ public class Abstraction extends LhpnFile {
 
 	private ArrayList<Transition> read = new ArrayList<Transition>();
 	
-	private ArrayList<String> intVars, newIntVars, newestIntVars;
+	private ArrayList<String> intVars, newestIntVars;
 
 	private AbstPane abstPane;
 
@@ -1422,6 +1422,16 @@ public class Abstraction extends LhpnFile {
 						}
 					}
 				}
+				if (t.getDelayTree().isit == 'a') {
+					if (!t.getDelayTree().op.equals("uniform") || t.getDelayTree().r1.isit != 'n' || t.getDelayTree().r2.isit != 'n') {
+						assign = true;
+						break;
+					}
+				}
+				else if (t.getDelayTree().isit != 'n') {
+					assign = true;
+					break;
+				}
 				if (!assign) {
 					if (t.getAssignments().size() > 0) {
 						assign = true;
@@ -1526,12 +1536,12 @@ public class Abstraction extends LhpnFile {
 	}
 
 	private boolean removeUninterestingVariables(boolean change) {
-		intVars = new ArrayList<String>(); // Set V
-		newIntVars = new ArrayList<String>(); // Set V''
-		newestIntVars = new ArrayList<String>(); // Set V'
+		ArrayList <String> allIntVars = new ArrayList<String>(); // Set V
+		ArrayList <String> newIntVars = new ArrayList<String>(); // Set V''
+		ArrayList <String> newestIntVars = new ArrayList<String>(); // Set V'
 		ArrayList<Integer> intProc = new ArrayList<Integer>(); // Processes with failure transitions or transitions that have interesting variables in their enabling conditions
 		for (String v : abstPane.getIntVars()) {
-			intVars.add(v);
+			allIntVars.add(v);
 			newIntVars.add(v);
 		}
 		for (Transition t : transitions.values()) {
@@ -1542,8 +1552,8 @@ public class Abstraction extends LhpnFile {
 		for (Transition t : transitions.values()) {
 			if (intProc.contains(process_trans.get(t)) && t.getEnablingTree() != null) {
 				for (String u : t.getEnablingTree().getVars()) {
-					if (!intVars.contains(u)) {
-						intVars.add(u);
+					if (!allIntVars.contains(u)) {
+						allIntVars.add(u);
 						newIntVars.add(u);
 					}
 				}
@@ -1553,17 +1563,22 @@ public class Abstraction extends LhpnFile {
 			for (Transition t : transitions.values()) { // Determine which processes are interesting
 				for (String v : newIntVars) {
 					if (t.getEnablingTree() != null) {
+					if (t.getEnablingTree().getVars().contains(v)) {
+						intProc.add(process_trans.get(t));
+					if (t.getEnablingTree() != null) {
 						if (t.getEnablingTree().getVars().contains(v)) {
 							intProc.add(process_trans.get(t));
 						}
 					}
+					}
 				}
+			}
 			}
 			for (Transition t : transitions.values()) {
 				for (String key : t.getAssignTrees().keySet()) {
-					if (intVars.contains(key)) {
+					if (allIntVars.contains(key)) {
 						for (String v : t.getAssignTree(key).getVars()) {
-							if (!intVars.contains(v)) {
+							if (!allIntVars.contains(v)) {
 								addInterestingVariable(v);
 							}
 						}
@@ -1571,19 +1586,30 @@ public class Abstraction extends LhpnFile {
 				}
 				if (intProc.contains(process_trans.get(t)) && t.getEnablingTree() != null) {
 					for (String v : t.getEnablingTree().getVars()) {
-						if (!intVars.contains(v)) {
+						if (!allIntVars.contains(v)) {
 							addInterestingVariable(v);
 						}
 					}
 				}
 			}
 			for (String v : newestIntVars) {
-				if (!intVars.contains(v)) {
+				if (!allIntVars.contains(v)) {
 					newIntVars.add(v);
-					intVars.add(v);
+					allIntVars.add(v);
 				}
 			}
-		} while (newIntVars.size() > 0);
+		} while (newestIntVars.size() > 0);
+		ArrayList<Variable> removeVars = new ArrayList<Variable>();
+		for (Variable v : variables) {
+			if (!allIntVars.contains(v.getName())) {
+				removeVars.add(v);
+				change = true;
+			}
+		}
+		for (Variable v : removeVars) {
+			removeAllAssignVar(v.getName());
+			removeVar(v.getName());
+		}
 		return change;
 	}
 
