@@ -2926,6 +2926,20 @@ public class Abstraction extends LhpnFile {
 						&& (comparePostset(t1, t2) || (t1.getPostset().length == 0 && t2
 								.getPostset().length == 0))) {
 					boolean combine = true;
+					ExprTree tree = new ExprTree(this);
+					tree.setNodeValues(t1.getEnablingTree(), t2.getEnablingTree(), "&&", 'l');
+					for (String v : tree.getVars()) {
+						if (process_write.get(v) != process_trans.get(t1)) {
+							combine = false;
+							break;
+						}
+					}
+					for (Transition t : transitions.values()) {
+						if (tree.becomesTrue(t.getAssignments())) {
+							combine = false;
+							break;
+						}
+					}
 					for (String var : t1.getAssignments().keySet()) {
 						if (!t2.containsAssignment(var)
 								|| !t1.getAssignTree(var).isEqual(
@@ -2975,6 +2989,42 @@ public class Abstraction extends LhpnFile {
 						&& (comparePostset(t1, t2) || (t1.getPostset().length == 0 && t2
 								.getPostset().length == 0))) {
 					boolean combine = true;
+					ExprTree tree = new ExprTree(this);
+					tree.setNodeValues(t1.getEnablingTree(), t2.getEnablingTree(), "&&", 'l');
+					for (String v : tree.getVars()) {
+						if (process_write.get(v) != process_trans.get(t1)) {
+							combine = false;
+							break;
+						}
+					}
+					for (Transition t : transitions.values()) {
+						if (tree.becomesTrue(t.getAssignments())) {
+							combine = false;
+							break;
+						}
+					}
+					if (t1.getEnablingTree() != null && t2.getEnablingTree() != null) {
+						if (t1.getEnablingTree().isit == 'a') {
+							if (!t1.getEnablingTree().op.equals("uniform") || t1.getEnablingTree().r1.isit != 'n' || t1.getEnablingTree().r2.isit != 'n') {
+								combine = false;
+								break;
+							}
+						}
+						else if (t1.getEnablingTree().isit != 'n') {
+							combine = false;
+							break;
+						}
+						if (t2.getEnablingTree().isit == 'a') {
+							if (!t2.getEnablingTree().op.equals("uniform") || t2.getEnablingTree().r1.isit != 'n' || t2.getEnablingTree().r2.isit != 'n') {
+								combine = false;
+								break;
+							}
+						}
+						else if (t2.getEnablingTree().isit != 'n') {
+							combine = false;
+							break;
+						}
+					}
 					for (String var : t1.getAssignments().keySet()) {
 						if (!t2.containsAssignment(var)
 								|| !t1.getAssignTree(var).isEqual(
@@ -3035,6 +3085,7 @@ public class Abstraction extends LhpnFile {
 			try {
 				Pattern pattern = Pattern.compile(RANGE);
 				Matcher matcher = pattern.matcher(t.getDelay());
+				ExprTree priority1 = t.getPriorityTree();
 				Integer dl1, dl2, du1, du2;
 				if (matcher.find()) {
 					dl1 = Integer.parseInt(matcher.group(1));
@@ -3058,6 +3109,9 @@ public class Abstraction extends LhpnFile {
 					if (du1.compareTo(dl2) <= 0) {
 						du1 = du2;
 					}
+					ExprTree priority2 = tP.getPriorityTree();
+					priority2.setNodeValues(tP.getEnablingTree(), priority2, "*", 'a');
+					priority1.setNodeValues(priority1, priority2, "+", 'a');
 				}
 				if (dl1.toString().equals(du1.toString())) {
 					t.addDelay(dl1.toString());
@@ -3065,6 +3119,7 @@ public class Abstraction extends LhpnFile {
 					t.addDelay("uniform(" + dl1.toString() + ","
 							+ du1.toString() + ")");
 				}
+				t.addPriority(priority1.toString());
 			} catch (Exception e) {
 				t.addDelay("uniform(0,inf)");
 			}
@@ -3086,6 +3141,7 @@ public class Abstraction extends LhpnFile {
 			ExprTree delay = new ExprTree(this);
 			ExprTree delay1 = t.getDelayTree();
 			ExprTree e1 = t.getEnablingTree();
+			ExprTree priority1 = t.getPriorityTree();
 			ExprTree dl1, dl2, du1, du2;
 			if (delay1.isit == 'a' & delay1.op.equals("uniform")) {
 				dl1 = delay1.r1;
@@ -3112,6 +3168,9 @@ public class Abstraction extends LhpnFile {
 				dl.setNodeValues(dl, dl2, "+", 'a');
 				du2.setNodeValues(e2, du2, "*", 'a');
 				du.setNodeValues(du, du2, "+", 'a');
+				ExprTree priority2 = tP.getPriorityTree();
+				priority2.setNodeValues(e2, priority2, "*", 'a');
+				priority1.setNodeValues(priority1, priority2, "+", 'a');
 			}
 			if (!dl.isEqual(du)) {
 				delay.setNodeValues(dl, du, "uniform", 'a');
@@ -3120,6 +3179,7 @@ public class Abstraction extends LhpnFile {
 			}
 			t.addEnabling(enabling);
 			t.addDelay(delay.toString());
+			t.addPriority(priority1.toString());
 		}
 		for (Transition tP : list) {
 			removeTransition(tP.getName());
