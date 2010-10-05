@@ -19,7 +19,9 @@ public class Abstraction extends LhpnFile {
 
 	private ArrayList<Transition> read = new ArrayList<Transition>();
 	
-	private ArrayList<String> intVars, newestIntVars;
+	private ArrayList<String> intVars;
+	
+	private ArrayList<String> newestIntVars = new ArrayList<String>();
 
 	private AbstPane abstPane;
 
@@ -1562,18 +1564,14 @@ public class Abstraction extends LhpnFile {
 		do {
 			for (Transition t : transitions.values()) { // Determine which processes are interesting
 				for (String v : newIntVars) {
-					if (t.getEnablingTree() != null) {
-					if (t.getEnablingTree().getVars().contains(v)) {
-						intProc.add(process_trans.get(t));
-					if (t.getEnablingTree() != null) {
-						if (t.getEnablingTree().getVars().contains(v)) {
+					if (t.containsAssignment(v)) {
+						if (!intProc.contains(process_trans.get(t))) {
 							intProc.add(process_trans.get(t));
 						}
 					}
-					}
 				}
 			}
-			}
+			System.out.println("int:"+intProc);
 			for (Transition t : transitions.values()) {
 				for (String key : t.getAssignTrees().keySet()) {
 					if (allIntVars.contains(key)) {
@@ -1598,6 +1596,9 @@ public class Abstraction extends LhpnFile {
 					allIntVars.add(v);
 				}
 			}
+			System.out.println("all:"+allIntVars);
+			System.out.println("new:"+newIntVars);
+			System.out.println("newest:"+newestIntVars);
 		} while (newestIntVars.size() > 0);
 		ArrayList<Variable> removeVars = new ArrayList<Variable>();
 		for (Variable v : variables) {
