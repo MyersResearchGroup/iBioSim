@@ -13772,7 +13772,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				.append("It is recommended that you fix them before using these models or you may get unexpected results.\n\n");
 		boolean display = false;
 		long numErrors = 0;
-		if (SBMLLevelVersion.equals("L2V4")) {
+		if (SBMLLevelVersion.equals("L2V4") && document.getLevel()<3) {
 			numErrors = document.checkL2v4Compatibility();
 		} else {
 			numErrors = document.checkL3v1Compatibility();
