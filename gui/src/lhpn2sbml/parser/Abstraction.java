@@ -741,6 +741,9 @@ public class Abstraction extends LhpnFile {
 	private boolean removeUnreadVars(boolean change) {
 		ArrayList<String> remove = new ArrayList<String>();
 		for (Variable v : variables) {
+			if (intVars.contains(v.getName())) {
+				continue;
+			}
 			String s = v.getName();
 			boolean isRead = false;
 			for (Transition t : transitions.values()) {
@@ -1502,6 +1505,9 @@ public class Abstraction extends LhpnFile {
 		ArrayList<String[]> remove = new ArrayList<String[]>();
 		for (Transition t : transitions.values()) {
 			for (String var : t.getAssignments().keySet()) {
+				if (intVars.contains(var)) {
+					continue;
+				}
 				read = new ArrayList<Transition>();
 				if ((process_read.get(var).equals(process_trans.get(t)) && process_write
 						.get(var).equals(process_trans.get(t)))
@@ -1522,6 +1528,9 @@ public class Abstraction extends LhpnFile {
 		ArrayList<String[]> remove = new ArrayList<String[]>();
 		for (Transition t : transitions.values()) {
 			for (String var : t.getAssignments().keySet()) {
+				if (intVars.contains(var)) {
+					continue;
+				}
 				read = new ArrayList<Transition>();
 				// Check read variables for global writes
 				if ((process_read.get(var).equals(process_trans.get(t)) && process_write
@@ -1543,16 +1552,16 @@ public class Abstraction extends LhpnFile {
 		ArrayList<String> allIntVars = new ArrayList<String>(); // Set V
 		ArrayList<String> newIntVars = new ArrayList<String>(); // Set V''
 		ArrayList<Integer> intProc = new ArrayList<Integer>(); // Processes with
-																// failure
-																// transitions
-																// or
-																// transitions
-																// that have
-																// interesting
-																// variables in
-																// their
-																// enabling
-																// conditions
+		// failure
+		// transitions
+		// or
+		// transitions
+		// that have
+		// interesting
+		// variables in
+		// their
+		// enabling
+		// conditions
 		for (String v : abstPane.getIntVars()) {
 			allIntVars.add(v);
 			newIntVars.add(v);
@@ -1575,8 +1584,8 @@ public class Abstraction extends LhpnFile {
 		}
 		do {
 			for (Transition t : transitions.values()) { // Determine which
-														// processes are
-														// interesting
+				// processes are
+				// interesting
 				for (String v : newIntVars) {
 					if (t.containsAssignment(v)) {
 						if (!intProc.contains(process_trans.get(t))) {
@@ -2423,14 +2432,16 @@ public class Abstraction extends LhpnFile {
 		for (Place p : trans.getPostset()) {
 			for (Transition tP : p.getPostset()) {
 				replace(tP, var, e);
-				for (Place pP : tP.getPreset()) {
-					for (Transition tPP : pP.getPreset()) {
-						if (isBoolean(var)) {
-							tPP.removeBoolAssign(var);
-						} else if (isInteger(var)) {
-							tPP.removeIntAssign(var);
-						} else {
-							tPP.removeContAssign(var);
+				if (!intVars.contains(var)) {
+					for (Place pP : tP.getPreset()) {
+						for (Transition tPP : pP.getPreset()) {
+							if (isBoolean(var)) {
+								tPP.removeBoolAssign(var);
+							} else if (isInteger(var)) {
+								tPP.removeIntAssign(var);
+							} else {
+								tPP.removeContAssign(var);
+							}
 						}
 					}
 				}
@@ -3114,7 +3125,8 @@ public class Abstraction extends LhpnFile {
 				Pattern pattern = Pattern.compile(RANGE);
 				Matcher matcher = pattern.matcher(t.getDelay());
 				ExprTree priority1 = t.getPriorityTree();
-				priority1.setNodeValues(t.getEnablingTree(), priority1, "*", 'a');
+				priority1.setNodeValues(t.getEnablingTree(), priority1, "*",
+						'a');
 				Integer dl1, dl2, du1, du2;
 				if (matcher.find()) {
 					dl1 = Integer.parseInt(matcher.group(1));
