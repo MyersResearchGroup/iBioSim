@@ -3114,6 +3114,7 @@ public class Abstraction extends LhpnFile {
 				Pattern pattern = Pattern.compile(RANGE);
 				Matcher matcher = pattern.matcher(t.getDelay());
 				ExprTree priority1 = t.getPriorityTree();
+				priority1.setNodeValues(t.getEnablingTree(), priority1, "*", 'a');
 				Integer dl1, dl2, du1, du2;
 				if (matcher.find()) {
 					dl1 = Integer.parseInt(matcher.group(1));
@@ -3184,6 +3185,7 @@ public class Abstraction extends LhpnFile {
 			}
 			dl1.setNodeValues(e1, dl1, "*", 'a');
 			du1.setNodeValues(e1, du1, "*", 'a');
+			priority1.setNodeValues(e1, priority1, "*", 'a');
 			dl = dl1;
 			du = du1;
 			for (Transition tP : list) {
