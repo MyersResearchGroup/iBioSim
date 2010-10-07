@@ -2930,7 +2930,7 @@ public class Abstraction extends LhpnFile {
 					ExprTree tree = new ExprTree(this);
 					tree.setNodeValues(t1.getEnablingTree(), t2.getEnablingTree(), "&&", 'l');
 					for (String v : tree.getVars()) {
-						if (process_write.get(v) != process_trans.get(t1)) {
+						if (process_write.get(v) != 0 && process_write.get(v) != process_trans.get(t1)) {
 							combine = false;
 							break;
 						}
@@ -3142,7 +3142,10 @@ public class Abstraction extends LhpnFile {
 			ExprTree delay = new ExprTree(this);
 			ExprTree delay1 = t.getDelayTree();
 			ExprTree e1 = t.getEnablingTree();
-			ExprTree priority1 = t.getPriorityTree();
+			ExprTree priority1 = new ExprTree(this);
+			if (t.containsPriority()) {
+				priority1 = t.getPriorityTree();
+			}
 			ExprTree dl1, dl2, du1, du2;
 			if (delay1.isit == 'a' & delay1.op.equals("uniform")) {
 				dl1 = delay1.r1;
@@ -3169,9 +3172,15 @@ public class Abstraction extends LhpnFile {
 				dl.setNodeValues(dl, dl2, "+", 'a');
 				du2.setNodeValues(e2, du2, "*", 'a');
 				du.setNodeValues(du, du2, "+", 'a');
-				ExprTree priority2 = tP.getPriorityTree();
-				priority2.setNodeValues(e2, priority2, "*", 'a');
-				priority1.setNodeValues(priority1, priority2, "+", 'a');
+				if (tP.containsPriority() && priority1 != null) {
+					ExprTree priority2 = tP.getPriorityTree();
+					priority2.setNodeValues(e2, priority2, "*", 'a');
+					priority1.setNodeValues(priority1, priority2, "+", 'a');
+				}
+				else if (tP.containsPriority()) {
+					ExprTree priority2 = tP.getPriorityTree();
+					priority1.setNodeValues(e2, priority2, "*", 'a');
+				}
 			}
 			if (!dl.isEqual(du)) {
 				delay.setNodeValues(dl, du, "uniform", 'a');
@@ -3180,7 +3189,9 @@ public class Abstraction extends LhpnFile {
 			}
 			t.addEnabling(enabling);
 			t.addDelay(delay.toString());
+			if (priority1 != null) {
 			t.addPriority(priority1.toString());
+			}
 		}
 		for (Transition tP : list) {
 			removeTransition(tP.getName());

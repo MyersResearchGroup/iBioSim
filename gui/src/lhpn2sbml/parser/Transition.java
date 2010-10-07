@@ -132,6 +132,9 @@ public class Transition {
 			return true;
 		}
 		boolean retVal;
+		if (delay.matches("\\d+?,\\d+?")) {
+			delay = "uniform(" + delay + ")";
+		}
 		ExprTree expr = new ExprTree(lhpn);
 		expr.token = expr.intexpr_gettok(delay);
 		retVal = expr.intexpr_L(delay);
@@ -256,7 +259,7 @@ public class Transition {
 		assignments.putAll(contAssignments);
 		for (String var : rateAssignments.keySet()) {
 			if (assignments.containsKey(var)) {
-				assignments.put(var + " rate", rateAssignments.get(var));
+				assignments.put(var + "_rate", rateAssignments.get(var));
 			}
 			else {
 				assignments.put(var, rateAssignments.get(var));
@@ -272,7 +275,7 @@ public class Transition {
 		assignments.putAll(contAssignTrees);
 		for (String var : rateAssignments.keySet()) {
 			if (assignments.containsKey(var)) {
-				assignments.put(var + " rate", rateAssignTrees.get(var));
+				assignments.put(var + "_rate", rateAssignTrees.get(var));
 			}
 			else {
 				assignments.put(var, rateAssignTrees.get(var));

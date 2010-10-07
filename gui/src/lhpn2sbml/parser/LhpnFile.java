@@ -227,7 +227,7 @@ public class LhpnFile {
 							flag = true;
 						}
 						for (String var : contAssign.keySet()) {
-							buffer.append("<" + t.getName() + "=[" + t + ":="
+							buffer.append("<" + t.getName() + "=[" + var + ":="
 									+ contAssign.get(var) + "]>");
 						}
 					}
@@ -1511,7 +1511,7 @@ public class LhpnFile {
 
 	private boolean parseBooleanAssign(StringBuffer data, boolean error) {
 		Pattern linePattern = Pattern.compile(BOOLEAN_LINE);
-		Matcher lineMatcher = linePattern.matcher(data.toString());
+		Matcher lineMatcher = linePattern.matcher(data.toString().replace("\\s", ""));
 		if (lineMatcher.find()) {
 			Pattern transPattern = Pattern.compile(BOOLEAN_TRANS);
 			Matcher transMatcher = transPattern.matcher(lineMatcher.group(1)
@@ -1630,7 +1630,7 @@ public class LhpnFile {
 
 	private static final String BOOLEAN_LINE = "#@\\.boolean_assignments \\{([\\S[^\\}]]+?)\\}";
 
-	private static final String BOOLEAN_TRANS = "<([\\S[^=]]+?)=\\[(\\S+?)\\]>";
+	private static final String BOOLEAN_TRANS = "<(\\S+?)=\\[(\\S+?)\\]>";
 
 	private static final String BOOLEAN_ASSIGN = "([^:]+?):=(.+)";
 
