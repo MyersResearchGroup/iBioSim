@@ -18,9 +18,9 @@ public class Abstraction extends LhpnFile {
 	private HashMap<String, Integer> process_read = new HashMap<String, Integer>();
 
 	private ArrayList<Transition> read = new ArrayList<Transition>();
-	
+
 	private ArrayList<String> intVars;
-	
+
 	private ArrayList<String> newestIntVars = new ArrayList<String>();
 
 	private AbstPane abstPane;
@@ -209,7 +209,8 @@ public class Abstraction extends LhpnFile {
 				change = mergeTransitionsSimp(change);
 			}
 			// Transform 29 - Remove Uninteresting Variables (Simplification)
-			if (abstPane.absListModel.contains(abstPane.xform29) && abstPane.isSimplify()) {
+			if (abstPane.absListModel.contains(abstPane.xform29)
+					&& abstPane.isSimplify()) {
 				change = removeUninterestingVariables(change);
 			}
 			i++;
@@ -1425,12 +1426,13 @@ public class Abstraction extends LhpnFile {
 					}
 				}
 				if (t.getDelayTree().isit == 'a') {
-					if (!t.getDelayTree().op.equals("uniform") || t.getDelayTree().r1.isit != 'n' || t.getDelayTree().r2.isit != 'n') {
+					if (!t.getDelayTree().op.equals("uniform")
+							|| t.getDelayTree().r1.isit != 'n'
+							|| t.getDelayTree().r2.isit != 'n') {
 						assign = true;
 						break;
 					}
-				}
-				else if (t.getDelayTree().isit != 'n') {
+				} else if (t.getDelayTree().isit != 'n') {
 					assign = true;
 					break;
 				}
@@ -1538,10 +1540,19 @@ public class Abstraction extends LhpnFile {
 	}
 
 	private boolean removeUninterestingVariables(boolean change) {
-		ArrayList <String> allIntVars = new ArrayList<String>(); // Set V
-		ArrayList <String> newIntVars = new ArrayList<String>(); // Set V''
-		ArrayList <String> newestIntVars = new ArrayList<String>(); // Set V'
-		ArrayList<Integer> intProc = new ArrayList<Integer>(); // Processes with failure transitions or transitions that have interesting variables in their enabling conditions
+		ArrayList<String> allIntVars = new ArrayList<String>(); // Set V
+		ArrayList<String> newIntVars = new ArrayList<String>(); // Set V''
+		ArrayList<Integer> intProc = new ArrayList<Integer>(); // Processes with
+																// failure
+																// transitions
+																// or
+																// transitions
+																// that have
+																// interesting
+																// variables in
+																// their
+																// enabling
+																// conditions
 		for (String v : abstPane.getIntVars()) {
 			allIntVars.add(v);
 			newIntVars.add(v);
@@ -1552,7 +1563,8 @@ public class Abstraction extends LhpnFile {
 			}
 		}
 		for (Transition t : transitions.values()) {
-			if (intProc.contains(process_trans.get(t)) && t.getEnablingTree() != null) {
+			if (intProc.contains(process_trans.get(t))
+					&& t.getEnablingTree() != null) {
 				for (String u : t.getEnablingTree().getVars()) {
 					if (!allIntVars.contains(u)) {
 						allIntVars.add(u);
@@ -1562,7 +1574,9 @@ public class Abstraction extends LhpnFile {
 			}
 		}
 		do {
-			for (Transition t : transitions.values()) { // Determine which processes are interesting
+			for (Transition t : transitions.values()) { // Determine which
+														// processes are
+														// interesting
 				for (String v : newIntVars) {
 					if (t.containsAssignment(v)) {
 						if (!intProc.contains(process_trans.get(t))) {
@@ -1571,7 +1585,7 @@ public class Abstraction extends LhpnFile {
 					}
 				}
 			}
-			System.out.println("int:"+intProc);
+			System.out.println("int:" + intProc);
 			for (Transition t : transitions.values()) {
 				for (String key : t.getAssignTrees().keySet()) {
 					if (allIntVars.contains(key)) {
@@ -1582,7 +1596,8 @@ public class Abstraction extends LhpnFile {
 						}
 					}
 				}
-				if (intProc.contains(process_trans.get(t)) && t.getEnablingTree() != null) {
+				if (intProc.contains(process_trans.get(t))
+						&& t.getEnablingTree() != null) {
 					for (String v : t.getEnablingTree().getVars()) {
 						if (!allIntVars.contains(v)) {
 							addInterestingVariable(v);
@@ -1590,16 +1605,21 @@ public class Abstraction extends LhpnFile {
 					}
 				}
 			}
-			for (String v : newestIntVars) {
-				if (!allIntVars.contains(v)) {
-					newIntVars.add(v);
-					allIntVars.add(v);
+			for (String v : allIntVars) {
+				if (newIntVars.contains(v)) {
+					newIntVars.remove(v);
 				}
 			}
-			System.out.println("all:"+allIntVars);
-			System.out.println("new:"+newIntVars);
-			System.out.println("newest:"+newestIntVars);
-		} while (newestIntVars.size() > 0);
+			for (String v : newestIntVars) {
+				if (!allIntVars.contains(v)) {
+					allIntVars.add(v);
+					newIntVars.add(v);
+				}
+			}
+			System.out.println("all:" + allIntVars);
+			System.out.println("new:" + newIntVars);
+			System.out.println("newest:" + newestIntVars);
+		} while (newIntVars.size() > 0);
 		ArrayList<Variable> removeVars = new ArrayList<Variable>();
 		for (Variable v : variables) {
 			if (!allIntVars.contains(v.getName())) {
@@ -2928,9 +2948,12 @@ public class Abstraction extends LhpnFile {
 								.getPostset().length == 0))) {
 					boolean combine = true;
 					ExprTree tree = new ExprTree(this);
-					tree.setNodeValues(t1.getEnablingTree(), t2.getEnablingTree(), "&&", 'l');
+					tree.setNodeValues(t1.getEnablingTree(), t2
+							.getEnablingTree(), "&&", 'l');
 					for (String v : tree.getVars()) {
-						if (process_write.get(v) != 0 && process_write.get(v) != process_trans.get(t1)) {
+						if (process_write.get(v) != 0
+								&& process_write.get(v) != process_trans
+										.get(t1)) {
 							combine = false;
 							break;
 						}
@@ -2991,7 +3014,8 @@ public class Abstraction extends LhpnFile {
 								.getPostset().length == 0))) {
 					boolean combine = true;
 					ExprTree tree = new ExprTree(this);
-					tree.setNodeValues(t1.getEnablingTree(), t2.getEnablingTree(), "&&", 'l');
+					tree.setNodeValues(t1.getEnablingTree(), t2
+							.getEnablingTree(), "&&", 'l');
 					for (String v : tree.getVars()) {
 						if (process_write.get(v) != process_trans.get(t1)) {
 							combine = false;
@@ -3004,24 +3028,27 @@ public class Abstraction extends LhpnFile {
 							break;
 						}
 					}
-					if (t1.getEnablingTree() != null && t2.getEnablingTree() != null) {
+					if (t1.getEnablingTree() != null
+							&& t2.getEnablingTree() != null) {
 						if (t1.getEnablingTree().isit == 'a') {
-							if (!t1.getEnablingTree().op.equals("uniform") || t1.getEnablingTree().r1.isit != 'n' || t1.getEnablingTree().r2.isit != 'n') {
+							if (!t1.getEnablingTree().op.equals("uniform")
+									|| t1.getEnablingTree().r1.isit != 'n'
+									|| t1.getEnablingTree().r2.isit != 'n') {
 								combine = false;
 								break;
 							}
-						}
-						else if (t1.getEnablingTree().isit != 'n') {
+						} else if (t1.getEnablingTree().isit != 'n') {
 							combine = false;
 							break;
 						}
 						if (t2.getEnablingTree().isit == 'a') {
-							if (!t2.getEnablingTree().op.equals("uniform") || t2.getEnablingTree().r1.isit != 'n' || t2.getEnablingTree().r2.isit != 'n') {
+							if (!t2.getEnablingTree().op.equals("uniform")
+									|| t2.getEnablingTree().r1.isit != 'n'
+									|| t2.getEnablingTree().r2.isit != 'n') {
 								combine = false;
 								break;
 							}
-						}
-						else if (t2.getEnablingTree().isit != 'n') {
+						} else if (t2.getEnablingTree().isit != 'n') {
 							combine = false;
 							break;
 						}
@@ -3111,7 +3138,8 @@ public class Abstraction extends LhpnFile {
 						du1 = du2;
 					}
 					ExprTree priority2 = tP.getPriorityTree();
-					priority2.setNodeValues(tP.getEnablingTree(), priority2, "*", 'a');
+					priority2.setNodeValues(tP.getEnablingTree(), priority2,
+							"*", 'a');
 					priority1.setNodeValues(priority1, priority2, "+", 'a');
 				}
 				if (dl1.toString().equals(du1.toString())) {
@@ -3176,8 +3204,7 @@ public class Abstraction extends LhpnFile {
 					ExprTree priority2 = tP.getPriorityTree();
 					priority2.setNodeValues(e2, priority2, "*", 'a');
 					priority1.setNodeValues(priority1, priority2, "+", 'a');
-				}
-				else if (tP.containsPriority()) {
+				} else if (tP.containsPriority()) {
 					ExprTree priority2 = tP.getPriorityTree();
 					priority1.setNodeValues(e2, priority2, "*", 'a');
 				}
@@ -3190,7 +3217,7 @@ public class Abstraction extends LhpnFile {
 			t.addEnabling(enabling);
 			t.addDelay(delay.toString());
 			if (priority1 != null) {
-			t.addPriority(priority1.toString());
+				t.addPriority(priority1.toString());
 			}
 		}
 		for (Transition tP : list) {
@@ -3223,11 +3250,13 @@ public class Abstraction extends LhpnFile {
 		}
 		return true;
 	}
-	
+
 	private void addInterestingVariable(String var) {
-		newestIntVars.add(var);
-		if (continuous.containsKey(var)) {
-			newestIntVars.add(var + "_rate");
+		if (!newestIntVars.contains(var)) {
+			newestIntVars.add(var);
+			if (continuous.containsKey(var)) {
+				newestIntVars.add(var + "_rate");
+			}
 		}
 	}
 
