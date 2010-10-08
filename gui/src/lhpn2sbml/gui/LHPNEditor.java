@@ -327,7 +327,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					scrolls.setMinimumSize(new Dimension(500, 500));
 					scrolls.setPreferredSize(new Dimension(500, 500));
 					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(biosim.frame(), scrolls,
+					JOptionPane.showMessageDialog(BioSim.frame, scrolls,
 							"Log", JOptionPane.INFORMATION_MESSAGE);
 				}
 			} else {
@@ -493,7 +493,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					panel.add(temp);
 					list[i] = temp;
 				}
-				int value = JOptionPane.showOptionDialog(biosim.frame(), panel,
+				int value = JOptionPane.showOptionDialog(BioSim.frame, panel,
 						"Variable Assignment Editor",
 						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 						null, options, options[0]);
@@ -580,7 +580,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 						integer = true;
 					}
 					new VariablesPanel(selected, list, continuous, integer,
-							lhpnFile, biosim.atacs, biosim);
+							lhpnFile, biosim.atacs);
 				} else {
 					String temp = (String) JOptionPane.showInputDialog(
 							mainPanel, "", "Variable Type Selection",
@@ -593,7 +593,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 							integer = true;
 						}
 						new VariablesPanel(selected, list, continuous, integer,
-								lhpnFile, biosim.atacs, biosim);
+								lhpnFile, biosim.atacs);
 					}
 				}
 				// log.addText(selected);
@@ -605,7 +605,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					String[] array = selected.split(" ");
 					selected = array[0];
 				}
-				new PlacePanel(selected, list, controlFlow, lhpnFile, biosim);
+				new PlacePanel(selected, list, controlFlow, lhpnFile);
 			} else if (getName().contains("Transition")) {
 				String selected = null;
 				if (list.getSelectedValue() != null
@@ -613,21 +613,21 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					selected = list.getSelectedValue().toString();
 				}
 				new TransitionsPanel(selected, list, controlFlow, lhpnFile,
-						log, biosim);
+						log);
 			} else if (getName().contains("Movement")) {
 				String selected = null;
 				if (list.getSelectedValue() != null
 						&& getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				new ControlFlowPanel(selected, list, lhpnFile, biosim);
+				new ControlFlowPanel(selected, list, lhpnFile);
 			} else if (getName().contains("Property")) {
 				String selected = null;
 				if (list.getSelectedValue() != null
 						&& getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				new PropertyPanel(selected, list, lhpnFile, biosim);
+				new PropertyPanel(selected, list, lhpnFile);
 			}
 		}
 

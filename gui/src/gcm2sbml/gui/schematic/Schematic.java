@@ -230,7 +230,7 @@ public class Schematic extends JPanel implements ActionListener {
 							gcm.makeUndoPoint();
 						}else if(addComponentButton.isSelected()){
 							// Ask the user which component to add, then plop it down where the click happened
-//							String comp = (String) JOptionPane.showInputDialog(biosim.frame(),
+//							String comp = (String) JOptionPane.showInputDialog(BioSim.frame,
 //									"Choose a gcm to use as a component:", "Component Editor",
 //									JOptionPane.PLAIN_MESSAGE, null, 
 //									gcm2sbml.getAllPossibleComponentNames().toArray(), null);
@@ -385,7 +385,7 @@ public class Schematic extends JPanel implements ActionListener {
 							//gcm.getSpecies().remove(cell.getId());
 							//gcm.getSpecies().remove(cell.getId());
 							if(gcm.speciesUsedInOtherGCM(cell.getId())){
-								JOptionPane.showMessageDialog(biosim.frame(), "Sorry, the species \""+cell.getId()+"\" is used in another component and cannot be removed.");
+								JOptionPane.showMessageDialog(BioSim.frame, "Sorry, the species \""+cell.getId()+"\" is used in another component and cannot be removed.");
 								continue;
 							}
 							gcm.removeSpeciesAndAssociations(cell.getId());
@@ -469,7 +469,7 @@ public class Schematic extends JPanel implements ActionListener {
 			numComponents++;
 		// bail out if the user tries to connect two components.
 		if(numComponents == 2){
-			JOptionPane.showMessageDialog(biosim.frame(), "Sorry, you can't connect a component directly to another component. Please go through a species.");
+			JOptionPane.showMessageDialog(BioSim.frame, "Sorry, you can't connect a component directly to another component. Please go through a species.");
 			//graph.removeCells(cells);
 			graph.buildGraph();
 			return;
@@ -489,7 +489,7 @@ public class Schematic extends JPanel implements ActionListener {
 				try{
 					port = connectComponentToSpecies(sourceProp, targetID);
 				}catch(ListChooser.EmptyListException e){
-					JOptionPane.showMessageDialog(biosim.frame(), "Sorry, this component has no output ports.");
+					JOptionPane.showMessageDialog(BioSim.frame, "Sorry, this component has no output ports.");
 					graph.buildGraph();
 					return;
 				}
@@ -498,7 +498,7 @@ public class Schematic extends JPanel implements ActionListener {
 				try{
 					port = connectSpeciesToComponent(sourceID, targetProp);
 				}catch(ListChooser.EmptyListException e){
-					JOptionPane.showMessageDialog(biosim.frame(), "Sorry, this component has no input ports.");	
+					JOptionPane.showMessageDialog(BioSim.frame, "Sorry, this component has no input ports.");	
 					//graph.removeCells(cells);
 					// rebuild the graph to get rid of the edge that was created.
 					// Better then explicitly removing the edge because that will
@@ -548,7 +548,7 @@ public class Schematic extends JPanel implements ActionListener {
 		String name = InfluencePanel.buildName(sourceID, targetID, type, isBio, promoter);
 		String iia = gcm.isInfluenceAllowed(name);
 		if(iia != null){
-			JOptionPane.showMessageDialog(biosim.frame(), "Sorry, the influence could not be added because " + iia);
+			JOptionPane.showMessageDialog(BioSim.frame, "Sorry, the influence could not be added because " + iia);
 			graph.buildGraph();
 			gcm2sbml.refresh();
 			return;
@@ -572,7 +572,7 @@ public class Schematic extends JPanel implements ActionListener {
 
 		Object[] portNames = getGCMPorts(comp, GlobalConstants.OUTPUT);
 		
-		String port = ListChooser.selectFromList(biosim.frame(), portNames, 
+		String port = ListChooser.selectFromList(BioSim.frame, portNames, 
 				"Please Choose an Output Port");
 		
 		if(port == null)
@@ -591,7 +591,7 @@ public class Schematic extends JPanel implements ActionListener {
 
 		Object[] portNames = getGCMPorts(comp, GlobalConstants.INPUT);
 		
-		String port = ListChooser.selectFromList(biosim.frame(), portNames, 
+		String port = ListChooser.selectFromList(BioSim.frame, portNames, 
 				"Please Choose an Input Port");
 		if(port == null)
 			return null;

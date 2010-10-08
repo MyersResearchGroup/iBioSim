@@ -15,6 +15,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import biomodelsim.BioSim;
+
 public class PropertyField extends JPanel implements ActionListener,
 		PropertyProvider {
 
@@ -179,7 +181,7 @@ public class PropertyField extends JPanel implements ActionListener,
 			if (Utility.isValid(e.getActionCommand(), regExp)) {
 				// System.out.println();
 			} else {
-				JOptionPane.showMessageDialog(null, "Illegal value entered.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Illegal value entered.",
 						"Illegal value entered", JOptionPane.ERROR_MESSAGE);
 			}
 		}

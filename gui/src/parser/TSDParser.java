@@ -4,11 +4,10 @@ import java.io.*;
 import java.util.*;
 
 import javax.swing.*;
-import biomodelsim.*;
 
 public class TSDParser extends Parser {
-	public TSDParser(String filename, BioSim biosim, boolean warn) {
-		super(new ArrayList<String>(), new ArrayList<ArrayList<Double>>(), biosim);
+	public TSDParser(String filename, boolean warn) {
+		super(new ArrayList<String>(), new ArrayList<ArrayList<Double>>());
 		try {
 			warning = warn;
 			boolean warning2 = warning;

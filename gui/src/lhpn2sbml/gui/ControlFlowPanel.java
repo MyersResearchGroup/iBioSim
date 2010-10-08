@@ -38,15 +38,12 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 	private boolean flag = false;
 
 	private HashMap<String, PropertyField> fields = null;
-	
-	private BioSim biosim;
 
-	public ControlFlowPanel(String selected, PropertyList flowList, LhpnFile lhpn, BioSim biosim) {
+	public ControlFlowPanel(String selected, PropertyList flowList, LhpnFile lhpn) {
 		super(new GridLayout(2, 1));
 		this.selected = selected;
 		this.flowList = flowList;
 		this.lhpn = lhpn;
-		this.biosim = biosim;
 
 		placeList = lhpn.getPlaceList();
 		//System.out.println(placeList.length);
@@ -193,7 +190,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 			oldFlow = oldName.split("\\s");
 		}
 		String[] newFlow = { (String) fromBox.getSelectedItem(), (String) toBox.getSelectedItem() };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), this, "Control Flow Editor",
+		int value = JOptionPane.showOptionDialog(BioSim.frame, this, "Control Flow Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			id = (String) fromBox.getSelectedItem() + " " + (String) toBox.getSelectedItem();

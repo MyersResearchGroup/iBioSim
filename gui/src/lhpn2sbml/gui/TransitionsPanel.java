@@ -56,19 +56,16 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 	private HashMap<String, PropertyField> fields = null;
 
-	private BioSim biosim;
-
 	// private ExprTree delayTree, rateTree, enablingTree;
 
 	public TransitionsPanel(String selected, PropertyList transitionsList,
-			PropertyList controlList, LhpnFile lhpn, Log log, BioSim biosim) {
+			PropertyList controlList, LhpnFile lhpn, Log log) {
 		super(new GridBagLayout());
 		GridBagConstraints constraints = new GridBagConstraints();
 		this.selected = selected;
 		this.transitionsList = transitionsList;
 		this.controlList = controlList;
 		this.lhpn = lhpn;
-		this.biosim = biosim;
 		// this.log = log;
 
 		fields = new HashMap<String, PropertyField>();
@@ -226,7 +223,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 	}
 
 	private boolean openGui(String oldName) {
-		int value = JOptionPane.showOptionDialog(biosim.frame(), this, "Transition Editor",
+		int value = JOptionPane.showOptionDialog(BioSim.frame, this, "Transition Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (!checkValues()) {
@@ -451,8 +448,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			else {
 				// System.out.println("transition " + selected);
 				AssignmentPanel panel = new AssignmentPanel(selected, variable, list,
-						varAssignments, rateAssignments, boolAssignments, intAssignments, lhpn,
-						biosim);
+						varAssignments, rateAssignments, boolAssignments, intAssignments, lhpn);
 			}
 		}
 

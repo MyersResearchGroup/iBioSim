@@ -4,11 +4,9 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 
-import biomodelsim.*;
-
 public class DATParser extends Parser {
-	public DATParser(String filename, BioSim biosim, boolean warn) {
-		super(new ArrayList<String>(), new ArrayList<ArrayList<Double>>(), biosim);
+	public DATParser(String filename, boolean warn) {
+		super(new ArrayList<String>(), new ArrayList<ArrayList<Double>>());
 		try {
 			warning = warn;
 			boolean warning2 = warning;

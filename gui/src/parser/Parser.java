@@ -16,10 +16,10 @@ public class Parser {
 
 	protected boolean warning;
 
-	public Parser(ArrayList<String> species, ArrayList<ArrayList<Double>> data, BioSim biosim) {
+	public Parser(ArrayList<String> species, ArrayList<ArrayList<Double>> data) {
 		this.species = species;
 		this.data = data;
-		component = biosim.frame();
+		component = BioSim.frame;
 	}
 
 	public ArrayList<String> getSpecies() {

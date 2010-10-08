@@ -36,22 +36,18 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 
 	private HashMap<String, PropertyField> fields = null;
 
-	private String[] inputs, outputs, species;
+	private String[] species;
 
 	private String selectedComponent, oldPort;
 
-	private BioSim biosim;
-
 	public ComponentsPanel(String selected, PropertyList componentsList, PropertyList influences,
 			GCMFile gcm, String[] inputs, String[] outputs, String selectedComponent, String oldPort,
-			boolean paramsOnly, BioSim biosim) {
+			boolean paramsOnly) {
 		super(new GridLayout(inputs.length + outputs.length + 2, 1));
 		this.selected = selected;
 		this.componentsList = componentsList;
 		this.influences = influences;
 		this.gcm = gcm;
-		this.inputs = inputs;
-		this.outputs = outputs;
 		species = new String[inputs.length + outputs.length];
 		for(int i = 0; i < inputs.length; i++) {
 			species[i] = inputs[i];
@@ -61,7 +57,6 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		}
 		this.selectedComponent = selectedComponent;
 		this.oldPort = oldPort;
-		this.biosim = biosim;
 
 		fields = new HashMap<String, PropertyField>();
 		portmapBox = new ArrayList<JComboBox>();
@@ -164,7 +159,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	}
 
 	private boolean openGui(String oldName) {
-		int value = JOptionPane.showOptionDialog(biosim.frame(), this, "Component Editor",
+		int value = JOptionPane.showOptionDialog(BioSim.frame, this, "Component Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (!checkValues()) {

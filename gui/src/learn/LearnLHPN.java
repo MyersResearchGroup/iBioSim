@@ -478,7 +478,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		//Finding the intersection of all the variables present in all data files.
 		for (int i = 1; (new File(directory + separator + "run-" + i + ".tsd")).exists(); i++) {
 			Properties cProp = new Properties();
-			extractVars = new TSDParser(directory + separator + "run-" + i + ".tsd", biosim,false);
+			extractVars = new TSDParser(directory + separator + "run-" + i + ".tsd", false);
 			datFileVars = extractVars.getSpecies();
 			if (i == 1){
 				allVars.addAll(datFileVars);
@@ -501,7 +501,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				allVars.remove(0);
 			}
 			else{
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 					"Error!",
 					"AllVars doesnot have time at zeroeth element. Something wrong. Please check time variable", JOptionPane.ERROR_MESSAGE);
 			}
@@ -525,7 +525,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				
 			}
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
@@ -785,7 +785,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 			}
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
@@ -799,7 +799,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			write.close();
 			input.close();
 		} catch (Exception e) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to create background file!",
 					"Error Writing Background", JOptionPane.ERROR_MESSAGE);
 		}
@@ -1264,7 +1264,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 //					write.close();
 				} catch (Exception e1) {
 					e1.printStackTrace();
-					JOptionPane.showMessageDialog(biosim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"Unable to save thresholds!",
 							"Error saving thresholds", JOptionPane.ERROR_MESSAGE);
 				}
@@ -1948,7 +1948,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		try {
 			if (true) {// (new File(directory + separator +
 				// "method.gcm").exists()) {
-				String copy = JOptionPane.showInputDialog(biosim.frame(),
+				String copy = JOptionPane.showInputDialog(BioSim.frame,
 						"Enter Circuit Name:", "Save Circuit",
 						JOptionPane.PLAIN_MESSAGE);
 				if (copy != null) {
@@ -1967,12 +1967,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 				biosim.saveLhpn(copy, directory + separator + lhpnFile);
 			} else {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"No circuit has been generated yet.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to save model.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -2022,16 +2022,16 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					scrolls.setMinimumSize(new Dimension(500, 500));
 					scrolls.setPreferredSize(new Dimension(500, 500));
 					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(biosim.frame(), scrolls,
+					JOptionPane.showMessageDialog(BioSim.frame, scrolls,
 							"Log", JOptionPane.INFORMATION_MESSAGE);
 				}
 			} else {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"No circuit has been generated yet.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to view LPN Model.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -2056,15 +2056,15 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				scrolls.setMinimumSize(new Dimension(500, 500));
 				scrolls.setPreferredSize(new Dimension(500, 500));
 				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(biosim.frame(), scrolls,
+				JOptionPane.showMessageDialog(BioSim.frame, scrolls,
 						"Run Log", JOptionPane.INFORMATION_MESSAGE);
 			} else {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"No run log exists.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to view run log.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -2122,15 +2122,15 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				scrolls.setMinimumSize(new Dimension(500, 500));
 				scrolls.setPreferredSize(new Dimension(500, 500));
 				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(biosim.frame(), scrolls,
+				JOptionPane.showMessageDialog(BioSim.frame, scrolls,
 						"Coverage Report", JOptionPane.INFORMATION_MESSAGE);
 			} else {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"No Coverage Report exists.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to view Coverage Report.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -2157,15 +2157,15 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				scrolls.setMinimumSize(new Dimension(800, 500));
 				scrolls.setPreferredSize(new Dimension(800, 500));
 				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(biosim.frame(), scrolls,
+				JOptionPane.showMessageDialog(BioSim.frame, scrolls,
 						"VHDL-AMS Model", JOptionPane.INFORMATION_MESSAGE);
 			} else {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"VHDL-AMS model does not exist.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to view VHDL-AMS model.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -2192,15 +2192,15 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				scrolls.setMinimumSize(new Dimension(800, 500));
 				scrolls.setPreferredSize(new Dimension(800, 500));
 				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(biosim.frame(), scrolls,
+				JOptionPane.showMessageDialog(BioSim.frame, scrolls,
 						"Verilog-AMS Model", JOptionPane.INFORMATION_MESSAGE);
 			} else {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Verilog-AMS model does not exist.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to view Verilog-AMS model.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -2502,7 +2502,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			change = false;
 		} catch (Exception e1) {
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to save parameter file!", "Error Saving File",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -2541,7 +2541,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		// }
 		// catch (Exception e1) {
 		// //e1.printStackTrace();
-		// JOptionPane.showMessageDialog(biosim.frame(), "Unable to save
+		// JOptionPane.showMessageDialog(BioSim.frame, "Unable to save
 		// parameter file!",
 		// "Error Saving File", JOptionPane.ERROR_MESSAGE);
 		// }
@@ -2749,7 +2749,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									if (!warned && (thresholds.get(st1).get(j) != Double.parseDouble((String) ((JTextField) variables.get(i).get(7+j)).getText()))){
 										warned = true;
 										out.write("WARNING: THRESHOLDS OF " + st1 + " NOT MATCHING THOSE IN THE GUI. WRONG!");
-										JOptionPane.showMessageDialog(biosim.frame(),
+										JOptionPane.showMessageDialog(BioSim.frame,
 												"Thresholds of " + st1 + " not matching those displayed in the gui.",
 												"WARNING!", JOptionPane.WARNING_MESSAGE);
 									}
@@ -2758,7 +2758,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								if (!warned){
 									warned = true;
 									out.write("WARNING: THRESHOLDS OF " + st1 + " NOT MATCHING THOSE IN THE GUI. WRONG!");
-									JOptionPane.showMessageDialog(biosim.frame(),
+									JOptionPane.showMessageDialog(BioSim.frame,
 											"Thresholds of " + st1 + " not matching those displayed in the gui.",
 											"WARNING!", JOptionPane.WARNING_MESSAGE);
 								}
@@ -2905,13 +2905,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 		} catch (IOException e1) {
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to create log file.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 			
 		} 
 		/*catch (RuntimeException e1) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Learning was" + " canceled by the user.",
 					"Canceled Learning", JOptionPane.ERROR_MESSAGE);
 		} */
@@ -3014,7 +3014,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			tPar.put("unstableTime", unstableTime);
 		} catch (IOException e){
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to create log file.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -3091,7 +3091,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		 * variablesList.add(s); write.write("s" + s + "
 		 * [shape=ellipse,color=black,label=\"" + (s) + "\"" + "];\n"); }
 		 * write.write("}\n"); write.close(); } catch (Exception e) {
-		 * JOptionPane.showMessageDialog(biosim.frame(), "Unable to create
+		 * JOptionPane.showMessageDialog(BioSim.frame, "Unable to create
 		 * background file!", "Error Writing Background",
 		 * JOptionPane.ERROR_MESSAGE); } } else {
 		 */
@@ -3186,7 +3186,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 			}
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
@@ -3196,7 +3196,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		 * BufferedReader(new FileReader(new File(learnFile))); String line =
 		 * null; while ((line = input.readLine()) != null) { write.write(line +
 		 * "\n"); } write.close(); input.close(); } catch (Exception e) {
-		 * JOptionPane.showMessageDialog(biosim.frame(), "Unable to create
+		 * JOptionPane.showMessageDialog(BioSim.frame, "Unable to create
 		 * background file!", "Error Writing Background",
 		 * JOptionPane.ERROR_MESSAGE); }
 		 */
@@ -3883,19 +3883,19 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"LPN file couldn't be created/written.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 		catch (NullPointerException e4) {
 			e4.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"LPN file couldn't be created/written. Null exception",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 		catch (ArrayIndexOutOfBoundsException e1) {	// comes from initMark = -1 of updateGraph()
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to calculate rates.\nWindow size or pathLengthBin must be reduced.\nLearning unsuccessful.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 			try {
@@ -3910,7 +3910,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		catch (java.lang.IllegalStateException e3){
 			e3.printStackTrace();
 			//System.out.println("LPN file couldn't be created/written ");
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"LPN File not found for merging.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -4024,12 +4024,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Log file couldn't be opened in addInitPlace.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		} catch (NullPointerException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Null exception in addInitPlace.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -4170,12 +4170,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 		} catch (NullPointerException e){
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Bins/Rates could not be generated. Please check thresholds.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);				
 		} catch (IOException e){
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Log file couldn't be opened for writing genBinsRates messages.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -4458,7 +4458,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 		}catch (IOException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Log file couldn't be opened for writing rates and bins.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -4552,7 +4552,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 		}catch (IOException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Log file couldn't be opened for writing rates and bins.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -4686,7 +4686,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 		catch (NullPointerException e){
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Not all regions have values for all dmv variables",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -5213,7 +5213,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 		catch(NullPointerException e){
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to calculate rates.\nThresholds could not be generated\nWindow size or pathLengthBin must be reduced.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 			try {
@@ -5241,7 +5241,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		int i = 1;
 		try{
 			while (new File(directory + separator + "run-" + i + ".tsd").exists()) {
-				TSDParser tsd = new TSDParser(directory + separator + "run-" + i +".tsd",biosim, false);
+				TSDParser tsd = new TSDParser(directory + separator + "run-" + i +".tsd", false);
 				singleFileData = tsd.getData();
 				varNames = tsd.getSpecies();
 				if (i == 1){
@@ -5284,7 +5284,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					for (String k : dmvDivs.keySet()){
 						for (int l = 0; l < reqdVarsL.size(); l++){
 							if (!reqdVarsL.get(l).isDmvc()){
-								JOptionPane.showMessageDialog(biosim.frame(),
+								JOptionPane.showMessageDialog(BioSim.frame,
 										"Can't generate the number of thresholds for continuous variables.",
 										"ERROR!", JOptionPane.ERROR_MESSAGE);
 								out.write(reqdVarsL.get(l).getName() + " is not a dmv. So.. ");
@@ -5319,7 +5319,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							varThresholds.put(reqdVarsL.get(k).getName(),Integer.valueOf(numThresholds));
 							if (numThresholds == -1){
 								if (!reqdVarsL.get(k).isDmvc()){
-									JOptionPane.showMessageDialog(biosim.frame(),
+									JOptionPane.showMessageDialog(BioSim.frame,
 											"Can't generate the number of thresholds for continuous variables.",
 											"ERROR!", JOptionPane.ERROR_MESSAGE);
 
@@ -5366,20 +5366,20 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 		catch(NullPointerException e){
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to calculate rates.\nThresholds could not be generated\nWindow size or pathLengthBin must be reduced.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 			running.setCursor(null);
 			running.dispose();
 		} catch (IOException e2) {
 			e2.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to write into log file in autogenT.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		} catch (NoSuchElementException e3) {
 			e3.printStackTrace();
 			if (reqdVarsL.size() == 0){
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"No input or output variables.",
 						"ERROR!", JOptionPane.ERROR_MESSAGE);
 			}
@@ -6521,12 +6521,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			
 		}
 		catch(IOException e){
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"VHDL-AMS model couldn't be created/written.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 		catch(Exception e){
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Error in VHDL-AMS model generation.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -7032,12 +7032,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 		catch(IOException e){
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Verilog-AMS model couldn't be created/written.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 		catch(Exception e){
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Error in Verilog-AMS model generation.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -7142,7 +7142,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			tmp.delete();
 		}catch(Exception e){
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Problem while merging lpns",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -7173,7 +7173,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 		} catch (NullPointerException e){
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Exception while tracing back for making the enabling conditions mutually exclusive.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 
@@ -7310,7 +7310,7 @@ public void updateTimeInfo(int[][] bins, Properties cvgProp) {
 		}
 	} catch (IOException e) {
 		e.printStackTrace();
-		JOptionPane.showMessageDialog(biosim.frame(),
+		JOptionPane.showMessageDialog(BioSim.frame,
 				"Log file couldn't be opened for writing rates and bins.",
 				"ERROR!", JOptionPane.ERROR_MESSAGE);
 	}

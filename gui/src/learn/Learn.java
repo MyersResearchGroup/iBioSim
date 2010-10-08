@@ -366,7 +366,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 
@@ -388,7 +388,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				write.close();
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
+				JOptionPane.showMessageDialog(BioSim.frame, "Unable to create background file!",
 						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -411,7 +411,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				input.close();
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
+				JOptionPane.showMessageDialog(BioSim.frame, "Unable to create background file!",
 						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -927,7 +927,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 	public void saveGcm() {
 		try {
 			if (new File(directory + separator + "method.gcm").exists()) {
-				String copy = JOptionPane.showInputDialog(biosim.frame(), "Enter Circuit Name:",
+				String copy = JOptionPane.showInputDialog(BioSim.frame, "Enter Circuit Name:",
 						"Save Circuit", JOptionPane.PLAIN_MESSAGE);
 				if (copy != null) {
 					copy = copy.trim();
@@ -948,12 +948,12 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				biosim.saveGcm(copy, directory + separator + "method.gcm");
 			}
 			else {
-				JOptionPane.showMessageDialog(biosim.frame(), "No circuit has been generated yet.",
+				JOptionPane.showMessageDialog(BioSim.frame, "No circuit has been generated yet.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save circuit.", "Error",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to save circuit.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -984,12 +984,12 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				}
 			}
 			else {
-				JOptionPane.showMessageDialog(biosim.frame(), "No circuit has been generated yet.",
+				JOptionPane.showMessageDialog(BioSim.frame, "No circuit has been generated yet.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view circuit.", "Error",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to view circuit.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -1010,16 +1010,16 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				scrolls.setMinimumSize(new Dimension(500, 500));
 				scrolls.setPreferredSize(new Dimension(500, 500));
 				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Run Log",
+				JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Run Log",
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 			else {
-				JOptionPane.showMessageDialog(biosim.frame(), "No run log exists.", "Error",
+				JOptionPane.showMessageDialog(BioSim.frame, "No run log exists.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view run log.", "Error",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to view run log.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -1097,7 +1097,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			change = false;
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to save parameter file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -1299,7 +1299,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			}
 			int exitValue = learn.waitFor();
 			if (exitValue == 143) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Learning was"
+				JOptionPane.showMessageDialog(BioSim.frame, "Learning was"
 						+ " canceled by the user.", "Canceled Learning", JOptionPane.ERROR_MESSAGE);
 			}
 			else {
@@ -1329,7 +1329,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 					}
 				}
 				else {
-					JOptionPane.showMessageDialog(biosim.frame(), "A gcm file was not generated."
+					JOptionPane.showMessageDialog(BioSim.frame, "A gcm file was not generated."
 							+ "\nPlease see the run.log file.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 				running.setCursor(null);
@@ -1345,7 +1345,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to learn from data.", "Error",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to learn from data.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -1401,7 +1401,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				write.close();
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
+				JOptionPane.showMessageDialog(BioSim.frame, "Unable to create background file!",
 						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -1424,7 +1424,7 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 				input.close();
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Unable to create background file!",
+				JOptionPane.showMessageDialog(BioSim.frame, "Unable to create background file!",
 						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
 			}
 		}

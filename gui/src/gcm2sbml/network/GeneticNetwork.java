@@ -231,7 +231,7 @@ public class GeneticNetwork {
 					scroll.setMinimumSize(new Dimension(600, 600));
 					scroll.setPreferredSize(new Dimension(600, 600));
 					scroll.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(BioSim.frame(), scroll, "Generated SBML Has Errors",
+					JOptionPane.showMessageDialog(BioSim.frame, scroll, "Generated SBML Has Errors",
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}

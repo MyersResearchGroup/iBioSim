@@ -393,7 +393,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					abstractLhpn.setSelected(true);
 				}
 			}
-			abstPane = new AbstPane(root + separator + verName, this, log, biosim, lema, atacs);
+			abstPane = new AbstPane(root + separator + verName, this, log, lema, atacs);
 			if (load.containsKey("verification.timing.methods")) {
 				if (atacs) {
 					if (load.getProperty("verification.timing.methods").equals("untimed")) {
@@ -620,7 +620,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 			// e.printStackTrace();
 		}
@@ -763,14 +763,14 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}
 				}
 				if (!filename.endsWith(".vhd")) {
-					JOptionPane.showMessageDialog(biosim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"You must select a valid VHDL file.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				else if (new File(directory + separator + filename).exists()
 						|| filename.equals(sourceFileNoPath) || contains) {
-					JOptionPane.showMessageDialog(biosim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"This component is already contained in this tool.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
@@ -800,7 +800,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				preproc.waitFor();
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Error with preprocessing.", "Error",
+				JOptionPane.showMessageDialog(BioSim.frame, "Error with preprocessing.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -933,7 +933,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 				catch (IOException e1) {
 					e1.printStackTrace();
-					JOptionPane.showMessageDialog(biosim.frame(), "Cannot update the file " + s
+					JOptionPane.showMessageDialog(BioSim.frame, "Cannot update the file " + s
 							+ ".", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -1305,7 +1305,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				boolean success = false;
 				while ((output = atacsBuffer.readLine()) != null) {
 					if (output.contains("Verification succeeded.")) {
-						JOptionPane.showMessageDialog(biosim.frame(), "Verification succeeded!",
+						JOptionPane.showMessageDialog(BioSim.frame, "Verification succeeded!",
 								"Success", JOptionPane.INFORMATION_MESSAGE);
 						success = true;
 						break;
@@ -1313,7 +1313,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 				//int exitValue = ver.waitFor();
 				if (exitValue == 143) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Verification was"
+					JOptionPane.showMessageDialog(BioSim.frame, "Verification was"
 							+ " canceled by the user.", "Canceled Verification",
 							JOptionPane.ERROR_MESSAGE);
 				}
@@ -1371,7 +1371,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Unable to verify model.", "Error",
+				JOptionPane.showMessageDialog(BioSim.frame, "Unable to verify model.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -1409,7 +1409,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						dot.waitFor();
 					}
 					else {
-						JOptionPane.showMessageDialog(biosim.frame(), "Unable to view LHPN.", "Error",
+						JOptionPane.showMessageDialog(BioSim.frame, "Unable to view LHPN.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -1421,7 +1421,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void saveAs() {
-		String newName = JOptionPane.showInputDialog(biosim.frame(), "Enter Verification name:",
+		String newName = JOptionPane.showInputDialog(BioSim.frame, "Enter Verification name:",
 				"Verification Name", JOptionPane.PLAIN_MESSAGE);
 		if (newName == null) {
 			return;
@@ -1723,7 +1723,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		catch (Exception e1) {
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to save parameter file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
 		for (String s : componentList.getItems()) {
@@ -1741,7 +1741,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			catch (IOException e1) {
 				e1.printStackTrace();
-				JOptionPane.showMessageDialog(biosim.frame(), "Cannot add the selected component.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Cannot add the selected component.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -1755,7 +1755,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		// out.close();
 		// }
 		// catch (IOException e) {
-		// JOptionPane.showMessageDialog(biosim.frame(), "Unable to save
+		// JOptionPane.showMessageDialog(BioSim.frame, "Unable to save
 		// parameter file!",
 		// "Error Saving File", JOptionPane.ERROR_MESSAGE);
 		// }
@@ -1799,16 +1799,16 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				scrolls.setMinimumSize(new Dimension(500, 500));
 				scrolls.setPreferredSize(new Dimension(500, 500));
 				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Circuit View",
+				JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Circuit View",
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 			else {
-				JOptionPane.showMessageDialog(biosim.frame(), "No circuit view exists.", "Error",
+				JOptionPane.showMessageDialog(BioSim.frame, "No circuit view exists.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view circuit.", "Error",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to view circuit.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -1851,16 +1851,16 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				scrolls.setMinimumSize(new Dimension(500, 500));
 				scrolls.setPreferredSize(new Dimension(500, 500));
 				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Trace View",
+				JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Trace View",
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 			else {
-				JOptionPane.showMessageDialog(biosim.frame(), "No trace file exists.", "Error",
+				JOptionPane.showMessageDialog(BioSim.frame, "No trace file exists.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view trace.", "Error",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to view trace.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -1886,16 +1886,16 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				scrolls.setMinimumSize(new Dimension(500, 500));
 				scrolls.setPreferredSize(new Dimension(500, 500));
 				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Run Log",
+				JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Run Log",
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 			else {
-				JOptionPane.showMessageDialog(biosim.frame(), "No run log exists.", "Error",
+				JOptionPane.showMessageDialog(BioSim.frame, "No run log exists.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view run log.", "Error",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to view run log.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -1939,7 +1939,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		catch (IOException e) {
 			// e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(), "Cannot copy file " + sourceFile,
+			JOptionPane.showMessageDialog(BioSim.frame, "Cannot copy file " + sourceFile,
 					"Copy Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}

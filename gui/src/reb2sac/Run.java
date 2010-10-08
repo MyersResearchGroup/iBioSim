@@ -875,7 +875,7 @@ public class Run implements ActionListener {
 						// String[] options = { "Yes", "No" };
 						// int value = JOptionPane
 						// .showOptionDialog(
-						// biomodelsim.frame(),
+						// BioSim.frame,
 						// "The state graph contains more than 30 states and may not open well in dotty.\nOpen it with dotty anyway?",
 						// "More Than 30 States", JOptionPane.YES_NO_OPTION,
 						// JOptionPane.WARNING_MESSAGE, null, options,
@@ -1077,18 +1077,18 @@ public class Run implements ActionListener {
 			}
 			if (exitValue != 0) {
 				if (exitValue == 143) {
-					JOptionPane.showMessageDialog(biomodelsim.frame(), "The simulation was"
+					JOptionPane.showMessageDialog(BioSim.frame, "The simulation was"
 							+ " canceled by the user.", "Canceled Simulation",
 							JOptionPane.ERROR_MESSAGE);
 				}
 				else if (exitValue == 139) {
-					JOptionPane.showMessageDialog(biomodelsim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"The selected model is not a valid sbml file."
 									+ "\nYou must select an sbml file.", "Not An SBML File",
 							JOptionPane.ERROR_MESSAGE);
 				}
 				else {
-					JOptionPane.showMessageDialog(biomodelsim.frame(), "Error In Execution!\n"
+					JOptionPane.showMessageDialog(BioSim.frame, "Error In Execution!\n"
 							+ "Bad Return Value!\n" + "The reb2sac program returned " + exitValue
 							+ " as an exit value.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
@@ -1202,9 +1202,9 @@ public class Run implements ActionListener {
 												+ run, "average", direct, warning);
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
 										Parser p = new TSDParser(directory + separator + run,
-												biomodelsim, warning);
+												warning);
 										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), mean, biomodelsim);
+										Parser p2 = new Parser(p.getSpecies(), mean);
 										p2.outputTSD(directory + separator + "mean.tsd");
 									}
 									if (outputV) {
@@ -1213,9 +1213,9 @@ public class Run implements ActionListener {
 												+ run, "variance", direct, warning);
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
 										Parser p = new TSDParser(directory + separator + run,
-												biomodelsim, warning);
+												warning);
 										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
+										Parser p2 = new Parser(p.getSpecies(), var);
 										p2.outputTSD(directory + separator + "variance.tsd");
 									}
 									if (outputS) {
@@ -1224,9 +1224,9 @@ public class Run implements ActionListener {
 												+ run, "deviation", direct, warning);
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
 										Parser p = new TSDParser(directory + separator + run,
-												biomodelsim, warning);
+												warning);
 										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), stddev, biomodelsim);
+										Parser p2 = new Parser(p.getSpecies(), stddev);
 										p2.outputTSD(directory + separator
 												+ "standard_deviation.tsd");
 									}
@@ -1288,9 +1288,9 @@ public class Run implements ActionListener {
 												+ run, "average", direct, warning);
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
 										Parser p = new TSDParser(directory + separator + run,
-												biomodelsim, warning);
+												warning);
 										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), mean, biomodelsim);
+										Parser p2 = new Parser(p.getSpecies(), mean);
 										p2.outputTSD(directory + separator + "mean.tsd");
 									}
 									if (outputV) {
@@ -1299,9 +1299,9 @@ public class Run implements ActionListener {
 												+ run, "variance", direct, warning);
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
 										Parser p = new TSDParser(directory + separator + run,
-												biomodelsim, warning);
+												warning);
 										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
+										Parser p2 = new Parser(p.getSpecies(), var);
 										p2.outputTSD(directory + separator + "variance.tsd");
 									}
 									if (outputS) {
@@ -1310,9 +1310,9 @@ public class Run implements ActionListener {
 												+ run, "deviation", direct, warning);
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
 										Parser p = new TSDParser(directory + separator + run,
-												biomodelsim, warning);
+												warning);
 										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), stddev, biomodelsim);
+										Parser p2 = new Parser(p.getSpecies(), stddev);
 										p2.outputTSD(directory + separator
 												+ "standard_deviation.tsd");
 									}
@@ -1430,10 +1430,9 @@ public class Run implements ActionListener {
 											warning = ((Graph) simTab.getComponentAt(i))
 													.getWarning();
 											Parser p = new TSDParser(directory + separator + run,
-													biomodelsim, warning);
+													warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), mean,
-													biomodelsim);
+											Parser p2 = new Parser(p.getSpecies(), mean);
 											p2.outputTSD(directory + separator + "mean.tsd");
 										}
 										if (outputV) {
@@ -1443,9 +1442,9 @@ public class Run implements ActionListener {
 											warning = ((Graph) simTab.getComponentAt(i))
 													.getWarning();
 											Parser p = new TSDParser(directory + separator + run,
-													biomodelsim, warning);
+													warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
+											Parser p2 = new Parser(p.getSpecies(), var);
 											p2.outputTSD(directory + separator + "variance.tsd");
 										}
 										if (outputS) {
@@ -1456,10 +1455,9 @@ public class Run implements ActionListener {
 											warning = ((Graph) simTab.getComponentAt(i))
 													.getWarning();
 											Parser p = new TSDParser(directory + separator + run,
-													biomodelsim, warning);
+													warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), stddev,
-													biomodelsim);
+											Parser p2 = new Parser(p.getSpecies(), stddev);
 											p2.outputTSD(directory + separator
 													+ "standard_deviation.tsd");
 										}
@@ -1521,10 +1519,9 @@ public class Run implements ActionListener {
 											warning = ((Graph) simTab.getComponentAt(i))
 													.getWarning();
 											Parser p = new TSDParser(directory + separator + run,
-													biomodelsim, warning);
+													warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), mean,
-													biomodelsim);
+											Parser p2 = new Parser(p.getSpecies(), mean);
 											p2.outputTSD(directory + separator + "mean.tsd");
 										}
 										if (outputV) {
@@ -1534,9 +1531,9 @@ public class Run implements ActionListener {
 											warning = ((Graph) simTab.getComponentAt(i))
 													.getWarning();
 											Parser p = new TSDParser(directory + separator + run,
-													biomodelsim, warning);
+													warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
+											Parser p2 = new Parser(p.getSpecies(), var);
 											p2.outputTSD(directory + separator + "variance.tsd");
 										}
 										if (outputS) {
@@ -1547,10 +1544,9 @@ public class Run implements ActionListener {
 											warning = ((Graph) simTab.getComponentAt(i))
 													.getWarning();
 											Parser p = new TSDParser(directory + separator + run,
-													biomodelsim, warning);
+													warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), stddev,
-													biomodelsim);
+											Parser p2 = new Parser(p.getSpecies(), stddev);
 											p2.outputTSD(directory + separator
 													+ "standard_deviation.tsd");
 										}
@@ -1631,10 +1627,9 @@ public class Run implements ActionListener {
 											warning = ((Graph) simTab.getComponentAt(i))
 													.getWarning();
 											Parser p = new TSDParser(directory + separator + run,
-													biomodelsim, warning);
+													warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), mean,
-													biomodelsim);
+											Parser p2 = new Parser(p.getSpecies(), mean);
 											p2.outputTSD(directory + separator + "mean.tsd");
 										}
 										if (outputV) {
@@ -1644,9 +1639,9 @@ public class Run implements ActionListener {
 											warning = ((Graph) simTab.getComponentAt(i))
 													.getWarning();
 											Parser p = new TSDParser(directory + separator + run,
-													biomodelsim, warning);
+													warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
+											Parser p2 = new Parser(p.getSpecies(), var);
 											p2.outputTSD(directory + separator + "variance.tsd");
 										}
 										if (outputS) {
@@ -1657,10 +1652,9 @@ public class Run implements ActionListener {
 											warning = ((Graph) simTab.getComponentAt(i))
 													.getWarning();
 											Parser p = new TSDParser(directory + separator + run,
-													biomodelsim, warning);
+													warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), stddev,
-													biomodelsim);
+											Parser p2 = new Parser(p.getSpecies(), stddev);
 											p2.outputTSD(directory + separator
 													+ "standard_deviation.tsd");
 										}
@@ -1722,10 +1716,9 @@ public class Run implements ActionListener {
 											warning = ((Graph) simTab.getComponentAt(i))
 													.getWarning();
 											Parser p = new TSDParser(directory + separator + run,
-													biomodelsim, warning);
+													warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), mean,
-													biomodelsim);
+											Parser p2 = new Parser(p.getSpecies(), mean);
 											p2.outputTSD(directory + separator + "mean.tsd");
 										}
 										if (outputV) {
@@ -1735,9 +1728,9 @@ public class Run implements ActionListener {
 											warning = ((Graph) simTab.getComponentAt(i))
 													.getWarning();
 											Parser p = new TSDParser(directory + separator + run,
-													biomodelsim, warning);
+													warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), var, biomodelsim);
+											Parser p2 = new Parser(p.getSpecies(), var);
 											p2.outputTSD(directory + separator + "variance.tsd");
 										}
 										if (outputS) {
@@ -1748,10 +1741,9 @@ public class Run implements ActionListener {
 											warning = ((Graph) simTab.getComponentAt(i))
 													.getWarning();
 											Parser p = new TSDParser(directory + separator + run,
-													biomodelsim, warning);
+													warning);
 											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), stddev,
-													biomodelsim);
+											Parser p2 = new Parser(p.getSpecies(), stddev);
 											p2.outputTSD(directory + separator
 													+ "standard_deviation.tsd");
 										}
@@ -1785,12 +1777,12 @@ public class Run implements ActionListener {
 			}
 		}
 		catch (InterruptedException e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Error In Execution!",
+			JOptionPane.showMessageDialog(BioSim.frame, "Error In Execution!",
 					"Error In Execution", JOptionPane.ERROR_MESSAGE);
 			e1.printStackTrace();
 		}
 		catch (IOException e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "File I/O Error!", "File I/O Error",
+			JOptionPane.showMessageDialog(BioSim.frame, "File I/O Error!", "File I/O Error",
 					JOptionPane.ERROR_MESSAGE);
 			e1.printStackTrace();
 		}

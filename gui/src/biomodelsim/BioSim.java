@@ -120,7 +120,7 @@ import uk.ac.ebi.biomodels.*;
 public class BioSim implements MouseListener, ActionListener, MouseMotionListener,
 		MouseWheelListener, WindowFocusListener {
 
-	private static JFrame frame; // Frame where components of the GUI are displayed
+	public static JFrame frame; // Frame where components of the GUI are displayed
 
 	private JMenuBar menuBar;
 
@@ -2237,12 +2237,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		 * JScrollPane scrolls = new JScrollPane(); scrolls.setMinimumSize(new
 		 * Dimension(800, 500)); scrolls.setPreferredSize(new Dimension(800,
 		 * 500)); scrolls.setViewportView(messageArea);
-		 * JOptionPane.showMessageDialog(this.frame(), scrolls,
+		 * JOptionPane.showMessageDialog(frame(), scrolls,
 		 * "VHDL-AMS Model", JOptionPane.INFORMATION_MESSAGE); } else {
-		 * JOptionPane.showMessageDialog(this.frame(),
+		 * JOptionPane.showMessageDialog(frame(),
 		 * "VHDL-AMS model does not exist.", "Error",
 		 * JOptionPane.ERROR_MESSAGE); } } catch (Exception e1) {
-		 * JOptionPane.showMessageDialog(this.frame(),
+		 * JOptionPane.showMessageDialog(frame(),
 		 * "Unable to view VHDL-AMS model.", "Error",
 		 * JOptionPane.ERROR_MESSAGE); } } else if (e.getSource() ==
 		 * viewVerilog) { // should change to // systemverilog?? // Component
@@ -2259,14 +2259,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		 * JScrollPane scrolls = new JScrollPane(); scrolls.setMinimumSize(new
 		 * Dimension(800, 500)); scrolls.setPreferredSize(new Dimension(800,
 		 * 500)); scrolls.setViewportView(messageArea);
-		 * JOptionPane.showMessageDialog(this.frame(), scrolls, "Verilog Model",
+		 * JOptionPane.showMessageDialog(frame(), scrolls, "Verilog Model",
 		 * JOptionPane.INFORMATION_MESSAGE); // Being // generic // for //
 		 * System // Verilog // and // Verilog-AMS } else {
-		 * JOptionPane.showMessageDialog(this.frame(),
+		 * JOptionPane.showMessageDialog(frame(),
 		 * "Verilog model does not exist.", "Error",
 		 * JOptionPane.ERROR_MESSAGE);// Being // generic // for // System //
 		 * Verilog // and // Verilog-AMS } } catch (Exception e1) {
-		 * JOptionPane.showMessageDialog(this.frame(),
+		 * JOptionPane.showMessageDialog(frame,
 		 * "Unable to view Verilog model.", "Error",
 		 * JOptionPane.ERROR_MESSAGE);// Being generic // for System // Verilog
 		 * and // Verilog-AMS } }
@@ -2320,7 +2320,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					scrolls.setMinimumSize(new Dimension(500, 500));
 					scrolls.setPreferredSize(new Dimension(500, 500));
 					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(frame(), scrolls, "Log",
+					JOptionPane.showMessageDialog(frame, scrolls, "Log",
 							JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
@@ -3188,7 +3188,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						scrolls.setMinimumSize(new Dimension(500, 500));
 						scrolls.setPreferredSize(new Dimension(500, 500));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(frame(), scrolls, "Log",
+						JOptionPane.showMessageDialog(frame, scrolls, "Log",
 								JOptionPane.INFORMATION_MESSAGE);
 					}
 					return;
@@ -3347,7 +3347,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			 * JScrollPane(); scrolls.setMinimumSize(new Dimension(500, 500));
 			 * scrolls.setPreferredSize(new Dimension(500, 500));
 			 * scrolls.setViewportView(messageArea);
-			 * JOptionPane.showMessageDialog(frame(), scrolls, "Log",
+			 * JOptionPane.showMessageDialog(frame, scrolls, "Log",
 			 * JOptionPane.INFORMATION_MESSAGE); } return; } catch (Exception
 			 * e1) { JOptionPane.showMessageDialog(frame,
 			 * "Unable to view this lpn.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -3427,7 +3427,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						scrolls.setMinimumSize(new Dimension(500, 500));
 						scrolls.setPreferredSize(new Dimension(500, 500));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(frame(), scrolls, "Log",
+						JOptionPane.showMessageDialog(frame, scrolls, "Log",
 								JOptionPane.INFORMATION_MESSAGE);
 					}
 					return;
@@ -3762,7 +3762,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			Component comp = tab.getSelectedComponent();
 			// int index = tab.getSelectedIndex();
 			if (comp instanceof LHPNEditor) {
-				String newName = JOptionPane.showInputDialog(frame(), "Enter LPN name:",
+				String newName = JOptionPane.showInputDialog(frame, "Enter LPN name:",
 						"LPN Name", JOptionPane.PLAIN_MESSAGE);
 				if (newName == null) {
 					return;
@@ -3774,7 +3774,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				tab.setTitleAt(tab.getSelectedIndex(), newName);
 			}
 			else if (comp instanceof GCM2SBMLEditor) {
-				String newName = JOptionPane.showInputDialog(frame(), "Enter GCM name:",
+				String newName = JOptionPane.showInputDialog(frame, "Enter GCM name:",
 						"GCM Name", JOptionPane.PLAIN_MESSAGE);
 				if (newName == null) {
 					return;
@@ -3809,7 +3809,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				String fileName = tab.getTitleAt(tab.getSelectedIndex());
 				String newName = "";
 				if (fileName.endsWith(".vhd")) {
-					newName = JOptionPane.showInputDialog(frame(), "Enter VHDL name:", "VHDL Name",
+					newName = JOptionPane.showInputDialog(frame, "Enter VHDL name:", "VHDL Name",
 							JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
@@ -3819,7 +3819,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				else if (fileName.endsWith(".s")) {
-					newName = JOptionPane.showInputDialog(frame(), "Enter Assembly File Name:",
+					newName = JOptionPane.showInputDialog(frame, "Enter Assembly File Name:",
 							"Assembly File Name", JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
@@ -3829,7 +3829,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				else if (fileName.endsWith(".inst")) {
-					newName = JOptionPane.showInputDialog(frame(), "Enter Instruction File Name:",
+					newName = JOptionPane.showInputDialog(frame, "Enter Instruction File Name:",
 							"Instruction File Name", JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
@@ -3839,7 +3839,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				else if (fileName.endsWith(".g")) {
-					newName = JOptionPane.showInputDialog(frame(), "Enter Petri net name:",
+					newName = JOptionPane.showInputDialog(frame, "Enter Petri net name:",
 							"Petri net Name", JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
@@ -3849,7 +3849,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				else if (fileName.endsWith(".csp")) {
-					newName = JOptionPane.showInputDialog(frame(), "Enter CSP name:", "CSP Name",
+					newName = JOptionPane.showInputDialog(frame, "Enter CSP name:", "CSP Name",
 							JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
@@ -3859,7 +3859,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				else if (fileName.endsWith(".hse")) {
-					newName = JOptionPane.showInputDialog(frame(), "Enter HSE name:", "HSE Name",
+					newName = JOptionPane.showInputDialog(frame, "Enter HSE name:", "HSE Name",
 							JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
@@ -3869,7 +3869,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				else if (fileName.endsWith(".unc")) {
-					newName = JOptionPane.showInputDialog(frame(), "Enter UNC name:", "UNC Name",
+					newName = JOptionPane.showInputDialog(frame, "Enter UNC name:", "UNC Name",
 							JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
@@ -3879,7 +3879,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 				else if (fileName.endsWith(".rsg")) {
-					newName = JOptionPane.showInputDialog(frame(), "Enter RSG name:", "RSG Name",
+					newName = JOptionPane.showInputDialog(frame, "Enter RSG name:", "RSG Name",
 							JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
@@ -6345,7 +6345,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						scrolls.setMinimumSize(new Dimension(500, 500));
 						scrolls.setPreferredSize(new Dimension(500, 500));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(frame(), scrolls, "Log",
+						JOptionPane.showMessageDialog(frame, scrolls, "Log",
 								JOptionPane.INFORMATION_MESSAGE);
 					}
 				}
@@ -6397,7 +6397,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						scrolls.setMinimumSize(new Dimension(500, 500));
 						scrolls.setPreferredSize(new Dimension(500, 500));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(frame(), scrolls, "Log",
+						JOptionPane.showMessageDialog(frame, scrolls, "Log",
 								JOptionPane.INFORMATION_MESSAGE);
 					}
 				}
@@ -6422,17 +6422,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							scrolls.setMinimumSize(new Dimension(800, 500));
 							scrolls.setPreferredSize(new Dimension(800, 500));
 							scrolls.setViewportView(messageArea);
-							JOptionPane.showMessageDialog(this.frame(), scrolls, "VHDL-AMS Model",
+							JOptionPane.showMessageDialog(frame, scrolls, "VHDL-AMS Model",
 									JOptionPane.INFORMATION_MESSAGE);
 						}
 						else {
-							JOptionPane.showMessageDialog(this.frame(),
+							JOptionPane.showMessageDialog(frame,
 									"VHDL-AMS model does not exist.", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(this.frame(),
+						JOptionPane.showMessageDialog(frame,
 								"Unable to view VHDL-AMS model.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
@@ -6468,7 +6468,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					 * JScrollPane(); scrolls.setMinimumSize(new Dimension(500,
 					 * 500)); scrolls.setPreferredSize(new Dimension(500, 500));
 					 * scrolls.setViewportView(messageArea);
-					 * JOptionPane.showMessageDialog(frame(), scrolls, "Log",
+					 * JOptionPane.showMessageDialog(frame, scrolls, "Log",
 					 * JOptionPane.INFORMATION_MESSAGE); }
 					 */
 				}
@@ -6493,17 +6493,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							scrolls.setMinimumSize(new Dimension(800, 500));
 							scrolls.setPreferredSize(new Dimension(800, 500));
 							scrolls.setViewportView(messageArea);
-							JOptionPane.showMessageDialog(this.frame(), scrolls,
+							JOptionPane.showMessageDialog(frame, scrolls,
 									"Verilog-AMS Model", JOptionPane.INFORMATION_MESSAGE);
 						}
 						else {
-							JOptionPane.showMessageDialog(this.frame(),
+							JOptionPane.showMessageDialog(frame,
 									"Verilog-AMS model does not exist.", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(this.frame(),
+						JOptionPane.showMessageDialog(frame,
 								"Unable to view Verilog-AMS model.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
@@ -6529,17 +6529,17 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							scrolls.setMinimumSize(new Dimension(800, 500));
 							scrolls.setPreferredSize(new Dimension(800, 500));
 							scrolls.setViewportView(messageArea);
-							JOptionPane.showMessageDialog(this.frame(), scrolls,
+							JOptionPane.showMessageDialog(frame, scrolls,
 									"SystemVerilog Model", JOptionPane.INFORMATION_MESSAGE);
 						}
 						else {
-							JOptionPane.showMessageDialog(this.frame(),
+							JOptionPane.showMessageDialog(frame,
 									"SystemVerilog model does not exist.", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(this.frame(),
+						JOptionPane.showMessageDialog(frame,
 								"Unable to view SystemVerilog model.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
@@ -6591,7 +6591,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						scrolls.setMinimumSize(new Dimension(500, 500));
 						scrolls.setPreferredSize(new Dimension(500, 500));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(frame(), scrolls, "Log",
+						JOptionPane.showMessageDialog(frame, scrolls, "Log",
 								JOptionPane.INFORMATION_MESSAGE);
 					}
 				}
@@ -6642,7 +6642,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						scrolls.setMinimumSize(new Dimension(500, 500));
 						scrolls.setPreferredSize(new Dimension(500, 500));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(frame(), scrolls, "Log",
+						JOptionPane.showMessageDialog(frame, scrolls, "Log",
 								JOptionPane.INFORMATION_MESSAGE);
 					}
 				}
@@ -6693,7 +6693,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						scrolls.setMinimumSize(new Dimension(500, 500));
 						scrolls.setPreferredSize(new Dimension(500, 500));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(frame(), scrolls, "Log",
+						JOptionPane.showMessageDialog(frame, scrolls, "Log",
 								JOptionPane.INFORMATION_MESSAGE);
 					}
 				}
@@ -6744,7 +6744,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						scrolls.setMinimumSize(new Dimension(500, 500));
 						scrolls.setPreferredSize(new Dimension(500, 500));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(frame(), scrolls, "Log",
+						JOptionPane.showMessageDialog(frame, scrolls, "Log",
 								JOptionPane.INFORMATION_MESSAGE);
 					}
 				}
@@ -8460,13 +8460,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		save.setEnabled(othersEnabled);
 		viewLog.setEnabled(logEnabled);
 		// Do saveas & save button too
-	}
-
-	/**
-	 * Returns the frame.
-	 */
-	public static JFrame frame() {
-		return frame;
 	}
 
 	public void mousePressed(MouseEvent e) {
@@ -10269,7 +10262,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 		}
 		if (fileType == 0) {
-			SBMLDocument document = readSBML(tree.getFile());
+			readSBML(tree.getFile());
 		}
 		String simName = JOptionPane.showInputDialog(frame, "Enter analysis id:", "Analysis ID",
 				JOptionPane.PLAIN_MESSAGE);
@@ -10496,7 +10489,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(frame(), "Unable to load properties file!",
+				JOptionPane.showMessageDialog(frame, "Unable to load properties file!",
 						"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
@@ -10623,7 +10616,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(frame(), "Unable to load properties file!",
+				JOptionPane.showMessageDialog(frame, "Unable to load properties file!",
 						"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
@@ -10746,7 +10739,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(frame(), "Unable to load properties file!",
+				JOptionPane.showMessageDialog(frame, "Unable to load properties file!",
 						"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
@@ -10819,7 +10812,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				// out.close();
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(frame(), "Unable to load properties file!",
+				JOptionPane.showMessageDialog(frame, "Unable to load properties file!",
 						"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
