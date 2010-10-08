@@ -85,8 +85,6 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	private Log log;
 
-	private BioSim biosim;
-
 	private Verification verification;
 
 	/**
@@ -94,7 +92,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	 * the input fields, puts them on panels, adds the panels to the frame, and
 	 * then displays the frame.
 	 */
-	public AbstPane(String directory, Verification verification, Log log, BioSim biosim,
+	public AbstPane(String directory, Verification verification, Log log,
 			boolean lema, boolean atacs) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
@@ -373,7 +371,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void saveAs() {
-		String newName = JOptionPane.showInputDialog(biosim.frame(), "Enter Verification name:",
+		String newName = JOptionPane.showInputDialog(BioSim.frame, "Enter Verification name:",
 				"Verification Name", JOptionPane.PLAIN_MESSAGE);
 		if (newName == null) {
 			return;
@@ -426,7 +424,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		}
 		catch (Exception e1) {
 			// e1.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to save parameter file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
 		if (componentList != null) {
@@ -445,7 +443,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 				}
 				catch (IOException e1) {
 					e1.printStackTrace();
-					JOptionPane.showMessageDialog(biosim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"Cannot add the selected component.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
@@ -526,16 +524,16 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 				scrolls.setMinimumSize(new Dimension(500, 500));
 				scrolls.setPreferredSize(new Dimension(500, 500));
 				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Run Log",
+				JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Run Log",
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 			else {
-				JOptionPane.showMessageDialog(biosim.frame(), "No run log exists.", "Error",
+				JOptionPane.showMessageDialog(BioSim.frame, "No run log exists.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view run log.", "Error",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to view run log.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}

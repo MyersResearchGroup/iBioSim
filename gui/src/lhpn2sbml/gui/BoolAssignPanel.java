@@ -43,11 +43,9 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 	//private static final String[] types = { "boolean", "continuous", "rate" };
 
 	private HashMap<String, PropertyField> fields = null;
-	
-	private BioSim biosim;
 
 	public BoolAssignPanel(String transition, String selected, PropertyList assignmentList, PropertyList booleanList,
-			LhpnFile lhpn, Log log, BioSim biosim) {
+			LhpnFile lhpn, Log log) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.transition = transition;
@@ -55,7 +53,6 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 		this.booleanList = booleanList;
 		this.lhpn = lhpn;
 		this.log = log;
-		this.biosim = biosim;
 
 		fields = new HashMap<String, PropertyField>();
 		
@@ -153,7 +150,7 @@ public class BoolAssignPanel extends JPanel implements ActionListener {
 	}
 
 	private boolean openGui(String oldName) {
-		int value = JOptionPane.showOptionDialog(biosim.frame(), this, "Boolean Assignment Editor",
+		int value = JOptionPane.showOptionDialog(BioSim.frame, this, "Boolean Assignment Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			//if (!checkValues()) {

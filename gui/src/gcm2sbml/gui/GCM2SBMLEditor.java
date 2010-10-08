@@ -109,7 +109,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				scan.close();
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Unable to read parameter file.", "Error",
+				JOptionPane.showMessageDialog(BioSim.frame, "Unable to read parameter file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				refFile = "";
 			}
@@ -297,7 +297,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		GeneticNetwork.setRoot(path + separator);
 
 		if (command.contains("GCM as")) {
-			String newName = JOptionPane.showInputDialog(biosim.frame(), "Enter GCM name:", "GCM Name",
+			String newName = JOptionPane.showInputDialog(BioSim.frame, "Enter GCM name:", "GCM Name",
 					JOptionPane.PLAIN_MESSAGE);
 			if (newName == null) {
 				return;
@@ -319,20 +319,20 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				parser.buildNetwork();
 			}
 			catch (IllegalStateException e) {
-				JOptionPane.showMessageDialog(biosim.frame(), e.getMessage(), "Error",
+				JOptionPane.showMessageDialog(BioSim.frame, e.getMessage(), "Error",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			GeneticNetwork network = new GeneticNetwork();
 
-			String templateName = JOptionPane.showInputDialog(biosim.frame(),
+			String templateName = JOptionPane.showInputDialog(BioSim.frame,
 					"Enter SBML template name:", "SBML Template Name", JOptionPane.PLAIN_MESSAGE);
 			if (templateName != null) {
 				if (!templateName.contains(".sbml") && !templateName.contains(".xml")) {
 					templateName = templateName + ".xml";
 				}
 				if (new File(path + separator + templateName).exists()) {
-					int value = JOptionPane.showOptionDialog(biosim.frame(), templateName
+					int value = JOptionPane.showOptionDialog(BioSim.frame, templateName
 							+ " already exists.  Overwrite file?", "Save file",
 							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 							options[0]);
@@ -358,13 +358,13 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 		}
 		else if (command.contains("LHPN")) {
-			String lpnName = JOptionPane.showInputDialog(biosim.frame(),
+			String lpnName = JOptionPane.showInputDialog(BioSim.frame,
 					"Enter LPN name:", "LPN Name", JOptionPane.PLAIN_MESSAGE);
 			if (!lpnName.trim().contains(".lpn")) {
 				lpnName = lpnName.trim() + ".lpn";
 			}
 			if (new File(path + separator + lpnName).exists()) {
-				int value = JOptionPane.showOptionDialog(biosim.frame(), lpnName
+				int value = JOptionPane.showOptionDialog(BioSim.frame, lpnName
 						+ " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
@@ -386,14 +386,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				network = parser.buildNetwork();
 			}
 			catch (IllegalStateException e) {
-				JOptionPane.showMessageDialog(biosim.frame(), e.getMessage(), "Error",
+				JOptionPane.showMessageDialog(BioSim.frame, e.getMessage(), "Error",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			network.loadProperties(gcm);
 			// Finally, output to a file
 			if (new File(path + separator + gcmname + ".xml").exists()) {
-				int value = JOptionPane.showOptionDialog(biosim.frame(), gcmname
+				int value = JOptionPane.showOptionDialog(BioSim.frame, gcmname
 						+ ".xml already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
@@ -421,7 +421,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 
 	public void saveAs(String newName) {
 		if (new File(path + separator + newName + ".gcm").exists()) {
-			int value = JOptionPane.showOptionDialog(biosim.frame(), newName
+			int value = JOptionPane.showOptionDialog(BioSim.frame, newName
 					+ " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
 					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
@@ -459,7 +459,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					double step = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[2]
 							.trim());
 					if (step <= 0) {
-						JOptionPane.showMessageDialog(biosim.frame(), "Step must be a positive number."
+						JOptionPane.showMessageDialog(BioSim.frame, "Step must be a positive number."
 								+ "\nDefaulting to a step of 1.", "Error", JOptionPane.ERROR_MESSAGE);
 						step = 1;
 					}
@@ -478,7 +478,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					double step = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[2]
 							.trim());
 					if (step <= 0) {
-						JOptionPane.showMessageDialog(biosim.frame(), "Step must be a positive number."
+						JOptionPane.showMessageDialog(BioSim.frame, "Step must be a positive number."
 								+ "\nDefaulting to a step of 1.", "Error", JOptionPane.ERROR_MESSAGE);
 						step = 1;
 					}
@@ -725,7 +725,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			out.close();
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file.",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to save parameter file.",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
 		try {
@@ -785,7 +785,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				network = parser.buildNetwork();
 			}
 			catch (IllegalStateException e) {
-				JOptionPane.showMessageDialog(biosim.frame(), e.getMessage(), "Error",
+				JOptionPane.showMessageDialog(BioSim.frame, e.getMessage(), "Error",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -840,7 +840,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to create sbml file.",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to create sbml file.",
 					"Error Creating File", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -1229,7 +1229,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						list.removeItem(name);
 					}
 					else {
-						JOptionPane.showMessageDialog(biosim.frame(), "Cannot remove species " + name
+						JOptionPane.showMessageDialog(BioSim.frame, "Cannot remove species " + name
 								+ " because it is currently in other reactions and/or components.");
 					}
 				}
@@ -1243,7 +1243,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						list.removeItem(name);
 					}
 					else {
-						JOptionPane.showMessageDialog(biosim.frame(), "Cannot remove promoter " + name
+						JOptionPane.showMessageDialog(BioSim.frame, "Cannot remove promoter " + name
 								+ " because it is currently in other reactions");
 					}
 				}
@@ -1266,7 +1266,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						list.removeItem(name);
 					}
 					else {
-						JOptionPane.showMessageDialog(biosim.frame(), "Cannot remove component "
+						JOptionPane.showMessageDialog(BioSim.frame, "Cannot remove component "
 								+ name.split(" ")[0] + " because it is currently in other reactions");
 					}
 				}
@@ -1318,7 +1318,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					refGCM = new GCMFile(path);
 					refGCM.load(path + separator + refFile);
 				}
-				SpeciesPanel panel = new SpeciesPanel(selected, list, influences, conditions, components, gcm, paramsOnly, biosim, refGCM);
+				SpeciesPanel panel = new SpeciesPanel(selected, list, influences, conditions, components, gcm, paramsOnly, refGCM);
 				if (paramsOnly) {
 					String updates = panel.updates();
 					if (!updates.equals("")) {
@@ -1348,7 +1348,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					refGCM = new GCMFile(path);
 					refGCM.load(path + separator + refFile);
 				}
-				InfluencePanel panel = new InfluencePanel(selected, list, gcm, paramsOnly, biosim, refGCM);
+				InfluencePanel panel = new InfluencePanel(selected, list, gcm, paramsOnly, refGCM);
 				if (paramsOnly) {
 					String updates = panel.updates();
 					if (!updates.equals("")) {
@@ -1378,7 +1378,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					refGCM = new GCMFile(path);
 					refGCM.load(path + separator + refFile);
 				}
-				PromoterPanel panel = new PromoterPanel(selected, list, influences, gcm, paramsOnly, biosim, refGCM);
+				PromoterPanel panel = new PromoterPanel(selected, list, influences, gcm, paramsOnly, refGCM);
 				if (paramsOnly) {
 					String updates = panel.updates();
 					if (!updates.equals("")) {
@@ -1400,7 +1400,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				ConditionsPanel panel = new ConditionsPanel(selected, list, gcm, paramsOnly, biosim);
+				ConditionsPanel panel = new ConditionsPanel(selected, list, gcm, paramsOnly);
 			}
 			else if (getName().contains("Component")) {
 				displayChooseComponentDialog(getName().contains("Edit"), list, false);
@@ -1415,7 +1415,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					refGCM = new GCMFile(path);
 					refGCM.load(path + separator + refFile);
 				}
-				ParameterPanel panel = new ParameterPanel(selected, list, gcm, paramsOnly, biosim, refGCM);
+				ParameterPanel panel = new ParameterPanel(selected, list, gcm, paramsOnly, refGCM);
 				if (paramsOnly) {
 					String updates = panel.updates();
 					if (!updates.equals("")) {
@@ -1455,7 +1455,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			refGCM = new GCMFile(path);
 			refGCM.load(path + separator + refFile);
 		}
-		return new PromoterPanel(id, promoters, influences, gcm, paramsOnly, biosim, refGCM);	
+		return new PromoterPanel(id, promoters, influences, gcm, paramsOnly, refGCM);	
 	}
 	public SpeciesPanel launchSpeciesPanel(String id){
 		GCMFile refGCM = null;
@@ -1463,7 +1463,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			refGCM = new GCMFile(path);
 			refGCM.load(path + separator + refFile);
 		}
-		return new SpeciesPanel(id, species, influences, conditions, components, gcm, paramsOnly, biosim, refGCM);
+		return new SpeciesPanel(id, species, influences, conditions, components, gcm, paramsOnly, refGCM);
 	}
 	public InfluencePanel launchInfluencePanel(String id){
 		GCMFile refGCM = null;
@@ -1471,7 +1471,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			refGCM = new GCMFile(path);
 			refGCM.load(path + separator + refFile);
 		}
-		return new InfluencePanel(id, influences, gcm, paramsOnly, biosim, refGCM);
+		return new InfluencePanel(id, influences, gcm, paramsOnly, refGCM);
 	}
 	public String launchComponentPanel(String id){
 		GCMFile refGCM = null;
@@ -1553,13 +1553,13 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 			if (components.size() == 0) {
 				comp = null;
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"There aren't any other gcms to use as components."
 								+ "\nCreate a new gcm or import a gcm into the project first.",
 						"Add Another GCM To The Project", JOptionPane.ERROR_MESSAGE);
 			}
 			else {
-				comp = (String) JOptionPane.showInputDialog(biosim.frame(),
+				comp = (String) JOptionPane.showInputDialog(BioSim.frame,
 						"Choose a gcm to use as a component:", "Component Editor",
 						JOptionPane.PLAIN_MESSAGE, null, components.toArray(new String[0]), null);
 			}
@@ -1605,7 +1605,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				outID = gcm.addComponent(null, properties);
 			}else{
 				new ComponentsPanel(selected, list, influences, gcm,
-						inputs, outputs, comp, oldPort, paramsOnly, biosim);
+						inputs, outputs, comp, oldPort, paramsOnly);
 				outID = selected;
 			}
 

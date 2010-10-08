@@ -34,17 +34,14 @@ public class PlacePanel extends JPanel implements ActionListener {
 	private LhpnFile lhpn;
 
 	private HashMap<String, PropertyField> fields = null;
-	
-	private BioSim biosim;
 
 	public PlacePanel(String selected, PropertyList placeList, PropertyList controlList,
-			LhpnFile lhpn, BioSim biosim) {
+			LhpnFile lhpn) {
 		super(new GridLayout(2, 1));
 		this.selected = selected;
 		this.placeList = placeList;
 		this.controlList = controlList;
 		this.lhpn = lhpn;
-		this.biosim = biosim;
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -96,7 +93,7 @@ public class PlacePanel extends JPanel implements ActionListener {
 	}
 
 	private boolean openGui(String oldName) {
-		int value = JOptionPane.showOptionDialog(biosim.frame(), this, "Place Editor",
+		int value = JOptionPane.showOptionDialog(BioSim.frame, this, "Place Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (!checkValues()) {

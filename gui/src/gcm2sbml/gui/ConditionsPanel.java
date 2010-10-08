@@ -14,12 +14,11 @@ import biomodelsim.BioSim;
 
 public class ConditionsPanel extends JPanel {
 	public ConditionsPanel(String selected, PropertyList conditionList, GCMFile gcm,
-			boolean paramsOnly, BioSim biosim) {
+			boolean paramsOnly) {
 		super(new GridLayout(1, 1));
 		this.selected = selected;
 		this.conditionList = conditionList;
 		this.gcm = gcm;
-		this.biosim = biosim;
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -42,7 +41,7 @@ public class ConditionsPanel extends JPanel {
 	}
 
 	private boolean openGui(String oldName) {
-		int value = JOptionPane.showOptionDialog(biosim.frame(), this, "Property Editor",
+		int value = JOptionPane.showOptionDialog(BioSim.frame, this, "Property Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (oldName == null) {
@@ -87,5 +86,4 @@ public class ConditionsPanel extends JPanel {
 	private String selected = "";
 	private GCMFile gcm = null;
 	private PropertyList conditionList = null;
-	private BioSim biosim;
 }

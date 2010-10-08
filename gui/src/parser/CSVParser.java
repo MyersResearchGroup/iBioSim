@@ -5,11 +5,9 @@ import java.util.*;
 
 import javax.swing.*;
 
-import biomodelsim.*;
-
 public class CSVParser extends Parser {
-	public CSVParser(String filename, BioSim biosim, boolean warn) {
-		super(new ArrayList<String>(), new ArrayList<ArrayList<Double>>(), biosim);
+	public CSVParser(String filename, boolean warn) {
+		super(new ArrayList<String>(), new ArrayList<ArrayList<Double>>());
 		try {
 			warning = warn;
 			boolean warning2 = warning;

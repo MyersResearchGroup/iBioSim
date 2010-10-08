@@ -11,6 +11,8 @@ import java.util.Stack;
 
 import javax.swing.JOptionPane;
 
+import biomodelsim.BioSim;
+
 import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.LhpnFile;
 
@@ -221,26 +223,26 @@ public class StateGraph implements Runnable {
 	public boolean canPerformMarkovianAnalysis() {
 		for (String trans : lhpn.getTransitionList()) {
 			if (!lhpn.isExpTransitionRateTree(trans)) {
-				JOptionPane.showMessageDialog(null,
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"LPN has transitions without exponential delay.",
 						"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
 				return false;
 			}
 			for (String var : lhpn.getVariables()) {
 				if (lhpn.isRandomBoolAssignTree(trans, var)) {
-					JOptionPane.showMessageDialog(null,
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"LPN has assignments containing random functions.",
 							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
 				if (lhpn.isRandomContAssignTree(trans, var)) {
-					JOptionPane.showMessageDialog(null,
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"LPN has assignments containing random functions.",
 							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
 					return false;
 				}
 				if (lhpn.isRandomIntAssignTree(trans, var)) {
-					JOptionPane.showMessageDialog(null,
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"LPN has assignments containing random functions.",
 							"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
 					return false;
@@ -248,7 +250,7 @@ public class StateGraph implements Runnable {
 			}
 		}
 		if (lhpn.getContVars().length > 0) {
-			JOptionPane.showMessageDialog(null, "LPN contains continuous variables.",
+			JOptionPane.showMessageDialog(BioSim.frame, "LPN contains continuous variables.",
 					"Unable to Perform Markov Chain Analysis", JOptionPane.ERROR_MESSAGE);
 			return false;
 		}

@@ -18,14 +18,13 @@ import biomodelsim.BioSim;
 
 public class PromoterPanel extends JPanel {
 	public PromoterPanel(String selected, PropertyList promoterList,
-			PropertyList influencesList, GCMFile gcm, boolean paramsOnly, BioSim biosim, GCMFile refGCM) {
+			PropertyList influencesList, GCMFile gcm, boolean paramsOnly, GCMFile refGCM) {
 		super(new GridLayout(8, 1));
 		this.selected = selected;
 		this.promoterList = promoterList;
 		this.influenceList = influencesList;
 		this.gcm = gcm;
 		this.paramsOnly = paramsOnly;
-		this.biosim = biosim;
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -214,7 +213,7 @@ public class PromoterPanel extends JPanel {
 	public String getLastUsedPromoter(){return lastUsedPromoter;}
 	
 	private boolean openGui(String oldName) {
-		int value = JOptionPane.showOptionDialog(biosim.frame(), this,
+		int value = JOptionPane.showOptionDialog(BioSim.frame, this,
 				"Promoter Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
@@ -361,5 +360,4 @@ public class PromoterPanel extends JPanel {
 	private PropertyList promoterList = null;
 	private PropertyList influenceList = null;
 	private boolean paramsOnly;
-	private BioSim biosim;
 }

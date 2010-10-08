@@ -25,17 +25,14 @@ public class PropertyPanel extends JPanel implements ActionListener {
 	private LhpnFile lhpn;
 
 	private PropertyField field;
-	
-	private BioSim biosim;
 
 	private PropertyList propertyList;
 
-	public PropertyPanel(String selected, PropertyList propertyList, LhpnFile lhpn, BioSim biosim) {
+	public PropertyPanel(String selected, PropertyList propertyList, LhpnFile lhpn) {
 		super(new GridLayout(1, 1));
 		this.selected = selected;
 		this.propertyList = propertyList;
 		this.lhpn = lhpn;
-		this.biosim = biosim;
 
 		// Property field
 		field = new PropertyField("Property", "", null, null,
@@ -131,12 +128,12 @@ public class PropertyPanel extends JPanel implements ActionListener {
 										goodProperty = Parseprobprop(probprop, goodProperty);
 									}
 									else{
-										JOptionPane.showMessageDialog(null, "invalid format after the first probability value ",
+										JOptionPane.showMessageDialog(BioSim.frame, "invalid format after the first probability value ",
 												"Error in Property", JOptionPane.ERROR_MESSAGE);
 									}
 								}
 								else {
-									JOptionPane.showMessageDialog(null, "invalid format of the probability value ",
+									JOptionPane.showMessageDialog(BioSim.frame, "invalid format of the probability value ",
 											"Error in Property", JOptionPane.ERROR_MESSAGE);
 								}
 							}
@@ -148,12 +145,12 @@ public class PropertyPanel extends JPanel implements ActionListener {
 									goodProperty = Parseprobprop(probprop, goodProperty);
 								}
 								else{
-									JOptionPane.showMessageDialog(null, "invalid format after the question mark ",
+									JOptionPane.showMessageDialog(BioSim.frame, "invalid format after the question mark ",
 											"Error in Property", JOptionPane.ERROR_MESSAGE);
 								}
 							}
 							else {
-								JOptionPane.showMessageDialog(null, "Missing relational operator after Pr",
+								JOptionPane.showMessageDialog(BioSim.frame, "Missing relational operator after Pr",
 										"Error in Property", JOptionPane.ERROR_MESSAGE);
 							}
 						}
@@ -185,17 +182,17 @@ public class PropertyPanel extends JPanel implements ActionListener {
 										boolean isHsfValid = isValidExpr(lhpn, hsf);
 										if(isHsfValid) goodProperty = true;
 										else{
-											 JOptionPane.showMessageDialog(null, "Invalid expression inside the square brackets.",
+											 JOptionPane.showMessageDialog(BioSim.frame, "Invalid expression inside the square brackets.",
 														"Error in Property", JOptionPane.ERROR_MESSAGE);
 										 }
 									}
 									else{
-										JOptionPane.showMessageDialog(null, "invalid format after the first probability value ",
+										JOptionPane.showMessageDialog(BioSim.frame, "invalid format after the first probability value ",
 												"Error in Property", JOptionPane.ERROR_MESSAGE);
 									}
 								}
 								else {
-									JOptionPane.showMessageDialog(null, "invalid format of the probability value ",
+									JOptionPane.showMessageDialog(BioSim.frame, "invalid format of the probability value ",
 											"Error in Property", JOptionPane.ERROR_MESSAGE);
 								}
 							}
@@ -207,17 +204,17 @@ public class PropertyPanel extends JPanel implements ActionListener {
 									boolean isHsfValid = isValidExpr(lhpn, hsf);
 									if(isHsfValid) goodProperty = true;
 									 else{
-										 JOptionPane.showMessageDialog(null, "Invalid expression inside the square brackets.",
+										 JOptionPane.showMessageDialog(BioSim.frame, "Invalid expression inside the square brackets.",
 													"Error in Property", JOptionPane.ERROR_MESSAGE);
 									 }
 								}
 								else{
-									JOptionPane.showMessageDialog(null, "invalid format after the question mark ",
+									JOptionPane.showMessageDialog(BioSim.frame, "invalid format after the question mark ",
 											"Error in Property", JOptionPane.ERROR_MESSAGE);
 								}
 							}
 							else {
-								JOptionPane.showMessageDialog(null, "Missing relational operator after St",
+								JOptionPane.showMessageDialog(BioSim.frame, "Missing relational operator after St",
 										"Error in Property", JOptionPane.ERROR_MESSAGE);
 							}
 						}
@@ -226,7 +223,7 @@ public class PropertyPanel extends JPanel implements ActionListener {
 						}
 					}
 					else {
-						JOptionPane.showMessageDialog(null, "Nested probabilistic property is not supported",
+						JOptionPane.showMessageDialog(BioSim.frame, "Nested probabilistic property is not supported",
 								"Error in Property", JOptionPane.ERROR_MESSAGE);				
 					}
 				}
@@ -236,7 +233,7 @@ public class PropertyPanel extends JPanel implements ActionListener {
 				}
 			}
 			else{
-				JOptionPane.showMessageDialog(null, "Unbalanced parentheses or square brackets",
+				JOptionPane.showMessageDialog(BioSim.frame, "Unbalanced parentheses or square brackets",
 						"Error in Property", JOptionPane.ERROR_MESSAGE);
 			}
 			return goodProperty;
@@ -250,7 +247,7 @@ public class PropertyPanel extends JPanel implements ActionListener {
 	}
 
 	private boolean openGui(String oldProperty) {
-		int value = JOptionPane.showOptionDialog(biosim.frame(), this, "Property Editor",
+		int value = JOptionPane.showOptionDialog(BioSim.frame, this, "Property Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			if (!checkValues()) {
@@ -325,7 +322,7 @@ public class PropertyPanel extends JPanel implements ActionListener {
 									 boolean isUpperValid = isValidExpr(lhpn, upperBoundPropTemp);
 									 if(isUpperValid) goodProperty = true;
 									 else{
-										 JOptionPane.showMessageDialog(null, "Invalid expression in upper time bound.",
+										 JOptionPane.showMessageDialog(BioSim.frame, "Invalid expression in upper time bound.",
 													"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
 									 }
 								 }
@@ -337,27 +334,27 @@ public class PropertyPanel extends JPanel implements ActionListener {
 									 boolean isUpperValid = isValidExpr(lhpn, upperBoundPropTemp);	 
 									 if(isLowerValid && isUpperValid) goodProperty = true;
 									 else 
-										 JOptionPane.showMessageDialog(null, "Invalid expression in lower/upper bound.",
+										 JOptionPane.showMessageDialog(BioSim.frame, "Invalid expression in lower/upper bound.",
 													"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
 								 }
 								 // invalid expression for the time bound
 								 else {
-									 JOptionPane.showMessageDialog(null, "Invalid format in time bound. It should be either [<= upper] or [lower, upper].",
+									 JOptionPane.showMessageDialog(BioSim.frame, "Invalid format in time bound. It should be either [<= upper] or [lower, upper].",
 												"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
 								 } 
 							 }
 							 else{
-								 JOptionPane.showMessageDialog(null, "Invalid logical expression after the until operator",
+								 JOptionPane.showMessageDialog(BioSim.frame, "Invalid logical expression after the until operator",
 											"Error in Property", JOptionPane.ERROR_MESSAGE);
 							 }
 						 }
 						 else {
-							 JOptionPane.showMessageDialog(null, "Invalid logical expression before the until operator",
+							 JOptionPane.showMessageDialog(BioSim.frame, "Invalid logical expression before the until operator",
 										"Error in Property", JOptionPane.ERROR_MESSAGE);
 						 }
 					 }
 					 else {
-						 JOptionPane.showMessageDialog(null, "Please add parenthese around the PU specification.",
+						 JOptionPane.showMessageDialog(BioSim.frame, "Please add parenthese around the PU specification.",
 									"Error in Property", JOptionPane.ERROR_MESSAGE);
 					 }
 				 }
@@ -376,7 +373,7 @@ public class PropertyPanel extends JPanel implements ActionListener {
 							 boolean isUpperValid = isValidExpr(lhpn, upperBoundPropTemp);
 							 if(isUpperValid) goodProperty = true;
 							 else{
-								 JOptionPane.showMessageDialog(null, "Invalid expression in upper time bound.",
+								 JOptionPane.showMessageDialog(BioSim.frame, "Invalid expression in upper time bound.",
 											"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
 							 }
 								 
@@ -388,24 +385,24 @@ public class PropertyPanel extends JPanel implements ActionListener {
 							 boolean isUpperValid = isValidExpr(lhpn, upperBoundPropTemp);
 							 if(isLowerValid && isUpperValid) goodProperty = true;
 							 else {
-								 JOptionPane.showMessageDialog(null, "Invalid format in time bound. It should be either [<= upper] or [lower, upper].",
+								 JOptionPane.showMessageDialog(BioSim.frame, "Invalid format in time bound. It should be either [<= upper] or [lower, upper].",
 											"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
 							 }	 
 						 }
 						 else {
-							 JOptionPane.showMessageDialog(null, "Invalid format in time bound. It should be either [<= upper] or [lower, upper].",
+							 JOptionPane.showMessageDialog(BioSim.frame, "Invalid format in time bound. It should be either [<= upper] or [lower, upper].",
 										"Error in Time Bound", JOptionPane.ERROR_MESSAGE);
 						 }
 						 
 					 }
 					 else {
-						 JOptionPane.showMessageDialog(null, "Invalid logical expression after the until operator",
+						 JOptionPane.showMessageDialog(BioSim.frame, "Invalid logical expression after the until operator",
 									"Error in Property", JOptionPane.ERROR_MESSAGE);
 					 }
 					
 				 }
 				 else {
-					 JOptionPane.showMessageDialog(null, "Temporal logic can only be one of the following: PU, PF and PG.",
+					 JOptionPane.showMessageDialog(BioSim.frame, "Temporal logic can only be one of the following: PU, PF and PG.",
 								"Error in Property", JOptionPane.ERROR_MESSAGE);
 				 }
 		     

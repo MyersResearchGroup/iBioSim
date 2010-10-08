@@ -81,7 +81,7 @@ public class Utility {
 	}*/
 
 	public static void createErrorMessage(String title, String message) {
-		JOptionPane.showMessageDialog(null, message, title,
+		JOptionPane.showMessageDialog(BioSim.frame, message, title,
 				JOptionPane.ERROR_MESSAGE);
 	}
 

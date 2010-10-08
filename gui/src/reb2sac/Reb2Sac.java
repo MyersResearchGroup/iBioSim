@@ -851,7 +851,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				input.close();
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Unable to load termination condition file!", "Error Loading File",
 						JOptionPane.ERROR_MESSAGE);
 			}
@@ -933,7 +933,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						}
 					}
 					else {
-						JOptionPane.showMessageDialog(biomodelsim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Unable to load user defined file!", "Error Loading File",
 								JOptionPane.ERROR_MESSAGE);
 						return;
@@ -941,7 +941,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Unable to load user defined file!", "Error Loading File",
 						JOptionPane.ERROR_MESSAGE);
 			}
@@ -1535,7 +1535,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			String stem = "";
 			if (!fileStem.getText().trim().equals("")) {
 				if (!(stemPat.matcher(fileStem.getText().trim()).matches())) {
-					JOptionPane.showMessageDialog(biomodelsim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"A file stem can only contain letters, numbers, and underscores.",
 							"Invalid File Stem", JOptionPane.ERROR_MESSAGE);
 					return;
@@ -1550,7 +1550,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 									.getComponentAt(i)));
 							if (sbml.isDirty()) {
 								Object[] options = { "Yes", "No" };
-								int value = JOptionPane.showOptionDialog(biomodelsim.frame(),
+								int value = JOptionPane.showOptionDialog(BioSim.frame,
 										"Do you want to save changes to " + sbmlEditor.getRefFile()
 												+ " before running the simulation?",
 										"Save Changes", JOptionPane.YES_NO_OPTION,
@@ -1565,7 +1565,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 									.getComponentAt(i)));
 							if (gcm.isDirty()) {
 								Object[] options = { "Yes", "No" };
-								int value = JOptionPane.showOptionDialog(biomodelsim.frame(),
+								int value = JOptionPane.showOptionDialog(BioSim.frame,
 										"Do you want to save changes to " + sbmlEditor.getRefFile()
 												+ " before running the simulation?",
 										"Save Changes", JOptionPane.YES_NO_OPTION,
@@ -1584,7 +1584,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 									.getComponentAt(i)));
 							if (gcm.isDirty()) {
 								Object[] options = { "Yes", "No" };
-								int value = JOptionPane.showOptionDialog(biomodelsim.frame(),
+								int value = JOptionPane.showOptionDialog(BioSim.frame,
 										"Do you want to save changes to " + gcmEditor.getRefFile()
 												+ " before running the simulation?",
 										"Save Changes", JOptionPane.YES_NO_OPTION,
@@ -1602,7 +1602,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							LHPNEditor lpn = ((LHPNEditor) (biomodelsim.getTab().getComponentAt(i)));
 							if (lpn.isDirty()) {
 								Object[] options = { "Yes", "No" };
-								int value = JOptionPane.showOptionDialog(biomodelsim.frame(),
+								int value = JOptionPane.showOptionDialog(BioSim.frame,
 										"Do you want to save changes to " + modelFile
 												+ " before running the simulation?",
 										"Save Changes", JOptionPane.YES_NO_OPTION,
@@ -1834,7 +1834,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				time = Double.parseDouble(this.time.getText().trim());
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(), "You must enter a real "
+				JOptionPane.showMessageDialog(BioSim.frame, "You must enter a real "
 						+ "number into the time text field!", "Time Must Be A Real Number",
 						JOptionPane.ERROR_MESSAGE);
 				return;
@@ -1843,7 +1843,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				mod = Integer.parseInt(ssaModNum.getText().trim());
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(), "You must enter an integer "
+				JOptionPane.showMessageDialog(BioSim.frame, "You must enter an integer "
 						+ "into the amount change text field!", "Amount Change Must Be An Integer",
 						JOptionPane.ERROR_MESSAGE);
 				return;
@@ -1865,7 +1865,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				modify = "/";
 			}
 			if (availSpecies.getSelectedItem() == null) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"You must select a model for simulation "
 								+ "in order to add a user defined condition.",
 						"Select A Model For Simulation", JOptionPane.ERROR_MESSAGE);
@@ -1946,7 +1946,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 			}
 			TermCond TCparser = new TermCond(false);
-			int result = TCparser.ParseTermCond(biomodelsim, (this), listOfSpecs, listOfReacs, cond
+			int result = TCparser.ParseTermCond(listOfSpecs, listOfReacs, cond
 					.getText().trim());
 			if (result == 0) {
 				String add = TCid.getText().trim() + "; " + desc.getText().trim() + "; "
@@ -1963,7 +1963,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				sad.setListData(sadList);
 			}
 			else if (result == 1) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Syntax error in the termination condition!", "Syntax Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
@@ -2036,7 +2036,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				ssaAddPanel.add(ssaAddPanel1, "North");
 				ssaAddPanel.add(ssaAddPanel2, "Center");
 				String[] options = { "Save", "Cancel" };
-				int value = JOptionPane.showOptionDialog(biomodelsim.frame(), ssaAddPanel,
+				int value = JOptionPane.showOptionDialog(BioSim.frame, ssaAddPanel,
 						"Edit User Defined Data", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
@@ -2046,7 +2046,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						time1 = Double.parseDouble(time.getText().trim());
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(biomodelsim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"You must enter a real number " + "into the time text field!",
 								"Time Must Be A Real Number", JOptionPane.ERROR_MESSAGE);
 						return;
@@ -2056,7 +2056,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					}
 					catch (Exception e1) {
 						JOptionPane
-								.showMessageDialog(biomodelsim.frame(),
+								.showMessageDialog(BioSim.frame,
 										"You must enter an integer "
 												+ "into the amount change text field!",
 										"Amount Change Must Be An Integer",
@@ -2080,7 +2080,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						modify = "/";
 					}
 					if (availSpecies.getSelectedItem() == null) {
-						JOptionPane.showMessageDialog(biomodelsim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"You must select a model for simulation "
 										+ "in order to add a user defined condition.",
 								"Select A Model For Simulation", JOptionPane.ERROR_MESSAGE);
@@ -2186,7 +2186,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				sadAddPanel.add(sadAddPanel1, "Center");
 				sadAddPanel.add(sadAddPanel2, "South");
 				String[] options = { "Save", "Cancel" };
-				int value = JOptionPane.showOptionDialog(biomodelsim.frame(), sadAddPanel,
+				int value = JOptionPane.showOptionDialog(BioSim.frame, sadAddPanel,
 						"Edit Termination Condition", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
@@ -2207,7 +2207,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						}
 					}
 					TermCond TCparser = new TermCond(false);
-					int result = TCparser.ParseTermCond(biomodelsim, (this), listOfSpecs,
+					int result = TCparser.ParseTermCond(listOfSpecs,
 							listOfReacs, cond.getText().trim());
 					if (result == 0) {
 						sadList[sad.getSelectedIndex()] = TCid.getText().trim() + "; "
@@ -2219,7 +2219,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						sad.setListData(sadList);
 					}
 					else if (result == 1) {
-						JOptionPane.showMessageDialog(biomodelsim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Syntax error in the termination condition!", "Syntax Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
@@ -2246,7 +2246,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				OptAddPanel.add(OptAddPanel0, "North");
 				OptAddPanel.add(OptAddPanel1, "Center");
 				String[] options = { "Save", "Cancel" };
-				int value = JOptionPane.showOptionDialog(biomodelsim.frame(), OptAddPanel,
+				int value = JOptionPane.showOptionDialog(BioSim.frame, OptAddPanel,
 						"Edit Option", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 						options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
@@ -2314,7 +2314,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			absList.addItem("stop-flag-generator");
 			addAbsPanel.add(absList, "Center");
 			String[] options = { "Add", "Cancel" };
-			int value = JOptionPane.showOptionDialog(biomodelsim.frame(), addAbsPanel,
+			int value = JOptionPane.showOptionDialog(BioSim.frame, addAbsPanel,
 					"Add abstraction method", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 					null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
@@ -2382,13 +2382,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the add properties button is clicked
 		else if (e.getSource() == addProp) {
 			if (prop.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Enter a option into the option field!", "Must Enter an Option",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			if (value.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Enter a value into the value field!", "Must Enter a Value",
 						JOptionPane.ERROR_MESSAGE);
 				return;
@@ -2442,7 +2442,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Unable to restore time limit and print interval.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
@@ -2485,7 +2485,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			timeLimit = Double.parseDouble(limit.getText().trim());
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Must Enter A Real Number Into The Time Limit Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
@@ -2494,14 +2494,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
 				printInterval = Double.parseDouble(interval.getText().trim());
 				if (printInterval < 0) {
-					JOptionPane.showMessageDialog(biomodelsim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"Must Enter A Positive Number Into The Print Interval Field.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				else if (printInterval == 0
 						&& !((String) intervalLabel.getSelectedItem()).contains("Minimum")) {
-					JOptionPane.showMessageDialog(biomodelsim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"Must Enter A Positive Number Into The Print Interval Field.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
@@ -2510,7 +2510,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			else {
 				printInterval = Integer.parseInt(interval.getText().trim());
 				if (printInterval <= 0) {
-					JOptionPane.showMessageDialog(biomodelsim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"Must Enter A Positive Number Into The Number of Steps Field.",
 							"Error", JOptionPane.ERROR_MESSAGE);
 					return;
@@ -2519,13 +2519,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		catch (Exception e1) {
 			if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Must Enter A Real Number Into The Print Interval Field.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			else {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Must Enter An Integer Into The Number Of Steps Field.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				return;
@@ -2536,7 +2536,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			timeStep = Double.MAX_VALUE;
 		}
 		else if (step.getText().trim().equals("inf") && sim.equals("euler")) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Cannot Select An Infinite Time Step With Euler Simulation.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
@@ -2549,7 +2549,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 			catch (Exception e1) {
 				// if (step.isEnabled()) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Must Enter A Real Number Into The Time Step Field.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				// }
@@ -2560,7 +2560,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			minTimeStep = Double.parseDouble(minStep.getText().trim());
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Must Enter A Real Number Into The Minimum Time Step Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
@@ -2572,7 +2572,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		catch (Exception e1) {
 			// if (absErr.isEnabled()) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Must Enter A Real Number Into The Absolute Error Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			// }
@@ -2590,7 +2590,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Must Enter An Integer Into The Random Seed Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
@@ -2600,7 +2600,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// if (runs.isEnabled()) {
 			run = Integer.parseInt(runs.getText().trim());
 			if (run < 0) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Must Enter A Positive Integer Into The Runs Field."
 								+ "\nProceding With Default:   "
 								+ biosimrc.get("biosim.sim.runs", ""), "Error",
@@ -2610,7 +2610,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Must Enter A Positive Integer Into The Runs Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
@@ -2662,7 +2662,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter A Real Number Into The"
+			JOptionPane.showMessageDialog(BioSim.frame, "Must Enter A Real Number Into The"
 					+ " Rapid Equilibrium Condition 1 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -2672,7 +2672,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter A Real Number Into The"
+			JOptionPane.showMessageDialog(BioSim.frame, "Must Enter A Real Number Into The"
 					+ " Rapid Equilibrium Condition 2 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -2682,7 +2682,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Must Enter A Real Number Into The QSSA Condition Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
@@ -2693,7 +2693,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter An Integer Into The Max"
+			JOptionPane.showMessageDialog(BioSim.frame, "Must Enter An Integer Into The Max"
 					+ " Concentration Threshold Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -2780,7 +2780,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable to save user defined file!",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to save user defined file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -2823,7 +2823,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		 * monteInterval =
 		 * getProps.getProperty("monte.carlo.simulation.print.interval"); } } }
 		 * catch (Exception e) {
-		 * JOptionPane.showMessageDialog(biomodelsim.frame(),
+		 * JOptionPane.showMessageDialog(BioSim.frame,
 		 * "Unable to add properties to property file.", "Error",
 		 * JOptionPane.ERROR_MESSAGE); }
 		 */
@@ -2876,7 +2876,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				// double test = printInterval / timeStep;
 				// double error = test - ((int) test);
 				// if (error > 0.0001) {
-				// JOptionPane.showMessageDialog(biomodelsim.frame(),
+				// JOptionPane.showMessageDialog(BioSim.frame,
 				// "Print Interval Must Be A Multiple Of Time Step.", "Error",
 				// JOptionPane.ERROR_MESSAGE);
 				// return;
@@ -2884,7 +2884,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				// test = timeLimit / printInterval;
 				// error = test - ((int) test);
 				// if (error > 0.0001) {
-				// JOptionPane.showMessageDialog(biomodelsim.frame(),
+				// JOptionPane.showMessageDialog(BioSim.frame,
 				// "Time Limit Must Be A Multiple Of Print Interval.", "Error",
 				// JOptionPane.ERROR_MESSAGE);
 				// return;
@@ -2922,7 +2922,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				// double test = interval / timeStep;
 				// double error = test - ((int) test);
 				// if (error > 0.0001) {
-				// JOptionPane.showMessageDialog(biomodelsim.frame(),
+				// JOptionPane.showMessageDialog(BioSim.frame,
 				// "Print Interval Must Be A Multiple Of Time Step.", "Error",
 				// JOptionPane.ERROR_MESSAGE);
 				// return;
@@ -3051,7 +3051,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to add properties to property file.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -3087,7 +3087,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			if (lpnProperties != null) {
 				lpnProperty = ((String) lpnProperties.getSelectedItem());
 			}
-			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, biomodelsim.frame(), ODE,
+			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, BioSim.frame, ODE,
 					monteCarlo, sim, printer_id, printer_track_quantity,
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
@@ -3116,7 +3116,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			if (lpnProperties != null) {
 				lpnProperty = ((String) lpnProperties.getSelectedItem());
 			}
-			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, biomodelsim.frame(), ODE,
+			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, BioSim.frame, ODE,
 					monteCarlo, sim, printer_id, printer_track_quantity,
 					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
 							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
@@ -3252,7 +3252,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			timeLimit = Double.parseDouble(limit.getText().trim());
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Must Enter A Real Number Into The Time Limit Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
@@ -3267,13 +3267,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		catch (Exception e1) {
 			if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Must Enter A Real Number Into The Print Interval Field.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			else {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Must Enter An Integer Into The Number Of Steps Field.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				return;
@@ -3288,7 +3288,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 			catch (Exception e1) {
 				if (step.isEnabled()) {
-					JOptionPane.showMessageDialog(biomodelsim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"Must Enter A Real Number Into The Time Step Field.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
@@ -3300,7 +3300,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		catch (Exception e1) {
 			if (minStep.isEnabled()) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Must Enter A Real Number Into The Time Step Field.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
@@ -3313,7 +3313,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		catch (Exception e1) {
 			// if (absErr.isEnabled()) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Must Enter A Real Number Into The Absolute Error Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			// }
@@ -3327,7 +3327,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Must Enter An Integer Into The Random Seed Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
@@ -3336,7 +3336,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// if (runs.isEnabled()) {
 			run = Integer.parseInt(runs.getText().trim());
 			if (run < 0) {
-				JOptionPane.showMessageDialog(biomodelsim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Must Enter A Positive Integer Into The Runs Field."
 								+ "\nProceding With Default:  1", "Error",
 						JOptionPane.ERROR_MESSAGE);
@@ -3345,7 +3345,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Must Enter A Positive Integer Into The Runs Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
@@ -3381,7 +3381,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter A Real Number Into The"
+			JOptionPane.showMessageDialog(BioSim.frame, "Must Enter A Real Number Into The"
 					+ " Rapid Equilibrium Condition 1 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -3391,7 +3391,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter A Real Number Into The"
+			JOptionPane.showMessageDialog(BioSim.frame, "Must Enter A Real Number Into The"
 					+ " Rapid Equilibrium Condition 2 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -3401,7 +3401,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Must Enter A Real Number Into The QSSA Condition Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
@@ -3412,7 +3412,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Must Enter An Integer Into The Max"
+			JOptionPane.showMessageDialog(BioSim.frame, "Must Enter An Integer Into The Max"
 					+ " Concentration Threshold Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -3499,7 +3499,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable to save user defined file!",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to save user defined file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -3531,7 +3531,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// }
 		// }
 		// catch (Exception e) {
-		// JOptionPane.showMessageDialog(biomodelsim.frame(),
+		// JOptionPane.showMessageDialog(BioSim.frame,
 		// "Unable to add properties to property file.", "Error",
 		// JOptionPane.ERROR_MESSAGE);
 		// }
@@ -3568,7 +3568,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			store.close();
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to add properties to property file.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -3597,7 +3597,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			out.close();
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biomodelsim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Unable to save termination conditions!", "Error Saving File",
 					JOptionPane.ERROR_MESSAGE);
 			return;
@@ -4372,7 +4372,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		catch (Exception e1) {
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(biomodelsim.frame(), "Unable to load properties file!",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -4485,7 +4485,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * ArrayList<String>(); for (Object spec : interestingSpecies) {
 	 * intSpecs.add(((String) spec).split(" ")[0]); } for (Object spec :
 	 * intSpecies.getSelectedValues()) { if (intSpecs.contains((String) spec)) {
-	 * JOptionPane .showMessageDialog(biomodelsim.frame(), spec +
+	 * JOptionPane .showMessageDialog(BioSim.frame, spec +
 	 * " is already an interesting species.", "Error",
 	 * JOptionPane.ERROR_MESSAGE); return; } } JTabbedPane naryTabs = new
 	 * JTabbedPane(); ArrayList<JPanel> specProps = new ArrayList<JPanel>();
@@ -4510,17 +4510,17 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * Integer.parseInt(e.getActionCommand().substring(3,
 	 * e.getActionCommand().length())); try { int get =
 	 * Integer.parseInt(texts.get(number).getText().trim()); if (get <= 0) {
-	 * JOptionPane.showMessageDialog(biomodelsim.frame(),
+	 * JOptionPane.showMessageDialog(BioSim.frame,
 	 * "Amounts Must Be Positive Integers.", "Error",
 	 * JOptionPane.ERROR_MESSAGE); } else { JList add = new JList(); Object[]
 	 * adding = { "" + get }; add.setListData(adding); add.setSelectedIndex(0);
 	 * Object[] sort = Buttons.add(conLevel.get(number), consLevel.get(number),
-	 * add, false, null, null, null, null, null, null, biomodelsim.frame()); int
+	 * add, false, null, null, null, null, null, null, BioSim.frame); int
 	 * in; for (int out = 1; out < sort.length; out++) { int temp =
 	 * Integer.parseInt((String) sort[out]); in = out; while (in > 0 &&
 	 * Integer.parseInt((String) sort[in - 1]) >= temp) { sort[in] = sort[in -
 	 * 1]; --in; } sort[in] = temp + ""; } conLevel.set(number, sort); } } catch
-	 * (Exception e1) { JOptionPane.showMessageDialog(biomodelsim.frame(),
+	 * (Exception e1) { JOptionPane.showMessageDialog(BioSim.frame,
 	 * "Amounts Must Be Positive Integers.", "Error",
 	 * JOptionPane.ERROR_MESSAGE); } } }); Add.setActionCommand("Add" +
 	 * (consLevel.size() - 1)); Remove.addActionListener(new ActionListener() {
@@ -4536,7 +4536,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * "South"); specProps.add(newnewPanel); naryTabs.addTab(spec +
 	 * " Properties", specProps.get(specProps.size() - 1)); } Object[] options =
 	 * { "Add", "Cancel" }; int value =
-	 * JOptionPane.showOptionDialog(biomodelsim.frame(), naryTabs, "Thresholds",
+	 * JOptionPane.showOptionDialog(BioSim.frame, naryTabs, "Thresholds",
 	 * JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 	 * options[0]); if (value == JOptionPane.YES_OPTION) { String[] add = new
 	 * String[specs.size()]; for (int i = 0; i < specs.size(); i++) { add[i] =
@@ -4546,7 +4546,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * int[] select = new int[add.length]; for (int i = 0; i < add.length; i++)
 	 * { select[i] = i; } list.setSelectedIndices(select); interestingSpecies =
 	 * Buttons.add(interestingSpecies, species, list, false, amountTerm, ge, gt,
-	 * eq, lt, le, biomodelsim.frame()); } }
+	 * eq, lt, le, BioSim.frame); } }
 	 * 
 	 * private void editInterstingSpecies() { JTabbedPane naryTabs = new
 	 * JTabbedPane(); ArrayList<JPanel> specProps = new ArrayList<JPanel>();
@@ -4573,17 +4573,17 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * Integer.parseInt(e.getActionCommand().substring(3,
 	 * e.getActionCommand().length())); try { int get =
 	 * Integer.parseInt(texts.get(number).getText().trim()); if (get <= 0) {
-	 * JOptionPane.showMessageDialog(biomodelsim.frame(),
+	 * JOptionPane.showMessageDialog(BioSim.frame,
 	 * "Amounts Must Be Positive Integers.", "Error",
 	 * JOptionPane.ERROR_MESSAGE); } else { JList add = new JList(); Object[]
 	 * adding = { "" + get }; add.setListData(adding); add.setSelectedIndex(0);
 	 * Object[] sort = Buttons.add(conLevel.get(number), consLevel.get(number),
-	 * add, false, null, null, null, null, null, null, biomodelsim.frame()); int
+	 * add, false, null, null, null, null, null, null, BioSim.frame); int
 	 * in; for (int out = 1; out < sort.length; out++) { int temp =
 	 * Integer.parseInt((String) sort[out]); in = out; while (in > 0 &&
 	 * Integer.parseInt((String) sort[in - 1]) >= temp) { sort[in] = sort[in -
 	 * 1]; --in; } sort[in] = temp + ""; } conLevel.set(number, sort); } } catch
-	 * (Exception e1) { JOptionPane.showMessageDialog(biomodelsim.frame(),
+	 * (Exception e1) { JOptionPane.showMessageDialog(BioSim.frame,
 	 * "Amounts Must Be Positive Integers.", "Error",
 	 * JOptionPane.ERROR_MESSAGE); } } }); Add.setActionCommand("Add" +
 	 * (consLevel.size() - 1)); Remove.addActionListener(new ActionListener() {
@@ -4599,7 +4599,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * "South"); specProps.add(newnewPanel); naryTabs.addTab(split[0] +
 	 * " Properties", specProps.get(specProps.size() - 1)); } Object[] options =
 	 * { "Add", "Cancel" }; int value =
-	 * JOptionPane.showOptionDialog(biomodelsim.frame(), naryTabs, "Thresholds",
+	 * JOptionPane.showOptionDialog(BioSim.frame, naryTabs, "Thresholds",
 	 * JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 	 * options[0]); if (value == JOptionPane.YES_OPTION) {
 	 * Buttons.remove(species); String[] add = new String[specs.size()]; for
@@ -4610,7 +4610,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * int[add.length]; for (int i = 0; i < add.length; i++) { select[i] = i; }
 	 * list.setSelectedIndices(select); interestingSpecies =
 	 * Buttons.add(interestingSpecies, species, list, false, amountTerm, ge, gt,
-	 * eq, lt, le, biomodelsim.frame()); } }
+	 * eq, lt, le, BioSim.frame); } }
 	 */
 
 	private void createInterestingSpeciesPanel() {
@@ -4843,7 +4843,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * new JScrollPane(); scroll.setMinimumSize(new Dimension(300, 300));
 	 * scroll.setPreferredSize(new Dimension(300, 300));
 	 * scroll.setViewportView(messageArea);
-	 * JOptionPane.showMessageDialog(biomodelsim.frame(), scroll,
+	 * JOptionPane.showMessageDialog(BioSim.frame, scroll,
 	 * "Unable To Remove Species", JOptionPane.ERROR_MESSAGE); }
 	 * interestingSpecies = Buttons.remove(species, interestingSpecies); }
 	 */

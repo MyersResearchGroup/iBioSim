@@ -44,11 +44,9 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 	// };
 
 	private HashMap<String, PropertyField> fields = null;
-	
-	private BioSim biosim;
 
 	public RateAssignPanel(String transition, String selected, PropertyList assignmentList, PropertyList rateAssignList,
-			LhpnFile lhpn, Log log, BioSim biosim) {
+			LhpnFile lhpn, Log log) {
 		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.transition = transition;
@@ -56,7 +54,6 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 		this.rateAssignList = rateAssignList;
 		this.lhpn = lhpn;
 		this.log = log;
-		this.biosim = biosim;
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -149,7 +146,7 @@ public class RateAssignPanel extends JPanel implements ActionListener {
 	}
 
 	private boolean openGui(String oldName, String oldVar) {
-		int value = JOptionPane.showOptionDialog(biosim.frame(), this, "Rate Assignment Editor",
+		int value = JOptionPane.showOptionDialog(BioSim.frame, this, "Rate Assignment Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			//if (!checkValues()) {

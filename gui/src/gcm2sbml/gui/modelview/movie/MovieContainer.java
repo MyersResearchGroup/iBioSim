@@ -91,15 +91,15 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 		String filename;
 		try{
-			filename = ListChooser.selectFromList(biosim.frame(), filenames.toArray(), "Please choose a simulation file");
+			filename = ListChooser.selectFromList(BioSim.frame, filenames.toArray(), "Please choose a simulation file");
 		}catch(ListChooser.EmptyListException e){
-			JOptionPane.showMessageDialog(biosim.frame(), "Sorry, there aren't any simulation files. Please simulate then try again.");
+			JOptionPane.showMessageDialog(BioSim.frame, "Sorry, there aren't any simulation files. Please simulate then try again.");
 			return;
 		}
 		if(filename == null)
 			return;
 		String fullFilePath = reb2sac.getSimPath() + File.separator + filename;
-		this.parser = new TSDParser(fullFilePath, biosim, false);
+		this.parser = new TSDParser(fullFilePath, false);
 		
 		slider.setMaximum(parser.getNumSamples()-1);
 		slider.setValue(0);

@@ -337,7 +337,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				scan.close();
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Unable to read parameter file.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Unable to read parameter file.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 				refFile = "";
 			}
@@ -370,7 +370,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				scan.close();
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Unable to read parameter file.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Unable to read parameter file.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 				refFile = file;
 			}
@@ -1031,7 +1031,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			funcs = sortFunctions(funcs);
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Cycle detected in function definitions.", "Cycle Detected",
 					JOptionPane.ERROR_MESSAGE);
 			funcs = oldFuncs;
@@ -1114,7 +1114,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		catch (Exception e) {
 			cycle = true;
-			JOptionPane.showMessageDialog(biosim.frame(), "Cycle detected in initial assignments.",
+			JOptionPane.showMessageDialog(BioSim.frame, "Cycle detected in initial assignments.",
 					"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 			inits = oldInits;
 		}
@@ -1147,12 +1147,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		catch (Exception e) {
 			cycle = true;
-			JOptionPane.showMessageDialog(biosim.frame(), "Cycle detected in assignments.",
+			JOptionPane.showMessageDialog(BioSim.frame, "Cycle detected in assignments.",
 					"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 			rul = oldRul;
 		}
 		if (!cycle && checkCycles(inits, rul)) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Cycle detected within initial assignments, assignment rules, and rate laws.",
 					"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 		}
@@ -1608,7 +1608,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				scroll.setMinimumSize(new Dimension(300, 300));
 				scroll.setPreferredSize(new Dimension(300, 300));
 				scroll.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(biosim.frame(), scroll,
+				JOptionPane.showMessageDialog(BioSim.frame, scroll,
 						"Unable To Remove Compartment Type", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -1692,7 +1692,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				scroll.setMinimumSize(new Dimension(300, 300));
 				scroll.setPreferredSize(new Dimension(300, 300));
 				scroll.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(biosim.frame(), scroll,
+				JOptionPane.showMessageDialog(BioSim.frame, scroll,
 						"Unable To Remove Species Type", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -1883,7 +1883,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					scroll.setMinimumSize(new Dimension(300, 300));
 					scroll.setPreferredSize(new Dimension(300, 300));
 					scroll.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(biosim.frame(), scroll,
+					JOptionPane.showMessageDialog(BioSim.frame, scroll,
 							"Unable To Remove Compartment", JOptionPane.ERROR_MESSAGE);
 				}
 				else if (!variableInUse(((String) compartments.getSelectedValue()).split(" ")[0],
@@ -1905,7 +1905,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			else {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Each model must contain at least one compartment.",
 						"Unable To Remove Compartment", JOptionPane.ERROR_MESSAGE);
 			}
@@ -1940,7 +1940,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Copy a reaction
 	 */
 	private void copyReaction() {
-		String reacID = JOptionPane.showInputDialog(biosim.frame(), "Enter New Reaction ID:",
+		String reacID = JOptionPane.showInputDialog(BioSim.frame, "Enter New Reaction ID:",
 				"Reaction ID", JOptionPane.PLAIN_MESSAGE);
 		if (reacID == null) {
 			return;
@@ -1975,7 +1975,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			add.setSelectedIndex(0);
 			reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			adding = Buttons.add(reacts, reactions, add, false, null, null, null, null, null, null,
-					biosim.frame());
+					BioSim.frame);
 			reacts = new String[adding.length];
 			for (int i = 0; i < adding.length; i++) {
 				reacts[i] = (String) adding[i];
@@ -1992,7 +1992,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			dirty = true;
 		}
 		else {
-			JOptionPane.showMessageDialog(biosim.frame(), "ID is not unique.", "Enter A Unique ID",
+			JOptionPane.showMessageDialog(BioSim.frame, "ID is not unique.", "Enter A Unique ID",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -2204,7 +2204,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Save SBML file with a new name
 	 */
 	public void saveAs() {
-		String simName = JOptionPane.showInputDialog(biosim.frame(), "Enter Model ID:", "Model ID",
+		String simName = JOptionPane.showInputDialog(BioSim.frame, "Enter Model ID:", "Model ID",
 				JOptionPane.PLAIN_MESSAGE);
 		if (simName != null && !simName.equals("")) {
 			if (simName.length() > 4) {
@@ -2249,7 +2249,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				biosim.addToTree(simName);
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Unable to save sbml file.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Unable to save sbml file.",
 						"Error Saving File", JOptionPane.ERROR_MESSAGE);
 			}
 			finally {
@@ -2275,7 +2275,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (vars[j].equals(v)) {
 						JOptionPane
 								.showMessageDialog(
-										biosim.frame(),
+										BioSim.frame,
 										"Cannot remove reaction parameter because it is used in the kinetic law.",
 										"Cannot Remove Parameter", JOptionPane.ERROR_MESSAGE);
 						return;
@@ -2289,7 +2289,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									" |\\(|\\)|\\,");
 							for (int k = 0; k < vars.length; k++) {
 								if (vars[k].equals(v)) {
-									JOptionPane.showMessageDialog(biosim.frame(),
+									JOptionPane.showMessageDialog(BioSim.frame,
 											"Cannot remove reaction parameter because it is used in the stoichiometry math for product "
 													+ specRef + ".", "Cannot Remove Parameter",
 											JOptionPane.ERROR_MESSAGE);
@@ -2307,7 +2307,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									" |\\(|\\)|\\,");
 							for (int k = 0; k < vars.length; k++) {
 								if (vars[k].equals(v)) {
-									JOptionPane.showMessageDialog(biosim.frame(),
+									JOptionPane.showMessageDialog(BioSim.frame,
 											"Cannot remove reaction parameter because it is used in the stoichiometry math for reactant "
 													+ specRef + ".", "Cannot Remove Parameter",
 											JOptionPane.ERROR_MESSAGE);
@@ -2475,7 +2475,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			scroll.setMinimumSize(new Dimension(350, 350));
 			scroll.setPreferredSize(new Dimension(350, 350));
 			scroll.setViewportView(messageArea);
-			JOptionPane.showMessageDialog(biosim.frame(), scroll, "Unable To Remove Variable",
+			JOptionPane.showMessageDialog(BioSim.frame, scroll, "Unable To Remove Variable",
 					JOptionPane.ERROR_MESSAGE);
 		}
 		return inUse;
@@ -2790,7 +2790,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			scroll.setMinimumSize(new Dimension(400, 400));
 			scroll.setPreferredSize(new Dimension(400, 400));
 			scroll.setViewportView(messageArea);
-			JOptionPane.showMessageDialog(biosim.frame(), scroll, "Unable To Remove Variable",
+			JOptionPane.showMessageDialog(BioSim.frame, scroll, "Unable To Remove Variable",
 					JOptionPane.ERROR_MESSAGE);
 		}
 		return inUse;
@@ -2801,12 +2801,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private boolean checkID(String ID, String selectedID, boolean isReacParam) {
 		if (ID.equals("")) {
-			JOptionPane.showMessageDialog(biosim.frame(), "An ID is required.", "Enter an ID",
+			JOptionPane.showMessageDialog(BioSim.frame, "An ID is required.", "Enter an ID",
 					JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
 		if (!(IDpat.matcher(ID).matches())) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"An ID can only contain letters, numbers, and underscores.", "Invalid ID",
 					JOptionPane.ERROR_MESSAGE);
 			return true;
@@ -2832,17 +2832,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				|| ID.equals("eq") || ID.equals("geq") || ID.equals("leq") || ID.equals("gt")
 				|| ID.equals("neq") || ID.equals("lt") || ID.equals("delay") 
 				|| ((document.getLevel()>2) && (ID.equals("avogadro")))) {
-			JOptionPane.showMessageDialog(biosim.frame(), "ID cannot be a reserved word.",
+			JOptionPane.showMessageDialog(BioSim.frame, "ID cannot be a reserved word.",
 					"Illegal ID", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
 		if (usedIDs.contains(ID) && !ID.equals(selectedID)) {
 			if (isReacParam) {
-				JOptionPane.showMessageDialog(biosim.frame(), "ID shadows a global ID.",
+				JOptionPane.showMessageDialog(BioSim.frame, "ID shadows a global ID.",
 						"Not a Unique ID", JOptionPane.WARNING_MESSAGE);
 			}
 			else {
-				JOptionPane.showMessageDialog(biosim.frame(), "ID is not unique.",
+				JOptionPane.showMessageDialog(BioSim.frame, "ID is not unique.",
 						"Enter a Unique ID", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
@@ -2867,7 +2867,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private void functionEditor(String option) {
 		if (option.equals("OK") && functions.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No function selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No function selected.",
 					"Must Select a Function", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -2917,7 +2917,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		funcPanel.add(eqn);
 		functionPanel.add(funcPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), functionPanel, "Function Editor",
+		int value = JOptionPane.showOptionDialog(BioSim.frame, functionPanel, "Function Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
@@ -2926,7 +2926,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				String[] vars = eqn.getText().trim().split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-");
 				for (int i = 0; i < vars.length; i++) {
 					if (vars[i].equals(funcID.getText().trim())) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Recursive functions are not allowed.", "Recursion Illegal",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -2936,20 +2936,20 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			if (!error) {
 				if (eqn.getText().trim().equals("")) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Formula is not valid.",
+					JOptionPane.showMessageDialog(BioSim.frame, "Formula is not valid.",
 							"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 				else if (args.getText().trim().equals("")
 						&& libsbml.parseFormula("lambda(" + eqn.getText().trim() + ")") == null) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Formula is not valid.",
+					JOptionPane.showMessageDialog(BioSim.frame, "Formula is not valid.",
 							"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 				else if (!args.getText().trim().equals("")
 						&& libsbml.parseFormula("lambda(" + args.getText().trim() + ","
 								+ eqn.getText().trim() + ")") == null) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Formula is not valid.",
+					JOptionPane.showMessageDialog(BioSim.frame, "Formula is not valid.",
 							"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
@@ -2977,7 +2977,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						scrolls.setMinimumSize(new Dimension(300, 300));
 						scrolls.setPreferredSize(new Dimension(300, 300));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Illegal Variables",
+						JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Illegal Variables",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
@@ -3015,7 +3015,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						funcs = sortFunctions(funcs);
 					}
 					catch (Exception e) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Cycle detected in functions.", "Cycle Detected",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -3036,7 +3036,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					add.setSelectedIndex(0);
 					functions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					adding = Buttons.add(funcs, functions, add, false, null, null, null, null,
-							null, null, biosim.frame());
+							null, null, BioSim.frame);
 					String[] oldVal = funcs;
 					funcs = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
@@ -3046,7 +3046,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						funcs = sortFunctions(funcs);
 					}
 					catch (Exception e) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Cycle detected in functions.", "Cycle Detected",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -3077,7 +3077,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				dirty = true;
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), functionPanel,
+				value = JOptionPane.showOptionDialog(BioSim.frame, functionPanel,
 						"Function Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 						null, options, options[0]);
 			}
@@ -3142,7 +3142,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private void unitEditor(String option) {
 		if (option.equals("OK") && unitDefs.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No unit definition selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No unit definition selected.",
 					"Must Select a Unit Definition", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -3232,17 +3232,17 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		unitDefPanel.add(unitPanel, "North");
 		unitDefPanel.add(unitListPanel, "South");
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), unitDefPanel,
+		int value = JOptionPane.showOptionDialog(BioSim.frame, unitDefPanel,
 				"Unit Definition Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 				null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
 			if (unitID.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(biosim.frame(), "A unit definition ID is required.",
+				JOptionPane.showMessageDialog(BioSim.frame, "A unit definition ID is required.",
 						"Enter an ID", JOptionPane.ERROR_MESSAGE);
 				error = true;
-				value = JOptionPane.showOptionDialog(biosim.frame(), unitDefPanel,
+				value = JOptionPane.showOptionDialog(BioSim.frame, unitDefPanel,
 						"Unit Definition Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
@@ -3252,7 +3252,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				if (!(IDpat.matcher(addUnit).matches())) {
 					JOptionPane
 							.showMessageDialog(
-									biosim.frame(),
+									BioSim.frame,
 									"A unit definition ID can only contain letters, numbers, and underscores.",
 									"Invalid ID", JOptionPane.ERROR_MESSAGE);
 					error = true;
@@ -3260,7 +3260,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				else {
 					for (int i = 0; i < kinds.length; i++) {
 						if (kinds[i].equals(addUnit)) {
-							JOptionPane.showMessageDialog(biosim.frame(),
+							JOptionPane.showMessageDialog(BioSim.frame,
 									"Unit ID matches a predefined unit.", "Enter a Unique ID",
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
@@ -3275,14 +3275,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								continue;
 						}
 						if (units[i].equals(addUnit)) {
-							JOptionPane.showMessageDialog(biosim.frame(), "Unit ID is not unique.",
+							JOptionPane.showMessageDialog(BioSim.frame, "Unit ID is not unique.",
 									"Enter a Unique ID", JOptionPane.ERROR_MESSAGE);
 							error = true;
 						}
 					}
 				}
 				if ((!error) && (uList.length == 0)) {
-					JOptionPane.showMessageDialog(biosim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"Unit definition must have at least one unit.", "Unit Needed",
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
@@ -3292,7 +3292,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								|| (addUnit.equals("area")) || (addUnit.equals("volume")) || (addUnit
 								.equals("time")))) {
 					if (uList.length > 1) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Redefinition of built-in unit must have a single unit.",
 								"Single Unit Required", JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -3310,7 +3310,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									.valueOf(extractUnitExp(uList[0])) == 1))) {
 								JOptionPane
 										.showMessageDialog(
-												biosim.frame(),
+												BioSim.frame,
 												"Redefinition of substance must be dimensionless or\n in terms of moles, items, grams, or kilograms.",
 												"Incorrect Redefinition", JOptionPane.ERROR_MESSAGE);
 								error = true;
@@ -3322,7 +3322,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									.valueOf(extractUnitExp(uList[0])) == 1))) {
 								JOptionPane
 										.showMessageDialog(
-												biosim.frame(),
+												BioSim.frame,
 												"Redefinition of time must be dimensionless or in terms of seconds.",
 												"Incorrect Redefinition", JOptionPane.ERROR_MESSAGE);
 								error = true;
@@ -3334,7 +3334,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									.valueOf(extractUnitExp(uList[0])) == 1))) {
 								JOptionPane
 										.showMessageDialog(
-												biosim.frame(),
+												BioSim.frame,
 												"Redefinition of length must be dimensionless or in terms of metres.",
 												"Incorrect Redefinition", JOptionPane.ERROR_MESSAGE);
 								error = true;
@@ -3346,7 +3346,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									.valueOf(extractUnitExp(uList[0])) == 2))) {
 								JOptionPane
 										.showMessageDialog(
-												biosim.frame(),
+												BioSim.frame,
 												"Redefinition of area must be dimensionless or in terms of metres^2.",
 												"Incorrect Redefinition", JOptionPane.ERROR_MESSAGE);
 								error = true;
@@ -3360,7 +3360,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 									.valueOf(extractUnitExp(uList[0])) == 3))) {
 								JOptionPane
 										.showMessageDialog(
-												biosim.frame(),
+												BioSim.frame,
 												"Redefinition of volume must be dimensionless or in terms of litres or metres^3.",
 												"Incorrect Redefinition", JOptionPane.ERROR_MESSAGE);
 								error = true;
@@ -3435,7 +3435,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						add.setSelectedIndex(0);
 						unitDefs.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						adding = Buttons.add(units, unitDefs, add, false, null, null, null, null,
-								null, null, biosim.frame());
+								null, null, BioSim.frame);
 						units = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							units[i] = (String) adding[i];
@@ -3453,7 +3453,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					dirty = true;
 				}
 				if (error) {
-					value = JOptionPane.showOptionDialog(biosim.frame(), unitDefPanel,
+					value = JOptionPane.showOptionDialog(BioSim.frame, unitDefPanel,
 							"Unit Definition Editor", JOptionPane.YES_NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				}
@@ -3469,7 +3469,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private void unitListEditor(String option) {
 		if (option.equals("OK") && unitList.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No unit selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No unit selected.",
 					"Must Select an Unit", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -3519,7 +3519,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		ULPanel.add(mult);
 		unitListPanel.add(ULPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), unitListPanel, "Unit List Editor",
+		int value = JOptionPane.showOptionDialog(BioSim.frame, unitListPanel, "Unit List Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
@@ -3529,7 +3529,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					Integer.valueOf(exp.getText().trim()).intValue();
 				}
 				catch (Exception e) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Exponent must be an integer.",
+					JOptionPane.showMessageDialog(BioSim.frame, "Exponent must be an integer.",
 							"Integer Expected", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
@@ -3538,7 +3538,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					Double.valueOf(exp.getText().trim()).doubleValue();
 				}
 				catch (Exception e) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Exponent must be a double.",
+					JOptionPane.showMessageDialog(BioSim.frame, "Exponent must be a double.",
 							"Double Expected", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
@@ -3548,7 +3548,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					Integer.valueOf(scale.getText().trim()).intValue();
 				}
 				catch (Exception e) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Scale must be an integer.",
+					JOptionPane.showMessageDialog(BioSim.frame, "Scale must be an integer.",
 							"Integer Expected", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
@@ -3558,7 +3558,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					Double.valueOf(mult.getText().trim()).doubleValue();
 				}
 				catch (Exception e) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Multiplier must be a double.",
+					JOptionPane.showMessageDialog(BioSim.frame, "Multiplier must be a double.",
 							"Double Expected", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
@@ -3604,7 +3604,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					add.setSelectedIndex(0);
 					unitList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					adding = Buttons.add(uList, unitList, add, false, null, null, null, null, null,
-							null, biosim.frame());
+							null, BioSim.frame);
 					uList = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						uList[i] = (String) adding[i];
@@ -3622,7 +3622,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				dirty = true;
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), unitListPanel,
+				value = JOptionPane.showOptionDialog(BioSim.frame, unitListPanel,
 						"Unit List Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 						null, options, options[0]);
 			}
@@ -3826,7 +3826,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private void compTypeEditor(String option) {
 		if (option.equals("OK") && compTypes.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No compartment type selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No compartment type selected.",
 					"Must Select a Compartment Type", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -3854,7 +3854,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		cpTypPanel.add(compTypeName);
 		compTypePanel.add(cpTypPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), compTypePanel,
+		int value = JOptionPane.showOptionDialog(BioSim.frame, compTypePanel,
 				"Compartment Type Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 				null, options, options[0]);
 		boolean error = true;
@@ -3911,7 +3911,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					add.setSelectedIndex(0);
 					compTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					adding = Buttons.add(cpTyp, compTypes, add, false, null, null, null, null,
-							null, null, biosim.frame());
+							null, null, BioSim.frame);
 					cpTyp = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						cpTyp[i] = (String) adding[i];
@@ -3929,7 +3929,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				dirty = true;
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), compTypePanel,
+				value = JOptionPane.showOptionDialog(BioSim.frame, compTypePanel,
 						"Compartment Type Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
@@ -3944,7 +3944,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private void specTypeEditor(String option) {
 		if (option.equals("OK") && specTypes.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No species type selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No species type selected.",
 					"Must Select a Species Type", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -3972,7 +3972,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		spTypPanel.add(specTypeName);
 		specTypePanel.add(spTypPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), specTypePanel,
+		int value = JOptionPane.showOptionDialog(BioSim.frame, specTypePanel,
 				"Species Type Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				options, options[0]);
 		boolean error = true;
@@ -4038,7 +4038,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					add.setSelectedIndex(0);
 					specTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					adding = Buttons.add(spTyp, specTypes, add, false, null, null, null, null,
-							null, null, biosim.frame());
+							null, null, BioSim.frame);
 					spTyp = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						spTyp[i] = (String) adding[i];
@@ -4056,7 +4056,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				dirty = true;
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), specTypePanel,
+				value = JOptionPane.showOptionDialog(BioSim.frame, specTypePanel,
 						"Species Type Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
@@ -4071,7 +4071,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private void initEditor(String option) {
 		if (option.equals("OK") && initAssigns.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No initial assignment selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No initial assignment selected.",
 					"Must Select an Initial Assignment", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -4155,7 +4155,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		initPanel.add(initMath);
 		initAssignPanel.add(initPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), initAssignPanel,
+		int value = JOptionPane.showOptionDialog(BioSim.frame, initAssignPanel,
 				"Initial Assignment Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 				null, options, options[0]);
 		boolean error = true;
@@ -4164,12 +4164,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			String addVar = "";
 			addVar = (String) initVar.getSelectedItem();
 			if (initMath.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Initial assignment is missing.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Initial assignment is missing.",
 						"Enter Assignment", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			else if (myParseFormula(initMath.getText().trim()) == null) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Initial assignment is not valid.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Initial assignment is not valid.",
 						"Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
@@ -4197,7 +4197,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					scrolls.setMinimumSize(new Dimension(300, 300));
 					scrolls.setPreferredSize(new Dimension(300, 300));
 					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Unknown Variables",
+					JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Unknown Variables",
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
@@ -4206,7 +4206,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				if (!error) {
 					if (myParseFormula(initMath.getText().trim()).isBoolean()) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Initial assignment must evaluate to a number.", "Number Expected",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -4233,7 +4233,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							inits = sortInitRules(inits);
 						}
 						catch (Exception e) {
-							JOptionPane.showMessageDialog(biosim.frame(),
+							JOptionPane.showMessageDialog(BioSim.frame,
 									"Cycle detected in initial assignments.", "Cycle Detected",
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
@@ -4242,7 +4242,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (!error && checkCycles(inits, rul)) {
 						JOptionPane
 								.showMessageDialog(
-										biosim.frame(),
+										BioSim.frame,
 										"Cycle detected within initial assignments, assignment rules, and rate laws.",
 										"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -4268,7 +4268,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					add.setSelectedIndex(0);
 					initAssigns.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					adding = Buttons.add(inits, initAssigns, add, false, null, null, null, null,
-							null, null, biosim.frame());
+							null, null, BioSim.frame);
 					String[] oldInits = inits;
 					inits = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
@@ -4280,7 +4280,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							inits = sortInitRules(inits);
 						}
 						catch (Exception e) {
-							JOptionPane.showMessageDialog(biosim.frame(),
+							JOptionPane.showMessageDialog(BioSim.frame,
 									"Cycle detected in initial assignments.", "Cycle Detected",
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
@@ -4289,7 +4289,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (!error && checkCycles(inits, rul)) {
 						JOptionPane
 								.showMessageDialog(
-										biosim.frame(),
+										BioSim.frame,
 										"Cycle detected within initial assignments, assignment rules, and rate laws.",
 										"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -4318,7 +4318,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				dirty = true;
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), initAssignPanel,
+				value = JOptionPane.showOptionDialog(BioSim.frame, initAssignPanel,
 						"Initial Assignment Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
@@ -4376,7 +4376,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private void ruleEditor(String option) {
 		if (option.equals("OK") && rules.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No rule selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No rule selected.",
 					"Must Select a Rule", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -4475,7 +4475,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		rulPanel.add(ruleMath);
 		rulePanel.add(rulPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), rulePanel, "Rule Editor",
+		int value = JOptionPane.showOptionDialog(BioSim.frame, rulePanel, "Rule Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
@@ -4483,12 +4483,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			String addVar = "";
 			addVar = (String) ruleVar.getSelectedItem();
 			if (ruleMath.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Rule must have formula.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Rule must have formula.",
 						"Enter Rule Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			else if (myParseFormula(ruleMath.getText().trim()) == null) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Rule formula is not valid.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Rule formula is not valid.",
 						"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
@@ -4516,7 +4516,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					scrolls.setMinimumSize(new Dimension(300, 300));
 					scrolls.setPreferredSize(new Dimension(300, 300));
 					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Unknown Variables",
+					JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Unknown Variables",
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
@@ -4525,7 +4525,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				if (!error) {
 					if (myParseFormula(ruleMath.getText().trim()).isBoolean()) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Rule must evaluate to a number.", "Number Expected",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -4568,7 +4568,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							rul = sortRules(rul);
 						}
 						catch (Exception e) {
-							JOptionPane.showMessageDialog(biosim.frame(),
+							JOptionPane.showMessageDialog(BioSim.frame,
 									"Cycle detected in assignments.", "Cycle Detected",
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
@@ -4577,7 +4577,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (!error && checkCycles(inits, rul)) {
 						JOptionPane
 								.showMessageDialog(
-										biosim.frame(),
+										BioSim.frame,
 										"Cycle detected within initial assignments, assignment rules, and rate laws.",
 										"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -4614,7 +4614,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					add.setSelectedIndex(0);
 					rules.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					adding = Buttons.add(rul, rules, add, false, null, null, null, null, null,
-							null, biosim.frame());
+							null, BioSim.frame);
 					String[] oldRul = rul;
 					rul = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
@@ -4624,7 +4624,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						rul = sortRules(rul);
 					}
 					catch (Exception e) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Cycle detected in assignments.", "Cycle Detected",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -4633,7 +4633,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (!error && checkCycles(inits, rul)) {
 						JOptionPane
 								.showMessageDialog(
-										biosim.frame(),
+										BioSim.frame,
 										"Cycle detected within initial assignments, assignment rules, and rate laws.",
 										"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -4675,7 +4675,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				dirty = true;
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), rulePanel, "Rule Editor",
+				value = JOptionPane.showOptionDialog(BioSim.frame, rulePanel, "Rule Editor",
 						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 						options[0]);
 			}
@@ -5083,7 +5083,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private void eventEditor(String option) {
 		if (option.equals("OK") && events.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No event selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No event selected.",
 					"Must Select an Event", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -5223,41 +5223,41 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		eventPanel.add(evPanel, "North");
 		eventPanel.add(eventAssignPanel, "South");
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), eventPanel, "Event Editor",
+		int value = JOptionPane.showOptionDialog(BioSim.frame, eventPanel, "Event Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = checkID(eventID.getText().trim(), selectedID, false);
 			if (eventTrigger.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Event must have a trigger formula.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Event must have a trigger formula.",
 						"Enter Trigger Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			else if (myParseFormula(eventTrigger.getText().trim()) == null) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Trigger formula is not valid.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Trigger formula is not valid.",
 						"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			else if (!myParseFormula(eventTrigger.getText().trim()).isBoolean()) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Trigger formula must be of type Boolean.", "Enter Valid Formula",
 						JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			else if (!eventDelay.getText().trim().equals("")
 					&& myParseFormula(eventDelay.getText().trim()) == null) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Delay formula is not valid.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Delay formula is not valid.",
 						"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			else if (!eventPriority.getText().trim().equals("")
 					&& myParseFormula(eventPriority.getText().trim()) == null) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Priority formula is not valid.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Priority formula is not valid.",
 						"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			else if (assign.length == 0) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Event must have at least one event assignment.",
 						"Event Assignment Needed", JOptionPane.ERROR_MESSAGE);
 				error = true;
@@ -5286,7 +5286,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					scrolls.setMinimumSize(new Dimension(300, 300));
 					scrolls.setPreferredSize(new Dimension(300, 300));
 					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Unknown Variables",
+					JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Unknown Variables",
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
@@ -5313,7 +5313,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						scrolls.setMinimumSize(new Dimension(300, 300));
 						scrolls.setPreferredSize(new Dimension(300, 300));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Unknown Variables",
+						JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Unknown Variables",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
@@ -5342,7 +5342,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						scrolls.setMinimumSize(new Dimension(300, 300));
 						scrolls.setPreferredSize(new Dimension(300, 300));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Unknown Variables",
+						JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Unknown Variables",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
@@ -5354,7 +5354,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					error = checkNumFunctionArguments(myParseFormula(eventDelay.getText().trim()));
 					if (!error) {
 						if (myParseFormula(eventDelay.getText().trim()).isBoolean()) {
-							JOptionPane.showMessageDialog(biosim.frame(),
+							JOptionPane.showMessageDialog(BioSim.frame,
 									"Event delay must evaluate to a number.", "Number Expected",
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
@@ -5365,7 +5365,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					error = checkNumFunctionArguments(myParseFormula(eventPriority.getText().trim()));
 					if (!error) {
 						if (myParseFormula(eventPriority.getText().trim()).isBoolean()) {
-							JOptionPane.showMessageDialog(biosim.frame(),
+							JOptionPane.showMessageDialog(BioSim.frame,
 									"Event priority must evaluate to a number.", "Number Expected",
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
@@ -5522,7 +5522,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					add.setSelectedIndex(0);
 					events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					adding = Buttons.add(ev, events, add, false, null, null, null, null, null,
-							null, biosim.frame());
+							null, BioSim.frame);
 					usedIDs.add(eventID.getText().trim());
 					ev = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
@@ -5544,7 +5544,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				dirty = true;
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), eventPanel, "Event Editor",
+				value = JOptionPane.showOptionDialog(BioSim.frame, eventPanel, "Event Editor",
 						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 						options[0]);
 			}
@@ -5559,7 +5559,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private void eventAssignEditor(String option) {
 		if (option.equals("OK") && eventAssign.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No event assignment selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No event assignment selected.",
 					"Must Select an Event Assignment", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -5641,19 +5641,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		EAPanel.add(eqn);
 		eventAssignPanel.add(EAPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), eventAssignPanel,
+		int value = JOptionPane.showOptionDialog(BioSim.frame, eventAssignPanel,
 				"Event Asssignment Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 				null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
 			if (eqn.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Event assignment is missing.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Event assignment is missing.",
 						"Enter Assignment", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			else if (myParseFormula(eqn.getText().trim()) == null) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Event assignment is not valid.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Event assignment is not valid.",
 						"Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
@@ -5681,7 +5681,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					scrolls.setMinimumSize(new Dimension(300, 300));
 					scrolls.setPreferredSize(new Dimension(300, 300));
 					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Unknown Variables",
+					JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Unknown Variables",
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
@@ -5690,7 +5690,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				if (!error) {
 					if (myParseFormula(eqn.getText().trim()).isBoolean()) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Event assignment must evaluate to a number.", "Number Expected",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -5716,7 +5716,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					add.setSelectedIndex(0);
 					eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					adding = Buttons.add(assign, eventAssign, add, false, null, null, null, null,
-							null, null, biosim.frame());
+							null, null, BioSim.frame);
 					assign = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						assign[i] = (String) adding[i];
@@ -5734,7 +5734,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				dirty = true;
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), eventAssignPanel,
+				value = JOptionPane.showOptionDialog(BioSim.frame, eventAssignPanel,
 						"Event Assignment Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
@@ -5749,7 +5749,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private void constraintEditor(String option) {
 		if (option.equals("OK") && constraints.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No constraint selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No constraint selected.",
 					"Must Select a Constraint", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -5802,7 +5802,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		consPanel.add(consMessage);
 		constraintPanel.add(consPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), constraintPanel,
+		int value = JOptionPane.showOptionDialog(BioSim.frame, constraintPanel,
 				"Constraint Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				options, options[0]);
 		boolean error = true;
@@ -5811,12 +5811,12 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (!error) {
 				if (consMath.getText().trim().equals("")
 						|| myParseFormula(consMath.getText().trim()) == null) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Formula is not valid.",
+					JOptionPane.showMessageDialog(BioSim.frame, "Formula is not valid.",
 							"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 				else if (!myParseFormula(consMath.getText().trim()).isBoolean()) {
-					JOptionPane.showMessageDialog(biosim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"Constraint formula must be of type Boolean.", "Enter Valid Formula",
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
@@ -5848,7 +5848,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						scrolls.setMinimumSize(new Dimension(300, 300));
 						scrolls.setPreferredSize(new Dimension(300, 300));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Unknown Variables",
+						JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Unknown Variables",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
@@ -5902,7 +5902,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						constraints
 								.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						adding = Buttons.add(cons, constraints, add, false, null, null, null, null,
-								null, null, biosim.frame());
+								null, null, BioSim.frame);
 						cons = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							cons[i] = (String) adding[i];
@@ -5921,7 +5921,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), constraintPanel,
+				value = JOptionPane.showOptionDialog(BioSim.frame, constraintPanel,
 						"Constraint Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 						null, options, options[0]);
 			}
@@ -5936,7 +5936,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private void compartEditor(String option) {
 		if (option.equals("OK") && compartments.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No compartment selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No compartment selected.",
 					"Must Select a Compartment", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -6045,7 +6045,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				p.add(step);
 				p.add(levelLabel);
 				p.add(level);
-				int i = JOptionPane.showOptionDialog(biosim.frame(), p, "Sweep",
+				int i = JOptionPane.showOptionDialog(BioSim.frame, p, "Sweep",
 						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 						options[0]);
 				if (i == JOptionPane.YES_OPTION) {
@@ -6199,7 +6199,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		compPanel.add(compUnits);
 		compartPanel.add(compPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), compartPanel,
+		int value = JOptionPane.showOptionDialog(BioSim.frame, compartPanel,
 				"Compartment Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				options, options[0]);
 		boolean error = true;
@@ -6217,7 +6217,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							&& (species.isSetInitialConcentration())) {
 						JOptionPane
 								.showMessageDialog(
-										biosim.frame(),
+										BioSim.frame,
 										"Compartment with 0-dimensions cannot contain species with an initial concentration.",
 										"Cannot be 0 Dimensions", JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -6230,7 +6230,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						if (compartment.getOutside().equals(val)) {
 							JOptionPane
 									.showMessageDialog(
-											biosim.frame(),
+											BioSim.frame,
 											"Compartment with 0-dimensions cannot be outside another compartment.",
 											"Cannot be 0 Dimensions", JOptionPane.ERROR_MESSAGE);
 							error = true;
@@ -6252,14 +6252,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								.replace(")", "").trim());
 						if (lev != 1 && lev != 2) {
 							error = true;
-							JOptionPane.showMessageDialog(biosim.frame(),
+							JOptionPane.showMessageDialog(BioSim.frame,
 									"The level can only be 1 or 2.", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					catch (Exception e1) {
 						error = true;
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Invalid sweeping parameters.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -6269,7 +6269,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					catch (Exception e1) {
 						error = true;
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"The compartment size must be a real number.",
 								"Enter a Valid Size", JOptionPane.ERROR_MESSAGE);
 					}
@@ -6280,7 +6280,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (!compOutside.getSelectedItem().equals("( none )")) {
 						if (checkOutsideCycle(compID.getText().trim(), (String) compOutside
 								.getSelectedItem(), 0)) {
-							JOptionPane.showMessageDialog(biosim.frame(),
+							JOptionPane.showMessageDialog(BioSim.frame,
 									"Compartment contains itself through outside references.",
 									"Cycle in Outside References", JOptionPane.ERROR_MESSAGE);
 							error = true;
@@ -6306,7 +6306,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				} catch (Exception e1) {
 					JOptionPane.showMessageDialog(
-							biosim.frame(),
+							BioSim.frame,
 							"Compartment spatial dimensions must be a real number.",
 							"Invalid Spatial Dimensions", JOptionPane.ERROR_MESSAGE);
 					error = true;
@@ -6531,7 +6531,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						compartments
 								.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						adding = Buttons.add(comps, compartments, add, false, null, null, null,
-								null, null, null, biosim.frame());
+								null, null, null, BioSim.frame);
 						comps = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							comps[i] = (String) adding[i];
@@ -6550,7 +6550,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), compartPanel,
+				value = JOptionPane.showOptionDialog(BioSim.frame, compartPanel,
 						"Compartment Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 						null, options, options[0]);
 			}
@@ -6584,7 +6584,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
 			Species species = document.getModel().getSpecies(i);
 			if (species.getConversionFactor().equals(val)) {
-				JOptionPane.showMessageDialog(biosim.frame(), 
+				JOptionPane.showMessageDialog(BioSim.frame, 
 						"Parameter must be constant because it is used as a conversion factor for " + species.getId() + ".", 
 						" Parameter Must Be Constant", JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -6600,7 +6600,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		for (int i = 0; i < document.getModel().getNumRules(); i++) {
 			Rule rule = document.getModel().getRule(i);
 			if (rule.getVariable().equals(val)) {
-				JOptionPane.showMessageDialog(biosim.frame(), varType
+				JOptionPane.showMessageDialog(BioSim.frame, varType
 						+ " cannot be constant if updated by a rule.", varType
 						+ " Cannot Be Constant", JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -6612,7 +6612,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			for (int j = 0; j < event.getNumEventAssignments(); j++) {
 				EventAssignment ea = (EventAssignment) event.getListOfEventAssignments().get(j);
 				if (ea.getVariable().equals(val)) {
-					JOptionPane.showMessageDialog(biosim.frame(), varType
+					JOptionPane.showMessageDialog(BioSim.frame, varType
 							+ " cannot be constant if updated by an event.", varType
 							+ " Cannot Be Constant", JOptionPane.ERROR_MESSAGE);
 					return true;
@@ -6651,7 +6651,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						if (checkRule) {
 							JOptionPane
 									.showMessageDialog(
-											biosim.frame(),
+											BioSim.frame,
 											"Boundary condition cannot be false if a species is used\n"
 													+ "in a rule and as a reactant or product in a reaction.",
 											"Boundary Condition Cannot be False",
@@ -6660,7 +6660,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						else {
 							JOptionPane
 									.showMessageDialog(
-											biosim.frame(),
+											BioSim.frame,
 											"Species cannot be reactant if constant and not a boundary condition.",
 											"Invalid Species Attributes", JOptionPane.ERROR_MESSAGE);
 						}
@@ -6675,7 +6675,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						if (checkRule) {
 							JOptionPane
 									.showMessageDialog(
-											biosim.frame(),
+											BioSim.frame,
 											"Boundary condition cannot be false if a species is used\n"
 													+ "in a rule and as a reactant or product in a reaction.",
 											"Boundary Condition Cannot be False",
@@ -6684,7 +6684,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						else {
 							JOptionPane
 							.showMessageDialog(
-									biosim.frame(),
+									BioSim.frame,
 									"Species cannot be product if constant and not a boundary condition.",
 									"Invalid Species Attributes", JOptionPane.ERROR_MESSAGE);
 				}
@@ -6856,7 +6856,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private void speciesEditor(String option) {
 		if (option.equals("OK") && species.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No species selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No species selected.",
 					"Must Select A Species", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -6967,7 +6967,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				p.add(step);
 				p.add(levelLabel);
 				p.add(level);
-				int i = JOptionPane.showOptionDialog(biosim.frame(), p, "Sweep",
+				int i = JOptionPane.showOptionDialog(BioSim.frame, p, "Sweep",
 						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 						options[0]);
 				if (i == JOptionPane.YES_OPTION) {
@@ -7139,7 +7139,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			speciesPanel.add(specConv);
 		}
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), speciesPanel, "Species Editor",
+		int value = JOptionPane.showOptionDialog(BioSim.frame, speciesPanel, "Species Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
@@ -7156,14 +7156,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								")", "").trim());
 						if (lev != 1 && lev != 2) {
 							error = true;
-							JOptionPane.showMessageDialog(biosim.frame(),
+							JOptionPane.showMessageDialog(BioSim.frame,
 									"The level can only be 1 or 2.", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					catch (Exception e1) {
 						error = true;
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Invalid sweeping parameters.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -7173,7 +7173,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					catch (Exception e1) {
 						error = true;
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"The initial value field must be a real number.",
 								"Enter a Valid Initial Value", JOptionPane.ERROR_MESSAGE);
 					}
@@ -7237,7 +7237,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 											selSpecType)) {
 								JOptionPane
 										.showMessageDialog(
-												biosim.frame(),
+												BioSim.frame,
 												"Compartment already contains another species of this type.",
 												"Species Type Not Unique",
 												JOptionPane.ERROR_MESSAGE);
@@ -7253,7 +7253,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							&& document.getLevel()<3 && compartment.getSpatialDimensions() == 0) {
 						JOptionPane
 								.showMessageDialog(
-										biosim.frame(),
+										BioSim.frame,
 										"Species in a 0 dimensional compartment cannot have an initial concentration.",
 										"Concentration Not Possible", JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -7404,7 +7404,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						addIt.setSelectedIndex(0);
 						species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						adding = Buttons.add(specs, species, addIt, false, null, null, null, null,
-								null, null, biosim.frame());
+								null, null, BioSim.frame);
 						specs = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							specs[i] = (String) adding[i];
@@ -7423,7 +7423,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), speciesPanel,
+				value = JOptionPane.showOptionDialog(BioSim.frame, speciesPanel,
 						"Species Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 						null, options, options[0]);
 			}
@@ -7512,14 +7512,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				if (checkCycles(inits, rul)) {
 					JOptionPane
 							.showMessageDialog(
-									biosim.frame(),
+									BioSim.frame,
 									"Cycle detected within initial assignments, assignment rules, and rate laws.",
 									"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 					inits = oldInits;
 				}
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Cycle detected in assignments.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Cycle detected in assignments.",
 						"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 				inits = oldInits;
 			}
@@ -7550,14 +7550,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				if (checkCycles(inits, rul)) {
 					JOptionPane
 							.showMessageDialog(
-									biosim.frame(),
+									BioSim.frame,
 									"Cycle detected within initial assignments, assignment rules, and rate laws.",
 									"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 					rul = oldRul;
 				}
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Cycle detected in assignments.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Cycle detected in assignments.",
 						"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 				rul = oldRul;
 			}
@@ -7746,7 +7746,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private void reactionsEditor(String option) {
 		if (option.equals("OK") && reactions.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No reaction selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No reaction selected.",
 					"Must Select A Reaction", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -8093,7 +8093,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			clearKineticLaw.setEnabled(false);
 		}
 		Object[] options1 = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), reactionPanel, "Reaction Editor",
+		int value = JOptionPane.showOptionDialog(BioSim.frame, reactionPanel, "Reaction Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options1, options1[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
@@ -8101,19 +8101,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			error = checkID(reac, selectedID, false);
 			if (!error) {
 				if (kineticLaw.getText().trim().equals("")) {
-					JOptionPane.showMessageDialog(biosim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"A reaction must have a kinetic law.", "Enter A Kinetic Law",
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 				else if ((changedReactants.size() == 0) && (changedProducts.size() == 0)) {
-					JOptionPane.showMessageDialog(biosim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"A reaction must have at least one reactant or product.",
 							"No Reactants or Products", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 				else if (myParseFormula(kineticLaw.getText().trim()) == null) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Unable to parse kinetic law.",
+					JOptionPane.showMessageDialog(BioSim.frame, "Unable to parse kinetic law.",
 							"Kinetic Law Error", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
@@ -8141,7 +8141,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						scrolls.setMinimumSize(new Dimension(300, 300));
 						scrolls.setPreferredSize(new Dimension(300, 300));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Kinetic Law Error",
+						JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Kinetic Law Error",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
@@ -8153,7 +8153,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			if (!error) {
 				if (myParseFormula(kineticLaw.getText().trim()).isBoolean()) {
-					JOptionPane.showMessageDialog(biosim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"Kinetic law must evaluate to a number.", "Number Expected",
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
@@ -8222,7 +8222,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						if (error) {
 							JOptionPane
 									.showMessageDialog(
-											biosim.frame(),
+											BioSim.frame,
 											"Cycle detected within initial assignments, assignment rules, and rate laws.",
 											"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						}
@@ -8311,7 +8311,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						if (error) {
 							JOptionPane
 									.showMessageDialog(
-											biosim.frame(),
+											BioSim.frame,
 											"Cycle detected within initial assignments, assignment rules, and rate laws.",
 											"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						}
@@ -8324,7 +8324,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						add.setSelectedIndex(0);
 						reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						adding = Buttons.add(reacts, reactions, add, false, null, null, null, null,
-								null, null, biosim.frame());
+								null, null, BioSim.frame);
 						reacts = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							reacts[i] = (String) adding[i];
@@ -8346,7 +8346,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				dirty = true;
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), reactionPanel,
+				value = JOptionPane.showOptionDialog(BioSim.frame, reactionPanel,
 						"Reaction Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 						null, options1, options1[0]);
 			}
@@ -8592,7 +8592,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		modelUnitsPanel.add(conversionFactorLabel);
 		modelUnitsPanel.add(conversionFactor);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), modelUnitsPanel,
+		int value = JOptionPane.showOptionDialog(BioSim.frame, modelUnitsPanel,
 				"Model Units Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				options, options[0]);
 		boolean error = true;
@@ -8642,7 +8642,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			dirty = true;
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), modelUnitsPanel,
+				value = JOptionPane.showOptionDialog(BioSim.frame, modelUnitsPanel,
 						"Model Units Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 						null, options, options[0]);
 			}
@@ -8656,7 +8656,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private void parametersEditor(String option) {
 		if (option.equals("OK") && parameters.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No parameter selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No parameter selected.",
 					"Must Select A Parameter", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -8731,7 +8731,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				p.add(step);
 				p.add(levelLabel);
 				p.add(level);
-				int i = JOptionPane.showOptionDialog(biosim.frame(), p, "Sweep",
+				int i = JOptionPane.showOptionDialog(BioSim.frame, p, "Sweep",
 						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 						options[0]);
 				if (i == JOptionPane.YES_OPTION) {
@@ -8864,7 +8864,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		parametersPanel.add(constLabel);
 		parametersPanel.add(paramConst);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), parametersPanel,
+		int value = JOptionPane.showOptionDialog(BioSim.frame, parametersPanel,
 				"Parameter Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				options, options[0]);
 		boolean error = true;
@@ -8883,14 +8883,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								.replace(")", "").trim());
 						if (lev != 1 && lev != 2) {
 							error = true;
-							JOptionPane.showMessageDialog(biosim.frame(),
+							JOptionPane.showMessageDialog(BioSim.frame,
 									"The level can only be 1 or 2.", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					catch (Exception e1) {
 						error = true;
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Invalid sweeping parameters.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -8899,7 +8899,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						val = Double.parseDouble(paramValue.getText().trim());
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"The value must be a real number.", "Enter A Valid Value",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -9027,7 +9027,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							parameters
 									.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 							adding = Buttons.add(params, parameters, add, false, null, null, null,
-									null, null, null, biosim.frame());
+									null, null, null, BioSim.frame);
 							params = new String[adding.length];
 							for (int i = 0; i < adding.length; i++) {
 								params[i] = (String) adding[i];
@@ -9047,7 +9047,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), parametersPanel,
+				value = JOptionPane.showOptionDialog(BioSim.frame, parametersPanel,
 						"Parameter Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 						null, options, options[0]);
 			}
@@ -9062,7 +9062,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	private void reacParametersEditor(String option) {
 		if (option.equals("OK") && reacParameters.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No parameter selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No parameter selected.",
 					"Must Select A Parameter", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -9133,7 +9133,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				p.add(step);
 				p.add(levelLabel);
 				p.add(level);
-				int i = JOptionPane.showOptionDialog(biosim.frame(), p, "Sweep",
+				int i = JOptionPane.showOptionDialog(BioSim.frame, p, "Sweep",
 						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 						options[0]);
 				if (i == JOptionPane.YES_OPTION) {
@@ -9263,7 +9263,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		parametersPanel.add(unitsLabel);
 		parametersPanel.add(reacParamUnits);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), parametersPanel,
+		int value = JOptionPane.showOptionDialog(BioSim.frame, parametersPanel,
 				"Parameter Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				options, options[0]);
 		boolean error = true;
@@ -9272,7 +9272,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (!error) {
 				if (thisReactionParams.contains(reacParamID.getText().trim())
 						&& (!reacParamID.getText().trim().equals(selectedID))) {
-					JOptionPane.showMessageDialog(biosim.frame(), "ID is not unique.",
+					JOptionPane.showMessageDialog(BioSim.frame, "ID is not unique.",
 							"ID Not Unique", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
@@ -9290,14 +9290,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								.replace(")", "").trim());
 						if (lev != 1 && lev != 2) {
 							error = true;
-							JOptionPane.showMessageDialog(biosim.frame(),
+							JOptionPane.showMessageDialog(BioSim.frame,
 									"The level can only be 1 or 2.", "Error",
 									JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					catch (Exception e1) {
 						error = true;
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Invalid sweeping parameters.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
@@ -9306,7 +9306,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						val = Double.parseDouble(reacParamValue.getText().trim());
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"The value must be a real number.", "Enter A Valid Value",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -9443,7 +9443,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						reacParameters
 								.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						adding = Buttons.add(reacParams, reacParameters, add, false, null, null,
-								null, null, null, null, biosim.frame());
+								null, null, null, null, BioSim.frame);
 						reacParams = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							reacParams[i] = (String) adding[i];
@@ -9469,7 +9469,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), parametersPanel,
+				value = JOptionPane.showOptionDialog(BioSim.frame, parametersPanel,
 						"Parameter Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 						null, options, options[0]);
 			}
@@ -9484,7 +9484,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	public void productsEditor(String option) {
 		if (option.equals("OK") && products.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No product selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No product selected.",
 					"Must Select A Product", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -9574,14 +9574,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			productsPanel.add(productConstant);
 		}
 		if (speciesList.length == 0) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"There are no species availiable to be products."
 							+ "\nAdd species to this sbml file first.", "No Species",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), productsPanel, "Products Editor",
+		int value = JOptionPane.showOptionDialog(BioSim.frame, productsPanel, "Products Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
@@ -9599,13 +9599,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						val = Double.parseDouble(productStoiciometry.getText().trim());
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"The stoichiometry must be a real number.", "Enter A Valid Value",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
 					if (val <= 0) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"The stoichiometry value must be greater than 0.",
 								"Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -9632,7 +9632,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (i != index) {
 						if (product[i].split(" ")[0].equals(productSpecies.getSelectedItem())) {
 							error = true;
-							JOptionPane.showMessageDialog(biosim.frame(),
+							JOptionPane.showMessageDialog(BioSim.frame,
 									"Unable to add species as a product.\n"
 											+ "Each species can only be used as a product once.",
 									"Species Can Only Be Used Once", JOptionPane.ERROR_MESSAGE);
@@ -9643,13 +9643,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (!error) {
 				if (stoiciLabel.getSelectedItem().equals("Stoichiometry Math")) {
 					if (productStoiciometry.getText().trim().equals("")) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Stoichiometry math must have formula.",
 								"Enter Stoichiometry Formula", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
 					else if (myParseFormula(productStoiciometry.getText().trim()) == null) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Stoichiometry formula is not valid.", "Enter Valid Formula",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -9678,7 +9678,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							scrolls.setMinimumSize(new Dimension(300, 300));
 							scrolls.setPreferredSize(new Dimension(300, 300));
 							scrolls.setViewportView(messageArea);
-							JOptionPane.showMessageDialog(biosim.frame(), scrolls,
+							JOptionPane.showMessageDialog(BioSim.frame, scrolls,
 									"Stoiciometry Math Error", JOptionPane.ERROR_MESSAGE);
 							error = true;
 						}
@@ -9688,7 +9688,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 						if (!error) {
 							if (myParseFormula(productStoiciometry.getText().trim()).isBoolean()) {
-								JOptionPane.showMessageDialog(biosim.frame(),
+								JOptionPane.showMessageDialog(BioSim.frame,
 										"Stoichiometry math must evaluate to a number.",
 										"Number Expected", JOptionPane.ERROR_MESSAGE);
 								error = true;
@@ -9773,7 +9773,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					add.setSelectedIndex(0);
 					products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					adding = Buttons.add(product, products, add, false, null, null, null, null,
-							null, null, biosim.frame());
+							null, null, BioSim.frame);
 					product = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						product[i] = (String) adding[i];
@@ -9786,7 +9786,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				dirty = true;
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), productsPanel,
+				value = JOptionPane.showOptionDialog(BioSim.frame, productsPanel,
 						"Products Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 						null, options, options[0]);
 			}
@@ -9801,7 +9801,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	public void modifiersEditor(String option) {
 		if (option.equals("OK") && modifiers.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No modifier selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No modifier selected.",
 					"Must Select A Modifier", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -9828,14 +9828,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		modifiersPanel.add(speciesLabel);
 		modifiersPanel.add(modifierSpecies);
 		if (choices.length == 0) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"There are no species availiable to be modifiers."
 							+ "\nAdd species to this sbml file first.", "No Species",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), modifiersPanel,
+		int value = JOptionPane.showOptionDialog(BioSim.frame, modifiersPanel,
 				"Modifiers Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				options, options[0]);
 		boolean error = true;
@@ -9852,7 +9852,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (i != index) {
 						if (modifier[i].equals(modifierSpecies.getSelectedItem())) {
 							error = true;
-							JOptionPane.showMessageDialog(biosim.frame(),
+							JOptionPane.showMessageDialog(BioSim.frame,
 									"Unable to add species as a modifier.\n"
 											+ "Each species can only be used as a modifier once.",
 									"Species Can Only Be Used Once", JOptionPane.ERROR_MESSAGE);
@@ -9886,7 +9886,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				for (int i = 0; i < modifier.length; i++) {
 					if (modifier[i].equals(modifierSpecies.getSelectedItem())) {
 						error = true;
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Unable to add species as a modifier.\n"
 										+ "Each species can only be used as a modifier once.",
 								"Species Can Only Be Used Once", JOptionPane.ERROR_MESSAGE);
@@ -9906,7 +9906,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					add.setSelectedIndex(0);
 					modifiers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					adding = Buttons.add(modifier, modifiers, add, false, null, null, null, null,
-							null, null, biosim.frame());
+							null, null, BioSim.frame);
 					modifier = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						modifier[i] = (String) adding[i];
@@ -9931,7 +9931,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			}
 			dirty = true;
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), modifiersPanel,
+				value = JOptionPane.showOptionDialog(BioSim.frame, modifiersPanel,
 						"Modifiers Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 						null, options, options[0]);
 			}
@@ -9946,7 +9946,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 */
 	public void reactantsEditor(String option) {
 		if (option.equals("OK") && reactants.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "No reactant selected.",
+			JOptionPane.showMessageDialog(BioSim.frame, "No reactant selected.",
 					"Must Select A Reactant", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -10036,14 +10036,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			reactantsPanel.add(reactantConstant);
 		}
 		if (speciesList.length == 0) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"There are no species availiable to be reactants."
 							+ "\nAdd species to this sbml file first.", "No Species",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(biosim.frame(), reactantsPanel,
+		int value = JOptionPane.showOptionDialog(BioSim.frame, reactantsPanel,
 				"Reactants Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
 				options, options[0]);
 		boolean error = true;
@@ -10062,13 +10062,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						val = Double.parseDouble(reactantStoiciometry.getText().trim());
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"The stoichiometry must be a real number.", "Enter A Valid Value",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
 					if (val <= 0) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"The stoichiometry value must be greater than 0.",
 								"Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -10095,7 +10095,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					if (i != index) {
 						if (reacta[i].split(" ")[0].equals(reactantSpecies.getSelectedItem())) {
 							error = true;
-							JOptionPane.showMessageDialog(biosim.frame(),
+							JOptionPane.showMessageDialog(BioSim.frame,
 									"Unable to add species as a reactant.\n"
 											+ "Each species can only be used as a reactant once.",
 									"Species Can Only Be Used Once", JOptionPane.ERROR_MESSAGE);
@@ -10106,13 +10106,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (!error) {
 				if (stoiciLabel.getSelectedItem().equals("Stoichiometry Math")) {
 					if (reactantStoiciometry.getText().trim().equals("")) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Stoichiometry math must have formula.",
 								"Enter Stoichiometry Formula", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
 					else if (myParseFormula(reactantStoiciometry.getText().trim()) == null) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"Stoichiometry formula is not valid.", "Enter Valid Formula",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
@@ -10141,7 +10141,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							scrolls.setMinimumSize(new Dimension(300, 300));
 							scrolls.setPreferredSize(new Dimension(300, 300));
 							scrolls.setViewportView(messageArea);
-							JOptionPane.showMessageDialog(biosim.frame(), scrolls,
+							JOptionPane.showMessageDialog(BioSim.frame, scrolls,
 									"Stoiciometry Math Error", JOptionPane.ERROR_MESSAGE);
 							error = true;
 						}
@@ -10151,7 +10151,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 						if (!error) {
 							if (myParseFormula(reactantStoiciometry.getText().trim()).isBoolean()) {
-								JOptionPane.showMessageDialog(biosim.frame(),
+								JOptionPane.showMessageDialog(BioSim.frame,
 										"Stoichiometry math must evaluate to a number.",
 										"Number Expected", JOptionPane.ERROR_MESSAGE);
 								error = true;
@@ -10237,7 +10237,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					add.setSelectedIndex(0);
 					reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					adding = Buttons.add(reacta, reactants, add, false, null, null, null, null,
-							null, null, biosim.frame());
+							null, null, BioSim.frame);
 					reacta = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						reacta[i] = (String) adding[i];
@@ -10250,7 +10250,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				dirty = true;
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(biosim.frame(), reactantsPanel,
+				value = JOptionPane.showOptionDialog(BioSim.frame, reactantsPanel,
 						"Reactants Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 						null, options, options[0]);
 			}
@@ -10397,7 +10397,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			out.close();
 		}
 		catch (IOException e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file.",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to save parameter file.",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
 		try {
@@ -10513,7 +10513,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					+ file.split(separator)[file.split(separator).length - 1]);
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to create sbml file.",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to create sbml file.",
 					"Error Creating File", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -10537,7 +10537,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			message += i + ":" + error + "\n";
 		}
 		if (numErrors > 0) {
-			JOptionPane.showMessageDialog(biosim.frame(),
+			JOptionPane.showMessageDialog(BioSim.frame,
 					"Algebraic rules make model overdetermined.", "Model is Overdetermined",
 					JOptionPane.WARNING_MESSAGE);
 		}
@@ -10572,7 +10572,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			scroll.setMinimumSize(new Dimension(600, 600));
 			scroll.setPreferredSize(new Dimension(600, 600));
 			scroll.setViewportView(messageArea);
-			JOptionPane.showMessageDialog(biosim.frame(), scroll, "Unit Errors in Model",
+			JOptionPane.showMessageDialog(BioSim.frame, scroll, "Unit Errors in Model",
 					JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
@@ -10609,7 +10609,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			scroll.setMinimumSize(new Dimension(600, 600));
 			scroll.setPreferredSize(new Dimension(600, 600));
 			scroll.setViewportView(messageArea);
-			JOptionPane.showMessageDialog(biosim.frame(), scroll, "SBML Errors and Warnings",
+			JOptionPane.showMessageDialog(BioSim.frame, scroll, "SBML Errors and Warnings",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -10760,7 +10760,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Unable to save sbml file.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Unable to save sbml file.",
 						"Error Saving File", JOptionPane.ERROR_MESSAGE);
 			}
 			biosim.updateViews(file.split(separator)[file.split(separator).length - 1]);
@@ -10945,13 +10945,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		case libsbml.AST_FUNCTION_LN:
 		case libsbml.AST_FUNCTION_LOG:
 			if (node.getNumChildren() != 1) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Expected 1 argument for "
+				JOptionPane.showMessageDialog(BioSim.frame, "Expected 1 argument for "
 						+ node.getName() + " but found " + node.getNumChildren() + ".",
 						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 			if (node.getChild(0).isBoolean()) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Argument for " + node.getName()
+				JOptionPane.showMessageDialog(BioSim.frame, "Argument for " + node.getName()
 						+ " function must evaluate to a number.", "Number Expected",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -10959,13 +10959,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			break;
 		case libsbml.AST_LOGICAL_NOT:
 			if (node.getNumChildren() != 1) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Expected 1 argument for "
+				JOptionPane.showMessageDialog(BioSim.frame, "Expected 1 argument for "
 						+ node.getName() + " but found " + node.getNumChildren() + ".",
 						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 			if (!node.getChild(0).isBoolean()) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Argument for not function must be of type Boolean.", "Boolean Expected",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -10976,7 +10976,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		case libsbml.AST_LOGICAL_XOR:
 			for (int i = 0; i < node.getNumChildren(); i++) {
 				if (!node.getChild(i).isBoolean()) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Argument " + i + " for "
+					JOptionPane.showMessageDialog(BioSim.frame, "Argument " + i + " for "
 							+ node.getName() + " function is not of type Boolean.",
 							"Boolean Expected", JOptionPane.ERROR_MESSAGE);
 					return true;
@@ -10985,13 +10985,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			break;
 		case libsbml.AST_PLUS:
 			if (node.getChild(0).isBoolean()) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Argument 1 for + operator must evaluate to a number.", "Number Expected",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 			if (node.getChild(1).isBoolean()) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Argument 2 for + operator must evaluate to a number.", "Number Expected",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -10999,13 +10999,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			break;
 		case libsbml.AST_MINUS:
 			if (node.getChild(0).isBoolean()) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Argument 1 for - operator must evaluate to a number.", "Number Expected",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 			if ((node.getNumChildren() > 1) && (node.getChild(1).isBoolean())) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Argument 2 for - operator must evaluate to a number.", "Number Expected",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -11013,13 +11013,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			break;
 		case libsbml.AST_TIMES:
 			if (node.getChild(0).isBoolean()) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Argument 1 for * operator must evaluate to a number.", "Number Expected",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 			if (node.getChild(1).isBoolean()) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Argument 2 for * operator must evaluate to a number.", "Number Expected",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -11027,13 +11027,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			break;
 		case libsbml.AST_DIVIDE:
 			if (node.getChild(0).isBoolean()) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Argument 1 for / operator must evaluate to a number.", "Number Expected",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 			if (node.getChild(1).isBoolean()) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Argument 2 for / operator must evaluate to a number.", "Number Expected",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -11041,13 +11041,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			break;
 		case libsbml.AST_POWER:
 			if (node.getChild(0).isBoolean()) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Argument 1 for ^ operator must evaluate to a number.", "Number Expected",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 			if (node.getChild(1).isBoolean()) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Argument 2 for ^ operator must evaluate to a number.", "Number Expected",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -11061,19 +11061,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		case libsbml.AST_RELATIONAL_LT:
 		case libsbml.AST_RELATIONAL_GT:
 			if (node.getNumChildren() != 2) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Expected 2 arguments for "
+				JOptionPane.showMessageDialog(BioSim.frame, "Expected 2 arguments for "
 						+ node.getName() + " but found " + node.getNumChildren() + ".",
 						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 			if (node.getChild(0).isBoolean()) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Argument 1 for " + node.getName()
+				JOptionPane.showMessageDialog(BioSim.frame, "Argument 1 for " + node.getName()
 						+ " function must evaluate to a number.", "Number Expected",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 			if (node.getChild(1).isBoolean()) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Argument 2 for " + node.getName()
+				JOptionPane.showMessageDialog(BioSim.frame, "Argument 2 for " + node.getName()
 						+ " function must evaluate to a number.", "Number Expected",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -11082,14 +11082,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		case libsbml.AST_RELATIONAL_EQ:
 		case libsbml.AST_RELATIONAL_NEQ:
 			if (node.getNumChildren() != 2) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Expected 2 arguments for "
+				JOptionPane.showMessageDialog(BioSim.frame, "Expected 2 arguments for "
 						+ node.getName() + " but found " + node.getNumChildren() + ".",
 						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 			if ((node.getChild(0).isBoolean() && !node.getChild(1).isBoolean())
 					|| (!node.getChild(0).isBoolean() && node.getChild(1).isBoolean())) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Arguments for " + node.getName()
+				JOptionPane.showMessageDialog(BioSim.frame, "Arguments for " + node.getName()
 						+ " function must either both be numbers or Booleans.",
 						"Argument Mismatch", JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -11097,14 +11097,14 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			break;
 		case libsbml.AST_FUNCTION_PIECEWISE:
 			if (node.getNumChildren() < 1) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Piecewise function requires at least 1 argument.",
 						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 			for (int i = 1; i < node.getNumChildren(); i += 2) {
 				if (!node.getChild(i).isBoolean()) {
-					JOptionPane.showMessageDialog(biosim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"Even arguments of piecewise function must be of type Boolean.",
 							"Boolean Expected", JOptionPane.ERROR_MESSAGE);
 					return true;
@@ -11114,7 +11114,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			for (int i = 0; i < node.getNumChildren(); i += 2) {
 				if (node.getChild(i).isBoolean()) {
 					if (pieceType == 2) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"All odd arguments of a piecewise function must agree.",
 								"Type Mismatch", JOptionPane.ERROR_MESSAGE);
 						return true;
@@ -11123,7 +11123,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				}
 				else {
 					if (pieceType == 1) {
-						JOptionPane.showMessageDialog(biosim.frame(),
+						JOptionPane.showMessageDialog(BioSim.frame,
 								"All odd arguments of a piecewise function must agree.",
 								"Type Mismatch", JOptionPane.ERROR_MESSAGE);
 						return true;
@@ -11136,7 +11136,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				if (((FunctionDefinition) sbml.get(i)).getId().equals(node.getName())) {
 					long numArgs = ((FunctionDefinition) sbml.get(i)).getNumArguments();
 					if (numArgs != node.getNumChildren()) {
-						JOptionPane.showMessageDialog(biosim.frame(), "Expected " + numArgs
+						JOptionPane.showMessageDialog(BioSim.frame, "Expected " + numArgs
 								+ " argument(s) for " + node.getName() + " but found "
 								+ node.getNumChildren() + ".", "Number of Arguments Incorrect",
 								JOptionPane.ERROR_MESSAGE);
@@ -11171,7 +11171,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					|| node.getName().equals("sin") || node.getName().equals("sinh")
 					|| node.getName().equals("tan") || node.getName().equals("tanh")
 					|| node.getName().equals("not")) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Expected 1 argument for "
+				JOptionPane.showMessageDialog(BioSim.frame, "Expected 1 argument for "
 						+ node.getName() + " but found 0.", "Number of Arguments Incorrect",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -11182,13 +11182,13 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					|| node.getName().equals("leq") || node.getName().equals("gt")
 					|| node.getName().equals("neq") || node.getName().equals("lt")
 					|| node.getName().equals("delay") || node.getName().equals("root")) {
-				JOptionPane.showMessageDialog(biosim.frame(), "Expected 2 arguments for "
+				JOptionPane.showMessageDialog(BioSim.frame, "Expected 2 arguments for "
 						+ node.getName() + " but found 0.", "Number of Arguments Incorrect",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 			if (node.getName().equals("piecewise")) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Piecewise function requires at least 1 argument.",
 						"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -11196,7 +11196,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			for (int i = 0; i < document.getModel().getNumFunctionDefinitions(); i++) {
 				if (((FunctionDefinition) sbml.get(i)).getId().equals(node.getName())) {
 					long numArgs = ((FunctionDefinition) sbml.get(i)).getNumArguments();
-					JOptionPane.showMessageDialog(biosim.frame(), "Expected " + numArgs
+					JOptionPane.showMessageDialog(BioSim.frame, "Expected " + numArgs
 							+ " argument(s) for " + node.getName() + " but found 0.",
 							"Number of Arguments Incorrect", JOptionPane.ERROR_MESSAGE);
 					return true;
@@ -11221,7 +11221,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (biosim.checkUndeclared) {
 				JOptionPane
 						.showMessageDialog(
-								biosim.frame(),
+								BioSim.frame,
 								"Rate rule contains literals numbers or parameters with undeclared units.\n"
 										+ "Therefore, it is not possible to completely verify the consistency of the units.",
 								"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
@@ -11266,7 +11266,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				unit.setMultiplier(1.0);
 			}
 			if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Units on the left and right-hand side of the rate rule do not agree.",
 						"Units Do Not Match", JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -11284,7 +11284,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (biosim.checkUndeclared) {
 				JOptionPane
 						.showMessageDialog(
-								biosim.frame(),
+								BioSim.frame,
 								"Assignment rule contains literals numbers or parameters with undeclared units.\n"
 										+ "Therefore, it is not possible to completely verify the consistency of the units.",
 								"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
@@ -11309,7 +11309,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
 				JOptionPane
 						.showMessageDialog(
-								biosim.frame(),
+								BioSim.frame,
 								"Units on the left and right-hand side of the assignment rule do not agree.",
 								"Units Do Not Match", JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -11327,7 +11327,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (biosim.checkUndeclared) {
 				JOptionPane
 						.showMessageDialog(
-								biosim.frame(),
+								BioSim.frame,
 								"Initial assignment contains literals numbers or parameters with undeclared units.\n"
 										+ "Therefore, it is not possible to completely verify the consistency of the units.",
 								"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
@@ -11352,7 +11352,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
 				JOptionPane
 						.showMessageDialog(
-								biosim.frame(),
+								BioSim.frame,
 								"Units on the left and right-hand side of the initial assignment do not agree.",
 								"Units Do Not Match", JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -11382,7 +11382,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (biosim.checkUndeclared) {
 				JOptionPane
 						.showMessageDialog(
-								biosim.frame(),
+								BioSim.frame,
 								"Event assignment to "
 										+ assign.getVariable()
 										+ " contains literals numbers or parameters with undeclared units.\n"
@@ -11407,7 +11407,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				unitDefVar = parameter.getDerivedUnitDefinition();
 			}
 			if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Units on the left and right-hand side for the event assignment "
 								+ assign.getVariable() + " do not agree.", "Units Do Not Match",
 						JOptionPane.ERROR_MESSAGE);
@@ -11426,7 +11426,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (biosim.checkUndeclared) {
 				JOptionPane
 						.showMessageDialog(
-								biosim.frame(),
+								BioSim.frame,
 								"Event assignment delay contains literals numbers or parameters with undeclared units.\n"
 										+ "Therefore, it is not possible to completely verify the consistency of the units.",
 								"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
@@ -11436,7 +11436,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = delay.getDerivedUnitDefinition();
 			if (unitDef != null && !(unitDef.isVariantOfTime())) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Event delay should be units of time.", "Event Delay Not Time Units",
 						JOptionPane.ERROR_MESSAGE);
 				return true;
@@ -11454,7 +11454,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			if (biosim.checkUndeclared) {
 				JOptionPane
 						.showMessageDialog(
-								biosim.frame(),
+								BioSim.frame,
 								"Kinetic law contains literals numbers or parameters with undeclared units.\n"
 										+ "Therefore, it is not possible to completely verify the consistency of the units.",
 								"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
@@ -11504,7 +11504,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				unit.setMultiplier(1.0);
 			}
 			if (!UnitDefinition.areEquivalent(unitDef, unitDefLaw)) {
-				JOptionPane.showMessageDialog(biosim.frame(),
+				JOptionPane.showMessageDialog(BioSim.frame,
 						"Kinetic law units should be substance / time.", "Units Do Not Match",
 						JOptionPane.ERROR_MESSAGE);
 				return true;

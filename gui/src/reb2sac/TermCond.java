@@ -268,16 +268,12 @@ public class TermCond {
 
 	private String expr;
 
-	private BioSim biosim;
-
-	private Reb2Sac reb2sac;
-
 	private ArrayList<String> listOfSpecies;
 
 	private ArrayList<String> listOfReactions;
 
 	void yyerror(String s) {
-		// JOptionPane.showMessageDialog(biosim.frame(), s,
+		// JOptionPane.showMessageDialog(BioSim.frame, s,
 		// "Error", JOptionPane.ERROR_MESSAGE);
 		// System.out.println("error: "+s);
 	}
@@ -422,10 +418,8 @@ public class TermCond {
 		return -1;
 	}
 
-	public int ParseTermCond(BioSim biosim, Reb2Sac reb2sac, ArrayList<String> listOfSpecies,
+	public int ParseTermCond(ArrayList<String> listOfSpecies,
 			ArrayList<String> listOfReactions, String termCond) {
-		(this).biosim = biosim;
-		(this).reb2sac = reb2sac;
 		(this).listOfSpecies = listOfSpecies;
 		(this).listOfReactions = listOfReactions;
 		expr = termCond;
@@ -594,7 +588,7 @@ public class TermCond {
 				// #line 67 "TermCond.y"
 			{
 				if (!(val_peek(3).sval.equals("exp")) && !(val_peek(3).sval.equals("log"))) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Expected exp or log!", "Error",
+					JOptionPane.showMessageDialog(BioSim.frame, "Expected exp or log!", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return 2;
 				}
@@ -604,7 +598,7 @@ public class TermCond {
 				// #line 76 "TermCond.y"
 			{
 				if (!(val_peek(5).sval.equals("pow"))) {
-					JOptionPane.showMessageDialog(biosim.frame(), "Expected pow!", "Error",
+					JOptionPane.showMessageDialog(BioSim.frame, "Expected pow!", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return 3;
 				}
@@ -623,7 +617,7 @@ public class TermCond {
 						}
 					}
 					if (!found) {
-						JOptionPane.showMessageDialog(biosim.frame(), val_peek(0).sval
+						JOptionPane.showMessageDialog(BioSim.frame, val_peek(0).sval
 								+ " is not a valid species!", "Error", JOptionPane.ERROR_MESSAGE);
 						return 4;
 					}
@@ -642,7 +636,7 @@ public class TermCond {
 					}
 				}
 				if (!found) {
-					JOptionPane.showMessageDialog(biosim.frame(), val_peek(0).sval
+					JOptionPane.showMessageDialog(BioSim.frame, val_peek(0).sval
 							+ " is not a valid species!", "Error", JOptionPane.ERROR_MESSAGE);
 					return 5;
 				}
@@ -660,7 +654,7 @@ public class TermCond {
 					}
 				}
 				if (!found) {
-					JOptionPane.showMessageDialog(biosim.frame(), val_peek(0).sval
+					JOptionPane.showMessageDialog(BioSim.frame, val_peek(0).sval
 							+ " is not a valid species!", "Error", JOptionPane.ERROR_MESSAGE);
 					return 6;
 				}
@@ -677,7 +671,7 @@ public class TermCond {
 					}
 				}
 				if (!found) {
-					JOptionPane.showMessageDialog(biosim.frame(), val_peek(0).sval
+					JOptionPane.showMessageDialog(BioSim.frame, val_peek(0).sval
 							+ " is not a valid reaction!", "Error", JOptionPane.ERROR_MESSAGE);
 					return 6;
 				}

@@ -667,7 +667,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		}
 		catch (Exception e) {
 			//e.printStackTrace();
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to load properties file!",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 		String[] tempArray = synthesisFile.split(separator);
@@ -832,14 +832,14 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 					}
 				}
 				if (!filename.endsWith(".vhd")) {
-					JOptionPane.showMessageDialog(biosim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"You must select a valid VHDL file.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				else if (new File(directory + separator + filename).exists()
 						|| filename.equals(sourceFileNoPath) || contains) {
-					JOptionPane.showMessageDialog(biosim.frame(),
+					JOptionPane.showMessageDialog(BioSim.frame,
 							"This component is already contained in this tool.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
@@ -901,7 +901,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			}
 			catch (IOException e1) {
 				e1.printStackTrace();
-				JOptionPane.showMessageDialog(biosim.frame(), "Cannot update the file " + s + ".",
+				JOptionPane.showMessageDialog(BioSim.frame, "Cannot update the file " + s + ".",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -1217,7 +1217,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			running.dispose();
 			if (exitValue == 143) {
 				JOptionPane
-						.showMessageDialog(biosim.frame(), "Synthesis was"
+						.showMessageDialog(BioSim.frame, "Synthesis was"
 								+ " canceled by the user.", "Canceled Synthesis",
 								JOptionPane.ERROR_MESSAGE);
 			}
@@ -1264,7 +1264,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void saveAs() {
-		String newName = JOptionPane.showInputDialog(biosim.frame(), "Enter Synthesis name:",
+		String newName = JOptionPane.showInputDialog(BioSim.frame, "Enter Synthesis name:",
 				"Synthesis Name", JOptionPane.PLAIN_MESSAGE);
 		if (newName == null) {
 			return;
@@ -1578,7 +1578,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			oldBdd = bddSize.getText();
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to save parameter file!",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to save parameter file!",
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
 		for (String s : componentList.getItems()) {
@@ -1596,7 +1596,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			}
 			catch (IOException e1) {
 				e1.printStackTrace();
-				JOptionPane.showMessageDialog(biosim.frame(), "Cannot add the selected component.",
+				JOptionPane.showMessageDialog(BioSim.frame, "Cannot add the selected component.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -1686,7 +1686,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 					scrolls.setMinimumSize(new Dimension(500, 500));
 					scrolls.setPreferredSize(new Dimension(500, 500));
 					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Log",
+					JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Log",
 							JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
@@ -1707,7 +1707,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			log.addText(command + directory + separator + graphFile + "\n");
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view circuit.", "Error",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to view circuit.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -1742,16 +1742,16 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 				scrolls.setMinimumSize(new Dimension(500, 500));
 				scrolls.setPreferredSize(new Dimension(500, 500));
 				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Circuit View",
+				JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Circuit View",
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 			else {
-				JOptionPane.showMessageDialog(biosim.frame(), "No production rules exist.",
+				JOptionPane.showMessageDialog(BioSim.frame, "No production rules exist.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view production rules.",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to view production rules.",
 					"Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -1786,16 +1786,16 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 				scrolls.setMinimumSize(new Dimension(500, 500));
 				scrolls.setPreferredSize(new Dimension(500, 500));
 				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Trace View",
+				JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Trace View",
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 			else {
-				JOptionPane.showMessageDialog(biosim.frame(), "No trace file exists.", "Error",
+				JOptionPane.showMessageDialog(BioSim.frame, "No trace file exists.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view trace.", "Error",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to view trace.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -1821,16 +1821,16 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 				scrolls.setMinimumSize(new Dimension(500, 500));
 				scrolls.setPreferredSize(new Dimension(500, 500));
 				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(biosim.frame(), scrolls, "Run Log",
+				JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Run Log",
 						JOptionPane.INFORMATION_MESSAGE);
 			}
 			else {
-				JOptionPane.showMessageDialog(biosim.frame(), "No run log exists.", "Error",
+				JOptionPane.showMessageDialog(BioSim.frame, "No run log exists.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(biosim.frame(), "Unable to view run log.", "Error",
+			JOptionPane.showMessageDialog(BioSim.frame, "Unable to view run log.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
