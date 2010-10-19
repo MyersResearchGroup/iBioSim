@@ -246,7 +246,7 @@ public class Translator {
 					SpeciesReference reactant = r.createReactant();
 					// get preset(s) of a transition and set each as a reactant
 					for (String x : lhpn.getPreset(t)){
-						reactant.setId(x);
+						//reactant.setId(x);
 						reactant.setSpecies(x);
 						//System.out.println("transition:" + t + "preset:" + x);
 					}
