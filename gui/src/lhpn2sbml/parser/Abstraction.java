@@ -1594,7 +1594,6 @@ public class Abstraction extends LhpnFile {
 					}
 				}
 			}
-			System.out.println("int:" + intProc);
 			for (Transition t : transitions.values()) {
 				for (String key : t.getAssignTrees().keySet()) {
 					if (allIntVars.contains(key)) {
@@ -1625,9 +1624,6 @@ public class Abstraction extends LhpnFile {
 					newIntVars.add(v);
 				}
 			}
-			System.out.println("all:" + allIntVars);
-			System.out.println("new:" + newIntVars);
-			System.out.println("newest:" + newestIntVars);
 		} while (newIntVars.size() > 0);
 		ArrayList<Variable> removeVars = new ArrayList<Variable>();
 		for (Variable v : variables) {
