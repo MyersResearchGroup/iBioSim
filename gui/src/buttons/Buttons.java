@@ -101,7 +101,8 @@ public class Buttons {
 					fd.setDirectory(file.getPath());
 				}
 				else {
-					fd.setFile(file.getPath());
+					fd.setDirectory(file.getPath());
+					fd.setFile(file.getName());
 				}
 			}
 			if (i == JFileChooser.DIRECTORIES_ONLY) {
