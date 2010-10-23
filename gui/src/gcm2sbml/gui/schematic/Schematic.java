@@ -530,13 +530,13 @@ public class Schematic extends JPanel implements ActionListener {
 		String type;
 		String constType;
 		if(activationButton.isSelected()){
-			isBio = "no"; type = InfluencePanel.types[1]; constType = GlobalConstants.ACTIVATION;
+			isBio = InfluencePanel.bio[0]; type = InfluencePanel.types[1]; constType = GlobalConstants.ACTIVATION;
 		}else if(inhibitionButton.isSelected()){
-			isBio = "no"; type = InfluencePanel.types[0]; constType = GlobalConstants.REPRESSION;
+			isBio = InfluencePanel.bio[0]; type = InfluencePanel.types[0]; constType = GlobalConstants.REPRESSION;
 		}else if(bioActivationButton.isSelected()){
-			isBio = "yes"; type = InfluencePanel.types[1]; constType = GlobalConstants.ACTIVATION;
+			isBio = InfluencePanel.bio[1]; type = InfluencePanel.types[1]; constType = GlobalConstants.ACTIVATION;
 		}else if(bioInhibitionButton.isSelected()){
-			isBio = "yes"; type = InfluencePanel.types[0]; constType = GlobalConstants.REPRESSION;
+			isBio = InfluencePanel.bio[1]; type = InfluencePanel.types[0]; constType = GlobalConstants.REPRESSION;
 		}else if(noInfluenceButton.isSelected()){
 			isBio = ""; type = InfluencePanel.types[2]; constType = GlobalConstants.NOINFLUENCE;
 		}else{
@@ -555,7 +555,7 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		
 		
-		graph.addInfluence(edge, name, constType);
+		graph.addInfluence(edge, name, constType, isBio);
 		graph.buildGraph();
 		gcm2sbml.refresh();
 		gcm2sbml.setDirty(true);
