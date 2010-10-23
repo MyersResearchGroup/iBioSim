@@ -2357,6 +2357,9 @@ public class Abstraction extends LhpnFile {
 				process_trans.get(trans)))) {
 			return change; // Return if the variable is not local
 		}
+		if (intVars.contains(var)) {
+			return change;
+		}
 		HashMap<String, ExprTree> typeAssign;
 		// The assignments that will contain var
 		if (isInteger(var)) {
@@ -2428,16 +2431,14 @@ public class Abstraction extends LhpnFile {
 		for (Place p : trans.getPostset()) {
 			for (Transition tP : p.getPostset()) {
 				replace(tP, var, e);
-				if (!intVars.contains(var)) {
-					for (Place pP : tP.getPreset()) {
-						for (Transition tPP : pP.getPreset()) {
-							if (isBoolean(var)) {
-								tPP.removeBoolAssign(var);
-							} else if (isInteger(var)) {
-								tPP.removeIntAssign(var);
-							} else {
-								tPP.removeContAssign(var);
-							}
+				for (Place pP : tP.getPreset()) {
+					for (Transition tPP : pP.getPreset()) {
+						if (isBoolean(var)) {
+							tPP.removeBoolAssign(var);
+						} else if (isInteger(var)) {
+							tPP.removeIntAssign(var);
+						} else {
+							tPP.removeContAssign(var);
 						}
 					}
 				}
@@ -2971,6 +2972,17 @@ public class Abstraction extends LhpnFile {
 							break;
 						}
 					}
+					for (Transition t3 : toMerge.get(t1)) {
+						ExprTree tree3 = new ExprTree(this);
+						tree3.setNodeValues(t3.getEnablingTree(), t2
+								.getEnablingTree(), "&&", 'l');
+						for (Transition t : transitions.values()) {
+							if (tree3.becomesTrue(t.getAssignments())) {
+								combine = false;
+								break;
+							}
+						}
+					}
 					for (String var : t1.getAssignments().keySet()) {
 						if (!t2.containsAssignment(var)
 								|| !t1.getAssignTree(var).isEqual(
@@ -3033,6 +3045,17 @@ public class Abstraction extends LhpnFile {
 						if (tree.becomesTrue(t.getAssignments())) {
 							combine = false;
 							break;
+						}
+					}
+					for (Transition t3 : toMerge.get(t1)) {
+						ExprTree tree3 = new ExprTree(this);
+						tree3.setNodeValues(t3.getEnablingTree(), t2
+								.getEnablingTree(), "&&", 'l');
+						for (Transition t : transitions.values()) {
+							if (tree3.becomesTrue(t.getAssignments())) {
+								combine = false;
+								break;
+							}
 						}
 					}
 					if (t1.getEnablingTree() != null
