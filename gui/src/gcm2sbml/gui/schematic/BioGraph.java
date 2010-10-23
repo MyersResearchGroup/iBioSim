@@ -649,10 +649,11 @@ public class BioGraph extends mxGraph {
 	/**
 	 * Creates an influence based on an already created edge.
 	 */
-	public void addInfluence(mxCell cell, String id, String constType){
+	public void addInfluence(mxCell cell, String id, String constType, String bio){
 		Properties prop = new Properties();
 		prop.setProperty(GlobalConstants.NAME, id);
 		prop.setProperty(GlobalConstants.TYPE, constType);
+		prop.setProperty(GlobalConstants.BIO, bio);
 		gcm.getInfluences().put(id, prop);
 		this.influencesToMxCellMap.put(id, cell);
 		updateInfluenceVisuals(id);
