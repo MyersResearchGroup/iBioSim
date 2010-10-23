@@ -4,6 +4,7 @@
 package gcm2sbml.gui.schematic;
 
 import gcm2sbml.gui.GCM2SBMLEditor;
+import gcm2sbml.gui.InfluencePanel;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 
@@ -653,7 +654,8 @@ public class BioGraph extends mxGraph {
 		Properties prop = new Properties();
 		prop.setProperty(GlobalConstants.NAME, id);
 		prop.setProperty(GlobalConstants.TYPE, constType);
-		prop.setProperty(GlobalConstants.BIO, bio);
+		if(bio == InfluencePanel.bio[1])
+			prop.setProperty(GlobalConstants.BIO, bio);
 		gcm.getInfluences().put(id, prop);
 		this.influencesToMxCellMap.put(id, cell);
 		updateInfluenceVisuals(id);
