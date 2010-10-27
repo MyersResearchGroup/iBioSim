@@ -1076,6 +1076,8 @@ public class LearnModel { // added ItemListener SB
 
 						// System.out.print(" ");
 						break;
+					} else {
+								out.write("WARNING: A variable in reqdVarsL wasn't found in the complete list of names.\n");
 					}
 				}
 			}
@@ -1131,7 +1133,8 @@ public class LearnModel { // added ItemListener SB
 								k = reqdVarIndices.get(j);
 								rates[j][previous] = ((data.get(k).get(mark - 1) - data.get(k).get(previous)) / (data.get(0).get(mark - 1) - data.get(0).get(previous)));
 							}
-							duration[previous] = data.get(0).get(mark)	- data.get(0).get(previous); // changed (mark - 1) to mark on may 28,2010
+							if (mark < data.get(0).size()) //This if condition added to fix bug on sept 25 2010
+								duration[previous] = data.get(0).get(mark)	- data.get(0).get(previous); // changed (mark - 1) to mark on may 28,2010
 						}
 					} else if ((mark - i) <  pathLengthBin)  { // account for the glitch duration //
 						out.write("Short bin at " + data.get(0).get(i) + " until " + data.get(0).get(mark) + " due to min pathLengthBin. This delay being added to " + previous + " \n");
