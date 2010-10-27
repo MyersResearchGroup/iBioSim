@@ -47,7 +47,8 @@ public class Translator {
 		lhpn.load(lhpnFilename);
 		
 		// create sbml file
-		document = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+		//document = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+		document = new SBMLDocument(3,1);
 		Model m = document.createModel();
 		Compartment c = m.createCompartment();
 		m.setId(filename.replace(".xml", ""));
