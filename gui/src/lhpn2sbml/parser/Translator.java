@@ -249,11 +249,13 @@ public class Translator {
 					for (String x : lhpn.getPreset(t)){
 						//reactant.setId(x);
 						reactant.setSpecies(x);
+						reactant.setStoichiometry(1.0);
 						//System.out.println("transition:" + t + "preset:" + x);
 					}
 					
 					SpeciesReference product  = r.createProduct();
 					product.setSpecies(t);
+					product.setStoichiometry(1.0);
 						
 					KineticLaw rateReaction = r.createKineticLaw(); // rate of reaction
 					//Parameter p_local = rateReaction.createParameter();
@@ -560,9 +562,9 @@ public class Translator {
 						triggerExtra.setInitialValue(false);
 						extraEvent.setUseValuesFromTriggerTime(false);
 						// assignments
-						EventAssignment assign5ex1 = extraEvent.createEventAssignment();
 						EventAssignment assign5ex2 = extraEvent.createEventAssignment();
 						for (String var : t_intersect){
+							EventAssignment assign5ex1 = extraEvent.createEventAssignment();
 							assign5ex1.setVariable(var);
 							assign5ex1.setMath(SBML_Editor.myParseFormula("1"));
 						}
