@@ -93,7 +93,7 @@ public class Schematic extends JPanel implements ActionListener {
 	
 		// Do layouting if it hasn't been done yet
 		if(needs_layouting){
-			graph.applyLayout("circleLayout", graphComponent);
+		//	graph.applyLayout("circleLayout", graphComponent);
 		}
 		
 	}
