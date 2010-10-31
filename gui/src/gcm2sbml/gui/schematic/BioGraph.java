@@ -249,6 +249,8 @@ public class BioGraph extends mxGraph {
 		this.getModel().beginUpdate();
 		
 		boolean needsPositioning = false;
+		unpositionedSpeciesComponentCount = 0;
+		
 		// add species
 		for(String sp:gcm.getSpecies().keySet()){ // SPECIES
 			if(createGraphSpeciesFromModel(sp))
