@@ -2098,17 +2098,15 @@ public class GCMFile {
 				else {
 					name = name + ", Promoter " + "default";
 				}
-				if (!properties.containsKey("label")) {
-					String label = properties.getProperty(GlobalConstants.PROMOTER);
-					if (label == null) {
-						label = "";
-					}
-					if (properties.containsKey(GlobalConstants.BIO)
-							&& properties.get(GlobalConstants.BIO).equals("yes")) {
-						label = label + "+";
-					}
-					properties.put("label", "\"" + label + "\"");
+				String label = properties.getProperty(GlobalConstants.PROMOTER);
+				if (label == null) {
+					label = "";
 				}
+				if (properties.containsKey(GlobalConstants.BIO)
+						&& properties.get(GlobalConstants.BIO).equals("yes")) {
+					label = label + "+";
+				}
+				properties.put("label", "\"" + label + "\"");
 				properties.put(GlobalConstants.NAME, name);
 				influences.put(name, properties);
 			}

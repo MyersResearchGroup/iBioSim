@@ -66,7 +66,7 @@ public class Translator {
 		createFunction(m, "and", "Logical AND", "lambda(a,b,a*b)");
 		createFunction(m, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
 		createFunction(m, "normal", "Normal distribution", "lambda(m,s,m)");
-		createFunction(m, "exponential", "Exponential distribution", "lambda(mu,mu)");
+		createFunction(m, "exponential", "Exponential distribution", "lambda(l,1/l)");
 		createFunction(m, "gamma", "Gamma distribution", "lambda(a,b,a*b)");
 		createFunction(m, "lognormal", "Lognormal distribution", "lambda(z,s,exp(z+s^2/2))");
 		createFunction(m, "chisq", "Chi-squared distribution", "lambda(nu,nu)");
