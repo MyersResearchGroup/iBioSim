@@ -417,7 +417,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			createFunction(model, "gamma", "Gamma distribution", "lambda(a,b,a*b)");
 			createFunction(model, "lognormal", "Lognormal distribution", "lambda(z,s,exp(z+s^2/2))");
 			createFunction(model, "chisq", "Chi-squared distribution", "lambda(nu,nu)");
-			createFunction(model, "laplace", "Laplace distribution", "lambda(a,a)");
+			createFunction(model, "laplace", "Laplace distribution", "lambda(a,0)");
 			createFunction(model, "cauchy", "Cauchy distribution", "lambda(a,a)");
 			createFunction(model, "rayleigh", "Rayleigh distribution",
 				"lambda(s,s*sqrt(pi/2))");

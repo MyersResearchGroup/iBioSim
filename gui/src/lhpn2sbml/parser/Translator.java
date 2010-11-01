@@ -70,7 +70,7 @@ public class Translator {
 		createFunction(m, "gamma", "Gamma distribution", "lambda(a,b,a*b)");
 		createFunction(m, "lognormal", "Lognormal distribution", "lambda(z,s,exp(z+s^2/2))");
 		createFunction(m, "chisq", "Chi-squared distribution", "lambda(nu,nu)");
-		createFunction(m, "laplace", "Laplace distribution", "lambda(a,a)");
+		createFunction(m, "laplace", "Laplace distribution", "lambda(a,0)");
 		createFunction(m, "cauchy", "Cauchy distribution", "lambda(a,a)");
 		createFunction(m, "rayleigh", "Rayleigh distribution", "lambda(s,s*sqrt(pi/2))");
 		createFunction(m, "poisson", "Poisson distribution", "lambda(mu,mu)");
