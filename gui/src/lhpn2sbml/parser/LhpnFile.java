@@ -368,6 +368,105 @@ public class LhpnFile {
 		// e.printStackTrace();
 		// }
 	}
+	
+	public void printDot(String filename) {
+		try {
+			String file = filename;
+			PrintStream p = new PrintStream(new FileOutputStream(filename));
+			StringBuffer buffer = new StringBuffer();
+			buffer.append("digraph G {\nsize=\"7.5,10\"\n");
+			for (Transition t : transitions.values()) {
+				buffer.append(t.getName() + " [shape=plaintext,label=\"" + t.getName());
+				if (t.containsEnabling()) {
+					buffer.append("\\n{" + t.getEnabling() + "}");
+				}
+				if (t.containsDelay()) {
+					buffer.append("\\n[" + t.getDelay() + "]");
+				}
+				if (t.containsAssignment()) {
+					buffer.append("\\n<");
+					boolean flag = false;
+					if (t.containsBooleanAssignment()) {
+						HashMap<String, String> map = t.getBoolAssignments();
+						for (String v : map.keySet()) {
+							if (flag) {
+								buffer.append(",");
+							}
+							else {
+								flag = true;
+							}
+							buffer.append(v + ":="
+									+ t.getBoolAssignment(v));
+						}
+					}
+					if (t.containsContinuousAssignment()) {
+						HashMap<String, String> map = t.getContAssignments();
+						for (String v : map.keySet()) {
+							if (flag) {
+								buffer.append(",");
+							}
+							else {
+								flag = true;
+							}
+							buffer.append(v + ":=" + t.getContAssignment(v));
+						}
+					}
+					if (t.containsIntegerAssignment()) {
+						HashMap<String, String> map = t.getIntAssignments();
+						for (String v : map.keySet()) {
+							if (flag) {
+								buffer.append(",");
+							}
+							else {
+								flag = true;
+							}
+							buffer.append(v + ":=" + t.getIntAssignment(v));
+						}
+					}
+					buffer.append(">");
+				}
+				buffer.append("\"];\n");
+				//Place[] postset = t.getPostset();
+				//for (Place place : postset) {
+				//	buffer.append(t.getName() + " -> " + place.getName() + "\n");
+				//}
+			}
+			for (Place place : places.values()) {
+				buffer.append(place.getName() + " [label=\"" + place.getName() + "\"];\n" + place.getName()
+						+ " [shape=circle,width=0.40,height=0.40]\n");
+				if (place.isMarked()) {
+					buffer
+							.append(place.getName()
+									+ " [height=.3,width=.3,peripheries=2,style=filled,color=black,fontcolor=white];\n");
+				}
+				Transition[] postset = place.getPostset();
+				for (Transition t : postset) {
+					buffer.append(place.getName() + " -> " + t.getName() + "\n");
+				}
+			}
+			for (Transition t : transitions.values()) {
+				Place[] postset = t.getPostset();
+				for (Place place : postset) {
+					buffer.append(t.getName() + " -> " + place.getName() + "\n");
+				}
+			}
+			//for (Place place : places.values()) {
+			//	Transition[] postset = place.getPostset();
+			//	for (Transition t : postset) {
+			//		buffer.append(place.getName() + " -> " + t.getName() + "\n");
+			//	}
+			//}
+			buffer.append("}\n");
+			p.print(buffer);
+			p.close();
+			if (log != null) {
+				log.addText("Saving:\n" + file + "\n");
+			}
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public void addTransition(String name) {
 		Transition trans = new Transition(name, variables, this);

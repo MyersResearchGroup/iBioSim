@@ -2298,12 +2298,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				String theFile = findTheFile[0] + ".dot";
 				File dot = new File(root + separator + theFile);
 				dot.delete();
-				String cmd = "atacs -cPllodpl " + filename;
+				//String cmd = "atacs -cPllodpl " + filename;
 				File work = new File(root);
 				Runtime exec = Runtime.getRuntime();
-				Process ATACS = exec.exec(cmd, null, work);
-				ATACS.waitFor();
-				log.addText("Executing:\n" + cmd);
+				//Process ATACS = exec.exec(cmd, null, work);
+				//ATACS.waitFor();
+				LhpnFile lhpn = new LhpnFile(log);
+				lhpn.load(root + separator + filename);
+				lhpn.printDot(root + separator + theFile);
+				//log.addText("Executing:\n" + cmd);
 				if (dot.exists()) {
 					String command = "";
 					if (System.getProperty("os.name").contentEquals("Linux")) {
@@ -2347,9 +2350,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				JOptionPane.showMessageDialog(frame, "File cannot be read", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
-			catch (InterruptedException e2) {
-				e2.printStackTrace();
-			}
+			//catch (InterruptedException e2) {
+			//	e2.printStackTrace();
+			//}
 		}
 		// else if (e.getSource() == saveParam) {
 		// Component comp = tab.getSelectedComponent();
@@ -3167,11 +3170,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					theFile = findTheFile[0] + ".dot";
 					File dot = new File(root + separator + theFile);
 					dot.delete();
-					String cmd = "atacs -cPllodpl " + file;
+					LhpnFile lhpn = new LhpnFile(log);
+					lhpn.load(directory + separator + theFile);
+					lhpn.printDot(directory + separator + file);
+					//String cmd = "atacs -cPllodpl " + file;
 					Runtime exec = Runtime.getRuntime();
-					Process ATACS = exec.exec(cmd, null, work);
-					ATACS.waitFor();
-					log.addText("Executing:\n" + cmd);
+					//Process ATACS = exec.exec(cmd, null, work);
+					//ATACS.waitFor();
+					//log.addText("Executing:\n" + cmd);
 					if (dot.exists()) {
 						String command = "";
 						if (System.getProperty("os.name").contentEquals("Linux")) {
@@ -3406,11 +3412,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					theFile = findTheFile[0] + ".dot";
 					File dot = new File(root + separator + theFile);
 					dot.delete();
-					String cmd = "atacs -cPllodpl " + file;
+					LhpnFile lhpn = new LhpnFile(log);
+					lhpn.load(root + separator + file);
+					lhpn.printDot(root + separator + dot);
+					//String cmd = "atacs -cPllodpl " + file;
 					Runtime exec = Runtime.getRuntime();
-					Process ATACS = exec.exec(cmd, null, work);
-					ATACS.waitFor();
-					log.addText("Executing:\n" + cmd);
+					//Process ATACS = exec.exec(cmd, null, work);
+					//ATACS.waitFor();
+					//log.addText("Executing:\n" + cmd);
 					if (dot.exists()) {
 						String command = "";
 						if (System.getProperty("os.name").contentEquals("Linux")) {
@@ -6323,12 +6332,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					String theFile = findTheFile[0] + ".dot";
 					File dot = new File(root + separator + theFile);
 					dot.delete();
-					String cmd = "atacs -cPllodpl " + filename;
+					LhpnFile lhpn = new LhpnFile(log);
+					lhpn.load(tree.getFile());
+					lhpn.printDot(root + separator + theFile);
+					//String cmd = "atacs -cPllodpl " + filename;
 					File work = new File(root);
 					Runtime exec = Runtime.getRuntime();
-					Process ATACS = exec.exec(cmd, null, work);
-					ATACS.waitFor();
-					log.addText("Executing:\n" + cmd);
+					//Process ATACS = exec.exec(cmd, null, work);
+					//ATACS.waitFor();
+					//log.addText("Executing:\n" + cmd);
 					if (dot.exists()) {
 						String command = "";
 						if (System.getProperty("os.name").contentEquals("Linux")) {

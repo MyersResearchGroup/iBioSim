@@ -731,23 +731,27 @@ public class Run implements ActionListener {
 			}
 			else if (dot.isSelected()) {
 				if (nary.isSelected() && gcmEditor != null) {
-					String cmd = "atacs -cPllodpl "
-							+ theFile.replace(".sbml", "").replace(".xml", "") + ".lpn";
+					//String cmd = "atacs -cPllodpl "
+					//		+ theFile.replace(".sbml", "").replace(".xml", "") + ".lpn";
+					LhpnFile lhpnFile = new LhpnFile(log);
+					lhpnFile.load(directory + separator + theFile.replace(".sbml", "").replace(".xml", "") + ".lpn");
+					lhpnFile.printDot(directory + separator + theFile.replace(".sbml", "").replace(".xml", "") + ".dot");
 					time1 = System.nanoTime();
-					Process ATACS = exec.exec(cmd, null, work);
-					ATACS.waitFor();
-					log.addText("Executing:\n" + cmd);
+					//Process ATACS = exec.exec(cmd, null, work);
+					//ATACS.waitFor();
+					//log.addText("Executing:\n" + cmd);
 					exitValue = 0;
 				}
 				else if (modelFile.contains(".lpn")) {
 					LhpnFile lhpnFile = new LhpnFile();
 					lhpnFile.load(root + separator + modelFile);
 					lhpnFile.save(root + separator + simName + separator + modelFile);
-					String cmd = "atacs -cPllodpl " + modelFile;
-					time1 = System.nanoTime();
-					Process ATACS = exec.exec(cmd, null, work);
-					ATACS.waitFor();
-					log.addText("Executing:\n" + cmd);
+					lhpnFile.printDot(root + separator + modelFile.replace(".lpn", ".dot"));
+					//String cmd = "atacs -cPllodpl " + modelFile;
+					//time1 = System.nanoTime();
+					//Process ATACS = exec.exec(cmd, null, work);
+					//ATACS.waitFor();
+					//log.addText("Executing:\n" + cmd);
 					time1 = System.nanoTime();
 					exitValue = 0;
 				}
