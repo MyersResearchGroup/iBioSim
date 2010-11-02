@@ -18,7 +18,6 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	 * 
 	 */
 	public AbstractSpecies() {
-		super();
 		properties = new Properties();
 	}
 	
@@ -121,14 +120,18 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		return Double.parseDouble(getProperty(GlobalConstants.KDECAY_STRING));
 	}
 	
-	protected Properties properties = null;
+	public double getKc() {
+		return Double.parseDouble(getProperty(GlobalConstants.KCOMPLEX_STRING));
+	}
+	
+	protected Properties properties;
 	
 	// The id of the species
-	protected String id = null;
+	protected String id;
 
 	// The name of the species
-	protected String name = null;
+	protected String name;
 
 	// The state associated with the species
-	protected String stateName = null;
+	protected String stateName;
 }

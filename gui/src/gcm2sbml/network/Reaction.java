@@ -42,25 +42,25 @@ public class Reaction {
 	/**
 	 * @return Returns the inputState.
 	 */
-	public String getInputState() {
+	public String getInput() {
 		return inputState;
 	}
 	/**
 	 * @param inputState The inputState to set.
 	 */
-	public void setInputState(String inputState) {
+	public void setInput(String inputState) {
 		this.inputState = inputState;
 	}
 	/**
 	 * @return Returns the outputState.
 	 */
-	public String getOutputState() {
+	public String getOutput() {
 		return outputState;
 	}
 	/**
 	 * @param outputState The outputState to set.
 	 */
-	public void setOutputState(String outputState) {
+	public void setOutput(String outputState) {
 		this.outputState = outputState;
 	}
 	/**
@@ -140,9 +140,7 @@ public class Reaction {
 	//The input state
 	private String inputState = null;
 	//The output state
-	private String outputState= null;
-	//Binding constant
-	private double bindingConstant;
+	private String outputState = null;
 	//Activation or repression
 	private String type = "";
 	//The name of the reaction

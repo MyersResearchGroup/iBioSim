@@ -3,17 +3,18 @@ package gcm2sbml.parser;
 import gcm2sbml.network.BaseSpecies;
 import gcm2sbml.network.ConstantSpecies;
 import gcm2sbml.network.GeneticNetwork;
+import gcm2sbml.network.PartSpecies;
 import gcm2sbml.network.Promoter;
 import gcm2sbml.network.Reaction;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
 import gcm2sbml.util.GlobalConstants;
-import gcm2sbml.util.Utility;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -64,13 +65,12 @@ public class GCMParser {
 		HashMap<String, Properties> promoterMap = gcm.getPromoters();
 
 		species = new HashMap<String, SpeciesInterface>();
-		stateMap = new HashMap<String, SpeciesInterface>();
 		promoters = new HashMap<String, Promoter>();
+		complexMap = new HashMap<String, ArrayList<PartSpecies>>();
 
 		for (String s : speciesMap.keySet()) {
 			SpeciesInterface specie = parseSpeciesData(s, speciesMap.get(s));
 			species.put(specie.getId(), specie);
-			stateMap.put(specie.getStateName(), specie);
 		}
 		
 		for (String s : promoterMap.keySet()) {
@@ -81,7 +81,7 @@ public class GCMParser {
 			parseReactionData(s, reactionMap.get(s));			
 		}
 		
-		GeneticNetwork network = new GeneticNetwork(species, stateMap,
+		GeneticNetwork network = new GeneticNetwork(species, complexMap,
 				promoters, gcm);
 		
 		network.setSBMLFile(gcm.getSBMLFile());
@@ -102,14 +102,6 @@ public class GCMParser {
 
 	public void setSpecies(HashMap<String, SpeciesInterface> species) {
 		this.species = species;
-	}
-
-	public HashMap<String, SpeciesInterface> getStateMap() {
-		return stateMap;
-	}
-
-	public void setStateMap(HashMap<String, SpeciesInterface> stateMap) {
-		this.stateMap = stateMap;
 	}
 
 	public HashMap<String, Promoter> getPromoters() {
@@ -177,45 +169,8 @@ public class GCMParser {
 	 */
 	// TODO: Match rate constants
 	private void parseReactionData(String reaction, Properties property) {
-
-		String promoterName = "";
-		Promoter promoter = null;
 		Reaction r = new Reaction();		
 		r.generateName();		
-
-		if (property.containsKey(GlobalConstants.PROMOTER)) {
-			promoterName = property.getProperty(GlobalConstants.PROMOTER);
-		} else {
-			promoterName = "Promoter_" + GCMFile.getOutput(reaction);
-		}
-
-		// Check if promoter exists. If not, create it.
-		if (promoters.containsKey(promoterName)) {
-			promoter = promoters.get(promoterName);
-		} else {
-			promoter = parsePromoterData(promoterName, null);
-			/*
-			promoter = new Promoter();
-			promoter.setId(promoterName);
-			promoters.put(promoter.getId(), promoter);
-			*/
-		}
-
-		if (property.containsKey(GlobalConstants.BIO) && property.get(GlobalConstants.BIO).equals("yes")) {
-			Utility.print(debug, "GCMParser: Biochemical");
-			r.setBiochemical(true);
-			if (property.containsKey(GlobalConstants.KBIO_STRING)) {
-				r.addProperty(GlobalConstants.KBIO_STRING, property.getProperty(GlobalConstants.KBIO_STRING));
-			} else {
-				r.addProperty(GlobalConstants.KBIO_STRING, gcm.getParameter(GlobalConstants.KBIO_STRING));
-			} 
-		}
-		
-		if (property.containsKey(GlobalConstants.MAX_DIMER_STRING)) {
-			r.addProperty(GlobalConstants.MAX_DIMER_STRING, property.getProperty(GlobalConstants.MAX_DIMER_STRING));
-		} else {
-			r.addProperty(GlobalConstants.MAX_DIMER_STRING, gcm.getParameter(GlobalConstants.MAX_DIMER_STRING));
-		} 
 		
 		if (property.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
 			r.addProperty(GlobalConstants.COOPERATIVITY_STRING, property.getProperty(GlobalConstants.COOPERATIVITY_STRING));
@@ -223,8 +178,6 @@ public class GCMParser {
 			r.addProperty(GlobalConstants.COOPERATIVITY_STRING, gcm.getParameter(GlobalConstants.COOPERATIVITY_STRING));
 		} 
 		
-		r.setInputState(GCMFile.getInput(reaction));
-		r.setOutputState(GCMFile.getOutput(reaction));
 		if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
 			r.setType("vee");
 			if (property.containsKey(GlobalConstants.KACT_STRING)) {
@@ -239,13 +192,50 @@ public class GCMParser {
 			} else {
 				r.addProperty(GlobalConstants.KREP_STRING, gcm.getParameter(GlobalConstants.KREP_STRING));
 			} 	
-		} else {
+		} else if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.COMPLEX)) {
+			r.setType("plus");
+		}
+		else {
 			r.setType("dot");
 			if (property.containsKey(GlobalConstants.KREP_STRING)) {
 				r.addProperty(GlobalConstants.KREP_STRING, property.getProperty(GlobalConstants.KREP_STRING));
 			}					
 		}
-		promoter.addReaction(r);
+		
+		String input = GCMFile.getInput(reaction);
+		String output = GCMFile.getOutput(reaction);
+		r.setInput(input);
+		r.setOutput(output);
+		if (r.getType().equals("plus")) {
+			ArrayList<PartSpecies> parts = null;
+			if (complexMap.containsKey(output)) {
+				parts = complexMap.get(output);
+			} else { 
+				parts = new ArrayList<PartSpecies>();
+				complexMap.put(output, parts);
+			}
+			PartSpecies ps = new PartSpecies(species.get(input), r.getCoop());
+			parts.add(ps);
+		} else {	
+			String promoterName = "";
+			if (property.containsKey(GlobalConstants.PROMOTER)) {
+				promoterName = property.getProperty(GlobalConstants.PROMOTER);
+			} else {
+				promoterName = "Promoter_" + GCMFile.getOutput(reaction);
+			}
+			// Check if promoter exists. If not, create it.
+			Promoter p = null;
+			if (promoters.containsKey(promoterName)) {
+				p = promoters.get(promoterName);
+			} else {
+				p = parsePromoterData(promoterName, null);
+			}
+			p.addToReactionMap(input, r);
+			if (r.getType().equals("vee"))
+				p.addActivator(input, species.get(input));
+			else
+				p.addRepressor(input, species.get(input));
+		}
 	}
 	
 
@@ -269,6 +259,12 @@ public class GCMParser {
 			specie = new BaseSpecies();
 		}
 
+		if (property.containsKey(GlobalConstants.KCOMPLEX_STRING)) {
+			specie.addProperty(GlobalConstants.KCOMPLEX_STRING, property.getProperty(GlobalConstants.KCOMPLEX_STRING));
+		} else {
+			specie.addProperty(GlobalConstants.KCOMPLEX_STRING, gcm.getParameter(GlobalConstants.KCOMPLEX_STRING));
+		}
+		
 		if (property.containsKey(GlobalConstants.KASSOCIATION_STRING)) {
 			specie.addProperty(GlobalConstants.KASSOCIATION_STRING, property.getProperty(GlobalConstants.KASSOCIATION_STRING));
 		} else {
@@ -308,12 +304,11 @@ public class GCMParser {
 	// Holds the text of the GCM
 	private StringBuffer data = null;
 
-	private HashMap<String, SpeciesInterface> species = null;
+	private HashMap<String, SpeciesInterface> species;
 
-	// StateMap, species
-	private HashMap<String, SpeciesInterface> stateMap = null;
-
-	private HashMap<String, Promoter> promoters = null;
+	private HashMap<String, Promoter> promoters;
+	
+	private HashMap<String, ArrayList<PartSpecies>> complexMap;
 
 	private GCMFile gcm = null;
 

@@ -8,9 +8,8 @@ import gcm2sbml.util.Utility;
 import gcm2sbml.visitor.AbstractPrintVisitor;
 import gcm2sbml.visitor.PrintActivatedBindingVisitor;
 import gcm2sbml.visitor.PrintActivatedProductionVisitor;
-import gcm2sbml.visitor.PrintBiochemicalVisitor;
+import gcm2sbml.visitor.PrintComplexVisitor;
 import gcm2sbml.visitor.PrintDecaySpeciesVisitor;
-import gcm2sbml.visitor.PrintDimerizationVisitor;
 import gcm2sbml.visitor.PrintRepressionBindingVisitor;
 import gcm2sbml.visitor.PrintSpeciesVisitor;
 
@@ -21,8 +20,6 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -68,9 +65,9 @@ public class GeneticNetwork {
 	 *            a hashmap of promoters
 	 */
 	public GeneticNetwork(HashMap<String, SpeciesInterface> species,
-			HashMap<String, SpeciesInterface> stateMap,
+			HashMap<String, ArrayList<PartSpecies>> complexMap,
 			HashMap<String, Promoter> promoters) {
-		this(species, stateMap, promoters, null);
+		this(species, complexMap, promoters, null);
 	}
 	
 	/**
@@ -98,8 +95,9 @@ public class GeneticNetwork {
 	 *            a gcm file containing extra information
 	 */
 	public GeneticNetwork(HashMap<String, SpeciesInterface> species,
-			HashMap<String, SpeciesInterface> stateMap,
-			HashMap<String, Promoter> promoters, GCMFile gcm) {
+			HashMap<String, ArrayList<PartSpecies>> complexMap,
+			HashMap<String, Promoter> promoters, 
+			GCMFile gcm) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -107,8 +105,8 @@ public class GeneticNetwork {
 			separator = File.separator;
 		}
 		this.species = species;
-		this.stateMap = stateMap;
 		this.promoters = promoters;
+		this.complexMap = complexMap;
 		this.properties = gcm;
 		
 		AbstractPrintVisitor.setGCMFile(gcm);
@@ -159,8 +157,7 @@ public class GeneticNetwork {
 	 */
 	public void loadProperties(GCMFile gcm) {
 		properties = gcm;
-		dimerizationAbstraction = gcm.getDimAbs();
-		biochemicalAbstraction = gcm.getBioAbs();
+		complexAbstraction = gcm.getBioAbs();
 	}
 	
 	public void setSBMLFile(String file) {
@@ -201,6 +198,9 @@ public class GeneticNetwork {
 			printPromoterProduction(document);
 			
 			printPromoterBinding(document);
+			
+			if (!complexAbstraction)
+				printComplexBinding(document);
 			
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
 
@@ -289,7 +289,7 @@ public class GeneticNetwork {
 			throw new IllegalStateException("Unable to output to SBML");
 		}
 	}
-
+	
 	/**
 	 * Prints each promoter binding
 	 * 
@@ -318,19 +318,15 @@ public class GeneticNetwork {
 			// Next setup activated binding
 			PrintActivatedBindingVisitor v = new PrintActivatedBindingVisitor(
 					document, p);
-			
-			v.setBiochemicalAbstraction(biochemicalAbstraction);
-			v.setDimerizationAbstraction(dimerizationAbstraction);
 			v.setCooperationAbstraction(cooperationAbstraction);
+			v.setComplexAbstraction(complexAbstraction);
 			v.run();
 
 			// Next setup repression binding
-			p.getRepressors();
 			PrintRepressionBindingVisitor v2 = new PrintRepressionBindingVisitor(
 					document, p);
-			v2.setBiochemicalAbstraction(biochemicalAbstraction);
-			v2.setDimerizationAbstraction(dimerizationAbstraction);
 			v2.setCooperationAbstraction(cooperationAbstraction);
+			v2.setComplexAbstraction(complexAbstraction);
 			v2.run();
 		}
 
@@ -346,56 +342,27 @@ public class GeneticNetwork {
 		
 		for (Promoter p : promoters.values()) {
 			if (p.getOutputs().size()==0) continue;
-			if (p.getActivators().size() > 0 && p.getRepressors().size() == 0) {
-				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+			r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + p.getId()));
+			for (SpeciesInterface species : p.getOutputs()) {
+				r.addProduct(Utility.SpeciesReference(species.getId(), p.getStoich()));
+			}
+			r.setReversible(false);
+			r.setFast(false);
+			KineticLaw kl = r.createKineticLaw();
+			if (p.getRepressors().size() > 0) {
+				r.setId("R_constitutive_production_" + p.getId());
+				kl.addParameter(Utility.Parameter(kOcString, p.getKoc(),
+							getMoleTimeParameter(1)));
+				kl.setFormula(kOcString + "*" + "RNAP_" + p.getId());
+			} else {
 				r.setId("R_basal_production_" + p.getId());
-				r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + p.getId()));
-				for (SpeciesInterface species : p.getOutputs()) {
-					r.addProduct(Utility.SpeciesReference(species.getId(), p.getStoich()));
-				}
-				r.setReversible(false);
-				r.setFast(false);
-				KineticLaw kl = r.createKineticLaw();
 				kl.addParameter(Utility.Parameter(kBasalString, p.getKbasal(),
 							getMoleTimeParameter(1)));
 				kl.setFormula(kBasalString + "*" + "RNAP_" + p.getId());
-				Utility.addReaction(document, r);
-
-				PrintActivatedProductionVisitor v = new PrintActivatedProductionVisitor(
-						document, p);
-				v.run();
-			} else if (p.getActivators().size() == 0
-					&& p.getRepressors().size() >= 0) {
-				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-				r.setId("R_constitutive_production_" + p.getId());
-				r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + p.getId()));
-				for (SpeciesInterface species : p.getOutputs()) {
-					r.addProduct(Utility.SpeciesReference(species.getId(), p.getStoich()));
-				}
-				r.setReversible(false);
-				r.setFast(false);
-				KineticLaw kl = r.createKineticLaw();
-				kl.addParameter(Utility.Parameter(kOcString, p.getKoc(),
-							getMoleTimeParameter(1)));
-				kl.setFormula(kOcString + "*" + "RNAP_" + p.getId());
-				Utility.addReaction(document, r);
-			} else {
-				// TODO: Should ask Chris how to handle
-				// Both activated and repressed
-				org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-				r.setId("R_constitutive_production_" + p.getId());
-				r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + p.getId()));
-				for (SpeciesInterface species : p.getOutputs()) {
-					r.addProduct(Utility.SpeciesReference(species.getId(), p.getStoich()));
-				}
-				r.setReversible(false);
-				r.setFast(false);
-				KineticLaw kl = r.createKineticLaw();
-				kl.addParameter(Utility.Parameter(kOcString, p.getKoc(),
-							getMoleTimeParameter(1)));
-				kl.setFormula(kOcString + "*" + "RNAP_" + p.getId());
-				Utility.addReaction(document, r);
-
+			}
+			Utility.addReaction(document, r);
+			if (p.getActivators().size() > 0) {
 				PrintActivatedProductionVisitor v = new PrintActivatedProductionVisitor(
 						document, p);
 				v.run();
@@ -410,12 +377,9 @@ public class GeneticNetwork {
 	 *            the SBML document
 	 */
 	private void printDecay(SBMLDocument document) {
-		
-
 		PrintDecaySpeciesVisitor visitor = new PrintDecaySpeciesVisitor(
 				document, species.values());
-		visitor.setBiochemicalAbstraction(biochemicalAbstraction);
-		visitor.setDimerizationAbstraction(dimerizationAbstraction);
+		visitor.setComplexAbstraction(complexAbstraction);
 		visitor.run();
 	}
 
@@ -428,9 +392,13 @@ public class GeneticNetwork {
 	private void printSpecies(SBMLDocument document) {
 		PrintSpeciesVisitor visitor = new PrintSpeciesVisitor(document, species
 				.values(), compartment);
-		visitor.setBiochemicalAbstraction(biochemicalAbstraction);
-		visitor.setDimerizationAbstraction(dimerizationAbstraction);
+		visitor.setComplexAbstraction(complexAbstraction);
 		visitor.run();
+	}
+	
+	private void printComplexBinding(SBMLDocument document) {
+		PrintComplexVisitor v = new PrintComplexVisitor(document, species.values());
+		v.run();
 	}
 	
 	private ASTNode updateMathVar(ASTNode math, String origVar, String newVar) {
@@ -888,161 +856,42 @@ public class GeneticNetwork {
 	 * 
 	 */
 	private void initialize() {
-		buildPromoters();
-		buildDimers();
-		buildBiochemical();
+		buildComplexes();
 	}
 
 	/**
-	 * Configurates the promoters
+	 * Configures the promoters
 	 * 
 	 */
-	private void buildPromoters() {
-		for (Promoter promoter : promoters.values()) {
-			for (Reaction reaction : promoter.getActivatingReactions()) {
-				if (!reaction.isBiochemical() && reaction.getDimer() <= 1) {
-					promoter.addActivator(stateMap
-							.get(reaction.getInputState()));
-					promoter.addToReactionMap(stateMap.get(reaction
-							.getInputState()), reaction);
+	private void buildComplexes() {
+		for (Promoter p : promoters.values()) {
+			for (Reaction r : p.getActivatingReactions()) {
+				String inputId = r.getInput();
+				if (complexMap.containsKey(inputId)) {
+					ComplexSpecies c = new ComplexSpecies(species.get(inputId), 
+							complexMap.get(inputId));
+					p.addActivator(inputId, c);
+					species.put(inputId, c);
 				}
-				if (!reaction.getOutputState().equals("none")) {
-					promoter.addOutput(stateMap.get(reaction.getOutputState()));
-				}
-			}
-			for (Reaction reaction : promoter.getRepressingReactions()) {
-				if (!reaction.isBiochemical() && reaction.getDimer() <= 1) {
-					promoter.addRepressor(stateMap
-							.get(reaction.getInputState()));
-					promoter.addToReactionMap(stateMap.get(reaction
-							.getInputState()), reaction);
-				}
-				if (!reaction.getOutputState().equals("none")) {
-					promoter.addOutput(stateMap.get(reaction.getOutputState()));
+				String outputId = r.getOutput();
+				if (!r.getOutput().equals("none")) {
+					p.addOutput(outputId, species.get(outputId));
 				}
 			}
-		}
-	}
-
-	/**
-	 * Builds the dimer list from reactions and species and adds it to the
-	 * promoter as input.
-	 */
-	private void buildDimers() {
-		// Go through reaction list to see if any are missed
-		for (Promoter promoter : promoters.values()) {
-			for (Reaction reaction : promoter.getActivatingReactions()) {
-				double nDimer = reaction.getDimer();
-				if (nDimer > 1) {
-					SpeciesInterface specie = stateMap.get(reaction.getInputState());
-					DimerSpecies dimer = new DimerSpecies(specie, specie.getProperty(GlobalConstants.KASSOCIATION_STRING), nDimer);
-					promoter.addToReactionMap(dimer, reaction);
-					promoter.addActivator(dimer);
-					species.put(dimer.getId(), dimer);
+			for (Reaction r : p.getRepressingReactions()) {
+				String inputId = r.getInput();
+				if (complexMap.containsKey(inputId)) {
+					ComplexSpecies c = new ComplexSpecies(species.get(inputId), 
+							complexMap.get(inputId));
+					p.addRepressor(inputId, c);
+					species.put(inputId, c);
 				}
-			}
-			for (Reaction reaction : promoter.getRepressingReactions()) {
-				double nDimer = reaction.getDimer();
-				if (nDimer > 1) {
-					SpeciesInterface specie = stateMap.get(reaction.getInputState());
-					DimerSpecies dimer = new DimerSpecies(specie, specie.getProperty(GlobalConstants.KASSOCIATION_STRING), nDimer);
-					promoter.addToReactionMap(dimer, reaction);
-					promoter.addRepressor(dimer);
-					species.put(dimer.getId(), dimer);
-				}
-			}
-
-		}
-	}
-
-	/**
-	 * Builds the biochemical species, and adds it to the promoter as input
-	 */
-	private void buildBiochemical() {
-		// Cycle through each promoter
-		for (Promoter promoter : promoters.values()) {
-			// keep track of all activating and repressing reactions in separate
-			// lists
-			ArrayList<SpeciesInterface> biochem = new ArrayList<SpeciesInterface>();
-			ArrayList<Reaction> reactions = new ArrayList<Reaction>();
-			for (Reaction reaction : promoter.getActivatingReactions()) {
-				if (reaction.isBiochemical()) {
-					reactions.add(reaction);
-					SpeciesInterface specie = stateMap.get(reaction.getInputState());
-					biochem.add(specie);
-				}
-			}
-			if (biochem.size() == 1) {
-				throw new IllegalStateException(
-						"Must have more than 1 biochemical reaction");
-			} else if (biochem.size() >= 2) {
-				BiochemicalSpecies bio = null;
-				String unique = isUnique(biochem);
-				if (unique.equals("unique")) {
-					bio = new BiochemicalSpecies(biochem);
-				} else {
-					bio = (BiochemicalSpecies) species.get(unique);
-				}
-				promoter.addActivator(bio);
-				for (Reaction reaction : reactions) {
-					promoter.addToReactionMap(bio, reaction);
-				}
-				species.put(bio.getId(), bio);
-			}
-
-			biochem = new ArrayList<SpeciesInterface>();
-			reactions = new ArrayList<Reaction>();
-			for (Reaction reaction : promoter.getRepressingReactions()) {
-				if (reaction.isBiochemical()) {
-					reactions.add(reaction);
-					SpeciesInterface specie = stateMap.get(reaction.getInputState());
-					biochem.add(specie);
-				}
-			}
-			if (biochem.size() == 1) {
-				throw new IllegalStateException(
-						"Must have more than 1 biochemical reaction");
-			} else if (biochem.size() >= 2) {
-				BiochemicalSpecies bio = null;
-				String unique = isUnique(biochem);
-				if (unique.equals("unique")) {
-					bio = new BiochemicalSpecies(biochem);
-				} else {
-					bio = (BiochemicalSpecies) species.get(unique);
-				}
-				promoter.addRepressor(bio);
-				for (Reaction reaction : reactions) {
-					promoter.addToReactionMap(bio, reaction);
-				}
-				species.put(bio.getId(), bio);
-			}
-		}
-
-	}
-	
-	/**
-	 * Identifies whether biochemical species to be constructed has
-	 * already been constructed or not
-	 */
-	private String isUnique(ArrayList<SpeciesInterface> biochem) {
-		Set<String> keys = species.keySet();
-		Iterator<String> bob = keys.iterator();
-		while (bob.hasNext()) {
-			String key = bob.next();
-			if (key.startsWith("Biochemical")) {
-				String name = key.substring(11);
-				int count = 0;
-				for (SpeciesInterface s : biochem) {
-					if (name.contains(s.getId())) {
-						count++;
-					}
-				}
-				if (count == biochem.size()) {
-					return key;
+				String outputId = r.getOutput();
+				if (!r.getOutput().equals("none")) {
+					p.addOutput(outputId, species.get(outputId));
 				}
 			}
 		}
-		return "unique";
 	}
 
 	public HashMap<String, SpeciesInterface> getSpecies() {
@@ -1051,14 +900,6 @@ public class GeneticNetwork {
 
 	public void setSpecies(HashMap<String, SpeciesInterface> species) {
 		this.species = species;
-	}
-
-	public HashMap<String, SpeciesInterface> getStateMap() {
-		return stateMap;
-	}
-
-	public void setStateMap(HashMap<String, SpeciesInterface> stateMap) {
-		this.stateMap = stateMap;
 	}
 
 	public HashMap<String, Promoter> getPromoters() {
@@ -1099,17 +940,15 @@ public class GeneticNetwork {
 	
 	private static String currentRoot = "";
 
-	private boolean biochemicalAbstraction = false;
-
-	private boolean dimerizationAbstraction = false;
-
 	private boolean cooperationAbstraction = false;
+	
+	private boolean complexAbstraction = false;
 
 	private HashMap<String, SpeciesInterface> species = null;
 
-	private HashMap<String, SpeciesInterface> stateMap = null;
-
 	private HashMap<String, Promoter> promoters = null;
+	
+	private HashMap<String, ArrayList<PartSpecies>> complexMap = null;
 
 	private GCMFile properties = null;
 

@@ -3,6 +3,7 @@ package gcm2sbml.network;
 import gcm2sbml.util.GlobalConstants;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Properties;
@@ -20,66 +21,13 @@ public class Promoter {
 	 * 
 	 */
 	public Promoter() {
-		activators = new HashSet<SpeciesInterface>();
-		repressors = new HashSet<SpeciesInterface>();
-		outputs = new HashSet<SpeciesInterface>();
-		activatingReactions = new ArrayList<Reaction>();
-		repressingReactions = new ArrayList<Reaction>();
-		reactionMap = new HashMap<SpeciesInterface, ArrayList<Reaction>>();
+		outputs = new HashMap<String, SpeciesInterface>();
+		activationMap = new HashMap<String, Reaction>();
+		repressionMap = new HashMap<String, Reaction>();
+		activators = new HashMap<String, SpeciesInterface>();
+		repressors = new HashMap<String, SpeciesInterface>();
 	}
-
-	/**
-	 * Adds reaction to list of reactions
-	 * 
-	 * @param reaction
-	 *            reaction to add
-	 */
-	public void addReaction(Reaction reaction) {
-		if (reaction.getType().equals("tee")) {
-			repressingReactions.add(reaction);
-		} else if (reaction.getType().equals("vee")) {
-			activatingReactions.add(reaction);
-		} else {
-			//throw new IllegalArgumentException(
-			//		"Reaction must be activating or repressing");
-		}
-	}
-
-	/**
-	 * Adds an activator
-	 * 
-	 * @param species
-	 *            the species to add
-	 */
-	public void addActivator(SpeciesInterface species) {
-		activators.add(species);
-	}
-
-	/**
-	 * Adds a repressor
-	 * 
-	 * @param species
-	 *            the species to add
-	 */
-	public void addRepressor(SpeciesInterface species) {
-		repressors.add(species);
-	}
-
-	/**
-	 * @return Returns the activators.
-	 */
-	public HashSet<SpeciesInterface> getActivators() {
-		return activators;
-	}
-
-	/**
-	 * @param activators
-	 *            The activators to set.
-	 */
-	public void setActivators(HashSet<SpeciesInterface> activators) {
-		this.activators = activators;
-	}
-
+	
 	/**
 	 * @return Returns the id.
 	 */
@@ -96,44 +44,6 @@ public class Promoter {
 	}
 
 	/**
-	 * @return Returns the outputs.
-	 */
-	public HashSet<SpeciesInterface> getOutputs() {
-		return outputs;
-	}
-
-	/**
-	 * @param outputs
-	 *            The outputs to set.
-	 */
-	public void setOutputs(HashSet<SpeciesInterface> outputs) {
-		this.outputs = outputs;
-	}
-
-	/**
-	 * @param specie
-	 *            the species to add
-	 */
-	public void addOutput(SpeciesInterface specie) {
-		this.outputs.add(specie);
-	}
-
-	/**
-	 * @return Returns the repressors.
-	 */
-	public HashSet<SpeciesInterface> getRepressors() {
-		return repressors;
-	}
-
-	/**
-	 * @param repressors
-	 *            The repressors to set.
-	 */
-	public void setRepressors(HashSet<SpeciesInterface> repressors) {
-		this.repressors = repressors;
-	}
-
-	/**
 	 * Creates a unique name
 	 * 
 	 */
@@ -141,12 +51,89 @@ public class Promoter {
 		id = "Promoter_" + uniqueID;
 		uniqueID++;
 	}
+	
+	/**
+	 * @param specie
+	 *            the species to add
+	 */
+	public void addOutput(String id, SpeciesInterface s) {
+		outputs.put(id, s);
+	}
+	
+	/**
+	 * @return Returns the outputs.
+	 */
+	public Collection<SpeciesInterface> getOutputs() {
+		return outputs.values();
+	}
 
+	/**
+	 * @param outputs
+	 *            The outputs to set.
+	 */
+	public void setOutputs(HashMap<String, SpeciesInterface> outputs) {
+		this.outputs = outputs;
+	}
+
+	/**
+	 * Adds reaction to list of reactions
+	 * 
+	 * @param reaction
+	 *            reaction to add
+	 */
+	public void addToReactionMap(String id, Reaction r) {
+		if (r.getType().equals("tee")) {
+			repressionMap.put(id, r);
+		} else if (r.getType().equals("vee")) {
+			activationMap.put(id, r);
+		} else {
+			//throw new IllegalArgumentException(
+			//		"Reaction must be activating or repressing");
+		}
+	}
+	
+	public void addActivator(String id, SpeciesInterface s) {
+		activators.put(id, s);
+	}
+	
+	public void addRepressor(String id, SpeciesInterface s) {
+		repressors.put(id, s);
+	}
+
+	/**
+	 * @return Returns the activators.
+	 */
+	public Collection<SpeciesInterface> getActivators() {
+		return activators.values();
+	}
+	
+	/**
+	 * @return Returns the repressors.
+	 */
+	public Collection<SpeciesInterface> getRepressors() {
+		return repressors.values();
+	}
+	
 	/**
 	 * @return Returns the reactions.
 	 */
-	public ArrayList<Reaction> getActivatingReactions() {
-		return activatingReactions;
+	public Collection<Reaction> getActivatingReactions() {
+		return activationMap.values();
+	}
+	
+	/**
+	 * @return Returns the repressingReactions.
+	 */
+	public Collection<Reaction> getRepressingReactions() {
+		return repressionMap.values();
+	}
+	
+	public HashMap<String, Reaction> getActivationMap() {
+		return activationMap;
+	}
+	
+	public HashMap<String, Reaction> getRepressionMap() {
+		return repressionMap;
 	}
 	
 	public double getPcount() {
@@ -187,50 +174,16 @@ public class Promoter {
 	 * @param reactions
 	 *            The reactions to set.
 	 */
-	public void setActivatingReactions(ArrayList<Reaction> reactions) {
-		this.activatingReactions = reactions;
-	}
-
-	/**
-	 * @return Returns the repressingReactions.
-	 */
-	public ArrayList<Reaction> getRepressingReactions() {
-		return repressingReactions;
+	public void setActivatingReactions(HashMap<String, Reaction> activationMap) {
+		this.activationMap = activationMap;
 	}
 
 	/**
 	 * @param repressingReactions
 	 *            The repressingReactions to set.
 	 */
-	public void setRepressingReactions(ArrayList<Reaction> repressingReactions) {
-		this.repressingReactions = repressingReactions;
-	}
-
-	public HashMap<SpeciesInterface, ArrayList<Reaction>> getReactionMap() {
-		return reactionMap;
-	}
-
-	public void setReactionMap(
-			HashMap<SpeciesInterface, ArrayList<Reaction>> reactionMap) {
-		this.reactionMap = reactionMap;
-	}
-
-	/**
-	 * Adds a reaction to the ReactionMap
-	 * 
-	 * @param species
-	 *            the species to add
-	 * @param reaction
-	 *            the reaction to add
-	 */
-	public void addToReactionMap(SpeciesInterface species, Reaction reaction) {
-		if (reactionMap.containsKey(species)) {
-			reactionMap.get(species).add(reaction);
-		} else {
-			ArrayList<Reaction> list = new ArrayList<Reaction>();
-			list.add(reaction);
-			reactionMap.put(species, list);
-		}
+	public void setRepressingReactions(HashMap<String, Reaction> repressionMap) {
+		this.repressionMap = repressionMap;
 	}
 	
 	public void setProperties(Properties properties) {
@@ -269,26 +222,19 @@ public class Promoter {
 	// id of promoter
 	protected String id = "";
 
-	// Activators of promoter
-	protected HashSet<SpeciesInterface> activators = null;
-
-	// Repressors of promoter
-	protected HashSet<SpeciesInterface> repressors = null;
-
 	// Outputs of promoter
-	protected HashSet<SpeciesInterface> outputs = null;
+	protected HashMap<String, SpeciesInterface> outputs;
 
 	// List of reactions
-	protected ArrayList<Reaction> activatingReactions = null;
+	protected HashMap<String, Reaction> activationMap;
 
-	protected ArrayList<Reaction> repressingReactions = null;
+	protected HashMap<String, Reaction> repressionMap;
+	
+	protected HashMap<String, SpeciesInterface> activators;
+	
+	protected HashMap<String, SpeciesInterface> repressors;
 
 	protected static int uniqueID = 0;
 
-	protected HashMap<SpeciesInterface, ArrayList<Reaction>> reactionMap = null;
-	
-	private double act;
-	
-	private int stoich;
 	
 }

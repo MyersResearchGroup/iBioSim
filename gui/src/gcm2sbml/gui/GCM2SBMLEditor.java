@@ -282,12 +282,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		else {
 			gcm.setSBMLFile("");
 		}
-		if (dimAbs.isSelected()) {
-			gcm.setDimAbs(true);
-		}
-		else {
-			gcm.setDimAbs(false);
-		}
 		if (bioAbs.isSelected()) {
 			gcm.setBioAbs(true);
 		}
@@ -901,7 +895,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		mainPanelNorth.add(sbmlFileLabel);
 		mainPanelNorth.add(sbmlFiles);
 
-		JLabel bioAbsLabel = new JLabel("Biochemical abstraction:");
+		JLabel bioAbsLabel = new JLabel("Complex abstraction:");
 		bioAbs = new JCheckBox();
 		bioAbs.addActionListener(this);
 		if (paramsOnly) {
@@ -914,7 +908,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			bioAbs.setSelected(true);
 		}
 
-		JLabel dimAbsLabel = new JLabel("Dimerization abstraction:");
+		/*JLabel dimAbsLabel = new JLabel("Dimerization abstraction:");
 		dimAbs = new JCheckBox();
 		dimAbs.addActionListener(this);
 		if (paramsOnly) {
@@ -925,7 +919,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		mainPanelNorth.add(dimAbs);
 		if (gcm.getDimAbs()) {
 			dimAbs.setSelected(true);
-		}
+		}*/
 
 		// create the grappa panel
 		GCIGrappaPanel grappaPanel = new GCIGrappaPanel();

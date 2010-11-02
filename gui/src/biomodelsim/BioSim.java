@@ -1144,6 +1144,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		if (biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", "").equals("")) {
 			biosimrc.put("biosim.gcm.STOICHIOMETRY_VALUE", "10");
 		}
+		if (biosimrc.get("biosim.gcm.KCOMPLEX_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.KCOMPLEX_VALUE", "0.05");
+		}
 		if (biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", "").equals("")) {
 			biosimrc.put("biosim.gcm.COOPERATIVITY_VALUE", "2");
 		}
@@ -1376,7 +1379,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			final JTextField KREP_VALUE = new JTextField(biosimrc.get("biosim.gcm.KREP_VALUE", ""));
 			final JTextField STOICHIOMETRY_VALUE = new JTextField(biosimrc.get(
 					"biosim.gcm.STOICHIOMETRY_VALUE", ""));
-			JPanel labels = new JPanel(new GridLayout(15, 1));
+			final JTextField KCOMPLEX_VALUE = new JTextField(biosimrc.get(
+					"biosim.gcm.KCOMPLEX_VALUE", ""));
+			JPanel labels = new JPanel(new GridLayout(16, 1));
 			labels
 					.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVED_STRING)
 							+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.ACTIVED_STRING)
@@ -1427,7 +1432,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					+ " ("
 					+ CompatibilityFixer.getSBMLName(GlobalConstants.STOICHIOMETRY_STRING)
 					+ "):"));
-			JPanel fields = new JPanel(new GridLayout(15, 1));
+			labels.add(new JLabel(CompatibilityFixer
+					.getGuiName(GlobalConstants.KCOMPLEX_STRING)
+					+ " ("
+					+ CompatibilityFixer.getSBMLName(GlobalConstants.KCOMPLEX_STRING)
+					+ "):"));
+			JPanel fields = new JPanel(new GridLayout(16, 1));
 			fields.add(ACTIVED_VALUE);
 			fields.add(KACT_VALUE);
 			fields.add(KBASAL_VALUE);
@@ -1443,6 +1453,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			fields.add(RNAP_BINDING_VALUE);
 			fields.add(KREP_VALUE);
 			fields.add(STOICHIOMETRY_VALUE);
+			fields.add(KCOMPLEX_VALUE);
 			JPanel gcmPrefs = new JPanel(new GridLayout(1, 2));
 			gcmPrefs.add(labels);
 			gcmPrefs.add(fields);
@@ -1802,6 +1813,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				try {
 					Double.parseDouble(STOICHIOMETRY_VALUE.getText().trim());
 					biosimrc.put("biosim.gcm.STOICHIOMETRY_VALUE", STOICHIOMETRY_VALUE.getText()
+							.trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(KCOMPLEX_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.KCOMPLEX_VALUE", KCOMPLEX_VALUE.getText()
 							.trim());
 				}
 				catch (Exception e1) {
@@ -9301,6 +9319,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(frame, "Unable to open this gcm file.", "Error",
 							JOptionPane.ERROR_MESSAGE);
+					e1.printStackTrace();
 				}
 			}
 			else if (tree.getFile().length() >= 4
@@ -10053,8 +10072,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					}
 				}
 			}
-			enableTabMenu(tab.getSelectedIndex());
-			enableTreeMenu();
 		}
 		else {
 			enableTreeMenu();
@@ -13761,7 +13778,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				.append("It is recommended that you fix them before using these models or you may get unexpected results.\n\n");
 		boolean display = false;
 		long numErrors = 0;
-		if (SBMLLevelVersion.equals("L2V4") && document.getLevel()<3) {
+		if (SBMLLevelVersion.equals("L2V4")) {
 			numErrors = document.checkL2v4Compatibility();
 		} else {
 			numErrors = document.checkL3v1Compatibility();

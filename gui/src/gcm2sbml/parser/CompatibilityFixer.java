@@ -79,6 +79,9 @@ public class CompatibilityFixer {
 	public final static String GUI_KACT_STRING = "Activation binding equilibrium";
 	public final static String SBML_KACT_STRING = "Ka";
 	
+	public final static String GUI_KCOMPLEX_STRING = "Complex formation equilibrium";
+	public final static String SBML_KCOMPLEX_STRING = "Kc";
+	
 	//Static initializer that sets up the hashing 
 	static {		
 		guiName = new HashMap<String, String>();
@@ -132,6 +135,9 @@ public class CompatibilityFixer {
 		
 		guiName.put(GlobalConstants.KACT_STRING, GUI_KACT_STRING);
 		sbmlName.put(GlobalConstants.KACT_STRING, SBML_KACT_STRING);
+		
+		guiName.put(GlobalConstants.KCOMPLEX_STRING, GUI_KCOMPLEX_STRING);
+		sbmlName.put(GlobalConstants.KCOMPLEX_STRING, SBML_KCOMPLEX_STRING);
 		
 		for (String i : guiName.keySet()) {
 			gcmName.put(guiName.get(i), i);
