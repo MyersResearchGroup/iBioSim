@@ -47,7 +47,7 @@ public class PropertyField extends JPanel implements ActionListener,
 		}
 		name.setEnabled(state);
 		if (state) {
-			if (paramsOnly) {
+			if (paramsOnly && box != null) {
 				if (box.getSelectedItem().equals(paramStates[0]) || box.getSelectedItem().equals(states[0])) {
 					setDefault();
 				} else {
@@ -55,10 +55,12 @@ public class PropertyField extends JPanel implements ActionListener,
 				} 
 			}
 			else {
-				if (box.getSelectedItem().equals(states[0])) {
-					setDefault();
-				} else {
-					setCustom();
+				if (box != null) {
+					if (box.getSelectedItem().equals(states[0])) {
+						setDefault();
+					} else {
+						setCustom();
+					}
 				}
 			}
 		}

@@ -1,7 +1,6 @@
 package gcm2sbml.visitor;
 
 import java.util.Collection;
-import java.util.Properties;
 
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.SBMLDocument;
@@ -9,9 +8,8 @@ import org.sbml.libsbml.Species;
 import biomodelsim.BioSim;
 
 import gcm2sbml.network.BaseSpecies;
-import gcm2sbml.network.BiochemicalSpecies;
+import gcm2sbml.network.ComplexSpecies;
 import gcm2sbml.network.ConstantSpecies;
-import gcm2sbml.network.DimerSpecies;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
 import gcm2sbml.util.GlobalConstants;
@@ -31,26 +29,16 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	 * 
 	 */
 	public void run() {		
-		for (SpeciesInterface specie : species) {
-			specie.accept(this);
+		for (SpeciesInterface s : species) {
+			s.accept(this);
 		}
 	}
-
-	public void visitDimer(DimerSpecies specie) {
-		loadValues(specie);
-		if (!dimerizationAbstraction) {
-			Species s = Utility.makeSpecies(specie.getId(), compartment, 0);
-			s.setHasOnlySubstanceUnits(true);
-			Utility.addSpecies(document, s);
-		}
-
-	}
-
+	
 	@Override
-	public void visitBiochemical(BiochemicalSpecies specie) {
-		loadValues(specie);
-		if (!biochemicalAbstraction) {
-			Species s = Utility.makeSpecies(specie.getId(), compartment, 0);
+	public void visitComplex(ComplexSpecies specie) {
+		if (!complexAbstraction) {
+			loadValues(specie);
+			Species s = Utility.makeSpecies(specie.getId(), compartment, init);
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);
 		}

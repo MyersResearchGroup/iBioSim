@@ -264,7 +264,12 @@ public class InfluencePanel extends JPanel implements ActionListener {
 						GlobalConstants.REPRESSION)) {
 				typeBox.setSelectedItem(types[0]);
 				setType(types[0]);
-			} else {
+				
+			} else if (prop.get(GlobalConstants.TYPE).equals(
+						GlobalConstants.COMPLEX)) {
+				typeBox.setSelectedItem(types[3]);
+				setType(types[3]);
+			}else {
 				typeBox.setSelectedItem(types[2]);
 				setType(types[2]);
 				promoterBox.setSelectedItem("default");
@@ -424,16 +429,14 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	 * @return
 	 */
 	public static String buildName(String sourceId, String targetId, String type, String isBio, String promoter){
-		String arrow = " -> ";
-		if ((type==types[0]) && (isBio.equals(bio[0]))) {
-			arrow = " -| ";
-		} else if ((type==types[0]) && (isBio.equals(bio[1]))) {
-			arrow = " +| ";
-		} else if ((type==types[1]) && (isBio.equals(bio[1]))) {
-			arrow = " +> ";
-		} else if ((type==types[2])) {
+		String arrow = " -| ";
+		if (type==types[1]) {
+			arrow = " -> ";
+		} else if (type==types[2]) {
 			arrow = " x> ";
-		}
+		} else if (type==types[3]) {
+			arrow = " +> ";
+		} 
 		
 		String out = sourceId + arrow + targetId + ", Promoter " + promoter;
 		
@@ -510,6 +513,11 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			fields.get(GlobalConstants.KACT_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(false);
 			fields.get(GlobalConstants.COOPERATIVITY_STRING).setEnabled(false);
+			fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(false); 
+		} else if (type.equals(types[3])) {
+			fields.get(GlobalConstants.KACT_STRING).setEnabled(false);
+			fields.get(GlobalConstants.KREP_STRING).setEnabled(false);
+			fields.get(GlobalConstants.COOPERATIVITY_STRING).setEnabled(true);
 			fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(false);
 		} else {
 			throw new IllegalStateException("Illegal state");
@@ -530,7 +538,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	}
 
 	private String[] options = { "Ok", "Cancel" };
-	public static String[] types = { "repression", "activation", "no influence" };
+	public static String[] types = { "repression", "activation", "no influence", "complex" };
 	public static String[] bio = { "no", "yes" };
 	private HashMap<String, PropertyField> fields = null;
 	private GCMFile gcm = null;

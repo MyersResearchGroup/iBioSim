@@ -1,6 +1,6 @@
 package gcm2sbml.network;
 
-import gcm2sbml.util.GlobalConstants;
+import java.util.Properties;
 import gcm2sbml.visitor.SpeciesVisitor;
 
 /**
@@ -9,12 +9,14 @@ import gcm2sbml.visitor.SpeciesVisitor;
  *
  */
 public class SpasticSpecies extends AbstractSpecies {
-	public SpasticSpecies(String name, String stateName) {
+	public SpasticSpecies(String name, String stateName, Properties properties) {
+		this.properties = properties;
 		this.id = name;
 		this.stateName = stateName;
 	}
 	
 	public SpasticSpecies() {
+		super();
 	}
 	
 	

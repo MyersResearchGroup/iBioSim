@@ -4,9 +4,8 @@
 package gcm2sbml.visitor;
 
 import gcm2sbml.network.BaseSpecies;
-import gcm2sbml.network.BiochemicalSpecies;
+import gcm2sbml.network.ComplexSpecies;
 import gcm2sbml.network.ConstantSpecies;
-import gcm2sbml.network.DimerSpecies;
 import gcm2sbml.network.NullSpecies;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
@@ -29,27 +28,19 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	}
 
 	/**
-	 * @param biochemicalAbstraction
-	 *            The biochemicalAbstraction to set.
-	 */
-	public void setBiochemicalAbstraction(boolean biochemicalAbstraction) {
-		this.biochemicalAbstraction = biochemicalAbstraction;
-	}
-
-	/**
 	 * @param cooperationAbstraction
 	 *            The cooperationAbstraction to set.
 	 */
 	public void setCooperationAbstraction(boolean cooperationAbstraction) {
 		this.cooperationAbstraction = cooperationAbstraction;
 	}
-
+	
 	/**
 	 * @param dimerizationAbstraction
 	 *            The dimerizationAbstraction to set.
 	 */
-	public void setDimerizationAbstraction(boolean dimerizationAbstraction) {
-		this.dimerizationAbstraction = dimerizationAbstraction;
+	public void setComplexAbstraction(boolean complexAbstraction) {
+		this.complexAbstraction = complexAbstraction;
 	}
 	
 	/**
@@ -69,15 +60,11 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 		parameters = file;
 	}
 	
-	
-	
 	public void visitBaseSpecies(BaseSpecies specie) {}
 
-	public void visitBiochemical(BiochemicalSpecies specie) {}
-
+	public void visitComplex(ComplexSpecies specie) {}
+	
 	public void visitConstantSpecies(ConstantSpecies specie) {}
-
-	public void visitDimer(DimerSpecies specie) {}
 
 	public void visitNullSpecies(NullSpecies specie) {}
 
@@ -89,10 +76,8 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 
 	protected SBMLDocument document = null;
 
-	protected boolean biochemicalAbstraction = false;
-
-	protected boolean dimerizationAbstraction = false;
-
 	protected boolean cooperationAbstraction = false;
+	
+	protected boolean complexAbstraction = false;
 
 }

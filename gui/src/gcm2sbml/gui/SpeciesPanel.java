@@ -22,7 +22,7 @@ import biomodelsim.BioSim;
 public class SpeciesPanel extends JPanel implements ActionListener {
 	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList influencesList,
 			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly, GCMFile refGCM) {
-		super(new GridLayout(6, 1));
+		super(new GridLayout(7, 1));
 		this.selected = selected;
 		this.speciesList = speciesList;
 		this.influences = influencesList;
@@ -134,6 +134,27 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		fields.put(GlobalConstants.KDECAY_STRING, field);
 		add(field);
 
+		// Complex Equilibrium Constant Field
+		if (paramsOnly) {
+			String defaultValue = refGCM.getParameter(GlobalConstants.KCOMPLEX_STRING);
+			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.KCOMPLEX_STRING)) {
+				defaultValue = refGCM.getSpecies().get(selected).getProperty(GlobalConstants.KCOMPLEX_STRING);
+			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.KCOMPLEX_STRING)) {
+				defaultValue = gcm.getParameter(GlobalConstants.KCOMPLEX_STRING);
+			}
+			field = new PropertyField(GlobalConstants.KCOMPLEX_STRING, gcm
+					.getParameter(GlobalConstants.KCOMPLEX_STRING), PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
+		}
+		else {
+			field = new PropertyField(GlobalConstants.KCOMPLEX_STRING, gcm
+					.getParameter(GlobalConstants.KCOMPLEX_STRING), PropertyField.states[0], gcm
+					.getParameter(GlobalConstants.KCOMPLEX_STRING), Utility.NUMstring, paramsOnly);
+		}
+		fields.put(GlobalConstants.KCOMPLEX_STRING, field);
+		add(field);
+		
+		
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
@@ -276,6 +297,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				+ CompatibilityFixer.getSBMLName(GlobalConstants.KDECAY_STRING) + " "
 				+ fields.get(GlobalConstants.KDECAY_STRING).getValue();
 			}
+			if (fields.get(GlobalConstants.KCOMPLEX_STRING).getState().equals(PropertyField.paramStates[1])) {
+				if (!updates.equals("")) {
+					updates += "\n";
+				}
+				updates += fields.get(GlobalConstants.ID).getValue() + "/"
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.KCOMPLEX_STRING) + " "
+				+ fields.get(GlobalConstants.KCOMPLEX_STRING).getValue();
+			}
 			if (updates.equals("")) {
 				updates += fields.get(GlobalConstants.ID).getValue() + "/";
 			}
@@ -294,21 +323,24 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(false);
+			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
 		}
 		else if (type.equals(types[1])) {
 			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
+			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
 		}
 		else if (type.equals(types[2])) {
 			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
-		}
-		else {
+			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
+		} else {
 			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
+			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(false);
 		}
 	}
 
@@ -337,7 +369,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	private JComboBox typeBox = null;
 
-	private static final String[] types = new String[] { "input", "internal", "output", "unconstrained" };
+	private static final String[] types = new String[] { "input", "internal", "output", "unconstrained"};
 
 	private HashMap<String, PropertyField> fields = null;
 

@@ -1,9 +1,8 @@
 package gcm2sbml.visitor;
 
 import gcm2sbml.network.BaseSpecies;
-import gcm2sbml.network.BiochemicalSpecies;
 import gcm2sbml.network.ConstantSpecies;
-import gcm2sbml.network.DimerSpecies;
+import gcm2sbml.network.ComplexSpecies;
 import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
@@ -12,7 +11,6 @@ import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
 import java.util.Collection;
-import java.util.Properties;
 
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Reaction;
@@ -36,8 +34,8 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	 * 
 	 */
 	public void run() {		
-		for (SpeciesInterface specie : species) {
-			specie.accept(this);
+		for (SpeciesInterface s : species) {
+			s.accept(this);
 		}
 	}
 
@@ -46,17 +44,20 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		// TODO Auto-generated method stub
 
 	}
-
+	
 	@Override
-	public void visitDimer(DimerSpecies specie) {
-		//do nothing, dimer species decay much more slowly than their
-		//constituent species
-	}
-
-	@Override
-	public void visitBiochemical(BiochemicalSpecies specie) {
-		//do nothing, biochemical species decay much more slowly than their
-		// constituent species
+	public void visitComplex(ComplexSpecies specie) {
+		if (!complexAbstraction) {	
+			loadValues(specie);
+			Reaction r = Utility.Reaction("Degradation_"+specie.getId());
+			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
+			r.setReversible(false);
+			r.setFast(false);
+			KineticLaw kl = r.createKineticLaw();
+			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
+			kl.setFormula(decayString + "*" + specie.getId());
+			Utility.addReaction(document, r);
+		}
 	}
 
 	@Override

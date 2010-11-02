@@ -1,15 +1,12 @@
 package gcm2sbml.visitor;
 
-import java.util.Collection;
-import java.util.Properties;
 
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
 import gcm2sbml.network.BaseSpecies;
-import gcm2sbml.network.BiochemicalSpecies;
+import gcm2sbml.network.ComplexSpecies;
 import gcm2sbml.network.ConstantSpecies;
-import gcm2sbml.network.DimerSpecies;
 import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.Promoter;
 import gcm2sbml.network.SpasticSpecies;
@@ -40,30 +37,8 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		// TODO Auto-generated method stub
 
 	}
-
-	@Override
-	public void visitDimer(DimerSpecies specie) {
-		loadValues();
-		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
-				+ specie.getId());
-		r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + promoter.getId() + "_"
-				+ specie.getId()));
-		for (SpeciesInterface species : promoter.getOutputs()) {
-			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
-		}
-		r.setReversible(false);
-		r.setFast(false);
-		KineticLaw kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter(actString, act, GeneticNetwork
-				.getMoleTimeParameter(1)));
-		kl.setFormula(actString+ "*RNAP_" + promoter.getId() + "_"
-				+ specie.getId());
-		Utility.addReaction(document, r);
-
-	}
-
-	@Override
-	public void visitBiochemical(BiochemicalSpecies specie) {
+	
+	public void visitComplex(ComplexSpecies specie) {
 		loadValues();
 		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
 				+ specie.getId());

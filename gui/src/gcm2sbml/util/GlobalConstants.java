@@ -15,6 +15,10 @@ public class GlobalConstants {
 	public static final String STOICHIOMETRY_STRING = "Stoichiometry of production";
 	public static final String COOPERATIVITY_STRING = "Binding site count for transciption factors";
 	public static final String ACTIVED_STRING = "Activated kocr";
+	public static final String KCOMPLEX_STRING = "Kc";
+	public static final String COMPLEX = "complex";
+	public static final String GENE_PRODUCT = "gene product";
+	public static final String TRANSCRIPTION_FACTOR = "transcription factor";
 	
 //	public static final String KREP_VALUE = ".5"; 
 //	public static final String KACT_VALUE = ".0033";
