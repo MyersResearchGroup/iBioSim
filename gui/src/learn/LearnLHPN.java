@@ -1895,11 +1895,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				String dotFile = lhpnFile.replace(".lpn", ".dot");
 				File dot = new File(directory + separator + dotFile);
 				dot.delete();
-				log.addText("Executing:\n" + "atacs -cPllodpl " + lhpnFile);
+				LhpnFile lhpn = new LhpnFile(log);
+				lhpn.load(directory + separator + lhpnFile);
+				lhpn.printDot(directory + separator + dotFile);
+				//log.addText("Executing:\n" + "atacs -cPllodpl " + lhpnFile);
 				Runtime exec = Runtime.getRuntime();
-				Process load = exec.exec("atacs -cPllodpl " + lhpnFile, null,
-						work);
-				load.waitFor();
+				//Process load = exec.exec("atacs -cPllodpl " + lhpnFile, null,
+				//		work);
+				//load.waitFor();
 				if (dot.exists()) {
 					viewLhpn.setEnabled(true);
 					String command = "";

@@ -302,10 +302,11 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					command = "open " + dotFile;
 				}
 				Runtime exec = Runtime.getRuntime();
-				log.addText("Executing:\natacs -cPllodpl " + filename + "\n");
-				Process load = exec.exec("atacs -cPllodpl " + filename, null,
-						work);
-				load.waitFor();
+				lhpnFile.printDot(directory + separator + dotFile);
+				//log.addText("Executing:\natacs -cPllodpl " + filename + "\n");
+				//Process load = exec.exec("atacs -cPllodpl " + filename, null,
+				//		work);
+				//load.waitFor();
 				if (dot.exists()) {
 					exec.exec(command, null, work);
 				} else {
