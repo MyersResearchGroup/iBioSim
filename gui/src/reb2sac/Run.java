@@ -11,7 +11,9 @@ import javax.swing.*;
 import parser.*;
 
 import lhpn2sbml.gui.LHPNEditor;
-import lhpn2sbml.parser.*;
+import lhpn2sbml.parser.Abstraction;
+import lhpn2sbml.parser.LhpnFile;
+import lhpn2sbml.parser.Translator;
 
 import biomodelsim.*;
 import gcm2sbml.gui.GCM2SBMLEditor;
