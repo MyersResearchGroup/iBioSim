@@ -1107,7 +1107,8 @@ public class GCMFile {
 			}
 		}
 		catch (Exception e) {
-			throw new IllegalArgumentException("Unable to parse GCM" + e.toString());
+			e.printStackTrace();
+			//throw new IllegalArgumentException("Unable to parse GCM" + e.toString());
 			// JOptionPane.showMessageDialog(BioSim.frame,
 			// "Unable to parse model, creating a blank model.", "Error",
 			// JOptionPane.ERROR_MESSAGE);

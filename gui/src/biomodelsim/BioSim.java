@@ -883,9 +883,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			// newMenu.add(newSpice);
 		}
 		newMenu.add(graph);
-		if (!async) {
-			newMenu.add(probGraph);
-		}
+		newMenu.add(probGraph);
 		file.add(openProj);
 		// openMenu.add(openProj);
 		file.addSeparator();
@@ -6106,7 +6104,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		else if (e.getSource() == probGraph) {
 			if (root != null) {
 				String graphName = JOptionPane.showInputDialog(frame,
-						"Enter A Name For The Probability Graph:", "Probability Graph Name",
+						"Enter A Name For The Histogram:", "Histogram Name",
 						JOptionPane.PLAIN_MESSAGE);
 				if (graphName != null && !graphName.trim().equals("")) {
 					graphName = graphName.trim();
@@ -6122,7 +6120,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						Graph g = new Graph(null, "Number of Molecules", graphName.trim()
 								.substring(0, graphName.length() - 4), "tsd.printer", root, "Time",
 								this, null, log, graphName.trim(), false, false);
-						addTab(graphName.trim(), g, "Probability Graph");
+						addTab(graphName.trim(), g, "Histogram");
 						g.save();
 						addToTree(graphName.trim());
 					}
@@ -7642,7 +7640,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 																.setName("TSD Graph");
 													}
 													else {
-														t.addTab("Probability Graph", c);
+														t.addTab("Histogram", c);
 														t.getComponentAt(
 																t.getComponents().length - 1)
 																.setName("ProbGraph");
@@ -7748,7 +7746,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							new Graph(null, "Percent", "title", "tsd.printer", root, "Time", this,
 									tree.getFile(), log, tree.getFile().split(separator)[tree
 											.getFile().split(separator).length - 1], false, false),
-							"Probability Graph");
+							"Histogram");
 				}
 			}
 		}
@@ -10044,7 +10042,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							new Graph(null, "Percent", "title", "tsd.printer", root, "Time", this,
 									tree.getFile(), log, tree.getFile().split(separator)[tree
 											.getFile().split(separator).length - 1], false, false),
-							"Probability Graph");
+							"Histogram");
 				}
 			}
 			else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
@@ -10156,129 +10154,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 
 	private void simulate(int fileType) throws Exception {
-		/*
-		 * if (fileType == 1) { String simName =
-		 * JOptionPane.showInputDialog(frame, "Enter Analysis ID:",
-		 * "Analysis ID", JOptionPane.PLAIN_MESSAGE); if (simName != null &&
-		 * !simName.trim().equals("")) { simName = simName.trim(); if
-		 * (overwrite(root + separator + simName, simName)) { new File(root +
-		 * separator + simName).mkdir(); // new FileWriter(new File(root +
-		 * separator + simName + // separator + // ".sim")).close(); String[]
-		 * dot = tree.getFile().split(separator); String sbmlFile = root +
-		 * separator + simName + separator + (dot[dot.length - 1].substring(0,
-		 * dot[dot.length - 1].length() - 3) + "sbml"); GCMParser parser = new
-		 * GCMParser(tree.getFile()); GeneticNetwork network =
-		 * parser.buildNetwork(); GeneticNetwork.setRoot(root + separator);
-		 * network.mergeSBML(root + separator + simName + separator + sbmlFile);
-		 * try { FileOutputStream out = new FileOutputStream(new File(root +
-		 * separator + simName.trim() + separator + simName.trim() + ".sim"));
-		 * out.write((dot[dot.length - 1] + "\n").getBytes()); out.close(); }
-		 * catch (IOException e1) { JOptionPane.showMessageDialog(frame,
-		 * "Unable to save parameter file!", "Error Saving File",
-		 * JOptionPane.ERROR_MESSAGE); } // network.outputSBML(root + separator
-		 * + sbmlFile); refreshTree(); sbmlFile = root + separator + simName +
-		 * separator + (dot[dot.length - 1].substring(0, dot[dot.length -
-		 * 1].length() - 3) + "sbml"); JTabbedPane simTab = new JTabbedPane();
-		 * Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFile, root, this,
-		 * simName.trim(), log, simTab, null, dot[dot.length - 1]); //
-		 * reb2sac.addMouseListener(this); simTab.addTab("Simulation Options",
-		 * reb2sac); simTab.getComponentAt(simTab.getComponents().length -
-		 * 1).setName("Simulate"); JPanel abstraction = reb2sac.getAdvanced();
-		 * // abstraction.addMouseListener(this);
-		 * simTab.addTab("Abstraction Options", abstraction);
-		 * simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-		 * // simTab.addTab("Advanced Options", // reb2sac.getProperties()); //
-		 * simTab.getComponentAt(simTab.getComponents().length - //
-		 * 1).setName(""); if (dot[dot.length - 1].contains(".gcm")) {
-		 * GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator,
-		 * dot[dot.length - 1], this, log, true, simName.trim(), root +
-		 * separator + simName.trim() + separator + simName.trim() + ".sim",
-		 * reb2sac); reb2sac.setGcm(gcm); // sbml.addMouseListener(this);
-		 * simTab.addTab("Parameter Editor", gcm);
-		 * simTab.getComponentAt(simTab.getComponents().length -
-		 * 1).setName("GCM Editor"); if (!gcm.getSBMLFile().equals("--none--"))
-		 * { SBML_Editor sbml = new SBML_Editor(root + separator +
-		 * gcm.getSBMLFile(), reb2sac, log, this, root + separator +
-		 * simName.trim(), root + separator + simName.trim() + separator +
-		 * simName.trim() + ".sim"); simTab.addTab("SBML Elements",
-		 * sbml.getElementsPanel());
-		 * simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-		 * gcm.setSBMLParamFile(sbml); } else { JScrollPane scroll = new
-		 * JScrollPane(); scroll.setViewportView(new JPanel());
-		 * simTab.addTab("SBML Elements", scroll);
-		 * simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-		 * gcm.setSBMLParamFile(null); } } else { SBML_Editor sbml = new
-		 * SBML_Editor(sbmlFile, reb2sac, log, this, root + separator +
-		 * simName.trim(), root + separator + simName.trim() + separator +
-		 * simName.trim() + ".sim"); reb2sac.setSbml(sbml); //
-		 * sbml.addMouseListener(this); simTab.addTab("Parameter Editor", sbml);
-		 * simTab.getComponentAt(simTab.getComponents().length -
-		 * 1).setName("SBML Editor"); simTab.addTab("SBML Elements",
-		 * sbml.getElementsPanel());
-		 * simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-		 * } Graph tsdGraph = reb2sac.createGraph(null); //
-		 * tsdGraph.addMouseListener(this); simTab.addTab("TSD Graph",
-		 * tsdGraph); simTab.getComponentAt(simTab.getComponents().length -
-		 * 1).setName("TSD Graph"); Graph probGraph =
-		 * reb2sac.createProbGraph(null); // probGraph.addMouseListener(this);
-		 * simTab.addTab("Probability Graph", probGraph);
-		 * simTab.getComponentAt(simTab.getComponents().length -
-		 * 1).setName("ProbGraph");
-		 * 
-		 * JLabel noData = new JLabel("No data available"); Font font =
-		 * noData.getFont(); font = font.deriveFont(Font.BOLD, 42.0f);
-		 * noData.setFont(font);
-		 * noData.setHorizontalAlignment(SwingConstants.CENTER);
-		 * simTab.addTab("TSD Graph", noData);
-		 * simTab.getComponentAt(simTab.getComponents().length -
-		 * 1).setName("TSD Graph"); JLabel noData1 = new JLabel("No data
-		 * available"); Font font1 = noData1.getFont(); font1 =
-		 * font1.deriveFont(Font.BOLD, 42.0f); noData1.setFont(font1);
-		 * noData1.setHorizontalAlignment(SwingConstants.CENTER);
-		 * simTab.addTab("Probability Graph", noData1);
-		 * simTab.getComponentAt(simTab.getComponents().length -
-		 * 1).setName("ProbGraph");
-		 * 
-		 * addTab(simName, simTab, null); } } } else if (fileType == 2) { String
-		 * simName = JOptionPane.showInputDialog(frame, "Enter Analysis ID:",
-		 * "Analysis ID", JOptionPane.PLAIN_MESSAGE); if (simName != null &&
-		 * !simName.trim().equals("")) { simName = simName.trim(); if
-		 * (overwrite(root + separator + simName, simName)) { new File(root +
-		 * separator + simName).mkdir(); // new FileWriter(new File(root +
-		 * separator + simName + // separator + // ".sim")).close(); String[]
-		 * dot = tree.getFile().split(separator); String sbmlFile = root +
-		 * separator + simName + separator + (dot[dot.length - 1].substring(0,
-		 * dot[dot.length - 1].length() - 3) + "sbml"); Translator t1 = new
-		 * Translator(); t1.BuildTemplate(tree.getFile()); t1.setFilename(root +
-		 * separator + simName + separator + sbmlFile); t1.outputSBML(); try {
-		 * FileOutputStream out = new FileOutputStream(new File(root + separator
-		 * + simName.trim() + separator + simName.trim() + ".sim"));
-		 * out.write((dot[dot.length - 1] + "\n").getBytes()); out.close(); }
-		 * catch (IOException e1) { JOptionPane.showMessageDialog(frame,
-		 * "Unable to save parameter file!", "Error Saving File",
-		 * JOptionPane.ERROR_MESSAGE); } // network.outputSBML(root + separator
-		 * + sbmlFile); refreshTree(); sbmlFile = root + separator + simName +
-		 * separator + (dot[dot.length - 1].substring(0, dot[dot.length -
-		 * 1].length() - 3) + "sbml"); JTabbedPane simTab = new JTabbedPane();
-		 * Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFile, root, this,
-		 * simName.trim(), log, simTab, null, dot[dot.length - 1]); //
-		 * reb2sac.addMouseListener(this); simTab.addTab("Simulation Options",
-		 * reb2sac); simTab.getComponentAt(simTab.getComponents().length -
-		 * 1).setName("Simulate"); JPanel abstraction = reb2sac.getAdvanced();
-		 * // abstraction.addMouseListener(this);
-		 * simTab.addTab("Abstraction Options", abstraction);
-		 * simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-		 * // simTab.addTab("Advanced Options", // reb2sac.getProperties()); //
-		 * simTab.getComponentAt(simTab.getComponents().length - //
-		 * 1).setName(""); Graph tsdGraph = reb2sac.createGraph(null); //
-		 * tsdGraph.addMouseListener(this); simTab.addTab("TSD Graph",
-		 * tsdGraph); simTab.getComponentAt(simTab.getComponents().length -
-		 * 1).setName("TSD Graph"); Graph probGraph =
-		 * reb2sac.createProbGraph(null); // probGraph.addMouseListener(this);
-		 * simTab.addTab("Probability Graph", probGraph);
-		 * simTab.getComponentAt(simTab.getComponents().length -
-		 * 1).setName("ProbGraph"); addTab(simName, simTab, null); } } } else {
-		 */
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			if (tab.getTitleAt(i).equals(
 					tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
@@ -10424,7 +10299,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
 				Graph probGraph = reb2sac.createProbGraph(null);
 				// probGraph.addMouseListener(this);
-				simTab.addTab("Probability Graph", probGraph);
+				simTab.addTab("Histogram", probGraph);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
 				/*
 				 * JLabel noData = new JLabel("No data available"); Font font =
@@ -10437,7 +10312,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				 * available"); Font font1 = noData1.getFont(); font1 =
 				 * font1.deriveFont(Font.BOLD, 42.0f); noData1.setFont(font1);
 				 * noData1.setHorizontalAlignment(SwingConstants.CENTER);
-				 * simTab.addTab("Probability Graph", noData1);
+				 * simTab.addTab("Histogram", noData1);
 				 * simTab.getComponentAt(simTab.getComponents().length -
 				 * 1).setName("ProbGraph");
 				 */
@@ -11166,12 +11041,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						// if (openProb != null) {
 						Graph probGraph = reb2sac.createProbGraph(openProb);
 						// probGraph.addMouseListener(this);
-						simTab.addTab("Probability Graph", probGraph);
+						simTab.addTab("Histogram", probGraph);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 								"ProbGraph");
 						/*
 						 * } else if (!probFile.equals("")) {
-						 * simTab.addTab("Probability Graph",
+						 * simTab.addTab("Histogram",
 						 * reb2sac.createProbGraph(openProb));
 						 * simTab.getComponentAt(simTab.getComponents().length -
 						 * 1).setName("ProbGraph"); } else { JLabel noData1 =
@@ -11181,7 +11056,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						 * noData1.setFont(font1);
 						 * noData1.setHorizontalAlignment
 						 * (SwingConstants.CENTER);
-						 * simTab.addTab("Probability Graph", noData1);
+						 * simTab.addTab("Histogram", noData1);
 						 * simTab.getComponentAt(simTab.getComponents().length -
 						 * 1).setName("ProbGraph"); }
 						 */
@@ -11725,7 +11600,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
 			Graph probGraph = reb2sac.createProbGraph(null);
 			// probGraph.addMouseListener(this);
-			simTab.addTab("Probability Graph", probGraph);
+			simTab.addTab("Histogram", probGraph);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
 			/*
 			 * JLabel noData = new JLabel("No data available"); Font font =
@@ -11738,7 +11613,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			 * available"); Font font1 = noData1.getFont(); font1 =
 			 * font1.deriveFont(Font.BOLD, 42.0f); noData1.setFont(font1);
 			 * noData1.setHorizontalAlignment(SwingConstants.CENTER);
-			 * simTab.addTab("Probability Graph", noData1);
+			 * simTab.addTab("Histogram", noData1);
 			 * simTab.getComponentAt(simTab.getComponents().length -
 			 * 1).setName("ProbGraph");
 			 */
@@ -12080,7 +11955,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			}
 			String[] files = new File(root).list();
 			for (String s : files) {
-				if (s.contains(".gcm") && !saved.contains(s)) {
+				if (s.endsWith(".gcm") && !saved.contains(s)) {
 					GCMFile gcm = new GCMFile(root);
 					gcm.load(root + separator + s);
 					if (gcm.getSBMLFile().equals(updatedFile)) {
