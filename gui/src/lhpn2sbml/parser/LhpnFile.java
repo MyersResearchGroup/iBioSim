@@ -423,6 +423,18 @@ public class LhpnFile {
 							buffer.append(v + ":=" + t.getIntAssignment(v));
 						}
 					}
+					if (t.containsRateAssignment()) {
+						HashMap<String, String> map = t.getRateAssignments();
+						for (String v : map.keySet()) {
+							if (flag) {
+								buffer.append(",");
+							}
+							else {
+								flag = true;
+							}
+							buffer.append(v + "':=" + t.getRateAssignment(v));
+						}
+					}
 					buffer.append(">");
 				}
 				buffer.append("\"];\n");
