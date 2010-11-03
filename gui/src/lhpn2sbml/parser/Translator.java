@@ -58,6 +58,7 @@ public class Translator {
 		c.setSpatialDimensions(3);
 		
 		// Create bitwise operators for sbml
+		createFunction(m, "rate", "Rate", "lambda(a,a)");
 		createFunction(m, "BITAND", "Bitwise AND", "lambda(a,b,a*b)");
 		createFunction(m, "BITOR", "Bitwise AND", "lambda(a,b,a*b)");
 		createFunction(m, "BITNOT", "Bitwise AND", "lambda(a,b,a*b)");

@@ -10292,6 +10292,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			else if (e.getSource() == events) {
 				eventEditor("OK");
 			}
+			else if (e.getSource() == eventAssign) {
+				eventAssignEditor("OK");
+			}
 			else if (e.getSource() == constraints) {
 				constraintEditor("OK");
 			}
