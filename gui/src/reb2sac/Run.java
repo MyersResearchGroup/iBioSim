@@ -1112,6 +1112,7 @@ public class Run implements ActionListener {
 						else {
 							biomodelsim.getTab().setSelectedIndex(biomodelsim.getTab(sbmlName));
 						}
+						biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 					}
 				}
 				else if (lhpn.isSelected()) {
@@ -1124,6 +1125,7 @@ public class Run implements ActionListener {
 						else {
 							biomodelsim.getTab().setSelectedIndex(biomodelsim.getTab(lhpnName));
 						}
+						biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 					}
 				}
 				else if (dot.isSelected()) {
