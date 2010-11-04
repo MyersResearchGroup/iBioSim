@@ -60,6 +60,10 @@ public class GCMParser {
 
 	public GeneticNetwork buildNetwork() {
 		org.sbml.libsbml.SBMLDocument sbml = gcm.flattenGCM(true);
+		return buildTopLevelNetwork(sbml);
+	}
+	
+	public GeneticNetwork buildTopLevelNetwork(org.sbml.libsbml.SBMLDocument sbml) {
 		HashMap<String, Properties> speciesMap = gcm.getSpecies();
 		HashMap<String, Properties> reactionMap = gcm.getInfluences();
 		HashMap<String, Properties> promoterMap = gcm.getPromoters();
@@ -88,7 +92,7 @@ public class GCMParser {
 		if (sbml != null) {
 			network.setSBML(sbml);
 		}
-		return network;
+		return network;		
 	}
 
 	public void printFile() {

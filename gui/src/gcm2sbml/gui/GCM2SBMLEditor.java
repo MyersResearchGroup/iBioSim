@@ -310,7 +310,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		if (command.contains("template")) {
 			GCMParser parser = new GCMParser(path + separator + gcmname + ".gcm");
 			try {
-				parser.buildNetwork();
+				parser.buildTopLevelNetwork(null);
 			}
 			catch (IllegalStateException e) {
 				JOptionPane.showMessageDialog(BioSim.frame, e.getMessage(), "Error",
