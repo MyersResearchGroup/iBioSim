@@ -239,6 +239,7 @@ public class GCMParser {
 				p.addActivator(input, species.get(input));
 			else
 				p.addRepressor(input, species.get(input));
+			p.addOutput(output,species.get(output));
 		}
 	}
 	
