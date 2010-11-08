@@ -97,3 +97,4 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	private String compartment;
 
 }
+

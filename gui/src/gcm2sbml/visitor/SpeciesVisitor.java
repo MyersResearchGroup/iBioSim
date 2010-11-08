@@ -45,3 +45,4 @@ public interface SpeciesVisitor {
 	 */
 	public void visitNullSpecies(NullSpecies specie);
 }
+

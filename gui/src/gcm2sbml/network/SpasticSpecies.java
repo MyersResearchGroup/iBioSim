@@ -24,3 +24,4 @@ public class SpasticSpecies extends AbstractSpecies {
 		visitor.visitSpasticSpecies(this);
 	}
 }
+
