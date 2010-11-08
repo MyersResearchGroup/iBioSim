@@ -235,12 +235,15 @@ public class GCMParser {
 			} else {
 				p = parsePromoterData(promoterName, null);
 			}
-			p.addToReactionMap(input, r);
-			if (r.getType().equals("vee"))
-				p.addActivator(input, species.get(input));
-			else
-				p.addRepressor(input, species.get(input));
-			p.addOutput(output,species.get(output));
+			if (!input.equals("none")) {
+				p.addToReactionMap(input, r);
+				if (r.getType().equals("vee"))
+					p.addActivator(input, species.get(input));
+				else
+					p.addRepressor(input, species.get(input));
+			}
+			if (!output.equals("none"))
+				p.addOutput(output,species.get(output));
 		}
 	}
 	
