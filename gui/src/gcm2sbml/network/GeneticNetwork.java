@@ -350,16 +350,17 @@ public class GeneticNetwork {
 			r.setReversible(false);
 			r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
-			if (p.getRepressors().size() > 0) {
-				r.setId("R_constitutive_production_" + p.getId());
-				kl.addParameter(Utility.Parameter(kOcString, p.getKoc(),
-							getMoleTimeParameter(1)));
-				kl.setFormula(kOcString + "*" + "RNAP_" + p.getId());
-			} else {
+			if (p.getActivators().size() > 0) {
 				r.setId("R_basal_production_" + p.getId());
 				kl.addParameter(Utility.Parameter(kBasalString, p.getKbasal(),
 							getMoleTimeParameter(1)));
 				kl.setFormula(kBasalString + "*" + "RNAP_" + p.getId());
+				
+			} else {
+				r.setId("R_constitutive_production_" + p.getId());
+				kl.addParameter(Utility.Parameter(kOcString, p.getKoc(),
+							getMoleTimeParameter(1)));
+				kl.setFormula(kOcString + "*" + "RNAP_" + p.getId());
 			}
 			Utility.addReaction(document, r);
 			if (p.getActivators().size() > 0) {
