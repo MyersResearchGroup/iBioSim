@@ -24,3 +24,4 @@ public class ConstantSpecies extends AbstractSpecies {
 		visitor.visitConstantSpecies(this);
 	}
 }
+

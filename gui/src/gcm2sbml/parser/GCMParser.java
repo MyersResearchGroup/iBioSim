@@ -1,6 +1,7 @@
 package gcm2sbml.parser;
 
 import gcm2sbml.network.BaseSpecies;
+import gcm2sbml.network.ComplexSpecies;
 import gcm2sbml.network.ConstantSpecies;
 import gcm2sbml.network.GeneticNetwork;
 import gcm2sbml.network.PartSpecies;
@@ -204,7 +205,7 @@ public class GCMParser {
 			if (property.containsKey(GlobalConstants.KREP_STRING)) {
 				r.addProperty(GlobalConstants.KREP_STRING, property.getProperty(GlobalConstants.KREP_STRING));
 			}					
-		}
+		}	
 		
 		String input = GCMFile.getInput(reaction);
 		String output = GCMFile.getOutput(reaction);
@@ -225,7 +226,7 @@ public class GCMParser {
 			if (property.containsKey(GlobalConstants.PROMOTER)) {
 				promoterName = property.getProperty(GlobalConstants.PROMOTER);
 			} else {
-				promoterName = "Promoter_" + GCMFile.getOutput(reaction);
+				promoterName = "Promoter_" + output;
 			}
 			// Check if promoter exists. If not, create it.
 			Promoter p = null;

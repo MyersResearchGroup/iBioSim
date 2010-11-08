@@ -42,3 +42,4 @@ public class BaseSpecies extends AbstractSpecies {
 		visitor.visitBaseSpecies(this);
 	}
 }
+
