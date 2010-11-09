@@ -78,7 +78,7 @@ public class Abstraction extends LhpnFile {
 		Integer i = 0;
 		for (Object o : abstPane.preAbsModel.toArray()) {
 			String s = o.toString();
-			if (abstPane.absListModel.contains(abstPane.xform12)) {
+			if (s.equals(abstPane.xform12)) {
 				abstractAssign();
 			}
 			divideProcesses();
@@ -198,9 +198,9 @@ public class Abstraction extends LhpnFile {
 			for (String v : abstPane.getIntVars()) {
 				intVars.add(v);
 			}
-			for (Object o : abstPane.absListModel.toArray()) {
+			for (Object o : abstPane.loopAbsModel.toArray()) {
 				String s = o.toString();
-				if (abstPane.absListModel.contains(abstPane.xform12)) {
+				if (s.equals(abstPane.xform12)) {
 					abstractAssign();
 				}
 				// Transform 0 - Merge Parallel Places
@@ -313,7 +313,7 @@ public class Abstraction extends LhpnFile {
 		}
 		for (Object o : abstPane.postAbsModel.toArray()) {
 			String s = o.toString();
-			if (abstPane.absListModel.contains(abstPane.xform12)) {
+			if (s.equals(abstPane.xform12)) {
 				abstractAssign();
 			}
 			divideProcesses();
@@ -687,7 +687,10 @@ public class Abstraction extends LhpnFile {
 			}
 		}
 		for (Place p : places.values()) {
-			if (!change && abstPane.absListModel.contains(abstPane.xform15)) {
+			if (!change
+					&& (abstPane.preAbsModel.contains(abstPane.xform15)
+							|| abstPane.loopAbsModel.contains(abstPane.xform15) || abstPane.postAbsModel
+							.contains(abstPane.xform15))) {
 				if (p.isMarked())
 					continue;
 				ArrayList<Place> list = new ArrayList<Place>();
@@ -742,7 +745,9 @@ public class Abstraction extends LhpnFile {
 				}
 			}
 			// If the enabling condition is initially true
-			if (abstPane.absListModel.contains(abstPane.xform16)
+			if ((abstPane.preAbsModel.contains(abstPane.xform16)
+					|| abstPane.loopAbsModel.contains(abstPane.xform16) || abstPane.postAbsModel
+					.contains(abstPane.xform16))
 					&& (expr.evaluateExp(initVars) == 1)
 					&& abstPane.isSimplify()) {
 				boolean enabled = true;
@@ -760,7 +765,9 @@ public class Abstraction extends LhpnFile {
 				}
 			}
 			// If the enabling condition is initially false
-			else if (abstPane.absListModel.contains(abstPane.xform11)
+			else if ((abstPane.preAbsModel.contains(abstPane.xform11)
+					|| abstPane.loopAbsModel.contains(abstPane.xform11) || abstPane.postAbsModel
+					.contains(abstPane.xform11))
 					&& (expr.evaluateExp(initVars) == 0)
 					&& abstPane.isSimplify()) {
 				boolean disabled = true;
@@ -781,7 +788,9 @@ public class Abstraction extends LhpnFile {
 		for (String t : removeEnab) {
 			transitions.get(t).removeEnabling();
 		}
-		if (abstPane.absListModel.contains(abstPane.xform15)) {
+		if (abstPane.preAbsModel.contains(abstPane.xform15)
+				|| abstPane.loopAbsModel.contains(abstPane.xform15)
+				|| abstPane.postAbsModel.contains(abstPane.xform15)) {
 			for (String t : removeTrans) {
 				Transition trans = transitions.get(t);
 				for (Place p : trans.getPreset()) {
@@ -3177,14 +3186,16 @@ public class Abstraction extends LhpnFile {
 							break;
 						}
 					}
-					for (Transition t3 : toMerge.get(t1)) {
-						ExprTree tree3 = new ExprTree(this);
-						tree3.setNodeValues(t3.getEnablingTree(), t2
-								.getEnablingTree(), "&&", 'l');
-						for (Transition t : transitions.values()) {
-							if (tree3.becomesTrue(t.getAssignments())) {
-								combine = false;
-								break;
+					if (toMerge.containsKey(t1)) {
+						for (Transition t3 : toMerge.get(t1)) {
+							ExprTree tree3 = new ExprTree(this);
+							tree3.setNodeValues(t3.getEnablingTree(), t2
+									.getEnablingTree(), "&&", 'l');
+							for (Transition t : transitions.values()) {
+								if (tree3.becomesTrue(t.getAssignments())) {
+									combine = false;
+									break;
+								}
 							}
 						}
 					}
@@ -3252,14 +3263,16 @@ public class Abstraction extends LhpnFile {
 							break;
 						}
 					}
-					for (Transition t3 : toMerge.get(t1)) {
-						ExprTree tree3 = new ExprTree(this);
-						tree3.setNodeValues(t3.getEnablingTree(), t2
-								.getEnablingTree(), "&&", 'l');
-						for (Transition t : transitions.values()) {
-							if (tree3.becomesTrue(t.getAssignments())) {
-								combine = false;
-								break;
+					if (toMerge.containsKey(t1)) {
+						for (Transition t3 : toMerge.get(t1)) {
+							ExprTree tree3 = new ExprTree(this);
+							tree3.setNodeValues(t3.getEnablingTree(), t2
+									.getEnablingTree(), "&&", 'l');
+							for (Transition t : transitions.values()) {
+								if (tree3.becomesTrue(t.getAssignments())) {
+									combine = false;
+									break;
+								}
 							}
 						}
 					}
