@@ -3,10 +3,14 @@ package gcm2sbml.gui.modelview.movie;
 import gcm2sbml.gui.GCM2SBMLEditor;
 import gcm2sbml.gui.schematic.ListChooser;
 import gcm2sbml.gui.schematic.Schematic;
+import gcm2sbml.gui.schematic.SchematicObjectClickEvent;
+import gcm2sbml.gui.schematic.SchematicObjectClickEventListener;
 import gcm2sbml.gui.schematic.Utils;
 import gcm2sbml.parser.GCMFile;
+import gcm2sbml.util.GlobalConstants;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -15,12 +19,15 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
+
+import org.jfree.ui.tabbedui.VerticalLayout;
 
 import parser.TSDParser;
 
@@ -58,6 +65,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		this.playTimer = new Timer(0, playTimerEventHandler);
 		mode = PAUSED;
+		
+		registerEventListeners();
 	}
 	
 	private boolean isUIInitialized;
@@ -114,6 +123,30 @@ public class MovieContainer extends JPanel implements ActionListener {
 	JButton singleStepButton;
 	JSlider slider;
 	private void addUI(){
+
+		addPlayUI();
+		addPropertiesWindow();
+		
+		// add the top menu bar
+		JToolBar sb = new JToolBar();
+		JButton b = new JButton();
+		b.addActionListener(this);
+		b.setText("Choose Sim File");
+		b.setActionCommand("choose_simulation_file");
+		sb.add(b);
+		this.add(sb, BorderLayout.NORTH);
+		
+	}
+	
+	JPanel colorSchemePropertiesWindow;
+	private void addPropertiesWindow(){
+		colorSchemePropertiesWindow = new JPanel(new VerticalLayout());
+		colorSchemePropertiesWindow.setPreferredSize(new Dimension(150, 20));
+
+		this.add(colorSchemePropertiesWindow, BorderLayout.WEST);
+	}
+	
+	private void addPlayUI(){
 		// Add the bottom menu bar
 		JToolBar mt = new JToolBar();
 		
@@ -130,15 +163,38 @@ public class MovieContainer extends JPanel implements ActionListener {
 		mt.add(slider);
 
 		this.add(mt, BorderLayout.SOUTH);
+	}
+	
+	private void registerEventListeners(){
 		
-		// add the side menu bar
-		JToolBar sb = new JToolBar();
-		JButton b = new JButton();
-		b.addActionListener(this);
-		b.setText("Choose Sim File");
-		b.setActionCommand("choose_simulation_file");
-		sb.add(b);
-		this.add(sb, BorderLayout.NORTH);
+		final MovieContainer self = this;
+		
+		// When the user clicks on an object in the schematic
+		this.schematic.addSchematicObjectClickEventListener(new SchematicObjectClickEventListener() {
+			
+			public void SchematicObjectClickEventOccurred(SchematicObjectClickEvent evt) {
+				// TODO Auto-generated method stub
+				colorSchemePropertiesWindow.removeAll();
+				
+				
+				if(evt.getType() == GlobalConstants.SPECIES){
+					// it is a species
+					
+					JLabel label = new JLabel("Color Scheme For " + evt.getProp().getProperty(GlobalConstants.ID));
+					colorSchemePropertiesWindow.add(label);
+					
+					ColorSchemeChooser csc = new ColorSchemeChooser();
+					colorSchemePropertiesWindow.add(csc);
+					colorSchemePropertiesWindow.invalidate();
+					self.invalidate();
+					self.repaint();
+					colorSchemePropertiesWindow.repaint();
+					
+				}else if(evt.getType() == GlobalConstants.COMPONENT){
+					// the clicked object is a component
+				}
+			}
+		});
 	}
 	
 	/**
@@ -175,6 +231,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		if(command.equals("rewind")){
 			slider.setValue(0);
+			updateVisuals();
 		}else if(command.equals("playpause")){
 			playPauseButtonPress();
 		}else if(command.equals("singlestep")){
@@ -210,6 +267,12 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 * Called when the timer ticks and we need to update the colors/sizes/etc.
 	 */
 	private void updateVisuals(){
+		
+		if(parser == null){
+			// TODO: Warn the user that they need to choose a simulation file
+			throw new Error("No simulation file chosen! (i think)");
+		}
+		
 		int pos = slider.getValue();
 		if(pos < 0 || pos > parser.getNumSamples()-1){
 			throw new Error("Invalid slider value! It is outside the data range!");
