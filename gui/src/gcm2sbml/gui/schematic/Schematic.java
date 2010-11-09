@@ -7,6 +7,7 @@ import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 
 import java.awt.BorderLayout;
+import java.awt.Event;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -48,6 +49,32 @@ public class Schematic extends JPanel implements ActionListener {
 	private BioSim biosim;
 	private GCM2SBMLEditor gcm2sbml;
 	private boolean editable;
+	
+	/**
+	 * listener stuff. Thanks to http://www.exampledepot.com/egs/java.util/custevent.html.
+	 * This makes it so that we can dispatch events that the movie container can listen for.
+	 */
+	protected javax.swing.event.EventListenerList listenerList =
+        new javax.swing.event.EventListenerList();
+	// This methods allows classes to register for MyEvents
+    public void addSchematicObjectClickEventListener(SchematicObjectClickEventListener listener) {
+        listenerList.add(SchematicObjectClickEventListener.class, listener);
+    }
+ // This methods allows classes to unregister for MyEvents
+    public void removeSchematicObjectClickEventListener(SchematicObjectClickEventListener listener) {
+        listenerList.remove(SchematicObjectClickEventListener.class, listener);
+    }
+ // This private class is used to fire MyEvents
+    void dispatchSchematicObjectClickEvent(SchematicObjectClickEvent evt) {
+        Object[] listeners = listenerList.getListenerList();
+        // Each listener occupies two elements - the first is the listener class
+        // and the second is the listener instance
+        for (int i=0; i<listeners.length; i+=2) {
+            if (listeners[i]==SchematicObjectClickEventListener.class) {
+                ((SchematicObjectClickEventListener)listeners[i+1]).SchematicObjectClickEventOccurred(evt);
+            }
+        }
+    }
 	
 	/**
 	 * Constructor
@@ -203,13 +230,26 @@ public class Schematic extends JPanel implements ActionListener {
 	 * Add listeners for the graph component
 	 */
 	private void addGraphComponentListeners(){
-
+		
+		final Schematic self = this;
 		
 		// Add a listener for when cells get clicked on.
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter(){
 			@Override
 			public void mouseReleased(MouseEvent e)
 			{
+				
+				mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
+				if(cell != null){
+					// dispatch a new event in case the movie container is listening for it
+					Event evt = new Event(this, 1000, null);
+					Properties prop = graph.getCellProperties(cell);
+					if(prop != null){
+						SchematicObjectClickEvent soce = new SchematicObjectClickEvent(evt, prop, graph.getCellType(cell));
+						self.dispatchSchematicObjectClickEvent(soce);
+					}
+				}
+				
 				if (e.isPopupTrigger() && e.getButton() == MouseEvent.BUTTON3){
 					// rightclick on windows
 					if(editable)
@@ -217,7 +257,6 @@ public class Schematic extends JPanel implements ActionListener {
 				}else if(e.getClickCount() == 1 && editable && e.getButton() == MouseEvent.BUTTON1){
 					// single click.
 					// First check and if the user clicked on a component, let the graph lib take care of it.
-					mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
 					if(cell == null){
 						// If control gets here, the user clicked once, and not on any component.
 						if(selectButton.isSelected()){
@@ -285,7 +324,6 @@ public class Schematic extends JPanel implements ActionListener {
 					}
 				}else if(e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1){
 					// double click
-					mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
 					if (cell != null){
 						graph.bringUpEditorForCell(cell);
 						graph.buildGraph();

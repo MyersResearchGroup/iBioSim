@@ -167,10 +167,11 @@ public class BioGraph extends mxGraph {
 		else if(type == GlobalConstants.INFLUENCE)
 			return gcm.getInfluences();
 		else if(type == GlobalConstants.COMPONENT_CONNECTION)
-			throw new Error("Component Connectiosn don't have properties!");
+			return null; // Component Connectiosn don't have properties
 		else
 			throw new Error("Invalid type: " + type);
 	}
+
 	
 	/**
 	 * A convenience function
@@ -178,6 +179,8 @@ public class BioGraph extends mxGraph {
 	 * @return
 	 */
 	public Properties getCellProperties(mxCell cell){
+		if(cell.getId() == null || getPropertiesList(cell) == null)
+			return null;
 		return getPropertiesList(cell).get(cell.getId());
 	}
 	public Properties getCellProperties(mxICell cell){
