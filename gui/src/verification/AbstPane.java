@@ -458,6 +458,15 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		if (e.getSource() == removeXform) {
 			absListModel.removeElement(xforms.getSelectedValue());
 		}
+		if (e.getSource() == rmPreAbs) {
+			preAbsModel.removeElement(preAbs.getSelectedValue());
+		}
+		if (e.getSource() == rmLoopAbs) {
+			loopAbsModel.removeElement(loopAbs.getSelectedValue());
+		}
+		if (e.getSource() == rmPostAbs) {
+			postAbsModel.removeElement(postAbs.getSelectedValue());
+		}
 		if (e.getSource() == addAllXforms) {
 			for (String s : transforms) {
 				if (!absListModel.contains(s)) {
