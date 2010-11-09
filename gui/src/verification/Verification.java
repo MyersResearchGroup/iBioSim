@@ -598,13 +598,34 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}
 				}
 			}
+			//abstPane.loopAbsModel.removeAllElements();
+			//abstPane.preAbsModel.removeAllElements();
+			//abstPane.postAbsModel.removeAllElements();
+			for (String s : abstPane.transforms) {
+				if (load.containsKey(s)) {
+					if (load.getProperty(s).equals("preloop")) {
+						abstPane.preAbsModel.addElement(s);
+					}
+					else if (load.getProperty(s).equals("mainloop")) {
+						abstPane.loopAbsModel.addElement(s);
+					}
+					else if (load.getProperty(s).equals("postloop")) {
+						abstPane.postAbsModel.addElement(s);
+					}
+				}
+				else {
+					abstPane.preAbsModel.removeElement(s);
+					abstPane.loopAbsModel.removeElement(s);
+					abstPane.postAbsModel.removeElement(s);
+				}
+			}
 			if (load.containsKey("abstraction.transforms")) {
 				abstPane.removeAllXform();
 				String xforms = load.getProperty("abstraction.transforms");
 				String[] array = xforms.split(", ");
 				for (String s : array) {
 					if (!s.equals("")) {
-						abstPane.addXform(s.replace(",", ""));
+						abstPane.addLoopXform(s.replace(",", ""));
 					}
 				}
 			}
@@ -1698,9 +1719,18 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				prop.remove("abstraction.interesting");
 			}
 			String xforms = "";
-			for (int i = 0; i < abstPane.absListModel.getSize(); i++) {
-				if (abstPane.absListModel.getElementAt(i) != null) {
-					xforms = xforms + abstPane.absListModel.getElementAt(i) + ", ";
+			for (String s : abstPane.transforms) {
+				if (abstPane.preAbsModel.contains(s)) {
+					prop.setProperty(s, "preloop");
+				}
+				else if (abstPane.loopAbsModel.contains(s)) {
+					prop.setProperty(s, "mainloop");
+				}
+				else if (abstPane.postAbsModel.contains(s)) {
+					prop.setProperty(s, "postloop");
+				}
+				else {
+					prop.remove(s);
 				}
 			}
 			if (!xforms.equals("")) {

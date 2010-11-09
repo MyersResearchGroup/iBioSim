@@ -3907,7 +3907,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						String[] array = xforms.split(", ");
 						for (String s : array) {
 							if (!s.equals("")) {
-								lhpnAbstraction.addXform(s.replace(",", ""));
+								lhpnAbstraction.addLoopXform(s.replace(",", ""));
 							}
 						}
 					}

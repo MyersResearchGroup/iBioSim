@@ -19,6 +19,7 @@ import lhpn2sbml.parser.LhpnFile;
 import gcm2sbml.gui.PropertyList; //import gcm2sbml.util.Utility;
 
 import biomodelsim.*;
+import buttons.Buttons;
 
 /**
  * This class creates a GUI front end for the Verification tool. It provides the
@@ -33,15 +34,17 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	private static final long serialVersionUID = -5806315070287184299L;
 
 	private JButton addIntSpecies, removeIntSpecies, clearIntSpecies, addXform, removeXform,
-			addAllXforms, clearXforms;
+			addAllXforms, clearXforms, addPreAbs, addLoopAbs, addPostAbs, editPreAbs, editLoopAbs, editPostAbs, rmPreAbs, rmLoopAbs, rmPostAbs;
 
-	private JList species, intSpecies, xforms, selectXforms;
+	private JList species, intSpecies, xforms, selectXforms, preAbs, loopAbs, postAbs;
 
-	public DefaultListModel listModel, absListModel;
+	public DefaultListModel listModel, absListModel, preAbsModel, loopAbsModel, postAbsModel;
 
 	private JTextField field;
 
 	private String directory, separator, root, absFile, oldBdd;
+	
+	private JLabel preAbsLabel, loopAbsLabel, postAbsLabel;
 
 	public String xform0 = "Merge Parallel Places - simplification",
 			xform1 = "Remove Place in Self-Loop - simplification",
@@ -73,7 +76,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			xform28 = "Combine Parallel Transitions - abstraction",
 			xform29 = "Remove Uninteresting Variables - simplification";
 
-	private String[] transforms = { xform0, xform1, xform3, xform4, xform5, xform6, xform7, xform8,
+	public String[] transforms = { xform0, xform1, xform3, xform4, xform5, xform6, xform7, xform8,
 			xform25, xform9, xform24, xform10, xform12, xform14, xform16, xform11,
 			xform15, xform17, xform18, xform19, xform20, xform21, xform22, xform23, xform26, xform27, xform28, xform29 };
 
@@ -159,7 +162,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		this.add(factorPanel);
 
 		// Creates the abstractions JList
-		absListModel = new DefaultListModel();
+		/*absListModel = new DefaultListModel();
 		selectXforms = new JList(transforms);
 		xforms = new JList(absListModel);
 		for (String s : transforms) {
@@ -198,6 +201,123 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		absButtonHolder.add(addAllXforms);
 		absButtonHolder.add(clearXforms);
 		absHolder.add(absButtonHolder, "South");
+		this.add(absHolder, "South");
+		*/
+		preAbsModel = new DefaultListModel();
+		loopAbsModel = new DefaultListModel();
+		postAbsModel = new DefaultListModel();
+		preAbs = new JList(preAbsModel);
+		loopAbs = new JList(loopAbsModel);
+		postAbs = new JList(postAbsModel);
+		preAbsLabel = new JLabel("Preprocess abstraction methods:");
+		loopAbsLabel = new JLabel("Main loop abstraction methods:");
+		postAbsLabel = new JLabel("Postprocess abstraction methods:");
+		JPanel absHolder = new JPanel(new BorderLayout());
+		JPanel listOfAbsLabelHolder = new JPanel(new GridLayout(1, 3));
+		JPanel listOfAbsHolder = new JPanel(new GridLayout(1, 3));
+		JPanel listOfAbsButtonHolder = new JPanel(new GridLayout(1, 3));
+		JScrollPane preAbsScroll = new JScrollPane();
+		JScrollPane loopAbsScroll = new JScrollPane();
+		JScrollPane postAbsScroll = new JScrollPane();
+		preAbsScroll.setMinimumSize(new Dimension(260, 200));
+		preAbsScroll.setPreferredSize(new Dimension(276, 132));
+		preAbsScroll.setViewportView(preAbs);
+		loopAbsScroll.setMinimumSize(new Dimension(260, 200));
+		loopAbsScroll.setPreferredSize(new Dimension(276, 132));
+		loopAbsScroll.setViewportView(loopAbs);
+		postAbsScroll.setMinimumSize(new Dimension(260, 200));
+		postAbsScroll.setPreferredSize(new Dimension(276, 132));
+		postAbsScroll.setViewportView(postAbs);
+		addPreAbs = new JButton("Add");
+		rmPreAbs = new JButton("Remove");
+		editPreAbs = new JButton("Edit");
+		JPanel preAbsButtonHolder = new JPanel();
+		preAbsButtonHolder.add(addPreAbs);
+		preAbsButtonHolder.add(rmPreAbs);
+		// preAbsButtonHolder.add(editPreAbs);
+		addLoopAbs = new JButton("Add");
+		rmLoopAbs = new JButton("Remove");
+		editLoopAbs = new JButton("Edit");
+		JPanel loopAbsButtonHolder = new JPanel();
+		loopAbsButtonHolder.add(addLoopAbs);
+		loopAbsButtonHolder.add(rmLoopAbs);
+		// loopAbsButtonHolder.add(editLoopAbs);
+		addPostAbs = new JButton("Add");
+		rmPostAbs = new JButton("Remove");
+		editPostAbs = new JButton("Edit");
+		JPanel postAbsButtonHolder = new JPanel();
+		postAbsButtonHolder.add(addPostAbs);
+		postAbsButtonHolder.add(rmPostAbs);
+		// postAbsButtonHolder.add(editPostAbs);
+		listOfAbsLabelHolder.add(preAbsLabel);
+		listOfAbsHolder.add(preAbsScroll);
+		listOfAbsLabelHolder.add(loopAbsLabel);
+		listOfAbsHolder.add(loopAbsScroll);
+		listOfAbsLabelHolder.add(postAbsLabel);
+		listOfAbsHolder.add(postAbsScroll);
+		listOfAbsButtonHolder.add(preAbsButtonHolder);
+		listOfAbsButtonHolder.add(loopAbsButtonHolder);
+		listOfAbsButtonHolder.add(postAbsButtonHolder);
+		absHolder.add(listOfAbsLabelHolder, "North");
+		absHolder.add(listOfAbsHolder, "Center");
+		absHolder.add(listOfAbsButtonHolder, "South");
+		preAbsModel.addElement(xform12);
+		loopAbsModel.addElement(xform0);
+		loopAbsModel.addElement(xform1);
+		loopAbsModel.addElement(xform3);
+		loopAbsModel.addElement(xform4);
+		loopAbsModel.addElement(xform5);
+		loopAbsModel.addElement(xform6);
+		loopAbsModel.addElement(xform7);
+		loopAbsModel.addElement(xform8);
+		loopAbsModel.addElement(xform9);
+		loopAbsModel.addElement(xform10);
+		loopAbsModel.addElement(xform11);
+		loopAbsModel.addElement(xform12);
+		loopAbsModel.addElement(xform13);
+		loopAbsModel.addElement(xform14);
+		loopAbsModel.addElement(xform15);
+		loopAbsModel.addElement(xform16);
+		loopAbsModel.addElement(xform17);
+		loopAbsModel.addElement(xform18);
+		loopAbsModel.addElement(xform19);
+		loopAbsModel.addElement(xform20);
+		loopAbsModel.addElement(xform22);
+		loopAbsModel.addElement(xform23);
+		loopAbsModel.addElement(xform24);
+		loopAbsModel.addElement(xform25);
+		loopAbsModel.addElement(xform26);
+		loopAbsModel.addElement(xform27);
+		loopAbsModel.addElement(xform28);
+		loopAbsModel.addElement(xform29);
+		postAbsModel.addElement(xform21);
+		//preAbs.setEnabled(false);
+		//loopAbs.setEnabled(false);
+		//postAbs.setEnabled(false);
+		//preAbs.addMouseListener(this);
+		//loopAbs.addMouseListener(this);
+		//postAbs.addMouseListener(this);
+		//preAbsLabel.setEnabled(false);
+		//loopAbsLabel.setEnabled(false);
+		//postAbsLabel.setEnabled(false);
+		//addPreAbs.setEnabled(false);
+		//rmPreAbs.setEnabled(false);
+		//editPreAbs.setEnabled(false);
+		addPreAbs.addActionListener(this);
+		rmPreAbs.addActionListener(this);
+		editPreAbs.addActionListener(this);
+		//addLoopAbs.setEnabled(false);
+		//rmLoopAbs.setEnabled(false);
+		//editLoopAbs.setEnabled(false);
+		addLoopAbs.addActionListener(this);
+		rmLoopAbs.addActionListener(this);
+		editLoopAbs.addActionListener(this);
+		//addPostAbs.setEnabled(false);
+		//rmPostAbs.setEnabled(false);
+		//editPostAbs.setEnabled(false);
+		addPostAbs.addActionListener(this);
+		rmPostAbs.addActionListener(this);
+		editPostAbs.addActionListener(this);
 		this.add(absHolder, "South");
 
 		change = false;
@@ -267,12 +387,12 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		this.add(factorPanel);
 
 		// Creates the abstractions JList
-		absListModel = new DefaultListModel();
-		selectXforms = new JList(transforms);
-		xforms = new JList(absListModel);
-		for (String s : transforms) {
-			absListModel.addElement(s);
-		}
+		//absListModel = new DefaultListModel();
+		//selectXforms = new JList(transforms);
+		//xforms = new JList(absListModel);
+		//for (String s : transforms) {
+		//	absListModel.addElement(s);
+		//}
 		JLabel absLabel = new JLabel("Available Transforms:");
 		JLabel abstractLabel = new JLabel("Selected Transforms:");
 		JPanel absHolder = new JPanel(new BorderLayout());
@@ -306,7 +426,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		absButtonHolder.add(addAllXforms);
 		absButtonHolder.add(clearXforms);
 		absHolder.add(absButtonHolder, "South");
-		this.add(absHolder, "South");
+		//this.add(absHolder, "South");
 
 		change = false;
 	}
@@ -356,14 +476,35 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		}
 	}
 
-	public void addXform(String variable) {
-		if (!absListModel.contains(variable)) {
-			absListModel.addElement(variable);
+	//public void addXform(String variable) {
+	//	if (!absListModel.contains(variable)) {
+	//		absListModel.addElement(variable);
+	//	}
+	//}
+	
+	public void addPreXform(String xform) {
+		if (!preAbsModel.contains(xform)) {
+			preAbsModel.addElement(xform);
+		}
+	}
+	
+	public void addLoopXform(String xform) {
+		if (!loopAbsModel.contains(xform)) {
+			loopAbsModel.addElement(xform);
+		}
+	}
+	
+	public void addPostXform(String xform) {
+		if (!postAbsModel.contains(xform)) {
+			postAbsModel.addElement(xform);
 		}
 	}
 
 	public void removeAllXform() {
-		absListModel.removeAllElements();
+		preAbsModel.removeAllElements();
+		loopAbsModel.removeAllElements();
+		postAbsModel.removeAllElements();
+		//absListModel.removeAllElements();
 	}
 
 	public void run() {
@@ -403,12 +544,17 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			if (!intVars.equals("")) {
 				prop.setProperty("abstraction.interesting", intVars);
 			}
-			String selXforms = "";
 			for (int i = 0; i < absListModel.getSize(); i++) {
-				intVars = absListModel.getElementAt(i) + " ";
-			}
-			if (!selXforms.equals("")) {
-				prop.setProperty("abstraction.transforms", selXforms);
+				String s = absListModel.getElementAt(i).toString();
+				if (preAbsModel.contains(s)) {
+					prop.setProperty(s, "preloop");
+				}
+				else if (absListModel.contains(s)) {
+					prop.setProperty(s, "mainloop");
+				}
+				else if (postAbsModel.contains(s)) {
+					prop.setProperty(s, "postloop");
+				}
 			}
 			if (!factorField.getText().equals("")) {
 				prop.setProperty("abstraction.factor", factorField.getText());
@@ -543,6 +689,17 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			return true;
 		}
 		return change;
+	}
+	
+	public void mouseClicked(MouseEvent e) {
+		if (e.getClickCount() == 2) {
+			// if (e.getSource() == intSpecies) {
+			// addInterstingSpecies();
+			// }
+			// else if (e.getSource() == species) {
+			// editInterstingSpecies();
+			// }
+		}
 	}
 
 }
