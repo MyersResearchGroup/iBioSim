@@ -614,13 +614,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}
 				}
 				else {
-					abstPane.preAbsModel.removeElement(s);
-					abstPane.loopAbsModel.removeElement(s);
-					abstPane.postAbsModel.removeElement(s);
+					//abstPane.preAbsModel.removeElement(s);
+					//abstPane.loopAbsModel.removeElement(s);
+					//abstPane.postAbsModel.removeElement(s);
 				}
 			}
 			if (load.containsKey("abstraction.transforms")) {
-				abstPane.removeAllXform();
+				//abstPane.removeAllXform();
 				String xforms = load.getProperty("abstraction.transforms");
 				String[] array = xforms.split(", ");
 				for (String s : array) {
@@ -887,7 +887,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (abstFilename != null) {
 				if (!abstFilename.endsWith(".lpn"))
 					abstFilename = abstFilename + ".lpn";
-				if (abstPane.absListModel.contains("Remove Variables")) {
+				if (abstPane.loopAbsModel.contains("Remove Variables")) {
 					abstraction.abstractVars(abstPane.getIntVars());
 				}
 				abstraction.abstractSTG(true);
