@@ -567,11 +567,13 @@ public class BioGraph extends mxGraph {
 		// Look in mxConstants to see all the pre-built styles.
 		String style = "defaultEdge;" + mxConstants.STYLE_ENDARROW + "=";
 		if(prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION))
-			style += mxConstants.ARROW_CLASSIC;
+			style += mxConstants.ARROW_BLOCK;
 		else if(prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.REPRESSION))
 			style += mxConstants.ARROW_OVAL;
-		else
-			style += mxConstants.ARROW_OPEN; // This should never happen.
+		else if(prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.COMPLEX))
+			style += mxConstants.ARROW_OPEN; 
+		else 
+			style += mxConstants.ARROW_DIAMOND + ";" + mxConstants.STYLE_DASHED + "=true";
 //		=[';p']
 		
 		// apply the style
@@ -658,9 +660,13 @@ public class BioGraph extends mxGraph {
 	public void addInfluence(mxCell cell, String id, String constType, String bio){
 		Properties prop = new Properties();
 		prop.setProperty(GlobalConstants.NAME, id);
-		prop.setProperty(GlobalConstants.TYPE, constType);
-		if(bio == InfluencePanel.bio[1])
-			prop.setProperty(GlobalConstants.BIO, bio);
+		if (bio == "complex") {
+			prop.setProperty(GlobalConstants.TYPE, GlobalConstants.COMPLEX);
+		} else {
+			prop.setProperty(GlobalConstants.TYPE, constType);
+		}
+		/* if(bio == InfluencePanel.bio[1])
+			prop.setProperty(GlobalConstants.BIO, bio); */
 		gcm.getInfluences().put(id, prop);
 		this.influencesToMxCellMap.put(id, cell);
 		updateInfluenceVisuals(id);
