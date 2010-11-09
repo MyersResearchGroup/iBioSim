@@ -139,7 +139,7 @@ public class Schematic extends JPanel implements ActionListener {
 	AbstractButton activationButton;
 	AbstractButton inhibitionButton;
 	AbstractButton bioActivationButton;
-	AbstractButton bioInhibitionButton;
+	//AbstractButton bioInhibitionButton;
 	AbstractButton noInfluenceButton;
 	private JToolBar buildToolBar(){
 
@@ -167,10 +167,10 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(activationButton);
 		inhibitionButton = Utils.makeRadioToolButton("inhibition.png", "", "Create Repression Influences", this, influenceButtonGroup);
 		toolBar.add(inhibitionButton);
-		bioActivationButton = Utils.makeRadioToolButton("bio_activation.png", "", "Create Biological Activation Influences", this, influenceButtonGroup);
+		bioActivationButton = Utils.makeRadioToolButton("bio_activation.png", "", "Create Complex Formation Reaction", this, influenceButtonGroup);
 		toolBar.add(bioActivationButton);
-		bioInhibitionButton = Utils.makeRadioToolButton("bio_inhibition.png", "", "Create Biological Repression Influences", this, influenceButtonGroup);
-		toolBar.add(bioInhibitionButton);
+		//bioInhibitionButton = Utils.makeRadioToolButton("bio_inhibition.png", "", "Create Biological Repression Influences", this, influenceButtonGroup);
+		//toolBar.add(bioInhibitionButton);
 		noInfluenceButton = Utils.makeRadioToolButton("no_influence.png", "", "Explicitly Set No Influences", this, influenceButtonGroup);
 		toolBar.add(noInfluenceButton);
 		
@@ -572,9 +572,9 @@ public class Schematic extends JPanel implements ActionListener {
 		}else if(inhibitionButton.isSelected()){
 			isBio = InfluencePanel.bio[0]; type = InfluencePanel.types[0]; constType = GlobalConstants.REPRESSION;
 		}else if(bioActivationButton.isSelected()){
-			isBio = InfluencePanel.bio[1]; type = InfluencePanel.types[1]; constType = GlobalConstants.ACTIVATION;
-		}else if(bioInhibitionButton.isSelected()){
-			isBio = InfluencePanel.bio[1]; type = InfluencePanel.types[0]; constType = GlobalConstants.REPRESSION;
+			isBio = "complex"; /*InfluencePanel.bio[1];*/ type = InfluencePanel.types[1]; constType = GlobalConstants.ACTIVATION;
+		//}else if(bioInhibitionButton.isSelected()){
+		//	isBio = InfluencePanel.bio[1]; type = InfluencePanel.types[0]; constType = GlobalConstants.REPRESSION;
 		}else if(noInfluenceButton.isSelected()){
 			isBio = ""; type = InfluencePanel.types[2]; constType = GlobalConstants.NOINFLUENCE;
 		}else{

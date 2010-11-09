@@ -168,15 +168,17 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			}
 			if (oldName == null) {
 				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())
-						|| gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Components id already exists.");
+						|| gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())
+						|| gcm.getPromoters().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+					Utility.createErrorMessage("Error", "Id already exists.");
 					return false;
 				}
 			}
 			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
 				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())
-						|| gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Components id already exists.");
+						|| gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())
+						|| gcm.getPromoters().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+					Utility.createErrorMessage("Error", "Id already exists.");
 					return false;
 				}
 			}
