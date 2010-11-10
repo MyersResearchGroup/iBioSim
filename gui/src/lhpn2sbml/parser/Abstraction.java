@@ -76,8 +76,8 @@ public class Abstraction extends LhpnFile {
 			System.out.println("Variables before abstraction: " + numVars);
 		}
 		Integer i = 0;
-		for (int j=0; j < abstPane.preAbsModel.size(); j++) {
-			String s = abstPane.preAbsModel.getElementAt(j).toString();
+		for (Object o : abstPane.preAbsModel.toArray()) {
+			String s = o.toString();
 			if (s.equals(abstPane.xform12)) {
 				abstractAssign();
 			}

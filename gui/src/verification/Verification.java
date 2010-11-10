@@ -16,6 +16,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.prefs.Preferences;
+import java.util.regex.*;
+import java.util.HashMap;
 
 import lhpn2sbml.parser.Abstraction;
 import lhpn2sbml.parser.LhpnFile;
@@ -601,16 +603,41 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			//abstPane.loopAbsModel.removeAllElements();
 			//abstPane.preAbsModel.removeAllElements();
 			//abstPane.postAbsModel.removeAllElements();
+			Pattern intPattern = Pattern.compile("\\d+");
+			HashMap<Integer, String> preOrder = new HashMap<Integer, String>();
+			HashMap<Integer, String> loopOrder = new HashMap<Integer, String>();
+			HashMap<Integer, String> postOrder = new HashMap<Integer, String>();
 			for (String s : abstPane.transforms) {
 				if (load.containsKey(s)) {
-					if (load.getProperty(s).equals("preloop")) {
-						abstPane.addPreXform(s);
+					if (load.getProperty(s).contains("preloop")) {
+						Matcher intMatch = intPattern.matcher(load.getProperty(s));
+						if (intMatch.find()) {
+						Integer index = Integer.parseInt(intMatch.group());
+						preOrder.put(index, s);
+						}
+						else {
+							abstPane.addPreXform(s);
+						}
 					}
-					else if (load.getProperty(s).equals("mainloop")) {
+					else if (load.getProperty(s).contains("mainloop")) {
+						Matcher intMatch = intPattern.matcher(load.getProperty(s));
+						if (intMatch.find()) {
+						Integer index = Integer.parseInt(intMatch.group());
+						loopOrder.put(index, s);
+						}
+						else {
 						abstPane.addLoopXform(s);
+						}
 					}
-					else if (load.getProperty(s).equals("postloop")) {
-						abstPane.addPostXform(s);
+					else if (load.getProperty(s).contains("postloop")) {
+						Matcher intMatch = intPattern.matcher(load.getProperty(s));
+						if (intMatch.find()) {
+						Integer index = Integer.parseInt(intMatch.group());
+						postOrder.put(index, s);
+						}
+						else {
+							abstPane.addPostXform(s);
+						}
 					}
 				}
 				else {
@@ -619,6 +646,27 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					abstPane.postAbsModel.removeElement(s);
 				}
 			}
+			if (preOrder.size() > 0) {
+				abstPane.preAbsModel.removeAllElements();
+			}
+			for (Integer j=1; j<=preOrder.size(); j++) {
+				abstPane.preAbsModel.addElement(preOrder.get(j));
+			}
+			if (loopOrder.size() > 0) {
+				abstPane.loopAbsModel.removeAllElements();
+			}
+			for (Integer j=1; j<=loopOrder.size(); j++) {
+				abstPane.loopAbsModel.addElement(loopOrder.get(j));
+			}
+			if (postOrder.size() > 0) {
+				abstPane.postAbsModel.removeAllElements();
+			}
+			for (Integer j=1; j<=postOrder.size(); j++) {
+				abstPane.postAbsModel.addElement(postOrder.get(j));
+			}
+			abstPane.preAbs.setListData(abstPane.preAbsModel.toArray());
+			abstPane.loopAbs.setListData(abstPane.loopAbsModel.toArray());
+			abstPane.postAbs.setListData(abstPane.postAbsModel.toArray());
 			if (load.containsKey("abstraction.transforms")) {
 				//abstPane.removeAllXform();
 				String xforms = load.getProperty("abstraction.transforms");
@@ -1719,15 +1767,19 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				prop.remove("abstraction.interesting");
 			}
 			String xforms = "";
+			Integer pre = 1, loop = 1, post = 1;
 			for (String s : abstPane.transforms) {
 				if (abstPane.preAbsModel.contains(s)) {
-					prop.setProperty(s, "preloop");
+					prop.setProperty(s, "preloop" + pre.toString());
+					pre++;
 				}
 				else if (abstPane.loopAbsModel.contains(s)) {
-					prop.setProperty(s, "mainloop");
+					prop.setProperty(s, "mainloop" + loop.toString());
+					loop++;
 				}
 				else if (abstPane.postAbsModel.contains(s)) {
-					prop.setProperty(s, "postloop");
+					prop.setProperty(s, "postloop" + post.toString());
+					post++;
 				}
 				else {
 					prop.remove(s);
