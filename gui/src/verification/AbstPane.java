@@ -34,9 +34,9 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	private static final long serialVersionUID = -5806315070287184299L;
 
 	private JButton addIntSpecies, removeIntSpecies, clearIntSpecies, addXform, removeXform,
-			addAllXforms, clearXforms, addPreAbs, addLoopAbs, addPostAbs, editPreAbs, editLoopAbs, editPostAbs, rmPreAbs, rmLoopAbs, rmPostAbs;
+			addAllXforms, clearXforms, addPreAbs, addLoopAbs, addPostAbs, editPreAbs, editLoopAbs, editPostAbs, rmPreAbs, rmLoopAbs, rmPostAbs, clearPreAbs, clearLoopAbs, clearPostAbs;
 
-	private JList species, intSpecies, xforms, selectXforms, preAbs, loopAbs, postAbs;
+	public JList species, intSpecies, xforms, selectXforms, preAbs, loopAbs, postAbs;
 
 	public DefaultListModel listModel, absListModel, preAbsModel, loopAbsModel, postAbsModel;
 
@@ -231,23 +231,29 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		addPreAbs = new JButton("Add");
 		rmPreAbs = new JButton("Remove");
 		editPreAbs = new JButton("Edit");
+		clearPreAbs = new JButton("Clear");
 		JPanel preAbsButtonHolder = new JPanel();
 		preAbsButtonHolder.add(addPreAbs);
 		preAbsButtonHolder.add(rmPreAbs);
+		preAbsButtonHolder.add(clearPreAbs);
 		// preAbsButtonHolder.add(editPreAbs);
 		addLoopAbs = new JButton("Add");
 		rmLoopAbs = new JButton("Remove");
 		editLoopAbs = new JButton("Edit");
+		clearLoopAbs = new JButton("Clear");
 		JPanel loopAbsButtonHolder = new JPanel();
 		loopAbsButtonHolder.add(addLoopAbs);
 		loopAbsButtonHolder.add(rmLoopAbs);
+		loopAbsButtonHolder.add(clearLoopAbs);
 		// loopAbsButtonHolder.add(editLoopAbs);
 		addPostAbs = new JButton("Add");
 		rmPostAbs = new JButton("Remove");
 		editPostAbs = new JButton("Edit");
+		clearPostAbs = new JButton("Clear");
 		JPanel postAbsButtonHolder = new JPanel();
 		postAbsButtonHolder.add(addPostAbs);
 		postAbsButtonHolder.add(rmPostAbs);
+		postAbsButtonHolder.add(clearPostAbs);
 		// postAbsButtonHolder.add(editPostAbs);
 		listOfAbsLabelHolder.add(preAbsLabel);
 		listOfAbsHolder.add(preAbsScroll);
@@ -287,8 +293,6 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		loopAbsModel.addElement(xform24);
 		loopAbsModel.addElement(xform25);
 		loopAbsModel.addElement(xform26);
-		loopAbsModel.addElement(xform27);
-		loopAbsModel.addElement(xform28);
 		loopAbsModel.addElement(xform29);
 		postAbsModel.addElement(xform21);
 		//preAbs.setEnabled(false);
@@ -306,18 +310,21 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		addPreAbs.addActionListener(this);
 		rmPreAbs.addActionListener(this);
 		editPreAbs.addActionListener(this);
+		clearPreAbs.addActionListener(this);
 		//addLoopAbs.setEnabled(false);
 		//rmLoopAbs.setEnabled(false);
 		//editLoopAbs.setEnabled(false);
 		addLoopAbs.addActionListener(this);
 		rmLoopAbs.addActionListener(this);
 		editLoopAbs.addActionListener(this);
+		clearLoopAbs.addActionListener(this);
 		//addPostAbs.setEnabled(false);
 		//rmPostAbs.setEnabled(false);
 		//editPostAbs.setEnabled(false);
 		addPostAbs.addActionListener(this);
 		rmPostAbs.addActionListener(this);
 		editPostAbs.addActionListener(this);
+		clearPostAbs.addActionListener(this);
 		this.add(absHolder, "South");
 
 		change = false;
@@ -458,14 +465,52 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		if (e.getSource() == removeXform) {
 			absListModel.removeElement(xforms.getSelectedValue());
 		}
+		if (e.getSource() == addPreAbs || e.getSource() == addLoopAbs || e.getSource() == addPostAbs) {
+			JPanel addAbsPanel = new JPanel(new BorderLayout());
+			JComboBox absList = new JComboBox();
+			for (String s : transforms) {
+				absList.addItem(s);
+			}
+			addAbsPanel.add(absList, "Center");
+			String[] options = { "Add", "Cancel" };
+			int value = JOptionPane.showOptionDialog(BioSim.frame, addAbsPanel,
+					"Add abstraction method", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+					null, options, options[0]);
+			if (value == JOptionPane.YES_OPTION) {
+				if (e.getSource() == addPreAbs) {
+					addPreXform(absList.getSelectedItem().toString());
+				}
+				else if (e.getSource() == addLoopAbs) {
+					addLoopXform(absList.getSelectedItem().toString());
+				}
+				else {
+					addPostXform(absList.getSelectedItem().toString());
+				}
+			}
+		}
 		if (e.getSource() == rmPreAbs) {
 			preAbsModel.removeElement(preAbs.getSelectedValue());
+			preAbs.setListData(preAbsModel.toArray());
 		}
 		if (e.getSource() == rmLoopAbs) {
 			loopAbsModel.removeElement(loopAbs.getSelectedValue());
+			loopAbs.setListData(loopAbsModel.toArray());
 		}
 		if (e.getSource() == rmPostAbs) {
 			postAbsModel.removeElement(postAbs.getSelectedValue());
+			postAbs.setListData(postAbsModel.toArray());
+		}
+		if (e.getSource() == clearPreAbs) {
+			preAbsModel.removeAllElements();
+			preAbs.setListData(preAbsModel.toArray());
+		}
+		if (e.getSource() == clearLoopAbs) {
+			loopAbsModel.removeAllElements();
+			loopAbs.setListData(loopAbsModel.toArray());
+		}
+		if (e.getSource() == clearPostAbs) {
+			postAbsModel.removeAllElements();
+			postAbs.setListData(postAbsModel.toArray());
 		}
 		if (e.getSource() == addAllXforms) {
 			for (String s : transforms) {
@@ -493,19 +538,49 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	
 	public void addPreXform(String xform) {
 		if (!preAbsModel.contains(xform)) {
-			preAbsModel.addElement(xform);
+			add(preAbs, preAbsModel, xform);
 		}
 	}
 	
 	public void addLoopXform(String xform) {
 		if (!loopAbsModel.contains(xform)) {
-			loopAbsModel.addElement(xform);
+			add(loopAbs, loopAbsModel, xform);
 		}
 	}
 	
 	public void addPostXform(String xform) {
 		if (!postAbsModel.contains(xform)) {
-			postAbsModel.addElement(xform);
+			add(postAbs, postAbsModel, xform);
+		}
+	}
+	
+	public void add(JList currentList, DefaultListModel currentModel, Object newItem) {
+		Object[] list = new Object[currentList.getModel().getSize() + 1];
+		int addAfter = currentList.getSelectedIndex();
+		DefaultListModel newModel = new DefaultListModel();
+		for (int i = 0; i <= currentList.getModel().getSize(); i++) {
+			if (i <= addAfter) {
+				list[i] = currentList.getModel().getElementAt(i);
+				newModel.addElement(currentList.getModel().getElementAt(i));
+			}
+			else if (i == (addAfter + 1)) {
+				list[i] = newItem;
+				newModel.addElement(newItem);
+			}
+			else {
+				list[i] = currentList.getModel().getElementAt(i - 1);
+				newModel.addElement(currentList.getModel().getElementAt(i - 1));
+			}
+		}
+		currentList.setListData(list);
+		if (currentModel.equals(preAbsModel)) {
+			preAbsModel  = newModel;
+		}
+		else if (currentModel.equals(loopAbsModel)) {
+			loopAbsModel = newModel;
+		}
+		else if (currentModel.equals(postAbsModel)) {
+			postAbsModel = newModel;
 		}
 	}
 
