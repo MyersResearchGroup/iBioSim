@@ -873,6 +873,13 @@ public class Run implements ActionListener {
 						BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg);
 						buildStateGraph.start();
 						buildStateGraph.join();
+						// sg.performTransientMarkovianAnalysis(timeLimit,
+						// absError, null);
+						// sg.outputStateGraph(filename.replace(".gcm",
+						// "").replace(".sbml", "")
+						// .replace(".xml", "")
+						// + "_sg.dot", true);
+						// biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 						if (!sg.getStop()) {
 							log.addText("Performing Markov Chain analysis.\n");
 							PerfromMarkovAnalysisThread performMarkovAnalysis = new PerfromMarkovAnalysisThread(
@@ -899,6 +906,7 @@ public class Run implements ActionListener {
 								biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 							}
 						}
+
 						// if (sg.getNumberOfStates() > 30) {
 						// String[] options = { "Yes", "No" };
 						// int value = JOptionPane
