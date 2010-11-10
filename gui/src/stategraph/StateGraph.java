@@ -257,7 +257,64 @@ public class StateGraph implements Runnable {
 		return true;
 	}
 
-	public boolean performMarkovianAnalysis(ArrayList<String> conditions) {
+	public void performTransientMarkovianAnalysis(int timeLimit, double error, String condition) {
+		if (canPerformMarkovianAnalysis()) {
+			// Compute Gamma
+			double Gamma = 0;
+			for (String state : stateGraph.keySet()) {
+				for (State m : stateGraph.get(state)) {
+					Gamma = Math.max(m.getTransitionSum(0.0, null), Gamma);
+				}
+			}
+			// Compute K
+			int K = 0;
+			double xi = 1;
+			double delta = 1;
+			double eta = (1 - error) / (Math.pow((Math.E), -Gamma * timeLimit));
+			while (delta < eta) {
+				K = K + 1;
+				xi = xi * ((Gamma * timeLimit) / K);
+				delta = delta + xi;
+			}
+			// Approximate pi(t)
+			State initial = getInitialState();
+			if (initial != null) {
+				initial.setCurrentProb(1.0);
+				initial.setPiProb(1.0);
+				for (int k = 0; k < K; k++) {
+					for (String state : stateGraph.keySet()) {
+						for (State m : stateGraph.get(state)) {
+							double nextProb = 0.0;
+							for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
+								if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
+									nextProb = lhpn.getTransitionRateTree(prev.getTransition())
+											.evaluateExp(prev.getState().getVariables());
+								}
+								nextProb += (prev.getState().getCurrentProb() * nextProb) / Gamma;
+							}
+							nextProb += (1 - (m.getTransitionSum(0.0, null) / Gamma));
+							m.setNextProb(nextProb * ((Gamma * timeLimit) / k));
+							m.setPiProb(m.getPiProb() + m.getNextProb());
+						}
+					}
+					for (String state : stateGraph.keySet()) {
+						for (State m : stateGraph.get(state)) {
+							m.setCurrentProbToNext();
+						}
+					}
+				}
+				for (String state : stateGraph.keySet()) {
+					for (State m : stateGraph.get(state)) {
+						m.setPiProb(m.getPiProb() * (Math.pow((Math.E), -Gamma * timeLimit)));
+						m.setCurrentProbToPi();
+					}
+				}
+			}
+		}
+	}
+
+	public boolean performSteadyStateMarkovianAnalysis(double tolerance,
+			ArrayList<String> conditions) {
 		if (!canPerformMarkovianAnalysis()) {
 			stop = true;
 			return false;
@@ -272,7 +329,6 @@ public class StateGraph implements Runnable {
 				}
 				int step = 0;
 				initial.setCurrentProb(1.0);
-				double tolerance = 0.01;
 				boolean done = false;
 				if (!stop) {
 					do {
@@ -304,7 +360,8 @@ public class StateGraph implements Runnable {
 										else {
 											transProb = 1.0;
 										}
-										double transitionSum = prev.getState().getTransitionSum(m);
+										double transitionSum = prev.getState().getTransitionSum(
+												1.0, m);
 										if (transitionSum != 0) {
 											transProb = (transProb / transitionSum);
 										}
@@ -360,7 +417,7 @@ public class StateGraph implements Runnable {
 					double totalProb = 0.0;
 					for (String state : stateGraph.keySet()) {
 						for (State m : stateGraph.get(state)) {
-							double transitionSum = m.getTransitionSum(null);
+							double transitionSum = m.getTransitionSum(1.0, null);
 							if (transitionSum != 0.0) {
 								m.setCurrentProb((m.getCurrentProb() / period) / transitionSum);
 							}
@@ -412,7 +469,7 @@ public class StateGraph implements Runnable {
 																.getTransitionRateTree(
 																		nextState.getTransition())
 																.evaluateExp(m.getVariables()) / m
-																.getTransitionSum(null)));
+																.getTransitionSum(1.0, null)));
 													}
 												}
 												if (stop) {
@@ -745,6 +802,7 @@ public class StateGraph implements Runnable {
 		private int color;
 		private double currentProb;
 		private double nextProb;
+		private double piProb;
 		private HashMap<String, String> variables;
 		private double transitionSum;
 
@@ -790,11 +848,23 @@ public class StateGraph implements Runnable {
 			return nextProb;
 		}
 
+		private void setPiProb(double probability) {
+			piProb = probability;
+		}
+
+		private double getPiProb() {
+			return piProb;
+		}
+
 		private void setCurrentProbToNext() {
 			currentProb = nextProb;
 		}
 
-		private double getTransitionSum(State n) {
+		private void setCurrentProbToPi() {
+			currentProb = piProb;
+		}
+
+		private double getTransitionSum(double noRate, State n) {
 			if (transitionSum == -1) {
 				transitionSum = 0;
 				for (StateTransitionPair next : nextStates) {
@@ -817,7 +887,7 @@ public class StateGraph implements Runnable {
 						// }
 					}
 					else {
-						transitionSum += 1.0;
+						transitionSum += noRate;
 					}
 				}
 			}

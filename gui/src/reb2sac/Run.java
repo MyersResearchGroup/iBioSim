@@ -456,7 +456,7 @@ public class Run implements ActionListener {
 			String ssaFile, BioSim biomodelsim, JTabbedPane simTab, String root,
 			JProgressBar progress, String simName, GCM2SBMLEditor gcmEditor, String direct,
 			double timeLimit, double runTime, String modelFile, AbstPane abstPane,
-			JRadioButton abstraction, String lpnProperty) {
+			JRadioButton abstraction, String lpnProperty, double absError) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
@@ -878,10 +878,11 @@ public class Run implements ActionListener {
 							PerfromMarkovAnalysisThread performMarkovAnalysis = new PerfromMarkovAnalysisThread(
 									sg);
 							if (modelFile.contains(".lpn")) {
-								performMarkovAnalysis.start(null);
+								performMarkovAnalysis.start(absError, null);
 							}
 							else {
-								performMarkovAnalysis.start(gcmEditor.getGCM().getConditions());
+								performMarkovAnalysis.start(absError, gcmEditor.getGCM()
+										.getConditions());
 							}
 							performMarkovAnalysis.join();
 							if (!sg.getStop()) {

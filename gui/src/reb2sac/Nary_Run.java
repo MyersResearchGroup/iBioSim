@@ -119,6 +119,8 @@ public class Nary_Run implements ActionListener, Runnable {
 
 	private AbstPane abstPane;
 
+	private double absError;
+
 	/**
 	 * This constructs a new Nary_Run object. This object is a GUI that contains
 	 * input fields for the nary abstraction. This constructor initializes the
@@ -134,7 +136,7 @@ public class Nary_Run implements ActionListener, Runnable {
 			String[] intSpecies, double rap1, double rap2, double qss, int con, Log log,
 			JCheckBox usingSSA, String ssaFile, BioSim biomodelsim, JTabbedPane simTab,
 			String root, String direct, String modelFile, JRadioButton abstraction,
-			AbstPane abstPane) {
+			AbstPane abstPane, double absError) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -143,6 +145,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		}
 
 		// intitializes the member variables
+		this.absError = absError;
 		this.root = root;
 		this.rap1 = rap1;
 		this.rap2 = rap2;
@@ -588,7 +591,7 @@ public class Nary_Run implements ActionListener, Runnable {
 		runProgram.execute(filename, sbml, dot, xhtml, lhpn, naryFrame, ODE, monteCarlo, sim,
 				printer_id, printer_track_quantity, outDir, nary, 2, intSpecies, log, usingSSA,
 				ssaFile, biomodelsim, simTab, root, progress, "", null, direct, timeLimit,
-				timeLimit * run, modelFile, abstPane, abstraction, null);
+				timeLimit * run, modelFile, abstPane, abstraction, null, absError);
 		running.setCursor(null);
 		running.dispose();
 		naryCancel.removeActionListener(runProgram);
