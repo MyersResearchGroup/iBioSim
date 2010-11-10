@@ -604,19 +604,19 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			for (String s : abstPane.transforms) {
 				if (load.containsKey(s)) {
 					if (load.getProperty(s).equals("preloop")) {
-						abstPane.preAbsModel.addElement(s);
+						abstPane.addPreXform(s);
 					}
 					else if (load.getProperty(s).equals("mainloop")) {
-						abstPane.loopAbsModel.addElement(s);
+						abstPane.addLoopXform(s);
 					}
 					else if (load.getProperty(s).equals("postloop")) {
-						abstPane.postAbsModel.addElement(s);
+						abstPane.addPostXform(s);
 					}
 				}
 				else {
-					//abstPane.preAbsModel.removeElement(s);
-					//abstPane.loopAbsModel.removeElement(s);
-					//abstPane.postAbsModel.removeElement(s);
+					abstPane.preAbsModel.removeElement(s);
+					abstPane.loopAbsModel.removeElement(s);
+					abstPane.postAbsModel.removeElement(s);
 				}
 			}
 			if (load.containsKey("abstraction.transforms")) {
