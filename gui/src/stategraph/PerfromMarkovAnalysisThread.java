@@ -6,6 +6,8 @@ public class PerfromMarkovAnalysisThread extends Thread {
 
 	private StateGraph sg;
 	
+	private double tolerance;
+	
 	private ArrayList<String> conditions;
 
 	public PerfromMarkovAnalysisThread(StateGraph sg) {
@@ -13,13 +15,14 @@ public class PerfromMarkovAnalysisThread extends Thread {
 		this.sg = sg;
 	}
 
-	public void start(ArrayList<String> conditions) {
+	public void start(double tolerance, ArrayList<String> conditions) {
+		this.tolerance = tolerance;
 		this.conditions = conditions;
 		super.start();
 	}
 
 	@Override
 	public void run() {
-		sg.performMarkovianAnalysis(conditions);
+		sg.performSteadyStateMarkovianAnalysis(tolerance, conditions);
 	}
 }
