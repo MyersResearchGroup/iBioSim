@@ -295,6 +295,9 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		loopAbsModel.addElement(xform26);
 		loopAbsModel.addElement(xform29);
 		postAbsModel.addElement(xform21);
+		preAbs.setListData(preAbsModel.toArray());
+		loopAbs.setListData(loopAbsModel.toArray());
+		postAbs.setListData(postAbsModel.toArray());
 		//preAbs.setEnabled(false);
 		//loopAbs.setEnabled(false);
 		//postAbs.setEnabled(false);
