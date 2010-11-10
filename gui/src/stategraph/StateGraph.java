@@ -257,7 +257,7 @@ public class StateGraph implements Runnable {
 		return true;
 	}
 
-	public void performTransientMarkovianAnalysis(int timeLimit, double error, String condition) {
+	public void performTransientMarkovianAnalysis(double timeLimit, double error, String condition) {
 		if (canPerformMarkovianAnalysis()) {
 			// Compute Gamma
 			double Gamma = 0;
