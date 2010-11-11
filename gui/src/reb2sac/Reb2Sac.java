@@ -3902,7 +3902,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					}
 					else if (key.equals("monte.carlo.simulation.start.index")) {
 					}
-					else if (key.equals("abstraction.interesting")) {
+					else if (key.equals("abstraction.interesting") && lhpnAbstraction != null) {
 						String intVars = load.getProperty("abstraction.interesting");
 						String[] array = intVars.split(" ");
 						for (String s : array) {
@@ -3911,7 +3911,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							}
 						}
 					}
-					else if (key.equals("abstraction.transforms")) {
+					else if (key.equals("abstraction.transforms") && lhpnAbstraction != null) {
 						lhpnAbstraction.removeAllXform();
 						String xforms = load.getProperty("abstraction.transforms");
 						String[] array = xforms.split(", ");
@@ -3921,10 +3921,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							}
 						}
 					}
-					else if (key.equals("abstraction.factor")) {
+					else if (key.equals("abstraction.factor") && lhpnAbstraction != null) {
 						lhpnAbstraction.factorField.setText(load.getProperty("abstraction.factor"));
 					}
-					else if (key.equals("abstraction.iterations")) {
+					else if (key.equals("abstraction.iterations") && lhpnAbstraction != null) {
 						lhpnAbstraction.iterField.setText(load
 								.getProperty("abstraction.iterations"));
 					}
