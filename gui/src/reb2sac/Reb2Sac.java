@@ -1519,14 +1519,25 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
-			else if (simulators.getSelectedItem().equals("markov-chain-analysis")) {
-				description.setText("Markov Chain Analysis");
+			else if (simulators.getSelectedItem().equals("steady-state-markov-chain-analysis")) {
+				description.setText("Steady State Markov Chain Analysis");
 				minStep.setEnabled(false);
 				minStepLabel.setEnabled(false);
 				step.setEnabled(false);
 				stepLabel.setEnabled(false);
-				errorLabel.setEnabled(false);
-				absErr.setEnabled(false);
+				errorLabel.setEnabled(true);
+				absErr.setEnabled(true);
+			}
+			else if (simulators.getSelectedItem().equals("transient-markov-chain-analysis")) {
+				description.setText("Transient Markov Chain Analysis Using Uniformization");
+				minStep.setEnabled(false);
+				minStepLabel.setEnabled(false);
+				step.setEnabled(false);
+				stepLabel.setEnabled(false);
+				errorLabel.setEnabled(true);
+				absErr.setEnabled(true);
+				limitLabel.setEnabled(true);
+				limit.setEnabled(true);
 			}
 		}
 		// if the Run button is clicked
@@ -3134,7 +3145,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					simTab, root, progress, simName, gcmEditor, null, timeLimit, runTime,
 					modelFile, lhpnAbstraction, abstraction, lpnProperty, absError);
 		}
-		if (nary.isSelected() && gcmEditor == null && !sim.equals("markov-chain-analysis")
+		if (nary.isSelected() && gcmEditor == null && !sim.contains("markov-chain-analysis")
 				&& !lhpn.isSelected() && exit == 0) {
 			String d = null;
 			if (!direct.equals(".")) {
@@ -4420,7 +4431,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		if (markov.isSelected()) {
 			simulators.removeAllItems();
-			simulators.addItem("markov-chain-analysis");
+			simulators.addItem("steady-state-markov-chain-analysis");
+			simulators.addItem("transient-markov-chain-analysis");
 			simulators.addItem("atacs");
 			simulators.addItem("ctmc-transient");
 		}
