@@ -1450,6 +1450,15 @@ public class GCMFile {
 	public ArrayList<String> getConditions() {
 		return conditions;
 	}
+	
+	public String getSelectedCondition() {
+		if (!conditions.isEmpty()) {
+			return conditions.get(0);
+		}
+		else {
+			return null;
+		}
+	}
 
 	public void addInfluences(String name, Properties property) {
 		influences.put(name, property);
@@ -3059,4 +3068,5 @@ public class GCMFile {
 	private HashMap<String, String> globalParameters;
 	
 	private String path;
+	
 }

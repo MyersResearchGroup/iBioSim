@@ -257,44 +257,62 @@ public class StateGraph implements Runnable {
 		return true;
 	}
 
-	public void performTransientMarkovianAnalysis(double timeLimit, double error, String condition) {
-		if (canPerformMarkovianAnalysis()) {
+	public boolean performTransientMarkovianAnalysis(double timeLimit, double error,
+			String condition) {
+		if (!canPerformMarkovianAnalysis()) {
+			stop = true;
+			return false;
+		}
+		else {
 			// Compute Gamma
 			double Gamma = 0;
-			for (String state : stateGraph.keySet()) {
-				for (State m : stateGraph.get(state)) {
-					Gamma = Math.max(m.getTransitionSum(0.0, null), Gamma);
+			if (!stop) {
+				for (String state : stateGraph.keySet()) {
+					for (State m : stateGraph.get(state)) {
+						Gamma = Math.max(m.getTransitionSum(0.0, null), Gamma);
+					}
 				}
+			}
+			else {
+				return false;
 			}
 			// Compute K
 			int K = 0;
 			double xi = 1;
 			double delta = 1;
 			double eta = (1 - error) / (Math.pow((Math.E), -Gamma * timeLimit));
-			while (delta < eta) {
+			while (delta < eta && !stop) {
 				K = K + 1;
 				xi = xi * ((Gamma * timeLimit) / K);
 				delta = delta + xi;
 			}
+			if (stop) {
+				return false;
+			}
 			// Approximate pi(t)
 			State initial = getInitialState();
-			if (initial != null) {
+			if (initial != null && !stop) {
 				initial.setCurrentProb(1.0);
 				initial.setPiProb(1.0);
-				for (int k = 1; k <= K; k++) {
+				for (int k = 1; k <= K && !stop; k++) {
 					for (String state : stateGraph.keySet()) {
 						for (State m : stateGraph.get(state)) {
-							double nextProb = (1 - (m.getTransitionSum(0.0, null) / Gamma));
+							double nextProb = m.getCurrentProb()
+									* (1 - (m.getTransitionSum(0.0, null) / Gamma));
 							for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
+								double prob = 0.0;
 								if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
-									nextProb = lhpn.getTransitionRateTree(prev.getTransition())
+									prob = lhpn.getTransitionRateTree(prev.getTransition())
 											.evaluateExp(prev.getState().getVariables());
 								}
-								nextProb += (prev.getState().getCurrentProb() * nextProb) / Gamma;
+								nextProb += (prev.getState().getCurrentProb() * prob) / Gamma;
 							}
 							m.setNextProb(nextProb * ((Gamma * timeLimit) / k));
 							m.setPiProb(m.getPiProb() + m.getNextProb());
 						}
+					}
+					if (stop) {
+						return false;
 					}
 					for (String state : stateGraph.keySet()) {
 						for (State m : stateGraph.get(state)) {
@@ -302,14 +320,23 @@ public class StateGraph implements Runnable {
 						}
 					}
 				}
-				for (String state : stateGraph.keySet()) {
-					for (State m : stateGraph.get(state)) {
-						m.setPiProb(m.getPiProb() * (Math.pow((Math.E), -Gamma * timeLimit)));
-						m.setCurrentProbToPi();
+				if (!stop) {
+					for (String state : stateGraph.keySet()) {
+						for (State m : stateGraph.get(state)) {
+							m.setPiProb(m.getPiProb() * (Math.pow((Math.E), -Gamma * timeLimit)));
+							m.setCurrentProbToPi();
+						}
 					}
 				}
+				if (stop) {
+					return false;
+				}
+			}
+			else {
+				return false;
 			}
 		}
+		return true;
 	}
 
 	public boolean performSteadyStateMarkovianAnalysis(double tolerance,
