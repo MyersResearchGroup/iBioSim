@@ -920,6 +920,9 @@ public class Run implements ActionListener {
 								}
 								performMarkovAnalysis.join();
 								if (!sg.getStop()) {
+									sg.outputStateGraph(filename.replace(".gcm", "").replace(
+											".sbml", "").replace(".xml", "")
+											+ "_sg.dot", true);
 									biomodelsim.enableTabMenu(biomodelsim.getTab()
 											.getSelectedIndex());
 								}
@@ -938,11 +941,6 @@ public class Run implements ActionListener {
 								// biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 							}
 						}
-						sg.performTransientMarkovianAnalysis(timeLimit, absError, null);
-						sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "")
-								.replace(".xml", "")
-								+ "_sg.dot", true);
-						biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 						// if (sg.getNumberOfStates() > 30) {
 						// String[] options = { "Yes", "No" };
 						// int value = JOptionPane
