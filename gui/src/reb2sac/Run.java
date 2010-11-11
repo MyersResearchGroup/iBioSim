@@ -176,9 +176,11 @@ public class Run implements ActionListener {
 				abs.remove("abstraction.interesting");
 			}
 			String xforms = "";
-			for (int i = 0; i < abstPane.absListModel.getSize(); i++) {
-				if (abstPane.absListModel.getElementAt(i) != null) {
-					xforms = xforms + abstPane.absListModel.getElementAt(i) + ", ";
+			if (abstPane.absListModel != null) {
+				for (int i = 0; i < abstPane.absListModel.getSize(); i++) {
+					if (abstPane.absListModel.getElementAt(i) != null) {
+						xforms = xforms + abstPane.absListModel.getElementAt(i) + ", ";
+					}
 				}
 			}
 			if (!xforms.equals("")) {
@@ -880,6 +882,7 @@ public class Run implements ActionListener {
 						// .replace(".xml", "")
 						// + "_sg.dot", true);
 						// biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
+
 						if (!sg.getStop()) {
 							log.addText("Performing Markov Chain analysis.\n");
 							PerfromMarkovAnalysisThread performMarkovAnalysis = new PerfromMarkovAnalysisThread(

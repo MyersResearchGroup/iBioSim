@@ -281,10 +281,10 @@ public class StateGraph implements Runnable {
 			if (initial != null) {
 				initial.setCurrentProb(1.0);
 				initial.setPiProb(1.0);
-				for (int k = 0; k < K; k++) {
+				for (int k = 1; k <= K; k++) {
 					for (String state : stateGraph.keySet()) {
 						for (State m : stateGraph.get(state)) {
-							double nextProb = 0.0;
+							double nextProb = (1 - (m.getTransitionSum(0.0, null) / Gamma));
 							for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
 								if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
 									nextProb = lhpn.getTransitionRateTree(prev.getTransition())
@@ -292,7 +292,6 @@ public class StateGraph implements Runnable {
 								}
 								nextProb += (prev.getState().getCurrentProb() * nextProb) / Gamma;
 							}
-							nextProb += (1 - (m.getTransitionSum(0.0, null) / Gamma));
 							m.setNextProb(nextProb * ((Gamma * timeLimit) / k));
 							m.setPiProb(m.getPiProb() + m.getNextProb());
 						}
