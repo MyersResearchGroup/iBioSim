@@ -239,6 +239,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	private JTextField backgroundField;
 
+	private String selectedMarkovSim = null;
+
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
 	 * puts them on panels, adds the panels to the frame, and then displays the
@@ -1087,6 +1089,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		else if (biosimrc.get("biosim.sim.type", "").equals("Markov")) {
 			markov.doClick();
 			simulators.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
+			if (!simulators.getSelectedItem().equals(biosimrc.get("biosim.sim.sim", ""))) {
+				selectedMarkovSim = biosimrc.get("biosim.sim.sim", "");
+			}
 		}
 		else if (biosimrc.get("biosim.sim.type", "").equals("SBML")) {
 			sbml.doClick();
@@ -4236,6 +4241,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								limitLabel, limit, intervalLabel, interval, simulators,
 								simulatorsLabel, explanation, description, usingSSA, fileStem,
 								fileStemLabel, gcmEditor, postAbs, modelFile);
+						if (load.containsKey("selected.simulator")) {
+							selectedMarkovSim = load.getProperty("selected.simulator");
+							simulators.setSelectedItem(selectedMarkovSim);
+						}
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("SBML")) {
@@ -4441,6 +4450,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			simulators.addItem("transient-markov-chain-analysis");
 			simulators.addItem("atacs");
 			simulators.addItem("ctmc-transient");
+			if (selectedMarkovSim != null) {
+				simulators.setSelectedItem(selectedMarkovSim);
+			}
 		}
 		change = false;
 	}

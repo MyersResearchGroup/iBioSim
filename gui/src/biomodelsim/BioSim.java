@@ -1555,6 +1555,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					else if (type.getSelectedItem().equals("Markov")) {
 						Object o = sim.getSelectedItem();
 						sim.removeAllItems();
+						sim.addItem("steady-state-markov-chain-analysis");
+						sim.addItem("transient-markov-chain-analysis");
 						sim.addItem("atacs");
 						sim.addItem("ctmc-transient");
 						sim.setSelectedItem(o);
