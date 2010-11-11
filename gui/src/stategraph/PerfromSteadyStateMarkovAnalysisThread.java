@@ -2,15 +2,15 @@ package stategraph;
 
 import java.util.ArrayList;
 
-public class PerfromMarkovAnalysisThread extends Thread {
+public class PerfromSteadyStateMarkovAnalysisThread extends Thread {
 
 	private StateGraph sg;
-	
+
 	private double tolerance;
-	
+
 	private ArrayList<String> conditions;
 
-	public PerfromMarkovAnalysisThread(StateGraph sg) {
+	public PerfromSteadyStateMarkovAnalysisThread(StateGraph sg) {
 		super(sg);
 		this.sg = sg;
 	}

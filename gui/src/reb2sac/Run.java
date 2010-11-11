@@ -22,7 +22,8 @@ import graph.*;
 import buttons.*;
 import sbmleditor.*;
 import stategraph.BuildStateGraphThread;
-import stategraph.PerfromMarkovAnalysisThread;
+import stategraph.PerfromSteadyStateMarkovAnalysisThread;
+import stategraph.PerfromTransientMarkovAnalysisThread;
 import stategraph.StateGraph;
 import verification.AbstPane;
 
@@ -536,7 +537,7 @@ public class Run implements ActionListener {
 					return 0;
 				}
 			}
-			if (nary.isSelected() && gcmEditor == null && !sim.equals("markov-chain-analysis")
+			if (nary.isSelected() && gcmEditor == null && !sim.contains("markov-chain-analysis")
 					&& !lhpn.isSelected() && naryRun == 1) {
 				log.addText("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n");
 				time1 = System.nanoTime();
@@ -808,7 +809,7 @@ public class Run implements ActionListener {
 					time1 = System.nanoTime();
 					reb2sac = exec.exec("reb2sac --target.encoding=hse2 " + theFile, null, work);
 				}
-				else if (sim.equals("markov-chain-analysis")) {
+				else if (sim.contains("markov-chain-analysis")) {
 					LhpnFile lhpnFile = null;
 					if (modelFile.contains(".lpn")) {
 						lhpnFile = new LhpnFile();
@@ -875,41 +876,73 @@ public class Run implements ActionListener {
 						BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg);
 						buildStateGraph.start();
 						buildStateGraph.join();
-						// sg.performTransientMarkovianAnalysis(timeLimit,
-						// absError, null);
-						// sg.outputStateGraph(filename.replace(".gcm",
-						// "").replace(".sbml", "")
-						// .replace(".xml", "")
-						// + "_sg.dot", true);
-						// biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
-
-						if (!sg.getStop()) {
-							log.addText("Performing Markov Chain analysis.\n");
-							PerfromMarkovAnalysisThread performMarkovAnalysis = new PerfromMarkovAnalysisThread(
-									sg);
-							if (modelFile.contains(".lpn")) {
-								performMarkovAnalysis.start(absError, null);
-							}
-							else {
-								performMarkovAnalysis.start(absError, gcmEditor.getGCM()
-										.getConditions());
-							}
-							performMarkovAnalysis.join();
+						if (sim.equals("steady-state-markov-chain-analysis")) {
 							if (!sg.getStop()) {
-								String simrep = sg.getMarkovResults();
-								if (simrep != null) {
-									FileOutputStream simrepstream = new FileOutputStream(new File(
-											directory + separator + "sim-rep.txt"));
-									simrepstream.write((simrep).getBytes());
-									simrepstream.close();
+								log.addText("Performing steady state Markov chain analysis.\n");
+								PerfromSteadyStateMarkovAnalysisThread performMarkovAnalysis = new PerfromSteadyStateMarkovAnalysisThread(
+										sg);
+								if (modelFile.contains(".lpn")) {
+									performMarkovAnalysis.start(absError, null);
 								}
-								sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml",
-										"").replace(".xml", "")
-										+ "_sg.dot", true);
-								biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
+								else {
+									performMarkovAnalysis.start(absError, gcmEditor.getGCM()
+											.getConditions());
+								}
+								performMarkovAnalysis.join();
+								if (!sg.getStop()) {
+									String simrep = sg.getMarkovResults();
+									if (simrep != null) {
+										FileOutputStream simrepstream = new FileOutputStream(
+												new File(directory + separator + "sim-rep.txt"));
+										simrepstream.write((simrep).getBytes());
+										simrepstream.close();
+									}
+									sg.outputStateGraph(filename.replace(".gcm", "").replace(
+											".sbml", "").replace(".xml", "")
+											+ "_sg.dot", true);
+									biomodelsim.enableTabMenu(biomodelsim.getTab()
+											.getSelectedIndex());
+								}
 							}
 						}
-
+						else if (sim.equals("transient-markov-chain-analysis")) {
+							if (!sg.getStop()) {
+								log
+										.addText("Performing transient Markov chain analysis with uniformization.\n");
+								PerfromTransientMarkovAnalysisThread performMarkovAnalysis = new PerfromTransientMarkovAnalysisThread(
+										sg);
+								if (modelFile.contains(".lpn")) {
+									performMarkovAnalysis.start(timeLimit, absError, null);
+								}
+								else {
+									performMarkovAnalysis.start(timeLimit, absError, gcmEditor
+											.getGCM().getSelectedCondition());
+								}
+								performMarkovAnalysis.join();
+								if (!sg.getStop()) {
+									biomodelsim.enableTabMenu(biomodelsim.getTab()
+											.getSelectedIndex());
+								}
+								// String simrep = sg.getMarkovResults();
+								// if (simrep != null) {
+								// FileOutputStream simrepstream = new
+								// FileOutputStream(new File(
+								// directory + separator + "sim-rep.txt"));
+								// simrepstream.write((simrep).getBytes());
+								// simrepstream.close();
+								// }
+								// sg.outputStateGraph(filename.replace(".gcm",
+								// "").replace(".sbml",
+								// "").replace(".xml", "")
+								// + "_sg.dot", true);
+								// biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
+							}
+						}
+						sg.performTransientMarkovianAnalysis(timeLimit, absError, null);
+						sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "")
+								.replace(".xml", "")
+								+ "_sg.dot", true);
+						biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 						// if (sg.getNumberOfStates() > 30) {
 						// String[] options = { "Yes", "No" };
 						// int value = JOptionPane

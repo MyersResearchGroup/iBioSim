@@ -1481,7 +1481,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						"emc-sim", "bunker", "nmc" };
 			}
 			else if (type.getSelectedItem().equals("Markov")) {
-				choices = new String[] { "markov-chain-analysis", "atacs", "ctmc-transient" };
+				choices = new String[] { "steady-state-markov-chain-analysis", "transient-markov-chain-analysis", "atacs", "ctmc-transient" };
 			}
 			else {
 				choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
