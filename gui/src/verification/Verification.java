@@ -39,23 +39,28 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
-	private JButton save, run, viewCircuit, viewTrace, viewLog, addComponent, removeComponent;
+	private JButton save, run, viewCircuit, viewTrace, viewLog, addComponent,
+			removeComponent;
 
-	private JLabel algorithm, timingMethod, timingOptions, otherOptions, otherOptions2,
-			compilation, bddSizeLabel, advTiming, abstractLabel, preprocLabel;
+	private JLabel algorithm, timingMethod, timingOptions, otherOptions,
+			otherOptions2, compilation, bddSizeLabel, advTiming, abstractLabel,
+			preprocLabel;
 
-	public JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify, vergate, orbits,
-			search, trace, bdd, dbm, smt, lhpn, view, none, simplify, abstractLhpn;
+	public JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify,
+			vergate, orbits, search, trace, bdd, dbm, smt, lhpn, view, none,
+			simplify, abstractLhpn;
 
-	private JCheckBox abst, partialOrder, dot, verbose, graph, genrg, timsubset, superset, infopt,
-	    orbmatch, interleav, prune, disabling, nofail, noproj, keepgoing, explpn, nochecks, reduction,
-			newTab, postProc, redCheck, xForm2, expandRate;
+	private JCheckBox abst, partialOrder, dot, verbose, graph, genrg,
+			timsubset, superset, infopt, orbmatch, interleav, prune, disabling,
+			nofail, noproj, keepgoing, explpn, nochecks, reduction, newTab,
+			postProc, redCheck, xForm2, expandRate;
 
 	private JTextField bddSize, backgroundField, componentField, preprocStr;
 
 	private ButtonGroup timingMethodGroup, algorithmGroup, abstractionGroup;
 
-	private String directory, separator, root, verFile, oldBdd, sourceFileNoPath;
+	private String directory, separator, root, verFile, oldBdd,
+			sourceFileNoPath;
 
 	public String verifyFile;
 
@@ -76,12 +81,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	 * the input fields, puts them on panels, adds the panels to the frame, and
 	 * then displays the frame.
 	 */
-	public Verification(String directory, String verName, String filename, Log log, BioSim biosim,
-			boolean lema, boolean atacs) {
+	public Verification(String directory, String verName, String filename,
+			Log log, BioSim biosim, boolean lema, boolean atacs) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
-		}
-		else {
+		} else {
 			separator = File.separator;
 		}
 		this.atacs = atacs;
@@ -143,7 +147,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		preprocLabel = new JLabel("Preprocess Command:");
 		preprocStr = new JTextField();
 		preprocStr.setPreferredSize(new Dimension(500, 18));
-		
+
 		// Initializes the radio buttons and check boxes
 		// Abstraction Options
 		none = new JRadioButton("None");
@@ -163,8 +167,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			bag.addActionListener(this);
 			bap.addActionListener(this);
 			baptdc.addActionListener(this);
-		}
-		else {
+		} else {
 			bdd = new JRadioButton("BDD");
 			dbm = new JRadioButton("DBM");
 			smt = new JRadioButton("SMT");
@@ -246,8 +249,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		// addComponent.addActionListener(this);
 		// removeComponent.addActionListener(this);
 		GridBagConstraints constraints = new GridBagConstraints();
-		JPanel componentPanel = Utility.createPanel(this, "Components", componentList,
-				addComponent, removeComponent, null);
+		JPanel componentPanel = Utility.createPanel(this, "Components",
+				componentList, addComponent, removeComponent, null);
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 
@@ -258,8 +261,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		none.setSelected(true);
 		if (lema) {
 			dbm.setSelected(true);
-		}
-		else {
+		} else {
 			untimed.setSelected(true);
 		}
 		verify.setSelected(true);
@@ -272,8 +274,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			timingMethodGroup.add(bdd);
 			timingMethodGroup.add(dbm);
 			timingMethodGroup.add(smt);
-		}
-		else {
+		} else {
 			timingMethodGroup.add(untimed);
 			timingMethodGroup.add(geometric);
 			timingMethodGroup.add(posets);
@@ -302,8 +303,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			timingRadioPanel.add(bdd);
 			timingRadioPanel.add(dbm);
 			timingRadioPanel.add(smt);
-		}
-		else {
+		} else {
 			timingRadioPanel.add(untimed);
 			timingRadioPanel.add(geometric);
 			timingRadioPanel.add(posets);
@@ -325,7 +325,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 		preprocPanel.add(preprocLabel);
 		preprocPanel.add(preprocStr);
-		
+
 		algorithmPanel.add(algorithm);
 		algorithmPanel.add(verify);
 		algorithmPanel.add(vergate);
@@ -366,7 +366,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		verifyFile = "";
 		// log.addText(directory + separator + verFile);
 		try {
-			FileInputStream in = new FileInputStream(new File(directory + separator + verFile));
+			FileInputStream in = new FileInputStream(new File(directory
+					+ separator + verFile));
 			load.load(in);
 			in.close();
 			if (load.containsKey("verification.file")) {
@@ -377,66 +378,67 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				bddSize.setText(load.getProperty("verification .bddSize"));
 			}
 			if (load.containsKey("verification.component")) {
-				componentField.setText(load.getProperty("verification.component"));
+				componentField.setText(load
+						.getProperty("verification.component"));
 			}
 			Integer i = 0;
 			while (load.containsKey("verification.compList" + i.toString())) {
-				componentList.addItem(load.getProperty("verification.compList" + i.toString()));
+				componentList.addItem(load.getProperty("verification.compList"
+						+ i.toString()));
 				i++;
 			}
 			if (load.containsKey("verification.abstraction")) {
 				if (load.getProperty("verification.abstraction").equals("none")) {
 					none.setSelected(true);
-				}
-				else if (load.getProperty("verification.abstraction").equals("simplify")) {
+				} else if (load.getProperty("verification.abstraction").equals(
+						"simplify")) {
 					simplify.setSelected(true);
-				}
-				else {
+				} else {
 					abstractLhpn.setSelected(true);
 				}
 			}
-			abstPane = new AbstPane(root + separator + verName, this, log, lema, atacs);
+			abstPane = new AbstPane(root + separator + verName, this, log,
+					lema, atacs);
 			if (load.containsKey("verification.timing.methods")) {
 				if (atacs) {
-					if (load.getProperty("verification.timing.methods").equals("untimed")) {
+					if (load.getProperty("verification.timing.methods").equals(
+							"untimed")) {
 						untimed.setSelected(true);
-					}
-					else if (load.getProperty("verification.timing.methods").equals("geometric")) {
+					} else if (load.getProperty("verification.timing.methods")
+							.equals("geometric")) {
 						geometric.setSelected(true);
-					}
-					else if (load.getProperty("verification.timing.methods").equals("posets")) {
+					} else if (load.getProperty("verification.timing.methods")
+							.equals("posets")) {
 						posets.setSelected(true);
-					}
-					else if (load.getProperty("verification.timing.methods").equals("bag")) {
+					} else if (load.getProperty("verification.timing.methods")
+							.equals("bag")) {
 						bag.setSelected(true);
-					}
-					else if (load.getProperty("verification.timing.methods").equals("bap")) {
+					} else if (load.getProperty("verification.timing.methods")
+							.equals("bap")) {
 						bap.setSelected(true);
-					}
-					else if (load.getProperty("verification.timing.methods").equals("baptdc")) {
+					} else if (load.getProperty("verification.timing.methods")
+							.equals("baptdc")) {
 						baptdc.setSelected(true);
-					}
-					else if (load.getProperty("verification.timing.methods").equals("lhpn")) {
+					} else if (load.getProperty("verification.timing.methods")
+							.equals("lhpn")) {
 						lhpn.setSelected(true);
-					}
-					else {
+					} else {
 						view.setSelected(true);
 					}
-				}
-				else {
-					if (load.getProperty("verification.timing.methods").equals("bdd")) {
+				} else {
+					if (load.getProperty("verification.timing.methods").equals(
+							"bdd")) {
 						bdd.setSelected(true);
-					}
-					else if (load.getProperty("verification.timing.methods").equals("dbm")) {
+					} else if (load.getProperty("verification.timing.methods")
+							.equals("dbm")) {
 						dbm.setSelected(true);
-					}
-					else if (load.getProperty("verification.timing.methods").equals("smt")) {
+					} else if (load.getProperty("verification.timing.methods")
+							.equals("smt")) {
 						smt.setSelected(true);
-					}
-					else if (load.getProperty("verification.timing.methods").equals("lhpn")) {
+					} else if (load.getProperty("verification.timing.methods")
+							.equals("lhpn")) {
 						lhpn.setSelected(true);
-					}
-					else {
+					} else {
 						view.setSelected(true);
 					}
 				}
@@ -447,7 +449,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 			}
 			if (load.containsKey("verification.partial.order")) {
-				if (load.getProperty("verification.partial.order").equals("true")) {
+				if (load.getProperty("verification.partial.order").equals(
+						"true")) {
 					partialOrder.setSelected(true);
 				}
 			}
@@ -472,109 +475,127 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			// }
 			// }
 			if (load.containsKey("verification.partial.order")) {
-				if (load.getProperty("verification.partial.order").equals("true")) {
+				if (load.getProperty("verification.partial.order").equals(
+						"true")) {
 					partialOrder.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.partial.order")) {
-				if (load.getProperty("verification.partial.order").equals("true")) {
+				if (load.getProperty("verification.partial.order").equals(
+						"true")) {
 					partialOrder.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.algorithm")) {
 				if (load.getProperty("verification.algorithm").equals("verify")) {
 					verify.setSelected(true);
-				}
-				else if (load.getProperty("verification.algorithm").equals("vergate")) {
+				} else if (load.getProperty("verification.algorithm").equals(
+						"vergate")) {
 					vergate.setSelected(true);
-				}
-				else if (load.getProperty("verification.algorithm").equals("orbits")) {
+				} else if (load.getProperty("verification.algorithm").equals(
+						"orbits")) {
 					orbits.setSelected(true);
-				}
-				else if (load.getProperty("verification.algorithm").equals("search")) {
+				} else if (load.getProperty("verification.algorithm").equals(
+						"search")) {
 					search.setSelected(true);
-				}
-				else if (load.getProperty("verification.algorithm").equals("trace")) {
+				} else if (load.getProperty("verification.algorithm").equals(
+						"trace")) {
 					trace.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.compilation.newTab")) {
-				if (load.getProperty("verification.compilation.newTab").equals("true")) {
+				if (load.getProperty("verification.compilation.newTab").equals(
+						"true")) {
 					newTab.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.compilation.postProc")) {
-				if (load.getProperty("verification.compilation.postProc").equals("true")) {
+				if (load.getProperty("verification.compilation.postProc")
+						.equals("true")) {
 					postProc.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.compilation.redCheck")) {
-				if (load.getProperty("verification.compilation.redCheck").equals("true")) {
+				if (load.getProperty("verification.compilation.redCheck")
+						.equals("true")) {
 					redCheck.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.compilation.xForm2")) {
-				if (load.getProperty("verification.compilation.xForm2").equals("true")) {
+				if (load.getProperty("verification.compilation.xForm2").equals(
+						"true")) {
 					xForm2.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.compilation.expandRate")) {
-				if (load.getProperty("verification.compilation.expandRate").equals("true")) {
+				if (load.getProperty("verification.compilation.expandRate")
+						.equals("true")) {
 					expandRate.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.timing.genrg")) {
-				if (load.getProperty("verification.timing.genrg").equals("true")) {
+				if (load.getProperty("verification.timing.genrg")
+						.equals("true")) {
 					genrg.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.timing.subset")) {
-				if (load.getProperty("verification.timing.subset").equals("true")) {
+				if (load.getProperty("verification.timing.subset").equals(
+						"true")) {
 					timsubset.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.timing.superset")) {
-				if (load.getProperty("verification.timing.superset").equals("true")) {
+				if (load.getProperty("verification.timing.superset").equals(
+						"true")) {
 					superset.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.timing.infopt")) {
-				if (load.getProperty("verification.timing.infopt").equals("true")) {
+				if (load.getProperty("verification.timing.infopt").equals(
+						"true")) {
 					infopt.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.timing.orbmatch")) {
-				if (load.getProperty("verification.timing.orbmatch").equals("true")) {
+				if (load.getProperty("verification.timing.orbmatch").equals(
+						"true")) {
 					orbmatch.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.timing.interleav")) {
-				if (load.getProperty("verification.timing.interleav").equals("true")) {
+				if (load.getProperty("verification.timing.interleav").equals(
+						"true")) {
 					interleav.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.timing.prune")) {
-				if (load.getProperty("verification.timing.prune").equals("true")) {
+				if (load.getProperty("verification.timing.prune")
+						.equals("true")) {
 					prune.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.timing.disabling")) {
-				if (load.getProperty("verification.timing.disabling").equals("true")) {
+				if (load.getProperty("verification.timing.disabling").equals(
+						"true")) {
 					disabling.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.timing.nofail")) {
-				if (load.getProperty("verification.timing.nofail").equals("true")) {
+				if (load.getProperty("verification.timing.nofail").equals(
+						"true")) {
 					nofail.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.timing.noproj")) {
-				if (load.getProperty("verification.timing.noproj").equals("true")) {
+				if (load.getProperty("verification.timing.noproj").equals(
+						"true")) {
 					nofail.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.timing.explpn")) {
-				if (load.getProperty("verification.timing.explpn").equals("true")) {
+				if (load.getProperty("verification.timing.explpn").equals(
+						"true")) {
 					explpn.setSelected(true);
 				}
 			}
@@ -600,44 +621,58 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}
 				}
 			}
-			//abstPane.loopAbsModel.removeAllElements();
-			//abstPane.preAbsModel.removeAllElements();
-			//abstPane.postAbsModel.removeAllElements();
-			Pattern intPattern = Pattern.compile("\\d+");
+			// abstPane.loopAbsModel.removeAllElements();
+			// abstPane.preAbsModel.removeAllElements();
+			// abstPane.postAbsModel.removeAllElements();
+			// Pattern intPattern = Pattern.compile("\\d+");
 			HashMap<Integer, String> preOrder = new HashMap<Integer, String>();
 			HashMap<Integer, String> loopOrder = new HashMap<Integer, String>();
 			HashMap<Integer, String> postOrder = new HashMap<Integer, String>();
 			for (String s : abstPane.transforms) {
 				if (load.containsKey(s)) {
 					if (load.getProperty(s).contains("preloop")) {
-						Matcher intMatch = intPattern.matcher(load.getProperty(s));
+						Pattern prePattern = Pattern.compile("preloop(\\d+?)");
+						Matcher intMatch = prePattern.matcher(load
+								.getProperty(s));
 						if (intMatch.find()) {
-						Integer index = Integer.parseInt(intMatch.group());
-						preOrder.put(index, s);
-						}
-						else {
+							Integer index = Integer.parseInt(intMatch.group(1));
+							preOrder.put(index, s);
+						} else {
 							abstPane.addPreXform(s);
 						}
 					}
-					else if (load.getProperty(s).contains("mainloop")) {
-						Matcher intMatch = intPattern.matcher(load.getProperty(s));
+					else {
+						abstPane.preAbsModel.removeElement(s);
+					}
+					if (load.getProperty(s).contains("mainloop")) {
+						Pattern loopPattern = Pattern
+								.compile("mainloop(\\d+?)");
+						Matcher intMatch = loopPattern.matcher(load
+								.getProperty(s));
 						if (intMatch.find()) {
-						Integer index = Integer.parseInt(intMatch.group());
-						loopOrder.put(index, s);
-						}
-						else {
-						abstPane.addLoopXform(s);
+							Integer index = Integer.parseInt(intMatch.group(1));
+							loopOrder.put(index, s);
+						} else {
+							abstPane.addLoopXform(s);
 						}
 					}
-					else if (load.getProperty(s).contains("postloop")) {
-						Matcher intMatch = intPattern.matcher(load.getProperty(s));
+					else {
+						abstPane.loopAbsModel.removeElement(s);
+					}
+					if (load.getProperty(s).contains("postloop")) {
+						Pattern postPattern = Pattern
+								.compile("postloop(\\d+?)");
+						Matcher intMatch = postPattern.matcher(load
+								.getProperty(s));
 						if (intMatch.find()) {
-						Integer index = Integer.parseInt(intMatch.group());
-						postOrder.put(index, s);
-						}
-						else {
+							Integer index = Integer.parseInt(intMatch.group(1));
+							postOrder.put(index, s);
+						} else {
 							abstPane.addPostXform(s);
 						}
+					}
+					else {
+						abstPane.postAbsModel.removeElement(s);
 					}
 				}
 				else {
@@ -649,26 +684,26 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (preOrder.size() > 0) {
 				abstPane.preAbsModel.removeAllElements();
 			}
-			for (Integer j=1; j<=preOrder.size(); j++) {
+			for (Integer j = 0; j < preOrder.size(); j++) {
 				abstPane.preAbsModel.addElement(preOrder.get(j));
 			}
 			if (loopOrder.size() > 0) {
 				abstPane.loopAbsModel.removeAllElements();
 			}
-			for (Integer j=1; j<=loopOrder.size(); j++) {
+			for (Integer j = 0; j < loopOrder.size(); j++) {
 				abstPane.loopAbsModel.addElement(loopOrder.get(j));
 			}
 			if (postOrder.size() > 0) {
 				abstPane.postAbsModel.removeAllElements();
 			}
-			for (Integer j=1; j<=postOrder.size(); j++) {
+			for (Integer j = 0; j < postOrder.size(); j++) {
 				abstPane.postAbsModel.addElement(postOrder.get(j));
 			}
 			abstPane.preAbs.setListData(abstPane.preAbsModel.toArray());
 			abstPane.loopAbs.setListData(abstPane.loopAbsModel.toArray());
 			abstPane.postAbs.setListData(abstPane.postAbsModel.toArray());
 			if (load.containsKey("abstraction.transforms")) {
-				//abstPane.removeAllXform();
+				// abstPane.removeAllXform();
 				String xforms = load.getProperty("abstraction.transforms");
 				String[] array = xforms.split(", ");
 				for (String s : array) {
@@ -678,18 +713,20 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 			}
 			if (load.containsKey("abstraction.factor")) {
-				abstPane.factorField.setText(load.getProperty("abstraction.factor"));
+				abstPane.factorField.setText(load
+						.getProperty("abstraction.factor"));
 			}
 			if (load.containsKey("abstraction.iterations")) {
-				abstPane.iterField.setText(load.getProperty("abstraction.iterations"));
+				abstPane.iterField.setText(load
+						.getProperty("abstraction.iterations"));
 			}
 			tempArray = verifyFile.split(separator);
 			sourceFileNoPath = tempArray[tempArray.length - 1];
 			backgroundField = new JTextField(sourceFileNoPath);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame, "Unable to load properties file!",
+			JOptionPane.showMessageDialog(BioSim.frame,
+					"Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 			// e.printStackTrace();
 		}
@@ -728,7 +765,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		buttonPanel.add(viewLog);
 		viewLog.setMnemonic(KeyEvent.VK_V);
 		viewLog.setEnabled(false);
-		
+
 		JPanel backgroundPanel = new JPanel();
 		JLabel backgroundLabel = new JLabel("Model File:");
 		tempArray = verifyFile.split(separator);
@@ -795,25 +832,21 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		if (e.getSource() == run) {
 			save(verFile);
 			new Thread(this).start();
-		}
-		else if (e.getSource() == save) {
+		} else if (e.getSource() == save) {
 			log.addText("Saving:\n" + directory + separator + verFile + "\n");
 			save(verFile);
-		}
-		else if (e.getSource() == viewCircuit) {
+		} else if (e.getSource() == viewCircuit) {
 			viewCircuit();
-		}
-		else if (e.getSource() == viewTrace) {
+		} else if (e.getSource() == viewTrace) {
 			viewTrace();
-		}
-		else if (e.getSource() == viewLog) {
+		} else if (e.getSource() == viewLog) {
 			viewLog();
-		}
-		else if (e.getSource() == addComponent) {
+		} else if (e.getSource() == addComponent) {
 			String[] vhdlFiles = new File(root).list();
 			ArrayList<String> tempFiles = new ArrayList<String>();
 			for (int i = 0; i < vhdlFiles.length; i++) {
-				if (vhdlFiles[i].endsWith(".vhd") && !vhdlFiles[i].equals(sourceFileNoPath)) {
+				if (vhdlFiles[i].endsWith(".vhd")
+						&& !vhdlFiles[i].equals(sourceFileNoPath)) {
 					tempFiles.add(vhdlFiles[i]);
 				}
 			}
@@ -821,8 +854,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			for (int i = 0; i < vhdlFiles.length; i++) {
 				vhdlFiles[i] = tempFiles.get(i);
 			}
-			String filename = (String) JOptionPane.showInputDialog(this, "", "Select Component",
-					JOptionPane.PLAIN_MESSAGE, null, vhdlFiles, vhdlFiles[0]);
+			String filename = (String) JOptionPane.showInputDialog(this, "",
+					"Select Component", JOptionPane.PLAIN_MESSAGE, null,
+					vhdlFiles, vhdlFiles[0]);
 			if (filename != null) {
 				String[] comps = componentList.getItems();
 				boolean contains = false;
@@ -836,19 +870,19 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							"You must select a valid VHDL file.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
-				}
-				else if (new File(directory + separator + filename).exists()
+				} else if (new File(directory + separator + filename).exists()
 						|| filename.equals(sourceFileNoPath) || contains) {
-					JOptionPane.showMessageDialog(BioSim.frame,
-							"This component is already contained in this tool.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane
+							.showMessageDialog(
+									BioSim.frame,
+									"This component is already contained in this tool.",
+									"Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				componentList.addItem(filename);
 				return;
 			}
-		}
-		else if (e.getSource() == removeComponent) {
+		} else if (e.getSource() == removeComponent) {
 			if (componentList.getSelectedValue() != null) {
 				String selected = componentList.getSelectedValue().toString();
 				componentList.removeItem(selected);
@@ -867,9 +901,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				Process preproc = exec.exec(preprocCmd, null, work);
 				log.addText("Executing:\n" + preprocCmd + "\n");
 				preproc.waitFor();
-			}
-			catch (Exception e) {
-				JOptionPane.showMessageDialog(BioSim.frame, "Error with preprocessing.", "Error",
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(BioSim.frame,
+						"Error with preprocessing.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -880,22 +914,21 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		if (!verifyFile.endsWith("lpn")) {
 			String[] temp = verifyFile.split("\\.");
 			lpnFile = temp[0] + ".lpn";
-		}
-		else {
+		} else {
 			lpnFile = verifyFile;
 		}
 		try {
 			if (verifyFile.endsWith(".lpn")) {
-				Runtime.getRuntime().exec("atacs -llsl " + verifyFile, null, work);
+				Runtime.getRuntime().exec("atacs -llsl " + verifyFile, null,
+						work);
+			} else if (verifyFile.endsWith(".vhd")) {
+				Runtime.getRuntime().exec("atacs -lvsl " + verifyFile, null,
+						work);
+			} else if (verifyFile.endsWith(".g")) {
+				Runtime.getRuntime().exec("atacs -lgsl " + verifyFile, null,
+						work);
 			}
-			else if (verifyFile.endsWith(".vhd")) {
-				Runtime.getRuntime().exec("atacs -lvsl " + verifyFile, null, work);
-			}
-			else if (verifyFile.endsWith(".g")) {
-				Runtime.getRuntime().exec("atacs -lgsl " + verifyFile, null, work);
-			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 		}
 		for (int i = 0; i < array.length - 1; i++) {
 			tempDir = tempDir + array[i] + separator;
@@ -906,10 +939,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		String abstFilename;
 		if (lhpn.isSelected()) {
 			abstFilename = (String) JOptionPane.showInputDialog(this,
-					"Please enter the file name for the abstracted LPN.", "Enter Filename",
-					JOptionPane.PLAIN_MESSAGE);
-		}
-		else {
+					"Please enter the file name for the abstracted LPN.",
+					"Enter Filename", JOptionPane.PLAIN_MESSAGE);
+		} else {
 			abstFilename = lpnFile.replace(".lpn", "_abs.lpn");
 		}
 		String sourceFile;
@@ -917,7 +949,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			String[] boolVars = lhpnFile.getBooleanVars();
 			String[] contVars = lhpnFile.getContVars();
 			String[] intVars = lhpnFile.getIntVars();
-			String[] variables = new String[boolVars.length + contVars.length + intVars.length];
+			String[] variables = new String[boolVars.length + contVars.length
+					+ intVars.length];
 			int k = 0;
 			for (int j = 0; j < contVars.length; j++) {
 				variables[k] = contVars[j];
@@ -960,21 +993,26 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			String dotName = "";
 			if (componentField.getText().trim().equals("")) {
 				if (verifyFile.endsWith(".g")) {
-					pargName = directory + separator + sourceFile.replace(".g", ".prg");
-					dotName = directory + separator + sourceFile.replace(".g", ".dot");
+					pargName = directory + separator
+							+ sourceFile.replace(".g", ".prg");
+					dotName = directory + separator
+							+ sourceFile.replace(".g", ".dot");
+				} else if (verifyFile.endsWith(".lpn")) {
+					pargName = directory + separator
+							+ sourceFile.replace(".lpn", ".prg");
+					dotName = directory + separator
+							+ sourceFile.replace(".lpn", ".dot");
+				} else if (verifyFile.endsWith(".vhd")) {
+					pargName = directory + separator
+							+ sourceFile.replace(".vhd", ".prg");
+					dotName = directory + separator
+							+ sourceFile.replace(".vhd", ".dot");
 				}
-				else if (verifyFile.endsWith(".lpn")) {
-					pargName = directory + separator + sourceFile.replace(".lpn", ".prg");
-					dotName = directory + separator + sourceFile.replace(".lpn", ".dot");
-				}
-				else if (verifyFile.endsWith(".vhd")) {
-					pargName = directory + separator + sourceFile.replace(".vhd", ".prg");
-					dotName = directory + separator + sourceFile.replace(".vhd", ".dot");
-				}
-			}
-			else {
-				pargName = directory + separator + componentField.getText().trim() + ".prg";
-				dotName = directory + separator + componentField.getText().trim() + ".dot";
+			} else {
+				pargName = directory + separator
+						+ componentField.getText().trim() + ".prg";
+				dotName = directory + separator
+						+ componentField.getText().trim() + ".dot";
 			}
 			File pargFile = new File(pargName);
 			File dotFile = new File(dotName);
@@ -990,8 +1028,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			for (String s : componentList.getItems()) {
 				try {
-					FileInputStream in = new FileInputStream(new File(root + separator + s));
-					FileOutputStream out = new FileOutputStream(new File(directory + separator + s));
+					FileInputStream in = new FileInputStream(new File(root
+							+ separator + s));
+					FileOutputStream out = new FileOutputStream(new File(
+							directory + separator + s));
 					int read = in.read();
 					while (read != -1) {
 						out.write(read);
@@ -999,11 +1039,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}
 					in.close();
 					out.close();
-				}
-				catch (IOException e1) {
+				} catch (IOException e1) {
 					e1.printStackTrace();
-					JOptionPane.showMessageDialog(BioSim.frame, "Cannot update the file " + s
-							+ ".", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(BioSim.frame,
+							"Cannot update the file " + s + ".", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			// String[] workArray = directory.split(separator);
@@ -1023,31 +1063,23 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (atacs) {
 				if (untimed.isSelected()) {
 					options = options + "tu";
-				}
-				else if (geometric.isSelected()) {
+				} else if (geometric.isSelected()) {
 					options = options + "tg";
-				}
-				else if (posets.isSelected()) {
+				} else if (posets.isSelected()) {
 					options = options + "ts";
-				}
-				else if (bag.isSelected()) {
+				} else if (bag.isSelected()) {
 					options = options + "tg";
-				}
-				else if (bap.isSelected()) {
+				} else if (bap.isSelected()) {
 					options = options + "tp";
-				}
-				else {
+				} else {
 					options = options + "tt";
 				}
-			}
-			else {
+			} else {
 				if (bdd.isSelected()) {
 					options = options + "tB";
-				}
-				else if (dbm.isSelected()) {
+				} else if (dbm.isSelected()) {
 					options = options + "tL";
-				}
-				else if (smt.isSelected()) {
+				} else if (smt.isSelected()) {
 					options = options + "tM";
 				}
 			}
@@ -1128,27 +1160,22 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			// Load file type
 			if (verifyFile.endsWith(".g")) {
 				options = options + "lg";
-			}
-			else if (verifyFile.endsWith(".lpn")) {
+			} else if (verifyFile.endsWith(".lpn")) {
 				options = options + "ll";
-			}
-			else if (verifyFile.endsWith(".vhd") || verifyFile.endsWith(".vhdl")) {
+			} else if (verifyFile.endsWith(".vhd")
+					|| verifyFile.endsWith(".vhdl")) {
 				options = options + "lvslll";
 			}
 			// Verification Algorithms
 			if (verify.isSelected()) {
 				options = options + "va";
-			}
-			else if (vergate.isSelected()) {
+			} else if (vergate.isSelected()) {
 				options = options + "vg";
-			}
-			else if (orbits.isSelected()) {
+			} else if (orbits.isSelected()) {
 				options = options + "vo";
-			}
-			else if (search.isSelected()) {
+			} else if (search.isSelected()) {
 				options = options + "vs";
-			}
-			else if (trace.isSelected()) {
+			} else if (trace.isSelected()) {
 				options = options + "vt";
 			}
 			if (graph.isSelected()) {
@@ -1218,8 +1245,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			try {
 				Toolkit tk = Toolkit.getDefaultToolkit();
 				screenSize = tk.getScreenSize();
-			}
-			catch (AWTError awe) {
+			} catch (AWTError awe) {
 				screenSize = new Dimension(640, 480);
 			}
 			Dimension frameSize = running.getSize();
@@ -1252,18 +1278,20 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						}
 					});
 					biosim.getExitButton().setActionCommand("Exit program");
-					biosim.getExitButton().addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							ver.destroy();
-							running.setCursor(null);
-							running.dispose();
-						}
-					});
+					biosim.getExitButton().addActionListener(
+							new ActionListener() {
+								public void actionPerformed(ActionEvent e) {
+									ver.destroy();
+									running.setCursor(null);
+									running.dispose();
+								}
+							});
 					log.addText("Executing:\n" + cmd + "\n");
 					InputStream reb = ver.getInputStream();
 					InputStreamReader isr = new InputStreamReader(reb);
 					BufferedReader br = new BufferedReader(isr);
-					FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+					FileWriter out = new FileWriter(new File(directory
+							+ separator + "run.log"));
 					while ((output = br.readLine()) != null) {
 						out.write(output);
 						out.write("\n");
@@ -1275,7 +1303,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					viewLog.setEnabled(true);
 					exitValue = ver.waitFor();
 				} else {
-					cmd = biosimrc.get("biosim.verification.command","") + " " + options + " " + sourceFile.replaceAll(".lpn","");
+					cmd = biosimrc.get("biosim.verification.command", "") + " "
+							+ options + " " + sourceFile.replaceAll(".lpn", "");
 					final Process ver = exec.exec(cmd, null, work);
 					cancel.setActionCommand("Cancel");
 					cancel.addActionListener(new ActionListener() {
@@ -1286,18 +1315,20 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						}
 					});
 					biosim.getExitButton().setActionCommand("Exit program");
-					biosim.getExitButton().addActionListener(new ActionListener() {
-						public void actionPerformed(ActionEvent e) {
-							ver.destroy();
-							running.setCursor(null);
-							running.dispose();
-						}
-					});
+					biosim.getExitButton().addActionListener(
+							new ActionListener() {
+								public void actionPerformed(ActionEvent e) {
+									ver.destroy();
+									running.setCursor(null);
+									running.dispose();
+								}
+							});
 					log.addText("Executing:\n" + cmd + "\n");
 					InputStream reb = ver.getInputStream();
 					InputStreamReader isr = new InputStreamReader(reb);
 					BufferedReader br = new BufferedReader(isr);
-					FileWriter out = new FileWriter(new File(directory + separator + "run.log"));
+					FileWriter out = new FileWriter(new File(directory
+							+ separator + "run.log"));
 					while ((output = br.readLine()) != null) {
 						out.write(output);
 						out.write("\n");
@@ -1329,62 +1360,57 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				String secondLabel;
 				if (days == 1) {
 					dayLabel = " day ";
-				}
-				else {
+				} else {
 					dayLabel = " days ";
 				}
 				if (hours == 1) {
 					hourLabel = " hour ";
-				}
-				else {
+				} else {
 					hourLabel = " hours ";
 				}
 				if (minutes == 1) {
 					minuteLabel = " minute ";
-				}
-				else {
+				} else {
 					minuteLabel = " minutes ";
 				}
 				if (seconds == 1) {
 					secondLabel = " second";
-				}
-				else {
+				} else {
 					secondLabel = " seconds";
 				}
 				if (days != 0) {
-					time = days + dayLabel + hours + hourLabel + minutes + minuteLabel + secs
+					time = days + dayLabel + hours + hourLabel + minutes
+							+ minuteLabel + secs + secondLabel;
+				} else if (hours != 0) {
+					time = hours + hourLabel + minutes + minuteLabel + secs
 							+ secondLabel;
-				}
-				else if (hours != 0) {
-					time = hours + hourLabel + minutes + minuteLabel + secs + secondLabel;
-				}
-				else if (minutes != 0) {
+				} else if (minutes != 0) {
 					time = minutes + minuteLabel + secs + secondLabel;
-				}
-				else {
+				} else {
 					time = secs + secondLabel;
 				}
 				log.addText("Total Verification Time: " + time + "\n\n");
 				running.setCursor(null);
 				running.dispose();
-				FileInputStream atacsLog = new FileInputStream(new File(directory + separator
-						+ "atacs.log"));
+				FileInputStream atacsLog = new FileInputStream(new File(
+						directory + separator + "atacs.log"));
 				InputStreamReader atacsReader = new InputStreamReader(atacsLog);
 				BufferedReader atacsBuffer = new BufferedReader(atacsReader);
 				boolean success = false;
 				while ((output = atacsBuffer.readLine()) != null) {
 					if (output.contains("Verification succeeded.")) {
-						JOptionPane.showMessageDialog(BioSim.frame, "Verification succeeded!",
-								"Success", JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(BioSim.frame,
+								"Verification succeeded!", "Success",
+								JOptionPane.INFORMATION_MESSAGE);
 						success = true;
 						break;
 					}
 				}
-				//int exitValue = ver.waitFor();
+				// int exitValue = ver.waitFor();
 				if (exitValue == 143) {
-					JOptionPane.showMessageDialog(BioSim.frame, "Verification was"
-							+ " canceled by the user.", "Canceled Verification",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(BioSim.frame,
+							"Verification was" + " canceled by the user.",
+							"Canceled Verification", JOptionPane.ERROR_MESSAGE);
 				}
 				if (!success) {
 					// log.addText("failed");
@@ -1393,25 +1419,23 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						Process parg = exec.exec("parg " + pargName);
 						log.addText("parg " + pargName + "\n");
 						parg.waitFor();
-					}
-					else if (new File(dotName).exists()) {
+					} else if (new File(dotName).exists()) {
 						String command;
-						if (System.getProperty("os.name").contentEquals("Linux")) {
+						if (System.getProperty("os.name")
+								.contentEquals("Linux")) {
 							command = "gnome-open ";
-						}
-						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+						} else if (System.getProperty("os.name").toLowerCase()
+								.startsWith("mac os")) {
 							// directory = System.getenv("BIOSIM") + "/docs/";
 							command = "open ";
-						}
-						else {
+						} else {
 							// directory = System.getenv("BIOSIM") + "\\docs\\";
 							command = "dotty ";
 						}
 						Process dot = exec.exec("open " + dotName);
 						log.addText(command + dotName + "\n");
 						dot.waitFor();
-					}
-					else {
+					} else {
 						// log.addText("view log");
 						viewLog();
 					}
@@ -1419,37 +1443,34 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				if (graph.isSelected()) {
 					if (dot.isSelected()) {
 						String command;
-						if (System.getProperty("os.name").contentEquals("Linux")) {
+						if (System.getProperty("os.name")
+								.contentEquals("Linux")) {
 							command = "gnome-open ";
-						}
-						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+						} else if (System.getProperty("os.name").toLowerCase()
+								.startsWith("mac os")) {
 							// directory = System.getenv("BIOSIM") + "/docs/";
 							command = "open ";
-						}
-						else {
+						} else {
 							// directory = System.getenv("BIOSIM") + "\\docs\\";
 							command = "dotty ";
 						}
 						exec.exec(command + dotName);
 						log.addText("Executing:\n" + command + dotName + "\n");
-					}
-					else {
+					} else {
 						exec.exec("parg " + pargName);
 						log.addText("Executing:\nparg " + pargName + "\n");
 					}
 				}
-			}
-			catch (Exception e) {
-				JOptionPane.showMessageDialog(BioSim.frame, "Unable to verify model.", "Error",
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(BioSim.frame,
+						"Unable to verify model.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
-		}
-		else {
+		} else {
 			if (lhpn.isSelected()) {
 				abstraction.save(tempDir + separator + abstFilename);
 				biosim.addToTree(abstFilename);
-			}
-			else if (view.isSelected()) {
+			} else if (view.isSelected()) {
 				abstraction.save(directory + separator + abstFilename);
 				work = new File(directory + separator);
 				try {
@@ -1457,19 +1478,20 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					new File(directory + separator + dotName).delete();
 					Runtime exec = Runtime.getRuntime();
 					abstraction.printDot(directory + separator + dotName);
-					//Process makeDot = exec.exec("atacs -cPllodpl " + abstFilename, null, work);
-					//makeDot.waitFor();
+					// Process makeDot = exec.exec("atacs -cPllodpl " +
+					// abstFilename, null, work);
+					// makeDot.waitFor();
 					if (new File(directory + separator + dotName).exists()) {
 						String command;
-						if (System.getProperty("os.name").contentEquals("Linux")) {
+						if (System.getProperty("os.name")
+								.contentEquals("Linux")) {
 							command = "gnome-open ";
-						}
-						else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+						} else if (System.getProperty("os.name").toLowerCase()
+								.startsWith("mac os")) {
 							// directory = System.getenv("BIOSIM") +
 							// "/docs/";
 							command = "open ";
-						}
-						else {
+						} else {
 							// directory = System.getenv("BIOSIM") +
 							// "\\docs\\";
 							command = "dotty ";
@@ -1477,13 +1499,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						Process dot = exec.exec(command + dotName, null, work);
 						log.addText(command + dotName + "\n");
 						dot.waitFor();
-					}
-					else {
-						JOptionPane.showMessageDialog(BioSim.frame, "Unable to view LHPN.", "Error",
+					} else {
+						JOptionPane.showMessageDialog(BioSim.frame,
+								"Unable to view LHPN.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
@@ -1491,8 +1512,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void saveAs() {
-		String newName = JOptionPane.showInputDialog(BioSim.frame, "Enter Verification name:",
-				"Verification Name", JOptionPane.PLAIN_MESSAGE);
+		String newName = JOptionPane.showInputDialog(BioSim.frame,
+				"Enter Verification name:", "Verification Name",
+				JOptionPane.PLAIN_MESSAGE);
 		if (newName == null) {
 			return;
 		}
@@ -1510,17 +1532,19 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		// JOptionPane.showMessageDialog(this, verifyFile);
 		try {
 			Properties prop = new Properties();
-			FileInputStream in = new FileInputStream(new File(directory + separator + filename));
+			FileInputStream in = new FileInputStream(new File(directory
+					+ separator + filename));
 			prop.load(in);
 			in.close();
 			prop.setProperty("verification.file", verifyFile);
 			if (!bddSize.equals("")) {
-				prop.setProperty("verification.bddSize", this.bddSize.getText().trim());
+				prop.setProperty("verification.bddSize", this.bddSize.getText()
+						.trim());
 			}
 			if (!componentField.getText().trim().equals("")) {
-				prop.setProperty("verification.component", componentField.getText().trim());
-			}
-			else {
+				prop.setProperty("verification.component", componentField
+						.getText().trim());
+			} else {
 				prop.remove("verification.component");
 			}
 			String[] components = componentList.getItems();
@@ -1530,92 +1554,75 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						prop.remove(s);
 					}
 				}
-			}
-			else {
-			for (Integer i = 0; i < components.length; i++) {
-				prop.setProperty("verification.compList" + i.toString(), components[i]);
-			}
+			} else {
+				for (Integer i = 0; i < components.length; i++) {
+					prop.setProperty("verification.compList" + i.toString(),
+							components[i]);
+				}
 			}
 			if (none.isSelected()) {
 				prop.setProperty("verification.abstraction", "none");
-			}
-			else if (simplify.isSelected()) {
+			} else if (simplify.isSelected()) {
 				prop.setProperty("verification.abstraction", "simplify");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.abstraction", "abstract");
 			}
 			if (atacs) {
 				if (untimed.isSelected()) {
 					prop.setProperty("verification.timing.methods", "untimed");
-				}
-				else if (geometric.isSelected()) {
-					prop.setProperty("verification.timing.methods", "geometric");
-				}
-				else if (posets.isSelected()) {
+				} else if (geometric.isSelected()) {
+					prop
+							.setProperty("verification.timing.methods",
+									"geometric");
+				} else if (posets.isSelected()) {
 					prop.setProperty("verification.timing.methods", "posets");
-				}
-				else if (bag.isSelected()) {
+				} else if (bag.isSelected()) {
 					prop.setProperty("verification.timing.methods", "bag");
-				}
-				else if (bap.isSelected()) {
+				} else if (bap.isSelected()) {
 					prop.setProperty("verification.timing.methods", "bap");
-				}
-				else if (baptdc.isSelected()) {
+				} else if (baptdc.isSelected()) {
 					prop.setProperty("verification.timing.methods", "baptdc");
-				}
-				else if (lhpn.isSelected()) {
+				} else if (lhpn.isSelected()) {
 					prop.setProperty("verification.timing.methods", "lhpn");
-				}
-				else {
+				} else {
 					prop.setProperty("verification.timing.methods", "view");
 				}
-			}
-			else {
+			} else {
 				if (bdd.isSelected()) {
 					prop.setProperty("verification.timing.methods", "bdd");
-				}
-				else if (dbm.isSelected()) {
+				} else if (dbm.isSelected()) {
 					prop.setProperty("verification.timing.methods", "dbm");
-				}
-				else if (smt.isSelected()) {
+				} else if (smt.isSelected()) {
 					prop.setProperty("verification.timing.methods", "smt");
-				}
-				else if (lhpn.isSelected()) {
+				} else if (lhpn.isSelected()) {
 					prop.setProperty("verification.timing.methods", "lhpn");
-				}
-				else {
+				} else {
 					prop.setProperty("verification.timing.methods", "view");
 				}
 			}
 			if (abst.isSelected()) {
 				prop.setProperty("verification.Abst", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.Abst", "false");
 			}
 			if (partialOrder.isSelected()) {
 				prop.setProperty("verification.partial.order", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.partial.order", "false");
 			}
 			if (dot.isSelected()) {
 				prop.setProperty("verification.Dot", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.Dot", "false");
 			}
 			if (verbose.isSelected()) {
 				prop.setProperty("verification.Verb", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.Verb", "false");
 			}
 			if (graph.isSelected()) {
 				prop.setProperty("verification.Graph", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.Graph", "false");
 			}
 			// if (quiet.isSelected()) {
@@ -1626,194 +1633,190 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			// }
 			if (verify.isSelected()) {
 				prop.setProperty("verification.algorithm", "verify");
-			}
-			else if (vergate.isSelected()) {
+			} else if (vergate.isSelected()) {
 				prop.setProperty("verification.algorithm", "vergate");
-			}
-			else if (orbits.isSelected()) {
+			} else if (orbits.isSelected()) {
 				prop.setProperty("verification.algorithm", "orbits");
-			}
-			else if (search.isSelected()) {
+			} else if (search.isSelected()) {
 				prop.setProperty("verification.algorithm", "search");
-			}
-			else if (trace.isSelected()) {
+			} else if (trace.isSelected()) {
 				prop.setProperty("verification.algorithm", "trace");
 			}
 			if (newTab.isSelected()) {
 				prop.setProperty("verification.compilation.newTab", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.compilation.newTab", "false");
 			}
 			if (postProc.isSelected()) {
 				prop.setProperty("verification.compilation.postProc", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.compilation.postProc", "false");
 			}
 			if (redCheck.isSelected()) {
 				prop.setProperty("verification.compilation.redCheck", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.compilation.redCheck", "false");
 			}
 			if (xForm2.isSelected()) {
 				prop.setProperty("verification.compilation.xForm2", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.compilation.xForm2", "false");
 			}
 			if (expandRate.isSelected()) {
 				prop.setProperty("verification.compilation.expandRate", "true");
-			}
-			else {
-				prop.setProperty("verification.compilation.expandRate", "false");
+			} else {
+				prop
+						.setProperty("verification.compilation.expandRate",
+								"false");
 			}
 			if (genrg.isSelected()) {
 				prop.setProperty("verification.timing.genrg", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.timing.genrg", "false");
 			}
 			if (timsubset.isSelected()) {
 				prop.setProperty("verification.timing.subset", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.timing.subset", "false");
 			}
 			if (superset.isSelected()) {
 				prop.setProperty("verification.timing.superset", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.timing.superset", "false");
 			}
 			if (infopt.isSelected()) {
 				prop.setProperty("verification.timing.infopt", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.timing.infopt", "false");
 			}
 			if (orbmatch.isSelected()) {
 				prop.setProperty("verification.timing.orbmatch", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.timing.orbmatch", "false");
 			}
 			if (interleav.isSelected()) {
 				prop.setProperty("verification.timing.interleav", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.timing.interleav", "false");
 			}
 			if (prune.isSelected()) {
 				prop.setProperty("verification.timing.prune", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.timing.prune", "false");
 			}
 			if (disabling.isSelected()) {
 				prop.setProperty("verification.timing.disabling", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.timing.disabling", "false");
 			}
 			if (nofail.isSelected()) {
 				prop.setProperty("verification.timing.nofail", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.timing.nofail", "false");
 			}
 			if (nofail.isSelected()) {
 				prop.setProperty("verification.timing.noproj", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.timing.noproj", "false");
 			}
 			if (keepgoing.isSelected()) {
 				prop.setProperty("verification.timing.keepgoing", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.timing.keepgoing", "false");
 			}
 			if (explpn.isSelected()) {
 				prop.setProperty("verification.timing.explpn", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.timing.explpn", "false");
 			}
 			if (nochecks.isSelected()) {
 				prop.setProperty("verification.nochecks", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.nochecks", "false");
 			}
 			if (reduction.isSelected()) {
 				prop.setProperty("verification.reduction", "true");
-			}
-			else {
+			} else {
 				prop.setProperty("verification.reduction", "false");
 			}
-			prop.setProperty("verification.preprocess",preprocStr.getText());
+			prop.setProperty("verification.preprocess", preprocStr.getText());
 			String intVars = "";
 			for (int i = 0; i < abstPane.listModel.getSize(); i++) {
 				if (abstPane.listModel.getElementAt(i) != null) {
-					intVars = intVars + abstPane.listModel.getElementAt(i) + " ";
+					intVars = intVars + abstPane.listModel.getElementAt(i)
+							+ " ";
 				}
 			}
 			if (!intVars.equals("")) {
 				prop.setProperty("abstraction.interesting", intVars.trim());
-			}
-			else {
+			} else {
 				prop.remove("abstraction.interesting");
 			}
 			String xforms = "";
-			Integer pre = 1, loop = 1, post = 1;
-			for (String s : abstPane.transforms) {
-				if (abstPane.preAbsModel.contains(s)) {
-					prop.setProperty(s, "preloop" + pre.toString());
-					pre++;
-				}
-				else if (abstPane.loopAbsModel.contains(s)) {
-					prop.setProperty(s, "mainloop" + loop.toString());
-					loop++;
-				}
-				else if (abstPane.postAbsModel.contains(s)) {
-					prop.setProperty(s, "postloop" + post.toString());
-					post++;
+			for (Integer i=0; i<abstPane.preAbsModel.size(); i++) {
+				prop.setProperty(abstPane.preAbsModel.getElementAt(i).toString(), "preloop" + i.toString());
+			}
+			for (Integer i=0; i<abstPane.loopAbsModel.size(); i++) {
+				if (abstPane.preAbsModel.contains(abstPane.loopAbsModel.getElementAt(i))) {
+					String value = prop.getProperty(abstPane.loopAbsModel.getElementAt(i).toString());
+					value = value + "mainloop" + i.toString();
+					prop.setProperty(abstPane.loopAbsModel.getElementAt(i).toString(), value);
 				}
 				else {
+					prop.setProperty(abstPane.loopAbsModel.getElementAt(i).toString(), "mainloop" + i.toString());
+				}
+			}
+			for (Integer i=0; i<abstPane.postAbsModel.size(); i++) {
+				if (abstPane.preAbsModel.contains(abstPane.postAbsModel.getElementAt(i)) || abstPane.preAbsModel.contains(abstPane.postAbsModel.get(i))) {
+					String value = prop.getProperty(abstPane.postAbsModel.getElementAt(i).toString());
+					value = value + "postloop" + i.toString();
+					prop.setProperty(abstPane.postAbsModel.getElementAt(i).toString(), value);
+				}
+				else {
+					prop.setProperty(abstPane.postAbsModel.getElementAt(i).toString(), "postloop" + i.toString());
+				}
+			}
+			for (String s : abstPane.transforms) {
+				if (!abstPane.preAbsModel.contains(s)
+						&& !abstPane.loopAbsModel.contains(s)
+						&& !abstPane.postAbsModel.contains(s)) {
 					prop.remove(s);
 				}
 			}
 			if (!xforms.equals("")) {
 				prop.setProperty("abstraction.transforms", xforms.trim());
-			}
-			else {
+			} else {
 				prop.remove("abstraction.transforms");
 			}
 			if (!abstPane.factorField.getText().equals("")) {
-				prop.setProperty("abstraction.factor", abstPane.factorField.getText());
+				prop.setProperty("abstraction.factor", abstPane.factorField
+						.getText());
 			}
 			if (!abstPane.iterField.getText().equals("")) {
-				prop.setProperty("abstraction.iterations", abstPane.iterField.getText());
+				prop.setProperty("abstraction.iterations", abstPane.iterField
+						.getText());
 			}
-			FileOutputStream out = new FileOutputStream(new File(directory + separator + verFile));
+			FileOutputStream out = new FileOutputStream(new File(directory
+					+ separator + verFile));
 			prop.store(out, verifyFile);
 			out.close();
-			log.addText("Saving Parameter File:\n" + directory + separator + verFile + "\n");
+			log.addText("Saving Parameter File:\n" + directory + separator
+					+ verFile + "\n");
 			change = false;
 			oldBdd = bddSize.getText();
-		}
-		catch (Exception e1) {
+		} catch (Exception e1) {
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame, "Unable to save parameter file!",
-					"Error Saving File", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(BioSim.frame,
+					"Unable to save parameter file!", "Error Saving File",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		for (String s : componentList.getItems()) {
 			try {
 				new File(directory + separator + s).createNewFile();
-				FileInputStream in = new FileInputStream(new File(root + separator + s));
-				FileOutputStream out = new FileOutputStream(new File(directory + separator + s));
+				FileInputStream in = new FileInputStream(new File(root
+						+ separator + s));
+				FileOutputStream out = new FileOutputStream(new File(directory
+						+ separator + s));
 				int read = in.read();
 				while (read != -1) {
 					out.write(read);
@@ -1821,11 +1824,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 				in.close();
 				out.close();
-			}
-			catch (IOException e1) {
+			} catch (IOException e1) {
 				e1.printStackTrace();
-				JOptionPane.showMessageDialog(BioSim.frame, "Cannot add the selected component.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(BioSim.frame,
+						"Cannot add the selected component.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -1842,15 +1845,14 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		// parameter file!",
 		// "Error Saving File", JOptionPane.ERROR_MESSAGE);
 		// }
-		//backgroundField.setText(newname);
+		// backgroundField.setText(newname);
 	}
 
 	public void viewCircuit() {
 		String[] getFilename;
 		if (componentField.getText().trim().equals("")) {
 			getFilename = verifyFile.split("\\.");
-		}
-		else {
+		} else {
 			getFilename = new String[1];
 			getFilename[0] = componentField.getText().trim();
 		}
@@ -1882,16 +1884,16 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				scrolls.setMinimumSize(new Dimension(500, 500));
 				scrolls.setPreferredSize(new Dimension(500, 500));
 				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Circuit View",
-						JOptionPane.INFORMATION_MESSAGE);
-			}
-			else {
-				JOptionPane.showMessageDialog(BioSim.frame, "No circuit view exists.", "Error",
+				JOptionPane.showMessageDialog(BioSim.frame, scrolls,
+						"Circuit View", JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(BioSim.frame,
+						"No circuit view exists.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(BioSim.frame, "Unable to view circuit.", "Error",
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(BioSim.frame,
+					"Unable to view circuit.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -1934,17 +1936,17 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				scrolls.setMinimumSize(new Dimension(500, 500));
 				scrolls.setPreferredSize(new Dimension(500, 500));
 				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Trace View",
-						JOptionPane.INFORMATION_MESSAGE);
-			}
-			else {
-				JOptionPane.showMessageDialog(BioSim.frame, "No trace file exists.", "Error",
+				JOptionPane.showMessageDialog(BioSim.frame, scrolls,
+						"Trace View", JOptionPane.INFORMATION_MESSAGE);
+			} else {
+				JOptionPane.showMessageDialog(BioSim.frame,
+						"No trace file exists.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(BioSim.frame, "Unable to view trace.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+		} catch (Exception e1) {
+			JOptionPane
+					.showMessageDialog(BioSim.frame, "Unable to view trace.",
+							"Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -1971,14 +1973,14 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				scrolls.setViewportView(messageArea);
 				JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Run Log",
 						JOptionPane.INFORMATION_MESSAGE);
-			}
-			else {
-				JOptionPane.showMessageDialog(BioSim.frame, "No run log exists.", "Error",
+			} else {
+				JOptionPane.showMessageDialog(BioSim.frame,
+						"No run log exists.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(BioSim.frame, "Unable to view run log.", "Error",
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(BioSim.frame,
+					"Unable to view run log.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -2008,8 +2010,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			File newFile = new File(directory + separator + sourceFile);
 			newFile.createNewFile();
 			FileOutputStream copyin = new FileOutputStream(newFile);
-			FileInputStream copyout = new FileInputStream(
-					new File(workDir + separator + sourceFile));
+			FileInputStream copyout = new FileInputStream(new File(workDir
+					+ separator + sourceFile));
 			int read = copyout.read();
 			// System.out.println(read);
 			while (read != -1) {
@@ -2019,11 +2021,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			copyin.close();
 			copyout.close();
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			// e.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame, "Cannot copy file " + sourceFile,
-					"Copy Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(BioSim.frame, "Cannot copy file "
+					+ sourceFile, "Copy Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
