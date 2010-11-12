@@ -154,11 +154,11 @@ public class LearnModel { // added ItemListener SB
 
 	private boolean binError;
 
-	private HashMap<String, ArrayList<String>> destabMap, stabMap;
+	private HashMap<String, ArrayList<String>> destabMap;
 	
-	// Pattern lParenR = Pattern.compile("\\(+"); //SB
+	// Pattern lParenR = Pattern.compile("\\(+"); 
 	
-	//Pattern floatingPointNum = Pattern.compile(">=(-*[0-9]+\\.*[0-9]*)"); //SB
+	//Pattern floatingPointNum = Pattern.compile(">=(-*[0-9]+\\.*[0-9]*)"); 
 
 	// Pattern falseR = Pattern.compile("false",Pattern.CASE_INSENSITIVE); //pass the I flag to be case insensitive
 
@@ -173,7 +173,7 @@ public class LearnModel { // added ItemListener SB
 	 *  Version 3 : Satish Batchu (LearnModel.java)
 	 */
 	
-	public LhpnFile learnModel(String directory, Log log, BioSim biosim, int moduleNumber, HashMap<String, ArrayList<Double>> thresh, HashMap<String,Double> tPar, ArrayList<Variable> rVarsL, HashMap<String, ArrayList<String>> dstab, HashMap<String, ArrayList<String>> stab, Double vScaleFactor, Double dScaleFactor, String failProp) {
+	public LhpnFile learnModel(String directory, Log log, BioSim biosim, int moduleNumber, HashMap<String, ArrayList<Double>> thresh, HashMap<String,Double> tPar, ArrayList<Variable> rVarsL, HashMap<String, ArrayList<String>> dstab, Boolean netForStable, Double vScaleFactor, Double dScaleFactor, String failProp) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		} else {
@@ -187,7 +187,6 @@ public class LearnModel { // added ItemListener SB
 		this.valScaleFactor = vScaleFactor;
 		this.delayScaleFactor = dScaleFactor;
 		this.destabMap = dstab;
-		this.stabMap = stab;
 		String[] getFilename = directory.split(separator);
 		if (moduleNumber == 0)
 			lhpnFile = getFilename[getFilename.length - 1] + ".lpn";
@@ -222,7 +221,6 @@ public class LearnModel { // added ItemListener SB
 			TSDParser tsd = new TSDParser(directory + separator + "run-1.tsd",
 					false);
 			varNames = tsd.getSpecies();
-			//this.varNames = varNames;
 			//String[] learnDir = lrnFile.split("\\.");
 			//File cvgFile = new File(directory + separator + learnDir[0] + ".cvg");
 			File cvgFile = new File(directory + separator + "run.cvg");
@@ -265,25 +263,21 @@ public class LearnModel { // added ItemListener SB
 				cProp.setProperty("transitions", String.valueOf(0));
 				cProp.setProperty("rates", String.valueOf(0));
 				cProp.setProperty("delays", String.valueOf(0));
-				tsd = new TSDParser(directory + separator + "run-" + tsdFileNum + ".tsd", false);
+				if (!netForStable)
+					tsd = new TSDParser(directory + separator + "run-" + tsdFileNum + ".tsd", false);
+				else 
+					tsd = new TSDParser(directory + separator + "runWithStables-" + tsdFileNum + ".tsd", false);
 				data = tsd.getData();
-				if (((destabMap != null) && (destabMap.size() != 0)) || ((stabMap != null) && (stabMap.size() != 0))){
+				varNames = tsd.getSpecies();
+				if ((destabMap != null) && (destabMap.size() != 0)){
 					out.write("Generating data for stables \n");
-					HashMap<String, ArrayList<String>>  useMap = new HashMap<String, ArrayList<String>> ();
-					if ((destabMap != null) && (destabMap.size() != 0)){
-						for (String s : destabMap.keySet())
-							useMap.put(s, destabMap.get(s));
-					} else {
-						for (String s : stabMap.keySet())
-							useMap.put(s, stabMap.get(s));
-					}
-					addStablesToData(thresholds, useMap);
+					addStablesToData(thresholds, destabMap);
 					for (String s : varNames)
 						out.write(s + " ");
 					out.write("\n");
 					tsd.setData(data);
 					tsd.setSpecies(varNames);
-					tsd.outputDAT(directory + separator + "hello.dat");
+					tsd.outputTSD(directory + separator + "runWithStables-" + tsdFileNum + ".tsd");
 				}
 				findReqdVarIndices();
 				genBinsRates(thresholds); 
@@ -723,11 +717,11 @@ public class LearnModel { // added ItemListener SB
 				placeInfo.remove(getPlaceInfoIndex(st1));
 				g.removePlace(st1);
 			}
-	//		if (moduleNumber == 0){
-	//			out.write("Adding pseudo transitions now. It'll be saved in " + directory + separator + "pseudo" + lhpnFile + "\n");
-	//			addPseudo(scaledThresholds);
-	//			lpnWithPseudo.save(directory + separator + "pseudo" + lhpnFile);
-	//		}
+			if (moduleNumber == 0){
+				out.write("Adding pseudo transitions now. It'll be saved in " + directory + separator + "pseudo" + lhpnFile + "\n");
+				addPseudo(scaledThresholds);
+				lpnWithPseudo.save(directory + separator + "pseudo" + lhpnFile);
+			}
 	//		addMetaBins();
 	//		addMetaBinTransitions();
 			if ((destabMap != null) || (destabMap.size() != 0)){
@@ -735,9 +729,7 @@ public class LearnModel { // added ItemListener SB
 				int mNum = 1000;
 				for (String destabOp : destabMap.keySet()){
 					out.write("Generating stable signals with reqdVarsL as ");
-					HashMap<String, ArrayList<String>> stableSignalMap = new HashMap<String, ArrayList<String>>();
 					ArrayList <Variable> varsT = new ArrayList <Variable>();
-					stableSignalMap.put(destabOp, destabMap.get(destabOp));
 					for (String d : destabMap.get(destabOp)){
 						Variable input = new Variable("");
 						input.copy(reqdVarsL.get(findReqdVarslIndex(d)));
@@ -753,7 +745,8 @@ public class LearnModel { // added ItemListener SB
 					varsT.add(output);
 					out.write(output.getName() + "\n");
 					LearnModel l = new LearnModel();
-					LhpnFile moduleLPN = l.learnModel(directory, log, biosim, mNum, thresholds, tPar, varsT, dMap, stableSignalMap, valScaleFactor, delayScaleFactor, null);
+					LhpnFile moduleLPN = l.learnModel(directory, log, biosim, mNum, thresholds, tPar, varsT, dMap, true, valScaleFactor, delayScaleFactor, null);
+					//true parameter above indicates that the net being generated is for assigning stable
 					// new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 					g = mergeLhpns(moduleLPN,g);
 					mNum++;
