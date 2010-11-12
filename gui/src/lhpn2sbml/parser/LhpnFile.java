@@ -375,6 +375,17 @@ public class LhpnFile {
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("digraph G {\nsize=\"7.5,10\"\n");
+			buffer.append("Inits [shape=plaintext,label=\"");
+			for (Variable v : booleans.values()) {
+				buffer.append(v.getName() + " = " + v.getInitValue() + "\\n");
+			}
+			for (Variable v : integers.values()) {
+				buffer.append(v.getName() + " = " + v.getInitValue() + "\\n");
+			}
+			for (Variable v : continuous.values()) {
+				buffer.append(v.getName() + " = " + v.getInitValue() + "\\n" + v.getName() + "' = " + v.getInitRate() + "\\n");
+			}
+			buffer.append("\"]\n");
 			for (Transition t : transitions.values()) {
 				buffer.append(t.getName() + " [shape=plaintext,label=\"" + t.getName());
 				if (t.containsEnabling()) {
