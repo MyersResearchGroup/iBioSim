@@ -2554,7 +2554,7 @@ public class Abstraction extends LhpnFile {
 		unvisited.remove(trans);
 		for (Place p : trans.getPostset()) {
 			for (Transition t : p.getPostset()) {
-				if (unvisited.contains(t)) {
+				if (unvisited.contains(t)) {					
 					change = trans8Iteration(t, unvisited, change);
 					unvisited.remove(t);
 				}
@@ -2597,6 +2597,7 @@ public class Abstraction extends LhpnFile {
 			return change;
 		}
 		for (Place p : trans.getPostset()) {
+			if (p.isMarked()) return change;
 			for (Transition tP : p.getPostset()) {
 				if (transName.equals(tP.getName())) {
 					return change;
