@@ -2692,7 +2692,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					varsWithStables.add(var);
 				}
 				HashMap<String, ArrayList<String>> destabMap = new HashMap<String, ArrayList<String>>();
-				HashMap<String, ArrayList<String>> stabMap = new HashMap<String, ArrayList<String>>();
 				//ArrayList<String> stables = new ArrayList<String>();
 		
 		//For every op which can have transients, there's a corresponding variable
@@ -2741,7 +2740,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						}
 					}
 				}
-				LhpnFile g = l.learnModel(directory, log, biosim, moduleNumber, thresholds, tPar, varsWithStables, destabMap, stabMap, valScaleFactor, delayScaleFactor, failProp);
+				LhpnFile g = l.learnModel(directory, log, biosim, moduleNumber, thresholds, tPar, varsWithStables, destabMap, false, valScaleFactor, delayScaleFactor, failProp);
+				// the false parameter above says that it's not generating a net for stable
 				if (new File(seedLpnFile).exists()){ //directory + separator + "complete.lpn").exists()){//
 					LhpnFile seedLpn = new LhpnFile();
 					seedLpn.load(seedLpnFile);
@@ -2768,7 +2768,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							input.setCare(true);
 							varsT.add(input);
 							l = new LearnModel();
-							LhpnFile moduleLPN = l.learnModel(directory, log, biosim, j, thresholds, tPar, varsT, destabMap, stabMap, valScaleFactor, delayScaleFactor, null);
+							LhpnFile moduleLPN = l.learnModel(directory, log, biosim, j, thresholds, tPar, varsT, destabMap, false, valScaleFactor, delayScaleFactor, null);
 							// new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 							g = mergeLhpns(moduleLPN,g);
 						}	
@@ -2777,10 +2777,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				
 				g.save(directory + separator + lhpnFile);
 				
-				Abstraction a = new Abstraction(g, new AbstPane(directory,lhpnFile,log,biosim,true,false));
+			/*	Abstraction a = new Abstraction(g, new AbstPane(directory,lhpnFile,log,biosim,true,false));
 				a.mergeTransitionsSimp(true);
 				g.save(directory + separator + "abstracted" + lhpnFile);
-			
+			*/
 				viewLog.setEnabled(true);
 				//System.out.println(directory + separator + lhpnFile);
 				if (new File(directory + separator + lhpnFile).exists()) {
