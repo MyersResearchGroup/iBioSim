@@ -962,7 +962,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					//	}
 					//}
 				} else {	// added after adding allVars
-					((JComboBox)((JPanel) c).getComponent(1)).setSelectedItem("NA");
+					((JComboBox)((JPanel) c).getComponent(1)).setSelectedItem("Not used");
 					((JCheckBox)((JPanel) c).getComponent(2)).setEnabled(false);
 					((JCheckBox)((JPanel) c).getComponent(3)).setEnabled(false);
 					((JTextField)((JPanel) c).getComponent(4)).setEnabled(false);
@@ -992,12 +992,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}*/ 
 			for (int i = 0 ; i < variables.size(); i++){
 				if ((((JTextField) variables.get(i).get(0)).getText().trim()).equalsIgnoreCase(var)){
-					if (!(((((JComboBox) variables.get(i).get(1)).getSelectedItem()).toString()).equalsIgnoreCase("NA"))){
+					if (!(((((JComboBox) variables.get(i).get(1)).getSelectedItem()).toString()).equalsIgnoreCase("Not used"))){
 						if (((String)(((JComboBox) variables.get(i).get(5)).getSelectedItem())).equals("DMV")){
 							int v = findReqdVarslIndex(((JTextField) variables.get(i).get(0)).getText().trim());
 							reqdVarsL.get(v).forceDmvc(true);
 							//reqdVarsL.get(v).setDmvc(true);
-						} else if (((String)(((JComboBox) variables.get(i).get(5)).getSelectedItem())).equals("Cont")){
+						} else if (((String)(((JComboBox) variables.get(i).get(5)).getSelectedItem())).equals("Continuous")){
 							int v = findReqdVarslIndex(((JTextField) variables.get(i).get(0)).getText().trim());
 							reqdVarsL.get(v).forceDmvc(false);
 							//reqdVarsL.get(v).setDmvc(false);
@@ -1022,7 +1022,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}*/ 
 			for (int i = 0 ; i < variables.size(); i++){
 				if ((((JTextField) variables.get(i).get(0)).getText().trim()).equalsIgnoreCase(var)){
-					if (!(((((JComboBox) variables.get(i).get(1)).getSelectedItem()).toString()).equalsIgnoreCase("NA"))){
+					if (!(((((JComboBox) variables.get(i).get(1)).getSelectedItem()).toString()).equalsIgnoreCase("Not used"))){
 						reqdVarsL.get(findReqdVarslIndex(((JTextField) variables.get(i).get(0)).getText().trim())).setDestab(((JCheckBox) variables.get(i).get(2)).isSelected());
 					}
 				}
@@ -1032,7 +1032,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			String var = e.getActionCommand().substring(4,e.getActionCommand().length());  // -1; ??
 			for (int i = 0 ; i < variables.size(); i++){
 				if ((((JTextField) variables.get(i).get(0)).getText().trim()).equalsIgnoreCase(var)){
-					if (!(((((JComboBox) variables.get(i).get(1)).getSelectedItem()).toString()).equalsIgnoreCase("NA"))){
+					if (!(((((JComboBox) variables.get(i).get(1)).getSelectedItem()).toString()).equalsIgnoreCase("Not used"))){
 						reqdVarsL.get(findReqdVarslIndex(((JTextField) variables.get(i).get(0)).getText().trim())).setCare(((JCheckBox) variables.get(i).get(3)).isSelected());
 					}
 				}
@@ -1045,7 +1045,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			for (int i = 0 ; i < variables.size(); i++){
 				String currentVar = ((JTextField) variables.get(i).get(0)).getText().trim();
 				if ((currentVar).equalsIgnoreCase(var)){
-					if (!(((((JComboBox) variables.get(i).get(1)).getSelectedItem()).toString()).equalsIgnoreCase("NA"))){
+					if (!(((((JComboBox) variables.get(i).get(1)).getSelectedItem()).toString()).equalsIgnoreCase("Not used"))){
 						((JCheckBox) variables.get(i).get(2)).setEnabled(true);
 						((JCheckBox) variables.get(i).get(3)).setEnabled(true);
 						((JTextField) variables.get(i).get(4)).setEnabled(true);
@@ -1104,7 +1104,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			String var = e.getActionCommand().substring(7,e.getActionCommand().length());  // -1; ??
 			for (int i = 0 ; i < variables.size(); i++){
 				if ((((JTextField) variables.get(i).get(0)).getText().trim()).equalsIgnoreCase(var)){
-					if (!(((((JComboBox) variables.get(i).get(1)).getSelectedItem()).toString()).equalsIgnoreCase("NA"))){
+					if (!(((((JComboBox) variables.get(i).get(1)).getSelectedItem()).toString()).equalsIgnoreCase("Not used"))){
 						reqdVarsL.get(findReqdVarslIndex(((JTextField) variables.get(i).get(0)).getText().trim())).setEpsilon(Double.valueOf(((JTextField) variables.get(i).get(4)).getText()));
 					}
 				}
@@ -1436,14 +1436,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					// JCheckBox dmv = new JCheckBox();
 					
 					//JCheckBox required = new JCheckBox(); //SB
-					String[] portOptions = {"NA", "Input", "Output"};
+					String[] portOptions = {"Not used", "Input", "Output"};
 					JComboBox port = new JComboBox(portOptions);
 					//JCheckBox input = new JCheckBox(); //SB
 					JCheckBox mode = new JCheckBox();
 					
 					JCheckBox care = new JCheckBox(); //SB
 					JTextField epsilonTb = new JTextField(epsilonG.getText().trim()); 
-					String[] dmvOptions = {"DMV", "Cont", "Auto"};
+					String[] dmvOptions = {"DMV", "Continuous", "Auto"};
 					JComboBox dmv = new JComboBox(dmvOptions);
 					// dmv.setSelectedIndex(0);
 					// dmv.addActionListener(this);
@@ -1522,7 +1522,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								((JComboBox) specs.get(3)).setSelectedItem("DMV");
 							}
 							else{
-								((JComboBox) specs.get(3)).setSelectedItem("Cont");
+								((JComboBox) specs.get(3)).setSelectedItem("Continuous");
 							}
 						} else {
 							((JComboBox) specs.get(3)).setSelectedItem("Auto");
@@ -1534,12 +1534,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								((JComboBox) specs.get(5)).setSelectedItem("DMV");
 							}
 							else{
-								((JComboBox) specs.get(5)).setSelectedItem("Cont");
+								((JComboBox) specs.get(5)).setSelectedItem("Continuous");
 							}
 						}
 					}
 					else{	// variable not required
-						((JComboBox) specs.get(1)).setSelectedItem("NA"); // changed 1 to 2 after required
+						((JComboBox) specs.get(1)).setSelectedItem("Not used"); // changed 1 to 2 after required
 						((JCheckBox) specs.get(2)).setEnabled(false); // added after allVars
 						((JCheckBox) specs.get(3)).setEnabled(false); // added after allVars
 						((JTextField) specs.get(4)).setEnabled(false); // added after allVars
@@ -1643,7 +1643,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									((JComboBox) specs.get(3)).setSelectedItem("DMV");
 								}
 								else{
-									((JComboBox) specs.get(3)).setSelectedItem("Cont");
+									((JComboBox) specs.get(3)).setSelectedItem("Continuous");
 								}
 							} else {
 								((JComboBox) specs.get(3)).setSelectedItem("Auto");
@@ -1655,12 +1655,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									((JComboBox) specs.get(5)).setSelectedItem("DMV");
 								}
 								else{
-									((JComboBox) specs.get(5)).setSelectedItem("Cont");
+									((JComboBox) specs.get(5)).setSelectedItem("Continuous");
 								}
 							}
 						}
 						else{
-							((JComboBox) specs.get(1)).setSelectedItem("NA");
+							((JComboBox) specs.get(1)).setSelectedItem("Not used");
 							((JCheckBox) specs.get(2)).setEnabled(false);
 							((JCheckBox) specs.get(3)).setEnabled(false);
 							((JTextField) specs.get(4)).setEnabled(false);
@@ -1717,7 +1717,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									((JComboBox) specs.get(3)).setSelectedItem("DMV");
 								}
 								else{
-									((JComboBox) specs.get(3)).setSelectedItem("Cont");
+									((JComboBox) specs.get(3)).setSelectedItem("Continuous");
 								}
 							} else {
 								((JComboBox) specs.get(3)).setSelectedItem("Auto");
@@ -1729,12 +1729,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									((JComboBox) specs.get(5)).setSelectedItem("DMV");
 								}
 								else{
-									((JComboBox) specs.get(5)).setSelectedItem("Cont");
+									((JComboBox) specs.get(5)).setSelectedItem("Continuous");
 								}
 							}
 						}	
 						else{
-							((JComboBox) specs.get(1)).setSelectedItem("NA");
+							((JComboBox) specs.get(1)).setSelectedItem("Not used");
 							((JCheckBox) specs.get(2)).setEnabled(false);
 							((JCheckBox) specs.get(3)).setEnabled(false);
 							((JTextField) specs.get(4)).setEnabled(false);
@@ -2155,7 +2155,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						k++;
 						continue;
 					}
-					if (!((((JComboBox)((JPanel)c).getComponent(1)).getSelectedItem().toString()).equalsIgnoreCase("NA"))){ // added after required
+					if (!((((JComboBox)((JPanel)c).getComponent(1)).getSelectedItem().toString()).equalsIgnoreCase("Not used"))){ // added after required
 						if (varsList == null){ // k==1
 							varsList = ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
 						}
@@ -2213,7 +2213,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								dmv = dmv + " " + ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
 							}
 						}
-						if (((String)(((JComboBox)((JPanel)c).getComponent(5)).getSelectedItem())).equals("Cont")){ 
+						if (((String)(((JComboBox)((JPanel)c).getComponent(5)).getSelectedItem())).equals("Continuous")){ 
 							if (contCount == 0){
 								contCount++;
 								cont = ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
@@ -2274,7 +2274,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						k++;
 						continue;
 					}
-					if (!((((JComboBox)((JPanel)c).getComponent(1)).getSelectedItem().toString()).equalsIgnoreCase("NA"))){
+					if (!((((JComboBox)((JPanel)c).getComponent(1)).getSelectedItem().toString()).equalsIgnoreCase("Not used"))){
 						if (varsList == null) { //(k == 1){
 							varsList = ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
 						}
@@ -2334,7 +2334,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								dmv = dmv + " " + ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
 							}
 						}
-						if (((String)(((JComboBox)((JPanel)c).getComponent(5)).getSelectedItem())).equals("Cont")){  // changed 1 to 2 after required
+						if (((String)(((JComboBox)((JPanel)c).getComponent(5)).getSelectedItem())).equals("Continuous")){  // changed 1 to 2 after required
 							if (contCount == 0){
 								contCount++;
 								cont = ((JTextField)((JPanel)c).getComponent(0)).getText().trim();
