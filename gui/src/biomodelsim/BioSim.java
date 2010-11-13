@@ -5527,19 +5527,20 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							new GCMParser(filename.trim());
 							file[file.length - 1] = file[file.length - 1].replaceAll(
 									"[^a-zA-Z0-9_.]+", "_");
-							if (overwrite(root + separator + file[file.length - 1],
-									file[file.length - 1])) {
-								FileOutputStream out = new FileOutputStream(new File(root
-										+ separator + file[file.length - 1]));
-								FileInputStream in = new FileInputStream(new File(filename.trim()));
-								int read = in.read();
-								while (read != -1) {
-									out.write(read);
-									read = in.read();
+							if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
+								if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
+									FileOutputStream out = new FileOutputStream(new File(root
+											+ separator + file[file.length - 1]));
+									FileInputStream in = new FileInputStream(new File(filename.trim()));
+									int read = in.read();
+									while (read != -1) {
+										out.write(read);
+										read = in.read();
+									}
+									in.close();
+									out.close();
+									addToTree(file[file.length - 1]);
 								}
-								in.close();
-								out.close();
-								addToTree(file[file.length - 1]);
 							}
 						}
 						catch (Exception e1) {
@@ -5579,19 +5580,22 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
-						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
-								"_");
-						FileOutputStream out = new FileOutputStream(new File(root + separator
-								+ file[file.length - 1]));
-						FileInputStream in = new FileInputStream(new File(filename));
-						int read = in.read();
-						while (read != -1) {
-							out.write(read);
-							read = in.read();
+						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+","_");
+						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root + separator
+										+ file[file.length - 1]));
+								FileInputStream in = new FileInputStream(new File(filename));
+								int read = in.read();
+								while (read != -1) {
+									out.write(read);
+									read = in.read();
+								}
+								in.close();
+								out.close();
+								addToTree(file[file.length - 1]);
+							}
 						}
-						in.close();
-						out.close();
-						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
@@ -5630,17 +5634,21 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					try {
 						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
 								"_");
-						FileOutputStream out = new FileOutputStream(new File(root + separator
-								+ file[file.length - 1]));
-						FileInputStream in = new FileInputStream(new File(filename));
-						int read = in.read();
-						while (read != -1) {
-							out.write(read);
-							read = in.read();
+						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root + separator
+										+ file[file.length - 1]));
+								FileInputStream in = new FileInputStream(new File(filename));
+								int read = in.read();
+								while (read != -1) {
+									out.write(read);
+									read = in.read();
+								}
+								in.close();
+								out.close();
+								addToTree(file[file.length - 1]);
+							}
 						}
-						in.close();
-						out.close();
-						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
@@ -5679,17 +5687,21 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					try {
 						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
 								"_");
-						FileOutputStream out = new FileOutputStream(new File(root + separator
-								+ file[file.length - 1]));
-						FileInputStream in = new FileInputStream(new File(filename));
-						int read = in.read();
-						while (read != -1) {
-							out.write(read);
-							read = in.read();
+						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root + separator
+										+ file[file.length - 1]));
+								FileInputStream in = new FileInputStream(new File(filename));
+								int read = in.read();
+								while (read != -1) {
+									out.write(read);
+									read = in.read();
+								}
+								in.close();
+								out.close();
+								addToTree(file[file.length - 1]);
+							}
 						}
-						in.close();
-						out.close();
-						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
@@ -5730,18 +5742,22 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (new File(filename).exists()) {
 							file[file.length - 1] = file[file.length - 1].replaceAll(
 									"[^a-zA-Z0-9_.]+", "_");
-							FileOutputStream out = new FileOutputStream(new File(root + separator
-									+ file[file.length - 1]));
-							FileInputStream in = new FileInputStream(new File(filename));
-							// log.addText(filename);
-							int read = in.read();
-							while (read != -1) {
-								out.write(read);
-								read = in.read();
+							if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
+								if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
+									FileOutputStream out = new FileOutputStream(new File(root + separator
+											+ file[file.length - 1]));
+									FileInputStream in = new FileInputStream(new File(filename));
+									// log.addText(filename);
+									int read = in.read();
+									while (read != -1) {
+										out.write(read);
+										read = in.read();
+									}
+									in.close();
+									out.close();
+									addToTree(file[file.length - 1]);
+								}
 							}
-							in.close();
-							out.close();
-							addToTree(file[file.length - 1]);
 						}
 						if (filename.substring(filename.length() - 2, filename.length()).equals(
 								".g")) {
@@ -5809,17 +5825,21 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					try {
 						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
 								"_");
-						FileOutputStream out = new FileOutputStream(new File(root + separator
-								+ file[file.length - 1]));
-						FileInputStream in = new FileInputStream(new File(filename));
-						int read = in.read();
-						while (read != -1) {
-							out.write(read);
-							read = in.read();
+						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root + separator
+										+ file[file.length - 1]));
+								FileInputStream in = new FileInputStream(new File(filename));
+								int read = in.read();
+								while (read != -1) {
+									out.write(read);
+									read = in.read();
+								}
+								in.close();
+								out.close();
+								addToTree(file[file.length - 1]);
+							}
 						}
-						in.close();
-						out.close();
-						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						e1.printStackTrace();
@@ -5860,17 +5880,21 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					try {
 						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
 								"_");
-						FileOutputStream out = new FileOutputStream(new File(root + separator
-								+ file[file.length - 1]));
-						FileInputStream in = new FileInputStream(new File(filename));
-						int read = in.read();
-						while (read != -1) {
-							out.write(read);
-							read = in.read();
+						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root + separator
+										+ file[file.length - 1]));
+								FileInputStream in = new FileInputStream(new File(filename));
+								int read = in.read();
+								while (read != -1) {
+									out.write(read);
+									read = in.read();
+								}
+								in.close();
+								out.close();
+								addToTree(file[file.length - 1]);
+							}
 						}
-						in.close();
-						out.close();
-						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
@@ -5910,17 +5934,21 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					try {
 						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
 								"_");
-						FileOutputStream out = new FileOutputStream(new File(root + separator
-								+ file[file.length - 1]));
-						FileInputStream in = new FileInputStream(new File(filename));
-						int read = in.read();
-						while (read != -1) {
-							out.write(read);
-							read = in.read();
+						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root + separator
+										+ file[file.length - 1]));
+								FileInputStream in = new FileInputStream(new File(filename));
+								int read = in.read();
+								while (read != -1) {
+									out.write(read);
+									read = in.read();
+								}
+								in.close();
+								out.close();
+								addToTree(file[file.length - 1]);
+							}
 						}
-						in.close();
-						out.close();
-						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
@@ -5960,17 +5988,21 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					try {
 						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
 								"_");
-						FileOutputStream out = new FileOutputStream(new File(root + separator
-								+ file[file.length - 1]));
-						FileInputStream in = new FileInputStream(new File(filename));
-						int read = in.read();
-						while (read != -1) {
-							out.write(read);
-							read = in.read();
+						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root + separator
+										+ file[file.length - 1]));
+								FileInputStream in = new FileInputStream(new File(filename));
+								int read = in.read();
+								while (read != -1) {
+									out.write(read);
+									read = in.read();
+								}
+								in.close();
+								out.close();
+								addToTree(file[file.length - 1]);
+							}
 						}
-						in.close();
-						out.close();
-						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
@@ -6008,19 +6040,22 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
-						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
-								"_");
-						FileOutputStream out = new FileOutputStream(new File(root + separator
-								+ file[file.length - 1]));
-						FileInputStream in = new FileInputStream(new File(filename));
-						int read = in.read();
-						while (read != -1) {
-							out.write(read);
-							read = in.read();
+						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+","_");
+						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root + separator
+										+ file[file.length - 1]));
+								FileInputStream in = new FileInputStream(new File(filename));
+								int read = in.read();
+								while (read != -1) {
+									out.write(read);
+									read = in.read();
+								}
+								in.close();
+								out.close();
+								addToTree(file[file.length - 1]);
+							}
 						}
-						in.close();
-						out.close();
-						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
@@ -6060,17 +6095,21 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					try {
 						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
 								"_");
-						FileOutputStream out = new FileOutputStream(new File(root + separator
-								+ file[file.length - 1]));
-						FileInputStream in = new FileInputStream(new File(filename));
-						int read = in.read();
-						while (read != -1) {
-							out.write(read);
-							read = in.read();
+						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root + separator
+										+ file[file.length - 1]));
+								FileInputStream in = new FileInputStream(new File(filename));
+								int read = in.read();
+								while (read != -1) {
+									out.write(read);
+									read = in.read();
+								}
+								in.close();
+								out.close();
+								addToTree(file[file.length - 1]);
+							}
 						}
-						in.close();
-						out.close();
-						addToTree(file[file.length - 1]);
 					}
 					catch (Exception e1) {
 						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
@@ -13346,7 +13385,19 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	public void setGlassPane(boolean visible) {
 		// frame.getGlassPane().setVisible(visible);
 	}
-
+	
+	public boolean checkFiles(String input, String output) {
+		input = input.replaceAll("//","/");
+		output = output.replaceAll("//","/");
+		if (input.equals(output)) {
+			Object[] options = { "Ok" };
+			JOptionPane.showOptionDialog(frame, "Files are the same.", "Files Same", JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			return false;
+		}
+		return true; 
+	}
+	
 	public boolean overwrite(String fullPath, String name) {
 		if (new File(fullPath).exists()) {
 			String[] views = canDelete(name);
