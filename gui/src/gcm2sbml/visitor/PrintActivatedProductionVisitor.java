@@ -28,6 +28,8 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	 */
 	public void run() {
 		for (SpeciesInterface specie : promoter.getActivators()) {
+			speciesName = promoter.getId() + "_" + specie.getId() + "_RNAP";
+			reactionName = "R_act_production_" + promoter.getId() + "_" + specie.getId();
 			specie.accept(this);
 		}
 	}
@@ -40,10 +42,8 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	
 	public void visitComplex(ComplexSpecies specie) {
 		loadValues();
-		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
-				+ specie.getId());
-		r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + promoter.getId() + "_"
-				+ specie.getId()));
+		Reaction r = Utility.Reaction(reactionName);
+		r.addModifier(Utility.ModifierSpeciesReference(speciesName));
 		for (SpeciesInterface species : promoter.getOutputs()) {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
@@ -52,18 +52,15 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.setFormula(actString+ "*RNAP_" + promoter.getId() + "_"
-				+ specie.getId());
+		kl.setFormula(actString+ "*" + speciesName);
 		Utility.addReaction(document, r);
 	}
 
 	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues();
-		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
-				+ specie.getId());
-		r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + promoter.getId() + "_"
-				+ specie.getId()));
+		Reaction r = Utility.Reaction(reactionName);
+		r.addModifier(Utility.ModifierSpeciesReference(speciesName));
 		for (SpeciesInterface species : promoter.getOutputs()) {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
@@ -72,18 +69,15 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.setFormula(actString+ "*RNAP_" + promoter.getId() + "_"
-				+ specie.getId());
+		kl.setFormula(actString+ "*" + speciesName);
 		Utility.addReaction(document, r);
 	}
 
 	@Override
 	public void visitConstantSpecies(ConstantSpecies specie) {
 		loadValues();
-		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
-				+ specie.getId());
-		r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + promoter.getId() + "_"
-				+ specie.getId()));
+		Reaction r = Utility.Reaction(reactionName);
+		r.addModifier(Utility.ModifierSpeciesReference(speciesName));
 		for (SpeciesInterface species : promoter.getOutputs()) {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
@@ -92,18 +86,15 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.setFormula(actString+ "*RNAP_" + promoter.getId() + "_"
-				+ specie.getId());
+		kl.setFormula(actString+ "*" + speciesName);
 		Utility.addReaction(document, r);
 	}
 
 	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues();
-		Reaction r = Utility.Reaction("R_act_production_" + promoter.getId() + "_"
-				+ specie.getId());
-		r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + "_" + promoter.getId()
-				+ "_" + specie.getId()));
+		Reaction r = Utility.Reaction(reactionName);
+		r.addModifier(Utility.ModifierSpeciesReference(speciesName));
 		for (SpeciesInterface species : promoter.getOutputs()) {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
 		}
@@ -112,8 +103,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.setFormula(actString+ "*RNAP_" + promoter.getId() + "_"
-				+ specie.getId());
+		kl.setFormula(actString+ "*" + speciesName);
 		Utility.addReaction(document, r);
 	}
 
@@ -130,6 +120,8 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	private String actString = CompatibilityFixer
 			.getSBMLName(GlobalConstants.ACTIVED_STRING);
 	
+	private String speciesName;
+	private String reactionName;
 
 	
 

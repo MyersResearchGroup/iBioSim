@@ -28,7 +28,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	 */
 	public void run() {
 		for (SpeciesInterface specie : promoter.getRepressors()) {
-			speciesName = "bound_" + promoter.getId() + "_" + specie.getId();
+			speciesName = promoter.getId() + "_" + specie.getId() + "_bound";
 			reactionName = "R_repression_binding_" + promoter.getId() + "_"
 					+ specie.getId();
 
