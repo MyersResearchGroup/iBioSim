@@ -29,7 +29,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	 */
 	public void run() {
 		for (SpeciesInterface specie : promoter.getActivators()) {
-			speciesName = "RNAP_" + promoter.getId() + "_" + specie.getId();
+			speciesName = promoter.getId() + "_" + specie.getId() + "_RNAP";
 			reactionName = "R_RNAP_binding_" + promoter.getId() + "_" + specie.getId();
 			specie.accept(this);
 		}
@@ -167,7 +167,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	 */
 	private String generateLaw(String specieName, String actMolecule) {
 		String law = "kr*" + "Krnap*" + "(" + kactString + "*" + actMolecule + ")" + "^"
-				+ coopString + "*RNAP" + "*" + promoter.getId() + "-kr*" + speciesName;
+				+ coopString + "*RNAP" + "*" + promoter.getId() + "-kr*" + specieName;
 		return law;
 	}
 

@@ -302,17 +302,17 @@ public class GeneticNetwork {
 			// First setup RNAP binding
 			if (p.getOutputs().size()==0) continue;
 			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-			r.setId("R_RNAP_" + p.getId());
+			r.setId("R_" + p.getId() + "_RNAP");
 			r.addReactant(Utility.SpeciesReference("RNAP", 1));
 			r.addReactant(Utility.SpeciesReference(p.getId(), 1));
-			r.addProduct(Utility.SpeciesReference("RNAP_" + p.getId(), 1));
+			r.addProduct(Utility.SpeciesReference(p.getId() + "_RNAP", 1));
 			r.setReversible(true);
 			r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
 			kl.addParameter(Utility.Parameter(kRnapString, p.getKrnap(), getMoleParameter(2)));
 			kl.addParameter(Utility.Parameter("kr", 1, getMoleTimeParameter(1)));
-			kl.setFormula("kr*" + kRnapString + "*" + "RNAP*" + p.getId() + "-kr*RNAP_"
-					+ p.getId());		
+			kl.setFormula("kr*" + kRnapString + "*" + "RNAP*" + p.getId() + "-kr*"
+					+ p.getId() + "_RNAP");		
 			Utility.addReaction(document, r);
 
 			// Next setup activated binding
@@ -343,7 +343,7 @@ public class GeneticNetwork {
 		for (Promoter p : promoters.values()) {
 			if (p.getOutputs().size()==0) continue;
 			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-			r.addModifier(Utility.ModifierSpeciesReference("RNAP_" + p.getId()));
+			r.addModifier(Utility.ModifierSpeciesReference(p.getId() + "_RNAP"));
 			for (SpeciesInterface species : p.getOutputs()) {
 				r.addProduct(Utility.SpeciesReference(species.getId(), p.getStoich()));
 			}
@@ -354,13 +354,13 @@ public class GeneticNetwork {
 				r.setId("R_basal_production_" + p.getId());
 				kl.addParameter(Utility.Parameter(kBasalString, p.getKbasal(),
 							getMoleTimeParameter(1)));
-				kl.setFormula(kBasalString + "*" + "RNAP_" + p.getId());
+				kl.setFormula(kBasalString + "*" + p.getId() + "_RNAP");
 				
 			} else {
 				r.setId("R_constitutive_production_" + p.getId());
 				kl.addParameter(Utility.Parameter(kOcString, p.getKoc(),
 							getMoleTimeParameter(1)));
-				kl.setFormula(kOcString + "*" + "RNAP_" + p.getId());
+				kl.setFormula(kOcString + "*" + p.getId() + "_RNAP");
 			}
 			Utility.addReaction(document, r);
 			if (p.getActivators().size() > 0) {
@@ -795,21 +795,21 @@ public class GeneticNetwork {
 		    }
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);			
-			s = Utility.makeSpecies("RNAP_" + p.getId(), compartment,
+			s = Utility.makeSpecies(p.getId() + "_RNAP", compartment,
 					0);
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);
 			// Now cycle through all activators and repressors and add those
 			// bindings
 			for (SpeciesInterface specie : p.getActivators()) {
-				s = Utility.makeSpecies("RNAP_" + p.getId() + "_"
-						+ specie.getId(), compartment, 0);
+				s = Utility.makeSpecies(p.getId() + "_"
+						+ specie.getId() + "_RNAP", compartment, 0);
 				s.setHasOnlySubstanceUnits(true);
 				Utility.addSpecies(document, s);
 			}
 			for (SpeciesInterface specie : p.getRepressors()) {
-				s = Utility.makeSpecies("bound_" + p.getId() + "_"
-						+ specie.getId(), compartment, 0);
+				s = Utility.makeSpecies(p.getId() + "_"
+						+ specie.getId() + "_bound", compartment, 0);
 				s.setHasOnlySubstanceUnits(true);
 				Utility.addSpecies(document, s);
 			}
