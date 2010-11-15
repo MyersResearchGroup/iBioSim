@@ -21,8 +21,8 @@ public interface SpeciesInterface extends VisitableSpecies {
 	/**
 	 * Sets the id of the species
 	 * 
-	 * @param id
-	 *            the id of the species
+	 * @param name
+	 *            the name of the species
 	 */
 	public void setId(String name);
 

@@ -565,7 +565,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			for (String key : elements.keySet()) {
 				ArrayList<Object> remove = new ArrayList<Object>();
 				for (Object prop : elements.get(key).keySet()) {
-					if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID) && !prop.equals(GlobalConstants.TYPE)) {
+					if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID) && !prop.equals(GlobalConstants.TYPE) &&
+							(!((String)prop).startsWith("graph"))) {
 						remove.add(prop);
 					}
 				}
@@ -578,7 +579,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			for (String key : elements.keySet()) {
 				ArrayList<Object> remove = new ArrayList<Object>();
 				for (Object prop : elements.get(key).keySet()) {
-					if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.PROMOTER) && !prop.equals(GlobalConstants.BIO) && !prop.equals(GlobalConstants.TYPE)) {
+					if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.PROMOTER) && !prop.equals(GlobalConstants.BIO) && !prop.equals(GlobalConstants.TYPE) &&
+							(!((String)prop).startsWith("graph"))) {
 						remove.add(prop);
 					}
 				}
@@ -590,7 +592,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			for (String key : elements.keySet()) {
 				ArrayList<Object> remove = new ArrayList<Object>();
 				for (Object prop : elements.get(key).keySet()) {
-					if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID)) {
+					if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID) &&
+							(!((String)prop).startsWith("graph"))) {
 						remove.add(prop);
 					}
 				}
