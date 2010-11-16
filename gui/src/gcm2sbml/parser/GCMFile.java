@@ -1,7 +1,5 @@
 package gcm2sbml.parser;
 
-import gcm2sbml.gui.InfluencePanel;
-import gcm2sbml.network.PartSpecies;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.UndoManager;
 import gcm2sbml.util.Utility;
@@ -70,13 +68,13 @@ import buttons.Buttons;
  * @email namphuon@cs.utah.edu
  */
 public class GCMFile {
-	
+
 	private String separator;
-	
+
 	private String filename = null;
 
 	private UndoManager undoManager;
-	
+
 	public GCMFile(String path) {
 		undoManager = new UndoManager();
 		if (File.separator.equals("\\")) {
@@ -291,7 +289,7 @@ public class GCMFile {
 		naryFrame.setResizable(false);
 		naryFrame.setVisible(true);
 	}
-	
+
 	private ArrayList<String> copyArray(ArrayList<String> original) {
 		ArrayList<String> copy = new ArrayList<String>();
 		for (String element : original) {
@@ -301,76 +299,87 @@ public class GCMFile {
 	}
 
 	public SBMLDocument flattenGCM(boolean includeSBML) {
-		ArrayList<String> gcms = new ArrayList<String>();
-		gcms.add(filename);
-		save(filename + ".temp");
-		ArrayList<String> comps = setToArrayList(components.keySet());
-		SBMLDocument sbml = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-		Model m = sbml.createModel();
-		sbml.setModel(m);
-		Utility.addCompartments(sbml, "default");
-		sbml.getModel().getCompartment("default").setSize(1);
-		m.setVolumeUnits("litre");
-		if (!sbmlFile.equals("") && includeSBML) {
-			sbml = BioSim.readSBML(path + separator + sbmlFile);
-		}
-		else if (!sbmlFile.equals("") && !includeSBML) {
-			Utility.createErrorMessage("SBMLs Included",
-					"There are sbml files associated with the gcm file and its components.");
-			load(filename + ".temp");
-			return null;
-		}
-		for (String s : comps) {
-			GCMFile file = new GCMFile(path);
-			file.load(path + separator + components.get(s).getProperty("gcm"));
-			for (String p : globalParameters.keySet()) {
-				if (!file.globalParameters.containsKey(p)) {
-					file.setParameter(p, globalParameters.get(p));
-				}
+		if (filename != null) {
+			ArrayList<String> gcms = new ArrayList<String>();
+			gcms.add(filename);
+			save(filename + ".temp");
+			ArrayList<String> comps = setToArrayList(components.keySet());
+			SBMLDocument sbml = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+			Model m = sbml.createModel();
+			sbml.setModel(m);
+			Utility.addCompartments(sbml, "default");
+			sbml.getModel().getCompartment("default").setSize(1);
+			m.setVolumeUnits("litre");
+			if (!sbmlFile.equals("") && includeSBML) {
+				sbml = BioSim.readSBML(path + separator + sbmlFile);
 			}
-			ArrayList<String> copy = copyArray(gcms);
-			if (copy.contains(file.getFilename())) {
-				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n" + "There is a loop in the components.");
-				load(filename + ".temp");
-				return null;
-			}
-			copy.add(file.getFilename());
-			sbml = unionSBML(sbml, unionGCM(this, file, s, includeSBML, copy), s);
-			if (sbml == null && copy.isEmpty()) {
-				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n" + "There is a loop in the components.");
-				load(filename + ".temp");
-				return null;
-			}
-			else if (sbml == null && includeSBML) {
-				Utility.createErrorMessage("Cannot Merge SBMLs", "Unable to merge sbml files from components.");
-				load(filename + ".temp");
-				return null;
-			}
-			else if (sbml == null && !includeSBML) {
+			else if (!sbmlFile.equals("") && !includeSBML) {
 				Utility.createErrorMessage("SBMLs Included",
 						"There are sbml files associated with the gcm file and its components.");
 				load(filename + ".temp");
 				return null;
 			}
-		}
-		components = new HashMap<String, Properties>();
-		if (sbml != null) {
-			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
-			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
-			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, false);
-			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
-			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
-			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
-			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
-			long numErrors = sbml.checkConsistency();
-			if (numErrors > 0) {
-				Utility.createErrorMessage("Merged SBMLs Are Inconsistent", "The merged sbml files have inconsistencies.");
+			for (String s : comps) {
+				GCMFile file = new GCMFile(path);
+				file.load(path + separator + components.get(s).getProperty("gcm"));
+				for (String p : globalParameters.keySet()) {
+					if (!file.globalParameters.containsKey(p)) {
+						file.setParameter(p, globalParameters.get(p));
+					}
+				}
+				ArrayList<String> copy = copyArray(gcms);
+				if (copy.contains(file.getFilename())) {
+					Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n"
+							+ "There is a loop in the components.");
+					load(filename + ".temp");
+					return null;
+				}
+				copy.add(file.getFilename());
+				sbml = unionSBML(sbml, unionGCM(this, file, s, includeSBML, copy), s);
+				if (sbml == null && copy.isEmpty()) {
+					Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n"
+							+ "There is a loop in the components.");
+					load(filename + ".temp");
+					return null;
+				}
+				else if (sbml == null && includeSBML) {
+					Utility.createErrorMessage("Cannot Merge SBMLs",
+							"Unable to merge sbml files from components.");
+					load(filename + ".temp");
+					return null;
+				}
+				else if (sbml == null && !includeSBML) {
+					Utility
+							.createErrorMessage("SBMLs Included",
+									"There are sbml files associated with the gcm file and its components.");
+					load(filename + ".temp");
+					return null;
+				}
 			}
+			components = new HashMap<String, Properties>();
+			if (sbml != null) {
+				sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
+				sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
+				sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, false);
+				sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
+				sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
+				sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
+				sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
+				long numErrors = sbml.checkConsistency();
+				if (numErrors > 0) {
+					Utility.createErrorMessage("Merged SBMLs Are Inconsistent",
+							"The merged sbml files have inconsistencies.");
+				}
+			}
+			return sbml;
 		}
-		return sbml;
+		else {
+			return null;
+		}
 	}
 
-	private SBMLDocument unionGCM(GCMFile topLevel, GCMFile bottomLevel, String compName, boolean includeSBML, ArrayList<String> gcms) {
+	private SBMLDocument unionGCM(GCMFile topLevel, GCMFile bottomLevel, String compName,
+			boolean includeSBML, ArrayList<String> gcms) {
 		ArrayList<String> mod = setToArrayList(bottomLevel.components.keySet());
 		SBMLDocument sbml = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
 		Model m = sbml.createModel();
@@ -418,7 +427,8 @@ public class GCMFile {
 				if (spec.equals(compName + "_" + port)) {
 					bottomLevel.species.get(spec).put(GlobalConstants.ID,
 							topLevel.components.get(compName).getProperty((String) port));
-					bottomLevel.changeSpeciesName(spec, topLevel.components.get(compName).getProperty((String) port));
+					bottomLevel.changeSpeciesName(spec, topLevel.components.get(compName)
+							.getProperty((String) port));
 				}
 			}
 		}
@@ -435,9 +445,12 @@ public class GCMFile {
 			else if (param.equals(GlobalConstants.KASSOCIATION_STRING)) {
 				mod = setToArrayList(bottomLevel.influences.keySet());
 				for (String infl : mod) {
-					if (!bottomLevel.influences.get(infl).containsKey(GlobalConstants.KASSOCIATION_STRING)) {
-						bottomLevel.influences.get(infl).put(GlobalConstants.KASSOCIATION_STRING,
-								bottomLevel.globalParameters.get(GlobalConstants.KASSOCIATION_STRING));
+					if (!bottomLevel.influences.get(infl).containsKey(
+							GlobalConstants.KASSOCIATION_STRING)) {
+						bottomLevel.influences.get(infl).put(
+								GlobalConstants.KASSOCIATION_STRING,
+								bottomLevel.globalParameters
+										.get(GlobalConstants.KASSOCIATION_STRING));
 					}
 				}
 			}
@@ -453,9 +466,12 @@ public class GCMFile {
 			else if (param.equals(GlobalConstants.COOPERATIVITY_STRING)) {
 				mod = setToArrayList(bottomLevel.influences.keySet());
 				for (String infl : mod) {
-					if (!bottomLevel.influences.get(infl).containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
-						bottomLevel.influences.get(infl).put(GlobalConstants.COOPERATIVITY_STRING,
-								bottomLevel.globalParameters.get(GlobalConstants.COOPERATIVITY_STRING));
+					if (!bottomLevel.influences.get(infl).containsKey(
+							GlobalConstants.COOPERATIVITY_STRING)) {
+						bottomLevel.influences.get(infl).put(
+								GlobalConstants.COOPERATIVITY_STRING,
+								bottomLevel.globalParameters
+										.get(GlobalConstants.COOPERATIVITY_STRING));
 					}
 				}
 			}
@@ -480,9 +496,12 @@ public class GCMFile {
 			else if (param.equals(GlobalConstants.RNAP_BINDING_STRING)) {
 				mod = setToArrayList(bottomLevel.promoters.keySet());
 				for (String prom : mod) {
-					if (!bottomLevel.promoters.get(prom).containsKey(GlobalConstants.RNAP_BINDING_STRING)) {
-						bottomLevel.promoters.get(prom).put(GlobalConstants.RNAP_BINDING_STRING,
-								bottomLevel.globalParameters.get(GlobalConstants.RNAP_BINDING_STRING));
+					if (!bottomLevel.promoters.get(prom).containsKey(
+							GlobalConstants.RNAP_BINDING_STRING)) {
+						bottomLevel.promoters.get(prom).put(
+								GlobalConstants.RNAP_BINDING_STRING,
+								bottomLevel.globalParameters
+										.get(GlobalConstants.RNAP_BINDING_STRING));
 					}
 				}
 			}
@@ -508,25 +527,32 @@ public class GCMFile {
 			else if (param.equals(GlobalConstants.PROMOTER_COUNT_STRING)) {
 				mod = setToArrayList(bottomLevel.promoters.keySet());
 				for (String prom : mod) {
-					if (!bottomLevel.promoters.get(prom).containsKey(GlobalConstants.PROMOTER_COUNT_STRING)) {
-						bottomLevel.promoters.get(prom).put(GlobalConstants.PROMOTER_COUNT_STRING,
-								bottomLevel.globalParameters.get(GlobalConstants.PROMOTER_COUNT_STRING));
+					if (!bottomLevel.promoters.get(prom).containsKey(
+							GlobalConstants.PROMOTER_COUNT_STRING)) {
+						bottomLevel.promoters.get(prom).put(
+								GlobalConstants.PROMOTER_COUNT_STRING,
+								bottomLevel.globalParameters
+										.get(GlobalConstants.PROMOTER_COUNT_STRING));
 					}
 				}
 			}
 			else if (param.equals(GlobalConstants.STOICHIOMETRY_STRING)) {
 				mod = setToArrayList(bottomLevel.promoters.keySet());
 				for (String prom : mod) {
-					if (!bottomLevel.promoters.get(prom).containsKey(GlobalConstants.STOICHIOMETRY_STRING)) {
-						bottomLevel.promoters.get(prom).put(GlobalConstants.STOICHIOMETRY_STRING,
-								bottomLevel.globalParameters.get(GlobalConstants.STOICHIOMETRY_STRING));
+					if (!bottomLevel.promoters.get(prom).containsKey(
+							GlobalConstants.STOICHIOMETRY_STRING)) {
+						bottomLevel.promoters.get(prom).put(
+								GlobalConstants.STOICHIOMETRY_STRING,
+								bottomLevel.globalParameters
+										.get(GlobalConstants.STOICHIOMETRY_STRING));
 					}
 				}
 			}
 			else if (param.equals(GlobalConstants.ACTIVED_STRING)) {
 				mod = setToArrayList(bottomLevel.promoters.keySet());
 				for (String prom : mod) {
-					if (!bottomLevel.promoters.get(prom).containsKey(GlobalConstants.ACTIVED_STRING)) {
+					if (!bottomLevel.promoters.get(prom)
+							.containsKey(GlobalConstants.ACTIVED_STRING)) {
 						bottomLevel.promoters.get(prom).put(GlobalConstants.ACTIVED_STRING,
 								bottomLevel.globalParameters.get(GlobalConstants.ACTIVED_STRING));
 					}
@@ -535,7 +561,8 @@ public class GCMFile {
 			else if (param.equals(GlobalConstants.MAX_DIMER_STRING)) {
 				mod = setToArrayList(bottomLevel.species.keySet());
 				for (String spec : mod) {
-					if (!bottomLevel.species.get(spec).containsKey(GlobalConstants.MAX_DIMER_STRING)) {
+					if (!bottomLevel.species.get(spec)
+							.containsKey(GlobalConstants.MAX_DIMER_STRING)) {
 						bottomLevel.species.get(spec).put(GlobalConstants.MAX_DIMER_STRING,
 								bottomLevel.globalParameters.get(GlobalConstants.MAX_DIMER_STRING));
 					}
@@ -571,7 +598,8 @@ public class GCMFile {
 	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
 		HashMap<String, ArrayList<String>> infl = new HashMap<String, ArrayList<String>>();
 		for (String influence : influences.keySet()) {
-			if (influences.get(influence).get(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
+			if (influences.get(influence).get(GlobalConstants.TYPE).equals(
+					GlobalConstants.ACTIVATION)) {
 				String input = getInput(influence);
 				String output = getOutput(influence);
 				if (influences.get(influence).containsKey(GlobalConstants.BIO)
@@ -596,7 +624,8 @@ public class GCMFile {
 					}
 				}
 			}
-			else if (influences.get(influence).get(GlobalConstants.TYPE).equals(GlobalConstants.REPRESSION)) {
+			else if (influences.get(influence).get(GlobalConstants.TYPE).equals(
+					GlobalConstants.REPRESSION)) {
 				String input = getInput(influence);
 				String output = getOutput(influence);
 				if (influences.get(influence).containsKey(GlobalConstants.BIO)
@@ -638,23 +667,31 @@ public class GCMFile {
 				LHPN.addTransition(specs.get(i) + "_trans" + transNum);
 				LHPN.addMovement(previousPlaceName, specs.get(i) + "_trans" + transNum);
 				LHPN.addMovement(specs.get(i) + "_trans" + transNum, specs.get(i) + placeNum);
-				LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), (String) threshold);
+				LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i),
+						(String) threshold);
 				ArrayList<String> activators = new ArrayList<String>();
 				ArrayList<String> repressors = new ArrayList<String>();
 				ArrayList<String> bioActivators = new ArrayList<String>();
 				ArrayList<String> bioRepressors = new ArrayList<String>();
 				ArrayList<String> proms = new ArrayList<String>();
-				Double global_np = Double.parseDouble(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
-				Double global_ng = Double.parseDouble(parameters.get(GlobalConstants.PROMOTER_COUNT_STRING));
-				Double global_kb = Double.parseDouble(parameters.get(GlobalConstants.KBASAL_STRING));
+				Double global_np = Double.parseDouble(parameters
+						.get(GlobalConstants.STOICHIOMETRY_STRING));
+				Double global_ng = Double.parseDouble(parameters
+						.get(GlobalConstants.PROMOTER_COUNT_STRING));
+				Double global_kb = Double
+						.parseDouble(parameters.get(GlobalConstants.KBASAL_STRING));
 				Double global_Kb = Double.parseDouble(parameters.get(GlobalConstants.KBIO_STRING));
-				Double global_Ko = Double.parseDouble(parameters.get(GlobalConstants.RNAP_BINDING_STRING));
-				Double global_ka = Double.parseDouble(parameters.get(GlobalConstants.ACTIVED_STRING));
+				Double global_Ko = Double.parseDouble(parameters
+						.get(GlobalConstants.RNAP_BINDING_STRING));
+				Double global_ka = Double.parseDouble(parameters
+						.get(GlobalConstants.ACTIVED_STRING));
 				Double global_Ka = Double.parseDouble(parameters.get(GlobalConstants.KACT_STRING));
 				Double global_ko = Double.parseDouble(parameters.get(GlobalConstants.OCR_STRING));
 				Double global_Kr = Double.parseDouble(parameters.get(GlobalConstants.KREP_STRING));
-				Double global_kd = Double.parseDouble(parameters.get(GlobalConstants.KDECAY_STRING));
-				Double global_nc = Double.parseDouble(parameters.get(GlobalConstants.COOPERATIVITY_STRING));
+				Double global_kd = Double
+						.parseDouble(parameters.get(GlobalConstants.KDECAY_STRING));
+				Double global_nc = Double.parseDouble(parameters
+						.get(GlobalConstants.COOPERATIVITY_STRING));
 				Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
 				Double np = global_np;
 				Double ng = global_ng;
@@ -701,16 +738,19 @@ public class GCMFile {
 					if (promoters.containsKey(promoter)) {
 						Properties p = promoters.get(promoter);
 						if (p.containsKey(GlobalConstants.PROMOTER_COUNT_STRING)) {
-							ng = Double.parseDouble((String) p.get(GlobalConstants.PROMOTER_COUNT_STRING));
+							ng = Double.parseDouble((String) p
+									.get(GlobalConstants.PROMOTER_COUNT_STRING));
 						}
 						if (p.containsKey(GlobalConstants.RNAP_BINDING_STRING)) {
-							Ko = Double.parseDouble((String) p.get(GlobalConstants.RNAP_BINDING_STRING));
+							Ko = Double.parseDouble((String) p
+									.get(GlobalConstants.RNAP_BINDING_STRING));
 						}
 						if (p.containsKey(GlobalConstants.OCR_STRING)) {
 							ko = Double.parseDouble((String) p.get(GlobalConstants.OCR_STRING));
 						}
 						if (p.containsKey(GlobalConstants.STOICHIOMETRY_STRING)) {
-							np = Double.parseDouble((String) p.get(GlobalConstants.STOICHIOMETRY_STRING));
+							np = Double.parseDouble((String) p
+									.get(GlobalConstants.STOICHIOMETRY_STRING));
 						}
 						if (p.containsKey(GlobalConstants.KBASAL_STRING)) {
 							kb = Double.parseDouble((String) p.get(GlobalConstants.KBASAL_STRING));
@@ -728,7 +768,8 @@ public class GCMFile {
 							Properties p = influences.get(influence);
 							Kb = global_Kb;
 							if (p.containsKey(GlobalConstants.KBIO_STRING)) {
-								Kb = Double.parseDouble((String) p.get(GlobalConstants.KBIO_STRING));
+								Kb = Double
+										.parseDouble((String) p.get(GlobalConstants.KBIO_STRING));
 							}
 							if (addBio.equals("")) {
 								addBio = Kb + "*" + split[1];
@@ -750,7 +791,8 @@ public class GCMFile {
 							Properties p = influences.get(influence);
 							Kb = global_Kb;
 							if (p.containsKey(GlobalConstants.KBIO_STRING)) {
-								Kb = Double.parseDouble((String) p.get(GlobalConstants.KBIO_STRING));
+								Kb = Double
+										.parseDouble((String) p.get(GlobalConstants.KBIO_STRING));
 							}
 							if (addBio.equals("")) {
 								addBio = Kb + "*" + split[1];
@@ -777,7 +819,7 @@ public class GCMFile {
 						if (split[0].equals(promoter)) {
 							promRepressors.add(split[1] + ":" + split[2]);
 						}
-					}					
+					}
 					if (promActivators.size() != 0) {
 						promRate += "(" + np + "*" + ng + ")*((" + kb + "*" + Ko + "*" + RNAP + ")";
 						for (String act : promActivators) {
@@ -787,15 +829,19 @@ public class GCMFile {
 							Kr = global_Kr;
 							Ka = global_Ka;
 							if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
-								nc = Double.parseDouble((String) p.get(GlobalConstants.COOPERATIVITY_STRING));
+								nc = Double.parseDouble((String) p
+										.get(GlobalConstants.COOPERATIVITY_STRING));
 							}
 							if (p.containsKey(GlobalConstants.KREP_STRING)) {
-								Kr = Double.parseDouble((String) p.get(GlobalConstants.KREP_STRING));
+								Kr = Double
+										.parseDouble((String) p.get(GlobalConstants.KREP_STRING));
 							}
 							if (p.containsKey(GlobalConstants.KACT_STRING)) {
-								Ka = Double.parseDouble((String) p.get(GlobalConstants.KACT_STRING));
+								Ka = Double
+										.parseDouble((String) p.get(GlobalConstants.KACT_STRING));
 							}
-							promRate += "+(" + ka + "*((" + Ka + "*" + RNAP + "*" + split[0] + ")^" + nc + "))";
+							promRate += "+(" + ka + "*((" + Ka + "*" + RNAP + "*" + split[0] + ")^"
+									+ nc + "))";
 						}
 						promRate += ")/((1+(" + Ko + "*" + RNAP + "))";
 						for (String act : promActivators) {
@@ -805,13 +851,16 @@ public class GCMFile {
 							Kr = global_Kr;
 							Ka = global_Ka;
 							if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
-								nc = Double.parseDouble((String) p.get(GlobalConstants.COOPERATIVITY_STRING));
+								nc = Double.parseDouble((String) p
+										.get(GlobalConstants.COOPERATIVITY_STRING));
 							}
 							if (p.containsKey(GlobalConstants.KREP_STRING)) {
-								Kr = Double.parseDouble((String) p.get(GlobalConstants.KREP_STRING));
+								Kr = Double
+										.parseDouble((String) p.get(GlobalConstants.KREP_STRING));
 							}
 							if (p.containsKey(GlobalConstants.KACT_STRING)) {
-								Ka = Double.parseDouble((String) p.get(GlobalConstants.KACT_STRING));
+								Ka = Double
+										.parseDouble((String) p.get(GlobalConstants.KACT_STRING));
 							}
 							promRate += "+((" + Ka + "*" + RNAP + "*" + split[0] + ")^" + nc + ")";
 						}
@@ -823,13 +872,16 @@ public class GCMFile {
 								Kr = global_Kr;
 								Ka = global_Ka;
 								if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
-									nc = Double.parseDouble((String) p.get(GlobalConstants.COOPERATIVITY_STRING));
+									nc = Double.parseDouble((String) p
+											.get(GlobalConstants.COOPERATIVITY_STRING));
 								}
 								if (p.containsKey(GlobalConstants.KREP_STRING)) {
-									Kr = Double.parseDouble((String) p.get(GlobalConstants.KREP_STRING));
+									Kr = Double.parseDouble((String) p
+											.get(GlobalConstants.KREP_STRING));
 								}
 								if (p.containsKey(GlobalConstants.KACT_STRING)) {
-									Ka = Double.parseDouble((String) p.get(GlobalConstants.KACT_STRING));
+									Ka = Double.parseDouble((String) p
+											.get(GlobalConstants.KACT_STRING));
 								}
 								promRate += "+((" + Kr + "*" + split[0] + ")^" + nc + ")";
 							}
@@ -838,8 +890,8 @@ public class GCMFile {
 					}
 					else {
 						if (promRepressors.size() != 0) {
-							promRate += "(" + np + "*" + ko + "*" + ng + ")*((" + Ko + "*" + RNAP + "))/((1+(" + Ko
-									+ "*" + RNAP + "))";
+							promRate += "(" + np + "*" + ko + "*" + ng + ")*((" + Ko + "*" + RNAP
+									+ "))/((1+(" + Ko + "*" + RNAP + "))";
 							for (String rep : promRepressors) {
 								String split[] = rep.split(":");
 								Properties p = influences.get(split[1]);
@@ -847,13 +899,16 @@ public class GCMFile {
 								Kr = global_Kr;
 								Ka = global_Ka;
 								if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
-									nc = Double.parseDouble((String) p.get(GlobalConstants.COOPERATIVITY_STRING));
+									nc = Double.parseDouble((String) p
+											.get(GlobalConstants.COOPERATIVITY_STRING));
 								}
 								if (p.containsKey(GlobalConstants.KREP_STRING)) {
-									Kr = Double.parseDouble((String) p.get(GlobalConstants.KREP_STRING));
+									Kr = Double.parseDouble((String) p
+											.get(GlobalConstants.KREP_STRING));
 								}
 								if (p.containsKey(GlobalConstants.KACT_STRING)) {
-									Ka = Double.parseDouble((String) p.get(GlobalConstants.KACT_STRING));
+									Ka = Double.parseDouble((String) p
+											.get(GlobalConstants.KACT_STRING));
 								}
 								promRate += "+((" + Kr + "*" + split[0] + ")^" + nc + ")";
 							}
@@ -872,8 +927,8 @@ public class GCMFile {
 				if (rate.equals("")) {
 					rate = "0.0";
 				}
-				LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + rate + ")/" + "(" + threshold + "-"
-						+ number + ")");
+				LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + rate + ")/" + "("
+						+ threshold + "-" + number + ")");
 				transNum++;
 				LHPN.addTransition(specs.get(i) + "_trans" + transNum);
 				LHPN.addMovement(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
@@ -884,8 +939,8 @@ public class GCMFile {
 				if (p.containsKey(GlobalConstants.KDECAY_STRING)) {
 					kd = Double.parseDouble((String) p.get(GlobalConstants.KDECAY_STRING));
 				}
-				LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specs.get(i) + "*" + kd + ")/" + "("
-						+ threshold + "-" + number + ")");
+				LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specs.get(i) + "*"
+						+ kd + ")/" + "(" + threshold + "-" + number + ")");
 				transNum++;
 				previousPlaceName = specs.get(i) + placeNum;
 				placeNum++;
@@ -895,12 +950,13 @@ public class GCMFile {
 		return LHPN;
 	}
 
-	
 	/**
-	 * Save the contents to a StringBuffer. Can later be written to a file or other stream.
+	 * Save the contents to a StringBuffer. Can later be written to a file or
+	 * other stream.
+	 * 
 	 * @return
 	 */
-	public StringBuffer saveToBuffer(Boolean includeGlobals){
+	public StringBuffer saveToBuffer(Boolean includeGlobals) {
 		StringBuffer buffer = new StringBuffer("digraph G {\n");
 		for (String s : species.keySet()) {
 			buffer.append(s + " [");
@@ -936,12 +992,13 @@ public class GCMFile {
 					buffer.append(checkCompabilitySave(propName.toString()) + "=\""
 							+ prop.getProperty(propName.toString()).toString() + "\"");
 					// add sizes and positions of they are present.
-					if(	prop.get("graphx")!=null && prop.get("graphy")!=null &&
-							prop.getProperty("graphwidth")!=null && prop.getProperty("graphheight")!=null){
-							buffer.append(	",graphx="+prop.get("graphx") + 
-											",graphy="+prop.get("graphy") +
-											",graphwidth="+prop.getProperty("graphwidth")+
-											",graphheight="+prop.getProperty("graphheight"));
+					if (prop.get("graphx") != null && prop.get("graphy") != null
+							&& prop.getProperty("graphwidth") != null
+							&& prop.getProperty("graphheight") != null) {
+						buffer.append(",graphx=" + prop.get("graphx") + ",graphy="
+								+ prop.get("graphy") + ",graphwidth="
+								+ prop.getProperty("graphwidth") + ",graphheight="
+								+ prop.getProperty("graphheight"));
 					}
 				}
 			}
@@ -958,10 +1015,10 @@ public class GCMFile {
 			prop.setProperty(GlobalConstants.NAME, "\"" + getInput(s) + " " + getArrow(s) + " "
 					+ getOutput(s) + ", Promoter " + promo + "\"");
 			for (Object propName : prop.keySet()) {
-				if (propName.toString().equals("label") &&
-						prop.getProperty(propName.toString()).toString().equals("")) {
+				if (propName.toString().equals("label")
+						&& prop.getProperty(propName.toString()).toString().equals("")) {
 					buffer.append("label=\"\",");
-				}	
+				}
 				else {
 					buffer.append(checkCompabilitySave(propName.toString()) + "="
 							+ prop.getProperty(propName.toString()).toString() + ",");
@@ -973,12 +1030,10 @@ public class GCMFile {
 				if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
 					type = "vee";
 				}
-				else if (prop.getProperty(GlobalConstants.TYPE).equals(
-						GlobalConstants.REPRESSION)) {
+				else if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.REPRESSION)) {
 					type = "tee";
 				}
-				else if (prop.getProperty(GlobalConstants.TYPE).equals(
-						GlobalConstants.COMPLEX)) {
+				else if (prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.COMPLEX)) {
 					type = "plus";
 				}
 				else {
@@ -1012,9 +1067,9 @@ public class GCMFile {
 			}
 		}
 		buffer.append("}\n");
-		
+
 		// For saving .gcm file before sending to dotty, omit the rest of this.
-		if(includeGlobals){
+		if (includeGlobals) {
 			buffer.append("Global {\n");
 			for (String s : defaultParameters.keySet()) {
 				if (globalParameters.containsKey(s)) {
@@ -1070,32 +1125,33 @@ public class GCMFile {
 
 	/**
 	 * Save the current object to file.
+	 * 
 	 * @param filename
 	 */
 	public void save(String filename) {
 		try {
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
-                                                 
+
 			StringBuffer buffer = saveToBuffer(true);
-			                                     
-			p.print(buffer);                     
-			p.close();                           
-		}                                        
-		catch (FileNotFoundException e) {        
-			e.printStackTrace();                 
-		}                                        
-	}                                            
-	
+
+			p.print(buffer);
+			p.close();
+		}
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+	}
+
 	/**
-	 *  load the GCM file from a buffer.
+	 * load the GCM file from a buffer.
 	 */
-	private void loadFromBuffer(StringBuffer data){
-		
+	private void loadFromBuffer(StringBuffer data) {
+
 		species = new HashMap<String, Properties>();
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
 		components = new HashMap<String, Properties>();
-		conditions = new ArrayList<String>();    
+		conditions = new ArrayList<String>();
 		globalParameters = new HashMap<String, String>();
 		parameters = new HashMap<String, String>();
 		loadDefaultParameters();
@@ -1115,7 +1171,8 @@ public class GCMFile {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			//throw new IllegalArgumentException("Unable to parse GCM" + e.toString());
+			// throw new IllegalArgumentException("Unable to parse GCM" +
+			// e.toString());
 			// JOptionPane.showMessageDialog(BioSim.frame,
 			// "Unable to parse model, creating a blank model.", "Error",
 			// JOptionPane.ERROR_MESSAGE);
@@ -1123,16 +1180,16 @@ public class GCMFile {
 			// influences = new HashMap<String, Properties>();
 			// promoters = new HashMap<String, Properties>();
 			// globalParameters = new HashMap<String, String>();
-		}	
+		}
 	}
-	
-	public void load(String filename) {          
+
+	public void load(String filename) {
 		if (!filename.endsWith(".temp")) {
 			this.filename = filename;
 		}
 
 		StringBuffer data = new StringBuffer();
-		
+
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(filename));
 			String str;
@@ -1163,10 +1220,13 @@ public class GCMFile {
 				newInfluenceName = input + " " + arrow + " " + output + ", Promoter " + newName;
 				influences.put(newInfluenceName, influences.get(s));
 				influences.remove(s);
-				// If you don't remove the promoter, it will end up in the properties list twice, one with the old value and one with the new.
+				// If you don't remove the promoter, it will end up in the
+				// properties list twice, one with the old value and one with
+				// the new.
 				influences.get(newInfluenceName).remove(GlobalConstants.PROMOTER);
 				influences.get(newInfluenceName).setProperty(GlobalConstants.PROMOTER, newName);
-				influences.get(newInfluenceName).setProperty(GlobalConstants.NAME, newInfluenceName);
+				influences.get(newInfluenceName)
+						.setProperty(GlobalConstants.NAME, newInfluenceName);
 			}
 		}
 
@@ -1219,9 +1279,11 @@ public class GCMFile {
 							&& !Character.isDigit(condition.charAt(index + oldName.length()))
 							&& !Character.isLetter(condition.charAt(index + oldName.length()))
 							&& condition.charAt(index + oldName.length()) != '_') {
-						condition = condition.substring(0, index) + condition.substring(index, condition.length()).replace(oldName, newName);
+						condition = condition.substring(0, index)
+								+ condition.substring(index, condition.length()).replace(oldName,
+										newName);
 					}
-					index ++;
+					index++;
 					index = condition.indexOf(oldName, index);
 				}
 			}
@@ -1238,7 +1300,7 @@ public class GCMFile {
 		species.put(newName, species.get(oldName));
 		species.remove(oldName);
 	}
-	
+
 	public void changeComponentName(String oldName, String newName) {
 		String[] sArray = new String[influences.keySet().size()];
 		sArray = influences.keySet().toArray(sArray);
@@ -1285,49 +1347,54 @@ public class GCMFile {
 	}
 
 	/**
-	 * Add a component given the specified name and properties. If
-	 * either is null then they will be created using (hopefully) sensible
-	 * defaults.
-	 *  
+	 * Add a component given the specified name and properties. If either is
+	 * null then they will be created using (hopefully) sensible defaults.
+	 * 
 	 * @param name
 	 * @param properties
 	 * 
 	 * @return: the id of the created component.
 	 */
 	public String addComponent(String name, Properties properties) {
-		
-		if(name == null){
+
+		if (name == null) {
 			name = createNewObjectName("C", components);
 		}
-		
+
 		components.put(name, properties);
 		return name;
 	}
 
 	// used by createNewObjectName
 	private HashMap<String, Integer> createdHighIds;
+
 	/**
 	 * builds a sensible default name for a new species, component, or promoter.
-	 * @param prefix: a string which will begin the component name. ("S", "C", or "P")
-	 * @param hash: the internal model of species or components or promoter
+	 * 
+	 * @param prefix
+	 *            : a string which will begin the component name. ("S", "C", or
+	 *            "P")
+	 * @param hash
+	 *            : the internal model of species or components or promoter
 	 * @return: a string name for the new component.
 	 */
-	public String createNewObjectName(String prefix, HashMap<String, Properties> hash){
+	public String createNewObjectName(String prefix, HashMap<String, Properties> hash) {
 		// make sure createdHighIds exists and is initialized.
-		if(createdHighIds == null)
+		if (createdHighIds == null)
 			createdHighIds = new HashMap<String, Integer>();
-		if(createdHighIds.containsKey(prefix) == false)
+		if (createdHighIds.containsKey(prefix) == false)
 			createdHighIds.put(prefix, 0);
-		
+
 		String name;
-		do{
-			createdHighIds.put(prefix, createdHighIds.get(prefix)+1);
+		do {
+			createdHighIds.put(prefix, createdHighIds.get(prefix) + 1);
 			name = prefix + String.valueOf(createdHighIds.get(prefix));
-		}while(hash.containsKey(name));		
+		}
+		while (hash.containsKey(name));
 
 		return name;
 	}
-	
+
 	public String addCondition(String condition) {
 		boolean retval = true;
 		String finalCond = "";
@@ -1354,8 +1421,8 @@ public class GCMFile {
 				if (index == -1) {
 					break;
 				}
-				countLeft1 ++;
-				index ++;
+				countLeft1++;
+				index++;
 			}
 			index = 0;
 			while (index <= split2[0].length()) {
@@ -1363,8 +1430,8 @@ public class GCMFile {
 				if (index == -1) {
 					break;
 				}
-				countRight1 ++;
-				index ++;
+				countRight1++;
+				index++;
 			}
 			if (split2.length > 1) {
 				index = 0;
@@ -1373,8 +1440,8 @@ public class GCMFile {
 					if (index == -1) {
 						break;
 					}
-					countLeft2 ++;
-					index ++;
+					countLeft2++;
+					index++;
 				}
 				index = 0;
 				while (index <= split2[0].length()) {
@@ -1382,12 +1449,12 @@ public class GCMFile {
 					if (index == -1) {
 						break;
 					}
-					countRight2 ++;
-					index ++;
+					countRight2++;
+					index++;
 				}
 			}
 			if ((countLeft1 - countRight1) == (countRight2 - countLeft2)) {
-				for (int i = 0; i  < countLeft1 - countRight1; i ++) {
+				for (int i = 0; i < countLeft1 - countRight1; i++) {
 					split2[0] += ")";
 					split2[1] = "(" + split2[1];
 				}
@@ -1442,15 +1509,15 @@ public class GCMFile {
 			return null;
 		}
 	}
-	
+
 	public void removeCondition(String condition) {
 		conditions.remove(condition);
 	}
-	
+
 	public ArrayList<String> getConditions() {
 		return conditions;
 	}
-	
+
 	public String getSelectedCondition() {
 		if (!conditions.isEmpty()) {
 			return conditions.get(0);
@@ -1474,7 +1541,8 @@ public class GCMFile {
 			species.remove(name);
 		}
 	}
-	public void removeSpeciesAndAssociations(String name){
+
+	public void removeSpeciesAndAssociations(String name) {
 		checkRemoveSpeciesAssociations(name, true);
 		removeSpecies(name);
 	}
@@ -1482,7 +1550,7 @@ public class GCMFile {
 	public HashMap<String, Properties> getSpecies() {
 		return species;
 	}
-	
+
 	public ArrayList<String> getInputSpecies() {
 		ArrayList<String> inputs = new ArrayList<String>();
 		for (String spec : species.keySet()) {
@@ -1492,7 +1560,7 @@ public class GCMFile {
 		}
 		return inputs;
 	}
-	
+
 	public ArrayList<String> getOutputSpecies() {
 		ArrayList<String> outputs = new ArrayList<String>();
 		for (String spec : species.keySet()) {
@@ -1506,43 +1574,44 @@ public class GCMFile {
 	public HashMap<String, Properties> getComponents() {
 		return components;
 	}
-	
+
 	/**
-	 * returns all the ports in the gcm file matching type,
-	 * which must be either GlobalConstants.INPUT or 
-	 * GlobalConstants.OUTPUT.
+	 * returns all the ports in the gcm file matching type, which must be either
+	 * GlobalConstants.INPUT or GlobalConstants.OUTPUT.
+	 * 
 	 * @param type
 	 * @return
 	 */
-	public HashMap<String, Properties> getPorts(String type){
+	public HashMap<String, Properties> getPorts(String type) {
 		HashMap<String, Properties> out = new HashMap<String, Properties>();
-		for(Object ko:this.getSpecies().keySet()){
-			String key = (String)ko;
+		for (Object ko : this.getSpecies().keySet()) {
+			String key = (String) ko;
 			Properties prop = this.getSpecies().get(ko);
-			if(prop.getProperty(GlobalConstants.TYPE).equals(type)){
+			if (prop.getProperty(GlobalConstants.TYPE).equals(type)) {
 				out.put(key, prop);
-			} 
+			}
 		}
 		return out;
 	}
-	
-	public void connectComponentAndSpecies(Properties comp, String port, String specID, String type){
+
+	public void connectComponentAndSpecies(Properties comp, String port, String specID, String type) {
 		comp.put(port, specID);
 		comp.put("type_" + port, type);
 		return;
 	}
-	
+
 	/**
-	 * Given a component and the name of a species, return true if that species is connected
-	 * to that component. Optionally disconnect them as well.
+	 * Given a component and the name of a species, return true if that species
+	 * is connected to that component. Optionally disconnect them as well.
 	 */
-	public boolean checkDisconnectComponentAndSpecies(Properties comp, String speciesId, boolean disconnect){
+	public boolean checkDisconnectComponentAndSpecies(Properties comp, String speciesId,
+			boolean disconnect) {
 		// now figure out which port the species is connected to
-		for(Object p:comp.keySet()){
+		for (Object p : comp.keySet()) {
 			String key = p.toString();
-			String value = (String)comp.get(key);
-			if(value.equals(speciesId) && comp.containsKey("type_" + key)){
-				if(disconnect){
+			String value = (String) comp.get(key);
+			if (value.equals(speciesId) && comp.containsKey("type_" + key)) {
+				if (disconnect) {
 					comp.remove(key);
 					comp.remove("type_" + key);
 				}
@@ -1551,7 +1620,7 @@ public class GCMFile {
 		}
 		return false;
 	}
-	
+
 	public String getComponentPortMap(String s) {
 		String portmap = "(";
 		Properties c = components.get(s);
@@ -1599,38 +1668,42 @@ public class GCMFile {
 
 	/**
 	 * looks everywhere to see if the given species is connected to anything.
-	 * Returns true if it is. Also will delete the connections if remove parameter is true.
-	 * NOTE: This function does not check outside GCM files. Use speciesUsedInOtherGCM() for that.
+	 * Returns true if it is. Also will delete the connections if remove
+	 * parameter is true. NOTE: This function does not check outside GCM files.
+	 * Use speciesUsedInOtherGCM() for that.
+	 * 
 	 * @param remove
 	 * @return
 	 */
-	private boolean checkRemoveSpeciesAssociations(String name, boolean remove){
+	private boolean checkRemoveSpeciesAssociations(String name, boolean remove) {
 		boolean ret = false;
-		
+
 		boolean changed;
-		do{
+		do {
 			changed = false;
 			for (String s : influences.keySet()) {
 				if (s.contains(name)) {
 					ret = true;
-					if(remove){
+					if (remove) {
 						influences.remove(s);
-						// start over because the keyset changed and the forloop could be broken.
+						// start over because the keyset changed and the forloop
+						// could be broken.
 						changed = true;
 						break;
 					}
 				}
 			}
-		}while(changed == true);
-		for(String c:getComponents().keySet()){
-			if(checkDisconnectComponentAndSpecies(getComponents().get(c), name, remove))
+		}
+		while (changed == true);
+		for (String c : getComponents().keySet()) {
+			if (checkDisconnectComponentAndSpecies(getComponents().get(c), name, remove))
 				ret = true;
 		}
 		// TODO: also make sure speciesUsedInOtherGCM() gets called when needed.
 		return ret;
 	}
-	
-	public boolean speciesUsedInOtherGCM(String name){
+
+	public boolean speciesUsedInOtherGCM(String name) {
 		if (species.get(name).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)
 				|| species.get(name).getProperty(GlobalConstants.TYPE).equals(
 						GlobalConstants.OUTPUT)) {
@@ -1650,7 +1723,7 @@ public class GCMFile {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Checks to see if removing specie is okay
 	 * 
@@ -1661,7 +1734,7 @@ public class GCMFile {
 	public boolean removeSpeciesCheck(String name) {
 		return !checkRemoveSpeciesAssociations(name, false);
 	}
-	
+
 	public boolean editSpeciesCheck(String name, String newType) {
 		if (species.get(name).getProperty(GlobalConstants.TYPE).equals(newType)) {
 			return true;
@@ -1730,62 +1803,64 @@ public class GCMFile {
 		}
 	}
 
-	public void changeInfluencePromoter(String oldInfluence, String oldPromoter, String newPromoter){
-		if(oldPromoter == null)
+	public void changeInfluencePromoter(String oldInfluence, String oldPromoter, String newPromoter) {
+		if (oldPromoter == null)
 			oldPromoter = "default";
 		String pattern = oldPromoter + "$";
 		String newInfluence = oldInfluence.replaceFirst(pattern, newPromoter);
 		Properties prop = influences.get(oldInfluence);
-		
+
 		prop.remove(GlobalConstants.PROMOTER);
 		prop.setProperty(GlobalConstants.PROMOTER, newPromoter);
-		if(prop.get(GlobalConstants.NAME) == oldInfluence){
+		if (prop.get(GlobalConstants.NAME) == oldInfluence) {
 			prop.remove(GlobalConstants.NAME);
 			prop.put(GlobalConstants.NAME, newPromoter);
 		}
-		
+
 		removeInfluence(oldInfluence);
-		
+
 		influences.put(newInfluence, prop);
 	}
-	
+
 	/**
 	 * returns null if the given influence is allowed and false otherwise.
-	 * Reasons an influence wouldn't be allowed is if it shadows an existing influence,
-	 * is a no-influence and an influence already exists there, or a no-influence
-	 * already exists there.
-	 * If the influence isn't allowed, returns a reason why.
+	 * Reasons an influence wouldn't be allowed is if it shadows an existing
+	 * influence, is a no-influence and an influence already exists there, or a
+	 * no-influence already exists there. If the influence isn't allowed,
+	 * returns a reason why.
 	 */
-	public String isInfluenceAllowed(String newInfluenceName){
-		
+	public String isInfluenceAllowed(String newInfluenceName) {
+
 		String sourceID = GCMFile.getInput(newInfluenceName);
 		String targetID = GCMFile.getOutput(newInfluenceName);
-		
+
 		// Only one influence with the exact same name is allowed.
-		if(this.getInfluences().containsKey(newInfluenceName)){
+		if (this.getInfluences().containsKey(newInfluenceName)) {
 			return "there is already an influence between those species on that promoter.";
 		}
-		
+
 		// now check for existing influences between the two given species.
-		for(String infName:this.getInfluences().keySet()){
-			if(GCMFile.getInput(infName).equals(sourceID) && GCMFile.getOutput(infName).equals(targetID)){
-				// the influence goes between the same set of species. Now do some more checks.
+		for (String infName : this.getInfluences().keySet()) {
+			if (GCMFile.getInput(infName).equals(sourceID)
+					&& GCMFile.getOutput(infName).equals(targetID)) {
+				// the influence goes between the same set of species. Now do
+				// some more checks.
 				String arrow = getArrow(infName);
 				String newArrow = getArrow(newInfluenceName);
-				if(arrow.contains("x>")){
+				if (arrow.contains("x>")) {
 					return "there is a no-influence between these species.";
 				}
-				
-				if(newArrow.contains("x>")){
+
+				if (newArrow.contains("x>")) {
 					return "there is already at least one influence between these species.\nYou cannot add a no-influence until you remove the other influences.";
 				}
 			}
 		}
-		
+
 		// nothing was wrong, the influence is allowed.
 		return null;
 	}
-	
+
 	public static String getInput(String name) {
 		Pattern pattern = Pattern.compile(PARSE);
 		Matcher matcher = pattern.matcher(name);
@@ -1843,7 +1918,7 @@ public class GCMFile {
 	public HashMap<String, String> getParameters() {
 		return parameters;
 	}
-	
+
 	public boolean globalParameterIsSet(String parameter) {
 		return globalParameters.containsKey(parameter);
 	}
@@ -1856,7 +1931,7 @@ public class GCMFile {
 			return defaultParameters.get(parameter);
 		}
 	}
-	
+
 	private String getProp(Properties props, String prop) {
 		if (props.containsKey(prop))
 			return props.getProperty(prop);
@@ -1868,7 +1943,7 @@ public class GCMFile {
 		globalParameters.put(parameter, value);
 		parameters.put(parameter, value);
 	}
-	
+
 	public void setDefaultParameter(String parameter, String value) {
 		defaultParameters.put(parameter, value);
 	}
@@ -1978,7 +2053,7 @@ public class GCMFile {
 			}
 		}
 	}
-	
+
 	private void parseConditions(StringBuffer data) {
 		Pattern pattern = Pattern.compile(CONDITION);
 		Matcher matcher = pattern.matcher(data.toString());
@@ -2053,7 +2128,7 @@ public class GCMFile {
 						promoters.put(propMatcher.group(3).replaceAll("\"", ""), new Properties());
 						properties.setProperty(GlobalConstants.PROMOTER, propMatcher.group(3)
 								.replace("\"", "")); // for backwards
-														// compatibility
+						// compatibility
 					}
 				}
 				else {
@@ -2064,7 +2139,7 @@ public class GCMFile {
 						promoters.put(propMatcher.group(4).replaceAll("\"", ""), new Properties());
 						properties.setProperty(GlobalConstants.PROMOTER, propMatcher.group(4)
 								.replace("\"", "")); // for backwards
-														// compatibility
+						// compatibility
 					}
 				}
 			}
@@ -2073,39 +2148,52 @@ public class GCMFile {
 				if (components.containsKey(matcher.group(2))) {
 					components.get(matcher.group(2)).put(properties.get("port"), matcher.group(5));
 					if (properties.containsKey("type")) {
-						components.get(matcher.group(2)).put("type_" + properties.get("port"), properties.get("type"));
+						components.get(matcher.group(2)).put("type_" + properties.get("port"),
+								properties.get("type"));
 					}
 					else {
 						GCMFile file = new GCMFile(path);
-						file.load(path + separator + components.get(matcher.group(2)).getProperty("gcm"));
-						if (file.getSpecies().get(properties.get("port")).get(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)) {
-							components.get(matcher.group(2)).put("type_" + properties.get("port"), "Input");
+						file.load(path + separator
+								+ components.get(matcher.group(2)).getProperty("gcm"));
+						if (file.getSpecies().get(properties.get("port")).get(GlobalConstants.TYPE)
+								.equals(GlobalConstants.INPUT)) {
+							components.get(matcher.group(2)).put("type_" + properties.get("port"),
+									"Input");
 						}
-						else if (file.getSpecies().get(properties.get("port")).get(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
-							components.get(matcher.group(2)).put("type_" + properties.get("port"), "Output");
+						else if (file.getSpecies().get(properties.get("port")).get(
+								GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
+							components.get(matcher.group(2)).put("type_" + properties.get("port"),
+									"Output");
 						}
 					}
 				}
 				else {
 					components.get(matcher.group(5)).put(properties.get("port"), matcher.group(2));
 					if (properties.containsKey("type")) {
-						components.get(matcher.group(5)).put("type_" + properties.get("port"), properties.get("type"));
+						components.get(matcher.group(5)).put("type_" + properties.get("port"),
+								properties.get("type"));
 					}
 					else {
 						GCMFile file = new GCMFile(path);
-						file.load(path + separator + components.get(matcher.group(5)).getProperty("gcm"));
-						if (file.getSpecies().get(properties.get("port")).get(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)) {
-							components.get(matcher.group(5)).put("type_" + properties.get("port"), "Input");
+						file.load(path + separator
+								+ components.get(matcher.group(5)).getProperty("gcm"));
+						if (file.getSpecies().get(properties.get("port")).get(GlobalConstants.TYPE)
+								.equals(GlobalConstants.INPUT)) {
+							components.get(matcher.group(5)).put("type_" + properties.get("port"),
+									"Input");
 						}
-						else if (file.getSpecies().get(properties.get("port")).get(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
-							components.get(matcher.group(5)).put("type_" + properties.get("port"), "Output");
+						else if (file.getSpecies().get(properties.get("port")).get(
+								GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
+							components.get(matcher.group(5)).put("type_" + properties.get("port"),
+									"Output");
 						}
 					}
 				}
 			}
 			else {
 				String name = "";
-				int nDimer = Integer.parseInt(getProp(properties, GlobalConstants.MAX_DIMER_STRING));
+				int nDimer = Integer
+						.parseInt(getProp(properties, GlobalConstants.MAX_DIMER_STRING));
 				if (properties.containsKey("arrowhead")) {
 					if (properties.getProperty("arrowhead").indexOf("vee") != -1) {
 						properties.setProperty(GlobalConstants.TYPE, GlobalConstants.ACTIVATION);
@@ -2116,7 +2204,8 @@ public class GCMFile {
 							if (actBioMap.containsKey(promoter)) {
 								ArrayList<String> parts = actBioMap.get(promoter);
 								parts.add(matcher.group(2));
-							} else { 
+							}
+							else {
 								ArrayList<String> parts = new ArrayList<String>();
 								parts.add(matcher.group(2));
 								actBioMap.put(promoter, parts);
@@ -2124,7 +2213,7 @@ public class GCMFile {
 							properties.put(GlobalConstants.GENE_PRODUCT, matcher.group(5));
 							actBioPropMap.put(promoter, properties);
 						}
-						else if (nDimer > 1){
+						else if (nDimer > 1) {
 							complexConversion = true;
 							properties.put(GlobalConstants.TRANSCRIPTION_FACTOR, matcher.group(2));
 							properties.put(GlobalConstants.GENE_PRODUCT, matcher.group(5));
@@ -2143,15 +2232,16 @@ public class GCMFile {
 							if (repBioMap.containsKey(promoter)) {
 								ArrayList<String> parts = repBioMap.get(promoter);
 								parts.add(matcher.group(2));
-							} else { 
+							}
+							else {
 								ArrayList<String> parts = new ArrayList<String>();
 								parts.add(matcher.group(2));
 								repBioMap.put(promoter, parts);
 							}
 							properties.put(GlobalConstants.GENE_PRODUCT, matcher.group(5));
-							repBioPropMap.put(promoter, properties);						
+							repBioPropMap.put(promoter, properties);
 						}
-						else if (nDimer > 1){
+						else if (nDimer > 1) {
 							complexConversion = true;
 							properties.put(GlobalConstants.TRANSCRIPTION_FACTOR, matcher.group(2));
 							properties.put(GlobalConstants.GENE_PRODUCT, matcher.group(5));
@@ -2172,7 +2262,8 @@ public class GCMFile {
 				}
 				if (!complexConversion) {
 					if (properties.containsKey(GlobalConstants.PROMOTER)) {
-						name = name + ", Promoter " + properties.getProperty(GlobalConstants.PROMOTER);
+						name = name + ", Promoter "
+								+ properties.getProperty(GlobalConstants.PROMOTER);
 					}
 					else {
 						name = name + ", Promoter " + "default";
@@ -2191,20 +2282,24 @@ public class GCMFile {
 				}
 			}
 		}
-		//Parses mapped biochemical activation influences and adds them to the gcm as complex influences
+		// Parses mapped biochemical activation influences and adds them to the
+		// gcm as complex influences
 		parseBioInfluences(repBioMap, repBioPropMap);
 		parseBioInfluences(actBioMap, actBioPropMap);
-		//Parses collected dimer activation influences and adds them to the gcm as complex influences
+		// Parses collected dimer activation influences and adds them to the gcm
+		// as complex influences
 		parseDimerInfluences(repDimerList);
 		parseDimerInfluences(actDimerList);
 		return complexConversion;
 	}
-	
-	//Parses mapped biochemical repression influences and adds them to the gcm as complex influences
-	private void parseBioInfluences(HashMap<String, ArrayList<String>> bioMap, 
-			HashMap<String, Properties> bioPropMap){
+
+	// Parses mapped biochemical repression influences and adds them to the gcm
+	// as complex influences
+	private void parseBioInfluences(HashMap<String, ArrayList<String>> bioMap,
+			HashMap<String, Properties> bioPropMap) {
 		for (String promoter : bioMap.keySet()) {
-			//Adds activation or repression influence with complex species as input
+			// Adds activation or repression influence with complex species as
+			// input
 			String complex = "";
 			ArrayList<String> parts = bioMap.get(promoter);
 			for (String part : parts) {
@@ -2217,11 +2312,13 @@ public class GCMFile {
 				influence = influence + " -> ";
 			else
 				influence = influence + " -| ";
-			influence = influence + inflProp.getProperty(GlobalConstants.GENE_PRODUCT) + ", Promoter ";
+			influence = influence + inflProp.getProperty(GlobalConstants.GENE_PRODUCT)
+					+ ", Promoter ";
 			if (inflProp.containsKey(GlobalConstants.PROMOTER)) {
 				label = inflProp.getProperty(GlobalConstants.PROMOTER);
 				influence = influence + inflProp.getProperty(GlobalConstants.PROMOTER);
-			} else
+			}
+			else
 				influence = influence + "default";
 			label = "\"" + label + "\"";
 			inflProp.put("label", label);
@@ -2229,16 +2326,17 @@ public class GCMFile {
 			inflProp.remove(GlobalConstants.BIO);
 			inflProp.put(GlobalConstants.MAX_DIMER_STRING, "1");
 			influences.put(influence, inflProp);
-			//Adds complex species
+			// Adds complex species
 			Properties compProp = new Properties();
 			compProp.put(GlobalConstants.NAME, complex);
 			compProp.put(GlobalConstants.TYPE, GlobalConstants.INTERNAL);
-			compProp.put(GlobalConstants.KCOMPLEX_STRING, 
-					getProp(inflProp, GlobalConstants.KBIO_STRING));
+			compProp.put(GlobalConstants.KCOMPLEX_STRING, getProp(inflProp,
+					GlobalConstants.KBIO_STRING));
 			compProp.put(GlobalConstants.INITIAL_STRING, "0");
 			compProp.put(GlobalConstants.KDECAY_STRING, "0");
 			species.put(complex, compProp);
-			//Adds complex formation influences with biochemical species as inputs
+			// Adds complex formation influences with biochemical species as
+			// inputs
 			for (String part : parts) {
 				String compInfluence = part + " +> " + complex;
 				Properties compFormProp = new Properties();
@@ -2250,10 +2348,11 @@ public class GCMFile {
 			}
 		}
 	}
-	
+
 	private void parseDimerInfluences(ArrayList<Properties> dimerList) {
 		for (Properties inflProp : dimerList) {
-			//Adds activation or repression influence with complex species as input
+			// Adds activation or repression influence with complex species as
+			// input
 			String monomer = getProp(inflProp, GlobalConstants.TRANSCRIPTION_FACTOR);
 			String nDimer = getProp(inflProp, GlobalConstants.MAX_DIMER_STRING);
 			String complex = monomer + "_" + nDimer;
@@ -2263,27 +2362,29 @@ public class GCMFile {
 				influence = influence + " -> ";
 			else
 				influence = influence + " -| ";
-			influence = influence + inflProp.getProperty(GlobalConstants.GENE_PRODUCT) + ", Promoter ";
+			influence = influence + inflProp.getProperty(GlobalConstants.GENE_PRODUCT)
+					+ ", Promoter ";
 			if (inflProp.containsKey(GlobalConstants.PROMOTER)) {
 				label = inflProp.getProperty(GlobalConstants.PROMOTER);
 				influence = influence + inflProp.getProperty(GlobalConstants.PROMOTER);
-			} else
+			}
+			else
 				influence = influence + "default";
 			label = "\"" + label + "\"";
 			inflProp.put(GlobalConstants.NAME, influence);
 			inflProp.remove(GlobalConstants.BIO);
 			inflProp.put(GlobalConstants.MAX_DIMER_STRING, "1");
 			influences.put(influence, inflProp);
-			//Adds complex species
+			// Adds complex species
 			Properties compProp = new Properties();
 			compProp.put(GlobalConstants.NAME, complex);
 			compProp.put(GlobalConstants.TYPE, GlobalConstants.INTERNAL);
-			compProp.put(GlobalConstants.KCOMPLEX_STRING, 
-					getProp(species.get(monomer), GlobalConstants.KASSOCIATION_STRING));
+			compProp.put(GlobalConstants.KCOMPLEX_STRING, getProp(species.get(monomer),
+					GlobalConstants.KASSOCIATION_STRING));
 			compProp.put(GlobalConstants.INITIAL_STRING, "0");
 			compProp.put(GlobalConstants.KDECAY_STRING, "0");
 			species.put(complex, compProp);
-			//Adds complex formation influence with monomer as input
+			// Adds complex formation influence with monomer as input
 			String compInfluence = monomer + " +> " + complex;
 			Properties compFormProp = new Properties();
 			compFormProp.put("label", "\"+\"");
@@ -2355,7 +2456,7 @@ public class GCMFile {
 		}
 		return key;
 	}
-	
+
 	private ArrayList<String> setToArrayList(Set<String> set) {
 		ArrayList<String> array = new ArrayList<String>();
 		for (String s : set) {
@@ -2375,7 +2476,8 @@ public class GCMFile {
 			for (int j = 0; j < mainDoc.getModel().getNumCompartmentTypes(); j++) {
 				if (mainDoc.getModel().getCompartmentType(j).getId().equals(c.getId())) {
 					add = false;
-					org.sbml.libsbml.CompartmentType comp = mainDoc.getModel().getCompartmentType(j);
+					org.sbml.libsbml.CompartmentType comp = mainDoc.getModel()
+							.getCompartmentType(j);
 					if (!c.getName().equals(comp.getName())) {
 						return null;
 					}
@@ -2449,7 +2551,8 @@ public class GCMFile {
 			String newName = compName + "_" + spec.getId();
 			for (Object port : getComponents().get(compName).keySet()) {
 				if (spec.getId().equals((String) port)) {
-					newName = "_" + compName + "_" + getComponents().get(compName).getProperty((String) port);
+					newName = "_" + compName + "_"
+							+ getComponents().get(compName).getProperty((String) port);
 				}
 			}
 			updateVarId(true, spec.getId(), newName, doc);
@@ -2652,7 +2755,8 @@ public class GCMFile {
 								if (!react.getSpecies().equals(react2.getSpecies())) {
 									return null;
 								}
-								if (!react.getStoichiometryMath().equals(react2.getStoichiometryMath())) {
+								if (!react.getStoichiometryMath().equals(
+										react2.getStoichiometryMath())) {
 									return null;
 								}
 								if (react.getStoichiometry() != react2.getStoichiometry()) {
@@ -2677,7 +2781,8 @@ public class GCMFile {
 								if (!react.getSpecies().equals(react2.getSpecies())) {
 									return null;
 								}
-								if (!react.getStoichiometryMath().equals(react2.getStoichiometryMath())) {
+								if (!react.getStoichiometryMath().equals(
+										react2.getStoichiometryMath())) {
 									return null;
 								}
 								if (react.getStoichiometry() != react2.getStoichiometry()) {
@@ -2852,7 +2957,8 @@ public class GCMFile {
 			return;
 		Model model = document.getModel();
 		for (int i = 0; i < model.getNumSpecies(); i++) {
-			org.sbml.libsbml.Species species = (org.sbml.libsbml.Species) model.getListOfSpecies().get(i);
+			org.sbml.libsbml.Species species = (org.sbml.libsbml.Species) model.getListOfSpecies()
+					.get(i);
 			if (species.getCompartment().equals(origId)) {
 				species.setCompartment(newId);
 			}
@@ -2861,13 +2967,15 @@ public class GCMFile {
 			}
 		}
 		for (int i = 0; i < model.getNumCompartments(); i++) {
-			org.sbml.libsbml.Compartment compartment = (org.sbml.libsbml.Compartment) model.getListOfCompartments().get(i);
+			org.sbml.libsbml.Compartment compartment = (org.sbml.libsbml.Compartment) model
+					.getListOfCompartments().get(i);
 			if (compartment.getCompartmentType().equals(origId)) {
 				compartment.setCompartmentType(newId);
 			}
 		}
 		for (int i = 0; i < model.getNumReactions(); i++) {
-			org.sbml.libsbml.Reaction reaction = (org.sbml.libsbml.Reaction) model.getListOfReactions().get(i);
+			org.sbml.libsbml.Reaction reaction = (org.sbml.libsbml.Reaction) model
+					.getListOfReactions().get(i);
 			for (int j = 0; j < reaction.getNumProducts(); j++) {
 				if (reaction.getProduct(j).isSetSpecies()) {
 					SpeciesReference specRef = reaction.getProduct(j);
@@ -2875,8 +2983,9 @@ public class GCMFile {
 						specRef.setSpecies(newId);
 					}
 					if (specRef.isSetStoichiometryMath()) {
-						specRef.getStoichiometryMath().setMath(updateMathVar(specRef
-								.getStoichiometryMath().getMath(), origId, newId));
+						specRef.getStoichiometryMath().setMath(
+								updateMathVar(specRef.getStoichiometryMath().getMath(), origId,
+										newId));
 					}
 				}
 			}
@@ -2897,8 +3006,9 @@ public class GCMFile {
 						specRef.setSpecies(newId);
 					}
 					if (specRef.isSetStoichiometryMath()) {
-						specRef.getStoichiometryMath().setMath(updateMathVar(specRef
-								.getStoichiometryMath().getMath(), origId, newId));
+						specRef.getStoichiometryMath().setMath(
+								updateMathVar(specRef.getStoichiometryMath().getMath(), origId,
+										newId));
 					}
 				}
 			}
@@ -2907,7 +3017,8 @@ public class GCMFile {
 		}
 		if (model.getNumInitialAssignments() > 0) {
 			for (int i = 0; i < model.getNumInitialAssignments(); i++) {
-				InitialAssignment init = (InitialAssignment) model.getListOfInitialAssignments().get(i);
+				InitialAssignment init = (InitialAssignment) model.getListOfInitialAssignments()
+						.get(i);
 				if (origId.equals(init.getSymbol())) {
 					init.setSymbol(newId);
 				}
@@ -2931,12 +3042,15 @@ public class GCMFile {
 		}
 		if (model.getNumEvents() > 0) {
 			for (int i = 0; i < model.getNumEvents(); i++) {
-				org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) model.getListOfEvents().get(i);
+				org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) model.getListOfEvents()
+						.get(i);
 				if (event.isSetTrigger()) {
-					event.getTrigger().setMath(updateMathVar(event.getTrigger().getMath(), origId, newId));
+					event.getTrigger().setMath(
+							updateMathVar(event.getTrigger().getMath(), origId, newId));
 				}
 				if (event.isSetDelay()) {
-					event.getDelay().setMath(updateMathVar(event.getDelay().getMath(), origId, newId));
+					event.getDelay().setMath(
+							updateMathVar(event.getDelay().getMath(), origId, newId));
 				}
 				for (int j = 0; j < event.getNumEventAssignments(); j++) {
 					EventAssignment ea = (EventAssignment) event.getListOfEventAssignments().get(j);
@@ -2989,34 +3103,36 @@ public class GCMFile {
 				node.setType(libsbml.AST_FUNCTION_ARCTANH);
 			}
 		}
-	
+
 		for (int c = 0; c < node.getNumChildren(); c++)
 			setTimeAndTrigVar(node.getChild(c));
 	}
-	
-	public String getFilename(){
+
+	public String getFilename() {
 		return filename;
 	}
-	
-	public String getPath(){
+
+	public String getPath() {
 		return path;
 	}
 
-	public void makeUndoPoint(){
+	public void makeUndoPoint() {
 		StringBuffer up = this.saveToBuffer(true);
 		undoManager.makeUndoPoint(up);
 	}
-	public void undo(){
-		StringBuffer p = (StringBuffer)undoManager.undo();
-		if(p != null)
+
+	public void undo() {
+		StringBuffer p = (StringBuffer) undoManager.undo();
+		if (p != null)
 			this.loadFromBuffer(p);
 	}
-	public void redo(){
-		StringBuffer p = (StringBuffer)undoManager.redo();
-		if(p != null)
+
+	public void redo() {
+		StringBuffer p = (StringBuffer) undoManager.redo();
+		if (p != null)
 			this.loadFromBuffer(p);
-	}	
-	
+	}
+
 	private static final String NETWORK = "digraph\\sG\\s\\{([^}]*)\\s\\}";
 
 	private static final String STATE = "(^|\\n) *([^- \\n]*) *\\[(.*)\\]";
@@ -3031,7 +3147,7 @@ public class GCMFile {
 	private static final String PROPERTY = "([a-zA-Z\\ \\-]+)=(\"([^\"]*)\"|([^\\s,]+))";
 
 	private static final String GLOBAL = "Global\\s\\{([^}]*)\\s\\}";
-	
+
 	private static final String CONDITION = "Conditions\\s\\{([^}]*)\\s\\}";
 
 	private static final String SBMLFILE = GlobalConstants.SBMLFILE + "=\"([^\"]*)\"";
@@ -3058,7 +3174,7 @@ public class GCMFile {
 	private HashMap<String, Properties> promoters;
 
 	private HashMap<String, Properties> components;
-	
+
 	private ArrayList<String> conditions;
 
 	private HashMap<String, String> parameters;
@@ -3066,7 +3182,7 @@ public class GCMFile {
 	private HashMap<String, String> defaultParameters;
 
 	private HashMap<String, String> globalParameters;
-	
+
 	private String path;
-	
+
 }
