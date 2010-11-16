@@ -18,6 +18,7 @@ import lhpn2sbml.parser.Translator;
 import biomodelsim.*;
 import gcm2sbml.gui.GCM2SBMLEditor;
 import gcm2sbml.parser.GCMFile;
+import gcm2sbml.util.GlobalConstants;
 import graph.*;
 import buttons.*;
 import sbmleditor.*;
@@ -508,8 +509,43 @@ public class Run implements ActionListener {
 						}
 					}
 				}
-				GCMFile gcm = gcmEditor.getGCM();
-
+				GCMFile paramGCM = gcmEditor.getGCM();
+				GCMFile gcm = new GCMFile(root);
+				gcm.load(root + separator + gcmEditor.getRefFile());
+				HashMap<String, Properties> elements = paramGCM.getSpecies();
+				for (String key : elements.keySet()) {
+					for (Object prop : elements.get(key).keySet()) {
+						if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID)
+								&& !prop.equals(GlobalConstants.TYPE)) {
+							gcm.getSpecies().get(key).put(prop, elements.get(key).get(prop));
+						}
+					}
+				}
+				elements = paramGCM.getInfluences();
+				for (String key : elements.keySet()) {
+					for (Object prop : elements.get(key).keySet()) {
+						if (!prop.equals(GlobalConstants.NAME)
+								&& !prop.equals(GlobalConstants.PROMOTER)
+								&& !prop.equals(GlobalConstants.BIO)
+								&& !prop.equals(GlobalConstants.TYPE)) {
+							gcm.getInfluences().get(key).put(prop, elements.get(key).get(prop));
+						}
+					}
+				}
+				elements = paramGCM.getPromoters();
+				for (String key : elements.keySet()) {
+					for (Object prop : elements.get(key).keySet()) {
+						if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID)) {
+							gcm.getPromoters().get(key).put(prop, elements.get(key).get(prop));
+						}
+					}
+				}
+				HashMap<String, String> params = paramGCM.getGlobalParameters();
+				ArrayList<Object> remove = new ArrayList<Object>();
+				for (String key : params.keySet()) {
+					gcm.setParameter(key, params.get(key));
+					remove.add(key);
+				}
 				if (gcm.flattenGCM(false) != null) {
 					LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
 					lpnFile.save(root + separator + simName + separator + lpnName);
@@ -617,7 +653,48 @@ public class Run implements ActionListener {
 							}
 						}
 						progress.setIndeterminate(true);
-						GCMFile gcm = gcmEditor.getGCM();
+						GCMFile paramGCM = gcmEditor.getGCM();
+						GCMFile gcm = new GCMFile(root);
+						gcm.load(root + separator + gcmEditor.getRefFile());
+						HashMap<String, Properties> elements = paramGCM.getSpecies();
+						for (String key : elements.keySet()) {
+							for (Object prop : elements.get(key).keySet()) {
+								if (!prop.equals(GlobalConstants.NAME)
+										&& !prop.equals(GlobalConstants.ID)
+										&& !prop.equals(GlobalConstants.TYPE)) {
+									gcm.getSpecies().get(key)
+											.put(prop, elements.get(key).get(prop));
+								}
+							}
+						}
+						elements = paramGCM.getInfluences();
+						for (String key : elements.keySet()) {
+							for (Object prop : elements.get(key).keySet()) {
+								if (!prop.equals(GlobalConstants.NAME)
+										&& !prop.equals(GlobalConstants.PROMOTER)
+										&& !prop.equals(GlobalConstants.BIO)
+										&& !prop.equals(GlobalConstants.TYPE)) {
+									gcm.getInfluences().get(key).put(prop,
+											elements.get(key).get(prop));
+								}
+							}
+						}
+						elements = paramGCM.getPromoters();
+						for (String key : elements.keySet()) {
+							for (Object prop : elements.get(key).keySet()) {
+								if (!prop.equals(GlobalConstants.NAME)
+										&& !prop.equals(GlobalConstants.ID)) {
+									gcm.getPromoters().get(key).put(prop,
+											elements.get(key).get(prop));
+								}
+							}
+						}
+						HashMap<String, String> params = paramGCM.getGlobalParameters();
+						ArrayList<Object> remove = new ArrayList<Object>();
+						for (String key : params.keySet()) {
+							gcm.setParameter(key, params.get(key));
+							remove.add(key);
+						}
 						if (gcm.flattenGCM(false) != null) {
 							LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
 							lpnFile.save(root + separator + simName + separator + lpnName);
@@ -733,7 +810,48 @@ public class Run implements ActionListener {
 							}
 						}
 						progress.setIndeterminate(true);
-						GCMFile gcm = gcmEditor.getGCM();
+						GCMFile paramGCM = gcmEditor.getGCM();
+						GCMFile gcm = new GCMFile(root);
+						gcm.load(root + separator + gcmEditor.getRefFile());
+						HashMap<String, Properties> elements = paramGCM.getSpecies();
+						for (String key : elements.keySet()) {
+							for (Object prop : elements.get(key).keySet()) {
+								if (!prop.equals(GlobalConstants.NAME)
+										&& !prop.equals(GlobalConstants.ID)
+										&& !prop.equals(GlobalConstants.TYPE)) {
+									gcm.getSpecies().get(key)
+											.put(prop, elements.get(key).get(prop));
+								}
+							}
+						}
+						elements = paramGCM.getInfluences();
+						for (String key : elements.keySet()) {
+							for (Object prop : elements.get(key).keySet()) {
+								if (!prop.equals(GlobalConstants.NAME)
+										&& !prop.equals(GlobalConstants.PROMOTER)
+										&& !prop.equals(GlobalConstants.BIO)
+										&& !prop.equals(GlobalConstants.TYPE)) {
+									gcm.getInfluences().get(key).put(prop,
+											elements.get(key).get(prop));
+								}
+							}
+						}
+						elements = paramGCM.getPromoters();
+						for (String key : elements.keySet()) {
+							for (Object prop : elements.get(key).keySet()) {
+								if (!prop.equals(GlobalConstants.NAME)
+										&& !prop.equals(GlobalConstants.ID)) {
+									gcm.getPromoters().get(key).put(prop,
+											elements.get(key).get(prop));
+								}
+							}
+						}
+						HashMap<String, String> params = paramGCM.getGlobalParameters();
+						ArrayList<Object> remove = new ArrayList<Object>();
+						for (String key : params.keySet()) {
+							gcm.setParameter(key, params.get(key));
+							remove.add(key);
+						}
 						if (gcm.flattenGCM(false) != null) {
 							LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
 							lhpnFile.save(root + separator + lhpnName);
@@ -834,7 +952,48 @@ public class Run implements ActionListener {
 							}
 						}
 						progress.setIndeterminate(true);
-						GCMFile gcm = gcmEditor.getGCM();
+						GCMFile paramGCM = gcmEditor.getGCM();
+						GCMFile gcm = new GCMFile(root);
+						gcm.load(root + separator + gcmEditor.getRefFile());
+						HashMap<String, Properties> elements = paramGCM.getSpecies();
+						for (String key : elements.keySet()) {
+							for (Object prop : elements.get(key).keySet()) {
+								if (!prop.equals(GlobalConstants.NAME)
+										&& !prop.equals(GlobalConstants.ID)
+										&& !prop.equals(GlobalConstants.TYPE)) {
+									gcm.getSpecies().get(key)
+											.put(prop, elements.get(key).get(prop));
+								}
+							}
+						}
+						elements = paramGCM.getInfluences();
+						for (String key : elements.keySet()) {
+							for (Object prop : elements.get(key).keySet()) {
+								if (!prop.equals(GlobalConstants.NAME)
+										&& !prop.equals(GlobalConstants.PROMOTER)
+										&& !prop.equals(GlobalConstants.BIO)
+										&& !prop.equals(GlobalConstants.TYPE)) {
+									gcm.getInfluences().get(key).put(prop,
+											elements.get(key).get(prop));
+								}
+							}
+						}
+						elements = paramGCM.getPromoters();
+						for (String key : elements.keySet()) {
+							for (Object prop : elements.get(key).keySet()) {
+								if (!prop.equals(GlobalConstants.NAME)
+										&& !prop.equals(GlobalConstants.ID)) {
+									gcm.getPromoters().get(key).put(prop,
+											elements.get(key).get(prop));
+								}
+							}
+						}
+						HashMap<String, String> params = paramGCM.getGlobalParameters();
+						ArrayList<Object> remove = new ArrayList<Object>();
+						for (String key : params.keySet()) {
+							gcm.setParameter(key, params.get(key));
+							remove.add(key);
+						}
 						if (gcm.flattenGCM(false) != null) {
 							lhpnFile = gcm.convertToLHPN(specs, conLevel);
 							lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "")
