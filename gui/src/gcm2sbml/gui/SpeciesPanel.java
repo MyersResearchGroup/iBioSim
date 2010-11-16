@@ -35,7 +35,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null, Utility.IDstring,
-				paramsOnly);
+				paramsOnly, "default");
 		if (paramsOnly) {
 			field.setEnabled(false);
 		}
@@ -43,7 +43,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		add(field);
 
 		// Name field
-		field = new PropertyField(GlobalConstants.NAME, "", null, null, Utility.NAMEstring, paramsOnly);
+		field = new PropertyField(GlobalConstants.NAME, "", null, null, Utility.NAMEstring,
+				paramsOnly, "default");
 		if (paramsOnly) {
 			field.setEnabled(false);
 		}
@@ -66,21 +67,26 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		add(tempPanel);
 
 		// Initial field
+		String origString = "default";
 		if (paramsOnly) {
 			String defaultValue = refGCM.getParameter(GlobalConstants.INITIAL_STRING);
 			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.INITIAL_STRING)) {
-				defaultValue = refGCM.getSpecies().get(selected).getProperty(GlobalConstants.INITIAL_STRING);
+				defaultValue = refGCM.getSpecies().get(selected).getProperty(
+						GlobalConstants.INITIAL_STRING);
+				origString = "custom";
 			}
 			else if (gcm.globalParameterIsSet(GlobalConstants.INITIAL_STRING)) {
 				defaultValue = gcm.getParameter(GlobalConstants.INITIAL_STRING);
 			}
 			field = new PropertyField(GlobalConstants.INITIAL_STRING, gcm
-					.getParameter(GlobalConstants.INITIAL_STRING), PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
+					.getParameter(GlobalConstants.INITIAL_STRING), origString, defaultValue,
+					Utility.SWEEPstring, paramsOnly, origString);
 		}
 		else {
 			field = new PropertyField(GlobalConstants.INITIAL_STRING, gcm
-					.getParameter(GlobalConstants.INITIAL_STRING), PropertyField.states[0], gcm
-					.getParameter(GlobalConstants.INITIAL_STRING), Utility.NUMstring, paramsOnly);
+					.getParameter(GlobalConstants.INITIAL_STRING), origString, gcm
+					.getParameter(GlobalConstants.INITIAL_STRING), Utility.NUMstring, paramsOnly,
+					origString);
 		}
 		fields.put(GlobalConstants.INITIAL_STRING, field);
 		add(field);
@@ -95,66 +101,80 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		// add(field);
 
 		// Dimerization field
+		origString = "default";
 		if (paramsOnly) {
 			String defaultValue = refGCM.getParameter(GlobalConstants.KASSOCIATION_STRING);
 			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.KASSOCIATION_STRING)) {
-				defaultValue = refGCM.getSpecies().get(selected).getProperty(GlobalConstants.KASSOCIATION_STRING);
+				defaultValue = refGCM.getSpecies().get(selected).getProperty(
+						GlobalConstants.KASSOCIATION_STRING);
+				origString = "custom";
 			}
 			else if (gcm.globalParameterIsSet(GlobalConstants.KASSOCIATION_STRING)) {
 				defaultValue = gcm.getParameter(GlobalConstants.KASSOCIATION_STRING);
 			}
 			field = new PropertyField(GlobalConstants.KASSOCIATION_STRING, gcm
-					.getParameter(GlobalConstants.KASSOCIATION_STRING), PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
+					.getParameter(GlobalConstants.KASSOCIATION_STRING), origString, defaultValue,
+					Utility.SWEEPstring, paramsOnly, origString);
 		}
 		else {
 			field = new PropertyField(GlobalConstants.KASSOCIATION_STRING, gcm
-					.getParameter(GlobalConstants.KASSOCIATION_STRING), PropertyField.states[0], gcm
-					.getParameter(GlobalConstants.KASSOCIATION_STRING), Utility.NUMstring, paramsOnly);
+					.getParameter(GlobalConstants.KASSOCIATION_STRING), origString, gcm
+					.getParameter(GlobalConstants.KASSOCIATION_STRING), Utility.NUMstring,
+					paramsOnly, origString);
 		}
 		fields.put(GlobalConstants.KASSOCIATION_STRING, field);
 		add(field);
 
 		// Decay field
+		origString = "default";
 		if (paramsOnly) {
 			String defaultValue = refGCM.getParameter(GlobalConstants.KDECAY_STRING);
 			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.KDECAY_STRING)) {
-				defaultValue = refGCM.getSpecies().get(selected).getProperty(GlobalConstants.KDECAY_STRING);
+				defaultValue = refGCM.getSpecies().get(selected).getProperty(
+						GlobalConstants.KDECAY_STRING);
+				origString = "custom";
 			}
 			else if (gcm.globalParameterIsSet(GlobalConstants.KDECAY_STRING)) {
 				defaultValue = gcm.getParameter(GlobalConstants.KDECAY_STRING);
 			}
 			field = new PropertyField(GlobalConstants.KDECAY_STRING, gcm
-					.getParameter(GlobalConstants.KDECAY_STRING), PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
+					.getParameter(GlobalConstants.KDECAY_STRING), origString, defaultValue,
+					Utility.SWEEPstring, paramsOnly, origString);
 		}
 		else {
 			field = new PropertyField(GlobalConstants.KDECAY_STRING, gcm
-					.getParameter(GlobalConstants.KDECAY_STRING), PropertyField.states[0], gcm
-					.getParameter(GlobalConstants.KDECAY_STRING), Utility.NUMstring, paramsOnly);
+					.getParameter(GlobalConstants.KDECAY_STRING), origString, gcm
+					.getParameter(GlobalConstants.KDECAY_STRING), Utility.NUMstring, paramsOnly,
+					origString);
 		}
 		fields.put(GlobalConstants.KDECAY_STRING, field);
 		add(field);
 
 		// Complex Equilibrium Constant Field
+		origString = "default";
 		if (paramsOnly) {
 			String defaultValue = refGCM.getParameter(GlobalConstants.KCOMPLEX_STRING);
 			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.KCOMPLEX_STRING)) {
-				defaultValue = refGCM.getSpecies().get(selected).getProperty(GlobalConstants.KCOMPLEX_STRING);
+				defaultValue = refGCM.getSpecies().get(selected).getProperty(
+						GlobalConstants.KCOMPLEX_STRING);
+				origString = "custom";
 			}
 			else if (gcm.globalParameterIsSet(GlobalConstants.KCOMPLEX_STRING)) {
 				defaultValue = gcm.getParameter(GlobalConstants.KCOMPLEX_STRING);
 			}
 			field = new PropertyField(GlobalConstants.KCOMPLEX_STRING, gcm
-					.getParameter(GlobalConstants.KCOMPLEX_STRING), PropertyField.paramStates[0], defaultValue, Utility.SWEEPstring, paramsOnly);
+					.getParameter(GlobalConstants.KCOMPLEX_STRING), origString, defaultValue,
+					Utility.SWEEPstring, paramsOnly, origString);
 		}
 		else {
 			field = new PropertyField(GlobalConstants.KCOMPLEX_STRING, gcm
-					.getParameter(GlobalConstants.KCOMPLEX_STRING), PropertyField.states[0], gcm
-					.getParameter(GlobalConstants.KCOMPLEX_STRING), Utility.NUMstring, paramsOnly);
+					.getParameter(GlobalConstants.KCOMPLEX_STRING), origString, gcm
+					.getParameter(GlobalConstants.KCOMPLEX_STRING), Utility.NUMstring, paramsOnly,
+					origString);
 		}
 		fields.put(GlobalConstants.KCOMPLEX_STRING, field);
 		add(field);
-		
-		
+
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
@@ -175,8 +195,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	private boolean checkValues() {
 		for (PropertyField f : fields.values()) {
-			if (!f.isValidValue() || f.getValue().equals("RNAP") || 
-				f.getValue().endsWith("_RNAP") || f.getValue().endsWith("_bound")) {
+			if (!f.isValidValue() || f.getValue().equals("RNAP") || f.getValue().endsWith("_RNAP")
+					|| f.getValue().endsWith("_bound")) {
 				return false;
 			}
 		}
@@ -194,7 +214,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			if (oldName == null) {
 				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())
 						|| gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())
-						|| gcm.getPromoters().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+						|| gcm.getPromoters()
+								.containsKey(fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "Id already exists.");
 					return false;
 				}
@@ -202,7 +223,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
 				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())
 						|| gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())
-						|| gcm.getPromoters().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+						|| gcm.getPromoters()
+								.containsKey(fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "Id already exists.");
 					return false;
 				}
@@ -215,23 +237,24 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			String id = fields.get(GlobalConstants.ID).getValue();
 
-			
 			Properties property = new Properties();
-			
-			// copy the old values into the new property. Some will then be overwritten , 
-			// but others (such as positioning info) will not and need to be preserved.
-			if(oldName != null){
-				for(Object s:gcm.getSpecies().get(oldName).keySet()){
+
+			// copy the old values into the new property. Some will then be
+			// overwritten ,
+			// but others (such as positioning info) will not and need to be
+			// preserved.
+			if (oldName != null) {
+				for (Object s : gcm.getSpecies().get(oldName).keySet()) {
 					String k = s.toString();
 					String v = (gcm.getSpecies().get(oldName).getProperty(k)).toString();
 					if (!k.equals("label")) {
 						property.put(k, v);
-					}	
+					}
 				}
 			}
-			
+
 			for (PropertyField f : fields.values()) {
-				if (f.getState() == null || f.getState().equals(PropertyField.states[1]) || f.getState().equals(PropertyField.paramStates[1])) {
+				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 					property.put(f.getKey(), f.getValue());
 				}
 				else {
@@ -255,10 +278,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			gcm.addSpecies(id, property);
 			if (paramsOnly) {
-				if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(PropertyField.paramStates[1])
+				if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(
+						fields.get(GlobalConstants.INITIAL_STRING).getStates()[1])
 						|| fields.get(GlobalConstants.KASSOCIATION_STRING).getState().equals(
-								PropertyField.paramStates[1])
-						|| fields.get(GlobalConstants.KDECAY_STRING).getState().equals(PropertyField.paramStates[1])) {
+								fields.get(GlobalConstants.KASSOCIATION_STRING).getStates()[1])
+						|| fields.get(GlobalConstants.KDECAY_STRING).getState().equals(
+								fields.get(GlobalConstants.KDECAY_STRING).getStates()[1])) {
 					id += " Modified";
 				}
 			}
@@ -278,35 +303,38 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	public String updates() {
 		String updates = "";
 		if (paramsOnly) {
-			if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(PropertyField.paramStates[1])) {
+			if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(
+					fields.get(GlobalConstants.INITIAL_STRING).getStates()[1])) {
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
 						+ CompatibilityFixer.getSBMLName(GlobalConstants.INITIAL_STRING) + " "
 						+ fields.get(GlobalConstants.INITIAL_STRING).getValue();
 			}
-			if (fields.get(GlobalConstants.KASSOCIATION_STRING).getState()
-					.equals(PropertyField.paramStates[1])) {
+			if (fields.get(GlobalConstants.KASSOCIATION_STRING).getState().equals(
+					fields.get(GlobalConstants.KASSOCIATION_STRING).getStates()[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.KASSOCIATION_STRING) + " "
-				+ fields.get(GlobalConstants.KASSOCIATION_STRING).getValue();
+						+ CompatibilityFixer.getSBMLName(GlobalConstants.KASSOCIATION_STRING) + " "
+						+ fields.get(GlobalConstants.KASSOCIATION_STRING).getValue();
 			}
-			if (fields.get(GlobalConstants.KDECAY_STRING).getState().equals(PropertyField.paramStates[1])) {
+			if (fields.get(GlobalConstants.KDECAY_STRING).getState().equals(
+					fields.get(GlobalConstants.KDECAY_STRING).getStates()[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.KDECAY_STRING) + " "
-				+ fields.get(GlobalConstants.KDECAY_STRING).getValue();
+						+ CompatibilityFixer.getSBMLName(GlobalConstants.KDECAY_STRING) + " "
+						+ fields.get(GlobalConstants.KDECAY_STRING).getValue();
 			}
-			if (fields.get(GlobalConstants.KCOMPLEX_STRING).getState().equals(PropertyField.paramStates[1])) {
+			if (fields.get(GlobalConstants.KCOMPLEX_STRING).getState().equals(
+					fields.get(GlobalConstants.KCOMPLEX_STRING).getStates()[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.KCOMPLEX_STRING) + " "
-				+ fields.get(GlobalConstants.KCOMPLEX_STRING).getValue();
+						+ CompatibilityFixer.getSBMLName(GlobalConstants.KCOMPLEX_STRING) + " "
+						+ fields.get(GlobalConstants.KCOMPLEX_STRING).getValue();
 			}
 			if (updates.equals("")) {
 				updates += fields.get(GlobalConstants.ID).getValue() + "/";

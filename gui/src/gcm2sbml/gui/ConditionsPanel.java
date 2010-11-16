@@ -24,7 +24,7 @@ public class ConditionsPanel extends JPanel {
 
 		// Condition field
 		PropertyField field = new PropertyField("Property", "", null, null, "Property",
-				paramsOnly);
+				paramsOnly, "default");
 		fields.put("Property", field);
 		add(field);
 

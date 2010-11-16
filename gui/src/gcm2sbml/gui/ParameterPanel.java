@@ -29,13 +29,22 @@ public class ParameterPanel extends JPanel {
 
 		// Initial field
 		PropertyField field;
+		String origString = "default";
 		if (paramsOnly) {
-			field = new PropertyField(selected, gcm
-					.getParameter(selected), PropertyField.paramStates[0], refGCM.getParameter(selected), Utility.SWEEPstring, paramsOnly);
-		} else {
-			field = new PropertyField(selected, gcm
-					.getParameter(selected), PropertyField.states[0], gcm
-					.getDefaultParameters().get(selected), Utility.NUMstring, paramsOnly);
+			if (refGCM.getGlobalParameters().containsKey(selected)) {
+				origString = "custom";
+				field = new PropertyField(selected, gcm.getParameter(selected), origString, refGCM
+						.getParameter(selected), Utility.SWEEPstring, paramsOnly, origString);
+			}
+			else {
+				field = new PropertyField(selected, gcm.getParameter(selected), origString, refGCM
+						.getParameter(selected), Utility.SWEEPstring, paramsOnly, origString);
+			}
+		}
+		else {
+			field = new PropertyField(selected, gcm.getParameter(selected), origString, gcm
+					.getDefaultParameters().get(selected), Utility.NUMstring, paramsOnly,
+					origString);
 		}
 		fields.put(selected, field);
 		if (gcm.getGlobalParameters().containsKey(selected)) {
@@ -71,24 +80,42 @@ public class ParameterPanel extends JPanel {
 				return false;
 			}
 			String newItem = CompatibilityFixer.getGuiName(selected);
-			if (fields.get(selected).getState().equals(PropertyField.states[1])
-					|| fields.get(selected).getState().equals(PropertyField.paramStates[1])) {
+			if (fields.get(selected).getState().equals(fields.get(selected).getStates()[1])) {
 				gcm.setParameter(selected, fields.get(selected).getValue());
-				newItem = newItem +  " ("+CompatibilityFixer.getSBMLName(selected)+"), ";
+				newItem = newItem + " (" + CompatibilityFixer.getSBMLName(selected) + "), ";
 				if (paramsOnly && fields.get(selected).getValue().trim().startsWith("(")) {
 					newItem = newItem + "Sweep, " + fields.get(selected).getValue();
-					changedParam += CompatibilityFixer.getSBMLName(selected) + " " + fields.get(selected).getValue();
-				} else {
-					newItem = newItem + "Custom, " + fields.get(selected).getValue();
-					changedParam += CompatibilityFixer.getSBMLName(selected) + " " + fields.get(selected).getValue();
+					changedParam += CompatibilityFixer.getSBMLName(selected) + " "
+							+ fields.get(selected).getValue();
 				}
-			} else if (fields.get(selected).getState().equals(PropertyField.states[0])) {
+				else {
+					if (paramsOnly) {
+						newItem = newItem + "Modified, " + fields.get(selected).getValue();
+					}
+					else {
+						newItem = newItem + "Custom, " + fields.get(selected).getValue();
+					}
+					changedParam += CompatibilityFixer.getSBMLName(selected) + " "
+							+ fields.get(selected).getValue();
+				}
+			}
+			else if (fields.get(selected).getState().equals(fields.get(selected).getStates()[0])) {
 				gcm.removeParameter(selected);
-				newItem = newItem + " ("+CompatibilityFixer.getSBMLName(selected)+"), Default, " + gcm.getParameter(selected);
-			} else if (fields.get(selected).getState().equals(PropertyField.paramStates[0])) {
-				gcm.removeParameter(selected);
-				newItem = newItem + " ("+CompatibilityFixer.getSBMLName(selected)+"), Default, " + refGCM.getParameter(selected);
-				changedParam += CompatibilityFixer.getSBMLName(selected);
+				if (paramsOnly) {
+					if (refGCM.getGlobalParameters().containsKey(selected)) {
+						newItem = newItem + " (" + CompatibilityFixer.getSBMLName(selected)
+								+ "), Custom, " + refGCM.getParameter(selected);
+					}
+					else {
+						newItem = newItem + " (" + CompatibilityFixer.getSBMLName(selected)
+								+ "), Default, " + refGCM.getParameter(selected);
+					}
+					changedParam += CompatibilityFixer.getSBMLName(selected);
+				}
+				else {
+					newItem = newItem + " (" + CompatibilityFixer.getSBMLName(selected)
+							+ "), Default, " + gcm.getParameter(selected);
+				}
 			}
 			parameterList.removeItem(totalSelected);
 			parameterList.addItem(newItem);
