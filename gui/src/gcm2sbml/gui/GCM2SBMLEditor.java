@@ -1169,17 +1169,43 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		for (String s : gcm.getParameters().keySet()) {
 			if (gcm.getGlobalParameters().containsKey(s)) {
 				if (gcm.getParameter(s).contains("(")) {
-					results.add(CompatibilityFixer.getGuiName(s) + " (" + CompatibilityFixer.getSBMLName(s)
-							+ "), Sweep, " + gcm.getParameter(s));
+					results.add(CompatibilityFixer.getGuiName(s) + " ("
+							+ CompatibilityFixer.getSBMLName(s) + "), Sweep, "
+							+ gcm.getParameter(s));
 				}
 				else {
-					results.add(CompatibilityFixer.getGuiName(s) + " (" + CompatibilityFixer.getSBMLName(s)
-							+ "), Custom, " + gcm.getParameter(s));
+					if (paramsOnly) {
+						results.add(CompatibilityFixer.getGuiName(s) + " ("
+								+ CompatibilityFixer.getSBMLName(s) + "), Modified, "
+								+ gcm.getParameter(s));
+					}
+					else {
+						results.add(CompatibilityFixer.getGuiName(s) + " ("
+								+ CompatibilityFixer.getSBMLName(s) + "), Custom, "
+								+ gcm.getParameter(s));
+					}
 				}
 			}
 			else {
-				results.add(CompatibilityFixer.getGuiName(s) + " (" + CompatibilityFixer.getSBMLName(s)
-						+ "), Default, " + gcm.getParameter(s));
+				if (paramsOnly) {
+					GCMFile refGCM = new GCMFile(path);
+					refGCM.load(path + separator + refFile);
+					if (refGCM.getGlobalParameters().containsKey(s)) {
+						results.add(CompatibilityFixer.getGuiName(s) + " ("
+								+ CompatibilityFixer.getSBMLName(s) + "), Custom, "
+								+ gcm.getParameter(s));
+					}
+					else {
+						results.add(CompatibilityFixer.getGuiName(s) + " ("
+								+ CompatibilityFixer.getSBMLName(s) + "), Default, "
+								+ gcm.getParameter(s));
+					}
+				}
+				else {
+					results.add(CompatibilityFixer.getGuiName(s) + " ("
+							+ CompatibilityFixer.getSBMLName(s) + "), Default, "
+							+ gcm.getParameter(s));
+				}
 			}
 		}
 		return results;

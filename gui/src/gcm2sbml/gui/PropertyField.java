@@ -21,8 +21,9 @@ public class PropertyField extends JPanel implements ActionListener,
 		PropertyProvider {
 
 	public PropertyField(String name, String value, String state,
-			String defaultValue, String repExp, boolean paramsOnly) {
+			String defaultValue, String repExp, boolean paramsOnly, String origString) {
 		super(new GridLayout(1, 3));
+		paramStates = new String[] { origString, "modified" };
 		this.paramsOnly = paramsOnly;
 		if (state == null) {
 			setLayout(new GridLayout(1, 2));
@@ -34,7 +35,16 @@ public class PropertyField extends JPanel implements ActionListener,
 
 	public PropertyField(String name, String value, String state,
 			String defaultValue) {
-		this(name, value, state, defaultValue, null, false);
+		this(name, value, state, defaultValue, null, false, "default");
+	}
+	
+	public String[] getStates() {
+		if (paramsOnly) {
+			return paramStates;
+		}
+		else {
+			return states;
+		}
 	}
 
 	@Override
@@ -273,9 +283,9 @@ public class PropertyField extends JPanel implements ActionListener,
 
 	// private JLabel idL
 
-	public static final String[] states = new String[] { "default", "custom" };
+	private String[] states = new String[] { "default", "custom" };
 	
-	public static final String[] paramStates = new String[] { "original", "modified" };
+	private String[] paramStates;
 
 	private String defaultValue = null;
 	

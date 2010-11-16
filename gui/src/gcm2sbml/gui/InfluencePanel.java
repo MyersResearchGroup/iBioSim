@@ -31,7 +31,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 
 		// Name field
 		PropertyField field = new PropertyField(GlobalConstants.NAME, "", null,
-				null, "(.*)", paramsOnly);
+				null, "(.*)", paramsOnly, "default");
 		field.setEnabled(false);
 		fields.put(GlobalConstants.NAME, field);
 		add(field);
@@ -73,7 +73,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		tempLabel = new JLabel("Promoter");
 		promoterBox = new JComboBox(gcm.getPromotersAsArray());
 		((DefaultComboBoxModel) (promoterBox.getModel())).addElement("default");
-		promoterBox.setSelectedItem("default");
+		promoterBox.setSelectedItem("default");String origString = "default";
 		promoterBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
@@ -120,117 +120,127 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				+ promoterBox.getSelectedItem());
 		
 		// coop
+		String defString = "default";
 		if (paramsOnly) {
 			String defaultValue = refGCM.getParameter(GlobalConstants.COOPERATIVITY_STRING);
 			if (refGCM.getInfluences().get(selected).containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
 				defaultValue = refGCM.getInfluences().get(selected).getProperty(GlobalConstants.COOPERATIVITY_STRING);
+				defString = "custom";
 			}
 			else if (gcm.globalParameterIsSet(GlobalConstants.COOPERATIVITY_STRING)) {
 				defaultValue = gcm.getParameter(GlobalConstants.COOPERATIVITY_STRING);
 			}
 			field = new PropertyField(GlobalConstants.COOPERATIVITY_STRING, gcm
 					.getParameter(GlobalConstants.COOPERATIVITY_STRING),
-					PropertyField.paramStates[0], defaultValue,
-					Utility.SWEEPstring, paramsOnly);
+					defString, defaultValue,
+					Utility.SWEEPstring, paramsOnly, defString);
 		} else {
 			field = new PropertyField(GlobalConstants.COOPERATIVITY_STRING, gcm
 					.getParameter(GlobalConstants.COOPERATIVITY_STRING),
-					PropertyField.states[0], gcm
+					defString, gcm
 							.getParameter(GlobalConstants.COOPERATIVITY_STRING),
-					Utility.NUMstring, paramsOnly);
+					Utility.NUMstring, paramsOnly, defString);
 		}
 		fields.put(GlobalConstants.COOPERATIVITY_STRING, field);
 		add(field);
 
 		// dimer
+		defString = "default";
 		if (paramsOnly) {
 			String defaultValue = refGCM.getParameter(GlobalConstants.MAX_DIMER_STRING);
 			if (refGCM.getInfluences().get(selected).containsKey(GlobalConstants.MAX_DIMER_STRING)) {
 				defaultValue = refGCM.getInfluences().get(selected).getProperty(GlobalConstants.MAX_DIMER_STRING);
+				defString = "custom";
 			}
 			else if (gcm.globalParameterIsSet(GlobalConstants.MAX_DIMER_STRING)) {
 				defaultValue = gcm.getParameter(GlobalConstants.MAX_DIMER_STRING);
 			}
 			field = new PropertyField(GlobalConstants.MAX_DIMER_STRING, gcm
 					.getParameter(GlobalConstants.MAX_DIMER_STRING),
-					PropertyField.paramStates[0], defaultValue,
-					Utility.SWEEPstring, paramsOnly);
+					defString, defaultValue,
+					Utility.SWEEPstring, paramsOnly, defString);
 		} else {
 			field = new PropertyField(GlobalConstants.MAX_DIMER_STRING, gcm
 					.getParameter(GlobalConstants.MAX_DIMER_STRING),
-					PropertyField.states[0], gcm
+					defString, gcm
 							.getParameter(GlobalConstants.MAX_DIMER_STRING),
-					Utility.NUMstring, paramsOnly);
+					Utility.NUMstring, paramsOnly, defString);
 		}
 		fields.put(GlobalConstants.MAX_DIMER_STRING, field);
 		add(field);
 
 		// krep
+		defString = "default";
 		if (paramsOnly) {
 			String defaultValue = refGCM.getParameter(GlobalConstants.KREP_STRING);
 			if (refGCM.getInfluences().get(selected).containsKey(GlobalConstants.KREP_STRING)) {
 				defaultValue = refGCM.getInfluences().get(selected).getProperty(GlobalConstants.KREP_STRING);
+				defString = "custom";
 			}
 			else if (gcm.globalParameterIsSet(GlobalConstants.KREP_STRING)) {
 				defaultValue = gcm.getParameter(GlobalConstants.KREP_STRING);
 			}
 			field = new PropertyField(GlobalConstants.KREP_STRING, gcm
 					.getParameter(GlobalConstants.KREP_STRING),
-					PropertyField.paramStates[0], defaultValue,
-					Utility.SWEEPstring, paramsOnly);
+					defString, defaultValue,
+					Utility.SWEEPstring, paramsOnly, defString);
 		} else {
 			field = new PropertyField(GlobalConstants.KREP_STRING, gcm
 					.getParameter(GlobalConstants.KREP_STRING),
-					PropertyField.states[0], gcm
+					defString, gcm
 							.getParameter(GlobalConstants.KREP_STRING),
-					Utility.NUMstring, paramsOnly);
+					Utility.NUMstring, paramsOnly, defString);
 		}
 		fields.put(GlobalConstants.KREP_STRING, field);
 		add(field);
 
 		// kact
+		defString = "default";
 		if (paramsOnly) {
 			String defaultValue = refGCM.getParameter(GlobalConstants.KACT_STRING);
 			if (refGCM.getInfluences().get(selected).containsKey(GlobalConstants.KACT_STRING)) {
 				defaultValue = refGCM.getInfluences().get(selected).getProperty(GlobalConstants.KACT_STRING);
+				defString = "custom";
 			}
 			else if (gcm.globalParameterIsSet(GlobalConstants.KACT_STRING)) {
 				defaultValue = gcm.getParameter(GlobalConstants.KACT_STRING);
 			}
 			field = new PropertyField(GlobalConstants.KACT_STRING, gcm
 					.getParameter(GlobalConstants.KACT_STRING),
-					PropertyField.paramStates[0], defaultValue,
-					Utility.SWEEPstring, paramsOnly);
+					defString, defaultValue,
+					Utility.SWEEPstring, paramsOnly, defString);
 		} else {
 			field = new PropertyField(GlobalConstants.KACT_STRING, gcm
 					.getParameter(GlobalConstants.KACT_STRING),
-					PropertyField.states[0], gcm
+					defString, gcm
 							.getParameter(GlobalConstants.KACT_STRING),
-					Utility.NUMstring, paramsOnly);
+					Utility.NUMstring, paramsOnly, defString);
 		}
 		fields.put(GlobalConstants.KACT_STRING, field);
 		field.setEnabled(false);
 		add(field);
 
 		// kbio
+		defString = "default";
 		if (paramsOnly) {
 			String defaultValue = refGCM.getParameter(GlobalConstants.KBIO_STRING);
 			if (refGCM.getInfluences().get(selected).containsKey(GlobalConstants.KBIO_STRING)) {
 				defaultValue = refGCM.getInfluences().get(selected).getProperty(GlobalConstants.KBIO_STRING);
+				defString = "custom";
 			}
 			else if (gcm.globalParameterIsSet(GlobalConstants.KBIO_STRING)) {
 				defaultValue = gcm.getParameter(GlobalConstants.KBIO_STRING);
 			}
 			field = new PropertyField(GlobalConstants.KBIO_STRING, gcm
 					.getParameter(GlobalConstants.KBIO_STRING),
-					PropertyField.paramStates[0], defaultValue,
-					Utility.SWEEPstring, paramsOnly);
+					defString, defaultValue,
+					Utility.SWEEPstring, paramsOnly, defString);
 		} else {
 			field = new PropertyField(GlobalConstants.KBIO_STRING, gcm
 					.getParameter(GlobalConstants.KBIO_STRING),
-					PropertyField.states[0], gcm
+					defString, gcm
 							.getParameter(GlobalConstants.KBIO_STRING),
-					Utility.NUMstring, paramsOnly);
+					Utility.NUMstring, paramsOnly, defString);
 		}
 		fields.put(GlobalConstants.KBIO_STRING, field);
 		field.setEnabled(false);
@@ -326,8 +336,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			Properties property = new Properties();
 			for (PropertyField f : fields.values()) {
 				if (f.getState() == null
-						|| f.getState().equals(PropertyField.states[1])
-						|| f.getState().equals(PropertyField.paramStates[1])) {
+						|| f.getState().equals(f.getStates()[1])) {
 					property.put(f.getKey(), f.getValue());
 				}
 			}
@@ -354,11 +363,11 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			list.removeItem(id + " Modified");
 			gcm.addInfluences(id, property);
 			if (paramsOnly) {
-				if (fields.get(GlobalConstants.COOPERATIVITY_STRING).getState().equals(PropertyField.paramStates[1]) ||
-						fields.get(GlobalConstants.MAX_DIMER_STRING).getState().equals(PropertyField.paramStates[1]) ||
-						fields.get(GlobalConstants.KREP_STRING).getState().equals(PropertyField.paramStates[1]) ||
-						fields.get(GlobalConstants.KACT_STRING).getState().equals(PropertyField.paramStates[1]) ||
-						fields.get(GlobalConstants.KBIO_STRING).getState().equals(PropertyField.paramStates[1])) {
+				if (fields.get(GlobalConstants.COOPERATIVITY_STRING).getState().equals(fields.get(GlobalConstants.COOPERATIVITY_STRING).getStates()[1]) ||
+						fields.get(GlobalConstants.MAX_DIMER_STRING).getState().equals(fields.get(GlobalConstants.MAX_DIMER_STRING).getStates()[1]) ||
+						fields.get(GlobalConstants.KREP_STRING).getState().equals(fields.get(GlobalConstants.KREP_STRING).getStates()[1]) ||
+						fields.get(GlobalConstants.KACT_STRING).getState().equals(fields.get(GlobalConstants.KACT_STRING).getStates()[1]) ||
+						fields.get(GlobalConstants.KBIO_STRING).getState().equals(fields.get(GlobalConstants.KBIO_STRING).getStates()[1])) {
 					id += " Modified";
 				}
 			}
@@ -374,13 +383,13 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	public String updates() {
 		String updates = "";
 		if (paramsOnly) {
-			if (fields.get(GlobalConstants.COOPERATIVITY_STRING).getState().equals(PropertyField.paramStates[1])) {
+			if (fields.get(GlobalConstants.COOPERATIVITY_STRING).getState().equals(fields.get(GlobalConstants.COOPERATIVITY_STRING).getStates()[1])) {
 				updates += "\"" + fields.get(GlobalConstants.NAME).getValue() + "\"/"
 						+ CompatibilityFixer.getSBMLName(GlobalConstants.COOPERATIVITY_STRING) + " "
 						+ fields.get(GlobalConstants.COOPERATIVITY_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.MAX_DIMER_STRING).getState()
-					.equals(PropertyField.paramStates[1])) {
+					.equals(fields.get(GlobalConstants.MAX_DIMER_STRING).getStates()[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
@@ -388,7 +397,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				+ CompatibilityFixer.getSBMLName(GlobalConstants.MAX_DIMER_STRING) + " "
 				+ fields.get(GlobalConstants.MAX_DIMER_STRING).getValue();
 			}
-			if (fields.get(GlobalConstants.KREP_STRING).getState().equals(PropertyField.paramStates[1])) {
+			if (fields.get(GlobalConstants.KREP_STRING).getState().equals(fields.get(GlobalConstants.KREP_STRING).getStates()[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
@@ -396,7 +405,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				+ CompatibilityFixer.getSBMLName(GlobalConstants.KREP_STRING) + " "
 				+ fields.get(GlobalConstants.KREP_STRING).getValue();
 			}
-			if (fields.get(GlobalConstants.KACT_STRING).getState().equals(PropertyField.paramStates[1])) {
+			if (fields.get(GlobalConstants.KACT_STRING).getState().equals(fields.get(GlobalConstants.KACT_STRING).getStates()[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
@@ -404,7 +413,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				+ CompatibilityFixer.getSBMLName(GlobalConstants.KACT_STRING) + " "
 				+ fields.get(GlobalConstants.KACT_STRING).getValue();
 			}
-			if (fields.get(GlobalConstants.KBIO_STRING).getState().equals(PropertyField.paramStates[1])) {
+			if (fields.get(GlobalConstants.KBIO_STRING).getState().equals(fields.get(GlobalConstants.KBIO_STRING).getStates()[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}

@@ -91,7 +91,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
-				Utility.IDstring, paramsOnly);
+				Utility.IDstring, paramsOnly, "default");
 		fields.put(GlobalConstants.ID, field);
 		add(field);
 
@@ -200,7 +200,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			}
 			
 			for (PropertyField f : fields.values()) {
-				if (f.getState() == null || f.getState().equals(PropertyField.states[1])) {
+				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 					property.put(f.getKey(), f.getValue());
 				}
 			}
