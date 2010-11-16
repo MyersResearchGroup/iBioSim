@@ -1623,7 +1623,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							if (sbml.isDirty()) {
 								Object[] options = { "Yes", "No" };
 								int value = JOptionPane.showOptionDialog(BioSim.frame,
-										"Do you want to save changes to " + sbmlEditor.getRefFile()
+										"Do you want to save changes to " + gcmEditor.getSBMLFile()
 												+ " before running the simulation?",
 										"Save Changes", JOptionPane.YES_NO_OPTION,
 										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
