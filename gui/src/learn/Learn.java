@@ -76,6 +76,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 	private boolean firstRead;
 	
 	private JTextField backgroundField;
+	
+	private JPanel advancedOptionsPanel;
 
 	/**
 	 * This is the constructor for the Learn class. It initializes all the input
@@ -473,7 +475,8 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		JTabbedPane tab = new JTabbedPane();
 		tab.addTab("Basic Options", firstTab);
 		tab.addTab("Advanced Options", secondTab);
-		this.add(tab, "Center");
+		advancedOptionsPanel = secondTab;
+		this.add(firstTab, "Center");
 		// this.add(runHolder, "South");
 		firstRead = true;
 		if (user.isSelected()) {
@@ -488,6 +491,10 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		change = false;
 	}
 
+	public JPanel getAdvancedOptionsPanel() {
+		return advancedOptionsPanel;
+	}
+	
 	/**
 	 * This method performs different functions depending on what menu items or
 	 * buttons are selected.
@@ -800,48 +807,6 @@ public class Learn extends JPanel implements ActionListener, Runnable {
 		}
 		editText(0);
 	}
-
-	/*
-	 * private void levelsBin() { if (!directory.equals("")) { // File n = null;
-	 * // for (File f : new File(directory).listFiles()) { // if
-	 * (f.getAbsolutePath().contains(".tsd")) { // n = f; // } // } if (true) {
-	 * // if (n != null) { // ArrayList<String> species = new
-	 * ArrayList<String>(); // try { // InputStream input = new
-	 * FileInputStream(n); // boolean reading = true; // char cha; // while
-	 * (reading) { // String word = ""; // boolean readWord = true; // while
-	 * (readWord) { // int read = input.read(); // if (read == -1) { // reading
-	 * = false; // readWord = false; // } // cha = (char) read; // if
-	 * (Character.isWhitespace(cha)) { // word += cha; // } // else if (cha ==
-	 * ',' || cha == ':' || cha == ';' || cha == '\"' || cha // == '\'' // ||
-	 * cha == '(' || cha == ')' || cha == '[' || cha == ']') { // if
-	 * (!word.equals("") && !word.equals("time")) { // try { //
-	 * Double.parseDouble(word); // } // catch (Exception e2) { //
-	 * species.add(word); // } // } // word = ""; // } // else if (read != -1) {
-	 * // word += cha; // } // } // } // input.close(); // } // catch (Exception
-	 * e1) { // } speciesPanel.removeAll(); this.species = new
-	 * ArrayList<ArrayList<Component>>(); speciesPanel.setLayout(new
-	 * GridLayout(speciesList.size() + 1, 1)); JPanel label = new JPanel(new
-	 * GridLayout()); // label.add(new JLabel("Use")); label.add(new
-	 * JLabel("Species")); label.add(new JLabel("Number Of Bins")); for (int i =
-	 * 0; i < Integer.parseInt((String) numBins.getSelectedItem()) - 1; i++) {
-	 * label.add(new JLabel("Level " + (i + 1))); } speciesPanel.add(label); int
-	 * j = 0; for (String s : speciesList) { j++; JPanel sp = new JPanel(new
-	 * GridLayout()); ArrayList<Component> specs = new ArrayList<Component>();
-	 * // JCheckBox check = new JCheckBox(); // check.setSelected(true); //
-	 * specs.add(check); specs.add(new JTextField(s)); String[] options = { "0",
-	 * "1", "2", "3", "4", "5", "6", "7", "8", "9" }; JComboBox combo = new
-	 * JComboBox(options); combo.setSelectedItem(numBins.getSelectedItem());
-	 * specs.add(combo); ((JTextField) specs.get(0)).setEditable(false); //
-	 * sp.add(specs.get(0)); // ((JCheckBox)
-	 * specs.get(0)).addActionListener(this); // ((JCheckBox)
-	 * specs.get(0)).setActionCommand("box" + j); sp.add(specs.get(0));
-	 * sp.add(specs.get(1)); ((JComboBox) specs.get(1)).addActionListener(this);
-	 * ((JComboBox) specs.get(1)).setActionCommand("text" + j);
-	 * this.species.add(specs); for (int i = 0; i < Integer.parseInt((String)
-	 * ((JComboBox) specs.get(1)) .getSelectedItem()) - 1; i++) { specs.add(new
-	 * JTextField("")); sp.add(specs.get(i + 2)); } speciesPanel.add(sp); } } }
-	 * }
-	 */
 
 	private void editText(int num) {
 		try {

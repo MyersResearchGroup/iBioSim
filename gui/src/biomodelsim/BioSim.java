@@ -2721,29 +2721,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									+ circuitFileNoPath;
 							JPanel synthPane = new JPanel();
 							Synthesis synth = new Synthesis(work, circuitFile, log, this);
-							// synth.addMouseListener(this);
 							synthPane.add(synth);
-							/*
-							 * JLabel noData = new JLabel("No data available");
-							 * Font font = noData.getFont(); font =
-							 * font.deriveFont(Font.BOLD, 42.0f);
-							 * noData.setFont(font);
-							 * noData.setHorizontalAlignment
-							 * (SwingConstants.CENTER); lrnTab.addTab("Learn",
-							 * noData);
-							 * lrnTab.getComponentAt(lrnTab.getComponents
-							 * ().length - 1).setName("Learn"); JLabel noData1 =
-							 * new JLabel("No data available"); font =
-							 * noData1.getFont(); font =
-							 * font.deriveFont(Font.BOLD, 42.0f);
-							 * noData1.setFont(font);
-							 * noData1.setHorizontalAlignment
-							 * (SwingConstants.CENTER);
-							 * lrnTab.addTab("TSD Graph", noData1);
-							 * lrnTab.getComponentAt
-							 * (lrnTab.getComponents().length -
-							 * 1).setName("TSD Graph");
-							 */
 							addTab(synthName, synthPane, "Synthesis");
 						}
 					}
@@ -2798,60 +2776,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
 									"Error Saving File", JOptionPane.ERROR_MESSAGE);
 						}
-						/*
-						 * try { FileInputStream in = new FileInputStream(new
-						 * File(root + separator + circuitFileNoPath));
-						 * FileOutputStream out = new FileOutputStream(new
-						 * File(root + separator + verName.trim() + separator +
-						 * circuitFileNoPath)); int read = in.read(); while
-						 * (read != -1) { out.write(read); read = in.read(); }
-						 * in.close(); out.close(); } catch (Exception e1) {
-						 * JOptionPane.showMessageDialog(frame, "Unable to copy
-						 * circuit file!", "Error Saving File",
-						 * JOptionPane.ERROR_MESSAGE); }
-						 */
 						addToTree(verName.trim());
-						// String work = root + separator + verName;
-						// log.addText(circuitFile);
-						// JTabbedPane verTab = new JTabbedPane();
-						// JPanel verPane = new JPanel();
 						Verification verify = new Verification(root + separator + verName, verName,
 								circuitFileNoPath, log, this, lema, atacs);
-						// verify.addMouseListener(this);
 						verify.save();
-						// verPane.add(verify);
-						// JPanel abstPane = new JPanel();
-						// AbstPane abst = new AbstPane(root + separator +
-						// verName, verify,
-						// circuitFileNoPath, log, this, lema, atacs);
-						// abstPane.add(abst);
-						// verTab.addTab("verify", verPane);
-						// verTab.addTab("abstract", abstPane);
-						/*
-						 * JLabel noData = new JLabel("No data available"); Font
-						 * font = noData.getFont(); font =
-						 * font.deriveFont(Font.BOLD, 42.0f);
-						 * noData.setFont(font); noData.setHorizontalAlignment
-						 * (SwingConstants.CENTER); lrnTab.addTab("Learn",
-						 * noData); lrnTab.getComponentAt(lrnTab.getComponents
-						 * ().length - 1).setName("Learn"); JLabel noData1 = new
-						 * JLabel("No data available"); font =
-						 * noData1.getFont(); font = font.deriveFont(Font.BOLD,
-						 * 42.0f); noData1.setFont(font);
-						 * noData1.setHorizontalAlignment
-						 * (SwingConstants.CENTER); lrnTab.addTab("TSD Graph",
-						 * noData1); lrnTab.getComponentAt
-						 * (lrnTab.getComponents().length -
-						 * 1).setName("TSD Graph");
-						 */
 						addTab(verName, verify, "Verification");
 					}
-					// }
-					// catch (Exception e1) {
-					// JOptionPane.showMessageDialog(frame,
-					// "Unable to create Verification View directory.", "Error",
-					// JOptionPane.ERROR_MESSAGE);
-					// }
 				}
 			}
 			else {
@@ -6250,46 +6180,26 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (lema) {
 							LearnLHPN learn = new LearnLHPN(root + separator + lrnName, log, this);
 							lrnTab.addTab("Learn", learn);
+							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
+							lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
+							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
 						}
 						else {
 							Learn learn = new Learn(root + separator + lrnName, log, this);
 							lrnTab.addTab("Learn", learn);
+							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
+							lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
+							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
 						}
-						// learn.addMouseListener(this);
-						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
 						Graph tsdGraph;
 						tsdGraph = new Graph(null, "Number of molecules", lrnName + " data",
 								"tsd.printer", root + separator + lrnName, "Time", this, null, log,
 								null, true, false);
-						// tsdGraph.addMouseListener(this);
 						lrnTab.addTab("TSD Graph", tsdGraph);
 						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
 								"TSD Graph");
-						/*
-						 * JLabel noData = new JLabel("No data available"); Font
-						 * font = noData.getFont(); font =
-						 * font.deriveFont(Font.BOLD, 42.0f);
-						 * noData.setFont(font); noData.setHorizontalAlignment
-						 * (SwingConstants.CENTER); lrnTab.addTab("Learn",
-						 * noData); lrnTab.getComponentAt(lrnTab.getComponents
-						 * ().length - 1).setName("Learn"); JLabel noData1 = new
-						 * JLabel("No data available"); font =
-						 * noData1.getFont(); font = font.deriveFont(Font.BOLD,
-						 * 42.0f); noData1.setFont(font);
-						 * noData1.setHorizontalAlignment
-						 * (SwingConstants.CENTER); lrnTab.addTab("TSD Graph",
-						 * noData1); lrnTab.getComponentAt
-						 * (lrnTab.getComponents().length -
-						 * 1).setName("TSD Graph");
-						 */
 						addTab(lrnName, lrnTab, null);
 					}
-					// }
-					// catch (Exception e1) {
-					// JOptionPane.showMessageDialog(frame,
-					// "Unable to create Learn View directory.", "Error",
-					// JOptionPane.ERROR_MESSAGE);
-					// }
 				}
 			}
 			else {
@@ -10469,6 +10379,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			// learn.addMouseListener(this);
 			lrnTab.addTab("Learn", learn);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
+			lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
+			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
 			Graph tsdGraph = new Graph(null, "Number of molecules",
 					tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
 							+ " data", "tsd.printer", tree.getFile(), "Time", this, open, log,
@@ -10476,25 +10388,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			// tsdGraph.addMouseListener(this);
 			lrnTab.addTab("TSD Graph", tsdGraph);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
-			// }
-			/*
-			 * else { lrnTab.addTab("Data Manager", new
-			 * DataManager(tree.getFile(), this));
-			 * lrnTab.getComponentAt(lrnTab.getComponents().length -
-			 * 1).setName("Data Manager"); JLabel noData = new JLabel("No data
-			 * available"); Font font = noData.getFont(); font =
-			 * font.deriveFont(Font.BOLD, 42.0f); noData.setFont(font);
-			 * noData.setHorizontalAlignment(SwingConstants.CENTER);
-			 * lrnTab.addTab("Learn", noData);
-			 * lrnTab.getComponentAt(lrnTab.getComponents().length -
-			 * 1).setName("Learn"); JLabel noData1 = new
-			 * JLabel("No data available"); font = noData1.getFont(); font =
-			 * font.deriveFont(Font.BOLD, 42.0f); noData1.setFont(font);
-			 * noData1.setHorizontalAlignment(SwingConstants.CENTER);
-			 * lrnTab.addTab("TSD Graph", noData1);
-			 * lrnTab.getComponentAt(lrnTab.getComponents().length -
-			 * 1).setName("TSD Graph"); }
-			 */
 			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
 					lrnTab, null);
 		}
@@ -10587,41 +10480,20 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						+ " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			// if (!graphFile.equals("")) {
 			DataManager data = new DataManager(tree.getFile(), this, lema);
-			// data.addMouseListener(this);
 			lrnTab.addTab("Data Manager", data);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
 			LearnLHPN learn = new LearnLHPN(tree.getFile(), log, this);
-			// learn.addMouseListener(this);
 			lrnTab.addTab("Learn", learn);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
+			lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
+			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
 			Graph tsdGraph = new Graph(null, "Number of molecules",
 					tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
 							+ " data", "tsd.printer", tree.getFile(), "Time", this, open, log,
 					null, true, true);
-			// tsdGraph.addMouseListener(this);
 			lrnTab.addTab("TSD Graph", tsdGraph);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
-			// }
-			/*
-			 * else { lrnTab.addTab("Data Manager", new
-			 * DataManager(tree.getFile(), this));
-			 * lrnTab.getComponentAt(lrnTab.getComponents().length -
-			 * 1).setName("Data Manager"); JLabel noData = new JLabel("No data
-			 * available"); Font font = noData.getFont(); font =
-			 * font.deriveFont(Font.BOLD, 42.0f); noData.setFont(font);
-			 * noData.setHorizontalAlignment(SwingConstants.CENTER);
-			 * lrnTab.addTab("Learn", noData);
-			 * lrnTab.getComponentAt(lrnTab.getComponents().length -
-			 * 1).setName("Learn"); JLabel noData1 = new
-			 * JLabel("No data available"); font = noData1.getFont(); font =
-			 * font.deriveFont(Font.BOLD, 42.0f); noData1.setFont(font);
-			 * noData1.setHorizontalAlignment(SwingConstants.CENTER);
-			 * lrnTab.addTab("TSD Graph", noData1);
-			 * lrnTab.getComponentAt(lrnTab.getComponents().length -
-			 * 1).setName("TSD Graph"); }
-			 */
 			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
 					lrnTab, null);
 		}
@@ -11705,22 +11577,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName(
 									"TSD Graph");
 						}
-						/*
-						 * } else { JLabel noData1 = new
-						 * JLabel("No data available"); Font font =
-						 * noData1.getFont(); font = font.deriveFont(Font.BOLD,
-						 * 42.0f); noData1.setFont(font);
-						 * noData1.setHorizontalAlignment
-						 * (SwingConstants.CENTER); ((JTabbedPane)
-						 * tab.getComponentAt(i)).setComponentAt(j, noData1);
-						 * ((JTabbedPane)
-						 * tab.getComponentAt(i)).getComponentAt(j
-						 * ).setName("TSD Graph"); }
-						 */
 					}
 					else if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName()
 							.equals("Learn")) {
-						// if (data) {
 						if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof Learn) {
 						}
 						else {
@@ -11735,18 +11594,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j)
 									.setName("Learn");
 						}
-						/*
-						 * } else { JLabel noData = new
-						 * JLabel("No data available"); Font font =
-						 * noData.getFont(); font = font.deriveFont(Font.BOLD,
-						 * 42.0f); noData.setFont(font);
-						 * noData.setHorizontalAlignment(SwingConstants.CENTER);
-						 * ((JTabbedPane)
-						 * tab.getComponentAt(i)).setComponentAt(j, noData);
-						 * ((JTabbedPane)
-						 * tab.getComponentAt(i)).getComponentAt(j
-						 * ).setName("Learn"); }
-						 */
 					}
 				}
 			}
@@ -11763,85 +11610,20 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	}
 
 	public void updateAsyncViews(String updatedFile) {
-		// log.addText(updatedFile);
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			String tab = this.tab.getTitleAt(i);
 			String properties = root + separator + tab + separator + tab + ".ver";
 			String properties1 = root + separator + tab + separator + tab + ".synth";
 			String properties2 = root + separator + tab + separator + tab + ".lrn";
-			// log.addText(properties + "\n" + properties1 + "\n" + properties2
-			// + "\n");
 			if (new File(properties).exists()) {
-				// String check = "";
-				// try {
-				// Scanner s = new Scanner(new File(properties));
-				// if (s.hasNextLine()) {
-				// check = s.nextLine();
-				// check = check.split(separator)[check.split(separator).length
-				// -
-				// 1];
-				// }
-				// s.close();
-				// }
-				// catch (Exception e) {
-				// }
-				// if (check.equals(updatedFile)) {
 				Verification verify = ((Verification) (this.tab.getComponentAt(i)));
 				verify.reload(updatedFile);
 			}
-			// }
 			if (new File(properties1).exists()) {
-				// String check = "";
-				// try {
-				// Scanner s = new Scanner(new File(properties1));
-				// if (s.hasNextLine()) {
-				// check = s.nextLine();
-				// check = check.split(separator)[check.split(separator).length
-				// -
-				// 1];
-				// }
-				// s.close();
-				// }
-				// catch (Exception e) {
-				// }
-				// if (check.equals(updatedFile)) {
 				JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
 				for (int j = 0; j < sim.getTabCount(); j++) {
 					if (sim.getComponentAt(j).getName().equals("Synthesis")) {
-						// new File(properties).renameTo(new
-						// File(properties.replace(".synth",
-						// ".temp")));
-						// boolean dirty = ((SBML_Editor)
-						// (sim.getComponentAt(j))).isDirty();
 						((Synthesis) (sim.getComponentAt(j))).reload(updatedFile);
-						// if (updatedFile.contains(".g")) {
-						// GCMParser parser = new GCMParser(root + separator +
-						// updatedFile);
-						// GeneticNetwork network = parser.buildNetwork();
-						// GeneticNetwork.setRoot(root + File.separator);
-						// network.mergeSBML(root + separator + tab + separator
-						// + updatedFile.replace(".g", ".vhd"));
-						// ((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i,
-						// j, root
-						// + separator + tab + separator
-						// + updatedFile.replace(".g", ".vhd"));
-						// }
-						// else {
-						// ((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i,
-						// j, root
-						// + separator + updatedFile);
-						// }
-						// ((SBML_Editor)
-						// (sim.getComponentAt(j))).setDirty(dirty);
-						// new File(properties).delete();
-						// new File(properties.replace(".synth",
-						// ".temp")).renameTo(new
-						// File(
-						// properties));
-						// sim.setComponentAt(j + 1, ((SBML_Editor)
-						// (sim.getComponentAt(j)))
-						// .getElementsPanel());
-						// sim.getComponentAt(j + 1).setName("");
 					}
 				}
 			}
