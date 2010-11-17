@@ -178,6 +178,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	
 	private int pathLengthVar = 40;
 	
+	private JPanel advancedOptionsPanel;
+	
 	// Pattern lParenR = Pattern.compile("\\(+"); 
 	
 	//Pattern floatingPointNum = Pattern.compile(">=(-*[0-9]+\\.*[0-9]*)"); 
@@ -807,7 +809,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		JTabbedPane tab = new JTabbedPane();
 		tab.addTab("Basic Options", firstTab);
 		tab.addTab("Advanced Options", secondTab);
-		this.add(tab, "Center");
+		this.add(firstTab, "Center");
+		advancedOptionsPanel = secondTab;
 		//this.addTab("Basic", (JComponent)firstTab);
 		//this.addTab("Advanced", (JComponent)firstTab);
 		// this.add(runHolder, "South");
@@ -824,6 +827,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		change = false;
 	}
 
+	public JPanel getAdvancedOptionsPanel() {
+		return advancedOptionsPanel;
+	}
+	
 	/**
 	 * This method performs different functions depending on what menu items or
 	 * buttons are selected.
