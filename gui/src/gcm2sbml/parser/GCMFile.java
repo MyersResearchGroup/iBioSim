@@ -413,18 +413,18 @@ public class GCMFile {
 		}
 		mod = setToArrayList(bottomLevel.promoters.keySet());
 		for (String prom : mod) {
-			bottomLevel.promoters.get(prom).put(GlobalConstants.ID, compName + "_" + prom);
-			bottomLevel.changePromoterName(prom, compName + "_" + prom);
+			bottomLevel.promoters.get(prom).put(GlobalConstants.ID, compName + "__" + prom);
+			bottomLevel.changePromoterName(prom, compName + "__" + prom);
 		}
 		mod = setToArrayList(bottomLevel.species.keySet());
 		for (String spec : mod) {
-			bottomLevel.species.get(spec).put(GlobalConstants.ID, compName + "_" + spec);
-			bottomLevel.changeSpeciesName(spec, compName + "_" + spec);
+			bottomLevel.species.get(spec).put(GlobalConstants.ID, compName + "__" + spec);
+			bottomLevel.changeSpeciesName(spec, compName + "__" + spec);
 		}
 		mod = setToArrayList(bottomLevel.species.keySet());
 		for (String spec : mod) {
 			for (Object port : topLevel.components.get(compName).keySet()) {
-				if (spec.equals(compName + "_" + port)) {
+				if (spec.equals(compName + "__" + port)) {
 					bottomLevel.species.get(spec).put(GlobalConstants.ID,
 							topLevel.components.get(compName).getProperty((String) port));
 					bottomLevel.changeSpeciesName(spec, topLevel.components.get(compName)
