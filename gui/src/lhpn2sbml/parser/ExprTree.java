@@ -483,7 +483,7 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-					setNodeValues((this), newresult, "m", 'w');
+					setNodeValues((this), newresult, "m", 'a');
 				}
 				(token) = intexpr_gettok(expr);
 			}
@@ -526,7 +526,7 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-					setNodeValues((this), newresult, "M", 'w');
+					setNodeValues((this), newresult, "M", 'a');
 				}
 				(token) = intexpr_gettok(expr);
 			}
@@ -569,7 +569,7 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-					setNodeValues((this), newresult, "i", 'w');
+					setNodeValues((this), newresult, "i", 'a');
 				}
 				(token) = intexpr_gettok(expr);
 			}			
@@ -649,7 +649,7 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-					setNodeValues((this), null, "f", 'w');
+					setNodeValues((this), null, "f", 'a');
 				}
 				(token) = intexpr_gettok(expr);
 			}
@@ -680,7 +680,7 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 				else {
-					setNodeValues((this), null, "c", 'w');
+					setNodeValues((this), null, "c", 'a');
 				}
 				(token) = intexpr_gettok(expr);
 			}			
@@ -4049,48 +4049,6 @@ public class ExprTree {
 					
 				}
 			}
-			else if (op.equals("m")) {
-				if (r1 != null && r2 != null) {
-					if (sbmlFlag){
-						result = "min(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
-					}
-					else if (verilog){
-						result = "min(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
-					}
-					else {
-						result = "min(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
-					}
-					
-				}
-			}
-			else if (op.equals("M")) {
-				if (r1 != null && r2 != null) {
-					if (sbmlFlag){
-						result = "max(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
-					}
-					else if (verilog){
-						result = "max(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
-					}
-					else {
-						result = "max(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
-					}
-					
-				}
-			}
-			else if (op.equals("i")) {
-				if (r1 != null && r2 != null) {
-					if (sbmlFlag){
-						result = "floor(" + r1.getElement(type) + "/" + r2.getElement(type) + ")";
-					}
-					else if (verilog){
-						result = "floor(" + r1.getElement(type) + "/" + r2.getElement(type) + ")";
-					}
-					else {
-						result = "idiv(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
-					}
-					
-				}
-			}
 			break;
 		case 'a': // Arithmetic
 		case 'r': // Relational
@@ -4235,6 +4193,52 @@ public class ExprTree {
 							}
 							
 						}
+					}
+				}
+				else if (op.equals("m")) {
+					if (r1 != null && r2 != null) {
+						if (sbmlFlag){
+							result = "piecewise(" + r1.getElement(type) + ",leq(" + 
+							r1.getElement(type) + "," + r2.getElement(type) + ")," + 
+							r2.getElement(type) + ")";
+						}
+						else if (verilog){
+							result = "min(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+						}
+						else {
+							result = "min(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+						}
+						
+					}
+				}
+				else if (op.equals("M")) {
+					if (r1 != null && r2 != null) {
+						if (sbmlFlag){
+							result = "piecewise(" + r1.getElement(type) + ",geq(" + 
+							r1.getElement(type) + "," + r2.getElement(type) + ")," + 
+							r2.getElement(type) + ")";
+						}
+						else if (verilog){
+							result = "max(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+						}
+						else {
+							result = "max(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+						}
+						
+					}
+				}
+				else if (op.equals("i")) {
+					if (r1 != null && r2 != null) {
+						if (sbmlFlag){
+							result = "floor(" + r1.getElement(type) + "/" + r2.getElement(type) + ")";
+						}
+						else if (verilog){
+							result = "floor(" + r1.getElement(type) + "/" + r2.getElement(type) + ")";
+						}
+						else {
+							result = "idiv(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+						}
+						
 					}
 				}
 				else if (op.equals("uniform")) {
@@ -4573,6 +4577,7 @@ public class ExprTree {
 				}
 			}
 		}
+		System.out.println(result);
 		return result;
 	}
 
