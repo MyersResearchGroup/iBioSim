@@ -2,6 +2,7 @@ package lhpn2sbml.parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.lang.Math;
 
 //import java.util.Properties;
 
@@ -443,6 +444,135 @@ public class ExprTree {
 				}
 				(token) = intexpr_gettok(expr);
 			}
+			else if (tokvalue.toLowerCase().equals("min")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ',') {
+					System.out.printf("ERROR: Expected a ,\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				newresult.token = token;
+				newresult.tokvalue = tokvalue;
+				newresult.position = position;
+				if (!newresult.intexpr_R(expr))
+					return false;
+				token = newresult.token;
+				position = newresult.position;
+				if ((token) != ')') {
+					System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+				// simplify if operands are static
+				if (((newresult.isit == 'n') || (newresult.isit == 't'))
+						&& (((this).isit == 'n') || ((this).isit == 't'))
+					    && ((this).lvalue == (this).uvalue)
+					    && (newresult.lvalue == newresult.uvalue)
+					    && ((this).lvalue != INFIN)
+					    && ((this).lvalue != -INFIN)
+					    && (newresult.lvalue != INFIN)
+					    && (newresult.lvalue != -INFIN)) {
+					(this).isit = 'n';
+					(this).lvalue = Math.min((this).lvalue,newresult.lvalue);
+					(this).uvalue = (this).lvalue;
+				}
+				else {
+					setNodeValues((this), newresult, "m", 'w');
+				}
+				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.toLowerCase().equals("max")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ',') {
+					System.out.printf("ERROR: Expected a ,\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				newresult.token = token;
+				newresult.tokvalue = tokvalue;
+				newresult.position = position;
+				if (!newresult.intexpr_R(expr))
+					return false;
+				token = newresult.token;
+				position = newresult.position;
+				if ((token) != ')') {
+					System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+				// simplify if operands are static
+				if (((newresult.isit == 'n') || (newresult.isit == 't'))
+						&& (((this).isit == 'n') || ((this).isit == 't'))
+					    && ((this).lvalue == (this).uvalue)
+					    && (newresult.lvalue == newresult.uvalue)
+					    && ((this).lvalue != INFIN)
+					    && ((this).lvalue != -INFIN)
+					    && (newresult.lvalue != INFIN)
+					    && (newresult.lvalue != -INFIN)) {
+					(this).isit = 'n';
+					(this).lvalue = Math.max((this).lvalue,newresult.lvalue);
+					(this).uvalue = (this).lvalue;
+				}
+				else {
+					setNodeValues((this), newresult, "M", 'w');
+				}
+				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.toLowerCase().equals("idiv")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ',') {
+					System.out.printf("ERROR: Expected a ,\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				newresult.token = token;
+				newresult.tokvalue = tokvalue;
+				newresult.position = position;
+				if (!newresult.intexpr_R(expr))
+					return false;
+				token = newresult.token;
+				position = newresult.position;
+				if ((token) != ')') {
+					System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+				// simplify if operands are static
+				if (((newresult.isit == 'n') || (newresult.isit == 't'))
+						&& (((this).isit == 'n') || ((this).isit == 't'))
+					    && ((this).lvalue == (this).uvalue)
+					    && (newresult.lvalue == newresult.uvalue)
+					    && ((this).lvalue != INFIN)
+					    && ((this).lvalue != -INFIN)
+					    && (newresult.lvalue != INFIN)
+					    && (newresult.lvalue != -INFIN)) {
+					(this).isit = 'n';
+					(this).lvalue = Math.floor((this).lvalue / newresult.lvalue);
+					(this).uvalue = (this).lvalue;
+				}
+				else {
+					setNodeValues((this), newresult, "i", 'w');
+				}
+				(token) = intexpr_gettok(expr);
+			}			
 			else if (tokvalue.toLowerCase().equals("bit")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
@@ -492,6 +622,68 @@ public class ExprTree {
 				}
 				(token) = intexpr_gettok(expr);
 			}
+			else if (tokvalue.toLowerCase().equals("floor")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+					//		+ "\nU: Expected a (");
+					System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ')') {
+					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+					//		+ "\nU: Expected a (");
+					System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+				// simplify if operands are static
+				if (((this).isit == 'n') || ((this).isit == 't')
+					    && ((this).lvalue == (this).uvalue)
+					    && ((this).lvalue != INFIN)
+					    && ((this).lvalue != -INFIN)) {
+					(this).isit = 'n';
+					(this).lvalue = Math.floor((this).lvalue);
+					(this).uvalue = (this).lvalue;
+				}
+				else {
+					setNodeValues((this), null, "f", 'w');
+				}
+				(token) = intexpr_gettok(expr);
+			}
+			else if (tokvalue.toLowerCase().equals("ceil")) {
+				(token) = intexpr_gettok(expr);
+				if ((token) != '(') {
+					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+					//		+ "\nU: Expected a (");
+					System.out.printf("ERROR: Expected a (\n");
+					return false;
+				}
+				(token) = intexpr_gettok(expr);
+				if (!intexpr_R(expr))
+					return false;
+				if ((token) != ')') {
+					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+					//		+ "\nU: Expected a (");
+					System.out.printf("ERROR: Expected a )\n");
+					return false;
+				}
+				// simplify if operands are static
+				if (((this).isit == 'n') || ((this).isit == 't')
+					    && ((this).lvalue == (this).uvalue)
+					    && ((this).lvalue != INFIN)
+					    && ((this).lvalue != -INFIN)) {
+					(this).isit = 'n';
+					(this).lvalue = Math.ceil((this).lvalue);
+					(this).uvalue = (this).lvalue;
+				}
+				else {
+					setNodeValues((this), null, "c", 'w');
+				}
+				(token) = intexpr_gettok(expr);
+			}			
 			else if (tokvalue.toLowerCase().equals("not")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
@@ -2429,6 +2621,49 @@ public class ExprTree {
 					simplify = true;
 				}
 			}
+			else if (op.equals("m")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 'n';
+					(this).lvalue = Math.min((r1).lvalue,r2.lvalue);
+					(this).uvalue = (this).lvalue;
+					simplify = true;
+				}
+			}			
+			else if (op.equals("M")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 'n';
+					(this).lvalue = Math.max((r1).lvalue,r2.lvalue);
+					(this).uvalue = (this).lvalue;
+					simplify = true;
+				}
+			}			
+			else if (op.equals("i")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 'n';
+					(this).lvalue = Math.floor((r1).lvalue/(r2).lvalue);
+					(this).uvalue = (this).lvalue;
+					simplify = true;
+				}
+			}
+			else if (op.equals("f")) {
+				if (((r1).isit == 'n') || ((r1).isit == 't')) {
+					(this).isit = 'n';
+					(this).lvalue = Math.floor((r1).lvalue);
+					(this).uvalue = (this).lvalue;
+					simplify = true;
+				}
+			}
+			else if (op.equals("c")) {
+				if (((r1).isit == 'n') || ((r1).isit == 't')) {
+					(this).isit = 'n';
+					(this).lvalue = Math.ceil((r1).lvalue);
+					(this).uvalue = (this).lvalue;
+					simplify = true;
+				}
+			}
 			else if (op.equals("~")) {
 				if (((r1).isit == 'n') || ((r1).isit == 't')) {
 					(this).isit = 'n';
@@ -3772,6 +4007,34 @@ public class ExprTree {
 					
 				}
 			}
+			else if (op.equals("f")) {
+				if (r1 != null && r2 != null) {
+					if (sbmlFlag){
+						result = "floor(" + r1.getElement(type) + ")";
+					} 
+					else if (verilog){
+						result = "floor(" + r1.getElement(type) + ")";
+					}
+					else {
+						result = "floor(" + r1.getElement(type) +  ")";
+					}
+					
+				}
+			}
+			else if (op.equals("c")) {
+				if (r1 != null && r2 != null) {
+					if (sbmlFlag){
+						result = "ceil(" + r1.getElement(type) + ")";
+					} 
+					else if (verilog){
+						result = "ceil(" + r1.getElement(type) + ")";
+					}
+					else {
+						result = "ceil(" + r1.getElement(type) +  ")";
+					}
+					
+				}
+			}
 			else if (op.equals("X")) {
 				if (r1 != null && r2 != null) {
 					if (sbmlFlag){
@@ -3782,6 +4045,48 @@ public class ExprTree {
 					}
 					else {
 						result = "exor(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					}
+					
+				}
+			}
+			else if (op.equals("m")) {
+				if (r1 != null && r2 != null) {
+					if (sbmlFlag){
+						result = "min(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					}
+					else if (verilog){
+						result = "min(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					}
+					else {
+						result = "min(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					}
+					
+				}
+			}
+			else if (op.equals("M")) {
+				if (r1 != null && r2 != null) {
+					if (sbmlFlag){
+						result = "max(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					}
+					else if (verilog){
+						result = "max(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					}
+					else {
+						result = "max(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					}
+					
+				}
+			}
+			else if (op.equals("i")) {
+				if (r1 != null && r2 != null) {
+					if (sbmlFlag){
+						result = "floor(" + r1.getElement(type) + "/" + r2.getElement(type) + ")";
+					}
+					else if (verilog){
+						result = "floor(" + r1.getElement(type) + "/" + r2.getElement(type) + ")";
+					}
+					else {
+						result = "idiv(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
 					}
 					
 				}
@@ -4642,6 +4947,44 @@ public class ExprTree {
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
 					(this).lvalue = (int) (r1).lvalue ^ (int) r2.lvalue;
+					(this).uvalue = (this).lvalue;
+				}
+			}
+			else if (isit == 'w' && op.equals("m")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 'n';
+					(this).lvalue = Math.min((r1).lvalue,r2.lvalue);
+					(this).uvalue = (this).lvalue;
+				}
+			}
+			else if (isit == 'w' && op.equals("M")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 'n';
+					(this).lvalue = Math.max((r1).lvalue,r2.lvalue);
+					(this).uvalue = (this).lvalue;
+				}
+			}
+			else if (isit == 'w' && op.equals("i")) {
+				if (((r1.isit == 'n') || (r1.isit == 't'))
+						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
+					(this).isit = 'n';
+					(this).lvalue = Math.floor((r1).lvalue/r2.lvalue);
+					(this).uvalue = (this).lvalue;
+				}
+			}
+			else if (op.equals("f")) {
+				if (((r1).isit == 'n') || ((r1).isit == 't')) {
+					(this).isit = 'n';
+					(this).lvalue = Math.floor((r1).lvalue);
+					(this).uvalue = (this).lvalue;
+				}
+			}
+			else if (op.equals("c")) {
+				if (((r1).isit == 'n') || ((r1).isit == 't')) {
+					(this).isit = 'n';
+					(this).lvalue = Math.ceil((r1).lvalue);
 					(this).uvalue = (this).lvalue;
 				}
 			}
