@@ -72,8 +72,13 @@ TOKEN : {
 	<PROPERTY: (<DOT>"property"|<DOT>"PROPERTY")> |
 	<MARKING: (<DOT>"marking"|<DOT>"MARKING)")>|
 	<NAME: (<DOT>"name"|<DOT>"NAME")> |
-  	<UNIFORM: "uniform"> |
-  	<NORMAL: "normal"> |
+  	<MINF: "min"> |
+  	<MAXF: "max"> |
+  	<IDIV: "idiv"> |
+  	<FLOOR: "floor"> |
+  	<CEIL: "ceil"> |
+   	<UNIFORM: "uniform"> |
+   	<NORMAL: "normal"> |
   	<EXPONENTIAL: "exponential"> |
   	<GAMMA: "gamma"> |
 	<LOGNORMAL: "lognormal"> |
@@ -413,6 +418,8 @@ void Unop():
  | <POISSON>
  | <BERNOULLI>
  | <BOOL>
+ | <FLOOR>
+ | <CEIL>
 }
 
 void Binop():
@@ -426,6 +433,9 @@ void Binop():
  | <GAMMA>
  | <LOGNORMAL>
  | <BINOMIAL>
+ | <MINF>
+ | <MAXF>
+ | <IDIV>
 }
 
 void Id():
