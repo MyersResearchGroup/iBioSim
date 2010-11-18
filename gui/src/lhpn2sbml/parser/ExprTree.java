@@ -4577,7 +4577,6 @@ public class ExprTree {
 				}
 			}
 		}
-		System.out.println(result);
 		return result;
 	}
 
