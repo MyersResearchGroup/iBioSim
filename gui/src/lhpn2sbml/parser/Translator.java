@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
 //import org.apache.batik.svggen.font.table.Program;
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.Constraint;
@@ -38,7 +40,6 @@ import biomodelsim.BioSim;
 public class Translator {
 	private String filename;
 	private SBMLDocument document;
-	
 	
 	public void BuildTemplate(String lhpnFilename, String property) {
 		this.filename = lhpnFilename.replace(".lpn", ".xml");
@@ -608,8 +609,60 @@ public class Translator {
 			counter --;
 		}
 
-			// translate a LPN property passed to the BuildTemplate() into SBML constraints
-			// Property check is done in PropertyPanel.java		
+		// Property parsing is done in PropertyPanel.java
+		// translate the LPN property to SBML constraints
+		
+		String probprop = "";
+		String[] probpropParts = new String[4];
+		if(!property.equals("")){
+			probprop=getProbpropExpression(property);
+			probpropParts=getProbpropParts(probprop);
+			System.out.println("probprop=" + probprop);
+			System.out.println("probpropParts[0]=" + probpropParts[0]);
+			System.out.println("probpropParts[1]=" + probpropParts[1]);
+			System.out.println("probpropParts[2]=" + probpropParts[2]);
+			System.out.println("probpropParts[3]=" + probpropParts[3]);
+			
+			
+			// Convert extrated property parts into SBML constraints
+			// probpropParts=[probpropLeft, probpropRight, lowerBound, upperBound]
+			Constraint constraintFail = m.createConstraint();	
+			Constraint constraintSucc = m.createConstraint();
+			ExprTree probpropLeftTree = String2ExprTree(lhpn, probpropParts[0]);
+			String probpropLeftSBML = probpropLeftTree.toString("SBML");
+				
+			ExprTree probpropRightTree = String2ExprTree(lhpn, probpropParts[1]);
+			String probpropRightSBML = probpropRightTree.toString("SBML");
+				
+			ExprTree lowerBoundTree = String2ExprTree(lhpn, probpropParts[2]);
+			String lowerBoundSBML = lowerBoundTree.toString("SBML");
+			String lowerConstraint = "leq(t," + lowerBoundSBML + ")";
+				
+			ExprTree upperBoundTree = String2ExprTree(lhpn, probpropParts[3]);
+			String upperBoundSBML = upperBoundTree.toString("SBML");
+			String upperConstraint = "leq(t," + upperBoundSBML + ")";
+			    
+			if (property.contains("PU")){   
+				// construct the SBML constraints
+				constraintFail.setMetaId("Fail");
+				constraintFail.setMath(SBML_Editor.myParseFormula("and(" + probpropLeftSBML + "," + upperConstraint + ")"));
+				constraintSucc.setMetaId("Success");
+				constraintSucc.setMath(SBML_Editor.myParseFormula("not(" + probpropRightSBML + ")"));		    
+			}
+			if (property.contains("PF")){
+				constraintFail.setMetaId("Fail");
+				constraintFail.setMath(SBML_Editor.myParseFormula(upperConstraint));
+				constraintSucc.setMetaId("Success");
+				constraintSucc.setMath(SBML_Editor.myParseFormula("not(" + probpropRightSBML + ")"));
+			}
+			if (property.contains("PG")){
+				constraintFail.setMetaId("Fail");
+				constraintFail.setMath(SBML_Editor.myParseFormula(probpropRightSBML));
+				constraintSucc.setMetaId("Success");
+				constraintSucc.setMath(SBML_Editor.myParseFormula(upperConstraint));
+			}
+		}
+
 	}
 			
 	private void createFunction(Model model, String id, String name, String formula) {
@@ -632,6 +685,131 @@ public class Translator {
 
 	public String getFilename() {
 		return filename;
+	}
+	
+	// getProbpropExpression strips off the "Pr"("St"), relop and REAL parts of a property
+	public static String getProbpropExpression(String property){
+		String probprop="";
+		// probproperty 
+		if (property.startsWith("Pr") | property.startsWith("St")){
+			// remove Pr/St from the property spec
+			property=property.substring(2);
+			boolean relopFlag = property.startsWith(">")
+								| property.startsWith(">=")
+								| property.startsWith("<")
+								| property.startsWith("<=")
+								| (property.startsWith("=") && !property.contains("?"));
+			if (relopFlag){
+				if(property.startsWith(">=") | property.startsWith("<=")){
+					property=property.substring(2);
+				}
+				else{
+					property=property.substring(1);
+				}
+				// check the probability value after relop
+				String probabilityValue = property.substring(0,property.indexOf("{"));
+				Pattern ProbabilityValuePattern = Pattern.compile(probabilityValue);
+				Matcher ProbabilityValueMatcher = ProbabilityValuePattern.matcher(probabilityValue);
+				boolean correctProbabilityValue = ProbabilityValueMatcher.matches();
+				if(correctProbabilityValue) {
+					property=property.replaceFirst(probabilityValue, "");
+					property=property.replace("{", "");
+					property=property.replace("}", "");
+					probprop=property;
+				}
+				else{
+					JOptionPane.showMessageDialog(BioSim.frame, "Invalid probability value",
+							"Error in Property", JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if(property.startsWith("=") && property.contains("?")){
+				property=property.substring(3);
+				property=property.replace("}", "");
+				probprop=property;
+			}
+		}
+		else { // hsf
+			return "";
+			
+		}		
+		return probprop;
+	}
+	
+	// getProbpropParts extracts the expressions before and after the PU (after PG and PF)
+	// and time bound from the probprop
+	// Currently, we assume no nested until property
+	public static String[] getProbpropParts(String probprop){
+		String symbol = "@";
+		String[] probpropParts;
+		probpropParts = new String[4];
+		boolean PUFlag = probprop.contains("PU");
+		boolean PFFlag = probprop.contains("PF");
+		boolean PGFlag = probprop.contains("PG");
+		String probpropRight="";
+		String probpropLeft="";
+		String timeBound="";
+		String upperBound="";
+		String lowerBound="";
+		if (!probprop.equals("")){
+			// property should be in this format at this stage: probprop
+			// obtain the hsf AFTER bound
+			probpropRight= probprop.substring(probprop.indexOf("]")+1, probprop.length());			
+			// obtain the time bound
+			timeBound= probprop.substring(probprop.indexOf("["), probprop.indexOf("]")+1);							 
+			// bound: [<= upper]
+			if(timeBound.contains("<=")){
+				// upper bound
+				upperBound = timeBound.substring(timeBound.indexOf("<")+2, timeBound.indexOf("]"));			    
+				if(PUFlag){
+					probprop = probprop.replace("PU",symbol);
+					// obtain the logic BEFORE the temporal operator
+					probpropLeft= probprop.substring(0, probprop.indexOf(symbol));
+					// if probpropLeft has a pair of outermost parentheses, remove them
+					if (probpropLeft.startsWith("(") & probpropLeft.endsWith(")")){
+						probpropLeft=probprop.substring(1,probpropLeft.length()-1);
+					}
+				}
+				if(PFFlag){
+					probprop = probprop.replace("PF",symbol);
+					// Remove the outermost parentheses
+					if (probprop.startsWith("(") & probpropLeft.endsWith(")")){
+						probprop=probprop.substring(1,probpropLeft.length()-1);
+					}	
+				}
+				if(PGFlag){
+					probprop = probprop.replace("PGs",symbol);
+					// Remove the outermost parentheses
+					if (probprop.startsWith("(") & probpropLeft.endsWith(")")){
+						probprop=probprop.substring(1,probpropLeft.length()-1);
+					}
+				}			
+			}
+			// bound: [lower, upper]
+			else if (timeBound.contains(",")){ 
+				// lower bound
+				lowerBound = timeBound.substring(timeBound.indexOf("[")+1, timeBound.indexOf(","));
+				// upper bound
+				upperBound = timeBound.substring(timeBound.indexOf(",")+1, timeBound.indexOf("]"));		 						
+				if(PUFlag){
+						probprop = probprop.replace("PU",symbol);
+						// obtain the logic BEFORE the temporal operator
+						probpropLeft= probprop.substring(0, probprop.indexOf(symbol));
+						// if probpropLeft has a pair of outermost parentheses, remove them
+						if (probpropLeft.startsWith("(") & probpropLeft.endsWith(")")){
+							probpropLeft=probprop.substring(1,probpropLeft.length()-1);
+						}
+				}
+			} 
+		}
+		else { // hsfFlag = true	
+			JOptionPane.showMessageDialog(BioSim.frame, "Property does not contain the until operator",
+					"Warning in Property", JOptionPane.WARNING_MESSAGE);
+		}
+		probpropParts[0]=probpropLeft;
+		probpropParts[1]=probpropRight;
+		probpropParts[2]=lowerBound;
+		probpropParts[3]=upperBound;
+		return probpropParts;
 	}
 	
 	public ExprTree String2ExprTree(LhpnFile lhpn, String str) {
