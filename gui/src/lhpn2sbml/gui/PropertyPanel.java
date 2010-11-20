@@ -52,18 +52,14 @@ public class PropertyPanel extends JPanel implements ActionListener {
 			display = openGui(oldProperty);
 		}
 	}
-	private boolean checkValues() {
+	public boolean parseProperty() {
 		boolean goodProperty = false;
 		String propertyTemp = field.getValue();
 		if(!propertyTemp.equals("") && propertyTemp!=null){
 			// check the balance of parentheses and square brackets
 			Parser p = new Parser(propertyTemp);
 			goodProperty = p.parseProperty();
-			if (!goodProperty){
-				JOptionPane.showMessageDialog(BioSim.frame, "Invalid property. See terminal for detailed information.","Error in Property", JOptionPane.ERROR_MESSAGE);
-			}
 			return goodProperty;
-			
 		}
 		else
 		{
@@ -77,7 +73,7 @@ public class PropertyPanel extends JPanel implements ActionListener {
 		int value = JOptionPane.showOptionDialog(BioSim.frame, this, "Property Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
-			if (!checkValues()) {
+			if (!parseProperty()) {
 				return false;
 			}
 			String property = field.getValue();
@@ -113,4 +109,5 @@ public class PropertyPanel extends JPanel implements ActionListener {
 			// setType(initBox.getSelectedItem().toString());
 		}
 	}
+
 }
