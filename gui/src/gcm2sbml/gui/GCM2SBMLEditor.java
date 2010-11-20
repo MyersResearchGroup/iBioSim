@@ -433,6 +433,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			log.addText("Saving GCM file as:\n" + path + separator + newName + ".gcm\n");
 			biosim.addToTree(newName + ".gcm");
 		}
+		biosim.updateTabName(gcmname + ".gcm", newName + ".gcm");
 		reload(newName);
 	}
 
