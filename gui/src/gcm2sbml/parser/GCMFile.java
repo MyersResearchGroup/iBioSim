@@ -1396,6 +1396,9 @@ public class GCMFile {
 	}
 
 	public String addCondition(String condition) {
+		conditions.add(condition);
+		return condition;
+		/*
 		boolean retval = true;
 		String finalCond = "";
 		ArrayList<String> split = new ArrayList<String>();
@@ -1508,6 +1511,7 @@ public class GCMFile {
 		else {
 			return null;
 		}
+		*/
 	}
 
 	public void removeCondition(String condition) {

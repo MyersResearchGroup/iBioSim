@@ -5,14 +5,25 @@ import gcm2sbml.util.Utility;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.util.HashMap;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import lhpn2sbml.parser.Parser;
+
 import biomodelsim.BioSim;
 
 public class ConditionsPanel extends JPanel {
+
+	private String selected = "";
+
+	private String[] options = { "Ok", "Cancel" };
+
+	private PropertyField field;
+
+	private GCMFile gcm = null;
+	private PropertyList conditionList = null;
+
 	public ConditionsPanel(String selected, PropertyList conditionList, GCMFile gcm,
 			boolean paramsOnly) {
 		super(new GridLayout(1, 1));
@@ -20,52 +31,74 @@ public class ConditionsPanel extends JPanel {
 		this.conditionList = conditionList;
 		this.gcm = gcm;
 
-		fields = new HashMap<String, PropertyField>();
-
 		// Condition field
-		PropertyField field = new PropertyField("Property", "", null, null, "Property",
-				paramsOnly, "default");
-		fields.put("Property", field);
+		field = new PropertyField("Property", "", null, null, "Property", paramsOnly, "default");
 		add(field);
 
-		String oldName = null;
+		String oldProperty = null;
 		if (selected != null) {
-			oldName = selected;
-			fields.get("Property").setValue(selected);
+			oldProperty = selected;
+			// Properties prop = lhpn.getVariables().get(selected);
+			field.setValue(selected);
 		}
 
 		boolean display = false;
 		while (!display) {
-			display = openGui(oldName);
+			display = openGui(oldProperty);
 		}
 	}
 
-	private boolean openGui(String oldName) {
+	private boolean checkValues() {
+		boolean goodProperty = false;
+		String propertyTemp = field.getValue();
+		if (propertyTemp != null && !propertyTemp.equals("")) {
+			// check the balance of parentheses and square brackets
+			Parser p = new Parser(propertyTemp);
+			goodProperty = p.parseProperty();
+			if (!goodProperty) {
+				JOptionPane.showMessageDialog(BioSim.frame,
+						"Invalid property. See terminal for detailed information.",
+						"Error in Property", JOptionPane.ERROR_MESSAGE);
+			}
+			return goodProperty;
+
+		}
+		else {
+			goodProperty = true;
+			return goodProperty;
+		}
+
+	}
+
+	private boolean openGui(String oldProperty) {
 		int value = JOptionPane.showOptionDialog(BioSim.frame, this, "Property Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
-			if (oldName == null) {
-				if (gcm.getConditions().contains(fields.get("Property").getValue())) {
+			if (!checkValues()) {
+				return false;
+			}
+			else if (oldProperty == null) {
+				if (gcm.getConditions().contains(field.getValue())) {
 					Utility.createErrorMessage("Error", "Property already exists.");
 					return false;
 				}
 			}
-			else if (!oldName.equals(fields.get("Property").getValue())) {
-				if (gcm.getConditions().contains(fields.get("Property").getValue())) {
+			else if (!oldProperty.equals(field.getValue())) {
+				if (gcm.getConditions().contains(field.getValue())) {
 					Utility.createErrorMessage("Error", "Property already exists.");
 					return false;
 				}
 			}
-			String id = fields.get("Property").getValue();
+			String property = field.getValue();
 
 			if (selected != null) {
-				gcm.removeCondition(oldName);
+				gcm.removeCondition(oldProperty);
 			}
-			id = gcm.addCondition(id);
-			if (id != null) {
-				conditionList.removeItem(oldName);
-				conditionList.addItem(id);
-				conditionList.setSelectedValue(id, true);
+			property = gcm.addCondition(property);
+			if (property != null) {
+				conditionList.removeItem(oldProperty);
+				conditionList.addItem(property);
+				conditionList.setSelectedValue(property, true);
 			}
 			else {
 				return false;
@@ -80,10 +113,4 @@ public class ConditionsPanel extends JPanel {
 
 	public void actionPerformed(ActionEvent e) {
 	}
-
-	private String[] options = { "Ok", "Cancel" };
-	private HashMap<String, PropertyField> fields = null;
-	private String selected = "";
-	private GCMFile gcm = null;
-	private PropertyList conditionList = null;
 }
