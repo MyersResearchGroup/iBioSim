@@ -13291,6 +13291,15 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		return false;
 	}
+	
+	public void updateTabName(String oldName, String newName) {
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			String tab = this.tab.getTitleAt(i);
+			if (oldName.equals(tab)) {
+				this.tab.setTitleAt(i, newName);
+			}
+		}
+	}
 
 	public boolean updateOpenLHPN(String lhpnName) {
 		for (int i = 0; i < tab.getTabCount(); i++) {
