@@ -617,11 +617,11 @@ public class Translator {
 		if(!property.equals("")){
 			probprop=getProbpropExpression(property);
 			probpropParts=getProbpropParts(probprop);
-			System.out.println("probprop=" + probprop);
-			System.out.println("probpropParts[0]=" + probpropParts[0]);
-			System.out.println("probpropParts[1]=" + probpropParts[1]);
-			System.out.println("probpropParts[2]=" + probpropParts[2]);
-			System.out.println("probpropParts[3]=" + probpropParts[3]);
+			//System.out.println("probprop=" + probprop);
+			//System.out.println("probpropParts[0]=" + probpropParts[0]);
+			//System.out.println("probpropParts[1]=" + probpropParts[1]);
+			//System.out.println("probpropParts[2]=" + probpropParts[2]);
+			//System.out.println("probpropParts[3]=" + probpropParts[3]);
 			
 			
 			// Convert extrated property parts into SBML constraints
