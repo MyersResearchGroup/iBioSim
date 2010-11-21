@@ -576,6 +576,10 @@ public class BioGraph extends mxGraph {
 			style += mxConstants.ARROW_DIAMOND + ";" + mxConstants.STYLE_DASHED + "=true";
 //		=[';p']
 		
+		if(prop.getProperty(GlobalConstants.TYPE) == GlobalConstants.COMPLEX){
+			style += ";" + mxConstants.STYLE_DASHED + "=true";
+		}
+		
 		// apply the style
 		mxCell cell = this.getInfluence(id);
 		cell.setStyle(style);
