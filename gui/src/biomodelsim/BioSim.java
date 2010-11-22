@@ -1481,7 +1481,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						"emc-sim", "bunker", "nmc" };
 			}
 			else if (type.getSelectedItem().equals("Markov")) {
-				choices = new String[] { "steady-state-markov-chain-analysis", "transient-markov-chain-analysis", "atacs", "ctmc-transient" };
+				choices = new String[] { "steady-state-markov-chain-analysis",
+						"transient-markov-chain-analysis", "atacs", "ctmc-transient" };
 			}
 			else {
 				choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
@@ -5457,11 +5458,14 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							new GCMParser(filename.trim());
 							file[file.length - 1] = file[file.length - 1].replaceAll(
 									"[^a-zA-Z0-9_.]+", "_");
-							if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
-								if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
+							if (checkFiles(root + separator + file[file.length - 1], filename
+									.trim())) {
+								if (overwrite(root + separator + file[file.length - 1],
+										file[file.length - 1])) {
 									FileOutputStream out = new FileOutputStream(new File(root
 											+ separator + file[file.length - 1]));
-									FileInputStream in = new FileInputStream(new File(filename.trim()));
+									FileInputStream in = new FileInputStream(new File(filename
+											.trim()));
 									int read = in.read();
 									while (read != -1) {
 										out.write(read);
@@ -5510,11 +5514,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
-						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+","_");
-						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
-							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
-								FileOutputStream out = new FileOutputStream(new File(root + separator
-										+ file[file.length - 1]));
+						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
+								"_");
+						if (checkFiles(root + separator + file[file.length - 1], filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],
+									file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root
+										+ separator + file[file.length - 1]));
 								FileInputStream in = new FileInputStream(new File(filename));
 								int read = in.read();
 								while (read != -1) {
@@ -5564,10 +5570,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					try {
 						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
 								"_");
-						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
-							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
-								FileOutputStream out = new FileOutputStream(new File(root + separator
-										+ file[file.length - 1]));
+						if (checkFiles(root + separator + file[file.length - 1], filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],
+									file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root
+										+ separator + file[file.length - 1]));
 								FileInputStream in = new FileInputStream(new File(filename));
 								int read = in.read();
 								while (read != -1) {
@@ -5617,10 +5624,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					try {
 						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
 								"_");
-						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
-							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
-								FileOutputStream out = new FileOutputStream(new File(root + separator
-										+ file[file.length - 1]));
+						if (checkFiles(root + separator + file[file.length - 1], filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],
+									file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root
+										+ separator + file[file.length - 1]));
 								FileInputStream in = new FileInputStream(new File(filename));
 								int read = in.read();
 								while (read != -1) {
@@ -5672,10 +5680,12 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (new File(filename).exists()) {
 							file[file.length - 1] = file[file.length - 1].replaceAll(
 									"[^a-zA-Z0-9_.]+", "_");
-							if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
-								if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
-									FileOutputStream out = new FileOutputStream(new File(root + separator
-											+ file[file.length - 1]));
+							if (checkFiles(root + separator + file[file.length - 1], filename
+									.trim())) {
+								if (overwrite(root + separator + file[file.length - 1],
+										file[file.length - 1])) {
+									FileOutputStream out = new FileOutputStream(new File(root
+											+ separator + file[file.length - 1]));
 									FileInputStream in = new FileInputStream(new File(filename));
 									// log.addText(filename);
 									int read = in.read();
@@ -5755,10 +5765,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					try {
 						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
 								"_");
-						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
-							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
-								FileOutputStream out = new FileOutputStream(new File(root + separator
-										+ file[file.length - 1]));
+						if (checkFiles(root + separator + file[file.length - 1], filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],
+									file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root
+										+ separator + file[file.length - 1]));
 								FileInputStream in = new FileInputStream(new File(filename));
 								int read = in.read();
 								while (read != -1) {
@@ -5810,10 +5821,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					try {
 						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
 								"_");
-						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
-							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
-								FileOutputStream out = new FileOutputStream(new File(root + separator
-										+ file[file.length - 1]));
+						if (checkFiles(root + separator + file[file.length - 1], filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],
+									file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root
+										+ separator + file[file.length - 1]));
 								FileInputStream in = new FileInputStream(new File(filename));
 								int read = in.read();
 								while (read != -1) {
@@ -5864,10 +5876,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					try {
 						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
 								"_");
-						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
-							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
-								FileOutputStream out = new FileOutputStream(new File(root + separator
-										+ file[file.length - 1]));
+						if (checkFiles(root + separator + file[file.length - 1], filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],
+									file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root
+										+ separator + file[file.length - 1]));
 								FileInputStream in = new FileInputStream(new File(filename));
 								int read = in.read();
 								while (read != -1) {
@@ -5918,10 +5931,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					try {
 						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
 								"_");
-						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
-							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
-								FileOutputStream out = new FileOutputStream(new File(root + separator
-										+ file[file.length - 1]));
+						if (checkFiles(root + separator + file[file.length - 1], filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],
+									file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root
+										+ separator + file[file.length - 1]));
 								FileInputStream in = new FileInputStream(new File(filename));
 								int read = in.read();
 								while (read != -1) {
@@ -5970,11 +5984,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					biosimrc.put("biosim.general.import_dir", filename);
 					String[] file = filename.split(separator);
 					try {
-						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+","_");
-						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
-							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
-								FileOutputStream out = new FileOutputStream(new File(root + separator
-										+ file[file.length - 1]));
+						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
+								"_");
+						if (checkFiles(root + separator + file[file.length - 1], filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],
+									file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root
+										+ separator + file[file.length - 1]));
 								FileInputStream in = new FileInputStream(new File(filename));
 								int read = in.read();
 								while (read != -1) {
@@ -6025,10 +6041,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					try {
 						file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+",
 								"_");
-						if (checkFiles(root + separator + file[file.length-1],filename.trim())) {
-							if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
-								FileOutputStream out = new FileOutputStream(new File(root + separator
-										+ file[file.length - 1]));
+						if (checkFiles(root + separator + file[file.length - 1], filename.trim())) {
+							if (overwrite(root + separator + file[file.length - 1],
+									file[file.length - 1])) {
+								FileOutputStream out = new FileOutputStream(new File(root
+										+ separator + file[file.length - 1]));
 								FileInputStream in = new FileInputStream(new File(filename));
 								int read = in.read();
 								while (read != -1) {
@@ -6180,16 +6197,20 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						if (lema) {
 							LearnLHPN learn = new LearnLHPN(root + separator + lrnName, log, this);
 							lrnTab.addTab("Learn", learn);
-							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
+							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
+									"Learn");
 							lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
-							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
+							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
+									"Advanced Options");
 						}
 						else {
 							Learn learn = new Learn(root + separator + lrnName, log, this);
 							lrnTab.addTab("Learn", learn);
-							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
+							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
+									"Learn");
 							lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
-							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
+							lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
+									"Advanced Options");
 						}
 						Graph tsdGraph;
 						tsdGraph = new Graph(null, "Number of molecules", lrnName + " data",
@@ -7985,7 +8006,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				return 3;
 			}
 		}
-		else if (tab.getComponentAt(index).getName().contains("Graph")) {
+		else if (tab.getComponentAt(index).getName().contains("Graph")
+				|| tab.getComponentAt(index).getName().equals("Histogram")) {
 			if (tab.getComponentAt(index) instanceof Graph) {
 				if (((Graph) tab.getComponentAt(index)).hasChanged()) {
 					if (autosave == 0) {
@@ -13167,19 +13189,21 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 	public void setGlassPane(boolean visible) {
 		// frame.getGlassPane().setVisible(visible);
 	}
-	
+
 	public boolean checkFiles(String input, String output) {
-		input = input.replaceAll("//","/");
-		output = output.replaceAll("//","/");
+		input = input.replaceAll("//", "/");
+		output = output.replaceAll("//", "/");
 		if (input.equals(output)) {
 			Object[] options = { "Ok" };
-			JOptionPane.showOptionDialog(frame, "Files are the same.", "Files Same", JOptionPane.YES_NO_OPTION,
-					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			JOptionPane
+					.showOptionDialog(frame, "Files are the same.", "Files Same",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+							options[0]);
 			return false;
 		}
-		return true; 
+		return true;
 	}
-	
+
 	public boolean overwrite(String fullPath, String name) {
 		if (new File(fullPath).exists()) {
 			String[] views = canDelete(name);
@@ -13291,7 +13315,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		}
 		return false;
 	}
-	
+
 	public void updateTabName(String oldName, String newName) {
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			String tab = this.tab.getTitleAt(i);
