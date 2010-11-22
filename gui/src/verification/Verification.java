@@ -628,6 +628,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			HashMap<Integer, String> preOrder = new HashMap<Integer, String>();
 			HashMap<Integer, String> loopOrder = new HashMap<Integer, String>();
 			HashMap<Integer, String> postOrder = new HashMap<Integer, String>();
+			boolean containsAbstractions = false;
+			for (String s : abstPane.transforms) {
+				if (load.containsKey(s)) {
+					containsAbstractions = true;
+				}
+			}
 			for (String s : abstPane.transforms) {
 				if (load.containsKey(s)) {
 					if (load.getProperty(s).contains("preloop")) {
@@ -675,7 +681,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						abstPane.postAbsModel.removeElement(s);
 					}
 				}
-				else {
+				else if (containsAbstractions) {
 					abstPane.preAbsModel.removeElement(s);
 					abstPane.loopAbsModel.removeElement(s);
 					abstPane.postAbsModel.removeElement(s);
@@ -1462,6 +1468,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				JOptionPane.showMessageDialog(BioSim.frame,
 						"Unable to verify model.", "Error",
 						JOptionPane.ERROR_MESSAGE);
