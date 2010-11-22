@@ -6906,7 +6906,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		JLabel boundLabel = new JLabel("Boundary Condition:");
 		JLabel constLabel = new JLabel("Constant:");
 		JLabel hasOnlyLabel = new JLabel("Has Only Substance Units:");
-		JLabel convLabel = new JLabel("Converaion Factor:");
+		JLabel convLabel = new JLabel("Conversion Factor:");
 		ID = new JTextField();
 		String selectedID = "";
 		Name = new JTextField();
