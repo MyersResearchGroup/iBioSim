@@ -1421,8 +1421,12 @@ public class Abstraction extends LhpnFile {
 								samesets.put(t1, same);
 							}
 						}
-					} else if (samePostset && !assign
-							&& abstPane.absListModel.contains(abstPane.xform7)) {
+					} else if (samePostset
+							&& !assign
+							&& (abstPane.preAbsModel.contains(abstPane.xform7)
+									|| abstPane.loopAbsModel
+											.contains(abstPane.xform27) || abstPane.postAbsModel
+									.contains(abstPane.xform27))) {
 						Place[] preset1 = t1.getPreset();
 						Place[] preset2 = t1.getPreset();
 						if (preset1.length == 1 && preset2.length == 1) {
@@ -2554,7 +2558,7 @@ public class Abstraction extends LhpnFile {
 		unvisited.remove(trans);
 		for (Place p : trans.getPostset()) {
 			for (Transition t : p.getPostset()) {
-				if (unvisited.contains(t)) {					
+				if (unvisited.contains(t)) {
 					change = trans8Iteration(t, unvisited, change);
 					unvisited.remove(t);
 				}
@@ -2597,7 +2601,8 @@ public class Abstraction extends LhpnFile {
 			return change;
 		}
 		for (Place p : trans.getPostset()) {
-			if (p.isMarked()) return change;
+			if (p.isMarked())
+				return change;
 			for (Transition tP : p.getPostset()) {
 				if (transName.equals(tP.getName())) {
 					return change;
