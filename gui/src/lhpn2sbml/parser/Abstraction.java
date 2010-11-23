@@ -3187,7 +3187,7 @@ public class Abstraction extends LhpnFile {
 						}
 					}
 					for (Transition t : transitions.values()) {
-						if (tree.becomesTrue(t.getAssignments())) {
+						if (tree.getChange(t.getAssignments()) != 'F' && tree.getChange(t.getAssignments()) != 'f') {
 							combine = false;
 							break;
 						}
