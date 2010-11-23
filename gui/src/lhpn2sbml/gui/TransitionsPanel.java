@@ -305,7 +305,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			for (String s : boolAssignments.getItems()) {
 				// System.out.println("bool" + s);
 				String[] tempArray = s.split(":=");
-				if (!lhpn.getTransition(transition).addBoolAssign(tempArray[0], tempArray[1].replace("\\s", "")))
+				if (!lhpn.getTransition(transition).addBoolAssign(tempArray[0], tempArray[1].replaceAll("\\s+", "")))
 					return false;
 			}
 		}
@@ -315,7 +315,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				String[] tempArray = s.split(":=");
 				// System.out.println(transition + " " + tempArray[0] + " " +
 				// tempArray[1]);
-				lhpn.getTransition(transition).addContAssign(tempArray[0], tempArray[1].replace("\\s", ""));
+				lhpn.getTransition(transition).addContAssign(tempArray[0], tempArray[1].replaceAll("\\s+", ""));
 				// log.addText("continuous "+ tempArray[0]);
 			}
 		}
@@ -325,7 +325,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				String[] tempArray = s.split(":=");
 				// System.out.println(transition + " " + tempArray[0] + " " +
 				// tempArray[1]);
-				if (!lhpn.getTransition(transition).addIntAssign(tempArray[0], tempArray[1].replace("\\s", "")))
+				if (!lhpn.getTransition(transition).addIntAssign(tempArray[0], tempArray[1].replaceAll("\\s+", "")))
 					return false;
 				// log.addText("integer " + tempArray[0]);
 			}
@@ -335,14 +335,14 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 				// System.out.println("rate " + s);
 				String[] tempArray = s.split("':=");
 				// System.out.println(tempArray[1]);
-				if (!lhpn.getTransition(transition).addRateAssign(tempArray[0], tempArray[1].replace("\\s", "")))
+				if (!lhpn.getTransition(transition).addRateAssign(tempArray[0], tempArray[1].replaceAll("\\s+", "")))
 					return false;
 			}
 		}
 		// String delay;
-		if (!lhpn.getTransition(transition).addDelay(fields.get("delay").getValue().replace("\\s", "")))
+		if (!lhpn.getTransition(transition).addDelay(fields.get("delay").getValue().replaceAll("\\s+", "")))
 			return false;
-		if (!lhpn.getTransition(transition).addPriority(fields.get("priority").getValue().replace("\\s", "")))
+		if (!lhpn.getTransition(transition).addPriority(fields.get("priority").getValue().replaceAll("\\s+", "")))
 			return false;
 		if (fail.isSelected()) {
 			lhpn.getTransition(transition).setFail(true);
@@ -351,7 +351,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			lhpn.getTransition(transition).setFail(false);
 		}
 		if (fields.get("Enabling Condition") != null) {
-			if (!lhpn.getTransition(transition).addEnabling(fields.get("Enabling Condition").getValue().replace("\\s", "")))
+			if (!lhpn.getTransition(transition).addEnabling(fields.get("Enabling Condition").getValue().replaceAll("\\s+", "")))
 				return false;
 		}
 		return true;
