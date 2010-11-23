@@ -3394,55 +3394,7 @@ public class ExprTree {
 				}
 				return 'U';
 			}
-			else if (op.equals("X")) {
-				if (r1.getChange(variables) == 'T') {
-					if (r2.getChange(variables) == 'T') {
-						return 'F';
-					}
-					else if (r2.getChange(variables) == 'F') {
-						return 'T';
-					}
-					else if (r2.getChange(variables) == 't') {
-						return 'f';
-					}
-					else if (r2.getChange(variables) == 'f') {
-						return 't';
-					}
-					return 'X';
-				}
-				else if (r1.getChange(variables) == 'F') {
-					if (r2.getChange(variables) == 'U') {
-						return 'X';
-					}
-					else {
-						return r2.getChange(variables);
-					}
-				}
-				else if (r1.getChange(variables) == 't') {
-					if (r2.getChange(variables) == 't') {
-						return 'f';
-					}
-					else if (r2.getChange(variables) == 'f') {
-						return 't';
-					}
-					return 'X';
-				}
-				else if (r1.getChange(variables) == 'f') {
-					if (r2.getChange(variables) == 'T') {
-						return 't';
-					}
-					else if (r2.getChange(variables) == 'F') {
-						return 'f';
-					}
-					return 'X';
-				}
-				else if (r1.getChange(variables) == 'U' && r2.getChange(variables) == 'U') {
-					return 'U';
-				}
-				return 'X';
-			}
-		case 'a': // Arithmetic
-		case 'w': // bitWise
+		case 'r': // Relational
 			boolean flag = false;
 			for (String var : getVars()) {
 				if (variables.containsKey(var)) {
@@ -3453,70 +3405,52 @@ public class ExprTree {
 			if (!flag) {
 				return 'U';
 			}
-			if (op.equals("&")) {
-				if (evaluateExp(variables) == 0.0) {
-					return 'F';
+			if (op.equals("==")) {
+				if (r1.evaluateExp(variables) == r2.evaluateExp(variables)) {
+					return 'T';
 				}
-				else if (new Double(evaluateExp(variables)).equals(Double.NaN)) {
+				else if (new Double(r1.evaluateExp(variables)).equals(Double.NaN) || new Double(r2.evaluateExp(variables)).equals(Double.NaN)) {
 					return 'X';
 				}
-				return 'T';
+				return 'F';
 			}
-		case 'r': // Relational
-			if (r1.isit == 'i') {
-				if (!variables.containsKey(r1.variable)) {
-					return 'U';
+			else if (op.equals(">=")) {
+				if (r1.evaluateExp(variables) >= r2.evaluateExp(variables)) {
+					return 'T';
 				}
-				if (op.equals("==")) {
-					if (r1.evaluateExp(variables) == r2.evaluateExp(variables)) {
-						return 'T';
-					}
-					else if (new Double(r1.evaluateExp(variables)).equals(Double.NaN) || new Double(r2.evaluateExp(variables)).equals(Double.NaN)) {
-						return 'X';
-					}
-					return 'F';
+				else if (new Double(r2.evaluateExp(variables)).equals(Double.NaN) || new Double(r1.evaluateExp(variables)).equals(Double.NaN)) {
+					return 'X';
 				}
-				else if (op.equals(">=")) {
-					if (r1.evaluateExp(variables) >= r2.evaluateExp(variables)) {
-						return 'T';
-					}
-					else if (new Double(r2.evaluateExp(variables)).equals(Double.NaN) || new Double(r1.evaluateExp(variables)).equals(Double.NaN)) {
-						return 'X';
-					}
-					return 'F';
-				}
-				else if (op.equals("<=")) {
-					if (r1.evaluateExp(variables) <= r2.evaluateExp(variables)) {
-						return 'T';
-					}
-					else if (new Double(r1.evaluateExp(variables)).equals(Double.NaN) || new Double(r2.evaluateExp(variables)).equals(Double.NaN)) {
-						return 'X';
-					}
-					return 'F';
-				}
-				else if (op.equals(">")) {
-					if (r1.evaluateExp(variables) > r2.evaluateExp(variables)) {
-						return 'T';
-					}
-					else if (new Double(r1.evaluateExp(variables)).equals(Double.NaN) || new Double(r2.evaluateExp(variables)).equals(Double.NaN)) {
-						return 'X';
-					}
-					return 'F';
-				}
-				else if (op.equals("<")) {
-					if (r1.evaluateExp(variables) < r2.evaluateExp(variables)) {
-						return 'T';
-					}
-					else if (new Double(r1.evaluateExp(variables)).equals(Double.NaN) || new Double(r2.evaluateExp(variables)).equals(Double.NaN)) {
-						return 'X';
-					}
-					return 'F';
-				}
-				return 'X';
+				return 'F';
 			}
-			else {
-				return 'X';
+			else if (op.equals("<=")) {
+				if (r1.evaluateExp(variables) <= r2.evaluateExp(variables)) {
+					return 'T';
+				}
+				else if (new Double(r1.evaluateExp(variables)).equals(Double.NaN) || new Double(r2.evaluateExp(variables)).equals(Double.NaN)) {
+					return 'X';
+				}
+				return 'F';
 			}
+			else if (op.equals(">")) {
+				if (r1.evaluateExp(variables) > r2.evaluateExp(variables)) {
+					return 'T';
+				}
+				else if (new Double(r1.evaluateExp(variables)).equals(Double.NaN) || new Double(r2.evaluateExp(variables)).equals(Double.NaN)) {
+					return 'X';
+				}
+				return 'F';
+			}
+			else if (op.equals("<")) {
+				if (r1.evaluateExp(variables) < r2.evaluateExp(variables)) {
+					return 'T';
+				}
+				else if (new Double(r1.evaluateExp(variables)).equals(Double.NaN) || new Double(r2.evaluateExp(variables)).equals(Double.NaN)) {
+					return 'X';
+				}
+				return 'F';
+			}
+			return 'X';
 		case 'i': // Integer
 			if (variables.containsKey(variable)) {
 				if (Integer.parseInt(variables.get(variable)) == 0.0) {
@@ -5143,8 +5077,9 @@ public class ExprTree {
 			else {
 				return -1.0;
 			}
-		case 'i': // Integer
-		case 'c': // Continuous
+		case 'c': // Integer
+			return Double.NaN;
+		case 'i': // Continuous
 			if (variables != null) {
 				try {
 					return Double.parseDouble(variables.get(variable));
