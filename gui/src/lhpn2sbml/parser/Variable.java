@@ -69,15 +69,32 @@ public class Variable {
 	}
 	
 	public boolean isInput() {
+		if (port != null) {
 		return port.equals(INPUT);
+		}
+		return false;
 	}
 	
 	public boolean isOutput() {
+		if (port != null) {
 		return port.equals(OUTPUT);
+		}
+		return false;
 	}
 
 	public boolean isInternal() {
+		if (port != null) {
 		return port.equals(INTERNAL);
+		}
+		return true;
+	}
+	
+	public String getPort() {
+		return port;
+	}
+	
+	public void setPort(String newPort) {
+		port = newPort;
 	}
 	
 	@Override

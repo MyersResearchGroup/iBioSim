@@ -61,7 +61,7 @@ public class LhpnFile {
 				boolean flag = false;
 				for (String s : booleans.keySet()) {
 					if (booleans.get(s) != null) {
-						if (!booleans.get(s).isOutput()) {
+						if (booleans.get(s).isInput()) {
 							if (!flag) {
 								buffer.append(".inputs ");
 								flag = true;
@@ -69,6 +69,28 @@ public class LhpnFile {
 							buffer.append(s + " ");
 							boolOrder.put(s, i);
 							i++;
+						}
+					}
+				}
+				for (String s : continuous.keySet()) {
+					if (continuous.get(s) != null) {
+						if (continuous.get(s).isInput()) {
+							if (!flag) {
+								buffer.append(".inputs ");
+								flag = true;
+							}
+							buffer.append(s + " ");
+						}
+					}
+				}
+				for (String s : integers.keySet()) {
+					if (integers.get(s) != null) {
+						if (integers.get(s).isInput()) {
+							if (!flag) {
+								buffer.append(".inputs ");
+								flag = true;
+							}
+							buffer.append(s + " ");
 						}
 					}
 				}
@@ -84,6 +106,65 @@ public class LhpnFile {
 							buffer.append(s + " ");
 							boolOrder.put(s, i);
 							i++;
+						}
+					}
+				}
+				for (String s : continuous.keySet()) {
+					if (continuous.get(s) != null) {
+						if (continuous.get(s).isOutput()) {
+							if (!flag) {
+								buffer.append(".outputs ");
+								flag = true;
+							}
+							buffer.append(s + " ");
+						}
+					}
+				}
+				for (String s : integers.keySet()) {
+					if (integers.get(s) != null) {
+						if (integers.get(s).isOutput()) {
+							if (!flag) {
+								buffer.append(".outputs ");
+								flag = true;
+							}
+							buffer.append(s + " ");
+						}
+					}
+				}
+				buffer.append("\n");
+				flag = false;
+				for (String s : booleans.keySet()) {
+					if (booleans.get(s) != null) {
+						if (!flag) {
+							buffer.append(".internals ");
+							flag = true;
+						}
+						if (booleans.get(s).isInternal()) {
+							buffer.append(s + " ");
+							boolOrder.put(s, i);
+							i++;
+						}
+					}
+				}
+				for (String s : continuous.keySet()) {
+					if (continuous.get(s) != null) {
+						if (continuous.get(s).isInternal()) {
+							if (!flag) {
+								buffer.append(".internals ");
+								flag = true;
+							}
+							buffer.append(s + " ");
+						}
+					}
+				}
+				for (String s : integers.keySet()) {
+					if (integers.get(s) != null) {
+						if (integers.get(s).isInternal()) {
+							if (!flag) {
+								buffer.append(".internals ");
+								flag = true;
+							}
+							buffer.append(s + " ");
 						}
 					}
 				}
@@ -343,11 +424,11 @@ public class LhpnFile {
 		// try {
 
 		parseProperty(data);
-		parseInOut(data);
 		parsePlaces(data);
 		parseControlFlow(data);
 		parseVars(data);
 		parseIntegers(data);
+		parseInOut(data);
 		parseMarking(data);
 		boolean error = parseEnabling(data);
 		error = parseAssign(data, error);
@@ -544,6 +625,14 @@ public class LhpnFile {
 
 	public void addOutput(String name, String ic) {
 		Variable var = new Variable(name, "boolean", ic, Variable.OUTPUT);
+		booleans.put(name, var);
+		if (!variables.contains(var)) {
+			variables.add(var);
+		}
+	}
+	
+	public void addBoolean(String name, String ic) {
+		Variable var = new Variable(name, "boolean", ic);
 		booleans.put(name, var);
 		if (!variables.contains(var)) {
 			variables.add(var);
@@ -858,6 +947,14 @@ public class LhpnFile {
 		}
 		return outputs;
 	}
+	
+	public HashMap<String, String> getBooleans() {
+		HashMap<String, String> bools = new HashMap<String, String>();
+		for (Variable v : booleans.values()) {
+				bools.put(v.getName(), v.getInitValue());
+		}
+		return bools;
+	}
 
 	public HashMap<String, Properties> getContinuous() {
 		HashMap<String, Properties> tempCont = new HashMap<String, Properties>();
@@ -1128,14 +1225,26 @@ public class LhpnFile {
 	}
 
 	public boolean isInput(String var) {
-		if (booleans.containsKey(var)) {
-			return !booleans.get(var).isOutput();
+		if (isContinuous(var)) {
+			return continuous.get(var).isInput();
+		}
+		else if (isInteger(var)) {
+			return integers.get(var).isInput();
+		}
+		else if (isBoolean(var)) {
+			return booleans.get(var).isInput();
 		}
 		return false;
 	}
 
 	public boolean isOutput(String var) {
-		if (booleans.containsKey(var)) {
+		if (isContinuous(var)) {
+			return continuous.get(var).isOutput();
+		}
+		else if (isInteger(var)) {
+			return integers.get(var).isOutput();
+		}
+		else if (isBoolean(var)) {
 			return booleans.get(var).isOutput();
 		}
 		return false;
@@ -1182,19 +1291,6 @@ public class LhpnFile {
 		return abstraction;
 	}
 
-//	private void parseProperty(StringBuffer data) {
-//		Pattern pattern = Pattern.compile(PROPERTY_LINE);
-//		Matcher lineMatcher = pattern.matcher(data.toString());
-//		if (lineMatcher.find()) {
-//			Pattern propertyPattern = Pattern.compile(PROPERTY);
-//			Matcher propertyMatcher = propertyPattern.matcher(lineMatcher.group(1)
-//					.replace("\\s", ""));
-//			while (propertyMatcher.find()) {
-//				properties.add(propertyMatcher.group(1));
-//			}
-//		}
-//	}
-
 	private void parseProperty(StringBuffer data) {
 		Pattern pattern = Pattern.compile(PROPERTY);
 		Matcher lineMatcher = pattern.matcher(data.toString());
@@ -1209,13 +1305,23 @@ public class LhpnFile {
 		Matcher inLineMatcher = inLinePattern.matcher(data.toString());
 		Integer i = 0;
 		Integer inLength = 0;
+		Integer outLength = 0;
 		if (inLineMatcher.find()) {
 			Pattern inPattern = Pattern.compile(WORD);
 			Matcher inMatcher = inPattern.matcher(inLineMatcher.group(1));
 			while (inMatcher.find()) {
-				varOrder.setProperty(i.toString(), inMatcher.group());
-				i++;
-				inLength++;
+				String var = inMatcher.group();
+				if (isContinuous(var)) {
+					continuous.get(var).setPort("input");
+				}
+				else if (isInteger(var)) {
+					integers.get(var).setPort("input");
+				}
+				else {
+					varOrder.setProperty(i.toString(), var);
+					i++;
+					inLength++;
+				}
 			}
 		}
 		Pattern outPattern = Pattern.compile(OUTPUT);
@@ -1224,8 +1330,37 @@ public class LhpnFile {
 			Pattern output = Pattern.compile(WORD);
 			Matcher outMatcher = output.matcher(outLineMatcher.group(1));
 			while (outMatcher.find()) {
-				varOrder.setProperty(i.toString(), outMatcher.group());
-				i++;
+				String var = outMatcher.group();
+				if (isContinuous(var)) {
+					continuous.get(var).setPort("output");
+				}
+				else if (isInteger(var)) {
+					integers.get(var).setPort("output");
+				}
+				else {
+					varOrder.setProperty(i.toString(), var);
+					i++;
+					outLength++;
+				}
+			}
+		}
+		Pattern internalPattern = Pattern.compile(INTERNAL);
+		Matcher internalLineMatcher = internalPattern.matcher(data.toString());
+		if (internalLineMatcher.find()) {
+			Pattern internal = Pattern.compile(WORD);
+			Matcher internalMatcher = internal.matcher(internalLineMatcher.group(1));
+			while (internalMatcher.find()) {
+				String var = internalMatcher.group();
+				if (isContinuous(var)) {
+					continuous.get(var).setPort("internal");
+				}
+				else if (isInteger(var)) {
+					integers.get(var).setPort("internal");
+				}
+				else {
+					varOrder.setProperty(i.toString(), var);
+					i++;
+				}
 			}
 		}
 		Pattern initState = Pattern.compile(INIT_STATE);
@@ -1252,7 +1387,7 @@ public class LhpnFile {
 					addInput(name, "unknown");
 				}
 			}
-			for (i = inLength; i < initArray.length; i++) {
+			for (i = inLength; i < inLength + outLength; i++) {
 				String name = varOrder.getProperty(i.toString());
 				if (initArray[i].equals("1") && name != null) {
 					addOutput(name, "true");
@@ -1260,6 +1395,19 @@ public class LhpnFile {
 					addOutput(name, "false");
 				} else {
 					addOutput(name, "unknown");
+				}
+			}
+			for (i = inLength + outLength; i < initArray.length; i++) {
+				String name = varOrder.getProperty(i.toString());
+				if (initArray[i].equals("1") && name != null) {
+					addBoolean(name, "true");
+					booleans.get(name).setPort("internal");
+				} else if (initArray[i].equals("0") && name != null) {
+					addBoolean(name, "false");
+					booleans.get(name).setPort("internal");
+				} else {
+					addBoolean(name, "unknown");
+					booleans.get(name).setPort("internal");
 				}
 			}
 		} else {
@@ -1273,6 +1421,21 @@ public class LhpnFile {
 						addOutput(varOrder.getProperty(i.toString()), "unknown");
 					}
 				}
+			}
+		}
+		for (Variable var : continuous.values()) {
+			if (var.getPort() == null) {
+				var.setPort("internal");
+			}
+		}
+		for (Variable var : integers.values()) {
+			if (var.getPort() == null) {
+				var.setPort("internal");
+			}
+		}
+		for (Variable var : booleans.values()) {
+			if (var.getPort() == null) {
+				var.setPort("internal");
 			}
 		}
 	}
@@ -1695,6 +1858,8 @@ public class LhpnFile {
 	private static final String INPUT = "\\.inputs([[\\s[^\\n]]\\w+]*?)\\n";
 
 	private static final String OUTPUT = "\\.outputs([[\\s[^\\n]]\\w+]*?)\\n";
+	
+	private static final String INTERNAL = "\\.internal([[\\s[^\\n]]\\w+]*?)\\n";
 
 	private static final String INIT_STATE = "#@\\.init_state \\[(\\w+)\\]";
 
