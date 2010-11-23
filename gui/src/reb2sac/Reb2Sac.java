@@ -4004,89 +4004,91 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable,
 				HashMap<Integer, String> postOrder = new HashMap<Integer, String>();
 				HashMap<String, Boolean> containsXform = new HashMap<String, Boolean>();
 				boolean containsAbstractions = false;
-				for (String s : lhpnAbstraction.transforms) {
-					if (load.containsKey("abstraction.transform." + s)) {
-						containsAbstractions = true;
-						containsXform.put(s, true);
-					}
-					else {
-						containsXform.put(s, false);
-					}
-				}
-				for (String s : lhpnAbstraction.transforms) {
-					if (load.containsKey(s)) {
-						if (load.getProperty("abstraction.transform." + s).contains("preloop")) {
-							Pattern prePattern = Pattern.compile("preloop(\\d+?)");
-							Matcher intMatch = prePattern.matcher(load
-									.getProperty("abstraction.transform." + s));
-							if (intMatch.find()) {
-								Integer index = Integer.parseInt(intMatch.group(1));
-								preOrder.put(index, s);
-							} else {
-								lhpnAbstraction.addPreXform(s);
-							}
+				if (lhpnAbstraction != null) {
+					for (String s : lhpnAbstraction.transforms) {
+						if (load.containsKey("abstraction.transform." + s)) {
+							containsAbstractions = true;
+							containsXform.put(s, true);
 						}
 						else {
+							containsXform.put(s, false);
+						}
+					}
+					for (String s : lhpnAbstraction.transforms) {
+						if (load.containsKey(s)) {
+							if (load.getProperty("abstraction.transform." + s).contains("preloop")) {
+								Pattern prePattern = Pattern.compile("preloop(\\d+?)");
+								Matcher intMatch = prePattern.matcher(load
+										.getProperty("abstraction.transform." + s));
+								if (intMatch.find()) {
+									Integer index = Integer.parseInt(intMatch.group(1));
+									preOrder.put(index, s);
+								} else {
+									lhpnAbstraction.addPreXform(s);
+								}
+							}
+							else {
+								lhpnAbstraction.preAbsModel.removeElement(s);
+							}
+							if (load.getProperty("abstraction.transform." + s).contains("mainloop")) {
+								Pattern loopPattern = Pattern
+								.compile("mainloop(\\d+?)");
+								Matcher intMatch = loopPattern.matcher(load
+										.getProperty("abstraction.transform." + s));
+								if (intMatch.find()) {
+									Integer index = Integer.parseInt(intMatch.group(1));
+									loopOrder.put(index, s);
+								} else {
+									lhpnAbstraction.addLoopXform(s);
+								}
+							}
+							else {
+								lhpnAbstraction.loopAbsModel.removeElement(s);
+							}
+							if (load.getProperty("abstraction.transform." + s).contains("postloop")) {
+								Pattern postPattern = Pattern
+								.compile("postloop(\\d+?)");
+								Matcher intMatch = postPattern.matcher(load
+										.getProperty("abstraction.transform." + s));
+								if (intMatch.find()) {
+									Integer index = Integer.parseInt(intMatch.group(1));
+									postOrder.put(index, s);
+								} else {
+									lhpnAbstraction.addPostXform(s);
+								}
+							}
+							else {
+								lhpnAbstraction.postAbsModel.removeElement(s);
+							}
+						}
+						else if (containsAbstractions && !containsXform.get(s)) {
 							lhpnAbstraction.preAbsModel.removeElement(s);
-						}
-						if (load.getProperty("abstraction.transform." + s).contains("mainloop")) {
-							Pattern loopPattern = Pattern
-									.compile("mainloop(\\d+?)");
-							Matcher intMatch = loopPattern.matcher(load
-									.getProperty("abstraction.transform." + s));
-							if (intMatch.find()) {
-								Integer index = Integer.parseInt(intMatch.group(1));
-								loopOrder.put(index, s);
-							} else {
-								lhpnAbstraction.addLoopXform(s);
-							}
-						}
-						else {
 							lhpnAbstraction.loopAbsModel.removeElement(s);
-						}
-						if (load.getProperty("abstraction.transform." + s).contains("postloop")) {
-							Pattern postPattern = Pattern
-									.compile("postloop(\\d+?)");
-							Matcher intMatch = postPattern.matcher(load
-									.getProperty("abstraction.transform." + s));
-							if (intMatch.find()) {
-								Integer index = Integer.parseInt(intMatch.group(1));
-								postOrder.put(index, s);
-							} else {
-								lhpnAbstraction.addPostXform(s);
-							}
-						}
-						else {
 							lhpnAbstraction.postAbsModel.removeElement(s);
 						}
 					}
-					else if (containsAbstractions && !containsXform.get(s)) {
-						lhpnAbstraction.preAbsModel.removeElement(s);
-						lhpnAbstraction.loopAbsModel.removeElement(s);
-						lhpnAbstraction.postAbsModel.removeElement(s);
+					if (preOrder.size() > 0) {
+						lhpnAbstraction.preAbsModel.removeAllElements();
 					}
+					for (Integer j = 0; j < preOrder.size(); j++) {
+						lhpnAbstraction.preAbsModel.addElement(preOrder.get(j));
+					}
+					if (loopOrder.size() > 0) {
+						lhpnAbstraction.loopAbsModel.removeAllElements();
+					}
+					for (Integer j = 0; j < loopOrder.size(); j++) {
+						lhpnAbstraction.loopAbsModel.addElement(loopOrder.get(j));
+					}
+					if (postOrder.size() > 0) {
+						lhpnAbstraction.postAbsModel.removeAllElements();
+					}
+					for (Integer j = 0; j < postOrder.size(); j++) {
+						lhpnAbstraction.postAbsModel.addElement(postOrder.get(j));
+					}
+					lhpnAbstraction.preAbs.setListData(lhpnAbstraction.preAbsModel.toArray());
+					lhpnAbstraction.loopAbs.setListData(lhpnAbstraction.loopAbsModel.toArray());
+					lhpnAbstraction.postAbs.setListData(lhpnAbstraction.postAbsModel.toArray());
 				}
-				if (preOrder.size() > 0) {
-					lhpnAbstraction.preAbsModel.removeAllElements();
-				}
-				for (Integer j = 0; j < preOrder.size(); j++) {
-					lhpnAbstraction.preAbsModel.addElement(preOrder.get(j));
-				}
-				if (loopOrder.size() > 0) {
-					lhpnAbstraction.loopAbsModel.removeAllElements();
-				}
-				for (Integer j = 0; j < loopOrder.size(); j++) {
-					lhpnAbstraction.loopAbsModel.addElement(loopOrder.get(j));
-				}
-				if (postOrder.size() > 0) {
-					lhpnAbstraction.postAbsModel.removeAllElements();
-				}
-				for (Integer j = 0; j < postOrder.size(); j++) {
-					lhpnAbstraction.postAbsModel.addElement(postOrder.get(j));
-				}
-				lhpnAbstraction.preAbs.setListData(lhpnAbstraction.preAbsModel.toArray());
-				lhpnAbstraction.loopAbs.setListData(lhpnAbstraction.loopAbsModel.toArray());
-				lhpnAbstraction.postAbs.setListData(lhpnAbstraction.postAbsModel.toArray());
 				props = loadProperties.toArray(props);
 				properties.setListData(props);
 				String[] getFilename = openFile.split(separator);

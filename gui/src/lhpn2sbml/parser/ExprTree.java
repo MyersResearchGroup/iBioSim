@@ -4007,34 +4007,6 @@ public class ExprTree {
 					
 				}
 			}
-			else if (op.equals("f")) {
-				if (r1 != null && r2 != null) {
-					if (sbmlFlag){
-						result = "floor(" + r1.getElement(type) + ")";
-					} 
-					else if (verilog){
-						result = "floor(" + r1.getElement(type) + ")";
-					}
-					else {
-						result = "floor(" + r1.getElement(type) +  ")";
-					}
-					
-				}
-			}
-			else if (op.equals("c")) {
-				if (r1 != null && r2 != null) {
-					if (sbmlFlag){
-						result = "ceil(" + r1.getElement(type) + ")";
-					} 
-					else if (verilog){
-						result = "ceil(" + r1.getElement(type) + ")";
-					}
-					else {
-						result = "ceil(" + r1.getElement(type) +  ")";
-					}
-					
-				}
-			}
 			else if (op.equals("X")) {
 				if (r1 != null && r2 != null) {
 					if (sbmlFlag){
@@ -4193,6 +4165,34 @@ public class ExprTree {
 							}
 							
 						}
+					}
+				}
+				else if (op.equals("f")) {
+					if (r1 != null && r2 != null) {
+						if (sbmlFlag){
+							result = "floor(" + r1.getElement(type) + ")";
+						} 
+						else if (verilog){
+							result = "floor(" + r1.getElement(type) + ")";
+						}
+						else {
+							result = "floor(" + r1.getElement(type) +  ")";
+						}
+						
+					}
+				}
+				else if (op.equals("c")) {
+					if (r1 != null && r2 != null) {
+						if (sbmlFlag){
+							result = "ceil(" + r1.getElement(type) + ")";
+						} 
+						else if (verilog){
+							result = "ceil(" + r1.getElement(type) + ")";
+						}
+						else {
+							result = "ceil(" + r1.getElement(type) +  ")";
+						}
+						
 					}
 				}
 				else if (op.equals("m")) {
@@ -4954,7 +4954,7 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 			}
-			else if (isit == 'w' && op.equals("m")) {
+			else if (op.equals("m")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
@@ -4962,7 +4962,7 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 			}
-			else if (isit == 'w' && op.equals("M")) {
+			else if (op.equals("M")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
@@ -4970,7 +4970,7 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 				}
 			}
-			else if (isit == 'w' && op.equals("i")) {
+			else if (op.equals("i")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';

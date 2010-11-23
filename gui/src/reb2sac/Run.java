@@ -167,48 +167,50 @@ public class Run implements ActionListener {
 		} else if (selectedButtons.contains("nary")) {
 			abs.setProperty("reb2sac.abstraction.method", "nary");
 		}
-		for (Integer i = 0; i < abstPane.preAbsModel.size(); i++) {
-			abs.setProperty("abstraction.transform."
-					+ abstPane.preAbsModel.getElementAt(i).toString(),
-					"preloop" + i.toString());
-		}
-		for (Integer i = 0; i < abstPane.loopAbsModel.size(); i++) {
-			if (abstPane.preAbsModel.contains(abstPane.loopAbsModel
-					.getElementAt(i))) {
-				String value = abs.getProperty(abstPane.loopAbsModel
-						.getElementAt(i).toString());
-				value = value + "mainloop" + i.toString();
+		if (abstPane != null) {
+			for (Integer i = 0; i < abstPane.preAbsModel.size(); i++) {
 				abs.setProperty("abstraction.transform."
-						+ abstPane.loopAbsModel.getElementAt(i).toString(),
-						value);
-			} else {
-				abs.setProperty("abstraction.transform."
-						+ abstPane.loopAbsModel.getElementAt(i).toString(),
-						"mainloop" + i.toString());
+						+ abstPane.preAbsModel.getElementAt(i).toString(),
+						"preloop" + i.toString());
 			}
-		}
-		for (Integer i = 0; i < abstPane.postAbsModel.size(); i++) {
-			if (abstPane.preAbsModel.contains(abstPane.postAbsModel
-					.getElementAt(i))
-					|| abstPane.preAbsModel.contains(abstPane.postAbsModel
-							.get(i))) {
-				String value = abs.getProperty(abstPane.postAbsModel
-						.getElementAt(i).toString());
-				value = value + "postloop" + i.toString();
-				abs.setProperty("abstraction.transform."
-						+ abstPane.postAbsModel.getElementAt(i).toString(),
-						value);
-			} else {
-				abs.setProperty("abstraction.transform."
-						+ abstPane.postAbsModel.getElementAt(i).toString(),
-						"postloop" + i.toString());
+			for (Integer i = 0; i < abstPane.loopAbsModel.size(); i++) {
+				if (abstPane.preAbsModel.contains(abstPane.loopAbsModel
+						.getElementAt(i))) {
+					String value = abs.getProperty(abstPane.loopAbsModel
+							.getElementAt(i).toString());
+					value = value + "mainloop" + i.toString();
+					abs.setProperty("abstraction.transform."
+							+ abstPane.loopAbsModel.getElementAt(i).toString(),
+							value);
+				} else {
+					abs.setProperty("abstraction.transform."
+							+ abstPane.loopAbsModel.getElementAt(i).toString(),
+							"mainloop" + i.toString());
+				}
 			}
-		}
-		for (String s : abstPane.transforms) {
-			if (!abstPane.preAbsModel.contains(s)
-					&& !abstPane.loopAbsModel.contains(s)
-					&& !abstPane.postAbsModel.contains(s)) {
-				abs.remove(s);
+			for (Integer i = 0; i < abstPane.postAbsModel.size(); i++) {
+				if (abstPane.preAbsModel.contains(abstPane.postAbsModel
+						.getElementAt(i))
+						|| abstPane.preAbsModel.contains(abstPane.postAbsModel
+								.get(i))) {
+					String value = abs.getProperty(abstPane.postAbsModel
+							.getElementAt(i).toString());
+					value = value + "postloop" + i.toString();
+					abs.setProperty("abstraction.transform."
+							+ abstPane.postAbsModel.getElementAt(i).toString(),
+							value);
+				} else {
+					abs.setProperty("abstraction.transform."
+							+ abstPane.postAbsModel.getElementAt(i).toString(),
+							"postloop" + i.toString());
+				}
+			}
+			for (String s : abstPane.transforms) {
+				if (!abstPane.preAbsModel.contains(s)
+						&& !abstPane.loopAbsModel.contains(s)
+						&& !abstPane.postAbsModel.contains(s)) {
+					abs.remove(s);
+				}
 			}
 		}
 		if (selectedButtons.contains("ODE")) {

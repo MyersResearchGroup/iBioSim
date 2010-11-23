@@ -3246,7 +3246,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				System.gc();
 				new File(remove).delete();
 			}
-			catch (Exception e1) {
+			catch (InterruptedException e1) {
+				JOptionPane.showMessageDialog(frame, "Error graphing sbml file.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			catch (IOException e1) {
 				JOptionPane.showMessageDialog(frame, "Error graphing sbml file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
@@ -3488,7 +3492,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				System.gc();
 				new File(remove).delete();
 			}
-			catch (Exception e1) {
+			catch (IOException e1) {
+				JOptionPane.showMessageDialog(frame, "Error graphing sbml file.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			catch (InterruptedException e1) {
 				JOptionPane.showMessageDialog(frame, "Error graphing sbml file.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
