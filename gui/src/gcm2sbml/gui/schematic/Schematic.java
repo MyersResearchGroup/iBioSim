@@ -14,6 +14,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -413,7 +415,20 @@ public class Schematic extends JPanel implements ActionListener {
 				// comes through, remove all the cells from the 
 				// internal model that were specified.
 				if(graph.isBuilding == false){
+					
 					Object cells[] = (Object [])event.getProperties().get("cells");
+					// sort the cells so that edges are first. This makes them
+					// get deleted before anything they are connected to.
+					Arrays.sort(cells, 0, cells.length, new Comparator<Object>() {
+						public int compare(Object a, Object b){
+							boolean av = ((mxCell)a).isEdge();
+							boolean bv = ((mxCell)b).isEdge();
+							if(av && !bv) return -1; // a is edge, b isn't
+							if(!av && bv) return 1; // b is edge, a isn't
+							return 0; // both are the same
+						}
+					});
+					
 					for(Object ocell:cells){
 						mxCell cell = (mxCell)ocell;
 						//System.out.print(cell.getId() + " Deleting.\n");
@@ -437,6 +452,12 @@ public class Schematic extends JPanel implements ActionListener {
 							//graph.buildGraph();
 						}else if(type == GlobalConstants.COMPONENT){
 							gcm.getComponents().remove(cell.getId());
+						}else if(type == GlobalConstants.PROMOTER){
+							if(gcm.removePromoterCheck(cell.getId()))
+								gcm.removePromoter(cell.getId());
+							else // this should actually never happen because the edges get deleted before the promoters.
+								JOptionPane.showMessageDialog(BioSim.frame, "Sorry, you must remove the influences connected to this promoter first.");
+								
 						}else if(type == GlobalConstants.COMPONENT_CONNECTION){
 							removeComponentConnection(cell);
 						}else if(type == graph.CELL_NOT_FULLY_CONNECTED){
