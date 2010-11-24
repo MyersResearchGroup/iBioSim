@@ -282,6 +282,11 @@ public class Schematic extends JPanel implements ActionListener {
 								gcm2sbml.refresh();
 								gcm.makeUndoPoint();
 							}
+						}else if(editPromoterButton.isSelected()){
+							graph.createPromoter(null, e.getX(), e.getY());
+							gcm2sbml.refresh();
+							gcm2sbml.setDirty(true);
+							gcm.makeUndoPoint();
 						}
 					}else{
 						if(editPromoterButton.isSelected()){
@@ -500,6 +505,8 @@ public class Schematic extends JPanel implements ActionListener {
 		mxCell source = (mxCell)edge.getSource();
 		mxCell target = (mxCell)edge.getTarget();
 		//string source = edge.getSource().getValue();
+		
+		// make sure there is at most 1 component
 		int numComponents = 0;
 		if(graph.getCellType(source)==GlobalConstants.COMPONENT)
 			numComponents++;
@@ -512,6 +519,28 @@ public class Schematic extends JPanel implements ActionListener {
 			graph.buildGraph();
 			return;
 		}
+
+		// make sure there is at most 1 promoter
+		int numPromoters = 0;
+		if(graph.getCellType(source)==GlobalConstants.PROMOTER)
+			numPromoters++;
+		if(graph.getCellType(target)==GlobalConstants.PROMOTER)
+			numPromoters++;
+		// bail out if the user tries to connect two components.
+		if(numPromoters == 2){
+			JOptionPane.showMessageDialog(BioSim.frame, "Sorry, you can't connect a promoter directly to another promoter.");
+			//graph.removeCells(cells);
+			graph.buildGraph();
+			return;
+		}
+		
+		// bail out if the user tries to connect a component to a promoter.
+		if(numComponents > 0 && numPromoters > 0){
+			JOptionPane.showMessageDialog(BioSim.frame, "Sorry, you can't connect a component directly to a promoter.");
+			//graph.removeCells(cells);
+			graph.buildGraph();
+			return;
+		}		
 
 		
 		String sourceID = source.getId();
@@ -558,12 +587,10 @@ public class Schematic extends JPanel implements ActionListener {
 			graph.buildGraph();
 			gcm.makeUndoPoint();
 			return;
-		}
+		} // end connect species to component
 		
-		// if flow gets here then we are connecting a species to another
-		// species.
-
-		
+		// Calculate some parameters that will be needed to build the
+		// influence we will need.
 		String isBio;
 		String type;
 		String constType;
@@ -580,10 +607,38 @@ public class Schematic extends JPanel implements ActionListener {
 		}else{
 			throw(new Error("No influence button was pressed!"));
 		}
-								
-		String promoter = "default";
 		
-		String name = InfluencePanel.buildName(sourceID, targetID, type, isBio, promoter);
+		String name; // the species name
+		Properties newInfluenceProperties = new Properties(); // the new influence
+		
+		// see if  we need to connect a species to a promoter
+		if(numPromoters == 1){
+			if(graph.getCellType(source) == GlobalConstants.PROMOTER){
+				// source is a promoter
+				name = InfluencePanel.buildName(
+						GlobalConstants.NONE, 
+						targetID, 
+						type, 
+						isBio, 
+						sourceID);
+				newInfluenceProperties.setProperty(GlobalConstants.PROMOTER, sourceID);
+			}else{
+				// target is a promoter
+				name = InfluencePanel.buildName(
+						sourceID, 
+						GlobalConstants.NONE, 
+						type, 
+						isBio, 
+						targetID);
+				newInfluenceProperties.setProperty(GlobalConstants.PROMOTER, targetID);
+			}
+
+		}// end connect species to promoter
+		else{
+			// connect two species to each other
+			name = InfluencePanel.buildName(sourceID, targetID, type, isBio, "default");
+		}
+		// make sure the species name is valid
 		String iia = gcm.isInfluenceAllowed(name);
 		if(iia != null){
 			JOptionPane.showMessageDialog(BioSim.frame, "Sorry, the influence could not be added because " + iia);
@@ -592,8 +647,16 @@ public class Schematic extends JPanel implements ActionListener {
 			return;
 		}
 		
+		// build the influence properties
+		newInfluenceProperties.setProperty(GlobalConstants.NAME, name);
+		if (isBio == "complex") {
+			newInfluenceProperties.setProperty(GlobalConstants.TYPE, GlobalConstants.COMPLEX);
+		} else {
+			newInfluenceProperties.setProperty(GlobalConstants.TYPE, constType);
+		}
+		gcm.getInfluences().put(name, newInfluenceProperties);
 		
-		graph.addInfluence(edge, name, constType, isBio);
+		
 		graph.buildGraph();
 		gcm2sbml.refresh();
 		gcm2sbml.setDirty(true);

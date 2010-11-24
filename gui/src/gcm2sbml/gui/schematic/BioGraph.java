@@ -56,6 +56,7 @@ public class BioGraph extends mxGraph {
 	private HashMap<String, mxCell> influencesToMxCellMap;
 	private HashMap<String, mxCell> componentsToMxCellMap;
 	private HashMap<String, mxCell> componentsConnectionsToMxCellMap;
+	private HashMap<String, mxCell> drawnPromoterToMxCellMap;
 	
 	
 	private GCMFile gcm;
@@ -70,6 +71,7 @@ public class BioGraph extends mxGraph {
 		componentsToMxCellMap = new HashMap<String, mxCell>();
 		influencesToMxCellMap = new HashMap<String, mxCell>();
 		componentsConnectionsToMxCellMap = new HashMap<String, mxCell>();
+		drawnPromoterToMxCellMap = new HashMap<String, mxCell>();
 	}
 	
 	public BioGraph(GCMFile gcm, GCM2SBMLEditor gcm2sbml){
@@ -104,12 +106,20 @@ public class BioGraph extends mxGraph {
 		this.buildGraph();
 	}
 	
+	/**
+	 * Called after a layout is chosen and applied.
+	 * Updates the gcm's postitioning using the
+	 * positioning on the graph.
+	 */
 	public void updateAllSpeciesPosition(){
 		
 		for(mxCell cell:this.speciesToMxCellMap.values()){
 			updateInternalPosition(cell);
 		}
 		for(mxCell cell:this.componentsToMxCellMap.values()){
+			updateInternalPosition(cell);
+		}
+		for(mxCell cell:this.drawnPromoterToMxCellMap.values()){
 			updateInternalPosition(cell);
 		}
 	}
@@ -149,6 +159,8 @@ public class BioGraph extends mxGraph {
 				return GlobalConstants.SPECIES;
 			else if(gcm.getComponents().containsValue(prop))
 				return GlobalConstants.COMPONENT;
+			else if(gcm.getPromoters().containsValue(prop))
+				return GlobalConstants.PROMOTER;
 			else
 				return CELL_VALUE_NOT_FOUND;
 		}
@@ -168,6 +180,8 @@ public class BioGraph extends mxGraph {
 			return gcm.getInfluences();
 		else if(type == GlobalConstants.COMPONENT_CONNECTION)
 			return null; // Component Connectiosn don't have properties
+		else if(type == GlobalConstants.PROMOTER)
+			return gcm.getPromoters();
 		else
 			throw new Error("Invalid type: " + type);
 	}
@@ -202,6 +216,9 @@ public class BioGraph extends mxGraph {
 	public mxCell getComponentCell(String id){
 		return componentsToMxCellMap.get(id);
 	}
+	public mxCell getDrawnPromoterCell(String id){
+		return drawnPromoterToMxCellMap.get(id);
+	}
 	
 	/**
 	 * public Object insertEdge(Object parent,
@@ -226,12 +243,12 @@ public class BioGraph extends mxGraph {
 	 * the internal model.
 	 * @param id
 	 */
-	public void speciesRemoved(String id){
-		this.speciesToMxCellMap.remove(id);
-	}
-	public void influenceRemoved(String id){
-		this.influencesToMxCellMap.remove(id);
-	}
+//	public void speciesRemoved(String id){
+//		this.speciesToMxCellMap.remove(id);
+//	}
+//	public void influenceRemoved(String id){
+//		this.influencesToMxCellMap.remove(id);
+//	}
 	
 	/**
 	 * Builds the graph based on the internal representation
@@ -266,19 +283,82 @@ public class BioGraph extends mxGraph {
 				needsPositioning = true;
 		}
 		
-		// add all the edges
+		// add all the drawn promoters
+		for(String prom:gcm.getPromoters().keySet()){
+			Properties pprop = gcm.getPromoters().get(prom);
+			if(pprop.get(GlobalConstants.DRAWN_PROMOTER) != null && 
+					pprop.get(GlobalConstants.DRAWN_PROMOTER).equals(GlobalConstants.TRUE)){
+				//System.out.printf("Please draw this promoter!");
+				if(createGraphDrawnPromoterFromModel(prom))
+					needsPositioning = true;
+			}
+		}
+		
+		boolean needsRedrawn = false;
+		// add all the edges. 
 		for(String inf:gcm.getInfluences().keySet()){
-			this.insertEdge(this.getDefaultParent(), inf, "", 
-					this.getSpeciesCell(GCMFile.getInput(inf)), 
-					this.getSpeciesCell(GCMFile.getOutput(inf))
-					);
-			
-			updateInfluenceVisuals(inf);
+			String ins = GCMFile.getInput(inf);
+			String outs = GCMFile.getOutput(inf);
+		
+			if(ins.equals(GlobalConstants.NONE) || outs.equals(GlobalConstants.NONE)){
+				// a drawn-promoter edge
+				Properties influence = gcm.getInfluences().get(inf);
+				String promName = influence.getProperty(GlobalConstants.PROMOTER, "");
+				if(promName.equals("")){
+					System.out.printf("You have a default promoter that is connected to None. Because of this some edges are not being drawn in schematic. Please fix.\n");
+					continue;
+				}
+				Properties promProp = gcm.getPromoters().get(promName);
+				// If an edge is found with a drawn promoter, 
+				// this is a recoverable error case. Flag the promoter as drawn, re-call this 
+				// function and bail. This will ensure that legacy gcm files and files
+				// created with the other interface get built correctly.
+				// make sure the promoter is set to be drawn. If not, set it and try this function again.
+				if(!promProp.getProperty(GlobalConstants.DRAWN_PROMOTER, "").equals(GlobalConstants.TRUE)){
+					promProp.setProperty(GlobalConstants.DRAWN_PROMOTER, GlobalConstants.TRUE);
+					needsRedrawn = true;
+					// we can't draw this edge because the promoter isn't drawn. 
+					// It will be drawn in the next pass.
+					continue;
+				}
+				
+				// now draw the edge to the promoter
+				if(ins.equals(GlobalConstants.NONE)){
+					// the output must be the species
+					mxCell production = (mxCell)this.insertEdge(this.getDefaultParent(), inf, "", 
+							this.getDrawnPromoterCell(promName), 
+							this.getSpeciesCell(outs));
+					//updateProductionVisuals(inf);
+					production.setStyle("PRODUCTION");
+				}else{
+					// the input must be the species
+					this.insertEdge(this.getDefaultParent(), inf, "", 
+							this.getSpeciesCell(ins), 
+							this.getDrawnPromoterCell(promName)
+							);
+					updateInfluenceVisuals(inf);
+				}
+			}else{
+				// A normal, non-drawn promoter edge
+				this.insertEdge(this.getDefaultParent(), inf, "", 
+						this.getSpeciesCell(ins), 
+						this.getSpeciesCell(outs)
+						);
+				
+				updateInfluenceVisuals(inf);
+			}
 		}
 		addEdgeOffsets();
 		this.getModel().endUpdate();
 		
 		this.isBuilding = false;
+		
+		// if we found any incorrectly marked promoters we need to redraw. Do so now.
+		// The promoters should all pass the second time.
+		if(needsRedrawn){
+			return buildGraph();
+		}
+		
 		return needsPositioning;
 	}
 	
@@ -302,6 +382,9 @@ public class BioGraph extends mxGraph {
 		for(String inf:gcm.getInfluences().keySet()){
 			String endA = GCMFile.getInput(inf);
 			String endB = GCMFile.getOutput(inf);
+			// ignore anything connected directly to a drawn promoter
+			if(endA.equals(GlobalConstants.NONE) || endB.equals(GlobalConstants.NONE))
+				continue;
 			if(endA.compareTo(endB) > 0){
 				// swap the strings
 				String t = endA;
@@ -326,7 +409,6 @@ public class BioGraph extends mxGraph {
 				if(propName.startsWith("type_")){
 					Matcher matcher = getPropNamePattern.matcher(propName);
 					matcher.find();
-					String t = matcher.group(0);
 					String compInternalName = matcher.group(1);
 					String targetName = comp.get(compInternalName).toString();
 					String type = comp.get(propName).toString(); // Input or Output
@@ -518,15 +600,54 @@ public class BioGraph extends mxGraph {
 	 */
 	private boolean createGraphSpeciesFromModel(String sp){
 		Properties prop = gcm.getSpecies().get(sp);
+		String id = prop.getProperty("ID", "");
+		if (id==null) {
+			id = prop.getProperty("label", "");
+		}		
+
+		CellValueObject cvo = new CellValueObject(id, prop);
+		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		this.speciesToMxCellMap.put(id, (mxCell)insertedVertex);
 		
-		double x = Double.parseDouble(prop.getProperty("graphx", "-9999"));
-		double y = Double.parseDouble(prop.getProperty("graphy", "-9999"));;
-		double width = Double.parseDouble(prop.getProperty("graphwidth", String.valueOf(DEFAULT_SPECIES_WIDTH)));;
-		double height = Double.parseDouble(prop.getProperty("graphheight", String.valueOf(DEFAULT_SPECIES_HEIGHT)));
+		this.setSpeciesStyles(sp);
+		
+		return sizeAndPositionFromProperties((mxCell)insertedVertex, prop);
+	}
+	
+	/**
+	 * Creates a drawn promoter using the internal model
+	 * @param pname
+	 * @return
+	 */
+	private boolean createGraphDrawnPromoterFromModel(String pname){
+		Properties prop = gcm.getPromoters().get(pname);
+		if(prop == null){
+			throw new Error("No promoter could be found that matches the name " + pname);
+		}
 		String id = prop.getProperty("ID", "");
 		if (id==null) {
 			id = prop.getProperty("label", "");
 		}
+
+		CellValueObject cvo = new CellValueObject(id, prop);
+		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		this.drawnPromoterToMxCellMap.put(id, (mxCell)insertedVertex);
+		
+		this.setDrawnPromoterStyles(pname);
+		
+		return sizeAndPositionFromProperties((mxCell)insertedVertex, prop);
+	}
+		
+	/*
+	 * Given a species, component, or drawn promoter cell, position it 
+	 * using the properties.
+	 */
+	private boolean sizeAndPositionFromProperties(mxCell cell, Properties prop){
+		double x = Double.parseDouble(prop.getProperty("graphx", "-9999"));
+		double y = Double.parseDouble(prop.getProperty("graphy", "-9999"));;
+		double width = Double.parseDouble(prop.getProperty("graphwidth", String.valueOf(DEFAULT_SPECIES_WIDTH)));;
+		double height = Double.parseDouble(prop.getProperty("graphheight", String.valueOf(DEFAULT_SPECIES_HEIGHT)));
+
 		/*
 		String id = !(prop.getProperty(GlobalConstants.NAME, "").equals("")) ? 
 						prop.getProperty(GlobalConstants.NAME) : 
@@ -543,13 +664,8 @@ public class BioGraph extends mxGraph {
 			x = (unpositionedSpeciesComponentCount%50) * 20;
 			y = (unpositionedSpeciesComponentCount%10) * (DEFAULT_SPECIES_HEIGHT + 10);
 		}
-
-		CellValueObject cvo = new CellValueObject(id, prop);
-		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, x, y, width, height);
-		this.speciesToMxCellMap.put(id, (mxCell)insertedVertex);
-
 		
-		this.setSpeciesStyles(sp);
+		cell.setGeometry(new mxGeometry(x, y, width, height));
 		
 		return needsPositioning;
 	}
@@ -579,6 +695,9 @@ public class BioGraph extends mxGraph {
 		if(prop.getProperty(GlobalConstants.TYPE) == GlobalConstants.COMPLEX){
 			style += ";" + mxConstants.STYLE_DASHED + "=true";
 		}
+		//		style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
+
+		//style += ";" + mxConstants.STYLE_EDGE + "=" + mxConstants.EDGESTYLE_ENTITY_RELATION;
 		
 		// apply the style
 		mxCell cell = this.getInfluence(id);
@@ -641,6 +760,26 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_STROKECOLOR, "#AA7700");
 		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
 		stylesheet.putCellStyle("COMPONENT_EDGE", style);		
+
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_OPACITY, 100);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#0000FF");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#0000FF");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#AA7700");
+		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
+		style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
+		//style.put(mxConstants.STYLE_ELBOW, mxConstants.)
+		stylesheet.putCellStyle("PRODUCTION", style);	
+		
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_OPACITY, 30);
+		//style.put(mxConstants.STYLE_FONTCOLOR, "#0000FF");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#AA7700");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#FFAA00");
+		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RHOMBUS);
+		style.put(mxConstants.STYLE_OPACITY, 50);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#774400");
+		stylesheet.putCellStyle("DRAWN_PROMOTER", style);
 	}
 	
 	private void setSpeciesStyles(String id){
@@ -658,23 +797,13 @@ public class BioGraph extends mxGraph {
 		cell.setStyle(style);		
 	}
 	
-	/**
-	 * Creates an influence based on an already created edge.
-	 */
-	public void addInfluence(mxCell cell, String id, String constType, String bio){
-		Properties prop = new Properties();
-		prop.setProperty(GlobalConstants.NAME, id);
-		if (bio == "complex") {
-			prop.setProperty(GlobalConstants.TYPE, GlobalConstants.COMPLEX);
-		} else {
-			prop.setProperty(GlobalConstants.TYPE, constType);
-		}
-		/* if(bio == InfluencePanel.bio[1])
-			prop.setProperty(GlobalConstants.BIO, bio); */
-		gcm.getInfluences().put(id, prop);
-		this.influencesToMxCellMap.put(id, cell);
-		updateInfluenceVisuals(id);
+	private void setDrawnPromoterStyles(String id){
+		String style="DRAWN_PROMOTER";
+		
+		mxCell cell = this.getDrawnPromoterCell(id);
+		cell.setStyle(style);
 	}
+	
 	
 	/**
 	 * creates and adds a new species.
@@ -700,12 +829,38 @@ public class BioGraph extends mxGraph {
 		centerVertexOverPoint(prop, x, y);
 		gcm.getSpecies().put(id, prop);
 		
-		this.getModel().beginUpdate();
-		this.createGraphSpeciesFromModel(id);
-		this.getModel().endUpdate();
+//		this.getModel().beginUpdate();
+//		this.createGraphSpeciesFromModel(id);
+//		this.getModel().endUpdate();
 		
 		gcm2sbml.refresh();
+		this.buildGraph();
 		
+	}
+	
+	private int creatingPromoterID = 0;
+	public void createPromoter(String id, float x, float y){
+		if(id == null){
+			do{
+				creatingPromoterID++;
+				id = "P" + String.valueOf(creatingPromoterID);
+			}while(gcm.getPromoters().containsKey(id));
+		}
+		Properties prop = new Properties();
+		prop.setProperty(GlobalConstants.NAME, id);
+		prop.setProperty("ID", id);
+		prop.setProperty("graphwidth", String.valueOf(DEFAULT_SPECIES_WIDTH));
+		prop.setProperty("graphheight", String.valueOf(DEFAULT_SPECIES_HEIGHT));
+		prop.setProperty(GlobalConstants.DRAWN_PROMOTER, GlobalConstants.TRUE);
+		centerVertexOverPoint(prop, x, y);
+		gcm.getPromoters().put(id, prop);
+		
+//		this.getModel().beginUpdate();
+//		this.createGraphSpeciesFromModel(id);
+//		this.getModel().endUpdate();
+		
+		gcm2sbml.refresh();
+		this.buildGraph();
 	}
 	
 	/**
