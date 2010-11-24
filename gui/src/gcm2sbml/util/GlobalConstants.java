@@ -51,6 +51,7 @@ public class GlobalConstants {
 	public static final String MAX_DIMER_STRING = "N-mer as trascription factor";
 	public static final String INITIAL_STRING = "Initial amount";	
 	public static final String PROMOTER = "Promoter";
+	public static final String DRAWN_PROMOTER = "drawn_promoter"; // underscored value because used as key in GCM file.
 	public static final String SBMLFILE = "SBML file";
 	public static final String BIOABS = "Biochemical abstraction";
 	public static final String DIMABS = "Dimerization abstraction";
@@ -60,6 +61,9 @@ public class GlobalConstants {
 	public static final String REPRESSION = "repression";
 	public static final String NOINFLUENCE = "no influence";
 	
+	public static final String TRUE = "true";
+	public static final String FALSE = "false";
+	public static final String NONE = "none";
 	
 //	public static final String MAX_DIMER_VALUE = "1";
 //	public static final String INITIAL_VALUE = "0";
