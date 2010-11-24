@@ -21,7 +21,12 @@ import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
 //import javax.xml.bind.JAXBElement.GlobalScope;
+
+import biomodelsim.BioSim;
+import biomodelsim.Log;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
@@ -254,6 +259,7 @@ public class BioGraph extends mxGraph {
 	 * Builds the graph based on the internal representation
 	 * @return
 	 */
+	private int _badPromoters = 0; // only bother the user about bad promoters once. This should be improved to happen once per GCM file if this will be a common error.
 	public boolean isBuilding = false;
 	public boolean buildGraph(){
 		this.isBuilding = true;
@@ -305,7 +311,8 @@ public class BioGraph extends mxGraph {
 				Properties influence = gcm.getInfluences().get(inf);
 				String promName = influence.getProperty(GlobalConstants.PROMOTER, "");
 				if(promName.equals("")){
-					System.out.printf("You have a default promoter that is connected to None. Because of this some edges are not being drawn in schematic. Please fix.\n");
+					if(_badPromoters++ == 0)
+						JOptionPane.showMessageDialog(BioSim.frame, "You have a default promoter that is connected to None. Because of this some edges are not being drawn in schematic. Please fix.\n");
 					continue;
 				}
 				Properties promProp = gcm.getPromoters().get(promName);
