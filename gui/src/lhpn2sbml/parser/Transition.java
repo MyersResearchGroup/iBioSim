@@ -8,6 +8,8 @@ public class Transition {
 	private String name;
 
 	private boolean fail = false;
+	
+	private boolean disabling = true;
 
 	private String enabling;
 
@@ -181,9 +183,17 @@ public class Transition {
 	public void setFail(boolean fail) {
 		this.fail = fail;
 	}
+	
+	public void setDisabling(boolean disabling) {
+		this.disabling = disabling;
+	}
 
 	public boolean isFail() {
 		return fail;
+	}
+	
+	public boolean isDisabling() {
+		return disabling;
 	}
 
 	public boolean isConnected() {

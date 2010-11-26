@@ -46,7 +46,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 	private String[] allVariables;
 
-	private JCheckBox fail;
+	private JCheckBox fail, disabling;
 
 	// private Object[] types = { "Boolean", "Continuous", "Integer", "Rate" };
 
@@ -105,7 +105,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		// failPanel.setMinimumSize(new Dimension(200, 20));
 		JLabel failLabel = new JLabel("Fail Transition");
 		// JLabel blankLabel1 = new JLabel("  ");
-		JLabel blankLabel2 = new JLabel("                                     ");
+		JLabel blankLabel2 = new JLabel("                                          ");
 		fail = new JCheckBox();
 		failPanel.add(failLabel);
 		// failPanel.add(blankLabel1);
@@ -114,6 +114,21 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		constraints.gridx = 0;
 		constraints.gridy = 1;
 		add(failPanel, constraints);
+		
+		// Disabling Transition check box
+		JPanel disablingPanel = new JPanel(new GridLayout(1, 2));
+		// failPanel.setMinimumSize(new Dimension(200, 20));
+		JLabel disablingLabel = new JLabel("Disabling Transition");
+		// JLabel blankLabel1 = new JLabel("  ");
+		JLabel blankLabel3 = new JLabel("                                          ");
+		disabling = new JCheckBox();
+		disablingPanel.add(disablingLabel);
+		// failPanel.add(blankLabel1);
+		disablingPanel.add(disabling);
+		disablingPanel.add(blankLabel3);
+		constraints.gridx = 0;
+		constraints.gridy = 2;
+		add(disablingPanel, constraints);
 
 		// Assignment panel
 		assignments = new PropertyList("Assignment List");
@@ -169,7 +184,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		JPanel assignPanel = Utility.createPanel(this, "Assignments", assignments, addAssign,
 				removeAssign, editAssign);
 		constraints.gridx = 0;
-		constraints.gridy = 2;
+		constraints.gridy = 3;
 		add(assignPanel, constraints);
 
 		String oldName = null;
@@ -180,6 +195,9 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			// log.addText(lhpn.getDelay(selected));
 			if (lhpn.getTransition(oldName).isFail()) {
 				fail.setSelected(true);
+			}
+			if (lhpn.getTransition(oldName).isDisabling()) {
+				disabling.setSelected(true);
 			}
 			String delay = lhpn.getTransition(selected).getDelay();
 			if (delay != null) {
@@ -350,6 +368,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		else {
 			lhpn.getTransition(transition).setFail(false);
 		}
+		lhpn.getTransition(transition).setDisabling(disabling.isSelected());
 		if (fields.get("Enabling Condition") != null) {
 			if (!lhpn.getTransition(transition).addEnabling(fields.get("Enabling Condition").getValue().replaceAll("\\s+", "")))
 				return false;
