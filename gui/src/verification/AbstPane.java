@@ -33,17 +33,22 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	private static final long serialVersionUID = -5806315070287184299L;
 
-	private JButton addIntSpecies, removeIntSpecies, clearIntSpecies, addXform, removeXform,
-			addAllXforms, clearXforms, addPreAbs, addLoopAbs, addPostAbs, editPreAbs, editLoopAbs, editPostAbs, rmPreAbs, rmLoopAbs, rmPostAbs, clearPreAbs, clearLoopAbs, clearPostAbs;
+	private JButton addIntSpecies, removeIntSpecies, clearIntSpecies, addXform,
+			removeXform, addAllXforms, clearXforms, addPreAbs, addLoopAbs,
+			addPostAbs, editPreAbs, editLoopAbs, editPostAbs, rmPreAbs,
+			rmLoopAbs, rmPostAbs, clearPreAbs, clearLoopAbs, clearPostAbs,
+			restore;
 
-	public JList species, intSpecies, xforms, selectXforms, preAbs, loopAbs, postAbs;
+	public JList species, intSpecies, xforms, selectXforms, preAbs, loopAbs,
+			postAbs;
 
-	public DefaultListModel listModel, absListModel, preAbsModel, loopAbsModel, postAbsModel;
+	public DefaultListModel listModel, absListModel, preAbsModel, loopAbsModel,
+			postAbsModel;
 
 	private JTextField field;
 
 	private String directory, separator, root, absFile, oldBdd;
-	
+
 	private JLabel preAbsLabel, loopAbsLabel, postAbsLabel;
 
 	public String xform0 = "Merge Parallel Places - simplification",
@@ -76,9 +81,11 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			xform28 = "Combine Parallel Transitions - abstraction",
 			xform29 = "Remove Uninteresting Variables - simplification";
 
-	public String[] transforms = { xform0, xform1, xform3, xform4, xform5, xform6, xform7, xform8,
-			xform25, xform9, xform24, xform10, xform12, xform13, xform14, xform16, xform11,
-			xform15, xform17, xform18, xform19, xform20, xform21, xform22, xform23, xform26, xform27, xform28, xform29 };
+	public String[] transforms = { xform0, xform1, xform3, xform4, xform5,
+			xform6, xform7, xform8, xform25, xform9, xform24, xform10, xform12,
+			xform13, xform14, xform16, xform11, xform15, xform17, xform18,
+			xform19, xform20, xform21, xform22, xform23, xform26, xform27,
+			xform28, xform29 };
 
 	public JTextField factorField, iterField;
 
@@ -99,8 +106,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			boolean lema, boolean atacs) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
-		}
-		else {
+		} else {
 			separator = File.separator;
 		}
 		this.directory = directory;
@@ -159,6 +165,9 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		iterField.setPreferredSize(new Dimension(40, 18));
 		factorPanel.add(iterLabel);
 		factorPanel.add(iterField);
+		restore = new JButton("Restore Defaults");
+		factorPanel.add(restore);
+		restore.addActionListener(this);
 		this.add(factorPanel);
 
 		// Creates Abstraction List
@@ -270,13 +279,12 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 		change = false;
 	}
-	
+
 	public AbstPane(String directory, String lpnFile, Log log, BioSim biosim,
 			boolean lema, boolean atacs) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
-		}
-		else {
+		} else {
 			separator = File.separator;
 		}
 		this.directory = directory;
@@ -471,7 +479,8 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		if (e.getSource() == removeXform) {
 			absListModel.removeElement(xforms.getSelectedValue());
 		}
-		if (e.getSource() == addPreAbs || e.getSource() == addLoopAbs || e.getSource() == addPostAbs) {
+		if (e.getSource() == addPreAbs || e.getSource() == addLoopAbs
+				|| e.getSource() == addPostAbs) {
 			JPanel addAbsPanel = new JPanel(new BorderLayout());
 			JComboBox absList = new JComboBox();
 			for (String s : transforms) {
@@ -480,16 +489,14 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			addAbsPanel.add(absList, "Center");
 			String[] options = { "Add", "Cancel" };
 			int value = JOptionPane.showOptionDialog(BioSim.frame, addAbsPanel,
-					"Add abstraction method", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-					null, options, options[0]);
+					"Add abstraction method", JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				if (e.getSource() == addPreAbs) {
 					addPreXform(absList.getSelectedItem().toString());
-				}
-				else if (e.getSource() == addLoopAbs) {
+				} else if (e.getSource() == addLoopAbs) {
 					addLoopXform(absList.getSelectedItem().toString());
-				}
-				else {
+				} else {
 					addPostXform(absList.getSelectedItem().toString());
 				}
 			}
@@ -528,6 +535,9 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		if (e.getSource() == clearXforms) {
 			absListModel.removeAllElements();
 		}
+		if (e.getSource() == restore) {
+			restoreDefaults();
+		}
 	}
 
 	public void addIntVar(String variable) {
@@ -536,31 +546,32 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		}
 	}
 
-	//public void addXform(String variable) {
-	//	if (!absListModel.contains(variable)) {
-	//		absListModel.addElement(variable);
-	//	}
-	//}
-	
+	// public void addXform(String variable) {
+	// if (!absListModel.contains(variable)) {
+	// absListModel.addElement(variable);
+	// }
+	// }
+
 	public void addPreXform(String xform) {
 		if (!preAbsModel.contains(xform)) {
 			add(preAbs, preAbsModel, xform);
 		}
 	}
-	
+
 	public void addLoopXform(String xform) {
 		if (!loopAbsModel.contains(xform)) {
 			add(loopAbs, loopAbsModel, xform);
 		}
 	}
-	
+
 	public void addPostXform(String xform) {
 		if (!postAbsModel.contains(xform)) {
 			add(postAbs, postAbsModel, xform);
 		}
 	}
-	
-	public void add(JList currentList, DefaultListModel currentModel, Object newItem) {
+
+	public void add(JList currentList, DefaultListModel currentModel,
+			Object newItem) {
 		Object[] list = new Object[currentList.getModel().getSize() + 1];
 		int addAfter = currentList.getSelectedIndex();
 		DefaultListModel newModel = new DefaultListModel();
@@ -568,12 +579,10 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			if (i <= addAfter) {
 				list[i] = currentList.getModel().getElementAt(i);
 				newModel.addElement(currentList.getModel().getElementAt(i));
-			}
-			else if (i == (addAfter + 1)) {
+			} else if (i == (addAfter + 1)) {
 				list[i] = newItem;
 				newModel.addElement(newItem);
-			}
-			else {
+			} else {
 				list[i] = currentList.getModel().getElementAt(i - 1);
 				newModel.addElement(currentList.getModel().getElementAt(i - 1));
 			}
@@ -581,12 +590,10 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		newModel.removeElement(null);
 		currentList.setListData(list);
 		if (currentModel.equals(preAbsModel)) {
-			preAbsModel  = newModel;
-		}
-		else if (currentModel.equals(loopAbsModel)) {
+			preAbsModel = newModel;
+		} else if (currentModel.equals(loopAbsModel)) {
 			loopAbsModel = newModel;
-		}
-		else if (currentModel.equals(postAbsModel)) {
+		} else if (currentModel.equals(postAbsModel)) {
 			postAbsModel = newModel;
 		}
 	}
@@ -595,7 +602,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		preAbsModel.removeAllElements();
 		loopAbsModel.removeAllElements();
 		postAbsModel.removeAllElements();
-		//absListModel.removeAllElements();
+		// absListModel.removeAllElements();
 	}
 
 	public void run() {
@@ -603,8 +610,9 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void saveAs() {
-		String newName = JOptionPane.showInputDialog(BioSim.frame, "Enter Verification name:",
-				"Verification Name", JOptionPane.PLAIN_MESSAGE);
+		String newName = JOptionPane.showInputDialog(BioSim.frame,
+				"Enter Verification name:", "Verification Name",
+				JOptionPane.PLAIN_MESSAGE);
 		if (newName == null) {
 			return;
 		}
@@ -639,11 +647,9 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 				String s = absListModel.getElementAt(i).toString();
 				if (preAbsModel.contains(s)) {
 					prop.setProperty(s, "preloop");
-				}
-				else if (absListModel.contains(s)) {
+				} else if (absListModel.contains(s)) {
 					prop.setProperty(s, "mainloop");
-				}
-				else if (postAbsModel.contains(s)) {
+				} else if (postAbsModel.contains(s)) {
 					prop.setProperty(s, "postloop");
 				}
 			}
@@ -653,23 +659,27 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			if (!iterField.getText().equals("")) {
 				prop.setProperty("abstraction.factor", iterField.getText());
 			}
-			FileOutputStream out = new FileOutputStream(new File(directory + separator + absFile));
+			FileOutputStream out = new FileOutputStream(new File(directory
+					+ separator + absFile));
 			prop.store(out, absFile);
 			out.close();
-			log.addText("Saving Parameter File:\n" + directory + separator + absFile + "\n");
+			log.addText("Saving Parameter File:\n" + directory + separator
+					+ absFile + "\n");
 			change = false;
-		}
-		catch (Exception e1) {
+		} catch (Exception e1) {
 			// e1.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame, "Unable to save parameter file!",
-					"Error Saving File", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(BioSim.frame,
+					"Unable to save parameter file!", "Error Saving File",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		if (componentList != null) {
 			for (String s : componentList.getItems()) {
 				try {
 					new File(directory + separator + s).createNewFile();
-					FileInputStream in = new FileInputStream(new File(root + separator + s));
-					FileOutputStream out = new FileOutputStream(new File(directory + separator + s));
+					FileInputStream in = new FileInputStream(new File(root
+							+ separator + s));
+					FileOutputStream out = new FileOutputStream(new File(
+							directory + separator + s));
 					int read = in.read();
 					while (read != -1) {
 						out.write(read);
@@ -677,8 +687,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 					}
 					in.close();
 					out.close();
-				}
-				catch (IOException e1) {
+				} catch (IOException e1) {
 					e1.printStackTrace();
 					JOptionPane.showMessageDialog(BioSim.frame,
 							"Cannot add the selected component.", "Error",
@@ -706,8 +715,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		String[] getFilename;
 		if (field.getText().trim().equals("")) {
 			// getFilename = verifyFile.split("\\.");
-		}
-		else {
+		} else {
 			getFilename = new String[1];
 			getFilename[0] = field.getText().trim();
 		}
@@ -717,7 +725,8 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		if (verification == null) {
 			return true;
 		}
-		if (verification.simplify.isSelected() || verification.abstractLhpn.isSelected()) {
+		if (verification.simplify.isSelected()
+				|| verification.abstractLhpn.isSelected()) {
 			return true;
 		}
 		return false;
@@ -763,16 +772,53 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 				scrolls.setViewportView(messageArea);
 				JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Run Log",
 						JOptionPane.INFORMATION_MESSAGE);
-			}
-			else {
-				JOptionPane.showMessageDialog(BioSim.frame, "No run log exists.", "Error",
+			} else {
+				JOptionPane.showMessageDialog(BioSim.frame,
+						"No run log exists.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(BioSim.frame, "Unable to view run log.", "Error",
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(BioSim.frame,
+					"Unable to view run log.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
+	}
+	
+	private void restoreDefaults() {
+		preAbsModel.removeAllElements();
+		loopAbsModel.removeAllElements();
+		postAbsModel.removeAllElements();
+		preAbsModel.addElement(xform12);
+		loopAbsModel.addElement(xform0);
+		loopAbsModel.addElement(xform1);
+		loopAbsModel.addElement(xform3);
+		loopAbsModel.addElement(xform4);
+		loopAbsModel.addElement(xform5);
+		loopAbsModel.addElement(xform6);
+		loopAbsModel.addElement(xform7);
+		loopAbsModel.addElement(xform8);
+		loopAbsModel.addElement(xform9);
+		loopAbsModel.addElement(xform10);
+		loopAbsModel.addElement(xform11);
+		loopAbsModel.addElement(xform12);
+		loopAbsModel.addElement(xform13);
+		loopAbsModel.addElement(xform14);
+		loopAbsModel.addElement(xform15);
+		loopAbsModel.addElement(xform16);
+		loopAbsModel.addElement(xform17);
+		loopAbsModel.addElement(xform18);
+		loopAbsModel.addElement(xform19);
+		loopAbsModel.addElement(xform20);
+		loopAbsModel.addElement(xform22);
+		loopAbsModel.addElement(xform23);
+		loopAbsModel.addElement(xform24);
+		loopAbsModel.addElement(xform25);
+		loopAbsModel.addElement(xform26);
+		loopAbsModel.addElement(xform29);
+		postAbsModel.addElement(xform21);
+		preAbs.setListData(preAbsModel.toArray());
+		loopAbs.setListData(loopAbsModel.toArray());
+		postAbs.setListData(postAbsModel.toArray());
 	}
 
 	public boolean hasChanged() {
@@ -781,7 +827,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		}
 		return change;
 	}
-	
+
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			// if (e.getSource() == intSpecies) {
