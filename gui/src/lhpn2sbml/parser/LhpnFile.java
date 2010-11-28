@@ -57,119 +57,117 @@ public class LhpnFile {
 			StringBuffer buffer = new StringBuffer();
 			HashMap<String, Integer> boolOrder = new HashMap<String, Integer>();
 			int i = 0;
-			if (!booleans.isEmpty()) {
-				boolean flag = false;
-				for (String s : booleans.keySet()) {
-					if (booleans.get(s) != null) {
-						if (booleans.get(s).isInput()) {
-							if (!flag) {
-								buffer.append(".inputs ");
-								flag = true;
-							}
-							buffer.append(s + " ");
-							boolOrder.put(s, i);
-							i++;
+			boolean flag = false;
+			for (String s : booleans.keySet()) {
+				if (booleans.get(s) != null) {
+					if (booleans.get(s).isInput()) {
+						if (!flag) {
+							buffer.append(".inputs ");
+							flag = true;
 						}
+						buffer.append(s + " ");
+						boolOrder.put(s, i);
+						i++;
 					}
 				}
-				for (String s : continuous.keySet()) {
-					if (continuous.get(s) != null) {
-						if (continuous.get(s).isInput()) {
-							if (!flag) {
-								buffer.append(".inputs ");
-								flag = true;
-							}
-							buffer.append(s + " ");
+			}
+			for (String s : continuous.keySet()) {
+				if (continuous.get(s) != null) {
+					if (continuous.get(s).isInput()) {
+						if (!flag) {
+							buffer.append(".inputs ");
+							flag = true;
 						}
+						buffer.append(s + " ");
 					}
 				}
-				for (String s : integers.keySet()) {
-					if (integers.get(s) != null) {
-						if (integers.get(s).isInput()) {
-							if (!flag) {
-								buffer.append(".inputs ");
-								flag = true;
-							}
-							buffer.append(s + " ");
+			}
+			for (String s : integers.keySet()) {
+				if (integers.get(s) != null) {
+					if (integers.get(s).isInput()) {
+						if (!flag) {
+							buffer.append(".inputs ");
+							flag = true;
 						}
+						buffer.append(s + " ");
 					}
 				}
-				buffer.append("\n");
-				flag = false;
-				for (String s : booleans.keySet()) {
-					if (booleans.get(s) != null) {
+			}
+			if (flag) buffer.append("\n");
+			flag = false;
+			for (String s : booleans.keySet()) {
+				if (booleans.get(s) != null) {
+					if (!flag) {
+						buffer.append(".outputs ");
+						flag = true;
+					}
+					if (booleans.get(s).isOutput()) {
+						buffer.append(s + " ");
+						boolOrder.put(s, i);
+						i++;
+					}
+				}
+			}
+			for (String s : continuous.keySet()) {
+				if (continuous.get(s) != null) {
+					if (continuous.get(s).isOutput()) {
 						if (!flag) {
 							buffer.append(".outputs ");
 							flag = true;
 						}
-						if (booleans.get(s).isOutput()) {
-							buffer.append(s + " ");
-							boolOrder.put(s, i);
-							i++;
-						}
+						buffer.append(s + " ");
 					}
 				}
-				for (String s : continuous.keySet()) {
-					if (continuous.get(s) != null) {
-						if (continuous.get(s).isOutput()) {
-							if (!flag) {
-								buffer.append(".outputs ");
-								flag = true;
-							}
-							buffer.append(s + " ");
+			}
+			for (String s : integers.keySet()) {
+				if (integers.get(s) != null) {
+					if (integers.get(s).isOutput()) {
+						if (!flag) {
+							buffer.append(".outputs ");
+							flag = true;
 						}
+						buffer.append(s + " ");
 					}
 				}
-				for (String s : integers.keySet()) {
-					if (integers.get(s) != null) {
-						if (integers.get(s).isOutput()) {
-							if (!flag) {
-								buffer.append(".outputs ");
-								flag = true;
-							}
-							buffer.append(s + " ");
-						}
+			}
+			if (flag) buffer.append("\n");
+			flag = false;
+			for (String s : booleans.keySet()) {
+				if (booleans.get(s) != null) {
+					if (!flag) {
+						buffer.append(".internals ");
+						flag = true;
+					}
+					if (booleans.get(s).isInternal()) {
+						buffer.append(s + " ");
+						boolOrder.put(s, i);
+						i++;
 					}
 				}
-				buffer.append("\n");
-				flag = false;
-				for (String s : booleans.keySet()) {
-					if (booleans.get(s) != null) {
+			}
+			for (String s : continuous.keySet()) {
+				if (continuous.get(s) != null) {
+					if (continuous.get(s).isInternal()) {
 						if (!flag) {
 							buffer.append(".internals ");
 							flag = true;
 						}
-						if (booleans.get(s).isInternal()) {
-							buffer.append(s + " ");
-							boolOrder.put(s, i);
-							i++;
-						}
+						buffer.append(s + " ");
 					}
 				}
-				for (String s : continuous.keySet()) {
-					if (continuous.get(s) != null) {
-						if (continuous.get(s).isInternal()) {
-							if (!flag) {
-								buffer.append(".internals ");
-								flag = true;
-							}
-							buffer.append(s + " ");
-						}
-					}
-				}
-				for (String s : integers.keySet()) {
-					if (integers.get(s) != null) {
-						if (integers.get(s).isInternal()) {
-							if (!flag) {
-								buffer.append(".internals ");
-								flag = true;
-							}
-							buffer.append(s + " ");
-						}
-					}
-				}
-				buffer.append("\n");
 			}
+			for (String s : integers.keySet()) {
+				if (integers.get(s) != null) {
+					if (integers.get(s).isInternal()) {
+						if (!flag) {
+							buffer.append(".internals ");
+							flag = true;
+						}
+						buffer.append(s + " ");
+					}
+				}
+			}
+			if (flag) buffer.append("\n");
 			if (!transitions.isEmpty()) {
 				buffer.append(".dummy ");
 				for (String s : transitions.keySet()) {
@@ -188,7 +186,7 @@ public class LhpnFile {
 				buffer.append("\n");
 			}
 			if (!transitions.isEmpty()) {
-				boolean flag = false;
+				flag = false;
 				for (Transition t : transitions.values()) {
 					if (t.isFail()) {
 						if (!flag) {
@@ -223,7 +221,7 @@ public class LhpnFile {
 				buffer.append("\n");
 			}
 			if (!booleans.isEmpty()) {
-				boolean flag = false;
+				flag = false;
 				for (i = 0; i < boolOrder.size(); i++) {
 					for (String s : booleans.keySet()) {
 						if (boolOrder.get(s).equals(i)) {
@@ -257,7 +255,7 @@ public class LhpnFile {
 					}
 				}
 			}
-			boolean flag = false;
+			flag = false;
 			if (!places.keySet().isEmpty()) {
 				for (Place place : places.values()) {
 					if (place.isMarked()) {
@@ -1885,7 +1883,7 @@ public class LhpnFile {
 
 	private static final String OUTPUT = "\\.outputs([[\\s[^\\n]]\\w+]*?)\\n";
 	
-	private static final String INTERNAL = "\\.internal([[\\s[^\\n]]\\w+]*?)\\n";
+	private static final String INTERNAL = "\\.internals([[\\s[^\\n]]\\w+]*?)\\n";
 
 	private static final String INIT_STATE = "#@\\.init_state \\[(\\w+)\\]";
 
