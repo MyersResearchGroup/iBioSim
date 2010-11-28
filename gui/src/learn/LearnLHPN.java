@@ -114,7 +114,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 	private double percent ; // = 0.8; // a decimal value representing the percent of the total trace that must be constant to qualify to become a DMVC var
 
-	private double unstableTime;
+	//private double unstableTime;
+	private double stableTolerance;
+	
+	private boolean pseudoEnable;
 	
 	private JTextField epsilonG;
 	
@@ -132,8 +135,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	
 	private JTextField runLengthG;
 	
-	private JTextField unstableTimeG;
+	//private JTextField unstableTimeG;
 	
+	private JCheckBox pseudoEnableG;
+
+	private JTextField stableToleranceG;
+
 	private JTextField globalDelayScaling;
 	
 	private JTextField globalValueScaling;
@@ -179,7 +186,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 	private int pathLengthVar = 40;
 	
 	private JPanel advancedOptionsPanel;
-	
+
 	// Pattern lParenR = Pattern.compile("\\(+"); 
 	
 	//Pattern floatingPointNum = Pattern.compile(">=(-*[0-9]+\\.*[0-9]*)"); 
@@ -301,9 +308,16 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		defaultEnvG = new JCheckBox();
 		defaultEnvG.setSelected(true);
 		defaultEnvG.addItemListener(this); 
-		JLabel unstableTimeLabel = new JLabel("Mode unstable time");
-		unstableTimeG = new JTextField("5960.0");
-		unstableTimeG.setEnabled(true);
+		//JLabel unstableTimeLabel = new JLabel("Mode unstable time");
+		//unstableTimeG = new JTextField("5960.0");
+		//unstableTimeG.setEnabled(true);
+		JLabel stableToleranceLabel = new JLabel("Stable tolerance");
+		stableToleranceG = new JTextField("0.02");
+		stableToleranceG.setEnabled(true);
+		JLabel pseudoEnableLabel = new JLabel("Enable pseudo-transitions");
+		pseudoEnableG = new JCheckBox();
+		pseudoEnableG.setSelected(false);
+		pseudoEnableG.addItemListener(this);
 		
 		epsilonG.addActionListener(this); 
 		pathLengthBinG.addActionListener(this); 
@@ -312,11 +326,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		percentG.addActionListener(this); 
 		runTimeG.addActionListener(this);
 		runLengthG.addActionListener(this);
-		unstableTimeG.addActionListener(this);
+		//unstableTimeG.addActionListener(this);
+		stableToleranceG.addActionListener(this);
 		
 		JPanel panel4 = new JPanel();
 		((FlowLayout) panel4.getLayout()).setAlignment(FlowLayout.CENTER);
-		JPanel panel3 = new JPanel(new GridLayout(13, 2));
+		JPanel panel3 = new JPanel(new GridLayout(14, 2));
 		panel4.add(panel3, "Center");
 		panel3.add(epsilonLabel);
 		panel3.add(epsilonG);
@@ -336,9 +351,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		panel3.add(runLengthG);
 		panel3.add(defaultEnvLabel);
 		panel3.add(defaultEnvG);
-		panel3.add(unstableTimeLabel);
-		panel3.add(unstableTimeG);
-
+		//panel3.add(unstableTimeLabel);
+		//panel3.add(unstableTimeG);
+		panel3.add(stableToleranceLabel);
+		panel3.add(stableToleranceG);
+		panel3.add(pseudoEnableLabel);
+		panel3.add(pseudoEnableG);
+		
 		thresholds = new HashMap<String, ArrayList<Double>>(); // <Each Variable, List of thresholds for each variable>
 		reqdVarsL = new ArrayList<Variable>();  //List of objects for variables that are marked as "ip/op" in variables panel
 
@@ -509,6 +528,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			}
 			if (load.containsKey("learn.defaultEnv")){
 				defaultEnvG.setSelected(Boolean.parseBoolean(load.getProperty("learn.defaultEnv")));
+			}
+			if (load.containsKey("learn.pseudoEnable")){
+				pseudoEnableG.setSelected(Boolean.parseBoolean(load.getProperty("learn.pseudoEnable")));
+			}
+			if (load.containsKey("learn.stableTolerance")){
+				stableToleranceG.setText(load.getProperty("learn.stableTolerance"));
 			}
 			//int j = 0;
 			//levels();
@@ -761,7 +786,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		if (!(new File(directory + separator + "run.log").exists())) {
 			viewLog.setEnabled(false);
 		}
-		// SB
+		
 		viewCoverage = new JButton("View Coverage Report");
 		viewVHDL = new JButton("View VHDL-AMS Model");
 		viewVerilog = new JButton("View Verilog-AMS Model");
@@ -928,10 +953,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			variablesPanel.repaint();
 			int j = 0;
 			for (Component c : variablesPanel.getComponents()) {
-				if (j == 0){   // recheck .. SB
-					j++;		// SB
-					continue;	// SB
-				}				//SB
+				if (j == 0){   
+					j++;		
+					continue;	
+				}				
 				String s = ((JTextField)((JPanel) c).getComponent(0)).getText().trim();
 				if (findReqdVarslIndex(s) != -1) { // condition added after adding allVars
 					if (reqdVarsL.get((findReqdVarslIndex(s))).isInput())
@@ -2097,7 +2122,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					prop.remove("learn.inputs");
 				}
 				if (destabCount != 0){
-					prop.setProperty("learn.destabs", ip);
+					prop.setProperty("learn.destabs", destab);
 				}
 				else{
 					prop.remove("learn.destabs");
@@ -2217,6 +2242,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				else{
 					prop.remove("learn.inputs");
 				}
+				if (destabCount != 0){
+					prop.setProperty("learn.destabs", destab);
+				}
+				else{
+					prop.remove("learn.destabs");
+				}
 				if (dontcareCount != 0){
 					prop.setProperty("learn.dontcares", dontcares);
 				}
@@ -2245,7 +2276,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			prop.setProperty("learn.absTime",String.valueOf(this.absTimeG.isSelected()));
 			prop.setProperty("learn.runTime",this.runTimeG.getText().trim());
 			prop.setProperty("learn.runLength",this.runLengthG.getText().trim());
+			prop.setProperty("learn.stableTolerance",this.stableToleranceG.getText().trim());
 			prop.setProperty("learn.defaultEnv",String.valueOf(this.defaultEnvG.isSelected()));
+			prop.setProperty("learn.pseudoEnable",String.valueOf(this.pseudoEnableG.isSelected()));
 			if (varsList != null){
 				prop.setProperty("learn.varsList",varsList);
 			}
@@ -2523,7 +2556,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						}
 					}
 				}
-				LhpnFile g = l.learnModel(directory, log, biosim, moduleNumber, thresholds, tPar, varsWithStables, destabMap, false, valScaleFactor, delayScaleFactor, failProp);
+				LhpnFile g = l.learnModel(directory, log, biosim, moduleNumber, thresholds, tPar, varsWithStables, destabMap, false, pseudoEnable, valScaleFactor, delayScaleFactor, failProp);
 				// the false parameter above says that it's not generating a net for stable
 				LhpnFile seedLpn = null;
 				Boolean seedLpnExists = false;
@@ -2554,7 +2587,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							input.setCare(true);
 							varsT.add(input);
 							l = new LearnModel();
-							LhpnFile moduleLPN = l.learnModel(directory, log, biosim, j, thresholds, tPar, varsT, destabMap, false, valScaleFactor, delayScaleFactor, null);
+							LhpnFile moduleLPN = l.learnModel(directory, log, biosim, j, thresholds, tPar, varsT, destabMap, false, false, valScaleFactor, delayScaleFactor, null);
 							// new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 							g = mergeLhpns(moduleLPN,g);
 						} else {
@@ -2691,6 +2724,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				System.out.println("Can't parse runTime. Using default\n");
 			}
 			absoluteTime = absTimeG.isSelected();
+			pseudoEnable = pseudoEnableG.isSelected();
 			if (globalValueScaling.getText().matches("[\\d]+\\.??[\\d]*")){
 				valScaleFactor = Double.parseDouble(globalValueScaling.getText().trim());
 				//System.out.println("valScaleFactor " + valScaleFactor);
@@ -2701,13 +2735,19 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				//System.out.println("delayScaleFactor " + delayScaleFactor);
 			} else
 				delayScaleFactor = -1.0;
-			if ((unstableTimeG.getText().matches("[\\d]+\\.?[\\d]+?")) || (unstableTimeG.getText().matches("[\\d]+\\.??[\\d]*?[e]??[-]??[\\d]+"))) 
+		/*	if ((unstableTimeG.getText().matches("[\\d]+\\.?[\\d]+?")) || (unstableTimeG.getText().matches("[\\d]+\\.??[\\d]*?[e]??[-]??[\\d]+"))) 
 				unstableTime = Double.parseDouble(unstableTimeG.getText().trim());
 			else{
 				unstableTime = 5e-6;
 				System.out.println("Can't parse unstableTime. Using default\n");
+			}*/
+			if ((stableToleranceG.getText().matches("[\\d]+\\.?[\\d]+?")) || (stableToleranceG.getText().matches("[\\d]+\\.??[\\d]*?[e]??[-]??[\\d]+"))) 
+				stableTolerance = Double.parseDouble(stableToleranceG.getText().trim());
+			else{
+				stableTolerance = 0.02;
+				System.out.println("Can't parse unstableTime. Using default\n");
 			}
-			out.write("epsilon = " + epsilon + "; ratesampling = " + rateSampling + "; pathLengthBin = " + pathLengthBin + "; percent = " + percent + "; runlength = " + runLength + "; runtime = " + runTime + "; absoluteTime = " + absoluteTime + "; delayscalefactor = " + delayScaleFactor + "; valuescalefactor = " + valScaleFactor + "; unstableTime = " + unstableTime + "\n");
+			out.write("epsilon = " + epsilon + "; ratesampling = " + rateSampling + "; pathLengthBin = " + pathLengthBin + "; percent = " + percent + "; runlength = " + runLength + "; runtime = " + runTime + "; absoluteTime = " + absoluteTime + "; delayscalefactor = " + delayScaleFactor + "; pseudoEnable = " + pseudoEnable + "; valuescalefactor = " + valScaleFactor + "; stableTolerance = " + stableTolerance + "\n");
 			tPar.put("epsilon", epsilon);
 			tPar.put("pathLengthBin", Double.valueOf((double) pathLengthBin));
 			tPar.put("pathLengthVar", Double.valueOf((double) pathLengthVar));
@@ -2717,7 +2757,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				tPar.put("runTime", runTime);
 			else
 				tPar.put("runLength", Double.valueOf((double) runLength));
-			tPar.put("unstableTime", unstableTime);
+			//tPar.put("unstableTime", unstableTime);
+			tPar.put("stableTolerance", stableTolerance);
 		} catch (IOException e){
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(BioSim.frame,

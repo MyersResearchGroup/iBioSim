@@ -101,7 +101,7 @@ public class LearnModel { // added ItemListener SB
 	private boolean absoluteTime ; // = true; // true for intfixed //false; true for pd; false for integrator// when False time points are used to determine DMVC and when true absolutime time is used to determine DMVC
 
 	private double percent ; // = 0.8; // a decimal value representing the percent of the total trace that must be constant to qualify to become a DMVC var
-
+	
 	private Double[] lowerLimit;
 	
 	private Double[] upperLimit; 
@@ -157,6 +157,8 @@ public class LearnModel { // added ItemListener SB
 	private boolean binError;
 
 	private HashMap<String, ArrayList<String>> destabMap;
+
+	private double stableTolerance;
 	
 	// Pattern lParenR = Pattern.compile("\\(+"); 
 	
@@ -175,7 +177,7 @@ public class LearnModel { // added ItemListener SB
 	 *  Version 3 : Satish Batchu (LearnModel.java)
 	 */
 	
-	public LhpnFile learnModel(String directory, Log log, BioSim biosim, int moduleNumber, HashMap<String, ArrayList<Double>> thresh, HashMap<String,Double> tPar, ArrayList<Variable> rVarsL, HashMap<String, ArrayList<String>> dstab, Boolean netForStable, Double vScaleFactor, Double dScaleFactor, String failProp) {
+	public LhpnFile learnModel(String directory, Log log, BioSim biosim, int moduleNumber, HashMap<String, ArrayList<Double>> thresh, HashMap<String,Double> tPar, ArrayList<Variable> rVarsL, HashMap<String, ArrayList<String>> dstab, Boolean netForStable, boolean pseudoEnable, Double vScaleFactor, Double dScaleFactor, String failProp) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		} else {
@@ -206,7 +208,9 @@ public class LearnModel { // added ItemListener SB
 			runLength = (int) tPar.get("runLength").doubleValue();
 			runTime = null;
 		}
-		unstableTime = tPar.get("unstableTime").doubleValue();
+		//unstableTime = tPar.get("unstableTime").doubleValue();
+		stableTolerance = tPar.get("stableTolerance").doubleValue();
+		
 		new File(directory + separator + lhpnFile).delete();
 		try {
 
@@ -747,10 +751,10 @@ public class LearnModel { // added ItemListener SB
 				}
 				numTransitions++;
 			}
-			Boolean enablePseudo = false;
 			lpnWithPseudo = new LhpnFile();
 			lpnWithPseudo = mergeLhpns(lpnWithPseudo,g);
-			if (enablePseudo & ((moduleNumber == 0) || (moduleNumber == 1000))){
+			//if (pseudoEnable & ((moduleNumber == 0) || (moduleNumber == 1000))){
+			if (pseudoEnable) {
 				out.write("Adding pseudo transitions now. It'll be saved in " + directory + separator + "pseudo" + lhpnFile + "\n");
 				addPseudo(scaledThresholds);
 				//lpnWithPseudo.save(directory + separator + "pseudo" + lhpnFile);
@@ -778,7 +782,7 @@ public class LearnModel { // added ItemListener SB
 					varsT.add(output);
 					out.write(output.getName() + "\n");
 					LearnModel l = new LearnModel();
-					LhpnFile moduleLPN = l.learnModel(directory, log, biosim, mNum, thresholds, tPar, varsT, dMap, true, valScaleFactor, delayScaleFactor, null);
+					LhpnFile moduleLPN = l.learnModel(directory, log, biosim, mNum, thresholds, tPar, varsT, dMap, true, pseudoEnable, valScaleFactor, delayScaleFactor, null);
 					//true parameter above indicates that the net being generated is for assigning stable
 					// new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 			//		g = mergeLhpns(moduleLPN,g); // If pseudoTrans never required
@@ -1048,7 +1052,7 @@ public class LearnModel { // added ItemListener SB
 								//System.out.println("duration1 : "+duration1);
 								double duration2= returnDuration(allInfo,m);
 								//System.out.println("duration2 : "+duration2);
-								if(Math.abs(duration1-duration2)/duration1>0.02){
+								if(Math.abs(duration1-duration2)/duration1>stableTolerance){ //0.02 default
 									stable = time;
 									//System.out.println("stable changed here to : "+stable);
 
