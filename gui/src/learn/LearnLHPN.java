@@ -2509,24 +2509,27 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					for (Variable v1 : reqdVarsL){
 						if (!v1.isInput()){
 							destabMap.put(v1.getName(), destab_out);
-							Variable vStable = new Variable("stable_" + v1.getName());
-							vStable.setCare(true); 
-							vStable.setDmvc(true);
-							vStable.setInput(true);
-							vStable.setOutput(false);
-							vStable.forceDmvc(true);
-							vStable.setEpsilon(0.1); // since stable is always 0 or 1 and threshold is 0.5. even epsilon of 0.3 is fine
-							varsWithStables.add(vStable);
-							ArrayList<Double> tStable = new ArrayList<Double>();
-							tStable.add(0.5);
-							thresholds.put("stable_" + v1.getName(), tStable);
+						//	Variable vStable = new Variable("stable_" + v1.getName());
+						//	vStable.setCare(true); 
+						//	vStable.setDmvc(true);
+						//	vStable.setInput(true);
+						//	vStable.setOutput(false);
+						//	vStable.forceDmvc(true);
+						//	vStable.setEpsilon(0.1); // since stable is always 0 or 1 and threshold is 0.5. even epsilon of 0.3 is fine
+						//	varsWithStables.add(vStable);
+						//	ArrayList<Double> tStable = new ArrayList<Double>();
+						//	tStable.add(0.5);
+						//	thresholds.put("stable_" + v1.getName(), tStable);
 						}
 					}
 				}
 				LhpnFile g = l.learnModel(directory, log, biosim, moduleNumber, thresholds, tPar, varsWithStables, destabMap, false, valScaleFactor, delayScaleFactor, failProp);
 				// the false parameter above says that it's not generating a net for stable
+				LhpnFile seedLpn = null;
+				Boolean seedLpnExists = false;
 				if (new File(seedLpnFile).exists()){ //directory + separator + "complete.lpn").exists()){//
-					LhpnFile seedLpn = new LhpnFile();
+					seedLpnExists = true;
+					seedLpn = new LhpnFile();
 					seedLpn.load(seedLpnFile);
 					g = mergeLhpns(seedLpn,g);
 				}
@@ -2536,7 +2539,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				globalDelayScaling.setText(Double.toString(delayScaleFactor));
 				
 				boolean defaultStim = defaultEnvG.isSelected();
-				if (defaultStim){
+				if (defaultStim){ // In deafultStim case add only outputs to the LPN
 					int j = 0;
 					//stables = new ArrayList<String>();
 					destabMap = new HashMap<String, ArrayList<String>>();
@@ -2554,10 +2557,22 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							LhpnFile moduleLPN = l.learnModel(directory, log, biosim, j, thresholds, tPar, varsT, destabMap, false, valScaleFactor, delayScaleFactor, null);
 							// new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 							g = mergeLhpns(moduleLPN,g);
-						}	
+						} else {
+							if (!seedLpnExists || (seedLpnExists & !seedLpn.isInput(v.getName())))  
+								g.addOutput(v.getName(), "");
+						}
+					}
+				} else { // If not defaultStim, add inputs and outputs to the LPN
+					for (Variable v : reqdVarsL){
+						if (v.isInput()){
+							if (!seedLpnExists || (seedLpnExists & !seedLpn.isOutput(v.getName())))
+								g.addInput(v.getName(), "");
+						} else {
+							if (!seedLpnExists || (seedLpnExists & !seedLpn.isInput(v.getName())))
+								g.addOutput(v.getName(), "");
+						}
 					}
 				}
-				
 				g.save(directory + separator + lhpnFile);
 				viewLog.setEnabled(true);
 				//System.out.println(directory + separator + lhpnFile);

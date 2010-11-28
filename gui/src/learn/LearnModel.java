@@ -6,6 +6,8 @@ import lhpn2sbml.parser.Lpn2verilog;
 import parser.*;
 import java.io.*;
 import java.util.*;
+
+import javax.jws.soap.InitParam;
 import javax.swing.*;
 
 //import org.sbml.libsbml.*;
@@ -296,6 +298,7 @@ public class LearnModel { // added ItemListener SB
 				genBinsRates(thresholds); 
 				detectDMV(data,false); 
 				updateGraph(bins, rates, tsdFileNum, cProp);
+				addLastTransitionInfo(g, data.get(0).get(data.get(0).size() - 1) - data.get(0).get(0));
 				//cProp.store(coverage,  "run-" + String.valueOf(i) + ".tsd");
 				coverage.write("run-" + String.valueOf(tsdFileNum) + ".tsd\t");
 				coverage.write("places : " + cProp.getProperty("places"));
@@ -727,13 +730,30 @@ public class LearnModel { // added ItemListener SB
 			//This makes sure that signals which are constant throughout a trace are not completely lost.
 			addInitPlace(scaledThresholds);
 			for (String st1 : placesWithoutPostsetTrans){
-				placeInfo.remove(getPlaceInfoIndex(st1));
-				g.removePlace(st1);
+				//placeInfo.remove(getPlaceInfoIndex(st1));
+				//g.removePlace(st1);
+				int initPlaceNum = numPlaces - 1;
+				g.addTransition("t" + numTransitions);
+				g.addMovement(st1, "t" + numTransitions);
+				g.addMovement("t" + numTransitions,"p" + initPlaceNum);
+				out.write("Added transition t" + numTransitions + " b/w terminating place " + st1 + " and initPlace p" + initPlaceNum + "\n");
+				String lastTransDel = null;
+				if (getPlaceInfoIndex(st1) != null)
+					lastTransDel = placeInfo.get(getPlaceInfoIndex(st1)).getProperty("lastTransitionDelay");
+				else if (getTransientNetPlaceIndex(st1) != null)
+					lastTransDel = transientNetPlaces.get(getTransientNetPlaceIndex(st1)).getProperty("lastTransitionDelay");
+				if (lastTransDel != null) {
+					g.changeDelay("t" + numTransitions, lastTransDel);
+				}
+				numTransitions++;
 			}
-			if (moduleNumber == 0){
+			Boolean enablePseudo = false;
+			lpnWithPseudo = new LhpnFile();
+			lpnWithPseudo = mergeLhpns(lpnWithPseudo,g);
+			if (enablePseudo & ((moduleNumber == 0) || (moduleNumber == 1000))){
 				out.write("Adding pseudo transitions now. It'll be saved in " + directory + separator + "pseudo" + lhpnFile + "\n");
 				addPseudo(scaledThresholds);
-				lpnWithPseudo.save(directory + separator + "pseudo" + lhpnFile);
+				//lpnWithPseudo.save(directory + separator + "pseudo" + lhpnFile);
 			}
 	//		addMetaBins();
 	//		addMetaBinTransitions();
@@ -761,12 +781,13 @@ public class LearnModel { // added ItemListener SB
 					LhpnFile moduleLPN = l.learnModel(directory, log, biosim, mNum, thresholds, tPar, varsT, dMap, true, valScaleFactor, delayScaleFactor, null);
 					//true parameter above indicates that the net being generated is for assigning stable
 					// new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
-					g = mergeLhpns(moduleLPN,g);
+			//		g = mergeLhpns(moduleLPN,g); // If pseudoTrans never required
+					lpnWithPseudo = mergeLhpns(moduleLPN,lpnWithPseudo);
 					mNum++;
 				}
 			}
 			out.write("learning module done. Saving stuff and learning other modules.\n");
-			g.save(directory + separator + lhpnFile);
+			lpnWithPseudo.save(directory + separator + lhpnFile);
 			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 			out.write("Returning " + directory + separator + lhpnFile + "\n");
 			out.close();
@@ -802,7 +823,19 @@ public class LearnModel { // added ItemListener SB
 					"LPN File not found for merging.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
-		return (g);
+		//return (g); 
+		return (lpnWithPseudo);
+	}
+
+	private void addLastTransitionInfo(LhpnFile lpn, Double traceLength) {
+		for (String st1 : lpn.getPlaceList()) {
+			if (lpn.getPostset(st1).length == 0){ // a place without a postset transition
+				if (getPlaceInfoIndex(st1) != null)
+					placeInfo.get(getPlaceInfoIndex(st1)).setProperty("lastTransitionDelay", String.valueOf((int) (traceLength*delayScaleFactor)));
+				else if (getTransientNetPlaceIndex(st1) != null)
+					transientNetPlaces.get(getTransientNetPlaceIndex(st1)).setProperty("lastTransitionDelay", String.valueOf((int) (traceLength*delayScaleFactor)));
+			}
+		}
 	}
 
 	public ArrayList modeBinsCalculate(HashMap<String, ArrayList<String>> useMap, int i)
@@ -3099,28 +3132,29 @@ public class LearnModel { // added ItemListener SB
 	
 	public void addPseudo(HashMap<String,ArrayList<Double>> scaledThresholds){
 		try{
-			lpnWithPseudo = new LhpnFile();
-			lpnWithPseudo = mergeLhpns(lpnWithPseudo,g);
 			pseudoVars = new HashMap<String,Boolean>();
 			//pseudoVars.put("ctl",true);
 			for (int i = 0; i < reqdVarsL.size(); i++) {
 				if ((reqdVarsL.get(i).isInput()) && (reqdVarsL.get(i).isCare())){
 					pseudoVars.put(reqdVarsL.get(i).getName(),true);
-				}
+				} 
 			}
 			if ((pseudoVars != null) && (pseudoVars.size() != 0)){
 				for (String st : g.getPlaceList()){
 					currentPlace = st;
 					//TODO: do this only if not prop type place
-					if (getPlaceInfoIndex(st) != null)
+					if (getPlaceInfoIndex(st) != null) {
 						currPlaceBin = getPlaceInfoIndex(st).split(",");
-					else if (getTransientNetPlaceIndex(st) != null)
-						currPlaceBin = getTransientNetPlaceIndex(st).split(",");
-					else 
+						traverse(scaledThresholds);
+					}
+					else if (getTransientNetPlaceIndex(st) != null) {
+						//currPlaceBin = getTransientNetPlaceIndex(st).split(",");
+						//traverse(scaledThresholds);
+					} else 
 						out.write("WARNING: " + st + " is not in the placelist. It should be initPlace, otherwise something wrong\n");
 					//			visitedPlaces = new HashMap<String,Boolean>();
 					//			visitedPlaces.put(currentPlace, true);
-					traverse(scaledThresholds);
+					
 				}
 			}
 		}catch (IOException e) {
@@ -3183,7 +3217,7 @@ public class LearnModel { // added ItemListener SB
 						}
 					}
 				} else {
-					if (Integer.valueOf(currPlaceBin[i]) != Integer.valueOf(nextPlaceBin[i])){
+					if ( (int) Integer.valueOf(currPlaceBin[i]) != (int) Integer.valueOf(nextPlaceBin[i])){
 						pseudo = false;
 						break;
 					}

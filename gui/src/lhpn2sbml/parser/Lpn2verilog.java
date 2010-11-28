@@ -37,14 +37,14 @@ public class Lpn2verilog {
 			for (String v: varsList){
 				if (lpn.isOutput(v)){
 					if (first){
-						if (!lpn.isBoolean(v)){
+						if (lpn.isInteger(v) || lpn.isContinuous(v)){
 							sv.write("output real " + v);	//TODO: Integer if dmv?
 						} else{
 							sv.write("output logic " + v);
 						}
 						first = false;
 					} else{
-						if (!lpn.isBoolean(v)){
+						if (lpn.isInteger(v) || lpn.isContinuous(v)){
 							sv.write(", output real " + v);
 						} else{
 							sv.write(", output logic " + v);
@@ -53,14 +53,14 @@ public class Lpn2verilog {
 				}
 				else if (lpn.isInput(v)){
 					if (first){
-						if (!lpn.isBoolean(v)){
+						if (lpn.isInteger(v) || lpn.isContinuous(v)){
 							sv.write("input real " + v);//svFileName.split("\\.")[0]+
 						} else{
 							sv.write("input wire " + v);//svFileName.split("\\.")[0]+
 						}
 						first = false;
 					} else{
-						if (!lpn.isBoolean(v)){
+						if (lpn.isInteger(v) || lpn.isContinuous(v)){
 							sv.write(", input real " + v);
 						} else{
 							sv.write(", input wire " + v);
@@ -200,16 +200,16 @@ public class Lpn2verilog {
 								sv.write("\treal entryTime;\n");
 							}
 							sv.write("\treal rate_" + v + ", change_" + v + ";\n");
-							if (lpn.getInitialRate(v) != null){
+							if ((lpn.getInitialRate(v) != null) && (!lpn.getInitialRate(v).equalsIgnoreCase("unknown"))){
 								String initBufferString = getInitBufferString(v, lpn.getInitialRate(v));
 								initBuffer.append("\t\trate_" + initBufferString);
 							}
-							if (lpn.getInitialVal(v) != null){
+							if ((lpn.getInitialVal(v) != null)  && (!lpn.getInitialVal(v).equalsIgnoreCase("unknown"))){
 								String initBufferString = getInitBufferString(v, lpn.getInitialVal(v));
 								initBuffer.append("\t\tchange_" + initBufferString);
 							}
 						} else {
-							if (lpn.getInitialVal(v) != null){
+							if ((lpn.getInitialVal(v) != null) && (!lpn.getInitialVal(v).equalsIgnoreCase("unknown"))){
 								String initBufferString = getInitBufferString(v, lpn.getInitialVal(v));
 								initBuffer.append("\t\t" + initBufferString);
 							}
@@ -324,11 +324,13 @@ public class Lpn2verilog {
 					HashMap<String,ExprTree> assignmentTrees = lpn.getTransition(st).getAssignTrees(); 
 					HashMap<String,ExprTree> rateAssignmentTrees = lpn.getTransition(st).getRateAssignTrees();
 					HashMap<String,ExprTree> valueAssignmentTrees = lpn.getTransition(st).getIntAssignTrees();
+					HashMap<String,ExprTree> contAssignmentTrees = lpn.getTransition(st).getContAssignTrees();
 					if (assignmentTrees.size() != 0){
 						for (String st2 : valueAssignmentTrees.keySet()){
 							//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
 							String asgnmt = valueAssignmentTrees.get(st2).getElement("Verilog");
-							assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= " + asgnmt + ";\n");
+							if ((asgnmt != null) && (asgnmt != ""))
+								assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= " + asgnmt + ";\n");
 						/*	if (asgnmt.contains(",")){
 								asgnmt = asgnmt.replace("uniform(","");
 								asgnmt = asgnmt.replace(")","");
@@ -350,6 +352,12 @@ public class Lpn2verilog {
 							} else{
 								assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= " + asgnmt + ";\n");
 							}*/
+						}
+						for (String st2 : contAssignmentTrees.keySet()){
+							//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
+							String asgnmt = contAssignmentTrees.get(st2).getElement("Verilog");
+							if ((asgnmt != null) && (asgnmt != ""))
+								assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= " + asgnmt + ";\n");
 						}
 						for (String st2 : rateAssignmentTrees.keySet()){
 							//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
