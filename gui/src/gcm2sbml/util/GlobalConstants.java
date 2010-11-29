@@ -42,7 +42,7 @@ public class GlobalConstants {
 	public static final String PORTMAP = "Port Map";
 	public static final String NAME = "Name";
 	public static final String CONSTANT = "boundary";
-	public static final String SPASTIC = "unconstrained";
+	public static final String SPASTIC = "constitutive";
 	public static final String NORMAL = "normal";
 	public static final String INPUT = "input";
 	public static final String OUTPUT = "output";

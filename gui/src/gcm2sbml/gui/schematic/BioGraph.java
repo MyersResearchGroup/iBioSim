@@ -830,7 +830,7 @@ public class BioGraph extends mxGraph {
 		prop.setProperty(GlobalConstants.NAME, "");
 		prop.setProperty("label", id);
 		prop.setProperty("ID", id);
-		prop.setProperty("Type", "normal");
+		prop.setProperty("Type", "internal");
 		prop.setProperty("graphwidth", String.valueOf(DEFAULT_SPECIES_WIDTH));
 		prop.setProperty("graphheight", String.valueOf(DEFAULT_SPECIES_HEIGHT));
 		centerVertexOverPoint(prop, x, y);
