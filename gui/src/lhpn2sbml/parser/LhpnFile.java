@@ -201,7 +201,7 @@ public class LhpnFile {
 				}
 				flag = false;
 				for (Transition t : transitions.values()) {
-					if (t.isDisabling()) {
+					if (t.isNonDisabling()) {
 						if (!flag) {
 							buffer.append("#@.non_disabling ");
 						}
@@ -1867,7 +1867,7 @@ public class LhpnFile {
 		if (lineMatcher.find()) {
 			for (String s : lineMatcher.group(1).split("\\s")) {
 				if (!s.equals("")) {
-					transitions.get(s).setDisabling(false);
+					transitions.get(s).setNonDisabling(true);
 				}
 			}
 		}

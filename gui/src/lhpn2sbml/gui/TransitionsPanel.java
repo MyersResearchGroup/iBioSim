@@ -118,7 +118,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		// Disabling Transition check box
 		JPanel disablingPanel = new JPanel(new GridLayout(1, 2));
 		// failPanel.setMinimumSize(new Dimension(200, 20));
-		JLabel disablingLabel = new JLabel("Disabling Transition");
+		JLabel disablingLabel = new JLabel("Persistent Transition");
 		// JLabel blankLabel1 = new JLabel("  ");
 		JLabel blankLabel3 = new JLabel("                                          ");
 		disabling = new JCheckBox();
@@ -196,7 +196,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			if (lhpn.getTransition(oldName).isFail()) {
 				fail.setSelected(true);
 			}
-			if (lhpn.getTransition(oldName).isDisabling()) {
+			if (lhpn.getTransition(oldName).isNonDisabling()) {
 				disabling.setSelected(true);
 			}
 			String delay = lhpn.getTransition(selected).getDelay();
@@ -368,7 +368,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		else {
 			lhpn.getTransition(transition).setFail(false);
 		}
-		lhpn.getTransition(transition).setDisabling(disabling.isSelected());
+		lhpn.getTransition(transition).setNonDisabling(disabling.isSelected());
 		if (fields.get("Enabling Condition") != null) {
 			if (!lhpn.getTransition(transition).addEnabling(fields.get("Enabling Condition").getValue().replaceAll("\\s+", "")))
 				return false;
