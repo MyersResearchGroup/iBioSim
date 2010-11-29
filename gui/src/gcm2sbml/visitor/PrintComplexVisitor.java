@@ -35,7 +35,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitComplex(ComplexSpecies specie) {
 		this.kcomp = specie.getKc();
-		Reaction r = Utility.Reaction("Complex_" + specie.getId());
+		Reaction r = Utility.Reaction("Complex_formation_" + specie.getId());
 		String expression = "";
 		for (PartSpecies part : specie.getParts()) {
 			SpeciesInterface s = part.getSpecies();
