@@ -9,7 +9,7 @@ public class Transition {
 
 	private boolean fail = false;
 	
-	private boolean disabling = true;
+	private boolean nondisabling = true;
 
 	private String enabling;
 
@@ -184,16 +184,16 @@ public class Transition {
 		this.fail = fail;
 	}
 	
-	public void setDisabling(boolean disabling) {
-		this.disabling = disabling;
+	public void setNonDisabling(boolean nondisabling) {
+		this.nondisabling = nondisabling;
 	}
 
 	public boolean isFail() {
 		return fail;
 	}
 	
-	public boolean isDisabling() {
-		return disabling;
+	public boolean isNonDisabling() {
+		return nondisabling;
 	}
 
 	public boolean isConnected() {
