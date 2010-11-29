@@ -3406,46 +3406,46 @@ public class ExprTree {
 				return 'U';
 			}
 			if (op.equals("==")) {
-				if (r1.evaluateExp(variables) == r2.evaluateExp(variables)) {
+				if (r1.evaluateExpr(variables) == r2.evaluateExpr(variables)) {
 					return 'T';
 				}
-				else if (new Double(r1.evaluateExp(variables)).equals(Double.NaN) || new Double(r2.evaluateExp(variables)).equals(Double.NaN)) {
+				else if (new Double(r1.evaluateExpr(variables)).equals(Double.NaN) || new Double(r2.evaluateExpr(variables)).equals(Double.NaN)) {
 					return 'X';
 				}
 				return 'F';
 			}
 			else if (op.equals(">=")) {
-				if (r1.evaluateExp(variables) >= r2.evaluateExp(variables)) {
+				if (r1.evaluateExpr(variables) >= r2.evaluateExpr(variables)) {
 					return 'T';
 				}
-				else if (new Double(r2.evaluateExp(variables)).equals(Double.NaN) || new Double(r1.evaluateExp(variables)).equals(Double.NaN)) {
+				else if (new Double(r2.evaluateExpr(variables)).equals(Double.NaN) || new Double(r1.evaluateExpr(variables)).equals(Double.NaN)) {
 					return 'X';
 				}
 				return 'F';
 			}
 			else if (op.equals("<=")) {
-				if (r1.evaluateExp(variables) <= r2.evaluateExp(variables)) {
+				if (r1.evaluateExpr(variables) <= r2.evaluateExpr(variables)) {
 					return 'T';
 				}
-				else if (new Double(r1.evaluateExp(variables)).equals(Double.NaN) || new Double(r2.evaluateExp(variables)).equals(Double.NaN)) {
+				else if (new Double(r1.evaluateExpr(variables)).equals(Double.NaN) || new Double(r2.evaluateExpr(variables)).equals(Double.NaN)) {
 					return 'X';
 				}
 				return 'F';
 			}
 			else if (op.equals(">")) {
-				if (r1.evaluateExp(variables) > r2.evaluateExp(variables)) {
+				if (r1.evaluateExpr(variables) > r2.evaluateExpr(variables)) {
 					return 'T';
 				}
-				else if (new Double(r1.evaluateExp(variables)).equals(Double.NaN) || new Double(r2.evaluateExp(variables)).equals(Double.NaN)) {
+				else if (new Double(r1.evaluateExpr(variables)).equals(Double.NaN) || new Double(r2.evaluateExpr(variables)).equals(Double.NaN)) {
 					return 'X';
 				}
 				return 'F';
 			}
 			else if (op.equals("<")) {
-				if (r1.evaluateExp(variables) < r2.evaluateExp(variables)) {
+				if (r1.evaluateExpr(variables) < r2.evaluateExpr(variables)) {
 					return 'T';
 				}
-				else if (new Double(r1.evaluateExp(variables)).equals(Double.NaN) || new Double(r2.evaluateExp(variables)).equals(Double.NaN)) {
+				else if (new Double(r1.evaluateExpr(variables)).equals(Double.NaN) || new Double(r2.evaluateExpr(variables)).equals(Double.NaN)) {
 					return 'X';
 				}
 				return 'F';
@@ -3501,7 +3501,7 @@ public class ExprTree {
 				return false;
 			}
 			else if (op.equals("==")) {
-				if (!(r1.isEqual(r2) || r1.evaluateExp(variables) == r2.evaluateExp(variables)))
+				if (!(r1.isEqual(r2) || r1.evaluateExpr(variables) == r2.evaluateExpr(variables)))
 					return true;
 				return false;
 			}
@@ -3518,31 +3518,31 @@ public class ExprTree {
 			}
 		case 'w': // bitWise
 			if (op.equals("&")) {
-				if (!(evaluateExp(variables) == 0.0)) {
+				if (!(evaluateExpr(variables) == 0.0)) {
 					return true;
 				}
 				return false;
 			}
 			else if (op.equals("|")) {
-				if (!(evaluateExp(variables) == 0.0)) {
+				if (!(evaluateExpr(variables) == 0.0)) {
 					return true;
 				}
 				return false;
 			}
 			else if (op.equals("X")) {
-				if (!(evaluateExp(variables) == 0.0)) {
+				if (!(evaluateExpr(variables) == 0.0)) {
 					return true;
 				}
 				return false;
 			}
 			else if (op.equals("~")) {
-				if (!(evaluateExp(variables) == 0.0)) {
+				if (!(evaluateExpr(variables) == 0.0)) {
 					return true;
 				}
 				return false;
 			}
 			else if (op.equals("[]")) {
-				if (!(evaluateExp(variables) == 0.0)) {
+				if (!(evaluateExpr(variables) == 0.0)) {
 					return true;
 				}
 				return false;
@@ -3553,31 +3553,31 @@ public class ExprTree {
 					return false;
 				}
 				if (op.equals("==")) {
-					if (r1.evaluateExp(variables) == r2.evaluateExp(variables)) {
+					if (r1.evaluateExpr(variables) == r2.evaluateExpr(variables)) {
 						return false;
 					}
 					return true;
 				}
 				else if (op.equals(">=")) {
-					if (r1.evaluateExp(variables) >= r2.evaluateExp(variables)) {
+					if (r1.evaluateExpr(variables) >= r2.evaluateExpr(variables)) {
 						return false;
 					}
 					return true;
 				}
 				else if (op.equals("<=")) {
-					if (r1.evaluateExp(variables) <= r2.evaluateExp(variables)) {
+					if (r1.evaluateExpr(variables) <= r2.evaluateExpr(variables)) {
 						return false;
 					}
 					return true;
 				}
 				else if (op.equals(">")) {
-					if (r1.evaluateExp(variables) > r2.evaluateExp(variables)) {
+					if (r1.evaluateExpr(variables) > r2.evaluateExpr(variables)) {
 						return false;
 					}
 					return true;
 				}
 				else if (op.equals("<")) {
-					if (r1.evaluateExp(variables) < r2.evaluateExp(variables)) {
+					if (r1.evaluateExpr(variables) < r2.evaluateExpr(variables)) {
 						return false;
 					}
 					return true;
@@ -3612,7 +3612,7 @@ public class ExprTree {
 			if (!contains) {
 				return false;
 			}
-			if (!(evaluateExp(variables) == 0.0)) {
+			if (!(evaluateExpr(variables) == 0.0)) {
 				return false;
 			}
 			else {
@@ -3670,7 +3670,7 @@ public class ExprTree {
 			}
 			else if (op.equals("==")) {
 				if (r1.isEqual(r2, variables)
-						|| r1.evaluateExp(variables) == r2.evaluateExp(variables))
+						|| r1.evaluateExpr(variables) == r2.evaluateExpr(variables))
 					return true;
 				return false;
 			}
@@ -3689,31 +3689,31 @@ public class ExprTree {
 			}
 		case 'w': // bitWise
 			if (op.equals("&")) {
-				if (evaluateExp(variables) == 0.0) {
+				if (evaluateExpr(variables) == 0.0) {
 					return false;
 				}
 				return true;
 			}
 			else if (op.equals("|")) {
-				if (evaluateExp(variables) == 0.0) {
+				if (evaluateExpr(variables) == 0.0) {
 					return false;
 				}
 				return true;
 			}
 			else if (op.equals("X")) {
-				if (evaluateExp(variables) == 0.0) {
+				if (evaluateExpr(variables) == 0.0) {
 					return false;
 				}
 				return true;
 			}
 			else if (op.equals("~")) {
-				if (evaluateExp(variables) == 0.0) {
+				if (evaluateExpr(variables) == 0.0) {
 					return false;
 				}
 				return true;
 			}
 			else if (op.equals("[]")) {
-				if (evaluateExp(variables) == 0.0) {
+				if (evaluateExpr(variables) == 0.0) {
 					return false;
 				}
 				return true;
@@ -3724,31 +3724,31 @@ public class ExprTree {
 					return false;
 				}
 				if (op.equals("==")) {
-					if (!(r1.evaluateExp(variables) == r2.evaluateExp(variables))) {
+					if (!(r1.evaluateExpr(variables) == r2.evaluateExpr(variables))) {
 						return false;
 					}
 					return true;
 				}
 				else if (op.equals(">=")) {
-					if (!(r1.evaluateExp(variables) >= r2.evaluateExp(variables))) {
+					if (!(r1.evaluateExpr(variables) >= r2.evaluateExpr(variables))) {
 						return false;
 					}
 					return true;
 				}
 				else if (op.equals("<=")) {
-					if (!(r1.evaluateExp(variables) <= r2.evaluateExp(variables))) {
+					if (!(r1.evaluateExpr(variables) <= r2.evaluateExpr(variables))) {
 						return false;
 					}
 					return true;
 				}
 				else if (op.equals(">")) {
-					if (!(r1.evaluateExp(variables) > r2.evaluateExp(variables))) {
+					if (!(r1.evaluateExpr(variables) > r2.evaluateExpr(variables))) {
 						return false;
 					}
 					return true;
 				}
 				else if (op.equals("<")) {
-					if (!(r1.evaluateExp(variables) < r2.evaluateExp(variables))) {
+					if (!(r1.evaluateExpr(variables) < r2.evaluateExpr(variables))) {
 						return false;
 					}
 					return true;
@@ -3769,7 +3769,7 @@ public class ExprTree {
 			if (!contains) {
 				return false;
 			}
-			if (!(evaluateExp(variables) != 0.0)) {
+			if (!(evaluateExpr(variables) != 0.0)) {
 				return false;
 			}
 			else {
@@ -5060,7 +5060,9 @@ public class ExprTree {
 		}
 	}
 
-	public double evaluateExp(HashMap<String, String> variables) {
+	public double evaluateExpr(HashMap<String, String> variables) {
+		double left;
+		double right;
 		switch (isit) {
 		case 'b': // Boolean
 			if (variables != null) {
@@ -5109,15 +5111,42 @@ public class ExprTree {
 				return Double.NaN;
 			}
 		case 'w': // bitWise
+			if (r1 != null) {
+				left = r1.evaluateExpr(variables);
+			}
+			else {
+				left = Double.NaN;
+			}
+			if (r2 != null) {
+				right = r2.evaluateExpr(variables);
+			}
+			else {
+				right = Double.NaN;
+			}
+			if (op.equals("&")) {
+				return ((int) left) & ((int) right);
+			}
+			else if (op.equals("|")) {
+				return ((int) left) | ((int) right);
+			}
+			else if (op.equals("[]")) {
+				return (((int) left) >> ((int) right)) & 1;
+			}
+			else if (op.equals("!")) {
+				return ~((int) left);
+			}
+			else if (op.equals("X")) {
+				return ((int) left) ^ ((int) right);
+			}
 		case 'a': // Arithmetic
 		case 'r': // Relational
 		case 'l': // Logical
 			if (op.equals("!")) {
 				if (r1 != null) {
-					if (r1.evaluateExp(variables) == 1.0) {
+					if (r1.evaluateExpr(variables) == 1.0) {
 						return 0.0;
 					}
-					else if (r1.evaluateExp(variables) == 0.0) {
+					else if (r1.evaluateExpr(variables) == 0.0) {
 						return 1.0;
 					}
 					else {
@@ -5125,10 +5154,10 @@ public class ExprTree {
 					}
 				}
 				else if (r2 != null) {
-					if (r2.evaluateExp(variables) == 1.0) {
+					if (r2.evaluateExpr(variables) == 1.0) {
 						return 0.0;
 					}
-					else if (r2.evaluateExp(variables) == 0.0) {
+					else if (r2.evaluateExpr(variables) == 0.0) {
 						return 1.0;
 					}
 					else {
@@ -5140,16 +5169,14 @@ public class ExprTree {
 				}
 			}
 			else {
-				double left;
-				double right;
 				if (r1 != null) {
-					left = r1.evaluateExp(variables);
+					left = r1.evaluateExpr(variables);
 				}
 				else {
 					left = Double.NaN;
 				}
 				if (r2 != null) {
-					right = r2.evaluateExp(variables);
+					right = r2.evaluateExpr(variables);
 				}
 				else {
 					right = Double.NaN;
@@ -5175,10 +5202,27 @@ public class ExprTree {
 						return Double.NaN;
 				}
 				else if (op.equals("==")) {
-					if (left == right) {
+					if (left == Double.NaN || right == Double.NaN) {
+						return Double.NaN;
+					}
+					else if (left == right) {
 						return 1.0;
 					}
 					else if (left != right) {
+						return 0.0;
+					}
+					else {
+						return Double.NaN;
+					}
+				}
+				else if (op.equals("->")) {
+					if (left == 0.0 && (right == 1.0 || right == 0.0)) {
+						return 1.0;
+					}
+					else if (left == 1.0 && right == 1.0) {
+						return 1.0;
+					}
+					else if (left == 1.0 && right == 0.0) {
 						return 0.0;
 					}
 					else {
@@ -5199,6 +5243,63 @@ public class ExprTree {
 				}
 				else if (op.equals("^")) {
 					return Math.pow(left, right);
+				}
+				else if (op.equals("f")) {
+					return Math.floor(left);
+				}
+				else if (op.equals("c")) {
+					return Math.ceil(left);
+				}
+				else if (op.equals("m")) {
+					return Math.min(left, right);
+				}
+				else if (op.equals("M")) {
+					return Math.max(left, right);
+				}
+				else if (op.equals("i")) {
+					return ((int) left) / ((int) right);
+				}
+				else if (op.equals("uniform")) {
+					return Double.NaN;
+				}
+				else if (op.equals("normal")) {
+					return Double.NaN;
+				}
+				else if (op.equals("gamma")) {
+					return Double.NaN;
+				}
+				else if (op.equals("lognormal")) {
+					return Double.NaN;
+				}
+				else if (op.equals("binomial")) {
+					return Double.NaN;
+				}
+				else if (op.equals("exponential")) {
+					return Double.NaN;
+				}
+				else if (op.equals("chisq")) {
+					return Double.NaN;
+				}
+				else if (op.equals("laplace")) {
+					return Double.NaN;
+				}
+				else if (op.equals("cauchy")) {
+					return Double.NaN;
+				}
+				else if (op.equals("rayleigh")) {
+					return Double.NaN;
+				}
+				else if (op.equals("poisson")) {
+					return Double.NaN;
+				}
+				else if (op.equals("bernoulli")) {
+					return Double.NaN;
+				}
+				else if (op.equals("rate")) {
+					return Double.NaN;
+				}
+				else if (op.equals("int")) {
+					return ((int) left);
 				}
 				else if (op.equals("<")) {
 					if (left < right) {

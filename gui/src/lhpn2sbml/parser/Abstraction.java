@@ -748,7 +748,7 @@ public class Abstraction extends LhpnFile {
 			if ((abstPane.preAbsModel.contains(abstPane.xform16)
 					|| abstPane.loopAbsModel.contains(abstPane.xform16) || abstPane.postAbsModel
 					.contains(abstPane.xform16))
-					&& (expr.evaluateExp(initVars) == 1)
+					&& (expr.evaluateExpr(initVars) == 1)
 					&& abstPane.isSimplify()) {
 				boolean enabled = true;
 				for (Transition tP : transitions.values()) {
@@ -768,7 +768,7 @@ public class Abstraction extends LhpnFile {
 			else if ((abstPane.preAbsModel.contains(abstPane.xform11)
 					|| abstPane.loopAbsModel.contains(abstPane.xform11) || abstPane.postAbsModel
 					.contains(abstPane.xform11))
-					&& (expr.evaluateExp(initVars) == 0)
+					&& (expr.evaluateExpr(initVars) == 0)
 					&& abstPane.isSimplify()) {
 				boolean disabled = true;
 				for (Transition tP : transitions.values()) {
