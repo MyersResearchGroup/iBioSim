@@ -74,9 +74,9 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		Utility.addSpecies(document, s);
 		
 		org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-		r.setId("Spastic_production_" + s.getName());
+		r.setId("Constitutive_production_" + s.getId());
 		
-		r.addProduct(Utility.SpeciesReference(s.getName(), Double.parseDouble(parameters.getParameter(GlobalConstants.STOICHIOMETRY_STRING))));
+		r.addProduct(Utility.SpeciesReference(s.getId(), Double.parseDouble(parameters.getParameter(GlobalConstants.STOICHIOMETRY_STRING))));
 		
 		r.setReversible(false);
 		r.setFast(false);

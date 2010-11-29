@@ -352,9 +352,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private void setType(String type) {
 		if (type.equals(types[0])) {
 			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
+			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(false);
-			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
+			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(false);
 		}
 		else if (type.equals(types[1])) {
 			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
@@ -369,7 +369,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
 		} else {
 			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
+			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(false);
 		}
@@ -400,7 +400,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	private JComboBox typeBox = null;
 
-	private static final String[] types = new String[] { "input", "internal", "output", "unconstrained"};
+	private static final String[] types = new String[] { "input", "internal", "output", "constitutive"};
 
 	private HashMap<String, PropertyField> fields = null;
 
