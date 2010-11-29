@@ -2473,7 +2473,7 @@ public class GCMFile {
 		Model m = doc.getModel();
 		for (int i = 0; i < m.getNumCompartmentTypes(); i++) {
 			org.sbml.libsbml.CompartmentType c = m.getCompartmentType(i);
-			String newName = compName + "_" + c.getId();
+			String newName = compName + "__" + c.getId();
 			updateVarId(false, c.getId(), newName, doc);
 			c.setId(newName);
 			boolean add = true;
@@ -2493,7 +2493,7 @@ public class GCMFile {
 		}
 		for (int i = 0; i < m.getNumCompartments(); i++) {
 			org.sbml.libsbml.Compartment c = m.getCompartment(i);
-			String newName = compName + "_" + c.getId();
+			String newName = compName + "__" + c.getId();
 			updateVarId(false, c.getId(), newName, doc);
 			c.setId(newName);
 			boolean add = true;
@@ -2533,7 +2533,7 @@ public class GCMFile {
 		}
 		for (int i = 0; i < m.getNumSpeciesTypes(); i++) {
 			org.sbml.libsbml.SpeciesType s = m.getSpeciesType(i);
-			String newName = compName + "_" + s.getId();
+			String newName = compName + "__" + s.getId();
 			updateVarId(false, s.getId(), newName, doc);
 			s.setId(newName);
 			boolean add = true;
@@ -2552,10 +2552,10 @@ public class GCMFile {
 		}
 		for (int i = 0; i < m.getNumSpecies(); i++) {
 			Species spec = m.getSpecies(i);
-			String newName = compName + "_" + spec.getId();
+			String newName = compName + "__" + spec.getId();
 			for (Object port : getComponents().get(compName).keySet()) {
 				if (spec.getId().equals((String) port)) {
-					newName = "_" + compName + "_"
+					newName = "_" + compName + "__"
 							+ getComponents().get(compName).getProperty((String) port);
 				}
 			}
@@ -2565,9 +2565,9 @@ public class GCMFile {
 		for (int i = 0; i < m.getNumSpecies(); i++) {
 			Species spec = m.getSpecies(i);
 			boolean add = true;
-			if (spec.getId().startsWith("_" + compName + "_")) {
-				updateVarId(true, spec.getId(), spec.getId().substring(2 + compName.length()), doc);
-				spec.setId(spec.getId().substring(2 + compName.length()));
+			if (spec.getId().startsWith("_" + compName + "__")) {
+				updateVarId(true, spec.getId(), spec.getId().substring(3 + compName.length()), doc);
+				spec.setId(spec.getId().substring(3 + compName.length()));
 			}
 			else {
 				for (int j = 0; j < mainDoc.getModel().getNumSpecies(); j++) {
@@ -2619,7 +2619,7 @@ public class GCMFile {
 		}
 		for (int i = 0; i < m.getNumParameters(); i++) {
 			org.sbml.libsbml.Parameter p = m.getParameter(i);
-			String newName = compName + "_" + p.getId();
+			String newName = compName + "__" + p.getId();
 			updateVarId(false, p.getId(), newName, doc);
 			p.setId(newName);
 			boolean add = true;
@@ -2647,7 +2647,7 @@ public class GCMFile {
 		}
 		for (int i = 0; i < m.getNumReactions(); i++) {
 			org.sbml.libsbml.Reaction r = m.getReaction(i);
-			String newName = compName + "_" + r.getId();
+			String newName = compName + "__" + r.getId();
 			updateVarId(false, r.getId(), newName, doc);
 			r.setId(newName);
 			boolean add = true;
@@ -2821,7 +2821,7 @@ public class GCMFile {
 		}
 		for (int i = 0; i < m.getNumEvents(); i++) {
 			org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) m.getListOfEvents().get(i);
-			String newName = compName + "_" + event.getId();
+			String newName = compName + "__" + event.getId();
 			updateVarId(false, event.getId(), newName, doc);
 			event.setId(newName);
 			boolean add = true;
