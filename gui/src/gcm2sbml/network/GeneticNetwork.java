@@ -309,9 +309,9 @@ public class GeneticNetwork {
 			r.setReversible(true);
 			r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
-			kl.addParameter(Utility.Parameter(kRnapString, p.getKrnap(), getMoleParameter(2)));
+			kl.addParameter(Utility.Parameter(krnapString, p.getKrnap(), getMoleParameter(2)));
 			kl.addParameter(Utility.Parameter("kr", 1, getMoleTimeParameter(1)));
-			kl.setFormula("kr*" + kRnapString + "*" + "RNAP*" + p.getId() + "-kr*"
+			kl.setFormula("kr*" + krnapString + "*" + "RNAP*" + p.getId() + "-kr*"
 					+ p.getId() + "_RNAP");		
 			Utility.addReaction(document, r);
 
@@ -858,38 +858,44 @@ public class GeneticNetwork {
 	 */
 	private void initialize() {
 		buildComplexes();
+		buildComplexInfluences();
 	}
 
 	/**
-	 * Configures the promoters
+	 * Builds the complex species
 	 * 
 	 */
 	private void buildComplexes() {
+		for (String complexId : complexMap.keySet()) {
+			ComplexSpecies c = new ComplexSpecies(species.get(complexId), complexMap.get(complexId));
+			species.put(complexId, c);
+		}
+	}
+	
+	/**
+	 * 
+	 * 
+	 */
+	private void buildComplexInfluences() {
 		for (Promoter p : promoters.values()) {
 			for (Reaction r : p.getActivatingReactions()) {
 				String inputId = r.getInput();
 				if (complexMap.containsKey(inputId)) {
-					ComplexSpecies c = new ComplexSpecies(species.get(inputId), 
-							complexMap.get(inputId));
-					p.addActivator(inputId, c);
-					species.put(inputId, c);
-				}
-				String outputId = r.getOutput();
-				if (!r.getOutput().equals("none")) {
-					p.addOutput(outputId, species.get(outputId));
+					p.addActivator(inputId, species.get(inputId));
+					String outputId = r.getOutput();
+					if (!r.getOutput().equals("none")) {
+						p.addOutput(outputId, species.get(outputId));
+					}
 				}
 			}
 			for (Reaction r : p.getRepressingReactions()) {
 				String inputId = r.getInput();
 				if (complexMap.containsKey(inputId)) {
-					ComplexSpecies c = new ComplexSpecies(species.get(inputId), 
-							complexMap.get(inputId));
-					p.addRepressor(inputId, c);
-					species.put(inputId, c);
-				}
-				String outputId = r.getOutput();
-				if (!r.getOutput().equals("none")) {
-					p.addOutput(outputId, species.get(outputId));
+					p.addRepressor(inputId, species.get(inputId));
+					String outputId = r.getOutput();
+					if (!r.getOutput().equals("none")) {
+						p.addOutput(outputId, species.get(outputId));
+					}
 				}
 			}
 		}
@@ -955,7 +961,7 @@ public class GeneticNetwork {
 
 	private String compartment = "default";
 	
-	private String kRnapString = CompatibilityFixer
+	private String krnapString = CompatibilityFixer
 	.getSBMLName(GlobalConstants.RNAP_BINDING_STRING);
 	
 	private String kBasalString = CompatibilityFixer
