@@ -135,7 +135,7 @@ public class LhpnFile {
 			for (String s : booleans.keySet()) {
 				if (booleans.get(s) != null) {
 					if (!flag) {
-						buffer.append(".internals ");
+						buffer.append(".internal ");
 						flag = true;
 					}
 					if (booleans.get(s).isInternal()) {
@@ -149,7 +149,7 @@ public class LhpnFile {
 				if (continuous.get(s) != null) {
 					if (continuous.get(s).isInternal()) {
 						if (!flag) {
-							buffer.append(".internals ");
+							buffer.append(".internal ");
 							flag = true;
 						}
 						buffer.append(s + " ");
@@ -160,7 +160,7 @@ public class LhpnFile {
 				if (integers.get(s) != null) {
 					if (integers.get(s).isInternal()) {
 						if (!flag) {
-							buffer.append(".internals ");
+							buffer.append(".internal ");
 							flag = true;
 						}
 						buffer.append(s + " ");
@@ -1883,7 +1883,7 @@ public class LhpnFile {
 
 	private static final String OUTPUT = "\\.outputs([[\\s[^\\n]]\\w+]*?)\\n";
 	
-	private static final String INTERNAL = "\\.internals([[\\s[^\\n]]\\w+]*?)\\n";
+	private static final String INTERNAL = "\\.internal([[\\s[^\\n]]\\w+]*?)\\n";
 
 	private static final String INIT_STATE = "#@\\.init_state \\[(\\w+)\\]";
 
