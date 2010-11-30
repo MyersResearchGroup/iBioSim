@@ -614,7 +614,7 @@ public class Translator {
 		
 		String probprop = "";
 		String[] probpropParts = new String[4];
-		if(!property.equals("")){
+		if(!(property == null) && !property.equals("")){
 			probprop=getProbpropExpression(property);
 			probpropParts=getProbpropParts(probprop);
 			//System.out.println("probprop=" + probprop);
