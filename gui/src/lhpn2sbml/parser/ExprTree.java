@@ -5077,11 +5077,11 @@ public class ExprTree {
 				}
 			}
 			else {
-				return -1.0;
+				return Double.NaN;
 			}
-		case 'c': // Integer
+		case 'c': // Contunuous
 			return Double.NaN;
-		case 'i': // Continuous
+		case 'i': // Integer
 			if (variables != null) {
 				try {
 					return Double.parseDouble(variables.get(variable));
@@ -5091,7 +5091,7 @@ public class ExprTree {
 				}
 			}
 			else {
-				return -1.0;
+				return Double.NaN;
 			}
 		case 'n': // Number
 			if (uvalue == lvalue) {
