@@ -7,7 +7,7 @@ import parser.*;
 import java.io.*;
 import java.util.*;
 
-import javax.jws.soap.InitParam;
+// javax.jws.soap.InitParam;
 import javax.swing.*;
 
 //import org.sbml.libsbml.*;
