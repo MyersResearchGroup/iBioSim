@@ -1053,11 +1053,14 @@ public class Run implements ActionListener {
 									performMarkovAnalysis.start(absError, null);
 								}
 								else {
-									ArrayList<String> conditions = gcmEditor.getGCM()
-											.getConditions();
-									for (int i = 0; i < conditions.size(); i++) {
-										conditions.set(i, Translator
-												.getProbpropExpression(conditions.get(i)));
+									ArrayList<String> conditions = new ArrayList<String>();
+									for (int i = 0; i < gcmEditor.getGCM().getConditions().size(); i++) {
+										if (gcmEditor.getGCM().getConditions().get(i).startsWith(
+												"St")) {
+											conditions.add(Translator
+													.getProbpropExpression(gcmEditor.getGCM()
+															.getConditions().get(i)));
+										}
 									}
 									performMarkovAnalysis.start(absError, conditions);
 								}
