@@ -1087,13 +1087,9 @@ public class Run implements ActionListener {
 										.addText("Performing transient Markov chain analysis with uniformization.\n");
 								PerfromTransientMarkovAnalysisThread performMarkovAnalysis = new PerfromTransientMarkovAnalysisThread(
 										sg);
-								if (modelFile.contains(".lpn")) {
-									performMarkovAnalysis.start(timeLimit, absError, null);
-								}
-								else {
-									performMarkovAnalysis.start(timeLimit, absError, gcmEditor
-											.getGCM().getSelectedCondition());
-								}
+								performMarkovAnalysis.start(timeLimit, absError, Translator
+										.getProbpropParts(Translator
+												.getProbpropExpression(lpnProperty)));
 								performMarkovAnalysis.join();
 								if (!sg.getStop()) {
 									sg.outputStateGraph(filename.replace(".gcm", "").replace(

@@ -19,6 +19,7 @@ import org.sbml.libsbml.*;
 import sbmleditor.*;
 import verification.AbstPane;
 import gcm2sbml.gui.GCM2SBMLEditor;
+import gcm2sbml.parser.GCMFile;
 import graph.*;
 import biomodelsim.*;
 import buttons.*;
@@ -238,7 +239,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable,
 
 	private AbstPane lhpnAbstraction;
 
-	private JComboBox lpnProperties;
+	private JComboBox transientProperties;
 
 	private JTextField backgroundField;
 
@@ -340,16 +341,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable,
 		JPanel inputHolder = new JPanel(new BorderLayout());
 		JPanel inputHolderLeft;
 		JPanel inputHolderRight;
-		if (modelFile.contains(".lpn")) {
-			JLabel prop = new JLabel("Properties:");
-			LhpnFile lpn = new LhpnFile();
-			lpn.load(root + separator + modelFile);
-			lpnProperties = new JComboBox(lpn.getProperties().toArray(
-					new String[0]));
+		if (modelFile.contains(".lpn") || modelFile.contains(".gcm")) {
 			inputHolderLeft = new JPanel(new GridLayout(11, 1));
 			inputHolderRight = new JPanel(new GridLayout(11, 1));
-			inputHolderLeft.add(prop);
-			inputHolderRight.add(lpnProperties);
 		} else {
 			inputHolderLeft = new JPanel(new GridLayout(10, 1));
 			inputHolderRight = new JPanel(new GridLayout(10, 1));
@@ -374,6 +368,24 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable,
 		inputHolderRight.add(runs);
 		inputHolderLeft.add(fileStemLabel);
 		inputHolderRight.add(fileStem);
+		if (modelFile.contains(".lpn") || modelFile.contains(".gcm")) {
+			JLabel prop = new JLabel("Properties:");
+			String[] props = new String[0];
+			if (modelFile.contains(".lpn")) {
+				LhpnFile lpn = new LhpnFile();
+				lpn.load(root + separator + modelFile);
+				props = lpn.getProperties().toArray(new String[0]);
+			}
+			else {
+				GCMFile gcm = new GCMFile(root);
+				gcm.load(root + separator + modelFile);
+				props = gcm.getConditions().toArray(new String[0]);
+			}
+			transientProperties = new JComboBox(props);
+			transientProperties.setPreferredSize(new Dimension(5, 10));
+			inputHolderLeft.add(prop);
+			inputHolderRight.add(transientProperties);
+		}
 		inputHolder.add(inputHolderLeft, "West");
 		inputHolder.add(inputHolderRight, "Center");
 		JPanel topInputHolder = new JPanel();
@@ -1710,11 +1722,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable,
 					abst.save(root + separator + simName + separator
 							+ modelFile);
 					t1.BuildTemplate(root + separator + simName + separator
-							+ modelFile, ((String) lpnProperties
+							+ modelFile, ((String) transientProperties
 							.getSelectedItem()));
 				} else {
 					t1.BuildTemplate(root + separator + modelFile,
-							((String) lpnProperties.getSelectedItem()));
+							((String) transientProperties.getSelectedItem()));
 				}
 				t1.setFilename(root + separator + simName + separator + stem
 						+ separator + modelFile.replace(".lpn", ".sbml"));
@@ -3177,8 +3189,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable,
 				}
 			}
 			String lpnProperty = "";
-			if (lpnProperties != null) {
-				lpnProperty = ((String) lpnProperties.getSelectedItem());
+			if (transientProperties != null) {
+				lpnProperty = ((String) transientProperties.getSelectedItem());
 			}
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn,
 					BioSim.frame, ODE, monteCarlo, sim, printer_id,
@@ -3207,8 +3219,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable,
 				}
 			}
 			String lpnProperty = "";
-			if (lpnProperties != null) {
-				lpnProperty = ((String) lpnProperties.getSelectedItem());
+			if (transientProperties != null) {
+				lpnProperty = ((String) transientProperties.getSelectedItem());
 			}
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn,
 					BioSim.frame, ODE, monteCarlo, sim, printer_id,
