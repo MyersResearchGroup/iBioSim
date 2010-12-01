@@ -3885,14 +3885,23 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			Component comp = tab.getSelectedComponent();
 			// int index = tab.getSelectedIndex();
 			if (comp instanceof JTabbedPane) {
-				Component component = ((JTabbedPane) comp).getSelectedComponent();
-				int index = -1;
+				//int index = -1;
 				for (int i = 0; i < ((JTabbedPane) comp).getTabCount(); i++) {
-					if (((JTabbedPane) comp).getComponent(i) instanceof Reb2Sac) {
-						index = i;
+					Component component = ((JTabbedPane) comp).getComponent(i);
+					if (component instanceof Reb2Sac) {
+						((Reb2Sac) component).getRunButton().doClick();
 						break;
-					}
+					} else if (component instanceof Learn) {
+						((Learn) component).save();
+						new Thread((Learn) component).start();
+						break;
+					} else if (component instanceof LearnLHPN) {
+						((LearnLHPN) component).save();
+						((LearnLHPN) component).learn();
+						break;
+					}			
 				}
+				/*
 				if (component instanceof Graph) {
 					if (index != -1) {
 						((Reb2Sac) (((JTabbedPane) comp).getComponent(index))).getRunButton()
@@ -3923,6 +3932,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				else if (component instanceof JScrollPane) {
 					((Reb2Sac) (((JTabbedPane) comp).getComponent(index))).getRunButton().doClick();
 				}
+				*/
 			}
 			else if (comp instanceof Verification) {
 				((Verification) comp).save();
