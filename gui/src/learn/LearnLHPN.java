@@ -2596,15 +2596,15 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						}
 					}
 				} else { // If not defaultStim, add inputs and outputs to the LPN
-					for (Variable v : reqdVarsL){
-						if (v.isInput()){
-							if (!seedLpnExists || (seedLpnExists & !seedLpn.isOutput(v.getName())))
-								g.addInput(v.getName(), "");
-						} else {
-							if (!seedLpnExists || (seedLpnExists & !seedLpn.isInput(v.getName())))
-								g.addOutput(v.getName(), "");
-						}
-					}
+//					for (Variable v : reqdVarsL){
+//						if (v.isInput()){
+//							if (!seedLpnExists || (seedLpnExists & !seedLpn.isOutput(v.getName())))
+//								g.addInput(v.getName(), "");
+//						} else {
+//							if (!seedLpnExists || (seedLpnExists & !seedLpn.isInput(v.getName())))
+//								g.addOutput(v.getName(), "");
+//						}
+//					}
 				}
 				g.save(directory + separator + lhpnFile);
 				viewLog.setEnabled(true);
