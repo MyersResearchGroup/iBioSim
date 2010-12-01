@@ -792,7 +792,7 @@ public class LearnModel { // added ItemListener SB
 			}
 			out.write("learning module done. Saving stuff and learning other modules.\n");
 			lpnWithPseudo.save(directory + separator + lhpnFile);
-			new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
+			//new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 			out.write("Returning " + directory + separator + lhpnFile + "\n");
 			out.close();
 			
