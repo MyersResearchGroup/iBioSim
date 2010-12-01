@@ -197,7 +197,8 @@ public class StateGraph implements Runnable {
 							addToStack = false;
 						}
 						if (lhpn.getTransitionRateTree(transition) != null
-								&& lhpn.getTransitionRateTree(transition).evaluateExpr(allVariables) == 0.0) {
+								&& lhpn.getTransitionRateTree(transition)
+										.evaluateExpr(allVariables) == 0.0) {
 							addToStack = false;
 						}
 						if (lhpn.getPreset(transition).length != 0) {
@@ -258,7 +259,7 @@ public class StateGraph implements Runnable {
 	}
 
 	public boolean performTransientMarkovianAnalysis(double timeLimit, double error,
-			String condition) {
+			String[] condition) {
 		if (!canPerformMarkovianAnalysis()) {
 			stop = true;
 			return false;
@@ -733,7 +734,8 @@ public class StateGraph implements Runnable {
 						 * next.getTransition() + "\\n");
 						 * System.out.println(m.getTransitionSum());
 						 * System.out.println(lhpn.getTransitionRateTree(
-						 * next.getTransition()).evaluateExpr(m.getVariables()));
+						 * next.getTransition
+						 * ()).evaluateExpr(m.getVariables()));
 						 */
 						if (lhpn.getTransitionRateTree(next.getTransition()) != null) {
 							out.write(m.getID()

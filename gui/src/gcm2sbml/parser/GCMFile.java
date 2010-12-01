@@ -1522,15 +1522,6 @@ public class GCMFile {
 		return conditions;
 	}
 
-	public String getSelectedCondition() {
-		if (!conditions.isEmpty()) {
-			return conditions.get(0);
-		}
-		else {
-			return null;
-		}
-	}
-
 	public void addInfluences(String name, Properties property) {
 		influences.put(name, property);
 		// Now check to see if a promoter exists in the property
