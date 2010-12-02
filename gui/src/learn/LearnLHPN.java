@@ -1,5 +1,7 @@
 package learn;
 
+import lhpn2sbml.parser.Abstraction;
+import verification.AbstPane;
 import lhpn2sbml.parser.LhpnFile;
 import parser.*;
 import java.awt.*;
@@ -2591,23 +2593,26 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							// new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 							g = mergeLhpns(moduleLPN,g);
 						} else {
-							if (!seedLpnExists || (seedLpnExists & !seedLpn.isInput(v.getName())))  
-								;//g.addOutput(v.getName(), "");
+						//	if (!seedLpnExists || (seedLpnExists & seedLpn.isOutput(v.getName())))  
+						//		g.getVariable(v.getName()).setPort("output");
 						}
 					}
 				} else { // If not defaultStim, add inputs and outputs to the LPN
-//					for (Variable v : reqdVarsL){
-//						if (v.isInput()){
-//							if (!seedLpnExists || (seedLpnExists & !seedLpn.isOutput(v.getName())))
-//								g.addInput(v.getName(), "");
-//						} else {
-//							if (!seedLpnExists || (seedLpnExists & !seedLpn.isInput(v.getName())))
-//								g.addOutput(v.getName(), "");
-//						}
-//					}
+					for (Variable v : reqdVarsL){
+						if (v.isInput()){
+						//	if (!seedLpnExists || (seedLpnExists & seedLpn.isInput(v.getName())))
+						//		g.getVariable(v.getName()).setPort("input");
+						} else {
+						//	if (!seedLpnExists || (seedLpnExists & seedLpn.isOutput(v.getName())))
+						//		g.getVariable(v.getName()).setPort("output");
+						}
+					}
 				}
 				g.save(directory + separator + lhpnFile);
 				viewLog.setEnabled(true);
+				Abstraction a = new Abstraction(g, new AbstPane(directory,lhpnFile,log,biosim,true,false));
+				a.mergeTransitionsSimp(true);
+				g.save(directory + separator + "abstracted" + lhpnFile);
 				//System.out.println(directory + separator + lhpnFile);
 				if (new File(directory + separator + lhpnFile).exists()) {
 				//	System.out.println(" exists \n");
