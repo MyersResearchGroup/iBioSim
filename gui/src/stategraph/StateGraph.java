@@ -473,51 +473,51 @@ public class StateGraph implements Runnable {
 					resetColors();
 					HashMap<String, Double> output = new HashMap<String, Double>();
 					if (conditions != null && !stop) {
-						for (String s : conditions) {
+						for (String cond : conditions) {
 							double prob = 0;
-							for (String ss : s.split("&&")) {
-								if (ss.split("->").length == 2) {
-									String[] states = ss.split("->");
+							//for (String ss : s.split("&&")) {
+								//if (ss.split("->").length == 2) {
+									//String[] states = ss.split("->");
+									//for (String state : stateGraph.keySet()) {
+										//for (State m : stateGraph.get(state)) {
+											//ExprTree expr = new ExprTree(lhpn);
+									//		expr.token = expr.intexpr_gettok(states[0]);
+									//		expr.intexpr_L(states[0]);
+									//		if (expr.evaluateExpr(m.getVariables()) == 1.0) {
+									//			for (StateTransitionPair nextState : m
+									//					.getNextStatesWithTrans()) {
+									//				ExprTree nextExpr = new ExprTree(lhpn);
+									//				nextExpr.token = nextExpr
+									//						.intexpr_gettok(states[1]);
+									//				nextExpr.intexpr_L(states[1]);
+									//				if (nextExpr.evaluateExpr(nextState.getState()
+									//						.getVariables()) == 1.0) {
+									//					prob += (m.getCurrentProb() * (lhpn
+									//							.getTransitionRateTree(
+									//									nextState.getTransition())
+									//							.evaluateExpr(m.getVariables()) / m
+									//							.getTransitionSum(1.0, null)));
+									//				}
+									//			}
+									//			if (stop) {
+									//				return false;
+									//			}
+									//		}
+									//		if (stop) {
+									//			return false;
+									//		}
+									//	}
+									//	if (stop) {
+									//		return false;
+									//	}
+								//	}
+								//}
+								//else {
 									for (String state : stateGraph.keySet()) {
 										for (State m : stateGraph.get(state)) {
 											ExprTree expr = new ExprTree(lhpn);
-											expr.token = expr.intexpr_gettok(states[0]);
-											expr.intexpr_L(states[0]);
-											if (expr.evaluateExpr(m.getVariables()) == 1.0) {
-												for (StateTransitionPair nextState : m
-														.getNextStatesWithTrans()) {
-													ExprTree nextExpr = new ExprTree(lhpn);
-													nextExpr.token = nextExpr
-															.intexpr_gettok(states[1]);
-													nextExpr.intexpr_L(states[1]);
-													if (nextExpr.evaluateExpr(nextState.getState()
-															.getVariables()) == 1.0) {
-														prob += (m.getCurrentProb() * (lhpn
-																.getTransitionRateTree(
-																		nextState.getTransition())
-																.evaluateExpr(m.getVariables()) / m
-																.getTransitionSum(1.0, null)));
-													}
-												}
-												if (stop) {
-													return false;
-												}
-											}
-											if (stop) {
-												return false;
-											}
-										}
-										if (stop) {
-											return false;
-										}
-									}
-								}
-								else {
-									for (String state : stateGraph.keySet()) {
-										for (State m : stateGraph.get(state)) {
-											ExprTree expr = new ExprTree(lhpn);
-											expr.token = expr.intexpr_gettok(ss);
-											expr.intexpr_L(ss);
+											expr.token = expr.intexpr_gettok(cond);
+											expr.intexpr_L(cond);
 											if (expr.evaluateExpr(m.getVariables()) == 1.0) {
 												prob += m.getCurrentProb();
 											}
@@ -529,12 +529,12 @@ public class StateGraph implements Runnable {
 											return false;
 										}
 									}
-								}
+								//}
 								if (stop) {
 									return false;
 								}
-							}
-							output.put(s, prob);
+							//}
+							output.put(cond, prob);
 							if (stop) {
 								return false;
 							}
