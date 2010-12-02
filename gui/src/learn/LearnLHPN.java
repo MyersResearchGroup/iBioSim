@@ -2592,7 +2592,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							g = mergeLhpns(moduleLPN,g);
 						} else {
 							if (!seedLpnExists || (seedLpnExists & !seedLpn.isInput(v.getName())))  
-								g.addOutput(v.getName(), "");
+								;//g.addOutput(v.getName(), "");
 						}
 					}
 				} else { // If not defaultStim, add inputs and outputs to the LPN
