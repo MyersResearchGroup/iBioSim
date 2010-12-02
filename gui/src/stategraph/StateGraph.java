@@ -339,6 +339,28 @@ public class StateGraph implements Runnable {
 		}
 		return true;
 	}
+	
+	public void pruneStateGraph(String condition) {
+		for (String state : stateGraph.keySet()) {
+			for (State m : stateGraph.get(state)) {
+				ExprTree expr = new ExprTree(lhpn);
+				expr.token = expr.intexpr_gettok(condition);
+				expr.intexpr_L(condition);
+				if (expr.evaluateExpr(m.getVariables()) == 1.0) {
+					for (State s : m.getNextStates()) {
+						ArrayList<StateTransitionPair> newTrans = new ArrayList<StateTransitionPair>();
+						for (StateTransitionPair trans : s.getPrevStatesWithTrans()) {
+							if (trans.getState() != m) {
+								newTrans.add(trans);
+							}
+						}
+						s.setPrevStatesWithTrans(newTrans.toArray(new StateTransitionPair[0]));
+					}
+					m.setNextStatesWithTrans(new StateTransitionPair[0]);
+				}
+			}
+		}
+	}
 
 	public boolean performSteadyStateMarkovianAnalysis(double tolerance,
 			ArrayList<String> conditions) {
@@ -975,6 +997,14 @@ public class StateGraph implements Runnable {
 			}
 			newPrevStates[newPrevStates.length - 1] = new StateTransitionPair(prevState, transition);
 			prevStates = newPrevStates;
+		}
+		
+		private void setNextStatesWithTrans(StateTransitionPair[] trans) {
+			nextStates = trans;
+		}
+		
+		private void setPrevStatesWithTrans(StateTransitionPair[] trans) {
+			prevStates = trans;
 		}
 	}
 
