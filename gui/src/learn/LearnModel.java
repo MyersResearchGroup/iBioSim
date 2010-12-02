@@ -333,11 +333,14 @@ public class LearnModel { // added ItemListener SB
 			Properties initCond = new Properties();
 			for (Variable v : reqdVarsL) {
 				if (v.isDmvc()) {
-					g.addInteger(v.getName(), v.getInitValue());
+					if (v.getInitValue() != null)
+						g.addInteger(v.getName(), v.getInitValue());
 				} else {
-					initCond.put("value", v.getInitValue());
-					initCond.put("rate", v.getInitRate());
-					g.addContinuous(v.getName(), initCond);
+					if (v.getInitValue() != null) {
+						initCond.put("value", v.getInitValue());
+						initCond.put("rate", v.getInitRate());
+						g.addContinuous(v.getName(), initCond);
+					}
 				}
 			}
 			HashMap<String, ArrayList<Double>> scaledThresholds; 
@@ -347,11 +350,14 @@ public class LearnModel { // added ItemListener SB
 			initCond = new Properties(); 
 			for (Variable v : reqdVarsL) {	// Updating with scaled initial values & rates
 				if (v.isDmvc()) {
-					g.changeIntegerInitCond(v.getName(), v.getInitValue());
+					if (v.getInitValue() != null)
+						g.changeIntegerInitCond(v.getName(), v.getInitValue());
 				} else {
-					initCond.put("value", v.getInitValue());
-					initCond.put("rate", v.getInitRate());
-					g.changeContInitCond(v.getName(), initCond);
+					if (v.getInitValue() != null) {
+						initCond.put("value", v.getInitValue());
+						initCond.put("rate", v.getInitRate());
+						g.changeContInitCond(v.getName(), initCond);
+					}
 				}
 			}
 			String[] transitionList = g.getTransitionList();
