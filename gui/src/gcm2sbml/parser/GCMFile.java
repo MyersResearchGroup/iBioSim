@@ -1184,9 +1184,10 @@ public class GCMFile {
 	}
 
 	public void load(String filename) {
-		if (!filename.endsWith(".temp")) {
-			this.filename = filename;
+		while (filename.endsWith(".temp")) {
+			filename = filename.substring(0, filename.length() - 5);
 		}
+		this.filename = filename;
 
 		StringBuffer data = new StringBuffer();
 
