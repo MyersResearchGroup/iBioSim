@@ -2611,7 +2611,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				g.save(directory + separator + lhpnFile);
 				viewLog.setEnabled(true);
 				Abstraction a = new Abstraction(g, new AbstPane(directory,lhpnFile,log,biosim,true,false));
-				a.mergeTransitionsSimp(true);
+				a.mergeTransitionsSimp(true,false);
 				g.save(directory + separator + "abstracted" + lhpnFile);
 				//System.out.println(directory + separator + lhpnFile);
 				if (new File(directory + separator + lhpnFile).exists()) {
