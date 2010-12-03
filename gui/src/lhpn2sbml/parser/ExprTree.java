@@ -716,7 +716,7 @@ public class ExprTree {
 				}
 				(token) = intexpr_gettok(expr);
 			}
-			else if (tokvalue.toLowerCase().equals("int")) {
+			else if (tokvalue.toLowerCase().equals("INT")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
 					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
@@ -739,7 +739,7 @@ public class ExprTree {
 				}
 				else {
 					// (result) = new ExprTree((result), null, "~", 'w');
-					setNodeValues((this), null, "int", 'l');
+					setNodeValues((this), null, "INT", 'l');
 				}
 				(token) = intexpr_gettok(expr);
 			}
@@ -4245,7 +4245,7 @@ public class ExprTree {
 						result = "rate(" + r1.getElement(type) + ")";
 					}
 				}
-				else if (op.equals("int")) {
+				else if (op.equals("INT")) {
 					if (r1 != null) {
 						if (sbmlFlag) {
 							result = "piecewise(1," + r1.getElement(type) + ",0 )"; 
@@ -5298,7 +5298,7 @@ public class ExprTree {
 				else if (op.equals("rate")) {
 					return Double.NaN;
 				}
-				else if (op.equals("int")) {
+				else if (op.equals("INT")) {
 					return ((int) left);
 				}
 				else if (op.equals("<")) {

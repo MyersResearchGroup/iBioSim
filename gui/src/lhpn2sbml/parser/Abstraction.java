@@ -3370,8 +3370,9 @@ public class Abstraction extends LhpnFile {
 				Pattern pattern = Pattern.compile(RANGE);
 				Matcher matcher = pattern.matcher(t.getDelay());
 				ExprTree priority1 = t.getPriorityTree();
-				priority1.setNodeValues(t.getEnablingTree(), priority1, "*",
-						'a');
+				if (t.containsPriority()) {
+					priority1.setNodeValues(t.getEnablingTree(), priority1, "*", 'a');
+				}
 				Integer dl1, dl2, du1, du2;
 				if (matcher.find()) {
 					dl1 = Integer.parseInt(matcher.group(1));
@@ -3396,9 +3397,11 @@ public class Abstraction extends LhpnFile {
 						du1 = du2;
 					}
 					ExprTree priority2 = tP.getPriorityTree();
-					priority2.setNodeValues(tP.getEnablingTree(), priority2,
-							"*", 'a');
-					priority1.setNodeValues(priority1, priority2, "+", 'a');
+					if (tP.containsPriority()) {
+						priority2.setNodeValues(tP.getEnablingTree(), priority2,
+								"*", 'a');
+						priority1.setNodeValues(priority1, priority2, "+", 'a');
+					}
 				}
 				if (dl1.toString().equals(du1.toString())) {
 					t.addDelay(dl1.toString());
@@ -3440,9 +3443,12 @@ public class Abstraction extends LhpnFile {
 				dl1 = new ExprTree(delay1);
 				du1 = new ExprTree(delay1);
 			}
+			//e1.setNodeValues(e1, null, "INT", 'l');
 			dl1.setNodeValues(e1, dl1, "*", 'a');
 			du1.setNodeValues(e1, du1, "*", 'a');
-			priority1.setNodeValues(e1, priority1, "*", 'a');
+			if (t.containsPriority()) {
+				priority1.setNodeValues(e1, priority1, "*", 'a');
+			}
 			dl = dl1;
 			du = du1;
 			for (Transition tP : list) {
@@ -3455,6 +3461,7 @@ public class Abstraction extends LhpnFile {
 					du2 = new ExprTree(delay2);
 				}
 				ExprTree e2 = tP.getEnablingTree();
+				//e2.setNodeValues(e2,null,"INT",'l');
 				dl2.setNodeValues(e2, dl2, "*", 'a');
 				dl.setNodeValues(dl, dl2, "+", 'a');
 				du2.setNodeValues(e2, du2, "*", 'a');
@@ -3475,6 +3482,7 @@ public class Abstraction extends LhpnFile {
 			}
 			t.addEnabling(enabling);
 			t.addDelay(delay.toString());
+			//System.out.println("ADDING DELAY " + delay.toString());
 			if (priority1 != null) {
 				t.addPriority(priority1.toString());
 			}
