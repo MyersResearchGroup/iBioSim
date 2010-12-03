@@ -179,7 +179,7 @@ public class Abstraction extends LhpnFile {
 			}
 			// Transform 27 - Combine Parallel Transitions (Simplification)
 			else if (s.equals(abstPane.xform27) && abstPane.isSimplify()) {
-				change = mergeTransitionsSimp(change);
+				change = mergeTransitionsSimp(change,true);
 			}
 			// Transform 29 - Remove Uninteresting Variables (Simplification)
 			if (s.equals(abstPane.xform29) && abstPane.isSimplify()) {
@@ -297,7 +297,7 @@ public class Abstraction extends LhpnFile {
 				}
 				// Transform 27 - Combine Parallel Transitions (Simplification)
 				else if (s.equals(abstPane.xform27) && abstPane.isSimplify()) {
-					change = mergeTransitionsSimp(change);
+					change = mergeTransitionsSimp(change,true);
 				}
 				// Transform 29 - Remove Uninteresting Variables
 				// (Simplification)
@@ -414,7 +414,7 @@ public class Abstraction extends LhpnFile {
 			}
 			// Transform 27 - Combine Parallel Transitions (Simplification)
 			else if (s.equals(abstPane.xform27) && abstPane.isSimplify()) {
-				change = mergeTransitionsSimp(change);
+				change = mergeTransitionsSimp(change,true);
 			}
 			// Transform 29 - Remove Uninteresting Variables (Simplification)
 			if (s.equals(abstPane.xform29) && abstPane.isSimplify()) {
@@ -3160,7 +3160,7 @@ public class Abstraction extends LhpnFile {
 		removeVar(var2);
 	}
 
-	public boolean mergeTransitionsSimp(boolean change) {
+	public boolean mergeTransitionsSimp(boolean change, boolean checkEnabling) {
 		HashMap<Transition, ArrayList<Transition>> toMerge = new HashMap<Transition, ArrayList<Transition>>();
 		for (Transition t1 : transitions.values()) {
 			for (Transition t2 : transitions.values()) {
@@ -3175,32 +3175,34 @@ public class Abstraction extends LhpnFile {
 						&& (comparePostset(t1, t2) || (t1.getPostset().length == 0 && t2
 								.getPostset().length == 0))) {
 					boolean combine = true;
-					ExprTree tree = new ExprTree(this);
-					tree.setNodeValues(t1.getEnablingTree(), t2
-							.getEnablingTree(), "&&", 'l');
-					for (String v : tree.getVars()) {
-						if (process_write.get(v) != 0
-								&& process_write.get(v) != process_trans
-										.get(t1)) {
-							combine = false;
-							break;
+					if (checkEnabling) {
+						ExprTree tree = new ExprTree(this);
+						tree.setNodeValues(t1.getEnablingTree(), t2
+								.getEnablingTree(), "&&", 'l');
+						for (String v : tree.getVars()) {
+							if (process_write.get(v) != 0
+									&& process_write.get(v) != process_trans
+									.get(t1)) {
+								combine = false;
+								break;
+							}
 						}
-					}
-					for (Transition t : transitions.values()) {
-						if (tree.getChange(t.getAssignments()) != 'F' && tree.getChange(t.getAssignments()) != 'f') {
-							combine = false;
-							break;
+						for (Transition t : transitions.values()) {
+							if (tree.getChange(t.getAssignments()) != 'F' && tree.getChange(t.getAssignments()) != 'f') {
+								combine = false;
+								break;
+							}
 						}
-					}
-					if (toMerge.containsKey(t1)) {
-						for (Transition t3 : toMerge.get(t1)) {
-							ExprTree tree3 = new ExprTree(this);
-							tree3.setNodeValues(t3.getEnablingTree(), t2
-									.getEnablingTree(), "&&", 'l');
-							for (Transition t : transitions.values()) {
-								if (tree3.becomesTrue(t.getAssignments())) {
-									combine = false;
-									break;
+						if (toMerge.containsKey(t1)) {
+							for (Transition t3 : toMerge.get(t1)) {
+								ExprTree tree3 = new ExprTree(this);
+								tree3.setNodeValues(t3.getEnablingTree(), t2
+										.getEnablingTree(), "&&", 'l');
+								for (Transition t : transitions.values()) {
+									if (tree3.becomesTrue(t.getAssignments())) {
+										combine = false;
+										break;
+									}
 								}
 							}
 						}
