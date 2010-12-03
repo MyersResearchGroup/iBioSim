@@ -316,6 +316,7 @@ public class GCMFile {
 			Utility.createErrorMessage("SBMLs Included",
 					"There are sbml files associated with the gcm file and its components.");
 			load(filename + ".temp");
+			new File(filename + ".temp").delete();
 			return null;
 		}
 		for (String s : comps) {
@@ -330,6 +331,7 @@ public class GCMFile {
 			if (copy.contains(file.getFilename())) {
 				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n" + "There is a loop in the components.");
 				load(filename + ".temp");
+				new File(filename + ".temp").delete();
 				return null;
 			}
 			copy.add(file.getFilename());
@@ -337,17 +339,20 @@ public class GCMFile {
 			if (sbml == null && copy.isEmpty()) {
 				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n" + "There is a loop in the components.");
 				load(filename + ".temp");
+				new File(filename + ".temp").delete();
 				return null;
 			}
 			else if (sbml == null && includeSBML) {
 				Utility.createErrorMessage("Cannot Merge SBMLs", "Unable to merge sbml files from components.");
 				load(filename + ".temp");
+				new File(filename + ".temp").delete();
 				return null;
 			}
 			else if (sbml == null && !includeSBML) {
 				Utility.createErrorMessage("SBMLs Included",
 						"There are sbml files associated with the gcm file and its components.");
 				load(filename + ".temp");
+				new File(filename + ".temp").delete();
 				return null;
 			}
 		}
@@ -365,6 +370,7 @@ public class GCMFile {
 				Utility.createErrorMessage("Merged SBMLs Are Inconsistent", "The merged sbml files have inconsistencies.");
 			}
 		}
+		new File(filename + ".temp").delete();
 		return sbml;
 	}
 
