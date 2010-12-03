@@ -299,83 +299,73 @@ public class GCMFile {
 	}
 
 	public SBMLDocument flattenGCM(boolean includeSBML) {
-		if (filename != null) {
-			ArrayList<String> gcms = new ArrayList<String>();
-			gcms.add(filename);
-			save(filename + ".temp");
-			ArrayList<String> comps = setToArrayList(components.keySet());
-			SBMLDocument sbml = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-			Model m = sbml.createModel();
-			sbml.setModel(m);
-			Utility.addCompartments(sbml, "default");
-			sbml.getModel().getCompartment("default").setSize(1);
-			m.setVolumeUnits("litre");
-			if (!sbmlFile.equals("") && includeSBML) {
-				sbml = BioSim.readSBML(path + separator + sbmlFile);
+		ArrayList<String> gcms = new ArrayList<String>();
+		gcms.add(filename);
+		save(filename + ".temp");
+		ArrayList<String> comps = setToArrayList(components.keySet());
+		SBMLDocument sbml = new SBMLDocument(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+		Model m = sbml.createModel();
+		sbml.setModel(m);
+		Utility.addCompartments(sbml, "default");
+		sbml.getModel().getCompartment("default").setSize(1);
+		m.setVolumeUnits("litre");
+		if (!sbmlFile.equals("") && includeSBML) {
+			sbml = BioSim.readSBML(path + separator + sbmlFile);
+		}
+		else if (!sbmlFile.equals("") && !includeSBML) {
+			Utility.createErrorMessage("SBMLs Included",
+					"There are sbml files associated with the gcm file and its components.");
+			load(filename + ".temp");
+			return null;
+		}
+		for (String s : comps) {
+			GCMFile file = new GCMFile(path);
+			file.load(path + separator + components.get(s).getProperty("gcm"));
+			for (String p : globalParameters.keySet()) {
+				if (!file.globalParameters.containsKey(p)) {
+					file.setParameter(p, globalParameters.get(p));
+				}
 			}
-			else if (!sbmlFile.equals("") && !includeSBML) {
+			ArrayList<String> copy = copyArray(gcms);
+			if (copy.contains(file.getFilename())) {
+				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n" + "There is a loop in the components.");
+				load(filename + ".temp");
+				return null;
+			}
+			copy.add(file.getFilename());
+			sbml = unionSBML(sbml, unionGCM(this, file, s, includeSBML, copy), s);
+			if (sbml == null && copy.isEmpty()) {
+				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n" + "There is a loop in the components.");
+				load(filename + ".temp");
+				return null;
+			}
+			else if (sbml == null && includeSBML) {
+				Utility.createErrorMessage("Cannot Merge SBMLs", "Unable to merge sbml files from components.");
+				load(filename + ".temp");
+				return null;
+			}
+			else if (sbml == null && !includeSBML) {
 				Utility.createErrorMessage("SBMLs Included",
 						"There are sbml files associated with the gcm file and its components.");
 				load(filename + ".temp");
 				return null;
 			}
-			for (String s : comps) {
-				GCMFile file = new GCMFile(path);
-				file.load(path + separator + components.get(s).getProperty("gcm"));
-				for (String p : globalParameters.keySet()) {
-					if (!file.globalParameters.containsKey(p)) {
-						file.setParameter(p, globalParameters.get(p));
-					}
-				}
-				ArrayList<String> copy = copyArray(gcms);
-				if (copy.contains(file.getFilename())) {
-					Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n"
-							+ "There is a loop in the components.");
-					load(filename + ".temp");
-					return null;
-				}
-				copy.add(file.getFilename());
-				sbml = unionSBML(sbml, unionGCM(this, file, s, includeSBML, copy), s);
-				if (sbml == null && copy.isEmpty()) {
-					Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n"
-							+ "There is a loop in the components.");
-					load(filename + ".temp");
-					return null;
-				}
-				else if (sbml == null && includeSBML) {
-					Utility.createErrorMessage("Cannot Merge SBMLs",
-							"Unable to merge sbml files from components.");
-					load(filename + ".temp");
-					return null;
-				}
-				else if (sbml == null && !includeSBML) {
-					Utility
-							.createErrorMessage("SBMLs Included",
-									"There are sbml files associated with the gcm file and its components.");
-					load(filename + ".temp");
-					return null;
-				}
-			}
-			components = new HashMap<String, Properties>();
-			if (sbml != null) {
-				sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
-				sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
-				sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, false);
-				sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
-				sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
-				sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
-				sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
-				long numErrors = sbml.checkConsistency();
-				if (numErrors > 0) {
-					Utility.createErrorMessage("Merged SBMLs Are Inconsistent",
-							"The merged sbml files have inconsistencies.");
-				}
-			}
-			return sbml;
 		}
-		else {
-			return null;
+		components = new HashMap<String, Properties>();
+		if (sbml != null) {
+			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
+			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
+			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, false);
+			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
+			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
+			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
+			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
+			long numErrors = sbml.checkConsistency();
+			if (numErrors > 0) {
+				Utility.createErrorMessage("Merged SBMLs Are Inconsistent", "The merged sbml files have inconsistencies.");
+			}
 		}
+		return sbml;
 	}
 
 	private SBMLDocument unionGCM(GCMFile topLevel, GCMFile bottomLevel, String compName,
