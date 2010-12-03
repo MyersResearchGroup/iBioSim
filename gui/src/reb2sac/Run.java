@@ -1092,6 +1092,13 @@ public class Run implements ActionListener {
 												.getProbpropExpression(lpnProperty)));
 								performMarkovAnalysis.join();
 								if (!sg.getStop()) {
+									String simrep = sg.getMarkovResults();
+									if (simrep != null) {
+										FileOutputStream simrepstream = new FileOutputStream(
+												new File(directory + separator + "sim-rep.txt"));
+										simrepstream.write((simrep).getBytes());
+										simrepstream.close();
+									}
 									sg.outputStateGraph(filename.replace(".gcm", "").replace(
 											".sbml", "").replace(".xml", "")
 											+ "_sg.dot", true);
