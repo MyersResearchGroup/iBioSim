@@ -271,13 +271,13 @@ public class StateGraph implements Runnable {
 				expr.token = expr.intexpr_gettok(condition[2]);
 				expr.intexpr_L(condition[2]);
 				lowerbound = Math.min(expr.evaluateExpr(null), timeLimit);
-				pruneStateGraph(condition[0]);
+				pruneStateGraph("~(" + condition[0] + ")");
 				if (!performTransientMarkovianAnalysis(lowerbound, error)) {
 					return false;
 				}
 			}
 			else {
-				pruneStateGraph(condition[0]);
+				pruneStateGraph("~(" + condition[0] + ")");
 			}
 			ExprTree expr = new ExprTree(lhpn);
 			expr.token = expr.intexpr_gettok(condition[3]);
