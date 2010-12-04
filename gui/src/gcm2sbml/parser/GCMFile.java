@@ -3140,7 +3140,7 @@ public class GCMFile {
 
 	private static final String GLOBAL = "Global\\s\\{([^}]*)\\s\\}";
 
-	private static final String CONDITION = "Conditions\\s\\{([^}]*)\\s\\}";
+	private static final String CONDITION = "Conditions\\s\\{([^@]*)\\s\\}";
 
 	private static final String SBMLFILE = GlobalConstants.SBMLFILE + "=\"([^\"]*)\"";
 
