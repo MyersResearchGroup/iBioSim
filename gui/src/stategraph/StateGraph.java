@@ -293,15 +293,19 @@ public class StateGraph implements Runnable {
 			double prob = 0;
 			for (String state : stateGraph.keySet()) {
 				for (State m : stateGraph.get(state)) {
-					expr = new ExprTree(lhpn);
-					expr.token = expr.intexpr_gettok(condition[0]);
-					expr.intexpr_L(condition[0]);
-					if (expr.evaluateExpr(m.getVariables()) == 1.0) {
+					ExprTree expr1 = new ExprTree(lhpn);
+					ExprTree expr2 = new ExprTree(lhpn);
+					expr1.token = expr1.intexpr_gettok("~(" + condition[0] + ")");
+					expr2.token = expr2.intexpr_gettok("~(" + condition[1] + ")");
+					expr1.intexpr_L("~(" + condition[0] + ")");
+					expr2.intexpr_L("~(" + condition[1] + ")");
+					if (expr1.evaluateExpr(m.getVariables()) == 1.0
+							&& expr2.evaluateExpr(m.getVariables()) == 1.0) {
 						prob += m.getCurrentProb();
 					}
 				}
 			}
-			output.put(condition[0], prob);
+			output.put("~(" + condition[0] + ")&&~(" + condition[1] + ")", prob);
 			totalProb += prob;
 			prob = 0;
 			for (String state : stateGraph.keySet()) {
