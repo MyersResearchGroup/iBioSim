@@ -2558,7 +2558,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						}
 					}
 				}
-				LhpnFile g = l.learnModel(directory, log, biosim, moduleNumber, thresholds, tPar, varsWithStables, destabMap, false, pseudoEnable, valScaleFactor, delayScaleFactor, failProp);
+				LhpnFile g = l.learnModel(directory, log, biosim, moduleNumber, thresholds, tPar, varsWithStables, destabMap, false, pseudoEnable, true, valScaleFactor, delayScaleFactor, failProp);
 				// the false parameter above says that it's not generating a net for stable
 				LhpnFile seedLpn = null;
 				Boolean seedLpnExists = false;
@@ -2589,7 +2589,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							input.setCare(true);
 							varsT.add(input);
 							l = new LearnModel();
-							LhpnFile moduleLPN = l.learnModel(directory, log, biosim, j, thresholds, tPar, varsT, destabMap, false, false, valScaleFactor, delayScaleFactor, null);
+							LhpnFile moduleLPN = l.learnModel(directory, log, biosim, j, thresholds, tPar, varsT, destabMap, false, false, true, valScaleFactor, delayScaleFactor, null);
 							// new Lpn2verilog(directory + separator + lhpnFile); //writeSVFile(directory + separator + lhpnFile);
 							g = mergeLhpns(moduleLPN,g);
 						} else {
