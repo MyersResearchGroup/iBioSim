@@ -144,24 +144,28 @@ public class Lpn2verilog {
 				if (first){
 					sv.write("\tlogic " + st);
 					if (lpn.getPlace(st).isMarked()){
-						initBuffer.append("\t\t" + st + " <= 0");
-						markedPlaceBuffer.append("\t\t" + st + " <= #1 1; //Initially Marked\n");
+						initBuffer.append("\t\t" + st + " = 0");
+						if (markedPlaceBuffer.length() == 0)
+							markedPlaceBuffer.append("\t\t#1;\n");
+						markedPlaceBuffer.append("\t\t" + st + " = 1; //Initially Marked\n");
 						tag = tagNet(lpn,st,netCount,tag);
 						netCount++;
 					}
 					else
-						initBuffer.append("\t\t" + st + " <= 0");
+						initBuffer.append("\t\t" + st + " = 0");
 					first = false;
 				} else{
 					sv.write(", " + st);
 					if (lpn.getPlace(st).isMarked()){
-						initBuffer.append("; " + st + " <= 0");
-						markedPlaceBuffer.append("\t\t" + st + " <= #1 1; //Initially Marked\n");
+						initBuffer.append("; " + st + " = 0");
+						if (markedPlaceBuffer.length() == 0)
+							markedPlaceBuffer.append("\t\t#1;\n");
+						markedPlaceBuffer.append("\t\t" + st + " = 1; //Initially Marked\n");
 						tagNet(lpn,st,netCount,tag);
 						netCount++;
 					}
 					else
-						initBuffer.append("; " + st + " <= 0");
+						initBuffer.append("; " + st + " = 0");
 				}
 				if (lpn.getPreset(st) == null){
 					//TODO: traverse all the non-repeating transitions from here and assign a tag to them   
@@ -218,10 +222,10 @@ public class Lpn2verilog {
 					else { // boolean variable 
 						String initValue = lpn.getInitialVal(v);
 						if (initValue.equals("true")){
-							initBuffer.append("\t\t" + v + " <= 1'b1;\n");
+							initBuffer.append("\t\t" + v + " = 1'b1;\n");
 						}
 						else if (initValue.equals("false")){
-							initBuffer.append("\t\t" + v + " <= 1'b0;\n");
+							initBuffer.append("\t\t" + v + " = 1'b0;\n");
 						}
 						else {
 							//System.out.println("WARNING: The initial value of Boolean variable " + v + " should be a boolean value.");
@@ -316,10 +320,10 @@ public class Lpn2verilog {
 			//		assignmentsBuffer[tag.get(st)].append("\t\tif (pr" + tag.get(st) + "[\"" + st + "\"]==prMax" + tag.get(st) + ") begin\n");
 					assignmentsBuffer[tag.get(st)].append("\t\tif (" + st + ") begin\n");
 					for (String st2 : lpn.getPreset(st)){
-						assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= 0;\n");
+						assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " = 0;\n");
 					}
 					for (String st2 : lpn.getPostset(st)){
-						assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= 1;\n");
+						assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " = 1;\n");
 					}
 					HashMap<String,ExprTree> assignmentTrees = lpn.getTransition(st).getAssignTrees(); 
 					HashMap<String,ExprTree> rateAssignmentTrees = lpn.getTransition(st).getRateAssignTrees();
@@ -330,7 +334,7 @@ public class Lpn2verilog {
 							//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
 							String asgnmt = valueAssignmentTrees.get(st2).getElement("Verilog");
 							if ((asgnmt != null) && (asgnmt != ""))
-								assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= " + asgnmt + ";\n");
+								assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " = " + asgnmt + ";\n");
 						/*	if (asgnmt.contains(",")){
 								asgnmt = asgnmt.replace("uniform(","");
 								asgnmt = asgnmt.replace(")","");
@@ -357,15 +361,15 @@ public class Lpn2verilog {
 							//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
 							String asgnmt = contAssignmentTrees.get(st2).getElement("Verilog");
 							if ((asgnmt != null) && (asgnmt != ""))
-								assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " <= " + asgnmt + ";\n");
+								assignmentsBuffer[tag.get(st)].append("\t\t\t" + st2 + " = " + asgnmt + ";\n");
 						}
 						for (String st2 : rateAssignmentTrees.keySet()){
 							//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
 							String asgnmt = rateAssignmentTrees.get(st2).getElement("Verilog");
 							if (asgnmt != null){
-								assignmentsBuffer[tag.get(st)].append("\t\t\tentryTime <= $time;\n");
-								assignmentsBuffer[tag.get(st)].append("\t\t\trate_" + st2 + " <= " + asgnmt + ";\n");
-								assignmentsBuffer[tag.get(st)].append("\t\t\tchange_" + st2 + " <= " + st2 + ";\n");
+								assignmentsBuffer[tag.get(st)].append("\t\t\tentryTime = $time;\n");
+								assignmentsBuffer[tag.get(st)].append("\t\t\trate_" + st2 + " = " + asgnmt + ";\n");
+								assignmentsBuffer[tag.get(st)].append("\t\t\tchange_" + st2 + " = " + st2 + ";\n");
 							}
 						}
 					}
@@ -450,23 +454,23 @@ public class Lpn2verilog {
 				else if (!lowerBound.contains("-inf") && upperBound.contains("inf")){
 					initValue = lowerBound; // if [a,inf], initValue = a
 				}
-				initBufferString = v + " <= " + initValue + ";\n";
+				initBufferString = v + " = " + initValue + ";\n";
 			}
 			else { // initial value is a range, not involving infinity
 				if (!lowerBound.equalsIgnoreCase(upperBound)){
 					if (Double.valueOf(lowerBound) > 0)
-						initBufferString = v + " <= " + lowerBound + " + $signed((($unsigned($random))%(" + upperBound + "-" + lowerBound + "+1)));\n";
+						initBufferString = v + " = " + lowerBound + " + $signed((($unsigned($random))%(" + upperBound + "-" + lowerBound + "+1)));\n";
 					else if (Double.valueOf(lowerBound) < 0)
-						initBufferString = v + " <= " + lowerBound + " + $signed((($unsigned($random))%(" + upperBound + "+" + Math.abs(Integer.valueOf(lowerBound)) + "+1)));\n";
+						initBufferString = v + " = " + lowerBound + " + $signed((($unsigned($random))%(" + upperBound + "+" + Math.abs(Integer.valueOf(lowerBound)) + "+1)));\n";
 					else
-						initBufferString = v + " <= " + lowerBound + " + $signed((($unsigned($random))%(" + upperBound + "+1)));\n";
+						initBufferString = v + " = " + lowerBound + " + $signed((($unsigned($random))%(" + upperBound + "+1)));\n";
 				}
 				else
-					initBufferString = v + " <= " + lowerBound + ";\n";
+					initBufferString = v + " = " + lowerBound + ";\n";
 			}	
 		} 
 		else { // initial rate is a single number
-			initBufferString = v + " <= " + initValue + ";\n";
+			initBufferString = v + " = " + initValue + ";\n";
 		}
 		return(initBufferString);
 	}

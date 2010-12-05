@@ -1326,19 +1326,21 @@ public class LearnModel { // added ItemListener SB
 						String st2 = reqdVarsL.get(j).getName();
 					//	if (reqdVarsL.get(j).isCare()){
 							if (reqdVarsL.get(j).isInput()){
-								int bin = Integer.valueOf(binOutgoing[getCareIndex(j)]);
-								if (bin == 0){
-									if (!condStr.equalsIgnoreCase(""))
-										condStr += "&";
-									condStr += "~(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
-								} else if (bin == (scaledThresholds.get(st2).size())){
-									if (!condStr.equalsIgnoreCase(""))
-										condStr += "&";
-									condStr += "(" + st2 + ">="	+ (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()) + ")";
-								} else{
-									if (!condStr.equalsIgnoreCase(""))
-										condStr += "&";
-									condStr += "(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()) + ")&~(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
+								if (reqdVarsL.get(j).isCare()) {
+									int bin = Integer.valueOf(binOutgoing[getCareIndex(j)]);
+									if (bin == 0){
+										if (!condStr.equalsIgnoreCase(""))
+											condStr += "&";
+										condStr += "~(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
+									} else if (bin == (scaledThresholds.get(st2).size())){
+										if (!condStr.equalsIgnoreCase(""))
+											condStr += "&";
+										condStr += "(" + st2 + ">="	+ (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()) + ")";
+									} else{
+										if (!condStr.equalsIgnoreCase(""))
+											condStr += "&";
+										condStr += "(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin-1).doubleValue()) + ")&~(" + st2 + ">=" + (int) Math.floor(scaledThresholds.get(st2).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
+									}
 								}
 							} else {
 								if (reqdVarsL.get(j).isDmvc()){
@@ -3316,10 +3318,12 @@ public class LearnModel { // added ItemListener SB
 		int bin;
 		String st; 
 		Boolean pseudo = false;
+		int binIndex = -1;
 		try{
 			for (int i = 0; i < reqdVarsL.size(); i++) {
 				if ((reqdVarsL.get(i).isInput()) && (reqdVarsL.get(i).isCare())){
-					if (Integer.valueOf(currPlaceBin[i]) == Integer.valueOf(nextPlaceBin[i])){
+					binIndex++;
+					if (Integer.valueOf(currPlaceBin[binIndex]) == Integer.valueOf(nextPlaceBin[binIndex])){
 						continue;
 					} else {
 						if (!pseudoVars.containsKey(reqdVarsL.get(i).getName())){
@@ -3327,13 +3331,13 @@ public class LearnModel { // added ItemListener SB
 							pseudo = false;
 							break;
 						}
-						if (Math.abs(Integer.valueOf(currPlaceBin[i]) - Integer.valueOf(nextPlaceBin[i])) > 1){
-							// If the 2 places differ in the bins of a pseudovar but are not adjacent, then u can't add pseudotrans there
-							pseudo = false;
-							break;
-						}
+						//if (Math.abs(Integer.valueOf(currPlaceBin[binIndex]) - Integer.valueOf(nextPlaceBin[binIndex])) > 1){
+						// If the 2 places differ in the bins of a pseudovar but are not adjacent, then u can't add pseudotrans there
+						//	pseudo = false;
+						//	break;
+						//}
 						pseudo = true;
-						bin = Integer.valueOf(nextPlaceBin[i]);
+						bin = Integer.valueOf(nextPlaceBin[binIndex]);
 						st = reqdVarsL.get(i).getName();
 						if (bin == 0){
 							if (!enabling.equalsIgnoreCase(""))
@@ -3349,8 +3353,9 @@ public class LearnModel { // added ItemListener SB
 							enabling += "(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin-1).doubleValue()) + ")&~(" + st + ">=" + (int) Math.floor(scaledThresholds.get(st).get(bin).doubleValue()) + ")";//changed ceil to floor on aug 7,2010
 						}
 					}
-				} else if ((reqdVarsL.get(i).isOutput()) && (reqdVarsL.get(i).isCare())){
-					if ( (int) Integer.valueOf(currPlaceBin[i]) != (int) Integer.valueOf(nextPlaceBin[i])){
+				} else if ((!reqdVarsL.get(i).isInput()) && (reqdVarsL.get(i).isCare())){
+					binIndex++;
+					if ( (int) Integer.valueOf(currPlaceBin[binIndex]) != (int) Integer.valueOf(nextPlaceBin[binIndex])){
 						pseudo = false;
 						break;
 					}
@@ -4591,8 +4596,9 @@ public class LearnModel { // added ItemListener SB
 		l2.save(directory + separator + "l2.lpn");
 		String place1 = "p([-\\d]+)", place2 = "P([-\\d]+)";
 		String transition1 = "t([-\\d]+)", transition2 = "T([-\\d]+)";
-		int placeNum, transitionNum;
-		int minPlace=0, maxPlace=0, minTransition = 0, maxTransition = 0;
+		String pt1 = "pt([-\\d]+)", pt2 = "pt([-\\d]+)";
+		int placeNum, transitionNum, ptNum;
+		int minPlace=0, maxPlace=0, minTransition = 0, maxTransition = 0, minPT=0, maxPT=0;
 		Boolean first = true;
 		LhpnFile l3 = new LhpnFile();
 		try{
@@ -4634,6 +4640,49 @@ public class LearnModel { // added ItemListener SB
 					if (st1.equalsIgnoreCase(st2)){
 						maxPlace++;
 						l2.renamePlace(st2, "p" + maxPlace);//, l2.getPlace(st2).isMarked());
+						break;
+					}
+				}
+			}
+			first = true;
+			for (String st1: l1.getTransitionList()){
+				if ((st1.matches(pt1)) || (st1.matches(pt2))){
+					st1 = st1.replaceAll("pt", "");
+					st1 = st1.replaceAll("PT", "");
+					ptNum = Integer.valueOf(st1);
+					if (ptNum > maxPT){
+						maxPT = ptNum;
+						if (first){
+							first = false;
+							minPT = ptNum;
+						}
+					}
+					if (ptNum < minPT){
+						minPT = ptNum;
+						if (first){
+							first = false;
+							maxPT = ptNum;
+						}
+					}
+				}
+			}
+			for (String st1: l2.getTransitionList()){
+				if ((st1.matches(pt1)) || (st1.matches(pt2))){
+					st1 = st1.replaceAll("pt", "");
+					st1 = st1.replaceAll("PT", "");
+					ptNum = Integer.valueOf(st1);
+					if (ptNum > maxPT)
+						maxPT = ptNum;
+					if (ptNum < minPT)
+						minPT = ptNum;
+				}
+			}
+			//System.out.println("min transition and max transition in both lpns are : " + minTransition + "," + maxTransition);
+			for (String st2: l2.getTransitionList()){
+				for (String st1: l1.getTransitionList()){
+					if ((st1.equalsIgnoreCase(st2)) && ((st1.matches(pt1)) || (st1.matches(pt2))) && ((st2.matches(pt1)) || (st2.matches(pt2)))){
+						maxPT++;
+						l2.renameTransition(st2, "pt" + maxPT);
 						break;
 					}
 				}
