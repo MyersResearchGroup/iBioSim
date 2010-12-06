@@ -577,6 +577,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		sort(comps);
 		compartments.setListData(comps);
+		compartments.setSelectedIndex(0);
 		compartments.addMouseListener(this);
 		comp.add(compartmentsLabel, "North");
 		comp.add(scroll, "Center");
@@ -1237,6 +1238,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			sort(panelList);
 		}
 		panelJList.setListData(panelList);
+		panelJList.setSelectedIndex(0);
 		panelJList.addMouseListener(this);
 		Panel.add(panelLabel, "North");
 		Panel.add(scroll, "Center");
@@ -1510,7 +1512,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove a unit from list
 	 */
 	private void removeList() {
-		if (unitDefs.getSelectedIndex() != -1) {
+		int index = unitDefs.getSelectedIndex();
+		if (index != -1) {
 			UnitDefinition tempUnit = document.getModel().getUnitDefinition(
 					((String) unitDefs.getSelectedValue()).split(" ")[0]);
 			if (unitList.getSelectedIndex() != -1) {
@@ -1525,7 +1528,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			unitList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			uList = (String[]) Buttons.remove(unitList, uList);
 			unitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			unitList.setSelectedIndex(0);
+			if (index < unitList.getModel().getSize()) {
+				unitList.setSelectedIndex(index);
+			} else {
+				unitList.setSelectedIndex(index-1);
+			}
 			dirty = true;
 		}
 	}
@@ -1534,7 +1541,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove a unit
 	 */
 	private void removeUnit() {
-		if (unitDefs.getSelectedIndex() != -1) {
+		int index = unitDefs.getSelectedIndex();
+		if (index != -1) {
 			if (!unitsInUse(((String) unitDefs.getSelectedValue()).split(" ")[0])) {
 				UnitDefinition tempUnit = document.getModel().getUnitDefinition(
 						((String) unitDefs.getSelectedValue()).split(" ")[0]);
@@ -1548,7 +1556,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				unitDefs.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				units = (String[]) Buttons.remove(unitDefs, units);
 				unitDefs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				unitDefs.setSelectedIndex(0);
+				if (index < unitDefs.getModel().getSize()) {
+					unitDefs.setSelectedIndex(index);
+				} else {
+					unitDefs.setSelectedIndex(index-1);
+				}
 				dirty = true;
 			}
 		}
@@ -1558,7 +1570,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove a compartment type
 	 */
 	private void removeCompType() {
-		if (compTypes.getSelectedIndex() != -1) {
+		int index = compTypes.getSelectedIndex();
+		if (index != -1) {
 			boolean remove = true;
 			ArrayList<String> compartmentUsing = new ArrayList<String>();
 			for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
@@ -1585,7 +1598,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				compTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				cpTyp = (String[]) Buttons.remove(compTypes, cpTyp);
 				compTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				compTypes.setSelectedIndex(0);
+				if (index < compTypes.getModel().getSize()) {
+					compTypes.setSelectedIndex(index);
+				} else {
+					compTypes.setSelectedIndex(index-1);
+				}
 				dirty = true;
 			}
 			else {
@@ -1620,7 +1637,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove an initial assignment
 	 */
 	private void removeInit() {
-		if (initAssigns.getSelectedIndex() != -1) {
+		int index = initAssigns.getSelectedIndex();
+		if (index != -1) {
 			String selected = ((String) initAssigns.getSelectedValue());
 			String tempVar = selected.split(" ")[0];
 			String tempMath = selected.substring(selected.indexOf('=') + 2);
@@ -1634,7 +1652,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			initAssigns.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			inits = (String[]) Buttons.remove(initAssigns, inits);
 			initAssigns.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			initAssigns.setSelectedIndex(0);
+			if (index < initAssigns.getModel().getSize()) {
+				initAssigns.setSelectedIndex(index);
+			} else {
+				initAssigns.setSelectedIndex(index-1);
+			}
 			dirty = true;
 		}
 	}
@@ -1643,7 +1665,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove a species type
 	 */
 	private void removeSpecType() {
-		if (specTypes.getSelectedIndex() != -1) {
+		int index = specTypes.getSelectedIndex();
+		if (index != -1) {
 			boolean remove = true;
 			ArrayList<String> speciesUsing = new ArrayList<String>();
 			for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
@@ -1669,7 +1692,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				specTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				spTyp = (String[]) Buttons.remove(specTypes, spTyp);
 				specTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				specTypes.setSelectedIndex(0);
+				if (index < specTypes.getModel().getSize()) {
+					specTypes.setSelectedIndex(index);
+				} else {
+					specTypes.setSelectedIndex(index-1);
+				}
 				dirty = true;
 			}
 			else {
@@ -1704,13 +1731,18 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove a rule
 	 */
 	private void removeRule() {
-		if (rules.getSelectedIndex() != -1) {
+		int index = rules.getSelectedIndex();
+		if (index != -1) {
 			String selected = ((String) rules.getSelectedValue());
 			removeTheRule(selected);
 			rules.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			rul = (String[]) Buttons.remove(rules, rul);
 			rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			rules.setSelectedIndex(0);
+			if (index < rules.getModel().getSize()) {
+				rules.setSelectedIndex(index);
+			} else {
+				rules.setSelectedIndex(index-1);
+			}
 			dirty = true;
 		}
 	}
@@ -1762,14 +1794,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove an event
 	 */
 	private void removeEvent() {
-		if (events.getSelectedIndex() != -1) {
+		int index = events.getSelectedIndex();
+		if (index != -1) {
 			String selected = ((String) events.getSelectedValue());
 			removeTheEvent(selected);
 			usedIDs.remove(((String) events.getSelectedValue()).split(" ")[0]);
 			events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			ev = (String[]) Buttons.remove(events, ev);
 			events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			events.setSelectedIndex(0);
+			if (index < events.getModel().getSize()) {
+				events.setSelectedIndex(index);
+			} else {
+				events.setSelectedIndex(index-1);
+			}
 			dirty = true;
 		}
 	}
@@ -1791,11 +1828,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove an assignment
 	 */
 	private void removeAssignment() {
-		if (eventAssign.getSelectedIndex() != -1) {
+		int index = eventAssign.getSelectedIndex();
+		if (index != -1) {
 			eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			assign = (String[]) Buttons.remove(eventAssign, assign);
 			eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			eventAssign.setSelectedIndex(0);
+			if (index < eventAssign.getModel().getSize()) {
+				eventAssign.setSelectedIndex(index);
+			} else {
+				eventAssign.setSelectedIndex(index-1);
+			}
 			dirty = true;
 		}
 	}
@@ -1804,7 +1846,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove a constraint
 	 */
 	private void removeConstraint() {
-		if (constraints.getSelectedIndex() != -1) {
+		int index = constraints.getSelectedIndex();
+		if (index != -1) {
 			String selected = ((String) constraints.getSelectedValue());
 			ListOf c = document.getModel().getListOfConstraints();
 			for (int i = 0; i < document.getModel().getNumConstraints(); i++) {
@@ -1817,7 +1860,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			cons = (String[]) Buttons.remove(constraints, cons);
 			constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			constraints.setSelectedIndex(0);
+			if (index < constraints.getModel().getSize()) {
+				constraints.setSelectedIndex(index);
+			} else {
+				constraints.setSelectedIndex(index-1);
+			}
 			dirty = true;
 		}
 	}
@@ -1826,7 +1873,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove a compartment
 	 */
 	private void removeCompartment() {
-		if (compartments.getSelectedIndex() != -1) {
+		int index = compartments.getSelectedIndex();
+		if (index != -1) {
 			if (document.getModel().getNumCompartments() != 1) {
 				boolean remove = true;
 				ArrayList<String> speciesUsing = new ArrayList<String>();
@@ -1902,7 +1950,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					comps = (String[]) Buttons.remove(compartments, comps);
 					compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					compartments.setSelectedIndex(0);
+					if (index < compartments.getModel().getSize()) {
+						compartments.setSelectedIndex(index);
+					} else {
+						compartments.setSelectedIndex(index-1);
+					}
 					dirty = true;
 				}
 			}
@@ -1918,7 +1970,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove a species
 	 */
 	private void removeSpecies() {
-		if (species.getSelectedIndex() != -1) {
+		int index = species.getSelectedIndex();
+		if (index != -1) {
 			if (!variableInUse(((String) species.getSelectedValue()).split(" ")[0], false)) {
 				Species tempSpecies = document.getModel().getSpecies(
 						((String) species.getSelectedValue()).split(" ")[0]);
@@ -1932,7 +1985,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				specs = (String[]) Buttons.remove(species, specs);
 				species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				species.setSelectedIndex(0);
+				if (index < species.getModel().getSize()) {
+					species.setSelectedIndex(index);
+				} else {
+					species.setSelectedIndex(index-1);
+				}
 				dirty = true;
 			}
 		}
@@ -2003,14 +2060,19 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove a reaction
 	 */
 	private void removeReaction() {
-		if (reactions.getSelectedIndex() != -1) {
+		int index = reactions.getSelectedIndex();
+		if (index != -1) {
 			String selected = ((String) reactions.getSelectedValue()).split(" ")[0];
 			removeTheReaction(selected);
 			usedIDs.remove(selected);
 			reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			reacts = (String[]) Buttons.remove(reactions, reacts);
 			reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			reactions.setSelectedIndex(0);
+			if (index < reactions.getModel().getSize()) {
+				reactions.setSelectedIndex(index);
+			} else {
+				reactions.setSelectedIndex(index-1);
+			}
 			dirty = true;
 		}
 	}
@@ -2033,7 +2095,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove a global parameter
 	 */
 	private void removeParameter() {
-		if (parameters.getSelectedIndex() != -1) {
+		int index = parameters.getSelectedIndex();
+		if (index != -1) {
 			if (!variableInUse(((String) parameters.getSelectedValue()).split(" ")[0], false)) {
 				Parameter tempParameter = document.getModel().getParameter(
 						((String) parameters.getSelectedValue()).split(" ")[0]);
@@ -2047,7 +2110,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				params = (String[]) Buttons.remove(parameters, params);
 				parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				parameters.setSelectedIndex(0);
+				if (index < parameters.getModel().getSize()) {
+					parameters.setSelectedIndex(index);
+				} else {
+					parameters.setSelectedIndex(index-1);
+				}
 				dirty = true;
 			}
 		}
@@ -2057,7 +2124,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove a reactant from a reaction
 	 */
 	private void removeReactant() {
-		if (reactants.getSelectedIndex() != -1) {
+		int index = reactants.getSelectedIndex();
+		if (index != -1) {
 			String v = ((String) reactants.getSelectedValue()).split(" ")[0];
 			for (int i = 0; i < changedReactants.size(); i++) {
 				if (changedReactants.get(i).getSpecies().equals(v)
@@ -2066,7 +2134,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					reacta = (String[]) Buttons.remove(reactants, reacta);
 					reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					reactants.setSelectedIndex(0);
+					if (index < reactants.getModel().getSize()) {
+						reactants.setSelectedIndex(index);
+					} else {
+						reactants.setSelectedIndex(index-1);
+					}
 					dirty = true;
 				}
 			}
@@ -2077,7 +2149,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove a product from a reaction
 	 */
 	private void removeProduct() {
-		if (products.getSelectedIndex() != -1) {
+		int index = products.getSelectedIndex();
+		if (index != -1) {
 			String v = ((String) products.getSelectedValue()).split(" ")[0];
 			for (int i = 0; i < changedProducts.size(); i++) {
 				if (changedProducts.get(i).getSpecies().equals(v)
@@ -2086,7 +2159,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					product = (String[]) Buttons.remove(products, product);
 					products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					products.setSelectedIndex(0);
+					if (index < products.getModel().getSize()) {
+						products.setSelectedIndex(index);
+					} else {
+						products.setSelectedIndex(index-1);
+					}
 					dirty = true;
 				}
 			}
@@ -2097,7 +2174,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove a modifier from a reaction
 	 */
 	private void removeModifier() {
-		if (modifiers.getSelectedIndex() != -1) {
+		int index = modifiers.getSelectedIndex();
+		if (index != -1) {
 			String v = ((String) modifiers.getSelectedValue()).split(" ")[0];
 			for (int i = 0; i < changedModifiers.size(); i++) {
 				if (changedModifiers.get(i).getSpecies().equals(v)) {
@@ -2107,7 +2185,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			modifiers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			modifier = (String[]) Buttons.remove(modifiers, modifier);
 			modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			modifiers.setSelectedIndex(0);
+			if (index < modifiers.getModel().getSize()) {
+				modifiers.setSelectedIndex(index);
+			} else {
+				modifiers.setSelectedIndex(index-1);
+			}
 			dirty = true;
 		}
 	}
@@ -2182,7 +2264,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove a function if not in use
 	 */
 	private void removeFunction() {
-		if (functions.getSelectedIndex() != -1) {
+		int index = functions.getSelectedIndex();
+		if (index != -1) {
 			if (!variableInUse(((String) functions.getSelectedValue()).split(" ")[0], false)) {
 				FunctionDefinition tempFunc = document.getModel().getFunctionDefinition(
 						((String) functions.getSelectedValue()).split(" ")[0]);
@@ -2196,7 +2279,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				functions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 				funcs = (String[]) Buttons.remove(functions, funcs);
 				functions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				functions.setSelectedIndex(0);
+				if (index < functions.getModel().getSize()) {
+					functions.setSelectedIndex(index);
+				} else {
+					functions.setSelectedIndex(index-1);
+				}
 				dirty = true;
 			}
 		}
@@ -2264,7 +2351,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * Remove a reaction parameter, if allowed
 	 */
 	private void reacRemoveParam() {
-		if (reacParameters.getSelectedIndex() != -1) {
+		int index = reacParameters.getSelectedIndex();
+		if (index != -1) {
 			String v = ((String) reacParameters.getSelectedValue()).split(" ")[0];
 			if (reactions.getSelectedIndex() != -1) {
 				String kinetic = kineticLaw.getText().trim();
@@ -2329,7 +2417,11 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			reacParameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			reacParams = (String[]) Buttons.remove(reacParameters, reacParams);
 			reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-			reacParameters.setSelectedIndex(0);
+			if (index < reacParameters.getModel().getSize()) {
+				reacParameters.setSelectedIndex(index);
+			} else {
+				reacParameters.setSelectedIndex(index-1);
+			}
 			dirty = true;
 		}
 	}

@@ -1714,7 +1714,7 @@ public class GCMFile {
 		do {
 			changed = false;
 			for (String s : influences.keySet()) {
-				if (s.contains(name)) {
+				if (getInput(s).equals(name) || getOutput(s).equals(name)) {			
 					ret = true;
 					if (remove) {
 						influences.remove(s);
