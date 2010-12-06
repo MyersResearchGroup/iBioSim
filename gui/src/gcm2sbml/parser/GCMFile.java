@@ -53,7 +53,6 @@ import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
 
-import lhpn2sbml.parser.ExprTree;
 import lhpn2sbml.parser.LhpnFile;
 
 import biomodelsim.BioSim;
@@ -649,22 +648,58 @@ public class GCMFile {
 		}
 		LhpnFile LHPN = new LhpnFile();
 		for (int i = 0; i < specs.size(); i++) {
-			LHPN.addInteger(specs.get(i), "0");
+			try {
+				double difference = -1;
+				double selectedThreshold = 0;
+				double initial = Double.parseDouble(species.get(specs.get(i)).getProperty(GlobalConstants.INITIAL_STRING));
+				for (Object threshold : conLevel.get(i)) {
+					double thisThreshold = Double.parseDouble((String) threshold);
+					double diff = Math.abs(thisThreshold - initial);
+					if (difference == -1) {
+						difference = diff;
+						selectedThreshold = thisThreshold;
+					}
+					else if (diff < difference) {
+						difference = diff;
+						selectedThreshold = thisThreshold;
+					}
+				}
+				LHPN.addInteger(specs.get(i), "" + ((int) selectedThreshold));
+			}
+			catch (Exception e) {
+				LHPN.addInteger(specs.get(i), "0");
+			}
+		}
+		for (String spec : species.keySet()) {
+			if (!LHPN.getIntegers().keySet().contains(spec)) {
+				try {
+					LHPN.addInteger(spec, ""
+							+ ((int) Double.parseDouble(species.get(spec).getProperty(GlobalConstants.INITIAL_STRING))));
+				}
+				catch (Exception e) {
+					LHPN.addInteger(spec, "0");
+				}
+			}
 		}
 		for (int i = 0; i < specs.size(); i++) {
 			int placeNum = 0;
 			int transNum = 0;
 			String previousPlaceName = specs.get(i) + placeNum;
 			placeNum++;
-			LHPN.addPlace(previousPlaceName, true);
+			if (LHPN.getIntegers().get(specs.get(i)).equals("0")) {
+				LHPN.addPlace(previousPlaceName, true);
+			}
+			else {
+				LHPN.addPlace(previousPlaceName, false);
+			}
 			String number = "0";
 			for (Object threshold : conLevel.get(i)) {
-				LHPN.addPlace(specs.get(i) + placeNum, false);
-				LHPN.addTransition(specs.get(i) + "_trans" + transNum);
-				LHPN.addMovement(previousPlaceName, specs.get(i) + "_trans" + transNum);
-				LHPN.addMovement(specs.get(i) + "_trans" + transNum, specs.get(i) + placeNum);
-				LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i),
-						(String) threshold);
+				if (LHPN.getIntegers().get(specs.get(i)).equals("" + ((int) Double.parseDouble((String) threshold)))) {
+					LHPN.addPlace(specs.get(i) + placeNum, true);
+				}
+				else {
+					LHPN.addPlace(specs.get(i) + placeNum, false);
+				}
 				ArrayList<String> activators = new ArrayList<String>();
 				ArrayList<String> repressors = new ArrayList<String>();
 				ArrayList<String> bioActivators = new ArrayList<String>();
@@ -920,23 +955,26 @@ public class GCMFile {
 						}
 					}
 				}
-				if (rate.equals("")) {
-					rate = "0.0";
+				if (!rate.equals("")) {
+					LHPN.addTransition(specs.get(i) + "_trans" + transNum);
+					LHPN.addMovement(previousPlaceName, specs.get(i) + "_trans" + transNum);
+					LHPN.addMovement(specs.get(i) + "_trans" + transNum, specs.get(i) + placeNum);
+					LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), (String) threshold);
+					LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + rate + ")/" + "(" + threshold + "-" + number
+							+ ")");
+					transNum++;
 				}
-				LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + rate + ")/" + "("
-						+ threshold + "-" + number + ")");
-				transNum++;
-				LHPN.addTransition(specs.get(i) + "_trans" + transNum);
-				LHPN.addMovement(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
-				LHPN.addMovement(specs.get(i) + "_trans" + transNum, previousPlaceName);
-				LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
 				Properties p = this.species.get(specs.get(i));
 				kd = global_kd;
 				if (p.containsKey(GlobalConstants.KDECAY_STRING)) {
 					kd = Double.parseDouble((String) p.get(GlobalConstants.KDECAY_STRING));
 				}
-				LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specs.get(i) + "*"
-						+ kd + ")/" + "(" + threshold + "-" + number + ")");
+				LHPN.addTransition(specs.get(i) + "_trans" + transNum);
+				LHPN.addMovement(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
+				LHPN.addMovement(specs.get(i) + "_trans" + transNum, previousPlaceName);
+				LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
+				LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specs.get(i) + "*" + kd + ")/" + "("
+						+ threshold + "-" + number + ")");
 				transNum++;
 				previousPlaceName = specs.get(i) + placeNum;
 				placeNum++;
