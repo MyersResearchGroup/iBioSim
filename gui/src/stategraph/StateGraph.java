@@ -305,7 +305,7 @@ public class StateGraph implements Runnable {
 					}
 				}
 			}
-			output.put("~(" + condition[0] + ")&&~(" + condition[1] + ")", prob);
+			output.put("~(" + condition[0].trim() + ")&&~(" + condition[1].trim() + ")", prob);
 			totalProb += prob;
 			prob = 0;
 			for (String state : stateGraph.keySet()) {
@@ -318,7 +318,7 @@ public class StateGraph implements Runnable {
 					}
 				}
 			}
-			output.put(condition[1], prob);
+			output.put(condition[1].trim(), prob);
 			totalProb += prob;
 			output.put("timelimit", 1.0 - totalProb);
 			String result1 = "#total";
@@ -612,7 +612,7 @@ public class StateGraph implements Runnable {
 									}
 								}
 							}
-							output.put(cond, prob);
+							output.put(cond.trim(), prob);
 						}
 						String result1 = "#total";
 						String result2 = "1.0";
