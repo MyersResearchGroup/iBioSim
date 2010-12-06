@@ -965,17 +965,19 @@ public class GCMFile {
 					transNum++;
 				}
 				Properties p = this.species.get(specs.get(i));
-				kd = global_kd;
-				if (p.containsKey(GlobalConstants.KDECAY_STRING)) {
-					kd = Double.parseDouble((String) p.get(GlobalConstants.KDECAY_STRING));
+				if (!p.get(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)) {
+					kd = global_kd;
+					if (p.containsKey(GlobalConstants.KDECAY_STRING)) {
+						kd = Double.parseDouble((String) p.get(GlobalConstants.KDECAY_STRING));
+					}
+					LHPN.addTransition(specs.get(i) + "_trans" + transNum);
+					LHPN.addMovement(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
+					LHPN.addMovement(specs.get(i) + "_trans" + transNum, previousPlaceName);
+					LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
+					LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specs.get(i) + "*" + kd + ")/" + "("
+							+ threshold + "-" + number + ")");
+					transNum++;
 				}
-				LHPN.addTransition(specs.get(i) + "_trans" + transNum);
-				LHPN.addMovement(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
-				LHPN.addMovement(specs.get(i) + "_trans" + transNum, previousPlaceName);
-				LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
-				LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specs.get(i) + "*" + kd + ")/" + "("
-						+ threshold + "-" + number + ")");
-				transNum++;
 				previousPlaceName = specs.get(i) + placeNum;
 				placeNum++;
 				number = (String) threshold;
