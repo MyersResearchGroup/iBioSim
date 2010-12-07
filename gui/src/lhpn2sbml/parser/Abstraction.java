@@ -3181,8 +3181,7 @@ public class Abstraction extends LhpnFile {
 								.getEnablingTree(), "&&", 'l');
 						for (String v : tree.getVars()) {
 							if (process_write.get(v) != 0
-									&& process_write.get(v) != process_trans
-									.get(t1)) {
+									&& process_write.get(v) != process_trans.get(t1)) {
 								combine = false;
 								break;
 							}
@@ -3196,8 +3195,7 @@ public class Abstraction extends LhpnFile {
 						if (toMerge.containsKey(t1)) {
 							for (Transition t3 : toMerge.get(t1)) {
 								ExprTree tree3 = new ExprTree(this);
-								tree3.setNodeValues(t3.getEnablingTree(), t2
-										.getEnablingTree(), "&&", 'l');
+								tree3.setNodeValues(t3.getEnablingTree(), t2.getEnablingTree(), "&&", 'l');
 								for (Transition t : transitions.values()) {
 									if (tree3.becomesTrue(t.getAssignments())) {
 										combine = false;
@@ -3206,19 +3204,18 @@ public class Abstraction extends LhpnFile {
 								}
 							}
 						}
-					}
-					for (String var : t1.getAssignments().keySet()) {
-						if (!t2.containsAssignment(var)
-								|| !t1.getAssignTree(var).isEqual(
-										t2.getAssignTree(var))) {
-							combine = false;
-							break;
+						for (String var : t1.getAssignments().keySet()) {
+							if (!t2.containsAssignment(var)
+									|| !t1.getAssignTree(var).isEqual(t2.getAssignTree(var))) {
+								combine = false;
+								break;
+							}
 						}
-					}
-					for (String var : t2.getAssignments().keySet()) {
-						if (!t1.containsAssignment(var)) {
-							combine = false;
-							break;
+						for (String var : t2.getAssignments().keySet()) {
+							if (!t1.containsAssignment(var)) {
+								combine = false;
+								break;
+							}
 						}
 					}
 					if (combine) {
