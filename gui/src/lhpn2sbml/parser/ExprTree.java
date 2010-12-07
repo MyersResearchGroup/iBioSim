@@ -716,7 +716,7 @@ public class ExprTree {
 				}
 				(token) = intexpr_gettok(expr);
 			}
-			else if (tokvalue.toLowerCase().equals("INT")) {
+			else if (tokvalue.toLowerCase().equals("int")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
 					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
