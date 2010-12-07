@@ -201,7 +201,7 @@ public class LhpnFile {
 				}
 				flag = false;
 				for (Transition t : transitions.values()) {
-					if (t.isNonDisabling()) {
+					if (t.isPersistent()) {
 						if (!flag) {
 							buffer.append("#@.non_disabling ");
 						}
@@ -449,7 +449,7 @@ public class LhpnFile {
 		error = parseBooleanAssign(data, error);
 		error = parseTransitionRate(data, error);
 		parseFailTransitions(data);
-		parseDisablingTransitions(data);
+		parsePersistentTransitions(data);
 
 		if (!error) {
 			Utility
@@ -1861,13 +1861,13 @@ public class LhpnFile {
 		}
 	}
 	
-	private void parseDisablingTransitions(StringBuffer data) {
-		Pattern linePattern = Pattern.compile(DISABLING_LINE);
+	private void parsePersistentTransitions(StringBuffer data) {
+		Pattern linePattern = Pattern.compile(PERSISTENT_LINE);
 		Matcher lineMatcher = linePattern.matcher(data.toString());
 		if (lineMatcher.find()) {
 			for (String s : lineMatcher.group(1).split("\\s")) {
 				if (!s.equals("")) {
-					transitions.get(s).setNonDisabling(true);
+					transitions.get(s).setPersistent(true);
 				}
 			}
 		}
@@ -1939,7 +1939,7 @@ public class LhpnFile {
 
 	private static final String FAIL_LINE = "#@\\.failtrans ([.[^\\n]]+)\\n";
 	
-	private static final String DISABLING_LINE = "#@\\.non_disabling ([.[^\\n]]+)\\n";
+	private static final String PERSISTENT_LINE = "#@\\.non_disabling ([.[^\\n]]+)\\n";
 
 	private static final String BOOLEAN_LINE = "#@\\.boolean_assignments \\{([\\S[^\\}]]+?)\\}";
 

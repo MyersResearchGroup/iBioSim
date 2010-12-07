@@ -46,7 +46,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 
 	private String[] allVariables;
 
-	private JCheckBox fail, disabling;
+	private JCheckBox fail, persistent;
 
 	// private Object[] types = { "Boolean", "Continuous", "Integer", "Rate" };
 
@@ -115,20 +115,20 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		constraints.gridy = 1;
 		add(failPanel, constraints);
 		
-		// Disabling Transition check box
-		JPanel disablingPanel = new JPanel(new GridLayout(1, 2));
+		// Persistent Transition check box
+		JPanel persistentPanel = new JPanel(new GridLayout(1, 2));
 		// failPanel.setMinimumSize(new Dimension(200, 20));
-		JLabel disablingLabel = new JLabel("Persistent Transition");
+		JLabel persistentLabel = new JLabel("Persistent Transition");
 		// JLabel blankLabel1 = new JLabel("  ");
 		JLabel blankLabel3 = new JLabel("                                          ");
-		disabling = new JCheckBox();
-		disablingPanel.add(disablingLabel);
+		persistent = new JCheckBox();
+		persistentPanel.add(persistentLabel);
 		// failPanel.add(blankLabel1);
-		disablingPanel.add(disabling);
-		disablingPanel.add(blankLabel3);
+		persistentPanel.add(persistent);
+		persistentPanel.add(blankLabel3);
 		constraints.gridx = 0;
 		constraints.gridy = 2;
-		add(disablingPanel, constraints);
+		add(persistentPanel, constraints);
 
 		// Assignment panel
 		assignments = new PropertyList("Assignment List");
@@ -196,8 +196,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			if (lhpn.getTransition(oldName).isFail()) {
 				fail.setSelected(true);
 			}
-			if (lhpn.getTransition(oldName).isNonDisabling()) {
-				disabling.setSelected(true);
+			if (lhpn.getTransition(oldName).isPersistent()) {
+				persistent.setSelected(true);
 			}
 			String delay = lhpn.getTransition(selected).getDelay();
 			if (delay != null) {
@@ -368,7 +368,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		else {
 			lhpn.getTransition(transition).setFail(false);
 		}
-		lhpn.getTransition(transition).setNonDisabling(disabling.isSelected());
+		lhpn.getTransition(transition).setPersistent(persistent.isSelected());
 		if (fields.get("Enabling Condition") != null) {
 			if (!lhpn.getTransition(transition).addEnabling(fields.get("Enabling Condition").getValue().replaceAll("\\s+", "")))
 				return false;
