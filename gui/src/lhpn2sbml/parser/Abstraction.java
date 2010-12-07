@@ -3170,15 +3170,13 @@ public class Abstraction extends LhpnFile {
 				if (t1.isFail() != t2.isFail()) {
 					continue;
 				}
-				if ((comparePreset(t1, t2) || (t1.getPreset().length == 0 && t2
-						.getPreset().length == 0))
-						&& (comparePostset(t1, t2) || (t1.getPostset().length == 0 && t2
-								.getPostset().length == 0))) {
+				if ((comparePreset(t1, t2) || (t1.getPreset().length == 0 && t2.getPreset().length == 0)) &&
+					(comparePostset(t1, t2) || (t1.getPostset().length == 0 && t2.getPostset().length == 0)) &&
+					(t1.getEnablingTree()!=null && t2.getEnablingTree()!=null)) {
 					boolean combine = true;
 					if (checkEnabling) {
 						ExprTree tree = new ExprTree(this);
-						tree.setNodeValues(t1.getEnablingTree(), t2
-								.getEnablingTree(), "&&", 'l');
+						tree.setNodeValues(t1.getEnablingTree(), t2.getEnablingTree(), "&&", 'l');
 						for (String v : tree.getVars()) {
 							if (process_write.get(v) != 0
 									&& process_write.get(v) != process_trans.get(t1)) {
@@ -3186,12 +3184,16 @@ public class Abstraction extends LhpnFile {
 								break;
 							}
 						}
+						if (!combine) continue;
 						for (Transition t : transitions.values()) {
-							if (tree.getChange(t.getAssignments()) != 'F' && tree.getChange(t.getAssignments()) != 'f') {
+							if (tree.getChange(t.getAssignments()) != 'F' && 
+								tree.getChange(t.getAssignments()) != 'f' &&
+								tree.getChange(t.getAssignments()) != 'U') {
 								combine = false;
 								break;
 							}
 						}
+						if (!combine) continue;
 						if (toMerge.containsKey(t1)) {
 							for (Transition t3 : toMerge.get(t1)) {
 								ExprTree tree3 = new ExprTree(this);
@@ -3204,6 +3206,7 @@ public class Abstraction extends LhpnFile {
 								}
 							}
 						}
+						if (!combine) continue;
 						for (String var : t1.getAssignments().keySet()) {
 							if (!t2.containsAssignment(var)
 									|| !t1.getAssignTree(var).isEqual(t2.getAssignTree(var))) {
@@ -3211,12 +3214,14 @@ public class Abstraction extends LhpnFile {
 								break;
 							}
 						}
+						if (!combine) continue;
 						for (String var : t2.getAssignments().keySet()) {
 							if (!t1.containsAssignment(var)) {
 								combine = false;
 								break;
 							}
 						}
+						if (!combine) continue;
 					}
 					if (combine) {
 						if (toMerge.containsKey(t1)) {
@@ -3440,7 +3445,7 @@ public class Abstraction extends LhpnFile {
 				dl1 = new ExprTree(delay1);
 				du1 = new ExprTree(delay1);
 			}
-			//e1.setNodeValues(e1, null, "INT", 'l');
+			e1.setNodeValues(e1, null, "INT", 'l');
 			dl1.setNodeValues(e1, dl1, "*", 'a');
 			du1.setNodeValues(e1, du1, "*", 'a');
 			if (t.containsPriority()) {
@@ -3458,7 +3463,7 @@ public class Abstraction extends LhpnFile {
 					du2 = new ExprTree(delay2);
 				}
 				ExprTree e2 = tP.getEnablingTree();
-				//e2.setNodeValues(e2,null,"INT",'l');
+				e2.setNodeValues(e2,null,"INT",'l');
 				dl2.setNodeValues(e2, dl2, "*", 'a');
 				dl.setNodeValues(dl, dl2, "+", 'a');
 				du2.setNodeValues(e2, du2, "*", 'a');
