@@ -328,7 +328,8 @@ public class GCMFile {
 			}
 			ArrayList<String> copy = copyArray(gcms);
 			if (copy.contains(file.getFilename())) {
-				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n" + "There is a loop in the components.");
+				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n"
+						+ "There is a loop in the components.");
 				load(filename + ".temp");
 				new File(filename + ".temp").delete();
 				return null;
@@ -336,13 +337,15 @@ public class GCMFile {
 			copy.add(file.getFilename());
 			sbml = unionSBML(sbml, unionGCM(this, file, s, includeSBML, copy), s);
 			if (sbml == null && copy.isEmpty()) {
-				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n" + "There is a loop in the components.");
+				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n"
+						+ "There is a loop in the components.");
 				load(filename + ".temp");
 				new File(filename + ".temp").delete();
 				return null;
 			}
 			else if (sbml == null && includeSBML) {
-				Utility.createErrorMessage("Cannot Merge SBMLs", "Unable to merge sbml files from components.");
+				Utility.createErrorMessage("Cannot Merge SBMLs",
+						"Unable to merge sbml files from components.");
 				load(filename + ".temp");
 				new File(filename + ".temp").delete();
 				return null;
@@ -366,7 +369,8 @@ public class GCMFile {
 			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
 			long numErrors = sbml.checkConsistency();
 			if (numErrors > 0) {
-				Utility.createErrorMessage("Merged SBMLs Are Inconsistent", "The merged sbml files have inconsistencies.");
+				Utility.createErrorMessage("Merged SBMLs Are Inconsistent",
+						"The merged sbml files have inconsistencies.");
 			}
 		}
 		new File(filename + ".temp").delete();
@@ -651,7 +655,8 @@ public class GCMFile {
 			try {
 				double difference = -1;
 				double selectedThreshold = 0;
-				double initial = Double.parseDouble(species.get(specs.get(i)).getProperty(GlobalConstants.INITIAL_STRING));
+				double initial = Double.parseDouble(species.get(specs.get(i)).getProperty(
+						GlobalConstants.INITIAL_STRING));
 				for (Object threshold : conLevel.get(i)) {
 					double thisThreshold = Double.parseDouble((String) threshold);
 					double diff = Math.abs(thisThreshold - initial);
@@ -674,7 +679,8 @@ public class GCMFile {
 			if (!LHPN.getIntegers().keySet().contains(spec)) {
 				try {
 					LHPN.addInteger(spec, ""
-							+ ((int) Double.parseDouble(species.get(spec).getProperty(GlobalConstants.INITIAL_STRING))));
+							+ ((int) Double.parseDouble(species.get(spec).getProperty(
+									GlobalConstants.INITIAL_STRING))));
 				}
 				catch (Exception e) {
 					LHPN.addInteger(spec, "0");
@@ -694,210 +700,177 @@ public class GCMFile {
 			}
 			String number = "0";
 			for (Object threshold : conLevel.get(i)) {
-				if (LHPN.getIntegers().get(specs.get(i)).equals("" + ((int) Double.parseDouble((String) threshold)))) {
+				if (LHPN.getIntegers().get(specs.get(i)).equals(
+						"" + ((int) Double.parseDouble((String) threshold)))) {
 					LHPN.addPlace(specs.get(i) + placeNum, true);
 				}
 				else {
 					LHPN.addPlace(specs.get(i) + placeNum, false);
 				}
-				ArrayList<String> activators = new ArrayList<String>();
-				ArrayList<String> repressors = new ArrayList<String>();
-				ArrayList<String> bioActivators = new ArrayList<String>();
-				ArrayList<String> bioRepressors = new ArrayList<String>();
-				ArrayList<String> proms = new ArrayList<String>();
-				Double global_np = Double.parseDouble(parameters
-						.get(GlobalConstants.STOICHIOMETRY_STRING));
-				Double global_ng = Double.parseDouble(parameters
-						.get(GlobalConstants.PROMOTER_COUNT_STRING));
-				Double global_kb = Double
-						.parseDouble(parameters.get(GlobalConstants.KBASAL_STRING));
-				Double global_Kb = Double.parseDouble(parameters.get(GlobalConstants.KBIO_STRING));
-				Double global_Ko = Double.parseDouble(parameters
-						.get(GlobalConstants.RNAP_BINDING_STRING));
-				Double global_ka = Double.parseDouble(parameters
-						.get(GlobalConstants.ACTIVED_STRING));
-				Double global_Ka = Double.parseDouble(parameters.get(GlobalConstants.KACT_STRING));
-				Double global_ko = Double.parseDouble(parameters.get(GlobalConstants.OCR_STRING));
-				Double global_Kr = Double.parseDouble(parameters.get(GlobalConstants.KREP_STRING));
-				Double global_kd = Double
-						.parseDouble(parameters.get(GlobalConstants.KDECAY_STRING));
-				Double global_nc = Double.parseDouble(parameters
-						.get(GlobalConstants.COOPERATIVITY_STRING));
-				Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
-				Double np = global_np;
-				Double ng = global_ng;
-				Double kb = global_kb;
-				Double Kb = global_Kb;
-				Double Ko = global_Ko;
-				Double ka = global_ka;
-				Double Ka = global_Ka;
-				Double ko = global_ko;
-				Double Kr = global_Kr;
-				Double kd = global_kd;
-				Double nc = global_nc;
-				if (infl.containsKey(specs.get(i))) {
-					for (String in : infl.get(specs.get(i))) {
-						String[] parse = in.split(":");
-						String species = parse[1];
-						String influence = parse[2];
-						String promoter = influence.split(" ")[influence.split(" ").length - 1];
-						if (!proms.contains(promoter)) {
-							proms.add(promoter);
-						}
-						if (parse[0].equals("act")) {
-							activators.add(promoter + ":" + species + ":" + influence);
-						}
-						else if (parse[0].equals("rep")) {
-							repressors.add(promoter + ":" + species + ":" + influence);
-						}
-						else if (parse[0].equals("bioAct")) {
-							bioActivators.add(promoter + ":" + species + ":" + influence);
-						}
-						else if (parse[0].equals("bioRep")) {
-							bioRepressors.add(promoter + ":" + species + ":" + influence);
-						}
-					}
-				}
-				String rate = "";
-				for (String promoter : proms) {
-					ng = global_ng;
-					Ko = global_Ko;
-					ko = global_ko;
-					np = global_np;
-					kb = global_kb;
-					ka = global_ka;
-					if (promoters.containsKey(promoter)) {
-						Properties p = promoters.get(promoter);
-						if (p.containsKey(GlobalConstants.PROMOTER_COUNT_STRING)) {
-							ng = Double.parseDouble((String) p
-									.get(GlobalConstants.PROMOTER_COUNT_STRING));
-						}
-						if (p.containsKey(GlobalConstants.RNAP_BINDING_STRING)) {
-							Ko = Double.parseDouble((String) p
-									.get(GlobalConstants.RNAP_BINDING_STRING));
-						}
-						if (p.containsKey(GlobalConstants.OCR_STRING)) {
-							ko = Double.parseDouble((String) p.get(GlobalConstants.OCR_STRING));
-						}
-						if (p.containsKey(GlobalConstants.STOICHIOMETRY_STRING)) {
-							np = Double.parseDouble((String) p
-									.get(GlobalConstants.STOICHIOMETRY_STRING));
-						}
-						if (p.containsKey(GlobalConstants.KBASAL_STRING)) {
-							kb = Double.parseDouble((String) p.get(GlobalConstants.KBASAL_STRING));
-						}
-						if (p.containsKey(GlobalConstants.ACTIVED_STRING)) {
-							ka = Double.parseDouble((String) p.get(GlobalConstants.ACTIVED_STRING));
-						}
-					}
-					String addBio = "";
-					String influence = "";
-					for (String bioAct : bioActivators) {
-						String split[] = bioAct.split(":");
-						if (split[0].equals(promoter)) {
-							influence = split[2];
-							Properties p = influences.get(influence);
-							Kb = global_Kb;
-							if (p.containsKey(GlobalConstants.KBIO_STRING)) {
-								Kb = Double
-										.parseDouble((String) p.get(GlobalConstants.KBIO_STRING));
+				Properties speciesProps = this.species.get(specs.get(i));
+				if (!speciesProps.get(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)) {
+					ArrayList<String> activators = new ArrayList<String>();
+					ArrayList<String> repressors = new ArrayList<String>();
+					ArrayList<String> bioActivators = new ArrayList<String>();
+					ArrayList<String> bioRepressors = new ArrayList<String>();
+					ArrayList<String> proms = new ArrayList<String>();
+					Double global_np = Double.parseDouble(parameters
+							.get(GlobalConstants.STOICHIOMETRY_STRING));
+					Double global_ng = Double.parseDouble(parameters
+							.get(GlobalConstants.PROMOTER_COUNT_STRING));
+					Double global_kb = Double.parseDouble(parameters
+							.get(GlobalConstants.KBASAL_STRING));
+					Double global_Kb = Double.parseDouble(parameters
+							.get(GlobalConstants.KBIO_STRING));
+					Double global_Ko = Double.parseDouble(parameters
+							.get(GlobalConstants.RNAP_BINDING_STRING));
+					Double global_ka = Double.parseDouble(parameters
+							.get(GlobalConstants.ACTIVED_STRING));
+					Double global_Ka = Double.parseDouble(parameters
+							.get(GlobalConstants.KACT_STRING));
+					Double global_ko = Double.parseDouble(parameters
+							.get(GlobalConstants.OCR_STRING));
+					Double global_Kr = Double.parseDouble(parameters
+							.get(GlobalConstants.KREP_STRING));
+					Double global_kd = Double.parseDouble(parameters
+							.get(GlobalConstants.KDECAY_STRING));
+					Double global_nc = Double.parseDouble(parameters
+							.get(GlobalConstants.COOPERATIVITY_STRING));
+					Double RNAP = Double.parseDouble(parameters.get(GlobalConstants.RNAP_STRING));
+					Double np = global_np;
+					Double ng = global_ng;
+					Double kb = global_kb;
+					Double Kb = global_Kb;
+					Double Ko = global_Ko;
+					Double ka = global_ka;
+					Double Ka = global_Ka;
+					Double ko = global_ko;
+					Double Kr = global_Kr;
+					Double kd = global_kd;
+					Double nc = global_nc;
+					if (infl.containsKey(specs.get(i))) {
+						for (String in : infl.get(specs.get(i))) {
+							String[] parse = in.split(":");
+							String species = parse[1];
+							String influence = parse[2];
+							String promoter = influence.split(" ")[influence.split(" ").length - 1];
+							if (!proms.contains(promoter)) {
+								proms.add(promoter);
 							}
-							if (addBio.equals("")) {
-								addBio = Kb + "*" + split[1];
+							if (parse[0].equals("act")) {
+								activators.add(promoter + ":" + species + ":" + influence);
 							}
-							else {
-								addBio += "*" + split[1];
+							else if (parse[0].equals("rep")) {
+								repressors.add(promoter + ":" + species + ":" + influence);
+							}
+							else if (parse[0].equals("bioAct")) {
+								bioActivators.add(promoter + ":" + species + ":" + influence);
+							}
+							else if (parse[0].equals("bioRep")) {
+								bioRepressors.add(promoter + ":" + species + ":" + influence);
 							}
 						}
 					}
-					if (!addBio.equals("")) {
-						activators.add(promoter + ":" + addBio + ":" + influence);
-					}
-					addBio = "";
-					influence = "";
-					for (String bioRep : bioRepressors) {
-						String split[] = bioRep.split(":");
-						if (split[0].equals(promoter)) {
-							influence = split[2];
-							Properties p = influences.get(influence);
-							Kb = global_Kb;
-							if (p.containsKey(GlobalConstants.KBIO_STRING)) {
-								Kb = Double
-										.parseDouble((String) p.get(GlobalConstants.KBIO_STRING));
+					String rate = "";
+					for (String promoter : proms) {
+						ng = global_ng;
+						Ko = global_Ko;
+						ko = global_ko;
+						np = global_np;
+						kb = global_kb;
+						ka = global_ka;
+						if (promoters.containsKey(promoter)) {
+							Properties p = promoters.get(promoter);
+							if (p.containsKey(GlobalConstants.PROMOTER_COUNT_STRING)) {
+								ng = Double.parseDouble((String) p
+										.get(GlobalConstants.PROMOTER_COUNT_STRING));
 							}
-							if (addBio.equals("")) {
-								addBio = Kb + "*" + split[1];
+							if (p.containsKey(GlobalConstants.RNAP_BINDING_STRING)) {
+								Ko = Double.parseDouble((String) p
+										.get(GlobalConstants.RNAP_BINDING_STRING));
 							}
-							else {
-								addBio += "*" + split[1];
+							if (p.containsKey(GlobalConstants.OCR_STRING)) {
+								ko = Double.parseDouble((String) p.get(GlobalConstants.OCR_STRING));
+							}
+							if (p.containsKey(GlobalConstants.STOICHIOMETRY_STRING)) {
+								np = Double.parseDouble((String) p
+										.get(GlobalConstants.STOICHIOMETRY_STRING));
+							}
+							if (p.containsKey(GlobalConstants.KBASAL_STRING)) {
+								kb = Double.parseDouble((String) p
+										.get(GlobalConstants.KBASAL_STRING));
+							}
+							if (p.containsKey(GlobalConstants.ACTIVED_STRING)) {
+								ka = Double.parseDouble((String) p
+										.get(GlobalConstants.ACTIVED_STRING));
 							}
 						}
-					}
-					if (!addBio.equals("")) {
-						repressors.add(promoter + ":" + addBio + ":" + influence);
-					}
-					String promRate = "";
-					ArrayList<String> promActivators = new ArrayList<String>();
-					ArrayList<String> promRepressors = new ArrayList<String>();
-					for (String act : activators) {
-						String split[] = act.split(":");
-						if (split[0].equals(promoter)) {
-							promActivators.add(split[1] + ":" + split[2]);
+						String addBio = "";
+						String influence = "";
+						for (String bioAct : bioActivators) {
+							String split[] = bioAct.split(":");
+							if (split[0].equals(promoter)) {
+								influence = split[2];
+								Properties p = influences.get(influence);
+								Kb = global_Kb;
+								if (p.containsKey(GlobalConstants.KBIO_STRING)) {
+									Kb = Double.parseDouble((String) p
+											.get(GlobalConstants.KBIO_STRING));
+								}
+								if (addBio.equals("")) {
+									addBio = Kb + "*" + split[1];
+								}
+								else {
+									addBio += "*" + split[1];
+								}
+							}
 						}
-					}
-					for (String rep : repressors) {
-						String split[] = rep.split(":");
-						if (split[0].equals(promoter)) {
-							promRepressors.add(split[1] + ":" + split[2]);
+						if (!addBio.equals("")) {
+							activators.add(promoter + ":" + addBio + ":" + influence);
 						}
-					}
-					if (promActivators.size() != 0) {
-						promRate += "(" + np + "*" + ng + ")*((" + kb + "*" + Ko + "*" + RNAP + ")";
-						for (String act : promActivators) {
+						addBio = "";
+						influence = "";
+						for (String bioRep : bioRepressors) {
+							String split[] = bioRep.split(":");
+							if (split[0].equals(promoter)) {
+								influence = split[2];
+								Properties p = influences.get(influence);
+								Kb = global_Kb;
+								if (p.containsKey(GlobalConstants.KBIO_STRING)) {
+									Kb = Double.parseDouble((String) p
+											.get(GlobalConstants.KBIO_STRING));
+								}
+								if (addBio.equals("")) {
+									addBio = Kb + "*" + split[1];
+								}
+								else {
+									addBio += "*" + split[1];
+								}
+							}
+						}
+						if (!addBio.equals("")) {
+							repressors.add(promoter + ":" + addBio + ":" + influence);
+						}
+						String promRate = "";
+						ArrayList<String> promActivators = new ArrayList<String>();
+						ArrayList<String> promRepressors = new ArrayList<String>();
+						for (String act : activators) {
 							String split[] = act.split(":");
-							Properties p = influences.get(split[1]);
-							nc = global_nc;
-							Kr = global_Kr;
-							Ka = global_Ka;
-							if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
-								nc = Double.parseDouble((String) p
-										.get(GlobalConstants.COOPERATIVITY_STRING));
+							if (split[0].equals(promoter)) {
+								promActivators.add(split[1] + ":" + split[2]);
 							}
-							if (p.containsKey(GlobalConstants.KREP_STRING)) {
-								Kr = Double
-										.parseDouble((String) p.get(GlobalConstants.KREP_STRING));
-							}
-							if (p.containsKey(GlobalConstants.KACT_STRING)) {
-								Ka = Double
-										.parseDouble((String) p.get(GlobalConstants.KACT_STRING));
-							}
-							promRate += "+(" + ka + "*((" + Ka + "*" + RNAP + "*" + split[0] + ")^"
-									+ nc + "))";
 						}
-						promRate += ")/((1+(" + Ko + "*" + RNAP + "))";
-						for (String act : promActivators) {
-							String split[] = act.split(":");
-							Properties p = influences.get(split[1]);
-							nc = global_nc;
-							Kr = global_Kr;
-							Ka = global_Ka;
-							if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
-								nc = Double.parseDouble((String) p
-										.get(GlobalConstants.COOPERATIVITY_STRING));
+						for (String rep : repressors) {
+							String split[] = rep.split(":");
+							if (split[0].equals(promoter)) {
+								promRepressors.add(split[1] + ":" + split[2]);
 							}
-							if (p.containsKey(GlobalConstants.KREP_STRING)) {
-								Kr = Double
-										.parseDouble((String) p.get(GlobalConstants.KREP_STRING));
-							}
-							if (p.containsKey(GlobalConstants.KACT_STRING)) {
-								Ka = Double
-										.parseDouble((String) p.get(GlobalConstants.KACT_STRING));
-							}
-							promRate += "+((" + Ka + "*" + RNAP + "*" + split[0] + ")^" + nc + ")";
 						}
-						if (promRepressors.size() != 0) {
-							for (String rep : promRepressors) {
-								String split[] = rep.split(":");
+						if (promActivators.size() != 0) {
+							promRate += "(" + np + "*" + ng + ")*((" + kb + "*" + Ko + "*" + RNAP
+									+ ")";
+							for (String act : promActivators) {
+								String split[] = act.split(":");
 								Properties p = influences.get(split[1]);
 								nc = global_nc;
 								Kr = global_Kr;
@@ -914,17 +887,12 @@ public class GCMFile {
 									Ka = Double.parseDouble((String) p
 											.get(GlobalConstants.KACT_STRING));
 								}
-								promRate += "+((" + Kr + "*" + split[0] + ")^" + nc + ")";
+								promRate += "+(" + ka + "*((" + Ka + "*" + RNAP + "*" + split[0]
+										+ ")^" + nc + "))";
 							}
-						}
-						promRate += ")";
-					}
-					else {
-						if (promRepressors.size() != 0) {
-							promRate += "(" + np + "*" + ko + "*" + ng + ")*((" + Ko + "*" + RNAP
-									+ "))/((1+(" + Ko + "*" + RNAP + "))";
-							for (String rep : promRepressors) {
-								String split[] = rep.split(":");
+							promRate += ")/((1+(" + Ko + "*" + RNAP + "))";
+							for (String act : promActivators) {
+								String split[] = act.split(":");
 								Properties p = influences.get(split[1]);
 								nc = global_nc;
 								Kr = global_Kr;
@@ -941,41 +909,91 @@ public class GCMFile {
 									Ka = Double.parseDouble((String) p
 											.get(GlobalConstants.KACT_STRING));
 								}
-								promRate += "+((" + Kr + "*" + split[0] + ")^" + nc + ")";
+								promRate += "+((" + Ka + "*" + RNAP + "*" + split[0] + ")^" + nc
+										+ ")";
+							}
+							if (promRepressors.size() != 0) {
+								for (String rep : promRepressors) {
+									String split[] = rep.split(":");
+									Properties p = influences.get(split[1]);
+									nc = global_nc;
+									Kr = global_Kr;
+									Ka = global_Ka;
+									if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
+										nc = Double.parseDouble((String) p
+												.get(GlobalConstants.COOPERATIVITY_STRING));
+									}
+									if (p.containsKey(GlobalConstants.KREP_STRING)) {
+										Kr = Double.parseDouble((String) p
+												.get(GlobalConstants.KREP_STRING));
+									}
+									if (p.containsKey(GlobalConstants.KACT_STRING)) {
+										Ka = Double.parseDouble((String) p
+												.get(GlobalConstants.KACT_STRING));
+									}
+									promRate += "+((" + Kr + "*" + split[0] + ")^" + nc + ")";
+								}
 							}
 							promRate += ")";
 						}
-					}
-					if (!promRate.equals("")) {
-						if (rate.equals("")) {
-							rate = "(" + promRate + ")";
-						}
 						else {
-							rate += "+(" + promRate + ")";
+							if (promRepressors.size() != 0) {
+								promRate += "(" + np + "*" + ko + "*" + ng + ")*((" + Ko + "*"
+										+ RNAP + "))/((1+(" + Ko + "*" + RNAP + "))";
+								for (String rep : promRepressors) {
+									String split[] = rep.split(":");
+									Properties p = influences.get(split[1]);
+									nc = global_nc;
+									Kr = global_Kr;
+									Ka = global_Ka;
+									if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
+										nc = Double.parseDouble((String) p
+												.get(GlobalConstants.COOPERATIVITY_STRING));
+									}
+									if (p.containsKey(GlobalConstants.KREP_STRING)) {
+										Kr = Double.parseDouble((String) p
+												.get(GlobalConstants.KREP_STRING));
+									}
+									if (p.containsKey(GlobalConstants.KACT_STRING)) {
+										Ka = Double.parseDouble((String) p
+												.get(GlobalConstants.KACT_STRING));
+									}
+									promRate += "+((" + Kr + "*" + split[0] + ")^" + nc + ")";
+								}
+								promRate += ")";
+							}
+						}
+						if (!promRate.equals("")) {
+							if (rate.equals("")) {
+								rate = "(" + promRate + ")";
+							}
+							else {
+								rate += "+(" + promRate + ")";
+							}
 						}
 					}
-				}
-				if (!rate.equals("")) {
-					LHPN.addTransition(specs.get(i) + "_trans" + transNum);
-					LHPN.addMovement(previousPlaceName, specs.get(i) + "_trans" + transNum);
-					LHPN.addMovement(specs.get(i) + "_trans" + transNum, specs.get(i) + placeNum);
-					LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), (String) threshold);
-					LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + rate + ")/" + "(" + threshold + "-" + number
-							+ ")");
-					transNum++;
-				}
-				Properties p = this.species.get(specs.get(i));
-				if (!p.get(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)) {
+					if (!rate.equals("")) {
+						LHPN.addTransition(specs.get(i) + "_trans" + transNum);
+						LHPN.addMovement(previousPlaceName, specs.get(i) + "_trans" + transNum);
+						LHPN.addMovement(specs.get(i) + "_trans" + transNum, specs.get(i)
+								+ placeNum);
+						LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i),
+								(String) threshold);
+						LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + rate
+								+ ")/" + "(" + threshold + "-" + number + ")");
+						transNum++;
+					}
 					kd = global_kd;
-					if (p.containsKey(GlobalConstants.KDECAY_STRING)) {
-						kd = Double.parseDouble((String) p.get(GlobalConstants.KDECAY_STRING));
+					if (speciesProps.containsKey(GlobalConstants.KDECAY_STRING)) {
+						kd = Double.parseDouble((String) speciesProps
+								.get(GlobalConstants.KDECAY_STRING));
 					}
 					LHPN.addTransition(specs.get(i) + "_trans" + transNum);
 					LHPN.addMovement(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
 					LHPN.addMovement(specs.get(i) + "_trans" + transNum, previousPlaceName);
 					LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
-					LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specs.get(i) + "*" + kd + ")/" + "("
-							+ threshold + "-" + number + ")");
+					LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specs.get(i)
+							+ "*" + kd + ")/" + "(" + threshold + "-" + number + ")");
 					transNum++;
 				}
 				previousPlaceName = specs.get(i) + placeNum;
@@ -1436,119 +1454,45 @@ public class GCMFile {
 		conditions.add(condition);
 		return condition;
 		/*
-		boolean retval = true;
-		String finalCond = "";
-		ArrayList<String> split = new ArrayList<String>();
-		String splitting = condition;
-		while (splitting.contains("||")) {
-			split.add(splitting.substring(0, splitting.indexOf("||")));
-			splitting = splitting.substring(splitting.indexOf("||") + 2);
-		}
-		split.add(splitting);
-		for (String cond : split) {
-			finalCond += "(";
-			if (cond.split("->").length > 2) {
-				return null;
-			}
-			String[] split2 = cond.split("->");
-			int countLeft1 = 0;
-			int countRight1 = 0;
-			int countLeft2 = 0;
-			int countRight2 = 0;
-			int index = 0;
-			while (index <= split2[0].length()) {
-				index = split2[0].indexOf('(', index);
-				if (index == -1) {
-					break;
-				}
-				countLeft1++;
-				index++;
-			}
-			index = 0;
-			while (index <= split2[0].length()) {
-				index = split2[0].indexOf(')', index);
-				if (index == -1) {
-					break;
-				}
-				countRight1++;
-				index++;
-			}
-			if (split2.length > 1) {
-				index = 0;
-				while (index <= split2[0].length()) {
-					index = split2[1].indexOf('(', index);
-					if (index == -1) {
-						break;
-					}
-					countLeft2++;
-					index++;
-				}
-				index = 0;
-				while (index <= split2[0].length()) {
-					index = split2[1].indexOf(')', index);
-					if (index == -1) {
-						break;
-					}
-					countRight2++;
-					index++;
-				}
-			}
-			if ((countLeft1 - countRight1) == (countRight2 - countLeft2)) {
-				for (int i = 0; i < countLeft1 - countRight1; i++) {
-					split2[0] += ")";
-					split2[1] = "(" + split2[1];
-				}
-			}
-			ArrayList<String> specs = new ArrayList<String>();
-			ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
-			for (String spec : species.keySet()) {
-				specs.add(spec);
-				ArrayList<String> level = new ArrayList<String>();
-				level.add("0");
-				conLevel.add(level.toArray());
-			}
-			ExprTree expr = new ExprTree(convertToLHPN(specs, conLevel));
-			expr.token = expr.intexpr_gettok(split2[0]);
-			if (!split2[0].equals("")) {
-				retval = (expr.intexpr_L(split2[0]) && retval);
-			}
-			else {
-				expr = null;
-				retval = false;
-			}
-			if (split2.length > 1) {
-				if (retval) {
-					finalCond += "(" + expr.toString() + ")->";
-				}
-				expr = new ExprTree(convertToLHPN(specs, conLevel));
-				expr.token = expr.intexpr_gettok(split2[0]);
-				if (!split2[0].equals("")) {
-					retval = (expr.intexpr_L(split2[0]) && retval);
-				}
-				else {
-					expr = null;
-					retval = false;
-				}
-				if (retval) {
-					finalCond += "(" + expr.toString() + ")";
-				}
-			}
-			else if (retval) {
-				finalCond += expr.toString();
-			}
-			finalCond += ")||";
-		}
-		finalCond = finalCond.substring(0, finalCond.length() - 2);
-		if (retval) {
-			conditions.add(finalCond);
-		}
-		if (retval) {
-			return finalCond;
-		}
-		else {
-			return null;
-		}
-		*/
+		 * boolean retval = true; String finalCond = ""; ArrayList<String> split
+		 * = new ArrayList<String>(); String splitting = condition; while
+		 * (splitting.contains("||")) { split.add(splitting.substring(0,
+		 * splitting.indexOf("||"))); splitting =
+		 * splitting.substring(splitting.indexOf("||") + 2); }
+		 * split.add(splitting); for (String cond : split) { finalCond += "(";
+		 * if (cond.split("->").length > 2) { return null; } String[] split2 =
+		 * cond.split("->"); int countLeft1 = 0; int countRight1 = 0; int
+		 * countLeft2 = 0; int countRight2 = 0; int index = 0; while (index <=
+		 * split2[0].length()) { index = split2[0].indexOf('(', index); if
+		 * (index == -1) { break; } countLeft1++; index++; } index = 0; while
+		 * (index <= split2[0].length()) { index = split2[0].indexOf(')',
+		 * index); if (index == -1) { break; } countRight1++; index++; } if
+		 * (split2.length > 1) { index = 0; while (index <= split2[0].length())
+		 * { index = split2[1].indexOf('(', index); if (index == -1) { break; }
+		 * countLeft2++; index++; } index = 0; while (index <=
+		 * split2[0].length()) { index = split2[1].indexOf(')', index); if
+		 * (index == -1) { break; } countRight2++; index++; } } if ((countLeft1
+		 * - countRight1) == (countRight2 - countLeft2)) { for (int i = 0; i <
+		 * countLeft1 - countRight1; i++) { split2[0] += ")"; split2[1] = "(" +
+		 * split2[1]; } } ArrayList<String> specs = new ArrayList<String>();
+		 * ArrayList<Object[]> conLevel = new ArrayList<Object[]>(); for (String
+		 * spec : species.keySet()) { specs.add(spec); ArrayList<String> level =
+		 * new ArrayList<String>(); level.add("0");
+		 * conLevel.add(level.toArray()); } ExprTree expr = new
+		 * ExprTree(convertToLHPN(specs, conLevel)); expr.token =
+		 * expr.intexpr_gettok(split2[0]); if (!split2[0].equals("")) { retval =
+		 * (expr.intexpr_L(split2[0]) && retval); } else { expr = null; retval =
+		 * false; } if (split2.length > 1) { if (retval) { finalCond += "(" +
+		 * expr.toString() + ")->"; } expr = new ExprTree(convertToLHPN(specs,
+		 * conLevel)); expr.token = expr.intexpr_gettok(split2[0]); if
+		 * (!split2[0].equals("")) { retval = (expr.intexpr_L(split2[0]) &&
+		 * retval); } else { expr = null; retval = false; } if (retval) {
+		 * finalCond += "(" + expr.toString() + ")"; } } else if (retval) {
+		 * finalCond += expr.toString(); } finalCond += ")||"; } finalCond =
+		 * finalCond.substring(0, finalCond.length() - 2); if (retval) {
+		 * conditions.add(finalCond); } if (retval) { return finalCond; } else {
+		 * return null; }
+		 */
 	}
 
 	public void removeCondition(String condition) {
@@ -1714,7 +1658,7 @@ public class GCMFile {
 		do {
 			changed = false;
 			for (String s : influences.keySet()) {
-				if (getInput(s).equals(name) || getOutput(s).equals(name)) {			
+				if (getInput(s).equals(name) || getOutput(s).equals(name)) {
 					ret = true;
 					if (remove) {
 						influences.remove(s);
