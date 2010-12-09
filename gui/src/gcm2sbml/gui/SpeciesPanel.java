@@ -21,7 +21,8 @@ import biomodelsim.BioSim;
 
 public class SpeciesPanel extends JPanel implements ActionListener {
 	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList influencesList,
-			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly, GCMFile refGCM) {
+			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly, GCMFile refGCM,
+			GCM2SBMLEditor gcmEditor) {
 		super(new GridLayout(7, 1));
 		this.selected = selected;
 		this.speciesList = speciesList;
@@ -30,6 +31,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		this.components = componentsList;
 		this.gcm = gcm;
 		this.paramsOnly = paramsOnly;
+		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -291,7 +293,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			speciesList.removeItem(oldName + " Modified");
 			speciesList.addItem(id);
 			speciesList.setSelectedValue(id, true);
-
+			gcmEditor.setDirty(true);
 		}
 		else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();
@@ -405,4 +407,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private HashMap<String, PropertyField> fields = null;
 
 	private boolean paramsOnly;
+	
+	private GCM2SBMLEditor gcmEditor;
 }

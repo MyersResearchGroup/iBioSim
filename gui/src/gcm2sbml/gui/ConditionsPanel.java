@@ -23,13 +23,16 @@ public class ConditionsPanel extends JPanel {
 
 	private GCMFile gcm = null;
 	private PropertyList conditionList = null;
+	
+	private GCM2SBMLEditor gcmEditor = null;
 
 	public ConditionsPanel(String selected, PropertyList conditionList, GCMFile gcm,
-			boolean paramsOnly) {
+			boolean paramsOnly,GCM2SBMLEditor gcmEditor) {
 		super(new GridLayout(1, 1));
 		this.selected = selected;
 		this.conditionList = conditionList;
 		this.gcm = gcm;
+		this.gcmEditor = gcmEditor;
 
 		// Condition field
 		field = new PropertyField("Property", "", null, null, "Property", paramsOnly, "default");
@@ -74,6 +77,7 @@ public class ConditionsPanel extends JPanel {
 		int value = JOptionPane.showOptionDialog(BioSim.frame, this, "Property Editor",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
+			gcmEditor.setDirty(true);
 			if (!checkValues()) {
 				return false;
 			}
