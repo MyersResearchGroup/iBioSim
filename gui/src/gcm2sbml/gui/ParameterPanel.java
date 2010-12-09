@@ -14,13 +14,14 @@ import biomodelsim.BioSim;
 
 public class ParameterPanel extends JPanel {
 	public ParameterPanel(String totalSelected, PropertyList parameterList,
-			GCMFile gcm, boolean paramsOnly, GCMFile refGCM) {
+			GCMFile gcm, boolean paramsOnly, GCMFile refGCM, GCM2SBMLEditor gcmEditor) {
 		super(new GridLayout(1, 2));
 		this.totalSelected = totalSelected;
 		this.parameterList = parameterList;
 		this.gcm = gcm;
 		this.refGCM = refGCM;
 		this.paramsOnly = paramsOnly;
+		this.gcmEditor = gcmEditor;
 		changedParam = "";
 
 		fields = new HashMap<String, PropertyField>();
@@ -120,6 +121,7 @@ public class ParameterPanel extends JPanel {
 			parameterList.removeItem(totalSelected);
 			parameterList.addItem(newItem);
 			parameterList.setSelectedValue(newItem, true);
+			gcmEditor.setDirty(true);
 		} else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();
 			return true;
@@ -141,4 +143,5 @@ public class ParameterPanel extends JPanel {
 	private GCMFile refGCM = null;
 	private PropertyList parameterList = null;
 	private HashMap<String, PropertyField> fields = null;
+	private GCM2SBMLEditor gcmEditor = null;
 }

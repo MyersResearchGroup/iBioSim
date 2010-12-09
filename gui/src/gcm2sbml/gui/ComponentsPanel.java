@@ -39,15 +39,18 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	private String[] species;
 
 	private String selectedComponent, oldPort;
+	
+	private GCM2SBMLEditor gcmEditor;
 
 	public ComponentsPanel(String selected, PropertyList componentsList, PropertyList influences,
 			GCMFile gcm, String[] inputs, String[] outputs, String selectedComponent, String oldPort,
-			boolean paramsOnly) {
+			boolean paramsOnly, GCM2SBMLEditor gcmEditor) {
 		super(new GridLayout(inputs.length + outputs.length + 2, 1));
 		this.selected = selected;
 		this.componentsList = componentsList;
 		this.influences = influences;
 		this.gcm = gcm;
+		this.gcmEditor = gcmEditor;
 		species = new String[inputs.length + outputs.length];
 		for(int i = 0; i < inputs.length; i++) {
 			species[i] = inputs[i];
@@ -238,7 +241,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 					.addItem(id + " " + selectedComponent.replace(".gcm", "") + " " + newPort);
 			componentsList.setSelectedValue(id + " " + selectedComponent.replace(".gcm", "") + " "
 					+ newPort, true);
-
+			gcmEditor.setDirty(true);
 		}
 		else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();

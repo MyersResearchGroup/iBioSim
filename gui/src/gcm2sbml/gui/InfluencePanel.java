@@ -20,12 +20,13 @@ import javax.swing.JPanel;
 import biomodelsim.BioSim;
 
 public class InfluencePanel extends JPanel implements ActionListener {
-	public InfluencePanel(String selected, PropertyList list, GCMFile gcm, boolean paramsOnly, GCMFile refGCM) {
+	public InfluencePanel(String selected, PropertyList list, GCMFile gcm, boolean paramsOnly, GCMFile refGCM, GCM2SBMLEditor gcmEditor) {
 		super(new GridLayout(11, 1));
 		this.selected = selected;
 		this.list = list;
 		this.gcm = gcm;
 		this.paramsOnly = paramsOnly;
+		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -373,6 +374,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			}
 			list.addItem(id);
 			list.setSelectedValue(id, true);
+			gcmEditor.setDirty(true);
 		} else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();
 			return true;
@@ -559,4 +561,5 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	private JComboBox typeBox = null;
 	private PropertyList list = null;
 	private boolean paramsOnly;
+	private GCM2SBMLEditor gcmEditor = null;
 }

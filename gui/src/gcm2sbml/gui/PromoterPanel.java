@@ -18,13 +18,14 @@ import biomodelsim.BioSim;
 
 public class PromoterPanel extends JPanel {
 	public PromoterPanel(String selected, PropertyList promoterList,
-			PropertyList influencesList, GCMFile gcm, boolean paramsOnly, GCMFile refGCM) {
+			PropertyList influencesList, GCMFile gcm, boolean paramsOnly, GCMFile refGCM, GCM2SBMLEditor gcmEditor) {
 		super(new GridLayout(8, 1));
 		this.selected = selected;
 		this.promoterList = promoterList;
 		this.influenceList = influencesList;
 		this.gcm = gcm;
 		this.paramsOnly = paramsOnly;
+		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -287,7 +288,7 @@ public class PromoterPanel extends JPanel {
 			promoterList.removeItem(oldName + " Modified");
 			promoterList.addItem(id);
 			promoterList.setSelectedValue(id, true);
-
+			gcmEditor.setDirty(true);
 		} else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();
 			return true;
@@ -376,4 +377,5 @@ public class PromoterPanel extends JPanel {
 	private PropertyList promoterList = null;
 	private PropertyList influenceList = null;
 	private boolean paramsOnly;
+	private GCM2SBMLEditor gcmEditor = null;
 }
