@@ -887,10 +887,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		GCMNameTextField = new JTextField(filename.replace(".gcm", ""), 15);
 		GCMNameTextField.setEditable(false);
 		GCMNameTextField.addActionListener(this);
+		/*
 		JLabel GCMNameLabel = new JLabel("GCM Id:");
 		mainPanelNorth.add(GCMNameLabel);
 		mainPanelNorth.add(GCMNameTextField);
-
+		 */
+		
 		JLabel sbmlFileLabel = new JLabel("SBML File:");
 		sbmlFiles = new JComboBox();
 		sbmlFiles.addActionListener(this);

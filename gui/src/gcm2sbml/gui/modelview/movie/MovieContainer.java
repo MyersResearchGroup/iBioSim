@@ -118,6 +118,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 				" rows of data loaded.");
 	}
 	
+	JButton fileButton;
 	JButton playPauseButton;
 	JButton rewindButton;
 	JButton singleStepButton;
@@ -128,6 +129,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		addPropertiesWindow();
 		
 		// add the top menu bar
+		/*
 		JToolBar sb = new JToolBar();
 		JButton b = new JButton();
 		b.addActionListener(this);
@@ -135,6 +137,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		b.setActionCommand("choose_simulation_file");
 		sb.add(b);
 		this.add(sb, BorderLayout.NORTH);
+		*/
 		
 	}
 	
@@ -149,6 +152,9 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private void addPlayUI(){
 		// Add the bottom menu bar
 		JToolBar mt = new JToolBar();
+		
+		fileButton = Utils.makeToolButton("movie" + File.separator + "save.png", "choose_simulation_file", "Choose TSD File", this);
+		mt.add(fileButton);
 		
 		rewindButton = Utils.makeToolButton("movie" + File.separator + "rewind.png", "rewind", "Rewind", this);
 		mt.add(rewindButton);
