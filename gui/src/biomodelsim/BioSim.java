@@ -7374,6 +7374,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 													t.getComponentAt(t.getComponents().length - 1)
 															.setName("Simulate");
 												}
+												else if (c instanceof MovieContainer) {
+													t.addTab("Schematic", c);
+													t.getComponentAt(t.getComponents().length - 1)
+															.setName("ModelViewMovie");
+												}
 												else if (c instanceof SBML_Editor) {
 													sbml = (SBML_Editor) c;
 													t.addTab("Parameter Editor", c);
@@ -7390,7 +7395,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 																		+ separator + rename
 																		+ ".sim");
 													}
-													t.addTab("Parameter Editor", c);
+													t.addTab("Parameters", c);
 													t.getComponentAt(t.getComponents().length - 1)
 															.setName("GCM Editor");
 												}
@@ -7424,11 +7429,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 																t.getComponents().length - 1)
 																.setName("");
 													}
-												}
-												else if (c instanceof MovieContainer) {
-													t.addTab("Model Viewer", c);
-													t.getComponentAt(t.getComponents().length - 1)
-															.setName("ModelViewMovie");
 												}
 												else {
 													t.addTab("Abstraction Options", c);
@@ -9918,7 +9918,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									+ ".sim", reb2sac);
 					reb2sac.setGcm(gcm);
 					// sbml.addMouseListener(this);
-					simTab.addTab("Parameter Editor", gcm);
+					addModelViewTab(reb2sac, simTab, gcm);
+					simTab.addTab("Parameters", gcm);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
 					if (!gcm.getSBMLFile().equals("--none--")) {
 						SBML_Editor sbml = new SBML_Editor(root + separator + gcm.getSBMLFile(),
@@ -9936,7 +9937,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 						gcm.setSBMLParamFile(null);
 					}
-					addModelViewTab(reb2sac, simTab, gcm);
 				}
 				else if (sbml1[sbml1.length - 1].contains(".sbml")
 						|| sbml1[sbml1.length - 1].contains(".xml")) {
@@ -10607,7 +10607,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 									reb2sac);
 							reb2sac.setGcm(gcm);
 							// sbml.addMouseListener(this);
-							simTab.addTab("Parameter Editor", gcm);
+							addModelViewTab(reb2sac, simTab, gcm);
+							simTab.addTab("Parameters", gcm);
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
 									"GCM Editor");
 							if (!gcm.getSBMLFile().equals("--none--")) {
@@ -10629,8 +10630,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 										.setName("");
 								gcm.setSBMLParamFile(null);
 							}
-							addModelViewTab(reb2sac, simTab, gcm);
-
 						}
 						else if (gcmFile.contains(".sbml") || gcmFile.contains(".xml")) {
 							SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this,
@@ -10706,7 +10705,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		MovieContainer movieContainer = new MovieContainer(reb2sac, gcm2sbml.getGCM(), this,
 				gcm2sbml);
 
-		tabPane.addTab("Model Viewer", movieContainer);
+		tabPane.addTab("Schematic", movieContainer);
 		tabPane.getComponentAt(tabPane.getComponents().length - 1).setName("ModelViewMovie");
 		// When the Graphical View panel gets clicked on, tell it to display
 		// itself.
@@ -11144,7 +11143,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						newSim, root + separator + newSim + separator + newSim + ".sim", reb2sac);
 				reb2sac.setGcm(gcm);
 				// sbml.addMouseListener(this);
-				simTab.addTab("Parameter Editor", gcm);
+				addModelViewTab(reb2sac, simTab, gcm);
+				simTab.addTab("Parameters", gcm);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
 				if (!gcm.getSBMLFile().equals("--none--")) {
 					SBML_Editor sbml = new SBML_Editor(root + separator + gcm.getSBMLFile(),
@@ -11161,7 +11161,6 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 					gcm.setSBMLParamFile(null);
 				}
-				addModelViewTab(reb2sac, simTab, gcm);
 			}
 			else {
 				SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root

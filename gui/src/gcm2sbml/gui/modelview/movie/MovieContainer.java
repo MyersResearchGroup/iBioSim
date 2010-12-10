@@ -78,10 +78,10 @@ public class MovieContainer extends JPanel implements ActionListener {
 			
 			isUIInitialized = true;
 		}
-		
+		/*
 		if(this.parser == null)
 			prepareTSDFile();
-
+		 */
 	}
 	
 	/**
@@ -230,12 +230,24 @@ public class MovieContainer extends JPanel implements ActionListener {
 		String command = event.getActionCommand();
 		
 		if(command.equals("rewind")){
-			slider.setValue(0);
-			updateVisuals();
+			if(parser == null){
+				JOptionPane.showMessageDialog(BioSim.frame, "Must first choose a simulation file.");
+			} else {
+				slider.setValue(0);
+				updateVisuals();
+			}
 		}else if(command.equals("playpause")){
-			playPauseButtonPress();
+			if(parser == null){
+				JOptionPane.showMessageDialog(BioSim.frame, "Must first choose a simulation file.");
+			} else {
+				playPauseButtonPress();
+			}
 		}else if(command.equals("singlestep")){
-			nextFrame();
+			if(parser == null){
+				JOptionPane.showMessageDialog(BioSim.frame, "Must first choose a simulation file.");
+			} else {
+				nextFrame();
+			}
 		}else if(command.equals("choose_simulation_file")){
 			prepareTSDFile();
 		}else{
@@ -269,8 +281,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private void updateVisuals(){
 		
 		if(parser == null){
-			// TODO: Warn the user that they need to choose a simulation file
-			throw new Error("No simulation file chosen! (i think)");
+			throw new Error("NoSimFileChosen");
 		}
 		
 		int pos = slider.getValue();

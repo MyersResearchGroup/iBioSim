@@ -929,14 +929,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		}*/
 
 		// create the grappa panel
-		GCIGrappaPanel grappaPanel = new GCIGrappaPanel();
+		//GCIGrappaPanel grappaPanel = new GCIGrappaPanel();
 		
 		// create the modelview2 (jgraph) panel
 		Schematic schematic = new Schematic(gcm, biosim, this, true);
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
-		mainPanel.add(mainPanelNorth, "North");
+		tabPanel.add(mainPanelNorth, "North");
 		mainPanel.add(mainPanelCenter, "Center");
 		JTabbedPane tab = new JTabbedPane();
 		tab.addTab("Schematic", schematic);
@@ -945,7 +945,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
  		//tab.addTab("Model View", grappaPanel);
 		setLayout(new BorderLayout());
 		if (paramsOnly) {
-			add(mainPanel, BorderLayout.CENTER);
+			add(tabPanel, BorderLayout.CENTER);
 		}
 		else {
 			add(tab, BorderLayout.CENTER);
@@ -968,25 +968,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				}
 			}
 		});
-
-		JPanel buttons = new JPanel();
-		SaveButton saveButton = new SaveButton("Save GCM", GCMNameTextField);
-		buttons.add(saveButton);
-		saveButton.addActionListener(this);
-		saveButton = new SaveButton("Save GCM as", GCMNameTextField);
-		buttons.add(saveButton);
-		saveButton.addActionListener(this);
-		// mainPanelCenterDown.add(saveButton);
-		saveButton = new SaveButton("Save as SBML", GCMNameTextField);
-		buttons.add(saveButton);
-		saveButton.addActionListener(this);
-		saveButton = new SaveButton("Save as SBML template", GCMNameTextField);
-		buttons.add(saveButton);
-		saveButton.addActionListener(this);
-		// JSplitPane pane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, null,
-		// buttons);
-		// pane.setDividerSize(2);
-		// mainPanelCenterDown.add(buttons, BorderLayout.CENTER);
 
 		promoters = new PropertyList("Promoter List");
 		EditButton addInit = new EditButton("Add Promoter", promoters);
@@ -1088,25 +1069,24 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 		}
 		initPanel = Utility.createPanel(this, "Components", components, addInit, removeInit, editInit);
-		if (!paramsOnly) {
-			mainPanelCenterCenter.add(initPanel);
-		}
+		mainPanelCenterCenter.add(initPanel);
 		
 		parameters = new PropertyList("Parameter List");
 		editInit = new EditButton("Edit Parameter", parameters);
 		// parameters.addAllItem(gcm.getParameters().keySet());
 		parameters.addAllItem(generateParameters());
 		initPanel = Utility.createPanel(this, "Parameters", parameters, null, null, editInit);
-		if (paramsOnly) {
-			mainPanelCenterCenter.add(initPanel);
-		} else {
-			tabPanel.add(initPanel, "Center");
-		}
+		tabPanel.add(initPanel, "Center");
 		
 		conditions = new PropertyList("Property List");
 		addInit = new EditButton("Add Property", conditions);
 		removeInit = new RemoveButton("Remove Property", conditions);
 		editInit = new EditButton("Edit Property", conditions);
+		if (paramsOnly) {
+			addInit.setEnabled(false);
+			removeInit.setEnabled(false);
+			editInit.setEnabled(false);
+		}
 		for (String s : gcm.getConditions()) {
 			conditions.addItem(s);
 		}
