@@ -1,7 +1,10 @@
 package gcm2sbml.gui.schematic;
 
+import java.awt.event.MouseEvent;
+
 import javax.swing.JPopupMenu;
 //import com.mxgraph.examples.swing.editor.EditorActions.HistoryAction;
+import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.util.mxGraphActions;
 
 public class EditorPopupMenu extends JPopupMenu
@@ -15,64 +18,12 @@ public class EditorPopupMenu extends JPopupMenu
 //	public EditorPopupMenu(BasicGraphEditor editor)
 	public EditorPopupMenu(Schematic editor)
 	{
-		boolean selected = !editor.getGraphComponent().getGraph()
-				.isSelectionEmpty();
-
-//		add(editor.bind(mxResources.get("undo"), new HistoryAction(true),
-//				"/com/mxgraph/examples/swing/images/undo.gif"));
-
-//		addSeparator();
-
-//		add(
-//				editor.bind(mxResources.get("cut"), TransferHandler
-//						.getCutAction(),
-//						"/com/mxgraph/examples/swing/images/cut.gif"))
-//				.setEnabled(selected);
-//		add(
-//				editor.bind(mxResources.get("copy"), TransferHandler
-//						.getCopyAction(),
-//						"/com/mxgraph/examples/swing/images/copy.gif"))
-//				.setEnabled(selected);
-//		add(editor.bind(mxResources.get("paste"), TransferHandler
-//				.getPasteAction(),
-//				"/com/mxgraph/examples/swing/images/paste.gif"));
-
-//		addSeparator();
-
-		add(
-				editor.bind("Delete", mxGraphActions
-						.getDeleteAction()))
-				.setEnabled(selected);
-
-//		addSeparator();
-
-		// Creates the format menu
-		//JMenu menu = (JMenu) add(new JMenu(mxResources.get("format")));
-
-		//EditorMenuBar.populateFormatMenu(menu, editor);
-
-		// Creates the shape menu
-		//menu = (JMenu) add(new JMenu(mxResources.get("shape")));
-
-		//EditorMenuBar.populateShapeMenu(menu, editor);
-
-		//addSeparator();
-
-//		add(
-//				editor.bind(mxResources.get("edit"), mxGraphActions
-//						.getEditAction())).setEnabled(selected);
-//
+		boolean selected = !editor.getGraphComponent().getGraph().isSelectionEmpty();
+		add(editor.bind("Delete", mxGraphActions.getDeleteAction())).setEnabled(selected);
 		addSeparator();
-		
-		add(editor.bind("Select Vertices", mxGraphActions
-				.getSelectVerticesAction()));
-		add(editor.bind("Select Edges", mxGraphActions
-				.getSelectEdgesAction()));
-
+		add(editor.bind("Select Vertices", mxGraphActions.getSelectVerticesAction()));
+		add(editor.bind("Select Edges", mxGraphActions.getSelectEdgesAction()));
 		addSeparator();
-
-		add(editor.bind("Select All", mxGraphActions
-				.getSelectAllAction()));
+		add(editor.bind("Select All", mxGraphActions.getSelectAllAction()));
 	}
-
 }
