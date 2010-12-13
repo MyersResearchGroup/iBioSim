@@ -51,6 +51,7 @@ public class Schematic extends JPanel implements ActionListener {
 	private BioSim biosim;
 	private GCM2SBMLEditor gcm2sbml;
 	private boolean editable;
+	public boolean getEditable(){return editable;};
 	
 	/**
 	 * listener stuff. Thanks to http://www.exampledepot.com/egs/java.util/custevent.html.
@@ -254,7 +255,7 @@ public class Schematic extends JPanel implements ActionListener {
 				
 				if (e.isPopupTrigger() && e.getButton() == MouseEvent.BUTTON3){
 					// rightclick on windows
-					if(editable)
+					if (editable)
 						showGraphPopupMenu(e);
 				}else if(e.getClickCount() == 1 && editable && e.getButton() == MouseEvent.BUTTON1){
 					// single click.
@@ -349,7 +350,8 @@ public class Schematic extends JPanel implements ActionListener {
 			{
 				if (e.isPopupTrigger() && e.getButton() == MouseEvent.BUTTON3){
 					// rightclick on mac
-					showGraphPopupMenu(e);
+					if (editable)
+						showGraphPopupMenu(e);
 					//editable = false;
 				}
 			}
