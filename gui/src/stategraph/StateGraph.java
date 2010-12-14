@@ -264,67 +264,78 @@ public class StateGraph implements Runnable {
 			stop = true;
 			return false;
 		}
-		else {
-			double lowerbound = 0;
-			if (!condition[2].equals("")) {
+		else if (condition != null) {
+			State initial = getInitialState();
+			if (initial != null) {
+				initial.setCurrentProb(1.0);
+				initial.setPiProb(1.0);
+				double lowerbound = 0;
+				if (!condition[2].equals("")) {
+					ExprTree expr = new ExprTree(lhpn);
+					expr.token = expr.intexpr_gettok(condition[2]);
+					expr.intexpr_L(condition[2]);
+					lowerbound = Math.min(expr.evaluateExpr(null), timeLimit);
+					pruneStateGraph("~(" + condition[0] + ")");
+					if (!performTransientMarkovianAnalysis(lowerbound, error)) {
+						return false;
+					}
+				}
+				else {
+					pruneStateGraph("~(" + condition[0] + ")");
+				}
 				ExprTree expr = new ExprTree(lhpn);
-				expr.token = expr.intexpr_gettok(condition[2]);
-				expr.intexpr_L(condition[2]);
-				lowerbound = Math.min(expr.evaluateExpr(null), timeLimit);
-				pruneStateGraph("~(" + condition[0] + ")");
-				if (!performTransientMarkovianAnalysis(lowerbound, error)) {
+				expr.token = expr.intexpr_gettok(condition[3]);
+				expr.intexpr_L(condition[3]);
+				double upperbound = Math.min(expr.evaluateExpr(null) - lowerbound, timeLimit
+						- lowerbound);
+				pruneStateGraph(condition[1]);
+				if (!performTransientMarkovianAnalysis(upperbound, error)) {
 					return false;
 				}
+				HashMap<String, Double> output = new HashMap<String, Double>();
+				double totalProb = 0;
+				double prob = 0;
+				for (String state : stateGraph.keySet()) {
+					for (State m : stateGraph.get(state)) {
+						expr = new ExprTree(lhpn);
+						expr.token = expr.intexpr_gettok("~(" + condition[0] + ")");
+						expr.intexpr_L("~(" + condition[0] + ")&~(" + condition[1] + ")");
+						if (expr.evaluateExpr(m.getVariables()) == 1.0) {
+							prob += m.getCurrentProb();
+						}
+					}
+				}
+				output.put("~(" + condition[0].trim() + ")&~(" + condition[1].trim() + ")", prob);
+				totalProb += prob;
+				prob = 0;
+				for (String state : stateGraph.keySet()) {
+					for (State m : stateGraph.get(state)) {
+						expr = new ExprTree(lhpn);
+						expr.token = expr.intexpr_gettok(condition[1]);
+						expr.intexpr_L(condition[1]);
+						if (expr.evaluateExpr(m.getVariables()) == 1.0) {
+							prob += m.getCurrentProb();
+						}
+					}
+				}
+				output.put(condition[1].trim(), prob);
+				totalProb += prob;
+				output.put("timelimit", 1.0 - totalProb);
+				String result1 = "#total";
+				String result2 = "1.0";
+				for (String s : output.keySet()) {
+					result1 += " " + s;
+					result2 += " " + output.get(s);
+				}
+				markovResults = result1 + "\n" + result2 + "\n";
+				return true;
 			}
 			else {
-				pruneStateGraph("~(" + condition[0] + ")");
-			}
-			ExprTree expr = new ExprTree(lhpn);
-			expr.token = expr.intexpr_gettok(condition[3]);
-			expr.intexpr_L(condition[3]);
-			double upperbound = Math.min(expr.evaluateExpr(null) - lowerbound, timeLimit
-					- lowerbound);
-			pruneStateGraph(condition[1]);
-			if (!performTransientMarkovianAnalysis(upperbound, error)) {
 				return false;
 			}
-			HashMap<String, Double> output = new HashMap<String, Double>();
-			double totalProb = 0;
-			double prob = 0;
-			for (String state : stateGraph.keySet()) {
-				for (State m : stateGraph.get(state)) {
-					expr = new ExprTree(lhpn);
-					expr.token = expr.intexpr_gettok("~(" + condition[0] + ")");
-					expr.intexpr_L("~(" + condition[0] + ")&~(" + condition[1] + ")");
-					if (expr.evaluateExpr(m.getVariables()) == 1.0) {
-						prob += m.getCurrentProb();
-					}
-				}
-			}
-			output.put("~(" + condition[0].trim() + ")&~(" + condition[1].trim() + ")", prob);
-			totalProb += prob;
-			prob = 0;
-			for (String state : stateGraph.keySet()) {
-				for (State m : stateGraph.get(state)) {
-					expr = new ExprTree(lhpn);
-					expr.token = expr.intexpr_gettok(condition[1]);
-					expr.intexpr_L(condition[1]);
-					if (expr.evaluateExpr(m.getVariables()) == 1.0) {
-						prob += m.getCurrentProb();
-					}
-				}
-			}
-			output.put(condition[1].trim(), prob);
-			totalProb += prob;
-			output.put("timelimit", 1.0 - totalProb);
-			String result1 = "#total";
-			String result2 = "1.0";
-			for (String s : output.keySet()) {
-				result1 += " " + s;
-				result2 += " " + output.get(s);
-			}
-			markovResults = result1 + "\n" + result2 + "\n";
-			return true;
+		}
+		else {
+			return performTransientMarkovianAnalysis(timeLimit, error);
 		}
 	}
 
@@ -355,49 +366,41 @@ public class StateGraph implements Runnable {
 			return false;
 		}
 		// Approximate pi(t)
-		State initial = getInitialState();
-		if (initial != null && !stop) {
-			initial.setCurrentProb(1.0);
-			initial.setPiProb(1.0);
-			for (int k = 1; k <= K && !stop; k++) {
-				for (String state : stateGraph.keySet()) {
-					for (State m : stateGraph.get(state)) {
-						double nextProb = m.getCurrentProb()
-								* (1 - (m.getTransitionSum(0.0, null) / Gamma));
-						for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
-							double prob = 0.0;
-							if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
-								prob = lhpn.getTransitionRateTree(prev.getTransition())
-										.evaluateExpr(prev.getState().getVariables());
-							}
-							nextProb += (prev.getState().getCurrentProb() * prob) / Gamma;
+		for (int k = 1; k <= K && !stop; k++) {
+			for (String state : stateGraph.keySet()) {
+				for (State m : stateGraph.get(state)) {
+					double nextProb = m.getCurrentProb()
+							* (1 - (m.getTransitionSum(0.0, null) / Gamma));
+					for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
+						double prob = 0.0;
+						if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
+							prob = lhpn.getTransitionRateTree(prev.getTransition()).evaluateExpr(
+									prev.getState().getVariables());
 						}
-						m.setNextProb(nextProb * ((Gamma * timeLimit) / k));
-						m.setPiProb(m.getPiProb() + m.getNextProb());
+						nextProb += (prev.getState().getCurrentProb() * prob) / Gamma;
 					}
-				}
-				if (stop) {
-					return false;
-				}
-				for (String state : stateGraph.keySet()) {
-					for (State m : stateGraph.get(state)) {
-						m.setCurrentProbToNext();
-					}
-				}
-			}
-			if (!stop) {
-				for (String state : stateGraph.keySet()) {
-					for (State m : stateGraph.get(state)) {
-						m.setPiProb(m.getPiProb() * (Math.pow((Math.E), -Gamma * timeLimit)));
-						m.setCurrentProbToPi();
-					}
+					m.setNextProb(nextProb * ((Gamma * timeLimit) / k));
+					m.setPiProb(m.getPiProb() + m.getNextProb());
 				}
 			}
 			if (stop) {
 				return false;
 			}
+			for (String state : stateGraph.keySet()) {
+				for (State m : stateGraph.get(state)) {
+					m.setCurrentProbToNext();
+				}
+			}
 		}
-		else {
+		if (!stop) {
+			for (String state : stateGraph.keySet()) {
+				for (State m : stateGraph.get(state)) {
+					m.setPiProb(m.getPiProb() * (Math.pow((Math.E), -Gamma * timeLimit)));
+					m.setCurrentProbToPi();
+				}
+			}
+		}
+		if (stop) {
 			return false;
 		}
 		return true;
@@ -421,6 +424,7 @@ public class StateGraph implements Runnable {
 					}
 					m.setNextStatesWithTrans(new StateTransitionPair[0]);
 				}
+				m.setTransitionSum(-1);
 			}
 		}
 	}
@@ -961,6 +965,10 @@ public class StateGraph implements Runnable {
 
 		private void setCurrentProbToPi() {
 			currentProb = piProb;
+		}
+
+		private void setTransitionSum(double transitionSum) {
+			this.transitionSum = transitionSum;
 		}
 
 		private double getTransitionSum(double noRate, State n) {

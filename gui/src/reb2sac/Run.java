@@ -1087,9 +1087,14 @@ public class Run implements ActionListener {
 										.addText("Performing transient Markov chain analysis with uniformization.\n");
 								PerfromTransientMarkovAnalysisThread performMarkovAnalysis = new PerfromTransientMarkovAnalysisThread(
 										sg);
-								performMarkovAnalysis.start(timeLimit, absError, Translator
-										.getProbpropParts(Translator
-												.getProbpropExpression(lpnProperty)));
+								if (lpnProperty != null && !lpnProperty.equals("")) {
+									performMarkovAnalysis.start(timeLimit, absError, Translator
+											.getProbpropParts(Translator
+													.getProbpropExpression(lpnProperty)));
+								}
+								else {
+									performMarkovAnalysis.start(timeLimit, absError, null);
+								}
 								performMarkovAnalysis.join();
 								if (!sg.getStop()) {
 									String simrep = sg.getMarkovResults();
