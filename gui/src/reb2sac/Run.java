@@ -439,13 +439,11 @@ public class Run implements ActionListener {
 			}
 		}
 		try {
-			FileOutputStream store = new FileOutputStream(new File((filename.substring(0, filename
-					.length()
-					- getFilename[getFilename.length - 1].length()))
-					+ getFilename[getFilename.length - 1].substring(0,
-							getFilename[getFilename.length - 1].length() - 5) + ".properties"));
-			nary.store(store, getFilename[getFilename.length - 1].substring(0,
-					getFilename[getFilename.length - 1].length() - 5)
+			FileOutputStream store = new FileOutputStream(new File(filename.replace(".sbml", "")
+					.replace(".xml", "")
+					+ ".properties"));
+			nary.store(store, getFilename[getFilename.length - 1].replace(".sbml", "").replace(
+					".xml", "")
 					+ " Properties");
 			store.close();
 		}
@@ -733,7 +731,7 @@ public class Run implements ActionListener {
 						exitValue = 0;
 					}
 					else {
-						if (abstraction.isSelected()) {
+						if (abstraction.isSelected() || nary.isSelected()) {
 							log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + ".."
 									+ separator + sbmlName + " " + filename + "\n");
 							time1 = System.nanoTime();
