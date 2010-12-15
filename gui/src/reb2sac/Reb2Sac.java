@@ -1563,8 +1563,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable,
 						.setText("Transient Markov Chain Analysis Using Uniformization");
 				minStep.setEnabled(false);
 				minStepLabel.setEnabled(false);
-				step.setEnabled(false);
-				stepLabel.setEnabled(false);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
 				errorLabel.setEnabled(true);
 				absErr.setEnabled(true);
 				limitLabel.setEnabled(true);
@@ -3199,7 +3199,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable,
 							+ separator + "user-defined.dat", biomodelsim,
 					simTab, root, progress, simName + " " + direct, gcmEditor,
 					direct, timeLimit, runTime, modelFile, lhpnAbstraction,
-					abstraction, lpnProperty, absError);
+					abstraction, lpnProperty, absError, timeStep);
 		} else {
 			if (gcmEditor != null) {
 				try {
@@ -3229,7 +3229,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable,
 							+ separator + "user-defined.dat", biomodelsim,
 					simTab, root, progress, simName, gcmEditor, null,
 					timeLimit, runTime, modelFile, lhpnAbstraction,
-					abstraction, lpnProperty, absError);
+					abstraction, lpnProperty, absError, timeStep);
 		}
 		if (nary.isSelected() && gcmEditor == null
 				&& !sim.contains("markov-chain-analysis") && !lhpn.isSelected()
