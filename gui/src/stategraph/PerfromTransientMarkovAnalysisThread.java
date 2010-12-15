@@ -4,7 +4,7 @@ public class PerfromTransientMarkovAnalysisThread extends Thread {
 
 	private StateGraph sg;
 
-	private double timeLimit, error;
+	private double timeLimit, timeStep, error;
 
 	private String[] condition;
 
@@ -13,8 +13,9 @@ public class PerfromTransientMarkovAnalysisThread extends Thread {
 		this.sg = sg;
 	}
 
-	public void start(double timeLimit, double error, String[] condition) {
+	public void start(double timeLimit, double timeStep, double error, String[] condition) {
 		this.timeLimit = timeLimit;
+		this.timeStep = timeStep;
 		this.error = error;
 		this.condition = condition;
 		super.start();
@@ -22,6 +23,6 @@ public class PerfromTransientMarkovAnalysisThread extends Thread {
 
 	@Override
 	public void run() {
-		sg.performTransientMarkovianAnalysis(timeLimit, error, condition);
+		sg.performTransientMarkovianAnalysis(timeLimit, timeStep, error, condition);
 	}
 }
