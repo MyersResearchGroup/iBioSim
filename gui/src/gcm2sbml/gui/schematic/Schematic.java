@@ -3,10 +3,13 @@ package gcm2sbml.gui.schematic;
 import gcm2sbml.gui.GCM2SBMLEditor;
 import gcm2sbml.gui.InfluencePanel;
 import gcm2sbml.gui.PromoterPanel;
+import gcm2sbml.gui.modelview.movie.MovieContainer;
+import gcm2sbml.gui.modelview.movie.visualizations.ColorScheme;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Event;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -43,13 +46,14 @@ import com.mxgraph.util.mxEventSource;
 public class Schematic extends JPanel implements ActionListener {
 		
 	private static final long serialVersionUID = 1L;
-	BioGraph graph;
+	private BioGraph graph;
 	private mxGraphComponent graphComponent;
 	public mxGraphComponent getGraphComponent(){return graphComponent;};	
 	
 	private GCMFile gcm;
 	private BioSim biosim;
 	private GCM2SBMLEditor gcm2sbml;
+	private MovieContainer movieContainer;
 	private boolean editable;
 	public boolean getEditable(){return editable;};
 	
@@ -83,13 +87,15 @@ public class Schematic extends JPanel implements ActionListener {
 	 * Constructor
 	 * @param internalModel
 	 */
-	public Schematic(GCMFile gcm, BioSim biosim, GCM2SBMLEditor gcm2sbml, boolean editable){
+	public Schematic(GCMFile gcm, BioSim biosim, GCM2SBMLEditor gcm2sbml, 
+			boolean editable, MovieContainer movieContainer){
 		super(new BorderLayout());
 		
 		this.gcm = gcm;
 		this.biosim = biosim;
 		this.gcm2sbml = gcm2sbml;
 		this.editable = editable;
+		this.movieContainer = movieContainer;
 		
 		// initialize everything on creation.
 		display();
@@ -333,10 +339,9 @@ public class Schematic extends JPanel implements ActionListener {
 				}else if(e.getClickCount() == 2 && e.getButton() == MouseEvent.BUTTON1){
 					// double click
 					if (cell != null){
-						graph.bringUpEditorForCell(cell);
+						bringUpEditorForCell(cell);
 						graph.buildGraph();
 						gcm.makeUndoPoint();
-						
 					}
 				}
 			}
@@ -356,6 +361,27 @@ public class Schematic extends JPanel implements ActionListener {
 				}
 			}
 		});
+	}
+	
+	
+	public void bringUpEditorForCell(mxCell cell){
+		if(graph.getCellType(cell) == GlobalConstants.SPECIES){
+			ColorScheme scheme = null;
+			if(movieContainer != null)
+				scheme = movieContainer.getColorSchemeForSpecies(cell.getId());
+			gcm2sbml.launchSpeciesPanel(cell.getId(), scheme);
+		}else if(graph.getCellType(cell) == GlobalConstants.INFLUENCE){
+			// if an edge, make sure it isn't connected
+			// to a component - which aren't really influences at all.
+			if(	graph.getCellType(cell.getSource()) == GlobalConstants.SPECIES &&
+					graph.getCellType(cell.getTarget()) == GlobalConstants.SPECIES)
+			gcm2sbml.launchInfluencePanel(cell.getId());
+		}else if(graph.getCellType(cell) == GlobalConstants.COMPONENT){
+			//gcm2sbml.displayChooseComponentDialog(true, null, false, cell.getId());
+			gcm2sbml.launchComponentPanel(cell.getId());
+		}
+		// refresh everything.
+		graph.buildGraph();
 	}
 	
 	/**
@@ -787,8 +813,8 @@ public class Schematic extends JPanel implements ActionListener {
 	//	graph.getModel().beginUpdate(); // doesn't seem needed.
 	}
 	
-	public void setSpeciesAnimationValue(String s, double value){
-		graph.setSpeciesAnimationValue(s, value);
+	public void setSpeciesAnimationValue(String s, Color color){
+		graph.setSpeciesAnimationValue(s, color);
 	}
 	
 	public void endFrame(){
