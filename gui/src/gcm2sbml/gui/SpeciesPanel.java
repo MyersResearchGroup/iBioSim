@@ -1,10 +1,15 @@
 package gcm2sbml.gui;
 
+import gcm2sbml.gui.modelview.movie.MovieContainer;
+import gcm2sbml.gui.modelview.movie.visualizations.ColorScheme;
+import gcm2sbml.gui.modelview.movie.visualizations.ColorSchemeChooser;
 import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,13 +22,36 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import parser.TSDParser;
+
 import biomodelsim.BioSim;
 
 public class SpeciesPanel extends JPanel implements ActionListener {
+
 	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList influencesList,
-			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly, GCMFile refGCM,
-			GCM2SBMLEditor gcmEditor) {
-		super(new GridLayout(7, 1));
+			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
+			GCMFile refGCM, GCM2SBMLEditor gcmEditor){
+
+		super(new BorderLayout());
+		constructor(selected, speciesList, influencesList, conditionsList, componentsList, gcm, paramsOnly, refGCM, gcmEditor, null);
+	}
+
+	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList influencesList,
+			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
+			GCMFile refGCM, GCM2SBMLEditor gcmEditor, ColorScheme colorScheme){
+
+		super(new BorderLayout());
+		constructor(selected, speciesList, influencesList, conditionsList, componentsList, gcm, paramsOnly, refGCM, gcmEditor, colorScheme);
+	}
+	
+	private void constructor(String selected, PropertyList speciesList, PropertyList influencesList,
+			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
+			GCMFile refGCM,  GCM2SBMLEditor gcmEditor, ColorScheme colorScheme) {
+
+		JPanel grid = new JPanel(new GridLayout(7,1));
+		this.add(grid, BorderLayout.CENTER);
+		
+
 		this.selected = selected;
 		this.speciesList = speciesList;
 		this.influences = influencesList;
@@ -31,6 +59,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		this.components = componentsList;
 		this.gcm = gcm;
 		this.paramsOnly = paramsOnly;
+		this.colorScheme = colorScheme;
 		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
@@ -42,7 +71,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			field.setEnabled(false);
 		}
 		fields.put(GlobalConstants.ID, field);
-		add(field);
+		grid.add(field);
 
 		// Name field
 		field = new PropertyField(GlobalConstants.NAME, "", null, null, Utility.NAMEstring,
@@ -51,7 +80,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			field.setEnabled(false);
 		}
 		fields.put(GlobalConstants.NAME, field);
-		add(field);
+		grid.add(field);
 
 		// Type field
 		JPanel tempPanel = new JPanel();
@@ -66,7 +95,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			tempLabel.setEnabled(false);
 			typeBox.setEnabled(false);
 		}
-		add(tempPanel);
+		grid.add(tempPanel);
 
 		// Initial field
 		String origString = "default";
@@ -91,16 +120,16 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					origString);
 		}
 		fields.put(GlobalConstants.INITIAL_STRING, field);
-		add(field);
+		grid.add(field);
 
-		// Max dimer field
+		// grid.grid.add(dimer field
 		// field = new PropertyField(GlobalConstants.MAX_DIMER_STRING, gcm
 		// .getParameter(GlobalConstants.MAX_DIMER_STRING),
 		// PropertyField.states[0], gcm
 		// .getParameter(GlobalConstants.MAX_DIMER_STRING),
 		// Utility.NUMstring);
 		// fields.put(GlobalConstants.MAX_DIMER_STRING, field);
-		// add(field);
+		// grid.add(field);
 
 		// Dimerization field
 		origString = "default";
@@ -125,7 +154,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					paramsOnly, origString);
 		}
 		fields.put(GlobalConstants.KASSOCIATION_STRING, field);
-		add(field);
+		grid.add(field);
 
 		// Decay field
 		origString = "default";
@@ -150,8 +179,15 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					origString);
 		}
 		fields.put(GlobalConstants.KDECAY_STRING, field);
-		add(field);
+		grid.add(field);
 
+		// add the color chooser for the movie component
+		if(paramsOnly){
+			colorSchemeChooser = new ColorSchemeChooser(colorScheme);
+			this.add(colorSchemeChooser, BorderLayout.SOUTH);
+		}
+		
+		
 		// Complex Equilibrium Constant Field
 		origString = "default";
 		if (paramsOnly) {
@@ -175,7 +211,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					origString);
 		}
 		fields.put(GlobalConstants.KCOMPLEX_STRING, field);
-		add(field);
+		grid.add(field);
 
 		String oldName = null;
 		if (selected != null) {
@@ -293,6 +329,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			speciesList.removeItem(oldName + " Modified");
 			speciesList.addItem(id);
 			speciesList.setSelectedValue(id, true);
+			// ColorSchemeChooser
+			if(colorSchemeChooser != null){
+				//movieProperties.setProperty(id + MovieContainer.COLOR_PREPEND, colorSchemeChooser.)
+			}
+
+			if(paramsOnly)
+				colorSchemeChooser.saveChanges();
+			
 			gcmEditor.setDirty(true);
 		}
 		else if (value == JOptionPane.NO_OPTION) {
@@ -385,7 +429,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 		}
 	}
-
+	
 	private String selected = "";
 
 	private PropertyList speciesList = null;
@@ -407,6 +451,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private HashMap<String, PropertyField> fields = null;
 
 	private boolean paramsOnly;
+	
+	private ColorScheme colorScheme;
+
+	private ColorSchemeChooser colorSchemeChooser;
 	
 	private GCM2SBMLEditor gcmEditor;
 }

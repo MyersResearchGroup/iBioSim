@@ -8,6 +8,7 @@ import gcm2sbml.gui.InfluencePanel;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 
+import java.awt.Color;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -93,23 +94,7 @@ public class BioGraph extends mxGraph {
 	
 		createStyleSheets();
 	}
-	
-	public void bringUpEditorForCell(mxCell cell){
-		if(getCellType(cell) == GlobalConstants.SPECIES){
-			gcm2sbml.launchSpeciesPanel(cell.getId());
-		}else if(getCellType(cell) == GlobalConstants.INFLUENCE){
-			// if an edge, make sure it isn't connected
-			// to a component - which aren't really influences at all.
-			if(	getCellType(cell.getSource()) == GlobalConstants.SPECIES &&
-				getCellType(cell.getTarget()) == GlobalConstants.SPECIES)
-			gcm2sbml.launchInfluencePanel(cell.getId());
-		}else if(getCellType(cell) == GlobalConstants.COMPONENT){
-			//gcm2sbml.displayChooseComponentDialog(true, null, false, cell.getId());
-			gcm2sbml.launchComponentPanel(cell.getId());
-		}
-		// refresh everything.
-		this.buildGraph();
-	}
+
 	
 	/**
 	 * Called after a layout is chosen and applied.
@@ -918,23 +903,24 @@ public class BioGraph extends mxGraph {
 	}
 	
 	//////////////////////////////////////// ANIMATION TYPE STUFF ////////////////////////////////
-	private static final double extraAnimationWidth = 30.0;
-	private static final double extraAnimationHeight = 20;
-	public void setSpeciesAnimationValue(String s, double value){
+	public void setSpeciesAnimationValue(String s, Color color){
 		mxCell cell = this.speciesToMxCellMap.get(s);
 		
-//		String newCol = String.valueOf(value / 100 * 16);
+//		mxGeometry priorGeom = cell.getGeometry();
+//		mxGeometry geom = new mxGeometry();
 //		
-//		cell.setStyle(mxConstants.STYLE_FILLCOLOR, "#FFAA00", newCol);
-		mxGeometry priorGeom = cell.getGeometry();
-		mxGeometry geom = new mxGeometry();
+//		geom.setWidth(extraAnimationWidth + value*.5);
+//		geom.setHeight(extraAnimationHeight + value*.5);
+//		geom.setX(priorGeom.getCenterX() - geom.getWidth()*.5);
+//		geom.setY(priorGeom.getCenterY() - geom.getHeight()*.5);
+//
+//		cell.setGeometry(geom);
 		
-		geom.setWidth(extraAnimationWidth + value*.5);
-		geom.setHeight(extraAnimationHeight + value*.5);
-		geom.setX(priorGeom.getCenterX() - geom.getWidth()*.5);
-		geom.setY(priorGeom.getCenterY() - geom.getHeight()*.5);
 
-		cell.setGeometry(geom);
+		
+		String newStyle = mxConstants.STYLE_FILLCOLOR + "=" + Integer.toHexString(color.getRGB());
+		
+		cell.setStyle(newStyle);
 	}
 	
 }

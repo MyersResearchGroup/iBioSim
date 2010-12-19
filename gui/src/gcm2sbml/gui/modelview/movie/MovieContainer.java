@@ -1,6 +1,7 @@
 package gcm2sbml.gui.modelview.movie;
 
 import gcm2sbml.gui.GCM2SBMLEditor;
+import gcm2sbml.gui.modelview.movie.visualizations.ColorScheme;
 import gcm2sbml.gui.schematic.ListChooser;
 import gcm2sbml.gui.schematic.Schematic;
 import gcm2sbml.gui.schematic.SchematicObjectClickEvent;
@@ -10,12 +11,14 @@ import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -37,6 +40,9 @@ import biomodelsim.BioSim;
 
 public class MovieContainer extends JPanel implements ActionListener {
 
+	public static final String COLOR_PREPEND = "_COLOR";
+	public static final String MIN_PREPEND = "_MIN";
+	public static final String MAX_PREPEND = "_MAX";
 	
 	public static final int FRAME_DELAY_MILLISECONDS = 20;
 	
@@ -47,6 +53,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private GCMFile gcm;
 	private BioSim biosim;
 	
+	private Properties movieProperties; 
+	
 	TSDParser parser;
 	Timer playTimer;
 	
@@ -56,15 +64,19 @@ public class MovieContainer extends JPanel implements ActionListener {
 	
 	public MovieContainer(Reb2Sac reb2sac_, GCMFile gcm, BioSim biosim, GCM2SBMLEditor gcm2sbml){
 		super(new BorderLayout());
-		schematic = new Schematic(gcm, biosim, gcm2sbml, false);
+		schematic = new Schematic(gcm, biosim, gcm2sbml, false, this);
 		this.add(schematic, BorderLayout.CENTER);
 		
 		this.gcm = gcm;
 		this.biosim = biosim;
 		this.reb2sac = reb2sac_;
 		
+		speciesColorSchemes = new HashMap<String, ColorScheme>();
+		
 		this.playTimer = new Timer(0, playTimerEventHandler);
 		mode = PAUSED;
+		
+		movieProperties = new Properties();
 		
 		registerEventListeners();
 	}
@@ -126,7 +138,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private void addUI(){
 
 		addPlayUI();
-		addPropertiesWindow();
+		//addPropertiesWindow();
 		
 		// add the top menu bar
 		/*
@@ -141,13 +153,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 	}
 	
-	JPanel colorSchemePropertiesWindow;
-	private void addPropertiesWindow(){
-		colorSchemePropertiesWindow = new JPanel(new VerticalLayout());
-		colorSchemePropertiesWindow.setPreferredSize(new Dimension(150, 20));
-
-		this.add(colorSchemePropertiesWindow, BorderLayout.WEST);
-	}
 	
 	private void addPlayUI(){
 		// Add the bottom menu bar
@@ -173,32 +178,21 @@ public class MovieContainer extends JPanel implements ActionListener {
 	
 	private void registerEventListeners(){
 		
-		final MovieContainer self = this;
+	//	final MovieContainer self = this;
 		
 		// When the user clicks on an object in the schematic
 		this.schematic.addSchematicObjectClickEventListener(new SchematicObjectClickEventListener() {
 			
 			public void SchematicObjectClickEventOccurred(SchematicObjectClickEvent evt) {
-				// TODO Auto-generated method stub
-				colorSchemePropertiesWindow.removeAll();
-				
-				
-				if(evt.getType() == GlobalConstants.SPECIES){
-					// it is a species
-					
-					JLabel label = new JLabel("Color Scheme For " + evt.getProp().getProperty(GlobalConstants.ID));
-					colorSchemePropertiesWindow.add(label);
-					
-					ColorSchemeChooser csc = new ColorSchemeChooser();
-					colorSchemePropertiesWindow.add(csc);
-					colorSchemePropertiesWindow.invalidate();
-					self.invalidate();
-					self.repaint();
-					colorSchemePropertiesWindow.repaint();
-					
-				}else if(evt.getType() == GlobalConstants.COMPONENT){
-					// the clicked object is a component
-				}
+//				
+//				
+//				if(evt.getType() == GlobalConstants.SPECIES){
+//					// A species was clicked on
+//				}
+//			
+//				}else if(evt.getType() == GlobalConstants.COMPONENT){
+//					// the clicked object is a component
+//				}
 			}
 		});
 	}
@@ -301,11 +295,28 @@ public class MovieContainer extends JPanel implements ActionListener {
 		for(String s:gcm.getSpecies().keySet()){
 			if(dataHash.containsKey(s)){
 				double value = dataHash.get(s).get(pos);
-				schematic.setSpeciesAnimationValue(s, value*2.0);
+				Color color = getColorSchemeForSpecies(s).getColor(value);
+				schematic.setSpeciesAnimationValue(s, color);
 			}
 		}
 		schematic.endFrame();
 		
 	}
 
+	private HashMap<String, ColorScheme> speciesColorSchemes;
+	/**
+	 * Returns the ColorScheme for a given species. If such a color scheme doesn't exist
+	 * then a new one will be created.
+	 * @param species
+	 * @return
+	 */
+	public ColorScheme getColorSchemeForSpecies(String species){
+		ColorScheme cs = speciesColorSchemes.get(species);
+		if(cs == null){
+			cs = new ColorScheme();
+			speciesColorSchemes.put(species, cs);
+		}
+		return cs;
+	}
+	
 }
