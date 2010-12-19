@@ -2,6 +2,7 @@ package gcm2sbml.gui.modelview.movie;
 
 import gcm2sbml.gui.GCM2SBMLEditor;
 import gcm2sbml.gui.modelview.movie.visualizations.ColorScheme;
+import gcm2sbml.gui.modelview.movie.visualizations.component.ComponentScheme;
 import gcm2sbml.gui.schematic.ListChooser;
 import gcm2sbml.gui.schematic.Schematic;
 import gcm2sbml.gui.schematic.SchematicObjectClickEvent;
@@ -72,6 +73,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		this.reb2sac = reb2sac_;
 		
 		speciesColorSchemes = new HashMap<String, ColorScheme>();
+		componentSchemes = new HashMap<String, ComponentScheme>();
 		
 		this.playTimer = new Timer(0, playTimerEventHandler);
 		mode = PAUSED;
@@ -80,6 +82,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		registerEventListeners();
 	}
+	
+	public TSDParser getTSDParser(){return parser;}
 	
 	private boolean isUIInitialized;
 	public void display(){
@@ -304,6 +308,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	}
 
 	private HashMap<String, ColorScheme> speciesColorSchemes;
+	private HashMap<String, ComponentScheme> componentSchemes;
 	/**
 	 * Returns the ColorScheme for a given species. If such a color scheme doesn't exist
 	 * then a new one will be created.
@@ -318,5 +323,18 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 		return cs;
 	}
-	
+	/**
+	 * Returns the ComponentScheme for a given component. If such a scheme doesn't exist
+	 * then a new one will be created.
+	 * @param species
+	 * @return
+	 */
+	public ComponentScheme getComponentSchemeForComponent(String comp){
+		ComponentScheme cs = componentSchemes.get(comp);
+		if(cs == null){
+			cs = new ComponentScheme();
+			componentSchemes.put(comp, cs);
+		}
+		return cs;
+	}
 }

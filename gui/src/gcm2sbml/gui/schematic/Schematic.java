@@ -5,6 +5,7 @@ import gcm2sbml.gui.InfluencePanel;
 import gcm2sbml.gui.PromoterPanel;
 import gcm2sbml.gui.modelview.movie.MovieContainer;
 import gcm2sbml.gui.modelview.movie.visualizations.ColorScheme;
+import gcm2sbml.gui.modelview.movie.visualizations.component.ComponentSchemeChooser;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 
@@ -378,7 +379,14 @@ public class Schematic extends JPanel implements ActionListener {
 			gcm2sbml.launchInfluencePanel(cell.getId());
 		}else if(graph.getCellType(cell) == GlobalConstants.COMPONENT){
 			//gcm2sbml.displayChooseComponentDialog(true, null, false, cell.getId());
-			gcm2sbml.launchComponentPanel(cell.getId());
+			if(movieContainer == null)
+				gcm2sbml.launchComponentPanel(cell.getId());
+			else{
+				if(movieContainer.getTSDParser() == null)
+					JOptionPane.showMessageDialog(BioSim.frame, "Sorry, you must choose a simulation file before editing component properties.");
+				else
+					new ComponentSchemeChooser(cell.getId(), movieContainer);
+			}
 		}
 		// refresh everything.
 		graph.buildGraph();
