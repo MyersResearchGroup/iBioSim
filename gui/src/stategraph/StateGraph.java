@@ -813,10 +813,10 @@ public class StateGraph implements Runnable {
 									+ " [label=\""
 									+ next.getTransition()
 									+ "\\n"
-									+ Double.parseDouble(num.format((lhpn.getTransitionRateTree(next.getTransition()).evaluateExpr(m
+									+ num.format((lhpn.getTransitionRateTree(next.getTransition()).evaluateExpr(m
 											.getVariables()) /*
 																				 * / m . getTransitionSum ( )
-																				 */))) + "\"]\n");
+																				 */)) + "\"]\n");
 						}
 						else {
 							out.write(m.getID() + " -> " + next.getState().getID() + " [label=\"" + next.getTransition() + "\"]\n");
