@@ -980,7 +980,7 @@ public class GCMFile {
 						LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i),
 								(String) threshold);
 						LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + rate
-								+ ")/" + "(" + threshold + "-" + number + ")");
+								+ ")/" + "((" + threshold + "-" + number + ")/" + np + ")");
 						transNum++;
 					}
 					kd = global_kd;
