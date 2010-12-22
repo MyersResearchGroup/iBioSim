@@ -1004,6 +1004,15 @@ public class Run implements ActionListener {
 									}
 									sg.outputStateGraph(
 											filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", true);
+									if (sg.outputTSD(directory + separator + "run-1.tsd")) {
+										for (int i = 0; i < simTab.getComponentCount(); i++) {
+											if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
+												if (simTab.getComponentAt(i) instanceof Graph) {
+													((Graph) simTab.getComponentAt(i)).refresh();
+												}
+											}
+										}
+									}
 									biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 								}
 								// String simrep = sg.getMarkovResults();
