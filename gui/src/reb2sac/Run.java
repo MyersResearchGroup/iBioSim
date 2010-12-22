@@ -14,6 +14,7 @@ import lhpn2sbml.gui.LHPNEditor;
 import lhpn2sbml.parser.Abstraction;
 import lhpn2sbml.parser.LhpnFile;
 import lhpn2sbml.parser.Translator;
+import gillespieSSAjava.GillespieSSAJavaSingleStep;
 
 import biomodelsim.*;
 import gcm2sbml.gui.GCM2SBMLEditor;
@@ -1082,10 +1083,30 @@ public class Run implements ActionListener {
 				}
 				else {
 					Preferences biosimrc = Preferences.userRoot();
+					if (sim.equals("gillespieJava")) {
+						time1 = System.nanoTime();
+						Properties props = new Properties();
+//						props.load(new FileInputStream(new File(directory + separator + modelFile.substring(0, modelFile.indexOf('.')) + ".properties")));
+						GillespieSSAJavaSingleStep javaSim = new GillespieSSAJavaSingleStep();
+						String SBMLFileName = directory + separator + theFile;
+						javaSim.PerformSim(SBMLFileName, outDir, timeLimit);
+						exitValue = 0;
+						return exitValue;
+					}
+					else if (biosimrc.get("biosim.sim.command", "").equals("")) {
+						time1 = System.nanoTime();
+						log.addText("Executing:\nreb2sac --target.encoding="
+								+ sim + " " + filename + "\n");
 					if (biosimrc.get("biosim.sim.command", "").equals("")) {
 						log.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename + "\n");
 						time1 = System.nanoTime();
-						reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile, null, work);
+						reb2sac = exec.exec("reb2sac --target.encoding=" + sim
+								+ " " + theFile, null, work);
+					}
+					else {
+						reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile,
+								null, work);
+					}
 					}
 					else {
 						String command = biosimrc.get("biosim.sim.command", "");
