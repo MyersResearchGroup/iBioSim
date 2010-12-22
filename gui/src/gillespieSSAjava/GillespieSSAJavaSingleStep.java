@@ -10,6 +10,7 @@ import java.lang.Math;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -311,9 +312,8 @@ public class GillespieSSAJavaSingleStep {
 			  
 			  // Pop up the interactive menu and asks the user to specify tau and miu
 			  String[] CustomParams=new String[3];
-			  // TODO Add a new text field for the user to specify how long he wants to "run" the simulation
 			  // optionValue: 0=step, 1=run, 2=terminate
-//			  optionValue == 1 && t >= runUntil
+			  boolean hasRunModeStarted = false;
 			  boolean isRunMode = (optionValue == 1) && t < runUntil;
 			  if (!isRunMode) {
 				  CustomParams = openInteractiveMenu(tau,miu);
@@ -328,13 +328,14 @@ public class GillespieSSAJavaSingleStep {
 					  // runUntil_optVal: 0=Run, 1=Cancel
 					  if (runUntil_optVal == 0) {
 						  runUntil = t + Double.parseDouble(CustomParamsRun[0]);
+						  hasRunModeStarted = true;
 					  }
 					  else {	// runUntil_optVal == 1 (Cancel)
 						  continue;
 					  }
 					   
 				  }
-				  else if(optionValue == 2) {
+				  else {
 					  break;
 				  }
 			  }
@@ -361,8 +362,10 @@ public class GillespieSSAJavaSingleStep {
 //			  System.out.println("*****************************************");
 			  
 			  // Print results to a table and display it. 
-			  tableModel.addRow(new Object[]{t_current, tau, IndexToReactions.get(miu)});
-			  simResultsTbl.showTable(tableFrame, simResultsTbl);
+			  if ((!isRunMode && !hasRunModeStarted) || (isRunMode && t >= runUntil)){
+				  tableModel.addRow(new Object[]{t_current, tau, IndexToReactions.get(miu)});
+				  simResultsTbl.showTable(tableFrame, simResultsTbl);
+			  }
 			  outTSD.print("(" + t + ", ");
 			  for (int i=0;i<SpeciesList.size();i++){
 				  if (i<SpeciesList.size()-1)
@@ -390,11 +393,6 @@ public class GillespieSSAJavaSingleStep {
 		 for (int i = 0; i < ReactionsToIndex.size(); i++){
 			 EnoughMolecules.put((String)ReactionsToIndex.keySet().toArray()[i], true);
 		 }
-//		  System.out.println("###########################################");
-//		  for (int i=0; i<EnoughMolecules.size(); i++){
-//			  System.out.println(EnoughMolecules.keySet().toArray()[i]);
-//		  }
-//		  System.out.println("###########################################");
 	 }
 	 
 	 public String[] openInteractiveMenu(double tau, int miu) {
@@ -431,15 +429,11 @@ public class GillespieSSAJavaSingleStep {
 			Object[] options = {"Step", "Run", "Terminate"};
 			int optionValue;
 			optionValue = JOptionPane.showOptionDialog(BioSim.frame, mainPanel, "Next Simulation Step",
-					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-
-			
-			
+					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			tau_miu_optVal[0]=tauStep.getText().trim();
 			tau_miu_optVal[1]=(String) nextReactionsList.getSelectedItem();
 			tau_miu_optVal[2]="" + optionValue;
 			return tau_miu_optVal;
-			
 		}
 	 
 	 public String[] openRunMenu(){
