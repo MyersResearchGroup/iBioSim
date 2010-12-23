@@ -1478,7 +1478,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
 			}
 			else if (type.getSelectedItem().equals("Monte Carlo")) {
-				choices = new String[] { "gillespie", "mpde", "mp", "mp-adaptive", "mp-event",
+				choices = new String[] { "gillespie", "gillespieJava", "mpde", "mp", "mp-adaptive", "mp-event",
 						"emc-sim", "bunker", "nmc" };
 			}
 			else if (type.getSelectedItem().equals("Markov")) {
@@ -1545,6 +1545,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 						Object o = sim.getSelectedItem();
 						sim.removeAllItems();
 						sim.addItem("gillespie");
+						sim.addItem("gillespieJava");
 						sim.addItem("mpde");
 						sim.addItem("mp");
 						sim.addItem("mp-adaptive");
