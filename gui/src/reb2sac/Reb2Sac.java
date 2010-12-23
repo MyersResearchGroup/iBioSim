@@ -1459,7 +1459,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable,
 				errorLabel.setEnabled(true);
 				description
 						.setText("Embedded Runge-Kutta-Fehlberg (4, 5) method");
-			} else if (simulators.getSelectedItem().equals("gillespie")) {
+			} else if (((String) simulators.getSelectedItem()).contains("gillespie")) {
 				description.setText("Gillespie's direct method");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
