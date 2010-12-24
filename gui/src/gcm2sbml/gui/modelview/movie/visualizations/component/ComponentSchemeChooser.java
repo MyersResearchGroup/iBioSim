@@ -27,7 +27,7 @@ public class ComponentSchemeChooser extends JPanel implements ActionListener {
 		super(new BorderLayout());
 
 		this.compName = compName;
-		this.componentScheme = movieContainer.getComponentSchemeForComponent(compName);
+		this.componentScheme = movieContainer.getMoviePreferences().getComponentSchemeForComponent(compName);
 		this.movieContainer = movieContainer;
 		
 		buildGUI();

@@ -33,6 +33,9 @@ import javax.swing.Timer;
 
 import org.jfree.ui.tabbedui.VerticalLayout;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import parser.TSDParser;
 
 import reb2sac.Reb2Sac;
@@ -62,6 +65,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private final String PLAYING = "playing"; 
 	private final String PAUSED = "paused"; 
 	private String mode = PLAYING;
+	private MoviePreferences moviePreferences;
+	public MoviePreferences getMoviePreferences(){return moviePreferences;}
 	
 	public MovieContainer(Reb2Sac reb2sac_, GCMFile gcm, BioSim biosim, GCM2SBMLEditor gcm2sbml){
 		super(new BorderLayout());
@@ -72,8 +77,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		this.biosim = biosim;
 		this.reb2sac = reb2sac_;
 		
-		speciesColorSchemes = new HashMap<String, ColorScheme>();
-		componentSchemes = new HashMap<String, ComponentScheme>();
+		moviePreferences = new MoviePreferences();
 		
 		this.playTimer = new Timer(0, playTimerEventHandler);
 		mode = PAUSED;
@@ -162,7 +166,10 @@ public class MovieContainer extends JPanel implements ActionListener {
 		// Add the bottom menu bar
 		JToolBar mt = new JToolBar();
 		
-		fileButton = Utils.makeToolButton("movie" + File.separator + "save.png", "choose_simulation_file", "Choose TSD File", this);
+		JButton saveButton = Utils.makeToolButton("", "save_test", "Test Saving", this);
+		mt.add(saveButton);
+		
+		fileButton = Utils.makeToolButton("", "choose_simulation_file", "Choose TSD File", this);
 		mt.add(fileButton);
 		
 		rewindButton = Utils.makeToolButton("movie" + File.separator + "rewind.png", "rewind", "Rewind", this);
@@ -254,8 +261,10 @@ public class MovieContainer extends JPanel implements ActionListener {
 			}
 		}else if(command.equals("choose_simulation_file")){
 			prepareTSDFile();
+		}else if(command.equals("save_test")){
+			String json = this.getPreferencesJson();
 		}else{
-			throw new Error("Unrecognized command!");
+			throw new Error("Unrecognized command '" + command + "'!");
 		}
 	}
 	
@@ -299,7 +308,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		for(String s:gcm.getSpecies().keySet()){
 			if(dataHash.containsKey(s)){
 				double value = dataHash.get(s).get(pos);
-				Color color = getColorSchemeForSpecies(s).getColor(value);
+				Color color = moviePreferences.getColorSchemeForSpecies(s).getColor(value);
 				schematic.setSpeciesAnimationValue(s, color);
 			}
 		}
@@ -307,34 +316,10 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 	}
 
-	private HashMap<String, ColorScheme> speciesColorSchemes;
-	private HashMap<String, ComponentScheme> componentSchemes;
-	/**
-	 * Returns the ColorScheme for a given species. If such a color scheme doesn't exist
-	 * then a new one will be created.
-	 * @param species
-	 * @return
-	 */
-	public ColorScheme getColorSchemeForSpecies(String species){
-		ColorScheme cs = speciesColorSchemes.get(species);
-		if(cs == null){
-			cs = new ColorScheme();
-			speciesColorSchemes.put(species, cs);
-		}
-		return cs;
+	public String getPreferencesJson(){
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		String out = gson.toJson(this.getMoviePreferences());
+		return out;
 	}
-	/**
-	 * Returns the ComponentScheme for a given component. If such a scheme doesn't exist
-	 * then a new one will be created.
-	 * @param species
-	 * @return
-	 */
-	public ComponentScheme getComponentSchemeForComponent(String comp){
-		ComponentScheme cs = componentSchemes.get(comp);
-		if(cs == null){
-			cs = new ComponentScheme();
-			componentSchemes.put(comp, cs);
-		}
-		return cs;
-	}
+
 }
