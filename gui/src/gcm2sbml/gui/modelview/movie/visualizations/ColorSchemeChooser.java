@@ -1,11 +1,14 @@
 package gcm2sbml.gui.modelview.movie.visualizations;
 
-import gcm2sbml.gui.modelview.movie.GradientEditor;
+import gcm2sbml.gui.modelview.movie.visualizations.gradient.GradientDisplayer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.LayoutManager;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
@@ -15,12 +18,17 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 
 import org.jfree.ui.tabbedui.VerticalLayout;
+
+import com.google.gson.Gson;
+
+import biomodelsim.BioSim;
 
 public class ColorSchemeChooser extends JPanel {
 
@@ -41,14 +49,15 @@ public class ColorSchemeChooser extends JPanel {
 
 	private void buildGUI(){
 		
-		//GradientEditor gs[] = {new GradientEditor(Color.BLACK, Color.RED), new GradientEditor(Color.BLACK, Color.GREEN), new GradientEditor(Color.BLACK, Color.BLUE)};
+		//GradientDisplayer gs[] = {new GradientDisplayer(Color.BLACK, Color.RED), new GradientDisplayer(Color.BLACK, Color.GREEN), new GradientDisplayer(Color.BLACK, Color.BLUE)};
 		JLabel l;
 		JPanel p;
 		JButton b;
 		
 		
-		gradientEditor = new GradientEditor(colorScheme.getColorGradient());
-		this.add(gradientEditor);
+		// Add the gradientDisplayer
+		gradientDisplayer = new GradientDisplayer(colorScheme.getColorGradient());
+		this.add(gradientDisplayer);
 		
 		JPanel minmax_panel = new JPanel(new BorderLayout());
 		p = new JPanel(new VerticalLayout());
@@ -70,18 +79,19 @@ public class ColorSchemeChooser extends JPanel {
 		
 		this.add(minmax_panel);
 		
-		// minmax presets
-		//this.add(new JSeparator(JSeparator));
-		p = new JPanel(new GridLayout(1,3));
-		this.add(p);
-		l = new JLabel("Min-Max Presets:");
-		p.add(l);
-		b = new JButton("Global Min-Max");
-		b.setToolTipText("Set the min and max to the minimum and maximum values found in any species in this simulation");
-		p.add(b);
-		b = new JButton("Species Min-Max");
-		b.setToolTipText("Set the min and max to the minimum and maximum values used by -this- species");
-		p.add(b);
+		
+		// TODO: Implement this functionality because it is cool :)
+//		// minmax presets
+//		p = new JPanel(new GridLayout(1,3));
+//		this.add(p);
+//		l = new JLabel("Min-Max Presets:");
+//		p.add(l);
+//		b = new JButton("Global Min-Max");
+//		b.setToolTipText("Set the min and max to the minimum and maximum values found in any species in this simulation");
+//		p.add(b);
+//		b = new JButton("Species Min-Max");
+//		b.setToolTipText("Set the min and max to the minimum and maximum values used by -this- species");
+//		p.add(b);
 		
 	}
 
@@ -91,21 +101,22 @@ public class ColorSchemeChooser extends JPanel {
 	 */
 	public void saveChanges(){
 		try{
-			colorScheme.setMin(Integer.parseInt(minTextField.getText()));
+			colorScheme.setMin(Float.parseFloat(minTextField.getText()));
 		}catch(NumberFormatException e){
 			// Leave the value unchanged, until we have a better idea for how to handle bad input.
+			JOptionPane.showMessageDialog(BioSim.frame, "Sorry, the value entered for 'Min' was " + minTextField.getText() + " and does not look like a valid number. It was ignored.");
 		}
 		
 		try{
-			colorScheme.setMax(Integer.parseInt(maxTextField.getText()));
+			colorScheme.setMax(Float.parseFloat(maxTextField.getText()));
 		}catch(NumberFormatException e){
-			
+			JOptionPane.showMessageDialog(BioSim.frame, "Sorry, the value entered for 'Max' was " + maxTextField.getText() + " and does not look like a valid number. It was ignored.");
 		}
 		
-		gradientEditor.saveChanges();
+		gradientDisplayer.saveChanges();
 	}
 
 	private JTextField minTextField;
 	private JTextField maxTextField;
-	private GradientEditor gradientEditor;
+	private GradientDisplayer gradientDisplayer;
 }

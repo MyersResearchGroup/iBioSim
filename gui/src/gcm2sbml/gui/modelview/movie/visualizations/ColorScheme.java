@@ -1,5 +1,7 @@
 package gcm2sbml.gui.modelview.movie.visualizations;
 
+import gcm2sbml.gui.modelview.movie.visualizations.gradient.ColorGradient;
+
 import java.awt.Color;
 
 public class ColorScheme {

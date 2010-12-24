@@ -369,7 +369,7 @@ public class Schematic extends JPanel implements ActionListener {
 		if(graph.getCellType(cell) == GlobalConstants.SPECIES){
 			ColorScheme scheme = null;
 			if(movieContainer != null)
-				scheme = movieContainer.getColorSchemeForSpecies(cell.getId());
+				scheme = movieContainer.getMoviePreferences().getColorSchemeForSpecies(cell.getId());
 			gcm2sbml.launchSpeciesPanel(cell.getId(), scheme);
 		}else if(graph.getCellType(cell) == GlobalConstants.INFLUENCE){
 			// if an edge, make sure it isn't connected
