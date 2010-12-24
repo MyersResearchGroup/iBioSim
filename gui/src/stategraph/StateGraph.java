@@ -325,13 +325,13 @@ public class StateGraph implements Runnable {
 							ExprTree failureExpr = new ExprTree(lhpn);
 							failureExpr.token = failureExpr.intexpr_gettok("~(" + condition[0] + ")&~(" + condition[1] + ")");
 							failureExpr.intexpr_L("~(" + condition[0] + ")&~(" + condition[1] + ")");
-							if (failureExpr.evaluateExpr(m.getVariables()) == 1.0) {
-								failureProb += m.getCurrentProb();
-							}
 							ExprTree successExpr = new ExprTree(lhpn);
 							successExpr.token = successExpr.intexpr_gettok(condition[1]);
 							successExpr.intexpr_L(condition[1]);
-							if (successExpr.evaluateExpr(m.getVariables()) == 1.0) {
+							if (failureExpr.evaluateExpr(m.getVariables()) == 1.0) {
+								failureProb += m.getCurrentProb();
+							}
+							else if (successExpr.evaluateExpr(m.getVariables()) == 1.0) {
 								successProb += m.getCurrentProb();
 							}
 						}
@@ -342,25 +342,29 @@ public class StateGraph implements Runnable {
 				HashMap<String, Double> output = new HashMap<String, Double>();
 				double failureProb = 0;
 				double successProb = 0;
+				double timelimitProb = 0;
 				for (String state : stateGraph.keySet()) {
 					for (State m : stateGraph.get(state)) {
 						ExprTree failureExpr = new ExprTree(lhpn);
 						failureExpr.token = failureExpr.intexpr_gettok("~(" + condition[0] + ")&~(" + condition[1] + ")");
 						failureExpr.intexpr_L("~(" + condition[0] + ")&~(" + condition[1] + ")");
-						if (failureExpr.evaluateExpr(m.getVariables()) == 1.0) {
-							failureProb += m.getCurrentProb();
-						}
 						ExprTree successExpr = new ExprTree(lhpn);
 						successExpr.token = successExpr.intexpr_gettok(condition[1]);
 						successExpr.intexpr_L(condition[1]);
-						if (successExpr.evaluateExpr(m.getVariables()) == 1.0) {
+						if (failureExpr.evaluateExpr(m.getVariables()) == 1.0) {
+							failureProb += m.getCurrentProb();
+						}
+						else if (successExpr.evaluateExpr(m.getVariables()) == 1.0) {
 							successProb += m.getCurrentProb();
+						}
+						else {
+							timelimitProb += m.getCurrentProb();
 						}
 					}
 				}
 				output.put("~(" + condition[0].trim() + ")&~(" + condition[1].trim() + ")", failureProb);
 				output.put(condition[1].trim(), successProb);
-				output.put("timelimit", 1.0 - failureProb - successProb);
+				output.put("timelimit", timelimitProb);
 				String result1 = "#total";
 				String result2 = "1.0";
 				for (String s : output.keySet()) {
