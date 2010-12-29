@@ -28,7 +28,7 @@ public class StateGraph implements Runnable {
 	private boolean stop;
 
 	private String markovResults;
-	
+
 	private Parser probData;
 
 	public StateGraph(LhpnFile lhpn) {
@@ -127,7 +127,8 @@ public class StateGraph implements Runnable {
 				state = new State(markedPlaces.toArray(new String[0]), new StateTransitionPair[0], "S" + counter,
 						createStateVector(variables, allVariables), copyAllVariables(allVariables));
 				markings.add(state);
-				fire.getParent().addNextState(state, fire.getTransition());
+				fire.getParent().addNextState(state,
+						lhpn.getTransitionRateTree(fire.getTransition()).evaluateExpr(fire.getParent().getVariables()));// fire.getTransition());
 				counter++;
 				stateGraph.put(createStateVector(variables, allVariables), markings);
 				for (String transition : lhpn.getTransitionList()) {
@@ -178,7 +179,8 @@ public class StateGraph implements Runnable {
 					}
 					if (same) {
 						add = false;
-						fire.getParent().addNextState(mark, fire.getTransition());
+						fire.getParent().addNextState(mark,
+								lhpn.getTransitionRateTree(fire.getTransition()).evaluateExpr(fire.getParent().getVariables()));// fire.getTransition());
 					}
 					same = true;
 				}
@@ -186,7 +188,8 @@ public class StateGraph implements Runnable {
 					state = new State(markedPlaces.toArray(new String[0]), new StateTransitionPair[0], "S" + counter,
 							createStateVector(variables, allVariables), copyAllVariables(allVariables));
 					markings.add(state);
-					fire.getParent().addNextState(state, fire.getTransition());
+					fire.getParent().addNextState(state,
+							lhpn.getTransitionRateTree(fire.getTransition()).evaluateExpr(fire.getParent().getVariables()));// fire.getTransition());
 					counter++;
 					stateGraph.put(createStateVector(variables, allVariables), markings);
 					for (String transition : lhpn.getTransitionList()) {
@@ -426,10 +429,11 @@ public class StateGraph implements Runnable {
 				for (State m : stateGraph.get(state)) {
 					double nextProb = m.getCurrentProb() * (1 - (m.getTransitionSum(0.0, null) / Gamma));
 					for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
-						double prob = 0.0;
-						if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
-							prob = lhpn.getTransitionRateTree(prev.getTransition()).evaluateExpr(prev.getState().getVariables());
-						}
+						double prob = prev.getTransition();
+						// if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
+						// prob =
+						// lhpn.getTransitionRateTree(prev.getTransition()).evaluateExpr(prev.getState().getVariables());
+						// }
 						nextProb += (prev.getState().getCurrentProb() * prob) / Gamma;
 					}
 					m.setNextProb(nextProb * ((Gamma * timeLimit) / k));
@@ -508,25 +512,29 @@ public class StateGraph implements Runnable {
 									double nextProb = 0.0;
 									for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
 										double transProb = 0.0;
-										if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
-											if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
-												// if
-												// (!lhpn.isExpTransitionRateTree(prev
-												// .getTransition())
-												// &&
-												// lhpn.getDelayTree(prev.getTransition())
-												// .evaluateExpr(null) == 0) {
-												// transProb = 1.0;
-												// }
-												// else {
-												transProb = lhpn.getTransitionRateTree(prev.getTransition()).evaluateExpr(
-														prev.getState().getVariables());
-												// }
-											}
-										}
-										else {
-											transProb = 1.0;
-										}
+										transProb += prev.getTransition();
+										// if (lhpn.getTransitionRateTree(prev.getTransition()) !=
+										// null) {
+										// if (lhpn.getTransitionRateTree(prev.getTransition()) !=
+										// null) {
+										// if
+										// (!lhpn.isExpTransitionRateTree(prev
+										// .getTransition())
+										// &&
+										// lhpn.getDelayTree(prev.getTransition())
+										// .evaluateExpr(null) == 0) {
+										// transProb = 1.0;
+										// }
+										// else {
+										// transProb =
+										// lhpn.getTransitionRateTree(prev.getTransition()).evaluateExpr(
+										// prev.getState().getVariables());
+										// }
+										// }
+										// }
+										// else {
+										// transProb = 1.0;
+										// }
 										double transitionSum = prev.getState().getTransitionSum(1.0, m);
 										if (transitionSum != 0) {
 											transProb = (transProb / transitionSum);
@@ -680,7 +688,7 @@ public class StateGraph implements Runnable {
 	public String getMarkovResults() {
 		return markovResults;
 	}
-	
+
 	public boolean outputTSD(String filename) {
 		if (probData != null) {
 			probData.outputTSD(filename);
@@ -865,21 +873,25 @@ public class StateGraph implements Runnable {
 						 * System.out.println(lhpn.getTransitionRateTree( next.getTransition
 						 * ()).evaluateExpr(m.getVariables()));
 						 */
-						if (lhpn.getTransitionRateTree(next.getTransition()) != null) {
-							out.write(m.getID()
-									+ " -> "
-									+ next.getState().getID()
-									+ " [label=\""
-									+ next.getTransition()
-									+ "\\n"
-									+ num.format((lhpn.getTransitionRateTree(next.getTransition()).evaluateExpr(m
-											.getVariables()) /*
-																				 * / m . getTransitionSum ( )
-																				 */)) + "\"]\n");
-						}
-						else {
-							out.write(m.getID() + " -> " + next.getState().getID() + " [label=\"" + next.getTransition() + "\"]\n");
-						}
+						out.write(m.getID() + " -> " + next.getState().getID() + " [label=\"" + next.getTransition() + "\\n"
+								+ num.format(next.getTransition()) + "\"]\n");
+						// if (lhpn.getTransitionRateTree(next.getTransition()) != null) {
+						// out.write(m.getID()
+						// + " -> "
+						// + next.getState().getID()
+						// + " [label=\""
+						// + next.getTransition()
+						// + "\\n"
+						// +
+						// num.format((lhpn.getTransitionRateTree(next.getTransition()).evaluateExpr(m
+						// .getVariables()) /*
+						// * / m . getTransitionSum ( )
+						// */)) + "\"]\n");
+						// }
+						// else {
+						// out.write(m.getID() + " -> " + next.getState().getID() +
+						// " [label=\"" + next.getTransition() + "\"]\n");
+						// }
 					}
 				}
 			}
@@ -927,11 +939,11 @@ public class StateGraph implements Runnable {
 	}
 
 	private class StateTransitionPair {
-		private String transition;
+		private double transition;
 
 		private State state;
 
-		private StateTransitionPair(State state, String transition) {
+		private StateTransitionPair(State state, double transition) {
 			this.state = state;
 			this.transition = transition;
 		}
@@ -940,7 +952,7 @@ public class StateGraph implements Runnable {
 			return state;
 		}
 
-		private String getTransition() {
+		private double getTransition() {
 			return transition;
 		}
 	}
@@ -1034,26 +1046,28 @@ public class StateGraph implements Runnable {
 			if (transitionSum == -1) {
 				transitionSum = 0;
 				for (StateTransitionPair next : nextStates) {
-					if (lhpn.getTransitionRateTree(next.getTransition()) != null) {
-						// if
-						// (!lhpn.isExpTransitionRateTree(next.getTransition())
-						// &&
-						// lhpn.getDelayTree(next.getTransition()).evaluateExpr(null)
-						// == 0) {
-						// if (n == null || next.equals(n)) {
-						// return 1.0;
-						// }
-						// else {
-						// return 0.0;
-						// }
-						// }
-						// else {
-						transitionSum += lhpn.getTransitionRateTree(next.getTransition()).evaluateExpr(variables);
-						// }
-					}
-					else {
-						transitionSum += noRate;
-					}
+					transitionSum += next.getTransition();
+					// if (lhpn.getTransitionRateTree(next.getTransition()) != null) {
+					// if
+					// (!lhpn.isExpTransitionRateTree(next.getTransition())
+					// &&
+					// lhpn.getDelayTree(next.getTransition()).evaluateExpr(null)
+					// == 0) {
+					// if (n == null || next.equals(n)) {
+					// return 1.0;
+					// }
+					// else {
+					// return 0.0;
+					// }
+					// }
+					// else {
+					// transitionSum +=
+					// lhpn.getTransitionRateTree(next.getTransition()).evaluateExpr(variables);
+					// }
+					// }
+					// else {
+					// transitionSum += noRate;
+					// }
 				}
 			}
 			return transitionSum;
@@ -1095,7 +1109,7 @@ public class StateGraph implements Runnable {
 			return stateVector;
 		}
 
-		private void addNextState(State nextState, String transition) {
+		private void addNextState(State nextState, double transition) {
 			StateTransitionPair[] newNextStates = new StateTransitionPair[nextStates.length + 1];
 			for (int i = 0; i < nextStates.length; i++) {
 				newNextStates[i] = nextStates[i];
@@ -1105,7 +1119,7 @@ public class StateGraph implements Runnable {
 			nextState.addPreviousState(this, transition);
 		}
 
-		private void addPreviousState(State prevState, String transition) {
+		private void addPreviousState(State prevState, double transition) {
 			StateTransitionPair[] newPrevStates = new StateTransitionPair[prevStates.length + 1];
 			for (int i = 0; i < prevStates.length; i++) {
 				newPrevStates[i] = prevStates[i];
