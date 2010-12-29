@@ -128,7 +128,8 @@ public class StateGraph implements Runnable {
 						createStateVector(variables, allVariables), copyAllVariables(allVariables));
 				markings.add(state);
 				fire.getParent().addNextState(state,
-						lhpn.getTransitionRateTree(fire.getTransition()).evaluateExpr(fire.getParent().getVariables()));// fire.getTransition());
+						lhpn.getTransitionRateTree(fire.getTransition()).evaluateExpr(fire.getParent().getVariables()),
+						fire.getTransition());
 				counter++;
 				stateGraph.put(createStateVector(variables, allVariables), markings);
 				for (String transition : lhpn.getTransitionList()) {
@@ -180,7 +181,8 @@ public class StateGraph implements Runnable {
 					if (same) {
 						add = false;
 						fire.getParent().addNextState(mark,
-								lhpn.getTransitionRateTree(fire.getTransition()).evaluateExpr(fire.getParent().getVariables()));// fire.getTransition());
+								lhpn.getTransitionRateTree(fire.getTransition()).evaluateExpr(fire.getParent().getVariables()),
+								fire.getTransition());
 					}
 					same = true;
 				}
@@ -189,7 +191,8 @@ public class StateGraph implements Runnable {
 							createStateVector(variables, allVariables), copyAllVariables(allVariables));
 					markings.add(state);
 					fire.getParent().addNextState(state,
-							lhpn.getTransitionRateTree(fire.getTransition()).evaluateExpr(fire.getParent().getVariables()));// fire.getTransition());
+							lhpn.getTransitionRateTree(fire.getTransition()).evaluateExpr(fire.getParent().getVariables()),
+							fire.getTransition());
 					counter++;
 					stateGraph.put(createStateVector(variables, allVariables), markings);
 					for (String transition : lhpn.getTransitionList()) {
@@ -873,7 +876,7 @@ public class StateGraph implements Runnable {
 						 * System.out.println(lhpn.getTransitionRateTree( next.getTransition
 						 * ()).evaluateExpr(m.getVariables()));
 						 */
-						out.write(m.getID() + " -> " + next.getState().getID() + " [label=\"" + next.getTransition() + "\\n"
+						out.write(m.getID() + " -> " + next.getState().getID() + " [label=\"" + next.getTransitionName() + "\\n"
 								+ num.format(next.getTransition()) + "\"]\n");
 						// if (lhpn.getTransitionRateTree(next.getTransition()) != null) {
 						// out.write(m.getID()
@@ -941,11 +944,14 @@ public class StateGraph implements Runnable {
 	private class StateTransitionPair {
 		private double transition;
 
+		private String transitionName;
+
 		private State state;
 
-		private StateTransitionPair(State state, double transition) {
+		private StateTransitionPair(State state, double transition, String transitionName) {
 			this.state = state;
 			this.transition = transition;
+			this.transitionName = transitionName;
 		}
 
 		private State getState() {
@@ -954,6 +960,10 @@ public class StateGraph implements Runnable {
 
 		private double getTransition() {
 			return transition;
+		}
+
+		private String getTransitionName() {
+			return transitionName;
 		}
 	}
 
@@ -1109,22 +1119,22 @@ public class StateGraph implements Runnable {
 			return stateVector;
 		}
 
-		private void addNextState(State nextState, double transition) {
+		private void addNextState(State nextState, double transition, String transitionName) {
 			StateTransitionPair[] newNextStates = new StateTransitionPair[nextStates.length + 1];
 			for (int i = 0; i < nextStates.length; i++) {
 				newNextStates[i] = nextStates[i];
 			}
-			newNextStates[newNextStates.length - 1] = new StateTransitionPair(nextState, transition);
+			newNextStates[newNextStates.length - 1] = new StateTransitionPair(nextState, transition, transitionName);
 			nextStates = newNextStates;
-			nextState.addPreviousState(this, transition);
+			nextState.addPreviousState(this, transition, transitionName);
 		}
 
-		private void addPreviousState(State prevState, double transition) {
+		private void addPreviousState(State prevState, double transition, String transitionName) {
 			StateTransitionPair[] newPrevStates = new StateTransitionPair[prevStates.length + 1];
 			for (int i = 0; i < prevStates.length; i++) {
 				newPrevStates[i] = prevStates[i];
 			}
-			newPrevStates[newPrevStates.length - 1] = new StateTransitionPair(prevState, transition);
+			newPrevStates[newPrevStates.length - 1] = new StateTransitionPair(prevState, transition, transitionName);
 			prevStates = newPrevStates;
 		}
 
