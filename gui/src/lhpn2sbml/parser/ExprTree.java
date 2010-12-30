@@ -4987,11 +4987,11 @@ public class ExprTree {
 					setVarValues('n', 0.0, 0.0, null);
 				}
 				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 1 && r2.uvalue == 1) {
-					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
-						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
 					}
 					else {
-						setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
 					}
 				}
 			}
