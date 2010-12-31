@@ -992,8 +992,9 @@ public class GCMFile {
 					LHPN.addMovement(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
 					LHPN.addMovement(specs.get(i) + "_trans" + transNum, previousPlaceName);
 					LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
-					LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(((" + threshold
-							+ "+" + number + ")/2)"// specs.get(i)
+					LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + 
+							//"(("+ threshold + "+" + number + ")/2)"
+							specs.get(i)
 							+ "*" + kd + ")/" + "(" + threshold + "-" + number + ")");
 					transNum++;
 				}
