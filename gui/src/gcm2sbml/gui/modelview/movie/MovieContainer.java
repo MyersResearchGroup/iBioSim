@@ -1,6 +1,7 @@
 package gcm2sbml.gui.modelview.movie;
 
 import gcm2sbml.gui.GCM2SBMLEditor;
+import gcm2sbml.gui.modelview.movie.MoviePreferences;
 import gcm2sbml.gui.modelview.movie.visualizations.ColorScheme;
 import gcm2sbml.gui.modelview.movie.visualizations.component.ComponentScheme;
 import gcm2sbml.gui.schematic.ListChooser;
