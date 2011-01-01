@@ -2,6 +2,9 @@ package parser;
 
 import java.awt.*;
 import java.io.*;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.nio.charset.Charset;
 import java.util.*;
 import javax.swing.*;
 import biomodelsim.*;
@@ -144,6 +147,26 @@ public class Parser {
 			out.put(species.get(i), data.get(i));
 		}
 		return out;
+	}
+	
+	/**
+	 * A helper function. Read a file into a string.
+	 * Thanks to erickson at http://stackoverflow.com/questions/326390/how-to-create-a-java-string-from-the-contents-of-a-file
+	 * @param path: the path to the file
+	 * @return
+	 * @throws IOException
+	 */
+	public static String readFileToString(String path) throws IOException {
+		FileInputStream stream = new FileInputStream(new File(path));
+		try {
+			FileChannel fc = stream.getChannel();
+			MappedByteBuffer bb = fc.map(FileChannel.MapMode.READ_ONLY, 0, fc.size());
+			/* Instead of using default, pass in a decoder. */
+			return Charset.defaultCharset().decode(bb).toString();
+		}
+		finally {
+			stream.close();
+		}
 	}
 	
 }

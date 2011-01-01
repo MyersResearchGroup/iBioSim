@@ -3542,6 +3542,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					else if (component instanceof Reb2Sac) {
 						((Reb2Sac) component).save();
 					}
+					else if(component instanceof MovieContainer){
+						((MovieContainer) component).savePreferences();
+					}
 				}
 			}
 			if (comp instanceof JPanel) {
