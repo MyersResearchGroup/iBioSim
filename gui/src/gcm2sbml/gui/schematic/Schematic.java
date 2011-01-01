@@ -54,9 +54,9 @@ public class Schematic extends JPanel implements ActionListener {
 	private GCMFile gcm;
 	private BioSim biosim;
 	private GCM2SBMLEditor gcm2sbml;
-	private MovieContainer movieContainer;
 	private boolean editable;
 	public boolean getEditable(){return editable;};
+	private MovieContainer movieContainer;
 	
 	/**
 	 * listener stuff. Thanks to http://www.exampledepot.com/egs/java.util/custevent.html.
