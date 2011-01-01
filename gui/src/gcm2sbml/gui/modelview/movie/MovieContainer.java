@@ -16,7 +16,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
@@ -31,6 +37,7 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
+import org.jfree.io.FileUtilities;
 import org.jfree.ui.tabbedui.VerticalLayout;
 
 import com.google.gson.Gson;
@@ -40,6 +47,7 @@ import parser.TSDParser;
 
 import reb2sac.Reb2Sac;
 
+import att.grappa.Parser;
 import biomodelsim.BioSim;
 
 public class MovieContainer extends JPanel implements ActionListener {
@@ -56,8 +64,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 	
 	private GCMFile gcm;
 	private BioSim biosim;
-	
-	private Properties movieProperties; 
+	private boolean isDirty = false;
+	public boolean getIsDirty(){return isDirty;} public void setIsDirty(boolean value){isDirty = value;}
 	
 	TSDParser parser;
 	Timer playTimer;
@@ -77,12 +85,11 @@ public class MovieContainer extends JPanel implements ActionListener {
 		this.biosim = biosim;
 		this.reb2sac = reb2sac_;
 		
+		//loadPreferences();
 		moviePreferences = new MoviePreferences();
 		
 		this.playTimer = new Timer(0, playTimerEventHandler);
 		mode = PAUSED;
-		
-		movieProperties = new Properties();
 		
 		registerEventListeners();
 	}
@@ -166,8 +173,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 		// Add the bottom menu bar
 		JToolBar mt = new JToolBar();
 		
-		JButton saveButton = Utils.makeToolButton("", "save_test", "Test Saving", this);
-		mt.add(saveButton);
+		JButton loadButton = Utils.makeToolButton("", "load_test", "Test Loading Preferences", this);
+		mt.add(loadButton);
 		
 		fileButton = Utils.makeToolButton("", "choose_simulation_file", "Choose TSD File", this);
 		mt.add(fileButton);
@@ -261,8 +268,9 @@ public class MovieContainer extends JPanel implements ActionListener {
 			}
 		}else if(command.equals("choose_simulation_file")){
 			prepareTSDFile();
-		}else if(command.equals("save_test")){
-			String json = this.getPreferencesJson();
+		}else if(command.equals("load_test")){
+			//this.savePreferences();
+			this.loadPreferences();
 		}else{
 			throw new Error("Unrecognized command '" + command + "'!");
 		}
@@ -315,11 +323,81 @@ public class MovieContainer extends JPanel implements ActionListener {
 		schematic.endFrame();
 		
 	}
-
-	public String getPreferencesJson(){
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		String out = gson.toJson(this.getMoviePreferences());
-		return out;
+	
+	private String getPreferencesFullPath(){
+		String path = reb2sac.getSimPath();
+		String fullPath = path + File.separator + "schematic_preferences.json";
+		return fullPath;
 	}
 
+	/**
+	 * outputs the preferences file.
+	 */
+	public void savePreferences(){
+		/*
+		 * TODO: This should be getting called when the properties get saved.
+		 * Save them to a file in path, then remove the test save button.
+		 * Then work on loading the properties back.
+		 */
+		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		String out = gson.toJson(this.getMoviePreferences());
+		
+		String fullPath = getPreferencesFullPath();
+		
+		FileOutputStream fHandle;
+		try {
+			fHandle = new FileOutputStream(fullPath);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(BioSim.frame, "An error occured opening preferences file " + fullPath + "\nmessage: " + e.getMessage());
+			return;
+		}
+		
+		try {
+			fHandle.write(out.getBytes());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(BioSim.frame, "An error occured writing the preferences file " + fullPath + "\nmessage: " + e.getMessage());
+		}
+		
+		try {
+			fHandle.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(BioSim.frame, "An error occured closing the preferences file " + fullPath + "\nmessage: " + e.getMessage());
+			return;
+		}
+		
+		biosim.log.addText("file saved to " + fullPath);
+		
+	}
+
+	/**
+	 * Loads the preferences file if it exists and stores it's values into the moviePreferences object.
+	 * If no preferences file exists, a new moviePreferences file will still be created.
+	 */
+	public void loadPreferences(){
+		
+		// load the prefs file if it exists
+		String fullPath = getPreferencesFullPath();
+		String json = null;
+		
+		try {
+			json = TSDParser.readFileToString(fullPath);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			//e.printStackTrace();
+		}
+		
+		if(json == null){
+			moviePreferences = new MoviePreferences();			
+		}else{
+			Gson gson = new Gson();
+			moviePreferences = gson.fromJson(json, MoviePreferences.class);
+		}
+	}
+	
 }
