@@ -1,7 +1,13 @@
 package gcm2sbml.gui.modelview.movie.visualizations.component;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.Vector;
+
+import parser.TSDParser;
 
 /**
  * Components can be colored based on multiple color schemes relating to multiple of their sub-species.
@@ -26,6 +32,35 @@ public class ComponentScheme {
 			schemes.add(csp);
 		}
 
+	}
+	
+	public Color getColor(HashMap<String, ArrayList<Double>> dataHash, int frameIndex){
+
+		ListIterator<ComponentSchemePart> iter = schemes.listIterator();
+		
+		int red, green, blue;
+		red = green = blue = 0;
+		boolean isValid = false;
+		
+		while(iter.hasNext()){
+			Color nextCol = iter.next().getColor(dataHash, frameIndex);
+			if(nextCol != null){
+				red += nextCol.getRed();
+				green += nextCol.getGreen();
+				blue += nextCol.getBlue();
+				isValid = true;
+			}
+		}
+		if(isValid){
+			if(red > 255)
+				red = 255;
+			if(green > 255)
+				green = 255;
+			if(blue > 255)
+				blue = 255;
+			return new Color(red, green, blue);
+		}else
+			return null;
 	}
 
 }

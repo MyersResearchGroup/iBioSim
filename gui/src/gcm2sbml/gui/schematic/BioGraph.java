@@ -905,23 +905,20 @@ public class BioGraph extends mxGraph {
 	//////////////////////////////////////// ANIMATION TYPE STUFF ////////////////////////////////
 	public void setSpeciesAnimationValue(String s, Color color){
 		mxCell cell = this.speciesToMxCellMap.get(s);
-		
-//		mxGeometry priorGeom = cell.getGeometry();
-//		mxGeometry geom = new mxGeometry();
-//		
-//		geom.setWidth(extraAnimationWidth + value*.5);
-//		geom.setHeight(extraAnimationHeight + value*.5);
-//		geom.setX(priorGeom.getCenterX() - geom.getWidth()*.5);
-//		geom.setY(priorGeom.getCenterY() - geom.getHeight()*.5);
-//
-//		cell.setGeometry(geom);
-		
 
-		
 		String newStyle = mxConstants.STYLE_FILLCOLOR + "=" + Integer.toHexString(color.getRGB());
 		
 		cell.setStyle(newStyle);
 	}
+	public void setComponentAnimationValue(String c, Color color){
+		mxCell cell = this.componentsToMxCellMap.get(c);
+
+		String newStyle = mxConstants.STYLE_FILLCOLOR + "=" + Integer.toHexString(color.getRGB());
+		
+		cell.setStyle(newStyle);
+	}
+	
+		
 	
 }
 

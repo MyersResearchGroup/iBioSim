@@ -58,7 +58,7 @@ public class ColorScheme {
 	/**
 	 * Returns a color on the gradient based on the input value.
 	 * @param val: The value you want to get a color for.
-	 * @return: A color on the gradient. RETURNS RED IF min >= max!
+	 * @return: A color on the gradient. returns null if min >= max.
 	 */
 	public Color getColor(double val){
 		// an error case that would mess up the math.
@@ -67,7 +67,7 @@ public class ColorScheme {
 		// setting it to red would more quickly alert the user
 		// that they did something wrong.
 		if(min >= max)
-			return Color.RED;
+			return null;
 		
 		float ratio = (float)((val - min) / (max - min));
 		

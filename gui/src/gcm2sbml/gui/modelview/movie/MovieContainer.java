@@ -294,7 +294,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * Called when the timer ticks and we need to update the colors/sizes/etc.
+	 * Called when the timer ticks and we need to update the colors or species and components.
 	 */
 	private void updateVisuals(){
 		
@@ -302,8 +302,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 			throw new Error("NoSimFileChosen");
 		}
 		
-		int pos = slider.getValue();
-		if(pos < 0 || pos > parser.getNumSamples()-1){
+		int frameIndex = slider.getValue();
+		if(frameIndex < 0 || frameIndex > parser.getNumSamples()-1){
 			throw new Error("Invalid slider value! It is outside the data range!");
 		}
 		
@@ -312,11 +312,20 @@ public class MovieContainer extends JPanel implements ActionListener {
 		schematic.beginFrame();
 		for(String s:gcm.getSpecies().keySet()){
 			if(dataHash.containsKey(s)){
-				double value = dataHash.get(s).get(pos);
-				Color color = moviePreferences.getColorSchemeForSpecies(s).getColor(value);
+				double value = dataHash.get(s).get(frameIndex);
+				Color color = moviePreferences.getOrCreateColorSchemeForSpecies(s).getColor(value);
 				schematic.setSpeciesAnimationValue(s, color);
 			}
 		}
+		
+		for(String c:gcm.getComponents().keySet()){
+			ComponentScheme cs = moviePreferences.getComponentSchemeForComponent(c);
+			if(cs != null){
+				Color color = cs.getColor(dataHash, frameIndex);
+				schematic.setComponentAnimationValue(c, color);
+			}
+		}
+		
 		schematic.endFrame();
 		
 	}
