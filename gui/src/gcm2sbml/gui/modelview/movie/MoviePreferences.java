@@ -22,7 +22,7 @@ public class MoviePreferences {
 	 * @param species
 	 * @return
 	 */
-	public ColorScheme getColorSchemeForSpecies(String species){
+	public ColorScheme getOrCreateColorSchemeForSpecies(String species){
 		ColorScheme cs = speciesColorSchemes.get(species);
 		if(cs == null){
 			cs = new ColorScheme();
@@ -36,12 +36,22 @@ public class MoviePreferences {
 	 * @param species
 	 * @return
 	 */
-	public ComponentScheme getComponentSchemeForComponent(String comp){
+	public ComponentScheme getOrCreateComponentSchemeForComponent(String comp){
 		ComponentScheme cs = componentSchemes.get(comp);
 		if(cs == null){
 			cs = new ComponentScheme();
 			componentSchemes.put(comp, cs);
 		}
+		return cs;
+	}
+	
+	/**
+	 * Returns the component scheme for a component or null if it doesn't exist.
+	 * @param comp
+	 * @return
+	 */
+	public ComponentScheme getComponentSchemeForComponent(String comp){
+		ComponentScheme cs = componentSchemes.get(comp);
 		return cs;
 	}
 	

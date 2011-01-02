@@ -1,5 +1,11 @@
 package gcm2sbml.gui.modelview.movie.visualizations.component;
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.HashMap;
+
+import parser.TSDParser;
+
 import gcm2sbml.gui.modelview.movie.visualizations.ColorScheme;
 
 /**
@@ -33,5 +39,12 @@ public class ComponentSchemePart {
 	public ComponentSchemePart(){
 		tsdKey = null;
 		colorScheme = new ColorScheme();
+	}
+	
+	public Color getColor(HashMap<String, ArrayList<Double>> dataHash, int frameIndex){
+		
+		String key = getTsdKey();
+		double val = dataHash.get(key).get(frameIndex);
+		return colorScheme.getColor(val);
 	}
 }
