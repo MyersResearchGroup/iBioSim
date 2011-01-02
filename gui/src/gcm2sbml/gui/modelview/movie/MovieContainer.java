@@ -86,8 +86,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		this.biosim = biosim;
 		this.reb2sac = reb2sac_;
 		
-		//loadPreferences();
-		moviePreferences = new MoviePreferences();
+		loadPreferences();
 		
 		this.playTimer = new Timer(0, playTimerEventHandler);
 		mode = PAUSED;
@@ -174,8 +173,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 		// Add the bottom menu bar
 		JToolBar mt = new JToolBar();
 		
-		JButton loadButton = Utils.makeToolButton("", "load_test", "Test Loading Preferences", this);
-		mt.add(loadButton);
+//		JButton loadButton = Utils.makeToolButton("", "load_test", "Test Loading Preferences", this);
+//		mt.add(loadButton);
 		
 		fileButton = Utils.makeToolButton("", "choose_simulation_file", "Choose TSD File", this);
 		mt.add(fileButton);
@@ -269,9 +268,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 			}
 		}else if(command.equals("choose_simulation_file")){
 			prepareTSDFile();
-		}else if(command.equals("load_test")){
-			//this.savePreferences();
-			this.loadPreferences();
 		}else{
 			throw new Error("Unrecognized command '" + command + "'!");
 		}
@@ -340,7 +336,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		 * Save them to a file in path, then remove the test save button.
 		 * Then work on loading the properties back.
 		 */
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
+		Gson gson = (new GsonMaker()).makeGson();
 		String out = gson.toJson(this.getMoviePreferences());
 		
 		String fullPath = getPreferencesFullPath();
@@ -396,8 +392,12 @@ public class MovieContainer extends JPanel implements ActionListener {
 		if(json == null){
 			moviePreferences = new MoviePreferences();			
 		}else{
-			Gson gson = new Gson();
-			moviePreferences = gson.fromJson(json, MoviePreferences.class);
+			Gson gson = (new GsonMaker()).makeGson();
+			try{
+				moviePreferences = gson.fromJson(json, MoviePreferences.class);
+			}catch(Exception e){
+				biosim.log.addText("An error occured trying to load the preferences file " + fullPath + " ERROR: " + e.toString());
+			}
 		}
 	}
 	

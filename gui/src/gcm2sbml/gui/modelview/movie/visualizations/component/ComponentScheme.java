@@ -1,5 +1,6 @@
 package gcm2sbml.gui.modelview.movie.visualizations.component;
 
+import java.util.LinkedList;
 import java.util.Vector;
 
 /**
@@ -12,13 +13,13 @@ public class ComponentScheme {
 
 	public final int NUM_PARTS = 2;
 	
-	private Vector<ComponentSchemePart> schemes;
-	public Vector<ComponentSchemePart> getSchemes(){return schemes;}
+	private LinkedList<ComponentSchemePart> schemes;
+	public LinkedList<ComponentSchemePart> getSchemes(){return schemes;}
 
 	
 	public ComponentScheme() {
 		// TODO Auto-generated constructor stub
-		schemes = new Vector<ComponentSchemePart>(NUM_PARTS);
+		schemes = new LinkedList<ComponentSchemePart>();
 		
 		for(int i=0; i<NUM_PARTS; i++){
 			ComponentSchemePart csp = new ComponentSchemePart();
