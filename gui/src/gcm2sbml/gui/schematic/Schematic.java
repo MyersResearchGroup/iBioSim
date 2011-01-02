@@ -89,14 +89,14 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @param internalModel
 	 */
 	public Schematic(GCMFile gcm, BioSim biosim, GCM2SBMLEditor gcm2sbml, 
-			boolean editable, MovieContainer movieContainer){
+			boolean editable, MovieContainer movieContainer2){
 		super(new BorderLayout());
 		
 		this.gcm = gcm;
 		this.biosim = biosim;
 		this.gcm2sbml = gcm2sbml;
 		this.editable = editable;
-		this.movieContainer = movieContainer;
+		this.movieContainer = movieContainer2;
 		
 		// initialize everything on creation.
 		display();

@@ -6,6 +6,7 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ListIterator;
 
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
@@ -41,18 +42,18 @@ public class ComponentSchemeChooser extends JPanel implements ActionListener {
 		schemeHolder = new JPanel(new VerticalLayout());
 		this.add(schemeHolder, BorderLayout.CENTER);
 		
-		for(int i=0; i<componentScheme.getSchemes().size(); i++){
-			//addSchemePart(componentScheme.getSchemes().elementAt(i));
+		ListIterator<ComponentSchemePart> iter = componentScheme.getSchemes().listIterator();
+		
+		while(iter.hasNext()){
 			schemeHolder.add(
 					new ComponentSchemePartChooser(
-							componentScheme.getSchemes().elementAt(i),
+							iter.next(),
 							compName,
 							movieContainer.getTSDParser()
 							)
 					);
 		}
-		
-		
+	
 //		JButton moreButton = new JButton("Add Another Scheme");
 //		moreButton.setActionCommand(ADD_ANOTHER);
 //		moreButton.addActionListener(this);
