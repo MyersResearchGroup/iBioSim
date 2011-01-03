@@ -1,6 +1,8 @@
 package gcm2sbml.visitor;
 
 
+
+
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
@@ -17,9 +19,10 @@ import gcm2sbml.util.Utility;
 
 public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 
-	public PrintActivatedProductionVisitor(SBMLDocument document, Promoter p) {
+	public PrintActivatedProductionVisitor(SBMLDocument document, Promoter p, String compartment) {
 		super(document);
 		this.promoter = p;
+		this.compartment = compartment;
 	}
 
 	/**
@@ -28,8 +31,11 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	 */
 	public void run() {
 		for (SpeciesInterface specie : promoter.getActivators()) {
-			speciesName = promoter.getId() + "_" + specie.getId() + "_RNAP";
-			reactionName = "R_act_production_" + promoter.getId() + "_" + specie.getId();
+			String activator = specie.getId();
+			if (!compartment.equals("default"))
+				activator = activator.split("__")[1];
+			speciesName = promoter.getId() + "_" + activator + "_RNAP";
+			reactionName = "R_act_production_" + promoter.getId() + "_" + activator;
 			specie.accept(this);
 		}
 	}
@@ -43,6 +49,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	public void visitComplex(ComplexSpecies specie) {
 		loadValues();
 		Reaction r = Utility.Reaction(reactionName);
+		r.setCompartment(compartment);
 		r.addModifier(Utility.ModifierSpeciesReference(speciesName));
 		for (SpeciesInterface species : promoter.getOutputs()) {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
@@ -60,6 +67,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues();
 		Reaction r = Utility.Reaction(reactionName);
+		r.setCompartment(compartment);
 		r.addModifier(Utility.ModifierSpeciesReference(speciesName));
 		for (SpeciesInterface species : promoter.getOutputs()) {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
@@ -77,6 +85,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	public void visitConstantSpecies(ConstantSpecies specie) {
 		loadValues();
 		Reaction r = Utility.Reaction(reactionName);
+		r.setCompartment(compartment);
 		r.addModifier(Utility.ModifierSpeciesReference(speciesName));
 		for (SpeciesInterface species : promoter.getOutputs()) {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
@@ -94,6 +103,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues();
 		Reaction r = Utility.Reaction(reactionName);
+		r.setCompartment(compartment);
 		r.addModifier(Utility.ModifierSpeciesReference(speciesName));
 		for (SpeciesInterface species : promoter.getOutputs()) {
 			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
@@ -122,6 +132,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	
 	private String speciesName;
 	private String reactionName;
+	private String compartment;
 
 	
 

@@ -13,6 +13,7 @@ import java.util.Properties;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -25,6 +26,8 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	private String[] options = { "Ok", "Cancel" };
 
 	private ArrayList<JComboBox> portmapBox = null;
+	
+	private JCheckBox compartmentBox = null;
 	
 	private ArrayList<String> types = null;
 
@@ -45,7 +48,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	public ComponentsPanel(String selected, PropertyList componentsList, PropertyList influences,
 			GCMFile gcm, String[] inputs, String[] outputs, String selectedComponent, String oldPort,
 			boolean paramsOnly, GCM2SBMLEditor gcmEditor) {
-		super(new GridLayout(inputs.length + outputs.length + 2, 1));
+		super(new GridLayout(inputs.length + outputs.length + 3, 1));
 		this.selected = selected;
 		this.componentsList = componentsList;
 		this.influences = influences;
@@ -91,12 +94,23 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			port.addActionListener(this);
 			portmapBox.add(port);
 		}
-
+		
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
 				Utility.IDstring, paramsOnly, "default");
 		fields.put(GlobalConstants.ID, field);
 		add(field);
+		
+		//Compartment check box
+		compartmentBox = new JCheckBox();
+		compartmentBox.addActionListener(this);
+		compartmentBox.setEnabled(true);
+		JPanel compartmentPanel = new JPanel();
+		JLabel compartmentLabel = new JLabel("Compartment");
+		compartmentPanel.setLayout(new GridLayout(1, 2));
+		compartmentPanel.add(compartmentLabel);
+		compartmentPanel.add(compartmentBox);
+		add(compartmentPanel);
 
 		// Port Map field
 		add(new JLabel(GlobalConstants.PORTMAP));
@@ -125,7 +139,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			add(tempPanel);
 			i++;
 		}
-
+		
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
@@ -216,7 +230,10 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				i++;
 			}
 			property.put("gcm", selectedComponent);
-
+			if (compartmentBox.getSelectedObjects() != null)
+				property.put("compartment", "true");
+			else
+				property.put("compartment", "false");
 			if (selected != null && !oldName.equals(id)) {
 				gcm.changeComponentName(oldName, id);
 				((DefaultListModel) influences.getModel()).clear();
@@ -257,6 +274,8 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	}
 
 	private void loadProperties(Properties property) {
+		if (property.containsKey("compartment"))
+			compartmentBox.setSelected(Boolean.parseBoolean(property.get("compartment").toString()));
 		for (Object o : property.keySet()) {
 			if (fields.containsKey(o.toString())) {
 				fields.get(o.toString()).setValue(property.getProperty(o.toString()));

@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -108,6 +109,7 @@ public class GeneticNetwork {
 		this.promoters = promoters;
 		this.complexMap = complexMap;
 		this.properties = gcm;
+		this.compartments = gcm.getCompartments();
 		
 		AbstractPrintVisitor.setGCMFile(gcm);
 		
@@ -127,8 +129,8 @@ public class GeneticNetwork {
 		currentDocument = document;
 		Model m = document.createModel();
 		document.setModel(m);
-		Utility.addCompartments(document, compartment);
-		document.getModel().getCompartment(compartment).setSize(1);
+		Utility.addCompartments(document, "default");
+		document.getModel().getCompartment("default").setSize(1);
 		
 		SBMLWriter writer = new SBMLWriter();
 		printSpecies(document);
@@ -179,8 +181,8 @@ public class GeneticNetwork {
 		currentDocument = document;
 		Model m = document.createModel();
 		document.setModel(m);
-		Utility.addCompartments(document, compartment);
-		document.getModel().getCompartment(compartment).setSize(1);
+		Utility.addCompartments(document, "default");
+		document.getModel().getCompartment("default").setSize(1);
 		return outputSBML(filename, document);
 	}
 
@@ -301,9 +303,14 @@ public class GeneticNetwork {
 		for (Promoter p : promoters.values()) {
 			// First setup RNAP binding
 			if (p.getOutputs().size()==0) continue;
+			String compartment = checkCompartments(p.getId());
+			String rnapName = "RNAP";
+			if (!compartment.equals("default"))
+				rnapName = compartment + "__RNAP";
 			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+			r.setCompartment(compartment);
 			r.setId("R_" + p.getId() + "_RNAP");
-			r.addReactant(Utility.SpeciesReference("RNAP", 1));
+			r.addReactant(Utility.SpeciesReference(rnapName, 1));
 			r.addReactant(Utility.SpeciesReference(p.getId(), 1));
 			r.addProduct(Utility.SpeciesReference(p.getId() + "_RNAP", 1));
 			r.setReversible(true);
@@ -311,20 +318,20 @@ public class GeneticNetwork {
 			KineticLaw kl = r.createKineticLaw();
 			kl.addParameter(Utility.Parameter(krnapString, p.getKrnap(), getMoleParameter(2)));
 			kl.addParameter(Utility.Parameter("kr", 1, getMoleTimeParameter(1)));
-			kl.setFormula("kr*" + krnapString + "*" + "RNAP*" + p.getId() + "-kr*"
+			kl.setFormula("kr*" + krnapString + "*" + rnapName + "*" + p.getId() + "-kr*"
 					+ p.getId() + "_RNAP");		
 			Utility.addReaction(document, r);
 
 			// Next setup activated binding
 			PrintActivatedBindingVisitor v = new PrintActivatedBindingVisitor(
-					document, p);
+					document, p, compartment);
 			v.setCooperationAbstraction(cooperationAbstraction);
 			v.setComplexAbstraction(complexAbstraction);
 			v.run();
 
 			// Next setup repression binding
 			PrintRepressionBindingVisitor v2 = new PrintRepressionBindingVisitor(
-					document, p);
+					document, p, compartment);
 			v2.setCooperationAbstraction(cooperationAbstraction);
 			v2.setComplexAbstraction(complexAbstraction);
 			v2.run();
@@ -342,7 +349,9 @@ public class GeneticNetwork {
 		
 		for (Promoter p : promoters.values()) {
 			if (p.getOutputs().size()==0) continue;
+			String compartment = checkCompartments(p.getId());
 			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
+			r.setCompartment(compartment);
 			r.addModifier(Utility.ModifierSpeciesReference(p.getId() + "_RNAP"));
 			for (SpeciesInterface species : p.getOutputs()) {
 				r.addProduct(Utility.SpeciesReference(species.getId(), p.getStoich()));
@@ -365,7 +374,7 @@ public class GeneticNetwork {
 			Utility.addReaction(document, r);
 			if (p.getActivators().size() > 0) {
 				PrintActivatedProductionVisitor v = new PrintActivatedProductionVisitor(
-						document, p);
+						document, p, compartment);
 				v.run();
 			}
 		}
@@ -379,7 +388,7 @@ public class GeneticNetwork {
 	 */
 	private void printDecay(SBMLDocument document) {
 		PrintDecaySpeciesVisitor visitor = new PrintDecaySpeciesVisitor(
-				document, species.values());
+				document, species.values(), compartments);
 		visitor.setComplexAbstraction(complexAbstraction);
 		visitor.run();
 	}
@@ -392,13 +401,13 @@ public class GeneticNetwork {
 	 */
 	private void printSpecies(SBMLDocument document) {
 		PrintSpeciesVisitor visitor = new PrintSpeciesVisitor(document, species
-				.values(), compartment);
+				.values(), compartments);
 		visitor.setComplexAbstraction(complexAbstraction);
 		visitor.run();
 	}
 	
 	private void printComplexBinding(SBMLDocument document) {
-		PrintComplexVisitor v = new PrintComplexVisitor(document, species.values());
+		PrintComplexVisitor v = new PrintComplexVisitor(document, species.values(), compartments);
 		v.run();
 	}
 	
@@ -765,6 +774,7 @@ public class GeneticNetwork {
 		}
 	}
 	
+	//This currently isn't used
 	private void printComponents(SBMLDocument document, String filename) {
 		for (String s : properties.getComponents().keySet()) {
 			GCMParser parser = new GCMParser(currentRoot + separator +
@@ -787,6 +797,8 @@ public class GeneticNetwork {
 		for (Promoter p : promoters.values()) {
 			if (p.getOutputs().size()==0) continue;
 			// First print out the promoter, and promoter bound to RNAP
+			// But first check if promoter belongs to a compartment other than default
+			String compartment = checkCompartments(p.getId());
 			Species s = Utility.makeSpecies(p.getId(), compartment,
 					p.getPcount());
 		    if ((p.getProperties() != null) &&
@@ -799,17 +811,23 @@ public class GeneticNetwork {
 					0);
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);
-			// Now cycle through all activators and repressors and add those
-			// bindings
+			// Now cycle through all activators and repressors and add 
+			// those species bound to promoter
 			for (SpeciesInterface specie : p.getActivators()) {
+				String activator = specie.getId();
+				if (!compartment.equals("default"))
+					activator = activator.split("__")[1];
 				s = Utility.makeSpecies(p.getId() + "_"
-						+ specie.getId() + "_RNAP", compartment, 0);
+						+ activator + "_RNAP", compartment, 0);
 				s.setHasOnlySubstanceUnits(true);
 				Utility.addSpecies(document, s);
 			}
 			for (SpeciesInterface specie : p.getRepressors()) {
+				String repressor = specie.getId();
+				if (!compartment.equals("default"))
+					repressor = repressor.split("__")[1];
 				s = Utility.makeSpecies(p.getId() + "_"
-						+ specie.getId() + "_bound", compartment, 0);
+						+ repressor + "_bound", compartment, 0);
 				s.setHasOnlySubstanceUnits(true);
 				Utility.addSpecies(document, s);
 			}
@@ -826,7 +844,7 @@ public class GeneticNetwork {
 	private void printOnlyPromoters(SBMLDocument document) {
 
 		for (Promoter p : promoters.values()) {
-			Species s = Utility.makeSpecies(p.getId(), compartment,
+			Species s = Utility.makeSpecies(p.getId(), "default",
 					p.getPcount());
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);			
@@ -847,9 +865,24 @@ public class GeneticNetwork {
 			rnap = Double.parseDouble(properties
 					.getParameter(GlobalConstants.RNAP_STRING));
 		}
-		Species s = Utility.makeSpecies("RNAP", compartment, rnap);		
+		Species s = Utility.makeSpecies("RNAP", "default", rnap);		
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
+		//Adds RNA polymerase for compartments other than default
+		for (String compartment : compartments) {
+			Species sc = Utility.makeSpecies(compartment + "__RNAP", compartment, rnap);
+			sc.setHasOnlySubstanceUnits(true);
+			Utility.addSpecies(document, sc);
+		}
+	}
+	
+	//Checks if species belongs in a compartment other than default
+	private String checkCompartments(String species) {
+		String compartment = "default";
+		String[] splitted = species.split("__");
+		if (compartments.contains(splitted[0]))
+			compartment = splitted[0];
+		return compartment;
 	}
 
 	/**
@@ -956,10 +989,10 @@ public class GeneticNetwork {
 	private HashMap<String, Promoter> promoters = null;
 	
 	private HashMap<String, ArrayList<PartSpecies>> complexMap = null;
+	
+	private ArrayList<String> compartments;
 
 	private GCMFile properties = null;
-
-	private String compartment = "default";
 	
 	private String krnapString = CompatibilityFixer
 	.getSBMLName(GlobalConstants.RNAP_BINDING_STRING);

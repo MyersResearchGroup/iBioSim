@@ -12,6 +12,7 @@ import gcm2sbml.network.SpasticSpecies;
 import gcm2sbml.network.SpeciesInterface;
 import gcm2sbml.parser.GCMFile;
 
+import java.util.ArrayList;
 import java.util.Properties;
 
 import org.sbml.libsbml.SBMLDocument;
@@ -80,5 +81,6 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	protected boolean cooperationAbstraction = false;
 	
 	protected boolean complexAbstraction = false;
+	
 
 }
