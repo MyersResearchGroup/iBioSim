@@ -1,5 +1,7 @@
 package gcm2sbml.visitor;
 
+
+
 import gcm2sbml.network.BaseSpecies;
 import gcm2sbml.network.ComplexSpecies;
 import gcm2sbml.network.ConstantSpecies;
@@ -17,9 +19,10 @@ import org.sbml.libsbml.SBMLDocument;
 
 public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 
-	public PrintRepressionBindingVisitor(SBMLDocument document, Promoter p) {
+	public PrintRepressionBindingVisitor(SBMLDocument document, Promoter p, String compartment) {
 		super(document);
 		this.promoter = p;
+		this.compartment = compartment;
 	}
 
 	/**
@@ -28,10 +31,11 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	 */
 	public void run() {
 		for (SpeciesInterface specie : promoter.getRepressors()) {
-			speciesName = promoter.getId() + "_" + specie.getId() + "_bound";
-			reactionName = "R_repression_binding_" + promoter.getId() + "_"
-					+ specie.getId();
-
+			String repressor = specie.getId();
+			if (!compartment.equals("default"))
+				repressor = repressor.split("__")[1];
+			speciesName = promoter.getId() + "_" + repressor + "_bound";
+			reactionName = "R_repression_binding_" + promoter.getId() + "_" + repressor;
 			specie.accept(this);
 		}
 	}
@@ -46,6 +50,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	public void visitComplex(ComplexSpecies specie) {
 		loadValues(specie);
 		org.sbml.libsbml.Reaction r = Utility.Reaction(reactionName);
+		r.setCompartment(compartment);
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addProduct(Utility.SpeciesReference(speciesName, 1));
 		r.setReversible(true);
@@ -82,6 +87,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues(specie);
 		org.sbml.libsbml.Reaction r = Utility.Reaction(reactionName);
+		r.setCompartment(compartment);
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		r.addProduct(Utility.SpeciesReference(speciesName, 1));
@@ -101,6 +107,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	public void visitConstantSpecies(ConstantSpecies specie) {
 		loadValues(specie);
 		org.sbml.libsbml.Reaction r = Utility.Reaction(reactionName);
+		r.setCompartment(compartment);
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		r.addProduct(Utility.SpeciesReference(speciesName, 1));
@@ -120,6 +127,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie);
 		org.sbml.libsbml.Reaction r = Utility.Reaction(reactionName);
+		r.setCompartment(compartment);
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		r.addProduct(Utility.SpeciesReference(speciesName, 1));
@@ -172,7 +180,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			.getSBMLName(GlobalConstants.KREP_STRING);
 
 	private String speciesName;
-
 	private String reactionName;
+	private String compartment;
 }
 

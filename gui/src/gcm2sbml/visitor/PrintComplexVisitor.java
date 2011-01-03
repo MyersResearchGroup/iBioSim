@@ -1,5 +1,6 @@
 package gcm2sbml.visitor;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import gcm2sbml.network.ComplexSpecies;
@@ -16,10 +17,11 @@ import org.sbml.libsbml.SBMLDocument;
 
 public class PrintComplexVisitor extends AbstractPrintVisitor {
 	
-	public PrintComplexVisitor(SBMLDocument document,
-			Collection<SpeciesInterface> species) {
+	public PrintComplexVisitor(SBMLDocument document, Collection<SpeciesInterface> species,
+			ArrayList<String> compartments) {
 		super(document);
 		this.species = species;
+		this.compartments = compartments;
 	}
 
 	/**
@@ -35,7 +37,9 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitComplex(ComplexSpecies specie) {
 		this.kcomp = specie.getKc();
+		String compartment = checkCompartments(specie.getId());
 		Reaction r = Utility.Reaction("Complex_formation_" + specie.getId());
+		r.setCompartment(compartment);
 		String expression = "";
 		for (PartSpecies part : specie.getParts()) {
 			SpeciesInterface s = part.getSpecies();
@@ -57,8 +61,18 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);
 	}
 	
+	//Checks if species belongs in a compartment other than default
+	private String checkCompartments(String species) {
+		String compartment = "default";
+		String[] splitted = species.split("__");
+		if (compartments.contains(splitted[0]))
+			compartment = splitted[0];
+		return compartment;
+	}
+	
 	private double kcomp;
 	private String kcompString = CompatibilityFixer
 			.getSBMLName(GlobalConstants.KCOMPLEX_STRING);
 	private Collection<SpeciesInterface> species;
+	private ArrayList<String> compartments;
 }

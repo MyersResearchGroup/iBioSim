@@ -87,6 +87,7 @@ public class GCMFile {
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
 		components = new HashMap<String, Properties>();
+		compartments = new ArrayList<String>();
 		conditions = new ArrayList<String>();
 		globalParameters = new HashMap<String, String>();
 		parameters = new HashMap<String, String>();
@@ -1056,6 +1057,10 @@ public class GCMFile {
 								+ prop.getProperty("graphwidth") + ",graphheight="
 								+ prop.getProperty("graphheight"));
 					}
+					if (prop.get("compartment") != null)
+						buffer.append(",compartment=" + prop.get("compartment"));
+					else
+						buffer.append(",compartment=false");
 				}
 			}
 			buffer.append("]\n");
@@ -1551,6 +1556,10 @@ public class GCMFile {
 
 	public HashMap<String, Properties> getComponents() {
 		return components;
+	}
+	
+	public ArrayList<String> getCompartments() {
+		return compartments;
 	}
 
 	/**
@@ -2445,6 +2454,15 @@ public class GCMFile {
 
 	private SBMLDocument unionSBML(SBMLDocument mainDoc, SBMLDocument doc, String compName) {
 		Model m = doc.getModel();
+		//Checks if component is a compartment
+		Object testCompartment = components.get(compName).get("compartment");
+		boolean isCompartment = false;
+		if (testCompartment != null)
+			isCompartment = Boolean.parseBoolean(testCompartment.toString());
+		else {
+			components.get(compName).put("compartment", "false");
+		}
+		//??
 		for (int i = 0; i < m.getNumCompartmentTypes(); i++) {
 			org.sbml.libsbml.CompartmentType c = m.getCompartmentType(i);
 			String newName = compName + "__" + c.getId();
@@ -2455,7 +2473,7 @@ public class GCMFile {
 				if (mainDoc.getModel().getCompartmentType(j).getId().equals(c.getId())) {
 					add = false;
 					org.sbml.libsbml.CompartmentType comp = mainDoc.getModel()
-							.getCompartmentType(j);
+					.getCompartmentType(j);
 					if (!c.getName().equals(comp.getName())) {
 						return null;
 					}
@@ -2465,44 +2483,47 @@ public class GCMFile {
 				mainDoc.getModel().addCompartmentType(c);
 			}
 		}
-		for (int i = 0; i < m.getNumCompartments(); i++) {
-			org.sbml.libsbml.Compartment c = m.getCompartment(i);
-			String newName = compName + "__" + c.getId();
-			updateVarId(false, c.getId(), newName, doc);
-			c.setId(newName);
-			boolean add = true;
-			for (int j = 0; j < mainDoc.getModel().getNumCompartments(); j++) {
-				if (mainDoc.getModel().getCompartment(j).getId().equals(c.getId())) {
-					add = false;
-					org.sbml.libsbml.Compartment comp = mainDoc.getModel().getCompartment(j);
-					if (!c.getName().equals(comp.getName())) {
-						return null;
-					}
-					if (!c.getCompartmentType().equals(comp.getCompartmentType())) {
-						return null;
-					}
-					if (c.getConstant() != comp.getConstant()) {
-						return null;
-					}
-					if (!c.getOutside().equals(comp.getOutside())) {
-						return null;
-					}
-					if (c.getVolume() != comp.getVolume()) {
-						return null;
-					}
-					if (c.getSpatialDimensions() != comp.getSpatialDimensions()) {
-						return null;
-					}
-					if (c.getSize() != comp.getSize()) {
-						return null;
-					}
-					if (!c.getUnits().equals(comp.getUnits())) {
-						return null;
+		//Creates new compartment only if component is a compartment 
+		if (isCompartment) {
+			for (int i = 0; i < m.getNumCompartments(); i++) {
+				org.sbml.libsbml.Compartment c = m.getCompartment(i);
+				updateVarId(false, c.getId(), compName, doc);
+				c.setId(compName);
+				boolean add = true;
+				for (int j = 0; j < mainDoc.getModel().getNumCompartments(); j++) {
+					if (mainDoc.getModel().getCompartment(j).getId().equals(c.getId())) {
+						add = false;
+						org.sbml.libsbml.Compartment comp = mainDoc.getModel().getCompartment(j);
+						if (!c.getName().equals(comp.getName())) {
+							return null;
+						}
+						if (!c.getCompartmentType().equals(comp.getCompartmentType())) {
+							return null;
+						}
+						if (c.getConstant() != comp.getConstant()) {
+							return null;
+						}
+						if (!c.getOutside().equals(comp.getOutside())) {
+							return null;
+						}
+						if (c.getVolume() != comp.getVolume()) {
+							return null;
+						}
+						if (c.getSpatialDimensions() != comp.getSpatialDimensions()) {
+							return null;
+						}
+						if (c.getSize() != comp.getSize()) {
+							return null;
+						}
+						if (!c.getUnits().equals(comp.getUnits())) {
+							return null;
+						}
 					}
 				}
-			}
-			if (add) {
-				mainDoc.getModel().addCompartment(c);
+				if (add) {
+					mainDoc.getModel().addCompartment(c);
+					compartments.add(compName);
+				}
 			}
 		}
 		for (int i = 0; i < m.getNumSpeciesTypes(); i++) {
@@ -3152,6 +3173,8 @@ public class GCMFile {
 	private HashMap<String, Properties> promoters;
 
 	private HashMap<String, Properties> components;
+	
+	private ArrayList<String> compartments;
 
 	private ArrayList<String> conditions;
 

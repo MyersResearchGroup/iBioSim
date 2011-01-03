@@ -10,6 +10,7 @@ import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.Utility;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.sbml.libsbml.KineticLaw;
@@ -19,9 +20,10 @@ import org.sbml.libsbml.SBMLDocument;
 public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 
 	public PrintDecaySpeciesVisitor(SBMLDocument document,
-			Collection<SpeciesInterface> species) {
+			Collection<SpeciesInterface> species, ArrayList<String> compartments) {
 		super(document);
 		this.species = species;
+		this.compartments = compartments;
 		addDecayUnit();
 	}
 	
@@ -49,7 +51,9 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	public void visitComplex(ComplexSpecies specie) {
 		if (!complexAbstraction) {	
 			loadValues(specie);
+			String compartment = checkCompartments(specie.getId());
 			Reaction r = Utility.Reaction("Degradation_"+specie.getId());
+			r.setCompartment(compartment);
 			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
 			r.setReversible(false);
 			r.setFast(false);
@@ -63,7 +67,9 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues(specie);
+		String compartment = checkCompartments(specie.getId());
 		Reaction r = Utility.Reaction("Degradation_"+specie.getId());
+		r.setCompartment(compartment);
 		r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
 		r.setReversible(false);
 		r.setFast(false);
@@ -81,7 +87,9 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie);
+		String compartment = checkCompartments(specie.getId());
 		Reaction r = Utility.Reaction("Degradation_"+specie.getId());
+		r.setCompartment(compartment);
 		r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
 		r.setReversible(false);
 		r.setFast(false);
@@ -95,11 +103,19 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		decay = specie.getDecay();
 	}
 	
+	//Checks if species belongs in a compartment other than default
+	private String checkCompartments(String species) {
+		String compartment = "default";
+		String[] splitted = species.split("__");
+		if (compartments.contains(splitted[0]))
+			compartment = splitted[0];
+		return compartment;
+	}
+	
 	private double decay;
 	private String decayUnitString;
 	private String decayString = CompatibilityFixer.getSBMLName(GlobalConstants.KDECAY_STRING);
 	
 	private Collection<SpeciesInterface> species;
-	
-
+	private ArrayList<String> compartments;
 }
