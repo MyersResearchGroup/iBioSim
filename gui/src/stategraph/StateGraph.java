@@ -417,7 +417,7 @@ public class StateGraph implements Runnable {
 		int K = 0;
 		double xi = 1;
 		double delta = 1;
-		double eta = (1 - error) / (Math.pow((Math.E), -Gamma * timeLimit));
+		double eta = (1 - error) / (Math.pow(Math.E, ((0 - Gamma) * timeLimit)));
 		while (delta < eta && !stop) {
 			K = K + 1;
 			xi = xi * ((Gamma * timeLimit) / K);
@@ -432,12 +432,11 @@ public class StateGraph implements Runnable {
 				for (State m : stateGraph.get(state)) {
 					double nextProb = m.getCurrentProb() * (1 - (m.getTransitionSum(0.0, null) / Gamma));
 					for (StateTransitionPair prev : m.getPrevStatesWithTrans()) {
-						double prob = prev.getTransition();
 						// if (lhpn.getTransitionRateTree(prev.getTransition()) != null) {
 						// prob =
 						// lhpn.getTransitionRateTree(prev.getTransition()).evaluateExpr(prev.getState().getVariables());
 						// }
-						nextProb += (prev.getState().getCurrentProb() * prob) / Gamma;
+						nextProb += (prev.getState().getCurrentProb() * (prev.getTransition() / Gamma));
 					}
 					m.setNextProb(nextProb * ((Gamma * timeLimit) / k));
 					m.setPiProb(m.getPiProb() + m.getNextProb());
@@ -455,7 +454,7 @@ public class StateGraph implements Runnable {
 		if (!stop) {
 			for (String state : stateGraph.keySet()) {
 				for (State m : stateGraph.get(state)) {
-					m.setPiProb(m.getPiProb() * (Math.pow((Math.E), -Gamma * timeLimit)));
+					m.setPiProb(m.getPiProb() * (Math.pow(Math.E, ((0 - Gamma) * timeLimit))));
 					m.setCurrentProbToPi();
 				}
 			}
