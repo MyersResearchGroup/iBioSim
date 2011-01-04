@@ -1529,9 +1529,9 @@ public class Run implements ActionListener {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
 										ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-										Scanner scan = new Scanner(directory + separator
-												+ "term-time.txt");
-										if (scan.hasNextLine()) {
+										Scanner scan = new Scanner(new File(directory + separator
+												+ "term-time.txt"));
+										while (scan.hasNextLine()) {
 											String line = scan.nextLine();
 											String[] term = line.split(" ");
 											if (!dataLabels.contains(term[0])) {
@@ -1541,7 +1541,7 @@ public class Run implements ActionListener {
 												terms.add(times);
 											}
 											else {
-												terms.get(dataLabels.indexOf(term[0])).add(
+												terms.get(dataLabels.indexOf(term[0]) - 1).add(
 														Double.parseDouble(term[1]));
 											}
 										}
@@ -1556,7 +1556,7 @@ public class Run implements ActionListener {
 											temp.add(0.0);
 											percentData.add(temp);
 										}
-										for (double j = printInterval; j < timeLimit; j += printInterval) {
+										for (double j = printInterval; j <= timeLimit; j += printInterval) {
 											data.get(0).add(j);
 											percentData.get(0).add(j);
 											for (int k = 1; k < dataLabels.size(); k++) {
@@ -1565,7 +1565,7 @@ public class Run implements ActionListener {
 												percentData.get(k).add(
 														percentData.get(k).get(
 																percentData.get(k).size() - 1));
-												for (int l = 0; l < terms.get(k - 1).size(); l++) {
+												for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
 													if (terms.get(k - 1).get(l) < j) {
 														data
 																.get(k)
@@ -1585,8 +1585,7 @@ public class Run implements ActionListener {
 																		(data.get(k).get(data
 																				.get(k).size() - 1))
 																				/ runs);
-														terms.remove(l);
-														l--;
+														terms.get(k - 1).remove(l);
 													}
 												}
 											}
@@ -1691,9 +1690,9 @@ public class Run implements ActionListener {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
 										ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-										Scanner scan = new Scanner(directory + separator
-												+ "term-time.txt");
-										if (scan.hasNextLine()) {
+										Scanner scan = new Scanner(new File(directory + separator
+												+ "term-time.txt"));
+										while (scan.hasNextLine()) {
 											String line = scan.nextLine();
 											String[] term = line.split(" ");
 											if (!dataLabels.contains(term[0])) {
@@ -1703,7 +1702,7 @@ public class Run implements ActionListener {
 												terms.add(times);
 											}
 											else {
-												terms.get(dataLabels.indexOf(term[0])).add(
+												terms.get(dataLabels.indexOf(term[0]) - 1).add(
 														Double.parseDouble(term[1]));
 											}
 										}
@@ -1718,7 +1717,7 @@ public class Run implements ActionListener {
 											temp.add(0.0);
 											percentData.add(temp);
 										}
-										for (double j = printInterval; j < timeLimit; j += printInterval) {
+										for (double j = printInterval; j <= timeLimit; j += printInterval) {
 											data.get(0).add(j);
 											percentData.get(0).add(j);
 											for (int k = 1; k < dataLabels.size(); k++) {
@@ -1727,7 +1726,7 @@ public class Run implements ActionListener {
 												percentData.get(k).add(
 														percentData.get(k).get(
 																percentData.get(k).size() - 1));
-												for (int l = 0; l < terms.get(k - 1).size(); l++) {
+												for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
 													if (terms.get(k - 1).get(l) < j) {
 														data
 																.get(k)
@@ -1747,8 +1746,7 @@ public class Run implements ActionListener {
 																		(data.get(k).get(data
 																				.get(k).size() - 1))
 																				/ runs);
-														terms.remove(l);
-														l--;
+														terms.get(k - 1).remove(l);
 													}
 												}
 											}
@@ -1912,9 +1910,9 @@ public class Run implements ActionListener {
 											ArrayList<String> dataLabels = new ArrayList<String>();
 											dataLabels.add("time");
 											ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-											Scanner scan = new Scanner(directory + separator
-													+ "term-time.txt");
-											if (scan.hasNextLine()) {
+											Scanner scan = new Scanner(new File(directory
+													+ separator + "term-time.txt"));
+											while (scan.hasNextLine()) {
 												String line = scan.nextLine();
 												String[] term = line.split(" ");
 												if (!dataLabels.contains(term[0])) {
@@ -1924,7 +1922,7 @@ public class Run implements ActionListener {
 													terms.add(times);
 												}
 												else {
-													terms.get(dataLabels.indexOf(term[0])).add(
+													terms.get(dataLabels.indexOf(term[0]) - 1).add(
 															Double.parseDouble(term[1]));
 												}
 											}
@@ -1939,7 +1937,7 @@ public class Run implements ActionListener {
 												temp.add(0.0);
 												percentData.add(temp);
 											}
-											for (double j = printInterval; j < timeLimit; j += printInterval) {
+											for (double j = printInterval; j <= timeLimit; j += printInterval) {
 												data.get(0).add(j);
 												percentData.get(0).add(j);
 												for (int k = 1; k < dataLabels.size(); k++) {
@@ -1951,7 +1949,7 @@ public class Run implements ActionListener {
 													percentData.get(k).add(
 															percentData.get(k).get(
 																	percentData.get(k).size() - 1));
-													for (int l = 0; l < terms.get(k - 1).size(); l++) {
+													for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
 														if (terms.get(k - 1).get(l) < j) {
 															data
 																	.get(k)
@@ -1969,8 +1967,7 @@ public class Run implements ActionListener {
 																	(data.get(k).get(data.get(k)
 																			.size() - 1))
 																			/ runs);
-															terms.remove(l);
-															l--;
+															terms.get(k - 1).remove(l);
 														}
 													}
 												}
@@ -2079,9 +2076,9 @@ public class Run implements ActionListener {
 											ArrayList<String> dataLabels = new ArrayList<String>();
 											dataLabels.add("time");
 											ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-											Scanner scan = new Scanner(directory + separator
-													+ "term-time.txt");
-											if (scan.hasNextLine()) {
+											Scanner scan = new Scanner(new File(directory
+													+ separator + "term-time.txt"));
+											while (scan.hasNextLine()) {
 												String line = scan.nextLine();
 												String[] term = line.split(" ");
 												if (!dataLabels.contains(term[0])) {
@@ -2091,7 +2088,7 @@ public class Run implements ActionListener {
 													terms.add(times);
 												}
 												else {
-													terms.get(dataLabels.indexOf(term[0])).add(
+													terms.get(dataLabels.indexOf(term[0]) - 1).add(
 															Double.parseDouble(term[1]));
 												}
 											}
@@ -2106,7 +2103,7 @@ public class Run implements ActionListener {
 												temp.add(0.0);
 												percentData.add(temp);
 											}
-											for (double j = printInterval; j < timeLimit; j += printInterval) {
+											for (double j = printInterval; j <= timeLimit; j += printInterval) {
 												data.get(0).add(j);
 												percentData.get(0).add(j);
 												for (int k = 1; k < dataLabels.size(); k++) {
@@ -2118,7 +2115,7 @@ public class Run implements ActionListener {
 													percentData.get(k).add(
 															percentData.get(k).get(
 																	percentData.get(k).size() - 1));
-													for (int l = 0; l < terms.get(k - 1).size(); l++) {
+													for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
 														if (terms.get(k - 1).get(l) < j) {
 															data
 																	.get(k)
@@ -2136,8 +2133,7 @@ public class Run implements ActionListener {
 																	(data.get(k).get(data.get(k)
 																			.size() - 1))
 																			/ runs);
-															terms.remove(l);
-															l--;
+															terms.get(k - 1).remove(l);
 														}
 													}
 												}
@@ -2265,9 +2261,9 @@ public class Run implements ActionListener {
 											ArrayList<String> dataLabels = new ArrayList<String>();
 											dataLabels.add("time");
 											ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-											Scanner scan = new Scanner(directory + separator
-													+ "term-time.txt");
-											if (scan.hasNextLine()) {
+											Scanner scan = new Scanner(new File(directory
+													+ separator + "term-time.txt"));
+											while (scan.hasNextLine()) {
 												String line = scan.nextLine();
 												String[] term = line.split(" ");
 												if (!dataLabels.contains(term[0])) {
@@ -2277,7 +2273,7 @@ public class Run implements ActionListener {
 													terms.add(times);
 												}
 												else {
-													terms.get(dataLabels.indexOf(term[0])).add(
+													terms.get(dataLabels.indexOf(term[0]) - 1).add(
 															Double.parseDouble(term[1]));
 												}
 											}
@@ -2292,7 +2288,7 @@ public class Run implements ActionListener {
 												temp.add(0.0);
 												percentData.add(temp);
 											}
-											for (double j = printInterval; j < timeLimit; j += printInterval) {
+											for (double j = printInterval; j <= timeLimit; j += printInterval) {
 												data.get(0).add(j);
 												percentData.get(0).add(j);
 												for (int k = 1; k < dataLabels.size(); k++) {
@@ -2304,7 +2300,7 @@ public class Run implements ActionListener {
 													percentData.get(k).add(
 															percentData.get(k).get(
 																	percentData.get(k).size() - 1));
-													for (int l = 0; l < terms.get(k - 1).size(); l++) {
+													for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
 														if (terms.get(k - 1).get(l) < j) {
 															data
 																	.get(k)
@@ -2322,8 +2318,7 @@ public class Run implements ActionListener {
 																	(data.get(k).get(data.get(k)
 																			.size() - 1))
 																			/ runs);
-															terms.remove(l);
-															l--;
+															terms.get(k - 1).remove(l);
 														}
 													}
 												}
@@ -2432,9 +2427,9 @@ public class Run implements ActionListener {
 											ArrayList<String> dataLabels = new ArrayList<String>();
 											dataLabels.add("time");
 											ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-											Scanner scan = new Scanner(directory + separator
-													+ "term-time.txt");
-											if (scan.hasNextLine()) {
+											Scanner scan = new Scanner(new File(directory
+													+ separator + "term-time.txt"));
+											while (scan.hasNextLine()) {
 												String line = scan.nextLine();
 												String[] term = line.split(" ");
 												if (!dataLabels.contains(term[0])) {
@@ -2444,7 +2439,7 @@ public class Run implements ActionListener {
 													terms.add(times);
 												}
 												else {
-													terms.get(dataLabels.indexOf(term[0])).add(
+													terms.get(dataLabels.indexOf(term[0]) - 1).add(
 															Double.parseDouble(term[1]));
 												}
 											}
@@ -2459,7 +2454,7 @@ public class Run implements ActionListener {
 												temp.add(0.0);
 												percentData.add(temp);
 											}
-											for (double j = printInterval; j < timeLimit; j += printInterval) {
+											for (double j = printInterval; j <= timeLimit; j += printInterval) {
 												data.get(0).add(j);
 												percentData.get(0).add(j);
 												for (int k = 1; k < dataLabels.size(); k++) {
@@ -2471,7 +2466,7 @@ public class Run implements ActionListener {
 													percentData.get(k).add(
 															percentData.get(k).get(
 																	percentData.get(k).size() - 1));
-													for (int l = 0; l < terms.get(k - 1).size(); l++) {
+													for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
 														if (terms.get(k - 1).get(l) < j) {
 															data
 																	.get(k)
@@ -2489,8 +2484,7 @@ public class Run implements ActionListener {
 																	(data.get(k).get(data.get(k)
 																			.size() - 1))
 																			/ runs);
-															terms.remove(l);
-															l--;
+															terms.get(k - 1).remove(l);
 														}
 													}
 												}
