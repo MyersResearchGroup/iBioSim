@@ -984,7 +984,7 @@ public class Run implements ActionListener {
 							if (!sg.getStop()) {
 								log.addText("Performing transient Markov chain analysis with uniformization.\n");
 								PerfromTransientMarkovAnalysisThread performMarkovAnalysis = new PerfromTransientMarkovAnalysisThread(
-										sg);
+										sg, progress);
 								time1 = System.nanoTime();
 								if (lpnProperty != null && !lpnProperty.equals("")) {
 									performMarkovAnalysis.start(timeLimit, timeStep, absError, Translator.getProbpropParts(Translator
