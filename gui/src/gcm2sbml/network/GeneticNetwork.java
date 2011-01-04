@@ -815,8 +815,9 @@ public class GeneticNetwork {
 			// those species bound to promoter
 			for (SpeciesInterface specie : p.getActivators()) {
 				String activator = specie.getId();
-				if (!compartment.equals("default"))
-					activator = activator.split("__")[1];
+				String[] splitted = activator.split("__");
+				if (splitted.length > 1)
+					activator = splitted[1];
 				s = Utility.makeSpecies(p.getId() + "_"
 						+ activator + "_RNAP", compartment, 0);
 				s.setHasOnlySubstanceUnits(true);
@@ -824,8 +825,9 @@ public class GeneticNetwork {
 			}
 			for (SpeciesInterface specie : p.getRepressors()) {
 				String repressor = specie.getId();
-				if (!compartment.equals("default"))
-					repressor = repressor.split("__")[1];
+				String[] splitted = repressor.split("__");
+				if (splitted.length > 1)
+					repressor = splitted[1];
 				s = Utility.makeSpecies(p.getId() + "_"
 						+ repressor + "_bound", compartment, 0);
 				s.setHasOnlySubstanceUnits(true);

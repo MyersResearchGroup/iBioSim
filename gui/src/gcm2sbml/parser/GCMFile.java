@@ -309,6 +309,21 @@ public class GCMFile {
 		Utility.addCompartments(sbml, "default");
 		sbml.getModel().getCompartment("default").setSize(1);
 		m.setVolumeUnits("litre");
+		for (String compName : comps) {
+			//Checks if component is a compartment
+			Object testCompartment = components.get(compName).get("compartment");
+			boolean isCompartment = false;
+			if (testCompartment != null)
+				isCompartment = Boolean.parseBoolean(testCompartment.toString());
+			else 
+				components.get(compName).put("compartment", "false");
+			if (isCompartment) {
+				Utility.addCompartments(sbml, compName);
+				sbml.getModel().getCompartment(compName).setSize(1);
+				m.setVolumeUnits("litre");
+				compartments.add(compName);
+			}
+		}
 		if (!sbmlFile.equals("") && includeSBML) {
 			sbml = BioSim.readSBML(path + separator + sbmlFile);
 		}
@@ -2454,15 +2469,6 @@ public class GCMFile {
 
 	private SBMLDocument unionSBML(SBMLDocument mainDoc, SBMLDocument doc, String compName) {
 		Model m = doc.getModel();
-		//Checks if component is a compartment
-		Object testCompartment = components.get(compName).get("compartment");
-		boolean isCompartment = false;
-		if (testCompartment != null)
-			isCompartment = Boolean.parseBoolean(testCompartment.toString());
-		else {
-			components.get(compName).put("compartment", "false");
-		}
-		//??
 		for (int i = 0; i < m.getNumCompartmentTypes(); i++) {
 			org.sbml.libsbml.CompartmentType c = m.getCompartmentType(i);
 			String newName = compName + "__" + c.getId();
@@ -2483,46 +2489,42 @@ public class GCMFile {
 				mainDoc.getModel().addCompartmentType(c);
 			}
 		}
-		//Creates new compartment only if component is a compartment 
-		if (isCompartment) {
-			for (int i = 0; i < m.getNumCompartments(); i++) {
-				org.sbml.libsbml.Compartment c = m.getCompartment(i);
-				updateVarId(false, c.getId(), compName, doc);
-				c.setId(compName);
-				boolean add = true;
-				for (int j = 0; j < mainDoc.getModel().getNumCompartments(); j++) {
-					if (mainDoc.getModel().getCompartment(j).getId().equals(c.getId())) {
-						add = false;
-						org.sbml.libsbml.Compartment comp = mainDoc.getModel().getCompartment(j);
-						if (!c.getName().equals(comp.getName())) {
-							return null;
-						}
-						if (!c.getCompartmentType().equals(comp.getCompartmentType())) {
-							return null;
-						}
-						if (c.getConstant() != comp.getConstant()) {
-							return null;
-						}
-						if (!c.getOutside().equals(comp.getOutside())) {
-							return null;
-						}
-						if (c.getVolume() != comp.getVolume()) {
-							return null;
-						}
-						if (c.getSpatialDimensions() != comp.getSpatialDimensions()) {
-							return null;
-						}
-						if (c.getSize() != comp.getSize()) {
-							return null;
-						}
-						if (!c.getUnits().equals(comp.getUnits())) {
-							return null;
-						}
+		for (int i = 0; i < m.getNumCompartments(); i++) {
+			org.sbml.libsbml.Compartment c = m.getCompartment(i);
+			updateVarId(false, c.getId(), compName, doc);
+			c.setId(compName);
+			boolean add = true;
+			for (int j = 0; j < mainDoc.getModel().getNumCompartments(); j++) {
+				if (mainDoc.getModel().getCompartment(j).getId().equals(c.getId())) {
+					add = false;
+					org.sbml.libsbml.Compartment comp = mainDoc.getModel().getCompartment(j);
+					if (!c.getName().equals(comp.getName())) {
+						return null;
+					}
+					if (!c.getCompartmentType().equals(comp.getCompartmentType())) {
+						return null;
+					}
+					if (c.getConstant() != comp.getConstant()) {
+						return null;
+					}
+					if (!c.getOutside().equals(comp.getOutside())) {
+						return null;
+					}
+					if (c.getVolume() != comp.getVolume()) {
+						return null;
+					}
+					if (c.getSpatialDimensions() != comp.getSpatialDimensions()) {
+						return null;
+					}
+					if (c.getSize() != comp.getSize()) {
+						return null;
+					}
+					if (!c.getUnits().equals(comp.getUnits())) {
+						return null;
 					}
 				}
 				if (add) {
 					mainDoc.getModel().addCompartment(c);
-					compartments.add(compName);
 				}
 			}
 		}

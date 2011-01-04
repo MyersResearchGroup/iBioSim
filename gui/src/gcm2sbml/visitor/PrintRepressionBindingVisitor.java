@@ -32,8 +32,9 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	public void run() {
 		for (SpeciesInterface specie : promoter.getRepressors()) {
 			String repressor = specie.getId();
-			if (!compartment.equals("default"))
-				repressor = repressor.split("__")[1];
+			String[] splitted = repressor.split("__");
+			if (splitted.length > 1)
+				repressor = splitted[1];
 			speciesName = promoter.getId() + "_" + repressor + "_bound";
 			reactionName = "R_repression_binding_" + promoter.getId() + "_" + repressor;
 			specie.accept(this);

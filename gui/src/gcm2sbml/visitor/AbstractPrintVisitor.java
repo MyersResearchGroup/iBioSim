@@ -62,6 +62,7 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 		parameters = file;
 	}
 	
+	
 	public void visitBaseSpecies(BaseSpecies specie) {}
 
 	public void visitComplex(ComplexSpecies specie) {}
@@ -81,6 +82,4 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	protected boolean cooperationAbstraction = false;
 	
 	protected boolean complexAbstraction = false;
-	
-
 }
