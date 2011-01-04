@@ -327,7 +327,7 @@ public class StateGraph implements Runnable {
 								}
 							}
 						}
-						probData.getData().get(1).add(prob * 100);
+						probData.getData().get(1).add(prob);
 						probData.getData().get(2).add(0.0);
 					}
 				}
@@ -366,8 +366,8 @@ public class StateGraph implements Runnable {
 							}
 						}
 					}
-					probData.getData().get(1).add(failureProb * 100);
-					probData.getData().get(2).add(successProb * 100);
+					probData.getData().get(1).add(failureProb);
+					probData.getData().get(2).add(successProb);
 				}
 				HashMap<String, Double> output = new HashMap<String, Double>();
 				double failureProb = 0;
