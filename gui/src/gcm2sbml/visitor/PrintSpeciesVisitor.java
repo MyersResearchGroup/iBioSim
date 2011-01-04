@@ -105,6 +105,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		return compartment;
 	}
 	
+	
 	private double init;
 	private Collection<SpeciesInterface> species;
 	private ArrayList<String> compartments;
