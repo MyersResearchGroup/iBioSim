@@ -164,13 +164,13 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	}
 
 	private void loadValues(SpeciesInterface s) {
+		krnap = promoter.getKrnap();
 		Reaction r = promoter.getActivationMap().get(s.getId());
 		//krnap = promoter.getKrnap();
 		krnap = 1;
 		coop = r.getCoop();
 		kact = r.getAct();
 		kcomp = s.getKc();
-		
 	}
 
 	/**
@@ -201,10 +201,8 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 			.getSBMLName(GlobalConstants.COOPERATIVITY_STRING);
 	private String kactString = CompatibilityFixer
 			.getSBMLName(GlobalConstants.KACT_STRING);
-	/*private String krnapString = CompatibilityFixer
-	.getSBMLName(GlobalConstants.RNAP_BINDING_STRING);*/
-	
-	private String krnapString = "kRNAP";
+	private String krnapString = CompatibilityFixer
+		.getSBMLName(GlobalConstants.RNAP_BINDING_STRING);
 
 	private String speciesName;
 	private String reactionName;
