@@ -1355,7 +1355,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		shapes.put("Arrow (Backwards)", draw.getNextShape());
 	}
 
-	private void editGraph() {
+	public void editGraph() {
 		final ArrayList<GraphSpecies> old = new ArrayList<GraphSpecies>();
 		for (GraphSpecies g : graphed) {
 			old.add(g);
