@@ -1093,6 +1093,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			if ((maxY - minY) < .001) {
 				axis.setStandardTickUnits(new StandardTickUnitSource());
 			}
+			else {
+				axis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
+			}
 			axis.setRange(minY - (Math.abs(minY) * .1), maxY + (Math.abs(maxY) * .1));
 		}
 		axis.setAutoTickUnitSelection(true);
@@ -1122,6 +1125,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		else {
 			if ((maxX - minX) < .001) {
 				axis.setStandardTickUnits(new StandardTickUnitSource());
+			}
+			else {
+				axis.setStandardTickUnits(NumberAxis.createStandardTickUnits());
 			}
 			axis.setRange(minX, maxX);
 		}
