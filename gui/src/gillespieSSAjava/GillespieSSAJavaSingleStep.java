@@ -1,5 +1,7 @@
 package gillespieSSAjava;
 
+import graph.Graph;
+
 import java.util.HashMap;
 import java.util.Random;
 import org.sbml.libsbml.*;
@@ -46,11 +48,12 @@ public class GillespieSSAJavaSingleStep {
 	private double PropensityFunctionValueRV = 0;
 	
 	private double[][] StateChangeVector;
-	private JTextField tauStep;
+	private JTextField tNext;
 	private JComboBox nextReactionsList;
 	private double tau=0.0;
 	private int miu=0;
 	private double t = 0;
+	private double t_next = 0;
 	private int NumIrreversible = 0;
 	private int NumReversible = 0;
 	private int NumReactions = 0;
@@ -61,7 +64,7 @@ public class GillespieSSAJavaSingleStep {
 	public GillespieSSAJavaSingleStep() {
 	}
 		
-	public void PerformSim (String SBMLFileName,String outDir, double timeLimit) throws FileNotFoundException{  
+	public void PerformSim (String SBMLFileName,String outDir, double timeLimit, Graph graph) throws FileNotFoundException{  
 		  int optionValue = -1;
 //		  System.out.println("outDir = " + outDir);
 		  String outTSDName = outDir + "/run-1.tsd";
@@ -174,15 +177,16 @@ public class GillespieSSAJavaSingleStep {
 			  }
 			  l++; 
 		  }
-		  // Create a table to hold the results
-		  DefaultTableModel tableModel = new DefaultTableModel();
-		  tableModel.addColumn("t");
-		  tableModel.addColumn("tau");
-		  tableModel.addColumn("Next Reaction");
-		  SimResultsTable simResultsTbl = new SimResultsTable(tableModel);
-		  JFrame tableFrame = new JFrame("Simulation Results");
-		  simResultsTbl.showTable(tableFrame, simResultsTbl);
-//###############################################################	
+//		  // Create a table to hold the results
+//		  DefaultTableModel tableModel = new DefaultTableModel();
+//		  tableModel.addColumn("t");
+//		  tableModel.addColumn("tau");
+//		  tableModel.addColumn("Next Reaction");
+//		  SimResultsTable simResultsTbl = new SimResultsTable(tableModel);
+//		  JFrame tableFrame = new JFrame("Simulation Results");
+//		  simResultsTbl.showTable(tableFrame, simResultsTbl);
+//###############################################################
+		  graph.editGraph();
 		  while (t<=timeLimit) {
 			  InitializeEnoughMolecules();
 			  PropensitySum = 0.0;
@@ -316,24 +320,35 @@ public class GillespieSSAJavaSingleStep {
 			  boolean hasRunModeStarted = false;
 			  boolean isRunMode = (optionValue == 1) && t < runUntil;
 			  if (!isRunMode) {
-				  CustomParams = openInteractiveMenu(tau,miu);
+				  CustomParams = openInteractiveMenu(t,tau,miu);
+				  t_next = Double.parseDouble(CustomParams[0]);
+				  while (t_next < t){
+					  JOptionPane.showMessageDialog(BioSim.frame, "The value of t_next needs to be greater than current time",
+								"Error in next simulation time", JOptionPane.ERROR_MESSAGE);
+					  CustomParams = openInteractiveMenu(t,tau,miu);
+					  t_next = Double.parseDouble(CustomParams[0]);
+				  }  
 				  optionValue = Integer.parseInt(CustomParams[2]);
 				  if (optionValue == 0) {
-					  tau = Double.parseDouble(CustomParams[0]);
+					  tau = t_next - t;
 					  miu = ReactionsToIndex.get(CustomParams[1]);  
 				  }
 				  else if(optionValue == 1 && t >= runUntil){
-					  String[] CustomParamsRun = openRunMenu();
-					  int runUntil_optVal = Integer.parseInt(CustomParamsRun[1]);
-					  // runUntil_optVal: 0=Run, 1=Cancel
-					  if (runUntil_optVal == 0) {
-						  runUntil = t + Double.parseDouble(CustomParamsRun[0]);
-						  hasRunModeStarted = true;
-					  }
-					  else {	// runUntil_optVal == 1 (Cancel)
-						  continue;
-					  }
-					   
+					  runUntil = Double.parseDouble(CustomParams[0]);
+					  miu = ReactionsToIndex.get(CustomParams[1]);
+					  hasRunModeStarted = true;
+// ********************(obsolete) Create another pop-up window to specify the time to run ******************
+//					  String[] CustomParamsRun = openRunMenu();
+//					  int runUntil_optVal = Integer.parseInt(CustomParamsRun[1]);
+//					  // runUntil_optVal: 0=Run, 1=Cancel
+//					  if (runUntil_optVal == 0) {
+//						  runUntil = t + Double.parseDouble(CustomParamsRun[0]);
+//						  hasRunModeStarted = true;
+//					  }
+//					  else {	// runUntil_optVal == 1 (Cancel)
+//						  continue;
+//					  }
+// ****************************************************************************************************
 				  }
 				  else {
 					  break;
@@ -355,17 +370,19 @@ public class GillespieSSAJavaSingleStep {
 					 } 
 				  }
 			  }
-//			  System.out.println("t = " + t_current);
-//			  System.out.println("tau = " + tau);
-//			  System.out.println("miu = " + miu);
-//			  System.out.println("Next reaction is " + IndexToReactions.get(miu));
+//			  System.out.println("t_current = " + t_current);
+//			  System.out.println("t = " + t);
+//			  System.out.println("t_next = " + t_next);
+////			  System.out.println("tau = " + tau);
+////			  System.out.println("miu = " + miu);
+////			  System.out.println("Next reaction is " + IndexToReactions.get(miu));
 //			  System.out.println("*****************************************");
 			  
-			  // Print results to a table and display it. 
-			  if ((!isRunMode && !hasRunModeStarted) || (isRunMode && t >= runUntil)){
-				  tableModel.addRow(new Object[]{t_current, tau, IndexToReactions.get(miu)});
-				  simResultsTbl.showTable(tableFrame, simResultsTbl);
-			  }
+//			  // Print results to a table and display it. 
+//			  if ((!isRunMode && !hasRunModeStarted) || (isRunMode && t >= runUntil)){
+//				  tableModel.addRow(new Object[]{t_current, tau, IndexToReactions.get(miu)});
+//				  simResultsTbl.showTable(tableFrame, simResultsTbl);
+//			  }
 			  outTSD.print("(" + t + ", ");
 			  for (int i=0;i<SpeciesList.size();i++){
 				  if (i<SpeciesList.size()-1)
@@ -373,6 +390,10 @@ public class GillespieSSAJavaSingleStep {
 				  else
 					  outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]) + "),");
 			  }
+			  if ((!isRunMode && !hasRunModeStarted) || (isRunMode && t >= runUntil)) {
+				  graph.refresh();
+			  }
+			  
 		  }
 		  outTSD.print(")");
 	  }
@@ -395,17 +416,18 @@ public class GillespieSSAJavaSingleStep {
 		 }
 	 }
 	 
-	 public String[] openInteractiveMenu(double tau, int miu) {
-		    String[] tau_miu_optVal = new String[3];
-			JPanel tauPanel = new JPanel();
+	 public String[] openInteractiveMenu(double t, double tau, int miu) {
+		    String[] tNext_miu_optVal = new String[3];
+			JPanel tNextPanel = new JPanel();
 			JPanel nextReactionsListPanel = new JPanel();
 			JPanel mainPanel = new JPanel(new BorderLayout());
-			tauPanel.add(new JLabel("Tau:"));
-			tauStep = new JTextField(10);
-			tauStep.setText("" + tau);
-			tauPanel.add(tauStep);
+			tNextPanel.add(new JLabel("t_next:"));
+			tNext = new JTextField(10);
+			double t_next_deft = t + tau; 
+			tNext.setText("" + t_next_deft);
+			tNextPanel.add(tNext);
 			nextReactionsListPanel.add(new JLabel("Next reaction:"));
-//			String[] nextReactionsArray = new String[NumReactions];
+			// l = number of possible reactions that can fire at t_next
 			int l = 0;
 			for (int i=0; i<NumReactions; i++){
 				// Check if a reaction has enough molecules to fire
@@ -413,55 +435,59 @@ public class GillespieSSAJavaSingleStep {
 					  l++;
 				  }
 			  }
+			// create a drop-down list of next possible firing reactions
 			String[] nextReactionsArray = new String[l];
-			int k = 0;
+			if (EnoughMolecules.get(IndexToReactions.get(miu))){
+				nextReactionsArray[0] = IndexToReactions.get(miu);
+			}
+			int k = 1;
 			for (int i=0; i<NumReactions; i++){
 				// Check if a reaction has enough molecules to fire
-				  if (EnoughMolecules.get(IndexToReactions.get(i))){
+				  if (EnoughMolecules.get(IndexToReactions.get(i)) && (i!=miu)){
 					  nextReactionsArray[k] = IndexToReactions.get(i);
 					  k++;
-				  }
+					  
+				  } 
 			  }
 			nextReactionsList = new JComboBox(nextReactionsArray);
 			nextReactionsListPanel.add(nextReactionsList);
-			mainPanel.add(tauPanel, "North");
+			mainPanel.add(tNextPanel, "North");
 			mainPanel.add(nextReactionsListPanel, "Center");
 			Object[] options = {"Step", "Run", "Terminate"};
 			int optionValue;
-			optionValue = JOptionPane.showOptionDialog(BioSim.frame, mainPanel, "Next Simulation Step",
+			optionValue = JOptionPane.showOptionDialog(BioSim.frame, mainPanel, "Next Simulation Time",
 					JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			tau_miu_optVal[0]=tauStep.getText().trim();
-			tau_miu_optVal[1]=(String) nextReactionsList.getSelectedItem();
-			tau_miu_optVal[2]="" + optionValue;
-			return tau_miu_optVal;
+			tNext_miu_optVal[0]= tNext.getText().trim();
+			tNext_miu_optVal[1]=(String) nextReactionsList.getSelectedItem();
+			tNext_miu_optVal[2]="" + optionValue;
+			return tNext_miu_optVal;
 		}
 	 
-	 public String[] openRunMenu(){
-		int optlVal;
-		String[] runTimeLimit_optVal = new String[2];
-		do {			
-			JPanel runTimeLimitPanel = new JPanel();
-			runTimeLimitPanel.add(new JLabel("Time limit to run:"));
-			JTextField runTimeLimit = new JTextField(10);
-			runTimeLimitPanel.add(runTimeLimit);
-			Object[] options = {"Run", "Cancel"};
-			optlVal = JOptionPane.showOptionDialog(BioSim.frame, runTimeLimitPanel, "Specify Run Time Limit",
-					JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			runTimeLimit_optVal[0] = runTimeLimit.getText().trim();
-			runTimeLimit_optVal[1] = "" + optlVal;
-//			System.out.println("runUntil_optVal[0] = " +  runUntil_optVal[0]);
-			if (optlVal == 0 && runTimeLimit_optVal[0].equals("")) {
-				  JOptionPane.showMessageDialog(BioSim.frame, "Please specify a time limit.",
-							"Error in Run", JOptionPane.ERROR_MESSAGE);  
-			}
-			if (optlVal == 1) {
-				break;
-			}
-		}
-		while (optlVal == 0 && runTimeLimit_optVal[0].equals(""));
-		return runTimeLimit_optVal;
-		 
-	 }
+//	 public String[] openRunMenu(){
+//		int optlVal;
+//		String[] runTimeLimit_optVal = new String[2];
+//		do {			
+//			JPanel runTimeLimitPanel = new JPanel();
+//			runTimeLimitPanel.add(new JLabel("Time limit to run:"));
+//			JTextField runTimeLimit = new JTextField(10);
+//			runTimeLimitPanel.add(runTimeLimit);
+//			Object[] options = {"Run", "Cancel"};
+//			optlVal = JOptionPane.showOptionDialog(BioSim.frame, runTimeLimitPanel, "Specify Run Time Limit",
+//					JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+//			runTimeLimit_optVal[0] = runTimeLimit.getText().trim();
+//			runTimeLimit_optVal[1] = "" + optlVal;
+////			System.out.println("runUntil_optVal[0] = " +  runUntil_optVal[0]);
+//			if (optlVal == 0 && runTimeLimit_optVal[0].equals("")) {
+//				  JOptionPane.showMessageDialog(BioSim.frame, "Please specify a time limit.",
+//							"Error in Run", JOptionPane.ERROR_MESSAGE);  
+//			}
+//			if (optlVal == 1) {
+//				break;
+//			}
+//		}
+//		while (optlVal == 0 && runTimeLimit_optVal[0].equals(""));
+//		return runTimeLimit_optVal; 
+//	 }
 	 
 	 public double evaluatePropensityFunction(ASTNode currentASTNode, HashMap<String, Double>ListOfLocalParameters) {
 		double ret = 0;
