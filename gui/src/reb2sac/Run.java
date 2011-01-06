@@ -1209,13 +1209,18 @@ public class Run implements ActionListener {
 					Preferences biosimrc = Preferences.userRoot();
 					if (sim.equals("gillespieJava")) {
 						time1 = System.nanoTime();
-						Properties props = new Properties();
-						// props.load(new FileInputStream(new File(directory +
-						// separator + modelFile.substring(0,
-						// modelFile.indexOf('.')) + ".properties")));
+//						Properties props = new Properties();
+//						props.load(new FileInputStream(new File(directory + separator + modelFile.substring(0, modelFile.indexOf('.')) + ".properties")));
+						int index = -1;
+						for (int i = 0; i < simTab.getComponentCount(); i ++) {
+							if(simTab.getComponentAt(i).getName().equals("TSD Graph")) {
+								simTab.setSelectedIndex(i);
+								index = i;
+							}
+						}
 						GillespieSSAJavaSingleStep javaSim = new GillespieSSAJavaSingleStep();
 						String SBMLFileName = directory + separator + theFile;
-						javaSim.PerformSim(SBMLFileName, outDir, timeLimit);
+						javaSim.PerformSim(SBMLFileName, outDir, timeLimit, ((Graph)simTab.getComponentAt(index)));
 						exitValue = 0;
 						return exitValue;
 					}
