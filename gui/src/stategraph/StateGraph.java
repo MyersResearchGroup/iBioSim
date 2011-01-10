@@ -672,7 +672,7 @@ public class StateGraph implements Runnable {
 				notifyAll();
 			}
 			try {
-				while (!phase2) {
+				while (!phase2 && !stop) {
 					wait();
 				}
 			}
@@ -693,7 +693,7 @@ public class StateGraph implements Runnable {
 				notifyAll();
 			}
 			try {
-				while (!phase1) {
+				while (!phase1 && !stop) {
 					wait();
 				}
 			}
@@ -1250,7 +1250,7 @@ public class StateGraph implements Runnable {
 
 		private double piProb;
 
-		private HashMap<String, String> variables;
+		private String variables;
 
 		private double transitionSum;
 
@@ -1264,7 +1264,15 @@ public class StateGraph implements Runnable {
 			color = 0;
 			currentProb = 0.0;
 			nextProb = 0.0;
-			this.variables = variables;
+			this.variables = "";
+			for (String key : variables.keySet()) {
+				if (this.variables.equals("")) {
+					this.variables += key + "=" + variables.get(key);
+				}
+				else {
+					this.variables += "," + key + "=" + variables.get(key);
+				}
+			}
 			transitionSum = -1;
 		}
 
@@ -1273,7 +1281,15 @@ public class StateGraph implements Runnable {
 		}
 
 		private HashMap<String, String> getVariables() {
-			return variables;
+			HashMap<String, String> vars = new HashMap<String, String>();
+			if (!variables.equals("")) {
+				String[] assignments = variables.split(",");
+				for (String assignment : assignments) {
+					String[] split = assignment.split("=");
+					vars.put(split[0], split[1]);
+				}
+			}
+			return vars;
 		}
 
 		private String[] getMarkings() {
