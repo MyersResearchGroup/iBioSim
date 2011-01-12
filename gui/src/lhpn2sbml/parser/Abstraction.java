@@ -1637,7 +1637,7 @@ public class Abstraction extends LhpnFile {
 			Place[] preset = t.getPreset();
 			if (postset.length == 1 && preset.length == 1) {
 				boolean assign = false;
-				if (t.getEnablingTree() != null) {
+				if (t.getEnablingTree() != null && !t.isPersistent()) {
 					for (String var : t.getEnablingTree().getVars()) {
 						if (!process_write.get(var)
 								.equals(process_trans.get(t))) {
@@ -3253,6 +3253,15 @@ public class Abstraction extends LhpnFile {
 				if (t1.isFail() != t2.isFail()) {
 					continue;
 				}
+				if (!t1.isPersistent() || !t2.isPersistent()) {
+					continue;
+				}
+				if (toMerge.containsKey(t1)) {
+					toMerge.get(t1).add(t2);
+				} else {
+					toMerge.put(t1, new ArrayList<Transition>());
+					toMerge.get(t1).add(t2);
+				}/*
 				if ((comparePreset(t1, t2) || (t1.getPreset().length == 0 && t2
 						.getPreset().length == 0))
 						&& (comparePostset(t1, t2) || (t1.getPostset().length == 0 && t2
@@ -3333,7 +3342,7 @@ public class Abstraction extends LhpnFile {
 							toMerge.get(t1).add(t2);
 						}
 					}
-				}
+				}*/
 			}
 		}
 		for (Transition t : toMerge.keySet()) {
