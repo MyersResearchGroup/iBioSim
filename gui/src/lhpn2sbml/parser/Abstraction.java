@@ -304,6 +304,10 @@ public class Abstraction extends LhpnFile {
 				if (s.equals(abstPane.xform29) && abstPane.isSimplify()) {
 					change = removeUninterestingVariables(change);
 				}
+				// Transform 30 - Remove Uninteresting Transitions (Simplification)
+				if (s.equals(abstPane.xform30) && abstPane.isSimplify()) {
+					change = removeUninterestingTransitions(change);
+				}
 				// Transform 21 - Normalize Delays
 				if (s.equals(abstPane.xform21) && abstPane.isAbstract()) {
 					normalizeDelays();
@@ -1853,6 +1857,27 @@ public class Abstraction extends LhpnFile {
 		for (Variable v : removeVars) {
 			removeAllAssignVar(v.getName());
 			removeVar(v.getName());
+		}
+		return change;
+	}
+	
+	private boolean removeUninterestingTransitions(boolean change) {
+		ArrayList<Transition> remove = new ArrayList<Transition>();
+		for (Transition t : transitions.values()) {
+			ArrayList<Transition> visited = new ArrayList<Transition>();
+			if (!t.isInteresting(visited)) {
+				change = true;
+				for (Place p : t.getPreset()) {
+					removeMovement(p.getName(), t.getName());
+				}
+				for (Place p : t.getPostset()) {
+					removeMovement(t.getName(), p.getName());
+				}
+				remove.add(t);
+			}
+		}
+		for (Transition t : remove) {
+			removeTransition(t.getName());
 		}
 		return change;
 	}

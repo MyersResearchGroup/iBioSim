@@ -199,6 +199,24 @@ public class Transition {
 	public boolean isConnected() {
 		return (preset.size() > 0 || postset.size() > 0);
 	}
+	
+	public boolean isInteresting(ArrayList<Transition> visited) {
+		visited.add(this);
+		if (boolAssignments.size() > 0 || intAssignments.size() > 0 || contAssignments.size() > 0 || rateAssignments.size() > 0 || fail) {
+			return true;
+		}
+		for (Place p : postset) {
+			for (Transition t : p.getPostset()) {
+				if (visited.contains(t)) {
+					continue;
+				}
+				if (t.isInteresting(visited)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	public String getName() {
 		return name;

@@ -79,13 +79,14 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			xform26 = "Remove Dangling Transitions - simplification",
 			xform27 = "Combine Parallel Transitions - simplification",
 			xform28 = "Combine Parallel Transitions - abstraction",
-			xform29 = "Remove Uninteresting Variables - simplification";
+			xform29 = "Remove Uninteresting Variables - simplification",
+			xform30 = "Remove Uninteresting Transitions - simplification";
 
 	public String[] transforms = { xform0, xform1, xform3, xform4, xform5,
 			xform6, xform7, xform8, xform25, xform9, xform24, xform10, xform12,
 			xform13, xform14, xform16, xform11, xform15, xform17, xform18,
 			xform19, xform20, xform21, xform22, xform23, xform26, xform27,
-			xform28, xform29 };
+			xform28, xform29, xform30 };
 
 	public JTextField factorField, iterField;
 
@@ -431,6 +432,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		loopAbsModel.addElement(xform25);
 		loopAbsModel.addElement(xform26);
 		loopAbsModel.addElement(xform29);
+		loopAbsModel.addElement(xform30);
 		postAbsModel.addElement(xform21);
 		preAbs.setListData(preAbsModel.toArray());
 		loopAbs.setListData(loopAbsModel.toArray());
