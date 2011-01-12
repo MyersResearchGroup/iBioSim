@@ -27,11 +27,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JCheckBox;
 
-;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseEvent;
 
 //import javax.swing.Icon;
 
-public class TransitionsPanel extends JPanel implements ActionListener {
+public class TransitionsPanel extends JPanel implements ActionListener, MouseListener {
 
 	private String selected = "";
 
@@ -55,6 +56,8 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 	// private Log log;
 
 	private HashMap<String, PropertyField> fields = null;
+	
+	private boolean flag = false;
 
 	// private ExprTree delayTree, rateTree, enablingTree;
 
@@ -139,6 +142,7 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 		EditButton addAssign = new EditButton("Add Assignment", assignments);
 		RemoveButton removeAssign = new RemoveButton("Remove Assignment", assignments);
 		EditButton editAssign = new EditButton("Edit Assignment", assignments);
+		assignments.addMouseListener(this);
 		if (selected != null) {
 			if (lhpn.getBooleanVars(selected) != null) {
 				for (String s : lhpn.getBooleanVars(selected)) {
@@ -514,6 +518,28 @@ public class TransitionsPanel extends JPanel implements ActionListener {
 			}
 		}
 		return false;
+	}
+	
+	public void mouseEntered(MouseEvent e) {
+	}
+	
+	public void mouseExited(MouseEvent e) {	
+	}
+	
+	public void mouseClicked(MouseEvent e) {
+		if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2) {
+			flag = !flag;
+			if (flag) {
+				new AssignmentPanel(selected, assignments.getSelectedValue().toString(), assignments,
+					varAssignments, rateAssignments, boolAssignments, intAssignments, lhpn);
+			}
+		}
+	}
+	
+	public void mousePressed(MouseEvent e) {
+	}
+	
+	public void mouseReleased(MouseEvent e) {
 	}
 
 }
