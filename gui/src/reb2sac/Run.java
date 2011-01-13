@@ -1209,18 +1209,21 @@ public class Run implements ActionListener {
 					Preferences biosimrc = Preferences.userRoot();
 					if (sim.equals("gillespieJava")) {
 						time1 = System.nanoTime();
-//						Properties props = new Properties();
-//						props.load(new FileInputStream(new File(directory + separator + modelFile.substring(0, modelFile.indexOf('.')) + ".properties")));
+						// Properties props = new Properties();
+						// props.load(new FileInputStream(new File(directory +
+						// separator + modelFile.substring(0,
+						// modelFile.indexOf('.')) + ".properties")));
 						int index = -1;
-						for (int i = 0; i < simTab.getComponentCount(); i ++) {
-							if(simTab.getComponentAt(i).getName().equals("TSD Graph")) {
+						for (int i = 0; i < simTab.getComponentCount(); i++) {
+							if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
 								simTab.setSelectedIndex(i);
 								index = i;
 							}
 						}
 						GillespieSSAJavaSingleStep javaSim = new GillespieSSAJavaSingleStep();
 						String SBMLFileName = directory + separator + theFile;
-						javaSim.PerformSim(SBMLFileName, outDir, timeLimit, ((Graph)simTab.getComponentAt(index)));
+						javaSim.PerformSim(SBMLFileName, outDir, timeLimit, ((Graph) simTab
+								.getComponentAt(index)));
 						exitValue = 0;
 						return exitValue;
 					}
@@ -1228,17 +1231,8 @@ public class Run implements ActionListener {
 						time1 = System.nanoTime();
 						log.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename
 								+ "\n");
-						if (biosimrc.get("biosim.sim.command", "").equals("")) {
-							log.addText("Executing:\nreb2sac --target.encoding=" + sim + " "
-									+ filename + "\n");
-							time1 = System.nanoTime();
-							reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile,
-									null, work);
-						}
-						else {
-							reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile,
-									null, work);
-						}
+						reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile,
+								null, work);
 					}
 					else {
 						String command = biosimrc.get("biosim.sim.command", "");
