@@ -486,43 +486,51 @@ public class StateGraph implements Runnable {
 		}
 		else {
 			progress.setMaximum((int) timeLimit);
-			boolean stop = false;
-			// Compute Gamma
-			double Gamma = 0;
-			for (State m : stateGraph) {
-				Gamma = Math.max(m.getTransitionSum(0.0, null), Gamma);
-			}
-			// Compute K
-			int K = 0;
-			double xi = 1;
-			double delta = 1;
-			double eta = (1 - error) / (Math.pow(Math.E, ((0 - Gamma) * timeStep)));
-			while (delta < eta) {
-				K = K + 1;
-				xi = xi * ((Gamma * timeStep) / K);
-				delta = delta + xi;
-			}
-			for (double i = 0; i < timeLimit; i += timeStep) {
-				double step = Math.min(timeStep, timeLimit - i);
-				if (step == timeLimit - i) {
-				  // Compute K
-					K = 0;
-					xi = 1;
-					delta = 1;
-					eta = (1 - error) / (Math.pow(Math.E, ((0 - Gamma) * step)));
-					while (delta < eta) {
-						K = K + 1;
-						xi = xi * ((Gamma * step) / K);
-						delta = delta + xi;
+			State initial = getInitialState();
+			if (initial != null) {
+				initial.setCurrentProb(1.0);
+				initial.setPiProb(1.0);
+				boolean stop = false;
+				// Compute Gamma
+				double Gamma = 0;
+				for (State m : stateGraph) {
+					Gamma = Math.max(m.getTransitionSum(0.0, null), Gamma);
+				}
+				// Compute K
+				int K = 0;
+				double xi = 1;
+				double delta = 1;
+				double eta = (1 - error) / (Math.pow(Math.E, ((0 - Gamma) * timeStep)));
+				while (delta < eta) {
+					K = K + 1;
+					xi = xi * ((Gamma * timeStep) / K);
+					delta = delta + xi;
+				}
+				for (double i = 0; i < timeLimit; i += timeStep) {
+					double step = Math.min(timeStep, timeLimit - i);
+					if (step == timeLimit - i) {
+						// Compute K
+						K = 0;
+						xi = 1;
+						delta = 1;
+						eta = (1 - error) / (Math.pow(Math.E, ((0 - Gamma) * step)));
+						while (delta < eta) {
+							K = K + 1;
+							xi = xi * ((Gamma * step) / K);
+							delta = delta + xi;
+						}
+					}
+					stop = !performTransientMarkovianAnalysis(step, error, Gamma, K, progress);
+					progress.setValue((int) i);
+					if (stop) {
+						return false;
 					}
 				}
-				stop = !performTransientMarkovianAnalysis(step, error, Gamma, K, progress);
-				progress.setValue((int) i);
-				if (stop) {
-					return false;
-				}
+				return !stop;
 			}
-			return !stop;
+			else {
+				return false;
+			}
 		}
 	}
 
