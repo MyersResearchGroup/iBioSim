@@ -44,6 +44,9 @@ public class ComponentSchemePart {
 	public Color getColor(HashMap<String, ArrayList<Double>> dataHash, int frameIndex){
 		
 		String key = getTsdKey();
+		// if the user hasn't chosen a species, don't use this color.
+		if(key == null)
+			return null;
 		double val = dataHash.get(key).get(frameIndex);
 		return colorScheme.getColor(val);
 	}
