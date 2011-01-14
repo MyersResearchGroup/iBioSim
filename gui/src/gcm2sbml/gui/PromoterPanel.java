@@ -19,7 +19,7 @@ import biomodelsim.BioSim;
 public class PromoterPanel extends JPanel {
 	public PromoterPanel(String selected, PropertyList promoterList,
 			PropertyList influencesList, GCMFile gcm, boolean paramsOnly, GCMFile refGCM, GCM2SBMLEditor gcmEditor) {
-		super(new GridLayout(8, 1));
+		super(new GridLayout(9, 1));
 		this.selected = selected;
 		this.promoterList = promoterList;
 		this.influenceList = influencesList;
@@ -102,6 +102,29 @@ public class PromoterPanel extends JPanel {
 					.getParameter(GlobalConstants.RNAP_BINDING_STRING), Utility.NUMstring, paramsOnly, origString);
 		}
 		fields.put(GlobalConstants.RNAP_BINDING_STRING, field);
+		add(field);
+		
+		// Activated RNAP binding
+		origString = "default";
+		if (paramsOnly) {
+			String defaultValue = refGCM.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING);
+			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)) {
+				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING);
+				origString = "custom";
+			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)) {
+				defaultValue = gcm.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING);
+			}
+			field = new PropertyField(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, gcm
+					.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING),
+					origString, defaultValue, Utility.SWEEPstring, paramsOnly, origString);
+		} else {
+			field = new PropertyField(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, gcm
+					.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING),
+					origString, gcm
+					.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING), Utility.NUMstring, paramsOnly, origString);
+		}
+		fields.put(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, field);
 		add(field);
 		
 		// kocr
@@ -277,6 +300,7 @@ public class PromoterPanel extends JPanel {
 			if (paramsOnly) {
 				if (fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getState().equals(fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getStates()[1]) ||
 						fields.get(GlobalConstants.RNAP_BINDING_STRING).getState().equals(fields.get(GlobalConstants.RNAP_BINDING_STRING).getStates()[1]) ||
+						fields.get(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING).getState().equals(fields.get(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING).getStates()[1]) ||
 						fields.get(GlobalConstants.OCR_STRING).getState().equals(fields.get(GlobalConstants.OCR_STRING).getStates()[1]) ||
 						fields.get(GlobalConstants.STOICHIOMETRY_STRING).getState().equals(fields.get(GlobalConstants.STOICHIOMETRY_STRING).getStates()[1]) ||
 						fields.get(GlobalConstants.KBASAL_STRING).getState().equals(fields.get(GlobalConstants.KBASAL_STRING).getStates()[1]) ||
@@ -312,6 +336,15 @@ public class PromoterPanel extends JPanel {
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
 				+ CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_BINDING_STRING) + " "
 				+ fields.get(GlobalConstants.RNAP_BINDING_STRING).getValue();
+			}
+			if (fields.get(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING).getState()
+					.equals(fields.get(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING).getStates()[1])) {
+				if (!updates.equals("")) {
+					updates += "\n";
+				}
+				updates += fields.get(GlobalConstants.ID).getValue() + "/"
+				+ CompatibilityFixer.getSBMLName(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING) + " "
+				+ fields.get(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.OCR_STRING).getState().equals(fields.get(GlobalConstants.OCR_STRING).getStates()[1])) {
 				if (!updates.equals("")) {

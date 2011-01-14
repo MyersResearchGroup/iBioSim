@@ -304,7 +304,7 @@ public class Schematic extends JPanel implements ActionListener {
 							if(cell.isEdge()){
 								Properties prop = gcm.getInfluences().get(cell.getId());
 								String type = prop.getProperty(GlobalConstants.TYPE);
-								if (!type.equals(GlobalConstants.NOINFLUENCE)) {
+								if (!type.equals(GlobalConstants.NOINFLUENCE) && !type.equals(GlobalConstants.COMPLEX)) {
 									String promoter = prop.getProperty(GlobalConstants.PROMOTER);
 									//System.out.print(promoter);
 									if(promoter != null){
@@ -648,19 +648,15 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		// Calculate some parameters that will be needed to build the
 		// influence we will need.
-		String isBio;
 		String type;
-		String constType;
 		if(activationButton.isSelected()){
-			isBio = InfluencePanel.bio[0]; type = InfluencePanel.types[1]; constType = GlobalConstants.ACTIVATION;
+			type = InfluencePanel.types[1]; 
 		}else if(inhibitionButton.isSelected()){
-			isBio = InfluencePanel.bio[0]; type = InfluencePanel.types[0]; constType = GlobalConstants.REPRESSION;
+			type = InfluencePanel.types[0];
 		}else if(bioActivationButton.isSelected()){
-			isBio = "complex"; /*InfluencePanel.bio[1];*/ type = InfluencePanel.types[1]; constType = GlobalConstants.ACTIVATION;
-		//}else if(bioInhibitionButton.isSelected()){
-		//	isBio = InfluencePanel.bio[1]; type = InfluencePanel.types[0]; constType = GlobalConstants.REPRESSION;
+			type = InfluencePanel.types[3]; 
 		}else if(noInfluenceButton.isSelected()){
-			isBio = ""; type = InfluencePanel.types[2]; constType = GlobalConstants.NOINFLUENCE;
+			type = InfluencePanel.types[2];
 		}else{
 			throw(new Error("No influence button was pressed!"));
 		}
@@ -675,8 +671,7 @@ public class Schematic extends JPanel implements ActionListener {
 				name = InfluencePanel.buildName(
 						GlobalConstants.NONE, 
 						targetID, 
-						type, 
-						isBio, 
+						type,  
 						sourceID);
 				newInfluenceProperties.setProperty(GlobalConstants.PROMOTER, sourceID);
 			}else{
@@ -685,7 +680,6 @@ public class Schematic extends JPanel implements ActionListener {
 						sourceID, 
 						GlobalConstants.NONE, 
 						type, 
-						isBio, 
 						targetID);
 				newInfluenceProperties.setProperty(GlobalConstants.PROMOTER, targetID);
 			}
@@ -693,7 +687,7 @@ public class Schematic extends JPanel implements ActionListener {
 		}// end connect species to promoter
 		else{
 			// connect two species to each other
-			name = InfluencePanel.buildName(sourceID, targetID, type, isBio, "default");
+			name = InfluencePanel.buildName(sourceID, targetID, type, "default");
 		}
 		// make sure the species name is valid
 		String iia = gcm.isInfluenceAllowed(name);
@@ -706,11 +700,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		// build the influence properties
 		newInfluenceProperties.setProperty(GlobalConstants.NAME, name);
-		if (isBio == "complex") {
-			newInfluenceProperties.setProperty(GlobalConstants.TYPE, GlobalConstants.COMPLEX);
-		} else {
-			newInfluenceProperties.setProperty(GlobalConstants.TYPE, constType);
-		}
+		newInfluenceProperties.setProperty(GlobalConstants.TYPE, type);
 		gcm.getInfluences().put(name, newInfluenceProperties);
 		
 		

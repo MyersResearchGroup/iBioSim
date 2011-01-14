@@ -170,6 +170,10 @@ public class Promoter {
 		return Double.parseDouble(getProperty(GlobalConstants.RNAP_BINDING_STRING));
 	}
 	
+	public double getKArnap() {
+		return Double.parseDouble(getProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING));
+	}
+	
 	/**
 	 * @param reactions
 	 *            The reactions to set.

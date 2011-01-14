@@ -1141,6 +1141,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 		if (biosimrc.get("biosim.gcm.RNAP_BINDING_VALUE", "").equals("")) {
 			biosimrc.put("biosim.gcm.RNAP_BINDING_VALUE", ".033");
 		}
+		if (biosimrc.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", "1");
+		}
 		if (biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", "").equals("")) {
 			biosimrc.put("biosim.gcm.STOICHIOMETRY_VALUE", "10");
 		}
@@ -1377,6 +1380,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			final JTextField OCR_VALUE = new JTextField(biosimrc.get("biosim.gcm.OCR_VALUE", ""));
 			final JTextField RNAP_BINDING_VALUE = new JTextField(biosimrc.get(
 					"biosim.gcm.RNAP_BINDING_VALUE", ""));
+			final JTextField ACTIVATED_RNAP_BINDING_VALUE = new JTextField(biosimrc.get(
+					"biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", ""));
 			final JTextField KREP_VALUE = new JTextField(biosimrc.get("biosim.gcm.KREP_VALUE", ""));
 			final JTextField STOICHIOMETRY_VALUE = new JTextField(biosimrc.get(
 					"biosim.gcm.STOICHIOMETRY_VALUE", ""));
@@ -1426,6 +1431,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					+ " ("
 					+ CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_BINDING_STRING)
 					+ "):"));
+			labels.add(new JLabel(CompatibilityFixer
+					.getGuiName(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)
+					+ " ("
+					+ CompatibilityFixer.getSBMLName(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)
+					+ "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KREP_STRING) + " ("
 					+ CompatibilityFixer.getSBMLName(GlobalConstants.KREP_STRING) + "):"));
 			labels.add(new JLabel(CompatibilityFixer
@@ -1452,6 +1462,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			fields.add(MAX_DIMER_VALUE);
 			fields.add(OCR_VALUE);
 			fields.add(RNAP_BINDING_VALUE);
+			fields.add(ACTIVATED_RNAP_BINDING_VALUE);
 			fields.add(KREP_VALUE);
 			fields.add(STOICHIOMETRY_VALUE);
 			fields.add(KCOMPLEX_VALUE);
@@ -1811,6 +1822,13 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				try {
 					Double.parseDouble(RNAP_BINDING_VALUE.getText().trim());
 					biosimrc.put("biosim.gcm.RNAP_BINDING_VALUE", RNAP_BINDING_VALUE.getText()
+							.trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(ACTIVATED_RNAP_BINDING_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", ACTIVATED_RNAP_BINDING_VALUE.getText()
 							.trim());
 				}
 				catch (Exception e1) {

@@ -63,6 +63,9 @@ public class CompatibilityFixer {
 
 	public final static String GUI_RNAP_BINDING_STRING = "RNAP binding equilibrium";
 	public final static String SBML_RNAP_BINDING_STRING = "Ko";
+	
+	public final static String GUI_ACTIVATED_RNAP_BINDING_STRING = "Activated RNAP binding equilibrium";
+	public final static String SBML_ACTIVATED_RNAP_BINDING_STRING = "Kao";
 
 	public final static String GUI_OCR_STRING = "Open complex production rate";
 	public final static String SBML_OCR_STRING = "ko";
@@ -120,6 +123,9 @@ public class CompatibilityFixer {
 
 		guiName.put(GlobalConstants.RNAP_BINDING_STRING, GUI_RNAP_BINDING_STRING);
 		sbmlName.put(GlobalConstants.RNAP_BINDING_STRING, SBML_RNAP_BINDING_STRING);
+		
+		guiName.put(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, GUI_ACTIVATED_RNAP_BINDING_STRING);
+		sbmlName.put(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, SBML_ACTIVATED_RNAP_BINDING_STRING);
 
 		guiName.put(GlobalConstants.OCR_STRING, GUI_OCR_STRING);
 		sbmlName.put(GlobalConstants.OCR_STRING, SBML_OCR_STRING);
