@@ -58,7 +58,7 @@ public class CompatibilityFixer {
 	public final static String GUI_STOICHIOMETRY_STRING = "Stoichiometry of production";
 	public final static String SBML_STOICHIOMETRY_STRING = "np";
 
-	public final static String GUI_COOPERATIVITY_STRING = "Degree of cooperativity";
+	public final static String GUI_COOPERATIVITY_STRING = "Stoichiometry of binding";
 	public final static String SBML_COOPERATIVITY_STRING = "nc";
 
 	public final static String GUI_RNAP_BINDING_STRING = "RNAP binding equilibrium";

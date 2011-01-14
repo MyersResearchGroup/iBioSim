@@ -1387,7 +1387,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					"biosim.gcm.STOICHIOMETRY_VALUE", ""));
 			final JTextField KCOMPLEX_VALUE = new JTextField(biosimrc.get(
 					"biosim.gcm.KCOMPLEX_VALUE", ""));
-			JPanel labels = new JPanel(new GridLayout(16, 1));
+			JPanel labels = new JPanel(new GridLayout(14, 1));
 			labels
 					.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVED_STRING)
 							+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.ACTIVED_STRING)
@@ -1396,8 +1396,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					+ CompatibilityFixer.getSBMLName(GlobalConstants.KACT_STRING) + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBASAL_STRING)
 					+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.KBASAL_STRING) + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBIO_STRING) + " ("
-					+ CompatibilityFixer.getSBMLName(GlobalConstants.KBIO_STRING) + "):"));
+//			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBIO_STRING) + " ("
+//					+ CompatibilityFixer.getSBMLName(GlobalConstants.KBIO_STRING) + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KDECAY_STRING)
 					+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.KDECAY_STRING) + "):"));
 			labels.add(new JLabel(CompatibilityFixer
@@ -1405,11 +1405,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					+ " ("
 					+ CompatibilityFixer.getSBMLName(GlobalConstants.COOPERATIVITY_STRING)
 					+ "):"));
-			labels.add(new JLabel(CompatibilityFixer
-					.getGuiName(GlobalConstants.KASSOCIATION_STRING)
-					+ " ("
-					+ CompatibilityFixer.getSBMLName(GlobalConstants.KASSOCIATION_STRING)
-					+ "):"));
+//			labels.add(new JLabel(CompatibilityFixer
+//					.getGuiName(GlobalConstants.KASSOCIATION_STRING)
+//					+ " ("
+//					+ CompatibilityFixer.getSBMLName(GlobalConstants.KASSOCIATION_STRING)
+//					+ "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_STRING) + " ("
 					+ CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_STRING) + "):"));
 			labels.add(new JLabel(CompatibilityFixer
@@ -1421,9 +1421,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.INITIAL_STRING)
 							+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.INITIAL_STRING)
 							+ "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.MAX_DIMER_STRING)
-					+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.MAX_DIMER_STRING)
-					+ "):"));
+//			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.MAX_DIMER_STRING)
+//					+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.MAX_DIMER_STRING)
+//					+ "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.OCR_STRING) + " ("
 					+ CompatibilityFixer.getSBMLName(GlobalConstants.OCR_STRING) + "):"));
 			labels.add(new JLabel(CompatibilityFixer
@@ -1448,18 +1448,18 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							+ " ("
 							+ CompatibilityFixer.getSBMLName(GlobalConstants.KCOMPLEX_STRING)
 							+ "):"));
-			JPanel fields = new JPanel(new GridLayout(16, 1));
+			JPanel fields = new JPanel(new GridLayout(14, 1));
 			fields.add(ACTIVED_VALUE);
 			fields.add(KACT_VALUE);
 			fields.add(KBASAL_VALUE);
-			fields.add(KBIO_VALUE);
+//			fields.add(KBIO_VALUE);
 			fields.add(KDECAY_VALUE);
 			fields.add(COOPERATIVITY_VALUE);
-			fields.add(KASSOCIATION_VALUE);
+//			fields.add(KASSOCIATION_VALUE);
 			fields.add(RNAP_VALUE);
 			fields.add(PROMOTER_COUNT_VALUE);
 			fields.add(INITIAL_VALUE);
-			fields.add(MAX_DIMER_VALUE);
+//			fields.add(MAX_DIMER_VALUE);
 			fields.add(OCR_VALUE);
 			fields.add(RNAP_BINDING_VALUE);
 			fields.add(ACTIVATED_RNAP_BINDING_VALUE);
