@@ -520,6 +520,18 @@ public class GCMFile {
 					}
 				}
 			}
+			else if (param.equals(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)) {
+				mod = setToArrayList(bottomLevel.promoters.keySet());
+				for (String prom : mod) {
+					if (!bottomLevel.promoters.get(prom).containsKey(
+							GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)) {
+						bottomLevel.promoters.get(prom).put(
+								GlobalConstants.ACTIVATED_RNAP_BINDING_STRING,
+								bottomLevel.globalParameters
+										.get(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING));
+					}
+				}
+			}
 			else if (param.equals(GlobalConstants.OCR_STRING)) {
 				mod = setToArrayList(bottomLevel.promoters.keySet());
 				for (String prom : mod) {
@@ -2288,7 +2300,7 @@ public class GCMFile {
 		// gcm as complex influences
 		parseBioInfluences(repBioMap, repBioPropMap);
 		parseBioInfluences(actBioMap, actBioPropMap);
-		// Parses collected dimer activation influences and adds them to the gcm
+		// Parses mapped dimer activation influences and adds them to the gcm
 		// as complex influences
 		parseDimerInfluences(repDimerList);
 		parseDimerInfluences(actDimerList);
@@ -2414,6 +2426,8 @@ public class GCMFile {
 				.get("biosim.gcm.KACT_VALUE", ""));
 		defaultParameters.put(GlobalConstants.RNAP_BINDING_STRING, biosimrc.get(
 				"biosim.gcm.RNAP_BINDING_VALUE", ""));
+		defaultParameters.put(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, biosimrc.get(
+				"biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", ""));
 		defaultParameters.put(GlobalConstants.RNAP_STRING, biosimrc
 				.get("biosim.gcm.RNAP_VALUE", ""));
 		defaultParameters.put(GlobalConstants.OCR_STRING, biosimrc.get("biosim.gcm.OCR_VALUE", ""));

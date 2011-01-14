@@ -21,7 +21,7 @@ import biomodelsim.BioSim;
 
 public class InfluencePanel extends JPanel implements ActionListener {
 	public InfluencePanel(String selected, PropertyList list, GCMFile gcm, boolean paramsOnly, GCMFile refGCM, GCM2SBMLEditor gcmEditor) {
-		super(new GridLayout(11, 1));
+		super(new GridLayout(6, 1));
 		this.selected = selected;
 		this.list = list;
 		this.gcm = gcm;
@@ -37,41 +37,11 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		fields.put(GlobalConstants.NAME, field);
 		add(field);
 
-		// Input field
-		JPanel tempPanel = new JPanel();
-		JLabel tempLabel = new JLabel("Input");
-		inputBox = new JComboBox(gcm.getSpeciesAsArray());
-		inputBox.addItem("none");
-		// inputBox.setSelectedItem();
-		inputBox.addActionListener(this);
-		tempPanel.setLayout(new GridLayout(1, 2));
-		tempPanel.add(tempLabel);
-		tempPanel.add(inputBox);
-		if (paramsOnly) {
-			tempLabel.setEnabled(false);
-			inputBox.setEnabled(false);
-		}
-		add(tempPanel);
-
-		// Output field
-		tempPanel = new JPanel();
-		tempLabel = new JLabel("Output");
-		outputBox = new JComboBox(gcm.getSpeciesAsArray());
-		outputBox.addItem("none");
-		// outputBox.setSelectedItem(types[0]);
-		outputBox.addActionListener(this);
-		tempPanel.setLayout(new GridLayout(1, 2));
-		tempPanel.add(tempLabel);
-		tempPanel.add(outputBox);
-		if (paramsOnly) {
-			tempLabel.setEnabled(false);
-			outputBox.setEnabled(false);
-		}
-		add(tempPanel);
+		
 
 		// Promoter field
-		tempPanel = new JPanel();
-		tempLabel = new JLabel("Promoter");
+		JPanel tempPanel = new JPanel();
+		JLabel tempLabel = new JLabel("Promoter");
 		promoterBox = new JComboBox(gcm.getPromotersAsArray());
 		((DefaultComboBoxModel) (promoterBox.getModel())).addElement("default");
 		promoterBox.setSelectedItem("default");String origString = "default";
@@ -99,26 +69,6 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			typeBox.setEnabled(false);
 		}
 		add(tempPanel);
-
-		// Biochemical field
-		tempPanel = new JPanel();
-		tempLabel = new JLabel("Biochemical");
-		bioBox = new JComboBox(bio);
-		bioBox.setSelectedIndex(0);
-		bioBox.addActionListener(this);
-		// bioBox.addActionListener(this);
-		tempPanel.setLayout(new GridLayout(1, 2));
-		tempPanel.add(tempLabel);
-		tempPanel.add(bioBox);
-		if (paramsOnly) {
-			tempLabel.setEnabled(false);
-			bioBox.setEnabled(false);
-		}
-		add(tempPanel);
-
-		fields.get(GlobalConstants.NAME).setValue(inputBox.getSelectedItem() + " -| "
-				+ outputBox.getSelectedItem() + ", Promoter "
-				+ promoterBox.getSelectedItem());
 		
 		// coop
 		String defString = "default";
@@ -143,31 +93,6 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					Utility.NUMstring, paramsOnly, defString);
 		}
 		fields.put(GlobalConstants.COOPERATIVITY_STRING, field);
-		add(field);
-
-		// dimer
-		defString = "default";
-		if (paramsOnly) {
-			String defaultValue = refGCM.getParameter(GlobalConstants.MAX_DIMER_STRING);
-			if (refGCM.getInfluences().get(selected).containsKey(GlobalConstants.MAX_DIMER_STRING)) {
-				defaultValue = refGCM.getInfluences().get(selected).getProperty(GlobalConstants.MAX_DIMER_STRING);
-				defString = "custom";
-			}
-			else if (gcm.globalParameterIsSet(GlobalConstants.MAX_DIMER_STRING)) {
-				defaultValue = gcm.getParameter(GlobalConstants.MAX_DIMER_STRING);
-			}
-			field = new PropertyField(GlobalConstants.MAX_DIMER_STRING, gcm
-					.getParameter(GlobalConstants.MAX_DIMER_STRING),
-					defString, defaultValue,
-					Utility.SWEEPstring, paramsOnly, defString);
-		} else {
-			field = new PropertyField(GlobalConstants.MAX_DIMER_STRING, gcm
-					.getParameter(GlobalConstants.MAX_DIMER_STRING),
-					defString, gcm
-							.getParameter(GlobalConstants.MAX_DIMER_STRING),
-					Utility.NUMstring, paramsOnly, defString);
-		}
-		fields.put(GlobalConstants.MAX_DIMER_STRING, field);
 		add(field);
 
 		// krep
@@ -221,47 +146,12 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		field.setEnabled(false);
 		add(field);
 
-		// kbio
-		defString = "default";
-		if (paramsOnly) {
-			String defaultValue = refGCM.getParameter(GlobalConstants.KBIO_STRING);
-			if (refGCM.getInfluences().get(selected).containsKey(GlobalConstants.KBIO_STRING)) {
-				defaultValue = refGCM.getInfluences().get(selected).getProperty(GlobalConstants.KBIO_STRING);
-				defString = "custom";
-			}
-			else if (gcm.globalParameterIsSet(GlobalConstants.KBIO_STRING)) {
-				defaultValue = gcm.getParameter(GlobalConstants.KBIO_STRING);
-			}
-			field = new PropertyField(GlobalConstants.KBIO_STRING, gcm
-					.getParameter(GlobalConstants.KBIO_STRING),
-					defString, defaultValue,
-					Utility.SWEEPstring, paramsOnly, defString);
-		} else {
-			field = new PropertyField(GlobalConstants.KBIO_STRING, gcm
-					.getParameter(GlobalConstants.KBIO_STRING),
-					defString, gcm
-							.getParameter(GlobalConstants.KBIO_STRING),
-					Utility.NUMstring, paramsOnly, defString);
-		}
-		fields.put(GlobalConstants.KBIO_STRING, field);
-		field.setEnabled(false);
-		add(field);
-
 		setType(types[0]);
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
 			Properties prop = gcm.getInfluences().get(selected);
 			fields.get(GlobalConstants.NAME).setValue(selected);
-			inputBox.setSelectedItem(GCMFile.getInput(selected));
-			outputBox.setSelectedItem(GCMFile.getOutput(selected));
-			if (prop.containsKey(GlobalConstants.BIO)) {
-				bioBox.setSelectedItem(bio[1]);
-				fields.get(GlobalConstants.KBIO_STRING).setEnabled(true);
-			} else {
-				bioBox.setSelectedItem(bio[0]);
-				fields.get(GlobalConstants.KBIO_STRING).setEnabled(false);
-			}
 			if (prop.containsKey(GlobalConstants.PROMOTER)) {
 				promoterBox.setSelectedItem(prop.get(GlobalConstants.PROMOTER));
 			} else {
@@ -283,10 +173,6 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			}else {
 				typeBox.setSelectedItem(types[2]);
 				setType(types[2]);
-				promoterBox.setSelectedItem("default");
-				promoterBox.setEnabled(false);
-				bioBox.setSelectedItem("no");
-				bioBox.setEnabled(false);
 			}
 			loadProperties(prop);
 		}
@@ -349,10 +235,6 @@ public class InfluencePanel extends JPanel implements ActionListener {
 						.getSelectedItem());
 				label = promoterBox.getSelectedItem().toString();
 			}
-			if (bioBox.getSelectedItem().equals(bio[1])) {
-				property.put(GlobalConstants.BIO, bio[1]);
-				label = label + "+";
-			}
 			property.put("label", "\"" + label + "\"");
 
 			if (selected != null && !oldName.equals(id)) {
@@ -365,10 +247,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			gcm.addInfluences(id, property);
 			if (paramsOnly) {
 				if (fields.get(GlobalConstants.COOPERATIVITY_STRING).getState().equals(fields.get(GlobalConstants.COOPERATIVITY_STRING).getStates()[1]) ||
-						fields.get(GlobalConstants.MAX_DIMER_STRING).getState().equals(fields.get(GlobalConstants.MAX_DIMER_STRING).getStates()[1]) ||
 						fields.get(GlobalConstants.KREP_STRING).getState().equals(fields.get(GlobalConstants.KREP_STRING).getStates()[1]) ||
-						fields.get(GlobalConstants.KACT_STRING).getState().equals(fields.get(GlobalConstants.KACT_STRING).getStates()[1]) ||
-						fields.get(GlobalConstants.KBIO_STRING).getState().equals(fields.get(GlobalConstants.KBIO_STRING).getStates()[1])) {
+						fields.get(GlobalConstants.KACT_STRING).getState().equals(fields.get(GlobalConstants.KACT_STRING).getStates()[1])) {
 					id += " Modified";
 				}
 			}
@@ -390,15 +270,6 @@ public class InfluencePanel extends JPanel implements ActionListener {
 						+ CompatibilityFixer.getSBMLName(GlobalConstants.COOPERATIVITY_STRING) + " "
 						+ fields.get(GlobalConstants.COOPERATIVITY_STRING).getValue();
 			}
-			if (fields.get(GlobalConstants.MAX_DIMER_STRING).getState()
-					.equals(fields.get(GlobalConstants.MAX_DIMER_STRING).getStates()[1])) {
-				if (!updates.equals("")) {
-					updates += "\n";
-				}
-				updates += "\"" + fields.get(GlobalConstants.NAME).getValue() + "\"/"
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.MAX_DIMER_STRING) + " "
-				+ fields.get(GlobalConstants.MAX_DIMER_STRING).getValue();
-			}
 			if (fields.get(GlobalConstants.KREP_STRING).getState().equals(fields.get(GlobalConstants.KREP_STRING).getStates()[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
@@ -414,14 +285,6 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				updates += "\"" + fields.get(GlobalConstants.NAME).getValue() + "\"/"
 				+ CompatibilityFixer.getSBMLName(GlobalConstants.KACT_STRING) + " "
 				+ fields.get(GlobalConstants.KACT_STRING).getValue();
-			}
-			if (fields.get(GlobalConstants.KBIO_STRING).getState().equals(fields.get(GlobalConstants.KBIO_STRING).getStates()[1])) {
-				if (!updates.equals("")) {
-					updates += "\n";
-				}
-				updates += "\"" + fields.get(GlobalConstants.NAME).getValue() + "\"/"
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.KBIO_STRING) + " "
-				+ fields.get(GlobalConstants.KBIO_STRING).getValue();
 			}
 			if (updates.equals("")) {
 				updates += "\"" + fields.get(GlobalConstants.NAME).getValue() + "\"/";
@@ -439,7 +302,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	 * @param promoter
 	 * @return
 	 */
-	public static String buildName(String sourceId, String targetId, String type, String isBio, String promoter){
+	public static String buildName(String sourceId, String targetId, String type, String promoter){
 		String arrow = " -| ";
 		if (type==types[1]) {
 			arrow = " -> ";
@@ -457,55 +320,24 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")
 				&& e.getSource().equals(typeBox)) {
-			setType(typeBox.getSelectedItem().toString());
-
-			fields.get(GlobalConstants.NAME).setValue(buildName(
-					inputBox.getSelectedItem().toString(), 
-					outputBox.getSelectedItem().toString(),
-					typeBox.getSelectedItem().toString(),
-					bioBox.getSelectedItem().toString(),
-					promoterBox.getSelectedItem().toString()
-					));
-			
-			if (typeBox.getSelectedItem().equals("no influence")) {
-				promoterBox.setSelectedItem("default");
-				promoterBox.setEnabled(false);
-				bioBox.setSelectedItem("no");
-				bioBox.setEnabled(false);
-			} else {
-				promoterBox.setEnabled(true);
-				bioBox.setEnabled(true);
-			}
+			String type = typeBox.getSelectedItem().toString();
+			setType(type);
+			String arrow = "-|";
+			if (type==types[1]) {
+				arrow = "->";
+			} else if (type==types[2]) {
+				arrow = "x>";
+			} else if (type==types[3]) {
+				arrow = "+>";
+			} 
+			String newName = fields.get(GlobalConstants.NAME).getValue().replaceAll(".[>|]", arrow);
+			fields.get(GlobalConstants.NAME).setValue(newName);
 
 		} else if (e.getActionCommand().equals("comboBoxChanged")
-				&& (e.getSource().equals(inputBox) || e.getSource().equals(
-						outputBox)) || e.getSource().equals(promoterBox)) {
-			
-			fields.get(GlobalConstants.NAME).setValue(buildName(
-					inputBox.getSelectedItem().toString(), 
-					outputBox.getSelectedItem().toString(),
-					typeBox.getSelectedItem().toString(),
-					bioBox.getSelectedItem().toString(),
-					promoterBox.getSelectedItem().toString()
-					));
-		}
-		if (e.getActionCommand().equals("comboBoxChanged")
-				&& (e.getSource().equals(bioBox))) {
-			boolean state = false;
-			if (bioBox.getSelectedItem().equals(bio[0])) {
-				state = false;
-			} else {
-				state = true;
-			}
-			fields.get(GlobalConstants.KBIO_STRING).setEnabled(state);
-			
-			fields.get(GlobalConstants.NAME).setValue(buildName(
-					inputBox.getSelectedItem().toString(), 
-					outputBox.getSelectedItem().toString(),
-					typeBox.getSelectedItem().toString(),
-					bioBox.getSelectedItem().toString(),
-					promoterBox.getSelectedItem().toString()
-					));
+				&& e.getSource().equals(promoterBox)) {
+			String newName = fields.get(GlobalConstants.NAME).getValue().split("Promoter")[0] + "Promoter " + 
+				promoterBox.getSelectedItem().toString();
+			fields.get(GlobalConstants.NAME).setValue(newName);
 		}
 	}
 
@@ -514,22 +346,24 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			fields.get(GlobalConstants.KACT_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(true);
 			fields.get(GlobalConstants.COOPERATIVITY_STRING).setEnabled(true);
-			fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
+			promoterBox.setEnabled(true);
 		} else if (type.equals(types[1])) {
 			fields.get(GlobalConstants.KACT_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(false);
 			fields.get(GlobalConstants.COOPERATIVITY_STRING).setEnabled(true);
-			fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
+			promoterBox.setEnabled(true);
 		} else if (type.equals(types[2])) {
 			fields.get(GlobalConstants.KACT_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(false);
 			fields.get(GlobalConstants.COOPERATIVITY_STRING).setEnabled(false);
-			fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(false); 
+			promoterBox.setSelectedItem("default");
+			promoterBox.setEnabled(false);
 		} else if (type.equals(types[3])) {
 			fields.get(GlobalConstants.KACT_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(false);
 			fields.get(GlobalConstants.COOPERATIVITY_STRING).setEnabled(true);
-			fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(false);
+			promoterBox.setSelectedItem("default");
+			promoterBox.setEnabled(false);
 		} else {
 			throw new IllegalStateException("Illegal state");
 		}
@@ -549,15 +383,13 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	}
 
 	private String[] options = { "Ok", "Cancel" };
-	public static String[] types = { "repression", "activation", "no influence", "complex" };
+	public static String[] types = { GlobalConstants.REPRESSION, GlobalConstants.ACTIVATION, 
+		GlobalConstants.NOINFLUENCE, GlobalConstants.COMPLEX };
 	public static String[] bio = { "no", "yes" };
 	private HashMap<String, PropertyField> fields = null;
 	private GCMFile gcm = null;
 	private String selected = "";
-	private JComboBox inputBox = null;
-	private JComboBox outputBox = null;
 	private JComboBox promoterBox = null;
-	private JComboBox bioBox = null;
 	private JComboBox typeBox = null;
 	private PropertyList list = null;
 	private boolean paramsOnly;

@@ -48,7 +48,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
 			GCMFile refGCM,  GCM2SBMLEditor gcmEditor, ColorScheme colorScheme) {
 
-		JPanel grid = new JPanel(new GridLayout(7,1));
+		JPanel grid = new JPanel(new GridLayout(6,1));
 		this.add(grid, BorderLayout.CENTER);
 		
 
@@ -120,40 +120,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					origString);
 		}
 		fields.put(GlobalConstants.INITIAL_STRING, field);
-		grid.add(field);
-
-		// grid.grid.add(dimer field
-		// field = new PropertyField(GlobalConstants.MAX_DIMER_STRING, gcm
-		// .getParameter(GlobalConstants.MAX_DIMER_STRING),
-		// PropertyField.states[0], gcm
-		// .getParameter(GlobalConstants.MAX_DIMER_STRING),
-		// Utility.NUMstring);
-		// fields.put(GlobalConstants.MAX_DIMER_STRING, field);
-		// grid.add(field);
-
-		// Dimerization field
-		origString = "default";
-		if (paramsOnly) {
-			String defaultValue = refGCM.getParameter(GlobalConstants.KASSOCIATION_STRING);
-			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.KASSOCIATION_STRING)) {
-				defaultValue = refGCM.getSpecies().get(selected).getProperty(
-						GlobalConstants.KASSOCIATION_STRING);
-				origString = "custom";
-			}
-			else if (gcm.globalParameterIsSet(GlobalConstants.KASSOCIATION_STRING)) {
-				defaultValue = gcm.getParameter(GlobalConstants.KASSOCIATION_STRING);
-			}
-			field = new PropertyField(GlobalConstants.KASSOCIATION_STRING, gcm
-					.getParameter(GlobalConstants.KASSOCIATION_STRING), origString, defaultValue,
-					Utility.SWEEPstring, paramsOnly, origString);
-		}
-		else {
-			field = new PropertyField(GlobalConstants.KASSOCIATION_STRING, gcm
-					.getParameter(GlobalConstants.KASSOCIATION_STRING), origString, gcm
-					.getParameter(GlobalConstants.KASSOCIATION_STRING), Utility.NUMstring,
-					paramsOnly, origString);
-		}
-		fields.put(GlobalConstants.KASSOCIATION_STRING, field);
 		grid.add(field);
 
 		// Decay field
@@ -318,8 +284,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			if (paramsOnly) {
 				if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(
 						fields.get(GlobalConstants.INITIAL_STRING).getStates()[1])
-						|| fields.get(GlobalConstants.KASSOCIATION_STRING).getState().equals(
-								fields.get(GlobalConstants.KASSOCIATION_STRING).getStates()[1])
+						|| fields.get(GlobalConstants.KCOMPLEX_STRING).getState().equals(
+								fields.get(GlobalConstants.KCOMPLEX_STRING).getStates()[1])
 						|| fields.get(GlobalConstants.KDECAY_STRING).getState().equals(
 								fields.get(GlobalConstants.KDECAY_STRING).getStates()[1])) {
 					id += " Modified";
@@ -355,15 +321,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						+ CompatibilityFixer.getSBMLName(GlobalConstants.INITIAL_STRING) + " "
 						+ fields.get(GlobalConstants.INITIAL_STRING).getValue();
 			}
-			if (fields.get(GlobalConstants.KASSOCIATION_STRING).getState().equals(
-					fields.get(GlobalConstants.KASSOCIATION_STRING).getStates()[1])) {
-				if (!updates.equals("")) {
-					updates += "\n";
-				}
-				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-						+ CompatibilityFixer.getSBMLName(GlobalConstants.KASSOCIATION_STRING) + " "
-						+ fields.get(GlobalConstants.KASSOCIATION_STRING).getValue();
-			}
 			if (fields.get(GlobalConstants.KDECAY_STRING).getState().equals(
 					fields.get(GlobalConstants.KDECAY_STRING).getStates()[1])) {
 				if (!updates.equals("")) {
@@ -397,25 +354,17 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	private void setType(String type) {
 		if (type.equals(types[0])) {
-			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(false);
 		}
 		else if (type.equals(types[1])) {
-			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
 		}
 		else if (type.equals(types[2])) {
-			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
 		} else {
-			// fields.get(GlobalConstants.MAX_DIMER_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KASSOCIATION_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(false);
 		}

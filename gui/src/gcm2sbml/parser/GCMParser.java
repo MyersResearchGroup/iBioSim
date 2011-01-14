@@ -158,6 +158,12 @@ public class GCMParser {
 		} else {
 			p.addProperty(GlobalConstants.RNAP_BINDING_STRING, gcm.getParameter(GlobalConstants.RNAP_BINDING_STRING));
 		} 
+		
+		if (property != null && property.containsKey(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)) {
+			p.addProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, property.getProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING));
+		} else {
+			p.addProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, gcm.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING));
+		} 
 		return p;
 		
 	}

@@ -12,6 +12,7 @@ public class GlobalConstants {
 	public static final String KDECAY_STRING = "kdecay";
 	public static final String RNAP_STRING = "RNAP count";
 	public static final String RNAP_BINDING_STRING = "KRNAP";
+	public static final String ACTIVATED_RNAP_BINDING_STRING = "Kao";
 	public static final String STOICHIOMETRY_STRING = "Stoichiometry of production";
 	public static final String COOPERATIVITY_STRING = "Binding site count for transciption factors";
 	public static final String ACTIVED_STRING = "Activated kocr";
