@@ -1587,6 +1587,10 @@ public class Run implements ActionListener {
 														terms.get(k - 1).remove(l);
 													}
 												}
+												percentData.get(k).set(
+														percentData.get(k).size() - 1,
+														(percentData.get(k).get(percentData.get(k)
+																.size() - 1)) * 100);
 											}
 										}
 										Parser probData = new Parser(dataLabels, data);
@@ -1748,6 +1752,10 @@ public class Run implements ActionListener {
 														terms.get(k - 1).remove(l);
 													}
 												}
+												percentData.get(k).set(
+														percentData.get(k).size() - 1,
+														(percentData.get(k).get(percentData.get(k)
+																.size() - 1)) * 100);
 											}
 										}
 										Parser probData = new Parser(dataLabels, data);
@@ -1969,6 +1977,10 @@ public class Run implements ActionListener {
 															terms.get(k - 1).remove(l);
 														}
 													}
+													percentData.get(k).set(
+															percentData.get(k).size() - 1,
+															(percentData.get(k).get(percentData
+																	.get(k).size() - 1)) * 100);
 												}
 											}
 											Parser probData = new Parser(dataLabels, data);
@@ -2135,6 +2147,10 @@ public class Run implements ActionListener {
 															terms.get(k - 1).remove(l);
 														}
 													}
+													percentData.get(k).set(
+															percentData.get(k).size() - 1,
+															(percentData.get(k).get(percentData
+																	.get(k).size() - 1)) * 100);
 												}
 											}
 											Parser probData = new Parser(dataLabels, data);
@@ -2320,6 +2336,10 @@ public class Run implements ActionListener {
 															terms.get(k - 1).remove(l);
 														}
 													}
+													percentData.get(k).set(
+															percentData.get(k).size() - 1,
+															(percentData.get(k).get(percentData
+																	.get(k).size() - 1)) * 100);
 												}
 											}
 											Parser probData = new Parser(dataLabels, data);
@@ -2486,6 +2506,10 @@ public class Run implements ActionListener {
 															terms.get(k - 1).remove(l);
 														}
 													}
+													percentData.get(k).set(
+															percentData.get(k).size() - 1,
+															(percentData.get(k).get(percentData
+																	.get(k).size() - 1)) * 100);
 												}
 											}
 											Parser probData = new Parser(dataLabels, data);
