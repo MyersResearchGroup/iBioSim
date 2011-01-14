@@ -2286,10 +2286,10 @@ public class GCMFile {
 					if (label == null) {
 						label = "";
 					}
-					if (properties.containsKey(GlobalConstants.BIO)
-							&& properties.get(GlobalConstants.BIO).equals("yes")) {
-						label = label + "+";
-					}
+//					if (properties.containsKey(GlobalConstants.BIO)
+//							&& properties.get(GlobalConstants.BIO).equals("yes")) {
+//						label = label + "+";
+//					}
 					properties.put("label", "\"" + label + "\"");
 					properties.put(GlobalConstants.NAME, name);
 					influences.put(name, properties);
@@ -2300,10 +2300,23 @@ public class GCMFile {
 		// gcm as complex influences
 		parseBioInfluences(repBioMap, repBioPropMap);
 		parseBioInfluences(actBioMap, actBioPropMap);
-		// Parses mapped dimer activation influences and adds them to the gcm
+		// Parses collected dimer activation influences and adds them to the gcm
 		// as complex influences
 		parseDimerInfluences(repDimerList);
 		parseDimerInfluences(actDimerList);
+		//Removes local and global instances of old bio/dimer parameters from gcm file
+		for (Properties inflProp : influences.values()) {
+			inflProp.remove(GlobalConstants.BIO);
+			inflProp.remove(GlobalConstants.KBIO_STRING);
+			inflProp.remove(GlobalConstants.MAX_DIMER_STRING);
+		}
+		for (Properties specProp : species.values()) {
+			specProp.remove(GlobalConstants.KASSOCIATION_STRING);
+		}
+		globalParameters.remove(GlobalConstants.KBIO_STRING);
+		globalParameters.remove(GlobalConstants.MAX_DIMER_STRING);
+		globalParameters.remove(GlobalConstants.KASSOCIATION_STRING);
+		
 		return complexConversion;
 	}
 
@@ -2337,15 +2350,12 @@ public class GCMFile {
 			label = "\"" + label + "\"";
 			inflProp.put("label", label);
 			inflProp.put(GlobalConstants.NAME, influence);
-			inflProp.remove(GlobalConstants.BIO);
-			inflProp.put(GlobalConstants.MAX_DIMER_STRING, "1");
 			influences.put(influence, inflProp);
 			// Adds complex species
 			Properties compProp = new Properties();
 			compProp.put(GlobalConstants.NAME, complex);
 			compProp.put(GlobalConstants.TYPE, GlobalConstants.INTERNAL);
-			compProp.put(GlobalConstants.KCOMPLEX_STRING, getProp(inflProp,
-					GlobalConstants.KBIO_STRING));
+			compProp.put(GlobalConstants.KCOMPLEX_STRING, getProp(inflProp, GlobalConstants.KBIO_STRING));
 			compProp.put(GlobalConstants.INITIAL_STRING, "0");
 			compProp.put(GlobalConstants.KDECAY_STRING, "0");
 			species.put(complex, compProp);
@@ -2386,8 +2396,6 @@ public class GCMFile {
 				influence = influence + "default";
 			label = "\"" + label + "\"";
 			inflProp.put(GlobalConstants.NAME, influence);
-			inflProp.remove(GlobalConstants.BIO);
-			inflProp.put(GlobalConstants.MAX_DIMER_STRING, "1");
 			influences.put(influence, inflProp);
 			// Adds complex species
 			Properties compProp = new Properties();
