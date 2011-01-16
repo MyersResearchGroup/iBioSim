@@ -366,18 +366,19 @@ public class Schematic extends JPanel implements ActionListener {
 	
 	
 	public void bringUpEditorForCell(mxCell cell){
-		if(graph.getCellType(cell) == GlobalConstants.SPECIES){
+		String cellType = graph.getCellType(cell);
+		if(cellType == GlobalConstants.SPECIES){
 			ColorScheme scheme = null;
 			if(movieContainer != null)
 				scheme = movieContainer.getMoviePreferences().getOrCreateColorSchemeForSpecies(cell.getId());
 			gcm2sbml.launchSpeciesPanel(cell.getId(), scheme);
-		}else if(graph.getCellType(cell) == GlobalConstants.INFLUENCE){
+		}else if(cellType == GlobalConstants.INFLUENCE){
 			// if an edge, make sure it isn't connected
 			// to a component - which aren't really influences at all.
 			if(	graph.getCellType(cell.getSource()) == GlobalConstants.SPECIES &&
 					graph.getCellType(cell.getTarget()) == GlobalConstants.SPECIES)
 			gcm2sbml.launchInfluencePanel(cell.getId());
-		}else if(graph.getCellType(cell) == GlobalConstants.COMPONENT){
+		}else if(cellType == GlobalConstants.COMPONENT){
 			//gcm2sbml.displayChooseComponentDialog(true, null, false, cell.getId());
 			if(movieContainer == null)
 				gcm2sbml.launchComponentPanel(cell.getId());
@@ -387,6 +388,8 @@ public class Schematic extends JPanel implements ActionListener {
 				else
 					new ComponentSchemeChooser(cell.getId(), movieContainer);
 			}
+		}else if(cellType.equals(GlobalConstants.PROMOTER)){
+			gcm2sbml.launchPromoterPanel(cell.getId());
 		}
 		// refresh everything.
 		graph.buildGraph();

@@ -17,7 +17,7 @@ import parser.TSDParser;
  */
 public class ComponentScheme {
 
-	public final int NUM_PARTS = 2;
+	public final int NUM_PARTS = 3;
 	
 	private LinkedList<ComponentSchemePart> schemes;
 	public LinkedList<ComponentSchemePart> getSchemes(){return schemes;}
