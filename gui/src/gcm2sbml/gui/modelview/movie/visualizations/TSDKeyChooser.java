@@ -67,7 +67,7 @@ public class TSDKeyChooser extends JPanel {
 		
 		list = new JList(items);
 		list.setSelectedIndex(selectedIndex);
-		//list.setPreferredSize(new Dimension(400, 50));
+		list.setPreferredSize(new Dimension(300, 50));
 		//list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		JScrollPane listScroller = new JScrollPane(list);
 		this.add(listScroller, BorderLayout.CENTER);

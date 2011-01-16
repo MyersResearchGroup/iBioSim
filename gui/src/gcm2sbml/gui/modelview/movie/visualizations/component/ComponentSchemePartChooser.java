@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
+import javax.swing.border.EmptyBorder;
 
 import org.apache.batik.css.engine.value.svg.SpacingManager;
 import org.jfree.ui.tabbedui.VerticalLayout;
@@ -57,6 +58,8 @@ public class ComponentSchemePartChooser extends JPanel {
 		JSeparator sep = new JSeparator();
 		sep.setPreferredSize(new Dimension(100, 20));
 		this.add(sep);
+
+		this.setBorder(new EmptyBorder(5, 5, 5, 5));
 	}
 	
 	public void saveChanges(){

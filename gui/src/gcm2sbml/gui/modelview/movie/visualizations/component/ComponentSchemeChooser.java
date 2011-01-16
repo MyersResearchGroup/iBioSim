@@ -4,6 +4,7 @@ import gcm2sbml.gui.modelview.movie.MovieContainer;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ListIterator;
@@ -11,6 +12,7 @@ import java.util.ListIterator;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
 import org.jfree.ui.tabbedui.VerticalLayout;
 
@@ -25,7 +27,7 @@ public class ComponentSchemeChooser extends JPanel implements ActionListener {
 	private String compName;
 	
 	public ComponentSchemeChooser(String compName, MovieContainer movieContainer) {
-		super(new BorderLayout());
+		super();
 
 		this.compName = compName;
 		this.componentScheme = movieContainer.getMoviePreferences().getOrCreateComponentSchemeForComponent(compName);
@@ -39,7 +41,9 @@ public class ComponentSchemeChooser extends JPanel implements ActionListener {
 	
 	private void buildGUI(){
 		
-		schemeHolder = new JPanel(new VerticalLayout());
+		this.setLayout(new BorderLayout());
+		
+		schemeHolder = new JPanel(new GridLayout(1,2));
 		this.add(schemeHolder, BorderLayout.CENTER);
 		
 		ListIterator<ComponentSchemePart> iter = componentScheme.getSchemes().listIterator();

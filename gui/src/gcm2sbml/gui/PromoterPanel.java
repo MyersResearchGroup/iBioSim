@@ -278,6 +278,22 @@ public class PromoterPanel extends JPanel {
 
 			// Check to see if we need to add or edit
 			Properties property = new Properties();
+			
+			// copy the old values into the new property. Some will then be
+			// overwritten ,
+			// but others (such as positioning info) will not and need to be
+			// preserved.
+			if (oldName != null) {
+				for (Object p : gcm.getPromoters().get(oldName).keySet()) {
+					String k = p.toString();
+					String v = (gcm.getPromoters().get(oldName).getProperty(k)).toString();
+					//if (!k.equals("label")) {
+						property.put(k, v);
+					//}
+				}
+			}
+			
+			
 			for (PropertyField f : fields.values()) {
 				if (f.getState() == null
 						|| f.getState().equals(f.getStates()[1])) {
