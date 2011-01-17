@@ -65,17 +65,36 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		KineticLaw kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork
-				.getMoleTimeParameter(1)));
-		kl.addParameter(Utility.Parameter(kArnapString, kArnap, GeneticNetwork
-				.getMoleParameter(2)));
-		kl.addParameter(Utility.Parameter(kactString, kact,
-				GeneticNetwork.getMoleParameter(2)));
+		//Checks if binding parameters are specified as forward and reverse rate constants or 
+		//as equilibrium binding constants before adding to kinetic law
+		double kr = 1;
+		if (kArnap.length > 1) {
+			kr = kr * kArnap[1];
+			kl.addParameter(Utility.Parameter(kArnapString, kArnap[0]/kArnap[1], GeneticNetwork
+					.getMoleParameter(2)));
+		} else {
+			kl.addParameter(Utility.Parameter(kArnapString, kArnap[0], GeneticNetwork
+					.getMoleParameter(2)));
+		}
+		if (kact.length > 1) {
+			kr = kr * kact[1];
+			kl.addParameter(Utility.Parameter(kactString, kact[0]/kact[1],
+					GeneticNetwork.getMoleParameter(2)));
+		} else {
+			kl.addParameter(Utility.Parameter(kactString, kact[0],
+					GeneticNetwork.getMoleParameter(2)));
+		}
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String actMolecule = "";
 		if (complexAbstraction) {
-			kl.addParameter(Utility.Parameter(kcompString, kcomp,
-					GeneticNetwork.getMoleParameter(specie.getSize())));
+			if (kcomp.length > 1) {
+				kr = kr * kcomp[1];
+				kl.addParameter(Utility.Parameter(kcompString, kcomp[0]/kcomp[1],
+						GeneticNetwork.getMoleParameter(specie.getSize())));
+			} else {
+				kl.addParameter(Utility.Parameter(kcompString, kcomp[0],
+						GeneticNetwork.getMoleParameter(specie.getSize())));
+			}
 			for (PartSpecies part : specie.getParts()) {
 				SpeciesInterface s = part.getSpecies();
 				double n = part.getStoich();
@@ -85,11 +104,12 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 					actMolecule = actMolecule + '^' + n;
 			}
 			actMolecule = kcompString + actMolecule;
-		}
-		else {
+		} else {
 			actMolecule = specie.getId();
 			r.addReactant(Utility.SpeciesReference(actMolecule, coop));
 		}
+		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(speciesName, actMolecule));
 		Utility.addReaction(document, r);
 	}
@@ -106,12 +126,27 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		KineticLaw kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork
+		//Checks if binding parameters are specified as forward and reverse rate constants or 
+		//as equilibrium binding constants before adding to kinetic law
+		double kr = 1;
+		if (kArnap.length > 1) {
+			kr = kr * kArnap[1];
+			kl.addParameter(Utility.Parameter(kArnapString, kArnap[0]/kArnap[1], GeneticNetwork
+					.getMoleParameter(2)));
+		} else {
+			kl.addParameter(Utility.Parameter(kArnapString, kArnap[0], GeneticNetwork
+					.getMoleParameter(2)));
+		}
+		if (kact.length > 1) {
+			kr = kr * kact[1];
+			kl.addParameter(Utility.Parameter(kactString, kact[0]/kact[1],
+					GeneticNetwork.getMoleParameter(2)));
+		} else {
+			kl.addParameter(Utility.Parameter(kactString, kact[0],
+					GeneticNetwork.getMoleParameter(2)));
+		}
+		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.addParameter(Utility.Parameter(kArnapString, kArnap, GeneticNetwork
-				.getMoleParameter(2)));
-		kl.addParameter(Utility.Parameter(kactString, kact,
-				GeneticNetwork.getMoleParameter(2)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		kl.setFormula(generateLaw(speciesName, specie.getId()));
 		Utility.addReaction(document, r);
@@ -129,12 +164,27 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		KineticLaw kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork
+		//Checks if binding parameters are specified as forward and reverse rate constants or 
+		//as equilibrium binding constants before adding to kinetic law
+		double kr = 1;
+		if (kArnap.length > 1) {
+			kr = kr * kArnap[1];
+			kl.addParameter(Utility.Parameter(kArnapString, kArnap[0]/kArnap[1], GeneticNetwork
+					.getMoleParameter(2)));
+		} else {
+			kl.addParameter(Utility.Parameter(kArnapString, kArnap[0], GeneticNetwork
+					.getMoleParameter(2)));
+		}
+		if (kact.length > 1) {
+			kr = kr * kact[1];
+			kl.addParameter(Utility.Parameter(kactString, kact[0]/kact[1],
+					GeneticNetwork.getMoleParameter(2)));
+		} else {
+			kl.addParameter(Utility.Parameter(kactString, kact[0],
+					GeneticNetwork.getMoleParameter(2)));
+		}
+		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.addParameter(Utility.Parameter(kArnapString, kArnap, GeneticNetwork
-				.getMoleParameter(2)));
-		kl.addParameter(Utility.Parameter(kactString, kact,
-				GeneticNetwork.getMoleParameter(2)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));;
 		kl.setFormula(generateLaw(speciesName, specie.getId()));
 		Utility.addReaction(document, r);
@@ -152,12 +202,27 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		KineticLaw kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork
+		//Checks if binding parameters are specified as forward and reverse rate constants or 
+		//as equilibrium binding constants before adding to kinetic law
+		double kr = 1;
+		if (kArnap.length > 1) {
+			kr = kr * kArnap[1];
+			kl.addParameter(Utility.Parameter(kArnapString, kArnap[0]/kArnap[1], GeneticNetwork
+					.getMoleParameter(2)));
+		} else {
+			kl.addParameter(Utility.Parameter(kArnapString, kArnap[0], GeneticNetwork
+					.getMoleParameter(2)));
+		}
+		if (kact.length > 1) {
+			kr = kr * kact[1];
+			kl.addParameter(Utility.Parameter(kactString, kact[0]/kact[1],
+					GeneticNetwork.getMoleParameter(2)));
+		} else {
+			kl.addParameter(Utility.Parameter(kactString, kact[0],
+					GeneticNetwork.getMoleParameter(2)));
+		}
+		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.addParameter(Utility.Parameter(kArnapString, kArnap, GeneticNetwork
-				.getMoleParameter(2)));
-		kl.addParameter(Utility.Parameter(kactString, kact,
-				GeneticNetwork.getMoleParameter(2)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		kl.setFormula(generateLaw(speciesName, specie.getId()));
 		Utility.addReaction(document, r);
@@ -188,10 +253,10 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 
 	private Promoter promoter;
 
-	private double kArnap;
-	private double kcomp;
+	private double[] kArnap;
+	private double[] kcomp;
 	private double coop;
-	private double kact;
+	private double[] kact;
 	
 	private String kcompString = CompatibilityFixer
 			.getSBMLName(GlobalConstants.KCOMPLEX_STRING);

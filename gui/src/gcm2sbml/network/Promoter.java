@@ -164,14 +164,23 @@ public class Promoter {
 	}
 	
 	/**
-	 * Gets the equilibrium constant for RNAP binding to an open promoter
+	 * Gets the equilibrium constant for RNAP binding to an open promoter and RNAP binding to a promoter with
+	 * an activator TF bound
 	 */
-	public double getKrnap() {
-		return Double.parseDouble(getProperty(GlobalConstants.RNAP_BINDING_STRING));
+	public double[] getKrnap() {
+		String[] props = getProperty(GlobalConstants.RNAP_BINDING_STRING).split("/");
+		double[] params = new double[props.length];
+		for (int i = 0; i < props.length; i++)
+			params[i] = Double.parseDouble(props[i]);
+		return params;
 	}
 	
-	public double getKArnap() {
-		return Double.parseDouble(getProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING));
+	public double[] getKArnap() {
+		String[] props = getProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING).split("/");
+		double[] params = new double[props.length];
+		for (int i = 0; i < props.length; i++)
+			params[i] = Double.parseDouble(props[i]);
+		return params;
 	}
 	
 	/**

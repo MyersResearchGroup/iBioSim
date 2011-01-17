@@ -115,7 +115,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					.getParameter(GlobalConstants.KREP_STRING),
 					defString, gcm
 							.getParameter(GlobalConstants.KREP_STRING),
-					Utility.NUMstring, paramsOnly, defString);
+					Utility.SLASHstring, paramsOnly, defString);
 		}
 		fields.put(GlobalConstants.KREP_STRING, field);
 		add(field);
@@ -140,7 +140,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					.getParameter(GlobalConstants.KACT_STRING),
 					defString, gcm
 							.getParameter(GlobalConstants.KACT_STRING),
-					Utility.NUMstring, paramsOnly, defString);
+					Utility.SLASHstring, paramsOnly, defString);
 		}
 		fields.put(GlobalConstants.KACT_STRING, field);
 		field.setEnabled(false);
