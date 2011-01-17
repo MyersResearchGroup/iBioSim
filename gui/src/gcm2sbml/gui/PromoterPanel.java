@@ -99,7 +99,7 @@ public class PromoterPanel extends JPanel {
 			field = new PropertyField(GlobalConstants.RNAP_BINDING_STRING, gcm
 					.getParameter(GlobalConstants.RNAP_BINDING_STRING),
 					origString, gcm
-					.getParameter(GlobalConstants.RNAP_BINDING_STRING), Utility.NUMstring, paramsOnly, origString);
+					.getParameter(GlobalConstants.RNAP_BINDING_STRING), Utility.SLASHstring, paramsOnly, origString);
 		}
 		fields.put(GlobalConstants.RNAP_BINDING_STRING, field);
 		add(field);
@@ -122,7 +122,7 @@ public class PromoterPanel extends JPanel {
 			field = new PropertyField(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, gcm
 					.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING),
 					origString, gcm
-					.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING), Utility.NUMstring, paramsOnly, origString);
+					.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING), Utility.SLASHstring, paramsOnly, origString);
 		}
 		fields.put(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, field);
 		add(field);

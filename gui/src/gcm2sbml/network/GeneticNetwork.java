@@ -316,8 +316,18 @@ public class GeneticNetwork {
 			r.setReversible(true);
 			r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
-			kl.addParameter(Utility.Parameter(krnapString, p.getKrnap(), getMoleParameter(2)));
-			kl.addParameter(Utility.Parameter("kr", 1, getMoleTimeParameter(1)));
+			double[] Krnap = p.getKrnap();
+			if (Krnap.length > 1) {
+				kl.addParameter(Utility.Parameter("kr", Krnap[1], GeneticNetwork
+						.getMoleTimeParameter(1)));
+				kl.addParameter(Utility.Parameter(krnapString, Krnap[0]/Krnap[1],
+						GeneticNetwork.getMoleParameter(2)));
+			} else {
+				kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork
+						.getMoleTimeParameter(1)));
+				kl.addParameter(Utility.Parameter(krnapString, Krnap[0],
+						GeneticNetwork.getMoleParameter(2)));
+			}
 			kl.setFormula("kr*" + krnapString + "*" + rnapName + "*" + p.getId() + "-kr*"
 					+ p.getId() + "_RNAP");		
 			Utility.addReaction(document, r);

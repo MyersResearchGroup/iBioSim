@@ -108,12 +108,20 @@ public class Reaction {
 		return Double.parseDouble(getProperty(GlobalConstants.KBIO_STRING));
 	}
 	
-	public double getAct() {
-		return Double.parseDouble(getProperty(GlobalConstants.KACT_STRING));
+	public double[] getAct() {
+		String[] props = getProperty(GlobalConstants.KACT_STRING).split("/");
+		double[] params = new double[props.length];
+		for (int i = 0; i < props.length; i++)
+			params[i] = Double.parseDouble(props[i]);
+		return params;
 	}
 	
-	public double getRep() {
-		return Double.parseDouble(getProperty(GlobalConstants.KREP_STRING));
+	public double[] getRep() {
+		String[] props = getProperty(GlobalConstants.KREP_STRING).split("/");
+		double[] params = new double[props.length];
+		for (int i = 0; i < props.length; i++)
+			params[i] = Double.parseDouble(props[i]);
+		return params;
 	}
 	
 	public void setProperties(Properties properties) {

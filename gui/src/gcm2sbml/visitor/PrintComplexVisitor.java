@@ -54,9 +54,17 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		KineticLaw kl = r.createKineticLaw();
-        kl.addParameter(Utility.Parameter(kcompString, kcomp, 
-        		GeneticNetwork.getMoleParameter(specie.getSize())));
-		kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork.getMoleTimeParameter(1)));
+		//Checks if binding parameters are specified as forward and reverse rate constants or 
+		//as equilibrium binding constants before adding to kinetic law
+		if (kcomp.length > 1) {
+			kl.addParameter(Utility.Parameter("kr", kcomp[1], GeneticNetwork.getMoleTimeParameter(1)));
+			kl.addParameter(Utility.Parameter(kcompString, kcomp[0]/kcomp[1],
+					GeneticNetwork.getMoleParameter(specie.getSize())));
+		} else {
+			kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork.getMoleTimeParameter(1)));
+			kl.addParameter(Utility.Parameter(kcompString, kcomp[0],
+					GeneticNetwork.getMoleParameter(specie.getSize())));
+		}
 		kl.setFormula("kr*" + expression + "-kr*" + specie.getId());
 		Utility.addReaction(document, r);
 	}
@@ -70,7 +78,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		return compartment;
 	}
 	
-	private double kcomp;
+	private double kcomp[];
 	private String kcompString = CompatibilityFixer
 			.getSBMLName(GlobalConstants.KCOMPLEX_STRING);
 	private Collection<SpeciesInterface> species;

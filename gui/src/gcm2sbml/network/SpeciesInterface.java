@@ -85,7 +85,7 @@ public interface SpeciesInterface extends VisitableSpecies {
 	
 	public double getDecay();
 	
-	public double getKc();
+	public double[] getKc();
 	
 	
 }
