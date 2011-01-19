@@ -244,10 +244,6 @@ public class PromoterPanel extends JPanel {
 		}
 		return true;
 	}
-	
-	// Provide a public way to query what the last used (or created) promoter was.
-	private String lastUsedPromoter;
-	public String getLastUsedPromoter(){return lastUsedPromoter;}
 
 	private boolean openGui(String oldName) {
 		int value = JOptionPane.showOptionDialog(BioSim.frame, this,
@@ -286,10 +282,11 @@ public class PromoterPanel extends JPanel {
 			if (oldName != null) {
 				for (Object p : gcm.getPromoters().get(oldName).keySet()) {
 					String k = p.toString();
-					String v = (gcm.getPromoters().get(oldName).getProperty(k)).toString();
-					//if (!k.equals("label")) {
+					if (k.equals("graphwidth") || k.equals("graphheight") || k.equals("graphy") || k.equals("graphx")
+							|| k.equals("drawn_promoter")) {
+						String v = (gcm.getPromoters().get(oldName).getProperty(k)).toString();
 						property.put(k, v);
-					//}
+					}
 				}
 			}
 			
@@ -304,14 +301,17 @@ public class PromoterPanel extends JPanel {
 				}
 			}
 
-			// rename all the influences that use this promoter
+			// rename all the influences that use this promoter if name was changed
 			if (selected != null && !oldName.equals(id)) {
 				gcm.changePromoterName(oldName, id);
 				((DefaultListModel) influenceList.getModel()).clear();
 				influenceList.addAllItem(gcm.getInfluences().keySet());
+				this.secondToLastUsedPromoter = oldName;
+				promoterNameChange = true;
 			}
 			gcm.addPromoter(id, property);
 			this.lastUsedPromoter = id;
+			
 			
 			if (paramsOnly) {
 				if (fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getState().equals(fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getStates()[1]) ||
@@ -418,6 +418,15 @@ public class PromoterPanel extends JPanel {
 		}
 	}
 	
+	// Provide a public way to query what the last used (or created) promoter was.
+	private String lastUsedPromoter;
+	public String getLastUsedPromoter(){return lastUsedPromoter;}
+	
+	private String secondToLastUsedPromoter;
+	public String getSecondToLastUsedPromoter(){return secondToLastUsedPromoter;}
+	
+	private boolean promoterNameChange = false;
+	public boolean wasPromoterNameChanged(){return promoterNameChange;}
 	
 	private String[] options = { "Ok", "Cancel" };
 	private HashMap<String, PropertyField> fields = null;
