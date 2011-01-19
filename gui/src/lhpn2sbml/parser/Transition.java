@@ -217,6 +217,17 @@ public class Transition {
 		}
 		return false;
 	}
+	
+	public boolean hasConflictSet() {
+		for (Place p : getPreset()) {
+			for (Transition t : p.getPostset()) {
+				if (!this.toString().equals(t.toString())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	public String getName() {
 		return name;
@@ -270,6 +281,24 @@ public class Transition {
 			array[i++] = p;
 		}
 		return array;
+	}
+	
+	public Transition[] getConflictSet() {
+		ArrayList<Transition> conflictSet = new ArrayList<Transition>();
+		for (Place p : getPreset()) {
+			for (Transition t : p.getPostset()) {
+				if (!this.toString().equals(t.toString())) {
+					conflictSet.add(t);
+				}
+			}
+		}
+		Transition[] returnSet = new Transition[conflictSet.size()];
+		int i = 0;
+		for (Transition t : conflictSet) {
+			returnSet[i] = t;
+			i++;
+		}
+		return returnSet;
 	}
 
 	public String getEnabling() {
