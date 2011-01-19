@@ -405,7 +405,7 @@ public class Translator {
 					
 					// triggerCanBeDisabled := true
 					//trigger.setAnnotation("<TriggerCanBeDisabled/><TriggerInitiallyFalse/>");
-					trigger.setPersistent(false);
+					trigger.setPersistent(lhpn.getTransition(t).isPersistent());
 					trigger.setInitialValue(false);
 					
 					// TriggerInitiallyFalse
