@@ -2474,7 +2474,7 @@ public class Abstraction extends LhpnFile {
 		for (String v : continuous.keySet()) {
 			if (!continuous.get(v).getInitValue().equals("[-inf,inf]")) {
 				Pattern pattern = Pattern
-						.compile("uniform\\(([\\d\\.-]+?),([\\d\\.-]+?)\\)");
+						.compile("\\[([\\d\\.-]+?),([\\d\\.-]+?)\\]");
 				Matcher valMatch = pattern.matcher(continuous.get(v)
 						.getInitValue());
 				Matcher rateMatch = pattern.matcher(continuous.get(v)
