@@ -302,7 +302,7 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 					return false;
 				}
 			}
-			else if (lhpn.isInput(var) || lhpn.isOutput(var)) {
+			else if (lhpn.isBoolean(var)) {
 				booleanList.removeItem(oldName);
 				booleanList.addItem(id);
 			}
