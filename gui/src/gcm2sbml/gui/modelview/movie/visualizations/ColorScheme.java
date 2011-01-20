@@ -49,9 +49,8 @@ public class ColorScheme {
 	}
 
 	public ColorScheme() {
-		// TODO Auto-generated constructor stub
 		this.min=0;
-		this.max=1;
+		this.max=100;
 		this.colorGradient = new ColorGradient();
 	}
 
