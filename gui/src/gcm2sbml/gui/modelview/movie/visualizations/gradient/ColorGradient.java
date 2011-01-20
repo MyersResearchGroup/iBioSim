@@ -9,12 +9,18 @@ public class ColorGradient {
 	public static final String GRADIENT_NAMES[] = {
 		"GFP", 
 		"RFP", 
-		"BFP"
+		"BFP",
+		"White to Green",
+		"White to Red",
+		"White to Blue"
 		};
 	public static final Color GRADIENT_COLORS[] = {
 		Color.BLACK, new Color(0, 255, 0),
 		Color.BLACK, new Color(255, 0, 0),
-		Color.BLACK, new Color(0, 0, 255)
+		Color.BLACK, new Color(0, 0, 255),
+		Color.WHITE, new Color(0, 255, 0),
+		Color.WHITE, new Color(255, 0, 0),
+		Color.WHITE, new Color(0, 0, 255)
 	};
 
 

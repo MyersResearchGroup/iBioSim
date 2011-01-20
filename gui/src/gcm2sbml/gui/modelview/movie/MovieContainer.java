@@ -119,6 +119,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private void prepareTSDFile(){
 		pause();
 		
+		// TODO: also search subdirectories and add everything to a tree, instead of a list
 		Vector<String> filenames = new Vector<String>();
 		for (String s : new File(reb2sac.getSimPath()).list()) {
 			if (s.endsWith(".tsd")) {
