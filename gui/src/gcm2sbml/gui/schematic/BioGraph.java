@@ -695,9 +695,11 @@ public class BioGraph extends mxGraph {
 		mxCell cell = this.getInfluence(id);
 		cell.setStyle(style);
 
-		// apply the label
-		String label = prop.getProperty(GlobalConstants.PROMOTER, "");
-		cell.setValue(label);
+		// apply the promoter name as a label, only if the promoter isn't drawn.
+		String promoterName = prop.getProperty(GlobalConstants.PROMOTER, "");
+		Properties promoter = gcm.getPromoters().get(promoterName);
+		if(promoter != null && ! promoter.getProperty(GlobalConstants.DRAWN_PROMOTER, "").equals(GlobalConstants.TRUE))
+			cell.setValue(promoterName);
 		
 	};
 
