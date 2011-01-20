@@ -40,6 +40,7 @@ public class GlobalConstants {
 	public static final String SPECIES = "Species";
 	public static final String INFLUENCE = "Influence";
 	public static final String COMPONENT_CONNECTION = "Component Connection";
+	public static final String PRODUCTION = "Production";
 	public static final String PORTMAP = "Port Map";
 	public static final String NAME = "Name";
 	public static final String CONSTANT = "boundary";
@@ -52,7 +53,7 @@ public class GlobalConstants {
 	public static final String MAX_DIMER_STRING = "N-mer as trascription factor";
 	public static final String INITIAL_STRING = "Initial amount";	
 	public static final String PROMOTER = "Promoter";
-	public static final String DRAWN_PROMOTER = "drawn_promoter"; // underscored value because used as key in GCM file.
+	public static final String EXPLICIT_PROMOTER = "ExplicitPromoter";
 	public static final String SBMLFILE = "SBML file";
 	public static final String BIOABS = "Biochemical abstraction";
 	public static final String DIMABS = "Dimerization abstraction";

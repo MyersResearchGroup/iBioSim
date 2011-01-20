@@ -375,9 +375,11 @@ public class Schematic extends JPanel implements ActionListener {
 		}else if(cellType == GlobalConstants.INFLUENCE){
 			// if an edge, make sure it isn't connected
 			// to a component - which aren't really influences at all.
-			if(	graph.getCellType(cell.getSource()) == GlobalConstants.SPECIES &&
-					graph.getCellType(cell.getTarget()) == GlobalConstants.SPECIES)
+//			if(	graph.getCellType(cell.getSource()) == GlobalConstants.SPECIES &&
+//					graph.getCellType(cell.getTarget()) == GlobalConstants.SPECIES)
 			gcm2sbml.launchInfluencePanel(cell.getId());
+		}else if(cellType == GlobalConstants.PRODUCTION){
+			// do nothing
 		}else if(cellType == GlobalConstants.COMPONENT){
 			//gcm2sbml.displayChooseComponentDialog(true, null, false, cell.getId());
 			if(movieContainer == null)
@@ -390,6 +392,8 @@ public class Schematic extends JPanel implements ActionListener {
 			}
 		}else if(cellType.equals(GlobalConstants.PROMOTER)){
 			gcm2sbml.launchPromoterPanel(cell.getId());
+		}else{
+			// it wasn't a type that has an editor.
 		}
 		// refresh everything.
 		graph.buildGraph();

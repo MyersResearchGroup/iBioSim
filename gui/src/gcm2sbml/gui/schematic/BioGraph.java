@@ -140,6 +140,8 @@ public class BioGraph extends mxGraph {
 				return CELL_NOT_FULLY_CONNECTED;
 			}else if(sourceType == GlobalConstants.COMPONENT || targetType == GlobalConstants.COMPONENT){
 				return GlobalConstants.COMPONENT_CONNECTION;
+			}else if(sourceType == GlobalConstants.PROMOTER && targetType == GlobalConstants.SPECIES){
+				return GlobalConstants.PRODUCTION;
 			}else{
 				return GlobalConstants.INFLUENCE;
 			}
@@ -277,8 +279,8 @@ public class BioGraph extends mxGraph {
 		// add all the drawn promoters
 		for(String prom:gcm.getPromoters().keySet()){
 			Properties pprop = gcm.getPromoters().get(prom);
-			if(pprop.get(GlobalConstants.DRAWN_PROMOTER) != null && 
-					pprop.get(GlobalConstants.DRAWN_PROMOTER).equals(GlobalConstants.TRUE)){
+			if(pprop.get(GlobalConstants.EXPLICIT_PROMOTER) != null && 
+					pprop.get(GlobalConstants.EXPLICIT_PROMOTER).equals(GlobalConstants.TRUE)){
 				//System.out.printf("Please draw this promoter!");
 				if(createGraphDrawnPromoterFromModel(prom))
 					needsPositioning = true;
@@ -306,8 +308,8 @@ public class BioGraph extends mxGraph {
 				// function and bail. This will ensure that legacy gcm files and files
 				// created with the other interface get built correctly.
 				// make sure the promoter is set to be drawn. If not, set it and try this function again.
-				if(!promProp.getProperty(GlobalConstants.DRAWN_PROMOTER, "").equals(GlobalConstants.TRUE)){
-					promProp.setProperty(GlobalConstants.DRAWN_PROMOTER, GlobalConstants.TRUE);
+				if(!promProp.getProperty(GlobalConstants.EXPLICIT_PROMOTER, "").equals(GlobalConstants.TRUE)){
+					promProp.setProperty(GlobalConstants.EXPLICIT_PROMOTER, GlobalConstants.TRUE);
 					needsRedrawn = true;
 					// we can't draw this edge because the promoter isn't drawn. 
 					// It will be drawn in the next pass.
@@ -698,7 +700,7 @@ public class BioGraph extends mxGraph {
 		// apply the promoter name as a label, only if the promoter isn't drawn.
 		String promoterName = prop.getProperty(GlobalConstants.PROMOTER, "");
 		Properties promoter = gcm.getPromoters().get(promoterName);
-		if(promoter != null && ! promoter.getProperty(GlobalConstants.DRAWN_PROMOTER, "").equals(GlobalConstants.TRUE))
+		if(promoter != null && ! promoter.getProperty(GlobalConstants.EXPLICIT_PROMOTER, "").equals(GlobalConstants.TRUE))
 			cell.setValue(promoterName);
 		
 	};
@@ -773,7 +775,7 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RHOMBUS);
 		style.put(mxConstants.STYLE_OPACITY, 50);
 		style.put(mxConstants.STYLE_FONTCOLOR, "#774400");
-		stylesheet.putCellStyle("DRAWN_PROMOTER", style);
+		stylesheet.putCellStyle("EXPLICIT_PROMOTER", style);
 	}
 	
 	private void setSpeciesStyles(String id){
@@ -792,7 +794,7 @@ public class BioGraph extends mxGraph {
 	}
 	
 	private void setDrawnPromoterStyles(String id){
-		String style="DRAWN_PROMOTER";
+		String style="EXPLICIT_PROMOTER";
 		
 		mxCell cell = this.getDrawnPromoterCell(id);
 		cell.setStyle(style);
@@ -845,7 +847,7 @@ public class BioGraph extends mxGraph {
 		prop.setProperty("ID", id);
 		prop.setProperty("graphwidth", String.valueOf(DEFAULT_SPECIES_WIDTH));
 		prop.setProperty("graphheight", String.valueOf(DEFAULT_SPECIES_HEIGHT));
-		prop.setProperty(GlobalConstants.DRAWN_PROMOTER, GlobalConstants.TRUE);
+		prop.setProperty(GlobalConstants.EXPLICIT_PROMOTER, GlobalConstants.TRUE);
 		centerVertexOverPoint(prop, x, y);
 		gcm.getPromoters().put(id, prop);
 		
