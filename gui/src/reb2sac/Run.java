@@ -1222,7 +1222,7 @@ public class Run implements ActionListener {
 						}
 						GillespieSSAJavaSingleStep javaSim = new GillespieSSAJavaSingleStep();
 						String SBMLFileName = directory + separator + theFile;
-						javaSim.PerformSim(SBMLFileName, outDir, timeLimit, ((Graph) simTab
+						javaSim.PerformSim(SBMLFileName, outDir, timeLimit, timeStep,((Graph) simTab
 								.getComponentAt(index)));
 						exitValue = 0;
 						return exitValue;
