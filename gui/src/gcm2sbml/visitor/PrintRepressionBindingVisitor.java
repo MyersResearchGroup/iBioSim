@@ -59,9 +59,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = r.createKineticLaw();
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
-		double kr = 1;
 		if (krep.length > 1) {
-			kr = kr * krep[1];
 			kl.addParameter(Utility.Parameter(krepString, krep[0]/krep[1],
 					GeneticNetwork.getMoleParameter(2)));
 		} else {
@@ -72,7 +70,6 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		String repMolecule = "";
 		if (complexAbstraction) {
 			if (kcomp.length > 1) {
-				kr = kr * kcomp[1];
 				kl.addParameter(Utility.Parameter(kcompString, kcomp[0]/kcomp[1],
 						GeneticNetwork.getMoleParameter(specie.getSize())));
 			} else {
@@ -112,16 +109,14 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
 		if (krep.length > 1) {
-			kl.addParameter(Utility.Parameter("kr", krep[1], GeneticNetwork
-					.getMoleTimeParameter(1)));
 			kl.addParameter(Utility.Parameter(krepString, krep[0]/krep[1],
 					GeneticNetwork.getMoleParameter(2)));
 		} else {
-			kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork
-					.getMoleTimeParameter(1)));
 			kl.addParameter(Utility.Parameter(krepString, krep[0],
 					GeneticNetwork.getMoleParameter(2)));
 		}
+		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+				.getMoleTimeParameter(1)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		kl.setFormula(generateLaw(speciesName, specie.getId()));
 		Utility.addReaction(document, r);
@@ -141,16 +136,14 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
 		if (krep.length > 1) {
-			kl.addParameter(Utility.Parameter("kr", krep[1], GeneticNetwork
-					.getMoleTimeParameter(1)));
 			kl.addParameter(Utility.Parameter(krepString, krep[0]/krep[1],
 					GeneticNetwork.getMoleParameter(2)));
 		} else {
-			kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork
-					.getMoleTimeParameter(1)));
 			kl.addParameter(Utility.Parameter(krepString, krep[0],
 					GeneticNetwork.getMoleParameter(2)));
 		}
+		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+				.getMoleTimeParameter(1)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		kl.setFormula(generateLaw(speciesName, specie.getId()));
 		Utility.addReaction(document, r);
@@ -170,16 +163,14 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
 		if (krep.length > 1) {
-			kl.addParameter(Utility.Parameter("kr", krep[1], GeneticNetwork
-					.getMoleTimeParameter(1)));
 			kl.addParameter(Utility.Parameter(krepString, krep[0]/krep[1],
 					GeneticNetwork.getMoleParameter(2)));
 		} else {
-			kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork
-					.getMoleTimeParameter(1)));
 			kl.addParameter(Utility.Parameter(krepString, krep[0],
 					GeneticNetwork.getMoleParameter(2)));
 		}
+		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+				.getMoleTimeParameter(1)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		kl.setFormula(generateLaw(speciesName, specie.getId()));
 		Utility.addReaction(document, r);
@@ -204,6 +195,10 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		Reaction r = promoter.getRepressionMap().get(s.getId());
 		coop = r.getCoop();
 		krep = r.getRep();
+		if (krep.length > 1)
+			kr = krep[1];
+		else
+			kr = 1;
 		kcomp = s.getKc();
 	}
 		
@@ -213,6 +208,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	private double kcomp[];
 	private double coop;
 	private double krep[];
+	private double kr;
 
 	private String kcompString = CompatibilityFixer
 			.getSBMLName(GlobalConstants.KCOMPLEX_STRING);
