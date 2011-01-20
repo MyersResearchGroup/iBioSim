@@ -67,9 +67,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = r.createKineticLaw();
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
-		double kr = 1;
 		if (kArnap.length > 1) {
-			kr = kr * kArnap[1];
 			kl.addParameter(Utility.Parameter(kArnapString, kArnap[0]/kArnap[1], GeneticNetwork
 					.getMoleParameter(2)));
 		} else {
@@ -77,7 +75,6 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 					.getMoleParameter(2)));
 		}
 		if (kact.length > 1) {
-			kr = kr * kact[1];
 			kl.addParameter(Utility.Parameter(kactString, kact[0]/kact[1],
 					GeneticNetwork.getMoleParameter(2)));
 		} else {
@@ -88,7 +85,6 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		String actMolecule = "";
 		if (complexAbstraction) {
 			if (kcomp.length > 1) {
-				kr = kr * kcomp[1];
 				kl.addParameter(Utility.Parameter(kcompString, kcomp[0]/kcomp[1],
 						GeneticNetwork.getMoleParameter(specie.getSize())));
 			} else {
@@ -128,9 +124,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = r.createKineticLaw();
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
-		double kr = 1;
 		if (kArnap.length > 1) {
-			kr = kr * kArnap[1];
 			kl.addParameter(Utility.Parameter(kArnapString, kArnap[0]/kArnap[1], GeneticNetwork
 					.getMoleParameter(2)));
 		} else {
@@ -138,7 +132,6 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 					.getMoleParameter(2)));
 		}
 		if (kact.length > 1) {
-			kr = kr * kact[1];
 			kl.addParameter(Utility.Parameter(kactString, kact[0]/kact[1],
 					GeneticNetwork.getMoleParameter(2)));
 		} else {
@@ -166,9 +159,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = r.createKineticLaw();
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
-		double kr = 1;
 		if (kArnap.length > 1) {
-			kr = kr * kArnap[1];
 			kl.addParameter(Utility.Parameter(kArnapString, kArnap[0]/kArnap[1], GeneticNetwork
 					.getMoleParameter(2)));
 		} else {
@@ -176,7 +167,6 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 					.getMoleParameter(2)));
 		}
 		if (kact.length > 1) {
-			kr = kr * kact[1];
 			kl.addParameter(Utility.Parameter(kactString, kact[0]/kact[1],
 					GeneticNetwork.getMoleParameter(2)));
 		} else {
@@ -204,9 +194,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = r.createKineticLaw();
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
-		double kr = 1;
 		if (kArnap.length > 1) {
-			kr = kr * kArnap[1];
 			kl.addParameter(Utility.Parameter(kArnapString, kArnap[0]/kArnap[1], GeneticNetwork
 					.getMoleParameter(2)));
 		} else {
@@ -214,7 +202,6 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 					.getMoleParameter(2)));
 		}
 		if (kact.length > 1) {
-			kr = kr * kact[1];
 			kl.addParameter(Utility.Parameter(kactString, kact[0]/kact[1],
 					GeneticNetwork.getMoleParameter(2)));
 		} else {
@@ -231,6 +218,10 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	private void loadValues(SpeciesInterface s) {
 		Reaction r = promoter.getActivationMap().get(s.getId());
 		kArnap = promoter.getKArnap();
+		if (kArnap.length > 1)
+			kr = kArnap[1];
+		else
+			kr = 1;
 		coop = r.getCoop();
 		kact = r.getAct();
 		kcomp = s.getKc();
@@ -257,6 +248,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	private double[] kcomp;
 	private double coop;
 	private double[] kact;
+	private double kr;
 	
 	private String kcompString = CompatibilityFixer
 			.getSBMLName(GlobalConstants.KCOMPLEX_STRING);
