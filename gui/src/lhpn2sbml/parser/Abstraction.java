@@ -1774,9 +1774,7 @@ public class Abstraction extends LhpnFile {
 		ArrayList<String> allIntVars = new ArrayList<String>(); // Set V
 		ArrayList<String> newIntVars = new ArrayList<String>(); // Set V''
 		ArrayList<Integer> intProc = new ArrayList<Integer>(); // Processes with
-		// failure
-		// transitions
-		// or
+		// failure transitions or
 		// transitions
 		// that have
 		// interesting
@@ -3445,8 +3443,11 @@ public class Abstraction extends LhpnFile {
 					t.addDelay("uniform(" + dl1.toString() + ","
 							+ du1.toString() + ")");
 				}
-				t.addPriority(priority1.toString());
+				if (priority1 != null) {
+					t.addPriority(priority1.toString());
+				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				t.addDelay("uniform(0,inf)");
 			}
 			for (Transition tP : list) {
