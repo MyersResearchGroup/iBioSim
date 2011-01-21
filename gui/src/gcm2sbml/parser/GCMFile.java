@@ -1902,6 +1902,15 @@ public class GCMFile {
 		matcher.find();
 		return matcher.group(6);
 	}
+	
+	public boolean influenceHasExplicitPromoter(String infName){
+		String promoterName = getInfluences().get(infName).getProperty(GlobalConstants.PROMOTER);
+		Properties promoter = getPromoters().get(promoterName);
+		if(promoter != null && promoter.getProperty(GlobalConstants.EXPLICIT_PROMOTER, "").equals(GlobalConstants.TRUE))
+			return true;
+		else
+			return false;
+	}
 
 	public String[] getSpeciesAsArray() {
 		String[] s = new String[species.size()];

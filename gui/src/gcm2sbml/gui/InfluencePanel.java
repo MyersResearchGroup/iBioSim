@@ -62,20 +62,23 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		}
 		add(tempPanel);
 		// disable the promoter stuff if the promoter is explicitly drawn.
-		String promoterName = gcm.getInfluences().get(origSelection).getProperty(GlobalConstants.PROMOTER);
-		Properties promoter = gcm.getPromoters().get(promoterName);
-		if(promoter != null && promoter.getProperty(GlobalConstants.EXPLICIT_PROMOTER, "").equals(GlobalConstants.TRUE)){
+		boolean explicitPromoter = false;
+		if(gcm.influenceHasExplicitPromoter(origSelection)){
 			promoterBox.setEditable(false);
 			promoterBox.setEnabled(false);
 			promoterBox.setVisible(false); // how do you just disable it?!?!
 			promoterButton.setEnabled(false);
+			explicitPromoter = true;
 		}
 
 
 		// Type field
 		tempPanel = new JPanel();
 		tempLabel = new JLabel("Type");
-		typeBox = new JComboBox(types);
+		if(explicitPromoter)
+			typeBox = new JComboBox(explicitPromoterTypes);
+		else
+			typeBox = new JComboBox(types);
 		typeBox.setSelectedIndex(0);
 		typeBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 3));
@@ -233,6 +236,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					return false;
 				}
 			}
+			
 			String id = fields.get(GlobalConstants.NAME).getValue();
 
 			// Check to see if we need to add or edit
@@ -418,6 +422,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	private String[] options = { "Ok", "Cancel" };
 	public static String[] types = { GlobalConstants.REPRESSION, GlobalConstants.ACTIVATION, 
 		GlobalConstants.NOINFLUENCE, GlobalConstants.COMPLEX };
+	public static String[] explicitPromoterTypes = { GlobalConstants.REPRESSION, GlobalConstants.ACTIVATION};
 	public static String[] bio = { "no", "yes" };
 	private HashMap<String, PropertyField> fields = null;
 	private GCMFile gcm = null;
