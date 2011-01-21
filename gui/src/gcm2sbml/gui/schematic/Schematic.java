@@ -374,10 +374,7 @@ public class Schematic extends JPanel implements ActionListener {
 	public void bringUpEditorForCell(mxCell cell){
 		String cellType = graph.getCellType(cell);
 		if(cellType == GlobalConstants.SPECIES){
-			ColorScheme scheme = null;
-			if(movieContainer != null)
-				scheme = movieContainer.getMoviePreferences().getOrCreateColorSchemeForSpecies(cell.getId());
-			gcm2sbml.launchSpeciesPanel(cell.getId(), scheme);
+			gcm2sbml.launchSpeciesPanel(cell.getId(), movieContainer);
 		}else if(cellType == GlobalConstants.INFLUENCE){
 			gcm2sbml.launchInfluencePanel(cell.getId());
 		}else if(cellType == GlobalConstants.PRODUCTION){
