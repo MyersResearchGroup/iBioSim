@@ -422,6 +422,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	private String[] options = { "Ok", "Cancel" };
 	public static String[] types = { GlobalConstants.REPRESSION, GlobalConstants.ACTIVATION, 
 		GlobalConstants.NOINFLUENCE, GlobalConstants.COMPLEX };
+	 // options available for explicit promoters. Complex makes no sense, and no_influence breaks things.
 	public static String[] explicitPromoterTypes = { GlobalConstants.REPRESSION, GlobalConstants.ACTIVATION};
 	public static String[] bio = { "no", "yes" };
 	private HashMap<String, PropertyField> fields = null;

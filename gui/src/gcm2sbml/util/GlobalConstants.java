@@ -73,4 +73,9 @@ public class GlobalConstants {
 	
 //	public static final String DIMER_COUNT_STRING = "label";
 //	public static final String TYPE_STRING = "label";
+
+	public static final int DEFAULT_SPECIES_WIDTH = 100;
+	public static final int DEFAULT_SPECIES_HEIGHT = 30;
+	public static final int DEFAULT_COMPONENT_WIDTH = 80;
+	public static final int DEFAULT_COMPONENT_HEIGHT = 40;
 }

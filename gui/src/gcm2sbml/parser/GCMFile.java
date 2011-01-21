@@ -1,5 +1,6 @@
 package gcm2sbml.parser;
 
+import gcm2sbml.gui.schematic.BioGraph;
 import gcm2sbml.util.GlobalConstants;
 import gcm2sbml.util.UndoManager;
 import gcm2sbml.util.Utility;
@@ -1875,6 +1876,64 @@ public class GCMFile {
 		return null;
 	}
 
+
+	/**
+	 * creates and adds a new species.
+	 * @param id: the new id. If null the id will be generated
+	 * @param x
+	 * @param y
+	 */
+	private int creatingSpeciesID = 0;
+	public void createSpecies(String id, float x, float y){
+		if(id == null){
+			do{
+				creatingSpeciesID++;
+				id = "S" + String.valueOf(creatingSpeciesID);
+			}while(getSpecies().containsKey(id));
+		}
+		Properties prop = new Properties();
+		prop.setProperty(GlobalConstants.NAME, "");
+		prop.setProperty("label", id);
+		prop.setProperty("ID", id);
+		prop.setProperty("Type", "internal");
+		prop.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_SPECIES_WIDTH));
+		prop.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_SPECIES_HEIGHT));
+		centerVertexOverPoint(prop, x, y);
+		getSpecies().put(id, prop);
+		
+	}
+	
+	private int creatingPromoterID = 0;
+	public String createPromoter(String id, float x, float y, boolean is_explicit){
+		if(id == null){
+			do{
+				creatingPromoterID++;
+				id = "P" + String.valueOf(creatingPromoterID);
+			}while(getPromoters().containsKey(id));
+		}
+		Properties prop = new Properties();
+		prop.setProperty("ID", id);
+		if(is_explicit){
+			prop.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_SPECIES_WIDTH));
+			prop.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_SPECIES_HEIGHT));
+			prop.setProperty(GlobalConstants.EXPLICIT_PROMOTER, GlobalConstants.TRUE);
+			centerVertexOverPoint(prop, x, y);
+		}
+		getPromoters().put(id, prop);
+		
+		return id;
+	}
+
+	/**
+	 * Given a properties list (species or components) and some coords, center over that point.
+	 */
+	public void centerVertexOverPoint(Properties prop, double x, double y){
+		x -= Double.parseDouble(prop.getProperty("graphwidth", "60"))/2.0;
+		y -= Double.parseDouble(prop.getProperty("graphheight", "20"))/2.0;
+		prop.setProperty("graphx", String.valueOf(x));
+		prop.setProperty("graphy", String.valueOf(y));		
+	}
+	
 	public static String getInput(String name) {
 		Pattern pattern = Pattern.compile(PARSE);
 		Matcher matcher = pattern.matcher(name);
