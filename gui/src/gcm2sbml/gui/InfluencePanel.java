@@ -38,11 +38,13 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		fields.put(GlobalConstants.NAME, field);
 		add(field);
 
+		// Variables used repeatedly for different parts of the UI.
+		JPanel tempPanel;
+		JLabel tempLabel;
 		
-
-		// Promoter field
-		JPanel tempPanel = new JPanel();
-		JLabel tempLabel = new JLabel("Promoter");
+		// Promoter field. Disabled if the influences is connected to an explicit promoter.
+		tempPanel = new JPanel();
+		tempLabel = new JLabel("Promoter");
 		promoterBox = new JComboBox(gcm.getPromotersAsArray());
 		((DefaultComboBoxModel) (promoterBox.getModel())).addElement("default");
 		promoterBox.setSelectedItem("default");String origString = "default";
@@ -59,6 +61,16 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			promoterBox.setEnabled(false);
 		}
 		add(tempPanel);
+		// disable the promoter stuff if the promoter is explicitly drawn.
+		String promoterName = gcm.getInfluences().get(origSelection).getProperty(GlobalConstants.PROMOTER);
+		Properties promoter = gcm.getPromoters().get(promoterName);
+		if(promoter != null && promoter.getProperty(GlobalConstants.EXPLICIT_PROMOTER, "").equals(GlobalConstants.TRUE)){
+			promoterBox.setEditable(false);
+			promoterBox.setEnabled(false);
+			promoterBox.setVisible(false); // how do you just disable it?!?!
+			promoterButton.setEnabled(false);
+		}
+
 
 		// Type field
 		tempPanel = new JPanel();
