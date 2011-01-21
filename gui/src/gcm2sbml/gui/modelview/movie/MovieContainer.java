@@ -411,4 +411,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 	}
 	
+	public void copyMoviePreferencesComponent(String compName){
+		this.moviePreferences.copyMoviePreferences(compName, this.gcm);
+	}
+	
 }

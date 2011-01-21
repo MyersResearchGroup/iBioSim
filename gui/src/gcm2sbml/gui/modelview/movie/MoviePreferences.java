@@ -2,6 +2,7 @@ package gcm2sbml.gui.modelview.movie;
 
 import gcm2sbml.gui.modelview.movie.visualizations.ColorScheme;
 import gcm2sbml.gui.modelview.movie.visualizations.component.ComponentScheme;
+import gcm2sbml.parser.GCMFile;
 
 import java.util.HashMap;
 
@@ -53,6 +54,16 @@ public class MoviePreferences {
 	public ComponentScheme getComponentSchemeForComponent(String comp){
 		ComponentScheme cs = componentSchemes.get(comp);
 		return cs;
+	}
+	
+	public void copyMoviePreferences(String masterComponentName, GCMFile gcm){
+		ComponentScheme masterScheme = this.getComponentSchemeForComponent(masterComponentName);
+		for(String currentComponentName:gcm.getComponents().keySet()){
+			if(currentComponentName != masterComponentName){ // skip the current component
+				ComponentScheme currentScheme = this.getOrCreateComponentSchemeForComponent(currentComponentName);
+				currentScheme.duplicatePreferences(masterScheme, currentComponentName);
+			}
+		}
 	}
 	
 }

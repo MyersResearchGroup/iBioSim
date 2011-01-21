@@ -3,6 +3,8 @@ package gcm2sbml.gui.modelview.movie.visualizations.component;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import parser.TSDParser;
 
@@ -50,4 +52,20 @@ public class ComponentSchemePart {
 		double val = dataHash.get(key).get(frameIndex);
 		return colorScheme.getColor(val);
 	}
+	
+	public void duplicatePreferences(ComponentSchemePart master, String compName){
+		// figure out the new tsd key
+		if(master.tsdKey == null){
+			this.tsdKey = null;
+		}else{
+			Pattern pattern = Pattern.compile("^.*?__(.*)");
+			Matcher matcher = pattern.matcher(master.tsdKey);
+			matcher.find();
+			String newTSDKey = compName + "__" + matcher.group(1);
+			
+			this.tsdKey = newTSDKey;
+		}
+		this.colorScheme.duplicatePreferences(master.colorScheme);
+	}
+	
 }

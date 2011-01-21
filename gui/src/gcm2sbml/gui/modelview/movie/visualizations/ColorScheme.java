@@ -74,4 +74,10 @@ public class ColorScheme {
 		// is outside the bounds of [0,1]
 		return this.colorGradient.getIntermediateColor(ratio);
 	}
+	
+	public void duplicatePreferences(ColorScheme master){
+		this.min = master.min;
+		this.max = master.max;
+		this.colorGradient.duplicatePreferences(master.colorGradient);
+	}
 }

@@ -107,4 +107,9 @@ public class ColorGradient {
 		return out;
 	}
 
+	public void duplicatePreferences(ColorGradient master){
+		this.startColor = new Color(master.startColor.getRGB());
+		this.endColor = new Color(master.endColor.getRGB());
+		this.label = new String(master.label);
+	}
 }

@@ -21,6 +21,7 @@ import biomodelsim.BioSim;
 public class ComponentSchemeChooser extends JPanel implements ActionListener {
 
 	private final String ADD_ANOTHER = "add_another";
+	private final String COPY_PREFERENCES = "copy_preferences";
 	
 	private ComponentScheme componentScheme;
 	private MovieContainer movieContainer;
@@ -58,6 +59,7 @@ public class ComponentSchemeChooser extends JPanel implements ActionListener {
 					);
 		}
 	
+		
 //		JButton moreButton = new JButton("Add Another Scheme");
 //		moreButton.setActionCommand(ADD_ANOTHER);
 //		moreButton.addActionListener(this);
@@ -66,14 +68,26 @@ public class ComponentSchemeChooser extends JPanel implements ActionListener {
 	}
 	
 	private void openGUI(){
-		int value = JOptionPane.showOptionDialog(BioSim.frame, this, "Scheme for Component",
-				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, null, null);
 		
-		if (value == JOptionPane.OK_OPTION) {
+		// build a special button to display the extra options
+		JButton copyButton = new JButton("OK, and Copy to Similar Components");
+		copyButton.setToolTipText("This button will copy these settings to all other components of the same type.");
+		copyButton.setActionCommand(COPY_PREFERENCES);
+		copyButton.addActionListener(this);
+		
+		Object[] possibleValues = {"OK, and Copy to Similar Components", "OK", "Cancel"};
+		int value = JOptionPane.showOptionDialog(BioSim.frame, this, "Scheme for Component",
+				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, possibleValues, possibleValues[1]);
+		
+		if (value != 2) { // 2 is cancel
 			for(Object o:schemeHolder.getComponents()){
 				((ComponentSchemePartChooser)o).saveChanges();
 			}
-		}	
+		}
+		
+		if(value == 0){
+			this.movieContainer.copyMoviePreferencesComponent(compName);
+		}
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -81,9 +95,12 @@ public class ComponentSchemeChooser extends JPanel implements ActionListener {
 			if(componentScheme.getSchemes().size() < 3){
 				//addSchemePart(componentScheme.getNewAtEnd());
 			}
+		}else if(e.getActionCommand().equals(COPY_PREFERENCES)){
+			this.movieContainer.copyMoviePreferencesComponent(compName);
 		}
 	}
 	
+	// this would work if I could only get the layout to refresh!
 //	private void addSchemePart(ComponentSchemePart csp){
 //		schemeHolder.add(
 //				new ComponentSchemePartChooser(csp)
