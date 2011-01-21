@@ -44,12 +44,6 @@ import com.mxgraph.view.mxStylesheet;
  */
 public class BioGraph extends mxGraph {
 
-	private static final int DEFAULT_SPECIES_WIDTH = 100;
-	private static final int DEFAULT_SPECIES_HEIGHT = 30;
-	private static final int DEFAULT_COMPONENT_WIDTH = 80;
-	private static final int DEFAULT_COMPONENT_HEIGHT = 40;
-	
-
 	private double DIS_BETWEEN_NEIGHBORING_EDGES = 35.0;
 	private double SECOND_SELF_INFLUENCE_DISTANCE = 20;
 	
@@ -522,8 +516,8 @@ public class BioGraph extends mxGraph {
 
 		double x = Double.parseDouble(prop.getProperty("graphx", "-9999"));
 		double y = Double.parseDouble(prop.getProperty("graphy", "-9999"));;
-		double width = Double.parseDouble(prop.getProperty("graphwidth", String.valueOf(DEFAULT_COMPONENT_WIDTH)));;
-		double height = Double.parseDouble(prop.getProperty("graphheight", String.valueOf(DEFAULT_COMPONENT_HEIGHT)));
+		double width = Double.parseDouble(prop.getProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH)));;
+		double height = Double.parseDouble(prop.getProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_HEIGHT)));
 				
 		if(x < -9998 || y < -9998){
 			unpositionedSpeciesComponentCount += 1;
@@ -532,7 +526,7 @@ public class BioGraph extends mxGraph {
 			// and dirty way to prevent
 			// them going off the bottom or right hand side of the screen.
 			x = (unpositionedSpeciesComponentCount%50) * 20;
-			y = (unpositionedSpeciesComponentCount%10) * (DEFAULT_SPECIES_HEIGHT + 10);
+			y = (unpositionedSpeciesComponentCount%10) * (GlobalConstants.DEFAULT_SPECIES_HEIGHT + 10);
 		}
 		String label = id + "\n" + prop.getProperty("gcm").replace(".gcm", "");
 		CellValueObject cvo = new CellValueObject(label, prop);
@@ -639,8 +633,8 @@ public class BioGraph extends mxGraph {
 	private boolean sizeAndPositionFromProperties(mxCell cell, Properties prop){
 		double x = Double.parseDouble(prop.getProperty("graphx", "-9999"));
 		double y = Double.parseDouble(prop.getProperty("graphy", "-9999"));;
-		double width = Double.parseDouble(prop.getProperty("graphwidth", String.valueOf(DEFAULT_SPECIES_WIDTH)));;
-		double height = Double.parseDouble(prop.getProperty("graphheight", String.valueOf(DEFAULT_SPECIES_HEIGHT)));
+		double width = Double.parseDouble(prop.getProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_SPECIES_WIDTH)));;
+		double height = Double.parseDouble(prop.getProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_SPECIES_HEIGHT)));
 
 		/*
 		String id = !(prop.getProperty(GlobalConstants.NAME, "").equals("")) ? 
@@ -656,7 +650,7 @@ public class BioGraph extends mxGraph {
 			// and dirty way to prevent
 			// them going off the bottom or right hand side of the screen.
 			x = (unpositionedSpeciesComponentCount%50) * 20;
-			y = (unpositionedSpeciesComponentCount%10) * (DEFAULT_SPECIES_HEIGHT + 10);
+			y = (unpositionedSpeciesComponentCount%10) * (GlobalConstants.DEFAULT_SPECIES_HEIGHT + 10);
 		}
 		
 		cell.setGeometry(new mxGeometry(x, y, width, height));
@@ -688,7 +682,7 @@ public class BioGraph extends mxGraph {
 		
 		if(prop.getProperty(GlobalConstants.TYPE) == GlobalConstants.COMPLEX){
 			style += ";" + mxConstants.STYLE_DASHED + "=true";
-		}
+		};
 		//		style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
 
 		//style += ";" + mxConstants.STYLE_EDGE + "=" + mxConstants.EDGESTYLE_ENTITY_RELATION;
@@ -798,74 +792,6 @@ public class BioGraph extends mxGraph {
 		cell.setStyle(style);
 	}
 	
-	
-	/**
-	 * creates and adds a new species.
-	 * @param id: the new id. If null the id will be generated
-	 * @param x
-	 * @param y
-	 */
-	private int creatingSpeciesID = 0;
-	public void createSpecies(String id, float x, float y){
-		if(id == null){
-			do{
-				creatingSpeciesID++;
-				id = "S" + String.valueOf(creatingSpeciesID);
-			}while(gcm.getSpecies().containsKey(id));
-		}
-		Properties prop = new Properties();
-		prop.setProperty(GlobalConstants.NAME, "");
-		prop.setProperty("label", id);
-		prop.setProperty("ID", id);
-		prop.setProperty("Type", "internal");
-		prop.setProperty("graphwidth", String.valueOf(DEFAULT_SPECIES_WIDTH));
-		prop.setProperty("graphheight", String.valueOf(DEFAULT_SPECIES_HEIGHT));
-		centerVertexOverPoint(prop, x, y);
-		gcm.getSpecies().put(id, prop);
-		
-//		this.getModel().beginUpdate();
-//		this.createGraphSpeciesFromModel(id);
-//		this.getModel().endUpdate();
-		
-		gcm2sbml.refresh();
-		this.buildGraph();
-		
-	}
-	
-	private int creatingPromoterID = 0;
-	public void createPromoter(String id, float x, float y){
-		if(id == null){
-			do{
-				creatingPromoterID++;
-				id = "P" + String.valueOf(creatingPromoterID);
-			}while(gcm.getPromoters().containsKey(id));
-		}
-		Properties prop = new Properties();
-		prop.setProperty(GlobalConstants.NAME, id);
-		prop.setProperty("ID", id);
-		prop.setProperty("graphwidth", String.valueOf(DEFAULT_SPECIES_WIDTH));
-		prop.setProperty("graphheight", String.valueOf(DEFAULT_SPECIES_HEIGHT));
-		prop.setProperty(GlobalConstants.EXPLICIT_PROMOTER, GlobalConstants.TRUE);
-		centerVertexOverPoint(prop, x, y);
-		gcm.getPromoters().put(id, prop);
-		
-//		this.getModel().beginUpdate();
-//		this.createGraphSpeciesFromModel(id);
-//		this.getModel().endUpdate();
-		
-		gcm2sbml.refresh();
-		this.buildGraph();
-	}
-	
-	/**
-	 * Given a properties list (species or components) and some coords, center over that point.
-	 */
-	public void centerVertexOverPoint(Properties prop, double x, double y){
-		x -= Double.parseDouble(prop.getProperty("graphwidth", "60"))/2.0;
-		y -= Double.parseDouble(prop.getProperty("graphheight", "20"))/2.0;
-		prop.setProperty("graphx", String.valueOf(x));
-		prop.setProperty("graphy", String.valueOf(y));		
-	}
 	
 	public void applyLayout(String ident, mxGraphComponent graphComponent){
 		Layouting.applyLayout(ident, this, graphComponent);

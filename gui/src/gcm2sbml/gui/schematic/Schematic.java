@@ -273,7 +273,8 @@ public class Schematic extends JPanel implements ActionListener {
 							// do the default graph lib behavior
 						}else if(addSpeciesButton.isSelected()){
 							// plop a species down with good default info at the mouse coordinates
-							graph.createSpecies(null, e.getX(), e.getY());
+							gcm.createSpecies(null, e.getX(), e.getY());
+							graph.buildGraph();
 							gcm2sbml.refresh();
 							gcm2sbml.setDirty(true);
 							gcm.makeUndoPoint();
@@ -285,7 +286,7 @@ public class Schematic extends JPanel implements ActionListener {
 //									gcm2sbml.getAllPossibleComponentNames().toArray(), null);
 							String createdID = gcm2sbml.displayChooseComponentDialog(false, null, true);
 							if(createdID != null){
-								graph.centerVertexOverPoint(gcm.getComponents().get(createdID), 
+								gcm.centerVertexOverPoint(gcm.getComponents().get(createdID), 
 										e.getX(), e.getY());
 								gcm2sbml.setDirty(true);
 								graph.buildGraph();
@@ -293,13 +294,15 @@ public class Schematic extends JPanel implements ActionListener {
 								gcm.makeUndoPoint();
 							}
 						}else if(editPromoterButton.isSelected()){
-							graph.createPromoter(null, e.getX(), e.getY());
+							gcm.createPromoter(null, e.getX(), e.getY(), true);
 							gcm2sbml.refresh();
+							graph.buildGraph();
 							gcm2sbml.setDirty(true);
 							gcm.makeUndoPoint();
 						}
 					}else{
-						if(editPromoterButton.isSelected()){
+						// this would create a new promoter if an influence didn't already have one. And bring up the editor for it.
+						/*if(editPromoterButton.isSelected()){
 							// If the thing clicked on was an influence, bring up it's promoter window.
 							if(cell.isEdge()){
 								Properties prop = gcm.getInfluences().get(cell.getId());
@@ -324,7 +327,7 @@ public class Schematic extends JPanel implements ActionListener {
 									gcm.makeUndoPoint();
 								}
 							}
-						}else if(selfInfluenceButton.isSelected()){
+						}else */if(selfInfluenceButton.isSelected()){
 							if(cell.isEdge() == false){
 								// the user clicked to add a self-influence to a component.
 								//Object parent, String id, Object value, Object source, Object target, String style
@@ -385,7 +388,7 @@ public class Schematic extends JPanel implements ActionListener {
 				gcm2sbml.launchComponentPanel(cell.getId());
 			else{
 				if(movieContainer.getTSDParser() == null)
-					JOptionPane.showMessageDialog(BioSim.frame, "Sorry, you must choose a simulation file before editing component properties.");
+					JOptionPane.showMessageDialog(BioSim.frame, "You must choose a simulation file before editing component properties.");
 				else
 					new ComponentSchemeChooser(cell.getId(), movieContainer);
 			}
@@ -423,27 +426,13 @@ public class Schematic extends JPanel implements ActionListener {
 			}
 		});
 	
-		// Listen for deleted cells
+		// Listen for everything. Put breakpoints in here when trying to figure out new events.
 		graph.addListener(null, new mxEventSource.mxIEventListener() {
 			
 //			@Override
 			public void invoke(Object arg0, mxEventObject event) {
 				// see what events we have to work with.
 				//biosim.log.addText((event.getName()));
-			}
-		});
-
-		// TODO: Figure out how to tell when the user has moved an edge from one 
-		// cell to another. Then either undo the change (using a rebuild?) or 
-		// properly detach and re-attach the edge (tricky considering componentConnections)
-		graph.addListener(mxEvent.CELL_CONNECTED, new mxEventSource.mxIEventListener() {
-			public void invoke(Object arg0, mxEventObject event) {
-				// see what events we have to work with.
-				//biosim.log.addText((event.getName()));
-				if(graph.isBuilding == false && event.getProperties().get("source").equals(false)){
-					int a=1+1; // I needed somewhere to stick a breakpoint
-					int b=a+a;
-				}
 			}
 		});
 		
@@ -577,7 +566,7 @@ public class Schematic extends JPanel implements ActionListener {
 			numComponents++;
 		// bail out if the user tries to connect two components.
 		if(numComponents == 2){
-			JOptionPane.showMessageDialog(BioSim.frame, "Sorry, you can't connect a component directly to another component. Please go through a species.");
+			JOptionPane.showMessageDialog(BioSim.frame, "You can't connect a component directly to another component. Please go through a species.");
 			//graph.removeCells(cells);
 			graph.buildGraph();
 			return;
@@ -591,7 +580,7 @@ public class Schematic extends JPanel implements ActionListener {
 			numPromoters++;
 		// bail out if the user tries to connect two components.
 		if(numPromoters == 2){
-			JOptionPane.showMessageDialog(BioSim.frame, "Sorry, you can't connect a promoter directly to another promoter.");
+			JOptionPane.showMessageDialog(BioSim.frame, "You can't connect a promoter directly to another promoter.");
 			//graph.removeCells(cells);
 			graph.buildGraph();
 			return;
@@ -599,7 +588,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		// bail out if the user tries to connect a component to a promoter.
 		if(numComponents > 0 && numPromoters > 0){
-			JOptionPane.showMessageDialog(BioSim.frame, "Sorry, you can't connect a component directly to a promoter.");
+			JOptionPane.showMessageDialog(BioSim.frame, "You can't connect a component directly to a promoter.");
 			//graph.removeCells(cells);
 			graph.buildGraph();
 			return;
@@ -619,7 +608,7 @@ public class Schematic extends JPanel implements ActionListener {
 				try{
 					port = connectComponentToSpecies(sourceProp, targetID);
 				}catch(ListChooser.EmptyListException e){
-					JOptionPane.showMessageDialog(BioSim.frame, "Sorry, this component has no output ports.");
+					JOptionPane.showMessageDialog(BioSim.frame, "This component has no output ports.");
 					graph.buildGraph();
 					return;
 				}
@@ -628,7 +617,7 @@ public class Schematic extends JPanel implements ActionListener {
 				try{
 					port = connectSpeciesToComponent(sourceID, targetProp);
 				}catch(ListChooser.EmptyListException e){
-					JOptionPane.showMessageDialog(BioSim.frame, "Sorry, this component has no input ports.");	
+					JOptionPane.showMessageDialog(BioSim.frame, "This component has no input ports.");	
 					//graph.removeCells(cells);
 					// rebuild the graph to get rid of the edge that was created.
 					// Better then explicitly removing the edge because that will
@@ -664,13 +653,13 @@ public class Schematic extends JPanel implements ActionListener {
 		}else if(noInfluenceButton.isSelected()){
 			type = InfluencePanel.types[2];
 		}else{
-			throw(new Error("No influence button was pressed!"));
+			throw(new Error("No influence button was pressed"));
 		}
 		
 		String name; // the species name
 		Properties newInfluenceProperties = new Properties(); // the new influence
 		
-		// see if  we need to connect a species to a promoter
+		// see if we need to connect a species to a promoter
 		if(numPromoters == 1){
 			if(graph.getCellType(source) == GlobalConstants.PROMOTER){
 				// source is a promoter
@@ -693,12 +682,14 @@ public class Schematic extends JPanel implements ActionListener {
 		}// end connect species to promoter
 		else{
 			// connect two species to each other
-			name = InfluencePanel.buildName(sourceID, targetID, type, "default");
+			String newPromoterName = gcm.createPromoter(null,0, 0, false);
+			newInfluenceProperties.setProperty(GlobalConstants.PROMOTER, newPromoterName);
+			name = InfluencePanel.buildName(sourceID, targetID, type, newPromoterName);
 		}
 		// make sure the species name is valid
 		String iia = gcm.isInfluenceAllowed(name);
 		if(iia != null){
-			JOptionPane.showMessageDialog(BioSim.frame, "Sorry, the influence could not be added because " + iia);
+			JOptionPane.showMessageDialog(BioSim.frame, "The influence could not be added because " + iia);
 			graph.buildGraph();
 			gcm2sbml.refresh();
 			return;
