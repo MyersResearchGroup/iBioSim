@@ -44,6 +44,7 @@ import biomodelsim.BioSim;
 import biomodelsim.Log;
 
 import gcm2sbml.gui.grappa.GCIGrappaPanel;
+import gcm2sbml.gui.modelview.movie.MovieContainer;
 import gcm2sbml.gui.modelview.movie.visualizations.ColorScheme;
 import gcm2sbml.gui.schematic.Schematic;
 
@@ -1473,13 +1474,13 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	public SpeciesPanel launchSpeciesPanel(String id){
 		return launchSpeciesPanel(id, null);
 	}
-	public SpeciesPanel launchSpeciesPanel(String id, ColorScheme colorScheme){
+	public SpeciesPanel launchSpeciesPanel(String id, MovieContainer movieContainer){
 		GCMFile refGCM = null;
 		if (paramsOnly) {
 			refGCM = new GCMFile(path);
 			refGCM.load(path + separator + refFile);
 		}
-		return new SpeciesPanel(id, species, influences, conditions, components, gcm, paramsOnly, refGCM, this, colorScheme);
+		return new SpeciesPanel(id, species, influences, conditions, components, gcm, paramsOnly, refGCM, this, movieContainer);
 	}
 	public InfluencePanel launchInfluencePanel(String id){
 		GCMFile refGCM = null;

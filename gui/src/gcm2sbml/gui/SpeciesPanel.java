@@ -38,15 +38,15 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList influencesList,
 			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
-			GCMFile refGCM, GCM2SBMLEditor gcmEditor, ColorScheme colorScheme){
+			GCMFile refGCM, GCM2SBMLEditor gcmEditor, MovieContainer movieContainer){
 
 		super(new BorderLayout());
-		constructor(selected, speciesList, influencesList, conditionsList, componentsList, gcm, paramsOnly, refGCM, gcmEditor, colorScheme);
+		constructor(selected, speciesList, influencesList, conditionsList, componentsList, gcm, paramsOnly, refGCM, gcmEditor, movieContainer);
 	}
 	
 	private void constructor(String selected, PropertyList speciesList, PropertyList influencesList,
 			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
-			GCMFile refGCM,  GCM2SBMLEditor gcmEditor, ColorScheme colorScheme) {
+			GCMFile refGCM,  GCM2SBMLEditor gcmEditor, MovieContainer movieContainer) {
 
 		JPanel grid = new JPanel(new GridLayout(6,1));
 		this.add(grid, BorderLayout.CENTER);
@@ -59,7 +59,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		this.components = componentsList;
 		this.gcm = gcm;
 		this.paramsOnly = paramsOnly;
-		this.colorScheme = colorScheme;
+		this.movieContainer = movieContainer;
 		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
@@ -149,6 +149,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		// add the color chooser for the movie component
 		if(paramsOnly){
+			ColorScheme colorScheme = movieContainer.getMoviePreferences().getOrCreateColorSchemeForSpecies(selected);
 			colorSchemeChooser = new ColorSchemeChooser(colorScheme);
 			this.add(colorSchemeChooser, BorderLayout.SOUTH);
 		}
@@ -208,9 +209,20 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	}
 
 	private boolean openGui(String oldName) {
+		
+		// figure out which set of buttons to use
+		String[] buttonOptions = options;
+		String defaultOption = options[0];
+		if(paramsOnly)
+			buttonOptions = withColorOptions;
+		
 		int value = JOptionPane.showOptionDialog(BioSim.frame, this, "Species Editor",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-		if (value == JOptionPane.YES_OPTION) {
+				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, buttonOptions, defaultOption);
+		
+		// the new id of the species. Will be filled in later.
+		String newSpeciesID = null;
+		
+		if (buttonOptions[value].equals(options[0]) || buttonOptions[value].equals(withColorOptions[0])) { // "OK" or "Ok and copy..."
 			if (!checkValues()) {
 				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
@@ -239,7 +251,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						+ "Species is used as a port in a component.");
 				return false;
 			}
-			String id = fields.get(GlobalConstants.ID).getValue();
+			newSpeciesID = fields.get(GlobalConstants.ID).getValue();
 
 			Properties property = new Properties();
 
@@ -267,8 +279,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			property.put(GlobalConstants.TYPE, typeBox.getSelectedItem().toString());
 
-			if (selected != null && !oldName.equals(id)) {
-				gcm.changeSpeciesName(oldName, id);
+			if (selected != null && !oldName.equals(newSpeciesID)) {
+				gcm.changeSpeciesName(oldName, newSpeciesID);
 				((DefaultListModel) influences.getModel()).clear();
 				influences.addAllItem(gcm.getInfluences().keySet());
 				((DefaultListModel) conditions.getModel()).clear();
@@ -280,7 +292,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 							+ " " + gcm.getComponentPortMap(c));
 				}
 			}
-			gcm.addSpecies(id, property);
+			gcm.addSpecies(newSpeciesID, property);
 			if (paramsOnly) {
 				if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(
 						fields.get(GlobalConstants.INITIAL_STRING).getStates()[1])
@@ -288,13 +300,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 								fields.get(GlobalConstants.KCOMPLEX_STRING).getStates()[1])
 						|| fields.get(GlobalConstants.KDECAY_STRING).getState().equals(
 								fields.get(GlobalConstants.KDECAY_STRING).getStates()[1])) {
-					id += " Modified";
+					newSpeciesID += " Modified";
 				}
 			}
 			speciesList.removeItem(oldName);
 			speciesList.removeItem(oldName + " Modified");
-			speciesList.addItem(id);
-			speciesList.setSelectedValue(id, true);
+			speciesList.addItem(newSpeciesID);
+			speciesList.setSelectedValue(newSpeciesID, true);
 			// ColorSchemeChooser
 			if(colorSchemeChooser != null){
 				//movieProperties.setProperty(id + MovieContainer.COLOR_PREPEND, colorSchemeChooser.)
@@ -305,7 +317,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			gcmEditor.setDirty(true);
 		}
-		else if (value == JOptionPane.NO_OPTION) {
+		if(buttonOptions[value].equals(withColorOptions[0])) { // "Ok, and copy..."
+			movieContainer.copyMoviePreferencesSpecies(newSpeciesID);
+		}
+		if(buttonOptions[value].equals(options[1])) { // "Cancel"
 			// System.out.println();
 			return true;
 		}
@@ -390,6 +405,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private PropertyList components = null;
 
 	private String[] options = { "Ok", "Cancel" };
+	// make sure the Ok and Cancel options in both of these match exactly
+	private String[] withColorOptions = {"Ok, and Copy to Other Species", "Ok", "Cancel"};
 
 	private GCMFile gcm = null;
 
@@ -401,7 +418,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	private boolean paramsOnly;
 	
-	private ColorScheme colorScheme;
+	private MovieContainer movieContainer;
 
 	private ColorSchemeChooser colorSchemeChooser;
 	

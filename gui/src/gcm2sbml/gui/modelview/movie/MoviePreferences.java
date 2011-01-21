@@ -56,12 +56,22 @@ public class MoviePreferences {
 		return cs;
 	}
 	
-	public void copyMoviePreferences(String masterComponentName, GCMFile gcm){
+	public void copyMoviePreferencesComponent(String masterComponentName, GCMFile gcm){
 		ComponentScheme masterScheme = this.getComponentSchemeForComponent(masterComponentName);
 		for(String currentComponentName:gcm.getComponents().keySet()){
-			if(currentComponentName != masterComponentName){ // skip the current component
+			if(!currentComponentName.equals(masterComponentName)){ // skip the current component
 				ComponentScheme currentScheme = this.getOrCreateComponentSchemeForComponent(currentComponentName);
 				currentScheme.duplicatePreferences(masterScheme, currentComponentName);
+			}
+		}
+	}
+	
+	public void copyMoviePreferencesSpecies(String masterSpeciesName, GCMFile gcm){
+		ColorScheme masterScheme = this.getOrCreateColorSchemeForSpecies(masterSpeciesName);
+		for(String currentSpeciesName:gcm.getSpecies().keySet()){
+			if(!currentSpeciesName.equals(masterSpeciesName)){
+				ColorScheme currentScheme = this.getOrCreateColorSchemeForSpecies(currentSpeciesName);
+				currentScheme.duplicatePreferences(masterScheme);
 			}
 		}
 	}
