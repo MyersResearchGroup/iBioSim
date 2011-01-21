@@ -364,7 +364,10 @@ public class Schematic extends JPanel implements ActionListener {
 		});
 	}
 	
-	
+	/**
+	 * Given any type of cell, bring up an editor for it if supported.
+	 * @param cell
+	 */
 	public void bringUpEditorForCell(mxCell cell){
 		String cellType = graph.getCellType(cell);
 		if(cellType == GlobalConstants.SPECIES){
@@ -373,10 +376,6 @@ public class Schematic extends JPanel implements ActionListener {
 				scheme = movieContainer.getMoviePreferences().getOrCreateColorSchemeForSpecies(cell.getId());
 			gcm2sbml.launchSpeciesPanel(cell.getId(), scheme);
 		}else if(cellType == GlobalConstants.INFLUENCE){
-			// if an edge, make sure it isn't connected
-			// to a component - which aren't really influences at all.
-//			if(	graph.getCellType(cell.getSource()) == GlobalConstants.SPECIES &&
-//					graph.getCellType(cell.getTarget()) == GlobalConstants.SPECIES)
 			gcm2sbml.launchInfluencePanel(cell.getId());
 		}else if(cellType == GlobalConstants.PRODUCTION){
 			// do nothing
