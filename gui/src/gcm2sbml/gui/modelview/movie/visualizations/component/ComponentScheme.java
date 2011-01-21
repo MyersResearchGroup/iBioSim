@@ -62,5 +62,21 @@ public class ComponentScheme {
 		}else
 			return null;
 	}
+	
+	/**
+	 * A sort of deep-copy routine
+	 * @param masterScheme
+	 */
+	public void duplicatePreferences(ComponentScheme masterScheme, String compName){
+		// wipe out the old parts
+		this.schemes = new LinkedList<ComponentSchemePart>();
+		
+		ListIterator<ComponentSchemePart> iter = masterScheme.schemes.listIterator();
+		while(iter.hasNext()){
+			ComponentSchemePart part = new ComponentSchemePart();
+			this.schemes.add(part);
+			part.duplicatePreferences(iter.next(), compName);
+		}
+	}
 
 }
