@@ -1005,7 +1005,7 @@ public class Run implements ActionListener {
 							gcm.setParameter(key, params.get(key));
 							remove.add(key);
 						}
-						if (!direct.equals("")) {
+						if (direct != null && !direct.equals("")) {
 							String[] d = direct.split("_");
 							ArrayList<String> dd = new ArrayList<String>();
 							for (int i = 0; i < d.length; i++) {
