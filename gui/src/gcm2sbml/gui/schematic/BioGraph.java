@@ -165,7 +165,9 @@ public class BioGraph extends mxGraph {
 		else if(type == GlobalConstants.INFLUENCE)
 			return gcm.getInfluences();
 		else if(type == GlobalConstants.COMPONENT_CONNECTION)
-			return null; // Component Connectiosn don't have properties
+			return null; // Component connection don't have properties
+		else if(type == GlobalConstants.PRODUCTION)
+			return null; // Production connection don't have properties
 		else if(type == GlobalConstants.PROMOTER)
 			return gcm.getPromoters();
 		else
