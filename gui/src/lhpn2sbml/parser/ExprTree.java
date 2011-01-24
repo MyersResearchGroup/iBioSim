@@ -4433,7 +4433,8 @@ public class ExprTree {
 							|| (r1.isit == 'a' && (r1.op.equals("*") || r1.op.equals("/") || r1.op
 									.equals("^")))) {
 						if (r1 != null) {
-							result = r1.getElement(type);
+//							result = r1.getElement(type);
+							result = "(" + r1.getElement(type) + ")";
 						}
 					}
 					else {
@@ -4446,7 +4447,8 @@ public class ExprTree {
 							|| r2.isit == 't'
 							|| (r2.isit == 'a' && (r2.op.equals("/") || r2.op.equals("^")))) {
 						if (r2 != null) {
-							result = result + r2.getElement(type);
+//							result = result + r2.getElement(type);
+							result = result + "(" + r2.getElement(type) + ")";
 						}
 					}
 					else {
