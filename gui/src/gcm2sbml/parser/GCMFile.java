@@ -1977,12 +1977,30 @@ public class GCMFile {
 		Arrays.sort(s);
 		return s;
 	}
-
+	
 	public String[] getPromotersAsArray() {
 		String[] s = new String[promoters.size()];
 		s = promoters.keySet().toArray(s);
 		Arrays.sort(s);
 		return s;
+	}
+	
+	public String[] getImplicitPromotersAsArray() {
+		String[] s = new String[promoters.size()];
+		int index = 0;
+		for (String prom : promoters.keySet()) {
+			Properties promProp = promoters.get(prom);
+			if (!promProp.containsKey(GlobalConstants.EXPLICIT_PROMOTER) 
+					|| !promProp.getProperty(GlobalConstants.EXPLICIT_PROMOTER).equals(GlobalConstants.TRUE)) {
+				s[index] = prom;
+				index++;
+			}
+		}
+		String[] implicit = new String[index];
+		for (int i = 0; i < index; i++)
+			implicit[i] = s[i];
+		Arrays.sort(implicit);
+		return implicit;
 	}
 
 	public HashMap<String, Properties> getPromoters() {
