@@ -45,7 +45,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		// Promoter field. Disabled if the influences is connected to an explicit promoter.
 		tempPanel = new JPanel();
 		tempLabel = new JLabel("Promoter");
-		promoterBox = new JComboBox(gcm.getPromotersAsArray());
+		if (gcm.influenceHasExplicitPromoter(origSelection))
+			promoterBox = new JComboBox(gcm.getPromotersAsArray());
+		else
+			promoterBox = new JComboBox(gcm.getImplicitPromotersAsArray());
 		((DefaultComboBoxModel) (promoterBox.getModel())).addElement("default");
 		promoterBox.setSelectedItem("default");String origString = "default";
 		promoterBox.addActionListener(this);
@@ -63,10 +66,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		add(tempPanel);
 		// disable the promoter stuff if the promoter is explicitly drawn.
 		boolean explicitPromoter = false;
-		if(gcm.influenceHasExplicitPromoter(origSelection)){
-			promoterBox.setEditable(false);
+		if(gcm.influenceHasExplicitPromoter(origSelection)){	
 			promoterBox.setEnabled(false);
-			promoterBox.setVisible(false); // how do you just disable it?!?!
 			promoterButton.setEnabled(false);
 			explicitPromoter = true;
 		}
@@ -90,6 +91,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			typeBox.setEnabled(false);
 		}
 		add(tempPanel);
+		// Production is never a selectable type
 		((DefaultComboBoxModel) (typeBox.getModel())).removeElement(types[4]);
 		
 		// coop
@@ -384,12 +386,16 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			fields.get(GlobalConstants.KACT_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(true);
 			fields.get(GlobalConstants.COOPERATIVITY_STRING).setEnabled(true);
-			promoterBox.setEnabled(true);
+			if (!gcm.influenceHasExplicitPromoter(origSelection)) {	
+				promoterBox.setEnabled(true);
+			}
 		} else if (type.equals(types[1])) {
 			fields.get(GlobalConstants.KACT_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(false);
 			fields.get(GlobalConstants.COOPERATIVITY_STRING).setEnabled(true);
-			promoterBox.setEnabled(true);
+			if (!gcm.influenceHasExplicitPromoter(origSelection)) {	
+				promoterBox.setEnabled(true);
+			}
 		} else if (type.equals(types[2])) {
 			fields.get(GlobalConstants.KACT_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(false);
