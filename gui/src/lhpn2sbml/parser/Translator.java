@@ -233,7 +233,7 @@ public class Translator {
 		// else use event only
 			int counter = lhpn.getTransitionList().length - 1;
 			for (String t : lhpn.getTransitionList()) {
-				if(lhpn.getTransition(t).getTransitionRate()!=null){
+				if(false /*lhpn.getTransition(t).getTransitionRate()!=null*/){
 					Species spT = m.createSpecies();
 					spT.setId(t);
 					spT.setCompartment("default");
