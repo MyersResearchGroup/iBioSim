@@ -401,10 +401,14 @@ public class Translator {
 					}
 					
 					// Is transition persistent?
-					if (!lhpn.getTransition(t).isPersistent()){
-						//trigger.setAnnotation("<TriggerCanBeDisabled/><TriggerInitiallyFalse/>");
-						trigger.setPersistent(false);
-						//trigger.setMath(SBML_Editor.myParseFormula("and(gt(t,0)," + CheckPreset + "," + Enabling + ")"));
+					if (!lhpn.getTransition(t).isPersistent() || (lhpn.getTransition(t).isPersistent() && !lhpn.getTransition(t).hasConflictSet())){
+						if (!lhpn.getTransition(t).isPersistent()) {
+							trigger.setPersistent(false);
+						}
+						else {
+							trigger.setPersistent(true);
+						}
+						
 						trigger.setMath(SBML_Editor.myParseFormula("and(" + CheckPreset + "," + Enabling + ")"));
 					}
 					else { // transition is persistent
@@ -414,6 +418,7 @@ public class Translator {
 						// Create a parameter (id = rulePersisTriggName). 
 						Parameter rulePersisParam = m.createParameter();
 						rulePersisParam.setId(rulePersisTriggName);
+						rulePersisParam.setValue(0);
 						rulePersisParam.setConstant(false);
 						rulePersisParam.setUnits("");
 						String ruleExpBool = "or(and(" + CheckPreset + "," + Enabling + "), and(" + CheckPreset + "," + "eq(" + rulePersisTriggName + ", 1)" +"))";
