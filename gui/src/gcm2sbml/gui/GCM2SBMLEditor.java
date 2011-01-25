@@ -685,7 +685,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		for (String key : elements.keySet()) {
 			for (Object prop : elements.get(key).keySet()) {
 				if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID) && !prop.equals(GlobalConstants.TYPE)) {
-					gcm.getSpecies().get(key).put(prop, elements.get(key).get(prop));
+					if (gcm.getSpecies().containsKey(key)) {
+						gcm.getSpecies().get(key).put(prop, elements.get(key).get(prop));
+					}
 				}
 			}			
 		}
@@ -693,7 +695,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		for (String key : elements.keySet()) {
 			for (Object prop : elements.get(key).keySet()) {
 				if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.PROMOTER) && !prop.equals(GlobalConstants.BIO) && !prop.equals(GlobalConstants.TYPE)) {
-					gcm.getInfluences().get(key).put(prop, elements.get(key).get(prop));
+					if (gcm.getInfluences().containsKey(key)) {
+						gcm.getInfluences().get(key).put(prop, elements.get(key).get(prop));
+					}
 				}
 			}
 		}
@@ -701,7 +705,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		for (String key : elements.keySet()) {
 			for (Object prop : elements.get(key).keySet()) {
 				if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID)) {
-					gcm.getPromoters().get(key).put(prop, elements.get(key).get(prop));
+					if (gcm.getPromoters().containsKey(key)) {
+						gcm.getPromoters().get(key).put(prop, elements.get(key).get(prop));
+					}
 				}
 			}
 		}
