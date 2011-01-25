@@ -12,6 +12,7 @@ import javax.swing.JOptionPane;
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.Constraint;
 //import org.sbml.libsbml.Delay;
+import org.sbml.libsbml.AssignmentRule;
 import org.sbml.libsbml.Event;
 import org.sbml.libsbml.EventAssignment;
 import org.sbml.libsbml.FunctionDefinition;
@@ -210,7 +211,6 @@ public class Translator {
 				
 		// ----places -> species-----	
 		for (String p: lhpn.getPlaceList()){
-			
 			Boolean initMarking = lhpn.getPlace(p).isMarked();
 //			System.out.println(p + "=" + initMarking);
 			Species sp = m.createSpecies();
@@ -270,7 +270,7 @@ public class Translator {
 					//lhpn.getTransitionRateTree(t)
 					
 					// create exp for KineticLaw
-					// expTestNull is used to test if the enabling condition exists for a transistion t
+					// expTestNull is used to test if the enabling condition exists for a transition t
 					String expTestNull = lhpn.getTransition(t).getEnabling();
 					String exp;
 					if (expTestNull == null){
@@ -286,7 +286,8 @@ public class Translator {
 					//System.out.println("trans " + t + " enableCond " + lhpn.getEnabling(t));
 					
 					Event e = m.createEvent();
-					e.setId("event" + counter);			
+					e.setId("event" + counter);		
+					// TODO is trigger persistent? 
 					Trigger trigger = e.createTrigger();
 					trigger.setMath(SBML_Editor.myParseFormula("eq(" + product.getSpecies() + ",1)"));
 					e.setUseValuesFromTriggerTime(false);
@@ -299,7 +300,7 @@ public class Translator {
 		//				System.out.println("transition: " + t + " postset: " + x);
 					}
 					
-					// t = 0
+					// product = 0
 					EventAssignment assign1 = e.createEventAssignment();
 					assign1.setVariable(product.getSpecies());
 					assign1.setMath(SBML_Editor.myParseFormula("0"));
@@ -365,14 +366,12 @@ public class Translator {
 					}
 				}
 				
-				
-				 //Only use event
-				else {			// transitions only have ranges
+				else {			// Transition rate = null. Only use event. Transitions only have ranges
 //					System.out.println("Event Only");
 					Event e = m.createEvent();
 					e.setId("event" + counter);	
 					Trigger trigger = e.createTrigger();
-					
+
 					//trigger = CheckPreset(t) && En(t);
 					//test En(t)
 					String EnablingTestNull = lhpn.getTransition(t).getEnabling();
@@ -390,6 +389,7 @@ public class Translator {
 					int indexPreset = 0;
 					
 					// Check if all the presets of transition t are marked
+					// Transition t can fire only when all its preset are marked.
 					for (String x:lhpn.getPreset(t)){
 						if (indexPreset == 0){
 							CheckPreset = "eq(" + x + ",1)";
@@ -400,16 +400,33 @@ public class Translator {
 						indexPreset ++;
 					}
 					
-					//trigger.setMath(SBML_Editor.myParseFormula("and(gt(t,0)," + CheckPreset + "," + Enabling + ")"));
-					trigger.setMath(SBML_Editor.myParseFormula("and(" + CheckPreset + "," + Enabling + ")"));
-					
-					// triggerCanBeDisabled := true
-					//trigger.setAnnotation("<TriggerCanBeDisabled/><TriggerInitiallyFalse/>");
-					trigger.setPersistent(lhpn.getTransition(t).isPersistent());
-					trigger.setInitialValue(false);
-					
+					// Is transition persistent?
+					if (!lhpn.getTransition(t).isPersistent()){
+						//trigger.setAnnotation("<TriggerCanBeDisabled/><TriggerInitiallyFalse/>");
+						trigger.setPersistent(false);
+						//trigger.setMath(SBML_Editor.myParseFormula("and(gt(t,0)," + CheckPreset + "," + Enabling + ")"));
+						trigger.setMath(SBML_Editor.myParseFormula("and(" + CheckPreset + "," + Enabling + ")"));
+					}
+					else { // transition is persistent
+						// Create a rule for the persistent trigger t. 
+						AssignmentRule rulePersisTrigg = m.createAssignmentRule();
+						String rulePersisTriggName = "trigg_" + t;
+						// Create a parameter (id = rulePersisTriggName). 
+						Parameter rulePersisParam = m.createParameter();
+						rulePersisParam.setId(rulePersisTriggName);
+						rulePersisParam.setConstant(false);
+						rulePersisParam.setUnits("");
+						String ruleExpBool = "or(and(" + CheckPreset + "," + Enabling + "), and(" + CheckPreset + "," + "eq(" + rulePersisTriggName + ", 1)" +"))";
+						String ruleExpReal = "piecewise(1, " + ruleExpBool + ", 0)";
+						rulePersisTrigg.setVariable(rulePersisTriggName);
+						rulePersisTrigg.setMath(SBML_Editor.myParseFormula(ruleExpReal));
+						trigger.setPersistent(false);
+						trigger.setMath(SBML_Editor.myParseFormula("eq(" + rulePersisTriggName + ", 1)"));
+					}
+										
 					// TriggerInitiallyFalse
 //					trigger.setAnnotation("<TriggerInitiallyFalse/>");
+					trigger.setInitialValue(false);
 					
 					// use values at trigger time = false
 					e.setUseValuesFromTriggerTime(false);
@@ -442,7 +459,6 @@ public class Translator {
 					}
 					*/
 					
-					
 					// Check if there is any self-loop. If the intersection between lhpn.getPreset(t) and lhpn.getPostset(t)
 					// is not empty, self-loop exists. 
 					List<String> t_preset = Arrays.asList(lhpn.getPreset(t));
@@ -458,6 +474,7 @@ public class Translator {
 							t_intersect.add(x);
 						}
 					}
+					
 					
 					if (selfLoopFlag) {
 						t_NoIntersect.removeAll(t_intersect);
@@ -609,9 +626,8 @@ public class Translator {
 			counter --;
 		}
 
-		// Property parsing is done in PropertyPanel.java
+		// Property parsing is dealt with in PropertyPanel.java
 		// translate the LPN property to SBML constraints
-		
 		String probprop = "";
 		String[] probpropParts = new String[4];
 		if(!(property == null) && !property.equals("")){
@@ -689,6 +705,7 @@ public class Translator {
 	
 	// getProbpropExpression strips off the "Pr"("St"), relop and REAL parts of a property
 	public static String getProbpropExpression(String property){
+		System.out.println("property (getProbpropExpression)= " + property);
 		String probprop="";
 		// probproperty 
 		if (property.startsWith("Pr") | property.startsWith("St")){
