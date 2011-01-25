@@ -682,18 +682,14 @@ public class GCMFile {
 		LhpnFile LHPN = new LhpnFile();
 		for (int i = 0; i < specs.size(); i++) {
 			try {
-				double difference = -1;
 				double selectedThreshold = 0;
 				double initial = Double.parseDouble(species.get(specs.get(i)).getProperty(
 						GlobalConstants.INITIAL_STRING));
+				double difference = Math.abs(selectedThreshold - initial);
 				for (Object threshold : conLevel.get(i)) {
 					double thisThreshold = Double.parseDouble((String) threshold);
 					double diff = Math.abs(thisThreshold - initial);
-					if (difference == -1) {
-						difference = diff;
-						selectedThreshold = thisThreshold;
-					}
-					else if (diff < difference) {
+					if (diff < difference) {
 						difference = diff;
 						selectedThreshold = thisThreshold;
 					}
