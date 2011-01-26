@@ -556,6 +556,63 @@ public class Run implements ActionListener {
 					gcm.setParameter(key, params.get(key));
 					remove.add(key);
 				}
+				if (direct != null && !direct.equals("")) {
+					String[] d = direct.split("_");
+					ArrayList<String> dd = new ArrayList<String>();
+					for (int i = 0; i < d.length; i++) {
+						if (!d[i].contains("=")) {
+							String di = d[i];
+							while (!d[i].contains("=")) {
+								i++;
+								di += "_" + d[i];
+							}
+							dd.add(di);
+						}
+						else {
+							dd.add(d[i]);
+						}
+					}
+					for (String di : dd) {
+						if (di.contains("-")) {
+							if (gcm.getPromoters().containsKey(di.split("=")[0].split("-")[0])) {
+								Properties promoterProps = gcm.getPromoters().get(
+										di.split("=")[0].split("-")[0]);
+								promoterProps.put(CompatibilityFixer
+										.convertSBMLName(di.split("=")[0].split("-")[1]), di
+										.split("=")[1]);
+							}
+							if (gcm.getSpecies().containsKey(di.split("=")[0].split("-")[0])) {
+								Properties speciesProps = gcm.getSpecies().get(
+										di.split("=")[0].split("-")[0]);
+								speciesProps.put(CompatibilityFixer
+										.convertSBMLName(di.split("=")[0].split("-")[1]), di
+										.split("=")[1]);
+							}
+							if (gcm.getInfluences().containsKey(
+									di.split("=")[0].split("-")[0].substring(1))) {
+								Properties influenceProps = gcm.getInfluences().get(
+										di.split("=")[0].split("-")[0].substring(1));
+								influenceProps.put(CompatibilityFixer.convertSBMLName(
+										di.split("=")[0].split("-")[1]).replace("\"", ""), di
+										.split("=")[1]);
+							}
+						}
+						else {
+							if (gcm.getGlobalParameters().containsKey(
+									CompatibilityFixer.convertSBMLName(di.split("=")[0]))) {
+								gcm.getGlobalParameters().put(
+										CompatibilityFixer.convertSBMLName(di.split("=")[0]),
+										di.split("=")[1]);
+							}
+							if (gcm.getParameters().containsKey(
+									CompatibilityFixer.convertSBMLName(di.split("=")[0]))) {
+								gcm.getParameters().put(
+										CompatibilityFixer.convertSBMLName(di.split("=")[0]),
+										di.split("=")[1]);
+							}
+						}
+					}
+				}
 				if (gcm.flattenGCM(false) != null) {
 					LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
 					lpnFile.save(root + separator + simName + separator + lpnName);
@@ -1023,29 +1080,43 @@ public class Run implements ActionListener {
 							}
 							for (String di : dd) {
 								if (di.contains("-")) {
-									if (gcm.getPromoters().containsKey(di.split("=")[0].split("-")[0])) {
-										Properties promoterProps = gcm.getPromoters().get(di.split("=")[0].split("-")[0]);
-										promoterProps.put(CompatibilityFixer.convertSBMLName(di.split("=")[0].split("-")[1]),
-												di.split("=")[1]);
+									if (gcm.getPromoters().containsKey(
+											di.split("=")[0].split("-")[0])) {
+										Properties promoterProps = gcm.getPromoters().get(
+												di.split("=")[0].split("-")[0]);
+										promoterProps.put(CompatibilityFixer.convertSBMLName(di
+												.split("=")[0].split("-")[1]), di.split("=")[1]);
 									}
-									if (gcm.getSpecies().containsKey(di.split("=")[0].split("-")[0])) {
-										Properties speciesProps = gcm.getSpecies().get(di.split("=")[0].split("-")[0]);
-										speciesProps.put(CompatibilityFixer.convertSBMLName(di.split("=")[0].split("-")[1]),
-												di.split("=")[1]);
+									if (gcm.getSpecies()
+											.containsKey(di.split("=")[0].split("-")[0])) {
+										Properties speciesProps = gcm.getSpecies().get(
+												di.split("=")[0].split("-")[0]);
+										speciesProps.put(CompatibilityFixer.convertSBMLName(di
+												.split("=")[0].split("-")[1]), di.split("=")[1]);
 									}
-									if (gcm.getInfluences().containsKey(di.split("=")[0].split("-")[0].substring(1))) {
+									if (gcm.getInfluences().containsKey(
+											di.split("=")[0].split("-")[0].substring(1))) {
 										Properties influenceProps = gcm.getInfluences().get(
 												di.split("=")[0].split("-")[0].substring(1));
-										influenceProps.put(CompatibilityFixer.convertSBMLName(di.split("=")[0].split("-")[1])
-												.replace("\"", ""), di.split("=")[1]);
+										influenceProps.put(CompatibilityFixer.convertSBMLName(
+												di.split("=")[0].split("-")[1]).replace("\"", ""),
+												di.split("=")[1]);
 									}
 								}
 								else {
-									if (gcm.getGlobalParameters().containsKey(CompatibilityFixer.convertSBMLName(di.split("=")[0]))) {
-										gcm.getGlobalParameters().put(CompatibilityFixer.convertSBMLName(di.split("=")[0]), di.split("=")[1]);
+									if (gcm.getGlobalParameters().containsKey(
+											CompatibilityFixer.convertSBMLName(di.split("=")[0]))) {
+										gcm.getGlobalParameters().put(
+												CompatibilityFixer
+														.convertSBMLName(di.split("=")[0]),
+												di.split("=")[1]);
 									}
-									if (gcm.getParameters().containsKey(CompatibilityFixer.convertSBMLName(di.split("=")[0]))) {
-										gcm.getParameters().put(CompatibilityFixer.convertSBMLName(di.split("=")[0]), di.split("=")[1]);
+									if (gcm.getParameters().containsKey(
+											CompatibilityFixer.convertSBMLName(di.split("=")[0]))) {
+										gcm.getParameters().put(
+												CompatibilityFixer
+														.convertSBMLName(di.split("=")[0]),
+												di.split("=")[1]);
 									}
 								}
 							}
@@ -1268,8 +1339,8 @@ public class Run implements ActionListener {
 						}
 						GillespieSSAJavaSingleStep javaSim = new GillespieSSAJavaSingleStep();
 						String SBMLFileName = directory + separator + theFile;
-						javaSim.PerformSim(SBMLFileName, outDir, timeLimit, timeStep,((Graph) simTab
-								.getComponentAt(index)));
+						javaSim.PerformSim(SBMLFileName, outDir, timeLimit, timeStep,
+								((Graph) simTab.getComponentAt(index)));
 						exitValue = 0;
 						return exitValue;
 					}
