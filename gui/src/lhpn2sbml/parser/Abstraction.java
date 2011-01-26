@@ -179,7 +179,7 @@ public class Abstraction extends LhpnFile {
 			}
 			// Transform 27 - Combine Parallel Transitions (Simplification)
 			else if (s.equals(abstPane.xform27) && abstPane.isSimplify()) {
-				change = mergeTransitionsSimp(change,true);
+				change = mergeTransitionsSimp(change, true);
 			}
 			// Transform 29 - Remove Uninteresting Variables (Simplification)
 			if (s.equals(abstPane.xform29) && abstPane.isSimplify()) {
@@ -297,14 +297,15 @@ public class Abstraction extends LhpnFile {
 				}
 				// Transform 27 - Combine Parallel Transitions (Simplification)
 				else if (s.equals(abstPane.xform27) && abstPane.isSimplify()) {
-					change = mergeTransitionsSimp(change,true);
+					change = mergeTransitionsSimp(change, true);
 				}
 				// Transform 29 - Remove Uninteresting Variables
 				// (Simplification)
 				if (s.equals(abstPane.xform29) && abstPane.isSimplify()) {
 					change = removeUninterestingVariables(change);
 				}
-				// Transform 30 - Remove Uninteresting Transitions (Simplification)
+				// Transform 30 - Remove Uninteresting Transitions
+				// (Simplification)
 				if (s.equals(abstPane.xform30) && abstPane.isSimplify()) {
 					change = removeUninterestingTransitions(change);
 				}
@@ -418,7 +419,7 @@ public class Abstraction extends LhpnFile {
 			}
 			// Transform 27 - Combine Parallel Transitions (Simplification)
 			else if (s.equals(abstPane.xform27) && abstPane.isSimplify()) {
-				change = mergeTransitionsSimp(change,true);
+				change = mergeTransitionsSimp(change, true);
 			}
 			// Transform 29 - Remove Uninteresting Variables (Simplification)
 			if (s.equals(abstPane.xform29) && abstPane.isSimplify()) {
@@ -1858,7 +1859,7 @@ public class Abstraction extends LhpnFile {
 		}
 		return change;
 	}
-	
+
 	private boolean removeUninterestingTransitions(boolean change) {
 		ArrayList<Transition> remove = new ArrayList<Transition>();
 		for (Transition t : transitions.values()) {
@@ -3193,34 +3194,42 @@ public class Abstraction extends LhpnFile {
 				if (t1.isFail() != t2.isFail()) {
 					continue;
 				}
-				if ((comparePreset(t1, t2) || (t1.getPreset().length == 0 && t2.getPreset().length == 0)) &&
-					(comparePostset(t1, t2) || (t1.getPostset().length == 0 && t2.getPostset().length == 0)) &&
-					(t1.getEnablingTree()!=null && t2.getEnablingTree()!=null)) {
+				if ((comparePreset(t1, t2) || (t1.getPreset().length == 0 && t2
+						.getPreset().length == 0))
+						&& (comparePostset(t1, t2) || (t1.getPostset().length == 0 && t2
+								.getPostset().length == 0))
+						&& (t1.getEnablingTree() != null && t2
+								.getEnablingTree() != null)) {
 					boolean combine = true;
 					if (checkEnabling) {
 						ExprTree tree = new ExprTree(this);
-						tree.setNodeValues(t1.getEnablingTree(), t2.getEnablingTree(), "&&", 'l');
+						tree.setNodeValues(t1.getEnablingTree(), t2
+								.getEnablingTree(), "&&", 'l');
 						for (String v : tree.getVars()) {
 							if (process_write.get(v) != 0
-									&& process_write.get(v) != process_trans.get(t1)) {
+									&& process_write.get(v) != process_trans
+											.get(t1)) {
 								combine = false;
 								break;
 							}
 						}
-						if (!combine) continue;
+						if (!combine)
+							continue;
 						for (Transition t : transitions.values()) {
-							if (tree.getChange(t.getAssignments()) != 'F' && 
-								tree.getChange(t.getAssignments()) != 'f' &&
-								tree.getChange(t.getAssignments()) != 'U') {
+							if (tree.getChange(t.getAssignments()) != 'F'
+									&& tree.getChange(t.getAssignments()) != 'f'
+									&& tree.getChange(t.getAssignments()) != 'U') {
 								combine = false;
 								break;
 							}
 						}
-						if (!combine) continue;
+						if (!combine)
+							continue;
 						if (toMerge.containsKey(t1)) {
 							for (Transition t3 : toMerge.get(t1)) {
 								ExprTree tree3 = new ExprTree(this);
-								tree3.setNodeValues(t3.getEnablingTree(), t2.getEnablingTree(), "&&", 'l');
+								tree3.setNodeValues(t3.getEnablingTree(), t2
+										.getEnablingTree(), "&&", 'l');
 								for (Transition t : transitions.values()) {
 									if (tree3.becomesTrue(t.getAssignments())) {
 										combine = false;
@@ -3229,22 +3238,26 @@ public class Abstraction extends LhpnFile {
 								}
 							}
 						}
-						if (!combine) continue;
+						if (!combine)
+							continue;
 						for (String var : t1.getAssignments().keySet()) {
 							if (!t2.containsAssignment(var)
-									|| !t1.getAssignTree(var).isEqual(t2.getAssignTree(var))) {
+									|| !t1.getAssignTree(var).isEqual(
+											t2.getAssignTree(var))) {
 								combine = false;
 								break;
 							}
 						}
-						if (!combine) continue;
+						if (!combine)
+							continue;
 						for (String var : t2.getAssignments().keySet()) {
 							if (!t1.containsAssignment(var)) {
 								combine = false;
 								break;
 							}
 						}
-						if (!combine) continue;
+						if (!combine)
+							continue;
 					}
 					if (combine) {
 						if (toMerge.containsKey(t1)) {
@@ -3285,87 +3298,44 @@ public class Abstraction extends LhpnFile {
 					toMerge.put(t1, new ArrayList<Transition>());
 					toMerge.get(t1).add(t2);
 				}/*
-				if ((comparePreset(t1, t2) || (t1.getPreset().length == 0 && t2
-						.getPreset().length == 0))
-						&& (comparePostset(t1, t2) || (t1.getPostset().length == 0 && t2
-								.getPostset().length == 0))) {
-					boolean combine = true;
-					ExprTree tree = new ExprTree(this);
-					tree.setNodeValues(t1.getEnablingTree(), t2
-							.getEnablingTree(), "&&", 'l');
-					for (String v : tree.getVars()) {
-						if (process_write.get(v) != process_trans.get(t1)) {
-							combine = false;
-							break;
-						}
-					}
-					for (Transition t : transitions.values()) {
-						if (tree.becomesTrue(t.getAssignments())) {
-							combine = false;
-							break;
-						}
-					}
-					if (toMerge.containsKey(t1)) {
-						for (Transition t3 : toMerge.get(t1)) {
-							ExprTree tree3 = new ExprTree(this);
-							tree3.setNodeValues(t3.getEnablingTree(), t2
-									.getEnablingTree(), "&&", 'l');
-							for (Transition t : transitions.values()) {
-								if (tree3.becomesTrue(t.getAssignments())) {
-									combine = false;
-									break;
-								}
-							}
-						}
-					}
-					if (t1.getEnablingTree() != null
-							&& t2.getEnablingTree() != null) {
-						if (t1.getEnablingTree().isit == 'a') {
-							if (!t1.getEnablingTree().op.equals("uniform")
-									|| t1.getEnablingTree().r1.isit != 'n'
-									|| t1.getEnablingTree().r2.isit != 'n') {
-								combine = false;
-								break;
-							}
-						} else if (t1.getEnablingTree().isit != 'n') {
-							combine = false;
-							break;
-						}
-						if (t2.getEnablingTree().isit == 'a') {
-							if (!t2.getEnablingTree().op.equals("uniform")
-									|| t2.getEnablingTree().r1.isit != 'n'
-									|| t2.getEnablingTree().r2.isit != 'n') {
-								combine = false;
-								break;
-							}
-						} else if (t2.getEnablingTree().isit != 'n') {
-							combine = false;
-							break;
-						}
-					}
-					for (String var : t1.getAssignments().keySet()) {
-						if (!t2.containsAssignment(var)
-								|| !t1.getAssignTree(var).isEqual(
-										t2.getAssignTree(var))) {
-							combine = false;
-							break;
-						}
-					}
-					for (String var : t2.getAssignments().keySet()) {
-						if (!t1.containsAssignment(var)) {
-							combine = false;
-							break;
-						}
-					}
-					if (combine) {
-						if (toMerge.containsKey(t1)) {
-							toMerge.get(t1).add(t2);
-						} else {
-							toMerge.put(t1, new ArrayList<Transition>());
-							toMerge.get(t1).add(t2);
-						}
-					}
-				}*/
+				 * if ((comparePreset(t1, t2) || (t1.getPreset().length == 0 &&
+				 * t2 .getPreset().length == 0)) && (comparePostset(t1, t2) ||
+				 * (t1.getPostset().length == 0 && t2 .getPostset().length ==
+				 * 0))) { boolean combine = true; ExprTree tree = new
+				 * ExprTree(this); tree.setNodeValues(t1.getEnablingTree(), t2
+				 * .getEnablingTree(), "&&", 'l'); for (String v :
+				 * tree.getVars()) { if (process_write.get(v) !=
+				 * process_trans.get(t1)) { combine = false; break; } } for
+				 * (Transition t : transitions.values()) { if
+				 * (tree.becomesTrue(t.getAssignments())) { combine = false;
+				 * break; } } if (toMerge.containsKey(t1)) { for (Transition t3
+				 * : toMerge.get(t1)) { ExprTree tree3 = new ExprTree(this);
+				 * tree3.setNodeValues(t3.getEnablingTree(), t2
+				 * .getEnablingTree(), "&&", 'l'); for (Transition t :
+				 * transitions.values()) { if
+				 * (tree3.becomesTrue(t.getAssignments())) { combine = false;
+				 * break; } } } } if (t1.getEnablingTree() != null &&
+				 * t2.getEnablingTree() != null) { if (t1.getEnablingTree().isit
+				 * == 'a') { if (!t1.getEnablingTree().op.equals("uniform") ||
+				 * t1.getEnablingTree().r1.isit != 'n' ||
+				 * t1.getEnablingTree().r2.isit != 'n') { combine = false;
+				 * break; } } else if (t1.getEnablingTree().isit != 'n') {
+				 * combine = false; break; } if (t2.getEnablingTree().isit ==
+				 * 'a') { if (!t2.getEnablingTree().op.equals("uniform") ||
+				 * t2.getEnablingTree().r1.isit != 'n' ||
+				 * t2.getEnablingTree().r2.isit != 'n') { combine = false;
+				 * break; } } else if (t2.getEnablingTree().isit != 'n') {
+				 * combine = false; break; } } for (String var :
+				 * t1.getAssignments().keySet()) { if
+				 * (!t2.containsAssignment(var) ||
+				 * !t1.getAssignTree(var).isEqual( t2.getAssignTree(var))) {
+				 * combine = false; break; } } for (String var :
+				 * t2.getAssignments().keySet()) { if
+				 * (!t1.containsAssignment(var)) { combine = false; break; } }
+				 * if (combine) { if (toMerge.containsKey(t1)) {
+				 * toMerge.get(t1).add(t2); } else { toMerge.put(t1, new
+				 * ArrayList<Transition>()); toMerge.get(t1).add(t2); } } }
+				 */
 			}
 		}
 		for (Transition t : toMerge.keySet()) {
@@ -3405,43 +3375,86 @@ public class Abstraction extends LhpnFile {
 				Matcher matcher = pattern.matcher(t.getDelay());
 				ExprTree priority1 = t.getPriorityTree();
 				if (t.containsPriority()) {
-					priority1.setNodeValues(t.getEnablingTree(), priority1, "*", 'a');
+					priority1.setNodeValues(t.getEnablingTree(), priority1,
+							"*", 'a');
 				}
-				Integer dl1, dl2, du1, du2;
-				if (matcher.find()) {
-					dl1 = Integer.parseInt(matcher.group(1));
-					du1 = Integer.parseInt(matcher.group(2));
-				} else {
-					dl1 = Integer.parseInt(t.getDelay());
-					du1 = Integer.parseInt(t.getDelay());
+				Integer dl1 = null, dl2 = null, du1 = null, du2 = null;
+				String dl1String = null, dl2String = null, du1String = null, du2String = null;
+				try {
+					if (matcher.find()) {
+						dl1 = Integer.parseInt(matcher.group(1));
+						du1 = Integer.parseInt(matcher.group(2));
+					} else {
+						dl1 = Integer.parseInt(t.getDelay());
+						du1 = Integer.parseInt(t.getDelay());
+					}
+				} catch (NumberFormatException e) {
+					if (t.getDelayTree().op.equals("uniform")) {
+						dl1String = t.getDelayTree().r1.toString();
+						du1String = t.getDelayTree().r2.toString();
+					} else {
+						dl1String = t.getDelay();
+						du1String = t.getDelay();
+					}
 				}
 				for (Transition tP : list) {
 					matcher = pattern.matcher(tP.getDelay());
-					if (matcher.find()) {
-						dl2 = Integer.parseInt(matcher.group(1));
-						du2 = Integer.parseInt(matcher.group(2));
-					} else {
-						dl2 = Integer.parseInt(tP.getDelay());
-						du2 = Integer.parseInt(tP.getDelay());
+					try {
+						if (tP.getDelayTree().op.equals("uniform")) {
+							dl2String = tP.getDelayTree().r1.toString();
+							du2String = tP.getDelayTree().r2.toString();
+						} else {
+							dl2 = Integer.parseInt(tP.getDelay());
+							du2 = Integer.parseInt(tP.getDelay());
+						}
+					} catch (NumberFormatException e) {
+						if (matcher.find()) {
+							dl2String = matcher.group(1);
+							du2String = matcher.group(2);
+						} else {
+							dl2String = tP.getDelay();
+							du2String = tP.getDelay();
+						}
 					}
-					if (dl1.compareTo(dl2) > 0) {
-						dl1 = dl2;
+					if (dl1 != null) {
+						if (dl1.compareTo(dl2) > 0) {
+							dl1 = dl2;
+						}
 					}
-					if (du1.compareTo(dl2) <= 0) {
-						du1 = du2;
+					if (du1 != null) {
+						if (du1.compareTo(dl2) <= 0) {
+							du1 = du2;
+						}
 					}
 					ExprTree priority2 = tP.getPriorityTree();
 					if (tP.containsPriority()) {
-						priority2.setNodeValues(tP.getEnablingTree(), priority2,
-								"*", 'a');
+						priority2.setNodeValues(tP.getEnablingTree(),
+								priority2, "*", 'a');
 						priority1.setNodeValues(priority1, priority2, "+", 'a');
 					}
 				}
-				if (dl1.toString().equals(du1.toString())) {
-					t.addDelay(dl1.toString());
+				if (dl1 != null && du1 != null && du2 != null && dl2 != null) {
+					if (dl1.toString().equals(du1.toString())) {
+						t.addDelay(dl1.toString());
+					} else {
+						t.addDelay("uniform(" + dl1.toString() + ","
+								+ du1.toString() + ")");
+					}
 				} else {
-					t.addDelay("uniform(" + dl1.toString() + ","
-							+ du1.toString() + ")");
+					if (dl1 != null) {
+						dl1String = dl1.toString();
+					}
+					if (dl2 != null) {
+						dl2String = dl2.toString();
+					}
+					if (du1 != null) {
+						du2String = du2.toString();
+					}
+					if (du2 != null) {
+						du2String = du2.toString();
+					}
+					t.addDelay("uniform(min(" + dl1String + "," + dl2String
+							+ "),max(" + du1String + "," + du2String + "))");
 				}
 				if (priority1 != null) {
 					t.addPriority(priority1.toString());
@@ -3498,7 +3511,7 @@ public class Abstraction extends LhpnFile {
 					du2 = new ExprTree(delay2);
 				}
 				ExprTree e2 = tP.getEnablingTree();
-				e2.setNodeValues(e2,null,"INT",'l');
+				e2.setNodeValues(e2, null, "INT", 'l');
 				dl2.setNodeValues(e2, dl2, "*", 'a');
 				dl.setNodeValues(dl, dl2, "+", 'a');
 				du2.setNodeValues(e2, du2, "*", 'a');
@@ -3519,7 +3532,7 @@ public class Abstraction extends LhpnFile {
 			}
 			t.addEnabling(enabling);
 			t.addDelay(delay.toString());
-			//System.out.println("ADDING DELAY " + delay.toString());
+			// System.out.println("ADDING DELAY " + delay.toString());
 			if (priority1 != null) {
 				t.addPriority(priority1.toString());
 			}
