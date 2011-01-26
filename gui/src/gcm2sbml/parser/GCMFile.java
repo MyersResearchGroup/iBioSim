@@ -311,12 +311,12 @@ public class GCMFile {
 		sbml.getModel().getCompartment("default").setSize(1);
 		m.setVolumeUnits("litre");
 		for (String compName : comps) {
-			//Checks if component is a compartment
+			// Checks if component is a compartment
 			Object testCompartment = components.get(compName).get("compartment");
 			boolean isCompartment = false;
 			if (testCompartment != null)
 				isCompartment = Boolean.parseBoolean(testCompartment.toString());
-			else 
+			else
 				components.get(compName).put("compartment", "false");
 			if (isCompartment) {
 				Utility.addCompartments(sbml, compName);
@@ -681,24 +681,24 @@ public class GCMFile {
 		}
 		LhpnFile LHPN = new LhpnFile();
 		for (int i = 0; i < specs.size(); i++) {
+			double initial = Double.parseDouble(parameters.get(GlobalConstants.INITIAL_STRING));
+			double selectedThreshold = 0;
 			try {
-				double selectedThreshold = 0;
-				double initial = Double.parseDouble(species.get(specs.get(i)).getProperty(
+				initial = Double.parseDouble(species.get(specs.get(i)).getProperty(
 						GlobalConstants.INITIAL_STRING));
-				double difference = Math.abs(selectedThreshold - initial);
-				for (Object threshold : conLevel.get(i)) {
-					double thisThreshold = Double.parseDouble((String) threshold);
-					double diff = Math.abs(thisThreshold - initial);
-					if (diff < difference) {
-						difference = diff;
-						selectedThreshold = thisThreshold;
-					}
-				}
-				LHPN.addInteger(specs.get(i), "" + ((int) selectedThreshold));
 			}
 			catch (Exception e) {
-				LHPN.addInteger(specs.get(i), "0");
 			}
+			double difference = Math.abs(selectedThreshold - initial);
+			for (Object threshold : conLevel.get(i)) {
+				double thisThreshold = Double.parseDouble((String) threshold);
+				double diff = Math.abs(thisThreshold - initial);
+				if (diff < difference) {
+					difference = diff;
+					selectedThreshold = thisThreshold;
+				}
+			}
+			LHPN.addInteger(specs.get(i), "" + ((int) selectedThreshold));
 		}
 		for (String spec : species.keySet()) {
 			if (!LHPN.getIntegers().keySet().contains(spec)) {
@@ -1017,10 +1017,9 @@ public class GCMFile {
 					LHPN.addMovement(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
 					LHPN.addMovement(specs.get(i) + "_trans" + transNum, previousPlaceName);
 					LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
-					LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + 
-							//"(("+ threshold + "+" + number + ")/2)"
-							specs.get(i)
-							+ "*" + kd + ")/" + "(" + threshold + "-" + number + ")");
+					LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" +
+					// "(("+ threshold + "+" + number + ")/2)"
+							specs.get(i) + "*" + kd + ")/" + "(" + threshold + "-" + number + ")");
 					transNum++;
 				}
 				previousPlaceName = specs.get(i) + placeNum;
@@ -1581,7 +1580,7 @@ public class GCMFile {
 	public HashMap<String, Properties> getComponents() {
 		return components;
 	}
-	
+
 	public ArrayList<String> getCompartments() {
 		return compartments;
 	}
@@ -1872,20 +1871,23 @@ public class GCMFile {
 		return null;
 	}
 
-
 	/**
 	 * creates and adds a new species.
-	 * @param id: the new id. If null the id will be generated
+	 * 
+	 * @param id
+	 *            : the new id. If null the id will be generated
 	 * @param x
 	 * @param y
 	 */
 	private int creatingSpeciesID = 0;
-	public void createSpecies(String id, float x, float y){
-		if(id == null){
-			do{
+
+	public void createSpecies(String id, float x, float y) {
+		if (id == null) {
+			do {
 				creatingSpeciesID++;
 				id = "S" + String.valueOf(creatingSpeciesID);
-			}while(getSpecies().containsKey(id));
+			}
+			while (getSpecies().containsKey(id));
 		}
 		Properties prop = new Properties();
 		prop.setProperty(GlobalConstants.NAME, "");
@@ -1896,40 +1898,43 @@ public class GCMFile {
 		prop.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_SPECIES_HEIGHT));
 		centerVertexOverPoint(prop, x, y);
 		getSpecies().put(id, prop);
-		
+
 	}
-	
+
 	private int creatingPromoterID = 0;
-	public String createPromoter(String id, float x, float y, boolean is_explicit){
-		if(id == null){
-			do{
+
+	public String createPromoter(String id, float x, float y, boolean is_explicit) {
+		if (id == null) {
+			do {
 				creatingPromoterID++;
 				id = "P" + String.valueOf(creatingPromoterID);
-			}while(getPromoters().containsKey(id));
+			}
+			while (getPromoters().containsKey(id));
 		}
 		Properties prop = new Properties();
 		prop.setProperty("ID", id);
-		if(is_explicit){
+		if (is_explicit) {
 			prop.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_SPECIES_WIDTH));
 			prop.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_SPECIES_HEIGHT));
 			prop.setProperty(GlobalConstants.EXPLICIT_PROMOTER, GlobalConstants.TRUE);
 			centerVertexOverPoint(prop, x, y);
 		}
 		getPromoters().put(id, prop);
-		
+
 		return id;
 	}
 
 	/**
-	 * Given a properties list (species or components) and some coords, center over that point.
+	 * Given a properties list (species or components) and some coords, center
+	 * over that point.
 	 */
-	public void centerVertexOverPoint(Properties prop, double x, double y){
-		x -= Double.parseDouble(prop.getProperty("graphwidth", "60"))/2.0;
-		y -= Double.parseDouble(prop.getProperty("graphheight", "20"))/2.0;
+	public void centerVertexOverPoint(Properties prop, double x, double y) {
+		x -= Double.parseDouble(prop.getProperty("graphwidth", "60")) / 2.0;
+		y -= Double.parseDouble(prop.getProperty("graphheight", "20")) / 2.0;
 		prop.setProperty("graphx", String.valueOf(x));
-		prop.setProperty("graphy", String.valueOf(y));		
+		prop.setProperty("graphy", String.valueOf(y));
 	}
-	
+
 	public static String getInput(String name) {
 		Pattern pattern = Pattern.compile(PARSE);
 		Matcher matcher = pattern.matcher(name);
@@ -1957,11 +1962,13 @@ public class GCMFile {
 		matcher.find();
 		return matcher.group(6);
 	}
-	
-	public boolean influenceHasExplicitPromoter(String infName){
+
+	public boolean influenceHasExplicitPromoter(String infName) {
 		String promoterName = getInfluences().get(infName).getProperty(GlobalConstants.PROMOTER);
 		Properties promoter = getPromoters().get(promoterName);
-		if(promoter != null && promoter.getProperty(GlobalConstants.EXPLICIT_PROMOTER, "").equals(GlobalConstants.TRUE))
+		if (promoter != null
+				&& promoter.getProperty(GlobalConstants.EXPLICIT_PROMOTER, "").equals(
+						GlobalConstants.TRUE))
 			return true;
 		else
 			return false;
@@ -1973,21 +1980,22 @@ public class GCMFile {
 		Arrays.sort(s);
 		return s;
 	}
-	
+
 	public String[] getPromotersAsArray() {
 		String[] s = new String[promoters.size()];
 		s = promoters.keySet().toArray(s);
 		Arrays.sort(s);
 		return s;
 	}
-	
+
 	public String[] getImplicitPromotersAsArray() {
 		String[] s = new String[promoters.size()];
 		int index = 0;
 		for (String prom : promoters.keySet()) {
 			Properties promProp = promoters.get(prom);
-			if (!promProp.containsKey(GlobalConstants.EXPLICIT_PROMOTER) 
-					|| !promProp.getProperty(GlobalConstants.EXPLICIT_PROMOTER).equals(GlobalConstants.TRUE)) {
+			if (!promProp.containsKey(GlobalConstants.EXPLICIT_PROMOTER)
+					|| !promProp.getProperty(GlobalConstants.EXPLICIT_PROMOTER).equals(
+							GlobalConstants.TRUE)) {
 				s[index] = prom;
 				index++;
 			}
@@ -2368,10 +2376,10 @@ public class GCMFile {
 					if (label == null) {
 						label = "";
 					}
-//					if (properties.containsKey(GlobalConstants.BIO)
-//							&& properties.get(GlobalConstants.BIO).equals("yes")) {
-//						label = label + "+";
-//					}
+					// if (properties.containsKey(GlobalConstants.BIO)
+					// && properties.get(GlobalConstants.BIO).equals("yes")) {
+					// label = label + "+";
+					// }
 					properties.put("label", "\"" + label + "\"");
 					properties.put(GlobalConstants.NAME, name);
 					influences.put(name, properties);
@@ -2386,7 +2394,8 @@ public class GCMFile {
 		// as complex influences
 		parseDimerInfluences(repDimerList);
 		parseDimerInfluences(actDimerList);
-		//Removes local and global instances of old bio/dimer parameters from gcm file
+		// Removes local and global instances of old bio/dimer parameters from
+		// gcm file
 		for (Properties inflProp : influences.values()) {
 			inflProp.remove(GlobalConstants.BIO);
 			inflProp.remove(GlobalConstants.KBIO_STRING);
@@ -2398,7 +2407,7 @@ public class GCMFile {
 		globalParameters.remove(GlobalConstants.KBIO_STRING);
 		globalParameters.remove(GlobalConstants.MAX_DIMER_STRING);
 		globalParameters.remove(GlobalConstants.KASSOCIATION_STRING);
-		
+
 		return complexConversion;
 	}
 
@@ -2437,7 +2446,8 @@ public class GCMFile {
 			Properties compProp = new Properties();
 			compProp.put(GlobalConstants.NAME, complex);
 			compProp.put(GlobalConstants.TYPE, GlobalConstants.INTERNAL);
-			compProp.put(GlobalConstants.KCOMPLEX_STRING, getProp(inflProp, GlobalConstants.KBIO_STRING));
+			compProp.put(GlobalConstants.KCOMPLEX_STRING, getProp(inflProp,
+					GlobalConstants.KBIO_STRING));
 			compProp.put(GlobalConstants.INITIAL_STRING, "0");
 			compProp.put(GlobalConstants.KDECAY_STRING, "0");
 			species.put(complex, compProp);
@@ -2583,7 +2593,7 @@ public class GCMFile {
 				if (mainDoc.getModel().getCompartmentType(j).getId().equals(c.getId())) {
 					add = false;
 					org.sbml.libsbml.CompartmentType comp = mainDoc.getModel()
-					.getCompartmentType(j);
+							.getCompartmentType(j);
 					if (!c.getName().equals(comp.getName())) {
 						return null;
 					}
@@ -3279,7 +3289,7 @@ public class GCMFile {
 	private HashMap<String, Properties> promoters;
 
 	private HashMap<String, Properties> components;
-	
+
 	private ArrayList<String> compartments;
 
 	private ArrayList<String> conditions;
