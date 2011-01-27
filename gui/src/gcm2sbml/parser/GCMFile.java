@@ -1036,7 +1036,7 @@ public class GCMFile {
 	 * 
 	 * @return
 	 */
-	public StringBuffer saveToBuffer(Boolean includeGlobals) {
+	public StringBuffer saveToBuffer(Boolean includeGlobals, Boolean collectGarbage) {
 		StringBuffer buffer = new StringBuffer("digraph G {\n");
 		for (String s : species.keySet()) {
 			buffer.append(s + " [");
@@ -1088,6 +1088,8 @@ public class GCMFile {
 			}
 			buffer.append("]\n");
 		}
+		//List facilitates garbage collecting of promoters that don't belong to an influence later on
+		ArrayList<String> promotersWithInfluences = new ArrayList<String>();
 		for (String s : influences.keySet()) {
 			buffer.append(getInput(s) + " -> "// + getArrow(s) + " "
 					+ getOutput(s) + " [");
@@ -1095,6 +1097,8 @@ public class GCMFile {
 			String promo = "default";
 			if (prop.containsKey(GlobalConstants.PROMOTER)) {
 				promo = prop.getProperty(GlobalConstants.PROMOTER);
+				if (!promotersWithInfluences.contains(promo))
+					promotersWithInfluences.add(promo);
 			}
 			prop.setProperty(GlobalConstants.NAME, "\"" + getInput(s) + " " + getArrow(s) + " "
 					+ getOutput(s) + ", Promoter " + promo + "\"");
@@ -1163,22 +1167,45 @@ public class GCMFile {
 			}
 			buffer.append("}\nPromoters {\n");
 			for (String s : promoters.keySet()) {
-				buffer.append(s + " [");
-				Properties prop = promoters.get(s);
-				for (Object propName : prop.keySet()) {
-					if (propName.toString().equals(GlobalConstants.NAME)) {
-						buffer.append(checkCompabilitySave(propName.toString()) + "=" + "\""
-								+ prop.getProperty(propName.toString()).toString() + "\"" + ",");
+				if (collectGarbage) {
+					//Only saves promoters belonging to influences
+					if (promotersWithInfluences.contains(s)) {
+						buffer.append(s + " [");
+						Properties prop = promoters.get(s);
+						for (Object propName : prop.keySet()) {
+							if (propName.toString().equals(GlobalConstants.NAME)) {
+								buffer.append(checkCompabilitySave(propName.toString()) + "=" + "\""
+										+ prop.getProperty(propName.toString()).toString() + "\"" + ",");
+							}
+							else {
+								buffer.append(checkCompabilitySave(propName.toString()) + "="
+										+ prop.getProperty(propName.toString()).toString() + ",");
+							}
+						}
+						if (buffer.charAt(buffer.length() - 1) == ',') {
+							buffer.deleteCharAt(buffer.length() - 1);
+						}
+						buffer.append("]\n");
 					}
-					else {
-						buffer.append(checkCompabilitySave(propName.toString()) + "="
-								+ prop.getProperty(propName.toString()).toString() + ",");
+				} else {
+					//Saves all promoters
+					buffer.append(s + " [");
+					Properties prop = promoters.get(s);
+					for (Object propName : prop.keySet()) {
+						if (propName.toString().equals(GlobalConstants.NAME)) {
+							buffer.append(checkCompabilitySave(propName.toString()) + "=" + "\""
+									+ prop.getProperty(propName.toString()).toString() + "\"" + ",");
+						}
+						else {
+							buffer.append(checkCompabilitySave(propName.toString()) + "="
+									+ prop.getProperty(propName.toString()).toString() + ",");
+						}
 					}
+					if (buffer.charAt(buffer.length() - 1) == ',') {
+						buffer.deleteCharAt(buffer.length() - 1);
+					}
+					buffer.append("]\n");
 				}
-				if (buffer.charAt(buffer.length() - 1) == ',') {
-					buffer.deleteCharAt(buffer.length() - 1);
-				}
-				buffer.append("]\n");
 			}
 			buffer.append("}\nConditions {\n");
 			for (String s : conditions) {
@@ -1216,7 +1243,7 @@ public class GCMFile {
 		try {
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
 
-			StringBuffer buffer = saveToBuffer(true);
+			StringBuffer buffer = saveToBuffer(true, true);
 
 			p.print(buffer);
 			p.close();
@@ -3232,7 +3259,7 @@ public class GCMFile {
 	}
 
 	public void makeUndoPoint() {
-		StringBuffer up = this.saveToBuffer(true);
+		StringBuffer up = this.saveToBuffer(true, false);
 		undoManager.makeUndoPoint(up);
 	}
 

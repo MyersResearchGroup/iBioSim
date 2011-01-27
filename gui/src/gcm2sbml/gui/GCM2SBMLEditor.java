@@ -970,7 +970,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				String className = selectedPanel.getClass().getName();
 				// The old Schematic (grappa panel) 
 				if(className.indexOf("GCIGrappaPanel") > 0){
-					((GCIGrappaPanel)selectedPanel).display(gcm.saveToBuffer(false));
+					((GCIGrappaPanel)selectedPanel).display(gcm.saveToBuffer(false, false));
 				}
 				// The new Schematic
 				else if(className.indexOf("Schematic") >= 0){
