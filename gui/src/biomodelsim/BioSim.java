@@ -11325,6 +11325,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 					s.close();
 				}
 				catch (Exception e) {
+					e.printStackTrace();
 				}
 				if (check.equals(updatedFile)) {
 					JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
