@@ -868,7 +868,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			dirty = true;
 		}
 		else if (o instanceof JCheckBox && !lock
-				&& ((gcm.getDimAbs() != dimAbs.isSelected()) || (gcm.getBioAbs() != bioAbs.isSelected()))) {
+				&& (gcm.getBioAbs() != bioAbs.isSelected())) {
 			dirty = true;
 		}
 		// System.out.println(o);

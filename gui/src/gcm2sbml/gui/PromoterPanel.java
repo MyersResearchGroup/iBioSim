@@ -257,6 +257,7 @@ public class PromoterPanel extends JPanel {
 			if (oldName == null) {
 				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())
 						|| gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())
+						|| gcm.getParameters().containsKey(fields.get(GlobalConstants.ID).getValue())
 						|| gcm.getPromoters().containsKey(fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "Id already exists.");
 					return false;
@@ -265,6 +266,7 @@ public class PromoterPanel extends JPanel {
 			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
 				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())
 						|| gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())
+						|| gcm.getParameters().containsKey(fields.get(GlobalConstants.ID).getValue())
 						|| gcm.getPromoters().containsKey(fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error","Id already exists.");
 					return false;
