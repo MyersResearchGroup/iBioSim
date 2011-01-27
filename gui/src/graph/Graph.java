@@ -3,6 +3,7 @@ package graph;
 import gcm2sbml.parser.GCMFile;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -40,6 +41,7 @@ import java.util.prefs.Preferences;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -166,6 +168,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private ArrayList<JTextField> series;
 
 	private ArrayList<JComboBox> colorsCombo;
+
+	private ArrayList<JButton> colorsButtons;
 
 	private ArrayList<JComboBox> shapesCombo;
 
@@ -3039,8 +3043,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									series.get(g.getNumber()).setText(g.getSpecies());
 									series.get(g.getNumber()).setSelectionStart(0);
 									series.get(g.getNumber()).setSelectionEnd(0);
+									colorsButtons.get(g.getNumber()).setBackground(
+											(Color) g.getShapeAndPaint().getPaint());
 									colorsCombo.get(g.getNumber()).setSelectedItem(
-											g.getShapeAndPaint().getPaintName());
+											g.getShapeAndPaint().getPaintName().split("_")[0]);
 									shapesCombo.get(g.getNumber()).setSelectedItem(
 											g.getShapeAndPaint().getShapeName());
 									connected.get(g.getNumber()).setSelected(g.getConnected());
@@ -3059,8 +3065,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									series.get(g.getNumber()).setText(g.getSpecies());
 									series.get(g.getNumber()).setSelectionStart(0);
 									series.get(g.getNumber()).setSelectionEnd(0);
+									colorsButtons.get(g.getNumber()).setBackground(
+											(Color) g.getShapeAndPaint().getPaint());
 									colorsCombo.get(g.getNumber()).setSelectedItem(
-											g.getShapeAndPaint().getPaintName());
+											g.getShapeAndPaint().getPaintName().split("_")[0]);
 									shapesCombo.get(g.getNumber()).setSelectedItem(
 											g.getShapeAndPaint().getShapeName());
 									connected.get(g.getNumber()).setSelected(g.getConnected());
@@ -3078,8 +3086,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									series.get(g.getNumber()).setText(g.getSpecies());
 									series.get(g.getNumber()).setSelectionStart(0);
 									series.get(g.getNumber()).setSelectionEnd(0);
+									colorsButtons.get(g.getNumber()).setBackground(
+											(Color) g.getShapeAndPaint().getPaint());
 									colorsCombo.get(g.getNumber()).setSelectedItem(
-											g.getShapeAndPaint().getPaintName());
+											g.getShapeAndPaint().getPaintName().split("_")[0]);
 									shapesCombo.get(g.getNumber()).setSelectedItem(
 											g.getShapeAndPaint().getShapeName());
 									connected.get(g.getNumber()).setSelected(g.getConnected());
@@ -3200,6 +3210,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								series.get(i).setSelectionStart(0);
 								series.get(i).setSelectionEnd(0);
 								colorsCombo.get(i).setSelectedIndex(0);
+								colorsButtons.get(i).setBackground((Color) colors.get("Black"));
 								shapesCombo.get(i).setSelectedIndex(0);
 							}
 							else {
@@ -3470,6 +3481,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		boxes = new ArrayList<JCheckBox>();
 		series = new ArrayList<JTextField>();
 		colorsCombo = new ArrayList<JComboBox>();
+		colorsButtons = new ArrayList<JButton>();
 		shapesCombo = new ArrayList<JComboBox>();
 		connected = new ArrayList<JCheckBox>();
 		visible = new ArrayList<JCheckBox>();
@@ -3585,51 +3597,75 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (boxes.get(k).isSelected()) {
 								if (colorsCombo.get(k).getSelectedItem().equals("Red")) {
 									cols[0]++;
+									colorsButtons.get(k).setBackground((Color) colory.get("Red"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Blue")) {
 									cols[1]++;
+									colorsButtons.get(k).setBackground((Color) colory.get("Blue"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Green")) {
 									cols[2]++;
+									colorsButtons.get(k).setBackground((Color) colory.get("Green"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow")) {
 									cols[3]++;
+									colorsButtons.get(k)
+											.setBackground((Color) colory.get("Yellow"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta")) {
 									cols[4]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Magenta"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan")) {
 									cols[5]++;
+									colorsButtons.get(k).setBackground((Color) colory.get("Cyan"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Tan")) {
 									cols[6]++;
+									colorsButtons.get(k).setBackground((Color) colory.get("Tan"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Gray (Dark)")) {
 									cols[7]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Gray (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Dark)")) {
 									cols[8]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Red (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Dark)")) {
 									cols[9]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Blue (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem()
 										.equals("Green (Dark)")) {
 									cols[10]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Green (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Yellow (Dark)")) {
 									cols[11]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Yellow (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Magenta (Dark)")) {
 									cols[12]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Magenta (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Dark)")) {
 									cols[13]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Cyan (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Black")) {
 									cols[14]++;
+									colorsButtons.get(k).setBackground((Color) colory.get("Black"));
 								}
 								/*
 								 * else if
@@ -3650,57 +3686,84 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								 */
 								else if (colorsCombo.get(k).getSelectedItem().equals("Gray")) {
 									cols[21]++;
+									colorsButtons.get(k).setBackground((Color) colory.get("Gray"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Red (Extra Dark)")) {
 									cols[22]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Red (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Blue (Extra Dark)")) {
 									cols[23]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Blue (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Green (Extra Dark)")) {
 									cols[24]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Green (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Yellow (Extra Dark)")) {
 									cols[25]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Yellow (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Magenta (Extra Dark)")) {
 									cols[26]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Magenta (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Cyan (Extra Dark)")) {
 									cols[27]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Cyan (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Light)")) {
 									cols[28]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Red (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem()
 										.equals("Blue (Light)")) {
 									cols[29]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Blue (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Green (Light)")) {
 									cols[30]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Green (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Yellow (Light)")) {
 									cols[31]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Yellow (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Magenta (Light)")) {
 									cols[32]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Magenta (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem()
 										.equals("Cyan (Light)")) {
 									cols[33]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Cyan (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem()
 										.equals("Gray (Light)")) {
 									cols[34]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Gray (Light)"));
 								}
 								if (shapesCombo.get(k).getSelectedItem().equals("Square")) {
 									shaps[0]++;
@@ -3923,6 +3986,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						for (int j = 0; j < set.length; j++) {
 							if (paint == colory.get(set[j])) {
 								colorsCombo.get(i).setSelectedItem(set[j]);
+								colorsButtons.get(i).setBackground((Color) paint);
 							}
 						}
 						for (int j = 0; j < shapeSet; j++) {
@@ -3944,12 +4008,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (allChecked) {
 							use.setSelected(true);
 						}
+						String color = (String) colorsCombo.get(i).getSelectedItem();
+						if (color.equals("Custom")) {
+							color += "_" + colorsButtons.get(i).getBackground().getRGB();
+						}
 						graphed.add(new GraphSpecies(shapey.get(shapesCombo.get(i)
-								.getSelectedItem()), colory.get(colorsCombo.get(i)
-								.getSelectedItem()), filled.get(i).isSelected(), visible.get(i)
-								.isSelected(), connected.get(i).isSelected(), selected, boxes
-								.get(i).getName(), series.get(i).getText().trim(), XVariable
-								.getSelectedIndex(), i, directory));
+								.getSelectedItem()), color, filled.get(i).isSelected(), visible
+								.get(i).isSelected(), connected.get(i).isSelected(), selected,
+								boxes.get(i).getName(), series.get(i).getText().trim(), XVariable
+										.getSelectedIndex(), i, directory));
 					}
 					else {
 						boolean check = false;
@@ -3997,6 +4064,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						use.setSelected(false);
 						colorsCombo.get(i).setSelectedIndex(0);
+						colorsButtons.get(i).setBackground((Color) colory.get("Black"));
 						shapesCombo.get(i).setSelectedIndex(0);
 					}
 				}
@@ -4141,7 +4209,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			});
 			series.add(seriesName);
-			Object[] col = this.colors.keySet().toArray();
+			ArrayList<String> allColors = new ArrayList<String>();
+			for (String c : this.colors.keySet()) {
+				allColors.add(c);
+			}
+			allColors.add("Custom");
+			Object[] col = allColors.toArray();
 			Arrays.sort(col);
 			Object[] shap = this.shapes.keySet().toArray();
 			Arrays.sort(shap);
@@ -4150,10 +4223,25 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			colBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
-					for (GraphSpecies g : graphed) {
-						if (g.getRunNumber().equals(selected) && g.getNumber() == i
-								&& g.getDirectory().equals(directory)) {
-							g.setPaint((String) ((JComboBox) e.getSource()).getSelectedItem());
+					if (!((JComboBox) (e.getSource())).getSelectedItem().equals("Custom")) {
+						colorsButtons.get(i)
+								.setBackground(
+										(Color) colors.get(((JComboBox) (e.getSource()))
+												.getSelectedItem()));
+						for (GraphSpecies g : graphed) {
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i
+									&& g.getDirectory().equals(directory)) {
+								g.setPaint((String) ((JComboBox) e.getSource()).getSelectedItem());
+							}
+						}
+					}
+					else {
+						for (GraphSpecies g : graphed) {
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i
+									&& g.getDirectory().equals(directory)) {
+								g.setPaint("Custom_"
+										+ colorsButtons.get(i).getBackground().getRGB());
+							}
 						}
 					}
 				}
@@ -4172,10 +4260,28 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			});
 			colorsCombo.add(colBox);
+			JButton colorButton = new JButton();
+			colorButton.setBackground((Color) colory.get("Black"));
+			colorButton.setActionCommand("" + i);
+			colorButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int i = Integer.parseInt(e.getActionCommand());
+					Color newColor = JColorChooser.showDialog(BioSim.frame, "Choose Color",
+							((JButton) e.getSource()).getBackground());
+					if (newColor != null) {
+						((JButton) e.getSource()).setBackground(newColor);
+						colorsCombo.get(i).setSelectedItem("Custom");
+					}
+				}
+			});
+			colorsButtons.add(colorButton);
+			JPanel colorPanel = new JPanel(new BorderLayout());
+			colorPanel.add(colorsCombo.get(i), "Center");
+			colorPanel.add(colorsButtons.get(i), "East");
 			shapesCombo.add(shapBox);
 			speciesPanel1.add(boxes.get(i));
 			speciesPanel2.add(series.get(i));
-			speciesPanel2.add(colorsCombo.get(i));
+			speciesPanel2.add(colorPanel);
 			speciesPanel2.add(shapesCombo.get(i));
 			speciesPanel3.add(connected.get(i));
 			speciesPanel3.add(visible.get(i));
@@ -5284,8 +5390,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						xnumber = Integer.parseInt(graph.getProperty("species.xnumber." + next));
 					}
 					graphed.add(new GraphSpecies(shapes.get(graph.getProperty("species.shape."
-							+ next)),
-							colors.get(graph.getProperty("species.paint." + next).trim()), filled,
+							+ next)), graph.getProperty("species.paint." + next).trim(), filled,
 							visible, connected, graph.getProperty("species.run.number." + next),
 							graph.getProperty("species.id." + next), graph
 									.getProperty("species.name." + next), xnumber, Integer
@@ -5327,12 +5432,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				int next = 0;
 				while (graph.containsKey("species.name." + next)) {
-					probGraphed.add(new GraphProbs(colors.get(graph.getProperty(
-							"species.paint." + next).trim()), graph.getProperty(
-							"species.paint." + next).trim(), graph
-							.getProperty("species.id." + next), graph.getProperty("species.name."
-							+ next), Integer.parseInt(graph.getProperty("species.number." + next)),
-							graph.getProperty("species.directory." + next)));
+					String color = graph.getProperty("species.paint." + next).trim();
+					Paint paint;
+					if (color.startsWith("Custom_")) {
+						paint = new Color(Integer.parseInt(color.replace("Custom_", "")));
+					}
+					else {
+						paint = colors.get(color);
+					}
+					probGraphed.add(new GraphProbs(paint, color, graph.getProperty("species.id."
+							+ next), graph.getProperty("species.name." + next), Integer
+							.parseInt(graph.getProperty("species.number." + next)), graph
+							.getProperty("species.directory." + next)));
 					next++;
 				}
 				refreshProb();
@@ -6057,9 +6168,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		private Paint paint;
 
-		private ShapeAndPaint(Shape s, Paint p) {
+		private ShapeAndPaint(Shape s, String p) {
 			shape = s;
-			paint = p;
+			if (p.startsWith("Custom_")) {
+				paint = new Color(Integer.parseInt(p.replace("Custom_", "")));
+			}
+			else {
+				paint = colors.get(p);
+			}
 		}
 
 		private Shape getShape() {
@@ -6087,11 +6203,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					return (String) set[i];
 				}
 			}
-			return "Unknown Color";
+			return "Custom_" + ((Color) paint).getRGB();
 		}
 
 		public void setPaint(String paint) {
-			this.paint = colors.get(paint);
+			if (paint.startsWith("Custom_")) {
+				this.paint = new Color(Integer.parseInt(paint.replace("Custom_", "")));
+			}
+			else {
+				this.paint = colors.get(paint);
+			}
 		}
 
 		public void setShape(String shape) {
@@ -6108,7 +6229,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		private int xnumber, number;
 
-		private GraphSpecies(Shape s, Paint p, boolean filled, boolean visible, boolean connected,
+		private GraphSpecies(Shape s, String p, boolean filled, boolean visible, boolean connected,
 				String runNumber, String id, String species, int xnumber, int number,
 				String directory) {
 			sP = new ShapeAndPaint(s, p);
@@ -6522,8 +6643,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										series.get(g.getNumber()).setText(g.getSpecies());
 										series.get(g.getNumber()).setSelectionStart(0);
 										series.get(g.getNumber()).setSelectionEnd(0);
+										colorsButtons.get(g.getNumber()).setBackground(
+												(Color) g.getPaint());
 										colorsCombo.get(g.getNumber()).setSelectedItem(
-												g.getPaintName());
+												g.getPaintName().split("_")[0]);
 									}
 								}
 							}
@@ -6535,8 +6658,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										series.get(g.getNumber()).setText(g.getSpecies());
 										series.get(g.getNumber()).setSelectionStart(0);
 										series.get(g.getNumber()).setSelectionEnd(0);
+										colorsButtons.get(g.getNumber()).setBackground(
+												(Color) g.getPaint());
 										colorsCombo.get(g.getNumber()).setSelectedItem(
-												g.getPaintName());
+												g.getPaintName().split("_")[0]);
 									}
 								}
 							}
@@ -6547,8 +6672,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										series.get(g.getNumber()).setText(g.getSpecies());
 										series.get(g.getNumber()).setSelectionStart(0);
 										series.get(g.getNumber()).setSelectionEnd(0);
+										colorsButtons.get(g.getNumber()).setBackground(
+												(Color) g.getPaint());
 										colorsCombo.get(g.getNumber()).setSelectedItem(
-												g.getPaintName());
+												g.getPaintName().split("_")[0]);
 									}
 								}
 							}
@@ -6591,6 +6718,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									series.get(i).setSelectionStart(0);
 									series.get(i).setSelectionEnd(0);
 									colorsCombo.get(i).setSelectedIndex(0);
+									colorsButtons.get(i).setBackground((Color) colors.get("Black"));
 								}
 								else {
 									String s = "";
@@ -6879,6 +7007,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		boxes = new ArrayList<JCheckBox>();
 		series = new ArrayList<JTextField>();
 		colorsCombo = new ArrayList<JComboBox>();
+		colorsButtons = new ArrayList<JButton>();
 		use.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (use.isSelected()) {
@@ -6930,51 +7059,75 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (boxes.get(k).isSelected()) {
 								if (colorsCombo.get(k).getSelectedItem().equals("Red")) {
 									cols[0]++;
+									colorsButtons.get(k).setBackground((Color) colory.get("Red"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Blue")) {
 									cols[1]++;
+									colorsButtons.get(k).setBackground((Color) colory.get("Blue"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Green")) {
 									cols[2]++;
+									colorsButtons.get(k).setBackground((Color) colory.get("Green"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow")) {
 									cols[3]++;
+									colorsButtons.get(k)
+											.setBackground((Color) colory.get("Yellow"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta")) {
 									cols[4]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Magenta"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan")) {
 									cols[5]++;
+									colorsButtons.get(k).setBackground((Color) colory.get("Cyan"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Tan")) {
 									cols[6]++;
+									colorsButtons.get(k).setBackground((Color) colory.get("Tan"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Gray (Dark)")) {
 									cols[7]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Gray (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Dark)")) {
 									cols[8]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Red (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Dark)")) {
 									cols[9]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Blue (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem()
 										.equals("Green (Dark)")) {
 									cols[10]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Green (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Yellow (Dark)")) {
 									cols[11]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Yellow (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Magenta (Dark)")) {
 									cols[12]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Magenta (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Dark)")) {
 									cols[13]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Cyan (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Black")) {
 									cols[14]++;
+									colorsButtons.get(k).setBackground((Color) colory.get("Black"));
 								}
 								/*
 								 * else if
@@ -6995,57 +7148,84 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								 */
 								else if (colorsCombo.get(k).getSelectedItem().equals("Gray")) {
 									cols[21]++;
+									colorsButtons.get(k).setBackground((Color) colory.get("Gray"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Red (Extra Dark)")) {
 									cols[22]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Red (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Blue (Extra Dark)")) {
 									cols[23]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Blue (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Green (Extra Dark)")) {
 									cols[24]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Green (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Yellow (Extra Dark)")) {
 									cols[25]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Yellow (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Magenta (Extra Dark)")) {
 									cols[26]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Magenta (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Cyan (Extra Dark)")) {
 									cols[27]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Cyan (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Light)")) {
 									cols[28]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Red (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem()
 										.equals("Blue (Light)")) {
 									cols[29]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Blue (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Green (Light)")) {
 									cols[30]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Green (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Yellow (Light)")) {
 									cols[31]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Yellow (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Magenta (Light)")) {
 									cols[32]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Magenta (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem()
 										.equals("Cyan (Light)")) {
 									cols[33]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Cyan (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem()
 										.equals("Gray (Light)")) {
 									cols[34]++;
+									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Gray (Light)"));
 								}
 							}
 						}
@@ -7177,6 +7357,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						for (int j = 0; j < set.length; j++) {
 							if (paint == colory.get(set[j])) {
 								colorsCombo.get(i).setSelectedItem(set[j]);
+								colorsButtons.get(i).setBackground((Color) paint);
 							}
 						}
 						boolean allChecked = true;
@@ -7188,8 +7369,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (allChecked) {
 							use.setSelected(true);
 						}
-						probGraphed.add(new GraphProbs(colory.get(colorsCombo.get(i)
-								.getSelectedItem()), (String) colorsCombo.get(i).getSelectedItem(),
+						String color = (String) colorsCombo.get(i).getSelectedItem();
+						if (color.equals("Custom")) {
+							color += "_" + colorsButtons.get(i).getBackground().getRGB();
+						}
+						probGraphed.add(new GraphProbs(colorsButtons.get(i).getBackground(), color,
 								boxes.get(i).getName(), series.get(i).getText().trim(), i,
 								directory));
 					}
@@ -7238,6 +7422,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						use.setSelected(false);
 						colorsCombo.get(i).setSelectedIndex(0);
+						colorsButtons.get(i).setBackground((Color) colory.get("Black"));
 					}
 				}
 			});
@@ -7273,25 +7458,65 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			});
 			series.add(seriesName);
-			Object[] col = this.colors.keySet().toArray();
+			ArrayList<String> allColors = new ArrayList<String>();
+			for (String c : this.colors.keySet()) {
+				allColors.add(c);
+			}
+			allColors.add("Custom");
+			Object[] col = allColors.toArray();
 			Arrays.sort(col);
 			JComboBox colBox = new JComboBox(col);
 			colBox.setActionCommand("" + i);
 			colBox.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
-					for (GraphProbs g : probGraphed) {
-						if (g.getNumber() == i && g.getDirectory().equals(directory)) {
-							g.setPaintName((String) ((JComboBox) e.getSource()).getSelectedItem());
-							g.setPaint(colory.get(((JComboBox) e.getSource()).getSelectedItem()));
+					if (!((JComboBox) (e.getSource())).getSelectedItem().equals("Custom")) {
+						colorsButtons.get(i)
+								.setBackground(
+										(Color) colors.get(((JComboBox) (e.getSource()))
+												.getSelectedItem()));
+						for (GraphProbs g : probGraphed) {
+							if (g.getNumber() == i && g.getDirectory().equals(directory)) {
+								g.setPaintName((String) ((JComboBox) e.getSource())
+										.getSelectedItem());
+								g.setPaint(colory
+										.get(((JComboBox) e.getSource()).getSelectedItem()));
+							}
+						}
+					}
+					else {
+						for (GraphProbs g : probGraphed) {
+							if (g.getNumber() == i && g.getDirectory().equals(directory)) {
+								g.setPaintName("Custom_"
+										+ colorsButtons.get(i).getBackground().getRGB());
+								g.setPaint(colorsButtons.get(i).getBackground());
+							}
 						}
 					}
 				}
 			});
 			colorsCombo.add(colBox);
+			JButton colorButton = new JButton();
+			colorButton.setBackground((Color) colory.get("Black"));
+			colorButton.setActionCommand("" + i);
+			colorButton.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					int i = Integer.parseInt(e.getActionCommand());
+					Color newColor = JColorChooser.showDialog(BioSim.frame, "Choose Color",
+							((JButton) e.getSource()).getBackground());
+					if (newColor != null) {
+						((JButton) e.getSource()).setBackground(newColor);
+						colorsCombo.get(i).setSelectedItem("Custom");
+					}
+				}
+			});
+			colorsButtons.add(colorButton);
+			JPanel colorPanel = new JPanel(new BorderLayout());
+			colorPanel.add(colorsCombo.get(i), "Center");
+			colorPanel.add(colorsButtons.get(i), "East");
 			speciesPanel1.add(boxes.get(i));
 			speciesPanel2.add(series.get(i));
-			speciesPanel2.add(colorsCombo.get(i));
+			speciesPanel2.add(colorPanel);
 		}
 		JPanel speciesPanel = new JPanel(new BorderLayout());
 		speciesPanel.add(speciesPanel1, "West");
