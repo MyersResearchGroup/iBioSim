@@ -678,9 +678,14 @@ public class Schematic extends JPanel implements ActionListener {
 
 		}// end connect species to promoter
 		else{
-			// connect two species to each other
-			String newPromoterName = gcm.createPromoter(null,0, 0, false);
-			newInfluenceProperties.setProperty(GlobalConstants.PROMOTER, newPromoterName);
+			// connect two species to each other, create new implicit promoter if influence is activation or repression
+			String newPromoterName = "";
+			if (activationButton.isSelected() || inhibitionButton.isSelected()) {
+				newPromoterName = gcm.createPromoter(null,0, 0, false);
+				newInfluenceProperties.setProperty(GlobalConstants.PROMOTER, newPromoterName);
+			}
+			else
+				newPromoterName = "none";
 			name = InfluencePanel.buildName(sourceID, targetID, type, newPromoterName);
 		}
 		// make sure the species name is valid

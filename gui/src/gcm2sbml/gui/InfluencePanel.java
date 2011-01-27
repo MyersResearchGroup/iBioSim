@@ -28,6 +28,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		this.gcm = gcm;
 		this.paramsOnly = paramsOnly;
 		this.gcmEditor = gcmEditor;
+		this.promoterNameChange = false;
+		this.promoterSetToNone = false;
 
 		fields = new HashMap<String, PropertyField>();
 
@@ -49,8 +51,6 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			promoterBox = new JComboBox(gcm.getPromotersAsArray());
 		else
 			promoterBox = new JComboBox(gcm.getImplicitPromotersAsArray());
-		((DefaultComboBoxModel) (promoterBox.getModel())).addElement("default");
-		promoterBox.setSelectedItem("default");String origString = "default";
 		promoterBox.addActionListener(this);
 		promoterButton = new JButton("Edit Promoter");
 		promoterButton.setActionCommand("buttonPushed");
@@ -80,7 +80,6 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			typeBox = new JComboBox(explicitPromoterTypes);
 		else
 			typeBox = new JComboBox(types);
-		typeBox.setSelectedIndex(0);
 		typeBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 3));
 		tempPanel.add(tempLabel);
@@ -170,31 +169,24 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		field.setEnabled(false);
 		add(field);
 
-		setType(types[0]);
 		if (origSelection != null) {
 			Properties prop = gcm.getInfluences().get(origSelection);
 			fields.get(GlobalConstants.NAME).setValue(origSelection);
-			if (prop.containsKey(GlobalConstants.PROMOTER)) {
-				promoterBox.setSelectedItem(prop.get(GlobalConstants.PROMOTER));
-			} else {
-				promoterBox.setSelectedItem("default");
-			}
+			if (prop.containsKey(GlobalConstants.PROMOTER))
+				promoterBox.setSelectedItem(prop.getProperty(GlobalConstants.PROMOTER));
 			if (prop.get(GlobalConstants.TYPE).equals(
 					GlobalConstants.ACTIVATION)) {
+				//This will generate the action command associated with changing the type combo box
 				typeBox.setSelectedItem(types[1]);
-				setType(types[1]);
 			} else if (prop.get(GlobalConstants.TYPE).equals(
 						GlobalConstants.REPRESSION)) {
+				//Likewise, etc etc
 				typeBox.setSelectedItem(types[0]);
-				setType(types[0]);
-				
 			} else if (prop.get(GlobalConstants.TYPE).equals(
 						GlobalConstants.COMPLEX)) {
 				typeBox.setSelectedItem(types[3]);
-				setType(types[3]);
 			}else {
 				typeBox.setSelectedItem(types[2]);
-				setType(types[2]);
 			}
 			loadProperties(prop);
 		}
@@ -253,7 +245,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			property.put(GlobalConstants.TYPE, typeBox.getSelectedItem()
 					.toString());
 			String label = "";
-			if (!promoterBox.getSelectedItem().equals("default")) {
+			if (!promoterBox.getSelectedItem().equals("none")) {
 				property.put(GlobalConstants.PROMOTER, promoterBox
 						.getSelectedItem());
 				label = promoterBox.getSelectedItem().toString();
@@ -363,8 +355,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			fields.get(GlobalConstants.NAME).setValue(newName);
 			if (promoterNameChange && oldName.equals(origSelection)) {
 				origSelection = newName;
-				promoterNameChange = false;
 			}
+			promoterNameChange = false;
 		} else if (e.getActionCommand().equals("buttonPushed") && e.getSource().equals(promoterButton)) {
 			PromoterPanel promPan = gcmEditor.launchPromoterPanel(promoterBox.getSelectedItem().toString());
 			//Updates panel's selected promoter (and influence name) if promoter was renamed during user edit
@@ -386,28 +378,50 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			fields.get(GlobalConstants.KACT_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(true);
 			fields.get(GlobalConstants.COOPERATIVITY_STRING).setEnabled(true);
+			if (promoterSetToNone) {
+				promoterBox.setSelectedIndex(0);
+				((DefaultComboBoxModel) (promoterBox.getModel())).removeElement("none");
+				promoterSetToNone = false;			
+			}
 			if (!gcm.influenceHasExplicitPromoter(origSelection)) {	
 				promoterBox.setEnabled(true);
+				promoterButton.setEnabled(true);
 			}
 		} else if (type.equals(types[1])) {
 			fields.get(GlobalConstants.KACT_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(false);
 			fields.get(GlobalConstants.COOPERATIVITY_STRING).setEnabled(true);
+			if (promoterSetToNone) {
+				promoterBox.setSelectedIndex(0);
+				((DefaultComboBoxModel) (promoterBox.getModel())).removeElement("none");
+				promoterSetToNone = false;			
+			}
 			if (!gcm.influenceHasExplicitPromoter(origSelection)) {	
 				promoterBox.setEnabled(true);
+				promoterButton.setEnabled(true);
 			}
 		} else if (type.equals(types[2])) {
 			fields.get(GlobalConstants.KACT_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(false);
 			fields.get(GlobalConstants.COOPERATIVITY_STRING).setEnabled(false);
-			promoterBox.setSelectedItem("default");
+			if (!promoterSetToNone) {
+				((DefaultComboBoxModel) (promoterBox.getModel())).addElement("none");
+				promoterBox.setSelectedItem("none");
+				promoterSetToNone = true;
+			}
 			promoterBox.setEnabled(false);
+			promoterButton.setEnabled(false);
 		} else if (type.equals(types[3])) {
 			fields.get(GlobalConstants.KACT_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KREP_STRING).setEnabled(false);
 			fields.get(GlobalConstants.COOPERATIVITY_STRING).setEnabled(true);
-			promoterBox.setSelectedItem("default");
+			if (!promoterSetToNone) {
+				((DefaultComboBoxModel) (promoterBox.getModel())).addElement("none");
+				promoterBox.setSelectedItem("none");
+				promoterSetToNone = true;
+			}
 			promoterBox.setEnabled(false);
+			promoterButton.setEnabled(false);
 		} else {
 			throw new IllegalStateException("Illegal state");
 		}
@@ -441,5 +455,6 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	private PropertyList list = null;
 	private boolean paramsOnly;
 	private boolean promoterNameChange;
+	private boolean promoterSetToNone;
 	private GCM2SBMLEditor gcmEditor = null;
 }
