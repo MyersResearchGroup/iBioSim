@@ -4303,10 +4303,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		chart.setTitle(title);
 		chart.getXYPlot().getDomainAxis().setLabel(x);
 		chart.getXYPlot().getRangeAxis().setLabel(y);
-		chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
-		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
-		chart.getXYPlot().setDomainGridlinePaint(java.awt.Color.LIGHT_GRAY);
-		chart.getXYPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
+		// chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
+		// chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
+		// chart.getXYPlot().setDomainGridlinePaint(java.awt.Color.LIGHT_GRAY);
+		// chart.getXYPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
 		// chart.addProgressListener(this);
 		ChartPanel graph = new ChartPanel(chart);
 		if (graphed.isEmpty()) {
@@ -5042,6 +5042,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if (timeSeries) {
 			Properties graph = new Properties();
 			graph.setProperty("title", chart.getTitle().getText());
+			graph.setProperty("chart.background.paint", ""
+					+ ((Color) chart.getBackgroundPaint()).getRGB());
+			graph.setProperty("plot.background.paint", ""
+					+ ((Color) chart.getPlot().getBackgroundPaint()).getRGB());
+			graph.setProperty("plot.domain.grid.line.paint", ""
+					+ ((Color) chart.getXYPlot().getDomainGridlinePaint()).getRGB());
+			graph.setProperty("plot.range.grid.line.paint", ""
+					+ ((Color) chart.getXYPlot().getRangeGridlinePaint()).getRGB());
 			graph.setProperty("x.axis", chart.getXYPlot().getDomainAxis().getLabel());
 			graph.setProperty("y.axis", chart.getXYPlot().getRangeAxis().getLabel());
 			graph.setProperty("x.min", XMin.getText());
@@ -5084,6 +5092,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		else {
 			Properties graph = new Properties();
 			graph.setProperty("title", chart.getTitle().getText());
+			graph.setProperty("chart.background.paint", ""
+					+ ((Color) chart.getBackgroundPaint()).getRGB());
+			graph.setProperty("plot.background.paint", ""
+					+ ((Color) chart.getPlot().getBackgroundPaint()).getRGB());
+			graph.setProperty("plot.range.grid.line.paint", ""
+					+ ((Color) chart.getCategoryPlot().getRangeGridlinePaint()).getRGB());
 			graph.setProperty("x.axis", chart.getCategoryPlot().getDomainAxis().getLabel());
 			graph.setProperty("y.axis", chart.getCategoryPlot().getRangeAxis().getLabel());
 			graph.setProperty("gradient",
@@ -5344,6 +5358,26 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				YMax.setText(graph.getProperty("y.max"));
 				YScale.setText(graph.getProperty("y.scale"));
 				chart.setTitle(graph.getProperty("title"));
+				if (graph.containsKey("chart.background.paint")) {
+					chart.setBackgroundPaint(new Color(Integer.parseInt(graph
+							.getProperty("chart.background.paint"))));
+				}
+				if (graph.containsKey("plot.background.paint")) {
+					chart.getPlot()
+							.setBackgroundPaint(
+									new Color(Integer.parseInt(graph
+											.getProperty("plot.background.paint"))));
+				}
+				if (graph.containsKey("plot.domain.grid.line.paint")) {
+					chart.getXYPlot().setDomainGridlinePaint(
+							new Color(Integer.parseInt(graph
+									.getProperty("plot.domain.grid.line.paint"))));
+				}
+				if (graph.containsKey("plot.range.grid.line.paint")) {
+					chart.getXYPlot().setRangeGridlinePaint(
+							new Color(Integer.parseInt(graph
+									.getProperty("plot.range.grid.line.paint"))));
+				}
 				chart.getXYPlot().getDomainAxis().setLabel(graph.getProperty("x.axis"));
 				chart.getXYPlot().getRangeAxis().setLabel(graph.getProperty("y.axis"));
 				if (graph.getProperty("auto.resize").equals("true")) {
@@ -5414,6 +5448,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				graph.load(load);
 				load.close();
 				chart.setTitle(graph.getProperty("title"));
+				if (graph.containsKey("chart.background.paint")) {
+					chart.setBackgroundPaint(new Color(Integer.parseInt(graph
+							.getProperty("chart.background.paint"))));
+				}
+				if (graph.containsKey("plot.background.paint")) {
+					chart.getPlot()
+							.setBackgroundPaint(
+									new Color(Integer.parseInt(graph
+											.getProperty("plot.background.paint"))));
+				}
+				if (graph.containsKey("plot.range.grid.line.paint")) {
+					chart.getCategoryPlot().setRangeGridlinePaint(
+							new Color(Integer.parseInt(graph
+									.getProperty("plot.range.grid.line.paint"))));
+				}
 				chart.getCategoryPlot().getDomainAxis().setLabel(graph.getProperty("x.axis"));
 				chart.getCategoryPlot().getRangeAxis().setLabel(graph.getProperty("y.axis"));
 				if (graph.containsKey("gradient") && graph.getProperty("gradient").equals("true")) {
@@ -7600,12 +7649,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private void fixProbGraph(String label, String xLabel, String yLabel,
 			DefaultCategoryDataset dataset, BarRenderer rend) {
+		Paint chartBackground = chart.getBackgroundPaint();
+		Paint plotBackground = chart.getPlot().getBackgroundPaint();
+		Paint plotRangeGridLine = chart.getCategoryPlot().getRangeGridlinePaint();
 		chart = ChartFactory.createBarChart(label, xLabel, yLabel, dataset,
 				PlotOrientation.VERTICAL, true, true, false);
 		chart.getCategoryPlot().setRenderer(rend);
-		chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
-		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
-		chart.getCategoryPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
+		chart.setBackgroundPaint(chartBackground);
+		chart.getPlot().setBackgroundPaint(plotBackground);
+		chart.getCategoryPlot().setRangeGridlinePaint(plotRangeGridLine);
 		ChartPanel graph = new ChartPanel(chart);
 		if (probGraphed.isEmpty()) {
 			graph.setLayout(new GridLayout(1, 1));
