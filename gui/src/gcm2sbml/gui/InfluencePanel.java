@@ -180,7 +180,6 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				typeBox.setSelectedItem(types[1]);
 			} else if (prop.get(GlobalConstants.TYPE).equals(
 						GlobalConstants.REPRESSION)) {
-				//Likewise, etc etc
 				typeBox.setSelectedItem(types[0]);
 			} else if (prop.get(GlobalConstants.TYPE).equals(
 						GlobalConstants.COMPLEX)) {
@@ -367,7 +366,6 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				((DefaultComboBoxModel) (promoterBox.getModel())).addElement(newPromoterName);
 				//This will generate the action command associated with changing the promoter combo box
 				promoterBox.setSelectedItem(newPromoterName);
-				//This will also generate the action command associated with changing the promoter combo box
 				((DefaultComboBoxModel) (promoterBox.getModel())).removeElement(oldPromoterName);
 			}
 		}
