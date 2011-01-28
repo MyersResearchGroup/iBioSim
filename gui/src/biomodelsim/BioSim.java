@@ -11366,11 +11366,9 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 							new File(properties).renameTo(new File(properties.replace(".sim",
 									".temp")));
 							try {
-								boolean dirty = ((GCM2SBMLEditor) (sim.getComponentAt(j)))
-										.isDirty();
+								boolean dirty = ((GCM2SBMLEditor) (sim.getComponentAt(j))).isDirty();
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).saveParams(false, "");
-								((GCM2SBMLEditor) (sim.getComponentAt(j))).reload(check.replace(
-										".gcm", ""));
+								((GCM2SBMLEditor) (sim.getComponentAt(j))).reload(check.replace(".gcm", ""));
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).refresh();
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).loadParams();
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).setDirty(dirty);
