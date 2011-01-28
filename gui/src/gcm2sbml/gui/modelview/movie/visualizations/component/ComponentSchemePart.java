@@ -42,6 +42,10 @@ public class ComponentSchemePart {
 		tsdKey = null;
 		colorScheme = new ColorScheme();
 	}
+	public ComponentSchemePart(TSDParser tsdParser){
+		tsdKey = null;
+		colorScheme = new ColorScheme(tsdParser);
+	}
 	
 	public Color getColor(HashMap<String, ArrayList<Double>> dataHash, int frameIndex){
 		

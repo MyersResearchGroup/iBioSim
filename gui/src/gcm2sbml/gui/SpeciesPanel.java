@@ -149,7 +149,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		// add the color chooser for the movie component
 		if(paramsOnly){
-			ColorScheme colorScheme = movieContainer.getMoviePreferences().getOrCreateColorSchemeForSpecies(selected);
+			ColorScheme colorScheme = movieContainer.getMoviePreferences().getOrCreateColorSchemeForSpecies(selected, movieContainer.getTSDParser());
 			colorSchemeChooser = new ColorSchemeChooser(colorScheme);
 			this.add(colorSchemeChooser, BorderLayout.SOUTH);
 		}
@@ -221,6 +221,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		
 		// the new id of the species. Will be filled in later.
 		String newSpeciesID = null;
+		
+		// if the value is -1 (user hit escape) then set it equal to the cancel value
+		if(value == -1)
+			for(int i=0; i<buttonOptions.length; i++){if(buttonOptions[i] == options[1]){value = i;}}
 		
 		if (buttonOptions[value].equals(options[0]) || buttonOptions[value].equals(withColorOptions[0])) { // "OK" or "Ok and copy..."
 			if (!checkValues()) {
@@ -404,9 +408,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	
 	private PropertyList components = null;
 
-	private String[] options = { "Ok", "Cancel" };
+	private String[] options = { "Apply", "Cancel" };
 	// make sure the Ok and Cancel options in both of these match exactly
-	private String[] withColorOptions = {"Ok, and Copy to Other Species", "Ok", "Cancel"};
+	private String[] withColorOptions = {"Apply to All", "Apply", "Cancel"};
 
 	private GCMFile gcm = null;
 

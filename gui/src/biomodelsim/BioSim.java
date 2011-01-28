@@ -7912,7 +7912,7 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								}
 							}
 						}
-						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i)
+						/*else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i)
 								.getName().equals("GCM Editor")) {
 							if (((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
 									.getComponent(i)).isDirty()) {
@@ -7941,6 +7941,42 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								else if (autosave == 1) {
 									((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
 											.getComponent(i)).saveParams(false, "");
+								}
+							}
+						}*/
+						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i)
+								instanceof MovieContainer) {
+							if (((MovieContainer) ((JTabbedPane) tab
+									.getComponentAt(index)).getComponent(i))
+									.getGCM2SBMLEditor().isDirty()
+									|| ((MovieContainer) ((JTabbedPane) tab
+											.getComponentAt(index))
+											.getComponent(i)).getIsDirty()) {
+								if (autosave == 0) {
+									int value = JOptionPane.showOptionDialog(frame,
+											"Do you want to save parameter changes for "
+													+ tab.getTitleAt(index) + "?", "Save Changes",
+											JOptionPane.YES_NO_CANCEL_OPTION,
+											JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+									if (value == YES_OPTION) {
+										((MovieContainer) ((JTabbedPane) tab.getComponentAt(index))
+												.getComponent(i)).savePreferences();
+									}
+									else if (value == CANCEL_OPTION) {
+										return 0;
+									}
+									else if (value == YES_TO_ALL_OPTION) {
+										((MovieContainer) ((JTabbedPane) tab.getComponentAt(index))
+												.getComponent(i)).savePreferences();
+										autosave = 1;
+									}
+									else if (value == NO_TO_ALL_OPTION) {
+										autosave = 2;
+									}
+								}
+								else if (autosave == 1) {
+									((MovieContainer) ((JTabbedPane) tab.getComponentAt(index))
+											.getComponent(i)).savePreferences();
 								}
 							}
 						}
@@ -11330,6 +11366,8 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 				if (check.equals(updatedFile)) {
 					JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
 					for (int j = 0; j < sim.getTabCount(); j++) {
+						String tabName = sim.getComponentAt(j).getName();
+						boolean b = sim.getComponentAt(j).getName().equals("ModelViewMovie");
 						if (sim.getComponentAt(j).getName().equals("SBML Editor")) {
 							new File(properties).renameTo(new File(properties.replace(".sim",
 									".temp")));
@@ -11396,6 +11434,11 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 								sim.setComponentAt(j + 1, scroll);
 								sim.getComponentAt(j + 1).setName("");
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).setSBMLParamFile(null);
+							}
+							for (int k = 0; k < sim.getTabCount(); k++) {
+								if (sim.getComponentAt(k) instanceof MovieContainer){
+									((MovieContainer)(sim.getComponentAt(k))).display();
+								}
 							}
 						}
 					}

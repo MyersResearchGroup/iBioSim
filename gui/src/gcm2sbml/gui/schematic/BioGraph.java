@@ -87,6 +87,8 @@ public class BioGraph extends mxGraph {
 		this.initializeMaps();
 	
 		createStyleSheets();
+		
+		
 	}
 
 	
