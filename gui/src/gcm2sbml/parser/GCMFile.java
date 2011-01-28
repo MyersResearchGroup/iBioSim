@@ -1088,7 +1088,7 @@ public class GCMFile {
 			}
 			buffer.append("]\n");
 		}
-		//List facilitates garbage collecting of promoters that don't belong to an influence later on
+		//List later facilitates garbage collecting of promoters that don't belong to an influence  
 		ArrayList<String> promotersWithInfluences = new ArrayList<String>();
 		for (String s : influences.keySet()) {
 			buffer.append(getInput(s) + " -> "// + getArrow(s) + " "

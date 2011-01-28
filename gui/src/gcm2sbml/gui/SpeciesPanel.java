@@ -169,7 +169,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			field = new PropertyField(GlobalConstants.KCOMPLEX_STRING, gcm
 					.getParameter(GlobalConstants.KCOMPLEX_STRING), origString, defaultValue,
-					Utility.SWEEPstring, paramsOnly, origString);
+					Utility.SLASHSWEEPstring, paramsOnly, origString);
 		}
 		else {
 			field = new PropertyField(GlobalConstants.KCOMPLEX_STRING, gcm

@@ -132,7 +132,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			field = new PropertyField(GlobalConstants.KREP_STRING, gcm
 					.getParameter(GlobalConstants.KREP_STRING),
 					defString, defaultValue,
-					Utility.SWEEPstring, paramsOnly, defString);
+					Utility.SLASHSWEEPstring, paramsOnly, defString);
 		} else {
 			field = new PropertyField(GlobalConstants.KREP_STRING, gcm
 					.getParameter(GlobalConstants.KREP_STRING),
@@ -157,7 +157,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			field = new PropertyField(GlobalConstants.KACT_STRING, gcm
 					.getParameter(GlobalConstants.KACT_STRING),
 					defString, defaultValue,
-					Utility.SWEEPstring, paramsOnly, defString);
+					Utility.SLASHSWEEPstring, paramsOnly, defString);
 		} else {
 			field = new PropertyField(GlobalConstants.KACT_STRING, gcm
 					.getParameter(GlobalConstants.KACT_STRING),
