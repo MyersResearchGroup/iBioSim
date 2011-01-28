@@ -631,7 +631,13 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					if (!s.trim().equals("")) {
 						boolean added = false;
 						for (int i = 0; i < parameterChanges.size(); i ++) {
-							if (parameterChanges.get(i).split(" ")[0].equals(s.split(" ")[0])) {
+							if (parameterChanges
+									.get(i)
+									.substring(
+											0,
+											parameterChanges.get(i)
+													.lastIndexOf(" "))
+									.equals(s.substring(0, s.lastIndexOf(" ")))) {
 								parameterChanges.set(i, s);
 								added = true;
 							}
@@ -1333,27 +1339,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						selected = selected.split(" ")[0];
 					}
 				}
-				GCMFile refGCM = null;
-				if (paramsOnly) {
-					refGCM = new GCMFile(path);
-					refGCM.load(path + separator + refFile);
-				}
-				SpeciesPanel panel = new SpeciesPanel(selected, list, influences, conditions, components, gcm, paramsOnly, refGCM, gcmEditor);
-				if (paramsOnly) {
-					String updates = panel.updates();
-					if (!updates.equals("")) {
-						for (int i = parameterChanges.size() - 1; i >= 0; i--) {
-							if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
-								parameterChanges.remove(i);
-							}
-						}
-						if (updates.contains(" ")) {
-							for (String s : updates.split("\n")) {
-								parameterChanges.add(s);
-							}
-						}
-					}
-				}
+
+				launchSpeciesPanel(selected);
+
 			}
 			else if (getName().contains("Influence")) {
 				String selected = null;
@@ -1363,27 +1351,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						selected = selected.substring(0, selected.length() - 9);
 					}
 				}
-				GCMFile refGCM = null;
-				if (paramsOnly) {
-					refGCM = new GCMFile(path);
-					refGCM.load(path + separator + refFile);
-				}
-				InfluencePanel panel = new InfluencePanel(selected, list, gcm, paramsOnly, refGCM, gcmEditor);
-				if (paramsOnly) {
-					String updates = panel.updates();
-					if (!updates.equals("")) {
-						for (int i = parameterChanges.size() - 1; i >= 0; i--) {
-							if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
-								parameterChanges.remove(i);
-							}
-						}
-						if (!updates.endsWith("/")) {
-							for (String s : updates.split("\n")) {
-								parameterChanges.add(s);
-							}
-						}
-					}
-				}
+				launchInfluencePanel(selected);
 			}
 			else if (getName().contains("Promoter")) {
 				String selected = null;
@@ -1393,27 +1361,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						selected = selected.split(" ")[0];
 					}
 				}
-				GCMFile refGCM = null;
-				if (paramsOnly) {
-					refGCM = new GCMFile(path);
-					refGCM.load(path + separator + refFile);
-				}
-				PromoterPanel panel = new PromoterPanel(selected, list, influences, gcm, paramsOnly, refGCM, gcmEditor);
-				if (paramsOnly) {
-					String updates = panel.updates();
-					if (!updates.equals("")) {
-						for (int i = parameterChanges.size() - 1; i >= 0; i--) {
-							if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
-								parameterChanges.remove(i);
-							}
-						}
-						if (updates.contains(" ")) {
-							for (String s : updates.split("\n")) {
-								parameterChanges.add(s);
-							}
-						}
-					}
-				}
+				launchPromoterPanel(selected);
+
 			}
 			else if (getName().contains("Property")) {
 				String selected = null;
@@ -1475,7 +1424,25 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			refGCM = new GCMFile(path);
 			refGCM.load(path + separator + refFile);
 		}
-		return new PromoterPanel(id, promoters, influences, gcm, paramsOnly, refGCM, gcmEditor);	
+		PromoterPanel panel = new PromoterPanel(id, promoters, influences, gcm, paramsOnly, refGCM, gcmEditor);	
+		
+		if (paramsOnly) {
+			String updates = panel.updates();
+			if (!updates.equals("")) {
+				for (int i = parameterChanges.size() - 1; i >= 0; i--) {
+					if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
+						parameterChanges.remove(i);
+					}
+				}
+				if (updates.contains(" ")) {
+					for (String s : updates.split("\n")) {
+						parameterChanges.add(s);
+					}
+				}
+			}
+		}
+		
+		return panel;
 	}
 	public SpeciesPanel launchSpeciesPanel(String id){
 		return launchSpeciesPanel(id, null);
@@ -1486,7 +1453,25 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			refGCM = new GCMFile(path);
 			refGCM.load(path + separator + refFile);
 		}
-		return new SpeciesPanel(id, species, influences, conditions, components, gcm, paramsOnly, refGCM, this, movieContainer);
+		SpeciesPanel panel = new SpeciesPanel(id, species, influences, conditions, components, gcm, paramsOnly, refGCM, this, movieContainer);
+		
+		if (paramsOnly) {
+			String updates = panel.updates();
+			if (!updates.equals("")) {
+				for (int i = parameterChanges.size() - 1; i >= 0; i--) {
+					if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
+						parameterChanges.remove(i);
+					}
+				}
+				if (updates.contains(" ")) {
+					for (String s : updates.split("\n")) {
+						parameterChanges.add(s);
+					}
+				}
+			}
+		}
+		
+		return panel;
 	}
 	public InfluencePanel launchInfluencePanel(String id){
 		GCMFile refGCM = null;
@@ -1494,7 +1479,24 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			refGCM = new GCMFile(path);
 			refGCM.load(path + separator + refFile);
 		}
-		return new InfluencePanel(id, influences, gcm, paramsOnly, refGCM, gcmEditor);
+		InfluencePanel panel = new InfluencePanel(id, influences, gcm, paramsOnly, refGCM, gcmEditor);
+		
+		if (paramsOnly) {
+			String updates = panel.updates();
+			if (!updates.equals("")) {
+				for (int i = parameterChanges.size() - 1; i >= 0; i--) {
+					if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
+						parameterChanges.remove(i);
+					}
+				}
+				if (!updates.endsWith("/")) {
+					for (String s : updates.split("\n")) {
+						parameterChanges.add(s);
+					}
+				}
+			}
+		}
+		return panel;
 	}
 	public String launchComponentPanel(String id){
 		GCMFile refGCM = null;

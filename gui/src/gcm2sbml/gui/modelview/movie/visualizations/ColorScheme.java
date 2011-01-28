@@ -4,6 +4,8 @@ import gcm2sbml.gui.modelview.movie.visualizations.gradient.ColorGradient;
 
 import java.awt.Color;
 
+import parser.TSDParser;
+
 public class ColorScheme {
 
 	private double min;
@@ -47,11 +49,19 @@ public class ColorScheme {
 		this.max = max;
 		assert(min < max);
 	}
-
+	
 	public ColorScheme() {
 		this.min=0;
 		this.max=100;
 		this.colorGradient = new ColorGradient();
+	}
+	
+	public ColorScheme(TSDParser tsdParser){
+		super();
+		if(tsdParser != null){
+			this.min = tsdParser.getMinValue();
+			this.max = tsdParser.getMaxValue();
+		}
 	}
 
 	/**

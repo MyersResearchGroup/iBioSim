@@ -133,6 +133,8 @@ public class Schematic extends JPanel implements ActionListener {
 		//	graph.applyLayout("circleLayout", graphComponent);
 		}
 		
+		//this.setBackground(Color.BLACK);
+		
 	}
 	
 	

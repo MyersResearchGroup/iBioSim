@@ -24,6 +24,14 @@ public class ComponentScheme {
 
 	
 	public ComponentScheme() {
+		init(null);
+	}
+	
+	public ComponentScheme(TSDParser tsdParser){
+		init(tsdParser);
+	}
+	
+	private void init(TSDParser tsdParser){
 		// TODO Auto-generated constructor stub
 		schemes = new LinkedList<ComponentSchemePart>();
 		
@@ -31,7 +39,6 @@ public class ComponentScheme {
 			ComponentSchemePart csp = new ComponentSchemePart();
 			schemes.add(csp);
 		}
-
 	}
 	
 	public Color getColor(HashMap<String, ArrayList<Double>> dataHash, int frameIndex){

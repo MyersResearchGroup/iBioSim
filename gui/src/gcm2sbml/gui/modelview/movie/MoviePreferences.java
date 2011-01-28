@@ -6,6 +6,8 @@ import gcm2sbml.parser.GCMFile;
 
 import java.util.HashMap;
 
+import parser.TSDParser;
+
 public class MoviePreferences {
 
 
@@ -23,7 +25,7 @@ public class MoviePreferences {
 	 * @param species
 	 * @return
 	 */
-	public ColorScheme getOrCreateColorSchemeForSpecies(String species){
+	public ColorScheme getOrCreateColorSchemeForSpecies(String species, TSDParser tsdParser){
 		ColorScheme cs = speciesColorSchemes.get(species);
 		if(cs == null){
 			cs = new ColorScheme();
@@ -32,15 +34,26 @@ public class MoviePreferences {
 		return cs;
 	}
 	/**
-	 * Returns the ComponentScheme for a given component. If such a scheme doesn't exist
-	 * then a new one will be created.
+	 * Returns the ColorScheme for a given species. 
 	 * @param species
 	 * @return
 	 */
-	public ComponentScheme getOrCreateComponentSchemeForComponent(String comp){
+	public ColorScheme getColorSchemeForSpecies(String species){
+		ColorScheme cs = speciesColorSchemes.get(species);
+		return cs;
+	}
+	
+	/**
+	 * Returns the ComponentScheme for a given component. If such a scheme doesn't exist
+	 * then a new one will be created.
+	 * @param species
+	 * @param tsdParser: can be null
+	 * @return
+	 */
+	public ComponentScheme getOrCreateComponentSchemeForComponent(String comp, TSDParser tsdParser){
 		ComponentScheme cs = componentSchemes.get(comp);
 		if(cs == null){
-			cs = new ComponentScheme();
+			cs = new ComponentScheme(tsdParser);
 			componentSchemes.put(comp, cs);
 		}
 		return cs;
@@ -56,21 +69,21 @@ public class MoviePreferences {
 		return cs;
 	}
 	
-	public void copyMoviePreferencesComponent(String masterComponentName, GCMFile gcm){
+	public void copyMoviePreferencesComponent(String masterComponentName, GCMFile gcm, TSDParser tsdParser){
 		ComponentScheme masterScheme = this.getComponentSchemeForComponent(masterComponentName);
 		for(String currentComponentName:gcm.getComponents().keySet()){
 			if(!currentComponentName.equals(masterComponentName)){ // skip the current component
-				ComponentScheme currentScheme = this.getOrCreateComponentSchemeForComponent(currentComponentName);
+				ComponentScheme currentScheme = this.getOrCreateComponentSchemeForComponent(currentComponentName, tsdParser);
 				currentScheme.duplicatePreferences(masterScheme, currentComponentName);
 			}
 		}
 	}
 	
-	public void copyMoviePreferencesSpecies(String masterSpeciesName, GCMFile gcm){
-		ColorScheme masterScheme = this.getOrCreateColorSchemeForSpecies(masterSpeciesName);
+	public void copyMoviePreferencesSpecies(String masterSpeciesName, GCMFile gcm, TSDParser tsdParser){
+		ColorScheme masterScheme = this.getOrCreateColorSchemeForSpecies(masterSpeciesName, tsdParser);
 		for(String currentSpeciesName:gcm.getSpecies().keySet()){
 			if(!currentSpeciesName.equals(masterSpeciesName)){
-				ColorScheme currentScheme = this.getOrCreateColorSchemeForSpecies(currentSpeciesName);
+				ColorScheme currentScheme = this.getOrCreateColorSchemeForSpecies(currentSpeciesName, tsdParser);
 				currentScheme.duplicatePreferences(masterScheme);
 			}
 		}

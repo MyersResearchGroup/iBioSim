@@ -6,8 +6,19 @@ import java.util.*;
 import javax.swing.*;
 
 public class TSDParser extends Parser {
+	
+	private double minValue;
+	private double maxValue;
+	public double getMinValue() {return minValue;}
+	public double getMaxValue() {return maxValue;}
+
 	public TSDParser(String filename, boolean warn) {
 		super(new ArrayList<String>(), new ArrayList<ArrayList<Double>>());
+		
+		// set the min and max such that they will be overwritten immediately
+		minValue = Double.POSITIVE_INFINITY;
+		maxValue = Double.NEGATIVE_INFINITY;
+		
 		try {
 			warning = warn;
 			boolean warning2 = warning;
@@ -16,6 +27,7 @@ public class TSDParser extends Parser {
 			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component,
 					"Reading Reb2sac Output Data From " + new File(filename).getName(), fileInput);
 			InputStream input = new BufferedInputStream(prog);
+			
 			boolean reading = true;
 			char cha = 0;
 			while (reading) {
@@ -116,7 +128,10 @@ public class TSDParser extends Parser {
 						else {
 							insert = counter % species.size();
 						}
-						(data.get(insert)).add(Double.parseDouble(word));
+						double dataPoint = Double.parseDouble(word);
+						(data.get(insert)).add(dataPoint);
+						this.minValue = Math.min(this.minValue, dataPoint);
+						this.maxValue = Math.max(this.maxValue, dataPoint);
 						counter++;
 						dataPoints++;
 						if (cha == ')') {
@@ -138,6 +153,10 @@ public class TSDParser extends Parser {
 			input.close();
 			prog.close();
 			fileInput.close();
+			if(Double.isInfinite(this.minValue) || Double.isInfinite(this.minValue)){
+				this.minValue = Double.NaN;
+				this.maxValue = Double.NaN;
+			}
 		}
 		catch (IOException e) {
 			JOptionPane.showMessageDialog(component, "Error Reading Data!"

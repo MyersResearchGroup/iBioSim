@@ -65,8 +65,12 @@ public class MovieContainer extends JPanel implements ActionListener {
 	
 	private GCMFile gcm;
 	private BioSim biosim;
+	
+	// TODO: set this to true any time the user messes with preferences
 	private boolean isDirty = false;
 	public boolean getIsDirty(){return isDirty;} public void setIsDirty(boolean value){isDirty = value;}
+	private GCM2SBMLEditor gcm2sbml;
+	public GCM2SBMLEditor getGCM2SBMLEditor(){return gcm2sbml;}
 	
 	TSDParser parser;
 	Timer playTimer;
@@ -85,6 +89,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		this.gcm = gcm;
 		this.biosim = biosim;
 		this.reb2sac = reb2sac_;
+		this.gcm2sbml = gcm2sbml;
 		
 		loadPreferences();
 		
@@ -314,7 +319,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		for(String s:gcm.getSpecies().keySet()){
 			if(dataHash.containsKey(s)){
 				double value = dataHash.get(s).get(frameIndex);
-				Color color = moviePreferences.getOrCreateColorSchemeForSpecies(s).getColor(value);
+				Color color = moviePreferences.getColorSchemeForSpecies(s).getColor(value);
 				schematic.setSpeciesAnimationValue(s, color);
 			}
 		}
@@ -380,6 +385,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		biosim.log.addText("file saved to " + fullPath);
 		
+		this.gcm2sbml.saveParams(false, "");
 	}
 
 	/**
@@ -412,11 +418,11 @@ public class MovieContainer extends JPanel implements ActionListener {
 	}
 	
 	public void copyMoviePreferencesComponent(String compName){
-		this.moviePreferences.copyMoviePreferencesComponent(compName, this.gcm);
+		this.moviePreferences.copyMoviePreferencesComponent(compName, this.gcm, this.getTSDParser());
 	}
 	
 	
 	public void copyMoviePreferencesSpecies(String speciesName){
-		this.moviePreferences.copyMoviePreferencesSpecies(speciesName, this.gcm);
+		this.moviePreferences.copyMoviePreferencesSpecies(speciesName, this.gcm, this.getTSDParser());
 	}
 }
