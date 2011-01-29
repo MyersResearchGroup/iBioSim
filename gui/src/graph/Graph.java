@@ -1502,15 +1502,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		simDir = new IconNode(simDirString, simDirString);
 		simDir.setIconName("");
 		String[] files = new File(outDir).list();
-		for (int i = 1; i < files.length; i++) {
-			String index = files[i];
-			int j = i;
-			while ((j > 0) && files[j - 1].compareToIgnoreCase(index) > 0) {
-				files[j] = files[j - 1];
-				j = j - 1;
-			}
-			files[j] = index;
-		}
+		// for (int i = 1; i < files.length; i++) {
+		// String index = files[i];
+		// int j = i;
+		// while ((j > 0) && files[j - 1].compareToIgnoreCase(index) > 0) {
+		// files[j] = files[j - 1];
+		// j = j - 1;
+		// }
+		// files[j] = index;
+		// }
 		boolean add = false;
 		directories = new ArrayList<String>();
 		for (String file : files) {
@@ -1524,7 +1524,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				else {
 					IconNode n = new IconNode(file.substring(0, file.length() - 4), file.substring(
 							0, file.length() - 4));
-					simDir.add(n);
+					boolean added = false;
+					for (int j = 0; j < simDir.getChildCount(); j++) {
+						if (simDir.getChildAt(j).toString().compareToIgnoreCase(n.toString()) > 0) {
+							simDir.insert(n, j);
+							added = true;
+							break;
+						}
+					}
+					if (!added) {
+						simDir.add(n);
+					}
 					n.setIconName("");
 					for (GraphSpecies g : graphed) {
 						if (g.getRunNumber().equals(file.substring(0, file.length() - 4))
@@ -1540,15 +1550,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			else if (new File(outDir + separator + file).isDirectory()) {
 				boolean addIt = false;
 				String[] files3 = new File(outDir + separator + file).list();
-				for (int i = 1; i < files3.length; i++) {
-					String index = files3[i];
-					int j = i;
-					while ((j > 0) && files3[j - 1].compareToIgnoreCase(index) > 0) {
-						files3[j] = files3[j - 1];
-						j = j - 1;
-					}
-					files3[j] = index;
-				}
+				// for (int i = 1; i < files3.length; i++) {
+				// String index = files3[i];
+				// int j = i;
+				// while ((j > 0) && files3[j - 1].compareToIgnoreCase(index) >
+				// 0) {
+				// files3[j] = files3[j - 1];
+				// j = j - 1;
+				// }
+				// files3[j] = index;
+				// }
 				for (String getFile : files3) {
 					if (getFile.length() > 3
 							&& getFile.substring(getFile.length() - 4).equals(
@@ -1581,7 +1592,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							else {
 								IconNode n = new IconNode(f.substring(0, f.length() - 4), f
 										.substring(0, f.length() - 4));
-								d.add(n);
+								boolean added = false;
+								for (int j = 0; j < d.getChildCount(); j++) {
+									if (d.getChildAt(j).toString()
+											.compareToIgnoreCase(n.toString()) > 0) {
+										d.insert(n, j);
+										added = true;
+										break;
+									}
+								}
+								if (!added) {
+									d.add(n);
+								}
 								n.setIconName("");
 								for (GraphSpecies g : graphed) {
 									if (g.getRunNumber().equals(f.substring(0, f.length() - 4))
@@ -1601,15 +1623,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							boolean addIt2 = false;
 							String[] files2 = new File(outDir + separator + file + separator + f)
 									.list();
-							for (int i = 1; i < files2.length; i++) {
-								String index = files2[i];
-								int j = i;
-								while ((j > 0) && files2[j - 1].compareToIgnoreCase(index) > 0) {
-									files2[j] = files2[j - 1];
-									j = j - 1;
-								}
-								files2[j] = index;
-							}
+							// for (int i = 1; i < files2.length; i++) {
+							// String index = files2[i];
+							// int j = i;
+							// while ((j > 0) && files2[j -
+							// 1].compareToIgnoreCase(index) > 0) {
+							// files2[j] = files2[j - 1];
+							// j = j - 1;
+							// }
+							// files2[j] = index;
+							// }
 							for (String getFile2 : files2) {
 								if (getFile2.length() > 3
 										&& getFile2.substring(getFile2.length() - 4).equals(
@@ -1636,7 +1659,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											IconNode n = new IconNode(f2.substring(0,
 													f2.length() - 4), f2.substring(0,
 													f2.length() - 4));
-											d2.add(n);
+											boolean added = false;
+											for (int j = 0; j < d2.getChildCount(); j++) {
+												if (d2.getChildAt(j).toString()
+														.compareToIgnoreCase(n.toString()) > 0) {
+													d2.insert(n, j);
+													added = true;
+													break;
+												}
+											}
+											if (!added) {
+												d2.add(n);
+											}
 											n.setIconName("");
 											for (GraphSpecies g : graphed) {
 												if (g.getRunNumber().equals(
@@ -1816,7 +1850,27 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										}
 									}
 								}
-								d.add(d2);
+								boolean added = false;
+								for (int j = 0; j < d.getChildCount(); j++) {
+									if ((d.getChildAt(j).toString().compareToIgnoreCase(
+											d2.toString()) > 0)
+											|| new File(
+													outDir
+															+ separator
+															+ d.toString()
+															+ separator
+															+ (d.getChildAt(j).toString() + "." + printer_id
+																	.substring(0, printer_id
+																			.length() - 8)))
+													.isFile()) {
+										d.insert(d2, j);
+										added = true;
+										break;
+									}
+								}
+								if (!added) {
+									d.add(d2);
+								}
 							}
 						}
 					}
@@ -1938,7 +1992,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 						}
 					}
-					simDir.add(d);
+					boolean added = false;
+					for (int j = 0; j < simDir.getChildCount(); j++) {
+						if ((simDir.getChildAt(j).toString().compareToIgnoreCase(d.toString()) > 0)
+								|| new File(outDir
+										+ separator
+										+ (simDir.getChildAt(j).toString() + "." + printer_id
+												.substring(0, printer_id.length() - 8))).isFile()) {
+							simDir.insert(d, j);
+							added = true;
+							break;
+						}
+					}
+					if (!added) {
+						simDir.add(d);
+					}
 				}
 			}
 		}
@@ -6454,15 +6522,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		simDir = new IconNode(simDirString, simDirString);
 		simDir.setIconName("");
 		String[] files = new File(outDir).list();
-		for (int i = 1; i < files.length; i++) {
-			String index = files[i];
-			int j = i;
-			while ((j > 0) && files[j - 1].compareToIgnoreCase(index) > 0) {
-				files[j] = files[j - 1];
-				j = j - 1;
-			}
-			files[j] = index;
-		}
+		// for (int i = 1; i < files.length; i++) {
+		// String index = files[i];
+		// int j = i;
+		// while ((j > 0) && files[j - 1].compareToIgnoreCase(index) > 0) {
+		// files[j] = files[j - 1];
+		// j = j - 1;
+		// }
+		// files[j] = index;
+		// }
 		boolean add = false;
 		final ArrayList<String> directories = new ArrayList<String>();
 		for (String file : files) {
@@ -6496,15 +6564,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					IconNode d = new IconNode(file, file);
 					d.setIconName("");
 					String[] files2 = new File(outDir + separator + file).list();
-					for (int i = 1; i < files2.length; i++) {
-						String index = files2[i];
-						int j = i;
-						while ((j > 0) && files2[j - 1].compareToIgnoreCase(index) > 0) {
-							files2[j] = files2[j - 1];
-							j = j - 1;
-						}
-						files2[j] = index;
-					}
+					// for (int i = 1; i < files2.length; i++) {
+					// String index = files2[i];
+					// int j = i;
+					// while ((j > 0) && files2[j -
+					// 1].compareToIgnoreCase(index) > 0) {
+					// files2[j] = files2[j - 1];
+					// j = j - 1;
+					// }
+					// files2[j] = index;
+					// }
 					boolean add2 = false;
 					for (String f : files2) {
 						if (f.equals("sim-rep.txt")) {
@@ -6549,7 +6618,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										}
 									}
 								}
-								d.add(d2);
+								boolean added = false;
+								for (int j = 0; j < d.getChildCount(); j++) {
+									if ((d.getChildAt(j).toString().compareToIgnoreCase(
+											d2.toString()) > 0)
+											|| new File(outDir + separator + d.toString()
+													+ separator
+													+ (d.getChildAt(j).toString() + ".txt"))
+													.isFile()) {
+										d.insert(d2, j);
+										added = true;
+										break;
+									}
+								}
+								if (!added) {
+									d.add(d2);
+								}
 							}
 						}
 					}
@@ -6568,7 +6652,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 						}
 					}
-					simDir.add(d);
+					boolean added = false;
+					for (int j = 0; j < simDir.getChildCount(); j++) {
+						if ((simDir.getChildAt(j).toString().compareToIgnoreCase(d.toString()) > 0)
+								|| new File(outDir + separator
+										+ (simDir.getChildAt(j).toString() + ".txt")).isFile()) {
+							simDir.insert(d, j);
+							added = true;
+							break;
+						}
+					}
+					if (!added) {
+						simDir.add(d);
+					}
 				}
 			}
 		}
