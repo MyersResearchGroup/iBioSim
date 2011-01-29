@@ -169,7 +169,6 @@ public class Translator {
 					    	double lowerBound_dbl = Double.parseDouble(lowerBound);
 					    	double upperBound_dbl = Double.parseDouble(upperBound);
 					    	double initVal_dbl = (lowerBound_dbl + upperBound_dbl)/2;
-					    	initVal_dbl = initVal_dbl;
 					    	p.setValue(initVal_dbl);
 						}	
 					} 
@@ -246,14 +245,72 @@ public class Translator {
 					Reaction r = m.createReaction();
 					r.setReversible(false);
 					r.setId("r" + counter);
-					SpeciesReference reactant = r.createReactant();
-					// get preset(s) of a transition and set each as a reactant
-					for (String x : lhpn.getPreset(t)){
-						//reactant.setId(x);
-						reactant.setSpecies(x);
-						reactant.setStoichiometry(1.0);
-						//System.out.println("transition:" + t + "preset:" + x);
+					
+					//test En(t)
+					String EnablingTestNull = lhpn.getTransition(t).getEnabling();
+					String EnablingBool;
+					String Enabling;
+					if (EnablingTestNull == null){
+						Enabling = "1"; // Enabling is true (Boolean)
 					}
+					else {
+						EnablingBool = lhpn.getEnablingTree(t).getElement("SBML");
+						Enabling = "piecewise(1," + EnablingBool + ",0)";
+					}
+//					System.out.println("Enabling = " + Enabling);
+					
+					//test Preset(t)
+					String CheckPreset = null;
+					int indexPreset = 0;
+					
+					// Check if all the presets of transition t are marked
+					// Transition t can fire only when all its preset are marked.
+					for (String x:lhpn.getPreset(t)){
+						if (indexPreset == 0){
+							CheckPreset = "eq(" + x + ",1)";
+						}
+						else {
+							CheckPreset = "and(" + CheckPreset + "," + "eq(" + x + ",1)" + ")";
+						}	
+						indexPreset ++;
+					}
+				
+					String reactantStr = ""; 
+					for (String x : lhpn.getPreset(t)){
+						// Is transition persistent?
+						if (lhpn.getTransition(t).isPersistent()){
+							// transition is persistent
+							// Create a rule for the persistent transition t. 
+							AssignmentRule rulePersis = m.createAssignmentRule();
+							String rulePersisSpeciesStr = "rPersis_" + t + x;
+							// Create a parameter (id = rulePersisTriggName). 
+							Species rulePersisSpecies = m.createSpecies();
+							rulePersisSpecies.setId(rulePersisSpeciesStr);
+							rulePersisSpecies.setCompartment("default");
+							rulePersisSpecies.setBoundaryCondition(false);
+							rulePersisSpecies.setConstant(false);
+							rulePersisSpecies.setHasOnlySubstanceUnits(false);
+							rulePersisSpecies.setUnits("");
+							
+							String ruleExpBool = "or(and(" + CheckPreset + "," + Enabling + "), and(" + CheckPreset + "," + "eq(" + rulePersisSpeciesStr + ", 1)" +"))";
+							String ruleExpReal = "piecewise(1, " + ruleExpBool + ", 0)";
+							rulePersis.setVariable(rulePersisSpeciesStr);
+							double ruleVal = rulePersis.setMath(SBML_Editor.myParseFormula(ruleExpReal));
+							SpeciesReference reactant = r.createReactant();
+							reactant.setSpecies(rulePersisSpeciesStr);
+							reactant.setStoichiometry(ruleVal);
+							// create the part of Kinetic law expression involving reactants 
+							reactantStr = reactantStr + reactant.getSpecies().toString() + "*";
+						}
+						else {
+							// get preset(s) of a transition and set each as a reactant
+							SpeciesReference reactant = r.createReactant();
+							reactant.setSpecies(x);
+							reactant.setStoichiometry(1.0);
+							reactantStr =  reactantStr + reactant.getSpecies().toString() + "*";
+						}
+					}
+
 					
 					SpeciesReference product  = r.createProduct();
 					product.setSpecies(t);
@@ -270,27 +327,17 @@ public class Translator {
 					//lhpn.getTransitionRateTree(t)
 					
 					// create exp for KineticLaw
-					// expTestNull is used to test if the enabling condition exists for a transition t
-					String expTestNull = lhpn.getTransition(t).getEnabling();
-					String exp;
-					if (expTestNull == null){
-						exp = "1";
-					}
-					else {
-						String tmp_exp = lhpn.getEnablingTree(t).getElement("SBML");
-//						System.out.println("tmp_exp = "+ tmp_exp);
-						exp = "piecewise(1," + tmp_exp + ",0)";
-
-					}
-					rateReaction.setFormula("(" + lhpn.getTransitionRateTree(t).getElement("SBML") + ")" + "*" + reactant.getSpecies() + "*" + exp); 
+					rateReaction.setFormula("(" + reactantStr + lhpn.getTransitionRateTree(t).getElement("SBML") + ")"); 
 					//System.out.println("trans " + t + " enableCond " + lhpn.getEnabling(t));
 					
 					Event e = m.createEvent();
 					e.setId("event" + counter);		
-					// TODO is trigger persistent? 
 					Trigger trigger = e.createTrigger();
 					trigger.setMath(SBML_Editor.myParseFormula("eq(" + product.getSpecies() + ",1)"));
+					// For persistent transition, it does not matter whether the trigger is persistent or not, because the delay is set to 0. 
+					trigger.setPersistent(false);
 					e.setUseValuesFromTriggerTime(false);
+					trigger.setInitialValue(false);
 				
 					// t_postSet = 1
 					for (String x : lhpn.getPostset(t)){
@@ -412,7 +459,7 @@ public class Translator {
 						trigger.setMath(SBML_Editor.myParseFormula("and(" + CheckPreset + "," + Enabling + ")"));
 					}
 					else { // transition is persistent
-						// Create a rule for the persistent trigger t. 
+						// Create a rule for the persistent transition t. 
 						AssignmentRule rulePersisTrigg = m.createAssignmentRule();
 						String rulePersisTriggName = "trigg_" + t;
 						// Create a parameter (id = rulePersisTriggName). 
