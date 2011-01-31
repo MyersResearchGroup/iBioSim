@@ -381,7 +381,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				((DefaultComboBoxModel) (promoterBox.getModel())).removeElement("none");
 				promoterSetToNone = false;			
 			}
-			if (!gcm.influenceHasExplicitPromoter(origSelection)) {	
+			if (!gcm.influenceHasExplicitPromoter(origSelection) && !paramsOnly) {	
 				promoterBox.setEnabled(true);
 				promoterButton.setEnabled(true);
 			}
@@ -394,7 +394,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				((DefaultComboBoxModel) (promoterBox.getModel())).removeElement("none");
 				promoterSetToNone = false;			
 			}
-			if (!gcm.influenceHasExplicitPromoter(origSelection)) {	
+			if (!gcm.influenceHasExplicitPromoter(origSelection) && !paramsOnly) {	
 				promoterBox.setEnabled(true);
 				promoterButton.setEnabled(true);
 			}
