@@ -128,8 +128,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	private double act;
 	private double stoc;
 
-	private String actString = CompatibilityFixer
-			.getSBMLName(GlobalConstants.ACTIVED_STRING);
+	private String actString = GlobalConstants.ACTIVED_STRING;
 	
 	private String speciesName;
 	private String reactionName;

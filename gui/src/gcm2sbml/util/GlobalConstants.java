@@ -2,20 +2,20 @@ package gcm2sbml.util;
 
 public class GlobalConstants {
 	
-	public static final String KREP_STRING = "Krep"; 
-	public static final String KACT_STRING = "Kact";
+	public static final String KREP_STRING = "Kr"; 
+	public static final String KACT_STRING = "Ka";
 	public static final String KBIO_STRING = "Kbio";
-	public static final String PROMOTER_COUNT_STRING = "Promoter count";
+	public static final String PROMOTER_COUNT_STRING = "ng";
 	public static final String KASSOCIATION_STRING = "Kassociation"; // Dimerization value
-	public static final String KBASAL_STRING = "kbasal";
-	public static final String OCR_STRING = "kocr";
-	public static final String KDECAY_STRING = "kdecay";
-	public static final String RNAP_STRING = "RNAP count";
-	public static final String RNAP_BINDING_STRING = "KRNAP";
+	public static final String KBASAL_STRING = "kb";
+	public static final String OCR_STRING = "ko";
+	public static final String KDECAY_STRING = "kd";
+	public static final String RNAP_STRING = "nr";
+	public static final String RNAP_BINDING_STRING = "Ko";
 	public static final String ACTIVATED_RNAP_BINDING_STRING = "Kao";
-	public static final String STOICHIOMETRY_STRING = "Stoichiometry of production";
-	public static final String COOPERATIVITY_STRING = "Binding site count for transciption factors";
-	public static final String ACTIVED_STRING = "Activated kocr";
+	public static final String STOICHIOMETRY_STRING = "np";
+	public static final String COOPERATIVITY_STRING = "nc";
+	public static final String ACTIVED_STRING = "ka";
 	public static final String KCOMPLEX_STRING = "Kc";
 	public static final String COMPLEX = "complex";
 	public static final String GENE_PRODUCT = "gene product";
@@ -51,7 +51,7 @@ public class GlobalConstants {
 	public static final String INTERNAL = "internal";
 	public static final String TYPE = "Type";
 	public static final String MAX_DIMER_STRING = "N-mer as trascription factor";
-	public static final String INITIAL_STRING = "Initial amount";	
+	public static final String INITIAL_STRING = "ns";	
 	public static final String PROMOTER = "Promoter";
 	public static final String EXPLICIT_PROMOTER = "ExplicitPromoter";
 	public static final String SBMLFILE = "SBML file";

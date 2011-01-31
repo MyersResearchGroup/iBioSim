@@ -1390,82 +1390,63 @@ public class BioSim implements MouseListener, ActionListener, MouseMotionListene
 			JPanel labels = new JPanel(new GridLayout(14, 1));
 			labels
 					.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVED_STRING)
-							+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.ACTIVED_STRING)
+							+ " (" + GlobalConstants.ACTIVED_STRING
 							+ "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KACT_STRING) + " ("
-					+ CompatibilityFixer.getSBMLName(GlobalConstants.KACT_STRING) + "):"));
+					+ GlobalConstants.KACT_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBASAL_STRING)
-					+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.KBASAL_STRING) + "):"));
-			// labels.add(new
-			// JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBIO_STRING)
-			// + " ("
-			// + CompatibilityFixer.getSBMLName(GlobalConstants.KBIO_STRING) +
-			// "):"));
+					+ " (" + GlobalConstants.KBASAL_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KDECAY_STRING)
-					+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.KDECAY_STRING) + "):"));
+					+ " (" + GlobalConstants.KDECAY_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer
 					.getGuiName(GlobalConstants.COOPERATIVITY_STRING)
 					+ " ("
-					+ CompatibilityFixer.getSBMLName(GlobalConstants.COOPERATIVITY_STRING)
+					+ GlobalConstants.COOPERATIVITY_STRING
 					+ "):"));
-			// labels.add(new JLabel(CompatibilityFixer
-			// .getGuiName(GlobalConstants.KASSOCIATION_STRING)
-			// + " ("
-			// +
-			// CompatibilityFixer.getSBMLName(GlobalConstants.KASSOCIATION_STRING)
-			// + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_STRING) + " ("
-					+ CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_STRING) + "):"));
+					+ GlobalConstants.RNAP_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer
 					.getGuiName(GlobalConstants.PROMOTER_COUNT_STRING)
 					+ " ("
-					+ CompatibilityFixer.getSBMLName(GlobalConstants.PROMOTER_COUNT_STRING)
+					+ GlobalConstants.PROMOTER_COUNT_STRING
 					+ "):"));
 			labels
 					.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.INITIAL_STRING)
-							+ " (" + CompatibilityFixer.getSBMLName(GlobalConstants.INITIAL_STRING)
+							+ " (" + GlobalConstants.INITIAL_STRING
 							+ "):"));
-			// labels.add(new
-			// JLabel(CompatibilityFixer.getGuiName(GlobalConstants.MAX_DIMER_STRING)
-			// + " (" +
-			// CompatibilityFixer.getSBMLName(GlobalConstants.MAX_DIMER_STRING)
-			// + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.OCR_STRING) + " ("
-					+ CompatibilityFixer.getSBMLName(GlobalConstants.OCR_STRING) + "):"));
+					+ GlobalConstants.OCR_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer
 					.getGuiName(GlobalConstants.RNAP_BINDING_STRING)
 					+ " ("
-					+ CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_BINDING_STRING)
+					+ GlobalConstants.RNAP_BINDING_STRING
 					+ "):"));
 			labels.add(new JLabel(CompatibilityFixer
 					.getGuiName(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)
 					+ " ("
-					+ CompatibilityFixer.getSBMLName(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)
+					+ GlobalConstants.ACTIVATED_RNAP_BINDING_STRING
 					+ "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KREP_STRING) + " ("
-					+ CompatibilityFixer.getSBMLName(GlobalConstants.KREP_STRING) + "):"));
+					+ GlobalConstants.KREP_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer
 					.getGuiName(GlobalConstants.STOICHIOMETRY_STRING)
 					+ " ("
-					+ CompatibilityFixer.getSBMLName(GlobalConstants.STOICHIOMETRY_STRING)
+					+ GlobalConstants.STOICHIOMETRY_STRING
 					+ "):"));
 			labels
 					.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KCOMPLEX_STRING)
 							+ " ("
-							+ CompatibilityFixer.getSBMLName(GlobalConstants.KCOMPLEX_STRING)
+							+ GlobalConstants.KCOMPLEX_STRING
 							+ "):"));
 			JPanel fields = new JPanel(new GridLayout(14, 1));
 			fields.add(ACTIVED_VALUE);
 			fields.add(KACT_VALUE);
 			fields.add(KBASAL_VALUE);
-			// fields.add(KBIO_VALUE);
 			fields.add(KDECAY_VALUE);
 			fields.add(COOPERATIVITY_VALUE);
-			// fields.add(KASSOCIATION_VALUE);
 			fields.add(RNAP_VALUE);
 			fields.add(PROMOTER_COUNT_VALUE);
 			fields.add(INITIAL_VALUE);
-			// fields.add(MAX_DIMER_VALUE);
 			fields.add(OCR_VALUE);
 			fields.add(RNAP_BINDING_VALUE);
 			fields.add(ACTIVATED_RNAP_BINDING_VALUE);

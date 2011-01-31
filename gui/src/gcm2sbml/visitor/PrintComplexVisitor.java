@@ -79,8 +79,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 	}
 	
 	private double kcomp[];
-	private String kcompString = CompatibilityFixer
-			.getSBMLName(GlobalConstants.KCOMPLEX_STRING);
+	private String kcompString = GlobalConstants.KCOMPLEX_STRING;
 	private Collection<SpeciesInterface> species;
 	private ArrayList<String> compartments;
 }

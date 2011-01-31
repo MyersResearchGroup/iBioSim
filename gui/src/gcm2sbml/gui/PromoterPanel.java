@@ -343,7 +343,7 @@ public class PromoterPanel extends JPanel {
 		if (paramsOnly) {
 			if (fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getState().equals(fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getStates()[1])) {
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-						+ CompatibilityFixer.getSBMLName(GlobalConstants.PROMOTER_COUNT_STRING) + " "
+						+ GlobalConstants.PROMOTER_COUNT_STRING + " "
 						+ fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.RNAP_BINDING_STRING).getState()
@@ -352,7 +352,7 @@ public class PromoterPanel extends JPanel {
 					updates += "\n";
 				}
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.RNAP_BINDING_STRING) + " "
+				+ GlobalConstants.RNAP_BINDING_STRING + " "
 				+ fields.get(GlobalConstants.RNAP_BINDING_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING).getState()
@@ -361,7 +361,7 @@ public class PromoterPanel extends JPanel {
 					updates += "\n";
 				}
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING) + " "
+				+ GlobalConstants.ACTIVATED_RNAP_BINDING_STRING + " "
 				+ fields.get(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.OCR_STRING).getState().equals(fields.get(GlobalConstants.OCR_STRING).getStates()[1])) {
@@ -369,7 +369,7 @@ public class PromoterPanel extends JPanel {
 					updates += "\n";
 				}
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.OCR_STRING) + " "
+				+ GlobalConstants.OCR_STRING + " "
 				+ fields.get(GlobalConstants.OCR_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.STOICHIOMETRY_STRING).getState().equals(fields.get(GlobalConstants.STOICHIOMETRY_STRING).getStates()[1])) {
@@ -377,7 +377,7 @@ public class PromoterPanel extends JPanel {
 					updates += "\n";
 				}
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.STOICHIOMETRY_STRING) + " "
+				+ GlobalConstants.STOICHIOMETRY_STRING + " "
 				+ fields.get(GlobalConstants.STOICHIOMETRY_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.KBASAL_STRING).getState().equals(fields.get(GlobalConstants.KBASAL_STRING).getStates()[1])) {
@@ -385,7 +385,7 @@ public class PromoterPanel extends JPanel {
 					updates += "\n";
 				}
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.KBASAL_STRING) + " "
+				+ GlobalConstants.KBASAL_STRING + " "
 				+ fields.get(GlobalConstants.KBASAL_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.ACTIVED_STRING).getState().equals(fields.get(GlobalConstants.ACTIVED_STRING).getStates()[1])) {
@@ -393,7 +393,7 @@ public class PromoterPanel extends JPanel {
 					updates += "\n";
 				}
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.ACTIVED_STRING) + " "
+				+ GlobalConstants.ACTIVED_STRING + " "
 				+ fields.get(GlobalConstants.ACTIVED_STRING).getValue();
 			}
 			if (updates.equals("")) {

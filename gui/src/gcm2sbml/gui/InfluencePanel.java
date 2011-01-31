@@ -281,7 +281,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		if (paramsOnly) {
 			if (fields.get(GlobalConstants.COOPERATIVITY_STRING).getState().equals(fields.get(GlobalConstants.COOPERATIVITY_STRING).getStates()[1])) {
 				updates += "\"" + fields.get(GlobalConstants.NAME).getValue() + "\"/"
-						+ CompatibilityFixer.getSBMLName(GlobalConstants.COOPERATIVITY_STRING) + " "
+						+ GlobalConstants.COOPERATIVITY_STRING + " "
 						+ fields.get(GlobalConstants.COOPERATIVITY_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.KREP_STRING).getState().equals(fields.get(GlobalConstants.KREP_STRING).getStates()[1])) {
@@ -289,7 +289,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					updates += "\n";
 				}
 				updates += "\"" + fields.get(GlobalConstants.NAME).getValue() + "\"/"
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.KREP_STRING) + " "
+				+ GlobalConstants.KREP_STRING + " "
 				+ fields.get(GlobalConstants.KREP_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.KACT_STRING).getState().equals(fields.get(GlobalConstants.KACT_STRING).getStates()[1])) {
@@ -297,7 +297,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					updates += "\n";
 				}
 				updates += "\"" + fields.get(GlobalConstants.NAME).getValue() + "\"/"
-				+ CompatibilityFixer.getSBMLName(GlobalConstants.KACT_STRING) + " "
+				+ GlobalConstants.KACT_STRING + " "
 				+ fields.get(GlobalConstants.KACT_STRING).getValue();
 			}
 			if (updates.equals("")) {
