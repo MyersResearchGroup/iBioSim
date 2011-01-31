@@ -1094,7 +1094,7 @@ public class GCMFile {
 			buffer.append(getInput(s) + " -> "// + getArrow(s) + " "
 					+ getOutput(s) + " [");
 			Properties prop = influences.get(s);
-			String promo = "default";
+			String promo = "none";
 			if (prop.containsKey(GlobalConstants.PROMOTER)) {
 				promo = prop.getProperty(GlobalConstants.PROMOTER);
 				if (!promotersWithInfluences.contains(promo))
@@ -2095,11 +2095,12 @@ public class GCMFile {
 			Matcher propMatcher = propPattern.matcher(matcher.group(3));
 			Properties properties = new Properties();
 			while (propMatcher.find()) {
+				String prop = CompatibilityFixer.convertOLDName(propMatcher.group(1));
 				if (propMatcher.group(3) != null) {
-					properties.put(propMatcher.group(1), propMatcher.group(3));
+					properties.put(prop, propMatcher.group(3));
 				}
 				else {
-					properties.put(propMatcher.group(1), propMatcher.group(4));
+					properties.put(prop, propMatcher.group(4));
 				}
 			}
 			// for backwards compatibility
@@ -2173,13 +2174,14 @@ public class GCMFile {
 			String s = matcher.group(1);
 			matcher = propPattern.matcher(s);
 			while (matcher.find()) {
+				String prop = CompatibilityFixer.convertOLDName(matcher.group(1));
 				if (matcher.group(3) != null) {
-					globalParameters.put(matcher.group(1), matcher.group(3));
-					parameters.put(matcher.group(1), matcher.group(3));
+					globalParameters.put(prop, matcher.group(3));
+					parameters.put(prop, matcher.group(3));
 				}
 				else {
-					globalParameters.put(matcher.group(1), matcher.group(4));
-					parameters.put(matcher.group(1), matcher.group(4));
+					globalParameters.put(prop, matcher.group(4));
+					parameters.put(prop, matcher.group(4));
 				}
 			}
 		}
@@ -2210,11 +2212,12 @@ public class GCMFile {
 			Matcher propMatcher = propPattern.matcher(matcher.group(3));
 			Properties properties = new Properties();
 			while (propMatcher.find()) {
+				String prop = CompatibilityFixer.convertOLDName(propMatcher.group(1));
 				if (propMatcher.group(3) != null) {
-					properties.put(propMatcher.group(1), propMatcher.group(3));
+					properties.put(prop, propMatcher.group(3));
 				}
 				else {
-					properties.put(propMatcher.group(1), propMatcher.group(4));
+					properties.put(prop, propMatcher.group(4));
 				}
 			}
 			promoters.put(name, properties);
@@ -2251,9 +2254,9 @@ public class GCMFile {
 			Matcher propMatcher = propPattern.matcher(matcher.group(6));
 			Properties properties = new Properties();
 			while (propMatcher.find()) {
+				String prop = CompatibilityFixer.convertOLDName(checkCompabilityLoad(propMatcher.group(1)));
 				if (propMatcher.group(3) != null) {
-					properties
-							.put(checkCompabilityLoad(propMatcher.group(1)), propMatcher.group(3));
+					properties.setProperty(prop, propMatcher.group(3));
 					if (propMatcher.group(1).equalsIgnoreCase(GlobalConstants.PROMOTER)
 							&& !promoters.containsKey(propMatcher.group(3))) {
 						promoters.put(propMatcher.group(3).replaceAll("\"", ""), new Properties());
@@ -2263,8 +2266,7 @@ public class GCMFile {
 					}
 				}
 				else {
-					properties
-							.put(checkCompabilityLoad(propMatcher.group(1)), propMatcher.group(4));
+					properties.put(prop, propMatcher.group(4));
 					if (propMatcher.group(1).equalsIgnoreCase(GlobalConstants.PROMOTER)
 							&& !promoters.containsKey(propMatcher.group(4))) {
 						promoters.put(propMatcher.group(4).replaceAll("\"", ""), new Properties());
@@ -2341,13 +2343,13 @@ public class GCMFile {
 								parts.add(matcher.group(2));
 								actBioMap.put(promoter, parts);
 							}
-							properties.put(GlobalConstants.GENE_PRODUCT, matcher.group(5));
+							properties.setProperty(GlobalConstants.GENE_PRODUCT, matcher.group(5));
 							actBioPropMap.put(promoter, properties);
 						}
 						else if (nDimer > 1) {
 							complexConversion = true;
-							properties.put(GlobalConstants.TRANSCRIPTION_FACTOR, matcher.group(2));
-							properties.put(GlobalConstants.GENE_PRODUCT, matcher.group(5));
+							properties.setProperty(GlobalConstants.TRANSCRIPTION_FACTOR, matcher.group(2));
+							properties.setProperty(GlobalConstants.GENE_PRODUCT, matcher.group(5));
 							actDimerList.add(properties);
 						}
 						else {
@@ -2369,13 +2371,13 @@ public class GCMFile {
 								parts.add(matcher.group(2));
 								repBioMap.put(promoter, parts);
 							}
-							properties.put(GlobalConstants.GENE_PRODUCT, matcher.group(5));
+							properties.setProperty(GlobalConstants.GENE_PRODUCT, matcher.group(5));
 							repBioPropMap.put(promoter, properties);
 						}
 						else if (nDimer > 1) {
 							complexConversion = true;
-							properties.put(GlobalConstants.TRANSCRIPTION_FACTOR, matcher.group(2));
-							properties.put(GlobalConstants.GENE_PRODUCT, matcher.group(5));
+							properties.setProperty(GlobalConstants.TRANSCRIPTION_FACTOR, matcher.group(2));
+							properties.setProperty(GlobalConstants.GENE_PRODUCT, matcher.group(5));
 							repDimerList.add(properties);
 						}
 						else {
@@ -2396,8 +2398,16 @@ public class GCMFile {
 						name = name + ", Promoter "
 								+ properties.getProperty(GlobalConstants.PROMOTER);
 					}
+					else if (properties.getProperty(GlobalConstants.TYPE).equals("complex") || 
+							properties.getProperty(GlobalConstants.TYPE).equals("no influence")){
+						name = name + ", Promoter " + "none";
+					}
+					//Instantiates default promoter
 					else {
-						name = name + ", Promoter " + "default";
+						String defaultPromoterName = "Promoter_" + getOutput(name);
+						name = name + ", Promoter " + defaultPromoterName;
+						createPromoter(defaultPromoterName, 0, 0, false);
+						properties.setProperty(GlobalConstants.PROMOTER, defaultPromoterName);
 					}
 					String label = properties.getProperty(GlobalConstants.PROMOTER);
 					if (label == null) {
@@ -2407,8 +2417,8 @@ public class GCMFile {
 					// && properties.get(GlobalConstants.BIO).equals("yes")) {
 					// label = label + "+";
 					// }
-					properties.put("label", "\"" + label + "\"");
-					properties.put(GlobalConstants.NAME, name);
+					properties.setProperty("label", "\"" + label + "\"");
+					properties.setProperty(GlobalConstants.NAME, name);
 					influences.put(name, properties);
 				}
 			}
@@ -2451,7 +2461,6 @@ public class GCMFile {
 				complex = complex + part;
 			}
 			Properties inflProp = bioPropMap.get(promoter);
-			String label = "";
 			String influence = complex;
 			if (inflProp.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION))
 				influence = influence + " -> ";
@@ -2460,33 +2469,38 @@ public class GCMFile {
 			influence = influence + inflProp.getProperty(GlobalConstants.GENE_PRODUCT)
 					+ ", Promoter ";
 			if (inflProp.containsKey(GlobalConstants.PROMOTER)) {
-				label = inflProp.getProperty(GlobalConstants.PROMOTER);
 				influence = influence + inflProp.getProperty(GlobalConstants.PROMOTER);
+			} 
+			//Instantiates default promoter
+			else {
+				String defaultPromoterName = "Promoter_" + inflProp.getProperty(GlobalConstants.GENE_PRODUCT);
+				influence = influence + defaultPromoterName;
+				createPromoter(defaultPromoterName, 0, 0, false);
+				inflProp.setProperty(GlobalConstants.PROMOTER, defaultPromoterName);
 			}
-			else
-				influence = influence + "default";
+			String label = inflProp.getProperty(GlobalConstants.PROMOTER);
 			label = "\"" + label + "\"";
-			inflProp.put("label", label);
-			inflProp.put(GlobalConstants.NAME, influence);
+			inflProp.setProperty("label", label);
+			inflProp.setProperty(GlobalConstants.NAME, influence);
 			influences.put(influence, inflProp);
 			// Adds complex species
 			Properties compProp = new Properties();
-			compProp.put(GlobalConstants.NAME, complex);
-			compProp.put(GlobalConstants.TYPE, GlobalConstants.INTERNAL);
-			compProp.put(GlobalConstants.KCOMPLEX_STRING, getProp(inflProp,
+			compProp.setProperty(GlobalConstants.NAME, complex);
+			compProp.setProperty(GlobalConstants.TYPE, GlobalConstants.INTERNAL);
+			compProp.setProperty(GlobalConstants.KCOMPLEX_STRING, getProp(inflProp,
 					GlobalConstants.KBIO_STRING));
-			compProp.put(GlobalConstants.INITIAL_STRING, "0");
-			compProp.put(GlobalConstants.KDECAY_STRING, "0");
+			compProp.setProperty(GlobalConstants.INITIAL_STRING, "0");
+			compProp.setProperty(GlobalConstants.KDECAY_STRING, "0");
 			species.put(complex, compProp);
 			// Adds complex formation influences with biochemical species as
 			// inputs
 			for (String part : parts) {
 				String compInfluence = part + " +> " + complex;
 				Properties compFormProp = new Properties();
-				compFormProp.put("label", "\"+\"");
-				compFormProp.put(GlobalConstants.NAME, compInfluence);
-				compFormProp.put(GlobalConstants.TYPE, GlobalConstants.COMPLEX);
-				compFormProp.put(GlobalConstants.COOPERATIVITY_STRING, "1");
+				compFormProp.setProperty("label", "\"\"");
+				compFormProp.setProperty(GlobalConstants.NAME, compInfluence);
+				compFormProp.setProperty(GlobalConstants.TYPE, GlobalConstants.COMPLEX);
+				compFormProp.setProperty(GlobalConstants.COOPERATIVITY_STRING, "1");
 				influences.put(compInfluence, compFormProp);
 			}
 		}
@@ -2499,7 +2513,6 @@ public class GCMFile {
 			String monomer = getProp(inflProp, GlobalConstants.TRANSCRIPTION_FACTOR);
 			String nDimer = getProp(inflProp, GlobalConstants.MAX_DIMER_STRING);
 			String complex = monomer + "_" + nDimer;
-			String label = "";
 			String influence = complex;
 			if (inflProp.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION))
 				influence = influence + " -> ";
@@ -2508,30 +2521,36 @@ public class GCMFile {
 			influence = influence + inflProp.getProperty(GlobalConstants.GENE_PRODUCT)
 					+ ", Promoter ";
 			if (inflProp.containsKey(GlobalConstants.PROMOTER)) {
-				label = inflProp.getProperty(GlobalConstants.PROMOTER);
+				
 				influence = influence + inflProp.getProperty(GlobalConstants.PROMOTER);
+			} 
+			//Instantiates default promoter
+			else {
+				String defaultPromoterName = "Promoter_" + inflProp.getProperty(GlobalConstants.GENE_PRODUCT);
+				influence = influence + defaultPromoterName;
+				createPromoter(defaultPromoterName, 0, 0, false);
+				inflProp.setProperty(GlobalConstants.PROMOTER, defaultPromoterName);
 			}
-			else
-				influence = influence + "default";
+			String label = inflProp.getProperty(GlobalConstants.PROMOTER);
 			label = "\"" + label + "\"";
 			inflProp.put(GlobalConstants.NAME, influence);
 			influences.put(influence, inflProp);
 			// Adds complex species
 			Properties compProp = new Properties();
-			compProp.put(GlobalConstants.NAME, complex);
-			compProp.put(GlobalConstants.TYPE, GlobalConstants.INTERNAL);
-			compProp.put(GlobalConstants.KCOMPLEX_STRING, getProp(species.get(monomer),
+			compProp.setProperty(GlobalConstants.NAME, complex);
+			compProp.setProperty(GlobalConstants.TYPE, GlobalConstants.INTERNAL);
+			compProp.setProperty(GlobalConstants.KCOMPLEX_STRING, getProp(species.get(monomer),
 					GlobalConstants.KASSOCIATION_STRING));
-			compProp.put(GlobalConstants.INITIAL_STRING, "0");
-			compProp.put(GlobalConstants.KDECAY_STRING, "0");
+			compProp.setProperty(GlobalConstants.INITIAL_STRING, "0");
+			compProp.setProperty(GlobalConstants.KDECAY_STRING, "0");
 			species.put(complex, compProp);
 			// Adds complex formation influence with monomer as input
 			String compInfluence = monomer + " +> " + complex;
 			Properties compFormProp = new Properties();
-			compFormProp.put("label", "\"+\"");
-			compFormProp.put(GlobalConstants.NAME, compInfluence);
-			compFormProp.put(GlobalConstants.TYPE, GlobalConstants.COMPLEX);
-			compFormProp.put(GlobalConstants.COOPERATIVITY_STRING, nDimer);
+			compFormProp.setProperty("label", "\"\"");
+			compFormProp.setProperty(GlobalConstants.NAME, compInfluence);
+			compFormProp.setProperty(GlobalConstants.TYPE, GlobalConstants.COMPLEX);
+			compFormProp.setProperty(GlobalConstants.COOPERATIVITY_STRING, nDimer);
 			influences.put(compInfluence, compFormProp);
 		}
 	}

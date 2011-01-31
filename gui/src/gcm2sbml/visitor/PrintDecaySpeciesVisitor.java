@@ -114,7 +114,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	
 	private double decay;
 	private String decayUnitString;
-	private String decayString = CompatibilityFixer.getSBMLName(GlobalConstants.KDECAY_STRING);
+	private String decayString = GlobalConstants.KDECAY_STRING;
 	
 	private Collection<SpeciesInterface> species;
 	private ArrayList<String> compartments;

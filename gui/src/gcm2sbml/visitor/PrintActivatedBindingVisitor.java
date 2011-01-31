@@ -250,14 +250,10 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	private double[] kact;
 	private double kr;
 	
-	private String kcompString = CompatibilityFixer
-			.getSBMLName(GlobalConstants.KCOMPLEX_STRING);
-	private String coopString = CompatibilityFixer
-			.getSBMLName(GlobalConstants.COOPERATIVITY_STRING);
-	private String kactString = CompatibilityFixer
-			.getSBMLName(GlobalConstants.KACT_STRING);
-	private String kArnapString = CompatibilityFixer
-	.getSBMLName(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING);
+	private String kcompString = GlobalConstants.KCOMPLEX_STRING;
+	private String coopString = GlobalConstants.COOPERATIVITY_STRING;
+	private String kactString = GlobalConstants.KACT_STRING;
+	private String kArnapString = GlobalConstants.ACTIVATED_RNAP_BINDING_STRING;
 
 	private String speciesName;
 	private String reactionName;

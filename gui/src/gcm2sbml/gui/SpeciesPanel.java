@@ -337,7 +337,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(
 					fields.get(GlobalConstants.INITIAL_STRING).getStates()[1])) {
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-						+ CompatibilityFixer.getSBMLName(GlobalConstants.INITIAL_STRING) + " "
+						+ GlobalConstants.INITIAL_STRING + " "
 						+ fields.get(GlobalConstants.INITIAL_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.KDECAY_STRING).getState().equals(
@@ -346,7 +346,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					updates += "\n";
 				}
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-						+ CompatibilityFixer.getSBMLName(GlobalConstants.KDECAY_STRING) + " "
+						+ GlobalConstants.KDECAY_STRING + " "
 						+ fields.get(GlobalConstants.KDECAY_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.KCOMPLEX_STRING).getState().equals(
@@ -355,7 +355,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					updates += "\n";
 				}
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-						+ CompatibilityFixer.getSBMLName(GlobalConstants.KCOMPLEX_STRING) + " "
+						+ GlobalConstants.KCOMPLEX_STRING + " "
 						+ fields.get(GlobalConstants.KCOMPLEX_STRING).getValue();
 			}
 			if (updates.equals("")) {

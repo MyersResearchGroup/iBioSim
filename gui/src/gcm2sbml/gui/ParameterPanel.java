@@ -83,10 +83,10 @@ public class ParameterPanel extends JPanel {
 			String newItem = CompatibilityFixer.getGuiName(selected);
 			if (fields.get(selected).getState().equals(fields.get(selected).getStates()[1])) {
 				gcm.setParameter(selected, fields.get(selected).getValue());
-				newItem = newItem + " (" + CompatibilityFixer.getSBMLName(selected) + "), ";
+				newItem = newItem + " (" + selected + "), ";
 				if (paramsOnly && fields.get(selected).getValue().trim().startsWith("(")) {
 					newItem = newItem + "Sweep, " + fields.get(selected).getValue();
-					changedParam += CompatibilityFixer.getSBMLName(selected) + " "
+					changedParam += selected + " "
 							+ fields.get(selected).getValue();
 				}
 				else {
@@ -96,7 +96,7 @@ public class ParameterPanel extends JPanel {
 					else {
 						newItem = newItem + "Custom, " + fields.get(selected).getValue();
 					}
-					changedParam += CompatibilityFixer.getSBMLName(selected) + " "
+					changedParam += selected + " "
 							+ fields.get(selected).getValue();
 				}
 			}
@@ -104,17 +104,17 @@ public class ParameterPanel extends JPanel {
 				gcm.removeParameter(selected);
 				if (paramsOnly) {
 					if (refGCM.getGlobalParameters().containsKey(selected)) {
-						newItem = newItem + " (" + CompatibilityFixer.getSBMLName(selected)
+						newItem = newItem + " (" + selected
 								+ "), Custom, " + refGCM.getParameter(selected);
 					}
 					else {
-						newItem = newItem + " (" + CompatibilityFixer.getSBMLName(selected)
+						newItem = newItem + " (" + selected
 								+ "), Default, " + refGCM.getParameter(selected);
 					}
-					changedParam += CompatibilityFixer.getSBMLName(selected);
+					changedParam += selected;
 				}
 				else {
-					newItem = newItem + " (" + CompatibilityFixer.getSBMLName(selected)
+					newItem = newItem + " (" + selected
 							+ "), Default, " + gcm.getParameter(selected);
 				}
 			}

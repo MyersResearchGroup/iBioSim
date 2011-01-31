@@ -577,37 +577,35 @@ public class Run implements ActionListener {
 							if (gcm.getPromoters().containsKey(di.split("=")[0].split("-")[0])) {
 								Properties promoterProps = gcm.getPromoters().get(
 										di.split("=")[0].split("-")[0]);
-								promoterProps.put(CompatibilityFixer
-										.convertSBMLName(di.split("=")[0].split("-")[1]), di
+								promoterProps.put(di.split("=")[0].split("-")[1], di
 										.split("=")[1]);
 							}
 							if (gcm.getSpecies().containsKey(di.split("=")[0].split("-")[0])) {
 								Properties speciesProps = gcm.getSpecies().get(
 										di.split("=")[0].split("-")[0]);
-								speciesProps.put(CompatibilityFixer
-										.convertSBMLName(di.split("=")[0].split("-")[1]), di
+								speciesProps.put(di.split("=")[0].split("-")[1], di
 										.split("=")[1]);
 							}
 							if (gcm.getInfluences().containsKey(
 									di.split("=")[0].split("-")[0].substring(1))) {
 								Properties influenceProps = gcm.getInfluences().get(
 										di.split("=")[0].split("-")[0].substring(1));
-								influenceProps.put(CompatibilityFixer.convertSBMLName(
-										di.split("=")[0].split("-")[1]).replace("\"", ""), di
+								influenceProps.put(
+										di.split("=")[0].split("-")[1].replace("\"", ""), di
 										.split("=")[1]);
 							}
 						}
 						else {
 							if (gcm.getGlobalParameters().containsKey(
-									CompatibilityFixer.convertSBMLName(di.split("=")[0]))) {
+									di.split("=")[0])) {
 								gcm.getGlobalParameters().put(
-										CompatibilityFixer.convertSBMLName(di.split("=")[0]),
+										di.split("=")[0],
 										di.split("=")[1]);
 							}
 							if (gcm.getParameters().containsKey(
-									CompatibilityFixer.convertSBMLName(di.split("=")[0]))) {
+									di.split("=")[0])) {
 								gcm.getParameters().put(
-										CompatibilityFixer.convertSBMLName(di.split("=")[0]),
+										di.split("=")[0],
 										di.split("=")[1]);
 							}
 						}
@@ -1084,38 +1082,36 @@ public class Run implements ActionListener {
 											di.split("=")[0].split("-")[0])) {
 										Properties promoterProps = gcm.getPromoters().get(
 												di.split("=")[0].split("-")[0]);
-										promoterProps.put(CompatibilityFixer.convertSBMLName(di
-												.split("=")[0].split("-")[1]), di.split("=")[1]);
+										promoterProps.put(di
+												.split("=")[0].split("-")[1], di.split("=")[1]);
 									}
 									if (gcm.getSpecies()
 											.containsKey(di.split("=")[0].split("-")[0])) {
 										Properties speciesProps = gcm.getSpecies().get(
 												di.split("=")[0].split("-")[0]);
-										speciesProps.put(CompatibilityFixer.convertSBMLName(di
-												.split("=")[0].split("-")[1]), di.split("=")[1]);
+										speciesProps.put(di
+												.split("=")[0].split("-")[1], di.split("=")[1]);
 									}
 									if (gcm.getInfluences().containsKey(
 											di.split("=")[0].split("-")[0].substring(1))) {
 										Properties influenceProps = gcm.getInfluences().get(
 												di.split("=")[0].split("-")[0].substring(1));
-										influenceProps.put(CompatibilityFixer.convertSBMLName(
-												di.split("=")[0].split("-")[1]).replace("\"", ""),
+										influenceProps.put(
+												di.split("=")[0].split("-")[1].replace("\"", ""),
 												di.split("=")[1]);
 									}
 								}
 								else {
 									if (gcm.getGlobalParameters().containsKey(
-											CompatibilityFixer.convertSBMLName(di.split("=")[0]))) {
+											di.split("=")[0])) {
 										gcm.getGlobalParameters().put(
-												CompatibilityFixer
-														.convertSBMLName(di.split("=")[0]),
+												di.split("=")[0],
 												di.split("=")[1]);
 									}
 									if (gcm.getParameters().containsKey(
-											CompatibilityFixer.convertSBMLName(di.split("=")[0]))) {
+											di.split("=")[0])) {
 										gcm.getParameters().put(
-												CompatibilityFixer
-														.convertSBMLName(di.split("=")[0]),
+												di.split("=")[0],
 												di.split("=")[1]);
 									}
 								}

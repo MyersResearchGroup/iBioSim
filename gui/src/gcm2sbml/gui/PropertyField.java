@@ -82,7 +82,7 @@ public class PropertyField extends JPanel implements ActionListener,
 		name.setText(nameString);
 		this.add(name);
 		if (!(valueString == null) && !(stateString == null)) {
-			name.setText(CompatibilityFixer.getGuiName(nameString) + " (" + CompatibilityFixer.getSBMLName(nameString) + ") ");
+			name.setText(CompatibilityFixer.getGuiName(nameString) + " (" + nameString + ") ");
 //			idLabel = new JLabel("ID");
 //			idLabel.setEnabled(false);
 //			this.add(idLabel);

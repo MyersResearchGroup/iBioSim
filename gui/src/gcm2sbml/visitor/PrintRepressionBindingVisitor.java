@@ -210,12 +210,9 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	private double krep[];
 	private double kr;
 
-	private String kcompString = CompatibilityFixer
-			.getSBMLName(GlobalConstants.KCOMPLEX_STRING);
-	private String coopString = CompatibilityFixer
-			.getSBMLName(GlobalConstants.COOPERATIVITY_STRING);
-	private String krepString = CompatibilityFixer
-			.getSBMLName(GlobalConstants.KREP_STRING);
+	private String kcompString = GlobalConstants.KCOMPLEX_STRING;
+	private String coopString = GlobalConstants.COOPERATIVITY_STRING;
+	private String krepString = GlobalConstants.KREP_STRING;
 
 	private String speciesName;
 	private String reactionName;

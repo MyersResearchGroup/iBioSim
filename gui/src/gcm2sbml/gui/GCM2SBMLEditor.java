@@ -659,7 +659,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				if (update.contains("/")) {
 					id = update.split("/")[0];
 					id = id.replace("\"", "");
-					String prop = CompatibilityFixer.convertSBMLName(update.split("/")[1].substring(0, update.split("/")[1].indexOf(" ")).trim());
+					String prop = update.split("/")[1].substring(0, update.split("/")[1].indexOf(" ")).trim();
 					String value = update.split(" ")[update.split(" ").length - 1].trim();
 					Properties props = null;
 					if(gcm.getSpecies().containsKey(id)) {
@@ -678,7 +678,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				else {
 					id = update.split(" ")[0];
 					String value = update.split(" ")[1].trim();
-					gcm.setParameter(CompatibilityFixer.convertSBMLName(id), value);
+					gcm.setParameter(id, value);
 				}
 			}
 		}
@@ -764,27 +764,27 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					if (di.contains("/")) {
 						if (gcm.getPromoters().containsKey(di.split("=")[0].split("/")[0])) {
 							Properties promoterProps = gcm.getPromoters().get(di.split("=")[0].split("/")[0]);
-							promoterProps.put(CompatibilityFixer.convertSBMLName(di.split("=")[0].split("/")[1]),
+							promoterProps.put(di.split("=")[0].split("/")[1],
 									di.split("=")[1]);
 						}
 						if (gcm.getSpecies().containsKey(di.split("=")[0].split("/")[0])) {
 							Properties speciesProps = gcm.getSpecies().get(di.split("=")[0].split("/")[0]);
-							speciesProps.put(CompatibilityFixer.convertSBMLName(di.split("=")[0].split("/")[1]),
+							speciesProps.put(di.split("=")[0].split("/")[1],
 									di.split("=")[1]);
 						}
 						if (gcm.getInfluences().containsKey(di.split("=")[0].split("/")[0].substring(1))) {
 							Properties influenceProps = gcm.getInfluences().get(
 									di.split("=")[0].split("/")[0].substring(1));
-							influenceProps.put(CompatibilityFixer.convertSBMLName(di.split("=")[0].split("/")[1])
+							influenceProps.put(di.split("=")[0].split("/")[1]
 									.replace("\"", ""), di.split("=")[1]);
 						}
 					}
 					else {
-						if (gcm.getGlobalParameters().containsKey(CompatibilityFixer.convertSBMLName(di.split("=")[0]))) {
-							gcm.getGlobalParameters().put(CompatibilityFixer.convertSBMLName(di.split("=")[0]), di.split("=")[1]);
+						if (gcm.getGlobalParameters().containsKey(di.split("=")[0])) {
+							gcm.getGlobalParameters().put(di.split("=")[0], di.split("=")[1]);
 						}
-						if (gcm.getParameters().containsKey(CompatibilityFixer.convertSBMLName(di.split("=")[0]))) {
-							gcm.getParameters().put(CompatibilityFixer.convertSBMLName(di.split("=")[0]), di.split("=")[1]);
+						if (gcm.getParameters().containsKey(di.split("=")[0])) {
+							gcm.getParameters().put(di.split("=")[0], di.split("=")[1]);
 						}
 					}
 				}
@@ -1163,7 +1163,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				if (!update.contains("/")) {
 					id = update.split(" ")[0];
 					String value = update.split(" ")[1].trim();
-					gcm.setParameter(CompatibilityFixer.convertSBMLName(id), value);
+					gcm.setParameter(id, value);
 				}
 			}
 		}
@@ -1173,18 +1173,18 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				if (gcm.getGlobalParameters().containsKey(s)) {
 					if (gcm.getParameter(s).contains("(")) {
 						results.add(CompatibilityFixer.getGuiName(s) + " ("
-								+ CompatibilityFixer.getSBMLName(s) + "), Sweep, "
+								+ s + "), Sweep, "
 								+ gcm.getParameter(s));
 					}
 					else {
 						if (paramsOnly) {
 							results.add(CompatibilityFixer.getGuiName(s) + " ("
-									+ CompatibilityFixer.getSBMLName(s) + "), Modified, "
+									+ s + "), Modified, "
 									+ gcm.getParameter(s));
 						}
 						else {
 							results.add(CompatibilityFixer.getGuiName(s) + " ("
-									+ CompatibilityFixer.getSBMLName(s) + "), Custom, "
+									+ s + "), Custom, "
 									+ gcm.getParameter(s));
 						}
 					}
@@ -1195,18 +1195,18 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						refGCM.load(path + separator + refFile);
 						if (refGCM.getGlobalParameters().containsKey(s)) {
 							results.add(CompatibilityFixer.getGuiName(s) + " ("
-									+ CompatibilityFixer.getSBMLName(s) + "), Custom, "
+									+ s + "), Custom, "
 									+ gcm.getParameter(s));
 						}
 						else {
 							results.add(CompatibilityFixer.getGuiName(s) + " ("
-									+ CompatibilityFixer.getSBMLName(s) + "), Default, "
+									+ s + "), Default, "
 									+ gcm.getParameter(s));
 						}
 					}
 					else {
 						results.add(CompatibilityFixer.getGuiName(s) + " ("
-								+ CompatibilityFixer.getSBMLName(s) + "), Default, "
+								+ s + "), Default, "
 								+ gcm.getParameter(s));
 					}
 				}

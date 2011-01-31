@@ -1006,14 +1006,11 @@ public class GeneticNetwork {
 
 	private GCMFile properties = null;
 	
-	private String krnapString = CompatibilityFixer
-	.getSBMLName(GlobalConstants.RNAP_BINDING_STRING);
+	private String krnapString = GlobalConstants.RNAP_BINDING_STRING;
 	
-	private String kBasalString = CompatibilityFixer
-	.getSBMLName(GlobalConstants.KBASAL_STRING);
+	private String kBasalString = GlobalConstants.KBASAL_STRING;
 	
-	private String kOcString = CompatibilityFixer
-	.getSBMLName(GlobalConstants.OCR_STRING);
+	private String kOcString = GlobalConstants.OCR_STRING;
 
 	/**
 	 * Returns the curent SBML document being built
