@@ -208,9 +208,6 @@ public class GCMParser {
 		}
 		else {
 			r.setType("dot");
-			if (property.containsKey(GlobalConstants.KREP_STRING)) {
-				r.addProperty(GlobalConstants.KREP_STRING, property.getProperty(GlobalConstants.KREP_STRING));
-			}					
 		}	
 		
 		String input = GCMFile.getInput(reaction);
@@ -227,20 +224,9 @@ public class GCMParser {
 			}
 			PartSpecies ps = new PartSpecies(species.get(input), r.getCoop());
 			parts.add(ps);
-		} else {	
-			String promoterName = "";
-			if (property.containsKey(GlobalConstants.PROMOTER)) {
-				promoterName = property.getProperty(GlobalConstants.PROMOTER);
-			} else {
-				promoterName = "Promoter_" + output;
-			}
-			// Check if promoter exists. If not, create it.
-			Promoter p = null;
-			if (promoters.containsKey(promoterName)) {
-				p = promoters.get(promoterName);
-			} else {
-				p = parsePromoterData(promoterName, null);
-			}
+		} else if (!r.getType().equals("dot")) {	
+			String promoterName = property.getProperty(GlobalConstants.PROMOTER);
+			Promoter p = promoters.get(promoterName);
 			if (!input.equals("none")) {
 				p.addToReactionMap(input, r);
 				if (r.getType().equals("vee"))
