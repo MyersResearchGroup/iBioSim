@@ -41,19 +41,21 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		Reaction r = Utility.Reaction("Complex_formation_" + specie.getId());
 		r.setCompartment(compartment);
 		String expression = "";
+		r.addProduct(Utility.SpeciesReference(specie.getId(), 1));
+		r.setReversible(true);
+		r.setFast(false);
+		KineticLaw kl = r.createKineticLaw();
 		for (PartSpecies part : specie.getParts()) {
 			SpeciesInterface s = part.getSpecies();
 			double n = part.getStoich();
 			r.addReactant(Utility.SpeciesReference(s.getId(), n));
 			expression = expression + "*" + s.getId();
-			if (n > 1)
-				expression = expression + '^' + n;
+			if (n > 1) {
+				expression = expression + '^' + coopString + "_" + s.getId();
+				kl.addParameter(Utility.Parameter(coopString + "_" + s.getId(), n, "dimensionless"));
+			}
 		}
 		expression = kcompString + expression;
-		r.addProduct(Utility.SpeciesReference(specie.getId(), 1));
-		r.setReversible(true);
-		r.setFast(false);
-		KineticLaw kl = r.createKineticLaw();
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
 		if (kcomp.length > 1) {
@@ -80,6 +82,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 	
 	private double kcomp[];
 	private String kcompString = GlobalConstants.KCOMPLEX_STRING;
+	private String coopString = GlobalConstants.COOPERATIVITY_STRING;
 	private Collection<SpeciesInterface> species;
 	private ArrayList<String> compartments;
 }

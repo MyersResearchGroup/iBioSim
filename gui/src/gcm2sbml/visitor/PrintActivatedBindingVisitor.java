@@ -96,8 +96,10 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 				double n = part.getStoich();
 				r.addReactant(Utility.SpeciesReference(s.getId(), n*coop));
 				actMolecule = actMolecule + "*" + s.getId();
-				if (n > 1)
-					actMolecule = actMolecule + '^' + n;
+				if (n > 1) {
+					actMolecule = actMolecule + '^' + coopString + "_" + s.getId();
+					kl.addParameter(Utility.Parameter(coopString + "_" + s.getId(), n, "dimensionless"));
+				}
 			}
 			actMolecule = kcompString + actMolecule;
 		} else {

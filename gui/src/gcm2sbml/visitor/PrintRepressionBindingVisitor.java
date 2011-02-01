@@ -81,8 +81,10 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 				double n = part.getStoich();
 				r.addReactant(Utility.SpeciesReference(s.getId(), n*coop));
 				repMolecule = repMolecule + "*" + s.getId();
-				if (n > 1)
-					repMolecule = repMolecule + '^' + n;
+				if (n > 1) {
+					repMolecule = repMolecule + '^' + coopString + "_" + s.getId();
+					kl.addParameter(Utility.Parameter(coopString + "_" + s.getId(), n, "dimensionless"));
+				}
 			}
 			repMolecule = kcompString + repMolecule;
 		} else {
