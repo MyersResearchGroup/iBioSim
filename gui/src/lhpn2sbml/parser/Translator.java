@@ -18,6 +18,7 @@ import org.sbml.libsbml.EventAssignment;
 import org.sbml.libsbml.FunctionDefinition;
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Model;
+import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.RateRule;
 import org.sbml.libsbml.Reaction;
@@ -248,16 +249,16 @@ public class Translator {
 					
 					//test En(t)
 					String EnablingTestNull = lhpn.getTransition(t).getEnabling();
-					String EnablingBool;
 					String Enabling;
+					String EnablingBool = null;
 					if (EnablingTestNull == null){
-						Enabling = "1"; // Enabling is true (Boolean)
+						EnablingBool = "true";
+						Enabling = "1"; // Enabling is true
 					}
 					else {
 						EnablingBool = lhpn.getEnablingTree(t).getElement("SBML");
-						Enabling = "piecewise(1," + EnablingBool + ",0)";
+						Enabling = "piecewise(1, " + EnablingBool + ", 0)";
 					}
-//					System.out.println("Enabling = " + Enabling);
 					
 					//test Preset(t)
 					String CheckPreset = null;
@@ -275,7 +276,8 @@ public class Translator {
 						indexPreset ++;
 					}
 				
-					String reactantStr = ""; 
+					String modifierStr = "";
+					String reactantStr = "";
 					for (String x : lhpn.getPreset(t)){
 						// Is transition persistent?
 						if (lhpn.getTransition(t).isPersistent()){
@@ -292,15 +294,15 @@ public class Translator {
 							rulePersisSpecies.setHasOnlySubstanceUnits(false);
 							rulePersisSpecies.setUnits("");
 							
-							String ruleExpBool = "or(and(" + CheckPreset + "," + Enabling + "), and(" + CheckPreset + "," + "eq(" + rulePersisSpeciesStr + ", 1)" +"))";
+							String ruleExpBool = "or(and(" + CheckPreset + "," + EnablingBool + "), and(" + CheckPreset + "," + "eq(" + rulePersisSpeciesStr + ", 1)" +"))";
 							String ruleExpReal = "piecewise(1, " + ruleExpBool + ", 0)";
 							rulePersis.setVariable(rulePersisSpeciesStr);
 							double ruleVal = rulePersis.setMath(SBML_Editor.myParseFormula(ruleExpReal));
-							SpeciesReference reactant = r.createReactant();
-							reactant.setSpecies(rulePersisSpeciesStr);
-							reactant.setStoichiometry(ruleVal);
-							// create the part of Kinetic law expression involving reactants 
-							reactantStr = reactantStr + reactant.getSpecies().toString() + "*";
+							rulePersisSpecies.setInitialAmount(0);
+							ModifierSpeciesReference modifier = r.createModifier();
+							modifier.setSpecies(rulePersisSpeciesStr);
+							// create the part of Kinetic law expression involving modifiers 
+							modifierStr = modifierStr + modifier.getSpecies().toString() + "*";
 						}
 						else {
 							// get preset(s) of a transition and set each as a reactant
@@ -327,8 +329,10 @@ public class Translator {
 					//lhpn.getTransitionRateTree(t)
 					
 					// create exp for KineticLaw
-					rateReaction.setFormula("(" + reactantStr + lhpn.getTransitionRateTree(t).getElement("SBML") + ")"); 
-					//System.out.println("trans " + t + " enableCond " + lhpn.getEnabling(t));
+					if (lhpn.getTransition(t).isPersistent())
+						rateReaction.setFormula("(" + modifierStr + Enabling + "*" + lhpn.getTransitionRateTree(t).getElement("SBML") + ")"); 
+					else
+						rateReaction.setFormula("(" + reactantStr + Enabling + "*" + lhpn.getTransitionRateTree(t).getElement("SBML") + ")"); 
 					
 					Event e = m.createEvent();
 					e.setId("event" + counter);		
@@ -424,7 +428,7 @@ public class Translator {
 					String EnablingTestNull = lhpn.getTransition(t).getEnabling();
 					String Enabling;
 					if (EnablingTestNull == null){
-						Enabling = "eq(1,1)"; // Enabling is true (Boolean)
+						Enabling = "true"; // Enabling is true (Boolean)
 					}
 					else {
 						Enabling = lhpn.getEnablingTree(t).getElement("SBML");
