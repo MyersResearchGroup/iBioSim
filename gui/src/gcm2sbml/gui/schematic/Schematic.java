@@ -597,6 +597,17 @@ public class Schematic extends JPanel implements ActionListener {
 		String sourceID = source.getId();
 		String targetID = target.getId();
 		
+		// Disallows user from connecting to a species that is an input
+		if (graph.getCellType(target).equals(GlobalConstants.SPECIES)) {
+			String specType = gcm.getSpecies().get(targetID).getProperty(GlobalConstants.TYPE);
+			if (specType.equals(GlobalConstants.INPUT) || specType.equals(GlobalConstants.SPASTIC)) {
+				JOptionPane.showMessageDialog(BioSim.frame, "You can't connect to a species that is an input or constitutive.");
+				graph.buildGraph();
+				return;
+			}
+		}
+		
+		
 		// see if we are connecting a component to a species
 		if(numComponents == 1){
 			Properties sourceProp = graph.getCellProperties(source);

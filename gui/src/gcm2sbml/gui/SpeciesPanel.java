@@ -86,7 +86,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		JPanel tempPanel = new JPanel();
 		JLabel tempLabel = new JLabel(GlobalConstants.TYPE);
 		typeBox = new JComboBox(types);
-		typeBox.setSelectedItem(types[1]);
 		typeBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
@@ -180,21 +179,19 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		fields.put(GlobalConstants.KCOMPLEX_STRING, field);
 		grid.add(field);
 
-		String oldName = null;
 		if (selected != null) {
-			oldName = selected;
 			Properties prop = gcm.getSpecies().get(selected);
 			fields.get(GlobalConstants.ID).setValue(selected);
+			//This will generate the action command associated with changing the type combo box
 			typeBox.setSelectedItem(prop.getProperty(GlobalConstants.TYPE));
-			setType(prop.getProperty(GlobalConstants.TYPE));
 			loadProperties(prop);
 		}
 		else {
-			setType(types[1]);
+			typeBox.setSelectedItem(types[1]);
 		}
 		boolean display = false;
 		while (!display) {
-			display = openGui(oldName);
+			display = openGui();
 		}
 	}
 
@@ -208,7 +205,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		return true;
 	}
 
-	private boolean openGui(String oldName) {
+	private boolean openGui() {
 		
 		// figure out which set of buttons to use
 		String[] buttonOptions = options;
@@ -231,7 +228,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
-			if (oldName == null) {
+			if (selected == null) {
 				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())
 						|| gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())
 						|| gcm.getParameters().containsKey(fields.get(GlobalConstants.ID).getValue())
@@ -240,7 +237,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					return false;
 				}
 			}
-			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
+			else if (!selected.equals(fields.get(GlobalConstants.ID).getValue())) {
 				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())
 						|| gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())
 						|| gcm.getParameters().containsKey(fields.get(GlobalConstants.ID).getValue())
@@ -249,11 +246,22 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					return false;
 				}
 			}
-			if (oldName != null
-					&& !gcm.editSpeciesCheck(oldName, typeBox.getSelectedItem().toString())) {
+			if (selected != null
+					&& !gcm.editSpeciesCheck(selected, typeBox.getSelectedItem().toString())) {
 				Utility.createErrorMessage("Error", "Cannot change species type.  "
 						+ "Species is used as a port in a component.");
 				return false;
+			}
+			if (selected != null && (typeBox.getSelectedItem().toString().equals(types[0]) || 
+					typeBox.getSelectedItem().toString().equals(types[3]))) {
+				for (String infl : gcm.getInfluences().keySet()) {
+					String geneProduct = GCMFile.getOutput(infl);
+					if (selected.equals(geneProduct)) {
+						Utility.createErrorMessage("Error", "There must be no connections to an input species " +
+						"or constitutive species.");
+						return false;
+					}
+				}
 			}
 			newSpeciesID = fields.get(GlobalConstants.ID).getValue();
 
@@ -263,10 +271,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			// overwritten ,
 			// but others (such as positioning info) will not and need to be
 			// preserved.
-			if (oldName != null) {
-				for (Object s : gcm.getSpecies().get(oldName).keySet()) {
+			if (selected != null) {
+				for (Object s : gcm.getSpecies().get(selected).keySet()) {
 					String k = s.toString();
-					String v = (gcm.getSpecies().get(oldName).getProperty(k)).toString();
+					String v = (gcm.getSpecies().get(selected).getProperty(k)).toString();
 					if (!k.equals("label")) {
 						property.put(k, v);
 					}
@@ -283,8 +291,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			property.put(GlobalConstants.TYPE, typeBox.getSelectedItem().toString());
 
-			if (selected != null && !oldName.equals(newSpeciesID)) {
-				gcm.changeSpeciesName(oldName, newSpeciesID);
+			if (selected != null && !selected.equals(newSpeciesID)) {
+				gcm.changeSpeciesName(selected, newSpeciesID);
 				((DefaultListModel) influences.getModel()).clear();
 				influences.addAllItem(gcm.getInfluences().keySet());
 				((DefaultListModel) conditions.getModel()).clear();
@@ -307,8 +315,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					newSpeciesID += " Modified";
 				}
 			}
-			speciesList.removeItem(oldName);
-			speciesList.removeItem(oldName + " Modified");
+			speciesList.removeItem(selected);
+			speciesList.removeItem(selected + " Modified");
 			speciesList.addItem(newSpeciesID);
 			speciesList.setSelectedValue(newSpeciesID, true);
 			// ColorSchemeChooser
@@ -416,7 +424,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	private JComboBox typeBox = null;
 
-	private static final String[] types = new String[] { "input", "internal", "output", "constitutive"};
+	private static final String[] types = new String[] { GlobalConstants.INPUT, GlobalConstants.INTERNAL, 
+		GlobalConstants.OUTPUT, GlobalConstants.SPASTIC};
 
 	private HashMap<String, PropertyField> fields = null;
 

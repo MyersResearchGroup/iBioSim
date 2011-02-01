@@ -21,9 +21,9 @@ import javax.swing.JPanel;
 import biomodelsim.BioSim;
 
 public class InfluencePanel extends JPanel implements ActionListener {
-	public InfluencePanel(String origSelection, PropertyList list, GCMFile gcm, boolean paramsOnly, GCMFile refGCM, GCM2SBMLEditor gcmEditor) {
+	public InfluencePanel(String selection, PropertyList list, GCMFile gcm, boolean paramsOnly, GCMFile refGCM, GCM2SBMLEditor gcmEditor) {
 		super(new GridLayout(6, 1));
-		this.origSelection = origSelection;
+		this.selection = selection;
 		this.list = list;
 		this.gcm = gcm;
 		this.paramsOnly = paramsOnly;
@@ -47,10 +47,18 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		// Promoter field. Disabled if the influences is connected to an explicit promoter.
 		tempPanel = new JPanel();
 		tempLabel = new JLabel("Promoter");
-		if (gcm.influenceHasExplicitPromoter(origSelection))
+		if (gcm.influenceHasExplicitPromoter(selection))
 			promoterBox = new JComboBox(gcm.getPromotersAsArray());
-		else
+		else {
+			//If no implicit promoters exist (e.g. there are only complex influences), 
+			//creates one to fall back on if influence type is changed to activation or repression
+			String[] impProms = gcm.getImplicitPromotersAsArray();
+			if (impProms.length == 0) {
+				gcm.createPromoter(null, 0, 0, false);
+				impProms = gcm.getImplicitPromotersAsArray();
+			}
 			promoterBox = new JComboBox(gcm.getImplicitPromotersAsArray());
+		}
 		promoterBox.addActionListener(this);
 		promoterButton = new JButton("Edit Promoter");
 		promoterButton.setActionCommand("buttonPushed");
@@ -66,7 +74,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		add(tempPanel);
 		// disable the promoter stuff if the promoter is explicitly drawn.
 		boolean explicitPromoter = false;
-		if(gcm.influenceHasExplicitPromoter(origSelection)){	
+		if(gcm.influenceHasExplicitPromoter(selection)){	
 			promoterBox.setEnabled(false);
 			promoterButton.setEnabled(false);
 			explicitPromoter = true;
@@ -97,8 +105,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		String defString = "default";
 		if (paramsOnly) {
 			String defaultValue = refGCM.getParameter(GlobalConstants.COOPERATIVITY_STRING);
-			if (refGCM.getInfluences().get(origSelection).containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
-				defaultValue = refGCM.getInfluences().get(origSelection).getProperty(GlobalConstants.COOPERATIVITY_STRING);
+			if (refGCM.getInfluences().get(selection).containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
+				defaultValue = refGCM.getInfluences().get(selection).getProperty(GlobalConstants.COOPERATIVITY_STRING);
 				defString = "custom";
 			}
 			else if (gcm.globalParameterIsSet(GlobalConstants.COOPERATIVITY_STRING)) {
@@ -122,8 +130,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		defString = "default";
 		if (paramsOnly) {
 			String defaultValue = refGCM.getParameter(GlobalConstants.KREP_STRING);
-			if (refGCM.getInfluences().get(origSelection).containsKey(GlobalConstants.KREP_STRING)) {
-				defaultValue = refGCM.getInfluences().get(origSelection).getProperty(GlobalConstants.KREP_STRING);
+			if (refGCM.getInfluences().get(selection).containsKey(GlobalConstants.KREP_STRING)) {
+				defaultValue = refGCM.getInfluences().get(selection).getProperty(GlobalConstants.KREP_STRING);
 				defString = "custom";
 			}
 			else if (gcm.globalParameterIsSet(GlobalConstants.KREP_STRING)) {
@@ -147,8 +155,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		defString = "default";
 		if (paramsOnly) {
 			String defaultValue = refGCM.getParameter(GlobalConstants.KACT_STRING);
-			if (refGCM.getInfluences().get(origSelection).containsKey(GlobalConstants.KACT_STRING)) {
-				defaultValue = refGCM.getInfluences().get(origSelection).getProperty(GlobalConstants.KACT_STRING);
+			if (refGCM.getInfluences().get(selection).containsKey(GlobalConstants.KACT_STRING)) {
+				defaultValue = refGCM.getInfluences().get(selection).getProperty(GlobalConstants.KACT_STRING);
 				defString = "custom";
 			}
 			else if (gcm.globalParameterIsSet(GlobalConstants.KACT_STRING)) {
@@ -169,9 +177,9 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		field.setEnabled(false);
 		add(field);
 
-		if (origSelection != null) {
-			Properties prop = gcm.getInfluences().get(origSelection);
-			fields.get(GlobalConstants.NAME).setValue(origSelection);
+		if (selection != null) {
+			Properties prop = gcm.getInfluences().get(selection);
+			fields.get(GlobalConstants.NAME).setValue(selection);
 			if (prop.containsKey(GlobalConstants.PROMOTER))
 				promoterBox.setSelectedItem(prop.getProperty(GlobalConstants.PROMOTER));
 			if (prop.get(GlobalConstants.TYPE).equals(
@@ -214,14 +222,14 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
-			if (origSelection == null) {
+			if (selection == null) {
 				if (gcm.getInfluences().containsKey(
 						fields.get(GlobalConstants.NAME).getValue())) {
 					Utility.createErrorMessage("Error",
 							"Influence already exists.");
 					return false;
 				}
-			} else if (!origSelection.equals(fields.get(GlobalConstants.NAME)
+			} else if (!selection.equals(fields.get(GlobalConstants.NAME)
 					.getValue())) {
 				if (gcm.getInfluences().containsKey(
 						fields.get(GlobalConstants.NAME).getValue())) {
@@ -251,10 +259,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			}
 			property.put("label", "\"" + label + "\"");
 
-			if (origSelection != null && !origSelection.equals(id)) {
-				list.removeItem(origSelection);
-				list.removeItem(origSelection + " Modified");
-				gcm.removeInfluence(origSelection);
+			if (selection != null && !selection.equals(id)) {
+				list.removeItem(selection);
+				list.removeItem(selection + " Modified");
+				gcm.removeInfluence(selection);
 			}
 			list.removeItem(id);
 			list.removeItem(id + " Modified");
@@ -352,8 +360,8 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			String oldName = fields.get(GlobalConstants.NAME).getValue();
 			String newName = oldName.split("Promoter")[0] + "Promoter " + promoterBox.getSelectedItem().toString();
 			fields.get(GlobalConstants.NAME).setValue(newName);
-			if (promoterNameChange && oldName.equals(origSelection)) {
-				origSelection = newName;
+			if (promoterNameChange && oldName.equals(selection)) {
+				selection = newName;
 			}
 			promoterNameChange = false;
 		} else if (e.getActionCommand().equals("buttonPushed") && e.getSource().equals(promoterButton)) {
@@ -381,7 +389,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				((DefaultComboBoxModel) (promoterBox.getModel())).removeElement("none");
 				promoterSetToNone = false;			
 			}
-			if (!gcm.influenceHasExplicitPromoter(origSelection) && !paramsOnly) {	
+			if (!gcm.influenceHasExplicitPromoter(selection) && !paramsOnly) {	
 				promoterBox.setEnabled(true);
 				promoterButton.setEnabled(true);
 			}
@@ -394,7 +402,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				((DefaultComboBoxModel) (promoterBox.getModel())).removeElement("none");
 				promoterSetToNone = false;			
 			}
-			if (!gcm.influenceHasExplicitPromoter(origSelection) && !paramsOnly) {	
+			if (!gcm.influenceHasExplicitPromoter(selection) && !paramsOnly) {	
 				promoterBox.setEnabled(true);
 				promoterButton.setEnabled(true);
 			}
@@ -446,7 +454,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 	public static String[] bio = { "no", "yes" };
 	private HashMap<String, PropertyField> fields = null;
 	private GCMFile gcm = null;
-	private String origSelection = "";
+	private String selection = "";
 	private JComboBox promoterBox = null;
 	private JComboBox typeBox = null;
 	private JButton promoterButton;
