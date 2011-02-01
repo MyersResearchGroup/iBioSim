@@ -1940,6 +1940,7 @@ public class GCMFile {
 		}
 		Properties prop = new Properties();
 		prop.setProperty("ID", id);
+		prop.setProperty("name", "");
 		if (is_explicit) {
 			prop.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_SPECIES_WIDTH));
 			prop.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_SPECIES_HEIGHT));
