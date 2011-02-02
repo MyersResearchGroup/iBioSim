@@ -56,24 +56,27 @@ public class PropertyField extends JPanel implements ActionListener,
 			box.setEnabled(state);
 		}
 		name.setEnabled(state);
-		if (state) {
-			if (paramsOnly && box != null) {
-				if (box.getSelectedItem().equals(paramStates[0]) || box.getSelectedItem().equals(states[0])) {
-					setDefault();
-				} else {
-					setCustom();
-				} 
+		// if (state) {
+		if (paramsOnly && box != null) {
+			if (box.getSelectedItem().equals(paramStates[0])
+					|| box.getSelectedItem().equals(states[0])) {
+				setDefault();
 			}
 			else {
-				if (box != null) {
-					if (box.getSelectedItem().equals(states[0])) {
-						setDefault();
-					} else {
-						setCustom();
-					}
+				setCustom();
+			}
+		}
+		else {
+			if (box != null) {
+				if (box.getSelectedItem().equals(states[0])) {
+					setDefault();
+				}
+				else {
+					setCustom();
 				}
 			}
 		}
+		// }
 	}
 
 	private void init(String nameString, String valueString, String stateString) {
@@ -215,9 +218,12 @@ public class PropertyField extends JPanel implements ActionListener,
 	}
 
 	public void setCustom() {
-		if (isEnabled && box != null) {
-			field.setEnabled(true);
-			name.setEnabled(true);
+		// if (isEnabled && box != null) {
+		if (box != null) {
+			if (isEnabled) {
+				field.setEnabled(true);
+				name.setEnabled(true);
+			}
 			if (paramsOnly) {
 				box.setSelectedItem(paramStates[1]);
 				if (sweep != null) {
