@@ -382,7 +382,7 @@ public class Run implements ActionListener {
 				nary.setProperty("reb2sac.absolute.inhibition.threshold." + getSpeciesProps.get(i),
 						inhib.get(i).getText().trim());
 			}
-			String[] consLevels = Buttons.getList(conLevel.get(i), consLevel.get(i));
+			String[] consLevels = Utility.getList(conLevel.get(i), consLevel.get(i));
 			for (int j = 0; j < counts.get(i); j++) {
 				nary
 						.remove("reb2sac.concentration.level." + getSpeciesProps.get(i) + "."

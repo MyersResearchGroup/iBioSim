@@ -99,7 +99,7 @@ import org.w3c.dom.DOMImplementation;
 
 import parser.TSDParser;
 import reb2sac.Reb2Sac;
-import util.Buttons;
+import util.Utility;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Rectangle;
@@ -4533,7 +4533,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			else {
 				file = new File(biosimrc.get("biosim.general.export_dir", ""));
 			}
-			String filename = Buttons.browse(Gui.frame, file, null, JFileChooser.FILES_ONLY,
+			String filename = Utility.browse(Gui.frame, file, null, JFileChooser.FILES_ONLY,
 					export, output);
 			if ((filename.length() > 4)
 					&& (filename.substring((filename.length() - 4), filename.length())
@@ -4716,7 +4716,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			else {
 				file = new File(biosimrc.get("biosim.general.export_dir", ""));
 			}
-			String filename = Buttons.browse(Gui.frame, file, null, JFileChooser.FILES_ONLY,
+			String filename = Utility.browse(Gui.frame, file, null, JFileChooser.FILES_ONLY,
 					export, output);
 			if (!filename.equals("")) {
 				file = new File(filename);

@@ -669,7 +669,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 			else {
 				file = new File(biosimrc.get("biosim.general.import_dir", ""));
 			}
-			String importFile = Buttons.browse(Gui.frame, file, null,
+			String importFile = Utility.browse(Gui.frame, file, null,
 					JFileChooser.FILES_AND_DIRECTORIES, "Import", -1);
 			if (importFile != null && !importFile.trim().equals("")) {
 				saveChanges(null);

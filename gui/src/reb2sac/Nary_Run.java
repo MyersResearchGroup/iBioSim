@@ -433,12 +433,12 @@ public class Nary_Run implements ActionListener, Runnable {
 			Object[] adding = { highLow.getSelectedItem() + "." + speci.getSelectedItem() };
 			add.setListData(adding);
 			add.setSelectedIndex(0);
-			finalStates = Buttons.add(finalStates, finalState, add, false, amountTerm, ge, gt, eq,
+			finalStates = Utility.add(finalStates, finalState, add, false, amountTerm, ge, gt, eq,
 					lt, le, naryFrame);
 		}
 		// if the remove button for the final states is clicked
 		else if (e.getSource() == finalRemove) {
-			Buttons.remove(finalState, finalStates);
+			Utility.remove(finalState, finalStates);
 		}
 		// if the add or remove button for the species properties is clicked
 		else {
@@ -458,7 +458,7 @@ public class Nary_Run implements ActionListener, Runnable {
 						Object[] adding = { "" + get };
 						add.setListData(adding);
 						add.setSelectedIndex(0);
-						Object[] sort = Buttons.add(conLevel.get(number), consLevel.get(number),
+						Object[] sort = Utility.add(conLevel.get(number), consLevel.get(number),
 								add, false, amountTerm, ge, gt, eq, lt, le, naryFrame);
 						int in;
 						for (int out = 1; out < sort.length; out++) {
@@ -484,7 +484,7 @@ public class Nary_Run implements ActionListener, Runnable {
 			else if (e.getActionCommand().contains("Remove")) {
 				int number = Integer.parseInt(e.getActionCommand().substring(6,
 						e.getActionCommand().length()));
-				Buttons.remove(consLevel.get(number), conLevel.get(number));
+				Utility.remove(consLevel.get(number), conLevel.get(number));
 			}
 		}
 	}
@@ -573,7 +573,7 @@ public class Nary_Run implements ActionListener, Runnable {
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		String[] finalS = Buttons.getList(finalStates, finalState);
+		String[] finalS = Utility.getList(finalStates, finalState);
 		Run runProgram = new Run(null);
 		naryCancel.addActionListener(runProgram);
 		runProgram.createNaryProperties(timeLimit, useInterval, printInterval, minTimeStep,

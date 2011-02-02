@@ -2,7 +2,7 @@ package verification;
 
 import javax.swing.*;
 
-import util.Buttons;
+import util.Utility;
 
 import java.awt.*;
 import java.awt.event.*;

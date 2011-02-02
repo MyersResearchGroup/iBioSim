@@ -13,7 +13,7 @@ import javax.swing.*;
  * 
  * @author Curtis Madsen
  */
-public class Buttons {
+public class Utility {
 
 	/**
 	 * Returns the pathname of the selected file in the file chooser.
