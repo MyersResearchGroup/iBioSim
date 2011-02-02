@@ -4,12 +4,10 @@ package learn;
 import lhpn2sbml.parser.LhpnFile;
 import lhpn2sbml.parser.Lpn2verilog;
 import parser.*;
-
-import java.awt.Container;
 import java.io.*;
 import java.util.*;
 
-// javax.jws.soap.InitParam;
+import javax.jws.soap.InitParam;
 import javax.swing.*;
 
 //import org.sbml.libsbml.*;
@@ -161,7 +159,7 @@ public class LearnModel { // added ItemListener SB
 	private HashMap<String, ArrayList<String>> destabMap;
 
 	private double stableTolerance;
-
+	
 	private ArrayList<String> startPlaces;
 	
 	// Pattern lParenR = Pattern.compile("\\(+"); 
@@ -565,8 +563,7 @@ public class LearnModel { // added ItemListener SB
 										careOpChange = true;
 									//String pPrev = g.getPreset(t)[0];
 									//String nextPlace = g.getPostset(t)[0];
-									
-									 
+								//	String nextPlaceKey = getPlaceInfoIndex(g.getPostset(t)[0]);
 									//int mind = (int) Math.floor(Double.parseDouble(transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+ "," +getPlaceInfoIndex(nextPlace)).getProperty("dMin")));
 									//int maxd = (int) Math.floor(Double.parseDouble(transientNetTransitions.get(getTransientNetPlaceIndex(pPrev)+ "," +getPlaceInfoIndex(nextPlace)).getProperty("dMax")));
 									int mind = (int) Math.floor(Double.parseDouble(transientNetTransitions.get(tKey).getProperty("dMin")));
@@ -1324,7 +1321,7 @@ public class LearnModel { // added ItemListener SB
 					String condStr = "";
 					for (int j = 0; j < reqdVarsL.size(); j++){ // preserving the order by having reqdVarsL as outer loop rather than care
 						String st2 = reqdVarsL.get(j).getName();
-					//	if (reqdVarsL.get(j).isCare()){
+						//	if (reqdVarsL.get(j).isCare()){
 							if (reqdVarsL.get(j).isInput()){
 								if (reqdVarsL.get(j).isCare()) {
 									int bin = Integer.valueOf(binOutgoing[getCareIndex(j)]);
@@ -1404,8 +1401,8 @@ public class LearnModel { // added ItemListener SB
 								// deal with rates for continuous here
 							}
 					//	} else {
-					//		out.write(st2 + " was don't care " + "\n");
-					//	}
+						///	out.write(st2 + " was don't care " + "\n");
+						//}
 					}
 					out.write("Changed enabling of t" + numTransitions + " to " + condStr + "\n");
 					g.addEnabling("t" + numTransitions, condStr);
@@ -1512,7 +1509,7 @@ public class LearnModel { // added ItemListener SB
 					//while ((mark < data.get(0).size()) && (compareBins(i, mark))) {
 					while (mark < data.get(0).size()){
 						if (compareBins(i, mark)){
-							if (compareFullBinInputs(i, mark) && !compareFullBins(i,mark)){ // new case to deal with non-care output change
+						    if (compareFullBinInputs(i, mark) && !compareFullBins(i,mark)){ // new case to deal with non-care output change
 								break;
 							}
 							for (int j = 0; j < reqdVarsL.size(); j++){
@@ -1523,9 +1520,7 @@ public class LearnModel { // added ItemListener SB
 						} else 
 							break;
 						//Assume that only inputs can be don't care
-						//if (!compareFullBinInputs(markFullPrev, mark-1)){ //mark-1 because of mark++ above
-						//New change both inputs and outputs can be don't care
-						if (!compareFullBins(markFullPrev, mark-1)){ //mark-1 because of mark++ above	
+						if (!compareFullBins(markFullPrev, mark-1)){ //mark-1 because of mark++ above
 							markFullPrev = mark-1;
 						}
 					}
@@ -1707,7 +1702,7 @@ public class LearnModel { // added ItemListener SB
 		}
 		return true;
 	}
-	
+
 	public boolean compareFullBins(int j, int mark) {
 		for (int i = 0; i < reqdVarsL.size(); i++) {
 			if (bins[i][j] != bins[i][mark]) {
@@ -1884,7 +1879,7 @@ public class LearnModel { // added ItemListener SB
 											numTransitions++;
 											cvgProp.setProperty("transitions", String.valueOf(Integer.parseInt(cvgProp.getProperty("transitions"))+1));
 										}
-									} else if (transientPlaceReqd && transientNetTransitions.containsKey(transId)){
+								} else if (transientPlaceReqd && transientNetTransitions.containsKey(transId)){
 										out.write("transientNetTransitions\n");
 										int removeTrans = Integer.valueOf(transientNetTransitions.get(transId).getProperty("transitionNum"));
 										String lastLastPlace = g.getTransition("t" + removeTrans).getPreset()[0].getName();
@@ -4646,7 +4641,7 @@ public class LearnModel { // added ItemListener SB
 			}
 			first = true;
 			for (String st1: l1.getTransitionList()){
-				if ((st1.matches(pt1)) || (st1.matches(pt2))){
+			if ((st1.matches(pt1)) || (st1.matches(pt2))){
 					st1 = st1.replaceAll("pt", "");
 					st1 = st1.replaceAll("PT", "");
 					ptNum = Integer.valueOf(st1);
