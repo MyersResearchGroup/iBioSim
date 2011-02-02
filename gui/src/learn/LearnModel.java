@@ -1,8 +1,9 @@
 package learn;
 
 //import gcm2sbml.parser.GCMFile;
-import lhpn2sbml.parser.LhpnFile;
-import lhpn2sbml.parser.Lpn2verilog;
+import lpn.parser.LhpnFile;
+import lpn.parser.Lpn2verilog;
+import main.*;
 import parser.*;
 import java.io.*;
 import java.util.*;
@@ -11,7 +12,6 @@ import java.util.*;
 import javax.swing.*;
 
 //import org.sbml.libsbml.*;
-import biomodelsim.*;
 
 /**
  * This class generates an LHPN model from the simulation traces provided
@@ -179,7 +179,7 @@ public class LearnModel { // added ItemListener SB
 	 *  Version 3 : Satish Batchu (LearnModel.java)
 	 */
 	
-	public LhpnFile learnModel(String directory, Log log, BioSim biosim, int moduleNumber, HashMap<String, 
+	public LhpnFile learnModel(String directory, Log log, Gui biosim, int moduleNumber, HashMap<String, 
 			ArrayList<Double>> thresh, HashMap<String,Double> tPar, ArrayList<Variable> rVarsL, 
 			HashMap<String, ArrayList<String>> dstab, Boolean netForStable, boolean pseudoEnable, 
 			boolean transientPlaceReqd, Double vScaleFactor, Double dScaleFactor, String failProp) {
@@ -836,19 +836,19 @@ public class LearnModel { // added ItemListener SB
 			//writeVerilogAMSFile(lhpnFile.replace(".lpn",".vams"));
 		} catch (IOException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"LPN file couldn't be created/written.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 		catch (NullPointerException e4) {
 			e4.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"LPN file couldn't be created/written. Null exception",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 		catch (ArrayIndexOutOfBoundsException e1) {	// comes from initMark = -1 of updateGraph()
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Unable to calculate rates.\nWindow size or pathLengthBin must be reduced.\nLearning unsuccessful.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 			try {
@@ -860,7 +860,7 @@ public class LearnModel { // added ItemListener SB
 		} catch (java.lang.IllegalStateException e3){
 			e3.printStackTrace();
 			//System.out.println("LPN file couldn't be created/written ");
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"LPN File not found for merging.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -1423,14 +1423,14 @@ public class LearnModel { // added ItemListener SB
 				}
 			} catch (NullPointerException e) {
 				e.printStackTrace();
-				JOptionPane.showMessageDialog(BioSim.frame,
+				JOptionPane.showMessageDialog(Gui.frame,
 						"Null exception in addInitPlace.",
 						"ERROR!", JOptionPane.ERROR_MESSAGE);
 				out.close();
 			}
 		}catch (IOException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Log file couldn't be opened in addInitPlace.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -1477,7 +1477,7 @@ public class LearnModel { // added ItemListener SB
 							}
 						}
 						if (binError)
-							JOptionPane.showMessageDialog(BioSim.frame,
+							JOptionPane.showMessageDialog(Gui.frame,
 									"Bin couldn't be retrieved for a point. Please check thresholds.",
 									"ERROR!", JOptionPane.ERROR_MESSAGE);	
 
@@ -1616,12 +1616,12 @@ public class LearnModel { // added ItemListener SB
 			}
 		} catch (NullPointerException e){
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Bins/Rates could not be generated. Please check thresholds.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);				
 		} catch (IOException e){
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Log file couldn't be opened for writing genBinsRates messages.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -1990,12 +1990,12 @@ public class LearnModel { // added ItemListener SB
 			}
 		}catch (IOException e){
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Log file couldn't be opened for writing UpdateRateInfo messages.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}catch (NullPointerException e4) {
 			e4.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Null exception during model generation in updateRate",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -2209,7 +2209,7 @@ public class LearnModel { // added ItemListener SB
 		}catch (IOException e) {
 			e.printStackTrace();
 			//System.out.println("LPN file couldn't be created/written ");
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Log file couldn't be opened for writing rates and bins.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -2685,7 +2685,7 @@ public class LearnModel { // added ItemListener SB
 		} catch (IOException e) {
 			e.printStackTrace();
 			//System.out.println("LPN file couldn't be created/written ");
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Log file couldn't be opened for writing rates and bins.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -2771,7 +2771,7 @@ public class LearnModel { // added ItemListener SB
 		catch (NullPointerException e){
 			e.printStackTrace();
 			//System.out.println("LPN file couldn't be created/written ");
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Not all regions have values for all dmv variables",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -2869,13 +2869,13 @@ public class LearnModel { // added ItemListener SB
 		}
 		catch(NullPointerException e){
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Delay scaling error due to null. Check",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 		catch(java.lang.ArrayIndexOutOfBoundsException e){
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Delay scaling error due to Array Index.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -3292,7 +3292,7 @@ public class LearnModel { // added ItemListener SB
 			}
 		}catch (IOException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Log file couldn't be written.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -3369,7 +3369,7 @@ public class LearnModel { // added ItemListener SB
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Log file couldn't be written.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -4066,12 +4066,12 @@ public class LearnModel { // added ItemListener SB
 			
 		}
 		catch(IOException e){
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"VHDL-AMS model couldn't be created/written.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 		catch(Exception e){
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Error in VHDL-AMS model generation.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -4577,12 +4577,12 @@ public class LearnModel { // added ItemListener SB
 		}
 		catch(IOException e){
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Verilog-AMS model couldn't be created/written.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 		catch(Exception e){
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Error in Verilog-AMS model generation.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
@@ -4743,7 +4743,7 @@ public class LearnModel { // added ItemListener SB
 			tmp.delete();
 		}catch(Exception e){
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Problem while merging lpns",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}

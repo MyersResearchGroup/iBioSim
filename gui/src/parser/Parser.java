@@ -7,7 +7,8 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.*;
 import javax.swing.*;
-import biomodelsim.*;
+
+import main.*;
 
 public class Parser {
 
@@ -22,7 +23,7 @@ public class Parser {
 	public Parser(ArrayList<String> species, ArrayList<ArrayList<Double>> data) {
 		this.species = species;
 		this.data = data;
-		component = BioSim.frame;
+		component = Gui.frame;
 	}
 
 	public ArrayList<String> getSpecies() {

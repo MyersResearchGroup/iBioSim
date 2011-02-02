@@ -2,6 +2,8 @@ package verification;
 
 import javax.swing.*;
 
+import util.Buttons;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.BufferedReader;
@@ -14,12 +16,11 @@ import java.io.IOException; //import java.io.InputStream;
 //import java.util.ArrayList;
 import java.util.Properties;
 
-import lhpn2sbml.parser.LhpnFile;
+import lpn.parser.LhpnFile;
+import main.*;
 
-import gcm2sbml.gui.PropertyList; //import gcm2sbml.util.Utility;
+import gcm.gui.PropertyList;
 
-import biomodelsim.*;
-import buttons.Buttons;
 
 /**
  * This class creates a GUI front end for the Verification tool. It provides the
@@ -251,7 +252,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		change = false;
 	}
 
-	public AbstPane(String directory, String lpnFile, Log log, BioSim biosim,
+	public AbstPane(String directory, String lpnFile, Log log, Gui biosim,
 			boolean lema, boolean atacs) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
@@ -460,7 +461,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			}
 			addAbsPanel.add(absList, "Center");
 			String[] options = { "Add", "Cancel" };
-			int value = JOptionPane.showOptionDialog(BioSim.frame, addAbsPanel,
+			int value = JOptionPane.showOptionDialog(Gui.frame, addAbsPanel,
 					"Add abstraction method", JOptionPane.YES_NO_OPTION,
 					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
@@ -582,7 +583,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void saveAs() {
-		String newName = JOptionPane.showInputDialog(BioSim.frame,
+		String newName = JOptionPane.showInputDialog(Gui.frame,
 				"Enter Verification name:", "Verification Name",
 				JOptionPane.PLAIN_MESSAGE);
 		if (newName == null) {
@@ -640,7 +641,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			change = false;
 		} catch (Exception e1) {
 			// e1.printStackTrace();
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Unable to save parameter file!", "Error Saving File",
 					JOptionPane.ERROR_MESSAGE);
 		}
@@ -661,7 +662,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 					out.close();
 				} catch (IOException e1) {
 					e1.printStackTrace();
-					JOptionPane.showMessageDialog(BioSim.frame,
+					JOptionPane.showMessageDialog(Gui.frame,
 							"Cannot add the selected component.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
@@ -742,15 +743,15 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 				scrolls.setMinimumSize(new Dimension(500, 500));
 				scrolls.setPreferredSize(new Dimension(500, 500));
 				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(BioSim.frame, scrolls, "Run Log",
+				JOptionPane.showMessageDialog(Gui.frame, scrolls, "Run Log",
 						JOptionPane.INFORMATION_MESSAGE);
 			} else {
-				JOptionPane.showMessageDialog(BioSim.frame,
+				JOptionPane.showMessageDialog(Gui.frame,
 						"No run log exists.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(BioSim.frame,
+			JOptionPane.showMessageDialog(Gui.frame,
 					"Unable to view run log.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}

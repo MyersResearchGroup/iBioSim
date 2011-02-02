@@ -3,7 +3,7 @@ package reb2sac;
 import java.awt.Component;
 import java.util.*;
 
-import gcm2sbml.gui.GCM2SBMLEditor;
+import gcm.gui.GCM2SBMLEditor;
 
 import javax.swing.*;
 

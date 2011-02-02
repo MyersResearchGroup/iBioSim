@@ -10,23 +10,23 @@ import javax.swing.*;
 
 import parser.*;
 
-import lhpn2sbml.gui.LHPNEditor;
-import lhpn2sbml.parser.Abstraction;
-import lhpn2sbml.parser.LhpnFile;
-import lhpn2sbml.parser.Translator;
+import lpn.gui.LHPNEditor;
+import lpn.parser.Abstraction;
+import lpn.parser.LhpnFile;
+import lpn.parser.Translator;
+import main.*;
 import gillespieSSAjava.GillespieSSAJavaSingleStep;
 
-import biomodelsim.*;
-import gcm2sbml.gui.GCM2SBMLEditor;
-import gcm2sbml.parser.GCMFile;
-import gcm2sbml.util.GlobalConstants;
+import gcm.gui.GCM2SBMLEditor;
+import gcm.parser.GCMFile;
+import gcm.util.GlobalConstants;
 import graph.*;
-import buttons.*;
 import sbmleditor.*;
 import stategraph.BuildStateGraphThread;
 import stategraph.PerfromSteadyStateMarkovAnalysisThread;
 import stategraph.PerfromTransientMarkovAnalysisThread;
 import stategraph.StateGraph;
+import util.*;
 import verification.AbstPane;
 
 /**
@@ -465,7 +465,7 @@ public class Run implements ActionListener {
 			JRadioButton lhpn, Component component, JRadioButton ode, JRadioButton monteCarlo,
 			String sim, String printer_id, String printer_track_quantity, String outDir,
 			JRadioButton nary, int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA,
-			String ssaFile, BioSim biomodelsim, JTabbedPane simTab, String root,
+			String ssaFile, Gui biomodelsim, JTabbedPane simTab, String root,
 			JProgressBar progress, String simName, GCM2SBMLEditor gcmEditor, String direct,
 			double timeLimit, double runTime, String modelFile, AbstPane abstPane,
 			JRadioButton abstraction, String lpnProperty, double absError, double timeStep,
@@ -1463,18 +1463,18 @@ public class Run implements ActionListener {
 			log.addText("Total Simulation Time: " + time + " for " + simName + "\n\n");
 			if (exitValue != 0) {
 				if (exitValue == 143) {
-					JOptionPane.showMessageDialog(BioSim.frame, "The simulation was"
+					JOptionPane.showMessageDialog(Gui.frame, "The simulation was"
 							+ " canceled by the user.", "Canceled Simulation",
 							JOptionPane.ERROR_MESSAGE);
 				}
 				else if (exitValue == 139) {
-					JOptionPane.showMessageDialog(BioSim.frame,
+					JOptionPane.showMessageDialog(Gui.frame,
 							"The selected model is not a valid sbml file."
 									+ "\nYou must select an sbml file.", "Not An SBML File",
 							JOptionPane.ERROR_MESSAGE);
 				}
 				else {
-					JOptionPane.showMessageDialog(BioSim.frame, "Error In Execution!\n"
+					JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!\n"
 							+ "Bad Return Value!\n" + "The reb2sac program returned " + exitValue
 							+ " as an exit value.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
@@ -2619,12 +2619,12 @@ public class Run implements ActionListener {
 			}
 		}
 		catch (InterruptedException e1) {
-			JOptionPane.showMessageDialog(BioSim.frame, "Error In Execution!",
+			JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!",
 					"Error In Execution", JOptionPane.ERROR_MESSAGE);
 			e1.printStackTrace();
 		}
 		catch (IOException e1) {
-			JOptionPane.showMessageDialog(BioSim.frame, "File I/O Error!", "File I/O Error",
+			JOptionPane.showMessageDialog(Gui.frame, "File I/O Error!", "File I/O Error",
 					JOptionPane.ERROR_MESSAGE);
 			e1.printStackTrace();
 		}

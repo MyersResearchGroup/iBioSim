@@ -16,7 +16,8 @@ package reb2sac;
 //#line 2 "TermCond.y"
 import java.util.*;
 import javax.swing.*;
-import biomodelsim.*;
+
+import main.*;
 
 //#line 25 "TermCond.java"
 
@@ -588,7 +589,7 @@ public class TermCond {
 				// #line 67 "TermCond.y"
 			{
 				if (!(val_peek(3).sval.equals("exp")) && !(val_peek(3).sval.equals("log"))) {
-					JOptionPane.showMessageDialog(BioSim.frame, "Expected exp or log!", "Error",
+					JOptionPane.showMessageDialog(Gui.frame, "Expected exp or log!", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return 2;
 				}
@@ -598,7 +599,7 @@ public class TermCond {
 				// #line 76 "TermCond.y"
 			{
 				if (!(val_peek(5).sval.equals("pow"))) {
-					JOptionPane.showMessageDialog(BioSim.frame, "Expected pow!", "Error",
+					JOptionPane.showMessageDialog(Gui.frame, "Expected pow!", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return 3;
 				}
@@ -617,7 +618,7 @@ public class TermCond {
 						}
 					}
 					if (!found) {
-						JOptionPane.showMessageDialog(BioSim.frame, val_peek(0).sval
+						JOptionPane.showMessageDialog(Gui.frame, val_peek(0).sval
 								+ " is not a valid species!", "Error", JOptionPane.ERROR_MESSAGE);
 						return 4;
 					}
@@ -636,7 +637,7 @@ public class TermCond {
 					}
 				}
 				if (!found) {
-					JOptionPane.showMessageDialog(BioSim.frame, val_peek(0).sval
+					JOptionPane.showMessageDialog(Gui.frame, val_peek(0).sval
 							+ " is not a valid species!", "Error", JOptionPane.ERROR_MESSAGE);
 					return 5;
 				}
@@ -654,7 +655,7 @@ public class TermCond {
 					}
 				}
 				if (!found) {
-					JOptionPane.showMessageDialog(BioSim.frame, val_peek(0).sval
+					JOptionPane.showMessageDialog(Gui.frame, val_peek(0).sval
 							+ " is not a valid species!", "Error", JOptionPane.ERROR_MESSAGE);
 					return 6;
 				}
@@ -671,7 +672,7 @@ public class TermCond {
 					}
 				}
 				if (!found) {
-					JOptionPane.showMessageDialog(BioSim.frame, val_peek(0).sval
+					JOptionPane.showMessageDialog(Gui.frame, val_peek(0).sval
 							+ " is not a valid reaction!", "Error", JOptionPane.ERROR_MESSAGE);
 					return 6;
 				}

@@ -6,9 +6,10 @@ import java.awt.event.*;
 import java.util.*;
 import javax.swing.*;
 
+import main.*;
+
+import util.*;
 import verification.AbstPane;
-import biomodelsim.*;
-import buttons.*;
 
 /**
  * This is the Nary_Run class. It creates a GUI for input in the nary
@@ -101,7 +102,7 @@ public class Nary_Run implements ActionListener, Runnable {
 
 	private String ssaFile; // ssa filename
 
-	private BioSim biomodelsim; // tstubd gui
+	private Gui biomodelsim; // tstubd gui
 
 	private JTabbedPane simTab; // the simulation tab
 
@@ -134,7 +135,7 @@ public class Nary_Run implements ActionListener, Runnable {
 			double minTimeStep, double timeStep, String outDir, long rndSeed, int run,
 			String printer_id, String printer_track_quantity, String[] termCond,
 			String[] intSpecies, double rap1, double rap2, double qss, int con, Log log,
-			JCheckBox usingSSA, String ssaFile, BioSim biomodelsim, JTabbedPane simTab,
+			JCheckBox usingSSA, String ssaFile, Gui biomodelsim, JTabbedPane simTab,
 			String root, String direct, String modelFile, JRadioButton abstraction,
 			AbstPane abstPane, double absError) {
 		if (File.separator.equals("\\")) {
