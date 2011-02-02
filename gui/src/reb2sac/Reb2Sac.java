@@ -857,7 +857,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					Object[] adding = { add };
 					addSAD.setListData(adding);
 					addSAD.setSelectedIndex(0);
-					sadList = Buttons.add(sadList, sad, addSAD, false, null, null, null, null,
+					sadList = Utility.add(sadList, sad, addSAD, false, null, null, null, null,
 							null, null, this);
 					// sadFile.append("" + (char) read);
 					read = input.readLine();
@@ -1376,12 +1376,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// }
 		// if the add termination conditions button is clicked
 		else if (e.getSource() == addTermCond) {
-			termConditions = Buttons.add(termConditions, terminations, termCond, true, amountTerm,
+			termConditions = Utility.add(termConditions, terminations, termCond, true, amountTerm,
 					ge, gt, eq, lt, le, this);
 		}
 		// if the remove termination conditions button is clicked
 		else if (e.getSource() == removeTermCond) {
-			termConditions = Buttons.remove(terminations, termConditions);
+			termConditions = Utility.remove(terminations, termConditions);
 		}
 		// if the clear termination conditions button is clicked
 		else if (e.getSource() == clearTermCond) {
@@ -1946,10 +1946,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				Object[] adding = { add };
 				addSSA.setListData(adding);
 				addSSA.setSelectedIndex(0);
-				ssaList = Buttons.add(ssaList, ssa, addSSA, false, null, null, null, null, null,
+				ssaList = Utility.add(ssaList, ssa, addSSA, false, null, null, null, null, null,
 						null, this);
 				int[] index = ssa.getSelectedIndices();
-				ssaList = Buttons.getList(ssaList, ssa);
+				ssaList = Utility.getList(ssaList, ssa);
 				ssa.setSelectedIndices(index);
 				ArrayList<String> sortName = new ArrayList<String>();
 				for (int i = 0; i < ssaList.length; i++) {
@@ -2017,7 +2017,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				TCid.setText("");
 				desc.setText("");
 				cond.setText("");
-				sadList = Buttons.add(sadList, sad, addSAD, false, null, null, null, null, null,
+				sadList = Utility.add(sadList, sad, addSAD, false, null, null, null, null, null,
 						null, this);
 				sad.setListData(sadList);
 			}
@@ -2147,7 +2147,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							+ " " + modify + mod1;
 					int[] index = ssa.getSelectedIndices();
 					ssa.setListData(ssaList);
-					ssaList = Buttons.getList(ssaList, ssa);
+					ssaList = Utility.getList(ssaList, ssa);
 					ssa.setSelectedIndices(index);
 					ArrayList<String> sortName = new ArrayList<String>();
 					for (int i = 0; i < ssaList.length; i++) {
@@ -2197,7 +2197,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							String[] remove = ((String) ssaList[i]).split(" ");
 							if (!remove[2].equals(modify + mod1) && !done) {
 								ssa.setSelectedIndex(i);
-								ssaList = Buttons.remove(ssa, ssaList);
+								ssaList = Utility.remove(ssa, ssaList);
 								index = ssa.getSelectedIndices();
 								// ssaList = Buttons.getList(ssaList, ssa);
 								ssa.setSelectedIndices(index);
@@ -2206,7 +2206,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						}
 						if (!done) {
 							ssa.setSelectedIndex(count.get(0));
-							ssaList = Buttons.remove(ssa, ssaList);
+							ssaList = Utility.remove(ssa, ssaList);
 							index = ssa.getSelectedIndices();
 							// ssaList = Buttons.getList(ssaList, ssa);
 							ssa.setSelectedIndices(index);
@@ -2270,7 +2270,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								+ desc.getText().trim() + "; " + cond.getText().trim();
 						int[] index = sad.getSelectedIndices();
 						sad.setListData(sadList);
-						sadList = Buttons.getList(sadList, sad);
+						sadList = Utility.getList(sadList, sad);
 						sad.setSelectedIndices(index);
 						sad.setListData(sadList);
 					}
@@ -2310,7 +2310,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							+ Value.getText().trim();
 					int[] index = properties.getSelectedIndices();
 					properties.setListData(props);
-					props = Buttons.getList(props, properties);
+					props = Utility.getList(props, properties);
 					properties.setSelectedIndices(index);
 					properties.setListData(props);
 				}
@@ -2375,32 +2375,32 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				if (e.getSource() == addPreAbs) {
-					Buttons.add(preAbs, absList.getSelectedItem());
+					Utility.add(preAbs, absList.getSelectedItem());
 				}
 				else if (e.getSource() == addLoopAbs) {
-					Buttons.add(loopAbs, absList.getSelectedItem());
+					Utility.add(loopAbs, absList.getSelectedItem());
 				}
 				else {
-					Buttons.add(postAbs, absList.getSelectedItem());
+					Utility.add(postAbs, absList.getSelectedItem());
 				}
 			}
 		}
 		else if (e.getSource() == rmPreAbs) {
-			Buttons.remove(preAbs);
+			Utility.remove(preAbs);
 		}
 		else if (e.getSource() == rmLoopAbs) {
-			Buttons.remove(loopAbs);
+			Utility.remove(loopAbs);
 		}
 		else if (e.getSource() == rmPostAbs) {
-			Buttons.remove(postAbs);
+			Utility.remove(postAbs);
 		}
 		// if the remove ssa button is clicked
 		else if (e.getSource() == removeSSA) {
-			ssaList = Buttons.remove(ssa, ssaList);
+			ssaList = Utility.remove(ssa, ssaList);
 		}
 		// if the remove sad button is clicked
 		else if (e.getSource() == removeSAD) {
-			sadList = Buttons.remove(sad, sadList);
+			sadList = Utility.remove(sad, sadList);
 		}
 		// if the new ssa button is clicked
 		else if (e.getSource() == newSSA) {
@@ -2433,7 +2433,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the remove properties button is clicked
 		else if (e.getSource() == removeProp) {
-			props = Buttons.remove(properties, props);
+			props = Utility.remove(properties, props);
 		}
 		// if the add properties button is clicked
 		else if (e.getSource() == addProp) {
@@ -2453,7 +2453,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			Object[] adding = { add };
 			addPropery.setListData(adding);
 			addPropery.setSelectedIndex(0);
-			props = Buttons.add(props, properties, addPropery, false, null, null, null, null, null,
+			props = Utility.add(props, properties, addPropery, false, null, null, null, null, null,
 					null, this);
 		}
 		else if (e.getSource() == append) {
@@ -2693,7 +2693,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			printer_track_quantity = "concentration";
 		}
 		int[] index = terminations.getSelectedIndices();
-		String[] termCond = Buttons.getList(termConditions, terminations);
+		String[] termCond = Utility.getList(termConditions, terminations);
 		terminations.setSelectedIndices(index);
 		// index = species.getSelectedIndices();
 		String[] intSpecies = getInterestingSpecies();
@@ -2817,7 +2817,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			FileOutputStream out = new FileOutputStream(new File(root + separator + outDir
 					+ separator + "user-defined.dat"));
 			int[] indecies = ssa.getSelectedIndices();
-			ssaList = Buttons.getList(ssaList, ssa);
+			ssaList = Utility.getList(ssaList, ssa);
 			ssa.setSelectedIndices(indecies);
 			String save = "";
 			for (int i = 0; i < ssaList.length; i++) {
@@ -3038,7 +3038,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				"user-defined.dat", usingSAD, new File(root + separator + outDir + separator
 						+ "termCond.sad"), preAbs, loopAbs, postAbs, lhpnAbstraction);
 		int[] indecies = properties.getSelectedIndices();
-		props = Buttons.getList(props, properties);
+		props = Utility.getList(props, properties);
 		properties.setSelectedIndices(indecies);
 		try {
 			Properties getProps = new Properties();
@@ -3254,17 +3254,17 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// editInterstingSpecies();
 			// }
 			if (e.getSource() == termCond) {
-				termConditions = Buttons.add(termConditions, terminations, termCond, true,
+				termConditions = Utility.add(termConditions, terminations, termCond, true,
 						amountTerm, ge, gt, eq, lt, le, this);
 			}
 			else if (e.getSource() == terminations) {
-				termConditions = Buttons.remove(terminations, termConditions);
+				termConditions = Utility.remove(terminations, termConditions);
 			}
 			else if (e.getSource() == ssa) {
 				editSSA.doClick();
 			}
 			else if (e.getSource() == properties) {
-				props = Buttons.remove(properties, props);
+				props = Utility.remove(properties, props);
 			}
 		}
 	}
@@ -3413,7 +3413,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			printer_track_quantity = "concentration";
 		}
 		int[] index = terminations.getSelectedIndices();
-		String[] termCond = Buttons.getList(termConditions, terminations);
+		String[] termCond = Utility.getList(termConditions, terminations);
 		terminations.setSelectedIndices(index);
 		// index = species.getSelectedIndices();
 		String[] intSpecies = getInterestingSpecies();
@@ -3537,7 +3537,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			FileOutputStream out = new FileOutputStream(new File(root + separator + simName
 					+ separator + "user-defined.dat"));
 			int[] indecies = ssa.getSelectedIndices();
-			ssaList = Buttons.getList(ssaList, ssa);
+			ssaList = Utility.getList(ssaList, ssa);
 			ssa.setSelectedIndices(indecies);
 			String save = "";
 			for (int i = 0; i < ssaList.length; i++) {
@@ -3604,7 +3604,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				"user-defined.dat", usingSAD, new File(root + separator + outDir + separator
 						+ "termCond.sad"), preAbs, loopAbs, postAbs, lhpnAbstraction);
 		int[] indecies = properties.getSelectedIndices();
-		props = Buttons.getList(props, properties);
+		props = Utility.getList(props, properties);
 		properties.setSelectedIndices(indecies);
 		try {
 			Properties getProps = new Properties();
@@ -3635,7 +3635,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	public void saveSAD(String outDir) {
 		try {
 			int[] indecies = sad.getSelectedIndices();
-			sadList = Buttons.getList(sadList, sad);
+			sadList = Utility.getList(sadList, sad);
 			if (sadList.length == 0)
 				return;
 			FileOutputStream out = new FileOutputStream(new File(root + separator + outDir

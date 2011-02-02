@@ -104,7 +104,7 @@ import sbmleditor.SBML_Editor;
 import datamanager.DataManager;
 import java.net.*;
 import uk.ac.ebi.biomodels.*;
-import util.Buttons;
+import util.Utility;
 import util.tabs.CloseAndMaxTabbedPane;
 
 //import datamanager.DataManagerLHPN;
@@ -3802,7 +3802,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 			else {
 				file = new File(biosimrc.get("biosim.general.project_dir", ""));
 			}
-			String filename = Buttons.browse(frame, file, null, JFileChooser.DIRECTORIES_ONLY,
+			String filename = Utility.browse(frame, file, null, JFileChooser.DIRECTORIES_ONLY,
 					"New", -1);
 			if (!filename.trim().equals("")) {
 				filename = filename.trim();
@@ -3909,7 +3909,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 				else {
 					file = new File(biosimrc.get("biosim.general.project_dir", ""));
 				}
-				projDir = Buttons.browse(frame, file, null, JFileChooser.DIRECTORIES_ONLY, "Open",
+				projDir = Utility.browse(frame, file, null, JFileChooser.DIRECTORIES_ONLY, "Open",
 						-1);
 				if (projDir.endsWith(".prj")) {
 					biosimrc.put("biosim.general.project_dir", projDir);
@@ -4800,7 +4800,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 				else {
 					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 				}
-				String filename = Buttons.browse(frame, importFile, null,
+				String filename = Utility.browse(frame, importFile, null,
 						JFileChooser.FILES_AND_DIRECTORIES, "Import SBML", -1);
 				if (!filename.trim().equals("")) {
 					biosimrc.put("biosim.general.import_dir", filename.trim());
@@ -5206,7 +5206,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 				else {
 					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 				}
-				String filename = Buttons.browse(frame, importFile, null,
+				String filename = Utility.browse(frame, importFile, null,
 						JFileChooser.FILES_AND_DIRECTORIES, "Import Genetic Circuit", -1);
 				if (filename != null && !filename.trim().equals("")) {
 					biosimrc.put("biosim.general.import_dir", filename.trim());
@@ -5303,7 +5303,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 				else {
 					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 				}
-				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+				String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
 						"Import VHDL Model", -1);
 				if (filename.length() > 3
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
@@ -5357,7 +5357,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 				else {
 					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 				}
-				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+				String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
 						"Import Assembly File", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 2, filename.length()).equals(
@@ -5411,7 +5411,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 				else {
 					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 				}
-				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+				String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
 						"Import Instruction File", -1);
 				if (filename.length() > 4
 						&& !filename.substring(filename.length() - 5, filename.length()).equals(
@@ -5465,7 +5465,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 				else {
 					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 				}
-				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+				String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
 						"Import LPN", -1);
 				if ((filename.length() > 1 && !filename.substring(filename.length() - 2,
 						filename.length()).equals(".g"))
@@ -5552,7 +5552,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 				else {
 					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 				}
-				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+				String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
 						"Import Net", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 2, filename.length()).equals(
@@ -5608,7 +5608,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 				else {
 					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 				}
-				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+				String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
 						"Import CSP", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
@@ -5663,7 +5663,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 				else {
 					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 				}
-				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+				String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
 						"Import HSE", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
@@ -5718,7 +5718,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 				else {
 					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 				}
-				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+				String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
 						"Import UNC", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
@@ -5773,7 +5773,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 				else {
 					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 				}
-				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+				String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
 						"Import RSG", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(
@@ -5828,7 +5828,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 				else {
 					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 				}
-				String filename = Buttons.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
+				String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
 						"Import Spice Circuit", -1);
 				if (filename.length() > 1
 						&& !filename.substring(filename.length() - 4, filename.length()).equals(

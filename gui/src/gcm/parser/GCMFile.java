@@ -54,8 +54,6 @@ import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
 
-import util.Buttons;
-
 import lpn.parser.LhpnFile;
 import main.Gui;
 import main.Log;
@@ -197,7 +195,7 @@ public class GCMFile {
 							Object[] adding = { "" + get };
 							add.setListData(adding);
 							add.setSelectedIndex(0);
-							Object[] sort = Buttons.add(conLevel.get(number),
+							Object[] sort = util.Utility.add(conLevel.get(number),
 									consLevel.get(number), add, false, null, null, null, null,
 									null, null, naryFrame);
 							int in;
@@ -225,7 +223,7 @@ public class GCMFile {
 				public void actionPerformed(ActionEvent e) {
 					int number = Integer.parseInt(e.getActionCommand().substring(6,
 							e.getActionCommand().length()));
-					conLevel.set(number, Buttons
+					conLevel.set(number, util.Utility
 							.remove(consLevel.get(number), conLevel.get(number)));
 				}
 			});
