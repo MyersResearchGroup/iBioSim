@@ -2442,9 +2442,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					 */
 				}
 				catch (Exception e1) {
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Must enter doubles into the inputs "
-									+ "to change the graph's dimensions!", "Error",
+					JOptionPane.showMessageDialog(Gui.frame, "Must enter doubles into the inputs "
+							+ "to change the graph's dimensions!", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -3113,6 +3112,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									series.get(g.getNumber()).setSelectionEnd(0);
 									colorsButtons.get(g.getNumber()).setBackground(
 											(Color) g.getShapeAndPaint().getPaint());
+									colorsButtons.get(g.getNumber()).setForeground(
+											(Color) g.getShapeAndPaint().getPaint());
 									colorsCombo.get(g.getNumber()).setSelectedItem(
 											g.getShapeAndPaint().getPaintName().split("_")[0]);
 									shapesCombo.get(g.getNumber()).setSelectedItem(
@@ -3135,6 +3136,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									series.get(g.getNumber()).setSelectionEnd(0);
 									colorsButtons.get(g.getNumber()).setBackground(
 											(Color) g.getShapeAndPaint().getPaint());
+									colorsButtons.get(g.getNumber()).setForeground(
+											(Color) g.getShapeAndPaint().getPaint());
 									colorsCombo.get(g.getNumber()).setSelectedItem(
 											g.getShapeAndPaint().getPaintName().split("_")[0]);
 									shapesCombo.get(g.getNumber()).setSelectedItem(
@@ -3155,6 +3158,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									series.get(g.getNumber()).setSelectionStart(0);
 									series.get(g.getNumber()).setSelectionEnd(0);
 									colorsButtons.get(g.getNumber()).setBackground(
+											(Color) g.getShapeAndPaint().getPaint());
+									colorsButtons.get(g.getNumber()).setForeground(
 											(Color) g.getShapeAndPaint().getPaint());
 									colorsCombo.get(g.getNumber()).setSelectedItem(
 											g.getShapeAndPaint().getPaintName().split("_")[0]);
@@ -3279,6 +3284,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								series.get(i).setSelectionEnd(0);
 								colorsCombo.get(i).setSelectedIndex(0);
 								colorsButtons.get(i).setBackground((Color) colors.get("Black"));
+								colorsButtons.get(i).setForeground((Color) colors.get("Black"));
 								shapesCombo.get(i).setSelectedIndex(0);
 							}
 							else {
@@ -3666,46 +3672,61 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								if (colorsCombo.get(k).getSelectedItem().equals("Red")) {
 									cols[0]++;
 									colorsButtons.get(k).setBackground((Color) colory.get("Red"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Red"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Blue")) {
 									cols[1]++;
 									colorsButtons.get(k).setBackground((Color) colory.get("Blue"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Blue"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Green")) {
 									cols[2]++;
 									colorsButtons.get(k).setBackground((Color) colory.get("Green"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Green"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow")) {
 									cols[3]++;
 									colorsButtons.get(k)
 											.setBackground((Color) colory.get("Yellow"));
+									colorsButtons.get(k)
+											.setForeground((Color) colory.get("Yellow"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta")) {
 									cols[4]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Magenta"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Magenta"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan")) {
 									cols[5]++;
 									colorsButtons.get(k).setBackground((Color) colory.get("Cyan"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Cyan"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Tan")) {
 									cols[6]++;
 									colorsButtons.get(k).setBackground((Color) colory.get("Tan"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Tan"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Gray (Dark)")) {
 									cols[7]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Gray (Dark)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Gray (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Dark)")) {
 									cols[8]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Red (Dark)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Red (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Dark)")) {
 									cols[9]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Blue (Dark)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Blue (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem()
@@ -3713,11 +3734,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									cols[10]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Green (Dark)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Green (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Yellow (Dark)")) {
 									cols[11]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Yellow (Dark)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Yellow (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
@@ -3725,15 +3750,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									cols[12]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Magenta (Dark)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Magenta (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Dark)")) {
 									cols[13]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Cyan (Dark)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Cyan (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Black")) {
 									cols[14]++;
 									colorsButtons.get(k).setBackground((Color) colory.get("Black"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Black"));
 								}
 								/*
 								 * else if
@@ -3755,11 +3785,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								else if (colorsCombo.get(k).getSelectedItem().equals("Gray")) {
 									cols[21]++;
 									colorsButtons.get(k).setBackground((Color) colory.get("Gray"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Gray"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Red (Extra Dark)")) {
 									cols[22]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Red (Extra Dark)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Red (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
@@ -3767,11 +3800,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									cols[23]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Blue (Extra Dark)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Blue (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Green (Extra Dark)")) {
 									cols[24]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Green (Extra Dark)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Green (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
@@ -3779,11 +3816,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									cols[25]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Yellow (Extra Dark)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Yellow (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Magenta (Extra Dark)")) {
 									cols[26]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Magenta (Extra Dark)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Magenta (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
@@ -3791,10 +3832,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									cols[27]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Cyan (Extra Dark)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Cyan (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Light)")) {
 									cols[28]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Red (Light)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Red (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem()
@@ -3802,11 +3847,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									cols[29]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Blue (Light)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Blue (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Green (Light)")) {
 									cols[30]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Green (Light)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Green (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
@@ -3814,11 +3863,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									cols[31]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Yellow (Light)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Yellow (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Magenta (Light)")) {
 									cols[32]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Magenta (Light)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Magenta (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem()
@@ -3826,11 +3879,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									cols[33]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Cyan (Light)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Cyan (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem()
 										.equals("Gray (Light)")) {
 									cols[34]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Gray (Light)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Gray (Light)"));
 								}
 								if (shapesCombo.get(k).getSelectedItem().equals("Square")) {
@@ -4055,6 +4112,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (paint == colory.get(set[j])) {
 								colorsCombo.get(i).setSelectedItem(set[j]);
 								colorsButtons.get(i).setBackground((Color) paint);
+								colorsButtons.get(i).setForeground((Color) paint);
 							}
 						}
 						for (int j = 0; j < shapeSet; j++) {
@@ -4133,6 +4191,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						use.setSelected(false);
 						colorsCombo.get(i).setSelectedIndex(0);
 						colorsButtons.get(i).setBackground((Color) colory.get("Black"));
+						colorsButtons.get(i).setForeground((Color) colory.get("Black"));
 						shapesCombo.get(i).setSelectedIndex(0);
 					}
 				}
@@ -4296,6 +4355,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								.setBackground(
 										(Color) colors.get(((JComboBox) (e.getSource()))
 												.getSelectedItem()));
+						colorsButtons.get(i)
+								.setForeground(
+										(Color) colors.get(((JComboBox) (e.getSource()))
+												.getSelectedItem()));
 						for (GraphSpecies g : graphed) {
 							if (g.getRunNumber().equals(selected) && g.getNumber() == i
 									&& g.getDirectory().equals(directory)) {
@@ -4330,6 +4393,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			colorsCombo.add(colBox);
 			JButton colorButton = new JButton();
 			colorButton.setBackground((Color) colory.get("Black"));
+			colorButton.setForeground((Color) colory.get("Black"));
 			colorButton.setActionCommand("" + i);
 			colorButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -4338,6 +4402,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							((JButton) e.getSource()).getBackground());
 					if (newColor != null) {
 						((JButton) e.getSource()).setBackground(newColor);
+						((JButton) e.getSource()).setForeground(newColor);
 						colorsCombo.get(i).setSelectedItem("Custom");
 					}
 				}
@@ -4540,9 +4605,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												"Error", JOptionPane.ERROR_MESSAGE);
 										width = -1;
 										height = -1;
-										value = JOptionPane.showOptionDialog(Gui.frame,
-												sizePanel, "Enter Size Of File",
-												JOptionPane.YES_NO_OPTION,
+										value = JOptionPane.showOptionDialog(Gui.frame, sizePanel,
+												"Enter Size Of File", JOptionPane.YES_NO_OPTION,
 												JOptionPane.PLAIN_MESSAGE, null, options2,
 												options2[0]);
 									}
@@ -4684,9 +4748,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 												"Error", JOptionPane.ERROR_MESSAGE);
 										width = -1;
 										height = -1;
-										value = JOptionPane.showOptionDialog(Gui.frame,
-												sizePanel, "Enter Size Of File",
-												JOptionPane.YES_NO_OPTION,
+										value = JOptionPane.showOptionDialog(Gui.frame, sizePanel,
+												"Enter Size Of File", JOptionPane.YES_NO_OPTION,
 												JOptionPane.PLAIN_MESSAGE, null, options2,
 												options2[0]);
 									}
@@ -5404,9 +5467,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					biomodelsim.addToTree(f.getName());
 				}
 				catch (Exception except) {
-					JOptionPane
-							.showMessageDialog(Gui.frame, "Unable To Save Probability Graph!",
-									"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Probability Graph!",
+							"Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -6790,6 +6852,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										series.get(g.getNumber()).setSelectionEnd(0);
 										colorsButtons.get(g.getNumber()).setBackground(
 												(Color) g.getPaint());
+										colorsButtons.get(g.getNumber()).setForeground(
+												(Color) g.getPaint());
 										colorsCombo.get(g.getNumber()).setSelectedItem(
 												g.getPaintName().split("_")[0]);
 									}
@@ -6805,6 +6869,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										series.get(g.getNumber()).setSelectionEnd(0);
 										colorsButtons.get(g.getNumber()).setBackground(
 												(Color) g.getPaint());
+										colorsButtons.get(g.getNumber()).setForeground(
+												(Color) g.getPaint());
 										colorsCombo.get(g.getNumber()).setSelectedItem(
 												g.getPaintName().split("_")[0]);
 									}
@@ -6818,6 +6884,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										series.get(g.getNumber()).setSelectionStart(0);
 										series.get(g.getNumber()).setSelectionEnd(0);
 										colorsButtons.get(g.getNumber()).setBackground(
+												(Color) g.getPaint());
+										colorsButtons.get(g.getNumber()).setForeground(
 												(Color) g.getPaint());
 										colorsCombo.get(g.getNumber()).setSelectedItem(
 												g.getPaintName().split("_")[0]);
@@ -6864,6 +6932,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									series.get(i).setSelectionEnd(0);
 									colorsCombo.get(i).setSelectedIndex(0);
 									colorsButtons.get(i).setBackground((Color) colors.get("Black"));
+									colorsButtons.get(i).setForeground((Color) colors.get("Black"));
 								}
 								else {
 									String s = "";
@@ -7205,46 +7274,61 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								if (colorsCombo.get(k).getSelectedItem().equals("Red")) {
 									cols[0]++;
 									colorsButtons.get(k).setBackground((Color) colory.get("Red"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Red"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Blue")) {
 									cols[1]++;
 									colorsButtons.get(k).setBackground((Color) colory.get("Blue"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Blue"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Green")) {
 									cols[2]++;
 									colorsButtons.get(k).setBackground((Color) colory.get("Green"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Green"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow")) {
 									cols[3]++;
 									colorsButtons.get(k)
 											.setBackground((Color) colory.get("Yellow"));
+									colorsButtons.get(k)
+											.setForeground((Color) colory.get("Yellow"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta")) {
 									cols[4]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Magenta"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Magenta"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan")) {
 									cols[5]++;
 									colorsButtons.get(k).setBackground((Color) colory.get("Cyan"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Cyan"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Tan")) {
 									cols[6]++;
 									colorsButtons.get(k).setBackground((Color) colory.get("Tan"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Tan"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Gray (Dark)")) {
 									cols[7]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Gray (Dark)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Gray (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Dark)")) {
 									cols[8]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Red (Dark)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Red (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Dark)")) {
 									cols[9]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Blue (Dark)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Blue (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem()
@@ -7252,11 +7336,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									cols[10]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Green (Dark)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Green (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Yellow (Dark)")) {
 									cols[11]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Yellow (Dark)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Yellow (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
@@ -7264,15 +7352,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									cols[12]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Magenta (Dark)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Magenta (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Dark)")) {
 									cols[13]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Cyan (Dark)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Cyan (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Black")) {
 									cols[14]++;
 									colorsButtons.get(k).setBackground((Color) colory.get("Black"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Black"));
 								}
 								/*
 								 * else if
@@ -7294,11 +7387,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								else if (colorsCombo.get(k).getSelectedItem().equals("Gray")) {
 									cols[21]++;
 									colorsButtons.get(k).setBackground((Color) colory.get("Gray"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Gray"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Red (Extra Dark)")) {
 									cols[22]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Red (Extra Dark)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Red (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
@@ -7306,11 +7402,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									cols[23]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Blue (Extra Dark)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Blue (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Green (Extra Dark)")) {
 									cols[24]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Green (Extra Dark)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Green (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
@@ -7318,11 +7418,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									cols[25]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Yellow (Extra Dark)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Yellow (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Magenta (Extra Dark)")) {
 									cols[26]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Magenta (Extra Dark)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Magenta (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
@@ -7330,10 +7434,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									cols[27]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Cyan (Extra Dark)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Cyan (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Light)")) {
 									cols[28]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Red (Light)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Red (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem()
@@ -7341,11 +7449,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									cols[29]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Blue (Light)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Blue (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Green (Light)")) {
 									cols[30]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Green (Light)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Green (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
@@ -7353,11 +7465,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									cols[31]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Yellow (Light)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Yellow (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals(
 										"Magenta (Light)")) {
 									cols[32]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Magenta (Light)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Magenta (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem()
@@ -7365,11 +7481,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									cols[33]++;
 									colorsButtons.get(k).setBackground(
 											(Color) colory.get("Cyan (Light)"));
+									colorsButtons.get(k).setForeground(
+											(Color) colory.get("Cyan (Light)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem()
 										.equals("Gray (Light)")) {
 									cols[34]++;
 									colorsButtons.get(k).setBackground(
+											(Color) colory.get("Gray (Light)"));
+									colorsButtons.get(k).setForeground(
 											(Color) colory.get("Gray (Light)"));
 								}
 							}
@@ -7503,6 +7623,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (paint == colory.get(set[j])) {
 								colorsCombo.get(i).setSelectedItem(set[j]);
 								colorsButtons.get(i).setBackground((Color) paint);
+								colorsButtons.get(i).setForeground((Color) paint);
 							}
 						}
 						boolean allChecked = true;
@@ -7568,6 +7689,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						use.setSelected(false);
 						colorsCombo.get(i).setSelectedIndex(0);
 						colorsButtons.get(i).setBackground((Color) colory.get("Black"));
+						colorsButtons.get(i).setForeground((Color) colory.get("Black"));
 					}
 				}
 			});
@@ -7620,6 +7742,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								.setBackground(
 										(Color) colors.get(((JComboBox) (e.getSource()))
 												.getSelectedItem()));
+						colorsButtons.get(i)
+								.setForeground(
+										(Color) colors.get(((JComboBox) (e.getSource()))
+												.getSelectedItem()));
 						for (GraphProbs g : probGraphed) {
 							if (g.getNumber() == i && g.getDirectory().equals(directory)) {
 								g.setPaintName((String) ((JComboBox) e.getSource())
@@ -7643,6 +7769,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			colorsCombo.add(colBox);
 			JButton colorButton = new JButton();
 			colorButton.setBackground((Color) colory.get("Black"));
+			colorButton.setForeground((Color) colory.get("Black"));
 			colorButton.setActionCommand("" + i);
 			colorButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -7651,6 +7778,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							((JButton) e.getSource()).getBackground());
 					if (newColor != null) {
 						((JButton) e.getSource()).setBackground(newColor);
+						((JButton) e.getSource()).setForeground(newColor);
 						colorsCombo.get(i).setSelectedItem("Custom");
 					}
 				}
