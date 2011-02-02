@@ -7,7 +7,7 @@ import parser.*;
 import java.io.*;
 import java.util.*;
 
-import javax.jws.soap.InitParam;
+//import javax.jws.soap.InitParam;
 import javax.swing.*;
 
 //import org.sbml.libsbml.*;
@@ -179,7 +179,10 @@ public class LearnModel { // added ItemListener SB
 	 *  Version 3 : Satish Batchu (LearnModel.java)
 	 */
 	
-	public LhpnFile learnModel(String directory, Log log, BioSim biosim, int moduleNumber, HashMap<String, ArrayList<Double>> thresh, HashMap<String,Double> tPar, ArrayList<Variable> rVarsL, HashMap<String, ArrayList<String>> dstab, Boolean netForStable, boolean pseudoEnable, boolean transientPlaceReqd, Double vScaleFactor, Double dScaleFactor, String failProp) {
+	public LhpnFile learnModel(String directory, Log log, BioSim biosim, int moduleNumber, HashMap<String, 
+			ArrayList<Double>> thresh, HashMap<String,Double> tPar, ArrayList<Variable> rVarsL, 
+			HashMap<String, ArrayList<String>> dstab, Boolean netForStable, boolean pseudoEnable, 
+			boolean transientPlaceReqd, Double vScaleFactor, Double dScaleFactor, String failProp) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		} else {

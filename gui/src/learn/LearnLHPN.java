@@ -2685,7 +2685,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						}
 					}
 				}
-				LhpnFile g = l.learnModel(directory, log, biosim, moduleNumber, thresholds, tPar, varsWithStables, destabMap, false, false, false,valScaleFactor, delayScaleFactor, failProp);
+				LhpnFile g = l.learnModel(directory, log, biosim, moduleNumber, thresholds, tPar, varsWithStables, destabMap, false, false, false, valScaleFactor, delayScaleFactor, failProp);
 				
 				// the false parameter above says that it's not generating a net for stable
 				if (new File(seedLpnFile).exists()){ //directory + separator + "complete.lpn").exists()){//
