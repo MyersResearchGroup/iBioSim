@@ -452,7 +452,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			if (s.split(" ")[s.split(" ").length - 1].startsWith("(")) {
 				if ((s.split(" ")[s.split(" ").length - 1]).split(",")[3].replace(")", "").trim().equals(
 						"1")) {
-					sweepThese1.add(s.split(" ")[0]);
+					sweepThese1.add(s.substring(0, s.lastIndexOf(" ")));
 					double start = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[0]
 							.substring(1).trim());
 					double stop = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[1]
@@ -471,7 +471,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					sweep1.add(add);
 				}
 				else {
-					sweepThese2.add(s.split(" ")[0]);
+					sweepThese2.add(s.substring(0, s.lastIndexOf(" ")));
 					double start = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[0]
 							.substring(1).trim());
 					double stop = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[1]
@@ -530,20 +530,20 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 							}
 						}
 						new File(path + separator + simName + separator + stem
-								+ sweepTwo.replace("/", "-")).mkdir();
+								+ sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "")).mkdir();
 						createSBML(stem, sweepTwo);
 						if (run) {
-							new Reb2SacThread(reb2sac).start(stem + sweepTwo.replace("/", "-"));
+							new Reb2SacThread(reb2sac).start(stem + sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
 							reb2sac.emptyFrames();
 						}
 					}
 				}
 				else {
 					new File(path + separator + simName + separator + stem
-							+ sweep.replace("/", "-")).mkdir();
+							+ sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "")).mkdir();
 					createSBML(stem, sweep);
 					if (run) {
-						new Reb2SacThread(reb2sac).start(stem + sweep.replace("/", "-"));
+						new Reb2SacThread(reb2sac).start(stem + sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
 						reb2sac.emptyFrames();
 					}
 				}
@@ -773,9 +773,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 							speciesProps.put(di.split("=")[0].split("/")[1],
 									di.split("=")[1]);
 						}
-						if (gcm.getInfluences().containsKey(di.split("=")[0].split("/")[0].substring(1))) {
+						if (gcm.getInfluences().containsKey(di.split("=")[0].split("/")[0].replace("\"", ""))) {
 							Properties influenceProps = gcm.getInfluences().get(
-									di.split("=")[0].split("/")[0].substring(1));
+									di.split("=")[0].split("/")[0].replace("\"", ""));
 							influenceProps.put(di.split("=")[0].split("/")[1]
 									.replace("\"", ""), di.split("=")[1]);
 						}
@@ -790,7 +790,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					}
 				}
 			}
-			direct = direct.replace("/", "-");
+			direct = direct.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "");
 			if (direct.equals(".") && !stem.equals("")) {
 				direct = "";
 			}
