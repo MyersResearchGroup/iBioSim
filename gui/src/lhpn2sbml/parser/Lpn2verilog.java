@@ -24,8 +24,10 @@ public class Lpn2verilog {
 			File svFile = new File(svFileName);
 			svFile.createNewFile();
 			String[] svPath = svFileName.split(separator);
+			//for (int i=0; i < svPath.length; i++){
+			//System.out.println("\nModule string is " + svPath[i] + "\n");}
 			String svModuleName = svPath[svPath.length -1].split("\\.")[0];
-			//System.out.println("\nModule name is " + svModuleName + "\n");
+			System.out.println("\nModule name is " + svModuleName + "\n");
 			BufferedWriter sv = new BufferedWriter(new FileWriter(svFile));
 			StringBuffer initBuffer = new StringBuffer();
 			StringBuffer markedPlaceBuffer = new StringBuffer();
@@ -72,7 +74,10 @@ public class Lpn2verilog {
 			sv.write(");\n");
 			first = true;
 			String[] transitionList = lpn.getTransitionList();
+			for (int i=0; i < transitionList.length; i++){
+			System.out.println("\ntransition list is  " + transitionList[i] + "\n");}
 			ArrayList<String> transArrayList = new ArrayList(Arrays.asList(transitionList));
+			System.out.println("\ntransArray list is  " + transArrayList + "\n");
 			Collections.sort(transArrayList,new Comparator<String>(){
 				public int compare(String a, String b){
 					return(a.compareToIgnoreCase(b));
