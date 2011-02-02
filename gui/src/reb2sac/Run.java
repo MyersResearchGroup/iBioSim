@@ -18,7 +18,6 @@ import gillespieSSAjava.GillespieSSAJavaSingleStep;
 
 import biomodelsim.*;
 import gcm2sbml.gui.GCM2SBMLEditor;
-import gcm2sbml.parser.CompatibilityFixer;
 import gcm2sbml.parser.GCMFile;
 import gcm2sbml.util.GlobalConstants;
 import graph.*;
@@ -577,14 +576,12 @@ public class Run implements ActionListener {
 							if (gcm.getPromoters().containsKey(di.split("=")[0].split("-")[0])) {
 								Properties promoterProps = gcm.getPromoters().get(
 										di.split("=")[0].split("-")[0]);
-								promoterProps.put(di.split("=")[0].split("-")[1], di
-										.split("=")[1]);
+								promoterProps.put(di.split("=")[0].split("-")[1], di.split("=")[1]);
 							}
 							if (gcm.getSpecies().containsKey(di.split("=")[0].split("-")[0])) {
 								Properties speciesProps = gcm.getSpecies().get(
 										di.split("=")[0].split("-")[0]);
-								speciesProps.put(di.split("=")[0].split("-")[1], di
-										.split("=")[1]);
+								speciesProps.put(di.split("=")[0].split("-")[1], di.split("=")[1]);
 							}
 							if (gcm.getInfluences().containsKey(
 									di.split("=")[0].split("-")[0].substring(1))) {
@@ -592,21 +589,15 @@ public class Run implements ActionListener {
 										di.split("=")[0].split("-")[0].substring(1));
 								influenceProps.put(
 										di.split("=")[0].split("-")[1].replace("\"", ""), di
-										.split("=")[1]);
+												.split("=")[1]);
 							}
 						}
 						else {
-							if (gcm.getGlobalParameters().containsKey(
-									di.split("=")[0])) {
-								gcm.getGlobalParameters().put(
-										di.split("=")[0],
-										di.split("=")[1]);
+							if (gcm.getGlobalParameters().containsKey(di.split("=")[0])) {
+								gcm.getGlobalParameters().put(di.split("=")[0], di.split("=")[1]);
 							}
-							if (gcm.getParameters().containsKey(
-									di.split("=")[0])) {
-								gcm.getParameters().put(
-										di.split("=")[0],
-										di.split("=")[1]);
+							if (gcm.getParameters().containsKey(di.split("=")[0])) {
+								gcm.getParameters().put(di.split("=")[0], di.split("=")[1]);
 							}
 						}
 					}
@@ -1082,37 +1073,31 @@ public class Run implements ActionListener {
 											di.split("=")[0].split("-")[0])) {
 										Properties promoterProps = gcm.getPromoters().get(
 												di.split("=")[0].split("-")[0]);
-										promoterProps.put(di
-												.split("=")[0].split("-")[1], di.split("=")[1]);
+										promoterProps.put(di.split("=")[0].split("-")[1], di
+												.split("=")[1]);
 									}
 									if (gcm.getSpecies()
 											.containsKey(di.split("=")[0].split("-")[0])) {
 										Properties speciesProps = gcm.getSpecies().get(
 												di.split("=")[0].split("-")[0]);
-										speciesProps.put(di
-												.split("=")[0].split("-")[1], di.split("=")[1]);
+										speciesProps.put(di.split("=")[0].split("-")[1], di
+												.split("=")[1]);
 									}
 									if (gcm.getInfluences().containsKey(
 											di.split("=")[0].split("-")[0].substring(1))) {
 										Properties influenceProps = gcm.getInfluences().get(
 												di.split("=")[0].split("-")[0].substring(1));
-										influenceProps.put(
-												di.split("=")[0].split("-")[1].replace("\"", ""),
-												di.split("=")[1]);
+										influenceProps.put(di.split("=")[0].split("-")[1].replace(
+												"\"", ""), di.split("=")[1]);
 									}
 								}
 								else {
-									if (gcm.getGlobalParameters().containsKey(
-											di.split("=")[0])) {
-										gcm.getGlobalParameters().put(
-												di.split("=")[0],
+									if (gcm.getGlobalParameters().containsKey(di.split("=")[0])) {
+										gcm.getGlobalParameters().put(di.split("=")[0],
 												di.split("=")[1]);
 									}
-									if (gcm.getParameters().containsKey(
-											di.split("=")[0])) {
-										gcm.getParameters().put(
-												di.split("=")[0],
-												di.split("=")[1]);
+									if (gcm.getParameters().containsKey(di.split("=")[0])) {
+										gcm.getParameters().put(di.split("=")[0], di.split("=")[1]);
 									}
 								}
 							}
@@ -1204,13 +1189,13 @@ public class Run implements ActionListener {
 										sg, progress);
 								time1 = System.nanoTime();
 								if (lpnProperty != null && !lpnProperty.equals("")) {
-									performMarkovAnalysis.start(timeLimit, timeStep, absError,
-											Translator.getProbpropParts(Translator
+									performMarkovAnalysis.start(timeLimit, timeStep, printInterval,
+											absError, Translator.getProbpropParts(Translator
 													.getProbpropExpression(lpnProperty)));
 								}
 								else {
-									performMarkovAnalysis
-											.start(timeLimit, timeStep, absError, null);
+									performMarkovAnalysis.start(timeLimit, timeStep, printInterval,
+											absError, null);
 								}
 								performMarkovAnalysis.join();
 								if (!sg.getStop()) {

@@ -46,7 +46,7 @@ public class StateGraph implements Runnable {
 
 	public void buildStateGraph() {
 		stateGraph = new ArrayList<State>();// HashMap<String,
-											// LinkedList<State>>();
+		// LinkedList<State>>();
 		HashMap<String, LinkedList<Integer>> stateLocations = new HashMap<String, LinkedList<Integer>>();
 		variables = new ArrayList<String>();
 		for (String var : lhpn.getBooleanVars()) {
@@ -80,7 +80,7 @@ public class StateGraph implements Runnable {
 		// markings.add(state);
 		counter++;
 		stateGraph.add(state);// .put(createStateVector(variables,
-								// allVariables), markings);
+		// allVariables), markings);
 		markings.add(stateGraph.size() - 1);
 		stateLocations.put(createStateVector(variables, allVariables), markings);
 		Stack<Transition> transitionsToFire = new Stack<Transition>();
@@ -156,7 +156,7 @@ public class StateGraph implements Runnable {
 								fire.getParent().getVariables()), fire.getTransition());
 				counter++;
 				stateGraph.add(state);// .put(createStateVector(variables,
-										// allVariables), markings);
+				// allVariables), markings);
 				markings.add(stateGraph.size() - 1);
 				stateLocations.put(createStateVector(variables, allVariables), markings);
 				for (String transition : lhpn.getTransitionList()) {
@@ -229,7 +229,7 @@ public class StateGraph implements Runnable {
 									fire.getParent().getVariables()), fire.getTransition());
 					counter++;
 					stateGraph.add(state);// .put(createStateVector(variables,
-											// allVariables), markings);
+					// allVariables), markings);
 					markings.add(stateGraph.size() - 1);
 					stateLocations.put(createStateVector(variables, allVariables), markings);
 					for (String transition : lhpn.getTransitionList()) {
@@ -301,12 +301,13 @@ public class StateGraph implements Runnable {
 	}
 
 	public boolean performTransientMarkovianAnalysis(double timeLimit, double timeStep,
-			double error, String[] condition, JProgressBar progress) {
+			double printInterval, double error, String[] condition, JProgressBar progress) {
 		if (!canPerformMarkovianAnalysis()) {
 			stop = true;
 			return false;
 		}
 		else if (condition != null) {
+			double nextPrint = printInterval;
 			progress.setMaximum((int) timeLimit);
 			double Gamma = 0;
 			ArrayList<String> dataLabels = new ArrayList<String>();
@@ -349,9 +350,10 @@ public class StateGraph implements Runnable {
 						xi = xi * ((Gamma * timeStep) / K);
 						delta = delta + xi;
 					}
-					for (double i = 0; i < lowerbound; i += timeStep) {
-						double step = Math.min(timeStep, lowerbound - i);
-						if (step == lowerbound - i) {
+					double step = Math.min(Math.min(timeStep, lowerbound), nextPrint);
+					for (double i = 0; i < lowerbound; i += step) {
+						step = Math.min(Math.min(timeStep, lowerbound - i), nextPrint - i);
+						if (step != timeStep) {
 							// Compute K
 							K = 0;
 							xi = 1;
@@ -366,7 +368,6 @@ public class StateGraph implements Runnable {
 						if (!performTransientMarkovianAnalysis(step, error, Gamma, K, progress)) {
 							return false;
 						}
-						probData.getData().get(0).add(i + timeStep);
 						double prob = 0;
 						// for (String state : stateGraph.keySet()) {
 						for (State m : stateGraph) {
@@ -379,8 +380,12 @@ public class StateGraph implements Runnable {
 							}
 							// }
 						}
-						probData.getData().get(1).add(prob * 100);
-						probData.getData().get(2).add(0.0);
+						if (i + step == nextPrint) {
+							probData.getData().get(0).add(nextPrint);
+							probData.getData().get(1).add(prob * 100);
+							probData.getData().get(2).add(0.0);
+							nextPrint += printInterval;
+						}
 					}
 				}
 				else {
@@ -406,9 +411,11 @@ public class StateGraph implements Runnable {
 					xi = xi * ((Gamma * timeStep) / K);
 					delta = delta + xi;
 				}
-				for (double i = 0; i < upperbound; i += timeStep) {
-					double step = Math.min(timeStep, upperbound - i);
-					if (step == upperbound - i) {
+				double step = Math.min(Math.min(timeStep, upperbound - lowerbound), nextPrint
+						- lowerbound);
+				for (double i = 0; i < upperbound; i += step) {
+					step = Math.min(Math.min(timeStep, upperbound - i), nextPrint - lowerbound - i);
+					if (step != timeStep) {
 						// Compute K
 						K = 0;
 						xi = 1;
@@ -423,7 +430,6 @@ public class StateGraph implements Runnable {
 					if (!performTransientMarkovianAnalysis(step, error, Gamma, K, progress)) {
 						return false;
 					}
-					probData.getData().get(0).add(lowerbound + i + timeStep);
 					double failureProb = 0;
 					double successProb = 0;
 					// for (String state : stateGraph.keySet()) {
@@ -444,8 +450,12 @@ public class StateGraph implements Runnable {
 						}
 						// }
 					}
-					probData.getData().get(1).add(failureProb * 100);
-					probData.getData().get(2).add(successProb * 100);
+					if (lowerbound + i + step == nextPrint) {
+						probData.getData().get(0).add(nextPrint);
+						probData.getData().get(1).add(failureProb * 100);
+						probData.getData().get(2).add(successProb * 100);
+						nextPrint += printInterval;
+					}
 				}
 				HashMap<String, Double> output = new HashMap<String, Double>();
 				double failureProb = 0;
@@ -1057,7 +1067,7 @@ public class StateGraph implements Runnable {
 			allVariables.put(var, lhpn.getInitialVal(var));
 		}
 		for (State s : stateGraph) {// .get(createStateVector(variables,
-									// allVariables))) {
+			// allVariables))) {
 			if (s.getID().equals("S0")) {
 				return s;
 			}
@@ -1066,8 +1076,8 @@ public class StateGraph implements Runnable {
 	}
 
 	public ArrayList<State> getStateGraph() {// HashMap<String,
-												// LinkedList<State>>
-												// getStateGraph() {
+		// LinkedList<State>>
+		// getStateGraph() {
 		return stateGraph;
 	}
 

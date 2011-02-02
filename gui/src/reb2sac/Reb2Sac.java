@@ -1530,6 +1530,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				absErr.setEnabled(false);
 				limitLabel.setEnabled(false);
 				limit.setEnabled(false);
+				intervalLabel.setEnabled(false);
+				interval.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("atacs")) {
 				description.setText("ATACS Analysis Tool");
@@ -1541,6 +1543,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				absErr.setEnabled(false);
 				limitLabel.setEnabled(false);
 				limit.setEnabled(false);
+				intervalLabel.setEnabled(false);
+				interval.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("steady-state-markov-chain-analysis")) {
 				description.setText("Steady State Markov Chain Analysis");
@@ -1552,6 +1556,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				absErr.setEnabled(true);
 				limitLabel.setEnabled(false);
 				limit.setEnabled(false);
+				intervalLabel.setEnabled(false);
+				interval.setEnabled(false);
 			}
 			else if (simulators.getSelectedItem().equals("transient-markov-chain-analysis")) {
 				description.setText("Transient Markov Chain Analysis Using Uniformization");
@@ -1563,6 +1569,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				absErr.setEnabled(true);
 				limitLabel.setEnabled(true);
 				limit.setEnabled(true);
+				intervalLabel.setEnabled(true);
+				interval.setEnabled(true);
 			}
 		}
 		// if the Run button is clicked

@@ -442,8 +442,8 @@ public class Button_Enabling {
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
 		runsLabel.setEnabled(false);
-		fileStem.setEnabled(false);
-		fileStemLabel.setEnabled(false);
+		fileStem.setEnabled(true);
+		fileStemLabel.setEnabled(true);
 		minStepLabel.setEnabled(false);
 		minStep.setEnabled(false);
 		stepLabel.setEnabled(false);
