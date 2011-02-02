@@ -2932,6 +2932,11 @@ public class Abstraction extends LhpnFile {
 			trans.addEnabling(trans.getEnablingTree().toString("LHPN"));
 			flag = true;
 		}
+		if (trans.getDelayTree() != null) {
+			trans.getDelayTree().replace(var, type, expr);
+			trans.addEnabling(trans.getDelayTree().toString("LHPN"));
+			flag = true;
+		}
 		for (String v : trans.getAssignTrees().keySet()) {
 			ExprTree e1 = trans.getAssignTree(v);
 			if (e1 != null) {
