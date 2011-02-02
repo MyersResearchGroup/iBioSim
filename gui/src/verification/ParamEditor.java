@@ -2,6 +2,8 @@ package verification;
 
 import javax.swing.*;
 
+import main.*;
+
 import java.awt.*;
 import java.awt.event.*;
 //import java.io.BufferedReader;
@@ -10,13 +12,12 @@ import java.io.File;
 //import java.io.FileOutputStream;
 //import java.io.FileReader;
 
-import gcm2sbml.gui.AbstractRunnableNamedButton;
-import gcm2sbml.gui.PropertyList;
-import gcm2sbml.gui.Runnable;
-import gcm2sbml.util.Utility;
+import gcm.gui.AbstractRunnableNamedButton;
+import gcm.gui.PropertyList;
+import gcm.gui.Runnable;
+import gcm.util.Utility;
 //import gcm2sbml.util.Utility;
 
-import biomodelsim.*;
 
 /**
  * This class creates a GUI front end for the Verification tool. It provides the
@@ -69,7 +70,7 @@ public class ParamEditor extends JPanel implements ActionListener {
 	 * then displays the frame.
 	 */
 	public ParamEditor(String directory, Verification verification, String filename, Log log,
-			BioSim biosim, boolean lema, boolean atacs) {
+			Gui biosim, boolean lema, boolean atacs) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}

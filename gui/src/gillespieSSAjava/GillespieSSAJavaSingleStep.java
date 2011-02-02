@@ -7,9 +7,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 import java.util.Random;
+
+import main.Gui;
+
 import org.sbml.libsbml.*;
 
-import biomodelsim.BioSim;
 import java.awt.BorderLayout;
 import java.io.*;
 import java.lang.Math;
@@ -195,7 +197,7 @@ public class GillespieSSAJavaSingleStep {
 			  Trigger trigger = event.getTrigger();
 			  // TODO add the feature for persistent event and event that uses values from trigger time.
 			  if (trigger.getPersistent() | event.getUseValuesFromTriggerTime()) {
-				  JOptionPane.showMessageDialog(BioSim.frame, "The simulator does not currently support persistent triggers or UseValuesFromTriggerTime.",
+				  JOptionPane.showMessageDialog(Gui.frame, "The simulator does not currently support persistent triggers or UseValuesFromTriggerTime.",
 							"Error in trigger", JOptionPane.ERROR_MESSAGE);
 				  break;
 			  }
@@ -240,7 +242,7 @@ public class GillespieSSAJavaSingleStep {
 			  while (eventQueue.size() > 0 && time == eventQueue.peek().getScheduledTime());
 		  }
 		  if (eventDelayNegative) {
-			  JOptionPane.showMessageDialog(BioSim.frame, "Delay expression evaluates to a negative number.",
+			  JOptionPane.showMessageDialog(Gui.frame, "Delay expression evaluates to a negative number.",
 						"Error in piecewise function", JOptionPane.ERROR_MESSAGE);
 			  break;
 		  }
@@ -393,7 +395,7 @@ public class GillespieSSAJavaSingleStep {
 			 CustomParams = openInteractiveMenu(time,tau,miu);
 			 t_next = Double.parseDouble(CustomParams[0]);
 			 while (t_next < time){
-				 JOptionPane.showMessageDialog(BioSim.frame, "The value of t_next needs to be greater than current time",
+				 JOptionPane.showMessageDialog(Gui.frame, "The value of t_next needs to be greater than current time",
 				"Error in next simulation time", JOptionPane.ERROR_MESSAGE);
 				 CustomParams = openInteractiveMenu(time,tau,miu);
 				 t_next = Double.parseDouble(CustomParams[0]);
@@ -550,7 +552,7 @@ public class GillespieSSAJavaSingleStep {
 			return eventQueue.peek().getScheduledTime();
 		}
 		else {
-			JOptionPane.showMessageDialog(BioSim.frame, "Event time has passed.",
+			JOptionPane.showMessageDialog(Gui.frame, "Event time has passed.",
 					"Error in event firing", JOptionPane.ERROR_MESSAGE);
 			return -1;
 		}
@@ -603,7 +605,7 @@ public class GillespieSSAJavaSingleStep {
 						}		
 					}
 					else {
-						JOptionPane.showMessageDialog(BioSim.frame, "The piecewise function only accepts 3 children.",
+						JOptionPane.showMessageDialog(Gui.frame, "The piecewise function only accepts 3 children.",
 									"Error in piecewise function", JOptionPane.ERROR_MESSAGE);
 						break;
 					}
@@ -685,7 +687,7 @@ public class GillespieSSAJavaSingleStep {
 		mainPanel.add(nextReactionsListPanel, "Center");
 		Object[] options = {"Step", "Run", "Terminate"};
 		int optionValue;
-		optionValue = JOptionPane.showOptionDialog(BioSim.frame, mainPanel, "Next Simulation Time",
+		optionValue = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Next Simulation Time",
 		JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		tNext_miu_optVal[0]= tNext.getText().trim();
 		tNext_miu_optVal[1]=(String) nextReactionsList.getSelectedItem();
@@ -758,7 +760,7 @@ public class GillespieSSAJavaSingleStep {
 						}		
 					}
 					else {
-						JOptionPane.showMessageDialog(BioSim.frame, "The piecewise function only accepts 3 children.",
+						JOptionPane.showMessageDialog(Gui.frame, "The piecewise function only accepts 3 children.",
 									"Error in piecewise function", JOptionPane.ERROR_MESSAGE);
 					}
 					break;

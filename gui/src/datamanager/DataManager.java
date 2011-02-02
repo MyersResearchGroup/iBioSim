@@ -1,7 +1,9 @@
 package datamanager;
 
-import gcm2sbml.parser.GCMFile;
-import lhpn2sbml.parser.LhpnFile;
+import gcm.parser.GCMFile;
+import lpn.parser.LhpnFile;
+import main.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -23,8 +25,7 @@ import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
 
 import parser.*;
-import biomodelsim.*;
-import buttons.*;
+import util.*;
 
 public class DataManager extends JPanel implements ActionListener, TableModelListener,
 		ListSelectionListener {
@@ -41,7 +42,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 
 	private JButton add, remove, rename, copy, copyFromView, importFile;
 
-	private BioSim biosim;
+	private Gui biosim;
 
 	private String separator;
 
@@ -61,7 +62,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 
 	private String[] list;
 
-	public DataManager(String directory, BioSim biosim, boolean lema) {
+	public DataManager(String directory, Gui biosim, boolean lema) {
 		// this.lema = lema;
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
@@ -155,7 +156,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == add) {
-			String dataFile = JOptionPane.showInputDialog(BioSim.frame, "Enter Data File ID:",
+			String dataFile = JOptionPane.showInputDialog(Gui.frame, "Enter Data File ID:",
 					"Data File ID", JOptionPane.PLAIN_MESSAGE);
 			if (dataFile != null && !dataFile.trim().equals("")) {
 				dataFile = dataFile.trim();
@@ -167,7 +168,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					load.close();
 					for (String s : p.keySet().toArray(new String[0])) {
 						if (p.getProperty(s).equals(dataFile)) {
-							JOptionPane.showMessageDialog(BioSim.frame,
+							JOptionPane.showMessageDialog(Gui.frame,
 									"A file with that description already exists.",
 									"Description Must Be Unique", JOptionPane.ERROR_MESSAGE);
 							return;
@@ -227,7 +228,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 									true);
 				}
 				catch (IOException e1) {
-					JOptionPane.showMessageDialog(BioSim.frame, "Unable to add new file.",
+					JOptionPane.showMessageDialog(Gui.frame, "Unable to add new file.",
 							"Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -320,25 +321,25 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 							false);
 				}
 				catch (IOException e1) {
-					JOptionPane.showMessageDialog(BioSim.frame,
+					JOptionPane.showMessageDialog(Gui.frame,
 							"Unable to remove selected files.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
 		else if (e.getSource() == rename) {
 			if (files.getSelectedIndices().length > 1) {
-				JOptionPane.showMessageDialog(BioSim.frame,
+				JOptionPane.showMessageDialog(Gui.frame,
 						"You can only select one file to rename at a time.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			else if (files.getSelectedIndices().length < 1) {
-				JOptionPane.showMessageDialog(BioSim.frame, "You must select a file to rename.",
+				JOptionPane.showMessageDialog(Gui.frame, "You must select a file to rename.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			try {
-				String rename = JOptionPane.showInputDialog(BioSim.frame,
+				String rename = JOptionPane.showInputDialog(Gui.frame,
 						"Please Enter New Name:", "Rename", JOptionPane.PLAIN_MESSAGE);
 				if (rename != null && !rename.trim().equals("")) {
 					rename = rename.trim();
@@ -353,7 +354,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				load.close();
 				for (String s : list) {
 					if (s.equals(rename)) {
-						JOptionPane.showMessageDialog(BioSim.frame,
+						JOptionPane.showMessageDialog(Gui.frame,
 								"A file with that description already exists.",
 								"Description Must Be Unique", JOptionPane.ERROR_MESSAGE);
 						return;
@@ -382,24 +383,24 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				files.setSelectedValue(rename, true);
 			}
 			catch (IOException e1) {
-				JOptionPane.showMessageDialog(BioSim.frame, "Unable to rename selected file.",
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to rename selected file.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		else if (e.getSource() == copy) {
 			if (files.getSelectedIndices().length > 1) {
-				JOptionPane.showMessageDialog(BioSim.frame,
+				JOptionPane.showMessageDialog(Gui.frame,
 						"You can only select one file to copy at a time.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			else if (files.getSelectedIndices().length < 1) {
-				JOptionPane.showMessageDialog(BioSim.frame, "You must select a file to copy.",
+				JOptionPane.showMessageDialog(Gui.frame, "You must select a file to copy.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			try {
-				String copy = JOptionPane.showInputDialog(BioSim.frame, "Please Enter New Name:",
+				String copy = JOptionPane.showInputDialog(Gui.frame, "Please Enter New Name:",
 						"Copy", JOptionPane.PLAIN_MESSAGE);
 				if (copy != null && !copy.trim().equals("")) {
 					copy = copy.trim();
@@ -436,7 +437,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				load.close();
 				for (String s : this.list) {
 					if (s.equals(copy)) {
-						JOptionPane.showMessageDialog(BioSim.frame,
+						JOptionPane.showMessageDialog(Gui.frame,
 								"A file with that description already exists.",
 								"Description Must Be Unique", JOptionPane.ERROR_MESSAGE);
 						return;
@@ -477,7 +478,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				files.setSelectedValue(copy, true);
 			}
 			catch (IOException e1) {
-				JOptionPane.showMessageDialog(BioSim.frame, "Unable to copy selected file.",
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to copy selected file.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -527,7 +528,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				sims.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				sims.setSelectedIndex(0);
 				Object[] options = { "Select", "Cancel" };
-				int value = JOptionPane.showOptionDialog(BioSim.frame, scroll, "Select View",
+				int value = JOptionPane.showOptionDialog(Gui.frame, scroll, "Select View",
 						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 						options[0]);
 				if (value == JOptionPane.YES_OPTION) {
@@ -605,7 +606,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 									run++;
 								}
 								catch (Exception e1) {
-									JOptionPane.showMessageDialog(BioSim.frame,
+									JOptionPane.showMessageDialog(Gui.frame,
 											"Unable to copy from view.", "Error",
 											JOptionPane.ERROR_MESSAGE);
 								}
@@ -655,7 +656,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 			}
 			else {
 				JOptionPane
-						.showMessageDialog(BioSim.frame, "There are no views to copy data from.",
+						.showMessageDialog(Gui.frame, "There are no views to copy data from.",
 								"Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -668,7 +669,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 			else {
 				file = new File(biosimrc.get("biosim.general.import_dir", ""));
 			}
-			String importFile = Buttons.browse(BioSim.frame, file, null,
+			String importFile = Buttons.browse(Gui.frame, file, null,
 					JFileChooser.FILES_AND_DIRECTORIES, "Import", -1);
 			if (importFile != null && !importFile.trim().equals("")) {
 				saveChanges(null);
@@ -894,14 +895,14 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 							}
 						}
 						catch (IOException e1) {
-							JOptionPane.showMessageDialog(BioSim.frame, "Unable to import file.",
+							JOptionPane.showMessageDialog(Gui.frame, "Unable to import file.",
 									"Error", JOptionPane.ERROR_MESSAGE);
 						}
 						catch (ArrayIndexOutOfBoundsException e1) {
 						}
 					}
 					else {
-						JOptionPane.showMessageDialog(BioSim.frame, "Unable to import file."
+						JOptionPane.showMessageDialog(Gui.frame, "Unable to import file."
 								+ "\nImported file must be a tsd, csv, or dat file.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
@@ -932,7 +933,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					}
 				}
 				catch (IOException e1) {
-					JOptionPane.showMessageDialog(BioSim.frame, "Unable to save file.", "Error",
+					JOptionPane.showMessageDialog(Gui.frame, "Unable to save file.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 				biosim.refreshLearn(
@@ -1144,7 +1145,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						else {
 							newData.get(i).add(0.0);
 							if (!warning) {
-								JOptionPane.showMessageDialog(BioSim.frame,
+								JOptionPane.showMessageDialog(Gui.frame,
 										"Data entered into the data manager must be real numbers."
 												+ "\nReplacing invalid " + "entries with 0.0.",
 										"Invalid Entries In Data", JOptionPane.WARNING_MESSAGE);
@@ -1173,12 +1174,12 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				Object[] options = { "Yes", "No" };
 				int value;
 				if (descriptor == null) {
-					value = JOptionPane.showOptionDialog(BioSim.frame, "Do you want to save"
+					value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save"
 							+ " changes to the current file?", "Save", JOptionPane.YES_NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				}
 				else {
-					value = JOptionPane.showOptionDialog(BioSim.frame, "Do you want to save"
+					value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save"
 							+ " changes to the current file for " + descriptor + "?", "Save",
 							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 							options[0]);
@@ -1205,7 +1206,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						}
 					}
 					catch (IOException e1) {
-						JOptionPane.showMessageDialog(BioSim.frame, "Unable to save file.",
+						JOptionPane.showMessageDialog(Gui.frame, "Unable to save file.",
 								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 					biosim
@@ -1241,7 +1242,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 			}
 		}
 		catch (IOException e) {
-			JOptionPane.showMessageDialog(BioSim.frame, "Unable to load background file.",
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to load background file.",
 					"Error", JOptionPane.ERROR_MESSAGE);
 			background = null;
 		}
@@ -1298,7 +1299,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				// END ADDED BY SB.
 			}
 			else {
-				SBMLDocument document = BioSim.readSBML(background);
+				SBMLDocument document = Gui.readSBML(background);
 				Model model = document.getModel();
 				ListOf ids = model.getListOfSpecies();
 				ArrayList<String> getSpecies = new ArrayList<String>();
@@ -1420,7 +1421,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					previous = file;
 				}
 				catch (IOException e1) {
-					JOptionPane.showMessageDialog(BioSim.frame, "Unable to display file.",
+					JOptionPane.showMessageDialog(Gui.frame, "Unable to display file.",
 							"Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}

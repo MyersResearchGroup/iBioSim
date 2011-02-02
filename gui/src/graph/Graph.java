@@ -1,6 +1,6 @@
 package graph;
 
-import gcm2sbml.parser.GCMFile;
+import gcm.parser.GCMFile;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -62,7 +62,9 @@ import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreePath;
 
-import lhpn2sbml.parser.LhpnFile;
+import lpn.parser.LhpnFile;
+import main.Gui;
+import main.Log;
 
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
@@ -97,9 +99,7 @@ import org.w3c.dom.DOMImplementation;
 
 import parser.TSDParser;
 import reb2sac.Reb2Sac;
-import biomodelsim.BioSim;
-import biomodelsim.Log;
-import buttons.Buttons;
+import util.Buttons;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Rectangle;
@@ -136,7 +136,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private ArrayList<String> graphSpecies; // names of species in the graph
 
-	private BioSim biomodelsim; // tstubd gui
+	private Gui biomodelsim; // tstubd gui
 
 	private JButton save, run, saveAs;
 
@@ -232,7 +232,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * helper method.
 	 */
 	public Graph(Reb2Sac reb2sac, String printer_track_quantity, String label, String printer_id,
-			String outDir, String time, BioSim biomodelsim, String open, Log log, String graphName,
+			String outDir, String time, Gui biomodelsim, String open, Log log, String graphName,
 			boolean timeSeries, boolean learnGraph) {
 		this.reb2sac = reb2sac;
 		averageOrder = null;
@@ -419,9 +419,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	private void readGraphSpecies(String file) {
-		BioSim.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		Gui.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 		graphSpecies = new TSDParser(file, true).getSpecies();
-		BioSim.frame.setCursor(null);
+		Gui.frame.setCursor(null);
 		if (learnSpecs != null) {
 			for (String spec : learnSpecs) {
 				if (!graphSpecies.contains(spec)) {
@@ -459,9 +459,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if ((label.contains("average") && file.contains("mean"))
 				|| (label.contains("variance") && file.contains("variance"))
 				|| (label.contains("deviation") && file.contains("standard_deviation"))) {
-			BioSim.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			Gui.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			TSDParser p = new TSDParser(file, warn);
-			BioSim.frame.setCursor(null);
+			Gui.frame.setCursor(null);
 			warn = p.getWarning();
 			graphSpecies = p.getSpecies();
 			ArrayList<ArrayList<Double>> data = p.getData();
@@ -525,9 +525,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			return calculateAverageVarianceDeviation(file, stem, 2, directory, warn);
 		}
 		else {
-			BioSim.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			Gui.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			TSDParser p = new TSDParser(file, warn);
-			BioSim.frame.setCursor(null);
+			Gui.frame.setCursor(null);
 			warn = p.getWarning();
 			graphSpecies = p.getSpecies();
 			ArrayList<ArrayList<Double>> data = p.getData();
@@ -597,7 +597,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			refresh();
 		}
 		else if (e.getActionCommand().equals("rename")) {
-			String rename = JOptionPane.showInputDialog(BioSim.frame, "Enter A New Filename:",
+			String rename = JOptionPane.showInputDialog(Gui.frame, "Enter A New Filename:",
 					"Rename", JOptionPane.PLAIN_MESSAGE);
 			if (rename != null) {
 				rename = rename.trim();
@@ -612,7 +612,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				else if (new File(outDir + separator + rename).exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
-					int value = JOptionPane.showOptionDialog(BioSim.frame, "File already exists."
+					int value = JOptionPane.showOptionDialog(Gui.frame, "File already exists."
 							+ "\nDo you want to overwrite?", "Overwrite",
 							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 							options[0]);
@@ -1111,7 +1111,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				plot.setRangeAxis(rangeAxis);
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(BioSim.frame,
+				JOptionPane.showMessageDialog(Gui.frame,
 						"Log plots are not allowed with data\nvalues less than or equal to zero.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 				NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis().getLabel());
@@ -1144,7 +1144,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				plot.setDomainAxis(domainAxis);
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(BioSim.frame,
+				JOptionPane.showMessageDialog(Gui.frame,
 						"Log plots are not allowed with data\nvalues less than or equal to zero.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 				NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
@@ -1390,7 +1390,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					catch (Exception e1) {
 						JOptionPane
 								.showMessageDialog(
-										BioSim.frame,
+										Gui.frame,
 										"Log plots are not allowed with data\nvalues less than or equal to zero.",
 										"Error", JOptionPane.ERROR_MESSAGE);
 						NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis()
@@ -1414,7 +1414,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					catch (Exception e1) {
 						JOptionPane
 								.showMessageDialog(
-										BioSim.frame,
+										Gui.frame,
 										"Semilog plots are not allowed with data\nvalues less than or equal to zero.",
 										"Error", JOptionPane.ERROR_MESSAGE);
 						NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis()
@@ -2116,7 +2116,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		if (simDir.getChildCount() == 0) {
-			JOptionPane.showMessageDialog(BioSim.frame, "No data to graph."
+			JOptionPane.showMessageDialog(Gui.frame, "No data to graph."
 					+ "\nPerform some simulations to create some data first.", "No Data",
 					JOptionPane.PLAIN_MESSAGE);
 		}
@@ -2412,7 +2412,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			// all.add(buttonPanel, "South");
 			Object[] options = { "Ok", "Cancel" };
 			int value = JOptionPane
-					.showOptionDialog(BioSim.frame, all, "Edit Graph", JOptionPane.YES_NO_OPTION,
+					.showOptionDialog(Gui.frame, all, "Edit Graph", JOptionPane.YES_NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				double minY;
@@ -2442,7 +2442,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					 */
 				}
 				catch (Exception e1) {
-					JOptionPane.showMessageDialog(BioSim.frame,
+					JOptionPane.showMessageDialog(Gui.frame,
 							"Must enter doubles into the inputs "
 									+ "to change the graph's dimensions!", "Error",
 							JOptionPane.ERROR_MESSAGE);
@@ -4334,7 +4334,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			colorButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
-					Color newColor = JColorChooser.showDialog(BioSim.frame, "Choose Color",
+					Color newColor = JColorChooser.showDialog(Gui.frame, "Choose Color",
 							((JButton) e.getSource()).getBackground());
 					if (newColor != null) {
 						((JButton) e.getSource()).setBackground(newColor);
@@ -4468,7 +4468,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			else {
 				file = new File(biosimrc.get("biosim.general.export_dir", ""));
 			}
-			String filename = Buttons.browse(BioSim.frame, file, null, JFileChooser.FILES_ONLY,
+			String filename = Buttons.browse(Gui.frame, file, null, JFileChooser.FILES_ONLY,
 					export, output);
 			if ((filename.length() > 4)
 					&& (filename.substring((filename.length() - 4), filename.length())
@@ -4516,7 +4516,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				boolean exportIt = true;
 				if (file.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
-					value = JOptionPane.showOptionDialog(BioSim.frame, "File already exists."
+					value = JOptionPane.showOptionDialog(Gui.frame, "File already exists."
 							+ " Overwrite?", "File Already Exists", JOptionPane.YES_NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					exportIt = false;
@@ -4526,7 +4526,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				if (exportIt) {
 					if ((output != 5) && (output != 6) && (output != 7)) {
-						value = JOptionPane.showOptionDialog(BioSim.frame, sizePanel,
+						value = JOptionPane.showOptionDialog(Gui.frame, sizePanel,
 								"Enter Size Of File", JOptionPane.YES_NO_OPTION,
 								JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
 						if (value == JOptionPane.YES_OPTION) {
@@ -4535,12 +4535,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									width = Integer.parseInt(widthField.getText().trim());
 									height = Integer.parseInt(heightField.getText().trim());
 									if (width < 1 || height < 1) {
-										JOptionPane.showMessageDialog(BioSim.frame,
+										JOptionPane.showMessageDialog(Gui.frame,
 												"Width and height must be positive integers!",
 												"Error", JOptionPane.ERROR_MESSAGE);
 										width = -1;
 										height = -1;
-										value = JOptionPane.showOptionDialog(BioSim.frame,
+										value = JOptionPane.showOptionDialog(Gui.frame,
 												sizePanel, "Enter Size Of File",
 												JOptionPane.YES_NO_OPTION,
 												JOptionPane.PLAIN_MESSAGE, null, options2,
@@ -4548,12 +4548,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 								}
 								catch (Exception e2) {
-									JOptionPane.showMessageDialog(BioSim.frame,
+									JOptionPane.showMessageDialog(Gui.frame,
 											"Width and height must be positive integers!", "Error",
 											JOptionPane.ERROR_MESSAGE);
 									width = -1;
 									height = -1;
-									value = JOptionPane.showOptionDialog(BioSim.frame, sizePanel,
+									value = JOptionPane.showOptionDialog(Gui.frame, sizePanel,
 											"Enter Size Of File", JOptionPane.YES_NO_OPTION,
 											JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
 								}
@@ -4609,7 +4609,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(BioSim.frame, "Unable To Export File!", "Error",
+			JOptionPane.showMessageDialog(Gui.frame, "Unable To Export File!", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -4652,7 +4652,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			else {
 				file = new File(biosimrc.get("biosim.general.export_dir", ""));
 			}
-			String filename = Buttons.browse(BioSim.frame, file, null, JFileChooser.FILES_ONLY,
+			String filename = Buttons.browse(Gui.frame, file, null, JFileChooser.FILES_ONLY,
 					export, output);
 			if (!filename.equals("")) {
 				file = new File(filename);
@@ -4660,7 +4660,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				boolean exportIt = true;
 				if (file.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
-					value = JOptionPane.showOptionDialog(BioSim.frame, "File already exists."
+					value = JOptionPane.showOptionDialog(Gui.frame, "File already exists."
 							+ " Overwrite?", "File Already Exists", JOptionPane.YES_NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					exportIt = false;
@@ -4670,7 +4670,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				if (exportIt) {
 					if ((output != 5) && (output != 6) && (output != 7)) {
-						value = JOptionPane.showOptionDialog(BioSim.frame, sizePanel,
+						value = JOptionPane.showOptionDialog(Gui.frame, sizePanel,
 								"Enter Size Of File", JOptionPane.YES_NO_OPTION,
 								JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
 						if (value == JOptionPane.YES_OPTION) {
@@ -4679,12 +4679,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									width = Integer.parseInt(widthField.getText().trim());
 									height = Integer.parseInt(heightField.getText().trim());
 									if (width < 1 || height < 1) {
-										JOptionPane.showMessageDialog(BioSim.frame,
+										JOptionPane.showMessageDialog(Gui.frame,
 												"Width and height must be positive integers!",
 												"Error", JOptionPane.ERROR_MESSAGE);
 										width = -1;
 										height = -1;
-										value = JOptionPane.showOptionDialog(BioSim.frame,
+										value = JOptionPane.showOptionDialog(Gui.frame,
 												sizePanel, "Enter Size Of File",
 												JOptionPane.YES_NO_OPTION,
 												JOptionPane.PLAIN_MESSAGE, null, options2,
@@ -4692,12 +4692,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 								}
 								catch (Exception e2) {
-									JOptionPane.showMessageDialog(BioSim.frame,
+									JOptionPane.showMessageDialog(Gui.frame,
 											"Width and height must be positive integers!", "Error",
 											JOptionPane.ERROR_MESSAGE);
 									width = -1;
 									height = -1;
-									value = JOptionPane.showOptionDialog(BioSim.frame, sizePanel,
+									value = JOptionPane.showOptionDialog(Gui.frame, sizePanel,
 											"Enter Size Of File", JOptionPane.YES_NO_OPTION,
 											JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
 								}
@@ -4753,7 +4753,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(BioSim.frame, "Unable To Export File!", "Error",
+			JOptionPane.showMessageDialog(Gui.frame, "Unable To Export File!", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -4763,7 +4763,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			int count = curData.getSeries(0).getItemCount();
 			for (int i = 1; i < curData.getSeriesCount(); i++) {
 				if (curData.getSeries(i).getItemCount() != count) {
-					JOptionPane.showMessageDialog(BioSim.frame,
+					JOptionPane.showMessageDialog(Gui.frame,
 							"Data series do not have the same number of points!",
 							"Unable to Export Data File", JOptionPane.ERROR_MESSAGE);
 					return;
@@ -4773,7 +4773,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				Number Xval = curData.getSeries(0).getDataItem(j).getX();
 				for (int i = 1; i < curData.getSeriesCount(); i++) {
 					if (!curData.getSeries(i).getDataItem(j).getX().equals(Xval)) {
-						JOptionPane.showMessageDialog(BioSim.frame,
+						JOptionPane.showMessageDialog(Gui.frame,
 								"Data series time points are not the same!",
 								"Unable to Export Data File", JOptionPane.ERROR_MESSAGE);
 						return;
@@ -4855,7 +4855,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			csvFile.close();
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(BioSim.frame, "Unable To Export File!", "Error",
+			JOptionPane.showMessageDialog(Gui.frame, "Unable To Export File!", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -5153,7 +5153,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				change = false;
 			}
 			catch (Exception except) {
-				JOptionPane.showMessageDialog(BioSim.frame, "Unable To Save Graph!", "Error",
+				JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -5190,7 +5190,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				change = false;
 			}
 			catch (Exception except) {
-				JOptionPane.showMessageDialog(BioSim.frame, "Unable To Save Graph!", "Error",
+				JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -5198,7 +5198,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	public void saveAs() {
 		if (timeSeries) {
-			String graphName = JOptionPane.showInputDialog(BioSim.frame, "Enter Graph Name:",
+			String graphName = JOptionPane.showInputDialog(Gui.frame, "Enter Graph Name:",
 					"Graph Name", JOptionPane.PLAIN_MESSAGE);
 			if (graphName != null && !graphName.trim().equals("")) {
 				graphName = graphName.trim();
@@ -5221,7 +5221,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				if (f.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
-					int value = JOptionPane.showOptionDialog(BioSim.frame, "File already exists."
+					int value = JOptionPane.showOptionDialog(Gui.frame, "File already exists."
 							+ "\nDo you want to overwrite?", "Overwrite",
 							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 							options[0]);
@@ -5301,13 +5301,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					biomodelsim.addToTree(f.getName());
 				}
 				catch (Exception except) {
-					JOptionPane.showMessageDialog(BioSim.frame, "Unable To Save Graph!", "Error",
+					JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
 		else {
-			String graphName = JOptionPane.showInputDialog(BioSim.frame,
+			String graphName = JOptionPane.showInputDialog(Gui.frame,
 					"Enter Probability Graph Name:", "Probability Graph Name",
 					JOptionPane.PLAIN_MESSAGE);
 			if (graphName != null && !graphName.trim().equals("")) {
@@ -5331,7 +5331,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				if (f.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
-					int value = JOptionPane.showOptionDialog(BioSim.frame, "File already exists."
+					int value = JOptionPane.showOptionDialog(Gui.frame, "File already exists."
 							+ "\nDo you want to overwrite?", "Overwrite",
 							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 							options[0]);
@@ -5405,7 +5405,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				catch (Exception except) {
 					JOptionPane
-							.showMessageDialog(BioSim.frame, "Unable To Save Probability Graph!",
+							.showMessageDialog(Gui.frame, "Unable To Save Probability Graph!",
 									"Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
@@ -5505,7 +5505,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				refresh();
 			}
 			catch (IOException except) {
-				JOptionPane.showMessageDialog(BioSim.frame, "Unable To Load Graph!", "Error",
+				JOptionPane.showMessageDialog(Gui.frame, "Unable To Load Graph!", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -5566,7 +5566,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				refreshProb();
 			}
 			catch (Exception except) {
-				JOptionPane.showMessageDialog(BioSim.frame, "Unable To Load Graph!", "Error",
+				JOptionPane.showMessageDialog(Gui.frame, "Unable To Load Graph!", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -6682,7 +6682,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		if (simDir.getChildCount() == 0) {
-			JOptionPane.showMessageDialog(BioSim.frame, "No data to graph."
+			JOptionPane.showMessageDialog(Gui.frame, "No data to graph."
 					+ "\nPerform some simulations to create some data first.", "No Data",
 					JOptionPane.PLAIN_MESSAGE);
 		}
@@ -7005,7 +7005,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			all.add(scrollpane, "West");
 			Object[] options = { "Ok", "Cancel" };
 			int value = JOptionPane
-					.showOptionDialog(BioSim.frame, all, "Edit Probability Graph",
+					.showOptionDialog(Gui.frame, all, "Edit Probability Graph",
 							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 							options[0]);
 			if (value == JOptionPane.YES_OPTION) {
@@ -7647,7 +7647,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			colorButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
-					Color newColor = JColorChooser.showDialog(BioSim.frame, "Choose Color",
+					Color newColor = JColorChooser.showDialog(Gui.frame, "Choose Color",
 							((JButton) e.getSource()).getBackground());
 					if (newColor != null) {
 						((JButton) e.getSource()).setBackground(newColor);
@@ -7912,7 +7912,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(BioSim.frame, "Unable to load background file.", "Error",
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to load background file.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			background = null;
 		}
@@ -7962,7 +7962,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				// END ADDED BY SB.
 			}
 			else {
-				SBMLDocument document = BioSim.readSBML(background);
+				SBMLDocument document = Gui.readSBML(background);
 				Model model = document.getModel();
 				ListOf ids = model.getListOfSpecies();
 				for (int i = 0; i < model.getNumSpecies(); i++) {
