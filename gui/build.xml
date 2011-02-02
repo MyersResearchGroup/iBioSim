@@ -105,7 +105,7 @@
 	  </javac>	
         <jar jarfile="${build.lib}/gui.jar" basedir="${build.classes}">
 	    <manifest>
-		<attribute name="Main-Class" value="biomodelsim.BioSim"/>
+		<attribute name="Main-Class" value="main.Gui"/>
 		<attribute name="Class-Path" value="../../lib/AppleJavaExtensions.jar ../../lib/jgraphx.jar ../../lib/grappa1_2.jar ../../lib/jcommon-1.0.16.jar ../../lib/jfreechart-1.0.13.jar ../../lib/iText-2.1.5.jar ../../lib/batik-anim.jar ../../lib/batik-awt-util.jar ../../lib/batik-bridge.jar ../../lib/batik-codec.jar ../../lib/batik-css.jar ../../lib/batik-dom.jar ../../lib/batik-ext.jar ../../lib/batik-extension.jar ../../lib/batik-gui-util.jar ../../lib/batik-gvt.jar ../../lib/batik-parser.jar ../../lib/batik-script.jar ../../lib/batik-svg-dom.jar ../../lib/batik-svggen.jar ../../lib/batik-swing.jar ../../lib/batik-transcoder.jar ../../lib/batik-util.jar ../../lib/batik-xml.jar ../../lib/activation.jar ../../lib/mail.jar ../../lib/js.jar ../../lib/pdf-transcoder.jar ../../lib/xalan-2.6.0.jar ../../lib/xerces_2_5_0.jar ../../lib/xml-apis.jar ../../lib/xml-apis-ext.jar ../../lib/epsgraphics.jar ../../lib/org-jdesktop-layout.jar ../../lib/swing-layout-1.0.3.jar ../../lib/libsbml/lib/libsbmlj.jar ../../lib/junit.jar ../../lib/biomodelswslib-standalone-1.11.jar ../../lib/gson-1.6.jar"/>
       	    </manifest>
 	</jar>
