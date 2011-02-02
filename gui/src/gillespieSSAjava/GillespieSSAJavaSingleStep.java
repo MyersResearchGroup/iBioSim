@@ -365,7 +365,8 @@ public class GillespieSSAJavaSingleStep {
 			 time = maxTime;
 			 System.out.println("propensity = 0");
 			 System.out.println("time = " + time);
-			 continue;
+//			 continue;
+			 break;
 		 }
 		 
 		 // 3. Determine the time, tau, until the next reaction. 
