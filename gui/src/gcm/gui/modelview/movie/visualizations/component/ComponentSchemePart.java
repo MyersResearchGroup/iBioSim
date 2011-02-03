@@ -53,7 +53,10 @@ public class ComponentSchemePart {
 		// if the user hasn't chosen a species, don't use this color.
 		if(key == null)
 			return null;
-		double val = dataHash.get(key).get(frameIndex);
+		ArrayList<Double> al = dataHash.get(key);
+		if(al == null)
+			return null;
+		double val = al.get(frameIndex);
 		return colorScheme.getColor(val);
 	}
 	
