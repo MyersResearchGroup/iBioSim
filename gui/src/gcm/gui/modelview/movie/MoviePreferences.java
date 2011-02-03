@@ -3,6 +3,7 @@ package gcm.gui.modelview.movie;
 import gcm.gui.modelview.movie.visualizations.ColorScheme;
 import gcm.gui.modelview.movie.visualizations.component.ComponentScheme;
 import gcm.parser.GCMFile;
+import gcm.util.GlobalConstants;
 
 import java.util.HashMap;
 
@@ -71,10 +72,14 @@ public class MoviePreferences {
 	
 	public void copyMoviePreferencesComponent(String masterComponentName, GCMFile gcm, TSDParser tsdParser){
 		ComponentScheme masterScheme = this.getComponentSchemeForComponent(masterComponentName);
+		String compGCMFileName = gcm.getComponents().get(masterComponentName).getProperty("gcm");
 		for(String currentComponentName:gcm.getComponents().keySet()){
-			if(!currentComponentName.equals(masterComponentName)){ // skip the current component
-				ComponentScheme currentScheme = this.getOrCreateComponentSchemeForComponent(currentComponentName, tsdParser);
-				currentScheme.duplicatePreferences(masterScheme, currentComponentName);
+			// make sure this is the same type of component
+			if(gcm.getComponents().get(currentComponentName).getProperty("gcm").equals(compGCMFileName)){
+				if(!currentComponentName.equals(masterComponentName)){ // skip the current component
+					ComponentScheme currentScheme = this.getOrCreateComponentSchemeForComponent(currentComponentName, tsdParser);
+					currentScheme.duplicatePreferences(masterScheme, currentComponentName);
+				}
 			}
 		}
 	}
