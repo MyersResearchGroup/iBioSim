@@ -745,7 +745,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 
 		// sortSpecies();
 		JPanel runHolder = new JPanel();
-		autogen(false);
+		levels(); //autogen(false);
 		if (auto.isSelected()) {
 			auto.doClick();
 		} else {
@@ -1355,8 +1355,8 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).set(m,Double.parseDouble(threshValues[m]));} // changed 3 to 4 after required
 							}
 						}
-						//}
-					} }
+					}
+				}
 				generate = true;
 				execute = false;
 				LearnThread = new Thread(this);

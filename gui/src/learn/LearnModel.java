@@ -1789,6 +1789,7 @@ public class LearnModel { // added ItemListener SB
 						// continue;
 						// }
 						if (reqdVarsL.get(j).isDmvc()) { // && !reqdVarsL.get(j).isInput()){
+							System.out.println("DMVC " + dmvcValuesUnique);
 							//System.out.println(reqdVarsL.get(j).getName() + " " + bins[j][i] + " "  + dmvcValuesUnique.get(reqdVarsL.get(j).getName()).getProperty(String.valueOf(bins[j][i]))"\n");
 							out.write("Add value : " + reqdVarsL.get(j).getName() + " -> corresponding to bin " + bins[j][i] + " at place p" + p0.getProperty("placeNum") + "\n");
 							out.write("Add value : " + reqdVarsL.get(j).getName() + " -> " + Double.valueOf(dmvcValuesUnique.get(reqdVarsL.get(j).getName()).getProperty(String.valueOf(bins[j][i]))) + " at place p" + p0.getProperty("placeNum") + "\n");
