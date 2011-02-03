@@ -844,8 +844,9 @@ public class BioGraph extends mxGraph {
 		cell.setStyle(newStyle);
 	}
 	public void setComponentAnimationValue(String c, Color color){
+		if(color == null)
+			return;
 		mxCell cell = this.componentsToMxCellMap.get(c);
-
 		String newStyle = mxConstants.STYLE_FILLCOLOR + "=" + Integer.toHexString(color.getRGB());
 		
 		cell.setStyle(newStyle);
