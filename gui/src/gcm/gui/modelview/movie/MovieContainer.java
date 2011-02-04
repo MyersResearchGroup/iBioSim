@@ -8,6 +8,7 @@ import gcm.gui.schematic.ListChooser;
 import gcm.gui.schematic.Schematic;
 import gcm.gui.schematic.SchematicObjectClickEvent;
 import gcm.gui.schematic.SchematicObjectClickEventListener;
+import gcm.gui.schematic.TreeChooser;
 import gcm.gui.schematic.Utils;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
@@ -30,6 +31,7 @@ import java.util.Properties;
 import java.util.Vector;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -37,6 +39,7 @@ import javax.swing.JSlider;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
+import javax.swing.filechooser.FileFilter;
 
 import main.Gui;
 
@@ -49,6 +52,7 @@ import com.google.gson.GsonBuilder;
 import parser.TSDParser;
 
 import reb2sac.Reb2Sac;
+import util.ExampleFileFilter;
 
 import att.grappa.Parser;
 
@@ -117,6 +121,22 @@ public class MovieContainer extends JPanel implements ActionListener {
 		 */
 	}
 	
+	private Vector<Object> recurseTSDFiles(String directoryName){
+		Vector<Object> filenames = new Vector<Object>();
+		
+		filenames.add(new File(directoryName).getName());
+		for (String s : new File(directoryName).list()){
+			String fullFileName = directoryName + File.separator + s;
+			File f = new File(fullFileName);
+			if(s.endsWith(".tsd") && f.isFile()){
+				filenames.add(s);
+			}else if(f.isDirectory()){
+				filenames.add(recurseTSDFiles(fullFileName));
+			}
+		}
+		return filenames;
+	}
+	
 	/**
 	 * Allows the user to choose from valid TSD files, then loads and parses the file.
 	 * @return
@@ -124,24 +144,25 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 */
 	private void prepareTSDFile(){
 		pause();
-		
-		// TODO: also search subdirectories and add everything to a tree, instead of a list
-		Vector<String> filenames = new Vector<String>();
-		for (String s : new File(reb2sac.getSimPath()).list()) {
-			if (s.endsWith(".tsd")) {
-				filenames.add(s);
-			}
+	
+		// if simID is present, go up one directory.
+		String simPath = reb2sac.getSimPath();
+		String simID = reb2sac.getSimID();
+		if(!simID.equals("")){
+			simPath = new File(simPath).getParent();
 		}
+		Vector<Object> filenames = recurseTSDFiles(simPath);
+		
 		String filename;
 		try{
-			filename = ListChooser.selectFromList(Gui.frame, filenames.toArray(), "Please choose a simulation file");
-		}catch(ListChooser.EmptyListException e){
+			filename = TreeChooser.selectFromTree(Gui.frame, filenames, "Please choose a simulation file");
+		}catch(TreeChooser.EmptyTreeException e){
 			JOptionPane.showMessageDialog(Gui.frame, "Sorry, there aren't any simulation files. Please simulate then try again.");
 			return;
 		}
 		if(filename == null)
 			return;
-		String fullFilePath = reb2sac.getSimPath() + File.separator + filename;
+		String fullFilePath = reb2sac.getRootPath() + filename;
 		this.parser = new TSDParser(fullFilePath, false);
 		
 		slider.setMaximum(parser.getNumSamples()-1);

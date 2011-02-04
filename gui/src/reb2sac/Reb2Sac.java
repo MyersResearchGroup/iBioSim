@@ -164,6 +164,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	private Object[] props; // array for properties JList
 
 	private String sbmlFile, root; // sbml file and root directory
+	public String getRootPath(){return root;}
 
 	private Gui biomodelsim; // reference to the tstubd class
 
