@@ -45,6 +45,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		KineticLaw kl = r.createKineticLaw();
+		String ncSum = "";
 		for (PartSpecies part : specie.getParts()) {
 			SpeciesInterface s = part.getSpecies();
 			double n = part.getStoich();
@@ -52,20 +53,21 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 			expression = expression + "*" + s.getId();
 			if (n > 1) {
 				expression = expression + '^' + coopString + "_" + s.getId();
-				kl.addParameter(Utility.Parameter(coopString + "_" + s.getId(), n, "dimensionless"));
 			}
+			kl.addParameter(Utility.Parameter(coopString + "_" + s.getId(), n, "dimensionless"));
+			ncSum = ncSum + coopString + "_" + s.getId() + "+";
 		}
-		expression = kcompString + expression;
+		expression = kcompString + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + expression;
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
-		if (kcomp.length > 1) {
+		if (kcomp.length == 2) {
 			kl.addParameter(Utility.Parameter("kr", kcomp[1], GeneticNetwork.getMoleTimeParameter(1)));
 			kl.addParameter(Utility.Parameter(kcompString, kcomp[0]/kcomp[1],
-					GeneticNetwork.getMoleParameter(specie.getSize())));
+					GeneticNetwork.getMoleParameter(2)));
 		} else {
 			kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork.getMoleTimeParameter(1)));
 			kl.addParameter(Utility.Parameter(kcompString, kcomp[0],
-					GeneticNetwork.getMoleParameter(specie.getSize())));
+					GeneticNetwork.getMoleParameter(2)));
 		}
 		kl.setFormula("kr*" + expression + "-kr*" + specie.getId());
 		Utility.addReaction(document, r);

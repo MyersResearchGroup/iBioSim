@@ -34,7 +34,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		for (SpeciesInterface specie : promoter.getRepressors()) {
 			String repressor = specie.getId();
 			String[] splitted = repressor.split("__");
-			if (splitted.length > 1)
+			if (splitted.length == 2)
 				repressor = splitted[1];
 			speciesName = promoter.getId() + "_" + repressor + "_bound";
 			reactionName = "R_repression_binding_" + promoter.getId() + "_" + repressor;
@@ -60,7 +60,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = r.createKineticLaw();
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
-		if (krep.length > 1) {
+		if (krep.length == 2) {
 			kl.addParameter(Utility.Parameter(krepString, krep[0]/krep[1],
 					GeneticNetwork.getMoleParameter(2)));
 		} else {
@@ -70,13 +70,14 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String repMolecule = "";
 		if (complexAbstraction) {
-			if (kcomp.length > 1) {
+			if (kcomp.length == 2) {
 				kl.addParameter(Utility.Parameter(kcompString, kcomp[0]/kcomp[1],
-						GeneticNetwork.getMoleParameter(specie.getSize())));
+						GeneticNetwork.getMoleParameter(2)));
 			} else {
 				kl.addParameter(Utility.Parameter(kcompString, kcomp[0],
-						GeneticNetwork.getMoleParameter(specie.getSize())));
+						GeneticNetwork.getMoleParameter(2)));
 			}
+			String ncSum = "";
 			for (PartSpecies part : specie.getParts()) {
 				SpeciesInterface s = part.getSpecies();
 				double n = part.getStoich();
@@ -84,10 +85,11 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 				repMolecule = repMolecule + "*" + s.getId();
 				if (n > 1) {
 					repMolecule = repMolecule + '^' + coopString + "_" + s.getId();
-					kl.addParameter(Utility.Parameter(coopString + "_" + s.getId(), n, "dimensionless"));
 				}
+				kl.addParameter(Utility.Parameter(coopString + "_" + s.getId(), n, "dimensionless"));
+				ncSum = ncSum + coopString + "_" + s.getId() + "+";
 			}
-			repMolecule = kcompString + repMolecule;
+			repMolecule = kcompString + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + repMolecule;
 		} else {
 			repMolecule = specie.getId();
 			r.addReactant(Utility.SpeciesReference(repMolecule, coop));
@@ -111,7 +113,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = r.createKineticLaw();
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
-		if (krep.length > 1) {
+		if (krep.length == 2) {
 			kl.addParameter(Utility.Parameter(krepString, krep[0]/krep[1],
 					GeneticNetwork.getMoleParameter(2)));
 		} else {
@@ -138,7 +140,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = r.createKineticLaw();
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
-		if (krep.length > 1) {
+		if (krep.length == 2) {
 			kl.addParameter(Utility.Parameter(krepString, krep[0]/krep[1],
 					GeneticNetwork.getMoleParameter(2)));
 		} else {
@@ -165,7 +167,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = r.createKineticLaw();
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
-		if (krep.length > 1) {
+		if (krep.length == 2) {
 			kl.addParameter(Utility.Parameter(krepString, krep[0]/krep[1],
 					GeneticNetwork.getMoleParameter(2)));
 		} else {
@@ -198,7 +200,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		Reaction r = promoter.getRepressionMap().get(s.getId());
 		coop = r.getCoop();
 		krep = r.getRep();
-		if (krep.length > 1)
+		if (krep.length == 2)
 			kr = krep[1];
 		else
 			kr = 1;

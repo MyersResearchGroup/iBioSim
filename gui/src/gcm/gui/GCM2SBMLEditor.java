@@ -443,6 +443,56 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		reload(newName);
 	}
 
+	private void sweepHelper(ArrayList<ArrayList<Double>> sweep, String s) {
+		double[] start = {0, 0};
+		double[] stop = {0, 0};
+		double[] step = {0, 0};
+		
+		String temp = (s.split(" ")[s.split(" ").length - 1]).split(",")[0].substring(1).trim();
+		String[] tempSlash = temp.split("/");
+		start[0] = Double.parseDouble(tempSlash[0]);
+		if (tempSlash.length == 2)
+			start[1] = Double.parseDouble(tempSlash[1]);
+			
+		temp = (s.split(" ")[s.split(" ").length - 1]).split(",")[1].trim();
+		tempSlash = temp.split("/");
+		stop[0] = Double.parseDouble(tempSlash[0]);
+		if (tempSlash.length == 2)
+			stop[1] = Double.parseDouble(tempSlash[1]);
+		
+		temp = (s.split(" ")[s.split(" ").length - 1]).split(",")[2].trim();
+		tempSlash = temp.split("/");
+		step[0] = Double.parseDouble(tempSlash[0]);
+		if (tempSlash.length == 2)
+			step[1] = Double.parseDouble(tempSlash[1]);
+		
+		ArrayList<Double> kf = new ArrayList<Double>();
+		ArrayList<Double> kr = new ArrayList<Double>();
+		kf.add(start[0]);
+		kr.add(start[1]);
+		while (step[0] != 0 || step[1] != 0) {
+			if (start[0] + step[0] > stop[0])
+				step[0] = 0;
+			if (start[1] + step[1] > stop[1])
+				step[1] = 0;
+			if (step[0] != 0 || step[1] != 0) {
+				start[0] += step[0];
+				start[1] += step[1];
+				kf.add(start[0]);
+				kr.add(start[1]);
+			}
+		}
+		ArrayList<Double> Keq = new ArrayList<Double>();
+		for (int i = 0; i < kf.size(); i++) {
+			if (kr.get(i) != 0) {
+				if (!Keq.contains(kf.get(i)/kr.get(i)))
+						Keq.add(kf.get(i)/kr.get(i));
+			} else if (!Keq.contains(kf.get(i)))
+				Keq.add(kf.get(i));
+		}
+		sweep.add(Keq);
+	}
+	
 	public void saveParams(boolean run, String stem) {
 		ArrayList<String> sweepThese1 = new ArrayList<String>();
 		ArrayList<ArrayList<Double>> sweep1 = new ArrayList<ArrayList<Double>>();
@@ -453,43 +503,19 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				if ((s.split(" ")[s.split(" ").length - 1]).split(",")[3].replace(")", "").trim().equals(
 						"1")) {
 					sweepThese1.add(s.substring(0, s.lastIndexOf(" ")));
-					double start = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[0]
-							.substring(1).trim());
-					double stop = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[1]
-							.trim());
-					double step = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[2]
-							.trim());
-					if (step <= 0) {
-						JOptionPane.showMessageDialog(Gui.frame, "Step must be a positive number."
-								+ "\nDefaulting to a step of 1.", "Error", JOptionPane.ERROR_MESSAGE);
-						step = 1;
-					}
-					ArrayList<Double> add = new ArrayList<Double>();
-					for (double i = start; i <= stop; i += step) {
-						add.add(i);
-					}
-					sweep1.add(add);
+					sweepHelper(sweep1, s);
 				}
 				else {
 					sweepThese2.add(s.substring(0, s.lastIndexOf(" ")));
-					double start = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[0]
-							.substring(1).trim());
-					double stop = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[1]
-							.trim());
-					double step = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[2]
-							.trim());
-					if (step <= 0) {
-						JOptionPane.showMessageDialog(Gui.frame, "Step must be a positive number."
-								+ "\nDefaulting to a step of 1.", "Error", JOptionPane.ERROR_MESSAGE);
-						step = 1;
-					}
-					ArrayList<Double> add = new ArrayList<Double>();
-					for (double i = start; i <= stop; i += step) {
-						add.add(i);
-					}
-					sweep2.add(add);
+					sweepHelper(sweep2, s);
 				}
 			}
+		}
+		if (sweepThese1.size() == 0 && (sweepThese2.size() > 0)) {
+			sweepThese1 = sweepThese2;
+			sweepThese2 = new ArrayList<String>();
+			sweep1 = sweep2;
+			sweep2 = new ArrayList<ArrayList<Double>>();
 		}
 		if (sweepThese1.size() > 0) {
 			int max = 0;

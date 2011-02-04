@@ -318,7 +318,7 @@ public class GeneticNetwork {
 			r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
 			double[] Krnap = p.getKrnap();
-			if (Krnap.length > 1) {
+			if (Krnap.length == 2) {
 				kl.addParameter(Utility.Parameter("kr", Krnap[1], GeneticNetwork
 						.getMoleTimeParameter(1)));
 				kl.addParameter(Utility.Parameter(krnapString, Krnap[0]/Krnap[1],
