@@ -16,6 +16,7 @@ import javax.swing.border.EmptyBorder;
 
 import main.Gui;
 
+import org.jfree.layout.CenterLayout;
 import org.jfree.ui.tabbedui.VerticalLayout;
 
 
@@ -60,6 +61,15 @@ public class ComponentSchemeChooser extends JPanel implements ActionListener {
 					);
 		}
 	
+		// build a special button to display the extra options
+		JPanel tpanel = new JPanel(new CenterLayout());
+		JButton copyButton = new JButton("Copy to Similar Components");
+		copyButton.setToolTipText("This button will copy these settings to all other components of the same type.");
+		copyButton.setActionCommand(COPY_PREFERENCES);
+		copyButton.addActionListener(this);
+		copyButton.setSize(200, 25);
+		tpanel.add(copyButton);
+		this.add(tpanel, BorderLayout.SOUTH);
 		
 //		JButton moreButton = new JButton("Add Another Scheme");
 //		moreButton.setActionCommand(ADD_ANOTHER);
@@ -70,26 +80,25 @@ public class ComponentSchemeChooser extends JPanel implements ActionListener {
 	
 	private void openGUI(){
 		
-		// build a special button to display the extra options
-		JButton copyButton = new JButton("OK, and Copy to Similar Components");
-		copyButton.setToolTipText("This button will copy these settings to all other components of the same type.");
-		copyButton.setActionCommand(COPY_PREFERENCES);
-		copyButton.addActionListener(this);
-		
-		Object[] possibleValues = {"OK, and Copy to Similar Components", "OK", "Cancel"};
+		Object[] possibleValues = {"OK", "Cancel"};
 		int value = JOptionPane.showOptionDialog(Gui.frame, this, "Scheme for Component",
 				JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, possibleValues, possibleValues[1]);
 		
 		if (value != 2) { // 2 is cancel
-			for(Object o:schemeHolder.getComponents()){
-				((ComponentSchemePartChooser)o).saveChanges();
-			}
+			this.applyToThis();
 		}
 		
-		if(value == 0){
-			this.movieContainer.copyMoviePreferencesComponent(compName);
-		}
+//		if(value == 0){
+//			this.movieContainer.copyMoviePreferencesComponent(compName);
+//		}
 	}
+	
+	private void applyToThis(){
+		for(Object o:schemeHolder.getComponents()){
+			((ComponentSchemePartChooser)o).saveChanges();
+		}	
+	}
+	
 	
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals(ADD_ANOTHER)) {
@@ -97,6 +106,7 @@ public class ComponentSchemeChooser extends JPanel implements ActionListener {
 				//addSchemePart(componentScheme.getNewAtEnd());
 			}
 		}else if(e.getActionCommand().equals(COPY_PREFERENCES)){
+			applyToThis();
 			this.movieContainer.copyMoviePreferencesComponent(compName);
 		}
 	}
