@@ -163,7 +163,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			// build a special button to display the extra options
 			JPanel tpanel = new JPanel(new CenterLayout());
-			JButton copyButton = new JButton("Copy to Similar Components");
+			JButton copyButton = new JButton("Copy Color Properties to All Species");
 			copyButton.setToolTipText("This button will copy these settings to all other components of the same type.");
 			copyButton.setActionCommand(COPY_COLOR_TO_ALL);
 			copyButton.addActionListener(this);
