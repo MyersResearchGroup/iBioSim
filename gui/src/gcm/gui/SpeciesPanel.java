@@ -17,10 +17,13 @@ import java.util.HashMap;
 import java.util.Properties;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import org.jfree.layout.CenterLayout;
 
 import main.Gui;
 
@@ -29,6 +32,8 @@ import parser.TSDParser;
 
 public class SpeciesPanel extends JPanel implements ActionListener {
 
+	private static final String COPY_COLOR_TO_ALL = "copy colors to all species";
+	
 	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList influencesList,
 			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
 			GCMFile refGCM, GCM2SBMLEditor gcmEditor){
@@ -149,9 +154,23 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		// add the color chooser for the movie component
 		if(paramsOnly){
+			JPanel colorsPanel = new JPanel(new BorderLayout());
+			this.add(colorsPanel, BorderLayout.SOUTH);
 			ColorScheme colorScheme = movieContainer.getMoviePreferences().getOrCreateColorSchemeForSpecies(selected, movieContainer.getTSDParser());
 			colorSchemeChooser = new ColorSchemeChooser(colorScheme);
-			this.add(colorSchemeChooser, BorderLayout.SOUTH);
+			colorsPanel.add(colorSchemeChooser, BorderLayout.CENTER);
+			
+			
+			// build a special button to display the extra options
+			JPanel tpanel = new JPanel(new CenterLayout());
+			JButton copyButton = new JButton("Copy to Similar Components");
+			copyButton.setToolTipText("This button will copy these settings to all other components of the same type.");
+			copyButton.setActionCommand(COPY_COLOR_TO_ALL);
+			copyButton.addActionListener(this);
+			copyButton.setSize(200, 25);
+			tpanel.add(copyButton);
+			colorsPanel.add(tpanel, BorderLayout.SOUTH);
+			
 		}
 		
 		
@@ -208,23 +227,17 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	private boolean openGui() {
 		
-		// figure out which set of buttons to use
-		String[] buttonOptions = options;
-		String defaultOption = options[0];
-		if(paramsOnly)
-			buttonOptions = withColorOptions;
-		
 		int value = JOptionPane.showOptionDialog(Gui.frame, this, "Species Editor",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, buttonOptions, defaultOption);
+				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		
 		// the new id of the species. Will be filled in later.
 		String newSpeciesID = null;
 		
 		// if the value is -1 (user hit escape) then set it equal to the cancel value
 		if(value == -1)
-			for(int i=0; i<buttonOptions.length; i++){if(buttonOptions[i] == options[1]){value = i;}}
+			for(int i=0; i<options.length; i++){if(options[i] == options[1]){value = i;}}
 		
-		if (buttonOptions[value].equals(options[0]) || buttonOptions[value].equals(withColorOptions[0])) { // "OK" or "Ok and copy..."
+		if (options[value].equals(options[0])) { // "OK" or "Ok and copy..."
 			if (!checkValues()) {
 				Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
@@ -330,10 +343,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			gcmEditor.setDirty(true);
 		}
-		if(buttonOptions[value].equals(withColorOptions[0])) { // "Ok, and copy..."
-			movieContainer.copyMoviePreferencesSpecies(newSpeciesID);
-		}
-		if(buttonOptions[value].equals(options[1])) { // "Cancel"
+
+		if(options[value].equals(options[1])) { // "Cancel"
 			// System.out.println();
 			return true;
 		}
@@ -377,6 +388,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 			setType(typeBox.getSelectedItem().toString());
+		}else if(e.getActionCommand().equals(COPY_COLOR_TO_ALL)){
+			colorSchemeChooser.saveChanges();
+			movieContainer.copyMoviePreferencesSpecies(this.selected);
 		}
 	}
 
@@ -417,9 +431,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	
 	private PropertyList components = null;
 
-	private String[] options = { "Apply", "Cancel" };
-	// make sure the Ok and Cancel options in both of these match exactly
-	private String[] withColorOptions = {"Apply to All", "Apply", "Cancel"};
+	private String[] options = { "Ok", "Cancel" };
 
 	private GCMFile gcm = null;
 
