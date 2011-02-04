@@ -172,26 +172,47 @@ public class PropertyField extends JPanel implements ActionListener,
 			int i = JOptionPane.showOptionDialog(this, p, "Sweep", JOptionPane.YES_NO_OPTION,
 					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (i == JOptionPane.YES_OPTION) {
-				double startVal = 0.0;
-				double stopVal = 0.0;
-				double stepVal = 1.0;
+				double[] startVal = {0, 0};
+				double[] stopVal = {0, 0};  
+				double[] stepVal = {1, 0};  
+				String sweeper = "(";
 				try {
-					startVal = Double.parseDouble(start.getText().trim());
+					String[] starter = start.getText().trim().split("/");
+					startVal[0] = Double.parseDouble(starter[0]);
+					if (starter.length == 2)
+						startVal[1] = Double.parseDouble(starter[1]);
 				}
 				catch (Exception e1) {
 				}
+				sweeper = sweeper + startVal[0];
+				if (startVal[1] != 0)
+					sweeper = sweeper + "/" + startVal[1];
+				sweeper = sweeper + ",";
 				try {
-					stopVal = Double.parseDouble(stop.getText().trim());
+					String[] stopper = stop.getText().trim().split("/");
+					stopVal[0] = Double.parseDouble(stopper[0]);
+					if (stopper.length == 2)
+						stopVal[1] = Double.parseDouble(stopper[1]);
 				}
 				catch (Exception e1) {
 				}
+				sweeper = sweeper + stopVal[0];
+				if (stopVal[1] != 0)
+					sweeper = sweeper + "/" + stopVal[1];
+				sweeper = sweeper + ",";
 				try {
-					stepVal = Double.parseDouble(step.getText().trim());
+					String[] stepper = step.getText().trim().split("/");
+					stepVal[0] = Double.parseDouble(stepper[0]);
+					if (stepper.length == 2)
+						stepVal[1] = Double.parseDouble(stepper[1]);
 				}
 				catch (Exception e1) {
 				}
-				setValue("(" + startVal + "," + stopVal + "," + stepVal + "," + level.getSelectedItem()
-						+ ")");
+				sweeper = sweeper + stepVal[0];
+				if (stepVal[1] != 0)
+					sweeper = sweeper + "/" + stepVal[1];
+				sweeper = sweeper + "," + level.getSelectedItem() + ")";
+				setValue(sweeper);
 			}
 		} else {
 			if (Utility.isValid(e.getActionCommand(), regExp)) {
