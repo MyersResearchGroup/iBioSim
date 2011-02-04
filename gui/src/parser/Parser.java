@@ -135,6 +135,8 @@ public class Parser {
 	 * @return
 	 */
 	public int getNumSamples(){
+		if(this.data.size() == 0)
+			return 0;
 		return this.data.get(0).size();
 	}
 	
