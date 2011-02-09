@@ -569,6 +569,28 @@ public class Transition {
 					"continuous", "LHPN"));
 		}
 	}
+	
+	public void minimizeUniforms() {
+		if (enablingTree != null) {
+			enabling = enablingTree.minimizeUniforms().toString("LHPN");
+		}
+		for (String var : boolAssignTrees.keySet()) {
+			boolAssignments.put(var, boolAssignTrees.get(var).minimizeUniforms().toString(
+					"boolean", "LHPN"));
+		}
+		for (String var : intAssignTrees.keySet()) {
+			intAssignments.put(var, intAssignTrees.get(var).minimizeUniforms().toString("integer",
+					"LHPN"));
+		}
+		for (String var : contAssignTrees.keySet()) {
+			contAssignments.put(var, contAssignTrees.get(var).minimizeUniforms().toString(
+					"continuous", "LHPN"));
+		}
+		for (String var : rateAssignTrees.keySet()) {
+			rateAssignments.put(var, rateAssignTrees.get(var).minimizeUniforms().toString(
+					"continuous", "LHPN"));
+		}
+	}
 
 	@Override
 	public String toString() {

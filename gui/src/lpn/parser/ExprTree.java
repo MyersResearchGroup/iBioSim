@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.lang.Math;
 
-//import java.util.Properties;
-
 public class ExprTree {
 
 	String op;
@@ -51,7 +49,7 @@ public class ExprTree {
 			signals.add(ints[j]);
 		}
 	}
-	
+
 	public ExprTree(OldLHPNFile lhpn) {
 		String[] bools = lhpn.getBooleanVars();
 		String[] conts = lhpn.getContVars();
@@ -67,9 +65,8 @@ public class ExprTree {
 			signals.add(ints[j]);
 		}
 	}
-	
+
 	public ExprTree(Abstraction abstraction) {
-		// this.abstraction = abstraction;
 		this.lhpn = abstraction;
 		String[] bools = abstraction.getBooleanVars();
 		String[] conts = abstraction.getContVars();
@@ -85,22 +82,8 @@ public class ExprTree {
 			signals.add(ints[j]);
 		}
 	}
-	
+
 	public ExprTree(Transition transition) {
-		//this.lhpn = lhpn;
-		//String[] bools = lhpn.getBooleanVars();
-		//String[] conts = lhpn.getContVars();
-		//String[] ints = lhpn.getIntVars();
-		//signals = new ArrayList<String>();
-		//for (int j = 0; j < bools.length; j++) {
-		//	signals.add(bools[j]);
-		//}
-		//for (int j = 0; j < conts.length; j++) {
-		//	signals.add(conts[j]);
-		//}
-		//for (int j = 0; j < ints.length; j++) {
-		//	signals.add(ints[j]);
-		//}
 	}
 
 	ExprTree(char willbe, int lNV, int uNV, String var) {
@@ -127,8 +110,7 @@ public class ExprTree {
 			logical = true;
 			uvalue = 1;
 			lvalue = 0;
-		}
-		else {
+		} else {
 			logical = false;
 			uvalue = INFIN;
 			lvalue = -INFIN;
@@ -159,9 +141,6 @@ public class ExprTree {
 		}
 		position = source.position;
 		token = source.token;
-		// if (source.result != null) {
-		// result = source.result;
-		// }
 		if (source.newresult != null) {
 			newresult = source.newresult;
 		}
@@ -206,8 +185,7 @@ public class ExprTree {
 			case '>':
 				if ((!readword) && (!readnum) && (!readsci)) {
 					return (c);
-				}
-				else {
+				} else {
 					position--;
 					return (WORD);
 				}
@@ -220,11 +198,9 @@ public class ExprTree {
 				}
 				if ((readsci) && (!readnum) && (!readsign)) {
 					return -1;
-				}
-				else if ((!readword) && (!readnum) && (!readsci)) {
+				} else if ((!readword) && (!readnum) && (!readsci)) {
 					return (c);
-				}
-				else {
+				} else {
 					position--;
 					return (WORD);
 				}
@@ -251,8 +227,7 @@ public class ExprTree {
 			case '.':
 				if (readsci) {
 					return -1;
-				}
-				else if (!readword) {
+				} else if (!readword) {
 					readnum = true;
 				}
 				tokvalue += c;
@@ -261,8 +236,7 @@ public class ExprTree {
 			case 'e':
 				if (readsci) {
 					return -1;
-				}
-				else if (readnum) {
+				} else if (readnum) {
 					readsci = true;
 					readnum = false;
 					readsign = true;
@@ -280,26 +254,20 @@ public class ExprTree {
 		}
 		if ((!readword) && (!readnum)) {
 			return (END_OF_STRING);
-		}
-		else if (readword || readnum) {
+		} else if (readword || readnum) {
 			return (WORD);
 		}
 		return -1;
 	}
 
 	public boolean intexpr_U(String expr) {
-		// System.out.println("U: token = " + token + " tokvalue = " + tokvalue
-		// + " result = ");
 		double temp;
-		// ExprTree newresult = new ExprTree();
 
 		switch (token) {
 		case WORD:
 			if (tokvalue.toLowerCase().equals("and")) {
 				token = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
 					System.out.print("ERROR: Expected a (\n");
 					return false;
 				}
@@ -316,39 +284,40 @@ public class ExprTree {
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
 						&& (((this).isit == 'n') || ((this).isit == 't'))
-					    && ((this).lvalue == (this).uvalue)
-					    && (newresult.lvalue == newresult.uvalue)
-					    && ((this).lvalue != INFIN)
-					    && ((this).lvalue != -INFIN)
-					    && (newresult.lvalue != INFIN)
-					    && (newresult.lvalue != -INFIN)){
+						&& ((this).lvalue == (this).uvalue)
+						&& (newresult.lvalue == newresult.uvalue)
+						&& ((this).lvalue != INFIN)
+						&& ((this).lvalue != -INFIN)
+						&& (newresult.lvalue != INFIN)
+						&& (newresult.lvalue != -INFIN)) {
 					// System.out.println(newresult.toString());
 					(this).isit = 'n';
 					// System.out.println(this.lvalue);
 					// System.out.println(newresult.lvalue);
-					(this).lvalue = ((int) (this).lvalue) & ((int) newresult.lvalue);
+					(this).lvalue = ((int) (this).lvalue)
+							& ((int) newresult.lvalue);
 					// System.out.println("After " + newresult.lvalue);
 					(this).uvalue = (this).lvalue;
-				}
-				else {
+				} else {
 					// (result) = new ExprTree((result), newresult, "&", 'w');
 					setNodeValues((this), newresult, "&", 'w');
 				}
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.toLowerCase().equals("or")) {
+			} else if (tokvalue.toLowerCase().equals("or")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -356,8 +325,9 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ',') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a ,\n");
 					return false;
 				}
@@ -370,35 +340,36 @@ public class ExprTree {
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
 						&& (((this).isit == 'n') || ((this).isit == 't'))
-					    && ((this).lvalue == (this).uvalue)
-					    && (newresult.lvalue == newresult.uvalue)
-					    && ((this).lvalue != INFIN)
-					    && ((this).lvalue != -INFIN)
-					    && (newresult.lvalue != INFIN)
-					    && (newresult.lvalue != -INFIN)) {
+						&& ((this).lvalue == (this).uvalue)
+						&& (newresult.lvalue == newresult.uvalue)
+						&& ((this).lvalue != INFIN)
+						&& ((this).lvalue != -INFIN)
+						&& (newresult.lvalue != INFIN)
+						&& (newresult.lvalue != -INFIN)) {
 					(this).isit = 'n';
-					(this).lvalue = (int) (this).lvalue | (int) newresult.lvalue;
+					(this).lvalue = (int) (this).lvalue
+							| (int) newresult.lvalue;
 					(this).uvalue = (this).lvalue;
-				}
-				else {
+				} else {
 					// (result) = new ExprTree((result), newresult, "|", 'w');
 					setNodeValues((this), newresult, "|", 'w');
 				}
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.toLowerCase().equals("xor")) {
+			} else if (tokvalue.toLowerCase().equals("xor")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -406,8 +377,9 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ',') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a ,\n");
 					return false;
 				}
@@ -420,31 +392,31 @@ public class ExprTree {
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
 						&& (((this).isit == 'n') || ((this).isit == 't'))
-					    && ((this).lvalue == (this).uvalue)
-					    && (newresult.lvalue == newresult.uvalue)
-					    && ((this).lvalue != INFIN)
-					    && ((this).lvalue != -INFIN)
-					    && (newresult.lvalue != INFIN)
-					    && (newresult.lvalue != -INFIN)) {
+						&& ((this).lvalue == (this).uvalue)
+						&& (newresult.lvalue == newresult.uvalue)
+						&& ((this).lvalue != INFIN)
+						&& ((this).lvalue != -INFIN)
+						&& (newresult.lvalue != INFIN)
+						&& (newresult.lvalue != -INFIN)) {
 					(this).isit = 'n';
-					(this).lvalue = (int) (this).lvalue ^ (int) newresult.lvalue;
+					(this).lvalue = (int) (this).lvalue
+							^ (int) newresult.lvalue;
 					(this).uvalue = (this).lvalue;
-				}
-				else {
+				} else {
 					// (result) = new ExprTree((result), newresult, "^", 'w');
 					setNodeValues((this), newresult, "X", 'w');
 				}
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.toLowerCase().equals("min")) {
+			} else if (tokvalue.toLowerCase().equals("min")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
 					System.out.printf("ERROR: Expected a (\n");
@@ -472,22 +444,20 @@ public class ExprTree {
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
 						&& (((this).isit == 'n') || ((this).isit == 't'))
-					    && ((this).lvalue == (this).uvalue)
-					    && (newresult.lvalue == newresult.uvalue)
-					    && ((this).lvalue != INFIN)
-					    && ((this).lvalue != -INFIN)
-					    && (newresult.lvalue != INFIN)
-					    && (newresult.lvalue != -INFIN)) {
+						&& ((this).lvalue == (this).uvalue)
+						&& (newresult.lvalue == newresult.uvalue)
+						&& ((this).lvalue != INFIN)
+						&& ((this).lvalue != -INFIN)
+						&& (newresult.lvalue != INFIN)
+						&& (newresult.lvalue != -INFIN)) {
 					(this).isit = 'n';
-					(this).lvalue = Math.min((this).lvalue,newresult.lvalue);
+					(this).lvalue = Math.min((this).lvalue, newresult.lvalue);
 					(this).uvalue = (this).lvalue;
-				}
-				else {
+				} else {
 					setNodeValues((this), newresult, "m", 'a');
 				}
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.toLowerCase().equals("max")) {
+			} else if (tokvalue.toLowerCase().equals("max")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
 					System.out.printf("ERROR: Expected a (\n");
@@ -515,22 +485,20 @@ public class ExprTree {
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
 						&& (((this).isit == 'n') || ((this).isit == 't'))
-					    && ((this).lvalue == (this).uvalue)
-					    && (newresult.lvalue == newresult.uvalue)
-					    && ((this).lvalue != INFIN)
-					    && ((this).lvalue != -INFIN)
-					    && (newresult.lvalue != INFIN)
-					    && (newresult.lvalue != -INFIN)) {
+						&& ((this).lvalue == (this).uvalue)
+						&& (newresult.lvalue == newresult.uvalue)
+						&& ((this).lvalue != INFIN)
+						&& ((this).lvalue != -INFIN)
+						&& (newresult.lvalue != INFIN)
+						&& (newresult.lvalue != -INFIN)) {
 					(this).isit = 'n';
-					(this).lvalue = Math.max((this).lvalue,newresult.lvalue);
+					(this).lvalue = Math.max((this).lvalue, newresult.lvalue);
 					(this).uvalue = (this).lvalue;
-				}
-				else {
+				} else {
 					setNodeValues((this), newresult, "M", 'a');
 				}
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.toLowerCase().equals("idiv")) {
+			} else if (tokvalue.toLowerCase().equals("idiv")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
 					System.out.printf("ERROR: Expected a (\n");
@@ -558,26 +526,26 @@ public class ExprTree {
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
 						&& (((this).isit == 'n') || ((this).isit == 't'))
-					    && ((this).lvalue == (this).uvalue)
-					    && (newresult.lvalue == newresult.uvalue)
-					    && ((this).lvalue != INFIN)
-					    && ((this).lvalue != -INFIN)
-					    && (newresult.lvalue != INFIN)
-					    && (newresult.lvalue != -INFIN)) {
+						&& ((this).lvalue == (this).uvalue)
+						&& (newresult.lvalue == newresult.uvalue)
+						&& ((this).lvalue != INFIN)
+						&& ((this).lvalue != -INFIN)
+						&& (newresult.lvalue != INFIN)
+						&& (newresult.lvalue != -INFIN)) {
 					(this).isit = 'n';
-					(this).lvalue = Math.floor((this).lvalue / newresult.lvalue);
+					(this).lvalue = Math
+							.floor((this).lvalue / newresult.lvalue);
 					(this).uvalue = (this).lvalue;
-				}
-				else {
+				} else {
 					setNodeValues((this), newresult, "i", 'a');
 				}
 				(token) = intexpr_gettok(expr);
-			}			
-			else if (tokvalue.toLowerCase().equals("bit")) {
+			} else if (tokvalue.toLowerCase().equals("bit")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -585,8 +553,9 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ',') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a ,\n");
 					return false;
 				}
@@ -599,34 +568,34 @@ public class ExprTree {
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
 						&& (((this).isit == 'n') || ((this).isit == 't'))
-					    && ((this).lvalue == (this).uvalue)
-					    && (newresult.lvalue == newresult.uvalue)
-					    && ((this).lvalue != INFIN)
-					    && ((this).lvalue != -INFIN)
-					    && (newresult.lvalue != INFIN)
-					    && (newresult.lvalue != -INFIN)) {
+						&& ((this).lvalue == (this).uvalue)
+						&& (newresult.lvalue == newresult.uvalue)
+						&& ((this).lvalue != INFIN)
+						&& ((this).lvalue != -INFIN)
+						&& (newresult.lvalue != INFIN)
+						&& (newresult.lvalue != -INFIN)) {
 					(this).isit = 't';
 					(this).lvalue = ((int) (this).lvalue >> (int) newresult.lvalue) & 1;
 					(this).uvalue = (this).lvalue;
-				}
-				else {
+				} else {
 					setNodeValues((this), newresult, "[]", 'w');
 				}
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.toLowerCase().equals("floor")) {
+			} else if (tokvalue.toLowerCase().equals("floor")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -634,30 +603,30 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				// simplify if operands are static
 				if (((this).isit == 'n') || ((this).isit == 't')
-					    && ((this).lvalue == (this).uvalue)
-					    && ((this).lvalue != INFIN)
-					    && ((this).lvalue != -INFIN)) {
+						&& ((this).lvalue == (this).uvalue)
+						&& ((this).lvalue != INFIN)
+						&& ((this).lvalue != -INFIN)) {
 					(this).isit = 'n';
 					(this).lvalue = Math.floor((this).lvalue);
 					(this).uvalue = (this).lvalue;
-				}
-				else {
+				} else {
 					setNodeValues((this), null, "f", 'a');
 				}
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.toLowerCase().equals("ceil")) {
+			} else if (tokvalue.toLowerCase().equals("ceil")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -665,30 +634,30 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				// simplify if operands are static
 				if (((this).isit == 'n') || ((this).isit == 't')
-					    && ((this).lvalue == (this).uvalue)
-					    && ((this).lvalue != INFIN)
-					    && ((this).lvalue != -INFIN)) {
+						&& ((this).lvalue == (this).uvalue)
+						&& ((this).lvalue != INFIN)
+						&& ((this).lvalue != -INFIN)) {
 					(this).isit = 'n';
 					(this).lvalue = Math.ceil((this).lvalue);
 					(this).uvalue = (this).lvalue;
-				}
-				else {
+				} else {
 					setNodeValues((this), null, "c", 'a');
 				}
 				(token) = intexpr_gettok(expr);
-			}			
-			else if (tokvalue.toLowerCase().equals("not")) {
+			} else if (tokvalue.toLowerCase().equals("not")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -696,31 +665,31 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				// simplify if operands are static
 				if (((this).isit == 'n') || ((this).isit == 't')
-					    && ((this).lvalue == (this).uvalue)
-					    && ((this).lvalue != INFIN)
-					    && ((this).lvalue != -INFIN)) {
+						&& ((this).lvalue == (this).uvalue)
+						&& ((this).lvalue != INFIN)
+						&& ((this).lvalue != -INFIN)) {
 					(this).isit = 'n';
 					(this).lvalue = ~(int) (this).lvalue;
 					(this).uvalue = (this).lvalue;
-				}
-				else {
+				} else {
 					// (result) = new ExprTree((result), null, "~", 'w');
 					setNodeValues((this), null, "~", 'w');
 				}
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.toLowerCase().equals("int")) {
+			} else if (tokvalue.toLowerCase().equals("int")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -728,26 +697,26 @@ public class ExprTree {
 				if (!intexpr_L(expr))
 					return false;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				// simplify if operands are static
 				if (((this).isit == 'n') || ((this).isit == 't')) {
 					// DO NOTHING
-				}
-				else {
+				} else {
 					// (result) = new ExprTree((result), null, "~", 'w');
 					setNodeValues((this), null, "INT", 'l');
 				}
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.equals("uniform")) {
+			} else if (tokvalue.equals("uniform")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -755,8 +724,9 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ',') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a ,\n");
 					return false;
 				}
@@ -769,19 +739,20 @@ public class ExprTree {
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				setNodeValues((this), newresult, "uniform", 'a');
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.equals("normal")) {
+			} else if (tokvalue.equals("normal")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -789,8 +760,9 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ',') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a ,\n");
 					return false;
 				}
@@ -803,19 +775,20 @@ public class ExprTree {
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				setNodeValues((this), newresult, "normal", 'a');
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.equals("gamma")) {
+			} else if (tokvalue.equals("gamma")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -823,8 +796,9 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ',') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a ,\n");
 					return false;
 				}
@@ -837,19 +811,20 @@ public class ExprTree {
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				setNodeValues((this), newresult, "gamma", 'a');
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.equals("lognormal")) {
+			} else if (tokvalue.equals("lognormal")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -857,8 +832,9 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ',') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a ,\n");
 					return false;
 				}
@@ -871,19 +847,20 @@ public class ExprTree {
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				setNodeValues((this), newresult, "lognormal", 'a');
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.equals("binomial")) {
+			} else if (tokvalue.equals("binomial")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -891,8 +868,9 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ',') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a ,\n");
 					return false;
 				}
@@ -905,19 +883,20 @@ public class ExprTree {
 				token = newresult.token;
 				position = newresult.position;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				setNodeValues((this), newresult, "binomial", 'a');
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.equals("exponential")) {
+			} else if (tokvalue.equals("exponential")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -925,19 +904,20 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				setNodeValues((this), null, "exponential", 'a');
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.equals("chisq")) {
+			} else if (tokvalue.equals("chisq")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -945,19 +925,20 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				setNodeValues((this), null, "chisq", 'a');
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.equals("laplace")) {
+			} else if (tokvalue.equals("laplace")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -965,19 +946,20 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				setNodeValues((this), null, "laplace", 'a');
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.equals("cauchy")) {
+			} else if (tokvalue.equals("cauchy")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -985,19 +967,20 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				setNodeValues((this), null, "cauchy", 'a');
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.equals("rayleigh")) {
+			} else if (tokvalue.equals("rayleigh")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -1005,19 +988,20 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				setNodeValues((this), null, "rayleigh", 'a');
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.equals("poisson")) {
+			} else if (tokvalue.equals("poisson")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -1025,19 +1009,20 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				setNodeValues((this), null, "poisson", 'a');
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.equals("bernoulli")) {
+			} else if (tokvalue.equals("bernoulli")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -1045,19 +1030,20 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				setNodeValues((this), null, "bernoulli", 'a');
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.equals("rate")) {
+			} else if (tokvalue.equals("rate")) {
 				(token) = intexpr_gettok(expr);
 				if ((token) != '(') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a (\n");
 					return false;
 				}
@@ -1065,67 +1051,57 @@ public class ExprTree {
 				if (!intexpr_R(expr))
 					return false;
 				if ((token) != ')') {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-					//		+ "\nU: Expected a (");
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr
+					// + "\nU: Expected a (");
 					System.out.printf("ERROR: Expected a )\n");
 					return false;
 				}
 				setNodeValues((this), null, "rate", 'a');
 				(token) = intexpr_gettok(expr);
-			}
-			else if ((tokvalue.equals("true")) || tokvalue.equals("TRUE")) {
+			} else if ((tokvalue.equals("true")) || tokvalue.equals("TRUE")) {
 				// (result) = new ExprTree('t', 1, 1, null);
 				setVarValues('t', 1, 1, null);
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.equals("t") && !signals.contains(tokvalue)) {
+			} else if (tokvalue.equals("t") && !signals.contains(tokvalue)) {
 				// (result) = new ExprTree('t', 1, 1, null);
 				setVarValues('t', 1, 1, null);
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.equals("T") && !signals.contains(tokvalue)) {
+			} else if (tokvalue.equals("T") && !signals.contains(tokvalue)) {
 				// (result) = new ExprTree('t', 1, 1, null);
 				setVarValues('t', 1, 1, null);
 				(token) = intexpr_gettok(expr);
-			}
-			else if ((tokvalue.equals("false")) || tokvalue.equals("FALSE")) {
+			} else if ((tokvalue.equals("false")) || tokvalue.equals("FALSE")) {
 				// (result) = new ExprTree('t', 0, 0, null);
 				setVarValues('t', 0, 0, null);
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.equals("f") && !signals.contains(tokvalue)) {
+			} else if (tokvalue.equals("f") && !signals.contains(tokvalue)) {
 				// (result) = new ExprTree('t', 0, 0, null);
 				setVarValues('t', 0, 0, null);
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.equals("F") && !signals.contains(tokvalue)) {
+			} else if (tokvalue.equals("F") && !signals.contains(tokvalue)) {
 				// (result) = new ExprTree('t', 0, 0, null);
 				setVarValues('t', 0, 0, null);
 				(token) = intexpr_gettok(expr);
-			}
-			else if ((tokvalue.toLowerCase().equals("unknown"))) {
+			} else if ((tokvalue.toLowerCase().equals("unknown"))) {
 				// (result) = new ExprTree('t', 0, 0, null);
 				setVarValues('t', 0, 1, null);
 				(token) = intexpr_gettok(expr);
-			}
-			else if (tokvalue.toLowerCase().equals("inf")) {
+			} else if (tokvalue.toLowerCase().equals("inf")) {
 				setVarValues('n', INFIN, INFIN, null);
 				token = intexpr_gettok(expr);
-			}
-			else {
+			} else {
 				// do boolean lookup here!!!
 				if (signals.contains(tokvalue)) {
 					if (lhpn.isInput(tokvalue) || lhpn.isOutput(tokvalue)) {
 						setVarValues('b', 0, 1, tokvalue);
 						(token) = intexpr_gettok(expr);
 						return true;
-					}
-					else if (lhpn.isInteger(tokvalue)) {
+					} else if (lhpn.isInteger(tokvalue)) {
 						setVarValues('i', -INFIN, INFIN, tokvalue);
 						(token) = intexpr_gettok(expr);
 						return true;
-					}
-					else {
+					} else {
 						setVarValues('c', -INFIN, INFIN, tokvalue);
 						(token) = intexpr_gettok(expr);
 						return true;
@@ -1133,15 +1109,21 @@ public class ExprTree {
 				}
 				// }
 				if (tokvalue.equals("")) {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU1:("
-					//		+ tokvalue + "): Expected a ID, Number, or a (\n");
-					System.out.printf("U1:ERROR(%s): Expected a ID, Number, or a (\n", tokvalue);
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr + "\nU1:("
+					// + tokvalue + "): Expected a ID, Number, or a (\n");
+					System.out.printf(
+							"U1:ERROR(%s): Expected a ID, Number, or a (\n",
+							tokvalue);
 					return false;
-				}
-				else if ((int) (tokvalue.charAt(0)) > ('9') || ((int) (tokvalue.charAt(0)) < '0')) {
-					//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nU1:("
-					//		+ tokvalue + "): Expected a ID, Number, or a (\n");
-					System.out.printf("U1:ERROR(%s): Expected a ID, Number, or a (\n", tokvalue);
+				} else if ((int) (tokvalue.charAt(0)) > ('9')
+						|| ((int) (tokvalue.charAt(0)) < '0')) {
+					// Utility.createErrorMessage("ERROR",
+					// "Invalid expression: " + expr + "\nU1:("
+					// + tokvalue + "): Expected a ID, Number, or a (\n");
+					System.out.printf(
+							"U1:ERROR(%s): Expected a ID, Number, or a (\n",
+							tokvalue);
 					return false;
 				}
 				temp = Double.parseDouble(tokvalue);
@@ -1156,16 +1138,17 @@ public class ExprTree {
 			if (!intexpr_L(expr))
 				return false;
 			if ((token) != ')') {
-				//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-				//		+ "\nU: Expected a (");
+				// Utility.createErrorMessage("ERROR", "Invalid expression: " +
+				// expr
+				// + "\nU: Expected a (");
 				System.out.printf("ERROR: Expected a )\n");
 				return false;
 			}
 			(token) = intexpr_gettok(expr);
 			break;
 		default:
-			//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-			//		+ "\nU2: Expected a ID, Number, or a (");
+			// Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+			// + "\nU2: Expected a ID, Number, or a (");
 			System.out.printf("U2:ERROR: Expected a ID, Number, or a (\n");
 			return false;
 		}
@@ -1187,22 +1170,20 @@ public class ExprTree {
 				return false;
 			// simplify if operands are static
 			if ((((this).isit == 'n') || ((this).isit == 't'))
-				    && ((this).lvalue == (this).uvalue)
-				    && ((this).lvalue != INFIN)
-				    && ((this).lvalue != -INFIN)) {
+					&& ((this).lvalue == (this).uvalue)
+					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)) {
 				(this).isit = 'n';
 				(this).lvalue = -((this).lvalue);
 				(this).uvalue = (this).lvalue;
-			}
-			else {
+			} else {
 				// (result) = new ExprTree((result), null, "U-", 'a');
 				setNodeValues((this), null, "U-", 'a');
 			}
 			break;
 		default:
 			// System.out.println(token);
-			//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-			//		+ "\nT: Expected a ID, Number, (, or -\n");
+			// Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+			// + "\nT: Expected a ID, Number, (, or -\n");
 			System.out.printf("T:ERROR: Expected a ID, Number, (, or -\n");
 			return false;
 		}
@@ -1227,17 +1208,15 @@ public class ExprTree {
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
 					&& (((this).isit == 'n') || ((this).isit == 't'))
-				    && ((this).lvalue == (this).uvalue)
-				    && (newresult.lvalue == newresult.uvalue)
-				    && ((this).lvalue != INFIN)
-				    && ((this).lvalue != -INFIN)
-				    && (newresult.lvalue != INFIN)
-				    && (newresult.lvalue != -INFIN)) {
+					&& ((this).lvalue == (this).uvalue)
+					&& (newresult.lvalue == newresult.uvalue)
+					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)
+					&& (newresult.lvalue != INFIN)
+					&& (newresult.lvalue != -INFIN)) {
 				(this).isit = 'n';
 				(this).lvalue = (this).lvalue * newresult.lvalue;
 				(this).uvalue = (this).lvalue;
-			}
-			else {
+			} else {
 				// (result) = new ExprTree((result), newresult, "*", 'a');
 				setNodeValues((this), newresult, "*", 'a');
 			}
@@ -1256,17 +1235,15 @@ public class ExprTree {
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
 					&& (((this).isit == 'n') || ((this).isit == 't'))
-				    && ((this).lvalue == (this).uvalue)
-				    && (newresult.lvalue == newresult.uvalue)
-				    && ((this).lvalue != INFIN)
-				    && ((this).lvalue != -INFIN)
-				    && (newresult.lvalue != INFIN)
-				    && (newresult.lvalue != -INFIN)) {
+					&& ((this).lvalue == (this).uvalue)
+					&& (newresult.lvalue == newresult.uvalue)
+					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)
+					&& (newresult.lvalue != INFIN)
+					&& (newresult.lvalue != -INFIN)) {
 				(this).isit = 'n';
-				(this).lvalue = Math.pow(lvalue,newresult.lvalue);
+				(this).lvalue = Math.pow(lvalue, newresult.lvalue);
 				(this).uvalue = (this).lvalue;
-			}
-			else {
+			} else {
 				// (result) = new ExprTree((result), newresult, "*", 'a');
 				setNodeValues((this), newresult, "^", 'a');
 			}
@@ -1285,17 +1262,15 @@ public class ExprTree {
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
 					&& (((this).isit == 'n') || ((this).isit == 't'))
-				    && ((this).lvalue == (this).uvalue)
-				    && (newresult.lvalue == newresult.uvalue)
-				    && ((this).lvalue != INFIN)
-				    && ((this).lvalue != -INFIN)
-				    && (newresult.lvalue != INFIN)
-				    && (newresult.lvalue != -INFIN)) {
+					&& ((this).lvalue == (this).uvalue)
+					&& (newresult.lvalue == newresult.uvalue)
+					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)
+					&& (newresult.lvalue != INFIN)
+					&& (newresult.lvalue != -INFIN)) {
 				(this).isit = 'n';
 				(this).lvalue = (this).lvalue / newresult.lvalue;
 				(this).uvalue = (this).lvalue;
-			}
-			else {
+			} else {
 				// (result) = new ExprTree((result), newresult, "/", 'a');
 				setNodeValues((this), newresult, "/", 'a');
 			}
@@ -1314,17 +1289,15 @@ public class ExprTree {
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
 					&& (((this).isit == 'n') || ((this).isit == 't'))
-				    && ((this).lvalue == (this).uvalue)
-				    && (newresult.lvalue == newresult.uvalue)
-				    && ((this).lvalue != INFIN)
-				    && ((this).lvalue != -INFIN)
-				    && (newresult.lvalue != INFIN)
-				    && (newresult.lvalue != -INFIN)) {
+					&& ((this).lvalue == (this).uvalue)
+					&& (newresult.lvalue == newresult.uvalue)
+					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)
+					&& (newresult.lvalue != INFIN)
+					&& (newresult.lvalue != -INFIN)) {
 				(this).isit = 'n';
 				(this).lvalue = (this).lvalue % newresult.lvalue;
 				(this).uvalue = (this).lvalue;
-			}
-			else {
+			} else {
 				// (result) = new ExprTree((result), newresult, "%", 'a');
 				setNodeValues((this), newresult, "%", 'a');
 			}
@@ -1354,17 +1327,15 @@ public class ExprTree {
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
 					&& (((this).isit == 'n') || ((this).isit == 't'))
-				    && ((this).lvalue == (this).uvalue)
-				    && (newresult.lvalue == newresult.uvalue)
-				    && ((this).lvalue != INFIN)
-				    && ((this).lvalue != -INFIN)
-				    && (newresult.lvalue != INFIN)
-				    && (newresult.lvalue != -INFIN)) {
+					&& ((this).lvalue == (this).uvalue)
+					&& (newresult.lvalue == newresult.uvalue)
+					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)
+					&& (newresult.lvalue != INFIN)
+					&& (newresult.lvalue != -INFIN)) {
 				(this).isit = 'n';
 				(this).lvalue = (this).lvalue * newresult.lvalue;
 				(this).uvalue = (this).lvalue;
-			}
-			else {
+			} else {
 				// (result) = new ExprTree((result), newresult, "*", 'a');
 				setNodeValues((this), newresult, "*", 'a');
 			}
@@ -1373,8 +1344,8 @@ public class ExprTree {
 			break;
 
 		default:
-			//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-			//		+ "\nC: Expected a * or /\n");
+			// Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+			// + "\nC: Expected a * or /\n");
 			System.out.printf("ERROR: Expected a * or /\n");
 			return false;
 		}
@@ -1399,17 +1370,15 @@ public class ExprTree {
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
 					&& (((this).isit == 'n') || ((this).isit == 't'))
-				    && ((this).lvalue == (this).uvalue)
-				    && (newresult.lvalue == newresult.uvalue)
-				    && ((this).lvalue != INFIN)
-				    && ((this).lvalue != -INFIN)
-				    && (newresult.lvalue != INFIN)
-				    && (newresult.lvalue != -INFIN)) {
+					&& ((this).lvalue == (this).uvalue)
+					&& (newresult.lvalue == newresult.uvalue)
+					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)
+					&& (newresult.lvalue != INFIN)
+					&& (newresult.lvalue != -INFIN)) {
 				(this).isit = 'n';
 				(this).lvalue = (this).lvalue + newresult.lvalue;
 				(this).uvalue = (this).lvalue;
-			}
-			else {
+			} else {
 				// (result) = new ExprTree((result), newresult, "+", 'a');
 				setNodeValues((this), newresult, "+", 'a');
 			}
@@ -1428,17 +1397,15 @@ public class ExprTree {
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
 					&& (((this).isit == 'n') || ((this).isit == 't'))
-				    && ((this).lvalue == (this).uvalue)
-				    && (newresult.lvalue == newresult.uvalue)
-				    && ((this).lvalue != INFIN)
-				    && ((this).lvalue != -INFIN)
-				    && (newresult.lvalue != INFIN)
-				    && (newresult.lvalue != -INFIN)) {
+					&& ((this).lvalue == (this).uvalue)
+					&& (newresult.lvalue == newresult.uvalue)
+					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)
+					&& (newresult.lvalue != INFIN)
+					&& (newresult.lvalue != -INFIN)) {
 				(this).isit = 'n';
 				(this).lvalue = (this).lvalue - newresult.lvalue;
 				(this).uvalue = (this).lvalue;
-			}
-			else {
+			} else {
 				// (result) = new ExprTree((result), newresult, "-", 'a');
 				setNodeValues((this), newresult, "-", 'a');
 			}
@@ -1458,8 +1425,8 @@ public class ExprTree {
 		case END_OF_STRING:
 			break;
 		default:
-			//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-			//		+ "\nB: Expected a + or -\n");
+			// Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+			// + "\nB: Expected a + or -\n");
 			System.out.printf("ERROR: Expected a + or -\n");
 			return false;
 		}
@@ -1479,8 +1446,8 @@ public class ExprTree {
 				return false;
 			break;
 		default:
-			//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-			//		+ "\nS: Expected a ID, Number, (, or -\n");
+			// Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+			// + "\nS: Expected a ID, Number, (, or -\n");
 			System.out.printf("S:ERROR: Expected a ID, Number, (, or -\n");
 			return false;
 		}
@@ -1500,8 +1467,8 @@ public class ExprTree {
 				return false;
 			break;
 		default:
-			//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-			//		+ "\nR: Expected a ID, Number, (, or -\n");
+			// Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+			// + "\nR: Expected a ID, Number, (, or -\n");
 			System.out.printf("R:ERROR: Expected a ID, Number, (, or -\n");
 			return false;
 		}
@@ -1532,22 +1499,19 @@ public class ExprTree {
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
 					&& (((this).isit == 'n') || ((this).isit == 't'))
-				    && ((this).lvalue == (this).uvalue)
-				    && (newresult.lvalue == newresult.uvalue)
-				    && ((this).lvalue != INFIN)
-				    && ((this).lvalue != -INFIN)
-				    && (newresult.lvalue != INFIN)
-				    && (newresult.lvalue != -INFIN)) {
+					&& ((this).lvalue == (this).uvalue)
+					&& (newresult.lvalue == newresult.uvalue)
+					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)
+					&& (newresult.lvalue != INFIN)
+					&& (newresult.lvalue != -INFIN)) {
 				(this).isit = 't';
 				if (this.lvalue == newresult.lvalue) {
 					this.lvalue = 1;
-				}
-				else {
+				} else {
 					this.lvalue = 0;
 				}
 				(this).uvalue = (this).lvalue;
-			}
-			else {
+			} else {
 				if ((this).isit == 'c') {
 					comp = variable;
 					comp += "=";
@@ -1571,8 +1535,7 @@ public class ExprTree {
 						this.lvalue = 0;
 						this.uvalue = 1;
 						return true;
-					}
-					else {
+					} else {
 						signals.add(comp);
 						this.isit = 'b';
 						this.variable = comp;
@@ -1581,8 +1544,7 @@ public class ExprTree {
 						return true;
 					}
 					// }
-				}
-				else {
+				} else {
 					// (result) = new ExprTree((result), newresult, "==", 'r');
 					setNodeValues((this), newresult, "==", 'r');
 				}
@@ -1606,22 +1568,20 @@ public class ExprTree {
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
 						&& (((this).isit == 'n') || ((this).isit == 't'))
-					    && ((this).lvalue == (this).uvalue)
-					    && (newresult.lvalue == newresult.uvalue)
-					    && ((this).lvalue != INFIN)
-					    && ((this).lvalue != -INFIN)
-					    && (newresult.lvalue != INFIN)
-					    && (newresult.lvalue != -INFIN)) {
+						&& ((this).lvalue == (this).uvalue)
+						&& (newresult.lvalue == newresult.uvalue)
+						&& ((this).lvalue != INFIN)
+						&& ((this).lvalue != -INFIN)
+						&& (newresult.lvalue != INFIN)
+						&& (newresult.lvalue != -INFIN)) {
 					(this).isit = 't';
 					if ((this).lvalue >= newresult.lvalue) {
 						this.lvalue = 1;
-					}
-					else {
+					} else {
 						this.lvalue = 0;
 					}
 					(this).uvalue = (this).lvalue;
-				}
-				else {
+				} else {
 					// if ((this).isit == 'c') {
 					// comp = variable;
 					// comp += ">=";
@@ -1663,8 +1623,7 @@ public class ExprTree {
 					setNodeValues((this), newresult, ">=", 'r');
 					// }
 				}
-			}
-			else {
+			} else {
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
@@ -1676,22 +1635,20 @@ public class ExprTree {
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
 						&& (((this).isit == 'n') || ((this).isit == 't'))
-					    && ((this).lvalue == (this).uvalue)
-					    && (newresult.lvalue == newresult.uvalue)
-					    && ((this).lvalue != INFIN)
-					    && ((this).lvalue != -INFIN)
-					    && (newresult.lvalue != INFIN)
-					    && (newresult.lvalue != -INFIN)) {
+						&& ((this).lvalue == (this).uvalue)
+						&& (newresult.lvalue == newresult.uvalue)
+						&& ((this).lvalue != INFIN)
+						&& ((this).lvalue != -INFIN)
+						&& (newresult.lvalue != INFIN)
+						&& (newresult.lvalue != -INFIN)) {
 					(this).isit = 't';
 					if ((this).lvalue > newresult.lvalue) {
 						this.lvalue = 1;
-					}
-					else {
+					} else {
 						this.lvalue = 0;
 					}
 					(this).uvalue = (this).lvalue;
-				}
-				else {
+				} else {
 					// if ((this).isit == 'c') {
 					// comp = variable;
 					// comp += ">";
@@ -1752,22 +1709,20 @@ public class ExprTree {
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
 						&& (((this).isit == 'n') || ((this).isit == 't'))
-					    && ((this).lvalue == (this).uvalue)
-					    && (newresult.lvalue == newresult.uvalue)
-					    && ((this).lvalue != INFIN)
-					    && ((this).lvalue != -INFIN)
-					    && (newresult.lvalue != INFIN)
-					    && (newresult.lvalue != -INFIN)) {
+						&& ((this).lvalue == (this).uvalue)
+						&& (newresult.lvalue == newresult.uvalue)
+						&& ((this).lvalue != INFIN)
+						&& ((this).lvalue != -INFIN)
+						&& (newresult.lvalue != INFIN)
+						&& (newresult.lvalue != -INFIN)) {
 					(this).isit = 't';
 					if ((this).lvalue <= newresult.lvalue) {
 						this.lvalue = 1;
-					}
-					else {
+					} else {
 						this.lvalue = 0;
 					}
 					(this).uvalue = (this).lvalue;
-				}
-				else {
+				} else {
 					// if ((this).isit == 'c') {
 					// comp = variable;
 					// comp += "<=";
@@ -1809,8 +1764,7 @@ public class ExprTree {
 					setNodeValues((this), newresult, "<=", 'r');
 					// }
 				}
-			}
-			else {
+			} else {
 				newresult.token = token;
 				newresult.tokvalue = tokvalue;
 				newresult.position = position;
@@ -1822,22 +1776,20 @@ public class ExprTree {
 				// simplify if operands are static
 				if (((newresult.isit == 'n') || (newresult.isit == 't'))
 						&& (((this).isit == 'n') || ((this).isit == 't'))
-					    && ((this).lvalue == (this).uvalue)
-					    && (newresult.lvalue == newresult.uvalue)
-					    && ((this).lvalue != INFIN)
-					    && ((this).lvalue != -INFIN)
-					    && (newresult.lvalue != INFIN)
-					    && (newresult.lvalue != -INFIN)) {
+						&& ((this).lvalue == (this).uvalue)
+						&& (newresult.lvalue == newresult.uvalue)
+						&& ((this).lvalue != INFIN)
+						&& ((this).lvalue != -INFIN)
+						&& (newresult.lvalue != INFIN)
+						&& (newresult.lvalue != -INFIN)) {
 					(this).isit = 't';
 					if ((this).lvalue < newresult.lvalue) {
 						this.lvalue = 1;
-					}
-					else {
+					} else {
 						this.lvalue = 0;
 					}
 					(this).uvalue = (this).lvalue;
-				}
-				else {
+				} else {
 					// if ((this).isit == 'c') {
 					// comp = variable;
 					// comp += "<";
@@ -1893,25 +1845,24 @@ public class ExprTree {
 			tokvalue = newresult.tokvalue;
 			position = newresult.position;
 			if ((token) != ']') {
-				//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-				//		+ "\nP: Expected a ]");
+				// Utility.createErrorMessage("ERROR", "Invalid expression: " +
+				// expr
+				// + "\nP: Expected a ]");
 				System.out.printf("ERROR: Expected a ]\n");
 				return false;
 			}
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
 					&& (((this).isit == 'n') || ((this).isit == 't'))
-				    && ((this).lvalue == (this).uvalue)
-				    && (newresult.lvalue == newresult.uvalue)
-				    && ((this).lvalue != INFIN)
-				    && ((this).lvalue != -INFIN)
-				    && (newresult.lvalue != INFIN)
-				    && (newresult.lvalue != -INFIN)) {
+					&& ((this).lvalue == (this).uvalue)
+					&& (newresult.lvalue == newresult.uvalue)
+					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)
+					&& (newresult.lvalue != INFIN)
+					&& (newresult.lvalue != -INFIN)) {
 				(this).isit = 't';
 				(this).lvalue = (((int) (this).lvalue) >> ((int) newresult.lvalue)) & 1;
 				(this).uvalue = (this).lvalue;
-			}
-			else {
+			} else {
 				// (result) = new ExprTree((result), newresult, "[]", 'w');
 				setNodeValues((this), newresult, "[]", 'w');
 			}
@@ -1924,8 +1875,8 @@ public class ExprTree {
 		case END_OF_STRING:
 			break;
 		default:
-			//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-			//		+ "\nP: Expected a [, =, <, or >");
+			// Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+			// + "\nP: Expected a [, =, <, or >");
 			System.out.printf("ERROR: Expected a [, =, <, or >\n");
 			return false;
 		}
@@ -1946,8 +1897,8 @@ public class ExprTree {
 				return false;
 			break;
 		default:
-			//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-			//		+ "\nO: Expected a ID, Number, or a (");
+			// Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+			// + "\nO: Expected a ID, Number, or a (");
 			System.out.printf("O:ERROR: Expected a ID, Number, or a (\n");
 			return false;
 		}
@@ -1970,26 +1921,23 @@ public class ExprTree {
 				return false;
 			// simplify if operands are static
 			if ((((this).isit == 'n') || ((this).isit == 't'))
-			    && ((this).lvalue == (this).uvalue)
-			    && ((this).lvalue != INFIN)
-			    && ((this).lvalue != -INFIN)) {
+					&& ((this).lvalue == (this).uvalue)
+					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)) {
 				(this).isit = 't';
 				if (this.lvalue == 1) {
 					this.lvalue = 0;
-				}
-				else {
+				} else {
 					this.lvalue = 1;
 				}
 				(this).uvalue = (this).lvalue;
-			}
-			else {
+			} else {
 				// (result) = new ExprTree((result), null, "!", 'l');
 				setNodeValues((this), null, "!", 'l');
 			}
 			break;
 		default:
-			//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-			//		+ "\nN: Expected a ID, Number, (, or -");
+			// Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+			// + "\nN: Expected a ID, Number, (, or -");
 			System.out.printf("N:ERROR: Expected a ID, Number, (, or -\n");
 			return false;
 		}
@@ -2014,22 +1962,19 @@ public class ExprTree {
 			// System.out.println(newresult);
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
 					&& (((this).isit == 'n') || ((this).isit == 't'))
-				    && ((this).lvalue == (this).uvalue)
-				    && (newresult.lvalue == newresult.uvalue)
-				    && ((this).lvalue != INFIN)
-				    && ((this).lvalue != -INFIN)
-				    && (newresult.lvalue != INFIN)
-				    && (newresult.lvalue != -INFIN)) {
+					&& ((this).lvalue == (this).uvalue)
+					&& (newresult.lvalue == newresult.uvalue)
+					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)
+					&& (newresult.lvalue != INFIN)
+					&& (newresult.lvalue != -INFIN)) {
 				(this).isit = 't';
 				if ((this.lvalue == 0) || (newresult.lvalue == 0)) {
 					this.lvalue = 0;
-				}
-				else {
+				} else {
 					this.lvalue = 1;
 				}
 				(this).uvalue = (this).lvalue;
-			}
-			else {
+			} else {
 				// (result) = new ExprTree((result), newresult, "&&", 'l');
 				setNodeValues((this), newresult, "&&", 'l');
 			}
@@ -2042,8 +1987,9 @@ public class ExprTree {
 		case END_OF_STRING:
 			break;
 		default:
-			//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr + "\nE:(" + token
-			//		+ "): Expected an &");
+			// Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+			// + "\nE:(" + token
+			// + "): Expected an &");
 			System.out.printf("ERROR(%c): Expected an &\n", (token));
 			return false;
 		}
@@ -2067,22 +2013,19 @@ public class ExprTree {
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
 					&& (((this).isit == 'n') || ((this).isit == 't'))
-				    && ((this).lvalue == (this).uvalue)
-				    && (newresult.lvalue == newresult.uvalue)
-				    && ((this).lvalue != INFIN)
-				    && ((this).lvalue != -INFIN)
-				    && (newresult.lvalue != INFIN)
-				    && (newresult.lvalue != -INFIN)) {
+					&& ((this).lvalue == (this).uvalue)
+					&& (newresult.lvalue == newresult.uvalue)
+					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)
+					&& (newresult.lvalue != INFIN)
+					&& (newresult.lvalue != -INFIN)) {
 				(this).isit = 't';
 				if (this.lvalue != 0 || newresult.lvalue != 0) {
 					this.lvalue = 1;
-				}
-				else {
+				} else {
 					this.lvalue = 0;
 				}
 				(this).uvalue = (this).lvalue;
-			}
-			else {
+			} else {
 				// (result) = new ExprTree((result), newresult, "||", 'l');
 				setNodeValues((this), newresult, "||", 'l');
 			}
@@ -2099,22 +2042,19 @@ public class ExprTree {
 			// simplify if operands are static
 			if (((newresult.isit == 'n') || (newresult.isit == 't'))
 					&& (((this).isit == 'n') || ((this).isit == 't'))
-				    && ((this).lvalue == (this).uvalue)
-				    && (newresult.lvalue == newresult.uvalue)
-				    && ((this).lvalue != INFIN)
-				    && ((this).lvalue != -INFIN)
-				    && (newresult.lvalue != INFIN)
-				    && (newresult.lvalue != -INFIN)) {
+					&& ((this).lvalue == (this).uvalue)
+					&& (newresult.lvalue == newresult.uvalue)
+					&& ((this).lvalue != INFIN) && ((this).lvalue != -INFIN)
+					&& (newresult.lvalue != INFIN)
+					&& (newresult.lvalue != -INFIN)) {
 				(this).isit = 't';
 				if (this.lvalue != 0 || newresult.lvalue == 0) {
 					this.lvalue = 1;
-				}
-				else {
+				} else {
 					this.lvalue = 0;
 				}
 				(this).uvalue = (this).lvalue;
-			}
-			else {
+			} else {
 				// (result) = new ExprTree((result), newresult, "->", 'l');
 				setNodeValues(this, newresult, "->", 'l');
 			}
@@ -2122,8 +2062,8 @@ public class ExprTree {
 				return false;
 			break;
 		default:
-			//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-			//		+ "\nD: Expected an | or ->");
+			// Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+			// + "\nD: Expected an | or ->");
 			System.out.printf("ERROR: Expected an | or ->\n");
 			return false;
 		}
@@ -2144,8 +2084,8 @@ public class ExprTree {
 				return false;
 			break;
 		default:
-			//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-			//		+ "\nM: Expected a ID, Number, (, or -");
+			// Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+			// + "\nM: Expected a ID, Number, (, or -");
 			System.out.printf("M: ERROR: Expected a ID, Number, (, or -\n");
 			return false;
 		}
@@ -2167,8 +2107,8 @@ public class ExprTree {
 				return false;
 			break;
 		default:
-			//Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
-			//		+ "\nL: Expected a ID, Number, (, or -");
+			// Utility.createErrorMessage("ERROR", "Invalid expression: " + expr
+			// + "\nL: Expected a ID, Number, (, or -");
 			System.out.printf("L:ERROR: Expected a ID, Number, (, or -\n");
 			return false;
 		}
@@ -2180,7 +2120,7 @@ public class ExprTree {
 		result = getElement("LHPN");
 		return result;
 	}
-	
+
 	public String toString(String type) {
 		String result = "";
 		result = getElement(type);
@@ -2194,18 +2134,15 @@ public class ExprTree {
 			if (isit == 't') {
 				if (uvalue == 0) {
 					result = "0";
-				}
-				else {
+				} else {
 					result = "1";
 				}
 			}
-		}
-		else {
+		} else {
 			if (isit == 'n') {
 				if (uvalue == 0) {
 					result = "FALSE";
-				}
-				else {
+				} else {
 					result = "TRUE";
 				}
 			}
@@ -2221,8 +2158,7 @@ public class ExprTree {
 			if (implies(expr.r1) || implies(expr.r2)) {
 				return true;
 			}
-		}
-		else if (expr.isit == 'l' && expr.op.equals("&&")) {
+		} else if (expr.isit == 'l' && expr.op.equals("&&")) {
 			if (implies(expr.r1) && implies(expr.r2)) {
 				return true;
 			}
@@ -2231,11 +2167,9 @@ public class ExprTree {
 		case 't': // Truth value
 			if (uvalue == 1 && lvalue == 1) {
 				return false;
-			}
-			else if (uvalue == 0 && lvalue == 0) {
+			} else if (uvalue == 0 && lvalue == 0) {
 				return true;
-			}
-			else {
+			} else {
 				return false;
 			}
 		case 'r': // Relational
@@ -2243,18 +2177,17 @@ public class ExprTree {
 				if (expr.isit == 'r' && expr.op.contains(">")) {
 					if (r2.lvalue > expr.r2.uvalue) {
 						return true;
-					}
-					else if (r2.lvalue == expr.r2.uvalue && op.length() >= expr.op.length()) {
+					} else if (r2.lvalue == expr.r2.uvalue
+							&& op.length() >= expr.op.length()) {
 						return true;
 					}
 				}
-			}
-			else if (op.contains("<")) {
+			} else if (op.contains("<")) {
 				if (expr.isit == 'r' && expr.op.contains("<")) {
 					if (r2.lvalue < expr.r2.uvalue) {
 						return true;
-					}
-					else if (r2.lvalue == expr.r2.uvalue && op.length() >= expr.op.length()) {
+					} else if (r2.lvalue == expr.r2.uvalue
+							&& op.length() >= expr.op.length()) {
 						return true;
 					}
 				}
@@ -2267,8 +2200,7 @@ public class ExprTree {
 						return true;
 					}
 				}
-			}
-			else if (op.equals("||")) {
+			} else if (op.equals("||")) {
 				if (expr.isit == 'b') {
 					if (r1.implies(expr) && r2.implies(expr)) {
 						return true;
@@ -2361,7 +2293,8 @@ public class ExprTree {
 				r2.scaleVals(scaleFactor);
 			break;
 		case 'n': // Number
-			variable = String.valueOf((int) (Double.parseDouble(variable) * scaleFactor));
+			variable = String
+					.valueOf((int) (Double.parseDouble(variable) * scaleFactor));
 			break;
 		case 't': // Truth value
 		default:
@@ -2404,10 +2337,10 @@ public class ExprTree {
 		case 'i': // Integer
 		case 'c': // Continuous
 			if (variable.equals(var)) {
-				if (e.isit == 'a' || e.isit == 'r' || e.isit == 'l' || e.isit == 'w') {
+				if (e.isit == 'a' || e.isit == 'r' || e.isit == 'l'
+						|| e.isit == 'w') {
 					setNodeValues(e.r1, e.r2, e.op, e.isit);
-				}
-				else {
+				} else {
 					setVarValues(e.isit, e.lvalue, e.uvalue, e.variable);
 				}
 			}
@@ -2426,171 +2359,151 @@ public class ExprTree {
 					if (r1.lvalue == 0) {
 						setVarValues('t', 0.0, 0.0, null);
 						simplify = true;
-					}
-					else {
-						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+					} else {
+						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w'
+								|| r2.isit == 'r') {
 							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-						}
-						else {
-							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+						} else {
+							setVarValues(r2.isit, r2.lvalue, r2.uvalue,
+									r2.variable);
 						}
 					}
-				}
-				else if (((r2).isit == 'n') || ((r2).isit == 't')) {
+				} else if (((r2).isit == 'n') || ((r2).isit == 't')) {
 					if (r2.lvalue == 0) {
 						setVarValues('t', 0.0, 0.0, null);
 						simplify = true;
-					}
-					else {
-						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+					} else {
+						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w'
+								|| r1.isit == 'r') {
 							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-						}
-						else {
-							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+						} else {
+							setVarValues(r1.isit, r1.lvalue, r1.uvalue,
+									r1.variable);
 						}
 					}
 				}
-			}
-			else if (op.equals("||")) {
+			} else if (op.equals("||")) {
 				if ((r1.isit == 'n') || (r1.isit == 't')) {
 					if (r1.lvalue == 1) {
 						setVarValues('t', 1.0, 1.0, null);
 						simplify = true;
-					}
-					else {
-						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+					} else {
+						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w'
+								|| r2.isit == 'r') {
 							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-						}
-						else {
-							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+						} else {
+							setVarValues(r2.isit, r2.lvalue, r2.uvalue,
+									r2.variable);
 						}
 					}
-				}
-				else if (((r2).isit == 'n') || ((r2).isit == 't')) {
+				} else if (((r2).isit == 'n') || ((r2).isit == 't')) {
 					if (r2.lvalue == 1) {
 						setVarValues('t', 1.0, 1.0, null);
 						simplify = true;
-					}
-					else {
-						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+					} else {
+						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w'
+								|| r1.isit == 'r') {
 							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-						}
-						else {
-							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+						} else {
+							setVarValues(r1.isit, r1.lvalue, r1.uvalue,
+									r1.variable);
 						}
 					}
-				}
-				else if (((r1.isit == 'n') || (r1.isit == 't'))
+				} else if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 't';
 					if (r1.lvalue != 0 || r2.lvalue != 0) {
 						this.lvalue = 1;
-					}
-					else {
+					} else {
 						this.lvalue = 0;
 					}
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals("->")) {
+			} else if (op.equals("->")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 't';
 					if (r1.lvalue != 0 || r2.lvalue == 0) {
 						this.lvalue = 1;
-					}
-					else {
+					} else {
 						this.lvalue = 0;
 					}
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals("!")) {
+			} else if (op.equals("!")) {
 				if (((r1).isit == 'n') || ((r1).isit == 't')) {
 					(this).isit = 't';
 					if (r1.lvalue == 1) {
 						this.lvalue = 0;
-					}
-					else {
+					} else {
 						this.lvalue = 1;
 					}
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals("==")) {
+			} else if (op.equals("==")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 't';
 					if (r1.lvalue == r2.lvalue) {
 						this.lvalue = 1;
-					}
-					else {
+					} else {
 						this.lvalue = 0;
 					}
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals(">=")) {
+			} else if (op.equals(">=")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 't';
 					if ((r1).lvalue >= r2.lvalue) {
 						this.lvalue = 1;
-					}
-					else {
+					} else {
 						this.lvalue = 0;
 					}
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals(">")) {
+			} else if (op.equals(">")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 't';
 					if ((r1).lvalue > r2.lvalue) {
 						this.lvalue = 1;
-					}
-					else {
+					} else {
 						this.lvalue = 0;
 					}
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals("<=")) {
+			} else if (op.equals("<=")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 't';
 					if ((r1).lvalue <= r2.lvalue) {
 						this.lvalue = 1;
-					}
-					else {
+					} else {
 						this.lvalue = 0;
 					}
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals("<")) {
+			} else if (op.equals("<")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 't';
 					if ((r1).lvalue < r2.lvalue) {
 						this.lvalue = 1;
-					}
-					else {
+					} else {
 						this.lvalue = 0;
 					}
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals("&")) {
+			} else if (op.equals("&")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					// System.out.println(newresult.toString());
@@ -2602,8 +2515,7 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals("|")) {
+			} else if (op.equals("|")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
@@ -2611,8 +2523,7 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals("X")) {
+			} else if (op.equals("X")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
@@ -2620,59 +2531,52 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals("m")) {
+			} else if (op.equals("m")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
-					(this).lvalue = Math.min((r1).lvalue,r2.lvalue);
+					(this).lvalue = Math.min((r1).lvalue, r2.lvalue);
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}			
-			else if (op.equals("M")) {
+			} else if (op.equals("M")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
-					(this).lvalue = Math.max((r1).lvalue,r2.lvalue);
+					(this).lvalue = Math.max((r1).lvalue, r2.lvalue);
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}			
-			else if (op.equals("i")) {
+			} else if (op.equals("i")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
-					(this).lvalue = Math.floor((r1).lvalue/(r2).lvalue);
+					(this).lvalue = Math.floor((r1).lvalue / (r2).lvalue);
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals("f")) {
+			} else if (op.equals("f")) {
 				if (((r1).isit == 'n') || ((r1).isit == 't')) {
 					(this).isit = 'n';
 					(this).lvalue = Math.floor((r1).lvalue);
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals("c")) {
+			} else if (op.equals("c")) {
 				if (((r1).isit == 'n') || ((r1).isit == 't')) {
 					(this).isit = 'n';
 					(this).lvalue = Math.ceil((r1).lvalue);
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals("~")) {
+			} else if (op.equals("~")) {
 				if (((r1).isit == 'n') || ((r1).isit == 't')) {
 					(this).isit = 'n';
 					(this).lvalue = ~(int) (r1).lvalue;
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals("[]")) {
+			} else if (op.equals("[]")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 't';
@@ -2680,24 +2584,21 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals("U-")) {
+			} else if (op.equals("U-")) {
 				if (((r1).isit == 'n') || ((r1).isit == 't')) {
 					(this).isit = 'n';
 					(this).lvalue = -((r1).lvalue);
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals("*")) {
+			} else if (op.equals("*")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
 					(this).lvalue = (r1).lvalue * r2.lvalue;
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (op.equals("/")) {
+			} else if (op.equals("/")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
@@ -2705,8 +2606,7 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals("%")) {
+			} else if (op.equals("%")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
@@ -2714,26 +2614,22 @@ public class ExprTree {
 					(this).uvalue = (this).lvalue;
 					simplify = true;
 				}
-			}
-			else if (op.equals("+")) {
+			} else if (op.equals("+")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
 					(this).lvalue = (r1).lvalue + r2.lvalue;
 					(this).uvalue = (this).lvalue;
-				}
-				else if ((r1.isit == 'n') || (r1.isit == 't')) {
+				} else if ((r1.isit == 'n') || (r1.isit == 't')) {
 					if (r1.lvalue == 0 && r1.uvalue == 0) {
 						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
 					}
-				}
-				else if (((r2).isit == 'n') || ((r2).isit == 't')) {
+				} else if (((r2).isit == 'n') || ((r2).isit == 't')) {
 					if (r2.lvalue == 0 && r2.uvalue == 0) {
 						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
 					}
 				}
-			}
-			else if (op.equals("-")) {
+			} else if (op.equals("-")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
@@ -2747,8 +2643,7 @@ public class ExprTree {
 			if (lvalue != 0 && uvalue != 0) {
 				lvalue = 1;
 				uvalue = 1;
-			}
-			else if (lvalue != 0 || uvalue != 0) {
+			} else if (lvalue != 0 || uvalue != 0) {
 				lvalue = 0;
 				uvalue = 1;
 			}
@@ -2759,14 +2654,12 @@ public class ExprTree {
 		if (simplify) {
 			if (type.equals("integer") || type.equals("continuous")) {
 				isit = 'n';
-			}
-			else {
+			} else {
 				isit = 't';
 				if (lvalue != 0 && uvalue != 0) {
 					lvalue = 1;
 					uvalue = 1;
-				}
-				else if (lvalue != 0 || uvalue != 0) {
+				} else if (lvalue != 0 || uvalue != 0) {
 					lvalue = 0;
 					uvalue = 1;
 				}
@@ -2797,459 +2690,20 @@ public class ExprTree {
 		}
 	}
 
-//	public void copy(ExprTree e, String type) {
-//		if (e.op != null) {
-//			op = e.op;
-//		}
-//		isit = e.isit;
-//		lvalue = e.lvalue;
-//		uvalue = e.uvalue;
-//		if (e.variable != null) {
-//			variable = e.variable;
-//		}
-//		real = e.real;
-//		logical = e.logical;
-//		r1 = new ExprTree(lhpn);
-//		if (e.r1 != null) {
-//			r1.copy(e.r1, type);
-//		}
-//		r2 = new ExprTree(lhpn);
-//		if (e.r2 != null) {
-//			r2.copy(e.r2, type);
-//		}
-//		// simplify if operands are static
-//		boolean simplify = false;
-//		if (isit == 'a' || isit == 'r' || isit == 'l' || isit == 'w') {
-//			if (op.equals("&&")) {
-//				if ((r1.isit == 'n') || (r1.isit == 't')) {
-//					if (r1.lvalue == 0) {
-//						setVarValues('t', 0.0, 0.0, null);
-//						simplify = true;
-//					}
-//					else {
-//						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
-//							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-//						}
-//						else {
-//							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
-//						}
-//					}
-//				}
-//				else if (((r2).isit == 'n') || ((r2).isit == 't')) {
-//					if (r2.lvalue == 0) {
-//						setVarValues('t', 0.0, 0.0, null);
-//						simplify = true;
-//					}
-//					else {
-//						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
-//							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-//						}
-//						else {
-//							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
-//						}
-//					}
-//				}
-//				else if (r1.equals(r2)) {
-//					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
-//						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-//					}
-//					else {
-//						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
-//					}
-//				}
-//				else {
-//					ExprTree notE = new ExprTree(this);
-//					notE.setNodeValues((this), null, "!", 'l');
-//					if (r1.equals(notE) || notE.equals(r1)) {
-//						setVarValues('t', 0.0, 0.0, null);
-//					}
-//				}
-//			}
-//			else if (op.equals("||")) {
-//				if ((r1.isit == 'n') || (r1.isit == 't')) {
-//					if (r1.lvalue != 0) {
-//						setVarValues('t', 1.0, 1.0, null);
-//						simplify = true;
-//					}
-//					else {
-//						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
-//							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-//						}
-//						else {
-//							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
-//						}
-//					}
-//				}
-//				else if (((r2).isit == 'n') || ((r2).isit == 't')) {
-//					if (r2.lvalue != 0) {
-//						setVarValues('t', 1.0, 1.0, null);
-//						simplify = true;
-//					}
-//					else {
-//						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
-//							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-//						}
-//						else {
-//							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
-//						}
-//					}
-//				}
-//				else if (r1.equals(r2)) {
-//					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
-//						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-//					}
-//					else {
-//						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
-//					}
-//				}
-//				else {
-//					ExprTree notE = new ExprTree(this);
-//					notE.setNodeValues((this), null, "!", 'l');
-//					if (r1.equals(notE) || notE.equals(r1)) {
-//						setVarValues('t', 1.0, 1.0, null);
-//					}
-//				}
-//				// if (((r1.isit == 'n') || (r1.isit == 't'))
-//				// && (((r2).isit == 'n') || ((r2).isit == 't'))) {
-//				// (this).isit = 't';
-//				// if (r1.lvalue != 0 || r2.lvalue != 0) {
-//				// this.lvalue = 1;
-//				// }
-//				// else {
-//				// this.lvalue = 0;
-//				// }
-//				// (this).uvalue = (this).lvalue;
-//				// simplify = true;
-//				// }
-//			}
-//			else if (op.equals("->")) {
-//				if (r1.isit == 'n' || r1.isit == 't') {
-//					if (r1.lvalue != 0) {
-//						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
-//							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-//						}
-//						else {
-//							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
-//						}
-//					}
-//					else if (r1.uvalue == 0) {
-//						setVarValues('t', 1.0, 1.0, null);
-//					}
-//				}
-//				else if (r2.isit == 't' || r2.isit == 'n') {
-//					if (r2.lvalue != 0) {
-//						setVarValues('t', 1.0, 1.0, null);
-//					}
-//					else if (r2.uvalue == 0) {
-//						ExprTree notE = new ExprTree(r2);
-//						notE.setNodeValues((this), null, "!", 'l');
-//						setNodeValues(notE.r1, notE.r2, notE.op, notE.isit);
-//					}
-//				}
-//				// else if (((r1.isit == 'n') || (r1.isit == 't'))
-//				// && (((r2).isit == 'n') || ((r2).isit == 't'))) {
-//				// (this).isit = 't';
-//				// if (r1.lvalue != 0 || r2.lvalue == 0) {
-//				// this.lvalue = 1;
-//				// }
-//				// else {
-//				// this.lvalue = 0;
-//				// }
-//				// (this).uvalue = (this).lvalue;
-//				// simplify = true;
-//				// }
-//			}
-//			else if (op.equals("!")) {
-//				if (((r1).isit == 'n') || ((r1).isit == 't')) {
-//					(this).isit = 't';
-//					if (r1.lvalue == 1) {
-//						this.lvalue = 0;
-//					}
-//					else {
-//						this.lvalue = 1;
-//					}
-//					(this).uvalue = (this).lvalue;
-//					simplify = true;
-//				}
-//			}
-//			else if (op.equals("==")) {
-//				if (((r1.isit == 'n') || (r1.isit == 't'))
-//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-//					(this).isit = 't';
-//					if (r1.lvalue == r2.lvalue) {
-//						this.lvalue = 1;
-//					}
-//					else {
-//						this.lvalue = 0;
-//					}
-//					(this).uvalue = (this).lvalue;
-//					simplify = true;
-//				}
-//			}
-//			else if (op.equals(">=")) {
-//				if (((r1.isit == 'n') || (r1.isit == 't'))
-//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-//					(this).isit = 't';
-//					if ((r1).lvalue >= r2.lvalue) {
-//						this.lvalue = 1;
-//					}
-//					else {
-//						this.lvalue = 0;
-//					}
-//					(this).uvalue = (this).lvalue;
-//					simplify = true;
-//				}
-//			}
-//			else if (op.equals(">")) {
-//				if (((r1.isit == 'n') || (r1.isit == 't'))
-//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-//					(this).isit = 't';
-//					if ((r1).lvalue > r2.lvalue) {
-//						this.lvalue = 1;
-//					}
-//					else {
-//						this.lvalue = 0;
-//					}
-//					(this).uvalue = (this).lvalue;
-//					simplify = true;
-//				}
-//			}
-//			else if (op.equals("<=")) {
-//				if (((r1.isit == 'n') || (r1.isit == 't'))
-//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-//					(this).isit = 't';
-//					if ((r1).lvalue <= r2.lvalue) {
-//						this.lvalue = 1;
-//					}
-//					else {
-//						this.lvalue = 0;
-//					}
-//					(this).uvalue = (this).lvalue;
-//					simplify = true;
-//				}
-//			}
-//			else if (op.equals("<")) {
-//				if (((r1.isit == 'n') || (r1.isit == 't'))
-//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-//					(this).isit = 't';
-//					if ((r1).lvalue < r2.lvalue) {
-//						this.lvalue = 1;
-//					}
-//					else {
-//						this.lvalue = 0;
-//					}
-//					(this).uvalue = (this).lvalue;
-//					simplify = true;
-//				}
-//			}
-//			else if (op.equals("&")) {
-//				if (((r1.isit == 'n') || (r1.isit == 't'))
-//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-//					// System.out.println(newresult.toString());
-//					(this).isit = 'n';
-//					// System.out.println(this.lvalue);
-//					// System.out.println(newresult.lvalue);
-//					(this).lvalue = ((int) (r1).lvalue) & ((int) r2.lvalue);
-//					// System.out.println("After " + newresult.lvalue);
-//					(this).uvalue = (this).lvalue;
-//					simplify = true;
-//				}
-//			}
-//			else if (op.equals("|")) {
-//				if (((r1.isit == 'n') || (r1.isit == 't'))
-//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-//					(this).isit = 'n';
-//					(this).lvalue = (int) (r1).lvalue | (int) r2.lvalue;
-//					(this).uvalue = (this).lvalue;
-//					simplify = true;
-//				}
-//			}
-//			else if (isit == 'w' && op.equals("^")) {
-//				if (((r1.isit == 'n') || (r1.isit == 't'))
-//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-//					(this).isit = 'n';
-//					(this).lvalue = (int) (r1).lvalue ^ (int) r2.lvalue;
-//					(this).uvalue = (this).lvalue;
-//					simplify = true;
-//				}
-//			}
-//			else if (op.equals("~")) {
-//				if (((r1).isit == 'n') || ((r1).isit == 't')) {
-//					(this).isit = 'n';
-//					(this).lvalue = ~(int) (r1).lvalue;
-//					(this).uvalue = (this).lvalue;
-//					simplify = true;
-//				}
-//			}
-//			else if (op.equals("[]")) {
-//				if (((r1.isit == 'n') || (r1.isit == 't'))
-//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-//					(this).isit = 't';
-//					(this).lvalue = (((int) (r1).lvalue) >> ((int) r2.lvalue)) & 1;
-//					(this).uvalue = (this).lvalue;
-//					simplify = true;
-//				}
-//			}
-//			else if (op.equals("U-")) {
-//				if (((r1).isit == 'n') || ((r1).isit == 't')) {
-//					(this).isit = 'n';
-//					(this).lvalue = -((r1).lvalue);
-//					(this).uvalue = (this).lvalue;
-//					simplify = true;
-//				}
-//			}
-//			else if (op.equals("*")) {
-//				if (r1.isit == 'n' || r1.isit == 't') {
-//					if (r1.lvalue == 0 && r1.uvalue == 0) {
-//						setVarValues('t', 0.0, 0.0, null);
-//					}
-//					else if (r1.lvalue == 1 && r1.uvalue == 1) {
-//						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
-//							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-//						}
-//						else {
-//							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
-//						}
-//					}
-//				}
-//				else if (r2.isit == 'n' || r2.isit == 't') {
-//					if (r2.lvalue == 0 && r2.uvalue == 0) {
-//						setVarValues('t', 0.0, 0.0, null);
-//					}
-//					else if (r2.lvalue == 1 && r2.uvalue == 1) {
-//						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
-//							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-//						}
-//						else {
-//							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
-//						}
-//					}
-//				}
-//				// if (((r1.isit == 'n') || (r1.isit == 't'))
-//				// && (((r2).isit == 'n') || ((r2).isit == 't'))) {
-//				// (this).isit = 'n';
-//				// (this).lvalue = (r1).lvalue * r2.lvalue;
-//				// (this).uvalue = (this).lvalue;
-//				// simplify = true;
-//				// }
-//			}
-//			else if (op.equals("/")) {
-//				if (((r1.isit == 'n') || (r1.isit == 't'))
-//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-//					(this).isit = 'n';
-//					(this).lvalue = (r1).lvalue / r2.lvalue;
-//					(this).uvalue = (this).lvalue;
-//					simplify = true;
-//				}
-//				else if ((r1.isit == 'n' || r1.isit == 't') && r1.uvalue == 0 && r1.lvalue == 0) {
-//					setVarValues('n', 0.0, 0.0, null);
-//				}
-//				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 1 && r2.uvalue == 1) {
-//					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
-//						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-//					}
-//					else {
-//						setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
-//					}
-//				}
-//			}
-//			else if (op.equals("%")) {
-//				if (((r1.isit == 'n') || (r1.isit == 't'))
-//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-//					(this).isit = 'n';
-//					(this).lvalue = (r1).lvalue % r2.lvalue;
-//					(this).uvalue = (this).lvalue;
-//					simplify = true;
-//				}
-//				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 1.0 && r1.uvalue == 1.0) {
-//					setVarValues('n', 1.0, 1.0, null);
-//				}
-//				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 1.0 && r2.uvalue == 1.0) {
-//					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
-//						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-//					}
-//					else {
-//						setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
-//					}
-//				}
-//			}
-//			else if (op.equals("+")) {
-//				if (((r1.isit == 'n') || (r1.isit == 't'))
-//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-//					(this).isit = 'n';
-//					(this).lvalue = (r1).lvalue + r2.lvalue;
-//					(this).uvalue = (this).lvalue;
-//					simplify = true;
-//				}
-//				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 0 && r1.uvalue == 0) {
-//					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
-//						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-//					}
-//					else {
-//						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
-//					}
-//				}
-//				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 0 && r2.uvalue == 0) {
-//					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
-//						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-//					}
-//					else {
-//						setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
-//					}
-//				}
-//			}
-//			else if (op.equals("-")) {
-//				if (((r1.isit == 'n') || (r1.isit == 't'))
-//						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
-//					(this).isit = 'n';
-//					(this).lvalue = (r1).lvalue - r2.lvalue;
-//					(this).uvalue = (this).lvalue;
-//					simplify = true;
-//				}
-//				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 0 && r1.uvalue == 0) {
-//					setNodeValues(r2, null, "U-", 'a');
-//				}
-//				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 0 && r2.uvalue == 0) {
-//					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
-//						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-//					}
-//					else {
-//						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
-//					}
-//				}
-//			}
-//		}
-//		if (simplify) {
-//			if (type.equals("integer") || type.equals("continuous")) {
-//				isit = 'n';
-//			}
-//			else {
-//				isit = 't';
-//				if (lvalue != 0 && uvalue != 0) {
-//					lvalue = 1;
-//					uvalue = 1;
-//				}
-//				else if (lvalue != 0 || uvalue != 0) {
-//					lvalue = 0;
-//					uvalue = 1;
-//				}
-//			}
-//		}
-//	}
-
 	public char getChange(HashMap<String, String> variables) {
 		switch (isit) {
 		case 'b': // Boolean
 			if (variables.containsKey(variable)) {
-				if (variables.get(variable).toString().toLowerCase().equals("false"))
+				if (variables.get(variable).toString().toLowerCase().equals(
+						"false"))
 					return 'F';
-				if (variables.get(variable).toString().toLowerCase().equals("true"))
+				if (variables.get(variable).toString().toLowerCase().equals(
+						"true"))
 					return 'T';
-				else  {
+				else {
 					return 'X';
 				}
-			}
-			else {
+			} else {
 				return 'U';
 			}
 		case 't': // Truth value
@@ -3260,136 +2714,110 @@ public class ExprTree {
 			return 'U';
 		case 'l': // Logical
 			if (op.equals("||")) {
-				if (r1.getChange(variables) == 'T' || r2.getChange(variables) == 'T') {
+				if (r1.getChange(variables) == 'T'
+						|| r2.getChange(variables) == 'T') {
 					return 'T';
-				}
-				else if (r1.getChange(variables) == 'X' || r2.getChange(variables) == 'X') {
+				} else if (r1.getChange(variables) == 'X'
+						|| r2.getChange(variables) == 'X') {
 					return 'X';
-				}
-				else if (r1.getChange(variables) == 't') {
+				} else if (r1.getChange(variables) == 't') {
 					if (r2.getChange(variables) == 'f') {
 						return 'X';
-					}
-					else {
+					} else {
 						return 't';
 					}
-				}
-				else if (r2.getChange(variables) == 't') {
+				} else if (r2.getChange(variables) == 't') {
 					if (r1.getChange(variables) == 'f') {
 						return 'X';
-					}
-					else {
+					} else {
 						return 't';
 					}
-				}
-				else if (r1.getChange(variables) == 'f' || r2.getChange(variables) == 'f') {
+				} else if (r1.getChange(variables) == 'f'
+						|| r2.getChange(variables) == 'f') {
 					return 'f';
-				}
-				else if (r1.getChange(variables) == 'F') {
+				} else if (r1.getChange(variables) == 'F') {
 					if (r2.getChange(variables) == 'F') {
 						return 'F';
-					}
-					else {
+					} else {
 						return 'f';
 					}
-				}
-				else if (r2.getChange(variables) == 'F') {
+				} else if (r2.getChange(variables) == 'F') {
 					return 'f';
 				}
 				return 'U';
-			}
-			else if (op.equals("&&")) {
-				if (r1.getChange(variables) == 'F' || r2.getChange(variables) == 'F') {
+			} else if (op.equals("&&")) {
+				if (r1.getChange(variables) == 'F'
+						|| r2.getChange(variables) == 'F') {
 					return 'F';
-				}
-				else if (r1.getChange(variables) == 'X' || r2.getChange(variables) == 'X') {
+				} else if (r1.getChange(variables) == 'X'
+						|| r2.getChange(variables) == 'X') {
 					return 'X';
-				}
-				else if (r1.getChange(variables) == 'f') {
+				} else if (r1.getChange(variables) == 'f') {
 					if (r2.getChange(variables) == 't') {
 						return 'X';
-					}
-					else {
+					} else {
 						return 'f';
 					}
-				}
-				else if (r2.getChange(variables) == 'f') {
+				} else if (r2.getChange(variables) == 'f') {
 					if (r1.getChange(variables) == 't') {
 						return 'X';
-					}
-					else {
+					} else {
 						return 'f';
 					}
-				}
-				else if (r1.getChange(variables) == 't' || r2.getChange(variables) == 't') {
+				} else if (r1.getChange(variables) == 't'
+						|| r2.getChange(variables) == 't') {
 					return 't';
-				}
-				else if (r1.getChange(variables) == 'T') {
+				} else if (r1.getChange(variables) == 'T') {
 					if (r2.getChange(variables) == 'T') {
 						return 'T';
-					}
-					else {
+					} else {
 						return 't';
 					}
-				}
-				else if (r2.getChange(variables) == 'T') {
+				} else if (r2.getChange(variables) == 'T') {
 					return 't';
 				}
 				return 'U';
-			}
-			else if (op.equals("!")) {
+			} else if (op.equals("!")) {
 				if (r1.getChange(variables) == 'T') {
 					return 'F';
-				}
-				else if (r1.getChange(variables) == 'F') {
+				} else if (r1.getChange(variables) == 'F') {
 					return 'T';
-				}
-				else if (r1.getChange(variables) == 't') {
+				} else if (r1.getChange(variables) == 't') {
 					return 'f';
-				}
-				else if (r1.getChange(variables) == 'f') {
+				} else if (r1.getChange(variables) == 'f') {
 					return 't';
 				}
 				return r1.getChange(variables);
-			}
-			else if (op.equals("->")) {
-				if (r1.getChange(variables) == 'T' || r2.getChange(variables) == 'F') {
+			} else if (op.equals("->")) {
+				if (r1.getChange(variables) == 'T'
+						|| r2.getChange(variables) == 'F') {
 					return 'T';
-				}
-				else if (r1.getChange(variables) == 'X' || r2.getChange(variables) == 'X') {
+				} else if (r1.getChange(variables) == 'X'
+						|| r2.getChange(variables) == 'X') {
 					return 'X';
-				}
-				else if (r1.getChange(variables) == 't') {
+				} else if (r1.getChange(variables) == 't') {
 					if (r2.getChange(variables) == 't') {
 						return 'X';
-					}
-					else {
+					} else {
 						return 't';
 					}
-				}
-				else if (r2.getChange(variables) == 'f') {
+				} else if (r2.getChange(variables) == 'f') {
 					if (r1.getChange(variables) == 'f') {
 						return 'X';
-					}
-					else {
+					} else {
 						return 't';
 					}
-				}
-				else if (r1.getChange(variables) == 'f') {
+				} else if (r1.getChange(variables) == 'f') {
 					return 'f';
-				}
-				else if (r2.getChange(variables) == 't') {
+				} else if (r2.getChange(variables) == 't') {
 					return 'f';
-				}
-				else if (r1.getChange(variables) == 'F') {
+				} else if (r1.getChange(variables) == 'F') {
 					if (r2.getChange(variables) == 'T') {
 						return 'F';
-					}
-					else {
+					} else {
 						return 'f';
 					}
-				}
-				else if (r2.getChange(variables) == 'T') {
+				} else if (r2.getChange(variables) == 'T') {
 					return 'f';
 				}
 				return 'U';
@@ -3408,44 +2836,50 @@ public class ExprTree {
 			if (op.equals("==")) {
 				if (r1.evaluateExpr(variables) == r2.evaluateExpr(variables)) {
 					return 'T';
-				}
-				else if (new Double(r1.evaluateExpr(variables)).equals(Double.NaN) || new Double(r2.evaluateExpr(variables)).equals(Double.NaN)) {
+				} else if (new Double(r1.evaluateExpr(variables))
+						.equals(Double.NaN)
+						|| new Double(r2.evaluateExpr(variables))
+								.equals(Double.NaN)) {
 					return 'X';
 				}
 				return 'F';
-			}
-			else if (op.equals(">=")) {
+			} else if (op.equals(">=")) {
 				if (r1.evaluateExpr(variables) >= r2.evaluateExpr(variables)) {
 					return 'T';
-				}
-				else if (new Double(r2.evaluateExpr(variables)).equals(Double.NaN) || new Double(r1.evaluateExpr(variables)).equals(Double.NaN)) {
+				} else if (new Double(r2.evaluateExpr(variables))
+						.equals(Double.NaN)
+						|| new Double(r1.evaluateExpr(variables))
+								.equals(Double.NaN)) {
 					return 'X';
 				}
 				return 'F';
-			}
-			else if (op.equals("<=")) {
+			} else if (op.equals("<=")) {
 				if (r1.evaluateExpr(variables) <= r2.evaluateExpr(variables)) {
 					return 'T';
-				}
-				else if (new Double(r1.evaluateExpr(variables)).equals(Double.NaN) || new Double(r2.evaluateExpr(variables)).equals(Double.NaN)) {
+				} else if (new Double(r1.evaluateExpr(variables))
+						.equals(Double.NaN)
+						|| new Double(r2.evaluateExpr(variables))
+								.equals(Double.NaN)) {
 					return 'X';
 				}
 				return 'F';
-			}
-			else if (op.equals(">")) {
+			} else if (op.equals(">")) {
 				if (r1.evaluateExpr(variables) > r2.evaluateExpr(variables)) {
 					return 'T';
-				}
-				else if (new Double(r1.evaluateExpr(variables)).equals(Double.NaN) || new Double(r2.evaluateExpr(variables)).equals(Double.NaN)) {
+				} else if (new Double(r1.evaluateExpr(variables))
+						.equals(Double.NaN)
+						|| new Double(r2.evaluateExpr(variables))
+								.equals(Double.NaN)) {
 					return 'X';
 				}
 				return 'F';
-			}
-			else if (op.equals("<")) {
+			} else if (op.equals("<")) {
 				if (r1.evaluateExpr(variables) < r2.evaluateExpr(variables)) {
 					return 'T';
-				}
-				else if (new Double(r1.evaluateExpr(variables)).equals(Double.NaN) || new Double(r2.evaluateExpr(variables)).equals(Double.NaN)) {
+				} else if (new Double(r1.evaluateExpr(variables))
+						.equals(Double.NaN)
+						|| new Double(r2.evaluateExpr(variables))
+								.equals(Double.NaN)) {
 					return 'X';
 				}
 				return 'F';
@@ -3455,12 +2889,10 @@ public class ExprTree {
 			if (variables.containsKey(variable)) {
 				if (Integer.parseInt(variables.get(variable)) == 0.0) {
 					return 'F';
-				}
-				else {
+				} else {
 					return 'T';
 				}
-			}
-			else {
+			} else {
 				return 'U';
 			}
 		case 'c': // Continuous
@@ -3468,8 +2900,7 @@ public class ExprTree {
 		case 'n': // Number
 			if (uvalue == 0.0 && lvalue == 0.0) {
 				return 'F';
-			}
-			else {
+			} else {
 				return 'T';
 			}
 		}
@@ -3480,7 +2911,8 @@ public class ExprTree {
 		switch (isit) {
 		case 'b': // Boolean
 			if (variables.containsKey(variable))
-				if (variables.get(variable).toString().toLowerCase().equals("false"))
+				if (variables.get(variable).toString().toLowerCase().equals(
+						"false"))
 					return true;
 			return false;
 		case 't': // Truth value
@@ -3493,24 +2925,22 @@ public class ExprTree {
 					return true;
 				}
 				return false;
-			}
-			else if (op.equals("&&")) {
+			} else if (op.equals("&&")) {
 				if ((r1.becomesFalse(variables) && !r2.becomesTrue(variables))
-						|| (!r1.becomesTrue(variables) && r2.becomesFalse(variables)))
+						|| (!r1.becomesTrue(variables) && r2
+								.becomesFalse(variables)))
 					return true;
 				return false;
-			}
-			else if (op.equals("==")) {
-				if (!(r1.isEqual(r2) || r1.evaluateExpr(variables) == r2.evaluateExpr(variables)))
+			} else if (op.equals("==")) {
+				if (!(r1.isEqual(r2) || r1.evaluateExpr(variables) == r2
+						.evaluateExpr(variables)))
 					return true;
 				return false;
-			}
-			else if (op.equals("!")) {
+			} else if (op.equals("!")) {
 				if (r1.becomesTrue(variables))
 					return true;
 				return false;
-			}
-			else if (op.equals("->")) {
+			} else if (op.equals("->")) {
 				if (r1.becomesFalse(variables) || r2.becomesTrue(variables)) {
 					return true;
 				}
@@ -3522,26 +2952,22 @@ public class ExprTree {
 					return true;
 				}
 				return false;
-			}
-			else if (op.equals("|")) {
+			} else if (op.equals("|")) {
 				if (!(evaluateExpr(variables) == 0.0)) {
 					return true;
 				}
 				return false;
-			}
-			else if (op.equals("X")) {
+			} else if (op.equals("X")) {
 				if (!(evaluateExpr(variables) == 0.0)) {
 					return true;
 				}
 				return false;
-			}
-			else if (op.equals("~")) {
+			} else if (op.equals("~")) {
 				if (!(evaluateExpr(variables) == 0.0)) {
 					return true;
 				}
 				return false;
-			}
-			else if (op.equals("[]")) {
+			} else if (op.equals("[]")) {
 				if (!(evaluateExpr(variables) == 0.0)) {
 					return true;
 				}
@@ -3553,50 +2979,46 @@ public class ExprTree {
 					return false;
 				}
 				if (op.equals("==")) {
-					if (r1.evaluateExpr(variables) == r2.evaluateExpr(variables)) {
+					if (r1.evaluateExpr(variables) == r2
+							.evaluateExpr(variables)) {
 						return false;
 					}
 					return true;
-				}
-				else if (op.equals(">=")) {
-					if (r1.evaluateExpr(variables) >= r2.evaluateExpr(variables)) {
+				} else if (op.equals(">=")) {
+					if (r1.evaluateExpr(variables) >= r2
+							.evaluateExpr(variables)) {
 						return false;
 					}
 					return true;
-				}
-				else if (op.equals("<=")) {
-					if (r1.evaluateExpr(variables) <= r2.evaluateExpr(variables)) {
+				} else if (op.equals("<=")) {
+					if (r1.evaluateExpr(variables) <= r2
+							.evaluateExpr(variables)) {
 						return false;
 					}
 					return true;
-				}
-				else if (op.equals(">")) {
+				} else if (op.equals(">")) {
 					if (r1.evaluateExpr(variables) > r2.evaluateExpr(variables)) {
 						return false;
 					}
 					return true;
-				}
-				else if (op.equals("<")) {
+				} else if (op.equals("<")) {
 					if (r1.evaluateExpr(variables) < r2.evaluateExpr(variables)) {
 						return false;
 					}
 					return true;
 				}
 				return true;
-			}
-			else {
+			} else {
 				return true;
 			}
 		case 'i': // Integer
 			if (variables.containsKey(variable)) {
 				if (Integer.parseInt(variables.get(variable)) == 0.0) {
 					return true;
-				}
-				else {
+				} else {
 					return false;
 				}
-			}
-			else {
+			} else {
 				return false;
 			}
 		case 'c': // Continuous
@@ -3614,15 +3036,13 @@ public class ExprTree {
 			}
 			if (!(evaluateExpr(variables) == 0.0)) {
 				return false;
-			}
-			else {
+			} else {
 				return true;
 			}
 		case 'n': // Number
 			if (uvalue == 0.0 && lvalue == 0.0) {
 				return true;
-			}
-			else {
+			} else {
 				return false;
 			}
 		}
@@ -3638,7 +3058,8 @@ public class ExprTree {
 						return true;
 					}
 				}
-				if (variables.get(variable).toString().toLowerCase().equals("true"))
+				if (variables.get(variable).toString().toLowerCase().equals(
+						"true"))
 					return true;
 			}
 			return false;
@@ -3661,29 +3082,26 @@ public class ExprTree {
 				if (r1.becomesTrue(variables) || r2.becomesTrue(variables))
 					return true;
 				return false;
-			}
-			else if (op.equals("&&")) {
+			} else if (op.equals("&&")) {
 				if ((r1.becomesTrue(variables) && !r2.becomesFalse(variables))
-						|| (!r1.becomesFalse(variables) && r2.becomesTrue(variables)))
+						|| (!r1.becomesFalse(variables) && r2
+								.becomesTrue(variables)))
 					return true;
 				return false;
-			}
-			else if (op.equals("==")) {
+			} else if (op.equals("==")) {
 				if (r1.isEqual(r2, variables)
-						|| r1.evaluateExpr(variables) == r2.evaluateExpr(variables))
+						|| r1.evaluateExpr(variables) == r2
+								.evaluateExpr(variables))
 					return true;
 				return false;
-			}
-			else if (op.equals("!")) {
+			} else if (op.equals("!")) {
 				if (r1.becomesFalse(variables))
 					return true;
 				return false;
-			}
-			else if (op.equals("->")) {
+			} else if (op.equals("->")) {
 				if (r1.becomesTrue(variables) || r2.becomesFalse(variables)) {
 					return true;
-				}
-				else {
+				} else {
 					return false;
 				}
 			}
@@ -3693,26 +3111,22 @@ public class ExprTree {
 					return false;
 				}
 				return true;
-			}
-			else if (op.equals("|")) {
+			} else if (op.equals("|")) {
 				if (evaluateExpr(variables) == 0.0) {
 					return false;
 				}
 				return true;
-			}
-			else if (op.equals("X")) {
+			} else if (op.equals("X")) {
 				if (evaluateExpr(variables) == 0.0) {
 					return false;
 				}
 				return true;
-			}
-			else if (op.equals("~")) {
+			} else if (op.equals("~")) {
 				if (evaluateExpr(variables) == 0.0) {
 					return false;
 				}
 				return true;
-			}
-			else if (op.equals("[]")) {
+			} else if (op.equals("[]")) {
 				if (evaluateExpr(variables) == 0.0) {
 					return false;
 				}
@@ -3724,38 +3138,38 @@ public class ExprTree {
 					return false;
 				}
 				if (op.equals("==")) {
-					if (!(r1.evaluateExpr(variables) == r2.evaluateExpr(variables))) {
+					if (!(r1.evaluateExpr(variables) == r2
+							.evaluateExpr(variables))) {
 						return false;
 					}
 					return true;
-				}
-				else if (op.equals(">=")) {
-					if (!(r1.evaluateExpr(variables) >= r2.evaluateExpr(variables))) {
+				} else if (op.equals(">=")) {
+					if (!(r1.evaluateExpr(variables) >= r2
+							.evaluateExpr(variables))) {
 						return false;
 					}
 					return true;
-				}
-				else if (op.equals("<=")) {
-					if (!(r1.evaluateExpr(variables) <= r2.evaluateExpr(variables))) {
+				} else if (op.equals("<=")) {
+					if (!(r1.evaluateExpr(variables) <= r2
+							.evaluateExpr(variables))) {
 						return false;
 					}
 					return true;
-				}
-				else if (op.equals(">")) {
-					if (!(r1.evaluateExpr(variables) > r2.evaluateExpr(variables))) {
+				} else if (op.equals(">")) {
+					if (!(r1.evaluateExpr(variables) > r2
+							.evaluateExpr(variables))) {
 						return false;
 					}
 					return true;
-				}
-				else if (op.equals("<")) {
-					if (!(r1.evaluateExpr(variables) < r2.evaluateExpr(variables))) {
+				} else if (op.equals("<")) {
+					if (!(r1.evaluateExpr(variables) < r2
+							.evaluateExpr(variables))) {
 						return false;
 					}
 					return true;
 				}
 				return true;
-			}
-			else {
+			} else {
 				return true;
 			}
 		case 'a': // Arithmetic
@@ -3771,8 +3185,7 @@ public class ExprTree {
 			}
 			if (!(evaluateExpr(variables) != 0.0)) {
 				return false;
-			}
-			else {
+			} else {
 				return true;
 			}
 		}
@@ -3788,171 +3201,149 @@ public class ExprTree {
 		case 'b': // Boolean
 		case 'i': // Integer
 		case 'c': // Continuous
-			if (!sbmlFlag){
-			// result = result + variable;
-			result = variable;
-			break;
-			}
-			else {
+			if (!sbmlFlag) {
+				result = variable;
+				break;
+			} else {
 				if (isit == 'b') {
 					result = "eq(" + variable + ",1)";
-				}
-				else {
+				} else {
 					result = variable;
 				}
 				break;
-				
+
 			}
 		case 'n': // Number
 			// long term solution: create initial assignment
 			// short term solution: initialize all inf, -inf, [-inf, inf] to 0
-			//            			initialize [l,u] to (l+u)/2
+			// initialize [l,u] to (l+u)/2
 			Double tempuval = uvalue;
 			Double templval = lvalue;
 			if ((uvalue == lvalue) || tempuval.toString().equals("")) {
-				if (lvalue==INFIN) {
+				if (lvalue == INFIN) {
 					result = "inf";
-				} else if (lvalue==-INFIN) {
+				} else if (lvalue == -INFIN) {
 					result = "-inf";
 				} else {
-					if (tempuval%1 == 0) {
-						int tempval = (int) (tempuval/1);
+					if (tempuval % 1 == 0) {
+						int tempval = (int) (tempuval / 1);
 						result = new Integer(tempval).toString();
-					}
-					else {
+					} else {
 						result = tempuval.toString();
 					}
 				}
-				// result = tempuval.toString();
-			}
-			else {
+			} else {
 				String lval;
-				if (lvalue==INFIN) {
+				if (lvalue == INFIN) {
 					lval = "inf";
-				} else if (lvalue==-INFIN){
+				} else if (lvalue == -INFIN) {
 					lval = "-inf";
 				} else {
-					if (tempuval%1 == 0) {
-						int tempval = (int) (templval/1);
+					if (tempuval % 1 == 0) {
+						int tempval = (int) (templval / 1);
 						lval = new Integer(tempval).toString();
-					}
-					else {
+					} else {
 						lval = templval.toString();
 					}
 				}
 				String uval;
-				if (uvalue==INFIN) {
-					uval = "inf";	
-				} else if (uvalue==-INFIN){
+				if (uvalue == INFIN) {
+					uval = "inf";
+				} else if (uvalue == -INFIN) {
 					uval = "-inf";
 				} else {
-					if (tempuval%1 == 0) {
-						int tempval = (int) (tempuval/1);
+					if (tempuval % 1 == 0) {
+						int tempval = (int) (tempuval / 1);
 						uval = new Integer(tempval).toString();
-					}
-					else {
+					} else {
 						uval = tempuval.toString();
 					}
 				}
-				if (verilog){
-					//result = lval + " + (($unsigned($random))%(" + uval + "-" + lval + "+1))";
+				if (verilog) {
 					result = "uniform(" + lval + "," + uval + ")";
 				} else {
 					result = "uniform(" + lval + "," + uval + ")";
 				}
-				// result = "[" + templval.toString() + "," +
-				// tempuval.toString() + "]";
-
 			}
 			break;
 		case 't': // Truth value
 			if (uvalue == 0 && lvalue == 0) {
 				if (verilog)
 					result = "0";
-				else 
+				else
 					result = "FALSE";
-				// result = "TRUE";
-			}
-			else if (uvalue == 1 && lvalue == 1) {
+			} else if (uvalue == 1 && lvalue == 1) {
 				if (verilog)
 					result = "1";
 				else
 					result = "TRUE";
-				// result = "FALSE";
-			}
-			else {
-				if (sbmlFlag | verilog){
+			} else {
+				if (sbmlFlag | verilog) {
 					result = "0";
 				}
 				result = "UNKNOWN";
-				
+
 			}
-			// else {
-			// System.out.println("WARNING: Unknown assignment to a boolean
-			// variable");
-			// result = result + "UNKNOWN";
-			// }
 			break;
 
 		case 'w': // bitWise
 			if (op.equals("&")) {
 				if (r1 != null && r2 != null) {
-					if (sbmlFlag)	 {
-						result = "BITAND(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
-					}
-					else if (verilog){
-						result = r1.getElement(type) + "&" + r2.getElement(type);
-					}
-					else {
-						result = "and(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					if (sbmlFlag) {
+						result = "BITAND(" + r1.getElement(type) + ","
+								+ r2.getElement(type) + ")";
+					} else if (verilog) {
+						result = r1.getElement(type) + "&"
+								+ r2.getElement(type);
+					} else {
+						result = "and(" + r1.getElement(type) + ","
+								+ r2.getElement(type) + ")";
 					}
 				}
-			}
-			else if (op.equals("|")) {
+			} else if (op.equals("|")) {
 				if (r1 != null && r2 != null) {
 					if (sbmlFlag) {
-						result = "BITOR(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
-					}
-					else if (verilog){
-						result = r1.getElement(type) + "|" + r2.getElement(type);
-					}
-					else {
-						result = "or(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+						result = "BITOR(" + r1.getElement(type) + ","
+								+ r2.getElement(type) + ")";
+					} else if (verilog) {
+						result = r1.getElement(type) + "|"
+								+ r2.getElement(type);
+					} else {
+						result = "or(" + r1.getElement(type) + ","
+								+ r2.getElement(type) + ")";
 					}
 				}
 			}
-			
+
 			else if (op.equals("[]")) {
 				if (r1 != null && r2 != null) {
-					result = "BIT(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					result = "BIT(" + r1.getElement(type) + ","
+							+ r2.getElement(type) + ")";
 				}
-			}
-			else if (op.equals("!")) {
+			} else if (op.equals("!")) {
 				if (r1 != null && r2 != null) {
-					if (sbmlFlag){
+					if (sbmlFlag) {
 						result = "BITNOT(" + r1.getElement(type) + ")";
-					} 
-					else if (verilog){
+					} else if (verilog) {
 						result = "~" + r1.getElement(type);
+					} else {
+						result = "not(" + r1.getElement(type) + ")";
 					}
-					else {
-						result = "not(" + r1.getElement(type) +  ")";
-					}
-					
+
 				}
-			}
-			else if (op.equals("X")) {
+			} else if (op.equals("X")) {
 				if (r1 != null && r2 != null) {
-					if (sbmlFlag){
-						result = "XOR(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+					if (sbmlFlag) {
+						result = "XOR(" + r1.getElement(type) + ","
+								+ r2.getElement(type) + ")";
+					} else if (verilog) {
+						result = r1.getElement(type) + "^"
+								+ r2.getElement(type);
+					} else {
+						result = "exor(" + r1.getElement(type) + ","
+								+ r2.getElement(type) + ")";
 					}
-					else if (verilog){
-						result = r1.getElement(type) + "^" + r2.getElement(type);
-					}
-					else {
-						result = "exor(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
-					}
-					
+
 				}
 			}
 			break;
@@ -3961,87 +3352,76 @@ public class ExprTree {
 		case 'l': // Logical
 			if (op.equals("!")) {
 				if (r1 != null) {
-					if (r1.isit == 'b' || r1.isit == 'i' || r1.isit == 'c' || r1.isit == 'n'
-							|| r1.isit == 't') {
-						if(sbmlFlag) {
+					if (r1.isit == 'b' || r1.isit == 'i' || r1.isit == 'c'
+							|| r1.isit == 'n' || r1.isit == 't') {
+						if (sbmlFlag) {
 							result = "not(" + r1.getElement(type) + ")";
-						}
-						else if (verilog){
+						} else if (verilog) {
 							result = "!" + r1.getElement(type);
-						}
-						else {
+						} else {
 							result = "~" + r1.getElement(type);
 						}
-					}
-					else {
-						if(sbmlFlag){
+					} else {
+						if (sbmlFlag) {
 							result = "not(" + r1.getElement(type) + ")";
-						}
-						else if (verilog){
+						} else if (verilog) {
 							result = "!" + "(" + r1.getElement(type) + ")";
-						}
-						else {
+						} else {
 							result = "~" + "(" + r1.getElement(type) + ")";
 						}
 					}
 				}
 				break;
-			}
-			else {
+			} else {
 				if (op.equals("&&")) {
-					if (r1.isit == 'r' || (r1.isit == 'l' && r1.op.equals("||"))) {
+					if (r1.isit == 'r'
+							|| (r1.isit == 'l' && r1.op.equals("||"))) {
 						if (r1 != null) {
 							if (sbmlFlag) {
 								result = "and(" + r1.getElement(type) + ",";
-							}
-							else if (verilog){
+							} else if (verilog) {
 								result = "(" + r1.getElement(type) + ")&&";
-							}
-							else {
+							} else {
 								result = "(" + r1.getElement(type) + ")";
 							}
 						}
 
-					}
-					else {
+					} else {
 						if (r1 != null) {
 							if (sbmlFlag) {
 								result = "and(" + r1.getElement(type) + ",";
-							}
-							else if (verilog){
+							} else if (verilog) {
 								result = r1.getElement(type) + "&&";
-							}
-							else {
+							} else {
 								result = r1.getElement(type);
 							}
-							
+
 						}
 					}
-					
+
 					if (!sbmlFlag && !verilog) {
 						result = result + "&";
 					}
-					
-					if (r2.isit == 'r' || (r2.isit == 'l' && r2.op.equals("||"))) {
-						if (r2 != null) {
-							if (sbmlFlag){
-								result = result + r2.getElement(type) + ")";
-							}
-							else {
-								result = result + "(" + r2.getElement(type) + ")";
-							}
-							
-						}
-					}
-					else {
+
+					if (r2.isit == 'r'
+							|| (r2.isit == 'l' && r2.op.equals("||"))) {
 						if (r2 != null) {
 							if (sbmlFlag) {
 								result = result + r2.getElement(type) + ")";
+							} else {
+								result = result + "(" + r2.getElement(type)
+										+ ")";
 							}
-							else {
+
+						}
+					} else {
+						if (r2 != null) {
+							if (sbmlFlag) {
+								result = result + r2.getElement(type) + ")";
+							} else {
 								result = result + r2.getElement(type);
 							}
-							
+
 						}
 					}
 				}
@@ -4050,252 +3430,236 @@ public class ExprTree {
 						if (r1 != null) {
 							if (sbmlFlag) {
 								result = "or(" + r1.getElement(type) + ",";
-							}
-							else if (verilog){
+							} else if (verilog) {
 								result = "(" + r1.getElement(type) + ")||";
-							}
-							else {
+							} else {
 								result = "(" + r1.getElement(type) + ")";
 							}
-							
+
 						}
-					}
-					else {
+					} else {
 						if (r1 != null) {
 							if (sbmlFlag) {
 								result = "or(" + r1.getElement(type) + ",";
-							}
-							else if (verilog){
+							} else if (verilog) {
 								result = r1.getElement(type) + "||";
-							}
-							else {
+							} else {
 								result = r1.getElement(type);
 							}
 						}
 					}
-					
-					if (!sbmlFlag && !verilog){
+
+					if (!sbmlFlag && !verilog) {
 						result = result + "|";
 					}
-					
+
 					if (r2.isit == 'r') {
 						if (r2 != null) {
 							if (sbmlFlag) {
 								result = result + r2.getElement(type) + ")";
+							} else {
+								result = result + "(" + r2.getElement(type)
+										+ ")";
 							}
-							else {
-								result = result + "(" + r2.getElement(type) + ")";
-							}
-							
+
 						}
-					}
-					else {
+					} else {
 						if (r2 != null) {
 							if (sbmlFlag) {
 								result = result + r2.getElement(type) + ")";
-							}
-							else {
+							} else {
 								result = result + r2.getElement(type);
 							}
-							
+
 						}
 					}
-				}
-				else if (op.equals("f")) {
+				} else if (op.equals("f")) {
 					if (r1 != null && r2 != null) {
-						if (sbmlFlag){
+						if (r1.isit == 'n') {
+							result = new Double(r1.lvalue).toString();
+						}
+						if (sbmlFlag) {
 							result = "floor(" + r1.getElement(type) + ")";
-						} 
-						else if (verilog){
+						} else if (verilog) {
 							result = "floor(" + r1.getElement(type) + ")";
-						}
-						else {
-							result = "floor(" + r1.getElement(type) +  ")";
-						}
-						
-					}
-				}
-				else if (op.equals("c")) {
-					if (r1 != null && r2 != null) {
-						if (sbmlFlag){
-							result = "ceil(" + r1.getElement(type) + ")";
-						} 
-						else if (verilog){
-							result = "ceil(" + r1.getElement(type) + ")";
-						}
-						else {
-							result = "ceil(" + r1.getElement(type) +  ")";
-						}
-						
-					}
-				}
-				else if (op.equals("m")) {
-					if (r1 != null && r2 != null) {
-						if (sbmlFlag){
-							result = "piecewise(" + r1.getElement(type) + ",leq(" + 
-							r1.getElement(type) + "," + r2.getElement(type) + ")," + 
-							r2.getElement(type) + ")";
-						}
-						else if (verilog){
-							result = "min(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
-						}
-						else {
-							result = "min(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
-						}
-						
-					}
-				}
-				else if (op.equals("M")) {
-					if (r1 != null && r2 != null) {
-						if (sbmlFlag){
-							result = "piecewise(" + r1.getElement(type) + ",geq(" + 
-							r1.getElement(type) + "," + r2.getElement(type) + ")," + 
-							r2.getElement(type) + ")";
-						}
-						else if (verilog){
-							result = "max(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
-						}
-						else {
-							result = "max(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
-						}
-						
-					}
-				}
-				else if (op.equals("i")) {
-					if (r1 != null && r2 != null) {
-						if (sbmlFlag){
-							result = "floor(" + r1.getElement(type) + "/" + r2.getElement(type) + ")";
-						}
-						else if (verilog){
-							result = "floor(" + r1.getElement(type) + "/" + r2.getElement(type) + ")";
-						}
-						else {
-							result = "idiv(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
-						}
-						
-					}
-				}
-				else if (op.equals("uniform")) {
-					if (r1 != null && r2 != null) {
-						if (verilog){
-							//result = r1.getElement(type) + " + (($unsigned($random))%(" + r2.getElement(type) + "-" + r1.getElement(type) + "+1))";
-							result = "uniform(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
 						} else {
-							result = "uniform(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+							result = "floor(" + r1.getElement(type) + ")";
+						}
+
+					}
+				} else if (op.equals("c")) {
+					if (r1 != null && r2 != null) {
+						if (r1.isit == 'n') {
+							result = new Double(r1.lvalue).toString();
+						}
+						if (sbmlFlag) {
+							result = "ceil(" + r1.getElement(type) + ")";
+						} else if (verilog) {
+							result = "ceil(" + r1.getElement(type) + ")";
+						} else {
+							result = "ceil(" + r1.getElement(type) + ")";
+						}
+
+					}
+				} else if (op.equals("m")) {
+					if (r1 != null && r2 != null) {
+						if (sbmlFlag) {
+							result = "piecewise(" + r1.getElement(type)
+									+ ",leq(" + r1.getElement(type) + ","
+									+ r2.getElement(type) + "),"
+									+ r2.getElement(type) + ")";
+						} else if (verilog) {
+							result = "min(" + r1.getElement(type) + ","
+									+ r2.getElement(type) + ")";
+						} else {
+							result = "min(" + r1.getElement(type) + ","
+									+ r2.getElement(type) + ")";
+						}
+
+					}
+				} else if (op.equals("M")) {
+					if (r1 != null && r2 != null) {
+						if (sbmlFlag) {
+							result = "piecewise(" + r1.getElement(type)
+									+ ",geq(" + r1.getElement(type) + ","
+									+ r2.getElement(type) + "),"
+									+ r2.getElement(type) + ")";
+						} else if (verilog) {
+							result = "max(" + r1.getElement(type) + ","
+									+ r2.getElement(type) + ")";
+						} else {
+							result = "max(" + r1.getElement(type) + ","
+									+ r2.getElement(type) + ")";
+						}
+
+					}
+				} else if (op.equals("i")) {
+					if (r1 != null && r2 != null) {
+						if (sbmlFlag) {
+							result = "floor(" + r1.getElement(type) + "/"
+									+ r2.getElement(type) + ")";
+						} else if (verilog) {
+							result = "floor(" + r1.getElement(type) + "/"
+									+ r2.getElement(type) + ")";
+						} else {
+							result = "idiv(" + r1.getElement(type) + ","
+									+ r2.getElement(type) + ")";
+						}
+
+					}
+				} else if (op.equals("uniform")) {
+					if (r1 != null && r2 != null) {
+						if (verilog) {
+							// result = r1.getElement(type) +
+							// " + (($unsigned($random))%(" +
+							// r2.getElement(type) + "-" + r1.getElement(type) +
+							// "+1))";
+							result = "uniform(" + r1.getElement(type) + ","
+									+ r2.getElement(type) + ")";
+						} else {
+							result = "uniform(" + r1.getElement(type) + ","
+									+ r2.getElement(type) + ")";
 						}
 					}
-				}	//TODO: Add verilog functions for other distributions
+				} // TODO: Add verilog functions for other distributions
 				else if (op.equals("normal")) {
 					if (r1 != null && r2 != null) {
-						result = "normal(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+						result = "normal(" + r1.getElement(type) + ","
+								+ r2.getElement(type) + ")";
 					}
-				}
-				else if (op.equals("gamma")) {
+				} else if (op.equals("gamma")) {
 					if (r1 != null && r2 != null) {
-						result = "gamma(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+						result = "gamma(" + r1.getElement(type) + ","
+								+ r2.getElement(type) + ")";
 					}
-				}
-				else if (op.equals("lognormal")) {
+				} else if (op.equals("lognormal")) {
 					if (r1 != null && r2 != null) {
-						result = "lognormal(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+						result = "lognormal(" + r1.getElement(type) + ","
+								+ r2.getElement(type) + ")";
 					}
-				}
-				else if (op.equals("binomial")) {
+				} else if (op.equals("binomial")) {
 					if (r1 != null && r2 != null) {
-						result = "binomial(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+						result = "binomial(" + r1.getElement(type) + ","
+								+ r2.getElement(type) + ")";
 					}
-				}
-				else if (op.equals("exponential")) {
+				} else if (op.equals("exponential")) {
 					if (r1 != null) {
 						result = "exponential(" + r1.getElement(type) + ")";
 					}
-				}
-				else if (op.equals("chisq")) {
+				} else if (op.equals("chisq")) {
 					if (r1 != null) {
 						result = "chisq(" + r1.getElement(type) + ")";
 					}
-				}
-				else if (op.equals("laplace")) {
+				} else if (op.equals("laplace")) {
 					if (r1 != null) {
 						result = "laplace(" + r1.getElement(type) + ")";
 					}
-				}
-				else if (op.equals("cauchy")) {
+				} else if (op.equals("cauchy")) {
 					if (r1 != null) {
 						result = "cauchy(" + r1.getElement(type) + ")";
 					}
-				}
-				else if (op.equals("rayleigh")) {
+				} else if (op.equals("rayleigh")) {
 					if (r1 != null) {
 						result = "rayleigh(" + r1.getElement(type) + ")";
 					}
-				}
-				else if (op.equals("poisson")) {
+				} else if (op.equals("poisson")) {
 					if (r1 != null) {
 						result = "poisson(" + r1.getElement(type) + ")";
 					}
-				}
-				else if (op.equals("bernoulli")) {
+				} else if (op.equals("bernoulli")) {
 					if (r1 != null) {
 						result = "bernoulli(" + r1.getElement(type) + ")";
 					}
-				}
-				else if (op.equals("rate")) {
+				} else if (op.equals("rate")) {
 					if (r1 != null) {
 						result = "rate(" + r1.getElement(type) + ")";
 					}
-				}
-				else if (op.equals("INT")) {
+				} else if (op.equals("INT")) {
 					if (r1 != null) {
 						if (sbmlFlag) {
-							result = "piecewise(1," + r1.getElement(type) + ",0 )"; 
-						}
-						else {
+							result = "piecewise(1," + r1.getElement(type)
+									+ ",0 )";
+						} else {
 							result = "INT(" + r1.getElement(type) + ")";
 						}
-						
+
 					}
-				}
-				else if (op.equals("==")) {
+				} else if (op.equals("==")) {
 					if (r1 != null) {
 						if (sbmlFlag) {
 							result = "eq(" + r1.getElement(type) + ",";
-						}
-						else if (verilog){
+						} else if (verilog) {
 							result = r1.getElement(type) + "==";
-						}
-						else {
+						} else {
 							result = r1.getElement(type);
 						}
-						
+
 					}
 					if (!sbmlFlag && !verilog) {
 						result = result + "=";
 					}
-					
+
 					if (r2 != null) {
 						if (sbmlFlag) {
 							result = result + r2.getElement(type) + ")";
-						}
-						else {
+						} else {
 							result = result + r2.getElement(type);
 						}
-						
+
 					}
-				}
-				else if (op.equals("+")) {
+				} else if (op.equals("+")) {
 					if (r1.isit == 'b'
 							|| r1.isit == 'i'
 							|| r1.isit == 'c'
 							|| r1.isit == 'n'
 							|| r1.isit == 't'
-							|| (r1.isit == 'a' && (r1.op.equals("+") || r1.op.equals("-")
-									|| r1.op.equals("*") || r1.op.equals("/") || r1.op.equals("^")))) {
+							|| (r1.isit == 'a' && (r1.op.equals("+")
+									|| r1.op.equals("-") || r1.op.equals("*")
+									|| r1.op.equals("/") || r1.op.equals("^")))) {
 						if (r1 != null) {
 							result = r1.getElement(type);
 						}
-					}
-					else {
+					} else {
 						if (r1 != null) {
 							result = "(" + r1.getElement(type) + ")";
 						}
@@ -4306,31 +3670,30 @@ public class ExprTree {
 							|| r2.isit == 'c'
 							|| r2.isit == 'n'
 							|| r2.isit == 't'
-							|| (r2.isit == 'a' && (r2.op.equals("+") || r2.op.equals("-")
-									|| r2.op.equals("*") || r2.op.equals("/") || r2.op.equals("^")))) {
+							|| (r2.isit == 'a' && (r2.op.equals("+")
+									|| r2.op.equals("-") || r2.op.equals("*")
+									|| r2.op.equals("/") || r2.op.equals("^")))) {
 						if (r2 != null) {
 							result = result + r2.getElement(type);
 						}
-					}
-					else {
+					} else {
 						if (r2 != null) {
 							result = result + "(" + r2.getElement(type) + ")";
 						}
 					}
-				}
-				else if (op.equals("-")) {
+				} else if (op.equals("-")) {
 					if (r1.isit == 'b'
 							|| r1.isit == 'i'
 							|| r1.isit == 'c'
 							|| r1.isit == 'n'
 							|| r1.isit == 't'
-							|| (r1.isit == 'a' && (r1.op.equals("+") || r1.op.equals("-")
-									|| r1.op.equals("*") || r1.op.equals("/") || r1.op.equals("^")))) {
+							|| (r1.isit == 'a' && (r1.op.equals("+")
+									|| r1.op.equals("-") || r1.op.equals("*")
+									|| r1.op.equals("/") || r1.op.equals("^")))) {
 						if (r1 != null) {
 							result = r1.getElement(type);
 						}
-					}
-					else {
+					} else {
 						if (r1 != null) {
 							result = "(" + r1.getElement(type) + ")";
 						}
@@ -4341,31 +3704,29 @@ public class ExprTree {
 							|| r2.isit == 'c'
 							|| r2.isit == 'n'
 							|| r2.isit == 't'
-							|| (r2.isit == 'a' && (r2.op.equals("-") || r2.op.equals("*")
-									|| r2.op.equals("/") || r2.op.equals("^")))) {
+							|| (r2.isit == 'a' && (r2.op.equals("-")
+									|| r2.op.equals("*") || r2.op.equals("/") || r2.op
+									.equals("^")))) {
 						if (r2 != null) {
 							result = result + r2.getElement(type);
 						}
-					}
-					else {
+					} else {
 						if (r2 != null) {
 							result = result + "(" + r2.getElement(type) + ")";
 						}
 					}
-				}
-				else if (op.equals("*")) {
+				} else if (op.equals("*")) {
 					if (r1.isit == 'b'
 							|| r1.isit == 'i'
 							|| r1.isit == 'c'
 							|| r1.isit == 'n'
 							|| r1.isit == 't'
-							|| (r1.isit == 'a' && (r1.op.equals("*") || r1.op.equals("/") || r1.op
-									.equals("^")))) {
+							|| (r1.isit == 'a' && (r1.op.equals("*")
+									|| r1.op.equals("/") || r1.op.equals("^")))) {
 						if (r1 != null) {
 							result = r1.getElement(type);
 						}
-					}
-					else {
+					} else {
 						if (r1 != null) {
 							result = "(" + r1.getElement(type) + ")";
 						}
@@ -4376,136 +3737,136 @@ public class ExprTree {
 							|| r2.isit == 'c'
 							|| r2.isit == 'n'
 							|| r2.isit == 't'
-							|| (r2.isit == 'a' && (r2.op.equals("*") || r2.op.equals("/") || r2.op
-									.equals("^")))) {
+							|| (r2.isit == 'a' && (r2.op.equals("*")
+									|| r2.op.equals("/") || r2.op.equals("^")))) {
 						if (r2 != null) {
 							result = result + r2.getElement(type);
 						}
-					}
-					else {
+					} else {
 						if (r2 != null) {
 							result = result + "(" + r2.getElement(type) + ")";
 						}
 					}
-				}
-				else if (op.equals("/")) {
+				} else if (op.equals("/")) {
 					if (r1.isit == 'b'
 							|| r1.isit == 'i'
 							|| r1.isit == 'c'
 							|| r1.isit == 'n'
 							|| r1.isit == 't'
-							|| (r1.isit == 'a' && (r1.op.equals("*") || r1.op.equals("/") || r1.op
-									.equals("^")))) {
+							|| (r1.isit == 'a' && (r1.op.equals("*")
+									|| r1.op.equals("/") || r1.op.equals("^")))) {
 						if (r1 != null) {
 							result = r1.getElement(type);
 						}
-					}
-					else {
+					} else {
 						if (r1 != null) {
 							result = "(" + r1.getElement(type) + ")";
 						}
 					}
 					result = result + "/";
-					if (r2.isit == 'b' || r2.isit == 'i' || r2.isit == 'c' || r2.isit == 'n'
+					if (r2.isit == 'b'
+							|| r2.isit == 'i'
+							|| r2.isit == 'c'
+							|| r2.isit == 'n'
 							|| r2.isit == 't'
-							|| (r2.isit == 'a' && (r2.op.equals("/") || r2.op.equals("^")))) {
+							|| (r2.isit == 'a' && (r2.op.equals("/") || r2.op
+									.equals("^")))) {
 						if (r2 != null) {
 							result = result + r2.getElement(type);
 						}
-					}
-					else {
+					} else {
 						if (r2 != null) {
 							result = result + "(" + r2.getElement(type) + ")";
 						}
 					}
-					/*
-					if (sbmlFlag) {
-						result = "floor(" + result + ")";
-					}
-					*/
-				}
-				else if (op.equals("^")) {
+				} else if (op.equals("^")) {
 					if (r1.isit == 'b'
 							|| r1.isit == 'i'
 							|| r1.isit == 'c'
 							|| r1.isit == 'n'
 							|| r1.isit == 't'
-							|| (r1.isit == 'a' && (r1.op.equals("*") || r1.op.equals("/") || r1.op
-									.equals("^")))) {
+							|| (r1.isit == 'a' && (r1.op.equals("*")
+									|| r1.op.equals("/") || r1.op.equals("^")))) {
 						if (r1 != null) {
-//							result = r1.getElement(type);
 							result = "(" + r1.getElement(type) + ")";
 						}
-					}
-					else {
+					} else {
 						if (r1 != null) {
 							result = "(" + r1.getElement(type) + ")";
 						}
 					}
 					result = result + "^";
-					if (r2.isit == 'b' || r2.isit == 'i' || r2.isit == 'c' || r2.isit == 'n'
+					if (r2.isit == 'b'
+							|| r2.isit == 'i'
+							|| r2.isit == 'c'
+							|| r2.isit == 'n'
 							|| r2.isit == 't'
-							|| (r2.isit == 'a' && (r2.op.equals("/") || r2.op.equals("^")))) {
+							|| (r2.isit == 'a' && (r2.op.equals("/") || r2.op
+									.equals("^")))) {
 						if (r2 != null) {
-//							result = result + r2.getElement(type);
 							result = result + "(" + r2.getElement(type) + ")";
 						}
-					}
-					else {
+					} else {
 						if (r2 != null) {
 							result = result + "(" + r2.getElement(type) + ")";
 						}
 					}
 				}
 				// relational ops: geq, leq, gt, lt
-				// mod 
-				else {  
+				// mod
+				else {
 					if (!sbmlFlag) {
 						if (r1 != null) {
-							if (r1.isit == 'b' || r1.isit == 'i' || r1.isit == 'c' || r1.isit == 'n'
+							if (r1.isit == 'b' || r1.isit == 'i'
+									|| r1.isit == 'c' || r1.isit == 'n'
 									|| r1.isit == 't') {
 								result = r1.getElement(type);
-							}
-							else {
+							} else {
 								result = "(" + r1.getElement(type) + ")";
 							}
 						}
 						result = result + op;
 						if (r2 != null) {
-							if (r2.isit == 'b' || r2.isit == 'i' || r2.isit == 'c' || r2.isit == 'n'
+							if (r2.isit == 'b' || r2.isit == 'i'
+									|| r2.isit == 'c' || r2.isit == 'n'
 									|| r2.isit == 't') {
 								result = result + r2.getElement(type);
-							}
-							else {
-								result = result + "(" + r2.getElement(type) + ")";
+							} else {
+								result = result + "(" + r2.getElement(type)
+										+ ")";
 							}
 						}
 					}
-					
+
 					if (sbmlFlag) {
 						if (op.equals("<=")) {
 							if (r1 != null && r2 != null) {
-								result = "leq(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+								result = "leq(" + r1.getElement(type) + ","
+										+ r2.getElement(type) + ")";
 							}
 						}
 						if (op.equals(">=")) {
-							if (r1 != null && r2 != null) {								
-								result = "geq(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+							if (r1 != null && r2 != null) {
+								result = "geq(" + r1.getElement(type) + ","
+										+ r2.getElement(type) + ")";
 							}
 						}
 						if (op.equals(">")) {
-							if (r1 != null && r2 != null) {								
-								result = "gt(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+							if (r1 != null && r2 != null) {
+								result = "gt(" + r1.getElement(type) + ","
+										+ r2.getElement(type) + ")";
 							}
 						}
 						if (op.equals("<")) {
-							if (r1 != null && r2 != null) {								
-								result = "lt(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+							if (r1 != null && r2 != null) {
+								result = "lt(" + r1.getElement(type) + ","
+										+ r2.getElement(type) + ")";
 							}
 						}
 						if (op.equals("%")) {
-							if (r1 != null && r2 != null) {								
-								result = "mod(" + r1.getElement(type) + "," + r2.getElement(type) + ")";
+							if (r1 != null && r2 != null) {
+								result = "mod(" + r1.getElement(type) + ","
+										+ r2.getElement(type) + ")";
 							}
 						}
 
@@ -4514,6 +3875,101 @@ public class ExprTree {
 			}
 		}
 		return result;
+	}
+
+	public ExprTree minimizeUniforms() {
+		r1.minimizeUniforms();
+		r2.minimizeUniforms();
+		if (isit == 'a' && op.equals("m")) {
+			if (r1.isit == 'n' && r2.isit == 'n') {
+				isit = 'n';
+				if (r1.lvalue < r2.lvalue) {
+					lvalue = r1.lvalue;
+				} else {
+					lvalue = r2.lvalue;
+				}
+				r1 = null;
+				r2 = null;
+			} else {
+				if (r1.isit == 'a' && r1.op.equals("uniform")) {
+					r1 = r1.r1;
+				}
+				if (r2.isit == 'a' && r2.op.equals("uniform")) {
+					r2 = r2.r1;
+				}
+			}
+		}
+		if (isit == 'a' && op.equals("M")) {
+			if (r1.isit == 'n' && r2.isit == 'n') {
+				isit = 'n';
+				if (r1.lvalue < r2.lvalue) {
+					lvalue = r2.lvalue;
+				} else {
+					lvalue = r1.lvalue;
+				}
+				r1 = null;
+				r2 = null;
+			} else {
+				if (r1.isit == 'a' && r1.op.equals("uniform")) {
+					r1 = r1.r2;
+				}
+				if (r2.isit == 'a' && r2.op.equals("uniform")) {
+					r2 = r2.r2;
+				}
+			}
+		}
+		if (isit == 'a' && op.equals("+")) {
+			if (r1.isit == 'a' && r1.equals("uniform") && r2.isit == 'a'
+					&& r2.equals("uniform")) {
+				ExprTree l1 = r1.r1;
+				ExprTree l2 = r2.r1;
+				ExprTree u1 = r1.r2;
+				ExprTree u2 = r2.r2;
+				op = "uniform";
+				r1.op = "+";
+				r2.op = "+";
+				r1.r1 = l1;
+				r1.r2 = l2;
+				r2.r1 = u1;
+				r2.r2 = u2;
+			}
+		}
+		if (isit == 'a' && op.equals("*")) {
+			if (r1.isit == 'a' && r1.equals("uniform") && r2.isit == 'a'
+					&& r2.equals("uniform")) {
+				ExprTree l1 = r1.r1;
+				ExprTree l2 = r2.r1;
+				ExprTree u1 = r1.r2;
+				ExprTree u2 = r2.r2;
+				op = "uniform";
+				r1.op = "*";
+				r2.op = "*";
+				r1.r1 = l1;
+				r1.r2 = l2;
+				r2.r1 = u1;
+				r2.r2 = u2;
+			}
+		}
+		if (isit == 'a' && op.equals("/")) {
+			if (r1.isit == 'a' && r1.equals("uniform") && r1.r1.isit == 'n' && r1.r2.isit == 'n' && r2.isit == 'n') {
+				double N = r2.lvalue;
+				op = "uniform";
+				r1.isit = 'n';
+				r1.lvalue = r1.r1.lvalue/N;
+				r2.lvalue = r1.r2.lvalue/N;
+				r1.r1 = null;
+				r1.r2 = null;
+			}
+		}
+		if (isit == 'a' && op.equals("uniform")) {
+			if (r1.isit == 'a' && r1.op.equals("uniform")) {
+				r1 = r1.r1;
+			}
+			if (r2.isit == 'a' && r2.op.equals("uniform")) {
+				r2 = r2.r2;
+			}
+		}
+		return this;
 	}
 
 	public boolean isEqual(ExprTree expr) {
@@ -4547,16 +4003,14 @@ public class ExprTree {
 					if (expr.r1 == null) {
 						r1Same = true;
 					}
-				}
-				else if (r1.isEqual(expr.r1)) {
+				} else if (r1.isEqual(expr.r1)) {
 					r1Same = true;
 				}
 				if (r2 == null) {
 					if (expr.r2 == null) {
 						r2Same = true;
 					}
-				}
-				else if (r2.isEqual(expr.r2)) {
+				} else if (r2.isEqual(expr.r2)) {
 					r2Same = true;
 				}
 				if (r1Same && r2Same) {
@@ -4576,11 +4030,11 @@ public class ExprTree {
 			case 'c': // Continuous
 				if (variables.containsKey(variable)) {
 					if (variables.containsKey(expr.variable)) {
-						if (variables.get(variable).equals(variables.get(expr.variable)))
+						if (variables.get(variable).equals(
+								variables.get(expr.variable)))
 							same = true;
 					}
-				}
-				else if (variable.equals(expr.variable)) {
+				} else if (variable.equals(expr.variable)) {
 					same = true;
 				}
 				break;
@@ -4588,14 +4042,15 @@ public class ExprTree {
 			case 't': // Truth value
 				if (uvalue == expr.uvalue && lvalue == expr.lvalue) {
 					same = true;
-				}
-				else if (variables.containsKey(expr.variable)) {
+				} else if (variables.containsKey(expr.variable)) {
 					if (uvalue == lvalue) {
 						if (uvalue == 1.0
-								&& variables.get(expr.variable).toLowerCase().equals("true"))
+								&& variables.get(expr.variable).toLowerCase()
+										.equals("true"))
 							same = true;
 						else if (uvalue == 0.0
-								&& variables.get(expr.variable).toLowerCase().equals("false"))
+								&& variables.get(expr.variable).toLowerCase()
+										.equals("false"))
 							same = true;
 					}
 				}
@@ -4614,16 +4069,14 @@ public class ExprTree {
 					if (expr.r1 == null) {
 						r1Same = true;
 					}
-				}
-				else if (r1.isEqual(expr.r1)) {
+				} else if (r1.isEqual(expr.r1)) {
 					r1Same = true;
 				}
 				if (r2 == null) {
 					if (expr.r2 == null) {
 						r2Same = true;
 					}
-				}
-				else if (r2.isEqual(expr.r2)) {
+				} else if (r2.isEqual(expr.r2)) {
 					r2Same = true;
 				}
 				if (r1Same && r2Same) {
@@ -4649,7 +4102,8 @@ public class ExprTree {
 		real = 0;
 	}
 
-	public void setNodeValues(ExprTree nr1, ExprTree nr2, String nop, char willbe) {
+	public void setNodeValues(ExprTree nr1, ExprTree nr2, String nop,
+			char willbe) {
 		ExprTree r1temp = null, r2temp = null;
 		if (nr1 != null) {
 			r1temp = new ExprTree(nr1);
@@ -4665,8 +4119,7 @@ public class ExprTree {
 			logical = true;
 			uvalue = 1;
 			lvalue = 0;
-		}
-		else {
+		} else {
 			logical = false;
 			uvalue = INFIN;
 			lvalue = -INFIN;
@@ -4678,191 +4131,168 @@ public class ExprTree {
 				if ((r1.isit == 'n') || (r1.isit == 't')) {
 					if (r1.lvalue == 0) {
 						setVarValues('t', 0.0, 0.0, null);
-					}
-					else {
-						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+					} else {
+						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w'
+								|| r2.isit == 'r') {
 							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-						}
-						else {
-							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+						} else {
+							setVarValues(r2.isit, r2.lvalue, r2.uvalue,
+									r2.variable);
 						}
 					}
-				}
-				else if (((r2).isit == 'n') || ((r2).isit == 't')) {
+				} else if (((r2).isit == 'n') || ((r2).isit == 't')) {
 					if (r2.lvalue == 0) {
 						setVarValues('t', 0.0, 0.0, null);
-					}
-					else {
-						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+					} else {
+						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w'
+								|| r1.isit == 'r') {
 							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-						}
-						else {
-							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+						} else {
+							setVarValues(r1.isit, r1.lvalue, r1.uvalue,
+									r1.variable);
 						}
 					}
-				}
-				else if (r1.equals(r2)) {
-					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+				} else if (r1.equals(r2)) {
+					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w'
+							|| r1.isit == 'r') {
 						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-					}
-					else {
+					} else {
 						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
 					}
-				}
-				else {
+				} else {
 					ExprTree notE = new ExprTree(this);
 					notE.setNodeValues((this), null, "!", 'l');
 					if (r1.equals(notE) || notE.equals(r1)) {
 						setVarValues('t', 0.0, 0.0, null);
 					}
 				}
-			}
-			else if (op.equals("||")) {
+			} else if (op.equals("||")) {
 				if ((r1.isit == 'n') || (r1.isit == 't')) {
 					if (r1.lvalue != 0) {
 						setVarValues('t', 1.0, 1.0, null);
-					}
-					else {
-						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+					} else {
+						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w'
+								|| r2.isit == 'r') {
 							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-						}
-						else {
-							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+						} else {
+							setVarValues(r2.isit, r2.lvalue, r2.uvalue,
+									r2.variable);
 						}
 					}
-				}
-				else if (((r2).isit == 'n') || ((r2).isit == 't')) {
+				} else if (((r2).isit == 'n') || ((r2).isit == 't')) {
 					if (r2.lvalue != 0) {
 						setVarValues('t', 1.0, 1.0, null);
-					}
-					else {
-						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+					} else {
+						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w'
+								|| r1.isit == 'r') {
 							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-						}
-						else {
-							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+						} else {
+							setVarValues(r1.isit, r1.lvalue, r1.uvalue,
+									r1.variable);
 						}
 					}
-				}
-				else if (r1.equals(r2)) {
-					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+				} else if (r1.equals(r2)) {
+					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w'
+							|| r1.isit == 'r') {
 						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-					}
-					else {
+					} else {
 						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
 					}
-				}
-				else {
+				} else {
 					ExprTree notE = new ExprTree(this);
 					notE.setNodeValues((this), null, "!", 'l');
 					if (r1.equals(notE) || notE.equals(r1)) {
 						setVarValues('t', 1.0, 1.0, null);
 					}
 				}
-			}
-			else if (op.equals("->")) {
+			} else if (op.equals("->")) {
 				if (r1.isit == 'n' || r1.isit == 't') {
 					if (r1.lvalue != 0) {
-						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w'
+								|| r2.isit == 'r') {
 							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
+						} else {
+							setVarValues(r2.isit, r2.lvalue, r2.uvalue,
+									r2.variable);
 						}
-						else {
-							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
-						}
-					}
-					else if (r1.uvalue == 0) {
+					} else if (r1.uvalue == 0) {
 						setVarValues('t', 1.0, 1.0, null);
 					}
-				}
-				else if (r2.isit == 't' || r2.isit == 'n') {
+				} else if (r2.isit == 't' || r2.isit == 'n') {
 					if (r2.lvalue != 0) {
 						setVarValues('t', 1.0, 1.0, null);
-					}
-					else if (r2.uvalue == 0) {
+					} else if (r2.uvalue == 0) {
 						ExprTree notE = new ExprTree(r2);
 						notE.setNodeValues((this), null, "!", 'l');
 						setNodeValues(notE.r1, notE.r2, notE.op, notE.isit);
 					}
 				}
-			}
-			else if (op.equals("!")) {
+			} else if (op.equals("!")) {
 				if (((r1).isit == 'n') || ((r1).isit == 't')) {
 					(this).isit = 't';
 					if (r1.lvalue == 1) {
 						this.lvalue = 0;
-					}
-					else {
+					} else {
 						this.lvalue = 1;
 					}
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (op.equals("==")) {
+			} else if (op.equals("==")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 't';
 					if (r1.lvalue == r2.lvalue) {
 						this.lvalue = 1;
-					}
-					else {
+					} else {
 						this.lvalue = 0;
 					}
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (op.equals(">=")) {
+			} else if (op.equals(">=")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 't';
 					if ((r1).lvalue >= r2.lvalue) {
 						this.lvalue = 1;
-					}
-					else {
+					} else {
 						this.lvalue = 0;
 					}
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (op.equals(">")) {
+			} else if (op.equals(">")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 't';
 					if ((r1).lvalue > r2.lvalue) {
 						this.lvalue = 1;
-					}
-					else {
+					} else {
 						this.lvalue = 0;
 					}
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (op.equals("<=")) {
+			} else if (op.equals("<=")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 't';
 					if ((r1).lvalue <= r2.lvalue) {
 						this.lvalue = 1;
-					}
-					else {
+					} else {
 						this.lvalue = 0;
 					}
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (op.equals("<")) {
+			} else if (op.equals("<")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 't';
 					if ((r1).lvalue < r2.lvalue) {
 						this.lvalue = 1;
-					}
-					else {
+					} else {
 						this.lvalue = 0;
 					}
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (op.equals("&")) {
+			} else if (op.equals("&")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					// System.out.println(newresult.toString());
@@ -4873,144 +4303,129 @@ public class ExprTree {
 					// System.out.println("After " + newresult.lvalue);
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (op.equals("|")) {
+			} else if (op.equals("|")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
 					(this).lvalue = (int) (r1).lvalue | (int) r2.lvalue;
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (isit == 'w' && op.equals("X")) {
+			} else if (isit == 'w' && op.equals("X")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
 					(this).lvalue = (int) (r1).lvalue ^ (int) r2.lvalue;
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (op.equals("m")) {
+			} else if (op.equals("m")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
-					(this).lvalue = Math.min((r1).lvalue,r2.lvalue);
+					(this).lvalue = Math.min((r1).lvalue, r2.lvalue);
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (op.equals("M")) {
+			} else if (op.equals("M")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
-					(this).lvalue = Math.max((r1).lvalue,r2.lvalue);
+					(this).lvalue = Math.max((r1).lvalue, r2.lvalue);
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (op.equals("i")) {
+			} else if (op.equals("i")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
-					(this).lvalue = Math.floor((r1).lvalue/r2.lvalue);
+					(this).lvalue = Math.floor((r1).lvalue / r2.lvalue);
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (op.equals("f")) {
+			} else if (op.equals("f")) {
 				if (((r1).isit == 'n') || ((r1).isit == 't')) {
 					(this).isit = 'n';
 					(this).lvalue = Math.floor((r1).lvalue);
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (op.equals("c")) {
+			} else if (op.equals("c")) {
 				if (((r1).isit == 'n') || ((r1).isit == 't')) {
 					(this).isit = 'n';
 					(this).lvalue = Math.ceil((r1).lvalue);
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (op.equals("~")) {
+			} else if (op.equals("~")) {
 				if (((r1).isit == 'n') || ((r1).isit == 't')) {
 					(this).isit = 'n';
 					(this).lvalue = ~(int) (r1).lvalue;
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (op.equals("[]")) {
+			} else if (op.equals("[]")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 't';
 					(this).lvalue = (((int) (r1).lvalue) >> ((int) r2.lvalue)) & 1;
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (op.equals("U-")) {
+			} else if (op.equals("U-")) {
 				if (((r1).isit == 'n') || ((r1).isit == 't')) {
 					(this).isit = 'n';
 					(this).lvalue = -((r1).lvalue);
 					(this).uvalue = (this).lvalue;
 				}
-			}
-			else if (op.equals("*")) {
+			} else if (op.equals("*")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
 					(this).lvalue = (r1).lvalue * r2.lvalue;
 					(this).uvalue = (this).lvalue;
-				}
-				else if (r1.isit == 'n' || r1.isit == 't') {
+				} else if (r1.isit == 'n' || r1.isit == 't') {
 					if (r1.lvalue == 0 && r1.uvalue == 0) {
 						setVarValues('t', 0.0, 0.0, null);
-					}
-					else if (r1.lvalue == 1 && r1.uvalue == 1) {
-						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+					} else if (r1.lvalue == 1 && r1.uvalue == 1) {
+						if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w'
+								|| r2.isit == 'r') {
 							setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-						}
-						else {
-							setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
+						} else {
+							setVarValues(r2.isit, r2.lvalue, r2.uvalue,
+									r2.variable);
 						}
 					}
-				}
-				else if (r2.isit == 'n' || r2.isit == 't') {
+				} else if (r2.isit == 'n' || r2.isit == 't') {
 					if (r2.lvalue == 0 && r2.uvalue == 0) {
 						setVarValues('t', 0.0, 0.0, null);
-					}
-					else if (r2.lvalue == 1 && r2.uvalue == 1) {
-						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+					} else if (r2.lvalue == 1 && r2.uvalue == 1) {
+						if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w'
+								|| r1.isit == 'r') {
 							setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-						}
-						else {
-							setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
+						} else {
+							setVarValues(r1.isit, r1.lvalue, r1.uvalue,
+									r1.variable);
 						}
 					}
 				}
-			}
-			else if (op.equals("/")) {
+			} else if (op.equals("/")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
 					(this).lvalue = (r1).lvalue / r2.lvalue;
 					(this).uvalue = (this).lvalue;
-				}
-				else if ((r1.isit == 'n' || r1.isit == 't') && r1.uvalue == 0 && r1.lvalue == 0) {
+				} else if ((r1.isit == 'n' || r1.isit == 't') && r1.uvalue == 0
+						&& r1.lvalue == 0) {
 					setVarValues('n', 0.0, 0.0, null);
-				}
-				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 1 && r2.uvalue == 1) {
-					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+				} else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 1
+						&& r2.uvalue == 1) {
+					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w'
+							|| r1.isit == 'r') {
 						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-					}
-					else {
+					} else {
 						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
 					}
 				}
-			}
-			else if (op.equals("%")) {
+			} else if (op.equals("%")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
 					(this).lvalue = (r1).lvalue % r2.lvalue;
 					(this).uvalue = (this).lvalue;
-				}
-				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 1.0 && r2.uvalue == 1.0) {
+				} else if ((r2.isit == 'n' || r2.isit == 't')
+						&& r2.lvalue == 1.0 && r2.uvalue == 1.0) {
 					// if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' ||
 					// r1.isit == 'r') {
 					setVarValues('n', 0.0, 0.0, null);
@@ -5018,50 +4433,48 @@ public class ExprTree {
 					// else {
 					// setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
 					// }
-				}
-				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 1.0 && r1.uvalue == 1.0) {
+				} else if ((r1.isit == 'n' || r1.isit == 't')
+						&& r1.lvalue == 1.0 && r1.uvalue == 1.0) {
 					setVarValues('n', 1.0, 1.0, null);
 				}
-			}
-			else if (op.equals("+")) {
+			} else if (op.equals("+")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
 					(this).lvalue = (r1).lvalue + r2.lvalue;
 					(this).uvalue = (this).lvalue;
-				}
-				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 0 && r1.uvalue == 0) {
-					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w' || r2.isit == 'r') {
+				} else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 0
+						&& r1.uvalue == 0) {
+					if (r2.isit == 'l' || r2.isit == 'a' || r2.isit == 'w'
+							|| r2.isit == 'r') {
 						setNodeValues(r2.r1, r2.r2, r2.op, r2.isit);
-					}
-					else {
+					} else {
 						setVarValues(r2.isit, r2.lvalue, r2.uvalue, r2.variable);
 					}
-				}
-				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 0 && r2.uvalue == 0) {
-					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+				} else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 0
+						&& r2.uvalue == 0) {
+					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w'
+							|| r1.isit == 'r') {
 						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-					}
-					else {
+					} else {
 						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
 					}
 				}
-			}
-			else if (op.equals("-")) {
+			} else if (op.equals("-")) {
 				if (((r1.isit == 'n') || (r1.isit == 't'))
 						&& (((r2).isit == 'n') || ((r2).isit == 't'))) {
 					(this).isit = 'n';
 					(this).lvalue = (r1).lvalue - r2.lvalue;
 					(this).uvalue = (this).lvalue;
-				}
-				else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 0 && r1.uvalue == 0) {
+				} else if ((r1.isit == 'n' || r1.isit == 't') && r1.lvalue == 0
+						&& r1.uvalue == 0) {
 					setNodeValues(r2, null, "U-", 'a');
-				}
-				else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 0 && r2.uvalue == 0) {
-					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w' || r1.isit == 'r') {
+				} else if ((r2.isit == 'n' || r2.isit == 't') && r2.lvalue == 0
+						&& r2.uvalue == 0) {
+					if (r1.isit == 'l' || r1.isit == 'a' || r1.isit == 'w'
+							|| r1.isit == 'r') {
 						setNodeValues(r1.r1, r1.r2, r1.op, r1.isit);
-					}
-					else {
+					} else {
 						setVarValues(r1.isit, r1.lvalue, r1.uvalue, r1.variable);
 					}
 				}
@@ -5076,16 +4489,15 @@ public class ExprTree {
 		case 'b': // Boolean
 			if (variables != null) {
 				if (!variables.containsKey(variable)
-						|| variables.get(variable).toLowerCase().equals("unknown"))
+						|| variables.get(variable).toLowerCase().equals(
+								"unknown"))
 					return Double.NaN;
 				if (variables.get(variable).toLowerCase().equals("true")) {
 					return 1.0;
-				}
-				else {
+				} else {
 					return 0.0;
 				}
-			}
-			else {
+			} else {
 				return Double.NaN;
 			}
 		case 'c': // Contunuous
@@ -5094,57 +4506,47 @@ public class ExprTree {
 			if (variables != null) {
 				try {
 					return Double.parseDouble(variables.get(variable));
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					return Double.NaN;
 				}
-			}
-			else {
+			} else {
 				return Double.NaN;
 			}
 		case 'n': // Number
 			if (uvalue == lvalue) {
 				return uvalue;
-			}
-			else {
-				return ((uvalue - lvalue) * new java.util.Random().nextDouble()) + lvalue;
+			} else {
+				return ((uvalue - lvalue) * new java.util.Random().nextDouble())
+						+ lvalue;
 			}
 		case 't': // Truth value
 			if (uvalue == 1 && lvalue == 1) {
 				return 1.0;
-			}
-			else if (uvalue == 0 && lvalue == 0) {
+			} else if (uvalue == 0 && lvalue == 0) {
 				return 0.0;
-			}
-			else {
+			} else {
 				return Double.NaN;
 			}
 		case 'w': // bitWise
 			if (r1 != null) {
 				left = r1.evaluateExpr(variables);
-			}
-			else {
+			} else {
 				left = Double.NaN;
 			}
 			if (r2 != null) {
 				right = r2.evaluateExpr(variables);
-			}
-			else {
+			} else {
 				right = Double.NaN;
 			}
 			if (op.equals("&")) {
 				return ((int) left) & ((int) right);
-			}
-			else if (op.equals("|")) {
+			} else if (op.equals("|")) {
 				return ((int) left) | ((int) right);
-			}
-			else if (op.equals("[]")) {
+			} else if (op.equals("[]")) {
 				return (((int) left) >> ((int) right)) & 1;
-			}
-			else if (op.equals("!")) {
+			} else if (op.equals("!")) {
 				return ~((int) left);
-			}
-			else if (op.equals("X")) {
+			} else if (op.equals("X")) {
 				return ((int) left) ^ ((int) right);
 			}
 		case 'a': // Arithmetic
@@ -5154,207 +4556,148 @@ public class ExprTree {
 				if (r1 != null) {
 					if (r1.evaluateExpr(variables) == 1.0) {
 						return 0.0;
-					}
-					else if (r1.evaluateExpr(variables) == 0.0) {
+					} else if (r1.evaluateExpr(variables) == 0.0) {
 						return 1.0;
-					}
-					else {
+					} else {
 						return Double.NaN;
 					}
-				}
-				else if (r2 != null) {
+				} else if (r2 != null) {
 					if (r2.evaluateExpr(variables) == 1.0) {
 						return 0.0;
-					}
-					else if (r2.evaluateExpr(variables) == 0.0) {
+					} else if (r2.evaluateExpr(variables) == 0.0) {
 						return 1.0;
-					}
-					else {
+					} else {
 						return Double.NaN;
 					}
-				}
-				else {
+				} else {
 					return Double.NaN;
 				}
-			}
-			else {
+			} else {
 				if (r1 != null) {
 					left = r1.evaluateExpr(variables);
-				}
-				else {
+				} else {
 					left = Double.NaN;
 				}
 				if (r2 != null) {
 					right = r2.evaluateExpr(variables);
-				}
-				else {
+				} else {
 					right = Double.NaN;
 				}
 				if (op.equals("&&")) {
 					if (left == 1.0 && right == 1.0) {
 						return 1.0;
-					}
-					else if (left == 0.0 || right == 0.0) {
+					} else if (left == 0.0 || right == 0.0) {
 						return 0.0;
-					}
-					else
+					} else
 						return Double.NaN;
-				}
-				else if (op.equals("||")) {
+				} else if (op.equals("||")) {
 					if (left == 1.0 || right == 1.0) {
 						return 1.0;
-					}
-					else if (left == 0.0 && right == 0.0) {
+					} else if (left == 0.0 && right == 0.0) {
 						return 0.0;
-					}
-					else
+					} else
 						return Double.NaN;
-				}
-				else if (op.equals("==")) {
+				} else if (op.equals("==")) {
 					if (left == Double.NaN || right == Double.NaN) {
 						return Double.NaN;
-					}
-					else if (left == right) {
+					} else if (left == right) {
 						return 1.0;
-					}
-					else if (left != right) {
+					} else if (left != right) {
 						return 0.0;
-					}
-					else {
+					} else {
 						return Double.NaN;
 					}
-				}
-				else if (op.equals("->")) {
+				} else if (op.equals("->")) {
 					if (left == 0.0 && (right == 1.0 || right == 0.0)) {
 						return 1.0;
-					}
-					else if (left == 1.0 && right == 1.0) {
+					} else if (left == 1.0 && right == 1.0) {
 						return 1.0;
-					}
-					else if (left == 1.0 && right == 0.0) {
+					} else if (left == 1.0 && right == 0.0) {
 						return 0.0;
-					}
-					else {
+					} else {
 						return Double.NaN;
 					}
-				}
-				else if (op.equals("+")) {
+				} else if (op.equals("+")) {
 					return left + right;
-				}
-				else if (op.equals("*")) {
+				} else if (op.equals("*")) {
 					return left * right;
-				}
-				else if (op.equals("/")) {
+				} else if (op.equals("/")) {
 					return left / right;
-				}
-				else if (op.equals("%")) {
+				} else if (op.equals("%")) {
 					return left % right;
-				}
-				else if (op.equals("^")) {
+				} else if (op.equals("^")) {
 					return Math.pow(left, right);
-				}
-				else if (op.equals("f")) {
+				} else if (op.equals("f")) {
 					return Math.floor(left);
-				}
-				else if (op.equals("c")) {
+				} else if (op.equals("c")) {
 					return Math.ceil(left);
-				}
-				else if (op.equals("m")) {
+				} else if (op.equals("m")) {
 					return Math.min(left, right);
-				}
-				else if (op.equals("M")) {
+				} else if (op.equals("M")) {
 					return Math.max(left, right);
-				}
-				else if (op.equals("i")) {
+				} else if (op.equals("i")) {
 					return ((int) left) / ((int) right);
-				}
-				else if (op.equals("uniform")) {
+				} else if (op.equals("uniform")) {
 					return Double.NaN;
-				}
-				else if (op.equals("normal")) {
+				} else if (op.equals("normal")) {
 					return Double.NaN;
-				}
-				else if (op.equals("gamma")) {
+				} else if (op.equals("gamma")) {
 					return Double.NaN;
-				}
-				else if (op.equals("lognormal")) {
+				} else if (op.equals("lognormal")) {
 					return Double.NaN;
-				}
-				else if (op.equals("binomial")) {
+				} else if (op.equals("binomial")) {
 					return Double.NaN;
-				}
-				else if (op.equals("exponential")) {
+				} else if (op.equals("exponential")) {
 					return Double.NaN;
-				}
-				else if (op.equals("chisq")) {
+				} else if (op.equals("chisq")) {
 					return Double.NaN;
-				}
-				else if (op.equals("laplace")) {
+				} else if (op.equals("laplace")) {
 					return Double.NaN;
-				}
-				else if (op.equals("cauchy")) {
+				} else if (op.equals("cauchy")) {
 					return Double.NaN;
-				}
-				else if (op.equals("rayleigh")) {
+				} else if (op.equals("rayleigh")) {
 					return Double.NaN;
-				}
-				else if (op.equals("poisson")) {
+				} else if (op.equals("poisson")) {
 					return Double.NaN;
-				}
-				else if (op.equals("bernoulli")) {
+				} else if (op.equals("bernoulli")) {
 					return Double.NaN;
-				}
-				else if (op.equals("rate")) {
+				} else if (op.equals("rate")) {
 					return Double.NaN;
-				}
-				else if (op.equals("INT")) {
+				} else if (op.equals("INT")) {
 					return ((int) left);
-				}
-				else if (op.equals("<")) {
+				} else if (op.equals("<")) {
 					if (left < right) {
 						return 1.0;
-					}
-					else if (left >= right) {
+					} else if (left >= right) {
 						return 0.0;
-					}
-					else {
+					} else {
 						return Double.NaN;
 					}
-				}
-				else if (op.equals(">")) {
+				} else if (op.equals(">")) {
 					if (left > right) {
 						return 1.0;
-					}
-					else if (left <= right) {
+					} else if (left <= right) {
 						return 0.0;
-					}
-					else {
+					} else {
 						return Double.NaN;
 					}
-				}
-				else if (op.equals("<=")) {
+				} else if (op.equals("<=")) {
 					if (left <= right) {
 						return 1.0;
-					}
-					else if (left > right) {
+					} else if (left > right) {
 						return 0.0;
-					}
-					else {
+					} else {
 						return Double.NaN;
 					}
-				}
-				else if (op.equals(">=")) {
+				} else if (op.equals(">=")) {
 					if (left >= right) {
 						return 1.0;
-					}
-					else if (left < right) {
+					} else if (left < right) {
 						return 0.0;
-					}
-					else {
+					} else {
 						return Double.NaN;
 					}
-				}
-				else {
+				} else {
 					return Double.NaN;
 				}
 			}
@@ -5367,10 +4710,6 @@ public class ExprTree {
 	private static final int IMPLIES = 7;
 
 	private static final int END_OF_STRING = 2;
-
-	// private static final int MAXTOKEN = 2000;
-
-	// private static final int VAR = 262144;
 
 	private static final int INFIN = 2147483647;
 
