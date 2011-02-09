@@ -242,8 +242,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		// Component List
 		addComponent = new JButton("Add Component");
 		removeComponent = new JButton("Remove Component");
-		// addComponent.addActionListener(this);
-		// removeComponent.addActionListener(this);
 		GridBagConstraints constraints = new GridBagConstraints();
 		JPanel componentPanel = Utility.createPanel(this, "Components",
 				componentList, addComponent, removeComponent, null);
@@ -360,7 +358,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		// load parameters
 		Properties load = new Properties();
 		verifyFile = "";
-		// log.addText(directory + separator + verFile);
 		try {
 			FileInputStream in = new FileInputStream(new File(directory
 					+ separator + verFile));
@@ -368,7 +365,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			in.close();
 			if (load.containsKey("verification.file")) {
 				verifyFile = load.getProperty("verification.file");
-				// log.addText(verifyFile);
 			}
 			if (load.containsKey("verification.bddSize")) {
 				bddSize.setText(load.getProperty("verification .bddSize"));
@@ -465,11 +461,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					graph.setSelected(true);
 				}
 			}
-			// if (load.containsKey("verification.quiet")) {
-			// if (load.getProperty("verification.quiet").equals("true")) {
-			// quiet.setSelected(true);
-			// }
-			// }
 			if (load.containsKey("verification.partial.order")) {
 				if (load.getProperty("verification.partial.order").equals(
 						"true")) {
@@ -617,10 +608,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}
 				}
 			}
-			// abstPane.loopAbsModel.removeAllElements();
-			// abstPane.preAbsModel.removeAllElements();
-			// abstPane.postAbsModel.removeAllElements();
-			// Pattern intPattern = Pattern.compile("\\d+");
 			HashMap<Integer, String> preOrder = new HashMap<Integer, String>();
 			HashMap<Integer, String> loopOrder = new HashMap<Integer, String>();
 			HashMap<Integer, String> postOrder = new HashMap<Integer, String>();
@@ -705,7 +692,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			abstPane.loopAbs.setListData(abstPane.loopAbsModel.toArray());
 			abstPane.postAbs.setListData(abstPane.postAbsModel.toArray());
 			if (load.containsKey("abstraction.transforms")) {
-				// abstPane.removeAllXform();
 				String xforms = load.getProperty("abstraction.transforms");
 				String[] array = xforms.split(", ");
 				for (String s : array) {
@@ -730,9 +716,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			JOptionPane.showMessageDialog(Gui.frame,
 					"Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
-			// e.printStackTrace();
 		}
-		// save();
 
 		// Creates the run button
 		run = new JButton("Save and Verify");
@@ -749,7 +733,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		// Creates the view circuit button
 		viewCircuit = new JButton("View Circuit");
 		viewCircuit.addActionListener(this);
-		// buttonPanel.add(viewCircuit);
 		viewCircuit.setMnemonic(KeyEvent.VK_C);
 
 		// Creates the view trace button
@@ -818,7 +801,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 		this.setLayout(new BorderLayout());
 		this.add(tab, BorderLayout.PAGE_START);
-		// this.add(buttonPanel, BorderLayout.PAGE_END);
 		change = false;
 	}
 
@@ -966,7 +948,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				variables[k] = boolVars[j];
 				k++;
 			}
-			// String[] vars = null;
 			if (abstFilename != null) {
 				if (!abstFilename.endsWith(".lpn"))
 					abstFilename = abstFilename + ".lpn";
@@ -987,7 +968,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			abstraction.save(directory + separator + abstFilename);
 		}
 		if (!lhpn.isSelected() && !view.isSelected()) {
-			// String command = "/home/shang/kjones/atacs/bin/atacs -";
 			String[] tempArray = verifyFile.split("\\.");
 			String traceFilename = tempArray[0] + ".trace";
 			File traceFile = new File(traceFilename);
@@ -1018,7 +998,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 			File pargFile = new File(pargName);
 			File dotFile = new File(dotName);
-			// log.addText("graph names " + pargName + " " + dotName);
 			if (traceFile.exists()) {
 				traceFile.delete();
 			}
@@ -1048,13 +1027,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
-			// String[] workArray = directory.split(separator);
-			// String workDir = "";
-			// for (int i = 0; i < (workArray.length - 1); i++) {
-			// workDir = workDir + workArray[i] + separator;
-			// }
-			// log.addText("copy to " + directory + separator + sourceFile);
-			// log.addText("copy from " + workDir + separator + sourceFile);
 			String options = "";
 			// BDD Linkspace Size
 			if (!bddSize.getText().equals("") && !bddSize.getText().equals("0")) {
@@ -1183,8 +1155,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (graph.isSelected()) {
 				options = options + "ps";
 			}
-			// String[] temp = verifyFile.split(separator);
-			// String src = temp[temp.length - 1];
 			String cmd = "atacs " + options;
 			String[] components = componentList.getItems();
 			for (String s : components) {
@@ -1194,9 +1164,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (!componentField.getText().trim().equals("")) {
 				cmd = cmd + " " + componentField.getText().trim();
 			}
-			// String[] cmd = {"emacs", "temp" };
-			// JOptionPane.showMessageDialog(this, cmd);
-			// Runtime exec = Runtime.getRuntime();
 			final JButton cancel = new JButton("Cancel");
 			final JFrame running = new JFrame("Progress");
 			WindowListener w = new WindowListener() {
@@ -1230,10 +1197,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			JPanel all = new JPanel(new BorderLayout());
 			JLabel label = new JLabel("Running...");
 			JProgressBar progress = new JProgressBar();
-			// progress.setStringPainted(true);
 			progress.setIndeterminate(true);
-			// progress.setString("");
-			// progress.setValue(0);
 			text.add(label);
 			progBar.add(progress);
 			button.add(cancel);
@@ -1408,16 +1372,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						break;
 					}
 				}
-				// int exitValue = ver.waitFor();
 				if (exitValue == 143) {
 					JOptionPane.showMessageDialog(Gui.frame,
 							"Verification was" + " canceled by the user.",
 							"Canceled Verification", JOptionPane.ERROR_MESSAGE);
 				}
 				if (!success) {
-					// log.addText("failed");
 					if (new File(pargName).exists()) {
-						// log.addText("view parg");
 						Process parg = exec.exec("parg " + pargName);
 						log.addText("parg " + pargName + "\n");
 						parg.waitFor();
@@ -1428,17 +1389,14 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							command = "gnome-open ";
 						} else if (System.getProperty("os.name").toLowerCase()
 								.startsWith("mac os")) {
-							// directory = System.getenv("BIOSIM") + "/docs/";
 							command = "open ";
 						} else {
-							// directory = System.getenv("BIOSIM") + "\\docs\\";
 							command = "dotty ";
 						}
 						Process dot = exec.exec("open " + dotName);
 						log.addText(command + dotName + "\n");
 						dot.waitFor();
 					} else {
-						// log.addText("view log");
 						viewLog();
 					}
 				}
@@ -1450,10 +1408,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							command = "gnome-open ";
 						} else if (System.getProperty("os.name").toLowerCase()
 								.startsWith("mac os")) {
-							// directory = System.getenv("BIOSIM") + "/docs/";
 							command = "open ";
 						} else {
-							// directory = System.getenv("BIOSIM") + "\\docs\\";
 							command = "dotty ";
 						}
 						exec.exec(command + dotName);
@@ -1481,9 +1437,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					new File(directory + separator + dotName).delete();
 					Runtime exec = Runtime.getRuntime();
 					abstraction.printDot(directory + separator + dotName);
-					// Process makeDot = exec.exec("atacs -cPllodpl " +
-					// abstFilename, null, work);
-					// makeDot.waitFor();
 					if (new File(directory + separator + dotName).exists()) {
 						String command;
 						if (System.getProperty("os.name")
@@ -1491,12 +1444,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							command = "gnome-open ";
 						} else if (System.getProperty("os.name").toLowerCase()
 								.startsWith("mac os")) {
-							// directory = System.getenv("BIOSIM") +
-							// "/docs/";
 							command = "open ";
 						} else {
-							// directory = System.getenv("BIOSIM") +
-							// "\\docs\\";
 							command = "dotty ";
 						}
 						Process dot = exec.exec(command + dotName, null, work);
@@ -1830,18 +1779,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void reload(String newname) {
-		// try {
-		// FileOutputStream out = new FileOutputStream(new File(directory +
-		// separator + verFile));
-		// prop.store(out, verifyFile);
-		// out.close();
-		// }
-		// catch (IOException e) {
-		// JOptionPane.showMessageDialog(BioSim.frame, "Unable to save
-		// parameter file!",
-		// "Error Saving File", JOptionPane.ERROR_MESSAGE);
-		// }
-		// backgroundField.setText(newname);
 	}
 
 	public void viewCircuit() {
@@ -1853,16 +1790,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			getFilename[0] = componentField.getText().trim();
 		}
 		String circuitFile = getFilename[0] + ".prs";
-		// JOptionPane.showMessageDialog(this, circuitFile);
-		// JOptionPane.showMessageDialog(this, directory + separator +
-		// circuitFile);
 		try {
-			// JOptionPane.showMessageDialog(this, directory + separator +
-			// "run.log");
-			// String[] getFilename = verifyFile.split(".");
-			// String circuitFile = getFilename[0] + ".ps";
-			// JOptionPane.showMessageDialog(this, directory + separator +
-			// circuitFile);
 			if (new File(circuitFile).exists()) {
 				File log = new File(circuitFile);
 				BufferedReader input = new BufferedReader(new FileReader(log));
@@ -1905,16 +1833,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	public void viewTrace() {
 		String[] getFilename = verifyFile.split("\\.");
 		String traceFilename = getFilename[0] + ".trace";
-		// JOptionPane.showMessageDialog(this, circuitFile);
-		// JOptionPane.showMessageDialog(this, directory + separator +
-		// circuitFile);
 		try {
-			// JOptionPane.showMessageDialog(this, directory + separator +
-			// "run.log");
-			// String[] getFilename = verifyFile.split(".");
-			// String circuitFile = getFilename[0] + ".ps";
-			// JOptionPane.showMessageDialog(this, directory + separator +
-			// circuitFile);
 			if (new File(directory + separator + traceFilename).exists()) {
 				File log = new File(directory + separator + traceFilename);
 				BufferedReader input = new BufferedReader(new FileReader(log));
@@ -1948,8 +1867,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	public void viewLog() {
 		try {
-			// JOptionPane.showMessageDialog(this, directory + separator +
-			// "run.log");
 			if (new File(directory + separator + "run.log").exists()) {
 				File log = new File(directory + separator + "run.log");
 				BufferedReader input = new BufferedReader(new FileReader(log));
@@ -2009,16 +1926,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			FileInputStream copyout = new FileInputStream(new File(workDir
 					+ separator + sourceFile));
 			int read = copyout.read();
-			// System.out.println(read);
 			while (read != -1) {
-				// System.out.println(read);
 				copyin.write(read);
 				read = copyout.read();
 			}
 			copyin.close();
 			copyout.close();
 		} catch (IOException e) {
-			// e.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "Cannot copy file "
 					+ sourceFile, "Copy Error", JOptionPane.ERROR_MESSAGE);
 		}

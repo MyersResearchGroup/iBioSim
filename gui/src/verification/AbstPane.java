@@ -2,18 +2,14 @@ package verification;
 
 import javax.swing.*;
 
-import util.Utility;
-
 import java.awt.*;
 import java.awt.event.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader; //import java.io.FileWriter;
-import java.io.IOException; //import java.io.InputStream;
-//import java.io.InputStreamReader;
-//import java.util.ArrayList;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.Properties;
 
 import lpn.parser.LhpnFile;
@@ -596,15 +592,8 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void save(String filename) {
-		// JOptionPane.showMessageDialog(this, verifyFile);
 		try {
-			// System.out.println(absFile);
 			Properties prop = new Properties();
-			// FileInputStream in = new FileInputStream(new File(directory +
-			// separator + filename));
-			// prop.load(in);
-			// in.close();
-			// prop.setProperty("verification.file", verifyFile);
 			String intVars = "";
 			for (int i = 0; i < listModel.getSize(); i++) {
 				intVars = listModel.getElementAt(i) + " ";
@@ -636,7 +625,6 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 					+ absFile + "\n");
 			change = false;
 		} catch (Exception e1) {
-			// e1.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame,
 					"Unable to save parameter file!", "Error Saving File",
 					JOptionPane.ERROR_MESSAGE);
@@ -683,7 +671,6 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	public void viewCircuit() {
 		String[] getFilename;
 		if (field.getText().trim().equals("")) {
-			// getFilename = verifyFile.split("\\.");
 		} else {
 			getFilename = new String[1];
 			getFilename[0] = field.getText().trim();
@@ -720,8 +707,6 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	public void viewLog() {
 		try {
-			// JOptionPane.showMessageDialog(this, directory + separator +
-			// "run.log");
 			if (new File(directory + separator + "run.log").exists()) {
 				File log = new File(directory + separator + "run.log");
 				BufferedReader input = new BufferedReader(new FileReader(log));
@@ -799,14 +784,6 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		if (e.getClickCount() == 2) {
-			// if (e.getSource() == intSpecies) {
-			// addInterstingSpecies();
-			// }
-			// else if (e.getSource() == species) {
-			// editInterstingSpecies();
-			// }
-		}
 	}
 
 }
