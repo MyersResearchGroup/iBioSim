@@ -8,8 +8,6 @@ import gcm.gui.AbstractRunnableNamedButton;
 import gcm.gui.PropertyList;
 import gcm.gui.Runnable;
 import gcm.util.Utility;
-//import gcm2sbml.gui.ParameterPanel;
-//import gcm2sbml.gui.PromoterPanel;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -19,24 +17,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import javax.swing.BoxLayout; //import java.io.FileNotFoundException;
-//import java.io.FileOutputStream;
-//import java.io.PrintStream;
-//import java.util.Arrays;
-//import java.util.HashMap;
-//import java.util.HashSet;
-//import java.util.Properties;
-//import java.util.Set;
+import javax.swing.BoxLayout;
 
-//import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox; //import javax.swing.JComboBox;
-//import javax.swing.JFrame;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
-import javax.swing.JTextArea; //import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JButton;
 
@@ -51,27 +40,21 @@ import javax.swing.JButton;
 public class LHPNEditor extends JPanel implements ActionListener, MouseListener {
 	private static final long serialVersionUID = 1L;
 
-	// , MouseListener {
-	private JTextField lhpnNameTextField; // , propertyField;
+	private JTextField lhpnNameTextField;
 
 	private PropertyList variables, places, transitions, controlFlow,
 			properties;
 
-	// private BioSim biosim;
 	private Log log;
-
-	// private String directory;
 
 	private String filename = "", directory = "", separator = "";
 
 	private String[] varOptions = new String[] { "Boolean", "Continuous",
 			"Discrete" };
 
-	// private String lhpnName = "";
-
 	private LhpnFile lhpnFile = null;
 
-	private JPanel mainPanel;// buttonPanel;
+	private JPanel mainPanel;
 
 	private JButton abstButton;
 
@@ -96,7 +79,6 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			separator = File.separator;
 		}
 
-		// this.directory = directory;
 		lhpnFile = lhpn;
 		if (lhpnFile == null) {
 			lhpnFile = new LhpnFile();
@@ -108,13 +90,10 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				lhpnFile.load(directory + separator + filename);
 			}
 			this.filename = filename;
-			// this.lhpnName = filename.replace(".lpn", "");
 		} else {
 			this.filename = "";
 		}
-		// log.addText("build Gui");
 		buildGui(this.filename);
-		// log.addText("Gui built");
 	}
 
 	private void buildGui(String filename) {
@@ -129,24 +108,11 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		lhpnNameTextField = new JTextField(filename, 15);
 		lhpnNameTextField.setEditable(false);
 		lhpnNameTextField.addActionListener(this);
-		// propertyField = new JTextField(lhpnFile.getProperty(), 15);
-		// propertyField.setEditable(true);
-		// propertyField.addActionListener(this);
 		JLabel lhpnNameLabel = new JLabel("LPN Id:");
-		// JLabel propertyLabel = new JLabel("Property:");
 		abstButton = new JButton("Abstract LPN");
 		abstButton.addActionListener(this);
 		mainPanelNorth.add(lhpnNameLabel);
 		mainPanelNorth.add(lhpnNameTextField);
-		// mainPanelNorth.add(propertyLabel);
-		// mainPanelNorth.add(propertyField);
-		// mainPanelNorth.add(abstButton);
-
-		// buttonPanel = new JPanel();
-		// JButton save = new JButton("Save");
-		// save.addActionListener(this);
-		// buttonPanel.add(save);
-		// add(buttonPanel, BorderLayout.SOUTH);
 
 		properties = new PropertyList("Property List");
 		properties.addMouseListener(this);
@@ -180,14 +146,12 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		buttons.add(saveButton);
 		saveButton.addActionListener(this);
 
-		// log.addText("build panels");
 		variables = new PropertyList("Variable List");
 		variables.addMouseListener(this);
 		EditButton addVar = new EditButton("Add Variable", variables);
 		RemoveButton removeVar = new RemoveButton("Remove Variable", variables);
 		EditButton editVar = new EditButton("Edit Variable", variables);
 		if (!lhpnFile.getVariables().equals(null)) {
-			// variables.addAllItem(lhpnFile.getVariables().keySet());
 			for (String s : lhpnFile.getContinuous().keySet()) {
 				variables.addItem(s + " - continuous - "
 						+ lhpnFile.getVariable(s).getPort() + " - "
@@ -196,7 +160,6 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			}
 		}
 		if (!lhpnFile.getVariables().equals(null)) {
-			// variables.addAllItem(lhpnFile.getIntegers().keySet());
 			for (String s : lhpnFile.getIntegers().keySet()) {
 				variables.addItem(s + " - discrete - "
 						+ lhpnFile.getVariable(s).getPort() + " - "
@@ -215,7 +178,6 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				addVar, removeVar, editVar);
 		mainPanelCenterCenter.add(varPanel);
 
-		// log.addText("build place panel");
 		places = new PropertyList("Place List");
 		places.addMouseListener(this);
 		EditButton addPlace = new EditButton("Add Place", places);
@@ -228,13 +190,11 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				places.addItem(s + " - unmarked");
 			}
 		}
-		// places.addAllItem(lhpnFile.getPlaces().keySet());
 
 		JPanel placePanel = Utility.createPanel(this, "Places", places,
 				addPlace, removePlace, editPlace);
 		mainPanelCenterCenter.add(placePanel);
 
-		// log.addText("build transition panel");
 		transitions = new PropertyList("Transition List");
 		transitions.addMouseListener(this);
 		EditButton addTrans = new EditButton("Add Transition", transitions);
@@ -247,16 +207,13 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				transitions, addTrans, removeTrans, editTrans);
 		mainPanelCenterCenter.add(transPanel);
 
-		// log.addText("build control panel");
 		controlFlow = new PropertyList("Control Flow");
 		controlFlow.addMouseListener(this);
 		EditButton addFlow = new EditButton("Add Movement", controlFlow);
 		RemoveButton removeFlow = new RemoveButton("Remove Movement",
 				controlFlow);
 		EditButton editFlow = new EditButton("Edit Movement", controlFlow);
-		// log.addText("get control panel");
 		controlFlow.addAllItem(lhpnFile.getControlFlow());
-		// log.addText("got control panel");
 
 		JPanel flowPanel = Utility.createPanel(this, "Control Flow",
 				controlFlow, addFlow, removeFlow, editFlow);
@@ -269,7 +226,6 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 	}
 
 	public void save() {
-		// lhpnFile.addProperty(propertyField.getText());
 		lhpnFile.save(directory + separator + filename);
 		dirty = false;
 		biosim.updateAsyncViews(filename);
@@ -277,7 +233,6 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 
 	public void saveAs(String newName) {
 		dirty = false;
-		// lhpnFile.addProperty(propertyField.getText());
 		lhpnFile.save(directory + separator + newName);
 		reload(newName);
 		biosim.addToTree(newName);
@@ -299,11 +254,6 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				}
 				Runtime exec = Runtime.getRuntime();
 				lhpnFile.printDot(directory + separator + dotFile);
-				// log.addText("Executing:\natacs -cPllodpl " + filename +
-				// "\n");
-				// Process load = exec.exec("atacs -cPllodpl " + filename, null,
-				// work);
-				// load.waitFor();
 				if (dot.exists()) {
 					exec.exec(command, null, work);
 				} else {
@@ -353,14 +303,11 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 
 		public SaveButton(String name, JTextField fieldNameField) {
 			super(name);
-			// this.fieldNameField = fieldNameField;
 		}
 
 		public void run() {
 			lhpnFile.save(getName());
 		}
-
-		// private JTextField fieldNameField = null;
 	}
 
 	public class EditButton extends AbstractRunnableNamedButton {
@@ -439,7 +386,6 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 			} else if (getName().contains("Property")) {
 				if (list.getSelectedValue() != null) {
 					String tempString = list.getSelectedValue().toString();
-					String[] tempArray = tempString.split("\\s");
 					lhpnFile.removeProperty(tempString);
 					properties.removeItem(tempString);
 				}
@@ -455,7 +401,6 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 		if (o instanceof Runnable) {
 			((Runnable) o).run();
 		} else if (e.getSource() == abstButton) {
-			// Abstraction abst = lhpnFile.abstractLhpn();
 			String[] boolVars = lhpnFile.getBooleanVars();
 			String[] contVars = lhpnFile.getContVars();
 			String[] intVars = lhpnFile.getIntVars();
@@ -474,7 +419,6 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				variables[k] = boolVars[j];
 				k++;
 			}
-			// String[] vars = null;
 			String abstFilename = (String) JOptionPane.showInputDialog(this,
 					"Please enter the file name for the abstracted LPN.",
 					"Enter Filename", JOptionPane.PLAIN_MESSAGE);
@@ -505,11 +449,7 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 					for (int i = 0; i < tempVars.size(); i++) {
 						vars[i] = tempVars.get(i);
 					}
-					// abst.abstractVars(vars);
 				}
-				// abst.abstractSTG();
-				// abst.save(directory + separator + abstFilename);
-				// biosim.refreshTree();
 			}
 		}
 	}
@@ -566,7 +506,6 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 				String selected = null;
 				Boolean continuous = false;
 				Boolean integer = false;
-				// log.addText(list.getSelectedValue().toString());
 				if (list.getSelectedValue() != null
 						&& getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
@@ -594,7 +533,6 @@ public class LHPNEditor extends JPanel implements ActionListener, MouseListener 
 								lhpnFile, biosim.atacs);
 					}
 				}
-				// log.addText(selected);
 			} else if (getName().contains("Place")) {
 				String selected = null;
 				if (list.getSelectedValue() != null

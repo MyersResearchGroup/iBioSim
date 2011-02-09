@@ -5,7 +5,6 @@ import main.Gui;
 
 import gcm.gui.*;
 import gcm.util.Utility;
-//import gcm2sbml.parser.GCMFile;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -13,7 +12,6 @@ import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.Properties;
-//import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
