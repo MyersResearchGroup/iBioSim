@@ -5,6 +5,7 @@ import graph.Graph;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.Random;
 
@@ -13,6 +14,7 @@ import main.Gui;
 import org.sbml.libsbml.*;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.io.*;
 import java.lang.Math;
 
@@ -37,6 +39,7 @@ public class GillespieSSAJavaSingleStep {
 	private HashMap<Integer, String> IndexToReactions  = new HashMap<Integer, String>();
 	private HashMap<String, Double> SpeciesList = new HashMap<String, Double>();
 	private HashMap<String, Double> GlobalParamsList = new HashMap<String, Double>();
+	private HashMap<String, HashMap<String, Double>> AtTriggerTimeList = new HashMap<String, HashMap<String, Double>>();	
 	// static HashMap<String, Double> GlobalParamsChangeList = new HashMap<String, Double>();
 	// static HashMap<String, Double> CompartmentList = new HashMap<String, Double>();
 	private HashMap<String, Double> PropensityFunctionList = new HashMap<String, Double>();
@@ -54,6 +57,7 @@ public class GillespieSSAJavaSingleStep {
 	private double[][] StateChangeVector;
 	private JTextField tNext;
 	private JComboBox nextReactionsList;
+	private JComboBox nextEventsList;
 	private double tau=0.0;
 	private int miu=0;
 	private double time = 0;
@@ -67,6 +71,7 @@ public class GillespieSSAJavaSingleStep {
 	private PrintStream outTSD;
 	private double runUntil = 0;
 	private boolean[] prevTriggerValArray = null;
+	boolean eventDelayNegative = false;
 	
 	public GillespieSSAJavaSingleStep() {
 	}
@@ -100,36 +105,52 @@ public class GillespieSSAJavaSingleStep {
 		 SpeciesList.put(SpeciesID, SpeciesInitAmount);
 		 SpeciesToIndex.put(SpeciesID,i);
 		 IndexToSpecies.put(i,SpeciesID); 
-	 }  
-	//  for (int i=0;i<SpeciesList.size();i++){
-	//  	System.out.println(SpeciesList.keySet().toArray()[i] + " = " + SpeciesList.get(SpeciesList.keySet().toArray()[i]));
-	//  } 
-	 outTSD.print("(\"time\",");
-	 for (int i=0;i<SpeciesList.size();i++){
-		 if (i<SpeciesList.size()-1)
-			 outTSD.print("\"" + SpeciesList.keySet().toArray()[i] + "\"" + ",");
-		 else
-			 outTSD.print("\"" + SpeciesList.keySet().toArray()[i] + "\"),");
-	 }
-	 outTSD.print("(" + time + ", ");
-	 for (int i=0;i<SpeciesList.size();i++){
-		 if (i<SpeciesList.size()-1)
-			 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]) + ", ");
-		 else
-			 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]) + "),");
-	 }
-	 
+	 }  	 
 	 // get the global parameters
-	 // System.out.println("GlobalParameters:");
-	 if(model.getNumParameters() != 0){
-		 for (int i=0;i<model.getNumParameters();i++){
-			 GlobalParamID= model.getListOfParameters().get(i).getId();
-			 GlobalParamValue = model.getListOfParameters().get(i).getValue();
-			 GlobalParamsList.put(GlobalParamID,GlobalParamValue);
-			//  GlobalParamsChangeList.put(GlobalParamID, (double) 0);
-		 }
+	 for (int i=0;i<model.getNumParameters();i++){
+		 GlobalParamID= model.getListOfParameters().get(i).getId();
+		 GlobalParamValue = model.getListOfParameters().get(i).getValue();
+		 GlobalParamsList.put(GlobalParamID,GlobalParamValue);
 	 }
 	 
+	 // print to the tsd file
+	 if (SpeciesList.size() > 0 || GlobalParamsList.size() > 0) {
+		 // print ID of species and (or) global parameters
+		 outTSD.print("(\"time\",");
+		 if (SpeciesList.size() > 0) {
+			 for (int i=0;i<SpeciesList.size();i++){
+				 if (i<SpeciesList.size()-1)
+					 outTSD.print("\"" + SpeciesList.keySet().toArray()[i] + "\"" + ",");
+				 else
+					 outTSD.print("\"" + SpeciesList.keySet().toArray()[i] + "\"");
+			 }
+		 }
+		 if (GlobalParamsList.size() > 0) {
+			 for (int i=0;i<GlobalParamsList.size();i++){
+				 if (i<GlobalParamsList.size()-1)
+					 outTSD.print("\"" + GlobalParamsList.keySet().toArray()[i] + "\"" + ",");
+				 else
+					 outTSD.print("\"" + GlobalParamsList.keySet().toArray()[i] + "\"");
+			 }
+		 }
+		 outTSD.print("),");
+		 // print the initial values
+		 outTSD.print("(" + time + ", ");
+		 for (int i=0;i<SpeciesList.size();i++){
+			 if (i<SpeciesList.size()-1)
+				 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]) + ", ");
+			 else
+				 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]));
+		 }
+		 for (int i=0;i<GlobalParamsList.size();i++){
+			 if (i<GlobalParamsList.size()-1)
+				 outTSD.print(GlobalParamsList.get(GlobalParamsList.keySet().toArray()[i]) + ", ");
+			 else
+				 outTSD.print(GlobalParamsList.get(GlobalParamsList.keySet().toArray()[i]));
+		 }
+		 outTSD.print("),");
+	 }
+
 	 //Currently, we assume only one compartment in one SBML file
 	 // get compartments and their sizes. 
 	 //  if (model.getNumCompartments() !=0){
@@ -184,6 +205,13 @@ public class GillespieSSAJavaSingleStep {
 		 l++; 
 	 }
 	 
+	 // TODO Initial assignments
+	 // Initial evaluation of rules
+	 evaluateRules(model);
+	 
+	 // TODO Initial evaluation of constraints
+	 
+	 
 	  // Initialize events.
 	 // if model does not include any events, both eventList and eventQueue are set to null
 	 ListOfEvents eventList = null;
@@ -195,24 +223,23 @@ public class GillespieSSAJavaSingleStep {
 		  for(int i=0; i< eventList.size();i++){
 			  Event event = eventList.get(i); 
 			  Trigger trigger = event.getTrigger();
-			  // TODO add the feature for persistent event and event that uses values from trigger time.
-			  if (trigger.getPersistent() | event.getUseValuesFromTriggerTime()) {
-				  JOptionPane.showMessageDialog(Gui.frame, "The simulator does not currently support persistent triggers or UseValuesFromTriggerTime.",
-							"Error in trigger", JOptionPane.ERROR_MESSAGE);
-				  break;
-			  }
+//			  if (event.getUseValuesFromTriggerTime()) {
+//				  JOptionPane.showMessageDialog(Gui.frame, "The simulator does not currently support UseValuesFromTriggerTime.",
+//							"Error in trigger", JOptionPane.ERROR_MESSAGE);
+//				  break;
+//			  }
 			  if (trigger.getInitialValue()) {
 				  prevTriggerValArray[i] = true;
 			  }
 			  else {
 				  prevTriggerValArray[i] = false;
-			  }			  
+			  }
 		  }
 		  // Initialize event queue
 		  EventQueueComparator comparator = new EventQueueComparator();
 		  eventQueue = new PriorityQueue<EventQueueElement>(initEventQueueCap, comparator);
 	 }
-	  graph.editGraph();	  
+	 graph.editGraph();	  
 	//  // Create a table to hold the results
 	//  DefaultTableModel tableModel = new DefaultTableModel();
 	//  tableModel.addColumn("t");
@@ -222,22 +249,27 @@ public class GillespieSSAJavaSingleStep {
 	//  JFrame tableFrame = new JFrame("Simulation Results");
 	//  simResultsTbl.showTable(tableFrame, simResultsTbl);
 	//  ########################################################
-	  while (time<=timeLimit) {
+	 double deltaTime = 0.01; // deltaTime is used to add to timeLimit, so that the while loop can terminate
+	 while (time<=timeLimit) {
 		  // 2. Update and fire events; evaluate propensity functions
 		  if (timeStep == Double.MAX_VALUE) {
-			  maxTime = Double.MAX_VALUE;
+			  maxTime = timeLimit + deltaTime;
 		  }
 		  else {
 			  maxTime = maxTime + timeStep;
 		  }
-		  
-		  boolean eventDelayNegative = false;
+		  evaluateRules(model);
 		  if (model.getListOfEvents().size() >0) { 
 			  do {
-				  eventDelayNegative = updateEventQueue(eventList, eventQueue);
+				  nextEventTime = updateEventQueue(eventList, eventQueue); // if (eventQueue is empty), then nextEventTime = -1
 				  if (!eventDelayNegative && eventQueue.size() > 0) {
-					  nextEventTime = fireEvent(eventQueue, initEventQueueCap, eventList);
-				  }	 
+					  boolean eventFired = fireEvent(eventQueue, initEventQueueCap, eventList);
+					  if (eventFired) {
+						  evaluateRules(model);
+						  // TODO evaluate algebraic and rate rules and constraints
+						  nextEventTime = updateEventQueue(eventList, eventQueue);
+					  }  
+				  } 
 			  }
 			  while (eventQueue.size() > 0 && time == eventQueue.peek().getScheduledTime());
 		  }
@@ -246,11 +278,11 @@ public class GillespieSSAJavaSingleStep {
 						"Error in piecewise function", JOptionPane.ERROR_MESSAGE);
 			  break;
 		  }
-		  if (nextEventTime < maxTime) {
+		  if (nextEventTime < maxTime && nextEventTime>0) {
 			  maxTime = nextEventTime;
 		  }
 		  
-		  // TODO evaluate rule, constraints
+		  // TODO evaluate rules, constraints
 		  
 		  // Evaluate propensity functions
 		  InitializeEnoughMolecules();
@@ -360,13 +392,35 @@ public class GillespieSSAJavaSingleStep {
 			  } 
 		 }
 		 
-		 // TODO PropensitySum == 0
 		 if (PropensitySum == 0){
+			 if (SpeciesList.size() > 0 || GlobalParamsList.size() > 0) {
+				 outTSD.print("(" + time + ", ");
+				 if (SpeciesList.size() > 0) {
+					 for (int i=0;i<SpeciesList.size();i++){
+						 if (i<SpeciesList.size()-1)
+							 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]) + ", ");
+						 else
+							 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]));
+					 }
+				 }
+				 if (GlobalParamsList.size()>0) {
+					 for (int i=0; i < GlobalParamsList.size();i++){
+						 if (i<GlobalParamsList.size()-1)
+							 outTSD.print(GlobalParamsList.get(GlobalParamsList.keySet().toArray()[i]) + ", ");
+						 else
+							 outTSD.print(GlobalParamsList.get(GlobalParamsList.keySet().toArray()[i]));
+					 }
+				 }
+				 outTSD.print("),");
+			 }
+			 graph.refresh();
 			 time = maxTime;
-			 System.out.println("propensity = 0");
-			 System.out.println("time = " + time);
-//			 continue;
-			 break;
+			 if (time <=0) {
+				 JOptionPane.showMessageDialog(Gui.frame, "Sum of propensities is 0 and event queue is empty. Simulation time can not proceed.",
+							"Error in next simulation time", JOptionPane.ERROR_MESSAGE);
+				 break;
+			 }
+			 continue;
 		 }
 		 
 		 // 3. Determine the time, tau, until the next reaction. 
@@ -393,12 +447,12 @@ public class GillespieSSAJavaSingleStep {
 		 boolean hasRunModeStarted = false;
 		 boolean isRunMode = (optionValue == 1) && time < runUntil;
 		 if (!isRunMode) {
-			 CustomParams = openInteractiveMenu(time,tau,miu);
+			 CustomParams = openReactionInteractiveMenu(time,tau,miu);
 			 t_next = Double.parseDouble(CustomParams[0]);
 			 while (t_next < time){
 				 JOptionPane.showMessageDialog(Gui.frame, "The value of t_next needs to be greater than current time",
 				"Error in next simulation time", JOptionPane.ERROR_MESSAGE);
-				 CustomParams = openInteractiveMenu(time,tau,miu);
+				 CustomParams = openReactionInteractiveMenu(time,tau,miu);
 				 t_next = Double.parseDouble(CustomParams[0]);
 			 }  
 			 optionValue = Integer.parseInt(CustomParams[2]);
@@ -459,12 +513,25 @@ public class GillespieSSAJavaSingleStep {
 		 //  tableModel.addRow(new Object[]{t_current, tau, IndexToReactions.get(miu)});
 		 //  simResultsTbl.showTable(tableFrame, simResultsTbl);
 		 //  }
-		 outTSD.print("(" + time + ", ");
-		 for (int i=0;i<SpeciesList.size();i++){
-			 if (i<SpeciesList.size()-1)
-				 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]) + ", ");
-			 else
-				 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]) + "),");
+		 if (SpeciesList.size() > 0 || GlobalParamsList.size() > 0) {
+			 outTSD.print("(" + time + ", ");
+			 if (SpeciesList.size() > 0) {
+				 for (int i=0;i<SpeciesList.size();i++){
+					 if (i<SpeciesList.size()-1)
+						 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]) + ", ");
+					 else
+						 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]));
+				 }
+			 }
+			 if (GlobalParamsList.size()>0) {
+				 for (int i=0; i < GlobalParamsList.size();i++){
+					 if (i<GlobalParamsList.size()-1)
+						 outTSD.print(GlobalParamsList.get(GlobalParamsList.keySet().toArray()[i]) + ", ");
+					 else
+						 outTSD.print(GlobalParamsList.get(GlobalParamsList.keySet().toArray()[i]));
+				 }
+			 }
+			 outTSD.print("),");
 		 }
 		 if ((!isRunMode && !hasRunModeStarted) || (isRunMode && time >= runUntil)) {
 			 graph.refresh();
@@ -482,81 +549,192 @@ public class GillespieSSAJavaSingleStep {
 	   }
 	}
 	
-	public boolean updateEventQueue(ListOfEvents eventList, PriorityQueue<EventQueueElement> eventQueue){
-	 boolean delayNegative = false;
+	private void evaluateRules(Model model) {
+		ListOfRules ruleList= null;
+		 if (model.getListOfRules().size()>0) {
+			 ruleList = model.getListOfRules();
+			 for (int i=0; i<ruleList.size(); i++){
+				 Rule currRule = ruleList.get(i);
+				 if (currRule.isAssignment()) {
+					 double assignment = Double.parseDouble(evaluateAST(currRule.getMath().getListOfNodes().get(0)));
+					 String variable = currRule.getVariable();
+					 if(SpeciesList.containsKey(variable)) {
+						SpeciesList.put(variable, assignment);
+					 }
+					 else if(GlobalParamsList.containsKey(variable)){
+						GlobalParamsList.put(variable, assignment);
+					 }
+					 System.out.println("evaluateRules: variable = " + variable);
+					 System.out.println("evaluateRules: assignment = " + assignment);
+				 }
+				 else {
+					 // TODO Initialize Algebraic and Rate rules
+					  JOptionPane.showMessageDialog(Gui.frame, "The simulator does not currently support Algebraic and Rate rules.",
+								"Error in rules", JOptionPane.ERROR_MESSAGE);
+					  break;
+				 }
+			 }
+		 }	
+	}
+	
+	public double updateEventQueue(ListOfEvents eventList, PriorityQueue<EventQueueElement> eventQueue){
+	 ArrayList<String> eventToRemoveArray = new ArrayList<String>();
 	 for(int i=0; i< eventList.size();i++){
 		 Event currEvent = eventList.get(i); 
 		 Trigger trigger = currEvent.getTrigger();
-		 // TODO if trigger is not specified
-		 ASTNode triggerTopASTNode = trigger.getMath().getListOfNodes().get(0);
-		 boolean currTriggerVal = Boolean.parseBoolean(evaluateAST(triggerTopASTNode));
+		 boolean currTriggerVal;
 		 boolean prevTriggerVal = prevTriggerValArray[i];
+		 double delayVal;
+		 double priorityVal;
+		 if (trigger == null) {
+			 currTriggerVal = true;
+		 }
+		 else {
+			 ASTNode triggerTopASTNode = trigger.getMath().getListOfNodes().get(0);
+			 currTriggerVal = Boolean.parseBoolean(evaluateAST(triggerTopASTNode));
+		 }
+		 if (currEvent.getDelay() == null) {
+			 delayVal = 0;
+		 }
+		 else {
+			 ASTNode delayTopASTNode = currEvent.getDelay().getMath().getListOfNodes().get(0);
+			 delayVal = Double.parseDouble(evaluateAST(delayTopASTNode));
+		 }
+		 if (currEvent.getPriority()== null) {
+			  priorityVal = 0;
+		 }
+		 else {
+			 ASTNode priorityTopASTNode = currEvent.getPriority().getMath().getListOfNodes().get(0);
+			 priorityVal = Double.parseDouble(evaluateAST(priorityTopASTNode));
+		 }
+		 if (delayVal < 0) {
+			 eventDelayNegative = true;
+			 break;
+		 }
+		 
 		 // update the event queue
 		 if (!prevTriggerVal && currTriggerVal) {
-			// TODO if delay/priority is not specified
-			  ASTNode delayTopASTNode = currEvent.getDelay().getMath().getListOfNodes().get(0);
-			  double delayVal = Double.parseDouble(evaluateAST(delayTopASTNode));
-			  ASTNode priorityTopASTNode = currEvent.getPriority().getMath().getListOfNodes().get(0);
-			  double priorityVal = Double.parseDouble(evaluateAST(priorityTopASTNode));
-			  if (delayVal < 0) {
-				  delayNegative = true;
-				  break;
+			  if (currEvent.getUseValuesFromTriggerTime()) {
+				  ListOfEventAssignments eventToFireAssignList = currEvent.getListOfEventAssignments();
+				  for (int j = 0; j < eventToFireAssignList.size(); j ++){
+					  double assignment = Double.parseDouble(evaluateAST(eventToFireAssignList.get(j).getMath().getListOfNodes().get(0)));
+					  String variable = eventToFireAssignList.get(j).getVariable();
+					  HashMap<String, Double> assignMap = new HashMap<String, Double>();
+					  assignMap.put(variable, assignment);
+					  AtTriggerTimeList.put(currEvent.getId(), assignMap);
+				  }
 			  }
-			  // Assume event assignment evaluates at firing time
-			  // add newly triggered event to the event queue
 			  EventQueueElement currEventQueueElement = new EventQueueElement(time, currEvent.getId(), delayVal, priorityVal);
+			  // add newly triggered event to the event queue
 			  eventQueue.add(currEventQueueElement);
-			  prevTriggerValArray[i] = currTriggerVal;
+			  prevTriggerValArray[i] = currTriggerVal; 
 		  }
-		  if (prevTriggerVal && !currTriggerVal && eventQueue.contains(currEvent)) {
-			  // remove event from event queue
-			  eventQueue.remove(currEvent);
+		 
+		 boolean eventQueueContainsEvent = false;
+		 for (Iterator<EventQueueElement> eventQueueIterator = eventQueue.iterator();eventQueueIterator.hasNext();) {
+		 	 EventQueueElement currEventQueueElement = eventQueueIterator.next();
+		 	 if (currEvent.getId().equals(currEventQueueElement.getEventId())) {
+		 		eventQueueContainsEvent = true;
+		 	 }
+		 }
+		 
+		 if (prevTriggerVal && !currTriggerVal ) { 
+			  // non-persistent trigger
+			  if (eventQueueContainsEvent && !trigger.getPersistent()) { 
+				  // add event to eventToRemove
+				  eventToRemoveArray.add(currEvent.getId());
+			  }
 			  prevTriggerValArray[i] = currTriggerVal;
-		  }
+		 }
 	 }
-	 return delayNegative;
+	
+	 // remove disabled non-persistent event from the queue
+	 if (!eventToRemoveArray.isEmpty()) {
+		 ArrayList<EventQueueElement> eventQueueElemToRemoveArray = new ArrayList<EventQueueElement>();
+		 for (int j = 0; j < eventToRemoveArray.size(); j ++) {
+			 String eventToRemove = eventToRemoveArray.get(j);
+			 for (Iterator<EventQueueElement> eventQueueIterator = eventQueue.iterator();eventQueueIterator.hasNext();) {
+//				 System.out.println("eventQueueIterator.hasNext() = " + eventQueueIterator.hasNext());
+//				 System.out.println("eventQueueIterator.next() = " + eventQueueIterator.next().getEventId());
+				 EventQueueElement currEventQueueElement = eventQueueIterator.next();
+			 	 if (eventToRemove.equals(currEventQueueElement.getEventId())) {
+//			 		 eventQueue.remove(currEventQueueElement);
+			 		 eventQueueElemToRemoveArray.add(currEventQueueElement);		 		 
+			 	 }
+			 }
+		 } 
+		 for (int j = 0; j < eventQueueElemToRemoveArray.size(); j++) {
+			 eventQueue.remove(eventQueueElemToRemoveArray.get(j));
+		 }
+		 eventToRemoveArray.clear();
+	 }
+	 
+	 if (!eventQueue.isEmpty()) {
+		 return eventQueue.peek().getScheduledTime();
+	 }
+	 else {
+		 return -1;
+	 }
+	 
 	}
 	
-	private double fireEvent(PriorityQueue<EventQueueElement> eventQueue, int initEventQueueCap, ListOfEvents eventList) {
+	private boolean fireEvent(PriorityQueue<EventQueueElement> eventQueue, int initEventQueueCap, ListOfEvents eventList) {
 		// Assume event assignments are evaluated at fire time
+		boolean isEventFired = false;
 		if (time == eventQueue.peek().getScheduledTime()) {
-			ArrayList<EventQueueElement> eventsReadyArray = new ArrayList<EventQueueElement>();
-			EventQueueElement eventReady = eventQueue.poll();
+			isEventFired = true;
+			ArrayList<EventQueueElement> eventReadyArray = new ArrayList<EventQueueElement>();
+			EventQueueElement eventReady;
 			// check if multiple events are ready to fire
-			while(time == eventQueue.peek().getScheduledTime()){
-				eventsReadyArray.add(eventReady);
+			do {
 				eventReady = eventQueue.poll();
+				eventReadyArray.add(eventReady);
 			}
-			// TODO Create GUI to let user to choose a event to fire
-			Random generator = new Random();
-			int randomIndex = generator.nextInt(eventsReadyArray.size());
-			Event eventToFire = eventList.get(eventsReadyArray.get(randomIndex).getEventId());
-			ListOfEventAssignments eventToFireAssignList = eventToFire.getListOfEventAssignments();
-			for (int i = 0; i < eventToFireAssignList.size(); i ++){
-				double assignment = Double.parseDouble(evaluateAST(eventToFireAssignList.get(i).getMath().getListOfNodes().get(0)));
-				String variable = eventToFireAssignList.get(i).getVariable();
-				if(SpeciesList.containsKey(variable)) {
-					SpeciesList.put(variable, assignment);
+			while(!eventQueue.isEmpty() && time == eventQueue.peek().getScheduledTime() && eventReady.getPriorityVal() == eventQueue.peek().getPriorityVal());
+			// Pop up the interactive menu and asks the user to select event to fire
+			int eventToFireIndex = openEventInteractiveMenu(eventReadyArray);
+			Event eventToFire = eventList.get(eventReadyArray.get(eventToFireIndex).getEventId());
+			if (!eventToFire.getUseValuesFromTriggerTime()) {
+				ListOfEventAssignments eventToFireAssignList = eventToFire.getListOfEventAssignments();
+				for (int i = 0; i < eventToFireAssignList.size(); i ++){
+					double assignment = Double.parseDouble(evaluateAST(eventToFireAssignList.get(i).getMath().getListOfNodes().get(0)));
+					String variable = eventToFireAssignList.get(i).getVariable();
+					if(SpeciesList.containsKey(variable)) {
+						SpeciesList.put(variable, assignment);
+					}
+					else if(GlobalParamsList.containsKey(variable)){
+						GlobalParamsList.put(variable, assignment);
+					}
 				}
-				else if(GlobalParamsList.containsKey(variable)){
-					GlobalParamsList.put(variable, assignment);
+			}
+			else {  // UseValuesFromTriggerTime
+				HashMap<String, Double> varMap =  AtTriggerTimeList.get(eventToFire.getId());				
+				for (Iterator<String> varMapIterator = varMap.keySet().iterator(); varMapIterator.hasNext();) {
+					String currVarMapId = varMapIterator.next();
+					Double currVarMapVal = varMap.get(currVarMapId);
+					if(SpeciesList.containsKey(currVarMapId)) {
+						SpeciesList.put(currVarMapId, currVarMapVal);
+					}
+					else if(GlobalParamsList.containsKey(currVarMapId)){
+						GlobalParamsList.put(currVarMapId, currVarMapVal);
+					}
+				}
+				
+			}
+			// TODO need to test multiple events
+			// If multiple events were selected, put the all events in eventsReadyArray (except eventToFire) back to the event queue.
+			for (Iterator<EventQueueElement> eventQueueIterator = eventQueue.iterator();eventQueueIterator.hasNext();) {
+				EventQueueElement currEventQueueElement = eventQueueIterator.next();
+				if (eventToFire.getId().equals(currEventQueueElement.getEventId())) {
+					eventReadyArray.remove(currEventQueueElement);
 				}
 			}
-			// Put the all events in eventsReadyArray (except eventToFire) back to the event queue.
-			eventsReadyArray.remove(eventToFire);
-			for (int i = 0; i < eventsReadyArray.size() - 1; i++){
-				eventQueue.add(eventsReadyArray.get(i));
+			for (int i = 0; i < eventReadyArray.size() - 1; i++){
+				eventQueue.add(eventReadyArray.get(i));
 			}
-			return eventQueue.peek().getScheduledTime();
+			eventReadyArray.clear();
 		}
-		else if (time < eventQueue.peek().getScheduledTime()){
-			return eventQueue.peek().getScheduledTime();
-		}
-		else {
-			JOptionPane.showMessageDialog(Gui.frame, "Event time has passed.",
-					"Error in event firing", JOptionPane.ERROR_MESSAGE);
-			return -1;
-		}
+		return isEventFired;
 		
 	}
 	
@@ -595,14 +773,13 @@ public class GillespieSSAJavaSingleStep {
 					retStr = Boolean.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) != Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
 				// other operators
 				case libsbml.AST_FUNCTION_PIECEWISE: {
-					//Currently, the evaluator only accepts piecewise(arg0, arg1, arg2). arg0 and arg2 are real, and arg1 is boolean
-					System.out.println("currentASTNode.getNumChildren() = " + currentASTNode.getNumChildren());
+					//Currently, the evaluator only accepts piecewise(1, arg1, 0), where arg1 is boolean
 					if (currentASTNode.getNumChildren() == 3) {
 						if (Boolean.parseBoolean(evaluateAST(currentASTNode.getChild(1)))){
-							retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getChild(2))));
+							retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getChild(0))));
 						}
 						else {
-							retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getChild(0))));
+							retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getChild(2))));
 						}		
 					}
 					else {
@@ -625,22 +802,48 @@ public class GillespieSSAJavaSingleStep {
 	}
 	 
 	public String evaluateLeafNode(ASTNode currentASTNode){
-		double node_val=0;
+		double nodeVal=0;
+		String nodeValStr = null;
 	    if(currentASTNode.isInteger()){
-	    	node_val = currentASTNode.getInteger();
+	    	nodeVal = currentASTNode.getInteger();
+	    	nodeValStr = Double.toString(nodeVal);
 	    }
 	    else if(currentASTNode.isReal()){
-	    	node_val = currentASTNode.getReal();
+	    	nodeVal = currentASTNode.getReal();
+	    	nodeValStr = Double.toString(nodeVal);
 	    }
 	    else if(currentASTNode.isName()){
 	    	if (SpeciesToIndex.containsKey(currentASTNode.getName())){
-	    		node_val = SpeciesList.get(currentASTNode.getName());
+	    		nodeVal = SpeciesList.get(currentASTNode.getName());
+	    		nodeValStr = Double.toString(nodeVal);
 	    	}
 	    	else if (GlobalParamsList.containsKey(currentASTNode.getName())){
-	    		node_val = GlobalParamsList.get(currentASTNode.getName());
-	    	}  
+	    		nodeVal = GlobalParamsList.get(currentASTNode.getName());
+	    		nodeValStr = Double.toString(nodeVal);
+	    	}
+	    	else if (currentASTNode.getName().equals("t")) {
+	    		nodeVal = time;
+	    		nodeValStr = Double.toString(nodeVal);
+	    	}
 	     }
-	    return Double.toString(node_val);
+	    else if(currentASTNode.isConstant()) {
+	    	if (currentASTNode.getType() == libsbml.AST_CONSTANT_E || currentASTNode.getType() == libsbml.AST_CONSTANT_PI) {
+	    		nodeVal = currentASTNode.getReal();
+	    		nodeValStr = Double.toString(nodeVal);
+	    	}
+	    	else if (currentASTNode.getType() == libsbml.AST_CONSTANT_TRUE) {
+	    		nodeValStr = Boolean.toString(true);
+	    	}
+	    	else if (currentASTNode.getType() == libsbml.AST_CONSTANT_FALSE) {
+	    		nodeValStr = Boolean.toString(false);
+	    	}
+	    	else {
+	    		JOptionPane.showMessageDialog(Gui.frame, "Leaf node type is unknown.",
+						"Error in parsing AST", JOptionPane.ERROR_MESSAGE);
+	    	}
+	    }
+	    return nodeValStr;
+	    
 	}
 	 
 	
@@ -650,7 +853,7 @@ public class GillespieSSAJavaSingleStep {
 		}
 	}
 	 
-	public String[] openInteractiveMenu(double t, double tau, int miu) {
+	public String[] openReactionInteractiveMenu(double t, double tau, int miu) {
 		String[] tNext_miu_optVal = new String[3];
 		JPanel tNextPanel = new JPanel();
 		JPanel nextReactionsListPanel = new JPanel();
@@ -722,6 +925,44 @@ public class GillespieSSAJavaSingleStep {
 	// return runTimeLimit_optVal; 
 	// }
 	 
+	public int openEventInteractiveMenu(ArrayList<EventQueueElement> eventReadyArray) {
+		JPanel nextEventsPanel = new JPanel();
+		JPanel mainPanel = new JPanel(new BorderLayout());
+		nextEventsPanel.add(new JLabel("Next event to fire:"));
+		// create a drop-down list of next possible firing events
+		int sizeEventReadyArray = eventReadyArray.size();
+		String[] nextEventsArray = new String[sizeEventReadyArray];
+		Random generator = new Random();
+		int eventToFireIndex = generator.nextInt(sizeEventReadyArray);
+		nextEventsArray[0] = eventReadyArray.get(eventToFireIndex).getEventId();
+		EventQueueElement eventToFire = eventReadyArray.remove(eventToFireIndex);	
+		for (int i=1; i<sizeEventReadyArray; i++) {
+			nextEventsArray[i] = eventReadyArray.get(i-1).getEventId();
+		}
+		eventReadyArray.add(eventToFireIndex, eventToFire);
+		nextEventsList = new JComboBox(nextEventsArray);
+		nextEventsPanel.add(nextEventsList);
+		mainPanel.add(nextEventsPanel, "Center");
+		Object[] options = {"OK", "Cancel"};
+//		int optionValue;
+		// optionValue: 0=OK, 1=Cancel 
+		JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Next Event Selection",
+		JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		String eventSelected = (String)nextEventsList.getSelectedItem();
+		if (eventSelected.equals(eventToFire.getEventId()))
+			return eventReadyArray.indexOf(eventToFire);
+		else {
+			int eventSelectedIndex = -1;
+			for (int i = 0; i<sizeEventReadyArray; i++) {
+				if (eventReadyArray.get(i).getEventId() == eventSelected) {
+					 eventSelectedIndex = i;
+					 break;
+				}
+			}
+			return eventSelectedIndex;
+		}
+	}
+	
 	public String evaluatePropensityFunction(ASTNode currentASTNode, HashMap<String, Double>ListOfLocalParameters) {
 		String retStr = null;
 		if(isLeafNode(currentASTNode)){
@@ -731,33 +972,33 @@ public class GillespieSSAJavaSingleStep {
 			int type_const=currentASTNode.getType();
 			switch (type_const) {
 				// arithmetic operators
-				case libsbml.AST_PLUS: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) + Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_MINUS: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) - Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_TIMES: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) * Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_DIVIDE:retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) / Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_FUNCTION_POWER: retStr = Double.toString(Math.pow(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())), Double.parseDouble(evaluateAST(currentASTNode.getRightChild())))); break;
+				case libsbml.AST_PLUS: retStr = Double.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) + Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case libsbml.AST_MINUS: retStr = Double.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) - Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case libsbml.AST_TIMES: retStr = Double.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) * Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case libsbml.AST_DIVIDE:retStr = Double.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) / Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case libsbml.AST_FUNCTION_POWER: retStr = Double.toString(Math.pow(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)), Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters)))); break;
 				// logical operators
-				case libsbml.AST_LOGICAL_AND: retStr = Boolean.toString(Boolean.parseBoolean(evaluateAST(currentASTNode.getLeftChild())) && Boolean.parseBoolean(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_LOGICAL_OR:  retStr = Boolean.toString(Boolean.parseBoolean(evaluateAST(currentASTNode.getLeftChild())) || Boolean.parseBoolean(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_LOGICAL_NOT:  retStr = Boolean.toString(!Boolean.parseBoolean(evaluateAST(currentASTNode.getLeftChild()))); break;
-				case libsbml.AST_LOGICAL_XOR:  retStr = Boolean.toString(Boolean.parseBoolean(evaluateAST(currentASTNode.getLeftChild())) ^ Boolean.parseBoolean(evaluateAST(currentASTNode.getRightChild()))); break;
+				case libsbml.AST_LOGICAL_AND: retStr = Boolean.toString(Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) && Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case libsbml.AST_LOGICAL_OR:  retStr = Boolean.toString(Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) || Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case libsbml.AST_LOGICAL_NOT:  retStr = Boolean.toString(!Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters))); break;
+				case libsbml.AST_LOGICAL_XOR:  retStr = Boolean.toString(Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) ^ Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
 				// relational operators
 				// TODO EQ, NEQ can have boolean arguments
-				case libsbml.AST_RELATIONAL_EQ:  retStr = Boolean.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) == Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_RELATIONAL_GEQ: retStr = Boolean.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) >= Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_RELATIONAL_GT:  retStr = Boolean.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) > Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_RELATIONAL_LEQ:  retStr = Boolean.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) <= Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_RELATIONAL_LT:  retStr = Boolean.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) < Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
-				case libsbml.AST_RELATIONAL_NEQ:  retStr = Boolean.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) > Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
+				case libsbml.AST_RELATIONAL_EQ:  retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) == Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case libsbml.AST_RELATIONAL_GEQ: retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) >= Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case libsbml.AST_RELATIONAL_GT:  retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) > Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case libsbml.AST_RELATIONAL_LEQ:  retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) <= Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case libsbml.AST_RELATIONAL_LT:  retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) < Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
+				case libsbml.AST_RELATIONAL_NEQ:  retStr = Boolean.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)) > Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters))); break;
 				// other operators
 				case libsbml.AST_FUNCTION_PIECEWISE: {
-					//Currently, the evaluator only accepts piecewise(arg0, arg1, arg2). arg0 and arg2 are real, and arg1 is boolean
+					//Currently, the evaluator only accepts piecewise(1, arg1, 0), where arg1 is boolean
 					if (currentASTNode.getNumChildren() == 3) {
 						if (Boolean.parseBoolean(evaluatePropensityFunction(currentASTNode.getChild(1),ListOfLocalParameters))){
-							retStr = Double.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getChild(2),ListOfLocalParameters)));
+							retStr = Double.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getChild(0),ListOfLocalParameters)));
 						}
 						else {
-							retStr = Double.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getChild(0),ListOfLocalParameters)));
+							retStr = Double.toString(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getChild(2),ListOfLocalParameters)));
 						}		
 					}
 					else {
