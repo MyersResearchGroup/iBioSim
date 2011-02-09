@@ -803,12 +803,6 @@ public class Abstraction extends LhpnFile {
 					removeMovement(p.getName(), t);
 				}
 				for (Place p : trans.getPostset()) {
-					// for (Transition tP : p.getPostset()) {
-					// removeMovement(p.getName(), tP.getName());
-					// if (tP.getPreset().length == 0) {
-					// removeTransition(tP.getName());
-					// }
-					// }
 					removeMovement(t, p.getName());
 				}
 				removeTransition(t);
@@ -1047,7 +1041,6 @@ public class Abstraction extends LhpnFile {
 									.get(var1.getName()) == -1)) {
 						String[] temp = { var1.getName(), var2.getName() };
 						merge.add(temp);
-						// mergeVariables(var1, var2);
 						remove.add(var2.getName());
 						change = true;
 					}
@@ -1060,7 +1053,6 @@ public class Abstraction extends LhpnFile {
 						mergeInverse.put(var2.getName(), expr);
 						remove.add(var2.toString());
 					}
-					// mergeVariables(expr, var2.getName());
 				}
 			}
 		}
@@ -1077,7 +1069,6 @@ public class Abstraction extends LhpnFile {
 									.get(var1.getName()) == -1)) {
 						String[] temp = { var1.getName(), var2.getName() };
 						merge.add(temp);
-						// mergeVariables(var1, var2);
 						remove.add(var2.getName());
 						change = true;
 					}
@@ -1097,7 +1088,6 @@ public class Abstraction extends LhpnFile {
 									.get(var1.getName()) == -1)) {
 						String[] temp = { var1.getName(), var2.getName() };
 						merge.add(temp);
-						// mergeVariables(var1, var2);
 						remove.add(var2.getName());
 						change = true;
 					}
@@ -1776,14 +1766,8 @@ public class Abstraction extends LhpnFile {
 		ArrayList<String> allIntVars = new ArrayList<String>(); // Set V
 		ArrayList<String> newIntVars = new ArrayList<String>(); // Set V''
 		ArrayList<Integer> intProc = new ArrayList<Integer>(); // Processes with
-		// failure transitions or
-		// transitions
-		// that have
-		// interesting
-		// variables in
-		// their
-		// enabling
-		// conditions
+		// failure transitions or transitions that have interesting variables in
+		// their enabling conditions
 		for (String v : abstPane.getIntVars()) {
 			allIntVars.add(v);
 			newIntVars.add(v);
@@ -1806,8 +1790,7 @@ public class Abstraction extends LhpnFile {
 		}
 		do {
 			for (Transition t : transitions.values()) { // Determine which
-				// processes are
-				// interesting
+				// processes are interesting
 				for (String v : newIntVars) {
 					if (t.containsAssignment(v)) {
 						if (!intProc.contains(process_trans.get(t))) {
@@ -1888,67 +1871,6 @@ public class Abstraction extends LhpnFile {
 		}
 	}
 
-	// private void normalizeDelays() {
-	// int N = abstPane.getNormFactor();
-	// for (Transition t : transitions.values()) {
-	// String delay = t.getDelay();
-	// if (delay != null) {
-	// Pattern pattern = Pattern.compile("uniform\\(([\\w-]+?),([\\w-]+?)\\)");
-	// Matcher matcher = pattern.matcher(delay);
-	// Pattern normPattern =
-	// Pattern.compile("uniform\\(([\\w-]+?),([\\w-]+?)\\)");
-	// Matcher normMatcher = normPattern.matcher(delay);
-	// Pattern numPattern = Pattern.compile("[-\\d]+");
-	// Matcher numMatcher = numPattern.matcher(delay);
-	// if (matcher.find()) {
-	// String lVal = matcher.group(1);
-	// String uVal = matcher.group(2);
-	// if (!lVal.contains("inf")) {
-	// Integer lInt = Integer.parseInt(lVal);
-	// lInt = (lInt / N) * N;
-	// lVal = lInt.toString();
-	// }
-	// if (!uVal.contains("inf")) {
-	// Integer uInt = Integer.parseInt(uVal);
-	// if (uInt % N != 0) {
-	// uInt = (uInt / N + 1) * N;
-	// uVal = uInt.toString();
-	// }
-	// }
-	// delay = "uniform(" + lVal + "," + uVal + ")";
-	// t.addDelay(delay);
-	// }
-	// else if (normMatcher.find()) {
-	// String lVal = normMatcher.group(1);
-	// String uVal = normMatcher.group(2);
-	// if (!lVal.contains("inf")) {
-	// Integer lInt = Integer.parseInt(lVal);
-	// lInt = (lInt / N) * N;
-	// lVal = lInt.toString();
-	// }
-	// if (!uVal.contains("inf")) {
-	// Integer uInt = Integer.parseInt(uVal);
-	// if (uInt % N != 0) {
-	// uInt = (uInt / N + 1) * N;
-	// uVal = uInt.toString();
-	// }
-	// }
-	// delay = "normal(" + lVal + "," + uVal + ")";
-	// t.addDelay(delay);
-	// }
-	// else if (numMatcher.find()) {
-	// Integer val = Integer.parseInt(delay);
-	// Integer lInt = (val / N) * N;
-	// String lVal = lInt.toString();
-	// Integer uInt = lInt + N;
-	// String uVal = uInt.toString();
-	// delay = "uniform(" + lVal + "," + uVal + ")";
-	// t.addDelay(delay);
-	// }
-	// }
-	// }
-	// }
-
 	private void normalizeDelays() {
 		int N = abstPane.getNormFactor();
 		for (Transition t : transitions.values()) {
@@ -2005,10 +1927,6 @@ public class Abstraction extends LhpnFile {
 
 	private boolean removeTrans3(Transition transition) {
 		// Remove a transition with a single place in the postset
-		// if (!transition.getDelay().contains("uniform")
-		// && !transition.getDelay().matches("[\\d-]+")) {
-		// return false;
-		// }
 		Place place = transition.getPostset()[0];
 		Place[] preset = transition.getPreset();
 		Transition[] postset = place.getPostset();
@@ -2098,10 +2016,6 @@ public class Abstraction extends LhpnFile {
 
 	private boolean removeTrans4(Transition transition) {
 		// Remove a transition with a single place in the preset
-		// if (!transition.getDelay().contains("uniform")
-		// && !transition.getDelay().matches("[\\d-]+")) {
-		// return false;
-		// }
 		Place place = transition.getPreset()[0];
 		Transition[] preset = place.getPreset();
 		Place[] postset = transition.getPostset();
@@ -2180,10 +2094,6 @@ public class Abstraction extends LhpnFile {
 	}
 
 	private boolean removeVacTrans(Transition transition) {
-		// if (!transition.getDelay().contains("uniform")
-		// && !transition.getDelay().matches("[\\d-]+")) {
-		// return false;
-		// }
 		Place place = transition.getPostset()[0];
 		Place[] preset = transition.getPreset();
 		Transition[] postset = place.getPostset();
@@ -2273,10 +2183,6 @@ public class Abstraction extends LhpnFile {
 	}
 
 	private boolean removeVacTransAbs(Transition transition) {
-		// if (!transition.getDelay().contains("uniform")
-		// && !transition.getDelay().matches("[\\d-]+")) {
-		// return false;
-		// }
 		Place place = transition.getPostset()[0];
 		Place[] preset = transition.getPreset();
 		Transition[] postset = place.getPostset();
@@ -2370,14 +2276,6 @@ public class Abstraction extends LhpnFile {
 			return;
 		}
 		if (trans1.containsDelay() && trans2.containsDelay()) {
-			// if (!trans1.getDelay().contains("uniform")
-			// && !trans1.getDelay().matches("[\\d-]+")) {
-			// return;
-			// }
-			// if (!trans2.getDelay().contains("uniform")
-			// && !trans2.getDelay().matches("[\\d-]+")) {
-			// return;
-			// }
 			String[] delay = { trans1.getDelay(), trans2.getDelay() };
 			String[][] delayRange = new String[2][2];
 			Pattern pattern = Pattern.compile("uniform\\((\\S+?),(\\S+?)\\)");
@@ -2634,7 +2532,6 @@ public class Abstraction extends LhpnFile {
 				}
 				for (Place pP : tP.getPreset()) {
 					for (Transition tPP : pP.getPreset()) {
-						// if (typeAssign.containsKey(tPP)) {
 						if (tPP.getAssignTrees().containsKey(var)) {
 							ExprTree ePP = tPP.getAssignTree(var);
 							if (!ePP.isEqual(e)) {
@@ -2667,7 +2564,6 @@ public class Abstraction extends LhpnFile {
 						} else {
 							return change;
 						}
-						// }
 					}
 				}
 			}
@@ -2781,8 +2677,7 @@ public class Abstraction extends LhpnFile {
 
 	private boolean divideProcesses() {
 		for (Transition t : transitions.values()) { // Add all transitions to
-			// process
-			// structure
+			// process structure
 			process_trans.put(t, 0);
 		}
 		for (String v : booleans.keySet()) { // / Add All variables to process
@@ -2802,8 +2697,7 @@ public class Abstraction extends LhpnFile {
 		Integer process = 1; // The active process number
 		while (process_trans.containsValue(0)) {
 			Transition new_proc = new Transition(); // Find a transition that is
-			// not part of a
-			// process
+			// not part of a process
 			for (Transition t : process_trans.keySet()) {
 				if (process_trans.get(t) == 0) {
 					new_proc = t;
@@ -3303,45 +3197,7 @@ public class Abstraction extends LhpnFile {
 				} else {
 					toMerge.put(t1, new ArrayList<Transition>());
 					toMerge.get(t1).add(t2);
-				}/*
-				 * if ((comparePreset(t1, t2) || (t1.getPreset().length == 0 &&
-				 * t2 .getPreset().length == 0)) && (comparePostset(t1, t2) ||
-				 * (t1.getPostset().length == 0 && t2 .getPostset().length ==
-				 * 0))) { boolean combine = true; ExprTree tree = new
-				 * ExprTree(this); tree.setNodeValues(t1.getEnablingTree(), t2
-				 * .getEnablingTree(), "&&", 'l'); for (String v :
-				 * tree.getVars()) { if (process_write.get(v) !=
-				 * process_trans.get(t1)) { combine = false; break; } } for
-				 * (Transition t : transitions.values()) { if
-				 * (tree.becomesTrue(t.getAssignments())) { combine = false;
-				 * break; } } if (toMerge.containsKey(t1)) { for (Transition t3
-				 * : toMerge.get(t1)) { ExprTree tree3 = new ExprTree(this);
-				 * tree3.setNodeValues(t3.getEnablingTree(), t2
-				 * .getEnablingTree(), "&&", 'l'); for (Transition t :
-				 * transitions.values()) { if
-				 * (tree3.becomesTrue(t.getAssignments())) { combine = false;
-				 * break; } } } } if (t1.getEnablingTree() != null &&
-				 * t2.getEnablingTree() != null) { if (t1.getEnablingTree().isit
-				 * == 'a') { if (!t1.getEnablingTree().op.equals("uniform") ||
-				 * t1.getEnablingTree().r1.isit != 'n' ||
-				 * t1.getEnablingTree().r2.isit != 'n') { combine = false;
-				 * break; } } else if (t1.getEnablingTree().isit != 'n') {
-				 * combine = false; break; } if (t2.getEnablingTree().isit ==
-				 * 'a') { if (!t2.getEnablingTree().op.equals("uniform") ||
-				 * t2.getEnablingTree().r1.isit != 'n' ||
-				 * t2.getEnablingTree().r2.isit != 'n') { combine = false;
-				 * break; } } else if (t2.getEnablingTree().isit != 'n') {
-				 * combine = false; break; } } for (String var :
-				 * t1.getAssignments().keySet()) { if
-				 * (!t2.containsAssignment(var) ||
-				 * !t1.getAssignTree(var).isEqual( t2.getAssignTree(var))) {
-				 * combine = false; break; } } for (String var :
-				 * t2.getAssignments().keySet()) { if
-				 * (!t1.containsAssignment(var)) { combine = false; break; } }
-				 * if (combine) { if (toMerge.containsKey(t1)) {
-				 * toMerge.get(t1).add(t2); } else { toMerge.put(t1, new
-				 * ArrayList<Transition>()); toMerge.get(t1).add(t2); } } }
-				 */
+				}
 			}
 		}
 		for (Transition t : toMerge.keySet()) {
@@ -3538,7 +3394,6 @@ public class Abstraction extends LhpnFile {
 			}
 			t.addEnabling(enabling);
 			t.addDelay(delay.toString());
-			// System.out.println("ADDING DELAY " + delay.toString());
 			if (priority1 != null) {
 				t.addPriority(priority1.toString());
 			}
