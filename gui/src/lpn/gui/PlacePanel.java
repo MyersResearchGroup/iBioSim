@@ -11,7 +11,6 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.Properties;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -20,6 +19,11 @@ import javax.swing.JPanel;
 
 
 public class PlacePanel extends JPanel implements ActionListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private String selected = "";
 
@@ -127,22 +131,7 @@ public class PlacePanel extends JPanel implements ActionListener {
 			else {
 				ic = false;
 			}
-
-			//if (selected != null && !oldName.equals(id)) {
-			//	lhpn.changeVariableName(oldName, id);
-			//}
-			/*
-			lhpn.removePlace(oldName);
-			lhpn.addPlace(id, ic);
-			//lhpn.renamePlace(oldName, id, ic);
-			for (String s : placeList.getItems()) {
-				if (oldName != null) {
-					if (s.startsWith(oldName)) {
-						placeList.removeItem(s);
-					}
-				}
-			}
-			*/
+			
 			if (selected != null) {
 				if (!oldName.equals(id)) {
 					lhpn.changePlaceName(oldName, id);
@@ -186,7 +175,6 @@ public class PlacePanel extends JPanel implements ActionListener {
 			}
 		}
 		else if (value == JOptionPane.NO_OPTION) {
-			// System.out.println();
 			return true;
 		}
 		return true;
@@ -194,16 +182,6 @@ public class PlacePanel extends JPanel implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
-			// setType(initBox.getSelectedItem().toString());
-		}
-	}
-
-	private void loadProperties(Properties property) {
-		for (Object o : property.keySet()) {
-			if (fields.containsKey(o.toString())) {
-				fields.get(o.toString()).setValue(property.getProperty(o.toString()));
-				fields.get(o.toString()).setCustom();
-			}
 		}
 	}
 

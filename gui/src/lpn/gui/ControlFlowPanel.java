@@ -6,15 +6,12 @@ import main.Gui;
 import gcm.gui.*;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
-//import gcm2sbml.parser.GCMFile;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-//import java.util.Properties;
 
-//import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -22,6 +19,11 @@ import javax.swing.JPanel;
 
 
 public class ControlFlowPanel extends JPanel implements ActionListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private String selected = "";
 
@@ -46,20 +48,15 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 		this.lhpn = lhpn;
 
 		placeList = lhpn.getPlaceList();
-		//System.out.println(placeList.length);
 		transitionList = lhpn.getTransitionList();
 		flowStringList = new String[0];
 		if (!placeList.equals(null) && !transitionList.equals(null)) {
 			flowStringList = new String[placeList.length + transitionList.length];
-			// JOptionPane.showMessageDialog(this, flowStringList.length);
 		}
-		// placeList = lhpn.getPlaceList();
-		// transitionList = lhpn.getTransitionList();
 		if (!placeList.equals(null) && !transitionList.equals(null)) {
 			System.arraycopy(placeList, 0, flowStringList, 0, placeList.length);
 			System.arraycopy(transitionList, 0, flowStringList, placeList.length,
 					transitionList.length);
-			// JOptionPane.showMessageDialog(this, flowStringList.length);
 		}
 		else if (placeList.length > 0) {
 			System.arraycopy(placeList, 0, flowStringList, 0, placeList.length);
@@ -67,7 +64,6 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 		else if (transitionList.length > 0) {
 			System.arraycopy(transitionList, 0, flowStringList, 0, transitionList.length);
 		}
-		// JOptionPane.showMessageDialog(this, flowStringList.length);
 		
 		sort(placeList);
 		sort(transitionList);
@@ -79,7 +75,6 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
 				Utility.NAMEstring);
 		fields.put(GlobalConstants.ID, field);
-		// add(field);
 
 		JPanel tempPanel;
 		JLabel tempLabel;
@@ -106,7 +101,6 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 			else {
 				toBox = new JComboBox(transitionList);
 			}
-			// toBox.setSelectedItem(flowStringList[0]);
 			toBox.addActionListener(this);
 			tempPanel.setLayout(new GridLayout(1, 2));
 			tempPanel.add(tempLabel);
@@ -116,9 +110,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 
 		String oldName = null;
 		if (selected != null) {
-			// JOptionPane.showMessageDialog(this, "here");
 			oldName = selected;
-			// fields.get(GlobalConstants.ID).setValue(selected);
 			String[] flowArray = selected.split("\\s");
 			fromBox.setSelectedItem(flowArray[0]);
 			toBox.setSelectedItem(flowArray[1]);
@@ -153,7 +145,6 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 				}
 				if (flag) {
 					toBox.setSelectedItem(to);
-					// JOptionPane.showMessageDialog(this, to);
 				}
 			}
 		}
@@ -173,18 +164,8 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 				fromBox.getSelectedItem().toString() + " " + toBox.getSelectedItem().toString());
 	}
 
-	// private boolean checkValues() {
-	// for (PropertyField f : fields.values()) {
-	// if (!f.isValidValue()) {
-	// return false;
-	// }
-	// }
-	// return true;
-	// }
-
 	private boolean openGui(String oldName) {
 		String id = (String) fromBox.getSelectedItem() + " " + (String) toBox.getSelectedItem();
-		// JOptionPane.showMessageDialog(this, oldName);
 		String[] oldFlow = new String[2];
 		if (oldName != null) {
 			oldFlow = oldName.split("\\s");
@@ -196,10 +177,6 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 			id = (String) fromBox.getSelectedItem() + " " + (String) toBox.getSelectedItem();
 			newFlow[0] = (String) fromBox.getSelectedItem();
 			newFlow[1] = (String) toBox.getSelectedItem();
-			// if (!checkValues()) {
-			// Utility.createErrorMessage("Error", "Illegal values entered.");
-			// return false;
-			// }
 			if (oldName == null) {
 				if (lhpn.containsMovement(newFlow[0], newFlow[1])) {
 					Utility.createErrorMessage("Error", "Movement already exists.");
@@ -221,12 +198,10 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 			lhpn.addMovement(fromBox.getSelectedItem().toString(), toBox.getSelectedItem()
 					.toString());
 			flowList.removeItem(oldName);
-			// JOptionPane.showMessageDialog(this, id);
 			flowList.addItem(id);
 			flowList.setSelectedValue(id, true);
 		}
 		else if (value == JOptionPane.NO_OPTION) {
-			// System.out.println();
 			return true;
 		}
 		return true;
@@ -284,12 +259,7 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 					flag = true;
 				}
 				toBox.removeAllItems();
-				//System.out.println(toBox.getItemCount());
-				// JOptionPane.showMessageDialog(this, toBox.getItemCount());
 				for (int i = 0; i < transitionList.length; i++) {
-					// JOptionPane.showMessageDialog(this, "transition " + i + "
-					// " + transitionList[i]);
-					//toBox.removeItem(transitionList[i]);
 					toBox.addItem(transitionList[i]);
 				}
 				if (flag) {
@@ -302,23 +272,11 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 				if (toBox.getSelectedItem() != null) {
 					to = toBox.getSelectedItem().toString();
 					flag = true;
-					// JOptionPane.showMessageDialog(this, "to: " + to);
 				}
 				toBox.removeAllItems();
-				//toBox.removeAll();
-				//System.out.println("count " + toBox.getItemCount());
-				//System.out.println("starting for loop");
 				for (int i = 0; i < placeList.length; ++i) {
-					//System.out.println(placeList.length);
-					//System.out.println(i + " : " + placeList[i]);
-					//System.out.println(placeList.length);
-					//toBox.removeItem(placeList[i]);
 					toBox.addItem(placeList[i]);
-					//System.out.println(i + " adsf " + toBox.getItemAt(i));
-					//System.out.println(placeList[i]);
-					//System.out.println("");
 				}
-				//System.out.println("leaving for loop");
 				if (flag) {
 					toBox.setSelectedItem(to);
 				}
@@ -328,14 +286,5 @@ public class ControlFlowPanel extends JPanel implements ActionListener {
 		fields.get(GlobalConstants.ID).setValue(
 				fromBox.getSelectedItem().toString() + " " + toBox.getSelectedItem().toString());
 	}
-
-	// private void loadProperties(Properties property) {
-	// for (Object o : property.keySet()) {
-	// if (fields.containsKey(o.toString())) {
-	// fields.get(o.toString()).setValue(property.getProperty(o.toString()));
-	// fields.get(o.toString()).setCustom();
-	// }
-	// }
-	// }
 
 }

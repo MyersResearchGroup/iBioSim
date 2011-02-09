@@ -11,10 +11,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.Properties; //import java.util.regex.Matcher;
-//import java.util.regex.Pattern;
+import java.util.Properties; 
 
-//import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -22,6 +20,11 @@ import javax.swing.JPanel;
 
 
 public class VariablesPanel extends JPanel implements ActionListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private String name = "", type = "", selList;
 
@@ -106,7 +109,6 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			JLabel initLabel = new JLabel("Initial Value");
 			initBox = new JComboBox(booleans);
 			initBox.setSelectedItem(booleans[1]);
-			// initBox.addActionListener(this);
 			initPanel.setLayout(new GridLayout(1, 2));
 			initPanel.add(initLabel);
 			initPanel.add(initBox);
@@ -234,8 +236,6 @@ public class VariablesPanel extends JPanel implements ActionListener {
 					return false;
 				}
 			}
-			// System.out.print("after " +
-			// fields.get(GlobalConstants.ID).getValue());
 			String id = fields.get(GlobalConstants.ID).getValue();
 
 			// Check to see if we need to add or edit
@@ -258,9 +258,6 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				property.remove("Initial Rate");
 			}
 
-			// property.put(GlobalConstants.TYPE,
-			// typeBox.getSelectedItem().toString());
-
 			if (name != null && !oldName.equals(id)) {
 				lhpn.changeVariableName(oldName, id);
 			}
@@ -268,13 +265,11 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				lhpn.removeVar(id);
 			}
 			if (lhpn.isContinuous(id) || continuous) {
-				// System.out.println("add var " + property);
 				tempVal = fields.get("Initial value").getValue();
 				lhpn.addContinuous(id, property);
 				lhpn.getVariable(id).setPort(
 						modeBox.getSelectedItem().toString());
 			} else if (lhpn.isInteger(id) || integer) {
-				// System.out.println("add var " + property);
 				tempVal = fields.get("Initial value").getValue();
 				lhpn.addInteger(id, tempVal);
 				lhpn.getVariable(id).setPort(
@@ -301,7 +296,6 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			variablesList.setSelectedValue(id, true);
 
 		} else if (value == JOptionPane.NO_OPTION) {
-			// System.out.println();
 			return true;
 		}
 		return true;
@@ -309,7 +303,6 @@ public class VariablesPanel extends JPanel implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
-			// setType(typeBox.getSelectedItem().toString());
 		}
 	}
 

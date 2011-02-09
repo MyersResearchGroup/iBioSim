@@ -8,19 +8,14 @@ import gcm.gui.*;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
 
-//import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
-import java.awt.GridBagConstraints; //import java.awt.Dimension;
+import java.awt.GridBagConstraints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
-import java.util.Properties; //import java.util.regex.Matcher;
-//import java.util.regex.Pattern;
+import java.util.Properties;
 
-//import javax.swing.DefaultListModel;
-//import javax.swing.JComboBox;
-//import javax.swing.BoxLayout;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -30,13 +25,14 @@ import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
 import gcm.gui.Runnable;
 
-import javax.swing.Icon;
-
 public class TransitionsPanel extends JPanel implements ActionListener, MouseListener {
 
-	private String selected = "";
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
-	// private TransitionsPanel frame;
+	private String selected = "";
 
 	private PropertyList transitionsList, controlList, boolAssignments, varAssignments,
 			intAssignments, rateAssignments, assignments;
@@ -49,17 +45,11 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 
 	private JCheckBox fail, persistent;
 
-	// private Object[] types = { "Boolean", "Continuous", "Integer", "Rate" };
-
 	private LhpnFile lhpn;
-
-	// private Log log;
 
 	private HashMap<String, PropertyField> fields = null;
 	
 	private boolean flag = false;
-
-	// private ExprTree delayTree, rateTree, enablingTree;
 
 	public TransitionsPanel(String selected, PropertyList transitionsList,
 			PropertyList controlList, LhpnFile lhpn, Log log) {
@@ -69,7 +59,6 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 		this.transitionsList = transitionsList;
 		this.controlList = controlList;
 		this.lhpn = lhpn;
-		// this.log = log;
 
 		fields = new HashMap<String, PropertyField>();
 		fieldPanel = new JPanel(new GridLayout(4, 2));
@@ -77,8 +66,6 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
 				Utility.ATACSIDstring);
-		// field.setMaximumSize(new Dimension(5, 5));
-		// field.setPreferredSize(new Dimension(5, 5));
 		fields.put(GlobalConstants.ID, field);
 		fieldPanel.add(field);
 
@@ -97,21 +84,16 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 		fields.put("priority", field);
 		fieldPanel.add(field);
 
-		// fieldPanel.setMaximumSize(new Dimension(50,50));
-		// fieldPanel.setPreferredSize(new Dimension(50,50));
 		constraints.gridx = 0;
 		constraints.gridy = 0;
 		add(fieldPanel, constraints);
 
 		// Fail Transition check box
 		JPanel failPanel = new JPanel(new GridLayout(1, 2));
-		// failPanel.setMinimumSize(new Dimension(200, 20));
 		JLabel failLabel = new JLabel("Fail Transition");
-		// JLabel blankLabel1 = new JLabel("  ");
 		JLabel blankLabel2 = new JLabel("                                          ");
 		fail = new JCheckBox();
 		failPanel.add(failLabel);
-		// failPanel.add(blankLabel1);
 		failPanel.add(fail);
 		failPanel.add(blankLabel2);
 		constraints.gridx = 0;
@@ -120,13 +102,10 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 		
 		// Persistent Transition check box
 		JPanel persistentPanel = new JPanel(new GridLayout(1, 2));
-		// failPanel.setMinimumSize(new Dimension(200, 20));
 		JLabel persistentLabel = new JLabel("Persistent Transition");
-		// JLabel blankLabel1 = new JLabel("  ");
 		JLabel blankLabel3 = new JLabel("                                          ");
 		persistent = new JCheckBox();
 		persistentPanel.add(persistentLabel);
-		// failPanel.add(blankLabel1);
 		persistentPanel.add(persistent);
 		persistentPanel.add(blankLabel3);
 		constraints.gridx = 0;
@@ -173,7 +152,6 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 			}
 			if (lhpn.getRateVars(selected) != null) {
 				for (String s : lhpn.getRateVars(selected)) {
-					// log.addText(selected + " " + s);
 					if (s != null) {
 						if (!s.equals(null) && !lhpn.getRateAssign(selected, s).equals("true")
 								&& !lhpn.getRateAssign(selected, s).equals("false")) {
@@ -194,9 +172,7 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
-			// Properties prop = lhpn.getVariables().get(selected);
 			fields.get(GlobalConstants.ID).setValue(selected);
-			// log.addText(lhpn.getDelay(selected));
 			if (lhpn.getTransition(oldName).isFail()) {
 				fail.setSelected(true);
 			}
@@ -207,10 +183,6 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 			if (delay != null) {
 				fields.get("delay").setValue(delay);
 			}
-			//else if (lhpn.getTransitionRate(selected) != null) {
-			//	fields.get("delay/rate").setValue(lhpn.getTransitionRate(selected));
-			//	rateButton.setSelected(true);
-			//}
 			String enabling = lhpn.getTransition(selected).getEnabling();
 			if (enabling != null) {
 				fields.get("Enabling Condition").setValue(enabling);
@@ -219,15 +191,8 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 			if (priority != null) {
 				fields.get("priority").setValue(priority);
 			}
-			// String temp = lhpn.getEnabling(selected);
-			// if (lhpn.getTransitionRate(selected) != null) {
-			// fields.get("Transition rate").setValue(lhpn.getTransitionRate(selected));
-			// }
-			// log.addText(selected + lhpn.getEnabling(selected));
-			// loadProperties(prop);
 		}
 
-		// setType(types[0]);
 		boolean display = false;
 		allVariables = lhpn.getAllIDs();
 		while (!display) {
@@ -291,9 +256,6 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 			if (selected != null && !oldName.equals(id)) {
 				lhpn.changeTransitionName(oldName, id);
 			}
-			//else if (selected == null) {
-			//	lhpn.addTransition(id);
-			//}
 			transitionsList.removeItem(oldName);
 			transitionsList.addItem(id);
 			transitionsList.setSelectedValue(id, true);
@@ -311,21 +273,18 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 			}
 		}
 		else if (value == JOptionPane.NO_OPTION) {
-			// System.out.println();
 			return true;
 		}
 		return true;
 	}
 
 	public boolean save(String transition) {
-		// log.addText("saving...");
 		if (!lhpn.containsTransition(transition)) {
 			lhpn.addTransition(transition);
 		}
 		lhpn.getTransition(transition).removeAllAssign();
 		if (boolAssignments.getItems() != null) {
 			for (String s : boolAssignments.getItems()) {
-				// System.out.println("bool" + s);
 				String[] tempArray = s.split(":=");
 				if (!lhpn.getTransition(transition).addBoolAssign(tempArray[0], tempArray[1].replaceAll("\\s+", "")))
 					return false;
@@ -333,30 +292,20 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 		}
 		if (varAssignments.getItems() != null) {
 			for (String s : varAssignments.getItems()) {
-				// System.out.println("var " + s);
 				String[] tempArray = s.split(":=");
-				// System.out.println(transition + " " + tempArray[0] + " " +
-				// tempArray[1]);
 				lhpn.getTransition(transition).addContAssign(tempArray[0], tempArray[1].replaceAll("\\s+", ""));
-				// log.addText("continuous "+ tempArray[0]);
 			}
 		}
 		if (intAssignments.getItems() != null) {
 			for (String s : intAssignments.getItems()) {
-				// System.out.println("int" + s);
 				String[] tempArray = s.split(":=");
-				// System.out.println(transition + " " + tempArray[0] + " " +
-				// tempArray[1]);
 				if (!lhpn.getTransition(transition).addIntAssign(tempArray[0], tempArray[1].replaceAll("\\s+", "")))
 					return false;
-				// log.addText("integer " + tempArray[0]);
 			}
 		}
 		if (rateAssignments.getItems() != null) {
 			for (String s : rateAssignments.getItems()) {
-				// System.out.println("rate " + s);
 				String[] tempArray = s.split("':=");
-				// System.out.println(tempArray[1]);
 				if (!lhpn.getTransition(transition).addRateAssign(tempArray[0], tempArray[1].replaceAll("\\s+", "")))
 					return false;
 			}
@@ -391,6 +340,11 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 	}
 
 	public class RemoveButton extends AbstractRunnableNamedButton {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public RemoveButton(String name, PropertyList list) {
 			super(name);
 			this.list = list;
@@ -426,6 +380,11 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 	}
 
 	public class EditButton extends AbstractRunnableNamedButton {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		public EditButton(String name, PropertyList list) {
 			super(name);
 			this.list = list;
@@ -453,7 +412,6 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 				Utility.createErrorMessage("Error", "Nothing selected to edit");
 				return;
 			}
-			// String type = "", assignment = "";
 			String variable = null;
 			if (list.getSelectedValue() != null && getName().contains("Edit")) {
 				variable = list.getSelectedValue().toString();
@@ -469,8 +427,7 @@ public class TransitionsPanel extends JPanel implements ActionListener, MouseLis
 						"All variables have already been assigned in this transition");
 			}
 			else {
-				// System.out.println("transition " + selected);
-				AssignmentPanel panel = new AssignmentPanel(selected, variable, list,
+				new AssignmentPanel(selected, variable, list,
 						varAssignments, rateAssignments, boolAssignments, intAssignments, lhpn);
 			}
 		}
