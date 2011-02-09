@@ -260,8 +260,6 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		// Component List
 		addComponent = new JButton("Add Component");
 		removeComponent = new JButton("Remove Component");
-		//addComponent.addActionListener(this);
-		//removeComponent.addActionListener(this);
 		GridBagConstraints constraints = new GridBagConstraints();
 		JPanel componentPanel = Utility.createPanel(this, "Components", componentList,
 				addComponent, removeComponent, null);
@@ -313,7 +311,6 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		technologyPanel.add(bm2);
 
 		otherPanel.add(otherOptions);
-		//otherPanel.add(dot);
 		otherPanel.add(verbose);
 		otherPanel.add(quiet);
 		otherPanel.add(noinsert);
@@ -667,21 +664,12 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		catch (Exception e) {
-			//e.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to load properties file!",
 					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 		String[] tempArray = synthesisFile.split(separator);
 		sourceFileNoPath = tempArray[tempArray.length - 1];
 		backgroundField = new JTextField(sourceFileNoPath);
-		// String[] components = new File(directory).list();
-		// for (int i=0; i<components.length; i++) {
-		// if (components[i].endsWith(".vhd") &&
-		// components[i].equals(sourceFileNoPath)) {
-		// componentList.addItem(components[i]);
-		// }
-		// }
-		// save();
 
 		getFilename = sourceFile.split(separator);
 		getFilename = getFilename[getFilename.length - 1].split("\\.");
@@ -739,7 +727,6 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		viewLog.setMnemonic(KeyEvent.VK_V);
 
 		JPanel backgroundPanel = new JPanel();
-		// log.addText(sourceFile);
 		JLabel backgroundLabel = new JLabel("Model File:");
 		backgroundField.setMaximumSize(new Dimension(200, 20));
 		backgroundField.setEditable(false);
@@ -777,7 +764,6 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 
 		this.setLayout(new BorderLayout());
 		this.add(tab, BorderLayout.PAGE_START);
-		// this.add(buttonPanel, BorderLayout.PAGE_END);
 		change = false;
 	}
 
@@ -859,7 +845,6 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void run() {
-		// String command = "/home/shang/kjones/atacs/bin/atacs -";
 		String[] tempArray = synthesisFile.split(separator);
 		String circuitFile = tempArray[tempArray.length - 1];
 		tempArray = sourceFile.split("separator");
@@ -868,7 +853,6 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		File traceFile = new File(traceFilename);
 		String rulesFilename, graphFilename;
 		String pargFilename = tempArray[0] + ".grf";
-		//log.addText(tempArray[0]);
 		if (componentField.getText().trim().equals("")) {
 			rulesFilename = tempArray[0] + ".prs";
 			graphFilename = tempArray[0] + ".dot";
@@ -1085,8 +1069,6 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		if (graph.isSelected()) {
 			options = options + "ps";
 		}
-		// String[] temp = sourceFile.split(separator);
-		// String src = temp[temp.length - 1];
 		String cmd = "atacs " + options;
 		String[] components = componentList.getItems();
 		for (String s : components) {
@@ -1129,10 +1111,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		JPanel all = new JPanel(new BorderLayout());
 		JLabel label = new JLabel("Running...");
 		JProgressBar progress = new JProgressBar();
-		// progress.setStringPainted(true);
 		progress.setIndeterminate(true);
-		// progress.setString("");
-		// progress.setValue(0);
 		text.add(label);
 		progBar.add(progress);
 		button.add(cancel);
@@ -1223,7 +1202,6 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 								JOptionPane.ERROR_MESSAGE);
 			}
 			else {
-				//log.addText(rulesFile.getName());
 				if (rulesFile.exists()) {
 					viewCircuit.setEnabled(true);
 					viewRules.setEnabled(true);
@@ -1244,11 +1222,9 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 						command = "gnome-open ";
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-						// directory = System.getenv("BIOSIM") + "/docs/";
 						command = "open ";
 					}
 					else {
-						// directory = System.getenv("BIOSIM") + "\\docs\\";
 						command = "dotty ";
 					}
 					exec.exec(command + graphFilename);
@@ -1283,10 +1259,6 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 	public void save(String filename) {
 		try {
 			Properties prop = new Properties();
-			// FileInputStream in = new FileInputStream(new File(directory +
-			// separator + filename));
-			// prop.load(in);
-			// in.close();
 			prop.setProperty("synthesis.file", synthesisFile);
 			prop.setProperty("synthesis.source", sourceFile);
 			prop.setProperty("synthesis.Max", this.maxSize.getText().trim());
@@ -1604,7 +1576,6 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void reload(String newname) {
-		//		
 		backgroundField.setText(newname);
 	}
 
@@ -1636,9 +1607,6 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			getFilename = componentField.getText().trim().split("\\.");
 			graphFile = getFilename[0] + ".dot";
 		}
-		// JOptionPane.showMessageDialog(this, circuitFile);
-		// JOptionPane.showMessageDialog(this, directory + separator +
-		// circuitFile);
 		try {
 			File work = new File(directory);
 			Runtime exec = Runtime.getRuntime();
@@ -1693,15 +1661,12 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 			}
 			String command = "";
 			if (System.getProperty("os.name").contentEquals("Linux")) {
-				// directory = System.getenv("BIOSIM") + "/docs/";
 				command = "gnome-open ";
 			}
 			else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-				// directory = System.getenv("BIOSIM") + "/docs/";
 				command = "open ";
 			}
 			else {
-				// directory = System.getenv("BIOSIM") + "\\docs\\";
 				command = "dotty ";
 			}
 			exec.exec(command + graphFile, null, work);
@@ -1716,16 +1681,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 	public void viewRules() {
 		String[] getFilename = sourceFile.split("\\.");
 		String circuitFile = getFilename[0] + ".prs";
-		// JOptionPane.showMessageDialog(this, circuitFile);
-		// JOptionPane.showMessageDialog(this, directory + separator +
-		// circuitFile);
 		try {
-			// JOptionPane.showMessageDialog(this, directory + separator +
-			// "run.log");
-			// String[] getFilename = sourceFile.split(".");
-			// String circuitFile = getFilename[0] + ".ps";
-			// JOptionPane.showMessageDialog(this, directory + separator +
-			// circuitFile);
 			if (new File(circuitFile).exists()) {
 				File log = new File(circuitFile);
 				BufferedReader input = new BufferedReader(new FileReader(log));
@@ -1760,16 +1716,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 	public void viewTrace() {
 		String[] getFilename = sourceFile.split("\\.");
 		String traceFilename = getFilename[0] + ".trace";
-		// JOptionPane.showMessageDialog(this, circuitFile);
-		// JOptionPane.showMessageDialog(this, directory + separator +
-		// circuitFile);
 		try {
-			// JOptionPane.showMessageDialog(this, directory + separator +
-			// "run.log");
-			// String[] getFilename = sourceFile.split(".");
-			// String circuitFile = getFilename[0] + ".ps";
-			// JOptionPane.showMessageDialog(this, directory + separator +
-			// circuitFile);
 			if (new File(traceFilename).exists()) {
 				File log = new File(traceFilename);
 				BufferedReader input = new BufferedReader(new FileReader(log));
@@ -1803,8 +1750,6 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 
 	public void viewLog() {
 		try {
-			// JOptionPane.showMessageDialog(this, directory + separator +
-			// "run.log");
 			if (new File(directory + separator + "run.log").exists()) {
 				File log = new File(directory + separator + "run.log");
 				BufferedReader input = new BufferedReader(new FileReader(log));
