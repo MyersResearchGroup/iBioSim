@@ -57,6 +57,8 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.plaf.basic.BasicToggleButtonUI;
+import javax.swing.plaf.metal.MetalButtonUI;
 import javax.swing.plaf.metal.MetalIconFactory;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -99,6 +101,7 @@ import org.w3c.dom.DOMImplementation;
 
 import parser.TSDParser;
 import reb2sac.Reb2Sac;
+import util.SimpleButtonUI;
 import util.Utility;
 
 import com.lowagie.text.Document;
@@ -4392,6 +4395,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			});
 			colorsCombo.add(colBox);
 			JButton colorButton = new JButton();
+			colorButton.setUI(new SimpleButtonUI());
 			colorButton.setBackground((Color) colory.get("Black"));
 			colorButton.setForeground((Color) colory.get("Black"));
 			colorButton.setActionCommand("" + i);
@@ -7768,6 +7772,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			});
 			colorsCombo.add(colBox);
 			JButton colorButton = new JButton();
+			colorButton.setUI(new SimpleButtonUI());
 			colorButton.setBackground((Color) colory.get("Black"));
 			colorButton.setForeground((Color) colory.get("Black"));
 			colorButton.setActionCommand("" + i);
