@@ -433,8 +433,6 @@ public class LhpnFile {
 			throw new IllegalStateException("Error opening file");
 		}
 
-		// try {
-
 		parseProperty(data);
 		parsePlaces(data);
 		parseControlFlow(data);
@@ -457,10 +455,6 @@ public class LhpnFile {
 					.createErrorMessage("Invalid Expressions",
 							"The input file contained invalid expressions.  See console for details.");
 		}
-		// }
-		// catch (Exception e) {
-		// e.printStackTrace();
-		// }
 	}
 	
 	public void printDot(String filename) {
@@ -543,10 +537,6 @@ public class LhpnFile {
 					buffer.append(">");
 				}
 				buffer.append("\"];\n");
-				//Place[] postset = t.getPostset();
-				//for (Place place : postset) {
-				//	buffer.append(t.getName() + " -> " + place.getName() + "\n");
-				//}
 			}
 			for (Place place : places.values()) {
 				buffer.append(place.getName() + " [label=\"" + place.getName() + "\"];\n" + place.getName()
@@ -567,12 +557,6 @@ public class LhpnFile {
 					buffer.append(t.getName() + " -> " + place.getName() + "\n");
 				}
 			}
-			//for (Place place : places.values()) {
-			//	Transition[] postset = place.getPostset();
-			//	for (Transition t : postset) {
-			//		buffer.append(place.getName() + " -> " + t.getName() + "\n");
-			//	}
-			//}
 			buffer.append("}\n");
 			p.print(buffer);
 			p.close();
@@ -1132,14 +1116,6 @@ public class LhpnFile {
 			places.remove(name);
 		}
 	}
-
-	/*
-	 * public void renamePlace(String oldName, String newName, Boolean ic) {
-	 * Place place = new Place(newName, ic); if (oldName != null &&
-	 * places.containsKey(oldName)) { places.put(newName, place);
-	 * places.remove(oldName); } for (Transition t : transitions.values()) {
-	 * t.renamePlace(places.get(oldName), places.get(newName)); } }
-	 */
 
 	public void renamePlace(String oldName, String newName) {
 		if (oldName != null && places.containsKey(oldName)) {
@@ -1769,11 +1745,6 @@ public class LhpnFile {
 					}
 				} else {
 					delay = delayMatcher.group(2);
-					/*
-					if (delay.startsWith("[") && delay.endsWith("]")) {
-						delay = delay.substring(1, delay.length() - 1);
-					}
-					*/
 				}
 				if (transition.addDelay(delay) == false) {
 					error = false;
@@ -1874,10 +1845,6 @@ public class LhpnFile {
 		}
 	}
 	
-//	private static final String PROPERTY_LINE = "#@\\.properties \\{([.[^\\}]]+?)\\}";
-	
-//	private static final String PROPERTY = "<(\\S+?)>";
-	
 	private static final String PROPERTY = "#@\\.property (\\S+?)\\n";
 
 	private static final String INPUT = "\\.inputs([[\\s[^\\n]]\\w+]*?)\\n";
@@ -1926,8 +1893,6 @@ public class LhpnFile {
 
 	private static final String DELAY_LINE = "#@\\.delay_assignments \\{([\\S[^\\}]]+?)\\}";
 
-//	private static final String DELAY = "<([\\w_]+)=(\\S+?)>";
-
 	private static final String DELAY = "<([\\w_]+)=\\[(\\S+?)\\]>";
 
 	private static final String RANGE = "\\[([\\w-]+?),([\\w-]+?)\\]";
@@ -1947,9 +1912,5 @@ public class LhpnFile {
 	private static final String BOOLEAN_TRANS = "<(\\S+?)=\\[(\\S+?)\\]>";
 
 	private static final String BOOLEAN_ASSIGN = "([^:]+?):=(.+)";
-
-//	private static final String BOOLEAN_TRANS = "<([\\w]+?)=([\\S[^>]]+?)>";
-
-//	private static final String BOOLEAN_ASSIGN = "\\[([\\w_]+):=\\s?([\\S^\\]]+?)\\]";
 
 }
