@@ -23,7 +23,12 @@ import javax.swing.JCheckBox;
 
 public class AssignmentPanel extends JPanel implements ActionListener {
 
-	private String selected = "", transition, id, oldName = null;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private String selected = "", id, oldName = null;
 
 	private PropertyList assignmentList, continuousList, rateList, integerList, booleanList;
 
@@ -35,24 +40,19 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 
 	private LhpnFile lhpn;
 
-	// private JComboBox typeBox, varBox;
 	private JComboBox varBox;
 
 	private JCheckBox rateBox;
 
-	// private static final String[] types = { "boolean", "continuous", "rate"
-	// };
 
 	private HashMap<String, PropertyField> fields = null;
 
-	// private boolean rate = false;
 
 	public AssignmentPanel(String transition, String selected, PropertyList assignmentList,
 			PropertyList continuousList, PropertyList rateList, PropertyList booleanList,
 			PropertyList integerList, LhpnFile lhpn) {
 		super(new GridLayout(3, 1));
 		this.selected = selected;
-		//this.transition = transition;
 		this.assignmentList = assignmentList;
 		this.continuousList = continuousList;
 		this.rateList = rateList;
@@ -203,10 +203,8 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 				rateBox.setEnabled(false);
 			}
 			fields.get("Assignment").setValue(tempArray[1]);
-			// loadProperties(prop);
 		}
 
-		// setType(types[0]);
 		boolean display = false;
 		while (!display) {
 			display = openGui(oldName);
@@ -248,16 +246,6 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			if (!save()) {
 				return false;
 			}
-			// else if
-			// (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-			// if
-			// (lhpn.getVariables().containsKey(fields.get(GlobalConstants.ID).getValue()))
-			// {
-			// Utility.createErrorMessage("Error", "Assignment id already
-			// exists.");
-			// return false;
-			// }
-			// }
 			String assign = "";
 			assign = fields.get("Assignment").getValue();
 			if (rateBox.isSelected()) {
@@ -270,24 +258,13 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			// Check to see if we need to add or edit
 			Properties property = new Properties();
 			for (PropertyField f : fields.values()) {
-				// System.out.println(f.getKey());
 				if (f.getState() == null || f.getState().equals(PropertyField.states[1])) {
 					property.put(f.getKey(), f.getValue());
 				}
 			}
 			property.put("Variable", varBox.getSelectedItem().toString());
 
-			// if (selected != null && !oldName.equals(id)) {
-			// lhpn.removeContAssign(selected, oldName);
-			// }
-			// else {
-			// System.out.println(transition + " " + id + " " +
-			// property.getProperty("Assignment value"));
-			// lhpn.addContAssign(transition, id,
-			// property.getProperty("Value"));
-			// }
 			assignmentList.removeItem(oldName);
-			// System.out.println(id);
 			assignmentList.addItem(id);
 			assignmentList.setSelectedValue(id, true);
 			String var = varBox.getSelectedItem().toString();
@@ -316,7 +293,6 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 			}
 		}
 		else if (value == JOptionPane.NO_OPTION) {
-			// System.out.println();
 			return true;
 		}
 		return true;
@@ -324,7 +300,6 @@ public class AssignmentPanel extends JPanel implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
-			// setID(varBox.getSelectedItem().toString());
 			if (lhpn.isContinuous(varBox.getSelectedItem().toString())) {
 				rateBox.setEnabled(true);
 			}
