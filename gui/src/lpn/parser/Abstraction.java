@@ -6,7 +6,6 @@ import java.util.regex.Pattern;
 
 import main.Log;
 
-
 import verification.Verification;
 import verification.AbstPane;
 
@@ -190,6 +189,10 @@ public class Abstraction extends LhpnFile {
 			if (s.equals(abstPane.xform21) && abstPane.isAbstract()) {
 				normalizeDelays();
 			}
+			// Transform 31 - Simplify Delay Ranges
+			if (s.equals(abstPane.xform31) && abstPane.isAbstract()) {
+				minimizeUniforms();
+			}
 		}
 		change = true;
 		while (change && i < abstPane.maxIterations()) {
@@ -314,6 +317,10 @@ public class Abstraction extends LhpnFile {
 				if (s.equals(abstPane.xform21) && abstPane.isAbstract()) {
 					normalizeDelays();
 				}
+				// Transform 31 - Simplify Delay Ranges
+				if (s.equals(abstPane.xform31) && abstPane.isAbstract()) {
+					minimizeUniforms();
+				}
 			}
 			i++;
 		}
@@ -429,6 +436,10 @@ public class Abstraction extends LhpnFile {
 			// Transform 21 - Normalize Delays
 			if (s.equals(abstPane.xform21) && abstPane.isAbstract()) {
 				normalizeDelays();
+			}
+			// Transform 31 - Simplify Delay Ranges
+			if (s.equals(abstPane.xform31) && abstPane.isAbstract()) {
+				minimizeUniforms();
 			}
 		}
 		numTrans = transitions.size();
@@ -895,7 +906,9 @@ public class Abstraction extends LhpnFile {
 						String delayT = t.getDelay();
 						String delayTP = tP.getDelay();
 						if (!delayT.contains("uniform")
-								&& !delayT.matches("[\\d-]+")) {
+								&& !delayT.matches("[\\d-]+")
+								|| !delayTP.contains("uniform")
+								&& !delayTP.matches("[\\d-]+")) {
 							continue;
 						}
 						Pattern rangePattern = Pattern
@@ -964,6 +977,13 @@ public class Abstraction extends LhpnFile {
 				ExprTree enab = t.getEnablingTree();
 				if (enab != null) {
 					if (enab.containsVar(s)) {
+						isRead = true;
+						break;
+					}
+				}
+				ExprTree delay = t.getDelayTree();
+				if (delay != null) {
+					if (delay.containsVar(s)) {
 						isRead = true;
 						break;
 					}
@@ -1787,6 +1807,15 @@ public class Abstraction extends LhpnFile {
 					}
 				}
 			}
+			if (intProc.contains(process_trans.get(t))
+					&& t.getDelayTree() != null) {
+				for (String u : t.getDelayTree().getVars()) {
+					if (!allIntVars.contains(u)) {
+						allIntVars.add(u);
+						newIntVars.add(u);
+					}
+				}
+			}
 		}
 		do {
 			for (Transition t : transitions.values()) { // Determine which
@@ -1812,6 +1841,14 @@ public class Abstraction extends LhpnFile {
 				if (intProc.contains(process_trans.get(t))
 						&& t.getEnablingTree() != null) {
 					for (String v : t.getEnablingTree().getVars()) {
+						if (!allIntVars.contains(v)) {
+							addInterestingVariable(v);
+						}
+					}
+				}
+				if (intProc.contains(process_trans.get(t))
+						&& t.getDelayTree() != null) {
+					for (String v : t.getDelayTree().getVars()) {
 						if (!allIntVars.contains(v)) {
 							addInterestingVariable(v);
 						}
@@ -1871,57 +1908,20 @@ public class Abstraction extends LhpnFile {
 		}
 	}
 
+	private void minimizeUniforms() {
+		for (Transition t : transitions.values()) {
+			t.minimizeUniforms();
+		}
+	}
+
 	private void normalizeDelays() {
-		int N = abstPane.getNormFactor();
+		String N = new Integer(abstPane.getNormFactor()).toString();
 		for (Transition t : transitions.values()) {
 			if (!t.containsDelay()) {
 				continue;
 			}
-			ExprTree delay = t.getDelayTree();
-			switch (delay.isit) {
-			case 'n':
-				double val = delay.lvalue;
-				if (val % N == 0) {
-					continue;
-				}
-				int lower = (int) (val / N) * N;
-				Integer lInt = (Integer) lower;
-				String lVal = lInt.toString();
-				Integer uInt = lInt + N;
-				String uVal = uInt.toString();
-				t.addDelay("uniform(" + lVal + "," + uVal + ")");
-				break;
-			case 'a':
-				if (delay.op.equals("uniform")) {
-					lower = (int) delay.r1.lvalue;
-					lInt = (Integer) lower;
-					int upper = (int) delay.r2.uvalue;
-					uInt = (Integer) upper;
-					if (lower == upper) {
-						continue;
-					}
-					if (lower != INFIN) {
-						lInt = (lInt / N) * N;
-						lVal = lInt.toString();
-					} else {
-						lVal = "inf";
-					}
-					if (upper != INFIN) {
-						if (uInt % N != 0) {
-							uInt = (uInt / N + 1) * N;
-							uVal = uInt.toString();
-						} else {
-							uVal = lVal;
-						}
-					} else {
-						uVal = "inf";
-					}
-					t.addDelay("uniform(" + lVal + "," + uVal + ")");
-				}
-				break;
-			default:
-				break;
-			}
+			t.addDelay("uniform(floor(" + t.getDelay() + "/" + N + ")*" + N
+					+ ",ceil(" + t.getDelay() + "/" + N + ")*" + N + ")");
 		}
 	}
 
@@ -2156,27 +2156,7 @@ public class Abstraction extends LhpnFile {
 			oldDelay[1] = "inf";
 		}
 		for (Transition t : postset) {
-			if (t.getDelay() != null) {
-				Matcher newMatcher = rangePattern.matcher(t.getDelay());
-				if (newMatcher.find()) {
-					String newDelay[] = { newMatcher.group(1),
-							newMatcher.group(2) };
-					for (int i = 0; i < newDelay.length; i++) {
-						if (!oldDelay[i].equals("inf")
-								&& !newDelay[i].equals("inf")) {
-							if (i != 0 || !marked) {
-								newDelay[i] = String.valueOf(Integer
-										.parseInt(newDelay[i])
-										+ Integer.parseInt(oldDelay[i]));
-							}
-						} else {
-							newDelay[i] = "inf";
-						}
-					}
-					t.addDelay("uniform(" + newDelay[0] + "," + newDelay[1]
-							+ ")");
-				}
-			}
+			t.addDelay(transition.getDelay() + "+" + t.getDelay());
 		}
 		removeTransition(transition.getName());
 		return true;
@@ -2277,41 +2257,9 @@ public class Abstraction extends LhpnFile {
 		}
 		if (trans1.containsDelay() && trans2.containsDelay()) {
 			String[] delay = { trans1.getDelay(), trans2.getDelay() };
-			String[][] delayRange = new String[2][2];
-			Pattern pattern = Pattern.compile("uniform\\((\\S+?),(\\S+?)\\)");
 			for (int i = 0; i < delay.length; i++) {
-				Matcher matcher = pattern.matcher(delay[i]);
-				if (matcher.find()) {
-					delayRange[i][0] = matcher.group(1);
-					delayRange[i][1] = matcher.group(2);
-				} else {
-					delayRange[i][0] = delay[i];
-					delayRange[i][1] = delay[i];
-				}
-			}
-			if (delayRange[0][0].equals("inf")) {
-				delay[0] = delayRange[1][0];
-			} else if (delayRange[1][0].equals("inf")) {
-				delay[0] = delayRange[0][0];
-			} else if (Integer.parseInt(delayRange[0][0]) < Integer
-					.parseInt(delayRange[1][0])) {
-				delay[0] = delayRange[0][0];
-			} else {
-				delay[0] = delayRange[1][0];
-			}
-			if (delayRange[0][1].equals("inf")
-					|| delayRange[1][1].equals("inf")) {
-				delay[1] = "inf";
-			} else if (Integer.parseInt(delayRange[0][1]) > Integer
-					.parseInt(delayRange[1][1])) {
-				delay[1] = delayRange[0][1];
-			} else {
-				delay[1] = delayRange[1][1];
-			}
-			if (delay[0].equals(delay[1])) {
-				trans1.addDelay(delay[0]);
-			} else {
-				trans1.addDelay("uniform(" + delay[0] + "," + delay[1] + ")");
+				trans1.addDelay("uniform(min(" + delay[0] + "," + delay[1]
+						+ ")," + delay[0] + "+" + delay[1]);
 			}
 		} else {
 			trans1.addDelay("uniform(0,inf)");
@@ -2359,6 +2307,9 @@ public class Abstraction extends LhpnFile {
 					for (Transition t : transitions.values()) {
 						if (t.getEnablingTree() != null) {
 							t.getEnablingTree().replace(v, "boolean", init);
+						}
+						if (t.getDelayTree() != null) {
+							t.getDelayTree().replace(v, "boolean", init);
 						}
 						for (ExprTree e : t.getAssignTrees().values()) {
 							if (e != null) {
@@ -2411,6 +2362,9 @@ public class Abstraction extends LhpnFile {
 						if (t.getEnablingTree() != null) {
 							t.getEnablingTree().replace(v, "continuous", init);
 						}
+						if (t.getDelayTree() != null) {
+							t.getDelayTree().replace(v, "continuous", init);
+						}
 						for (ExprTree e : t.getAssignTrees().values()) {
 							if (e != null) {
 								e.replace(v, "continuous", init);
@@ -2451,6 +2405,9 @@ public class Abstraction extends LhpnFile {
 					for (Transition t : transitions.values()) {
 						if (t.getEnablingTree() != null) {
 							t.getEnablingTree().replace(v, "integer", init);
+						}
+						if (t.getDelayTree() != null) {
+							t.getDelayTree().replace(v, "integer", init);
 						}
 						for (ExprTree e : t.getAssignTrees().values()) {
 							if (e != null) {
@@ -2979,6 +2936,9 @@ public class Abstraction extends LhpnFile {
 			if (t.getEnablingTree() != null) {
 				t.getEnablingTree().replaceVar(var2, var1);
 			}
+			if (t.getDelayTree() != null) {
+				t.getDelayTree().replaceVar(var2, var1);
+			}
 			HashMap<String, ExprTree> m = t.getBoolAssignTrees();
 			for (ExprTree e : m.values()) {
 				if (e != null) {
@@ -3232,99 +3192,18 @@ public class Abstraction extends LhpnFile {
 				enabling = enabling + "|(" + tP.getEnabling() + ")";
 			}
 			t.addEnabling(enabling);
-			try {
-				Pattern pattern = Pattern.compile(RANGE);
-				Matcher matcher = pattern.matcher(t.getDelay());
-				ExprTree priority1 = t.getPriorityTree();
-				if (t.containsPriority()) {
-					priority1.setNodeValues(t.getEnablingTree(), priority1,
-							"*", 'a');
-				}
-				Integer dl1 = null, dl2 = null, du1 = null, du2 = null;
-				String dl1String = null, dl2String = null, du1String = null, du2String = null;
-				try {
-					if (matcher.find()) {
-						dl1 = Integer.parseInt(matcher.group(1));
-						du1 = Integer.parseInt(matcher.group(2));
-					} else {
-						dl1 = Integer.parseInt(t.getDelay());
-						du1 = Integer.parseInt(t.getDelay());
-					}
-				} catch (NumberFormatException e) {
-					if (t.getDelayTree().op.equals("uniform")) {
-						dl1String = t.getDelayTree().r1.toString();
-						du1String = t.getDelayTree().r2.toString();
-					} else {
-						dl1String = t.getDelay();
-						du1String = t.getDelay();
-					}
-				}
-				for (Transition tP : list) {
-					matcher = pattern.matcher(tP.getDelay());
-					try {
-						if (tP.getDelayTree().op.equals("uniform")) {
-							dl2String = tP.getDelayTree().r1.toString();
-							du2String = tP.getDelayTree().r2.toString();
-						} else {
-							dl2 = Integer.parseInt(tP.getDelay());
-							du2 = Integer.parseInt(tP.getDelay());
-						}
-					} catch (NumberFormatException e) {
-						if (matcher.find()) {
-							dl2String = matcher.group(1);
-							du2String = matcher.group(2);
-						} else {
-							dl2String = tP.getDelay();
-							du2String = tP.getDelay();
-						}
-					}
-					if (dl1 != null) {
-						if (dl1.compareTo(dl2) > 0) {
-							dl1 = dl2;
-						}
-					}
-					if (du1 != null) {
-						if (du1.compareTo(dl2) <= 0) {
-							du1 = du2;
-						}
-					}
-					ExprTree priority2 = tP.getPriorityTree();
-					if (tP.containsPriority()) {
-						priority2.setNodeValues(tP.getEnablingTree(),
-								priority2, "*", 'a');
-						priority1.setNodeValues(priority1, priority2, "+", 'a');
-					}
-				}
-				if (dl1 != null && du1 != null && du2 != null && dl2 != null) {
-					if (dl1.toString().equals(du1.toString())) {
-						t.addDelay(dl1.toString());
-					} else {
-						t.addDelay("uniform(" + dl1.toString() + ","
-								+ du1.toString() + ")");
-					}
-				} else {
-					if (dl1 != null) {
-						dl1String = dl1.toString();
-					}
-					if (dl2 != null) {
-						dl2String = dl2.toString();
-					}
-					if (du1 != null) {
-						du2String = du2.toString();
-					}
-					if (du2 != null) {
-						du2String = du2.toString();
-					}
-					t.addDelay("uniform(min(" + dl1String + "," + dl2String
-							+ "),max(" + du1String + "," + du2String + "))");
-				}
-				if (priority1 != null) {
-					t.addPriority(priority1.toString());
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				t.addDelay("uniform(0,inf)");
+			String minDelay = "", maxDelay = "";
+			for (Transition tP : list) {
+				minDelay = minDelay + "min(" + tP.getDelay() + ",";
+				maxDelay = maxDelay + "max(" + tP.getDelay() + ",";
 			}
+			minDelay = minDelay + t.getDelay();
+			maxDelay = maxDelay + t.getDelay();
+			for (int i = 0; i < list.size(); i++) {
+				minDelay = minDelay + ")";
+				maxDelay = maxDelay + ")";
+			}
+			t.addDelay("uniform(" + minDelay + "," + maxDelay + ")");
 			for (Transition tP : list) {
 				removeTransition(tP.getName());
 			}
@@ -3440,5 +3319,4 @@ public class Abstraction extends LhpnFile {
 
 	private static final String RANGE = "uniform\\((\\w+?),(\\w+?)\\)";
 
-	private static final int INFIN = 2147483647;
 }

@@ -66,8 +66,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	private boolean change, atacs;
 
-	// private JTabbedPane bigTab;
-
 	private PropertyList componentList;
 
 	private AbstPane abstPane;
@@ -92,8 +90,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		this.biosim = biosim;
 		this.log = log;
 		this.directory = directory;
-		// this.bigTab = bigTab;
-		// String[] getFilename = directory.split(separator);
 		verFile = verName + ".ver";
 		String[] tempArray = filename.split("\\.");
 		String traceFilename = tempArray[0] + ".trace";
@@ -1536,7 +1532,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void save(String filename) {
-		// JOptionPane.showMessageDialog(this, verifyFile);
 		try {
 			Properties prop = new Properties();
 			FileInputStream in = new FileInputStream(new File(directory
@@ -1632,12 +1627,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			} else {
 				prop.setProperty("verification.Graph", "false");
 			}
-			// if (quiet.isSelected()) {
-			// prop.setProperty("verification.quiet", "true");
-			// }
-			// else {
-			// prop.setProperty("verification.quiet", "false");
-			// }
 			if (verify.isSelected()) {
 				prop.setProperty("verification.algorithm", "verify");
 			} else if (vergate.isSelected()) {
