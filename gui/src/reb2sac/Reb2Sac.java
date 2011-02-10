@@ -164,7 +164,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	private Object[] props; // array for properties JList
 
 	private String sbmlFile, root; // sbml file and root directory
-	public String getRootPath(){return root;}
+
+	public String getRootPath() {
+		return root;
+	}
 
 	private Gui biomodelsim; // reference to the tstubd class
 
@@ -251,9 +254,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * 
 	 * @param modelFile
 	 */
-	public Reb2Sac(String sbmlFile, String sbmlProp, String root, Gui biomodelsim,
-			String simName, Log log, JTabbedPane simTab, String open, String modelFile,
-			AbstPane lhpnAbstraction) {
+	public Reb2Sac(String sbmlFile, String sbmlProp, String root, Gui biomodelsim, String simName,
+			Log log, JTabbedPane simTab, String open, String modelFile, AbstPane lhpnAbstraction) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -1926,9 +1928,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				modify = "/";
 			}
 			if (availSpecies.getSelectedItem() == null) {
-				JOptionPane.showMessageDialog(Gui.frame,
-						"You must select a model for simulation "
-								+ "in order to add a user defined condition.",
+				JOptionPane.showMessageDialog(Gui.frame, "You must select a model for simulation "
+						+ "in order to add a user defined condition.",
 						"Select A Model For Simulation", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -2439,9 +2440,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the add properties button is clicked
 		else if (e.getSource() == addProp) {
 			if (prop.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(Gui.frame,
-						"Enter a option into the option field!", "Must Enter an Option",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Enter a option into the option field!",
+						"Must Enter an Option", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			if (value.getText().trim().equals("")) {
@@ -3107,9 +3107,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Unable to add properties to property file.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to add properties to property file.",
+					"Error", JOptionPane.ERROR_MESSAGE);
 		}
 		if (monteCarlo.isSelected() || ODE.isSelected()) {
 			File[] files = new File(root + separator + outDir).listFiles();
@@ -3143,13 +3142,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			if (transientProperties != null) {
 				lpnProperty = ((String) transientProperties.getSelectedItem());
 			}
-			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, Gui.frame, ODE,
-					monteCarlo, sim, printer_id, printer_track_quantity,
-					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
-							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
-					simTab, root, progress, simName + " " + direct, gcmEditor, direct, timeLimit,
-					runTime, modelFile, lhpnAbstraction, abstraction, lpnProperty, absError,
-					timeStep, printInterval, run);
+			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, Gui.frame, ODE, monteCarlo,
+					sim, printer_id, printer_track_quantity, root + separator + simName, nary, 1,
+					intSpecies, log, usingSSA, root + separator + outDir + separator
+							+ "user-defined.dat", biomodelsim, simTab, root, progress, simName
+							+ " " + direct, gcmEditor, direct, timeLimit, runTime, modelFile,
+					lhpnAbstraction, abstraction, lpnProperty, absError, timeStep, printInterval,
+					run);
 		}
 		else {
 			if (gcmEditor != null) {
@@ -3173,13 +3172,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			if (transientProperties != null) {
 				lpnProperty = ((String) transientProperties.getSelectedItem());
 			}
-			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, Gui.frame, ODE,
-					monteCarlo, sim, printer_id, printer_track_quantity,
-					root + separator + simName, nary, 1, intSpecies, log, usingSSA, root
-							+ separator + outDir + separator + "user-defined.dat", biomodelsim,
-					simTab, root, progress, simName, gcmEditor, null, timeLimit, runTime,
-					modelFile, lhpnAbstraction, abstraction, lpnProperty, absError, timeStep,
-					printInterval, run);
+			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, Gui.frame, ODE, monteCarlo,
+					sim, printer_id, printer_track_quantity, root + separator + simName, nary, 1,
+					intSpecies, log, usingSSA, root + separator + outDir + separator
+							+ "user-defined.dat", biomodelsim, simTab, root, progress, simName,
+					gcmEditor, null, timeLimit, runTime, modelFile, lhpnAbstraction, abstraction,
+					lpnProperty, absError, timeStep, printInterval, run);
 		}
 		if (nary.isSelected() && gcmEditor == null && !sim.contains("markov-chain-analysis")
 				&& !lhpn.isSelected() && exit == 0) {
@@ -3626,9 +3624,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			store.close();
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Unable to add properties to property file.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to add properties to property file.",
+					"Error", JOptionPane.ERROR_MESSAGE);
 		}
 		change = false;
 	}
@@ -5088,5 +5085,25 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	public String getBackgroundFile() {
 		return backgroundField.getText();
+	}
+
+	public void updateProperties() {
+		if (transientProperties != null) {
+			String[] props = new String[0];
+			if (modelFile.contains(".lpn")) {
+				LhpnFile lpn = new LhpnFile();
+				lpn.load(root + separator + modelFile);
+				props = lpn.getProperties().toArray(new String[0]);
+			}
+			else {
+				GCMFile gcm = new GCMFile(root);
+				gcm.load(root + separator + modelFile);
+				props = gcm.getConditions().toArray(new String[0]);
+			}
+			transientProperties.removeAllItems();
+			for (String s : props) {
+				transientProperties.addItem(s);
+			}
+		}
 	}
 }
