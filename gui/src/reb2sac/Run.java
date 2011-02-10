@@ -583,13 +583,24 @@ public class Run implements ActionListener {
 										di.split("=")[0].split("-")[0]);
 								speciesProps.put(di.split("=")[0].split("-")[1], di.split("=")[1]);
 							}
-							if (gcm.getInfluences().containsKey(
-									di.split("=")[0].split("-")[0].substring(1))) {
+							String influence = "";
+							for (String infl : gcm.getInfluences().keySet()) {
+								boolean matchInfl = true;
+								for (String part : di.split("=")[0].split("-")[0]
+										.split("_")) {
+									if (!infl.contains(part)) {
+										matchInfl = false;
+									}
+								}
+								if (matchInfl) {
+									influence = infl;
+								}
+							}
+							if (!influence.equals("")) {
 								Properties influenceProps = gcm.getInfluences().get(
-										di.split("=")[0].split("-")[0].substring(1));
-								influenceProps.put(
-										di.split("=")[0].split("-")[1].replace("\"", ""), di
-												.split("=")[1]);
+										influence);
+								influenceProps.put(di.split("=")[0].split("-")[1].replace(
+										"\"", ""), di.split("=")[1]);
 							}
 						}
 						else {
@@ -1083,10 +1094,22 @@ public class Run implements ActionListener {
 										speciesProps.put(di.split("=")[0].split("-")[1], di
 												.split("=")[1]);
 									}
-									if (gcm.getInfluences().containsKey(
-											di.split("=")[0].split("-")[0].substring(1))) {
+									String influence = "";
+									for (String infl : gcm.getInfluences().keySet()) {
+										boolean matchInfl = true;
+										for (String part : di.split("=")[0].split("-")[0]
+												.split("_")) {
+											if (!infl.contains(part)) {
+												matchInfl = false;
+											}
+										}
+										if (matchInfl) {
+											influence = infl;
+										}
+									}
+									if (!influence.equals("")) {
 										Properties influenceProps = gcm.getInfluences().get(
-												di.split("=")[0].split("-")[0].substring(1));
+												influence);
 										influenceProps.put(di.split("=")[0].split("-")[1].replace(
 												"\"", ""), di.split("=")[1]);
 									}
@@ -2619,8 +2642,8 @@ public class Run implements ActionListener {
 			}
 		}
 		catch (InterruptedException e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!",
-					"Error In Execution", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!", "Error In Execution",
+					JOptionPane.ERROR_MESSAGE);
 			e1.printStackTrace();
 		}
 		catch (IOException e1) {
