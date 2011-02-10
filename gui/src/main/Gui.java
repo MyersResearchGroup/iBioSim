@@ -11349,7 +11349,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 					for (int j = 0; j < sim.getTabCount(); j++) {
 						String tabName = sim.getComponentAt(j).getName();
 						boolean b = sim.getComponentAt(j).getName().equals("ModelViewMovie");
-						if (sim.getComponentAt(j).getName().equals("SBML Editor")) {
+						if (sim.getComponentAt(j) instanceof Reb2Sac) {
+							((Reb2Sac) sim.getComponentAt(j)).updateProperties();
+						}
+						else if (sim.getComponentAt(j).getName().equals("SBML Editor")) {
 							new File(properties).renameTo(new File(properties.replace(".sim",
 									".temp")));
 							try {
