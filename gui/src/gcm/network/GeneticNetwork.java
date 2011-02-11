@@ -335,14 +335,14 @@ public class GeneticNetwork {
 
 			// Next setup activated binding
 			PrintActivatedBindingVisitor v = new PrintActivatedBindingVisitor(
-					document, p, compartment);
+					document, p, compartment, complexMap);
 			v.setCooperationAbstraction(cooperationAbstraction);
 			v.setComplexAbstraction(complexAbstraction);
 			v.run();
 
 			// Next setup repression binding
 			PrintRepressionBindingVisitor v2 = new PrintRepressionBindingVisitor(
-					document, p, compartment);
+					document, p, compartment, complexMap);
 			v2.setCooperationAbstraction(cooperationAbstraction);
 			v2.setComplexAbstraction(complexAbstraction);
 			v2.run();
@@ -418,7 +418,7 @@ public class GeneticNetwork {
 	}
 	
 	private void printComplexBinding(SBMLDocument document) {
-		PrintComplexVisitor v = new PrintComplexVisitor(document, species.values(), compartments);
+		PrintComplexVisitor v = new PrintComplexVisitor(document, species.values(), compartments, complexMap);
 		v.run();
 	}
 	
@@ -913,7 +913,8 @@ public class GeneticNetwork {
 	 */
 	private void buildComplexes() {
 		for (String complexId : complexMap.keySet()) {
-			ComplexSpecies c = new ComplexSpecies(species.get(complexId), complexMap.get(complexId));
+//			ComplexSpecies c = new ComplexSpecies(species.get(complexId), complexMap.get(complexId));
+			ComplexSpecies c = new ComplexSpecies(species.get(complexId));
 			species.put(complexId, c);
 		}
 	}
