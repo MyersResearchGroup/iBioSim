@@ -39,14 +39,6 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	private GCM2SBMLEditor gcm2sbml;
 	private GCMFile gcm;
 	
-	/////////////////////////////////////////////////////////////////////////////////
-	// Getters
-//	public String getUserSelectedButton(){return userSelectedButton;}
-//	
-//	public String getSelectedComponent(){return (String)componentCombo.getSelectedItem();}
-//	
-//	public boolean getDoTiling(){return doTiling.isSelected();}
-	
 	// the public interface to this class.
 	// returns true if at least 1 component was dropped.
 	private static DropComponentPanel panel;
@@ -64,8 +56,6 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		this.gcm2sbml = gcm2sbml;
 		this.gcm = gcm;
 	
-		// dropdown to choose component
-		
 		ArrayList<String> gcmList = gcm2sbml.getComponentsList();
 		
 		if(gcmList.size() == 0){
@@ -184,10 +174,12 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	
 	public void actionPerformed(ActionEvent e) {
 		// TODO Auto-generated method stub
-		
 		updateTilingEnabled();
 	}
 	
+	/**
+	 * updates the enabled property of all the components that are enabled and disabled with the tiling options.
+	 */
 	private void updateTilingEnabled(){
 		boolean enabled = doTiling.isSelected();
 		
