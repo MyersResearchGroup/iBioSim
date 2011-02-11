@@ -2,6 +2,9 @@ package gcm.visitor;
 
 
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
@@ -20,9 +23,11 @@ import org.sbml.libsbml.SBMLDocument;
 
 public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 
-	public PrintRepressionBindingVisitor(SBMLDocument document, Promoter p, String compartment) {
+	public PrintRepressionBindingVisitor(SBMLDocument document, Promoter p, String compartment, 
+			HashMap<String, ArrayList<PartSpecies>> complexMap) {
 		super(document);
 		this.promoter = p;
+		this.complexMap = complexMap;
 		this.compartment = compartment;
 	}
 
@@ -51,13 +56,13 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitComplex(ComplexSpecies specie) {
 		loadValues(specie);
-		org.sbml.libsbml.Reaction r = Utility.Reaction(reactionName);
+		r = Utility.Reaction(reactionName);
 		r.setCompartment(compartment);
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addProduct(Utility.SpeciesReference(speciesName, 1));
 		r.setReversible(true);
 		r.setFast(false);
-		KineticLaw kl = r.createKineticLaw();
+		kl = r.createKineticLaw();
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
 		if (krep.length == 2) {
@@ -70,26 +75,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String repMolecule = "";
 		if (complexAbstraction) {
-			if (kcomp.length == 2) {
-				kl.addParameter(Utility.Parameter(kcompString, kcomp[0]/kcomp[1],
-						GeneticNetwork.getMoleParameter(2)));
-			} else {
-				kl.addParameter(Utility.Parameter(kcompString, kcomp[0],
-						GeneticNetwork.getMoleParameter(2)));
-			}
-			String ncSum = "";
-			for (PartSpecies part : specie.getParts()) {
-				SpeciesInterface s = part.getSpecies();
-				double n = part.getStoich();
-				r.addReactant(Utility.SpeciesReference(s.getId(), n*coop));
-				repMolecule = repMolecule + "*" + s.getId();
-				if (n > 1) {
-					repMolecule = repMolecule + '^' + coopString + "_" + s.getId();
-				}
-				kl.addParameter(Utility.Parameter(coopString + "_" + s.getId(), n, "dimensionless"));
-				ncSum = ncSum + coopString + "_" + s.getId() + "+";
-			}
-			repMolecule = kcompString + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + repMolecule;
+			repMolecule = abstractComplex(specie, 1, "");
 		} else {
 			repMolecule = specie.getId();
 			r.addReactant(Utility.SpeciesReference(repMolecule, coop));
@@ -100,17 +86,45 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);
 	}
 	
+	//Recursively breaks down repressing complex into its constituent species and complex formation equilibria
+	private String abstractComplex(SpeciesInterface complex, double multiplier, String ncProduct) {
+		String repMolecule = "";
+		kcomp = complex.getKc();
+		if (kcomp.length == 2) {
+			kl.addParameter(Utility.Parameter(kcompString + "_" + complex.getId(), kcomp[0]/kcomp[1],
+					GeneticNetwork.getMoleParameter(2)));
+		} else {
+			kl.addParameter(Utility.Parameter(kcompString + "_" + complex.getId(), kcomp[0],
+					GeneticNetwork.getMoleParameter(2)));
+		}
+		String ncSum = "";
+		for (PartSpecies part : complexMap.get(complex.getId())) {
+			SpeciesInterface s = part.getSpecies();
+			double n = part.getStoich();
+			kl.addParameter(Utility.Parameter(coopString + "_" + s.getId(), n, "dimensionless"));
+			ncSum = ncSum + coopString + "_" + s.getId() + "+";
+			if (complexMap.containsKey(s.getId())) {
+				repMolecule = "*" + abstractComplex(s, multiplier * n, ncProduct + coopString + "_" + s.getId() + "*") + repMolecule;
+			} else {
+				r.addReactant(Utility.SpeciesReference(s.getId(), multiplier * n * coop));
+				repMolecule = repMolecule + "*" + s.getId() + '^' + "(" + ncProduct + coopString + "_" + s.getId() + ")";
+			}
+		}
+		repMolecule = kcompString + "_" + complex.getId() + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + repMolecule;	
+		return repMolecule;
+	}
+	
 	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues(specie);
-		org.sbml.libsbml.Reaction r = Utility.Reaction(reactionName);
+		r = Utility.Reaction(reactionName);
 		r.setCompartment(compartment);
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		r.addProduct(Utility.SpeciesReference(speciesName, 1));
 		r.setReversible(true);
 		r.setFast(false);
-		KineticLaw kl = r.createKineticLaw();
+		kl = r.createKineticLaw();
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
 		if (krep.length == 2) {
@@ -130,14 +144,14 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitConstantSpecies(ConstantSpecies specie) {
 		loadValues(specie);
-		org.sbml.libsbml.Reaction r = Utility.Reaction(reactionName);
+		r = Utility.Reaction(reactionName);
 		r.setCompartment(compartment);
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		r.addProduct(Utility.SpeciesReference(speciesName, 1));
 		r.setReversible(true);
 		r.setFast(false);
-		KineticLaw kl = r.createKineticLaw();
+		kl = r.createKineticLaw();
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
 		if (krep.length == 2) {
@@ -157,14 +171,14 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie);
-		org.sbml.libsbml.Reaction r = Utility.Reaction(reactionName);
+		r = Utility.Reaction(reactionName);
 		r.setCompartment(compartment);
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
 		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		r.addProduct(Utility.SpeciesReference(speciesName, 1));
 		r.setReversible(true);
 		r.setFast(false);
-		KineticLaw kl = r.createKineticLaw();
+		kl = r.createKineticLaw();
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
 		//as equilibrium binding constants before adding to kinetic law
 		if (krep.length == 2) {
@@ -182,7 +196,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	}
 
 	/**
-	 * Generates a kenetic law
+	 * Generates a kinetic law
 	 * 
 	 * @param specieName
 	 *            specie name
@@ -209,7 +223,10 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		
 
 	private Promoter promoter;
-
+	private HashMap<String, ArrayList<PartSpecies>> complexMap;
+	private org.sbml.libsbml.Reaction r;
+	private KineticLaw kl;
+	
 	private double kcomp[];
 	private double coop;
 	private double krep[];

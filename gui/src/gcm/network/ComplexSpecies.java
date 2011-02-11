@@ -8,13 +8,14 @@ import gcm.visitor.SpeciesVisitor;
 
 public class ComplexSpecies extends AbstractSpecies {
 	
-	public ComplexSpecies(SpeciesInterface s, ArrayList<PartSpecies> parts) {
+//	public ComplexSpecies(SpeciesInterface s, ArrayList<PartSpecies> parts) {
+	public ComplexSpecies(SpeciesInterface s) {
 		id = s.getId();
-		this.parts = parts;
+//		this.parts = parts;
 		properties = s.getProperties();
-		for (PartSpecies p : parts) {
-			size += (int) p.getStoich();
-		}
+//		for (PartSpecies p : parts) {
+//			size += (int) p.getStoich();
+//		}
 	}
 	
 	/**
@@ -30,15 +31,15 @@ public class ComplexSpecies extends AbstractSpecies {
 	}
 	
 	
-	public ArrayList<PartSpecies> getParts() {
-		return parts;
-	}
+//	public ArrayList<PartSpecies> getParts() {
+//		return parts;
+//	}
 	
 	
-	public int getSize() {
-		return size;
-	}
+//	public int getSize() {
+//		return size;
+//	}
 	
-	private ArrayList<PartSpecies> parts;
-	private int size = 0;
+//	private ArrayList<PartSpecies> parts;
+//	private int size = 0;
 }

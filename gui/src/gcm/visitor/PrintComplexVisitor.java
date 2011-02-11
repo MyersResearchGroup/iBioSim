@@ -2,6 +2,7 @@ package gcm.visitor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import gcm.network.ComplexSpecies;
 import gcm.network.GeneticNetwork;
@@ -18,9 +19,10 @@ import org.sbml.libsbml.SBMLDocument;
 public class PrintComplexVisitor extends AbstractPrintVisitor {
 	
 	public PrintComplexVisitor(SBMLDocument document, Collection<SpeciesInterface> species,
-			ArrayList<String> compartments) {
+			ArrayList<String> compartments, HashMap<String, ArrayList<PartSpecies>> complexMap) {
 		super(document);
 		this.species = species;
+		this.complexMap = complexMap;
 		this.compartments = compartments;
 	}
 
@@ -46,7 +48,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		r.setFast(false);
 		KineticLaw kl = r.createKineticLaw();
 		String ncSum = "";
-		for (PartSpecies part : specie.getParts()) {
+		for (PartSpecies part : complexMap.get(specie.getId())) {
 			SpeciesInterface s = part.getSpecies();
 			double n = part.getStoich();
 			r.addReactant(Utility.SpeciesReference(s.getId(), n));
@@ -87,4 +89,5 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 	private String coopString = GlobalConstants.COOPERATIVITY_STRING;
 	private Collection<SpeciesInterface> species;
 	private ArrayList<String> compartments;
+	private HashMap<String, ArrayList<PartSpecies>> complexMap;
 }
