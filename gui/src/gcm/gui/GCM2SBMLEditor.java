@@ -1562,6 +1562,36 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		return check;
 	}
 	
+	
+	/**
+	 * @return a list of all gcm files that can be included.
+	 */
+	public ArrayList<String> getComponentsList(){
+
+		// get a list of components
+		ArrayList<String> components = new ArrayList<String>();
+		for (String s : new File(path).list()) {
+			if (s.endsWith(".gcm") && !s.equals(filename) && checkNoComponentLoop(filename, s)) {
+				components.add(s);
+			}
+		}
+		
+		// I think this sorts them
+		int i, j;
+		String index;
+		for (i = 1; i < components.size(); i++) {
+			index = components.get(i);
+			j = i;
+			while ((j > 0) && components.get(j - 1).compareToIgnoreCase(index) > 0) {
+				components.set(j, components.get(j - 1));
+				j = j - 1;
+			}
+			components.set(j, index);
+		}
+		
+		return components;
+	}
+	
 	/*
 	 * 
 	 * Displays the "Choose Component" dialog and then adds the component afterward.
@@ -1587,23 +1617,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			comp = selected.split(" ")[1] + ".gcm";
 		}
 		else {
-			ArrayList<String> components = new ArrayList<String>();
-			for (String s : new File(path).list()) {
-				if (s.endsWith(".gcm") && !s.equals(filename) && checkNoComponentLoop(filename, s)) {
-					components.add(s);
-				}
-			}
-			int i, j;
-			String index;
-			for (i = 1; i < components.size(); i++) {
-				index = components.get(i);
-				j = i;
-				while ((j > 0) && components.get(j - 1).compareToIgnoreCase(index) > 0) {
-					components.set(j, components.get(j - 1));
-					j = j - 1;
-				}
-				components.set(j, index);
-			}
+			ArrayList<String> components = getComponentsList();
+
 			if (components.size() == 0) {
 				comp = null;
 				JOptionPane.showMessageDialog(Gui.frame,
