@@ -1956,8 +1956,8 @@ public class GCMFile {
 	 * over that point.
 	 */
 	public void centerVertexOverPoint(Properties prop, double x, double y) {
-		x -= Double.parseDouble(prop.getProperty("graphwidth", "60")) / 2.0;
-		y -= Double.parseDouble(prop.getProperty("graphheight", "20")) / 2.0;
+		x -= Double.parseDouble(prop.getProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH))) / 2.0;
+		y -= Double.parseDouble(prop.getProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_HEIGHT))) / 2.0;
 		prop.setProperty("graphx", String.valueOf(x));
 		prop.setProperty("graphy", String.valueOf(y));
 	}

@@ -66,6 +66,8 @@ public class GlobalConstants {
 	public static final String TRUE = "true";
 	public static final String FALSE = "false";
 	public static final String NONE = "none";
+	public static final String OK = "Ok";
+	public static final String CANCEL = "Cancel";
 	
 //	public static final String MAX_DIMER_VALUE = "1";
 //	public static final String INITIAL_VALUE = "0";
@@ -78,4 +80,6 @@ public class GlobalConstants {
 	public static final int DEFAULT_SPECIES_HEIGHT = 30;
 	public static final int DEFAULT_COMPONENT_WIDTH = 80;
 	public static final int DEFAULT_COMPONENT_HEIGHT = 40;
+	
+	
 }

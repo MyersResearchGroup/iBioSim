@@ -1,5 +1,6 @@
 package gcm.gui.schematic;
 
+import gcm.gui.DropComponentPanel;
 import gcm.gui.GCM2SBMLEditor;
 import gcm.gui.InfluencePanel;
 import gcm.gui.PromoterPanel;
@@ -282,15 +283,19 @@ public class Schematic extends JPanel implements ActionListener {
 							gcm2sbml.setDirty(true);
 							gcm.makeUndoPoint();
 						}else if(addComponentButton.isSelected()){
-							// Ask the user which component to add, then plop it down where the click happened
-//							String comp = (String) JOptionPane.showInputDialog(BioSim.frame,
-//									"Choose a gcm to use as a component:", "Component Editor",
-//									JOptionPane.PLAIN_MESSAGE, null, 
-//									gcm2sbml.getAllPossibleComponentNames().toArray(), null);
-							String createdID = gcm2sbml.displayChooseComponentDialog(false, null, true);
-							if(createdID != null){
-								gcm.centerVertexOverPoint(gcm.getComponents().get(createdID), 
-										e.getX(), e.getY());
+
+//							String createdID = gcm2sbml.displayChooseComponentDialog(false, null, true);
+//							if(createdID != null){
+//								gcm.centerVertexOverPoint(gcm.getComponents().get(createdID), 
+//										e.getX(), e.getY());
+//								gcm2sbml.setDirty(true);
+//								graph.buildGraph();
+//								gcm2sbml.refresh();
+//								gcm.makeUndoPoint();
+//							}
+							
+							boolean dropped = DropComponentPanel.dropComponent(gcm2sbml, gcm, e.getX(), e.getY());
+							if(dropped){
 								gcm2sbml.setDirty(true);
 								graph.buildGraph();
 								gcm2sbml.refresh();
