@@ -3073,6 +3073,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							}
 							start = Math.max(Integer.parseInt(number), start);
 						}
+						else if (s.length() > 3
+								&& new File(root + separator + outDir + separator + s).isFile()
+								&& (s.equals("mean.tsd") || s.equals("standard_deviation.tsd") || s
+										.equals("variance.tsd"))) {
+							new File(root + separator + outDir + separator + s).delete();
+						}
 					}
 					getProps.setProperty("monte.carlo.simulation.start.index", (start + 1) + "");
 				}
