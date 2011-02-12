@@ -100,6 +100,7 @@ import org.w3c.dom.DOMImplementation;
 import parser.TSDParser;
 import reb2sac.Reb2Sac;
 import util.Utility;
+import util.myButton;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Rectangle;
@@ -4392,8 +4393,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			});
 			colorsCombo.add(colBox);
-			JButton colorButton = new JButton();
-			colorButton.setUI(new WindowsButtonUI());
+			JButton colorButton = new myButton();
+			//colorButton.setUI(new WindowsButtonUI());
 			colorButton.setBackground((Color) colory.get("Black"));
 			colorButton.setForeground((Color) colory.get("Black"));
 			colorButton.setActionCommand("" + i);
