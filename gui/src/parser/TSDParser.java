@@ -130,8 +130,13 @@ public class TSDParser extends Parser {
 						}
 						double dataPoint = Double.parseDouble(word);
 						(data.get(insert)).add(dataPoint);
-						this.minValue = Math.min(this.minValue, dataPoint);
-						this.maxValue = Math.max(this.maxValue, dataPoint);
+						
+						// add the value to the min and max if it isn't a time value
+						if(dataPoints > 0){
+							this.minValue = Math.min(this.minValue, dataPoint);
+							this.maxValue = Math.max(this.maxValue, dataPoint);
+						}
+						
 						counter++;
 						dataPoints++;
 						if (cha == ')') {

@@ -51,19 +51,24 @@ public class ColorScheme {
 	}
 	
 	public ColorScheme() {
-		this.min=0;
-		this.max=100;
-		this.colorGradient = new ColorGradient();
+		defaultConstructor();
 	}
 	
 	public ColorScheme(TSDParser tsdParser){
 		super();
+		defaultConstructor();
 		if(tsdParser != null){
 			this.min = tsdParser.getMinValue();
 			this.max = tsdParser.getMaxValue();
 		}
 	}
 
+	private void defaultConstructor(){
+		this.min=0;
+		this.max=100;
+		this.colorGradient = new ColorGradient();
+	}
+	
 	/**
 	 * Returns a color on the gradient based on the input value.
 	 * @param val: The value you want to get a color for.

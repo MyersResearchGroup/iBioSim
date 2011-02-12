@@ -341,7 +341,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		for(String s:gcm.getSpecies().keySet()){
 			if(dataHash.containsKey(s)){
 				double value = dataHash.get(s).get(frameIndex);
-				Color color = moviePreferences.getColorSchemeForSpecies(s).getColor(value);
+				Color color = moviePreferences.getOrCreateColorSchemeForSpecies(s, null).getColor(value);
 				schematic.setSpeciesAnimationValue(s, color);
 			}
 		}
