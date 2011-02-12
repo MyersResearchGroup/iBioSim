@@ -107,7 +107,6 @@ import com.lowagie.text.pdf.DefaultFontMapper;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
-import com.sun.java.swing.plaf.windows.WindowsBorders;
 import com.sun.java.swing.plaf.windows.WindowsButtonUI;
 
 /**
@@ -4395,7 +4394,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			colorsCombo.add(colBox);
 			JButton colorButton = new JButton();
 			colorButton.setUI(new WindowsButtonUI());
-			colorButton.setBorder(WindowsBorders.getToolBarBorder());
 			colorButton.setBackground((Color) colory.get("Black"));
 			colorButton.setForeground((Color) colory.get("Black"));
 			colorButton.setActionCommand("" + i);
@@ -7773,7 +7771,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			colorsCombo.add(colBox);
 			JButton colorButton = new JButton();
 			colorButton.setUI(new WindowsButtonUI());
-			colorButton.setBorder(WindowsBorders.getToolBarBorder());
 			colorButton.setBackground((Color) colory.get("Black"));
 			colorButton.setForeground((Color) colory.get("Black"));
 			colorButton.setActionCommand("" + i);
