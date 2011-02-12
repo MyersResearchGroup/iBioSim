@@ -38,6 +38,7 @@ import java.util.Properties;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -53,6 +54,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.SwingConstants;
+import javax.swing.border.BevelBorder;
+import javax.swing.border.Border;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -4394,6 +4397,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			});
 			colorsCombo.add(colBox);
 			JButton colorButton = new myButton();
+			Border border = BorderFactory.createBevelBorder(BevelBorder.RAISED);
+			colorButton.setBorder(border);
 			//colorButton.setUI(new WindowsButtonUI());
 			colorButton.setBackground((Color) colory.get("Black"));
 			colorButton.setForeground((Color) colory.get("Black"));
