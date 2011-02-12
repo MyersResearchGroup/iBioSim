@@ -29,7 +29,7 @@ public class MoviePreferences {
 	public ColorScheme getOrCreateColorSchemeForSpecies(String species, TSDParser tsdParser){
 		ColorScheme cs = speciesColorSchemes.get(species);
 		if(cs == null){
-			cs = new ColorScheme();
+			cs = new ColorScheme(tsdParser);
 			speciesColorSchemes.put(species, cs);
 		}
 		return cs;
