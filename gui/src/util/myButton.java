@@ -25,4 +25,8 @@ public class myButton extends JButton {
 		g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
 				RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
 	}
+	
+	protected void paintBorder(Graphics g) {
+		this.getBorder().paintBorder(this, g, 0, 0, 20, 20);
+	}
 }
