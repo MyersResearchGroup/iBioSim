@@ -71,7 +71,11 @@ public class GillespieSSAJavaSingleStep {
 	private PrintStream outTSD;
 	private double runUntil = 0;
 	private boolean[] prevTriggerValArray = null;
-	boolean eventDelayNegative = false;
+	private ListOfEvents eventList = null;
+	private PriorityQueue<EventQueueElement> eventQueue = null;
+	private int initEventQueueCap = 10;
+	private Model model = null;
+	private int optValFireReaction = -1;
 	
 	public GillespieSSAJavaSingleStep() {
 	}
@@ -83,7 +87,7 @@ public class GillespieSSAJavaSingleStep {
 	 outTSD = new PrintStream(output);
 	 SBMLReader reader = new SBMLReader();
 	 SBMLDocument document = reader.readSBML(SBMLFileName);
-	 Model model = document.getModel();
+	 model = document.getModel();
 	 outTSD.print("(");
 	 for (int i=0; i < model.getNumReactions(); i++){
 		 Reaction reaction = model.getReaction(i);
@@ -126,6 +130,8 @@ public class GillespieSSAJavaSingleStep {
 			 }
 		 }
 		 if (GlobalParamsList.size() > 0) {
+			 if (SpeciesList.size() > 0)
+				 outTSD.print(",");
 			 for (int i=0;i<GlobalParamsList.size();i++){
 				 if (i<GlobalParamsList.size()-1)
 					 outTSD.print("\"" + GlobalParamsList.keySet().toArray()[i] + "\"" + ",");
@@ -135,20 +141,7 @@ public class GillespieSSAJavaSingleStep {
 		 }
 		 outTSD.print("),");
 		 // print the initial values
-		 outTSD.print("(" + time + ", ");
-		 for (int i=0;i<SpeciesList.size();i++){
-			 if (i<SpeciesList.size()-1)
-				 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]) + ", ");
-			 else
-				 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]));
-		 }
-		 for (int i=0;i<GlobalParamsList.size();i++){
-			 if (i<GlobalParamsList.size()-1)
-				 outTSD.print(GlobalParamsList.get(GlobalParamsList.keySet().toArray()[i]) + ", ");
-			 else
-				 outTSD.print(GlobalParamsList.get(GlobalParamsList.keySet().toArray()[i]));
-		 }
-		 outTSD.print("),");
+		 printTSDVals();
 	 }
 
 	 //Currently, we assume only one compartment in one SBML file
@@ -214,9 +207,6 @@ public class GillespieSSAJavaSingleStep {
 	 
 	  // Initialize events.
 	 // if model does not include any events, both eventList and eventQueue are set to null
-	 ListOfEvents eventList = null;
-	 PriorityQueue<EventQueueElement> eventQueue = null;
-	 int initEventQueueCap = 20;
 	 if (model.getListOfEvents().size() >0) {
 		  eventList = model.getListOfEvents();
 		  prevTriggerValArray = new boolean[(int) eventList.size()];
@@ -259,30 +249,17 @@ public class GillespieSSAJavaSingleStep {
 			  maxTime = maxTime + timeStep;
 		  }
 		  evaluateRules(model);
-		  if (model.getListOfEvents().size() >0) { 
-			  do {
-				  nextEventTime = updateEventQueue(eventList, eventQueue); // if (eventQueue is empty), then nextEventTime = -1
-				  if (!eventDelayNegative && eventQueue.size() > 0) {
-					  boolean eventFired = fireEvent(eventQueue, initEventQueueCap, eventList);
-					  if (eventFired) {
-						  evaluateRules(model);
-						  // TODO evaluate algebraic and rate rules and constraints
-						  nextEventTime = updateEventQueue(eventList, eventQueue);
-					  }  
-				  } 
-			  }
-			  while (eventQueue.size() > 0 && time == eventQueue.peek().getScheduledTime());
-		  }
-		  if (eventDelayNegative) {
-			  JOptionPane.showMessageDialog(Gui.frame, "Delay expression evaluates to a negative number.",
-						"Error in piecewise function", JOptionPane.ERROR_MESSAGE);
-			  break;
-		  }
+		  String[] CustomParamsUpdateFireEvents = new String[2];
+          CustomParamsUpdateFireEvents = UpdateFireEvents();
+          int optVal = Integer.parseInt(CustomParamsUpdateFireEvents[0]);
+          boolean eventDelayNegative = Boolean.parseBoolean(CustomParamsUpdateFireEvents[1]);
+          if (eventDelayNegative || optVal == 2 || (time > 0 && optVal == -1)) 
+        	  break;
 		  if (nextEventTime < maxTime && nextEventTime>0) {
 			  maxTime = nextEventTime;
 		  }
 		  
-		  // TODO evaluate rules, constraints
+		  // TODO evaluate algebraic and rate rules, constraints
 		  
 		  // Evaluate propensity functions
 		  InitializeEnoughMolecules();
@@ -393,26 +370,8 @@ public class GillespieSSAJavaSingleStep {
 		 }
 		 
 		 if (PropensitySum == 0){
-			 if (SpeciesList.size() > 0 || GlobalParamsList.size() > 0) {
-				 outTSD.print("(" + time + ", ");
-				 if (SpeciesList.size() > 0) {
-					 for (int i=0;i<SpeciesList.size();i++){
-						 if (i<SpeciesList.size()-1)
-							 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]) + ", ");
-						 else
-							 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]));
-					 }
-				 }
-				 if (GlobalParamsList.size()>0) {
-					 for (int i=0; i < GlobalParamsList.size();i++){
-						 if (i<GlobalParamsList.size()-1)
-							 outTSD.print(GlobalParamsList.get(GlobalParamsList.keySet().toArray()[i]) + ", ");
-						 else
-							 outTSD.print(GlobalParamsList.get(GlobalParamsList.keySet().toArray()[i]));
-					 }
-				 }
-				 outTSD.print("),");
-			 }
+			 if (time > 0)
+				 printTSDVals();
 			 graph.refresh();
 			 time = maxTime;
 			 if (time <=0) {
@@ -428,7 +387,7 @@ public class GillespieSSAJavaSingleStep {
 		 Random generator = new Random();
 		 // Draw one uniform(0,1) random numbers r1. 
 		 double r1 = generator.nextDouble();
-		 // Determine randomly the time, tau, until the next reaction. 
+		 // Determine randomly the time step, tau, until the next reaction. 
 		 tau = (1/PropensitySum)*Math.log(1/r1);  
 		 
 		 // 5. Determine the next reaction: (miu is the row index of state change vector array)
@@ -442,27 +401,53 @@ public class GillespieSSAJavaSingleStep {
 		 miu = count;
 		 
 		 // Pop up the interactive menu and asks the user to specify tau and miu
-		 String[] CustomParams=new String[3];
+		 String[] CustomParamsReactionMenu=new String[3];
 		 // optionValue: 0=step, 1=run, 2=terminate
 		 boolean hasRunModeStarted = false;
 		 boolean isRunMode = (optionValue == 1) && time < runUntil;
 		 if (!isRunMode) {
-			 CustomParams = openReactionInteractiveMenu(time,tau,miu);
-			 t_next = Double.parseDouble(CustomParams[0]);
-			 while (t_next < time){
-				 JOptionPane.showMessageDialog(Gui.frame, "The value of t_next needs to be greater than current time",
-				"Error in next simulation time", JOptionPane.ERROR_MESSAGE);
-				 CustomParams = openReactionInteractiveMenu(time,tau,miu);
-				 t_next = Double.parseDouble(CustomParams[0]);
-			 }  
-			 optionValue = Integer.parseInt(CustomParams[2]);
+			 CustomParamsReactionMenu = openReactionInteractiveMenu(time,tau,miu);
+			 t_next = Double.parseDouble(CustomParamsReactionMenu[0]);
+			 optionValue = Integer.parseInt(CustomParamsReactionMenu[2]);
+			 if (optionValue != 2 && optionValue != -1) {  // 2 = terminate
+				 while (t_next < time && optionValue!=2 && optionValue!=-1 ){
+					 JOptionPane.showMessageDialog(Gui.frame, "The value of t_next needs to be greater than the current simulation time " + time + ".",
+					"Error in next simulation time", JOptionPane.ERROR_MESSAGE);
+					 CustomParamsReactionMenu = openReactionInteractiveMenu(time,tau,miu);
+					 optionValue = Integer.parseInt(CustomParamsReactionMenu[2]);
+					 t_next = Double.parseDouble(CustomParamsReactionMenu[0]);
+				 }
+				 while (t_next > maxTime && optionValue!=2 && optionValue!=-1 ) {
+					 optValFireReaction = openReactionDialogue();
+					 if (optValFireReaction == 0) {
+						 CustomParamsReactionMenu = openReactionInteractiveMenu(time,tau,miu);
+						 optionValue = Integer.parseInt(CustomParamsReactionMenu[2]);
+						 t_next = Double.parseDouble(CustomParamsReactionMenu[0]); 
+					 }
+					 else 
+						 break; 
+				 }
+			 }
+			 else {  // terminate
+				 break;
+			 }
+			 
+			 
+			 if (optValFireReaction == 1) {
+				 if (time > 0)
+					 printTSDVals();
+				 graph.refresh();
+				 time = maxTime;
+				 continue;
+			 }
+			 
 			 if (optionValue == 0) {
 				 tau = t_next - time;
-				 miu = ReactionsToIndex.get(CustomParams[1]);  
+				 miu = ReactionsToIndex.get(CustomParamsReactionMenu[1]);  
 			 }
 			 else if(optionValue == 1 && time >= runUntil){
-				 runUntil = Double.parseDouble(CustomParams[0]);
-				 miu = ReactionsToIndex.get(CustomParams[1]);
+				 runUntil = Double.parseDouble(CustomParamsReactionMenu[0]);
+				 miu = ReactionsToIndex.get(CustomParamsReactionMenu[1]);
 				 hasRunModeStarted = true;
 				// ********************(obsolete) Create another pop-up window to specify the time to run ******************
 				//  String[] CustomParamsRun = openRunMenu();
@@ -477,13 +462,13 @@ public class GillespieSSAJavaSingleStep {
 				//  }
 				// ****************************************************************************************************
 			 }
-			 else {
+			 else {  // optionValue == 2 (terminate)
 				 break;
 			 }
 		 }
 		 
 		 // 6. Determine the new state: t = t + tau and x = x + v[miu]
-		 double t_current = time;
+//		 double t_current = time;
 		 if (maxTime <= time+tau)
 			 time = maxTime;
 		 else
@@ -513,26 +498,7 @@ public class GillespieSSAJavaSingleStep {
 		 //  tableModel.addRow(new Object[]{t_current, tau, IndexToReactions.get(miu)});
 		 //  simResultsTbl.showTable(tableFrame, simResultsTbl);
 		 //  }
-		 if (SpeciesList.size() > 0 || GlobalParamsList.size() > 0) {
-			 outTSD.print("(" + time + ", ");
-			 if (SpeciesList.size() > 0) {
-				 for (int i=0;i<SpeciesList.size();i++){
-					 if (i<SpeciesList.size()-1)
-						 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]) + ", ");
-					 else
-						 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]));
-				 }
-			 }
-			 if (GlobalParamsList.size()>0) {
-				 for (int i=0; i < GlobalParamsList.size();i++){
-					 if (i<GlobalParamsList.size()-1)
-						 outTSD.print(GlobalParamsList.get(GlobalParamsList.keySet().toArray()[i]) + ", ");
-					 else
-						 outTSD.print(GlobalParamsList.get(GlobalParamsList.keySet().toArray()[i]));
-				 }
-			 }
-			 outTSD.print("),");
-		 }
+		 printTSDVals();
 		 if ((!isRunMode && !hasRunModeStarted) || (isRunMode && time >= runUntil)) {
 			 graph.refresh();
 		 }
@@ -549,6 +515,30 @@ public class GillespieSSAJavaSingleStep {
 	   }
 	}
 	
+	private void printTSDVals() {
+		 outTSD.print("(" + time + ", ");		 
+		 if (SpeciesList.size() > 0) {
+			 for (int i=0;i<SpeciesList.size();i++){
+				 if (i<SpeciesList.size()-1)
+					 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]) + ", ");
+				 else
+					 outTSD.print(SpeciesList.get(SpeciesList.keySet().toArray()[i]));
+			 }
+		 }
+		 if (GlobalParamsList.size() > 0) {
+			 if (SpeciesList.size() > 0)
+				 outTSD.print(",");
+			 for (int i=0;i<GlobalParamsList.size();i++){
+				 if (i<GlobalParamsList.size()-1)
+					 outTSD.print(GlobalParamsList.get(GlobalParamsList.keySet().toArray()[i]) + ", ");
+				 else
+					 outTSD.print(GlobalParamsList.get(GlobalParamsList.keySet().toArray()[i]));
+			 }
+		 }
+		 outTSD.print("),");
+	}
+	
+	
 	private void evaluateRules(Model model) {
 		ListOfRules ruleList= null;
 		 if (model.getListOfRules().size()>0) {
@@ -564,8 +554,6 @@ public class GillespieSSAJavaSingleStep {
 					 else if(GlobalParamsList.containsKey(variable)){
 						GlobalParamsList.put(variable, assignment);
 					 }
-					 System.out.println("evaluateRules: variable = " + variable);
-					 System.out.println("evaluateRules: assignment = " + assignment);
 				 }
 				 else {
 					 // TODO Initialize Algebraic and Rate rules
@@ -577,8 +565,51 @@ public class GillespieSSAJavaSingleStep {
 		 }	
 	}
 	
-	public double updateEventQueue(ListOfEvents eventList, PriorityQueue<EventQueueElement> eventQueue){
+	private String[] UpdateFireEvents() {
+		  String[] CustomParamsEventFired = new String[2];
+		  String[] CustomParamsUpdateFireEvents = new String[2];
+		  String[] ReturnParamsFromUpdateEventQueue = new String[2];
+		  boolean eventDelayNegative = false;
+		  int optVal = -1;
+		  if (model.getListOfEvents().size() >0) { 
+			  do {
+				  ReturnParamsFromUpdateEventQueue = updateEventQueue(eventList, eventQueue); // if (eventQueue is empty), then nextEventTime = -1
+				  eventDelayNegative = Boolean.parseBoolean(ReturnParamsFromUpdateEventQueue[0]);
+				  nextEventTime = Double.parseDouble(ReturnParamsFromUpdateEventQueue[1]);
+				   if (!eventDelayNegative && eventQueue.size() > 0) {
+					  CustomParamsEventFired = fireEvent(eventQueue, initEventQueueCap, eventList);
+					  optVal = Integer.parseInt(CustomParamsEventFired[0]);
+					  if (optVal == 2 || optVal == -1) { // 2=terminate -1=No interaction performed
+						  break;
+					  }
+					  boolean eventFired = Boolean.parseBoolean(CustomParamsEventFired[1]); 
+					  if (eventFired) {
+						  evaluateRules(model);
+						  // TODO evaluate algebraic and rate rules and constraints
+						  ReturnParamsFromUpdateEventQueue = updateEventQueue(eventList, eventQueue); // if (eventQueue is empty), then nextEventTime = -1
+						  eventDelayNegative = Boolean.parseBoolean(ReturnParamsFromUpdateEventQueue[0]);
+						  nextEventTime = Double.parseDouble(ReturnParamsFromUpdateEventQueue[1]);
+					  }  
+				  }
+				  if (eventDelayNegative) {
+					  JOptionPane.showMessageDialog(Gui.frame, "Delay expression evaluates to a negative number.",
+								"Error in piecewise function", JOptionPane.ERROR_MESSAGE);
+					  eventDelayNegative = true;
+					  break;
+				  }
+			  }
+			  while (eventQueue.size() > 0 && time == eventQueue.peek().getScheduledTime());
+		  }
+		
+		CustomParamsUpdateFireEvents[0] = optVal + "";
+		CustomParamsUpdateFireEvents[1] = eventDelayNegative + "";
+		return CustomParamsUpdateFireEvents;
+	}
+	
+	public String[] updateEventQueue(ListOfEvents eventList, PriorityQueue<EventQueueElement> eventQueue){
 	 ArrayList<String> eventToRemoveArray = new ArrayList<String>();
+	 boolean eventDelayNegative = false;
+	 String[] ReturnParamsFromUpdateEventQueue = new String[2];
 	 for(int i=0; i< eventList.size();i++){
 		 Event currEvent = eventList.get(i); 
 		 Trigger trigger = currEvent.getTrigger();
@@ -669,18 +700,22 @@ public class GillespieSSAJavaSingleStep {
 		 eventToRemoveArray.clear();
 	 }
 	 
+	 ReturnParamsFromUpdateEventQueue[0] = eventDelayNegative + "";
 	 if (!eventQueue.isEmpty()) {
-		 return eventQueue.peek().getScheduledTime();
+		 ReturnParamsFromUpdateEventQueue[1] = eventQueue.peek().getScheduledTime() + "";
+		 return ReturnParamsFromUpdateEventQueue;
 	 }
 	 else {
-		 return -1;
+		 ReturnParamsFromUpdateEventQueue[1] = -1 + "";
+		 return ReturnParamsFromUpdateEventQueue;
 	 }
 	 
 	}
 	
-	private boolean fireEvent(PriorityQueue<EventQueueElement> eventQueue, int initEventQueueCap, ListOfEvents eventList) {
+	private String[] fireEvent(PriorityQueue<EventQueueElement> eventQueue, int initEventQueueCap, ListOfEvents eventList) {
 		// Assume event assignments are evaluated at fire time
 		boolean isEventFired = false;
+		int optVal = -1;
 		if (time == eventQueue.peek().getScheduledTime()) {
 			isEventFired = true;
 			ArrayList<EventQueueElement> eventReadyArray = new ArrayList<EventQueueElement>();
@@ -692,49 +727,61 @@ public class GillespieSSAJavaSingleStep {
 			}
 			while(!eventQueue.isEmpty() && time == eventQueue.peek().getScheduledTime() && eventReady.getPriorityVal() == eventQueue.peek().getPriorityVal());
 			// Pop up the interactive menu and asks the user to select event to fire
-			int eventToFireIndex = openEventInteractiveMenu(eventReadyArray);
-			Event eventToFire = eventList.get(eventReadyArray.get(eventToFireIndex).getEventId());
-			if (!eventToFire.getUseValuesFromTriggerTime()) {
-				ListOfEventAssignments eventToFireAssignList = eventToFire.getListOfEventAssignments();
-				for (int i = 0; i < eventToFireAssignList.size(); i ++){
-					double assignment = Double.parseDouble(evaluateAST(eventToFireAssignList.get(i).getMath().getListOfNodes().get(0)));
-					String variable = eventToFireAssignList.get(i).getVariable();
-					if(SpeciesList.containsKey(variable)) {
-						SpeciesList.put(variable, assignment);
-					}
-					else if(GlobalParamsList.containsKey(variable)){
-						GlobalParamsList.put(variable, assignment);
-					}
-				}
-			}
-			else {  // UseValuesFromTriggerTime
-				HashMap<String, Double> varMap =  AtTriggerTimeList.get(eventToFire.getId());				
-				for (Iterator<String> varMapIterator = varMap.keySet().iterator(); varMapIterator.hasNext();) {
-					String currVarMapId = varMapIterator.next();
-					Double currVarMapVal = varMap.get(currVarMapId);
-					if(SpeciesList.containsKey(currVarMapId)) {
-						SpeciesList.put(currVarMapId, currVarMapVal);
-					}
-					else if(GlobalParamsList.containsKey(currVarMapId)){
-						GlobalParamsList.put(currVarMapId, currVarMapVal);
+			String[] CustomParamsEventMenu=new String[2];
+			CustomParamsEventMenu= openEventInteractiveMenu(eventReadyArray);
+			optVal = Integer.parseInt(CustomParamsEventMenu[0]);
+			int eventToFireIndex = Integer.parseInt(CustomParamsEventMenu[1]);
+			if (optVal != 2 && optVal != -1) { // 2 = terminate  1 = no action performed
+				Event eventToFire = eventList.get(eventReadyArray.get(eventToFireIndex).getEventId());
+				if (!eventToFire.getUseValuesFromTriggerTime()) {
+					ListOfEventAssignments eventToFireAssignList = eventToFire.getListOfEventAssignments();
+					for (int i = 0; i < eventToFireAssignList.size(); i ++){
+						double assignment = Double.parseDouble(evaluateAST(eventToFireAssignList.get(i).getMath().getListOfNodes().get(0)));
+						String variable = eventToFireAssignList.get(i).getVariable();
+						if(SpeciesList.containsKey(variable)) {
+							SpeciesList.put(variable, assignment);
+						}
+						else if(GlobalParamsList.containsKey(variable)){
+							GlobalParamsList.put(variable, assignment);
+						}
 					}
 				}
-				
-			}
-			// TODO need to test multiple events
-			// If multiple events were selected, put the all events in eventsReadyArray (except eventToFire) back to the event queue.
-			for (Iterator<EventQueueElement> eventQueueIterator = eventQueue.iterator();eventQueueIterator.hasNext();) {
-				EventQueueElement currEventQueueElement = eventQueueIterator.next();
-				if (eventToFire.getId().equals(currEventQueueElement.getEventId())) {
-					eventReadyArray.remove(currEventQueueElement);
+				else {  // UseValuesFromTriggerTime
+					HashMap<String, Double> varMap =  AtTriggerTimeList.get(eventToFire.getId());				
+					for (Iterator<String> varMapIterator = varMap.keySet().iterator(); varMapIterator.hasNext();) {
+						String currVarMapId = varMapIterator.next();
+						Double currVarMapVal = varMap.get(currVarMapId);
+						if(SpeciesList.containsKey(currVarMapId)) {
+							SpeciesList.put(currVarMapId, currVarMapVal);
+						}
+						else if(GlobalParamsList.containsKey(currVarMapId)){
+							GlobalParamsList.put(currVarMapId, currVarMapVal);
+						}
+					}
 				}
-			}
-			for (int i = 0; i < eventReadyArray.size() - 1; i++){
-				eventQueue.add(eventReadyArray.get(i));
-			}
-			eventReadyArray.clear();
+
+				// If multiple events were selected, put the all events in eventsReadyArray (except eventToFire) back to the event queue.
+				EventQueueElement eventFired = null;
+				for (Iterator<EventQueueElement> eventReadyArrayIter = eventReadyArray.iterator();eventReadyArrayIter.hasNext();) {
+					EventQueueElement currEventQueueElement = eventReadyArrayIter.next();
+					if (eventToFire.getId().equals(currEventQueueElement.getEventId())) {
+						eventFired = currEventQueueElement;
+						break;
+					}
+				}
+				if (eventFired != null)
+					eventReadyArray.remove(eventFired);
+				// add events that were not fired back to the event queue.
+				for (int i = 0; i < eventReadyArray.size(); i++){
+					eventQueue.add(eventReadyArray.get(i));
+				}
+				eventReadyArray.clear();				
+			}			
 		}
-		return isEventFired;
+		String[] CustomParamsFireEvent = new String[2];
+		CustomParamsFireEvent[0] = optVal + "";
+		CustomParamsFireEvent[1] = isEventFired + "";
+		return CustomParamsFireEvent;
 		
 	}
 	
@@ -854,7 +901,7 @@ public class GillespieSSAJavaSingleStep {
 	}
 	 
 	public String[] openReactionInteractiveMenu(double t, double tau, int miu) {
-		String[] tNext_miu_optVal = new String[3];
+		String[] CustomParamsReactionMenu = new String[3];
 		JPanel tNextPanel = new JPanel();
 		JPanel nextReactionsListPanel = new JPanel();
 		JPanel mainPanel = new JPanel(new BorderLayout());
@@ -890,13 +937,13 @@ public class GillespieSSAJavaSingleStep {
 		mainPanel.add(tNextPanel, "North");
 		mainPanel.add(nextReactionsListPanel, "Center");
 		Object[] options = {"Step", "Run", "Terminate"};
-		int optionValue;
+		int optionValue = -1;
 		optionValue = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Next Simulation Time",
 		JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-		tNext_miu_optVal[0]= tNext.getText().trim();
-		tNext_miu_optVal[1]=(String) nextReactionsList.getSelectedItem();
-		tNext_miu_optVal[2]="" + optionValue;
-		return tNext_miu_optVal;
+		CustomParamsReactionMenu[0]= tNext.getText().trim();
+		CustomParamsReactionMenu[1]=(String) nextReactionsList.getSelectedItem();
+		CustomParamsReactionMenu[2]="" + optionValue;
+		return CustomParamsReactionMenu;
 	}
 	 
 	// public String[] openRunMenu(){
@@ -924,8 +971,9 @@ public class GillespieSSAJavaSingleStep {
 	// while (optlVal == 0 && runTimeLimit_optVal[0].equals(""));
 	// return runTimeLimit_optVal; 
 	// }
-	 
-	public int openEventInteractiveMenu(ArrayList<EventQueueElement> eventReadyArray) {
+	
+	public String[] openEventInteractiveMenu(ArrayList<EventQueueElement> eventReadyArray) {
+		String[] CustomParamsEventMenu=new String[2];
 		JPanel nextEventsPanel = new JPanel();
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		nextEventsPanel.add(new JLabel("Next event to fire:"));
@@ -943,24 +991,42 @@ public class GillespieSSAJavaSingleStep {
 		nextEventsList = new JComboBox(nextEventsArray);
 		nextEventsPanel.add(nextEventsList);
 		mainPanel.add(nextEventsPanel, "Center");
-		Object[] options = {"OK", "Cancel"};
-//		int optionValue;
-		// optionValue: 0=OK, 1=Cancel 
-		JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Next Event Selection",
-		JOptionPane.OK_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		Object[] options = {"OK", "Cancel", "Terminate"};
+		int optionValue;
+		// optionValue: 0=OK, 1=Cancel, 2=Terminate
+		optionValue = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Next Event Selection",
+		JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		CustomParamsEventMenu[0] = optionValue + "";
 		String eventSelected = (String)nextEventsList.getSelectedItem();
-		if (eventSelected.equals(eventToFire.getEventId()))
-			return eventReadyArray.indexOf(eventToFire);
+		if (eventSelected.equals(eventToFire.getEventId())) {
+			CustomParamsEventMenu[1] = "" + eventReadyArray.indexOf(eventToFire);
+			return CustomParamsEventMenu;
+		}
 		else {
 			int eventSelectedIndex = -1;
 			for (int i = 0; i<sizeEventReadyArray; i++) {
 				if (eventReadyArray.get(i).getEventId() == eventSelected) {
-					 eventSelectedIndex = i;
-					 break;
+					eventSelectedIndex = i;
+					break;
 				}
 			}
-			return eventSelectedIndex;
+			CustomParamsEventMenu[1] = "" + eventSelectedIndex;
+			return CustomParamsEventMenu;
 		}
+	}
+	
+	private int openReactionDialogue() {
+		JPanel mainPanel = new JPanel(new BorderLayout());
+		JPanel tNextPanel = new JPanel();
+//		String newline = System.getProperty("line.separator");
+		tNextPanel.add(new JLabel("<html>The next simulation time will stop at " + maxTime + " in stead of " + t_next + " . <br></br>Would you like to enter a new next reaction time? </html>"));
+//		tNextPanel.add(new JLabel("Would you like to enter a new next reaction time? "));
+		mainPanel.add(tNextPanel, "Center");
+		Object[] options = {"Enter a new value", "Proceed with the current value"};
+		int optValue;
+		optValue = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Fire the current reaction?",
+		JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		return optValue;
 	}
 	
 	public String evaluatePropensityFunction(ASTNode currentASTNode, HashMap<String, Double>ListOfLocalParameters) {
