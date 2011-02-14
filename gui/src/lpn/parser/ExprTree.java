@@ -33,6 +33,10 @@ public class ExprTree {
 
 	private LhpnFile lhpn;
 
+	public ExprTree() {
+		
+	}
+	
 	public ExprTree(LhpnFile lhpn) {
 		this.lhpn = lhpn;
 		String[] bools = lhpn.getBooleanVars();

@@ -898,6 +898,33 @@ public class GeneticNetwork {
 		return compartment;
 	}
 
+	public String abstractComplex(String id) {
+		String complexExpression = "";
+		if (species.containsKey(id)) {
+			complexExpression = abstractComplexHelper(species.get(id), "");
+		}
+		return complexExpression;
+	}
+	
+	private String abstractComplexHelper(SpeciesInterface complex, String ncProduct) {
+		String expression = "";
+		String ncSum = "";
+		for (PartSpecies part : complexMap.get(complex.getId())) {
+			SpeciesInterface s = part.getSpecies();
+			ncSum = ncSum + GlobalConstants.COOPERATIVITY_STRING + "__" + s.getId() + "+";
+			if (complexMap.containsKey(s.getId())) {
+				expression = "*" + abstractComplexHelper(s, ncProduct 
+						+ GlobalConstants.COOPERATIVITY_STRING + "__" + s.getId() + "*") + expression;
+			} else {
+				expression = expression + "*" + s.getId() + '^' + "(" + ncProduct 
+						+ GlobalConstants.COOPERATIVITY_STRING + "__" + s.getId() + ")";
+			}
+		}
+		expression = GlobalConstants.KCOMPLEX_STRING + "__" + complex.getId() 
+				+ "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + expression;	
+		return expression;
+	}
+	
 	/**
 	 * Initializes the network
 	 * 

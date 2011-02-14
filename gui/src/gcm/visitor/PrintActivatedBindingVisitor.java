@@ -106,26 +106,26 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		String actMolecule = "";
 		kcomp = complex.getKc();
 		if (kcomp.length == 2) {
-			kl.addParameter(Utility.Parameter(kcompString + "_" + complex.getId(), kcomp[0]/kcomp[1],
+			kl.addParameter(Utility.Parameter(kcompString + "__" + complex.getId(), kcomp[0]/kcomp[1],
 					GeneticNetwork.getMoleParameter(2)));
 		} else {
-			kl.addParameter(Utility.Parameter(kcompString + "_" + complex.getId(), kcomp[0],
+			kl.addParameter(Utility.Parameter(kcompString + "__" + complex.getId(), kcomp[0],
 					GeneticNetwork.getMoleParameter(2)));
 		}
 		String ncSum = "";
 		for (PartSpecies part : complexMap.get(complex.getId())) {
 			SpeciesInterface s = part.getSpecies();
 			double n = part.getStoich();
-			kl.addParameter(Utility.Parameter(coopString + "_" + s.getId(), n, "dimensionless"));
-			ncSum = ncSum + coopString + "_" + s.getId() + "+";
+			kl.addParameter(Utility.Parameter(coopString + "__" + s.getId(), n, "dimensionless"));
+			ncSum = ncSum + coopString + "__" + s.getId() + "+";
 			if (complexMap.containsKey(s.getId())) {
-				actMolecule = "*" + abstractComplex(s, multiplier * n, ncProduct + coopString + "_" + s.getId() + "*") + actMolecule;
+				actMolecule = "*" + abstractComplex(s, multiplier * n, ncProduct + coopString + "__" + s.getId() + "*") + actMolecule;
 			} else {
 				r.addReactant(Utility.SpeciesReference(s.getId(), multiplier * n * coop));
-				actMolecule = actMolecule + "*" + s.getId() + '^' + "(" + ncProduct + coopString + "_" + s.getId() + ")";
+				actMolecule = actMolecule + "*" + s.getId() + '^' + "(" + ncProduct + coopString + "__" + s.getId() + ")";
 			}
 		}
-		actMolecule = kcompString + "_" + complex.getId() + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + actMolecule;	
+		actMolecule = kcompString + "__" + complex.getId() + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + actMolecule;	
 		return actMolecule;
 	}
 
