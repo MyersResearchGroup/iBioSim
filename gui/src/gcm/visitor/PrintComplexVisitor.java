@@ -51,13 +51,14 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		for (PartSpecies part : complexMap.get(specie.getId())) {
 			SpeciesInterface s = part.getSpecies();
 			double n = part.getStoich();
+			String nId = coopString + "__" + s.getId() + "_" + specie.getId();
 			r.addReactant(Utility.SpeciesReference(s.getId(), n));
 			expression = expression + "*" + s.getId();
 			if (n > 1) {
-				expression = expression + '^' + coopString + "_" + s.getId();
+				expression = expression + '^' + nId;
 			}
-			kl.addParameter(Utility.Parameter(coopString + "_" + s.getId(), n, "dimensionless"));
-			ncSum = ncSum + coopString + "_" + s.getId() + "+";
+			kl.addParameter(Utility.Parameter(nId, n, "dimensionless"));
+			ncSum = ncSum + nId + "+";
 		}
 		expression = kcompString + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + expression;
 		//Checks if binding parameters are specified as forward and reverse rate constants or 
