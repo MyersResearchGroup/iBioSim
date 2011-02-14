@@ -82,6 +82,7 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JViewport; //import javax.swing.tree.TreePath;
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -117,8 +118,8 @@ import util.tabs.CloseAndMaxTabbedPane;
  * @author Curtis Madsen
  */
 
-public class Gui implements MouseListener, ActionListener, MouseMotionListener,
-		MouseWheelListener, WindowFocusListener {
+public class Gui implements MouseListener, ActionListener, MouseMotionListener, MouseWheelListener,
+		WindowFocusListener {
 
 	public static JFrame frame; // Frame where components of the GUI are
 	// displayed
@@ -1388,10 +1389,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 			final JTextField KCOMPLEX_VALUE = new JTextField(biosimrc.get(
 					"biosim.gcm.KCOMPLEX_VALUE", ""));
 			JPanel labels = new JPanel(new GridLayout(14, 1));
-			labels
-					.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVED_STRING)
-							+ " (" + GlobalConstants.ACTIVED_STRING
-							+ "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVED_STRING)
+					+ " (" + GlobalConstants.ACTIVED_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KACT_STRING) + " ("
 					+ GlobalConstants.KACT_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBASAL_STRING)
@@ -1400,44 +1399,29 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 					+ " (" + GlobalConstants.KDECAY_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer
 					.getGuiName(GlobalConstants.COOPERATIVITY_STRING)
-					+ " ("
-					+ GlobalConstants.COOPERATIVITY_STRING
-					+ "):"));
+					+ " (" + GlobalConstants.COOPERATIVITY_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_STRING) + " ("
 					+ GlobalConstants.RNAP_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer
 					.getGuiName(GlobalConstants.PROMOTER_COUNT_STRING)
-					+ " ("
-					+ GlobalConstants.PROMOTER_COUNT_STRING
-					+ "):"));
-			labels
-					.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.INITIAL_STRING)
-							+ " (" + GlobalConstants.INITIAL_STRING
-							+ "):"));
+					+ " (" + GlobalConstants.PROMOTER_COUNT_STRING + "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.INITIAL_STRING)
+					+ " (" + GlobalConstants.INITIAL_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.OCR_STRING) + " ("
 					+ GlobalConstants.OCR_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer
 					.getGuiName(GlobalConstants.RNAP_BINDING_STRING)
-					+ " ("
-					+ GlobalConstants.RNAP_BINDING_STRING
-					+ "):"));
+					+ " (" + GlobalConstants.RNAP_BINDING_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer
 					.getGuiName(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)
-					+ " ("
-					+ GlobalConstants.ACTIVATED_RNAP_BINDING_STRING
-					+ "):"));
+					+ " (" + GlobalConstants.ACTIVATED_RNAP_BINDING_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KREP_STRING) + " ("
 					+ GlobalConstants.KREP_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer
 					.getGuiName(GlobalConstants.STOICHIOMETRY_STRING)
-					+ " ("
-					+ GlobalConstants.STOICHIOMETRY_STRING
-					+ "):"));
-			labels
-					.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KCOMPLEX_STRING)
-							+ " ("
-							+ GlobalConstants.KCOMPLEX_STRING
-							+ "):"));
+					+ " (" + GlobalConstants.STOICHIOMETRY_STRING + "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KCOMPLEX_STRING)
+					+ " (" + GlobalConstants.KCOMPLEX_STRING + "):"));
 			JPanel fields = new JPanel(new GridLayout(14, 1));
 			fields.add(ACTIVED_VALUE);
 			fields.add(KACT_VALUE);
@@ -7454,7 +7438,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 											((Reb2Sac) c).updateBackgroundFile(rename);
 										}
 										else if (c instanceof LearnGCM
-												&& ((LearnGCM) c).getBackgroundFile().equals(oldName)) {
+												&& ((LearnGCM) c).getBackgroundFile().equals(
+														oldName)) {
 											((LearnGCM) c).updateBackgroundFile(rename);
 										}
 									}
@@ -7893,45 +7878,35 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 								}
 							}
 						}
-						/*else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i)
-								.getName().equals("GCM Editor")) {
-							if (((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
-									.getComponent(i)).isDirty()) {
-								if (autosave == 0) {
-									int value = JOptionPane.showOptionDialog(frame,
-											"Do you want to save parameter changes for "
-													+ tab.getTitleAt(index) + "?", "Save Changes",
-											JOptionPane.YES_NO_CANCEL_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
-									if (value == YES_OPTION) {
-										((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i)).saveParams(false, "");
-									}
-									else if (value == CANCEL_OPTION) {
-										return 0;
-									}
-									else if (value == YES_TO_ALL_OPTION) {
-										((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i)).saveParams(false, "");
-										autosave = 1;
-									}
-									else if (value == NO_TO_ALL_OPTION) {
-										autosave = 2;
-									}
-								}
-								else if (autosave == 1) {
-									((GCM2SBMLEditor) ((JTabbedPane) tab.getComponentAt(index))
-											.getComponent(i)).saveParams(false, "");
-								}
-							}
-						}*/
-						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i)
-								instanceof MovieContainer) {
-							if (((MovieContainer) ((JTabbedPane) tab
-									.getComponentAt(index)).getComponent(i))
-									.getGCM2SBMLEditor().isDirty()
-									|| ((MovieContainer) ((JTabbedPane) tab
-											.getComponentAt(index))
+						/*
+						 * else if (((JTabbedPane)
+						 * tab.getComponentAt(index)).getComponent(i)
+						 * .getName().equals("GCM Editor")) { if
+						 * (((GCM2SBMLEditor) ((JTabbedPane)
+						 * tab.getComponentAt(index))
+						 * .getComponent(i)).isDirty()) { if (autosave == 0) {
+						 * int value = JOptionPane.showOptionDialog(frame,
+						 * "Do you want to save parameter changes for " +
+						 * tab.getTitleAt(index) + "?", "Save Changes",
+						 * JOptionPane.YES_NO_CANCEL_OPTION,
+						 * JOptionPane.PLAIN_MESSAGE, null, OPTIONS,
+						 * OPTIONS[0]); if (value == YES_OPTION) {
+						 * ((GCM2SBMLEditor) ((JTabbedPane)
+						 * tab.getComponentAt(index))
+						 * .getComponent(i)).saveParams(false, ""); } else if
+						 * (value == CANCEL_OPTION) { return 0; } else if (value
+						 * == YES_TO_ALL_OPTION) { ((GCM2SBMLEditor)
+						 * ((JTabbedPane) tab.getComponentAt(index))
+						 * .getComponent(i)).saveParams(false, ""); autosave =
+						 * 1; } else if (value == NO_TO_ALL_OPTION) { autosave =
+						 * 2; } } else if (autosave == 1) { ((GCM2SBMLEditor)
+						 * ((JTabbedPane) tab.getComponentAt(index))
+						 * .getComponent(i)).saveParams(false, ""); } } }
+						 */
+						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof MovieContainer) {
+							if (((MovieContainer) ((JTabbedPane) tab.getComponentAt(index))
+									.getComponent(i)).getGCM2SBMLEditor().isDirty()
+									|| ((MovieContainer) ((JTabbedPane) tab.getComponentAt(index))
 											.getComponent(i)).getIsDirty()) {
 								if (autosave == 0) {
 									int value = JOptionPane.showOptionDialog(frame,
@@ -7976,8 +7951,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 										if (value == YES_OPTION) {
 											if (((JTabbedPane) tab.getComponentAt(index))
 													.getComponent(i) instanceof LearnGCM) {
-												((LearnGCM) ((JTabbedPane) tab.getComponentAt(index))
-														.getComponent(i)).save();
+												((LearnGCM) ((JTabbedPane) tab
+														.getComponentAt(index)).getComponent(i))
+														.save();
 											}
 										}
 										else if (value == CANCEL_OPTION) {
@@ -7986,8 +7962,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 										else if (value == YES_TO_ALL_OPTION) {
 											if (((JTabbedPane) tab.getComponentAt(index))
 													.getComponent(i) instanceof LearnGCM) {
-												((LearnGCM) ((JTabbedPane) tab.getComponentAt(index))
-														.getComponent(i)).save();
+												((LearnGCM) ((JTabbedPane) tab
+														.getComponentAt(index)).getComponent(i))
+														.save();
 											}
 											autosave = 1;
 										}
@@ -11246,8 +11223,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 										new LearnLHPN(root + separator + learnName, log, this));
 							}
 							else {
-								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new LearnGCM(
-										root + separator + learnName, log, this));
+								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j,
+										new LearnGCM(root + separator + learnName, log, this));
 							}
 							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j)
 									.setName("Learn");
@@ -11388,9 +11365,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 							new File(properties).renameTo(new File(properties.replace(".sim",
 									".temp")));
 							try {
-								boolean dirty = ((GCM2SBMLEditor) (sim.getComponentAt(j))).isDirty();
+								boolean dirty = ((GCM2SBMLEditor) (sim.getComponentAt(j)))
+										.isDirty();
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).saveParams(false, "");
-								((GCM2SBMLEditor) (sim.getComponentAt(j))).reload(check.replace(".gcm", ""));
+								((GCM2SBMLEditor) (sim.getComponentAt(j))).reload(check.replace(
+										".gcm", ""));
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).refresh();
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).loadParams();
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).setDirty(dirty);
@@ -11420,8 +11399,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener,
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).setSBMLParamFile(null);
 							}
 							for (int k = 0; k < sim.getTabCount(); k++) {
-								if (sim.getComponentAt(k) instanceof MovieContainer){
-									((MovieContainer)(sim.getComponentAt(k))).display();
+								if (sim.getComponentAt(k) instanceof MovieContainer) {
+									((MovieContainer) (sim.getComponentAt(k))).display();
 								}
 							}
 						}
