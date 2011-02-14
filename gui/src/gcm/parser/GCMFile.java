@@ -1,5 +1,6 @@
 package gcm.parser;
 
+import gcm.network.GeneticNetwork;
 import gcm.util.GlobalConstants;
 import gcm.util.UndoManager;
 import gcm.util.Utility;
@@ -632,6 +633,9 @@ public class GCMFile {
 	}
 
 	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
+		GCMParser parser = new GCMParser(filename);
+		GeneticNetwork network = parser.buildNetwork();
+		//System.out.println(network.abstractComplex("LacI"));
 		HashMap<String, ArrayList<String>> infl = new HashMap<String, ArrayList<String>>();
 		for (String influence : influences.keySet()) {
 			if (influences.get(influence).get(GlobalConstants.TYPE).equals(

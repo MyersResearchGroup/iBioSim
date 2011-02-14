@@ -911,19 +911,24 @@ public class GeneticNetwork {
 		String expression = "";
 		String kcompId = GlobalConstants.KCOMPLEX_STRING + "__" + complex.getId();
 		String ncSum = "";
-		for (PartSpecies part : complexMap.get(complex.getId())) {
-			SpeciesInterface s = part.getSpecies();
-			String nId = GlobalConstants.COOPERATIVITY_STRING + "__" + s.getId() + "_" + complex.getId();
-			ncSum = ncSum + nId + "__" + s.getId() + "+";
-			if (complexMap.containsKey(s.getId())) {
-				expression = "*" + abstractComplexHelper(s, ncProduct 
+		try {
+			for (PartSpecies part : complexMap.get(complex.getId())) {
+				SpeciesInterface s = part.getSpecies();
+				String nId = GlobalConstants.COOPERATIVITY_STRING + "__" + s.getId() + "_" + complex.getId();
+				ncSum = ncSum + nId + "__" + s.getId() + "+";
+				if (complexMap.containsKey(s.getId())) {
+					expression = "*" + abstractComplexHelper(s, ncProduct 
 						+ nId + "__" + s.getId() + "*") + expression;
-			} else {
-				expression = expression + "*" + s.getId() + '^' + "(" + ncProduct 
+				} else {
+					expression = expression + "*" + s.getId() + '^' + "(" + ncProduct 
 						+ nId + "__" + s.getId() + ")";
+				}
 			}
+			expression = kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + expression;
 		}
-		expression = kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + expression;	
+		catch (Exception e) {
+			return complex.getId();
+		}
 		return expression;
 	}
 	
