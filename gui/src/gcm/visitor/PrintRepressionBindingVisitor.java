@@ -5,6 +5,8 @@ package gcm.visitor;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+
+
 import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
@@ -91,26 +93,26 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		String repMolecule = "";
 		kcomp = complex.getKc();
 		if (kcomp.length == 2) {
-			kl.addParameter(Utility.Parameter(kcompString + "_" + complex.getId(), kcomp[0]/kcomp[1],
+			kl.addParameter(Utility.Parameter(kcompString + "__" + complex.getId(), kcomp[0]/kcomp[1],
 					GeneticNetwork.getMoleParameter(2)));
 		} else {
-			kl.addParameter(Utility.Parameter(kcompString + "_" + complex.getId(), kcomp[0],
+			kl.addParameter(Utility.Parameter(kcompString + "__" + complex.getId(), kcomp[0],
 					GeneticNetwork.getMoleParameter(2)));
 		}
 		String ncSum = "";
 		for (PartSpecies part : complexMap.get(complex.getId())) {
 			SpeciesInterface s = part.getSpecies();
 			double n = part.getStoich();
-			kl.addParameter(Utility.Parameter(coopString + "_" + s.getId(), n, "dimensionless"));
-			ncSum = ncSum + coopString + "_" + s.getId() + "+";
+			kl.addParameter(Utility.Parameter(coopString + "__" + s.getId(), n, "dimensionless"));
+			ncSum = ncSum + coopString + "__" + s.getId() + "+";
 			if (complexMap.containsKey(s.getId())) {
-				repMolecule = "*" + abstractComplex(s, multiplier * n, ncProduct + coopString + "_" + s.getId() + "*") + repMolecule;
+				repMolecule = "*" + abstractComplex(s, multiplier * n, ncProduct + coopString + "__" + s.getId() + "*") + repMolecule;
 			} else {
 				r.addReactant(Utility.SpeciesReference(s.getId(), multiplier * n * coop));
-				repMolecule = repMolecule + "*" + s.getId() + '^' + "(" + ncProduct + coopString + "_" + s.getId() + ")";
+				repMolecule = repMolecule + "*" + s.getId() + '^' + "(" + ncProduct + coopString + "__" + s.getId() + ")";
 			}
 		}
-		repMolecule = kcompString + "_" + complex.getId() + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + repMolecule;	
+		repMolecule = kcompString + "__" + complex.getId() + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + repMolecule;	
 		return repMolecule;
 	}
 	
