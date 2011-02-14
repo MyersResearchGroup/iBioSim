@@ -38,7 +38,7 @@ import java.util.Properties;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
 
-//import javax.swing.BorderFactory;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -53,8 +53,7 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.JTree;
-import javax.swing.SwingConstants; //import javax.swing.border.BevelBorder;
-//import javax.swing.border.Border;
+import javax.swing.SwingConstants;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -101,7 +100,8 @@ import org.w3c.dom.DOMImplementation;
 
 import parser.TSDParser;
 import reb2sac.Reb2Sac;
-import util.Utility; //import util.myButton;
+import util.Utility;
+import util.myButton;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Rectangle;
@@ -4394,11 +4394,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			});
 			colorsCombo.add(colBox);
-			JButton colorButton = new JButton();
-			// Border border =
-			// BorderFactory.createBevelBorder(BevelBorder.RAISED);
-			// colorButton.setBorder(border);
-			colorButton.setUI(new WindowsButtonUI());
+			JButton colorButton = new myButton();
+			colorButton.setPreferredSize(new Dimension(30, 20));
+			colorButton.setBorder(BorderFactory.createLineBorder(Color.darkGray));
 			colorButton.setBackground((Color) colory.get("Black"));
 			colorButton.setForeground((Color) colory.get("Black"));
 			colorButton.setActionCommand("" + i);
@@ -7774,8 +7772,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			});
 			colorsCombo.add(colBox);
-			JButton colorButton = new JButton();
-			colorButton.setUI(new WindowsButtonUI());
+			JButton colorButton = new myButton();
+			colorButton.setPreferredSize(new Dimension(30, 20));
+			colorButton.setBorder(BorderFactory.createLineBorder(Color.darkGray));
 			colorButton.setBackground((Color) colory.get("Black"));
 			colorButton.setForeground((Color) colory.get("Black"));
 			colorButton.setActionCommand("" + i);
