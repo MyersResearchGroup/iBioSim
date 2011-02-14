@@ -906,22 +906,24 @@ public class GeneticNetwork {
 		return complexExpression;
 	}
 	
+	//Recursively breaks down repressing complex into its constituent species and complex formation equilibria
 	private String abstractComplexHelper(SpeciesInterface complex, String ncProduct) {
 		String expression = "";
+		String kcompId = GlobalConstants.KCOMPLEX_STRING + "__" + complex.getId();
 		String ncSum = "";
 		for (PartSpecies part : complexMap.get(complex.getId())) {
 			SpeciesInterface s = part.getSpecies();
-			ncSum = ncSum + GlobalConstants.COOPERATIVITY_STRING + "__" + s.getId() + "+";
+			String nId = GlobalConstants.COOPERATIVITY_STRING + "__" + s.getId() + "_" + complex.getId();
+			ncSum = ncSum + nId + "__" + s.getId() + "+";
 			if (complexMap.containsKey(s.getId())) {
 				expression = "*" + abstractComplexHelper(s, ncProduct 
-						+ GlobalConstants.COOPERATIVITY_STRING + "__" + s.getId() + "*") + expression;
+						+ nId + "__" + s.getId() + "*") + expression;
 			} else {
 				expression = expression + "*" + s.getId() + '^' + "(" + ncProduct 
-						+ GlobalConstants.COOPERATIVITY_STRING + "__" + s.getId() + ")";
+						+ nId + "__" + s.getId() + ")";
 			}
 		}
-		expression = GlobalConstants.KCOMPLEX_STRING + "__" + complex.getId() 
-				+ "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + expression;	
+		expression = kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + expression;	
 		return expression;
 	}
 	
