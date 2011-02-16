@@ -78,7 +78,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			xform28 = "Combine Parallel Transitions - abstraction",
 			xform29 = "Remove Uninteresting Variables - simplification",
 			xform30 = "Remove Uninteresting Transitions - simplification",
-			xform31 = "Simplify Delay Ranges - abstraction";
+			xform31 = "Simplify Uniform Expressions - abstraction";
 
 	public String[] transforms = { xform0, xform1, xform3, xform4, xform5,
 			xform6, xform7, xform8, xform25, xform9, xform24, xform10, xform12,
