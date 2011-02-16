@@ -552,6 +552,9 @@ public class Transition {
 		if (enablingTree != null) {
 			enabling = enablingTree.toString("LHPN");
 		}
+		if (delayTree != null) {
+			delay = delayTree.toString("LHPN");
+		}
 		for (String var : boolAssignTrees.keySet()) {
 			boolAssignments.put(var, boolAssignTrees.get(var).toString(
 					"boolean", "LHPN"));
@@ -573,6 +576,9 @@ public class Transition {
 	public void minimizeUniforms() {
 		if (enablingTree != null) {
 			enabling = enablingTree.minimizeUniforms().toString("LHPN");
+		}
+		if (delayTree != null) {
+			delay = delayTree.minimizeUniforms().toString("LHPN");
 		}
 		for (String var : boolAssignTrees.keySet()) {
 			boolAssignments.put(var, boolAssignTrees.get(var).minimizeUniforms().toString(
