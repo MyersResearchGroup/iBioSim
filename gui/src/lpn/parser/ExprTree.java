@@ -34,9 +34,9 @@ public class ExprTree {
 	private LhpnFile lhpn;
 
 	public ExprTree() {
-		
+
 	}
-	
+
 	public ExprTree(LhpnFile lhpn) {
 		this.lhpn = lhpn;
 		String[] bools = lhpn.getBooleanVars();
@@ -2991,8 +2991,7 @@ public class ExprTree {
 
 						}
 					}
-				}
-				else if (op.equals("||")) {
+				} else if (op.equals("||")) {
 					if (r1.isit == 'r') {
 						if (r1 != null) {
 							if (sbmlFlag) {
@@ -3070,35 +3069,50 @@ public class ExprTree {
 					}
 				} else if (op.equals("m")) {
 					if (r1 != null && r2 != null) {
-						if (sbmlFlag) {
-							result = "piecewise(" + r1.getElement(type)
-									+ ",leq(" + r1.getElement(type) + ","
-									+ r2.getElement(type) + "),"
-									+ r2.getElement(type) + ")";
-						} else if (verilog) {
-							result = "min(" + r1.getElement(type) + ","
-									+ r2.getElement(type) + ")";
+						if (r1.isit == 'n' && r2.isit == 'n') {
+							if (r1.lvalue < r2.lvalue) {
+								result = r1.getElement(type);
+							} else {
+								result = r2.getElement(type);
+							}
 						} else {
-							result = "min(" + r1.getElement(type) + ","
-									+ r2.getElement(type) + ")";
+							if (sbmlFlag) {
+								result = "piecewise(" + r1.getElement(type)
+										+ ",leq(" + r1.getElement(type) + ","
+										+ r2.getElement(type) + "),"
+										+ r2.getElement(type) + ")";
+							} else if (verilog) {
+								result = "min(" + r1.getElement(type) + ","
+										+ r2.getElement(type) + ")";
+							} else {
+								result = "min(" + r1.getElement(type) + ","
+										+ r2.getElement(type) + ")";
+							}
 						}
 
 					}
 				} else if (op.equals("M")) {
 					if (r1 != null && r2 != null) {
-						if (sbmlFlag) {
-							result = "piecewise(" + r1.getElement(type)
-									+ ",geq(" + r1.getElement(type) + ","
-									+ r2.getElement(type) + "),"
-									+ r2.getElement(type) + ")";
-						} else if (verilog) {
-							result = "max(" + r1.getElement(type) + ","
-									+ r2.getElement(type) + ")";
+						if (r1.isit == 'n' && r2.isit == 'n') {
+							if (r1.lvalue > r2.lvalue) {
+								result = r1.getElement(type);
+							} else {
+								result = r2.getElement(type);
+							}
 						} else {
-							result = "max(" + r1.getElement(type) + ","
-									+ r2.getElement(type) + ")";
+							if (sbmlFlag) {
+								result = "piecewise(" + r1.getElement(type)
+										+ ",geq(" + r1.getElement(type) + ","
+										+ r2.getElement(type) + "),"
+										+ r2.getElement(type) + ")";
+							} else if (verilog) {
+								result = "max(" + r1.getElement(type) + ","
+										+ r2.getElement(type) + ")";
+							} else {
+								result = "max(" + r1.getElement(type) + ","
+										+ r2.getElement(type) + ")";
+							}
 						}
-
 					}
 				} else if (op.equals("i")) {
 					if (r1 != null && r2 != null) {
@@ -3441,8 +3455,12 @@ public class ExprTree {
 	}
 
 	public ExprTree minimizeUniforms() {
-		r1.minimizeUniforms();
-		r2.minimizeUniforms();
+		if (r1 != null) {
+			r1.minimizeUniforms();
+		}
+		if (r2 != null) {
+			r2.minimizeUniforms();
+		}
 		if (isit == 'a' && op.equals("m")) {
 			if (r1.isit == 'n' && r2.isit == 'n') {
 				isit = 'n';
@@ -3453,13 +3471,19 @@ public class ExprTree {
 				}
 				r1 = null;
 				r2 = null;
-			} else {
-				if (r1.isit == 'a' && r1.op.equals("uniform")) {
-					r1 = r1.r1;
-				}
-				if (r2.isit == 'a' && r2.op.equals("uniform")) {
-					r2 = r2.r1;
-				}
+			} else if (r1.isit == 'a' && r1.op.equals("uniform")
+					&& r2.isit == 'a' && r2.op.equals("uniform")) {
+				ExprTree l1 = r1.r1;
+				ExprTree l2 = r2.r1;
+				ExprTree u1 = r1.r2;
+				ExprTree u2 = r2.r2;
+				op = "uniform";
+				r1.op = "m";
+				r2.op = "m";
+				r1.r1 = l1;
+				r1.r2 = l2;
+				r2.r1 = u1;
+				r2.r2 = u2;
 			}
 		}
 		if (isit == 'a' && op.equals("M")) {
@@ -3472,13 +3496,19 @@ public class ExprTree {
 				}
 				r1 = null;
 				r2 = null;
-			} else {
-				if (r1.isit == 'a' && r1.op.equals("uniform")) {
-					r1 = r1.r2;
-				}
-				if (r2.isit == 'a' && r2.op.equals("uniform")) {
-					r2 = r2.r2;
-				}
+			} else if (r1.isit == 'a' && r1.op.equals("uniform")
+					&& r2.isit == 'a' && r2.op.equals("uniform")) {
+				ExprTree l1 = r1.r1;
+				ExprTree l2 = r2.r1;
+				ExprTree u1 = r1.r2;
+				ExprTree u2 = r2.r2;
+				op = "uniform";
+				r1.op = "M";
+				r2.op = "M";
+				r1.r1 = l1;
+				r1.r2 = l2;
+				r2.r1 = u1;
+				r2.r2 = u2;
 			}
 		}
 		if (isit == 'a' && op.equals("+")) {
@@ -3514,12 +3544,13 @@ public class ExprTree {
 			}
 		}
 		if (isit == 'a' && op.equals("/")) {
-			if (r1.isit == 'a' && r1.equals("uniform") && r1.r1.isit == 'n' && r1.r2.isit == 'n' && r2.isit == 'n') {
+			if (r1.isit == 'a' && r1.equals("uniform") && r1.r1.isit == 'n'
+					&& r1.r2.isit == 'n' && r2.isit == 'n') {
 				double N = r2.lvalue;
 				op = "uniform";
 				r1.isit = 'n';
-				r1.lvalue = r1.r1.lvalue/N;
-				r2.lvalue = r1.r2.lvalue/N;
+				r1.lvalue = r1.r1.lvalue / N;
+				r2.lvalue = r1.r2.lvalue / N;
 				r1.r1 = null;
 				r1.r2 = null;
 			}
