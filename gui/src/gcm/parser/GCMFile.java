@@ -635,7 +635,6 @@ public class GCMFile {
 	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
 		GCMParser parser = new GCMParser(filename);
 		GeneticNetwork network = parser.buildNetwork();
-		//System.out.println(network.abstractComplex("LacI"));
 		HashMap<String, ArrayList<String>> infl = new HashMap<String, ArrayList<String>>();
 		for (String influence : influences.keySet()) {
 			if (influences.get(influence).get(GlobalConstants.TYPE).equals(
@@ -763,6 +762,7 @@ public class GCMFile {
 					Double global_Ka = parseValue(parameters.get(GlobalConstants.KACT_STRING));
 					Double global_ko = parseValue(parameters.get(GlobalConstants.OCR_STRING));
 					Double global_Kr = parseValue(parameters.get(GlobalConstants.KREP_STRING));
+					Double global_Kc = parseValue(parameters.get(GlobalConstants.KCOMPLEX_STRING));
 					Double global_kd = parseValue(parameters.get(GlobalConstants.KDECAY_STRING));
 					Double global_nc = parseValue(parameters
 							.get(GlobalConstants.COOPERATIVITY_STRING));
@@ -776,6 +776,7 @@ public class GCMFile {
 					Double Ka = global_Ka;
 					Double ko = global_ko;
 					Double Kr = global_Kr;
+					Double Kc = global_Kc;
 					Double kd = global_kd;
 					Double nc = global_nc;
 					if (infl.containsKey(specs.get(i))) {
@@ -910,7 +911,53 @@ public class GCMFile {
 								if (p.containsKey(GlobalConstants.KACT_STRING)) {
 									Ka = parseValue((String) p.get(GlobalConstants.KACT_STRING));
 								}
-								promRate += "+(" + ka + "*((" + Ka + "*" + RNAP + "*" + split[0]
+								String specExpr = network.abstractComplex(split[0]);
+								if (!specExpr.equals(split[0])) {
+									while (specExpr.contains("Kc__")) {
+										Kc = global_Kc;
+										String species = specExpr.substring(specExpr
+												.indexOf("Kc__") + 4, specExpr.indexOf("^",
+												specExpr.indexOf("Kc__") + 4));
+										Properties props = this.species.get(species);
+										if (props.containsKey(GlobalConstants.KCOMPLEX_STRING)) {
+											Kc = parseValue((String) props
+													.get(GlobalConstants.KCOMPLEX_STRING));
+										}
+										specExpr = specExpr.replaceAll("Kc__" + species, Kc + "");
+									}
+									while (specExpr.contains("nc__")) {
+										nc = global_nc;
+										String influences = specExpr.substring(specExpr
+												.indexOf("nc__") + 4);
+										if (influences.contains("-")) {
+											influences = influences.substring(0, influences
+													.indexOf("-"));
+										}
+										if (influences.contains("+")) {
+											influences = influences.substring(0, influences
+													.indexOf("+"));
+										}
+										if (influences.contains(")")) {
+											influences = influences.substring(0, influences
+													.indexOf(")"));
+										}
+										if (influences.contains("*")) {
+											influences = influences.substring(0, influences
+													.indexOf("*"));
+										}
+										String[] influParts = influences.split("_");
+										Properties props = this.influences.get(influParts[0]
+												+ " +> " + influParts[1] + ", Promoter none");
+										if (props.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
+											nc = parseValue((String) props
+													.get(GlobalConstants.COOPERATIVITY_STRING));
+										}
+										specExpr = specExpr
+												.replaceAll("nc__" + influences, nc + "");
+									}
+									specExpr = "(" + specExpr + ")";
+								}
+								promRate += "+(" + ka + "*((" + Ka + "*" + RNAP + "*" + specExpr
 										+ ")^" + nc + "))";
 							}
 							promRate += ")/((1+(" + Ko + "*" + RNAP + "))";
@@ -930,7 +977,53 @@ public class GCMFile {
 								if (p.containsKey(GlobalConstants.KACT_STRING)) {
 									Ka = parseValue((String) p.get(GlobalConstants.KACT_STRING));
 								}
-								promRate += "+((" + Ka + "*" + RNAP + "*" + split[0] + ")^" + nc
+								String specExpr = network.abstractComplex(split[0]);
+								if (!specExpr.equals(split[0])) {
+									while (specExpr.contains("Kc__")) {
+										Kc = global_Kc;
+										String species = specExpr.substring(specExpr
+												.indexOf("Kc__") + 4, specExpr.indexOf("^",
+												specExpr.indexOf("Kc__") + 4));
+										Properties props = this.species.get(species);
+										if (props.containsKey(GlobalConstants.KCOMPLEX_STRING)) {
+											Kc = parseValue((String) props
+													.get(GlobalConstants.KCOMPLEX_STRING));
+										}
+										specExpr = specExpr.replaceAll("Kc__" + species, Kc + "");
+									}
+									while (specExpr.contains("nc__")) {
+										nc = global_nc;
+										String influences = specExpr.substring(specExpr
+												.indexOf("nc__") + 4);
+										if (influences.contains("-")) {
+											influences = influences.substring(0, influences
+													.indexOf("-"));
+										}
+										if (influences.contains("+")) {
+											influences = influences.substring(0, influences
+													.indexOf("+"));
+										}
+										if (influences.contains(")")) {
+											influences = influences.substring(0, influences
+													.indexOf(")"));
+										}
+										if (influences.contains("*")) {
+											influences = influences.substring(0, influences
+													.indexOf("*"));
+										}
+										String[] influParts = influences.split("_");
+										Properties props = this.influences.get(influParts[0]
+												+ " +> " + influParts[1] + ", Promoter none");
+										if (props.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
+											nc = parseValue((String) props
+													.get(GlobalConstants.COOPERATIVITY_STRING));
+										}
+										specExpr = specExpr
+												.replaceAll("nc__" + influences, nc + "");
+									}
+									specExpr = "(" + specExpr + ")";
+								}
+								promRate += "+((" + Ka + "*" + RNAP + "*" + specExpr + ")^" + nc
 										+ ")";
 							}
 							if (promRepressors.size() != 0) {
@@ -950,7 +1043,55 @@ public class GCMFile {
 									if (p.containsKey(GlobalConstants.KACT_STRING)) {
 										Ka = parseValue((String) p.get(GlobalConstants.KACT_STRING));
 									}
-									promRate += "+((" + Kr + "*" + split[0] + ")^" + nc + ")";
+									String specExpr = network.abstractComplex(split[0]);
+									if (!specExpr.equals(split[0])) {
+										while (specExpr.contains("Kc__")) {
+											Kc = global_Kc;
+											String species = specExpr.substring(specExpr
+													.indexOf("Kc__") + 4, specExpr.indexOf("^",
+													specExpr.indexOf("Kc__") + 4));
+											Properties props = this.species.get(species);
+											if (props.containsKey(GlobalConstants.KCOMPLEX_STRING)) {
+												Kc = parseValue((String) props
+														.get(GlobalConstants.KCOMPLEX_STRING));
+											}
+											specExpr = specExpr.replaceAll("Kc__" + species, Kc
+													+ "");
+										}
+										while (specExpr.contains("nc__")) {
+											nc = global_nc;
+											String influences = specExpr.substring(specExpr
+													.indexOf("nc__") + 4);
+											if (influences.contains("-")) {
+												influences = influences.substring(0, influences
+														.indexOf("-"));
+											}
+											if (influences.contains("+")) {
+												influences = influences.substring(0, influences
+														.indexOf("+"));
+											}
+											if (influences.contains(")")) {
+												influences = influences.substring(0, influences
+														.indexOf(")"));
+											}
+											if (influences.contains("*")) {
+												influences = influences.substring(0, influences
+														.indexOf("*"));
+											}
+											String[] influParts = influences.split("_");
+											Properties props = this.influences.get(influParts[0]
+													+ " +> " + influParts[1] + ", Promoter none");
+											if (props
+													.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
+												nc = parseValue((String) props
+														.get(GlobalConstants.COOPERATIVITY_STRING));
+											}
+											specExpr = specExpr.replaceAll("nc__" + influences, nc
+													+ "");
+										}
+										specExpr = "(" + specExpr + ")";
+									}
+									promRate += "+((" + Kr + "*" + specExpr + ")^" + nc + ")";
 								}
 							}
 							promRate += ")";
@@ -975,7 +1116,55 @@ public class GCMFile {
 									if (p.containsKey(GlobalConstants.KACT_STRING)) {
 										Ka = parseValue((String) p.get(GlobalConstants.KACT_STRING));
 									}
-									promRate += "+((" + Kr + "*" + split[0] + ")^" + nc + ")";
+									String specExpr = network.abstractComplex(split[0]);
+									if (!specExpr.equals(split[0])) {
+										while (specExpr.contains("Kc__")) {
+											Kc = global_Kc;
+											String species = specExpr.substring(specExpr
+													.indexOf("Kc__") + 4, specExpr.indexOf("^",
+													specExpr.indexOf("Kc__") + 4));
+											Properties props = this.species.get(species);
+											if (props.containsKey(GlobalConstants.KCOMPLEX_STRING)) {
+												Kc = parseValue((String) props
+														.get(GlobalConstants.KCOMPLEX_STRING));
+											}
+											specExpr = specExpr.replaceAll("Kc__" + species, Kc
+													+ "");
+										}
+										while (specExpr.contains("nc__")) {
+											nc = global_nc;
+											String influences = specExpr.substring(specExpr
+													.indexOf("nc__") + 4);
+											if (influences.contains("-")) {
+												influences = influences.substring(0, influences
+														.indexOf("-"));
+											}
+											if (influences.contains("+")) {
+												influences = influences.substring(0, influences
+														.indexOf("+"));
+											}
+											if (influences.contains(")")) {
+												influences = influences.substring(0, influences
+														.indexOf(")"));
+											}
+											if (influences.contains("*")) {
+												influences = influences.substring(0, influences
+														.indexOf("*"));
+											}
+											String[] influParts = influences.split("_");
+											Properties props = this.influences.get(influParts[0]
+													+ " +> " + influParts[1] + ", Promoter none");
+											if (props
+													.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
+												nc = parseValue((String) props
+														.get(GlobalConstants.COOPERATIVITY_STRING));
+											}
+											specExpr = specExpr.replaceAll("nc__" + influences, nc
+													+ "");
+										}
+										specExpr = "(" + specExpr + ")";
+									}
+									promRate += "+((" + Kr + "*" + specExpr + ")^" + nc + ")";
 								}
 								promRate += ")";
 							}
@@ -996,8 +1185,8 @@ public class GCMFile {
 								+ placeNum);
 						LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i),
 								(String) threshold);
-						LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + rate
-								+ ")/" + "((" + threshold + "-" + number + ")/" + np + ")");
+						LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, np + "*(("
+								+ rate + ")/" + "(" + threshold + "-" + number + "))");
 						transNum++;
 					}
 					kd = global_kd;
@@ -1008,9 +1197,46 @@ public class GCMFile {
 					LHPN.addMovement(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
 					LHPN.addMovement(specs.get(i) + "_trans" + transNum, previousPlaceName);
 					LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
-					LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" +
-					// "(("+ threshold + "+" + number + ")/2)"
-							specs.get(i) + "*" + kd + ")/" + "(" + threshold + "-" + number + ")");
+					String specExpr = network.abstractComplex(specs.get(i));
+					if (!specExpr.equals(specs.get(i))) {
+						while (specExpr.contains("Kc__")) {
+							Kc = global_Kc;
+							String species = specExpr.substring(specExpr.indexOf("Kc__") + 4,
+									specExpr.indexOf("^", specExpr.indexOf("Kc__") + 4));
+							Properties props = this.species.get(species);
+							if (props.containsKey(GlobalConstants.KCOMPLEX_STRING)) {
+								Kc = parseValue((String) props.get(GlobalConstants.KCOMPLEX_STRING));
+							}
+							specExpr = specExpr.replaceAll("Kc__" + species, Kc + "");
+						}
+						while (specExpr.contains("nc__")) {
+							nc = global_nc;
+							String influences = specExpr.substring(specExpr.indexOf("nc__") + 4);
+							if (influences.contains("-")) {
+								influences = influences.substring(0, influences.indexOf("-"));
+							}
+							if (influences.contains("+")) {
+								influences = influences.substring(0, influences.indexOf("+"));
+							}
+							if (influences.contains(")")) {
+								influences = influences.substring(0, influences.indexOf(")"));
+							}
+							if (influences.contains("*")) {
+								influences = influences.substring(0, influences.indexOf("*"));
+							}
+							String[] influParts = influences.split("_");
+							Properties props = this.influences.get(influParts[0] + " +> "
+									+ influParts[1] + ", Promoter none");
+							if (props.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
+								nc = parseValue((String) props
+										.get(GlobalConstants.COOPERATIVITY_STRING));
+							}
+							specExpr = specExpr.replaceAll("nc__" + influences, nc + "");
+						}
+						specExpr = "(" + specExpr + ")";
+					}
+					LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specExpr + "*"
+							+ kd + ")/" + "(" + threshold + "-" + number + ")");
 					transNum++;
 				}
 				previousPlaceName = specs.get(i) + placeNum;
