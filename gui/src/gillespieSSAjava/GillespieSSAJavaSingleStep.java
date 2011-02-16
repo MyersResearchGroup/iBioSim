@@ -75,7 +75,7 @@ public class GillespieSSAJavaSingleStep {
 	private PriorityQueue<EventQueueElement> eventQueue = null;
 	private int initEventQueueCap = 10;
 	private Model model = null;
-	private int optValFireReaction = -1;
+	private int optValFireReaction=-1;
 	
 	public GillespieSSAJavaSingleStep() {
 	}
@@ -230,6 +230,7 @@ public class GillespieSSAJavaSingleStep {
 		  eventQueue = new PriorityQueue<EventQueueElement>(initEventQueueCap, comparator);
 	 }
 	 graph.editGraph();	  
+	 
 	//  // Create a table to hold the results
 	//  DefaultTableModel tableModel = new DefaultTableModel();
 	//  tableModel.addColumn("t");
@@ -238,6 +239,7 @@ public class GillespieSSAJavaSingleStep {
 	//  SimResultsTable simResultsTbl = new SimResultsTable(tableModel);
 	//  JFrame tableFrame = new JFrame("Simulation Results");
 	//  simResultsTbl.showTable(tableFrame, simResultsTbl);
+	 
 	//  ########################################################
 	 double deltaTime = 0.01; // deltaTime is used to add to timeLimit, so that the while loop can terminate
 	 while (time<=timeLimit) {
@@ -250,11 +252,13 @@ public class GillespieSSAJavaSingleStep {
 		  }
 		  evaluateRules(model);
 		  String[] CustomParamsUpdateFireEvents = new String[2];
-          CustomParamsUpdateFireEvents = UpdateFireEvents();
+          CustomParamsUpdateFireEvents = UpdateFireEvents(graph);
           int optVal = Integer.parseInt(CustomParamsUpdateFireEvents[0]);
           boolean eventDelayNegative = Boolean.parseBoolean(CustomParamsUpdateFireEvents[1]);
           if (eventDelayNegative || optVal == 2 || (time > 0 && optVal == -1)) 
         	  break;
+          else 
+        	  
 		  if (nextEventTime < maxTime && nextEventTime>0) {
 			  maxTime = nextEventTime;
 		  }
@@ -419,7 +423,7 @@ public class GillespieSSAJavaSingleStep {
 				 }
 				 while (t_next > maxTime && optionValue!=2 && optionValue!=-1 ) {
 					 optValFireReaction = openReactionDialogue();
-					 if (optValFireReaction == 0) {
+					 if (optValFireReaction == 0) {  // re-enter a new t_next
 						 CustomParamsReactionMenu = openReactionInteractiveMenu(time,tau,miu);
 						 optionValue = Integer.parseInt(CustomParamsReactionMenu[2]);
 						 t_next = Double.parseDouble(CustomParamsReactionMenu[0]); 
@@ -565,7 +569,7 @@ public class GillespieSSAJavaSingleStep {
 		 }	
 	}
 	
-	private String[] UpdateFireEvents() {
+	private String[] UpdateFireEvents(Graph graph) {
 		  String[] CustomParamsEventFired = new String[2];
 		  String[] CustomParamsUpdateFireEvents = new String[2];
 		  String[] ReturnParamsFromUpdateEventQueue = new String[2];
@@ -577,7 +581,7 @@ public class GillespieSSAJavaSingleStep {
 				  eventDelayNegative = Boolean.parseBoolean(ReturnParamsFromUpdateEventQueue[0]);
 				  nextEventTime = Double.parseDouble(ReturnParamsFromUpdateEventQueue[1]);
 				   if (!eventDelayNegative && eventQueue.size() > 0) {
-					  CustomParamsEventFired = fireEvent(eventQueue, initEventQueueCap, eventList);
+					  CustomParamsEventFired = fireEvent(eventQueue, initEventQueueCap, eventList, graph);
 					  optVal = Integer.parseInt(CustomParamsEventFired[0]);
 					  if (optVal == 2 || optVal == -1) { // 2=terminate -1=No interaction performed
 						  break;
@@ -712,7 +716,7 @@ public class GillespieSSAJavaSingleStep {
 	 
 	}
 	
-	private String[] fireEvent(PriorityQueue<EventQueueElement> eventQueue, int initEventQueueCap, ListOfEvents eventList) {
+	private String[] fireEvent(PriorityQueue<EventQueueElement> eventQueue, int initEventQueueCap, ListOfEvents eventList, Graph graph) {
 		// Assume event assignments are evaluated at fire time
 		boolean isEventFired = false;
 		int optVal = -1;
@@ -731,7 +735,7 @@ public class GillespieSSAJavaSingleStep {
 			CustomParamsEventMenu= openEventInteractiveMenu(eventReadyArray);
 			optVal = Integer.parseInt(CustomParamsEventMenu[0]);
 			int eventToFireIndex = Integer.parseInt(CustomParamsEventMenu[1]);
-			if (optVal != 2 && optVal != -1) { // 2 = terminate  1 = no action performed
+			if (optVal != 2 && optVal != -1) { // 2 = terminate  -1 = no action performed
 				Event eventToFire = eventList.get(eventReadyArray.get(eventToFireIndex).getEventId());
 				if (!eventToFire.getUseValuesFromTriggerTime()) {
 					ListOfEventAssignments eventToFireAssignList = eventToFire.getListOfEventAssignments();
@@ -775,7 +779,9 @@ public class GillespieSSAJavaSingleStep {
 				for (int i = 0; i < eventReadyArray.size(); i++){
 					eventQueue.add(eventReadyArray.get(i));
 				}
-				eventReadyArray.clear();				
+				eventReadyArray.clear();	
+				printTSDVals();
+				graph.refresh();
 			}			
 		}
 		String[] CustomParamsFireEvent = new String[2];
@@ -785,7 +791,7 @@ public class GillespieSSAJavaSingleStep {
 		
 	}
 	
-	private String evaluateAST(ASTNode currentASTNode) {
+	public String evaluateAST(ASTNode currentASTNode) {
 		String retStr = null;
 		if(isLeafNode(currentASTNode)){
 			retStr = evaluateLeafNode(currentASTNode);  
@@ -836,6 +842,12 @@ public class GillespieSSAJavaSingleStep {
 					}
 					break;
 				}
+//				// user defined functions
+//				case libsbml.AST_FUNCTION:
+//					retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) + Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
+				
+				
+				
 				// TODO MOD, BITNOT, BITOR, BITAND, BITXOR, idiv
 			}
 		 }
@@ -975,6 +987,7 @@ public class GillespieSSAJavaSingleStep {
 	public String[] openEventInteractiveMenu(ArrayList<EventQueueElement> eventReadyArray) {
 		String[] CustomParamsEventMenu=new String[2];
 		JPanel nextEventsPanel = new JPanel();
+		JPanel nextEventFireTimePanel = new JPanel();
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		nextEventsPanel.add(new JLabel("Next event to fire:"));
 		// create a drop-down list of next possible firing events
@@ -992,24 +1005,33 @@ public class GillespieSSAJavaSingleStep {
 		nextEventsPanel.add(nextEventsList);
 		mainPanel.add(nextEventsPanel, "Center");
 		Object[] options = {"OK", "Cancel", "Terminate"};
+		Object[] singleOpt = {"OK"};
 		int optionValue;
 		// optionValue: 0=OK, 1=Cancel, 2=Terminate
 		optionValue = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Next Event Selection",
 		JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		CustomParamsEventMenu[0] = optionValue + "";
 		String eventSelected = (String)nextEventsList.getSelectedItem();
-		if (eventSelected.equals(eventToFire.getEventId())) {
+		if (eventSelected.equals(eventToFire.getEventId())) { // user selected event is the same as the randomly selected one.
+			nextEventFireTimePanel.add(new JLabel("The selected event will fire at time " + eventToFire.getScheduledTime() + "."));
+			JOptionPane.showOptionDialog(Gui.frame, nextEventFireTimePanel, "Next Event Selection",
+					JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, singleOpt, singleOpt[0]);
 			CustomParamsEventMenu[1] = "" + eventReadyArray.indexOf(eventToFire);
 			return CustomParamsEventMenu;
 		}
 		else {
 			int eventSelectedIndex = -1;
+			double eventSelectedScheduledTime = -1;
 			for (int i = 0; i<sizeEventReadyArray; i++) {
 				if (eventReadyArray.get(i).getEventId() == eventSelected) {
 					eventSelectedIndex = i;
+					eventSelectedScheduledTime = eventReadyArray.get(i).getScheduledTime();
 					break;
 				}
 			}
+			nextEventFireTimePanel.add(new JLabel("The selected event will fire at some time " + eventSelectedScheduledTime + "."));
+			JOptionPane.showOptionDialog(Gui.frame, nextEventFireTimePanel, "Next Event Selection",
+					JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, singleOpt, singleOpt[0]);
 			CustomParamsEventMenu[1] = "" + eventSelectedIndex;
 			return CustomParamsEventMenu;
 		}
