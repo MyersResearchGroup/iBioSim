@@ -899,36 +899,39 @@ public class GeneticNetwork {
 	}
 
 	public String abstractComplex(String id) {
-		String complexExpression = "";
+		String complexExpression = id;
 		if (species.containsKey(id)) {
-			complexExpression = abstractComplexHelper(species.get(id), "");
+			try {
+				complexExpression = abstractComplexHelper(species.get(id), "");
+			}
+			catch (Exception e) {
+			}
 		}
 		return complexExpression;
 	}
-	
-	//Recursively breaks down repressing complex into its constituent species and complex formation equilibria
+
+	// Recursively breaks down repressing complex into its constituent species
+	// and complex formation equilibria
 	private String abstractComplexHelper(SpeciesInterface complex, String ncProduct) {
 		String expression = "";
 		String kcompId = GlobalConstants.KCOMPLEX_STRING + "__" + complex.getId();
 		String ncSum = "";
-		try {
-			for (PartSpecies part : complexMap.get(complex.getId())) {
-				SpeciesInterface s = part.getSpecies();
-				String nId = GlobalConstants.COOPERATIVITY_STRING + "__" + s.getId() + "_" + complex.getId();
-				ncSum = ncSum + nId + "__" + s.getId() + "+";
-				if (complexMap.containsKey(s.getId())) {
-					expression = "*" + abstractComplexHelper(s, ncProduct 
-						+ nId + "__" + s.getId() + "*") + expression;
-				} else {
-					expression = expression + "*" + s.getId() + '^' + "(" + ncProduct 
-						+ nId + "__" + s.getId() + ")";
-				}
+		for (PartSpecies part : complexMap.get(complex.getId())) {
+			SpeciesInterface s = part.getSpecies();
+			String nId = GlobalConstants.COOPERATIVITY_STRING + "__" + s.getId() + "_"
+					+ complex.getId();
+			ncSum = ncSum + nId + "+";
+			if (complexMap.containsKey(s.getId())) {
+				expression = "*"
+						+ abstractComplexHelper(s, ncProduct + nId  + "*")
+						+ expression;
 			}
-			expression = kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + expression;
+			else {
+				expression = expression + "*" + s.getId() + '^' + "(" + ncProduct + nId + ")";
+			}
 		}
-		catch (Exception e) {
-			return complex.getId();
-		}
+		expression = kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)"
+				+ expression;
 		return expression;
 	}
 	
