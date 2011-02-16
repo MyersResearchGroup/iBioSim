@@ -3527,7 +3527,7 @@ public class ExprTree {
 				r2.r2 = u2;
 			}
 		}
-		if (isit == 'a' && op.equals("*")) {
+		if (isit == 'a' && op.equals("-")) {
 			if (r1.isit == 'a' && r1.equals("uniform") && r2.isit == 'a'
 					&& r2.equals("uniform")) {
 				ExprTree l1 = r1.r1;
@@ -3535,12 +3535,34 @@ public class ExprTree {
 				ExprTree u1 = r1.r2;
 				ExprTree u2 = r2.r2;
 				op = "uniform";
-				r1.op = "*";
-				r2.op = "*";
+				r1.op = "+";
+				r2.op = "+";
 				r1.r1 = l1;
-				r1.r2 = l2;
+				r1.r2 = u2;
 				r2.r1 = u1;
-				r2.r2 = u2;
+				r2.r2 = l2;
+			}
+		}
+		if (isit == 'a' && op.equals("*")) {
+			if (r1.isit == 'a' && r1.equals("uniform") && r2.isit == 'a'
+					&& r2.equals("uniform")) {
+				ExprTree l1 = r1.r1;
+				ExprTree l2 = r2.r1;
+				ExprTree u1 = r1.r2;
+				ExprTree u2 = r2.r2;
+				if (l1.isit == 'n' && l2.isit == 'n' && u1.isit == 'n'
+						&& u2.isit == 'n') {
+					if (l1.lvalue >= 0 && l2.lvalue >= 0 && u1.lvalue >= 0
+							&& u2.lvalue >= 0) {
+						op = "uniform";
+						r1.op = "*";
+						r2.op = "*";
+						r1.r1 = l1;
+						r1.r2 = l2;
+						r2.r1 = u1;
+						r2.r2 = u2;
+					}
+				}
 			}
 		}
 		if (isit == 'a' && op.equals("/")) {
@@ -3553,6 +3575,28 @@ public class ExprTree {
 				r2.lvalue = r1.r2.lvalue / N;
 				r1.r1 = null;
 				r1.r2 = null;
+			}
+		}
+		if (isit == 'a' && op.equals("ceil")) {
+			if (r1.isit == 'a' && r1.equals("uniform")) {
+				ExprTree l1 = r1.r1;
+				ExprTree u1 = r1.r2;
+				op = "uniform";
+				r1.op = "ceil";
+				r2.op = "ceil";
+				r1.r1 = l1;
+				r1.r2 = u1;
+			}
+		}
+		if (isit == 'a' && op.equals("floor")) {
+			if (r1.isit == 'a' && r1.equals("uniform")) {
+				ExprTree l1 = r1.r1;
+				ExprTree u1 = r1.r2;
+				op = "uniform";
+				r1.op = "floor";
+				r2.op = "floor";
+				r1.r1 = l1;
+				r1.r2 = u1;
 			}
 		}
 		if (isit == 'a' && op.equals("uniform")) {
