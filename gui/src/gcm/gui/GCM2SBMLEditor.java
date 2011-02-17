@@ -43,6 +43,7 @@ import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBMLDocument;
 
+import reb2sac.ConstraintTermThread;
 import reb2sac.Reb2Sac;
 import reb2sac.Reb2SacThread;
 import sbmleditor.SBML_Editor;
@@ -518,6 +519,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			sweep2 = new ArrayList<ArrayList<Double>>();
 		}
 		if (sweepThese1.size() > 0) {
+			ArrayList<Reb2SacThread> threads = new ArrayList<Reb2SacThread>();
+			ArrayList<String> dirs = new ArrayList<String>();
 			int max = 0;
 			for (ArrayList<Double> d : sweep1) {
 				max = Math.max(max, d.size());
@@ -559,7 +562,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 								+ sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "")).mkdir();
 						createSBML(stem, sweepTwo);
 						if (run) {
-							new Reb2SacThread(reb2sac).start(stem + sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
+							Reb2SacThread thread = new Reb2SacThread(reb2sac);
+							thread.start(stem + sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
+							threads.add(thread);
+							dirs.add(sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
 							reb2sac.emptyFrames();
 						}
 					}
@@ -569,11 +575,15 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 							+ sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "")).mkdir();
 					createSBML(stem, sweep);
 					if (run) {
-						new Reb2SacThread(reb2sac).start(stem + sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
+						Reb2SacThread thread = new Reb2SacThread(reb2sac);
+						thread.start(stem + sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
+						threads.add(thread);
+						dirs.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
 						reb2sac.emptyFrames();
 					}
 				}
 			}
+			new ConstraintTermThread(reb2sac).start(threads, dirs);
 		}
 		else {
 			if (!stem.equals("")) {
