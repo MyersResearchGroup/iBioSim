@@ -583,7 +583,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					}
 				}
 			}
-			new ConstraintTermThread(reb2sac).start(threads, dirs);
+			new ConstraintTermThread(reb2sac).start(threads, dirs, stem);
 		}
 		else {
 			if (!stem.equals("")) {

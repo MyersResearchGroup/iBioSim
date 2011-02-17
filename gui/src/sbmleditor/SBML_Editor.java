@@ -10865,7 +10865,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							reb2sac.emptyFrames();
 						}
 					}
-					new ConstraintTermThread(reb2sac).start(threads, dirs);
+					new ConstraintTermThread(reb2sac).start(threads, dirs, stem);
 				}
 				else {
 					if (!stem.equals("")) {
