@@ -1,5 +1,7 @@
 package lpn.parser;
 
+import gcm.util.Utility;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -75,6 +77,11 @@ public class Abstraction extends LhpnFile {
 			System.out.println("Places before abstraction: " + numPlaces);
 			System.out.println("Variables before abstraction: " + numVars);
 		}
+		boolean normalize = true;
+		if ((abstPane.preAbsModel.contains(abstPane.xform21) || abstPane.loopAbsModel.contains(abstPane.xform21) || abstPane.postAbsModel.contains(abstPane.xform21)) && abstPane.getNormFactor() <= 0) {
+			Utility.createErrorMessage("Invalid Normalization Factor", "Normalization factor must be a non-negative integer.\nDelay normalization will not be performed.");
+			normalize = false;
+		}
 		Integer i = 0;
 		for (Object o : abstPane.preAbsModel.toArray()) {
 			String s = o.toString();
@@ -137,7 +144,7 @@ public class Abstraction extends LhpnFile {
 			}
 			// Transform 10 - Simplify Expressions
 			if (s.equals(abstPane.xform10) && abstPane.isSimplify()) {
-				simplifyExpr();
+				change = simplifyExpr(change);
 			}
 			// Transform 15 - Remove Dead Transitions
 			if (s.equals(abstPane.xform15) && abstPane.isSimplify()) {
@@ -167,7 +174,7 @@ public class Abstraction extends LhpnFile {
 			// Transform 19 - Merge Coordinated Variables
 			if (s.equals(abstPane.xform19) && abstPane.isSimplify()) {
 				change = mergeCoordinatedVars(change);
-				simplifyExpr();
+				change = simplifyExpr(change);
 			}
 			// Transform 26 - Remove Dangling Transitions
 			if (s.equals(abstPane.xform26) && abstPane.isSimplify()) {
@@ -186,12 +193,12 @@ public class Abstraction extends LhpnFile {
 				change = removeUninterestingVariables(change);
 			}
 			// Transform 21 - Normalize Delays
-			if (s.equals(abstPane.xform21) && abstPane.isAbstract()) {
+			if (s.equals(abstPane.xform21) && abstPane.isAbstract() && normalize) {
 				normalizeDelays();
 			}
 			// Transform 31 - Simplify Delay Ranges
 			if (s.equals(abstPane.xform31) && abstPane.isAbstract()) {
-				minimizeUniforms();
+				change = minimizeUniforms(change);
 			}
 		}
 		change = true;
@@ -259,7 +266,7 @@ public class Abstraction extends LhpnFile {
 				}
 				// Transform 10 - Simplify Expressions
 				if (s.equals(abstPane.xform10) && abstPane.isSimplify()) {
-					simplifyExpr();
+					change = simplifyExpr(change);
 				}
 				// Transform 15 - Remove Dead Transitions
 				if (s.equals(abstPane.xform15) && abstPane.isSimplify()) {
@@ -289,7 +296,7 @@ public class Abstraction extends LhpnFile {
 				// Transform 19 - Merge Coordinated Variables
 				if (s.equals(abstPane.xform19) && abstPane.isSimplify()) {
 					change = mergeCoordinatedVars(change);
-					simplifyExpr();
+					change = simplifyExpr(change);
 				}
 				// Transform 26 - Remove Dangling Transitions
 				if (s.equals(abstPane.xform26) && abstPane.isSimplify()) {
@@ -314,132 +321,142 @@ public class Abstraction extends LhpnFile {
 					change = removeUninterestingTransitions(change);
 				}
 				// Transform 21 - Normalize Delays
-				if (s.equals(abstPane.xform21) && abstPane.isAbstract()) {
+				if (s.equals(abstPane.xform21) && abstPane.isAbstract() && normalize) {
 					normalizeDelays();
 				}
 				// Transform 31 - Simplify Delay Ranges
 				if (s.equals(abstPane.xform31) && abstPane.isAbstract()) {
-					minimizeUniforms();
+					change = minimizeUniforms(change);
 				}
 			}
 			i++;
 		}
-		for (Object o : abstPane.postAbsModel.toArray()) {
-			String s = o.toString();
-			if (s.equals(abstPane.xform12)) {
-				abstractAssign();
-			}
+		while (change && i < abstPane.maxIterations()) {
+			change = false;
 			divideProcesses();
 			intVars = new ArrayList<String>();
 			for (String v : abstPane.getIntVars()) {
 				intVars.add(v);
 			}
-			// Transform 0 - Merge Parallel Places
-			if (s.equals(abstPane.xform0) && abstPane.isSimplify()) {
-				change = checkTrans0(change);
-			}
-			// Transform 1 - Remove a Place in a Self Loop
-			if (s.equals(abstPane.xform1) && abstPane.isSimplify()) {
-				change = checkTrans1(change);
-			}
-			// Transforms 5a, 6, 7 - Combine Transitions with the Same Preset
-			// and/or Postset
-			if ((s.equals(abstPane.xform5) || s.equals(abstPane.xform6) || s
-					.equals(abstPane.xform7))
-					&& abstPane.isAbstract()) {
-				change = checkTrans5(change);
-			}
-			// Transform 5b
-			if (s.equals(abstPane.xform5) && abstPane.isAbstract()) {
-				change = checkTrans5b(change);
-			}
-			// Transform 4 - Remove a Transition with a Single Place in the
-			// Preset
-			if (s.equals(abstPane.xform4) && abstPane.isSimplify()) {
-				change = checkTrans4(change);
-			}
-			// Transform 3 - Remove a Transition with a Single Place in the
-			// Postset
-			if (s.equals(abstPane.xform3) && abstPane.isSimplify()) {
-				change = checkTrans3(change);
-			}
-			// Transform 22 - Remove Vacuous Transitions (simplification)
-			if (s.equals(abstPane.xform22) && abstPane.isSimplify()) {
-				change = checkTrans22(change);
-			}
-			// Transform 23 - Remove Vacuous Transitions (abstraction)
-			if (s.equals(abstPane.xform22) && abstPane.isAbstract()) {
-				change = checkTrans23(change);
-			}
-			// Transform 14 - Remove Dead Places
-			if (s.equals(abstPane.xform14) && abstPane.isSimplify()) {
-				change = removeDeadPlaces(change);
-			}
-			// Transform 8 - Propagate local assignments
-			if (s.equals(abstPane.xform8) && abstPane.isSimplify()) {
-				change = checkTrans8(change);
-			}
-			// Transform 9 - Remove Write Before Write
-			if (s.equals(abstPane.xform9) && abstPane.isSimplify()) {
-				change = checkTrans9(change);
-			}
-			// Transform 10 - Simplify Expressions
-			if (s.equals(abstPane.xform10) && abstPane.isSimplify()) {
-				simplifyExpr();
-			}
-			// Transform 15 - Remove Dead Transitions
-			if (s.equals(abstPane.xform15) && abstPane.isSimplify()) {
-				change = removeDeadTransitions(change);
-			}
-			// Transform 17 - Remove Dominated Transitions
-			if (s.equals(abstPane.xform17) && abstPane.isSimplify()) {
-				change = removeDominatedTransitions(change);
-				change = removeRedundantTransitions(change);
-			}
-			// Transform 18 - Remove Unread Variables
-			if (s.equals(abstPane.xform18) && abstPane.isSimplify()) {
-				change = removeUnreadVars(change);
-			}
-			// Transform 20 - Remove Arc after Fail Transition
-			if (s.equals(abstPane.xform20) && abstPane.isSimplify()) {
-				change = removePostFailPlaces(change);
-			}
-			// Transform 24 - Pairwise Write Before Write
-			if (s.equals(abstPane.xform24) && abstPane.isSimplify()) {
-				change = weakWriteBeforeWrite(change);
-			}
-			// Transform 25 - Propagate Constant Variable Values
-			if (s.equals(abstPane.xform25) && abstPane.isSimplify()) {
-				change = propagateConst(change);
-			}
-			// Transform 19 - Merge Coordinated Variables
-			if (s.equals(abstPane.xform19) && abstPane.isSimplify()) {
-				change = mergeCoordinatedVars(change);
-				simplifyExpr();
-			}
-			// Transform 26 - Remove Dangling Transitions
-			if (s.equals(abstPane.xform26) && abstPane.isSimplify()) {
-				change = removeDanglingTransitions(change);
-			}
-			// Transform 28 - Combing Parallel Transitions (Abstraction)
-			if (s.equals(abstPane.xform28) && abstPane.isAbstract()) {
-				change = mergeTransitionsAbs(change);
-			}
-			// Transform 27 - Combine Parallel Transitions (Simplification)
-			else if (s.equals(abstPane.xform27) && abstPane.isSimplify()) {
-				change = mergeTransitionsSimp(change, true);
-			}
-			// Transform 29 - Remove Uninteresting Variables (Simplification)
-			if (s.equals(abstPane.xform29) && abstPane.isSimplify()) {
-				change = removeUninterestingVariables(change);
-			}
-			// Transform 21 - Normalize Delays
-			if (s.equals(abstPane.xform21) && abstPane.isAbstract()) {
-				normalizeDelays();
-			}
-			// Transform 31 - Simplify Delay Ranges
-			if (s.equals(abstPane.xform31) && abstPane.isAbstract()) {
-				minimizeUniforms();
+			for (Object o : abstPane.postAbsModel.toArray()) {
+				String s = o.toString();
+				if (s.equals(abstPane.xform12)) {
+					abstractAssign();
+				}
+				divideProcesses();
+				intVars = new ArrayList<String>();
+				for (String v : abstPane.getIntVars()) {
+					intVars.add(v);
+				}
+				// Transform 0 - Merge Parallel Places
+				if (s.equals(abstPane.xform0) && abstPane.isSimplify()) {
+					change = checkTrans0(change);
+				}
+				// Transform 1 - Remove a Place in a Self Loop
+				if (s.equals(abstPane.xform1) && abstPane.isSimplify()) {
+					change = checkTrans1(change);
+				}
+				// Transforms 5a, 6, 7 - Combine Transitions with the Same
+				// Preset
+				// and/or Postset
+				if ((s.equals(abstPane.xform5) || s.equals(abstPane.xform6) || s
+						.equals(abstPane.xform7))
+						&& abstPane.isAbstract()) {
+					change = checkTrans5(change);
+				}
+				// Transform 5b
+				if (s.equals(abstPane.xform5) && abstPane.isAbstract()) {
+					change = checkTrans5b(change);
+				}
+				// Transform 4 - Remove a Transition with a Single Place in the
+				// Preset
+				if (s.equals(abstPane.xform4) && abstPane.isSimplify()) {
+					change = checkTrans4(change);
+				}
+				// Transform 3 - Remove a Transition with a Single Place in the
+				// Postset
+				if (s.equals(abstPane.xform3) && abstPane.isSimplify()) {
+					change = checkTrans3(change);
+				}
+				// Transform 22 - Remove Vacuous Transitions (simplification)
+				if (s.equals(abstPane.xform22) && abstPane.isSimplify()) {
+					change = checkTrans22(change);
+				}
+				// Transform 23 - Remove Vacuous Transitions (abstraction)
+				if (s.equals(abstPane.xform22) && abstPane.isAbstract()) {
+					change = checkTrans23(change);
+				}
+				// Transform 14 - Remove Dead Places
+				if (s.equals(abstPane.xform14) && abstPane.isSimplify()) {
+					change = removeDeadPlaces(change);
+				}
+				// Transform 8 - Propagate local assignments
+				if (s.equals(abstPane.xform8) && abstPane.isSimplify()) {
+					change = checkTrans8(change);
+				}
+				// Transform 9 - Remove Write Before Write
+				if (s.equals(abstPane.xform9) && abstPane.isSimplify()) {
+					change = checkTrans9(change);
+				}
+				// Transform 10 - Simplify Expressions
+				if (s.equals(abstPane.xform10) && abstPane.isSimplify()) {
+					change = simplifyExpr(change);
+				}
+				// Transform 15 - Remove Dead Transitions
+				if (s.equals(abstPane.xform15) && abstPane.isSimplify()) {
+					change = removeDeadTransitions(change);
+				}
+				// Transform 17 - Remove Dominated Transitions
+				if (s.equals(abstPane.xform17) && abstPane.isSimplify()) {
+					change = removeDominatedTransitions(change);
+					change = removeRedundantTransitions(change);
+				}
+				// Transform 18 - Remove Unread Variables
+				if (s.equals(abstPane.xform18) && abstPane.isSimplify()) {
+					change = removeUnreadVars(change);
+				}
+				// Transform 20 - Remove Arc after Fail Transition
+				if (s.equals(abstPane.xform20) && abstPane.isSimplify()) {
+					change = removePostFailPlaces(change);
+				}
+				// Transform 24 - Pairwise Write Before Write
+				if (s.equals(abstPane.xform24) && abstPane.isSimplify()) {
+					change = weakWriteBeforeWrite(change);
+				}
+				// Transform 25 - Propagate Constant Variable Values
+				if (s.equals(abstPane.xform25) && abstPane.isSimplify()) {
+					change = propagateConst(change);
+				}
+				// Transform 19 - Merge Coordinated Variables
+				if (s.equals(abstPane.xform19) && abstPane.isSimplify()) {
+					change = mergeCoordinatedVars(change);
+					change = simplifyExpr(change);
+				}
+				// Transform 26 - Remove Dangling Transitions
+				if (s.equals(abstPane.xform26) && abstPane.isSimplify()) {
+					change = removeDanglingTransitions(change);
+				}
+				// Transform 28 - Combing Parallel Transitions (Abstraction)
+				if (s.equals(abstPane.xform28) && abstPane.isAbstract()) {
+					change = mergeTransitionsAbs(change);
+				}
+				// Transform 27 - Combine Parallel Transitions (Simplification)
+				else if (s.equals(abstPane.xform27) && abstPane.isSimplify()) {
+					change = mergeTransitionsSimp(change, true);
+				}
+				// Transform 29 - Remove Uninteresting Variables
+				// (Simplification)
+				if (s.equals(abstPane.xform29) && abstPane.isSimplify()) {
+					change = removeUninterestingVariables(change);
+				}
+				// Transform 21 - Normalize Delays
+				if (s.equals(abstPane.xform21) && abstPane.isAbstract() && normalize) {
+					normalizeDelays();
+				}
+				// Transform 31 - Simplify Delay Ranges
+				if (s.equals(abstPane.xform31) && abstPane.isAbstract()) {
+					change = minimizeUniforms(change);
+				}
 			}
 		}
 		numTrans = transitions.size();
@@ -1902,16 +1919,18 @@ public class Abstraction extends LhpnFile {
 		return change;
 	}
 
-	private void simplifyExpr() {
+	private boolean simplifyExpr(boolean change) {
 		for (Transition t : transitions.values()) {
-			t.simplifyExpr();
+			change = t.simplifyExpr(change);
 		}
+		return change;
 	}
 
-	private void minimizeUniforms() {
+	private boolean minimizeUniforms(boolean change) {
 		for (Transition t : transitions.values()) {
-			t.minimizeUniforms();
+			change = t.minimizeUniforms(change);
 		}
+		return change;
 	}
 
 	private void normalizeDelays() {
@@ -2979,7 +2998,7 @@ public class Abstraction extends LhpnFile {
 				m.remove(var2);
 				t.removeRateAssign(var2);
 			}
-			t.simplifyExpr();
+			t.simplifyExpr(false);
 		}
 		if (process_read.get(var1) != process_read.get(var2)) {
 			process_read.put(var1, -1);
