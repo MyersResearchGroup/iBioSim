@@ -58,6 +58,7 @@ import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
+import javax.swing.plaf.metal.MetalButtonUI;
 import javax.swing.plaf.metal.MetalIconFactory;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeCellRenderer;
@@ -108,7 +109,6 @@ import com.lowagie.text.pdf.DefaultFontMapper;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
-import com.sun.java.swing.plaf.windows.WindowsButtonUI;
 
 /**
  * This is the Graph class. It takes in data and draws a graph of that data. The
@@ -4398,7 +4398,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			colorButton.setBorder(BorderFactory.createLineBorder(Color.darkGray));
 			colorButton.setBackground((Color) colory.get("Black"));
 			colorButton.setForeground((Color) colory.get("Black"));
-			colorButton.setUI(new WindowsButtonUI());
+			colorButton.setUI(new MetalButtonUI());
 			colorButton.setActionCommand("" + i);
 			colorButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -7777,7 +7777,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			colorButton.setBorder(BorderFactory.createLineBorder(Color.darkGray));
 			colorButton.setBackground((Color) colory.get("Black"));
 			colorButton.setForeground((Color) colory.get("Black"));
-			colorButton.setUI(new WindowsButtonUI());
+			colorButton.setUI(new MetalButtonUI());
 			colorButton.setActionCommand("" + i);
 			colorButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {

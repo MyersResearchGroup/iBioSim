@@ -17,6 +17,8 @@ import lpn.parser.Translator;
 import main.*;
 
 import org.sbml.libsbml.*;
+
+import parser.Parser;
 import sbmleditor.*;
 import util.*;
 import verification.AbstPane;
@@ -5012,7 +5014,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				outDir, "time", biomodelsim, open, log, null, false, false);
 	}
 	
-	public void run(ArrayList<Reb2SacThread> threads, ArrayList<String> dirs) {
+	public void run(ArrayList<Reb2SacThread> threads, ArrayList<String> dirs, String stem) {
 		for (Reb2SacThread thread : threads) {
 			try {
 				thread.join();
@@ -5024,13 +5026,79 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			ArrayList<String> dataLabels = new ArrayList<String>();
 			ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
 			String spec = dirs.get(0).split("=")[0];
-			
-			//dataLabels.add(direct[0]);
-			ArrayList<Double> dat = new ArrayList<Double>();
-			//for ()
-			for (String d : dirs) {
-				dataLabels.add(dirs.get(0).split("=")[0]);
+			dataLabels.add(spec);
+			data.add(new ArrayList<Double>());
+			ArrayList<String> specs = new ArrayList<String>();
+			try {
+				Scanner s = new Scanner(new File(root + separator + simName + separator + stem + dirs.get(0) + separator + "sim-rep.txt"));
+				while (s.hasNextLine()) {
+					String[] ss = s.nextLine().split(" ");
+					if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
+							&& ss[3].equals("count:") && ss[4].equals("0")) {
+						return;
+					}
+					if (specs.size() == 0) {
+						for (String add : ss) {
+							specs.add(add);
+						}
+					}
+					else {
+						for (int i = 0; i < ss.length; i++) {
+							specs.set(i, specs.get(i) + " " + ss[i]);
+						}
+					}
+				}
 			}
+			catch (Exception e) {
+			}
+			for (String s : specs) {
+				if (!s.split(" ")[0].equals("#total")) {
+					dataLabels.add(s.split(" ")[0]);
+					data.add(new ArrayList<Double>());
+				}
+			}
+			for (String d : dirs) {
+				double val = Double.parseDouble(d.split("=")[1].split("_")[0]);
+				data.get(0).add(val);
+				ArrayList<String> vals = new ArrayList<String>();
+				try {
+					Scanner s = new Scanner(new File(root + separator + simName + separator + stem + d + separator + "sim-rep.txt"));
+					while (s.hasNextLine()) {
+						String[] ss = s.nextLine().split(" ");
+						if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
+								&& ss[3].equals("count:") && ss[4].equals("0")) {
+						}
+						if (vals.size() == 0) {
+							for (String add : ss) {
+								vals.add(add);
+							}
+						}
+						else {
+							for (int i = 0; i < ss.length; i++) {
+								vals.set(i, vals.get(i) + " " + ss[i]);
+							}
+						}
+					}
+				}
+				catch (Exception e) {
+				}
+				double total = 0;
+				int i = 0;
+				if (vals.get(0).split(" ")[0].equals("#total")) {
+					total = Double.parseDouble(vals.get(0).split(" ")[1]);
+					i = 1;
+				}
+				for (; i < vals.size(); i++) {
+					if (total == 0) {
+						data.get(i).add(Double.parseDouble(vals.get(i).split(" ")[1]));
+					}
+					else {
+						data.get(i).add(100 * ((Double.parseDouble(vals.get(i).split(" ")[1])) / total));
+					}
+				}
+			}
+			Parser constData = new Parser(dataLabels, data);
+			constData.outputTSD(root + separator + simName + separator + "sim-rep.tsd");
 		}
 	}
 
