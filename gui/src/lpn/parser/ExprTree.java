@@ -3230,71 +3230,119 @@ public class ExprTree {
 
 					}
 				} else if (op.equals("+")) {
-					if (r1.isit == 'b'
-							|| r1.isit == 'i'
-							|| r1.isit == 'c'
-							|| r1.isit == 'n'
-							|| r1.isit == 't'
-							|| (r1.isit == 'a' && (r1.op.equals("+")
-									|| r1.op.equals("-") || r1.op.equals("*")
-									|| r1.op.equals("/") || r1.op.equals("^")))) {
-						if (r1 != null) {
-							result = r1.getElement(type);
-						}
+					if (r1.isit == 'n' && r1.lvalue >= 0 && r2.isit == 'a'
+							&& r2.op.equals("uniform")) {
+						ExprTree tempUniform = new ExprTree(r2);
+						r1.setNodeValues(r1, tempUniform.r1, "+", 'a');
+						r2.setNodeValues(r1, tempUniform.r2, "+", 'a');
+						isit = 'a';
+						op = "uniform";
+					} else if (r1.isit == 'a' && r1.op.equals("uniform")
+							&& r2.isit == 'n' && r2.lvalue >= 0) {
+						ExprTree tempUniform = new ExprTree(r1);
+						r1.setNodeValues(r2, tempUniform.r1, "+", 'a');
+						r2.setNodeValues(r2, tempUniform.r2, "+", 'a');
+						isit = 'a';
+						op = "uniform";
 					} else {
-						if (r1 != null) {
-							result = "(" + r1.getElement(type) + ")";
-						}
-					}
-					result = result + "+";
-					if (r2.isit == 'b'
-							|| r2.isit == 'i'
-							|| r2.isit == 'c'
-							|| r2.isit == 'n'
-							|| r2.isit == 't'
-							|| (r2.isit == 'a' && (r2.op.equals("+")
-									|| r2.op.equals("-") || r2.op.equals("*")
-									|| r2.op.equals("/") || r2.op.equals("^")))) {
-						if (r2 != null) {
-							result = result + r2.getElement(type);
-						}
-					} else {
-						if (r2 != null) {
-							result = result + "(" + r2.getElement(type) + ")";
+						try {
+							String r1String = r1.getElement(type);
+							String r2String = r2.getElement(type);
+							result = new Integer(Integer.parseInt(r1String)
+									+ Integer.parseInt(r2String)).toString();
+						} catch (NumberFormatException e) {
+							if (r1.isit == 'b'
+									|| r1.isit == 'i'
+									|| r1.isit == 'c'
+									|| r1.isit == 'n'
+									|| r1.isit == 't'
+									|| (r1.isit == 'a' && (r1.op.equals("+")
+											|| r1.op.equals("-")
+											|| r1.op.equals("*")
+											|| r1.op.equals("/") || r1.op
+											.equals("^")))) {
+								if (r1 != null) {
+									result = r1.getElement(type);
+								}
+							} else {
+								if (r1 != null) {
+									result = "(" + r1.getElement(type) + ")";
+								}
+							}
+							result = result + "+";
+							if (r2.isit == 'b'
+									|| r2.isit == 'i'
+									|| r2.isit == 'c'
+									|| r2.isit == 'n'
+									|| r2.isit == 't'
+									|| (r2.isit == 'a' && (r2.op.equals("+")
+											|| r2.op.equals("-")
+											|| r2.op.equals("*")
+											|| r2.op.equals("/") || r2.op
+											.equals("^")))) {
+								if (r2 != null) {
+									result = result + r2.getElement(type);
+								}
+							} else {
+								if (r2 != null) {
+									result = result + "(" + r2.getElement(type)
+											+ ")";
+								}
+							}
 						}
 					}
 				} else if (op.equals("-")) {
-					if (r1.isit == 'b'
-							|| r1.isit == 'i'
-							|| r1.isit == 'c'
-							|| r1.isit == 'n'
-							|| r1.isit == 't'
-							|| (r1.isit == 'a' && (r1.op.equals("+")
-									|| r1.op.equals("-") || r1.op.equals("*")
-									|| r1.op.equals("/") || r1.op.equals("^")))) {
-						if (r1 != null) {
-							result = r1.getElement(type);
-						}
+					if (r1.isit == 'a' && r1.op.equals("uniform")
+							&& r2.isit == 'n' && r2.lvalue >= 0) {
+						ExprTree tempUniform = new ExprTree(r1);
+						r1.setNodeValues(tempUniform.r1, r2, "-", 'a');
+						r2.setNodeValues(tempUniform.r2, r2, "-", 'a');
+						isit = 'a';
+						op = "uniform";
 					} else {
-						if (r1 != null) {
-							result = "(" + r1.getElement(type) + ")";
-						}
-					}
-					result = result + "-";
-					if (r2.isit == 'b'
-							|| r2.isit == 'i'
-							|| r2.isit == 'c'
-							|| r2.isit == 'n'
-							|| r2.isit == 't'
-							|| (r2.isit == 'a' && (r2.op.equals("-")
-									|| r2.op.equals("*") || r2.op.equals("/") || r2.op
-									.equals("^")))) {
-						if (r2 != null) {
-							result = result + r2.getElement(type);
-						}
-					} else {
-						if (r2 != null) {
-							result = result + "(" + r2.getElement(type) + ")";
+						try {
+							String r1String = r1.getElement(type);
+							String r2String = r2.getElement(type);
+							result = new Integer(Integer.parseInt(r1String)
+									- Integer.parseInt(r2String)).toString();
+						} catch (NumberFormatException e) {
+							if (r1.isit == 'b'
+									|| r1.isit == 'i'
+									|| r1.isit == 'c'
+									|| r1.isit == 'n'
+									|| r1.isit == 't'
+									|| (r1.isit == 'a' && (r1.op.equals("+")
+											|| r1.op.equals("-")
+											|| r1.op.equals("*")
+											|| r1.op.equals("/") || r1.op
+											.equals("^")))) {
+								if (r1 != null) {
+									result = r1.getElement(type);
+								}
+							} else {
+								if (r1 != null) {
+									result = "(" + r1.getElement(type) + ")";
+								}
+							}
+							result = result + "-";
+							if (r2.isit == 'b'
+									|| r2.isit == 'i'
+									|| r2.isit == 'c'
+									|| r2.isit == 'n'
+									|| r2.isit == 't'
+									|| (r2.isit == 'a' && (r2.op.equals("-")
+											|| r2.op.equals("*")
+											|| r2.op.equals("/") || r2.op
+											.equals("^")))) {
+								if (r2 != null) {
+									result = result + r2.getElement(type);
+								}
+							} else {
+								if (r2 != null) {
+									result = result + "(" + r2.getElement(type)
+											+ ")";
+								}
+							}
 						}
 					}
 				} else if (op.equals("*")) {
@@ -3312,12 +3360,6 @@ public class ExprTree {
 						r2.setNodeValues(r2, tempUniform.r2, "*", 'a');
 						isit = 'a';
 						op = "uniform";
-					} else if (r1.isit == 'n' && r2.isit == 'n') {
-						isit = 'n';
-						lvalue = r1.lvalue * r2.lvalue;
-						uvalue = lvalue;
-						r1 = null;
-						r2 = null;
 					} else {
 						try {
 							String r1String = r1.getElement(type);
@@ -3412,35 +3454,45 @@ public class ExprTree {
 						}
 					}
 				} else if (op.equals("^")) {
-					if (r1.isit == 'b'
-							|| r1.isit == 'i'
-							|| r1.isit == 'c'
-							|| r1.isit == 'n'
-							|| r1.isit == 't'
-							|| (r1.isit == 'a' && (r1.op.equals("*")
-									|| r1.op.equals("/") || r1.op.equals("^")))) {
-						if (r1 != null) {
-							result = "(" + r1.getElement(type) + ")";
+					try {
+						String r1String = r1.getElement(type);
+						String r2String = r2.getElement(type);
+						result = new Integer(Integer.parseInt(r1String)
+								^ Integer.parseInt(r2String)).toString();
+					} catch (NumberFormatException e) {
+						if (r1.isit == 'b'
+								|| r1.isit == 'i'
+								|| r1.isit == 'c'
+								|| r1.isit == 'n'
+								|| r1.isit == 't'
+								|| (r1.isit == 'a' && (r1.op.equals("*")
+										|| r1.op.equals("/") || r1.op
+										.equals("^")))) {
+							if (r1 != null) {
+								result = "(" + r1.getElement(type) + ")";
+							}
+						} else {
+							if (r1 != null) {
+								result = "(" + r1.getElement(type) + ")";
+							}
 						}
-					} else {
-						if (r1 != null) {
-							result = "(" + r1.getElement(type) + ")";
-						}
-					}
-					result = result + "^";
-					if (r2.isit == 'b'
-							|| r2.isit == 'i'
-							|| r2.isit == 'c'
-							|| r2.isit == 'n'
-							|| r2.isit == 't'
-							|| (r2.isit == 'a' && (r2.op.equals("/") || r2.op
-									.equals("^")))) {
-						if (r2 != null) {
-							result = result + "(" + r2.getElement(type) + ")";
-						}
-					} else {
-						if (r2 != null) {
-							result = result + "(" + r2.getElement(type) + ")";
+						result = result + "^";
+						if (r2.isit == 'b'
+								|| r2.isit == 'i'
+								|| r2.isit == 'c'
+								|| r2.isit == 'n'
+								|| r2.isit == 't'
+								|| (r2.isit == 'a' && (r2.op.equals("/") || r2.op
+										.equals("^")))) {
+							if (r2 != null) {
+								result = result + "(" + r2.getElement(type)
+										+ ")";
+							}
+						} else {
+							if (r2 != null) {
+								result = result + "(" + r2.getElement(type)
+										+ ")";
+							}
 						}
 					}
 				}

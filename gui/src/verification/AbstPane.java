@@ -16,6 +16,7 @@ import lpn.parser.LhpnFile;
 import main.*;
 
 import gcm.gui.PropertyList;
+import gcm.util.Utility;
 
 
 /**
@@ -697,7 +698,14 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 	public Integer getNormFactor() {
 		String factorString = factorField.getText();
-		return Integer.parseInt(factorString);
+		Integer factor;
+		try {
+			factor = Integer.parseInt(factorString);
+		}
+		catch (NumberFormatException e) {
+			factor =  -1;
+		}
+		return factor;
 	}
 
 	public Integer maxIterations() {
