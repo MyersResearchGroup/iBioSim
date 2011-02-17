@@ -752,7 +752,6 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		loopAbsModel.addElement(xform7);
 		loopAbsModel.addElement(xform8);
 		loopAbsModel.addElement(xform9);
-		loopAbsModel.addElement(xform10);
 		loopAbsModel.addElement(xform11);
 		loopAbsModel.addElement(xform12);
 		loopAbsModel.addElement(xform13);
@@ -771,6 +770,8 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		loopAbsModel.addElement(xform29);
 		loopAbsModel.addElement(xform30);
 		postAbsModel.addElement(xform21);
+		postAbsModel.addElement(xform10);
+		postAbsModel.addElement(xform31);
 		preAbs.setListData(preAbsModel.toArray());
 		loopAbs.setListData(loopAbsModel.toArray());
 		postAbs.setListData(postAbsModel.toArray());

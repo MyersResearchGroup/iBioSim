@@ -8,7 +8,7 @@ public class Transition {
 	private String name;
 
 	private boolean fail = false;
-	
+
 	private boolean persistent = false;
 
 	private String enabling;
@@ -183,7 +183,7 @@ public class Transition {
 	public void setFail(boolean fail) {
 		this.fail = fail;
 	}
-	
+
 	public void setPersistent(boolean persistent) {
 		this.persistent = persistent;
 	}
@@ -191,7 +191,7 @@ public class Transition {
 	public boolean isFail() {
 		return fail;
 	}
-	
+
 	public boolean isPersistent() {
 		return persistent;
 	}
@@ -199,10 +199,12 @@ public class Transition {
 	public boolean isConnected() {
 		return (preset.size() > 0 || postset.size() > 0);
 	}
-	
+
 	public boolean isInteresting(ArrayList<Transition> visited) {
 		visited.add(this);
-		if (boolAssignments.size() > 0 || intAssignments.size() > 0 || contAssignments.size() > 0 || rateAssignments.size() > 0 || fail) {
+		if (boolAssignments.size() > 0 || intAssignments.size() > 0
+				|| contAssignments.size() > 0 || rateAssignments.size() > 0
+				|| fail) {
 			return true;
 		}
 		for (Place p : postset) {
@@ -217,7 +219,7 @@ public class Transition {
 		}
 		return false;
 	}
-	
+
 	public boolean hasConflictSet() {
 		for (Place p : getPreset()) {
 			for (Transition t : p.getPostset()) {
@@ -282,7 +284,7 @@ public class Transition {
 		}
 		return array;
 	}
-	
+
 	public Transition[] getConflictSet() {
 		ArrayList<Transition> conflictSet = new ArrayList<Transition>();
 		for (Place p : getPreset()) {
@@ -515,19 +517,19 @@ public class Transition {
 		return (boolAssignments.size() > 0 || intAssignments.size() > 0
 				|| contAssignments.size() > 0 || rateAssignments.size() > 0);
 	}
-	
+
 	public boolean containsBooleanAssignment() {
 		return boolAssignments.size() > 0;
 	}
-	
+
 	public boolean containsIntegerAssignment() {
 		return intAssignments.size() > 0;
 	}
-	
+
 	public boolean containsContinuousAssignment() {
 		return contAssignments.size() > 0;
 	}
-	
+
 	public boolean containsRateAssignment() {
 		return rateAssignments.size() > 0;
 	}
@@ -548,54 +550,105 @@ public class Transition {
 		return false;
 	}
 
-	public void simplifyExpr() {
+	public boolean simplifyExpr(boolean change) {
 		if (enablingTree != null) {
+			if (!enabling.equals(enablingTree.toString("LHPN"))) {
+				change = true;
+			}
 			enabling = enablingTree.toString("LHPN");
 		}
 		if (delayTree != null) {
+			if (!delay.equals(delayTree.toString("LHPN"))) {
+				change = true;
+			}
 			delay = delayTree.toString("LHPN");
 		}
 		for (String var : boolAssignTrees.keySet()) {
+			if (!boolAssignments.get(var).equals(
+					boolAssignTrees.get(var).toString("boolean", "LHPN"))) {
+				change = true;
+			}
 			boolAssignments.put(var, boolAssignTrees.get(var).toString(
 					"boolean", "LHPN"));
 		}
 		for (String var : intAssignTrees.keySet()) {
+			if (!intAssignments.get(var).equals(
+					intAssignTrees.get(var).toString("integer", "LHPN"))) {
+				change = true;
+			}
 			intAssignments.put(var, intAssignTrees.get(var).toString("integer",
 					"LHPN"));
 		}
 		for (String var : contAssignTrees.keySet()) {
+			if (!contAssignments.get(var).equals(
+					contAssignTrees.get(var).toString("continuous", "LHPN"))) {
+				change = true;
+			}
 			contAssignments.put(var, contAssignTrees.get(var).toString(
 					"continuous", "LHPN"));
 		}
 		for (String var : rateAssignTrees.keySet()) {
+			if (!rateAssignments.get(var).equals(
+					rateAssignTrees.get(var).toString("continuous", "LHPN"))) {
+				change = true;
+			}
 			rateAssignments.put(var, rateAssignTrees.get(var).toString(
 					"continuous", "LHPN"));
 		}
+		return change;
 	}
-	
-	public void minimizeUniforms() {
+
+	public boolean minimizeUniforms(boolean change) {
 		if (enablingTree != null) {
+			if (!enabling.equals(enablingTree.minimizeUniforms().toString(
+					"LHPN"))) {
+				change = true;
+			}
 			enabling = enablingTree.minimizeUniforms().toString("LHPN");
 		}
 		if (delayTree != null) {
+			if (!delay.equals(delayTree.minimizeUniforms().toString("LHPN"))) {
+				change = true;
+			}
 			delay = delayTree.minimizeUniforms().toString("LHPN");
 		}
 		for (String var : boolAssignTrees.keySet()) {
-			boolAssignments.put(var, boolAssignTrees.get(var).minimizeUniforms().toString(
-					"boolean", "LHPN"));
+			if (!boolAssignments.get(var).equals(
+					boolAssignTrees.get(var).minimizeUniforms().toString(
+							"boolean", "LHPN"))) {
+				change = true;
+			}
+			boolAssignments.put(var, boolAssignTrees.get(var)
+					.minimizeUniforms().toString("boolean", "LHPN"));
 		}
 		for (String var : intAssignTrees.keySet()) {
-			intAssignments.put(var, intAssignTrees.get(var).minimizeUniforms().toString("integer",
-					"LHPN"));
+			if (!intAssignments.get(var).equals(
+					intAssignTrees.get(var).minimizeUniforms().toString(
+							"integer", "LHPN"))) {
+				change = true;
+			}
+			intAssignments.put(var, intAssignTrees.get(var).minimizeUniforms()
+					.toString("integer", "LHPN"));
 		}
 		for (String var : contAssignTrees.keySet()) {
-			contAssignments.put(var, contAssignTrees.get(var).minimizeUniforms().toString(
-					"continuous", "LHPN"));
+			if (!contAssignments.get(var).equals(
+					contAssignTrees.get(var).minimizeUniforms().toString(
+							"continuous", "LHPN"))) {
+				change = true;
+			}
+			contAssignments.put(var, contAssignTrees.get(var)
+					.minimizeUniforms().toString("continuous", "LHPN"));
 		}
 		for (String var : rateAssignTrees.keySet()) {
-			rateAssignments.put(var, rateAssignTrees.get(var).minimizeUniforms().toString(
-					"continuous", "LHPN"));
+			if (!rateAssignments.get(var).equals(
+					rateAssignTrees.get(var).minimizeUniforms().toString(
+							"continuous", "LHPN"))) {
+				change = true;
+			}
+			rateAssignments.put(var, rateAssignTrees.get(var)
+					.minimizeUniforms().toString("continuous", "LHPN"));
 		}
+		return change;
 	}
 
 	@Override
