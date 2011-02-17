@@ -10805,6 +10805,8 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 				}
 				if (sweepThese1.size() > 0) {
+					ArrayList<Reb2SacThread> threads = new ArrayList<Reb2SacThread>();
+					ArrayList<String> dirs = new ArrayList<String>();
 					int max = 0;
 					for (ArrayList<Double> d : sweep1) {
 						max = Math.max(max, d.size());
@@ -10846,17 +10848,24 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 								new File(simDir + separator + stem + sweepTwo.replace("/", "-"))
 										.mkdir();
 								createSBML(stem, sweepTwo);
-								new Reb2SacThread(reb2sac).start(stem + sweepTwo.replace("/", "-"));
+								Reb2SacThread thread = new Reb2SacThread(reb2sac);
+								thread.start(stem + sweepTwo.replace("/", "-"));
+								threads.add(thread);
+								dirs.add(sweepTwo.replace("/", "-"));
 								reb2sac.emptyFrames();
 							}
 						}
 						else {
 							new File(simDir + separator + stem + sweep.replace("/", "-")).mkdir();
 							createSBML(stem, sweep);
-							new Reb2SacThread(reb2sac).start(stem + sweep.replace("/", "-"));
+							Reb2SacThread thread = new Reb2SacThread(reb2sac);
+							thread.start(stem + sweep.replace("/", "-"));
+							threads.add(thread);
+							dirs.add(sweep.replace("/", "-"));
 							reb2sac.emptyFrames();
 						}
 					}
+					new ConstraintTermThread(reb2sac).start(threads, dirs);
 				}
 				else {
 					if (!stem.equals("")) {

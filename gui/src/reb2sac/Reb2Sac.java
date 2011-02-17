@@ -5011,6 +5011,28 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id,
 				outDir, "time", biomodelsim, open, log, null, false, false);
 	}
+	
+	public void run(ArrayList<Reb2SacThread> threads, ArrayList<String> dirs) {
+		for (Reb2SacThread thread : threads) {
+			try {
+				thread.join();
+			}
+			catch (InterruptedException e) {
+			}
+		}
+		if (!dirs.isEmpty()) {
+			ArrayList<String> dataLabels = new ArrayList<String>();
+			ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
+			String spec = dirs.get(0).split("=")[0];
+			
+			//dataLabels.add(direct[0]);
+			ArrayList<Double> dat = new ArrayList<Double>();
+			//for ()
+			for (String d : dirs) {
+				dataLabels.add(dirs.get(0).split("=")[0]);
+			}
+		}
+	}
 
 	public void run() {
 	}
