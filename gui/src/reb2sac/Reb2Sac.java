@@ -2514,8 +2514,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 			}
 			else {
-				for (int i = 2; i < speciesInt.get(num).size(); i++) {
-					speciesInt.get(num).get(i).setEnabled(true);
+				if (gcmEditor == null
+						|| !(gcmEditor.getGCM().getBiochemicalSpecies().contains(
+								((JTextField) speciesInt.get(num).get(1)).getText()) || gcmEditor
+								.getGCM().getInputSpecies().contains(
+										((JTextField) speciesInt.get(num).get(1)).getText()))) {
+					for (int i = 2; i < speciesInt.get(num).size(); i++) {
+						speciesInt.get(num).get(i).setEnabled(true);
+					}
 				}
 			}
 		}
@@ -4569,6 +4575,23 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 		}
 		change = false;
+		for (int j = 0; j < speciesInt.size(); j++) {
+			if (((JCheckBox) speciesInt.get(j).get(0)).isSelected()) {
+				if (!(gcmEditor.getGCM().getBiochemicalSpecies().contains(
+						((JTextField) speciesInt.get(j).get(1)).getText()) || gcmEditor.getGCM()
+						.getInputSpecies().contains(
+								((JTextField) speciesInt.get(j).get(1)).getText()))) {
+					for (int i = 2; i < speciesInt.get(j).size(); i++) {
+						speciesInt.get(j).get(i).setEnabled(true);
+					}
+				}
+				else {
+					for (int i = 2; i < speciesInt.get(j).size(); i++) {
+						speciesInt.get(j).get(i).setEnabled(false);
+					}
+				}
+			}
+		}
 	}
 
 	public void updateSpeciesList() {
@@ -5013,7 +5036,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id,
 				outDir, "time", biomodelsim, open, log, null, false, false);
 	}
-	
+
 	public void run(ArrayList<Reb2SacThread> threads, ArrayList<String> dirs, String stem) {
 		for (Reb2SacThread thread : threads) {
 			try {
@@ -5030,7 +5053,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			data.add(new ArrayList<Double>());
 			ArrayList<String> specs = new ArrayList<String>();
 			try {
-				Scanner s = new Scanner(new File(root + separator + simName + separator + stem + dirs.get(0) + separator + "sim-rep.txt"));
+				Scanner s = new Scanner(new File(root + separator + simName + separator + stem
+						+ dirs.get(0) + separator + "sim-rep.txt"));
 				while (s.hasNextLine()) {
 					String[] ss = s.nextLine().split(" ");
 					if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
@@ -5062,11 +5086,13 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				data.get(0).add(val);
 				ArrayList<String> vals = new ArrayList<String>();
 				try {
-					Scanner s = new Scanner(new File(root + separator + simName + separator + stem + d + separator + "sim-rep.txt"));
+					Scanner s = new Scanner(new File(root + separator + simName + separator + stem
+							+ d + separator + "sim-rep.txt"));
 					while (s.hasNextLine()) {
 						String[] ss = s.nextLine().split(" ");
-						if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
-								&& ss[3].equals("count:") && ss[4].equals("0")) {
+						if (ss[0].equals("The") && ss[1].equals("total")
+								&& ss[2].equals("termination") && ss[3].equals("count:")
+								&& ss[4].equals("0")) {
 						}
 						if (vals.size() == 0) {
 							for (String add : ss) {
@@ -5093,7 +5119,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						data.get(i).add(Double.parseDouble(vals.get(i).split(" ")[1]));
 					}
 					else {
-						data.get(i).add(100 * ((Double.parseDouble(vals.get(i).split(" ")[1])) / total));
+						data.get(i).add(
+								100 * ((Double.parseDouble(vals.get(i).split(" ")[1])) / total));
 					}
 				}
 			}
