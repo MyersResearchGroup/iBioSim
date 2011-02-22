@@ -1,7 +1,6 @@
 package gillespieSSAjava;
 
 import graph.Graph;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -17,6 +16,8 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.io.*;
 import java.lang.Math;
+import java.lang.Object;
+
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -76,11 +77,13 @@ public class GillespieSSAJavaSingleStep {
 	private int initEventQueueCap = 10;
 	private Model model = null;
 	private int optValFireReaction=-1;
+	private long randSeed;
 	
 	public GillespieSSAJavaSingleStep() {
 	}
-	public void PerformSim (String SBMLFileName,String outDir, double timeLimit, double timeStep, Graph graph) throws FileNotFoundException{  
+	public void PerformSim (String SBMLFileName,String outDir, double timeLimit, double timeStep, long rndSeed, Graph graph) throws FileNotFoundException{  
 	 int optionValue = -1;
+	 randSeed = rndSeed;
 	 //  System.out.println("outDir = " + outDir);
 	 String outTSDName = outDir + "/run-1.tsd";
 	 output = new FileOutputStream(outTSDName);
@@ -842,9 +845,26 @@ public class GillespieSSAJavaSingleStep {
 					}
 					break;
 				}
-//				// user defined functions
-//				case libsbml.AST_FUNCTION:
-//					retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) + Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
+//				// probability distribution functions
+				case libsbml.AST_FUNCTION: {
+					String currNodeName = currentASTNode.getName();
+					if (currNodeName.equals("uniform")) {
+						double lowerBound = Math.min(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())), Double.parseDouble(evaluateAST(currentASTNode.getRightChild())));
+						double upperBound = Math.max(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())), Double.parseDouble(evaluateAST(currentASTNode.getRightChild())));
+						Random uniformCont = new Random(randSeed);
+						double uniformRandNumber = uniformCont.nextDouble();
+						uniformRandNumber = (upperBound - lowerBound)*uniformRandNumber + lowerBound;
+						retStr = Double.toString(uniformRandNumber);
+					}
+					if (currNodeName.equals("exponential")) {
+						double lambda = Double.parseDouble(evaluateAST(currentASTNode.getChild(0)));
+						Random uniformCont = new Random(randSeed);
+						double uniformRandNumber = uniformCont.nextDouble();
+						double expRandNumber = -Math.log(uniformRandNumber)/lambda;
+						retStr = Double.toString(expRandNumber);
+					}
+				}
+					
 				
 				
 				
@@ -1094,6 +1114,25 @@ public class GillespieSSAJavaSingleStep {
 									"Error in piecewise function", JOptionPane.ERROR_MESSAGE);
 					}
 					break;
+				}
+//				// probability distribution functions
+				case libsbml.AST_FUNCTION: {
+					String currNodeName = currentASTNode.getName();
+					if (currNodeName.equals("uniform")) {
+						double lowerBound = Math.min(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)), Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters)));
+						double upperBound = Math.max(Double.parseDouble(evaluatePropensityFunction(currentASTNode.getLeftChild(), ListOfLocalParameters)), Double.parseDouble(evaluatePropensityFunction(currentASTNode.getRightChild(), ListOfLocalParameters)));
+						Random uniformCont = new Random(randSeed);
+						double uniformRandNumber = uniformCont.nextDouble();
+						uniformRandNumber = (upperBound - lowerBound)*uniformRandNumber + lowerBound;
+						retStr = Double.toString(uniformRandNumber);
+					}
+					if (currNodeName.equals("exponential")) {
+						double lambda = Double.parseDouble(evaluatePropensityFunction(currentASTNode.getChild(0), ListOfLocalParameters));
+						Random uniformCont = new Random(randSeed);
+						double uniformRandNumber = uniformCont.nextDouble();
+						double expRandNumber = -Math.log(uniformRandNumber)/lambda;
+						retStr = Double.toString(expRandNumber);
+					}
 				}
 				// TODO MOD, BITNOT, BITOR, BITAND, BITXOR, idiv
 			}
