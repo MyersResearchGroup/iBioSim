@@ -469,7 +469,7 @@ public class Run implements ActionListener {
 			JProgressBar progress, String simName, GCM2SBMLEditor gcmEditor, String direct,
 			double timeLimit, double runTime, String modelFile, AbstPane abstPane,
 			JRadioButton abstraction, String lpnProperty, double absError, double timeStep,
-			double printInterval, int runs) {
+			double printInterval, int runs, long rndSeed) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
@@ -1343,7 +1343,7 @@ public class Run implements ActionListener {
 						}
 						GillespieSSAJavaSingleStep javaSim = new GillespieSSAJavaSingleStep();
 						String SBMLFileName = directory + separator + theFile;
-						javaSim.PerformSim(SBMLFileName, outDir, timeLimit, timeStep,
+						javaSim.PerformSim(SBMLFileName, outDir, timeLimit, timeStep, rndSeed,
 								((Graph) simTab.getComponentAt(index)));
 						exitValue = 0;
 						return exitValue;
