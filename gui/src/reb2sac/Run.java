@@ -615,6 +615,9 @@ public class Run implements ActionListener {
 				}
 				if (gcm.flattenGCM(false) != null) {
 					LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
+					if (lpnFile == null) {
+						return 0;
+					}
 					lpnFile.save(root + separator + simName + separator + lpnName);
 					time1 = System.nanoTime();
 					Translator t1 = new Translator();
@@ -764,6 +767,9 @@ public class Run implements ActionListener {
 						}
 						if (gcm.flattenGCM(false) != null) {
 							LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
+							if (lpnFile == null) {
+								return 0;
+							}
 							lpnFile.save(root + separator + simName + separator + lpnName);
 							time1 = System.nanoTime();
 							Translator t1 = new Translator();
@@ -921,6 +927,9 @@ public class Run implements ActionListener {
 						}
 						if (gcm.flattenGCM(false) != null) {
 							LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
+							if (lhpnFile == null) {
+								return 0;
+							}
 							lhpnFile.save(root + separator + lhpnName);
 							log.addText("Saving GCM file as LHPN:\n" + root + separator + lhpnName
 									+ "\n");
@@ -1127,6 +1136,9 @@ public class Run implements ActionListener {
 						}
 						if (gcm.flattenGCM(false) != null) {
 							lhpnFile = gcm.convertToLHPN(specs, conLevel);
+							if (lhpnFile == null) {
+								return 0;
+							}
 							lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "")
 									.replace(".xml", "")
 									+ ".lpn");

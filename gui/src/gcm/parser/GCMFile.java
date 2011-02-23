@@ -726,7 +726,7 @@ public class GCMFile {
 		// }
 		// }
 		for (int i = 0; i < specs.size(); i++) {
-			if (!getBiochemicalSpecies().contains(specs.get(i))
+			if (!biochemical.contains(specs.get(i))
 					&& !getInputSpecies().contains(specs.get(i))) {
 				int placeNum = 0;
 				int transNum = 0;
@@ -1018,6 +1018,11 @@ public class GCMFile {
 										}
 										specExpr = "(" + specExpr + ")";
 									}
+									else if (biochemical.contains(split[0])) {
+										JOptionPane.showMessageDialog(Gui.frame, "Unable to abstract away all biochemical species.", "Error",
+												JOptionPane.ERROR_MESSAGE);
+										return null;
+									}
 									promRate += "+(" + ka + "*((" + Ka + "*" + RNAP + "*"
 											+ specExpr + ")^" + nc + "))";
 								}
@@ -1137,6 +1142,11 @@ public class GCMFile {
 											}
 										}
 										specExpr = "(" + specExpr + ")";
+									}
+									else if (biochemical.contains(split[0])) {
+										JOptionPane.showMessageDialog(Gui.frame, "Unable to abstract away all biochemical species.", "Error",
+												JOptionPane.ERROR_MESSAGE);
+										return null;
 									}
 									promRate += "+((" + Ka + "*" + RNAP + "*" + specExpr + ")^"
 											+ nc + ")";
@@ -1262,6 +1272,11 @@ public class GCMFile {
 												}
 											}
 											specExpr = "(" + specExpr + ")";
+										}
+										else if (biochemical.contains(split[0])) {
+											JOptionPane.showMessageDialog(Gui.frame, "Unable to abstract away all biochemical species.", "Error",
+													JOptionPane.ERROR_MESSAGE);
+											return null;
 										}
 										promRate += "+((" + Kr + "*" + specExpr + ")^" + nc + ")";
 									}
@@ -1392,6 +1407,11 @@ public class GCMFile {
 												}
 											}
 											specExpr = "(" + specExpr + ")";
+										}
+										else if (biochemical.contains(split[0])) {
+											JOptionPane.showMessageDialog(Gui.frame, "Unable to abstract away all biochemical species.", "Error",
+													JOptionPane.ERROR_MESSAGE);
+											return null;
 										}
 										promRate += "+((" + Kr + "*" + specExpr + ")^" + nc + ")";
 									}
