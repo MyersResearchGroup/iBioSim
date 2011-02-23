@@ -3825,7 +3825,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				catch (IOException e1) {
-					JOptionPane.showMessageDialog(frame, "Unable create a new project.", "Error",
+					JOptionPane.showMessageDialog(frame, "Unable to create a new project.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
