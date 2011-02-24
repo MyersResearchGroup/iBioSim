@@ -5053,41 +5053,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			String spec = dirs.get(0).split("=")[0];
 			dataLabels.add(spec);
 			data.add(new ArrayList<Double>());
-			ArrayList<String> specs = new ArrayList<String>();
-			try {
-				Scanner s = new Scanner(new File(root + separator + simName + separator + stem
-						+ dirs.get(0) + separator + "sim-rep.txt"));
-				while (s.hasNextLine()) {
-					String[] ss = s.nextLine().split(" ");
-					if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
-							&& ss[3].equals("count:") && ss[4].equals("0")) {
-						return;
-					}
-					if (specs.size() == 0) {
-						for (String add : ss) {
-							specs.add(add);
-						}
-					}
-					else {
-						for (int i = 0; i < ss.length; i++) {
-							specs.set(i, specs.get(i) + " " + ss[i]);
-						}
-					}
-				}
-			}
-			catch (Exception e) {
-			}
-			for (String s : specs) {
-				if (!s.split(" ")[0].equals("#total")) {
-					dataLabels.add(s.split(" ")[0]);
-					data.add(new ArrayList<Double>());
-				}
-			}
 			for (String prefix : levelOne) {
+				double val = Double.parseDouble(prefix.split("=")[1].split("_")[0]);
+				data.get(0).add(val);
 				for (String d : dirs) {
 					if (d.startsWith(prefix)) {
-						double val = Double.parseDouble(d.split("=")[1].split("_")[0]);
-						data.get(0).add(val);
+						String suffix = d.replace(prefix, "");
 						ArrayList<String> vals = new ArrayList<String>();
 						try {
 							Scanner s = new Scanner(new File(root + separator + simName + separator
@@ -5100,7 +5071,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								}
 								if (vals.size() == 0) {
 									for (String add : ss) {
-										vals.add(add);
+										vals.add(add + suffix);
 									}
 								}
 								else {
@@ -5119,12 +5090,21 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							i = 1;
 						}
 						for (; i < vals.size(); i++) {
+							int index;
+							if (dataLabels.contains(vals.get(i).split(" ")[0])) {
+								index = dataLabels.indexOf(vals.get(i).split(" ")[0]);
+							}
+							else {
+								dataLabels.add(vals.get(i).split(" ")[0]);
+								data.add(new ArrayList<Double>());
+								index = dataLabels.size() - 1;
+							}
 							if (total == 0) {
-								data.get(i).add(Double.parseDouble(vals.get(i).split(" ")[1]));
+								data.get(index).add(Double.parseDouble(vals.get(i).split(" ")[1]));
 							}
 							else {
 								data
-										.get(i)
+										.get(index)
 										.add(
 												100 * ((Double
 														.parseDouble(vals.get(i).split(" ")[1])) / total));
