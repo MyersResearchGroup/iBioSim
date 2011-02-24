@@ -5085,7 +5085,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						}
 						double total = 0;
 						int i = 0;
-						if (vals.get(0).split(" ")[0].equals("#total")) {
+						if (vals.get(0).split(" ")[0].startsWith("#total")) {
 							total = Double.parseDouble(vals.get(0).split(" ")[1]);
 							i = 1;
 						}
