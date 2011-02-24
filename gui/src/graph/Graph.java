@@ -3058,6 +3058,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					else if (selected.contains("term-time")) {
 						select = 0;
 					}
+					else if (selected.contains("sim-rep")) {
+						select = 0;
+					}
 					else {
 						try {
 							if (selected.contains("run-")) {

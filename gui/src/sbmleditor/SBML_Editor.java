@@ -10871,7 +10871,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							dirs.add(sweep.replace("/", "-"));
 							reb2sac.emptyFrames();
 						}
-						levelOne.add(sweep);
+						levelOne.add(sweep.replace("/", "-"));
 					}
 					new ConstraintTermThread(reb2sac).start(threads, dirs, levelOne, stem);
 				}

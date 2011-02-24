@@ -2,7 +2,6 @@ package gcm.gui;
 
 import gcm.gui.grappa.GCIGrappaPanel;
 import gcm.gui.modelview.movie.MovieContainer;
-import gcm.gui.modelview.movie.visualizations.ColorScheme;
 import gcm.gui.schematic.Schematic;
 import gcm.network.GeneticNetwork;
 import gcm.parser.CompatibilityFixer;
@@ -583,7 +582,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						reb2sac.emptyFrames();
 					}
 				}
-				levelOne.add(sweep);
+				levelOne.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
 			}
 			new ConstraintTermThread(reb2sac).start(threads, dirs, levelOne, stem);
 		}
