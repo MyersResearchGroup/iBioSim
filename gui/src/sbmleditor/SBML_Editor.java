@@ -10804,9 +10804,16 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 						}
 					}
 				}
+				if (sweepThese1.size() == 0 && (sweepThese2.size() > 0)) {
+					sweepThese1 = sweepThese2;
+					sweepThese2 = new ArrayList<String>();
+					sweep1 = sweep2;
+					sweep2 = new ArrayList<ArrayList<Double>>();
+				}
 				if (sweepThese1.size() > 0) {
 					ArrayList<Reb2SacThread> threads = new ArrayList<Reb2SacThread>();
 					ArrayList<String> dirs = new ArrayList<String>();
+					ArrayList<String> levelOne = new ArrayList<String>();
 					int max = 0;
 					for (ArrayList<Double> d : sweep1) {
 						max = Math.max(max, d.size());
@@ -10864,8 +10871,9 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							dirs.add(sweep.replace("/", "-"));
 							reb2sac.emptyFrames();
 						}
+						levelOne.add(sweep);
 					}
-					new ConstraintTermThread(reb2sac).start(threads, dirs, stem);
+					new ConstraintTermThread(reb2sac).start(threads, dirs, levelOne, stem);
 				}
 				else {
 					if (!stem.equals("")) {

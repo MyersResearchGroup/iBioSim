@@ -521,6 +521,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		if (sweepThese1.size() > 0) {
 			ArrayList<Reb2SacThread> threads = new ArrayList<Reb2SacThread>();
 			ArrayList<String> dirs = new ArrayList<String>();
+			ArrayList<String> levelOne = new ArrayList<String>();
 			int max = 0;
 			for (ArrayList<Double> d : sweep1) {
 				max = Math.max(max, d.size());
@@ -582,8 +583,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						reb2sac.emptyFrames();
 					}
 				}
+				levelOne.add(sweep);
 			}
-			new ConstraintTermThread(reb2sac).start(threads, dirs, stem);
+			new ConstraintTermThread(reb2sac).start(threads, dirs, levelOne, stem);
 		}
 		else {
 			if (!stem.equals("")) {

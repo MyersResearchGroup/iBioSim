@@ -8,7 +8,7 @@ public class ConstraintTermThread extends Thread {
 
 	private ArrayList<Reb2SacThread> threads;
 
-	private ArrayList<String> dirs;
+	private ArrayList<String> dirs, levelOne;
 	
 	private String stem;
 
@@ -17,15 +17,16 @@ public class ConstraintTermThread extends Thread {
 		reb = reb2sac;
 	}
 
-	public void start(ArrayList<Reb2SacThread> threads, ArrayList<String> dirs, String stem) {
+	public void start(ArrayList<Reb2SacThread> threads, ArrayList<String> dirs, ArrayList<String> levelOne, String stem) {
 		this.threads = threads;
 		this.dirs = dirs;
+		this.levelOne = levelOne;
 		this.stem = stem;
 		super.start();
 	}
 
 	@Override
 	public void run() {
-		reb.run(threads, dirs, stem);
+		reb.run(threads, dirs, levelOne, stem);
 	}
 }
