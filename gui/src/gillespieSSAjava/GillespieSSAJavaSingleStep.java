@@ -40,7 +40,7 @@ public class GillespieSSAJavaSingleStep {
 	private HashMap<Integer, String> IndexToReactions  = new HashMap<Integer, String>();
 	private HashMap<String, Double> SpeciesList = new HashMap<String, Double>();
 	private HashMap<String, Double> GlobalParamsList = new HashMap<String, Double>();
-	private HashMap<String, HashMap<String, Double>> AtTriggerTimeList = new HashMap<String, HashMap<String, Double>>();	
+	private HashMap<String, ArrayList<Double>> EventAssignAtTriggerTime = new HashMap<String, ArrayList<Double>>();	
 	// static HashMap<String, Double> GlobalParamsChangeList = new HashMap<String, Double>();
 	// static HashMap<String, Double> CompartmentList = new HashMap<String, Double>();
 	private HashMap<String, Double> PropensityFunctionList = new HashMap<String, Double>();
@@ -62,8 +62,8 @@ public class GillespieSSAJavaSingleStep {
 	private double tau=0.0;
 	private int miu=0;
 	private double time = 0;
-	private double t_next = 0;
-	private double maxTime = 0;
+	private double nextReactionTime = 0;
+	private double nextTime = 0;
 	private double nextEventTime = 0;
 	private int NumIrreversible = 0;
 	private int NumReversible = 0;
@@ -103,7 +103,8 @@ public class GillespieSSAJavaSingleStep {
 	 StateChangeVector=new double[(int) NumReactions][(int) model.getNumSpecies()];
 	 
 	//---------Gillespie's SSA---------
-	// 1. Initialize time (t) and states (x) 
+	// 1. Initialization
+	// Initialize time (t) and states (x) 
 	 time = 0.0;
 	 // get the species and the associated initial values
 	 for (int i=0;i<model.getNumSpecies();i++){
@@ -243,15 +244,15 @@ public class GillespieSSAJavaSingleStep {
 	//  JFrame tableFrame = new JFrame("Simulation Results");
 	//  simResultsTbl.showTable(tableFrame, simResultsTbl);
 	 
-	//  ########################################################
+	//  ##########################################
 	 double deltaTime = 0.01; // deltaTime is used to add to timeLimit, so that the while loop can terminate
 	 while (time<=timeLimit) {
 		  // 2. Update and fire events; evaluate propensity functions
 		  if (timeStep == Double.MAX_VALUE) {
-			  maxTime = timeLimit + deltaTime;
+			  nextTime = timeLimit + deltaTime;
 		  }
 		  else {
-			  maxTime = maxTime + timeStep;
+			  nextTime = nextTime + timeStep;
 		  }
 		  evaluateRules(model);
 		  String[] CustomParamsUpdateFireEvents = new String[2];
@@ -262,8 +263,8 @@ public class GillespieSSAJavaSingleStep {
         	  break;
           else 
         	  
-		  if (nextEventTime < maxTime && nextEventTime>0) {
-			  maxTime = nextEventTime;
+		  if (nextEventTime < nextTime && nextEventTime>0) {
+			  nextTime = nextEventTime;
 		  }
 		  
 		  // TODO evaluate algebraic and rate rules, constraints
@@ -380,7 +381,7 @@ public class GillespieSSAJavaSingleStep {
 			 if (time > 0)
 				 printTSDVals();
 			 graph.refresh();
-			 time = maxTime;
+			 time = nextTime;
 			 if (time <=0) {
 				 JOptionPane.showMessageDialog(Gui.frame, "Sum of propensities is 0 and event queue is empty. Simulation time can not proceed.",
 							"Error in next simulation time", JOptionPane.ERROR_MESSAGE);
@@ -397,7 +398,7 @@ public class GillespieSSAJavaSingleStep {
 		 // Determine randomly the time step, tau, until the next reaction. 
 		 tau = (1/PropensitySum)*Math.log(1/r1);  
 		 
-		 // 5. Determine the next reaction: (miu is the row index of state change vector array)
+		 // 4. Determine the next reaction: (miu is the row index of state change vector array)
 		 double SumLeft = 0.0;
 		 int count;
 		 double r2 = generator.nextDouble();
@@ -414,22 +415,22 @@ public class GillespieSSAJavaSingleStep {
 		 boolean isRunMode = (optionValue == 1) && time < runUntil;
 		 if (!isRunMode) {
 			 CustomParamsReactionMenu = openReactionInteractiveMenu(time,tau,miu);
-			 t_next = Double.parseDouble(CustomParamsReactionMenu[0]);
+			 nextReactionTime = Double.parseDouble(CustomParamsReactionMenu[0]);
 			 optionValue = Integer.parseInt(CustomParamsReactionMenu[2]);
 			 if (optionValue != 2 && optionValue != -1) {  // 2 = terminate
-				 while (t_next < time && optionValue!=2 && optionValue!=-1 ){
+				 while (nextReactionTime < time && optionValue!=2 && optionValue!=-1 ){
 					 JOptionPane.showMessageDialog(Gui.frame, "The value of t_next needs to be greater than the current simulation time " + time + ".",
 					"Error in next simulation time", JOptionPane.ERROR_MESSAGE);
 					 CustomParamsReactionMenu = openReactionInteractiveMenu(time,tau,miu);
 					 optionValue = Integer.parseInt(CustomParamsReactionMenu[2]);
-					 t_next = Double.parseDouble(CustomParamsReactionMenu[0]);
+					 nextReactionTime = Double.parseDouble(CustomParamsReactionMenu[0]);
 				 }
-				 while (t_next > maxTime && optionValue!=2 && optionValue!=-1 ) {
+				 while (nextReactionTime > nextTime && optionValue!=2 && optionValue!=-1 ) {
 					 optValFireReaction = openReactionDialogue();
 					 if (optValFireReaction == 0) {  // re-enter a new t_next
 						 CustomParamsReactionMenu = openReactionInteractiveMenu(time,tau,miu);
 						 optionValue = Integer.parseInt(CustomParamsReactionMenu[2]);
-						 t_next = Double.parseDouble(CustomParamsReactionMenu[0]); 
+						 nextReactionTime = Double.parseDouble(CustomParamsReactionMenu[0]); 
 					 }
 					 else 
 						 break; 
@@ -444,12 +445,12 @@ public class GillespieSSAJavaSingleStep {
 				 if (time > 0)
 					 printTSDVals();
 				 graph.refresh();
-				 time = maxTime;
+				 time = nextTime;
 				 continue;
 			 }
 			 
 			 if (optionValue == 0) {
-				 tau = t_next - time;
+				 tau = nextReactionTime - time;
 				 miu = ReactionsToIndex.get(CustomParamsReactionMenu[1]);  
 			 }
 			 else if(optionValue == 1 && time >= runUntil){
@@ -474,10 +475,10 @@ public class GillespieSSAJavaSingleStep {
 			 }
 		 }
 		 
-		 // 6. Determine the new state: t = t + tau and x = x + v[miu]
+		 // 5. Determine the new state: time = time + tau and x = x + v[miu]
 //		 double t_current = time;
-		 if (maxTime <= time+tau)
-			 time = maxTime;
+		 if (nextTime <= time+tau)
+			 time = nextTime;
 		 else
 			 time = time + tau;
 		 // Determine the next reaction to fire, in row miu of StateChangeVector.
@@ -491,15 +492,7 @@ public class GillespieSSAJavaSingleStep {
 					SpeciesList.put(SpeciesToUpdate, SpeciesToUpdateAmount);
 				} 
 			 }
-		 }
-		 //  System.out.println("t_current = " + t_current);
-		 //  System.out.println("t = " + t);
-		 //  System.out.println("t_next = " + t_next);
-		 ////  System.out.println("tau = " + tau);
-		 ////  System.out.println("miu = " + miu);
-		 ////  System.out.println("Next reaction is " + IndexToReactions.get(miu));
-		 //  System.out.println("*****************************************");
-		 
+		 }		 
 		 //  // Print results to a table and display it. 
 		 //  if ((!isRunMode && !hasRunModeStarted) || (isRunMode && t >= runUntil)){
 		 //  tableModel.addRow(new Object[]{t_current, tau, IndexToReactions.get(miu)});
@@ -654,12 +647,11 @@ public class GillespieSSAJavaSingleStep {
 		 if (!prevTriggerVal && currTriggerVal) {
 			  if (currEvent.getUseValuesFromTriggerTime()) {
 				  ListOfEventAssignments eventToFireAssignList = currEvent.getListOfEventAssignments();
+				  ArrayList<Double> assignList = new ArrayList<Double>();
 				  for (int j = 0; j < eventToFireAssignList.size(); j ++){
-					  double assignment = Double.parseDouble(evaluateAST(eventToFireAssignList.get(j).getMath().getListOfNodes().get(0)));
-					  String variable = eventToFireAssignList.get(j).getVariable();
-					  HashMap<String, Double> assignMap = new HashMap<String, Double>();
-					  assignMap.put(variable, assignment);
-					  AtTriggerTimeList.put(currEvent.getId(), assignMap);
+					  double assignVal = Double.parseDouble(evaluateAST(eventToFireAssignList.get(j).getMath().getListOfNodes().get(0)));
+					  assignList.add(j, assignVal);
+					  EventAssignAtTriggerTime.put(currEvent.getId(), assignList);
 				  }
 			  }
 			  EventQueueElement currEventQueueElement = new EventQueueElement(time, currEvent.getId(), delayVal, priorityVal);
@@ -740,34 +732,35 @@ public class GillespieSSAJavaSingleStep {
 			int eventToFireIndex = Integer.parseInt(CustomParamsEventMenu[1]);
 			if (optVal != 2 && optVal != -1) { // 2 = terminate  -1 = no action performed
 				Event eventToFire = eventList.get(eventReadyArray.get(eventToFireIndex).getEventId());
+				ListOfEventAssignments eventToFireAssignList = eventToFire.getListOfEventAssignments();
 				if (!eventToFire.getUseValuesFromTriggerTime()) {
-					ListOfEventAssignments eventToFireAssignList = eventToFire.getListOfEventAssignments();
 					for (int i = 0; i < eventToFireAssignList.size(); i ++){
 						double assignment = Double.parseDouble(evaluateAST(eventToFireAssignList.get(i).getMath().getListOfNodes().get(0)));
-						String variable = eventToFireAssignList.get(i).getVariable();
-						if(SpeciesList.containsKey(variable)) {
-							SpeciesList.put(variable, assignment);
+						String varId = eventToFireAssignList.get(i).getVariable();
+						if(SpeciesList.containsKey(varId)) {
+							SpeciesList.put(varId, assignment);
 						}
-						else if(GlobalParamsList.containsKey(variable)){
-							GlobalParamsList.put(variable, assignment);
+						else if(GlobalParamsList.containsKey(varId)){
+							GlobalParamsList.put(varId, assignment);
 						}
 					}
 				}
 				else {  // UseValuesFromTriggerTime
-					HashMap<String, Double> varMap =  AtTriggerTimeList.get(eventToFire.getId());				
-					for (Iterator<String> varMapIterator = varMap.keySet().iterator(); varMapIterator.hasNext();) {
-						String currVarMapId = varMapIterator.next();
-						Double currVarMapVal = varMap.get(currVarMapId);
-						if(SpeciesList.containsKey(currVarMapId)) {
-							SpeciesList.put(currVarMapId, currVarMapVal);
+					// get event assignment(s) of eventToFire, and update species and global parameters.
+					ArrayList<Double> assignValList = EventAssignAtTriggerTime.get(eventToFire.getId());				
+					for (int j=0; j < assignValList.size(); j++) {
+						String varId = eventToFireAssignList.get(j).getVariable();
+						Double varVal = assignValList.get(j);
+						if(SpeciesList.containsKey(varId)) {
+							SpeciesList.put(varId, varVal);
 						}
-						else if(GlobalParamsList.containsKey(currVarMapId)){
-							GlobalParamsList.put(currVarMapId, currVarMapVal);
+						else if(GlobalParamsList.containsKey(varId)){
+							GlobalParamsList.put(varId, varVal);
 						}
 					}
 				}
 
-				// If multiple events were selected, put the all events in eventsReadyArray (except eventToFire) back to the event queue.
+				// If multiple events were popped off the queue and placed in eventsReadyArray, put the all events in eventsReadyArray (except eventToFire) back to the event queue.
 				EventQueueElement eventFired = null;
 				for (Iterator<EventQueueElement> eventReadyArrayIter = eventReadyArray.iterator();eventReadyArrayIter.hasNext();) {
 					EventQueueElement currEventQueueElement = eventReadyArrayIter.next();
@@ -803,6 +796,7 @@ public class GillespieSSAJavaSingleStep {
 			int type_const=currentASTNode.getType();
 			switch (type_const) {
 				// arithmetic operators
+				case libsbml.AST_FUNCTION_ABS: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getChild(0)))); break;
 				case libsbml.AST_PLUS: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) + Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
 				case libsbml.AST_MINUS: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) - Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
 				case libsbml.AST_TIMES: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) * Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
@@ -864,10 +858,6 @@ public class GillespieSSAJavaSingleStep {
 						retStr = Double.toString(expRandNumber);
 					}
 				}
-					
-				
-				
-				
 				// TODO MOD, BITNOT, BITOR, BITAND, BITXOR, idiv
 			}
 		 }
@@ -900,7 +890,7 @@ public class GillespieSSAJavaSingleStep {
 	    		nodeVal = GlobalParamsList.get(currentASTNode.getName());
 	    		nodeValStr = Double.toString(nodeVal);
 	    	}
-	    	else if (currentASTNode.getName().equals("t")) {
+	    	else if (currentASTNode.getName().equals("t") || currentASTNode.getName().equals("time")) {
 	    		nodeVal = time;
 	    		nodeValStr = Double.toString(nodeVal);
 	    	}
@@ -1061,7 +1051,7 @@ public class GillespieSSAJavaSingleStep {
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		JPanel tNextPanel = new JPanel();
 //		String newline = System.getProperty("line.separator");
-		tNextPanel.add(new JLabel("<html>The next simulation time will stop at " + maxTime + " in stead of " + t_next + " . <br></br>Would you like to enter a new next reaction time? </html>"));
+		tNextPanel.add(new JLabel("<html>The next simulation time will stop at " + nextTime + " in stead of " + nextReactionTime + " . <br></br>Would you like to enter a new next reaction time? </html>"));
 //		tNextPanel.add(new JLabel("Would you like to enter a new next reaction time? "));
 		mainPanel.add(tNextPanel, "Center");
 		Object[] options = {"Enter a new value", "Proceed with the current value"};
