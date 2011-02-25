@@ -1023,6 +1023,22 @@ public class GCMFile {
 												JOptionPane.ERROR_MESSAGE);
 										return null;
 									}
+									else if (!LHPN.getIntegers().keySet().contains(split[0])) {
+										try {
+											LHPN
+													.addInteger(
+															split[0],
+															""
+																	+ ((int) parseValue(this.species
+																			.get(
+																					split[0])
+																			.getProperty(
+																					GlobalConstants.INITIAL_STRING))));
+										}
+										catch (Exception e) {
+											LHPN.addInteger(split[0], "0");
+										}
+									}
 									promRate += "+(" + ka + "*((" + Ka + "*" + RNAP + "*"
 											+ specExpr + ")^" + nc + "))";
 								}
@@ -1147,6 +1163,22 @@ public class GCMFile {
 										JOptionPane.showMessageDialog(Gui.frame, "Unable to abstract away all biochemical species.", "Error",
 												JOptionPane.ERROR_MESSAGE);
 										return null;
+									}
+									else if (!LHPN.getIntegers().keySet().contains(split[0])) {
+										try {
+											LHPN
+													.addInteger(
+															split[0],
+															""
+																	+ ((int) parseValue(this.species
+																			.get(
+																					split[0])
+																			.getProperty(
+																					GlobalConstants.INITIAL_STRING))));
+										}
+										catch (Exception e) {
+											LHPN.addInteger(split[0], "0");
+										}
 									}
 									promRate += "+((" + Ka + "*" + RNAP + "*" + specExpr + ")^"
 											+ nc + ")";
@@ -1277,6 +1309,22 @@ public class GCMFile {
 											JOptionPane.showMessageDialog(Gui.frame, "Unable to abstract away all biochemical species.", "Error",
 													JOptionPane.ERROR_MESSAGE);
 											return null;
+										}
+										else if (!LHPN.getIntegers().keySet().contains(split[0])) {
+											try {
+												LHPN
+														.addInteger(
+																split[0],
+																""
+																		+ ((int) parseValue(this.species
+																				.get(
+																						split[0])
+																				.getProperty(
+																						GlobalConstants.INITIAL_STRING))));
+											}
+											catch (Exception e) {
+												LHPN.addInteger(split[0], "0");
+											}
 										}
 										promRate += "+((" + Kr + "*" + specExpr + ")^" + nc + ")";
 									}
@@ -1412,6 +1460,22 @@ public class GCMFile {
 											JOptionPane.showMessageDialog(Gui.frame, "Unable to abstract away all biochemical species.", "Error",
 													JOptionPane.ERROR_MESSAGE);
 											return null;
+										}
+										else if (!LHPN.getIntegers().keySet().contains(split[0])) {
+											try {
+												LHPN
+														.addInteger(
+																split[0],
+																""
+																		+ ((int) parseValue(this.species
+																				.get(
+																						split[0])
+																				.getProperty(
+																						GlobalConstants.INITIAL_STRING))));
+											}
+											catch (Exception e) {
+												LHPN.addInteger(split[0], "0");
+											}
 										}
 										promRate += "+((" + Kr + "*" + specExpr + ")^" + nc + ")";
 									}
