@@ -796,8 +796,8 @@ public class GillespieSSAJavaSingleStep {
 			int type_const=currentASTNode.getType();
 			switch (type_const) {
 				// arithmetic operators
-				case libsbml.AST_FUNCTION_ABS: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getChild(0)))); break;
-				case libsbml.AST_PLUS: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) + Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
+			    case libsbml.AST_FUNCTION_ABS: retStr = Double.toString(Math.abs(Double.parseDouble(evaluateAST(currentASTNode.getChild(0))))); break;
+			    case libsbml.AST_PLUS: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) + Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
 				case libsbml.AST_MINUS: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) - Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
 				case libsbml.AST_TIMES: retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) * Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
 				case libsbml.AST_DIVIDE:retStr = Double.toString(Double.parseDouble(evaluateAST(currentASTNode.getLeftChild())) / Double.parseDouble(evaluateAST(currentASTNode.getRightChild()))); break;
