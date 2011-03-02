@@ -16,7 +16,6 @@ import lpn.parser.LhpnFile;
 import main.*;
 
 import gcm.gui.PropertyList;
-import gcm.util.Utility;
 
 
 /**
