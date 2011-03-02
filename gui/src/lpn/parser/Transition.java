@@ -77,6 +77,8 @@ public class Transition {
 			return false;
 		}
 		if (newEnab.equals("")) {
+			enabling = "";
+			enablingTree = new ExprTree();
 			retVal = true;
 		}
 		ExprTree expr = new ExprTree(lhpn);
