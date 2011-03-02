@@ -541,6 +541,16 @@ public class LhpnFile {
 					}
 					buffer.append(">");
 				}
+				buffer.append("\"");
+				if (t.isFail()&&t.isPersistent()) {
+					buffer.append(",fontcolor=purple");
+				}
+				else if (t.isFail()) {
+					buffer.append(",fontcolor=red");
+				}
+				else if (t.isPersistent()) {
+					buffer.append(",fontcolor=blue");
+				}
 				buffer.append("\"];\n");
 			}
 			for (Place place : places.values()) {
