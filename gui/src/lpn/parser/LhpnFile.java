@@ -477,7 +477,12 @@ public class LhpnFile {
 			for (Transition t : transitions.values()) {
 				buffer.append(t.getName() + " [shape=plaintext,label=\"" + t.getName());
 				if (t.containsEnabling()) {
-					buffer.append("\\n{" + t.getEnabling() + "}");
+					if (t.isPersistent()) {
+						buffer.append("\\n{" + t.getEnabling() + "}");
+					}
+					else {
+						buffer.append("\\n{" + t.getEnabling() + "}");
+					}
 				}
 				if (t.containsDelay()) {
 					buffer.append("\\n[" + t.getDelay() + "]");
