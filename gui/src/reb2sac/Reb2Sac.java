@@ -5115,6 +5115,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 			Parser constData = new Parser(dataLabels, data);
 			constData.outputTSD(root + separator + simName + separator + "sim-rep.tsd");
+			for (int i = 0; i < simTab.getComponentCount(); i++) {
+				if (simTab.getComponentAt(i).getName().equals(
+						"TSD Graph")) {
+					if (simTab.getComponentAt(i) instanceof Graph) {
+						((Graph) simTab.getComponentAt(i)).refresh();
+					}
+				}
+			}
 		}
 	}
 
