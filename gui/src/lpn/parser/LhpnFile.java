@@ -551,7 +551,7 @@ public class LhpnFile {
 				else if (t.isPersistent()) {
 					buffer.append(",fontcolor=blue");
 				}
-				buffer.append("\"];\n");
+				buffer.append("];\n");
 			}
 			for (Place place : places.values()) {
 				buffer.append(place.getName() + " [label=\"" + place.getName() + "\"];\n" + place.getName()
