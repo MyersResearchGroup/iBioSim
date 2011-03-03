@@ -177,12 +177,13 @@ public class LearnModel { // added ItemListener SB
 	 *  Version 1 : Kevin Jones (Perl)
 	 *  Version 2 : Scott Little (data2lhpn.py)
 	 *  Version 3 : Satish Batchu (LearnModel.java)
+	 * @throws IOException 
 	 */
 	
 	public LhpnFile learnModel(String directory, Log log, Gui biosim, int moduleNumber, HashMap<String, 
 			ArrayList<Double>> thresh, HashMap<String,Double> tPar, ArrayList<Variable> rVarsL, 
 			HashMap<String, ArrayList<String>> dstab, Boolean netForStable, boolean pseudoEnable, 
-			boolean transientPlaceReqd, Double vScaleFactor, Double dScaleFactor, String failProp) {
+			boolean transientPlaceReqd, Double vScaleFactor, Double dScaleFactor, String failProp) throws IOException {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		} else {
@@ -381,6 +382,7 @@ public class LearnModel { // added ItemListener SB
 								&& (placeInfo.get(getPlaceInfoIndex(g.getPostset(t)[0])).getProperty("type").equalsIgnoreCase("RATE"))) {
 							// g.getPreset(t).length != 0 && g.getPostset(t).length != 0 ??
 							String tKey = getTransitionInfoIndex(t);
+							if (tKey==null) continue;
 							String prevPlaceFullKey = getPresetPlaceFullKey(tKey);
 							String nextPlaceFullKey = getPostsetPlaceFullKey(tKey);
 							
@@ -647,6 +649,7 @@ public class LearnModel { // added ItemListener SB
 								 transKey = getTransitionInfoIndex(st2);
 							else
 								 transKey = getTransientNetTransitionIndex(st2);
+							if (transKey==null) continue;
 							String[] binOutgoing = getPostsetPlaceFullKey(transKey).split(",");
 							String condStr = "";
 							for (String st : varsInEnabling.keySet()){
@@ -841,6 +844,7 @@ public class LearnModel { // added ItemListener SB
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 		catch (NullPointerException e4) {
+			out.close();
 			e4.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame,
 					"LPN file couldn't be created/written. Null exception",
@@ -1799,7 +1803,7 @@ public class LearnModel { // added ItemListener SB
 						}
 						addRate(p0, reqdVarsL.get(j).getName(), rates[j][i]);
 					}
-					boolean transientNet = false;
+//					boolean transientNet = false;
 					if (!prevPlaceFullKey.equalsIgnoreCase(fullKey)) {
 						if (!prevPlaceFullKey.equals("")){
 							ArrayList<Integer> diffL = diff(prevPlaceFullKey,fullKey);
@@ -1820,11 +1824,12 @@ public class LearnModel { // added ItemListener SB
 							opChange = false;
 							careIpChange = false;
 						}
+						opChange=true;
 						if ((traceNum > 1) && transientNetTransitions.containsKey(prevPlaceFullKey + "," + fullKey) && (ratePlaces.size() == 2)) { // same transient transition as that from some previous trace
 							p1 = transientNetTransitions.get(prevPlaceFullKey + "," + fullKey);
 							transId = prevPlaceFullKey + "," + fullKey;
 							out.write("Came back to existing transient transition t" + p1.getProperty("transitionNum") + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
-						} else if (transitionInfo.containsKey(prevPlaceFullKey + "," + fullKey) && (ratePlaces.size() > 2)) { // instead of tuple
+						} else if (transitionInfo.containsKey(prevPlaceFullKey + "," + fullKey) /*&& (ratePlaces.size() > 2)*/) { // instead of tuple
 							p1 = transitionInfo.get(prevPlaceFullKey + "," + fullKey);
 							transId = prevPlaceFullKey + "," + fullKey;
 							out.write("Came back to existing transition t" + p1.getProperty("transitionNum") + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
@@ -1840,7 +1845,7 @@ public class LearnModel { // added ItemListener SB
 									g.addMovement("t" + transientNetTransitions.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + placeInfo.get(key).getProperty("placeNum"));
 								else if (ratePlaces.size() == 1)
 									g.addMovement("t" + transientNetTransitions.get(prevPlaceFullKey + "," + fullKey).getProperty("transitionNum"), "p" + transientNetPlaces.get(key).getProperty("placeNum"));
-								transientNet = true;
+//								transientNet = true;
 								transId = prevPlaceFullKey + "," + fullKey;
 								out.write("New transition t" + numTransitions + " at time " + data.get(0).get(i) + " " + prevPlaceFullKey + " -> " + fullKey);
 								numTransitions++;
@@ -2065,6 +2070,7 @@ public class LearnModel { // added ItemListener SB
 				key = key + "," + bins[l][initMark];
 			}
 			if (!reqdVarsL.get(i).isDmvc()){
+//				System.out.println(key);
 				reqdVarsL.get(i).addInitRates((double)getMinRate(key, reqdVarsL.get(i).getName()));
 				reqdVarsL.get(i).addInitRates((double)getMaxRate(key, reqdVarsL.get(i).getName()));
 			}
@@ -2792,10 +2798,13 @@ public class LearnModel { // added ItemListener SB
 							if (tKey != null){
 								String pPrev = getPresetPlaceFullKey(tKey);
 								String nextPlace = getPostsetPlaceFullKey(tKey);
-								Double mind = Double.parseDouble(transitionInfo.get(pPrev + "," + nextPlace).getProperty("dMin"));
-								Double maxd = Double.parseDouble(transitionInfo.get(pPrev + "," + nextPlace).getProperty("dMax"));
-								transitionInfo.get(pPrev + "," + nextPlace).setProperty("dMin",Double.toString(mind*scaleFactor));
-								transitionInfo.get(pPrev + "," + nextPlace).setProperty("dMax",Double.toString(maxd*scaleFactor));
+								if ((transitionInfo.get(pPrev + "," + nextPlace).getProperty("dMin")!=null) &&
+									(transitionInfo.get(pPrev + "," + nextPlace).getProperty("dMax")!=null)) {
+									Double mind = Double.parseDouble(transitionInfo.get(pPrev + "," + nextPlace).getProperty("dMin"));
+									Double maxd = Double.parseDouble(transitionInfo.get(pPrev + "," + nextPlace).getProperty("dMax"));
+									transitionInfo.get(pPrev + "," + nextPlace).setProperty("dMin",Double.toString(mind*scaleFactor));
+									transitionInfo.get(pPrev + "," + nextPlace).setProperty("dMax",Double.toString(maxd*scaleFactor));
+								}
 							} else {
 								System.out.println("Transition " + t + " has no index in transitionInfo. CHECK");
 							}
