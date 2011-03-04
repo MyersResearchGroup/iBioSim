@@ -9,7 +9,9 @@ import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.GroupLayout.Alignment;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 
 
 public class GradientDisplayer extends JComboBox {
@@ -17,35 +19,34 @@ public class GradientDisplayer extends JComboBox {
 	private static final long serialVersionUID = 1L;
 
 	
-	private ColorGradient colorGradient;
+	private MovieGradient movieGradient;
 	
-	// make a place to store the colorGradient that was passed in
+	// make a place to store the movieGradient that was passed in
 	// so that when we save changes we can modify the original.
-	private ColorGradient savedColorGradient;
+	private MovieGradient savedColorGradient;
 	
-	public GradientDisplayer(ColorGradient colorGradient){
-		super(ColorGradient.GRADIENT_NAMES);
+	private JLabel label;
+	
+	public GradientDisplayer(MovieGradient movieGradient){
+		super(MovieGradient.GRADIENT_NAMES);
 		this.setLayout(new BorderLayout());
+		
+		label = new JLabel(movieGradient.getLabel());
+		this.add(label, BorderLayout.CENTER);
+		
 		addListener();
-		setup(colorGradient);
-		savedColorGradient = colorGradient;
+		setup(movieGradient);
+		savedColorGradient = movieGradient;
 	}
 	
-	private void setup(ColorGradient colorGradient){
+	private void setup(MovieGradient movieGradient){
 		
-		this.colorGradient = colorGradient;
+		this.movieGradient = movieGradient;
 		
-		// Why did this stop working when I switched to a ComboBox?
-//		this.removeAll();
-//
-//		// optionally add a label
-//		if(!colorGradient.getLabel().equals("")){
-//			JLabel l = new JLabel(colorGradient.getLabel());
-//			l.setHorizontalAlignment(JLabel.CENTER);
-//			this.add(l, BorderLayout.CENTER);
-//			
-//		}
-	
+		if(movieGradient != null && movieGradient.getLabel() != null)
+			label.setText(movieGradient.getLabel());
+		else
+			label.setText("");
 	}
 
 	/**
@@ -57,32 +58,38 @@ public class GradientDisplayer extends JComboBox {
 		this.addActionListener(new ActionListener() {
 			
 			public void actionPerformed(ActionEvent e) {
-				setup(ColorGradient.getGradientFromName((String)getSelectedItem()));
+				setup(MovieGradient.getGradientFromName((String)getSelectedItem()));
 			}
 		});
 	}
 
 	public void paintComponent(Graphics g) {
-        super.paintComponent(g);
+		//super.paintComponent(g);
+		
         Graphics2D g2d = (Graphics2D)g;
-        //drawing messages sent to g
-        GradientPaint grad = new GradientPaint(
-        		0, 0, 
-        		colorGradient.getStartColor(), 
-        		this.getWidth(), 0,
-        		colorGradient.getEndColor());
-        g2d.setPaint(grad);
-        g2d.fillRoundRect(0, 0, this.getWidth(), this.getHeight(), 4, 4);
+        GradientPaint grad;
+        
+        if(movieGradient.getStartAppearance().color != null && movieGradient.getEndAppearance().color != null){
+	        grad = new GradientPaint(
+	        		0, 0, 
+	        		movieGradient.getStartAppearance().color, 
+	        		this.getWidth(), 0,
+	        		movieGradient.getEndAppearance().color);
+	        g2d.setPaint(grad);
+	        g2d.fillRoundRect(0, 0, this.getWidth(), this.getHeight(), 4, 4);
+        }
         
         grad = new GradientPaint(0,0, Color.DARK_GRAY, this.getWidth(), 0, Color.DARK_GRAY);
         g2d.setPaint(grad);
         g2d.drawRoundRect(0, 0, this.getWidth()-1, this.getHeight()-1, 4, 4);
+        
+        
     }
     
 	public void saveChanges(){
-		savedColorGradient.setStartColor(colorGradient.getStartColor());
-		savedColorGradient.setEndColor(colorGradient.getEndColor());
-		savedColorGradient.setLabel(colorGradient.getLabel());
+		savedColorGradient.setStartAppearance(movieGradient.getStartAppearance());
+		savedColorGradient.setEndAppearance(movieGradient.getEndAppearance());
+		savedColorGradient.setLabel(movieGradient.getLabel());
 	}
 
 

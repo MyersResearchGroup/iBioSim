@@ -1,5 +1,7 @@
 package gcm.gui.modelview.movie.visualizations.component;
 
+import gcm.gui.modelview.movie.visualizations.cellvisualizations.MovieAppearance;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,33 +43,17 @@ public class ComponentScheme {
 		}
 	}
 	
-	public Color getColor(HashMap<String, ArrayList<Double>> dataHash, int frameIndex){
+	public MovieAppearance getAppearance(HashMap<String, ArrayList<Double>> dataHash, int frameIndex){
 
 		ListIterator<ComponentSchemePart> iter = schemes.listIterator();
 		
-		int red, green, blue;
-		red = green = blue = 0;
-		boolean isValid = false;
+		MovieAppearance ret = new MovieAppearance();
 		
 		while(iter.hasNext()){
-			Color nextCol = iter.next().getColor(dataHash, frameIndex);
-			if(nextCol != null){
-				red += nextCol.getRed();
-				green += nextCol.getGreen();
-				blue += nextCol.getBlue();
-				isValid = true;
-			}
+			MovieAppearance nextAppearance = iter.next().getAppearance(dataHash, frameIndex);
+			ret.add(nextAppearance);
 		}
-		if(isValid){
-			if(red > 255)
-				red = 255;
-			if(green > 255)
-				green = 255;
-			if(blue > 255)
-				blue = 255;
-			return new Color(red, green, blue);
-		}else
-			return null;
+		return ret;
 	}
 	
 	/**
