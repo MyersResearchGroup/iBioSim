@@ -1,6 +1,7 @@
 package gcm.gui.modelview.movie.visualizations;
 
-import gcm.gui.modelview.movie.visualizations.gradient.ColorGradient;
+import gcm.gui.modelview.movie.visualizations.cellvisualizations.MovieAppearance;
+import gcm.gui.modelview.movie.visualizations.gradient.MovieGradient;
 
 import java.awt.Color;
 
@@ -10,14 +11,14 @@ public class ColorScheme {
 
 	private double min;
 	private double max;
-	private ColorGradient colorGradient;
+	private MovieGradient movieGradient;
 	
-	public ColorGradient getColorGradient() {
-		return colorGradient;
+	public MovieGradient getColorGradient() {
+		return movieGradient;
 	}
 
-	public void setColorGradient(ColorGradient colorGradient) {
-		this.colorGradient = colorGradient;
+	public void setColorGradient(MovieGradient movieGradient) {
+		this.movieGradient = movieGradient;
 	}
 
 	public double getMin() {
@@ -66,7 +67,7 @@ public class ColorScheme {
 	private void defaultConstructor(){
 		this.min=0;
 		this.max=100;
-		this.colorGradient = new ColorGradient();
+		this.movieGradient = new MovieGradient();
 	}
 	
 	/**
@@ -74,7 +75,7 @@ public class ColorScheme {
 	 * @param val: The value you want to get a color for.
 	 * @return: A color on the gradient. returns null if min >= max.
 	 */
-	public Color getColor(double val){
+	public MovieAppearance getAppearance(double val){
 		// an error case that would mess up the math.
 		// Note that we could have also set the ratio to 0.0
 		// and return a color on the gradient, but I thought that
@@ -85,14 +86,14 @@ public class ColorScheme {
 		
 		float ratio = (float)((val - min) / (max - min));
 		
-		// Note that ColorGradient properly handles the case when the ratio
+		// Note that MovieGradient properly handles the case when the ratio
 		// is outside the bounds of [0,1]
-		return this.colorGradient.getIntermediateColor(ratio);
+		return this.movieGradient.getIntermediateAppearance(ratio, val);
 	}
 	
 	public void duplicatePreferences(ColorScheme master){
 		this.min = master.min;
 		this.max = master.max;
-		this.colorGradient.duplicatePreferences(master.colorGradient);
+		this.movieGradient.duplicatePreferences(master.movieGradient);
 	}
 }

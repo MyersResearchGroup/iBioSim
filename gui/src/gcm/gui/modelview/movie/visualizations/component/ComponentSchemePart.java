@@ -9,6 +9,7 @@ import java.util.regex.Pattern;
 import parser.TSDParser;
 
 import gcm.gui.modelview.movie.visualizations.ColorScheme;
+import gcm.gui.modelview.movie.visualizations.cellvisualizations.MovieAppearance;
 
 /**
  * Components can be colored based on multiple color schemes relating to multiple of their sub-species.
@@ -47,7 +48,7 @@ public class ComponentSchemePart {
 		colorScheme = new ColorScheme(tsdParser);
 	}
 	
-	public Color getColor(HashMap<String, ArrayList<Double>> dataHash, int frameIndex){
+	public MovieAppearance getAppearance(HashMap<String, ArrayList<Double>> dataHash, int frameIndex){
 		
 		String key = getTsdKey();
 		// if the user hasn't chosen a species, don't use this color.
@@ -57,7 +58,7 @@ public class ComponentSchemePart {
 		if(al == null)
 			return null;
 		double val = al.get(frameIndex);
-		return colorScheme.getColor(val);
+		return colorScheme.getAppearance(val);
 	}
 	
 	public void duplicatePreferences(ComponentSchemePart master, String compName){

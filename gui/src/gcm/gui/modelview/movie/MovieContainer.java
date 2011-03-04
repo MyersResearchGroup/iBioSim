@@ -3,6 +3,7 @@ package gcm.gui.modelview.movie;
 import gcm.gui.GCM2SBMLEditor;
 import gcm.gui.modelview.movie.MoviePreferences;
 import gcm.gui.modelview.movie.visualizations.ColorScheme;
+import gcm.gui.modelview.movie.visualizations.cellvisualizations.MovieAppearance;
 import gcm.gui.modelview.movie.visualizations.component.ComponentScheme;
 import gcm.gui.schematic.ListChooser;
 import gcm.gui.schematic.Schematic;
@@ -217,6 +218,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		mt.add(playPauseButton);
 		
 		slider = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 0);
+		slider.setSnapToTicks(true);
 		mt.add(slider);
 
 		this.add(mt, BorderLayout.SOUTH);
@@ -341,16 +343,16 @@ public class MovieContainer extends JPanel implements ActionListener {
 		for(String s:gcm.getSpecies().keySet()){
 			if(dataHash.containsKey(s)){
 				double value = dataHash.get(s).get(frameIndex);
-				Color color = moviePreferences.getOrCreateColorSchemeForSpecies(s, null).getColor(value);
-				schematic.setSpeciesAnimationValue(s, color);
+				MovieAppearance appearance = moviePreferences.getOrCreateColorSchemeForSpecies(s, null).getAppearance(value);
+				schematic.setSpeciesAnimationValue(s, appearance);
 			}
 		}
 		
 		for(String c:gcm.getComponents().keySet()){
 			ComponentScheme cs = moviePreferences.getComponentSchemeForComponent(c);
 			if(cs != null){
-				Color color = cs.getColor(dataHash, frameIndex);
-				schematic.setComponentAnimationValue(c, color);
+				MovieAppearance appearance= cs.getAppearance(dataHash, frameIndex);
+				schematic.setComponentAnimationValue(c, appearance);
 			}
 		}
 		

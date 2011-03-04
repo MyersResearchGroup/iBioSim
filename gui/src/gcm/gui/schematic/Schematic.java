@@ -6,6 +6,7 @@ import gcm.gui.InfluencePanel;
 import gcm.gui.PromoterPanel;
 import gcm.gui.modelview.movie.MovieContainer;
 import gcm.gui.modelview.movie.visualizations.ColorScheme;
+import gcm.gui.modelview.movie.visualizations.cellvisualizations.MovieAppearance;
 import gcm.gui.modelview.movie.visualizations.component.ComponentSchemeChooser;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
@@ -829,11 +830,11 @@ public class Schematic extends JPanel implements ActionListener {
 	//	graph.getModel().beginUpdate(); // doesn't seem needed.
 	}
 	
-	public void setSpeciesAnimationValue(String s, Color color){
-		graph.setSpeciesAnimationValue(s, color);
+	public void setSpeciesAnimationValue(String s, MovieAppearance appearance){
+		graph.setSpeciesAnimationValue(s, appearance);
 	}
-	public void setComponentAnimationValue(String c, Color color){
-		graph.setComponentAnimationValue(c, color);
+	public void setComponentAnimationValue(String c, MovieAppearance appearance){
+		graph.setComponentAnimationValue(c, appearance);
 	}
 	
 	public void endFrame(){

@@ -5,6 +5,7 @@ package gcm.gui.schematic;
 
 import gcm.gui.GCM2SBMLEditor;
 import gcm.gui.InfluencePanel;
+import gcm.gui.modelview.movie.visualizations.cellvisualizations.MovieAppearance;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 
@@ -836,20 +837,74 @@ public class BioGraph extends mxGraph {
 	}
 	
 	//////////////////////////////////////// ANIMATION TYPE STUFF ////////////////////////////////
-	public void setSpeciesAnimationValue(String s, Color color){
+	public void setSpeciesAnimationValue(String s, MovieAppearance appearance){
 		mxCell cell = this.speciesToMxCellMap.get(s);
-
-		String newStyle = mxConstants.STYLE_FILLCOLOR + "=" + Integer.toHexString(color.getRGB());
-		
-		cell.setStyle(newStyle);
+		Properties prop = gcm.getSpecies().get(s);
+		assert(prop != null);
+		setCellAnimationValue(cell, appearance, prop);
 	}
-	public void setComponentAnimationValue(String c, Color color){
-		if(color == null)
-			return;
+	public void setComponentAnimationValue(String c, MovieAppearance appearance){
 		mxCell cell = this.componentsToMxCellMap.get(c);
-		String newStyle = mxConstants.STYLE_FILLCOLOR + "=" + Integer.toHexString(color.getRGB());
+		Properties prop = gcm.getComponents().get(c);
+		assert(prop != null);
+		setCellAnimationValue(cell, appearance, prop);
+	}
+	/**
+	 * Applies the MovieAppearance to the cell
+	 * @param cell
+	 * @param appearance
+	 * @param properties
+	 */
+	private void setCellAnimationValue(mxCell cell, MovieAppearance appearance, Properties prop){
+		if(appearance == null)
+			return;
 		
-		cell.setStyle(newStyle);
+		// color
+		String newStyle = null;
+		if(appearance.color != null){
+			newStyle = mxConstants.STYLE_FILLCOLOR + "=" + Integer.toHexString(appearance.color.getRGB());
+		}
+		
+		// opacity
+		if(appearance.opacity != null){
+			if(newStyle == null)
+				newStyle = "";
+			else
+				newStyle += ";";
+			double op = (appearance.opacity) * 100.0;
+			newStyle += mxConstants.STYLE_OPACITY + "=" + String.valueOf(op);
+			newStyle +=";" + mxConstants.STYLE_TEXT_OPACITY + "=" + String.valueOf(op);
+			//newStyle = mxConstants.STYLE_TEXT_OPACITY "opacity=.3";
+			//newStyle = "opacity=100";
+		}
+		if(newStyle != null)
+			cell.setStyle(newStyle);
+		
+		// size
+		if(appearance.size != null){
+			
+			double gcmX = Double.parseDouble(
+					prop.getProperty("graphx", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH)));
+			double gcmY = Double.parseDouble(
+					prop.getProperty("graphy", String.valueOf(GlobalConstants.DEFAULT_SPECIES_HEIGHT)));
+			double gcmWidth = Double.parseDouble(
+					prop.getProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH)));
+			double gcmHeight = Double.parseDouble(
+					prop.getProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_SPECIES_HEIGHT)));
+			
+			double aspect_ratio = gcmHeight	/ gcmWidth;
+			
+			double centerX = gcmX + gcmWidth/2.0;
+			double centerY = gcmY + gcmHeight/2.0;
+			
+			mxGeometry startG = cell.getGeometry();
+			startG.setWidth(appearance.size);
+			startG.setHeight(appearance.size * aspect_ratio);
+			
+			startG.setX(centerX - startG.getWidth()/2.0);
+			startG.setY(centerY - startG.getHeight()/2.0);
+		}
+
 	}
 	
 		
