@@ -445,8 +445,14 @@ public class LearnModel { // added ItemListener SB
 									//if (!isTransientTransition(t)){
 								//	int mind = (int) Math.floor(Double.parseDouble(transitionInfo.get(getPlaceInfoIndex(pPrev) + "," + getPlaceInfoIndex(nextPlace)).getProperty("dMin")));
 								//	int maxd = (int) Math.ceil(Double.parseDouble(transitionInfo.get(getPlaceInfoIndex(pPrev) + "," + getPlaceInfoIndex(nextPlace)).getProperty("dMax")));
-									int mind = (int) Math.floor(Double.parseDouble(transitionInfo.get(tKey).getProperty("dMin")));
-									int maxd = (int) Math.ceil(Double.parseDouble(transitionInfo.get(tKey).getProperty("dMax")));
+									int mind = 0;
+									int maxd = 0;
+									if (transitionInfo.get(tKey).getProperty("dMin") != null) {
+										mind = (int) Math.floor(Double.parseDouble(transitionInfo.get(tKey).getProperty("dMin")));
+									}
+									if (transitionInfo.get(tKey).getProperty("dMax") != null) {
+										maxd = (int) Math.ceil(Double.parseDouble(transitionInfo.get(tKey).getProperty("dMax")));
+									}
 									if (mind != maxd)
 										g.changeDelay(t, "uniform(" + mind + "," + maxd + ")");
 									else
@@ -1730,6 +1736,7 @@ public class LearnModel { // added ItemListener SB
 		// boolean addNewPlace;
 		ArrayList<String> ratePlaces = new ArrayList<String>(); // ratePlaces can include non-input dmv places.
 		// boolean newRate = false;
+		System.out.println("Duration " + duration);
 		try{
 			Properties p0, p1 = null;
 			out.write("In UpdateRateInfo\n");
@@ -1793,7 +1800,7 @@ public class LearnModel { // added ItemListener SB
 						// continue;
 						// }
 						if (reqdVarsL.get(j).isDmvc()) { // && !reqdVarsL.get(j).isInput()){
-							System.out.println("DMVC " + dmvcValuesUnique);
+							//System.out.println("DMVC " + dmvcValuesUnique);
 							//System.out.println(reqdVarsL.get(j).getName() + " " + bins[j][i] + " "  + dmvcValuesUnique.get(reqdVarsL.get(j).getName()).getProperty(String.valueOf(bins[j][i]))"\n");
 							out.write("Add value : " + reqdVarsL.get(j).getName() + " -> corresponding to bin " + bins[j][i] + " at place p" + p0.getProperty("placeNum") + "\n");
 							out.write("Add value : " + reqdVarsL.get(j).getName() + " -> " + Double.valueOf(dmvcValuesUnique.get(reqdVarsL.get(j).getName()).getProperty(String.valueOf(bins[j][i]))) + " at place p" + p0.getProperty("placeNum") + "\n");
@@ -3113,6 +3120,7 @@ public class LearnModel { // added ItemListener SB
 	public void addDuration(Properties p, Double d) {
 		Double dMin;
 		Double dMax;
+		System.out.println("Adding duration of " + d);
 		// d = d*(10^6);
 		if ((p.getProperty("dMin") == null) && (p.getProperty("dMax") == null)) {
 			// p.setProperty("dMin", Integer.toString((int)(Math.floor(d))));
