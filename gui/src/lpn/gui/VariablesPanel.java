@@ -217,9 +217,8 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				}
 			}
 			if (fields.containsKey("Initial value")) {
-				if (!(fields.get("Initial value").getValue().matches("\\d+") || fields
-						.get("Initial value").getValue().matches(
-								"\\[\\d+,\\d+\\]"))) {
+				if (!(fields.get("Initial value").getValue().matches("-?\\d+") || fields
+						.get("Initial value").getValue().matches("\\[-?\\d+,-?\\d+\\]"))) {
 					Utility
 							.createErrorMessage("Error",
 									"Initial value must be an integer or a range of integers.");
@@ -227,9 +226,8 @@ public class VariablesPanel extends JPanel implements ActionListener {
 				}
 			}
 			if (fields.containsKey("Initial rate")) {
-				if (!(fields.get("Initial rate").getValue().matches("\\d+") || fields
-						.get("Initial rate").getValue().matches(
-								"\\[\\d+,\\d+\\]"))) {
+				if (!(fields.get("Initial rate").getValue().matches("-?\\d+") || fields
+						.get("Initial rate").getValue().matches("\\[-?\\d+,-?\\d+\\]"))) {
 					Utility
 							.createErrorMessage("Error",
 									"Initial rate must be an integer or a range of integers.");

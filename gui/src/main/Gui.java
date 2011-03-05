@@ -2521,6 +2521,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				simulate(2);
 			}
 			catch (Exception e1) {
+				e1.printStackTrace();
 				JOptionPane.showMessageDialog(frame,
 						"You must select a valid lpn file for simulation.", "Error",
 						JOptionPane.ERROR_MESSAGE);
