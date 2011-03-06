@@ -410,7 +410,6 @@ public class Abstraction extends LhpnFile {
 			// Transform 17 - Remove Dominated Transitions
 			if (s.equals(abstPane.xform17) && abstPane.isSimplify()) {
 				change = removeDominatedTransitions(change);
-				change = removeRedundantTransitions(change);
 			}
 			// Transform 18 - Remove Unread Variables
 			if (s.equals(abstPane.xform18) && abstPane.isSimplify()) {
@@ -2242,39 +2241,15 @@ public class Abstraction extends LhpnFile {
 		}
 		removePlace(place.getName());
 		// Add delays
-		String[] oldDelay = new String[2];
-		Pattern rangePattern = Pattern.compile(RANGE);
+		String oldDelay = new String();
 		if (transition.getDelay() != null) {
-			Matcher rangeMatcher = rangePattern.matcher(transition.getDelay());
-			if (rangeMatcher.find()) {
-				oldDelay[0] = rangeMatcher.group(1);
-				oldDelay[1] = rangeMatcher.group(2);
-			}
-		} else {
-			oldDelay[0] = "0";
-			oldDelay[1] = "inf";
+			oldDelay = transition.getDelay();
 		}
 		for (Transition t : postset) {
 			if (t.getDelay() != null) {
-				Matcher newMatcher = rangePattern.matcher(t.getDelay());
-				if (newMatcher.find()) {
-					String newDelay[] = { newMatcher.group(1),
-							newMatcher.group(2) };
-					for (int i = 0; i < newDelay.length; i++) {
-						if (!oldDelay[i].equals("inf")
-								&& !newDelay[i].equals("inf")) {
-							if (i != 0) {
-								newDelay[i] = String.valueOf(Integer
-										.parseInt(newDelay[i])
-										+ Integer.parseInt(oldDelay[i]));
-							}
-						} else {
-							newDelay[i] = "inf";
-						}
-					}
-					t.addDelay("uniform(" + newDelay[0] + "," + newDelay[1]
+					String newDelay = t.getDelay() + "+" + oldDelay;
+					t.addDelay("uniform(" + oldDelay + "," + newDelay
 							+ ")");
-				}
 			}
 		}
 		removeTransition(transition.getName());
@@ -3202,16 +3177,6 @@ public class Abstraction extends LhpnFile {
 
 	private void mergeTransitions(Transition t, ArrayList<Transition> list,
 			boolean abstraction) {
-		if (!t.getDelay().contains("uniform")
-				&& !t.getDelay().matches("[\\d-]+")) {
-			return;
-		}
-		for (Transition tP : list) {
-			if (!tP.getDelay().contains("uniform")
-					&& !tP.getDelay().matches("[\\d-]+")) {
-				return;
-			}
-		}
 		if (abstraction) {
 			for (Transition tP : list) {
 				if (!transitions.containsKey(tP.getName())) {
@@ -3236,6 +3201,17 @@ public class Abstraction extends LhpnFile {
 			}
 			t.addDelay("uniform(" + minDelay + "," + maxDelay + ")");
 			for (Transition tP : list) {
+				for (Place pP : tP.getPostset()) {
+					boolean contains = false;
+					for (Place p : t.getPostset()) {
+						if (p.equals(pP)) {
+							contains = true;
+						}
+					}
+					if (!contains) {
+						t.addPostset(pP);
+					}
+				}
 				removeTransition(tP.getName());
 			}
 		} else {
