@@ -538,7 +538,7 @@ public class ExprTree {
 					(this).lvalue = ((int) (this).lvalue >> (int) newresult.lvalue) & 1;
 					(this).uvalue = (this).lvalue;
 				} else {
-					setNodeValues((this), newresult, "[]", 'w');
+					setNodeValues((this), newresult, "[]", 'b');
 				}
 				(token) = intexpr_gettok(expr);
 			} else if (tokvalue.toLowerCase().equals("floor")) {
