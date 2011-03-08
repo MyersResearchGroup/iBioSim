@@ -62,6 +62,7 @@ public class Translator {
 		
 		// Create bitwise operators for sbml
 		createFunction(m, "rate", "Rate", "lambda(a,a)");
+		createFunction(m, "BIT", "bit selection", "lambda(a,b,a*b)");
 		createFunction(m, "BITAND", "Bitwise AND", "lambda(a,b,a*b)");
 		createFunction(m, "BITOR", "Bitwise AND", "lambda(a,b,a*b)");
 		createFunction(m, "BITNOT", "Bitwise AND", "lambda(a,b,a*b)");
@@ -305,7 +306,7 @@ public class Translator {
 							modifierStr = modifierStr + modifier.getSpecies().toString() + "*";
 						}
 						else {
-							// get preset(s) of a transition and set each as a reactant
+							// get the preset of a transition and set each as a reactant
 							SpeciesReference reactant = r.createReactant();
 							reactant.setSpecies(x);
 							reactant.setStoichiometry(1.0);
@@ -335,7 +336,8 @@ public class Translator {
 						rateReaction.setFormula("(" + reactantStr + Enabling + "*" + lhpn.getTransitionRateTree(t).getElement("SBML") + ")"); 
 					
 					Event e = m.createEvent();
-					e.setId("event" + counter);		
+//					e.setId("event" + counter);		
+					e.setId(t);
 					Trigger trigger = e.createTrigger();
 					trigger.setMath(SBML_Editor.myParseFormula("eq(" + product.getSpecies() + ",1)"));
 					// For persistent transition, it does not matter whether the trigger is persistent or not, because the delay is set to 0. 
@@ -355,6 +357,16 @@ public class Translator {
 					EventAssignment assign1 = e.createEventAssignment();
 					assign1.setVariable(product.getSpecies());
 					assign1.setMath(SBML_Editor.myParseFormula("0"));
+					
+					if (lhpn.getTransition(t).isPersistent()){
+						// t_preSet = 0
+						for (String x : lhpn.getPreset(t)){
+							EventAssignment assign0 = e.createEventAssignment();
+							assign0.setVariable(x);
+							assign0.setMath(SBML_Editor.myParseFormula("0"));
+			//				System.out.println("transition: " + t + " preset: " + x);
+						}
+					}
 					
 					// assignment <A>
 					// continuous assignment
@@ -417,10 +429,11 @@ public class Translator {
 					}
 				}
 				
-				else {			// Transition rate = null. Only use event. Transitions only have ranges
+				else {			// Transition rate = null. Only use event. Transitions only have ranges.
 //					System.out.println("Event Only");
 					Event e = m.createEvent();
-					e.setId("event" + counter);	
+//					e.setId("event" + counter);	
+					e.setId(t);
 					Trigger trigger = e.createTrigger();
 
 					//trigger = CheckPreset(t) && En(t);
@@ -628,7 +641,7 @@ public class Translator {
 						
 					   // create a new event 
 						Event extraEvent = m.createEvent();
-						extraEvent.setId("extraEvent" + counter);	
+						extraEvent.setId("extra_" + t);	
 						Trigger triggerExtra = extraEvent.createTrigger();
 						//triggerExtra.setMath(SBML_Editor.myParseFormula("and(gt(t,0),eq(" + extraVar + ",1))"));
 						triggerExtra.setMath(SBML_Editor.myParseFormula("eq(" + extraVar + ",1)"));
