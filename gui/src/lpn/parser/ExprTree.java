@@ -2771,18 +2771,23 @@ public class ExprTree {
 		case 'b': // Boolean
 		case 'i': // Integer
 		case 'c': // Continuous
-			if (!sbmlFlag) {
-				result = variable;
-				break;
-			} else {
-				if (isit == 'b') {
-					result = "eq(" + variable + ",1)";
-				} else {
-					result = variable;
+			if (op.equals("[]")) {
+				if (r1 != null && r2 != null) {
+					result = "BIT(" + r1.getElement(type) + ","
+					+ r2.getElement(type) + ")";
 				}
-				break;
-
+			} else {
+				if (!sbmlFlag) {
+					result = variable;
+				} else {
+					if (isit == 'b') {
+						result = "eq(" + variable + ",1)";
+					} else {
+						result = variable;
+					}
+				}
 			}
+			break;
 		case 'n': // Number
 			// long term solution: create initial assignment
 			// short term solution: initialize all inf, -inf, [-inf, inf] to 0
