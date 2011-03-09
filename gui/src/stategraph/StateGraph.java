@@ -494,6 +494,24 @@ public class StateGraph implements Runnable {
 					result2 += " " + output.get(s);
 				}
 				markovResults = result1 + "\n" + result2 + "\n";
+				// State init = initial;
+				// ArrayList<State> stats = new ArrayList<State>();
+				// stats.add(init);
+				// ArrayList<State> stats2 = new ArrayList<State>();
+				// for (StateTransitionPair pair :init.nextStates) {
+				// stats2.add(pair.getState());
+				// }
+				// while(!stats2.isEmpty()) {
+				// State m = stats2.remove(0);
+				// stats.add(m);
+				// for (StateTransitionPair pair :m.nextStates) {
+				// if (!stats.contains(pair.getState()) &&
+				// !stats2.contains(pair.getState())) {
+				// stats2.add(pair.getState());
+				// }
+				// }
+				// }
+				// System.out.println("State count: " + stats.size());
 				return true;
 			}
 			else {
