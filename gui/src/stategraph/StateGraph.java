@@ -14,7 +14,6 @@ import javax.swing.JProgressBar;
 
 import parser.Parser;
 
-
 import lpn.parser.ExprTree;
 import lpn.parser.LhpnFile;
 import main.Gui;
@@ -309,7 +308,7 @@ public class StateGraph implements Runnable {
 		else if (condition != null) {
 			double nextPrint = printInterval;
 			progress.setMaximum((int) timeLimit);
-			double Gamma = 0;
+			double Gamma;
 			ArrayList<String> dataLabels = new ArrayList<String>();
 			dataLabels.add("time");
 			dataLabels.add("~(" + condition[0] + ")&~(" + condition[1] + ")");
@@ -337,6 +336,7 @@ public class StateGraph implements Runnable {
 					lowerbound = Math.min(expr.evaluateExpr(null), timeLimit);
 					pruneStateGraph("~(" + condition[0] + ")");
 					// Compute Gamma
+					Gamma = 0;
 					for (State m : stateGraph) {
 						Gamma = Math.max(m.getTransitionSum(0.0, null), Gamma);
 					}
@@ -365,7 +365,7 @@ public class StateGraph implements Runnable {
 								delta = delta + xi;
 							}
 						}
-						if (!performTransientMarkovianAnalysis(step, error, Gamma, K, progress)) {
+						if (!performTransientMarkovianAnalysis(step, Gamma, K, progress)) {
 							return false;
 						}
 						double prob = 0;
@@ -398,6 +398,7 @@ public class StateGraph implements Runnable {
 						- lowerbound);
 				pruneStateGraph(condition[1]);
 				// Compute Gamma
+				Gamma = 0;
 				for (State m : stateGraph) {
 					Gamma = Math.max(m.getTransitionSum(0.0, null), Gamma);
 				}
@@ -427,7 +428,7 @@ public class StateGraph implements Runnable {
 							delta = delta + xi;
 						}
 					}
-					if (!performTransientMarkovianAnalysis(step, error, Gamma, K, progress)) {
+					if (!performTransientMarkovianAnalysis(step, Gamma, K, progress)) {
 						return false;
 					}
 					double failureProb = 0;
@@ -535,7 +536,7 @@ public class StateGraph implements Runnable {
 							delta = delta + xi;
 						}
 					}
-					stop = !performTransientMarkovianAnalysis(step, error, Gamma, K, progress);
+					stop = !performTransientMarkovianAnalysis(step, Gamma, K, progress);
 					progress.setValue((int) i);
 					if (stop) {
 						return false;
@@ -549,8 +550,8 @@ public class StateGraph implements Runnable {
 		}
 	}
 
-	private synchronized boolean performTransientMarkovianAnalysis(double timeLimit, double error,
-			double Gamma, int K, JProgressBar progress) {
+	private synchronized boolean performTransientMarkovianAnalysis(double timeLimit, double Gamma,
+			int K, JProgressBar progress) {
 		if (timeLimit == 0.0) {
 			return true;
 		}
