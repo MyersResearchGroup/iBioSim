@@ -1860,7 +1860,7 @@ public class LhpnFile {
 		}
 	}
 	
-	private static final String PROPERTY = "#@\\.property (\\S+?)\\n";
+	private static final String PROPERTY = "#@\\.property ([^@]*)\\n";
 
 	private static final String INPUT = "\\.inputs([[\\s[^\\n]]\\w+]*?)\\n";
 
