@@ -150,9 +150,9 @@ public class VariablesPanel extends JPanel implements ActionListener {
 			} else {
 				HashMap<String, String> inits;
 				if (lhpn.isInput(name)) {
-					inits = lhpn.getInputs();
+					inits = lhpn.getBoolInputs();
 				} else {
-					inits = lhpn.getOutputs();
+					inits = lhpn.getBoolOutputs();
 				}
 				initBox.setSelectedItem(inits.get(name));
 			}

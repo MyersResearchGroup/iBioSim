@@ -940,7 +940,7 @@ public class LhpnFile {
 		return null;
 	}
 
-	public HashMap<String, String> getInputs() {
+	public HashMap<String, String> getBoolInputs() {
 		HashMap<String, String> inputs = new HashMap<String, String>();
 		for (Variable v : booleans.values()) {
 			if (!v.isOutput()) {
@@ -950,9 +950,29 @@ public class LhpnFile {
 		return inputs;
 	}
 
-	public HashMap<String, String> getOutputs() {
+	public HashMap<String, String> getBoolOutputs() {
 		HashMap<String, String> outputs = new HashMap<String, String>();
 		for (Variable v : booleans.values()) {
+			if (v.isOutput()) {
+				outputs.put(v.getName(), v.getInitValue());
+			}
+		}
+		return outputs;
+	}
+	
+	public HashMap<String, String> getAllInputs() {
+		HashMap<String, String> inputs = new HashMap<String, String>();
+		for (Variable v : variables) {
+			if (!v.isOutput()) {
+				inputs.put(v.getName(), v.getInitValue());
+			}
+		}
+		return inputs;
+	}
+
+	public HashMap<String, String> getAllOutputs() {
+		HashMap<String, String> outputs = new HashMap<String, String>();
+		for (Variable v : variables) {
 			if (v.isOutput()) {
 				outputs.put(v.getName(), v.getInitValue());
 			}
