@@ -918,7 +918,7 @@ public class ExprTree {
 			} else {
 				// do boolean lookup here!!!
 				if (signals.contains(tokvalue)) {
-					if (lhpn.isInput(tokvalue) || lhpn.isOutput(tokvalue)) {
+					if (lhpn.isBoolean(tokvalue)) {
 						setVarValues('b', 0, 1, tokvalue);
 						(token) = intexpr_gettok(expr);
 						return true;
