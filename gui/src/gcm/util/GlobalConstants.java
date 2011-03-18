@@ -58,6 +58,7 @@ public class GlobalConstants {
 	public static final String BIOABS = "Biochemical abstraction";
 	public static final String DIMABS = "Dimerization abstraction";
 	
+	
 	public static final String BIO = "biochem";
 	public static final String ACTIVATION = "activation";
 	public static final String REPRESSION = "repression";

@@ -2,6 +2,7 @@ package gcm.visitor;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import main.Gui;
 
@@ -20,7 +21,7 @@ import gcm.util.Utility;
 public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 
 	public PrintSpeciesVisitor(SBMLDocument document,
-			Collection<SpeciesInterface> species, ArrayList<String> compartments) {
+			HashMap<String, SpeciesInterface> species, ArrayList<String> compartments) {
 		super(document);
 		this.species = species;
 		this.compartments = compartments;
@@ -31,14 +32,14 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	 * 
 	 */
 	public void run() {		
-		for (SpeciesInterface s : species) {
+		for (SpeciesInterface s : species.values()) {
 			s.accept(this);
 		}
 	}
 	
 	@Override
 	public void visitComplex(ComplexSpecies specie) {
-		if (!complexAbstraction) {
+		if (!complexAbstraction || !specie.isAbstractable()) {
 			loadValues(specie);
 			String compartment = checkCompartments(specie.getId());
 			Species s = Utility.makeSpecies(specie.getId(), compartment, init);
@@ -79,14 +80,14 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
 		
-		org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		r = new org.sbml.libsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		r.setId("Constitutive_production_" + s.getId());
 		
 		r.addProduct(Utility.SpeciesReference(s.getId(), Double.parseDouble(parameters.getParameter(GlobalConstants.STOICHIOMETRY_STRING))));
 		
 		r.setReversible(false);
 		r.setFast(false);
-		KineticLaw kl = r.createKineticLaw();
+		kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter("kp", Double.parseDouble(parameters
 					.getParameter((GlobalConstants.OCR_STRING)))));	
 		kl.setFormula("kp");
@@ -108,7 +109,6 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	
 	
 	private double init;
-	private Collection<SpeciesInterface> species;
 	private ArrayList<String> compartments;
 
 }

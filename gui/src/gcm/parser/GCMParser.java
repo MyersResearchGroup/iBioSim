@@ -72,6 +72,7 @@ public class GCMParser {
 		species = new HashMap<String, SpeciesInterface>();
 		promoters = new HashMap<String, Promoter>();
 		complexMap = new HashMap<String, ArrayList<PartSpecies>>();
+		partsMap = new HashMap<String, ArrayList<PartSpecies>>();
 
 		for (String s : speciesMap.keySet()) {
 			SpeciesInterface specie = parseSpeciesData(s, speciesMap.get(s));
@@ -86,7 +87,7 @@ public class GCMParser {
 			parseReactionData(s, reactionMap.get(s));			
 		}
 		
-		GeneticNetwork network = new GeneticNetwork(species, complexMap,
+		GeneticNetwork network = new GeneticNetwork(species, complexMap, partsMap,
 				promoters, gcm);
 		
 		network.setSBMLFile(gcm.getSBMLFile());
@@ -215,6 +216,7 @@ public class GCMParser {
 		r.setInput(input);
 		r.setOutput(output);
 		if (r.getType().equals("plus")) {
+			//Maps complex species to constituent species
 			ArrayList<PartSpecies> parts = null;
 			if (complexMap.containsKey(output)) {
 				parts = complexMap.get(output);
@@ -222,17 +224,30 @@ public class GCMParser {
 				parts = new ArrayList<PartSpecies>();
 				complexMap.put(output, parts);
 			}
-			PartSpecies ps = new PartSpecies(species.get(input), r.getCoop());
+			PartSpecies ps = new PartSpecies(input, output, r.getCoop());
+			parts.add(ps);
+			//Maps constituent species to complex species
+			parts = null;
+			if (partsMap.containsKey(input)) {
+				parts = partsMap.get(input);
+			} else { 
+				parts = new ArrayList<PartSpecies>();
+				partsMap.put(input, parts);
+			}
+			ps = new PartSpecies(input, output, r.getCoop());
 			parts.add(ps);
 		} else if (!r.getType().equals("dot")) {	
 			String promoterName = property.getProperty(GlobalConstants.PROMOTER);
 			Promoter p = promoters.get(promoterName);
 			if (!input.equals("none")) {
 				p.addToReactionMap(input, r);
-				if (r.getType().equals("vee"))
+				if (r.getType().equals("vee")) {
 					p.addActivator(input, species.get(input));
-				else
+					species.get(input).setActivator(true);
+				} else {
 					p.addRepressor(input, species.get(input));
+					species.get(input).setRepressor(true);
+				}
 			}
 			if (!output.equals("none"))
 				p.addOutput(output,species.get(output));
@@ -310,6 +325,7 @@ public class GCMParser {
 	private HashMap<String, Promoter> promoters;
 	
 	private HashMap<String, ArrayList<PartSpecies>> complexMap;
+	private HashMap<String, ArrayList<PartSpecies>> partsMap;
 
 	private GCMFile gcm = null;
 

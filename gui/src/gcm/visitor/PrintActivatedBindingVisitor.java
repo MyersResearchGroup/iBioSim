@@ -24,11 +24,14 @@ import org.sbml.libsbml.SBMLDocument;
 
 public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 
-	public PrintActivatedBindingVisitor(SBMLDocument document, Promoter p, String compartment, 
-			HashMap<String, ArrayList<PartSpecies>> complexMap) {
+	public PrintActivatedBindingVisitor(SBMLDocument document, Promoter p, HashMap<String, SpeciesInterface> species, 
+			String compartment, 
+			HashMap<String, ArrayList<PartSpecies>> complexMap, HashMap<String, ArrayList<PartSpecies>> partsMap) {
 		super(document);
 		this.promoter = p;
+		this.species = species;
 		this.complexMap = complexMap;
+		this.partsMap = partsMap;
 		this.compartment = compartment;
 		if (compartment.equals("default"))
 			rnapName = "RNAP";
@@ -89,11 +92,19 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		}
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String actMolecule = "";
-		if (complexAbstraction) {
+		if (complexAbstraction && specie.isAbstractable()) {
 			complexReactants = new HashMap<String, Double>();
-			actMolecule = abstractComplex(specie, 1, "");
+			complexModifiers = new ArrayList<String>();
+			actMolecule = abstractComplex(specie.getId(), coop);
 			for (String reactant : complexReactants.keySet())
 				r.addReactant(Utility.SpeciesReference(reactant, complexReactants.get(reactant)));
+			for (String modifier : complexModifiers)
+				r.addModifier(Utility.ModifierSpeciesReference(modifier));
+		} else if (complexAbstraction && specie.isSequesterable()) {
+			complexModifiers = new ArrayList<String>();
+			actMolecule = sequesterSpecies(specie.getId());
+			for (String modifier : complexModifiers)
+				r.addModifier(Utility.ModifierSpeciesReference(modifier));
 		} else {
 			actMolecule = specie.getId();
 			r.addReactant(Utility.SpeciesReference(actMolecule, coop));
@@ -102,39 +113,6 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(speciesName, actMolecule));
 		Utility.addReaction(document, r);
-	}
-	
-	//Recursively breaks down activating complex into its constituent species and complex formation equilibria
-	private String abstractComplex(SpeciesInterface complex, double multiplier, String ncProduct) {
-		String actMolecule = "";
-		kcomp = complex.getKc();
-		String kcompId = kcompString + "__" + complex.getId();
-		if (kcomp.length == 2) {
-			kl.addParameter(Utility.Parameter(kcompId, kcomp[0]/kcomp[1],
-					GeneticNetwork.getMoleParameter(2)));
-		} else {
-			kl.addParameter(Utility.Parameter(kcompId, kcomp[0],
-					GeneticNetwork.getMoleParameter(2)));
-		}
-		String ncSum = "";
-		for (PartSpecies part : complexMap.get(complex.getId())) {
-			SpeciesInterface s = part.getSpecies();
-			double n = part.getStoich();
-			String nId = coopString + "__" + s.getId() + "_" + complex.getId();
-			kl.addParameter(Utility.Parameter(nId, n, "dimensionless"));
-			ncSum = ncSum + nId + "+";
-			if (complexMap.containsKey(s.getId())) {
-				actMolecule = "*" + abstractComplex(s, multiplier * n, ncProduct + nId + "*") + actMolecule;
-			} else {
-				if (complexReactants.containsKey(s.getId()))
-					complexReactants.put(s.getId(), complexReactants.get(s.getId()) + multiplier * n * coop);
-				else 
-					complexReactants.put(s.getId(), multiplier * n * coop);
-				actMolecule = actMolecule + "*" + s.getId() + '^' + "(" + ncProduct + nId + ")";
-			}
-		}
-		actMolecule = kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + actMolecule;	
-		return actMolecule;
 	}
 
 	@Override
@@ -168,7 +146,14 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
-		kl.setFormula(generateLaw(speciesName, specie.getId()));
+		String actMolecule = specie.getId();
+		if (complexAbstraction && specie.isSequesterable()) {
+			complexModifiers = new ArrayList<String>();
+			actMolecule = actMolecule + sequesterSpecies(specie.getId());
+			for (String modifier : complexModifiers)
+				r.addModifier(Utility.ModifierSpeciesReference(modifier));
+		}
+		kl.setFormula(generateLaw(speciesName, actMolecule));
 		Utility.addReaction(document, r);
 	}
 
@@ -203,7 +188,14 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));;
-		kl.setFormula(generateLaw(speciesName, specie.getId()));
+		String actMolecule = specie.getId();
+		if (complexAbstraction && specie.isSequesterable()) {
+			complexModifiers = new ArrayList<String>();
+			actMolecule = actMolecule + sequesterSpecies(specie.getId());
+			for (String modifier : complexModifiers)
+				r.addModifier(Utility.ModifierSpeciesReference(modifier));
+		}
+		kl.setFormula(generateLaw(speciesName, actMolecule));
 		Utility.addReaction(document, r);
 	}
 
@@ -238,20 +230,15 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
-		kl.setFormula(generateLaw(speciesName, specie.getId()));
+		String actMolecule = specie.getId();
+		if (complexAbstraction && specie.isSequesterable()) {
+			complexModifiers = new ArrayList<String>();
+			actMolecule = actMolecule + sequesterSpecies(specie.getId());
+			for (String modifier : complexModifiers)
+				r.addModifier(Utility.ModifierSpeciesReference(modifier));
+		}
+		kl.setFormula(generateLaw(speciesName, actMolecule));
 		Utility.addReaction(document, r);
-	}
-
-	private void loadValues(SpeciesInterface s) {
-		Reaction r = promoter.getActivationMap().get(s.getId());
-		kArnap = promoter.getKArnap();
-		if (kArnap.length == 2)
-			kr = kArnap[1];
-		else
-			kr = 1;
-		coop = r.getCoop();
-		kact = r.getAct();
-		kcomp = s.getKc();
 	}
 
 	/**
@@ -268,23 +255,29 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 				+ coopString + "*" + rnapName + "*" + promoter.getId() + "-kr*" + specieName;
 		return law;
 	}
+	
+	private void loadValues(SpeciesInterface s) {
+		Reaction r = promoter.getActivationMap().get(s.getId());
+		kArnap = promoter.getKArnap();
+		if (kArnap.length == 2)
+			kr = kArnap[1];
+		else
+			kr = 1;
+		coop = r.getCoop();
+		kact = r.getAct();
+	}
 
 	private Promoter promoter;
-	private HashMap<String, ArrayList<PartSpecies>> complexMap;
-	private org.sbml.libsbml.Reaction r;
-	private KineticLaw kl;
-	private HashMap<String, Double> complexReactants;
 
-	private double[] kArnap;
-	private double[] kcomp;
 	private double coop;
+	private double[] kArnap;
 	private double[] kact;
 	private double kr;
 	
-	private String kcompString = GlobalConstants.KCOMPLEX_STRING;
-	private String coopString = GlobalConstants.COOPERATIVITY_STRING;
 	private String kactString = GlobalConstants.KACT_STRING;
 	private String kArnapString = GlobalConstants.ACTIVATED_RNAP_BINDING_STRING;
+	private String coopString = GlobalConstants.COOPERATIVITY_STRING;
+	
 
 	private String speciesName;
 	private String reactionName;

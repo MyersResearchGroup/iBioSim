@@ -50,7 +50,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	
 	public void visitComplex(ComplexSpecies specie) {
 		loadValues();
-		Reaction r = Utility.Reaction(reactionName);
+		r = Utility.Reaction(reactionName);
 		r.setCompartment(compartment);
 		r.addModifier(Utility.ModifierSpeciesReference(speciesName));
 		for (SpeciesInterface species : promoter.getOutputs()) {
@@ -58,7 +58,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		}
 		r.setReversible(false);
 		r.setFast(false);
-		KineticLaw kl = r.createKineticLaw();
+		kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(actString+ "*" + speciesName);
@@ -68,7 +68,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues();
-		Reaction r = Utility.Reaction(reactionName);
+		r = Utility.Reaction(reactionName);
 		r.setCompartment(compartment);
 		r.addModifier(Utility.ModifierSpeciesReference(speciesName));
 		for (SpeciesInterface species : promoter.getOutputs()) {
@@ -76,7 +76,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		}
 		r.setReversible(false);
 		r.setFast(false);
-		KineticLaw kl = r.createKineticLaw();
+		kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(actString+ "*" + speciesName);
@@ -86,7 +86,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitConstantSpecies(ConstantSpecies specie) {
 		loadValues();
-		Reaction r = Utility.Reaction(reactionName);
+		r = Utility.Reaction(reactionName);
 		r.setCompartment(compartment);
 		r.addModifier(Utility.ModifierSpeciesReference(speciesName));
 		for (SpeciesInterface species : promoter.getOutputs()) {
@@ -94,7 +94,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		}
 		r.setReversible(false);
 		r.setFast(false);
-		KineticLaw kl = r.createKineticLaw();
+		kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(actString+ "*" + speciesName);
@@ -104,7 +104,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues();
-		Reaction r = Utility.Reaction(reactionName);
+		r = Utility.Reaction(reactionName);
 		r.setCompartment(compartment);
 		r.addModifier(Utility.ModifierSpeciesReference(speciesName));
 		for (SpeciesInterface species : promoter.getOutputs()) {
@@ -112,7 +112,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		}
 		r.setReversible(false);
 		r.setFast(false);
-		KineticLaw kl = r.createKineticLaw();
+		kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter(actString, act, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(actString+ "*" + speciesName);

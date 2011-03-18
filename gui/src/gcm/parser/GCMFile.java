@@ -918,7 +918,7 @@ public class GCMFile {
 									if (p.containsKey(GlobalConstants.KACT_STRING)) {
 										Ka = parseValue((String) p.get(GlobalConstants.KACT_STRING));
 									}
-									String specExpr = network.abstractComplex(split[0]);
+									String specExpr = network.abstractExpression(split[0]);
 									if (!specExpr.equals(split[0])) {
 										while (specExpr.contains("Kc__")) {
 											Kc = global_Kc;
@@ -1059,7 +1059,7 @@ public class GCMFile {
 									if (p.containsKey(GlobalConstants.KACT_STRING)) {
 										Ka = parseValue((String) p.get(GlobalConstants.KACT_STRING));
 									}
-									String specExpr = network.abstractComplex(split[0]);
+									String specExpr = network.abstractExpression(split[0]);
 									if (!specExpr.equals(split[0])) {
 										while (specExpr.contains("Kc__")) {
 											Kc = global_Kc;
@@ -1202,7 +1202,7 @@ public class GCMFile {
 											Ka = parseValue((String) p
 													.get(GlobalConstants.KACT_STRING));
 										}
-										String specExpr = network.abstractComplex(split[0]);
+										String specExpr = network.abstractExpression(split[0]);
 										if (!specExpr.equals(split[0])) {
 											while (specExpr.contains("Kc__")) {
 												Kc = global_Kc;
@@ -1353,7 +1353,7 @@ public class GCMFile {
 											Ka = parseValue((String) p
 													.get(GlobalConstants.KACT_STRING));
 										}
-										String specExpr = network.abstractComplex(split[0]);
+										String specExpr = network.abstractExpression(split[0]);
 										if (!specExpr.equals(split[0])) {
 											while (specExpr.contains("Kc__")) {
 												Kc = global_Kc;
@@ -1512,7 +1512,7 @@ public class GCMFile {
 								+ transNum);
 						LHPN.addMovement(specs.get(i) + "_trans" + transNum, previousPlaceName);
 						LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
-						String specExpr = network.abstractComplex(specs.get(i));
+						String specExpr = network.abstractExpression(specs.get(i));
 						if (!specExpr.equals(specs.get(i))) {
 							while (specExpr.contains("Kc__")) {
 								Kc = global_Kc;

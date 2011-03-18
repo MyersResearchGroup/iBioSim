@@ -7,14 +7,20 @@ package gcm.visitor;
 import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
+import gcm.network.GeneticNetwork;
 import gcm.network.NullSpecies;
+import gcm.network.PartSpecies;
 import gcm.network.SpasticSpecies;
 import gcm.network.SpeciesInterface;
 import gcm.parser.GCMFile;
+import gcm.util.GlobalConstants;
+import gcm.util.Utility;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Properties;
 
+import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.SBMLDocument;
 
 /**
@@ -62,6 +68,16 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 		parameters = file;
 	}
 	
+	//Recursively breaks down repressing complex into its constituent species and complex formation equilibria
+	protected String abstractComplex(String complexId, double multiplier) {
+		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, kl, complexReactants, complexModifiers);
+		return e.abstractComplex(complexId, multiplier, "");
+	}
+	
+	protected String sequesterSpecies(String speciesId) {
+		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, kl, complexReactants, complexModifiers);
+		return e.sequesterSpecies(speciesId, "");
+	}
 	
 	public void visitBaseSpecies(BaseSpecies specie) {}
 
@@ -82,4 +98,15 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	protected boolean cooperationAbstraction = false;
 	
 	protected boolean complexAbstraction = false;
+	
+	protected org.sbml.libsbml.Reaction r;
+	protected KineticLaw kl;
+	protected HashMap<String, Double> complexReactants;
+	protected ArrayList<String> complexModifiers;
+	protected HashMap<String, SpeciesInterface> species;
+	protected HashMap<String, ArrayList<PartSpecies>> complexMap;
+	protected HashMap<String, ArrayList<PartSpecies>> partsMap;
+	
+	
+	
 }

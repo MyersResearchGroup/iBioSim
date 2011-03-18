@@ -18,11 +18,13 @@ import org.sbml.libsbml.SBMLDocument;
 
 public class PrintComplexVisitor extends AbstractPrintVisitor {
 	
-	public PrintComplexVisitor(SBMLDocument document, Collection<SpeciesInterface> species,
-			ArrayList<String> compartments, HashMap<String, ArrayList<PartSpecies>> complexMap) {
+	public PrintComplexVisitor(SBMLDocument document, HashMap<String, SpeciesInterface> species,
+			ArrayList<String> compartments, HashMap<String, ArrayList<PartSpecies>> complexMap, 
+			HashMap<String, ArrayList<PartSpecies>> partsMap) {
 		super(document);
 		this.species = species;
 		this.complexMap = complexMap;
+		this.partsMap = partsMap;
 		this.compartments = compartments;
 	}
 
@@ -31,47 +33,35 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 	 * 
 	 */
 	public void run() {
-		for (SpeciesInterface s : species) {
-			s.accept(this);
+		for (SpeciesInterface s : species.values()) {
+			if (!s.isAbstractable())
+				s.accept(this);
 		}
 	}
 
 	@Override
 	public void visitComplex(ComplexSpecies specie) {
-		this.kcomp = specie.getKc();
 		String compartment = checkCompartments(specie.getId());
-		Reaction r = Utility.Reaction("Complex_formation_" + specie.getId());
+		r = Utility.Reaction("Complex_formation_" + specie.getId());
 		r.setCompartment(compartment);
-		String expression = "";
 		r.addProduct(Utility.SpeciesReference(specie.getId(), 1));
 		r.setReversible(true);
 		r.setFast(false);
-		KineticLaw kl = r.createKineticLaw();
-		String ncSum = "";
-		for (PartSpecies part : complexMap.get(specie.getId())) {
-			SpeciesInterface s = part.getSpecies();
-			double n = part.getStoich();
-			String nId = coopString + "__" + s.getId() + "_" + specie.getId();
-			r.addReactant(Utility.SpeciesReference(s.getId(), n));
-			expression = expression + "*" + s.getId();
-			if (n > 1) {
-				expression = expression + '^' + nId;
-			}
-			kl.addParameter(Utility.Parameter(nId, n, "dimensionless"));
-			ncSum = ncSum + nId + "+";
-		}
-		expression = kcompString + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + expression;
-		//Checks if binding parameters are specified as forward and reverse rate constants or 
-		//as equilibrium binding constants before adding to kinetic law
-		if (kcomp.length == 2) {
-			kl.addParameter(Utility.Parameter("kr", kcomp[1], GeneticNetwork.getMoleTimeParameter(1)));
-			kl.addParameter(Utility.Parameter(kcompString, kcomp[0]/kcomp[1],
-					GeneticNetwork.getMoleParameter(2)));
-		} else {
-			kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork.getMoleTimeParameter(1)));
-			kl.addParameter(Utility.Parameter(kcompString, kcomp[0],
-					GeneticNetwork.getMoleParameter(2)));
-		}
+		kl = r.createKineticLaw();
+		double[] kcomp = specie.getKc();
+		double kr = 1;
+		if (kcomp.length == 2)
+			kr = kcomp[1];
+		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+				.getMoleTimeParameter(1)));
+		String expression = "";
+		complexReactants = new HashMap<String, Double>();
+		complexModifiers = new ArrayList<String>();
+		expression = abstractComplex(specie.getId(), 1);
+		for (String reactant : complexReactants.keySet())
+			r.addReactant(Utility.SpeciesReference(reactant, complexReactants.get(reactant)));
+		for (String modifier : complexModifiers)
+			r.addModifier(Utility.ModifierSpeciesReference(modifier));
 		kl.setFormula("kr*" + expression + "-kr*" + specie.getId());
 		Utility.addReaction(document, r);
 	}
@@ -85,10 +75,6 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		return compartment;
 	}
 	
-	private double kcomp[];
-	private String kcompString = GlobalConstants.KCOMPLEX_STRING;
-	private String coopString = GlobalConstants.COOPERATIVITY_STRING;
-	private Collection<SpeciesInterface> species;
 	private ArrayList<String> compartments;
-	private HashMap<String, ArrayList<PartSpecies>> complexMap;
+	
 }
