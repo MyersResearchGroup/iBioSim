@@ -6,6 +6,7 @@ import gcm.parser.GCMParser;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
 import gcm.visitor.AbstractPrintVisitor;
+import gcm.visitor.AbstractionEngine;
 import gcm.visitor.PrintActivatedBindingVisitor;
 import gcm.visitor.PrintActivatedProductionVisitor;
 import gcm.visitor.PrintComplexVisitor;
@@ -67,9 +68,9 @@ public class GeneticNetwork {
 	 *            a hashmap of promoters
 	 */
 	public GeneticNetwork(HashMap<String, SpeciesInterface> species,
-			HashMap<String, ArrayList<PartSpecies>> complexMap,
+			HashMap<String, ArrayList<PartSpecies>> complexMap, HashMap<String, ArrayList<PartSpecies>> partsMap,
 			HashMap<String, Promoter> promoters) {
-		this(species, complexMap, promoters, null);
+		this(species, complexMap, partsMap, promoters, null);
 	}
 	
 	/**
@@ -96,10 +97,9 @@ public class GeneticNetwork {
 	 * @param gcm
 	 *            a gcm file containing extra information
 	 */
-	public GeneticNetwork(HashMap<String, SpeciesInterface> species,
-			HashMap<String, ArrayList<PartSpecies>> complexMap,
-			HashMap<String, Promoter> promoters, 
-			GCMFile gcm) {
+	public GeneticNetwork(HashMap<String, SpeciesInterface> species, 
+			HashMap<String, ArrayList<PartSpecies>> complexMap, HashMap<String, ArrayList<PartSpecies>> partsMap, 
+			HashMap<String, Promoter> promoters, GCMFile gcm) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -109,6 +109,7 @@ public class GeneticNetwork {
 		this.species = species;
 		this.promoters = promoters;
 		this.complexMap = complexMap;
+		this.partsMap = partsMap;
 		this.properties = gcm;
 		this.compartments = gcm.getCompartments();
 		
@@ -202,8 +203,7 @@ public class GeneticNetwork {
 			
 			printPromoterBinding(document);
 			
-			if (!complexAbstraction)
-				printComplexBinding(document);
+			printComplexBinding(document);
 			
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
 
@@ -335,14 +335,14 @@ public class GeneticNetwork {
 
 			// Next setup activated binding
 			PrintActivatedBindingVisitor v = new PrintActivatedBindingVisitor(
-					document, p, compartment, complexMap);
+					document, p, species, compartment, complexMap, partsMap);
 			v.setCooperationAbstraction(cooperationAbstraction);
 			v.setComplexAbstraction(complexAbstraction);
 			v.run();
 
 			// Next setup repression binding
 			PrintRepressionBindingVisitor v2 = new PrintRepressionBindingVisitor(
-					document, p, compartment, complexMap);
+					document, p, species, compartment, complexMap, partsMap);
 			v2.setCooperationAbstraction(cooperationAbstraction);
 			v2.setComplexAbstraction(complexAbstraction);
 			v2.run();
@@ -399,7 +399,7 @@ public class GeneticNetwork {
 	 */
 	private void printDecay(SBMLDocument document) {
 		PrintDecaySpeciesVisitor visitor = new PrintDecaySpeciesVisitor(
-				document, species.values(), compartments);
+				document, species, compartments, complexMap, partsMap);
 		visitor.setComplexAbstraction(complexAbstraction);
 		visitor.run();
 	}
@@ -412,13 +412,14 @@ public class GeneticNetwork {
 	 */
 	private void printSpecies(SBMLDocument document) {
 		PrintSpeciesVisitor visitor = new PrintSpeciesVisitor(document, species
-				.values(), compartments);
+				, compartments);
 		visitor.setComplexAbstraction(complexAbstraction);
 		visitor.run();
 	}
 	
 	private void printComplexBinding(SBMLDocument document) {
-		PrintComplexVisitor v = new PrintComplexVisitor(document, species.values(), compartments, complexMap);
+		PrintComplexVisitor v = new PrintComplexVisitor(document, species, compartments, complexMap, partsMap);
+		v.setComplexAbstraction(complexAbstraction);
 		v.run();
 	}
 	
@@ -898,40 +899,14 @@ public class GeneticNetwork {
 		return compartment;
 	}
 
-	public String abstractComplex(String id) {
-		String complexExpression = id;
-		if (species.containsKey(id)) {
-			try {
-				complexExpression = abstractComplexHelper(species.get(id), "");
-			}
-			catch (Exception e) {
-			}
-		}
-		return complexExpression;
-	}
-
-	// Recursively breaks down repressing complex into its constituent species
-	// and complex formation equilibria
-	private String abstractComplexHelper(SpeciesInterface complex, String ncProduct) {
-		String expression = "";
-		String kcompId = GlobalConstants.KCOMPLEX_STRING + "__" + complex.getId();
-		String ncSum = "";
-		for (PartSpecies part : complexMap.get(complex.getId())) {
-			SpeciesInterface s = part.getSpecies();
-			String nId = GlobalConstants.COOPERATIVITY_STRING + "__" + s.getId() + "_"
-					+ complex.getId();
-			ncSum = ncSum + nId + "+";
-			if (complexMap.containsKey(s.getId())) {
-				expression = "*"
-						+ abstractComplexHelper(s, ncProduct + nId  + "*")
-						+ expression;
-			}
-			else {
-				expression = expression + "*" + s.getId() + '^' + "(" + ncProduct + nId + ")";
-			}
-		}
-		expression = kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)"
-				+ expression;
+	//Returns abstracted rate law for the formation of a complex species
+	public String abstractExpression(String id) {
+		String expression = id;	
+		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap);
+		if (species.get(id).isSequesterable())
+			expression = e.sequesterSpecies(id, "");
+		else if (complexMap.containsKey(id))
+			expression = e.abstractComplex(id, 0, "");
 		return expression;
 	}
 	
@@ -942,6 +917,7 @@ public class GeneticNetwork {
 	private void initialize() {
 		buildComplexes();
 		buildComplexInfluences();
+		markAbstracted();
 	}
 
 	/**
@@ -950,7 +926,6 @@ public class GeneticNetwork {
 	 */
 	private void buildComplexes() {
 		for (String complexId : complexMap.keySet()) {
-//			ComplexSpecies c = new ComplexSpecies(species.get(complexId), complexMap.get(complexId));
 			ComplexSpecies c = new ComplexSpecies(species.get(complexId));
 			species.put(complexId, c);
 		}
@@ -966,6 +941,7 @@ public class GeneticNetwork {
 				String inputId = r.getInput();
 				if (complexMap.containsKey(inputId)) {
 					p.addActivator(inputId, species.get(inputId));
+					species.get(inputId).setActivator(true);
 					String outputId = r.getOutput();
 					if (!r.getOutput().equals("none")) {
 						p.addOutput(outputId, species.get(outputId));
@@ -976,6 +952,7 @@ public class GeneticNetwork {
 				String inputId = r.getInput();
 				if (complexMap.containsKey(inputId)) {
 					p.addRepressor(inputId, species.get(inputId));
+					species.get(inputId).setRepressor(true);
 					String outputId = r.getOutput();
 					if (!r.getOutput().equals("none")) {
 						p.addOutput(outputId, species.get(outputId));
@@ -985,6 +962,88 @@ public class GeneticNetwork {
 		}
 	}
 
+	private void markAbstracted() {
+		for (Promoter p : promoters.values()) {
+			for (SpeciesInterface s : p.getActivators()) {
+				boolean sequesterable = false;
+				int numParts = 0;
+				if (partsMap.containsKey(s.getId())) {
+					sequesterable = checkSequester(s.getId(), "");
+					numParts = partsMap.get(s.getId()).size();
+				}
+				if (complexMap.containsKey(s.getId())) {
+					checkComplex(s.getId(), "");
+					if (!s.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT) && !sequesterable
+							&& numParts < 2)
+						s.setAbstractable(true);
+				}
+			}
+			for (SpeciesInterface s : p.getRepressors()) {
+				boolean sequesterable = false;
+				int numParts = 0;
+				if (partsMap.containsKey(s.getId())) {
+					sequesterable = checkSequester(s.getId(), "");
+					numParts = partsMap.get(s.getId()).size();
+				}
+				if (complexMap.containsKey(s.getId())) {
+					checkComplex(s.getId(), "");
+					if (!s.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT) && !sequesterable
+							&& numParts < 2)
+						s.setAbstractable(true);
+				}
+			}
+		}	
+		for (String complexId : complexMap.keySet()) {
+			if (!species.get(complexId).isActivator() && !species.get(complexId).isRepressor() 
+					&& !partsMap.containsKey(complexId))
+				checkComplex(complexId, "");
+		}
+	}
+	
+	private boolean checkComplex(String complexId, String payNoMind) {
+		for (PartSpecies part : complexMap.get(complexId)) {
+			String speciesId = part.getSpeciesId();
+			if (!speciesId.equals(payNoMind)) {
+				if (complexMap.containsKey(speciesId)) {
+					if (!species.get(speciesId).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT))
+						species.get(speciesId).setAbstractable(true);
+					checkComplex(speciesId, "");
+				}
+				if (partsMap.get(speciesId).size() > 1) {
+					if (!payNoMind.equals(""))
+						return false;
+					checkSequester(speciesId, complexId);
+				}
+				if (!payNoMind.equals("") && (species.get(speciesId).isActivator() || species.get(speciesId).isRepressor()))
+					return false;
+			}
+		}
+		return true;
+	}
+	
+	private boolean checkSequester(String speciesId, String payNoMind) {
+		boolean sequesterable = true;
+		ArrayList<String> abstractableComplexes = new ArrayList<String>();
+		for (PartSpecies part : partsMap.get(speciesId)) {
+			String complexId = part.getComplexId();
+			if (!complexId.equals(payNoMind)) {
+				if (part.getStoich() == 1 && !species.get(complexId).isActivator() 
+						&& !species.get(complexId).isRepressor() && !partsMap.containsKey(complexId)
+						&& !species.get(complexId).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)
+						&& checkComplex(complexId, speciesId)) 
+					abstractableComplexes.add(complexId);
+				else
+					sequesterable = false;
+			}
+		}
+		if (sequesterable && abstractableComplexes.size() > 0) {
+			species.get(speciesId).setSequesterable(true);
+			for (String complexId : abstractableComplexes)
+				species.get(complexId).setAbstractable(true);
+		}
+		return sequesterable;
+	}
+	
 	public HashMap<String, SpeciesInterface> getSpecies() {
 		return species;
 	}
@@ -1040,6 +1099,7 @@ public class GeneticNetwork {
 	private HashMap<String, Promoter> promoters = null;
 	
 	private HashMap<String, ArrayList<PartSpecies>> complexMap = null;
+	private HashMap<String, ArrayList<PartSpecies>> partsMap;
 	
 	private ArrayList<String> compartments;
 

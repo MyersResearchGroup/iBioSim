@@ -1,19 +1,26 @@
 package gcm.network;
 
 public class PartSpecies {
-	public PartSpecies(SpeciesInterface species, double stoichiometry) {
-		this.species = species;
+	public PartSpecies(String speciesId, String complexId, double stoichiometry) {
+		this.speciesId = speciesId;
+		this.complexId = complexId;
 		this.stoichiometry = stoichiometry;
+		
 	}
 	
-	public SpeciesInterface getSpecies() {
-		return species;
+	public String getSpeciesId() {
+		return speciesId;
+	}
+	
+	public String getComplexId() {
+		return complexId;
 	}
 	
 	public double getStoich() {
 		return stoichiometry;
 	}
 	
-	private SpeciesInterface species;
+	private String speciesId;
+	private String complexId;
 	private double stoichiometry;
 }

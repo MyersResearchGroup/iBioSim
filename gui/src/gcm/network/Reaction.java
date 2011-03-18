@@ -157,8 +157,6 @@ public class Reaction {
 	private double productionConstant = 0.0001;
 	//Biochemical reaction
 	private boolean isBiochemical = false;
-	
-	
 	//Number property
 	private Properties properties = null;
 

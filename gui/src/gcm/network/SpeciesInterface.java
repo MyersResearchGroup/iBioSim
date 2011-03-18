@@ -88,5 +88,20 @@ public interface SpeciesInterface extends VisitableSpecies {
 	
 	public double[] getKc();
 	
+	public boolean isActivator();
+	
+	public void setActivator(boolean set);
+	
+	public boolean isRepressor();
+	
+	public void setRepressor(boolean set);
+	
+	public boolean isAbstractable();
+	
+	public void setAbstractable(boolean set);
+
+	public boolean isSequesterable();
+	
+	public void setSequesterable(boolean set);
 	
 }

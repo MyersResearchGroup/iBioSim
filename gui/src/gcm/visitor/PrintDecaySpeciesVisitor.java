@@ -4,6 +4,7 @@ import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
 import gcm.network.GeneticNetwork;
+import gcm.network.PartSpecies;
 import gcm.network.SpasticSpecies;
 import gcm.network.SpeciesInterface;
 import gcm.parser.CompatibilityFixer;
@@ -12,6 +13,7 @@ import gcm.util.Utility;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Reaction;
@@ -20,9 +22,12 @@ import org.sbml.libsbml.SBMLDocument;
 public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 
 	public PrintDecaySpeciesVisitor(SBMLDocument document,
-			Collection<SpeciesInterface> species, ArrayList<String> compartments) {
+			HashMap<String, SpeciesInterface> species, ArrayList<String> compartments, 
+			HashMap<String, ArrayList<PartSpecies>> complexMap, HashMap<String, ArrayList<PartSpecies>> partsMap) {
 		super(document);
 		this.species = species;
+		this.complexMap = complexMap;
+		this.partsMap = partsMap;
 		this.compartments = compartments;
 		addDecayUnit();
 	}
@@ -36,7 +41,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	 * 
 	 */
 	public void run() {		
-		for (SpeciesInterface s : species) {
+		for (SpeciesInterface s : species.values()) {
 			s.accept(this);
 		}
 	}
@@ -49,17 +54,23 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	
 	@Override
 	public void visitComplex(ComplexSpecies specie) {
-		if (!complexAbstraction) {	
-			loadValues(specie);
+		loadValues(specie);
+		if ((!complexAbstraction || !specie.isAbstractable()) && decay != 0) {	
 			String compartment = checkCompartments(specie.getId());
-			Reaction r = Utility.Reaction("Degradation_"+specie.getId());
+			r = Utility.Reaction("Degradation_"+specie.getId());
 			r.setCompartment(compartment);
 			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
 			r.setReversible(false);
 			r.setFast(false);
-			KineticLaw kl = r.createKineticLaw();
+			kl = r.createKineticLaw();
 			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
-			kl.setFormula(decayString + "*" + specie.getId());
+			if (complexAbstraction && specie.isSequesterable()) {
+				complexModifiers = new ArrayList<String>();
+				kl.setFormula(decayString + "*" + specie.getId() + sequesterSpecies(specie.getId()));
+				for (String modifier : complexModifiers)
+					r.addModifier(Utility.ModifierSpeciesReference(modifier));
+			} else
+				kl.setFormula(decayString + "*" + specie.getId());
 			Utility.addReaction(document, r);
 		}
 	}
@@ -67,16 +78,24 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues(specie);
-		String compartment = checkCompartments(specie.getId());
-		Reaction r = Utility.Reaction("Degradation_"+specie.getId());
-		r.setCompartment(compartment);
-		r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
-		r.setReversible(false);
-		r.setFast(false);
-		KineticLaw kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
-		kl.setFormula(decayString + "*" + specie.getId());
-		Utility.addReaction(document, r);
+		if (decay != 0) {
+			String compartment = checkCompartments(specie.getId());
+			r = Utility.Reaction("Degradation_"+specie.getId());
+			r.setCompartment(compartment);
+			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
+			r.setReversible(false);
+			r.setFast(false);
+			kl = r.createKineticLaw();
+			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
+			if (complexAbstraction && specie.isSequesterable()) {
+				complexModifiers = new ArrayList<String>();
+				kl.setFormula(decayString + "*" + specie.getId() + sequesterSpecies(specie.getId()));
+				for (String modifier : complexModifiers)
+					r.addModifier(Utility.ModifierSpeciesReference(modifier));
+			} else
+				kl.setFormula(decayString + "*" + specie.getId());
+			Utility.addReaction(document, r);
+		}
 	}
 
 	@Override
@@ -87,16 +106,24 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie);
-		String compartment = checkCompartments(specie.getId());
-		Reaction r = Utility.Reaction("Degradation_"+specie.getId());
-		r.setCompartment(compartment);
-		r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
-		r.setReversible(false);
-		r.setFast(false);
-		KineticLaw kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
-		kl.setFormula(decayString + "*" + specie.getId());
-		Utility.addReaction(document, r);
+		if (decay != 0) {
+			String compartment = checkCompartments(specie.getId());
+			r = Utility.Reaction("Degradation_"+specie.getId());
+			r.setCompartment(compartment);
+			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
+			r.setReversible(false);
+			r.setFast(false);
+			kl = r.createKineticLaw();
+			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
+			if (complexAbstraction && specie.isSequesterable()) {
+				complexModifiers = new ArrayList<String>();
+				kl.setFormula(decayString + "*" + specie.getId() + sequesterSpecies(specie.getId()));
+				for (String modifier : complexModifiers)
+					r.addModifier(Utility.ModifierSpeciesReference(modifier));
+			} else
+				kl.setFormula(decayString + "*" + specie.getId());
+			Utility.addReaction(document, r);
+		}
 	}
 	
 	private void loadValues(SpeciesInterface specie) {
@@ -116,6 +143,5 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	private String decayUnitString;
 	private String decayString = GlobalConstants.KDECAY_STRING;
 	
-	private Collection<SpeciesInterface> species;
 	private ArrayList<String> compartments;
 }

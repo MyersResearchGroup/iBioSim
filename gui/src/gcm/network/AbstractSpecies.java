@@ -128,6 +128,38 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		return params;
 	}
 	
+	public boolean isActivator() {
+		return isActivator;
+	}
+	
+	public void setActivator(boolean set) {
+		isActivator = set;
+	}
+	
+	public boolean isRepressor() {
+		return isRepressor;
+	}
+	
+	public void setRepressor(boolean set) {
+		isRepressor = set;
+	}
+	
+	public boolean isAbstractable() {
+		return isAbstractable;
+	}
+	
+	public void setAbstractable(boolean set) {
+		isAbstractable = set;
+	}
+	
+	public boolean isSequesterable() {
+		return isSequesterable;
+	}
+	
+	public void setSequesterable(boolean set) {
+		isSequesterable = set;
+	}
+	
 	protected Properties properties;
 	
 	// The id of the species
@@ -138,4 +170,13 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 
 	// The state associated with the species
 	protected String stateName;
+	
+	protected boolean isActivator = false;
+	
+	protected boolean isRepressor = false;
+	
+	protected boolean isAbstractable = false;
+	
+	protected boolean isSequesterable = false;
+	
 }
