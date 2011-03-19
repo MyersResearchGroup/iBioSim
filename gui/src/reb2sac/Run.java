@@ -614,12 +614,12 @@ public class Run implements ActionListener {
 					}
 				}
 				if (gcm.flattenGCM(false) != null) {
+					time1 = System.nanoTime();
 					LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
 					if (lpnFile == null) {
 						return 0;
 					}
 					lpnFile.save(root + separator + simName + separator + lpnName);
-					time1 = System.nanoTime();
 					Translator t1 = new Translator();
 					if (abstraction.isSelected()) {
 						LhpnFile lhpnFile = new LhpnFile();
@@ -766,12 +766,12 @@ public class Run implements ActionListener {
 							remove.add(key);
 						}
 						if (gcm.flattenGCM(false) != null) {
+							time1 = System.nanoTime();
 							LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
 							if (lpnFile == null) {
 								return 0;
 							}
 							lpnFile.save(root + separator + simName + separator + lpnName);
-							time1 = System.nanoTime();
 							Translator t1 = new Translator();
 							if (abstraction.isSelected()) {
 								LhpnFile lhpnFile = new LhpnFile();
@@ -926,6 +926,7 @@ public class Run implements ActionListener {
 							remove.add(key);
 						}
 						if (gcm.flattenGCM(false) != null) {
+							time1 = System.nanoTime();
 							LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
 							if (lhpnFile == null) {
 								return 0;
@@ -937,7 +938,6 @@ public class Run implements ActionListener {
 						else {
 							return 0;
 						}
-						time1 = System.nanoTime();
 						exitValue = 0;
 					}
 				}
@@ -1135,6 +1135,7 @@ public class Run implements ActionListener {
 							}
 						}
 						if (gcm.flattenGCM(false) != null) {
+							time1 = System.nanoTime();
 							lhpnFile = gcm.convertToLHPN(specs, conLevel);
 							if (lhpnFile == null) {
 								return 0;
@@ -1183,7 +1184,6 @@ public class Run implements ActionListener {
 								log.addText("Performing steady state Markov chain analysis.\n");
 								PerfromSteadyStateMarkovAnalysisThread performMarkovAnalysis = new PerfromSteadyStateMarkovAnalysisThread(
 										sg);
-								time1 = System.nanoTime();
 								if (modelFile.contains(".lpn")) {
 									performMarkovAnalysis.start(absError, null);
 								}
