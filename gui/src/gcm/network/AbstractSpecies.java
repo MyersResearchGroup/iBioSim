@@ -175,6 +175,8 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	
 	protected boolean isRepressor = false;
 	
+	protected boolean isInteresting = false;
+	
 	protected boolean isAbstractable = false;
 	
 	protected boolean isSequesterable = false;
