@@ -4850,7 +4850,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 	}
 
-	private String[] getInterestingSpecies() {
+	public String[] getInterestingSpecies() {
 		ArrayList<String> species = new ArrayList<String>();
 		for (int i = 0; i < speciesInt.size(); i++) {
 			if (((JCheckBox) speciesInt.get(i).get(0)).isSelected()) {
