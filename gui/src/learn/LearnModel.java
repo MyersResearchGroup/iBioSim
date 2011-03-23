@@ -1403,6 +1403,7 @@ public class LearnModel { // added ItemListener SB
 								}
 							} else {
 								if (reqdVarsL.get(j).isDmvc()){
+									if (placeInfo.get(st).getProperty(st2 + "_vMin")!=null){
 									int minv = (int) Math.floor(Double.parseDouble(placeInfo.get(st).getProperty(st2 + "_vMin")));
 									int maxv = (int) Math.ceil(Double.parseDouble(placeInfo.get(st).getProperty(st2 + "_vMax"))); 
 									if (minv != maxv)
@@ -1410,7 +1411,7 @@ public class LearnModel { // added ItemListener SB
 									else
 										g.addIntAssign("t" + numTransitions,st2,String.valueOf(minv));
 									out.write("Added assignment to " + st2 + " at transition t" + numTransitions + "\n");
-								}
+								}}
 								// deal with rates for continuous here
 							}
 					//	} else {
@@ -1800,14 +1801,19 @@ public class LearnModel { // added ItemListener SB
 						// continue;
 						// }
 						if (reqdVarsL.get(j).isDmvc()) { // && !reqdVarsL.get(j).isInput()){
+
+							//if(dmvcValuesUnique.get(reqdVarsL.get(j).getName()).getProperty(String.valueOf(bins[j][i]))!=null){ System.out.println("Here it is : "+dmvcValuesUnique.get(reqdVarsL.get(j).getName()).getProperty(String.valueOf(bins[j][i])));
 							//System.out.println("DMVC " + dmvcValuesUnique);
+
+							//System.out.println("DMVC " + dmvcValuesUnique);
+
 							//System.out.println(reqdVarsL.get(j).getName() + " " + bins[j][i] + " "  + dmvcValuesUnique.get(reqdVarsL.get(j).getName()).getProperty(String.valueOf(bins[j][i]))"\n");
 							out.write("Add value : " + reqdVarsL.get(j).getName() + " -> corresponding to bin " + bins[j][i] + " at place p" + p0.getProperty("placeNum") + "\n");
 							out.write("Add value : " + reqdVarsL.get(j).getName() + " -> " + Double.valueOf(dmvcValuesUnique.get(reqdVarsL.get(j).getName()).getProperty(String.valueOf(bins[j][i]))) + " at place p" + p0.getProperty("placeNum") + "\n");
 							addValue(p0,reqdVarsL.get(j).getName(),Double.valueOf(dmvcValuesUnique.get(reqdVarsL.get(j).getName()).getProperty(String.valueOf(bins[j][i]))));
 							//out.write("Add value : " + reqdVarsL.get(j).getName() + " -> " + dmvcValuesUnique.get(reqdVarsL.get(j).getName()).get(bins[j][i]) + " at place p" + p0.getProperty("placeNum") + "\n");
 							continue;
-						}
+						}//}
 						addRate(p0, reqdVarsL.get(j).getName(), rates[j][i]);
 					}
 //					boolean transientNet = false;
@@ -2001,17 +2007,24 @@ public class LearnModel { // added ItemListener SB
 					}
 				}
 			}
-		}catch (IOException e){
+		}
+		catch (IOException e){
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame,
 					"Log file couldn't be opened for writing UpdateRateInfo messages.",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
-		}catch (NullPointerException e4) {
+	/*	}catch (NullPointerException e4) {
 			e4.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame,
 					"Null exception during model generation in updateRate",
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
-		}
+		}*/
+	}catch (NullPointerException e4) {
+		e4.printStackTrace();
+		JOptionPane.showMessageDialog(Gui.frame,
+				"The number of thresholds generated do not match with the dmvc values.    Use 'Auto' option.",
+				"ERROR!", JOptionPane.ERROR_MESSAGE);
+	}
 	}
 
 	public String getPresetPlaceFullKey(String transition){
@@ -2747,13 +2760,10 @@ public class LearnModel { // added ItemListener SB
 							// "_rMax",Integer.toString((int)(Double.parseDouble(p.getProperty(v.getName()
 							// + "_rMax"))/delayScaleFactor)));
 							if (!v.isInput()) {
-								p.setProperty(v.getName() + "_vMin", Double
-										.toString(Double.parseDouble(p.getProperty(v.getName()
-												+ "_vMin"))* scaleFactor));
-								p.setProperty(v.getName() + "_vMax", Double
-										.toString(Double.parseDouble(p.getProperty(v.getName()
-												+ "_vMax")) * scaleFactor));
-							}
+								if(p.getProperty(v.getName()+ "_vMin")!=null){
+								p.setProperty(v.getName() + "_vMin", Double.toString(Double.parseDouble(p.getProperty(v.getName()+ "_vMin"))* scaleFactor));
+								p.setProperty(v.getName() + "_vMax", Double.toString(Double.parseDouble(p.getProperty(v.getName()+ "_vMax")) * scaleFactor));
+							}}
 
 						}
 					}
