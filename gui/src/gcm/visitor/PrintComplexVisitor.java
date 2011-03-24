@@ -34,7 +34,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 	 */
 	public void run() {
 		for (SpeciesInterface s : species.values()) {
-			if (!s.isAbstractable())
+			if (!complexAbstraction || !s.isAbstractable())
 				s.accept(this);
 		}
 	}
