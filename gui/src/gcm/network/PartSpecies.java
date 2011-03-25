@@ -1,15 +1,15 @@
 package gcm.network;
 
 public class PartSpecies {
-	public PartSpecies(String speciesId, String complexId, double stoichiometry) {
-		this.speciesId = speciesId;
+	public PartSpecies(String partId, String complexId, double stoichiometry) {
+		this.partId = partId;
 		this.complexId = complexId;
 		this.stoichiometry = stoichiometry;
 		
 	}
 	
-	public String getSpeciesId() {
-		return speciesId;
+	public String getPartId() {
+		return partId;
 	}
 	
 	public String getComplexId() {
@@ -20,7 +20,7 @@ public class PartSpecies {
 		return stoichiometry;
 	}
 	
-	private String speciesId;
+	private String partId;
 	private String complexId;
 	private double stoichiometry;
 }

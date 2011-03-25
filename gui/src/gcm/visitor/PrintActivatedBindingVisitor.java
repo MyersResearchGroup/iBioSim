@@ -93,18 +93,9 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String actMolecule = "";
 		if (complexAbstraction && specie.isAbstractable()) {
-			complexReactants = new HashMap<String, Double>();
-			complexModifiers = new ArrayList<String>();
 			actMolecule = abstractComplex(specie.getId(), coop);
-			for (String reactant : complexReactants.keySet())
-				r.addReactant(Utility.SpeciesReference(reactant, complexReactants.get(reactant)));
-			for (String modifier : complexModifiers)
-				r.addModifier(Utility.ModifierSpeciesReference(modifier));
 		} else if (complexAbstraction && specie.isSequesterable()) {
-			complexModifiers = new ArrayList<String>();
 			actMolecule = sequesterSpecies(specie.getId());
-			for (String modifier : complexModifiers)
-				r.addModifier(Utility.ModifierSpeciesReference(modifier));
 		} else {
 			actMolecule = specie.getId();
 			r.addReactant(Utility.SpeciesReference(actMolecule, coop));
@@ -148,10 +139,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String actMolecule = specie.getId();
 		if (complexAbstraction && specie.isSequesterable()) {
-			complexModifiers = new ArrayList<String>();
 			actMolecule = actMolecule + sequesterSpecies(specie.getId());
-			for (String modifier : complexModifiers)
-				r.addModifier(Utility.ModifierSpeciesReference(modifier));
 		}
 		kl.setFormula(generateLaw(speciesName, actMolecule));
 		Utility.addReaction(document, r);
@@ -190,10 +178,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));;
 		String actMolecule = specie.getId();
 		if (complexAbstraction && specie.isSequesterable()) {
-			complexModifiers = new ArrayList<String>();
 			actMolecule = actMolecule + sequesterSpecies(specie.getId());
-			for (String modifier : complexModifiers)
-				r.addModifier(Utility.ModifierSpeciesReference(modifier));
 		}
 		kl.setFormula(generateLaw(speciesName, actMolecule));
 		Utility.addReaction(document, r);
@@ -232,10 +217,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String actMolecule = specie.getId();
 		if (complexAbstraction && specie.isSequesterable()) {
-			complexModifiers = new ArrayList<String>();
 			actMolecule = actMolecule + sequesterSpecies(specie.getId());
-			for (String modifier : complexModifiers)
-				r.addModifier(Utility.ModifierSpeciesReference(modifier));
 		}
 		kl.setFormula(generateLaw(speciesName, actMolecule));
 		Utility.addReaction(document, r);

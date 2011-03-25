@@ -80,18 +80,9 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String repMolecule = "";
 		if (complexAbstraction && specie.isAbstractable()) {
-			complexReactants = new HashMap<String, Double>();
-			complexModifiers = new ArrayList<String>();
 			repMolecule = abstractComplex(specie.getId(), coop);
-			for (String reactant : complexReactants.keySet())
-				r.addReactant(Utility.SpeciesReference(reactant, complexReactants.get(reactant)));
-			for (String modifier : complexModifiers)
-				r.addModifier(Utility.ModifierSpeciesReference(modifier));
 		} else if (complexAbstraction && specie.isSequesterable()) {
-			complexModifiers = new ArrayList<String>();
 			repMolecule = sequesterSpecies(specie.getId());
-			for (String modifier : complexModifiers)
-				r.addModifier(Utility.ModifierSpeciesReference(modifier));
 		} else {
 			repMolecule = specie.getId();
 			r.addReactant(Utility.SpeciesReference(repMolecule, coop));
@@ -128,10 +119,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		String repMolecule = specie.getId();
 		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
 		if (complexAbstraction && specie.isSequesterable()) {
-			complexModifiers = new ArrayList<String>();
 			repMolecule = repMolecule + sequesterSpecies(specie.getId());
-			for (String modifier : complexModifiers)
-				r.addModifier(Utility.ModifierSpeciesReference(modifier));
 		}
 		kl.setFormula(generateLaw(speciesName, repMolecule));
 		Utility.addReaction(document, r);
@@ -163,10 +151,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		String repMolecule = specie.getId();
 		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
 		if (complexAbstraction && specie.isSequesterable()) {
-			complexModifiers = new ArrayList<String>();
 			repMolecule = repMolecule + sequesterSpecies(specie.getId());
-			for (String modifier : complexModifiers)
-				r.addModifier(Utility.ModifierSpeciesReference(modifier));
 		}
 		kl.setFormula(generateLaw(speciesName, repMolecule));
 		Utility.addReaction(document, r);
@@ -198,10 +183,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		String repMolecule = specie.getId();
 		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
 		if (complexAbstraction && specie.isSequesterable()) {
-			complexModifiers = new ArrayList<String>();
 			repMolecule = repMolecule + sequesterSpecies(specie.getId());
-			for (String modifier : complexModifiers)
-				r.addModifier(Utility.ModifierSpeciesReference(modifier));
 		}
 		kl.setFormula(generateLaw(speciesName, repMolecule));
 		Utility.addReaction(document, r);
