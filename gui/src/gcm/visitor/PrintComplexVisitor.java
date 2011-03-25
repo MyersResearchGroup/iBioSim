@@ -55,13 +55,31 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		String expression = "";
-		complexReactants = new HashMap<String, Double>();
-		complexModifiers = new ArrayList<String>();
-		expression = abstractComplex(specie.getId(), 1);
-		for (String reactant : complexReactants.keySet())
-			r.addReactant(Utility.SpeciesReference(reactant, complexReactants.get(reactant)));
-		for (String modifier : complexModifiers)
-			r.addModifier(Utility.ModifierSpeciesReference(modifier));
+		if (complexAbstraction) {
+			expression = abstractComplex(specie.getId(), 1);
+		} else {
+			String kcompId = kcompString + "__" + specie.getId();
+			//Checks if binding parameters are specified as forward and reverse rate constants or 
+			//as equilibrium binding constants before adding to kinetic law
+			if (kcomp.length == 2) {
+				kl.addParameter(Utility.Parameter(kcompId, kcomp[0]/kcomp[1],
+						GeneticNetwork.getMoleParameter(2)));
+			} else {
+				kl.addParameter(Utility.Parameter(kcompId, kcomp[0],
+						GeneticNetwork.getMoleParameter(2)));
+			}
+			String ncSum = "";
+			for (PartSpecies part : complexMap.get(specie.getId())) {
+				String partId = part.getPartId();
+				double n = part.getStoich();
+				r.addReactant(Utility.SpeciesReference(partId, n));
+				String nId = coopString + "__" + partId + "_" + specie.getId();
+				kl.addParameter(Utility.Parameter(nId, n, "dimensionless"));
+				ncSum = ncSum + nId + "+";
+				expression = expression + "*" + "(" + partId + ")^" + nId;
+			}
+			expression = kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + expression;	
+		}
 		kl.setFormula("kr*" + expression + "-kr*" + specie.getId());
 		Utility.addReaction(document, r);
 	}
@@ -76,5 +94,8 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 	}
 	
 	private ArrayList<String> compartments;
+	
+	private String kcompString = GlobalConstants.KCOMPLEX_STRING;
+	private String coopString = GlobalConstants.COOPERATIVITY_STRING;
 	
 }

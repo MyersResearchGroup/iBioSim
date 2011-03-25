@@ -70,13 +70,24 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	
 	//Recursively breaks down repressing complex into its constituent species and complex formation equilibria
 	protected String abstractComplex(String complexId, double multiplier) {
-		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, kl, complexReactants, complexModifiers);
-		return e.abstractComplex(complexId, multiplier, "");
+		complexReactantStoich = new HashMap<String, Double>();
+		complexModifierStoich = new ArrayList<String>();
+		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, kl, complexReactantStoich, complexModifierStoich);
+		String expression = e.abstractComplex(complexId, multiplier, "");
+		for (String reactant : complexReactantStoich.keySet())
+			r.addReactant(Utility.SpeciesReference(reactant, complexReactantStoich.get(reactant)));
+		for (String modifier : complexModifierStoich)
+			r.addModifier(Utility.ModifierSpeciesReference(modifier));
+		return expression;
 	}
 	
 	protected String sequesterSpecies(String speciesId) {
-		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, kl, complexReactants, complexModifiers);
-		return e.sequesterSpecies(speciesId, "");
+		complexModifierStoich = new ArrayList<String>();
+		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, kl, complexReactantStoich, complexModifierStoich);
+		String expression = e.sequesterSpecies(speciesId, "");
+		for (String modifier : complexModifierStoich)
+			r.addModifier(Utility.ModifierSpeciesReference(modifier));
+		return expression;
 	}
 	
 	public void visitBaseSpecies(BaseSpecies specie) {}
@@ -101,8 +112,8 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	
 	protected org.sbml.libsbml.Reaction r;
 	protected KineticLaw kl;
-	protected HashMap<String, Double> complexReactants;
-	protected ArrayList<String> complexModifiers;
+	protected HashMap<String, Double> complexReactantStoich;
+	protected ArrayList<String> complexModifierStoich;
 	protected HashMap<String, SpeciesInterface> species;
 	protected HashMap<String, ArrayList<PartSpecies>> complexMap;
 	protected HashMap<String, ArrayList<PartSpecies>> partsMap;

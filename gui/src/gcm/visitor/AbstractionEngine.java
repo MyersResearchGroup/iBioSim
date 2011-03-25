@@ -23,13 +23,13 @@ public class AbstractionEngine {
 	
 	public AbstractionEngine(HashMap<String, SpeciesInterface> species, HashMap<String, ArrayList<PartSpecies>> complexMap, 
 			HashMap<String, ArrayList<PartSpecies>> partsMap, KineticLaw kl,  
-			HashMap<String, Double> complexReactants, ArrayList<String> complexModifiers) {
+			HashMap<String, Double> complexReactantStoich, ArrayList<String> complexModifierStoich) {
 		this.species = species;
 		this.complexMap = complexMap;
 		this.partsMap = partsMap;
 		this.kl = kl;
-		this.complexReactants = complexReactants;
-		this.complexModifiers = complexModifiers;
+		this.complexReactantStoich = complexReactantStoich;
+		this.complexModifierStoich = complexModifierStoich;
 		this.sbmlMode = true;
 	}
 	
@@ -48,27 +48,27 @@ public class AbstractionEngine {
 		}
 		String ncSum = "";
 		for (PartSpecies part : complexMap.get(complexId)) {
-			String speciesId = part.getSpeciesId();
+			String partId = part.getPartId();
 			double n = part.getStoich();
-			String nId = coopString + "__" + speciesId + "_" + complexId;
+			String nId = coopString + "__" + partId + "_" + complexId;
 			if (sbmlMode)
 				kl.addParameter(Utility.Parameter(nId, n, "dimensionless"));
 			ncSum = ncSum + nId + "+";
-			if (!speciesId.equals(payNoMind)) {
+			if (!partId.equals(payNoMind)) {
 				repMolecule = repMolecule + "*" + "(";
-				if (species.get(speciesId).isAbstractable()) {
-					repMolecule = repMolecule + abstractComplex(speciesId, multiplier * n, "");
+				if (species.get(partId).isAbstractable()) {
+					repMolecule = repMolecule + abstractComplex(partId, multiplier * n, "");
 				} else {
-					repMolecule = repMolecule + speciesId;
+					repMolecule = repMolecule + partId;
 					if (payNoMind.equals("")) {
-						if (species.get(speciesId).isSequesterable())
-							repMolecule = repMolecule + sequesterSpecies(speciesId, complexId);
-						if (sbmlMode && complexReactants.containsKey(speciesId))
-							complexReactants.put(speciesId, complexReactants.get(speciesId) + multiplier * n);
+						if (species.get(partId).isSequesterable())
+							repMolecule = repMolecule + sequesterSpecies(partId, complexId);
+						if (sbmlMode && complexReactantStoich.containsKey(partId))
+							complexReactantStoich.put(partId, complexReactantStoich.get(partId) + multiplier * n);
 						else if (sbmlMode) 
-							complexReactants.put(speciesId, multiplier * n);
+							complexReactantStoich.put(partId, multiplier * n);
 					} else if (sbmlMode) {
-						complexModifiers.add(speciesId);
+						complexModifierStoich.add(partId);
 					}
 				}
 				repMolecule = repMolecule + ")^" + nId;
@@ -91,8 +91,8 @@ public class AbstractionEngine {
 	
 	private KineticLaw kl;
 	private HashMap<String, SpeciesInterface> species;
-	private HashMap<String, Double> complexReactants;
-	private ArrayList<String> complexModifiers;
+	private HashMap<String, Double> complexReactantStoich;
+	private ArrayList<String> complexModifierStoich;
 	private HashMap<String, ArrayList<PartSpecies>> complexMap;
 	private HashMap<String, ArrayList<PartSpecies>> partsMap;
 	private boolean sbmlMode;
