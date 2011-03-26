@@ -4202,7 +4202,7 @@ public class ExprTree {
 			} else {
 				return Double.NaN;
 			}
-		case 'c': // Contunuous
+		case 'c': // Continuous
 			return Double.NaN;
 		case 'i': // Integer
 			if (variables != null) {

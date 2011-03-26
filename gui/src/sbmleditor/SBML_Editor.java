@@ -2214,6 +2214,21 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 			kr = changedParameters.get(1).getId();
 		}
 		String kinetic = kf;
+		if (document.getLevel() > 2) {
+			boolean addEquil = false;
+			String equilExpr = "";  
+			for (SpeciesReference s : changedReactants) {
+				if (s.isSetId()) {
+					addEquil = true;
+					equilExpr += s.getId();
+				} else {
+					equilExpr += s.getStoichiometry();
+				}
+			}
+			if (addEquil) {
+				kinetic +=  " * pow(" + kf + "/" + kr + "," + equilExpr + "-2)";
+			}
+		}
 		for (SpeciesReference s : changedReactants) {
 			if ((document.getLevel() < 3) && (s.isSetStoichiometryMath())) {
 				kinetic += " * pow(" + s.getSpecies() + ", "
@@ -2236,6 +2251,21 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		if (reacReverse.getSelectedItem().equals("true")) {
 			kinetic += " - " + kr;
+			if (document.getLevel() > 2) {
+				boolean addEquil = false;
+				String equilExpr = "";  
+				for (SpeciesReference s : changedProducts) {
+					if (s.isSetId()) {
+						addEquil = true;
+						equilExpr += s.getId();
+					} else {
+						equilExpr += s.getStoichiometry();
+					}
+				}
+				if (addEquil) {
+					kinetic +=  " * pow(" + kf + "/" + kr + "," + equilExpr + "-1)";
+				}
+			}
 			for (SpeciesReference s : changedProducts) {
 				if ((document.getLevel() < 3) && (s.isSetStoichiometryMath())) {
 					kinetic += " * pow(" + s.getSpecies() + ", "
