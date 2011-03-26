@@ -1009,7 +1009,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			view.addSeparator();
 			view.add(refresh);
 		}
-		if (!async) {
+		if (LPN2SBML) {
 			tools.add(createAnal);
 		}
 		if (!atacs) {
@@ -1028,27 +1028,37 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 		// Create recent project menu items
 		numberRecentProj = 0;
-		recentProjects = new JMenuItem[5];
-		recentProjectPaths = new String[5];
-		for (int i = 0; i < 5; i++) {
+		recentProjects = new JMenuItem[10];
+		recentProjectPaths = new String[10];
+		for (int i = 0; i < 10; i++) {
 			recentProjects[i] = new JMenuItem();
 			recentProjects[i].addActionListener(this);
 			recentProjects[i].setActionCommand("recent" + i);
 			recentProjectPaths[i] = "";
 		}
-		recentProjects[0].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ShortCutKey));
-		recentProjects[0].setMnemonic(KeyEvent.VK_1);
-		recentProjects[1].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, ShortCutKey));
-		recentProjects[1].setMnemonic(KeyEvent.VK_2);
-		recentProjects[2].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, ShortCutKey));
-		recentProjects[2].setMnemonic(KeyEvent.VK_3);
-		recentProjects[3].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4, ShortCutKey));
-		recentProjects[3].setMnemonic(KeyEvent.VK_4);
-		recentProjects[4].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_5, ShortCutKey));
-		recentProjects[4].setMnemonic(KeyEvent.VK_5);
+		recentProjects[0].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_0, ShortCutKey));
+		recentProjects[0].setMnemonic(KeyEvent.VK_0);
+		recentProjects[1].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ShortCutKey));
+		recentProjects[1].setMnemonic(KeyEvent.VK_1);
+		recentProjects[2].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, ShortCutKey));
+		recentProjects[2].setMnemonic(KeyEvent.VK_2);
+		recentProjects[3].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_3, ShortCutKey));
+		recentProjects[3].setMnemonic(KeyEvent.VK_3);
+		recentProjects[4].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_4, ShortCutKey));
+		recentProjects[4].setMnemonic(KeyEvent.VK_4);
+		recentProjects[5].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_5, ShortCutKey));
+		recentProjects[5].setMnemonic(KeyEvent.VK_5);
+		recentProjects[6].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_6, ShortCutKey));
+		recentProjects[6].setMnemonic(KeyEvent.VK_6);
+		recentProjects[7].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_7, ShortCutKey));
+		recentProjects[7].setMnemonic(KeyEvent.VK_7);
+		recentProjects[8].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_8, ShortCutKey));
+		recentProjects[8].setMnemonic(KeyEvent.VK_8);
+		recentProjects[9].setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_9, ShortCutKey));
+		recentProjects[9].setMnemonic(KeyEvent.VK_9);
 		Preferences biosimrc = Preferences.userRoot();
 		viewer = biosimrc.get("biosim.general.viewer", "");
-		for (int i = 0; i < 5; i++) {
+		for (int i = 0; i < 10; i++) {
 			if (atacs) {
 				recentProjects[i].setText(biosimrc.get("atacs.recent.project." + i, ""));
 				recentProjectPaths[i] = biosimrc.get("atacs.recent.project.path." + i, "");
@@ -3870,7 +3880,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if ((e.getSource() == openProj) || (e.getSource() == recentProjects[0])
 				|| (e.getSource() == recentProjects[1]) || (e.getSource() == recentProjects[2])
-				|| (e.getSource() == recentProjects[3]) || (e.getSource() == recentProjects[4])) {
+				|| (e.getSource() == recentProjects[3]) || (e.getSource() == recentProjects[4])
+				|| (e.getSource() == recentProjects[5]) || (e.getSource() == recentProjects[6])
+				|| (e.getSource() == recentProjects[7]) || (e.getSource() == recentProjects[8])
+				|| (e.getSource() == recentProjects[9])) {
 			int autosave = 0;
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				int save = save(i, autosave);
@@ -3919,6 +3932,21 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (e.getSource() == recentProjects[4]) {
 				projDir = recentProjectPaths[4];
+			}
+			else if (e.getSource() == recentProjects[5]) {
+				projDir = recentProjectPaths[5];
+			}
+			else if (e.getSource() == recentProjects[6]) {
+				projDir = recentProjectPaths[6];
+			}
+			else if (e.getSource() == recentProjects[7]) {
+				projDir = recentProjectPaths[7];
+			}
+			else if (e.getSource() == recentProjects[8]) {
+				projDir = recentProjectPaths[8];
+			}
+			else if (e.getSource() == recentProjects[9]) {
+				projDir = recentProjectPaths[9];
 			}
 			// log.addText(projDir);
 			if (!projDir.equals("")) {
@@ -7557,7 +7585,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				return;
 			}
 		}
-		if (numberRecentProj < 5) {
+		if (numberRecentProj < 10) {
 			numberRecentProj++;
 		}
 		for (int i = 0; i < numberRecentProj; i++) {
@@ -8420,7 +8448,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
 				createAnalysis.addActionListener(this);
 				createAnalysis.addMouseListener(this);
-				createAnalysis.setActionCommand("createSim");
+				createAnalysis.setActionCommand("createAnalysis");
 				JMenuItem createLearn = new JMenuItem("Create Learn View");
 				createLearn.addActionListener(this);
 				createLearn.addMouseListener(this);
@@ -8521,7 +8549,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
 				createAnalysis.addActionListener(this);
 				createAnalysis.addMouseListener(this);
-				createAnalysis.setActionCommand("createSim");
+				createAnalysis.setActionCommand("createAnalysis");
 				JMenuItem createLearn = new JMenuItem("Create Learn View");
 				createLearn.addActionListener(this);
 				createLearn.addMouseListener(this);
@@ -8684,7 +8712,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
 				createAnalysis.addActionListener(this);
 				createAnalysis.addMouseListener(this);
-				createAnalysis.setActionCommand("createSim");
+				createAnalysis.setActionCommand("createAnalysis");
 				JMenuItem createLearn = new JMenuItem("Create Learn View");
 				createLearn.addActionListener(this);
 				createLearn.addMouseListener(this);
@@ -8733,7 +8761,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
 				createAnalysis.addActionListener(this);
 				createAnalysis.addMouseListener(this);
-				createAnalysis.setActionCommand("createSim");
+				createAnalysis.setActionCommand("createAnalysis");
 				JMenuItem createLearn = new JMenuItem("Create Learn View");
 				createLearn.addActionListener(this);
 				createLearn.addMouseListener(this);
@@ -11728,7 +11756,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false);
 				run.setEnabled(true);
-				saveModel.setEnabled(false);
 				saveAsVerilog.setEnabled(false);
 				viewCircuit.setEnabled(false);
 				if (learn) {
@@ -11737,14 +11764,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						viewLearnedModel.setEnabled(true);
 					}
 					run.setEnabled(true);
-					saveModel.setEnabled(true);
+					saveModel.setEnabled(((LearnGCM) learnComponent).getViewGcmEnabled());
 					saveAsVerilog.setEnabled(false);
 					viewCircuit.setEnabled(((LearnGCM) learnComponent).getViewGcmEnabled());
 					viewLog.setEnabled(((LearnGCM) learnComponent).getViewLogEnabled());
 				}
 				else if (learnLHPN) {
 					run.setEnabled(true);
-					saveModel.setEnabled(true);
+					saveModel.setEnabled(((LearnLHPN) learnComponent).getViewLhpnEnabled());
 					saveAsVerilog.setEnabled(false);
 					viewLearnedModel.setEnabled(((LearnLHPN) learnComponent).getViewLhpnEnabled());
 					viewCircuit.setEnabled(((LearnLHPN) learnComponent).getViewLhpnEnabled());
@@ -11906,7 +11933,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewTrace.setEnabled(false);
 				viewLog.setEnabled(((LearnGCM) component).getViewLogEnabled());
 				viewCoverage.setEnabled(false);
-				saveModel.setEnabled(true);
+				saveModel.setEnabled(((LearnGCM) component).getViewGcmEnabled());
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -11937,7 +11964,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewTrace.setEnabled(false);
 				viewLog.setEnabled(((LearnLHPN) component).getViewLogEnabled());
 				viewCoverage.setEnabled(((LearnLHPN) component).getViewCoverageEnabled());
-				saveModel.setEnabled(true);
+				saveModel.setEnabled(((LearnLHPN) learnComponent).getViewLhpnEnabled());
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -11967,7 +11994,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewTrace.setEnabled(false);
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false);
-				saveModel.setEnabled(true);
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -11977,14 +12003,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						viewLearnedModel.setEnabled(true);
 					}
 					run.setEnabled(true);
-					saveModel.setEnabled(true);
+					saveModel.setEnabled(((LearnGCM) learnComponent).getViewGcmEnabled());
 					saveAsVerilog.setEnabled(false);
 					viewCircuit.setEnabled(((LearnGCM) learnComponent).getViewGcmEnabled());
 					viewLog.setEnabled(((LearnGCM) learnComponent).getViewLogEnabled());
 				}
 				else if (learnLHPN) {
 					run.setEnabled(true);
-					saveModel.setEnabled(true);
+					saveModel.setEnabled(((LearnLHPN) learnComponent).getViewLhpnEnabled());
 					saveAsVerilog.setEnabled(false);
 					viewLearnedModel.setEnabled(((LearnLHPN) learnComponent).getViewLhpnEnabled());
 					viewCircuit.setEnabled(((LearnLHPN) learnComponent).getViewLhpnEnabled());
@@ -12017,7 +12043,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewCircuit.setEnabled(false);
 				viewLog.setEnabled(false);
 				viewCoverage.setEnabled(false);
-				saveModel.setEnabled(false);
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -12027,14 +12052,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						viewLearnedModel.setEnabled(true);
 					}
 					run.setEnabled(true);
-					saveModel.setEnabled(true);
+					saveModel.setEnabled(((LearnGCM) learnComponent).getViewGcmEnabled());
 					saveAsVerilog.setEnabled(false);
 					viewCircuit.setEnabled(((LearnGCM) learnComponent).getViewGcmEnabled());
 					viewLog.setEnabled(((LearnGCM) learnComponent).getViewLogEnabled());
 				}
 				else if (learnLHPN) {
 					run.setEnabled(true);
-					saveModel.setEnabled(true);
+					saveModel.setEnabled(((LearnLHPN) learnComponent).getViewLhpnEnabled());
 					saveAsVerilog.setEnabled(false);
 					viewLearnedModel.setEnabled(((LearnLHPN) learnComponent).getViewLhpnEnabled());
 					viewCircuit.setEnabled(((LearnLHPN) learnComponent).getViewLhpnEnabled());
@@ -12234,7 +12259,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// viewVerilog.setEnabled(false);
 				viewLHPN.setEnabled(false);
 				// saveParam.setEnabled(false);
-				saveModel.setEnabled(false);
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -12267,7 +12291,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// viewVerilog.setEnabled(false);
 				viewLHPN.setEnabled(false);
 				// saveParam.setEnabled(false);
-				saveModel.setEnabled(false);
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -12298,7 +12321,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// viewVerilog.setEnabled(false);
 				viewLHPN.setEnabled(false);
 				// /saveParam.setEnabled(false);
-				saveModel.setEnabled(false);
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -12327,7 +12349,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// viewVerilog.setEnabled(false);
 				viewLHPN.setEnabled(false);
 				// saveParam.setEnabled(false);
-				saveModel.setEnabled(false);
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -12338,7 +12359,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewModGraph.setEnabled(true);
 				viewModBrowser.setEnabled(false);
 				createAnal.setEnabled(true);
-				createAnal.setActionCommand("createSim");
+				createAnal.setActionCommand("createAnalysis");
 				createLearn.setEnabled(true);
 				createVer.setEnabled(true);
 				createSynth.setEnabled(true);
@@ -12361,7 +12382,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// saveas too ????
 				// viewLog should be available ???
 				// saveParam.setEnabled(false);
-				saveModel.setEnabled(false);
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -12372,7 +12392,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewModGraph.setEnabled(false);
 				viewModBrowser.setEnabled(false);
 				createAnal.setEnabled(false);
-				createAnal.setActionCommand("createSim");
+				createAnal.setActionCommand("createAnalysis");
 				createLearn.setEnabled(false);
 				createVer.setEnabled(false);
 				createSynth.setEnabled(false);
@@ -12395,7 +12415,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// saveas too ????
 				// viewLog should be available ???
 				// saveParam.setEnabled(false);
-				saveModel.setEnabled(false);
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -12406,7 +12425,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewModGraph.setEnabled(false);
 				viewModBrowser.setEnabled(false);
 				createAnal.setEnabled(false);
-				createAnal.setActionCommand("createSim");
+				createAnal.setActionCommand("createAnalysis");
 				createLearn.setEnabled(false);
 				createSynth.setEnabled(false);
 				createVer.setEnabled(false);
@@ -12428,7 +12447,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// saveas too ????
 				// viewLog should be available ???
 				// saveParam.setEnabled(false);
-				saveModel.setEnabled(false);
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -12439,7 +12457,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewModGraph.setEnabled(true);
 				viewModBrowser.setEnabled(false);
 				createAnal.setEnabled(true);
-				createAnal.setActionCommand("createSim");
+				createAnal.setActionCommand("createAnalysis");
 				createLearn.setEnabled(true);
 				createSynth.setEnabled(true);
 				createVer.setEnabled(true);
@@ -12463,7 +12481,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// viewVerilog.setEnabled(false);
 				viewLHPN.setEnabled(true);
 				// saveParam.setEnabled(false);
-				saveModel.setEnabled(false);
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -12474,7 +12491,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewModGraph.setEnabled(true);
 				viewModBrowser.setEnabled(false);
 				createAnal.setEnabled(true);
-				createAnal.setActionCommand("createSim");
+				createAnal.setActionCommand("createAnalysis");
 				createLearn.setEnabled(true);
 				createSynth.setEnabled(true);
 				createVer.setEnabled(true);
@@ -12501,7 +12518,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// save.setEnabled(true); // should exist ???
 				// saveas too???
 				// saveParam.setEnabled(false);
-				saveModel.setEnabled(false);
 				saveAsVerilog.setEnabled(true);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -12529,7 +12545,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// viewVerilog.setEnabled(false);
 				viewLHPN.setEnabled(true);
 				// saveParam.setEnabled(false);
-				saveModel.setEnabled(false);
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -12557,7 +12572,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// viewVerilog.setEnabled(false);
 				viewLHPN.setEnabled(true);
 				// saveParam.setEnabled(false);
-				saveModel.setEnabled(false);
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -12585,7 +12599,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// viewVerilog.setEnabled(false);
 				viewLHPN.setEnabled(true);
 				// saveParam.setEnabled(false);
-				saveModel.setEnabled(false);
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -12613,7 +12626,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// viewVerilog.setEnabled(false);
 				viewLHPN.setEnabled(true);
 				// saveParam.setEnabled(false);
-				saveModel.setEnabled(false);
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -12659,7 +12671,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					// viewVerilog.setEnabled(false);
 					viewLHPN.setEnabled(false); // SB ???
 					// saveParam.setEnabled(false);
-					saveModel.setEnabled(false);
 					saveAsVerilog.setEnabled(false);
 					saveSbml.setEnabled(false);
 					saveTemp.setEnabled(false);
@@ -12687,7 +12698,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// viewVerilog.setEnabled(false);
 				viewLHPN.setEnabled(false);
 				// saveParam.setEnabled(false);
-				saveModel.setEnabled(false);
 				saveAsVerilog.setEnabled(false);
 				saveSbml.setEnabled(false);
 				saveTemp.setEnabled(false);
@@ -12716,7 +12726,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			// viewVerilog.setEnabled(false);
 			viewLHPN.setEnabled(false);
 			// saveParam.setEnabled(false);
-			saveModel.setEnabled(false);
 			saveAsVerilog.setEnabled(false);
 			saveSbml.setEnabled(false);
 			saveTemp.setEnabled(false);
