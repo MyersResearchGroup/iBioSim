@@ -189,7 +189,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	// private JRadioButton amounts, concentrations;
 
-	private JCheckBox concentrations;
+	private JCheckBox concentrations,genRuns;
 
 	// private JLabel choose3;
 
@@ -670,38 +670,24 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		sim.add(xhtml);
 		sim.add(lhpn);
 
-		report = new JLabel("Options:");
-		// amounts = new JRadioButton("Amounts");
-		concentrations = new JCheckBox("Report Concentrations");
-		// amounts.setSelected(true);
-		// amounts.setEnabled(true);
-		concentrations.setEnabled(true);
 		JPanel reportPanel = new JPanel();
+		report = new JLabel("Options:");
 		reportPanel.add(report);
-		// reportPanel.add(amounts);
-		reportPanel.add(concentrations);
-		// amounts.addActionListener(this);
-		concentrations.addActionListener(this);
-		// ButtonGroup rept = new ButtonGroup();
-		// rept.add(amounts);
-		// rept.add(concentrations);
 
-		// choose3 = new JLabel("Choose One:");
-		// overwrite = new JRadioButton("Overwrite");
+		concentrations = new JCheckBox("Report Concentrations");
+		concentrations.setEnabled(true);
+		reportPanel.add(concentrations);
+		concentrations.addActionListener(this);
+
+		genRuns = new JCheckBox("Do Not Generate Runs");
+		genRuns.setEnabled(true);
+		reportPanel.add(genRuns);
+		genRuns.addActionListener(this);
+
 		append = new JCheckBox("Append Simulation Runs");
-		// overwrite.setSelected(true);
-		// overwrite.setEnabled(true);
 		append.setEnabled(true);
-		// choose3.setEnabled(true);
-		// JPanel overwritePanel = new JPanel();
-		// reportPanel.add(choose3);
-		// reportPanel.add(overwrite);
 		reportPanel.add(append);
-		// overwrite.addActionListener(this);
 		append.addActionListener(this);
-		// ButtonGroup over = new ButtonGroup();
-		// over.add(overwrite);
-		// over.add(append);
 
 		// Puts all the radio buttons in a panel
 		JPanel radioButtonPanel = new JPanel(new BorderLayout());
@@ -1161,11 +1147,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				lhpn.setEnabled(true);
 			}
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
-				// overwrite.setEnabled(true);
 				append.setEnabled(true);
-				// choose3.setEnabled(true);
-				// amounts.setEnabled(true);
 				concentrations.setEnabled(true);
+				genRuns.setEnabled(true);
 				report.setEnabled(true);
 				if (append.isSelected()) {
 					limit.setEnabled(false);
@@ -1197,11 +1181,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				lhpn.setEnabled(true);
 			}
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
-				// overwrite.setEnabled(true);
 				append.setEnabled(true);
-				// choose3.setEnabled(true);
-				// amounts.setEnabled(true);
 				concentrations.setEnabled(true);
+				genRuns.setEnabled(true);
 				report.setEnabled(true);
 				if (append.isSelected()) {
 					limit.setEnabled(false);
@@ -1229,11 +1211,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn,
 					gcmEditor, speciesInt);
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
-				// overwrite.setEnabled(true);
 				append.setEnabled(true);
-				// choose3.setEnabled(true);
-				// amounts.setEnabled(true);
 				concentrations.setEnabled(true);
+				genRuns.setEnabled(true);
 				report.setEnabled(true);
 				if (append.isSelected()) {
 					limit.setEnabled(false);
@@ -1255,11 +1235,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 					interval, simulators, simulatorsLabel, explanation, description, usingSSA,
 					fileStem, fileStemLabel, postAbs);
-			// overwrite.setEnabled(true);
 			append.setEnabled(true);
-			// choose3.setEnabled(true);
-			// amounts.setEnabled(true);
 			concentrations.setEnabled(true);
+			genRuns.setEnabled(true);
 			report.setEnabled(true);
 		}
 		// if the monteCarlo Radio Button is selected
@@ -1269,11 +1247,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					interval, simulators, simulatorsLabel, explanation, description, usingSSA,
 					fileStem, fileStemLabel, postAbs);
 			if (runFiles) {
-				// overwrite.setEnabled(true);
 				append.setEnabled(true);
-				// choose3.setEnabled(true);
-				// amounts.setEnabled(true);
 				concentrations.setEnabled(true);
+				genRuns.setEnabled(true);
 				report.setEnabled(true);
 				if (append.isSelected()) {
 					limit.setEnabled(false);
@@ -1295,11 +1271,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 					interval, simulators, simulatorsLabel, explanation, description, usingSSA,
 					fileStem, fileStemLabel, gcmEditor, postAbs, modelFile);
-			// overwrite.setEnabled(false);
 			append.setEnabled(false);
-			// choose3.setEnabled(false);
-			// amounts.setEnabled(false);
 			concentrations.setEnabled(false);
+			genRuns.setEnabled(false);
 			report.setEnabled(false);
 		}
 		// if the sbml Radio Button is selected
@@ -1308,11 +1282,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 					interval, simulators, simulatorsLabel, explanation, description, fileStem,
 					fileStemLabel, postAbs);
-			// overwrite.setEnabled(false);
 			append.setEnabled(false);
-			// choose3.setEnabled(false);
-			// amounts.setEnabled(false);
 			concentrations.setEnabled(false);
+			genRuns.setEnabled(false);
 			report.setEnabled(false);
 			absErr.setEnabled(false);
 		}
@@ -1322,11 +1294,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 					interval, simulators, simulatorsLabel, explanation, description, fileStem,
 					fileStemLabel, postAbs);
-			// overwrite.setEnabled(false);
 			append.setEnabled(false);
-			// choose3.setEnabled(false);
-			// amounts.setEnabled(false);
 			concentrations.setEnabled(false);
+			genRuns.setEnabled(false);
 			report.setEnabled(false);
 			absErr.setEnabled(false);
 		}
@@ -1336,11 +1306,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 					interval, simulators, simulatorsLabel, explanation, description, fileStem,
 					fileStemLabel, postAbs);
-			// overwrite.setEnabled(false);
 			append.setEnabled(false);
-			// choose3.setEnabled(false);
-			// amounts.setEnabled(false);
 			concentrations.setEnabled(false);
+			genRuns.setEnabled(false);
 			report.setEnabled(false);
 			absErr.setEnabled(false);
 		}
@@ -1350,11 +1318,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 					interval, simulators, simulatorsLabel, explanation, description, fileStem,
 					fileStemLabel, postAbs);
-			// overwrite.setEnabled(false);
 			append.setEnabled(false);
-			// choose3.setEnabled(false);
-			// amounts.setEnabled(false);
 			concentrations.setEnabled(false);
+			genRuns.setEnabled(false);
 			report.setEnabled(false);
 			absErr.setEnabled(false);
 		}
@@ -1743,11 +1709,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							limit, intervalLabel, interval, simulators, simulatorsLabel,
 							explanation, description, usingSSA, fileStem, fileStemLabel, postAbs);
 					if (runFiles) {
-						// overwrite.setEnabled(true);
 						append.setEnabled(true);
-						// choose3.setEnabled(true);
-						// amounts.setEnabled(true);
 						concentrations.setEnabled(true);
+						genRuns.setEnabled(true);
 						report.setEnabled(true);
 						if (append.isSelected()) {
 							limit.setEnabled(false);
@@ -1772,11 +1736,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							limit, intervalLabel, interval, simulators, simulatorsLabel,
 							explanation, description, usingSSA, fileStem, fileStemLabel, postAbs);
 					if (runFiles) {
-						// overwrite.setEnabled(true);
 						append.setEnabled(true);
-						// choose3.setEnabled(true);
-						// amounts.setEnabled(true);
 						concentrations.setEnabled(true);
+						genRuns.setEnabled(true);
 						report.setEnabled(true);
 						if (append.isSelected()) {
 							limit.setEnabled(false);
@@ -2696,7 +2658,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 			}
 		}
-		String printer_id = "tsd.printer";
+		String printer_id;
+		if (genRuns.isSelected()) {
+			printer_id = "null.printer";
+		} else {
+			printer_id = "tsd.printer";
+		}
 		String printer_track_quantity = "amount";
 		if (concentrations.isSelected()) {
 			printer_track_quantity = "concentration";
@@ -3217,11 +3184,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 		}
 		if (monteCarlo.isSelected()) {
-			// overwrite.setEnabled(true);
 			append.setEnabled(true);
-			// choose3.setEnabled(true);
-			// amounts.setEnabled(true);
 			concentrations.setEnabled(true);
+			genRuns.setEnabled(true);
 			report.setEnabled(true);
 			if (append.isSelected()) {
 				limit.setEnabled(false);
@@ -3420,7 +3385,12 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		String printer_id = "tsd.printer";
+		String printer_id;
+		if (genRuns.isSelected()) {
+			printer_id = "null.printer";
+		} else {
+			printer_id = "tsd.printer";
+		}
 		String printer_track_quantity = "amount";
 		if (concentrations.isSelected()) {
 			printer_track_quantity = "concentration";
@@ -4287,6 +4257,16 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						markov.setEnabled(true);
 					}
 				}
+				if (load.containsKey("simulation.printer.tracking.quantity")) {
+					if (load.getProperty("simulation.printer.tracking.quantity").equals("concentration")) {
+						concentrations.doClick();
+					}
+				}
+				if (load.containsKey("simulation.printer")) {
+					if (load.getProperty("simulation.printer").equals("null.printer")) {
+						genRuns.doClick();
+					}
+				}
 				if (load.containsKey("reb2sac.simulation.method")) {
 					if (load.getProperty("reb2sac.simulation.method").equals("ODE")) {
 						ODE.setSelected(true);
@@ -4321,17 +4301,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						}
 						if (load.containsKey("file.stem")) {
 							fileStem.setText(load.getProperty("file.stem"));
-						}
-						if (load.containsKey("simulation.printer.tracking.quantity")) {
-							/*
-							 * if(load.getProperty(
-							 * "simulation.printer.tracking.quantity").equals(
-							 * "amount")) { amounts.doClick(); } else
-							 */
-							if (load.getProperty("simulation.printer.tracking.quantity").equals(
-									"concentration")) {
-								concentrations.doClick();
-							}
 						}
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("monteCarlo")) {
@@ -4514,14 +4483,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					fileStem.setText(load.getProperty("file.stem"));
 				}
 				if (load.containsKey("simulation.printer.tracking.quantity")) {
-					/*
-					 * if
-					 * (load.getProperty("simulation.printer.tracking.quantity"
-					 * ).equals("amount")) { amounts.doClick(); } else
-					 */
 					if (load.getProperty("simulation.printer.tracking.quantity").equals(
 							"concentration")) {
 						concentrations.doClick();
+					}
+				}
+				if (load.containsKey("simulation.printer")) {
+					if (load.getProperty("simulation.printer").equals("null.printer")) {
+						genRuns.doClick();
 					}
 				}
 			}
@@ -4536,7 +4505,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	public Graph createGraph(String open) {
 		String outDir = root + separator + simName;
-		String printer_id = "tsd.printer";
+		String printer_id;
+		printer_id = "tsd.printer";
 		String printer_track_quantity = "amount";
 		if (concentrations.isSelected()) {
 			printer_track_quantity = "concentration";
@@ -5028,7 +4998,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	public Graph createProbGraph(String open) {
 		String outDir = root + separator + simName;
-		String printer_id = "tsd.printer";
+		String printer_id;
+		printer_id = "tsd.printer";
 		String printer_track_quantity = "amount";
 		if (concentrations.isSelected()) {
 			printer_track_quantity = "concentration";
