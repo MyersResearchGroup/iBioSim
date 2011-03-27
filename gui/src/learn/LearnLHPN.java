@@ -466,13 +466,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		variablesList = new ArrayList<String>();
 		LhpnFile lhpn = new LhpnFile(log);
 		lhpn.load(seedLpnFile);
-		HashMap<String, Properties> variablesMap = lhpn.getContinuous(); System.out.println("Variables MAp :"+variablesMap);
-		for (String s : variablesMap.keySet()) {  //System.out.println("Variables MAp :"+s);
+		HashMap<String, Properties> variablesMap = lhpn.getContinuous(); //System.out.println("Variables MAp :"+variablesMap.keySet());
+		for (String s : variablesMap.keySet()) {  System.out.println("Variables MAp :"+s);
 			variablesList.add(s);
 			reqdVarsL.add(new Variable(s));
 			thresholds.put(s, new ArrayList<Double>());
 		}
-		// System.out.println(variablesList);
+		 System.out.println("Hey :"+variablesList.size());
 		try {
 			FileInputStream in = new FileInputStream(new File(directory
 					+ separator + lrnFile));
@@ -540,34 +540,23 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			if (load.containsKey("learn.stableTolerance")){
 				stableToleranceG.setText(load.getProperty("learn.stableTolerance"));
 			}
-			//int j = 0;
+			
 			//levels();
-			/*while (load.containsKey("learn.bins"+j)){
-				String s = load.getProperty("learn.bins" + j);
-				String[] savedBins = s.split("\\s");
-				//divisionsL.add(new ArrayList<Double>());
-				//variablesList.add(savedBins[0]);
-			//	((JComboBox)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(2))).setSelectedItem(savedBins[1]);
-				for (int i = 2; i < savedBins.length ; i++){
-			//		((JTextField)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(i+1))).setText(savedBins[i]);
-					if (j < variablesMap.size()) {
-						divisionsL.get(j).add(Double.parseDouble(savedBins[i]));
-					}
-				}
-				j++;
-			}*/
+			
 			String[] varsList = null;
 			if (load.containsKey("learn.varsList")){
 				String varsListString = load.getProperty("learn.varsList");
 				varsList = varsListString.split("\\s");
+				//System.out.println("VARSLIST  :"+varsList);
 				for (String st1 : varsList){ 
 					boolean varFound = false;
 					String s = load.getProperty("learn.bins" + st1);
 					String[] savedBins = null;
 					if (s != null){
 						savedBins = s.split("\\s");
+						//for (int i = 2; i < savedBins.length ; i++){ System.out.println("saved bins[] :"+savedBins[i]);}
 					}
-					for (String st2 :variablesList){System.out.println("variables List :"+variablesList);
+					for (String st2 :variablesList){System.out.println("variables List it is :"+variablesList);
 						if (st1.equalsIgnoreCase(st2)){ //System.out.println("Match found");
 							varFound = true;
 							break;
@@ -575,7 +564,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					}
 					if (varFound){ 
 						if (savedBins != null){//System.out.println("M in loop 2 ");
-							for (int i = 2; i < savedBins.length ; i++){ System.out.println("saved bins["+i+"] :"+thresholds.get(st1));
+							for (int i = 2; i < savedBins.length ; i++){ //System.out.println("saved bins["+i+"] :"+thresholds.get(st1));
 								thresholds.get(st1).add(Double.parseDouble(savedBins[i]));
 							}
 						}
@@ -746,11 +735,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		// sortSpecies();
 		JPanel runHolder = new JPanel();
 		
-		levels(); //autogen(false);
+		//levels(); 
+		autogen(false);
 		if (auto.isSelected()) {
 			auto.doClick();
 		} else {
-		//	user.doClick();
+			//user.doClick();
 			numBinsLabel.setEnabled(false);
 			numBins.setEnabled(false);
 			suggest.setEnabled(true);
@@ -850,14 +840,14 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		//this.addTab("Advanced", (JComponent)firstTab);
 		// this.add(runHolder, "South");
 		firstRead = true;
-		// if (user.isSelected()) {
-		// auto.doClick();
-		// user.doClick();
-		// }
-		// else {
-		// user.doClick();
-		// auto.doClick();
-		// }
+		/* if (user.isSelected()) {
+		 auto.doClick();
+	     user.doClick();
+		 }
+		 else {
+		 user.doClick();
+		 auto.doClick();
+		 } */
 		firstRead = false;
 		change = false;
 	}
@@ -887,7 +877,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		if (e.getActionCommand().contains("text")) {
 			// int num = Integer.parseInt(e.getActionCommand().substring(4)) -
 			// 1;
-			if (variables != null && user.isSelected()) {  // action source is any of the variables' combobox
+			if (variables != null && user.isSelected()) { // System.out.println("Var :"+variables);// action source is any of the variables' combobox 
 				for (int i = 0; i < variables.size(); i++) {
 					//editText(i);
 					// SB
@@ -924,23 +914,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					combox_selected = Integer.parseInt(selected); // changed 2 to 3 after required
 				else 
 					combox_selected = 0;
-				//for (int i = 0; i < variablesList.size(); i++) {//commented after adding allVars
+				
 				for (int i = 0; i < allVars.size(); i++) { 
-					//editText(i);  //editText not required??
-					// SB
-					/*if (divisionsL.get(i).size() >= combox_selected){
-						for (int j = divisionsL.get(i).size() - 1; j >= (combox_selected-1) ; j--){
-							divisionsL.get(i).remove(j); //combox_selected);
-							//thresholds.get(variablesList.get(i)).remove(j); 
-						}
-					}*/
-					//Added for replacing divisionsL by thresholds
-					// String currentVar = ((JTextField) variables.get(i).get(0)).getText().trim();
-					// int iThresholds =  thresholds.get(currentVar).size(); // GIVING EXCEPTION BCOz variables is null when called first; 
-					//String currentVar = variablesList.get(i); //commented after adding allVars
+					
 					String currentVar = allVars.get(i);
 					if (findReqdVarslIndex(currentVar) != -1){ // condition added after adding allVars
-						//int iThresholds =  thresholds.get(variablesList.get(i)).size(); //commented after adding allVars
+						
 						ArrayList<Double> iThresholds =  thresholds.get(currentVar);
 						if (combox_selected != 0){
 							if ((iThresholds != null) &&  (iThresholds.size() >= combox_selected)){
@@ -1143,10 +1122,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 			}
 		}
-		else if (e.getSource() == user) {  System.out.println(" ITS USER SELECTED ");
+		else if (e.getSource() == user) { // System.out.println(" ITS USER SELECTED ");
 		//   if (!firstRead) {
 				try {	
-					for (int i = 0; i < variables.size(); i++) { System.out.println("variables IN USER SELECTED :"+variables.size());
+					for (int i = 0; i < variables.size(); i++) { 
 
 					String currentVar = ((JTextField) variables.get(i).get(0)).getText().trim();
 					if (findReqdVarslIndex(currentVar) != -1){
@@ -1156,6 +1135,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						((JComboBox) variables.get(i).get(5)).setEnabled(true);
 						((JComboBox) variables.get(i).get(6)).setEnabled(true);
 						ArrayList<Double> iThresholds =  thresholds.get(currentVar);
+						System.out.println("iThresholds :"+iThresholds);
 						if ((iThresholds == null) || ( iThresholds.size() == 0)){  	// This condition added later.. This ensures that when you switch from auto to user, the options of auto are written to the textboxes. SB.. rechk
 
 							if (variables.get(i).get(variables.get(i).size()-1) instanceof JTextField
@@ -1166,8 +1146,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								thresh = ((JTextField) variables.get(i).get(variables.get(i).size()-1)).getText().trim();
 								System.out.println("thresh : "+thresh);
 								String[] threshValues = thresh.split(",");
+								System.out.println("threshValues.length is : "+threshValues.length);
 								for (int m=0; m<threshValues.length; m++){
 									thresholds.get(currentVar).add(Double.parseDouble(threshValues[m]));
+									System.out.println("m is : "+m);
 									System.out.println("thresh : "+variables.get(i).get(m));	
 								}
 								System.out.println("Thresholds :"+thresholds);
@@ -1198,7 +1180,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			// levelsBin();
 			variablesPanel.revalidate();
 			variablesPanel.repaint();
-			levels(); // To be added later? if the scaled divisions are not supposed to be shown after auto to user switching, then should have something like divsB4scaling which should be passed as a parameter to levels()
+			levels(); // To be added later? if the scaled divisions are not supposed to be shown after auto to user switching, then should have something like divsB4scaling which should be passed as a parameter to 
 		} else if (e.getSource() == auto) {
 			numBinsLabel.setEnabled(true);
 			numBins.setEnabled(true);
@@ -1208,16 +1190,12 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				for (int i = 6; i < ((JPanel) c).getComponentCount(); i++) { // changed 1 to 2 SB
 					((JPanel) c).getComponent(i).setEnabled(false);
 				}
-				/*	if (j == 0){   // recheck .. SB
-					j++;		// SB
-					continue;	// SB
-				}				//SB
-				((JCheckBox)((JPanel) c).getComponent(1)).addActionListener(this); // SB
-				((JCheckBox)((JPanel) c).getComponent(1)).setActionCommand("input" + j); // SB */
+				
 			}
 		} else if (e.getSource() == suggest) {
 			suggestIsSource = true;
 			autogen(false);
+			//levels();
 			variablesPanel.revalidate();
 			variablesPanel.repaint();
 			int j = 0;
@@ -1304,33 +1282,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		}
 	}
 
-/*	private void autogen(boolean readfile) {
-		try {
-			if (!readfile) {
-				for (int i = 0; i < variables.size(); i++) {	
-					for (int j = 7; j < variables.get(i).size(); j++) {  								// changed 2 to 3 SB 
-						// TODO: Needs to be updated to extract thresholds from comma-separated field
-						if (((JTextField) variables.get(i).get(j)).getText().trim().equals("")) {
-						} else {
-							if (thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).size() <= (j-7)){ // changed 3 to 4 after required
-								thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).add(Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim()));
-							}
-							else{
-								thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).set(j-7,Double.parseDouble(((JTextField) variables.get(i).get(j)).getText().trim())); // changed 3 to 4 after required
-							}
-						}
-					}
-				}
-				generate = true;
-				execute = false;
-				LearnThread = new Thread(this);
-				LearnThread.start();
-			}
-		} catch (Exception e1) {
-			levels();
-		}
-	}*/
-	
+
 	private void autogen(boolean readfile) {
 		try {
 			if (!readfile) { 
@@ -1342,7 +1294,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								&& ((JTextField) variables.get(i).get(variables.get(i).size()-1)).getText().trim().equals("")) {
 						} else if (variables.get(i).get(variables.get(i).size()-1) instanceof JTextField) {
 							thresh = ((JTextField) variables.get(i).get(variables.get(i).size()-1)).getText().trim();
-							System.out.println("thresh : "+thresh);
+							//System.out.println("thresh : "+thresh);
 							String[] threshValues = thresh.split(",");
 							int size = thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).size();
 							if (thresholds.get(((JTextField) variables.get(i).get(0)).getText().trim()).size() <= threshValues.length-size){ // changed 3 to 4 after required
@@ -1380,7 +1332,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					for (String s : thresholds.keySet()){
 						if (thresholds.get(s) != null) {
 							max = Math.max(max, thresholds.get(s).size()+2);
-							//System.out.println("Max is : "+thresholds.get(s).size());
+							System.out.println("Max is : "+thresholds.get(s).size());
 						}
 					}
 				}
@@ -1393,10 +1345,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				label.add(new JLabel("Type                       ")); 
 				label.add(new JLabel("# Bins          "));
 				label.add(new JLabel("Levels"));
-				//System.out.println("Max is : "+max);
-				/*for (int i = 0; i < max - 2; i++) { 
-					label.add(new JLabel("Level " + (i + 1)));
-				} */
+				
 				variablesPanel.add(label);
 				int j = 0;
 				for (String s : allVars) {
@@ -1506,23 +1455,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									combox_selected = Integer.parseInt(selected);
 								else
 									combox_selected = 0;
-
-								//for (int i = 0; i < (combox_selected - 1); i++) {// changed 1 to 2 SB
-								//	if (div.isEmpty() || div.size() < i) {
-								//		specs.add(new JTextField("",3));
-								//	} else {
-								//		specs.add(new JTextField(div.get(i).toString(),3));
-
-
-								//	}
-								//StringBuilder builder = new StringBuilder(div.size()); //DRK
-								//for (int o=0;o<div.size();builder.append(div.get(o++)))//DRK
-								//builder.append(",");//DRK
-								//specs.add(new JTextField(builder.toString(),20)); //DRK
-								//sp.add(specs.get(7)); // changed 2 to 3 SB
-								
-								
-									StringBuilder builder = new StringBuilder(div.size()); //DRK
+								StringBuilder builder = new StringBuilder(div.size()); //DRK
 								for (int o=0;o<div.size();o++){//DRK	
 										
 										long app = (long) ((div.get(o))*valScaleFactor);
@@ -1535,13 +1468,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									
 									sp.add(specs.get(7)); //System.out.println("builder :"+builder.toString());			// changed 2 to 3 SB   
 									
-								//}Flearn
+								
 									
 								selected = (String) ((JComboBox) specs.get(6)).getSelectedItem();
 								if (!selected.equalsIgnoreCase("Auto"))
-									combox_selected = Integer.parseInt(selected);
+								combox_selected = Integer.parseInt(selected);
 								else
-									combox_selected = 0;
+								combox_selected = 0;
 								for (int i = combox_selected - 1; i < max - 2; i++) {// changed 1 to 2 SB
 									sp.add(new JLabel());
 								}
@@ -1601,25 +1534,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								combox_selected = Integer.parseInt(selected);
 							else
 								combox_selected = 0;
-							//for (int i = 0; i < combox_selected - 1; i++) {
-							//	selected = (String) ((JComboBox) specs.get(6)).getSelectedItem();
-							//	int combo_selected;
-							//	if (!selected.equalsIgnoreCase("Auto"))
-							//		combo_selected = Integer.parseInt(selected);
-							//	else
-							//		combo_selected = 0;
-							//	if ((specs.size() -7) < combo_selected - 1){
-							//		specs.add(new JTextField("",3));
-							//		sp.add(specs.get(i + 7));
-							//		((JTextField) specs.get(i + 7)).setEnabled(false);
-							//	}
-							//	else{
-							//		((JTextField) specs.get(i + 7)).setEnabled(false);
-							//	}
-							//}
+							
 						}
 					} else {
-						if (findReqdVarslIndex(((JTextField) sp.getComponent(0)).getText().trim()) != -1){System.out.println("M here");
+						if (findReqdVarslIndex(((JTextField) sp.getComponent(0)).getText().trim()) != -1){
 							if (reqdVarsL.get((findReqdVarslIndex(s))).isInput())
 								((JComboBox) specs.get(1)).setSelectedItem("Input"); // changed 1 to 2 after required
 							else
@@ -1657,25 +1575,13 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							((JComboBox) specs.get(6)).setEnabled(false);
 						}
 						String selected = (String) ((JComboBox) specs.get(6)).getSelectedItem();
-						System.out.println("Selected :"+selected);
+						
 						int combox_selected;
 						if (!selected.equalsIgnoreCase("Auto")){//System.out.println("I am here");
 							combox_selected = Integer.parseInt(selected);}
 						else
 							combox_selected = 0;
-						//for (int i = 0; i < combox_selected - 1; i++) {// changed 1 to 2 SB
-						//	specs.add(new JTextField("",3));
-						//	sp.add(specs.get(i + 7));// changed 1 to 2 SB //changed to 4 bcoz of a bug
-						//	if (findReqdVarslIndex(((JTextField) sp.getComponent(0)).getText().trim()) != -1){
-						//		((JTextField) specs.get(i + 7)).setEnabled(true);
-						//	}
-						//	else{
-						//		((JTextField) specs.get(i + 7)).setEnabled(false);
-						//	}
-						//}
 						
-						
-						//for (int i = 0; i < combox_selected - 1; i++) {// changed 1 to 2 SB
 								specs.add(new JTextField("",20));
 								sp.add(specs.get(7));// changed 1 to 2 SB //changed to 4 bcoz of a bug
 								if (findReqdVarslIndex(((JTextField) sp.getComponent(0)).getText().trim()) != -1){
@@ -1693,89 +1599,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		variablesPanel.revalidate(); //july 21,2010
 		variablesPanel.repaint(); //july 21,2010
 		//editText(0);
-	}
-
-	private void editText(int num) { // adjusts number of boxes for thresholds
-		/* TODO: this needs to be updated for thresholds at comma-separated list */
-		try {
-			ArrayList<Component> specs = variables.get(num);
-			Component[] panels = variablesPanel.getComponents();
-			String selected = (String) (((JComboBox) specs.get(6)).getSelectedItem()); // changed 2 to 3 after required
-			System.out.println("selected hi :"+selected);
-			int boxes;
-			if (!selected.equalsIgnoreCase("Auto"))
-				boxes = Integer.parseInt(selected); // changed 2 to 3 after required
-			else 
-				boxes = 0;
-			//int boxes = Integer.parseInt((String) ((JComboBox) specs.get(6)).getSelectedItem()); //changed 1 to 2 SB
-			System.out.println("Specs sizes :"+specs.size());
-			if ((specs.size() - 7) < boxes) { // changed 2 to 3 SB
-				for (int i = 0; i < boxes - 1; i++) {
-					try {
-						specs.get(i + 7); // changed 2 to 3 SB
-						//System.out.println("specs :"+specs);
-					} catch (Exception e1) {
-						JTextField temp = new JTextField("",3);
-						((JPanel) panels[num + 1]).add(temp);
-						specs.add(temp);
-					}
-				}
-			} else {
-				try {
-					if (boxes > 0) {
-						while (true) {
-							specs.remove(boxes + 6); // changed 1 to 2 SB
-							((JPanel) panels[num + 1]).remove(boxes + 6); // changed 1 to 2 SB
-						}
-					} else if (boxes == 0) {
-						while (true) {
-							specs.remove(7); // changed 2 to 3 SB
-							((JPanel) panels[num + 1]).remove(7); // changed 2 to 3 SB
-						}
-					}
-				} catch (Exception e1) {
-				}
-			}
-			int max = 0;
-			for (int i = 0; i < this.variables.size(); i++) {
-				//System.out.println("Variables :"+variables.get(i).toString());
-				max = Math.max(max, variables.get(i).size());
-			}
-			/*if (((JPanel) panels[0]).getComponentCount() < max) {
-				for (int i = 0; i < max - 7; i++) { //changed 2 to 3 SB
-					try {
-						((JPanel) panels[0]).getComponent(i + 7); //changed 2 to 3 SB
-					} catch (Exception e) {
-						((JPanel) panels[0]).add(new JLabel("Level " + (i + 1)));
-					}
-				}
-			} else {
-				try {
-					while (true) {
-						((JPanel) panels[0]).remove(max);
-					}
-				} catch (Exception e) {
-				}
-			}*/
-			for (int i = 1; i < panels.length; i++) {
-				JPanel sp = (JPanel) panels[i];
-				for (int j = sp.getComponentCount() - 1; j >= 7; j--) {//changed 2 to 3 SB
-					if (sp.getComponent(j) instanceof JLabel) {
-						sp.remove(j);
-					}
-				}
-				if (max > sp.getComponentCount()) {
-					for (int j = sp.getComponentCount(); j < max; j++) {
-						sp.add(new JLabel());
-					}
-				} else {
-					for (int j = sp.getComponentCount() - 6; j >= max; j--) {//changed 2 to 3 SB .. not sure??
-						sp.remove(j);
-					}
-				}
-			}
-		} catch (Exception e) {
-		}
 	}
 
 	private int findReqdVarslIndex(String s) {
@@ -3832,7 +3655,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							reqdVarsL.get(i).setDmvc(true);
 							Double[] dmvcValues;
 							if (lastRunValueWithoutTransition != null ){
-								Double[] dVals = reqdVarsL.get(i).getRuns().getAvgVals(); for (int x=0; x<dVals.length; x++)  System.out.println("dVals :"+dVals[x]);
+								Double[] dVals = reqdVarsL.get(i).getRuns().getAvgVals(); //for (int x=0; x<dVals.length; x++)  System.out.println("dVals :"+dVals[x]);
 								dmvcValues = new Double[dVals.length + 1];
 								for (int j = 0; j < dVals.length; j++){
 									dmvcValues[j] = dVals[j];
@@ -4561,13 +4384,31 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}	
 			}
 			if ((suggestIsSource && (Collections.max(varThresholds.values()) == -1)) || (!suggestIsSource && (numThresholds == -1))){
-
+				
 			}
+		/*	else if  (!suggestIsSource && !(numThresholds == -1)){
+				for (int l = 0; l < reqdVarsL.size(); l++){
+					for (String k : dmvDivs.keySet()){
+					//if(varThresholds.get(k)!=null){
+					if ((k.equalsIgnoreCase(reqdVarsL.get(l).getName()))){
+						
+							localThresholds.get(reqdVarsL.get(l).getName()).clear();
+							localThresholds.get(reqdVarsL.get(l).getName()).addAll(dmvDivs.get(k));
+							
+						}//}
+					}
+				}
+					
+							
+			}  */
 			else{
 				HashMap<String, Double[]> extrema = getDataExtrema(fullData); //CHANGE THIS TO HASHMAP for replacing divisionsL by threholds
+				
 				//divisions = initDivisions(extrema,divisions);
 				localThresholds = initDivisions(extrema);
-				localThresholds = greedyOpt(localThresholds,fullData,extrema);
+				System.out.println("local 1 :"+localThresholds);
+				//localThresholds = greedyOpt(localThresholds,fullData,extrema);
+				System.out.println("local 2 :"+localThresholds);
 				// Overwriting dmv divisions calculated above with those that come from detectDMV here.
 				for (int l = 0; l < reqdVarsL.size(); l++){
 					for (String k : dmvDivs.keySet()){
