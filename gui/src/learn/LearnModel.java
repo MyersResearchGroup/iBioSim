@@ -1737,7 +1737,7 @@ public class LearnModel { // added ItemListener SB
 		// boolean addNewPlace;
 		ArrayList<String> ratePlaces = new ArrayList<String>(); // ratePlaces can include non-input dmv places.
 		// boolean newRate = false;
-		System.out.println("Duration " + duration);
+		//System.out.println("Duration " + duration);
 		try{
 			Properties p0, p1 = null;
 			out.write("In UpdateRateInfo\n");
@@ -3130,7 +3130,7 @@ public class LearnModel { // added ItemListener SB
 	public void addDuration(Properties p, Double d) {
 		Double dMin;
 		Double dMax;
-		System.out.println("Adding duration of " + d);
+		//System.out.println("Adding duration of " + d);
 		// d = d*(10^6);
 		if ((p.getProperty("dMin") == null) && (p.getProperty("dMax") == null)) {
 			// p.setProperty("dMin", Integer.toString((int)(Math.floor(d))));
