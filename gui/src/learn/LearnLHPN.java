@@ -604,46 +604,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				for (Variable v : removeVars){
 					reqdVarsL.remove(v);
 				}
-				/*	for (String st1 : varsList){
-					String s = load.getProperty("learn.bins" + st1);
-					if (s != null){
-						String[] savedBins = s.split("\\s");
-						//divisionsL.add(new ArrayList<Double>());
-						//variablesList.add(savedBins[0]);
-						//	((JComboBox)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(2))).setSelectedItem(savedBins[1]);
-						boolean varFound = false;
-						if (noLpn){
-							variablesList.add(st1);
-							reqdVarsL.add(new Variable(st1));
-							thresholds.put(st1, new ArrayList<Double>());
-						}
-						for (String st2 :variablesList){
-							if (st1.equalsIgnoreCase(st2)){
-								varFound = true;
-								break;
-							}
-						}
-						if (!varFound){
-							continue;
-						}
-						else{
-							for (int i = 2; i < savedBins.length ; i++){
-								//		((JTextField)(((JPanel)variablesPanel.getComponent(j+1)).getComponent(i+1))).setText(savedBins[i]);
-								if (j < variablesMap.size()) {
-								//	divisionsL.get(j).add(Double.parseDouble(savedBins[i]));
-									thresholds.get(st1).add(Double.parseDouble(savedBins[i]));
-								}
-							}
-							j++;
-						}
-					}
-				}*/
 			}
-			//	else{ Doing this will clear the selects even first time when created from lpn
-			//		variablesList.clear();
-			//		reqdVarsL.clear();
-			//		thresholds.clear();
-			//	}
 			if (load.containsKey("learn.inputs")){
 				String s = load.getProperty("learn.inputs");
 				String[] savedInputs = s.split("\\s");
@@ -918,6 +879,10 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				for (int i = 0; i < allVars.size(); i++) { 
 					
 					String currentVar = allVars.get(i);
+				//	if (((String)(((JComboBox) variables.get(i).get(5)).getSelectedItem())).equals("DMV")){
+						
+				//		combox_selected = 0;
+				//	}
 					if (findReqdVarslIndex(currentVar) != -1){ // condition added after adding allVars
 						
 						ArrayList<Double> iThresholds =  thresholds.get(currentVar);
@@ -935,7 +900,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								}
 							}
 						}
-					}
+					}//}
 				}
 			}
 			variablesPanel.revalidate();
@@ -2437,8 +2402,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 							else 
 								combox_selected = 0;
 							
-							 System.out.println("combo selected :"+combox_selected);
-							 System.out.println("thresholds.get(st1).size() :"+thresholds.get(st1).size()); 
+							
 							if (thresholds.get(st1).size() == (combox_selected -1)){
 								thresh = ((JTextField) variables.get(i).get(variables.get(i).size()-1)).getText().trim();
 								
@@ -3453,27 +3417,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 					"ERROR!", JOptionPane.ERROR_MESSAGE);
 		}
 
-		/*try {
-				for (int i = 0; i < (data.get(0).size()); i++) {
-					for (int j = 0; j < reqdVarsL.size(); j++) {
-						k = reqdVarIndices.get(j);
-						out.write(data.get(k).get(i) + " ");// + bins[j][i] + " " +
-						// rates[j][i] + " ");
-					}
-					for (int j = 0; j < reqdVarsL.size(); j++) {
-						out.write(bins[j][i] + " ");
-					}
-					for (int j = 0; j < reqdVarsL.size(); j++) {
-						out.write(rates[j][i] + " ");
-					}
-					out.write(duration[i] + " ");
-					out.write("\n");
-				}
-			} catch (IOException e) {
-				System.out
-						.println("Log file couldn't be opened for writing rates and bins ");
-			}*/
-	}
+		}
 
 	public int getRegion(double value, ArrayList<Double> varThresholds){
 		int bin = 0;
@@ -4316,12 +4260,15 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			HashMap<String, ArrayList<Double>> dmvDivs = detectDMV(fullData,true); System.out.println("dmvDivs :"+dmvDivs);
 			HashMap<String, Integer> varThresholds = new HashMap<String, Integer>();
 			if (!suggestIsSource){
+				
 				out.write("suggest is not the source\n");
 				String selected = numBins.getSelectedItem().toString();
+				
 				if (!selected.equalsIgnoreCase("Auto"))
 					numThresholds = Integer.parseInt(selected) - 1;
 				else 
 					numThresholds = -1;
+				
 				//numThresholds = Integer.parseInt(numBins.getSelectedItem().toString()) - 1;	//after adding 0 to comboboxes
 				if (numThresholds == -1){
 					for (String k : dmvDivs.keySet()){
@@ -4358,6 +4305,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 								numThresholds = Integer.parseInt(selected) - 1; // changed 2 to 3 after required
 							else 
 								numThresholds = -1;
+							
 							//numThresholds = Integer.parseInt((String)((JComboBox)((JPanel)variablesPanel.getComponent(j)).getComponent(6)).getSelectedItem()) -1; // changed 2 to 3 after required
 							varThresholds.put(reqdVarsL.get(k).getName(),Integer.valueOf(numThresholds));
 							if (numThresholds == -1){
@@ -4373,6 +4321,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 									running.dispose();
 									return(localThresholds);
 								}
+								//else {
+									//localThresholds.put(reqdVarsL.get(k).getName(),dmvDivs.get(reqdVarsL.get(k).getName()));
+								//}
 								out.write("saving auto generated thresholds for " + reqdVarsL.get(k).getName() + " whether or not it is a dmv\n");
 								localThresholds.put(reqdVarsL.get(k).getName(),dmvDivs.get(reqdVarsL.get(k).getName()));
 							} else {
@@ -4386,21 +4337,29 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			if ((suggestIsSource && (Collections.max(varThresholds.values()) == -1)) || (!suggestIsSource && (numThresholds == -1))){
 				
 			}
-		/*	else if  (!suggestIsSource && !(numThresholds == -1)){
+			else if (suggestIsSource && !(Collections.max(varThresholds.values()) == -1)) {
+				HashMap<String, Double[]> extrema = getDataExtrema(fullData); //CHANGE THIS TO HASHMAP for replacing divisionsL by threholds
+				
+				//divisions = initDivisions(extrema,divisions);
+				localThresholds = initDivisions(extrema);
+				System.out.println("local 1 :"+localThresholds);
+				//localThresholds = greedyOpt(localThresholds,fullData,extrema);
+				System.out.println("local 2 :"+localThresholds);
+				// Overwriting dmv divisions calculated above with those that come from detectDMV here.
+				
 				for (int l = 0; l < reqdVarsL.size(); l++){
-					for (String k : dmvDivs.keySet()){
-					//if(varThresholds.get(k)!=null){
-					if ((k.equalsIgnoreCase(reqdVarsL.get(l).getName()))){
-						
+					for (String k : dmvDivs.keySet()){  System.out.println("k :"+k);	
+					//if(varThresholds.get(k)!=null){ System.out.println("varthresh :");
+					if ((k.equalsIgnoreCase(reqdVarsL.get(l).getName())) && (varThresholds.get(k) == -1)){ System.out.println("k2 :");
+					//if (k.equalsIgnoreCase(reqdVarsL.get(l).getName())){ System.out.println("k2 :");	
 							localThresholds.get(reqdVarsL.get(l).getName()).clear();
 							localThresholds.get(reqdVarsL.get(l).getName()).addAll(dmvDivs.get(k));
 							
-						}//}
+						}
+					
 					}
 				}
-					
-							
-			}  */
+			}
 			else{
 				HashMap<String, Double[]> extrema = getDataExtrema(fullData); //CHANGE THIS TO HASHMAP for replacing divisionsL by threholds
 				
@@ -4410,18 +4369,21 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				//localThresholds = greedyOpt(localThresholds,fullData,extrema);
 				System.out.println("local 2 :"+localThresholds);
 				// Overwriting dmv divisions calculated above with those that come from detectDMV here.
+				
 				for (int l = 0; l < reqdVarsL.size(); l++){
-					for (String k : dmvDivs.keySet()){
-					if(varThresholds.get(k)!=null){
-					if ((k.equalsIgnoreCase(reqdVarsL.get(l).getName())) && (varThresholds.get(k) == -1)){
-						
+					for (String k : dmvDivs.keySet()){  System.out.println("k :"+k);	
+					//if(varThresholds.get(k)!=null){ System.out.println("varthresh :");
+					//if ((k.equalsIgnoreCase(reqdVarsL.get(l).getName())) && (varThresholds.get(k) == -1)){ System.out.println("k2 :");
+					if (k.equalsIgnoreCase(reqdVarsL.get(l).getName())){ System.out.println("k2 :");	
 							localThresholds.get(reqdVarsL.get(l).getName()).clear();
 							localThresholds.get(reqdVarsL.get(l).getName()).addAll(dmvDivs.get(k));
 							
-						}}
+						}
+					//} 
 					}
 				}
-			}
+		
+	}//
 		}
 		catch(NullPointerException e){
 			e.printStackTrace();
