@@ -899,17 +899,13 @@ public class LearnModel { // added ItemListener SB
 		for (int j=0; j<reqdVarsL.size(); j++){ 
 			Variable v = reqdVarsL.get(j);
 			String vName = v.getName();
-			//****System.out.println("in mode bin calculate v : "+vName);
+			
 			for(int k=0; k<useMapKeySet.size(); k++){
 				int length =0;
 				if(useMapKeySet.contains(vName)){
-					//System.out.println("no key : ");
+					
 				}
 				else{
-					///***System.out.println("print it ///////////// : "+v.getName());
-					//System.out.println("couterInMethod : "+cim);
-					//cim++;
-					///***System.out.println("bin in mode  : "+bins[j][i]);
 					bin =bins[j][i];
 					currentBinArray.add(index, bin);
 					//System.out.println("bin final ^^^^^^^^ : "+bin);
@@ -932,21 +928,16 @@ public class LearnModel { // added ItemListener SB
 		for (int j=0; j<reqdVarsL.size(); j++){ 
 			Variable v = reqdVarsL.get(j);
 			String vName = v.getName();
-			//System.out.println("in vars bin calculate v : "+vName);
-			//for(int k=0; k<useMapKeySet.size(); k++){
-			///int length =0;
 			if(!useMapKeySet.contains(vName)){
-				//System.out.println("no key : ");
+				
 			}
 			else{
-				//System.out.println("bin in method vars bin : "+bins[j][i]+" at time : "+i);
+				
 				bin =bins[j][i];
 				currentBinArray.add(index, bin);
-				//System.out.println("bin final vars^^^^^^^^ : "+bin);
-
 				index++;
 			}
-			//}
+			
 		}
 		return currentBinArray;
 	}
@@ -978,22 +969,7 @@ public class LearnModel { // added ItemListener SB
 
 	public void addStablesToData2(int[][]bins, Double[] duration, HashMap<String, ArrayList<Double>> localThresholds, HashMap<String, ArrayList<String>> useMap, ArrayList<Variable> reqdVarsL){
 
-		//System.out.println("This is useMap size : " +useMap.keySet());
-		//Set<String> hello = useMap.keySet();
-		//int hi =hello.contains(v)
-		//System.out.println("This is hi size : " +hi);
-		//Set<String> hello = useMap.keySet();
-		//System.out.println("This is hi size : " +data.get(0).size());
-		//for(int s=0; s<data.get(0).size(); s++){
-			//System.out.println("bin of ctl : "+bins[0][s]+" at time : "+s);
-		//}
-
-		//System.out.println("Bin size : " +bins.length);				
-		//for(int m=0; m<varNames.size(); m++)
-		////{
-		//System.out.println("This is varNames size  :  " +varNames.get(m));
-
-		//}
+		
 		ArrayList<Integer> modeBinAtStart;
 		ArrayList<Integer> modeBinAtEnd;
 		ArrayList<Integer> varsBinCurrent;
@@ -1002,56 +978,34 @@ public class LearnModel { // added ItemListener SB
 		int end =0;
 		int startMode=0;
 		int endMode =0;
-		//Hashtable<String, Object> binInfo = new Hashtable<String, Object>();
-		//Interface Set<Object> allVarsBins = new Set<Object>();
-		//Set wrappedSet = new HashSet<E>();
 		Set allVarsBins = new HashSet();
 
-		//ArrayList<Object> binInfo = new ArrayList<Object>();
+		
 		ArrayList<Object> allInfo = new ArrayList<Object>();
 		ArrayList<Double> dataForStable = new ArrayList<Double>();
 		//int index=0;
 		int count1=0;
 		ArrayList compareBin = new ArrayList();
-		//System.out.println("size : "+data.get(0).size());
+		
 		while (end<(data.get(0).size()-2) && endMode<(data.get(0).size()-2))
 		{// System.out.println("end Mode is : "+endMode);
 			modeBinAtStart = modeBinsCalculate(useMap,startMode);
 			//System.out.println("modeBinAtStart%%%%%%% : "+modeBinAtStart+" at time : "+startMode);
 			modeBinAtEnd = modeBinsCalculate(useMap, endMode+1);
-			//System.out.println("end Mode is 2: "+endMode);
-			//System.out.println("modeBinAtEnd%%%%%%%%%%%%% : "+modeBinAtEnd+" at time "+(endMode+1));
-			//int whileCounter = 0;
-			//while(modeBinAtStart==modeBinAtEnd){
+			
 			while((modeBinAtStart.equals(modeBinAtEnd))&& endMode<(data.get(0).size()-2)){ 
-				//if(modeBinAtStart.equals(modeBinAtEnd)){ 
-				//****System.out.println("modeBinAtStart : "+modeBinAtStart);
-				//System.out.println("modeBinAtEnd : "+endMode);
 				endMode++; end++;
-				//****System.out.println("end in while loop : "+end);
-				//****System.out.println("time Start : "+start);
-				//****//****System.out.println("time end : "+end);
 				varsBinCurrent=varsBinsCalculate(useMap,start);
 
 				varsBinAtEnd=varsBinsCalculate(useMap,end);
 
 
 				if((!varsBinCurrent.equals(varsBinAtEnd)) && (duration[end]!=null)){ 
-					//if(varsBinCurrent.!=varsBinAtEnd){ 
-					//****System.out.println("varsBinCurrent : "+varsBinCurrent);
-					//****//****System.out.println("varsBinAtEnd : "+varsBinAtEnd);
-					//****System.out.println("*********************************************end time : "+end);
 					ArrayList<Object> binInfo = new ArrayList<Object>();
 					binInfo.add(new Integer(end));
 					binInfo.add(varsBinAtEnd);
 					binInfo.add(new Double(duration[end]));
-					//if(!allVarsBins.contains(varsBinCurrent)){
-					//allVarsBins.add(index, new Integer(varsBinCurrent));
-
 					allVarsBins.add(varsBinAtEnd);
-					//System.out.println("binInfo : "+binInfo);	
-					//***System.out.println("allVarsBin : "+allVarsBins);
-
 					allInfo.add(count1, binInfo);
 					//allInfo.add(binInfo);
 					count1++;
@@ -1060,30 +1014,24 @@ public class LearnModel { // added ItemListener SB
 				}
 				//startMode=endMode;
 				modeBinAtStart = modeBinsCalculate(useMap,startMode);
-				//System.out.println("modeBinAtStart%%%%%%% : "+modeBinAtStart+" at time : "+startMode);
-				//System.out.println("end Mode+1 is : "+endMode+1);
-
+				
 				modeBinAtEnd = modeBinsCalculate(useMap, endMode+1);
-				//System.out.println("modeBinAtEnd%%%%%%%%%%%%% : "+modeBinAtEnd+" at time "+(endMode+1));
+				
 			}
 
 			//}
 			int stable = startMode;
-			//System.out.println("STABLE ASSIGNED : "+stable);
-			//System.out.println("allVarsBin : "+allVarsBins);
-			//ArrayList  compareBin2;
+			
 			Iterator itr = allVarsBins.iterator();
 			while (itr.hasNext()){//System.out.println("compareBin : "+itr.next());
 				compareBin=(ArrayList)itr.next();
 
-				//System.out.println("compareBin : "+compareBin);
-				//System.out.println("all info size is  : "+allInfo.size());
+				
 
 				for(int i=(allInfo.size()-1);i>=0; --i){
 					//System.out.println("compareBin : "+compareBin);
 					ArrayList varsBinAtEnd2 = returnBin(allInfo, i);
-					//System.out.println("varsBinAtEnd2 : "+varsBinAtEnd2);
-					//if(compareBin==varsBinAtEnd2){
+					
 					if(compareBin.equals(varsBinAtEnd2)){
 						for(int m=i-1; m>=0;m--){
 							//int time;
@@ -1092,8 +1040,7 @@ public class LearnModel { // added ItemListener SB
 							if (time<stable)
 								break;
 							ArrayList bin2 = returnBin(allInfo, m);
-							//System.out.println("bin2 : "+bin2);
-							//if (bin2==varsBinAtEnd2){
+							
 							if (bin2.equals(varsBinAtEnd2)){
 								double duration1= returnDuration(allInfo,i);
 								//System.out.println("duration1 : "+duration1);
