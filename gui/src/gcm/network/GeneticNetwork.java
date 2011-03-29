@@ -47,6 +47,7 @@ import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
 
 
+
 /**
  * This class represents a genetic network
  * 
@@ -162,6 +163,12 @@ public class GeneticNetwork {
 	public void loadProperties(GCMFile gcm) {
 		properties = gcm;
 		complexAbstraction = gcm.getBioAbs();
+	}
+	
+	public void loadProperties(GCMFile gcm, boolean complexAbstraction, String[] interestingSpecies) {
+		properties = gcm;
+		this.complexAbstraction = complexAbstraction;
+		unMarkInterestingSpecies(interestingSpecies);
 	}
 	
 	public void setSBMLFile(String file) {
@@ -1051,7 +1058,7 @@ public class GeneticNetwork {
 		return sequesterable;
 	}
 	
-	//Unmarks species as abstractable if they are interesting
+	//Unmarks complex species as abstractable (and their parts as sequesterable) if they are interesting
 	public void unMarkInterestingSpecies(String[] interestingSpecies) {
 		for (String interestingId : interestingSpecies) {
 			if (species.containsKey(interestingId) && complexMap.containsKey(interestingId)) {

@@ -4524,6 +4524,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	public JButton getSaveButton() {
 		return save;
 	}
+	
+	public JRadioButton getAbstractionRadio() {
+		return abstraction;
+	}
 
 	public void setSbml(SBML_Editor sbml) {
 		sbmlEditor = sbml;
