@@ -58,18 +58,19 @@ public class AbstractionEngine {
 				repMolecule = repMolecule + "*" + "(";
 				if (species.get(partId).isAbstractable()) {
 					repMolecule = repMolecule + abstractComplex(partId, multiplier * n, "");
+				} else if (payNoMind.equals("")) {
+					if (species.get(partId).isSequesterable())
+						repMolecule = repMolecule + sequesterSpecies(partId, complexId);
+					else
+						repMolecule = repMolecule + partId;
+					if (sbmlMode && complexReactantStoich.containsKey(partId))
+						complexReactantStoich.put(partId, complexReactantStoich.get(partId) + multiplier * n);
+					else if (sbmlMode) 
+						complexReactantStoich.put(partId, multiplier * n);
 				} else {
 					repMolecule = repMolecule + partId;
-					if (payNoMind.equals("")) {
-						if (species.get(partId).isSequesterable())
-							repMolecule = repMolecule + sequesterSpecies(partId, complexId);
-						if (sbmlMode && complexReactantStoich.containsKey(partId))
-							complexReactantStoich.put(partId, complexReactantStoich.get(partId) + multiplier * n);
-						else if (sbmlMode) 
-							complexReactantStoich.put(partId, multiplier * n);
-					} else if (sbmlMode) {
+					if (sbmlMode)
 						complexModifierStoich.add(partId);
-					}
 				}
 				repMolecule = repMolecule + ")^" + nId;
 			}
@@ -79,7 +80,7 @@ public class AbstractionEngine {
 	}
 	
 	public String sequesterSpecies(String speciesId, String payNoMind) {
-		String sequesterFactor = "/(1";
+		String sequesterFactor = speciesId + "/(1";
 		for (PartSpecies part : partsMap.get(speciesId)) {
 			String complexId = part.getComplexId();
 			if (!complexId.equals(payNoMind))
