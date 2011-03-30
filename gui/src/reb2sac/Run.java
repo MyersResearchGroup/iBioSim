@@ -555,7 +555,7 @@ public class Run implements ActionListener {
 					gcm.setParameter(key, params.get(key));
 					remove.add(key);
 				}
-				if (direct != null && !direct.equals("")) {
+				if (direct != null && !direct.equals("") && direct.contains("=")) {
 					String[] d = direct.split("_");
 					ArrayList<String> dd = new ArrayList<String>();
 					for (int i = 0; i < d.length; i++) {
@@ -1071,7 +1071,7 @@ public class Run implements ActionListener {
 							gcm.setParameter(key, params.get(key));
 							remove.add(key);
 						}
-						if (direct != null && !direct.equals("")) {
+						if (direct != null && !direct.equals("") && direct.contains("=")) {
 							String[] d = direct.split("_");
 							ArrayList<String> dd = new ArrayList<String>();
 							for (int i = 0; i < d.length; i++) {
