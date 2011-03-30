@@ -904,20 +904,6 @@ public class GCMFile {
 										+ RNAP + ")";
 								for (String act : promActivators) {
 									String split[] = act.split(":");
-									Properties p = influences.get(split[1]);
-									nc = global_nc;
-									Kr = global_Kr;
-									Ka = global_Ka;
-									if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
-										nc = parseValue((String) p
-												.get(GlobalConstants.COOPERATIVITY_STRING));
-									}
-									if (p.containsKey(GlobalConstants.KREP_STRING)) {
-										Kr = parseValue((String) p.get(GlobalConstants.KREP_STRING));
-									}
-									if (p.containsKey(GlobalConstants.KACT_STRING)) {
-										Ka = parseValue((String) p.get(GlobalConstants.KACT_STRING));
-									}
 									String specExpr = network.abstractExpression(split[0]);
 									if (!specExpr.equals(split[0])) {
 										while (specExpr.contains("Kc__")) {
@@ -1038,6 +1024,20 @@ public class GCMFile {
 										catch (Exception e) {
 											LHPN.addInteger(split[0], "0");
 										}
+									}
+									Properties p = influences.get(split[1]);
+									nc = global_nc;
+									Kr = global_Kr;
+									Ka = global_Ka;
+									if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
+										nc = parseValue((String) p
+												.get(GlobalConstants.COOPERATIVITY_STRING));
+									}
+									if (p.containsKey(GlobalConstants.KREP_STRING)) {
+										Kr = parseValue((String) p.get(GlobalConstants.KREP_STRING));
+									}
+									if (p.containsKey(GlobalConstants.KACT_STRING)) {
+										Ka = parseValue((String) p.get(GlobalConstants.KACT_STRING));
 									}
 									promRate += "+(" + ka + "*((" + Ka + "*" + RNAP + "*"
 											+ specExpr + ")^" + nc + "))";
@@ -1045,20 +1045,6 @@ public class GCMFile {
 								promRate += ")/((1+(" + Ko + "*" + RNAP + "))";
 								for (String act : promActivators) {
 									String split[] = act.split(":");
-									Properties p = influences.get(split[1]);
-									nc = global_nc;
-									Kr = global_Kr;
-									Ka = global_Ka;
-									if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
-										nc = parseValue((String) p
-												.get(GlobalConstants.COOPERATIVITY_STRING));
-									}
-									if (p.containsKey(GlobalConstants.KREP_STRING)) {
-										Kr = parseValue((String) p.get(GlobalConstants.KREP_STRING));
-									}
-									if (p.containsKey(GlobalConstants.KACT_STRING)) {
-										Ka = parseValue((String) p.get(GlobalConstants.KACT_STRING));
-									}
 									String specExpr = network.abstractExpression(split[0]);
 									if (!specExpr.equals(split[0])) {
 										while (specExpr.contains("Kc__")) {
@@ -1180,28 +1166,26 @@ public class GCMFile {
 											LHPN.addInteger(split[0], "0");
 										}
 									}
+									Properties p = influences.get(split[1]);
+									nc = global_nc;
+									Kr = global_Kr;
+									Ka = global_Ka;
+									if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
+										nc = parseValue((String) p
+												.get(GlobalConstants.COOPERATIVITY_STRING));
+									}
+									if (p.containsKey(GlobalConstants.KREP_STRING)) {
+										Kr = parseValue((String) p.get(GlobalConstants.KREP_STRING));
+									}
+									if (p.containsKey(GlobalConstants.KACT_STRING)) {
+										Ka = parseValue((String) p.get(GlobalConstants.KACT_STRING));
+									}
 									promRate += "+((" + Ka + "*" + RNAP + "*" + specExpr + ")^"
 											+ nc + ")";
 								}
 								if (promRepressors.size() != 0) {
 									for (String rep : promRepressors) {
 										String split[] = rep.split(":");
-										Properties p = influences.get(split[1]);
-										nc = global_nc;
-										Kr = global_Kr;
-										Ka = global_Ka;
-										if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
-											nc = parseValue((String) p
-													.get(GlobalConstants.COOPERATIVITY_STRING));
-										}
-										if (p.containsKey(GlobalConstants.KREP_STRING)) {
-											Kr = parseValue((String) p
-													.get(GlobalConstants.KREP_STRING));
-										}
-										if (p.containsKey(GlobalConstants.KACT_STRING)) {
-											Ka = parseValue((String) p
-													.get(GlobalConstants.KACT_STRING));
-										}
 										String specExpr = network.abstractExpression(split[0]);
 										if (!specExpr.equals(split[0])) {
 											while (specExpr.contains("Kc__")) {
@@ -1325,6 +1309,22 @@ public class GCMFile {
 											catch (Exception e) {
 												LHPN.addInteger(split[0], "0");
 											}
+										}
+										Properties p = influences.get(split[1]);
+										nc = global_nc;
+										Kr = global_Kr;
+										Ka = global_Ka;
+										if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
+											nc = parseValue((String) p
+													.get(GlobalConstants.COOPERATIVITY_STRING));
+										}
+										if (p.containsKey(GlobalConstants.KREP_STRING)) {
+											Kr = parseValue((String) p
+													.get(GlobalConstants.KREP_STRING));
+										}
+										if (p.containsKey(GlobalConstants.KACT_STRING)) {
+											Ka = parseValue((String) p
+													.get(GlobalConstants.KACT_STRING));
 										}
 										promRate += "+((" + Kr + "*" + specExpr + ")^" + nc + ")";
 									}
@@ -1337,22 +1337,6 @@ public class GCMFile {
 											+ RNAP + "))/((1+(" + Ko + "*" + RNAP + "))";
 									for (String rep : promRepressors) {
 										String split[] = rep.split(":");
-										Properties p = influences.get(split[1]);
-										nc = global_nc;
-										Kr = global_Kr;
-										Ka = global_Ka;
-										if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
-											nc = parseValue((String) p
-													.get(GlobalConstants.COOPERATIVITY_STRING));
-										}
-										if (p.containsKey(GlobalConstants.KREP_STRING)) {
-											Kr = parseValue((String) p
-													.get(GlobalConstants.KREP_STRING));
-										}
-										if (p.containsKey(GlobalConstants.KACT_STRING)) {
-											Ka = parseValue((String) p
-													.get(GlobalConstants.KACT_STRING));
-										}
 										String specExpr = network.abstractExpression(split[0]);
 										if (!specExpr.equals(split[0])) {
 											while (specExpr.contains("Kc__")) {
@@ -1476,6 +1460,22 @@ public class GCMFile {
 											catch (Exception e) {
 												LHPN.addInteger(split[0], "0");
 											}
+										}
+										Properties p = influences.get(split[1]);
+										nc = global_nc;
+										Kr = global_Kr;
+										Ka = global_Ka;
+										if (p.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
+											nc = parseValue((String) p
+													.get(GlobalConstants.COOPERATIVITY_STRING));
+										}
+										if (p.containsKey(GlobalConstants.KREP_STRING)) {
+											Kr = parseValue((String) p
+													.get(GlobalConstants.KREP_STRING));
+										}
+										if (p.containsKey(GlobalConstants.KACT_STRING)) {
+											Ka = parseValue((String) p
+													.get(GlobalConstants.KACT_STRING));
 										}
 										promRate += "+((" + Kr + "*" + specExpr + ")^" + nc + ")";
 									}
@@ -1501,11 +1501,6 @@ public class GCMFile {
 							LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, np + "*(("
 									+ rate + ")/" + "(" + threshold + "-" + number + "))");
 							transNum++;
-						}
-						kd = global_kd;
-						if (speciesProps.containsKey(GlobalConstants.KDECAY_STRING)) {
-							kd = parseValue((String) speciesProps
-									.get(GlobalConstants.KDECAY_STRING));
 						}
 						LHPN.addTransition(specs.get(i) + "_trans" + transNum);
 						LHPN.addMovement(specs.get(i) + placeNum, specs.get(i) + "_trans"
@@ -1590,6 +1585,11 @@ public class GCMFile {
 								}
 							}
 							specExpr = "(" + specExpr + ")";
+						}
+						kd = global_kd;
+						if (speciesProps.containsKey(GlobalConstants.KDECAY_STRING)) {
+							kd = parseValue((String) speciesProps
+									.get(GlobalConstants.KDECAY_STRING));
 						}
 						LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specExpr
 								+ "*" + kd + ")/" + "(" + threshold + "-" + number + ")");
