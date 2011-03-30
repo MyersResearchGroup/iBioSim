@@ -1888,7 +1888,7 @@ public class LhpnFile {
 	
 	private static final String INTERNAL = "\\.internal([[\\s[^\\n]]\\w+]*?)\\n";
 
-	private static final String INIT_STATE = "#@\\.init_state \\[(\\w+)\\]";
+	private static final String INIT_STATE = "#@\\.init_state \\[(\\w*)\\]";
 
 	private static final String TRANSITION = "\\.dummy([^\\n]*?)\\n";
 
@@ -1898,53 +1898,53 @@ public class LhpnFile {
 
 	private static final String PLACE = "\\n([\\w_\\+-/&&[^\\.#]]+ [\\w_\\+-/]+)";
 
-	private static final String CONTINUOUS = "#@\\.continuous ([.[^\\n]]+)\\n";
+	private static final String CONTINUOUS = "#@\\.continuous ([.[^\\n]]*)\\n";
 
-	private static final String VARS_INIT = "#@\\.init_vals \\{([\\S[^\\}]]+?)\\}";
+	private static final String VARS_INIT = "#@\\.init_vals \\{([\\S[^\\}]]*?)\\}";
 
-	private static final String INIT_RATE = "#@\\.init_rates \\{([\\S[^\\}]]+?)\\}";
+	private static final String INIT_RATE = "#@\\.init_rates \\{([\\S[^\\}]]*?)\\}";
 
-	private static final String INIT_COND = "<(\\w+)=([\\S^>]+?)>";
+	private static final String INIT_COND = "<(\\w+)=([\\S^>]*?)>";
 
-	private static final String VARIABLES = "#@\\.variables ([.[^\\n]]+)\\n";
+	private static final String VARIABLES = "#@\\.variables ([.[^\\n]]*)\\n";
 
-	private static final String PLACES_LINE = "#\\|\\.places ([.[^\\n]]+)\\n";
+	private static final String PLACES_LINE = "#\\|\\.places ([.[^\\n]]*)\\n";
 
 	private static final String MARKING = "\\w+";
 
-	private static final String MARKING_LINE = "\\.marking \\{(.+)\\}";
+	private static final String MARKING_LINE = "\\.marking \\{(.*)\\}";
 
-	private static final String ENABLING_LINE = "#@\\.enablings \\{([.[^\\}]]+?)\\}";
+	private static final String ENABLING_LINE = "#@\\.enablings \\{([.[^\\}]]*?)\\}";
 
 	private static final String ENABLING = "<([\\S[^=]]+?)=\\[([^\\]]+?)\\]>?";
 
-	private static final String ASSIGNMENT_LINE = "#@\\.assignments \\{([.[^\\}]]+?)\\}";
+	private static final String ASSIGNMENT_LINE = "#@\\.assignments \\{([.[^\\}]]*?)\\}";
 
-	private static final String RATE_ASSIGNMENT_LINE = "#@\\.rate_assignments \\{([.[^\\}]]+?)\\}";
+	private static final String RATE_ASSIGNMENT_LINE = "#@\\.rate_assignments \\{([.[^\\}]]*?)\\}";
 
 	private static final String ASSIGNMENT = "<([\\S[^=]]+?)=\\[(\\S+?)\\]>";
 
 	private static final String ASSIGN_VAR = "([^:]+?):=(.+)";
 
-	private static final String DELAY_LINE = "#@\\.delay_assignments \\{([\\S[^\\}]]+?)\\}";
+	private static final String DELAY_LINE = "#@\\.delay_assignments \\{([\\S[^\\}]]*?)\\}";
 
 	private static final String DELAY = "<([\\w_]+)=\\[(\\S+?)\\]>";
 
 	private static final String RANGE = "\\[([\\w-]+?),([\\w-]+?)\\]";
 
-	private static final String PRIORITY_LINE = "#@\\.priority_assignments \\{([\\S[^\\}]]+?)\\}";
+	private static final String PRIORITY_LINE = "#@\\.priority_assignments \\{([\\S[^\\}]]*?)\\}";
 
 	private static final String PRIORITY = "<([\\w_]+)=\\[(\\S+?)\\]>";
 
-	private static final String TRANS_RATE_LINE = "#@\\.transition_rates \\{([\\S[^\\}]]+?)\\}";
+	private static final String TRANS_RATE_LINE = "#@\\.transition_rates \\{([\\S[^\\}]]*?)\\}";
 
-	private static final String FAIL_LINE = "#@\\.failtrans ([.[^\\n]]+)\\n";
+	private static final String FAIL_LINE = "#@\\.failtrans ([.[^\\n]]*)\\n";
 	
-	private static final String PERSISTENT_LINE = "#@\\.non_disabling ([.[^\\n]]+)\\n";
+	private static final String PERSISTENT_LINE = "#@\\.non_disabling ([.[^\\n]]*)\\n";
 
-	private static final String BOOLEAN_LINE = "#@\\.boolean_assignments \\{([\\S[^\\}]]+?)\\}";
+	private static final String BOOLEAN_LINE = "#@\\.boolean_assignments \\{([\\S[^\\}]]*?)\\}";
 
-	private static final String BOOLEAN_TRANS = "<(\\S+?)=\\[(\\S+?)\\]>";
+	private static final String BOOLEAN_TRANS = "<(\\S+?)=\\[(\\S*?)\\]>";
 
 	private static final String BOOLEAN_ASSIGN = "([^:]+?):=(.+)";
 
