@@ -80,11 +80,11 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 			xform30 = "Remove Uninteresting Transitions - simplification",
 			xform31 = "Simplify Uniform Expressions - abstraction";
 
-	public String[] transforms = { xform0, xform1, xform3, xform4, xform5,
-			xform6, xform7, xform8, xform25, xform9, xform24, xform10, xform12,
-			xform13, xform14, xform16, xform11, xform15, xform17, xform18,
-			xform19, xform20, xform21, xform22, xform23, xform26, xform27,
-			xform28, xform29, xform30, xform31 };
+	public String[] transforms = { xform12, xform28, xform27, xform11, xform16,
+			xform19, xform17, xform8, xform0, xform7, xform6, xform5, xform25, xform20,
+			xform26, xform14, xform15, xform24, xform1, xform3, xform4,
+			xform30, xform29, xform13, xform18, xform23, xform22, xform9,
+			xform10, xform31, xform21 };
 
 	public JTextField factorField, iterField;
 
