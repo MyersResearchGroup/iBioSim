@@ -81,10 +81,10 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 		return expression;
 	}
 	
-	protected String sequesterSpecies(String speciesId) {
+	protected String sequesterSpecies(String partId) {
 		complexModifierStoich = new ArrayList<String>();
 		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, kl, complexReactantStoich, complexModifierStoich);
-		String expression = e.sequesterSpecies(speciesId, "");
+		String expression = e.sequesterSpecies(partId, "");
 		for (String modifier : complexModifierStoich)
 			r.addModifier(Utility.ModifierSpeciesReference(modifier));
 		return expression;

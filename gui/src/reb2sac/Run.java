@@ -73,8 +73,11 @@ public class Run implements ActionListener {
 		Properties abs = new Properties();
 		if (selectedButtons.contains("abs") || selectedButtons.contains("nary")) {
 			for (int i = 0; i < preAbs.getModel().getSize(); i++) {
-				abs.setProperty("reb2sac.abstraction.method.1." + (i + 1), (String) preAbs
-						.getModel().getElementAt(i));
+				String abstractionOption = (String) preAbs.getModel().getElementAt(i);
+				if (abstractionOption.equals("complex-formation-and-sequestering-abstraction"))
+					abs.setProperty("gcm.abstraction.method", abstractionOption);
+				else
+					abs.setProperty("reb2sac.abstraction.method.1." + (i + 1), abstractionOption);
 			}
 			for (int i = 0; i < loopAbs.getModel().getSize(); i++) {
 				abs.setProperty("reb2sac.abstraction.method.2." + (i + 1), (String) loopAbs
@@ -797,7 +800,7 @@ public class Run implements ActionListener {
 						exitValue = 0;
 					}
 					else {
-						if (abstraction.isSelected() || nary.isSelected()) {
+						if (r2s.reb2sacAbstraction() && (abstraction.isSelected() || nary.isSelected())) {
 							log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + ".."
 									+ separator + sbmlName + " " + filename + "\n");
 							time1 = System.nanoTime();

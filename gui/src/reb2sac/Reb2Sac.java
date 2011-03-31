@@ -2286,6 +2286,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				|| (e.getSource() == addPostAbs)) {
 			JPanel addAbsPanel = new JPanel(new BorderLayout());
 			JComboBox absList = new JComboBox();
+			if (e.getSource() == addPreAbs)
+				absList.addItem("complex-formation-and-sequestering-abstraction");
 			absList.addItem("absolute-activation/inhibition-generator");
 			absList.addItem("absolute-inhibition-generator");
 			absList.addItem("birth-death-generator");
@@ -3654,7 +3656,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				in.close();
 				ArrayList<String> loadProperties = new ArrayList<String>();
 				for (Object key : load.keySet()) {
-					if (key.equals("reb2sac.abstraction.method.0.1")) {
+					if (key.equals("gcm.abstraction.method")) {
+						loadProperties.add("gcm.abstraction.method="
+								+ load.getProperty("gcm.abstraction.method"));
+					}
+					else if (key.equals("reb2sac.abstraction.method.0.1")) {
 						if (!load.getProperty("reb2sac.abstraction.method.0.1").equals(
 								"enzyme-kinetic-qssa-1")) {
 							loadProperties.add("reb2sac.abstraction.method.0.1="
@@ -4434,6 +4440,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				// species.setListData(interestingSpecies);
 
 				getLists = new ArrayList<String>();
+				if (load.containsKey("gcm.abstraction.method"))
+					getLists.add(load.getProperty("gcm.abstraction.method"));
 				i = 1;
 				while (load.containsKey("reb2sac.abstraction.method.1." + i)) {
 					getLists.add(load.getProperty("reb2sac.abstraction.method.1." + i));
@@ -4525,8 +4533,42 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		return save;
 	}
 	
-	public JRadioButton getAbstractionRadio() {
-		return abstraction;
+	//Reports if any gcm abstraction options are selected (currently only one possible)
+	public boolean gcmAbstraction() {
+		ListModel preAbsList = preAbs.getModel();
+		for (int i = 0; i < preAbsList.getSize(); i++) {
+			String abstractionOption = (String) preAbsList.getElementAt(i);
+			if (abstractionOption.equals("complex-formation-and-sequestering-abstraction"))
+				return true;
+		}
+		return false;
+	}
+	
+	//Reports if any reb2sac abstraction options other than the default post-loop processing options are selected
+	public boolean reb2sacAbstraction() {
+		ListModel preAbsList = preAbs.getModel();
+		for (int i = 0; i < preAbsList.getSize(); i++) {
+			String abstractionOption = (String) preAbsList.getElementAt(i);
+			if (!abstractionOption.equals("complex-formation-and-sequestering-abstraction"))
+				return true;
+		}
+		ListModel loopAbsList = loopAbs.getModel();
+		for (int i = 0; i < loopAbsList.getSize(); i++) {
+			String abstractionOption = (String) loopAbsList.getElementAt(i);
+			if (!abstractionOption.equals("distribute-transformer") && 
+					!abstractionOption.equals("reversible-to-irreversible-transformer") &&
+					!abstractionOption.equals("kinetic-law-constants-simplifier"))
+				return true;
+		}
+		ListModel postAbsList = postAbs.getModel();
+		for (int i = 0; i < postAbsList.getSize(); i++) {
+			String abstractionOption = (String) postAbsList.getElementAt(i);
+			if (!abstractionOption.equals("distribute-transformer") && 
+					!abstractionOption.equals("reversible-to-irreversible-transformer") &&
+					!abstractionOption.equals("kinetic-law-constants-simplifier"))
+				return true;
+		}
+		return false;
 	}
 
 	public void setSbml(SBML_Editor sbml) {
