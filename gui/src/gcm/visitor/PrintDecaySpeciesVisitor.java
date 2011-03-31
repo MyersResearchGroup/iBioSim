@@ -65,7 +65,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 			kl = r.createKineticLaw();
 			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
 			if (complexAbstraction && specie.isSequesterable()) {
-				kl.setFormula(decayString + "*" + specie.getId() + sequesterSpecies(specie.getId()));
+				kl.setFormula(decayString + "*" + sequesterSpecies(specie.getId()));
 			} else
 				kl.setFormula(decayString + "*" + specie.getId());
 			Utility.addReaction(document, r);
@@ -85,7 +85,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 			kl = r.createKineticLaw();
 			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
 			if (complexAbstraction && specie.isSequesterable()) {
-				kl.setFormula(decayString + "*" + specie.getId() + sequesterSpecies(specie.getId()));
+				kl.setFormula(decayString + "*" + sequesterSpecies(specie.getId()));
 			} else
 				kl.setFormula(decayString + "*" + specie.getId());
 			Utility.addReaction(document, r);
@@ -110,7 +110,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 			kl = r.createKineticLaw();
 			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
 			if (complexAbstraction && specie.isSequesterable()) {
-				kl.setFormula(decayString + "*" + specie.getId() + sequesterSpecies(specie.getId()));
+				kl.setFormula(decayString + "*" + sequesterSpecies(specie.getId()));
 			} else
 				kl.setFormula(decayString + "*" + specie.getId());
 			Utility.addReaction(document, r);
