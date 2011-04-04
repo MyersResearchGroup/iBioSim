@@ -27,7 +27,7 @@ public class Lpn2verilog {
 			//for (int i=0; i < svPath.length; i++){
 			//System.out.println("\nModule string is " + svPath[i] + "\n");}
 			String svModuleName = svPath[svPath.length -1].split("\\.")[0];
-			System.out.println("\nModule name is " + svModuleName + "\n");
+			//System.out.println("\nModule name is " + svModuleName + "\n");
 			BufferedWriter sv = new BufferedWriter(new FileWriter(svFile));
 			StringBuffer initBuffer = new StringBuffer();
 			StringBuffer markedPlaceBuffer = new StringBuffer();
@@ -74,10 +74,9 @@ public class Lpn2verilog {
 			sv.write(");\n");
 			first = true;
 			String[] transitionList = lpn.getTransitionList();
-			for (int i=0; i < transitionList.length; i++){
-				System.out.println("\ntransition list is  " + transitionList[i] + "\n");}
+			
 			ArrayList<String> transArrayList = new ArrayList(Arrays.asList(transitionList));
-			System.out.println("\ntransArray list is  " + transArrayList + "\n");
+			//System.out.println("\ntransArray list is  " + transArrayList + "\n");
 			Collections.sort(transArrayList,new Comparator<String>(){
 				public int compare(String a, String b){
 					return(a.compareToIgnoreCase(b));
@@ -103,7 +102,7 @@ public class Lpn2verilog {
 			initBuffer.append("\t\t$dumpfile(\"" + svModuleName + ".vcd\");\n");
 			initBuffer.append("\t\t$dumpvars(0," + svModuleName + ");\n");
 			for (String st: transitionList){
-				if (lpn.getTransition(st).isPersistent()){ 	 System.out.println("This is a persistent Transition :"+st);
+				if (lpn.getTransition(st).isPersistent()){ 	// System.out.println("This is a persistent Transition :"+st);
 
 				//else {
 					//if (lpn.getTransition(st).hasConflictSet()){
@@ -128,7 +127,7 @@ public class Lpn2verilog {
 				//if (!lpn.getTransition(st).isPersistent() || lpn.getTransition(st).hasConflictSet()){ 
 
 
-					if (first){System.out.println("This is a non- persistent Transition :"+st);
+					if (first){//System.out.println("This is a non- persistent Transition :"+st);
 					sv.write("\twire " + st);
 					first = false;
 					} else{
@@ -245,7 +244,7 @@ public class Lpn2verilog {
 			StringBuffer[] alwaysBuffer = new StringBuffer[netCount];
 			//	StringBuffer[] prioritiesBuffer = new StringBuffer[netCount];
 			StringBuffer[] assignmentsBuffer = new StringBuffer[netCount];
-			for (int j = 0; j < netCount; j++){ System.out.println("Netcount is :"+netCount);
+			for (int j = 0; j < netCount; j++){ //System.out.println("Netcount is :"+netCount);
 			firstTransition[j] = true;
 			//	alwaysBuffer[j] = new StringBuffer(); dec 4,2010
 			//	prioritiesBuffer[j] = new StringBuffer();
@@ -256,10 +255,10 @@ public class Lpn2verilog {
 					//if (transitionList.)
 					sv.write("\tassign ");
 					ExprTree delayTree = lpn.getTransition(st).getDelayTree();
-					System.out.println("Delay Tree :"+delayTree+"for transition :"+st);
+					//System.out.println("Delay Tree :"+delayTree+"for transition :"+st);
 					if (delayTree != null){
 						String delay = delayTree.getElement("Verilog");
-						System.out.println("Delay "+delay);
+						//System.out.println("Delay "+delay);
 						if (delay.contains("uniform")){ //range
 							delay = delay.replaceFirst("uniform\\(", "");
 							delay = delay.substring(0, delay.length()-1); //delay = delay.replace("\\)", "");
@@ -273,7 +272,7 @@ public class Lpn2verilog {
 					}
 					if (lpn.getPreset(st).length != 0){ //Assuming there's no transition without a preset.
 						first = true;
-						for (String st2 : lpn.getPreset(st)){ System.out.println("getPreset :"+st2);
+						for (String st2 : lpn.getPreset(st)){ //System.out.println("getPreset :"+st2);
 						if (first){
 							sv.write(st2);
 							first = false;
@@ -284,9 +283,9 @@ public class Lpn2verilog {
 
 						}
 						if (lpn.getEnablingTree(st) != null){
-							System.out.println("enabling");
+							//System.out.println("enabling");
 							sv.write(" && (" + lpn.getEnablingTree(st).getElement("Verilog") + ")");
-							System.out.println(st +" enabling " + lpn.getEnablingTree(st).getElement("Verilog"));
+							//System.out.println(st +" enabling " + lpn.getEnablingTree(st).getElement("Verilog"));
 						}
 					}
 					sv.write(";\n");
@@ -298,7 +297,7 @@ public class Lpn2verilog {
 					} else {
 
 						assignmentsBuffer[tag.get(st)].append("\talways @(posedge " + st + ") begin\n"); //dec 4, 2010
-						for (String st2 : lpn.getPreset(st)){System.out.println(" tag.get(st) :"+tag.get(st));
+						for (String st2 : lpn.getPreset(st)){//System.out.println(" tag.get(st) :"+tag.get(st));
 						assignmentsBuffer[tag.get(st)].append("\t\t" + st2 + " <= 0;\n");
 						}
 						for (String st2 : lpn.getPostset(st)){
@@ -307,12 +306,12 @@ public class Lpn2verilog {
 						HashMap<String,ExprTree> assignmentTrees = lpn.getTransition(st).getAssignTrees(); 
 						HashMap<String,ExprTree> rateAssignmentTrees = lpn.getTransition(st).getRateAssignTrees(); 
 						HashMap<String,ExprTree> valueAssignmentTrees = lpn.getTransition(st).getIntAssignTrees();
-						HashMap<String,ExprTree> contAssignmentTrees = lpn.getTransition(st).getContAssignTrees(); System.out.println("assignmentTrees.size() :"+assignmentTrees);
+						HashMap<String,ExprTree> contAssignmentTrees = lpn.getTransition(st).getContAssignTrees(); //System.out.println("assignmentTrees.size() :"+assignmentTrees);
 						if (assignmentTrees.size() != 0){
 							for (String st2 : valueAssignmentTrees.keySet()){
 								//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
 								String asgnmt = valueAssignmentTrees.get(st2).getElement("Verilog");
-								System.out.println("asgnmt :"+asgnmt);
+								//System.out.println("asgnmt :"+asgnmt);
 								if ((asgnmt != null) && (asgnmt != ""))
 									assignmentsBuffer[tag.get(st)].append("\t\t" + st2 + " <= " + asgnmt + ";\n");
 							}
@@ -322,9 +321,9 @@ public class Lpn2verilog {
 								if ((asgnmt != null) && (asgnmt != ""))
 									assignmentsBuffer[tag.get(st)].append("\t\t" + st2 + " <= " + asgnmt + ";\n");
 							}
-							for (String st2 : rateAssignmentTrees.keySet()){System.out.println("st2 :"+st2);
+							for (String st2 : rateAssignmentTrees.keySet()){//System.out.println("st2 :"+st2);
 							//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
-							String asgnmt = rateAssignmentTrees.get(st2).getElement("Verilog"); System.out.println("asgnmt :"+asgnmt);
+							String asgnmt = rateAssignmentTrees.get(st2).getElement("Verilog"); //System.out.println("asgnmt :"+asgnmt);
 							if (asgnmt != null){
 								assignmentsBuffer[tag.get(st)].append("\t\tentryTime = $time;\n");
 								assignmentsBuffer[tag.get(st)].append("\t\trate_" + st2 + " = " + asgnmt + ";\n");
@@ -339,23 +338,19 @@ public class Lpn2verilog {
 
 					//if(	lpn.getTransition(st).hasConflictSet()){ 
 						int size = 	transitionList.length;
-						System.out.println("st in conflict:"+st);
+						//System.out.println("st in conflict:"+st);
 						//Transition[] trans = new Transition[5];
 						Transition[] conflictSet = new Transition[size];
 						conflictSet = lpn.getTransition(st).getConflictSet();
 						//System.out.println("This is the conflict set size :"+size);
-						for(int i=0; i<conflictSet.length; i++){
-							System.out.println("This is the conflict set size:"+conflictSet.length);
-							System.out.println("This is the conflict set :"+conflictSet[i]);}
-						for (Transition conflict : conflictSet){
-							System.out.println("This is the conflict :"+conflict);
-						}
+						
+						
 						sv.write("\tassign ");
 						ExprTree delayTree = lpn.getTransition(st).getDelayTree();
-						System.out.println("Delay Tree :"+delayTree+"for transition :"+st);
+						//System.out.println("Delay Tree :"+delayTree+"for transition :"+st);
 						if (delayTree != null){
 							String delay = delayTree.getElement("Verilog");
-							System.out.println("Delay "+delay);
+							//System.out.println("Delay "+delay);
 							if (delay.contains("uniform")){ //range
 								delay = delay.replaceFirst("uniform\\(", "");
 								delay = delay.substring(0, delay.length()-1); //delay = delay.replace("\\)", "");
@@ -369,7 +364,7 @@ public class Lpn2verilog {
 						}
 						if (lpn.getPreset(st).length != 0){ //Assuming there's no transition without a preset.
 							first = true;
-							for (String st2 : lpn.getPreset(st)){ System.out.println("getPreset :"+st2);
+							for (String st2 : lpn.getPreset(st)){// System.out.println("getPreset :"+st2);
 							if (first){
 								sv.write("("+st2);
 								first = false;
@@ -391,28 +386,28 @@ public class Lpn2verilog {
 						HashMap<String,ExprTree> assignmentTrees = lpn.getTransition(st).getAssignTrees(); 
 						HashMap<String,ExprTree> rateAssignmentTrees = lpn.getTransition(st).getRateAssignTrees(); 
 						HashMap<String,ExprTree> valueAssignmentTrees = lpn.getTransition(st).getIntAssignTrees();
-						HashMap<String,ExprTree> contAssignmentTrees = lpn.getTransition(st).getContAssignTrees(); System.out.println("assignmentTrees.size() :"+assignmentTrees);
+						HashMap<String,ExprTree> contAssignmentTrees = lpn.getTransition(st).getContAssignTrees(); //System.out.println("assignmentTrees.size() :"+assignmentTrees);
 
 
 						if (lpn.getEnablingTree(st) != null){
 							enable = lpn.getEnablingTree(st).getElement("Verilog");
-							System.out.println("enabling");
+							//System.out.println("enabling");
 							//sv.write(" && (" + lpn.getEnablingTree(st).getElement("Verilog") + ")");
-							System.out.println(st +" enabling " + enable);
+							//System.out.println(st +" enabling " + enable);
 						}
 
 						for (String place : lpn.getPreset(st)){ 
-							System.out.println("getPreset :"+place);
+							//System.out.println("getPreset :"+place);
 							assignmentsBuffer[tag.get(st)].append("\talways @(posedge ("+ enable + ") && (" +place+")) begin\n"); //dec 4, 2010//dec 4, 2010
 						}
 
 						ExprTree delay = lpn.getDelayTree(st);
-						System.out.println(" delay....delay :"+delay);
+						//System.out.println(" delay....delay :"+delay);
 						if (lpn.getEnablingTree(st) != null){
 							enable = lpn.getEnablingTree(st).getElement("Verilog");
 							for (String st2 : lpn.getPreset(st)){
 
-								System.out.println(" tag.get(st) :"+tag.get(st));
+								//System.out.println(" tag.get(st) :"+tag.get(st));
 								assignmentsBuffer[tag.get(st)].append("\t\t" + st + "p <=  (("+enable+") && "+st2+");\n");
 
 							}
@@ -429,7 +424,7 @@ public class Lpn2verilog {
 						} else {
 
 							assignmentsBuffer[tag.get(st)].append("\talways @(posedge " + st + ") begin\n"); //dec 4, 2010
-							for (String st2 : lpn.getPreset(st)){System.out.println(" tag.get(st) :"+tag.get(st));
+							for (String st2 : lpn.getPreset(st)){//System.out.println(" tag.get(st) :"+tag.get(st));
 							assignmentsBuffer[tag.get(st)].append("\t\t" + st2 + " <= 0;\n");
 							}
 							for (String st2 : lpn.getPostset(st)){
@@ -443,7 +438,7 @@ public class Lpn2verilog {
 								for (String st2 : valueAssignmentTrees.keySet()){
 									//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
 									String asgnmt = valueAssignmentTrees.get(st2).getElement("Verilog");
-									System.out.println("asgnmt :"+asgnmt);
+									//System.out.println("asgnmt :"+asgnmt);
 									if ((asgnmt != null) && (asgnmt != ""))
 										assignmentsBuffer[tag.get(st)].append("\t\t" + st2 + " <= " + asgnmt + ";\n");
 								}
@@ -453,9 +448,9 @@ public class Lpn2verilog {
 									if ((asgnmt != null) && (asgnmt != ""))
 										assignmentsBuffer[tag.get(st)].append("\t\t" + st2 + " <= " + asgnmt + ";\n");
 								}
-								for (String st2 : rateAssignmentTrees.keySet()){System.out.println("st2 :"+st2);
+								for (String st2 : rateAssignmentTrees.keySet()){//System.out.println("st2 :"+st2);
 								//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
-								String asgnmt = rateAssignmentTrees.get(st2).getElement("Verilog"); System.out.println("asgnmt :"+asgnmt);
+								String asgnmt = rateAssignmentTrees.get(st2).getElement("Verilog"); //System.out.println("asgnmt :"+asgnmt);
 								if (asgnmt != null){
 									assignmentsBuffer[tag.get(st)].append("\t\tentryTime = $time;\n");
 									assignmentsBuffer[tag.get(st)].append("\t\trate_" + st2 + " = " + asgnmt + ";\n");
@@ -571,19 +566,19 @@ public class Lpn2verilog {
 	}
 
 	private HashMap<String,Integer> tagNet(LhpnFile g, String place, int id, HashMap<String,Integer> tag){
-		System.out.println("Place is :"+place);
+		//System.out.println("Place is :"+place);
 		if (!visitedPlaces.containsKey(place)){
 			visitedPlaces.put(place,true);
 			for (String postsetTrans : g.getPostset(place)){
-				System.out.println("postset : "+postsetTrans);
+				//System.out.println("postset : "+postsetTrans);
 				tag.put(postsetTrans, id);
 				//System.out.println("Tagged transition " + postsetTrans + " with " + id);
-				for (String postsetPlace : g.getPostset(postsetTrans)){ System.out.println("postsetPlace :"+postsetPlace);
+				for (String postsetPlace : g.getPostset(postsetTrans)){// System.out.println("postsetPlace :"+postsetPlace);
 				tag = tagNet(g, postsetPlace, id, tag);
 				}
 			}
 		}
-		System.out.println("Hello");
+		//System.out.println("Hello");
 		return tag;
 	}
 }
