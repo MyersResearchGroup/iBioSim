@@ -1080,16 +1080,7 @@ public class LearnModel { // added ItemListener SB
 		String s= "stable";
 		varNames.add(s);
 
-		//System.out.println("VarNames: "+varNames);
-		//variablesList.add(s);
-		/*reqdVarsL.add(new Variable(s));
-
-		for(int m=0; m<reqdVarsL.size(); m++)
-		{
-			System.out.println("This is varNames size  :  " +reqdVarsL.get(m).getName());
-
-		}*/
-
+		
 		Variable vStable = new Variable("stable");
 		vStable.setCare(true); 
 		vStable.setDmvc(true);
@@ -1104,12 +1095,7 @@ public class LearnModel { // added ItemListener SB
 		tStable.add(0.5);
 		thresholds.put(s, tStable);
 
-		/*for(int m=0; m<reqdVarsL.size(); m++)
-		{
-			System.out.println("This is reqdVarsL  :  " +reqdVarsL.get(m).getName());
-
-		}*/
-		//System.out.println("This is threshold  :  " +thresholds);
+		
 	}
 	
 	public void addStablesToData(HashMap<String, ArrayList<Double>> localThresholds, HashMap<String, ArrayList<String>> useMap){
@@ -1749,7 +1735,7 @@ public class LearnModel { // added ItemListener SB
 						// }
 						if (reqdVarsL.get(j).isDmvc()) { // && !reqdVarsL.get(j).isInput()){
 
-							//if(dmvcValuesUnique.get(reqdVarsL.get(j).getName()).getProperty(String.valueOf(bins[j][i]))!=null){ System.out.println("Here it is : "+dmvcValuesUnique.get(reqdVarsL.get(j).getName()).getProperty(String.valueOf(bins[j][i])));
+							if(dmvcValuesUnique.get(reqdVarsL.get(j).getName()).getProperty(String.valueOf(bins[j][i]))!=null){// System.out.println("Here it is : "+dmvcValuesUnique.get(reqdVarsL.get(j).getName()).getProperty(String.valueOf(bins[j][i])));
 							//System.out.println("DMVC " + dmvcValuesUnique);
 
 							//System.out.println("DMVC " + dmvcValuesUnique);
@@ -1760,7 +1746,7 @@ public class LearnModel { // added ItemListener SB
 							addValue(p0,reqdVarsL.get(j).getName(),Double.valueOf(dmvcValuesUnique.get(reqdVarsL.get(j).getName()).getProperty(String.valueOf(bins[j][i]))));
 							//out.write("Add value : " + reqdVarsL.get(j).getName() + " -> " + dmvcValuesUnique.get(reqdVarsL.get(j).getName()).get(bins[j][i]) + " at place p" + p0.getProperty("placeNum") + "\n");
 							continue;
-						}//}
+						}}
 						addRate(p0, reqdVarsL.get(j).getName(), rates[j][i]);
 					}
 //					boolean transientNet = false;
