@@ -288,12 +288,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		else {
 			gcm.setSBMLFile("");
 		}
-		if (bioAbs.isSelected()) {
-			gcm.setBioAbs(true);
-		}
-		else {
-			gcm.setBioAbs(false);
-		}
 		GeneticNetwork.setRoot(path + separator);
 
 		if (command.contains("GCM as")) {
@@ -916,10 +910,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				&& !gcm.getSBMLFile().equals(sbmlFiles.getSelectedItem())) {
 			dirty = true;
 		}
-		else if (o instanceof JCheckBox && !lock
-				&& (gcm.getBioAbs() != bioAbs.isSelected())) {
-			dirty = true;
-		}
 		// System.out.println(o);
 	}
 
@@ -960,19 +950,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		reloadFiles();
 		mainPanelNorth.add(sbmlFileLabel);
 		mainPanelNorth.add(sbmlFiles);
-
-		JLabel bioAbsLabel = new JLabel("Complex abstraction:");
-		bioAbs = new JCheckBox();
-		bioAbs.addActionListener(this);
-		if (paramsOnly) {
-			bioAbsLabel.setEnabled(false);
-			bioAbs.setEnabled(false);
-		}
-		mainPanelNorth.add(bioAbsLabel);
-		mainPanelNorth.add(bioAbs);
-		if (gcm.getBioAbs()) {
-			bioAbs.setSelected(true);
-		}
 
 		/*JLabel dimAbsLabel = new JLabel("Dimerization abstraction:");
 		dimAbs = new JCheckBox();
@@ -1720,9 +1697,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 
 	private JComboBox sbmlFiles = null;
 
-	private JCheckBox bioAbs = null;
-
-	private JCheckBox dimAbs = null;
 
 	private String path = null;
 

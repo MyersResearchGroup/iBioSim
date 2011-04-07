@@ -23,7 +23,7 @@ public class Button_Enabling {
 	 * @param gcmEditor
 	 */
 	public static void enableNoneOrAbs(JRadioButton ODE, JRadioButton monteCarlo,
-			JRadioButton markov, JTextField seed, JLabel seedLabel, JTextField runs,
+			JRadioButton markov, JRadioButton sbml, JTextField seed, JLabel seedLabel, JTextField runs,
 			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel,
 			JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
 			JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators,
@@ -87,7 +87,8 @@ public class Button_Enabling {
 				getLists.add("distribute-transformer");
 				getLists.add("reversible-to-irreversible-transformer");
 			}
-			getLists.add("kinetic-law-constants-simplifier");
+			if (!sbml.isSelected())
+				getLists.add("kinetic-law-constants-simplifier");
 			objects = getLists.toArray();
 			postAbs.setListData(objects);
 		}
@@ -150,7 +151,8 @@ public class Button_Enabling {
 				getLists.add("distribute-transformer");
 				getLists.add("reversible-to-irreversible-transformer");
 			}
-			getLists.add("kinetic-law-constants-simplifier");
+			if (!sbml.isSelected())
+				getLists.add("kinetic-law-constants-simplifier");
 			objects = getLists.toArray();
 			postAbs.setListData(objects);
 		}
@@ -504,7 +506,7 @@ public class Button_Enabling {
 		description.setEnabled(false);
 		fileStem.setText("");
 		ArrayList<String> getLists = new ArrayList<String>();
-		getLists.add("kinetic-law-constants-simplifier");
+//		getLists.add("kinetic-law-constants-simplifier");
 		Object[] objects = getLists.toArray();
 		postAbs.setListData(objects);
 	}
