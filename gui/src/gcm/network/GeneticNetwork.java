@@ -162,7 +162,6 @@ public class GeneticNetwork {
 	 */
 	public void loadProperties(GCMFile gcm) {
 		properties = gcm;
-		complexAbstraction = gcm.getBioAbs();
 	}
 	
 	public void loadProperties(GCMFile gcm, boolean complexAbstraction, String[] interestingSpecies) {
@@ -1067,6 +1066,16 @@ public class GeneticNetwork {
 					species.get(part.getPartId()).setSequesterable(false);
 			}
 		}
+	}
+	
+	public ArrayList<String> getInterestingSpecies() {
+		ArrayList<String> interestingSpecies = new ArrayList<String>();
+		for (String id : species.keySet()) {
+			if (!complexMap.keySet().contains(id) || 
+					species.get(id).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT))
+				interestingSpecies.add(id);
+		}
+		return interestingSpecies;
 	}
 	
 	public HashMap<String, SpeciesInterface> getSpecies() {

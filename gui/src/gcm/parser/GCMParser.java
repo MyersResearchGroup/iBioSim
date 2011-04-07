@@ -216,7 +216,7 @@ public class GCMParser {
 		r.setInput(input);
 		r.setOutput(output);
 		if (r.getType().equals("plus")) {
-			//Maps complex species to constituent species
+			//Maps complex species to its constituent species
 			ArrayList<PartSpecies> parts = null;
 			if (complexMap.containsKey(output)) {
 				parts = complexMap.get(output);

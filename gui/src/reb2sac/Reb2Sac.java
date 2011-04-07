@@ -257,7 +257,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * @param modelFile
 	 */
 	public Reb2Sac(String sbmlFile, String sbmlProp, String root, Gui biomodelsim, String simName,
-			Log log, JTabbedPane simTab, String open, String modelFile, AbstPane lhpnAbstraction) {
+			Log log, JTabbedPane simTab, String open, String modelFile, AbstPane lhpnAbstraction, ArrayList<String> defaultInterestingSpecies) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -1123,6 +1123,20 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		if (open != null) {
 			open(open);
 		}
+		//Marks default interesting species
+		for (int i = 0; i < speciesInt.size(); i++) {
+			if (defaultInterestingSpecies.contains(((JTextField) speciesInt.get(i).get(1)).getText()) &&
+					!((JCheckBox) speciesInt.get(i).get(0)).isSelected()) {
+				speciesInt.get(i).get(0).setEnabled(true);
+				((JCheckBox) speciesInt.get(i).get(0)).doClick();
+				speciesInt.get(i).get(0).setEnabled(false);
+				if (none.isSelected()) {
+					for (int j = 2; j < speciesInt.get(i).size(); j++) {
+						speciesInt.get(i).get(j).setEnabled(false);
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -1133,7 +1147,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		// if the none Radio Button is selected
 		change = true;
 		if (e.getSource() == none) {
-			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
+			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs,
 					runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
 					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
 					explanation, description, none, spLabel, speciesLabel, addIntSpecies,
@@ -1167,7 +1181,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the abstraction Radio Button is selected
 		else if (e.getSource() == abstraction) {
-			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
+			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs,
 					runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
 					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
 					explanation, description, none, spLabel, speciesLabel, addIntSpecies,
@@ -4131,7 +4145,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				terminations.setListData(new Object[0]);
 				if (load.getProperty("reb2sac.abstraction.method").equals("none")) {
 					none.setSelected(true);
-					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
+					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs,
 							runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
 							limitLabel, limit, intervalLabel, interval, simulators,
 							simulatorsLabel, explanation, description, none, spLabel, speciesLabel,
@@ -4148,7 +4162,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 				else if (load.getProperty("reb2sac.abstraction.method").equals("abs")) {
 					abstraction.setSelected(true);
-					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, seed, seedLabel, runs,
+					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs,
 							runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
 							limitLabel, limit, intervalLabel, interval, simulators,
 							simulatorsLabel, explanation, description, none, spLabel, speciesLabel,
@@ -4544,7 +4558,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		return false;
 	}
 	
-	//Reports if any reb2sac abstraction options other than the default post-loop processing options are selected
+	//Reports if any reb2sac abstraction options are selected
 	public boolean reb2sacAbstraction() {
 		ListModel preAbsList = preAbs.getModel();
 		for (int i = 0; i < preAbsList.getSize(); i++) {
@@ -4553,21 +4567,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				return true;
 		}
 		ListModel loopAbsList = loopAbs.getModel();
-		for (int i = 0; i < loopAbsList.getSize(); i++) {
-			String abstractionOption = (String) loopAbsList.getElementAt(i);
-			if (!abstractionOption.equals("distribute-transformer") && 
-					!abstractionOption.equals("reversible-to-irreversible-transformer") &&
-					!abstractionOption.equals("kinetic-law-constants-simplifier"))
-				return true;
-		}
+		if(loopAbsList.getSize() > 0)
+			return true;
 		ListModel postAbsList = postAbs.getModel();
-		for (int i = 0; i < postAbsList.getSize(); i++) {
-			String abstractionOption = (String) postAbsList.getElementAt(i);
-			if (!abstractionOption.equals("distribute-transformer") && 
-					!abstractionOption.equals("reversible-to-irreversible-transformer") &&
-					!abstractionOption.equals("kinetic-law-constants-simplifier"))
-				return true;
-		}
+		if(postAbsList.getSize() > 0)
+			return true;
 		return false;
 	}
 
@@ -4579,6 +4583,18 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		gcmEditor = gcm;
 		if (nary.isSelected()) {
 			lhpn.setEnabled(true);
+			//Disables thresholds for complex and input species
+			ArrayList<String> complexSpecies = gcmEditor.getGCM().getBiochemicalSpecies();
+			ArrayList<String> inputSpecies = gcmEditor.getGCM().getInputSpecies();
+			for (int j = 0; j < speciesInt.size(); j++) {
+				if (((JCheckBox) speciesInt.get(j).get(0)).isSelected() &&
+						!complexSpecies.contains(((JTextField) speciesInt.get(j).get(1)).getText()) && 
+						!inputSpecies.contains(((JTextField) speciesInt.get(j).get(1)).getText())) {
+					for (int i = 2; i < speciesInt.get(j).size(); i++) {
+						speciesInt.get(j).get(i).setEnabled(false);
+					}
+				}
+			}
 		}
 		if (markov.isSelected()) {
 			simulators.removeAllItems();
@@ -4591,23 +4607,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 		}
 		change = false;
-		for (int j = 0; j < speciesInt.size(); j++) {
-			if (((JCheckBox) speciesInt.get(j).get(0)).isSelected()) {
-				if (!(gcmEditor.getGCM().getBiochemicalSpecies().contains(
-						((JTextField) speciesInt.get(j).get(1)).getText()) || gcmEditor.getGCM()
-						.getInputSpecies().contains(
-								((JTextField) speciesInt.get(j).get(1)).getText()))) {
-					for (int i = 2; i < speciesInt.get(j).size(); i++) {
-						speciesInt.get(j).get(i).setEnabled(true);
-					}
-				}
-				else {
-					for (int i = 2; i < speciesInt.get(j).size(); i++) {
-						speciesInt.get(j).get(i).setEnabled(false);
-					}
-				}
-			}
-		}
+		
 	}
 
 	public void updateSpeciesList() {

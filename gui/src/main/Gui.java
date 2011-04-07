@@ -2773,73 +2773,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 		}
-		// if the edit popup menu is selected on a dot file
-		else if (e.getActionCommand().equals("createSBML")) {
-			try {
-				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab
-							.getTitleAt(i)
-							.equals(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-						tab.setSelectedIndex(i);
-						if (save(i, 0) == 0) {
-							return;
-						}
-						break;
-					}
-				}
-				String theFile = "";
-				String filename = tree.getFile();
-				GCMFile gcm = new GCMFile(root);
-				gcm.load(filename);
-				GCMParser parser = new GCMParser(filename);
-				GeneticNetwork network = null;
-				try {
-					network = parser.buildNetwork();
-				}
-				catch (IllegalStateException e1) {
-					JOptionPane.showMessageDialog(frame, e1.getMessage(), "Error",
-							JOptionPane.ERROR_MESSAGE);
-					return;
-				}
-				network.loadProperties(gcm);
-				if (filename.lastIndexOf('/') >= 0) {
-					theFile = filename.substring(filename.lastIndexOf('/') + 1);
-				}
-				if (filename.lastIndexOf('\\') >= 0) {
-					theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-				}
-				if (new File(root + separator + theFile.replace(".gcm", "") + ".xml").exists()) {
-					String[] options = { "Ok", "Cancel" };
-					int value = JOptionPane.showOptionDialog(frame, theFile.replace(".gcm", "")
-							+ ".xml already exists.  Overwrite file?", "Save file",
-							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-							options[0]);
-					if (value == JOptionPane.YES_OPTION) {
-						GeneticNetwork.setRoot(root + separator);
-						network.mergeSBML(root + separator + theFile.replace(".gcm", "") + ".xml");
-						log.addText("Saving GCM file as SBML file:\n" + root + separator
-								+ theFile.replace(".gcm", "") + ".xml\n");
-						addToTree(theFile.replace(".gcm", "") + ".xml");
-						updateOpenSBML(theFile.replace(".gcm", "") + ".xml");
-					}
-					else {
-						// Do nothing
-					}
-				}
-				else {
-					GeneticNetwork.setRoot(root + separator);
-					network.mergeSBML(root + separator + theFile.replace(".gcm", "") + ".xml");
-					log.addText("Saving GCM file as SBML file:\n" + root + separator
-							+ theFile.replace(".gcm", "") + ".xml\n");
-					addToTree(theFile.replace(".gcm", "") + ".xml");
-				}
-			}
-			catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to create SBML file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
 		else if (e.getActionCommand().equals("createLHPN")) {
 			try {
 				for (int i = 0; i < tab.getTabCount(); i++) {
@@ -8399,10 +8332,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				createLearn.addActionListener(this);
 				createLearn.addMouseListener(this);
 				createLearn.setActionCommand("createLearn");
-				JMenuItem createSBML = new JMenuItem("Create SBML File");
-				createSBML.addActionListener(this);
-				createSBML.addMouseListener(this);
-				createSBML.setActionCommand("createSBML");
 				// JMenuItem createLHPN = new JMenuItem("Create LPN File");
 				// createLHPN.addActionListener(this);
 				// createLHPN.addMouseListener(this);
@@ -8429,7 +8358,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				rename.setActionCommand("rename");
 				popup.add(create);
 				popup.add(createLearn);
-				popup.add(createSBML);
 				// popup.add(createLHPN);
 				popup.addSeparator();
 				popup.add(graph);
@@ -9868,11 +9796,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				String sbmlFile = tree.getFile();
 				String[] sbml1 = tree.getFile().split(separator);
 				String sbmlFileProp;
+				ArrayList<String> interestingSpecies = new ArrayList<String>();
 				if (fileType == 1) {
 					sbmlFile = (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1]
 							.length() - 3) + "sbml");
 					GCMParser parser = new GCMParser(tree.getFile());
 					GeneticNetwork network = parser.buildNetwork();
+					interestingSpecies.addAll(network.getInterestingSpecies());
 					GeneticNetwork.setRoot(root + separator);
 					network.mergeSBML(root + separator + simName + separator + sbmlFile);
 					sbmlFileProp = root
@@ -9925,7 +9855,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JTabbedPane simTab = new JTabbedPane();
 				simTab.addMouseListener(this);
 				Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFileProp, root, this, simName.trim(),
-						log, simTab, null, sbml1[sbml1.length - 1], null);
+						log, simTab, null, sbml1[sbml1.length - 1], null, interestingSpecies);
 				// reb2sac.addMouseListener(this);
 				simTab.addTab("Simulation Options", reb2sac);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
@@ -10507,6 +10437,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						String sbmlLoadFile = "";
 						String gcmFile = "";
+						ArrayList<String> interestingSpecies = new ArrayList<String>();
 						if (new File(simFile).exists()) {
 							try {
 								Scanner s = new Scanner(new File(simFile));
@@ -10535,6 +10466,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 										GCMParser parser = new GCMParser(root + separator
 												+ sbmlLoadFile);
 										GeneticNetwork network = parser.buildNetwork();
+										interestingSpecies.addAll(network.getInterestingSpecies());
 										GeneticNetwork.setRoot(root + separator);
 										sbmlLoadFile = root + separator
 												+ split[split.length - 1].trim() + separator
@@ -10610,12 +10542,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						if (gcmFile.contains(".lpn")) {
 							reb2sac = new Reb2Sac(sbmlLoadFile, getAFile, root, this,
 									split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
-									lhpnAbstraction);
+									lhpnAbstraction, null);
 						}
 						else {
 							reb2sac = new Reb2Sac(sbmlLoadFile, getAFile, root, this,
 									split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
-									null);
+									null, interestingSpecies);
 						}
 						simTab.addTab("Simulation Options", reb2sac);
 						simTab.getComponentAt(simTab.getComponents().length - 1)
@@ -11161,7 +11093,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			JTabbedPane simTab = new JTabbedPane();
 			simTab.addMouseListener(this);
 			Reb2Sac reb2sac = new Reb2Sac(sbmlLoadFile, sbmlFile, root, this, newSim, log, simTab,
-					propertiesFile, gcmFile, null);
+					propertiesFile, gcmFile, null, null);
 			simTab.addTab("Simulation Options", reb2sac);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 			simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
