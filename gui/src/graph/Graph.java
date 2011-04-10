@@ -88,6 +88,7 @@ import org.jfree.chart.renderer.category.GradientBarPainter;
 import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
+import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
@@ -162,6 +163,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private JComboBox XVariable;
 
 	private JCheckBox LogX, LogY;
+	
+	private JCheckBox visibleLegend;
+	
+	private LegendTitle legend;
 
 	private Log log;
 
@@ -315,6 +320,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		chart.getXYPlot().setDomainGridlinePaint(java.awt.Color.LIGHT_GRAY);
 		chart.getXYPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
 		chart.addProgressListener(this);
+		legend = chart.getLegend();
 		ChartPanel graph = new ChartPanel(chart);
 		graph.setLayout(new GridLayout(1, 1));
 		JLabel edit = new JLabel("Double click here to create graph");
@@ -361,6 +367,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		LogX.setSelected(false);
 		LogY = new JCheckBox("LogY");
 		LogY.setSelected(false);
+		visibleLegend = new JCheckBox("Visible Legend");
+		visibleLegend.setSelected(true);
 		XMin = new JTextField();
 		XMax = new JTextField();
 		XScale = new JTextField();
@@ -1121,6 +1129,17 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				LogY.setSelected(false);
 			}
 		}
+		if (visibleLegend.isSelected()) {
+			if (chart.getLegend() == null) {
+				chart.addLegend(legend);
+			}
+		}
+		else {
+			if (chart.getLegend() != null) {
+				legend = chart.getLegend();
+			}
+			chart.removeLegend();
+		}
 		axis = (NumberAxis) plot.getDomainAxis();
 		if (minX == Double.MAX_VALUE || maxX == Double.MIN_VALUE) {
 			axis.setRange(-1, 1);
@@ -1424,6 +1443,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						plot.setRangeAxis(rangeAxis);
 						LogY.setSelected(false);
 					}
+				}
+			}
+		});
+		visibleLegend.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (((JCheckBox) e.getSource()).isSelected()) {
+					if (chart.getLegend() == null) {
+						chart.addLegend(legend);
+					}
+				}
+				else {
+					if (chart.getLegend() != null) {
+						legend = chart.getLegend();
+					}
+					chart.removeLegend();
 				}
 			}
 		});
@@ -2592,8 +2626,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			titlePanel2.add(resize);
 			titlePanel2.add(XVariable);
 			titlePanel2.add(LogX);
-			titlePanel2.add(new JPanel());
 			titlePanel2.add(LogY);
+			titlePanel2.add(visibleLegend);
 			titlePanel.add(titlePanel1, "Center");
 			titlePanel.add(titlePanel2, "South");
 			// JPanel buttonPanel = new JPanel();
@@ -5667,6 +5701,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			graph.setProperty("auto.resize", "" + resize.isSelected());
 			graph.setProperty("LogX", "" + LogX.isSelected());
 			graph.setProperty("LogY", "" + LogY.isSelected());
+			graph.setProperty("visibleLegend", "" + visibleLegend.isSelected());
 			for (int i = 0; i < graphed.size(); i++) {
 				graph.setProperty("species.connected." + i, "" + graphed.get(i).getConnected());
 				graph.setProperty("species.filled." + i, "" + graphed.get(i).getFilled());
@@ -5712,6 +5747,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									.getBarPainter() instanceof GradientBarPainter));
 			graph.setProperty("shadow", ""
 					+ ((BarRenderer) chart.getCategoryPlot().getRenderer()).getShadowsVisible());
+			graph.setProperty("visibleLegend", "" + visibleLegend.isSelected());
 			for (int i = 0; i < probGraphed.size(); i++) {
 				graph.setProperty("species.number." + i, "" + probGraphed.get(i).getNumber());
 				graph.setProperty("species.name." + i, probGraphed.get(i).getSpecies());
@@ -5803,6 +5839,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				graph.setProperty("auto.resize", "" + resize.isSelected());
 				graph.setProperty("LogX", "" + LogX.isSelected());
 				graph.setProperty("LogY", "" + LogY.isSelected());
+				graph.setProperty("visibleLegend", "" + visibleLegend.isSelected());
 				for (int i = 0; i < graphed.size(); i++) {
 					graph.setProperty("species.connected." + i, "" + graphed.get(i).getConnected());
 					graph.setProperty("species.filled." + i, "" + graphed.get(i).getFilled());
@@ -5912,6 +5949,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						.setProperty("shadow", ""
 								+ ((BarRenderer) chart.getCategoryPlot().getRenderer())
 										.getShadowsVisible());
+				graph.setProperty("visibleLegend", "" + visibleLegend.isSelected());
 				for (int i = 0; i < probGraphed.size(); i++) {
 					graph.setProperty("species.number." + i, "" + probGraphed.get(i).getNumber());
 					graph.setProperty("species.name." + i, probGraphed.get(i).getSpecies());
@@ -6003,6 +6041,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				else {
 					LogY.setSelected(false);
 				}
+				if (graph.containsKey("visibleLegend") && graph.getProperty("visibleLegend").equals("false")) {
+					visibleLegend.setSelected(false);
+				}
+				else {
+					visibleLegend.setSelected(true);
+				}
 				int next = 0;
 				while (graph.containsKey("species.name." + next)) {
 					boolean connected, filled, visible;
@@ -6083,6 +6127,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				else {
 					((BarRenderer) chart.getCategoryPlot().getRenderer()).setShadowVisible(true);
+				}
+				if (graph.containsKey("visibleLegend") && graph.getProperty("visibleLegend").equals("false")) {
+					visibleLegend.setSelected(false);
+				}
+				else {
+					visibleLegend.setSelected(true);
 				}
 				int next = 0;
 				while (graph.containsKey("species.name." + next)) {
@@ -7141,6 +7191,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
 		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
 		chart.getCategoryPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
+		legend = chart.getLegend();
+		visibleLegend = new JCheckBox("Visible Legend");
+		visibleLegend.setSelected(true);
 		ChartPanel graph = new ChartPanel(chart);
 		graph.setLayout(new GridLayout(1, 1));
 		JLabel edit = new JLabel("Double click here to create graph");
@@ -7198,6 +7251,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		final JCheckBox shadow = new JCheckBox("Paint Bar Shadows");
 		shadow.setSelected(((BarRenderer) chart.getCategoryPlot().getRenderer())
 				.getShadowsVisible());
+		visibleLegend.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if (((JCheckBox) e.getSource()).isSelected()) {
+					if (chart.getLegend() == null) {
+						chart.addLegend(legend);
+					}
+				}
+				else {
+					if (chart.getLegend() != null) {
+						legend = chart.getLegend();
+					}
+					chart.removeLegend();
+				}
+			}
+		});
 		final JTextField title = new JTextField(chart.getTitle().getText(), 5);
 		final JTextField x = new JTextField(chart.getCategoryPlot().getDomainAxis().getLabel(), 5);
 		final JTextField y = new JTextField(chart.getCategoryPlot().getRangeAxis().getLabel(), 5);
@@ -7680,12 +7748,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			titlePanel1.add(x);
 			titlePanel1.add(yLabel);
 			titlePanel1.add(y);
-			titlePanel2.add(new JPanel());
 			JPanel deselectPanel = new JPanel();
 			deselectPanel.add(deselect);
 			titlePanel2.add(deselectPanel);
 			titlePanel2.add(gradient);
 			titlePanel2.add(shadow);
+			titlePanel2.add(visibleLegend);
 			titlePanel2.add(new JPanel());
 			titlePanel2.add(new JPanel());
 			titlePanel.add(titlePanel1, "Center");
@@ -8507,6 +8575,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		chart.getPlot().setBackgroundPaint(plotBackground);
 		chart.getCategoryPlot().setRangeGridlinePaint(plotRangeGridLine);
 		ChartPanel graph = new ChartPanel(chart);
+		legend = chart.getLegend();
+		if (visibleLegend.isSelected()) {
+			if (chart.getLegend() == null) {
+				chart.addLegend(legend);
+			}
+		}
+		else {
+			if (chart.getLegend() != null) {
+				legend = chart.getLegend();
+			}
+			chart.removeLegend();
+		}
 		if (probGraphed.isEmpty()) {
 			graph.setLayout(new GridLayout(1, 1));
 			JLabel edit = new JLabel("Double click here to create graph");
