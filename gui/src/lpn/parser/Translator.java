@@ -695,7 +695,7 @@ public class Translator {
 
 		// Property parsing is dealt with in PropertyPanel.java
 		// translate the LPN property to SBML constraints
-		document = generateSBMLConstraints(document, property);
+		document = generateSBMLConstraints(document, property, lhpn);
 			/*
 			String probprop = "";
 			String[] probpropParts = new String[4];
@@ -765,7 +765,7 @@ public class Translator {
 		return filename;
 	}
 	
-	public static SBMLDocument generateSBMLConstraints(SBMLDocument doc, String property) {
+	public static SBMLDocument generateSBMLConstraints(SBMLDocument doc, String property, LhpnFile lhpn) {
 		String probprop = "";
 		String[] probpropParts = new String[4];
 		if(!(property == null) && !property.equals("")){
@@ -777,17 +777,17 @@ public class Translator {
 			// probpropParts=[probpropLeft, probpropRight, lowerBound, upperBound]
 			Constraint constraintFail = m.createConstraint();	
 			Constraint constraintSucc = m.createConstraint();
-			ExprTree probpropLeftTree = String2ExprTree(probpropParts[0]);
+			ExprTree probpropLeftTree = String2ExprTree(lhpn,probpropParts[0]);
 			String probpropLeftSBML = probpropLeftTree.toString("SBML");
 				
-			ExprTree probpropRightTree = String2ExprTree(probpropParts[1]);
+			ExprTree probpropRightTree = String2ExprTree(lhpn,probpropParts[1]);
 			String probpropRightSBML = probpropRightTree.toString("SBML");
 				
-			ExprTree lowerBoundTree = String2ExprTree(probpropParts[2]);
+			ExprTree lowerBoundTree = String2ExprTree(lhpn,probpropParts[2]);
 			String lowerBoundSBML = lowerBoundTree.toString("SBML");
 			String lowerConstraint = "leq(t," + lowerBoundSBML + ")";
 				
-			ExprTree upperBoundTree = String2ExprTree(probpropParts[3]);
+			ExprTree upperBoundTree = String2ExprTree(lhpn,probpropParts[3]);
 			String upperBoundSBML = upperBoundTree.toString("SBML");
 			String upperConstraint = "leq(t," + upperBoundSBML + ")";
 			    
@@ -941,10 +941,10 @@ public class Translator {
 		return probpropParts;
 	}
 	
-	public static ExprTree String2ExprTree(String str) {
+	public static ExprTree String2ExprTree(LhpnFile lhpn, String str) {
 		boolean retVal;
-		ExprTree result = new ExprTree();
-		ExprTree expr = new ExprTree();
+		ExprTree result = new ExprTree(lhpn);
+		ExprTree expr = new ExprTree(lhpn);
 		expr.token = expr.intexpr_gettok(str);
 		retVal = expr.intexpr_L(str);
 		if (retVal) {
