@@ -10,7 +10,7 @@ import java.util.Properties;
  * @author Nam
  *
  */
-public class Reaction {	
+public class Influence {	
 	
 	
 	/**
@@ -83,14 +83,6 @@ public class Reaction {
 	public void generateName() {
 		this.name = "Reaction_" + uid;
 		uid++;
-	}
-
-	public boolean isBiochemical() {
-		return isBiochemical;
-	}
-	
-	public void setBiochemical(boolean isBiochemical) {
-		this.isBiochemical = isBiochemical;
 	}
 	
 	/**

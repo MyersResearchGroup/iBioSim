@@ -4,7 +4,7 @@ import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
 import gcm.network.GeneticNetwork;
-import gcm.network.PartSpecies;
+import gcm.network.Influence;
 import gcm.network.SpasticSpecies;
 import gcm.network.SpeciesInterface;
 import gcm.parser.CompatibilityFixer;
@@ -23,7 +23,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 
 	public PrintDecaySpeciesVisitor(SBMLDocument document,
 			HashMap<String, SpeciesInterface> species, ArrayList<String> compartments, 
-			HashMap<String, ArrayList<PartSpecies>> complexMap, HashMap<String, ArrayList<PartSpecies>> partsMap) {
+			HashMap<String, ArrayList<Influence>> complexMap, HashMap<String, ArrayList<Influence>> partsMap) {
 		super(document);
 		this.species = species;
 		this.complexMap = complexMap;

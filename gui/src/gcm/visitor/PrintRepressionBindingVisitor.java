@@ -11,9 +11,8 @@ import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
 import gcm.network.GeneticNetwork;
-import gcm.network.PartSpecies;
 import gcm.network.Promoter;
-import gcm.network.Reaction;
+import gcm.network.Influence;
 import gcm.network.SpasticSpecies;
 import gcm.network.SpeciesInterface;
 import gcm.parser.CompatibilityFixer;
@@ -27,7 +26,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 
 	public PrintRepressionBindingVisitor(SBMLDocument document, Promoter p, HashMap<String, SpeciesInterface> species, 
 			String compartment, 
-			HashMap<String, ArrayList<PartSpecies>> complexMap, HashMap<String, ArrayList<PartSpecies>> partsMap) {
+			HashMap<String, ArrayList<Influence>> complexMap, HashMap<String, ArrayList<Influence>> partsMap) {
 		super(document);
 		this.promoter = p;
 		this.species = species;
@@ -212,7 +211,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	}
 
 	private void loadValues(SpeciesInterface s) {
-		Reaction r = promoter.getRepressionMap().get(s.getId());
+		Influence r = promoter.getRepressionMap().get(s.getId());
 		coop = r.getCoop();
 		krep = r.getRep();
 		if (krep.length == 2)

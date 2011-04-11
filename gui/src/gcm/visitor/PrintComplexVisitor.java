@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 import gcm.network.ComplexSpecies;
 import gcm.network.GeneticNetwork;
-import gcm.network.PartSpecies;
+import gcm.network.Influence;
 import gcm.network.SpeciesInterface;
 import gcm.parser.CompatibilityFixer;
 import gcm.util.GlobalConstants;
@@ -19,8 +19,8 @@ import org.sbml.libsbml.SBMLDocument;
 public class PrintComplexVisitor extends AbstractPrintVisitor {
 	
 	public PrintComplexVisitor(SBMLDocument document, HashMap<String, SpeciesInterface> species,
-			ArrayList<String> compartments, HashMap<String, ArrayList<PartSpecies>> complexMap, 
-			HashMap<String, ArrayList<PartSpecies>> partsMap) {
+			ArrayList<String> compartments, HashMap<String, ArrayList<Influence>> complexMap, 
+			HashMap<String, ArrayList<Influence>> partsMap) {
 		super(document);
 		this.species = species;
 		this.complexMap = complexMap;
@@ -69,9 +69,9 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 						GeneticNetwork.getMoleParameter(2)));
 			}
 			String ncSum = "";
-			for (PartSpecies part : complexMap.get(specie.getId())) {
-				String partId = part.getPartId();
-				double n = part.getStoich();
+			for (Influence infl : complexMap.get(specie.getId())) {
+				String partId = infl.getInput();
+				double n = infl.getCoop();
 				r.addReactant(Utility.SpeciesReference(partId, n));
 				String nId = coopString + "__" + partId + "_" + specie.getId();
 				kl.addParameter(Utility.Parameter(nId, n, "dimensionless"));

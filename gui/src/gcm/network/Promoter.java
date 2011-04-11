@@ -20,8 +20,8 @@ public class Promoter {
 	 */
 	public Promoter() {
 		outputs = new HashMap<String, SpeciesInterface>();
-		activationMap = new HashMap<String, Reaction>();
-		repressionMap = new HashMap<String, Reaction>();
+		activationMap = new HashMap<String, Influence>();
+		repressionMap = new HashMap<String, Influence>();
 		activators = new HashMap<String, SpeciesInterface>();
 		repressors = new HashMap<String, SpeciesInterface>();
 	}
@@ -79,7 +79,7 @@ public class Promoter {
 	 * @param reaction
 	 *            reaction to add
 	 */
-	public void addToReactionMap(String id, Reaction r) {
+	public void addToReactionMap(String id, Influence r) {
 		if (r.getType().equals("tee")) {
 			repressionMap.put(id, r);
 		} else if (r.getType().equals("vee")) {
@@ -115,22 +115,22 @@ public class Promoter {
 	/**
 	 * @return Returns the reactions.
 	 */
-	public Collection<Reaction> getActivatingReactions() {
+	public Collection<Influence> getActivatingReactions() {
 		return activationMap.values();
 	}
 	
 	/**
 	 * @return Returns the repressingReactions.
 	 */
-	public Collection<Reaction> getRepressingReactions() {
+	public Collection<Influence> getRepressingReactions() {
 		return repressionMap.values();
 	}
 	
-	public HashMap<String, Reaction> getActivationMap() {
+	public HashMap<String, Influence> getActivationMap() {
 		return activationMap;
 	}
 	
-	public HashMap<String, Reaction> getRepressionMap() {
+	public HashMap<String, Influence> getRepressionMap() {
 		return repressionMap;
 	}
 	
@@ -185,7 +185,7 @@ public class Promoter {
 	 * @param reactions
 	 *            The reactions to set.
 	 */
-	public void setActivatingReactions(HashMap<String, Reaction> activationMap) {
+	public void setActivatingReactions(HashMap<String, Influence> activationMap) {
 		this.activationMap = activationMap;
 	}
 
@@ -193,7 +193,7 @@ public class Promoter {
 	 * @param repressingReactions
 	 *            The repressingReactions to set.
 	 */
-	public void setRepressingReactions(HashMap<String, Reaction> repressionMap) {
+	public void setRepressingReactions(HashMap<String, Influence> repressionMap) {
 		this.repressionMap = repressionMap;
 	}
 	
@@ -237,9 +237,9 @@ public class Promoter {
 	protected HashMap<String, SpeciesInterface> outputs;
 
 	// List of reactions
-	protected HashMap<String, Reaction> activationMap;
+	protected HashMap<String, Influence> activationMap;
 
-	protected HashMap<String, Reaction> repressionMap;
+	protected HashMap<String, Influence> repressionMap;
 	
 	protected HashMap<String, SpeciesInterface> activators;
 	
