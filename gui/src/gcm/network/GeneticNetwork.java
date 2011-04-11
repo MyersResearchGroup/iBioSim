@@ -69,7 +69,7 @@ public class GeneticNetwork {
 	 *            a hashmap of promoters
 	 */
 	public GeneticNetwork(HashMap<String, SpeciesInterface> species,
-			HashMap<String, ArrayList<PartSpecies>> complexMap, HashMap<String, ArrayList<PartSpecies>> partsMap,
+			HashMap<String, ArrayList<Influence>> complexMap, HashMap<String, ArrayList<Influence>> partsMap,
 			HashMap<String, Promoter> promoters) {
 		this(species, complexMap, partsMap, promoters, null);
 	}
@@ -99,7 +99,7 @@ public class GeneticNetwork {
 	 *            a gcm file containing extra information
 	 */
 	public GeneticNetwork(HashMap<String, SpeciesInterface> species, 
-			HashMap<String, ArrayList<PartSpecies>> complexMap, HashMap<String, ArrayList<PartSpecies>> partsMap, 
+			HashMap<String, ArrayList<Influence>> complexMap, HashMap<String, ArrayList<Influence>> partsMap, 
 			HashMap<String, Promoter> promoters, GCMFile gcm) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
@@ -943,26 +943,18 @@ public class GeneticNetwork {
 	 */
 	private void buildComplexInfluences() {
 		for (Promoter p : promoters.values()) {
-			for (Reaction r : p.getActivatingReactions()) {
+			for (Influence r : p.getActivatingReactions()) {
 				String inputId = r.getInput();
 				if (complexMap.containsKey(inputId)) {
 					p.addActivator(inputId, species.get(inputId));
 					species.get(inputId).setActivator(true);
-					String outputId = r.getOutput();
-					if (!r.getOutput().equals("none")) {
-						p.addOutput(outputId, species.get(outputId));
-					}
 				}
 			}
-			for (Reaction r : p.getRepressingReactions()) {
+			for (Influence r : p.getRepressingReactions()) {
 				String inputId = r.getInput();
 				if (complexMap.containsKey(inputId)) {
 					p.addRepressor(inputId, species.get(inputId));
 					species.get(inputId).setRepressor(true);
-					String outputId = r.getOutput();
-					if (!r.getOutput().equals("none")) {
-						p.addOutput(outputId, species.get(outputId));
-					}
 				}
 			}
 		}
@@ -1010,8 +1002,8 @@ public class GeneticNetwork {
 	//Marks non-output, non-sequesterable complex parts as abstractable 
 	//and checks if parts of complex parts are abstractable or sequesterable 
 	private boolean checkComplex(String complexId, String payNoMind) {
-		for (PartSpecies part : complexMap.get(complexId)) {
-			String partId = part.getPartId();
+		for (Influence infl : complexMap.get(complexId)) {
+			String partId = infl.getInput();
 			if (!partId.equals(payNoMind)) {
 				boolean sequesterable = false;
 				if (partsMap.get(partId).size() > 1) {
@@ -1037,10 +1029,10 @@ public class GeneticNetwork {
 	private boolean checkSequester(String partId, String payNoMind) {
 		boolean sequesterable = true;
 		ArrayList<String> abstractableComplexes = new ArrayList<String>();
-		for (PartSpecies part : partsMap.get(partId)) {
-			String complexId = part.getComplexId();
+		for (Influence infl : partsMap.get(partId)) {
+			String complexId = infl.getOutput();
 			if (!complexId.equals(payNoMind)) {
-				if (part.getStoich() == 1 && !species.get(complexId).isActivator() 
+				if (infl.getCoop() == 1 && !species.get(complexId).isActivator() 
 						&& !species.get(complexId).isRepressor() && !partsMap.containsKey(complexId)
 						&& !species.get(complexId).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)
 						&& checkComplex(complexId, partId)) 
@@ -1062,8 +1054,8 @@ public class GeneticNetwork {
 		for (String interestingId : interestingSpecies) {
 			if (species.containsKey(interestingId) && complexMap.containsKey(interestingId)) {
 				species.get(interestingId).setAbstractable(false);
-				for (PartSpecies part : complexMap.get(interestingId))
-					species.get(part.getPartId()).setSequesterable(false);
+				for (Influence infl : complexMap.get(interestingId))
+					species.get(infl.getInput()).setSequesterable(false);
 			}
 		}
 	}
@@ -1132,8 +1124,8 @@ public class GeneticNetwork {
 
 	private HashMap<String, Promoter> promoters = null;
 	
-	private HashMap<String, ArrayList<PartSpecies>> complexMap = null;
-	private HashMap<String, ArrayList<PartSpecies>> partsMap;
+	private HashMap<String, ArrayList<Influence>> complexMap;
+	private HashMap<String, ArrayList<Influence>> partsMap;
 	
 	private ArrayList<String> compartments;
 

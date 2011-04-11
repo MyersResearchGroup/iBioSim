@@ -10,9 +10,8 @@ import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
 import gcm.network.GeneticNetwork;
 import gcm.network.NullSpecies;
-import gcm.network.PartSpecies;
 import gcm.network.Promoter;
-import gcm.network.Reaction;
+import gcm.network.Influence;
 import gcm.network.SpasticSpecies;
 import gcm.network.SpeciesInterface;
 import gcm.parser.CompatibilityFixer;
@@ -26,7 +25,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 
 	public PrintActivatedBindingVisitor(SBMLDocument document, Promoter p, HashMap<String, SpeciesInterface> species, 
 			String compartment, 
-			HashMap<String, ArrayList<PartSpecies>> complexMap, HashMap<String, ArrayList<PartSpecies>> partsMap) {
+			HashMap<String, ArrayList<Influence>> complexMap, HashMap<String, ArrayList<Influence>> partsMap) {
 		super(document);
 		this.promoter = p;
 		this.species = species;
@@ -246,7 +245,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	}
 	
 	private void loadValues(SpeciesInterface s) {
-		Reaction r = promoter.getActivationMap().get(s.getId());
+		Influence r = promoter.getActivationMap().get(s.getId());
 		kArnap = promoter.getKArnap();
 		if (kArnap.length == 2)
 			kr = kArnap[1];

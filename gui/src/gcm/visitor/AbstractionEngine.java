@@ -1,7 +1,7 @@
 package gcm.visitor;
 
 import gcm.network.GeneticNetwork;
-import gcm.network.PartSpecies;
+import gcm.network.Influence;
 import gcm.network.SpeciesInterface;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
@@ -13,16 +13,16 @@ import org.sbml.libsbml.KineticLaw;
 
 public class AbstractionEngine {
 	
-	public AbstractionEngine(HashMap<String, SpeciesInterface> species, HashMap<String, ArrayList<PartSpecies>> complexMap, 
-			HashMap<String, ArrayList<PartSpecies>> partsMap) {
+	public AbstractionEngine(HashMap<String, SpeciesInterface> species, HashMap<String, ArrayList<Influence>> complexMap, 
+			HashMap<String, ArrayList<Influence>> partsMap) {
 		this.species = species;
 		this.complexMap = complexMap;
 		this.partsMap = partsMap;
 		this.sbmlMode = false;
 	}
 	
-	public AbstractionEngine(HashMap<String, SpeciesInterface> species, HashMap<String, ArrayList<PartSpecies>> complexMap, 
-			HashMap<String, ArrayList<PartSpecies>> partsMap, KineticLaw kl,  
+	public AbstractionEngine(HashMap<String, SpeciesInterface> species, HashMap<String, ArrayList<Influence>> complexMap, 
+			HashMap<String, ArrayList<Influence>> partsMap, KineticLaw kl,  
 			HashMap<String, Double> complexReactantStoich, ArrayList<String> complexModifierStoich) {
 		this.species = species;
 		this.complexMap = complexMap;
@@ -47,9 +47,9 @@ public class AbstractionEngine {
 					GeneticNetwork.getMoleParameter(2)));
 		}
 		String ncSum = "";
-		for (PartSpecies part : complexMap.get(complexId)) {
-			String partId = part.getPartId();
-			double n = part.getStoich();
+		for (Influence infl : complexMap.get(complexId)) {
+			String partId = infl.getInput();
+			double n = infl.getCoop();
 			String nId = coopString + "__" + partId + "_" + complexId;
 			if (sbmlMode)
 				kl.addParameter(Utility.Parameter(nId, n, "dimensionless"));
@@ -81,8 +81,8 @@ public class AbstractionEngine {
 	
 	public String sequesterSpecies(String speciesId, String payNoMind) {
 		String sequesterFactor = speciesId + "/(1";
-		for (PartSpecies part : partsMap.get(speciesId)) {
-			String complexId = part.getComplexId();
+		for (Influence infl : partsMap.get(speciesId)) {
+			String complexId = infl.getOutput();
 			if (!complexId.equals(payNoMind))
 				sequesterFactor = sequesterFactor + "+" + abstractComplex(complexId, 1, speciesId);
 		}
@@ -94,8 +94,8 @@ public class AbstractionEngine {
 	private HashMap<String, SpeciesInterface> species;
 	private HashMap<String, Double> complexReactantStoich;
 	private ArrayList<String> complexModifierStoich;
-	private HashMap<String, ArrayList<PartSpecies>> complexMap;
-	private HashMap<String, ArrayList<PartSpecies>> partsMap;
+	private HashMap<String, ArrayList<Influence>> complexMap;
+	private HashMap<String, ArrayList<Influence>> partsMap;
 	private boolean sbmlMode;
 	
 	private String kcompString = GlobalConstants.KCOMPLEX_STRING;

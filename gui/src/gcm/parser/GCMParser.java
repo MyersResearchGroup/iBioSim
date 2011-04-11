@@ -4,9 +4,8 @@ import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
 import gcm.network.GeneticNetwork;
-import gcm.network.PartSpecies;
 import gcm.network.Promoter;
-import gcm.network.Reaction;
+import gcm.network.Influence;
 import gcm.network.SpasticSpecies;
 import gcm.network.SpeciesInterface;
 import gcm.util.GlobalConstants;
@@ -71,8 +70,8 @@ public class GCMParser {
 
 		species = new HashMap<String, SpeciesInterface>();
 		promoters = new HashMap<String, Promoter>();
-		complexMap = new HashMap<String, ArrayList<PartSpecies>>();
-		partsMap = new HashMap<String, ArrayList<PartSpecies>>();
+		complexMap = new HashMap<String, ArrayList<Influence>>();
+		partsMap = new HashMap<String, ArrayList<Influence>>();
 
 		for (String s : speciesMap.keySet()) {
 			SpeciesInterface specie = parseSpeciesData(s, speciesMap.get(s));
@@ -181,67 +180,65 @@ public class GCMParser {
 	 */
 	// TODO: Match rate constants
 	private void parseReactionData(String reaction, Properties property) {
-		Reaction r = new Reaction();		
-		r.generateName();		
+		Influence infl = new Influence();		
+		infl.generateName();		
 		
 		if (property.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
-			r.addProperty(GlobalConstants.COOPERATIVITY_STRING, property.getProperty(GlobalConstants.COOPERATIVITY_STRING));
+			infl.addProperty(GlobalConstants.COOPERATIVITY_STRING, property.getProperty(GlobalConstants.COOPERATIVITY_STRING));
 		} else {
-			r.addProperty(GlobalConstants.COOPERATIVITY_STRING, gcm.getParameter(GlobalConstants.COOPERATIVITY_STRING));
+			infl.addProperty(GlobalConstants.COOPERATIVITY_STRING, gcm.getParameter(GlobalConstants.COOPERATIVITY_STRING));
 		} 
 		
 		if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
-			r.setType("vee");
+			infl.setType("vee");
 			if (property.containsKey(GlobalConstants.KACT_STRING)) {
-				r.addProperty(GlobalConstants.KACT_STRING, property.getProperty(GlobalConstants.KACT_STRING));
+				infl.addProperty(GlobalConstants.KACT_STRING, property.getProperty(GlobalConstants.KACT_STRING));
 			} else {
-				r.addProperty(GlobalConstants.KACT_STRING, gcm.getParameter(GlobalConstants.KACT_STRING));
+				infl.addProperty(GlobalConstants.KACT_STRING, gcm.getParameter(GlobalConstants.KACT_STRING));
 			} 
 		} else if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.REPRESSION)) {
-			r.setType("tee");
+			infl.setType("tee");
 			if (property.containsKey(GlobalConstants.KREP_STRING)) {
-				r.addProperty(GlobalConstants.KREP_STRING, property.getProperty(GlobalConstants.KREP_STRING));
+				infl.addProperty(GlobalConstants.KREP_STRING, property.getProperty(GlobalConstants.KREP_STRING));
 			} else {
-				r.addProperty(GlobalConstants.KREP_STRING, gcm.getParameter(GlobalConstants.KREP_STRING));
+				infl.addProperty(GlobalConstants.KREP_STRING, gcm.getParameter(GlobalConstants.KREP_STRING));
 			} 	
 		} else if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.COMPLEX)) {
-			r.setType("plus");
+			infl.setType("plus");
 		}
 		else {
-			r.setType("dot");
+			infl.setType("dot");
 		}	
 		
 		String input = GCMFile.getInput(reaction);
 		String output = GCMFile.getOutput(reaction);
-		r.setInput(input);
-		r.setOutput(output);
-		if (r.getType().equals("plus")) {
-			//Maps complex species to its constituent species
-			ArrayList<PartSpecies> parts = null;
+		infl.setInput(input);
+		infl.setOutput(output);
+		if (infl.getType().equals("plus")) {
+			//Maps complex species to complex formation influences of which they're outputs
+			ArrayList<Influence> complexInfl = null;
 			if (complexMap.containsKey(output)) {
-				parts = complexMap.get(output);
+				complexInfl = complexMap.get(output);
 			} else { 
-				parts = new ArrayList<PartSpecies>();
-				complexMap.put(output, parts);
+				complexInfl = new ArrayList<Influence>();
+				complexMap.put(output, complexInfl);
 			}
-			PartSpecies ps = new PartSpecies(input, output, r.getCoop());
-			parts.add(ps);
-			//Maps constituent species to complex species
-			parts = null;
+			complexInfl.add(infl);
+			//Maps part species to complex formation influences of which they're inputs
+			complexInfl = null;
 			if (partsMap.containsKey(input)) {
-				parts = partsMap.get(input);
+				complexInfl = partsMap.get(input);
 			} else { 
-				parts = new ArrayList<PartSpecies>();
-				partsMap.put(input, parts);
+				complexInfl = new ArrayList<Influence>();
+				partsMap.put(input, complexInfl);
 			}
-			ps = new PartSpecies(input, output, r.getCoop());
-			parts.add(ps);
-		} else if (!r.getType().equals("dot")) {	
+			complexInfl.add(infl);
+		} else if (!infl.getType().equals("dot")) {	
 			String promoterName = property.getProperty(GlobalConstants.PROMOTER);
 			Promoter p = promoters.get(promoterName);
 			if (!input.equals("none")) {
-				p.addToReactionMap(input, r);
-				if (r.getType().equals("vee")) {
+				p.addToReactionMap(input, infl);
+				if (infl.getType().equals("vee")) {
 					p.addActivator(input, species.get(input));
 					species.get(input).setActivator(true);
 				} else {
@@ -324,8 +321,8 @@ public class GCMParser {
 
 	private HashMap<String, Promoter> promoters;
 	
-	private HashMap<String, ArrayList<PartSpecies>> complexMap;
-	private HashMap<String, ArrayList<PartSpecies>> partsMap;
+	private HashMap<String, ArrayList<Influence>> complexMap;
+	private HashMap<String, ArrayList<Influence>> partsMap;
 
 	private GCMFile gcm = null;
 
