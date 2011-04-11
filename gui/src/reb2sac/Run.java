@@ -589,8 +589,7 @@ public class Run implements ActionListener {
 							String influence = "";
 							for (String infl : gcm.getInfluences().keySet()) {
 								boolean matchInfl = true;
-								for (String part : di.split("=")[0].split("-")[0]
-										.split("_")) {
+								for (String part : di.split("=")[0].split("-")[0].split("_")) {
 									if (!infl.contains(part)) {
 										matchInfl = false;
 									}
@@ -600,10 +599,10 @@ public class Run implements ActionListener {
 								}
 							}
 							if (!influence.equals("")) {
-								Properties influenceProps = gcm.getInfluences().get(
-										influence);
-								influenceProps.put(di.split("=")[0].split("-")[1].replace(
-										"\"", ""), di.split("=")[1]);
+								Properties influenceProps = gcm.getInfluences().get(influence);
+								influenceProps.put(
+										di.split("=")[0].split("-")[1].replace("\"", ""), di
+												.split("=")[1]);
 							}
 						}
 						else {
@@ -800,7 +799,8 @@ public class Run implements ActionListener {
 						exitValue = 0;
 					}
 					else {
-						if (r2s.reb2sacAbstraction() && (abstraction.isSelected() || nary.isSelected())) {
+						if (r2s.reb2sacAbstraction()
+								&& (abstraction.isSelected() || nary.isSelected())) {
 							log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + ".."
 									+ separator + sbmlName + " " + filename + "\n");
 							time1 = System.nanoTime();
@@ -1664,6 +1664,34 @@ public class Run implements ActionListener {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
 										ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
+										if (new File(directory + separator + "sim-rep.txt")
+												.exists()) {
+											try {
+												Scanner s = new Scanner(new File(directory
+														+ separator + "sim-rep.txt"));
+												if (s.hasNextLine()) {
+													String[] ss = s.nextLine().split(" ");
+													if (ss[0].equals("The")
+															&& ss[1].equals("total")
+															&& ss[2].equals("termination")
+															&& ss[3].equals("count:")
+															&& ss[4].equals("0")) {
+													}
+													else {
+														for (String add : ss) {
+															if (!add.equals("#total")
+																	&& !add.equals("time-limit")) {
+																dataLabels.add(add);
+																ArrayList<Double> times = new ArrayList<Double>();
+																terms.add(times);
+															}
+														}
+													}
+												}
+											}
+											catch (Exception e) {
+											}
+										}
 										Scanner scan = new Scanner(new File(directory + separator
 												+ "term-time.txt"));
 										while (scan.hasNextLine()) {
@@ -1823,6 +1851,34 @@ public class Run implements ActionListener {
 										ArrayList<String> dataLabels = new ArrayList<String>();
 										dataLabels.add("time");
 										ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
+										if (new File(directory + separator + "sim-rep.txt")
+												.exists()) {
+											try {
+												Scanner s = new Scanner(new File(directory
+														+ separator + "sim-rep.txt"));
+												if (s.hasNextLine()) {
+													String[] ss = s.nextLine().split(" ");
+													if (ss[0].equals("The")
+															&& ss[1].equals("total")
+															&& ss[2].equals("termination")
+															&& ss[3].equals("count:")
+															&& ss[4].equals("0")) {
+													}
+													else {
+														for (String add : ss) {
+															if (!add.equals("#total")
+																	&& !add.equals("time-limit")) {
+																dataLabels.add(add);
+																ArrayList<Double> times = new ArrayList<Double>();
+																terms.add(times);
+															}
+														}
+													}
+												}
+											}
+											catch (Exception e) {
+											}
+										}
 										Scanner scan = new Scanner(new File(directory + separator
 												+ "term-time.txt"));
 										while (scan.hasNextLine()) {
@@ -2041,6 +2097,35 @@ public class Run implements ActionListener {
 											ArrayList<String> dataLabels = new ArrayList<String>();
 											dataLabels.add("time");
 											ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
+											if (new File(directory + separator + "sim-rep.txt")
+													.exists()) {
+												try {
+													Scanner s = new Scanner(new File(directory
+															+ separator + "sim-rep.txt"));
+													if (s.hasNextLine()) {
+														String[] ss = s.nextLine().split(" ");
+														if (ss[0].equals("The")
+																&& ss[1].equals("total")
+																&& ss[2].equals("termination")
+																&& ss[3].equals("count:")
+																&& ss[4].equals("0")) {
+														}
+														else {
+															for (String add : ss) {
+																if (!add.equals("#total")
+																		&& !add
+																				.equals("time-limit")) {
+																	dataLabels.add(add);
+																	ArrayList<Double> times = new ArrayList<Double>();
+																	terms.add(times);
+																}
+															}
+														}
+													}
+												}
+												catch (Exception e) {
+												}
+											}
 											Scanner scan = new Scanner(new File(directory
 													+ separator + "term-time.txt"));
 											while (scan.hasNextLine()) {
@@ -2207,6 +2292,35 @@ public class Run implements ActionListener {
 											ArrayList<String> dataLabels = new ArrayList<String>();
 											dataLabels.add("time");
 											ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
+											if (new File(directory + separator + "sim-rep.txt")
+													.exists()) {
+												try {
+													Scanner s = new Scanner(new File(directory
+															+ separator + "sim-rep.txt"));
+													if (s.hasNextLine()) {
+														String[] ss = s.nextLine().split(" ");
+														if (ss[0].equals("The")
+																&& ss[1].equals("total")
+																&& ss[2].equals("termination")
+																&& ss[3].equals("count:")
+																&& ss[4].equals("0")) {
+														}
+														else {
+															for (String add : ss) {
+																if (!add.equals("#total")
+																		&& !add
+																				.equals("time-limit")) {
+																	dataLabels.add(add);
+																	ArrayList<Double> times = new ArrayList<Double>();
+																	terms.add(times);
+																}
+															}
+														}
+													}
+												}
+												catch (Exception e) {
+												}
+											}
 											Scanner scan = new Scanner(new File(directory
 													+ separator + "term-time.txt"));
 											while (scan.hasNextLine()) {
@@ -2392,6 +2506,35 @@ public class Run implements ActionListener {
 											ArrayList<String> dataLabels = new ArrayList<String>();
 											dataLabels.add("time");
 											ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
+											if (new File(directory + separator + "sim-rep.txt")
+													.exists()) {
+												try {
+													Scanner s = new Scanner(new File(directory
+															+ separator + "sim-rep.txt"));
+													if (s.hasNextLine()) {
+														String[] ss = s.nextLine().split(" ");
+														if (ss[0].equals("The")
+																&& ss[1].equals("total")
+																&& ss[2].equals("termination")
+																&& ss[3].equals("count:")
+																&& ss[4].equals("0")) {
+														}
+														else {
+															for (String add : ss) {
+																if (!add.equals("#total")
+																		&& !add
+																				.equals("time-limit")) {
+																	dataLabels.add(add);
+																	ArrayList<Double> times = new ArrayList<Double>();
+																	terms.add(times);
+																}
+															}
+														}
+													}
+												}
+												catch (Exception e) {
+												}
+											}
 											Scanner scan = new Scanner(new File(directory
 													+ separator + "term-time.txt"));
 											while (scan.hasNextLine()) {
@@ -2558,6 +2701,35 @@ public class Run implements ActionListener {
 											ArrayList<String> dataLabels = new ArrayList<String>();
 											dataLabels.add("time");
 											ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
+											if (new File(directory + separator + "sim-rep.txt")
+													.exists()) {
+												try {
+													Scanner s = new Scanner(new File(directory
+															+ separator + "sim-rep.txt"));
+													if (s.hasNextLine()) {
+														String[] ss = s.nextLine().split(" ");
+														if (ss[0].equals("The")
+																&& ss[1].equals("total")
+																&& ss[2].equals("termination")
+																&& ss[3].equals("count:")
+																&& ss[4].equals("0")) {
+														}
+														else {
+															for (String add : ss) {
+																if (!add.equals("#total")
+																		&& !add
+																				.equals("time-limit")) {
+																	dataLabels.add(add);
+																	ArrayList<Double> times = new ArrayList<Double>();
+																	terms.add(times);
+																}
+															}
+														}
+													}
+												}
+												catch (Exception e) {
+												}
+											}
 											Scanner scan = new Scanner(new File(directory
 													+ separator + "term-time.txt"));
 											while (scan.hasNextLine()) {
