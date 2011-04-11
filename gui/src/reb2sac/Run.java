@@ -621,6 +621,9 @@ public class Run implements ActionListener {
 					if (lpnFile == null) {
 						return 0;
 					}
+					if (!lpnProperty.equals("")) {
+						lpnFile.addProperty(lpnProperty);
+					}
 					lpnFile.save(root + separator + simName + separator + lpnName);
 					Translator t1 = new Translator();
 					if (abstraction.isSelected()) {
@@ -772,6 +775,9 @@ public class Run implements ActionListener {
 							LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
 							if (lpnFile == null) {
 								return 0;
+							}
+							if (!lpnProperty.equals("")) {
+								lpnFile.addProperty(lpnProperty);
 							}
 							lpnFile.save(root + separator + simName + separator + lpnName);
 							Translator t1 = new Translator();
@@ -933,6 +939,9 @@ public class Run implements ActionListener {
 							LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
 							if (lhpnFile == null) {
 								return 0;
+							}
+							if (!lpnProperty.equals("")) {
+								lhpnFile.addProperty(lpnProperty);
 							}
 							lhpnFile.save(root + separator + lhpnName);
 							log.addText("Saving GCM file as LHPN:\n" + root + separator + lhpnName
@@ -1142,6 +1151,9 @@ public class Run implements ActionListener {
 							lhpnFile = gcm.convertToLHPN(specs, conLevel);
 							if (lhpnFile == null) {
 								return 0;
+							}
+							if (!lpnProperty.equals("")) {
+								lhpnFile.addProperty(lpnProperty);
 							}
 							lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "")
 									.replace(".xml", "")
