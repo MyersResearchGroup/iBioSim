@@ -543,8 +543,6 @@ public class Translator {
 							t_intersect.add(x);
 						}
 					}
-					
-					
 					if (selfLoopFlag) {
 						t_NoIntersect.removeAll(t_intersect);
 						// t_preset = 0
@@ -697,57 +695,52 @@ public class Translator {
 
 		// Property parsing is dealt with in PropertyPanel.java
 		// translate the LPN property to SBML constraints
-		String probprop = "";
-		String[] probpropParts = new String[4];
-		if(!(property == null) && !property.equals("")){
-			probprop=getProbpropExpression(property);
-			probpropParts=getProbpropParts(probprop);
-			//System.out.println("probprop=" + probprop);
-			//System.out.println("probpropParts[0]=" + probpropParts[0]);
-			//System.out.println("probpropParts[1]=" + probpropParts[1]);
-			//System.out.println("probpropParts[2]=" + probpropParts[2]);
-			//System.out.println("probpropParts[3]=" + probpropParts[3]);
-			
-			
-			// Convert extrated property parts into SBML constraints
-			// probpropParts=[probpropLeft, probpropRight, lowerBound, upperBound]
-			Constraint constraintFail = m.createConstraint();	
-			Constraint constraintSucc = m.createConstraint();
-			ExprTree probpropLeftTree = String2ExprTree(lhpn, probpropParts[0]);
-			String probpropLeftSBML = probpropLeftTree.toString("SBML");
-				
-			ExprTree probpropRightTree = String2ExprTree(lhpn, probpropParts[1]);
-			String probpropRightSBML = probpropRightTree.toString("SBML");
-				
-			ExprTree lowerBoundTree = String2ExprTree(lhpn, probpropParts[2]);
-			String lowerBoundSBML = lowerBoundTree.toString("SBML");
-			String lowerConstraint = "leq(t," + lowerBoundSBML + ")";
-				
-			ExprTree upperBoundTree = String2ExprTree(lhpn, probpropParts[3]);
-			String upperBoundSBML = upperBoundTree.toString("SBML");
-			String upperConstraint = "leq(t," + upperBoundSBML + ")";
-			    
-			if (property.contains("PU")){   
-				// construct the SBML constraints
-				constraintFail.setMetaId("Fail");
-				constraintFail.setMath(SBML_Editor.myParseFormula("and(" + probpropLeftSBML + "," + upperConstraint + ")"));
-				constraintSucc.setMetaId("Success");
-				constraintSucc.setMath(SBML_Editor.myParseFormula("not(" + probpropRightSBML + ")"));		    
+		document = generateSBMLConstraints(document, property);
+			/*
+			String probprop = "";
+			String[] probpropParts = new String[4];
+			if(!(property == null) && !property.equals("")){
+				probprop=getProbpropExpression(property);
+				probpropParts=getProbpropParts(probprop);
+				// Convert extracted property parts into SBML constraints
+				// probpropParts=[probpropLeft, probpropRight, lowerBound, upperBound]
+				Constraint constraintFail = m.createConstraint();	
+				Constraint constraintSucc = m.createConstraint();
+				ExprTree probpropLeftTree = String2ExprTree(probpropParts[0]);
+				String probpropLeftSBML = probpropLeftTree.toString("SBML");
+					
+				ExprTree probpropRightTree = String2ExprTree(probpropParts[1]);
+				String probpropRightSBML = probpropRightTree.toString("SBML");
+					
+				ExprTree lowerBoundTree = String2ExprTree(probpropParts[2]);
+				String lowerBoundSBML = lowerBoundTree.toString("SBML");
+				String lowerConstraint = "leq(t," + lowerBoundSBML + ")";
+					
+				ExprTree upperBoundTree = String2ExprTree(probpropParts[3]);
+				String upperBoundSBML = upperBoundTree.toString("SBML");
+				String upperConstraint = "leq(t," + upperBoundSBML + ")";
+				    
+				if (property.contains("PU")){   
+					// construct the SBML constraints
+					constraintFail.setMetaId("Fail");
+					constraintFail.setMath(SBML_Editor.myParseFormula("and(" + probpropLeftSBML + "," + upperConstraint + ")"));
+					constraintSucc.setMetaId("Success");
+					constraintSucc.setMath(SBML_Editor.myParseFormula("not(" + probpropRightSBML + ")"));		    
+				}
+				if (property.contains("PF")){
+					constraintFail.setMetaId("Fail");
+					constraintFail.setMath(SBML_Editor.myParseFormula(upperConstraint));
+					constraintSucc.setMetaId("Success");
+					constraintSucc.setMath(SBML_Editor.myParseFormula("not(" + probpropRightSBML + ")"));
+				}
+				if (property.contains("PG")){
+					constraintFail.setMetaId("Fail");
+					constraintFail.setMath(SBML_Editor.myParseFormula(probpropRightSBML));
+					constraintSucc.setMetaId("Success");
+					constraintSucc.setMath(SBML_Editor.myParseFormula(upperConstraint));
+				}
 			}
-			if (property.contains("PF")){
-				constraintFail.setMetaId("Fail");
-				constraintFail.setMath(SBML_Editor.myParseFormula(upperConstraint));
-				constraintSucc.setMetaId("Success");
-				constraintSucc.setMath(SBML_Editor.myParseFormula("not(" + probpropRightSBML + ")"));
-			}
-			if (property.contains("PG")){
-				constraintFail.setMetaId("Fail");
-				constraintFail.setMath(SBML_Editor.myParseFormula(probpropRightSBML));
-				constraintSucc.setMetaId("Success");
-				constraintSucc.setMath(SBML_Editor.myParseFormula(upperConstraint));
-			}
-		}
-
+			*/
 	}
 			
 	private void createFunction(Model model, String id, String name, String formula) {
@@ -772,9 +765,59 @@ public class Translator {
 		return filename;
 	}
 	
+	public static SBMLDocument generateSBMLConstraints(SBMLDocument doc, String property) {
+		String probprop = "";
+		String[] probpropParts = new String[4];
+		if(!(property == null) && !property.equals("")){
+			probprop=getProbpropExpression(property);
+			probpropParts=getProbpropParts(probprop);
+			Model m = doc.getModel();
+			
+			// Convert extracted property parts into SBML constraints
+			// probpropParts=[probpropLeft, probpropRight, lowerBound, upperBound]
+			Constraint constraintFail = m.createConstraint();	
+			Constraint constraintSucc = m.createConstraint();
+			ExprTree probpropLeftTree = String2ExprTree(probpropParts[0]);
+			String probpropLeftSBML = probpropLeftTree.toString("SBML");
+				
+			ExprTree probpropRightTree = String2ExprTree(probpropParts[1]);
+			String probpropRightSBML = probpropRightTree.toString("SBML");
+				
+			ExprTree lowerBoundTree = String2ExprTree(probpropParts[2]);
+			String lowerBoundSBML = lowerBoundTree.toString("SBML");
+			String lowerConstraint = "leq(t," + lowerBoundSBML + ")";
+				
+			ExprTree upperBoundTree = String2ExprTree(probpropParts[3]);
+			String upperBoundSBML = upperBoundTree.toString("SBML");
+			String upperConstraint = "leq(t," + upperBoundSBML + ")";
+			    
+			if (property.contains("PU")){   
+				// construct the SBML constraints
+				constraintFail.setMetaId("Fail");
+				constraintFail.setMath(SBML_Editor.myParseFormula("and(" + probpropLeftSBML + "," + upperConstraint + ")"));
+				constraintSucc.setMetaId("Success");
+				constraintSucc.setMath(SBML_Editor.myParseFormula("not(" + probpropRightSBML + ")"));		    
+			}
+			if (property.contains("PF")){
+				constraintFail.setMetaId("Fail");
+				constraintFail.setMath(SBML_Editor.myParseFormula(upperConstraint));
+				constraintSucc.setMetaId("Success");
+				constraintSucc.setMath(SBML_Editor.myParseFormula("not(" + probpropRightSBML + ")"));
+			}
+			if (property.contains("PG")){
+				constraintFail.setMetaId("Fail");
+				constraintFail.setMath(SBML_Editor.myParseFormula(probpropRightSBML));
+				constraintSucc.setMetaId("Success");
+				constraintSucc.setMath(SBML_Editor.myParseFormula(upperConstraint));
+			}
+		}
+		return doc;
+	}
+	
+	
 	// getProbpropExpression strips off the "Pr"("St"), relop and REAL parts of a property
 	public static String getProbpropExpression(String property){
-		System.out.println("property (getProbpropExpression)= " + property);
+		//System.out.println("property (getProbpropExpression)= " + property);
 		String probprop="";
 		// probproperty 
 		if (property.startsWith("Pr") | property.startsWith("St")){
@@ -863,7 +906,7 @@ public class Translator {
 					}	
 				}
 				if(PGFlag){
-					probprop = probprop.replace("PGs",symbol);
+					probprop = probprop.replace("PG",symbol);
 					// Remove the outermost parentheses
 					if (probprop.startsWith("(") & probpropLeft.endsWith(")")){
 						probprop=probprop.substring(1,probpropLeft.length()-1);
@@ -898,10 +941,10 @@ public class Translator {
 		return probpropParts;
 	}
 	
-	public ExprTree String2ExprTree(LhpnFile lhpn, String str) {
+	public static ExprTree String2ExprTree(String str) {
 		boolean retVal;
-		ExprTree result = new ExprTree(lhpn);
-		ExprTree expr = new ExprTree(lhpn);
+		ExprTree result = new ExprTree();
+		ExprTree expr = new ExprTree();
 		expr.token = expr.intexpr_gettok(str);
 		retVal = expr.intexpr_L(str);
 		if (retVal) {
