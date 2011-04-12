@@ -27,6 +27,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import lpn.parser.LhpnFile;
+import lpn.parser.Translator;
 import main.Gui;
 
 import org.sbml.libsbml.ASTNode;
@@ -164,10 +166,11 @@ public class GeneticNetwork {
 		properties = gcm;
 	}
 	
-	public void loadProperties(GCMFile gcm, boolean complexAbstraction, String[] interestingSpecies) {
+	public void loadProperties(GCMFile gcm, boolean complexAbstraction, String[] interestingSpecies, String property) {
 		properties = gcm;
 		this.complexAbstraction = complexAbstraction;
 		unMarkInterestingSpecies(interestingSpecies);
+		this.property = property;
 	}
 	
 	public void setSBMLFile(String file) {
@@ -217,6 +220,15 @@ public class GeneticNetwork {
 			m.setId(new File(filename).getName().replace(".xml", ""));			
 			m.setVolumeUnits("litre");
 			m.setSubstanceUnits("mole");
+			if (property != null) {
+				ArrayList<String> species = new ArrayList<String>();
+				ArrayList<Object[]> levels = new ArrayList<Object[]>();
+				for (String spec : properties.getSpecies().keySet()) {
+					species.add(spec);
+					levels.add(new Object[0]);
+				}
+				Translator.generateSBMLConstraints(document, property, properties.convertToLHPN(species, levels));
+			}
 			if (document != null) {
 				document.setConsistencyChecks(libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
 				document.setConsistencyChecks(libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
@@ -1136,6 +1148,8 @@ public class GeneticNetwork {
 	private String kBasalString = GlobalConstants.KBASAL_STRING;
 	
 	private String kOcString = GlobalConstants.OCR_STRING;
+	
+	private String property;
 
 	/**
 	 * Returns the curent SBML document being built
