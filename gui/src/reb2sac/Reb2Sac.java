@@ -1299,7 +1299,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel,
 					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 					interval, simulators, simulatorsLabel, explanation, description, fileStem,
-					fileStemLabel, postAbs);
+					fileStemLabel, sbml, loopAbs, postAbs);
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
@@ -1311,7 +1311,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel,
 					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 					interval, simulators, simulatorsLabel, explanation, description, fileStem,
-					fileStemLabel, postAbs);
+					fileStemLabel, sbml, loopAbs, postAbs);
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
@@ -1323,7 +1323,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel,
 					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 					interval, simulators, simulatorsLabel, explanation, description, fileStem,
-					fileStemLabel, postAbs);
+					fileStemLabel, sbml, loopAbs, postAbs);
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
@@ -1335,7 +1335,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel,
 					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
 					interval, simulators, simulatorsLabel, explanation, description, fileStem,
-					fileStemLabel, postAbs);
+					fileStemLabel, sbml, loopAbs, postAbs);
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
@@ -4369,7 +4369,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
 								limitLabel, limit, intervalLabel, interval, simulators,
 								simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								postAbs);
+								sbml, loopAbs, postAbs);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("Network")) {
@@ -4378,7 +4378,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
 								limitLabel, limit, intervalLabel, interval, simulators,
 								simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								postAbs);
+								sbml, loopAbs, postAbs);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("Browser")) {
@@ -4387,7 +4387,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
 								limitLabel, limit, intervalLabel, interval, simulators,
 								simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								postAbs);
+								sbml, loopAbs, postAbs);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("LPN")) {
@@ -4396,7 +4396,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
 								limitLabel, limit, intervalLabel, interval, simulators,
 								simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-								postAbs);
+								sbml, loopAbs, postAbs);
 						absErr.setEnabled(false);
 					}
 				}
