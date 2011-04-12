@@ -115,14 +115,14 @@ public class Promoter {
 	/**
 	 * @return Returns the reactions.
 	 */
-	public Collection<Influence> getActivatingReactions() {
+	public Collection<Influence> getActivatingInfluences() {
 		return activationMap.values();
 	}
 	
 	/**
 	 * @return Returns the repressingReactions.
 	 */
-	public Collection<Influence> getRepressingReactions() {
+	public Collection<Influence> getRepressingInfluences() {
 		return repressionMap.values();
 	}
 	
@@ -185,7 +185,7 @@ public class Promoter {
 	 * @param reactions
 	 *            The reactions to set.
 	 */
-	public void setActivatingReactions(HashMap<String, Influence> activationMap) {
+	public void setActivatingInfluences(HashMap<String, Influence> activationMap) {
 		this.activationMap = activationMap;
 	}
 
@@ -193,7 +193,7 @@ public class Promoter {
 	 * @param repressingReactions
 	 *            The repressingReactions to set.
 	 */
-	public void setRepressingReactions(HashMap<String, Influence> repressionMap) {
+	public void setRepressingInfluences(HashMap<String, Influence> repressionMap) {
 		this.repressionMap = repressionMap;
 	}
 	
