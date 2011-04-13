@@ -102,8 +102,10 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	private String checkCompartments(String species) {
 		String compartment = "default";
 		String[] splitted = species.split("__");
-		if (compartments.contains(splitted[0]))
-			compartment = splitted[0];
+		if (compartments != null) {
+			if (compartments.contains(splitted[0]))
+				compartment = splitted[0];
+		}
 		return compartment;
 	}
 	
