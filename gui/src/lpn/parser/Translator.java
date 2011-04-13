@@ -42,6 +42,7 @@ import main.Gui;
 public class Translator {
 	private String filename;
 	private SBMLDocument document;
+	private static boolean isSteadyState = false;
 	
 	public void BuildTemplate(String lhpnFilename, String property) {
 		this.filename = lhpnFilename.replace(".lpn", ".xml");
@@ -696,51 +697,6 @@ public class Translator {
 		// Property parsing is dealt with in PropertyPanel.java
 		// translate the LPN property to SBML constraints
 		document = generateSBMLConstraints(document, property, lhpn);
-			/*
-			String probprop = "";
-			String[] probpropParts = new String[4];
-			if(!(property == null) && !property.equals("")){
-				probprop=getProbpropExpression(property);
-				probpropParts=getProbpropParts(probprop);
-				// Convert extracted property parts into SBML constraints
-				// probpropParts=[probpropLeft, probpropRight, lowerBound, upperBound]
-				Constraint constraintFail = m.createConstraint();	
-				Constraint constraintSucc = m.createConstraint();
-				ExprTree probpropLeftTree = String2ExprTree(probpropParts[0]);
-				String probpropLeftSBML = probpropLeftTree.toString("SBML");
-					
-				ExprTree probpropRightTree = String2ExprTree(probpropParts[1]);
-				String probpropRightSBML = probpropRightTree.toString("SBML");
-					
-				ExprTree lowerBoundTree = String2ExprTree(probpropParts[2]);
-				String lowerBoundSBML = lowerBoundTree.toString("SBML");
-				String lowerConstraint = "leq(t," + lowerBoundSBML + ")";
-					
-				ExprTree upperBoundTree = String2ExprTree(probpropParts[3]);
-				String upperBoundSBML = upperBoundTree.toString("SBML");
-				String upperConstraint = "leq(t," + upperBoundSBML + ")";
-				    
-				if (property.contains("PU")){   
-					// construct the SBML constraints
-					constraintFail.setMetaId("Fail");
-					constraintFail.setMath(SBML_Editor.myParseFormula("and(" + probpropLeftSBML + "," + upperConstraint + ")"));
-					constraintSucc.setMetaId("Success");
-					constraintSucc.setMath(SBML_Editor.myParseFormula("not(" + probpropRightSBML + ")"));		    
-				}
-				if (property.contains("PF")){
-					constraintFail.setMetaId("Fail");
-					constraintFail.setMath(SBML_Editor.myParseFormula(upperConstraint));
-					constraintSucc.setMetaId("Success");
-					constraintSucc.setMath(SBML_Editor.myParseFormula("not(" + probpropRightSBML + ")"));
-				}
-				if (property.contains("PG")){
-					constraintFail.setMetaId("Fail");
-					constraintFail.setMath(SBML_Editor.myParseFormula(probpropRightSBML));
-					constraintSucc.setMetaId("Success");
-					constraintSucc.setMath(SBML_Editor.myParseFormula(upperConstraint));
-				}
-			}
-			*/
 	}
 			
 	private void createFunction(Model model, String id, String name, String formula) {
@@ -769,67 +725,199 @@ public class Translator {
 		String probprop = "";
 		String[] probpropParts = new String[4];
 		if(!(property == null) && !property.equals("")){
-			probprop=getProbpropExpression(property);
-			probpropParts=getProbpropParts(probprop);
 			Model m = doc.getModel();
-			
-			// Convert extracted property parts into SBML constraints
-			// probpropParts=[probpropLeft, probpropRight, lowerBound, upperBound]
-			Constraint constraintFail = m.createConstraint();	
-			Constraint constraintSucc = m.createConstraint();
-			ExprTree probpropLeftTree = String2ExprTree(lhpn,probpropParts[0]);
-			String probpropLeftSBML = probpropLeftTree.toString("SBML");
+			probprop=getProbpropExpression(property);
+			if (!isSteadyState) {
+				probpropParts=getProbpropParts(probprop);
+				// Convert extracted property parts into SBML constraints
+				// probpropParts=[probpropLeft, probpropRight, lowerBound, upperBound]
+				Constraint constraintFail = m.createConstraint();	
+				Constraint constraintSucc = m.createConstraint();
+				constraintFail.setMetaId("Fail");
+				constraintSucc.setMetaId("Success");
+				ExprTree probpropLeftTree = String2ExprTree(lhpn,probpropParts[0]);
+				String probpropLeftSBML = probpropLeftTree.toString("SBML");
+				ExprTree probpropRightTree = String2ExprTree(lhpn,probpropParts[1]);
+				String probpropRightSBML = probpropRightTree.toString("SBML");
+					
+				ExprTree lowerBoundTree = String2ExprTree(lhpn,probpropParts[2]);
+				ExprTree upperBoundTree = String2ExprTree(lhpn,probpropParts[3]);
+				String lowerBoundSBML = lowerBoundTree.toString("SBML");
+				String upperBoundSBML = upperBoundTree.toString("SBML");
+				String LTlower = "lt(t," + lowerBoundSBML + ")";
+				String LEQlower = "leq(t," + lowerBoundSBML + ")";
+				String GTlower = "gt(t," + lowerBoundSBML + ")";
+				String GEQlower = "geq(t," + lowerBoundSBML + ")";
+				String EQlower = "eq(t," + lowerBoundSBML + ")";
+				String LEQupper = "leq(t," + upperBoundSBML + ")";
+				String LTupper = "lt(t," + upperBoundSBML + ")";
+				String GTupper = "gt(t," + upperBoundSBML + ")";
+				String GEQupper = "geq(t," + upperBoundSBML + ")";
 				
-			ExprTree probpropRightTree = String2ExprTree(lhpn,probpropParts[1]);
-			String probpropRightSBML = probpropRightTree.toString("SBML");
-				
-			ExprTree lowerBoundTree = String2ExprTree(lhpn,probpropParts[2]);
-			String lowerBoundSBML = lowerBoundTree.toString("SBML");
-			String lowerConstraint = "leq(t," + lowerBoundSBML + ")";
-				
-			ExprTree upperBoundTree = String2ExprTree(lhpn,probpropParts[3]);
-			String upperBoundSBML = upperBoundTree.toString("SBML");
-			String upperConstraint = "leq(t," + upperBoundSBML + ")";
-			    
-			if (property.contains("PU")){   
+				int relopType = Integer.parseInt(probpropParts[4]);
 				// construct the SBML constraints
-				constraintFail.setMetaId("Fail");
-				constraintFail.setMath(SBML_Editor.myParseFormula("and(" + probpropLeftSBML + "," + upperConstraint + ")"));
-				constraintSucc.setMetaId("Success");
-				constraintSucc.setMath(SBML_Editor.myParseFormula("not(" + probpropRightSBML + ")"));		    
+				if (property.contains("PU")){   // A PU B (Time bounds are specified below.)
+					switch (relopType) {
+						case 0:{	// [l,u]   
+							// Fail: (A || (B && (t>=l))) && (t<=u)
+							// Success: !B || (t<l) || (t>u)
+							constraintFail.setMath(SBML_Editor.myParseFormula("and(" + "or("+probpropLeftSBML + "," + "and(" + probpropRightSBML + "," + GEQlower + ")" + ")" + "," + LEQupper + ")"));
+							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "or(" + "not(" + probpropRightSBML + ")" + "," + LTlower + ")" + "," + GTupper + ")"));
+							break;
+						}
+						case 1: {  // [<=u]
+							// Fail: (A || B) && (t<=u)
+							// Success: (!B) || (t>u)
+							constraintFail.setMath(SBML_Editor.myParseFormula("and(" + "or(" + probpropLeftSBML + "," + probpropRightSBML + ")" + "," + LEQupper + ")"));
+							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + GTupper + ")"));
+							break;
+						}
+						case 2: {	// [<u]
+							// Fail: (A || B) && (t<u)
+							// Success:(!B) || (t>=u)
+							constraintFail.setMath(SBML_Editor.myParseFormula("and(" + "or(" + probpropLeftSBML + "," + probpropRightSBML + ")" + "," + LTupper + ")"));
+							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + GEQupper + ")"));
+							break;
+						}
+						case 3: {	// [>=l]
+							// Fail: A || (B && (t>=l))
+							// Success: (!B) || (t<l)
+							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + probpropLeftSBML + "," + "and(" + probpropRightSBML +"," + GEQlower + ")" + ")"));
+							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + LTlower + ")"));
+							break;
+						}
+						case 4: {	// [>l]
+							// Fail: A || (B && (t>l))
+							// Success: !B || (t<=l)
+							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + probpropLeftSBML + "," + "and(" + probpropRightSBML + "," + GTlower + ")" + ")"));
+							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + LEQlower + ")"));
+							break;
+						}
+						case 5: {	// [=k] (k was stored as lowerBound)
+							// Fail: (A && (t<=k)) || (B && (t=k))
+							// Success: !B || (t>k) || (t<k)
+							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + "and(" + probpropLeftSBML + "," + LEQlower + ")" + "," + "and(" + probpropRightSBML + "," + EQlower + ")" + ")"));
+							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "or(" + "not(" + probpropRightSBML + ")" + "," + GTlower + ")" + "," + LTlower + ")"));
+							break;
+						}
+					}
+				}
+				if (property.contains("PF")){ // PF A (Time bounds are specified below.)
+					switch (relopType) {
+						case 0:{	// [l,u]   
+							// Fail: t<=u
+							// Success: !A || (t<l) || (t>u)
+							constraintFail.setMath(SBML_Editor.myParseFormula(LEQupper));
+							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "or(" + "not(" + probpropRightSBML + ")" + "," + LTlower + ")" + "," + GTupper + ")"));
+							break;
+						}
+						case 1: {  // [<=u]
+							// Fail: t<=u
+							// Success: !A || (t>u)
+							constraintFail.setMath(SBML_Editor.myParseFormula(LEQupper));
+							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + GTupper + ")"));
+							break;
+						}
+						case 2: {	// [<u]
+							// Fail: t<u
+							// Success: !A || (t>=u)
+							constraintFail.setMath(SBML_Editor.myParseFormula(LTupper));
+							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + GEQupper + ")"));
+							break;
+						}
+						case 3: {	// [>=l]
+							// Fail: ---
+							// Success: !A || (t<l)
+							m.removeConstraint(0);
+							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + LTlower + ")"));
+							break;
+						}
+						case 4: {	// [>l]
+							// Fail: ---
+							// Success: !A || (t<=l)
+							m.removeConstraint(0);
+							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + LEQlower + ")"));
+							break;
+						}
+						case 5: {	// [=k]
+							// Fail: t<=k
+							// Success: !A || (t<k) || (t>k)
+							constraintFail.setMath(SBML_Editor.myParseFormula(EQlower));
+							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "or(" + "not(" + probpropRightSBML + ")" + "," + LTlower + ")" + "," + GTlower + ")"));
+							break;
+						}
+					}
+				}
+				if (property.contains("PG")){
+					switch (relopType) {
+						case 0:{	// [l,u]   
+							// Fail: A || (t<l) || (t>u)
+							// Success: t<=u
+							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + "or(" + probpropRightSBML + "," + LTlower + ")" + "," + GTupper + ")"));
+							constraintSucc.setMath(SBML_Editor.myParseFormula(LEQupper));
+							break;
+						}
+						case 1: {  // [<=u]
+							// Fail: A || (t>u)
+							// Success: t<=u
+							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + probpropRightSBML + "," + GTupper + ")"));
+							constraintSucc.setMath(SBML_Editor.myParseFormula(LEQupper));
+							break;
+						}
+						case 2: {	// [<u]
+							// Fail: A || (t>=u)
+							// Success: t<u
+							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + probpropRightSBML + "," + GEQupper + ")"));
+							constraintSucc.setMath(SBML_Editor.myParseFormula(LTupper));
+							break;
+						}
+						case 3: {	// [>=l]
+							// Fail: A || (t<l)
+							// Success: ---
+							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + probpropRightSBML + "," + LTlower + ")"));
+							m.removeConstraint(1);
+							break;
+						}
+						case 4: {	// [>l]
+							// Fail: A || (t<=l)
+							// Success: ---
+							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + probpropRightSBML + "," + LEQlower + ")"));
+							m.removeConstraint(1);
+							break;
+						}
+						case 5: {	// [=k]
+							// Fail: A || (t>k) || (t<k)
+							// Success: t<=k
+							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + "or(" + probpropRightSBML + "," + GTlower + ")" + "," + LTlower + ")"));
+							constraintSucc.setMath(SBML_Editor.myParseFormula(LEQlower));
+							break;
+						}
+					}
+				}
 			}
-			if (property.contains("PF")){
-				constraintFail.setMetaId("Fail");
-				constraintFail.setMath(SBML_Editor.myParseFormula(upperConstraint));
-				constraintSucc.setMetaId("Success");
-				constraintSucc.setMath(SBML_Editor.myParseFormula("not(" + probpropRightSBML + ")"));
-			}
-			if (property.contains("PG")){
-				constraintFail.setMetaId("Fail");
-				constraintFail.setMath(SBML_Editor.myParseFormula(probpropRightSBML));
-				constraintSucc.setMetaId("Success");
-				constraintSucc.setMath(SBML_Editor.myParseFormula(upperConstraint));
-			}
+				
 		}
 		return doc;
 	}
 	
-	
 	// getProbpropExpression strips off the "Pr"("St"), relop and REAL parts of a property
+	// Example: Pr>=0.99{(true)PU[3,10]((A<8)&&(R>4))]}
 	public static String getProbpropExpression(String property){
 		//System.out.println("property (getProbpropExpression)= " + property);
 		String probprop="";
 		// probproperty 
-		if (property.startsWith("Pr") | property.startsWith("St")){
+		if (property.startsWith("Pr") || property.startsWith("St")){
+			if(property.startsWith("St"))
+				isSteadyState = true;
 			// remove Pr/St from the property spec
 			property=property.substring(2);
 			boolean relopFlag = property.startsWith(">")
-								| property.startsWith(">=")
-								| property.startsWith("<")
-								| property.startsWith("<=")
-								| (property.startsWith("=") && !property.contains("?"));
+								|| property.startsWith(">=")
+								|| property.startsWith("<")
+								|| property.startsWith("<=")
+								|| (property.startsWith("=") && !property.contains("?"));
 			if (relopFlag){
-				if(property.startsWith(">=") | property.startsWith("<=")){
+				if(property.startsWith(">=") || property.startsWith("<=")){
 					property=property.substring(2);
 				}
 				else{
@@ -859,18 +947,17 @@ public class Translator {
 		}
 		else { // hsf
 			return "";
-			
 		}		
 		return probprop;
 	}
 	
 	// getProbpropParts extracts the expressions before and after the PU (after PG and PF)
-	// and time bound from the probprop
+	// and the time bound from the probprop
 	// Currently, we assume no nested until property
 	public static String[] getProbpropParts(String probprop){
 		String symbol = "@";
 		String[] probpropParts;
-		probpropParts = new String[4];
+		probpropParts = new String[5];
 		boolean PUFlag = probprop.contains("PU");
 		boolean PFFlag = probprop.contains("PF");
 		boolean PGFlag = probprop.contains("PG");
@@ -879,56 +966,64 @@ public class Translator {
 		String timeBound="";
 		String upperBound="";
 		String lowerBound="";
-		if (!probprop.equals("")){
+		String relopType = "";
+		if (!probprop.equals("") && !probprop.contains(" ")){
 			// property should be in this format at this stage: probprop
 			// obtain the hsf AFTER bound
 			probpropRight= probprop.substring(probprop.indexOf("]")+1, probprop.length());			
 			// obtain the time bound
 			timeBound= probprop.substring(probprop.indexOf("["), probprop.indexOf("]")+1);							 
-			// bound: [<= upper]
-			if(timeBound.contains("<=")){
-				// upper bound
-				upperBound = timeBound.substring(timeBound.indexOf("<")+2, timeBound.indexOf("]"));			    
-				if(PUFlag){
-					probprop = probprop.replace("PU",symbol);
-					// obtain the logic BEFORE the temporal operator
-					probpropLeft= probprop.substring(0, probprop.indexOf(symbol));
-					// if probpropLeft has a pair of outermost parentheses, remove them
-					if (probpropLeft.startsWith("(") & probpropLeft.endsWith(")")){
-						probpropLeft=probprop.substring(1,probpropLeft.length()-1);
-					}
-				}
-				if(PFFlag){
-					probprop = probprop.replace("PF",symbol);
-					// Remove the outermost parentheses
-					if (probprop.startsWith("(") & probpropLeft.endsWith(")")){
-						probprop=probprop.substring(1,probpropLeft.length()-1);
-					}	
-				}
-				if(PGFlag){
-					probprop = probprop.replace("PG",symbol);
-					// Remove the outermost parentheses
-					if (probprop.startsWith("(") & probpropLeft.endsWith(")")){
-						probprop=probprop.substring(1,probpropLeft.length()-1);
-					}
-				}			
-			}
 			// bound: [lower, upper]
-			else if (timeBound.contains(",")){ 
-				// lower bound
+			if (timeBound.contains(",")){
+				relopType = "0";
 				lowerBound = timeBound.substring(timeBound.indexOf("[")+1, timeBound.indexOf(","));
-				// upper bound
 				upperBound = timeBound.substring(timeBound.indexOf(",")+1, timeBound.indexOf("]"));		 						
-				if(PUFlag){
-						probprop = probprop.replace("PU",symbol);
-						// obtain the logic BEFORE the temporal operator
-						probpropLeft= probprop.substring(0, probprop.indexOf(symbol));
-						// if probpropLeft has a pair of outermost parentheses, remove them
-						if (probpropLeft.startsWith("(") & probpropLeft.endsWith(")")){
-							probpropLeft=probprop.substring(1,probpropLeft.length()-1);
-						}
+			}
+			// bound: [<=upper]
+			else if(timeBound.contains("<=")){
+				relopType = "1";
+				upperBound = timeBound.substring(timeBound.indexOf("<")+2, timeBound.indexOf("]"));			    
+			}
+			// bound: [<upper]
+			else if (timeBound.contains("<") && !timeBound.contains("=")){
+				relopType = "2";
+				upperBound = timeBound.substring(timeBound.indexOf("<")+1, timeBound.indexOf("]"));			    
+			}
+			// bound: [>=lower]
+			else if (timeBound.contains(">=")) {
+				relopType = "3";
+				lowerBound = timeBound.substring(timeBound.indexOf(">")+2, timeBound.indexOf("]"));
+			}
+			// bound: [>lower]
+			else if (timeBound.contains(">") && !timeBound.contains("=")){
+				relopType = "4";
+				lowerBound = timeBound.substring(timeBound.indexOf(">")+1, timeBound.indexOf("]"));
+			}
+			// bound: [=k] (k is treated as lowerBound)
+			else if (timeBound.contains("=") && !timeBound.contains("<") && !timeBound.contains(">")) {
+				relopType = "5";
+				lowerBound = timeBound.substring(timeBound.indexOf("=")+1, timeBound.indexOf("]"));
+			}
+			if(PUFlag){
+				probprop = probprop.replace("PU",symbol);
+				// obtain the logic BEFORE the temporal operator
+				probpropLeft= probprop.substring(0, probprop.indexOf(symbol));
+				// if probpropLeft has a pair of outermost parentheses, remove them
+				if (probpropLeft.startsWith("(") && probpropLeft.endsWith(")")){
+					probpropLeft=probprop.substring(1,probpropLeft.length()-1);
 				}
-			} 
+				if (probpropRight.startsWith("(") && probpropRight.endsWith(")")) {
+					probpropRight=probpropRight.substring(1,probpropRight.length()-1);
+				}
+			}
+			if(PFFlag){
+				// Remove the outermost parentheses. At this point, probpropRight = (hsf)
+				probpropRight=probpropRight.substring(1,probpropRight.length()-1);
+			}
+			if(PGFlag){
+				// Remove the outermost parentheses. At this point, probpropRight = (hsf)
+				probpropRight=probpropRight.substring(1,probpropRight.length()-1);
+			}		
 		}
 		else { // hsfFlag = true	
 			JOptionPane.showMessageDialog(Gui.frame, "Property does not contain the until operator",
@@ -938,6 +1033,7 @@ public class Translator {
 		probpropParts[1]=probpropRight;
 		probpropParts[2]=lowerBound;
 		probpropParts[3]=upperBound;
+		probpropParts[4]=relopType;
 		return probpropParts;
 	}
 	
