@@ -3,6 +3,7 @@ package main;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import javax.swing.*;
@@ -199,7 +200,12 @@ public class FileTree extends JPanel implements MouseListener {
 			UIManager.put("Tree.expandedIcon", ICON_MINUS);
 			UIManager.put("Tree.collapsedIcon", ICON_PLUS);
 		}
-		tree.updateUI();
+		Runnable updateTree = new Runnable() {
+			public void run() {
+				tree.updateUI();
+			}
+		};
+		SwingUtilities.invokeLater(updateTree);
 	}
 
 	/**
@@ -620,7 +626,12 @@ public class FileTree extends JPanel implements MouseListener {
 							((DefaultMutableTreeNode) root.getChildAt(i)).insert(
 									new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null,
 											item)), insert);
-							tree.updateUI();
+							Runnable updateTree = new Runnable() {
+								public void run() {
+									tree.updateUI();
+								}
+							};
+							SwingUtilities.invokeLater(updateTree);
 							return;
 						}
 					}
@@ -649,7 +660,12 @@ public class FileTree extends JPanel implements MouseListener {
 								((DefaultMutableTreeNode) root.getChildAt(i)).insert(
 										new DefaultMutableTreeNode(new IconData(ICON_LEARN, null,
 												item)), insert);
-								tree.updateUI();
+								Runnable updateTree = new Runnable() {
+									public void run() {
+										tree.updateUI();
+									}
+								};
+								SwingUtilities.invokeLater(updateTree);
 								return;
 							}
 						}
@@ -668,7 +684,12 @@ public class FileTree extends JPanel implements MouseListener {
 								((DefaultMutableTreeNode) root.getChildAt(i)).insert(
 										new DefaultMutableTreeNode(new IconData(ICON_LEARN, null,
 												item)), insert);
-								tree.updateUI();
+								Runnable updateTree = new Runnable() {
+									public void run() {
+										tree.updateUI();
+									}
+								};
+								SwingUtilities.invokeLater(updateTree);
 								return;
 							}
 						}
@@ -698,7 +719,12 @@ public class FileTree extends JPanel implements MouseListener {
 								((DefaultMutableTreeNode) root.getChildAt(i)).insert(
 										new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS,
 												null, item)), insert);
-								tree.updateUI();
+								Runnable updateTree = new Runnable() {
+									public void run() {
+										tree.updateUI();
+									}
+								};
+								SwingUtilities.invokeLater(updateTree);
 								return;
 							}
 						}
@@ -728,7 +754,12 @@ public class FileTree extends JPanel implements MouseListener {
 								((DefaultMutableTreeNode) root.getChildAt(i)).insert(
 										new DefaultMutableTreeNode(new IconData(ICON_VERIFY, null,
 												item)), insert);
-								tree.updateUI();
+								Runnable updateTree = new Runnable() {
+									public void run() {
+										tree.updateUI();
+									}
+								};
+								SwingUtilities.invokeLater(updateTree);
 								return;
 							}
 						}
@@ -803,8 +834,8 @@ public class FileTree extends JPanel implements MouseListener {
 								String refFile = scan.nextLine();
 								scan.close();
 								if (item.equals(refFile)) {
-									node.add(new DefaultMutableTreeNode(new IconData(ICON_SIMULATION, null,
-											f)));
+									node.add(new DefaultMutableTreeNode(new IconData(
+											ICON_SIMULATION, null, f)));
 								}
 							}
 							catch (Exception e) {
@@ -813,22 +844,24 @@ public class FileTree extends JPanel implements MouseListener {
 						else if (new File(path + separator + f + ".lrn").exists()) {
 							try {
 								Properties load = new Properties();
-								FileInputStream in = new FileInputStream(new File(path + separator + f
-										+ ".lrn"));
+								FileInputStream in = new FileInputStream(new File(path + separator
+										+ f + ".lrn"));
 								load.load(in);
 								in.close();
 								if (load.containsKey("genenet.file")) {
-									String[] getProp = load.getProperty("genenet.file").split(separator);
+									String[] getProp = load.getProperty("genenet.file").split(
+											separator);
 									if (item.equals(getProp[getProp.length - 1])) {
-										node.add(new DefaultMutableTreeNode(new IconData(ICON_LEARN, null,
-												f)));
+										node.add(new DefaultMutableTreeNode(new IconData(
+												ICON_LEARN, null, f)));
 									}
 								}
 								else if (load.containsKey("learn.file")) {
-									String[] getProp = load.getProperty("learn.file").split(separator);
+									String[] getProp = load.getProperty("learn.file").split(
+											separator);
 									if (item.equals(getProp[getProp.length - 1])) {
-										node.add(new DefaultMutableTreeNode(new IconData(ICON_LEARN, null,
-												f)));
+										node.add(new DefaultMutableTreeNode(new IconData(
+												ICON_LEARN, null, f)));
 									}
 								}
 							}
@@ -838,15 +871,16 @@ public class FileTree extends JPanel implements MouseListener {
 						else if (new File(path + separator + f + ".syn").exists()) {
 							try {
 								Properties load = new Properties();
-								FileInputStream in = new FileInputStream(new File(path + separator + f
-										+ ".syn"));
+								FileInputStream in = new FileInputStream(new File(path + separator
+										+ f + ".syn"));
 								load.load(in);
 								in.close();
 								if (load.containsKey("synthesis.file")) {
-									String[] getProp = load.getProperty("synthesis.file").split(separator);
+									String[] getProp = load.getProperty("synthesis.file").split(
+											separator);
 									if (item.equals(getProp[getProp.length - 1])) {
-										node.add(new DefaultMutableTreeNode(new IconData(ICON_SYNTHESIS, null,
-												f)));
+										node.add(new DefaultMutableTreeNode(new IconData(
+												ICON_SYNTHESIS, null, f)));
 									}
 								}
 							}
@@ -856,15 +890,16 @@ public class FileTree extends JPanel implements MouseListener {
 						else if (new File(path + separator + f + ".ver").exists()) {
 							try {
 								Properties load = new Properties();
-								FileInputStream in = new FileInputStream(new File(path + separator + f
-										+ ".ver"));
+								FileInputStream in = new FileInputStream(new File(path + separator
+										+ f + ".ver"));
 								load.load(in);
 								in.close();
 								if (load.containsKey("verification.file")) {
-									String[] getProp = load.getProperty("verification.file").split(separator);
+									String[] getProp = load.getProperty("verification.file").split(
+											separator);
 									if (item.equals(getProp[getProp.length - 1])) {
-										node.add(new DefaultMutableTreeNode(new IconData(ICON_VERIFY, null,
-												f)));
+										node.add(new DefaultMutableTreeNode(new IconData(
+												ICON_VERIFY, null, f)));
 									}
 								}
 							}
@@ -874,12 +909,17 @@ public class FileTree extends JPanel implements MouseListener {
 					}
 				}
 				root.insert(node, insert);
-				tree.updateUI();
+				Runnable updateTree = new Runnable() {
+					public void run() {
+						tree.updateUI();
+					}
+				};
+				SwingUtilities.invokeLater(updateTree);
 				return;
 			}
 		}
 	}
-	
+
 	private void sort(Object[] sort) {
 		int i, j;
 		String index;
@@ -898,13 +938,23 @@ public class FileTree extends JPanel implements MouseListener {
 		for (int i = 0; i < root.getChildCount(); i++) {
 			if (root.getChildAt(i).toString().equals(item)) {
 				root.remove(i);
-				tree.updateUI();
+				Runnable updateTree = new Runnable() {
+					public void run() {
+						tree.updateUI();
+					}
+				};
+				SwingUtilities.invokeLater(updateTree);
 				return;
 			}
 			for (int j = 0; j < root.getChildAt(i).getChildCount(); j++) {
 				if (root.getChildAt(i).getChildAt(j).toString().equals(item)) {
 					((DefaultMutableTreeNode) root.getChildAt(i)).remove(j);
-					tree.updateUI();
+					Runnable updateTree = new Runnable() {
+						public void run() {
+							tree.updateUI();
+						}
+					};
+					SwingUtilities.invokeLater(updateTree);
 					return;
 				}
 			}
@@ -913,7 +963,12 @@ public class FileTree extends JPanel implements MouseListener {
 
 	public void fixTree() {
 		fixTree(null, root, dir, false);
-		tree.updateUI();
+		Runnable updateTree = new Runnable() {
+			public void run() {
+				tree.updateUI();
+			}
+		};
+		SwingUtilities.invokeLater(updateTree);
 	}
 
 	public DefaultMutableTreeNode getRoot() {
