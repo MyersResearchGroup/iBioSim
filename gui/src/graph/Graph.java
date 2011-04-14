@@ -36,6 +36,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Properties;
 import java.util.Scanner;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.prefs.Preferences;
 
 import javax.swing.BorderFactory;
@@ -163,9 +164,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	private JComboBox XVariable;
 
 	private JCheckBox LogX, LogY;
-	
+
 	private JCheckBox visibleLegend;
-	
+
 	private LegendTitle legend;
 
 	private Log log;
@@ -234,6 +235,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private boolean updateXNumber;
 
+	private final ReentrantLock lock;
+
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
 	 * helper method.
@@ -241,6 +244,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	public Graph(Reb2Sac reb2sac, String printer_track_quantity, String label, String printer_id,
 			String outDir, String time, Gui biomodelsim, String open, Log log, String graphName,
 			boolean timeSeries, boolean learnGraph) {
+		lock = new ReentrantLock(true);
 		this.reb2sac = reb2sac;
 		averageOrder = null;
 		popup = new JPopupMenu();
@@ -1832,7 +1836,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 								}
 								if (addTerm3) {
-									IconNode n = new IconNode("Termination Time", "Termination Time");
+									IconNode n = new IconNode("Termination Time",
+											"Termination Time");
 									d2.add(n);
 									n.setIconName("");
 									for (GraphSpecies g : graphed) {
@@ -1855,7 +1860,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 								}
 								if (addPercent3) {
-									IconNode n = new IconNode("Percent Termination", "Percent Termination");
+									IconNode n = new IconNode("Percent Termination",
+											"Percent Termination");
 									d2.add(n);
 									n.setIconName("");
 									for (GraphSpecies g : graphed) {
@@ -1878,7 +1884,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 								}
 								if (addConst3) {
-									IconNode n = new IconNode("Constraint Termination", "Constraint Termination");
+									IconNode n = new IconNode("Constraint Termination",
+											"Constraint Termination");
 									d2.add(n);
 									n.setIconName("");
 									for (GraphSpecies g : graphed) {
@@ -2092,7 +2099,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 					}
 					if (addConst2) {
-						IconNode n = new IconNode("Constraint Termination", "Constraint Termination");
+						IconNode n = new IconNode("Constraint Termination",
+								"Constraint Termination");
 						d.add(n);
 						n.setIconName("");
 						for (GraphSpecies g : graphed) {
@@ -2265,7 +2273,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			simDir.add(n);
 			n.setIconName("");
 			for (GraphSpecies g : graphed) {
-				if (g.getRunNumber().equals("Constraint Termination") && g.getDirectory().equals("")) {
+				if (g.getRunNumber().equals("Constraint Termination")
+						&& g.getDirectory().equals("")) {
 					n.setIcon(TextIcons.getIcon("g"));
 					n.setIconName("" + (char) 10003);
 					simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
@@ -3915,7 +3924,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if (directory.equals("")) {
 			if (selected.equals("Average") || selected.equals("Variance")
 					|| selected.equals("Standard Deviation") || selected.equals("Termination Time")
-					|| selected.equals("Percent Termination") || selected.equals("Constraint Termination")) {
+					|| selected.equals("Percent Termination")
+					|| selected.equals("Constraint Termination")) {
 				if (selected.equals("Average")
 						&& new File(outDir + separator + "mean" + "."
 								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
@@ -3970,7 +3980,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		else {
 			if (selected.equals("Average") || selected.equals("Variance")
 					|| selected.equals("Standard Deviation") || selected.equals("Termination Time")
-					|| selected.equals("Percent Termination") || selected.equals("Constraint Termination")) {
+					|| selected.equals("Percent Termination")
+					|| selected.equals("Constraint Termination")) {
 				if (selected.equals("Average")
 						&& new File(outDir + separator + directory + separator + "mean" + "."
 								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
@@ -3998,9 +4009,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							+ printer_id.substring(0, printer_id.length() - 8));
 				}
 				else if (selected.equals("Percent Termination")
-						&& new File(outDir + separator + directory + separator + "percent-term-time" + "."
+						&& new File(outDir + separator + directory + separator
+								+ "percent-term-time" + "."
 								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-					readGraphSpecies(outDir + separator + directory + separator + "percent-term-time" + "."
+					readGraphSpecies(outDir + separator + directory + separator
+							+ "percent-term-time" + "."
 							+ printer_id.substring(0, printer_id.length() - 8));
 				}
 				else if (selected.equals("Constraint Termination")
@@ -5434,235 +5447,246 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private ArrayList<ArrayList<Double>> calculateAverageVarianceDeviation(String startFile,
 			String fileStem, int choice, String directory, boolean warning) {
-		warn = warning;
 		ArrayList<ArrayList<Double>> average = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> variance = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> deviation = new ArrayList<ArrayList<Double>>();
-		// TSDParser p = new TSDParser(startFile, biomodelsim, false);
-		ArrayList<ArrayList<Double>> data = readData(startFile, "", directory, warn);
-		averageOrder = graphSpecies;
-		boolean first = true;
-		int runsToMake = 1;
-		String[] findNum = startFile.split(separator);
-		String search = findNum[findNum.length - 1];
-		int firstOne = Integer.parseInt(search.substring(4, search.length() - 4));
-		if (directory == null) {
-			for (String f : new File(outDir).list()) {
-				if (f.contains(fileStem)) {
-					try {
-						int tempNum = Integer.parseInt(f.substring(fileStem.length(),
-								f.length() - 4));
-						if (tempNum > runsToMake) {
-							runsToMake = tempNum;
+		lock.lock();
+		try {
+			warn = warning;
+			// TSDParser p = new TSDParser(startFile, biomodelsim, false);
+			ArrayList<ArrayList<Double>> data = readData(startFile, "", directory, warn);
+			averageOrder = graphSpecies;
+			boolean first = true;
+			int runsToMake = 1;
+			String[] findNum = startFile.split(separator);
+			String search = findNum[findNum.length - 1];
+			int firstOne = Integer.parseInt(search.substring(4, search.length() - 4));
+			if (directory == null) {
+				for (String f : new File(outDir).list()) {
+					if (f.contains(fileStem)) {
+						try {
+							int tempNum = Integer.parseInt(f.substring(fileStem.length(), f
+									.length() - 4));
+							if (tempNum > runsToMake) {
+								runsToMake = tempNum;
+							}
 						}
-					}
-					catch (Exception e) {
+						catch (Exception e) {
+						}
 					}
 				}
 			}
-		}
-		else {
-			for (String f : new File(outDir + separator + directory).list()) {
-				if (f.contains(fileStem)) {
-					try {
-						int tempNum = Integer.parseInt(f.substring(fileStem.length(),
-								f.length() - 4));
-						if (tempNum > runsToMake) {
-							runsToMake = tempNum;
+			else {
+				for (String f : new File(outDir + separator + directory).list()) {
+					if (f.contains(fileStem)) {
+						try {
+							int tempNum = Integer.parseInt(f.substring(fileStem.length(), f
+									.length() - 4));
+							if (tempNum > runsToMake) {
+								runsToMake = tempNum;
+							}
 						}
-					}
-					catch (Exception e) {
+						catch (Exception e) {
+						}
 					}
 				}
 			}
-		}
-		for (int i = 0; i < graphSpecies.size(); i++) {
-			average.add(new ArrayList<Double>());
-			variance.add(new ArrayList<Double>());
-		}
-		HashMap<Double, Integer> dataCounts = new HashMap<Double, Integer>();
-		// int count = 0;
-		int skip = firstOne;
-		for (int j = 0; j < runsToMake; j++) {
-			if (!first) {
-				if (firstOne != 1) {
-					j--;
-					firstOne = 1;
-				}
-				boolean loop = true;
-				while (loop && j < runsToMake && (j + 1) != skip) {
-					if (directory == null) {
-						if (new File(outDir + separator + fileStem + (j + 1) + "."
-								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-							ArrayList<ArrayList<Double>> newData = readData(outDir + separator
-									+ fileStem + (j + 1) + "."
-									+ printer_id.substring(0, printer_id.length() - 8), "",
-									directory, warn);
-							data = new ArrayList<ArrayList<Double>>();
-							for (int i = 0; i < averageOrder.size(); i++) {
-								for (int k = 0; k < graphSpecies.size(); k++) {
-									if (averageOrder.get(i).equals(graphSpecies.get(k))) {
-										data.add(newData.get(k));
-										break;
+			for (int i = 0; i < graphSpecies.size(); i++) {
+				average.add(new ArrayList<Double>());
+				variance.add(new ArrayList<Double>());
+			}
+			HashMap<Double, Integer> dataCounts = new HashMap<Double, Integer>();
+			// int count = 0;
+			int skip = firstOne;
+			for (int j = 0; j < runsToMake; j++) {
+				if (!first) {
+					if (firstOne != 1) {
+						j--;
+						firstOne = 1;
+					}
+					boolean loop = true;
+					while (loop && j < runsToMake && (j + 1) != skip) {
+						if (directory == null) {
+							if (new File(outDir + separator + fileStem + (j + 1) + "."
+									+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+								ArrayList<ArrayList<Double>> newData = readData(outDir + separator
+										+ fileStem + (j + 1) + "."
+										+ printer_id.substring(0, printer_id.length() - 8), "",
+										directory, warn);
+								data = new ArrayList<ArrayList<Double>>();
+								for (int i = 0; i < averageOrder.size(); i++) {
+									for (int k = 0; k < graphSpecies.size(); k++) {
+										if (averageOrder.get(i).equals(graphSpecies.get(k))) {
+											data.add(newData.get(k));
+											break;
+										}
 									}
 								}
+								loop = false;
+								// count++;
 							}
-							loop = false;
-							// count++;
+							else {
+								j++;
+							}
 						}
 						else {
-							j++;
-						}
-					}
-					else {
-						if (new File(outDir + separator + directory + separator + fileStem
-								+ (j + 1) + "." + printer_id.substring(0, printer_id.length() - 8))
-								.exists()) {
-							ArrayList<ArrayList<Double>> newData = readData(outDir + separator
-									+ directory + separator + fileStem + (j + 1) + "."
-									+ printer_id.substring(0, printer_id.length() - 8), "",
-									directory, warn);
-							data = new ArrayList<ArrayList<Double>>();
-							for (int i = 0; i < averageOrder.size(); i++) {
-								for (int k = 0; k < graphSpecies.size(); k++) {
-									if (averageOrder.get(i).equals(graphSpecies.get(k))) {
-										data.add(newData.get(k));
-										break;
+							if (new File(outDir + separator + directory + separator + fileStem
+									+ (j + 1) + "."
+									+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+								ArrayList<ArrayList<Double>> newData = readData(outDir + separator
+										+ directory + separator + fileStem + (j + 1) + "."
+										+ printer_id.substring(0, printer_id.length() - 8), "",
+										directory, warn);
+								data = new ArrayList<ArrayList<Double>>();
+								for (int i = 0; i < averageOrder.size(); i++) {
+									for (int k = 0; k < graphSpecies.size(); k++) {
+										if (averageOrder.get(i).equals(graphSpecies.get(k))) {
+											data.add(newData.get(k));
+											break;
+										}
 									}
 								}
+								loop = false;
+								// count++;
 							}
-							loop = false;
-							// count++;
-						}
-						else {
-							j++;
+							else {
+								j++;
+							}
 						}
 					}
 				}
-			}
-			// ArrayList<ArrayList<Double>> data = p.getData();
-			for (int k = 0; k < data.get(0).size(); k++) {
-				if (first) {
-					double put;
-					if (k == data.get(0).size() - 1 && k >= 2) {
-						if (data.get(0).get(k) - data.get(0).get(k - 1) != data.get(0).get(k - 1)
-								- data.get(0).get(k - 2)) {
-							put = data.get(0).get(k - 1)
-									+ (data.get(0).get(k - 1) - data.get(0).get(k - 2));
-							dataCounts.put(put, 1);
+				// ArrayList<ArrayList<Double>> data = p.getData();
+				for (int k = 0; k < data.get(0).size(); k++) {
+					if (first) {
+						double put;
+						if (k == data.get(0).size() - 1 && k >= 2) {
+							if (data.get(0).get(k) - data.get(0).get(k - 1) != data.get(0).get(
+									k - 1)
+									- data.get(0).get(k - 2)) {
+								put = data.get(0).get(k - 1)
+										+ (data.get(0).get(k - 1) - data.get(0).get(k - 2));
+								dataCounts.put(put, 1);
+							}
+							else {
+								put = (data.get(0)).get(k);
+								dataCounts.put(put, 1);
+							}
 						}
 						else {
 							put = (data.get(0)).get(k);
 							dataCounts.put(put, 1);
 						}
-					}
-					else {
-						put = (data.get(0)).get(k);
-						dataCounts.put(put, 1);
-					}
-					for (int i = 0; i < data.size(); i++) {
-						if (i == 0) {
-							variance.get(i).add((data.get(i)).get(k));
-							average.get(i).add(put);
-						}
-						else {
-							variance.get(i).add(0.0);
-							average.get(i).add((data.get(i)).get(k));
-						}
-					}
-				}
-				else {
-					int index = -1;
-					double put;
-					if (k == data.get(0).size() - 1 && k >= 2) {
-						if (data.get(0).get(k) - data.get(0).get(k - 1) != data.get(0).get(k - 1)
-								- data.get(0).get(k - 2)) {
-							put = data.get(0).get(k - 1)
-									+ (data.get(0).get(k - 1) - data.get(0).get(k - 2));
-						}
-						else {
-							put = (data.get(0)).get(k);
-						}
-					}
-					else if (k == data.get(0).size() - 1 && k == 1) {
-						if (average.get(0).size() > 1) {
-							put = (average.get(0)).get(k);
-						}
-						else {
-							put = (data.get(0)).get(k);
-						}
-					}
-					else {
-						put = (data.get(0)).get(k);
-					}
-					if (average.get(0).contains(put)) {
-						index = average.get(0).indexOf(put);
-						int count = dataCounts.get(put);
-						dataCounts.put(put, count + 1);
-						for (int i = 1; i < data.size(); i++) {
-							double old = (average.get(i)).get(index);
-							(average.get(i)).set(index, old
-									+ (((data.get(i)).get(k) - old) / (count + 1)));
-							double newMean = (average.get(i)).get(index);
-							double vary = (((count - 1) * (variance.get(i)).get(index)) + ((data
-									.get(i)).get(k) - newMean)
-									* ((data.get(i)).get(k) - old))
-									/ count;
-							(variance.get(i)).set(index, vary);
-						}
-					}
-					else {
-						dataCounts.put(put, 1);
-						for (int a = 0; a < average.get(0).size(); a++) {
-							if (average.get(0).get(a) > put) {
-								index = a;
-								break;
+						for (int i = 0; i < data.size(); i++) {
+							if (i == 0) {
+								variance.get(i).add((data.get(i)).get(k));
+								average.get(i).add(put);
+							}
+							else {
+								variance.get(i).add(0.0);
+								average.get(i).add((data.get(i)).get(k));
 							}
 						}
-						if (index == -1) {
-							index = average.get(0).size() - 1;
+					}
+					else {
+						int index = -1;
+						double put;
+						if (k == data.get(0).size() - 1 && k >= 2) {
+							if (data.get(0).get(k) - data.get(0).get(k - 1) != data.get(0).get(
+									k - 1)
+									- data.get(0).get(k - 2)) {
+								put = data.get(0).get(k - 1)
+										+ (data.get(0).get(k - 1) - data.get(0).get(k - 2));
+							}
+							else {
+								put = (data.get(0)).get(k);
+							}
 						}
-						average.get(0).add(put);
-						variance.get(0).add(put);
-						for (int a = 1; a < average.size(); a++) {
-							average.get(a).add(data.get(a).get(k));
-							variance.get(a).add(0.0);
+						else if (k == data.get(0).size() - 1 && k == 1) {
+							if (average.get(0).size() > 1) {
+								put = (average.get(0)).get(k);
+							}
+							else {
+								put = (data.get(0)).get(k);
+							}
 						}
-						if (index != average.get(0).size() - 1) {
-							for (int a = average.get(0).size() - 2; a >= 0; a--) {
-								if (average.get(0).get(a) > average.get(0).get(a + 1)) {
-									for (int b = 0; b < average.size(); b++) {
-										double temp = average.get(b).get(a);
-										average.get(b).set(a, average.get(b).get(a + 1));
-										average.get(b).set(a + 1, temp);
-										temp = variance.get(b).get(a);
-										variance.get(b).set(a, variance.get(b).get(a + 1));
-										variance.get(b).set(a + 1, temp);
-									}
-								}
-								else {
+						else {
+							put = (data.get(0)).get(k);
+						}
+						if (average.get(0).contains(put)) {
+							index = average.get(0).indexOf(put);
+							int count = dataCounts.get(put);
+							dataCounts.put(put, count + 1);
+							for (int i = 1; i < data.size(); i++) {
+								double old = (average.get(i)).get(index);
+								(average.get(i)).set(index, old
+										+ (((data.get(i)).get(k) - old) / (count + 1)));
+								double newMean = (average.get(i)).get(index);
+								double vary = (((count - 1) * (variance.get(i)).get(index)) + ((data
+										.get(i)).get(k) - newMean)
+										* ((data.get(i)).get(k) - old))
+										/ count;
+								(variance.get(i)).set(index, vary);
+							}
+						}
+						else {
+							dataCounts.put(put, 1);
+							for (int a = 0; a < average.get(0).size(); a++) {
+								if (average.get(0).get(a) > put) {
+									index = a;
 									break;
 								}
 							}
+							if (index == -1) {
+								index = average.get(0).size() - 1;
+							}
+							average.get(0).add(put);
+							variance.get(0).add(put);
+							for (int a = 1; a < average.size(); a++) {
+								average.get(a).add(data.get(a).get(k));
+								variance.get(a).add(0.0);
+							}
+							if (index != average.get(0).size() - 1) {
+								for (int a = average.get(0).size() - 2; a >= 0; a--) {
+									if (average.get(0).get(a) > average.get(0).get(a + 1)) {
+										for (int b = 0; b < average.size(); b++) {
+											double temp = average.get(b).get(a);
+											average.get(b).set(a, average.get(b).get(a + 1));
+											average.get(b).set(a + 1, temp);
+											temp = variance.get(b).get(a);
+											variance.get(b).set(a, variance.get(b).get(a + 1));
+											variance.get(b).set(a + 1, temp);
+										}
+									}
+									else {
+										break;
+									}
+								}
+							}
 						}
 					}
 				}
+				first = false;
 			}
-			first = false;
-		}
-		deviation = new ArrayList<ArrayList<Double>>();
-		for (int i = 0; i < variance.size(); i++) {
-			deviation.add(new ArrayList<Double>());
-			for (int j = 0; j < variance.get(i).size(); j++) {
-				deviation.get(i).add(variance.get(i).get(j));
+			deviation = new ArrayList<ArrayList<Double>>();
+			for (int i = 0; i < variance.size(); i++) {
+				deviation.add(new ArrayList<Double>());
+				for (int j = 0; j < variance.get(i).size(); j++) {
+					deviation.get(i).add(variance.get(i).get(j));
+				}
 			}
-		}
-		for (int i = 1; i < deviation.size(); i++) {
-			for (int j = 0; j < deviation.get(i).size(); j++) {
-				deviation.get(i).set(j, Math.sqrt(deviation.get(i).get(j)));
+			for (int i = 1; i < deviation.size(); i++) {
+				for (int j = 0; j < deviation.get(i).size(); j++) {
+					deviation.get(i).set(j, Math.sqrt(deviation.get(i).get(j)));
+				}
 			}
+			averageOrder = null;
 		}
-		averageOrder = null;
+		catch (Exception e) {
+			JOptionPane.showMessageDialog(Gui.frame,
+					"Unable to output average, variance, and standard deviation!", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
+		lock.unlock();
 		if (choice == 0) {
 			return average;
 		}
@@ -6041,7 +6065,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				else {
 					LogY.setSelected(false);
 				}
-				if (graph.containsKey("visibleLegend") && graph.getProperty("visibleLegend").equals("false")) {
+				if (graph.containsKey("visibleLegend")
+						&& graph.getProperty("visibleLegend").equals("false")) {
 					visibleLegend.setSelected(false);
 				}
 				else {
@@ -6128,7 +6153,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				else {
 					((BarRenderer) chart.getCategoryPlot().getRenderer()).setShadowVisible(true);
 				}
-				if (graph.containsKey("visibleLegend") && graph.getProperty("visibleLegend").equals("false")) {
+				if (graph.containsKey("visibleLegend")
+						&& graph.getProperty("visibleLegend").equals("false")) {
 					visibleLegend.setSelected(false);
 				}
 				else {
@@ -6219,8 +6245,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
 					rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
 					if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
-							&& !g.getRunNumber().equals("Standard Deviation") && !g.getRunNumber().equals("Termination Time")
-							&& !g.getRunNumber().equals("Percent Termination") && !g.getRunNumber().equals("Constraint Termination")) {
+							&& !g.getRunNumber().equals("Standard Deviation")
+							&& !g.getRunNumber().equals("Termination Time")
+							&& !g.getRunNumber().equals("Percent Termination")
+							&& !g.getRunNumber().equals("Constraint Termination")) {
 						if (new File(outDir + separator + g.getRunNumber() + "."
 								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 							ArrayList<ArrayList<Double>> data;
@@ -6379,24 +6407,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										&& new File(outDir + separator + "term-time" + "."
 												+ printer_id.substring(0, printer_id.length() - 8))
 												.exists()) {
-									readGraphSpecies(outDir + separator + "term-time"
-											+ "."
+									readGraphSpecies(outDir + separator + "term-time" + "."
 											+ printer_id.substring(0, printer_id.length() - 8));
 								}
 								else if (g.getRunNumber().equals("Percent Termination")
 										&& new File(outDir + separator + "percent-term-time" + "."
 												+ printer_id.substring(0, printer_id.length() - 8))
 												.exists()) {
-									readGraphSpecies(outDir + separator + "percent-term-time"
-											+ "."
+									readGraphSpecies(outDir + separator + "percent-term-time" + "."
 											+ printer_id.substring(0, printer_id.length() - 8));
 								}
 								else if (g.getRunNumber().equals("Constraint Termination")
 										&& new File(outDir + separator + "sim-rep" + "."
 												+ printer_id.substring(0, printer_id.length() - 8))
 												.exists()) {
-									readGraphSpecies(outDir + separator + "sim-rep"
-											+ "."
+									readGraphSpecies(outDir + separator + "sim-rep" + "."
 											+ printer_id.substring(0, printer_id.length() - 8));
 								}
 								else {
@@ -6537,8 +6562,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
 					rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
 					if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
-							&& !g.getRunNumber().equals("Standard Deviation") && !g.getRunNumber().equals("Termination Time")
-							&& !g.getRunNumber().equals("Percent Termination") && !g.getRunNumber().equals("Constraint Termination")) {
+							&& !g.getRunNumber().equals("Standard Deviation")
+							&& !g.getRunNumber().equals("Termination Time")
+							&& !g.getRunNumber().equals("Percent Termination")
+							&& !g.getRunNumber().equals("Constraint Termination")) {
 						if (new File(outDir + separator + g.getDirectory() + separator
 								+ g.getRunNumber() + "."
 								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
