@@ -920,7 +920,7 @@ public class GeneticNetwork {
 	//Returns abstracted rate law for the formation of a complex species
 	public String abstractExpression(String id) {
 		String expression = id;	
-		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap);
+		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, promoters, Double.parseDouble(properties.getParameters().get(GlobalConstants.RNAP_STRING)));
 		if (species.get(id).isSequesterable())
 			expression = e.sequesterSpecies(id, "");
 		else if (complexMap.containsKey(id))
