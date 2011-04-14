@@ -647,9 +647,7 @@ public class Translator {
 
 		// Property parsing is dealt with in PropertyPanel.java
 		// translate the LPN property to SBML constraints
-		if (!property.toLowerCase().equals("none")) {
-			document = generateSBMLConstraints(document, property, lhpn);
-		}
+		document = generateSBMLConstraints(document, property, lhpn);
 	}
 			
 	private void createFunction(Model model, String id, String name, String formula) {
@@ -677,7 +675,7 @@ public class Translator {
 	public static SBMLDocument generateSBMLConstraints(SBMLDocument doc, String property, LhpnFile lhpn) {
 		String probprop = "";
 		String[] probpropParts = new String[4];
-		if(!(property == null) && !property.equals("")){
+		if(!(property == null) && !property.equals("") && !property.equals("none")){
 			Model m = doc.getModel();
 			probprop=getProbpropExpression(property);
 			if (!isSteadyState && !isHSF) {
