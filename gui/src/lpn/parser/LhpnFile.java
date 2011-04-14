@@ -273,7 +273,7 @@ public class LhpnFile {
 			}
 			if (properties != null && !properties.isEmpty()) {
 				if (!properties.contains("none"))
-					properties.add("none");
+					properties.add(0, "none");
 				for (String property : properties) {
 					buffer.append("#@.property ");
 					buffer.append(property + "\n");
