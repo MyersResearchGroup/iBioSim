@@ -72,7 +72,7 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	protected String abstractComplex(String complexId, double multiplier) {
 		complexReactantStoich = new HashMap<String, Double>();
 		complexModifierStoich = new ArrayList<String>();
-		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, kl, complexReactantStoich, complexModifierStoich);
+		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, kl, complexReactantStoich, complexModifierStoich, null);
 		String expression = e.abstractComplex(complexId, multiplier, "");
 		for (String reactant : complexReactantStoich.keySet())
 			r.addReactant(Utility.SpeciesReference(reactant, complexReactantStoich.get(reactant)));
@@ -83,7 +83,7 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	
 	protected String sequesterSpecies(String partId) {
 		complexModifierStoich = new ArrayList<String>();
-		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, kl, complexReactantStoich, complexModifierStoich);
+		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, kl, complexReactantStoich, complexModifierStoich, null);
 		String expression = e.sequesterSpecies(partId, "");
 		for (String modifier : complexModifierStoich)
 			r.addModifier(Utility.ModifierSpeciesReference(modifier));
