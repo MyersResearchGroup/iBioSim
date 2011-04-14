@@ -1022,7 +1022,8 @@ public class GeneticNetwork {
 				if (partsMap.get(partId).size() > 1) {
 					if (!payNoMind.equals(""))
 						return false;
-					sequesterable = checkSequester(partId, complexId);
+					if (!species.get(partId).isActivator() && !species.get(partId).isRepressor())
+						sequesterable = checkSequester(partId, complexId);
 				}
 				if (!payNoMind.equals("") && (species.get(partId).isActivator() || species.get(partId).isRepressor()))
 					return false;
@@ -1040,24 +1041,22 @@ public class GeneticNetwork {
 	//Marks given species as sequesterable and its sequestering complexes as abstractable if those complexes
 	//and the sequestering species which make them up are not used elsewhere
 	private boolean checkSequester(String partId, String payNoMind) {
-		boolean sequesterable = true;
+		boolean sequesterable = false;
 		ArrayList<String> abstractableComplexes = new ArrayList<String>();
 		for (Influence infl : partsMap.get(partId)) {
 			String complexId = infl.getOutput();
-			if (!complexId.equals(payNoMind)) {
-				if (infl.getCoop() == 1 && !species.get(complexId).isActivator() 
+			if (!complexId.equals(payNoMind) && infl.getCoop() == 1 && !species.get(complexId).isActivator() 
 						&& !species.get(complexId).isRepressor() && !partsMap.containsKey(complexId)
 						&& !species.get(complexId).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)
-						&& complexMap.get(complexId).size() > 1 && checkComplex(complexId, partId)) 
+						&& complexMap.get(complexId).size() > 1 && checkComplex(complexId, partId)) {
 					abstractableComplexes.add(complexId);
-				else
-					sequesterable = false;
+					sequesterable = true;
 			}
 		}
-		if (sequesterable && abstractableComplexes.size() > 0) {
+		if (sequesterable) {
 			species.get(partId).setSequesterable(true);
 			for (String complexId : abstractableComplexes)
-				species.get(complexId).setAbstractable(true);
+				species.get(complexId).setSequesterAbstractable(true);
 		}
 		return sequesterable;
 	}
@@ -1067,6 +1066,7 @@ public class GeneticNetwork {
 		for (String interestingId : interestingSpecies) {
 			if (species.containsKey(interestingId) && complexMap.containsKey(interestingId)) {
 				species.get(interestingId).setAbstractable(false);
+				species.get(interestingId).setSequesterAbstractable(false);
 				for (Influence infl : complexMap.get(interestingId))
 					species.get(infl.getInput()).setSequesterable(false);
 			}

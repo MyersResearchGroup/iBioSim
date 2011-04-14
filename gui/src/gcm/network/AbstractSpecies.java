@@ -152,6 +152,14 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		isAbstractable = set;
 	}
 	
+	public boolean isSequesterAbstractable() {
+		return isSequesterAbstractable;
+	}
+	
+	public void setSequesterAbstractable(boolean set) {
+		isSequesterAbstractable = set;
+	}
+	
 	public boolean isSequesterable() {
 		return isSequesterable;
 	}
@@ -178,6 +186,8 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	protected boolean isInteresting = false;
 	
 	protected boolean isAbstractable = false;
+	
+	protected boolean isSequesterAbstractable;
 	
 	protected boolean isSequesterable = false;
 	

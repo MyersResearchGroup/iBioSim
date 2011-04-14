@@ -10437,7 +10437,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						String sbmlLoadFile = "";
 						String gcmFile = "";
-						ArrayList<String> interestingSpecies = new ArrayList<String>();
+//						ArrayList<String> interestingSpecies = new ArrayList<String>();
 						if (new File(simFile).exists()) {
 							try {
 								Scanner s = new Scanner(new File(simFile));
@@ -10466,7 +10466,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 										GCMParser parser = new GCMParser(root + separator
 												+ sbmlLoadFile);
 										GeneticNetwork network = parser.buildNetwork();
-										interestingSpecies.addAll(network.getInterestingSpecies());
+//										interestingSpecies.addAll(network.getInterestingSpecies());
 										GeneticNetwork.setRoot(root + separator);
 										sbmlLoadFile = root + separator
 												+ split[split.length - 1].trim() + separator
@@ -10547,7 +10547,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						else {
 							reb2sac = new Reb2Sac(sbmlLoadFile, getAFile, root, this,
 									split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
-									null, interestingSpecies);
+									null, null);
 						}
 						simTab.addTab("Simulation Options", reb2sac);
 						simTab.getComponentAt(simTab.getComponents().length - 1)

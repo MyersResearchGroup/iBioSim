@@ -39,7 +39,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	
 	@Override
 	public void visitComplex(ComplexSpecies specie) {
-		if (!complexAbstraction || !specie.isAbstractable()) {
+		if (!complexAbstraction || (!specie.isAbstractable() && !specie.isSequesterAbstractable())) {
 			loadValues(specie);
 			String compartment = checkCompartments(specie.getId());
 			Species s = Utility.makeSpecies(specie.getId(), compartment, init);
