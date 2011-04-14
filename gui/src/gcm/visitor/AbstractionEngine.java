@@ -39,13 +39,17 @@ public class AbstractionEngine {
 	}
 
 	public String abstractComplex(String complexId, double multiplier) {
-		complexReactantStoich = new HashMap<String, Double>();
-		complexModifiers = new ArrayList<String>();
+		if (sbmlMode) {
+			complexReactantStoich = new HashMap<String, Double>();
+			complexModifiers = new ArrayList<String>();
+		}
 		String expression = abstractComplexHelper(complexId, multiplier, "");
-		for (String reactant : complexReactantStoich.keySet())
-			r.addReactant(Utility.SpeciesReference(reactant, complexReactantStoich.get(reactant)));
-		for (String modifier : complexModifiers)
-			r.addModifier(Utility.ModifierSpeciesReference(modifier));
+		if (sbmlMode) {
+			for (String reactant : complexReactantStoich.keySet())
+				r.addReactant(Utility.SpeciesReference(reactant, complexReactantStoich.get(reactant)));
+			for (String modifier : complexModifiers)
+				r.addModifier(Utility.ModifierSpeciesReference(modifier));
+		}
 		return expression;
 	}
 	
@@ -102,10 +106,13 @@ public class AbstractionEngine {
 	}
 
 	public String sequesterSpecies(String speciesId) {
-		complexModifiers = new ArrayList<String>();
+		if (sbmlMode)
+			complexModifiers = new ArrayList<String>();
 		String expression = sequesterSpeciesHelper(speciesId, "");
-		for (String modifier : complexModifiers)
-			r.addModifier(Utility.ModifierSpeciesReference(modifier));
+		if (sbmlMode) {
+			for (String modifier : complexModifiers)
+				r.addModifier(Utility.ModifierSpeciesReference(modifier));
+		}
 		return expression;
 	}
 	
