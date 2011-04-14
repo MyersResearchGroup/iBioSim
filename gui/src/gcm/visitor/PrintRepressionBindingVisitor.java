@@ -82,10 +82,10 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repMolecule = abstractComplex(specie.getId(), coop);
 		} else if (complexAbstraction && specie.isSequesterable()) {
 			repMolecule = sequesterSpecies(specie.getId());
-			r.addReactant(Utility.SpeciesReference(repMolecule, coop));
+			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		} else {
 			repMolecule = specie.getId();
-			r.addReactant(Utility.SpeciesReference(repMolecule, coop));
+			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
 		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));

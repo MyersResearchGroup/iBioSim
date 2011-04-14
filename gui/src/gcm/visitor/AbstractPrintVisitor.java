@@ -70,23 +70,14 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	
 	//Recursively breaks down repressing complex into its constituent species and complex formation equilibria
 	protected String abstractComplex(String complexId, double multiplier) {
-		complexReactantStoich = new HashMap<String, Double>();
-		complexModifierStoich = new ArrayList<String>();
-		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, kl, complexReactantStoich, complexModifierStoich, null);
-		String expression = e.abstractComplex(complexId, multiplier, "");
-		for (String reactant : complexReactantStoich.keySet())
-			r.addReactant(Utility.SpeciesReference(reactant, complexReactantStoich.get(reactant)));
-		for (String modifier : complexModifierStoich)
-			r.addModifier(Utility.ModifierSpeciesReference(modifier));
+		AbstractionEngine e = new AbstractionEngine(species, null, complexMap, partsMap, r, kl);
+		String expression = e.abstractComplex(complexId, multiplier);
 		return expression;
 	}
 	
 	protected String sequesterSpecies(String partId) {
-		complexModifierStoich = new ArrayList<String>();
-		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, kl, complexReactantStoich, complexModifierStoich, null);
-		String expression = e.sequesterSpecies(partId, "");
-		for (String modifier : complexModifierStoich)
-			r.addModifier(Utility.ModifierSpeciesReference(modifier));
+		AbstractionEngine e = new AbstractionEngine(species, null, complexMap, partsMap, r, kl);
+		String expression = e.sequesterSpecies(partId);
 		return expression;
 	}
 	
@@ -112,8 +103,6 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	
 	protected org.sbml.libsbml.Reaction r;
 	protected KineticLaw kl;
-	protected HashMap<String, Double> complexReactantStoich;
-	protected ArrayList<String> complexModifierStoich;
 	protected HashMap<String, SpeciesInterface> species;
 	protected HashMap<String, ArrayList<Influence>> complexMap;
 	protected HashMap<String, ArrayList<Influence>> partsMap;

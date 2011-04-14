@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.sbml.libsbml.KineticLaw;
+import org.sbml.libsbml.Reaction;
 
 public class AbstractionEngine {
 
-	public AbstractionEngine(HashMap<String, SpeciesInterface> species,
-			HashMap<String, ArrayList<Influence>> complexMap,
-			HashMap<String, ArrayList<Influence>> partsMap, HashMap<String, Promoter> promoters,
+	public AbstractionEngine(HashMap<String, SpeciesInterface> species, HashMap<String, Promoter> promoters,
+			HashMap<String, ArrayList<Influence>> complexMap, HashMap<String, ArrayList<Influence>> partsMap, 
 			double RNAP) {
 		this.species = species;
 		this.complexMap = complexMap;
@@ -26,22 +26,30 @@ public class AbstractionEngine {
 		this.sbmlMode = false;
 	}
 
-	public AbstractionEngine(HashMap<String, SpeciesInterface> species,
-			HashMap<String, ArrayList<Influence>> complexMap,
-			HashMap<String, ArrayList<Influence>> partsMap, KineticLaw kl,
-			HashMap<String, Double> complexReactantStoich, ArrayList<String> complexModifierStoich,
-			HashMap<String, Promoter> promoters) {
+	public AbstractionEngine(HashMap<String, SpeciesInterface> species, HashMap<String, Promoter> promoters, 
+			HashMap<String, ArrayList<Influence>> complexMap, HashMap<String, ArrayList<Influence>> partsMap, 
+			Reaction r, KineticLaw kl) {
 		this.species = species;
 		this.complexMap = complexMap;
 		this.partsMap = partsMap;
+		this.r = r;
 		this.kl = kl;
-		this.complexReactantStoich = complexReactantStoich;
-		this.complexModifierStoich = complexModifierStoich;
 		this.promoters = promoters;
 		this.sbmlMode = true;
 	}
 
-	public String abstractComplex(String complexId, double multiplier, String payNoMind) {
+	public String abstractComplex(String complexId, double multiplier) {
+		complexReactantStoich = new HashMap<String, Double>();
+		complexModifiers = new ArrayList<String>();
+		String expression = abstractComplexHelper(complexId, multiplier, "");
+		for (String reactant : complexReactantStoich.keySet())
+			r.addReactant(Utility.SpeciesReference(reactant, complexReactantStoich.get(reactant)));
+		for (String modifier : complexModifiers)
+			r.addModifier(Utility.ModifierSpeciesReference(modifier));
+		return expression;
+	}
+	
+	private String abstractComplexHelper(String complexId, double multiplier, String payNoMind) {
 		String repMolecule = "";
 		String kcompId = kcompString + "__" + complexId;
 		double[] kcomp = species.get(complexId).getKc();
@@ -67,11 +75,11 @@ public class AbstractionEngine {
 			if (!partId.equals(payNoMind)) {
 				repMolecule = repMolecule + "*" + "(";
 				if (species.get(partId).isAbstractable()) {
-					repMolecule = repMolecule + abstractComplex(partId, multiplier * n, "");
+					repMolecule = repMolecule + abstractComplexHelper(partId, multiplier * n, "");
 				}
 				else if (payNoMind.equals("")) {
 					if (species.get(partId).isSequesterable())
-						repMolecule = repMolecule + sequesterSpecies(partId, complexId);
+						repMolecule = repMolecule + sequesterSpeciesHelper(partId, complexId);
 					else
 						repMolecule = repMolecule + partId;
 					if (sbmlMode && complexReactantStoich.containsKey(partId))
@@ -83,7 +91,7 @@ public class AbstractionEngine {
 				else {
 					repMolecule = repMolecule + partId;
 					if (sbmlMode)
-						complexModifierStoich.add(partId);
+						complexModifiers.add(partId);
 				}
 				repMolecule = repMolecule + ")^" + nId;
 			}
@@ -93,12 +101,20 @@ public class AbstractionEngine {
 		return repMolecule;
 	}
 
-	public String sequesterSpecies(String speciesId, String payNoMind) {
+	public String sequesterSpecies(String speciesId) {
+		complexModifiers = new ArrayList<String>();
+		String expression = sequesterSpeciesHelper(speciesId, "");
+		for (String modifier : complexModifiers)
+			r.addModifier(Utility.ModifierSpeciesReference(modifier));
+		return expression;
+	}
+	
+	private String sequesterSpeciesHelper(String speciesId, String payNoMind) {
 		String sequesterFactor = speciesId + "/(1";
 		for (Influence infl : partsMap.get(speciesId)) {
 			String complexId = infl.getOutput();
 			if (!complexId.equals(payNoMind) && species.get(complexId).isSequesterAbstractable())
-				sequesterFactor = sequesterFactor + "+" + abstractComplex(complexId, 1, speciesId);
+				sequesterFactor = sequesterFactor + "+" + abstractComplexHelper(complexId, 1, speciesId);
 		}
 		sequesterFactor = sequesterFactor + ")";
 		return sequesterFactor;
@@ -133,10 +149,10 @@ public class AbstractionEngine {
 					String activator = act.getId();
 					String expression = activator;
 					if (species.get(activator).isSequesterable()) {
-						expression = sequesterSpecies(activator, "");
+						expression = sequesterSpecies(activator);
 					}
 					else if (complexMap.containsKey(activator)) {
-						expression = abstractComplex(activator, 0, "");
+						expression = abstractComplex(activator, 0);
 					}
 					for (Influence influ : promoters.get(promoterId).getActivatingInfluences()) {
 						if (influ.getInput().equals(activator)) {
@@ -177,10 +193,10 @@ public class AbstractionEngine {
 							String repressor = rep.getId();
 							String expression2 = repressor;
 							if (species.get(repressor).isSequesterable()) {
-								expression2 = sequesterSpecies(repressor, "");
+								expression2 = sequesterSpecies(repressor);
 							}
 							else if (complexMap.containsKey(repressor)) {
-								expression2 = abstractComplex(repressor, 0, "");
+								expression2 = abstractComplex(repressor, 0);
 							}
 							for (Influence influ : promoters.get(promoterId)
 									.getRepressingInfluences()) {
@@ -237,10 +253,10 @@ public class AbstractionEngine {
 						String repressor = rep.getId();
 						String expression = repressor;
 						if (species.get(repressor).isSequesterable()) {
-							expression = sequesterSpecies(repressor, "");
+							expression = sequesterSpecies(repressor);
 						}
 						else if (complexMap.containsKey(repressor)) {
-							expression = abstractComplex(repressor, 0, "");
+							expression = abstractComplex(repressor, 0);
 						}
 						for (Influence influ : promoters.get(promoterId).getRepressingInfluences()) {
 							if (influ.getInput().equals(repressor)) {
@@ -269,10 +285,11 @@ public class AbstractionEngine {
 		return promRate;
 	}
 
+	private Reaction r;
 	private KineticLaw kl;
 	private HashMap<String, SpeciesInterface> species;
 	private HashMap<String, Double> complexReactantStoich;
-	private ArrayList<String> complexModifierStoich;
+	private ArrayList<String> complexModifiers;
 	private HashMap<String, ArrayList<Influence>> complexMap;
 	private HashMap<String, ArrayList<Influence>> partsMap;
 	private HashMap<String, Promoter> promoters;
