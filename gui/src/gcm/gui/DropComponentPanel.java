@@ -56,19 +56,10 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		this.gcm2sbml = gcm2sbml;
 		this.gcm = gcm;
 	
-		ArrayList<String> gcmList = gcm2sbml.getComponentsList();
 		
-		if(gcmList.size() == 0){
-			JOptionPane.showMessageDialog(Gui.frame,
-					"There aren't any other gcms to use as components."
-							+ "\nCreate a new gcm or import a gcm into the project first.",
-					"Add Another GCM To The Project", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		
-		componentCombo = new JComboBox(gcmList.toArray());
-		componentCombo.setSelectedIndex(0);
-		this.add(componentCombo, BorderLayout.NORTH);
+//		componentCombo = new JComboBox();
+//		componentCombo.setSelectedIndex(0);
+//		this.add(componentCombo, BorderLayout.NORTH);
 		
 		// radio button to enable tiling
 		doTiling = new JRadioButton("Tile Component", false);
@@ -104,6 +95,22 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 
 	
 	private void openGUI(float mouseX, float mouseY){
+		
+		ArrayList<String> gcmList = gcm2sbml.getComponentsList();
+		if(gcmList.size() == 0){
+			JOptionPane.showMessageDialog(Gui.frame,
+					"There aren't any other gcms to use as components."
+							+ "\nCreate a new gcm or import a gcm into the project first.",
+					"Add Another GCM To The Project", JOptionPane.ERROR_MESSAGE);
+			return;
+		}
+		Object selItem = componentCombo != null ? componentCombo.getSelectedItem() : null;
+		this.remove(componentCombo);
+		componentCombo = new JComboBox(gcmList.toArray());
+		componentCombo.setSelectedItem(selItem);
+		this.add(componentCombo, BorderLayout.NORTH);
+		
+		
 		String[] options = { GlobalConstants.OK, GlobalConstants.CANCEL };
 		int value = JOptionPane.showOptionDialog(Gui.frame, this, "Add Component(s)",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
