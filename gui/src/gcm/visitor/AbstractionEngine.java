@@ -177,19 +177,19 @@ public class AbstractionEngine {
 				String actBottom = "";
 				for (SpeciesInterface act : promoters.get(promoterId).getActivators()) {
 					String activator = act.getId();
-					String expression = activator;
-					if (species.get(activator).isSequesterable()) {
-						expression = sequesterSpecies(activator);
-					}
-					else if (complexMap.containsKey(activator)) {
-						expression = abstractComplex(activator, 0);
-					}
 					for (Influence influ : promoters.get(promoterId).getActivatingInfluences()) {
 						if (influ.getInput().equals(activator)) {
 							double nc = influ.getCoop();
 							double[] KaArray = influ.getAct();
 							double Ka = KaArray[0] / KaArray[1];
 							double ka = promoters.get(promoterId).getKact();
+							String expression = activator;
+							if (species.get(activator).isSequesterable()) {
+								expression = sequesterSpecies(activator);
+							}
+							else if (complexMap.containsKey(activator)) {
+								expression = abstractComplex(activator, nc);
+							}
 							if (sbmlMode) {
 								promRate += "+(ka__" + activator + "_" + promoterId + "*((Ka__"
 										+ activator + "_" + promoterId + "*RNAP*" + expression
@@ -221,22 +221,22 @@ public class AbstractionEngine {
 					if (promoters.get(promoterId).getRepressors().size() != 0) {
 						for (SpeciesInterface rep : promoters.get(promoterId).getRepressors()) {
 							String repressor = rep.getId();
-							String expression2 = repressor;
-							if (species.get(repressor).isSequesterable()) {
-								expression2 = sequesterSpecies(repressor);
-							}
-							else if (complexMap.containsKey(repressor)) {
-								expression2 = abstractComplex(repressor, 0);
-							}
 							for (Influence influ : promoters.get(promoterId)
 									.getRepressingInfluences()) {
 								if (influ.getInput().equals(repressor)) {
 									double nc = influ.getCoop();
 									double[] KrArray = influ.getRep();
 									double Kr = KrArray[0] / KrArray[1];
+									String expression = repressor;
+									if (species.get(repressor).isSequesterable()) {
+										expression = sequesterSpecies(repressor);
+									}
+									else if (complexMap.containsKey(repressor)) {
+										expression = abstractComplex(repressor, nc);
+									}
 									if (sbmlMode) {
 										promRate += "+((Kr__" + repressor + "_" + promoterId + "*"
-												+ expression2 + ")^nc__" + repressor + "_"
+												+ expression + ")^nc__" + repressor + "_"
 												+ promoterId + ")";
 										kl.addParameter(Utility.Parameter("nc__" + repressor + "_"
 												+ promoterId, nc, "dimensionless"));
@@ -245,7 +245,7 @@ public class AbstractionEngine {
 												.getMoleParameter(2)));
 									}
 									else {
-										promRate += "+((" + Kr + "*" + expression2 + ")^" + nc
+										promRate += "+((" + Kr + "*" + expression + ")^" + nc
 												+ ")";
 									}
 								}
@@ -281,18 +281,18 @@ public class AbstractionEngine {
 					}
 					for (SpeciesInterface rep : promoters.get(promoterId).getRepressors()) {
 						String repressor = rep.getId();
-						String expression = repressor;
-						if (species.get(repressor).isSequesterable()) {
-							expression = sequesterSpecies(repressor);
-						}
-						else if (complexMap.containsKey(repressor)) {
-							expression = abstractComplex(repressor, 0);
-						}
 						for (Influence influ : promoters.get(promoterId).getRepressingInfluences()) {
 							if (influ.getInput().equals(repressor)) {
 								double nc = influ.getCoop();
 								double[] KrArray = influ.getRep();
 								double Kr = KrArray[0] / KrArray[1];
+								String expression = repressor;
+								if (species.get(repressor).isSequesterable()) {
+									expression = sequesterSpecies(repressor);
+								}
+								else if (complexMap.containsKey(repressor)) {
+									expression = abstractComplex(repressor, nc);
+								}
 								if (sbmlMode) {
 									promRate += "+((Kr__" + repressor + "_" + promoterId + "*"
 											+ expression + ")^nc__" + repressor + "_" + promoterId
