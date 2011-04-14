@@ -16,6 +16,7 @@ import org.sbml.libsbml.AssignmentRule;
 import org.sbml.libsbml.Event;
 import org.sbml.libsbml.EventAssignment;
 import org.sbml.libsbml.FunctionDefinition;
+import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModifierSpeciesReference;
@@ -42,7 +43,8 @@ import main.Gui;
 public class Translator {
 	private String filename;
 	private SBMLDocument document;
-	private static boolean isSteadyState = false;
+	public static boolean isSteadyState = false;
+	public static boolean isHSF = false;
 	
 	public void BuildTemplate(String lhpnFilename, String property) {
 		this.filename = lhpnFilename.replace(".lpn", ".xml");
@@ -87,99 +89,50 @@ public class Translator {
 		// translate from lhpn to sbml
 		// ----variables -> parameters-----	
 		for (String v: lhpn.getVariables()){
-//			System.out.println("Vars from lhpn.getVariables() " + v);
 			if (v != null){
 				String initVal = lhpn.getInitialVal(v);
-//				System.out.println("Begin:" + v + "= " + initVal);			
 				if (lhpn.isContinuous(v) || lhpn.isInteger(v)){
-					Parameter p = m.createParameter(); 
-					p.setConstant(false);
-					p.setId(v);
+					Parameter var = m.createParameter(); 
+					var.setConstant(false);
+					var.setId(v);
 					
+					boolean initVarIsInt = Pattern.matches(Int, initVal);
+					boolean initVarIsRange = Pattern.matches(Range, initVal);
+					if (initVarIsInt && !initVarIsRange) {
+						double initValDouble = Double.parseDouble(initVal);
+						var.setValue(initValDouble);
+					}
+					if (!initVarIsInt && initVarIsRange) {
+						var.setValue(0);
+						InitialAssignment initAssign = m.createInitialAssignment();
+						initAssign.setSymbol(var.getId());
+						initAssign.setMath(SBML_Editor.myParseFormula(initVal));
+					}
 					// For each continuous variable v, create rate rule dv/dt and set its initial value to lhpn.getInitialRate(v). 
 					if (lhpn.isContinuous(v)){
-						Parameter p_dot = m.createParameter();
-						p_dot.setConstant(false);
-						p_dot.setId(v + "_dot");
-//						System.out.println("v_dot = " + v + "_dot");
+						Parameter rateVar = m.createParameter();
+						rateVar.setConstant(false);
+						rateVar.setId(v + "_rate");
 						RateRule rateRule = m.createRateRule();
 						rateRule.setVariable(v);
-						rateRule.setMath(SBML_Editor.myParseFormula(v + "_dot"));
-						String initValDot= lhpn.getInitialRate(v);
-						double initValDot_dbl = Double.parseDouble(initValDot);
-						p_dot.setValue(initValDot_dbl);
-					}
-				
-				
-					// Assign initial values to continuous, discrete and boolean variables
-//					Short term fix: Extract the lower and upper bounds and set the initial value to the mean. 
-//									Anything that involves infinity, take either the lower or upper bound which is not infinity.  
-//									If both are infinity, set to 0.	
-					String initValue = lhpn.getInitialVal(v);
-					String tmp_initValue = initValue;
-					String[] subString = initValue.split(",");
-					String lowerBound = null;
-					String upperBound = null;
-					
-					// initial value is a range
-					if (tmp_initValue.contains(",")){
-						// If the initial value is a range, check the range only contains one ","
-						tmp_initValue = tmp_initValue.replaceFirst(",", "");
-//						// Test if tmp_initValue contains any more ",": if not, continue to extract upper and lower bounds 
-//						if (tmp_initValue.contains(",")){
-//							System.out.println("The inital range of variable " + v + " is incorrect.");
-//							System.exit(0);
-//						}
-						// Extract the lower and upper bound of the initValue
-						int i;
-						for (i = 0; i<subString.length; i ++)
-						{
-//							System.out.println("splitted initValue range " + subString[i].toString());
-							if (subString[i].contains("[")){
-								lowerBound = subString[i].replace("[", "");	
-//								System.out.println("remove [ " + subString[i].replace("[", "").toString());
-							}
-							if (subString[i].contains("uniform(")){
-								lowerBound = subString[i].replace("uniform(", "");	
-//								System.out.println("remove uniform( " + subString[i].replace("[", "").toString());
-							}
-							else if(subString[i].contains("]")){
-								upperBound = subString[i].replace("]", "");
-//								System.out.println("remove ] " + subString[i].replace("]", "").toString());
-							}
-							else if(subString[i].contains(")")){
-								upperBound = subString[i].replace(")", "");
-//								System.out.println("remove ) " + subString[i].replace("]", "").toString());
-							}
-						}
+						rateRule.setMath(SBML_Editor.myParseFormula(rateVar.getId()));
+						String initRate= lhpn.getInitialRate(v);
 						
-						// initial value involves infinity
-						if (lowerBound.contains("inf") || upperBound.contains("inf")){
-							if (lowerBound.contains("-inf") && upperBound.contains("inf")){
-								initValue = "0" ; // if [-inf,inf], initValue = 0
-							}
-							else if (lowerBound.contains("-inf") && !upperBound.contains("inf")){
-								initValue = upperBound; // if [-inf,a], initValue = a
-							}
-							else if (!lowerBound.contains("-inf") && upperBound.contains("inf")){
-								initValue = lowerBound; // if [a,inf], initValue = a
-							}
-							double initVal_dbl = Double.parseDouble(initValue);
-							p.setValue(initVal_dbl);
+//						Pattern initRateIsIntPattern = Pattern.compile(Int);
+//						Matcher initRateIsIntMatcher = initRateIsIntPattern.matcher(initValDot);
+//						boolean initRateIsInt = initRateIsIntMatcher.matches();
+						boolean initRateIsInt = Pattern.matches(Int, initRate);
+						boolean initRateIsRange = Pattern.matches(Range, initRate);
+						if (initRateIsInt && !initRateIsRange) {
+							double initRateDouble = Double.parseDouble(initRate);
+							rateVar.setValue(initRateDouble);
 						}
-						// initial value is a range, not involving infinity	
-					    else {
-					    	double lowerBound_dbl = Double.parseDouble(lowerBound);
-					    	double upperBound_dbl = Double.parseDouble(upperBound);
-					    	double initVal_dbl = (lowerBound_dbl + upperBound_dbl)/2;
-					    	p.setValue(initVal_dbl);
-						}	
-					} 
-					
-					// initial value is a single number
-					else {
-							double initVal_dbl = Double.parseDouble(initValue);
-							p.setValue(initVal_dbl);
+						if (!initRateIsInt && initRateIsRange) {
+							rateVar.setValue(0);
+							InitialAssignment initAssign = m.createInitialAssignment();
+							initAssign.setSymbol(rateVar.getId());
+							initAssign.setMath(SBML_Editor.myParseFormula(initRate));
+						}
 					}
 				}
 				else  // boolean variable 
@@ -205,9 +158,7 @@ public class Translator {
 							System.out.println("It should be a boolean variable.");
 							System.exit(0);
 					}
-				}
-				
-
+				}			
 			}
 		}
 				
@@ -423,7 +374,7 @@ public class Translator {
 		//						System.out.println("rate assign: "+ assignRate);
 								
 								EventAssignment assign5 = e.createEventAssignment();
-								assign5.setVariable(var + "_dot");
+								assign5.setVariable(var + "_rate");
 								assign5.setMath(SBML_Editor.myParseFormula(assignRate));
 							}
 						}
@@ -684,7 +635,7 @@ public class Translator {
 		//						System.out.println("rate assign: "+ assignRate);
 								
 								EventAssignment assign5 = e.createEventAssignment();
-								assign5.setVariable(var + "_dot");
+								assign5.setVariable(var + "_rate");
 								assign5.setMath(SBML_Editor.myParseFormula(assignRate));
 							}
 						}
@@ -696,7 +647,9 @@ public class Translator {
 
 		// Property parsing is dealt with in PropertyPanel.java
 		// translate the LPN property to SBML constraints
-		document = generateSBMLConstraints(document, property, lhpn);
+		if (!property.toLowerCase().equals("none")) {
+			document = generateSBMLConstraints(document, property, lhpn);
+		}
 	}
 			
 	private void createFunction(Model model, String id, String name, String formula) {
@@ -727,7 +680,7 @@ public class Translator {
 		if(!(property == null) && !property.equals("")){
 			Model m = doc.getModel();
 			probprop=getProbpropExpression(property);
-			if (!isSteadyState) {
+			if (!isSteadyState && !isHSF) {
 				probpropParts=getProbpropParts(probprop);
 				// Convert extracted property parts into SBML constraints
 				// probpropParts=[probpropLeft, probpropRight, lowerBound, upperBound]
@@ -895,7 +848,6 @@ public class Translator {
 					}
 				}
 			}
-				
 		}
 		return doc;
 	}
@@ -924,12 +876,12 @@ public class Translator {
 					property=property.substring(1);
 				}
 				// check the probability value after relop
-				String probabilityValue = property.substring(0,property.indexOf("{"));
+				String probabilityVal = property.substring(0,property.indexOf("{"));
 				Pattern ProbabilityValuePattern = Pattern.compile(probabilityValue);
-				Matcher ProbabilityValueMatcher = ProbabilityValuePattern.matcher(probabilityValue);
+				Matcher ProbabilityValueMatcher = ProbabilityValuePattern.matcher(probabilityVal);
 				boolean correctProbabilityValue = ProbabilityValueMatcher.matches();
 				if(correctProbabilityValue) {
-					property=property.replaceFirst(probabilityValue, "");
+					property=property.replaceFirst(probabilityVal, "");
 					property=property.replace("{", "");
 					property=property.replace("}", "");
 					probprop=property;
@@ -946,7 +898,7 @@ public class Translator {
 			}
 		}
 		else { // hsf
-			return "";
+			isHSF = true;
 		}		
 		return probprop;
 	}
@@ -967,67 +919,73 @@ public class Translator {
 		String upperBound="";
 		String lowerBound="";
 		String relopType = "";
-		if (!probprop.equals("") && !probprop.contains(" ")){
-			// property should be in this format at this stage: probprop
-			// obtain the hsf AFTER bound
-			probpropRight= probprop.substring(probprop.indexOf("]")+1, probprop.length());			
-			// obtain the time bound
-			timeBound= probprop.substring(probprop.indexOf("["), probprop.indexOf("]")+1);							 
-			// bound: [lower, upper]
-			if (timeBound.contains(",")){
-				relopType = "0";
-				lowerBound = timeBound.substring(timeBound.indexOf("[")+1, timeBound.indexOf(","));
-				upperBound = timeBound.substring(timeBound.indexOf(",")+1, timeBound.indexOf("]"));		 						
-			}
-			// bound: [<=upper]
-			else if(timeBound.contains("<=")){
-				relopType = "1";
-				upperBound = timeBound.substring(timeBound.indexOf("<")+2, timeBound.indexOf("]"));			    
-			}
-			// bound: [<upper]
-			else if (timeBound.contains("<") && !timeBound.contains("=")){
-				relopType = "2";
-				upperBound = timeBound.substring(timeBound.indexOf("<")+1, timeBound.indexOf("]"));			    
-			}
-			// bound: [>=lower]
-			else if (timeBound.contains(">=")) {
-				relopType = "3";
-				lowerBound = timeBound.substring(timeBound.indexOf(">")+2, timeBound.indexOf("]"));
-			}
-			// bound: [>lower]
-			else if (timeBound.contains(">") && !timeBound.contains("=")){
-				relopType = "4";
-				lowerBound = timeBound.substring(timeBound.indexOf(">")+1, timeBound.indexOf("]"));
-			}
-			// bound: [=k] (k is treated as lowerBound)
-			else if (timeBound.contains("=") && !timeBound.contains("<") && !timeBound.contains(">")) {
-				relopType = "5";
-				lowerBound = timeBound.substring(timeBound.indexOf("=")+1, timeBound.indexOf("]"));
-			}
-			if(PUFlag){
-				probprop = probprop.replace("PU",symbol);
-				// obtain the logic BEFORE the temporal operator
-				probpropLeft= probprop.substring(0, probprop.indexOf(symbol));
-				// if probpropLeft has a pair of outermost parentheses, remove them
-				if (probpropLeft.startsWith("(") && probpropLeft.endsWith(")")){
-					probpropLeft=probprop.substring(1,probpropLeft.length()-1);
+		if (!probprop.contains(" ")) {
+			if (!probprop.equals("")){
+				// property should be in this format at this stage: probprop
+				// obtain the hsf AFTER bound
+				probpropRight= probprop.substring(probprop.indexOf("]")+1, probprop.length());			
+				// obtain the time bound
+				timeBound= probprop.substring(probprop.indexOf("["), probprop.indexOf("]")+1);							 
+				// bound: [lower, upper]
+				if (timeBound.contains(",")){
+					relopType = "0";
+					lowerBound = timeBound.substring(timeBound.indexOf("[")+1, timeBound.indexOf(","));
+					upperBound = timeBound.substring(timeBound.indexOf(",")+1, timeBound.indexOf("]"));		 						
 				}
-				if (probpropRight.startsWith("(") && probpropRight.endsWith(")")) {
+				// bound: [<=upper]
+				else if(timeBound.contains("<=")){
+					relopType = "1";
+					upperBound = timeBound.substring(timeBound.indexOf("<")+2, timeBound.indexOf("]"));			    
+				}
+				// bound: [<upper]
+				else if (timeBound.contains("<") && !timeBound.contains("=")){
+					relopType = "2";
+					upperBound = timeBound.substring(timeBound.indexOf("<")+1, timeBound.indexOf("]"));			    
+				}
+				// bound: [>=lower]
+				else if (timeBound.contains(">=")) {
+					relopType = "3";
+					lowerBound = timeBound.substring(timeBound.indexOf(">")+2, timeBound.indexOf("]"));
+				}
+				// bound: [>lower]
+				else if (timeBound.contains(">") && !timeBound.contains("=")){
+					relopType = "4";
+					lowerBound = timeBound.substring(timeBound.indexOf(">")+1, timeBound.indexOf("]"));
+				}
+				// bound: [=k] (k is treated as lowerBound)
+				else if (timeBound.contains("=") && !timeBound.contains("<") && !timeBound.contains(">")) {
+					relopType = "5";
+					lowerBound = timeBound.substring(timeBound.indexOf("=")+1, timeBound.indexOf("]"));
+				}
+				if(PUFlag){
+					probprop = probprop.replace("PU",symbol);
+					// obtain the logic BEFORE the temporal operator
+					probpropLeft= probprop.substring(0, probprop.indexOf(symbol));
+					// if probpropLeft has a pair of outermost parentheses, remove them
+					if (probpropLeft.startsWith("(") && probpropLeft.endsWith(")")){
+						probpropLeft=probprop.substring(1,probpropLeft.length()-1);
+					}
+					if (probpropRight.startsWith("(") && probpropRight.endsWith(")")) {
+						probpropRight=probpropRight.substring(1,probpropRight.length()-1);
+					}
+				}
+				if(PFFlag){
+					// Remove the outermost parentheses. At this point, probpropRight = (hsf)
 					probpropRight=probpropRight.substring(1,probpropRight.length()-1);
 				}
+				if(PGFlag){
+					// Remove the outermost parentheses. At this point, probpropRight = (hsf)
+					probpropRight=probpropRight.substring(1,probpropRight.length()-1);
+				}		
 			}
-			if(PFFlag){
-				// Remove the outermost parentheses. At this point, probpropRight = (hsf)
-				probpropRight=probpropRight.substring(1,probpropRight.length()-1);
+			else { // isHSF = true	
+				JOptionPane.showMessageDialog(Gui.frame, "Property does not contain the until operator",
+						"Warning in Property", JOptionPane.WARNING_MESSAGE);
 			}
-			if(PGFlag){
-				// Remove the outermost parentheses. At this point, probpropRight = (hsf)
-				probpropRight=probpropRight.substring(1,probpropRight.length()-1);
-			}		
 		}
-		else { // hsfFlag = true	
-			JOptionPane.showMessageDialog(Gui.frame, "Property does not contain the until operator",
-					"Warning in Property", JOptionPane.WARNING_MESSAGE);
+		else {
+			JOptionPane.showMessageDialog(Gui.frame, "Property contains white space",
+					"Error in Property", JOptionPane.ERROR_MESSAGE);
 		}
 		probpropParts[0]=probpropLeft;
 		probpropParts[1]=probpropRight;
@@ -1049,5 +1007,7 @@ public class Translator {
 		return result;
 	}
 	
+	private static final String Int = "([0-9]+)";
+	private static final String Range = "uniform\\([\\w-]+?,[\\w-]+?\\)";
 	private static final String probabilityValue = "(0\\.[0-9]+)";
 }
