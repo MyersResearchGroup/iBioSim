@@ -105,7 +105,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	
 	private void openGUI(float mouseX, float mouseY){
 		String[] options = { GlobalConstants.OK, GlobalConstants.CANCEL };
-		int value = JOptionPane.showOptionDialog(Gui.frame, this, "Species Editor",
+		int value = JOptionPane.showOptionDialog(Gui.frame, this, "Add Component(s)",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 
 		// user presses escape
