@@ -1589,7 +1589,407 @@ public class Run implements ActionListener {
 					}
 				}
 				else if (usingSSA.isSelected()) {
-					if (!printer_id.equals("null.printer")) {
+					// if (!printer_id.equals("null.printer")) {
+					for (int i = 0; i < simTab.getComponentCount(); i++) {
+						if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
+							if (simTab.getComponentAt(i) instanceof Graph) {
+								boolean outputM = true;
+								boolean outputV = true;
+								boolean outputS = true;
+								boolean outputTerm = false;
+								boolean warning = false;
+								int num = -1;
+								String run = "run-1."
+										+ printer_id.substring(0, printer_id.length() - 8);
+								for (String f : work.list()) {
+									if (f.contains("mean")) {
+										outputM = false;
+									}
+									else if (f.contains("variance")) {
+										outputV = false;
+									}
+									else if (f.contains("standard_deviation")) {
+										outputS = false;
+									}
+									else if (f.contains("run-")) {
+										String getNumber = f.substring(4, f.length());
+										String number = "";
+										for (int j = 0; j < getNumber.length(); j++) {
+											if (Character.isDigit(getNumber.charAt(j))) {
+												number += getNumber.charAt(j);
+											}
+											else {
+												break;
+											}
+										}
+										if (num == -1) {
+											num = Integer.parseInt(number);
+										}
+										else if (Integer.parseInt(number) < num) {
+											num = Integer.parseInt(number);
+										}
+										run = "run-" + num + "."
+												+ printer_id.substring(0, printer_id.length() - 8);
+									}
+									else if (f.equals("term-time.txt")) {
+										outputTerm = true;
+									}
+								}
+								if (outputM && num != -1) {
+									ArrayList<ArrayList<Double>> mean = ((Graph) simTab
+											.getComponentAt(i)).readData(directory + separator
+											+ run, "average", direct, warning);
+									warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+									Parser p = new TSDParser(directory + separator + run, warning);
+									warning = p.getWarning();
+									Parser p2 = new Parser(p.getSpecies(), mean);
+									p2.outputTSD(directory + separator + "mean.tsd");
+								}
+								if (outputV && num != -1) {
+									ArrayList<ArrayList<Double>> var = ((Graph) simTab
+											.getComponentAt(i)).readData(directory + separator
+											+ run, "variance", direct, warning);
+									warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+									Parser p = new TSDParser(directory + separator + run, warning);
+									warning = p.getWarning();
+									Parser p2 = new Parser(p.getSpecies(), var);
+									p2.outputTSD(directory + separator + "variance.tsd");
+								}
+								if (outputS && num != -1) {
+									ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
+											.getComponentAt(i)).readData(directory + separator
+											+ run, "deviation", direct, warning);
+									warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+									Parser p = new TSDParser(directory + separator + run, warning);
+									warning = p.getWarning();
+									Parser p2 = new Parser(p.getSpecies(), stddev);
+									p2.outputTSD(directory + separator + "standard_deviation.tsd");
+								}
+								if (outputTerm) {
+									ArrayList<String> dataLabels = new ArrayList<String>();
+									dataLabels.add("time");
+									ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
+									if (new File(directory + separator + "sim-rep.txt").exists()) {
+										try {
+											Scanner s = new Scanner(new File(directory + separator
+													+ "sim-rep.txt"));
+											if (s.hasNextLine()) {
+												String[] ss = s.nextLine().split(" ");
+												if (ss[0].equals("The") && ss[1].equals("total")
+														&& ss[2].equals("termination")
+														&& ss[3].equals("count:")
+														&& ss[4].equals("0")) {
+												}
+												else {
+													for (String add : ss) {
+														if (!add.equals("#total")
+																&& !add.equals("time-limit")) {
+															dataLabels.add(add);
+															ArrayList<Double> times = new ArrayList<Double>();
+															terms.add(times);
+														}
+													}
+												}
+											}
+										}
+										catch (Exception e) {
+										}
+									}
+									Scanner scan = new Scanner(new File(directory + separator
+											+ "term-time.txt"));
+									while (scan.hasNextLine()) {
+										String line = scan.nextLine();
+										String[] term = line.split(" ");
+										if (!dataLabels.contains(term[0])) {
+											dataLabels.add(term[0]);
+											ArrayList<Double> times = new ArrayList<Double>();
+											times.add(Double.parseDouble(term[1]));
+											terms.add(times);
+										}
+										else {
+											terms.get(dataLabels.indexOf(term[0]) - 1).add(
+													Double.parseDouble(term[1]));
+										}
+									}
+									scan.close();
+									ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
+									ArrayList<ArrayList<Double>> percentData = new ArrayList<ArrayList<Double>>();
+									for (int j = 0; j < dataLabels.size(); j++) {
+										ArrayList<Double> temp = new ArrayList<Double>();
+										temp.add(0.0);
+										data.add(temp);
+										temp = new ArrayList<Double>();
+										temp.add(0.0);
+										percentData.add(temp);
+									}
+									for (double j = printInterval; j <= timeLimit; j += printInterval) {
+										data.get(0).add(j);
+										percentData.get(0).add(j);
+										for (int k = 1; k < dataLabels.size(); k++) {
+											data.get(k)
+													.add(data.get(k).get(data.get(k).size() - 1));
+											percentData.get(k).add(
+													percentData.get(k).get(
+															percentData.get(k).size() - 1));
+											for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
+												if (terms.get(k - 1).get(l) < j) {
+													data
+															.get(k)
+															.set(
+																	data.get(k).size() - 1,
+																	data.get(k).get(
+																			data.get(k).size() - 1) + 1);
+													percentData.get(k)
+															.set(
+																	percentData.get(k).size() - 1,
+																	((data.get(k).get(data.get(k)
+																			.size() - 1)) * 100)
+																			/ runs);
+													terms.get(k - 1).remove(l);
+												}
+											}
+										}
+									}
+									Parser probData = new Parser(dataLabels, data);
+									probData.outputTSD(directory + separator + "term-time.tsd");
+									probData = new Parser(dataLabels, percentData);
+									probData.outputTSD(directory + separator
+											+ "percent-term-time.tsd");
+								}
+								((Graph) simTab.getComponentAt(i)).refresh();
+							}
+							else {
+								simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity,
+										outDir.split(separator)[outDir.split(separator).length - 1]
+												+ " simulation results", printer_id, outDir,
+										"time", biomodelsim, null, log, null, true, false));
+								boolean outputM = true;
+								boolean outputV = true;
+								boolean outputS = true;
+								boolean outputTerm = false;
+								boolean warning = false;
+								int num = -1;
+								String run = "run-1."
+										+ printer_id.substring(0, printer_id.length() - 8);
+								for (String f : work.list()) {
+									if (f.contains("mean")) {
+										outputM = false;
+									}
+									else if (f.contains("variance")) {
+										outputV = false;
+									}
+									else if (f.contains("standard_deviation")) {
+										outputS = false;
+									}
+									else if (f.contains("run-")) {
+										String getNumber = f.substring(4, f.length());
+										String number = "";
+										for (int j = 0; j < getNumber.length(); j++) {
+											if (Character.isDigit(getNumber.charAt(j))) {
+												number += getNumber.charAt(j);
+											}
+											else {
+												break;
+											}
+										}
+										if (num == -1) {
+											num = Integer.parseInt(number);
+										}
+										else if (Integer.parseInt(number) < num) {
+											num = Integer.parseInt(number);
+										}
+										run = "run-" + num + "."
+												+ printer_id.substring(0, printer_id.length() - 8);
+									}
+									else if (f.equals("term-time.txt")) {
+										outputTerm = true;
+									}
+								}
+								if (outputM && num != -1) {
+									ArrayList<ArrayList<Double>> mean = ((Graph) simTab
+											.getComponentAt(i)).readData(directory + separator
+											+ run, "average", direct, warning);
+									warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+									Parser p = new TSDParser(directory + separator + run, warning);
+									warning = p.getWarning();
+									Parser p2 = new Parser(p.getSpecies(), mean);
+									p2.outputTSD(directory + separator + "mean.tsd");
+								}
+								if (outputV && num != -1) {
+									ArrayList<ArrayList<Double>> var = ((Graph) simTab
+											.getComponentAt(i)).readData(directory + separator
+											+ run, "variance", direct, warning);
+									warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+									Parser p = new TSDParser(directory + separator + run, warning);
+									warning = p.getWarning();
+									Parser p2 = new Parser(p.getSpecies(), var);
+									p2.outputTSD(directory + separator + "variance.tsd");
+								}
+								if (outputS && num != -1) {
+									ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
+											.getComponentAt(i)).readData(directory + separator
+											+ run, "deviation", direct, warning);
+									warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+									Parser p = new TSDParser(directory + separator + run, warning);
+									warning = p.getWarning();
+									Parser p2 = new Parser(p.getSpecies(), stddev);
+									p2.outputTSD(directory + separator + "standard_deviation.tsd");
+								}
+								if (outputTerm) {
+									ArrayList<String> dataLabels = new ArrayList<String>();
+									dataLabels.add("time");
+									ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
+									if (new File(directory + separator + "sim-rep.txt").exists()) {
+										try {
+											Scanner s = new Scanner(new File(directory + separator
+													+ "sim-rep.txt"));
+											if (s.hasNextLine()) {
+												String[] ss = s.nextLine().split(" ");
+												if (ss[0].equals("The") && ss[1].equals("total")
+														&& ss[2].equals("termination")
+														&& ss[3].equals("count:")
+														&& ss[4].equals("0")) {
+												}
+												else {
+													for (String add : ss) {
+														if (!add.equals("#total")
+																&& !add.equals("time-limit")) {
+															dataLabels.add(add);
+															ArrayList<Double> times = new ArrayList<Double>();
+															terms.add(times);
+														}
+													}
+												}
+											}
+										}
+										catch (Exception e) {
+										}
+									}
+									Scanner scan = new Scanner(new File(directory + separator
+											+ "term-time.txt"));
+									while (scan.hasNextLine()) {
+										String line = scan.nextLine();
+										String[] term = line.split(" ");
+										if (!dataLabels.contains(term[0])) {
+											dataLabels.add(term[0]);
+											ArrayList<Double> times = new ArrayList<Double>();
+											times.add(Double.parseDouble(term[1]));
+											terms.add(times);
+										}
+										else {
+											terms.get(dataLabels.indexOf(term[0]) - 1).add(
+													Double.parseDouble(term[1]));
+										}
+									}
+									scan.close();
+									ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
+									ArrayList<ArrayList<Double>> percentData = new ArrayList<ArrayList<Double>>();
+									for (int j = 0; j < dataLabels.size(); j++) {
+										ArrayList<Double> temp = new ArrayList<Double>();
+										temp.add(0.0);
+										data.add(temp);
+										temp = new ArrayList<Double>();
+										temp.add(0.0);
+										percentData.add(temp);
+									}
+									for (double j = printInterval; j <= timeLimit; j += printInterval) {
+										data.get(0).add(j);
+										percentData.get(0).add(j);
+										for (int k = 1; k < dataLabels.size(); k++) {
+											data.get(k)
+													.add(data.get(k).get(data.get(k).size() - 1));
+											percentData.get(k).add(
+													percentData.get(k).get(
+															percentData.get(k).size() - 1));
+											for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
+												if (terms.get(k - 1).get(l) < j) {
+													data
+															.get(k)
+															.set(
+																	data.get(k).size() - 1,
+																	data.get(k).get(
+																			data.get(k).size() - 1) + 1);
+													percentData.get(k)
+															.set(
+																	percentData.get(k).size() - 1,
+																	((data.get(k).get(data.get(k)
+																			.size() - 1)) * 100)
+																			/ runs);
+													terms.get(k - 1).remove(l);
+												}
+											}
+										}
+									}
+									Parser probData = new Parser(dataLabels, data);
+									probData.outputTSD(directory + separator + "term-time.tsd");
+									probData = new Parser(dataLabels, percentData);
+									probData.outputTSD(directory + separator
+											+ "percent-term-time.tsd");
+								}
+								simTab.getComponentAt(i).setName("TSD Graph");
+							}
+						}
+						if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+							if (simTab.getComponentAt(i) instanceof Graph) {
+								((Graph) simTab.getComponentAt(i)).refresh();
+							}
+							else {
+								if (new File(filename.substring(0,
+										filename.length()
+												- filename.split(separator)[filename
+														.split(separator).length - 1].length())
+										+ "sim-rep.txt").exists()) {
+									simTab
+											.setComponentAt(i,
+													new Graph(r2s, printer_track_quantity, outDir
+															.split(separator)[outDir
+															.split(separator).length - 1]
+															+ " simulation results", printer_id,
+															outDir, "time", biomodelsim, null, log,
+															null, false, false));
+									simTab.getComponentAt(i).setName("ProbGraph");
+								}
+							}
+						}
+					}
+					// }
+				}
+				else if (sim.equals("atacs")) {
+					log.addText("Executing:\natacs -T0.000001 -oqoflhsgllvA "
+							+ filename
+									.substring(0,
+											filename.length()
+													- filename.split(separator)[filename
+															.split(separator).length - 1].length())
+							+ "out.hse\n");
+					exec.exec("atacs -T0.000001 -oqoflhsgllvA out.hse", null, work);
+					for (int i = 0; i < simTab.getComponentCount(); i++) {
+						if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+							if (simTab.getComponentAt(i) instanceof Graph) {
+								((Graph) simTab.getComponentAt(i)).refresh();
+							}
+							else {
+								simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity,
+										outDir.split(separator)[outDir.split(separator).length - 1]
+												+ " simulation results", printer_id, outDir,
+										"time", biomodelsim, null, log, null, false, false));
+								simTab.getComponentAt(i).setName("ProbGraph");
+							}
+						}
+					}
+					// simTab.add("Probability Graph", new
+					// Graph(printer_track_quantity,
+					// outDir.split(separator)[outDir.split(separator).length -
+					// 1] + "
+					// simulation results",
+					// printer_id, outDir, "time", biomodelsim, null, log, null,
+					// false));
+					// simTab.getComponentAt(simTab.getComponentCount() -
+					// 1).setName("ProbGraph");
+				}
+				else {
+					// if (!printer_id.equals("null.printer")) {
+					if (ode.isSelected()) {
 						for (int i = 0; i < simTab.getComponentCount(); i++) {
 							if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
 								if (simTab.getComponentAt(i) instanceof Graph) {
@@ -1638,7 +2038,7 @@ public class Run implements ActionListener {
 											outputTerm = true;
 										}
 									}
-									if (outputM) {
+									if (outputM && num != -1) {
 										ArrayList<ArrayList<Double>> mean = ((Graph) simTab
 												.getComponentAt(i)).readData(directory + separator
 												+ run, "average", direct, warning);
@@ -1649,7 +2049,7 @@ public class Run implements ActionListener {
 										Parser p2 = new Parser(p.getSpecies(), mean);
 										p2.outputTSD(directory + separator + "mean.tsd");
 									}
-									if (outputV) {
+									if (outputV && num != -1) {
 										ArrayList<ArrayList<Double>> var = ((Graph) simTab
 												.getComponentAt(i)).readData(directory + separator
 												+ run, "variance", direct, warning);
@@ -1660,7 +2060,7 @@ public class Run implements ActionListener {
 										Parser p2 = new Parser(p.getSpecies(), var);
 										p2.outputTSD(directory + separator + "variance.tsd");
 									}
-									if (outputS) {
+									if (outputS && num != -1) {
 										ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
 												.getComponentAt(i)).readData(directory + separator
 												+ run, "deviation", direct, warning);
@@ -1825,7 +2225,7 @@ public class Run implements ActionListener {
 											outputTerm = true;
 										}
 									}
-									if (outputM) {
+									if (outputM && num != -1) {
 										ArrayList<ArrayList<Double>> mean = ((Graph) simTab
 												.getComponentAt(i)).readData(directory + separator
 												+ run, "average", direct, warning);
@@ -1836,7 +2236,7 @@ public class Run implements ActionListener {
 										Parser p2 = new Parser(p.getSpecies(), mean);
 										p2.outputTSD(directory + separator + "mean.tsd");
 									}
-									if (outputV) {
+									if (outputV && num != -1) {
 										ArrayList<ArrayList<Double>> var = ((Graph) simTab
 												.getComponentAt(i)).readData(directory + separator
 												+ run, "variance", direct, warning);
@@ -1847,7 +2247,400 @@ public class Run implements ActionListener {
 										Parser p2 = new Parser(p.getSpecies(), var);
 										p2.outputTSD(directory + separator + "variance.tsd");
 									}
-									if (outputS) {
+									if (outputS && num != -1) {
+										ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "deviation", direct, warning);
+										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+										Parser p = new TSDParser(directory + separator + run,
+												warning);
+										warning = p.getWarning();
+										Parser p2 = new Parser(p.getSpecies(), stddev);
+										p2.outputTSD(directory + separator
+												+ "standard_deviation.tsd");
+									}
+									if (outputTerm) {
+										ArrayList<String> dataLabels = new ArrayList<String>();
+										dataLabels.add("time");
+										ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
+										if (new File(directory + separator + "sim-rep.txt")
+												.exists()) {
+											try {
+												Scanner s = new Scanner(new File(directory
+														+ separator + "sim-rep.txt"));
+												if (s.hasNextLine()) {
+													String[] ss = s.nextLine().split(" ");
+													if (ss[0].equals("The")
+															&& ss[1].equals("total")
+															&& ss[2].equals("termination")
+															&& ss[3].equals("count:")
+															&& ss[4].equals("0")) {
+													}
+													else {
+														for (String add : ss) {
+															if (!add.equals("#total")
+																	&& !add.equals("time-limit")) {
+																dataLabels.add(add);
+																ArrayList<Double> times = new ArrayList<Double>();
+																terms.add(times);
+															}
+														}
+													}
+												}
+											}
+											catch (Exception e) {
+											}
+										}
+										Scanner scan = new Scanner(new File(directory + separator
+												+ "term-time.txt"));
+										while (scan.hasNextLine()) {
+											String line = scan.nextLine();
+											String[] term = line.split(" ");
+											if (!dataLabels.contains(term[0])) {
+												dataLabels.add(term[0]);
+												ArrayList<Double> times = new ArrayList<Double>();
+												times.add(Double.parseDouble(term[1]));
+												terms.add(times);
+											}
+											else {
+												terms.get(dataLabels.indexOf(term[0]) - 1).add(
+														Double.parseDouble(term[1]));
+											}
+										}
+										scan.close();
+										ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
+										ArrayList<ArrayList<Double>> percentData = new ArrayList<ArrayList<Double>>();
+										for (int j = 0; j < dataLabels.size(); j++) {
+											ArrayList<Double> temp = new ArrayList<Double>();
+											temp.add(0.0);
+											data.add(temp);
+											temp = new ArrayList<Double>();
+											temp.add(0.0);
+											percentData.add(temp);
+										}
+										for (double j = printInterval; j <= timeLimit; j += printInterval) {
+											data.get(0).add(j);
+											percentData.get(0).add(j);
+											for (int k = 1; k < dataLabels.size(); k++) {
+												data.get(k).add(
+														data.get(k).get(data.get(k).size() - 1));
+												percentData.get(k).add(
+														percentData.get(k).get(
+																percentData.get(k).size() - 1));
+												for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
+													if (terms.get(k - 1).get(l) < j) {
+														data
+																.get(k)
+																.set(
+																		data.get(k).size() - 1,
+																		data
+																				.get(k)
+																				.get(
+																						data
+																								.get(
+																										k)
+																								.size() - 1) + 1);
+														percentData.get(k).set(
+																percentData.get(k).size() - 1,
+																((data.get(k).get(data.get(k)
+																		.size() - 1)) * 100)
+																		/ runs);
+														terms.get(k - 1).remove(l);
+													}
+												}
+											}
+										}
+										Parser probData = new Parser(dataLabels, data);
+										probData.outputTSD(directory + separator + "term-time.tsd");
+										probData = new Parser(dataLabels, percentData);
+										probData.outputTSD(directory + separator
+												+ "percent-term-time.tsd");
+									}
+									simTab.getComponentAt(i).setName("TSD Graph");
+								}
+							}
+							if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+								if (simTab.getComponentAt(i) instanceof Graph) {
+									((Graph) simTab.getComponentAt(i)).refresh();
+								}
+								else {
+									if (new File(filename.substring(0,
+											filename.length()
+													- filename.split(separator)[filename
+															.split(separator).length - 1].length())
+											+ "sim-rep.txt").exists()) {
+										simTab.setComponentAt(i,
+												new Graph(r2s, printer_track_quantity,
+														outDir.split(separator)[outDir
+																.split(separator).length - 1]
+																+ " simulation results",
+														printer_id, outDir, "time", biomodelsim,
+														null, log, null, false, false));
+										simTab.getComponentAt(i).setName("ProbGraph");
+									}
+								}
+							}
+						}
+					}
+					else if (monteCarlo.isSelected()) {
+						for (int i = 0; i < simTab.getComponentCount(); i++) {
+							if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
+								if (simTab.getComponentAt(i) instanceof Graph) {
+									boolean outputM = true;
+									boolean outputV = true;
+									boolean outputS = true;
+									boolean outputTerm = false;
+									boolean warning = false;
+									int num = -1;
+									String run = "run-1."
+											+ printer_id.substring(0, printer_id.length() - 8);
+									for (String f : work.list()) {
+										if (f.contains("mean")) {
+											outputM = false;
+										}
+										else if (f.contains("variance")) {
+											outputV = false;
+										}
+										else if (f.contains("standard_deviation")) {
+											outputS = false;
+										}
+										else if (f.contains("run-")) {
+											String getNumber = f.substring(4, f.length());
+											String number = "";
+											for (int j = 0; j < getNumber.length(); j++) {
+												if (Character.isDigit(getNumber.charAt(j))) {
+													number += getNumber.charAt(j);
+												}
+												else {
+													break;
+												}
+											}
+											if (num == -1) {
+												num = Integer.parseInt(number);
+											}
+											else if (Integer.parseInt(number) < num) {
+												num = Integer.parseInt(number);
+											}
+											run = "run-"
+													+ num
+													+ "."
+													+ printer_id.substring(0,
+															printer_id.length() - 8);
+										}
+										else if (f.equals("term-time.txt")) {
+											outputTerm = true;
+										}
+									}
+									if (outputM && num != -1) {
+										ArrayList<ArrayList<Double>> mean = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "average", direct, warning);
+										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+										Parser p = new TSDParser(directory + separator + run,
+												warning);
+										warning = p.getWarning();
+										Parser p2 = new Parser(p.getSpecies(), mean);
+										p2.outputTSD(directory + separator + "mean.tsd");
+									}
+									if (outputV && num != -1) {
+										ArrayList<ArrayList<Double>> var = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "variance", direct, warning);
+										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+										Parser p = new TSDParser(directory + separator + run,
+												warning);
+										warning = p.getWarning();
+										Parser p2 = new Parser(p.getSpecies(), var);
+										p2.outputTSD(directory + separator + "variance.tsd");
+									}
+									if (outputS && num != -1) {
+										ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "deviation", direct, warning);
+										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+										Parser p = new TSDParser(directory + separator + run,
+												warning);
+										warning = p.getWarning();
+										Parser p2 = new Parser(p.getSpecies(), stddev);
+										p2.outputTSD(directory + separator
+												+ "standard_deviation.tsd");
+									}
+									if (outputTerm) {
+										ArrayList<String> dataLabels = new ArrayList<String>();
+										dataLabels.add("time");
+										ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
+										if (new File(directory + separator + "sim-rep.txt")
+												.exists()) {
+											try {
+												Scanner s = new Scanner(new File(directory
+														+ separator + "sim-rep.txt"));
+												if (s.hasNextLine()) {
+													String[] ss = s.nextLine().split(" ");
+													if (ss[0].equals("The")
+															&& ss[1].equals("total")
+															&& ss[2].equals("termination")
+															&& ss[3].equals("count:")
+															&& ss[4].equals("0")) {
+													}
+													else {
+														for (String add : ss) {
+															if (!add.equals("#total")
+																	&& !add.equals("time-limit")) {
+																dataLabels.add(add);
+																ArrayList<Double> times = new ArrayList<Double>();
+																terms.add(times);
+															}
+														}
+													}
+												}
+											}
+											catch (Exception e) {
+											}
+										}
+										Scanner scan = new Scanner(new File(directory + separator
+												+ "term-time.txt"));
+										while (scan.hasNextLine()) {
+											String line = scan.nextLine();
+											String[] term = line.split(" ");
+											if (!dataLabels.contains(term[0])) {
+												dataLabels.add(term[0]);
+												ArrayList<Double> times = new ArrayList<Double>();
+												times.add(Double.parseDouble(term[1]));
+												terms.add(times);
+											}
+											else {
+												terms.get(dataLabels.indexOf(term[0]) - 1).add(
+														Double.parseDouble(term[1]));
+											}
+										}
+										scan.close();
+										ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
+										ArrayList<ArrayList<Double>> percentData = new ArrayList<ArrayList<Double>>();
+										for (int j = 0; j < dataLabels.size(); j++) {
+											ArrayList<Double> temp = new ArrayList<Double>();
+											temp.add(0.0);
+											data.add(temp);
+											temp = new ArrayList<Double>();
+											temp.add(0.0);
+											percentData.add(temp);
+										}
+										for (double j = printInterval; j <= timeLimit; j += printInterval) {
+											data.get(0).add(j);
+											percentData.get(0).add(j);
+											for (int k = 1; k < dataLabels.size(); k++) {
+												data.get(k).add(
+														data.get(k).get(data.get(k).size() - 1));
+												percentData.get(k).add(
+														percentData.get(k).get(
+																percentData.get(k).size() - 1));
+												for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
+													if (terms.get(k - 1).get(l) < j) {
+														data
+																.get(k)
+																.set(
+																		data.get(k).size() - 1,
+																		data
+																				.get(k)
+																				.get(
+																						data
+																								.get(
+																										k)
+																								.size() - 1) + 1);
+														percentData.get(k).set(
+																percentData.get(k).size() - 1,
+																((data.get(k).get(data.get(k)
+																		.size() - 1)) * 100)
+																		/ runs);
+														terms.get(k - 1).remove(l);
+													}
+												}
+											}
+										}
+										Parser probData = new Parser(dataLabels, data);
+										probData.outputTSD(directory + separator + "term-time.tsd");
+										probData = new Parser(dataLabels, percentData);
+										probData.outputTSD(directory + separator
+												+ "percent-term-time.tsd");
+									}
+									((Graph) simTab.getComponentAt(i)).refresh();
+								}
+								else {
+									simTab
+											.setComponentAt(i,
+													new Graph(r2s, printer_track_quantity, outDir
+															.split(separator)[outDir
+															.split(separator).length - 1]
+															+ " simulation results", printer_id,
+															outDir, "time", biomodelsim, null, log,
+															null, true, false));
+									boolean outputM = true;
+									boolean outputV = true;
+									boolean outputS = true;
+									boolean outputTerm = false;
+									boolean warning = false;
+									int num = -1;
+									String run = "run-1."
+											+ printer_id.substring(0, printer_id.length() - 8);
+									for (String f : work.list()) {
+										if (f.contains("mean")) {
+											outputM = false;
+										}
+										else if (f.contains("variance")) {
+											outputV = false;
+										}
+										else if (f.contains("standard_deviation")) {
+											outputS = false;
+										}
+										else if (f.contains("run-")) {
+											String getNumber = f.substring(4, f.length());
+											String number = "";
+											for (int j = 0; j < getNumber.length(); j++) {
+												if (Character.isDigit(getNumber.charAt(j))) {
+													number += getNumber.charAt(j);
+												}
+												else {
+													break;
+												}
+											}
+											if (num == -1) {
+												num = Integer.parseInt(number);
+											}
+											else if (Integer.parseInt(number) < num) {
+												num = Integer.parseInt(number);
+											}
+											run = "run-"
+													+ num
+													+ "."
+													+ printer_id.substring(0,
+															printer_id.length() - 8);
+										}
+										else if (f.equals("term-time.txt")) {
+											outputTerm = true;
+										}
+									}
+									if (outputM && num != -1) {
+										ArrayList<ArrayList<Double>> mean = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "average", direct, warning);
+										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+										Parser p = new TSDParser(directory + separator + run,
+												warning);
+										warning = p.getWarning();
+										Parser p2 = new Parser(p.getSpecies(), mean);
+										p2.outputTSD(directory + separator + "mean.tsd");
+									}
+									if (outputV && num != -1) {
+										ArrayList<ArrayList<Double>> var = ((Graph) simTab
+												.getComponentAt(i)).readData(directory + separator
+												+ run, "variance", direct, warning);
+										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
+										Parser p = new TSDParser(directory + separator + run,
+												warning);
+										warning = p.getWarning();
+										Parser p2 = new Parser(p.getSpecies(), var);
+										p2.outputTSD(directory + separator + "variance.tsd");
+									}
+									if (outputS && num != -1) {
 										ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
 												.getComponentAt(i)).readData(directory + separator
 												+ run, "deviation", direct, warning);
@@ -1983,862 +2776,8 @@ public class Run implements ActionListener {
 						}
 					}
 				}
-				else if (sim.equals("atacs")) {
-					log.addText("Executing:\natacs -T0.000001 -oqoflhsgllvA "
-							+ filename
-									.substring(0,
-											filename.length()
-													- filename.split(separator)[filename
-															.split(separator).length - 1].length())
-							+ "out.hse\n");
-					exec.exec("atacs -T0.000001 -oqoflhsgllvA out.hse", null, work);
-					for (int i = 0; i < simTab.getComponentCount(); i++) {
-						if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
-							if (simTab.getComponentAt(i) instanceof Graph) {
-								((Graph) simTab.getComponentAt(i)).refresh();
-							}
-							else {
-								simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity,
-										outDir.split(separator)[outDir.split(separator).length - 1]
-												+ " simulation results", printer_id, outDir,
-										"time", biomodelsim, null, log, null, false, false));
-								simTab.getComponentAt(i).setName("ProbGraph");
-							}
-						}
-					}
-					// simTab.add("Probability Graph", new
-					// Graph(printer_track_quantity,
-					// outDir.split(separator)[outDir.split(separator).length -
-					// 1] + "
-					// simulation results",
-					// printer_id, outDir, "time", biomodelsim, null, log, null,
-					// false));
-					// simTab.getComponentAt(simTab.getComponentCount() -
-					// 1).setName("ProbGraph");
-				}
-				else {
-					if (!printer_id.equals("null.printer")) {
-						if (ode.isSelected()) {
-							for (int i = 0; i < simTab.getComponentCount(); i++) {
-								if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
-									if (simTab.getComponentAt(i) instanceof Graph) {
-										boolean outputM = true;
-										boolean outputV = true;
-										boolean outputS = true;
-										boolean outputTerm = false;
-										boolean warning = false;
-										int num = -1;
-										String run = "run-1."
-												+ printer_id.substring(0, printer_id.length() - 8);
-										for (String f : work.list()) {
-											if (f.contains("mean")) {
-												outputM = false;
-											}
-											else if (f.contains("variance")) {
-												outputV = false;
-											}
-											else if (f.contains("standard_deviation")) {
-												outputS = false;
-											}
-											else if (f.contains("run-")) {
-												String getNumber = f.substring(4, f.length());
-												String number = "";
-												for (int j = 0; j < getNumber.length(); j++) {
-													if (Character.isDigit(getNumber.charAt(j))) {
-														number += getNumber.charAt(j);
-													}
-													else {
-														break;
-													}
-												}
-												if (num == -1) {
-													num = Integer.parseInt(number);
-												}
-												else if (Integer.parseInt(number) < num) {
-													num = Integer.parseInt(number);
-												}
-												run = "run-"
-														+ num
-														+ "."
-														+ printer_id.substring(0, printer_id
-																.length() - 8);
-											}
-											else if (f.equals("term-time.txt")) {
-												outputTerm = true;
-											}
-										}
-										if (outputM) {
-											ArrayList<ArrayList<Double>> mean = ((Graph) simTab
-													.getComponentAt(i)).readData(directory
-													+ separator + run, "average", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i))
-													.getWarning();
-											Parser p = new TSDParser(directory + separator + run,
-													warning);
-											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), mean);
-											p2.outputTSD(directory + separator + "mean.tsd");
-										}
-										if (outputV) {
-											ArrayList<ArrayList<Double>> var = ((Graph) simTab
-													.getComponentAt(i)).readData(directory
-													+ separator + run, "variance", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i))
-													.getWarning();
-											Parser p = new TSDParser(directory + separator + run,
-													warning);
-											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), var);
-											p2.outputTSD(directory + separator + "variance.tsd");
-										}
-										if (outputS) {
-											ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
-													.getComponentAt(i))
-													.readData(directory + separator + run,
-															"deviation", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i))
-													.getWarning();
-											Parser p = new TSDParser(directory + separator + run,
-													warning);
-											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), stddev);
-											p2.outputTSD(directory + separator
-													+ "standard_deviation.tsd");
-										}
-										if (outputTerm) {
-											ArrayList<String> dataLabels = new ArrayList<String>();
-											dataLabels.add("time");
-											ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-											if (new File(directory + separator + "sim-rep.txt")
-													.exists()) {
-												try {
-													Scanner s = new Scanner(new File(directory
-															+ separator + "sim-rep.txt"));
-													if (s.hasNextLine()) {
-														String[] ss = s.nextLine().split(" ");
-														if (ss[0].equals("The")
-																&& ss[1].equals("total")
-																&& ss[2].equals("termination")
-																&& ss[3].equals("count:")
-																&& ss[4].equals("0")) {
-														}
-														else {
-															for (String add : ss) {
-																if (!add.equals("#total")
-																		&& !add
-																				.equals("time-limit")) {
-																	dataLabels.add(add);
-																	ArrayList<Double> times = new ArrayList<Double>();
-																	terms.add(times);
-																}
-															}
-														}
-													}
-												}
-												catch (Exception e) {
-												}
-											}
-											Scanner scan = new Scanner(new File(directory
-													+ separator + "term-time.txt"));
-											while (scan.hasNextLine()) {
-												String line = scan.nextLine();
-												String[] term = line.split(" ");
-												if (!dataLabels.contains(term[0])) {
-													dataLabels.add(term[0]);
-													ArrayList<Double> times = new ArrayList<Double>();
-													times.add(Double.parseDouble(term[1]));
-													terms.add(times);
-												}
-												else {
-													terms.get(dataLabels.indexOf(term[0]) - 1).add(
-															Double.parseDouble(term[1]));
-												}
-											}
-											scan.close();
-											ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
-											ArrayList<ArrayList<Double>> percentData = new ArrayList<ArrayList<Double>>();
-											for (int j = 0; j < dataLabels.size(); j++) {
-												ArrayList<Double> temp = new ArrayList<Double>();
-												temp.add(0.0);
-												data.add(temp);
-												temp = new ArrayList<Double>();
-												temp.add(0.0);
-												percentData.add(temp);
-											}
-											for (double j = printInterval; j <= timeLimit; j += printInterval) {
-												data.get(0).add(j);
-												percentData.get(0).add(j);
-												for (int k = 1; k < dataLabels.size(); k++) {
-													data
-															.get(k)
-															.add(
-																	data.get(k).get(
-																			data.get(k).size() - 1));
-													percentData.get(k).add(
-															percentData.get(k).get(
-																	percentData.get(k).size() - 1));
-													for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
-														if (terms.get(k - 1).get(l) < j) {
-															data
-																	.get(k)
-																	.set(
-																			data.get(k).size() - 1,
-																			data
-																					.get(k)
-																					.get(
-																							data
-																									.get(
-																											k)
-																									.size() - 1) + 1);
-															percentData.get(k).set(
-																	percentData.get(k).size() - 1,
-																	((data.get(k).get(data.get(k)
-																			.size() - 1)) * 100)
-																			/ runs);
-															terms.get(k - 1).remove(l);
-														}
-													}
-												}
-											}
-											Parser probData = new Parser(dataLabels, data);
-											probData.outputTSD(directory + separator
-													+ "term-time.tsd");
-											probData = new Parser(dataLabels, percentData);
-											probData.outputTSD(directory + separator
-													+ "percent-term-time.tsd");
-										}
-										((Graph) simTab.getComponentAt(i)).refresh();
-									}
-									else {
-										simTab.setComponentAt(i,
-												new Graph(r2s, printer_track_quantity,
-														outDir.split(separator)[outDir
-																.split(separator).length - 1]
-																+ " simulation results",
-														printer_id, outDir, "time", biomodelsim,
-														null, log, null, true, false));
-										boolean outputM = true;
-										boolean outputV = true;
-										boolean outputS = true;
-										boolean outputTerm = false;
-										boolean warning = false;
-										int num = -1;
-										String run = "run-1."
-												+ printer_id.substring(0, printer_id.length() - 8);
-										for (String f : work.list()) {
-											if (f.contains("mean")) {
-												outputM = false;
-											}
-											else if (f.contains("variance")) {
-												outputV = false;
-											}
-											else if (f.contains("standard_deviation")) {
-												outputS = false;
-											}
-											else if (f.contains("run-")) {
-												String getNumber = f.substring(4, f.length());
-												String number = "";
-												for (int j = 0; j < getNumber.length(); j++) {
-													if (Character.isDigit(getNumber.charAt(j))) {
-														number += getNumber.charAt(j);
-													}
-													else {
-														break;
-													}
-												}
-												if (num == -1) {
-													num = Integer.parseInt(number);
-												}
-												else if (Integer.parseInt(number) < num) {
-													num = Integer.parseInt(number);
-												}
-												run = "run-"
-														+ num
-														+ "."
-														+ printer_id.substring(0, printer_id
-																.length() - 8);
-											}
-											else if (f.equals("term-time.txt")) {
-												outputTerm = true;
-											}
-										}
-										if (outputM) {
-											ArrayList<ArrayList<Double>> mean = ((Graph) simTab
-													.getComponentAt(i)).readData(directory
-													+ separator + run, "average", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i))
-													.getWarning();
-											Parser p = new TSDParser(directory + separator + run,
-													warning);
-											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), mean);
-											p2.outputTSD(directory + separator + "mean.tsd");
-										}
-										if (outputV) {
-											ArrayList<ArrayList<Double>> var = ((Graph) simTab
-													.getComponentAt(i)).readData(directory
-													+ separator + run, "variance", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i))
-													.getWarning();
-											Parser p = new TSDParser(directory + separator + run,
-													warning);
-											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), var);
-											p2.outputTSD(directory + separator + "variance.tsd");
-										}
-										if (outputS) {
-											ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
-													.getComponentAt(i))
-													.readData(directory + separator + run,
-															"deviation", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i))
-													.getWarning();
-											Parser p = new TSDParser(directory + separator + run,
-													warning);
-											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), stddev);
-											p2.outputTSD(directory + separator
-													+ "standard_deviation.tsd");
-										}
-										if (outputTerm) {
-											ArrayList<String> dataLabels = new ArrayList<String>();
-											dataLabels.add("time");
-											ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-											if (new File(directory + separator + "sim-rep.txt")
-													.exists()) {
-												try {
-													Scanner s = new Scanner(new File(directory
-															+ separator + "sim-rep.txt"));
-													if (s.hasNextLine()) {
-														String[] ss = s.nextLine().split(" ");
-														if (ss[0].equals("The")
-																&& ss[1].equals("total")
-																&& ss[2].equals("termination")
-																&& ss[3].equals("count:")
-																&& ss[4].equals("0")) {
-														}
-														else {
-															for (String add : ss) {
-																if (!add.equals("#total")
-																		&& !add
-																				.equals("time-limit")) {
-																	dataLabels.add(add);
-																	ArrayList<Double> times = new ArrayList<Double>();
-																	terms.add(times);
-																}
-															}
-														}
-													}
-												}
-												catch (Exception e) {
-												}
-											}
-											Scanner scan = new Scanner(new File(directory
-													+ separator + "term-time.txt"));
-											while (scan.hasNextLine()) {
-												String line = scan.nextLine();
-												String[] term = line.split(" ");
-												if (!dataLabels.contains(term[0])) {
-													dataLabels.add(term[0]);
-													ArrayList<Double> times = new ArrayList<Double>();
-													times.add(Double.parseDouble(term[1]));
-													terms.add(times);
-												}
-												else {
-													terms.get(dataLabels.indexOf(term[0]) - 1).add(
-															Double.parseDouble(term[1]));
-												}
-											}
-											scan.close();
-											ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
-											ArrayList<ArrayList<Double>> percentData = new ArrayList<ArrayList<Double>>();
-											for (int j = 0; j < dataLabels.size(); j++) {
-												ArrayList<Double> temp = new ArrayList<Double>();
-												temp.add(0.0);
-												data.add(temp);
-												temp = new ArrayList<Double>();
-												temp.add(0.0);
-												percentData.add(temp);
-											}
-											for (double j = printInterval; j <= timeLimit; j += printInterval) {
-												data.get(0).add(j);
-												percentData.get(0).add(j);
-												for (int k = 1; k < dataLabels.size(); k++) {
-													data
-															.get(k)
-															.add(
-																	data.get(k).get(
-																			data.get(k).size() - 1));
-													percentData.get(k).add(
-															percentData.get(k).get(
-																	percentData.get(k).size() - 1));
-													for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
-														if (terms.get(k - 1).get(l) < j) {
-															data
-																	.get(k)
-																	.set(
-																			data.get(k).size() - 1,
-																			data
-																					.get(k)
-																					.get(
-																							data
-																									.get(
-																											k)
-																									.size() - 1) + 1);
-															percentData.get(k).set(
-																	percentData.get(k).size() - 1,
-																	((data.get(k).get(data.get(k)
-																			.size() - 1)) * 100)
-																			/ runs);
-															terms.get(k - 1).remove(l);
-														}
-													}
-												}
-											}
-											Parser probData = new Parser(dataLabels, data);
-											probData.outputTSD(directory + separator
-													+ "term-time.tsd");
-											probData = new Parser(dataLabels, percentData);
-											probData.outputTSD(directory + separator
-													+ "percent-term-time.tsd");
-										}
-										simTab.getComponentAt(i).setName("TSD Graph");
-									}
-								}
-								if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
-									if (simTab.getComponentAt(i) instanceof Graph) {
-										((Graph) simTab.getComponentAt(i)).refresh();
-									}
-									else {
-										if (new File(filename.substring(0, filename.length()
-												- filename.split(separator)[filename
-														.split(separator).length - 1].length())
-												+ "sim-rep.txt").exists()) {
-											simTab.setComponentAt(i,
-													new Graph(r2s, printer_track_quantity, outDir
-															.split(separator)[outDir
-															.split(separator).length - 1]
-															+ " simulation results", printer_id,
-															outDir, "time", biomodelsim, null, log,
-															null, false, false));
-											simTab.getComponentAt(i).setName("ProbGraph");
-										}
-									}
-								}
-							}
-						}
-						else if (monteCarlo.isSelected()) {
-							for (int i = 0; i < simTab.getComponentCount(); i++) {
-								if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
-									if (simTab.getComponentAt(i) instanceof Graph) {
-										boolean outputM = true;
-										boolean outputV = true;
-										boolean outputS = true;
-										boolean outputTerm = false;
-										boolean warning = false;
-										int num = -1;
-										String run = "run-1."
-												+ printer_id.substring(0, printer_id.length() - 8);
-										for (String f : work.list()) {
-											if (f.contains("mean")) {
-												outputM = false;
-											}
-											else if (f.contains("variance")) {
-												outputV = false;
-											}
-											else if (f.contains("standard_deviation")) {
-												outputS = false;
-											}
-											else if (f.contains("run-")) {
-												String getNumber = f.substring(4, f.length());
-												String number = "";
-												for (int j = 0; j < getNumber.length(); j++) {
-													if (Character.isDigit(getNumber.charAt(j))) {
-														number += getNumber.charAt(j);
-													}
-													else {
-														break;
-													}
-												}
-												if (num == -1) {
-													num = Integer.parseInt(number);
-												}
-												else if (Integer.parseInt(number) < num) {
-													num = Integer.parseInt(number);
-												}
-												run = "run-"
-														+ num
-														+ "."
-														+ printer_id.substring(0, printer_id
-																.length() - 8);
-											}
-											else if (f.equals("term-time.txt")) {
-												outputTerm = true;
-											}
-										}
-										if (outputM) {
-											ArrayList<ArrayList<Double>> mean = ((Graph) simTab
-													.getComponentAt(i)).readData(directory
-													+ separator + run, "average", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i))
-													.getWarning();
-											Parser p = new TSDParser(directory + separator + run,
-													warning);
-											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), mean);
-											p2.outputTSD(directory + separator + "mean.tsd");
-										}
-										if (outputV) {
-											ArrayList<ArrayList<Double>> var = ((Graph) simTab
-													.getComponentAt(i)).readData(directory
-													+ separator + run, "variance", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i))
-													.getWarning();
-											Parser p = new TSDParser(directory + separator + run,
-													warning);
-											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), var);
-											p2.outputTSD(directory + separator + "variance.tsd");
-										}
-										if (outputS) {
-											ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
-													.getComponentAt(i))
-													.readData(directory + separator + run,
-															"deviation", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i))
-													.getWarning();
-											Parser p = new TSDParser(directory + separator + run,
-													warning);
-											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), stddev);
-											p2.outputTSD(directory + separator
-													+ "standard_deviation.tsd");
-										}
-										if (outputTerm) {
-											ArrayList<String> dataLabels = new ArrayList<String>();
-											dataLabels.add("time");
-											ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-											if (new File(directory + separator + "sim-rep.txt")
-													.exists()) {
-												try {
-													Scanner s = new Scanner(new File(directory
-															+ separator + "sim-rep.txt"));
-													if (s.hasNextLine()) {
-														String[] ss = s.nextLine().split(" ");
-														if (ss[0].equals("The")
-																&& ss[1].equals("total")
-																&& ss[2].equals("termination")
-																&& ss[3].equals("count:")
-																&& ss[4].equals("0")) {
-														}
-														else {
-															for (String add : ss) {
-																if (!add.equals("#total")
-																		&& !add
-																				.equals("time-limit")) {
-																	dataLabels.add(add);
-																	ArrayList<Double> times = new ArrayList<Double>();
-																	terms.add(times);
-																}
-															}
-														}
-													}
-												}
-												catch (Exception e) {
-												}
-											}
-											Scanner scan = new Scanner(new File(directory
-													+ separator + "term-time.txt"));
-											while (scan.hasNextLine()) {
-												String line = scan.nextLine();
-												String[] term = line.split(" ");
-												if (!dataLabels.contains(term[0])) {
-													dataLabels.add(term[0]);
-													ArrayList<Double> times = new ArrayList<Double>();
-													times.add(Double.parseDouble(term[1]));
-													terms.add(times);
-												}
-												else {
-													terms.get(dataLabels.indexOf(term[0]) - 1).add(
-															Double.parseDouble(term[1]));
-												}
-											}
-											scan.close();
-											ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
-											ArrayList<ArrayList<Double>> percentData = new ArrayList<ArrayList<Double>>();
-											for (int j = 0; j < dataLabels.size(); j++) {
-												ArrayList<Double> temp = new ArrayList<Double>();
-												temp.add(0.0);
-												data.add(temp);
-												temp = new ArrayList<Double>();
-												temp.add(0.0);
-												percentData.add(temp);
-											}
-											for (double j = printInterval; j <= timeLimit; j += printInterval) {
-												data.get(0).add(j);
-												percentData.get(0).add(j);
-												for (int k = 1; k < dataLabels.size(); k++) {
-													data
-															.get(k)
-															.add(
-																	data.get(k).get(
-																			data.get(k).size() - 1));
-													percentData.get(k).add(
-															percentData.get(k).get(
-																	percentData.get(k).size() - 1));
-													for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
-														if (terms.get(k - 1).get(l) < j) {
-															data
-																	.get(k)
-																	.set(
-																			data.get(k).size() - 1,
-																			data
-																					.get(k)
-																					.get(
-																							data
-																									.get(
-																											k)
-																									.size() - 1) + 1);
-															percentData.get(k).set(
-																	percentData.get(k).size() - 1,
-																	((data.get(k).get(data.get(k)
-																			.size() - 1)) * 100)
-																			/ runs);
-															terms.get(k - 1).remove(l);
-														}
-													}
-												}
-											}
-											Parser probData = new Parser(dataLabels, data);
-											probData.outputTSD(directory + separator
-													+ "term-time.tsd");
-											probData = new Parser(dataLabels, percentData);
-											probData.outputTSD(directory + separator
-													+ "percent-term-time.tsd");
-										}
-										((Graph) simTab.getComponentAt(i)).refresh();
-									}
-									else {
-										simTab.setComponentAt(i,
-												new Graph(r2s, printer_track_quantity,
-														outDir.split(separator)[outDir
-																.split(separator).length - 1]
-																+ " simulation results",
-														printer_id, outDir, "time", biomodelsim,
-														null, log, null, true, false));
-										boolean outputM = true;
-										boolean outputV = true;
-										boolean outputS = true;
-										boolean outputTerm = false;
-										boolean warning = false;
-										int num = -1;
-										String run = "run-1."
-												+ printer_id.substring(0, printer_id.length() - 8);
-										for (String f : work.list()) {
-											if (f.contains("mean")) {
-												outputM = false;
-											}
-											else if (f.contains("variance")) {
-												outputV = false;
-											}
-											else if (f.contains("standard_deviation")) {
-												outputS = false;
-											}
-											else if (f.contains("run-")) {
-												String getNumber = f.substring(4, f.length());
-												String number = "";
-												for (int j = 0; j < getNumber.length(); j++) {
-													if (Character.isDigit(getNumber.charAt(j))) {
-														number += getNumber.charAt(j);
-													}
-													else {
-														break;
-													}
-												}
-												if (num == -1) {
-													num = Integer.parseInt(number);
-												}
-												else if (Integer.parseInt(number) < num) {
-													num = Integer.parseInt(number);
-												}
-												run = "run-"
-														+ num
-														+ "."
-														+ printer_id.substring(0, printer_id
-																.length() - 8);
-											}
-											else if (f.equals("term-time.txt")) {
-												outputTerm = true;
-											}
-										}
-										if (outputM) {
-											ArrayList<ArrayList<Double>> mean = ((Graph) simTab
-													.getComponentAt(i)).readData(directory
-													+ separator + run, "average", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i))
-													.getWarning();
-											Parser p = new TSDParser(directory + separator + run,
-													warning);
-											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), mean);
-											p2.outputTSD(directory + separator + "mean.tsd");
-										}
-										if (outputV) {
-											ArrayList<ArrayList<Double>> var = ((Graph) simTab
-													.getComponentAt(i)).readData(directory
-													+ separator + run, "variance", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i))
-													.getWarning();
-											Parser p = new TSDParser(directory + separator + run,
-													warning);
-											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), var);
-											p2.outputTSD(directory + separator + "variance.tsd");
-										}
-										if (outputS) {
-											ArrayList<ArrayList<Double>> stddev = ((Graph) simTab
-													.getComponentAt(i))
-													.readData(directory + separator + run,
-															"deviation", direct, warning);
-											warning = ((Graph) simTab.getComponentAt(i))
-													.getWarning();
-											Parser p = new TSDParser(directory + separator + run,
-													warning);
-											warning = p.getWarning();
-											Parser p2 = new Parser(p.getSpecies(), stddev);
-											p2.outputTSD(directory + separator
-													+ "standard_deviation.tsd");
-										}
-										if (outputTerm) {
-											ArrayList<String> dataLabels = new ArrayList<String>();
-											dataLabels.add("time");
-											ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-											if (new File(directory + separator + "sim-rep.txt")
-													.exists()) {
-												try {
-													Scanner s = new Scanner(new File(directory
-															+ separator + "sim-rep.txt"));
-													if (s.hasNextLine()) {
-														String[] ss = s.nextLine().split(" ");
-														if (ss[0].equals("The")
-																&& ss[1].equals("total")
-																&& ss[2].equals("termination")
-																&& ss[3].equals("count:")
-																&& ss[4].equals("0")) {
-														}
-														else {
-															for (String add : ss) {
-																if (!add.equals("#total")
-																		&& !add
-																				.equals("time-limit")) {
-																	dataLabels.add(add);
-																	ArrayList<Double> times = new ArrayList<Double>();
-																	terms.add(times);
-																}
-															}
-														}
-													}
-												}
-												catch (Exception e) {
-												}
-											}
-											Scanner scan = new Scanner(new File(directory
-													+ separator + "term-time.txt"));
-											while (scan.hasNextLine()) {
-												String line = scan.nextLine();
-												String[] term = line.split(" ");
-												if (!dataLabels.contains(term[0])) {
-													dataLabels.add(term[0]);
-													ArrayList<Double> times = new ArrayList<Double>();
-													times.add(Double.parseDouble(term[1]));
-													terms.add(times);
-												}
-												else {
-													terms.get(dataLabels.indexOf(term[0]) - 1).add(
-															Double.parseDouble(term[1]));
-												}
-											}
-											scan.close();
-											ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
-											ArrayList<ArrayList<Double>> percentData = new ArrayList<ArrayList<Double>>();
-											for (int j = 0; j < dataLabels.size(); j++) {
-												ArrayList<Double> temp = new ArrayList<Double>();
-												temp.add(0.0);
-												data.add(temp);
-												temp = new ArrayList<Double>();
-												temp.add(0.0);
-												percentData.add(temp);
-											}
-											for (double j = printInterval; j <= timeLimit; j += printInterval) {
-												data.get(0).add(j);
-												percentData.get(0).add(j);
-												for (int k = 1; k < dataLabels.size(); k++) {
-													data
-															.get(k)
-															.add(
-																	data.get(k).get(
-																			data.get(k).size() - 1));
-													percentData.get(k).add(
-															percentData.get(k).get(
-																	percentData.get(k).size() - 1));
-													for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
-														if (terms.get(k - 1).get(l) < j) {
-															data
-																	.get(k)
-																	.set(
-																			data.get(k).size() - 1,
-																			data
-																					.get(k)
-																					.get(
-																							data
-																									.get(
-																											k)
-																									.size() - 1) + 1);
-															percentData.get(k).set(
-																	percentData.get(k).size() - 1,
-																	((data.get(k).get(data.get(k)
-																			.size() - 1)) * 100)
-																			/ runs);
-															terms.get(k - 1).remove(l);
-														}
-													}
-												}
-											}
-											Parser probData = new Parser(dataLabels, data);
-											probData.outputTSD(directory + separator
-													+ "term-time.tsd");
-											probData = new Parser(dataLabels, percentData);
-											probData.outputTSD(directory + separator
-													+ "percent-term-time.tsd");
-										}
-										simTab.getComponentAt(i).setName("TSD Graph");
-									}
-								}
-								if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
-									if (simTab.getComponentAt(i) instanceof Graph) {
-										((Graph) simTab.getComponentAt(i)).refresh();
-									}
-									else {
-										if (new File(filename.substring(0, filename.length()
-												- filename.split(separator)[filename
-														.split(separator).length - 1].length())
-												+ "sim-rep.txt").exists()) {
-											simTab.setComponentAt(i,
-													new Graph(r2s, printer_track_quantity, outDir
-															.split(separator)[outDir
-															.split(separator).length - 1]
-															+ " simulation results", printer_id,
-															outDir, "time", biomodelsim, null, log,
-															null, false, false));
-											simTab.getComponentAt(i).setName("ProbGraph");
-										}
-									}
-								}
-							}
-						}
-					}
-				}
 			}
+			// }
 		}
 		catch (InterruptedException e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!", "Error In Execution",
