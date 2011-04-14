@@ -54,55 +54,78 @@ public class AbstractionEngine {
 	}
 	
 	private String abstractComplexHelper(String complexId, double multiplier, String payNoMind) {
-		String repMolecule = "";
-		String kcompId = kcompString + "__" + complexId;
-		double[] kcomp = species.get(complexId).getKc();
-		// Checks if binding parameters are specified as forward and reverse
-		// rate constants or
-		// as equilibrium binding constants before adding to kinetic law
-		if (sbmlMode && kcomp.length == 2) {
-			kl.addParameter(Utility.Parameter(kcompId, kcomp[0] / kcomp[1], GeneticNetwork
-					.getMoleParameter(2)));
-		}
-		else if (sbmlMode) {
-			kl.addParameter(Utility
-					.Parameter(kcompId, kcomp[0], GeneticNetwork.getMoleParameter(2)));
-		}
-		String ncSum = "";
-		for (Influence infl : complexMap.get(complexId)) {
-			String partId = infl.getInput();
-			double n = infl.getCoop();
-			String nId = coopString + "__" + partId + "_" + complexId;
-			if (sbmlMode)
-				kl.addParameter(Utility.Parameter(nId, n, "dimensionless"));
-			ncSum = ncSum + nId + "+";
-			if (!partId.equals(payNoMind)) {
-				repMolecule = repMolecule + "*" + "(";
-				if (species.get(partId).isAbstractable()) {
-					repMolecule = repMolecule + abstractComplexHelper(partId, multiplier * n, "");
-				}
-				else if (payNoMind.equals("")) {
-					if (species.get(partId).isSequesterable())
-						repMolecule = repMolecule + sequesterSpeciesHelper(partId, complexId);
-					else
-						repMolecule = repMolecule + partId;
-					if (sbmlMode && complexReactantStoich.containsKey(partId))
-						complexReactantStoich.put(partId, complexReactantStoich.get(partId)
-								+ multiplier * n);
-					else if (sbmlMode)
-						complexReactantStoich.put(partId, multiplier * n);
-				}
-				else {
-					repMolecule = repMolecule + partId;
-					if (sbmlMode)
-						complexModifiers.add(partId);
-				}
-				repMolecule = repMolecule + ")^" + nId;
+		String complexMolecule = "";
+		if (sbmlMode) {
+			String kcompId = kcompString + "__" + complexId;
+			double[] kcomp = species.get(complexId).getKc();
+			// Checks if binding parameters are specified as forward and reverse
+			// rate constants or
+			// as equilibrium binding constants before adding to kinetic law
+			if (kcomp.length == 2) {
+				kl.addParameter(Utility.Parameter(kcompId, kcomp[0] / kcomp[1], GeneticNetwork
+						.getMoleParameter(2)));
+			} else {
+				kl.addParameter(Utility
+						.Parameter(kcompId, kcomp[0], GeneticNetwork.getMoleParameter(2)));
 			}
+			String ncSum = "";
+			for (Influence infl : complexMap.get(complexId)) {
+				String partId = infl.getInput();
+				double n = infl.getCoop();
+				String nId = coopString + "__" + partId + "_" + complexId;
+				kl.addParameter(Utility.Parameter(nId, n, "dimensionless"));
+				ncSum = ncSum + nId + "+";
+				if (!partId.equals(payNoMind)) {
+					complexMolecule = complexMolecule + "*" + "(";
+					if (species.get(partId).isAbstractable()) {
+						complexMolecule = complexMolecule + abstractComplexHelper(partId, multiplier * n, "");
+					} else if (payNoMind.equals("")) {
+						if (species.get(partId).isSequesterable())
+							complexMolecule = complexMolecule + sequesterSpeciesHelper(partId, complexId);
+						else
+							complexMolecule = complexMolecule + partId;
+						if (complexReactantStoich.containsKey(partId))
+							complexReactantStoich.put(partId, complexReactantStoich.get(partId)
+									+ multiplier * n);
+						else
+							complexReactantStoich.put(partId, multiplier * n);
+					} else {
+						complexMolecule = complexMolecule + partId;
+						complexModifiers.add(partId);
+					}
+					complexMolecule = complexMolecule + ")^" + nId;
+				}
+			}
+			complexMolecule = kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)"
+			+ complexMolecule;
+		} else {
+			double ncSum = 0;
+			for (Influence infl : complexMap.get(complexId)) {
+				String partId = infl.getInput();
+				double n = infl.getCoop();
+				ncSum = ncSum + n;
+				if (!partId.equals(payNoMind)) {
+					complexMolecule = complexMolecule + "*" + "(";
+					if (species.get(partId).isAbstractable()) {
+						complexMolecule = complexMolecule + abstractComplexHelper(partId, multiplier * n, "");
+					} else if (payNoMind.equals("")) {
+						if (species.get(partId).isSequesterable())
+							complexMolecule = complexMolecule + sequesterSpeciesHelper(partId, complexId);
+						else
+							complexMolecule = complexMolecule + partId;
+					} else {
+						complexMolecule = complexMolecule + partId;
+					}
+					complexMolecule = complexMolecule + ")^" + n;
+				}
+			}
+			double[] kcomp = species.get(complexId).getKc();
+			if (kcomp.length == 2)
+				complexMolecule = kcomp[0]/kcomp[1] + "^" + (ncSum - 1) + complexMolecule;
+			else 
+				complexMolecule = kcomp[0] + "^" + (ncSum - 1) + complexMolecule;
 		}
-		repMolecule = kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)"
-				+ repMolecule;
-		return repMolecule;
+		return complexMolecule;
 	}
 
 	public String sequesterSpecies(String speciesId) {
