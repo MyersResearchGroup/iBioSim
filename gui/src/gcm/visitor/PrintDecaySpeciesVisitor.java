@@ -55,7 +55,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitComplex(ComplexSpecies specie) {
 		loadValues(specie);
-		if ((!complexAbstraction || !specie.isAbstractable()) && decay != 0) {	
+		if ((!complexAbstraction || (!specie.isAbstractable() && !specie.isSequesterAbstractable())) && decay != 0) {	
 			String compartment = checkCompartments(specie.getId());
 			r = Utility.Reaction("Degradation_"+specie.getId());
 			r.setCompartment(compartment);

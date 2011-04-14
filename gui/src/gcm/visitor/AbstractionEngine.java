@@ -97,7 +97,7 @@ public class AbstractionEngine {
 		String sequesterFactor = speciesId + "/(1";
 		for (Influence infl : partsMap.get(speciesId)) {
 			String complexId = infl.getOutput();
-			if (!complexId.equals(payNoMind))
+			if (!complexId.equals(payNoMind) && species.get(complexId).isSequesterAbstractable())
 				sequesterFactor = sequesterFactor + "+" + abstractComplex(complexId, 1, speciesId);
 		}
 		sequesterFactor = sequesterFactor + ")";

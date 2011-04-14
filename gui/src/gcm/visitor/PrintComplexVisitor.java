@@ -34,7 +34,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 	 */
 	public void run() {
 		for (SpeciesInterface s : species.values()) {
-			if (!complexAbstraction || !s.isAbstractable())
+			if (!complexAbstraction || (!s.isAbstractable() && !s.isSequesterAbstractable()))
 				s.accept(this);
 		}
 	}
@@ -55,8 +55,11 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		String expression = "";
+		String complexMolecule = specie.getId();
 		if (complexAbstraction) {
 			expression = abstractComplex(specie.getId(), 1);
+			if (specie.isSequesterable())
+				complexMolecule = sequesterSpecies(specie.getId());
 		} else {
 			String kcompId = kcompString + "__" + specie.getId();
 			//Checks if binding parameters are specified as forward and reverse rate constants or 
@@ -80,7 +83,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 			}
 			expression = kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + expression;	
 		}
-		kl.setFormula("kr*" + expression + "-kr*" + specie.getId());
+		kl.setFormula("kr*" + expression + "-kr*" + complexMolecule);
 		Utility.addReaction(document, r);
 	}
 	

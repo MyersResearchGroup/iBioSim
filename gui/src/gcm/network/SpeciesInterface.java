@@ -99,6 +99,10 @@ public interface SpeciesInterface extends VisitableSpecies {
 	public boolean isAbstractable();
 	
 	public void setAbstractable(boolean set);
+	
+	public boolean isSequesterAbstractable();
+	
+	public void setSequesterAbstractable(boolean set);
 
 	public boolean isSequesterable();
 	
