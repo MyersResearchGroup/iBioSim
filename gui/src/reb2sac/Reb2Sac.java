@@ -373,16 +373,26 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		inputHolderRight.add(fileStem);
 		if (modelFile.contains(".lpn") || modelFile.contains(".gcm")) {
 			JLabel prop = new JLabel("Properties:");
-			String[] props = new String[0];
+			String[] props = new String[] { "none" };
 			if (modelFile.contains(".lpn")) {
 				LhpnFile lpn = new LhpnFile();
 				lpn.load(root + separator + modelFile);
-				props = lpn.getProperties().toArray(new String[0]);
+				String[] getProps = lpn.getProperties().toArray(new String[0]);
+				props = new String[getProps.length + 1];
+				props[0] = "none";
+				for (int i = 0; i < getProps.length; i++) {
+					props[i + 1] = getProps[i];
+				}
 			}
 			else {
 				GCMFile gcm = new GCMFile(root);
 				gcm.load(root + separator + modelFile);
-				props = gcm.getConditions().toArray(new String[0]);
+				String[] getProps = gcm.getConditions().toArray(new String[0]);
+				props = new String[getProps.length + 1];
+				props[0] = "none";
+				for (int i = 0; i < getProps.length; i++) {
+					props[i + 1] = getProps[i];
+				}
 			}
 			transientProperties = new JComboBox(props);
 			transientProperties.setPreferredSize(new Dimension(5, 10));
@@ -1680,12 +1690,24 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					Abstraction abst = new Abstraction(lhpnFile, lhpnAbstraction);
 					abst.abstractSTG(false);
 					abst.save(root + separator + simName + separator + modelFile);
-					t1.BuildTemplate(root + separator + simName + separator + modelFile,
-							((String) transientProperties.getSelectedItem()));
+					if (transientProperties != null
+							&& !((String) transientProperties.getSelectedItem()).equals("none")) {
+						t1.BuildTemplate(root + separator + simName + separator + modelFile,
+								((String) transientProperties.getSelectedItem()));
+					}
+					else {
+						t1.BuildTemplate(root + separator + simName + separator + modelFile, "");
+					}
 				}
 				else {
-					t1.BuildTemplate(root + separator + modelFile, ((String) transientProperties
-							.getSelectedItem()));
+					if (transientProperties != null
+							&& !((String) transientProperties.getSelectedItem()).equals("none")) {
+						t1.BuildTemplate(root + separator + modelFile,
+								((String) transientProperties.getSelectedItem()));
+					}
+					else {
+						t1.BuildTemplate(root + separator + modelFile, "");
+					}
 				}
 				t1.setFilename(root + separator + simName + separator + stem + separator
 						+ modelFile.replace(".lpn", ".sbml"));
@@ -3142,7 +3164,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 			String lpnProperty = "";
 			if (transientProperties != null) {
-				lpnProperty = ((String) transientProperties.getSelectedItem());
+				if (!((String) transientProperties.getSelectedItem()).equals("none")) {
+					lpnProperty = ((String) transientProperties.getSelectedItem());
+				}
 			}
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, Gui.frame, ODE, monteCarlo,
 					sim, printer_id, printer_track_quantity, root + separator + simName, nary, 1,
@@ -3172,7 +3196,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 			String lpnProperty = "";
 			if (transientProperties != null) {
-				lpnProperty = ((String) transientProperties.getSelectedItem());
+				if (!((String) transientProperties.getSelectedItem()).equals("none")) {
+					lpnProperty = ((String) transientProperties.getSelectedItem());
+				}
 			}
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, Gui.frame, ODE, monteCarlo,
 					sim, printer_id, printer_track_quantity, root + separator + simName, nary, 1,
@@ -5209,10 +5235,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		constructPanel.add(splitPane, "South");
 		return constructPanel;
 	}
-	
+
 	public String getProperty() {
 		if (transientProperties != null) {
-			return ((String) transientProperties.getSelectedItem());
+			if (!((String) transientProperties.getSelectedItem()).equals("none")) {
+				return ((String) transientProperties.getSelectedItem());
+			}
+			else {
+				return "";
+			}
 		}
 		else {
 			return null;
@@ -5246,16 +5277,26 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	public void updateProperties() {
 		if (transientProperties != null) {
-			String[] props = new String[0];
+			String[] props = new String[] { "none" };
 			if (modelFile.contains(".lpn")) {
 				LhpnFile lpn = new LhpnFile();
 				lpn.load(root + separator + modelFile);
-				props = lpn.getProperties().toArray(new String[0]);
+				String[] getProps = lpn.getProperties().toArray(new String[0]);
+				props = new String[getProps.length + 1];
+				props[0] = "none";
+				for (int i = 0; i < getProps.length; i++) {
+					props[i + 1] = getProps[i];
+				}
 			}
 			else {
 				GCMFile gcm = new GCMFile(root);
 				gcm.load(root + separator + modelFile);
-				props = gcm.getConditions().toArray(new String[0]);
+				String[] getProps = gcm.getConditions().toArray(new String[0]);
+				props = new String[getProps.length + 1];
+				props[0] = "none";
+				for (int i = 0; i < getProps.length; i++) {
+					props[i + 1] = getProps[i];
+				}
 			}
 			transientProperties.removeAllItems();
 			for (String s : props) {
