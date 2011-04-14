@@ -3069,6 +3069,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// getProps.setProperty(split[0], split[1]);
 			// }
 			getProps.setProperty("selected.simulator", sim);
+			if (transientProperties != null) {
+				getProps.setProperty("selected.property", (String) transientProperties
+						.getSelectedItem());
+			}
 			if (!fileStem.getText().trim().equals("")) {
 				getProps.setProperty("file.stem", fileStem.getText().trim());
 			}
@@ -3647,6 +3651,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			// getProps.setProperty(split[0], split[1]);
 			// }
 			getProps.setProperty("selected.simulator", (String) simulators.getSelectedItem());
+			if (transientProperties != null) {
+				getProps.setProperty("selected.property", (String) transientProperties
+						.getSelectedItem());
+			}
 			if (!fileStem.getText().trim().equals("")) {
 				getProps.setProperty("file.stem", fileStem.getText().trim());
 			}
@@ -4441,6 +4449,11 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						none.setSelected(false);
 						abstraction.setSelected(false);
 						nary.setSelected(true);
+					}
+				}
+				if (load.containsKey("selected.property")) {
+					if (transientProperties != null) {
+						transientProperties.setSelectedItem(load.getProperty("selected.property"));
 					}
 				}
 				ArrayList<String> getLists = new ArrayList<String>();
@@ -5277,6 +5290,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	public void updateProperties() {
 		if (transientProperties != null) {
+			Object selected = transientProperties.getSelectedItem();
 			String[] props = new String[] { "none" };
 			if (modelFile.contains(".lpn")) {
 				LhpnFile lpn = new LhpnFile();
@@ -5302,6 +5316,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			for (String s : props) {
 				transientProperties.addItem(s);
 			}
+			transientProperties.setSelectedItem(selected);
 		}
 	}
 }
