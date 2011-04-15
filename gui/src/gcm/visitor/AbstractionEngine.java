@@ -158,7 +158,13 @@ public class AbstractionEngine {
 				double ng = promoters.get(promoterId).getPcount();
 				double kb = promoters.get(promoterId).getKbasal();
 				double[] KoArray = promoters.get(promoterId).getKrnap();
-				double Ko = KoArray[0] / KoArray[1];
+				double Ko;
+				if (KoArray.length == 2) {
+					Ko = KoArray[0] / KoArray[1];
+				}
+				else {
+					Ko = KoArray[0];
+				}
 				if (sbmlMode) {
 					promRate += "(np__" + promoterId + "*ng__" + promoterId + ")*((kb__"
 							+ promoterId + "*Ko__" + promoterId + "*RNAP)";
@@ -181,7 +187,13 @@ public class AbstractionEngine {
 						if (influ.getInput().equals(activator)) {
 							double nc = influ.getCoop();
 							double[] KaArray = influ.getAct();
-							double Ka = KaArray[0] / KaArray[1];
+							double Ka;
+							if (KaArray.length == 2) {
+								Ka = KaArray[0] / KaArray[1];
+							}
+							else {
+								Ka = KaArray[0];
+							}
 							double ka = promoters.get(promoterId).getKact();
 							String expression = activator;
 							if (species.get(activator).isSequesterable()) {
@@ -226,7 +238,13 @@ public class AbstractionEngine {
 								if (influ.getInput().equals(repressor)) {
 									double nc = influ.getCoop();
 									double[] KrArray = influ.getRep();
-									double Kr = KrArray[0] / KrArray[1];
+									double Kr;
+									if (KrArray.length == 2) {
+										Kr = KrArray[0] / KrArray[1];
+									}
+									else {
+										Kr = KrArray[0];
+									}
 									String expression = repressor;
 									if (species.get(repressor).isSequesterable()) {
 										expression = sequesterSpecies(repressor);
@@ -261,7 +279,13 @@ public class AbstractionEngine {
 					double ng = promoters.get(promoterId).getPcount();
 					double ko = promoters.get(promoterId).getKoc();
 					double[] KoArray = promoters.get(promoterId).getKrnap();
-					double Ko = KoArray[0] / KoArray[1];
+					double Ko;
+					if (KoArray.length == 2) {
+						Ko = KoArray[0] / KoArray[1];
+					}
+					else {
+						Ko = KoArray[0];
+					}
 					if (sbmlMode) {
 						promRate += "(np__" + promoterId + "*ko__" + promoterId + "*ng__"
 								+ promoterId + ")*((Ko__" + promoterId + "*RNAP))/((1+(Ko__"
@@ -285,7 +309,13 @@ public class AbstractionEngine {
 							if (influ.getInput().equals(repressor)) {
 								double nc = influ.getCoop();
 								double[] KrArray = influ.getRep();
-								double Kr = KrArray[0] / KrArray[1];
+								double Kr;
+								if (KrArray.length == 2) {
+									Kr = KrArray[0] / KrArray[1];
+								}
+								else {
+									Kr = KrArray[0];
+								}
 								String expression = repressor;
 								if (species.get(repressor).isSequesterable()) {
 									expression = sequesterSpecies(repressor);
