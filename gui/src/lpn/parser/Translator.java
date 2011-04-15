@@ -686,15 +686,32 @@ public class Translator {
 				Constraint constraintSucc = m.createConstraint();
 				constraintFail.setMetaId("Fail");
 				constraintSucc.setMetaId("Success");
-				ExprTree probpropLeftTree = String2ExprTree(lhpn,probpropParts[0]);
-				String probpropLeftSBML = probpropLeftTree.toString("SBML");
-				ExprTree probpropRightTree = String2ExprTree(lhpn,probpropParts[1]);
-				String probpropRightSBML = probpropRightTree.toString("SBML");
-					
-				ExprTree lowerBoundTree = String2ExprTree(lhpn,probpropParts[2]);
-				ExprTree upperBoundTree = String2ExprTree(lhpn,probpropParts[3]);
-				String lowerBoundSBML = lowerBoundTree.toString("SBML");
-				String upperBoundSBML = upperBoundTree.toString("SBML");
+				ExprTree probpropLeftTree = null;
+				ExprTree probpropRightTree = null;
+				ExprTree lowerBoundTree = null;
+				ExprTree upperBoundTree = null;
+				String probpropLeftSBML = null;
+				String probpropRightSBML = null;
+				String lowerBoundSBML = null;
+				String upperBoundSBML = null;
+				
+				if (!probpropParts[0].equals(""))
+					probpropLeftTree = String2ExprTree(lhpn,probpropParts[0]);
+				if (!probpropParts[1].equals(""))
+					probpropRightTree = String2ExprTree(lhpn,probpropParts[1]);
+				if (!probpropParts[2].equals(""))
+					lowerBoundTree = String2ExprTree(lhpn,probpropParts[2]);
+				if (!probpropParts[3].equals(""))
+					upperBoundTree = String2ExprTree(lhpn,probpropParts[3]);
+				if (!(probpropLeftTree == null))
+					probpropLeftSBML = probpropLeftTree.toString("SBML");
+				if (!(probpropRightTree == null))
+					probpropRightSBML = probpropRightTree.toString("SBML");
+				if (!(lowerBoundTree == null))
+					lowerBoundSBML = lowerBoundTree.toString("SBML");
+				if (!(upperBoundTree == null))
+					upperBoundSBML = upperBoundTree.toString("SBML");
+				
 				String LTlower = "lt(t," + lowerBoundSBML + ")";
 				String LEQlower = "leq(t," + lowerBoundSBML + ")";
 				String GTlower = "gt(t," + lowerBoundSBML + ")";
