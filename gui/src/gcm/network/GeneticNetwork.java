@@ -908,7 +908,9 @@ public class GeneticNetwork {
 		}
 	}
 	
-	//Checks if species belongs in a compartment other than default
+	/**
+	 * Checks if species belongs in a compartment other than default
+	 */
 	private String checkCompartments(String species) {
 		String compartment = "default";
 		String[] splitted = species.split("__");
@@ -917,7 +919,9 @@ public class GeneticNetwork {
 		return compartment;
 	}
 
-	// Returns abstracted rate law for the formation of a complex species
+	/**
+	 *  Returns abstracted rate law for the formation of a complex species
+	 */
 	public String abstractExpression(String id) {
 		String expression = id;
 		AbstractionEngine e = new AbstractionEngine(species, promoters, complexMap, partsMap,
@@ -927,6 +931,15 @@ public class GeneticNetwork {
 		else if (complexMap.containsKey(id))
 			expression = e.abstractComplex(id, 0);
 		return expression;
+	}
+
+	/**
+	 * Returns abstracted rate law for a given promoter
+	 */
+	public String abstractOperatorSite(String id) {
+		AbstractionEngine e = new AbstractionEngine(species, promoters, complexMap, partsMap,
+				Double.parseDouble(properties.getParameters().get(GlobalConstants.RNAP_STRING)));
+		return e.abstractOperatorSite(id);
 	}
 	
 	/**

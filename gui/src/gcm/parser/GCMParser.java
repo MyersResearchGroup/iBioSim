@@ -57,6 +57,17 @@ public class GCMParser {
 			throw new IllegalStateException("Error opening file");
 		}
 	}
+	
+	public GCMParser(GCMFile gcm, boolean debug) {
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		}
+		else {
+			separator = File.separator;
+		}
+		this.debug = debug;
+		this.gcm = gcm;
+	}
 
 	public GeneticNetwork buildNetwork() {
 		org.sbml.libsbml.SBMLDocument sbml = gcm.flattenGCM(true);
