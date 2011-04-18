@@ -1024,8 +1024,8 @@ public class GeneticNetwork {
 		}
 	}
 	
-	//Checks if parts of given complex are sequesterable
-	//Marks parts that are complexes as abstractable so long as they are not sequesterable/outputs and are only part of the given complex 
+	//Checks if parts of given complex are sequesterable so long as they're not activators or repressors
+	//Marks parts that are complexes as abstractable so long as they're not sequesterable/outputs and are only part of the given complex 
 	//Recursively checks parts of complex parts 
 	private boolean checkComplex(String complexId, String payNoMind) {
 		for (Influence infl : complexMap.get(complexId)) {
@@ -1051,7 +1051,7 @@ public class GeneticNetwork {
 		return true;
 	}
 	
-	//Marks given species as sequesterable and its sequestering complexes as abstractable if those complexes
+	//Marks given species as sequesterable and its sequestering complexes as sequester-abstractable if those complexes
 	//and the sequestering species which make them up are not used elsewhere
 	private boolean checkSequester(String partId, String payNoMind) {
 		boolean sequesterable = false;

@@ -41,6 +41,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitComplex(ComplexSpecies specie) {
+		loadValues(specie);
 		String compartment = checkCompartments(specie.getId());
 		r = Utility.Reaction("Complex_formation_" + specie.getId());
 		r.setCompartment(compartment);
@@ -48,43 +49,66 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		double[] kcomp = specie.getKc();
-		double kr = 1;
-		if (kcomp.length == 2)
-			kr = kcomp[1];
-		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
-				.getMoleTimeParameter(1)));
-		String expression = "";
-		String complexMolecule = specie.getId();
+		String compExpression = "";
+		String boundExpression = specie.getId();
+		String kcompId = kcompString + "__" + specie.getId();
+		String ncSum = "";
+		double stoich = 0;
 		if (complexAbstraction) {
-			expression = abstractComplex(specie.getId(), 1);
-			if (specie.isSequesterable())
-				complexMolecule = sequesterSpecies(specie.getId());
-		} else {
-			String kcompId = kcompString + "__" + specie.getId();
-			//Checks if binding parameters are specified as forward and reverse rate constants or 
-			//as equilibrium binding constants before adding to kinetic law
-			if (kcomp.length == 2) {
-				kl.addParameter(Utility.Parameter(kcompId, kcomp[0]/kcomp[1],
-						GeneticNetwork.getMoleParameter(2)));
-			} else {
-				kl.addParameter(Utility.Parameter(kcompId, kcomp[0],
-						GeneticNetwork.getMoleParameter(2)));
+			compExpression = abstractComplex(specie.getId(), 1);
+			int index = compExpression.indexOf('*');
+			compExpression = compExpression.substring(index, compExpression.length());
+			for (Influence infl : complexMap.get(specie.getId())) {
+				stoich += infl.getCoop();
+				String partId = infl.getInput();
+				String nId = coopString + "__" + partId + "_" + specie.getId();
+				ncSum = ncSum + nId + "+";
 			}
-			String ncSum = "";
+			if (specie.isSequesterable())
+				boundExpression = sequesterSpecies(specie.getId());
+		} else {
+			kl.addParameter(Utility.Parameter(kcompId, kcomp,
+					GeneticNetwork.getMoleParameter(2)));
 			for (Influence infl : complexMap.get(specie.getId())) {
 				String partId = infl.getInput();
-				double n = infl.getCoop();
-				r.addReactant(Utility.SpeciesReference(partId, n));
+				stoich += infl.getCoop();
+				r.addReactant(Utility.SpeciesReference(partId, infl.getCoop()));
 				String nId = coopString + "__" + partId + "_" + specie.getId();
-				kl.addParameter(Utility.Parameter(nId, n, "dimensionless"));
+				kl.addParameter(Utility.Parameter(nId, infl.getCoop(), "dimensionless"));
 				ncSum = ncSum + nId + "+";
-				expression = expression + "*" + "(" + partId + ")^" + nId;
+				compExpression = compExpression + "*" + "(" + partId + ")^" + nId;
 			}
-			expression = kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + expression;	
 		}
-		kl.setFormula("kr*" + expression + "-kr*" + complexMolecule);
+		if (stoich == 1)
+			kl.addParameter(Utility.Parameter("kf", kf, GeneticNetwork.getMoleTimeParameter(1)));
+		else 
+			kl.addParameter(Utility.Parameter("kf", kf, GeneticNetwork.getMoleTimeParameter(2)));
+		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+				.getMoleTimeParameter(1)));
+		kl.setFormula(generateLaw(compExpression, boundExpression, kcompId, ncSum, stoich));
 		Utility.addReaction(document, r);
+	}
+	
+	private String generateLaw(String compExpression, String boundExpression, String kcompId, String ncSum, double stoich) {
+		String law = "";
+		if (stoich == 1 || stoich == 2)
+			law = "kf" + compExpression + "-kr*" + boundExpression;
+		else
+			law = "kf*" + kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-2)" + compExpression + "-kr*" + boundExpression;
+		return law;
+	}
+	
+	//Checks whether equilibrium constants are given as forward and reverse rate constants before loading values
+	private void loadValues(SpeciesInterface s) {
+		double[] kcompArray = s.getKc();
+		kf = kcompArray[0];
+		if (kcompArray.length == 2) {
+			kcomp = kcompArray[0]/kcompArray[1];
+			kr = kcompArray[1];
+		} else {
+			kcomp = kcompArray[0];
+			kr = 1;
+		}
 	}
 	
 	//Checks if species belongs in a compartment other than default
@@ -97,6 +121,11 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 	}
 	
 	private ArrayList<String> compartments;
+	
+	private double kf;
+	private double kcomp;
+	private double kr;
+
 	
 	private String kcompString = GlobalConstants.KCOMPLEX_STRING;
 	private String coopString = GlobalConstants.COOPERATIVITY_STRING;

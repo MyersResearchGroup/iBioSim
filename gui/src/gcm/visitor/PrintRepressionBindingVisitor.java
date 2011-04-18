@@ -45,8 +45,8 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			String[] splitted = repressor.split("__");
 			if (splitted.length == 2)
 				repressor = splitted[1];
-			productName = promoter.getId() + "_" + repressor + "_bound";
-			reactionName = "R_repression_binding_" + promoter.getId() + "_" + repressor;
+			boundId = promoter.getId() + "_" + repressor + "_bound";
+			reactionId = "R_repression_binding_" + promoter.getId() + "_" + repressor;
 			specie.accept(this);
 		}
 	}
@@ -60,138 +60,118 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitComplex(ComplexSpecies specie) {
 		loadValues(specie);
-		r = Utility.Reaction(reactionName);
+		r = Utility.Reaction(reactionId);
 		r.setCompartment(compartment);
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
-		r.addProduct(Utility.SpeciesReference(productName, 1));
+		r.addProduct(Utility.SpeciesReference(boundId, 1));
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		//Checks if binding parameters are specified as forward and reverse rate constants or 
-		//as equilibrium binding constants before adding to kinetic law
-		if (krep.length == 2) {
-			kl.addParameter(Utility.Parameter(krepString, krep[0]/krep[1],
-					GeneticNetwork.getMoleParameter(2)));
-		} else {
-			kl.addParameter(Utility.Parameter(krepString, krep[0],
-					GeneticNetwork.getMoleParameter(2)));
-		}
+		kl.addParameter(Utility.Parameter("kf", kf,
+				GeneticNetwork.getMoleTimeParameter(2)));
+		kl.addParameter(Utility.Parameter(krepString, krep,
+				GeneticNetwork.getMoleParameter(2)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
-		String repMolecule = "";
+		String repExpression = "";
 		if (complexAbstraction && specie.isAbstractable()) {
-			repMolecule = abstractComplex(specie.getId(), coop);
+			repExpression = abstractComplex(specie.getId(), coop);
 		} else if (complexAbstraction && specie.isSequesterable()) {
-			repMolecule = sequesterSpecies(specie.getId());
+			repExpression = sequesterSpecies(specie.getId());
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		} else {
-			repMolecule = specie.getId();
+			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
 		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.setFormula(generateLaw(productName, repMolecule));
+		kl.setFormula(generateLaw(repExpression));
 		Utility.addReaction(document, r);
 	}
 	
 	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues(specie);
-		r = Utility.Reaction(reactionName);
+		r = Utility.Reaction(reactionId);
 		r.setCompartment(compartment);
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
-		r.addProduct(Utility.SpeciesReference(productName, 1));
+		r.addProduct(Utility.SpeciesReference(boundId, 1));
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		//Checks if binding parameters are specified as forward and reverse rate constants or 
-		//as equilibrium binding constants before adding to kinetic law
-		if (krep.length == 2) {
-			kl.addParameter(Utility.Parameter(krepString, krep[0]/krep[1],
-					GeneticNetwork.getMoleParameter(2)));
-		} else {
-			kl.addParameter(Utility.Parameter(krepString, krep[0],
-					GeneticNetwork.getMoleParameter(2)));
-		}
-		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
-				.getMoleTimeParameter(1)));
+		kl.addParameter(Utility.Parameter("kf", kf,
+				GeneticNetwork.getMoleTimeParameter(2)));
+		kl.addParameter(Utility.Parameter(krepString, krep,
+				GeneticNetwork.getMoleParameter(2)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
-		String repMolecule = "";
+		String repExpression = "";
 		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
 		if (complexAbstraction && specie.isSequesterable()) {
-			repMolecule = repMolecule + sequesterSpecies(specie.getId());
+			repExpression = repExpression + sequesterSpecies(specie.getId());
 		} else {
-			repMolecule = specie.getId();
+			repExpression = specie.getId();
 		}
 		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
-		kl.setFormula(generateLaw(productName, repMolecule));
+		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+				.getMoleTimeParameter(1)));
+		kl.setFormula(generateLaw(repExpression));
 		Utility.addReaction(document, r);
 	}
 
 	@Override
 	public void visitConstantSpecies(ConstantSpecies specie) {
 		loadValues(specie);
-		r = Utility.Reaction(reactionName);
+		r = Utility.Reaction(reactionId);
 		r.setCompartment(compartment);
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
-		r.addProduct(Utility.SpeciesReference(productName, 1));
+		r.addProduct(Utility.SpeciesReference(boundId, 1));
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		//Checks if binding parameters are specified as forward and reverse rate constants or 
-		//as equilibrium binding constants before adding to kinetic law
-		if (krep.length == 2) {
-			kl.addParameter(Utility.Parameter(krepString, krep[0]/krep[1],
-					GeneticNetwork.getMoleParameter(2)));
-		} else {
-			kl.addParameter(Utility.Parameter(krepString, krep[0],
-					GeneticNetwork.getMoleParameter(2)));
-		}
-		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
-				.getMoleTimeParameter(1)));
+		kl.addParameter(Utility.Parameter("kf", kf,
+				GeneticNetwork.getMoleTimeParameter(2)));
+		kl.addParameter(Utility.Parameter(krepString, krep,
+				GeneticNetwork.getMoleParameter(2)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
-		String repMolecule = "";
+		String repExpression = "";
 		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
 		if (complexAbstraction && specie.isSequesterable()) {
-			repMolecule = repMolecule + sequesterSpecies(specie.getId());
+			repExpression = repExpression + sequesterSpecies(specie.getId());
 		} else {
-			repMolecule = specie.getId();
+			repExpression = specie.getId();
 		}
 		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
-		kl.setFormula(generateLaw(productName, repMolecule));
+		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+				.getMoleTimeParameter(1)));
+		kl.setFormula(generateLaw(repExpression));
 		Utility.addReaction(document, r);
 	}
 
 	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie);
-		r = Utility.Reaction(reactionName);
+		r = Utility.Reaction(reactionId);
 		r.setCompartment(compartment);
 		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
-		r.addProduct(Utility.SpeciesReference(productName, 1));
+		r.addProduct(Utility.SpeciesReference(boundId, 1));
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		//Checks if binding parameters are specified as forward and reverse rate constants or 
-		//as equilibrium binding constants before adding to kinetic law
-		if (krep.length == 2) {
-			kl.addParameter(Utility.Parameter(krepString, krep[0]/krep[1],
-					GeneticNetwork.getMoleParameter(2)));
-		} else {
-			kl.addParameter(Utility.Parameter(krepString, krep[0],
-					GeneticNetwork.getMoleParameter(2)));
-		}
-		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
-				.getMoleTimeParameter(1)));
+		kl.addParameter(Utility.Parameter("kf", kf,
+				GeneticNetwork.getMoleTimeParameter(2)));
+		kl.addParameter(Utility.Parameter(krepString, krep,
+				GeneticNetwork.getMoleParameter(2)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
-		String repMolecule = "";
+		String repExpression = "";
 		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
 		if (complexAbstraction && specie.isSequesterable()) {
-			repMolecule = repMolecule + sequesterSpecies(specie.getId());
+			repExpression = repExpression + sequesterSpecies(specie.getId());
 		} else {
-			repMolecule = specie.getId();
+			repExpression = specie.getId();
 		}
 		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
-		kl.setFormula(generateLaw(productName, repMolecule));
+		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+				.getMoleTimeParameter(1)));
+		kl.setFormula(generateLaw(repExpression));
 		Utility.addReaction(document, r);
 	}
 
@@ -200,38 +180,49 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	 * 
 	 * @param specieName
 	 *            specie name
-	 * @param repMolecule
+	 * @param repExpression
 	 *            repressor molecule
 	 * @return
 	 */
-	private String generateLaw(String specieName, String repMolecule) {
-		String law = "kr*" + "(" + krepString + "*" + repMolecule + ")" + "^" + coopString + "*"
-				+ promoter.getId() + "-kr*" + specieName;
+	private String generateLaw(String repExpression) {
+		String law = "";
+		if (coop == 1)
+			law = "kf*" + "(" + repExpression + ")" + "^" + coopString + "*" + promoter.getId() + "-kr*" + boundId;
+		else
+			law = "kf*" + "(" + krepString + ")" + "^" + "(" + coopString + "-1" + ")" + "*" + "(" + repExpression + ")" 
+			+ "^" + coopString + "*" + promoter.getId() + "-kr*" + boundId;
 		return law;
 	}
 
+	// Checks if binding parameters are specified as forward and reverse rate constants or
+	// as equilibrium binding constants before loading values
 	private void loadValues(SpeciesInterface s) {
 		Influence r = promoter.getRepressionMap().get(s.getId());
 		coop = r.getCoop();
-		krep = r.getRep();
-		if (krep.length == 2)
-			kr = krep[1];
-		else
+		double[] krepArray = r.getRep();
+		kf = krepArray[0];
+		if (krepArray.length == 2) {
+			krep = krepArray[0]/krepArray[1];
+			kr = krepArray[1];
+		} else {
+			krep = krepArray[0];
 			kr = 1;
+		}
 	}
 		
 
 	private Promoter promoter;
 	
 	private double coop;
-	private double krep[];
+	private double kf;
+	private double krep;
 	private double kr;
 
 	private String krepString = GlobalConstants.KREP_STRING;
 	private String coopString = GlobalConstants.COOPERATIVITY_STRING;
 
-	private String productName;
-	private String reactionName;
+	private String boundId;
+	private String reactionId;
 	private String compartment;
 }
 
