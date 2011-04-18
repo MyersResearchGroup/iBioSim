@@ -54,7 +54,7 @@ public class AbstractionEngine {
 	}
 	
 	private String abstractComplexHelper(String complexId, double multiplier, String payNoMind) {
-		String complexMolecule = "";
+		String compExpression = "";
 		if (sbmlMode) {
 			String kcompId = kcompString + "__" + complexId;
 			double[] kcomp = species.get(complexId).getKc();
@@ -76,28 +76,28 @@ public class AbstractionEngine {
 				kl.addParameter(Utility.Parameter(nId, n, "dimensionless"));
 				ncSum = ncSum + nId + "+";
 				if (!partId.equals(payNoMind)) {
-					complexMolecule = complexMolecule + "*" + "(";
+					compExpression = compExpression + "*" + "(";
 					if (species.get(partId).isAbstractable()) {
-						complexMolecule = complexMolecule + abstractComplexHelper(partId, multiplier * n, "");
+						compExpression = compExpression + abstractComplexHelper(partId, multiplier * n, "");
 					} else if (payNoMind.equals("")) {
 						if (species.get(partId).isSequesterable())
-							complexMolecule = complexMolecule + sequesterSpeciesHelper(partId, complexId);
+							compExpression = compExpression + sequesterSpeciesHelper(partId, complexId);
 						else
-							complexMolecule = complexMolecule + partId;
+							compExpression = compExpression + partId;
 						if (complexReactantStoich.containsKey(partId))
 							complexReactantStoich.put(partId, complexReactantStoich.get(partId)
 									+ multiplier * n);
 						else
 							complexReactantStoich.put(partId, multiplier * n);
 					} else {
-						complexMolecule = complexMolecule + partId;
+						compExpression = compExpression + partId;
 						complexModifiers.add(partId);
 					}
-					complexMolecule = complexMolecule + ")^" + nId;
+					compExpression = compExpression + ")^" + nId;
 				}
 			}
-			complexMolecule = kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)"
-			+ complexMolecule;
+			compExpression = kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)"
+			+ compExpression;
 		} else {
 			double ncSum = 0;
 			for (Influence infl : complexMap.get(complexId)) {
@@ -105,27 +105,27 @@ public class AbstractionEngine {
 				double n = infl.getCoop();
 				ncSum = ncSum + n;
 				if (!partId.equals(payNoMind)) {
-					complexMolecule = complexMolecule + "*" + "(";
+					compExpression = compExpression + "*" + "(";
 					if (species.get(partId).isAbstractable()) {
-						complexMolecule = complexMolecule + abstractComplexHelper(partId, multiplier * n, "");
+						compExpression = compExpression + abstractComplexHelper(partId, multiplier * n, "");
 					} else if (payNoMind.equals("")) {
 						if (species.get(partId).isSequesterable())
-							complexMolecule = complexMolecule + sequesterSpeciesHelper(partId, complexId);
+							compExpression = compExpression + sequesterSpeciesHelper(partId, complexId);
 						else
-							complexMolecule = complexMolecule + partId;
+							compExpression = compExpression + partId;
 					} else {
-						complexMolecule = complexMolecule + partId;
+						compExpression = compExpression + partId;
 					}
-					complexMolecule = complexMolecule + ")^" + n;
+					compExpression = compExpression + ")^" + n;
 				}
 			}
 			double[] kcomp = species.get(complexId).getKc();
 			if (kcomp.length == 2)
-				complexMolecule = kcomp[0]/kcomp[1] + "^" + (ncSum - 1) + complexMolecule;
+				compExpression = kcomp[0]/kcomp[1] + "^" + (ncSum - 1) + compExpression;
 			else 
-				complexMolecule = kcomp[0] + "^" + (ncSum - 1) + complexMolecule;
+				compExpression = kcomp[0] + "^" + (ncSum - 1) + compExpression;
 		}
-		return complexMolecule;
+		return compExpression;
 	}
 
 	public String sequesterSpecies(String speciesId) {
