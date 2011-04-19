@@ -1,9 +1,6 @@
 package gcm.parser;
 
 import gcm.network.GeneticNetwork;
-import gcm.network.Influence;
-import gcm.network.Promoter;
-import gcm.network.SpeciesInterface;
 import gcm.util.GlobalConstants;
 import gcm.util.UndoManager;
 import gcm.util.Utility;
@@ -673,9 +670,19 @@ public class GCMFile {
 			}
 			LHPN.addInteger(specs.get(i), "" + ((int) selectedThreshold));
 		}
+		for (String input : getInputSpecies()) {
+			double value;
+			try {
+				value = parseValue(this.species.get(input).getProperty(
+						GlobalConstants.INITIAL_STRING));
+			}
+			catch (Exception e) {
+				value = 0;
+			}
+			LHPN.addInteger(input, "" + value);
+		}
 		for (int i = 0; i < specs.size(); i++) {
-			if (!biochemical.contains(specs.get(i))
-					&& !getInputSpecies().contains(specs.get(i))) {
+			if (!biochemical.contains(specs.get(i)) && !getInputSpecies().contains(specs.get(i))) {
 				int placeNum = 0;
 				int transNum = 0;
 				String previousPlaceName = specs.get(i) + placeNum;
@@ -725,6 +732,20 @@ public class GCMFile {
 						String rate = "";
 						for (String promoter : proms) {
 							String promRate = network.abstractOperatorSite(promoter);
+							for (String species : this.species.keySet()) {
+								if (promRate.contains(species)
+										&& !LHPN.getIntegers().keySet().contains(species)) {
+									double value;
+									try {
+										value = parseValue(this.species.get(species).getProperty(
+												GlobalConstants.INITIAL_STRING));
+									}
+									catch (Exception e) {
+										value = 0;
+									}
+									LHPN.addInteger(species, "" + value);
+								}
+							}
 							if (rate.equals("")) {
 								rate = "(" + promRate + ")";
 							}
