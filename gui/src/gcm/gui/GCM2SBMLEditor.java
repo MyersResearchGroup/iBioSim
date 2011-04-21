@@ -1,6 +1,5 @@
 package gcm.gui;
 
-import gcm.gui.grappa.GCIGrappaPanel;
 import gcm.gui.modelview.movie.MovieContainer;
 import gcm.gui.schematic.Schematic;
 import gcm.network.GeneticNetwork;
@@ -994,12 +993,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				JTabbedPane selectedTab = (JTabbedPane)(e.getSource());
 				JPanel selectedPanel = (JPanel)selectedTab.getComponent(selectedTab.getSelectedIndex());
 				String className = selectedPanel.getClass().getName();
-				// The old Schematic (grappa panel) 
-				if(className.indexOf("GCIGrappaPanel") > 0){
-					((GCIGrappaPanel)selectedPanel).display(gcm.saveToBuffer(false, false));
-				}
 				// The new Schematic
-				else if(className.indexOf("Schematic") >= 0){
+				if(className.indexOf("Schematic") >= 0){
 					((Schematic)selectedPanel).display();
 				}
 			}

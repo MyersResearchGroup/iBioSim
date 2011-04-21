@@ -55,8 +55,6 @@ import parser.TSDParser;
 import reb2sac.Reb2Sac;
 import util.ExampleFileFilter;
 
-import att.grappa.Parser;
-
 public class MovieContainer extends JPanel implements ActionListener {
 
 	public static final String COLOR_PREPEND = "_COLOR";
