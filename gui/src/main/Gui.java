@@ -2081,7 +2081,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			name = new JLabel("iBioSim", JLabel.CENTER);
 			version = new JLabel("Version 1.5.1", JLabel.CENTER);
 			developers = "Nathan Barker\nKevin Jones\nHiroyuki Kuwahara\n"
-					+ "Curtis Madsen\nChris Myers\nNam Nguyen\nNicolas Roehner\nTyler Patterson";
+					+ "Curtis Madsen\nChris Myers\nNam Nguyen\nNicholas Roehner\nTyler Patterson";
 		}
 		Font font = name.getFont();
 		font = font.deriveFont(Font.BOLD, 36.0f);
