@@ -4,6 +4,7 @@
  */
 package gcm.visitor;
 
+import gcm.network.AbstractionEngine;
 import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;

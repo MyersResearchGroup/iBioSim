@@ -1,9 +1,5 @@
-package gcm.visitor;
+package gcm.network;
 
-import gcm.network.GeneticNetwork;
-import gcm.network.Influence;
-import gcm.network.Promoter;
-import gcm.network.SpeciesInterface;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
 
