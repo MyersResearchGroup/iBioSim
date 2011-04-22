@@ -6,7 +6,6 @@ import gcm.parser.GCMParser;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
 import gcm.visitor.AbstractPrintVisitor;
-import gcm.visitor.AbstractionEngine;
 import gcm.visitor.PrintActivatedBindingVisitor;
 import gcm.visitor.PrintActivatedProductionVisitor;
 import gcm.visitor.PrintComplexVisitor;
