@@ -105,7 +105,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 			return;
 		}
 		Object selItem = componentCombo != null ? componentCombo.getSelectedItem() : null;
-		this.remove(componentCombo);
+		if (componentCombo != null)	this.remove(componentCombo);
 		componentCombo = new JComboBox(gcmList.toArray());
 		componentCombo.setSelectedItem(selItem);
 		this.add(componentCombo, BorderLayout.NORTH);
