@@ -908,7 +908,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		file.add(saveAs);
 		if (!async) {
-			file.add(saveAsSbml);
+			//file.add(saveAsSbml);
 			file.add(saveAsTemplate);
 			// file.add(saveGcmAsLhpn);
 		}
@@ -3990,6 +3990,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								// gcm.addMouseListener(this);
 								addTab(f.getName(), gcm, "GCM Editor");
 								addToTree(f.getName());
+								/*
+								Component comp = tab.getSelectedComponent();
+								((GCM2SBMLEditor) comp).save("Save as SBML template");
+								*/
 							}
 						}
 					}
