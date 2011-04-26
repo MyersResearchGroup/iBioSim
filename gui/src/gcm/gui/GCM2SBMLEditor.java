@@ -320,6 +320,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 
 			String templateName = JOptionPane.showInputDialog(Gui.frame,
 					"Enter SBML template name:", "SBML Template Name", JOptionPane.PLAIN_MESSAGE);
+			/*
+			String templateName = gcmname;
+			*/
 			if (templateName != null) {
 				if (!templateName.contains(".sbml") && !templateName.contains(".xml")) {
 					templateName = templateName + ".xml";
