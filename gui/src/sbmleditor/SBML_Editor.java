@@ -411,7 +411,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					modelID = modelID.substring(0, modelID.indexOf('.'));
 				}
 				model.setId(modelID);
-				save(false, "", true);
+				save(false, "", true, true);
 			}
 			createFunction(model, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
 			createFunction(model, "normal", "Normal distribution", "lambda(m,s,m)");
@@ -1258,7 +1258,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 		}
 		// if the check button is clicked
 		else if (e.getSource() == check) {
-			save(false, "", true);
+			save(false, "", true, true);
 			check();
 		}
 		// if the save button is clicked
@@ -1267,7 +1267,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 				reb2sac.getSaveButton().doClick();
 			}
 			else {
-				save(false, "", true);
+				save(false, "", true, true);
 			}
 		}
 		// if the save as button is clicked
@@ -10788,7 +10788,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 	 * 
 	 * @param stem
 	 */
-	public void save(boolean run, String stem, boolean outputMessage) {
+	public void save(boolean run, String stem, boolean outputMessage, boolean ignoreSweep) {
 		if (paramsOnly) {
 			if (run) {
 				ArrayList<String> sweepThese1 = new ArrayList<String>();
@@ -10840,7 +10840,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					sweep1 = sweep2;
 					sweep2 = new ArrayList<ArrayList<Double>>();
 				}
-				if (sweepThese1.size() > 0) {
+				if (sweepThese1.size() > 0 && !ignoreSweep) {
 					ArrayList<Reb2SacThread> threads = new ArrayList<Reb2SacThread>();
 					ArrayList<String> dirs = new ArrayList<String>();
 					ArrayList<String> levelOne = new ArrayList<String>();

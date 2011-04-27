@@ -489,7 +489,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		sweep.add(Keq);
 	}
 	
-	public void saveParams(boolean run, String stem) {
+	public void saveParams(boolean run, String stem, boolean ignoreSweep) {
 		ArrayList<String> sweepThese1 = new ArrayList<String>();
 		ArrayList<ArrayList<Double>> sweep1 = new ArrayList<ArrayList<Double>>();
 		ArrayList<String> sweepThese2 = new ArrayList<String>();
@@ -563,6 +563,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 							threads.add(thread);
 							dirs.add(sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
 							reb2sac.emptyFrames();
+							if (ignoreSweep) {
+								l = max2;
+								j = max;
+							}
 						}
 					}
 				}
@@ -576,11 +580,16 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						threads.add(thread);
 						dirs.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
 						reb2sac.emptyFrames();
+						if (ignoreSweep) {
+							j = max;
+						}
 					}
 				}
 				levelOne.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
 			}
-			new ConstraintTermThread(reb2sac).start(threads, dirs, levelOne, stem);
+			if (run) {
+				new ConstraintTermThread(reb2sac).start(threads, dirs, levelOne, stem);
+			}
 		}
 		else {
 			if (!stem.equals("")) {

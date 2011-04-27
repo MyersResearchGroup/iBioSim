@@ -1574,6 +1574,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 		// if the Run button is clicked
 		else if (e.getSource() == run) {
+			boolean ignoreSweep = false;
+			if (sbml.isSelected() || dot.isSelected() || xhtml.isSelected() || lhpn.isSelected()) {
+				ignoreSweep = true;
+			}
 			String stem = "";
 			if (!fileStem.getText().trim().equals("")) {
 				if (!(stemPat.matcher(fileStem.getText().trim()).matches())) {
@@ -1598,7 +1602,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 										"Save Changes", JOptionPane.YES_NO_OPTION,
 										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 								if (value == JOptionPane.YES_OPTION) {
-									sbml.save(true, stem, true);
+									sbml.save(true, stem, true, ignoreSweep);
 								}
 							}
 						}
@@ -1649,7 +1653,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 										"Save Changes", JOptionPane.YES_NO_OPTION,
 										JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 								if (value == JOptionPane.YES_OPTION) {
-									sbml.save(true, stem, true);
+									sbml.save(true, stem, true, ignoreSweep);
 								}
 							}
 						}
@@ -1675,10 +1679,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 			}
 			if (sbmlEditor != null) {
-				sbmlEditor.save(true, stem, true);
+				sbmlEditor.save(true, stem, true, ignoreSweep);
 			}
 			else if (gcmEditor != null) {
-				gcmEditor.saveParams(true, stem);
+				gcmEditor.saveParams(true, stem, ignoreSweep);
 			}
 			else {
 				if (!stem.equals("")) {
@@ -1723,11 +1727,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 		}
 		else if (e.getSource() == save) {
+			boolean ignoreSweep = false;
+			if (sbml.isSelected() || dot.isSelected() || xhtml.isSelected() || lhpn.isSelected()) {
+				ignoreSweep = true;
+			}
 			if (sbmlEditor != null) {
-				sbmlEditor.save(false, "", true);
+				sbmlEditor.save(false, "", true, ignoreSweep);
 			}
 			else if (gcmEditor != null) {
-				gcmEditor.saveParams(false, "");
+				gcmEditor.saveParams(false, "", ignoreSweep);
 			}
 			save();
 		}
