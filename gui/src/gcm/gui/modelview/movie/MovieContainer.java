@@ -407,7 +407,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		biosim.log.addText("file saved to " + fullPath);
 		
-		this.gcm2sbml.saveParams(false, "");
+		this.gcm2sbml.saveParams(false, "", true);
 	}
 
 	/**

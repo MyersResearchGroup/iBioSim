@@ -3416,7 +3416,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				((GCM2SBMLEditor) comp).save("Save GCM");
 			}
 			else if (comp instanceof SBML_Editor) {
-				((SBML_Editor) comp).save(false, "", true);
+				((SBML_Editor) comp).save(false, "", true, true);
 			}
 			else if (comp instanceof Graph) {
 				((Graph) comp).save();
@@ -3441,10 +3441,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								.getTitleAt(index));
 					}
 					else if (component instanceof SBML_Editor) {
-						((SBML_Editor) component).save(false, "", true);
+						((SBML_Editor) component).save(false, "", true, true);
 					}
 					else if (component instanceof GCM2SBMLEditor) {
-						((GCM2SBMLEditor) component).saveParams(false, "");
+						((GCM2SBMLEditor) component).saveParams(false, "", true);
 					}
 					else if (component instanceof Reb2Sac) {
 						((Reb2Sac) component).save();
@@ -3691,7 +3691,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getActionCommand().equals("check")) {
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof SBML_Editor) {
-				((SBML_Editor) comp).save(true, "", true);
+				((SBML_Editor) comp).save(true, "", true, true);
 				((SBML_Editor) comp).check();
 			}
 		}
@@ -7277,7 +7277,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 													boolean dirty = ((SBML_Editor) c).isDirty();
 													((SBML_Editor) c).setParamFileAndSimDir(
 															properties, root + separator + rename);
-													((SBML_Editor) c).save(false, "", true);
+													((SBML_Editor) c).save(false, "", true, true);
 													((SBML_Editor) c).updateSBML(i, 0);
 													((SBML_Editor) c).setDirty(dirty);
 												}
@@ -7694,7 +7694,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
 								JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 						if (value == YES_OPTION) {
-							((SBML_Editor) tab.getComponentAt(index)).save(false, "", true);
+							((SBML_Editor) tab.getComponentAt(index)).save(false, "", true, true);
 							return 1;
 						}
 						else if (value == NO_OPTION) {
@@ -7704,7 +7704,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							return 0;
 						}
 						else if (value == YES_TO_ALL_OPTION) {
-							((SBML_Editor) tab.getComponentAt(index)).save(false, "", true);
+							((SBML_Editor) tab.getComponentAt(index)).save(false, "", true, true);
 							return 2;
 						}
 						else if (value == NO_TO_ALL_OPTION) {
@@ -7712,7 +7712,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 					}
 					else if (autosave == 1) {
-						((SBML_Editor) tab.getComponentAt(index)).save(false, "", true);
+						((SBML_Editor) tab.getComponentAt(index)).save(false, "", true, true);
 						return 2;
 					}
 					else {
@@ -7824,14 +7824,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 											JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 									if (value == YES_OPTION) {
 										((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i)).save(false, "", true);
+												.getComponent(i)).save(false, "", true, true);
 									}
 									else if (value == CANCEL_OPTION) {
 										return 0;
 									}
 									else if (value == YES_TO_ALL_OPTION) {
 										((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i)).save(false, "", true);
+												.getComponent(i)).save(false, "", true, true);
 										autosave = 1;
 									}
 									else if (value == NO_TO_ALL_OPTION) {
@@ -7840,7 +7840,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								}
 								else if (autosave == 1) {
 									((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index))
-											.getComponent(i)).save(false, "", true);
+											.getComponent(i)).save(false, "", true, true);
 								}
 							}
 						}
@@ -11299,7 +11299,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									".temp")));
 							try {
 								boolean dirty = ((SBML_Editor) (sim.getComponentAt(j))).isDirty();
-								((SBML_Editor) (sim.getComponentAt(j))).save(false, "", true);
+								((SBML_Editor) (sim.getComponentAt(j))).save(false, "", true, true);
 								if (updatedFile.contains(".gcm")) {
 									GCMParser parser = new GCMParser(root + separator + updatedFile);
 									GeneticNetwork network = parser.buildNetwork();
@@ -11332,7 +11332,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							try {
 								boolean dirty = ((GCM2SBMLEditor) (sim.getComponentAt(j)))
 										.isDirty();
-								((GCM2SBMLEditor) (sim.getComponentAt(j))).saveParams(false, "");
+								((GCM2SBMLEditor) (sim.getComponentAt(j))).saveParams(false, "", true);
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).reload(check.replace(
 										".gcm", ""));
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).refresh();
@@ -12794,7 +12794,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							this, null, null);
 					this.tab.setComponentAt(i, newSBML);
 					this.tab.getComponentAt(i).setName("SBML Editor");
-					newSBML.save(false, "", false);
+					newSBML.save(false, "", false, true);
 					return true;
 				}
 			}
