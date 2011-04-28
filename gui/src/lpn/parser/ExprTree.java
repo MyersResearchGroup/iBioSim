@@ -538,7 +538,7 @@ public class ExprTree {
 					(this).lvalue = ((int) (this).lvalue >> (int) newresult.lvalue) & 1;
 					(this).uvalue = (this).lvalue;
 				} else {
-					setNodeValues((this), newresult, "[]", 'w');
+					setNodeValues((this), newresult, "[]", 'l');
 				}
 				(token) = intexpr_gettok(expr);
 			} else if (tokvalue.toLowerCase().equals("floor")) {
@@ -1472,7 +1472,7 @@ public class ExprTree {
 				(this).lvalue = (((int) (this).lvalue) >> ((int) newresult.lvalue)) & 1;
 				(this).uvalue = (this).lvalue;
 			} else {
-				setNodeValues((this), newresult, "[]", 'w');
+				setNodeValues((this), newresult, "[]", 'l');
 			}
 			(token) = intexpr_gettok(expr);
 			break;
@@ -2515,6 +2515,11 @@ public class ExprTree {
 					return true;
 				}
 				return false;
+			} else if (op.equals("[]")) {
+				if (!(evaluateExpr(variables) == 0.0)) {
+					return true;
+				}
+				return false;
 			}
 		case 'w': // bitWise
 			if (op.equals("&")) {
@@ -2537,12 +2542,7 @@ public class ExprTree {
 					return true;
 				}
 				return false;
-			} else if (op.equals("[]")) {
-				if (!(evaluateExpr(variables) == 0.0)) {
-					return true;
-				}
-				return false;
-			}
+			} 
 		case 'r': // Relational
 			if (r1.isit == 'i') {
 				if (!variables.containsKey(r1.variable)) {
@@ -2771,12 +2771,6 @@ public class ExprTree {
 		case 'b': // Boolean
 		case 'i': // Integer
 		case 'c': // Continuous
-			if (op.equals("[]")) {
-				if (r1 != null && r2 != null) {
-					result = "BIT(" + r1.getElement(type) + ","
-					+ r2.getElement(type) + ")";
-				}
-			} else {
 				if (!sbmlFlag) {
 					result = variable;
 				} else {
@@ -2786,7 +2780,6 @@ public class ExprTree {
 						result = variable;
 					}
 				}
-			}
 			break;
 		case 'n': // Number
 			// long term solution: create initial assignment
@@ -2887,13 +2880,6 @@ public class ExprTree {
 						result = "or(" + r1.getElement(type) + ","
 								+ r2.getElement(type) + ")";
 					}
-				}
-			}
-
-			else if (op.equals("[]")) {
-				if (r1 != null && r2 != null) {
-					result = "BIT(" + r1.getElement(type) + ","
-							+ r2.getElement(type) + ")";
 				}
 			} else if (op.equals("!")) {
 				if (r1 != null && r2 != null) {
@@ -3149,7 +3135,12 @@ public class ExprTree {
 						}
 					}
 				} // TODO: Add verilog functions for other distributions
-				else if (op.equals("normal")) {
+				else if (op.equals("[]")) {
+					if (r1 != null && r2 != null) {
+						result = "BIT(" + r1.getElement(type) + ","
+								+ r2.getElement(type) + ")";
+					}
+				} else if (op.equals("normal")) {
 					if (r1 != null && r2 != null) {
 						result = "normal(" + r1.getElement(type) + ","
 								+ r2.getElement(type) + ")";
@@ -4244,8 +4235,6 @@ public class ExprTree {
 				return ((int) left) & ((int) right);
 			} else if (op.equals("|")) {
 				return ((int) left) | ((int) right);
-			} else if (op.equals("[]")) {
-				return (((int) left) >> ((int) right)) & 1;
 			} else if (op.equals("!")) {
 				return ~((int) left);
 			} else if (op.equals("X")) {
@@ -4329,6 +4318,8 @@ public class ExprTree {
 					return left % right;
 				} else if (op.equals("^")) {
 					return Math.pow(left, right);
+				} else if (op.equals("[]")) {
+					return (((int) left) >> ((int) right)) & 1;
 				} else if (op.equals("f")) {
 					return Math.floor(left);
 				} else if (op.equals("c")) {
