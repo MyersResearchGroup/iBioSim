@@ -557,13 +557,15 @@ public class Transition {
 			if (!enabling.equals(enablingTree.toString("LHPN"))) {
 				change = true;
 			}
-			enabling = enablingTree.toString("LHPN");
+			String newEnab = enablingTree.toString("LHPN");
+			addEnabling(newEnab);
 		}
 		if (delayTree != null) {
 			if (!delay.equals(delayTree.toString("LHPN"))) {
 				change = true;
 			}
-			delay = delayTree.toString("LHPN");
+			String newDelay = delayTree.toString("LHPN");
+			addDelay(newDelay);
 		}
 		for (String var : boolAssignTrees.keySet()) {
 			if (!boolAssignments.get(var).equals(

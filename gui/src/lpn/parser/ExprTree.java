@@ -3244,8 +3244,8 @@ public class ExprTree {
 						try {
 							String r1String = r1.getElement(type);
 							String r2String = r2.getElement(type);
-							result = new Integer(Integer.parseInt(r1String)
-									+ Integer.parseInt(r2String)).toString();
+							result = new Float(Float.parseFloat(r1String)
+									+ Float.parseFloat(r2String)).toString();
 						} catch (NumberFormatException e) {
 							if (r1.isit == 'b'
 									|| r1.isit == 'i'
@@ -3299,8 +3299,8 @@ public class ExprTree {
 						try {
 							String r1String = r1.getElement(type);
 							String r2String = r2.getElement(type);
-							result = new Integer(Integer.parseInt(r1String)
-									- Integer.parseInt(r2String)).toString();
+							result = new Float(Float.parseFloat(r1String)
+									- Float.parseFloat(r2String)).toString();
 						} catch (NumberFormatException e) {
 							if (r1.isit == 'b'
 									|| r1.isit == 'i'
@@ -3360,8 +3360,8 @@ public class ExprTree {
 						try {
 							String r1String = r1.getElement(type);
 							String r2String = r2.getElement(type);
-							result = new Integer(Integer.parseInt(r1String)
-									* Integer.parseInt(r2String)).toString();
+							result = new Float(Float.parseFloat(r1String)
+									* Float.parseFloat(r2String)).toString();
 						} catch (NumberFormatException e) {
 							if (r1.isit == 'b'
 									|| r1.isit == 'i'
@@ -3411,8 +3411,8 @@ public class ExprTree {
 						try {
 							String r1String = r1.getElement(type);
 							String r2String = r2.getElement(type);
-							result = new Integer(Integer.parseInt(r1String)
-									/ Integer.parseInt(r2String)).toString();
+							result = new Float(Float.parseFloat(r1String)
+									/ Float.parseFloat(r2String)).toString();
 						} catch (NumberFormatException e) {
 							if (r1.isit == 'b'
 									|| r1.isit == 'i'
