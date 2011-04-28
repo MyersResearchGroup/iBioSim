@@ -917,28 +917,10 @@ public class GeneticNetwork {
 			compartment = splitted[0];
 		return compartment;
 	}
-
-	/**
-	 *  Returns abstracted rate law for the formation of a complex species
-	 */
-	public String abstractExpression(String id) {
-		String expression = id;
-		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap,
-				Double.parseDouble(properties.getParameters().get(GlobalConstants.RNAP_STRING)));
-		if (species.get(id).isSequesterable())
-			expression = e.sequesterSpecies(id);
-		else if (complexMap.containsKey(id))
-			expression = e.abstractComplex(id, 0);
-		return expression;
-	}
-
-	/**
-	 * Returns abstracted rate law for a given promoter
-	 */
-	public String abstractOperatorSite(String id) {
-		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap,
-				Double.parseDouble(properties.getParameters().get(GlobalConstants.RNAP_STRING)));
-		return e.abstractOperatorSite(promoters.get(id));
+	
+	public AbstractionEngine createAbstractionEngine() {
+		return new AbstractionEngine(species, complexMap, partsMap, Double.parseDouble(properties
+				.getParameters().get(GlobalConstants.RNAP_STRING)));
 	}
 	
 	/**
@@ -1118,6 +1100,10 @@ public class GeneticNetwork {
 
 	public void setProperties(GCMFile properties) {
 		this.properties = properties;
+	}
+	
+	public HashMap<String, ArrayList<Influence>> getComplexMap() {
+		return complexMap;
 	}
 
 	/**
