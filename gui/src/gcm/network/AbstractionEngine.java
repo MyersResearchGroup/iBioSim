@@ -11,26 +11,24 @@ import org.sbml.libsbml.Reaction;
 
 public class AbstractionEngine {
 
-	public AbstractionEngine(HashMap<String, SpeciesInterface> species, HashMap<String, Promoter> promoters,
-			HashMap<String, ArrayList<Influence>> complexMap, HashMap<String, ArrayList<Influence>> partsMap, 
-			double RNAP) {
+	public AbstractionEngine(HashMap<String, SpeciesInterface> species,
+			HashMap<String, ArrayList<Influence>> complexMap,
+			HashMap<String, ArrayList<Influence>> partsMap, double RNAP) {
 		this.species = species;
 		this.complexMap = complexMap;
 		this.partsMap = partsMap;
-		this.promoters = promoters;
 		this.RNAP = RNAP;
 		this.sbmlMode = false;
 	}
 
-	public AbstractionEngine(HashMap<String, SpeciesInterface> species, HashMap<String, Promoter> promoters, 
-			HashMap<String, ArrayList<Influence>> complexMap, HashMap<String, ArrayList<Influence>> partsMap, 
-			Reaction r, KineticLaw kl) {
+	public AbstractionEngine(HashMap<String, SpeciesInterface> species,
+			HashMap<String, ArrayList<Influence>> complexMap,
+			HashMap<String, ArrayList<Influence>> partsMap, Reaction r, KineticLaw kl) {
 		this.species = species;
 		this.complexMap = complexMap;
 		this.partsMap = partsMap;
 		this.r = r;
 		this.kl = kl;
-		this.promoters = promoters;
 		this.sbmlMode = true;
 	}
 
@@ -146,162 +144,91 @@ public class AbstractionEngine {
 		return sequesterFactor;
 	}
 
-	public String abstractOperatorSite(String promoterId) {
+	public String abstractOperatorSite(Promoter promoter) {
 		String promRate = "";
-		if (promoters.containsKey(promoterId)) {
-			if (promoters.get(promoterId).getActivators().size() != 0) {
-				double np = promoters.get(promoterId).getStoich();
-				double ng = promoters.get(promoterId).getPcount();
-				double kb = promoters.get(promoterId).getKbasal();
-				double[] KoArray = promoters.get(promoterId).getKrnap();
-				double Ko;
-				if (KoArray.length == 2) {
-					Ko = KoArray[0] / KoArray[1];
-				}
-				else {
-					Ko = KoArray[0];
-				}
-				if (sbmlMode) {
-					promRate += "(np__" + promoterId + "*ng__" + promoterId + ")*((kb__"
-							+ promoterId + "*Ko__" + promoterId + "*RNAP)";
-					kl.addParameter(Utility.Parameter("np__" + promoterId, np, GeneticNetwork
-							.getMoleParameter(1)));
-					kl.addParameter(Utility.Parameter("ng__" + promoterId, ng, GeneticNetwork
-							.getMoleParameter(1)));
-					kl.addParameter(Utility.Parameter("kb__" + promoterId, kb, GeneticNetwork
-							.getMoleTimeParameter(1)));
-					kl.addParameter(Utility.Parameter("Ko__" + promoterId, Ko, GeneticNetwork
-							.getMoleParameter(2)));
-				}
-				else {
-					promRate += "(" + np + "*" + ng + ")*((" + kb + "*" + Ko + "*" + RNAP + ")";
-				}
-				String actBottom = "";
-				for (SpeciesInterface act : promoters.get(promoterId).getActivators()) {
-					String activator = act.getId();
-					for (Influence influ : promoters.get(promoterId).getActivatingInfluences()) {
-						if (influ.getInput().equals(activator)) {
-							double nc = influ.getCoop();
-							double[] KaArray = influ.getAct();
-							double Ka;
-							if (KaArray.length == 2) {
-								Ka = KaArray[0] / KaArray[1];
-							}
-							else {
-								Ka = KaArray[0];
-							}
-							double ka = promoters.get(promoterId).getKact();
-							String expression = activator;
-							if (species.get(activator).isSequesterable()) {
-								expression = sequesterSpecies(activator);
-							}
-							else if (complexMap.containsKey(activator)) {
-								expression = abstractComplex(activator, nc);
-							}
-							if (sbmlMode) {
-								promRate += "+(ka__" + activator + "_" + promoterId + "*((Ka__"
-										+ activator + "_" + promoterId + "*RNAP*" + expression
-										+ ")^nc__" + activator + "_" + promoterId + "))";
-								actBottom += "+((Ka__" + activator + "_" + promoterId + "*RNAP*"
-										+ expression + ")^nc__" + activator + "_" + promoterId
-										+ ")";
-								kl.addParameter(Utility.Parameter("nc__" + activator + "_"
-										+ promoterId, nc, "dimensionless"));
-								kl.addParameter(Utility.Parameter("Ka__" + activator + "_"
-										+ promoterId, Ka, GeneticNetwork.getMoleParameter(2)));
-								kl.addParameter(Utility.Parameter("ka__" + activator + "_"
-										+ promoterId, ka, GeneticNetwork.getMoleTimeParameter(1)));
-							}
-							else {
-								promRate += "+(" + ka + "*((" + Ka + "*" + RNAP + "*" + expression
-										+ ")^" + nc + "))";
-								actBottom += "+((" + Ka + "*" + RNAP + "*" + expression + ")^" + nc
-										+ ")";
-							}
-						}
-					}
-					if (sbmlMode) {
-						promRate += ")/((1+(Ko__" + promoterId + "*RNAP))" + actBottom;
-					}
-					else {
-						promRate += ")/((1+(" + Ko + "*" + RNAP + "))" + actBottom;
-					}
-					if (promoters.get(promoterId).getRepressors().size() != 0) {
-						for (SpeciesInterface rep : promoters.get(promoterId).getRepressors()) {
-							String repressor = rep.getId();
-							for (Influence influ : promoters.get(promoterId)
-									.getRepressingInfluences()) {
-								if (influ.getInput().equals(repressor)) {
-									double nc = influ.getCoop();
-									double[] KrArray = influ.getRep();
-									double Kr;
-									if (KrArray.length == 2) {
-										Kr = KrArray[0] / KrArray[1];
-									}
-									else {
-										Kr = KrArray[0];
-									}
-									String expression = repressor;
-									if (species.get(repressor).isSequesterable()) {
-										expression = sequesterSpecies(repressor);
-									}
-									else if (complexMap.containsKey(repressor)) {
-										expression = abstractComplex(repressor, nc);
-									}
-									if (sbmlMode) {
-										promRate += "+((Kr__" + repressor + "_" + promoterId + "*"
-												+ expression + ")^nc__" + repressor + "_"
-												+ promoterId + ")";
-										kl.addParameter(Utility.Parameter("nc__" + repressor + "_"
-												+ promoterId, nc, "dimensionless"));
-										kl.addParameter(Utility.Parameter("Kr__" + repressor + "_"
-												+ promoterId, Kr, GeneticNetwork
-												.getMoleParameter(2)));
-									}
-									else {
-										promRate += "+((" + Kr + "*" + expression + ")^" + nc
-												+ ")";
-									}
-								}
-							}
-						}
-					}
-					promRate += ")";
-				}
+		if (promoter.getActivators().size() != 0) {
+			double np = promoter.getStoich();
+			double ng = promoter.getPcount();
+			double kb = promoter.getKbasal();
+			double[] KoArray = promoter.getKrnap();
+			double Ko;
+			if (KoArray.length == 2) {
+				Ko = KoArray[0] / KoArray[1];
 			}
 			else {
-				if (promoters.get(promoterId).getRepressors().size() != 0) {
-					double np = promoters.get(promoterId).getStoich();
-					double ng = promoters.get(promoterId).getPcount();
-					double ko = promoters.get(promoterId).getKoc();
-					double[] KoArray = promoters.get(promoterId).getKrnap();
-					double Ko;
-					if (KoArray.length == 2) {
-						Ko = KoArray[0] / KoArray[1];
+				Ko = KoArray[0];
+			}
+			if (sbmlMode) {
+				promRate += "(np__" + promoter.getId() + "*ng__" + promoter.getId() + ")*((kb__"
+						+ promoter.getId() + "*Ko__" + promoter.getId() + "*RNAP)";
+				kl.addParameter(Utility.Parameter("np__" + promoter.getId(), np, GeneticNetwork
+						.getMoleParameter(1)));
+				kl.addParameter(Utility.Parameter("ng__" + promoter.getId(), ng, GeneticNetwork
+						.getMoleParameter(1)));
+				kl.addParameter(Utility.Parameter("kb__" + promoter.getId(), kb, GeneticNetwork
+						.getMoleTimeParameter(1)));
+				kl.addParameter(Utility.Parameter("Ko__" + promoter.getId(), Ko, GeneticNetwork
+						.getMoleParameter(2)));
+			}
+			else {
+				promRate += "(" + np + "*" + ng + ")*((" + kb + "*" + Ko + "*" + RNAP + ")";
+			}
+			String actBottom = "";
+			for (SpeciesInterface act : promoter.getActivators()) {
+				String activator = act.getId();
+				for (Influence influ : promoter.getActivatingInfluences()) {
+					if (influ.getInput().equals(activator)) {
+						double nc = influ.getCoop();
+						double[] KaArray = influ.getAct();
+						double Ka;
+						if (KaArray.length == 2) {
+							Ka = KaArray[0] / KaArray[1];
+						}
+						else {
+							Ka = KaArray[0];
+						}
+						double ka = promoter.getKact();
+						String expression = activator;
+						if (species.get(activator).isSequesterable()) {
+							expression = sequesterSpecies(activator);
+						}
+						else if (complexMap.containsKey(activator)) {
+							expression = abstractComplex(activator, nc);
+						}
+						if (sbmlMode) {
+							promRate += "+(ka__" + activator + "_" + promoter.getId() + "*((Ka__"
+									+ activator + "_" + promoter.getId() + "*RNAP*" + expression
+									+ ")^nc__" + activator + "_" + promoter.getId() + "))";
+							actBottom += "+((Ka__" + activator + "_" + promoter.getId() + "*RNAP*"
+									+ expression + ")^nc__" + activator + "_" + promoter.getId()
+									+ ")";
+							kl.addParameter(Utility.Parameter("nc__" + activator + "_"
+									+ promoter.getId(), nc, "dimensionless"));
+							kl.addParameter(Utility.Parameter("Ka__" + activator + "_"
+									+ promoter.getId(), Ka, GeneticNetwork.getMoleParameter(2)));
+							kl
+									.addParameter(Utility.Parameter("ka__" + activator + "_"
+											+ promoter.getId(), ka, GeneticNetwork
+											.getMoleTimeParameter(1)));
+						}
+						else {
+							promRate += "+(" + ka + "*((" + Ka + "*" + RNAP + "*" + expression
+									+ ")^" + nc + "))";
+							actBottom += "+((" + Ka + "*" + RNAP + "*" + expression + ")^" + nc
+									+ ")";
+						}
 					}
-					else {
-						Ko = KoArray[0];
-					}
-					if (sbmlMode) {
-						promRate += "(np__" + promoterId + "*ko__" + promoterId + "*ng__"
-								+ promoterId + ")*((Ko__" + promoterId + "*RNAP))/((1+(Ko__"
-								+ promoterId + "*RNAP))";
-						kl.addParameter(Utility.Parameter("np__" + promoterId, np, GeneticNetwork
-								.getMoleParameter(1)));
-						kl.addParameter(Utility.Parameter("ng__" + promoterId, ng, GeneticNetwork
-								.getMoleParameter(1)));
-						kl.addParameter(Utility.Parameter("Ko__" + promoterId, Ko, GeneticNetwork
-								.getMoleParameter(2)));
-						kl.addParameter(Utility.Parameter("ko__" + promoterId, ko, GeneticNetwork
-								.getMoleTimeParameter(1)));
-					}
-					else {
-						promRate += "(" + np + "*" + ko + "*" + ng + ")*((" + Ko + "*" + RNAP
-								+ "))/((1+(" + Ko + "*" + RNAP + "))";
-					}
-					for (SpeciesInterface rep : promoters.get(promoterId).getRepressors()) {
+				}
+				if (sbmlMode) {
+					promRate += ")/((1+(Ko__" + promoter.getId() + "*RNAP))" + actBottom;
+				}
+				else {
+					promRate += ")/((1+(" + Ko + "*" + RNAP + "))" + actBottom;
+				}
+				if (promoter.getRepressors().size() != 0) {
+					for (SpeciesInterface rep : promoter.getRepressors()) {
 						String repressor = rep.getId();
-						for (Influence influ : promoters.get(promoterId).getRepressingInfluences()) {
+						for (Influence influ : promoter.getRepressingInfluences()) {
 							if (influ.getInput().equals(repressor)) {
 								double nc = influ.getCoop();
 								double[] KrArray = influ.getRep();
@@ -320,13 +247,14 @@ public class AbstractionEngine {
 									expression = abstractComplex(repressor, nc);
 								}
 								if (sbmlMode) {
-									promRate += "+((Kr__" + repressor + "_" + promoterId + "*"
-											+ expression + ")^nc__" + repressor + "_" + promoterId
-											+ ")";
+									promRate += "+((Kr__" + repressor + "_" + promoter.getId()
+											+ "*" + expression + ")^nc__" + repressor + "_"
+											+ promoter.getId() + ")";
 									kl.addParameter(Utility.Parameter("nc__" + repressor + "_"
-											+ promoterId, nc, "dimensionless"));
+											+ promoter.getId(), nc, "dimensionless"));
 									kl.addParameter(Utility.Parameter("Kr__" + repressor + "_"
-											+ promoterId, Kr, GeneticNetwork.getMoleParameter(2)));
+											+ promoter.getId(), Kr, GeneticNetwork
+											.getMoleParameter(2)));
 								}
 								else {
 									promRate += "+((" + Kr + "*" + expression + ")^" + nc + ")";
@@ -334,8 +262,78 @@ public class AbstractionEngine {
 							}
 						}
 					}
-					promRate += ")";
 				}
+				promRate += ")";
+			}
+		}
+		else {
+			if (promoter.getRepressors().size() != 0) {
+				double np = promoter.getStoich();
+				double ng = promoter.getPcount();
+				double ko = promoter.getKoc();
+				double[] KoArray = promoter.getKrnap();
+				double Ko;
+				if (KoArray.length == 2) {
+					Ko = KoArray[0] / KoArray[1];
+				}
+				else {
+					Ko = KoArray[0];
+				}
+				if (sbmlMode) {
+					promRate += "(np__" + promoter.getId() + "*ko__" + promoter.getId() + "*ng__"
+							+ promoter.getId() + ")*((Ko__" + promoter.getId()
+							+ "*RNAP))/((1+(Ko__" + promoter.getId() + "*RNAP))";
+					kl.addParameter(Utility.Parameter("np__" + promoter.getId(), np, GeneticNetwork
+							.getMoleParameter(1)));
+					kl.addParameter(Utility.Parameter("ng__" + promoter.getId(), ng, GeneticNetwork
+							.getMoleParameter(1)));
+					kl.addParameter(Utility.Parameter("Ko__" + promoter.getId(), Ko, GeneticNetwork
+							.getMoleParameter(2)));
+					kl.addParameter(Utility.Parameter("ko__" + promoter.getId(), ko, GeneticNetwork
+							.getMoleTimeParameter(1)));
+				}
+				else {
+					promRate += "(" + np + "*" + ko + "*" + ng + ")*((" + Ko + "*" + RNAP
+							+ "))/((1+(" + Ko + "*" + RNAP + "))";
+				}
+				for (SpeciesInterface rep : promoter.getRepressors()) {
+					String repressor = rep.getId();
+					for (Influence influ : promoter.getRepressingInfluences()) {
+						if (influ.getInput().equals(repressor)) {
+							double nc = influ.getCoop();
+							double[] KrArray = influ.getRep();
+							double Kr;
+							if (KrArray.length == 2) {
+								Kr = KrArray[0] / KrArray[1];
+							}
+							else {
+								Kr = KrArray[0];
+							}
+							String expression = repressor;
+							if (species.get(repressor).isSequesterable()) {
+								expression = sequesterSpecies(repressor);
+							}
+							else if (complexMap.containsKey(repressor)) {
+								expression = abstractComplex(repressor, nc);
+							}
+							if (sbmlMode) {
+								promRate += "+((Kr__" + repressor + "_" + promoter.getId() + "*"
+										+ expression + ")^nc__" + repressor + "_"
+										+ promoter.getId() + ")";
+								kl.addParameter(Utility.Parameter("nc__" + repressor + "_"
+										+ promoter.getId(), nc, "dimensionless"));
+								kl
+										.addParameter(Utility.Parameter("Kr__" + repressor + "_"
+												+ promoter.getId(), Kr, GeneticNetwork
+												.getMoleParameter(2)));
+							}
+							else {
+								promRate += "+((" + Kr + "*" + expression + ")^" + nc + ")";
+							}
+						}
+					}
+				}
+				promRate += ")";
 			}
 		}
 		return promRate;
@@ -348,7 +346,6 @@ public class AbstractionEngine {
 	private ArrayList<String> complexModifiers;
 	private HashMap<String, ArrayList<Influence>> complexMap;
 	private HashMap<String, ArrayList<Influence>> partsMap;
-	private HashMap<String, Promoter> promoters;
 	private double RNAP;
 	private boolean sbmlMode;
 

@@ -923,7 +923,7 @@ public class GeneticNetwork {
 	 */
 	public String abstractExpression(String id) {
 		String expression = id;
-		AbstractionEngine e = new AbstractionEngine(species, promoters, complexMap, partsMap,
+		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap,
 				Double.parseDouble(properties.getParameters().get(GlobalConstants.RNAP_STRING)));
 		if (species.get(id).isSequesterable())
 			expression = e.sequesterSpecies(id);
@@ -936,9 +936,9 @@ public class GeneticNetwork {
 	 * Returns abstracted rate law for a given promoter
 	 */
 	public String abstractOperatorSite(String id) {
-		AbstractionEngine e = new AbstractionEngine(species, promoters, complexMap, partsMap,
+		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap,
 				Double.parseDouble(properties.getParameters().get(GlobalConstants.RNAP_STRING)));
-		return e.abstractOperatorSite(id);
+		return e.abstractOperatorSite(promoters.get(id));
 	}
 	
 	/**

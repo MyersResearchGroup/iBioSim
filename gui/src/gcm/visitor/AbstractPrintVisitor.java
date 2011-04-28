@@ -71,13 +71,13 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	
 	//Recursively breaks down repressing complex into its constituent species and complex formation equilibria
 	protected String abstractComplex(String complexId, double multiplier) {
-		AbstractionEngine e = new AbstractionEngine(species, null, complexMap, partsMap, r, kl);
+		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, r, kl);
 		String expression = e.abstractComplex(complexId, multiplier);
 		return expression;
 	}
 	
 	protected String sequesterSpecies(String partId) {
-		AbstractionEngine e = new AbstractionEngine(species, null, complexMap, partsMap, r, kl);
+		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, r, kl);
 		String expression = e.sequesterSpecies(partId);
 		return expression;
 	}
