@@ -1,5 +1,6 @@
 package gcm.parser;
 
+import gcm.network.AbstractionEngine;
 import gcm.network.GeneticNetwork;
 import gcm.util.GlobalConstants;
 import gcm.util.UndoManager;
@@ -619,6 +620,7 @@ public class GCMFile {
 	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
 		GCMParser parser = new GCMParser(this, false);
 		GeneticNetwork network = parser.buildNetwork();
+		AbstractionEngine abs = network.createAbstractionEngine();
 		HashMap<String, ArrayList<String>> infl = new HashMap<String, ArrayList<String>>();
 		for (String influence : influences.keySet()) {
 			if (influences.get(influence).get(GlobalConstants.TYPE).equals(
@@ -731,7 +733,8 @@ public class GCMFile {
 						}
 						String rate = "";
 						for (String promoter : proms) {
-							String promRate = network.abstractOperatorSite(promoter);
+							String promRate = abs.abstractOperatorSite(network.getPromoters().get(
+									promoter));
 							for (String species : this.species.keySet()) {
 								if (promRate.contains(species)
 										&& !LHPN.getIntegers().keySet().contains(species)) {
@@ -769,7 +772,13 @@ public class GCMFile {
 								+ transNum);
 						LHPN.addMovement(specs.get(i) + "_trans" + transNum, previousPlaceName);
 						LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
-						String specExpr = network.abstractExpression(specs.get(i));
+						String specExpr = specs.get(i);
+						if (network.getSpecies().get(specs.get(i)).isSequesterable()) {
+							specExpr = abs.sequesterSpecies(specs.get(i));
+						}
+						else if (network.getComplexMap().containsKey(specs.get(i))) {
+							specExpr = abs.abstractComplex(specs.get(i), 0);
+						}
 						if (!specExpr.equals(specs.get(i))) {
 							specExpr = "(" + specExpr + ")";
 						}
