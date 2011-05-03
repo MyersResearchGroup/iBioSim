@@ -91,14 +91,7 @@ public class Lpn2verilog {
 				}
 			});
 			placeArrayList.toArray(placeList);
-			/*for (String st: transitionList){
-				System.out.print(st + " ");
-			}
-			System.out.println();
-			for (String st: placeList){
-				System.out.print(st + " ");
-			}*/
-			//StringBuffer tempBuff = new StringBuffer();
+			
 			initBuffer.append("\t\t$dumpfile(\"" + svModuleName + ".vcd\");\n");
 			initBuffer.append("\t\t$dumpvars(0," + svModuleName + ");\n");
 			for (String st: transitionList){
@@ -204,7 +197,7 @@ public class Lpn2verilog {
 							//double initRate = Double.parseDouble(lpn.getInitialRate(v));
 							if (firstCont){
 								firstCont = false;
-								initBuffer.append("\t\tentryTime=$time;\n");
+								initBuffer.append("\t\tentryTime<=$time;\n");
 								sv.write("\treal entryTime;\n");
 							}
 							sv.write("\treal rate_" + v + ", change_" + v + ";\n");
@@ -323,11 +316,11 @@ public class Lpn2verilog {
 							}
 							for (String st2 : rateAssignmentTrees.keySet()){//System.out.println("st2 :"+st2);
 							//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
-							String asgnmt = rateAssignmentTrees.get(st2).getElement("Verilog"); //System.out.println("asgnmt :"+asgnmt);
+							String asgnmt = rateAssignmentTrees.get(st2).getElement("Verilog"); System.out.println("asgnmt :"+asgnmt);
 							if (asgnmt != null){
-								assignmentsBuffer[tag.get(st)].append("\t\tentryTime = $time;\n");
-								assignmentsBuffer[tag.get(st)].append("\t\trate_" + st2 + " = " + asgnmt + ";\n");
-								assignmentsBuffer[tag.get(st)].append("\t\tchange_" + st2 + " = " + st2 + ";\n");
+								assignmentsBuffer[tag.get(st)].append("\t\tentryTime <= $time;\n");
+								assignmentsBuffer[tag.get(st)].append("\t\trate_" + st2 + " <= " + asgnmt + ";\n");
+								assignmentsBuffer[tag.get(st)].append("\t\tchange_" + st2 + " <= " + st2 + ";\n");
 							}
 							}
 						}
@@ -398,20 +391,25 @@ public class Lpn2verilog {
 
 						for (String place : lpn.getPreset(st)){ 
 							//System.out.println("getPreset :"+place);
-							assignmentsBuffer[tag.get(st)].append("\talways @(posedge ("+ enable + ") && (" +place+")) begin\n"); //dec 4, 2010//dec 4, 2010
+							if (enable!=null){
+							assignmentsBuffer[tag.get(st)].append("\talways @(posedge ("+ enable + ") && (" +place+")) begin\n");} //dec 4, 2010//dec 4, 2010
+							else assignmentsBuffer[tag.get(st)].append("\talways @(posedge " +place+") begin\n");
 						}
 
 						ExprTree delay = lpn.getDelayTree(st);
 						//System.out.println(" delay....delay :"+delay);
+						for (String st2 : lpn.getPreset(st)){
 						if (lpn.getEnablingTree(st) != null){
 							enable = lpn.getEnablingTree(st).getElement("Verilog");
-							for (String st2 : lpn.getPreset(st)){
-
+							
+								
 								//System.out.println(" tag.get(st) :"+tag.get(st));
 								assignmentsBuffer[tag.get(st)].append("\t\t" + st + "p <=  (("+enable+") && "+st2+");\n");
-
+								//else assignmentsBuffer[tag.get(st)].append("\t\t" + st + "p <=   "+st2+";\n");
 							}
+						else assignmentsBuffer[tag.get(st)].append("\t\t" + st + "p <=   "+st2+";\n");
 						}
+						
 						assignmentsBuffer[tag.get(st)].append("\tend\n");
 						
 						// add 1 more normal always block here for persistent transition.
@@ -450,11 +448,11 @@ public class Lpn2verilog {
 								}
 								for (String st2 : rateAssignmentTrees.keySet()){//System.out.println("st2 :"+st2);
 								//System.out.println("Assignment " + st2 + " <= " + lpn.getTransition(st).getAssignTree(st2));
-								String asgnmt = rateAssignmentTrees.get(st2).getElement("Verilog"); //System.out.println("asgnmt :"+asgnmt);
+								String asgnmt = rateAssignmentTrees.get(st2).getElement("Verilog"); System.out.println("asgnmt :"+asgnmt);
 								if (asgnmt != null){
-									assignmentsBuffer[tag.get(st)].append("\t\tentryTime = $time;\n");
-									assignmentsBuffer[tag.get(st)].append("\t\trate_" + st2 + " = " + asgnmt + ";\n");
-									assignmentsBuffer[tag.get(st)].append("\t\tchange_" + st2 + " = " + st2 + ";\n");
+									assignmentsBuffer[tag.get(st)].append("\t\tentryTime <= $time;\n");
+									assignmentsBuffer[tag.get(st)].append("\t\trate_" + st2 + " <= " + asgnmt + ";\n");
+									assignmentsBuffer[tag.get(st)].append("\t\tchange_" + st2 + " <= " + st2 + ";\n");
 								}
 								}
 							}
