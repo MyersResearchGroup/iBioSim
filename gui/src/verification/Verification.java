@@ -40,11 +40,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	private static final long serialVersionUID = -5806315070287184299L;
 
 	private JButton save, run, viewCircuit, viewTrace, viewLog, addComponent,
-			removeComponent;
+			removeComponent, addSFile;
 
 	private JLabel algorithm, timingMethod, timingOptions, otherOptions,
 			otherOptions2, compilation, bddSizeLabel, advTiming, abstractLabel,
-			preprocLabel;
+			listLabel;
 
 	public JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify,
 			vergate, orbits, search, trace, bdd, dbm, smt, lhpn, view, none,
@@ -56,6 +56,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			postProc, redCheck, xForm2, expandRate;
 
 	private JTextField bddSize, backgroundField, componentField, preprocStr;
+	
+	private JList sList;
+	
+	private DefaultListModel sListModel;
 
 	private ButtonGroup timingMethodGroup, algorithmGroup, abstractionGroup;
 
@@ -64,7 +68,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	public String verifyFile;
 
-	private boolean change, atacs;
+	private boolean change, atacs, lema;
 
 	private PropertyList componentList;
 
@@ -87,6 +91,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			separator = File.separator;
 		}
 		this.atacs = atacs;
+		this.lema = lema;
 		this.biosim = biosim;
 		this.log = log;
 		this.directory = directory;
@@ -109,7 +114,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		JPanel otherPanel = new JPanel();
 		otherPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel preprocPanel = new JPanel();
-		preprocPanel.setMaximumSize(new Dimension(1000, 35));
+		preprocPanel.setMaximumSize(new Dimension(1000, 700));
 		JPanel algorithmPanel = new JPanel();
 		algorithmPanel.setMaximumSize(new Dimension(1000, 35));
 		JPanel buttonPanel = new JPanel();
@@ -140,9 +145,24 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		compilation = new JLabel("Compilation Options:");
 		bddSizeLabel = new JLabel("BDD Linkspace Size:");
 		advTiming = new JLabel("Timing Options:");
-		preprocLabel = new JLabel("Preprocess Command:");
-		preprocStr = new JTextField();
-		preprocStr.setPreferredSize(new Dimension(500, 18));
+		//preprocLabel = new JLabel("Preprocess Command:");
+		listLabel = new JLabel("Assembly Files:");
+		JPanel labelPane = new JPanel();
+		labelPane.add(listLabel);
+		sListModel = new DefaultListModel();
+		sList = new JList(sListModel);
+		JScrollPane scroll = new JScrollPane();
+		scroll.setMinimumSize(new Dimension(260, 200));
+		scroll.setPreferredSize(new Dimension(276, 132));
+		scroll.setViewportView(sList);
+		JPanel scrollPane = new JPanel();
+		scrollPane.add(scroll);
+		addSFile = new JButton("Add File");
+		addSFile.addActionListener(this);
+		JPanel buttonPane = new JPanel();
+		buttonPane.add(addSFile);
+		//preprocStr = new JTextField();
+		//preprocStr.setPreferredSize(new Dimension(500, 18));
 
 		// Initializes the radio buttons and check boxes
 		// Abstraction Options
@@ -317,8 +337,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		otherPanel.add(verbose);
 		otherPanel.add(graph);
 
-		preprocPanel.add(preprocLabel);
-		preprocPanel.add(preprocStr);
+		preprocPanel.add(labelPane);
+		preprocPanel.add(scrollPane);
+		preprocPanel.add(buttonPane);
 
 		algorithmPanel.add(algorithm);
 		algorithmPanel.add(verify);
@@ -596,8 +617,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					reduction.setSelected(true);
 				}
 			}
-			if (load.containsKey("verification.preprocess")) {
-				preprocStr.setText(load.getProperty("verification.preprocess"));
+			if (verifyFile.endsWith(".s")) {
+				sListModel.addElement(verifyFile);
+			}
+			if (load.containsKey("verification.sList")) {
+				String concatList = load.getProperty("verification.sList");
+				String[] list = concatList.split("\\s");
+				for (String s : list) {
+					sListModel.addElement(s);
+				}
 			}
 			if (load.containsKey("abstraction.interesting")) {
 				String intVars = load.getProperty("abstraction.interesting");
@@ -620,7 +648,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			for (String s : abstPane.transforms) {
 				if (load.containsKey(s)) {
 					if (load.getProperty(s).contains("preloop")) {
-						Pattern prePattern = Pattern.compile("preloop(\\d+?)");
+						Pattern prePattern = Pattern.compile("preloop(\\d+)");
 						Matcher intMatch = prePattern.matcher(load
 								.getProperty(s));
 						if (intMatch.find()) {
@@ -635,7 +663,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}
 					if (load.getProperty(s).contains("mainloop")) {
 						Pattern loopPattern = Pattern
-								.compile("mainloop(\\d+?)");
+								.compile("mainloop(\\d+)");
 						Matcher intMatch = loopPattern.matcher(load
 								.getProperty(s));
 						if (intMatch.find()) {
@@ -650,7 +678,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					}
 					if (load.getProperty(s).contains("postloop")) {
 						Pattern postPattern = Pattern
-								.compile("postloop(\\d+?)");
+								.compile("postloop(\\d+)");
 						Matcher intMatch = postPattern.matcher(load
 								.getProperty(s));
 						if (intMatch.find()) {
@@ -774,9 +802,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			basicOptions.add(timingCheckBoxPanel);
 		}
 		basicOptions.add(otherPanel);
-		if (lema) {
-			basicOptions.add(preprocPanel);
-		}
+		//if (lema) {
+		//	basicOptions.add(preprocPanel);
+		//}
 		if (!lema) {
 			basicOptions.add(algorithmPanel);
 		}
@@ -872,6 +900,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				componentList.removeItem(selected);
 				new File(directory + separator + selected).delete();
 			}
+		} else if (e.getSource() == addSFile) {
+			String sFile = JOptionPane.showInputDialog(this, "Enter Assembly File Name:",
+					"Assembly File Name", JOptionPane.PLAIN_MESSAGE);
+			if ((!sFile.endsWith(".s") && !sFile.endsWith(".inst")) || !(new File(sFile).exists())) {
+				JOptionPane.showMessageDialog(this, "Invalid filename entered.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 	}
 
@@ -889,6 +924,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				JOptionPane.showMessageDialog(Gui.frame,
 						"Error with preprocessing.", "Error",
 						JOptionPane.ERROR_MESSAGE);
+				//e.printStackTrace();
+				
 			}
 		}
 		copyFile();
@@ -1692,6 +1729,16 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							+ " ";
 				}
 			}
+			if (sListModel.size() > 0) {
+				String list = "";
+				for (Object o : sListModel.toArray()) {
+					list = list + o + " ";
+				}
+				list.trim();
+				prop.put("verification.sList", list);
+			} else {
+				prop.remove("verification.sList");
+			}
 			if (!intVars.equals("")) {
 				prop.setProperty("abstraction.interesting", intVars.trim());
 			} else {
@@ -1935,6 +1982,40 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(Gui.frame, "Cannot copy file "
 					+ sourceFile, "Copy Error", JOptionPane.ERROR_MESSAGE);
+		}
+		/* TODO Test Assembly File compilation */
+		if (sourceFile.endsWith(".s") || sourceFile.endsWith(".inst")) {
+			try {
+				String preprocCmd;
+				if (lema) {
+					preprocCmd = System.getenv("LEMA") + "/bin/s2lpn " + verifyFile;
+				}
+				else if (atacs) {
+					preprocCmd = System.getenv("ATACS") + "/bin/s2lpn " + verifyFile;
+				}
+				else {
+					preprocCmd = System.getenv("BIOSIM") + "/bin/s2lpn " + verifyFile;
+				}
+				//for (Object o : sListModel.toArray()) {
+				//	preprocCmd = preprocCmd + " " + o.toString();
+				//}
+				File work = new File(directory);
+				Runtime exec = Runtime.getRuntime();
+				Process preproc = exec.exec(preprocCmd, null, work);
+				log.addText("Executing:\n" + preprocCmd + "\n");
+				preproc.waitFor();
+				if (verifyFile.endsWith(".s")) {
+					verifyFile.replace(".s", ".lpn");
+				}
+				else {
+					verifyFile.replace(".inst", ".lpn");
+				}
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(Gui.frame,
+						"Error with preprocessing.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				//e.printStackTrace();
+			}
 		}
 	}
 

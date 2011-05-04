@@ -259,6 +259,7 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		this.directory = directory;
 		this.log = log;
 		this.setLayout(new BorderLayout());
+		this.setMaximumSize(new Dimension(300, 150));
 		LhpnFile lhpn = new LhpnFile();
 		lhpn.load(directory + separator + lpnFile);
 
@@ -309,6 +310,9 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		iterField.setPreferredSize(new Dimension(40, 18));
 		factorPanel.add(iterLabel);
 		factorPanel.add(iterField);
+		restore = new JButton("Restore Defaults");
+		factorPanel.add(restore);
+		restore.addActionListener(this);
 		this.add(factorPanel);
 
 		// Creates Abstraction List
