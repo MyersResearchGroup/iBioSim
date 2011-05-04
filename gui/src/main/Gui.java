@@ -8601,6 +8601,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (tree.getFile().length() > 1
 					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".s")) {
+				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
+				createAnalysis.addActionListener(this);
+				createAnalysis.addMouseListener(this);
+				createAnalysis.setActionCommand("createAnalysis");
+				JMenuItem createVerification = new JMenuItem("Create Verification View");
+				createVerification.addActionListener(this);
+				createVerification.addMouseListener(this);
+				createVerification.setActionCommand("createVerify");
 				JMenuItem delete = new JMenuItem("Delete");
 				delete.addActionListener(this);
 				delete.addMouseListener(this);
@@ -8613,6 +8621,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				rename.addActionListener(this);
 				rename.addMouseListener(this);
 				rename.setActionCommand("rename");
+				popup.add(createAnalysis);
+				popup.add(createVerification);
+				popup.addSeparator();
 				popup.add(copy);
 				popup.add(rename);
 				popup.add(delete);
@@ -12547,6 +12558,34 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				createLearn.setEnabled(false);
 				createSynth.setEnabled(false);
 				createVer.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				// viewLog.setEnabled(false);
+				// viewCoverage.setEnabled(false);
+				// viewVHDL.setEnabled(false);
+				// viewVerilog.setEnabled(false);
+				viewLHPN.setEnabled(true);
+				// saveParam.setEnabled(false);
+				saveAsVerilog.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (tree.getFile().length() > 1
+					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".s") || 
+					tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".inst")) {
+				viewModGraph.setEnabled(false);
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(true);
+				createLearn.setEnabled(false);
+				createSynth.setEnabled(false);
+				createVer.setEnabled(true);
 				refresh.setEnabled(false);
 				check.setEnabled(false);
 				export.setEnabled(false);

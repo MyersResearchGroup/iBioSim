@@ -670,6 +670,30 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		String[] tempArray = synthesisFile.split(separator);
 		sourceFileNoPath = tempArray[tempArray.length - 1];
 		backgroundField = new JTextField(sourceFileNoPath);
+		
+		/*TODO Test Assembly File compilation */
+		if (sourceFile.endsWith(".s") || sourceFile.endsWith(".inst")) {
+			try {
+				String preprocCmd;
+				preprocCmd = System.getenv("BIOSIM") + "/bin/s2lpn " + sourceFile;
+				File work = new File(directory);
+				Runtime exec = Runtime.getRuntime();
+				Process preproc = exec.exec(preprocCmd, null, work);
+				log.addText("Executing:\n" + preprocCmd + "\n");
+				preproc.waitFor();
+				if (sourceFile.endsWith(".s")) {
+					sourceFile.replace(".s", ".lpn");
+				}
+				else {
+					sourceFile.replace(".inst", ".lpn");
+				}
+			} catch (Exception e) {
+				JOptionPane.showMessageDialog(Gui.frame,
+						"Error with preprocessing.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+				//e.printStackTrace();
+			}
+		}
 
 		getFilename = sourceFile.split(separator);
 		getFilename = getFilename[getFilename.length - 1].split("\\.");
