@@ -114,7 +114,6 @@ public class Translator {
 						InitialAssignment initAssign = m.createInitialAssignment();
 						initAssign.setSymbol(var.getId());
 						String initVarAssignRHS = "uniform(";
-						String tmp = "";
 						for (int i=1; i<=initRangeBoundMatcher.groupCount();i++) {
 							initVarAssignRHS = initVarAssignRHS + initRangeBoundMatcher.group(i);
 							//initAssignRHS = initAssignRHS + initRangeBoundMatcher.group(i);
@@ -274,7 +273,7 @@ public class Translator {
 							String ruleExpBool = "or(and(" + CheckPreset + "," + EnablingBool + "), and(" + CheckPreset + "," + "eq(" + rulePersisSpeciesStr + ", 1)" +"))";
 							String ruleExpReal = "piecewise(1, " + ruleExpBool + ", 0)";
 							rulePersis.setVariable(rulePersisSpeciesStr);
-							double ruleVal = rulePersis.setMath(SBML_Editor.myParseFormula(ruleExpReal));
+							rulePersis.setMath(SBML_Editor.myParseFormula(ruleExpReal));
 							rulePersisSpecies.setInitialAmount(0);
 							ModifierSpeciesReference modifier = r.createModifier();
 							modifier.setSpecies(rulePersisSpeciesStr);
@@ -334,15 +333,15 @@ public class Translator {
 					assign1.setVariable(product.getSpecies());
 					assign1.setMath(SBML_Editor.myParseFormula("0"));
 					
-					if (lhpn.getTransition(t).isPersistent()){
-						// t_preSet = 0
-						for (String x : lhpn.getPreset(t)){
-							EventAssignment assign0 = e.createEventAssignment();
-							assign0.setVariable(x);
-							assign0.setMath(SBML_Editor.myParseFormula("0"));
-			//				System.out.println("transition: " + t + " preset: " + x);
-						}
-					}
+//					if (lhpn.getTransition(t).isPersistent()){
+//						// t_preSet = 0
+//						for (String x : lhpn.getPreset(t)){
+//							EventAssignment assign0 = e.createEventAssignment();
+//							assign0.setVariable(x);
+//							assign0.setMath(SBML_Editor.myParseFormula("0"));
+//			//				System.out.println("transition: " + t + " preset: " + x);
+//						}
+//					}
 					
 					// assignment <A>
 					// continuous assignment
@@ -506,7 +505,6 @@ public class Translator {
 					
 					// Check if there is any self-loop. If the intersection between lhpn.getPreset(t) and lhpn.getPostset(t)
 					// is not empty, self-loop exists. 
-					List<String> t_preset = Arrays.asList(lhpn.getPreset(t));
 					List<String> t_postset = Arrays.asList(lhpn.getPostset(t));
 					List<String> t_intersect = new ArrayList<String>(); // intersection of t_preset and t_postset
 					List<String> t_NoIntersect = new ArrayList<String>(); // t_NoIntersect = t_postset - t_preset
