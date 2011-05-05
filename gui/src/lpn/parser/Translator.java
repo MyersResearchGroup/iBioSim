@@ -402,6 +402,20 @@ public class Translator {
 							}
 						}
 					}
+					// When translating a fail transition into an event, that event should assign to a special "fail" variable a value of 1.  
+					// This "fail" variable should have initial value of 0.  The SBML model should have a constraint "eq(fail,0)".
+					if (lhpn.getTransition(t).isFail()){
+						Parameter failVar = m.createParameter();
+						failVar.setConstant(false);
+						failVar.setId("failvar_" + t);
+						failVar.setValue(0);
+						EventAssignment assign6 = e.createEventAssignment();
+						assign6.setVariable(failVar.getId());
+						assign6.setMath(SBML_Editor.myParseFormula("1"));
+						Constraint failVarConstraint = m.createConstraint();
+						failVarConstraint.setMetaId("failtrans_" + t);
+						failVarConstraint.setMath(SBML_Editor.myParseFormula("eq(" + failVar.getId() + ", 0)"));
+					}
 				}
 				
 				else {			// Transition rate = null. Only use event. Transitions only have ranges.
@@ -662,7 +676,20 @@ public class Translator {
 							}
 						}
 					}
-					
+					// When translating a fail transition into an event, that event should assign to a special "fail" variable a value of 1.  
+					// This "fail" variable should have initial value of 0.  The SBML model should have a constraint "eq(fail,0)".
+					if (lhpn.getTransition(t).isFail()){
+						Parameter failVar = m.createParameter();
+						failVar.setConstant(false);
+						failVar.setId("failvar_" + t);
+						failVar.setValue(0);
+						EventAssignment assign6 = e.createEventAssignment();
+						assign6.setVariable(failVar.getId());
+						assign6.setMath(SBML_Editor.myParseFormula("1"));
+						Constraint failVarConstraint = m.createConstraint();
+						failVarConstraint.setMetaId("failtrans_" + t);
+						failVarConstraint.setMath(SBML_Editor.myParseFormula("eq(" + failVar.getId() + ", 0)"));
+					}
 				}
 			counter --;
 		}
