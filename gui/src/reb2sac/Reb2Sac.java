@@ -4029,24 +4029,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				if (lhpnAbstraction != null) {
 					for (String s : lhpnAbstraction.transforms) {
 						if (load.containsKey("abstraction.transform." + s)) {
-							containsAbstractions = true;
-							containsXform.put(s, true);
-						}
-						else {
-							containsXform.put(s, false);
-						}
-					}
-					for (String s : lhpnAbstraction.transforms) {
-						if (load.containsKey(s)) {
 							if (load.getProperty("abstraction.transform." + s).contains("preloop")) {
-								Pattern prePattern = Pattern.compile("preloop(\\d+?)");
+								Pattern prePattern = Pattern.compile("preloop(\\d+)");
 								Matcher intMatch = prePattern.matcher(load
 										.getProperty("abstraction.transform." + s));
 								if (intMatch.find()) {
 									Integer index = Integer.parseInt(intMatch.group(1));
 									preOrder.put(index, s);
-								}
-								else {
+								} else {
 									lhpnAbstraction.addPreXform(s);
 								}
 							}
@@ -4054,14 +4044,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								lhpnAbstraction.preAbsModel.removeElement(s);
 							}
 							if (load.getProperty("abstraction.transform." + s).contains("mainloop")) {
-								Pattern loopPattern = Pattern.compile("mainloop(\\d+?)");
+								Pattern loopPattern = Pattern
+										.compile("mainloop(\\d+)");
 								Matcher intMatch = loopPattern.matcher(load
 										.getProperty("abstraction.transform." + s));
 								if (intMatch.find()) {
 									Integer index = Integer.parseInt(intMatch.group(1));
 									loopOrder.put(index, s);
-								}
-								else {
+								} else {
 									lhpnAbstraction.addLoopXform(s);
 								}
 							}
@@ -4069,14 +4059,14 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								lhpnAbstraction.loopAbsModel.removeElement(s);
 							}
 							if (load.getProperty("abstraction.transform." + s).contains("postloop")) {
-								Pattern postPattern = Pattern.compile("postloop(\\d+?)");
+								Pattern postPattern = Pattern
+										.compile("postloop(\\d+)");
 								Matcher intMatch = postPattern.matcher(load
 										.getProperty("abstraction.transform." + s));
 								if (intMatch.find()) {
 									Integer index = Integer.parseInt(intMatch.group(1));
 									postOrder.put(index, s);
-								}
-								else {
+								} else {
 									lhpnAbstraction.addPostXform(s);
 								}
 							}
