@@ -104,6 +104,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		for (int i = 1; i < tempDir.length - 1; i++) {
 			root = root + separator + tempDir[i];
 		}
+		this.setMaximumSize(new Dimension(300,300));
+		this.setMinimumSize(new Dimension(300,300));
 
 		JPanel abstractionPanel = new JPanel();
 		abstractionPanel.setMaximumSize(new Dimension(1000, 35));
@@ -646,11 +648,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 			}
 			for (String s : abstPane.transforms) {
-				if (load.containsKey(s)) {
-					if (load.getProperty(s).contains("preloop")) {
+				if (load.containsKey("abstraction.transform." + s)) {
+					if (load.getProperty("abstraction.transform." + s).contains("preloop")) {
 						Pattern prePattern = Pattern.compile("preloop(\\d+)");
 						Matcher intMatch = prePattern.matcher(load
-								.getProperty(s));
+								.getProperty("abstraction.transform." + s));
 						if (intMatch.find()) {
 							Integer index = Integer.parseInt(intMatch.group(1));
 							preOrder.put(index, s);
@@ -661,11 +663,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					else {
 						abstPane.preAbsModel.removeElement(s);
 					}
-					if (load.getProperty(s).contains("mainloop")) {
+					if (load.getProperty("abstraction.transform." + s).contains("mainloop")) {
 						Pattern loopPattern = Pattern
 								.compile("mainloop(\\d+)");
 						Matcher intMatch = loopPattern.matcher(load
-								.getProperty(s));
+								.getProperty("abstraction.transform." + s));
 						if (intMatch.find()) {
 							Integer index = Integer.parseInt(intMatch.group(1));
 							loopOrder.put(index, s);
@@ -676,11 +678,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					else {
 						abstPane.loopAbsModel.removeElement(s);
 					}
-					if (load.getProperty(s).contains("postloop")) {
+					if (load.getProperty("abstraction.transform." + s).contains("postloop")) {
 						Pattern postPattern = Pattern
 								.compile("postloop(\\d+)");
 						Matcher intMatch = postPattern.matcher(load
-								.getProperty(s));
+								.getProperty("abstraction.transform." + s));
 						if (intMatch.find()) {
 							Integer index = Integer.parseInt(intMatch.group(1));
 							postOrder.put(index, s);
@@ -1721,7 +1723,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			} else {
 				prop.setProperty("verification.reduction", "false");
 			}
-			prop.setProperty("verification.preprocess", preprocStr.getText());
 			String intVars = "";
 			for (int i = 0; i < abstPane.listModel.getSize(); i++) {
 				if (abstPane.listModel.getElementAt(i) != null) {
@@ -1744,28 +1745,27 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			} else {
 				prop.remove("abstraction.interesting");
 			}
-			String xforms = "";
 			for (Integer i=0; i<abstPane.preAbsModel.size(); i++) {
-				prop.setProperty(abstPane.preAbsModel.getElementAt(i).toString(), "preloop" + i.toString());
+				prop.setProperty("abstraction.transform." + abstPane.preAbsModel.getElementAt(i).toString(), "preloop" + i.toString());
 			}
 			for (Integer i=0; i<abstPane.loopAbsModel.size(); i++) {
 				if (abstPane.preAbsModel.contains(abstPane.loopAbsModel.getElementAt(i))) {
-					String value = prop.getProperty(abstPane.loopAbsModel.getElementAt(i).toString());
+					String value = prop.getProperty("abstraction.transform." + abstPane.loopAbsModel.getElementAt(i).toString());
 					value = value + "mainloop" + i.toString();
-					prop.setProperty(abstPane.loopAbsModel.getElementAt(i).toString(), value);
+					prop.setProperty("abstraction.transform." + abstPane.loopAbsModel.getElementAt(i).toString(), value);
 				}
 				else {
-					prop.setProperty(abstPane.loopAbsModel.getElementAt(i).toString(), "mainloop" + i.toString());
+					prop.setProperty("abstraction.transform." + abstPane.loopAbsModel.getElementAt(i).toString(), "mainloop" + i.toString());
 				}
 			}
 			for (Integer i=0; i<abstPane.postAbsModel.size(); i++) {
 				if (abstPane.preAbsModel.contains(abstPane.postAbsModel.getElementAt(i)) || abstPane.preAbsModel.contains(abstPane.postAbsModel.get(i))) {
-					String value = prop.getProperty(abstPane.postAbsModel.getElementAt(i).toString());
+					String value = prop.getProperty("abstraction.transform." + abstPane.postAbsModel.getElementAt(i).toString());
 					value = value + "postloop" + i.toString();
-					prop.setProperty(abstPane.postAbsModel.getElementAt(i).toString(), value);
+					prop.setProperty("abstraction.transform." + abstPane.postAbsModel.getElementAt(i).toString(), value);
 				}
 				else {
-					prop.setProperty(abstPane.postAbsModel.getElementAt(i).toString(), "postloop" + i.toString());
+					prop.setProperty("abstraction.transform." + abstPane.postAbsModel.getElementAt(i).toString(), "postloop" + i.toString());
 				}
 			}
 			for (String s : abstPane.transforms) {
@@ -1774,11 +1774,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						&& !abstPane.postAbsModel.contains(s)) {
 					prop.remove(s);
 				}
-			}
-			if (!xforms.equals("")) {
-				prop.setProperty("abstraction.transforms", xforms.trim());
-			} else {
-				prop.remove("abstraction.transforms");
 			}
 			if (!abstPane.factorField.getText().equals("")) {
 				prop.setProperty("abstraction.factor", abstPane.factorField
