@@ -159,10 +159,11 @@ public class AbstractionEngine {
 				Ko = KoArray[0];
 			}
 			if (sbmlMode) {
-				promRate += "(np__" + promoter.getId() + "*ng__" + promoter.getId() + ")*((kb__"
-						+ promoter.getId() + "*Ko__" + promoter.getId() + "*RNAP)";
-				kl.addParameter(Utility.Parameter("np__" + promoter.getId(), np, GeneticNetwork
-						.getMoleParameter(1)));
+				promRate += "(ng__" + promoter.getId() + ")*((kb__" + promoter.getId() + "*Ko__"
+						+ promoter.getId() + "*RNAP)";
+				// kl.addParameter(Utility.Parameter("np__" + promoter.getId(),
+				// np, GeneticNetwork
+				// .getMoleParameter(1)));
 				kl.addParameter(Utility.Parameter("ng__" + promoter.getId(), ng, GeneticNetwork
 						.getMoleParameter(1)));
 				kl.addParameter(Utility.Parameter("kb__" + promoter.getId(), kb, GeneticNetwork
@@ -280,11 +281,12 @@ public class AbstractionEngine {
 					Ko = KoArray[0];
 				}
 				if (sbmlMode) {
-					promRate += "(np__" + promoter.getId() + "*ko__" + promoter.getId() + "*ng__"
-							+ promoter.getId() + ")*((Ko__" + promoter.getId()
-							+ "*RNAP))/((1+(Ko__" + promoter.getId() + "*RNAP))";
-					kl.addParameter(Utility.Parameter("np__" + promoter.getId(), np, GeneticNetwork
-							.getMoleParameter(1)));
+					promRate += "(ko__" + promoter.getId() + "*ng__" + promoter.getId()
+							+ ")*((Ko__" + promoter.getId() + "*RNAP))/((1+(Ko__"
+							+ promoter.getId() + "*RNAP))";
+					// kl.addParameter(Utility.Parameter("np__" +
+					// promoter.getId(), np, GeneticNetwork
+					// .getMoleParameter(1)));
 					kl.addParameter(Utility.Parameter("ng__" + promoter.getId(), ng, GeneticNetwork
 							.getMoleParameter(1)));
 					kl.addParameter(Utility.Parameter("Ko__" + promoter.getId(), Ko, GeneticNetwork
