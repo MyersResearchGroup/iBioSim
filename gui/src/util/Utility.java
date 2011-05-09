@@ -67,6 +67,14 @@ public class Utility {
 						}
 					});
 				}
+				else if (approve.equals("Import SBOL")) {
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+					fd.setFilenameFilter(new FilenameFilter() {
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".rdf");
+						}
+					});
+				}
 				else if (approve.equals("Import SBML")) {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 					fd.setFilenameFilter(new FilenameFilter() {
@@ -128,6 +136,11 @@ public class Utility {
 								&& !selectedFile.endsWith(".pdf") && !selectedFile.endsWith(".png")
 								&& !selectedFile.endsWith(".svg")) {
 							selectedFile += ".pdf";
+						}
+					}
+					else if (approve.equals("Import SBOL")) {
+						if (!selectedFile.endsWith(".rdf")) {
+							selectedFile += ".rdf";
 						}
 					}
 					else if (approve.equals("Import SBML")) {
@@ -255,6 +268,9 @@ public class Utility {
 			ExampleFileFilter svgFilter = new ExampleFileFilter();
 			svgFilter.addExtension("svg");
 			svgFilter.setDescription("Scalable Vector Graphics");
+			ExampleFileFilter rdfFilter = new ExampleFileFilter();
+			rdfFilter.addExtension("rdf");
+			rdfFilter.setDescription("Resource Description Framework");
 			ExampleFileFilter sbmlFilter = new ExampleFileFilter();
 			sbmlFilter.addExtension("sbml");
 			sbmlFilter.setDescription("Systems Biology Markup Language");
@@ -333,6 +349,12 @@ public class Utility {
 				if (fileType == 4) {
 					fc.setFileFilter(svgFilter);
 				}
+				retValue = fc.showDialog(frame, approve);
+			}
+			else if (approve.equals("Import SBOL")) {
+				fc.addChoosableFileFilter(rdfFilter);
+				fc.setAcceptAllFileFilterUsed(false);
+				fc.setFileFilter(rdfFilter);
 				retValue = fc.showDialog(frame, approve);
 			}
 			else if (approve.equals("Import SBML")) {

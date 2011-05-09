@@ -48,6 +48,8 @@ public class FileTree extends JPanel implements MouseListener {
 	public static ImageIcon ICON_MODEL;
 
 	public static ImageIcon ICON_DOT;
+	
+	public static ImageIcon ICON_SBOL;
 
 	public static ImageIcon ICON_SBML;
 
@@ -112,6 +114,9 @@ public class FileTree extends JPanel implements MouseListener {
 
 		ICON_DOT = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
 				+ separator + "dot.jpg");
+		
+		ICON_SBOL = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
+				+ separator + "sbol.jpg");
 
 		ICON_SBML = new ImageIcon(biomodelsim.ENVVAR + separator + "gui" + separator + "icons"
 				+ separator + "sbml.jpg");
@@ -303,6 +308,12 @@ public class FileTree extends JPanel implements MouseListener {
 				else if (!async
 						&& files.get(fnum).toString().length() > 3
 						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".rdf")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_SBOL, null, files.get(fnum)));
+				}
+				else if (!async
+						&& files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
 								files.get(fnum).toString().length() - 4).equals(".gcm")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_DOT, null, files.get(fnum)));
 				}
@@ -409,6 +420,12 @@ public class FileTree extends JPanel implements MouseListener {
 								files.get(fnum).toString().length() - 4).equals(".xml")) {
 					file = new DefaultMutableTreeNode(
 							new IconData(ICON_SBML, null, files.get(fnum)));
+				}
+				else if (!async
+						&& files.get(fnum).toString().length() > 3
+						&& files.get(fnum).toString().substring(
+								files.get(fnum).toString().length() - 4).equals(".rdf")) {
+					file = new DefaultMutableTreeNode(new IconData(ICON_SBOL, null, files.get(fnum)));
 				}
 				else if (!async
 						&& files.get(fnum).toString().length() > 3
@@ -779,6 +796,9 @@ public class FileTree extends JPanel implements MouseListener {
 			}
 			if (!async && item.endsWith(".sbml") || !async && item.endsWith(".xml")) {
 				node = new DefaultMutableTreeNode(new IconData(ICON_SBML, null, item));
+			}
+			else if (!async && item.endsWith(".rdf")) {
+				node = new DefaultMutableTreeNode(new IconData(ICON_SBOL, null, item));
 			}
 			else if (!async && item.endsWith(".gcm")) {
 				node = new DefaultMutableTreeNode(new IconData(ICON_DOT, null, item));
@@ -1195,6 +1215,13 @@ public class FileTree extends JPanel implements MouseListener {
 							&& files.get(fnum).toString().substring(
 									files.get(fnum).toString().length() - 4).equals(".xml")) {
 						file = new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files
+								.get(fnum)));
+					}
+					else if (!async
+							&& files.get(fnum).toString().length() > 3
+							&& files.get(fnum).toString().substring(
+									files.get(fnum).toString().length() - 4).equals(".rdf")) {
+						file = new DefaultMutableTreeNode(new IconData(ICON_SBOL, null, files
 								.get(fnum)));
 					}
 					else if (!async

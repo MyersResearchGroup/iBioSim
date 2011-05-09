@@ -23,31 +23,35 @@ public class AbstractionEngine {
 
 	public AbstractionEngine(HashMap<String, SpeciesInterface> species,
 			HashMap<String, ArrayList<Influence>> complexMap,
-			HashMap<String, ArrayList<Influence>> partsMap, Reaction r, KineticLaw kl) {
+			HashMap<String, ArrayList<Influence>> partsMap, double RNAP, Reaction r, KineticLaw kl) {
 		this.species = species;
 		this.complexMap = complexMap;
 		this.partsMap = partsMap;
+		this.RNAP = RNAP;
 		this.r = r;
 		this.kl = kl;
 		this.sbmlMode = true;
 	}
 
-	public String abstractComplex(String complexId, double multiplier) {
+	public String abstractComplex(String complexId, double multiplier, boolean operatorAbstraction) {
 		if (sbmlMode) {
 			complexReactantStoich = new HashMap<String, Double>();
 			complexModifiers = new ArrayList<String>();
 		}
-		String expression = abstractComplexHelper(complexId, multiplier, "");
+		String expression = abstractComplexHelper(complexId, multiplier, "", operatorAbstraction);
 		if (sbmlMode) {
 			for (String reactant : complexReactantStoich.keySet())
-				r.addReactant(Utility.SpeciesReference(reactant, complexReactantStoich.get(reactant)));
+				if (operatorAbstraction)
+					r.addModifier(Utility.ModifierSpeciesReference(reactant));
+				else
+					r.addReactant(Utility.SpeciesReference(reactant, complexReactantStoich.get(reactant)));
 			for (String modifier : complexModifiers)
 				r.addModifier(Utility.ModifierSpeciesReference(modifier));
 		}
 		return expression;
 	}
 	
-	private String abstractComplexHelper(String complexId, double multiplier, String payNoMind) {
+	private String abstractComplexHelper(String complexId, double multiplier, String payNoMind, boolean operatorAbstraction) {
 		String compExpression = "";
 		if (sbmlMode) {
 			String kcompId = kcompString + "__" + complexId;
@@ -72,10 +76,10 @@ public class AbstractionEngine {
 				if (!partId.equals(payNoMind)) {
 					compExpression = compExpression + "*" + "(";
 					if (species.get(partId).isAbstractable()) {
-						compExpression = compExpression + abstractComplexHelper(partId, multiplier * n, "");
+						compExpression = compExpression + abstractComplexHelper(partId, multiplier * n, "", operatorAbstraction);
 					} else if (payNoMind.equals("")) {
 						if (species.get(partId).isSequesterable())
-							compExpression = compExpression + sequesterSpeciesHelper(partId, complexId);
+							compExpression = compExpression + sequesterSpeciesHelper(partId, complexId, operatorAbstraction);
 						else
 							compExpression = compExpression + partId;
 						if (complexReactantStoich.containsKey(partId))
@@ -101,10 +105,10 @@ public class AbstractionEngine {
 				if (!partId.equals(payNoMind)) {
 					compExpression = compExpression + "*" + "(";
 					if (species.get(partId).isAbstractable()) {
-						compExpression = compExpression + abstractComplexHelper(partId, multiplier * n, "");
+						compExpression = compExpression + abstractComplexHelper(partId, multiplier * n, "", operatorAbstraction);
 					} else if (payNoMind.equals("")) {
 						if (species.get(partId).isSequesterable())
-							compExpression = compExpression + sequesterSpeciesHelper(partId, complexId);
+							compExpression = compExpression + sequesterSpeciesHelper(partId, complexId, operatorAbstraction);
 						else
 							compExpression = compExpression + partId;
 					} else {
@@ -122,29 +126,35 @@ public class AbstractionEngine {
 		return compExpression;
 	}
 
-	public String sequesterSpecies(String speciesId) {
+	public String sequesterSpecies(String speciesId, double n, boolean operatorAbstraction) {
 		if (sbmlMode)
 			complexModifiers = new ArrayList<String>();
-		String expression = sequesterSpeciesHelper(speciesId, "");
+		String expression = sequesterSpeciesHelper(speciesId, "", operatorAbstraction);
 		if (sbmlMode) {
+			if (operatorAbstraction)
+				r.addModifier(Utility.ModifierSpeciesReference(speciesId));
+			else if (n > 0)  // necessary to ignore the case of a reverse formation reaction for a complex that's being sequestered
+				r.addReactant(Utility.SpeciesReference(speciesId, n));
 			for (String modifier : complexModifiers)
 				r.addModifier(Utility.ModifierSpeciesReference(modifier));
 		}
 		return expression;
 	}
 	
-	private String sequesterSpeciesHelper(String speciesId, String payNoMind) {
+	private String sequesterSpeciesHelper(String speciesId, String payNoMind, boolean operatorAbstraction) {
 		String sequesterFactor = speciesId + "/(1";
 		for (Influence infl : partsMap.get(speciesId)) {
 			String complexId = infl.getOutput();
 			if (!complexId.equals(payNoMind) && species.get(complexId).isSequesterAbstractable())
-				sequesterFactor = sequesterFactor + "+" + abstractComplexHelper(complexId, 1, speciesId);
+				sequesterFactor = sequesterFactor + "+" + abstractComplexHelper(complexId, 1, speciesId, operatorAbstraction);
 		}
 		sequesterFactor = sequesterFactor + ")";
 		return sequesterFactor;
 	}
 
 	public String abstractOperatorSite(Promoter promoter) {
+		if (sbmlMode)
+			kl.addParameter(Utility.Parameter("RNAP", RNAP, GeneticNetwork.getMoleParameter(2)));
 		String promRate = "";
 		if (promoter.getActivators().size() != 0) {
 			double np = promoter.getStoich();
@@ -191,11 +201,13 @@ public class AbstractionEngine {
 						double ka = promoter.getKact();
 						String expression = activator;
 						if (species.get(activator).isSequesterable()) {
-							expression = sequesterSpecies(activator);
+							expression = sequesterSpecies(activator, nc, true);
 						}
-						else if (complexMap.containsKey(activator)) {
-							expression = abstractComplex(activator, nc);
-						}
+						else if (species.get(activator).isAbstractable()) {
+							expression = abstractComplex(activator, nc, true);
+						} 
+						else if (sbmlMode)
+							r.addModifier(Utility.ModifierSpeciesReference(activator));
 						if (sbmlMode) {
 							promRate += "+(ka__" + activator + "_" + promoter.getId() + "*((Ka__"
 									+ activator + "_" + promoter.getId() + "*RNAP*" + expression
@@ -242,11 +254,13 @@ public class AbstractionEngine {
 								}
 								String expression = repressor;
 								if (species.get(repressor).isSequesterable()) {
-									expression = sequesterSpecies(repressor);
+									expression = sequesterSpecies(repressor, nc, true);
 								}
-								else if (complexMap.containsKey(repressor)) {
-									expression = abstractComplex(repressor, nc);
-								}
+								else if (species.get(repressor).isAbstractable()) {
+									expression = abstractComplex(repressor, nc, true);
+								} 
+								else if (sbmlMode)
+									r.addModifier(Utility.ModifierSpeciesReference(repressor));
 								if (sbmlMode) {
 									promRate += "+((Kr__" + repressor + "_" + promoter.getId()
 											+ "*" + expression + ")^nc__" + repressor + "_"
@@ -313,11 +327,13 @@ public class AbstractionEngine {
 							}
 							String expression = repressor;
 							if (species.get(repressor).isSequesterable()) {
-								expression = sequesterSpecies(repressor);
+								expression = sequesterSpecies(repressor, nc, true);
 							}
-							else if (complexMap.containsKey(repressor)) {
-								expression = abstractComplex(repressor, nc);
+							else if (species.get(repressor).isAbstractable()) {
+								expression = abstractComplex(repressor, nc, true);
 							}
+							else if (sbmlMode)
+								r.addModifier(Utility.ModifierSpeciesReference(repressor));
 							if (sbmlMode) {
 								promRate += "+((Kr__" + repressor + "_" + promoter.getId() + "*"
 										+ expression + ")^nc__" + repressor + "_"

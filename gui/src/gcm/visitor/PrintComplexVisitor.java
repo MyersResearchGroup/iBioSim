@@ -65,7 +65,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 				ncSum = ncSum + nId + "+";
 			}
 			if (specie.isSequesterable())
-				boundExpression = sequesterSpecies(specie.getId());
+				boundExpression = sequesterSpecies(specie.getId(), 0);
 		} else {
 			kl.addParameter(Utility.Parameter(kcompId, kcomp,
 					GeneticNetwork.getMoleParameter(2)));

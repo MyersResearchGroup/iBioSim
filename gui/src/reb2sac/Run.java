@@ -72,11 +72,14 @@ public class Run implements ActionListener {
 			JList loopAbs, JList postAbs, AbstPane abstPane) {
 		Properties abs = new Properties();
 		if (selectedButtons.contains("abs") || selectedButtons.contains("nary")) {
+			int gcmIndex = 1;
 			for (int i = 0; i < preAbs.getModel().getSize(); i++) {
 				String abstractionOption = (String) preAbs.getModel().getElementAt(i);
-				if (abstractionOption.equals("complex-formation-and-sequestering-abstraction"))
-					abs.setProperty("gcm.abstraction.method", abstractionOption);
-				else
+				if (abstractionOption.equals("complex-formation-and-sequestering-abstraction")
+						|| abstractionOption.equals("operator-site-reduction-abstraction")) {
+					abs.setProperty("gcm.abstraction.method." + gcmIndex, abstractionOption);
+					gcmIndex++;
+				} else
 					abs.setProperty("reb2sac.abstraction.method.1." + (i + 1), abstractionOption);
 			}
 			for (int i = 0; i < loopAbs.getModel().getSize(); i++) {

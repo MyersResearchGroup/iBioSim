@@ -158,6 +158,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem newSpice; // The new spice circuit item
 
 	private JMenuItem exit; // The exit menu item
+	
+	private JMenuItem importSbol;
 
 	private JMenuItem importSbml; // The import sbml menu item
 
@@ -488,6 +490,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		newRsg = new JMenuItem("Reduced State Graph");
 		graph = new JMenuItem("TSD Graph");
 		probGraph = new JMenuItem("Histogram");
+		importSbol = new JMenuItem("SBOL File");
 		importSbml = new JMenuItem("SBML Model");
 		importBioModel = new JMenuItem("BioModel");
 		importDot = new JMenuItem("Genetic Circuit Model");
@@ -575,6 +578,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		newSpice.addActionListener(this);
 		exit.addActionListener(this);
 		about.addActionListener(this);
+		importSbol.addActionListener(this);
 		importSbml.addActionListener(this);
 		importBioModel.addActionListener(this);
 		importDot.addActionListener(this);
@@ -765,6 +769,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else {
 			importLpn.setMnemonic(KeyEvent.VK_L);
 		}
+		importSbol.setMnemonic(KeyEvent.VK_O);
 		importSbml.setMnemonic(KeyEvent.VK_S);
 		// importBioModel.setMnemonic(KeyEvent.VK_S);
 		importVhdl.setMnemonic(KeyEvent.VK_V);
@@ -786,6 +791,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		createAnal.setMnemonic(KeyEvent.VK_A);
 		createLearn.setMnemonic(KeyEvent.VK_L);
 		importDot.setEnabled(false);
+		importSbol.setEnabled(false);
 		importSbml.setEnabled(false);
 		importBioModel.setEnabled(false);
 		importVhdl.setEnabled(false);
@@ -924,6 +930,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		file.add(importMenu);
 		if (!async) {
 			importMenu.add(importDot);
+			importMenu.add(importSbol);
 			importMenu.add(importLpn);
 			importMenu.add(importSbml);
 			importMenu.add(importBioModel);
@@ -3779,6 +3786,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				addRecentProject(filename);
 
 				importDot.setEnabled(true);
+				importSbol.setEnabled(true);
 				importSbml.setEnabled(true);
 				importBioModel.setEnabled(true);
 				importVhdl.setEnabled(true);
@@ -3906,6 +3914,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						tab.removeAll();
 						addRecentProject(projDir);
 						importDot.setEnabled(true);
+						importSbol.setEnabled(true);
 						importSbml.setEnabled(true);
 						importBioModel.setEnabled(true);
 						importVhdl.setEnabled(true);
@@ -4735,6 +4744,43 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			else {
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+			}
+		} 
+		else if (e.getSource().equals(importSbol)) {
+			if (root != null) {
+				File importFile;
+				Preferences biosimrc = Preferences.userRoot();
+				if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
+					importFile = null;
+				} else {
+					importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
+				}
+				String importPath = Utility.browse(frame, importFile, null,
+						JFileChooser.FILES_AND_DIRECTORIES, "Import SBOL", -1).trim();
+				int index = importPath.lastIndexOf('/');
+				String filename = importPath.substring(index + 1, importPath.length()).replaceAll("[^a-zA-Z0-9_.]+", "_");
+				String exportPath = root + separator + filename;
+				try {
+					if (checkFiles(exportPath, importPath) 
+							&& overwrite(exportPath, filename)) {
+						FileOutputStream out = new FileOutputStream(new File(exportPath));
+						FileInputStream in = new FileInputStream(new File(importPath));
+						int read = in.read();
+						while (read != -1) {
+							out.write(read);
+							read = in.read();
+						}
+						in.close();
+						out.close();
+						addToTree(filename);
+					}
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			} else {
 				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
@@ -8327,6 +8373,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(delete);
 			}
 			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")) {
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
+				popup.add(delete);
+			}
+			else if (tree.getFile().length() > 3
 					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
 				JMenuItem create = new JMenuItem("Create Analysis View");
 				create.addActionListener(this);
@@ -10770,6 +10824,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		public void actionPerformed(ActionEvent e) {
 			if (!lema) {
 				popup.add(importDot);
+				popup.add(importSbol);
 				popup.add(importSbml);
 				popup.add(importBioModel);
 			}

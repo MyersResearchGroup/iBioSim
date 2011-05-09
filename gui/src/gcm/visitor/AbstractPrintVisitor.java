@@ -35,14 +35,6 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	public AbstractPrintVisitor(SBMLDocument document) {
 		this.document = document;
 	}
-
-	/**
-	 * @param cooperationAbstraction
-	 *            The cooperationAbstraction to set.
-	 */
-	public void setCooperationAbstraction(boolean cooperationAbstraction) {
-		this.cooperationAbstraction = cooperationAbstraction;
-	}
 	
 	/**
 	 * @param dimerizationAbstraction
@@ -71,14 +63,14 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	
 	//Recursively breaks down repressing complex into its constituent species and complex formation equilibria
 	protected String abstractComplex(String complexId, double multiplier) {
-		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, r, kl);
-		String expression = e.abstractComplex(complexId, multiplier);
+		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, 0, r, kl);
+		String expression = e.abstractComplex(complexId, multiplier, false);
 		return expression;
 	}
 	
-	protected String sequesterSpecies(String partId) {
-		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, r, kl);
-		String expression = e.sequesterSpecies(partId);
+	protected String sequesterSpecies(String partId, double n) {
+		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, 0, r, kl);
+		String expression = e.sequesterSpecies(partId, n, false);
 		return expression;
 	}
 	
@@ -97,8 +89,6 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	protected static GCMFile parameters = null;
 
 	protected SBMLDocument document = null;
-
-	protected boolean cooperationAbstraction = false;
 	
 	protected boolean complexAbstraction = false;
 	
