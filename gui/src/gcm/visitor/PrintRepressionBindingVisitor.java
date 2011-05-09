@@ -76,8 +76,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		if (complexAbstraction && specie.isAbstractable()) {
 			repExpression = abstractComplex(specie.getId(), coop);
 		} else if (complexAbstraction && specie.isSequesterable()) {
-			repExpression = sequesterSpecies(specie.getId());
-			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
+			repExpression = sequesterSpecies(specie.getId(), coop);
 		} else {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
@@ -106,11 +105,11 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		String repExpression = "";
 		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
 		if (complexAbstraction && specie.isSequesterable()) {
-			repExpression = repExpression + sequesterSpecies(specie.getId());
+			repExpression = repExpression + sequesterSpecies(specie.getId(), coop);
 		} else {
 			repExpression = specie.getId();
+			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(repExpression));
@@ -135,11 +134,11 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		String repExpression = "";
 		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
 		if (complexAbstraction && specie.isSequesterable()) {
-			repExpression = repExpression + sequesterSpecies(specie.getId());
+			repExpression = repExpression + sequesterSpecies(specie.getId(), coop);
 		} else {
 			repExpression = specie.getId();
+			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(repExpression));
@@ -164,11 +163,11 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		String repExpression = "";
 		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
 		if (complexAbstraction && specie.isSequesterable()) {
-			repExpression = repExpression + sequesterSpecies(specie.getId());
+			repExpression = repExpression + sequesterSpecies(specie.getId(), coop);
 		} else {
 			repExpression = specie.getId();
+			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(repExpression));

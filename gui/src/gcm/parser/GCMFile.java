@@ -774,10 +774,10 @@ public class GCMFile {
 						LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
 						String specExpr = specs.get(i);
 						if (network.getSpecies().get(specs.get(i)).isSequesterable()) {
-							specExpr = abs.sequesterSpecies(specs.get(i));
+							specExpr = abs.sequesterSpecies(specs.get(i), 0, false);
 						}
 						else if (network.getComplexMap().containsKey(specs.get(i))) {
-							specExpr = abs.abstractComplex(specs.get(i), 0);
+							specExpr = abs.abstractComplex(specs.get(i), 0, false);
 						}
 						if (!specExpr.equals(specs.get(i))) {
 							specExpr = "(" + specExpr + ")";

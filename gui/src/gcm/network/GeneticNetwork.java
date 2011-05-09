@@ -165,9 +165,14 @@ public class GeneticNetwork {
 		properties = gcm;
 	}
 	
-	public void loadProperties(GCMFile gcm, boolean complexAbstraction, String[] interestingSpecies, String property) {
+	public void loadProperties(GCMFile gcm, ArrayList<String> gcmAbstractions, String[] interestingSpecies, String property) {
 		properties = gcm;
-		this.complexAbstraction = complexAbstraction;
+		for (String abstractionOption : gcmAbstractions) {
+			if (abstractionOption.equals("complex-formation-and-sequestering-abstraction"))
+				complexAbstraction = true;
+			else if (abstractionOption.equals("operator-site-reduction-abstraction"))
+				operatorAbstraction = true;
+		}
 		unMarkInterestingSpecies(interestingSpecies);
 		this.property = property;
 	}
@@ -203,14 +208,14 @@ public class GeneticNetwork {
 			SBMLWriter writer = new SBMLWriter();
 			//printParameters(document);
 			printSpecies(document);
-			printPromoters(document);
-			printRNAP(document);
+			if (!operatorAbstraction) {
+				printPromoters(document);
+				printRNAP(document);
+			}
 			printDecay(document);
-			
 			printPromoterProduction(document);
-			
-			printPromoterBinding(document);
-			
+			if (!operatorAbstraction)
+				printPromoterBinding(document);
 			printComplexBinding(document);
 			
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
@@ -353,14 +358,12 @@ public class GeneticNetwork {
 			// Next setup activated binding
 			PrintActivatedBindingVisitor v = new PrintActivatedBindingVisitor(
 					document, p, species, compartment, complexMap, partsMap);
-			v.setCooperationAbstraction(cooperationAbstraction);
 			v.setComplexAbstraction(complexAbstraction);
 			v.run();
 
 			// Next setup repression binding
 			PrintRepressionBindingVisitor v2 = new PrintRepressionBindingVisitor(
 					document, p, species, compartment, complexMap, partsMap);
-			v2.setCooperationAbstraction(cooperationAbstraction);
 			v2.setComplexAbstraction(complexAbstraction);
 			v2.run();
 		}
@@ -374,36 +377,45 @@ public class GeneticNetwork {
 	 *            the SBMLDocument to print to
 	 */
 	private void printPromoterProduction(SBMLDocument document) {
-		
 		for (Promoter p : promoters.values()) {
 			if (p.getOutputs().size()==0) continue;
 			String compartment = checkCompartments(p.getId());
 			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 			r.setCompartment(compartment);
-			r.addModifier(Utility.ModifierSpeciesReference(p.getId() + "_RNAP"));
 			for (SpeciesInterface species : p.getOutputs()) {
 				r.addProduct(Utility.SpeciesReference(species.getId(), p.getStoich()));
 			}
 			r.setReversible(false);
 			r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
-			if (p.getActivators().size() > 0) {
-				r.setId("R_basal_production_" + p.getId());
-				kl.addParameter(Utility.Parameter(kBasalString, p.getKbasal(),
-							getMoleTimeParameter(1)));
-				kl.setFormula(kBasalString + "*" + p.getId() + "_RNAP");
-				
+			if (operatorAbstraction) {
+				r.setId("R_abstracted_production_" + p.getId());
+				double rnap = 30;
+				if (properties != null)
+					rnap = Double.parseDouble(properties.getParameter(GlobalConstants.RNAP_STRING));
+				AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, rnap, r, kl);
+				kl.setFormula(e.abstractOperatorSite(p));
+				Utility.addReaction(document, r);
 			} else {
-				r.setId("R_constitutive_production_" + p.getId());
-				kl.addParameter(Utility.Parameter(kOcString, p.getKoc(),
+				r.addModifier(Utility.ModifierSpeciesReference(p.getId() + "_RNAP"));
+				if (p.getActivators().size() > 0) {
+					r.setId("R_basal_production_" + p.getId());
+					kl.addParameter(Utility.Parameter(kBasalString, p.getKbasal(),
 							getMoleTimeParameter(1)));
-				kl.setFormula(kOcString + "*" + p.getId() + "_RNAP");
-			}
-			Utility.addReaction(document, r);
-			if (p.getActivators().size() > 0) {
-				PrintActivatedProductionVisitor v = new PrintActivatedProductionVisitor(
-						document, p, compartment);
-				v.run();
+					kl.setFormula(kBasalString + "*" + p.getId() + "_RNAP");
+
+				} else {
+					r.setId("R_constitutive_production_" + p.getId());
+					kl.addParameter(Utility.Parameter(kOcString, p.getKoc(),
+							getMoleTimeParameter(1)));
+					kl.setFormula(kOcString + "*" + p.getId() + "_RNAP");
+				}
+				Utility.addReaction(document, r);
+				if (p.getActivators().size() > 0) {
+					PrintActivatedProductionVisitor v = new PrintActivatedProductionVisitor(
+							document, p, compartment);
+					v.run();
+				}
 			}
 		}
 	}
@@ -917,7 +929,7 @@ public class GeneticNetwork {
 			compartment = splitted[0];
 		return compartment;
 	}
-	
+
 	public AbstractionEngine createAbstractionEngine() {
 		return new AbstractionEngine(species, complexMap, partsMap, Double.parseDouble(properties
 				.getParameters().get(GlobalConstants.RNAP_STRING)));
@@ -970,8 +982,9 @@ public class GeneticNetwork {
 	private void markAbstractable() {
 		for (Promoter p : promoters.values()) {
 			//Checks if activators are sequesterable
-			//Marks activators that are complexes as abstractable provided they're not sequesterable/outputs and are only part of the given complex
-			//Checks parts of complex activators provided they're not outputs
+			//Marks activators that are complexes as abstractable provided they're not sequesterable/outputs 
+			//and are only part of a single complex (if they're part of a complex at all)
+			//Checks parts of complex activators provided the activators aren't outputs
 			for (SpeciesInterface s : p.getActivators()) {
 				boolean sequesterable = false;
 				if (partsMap.containsKey(s.getId())) {
@@ -979,13 +992,14 @@ public class GeneticNetwork {
 				}
 				if (complexMap.containsKey(s.getId()) && !s.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
 					checkComplex(s.getId(), "");
-					if (!partsMap.containsKey(s.getId()) || (!sequesterable && partsMap.get(s.getId()).size() == 1))
+					if (!partsMap.containsKey(s.getId()))
 						s.setAbstractable(true);
 				}
 			}
 			//Checks if repressors are sequesterable
-			//Marks repressors that are complexes as abstractable provided they're not sequesterable/outputs and are only part of the given complex
-			//Checks parts of complex repressors provided they're not outputs
+			//Marks repressors that are complexes as abstractable provided they're not sequesterable/outputs 
+			//and are only part of a single complex (if they're part of a complex at all)
+			//Checks parts of complex repressors provided the repressors aren't outputs
 			for (SpeciesInterface s : p.getRepressors()) {
 				boolean sequesterable = false;
 				if (partsMap.containsKey(s.getId())) {
@@ -993,7 +1007,7 @@ public class GeneticNetwork {
 				}
 				if (complexMap.containsKey(s.getId()) && !s.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
 					checkComplex(s.getId(), "");
-					if (!partsMap.containsKey(s.getId()) || (!sequesterable && partsMap.get(s.getId()).size() == 1))
+					if (!partsMap.containsKey(s.getId()))
 						s.setAbstractable(true);
 				}
 			}
@@ -1005,16 +1019,16 @@ public class GeneticNetwork {
 		}
 	}
 	
-	//Checks if parts of given complex are sequesterable so long as they're not activators or repressors
-	//Marks parts that are complexes as abstractable so long as they're not sequesterable/outputs and are only part of the given complex 
-	//Recursively checks parts of complex parts 
+	//Checks if parts of given complex are sequesterable so long as the parts aren't activators or repressors
+	//Marks parts that are complexes as abstractable so long as the parts aren't sequesterable/outputs and are only part of the given complex 
+	//Recursively checks parts of parts that are complexes provided the latter aren't activators, reopressors, or outputs
 	private boolean checkComplex(String complexId, String payNoMind) {
 		for (Influence infl : complexMap.get(complexId)) {
 			String partId = infl.getInput();
 			if (!partId.equals(payNoMind)) {
 				boolean sequesterable = false;
 				if (partsMap.get(partId).size() > 1) {
-					if (!payNoMind.equals(""))
+					if (!payNoMind.equals(""))  //i.e. checkComplex called by checkSequester to determine if sequestering species are used elsewhere
 						return false;
 					if (!species.get(partId).isActivator() && !species.get(partId).isRepressor())
 						sequesterable = checkSequester(partId, complexId);
@@ -1023,17 +1037,18 @@ public class GeneticNetwork {
 					return false;
 				if (complexMap.containsKey(partId) && !species.get(partId).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)
 						&& !species.get(partId).isActivator() && !species.get(partId).isRepressor()) {
-					checkComplex(partId, "");
 					if (!sequesterable && partsMap.get(partId).size() == 1)
 						species.get(partId).setAbstractable(true);
-				}
+					checkComplex(partId, "");
+				} else if (!sequesterable && (partsMap.get(partId).size() > 1 || species.get(partId).isActivator() || species.get(partId).isRepressor()))
+					species.get(complexId).setAbstractable(false);
 			}
 		}
 		return true;
 	}
 	
-	//Marks given species as sequesterable and its sequestering complexes as sequester-abstractable if those complexes
-	//and the sequestering species which make them up are not used elsewhere
+	//Marks given species as sequesterable and its sequestering complexes as sequester-abstractable if (1) those complexes
+	//and the sequestering species which make them up are not used elsewhere and (2) the sequestered species's stoichiometry of binding is one
 	private boolean checkSequester(String partId, String payNoMind) {
 		boolean sequesterable = false;
 		ArrayList<String> abstractableComplexes = new ArrayList<String>();
@@ -1042,7 +1057,8 @@ public class GeneticNetwork {
 			if (!complexId.equals(payNoMind) && infl.getCoop() == 1 && !species.get(complexId).isActivator() 
 						&& !species.get(complexId).isRepressor() && !partsMap.containsKey(complexId)
 						&& !species.get(complexId).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)
-						&& complexMap.get(complexId).size() > 1 && checkComplex(complexId, partId)) {
+						&& species.get(complexId).getDecay() == 0 && complexMap.get(complexId).size() > 1 
+						&& checkComplex(complexId, partId)) {
 					abstractableComplexes.add(complexId);
 					sequesterable = true;
 			}
@@ -1128,7 +1144,7 @@ public class GeneticNetwork {
 	
 	private static String currentRoot = "";
 
-	private boolean cooperationAbstraction = false;
+	private boolean operatorAbstraction = false;
 	
 	private boolean complexAbstraction = false;
 

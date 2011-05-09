@@ -83,12 +83,11 @@ public class Button_Enabling {
 			preAbs.setListData(objects);
 			loopAbs.setListData(objects);
 			getLists = new ArrayList<String>();
-			if (monteCarlo.isSelected()) {
-				getLists.add("distribute-transformer");
-				getLists.add("reversible-to-irreversible-transformer");
-			}
-			if (!sbml.isSelected())
-				getLists.add("kinetic-law-constants-simplifier");
+//			if (monteCarlo.isSelected()) {
+//				getLists.add("distribute-transformer");
+//				getLists.add("reversible-to-irreversible-transformer");
+//			}
+//			getLists.add("kinetic-law-constants-simplifier");
 			objects = getLists.toArray();
 			postAbs.setListData(objects);
 		}
@@ -133,26 +132,26 @@ public class Button_Enabling {
 			rapid2.setEnabled(true);
 			ArrayList<String> getLists = new ArrayList<String>();
 			getLists.add("complex-formation-and-sequestering-abstraction");
+			getLists.add("operator-site-reduction-abstraction");
 			Object[] objects = getLists.toArray();
 			preAbs.setListData(objects);
 			getLists = new ArrayList<String>();
-			getLists.add("operator-site-forward-binding-remover");
+//			getLists.add("operator-site-forward-binding-remover");
 //			getLists.add("dimerization-reduction");
 //			getLists.add("enzyme-kinetic-rapid-equilibrium-1");
 //			getLists.add("irrelevant-species-remover");
 //			getLists.add("inducer-structure-transformer");
 //			getLists.add("modifier-constant-propagation");
 //			getLists.add("similar-reaction-combiner");
-			getLists.add("modifier-constant-propagation");
+//			getLists.add("modifier-constant-propagation");
 			objects = getLists.toArray();
 			loopAbs.setListData(objects);
 			getLists = new ArrayList<String>();
-			if (monteCarlo.isSelected()) {
-				getLists.add("distribute-transformer");
-				getLists.add("reversible-to-irreversible-transformer");
-			}
-			if (!sbml.isSelected())
-				getLists.add("kinetic-law-constants-simplifier");
+//			if (monteCarlo.isSelected()) {
+//				getLists.add("distribute-transformer");
+//				getLists.add("reversible-to-irreversible-transformer");
+//			}
+//			getLists.add("kinetic-law-constants-simplifier");
 			objects = getLists.toArray();
 			postAbs.setListData(objects);
 		}
@@ -337,7 +336,7 @@ public class Button_Enabling {
 			JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
 			JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators,
 			JLabel simulatorsLabel, JLabel explanation, JLabel description, JCheckBox usingSSA,
-			JTextField fileStem, JLabel fileStemLabel, JList postAbs) {
+			JTextField fileStem, JLabel fileStemLabel, JList postAbs, JRadioButton abstraction) {
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
 		runs.setEnabled(true);
@@ -369,7 +368,8 @@ public class Button_Enabling {
 		simulators.addItem("rkf45");
 		simulators.setSelectedItem("rkf45");
 		ArrayList<String> getLists = new ArrayList<String>();
-		getLists.add("kinetic-law-constants-simplifier");
+		if (!abstraction.isSelected())
+			getLists.add("kinetic-law-constants-simplifier");
 		Object[] objects = getLists.toArray();
 		postAbs.setListData(objects);
 	}
@@ -386,7 +386,7 @@ public class Button_Enabling {
 			JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
 			JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators,
 			JLabel simulatorsLabel, JLabel explanation, JLabel description, JCheckBox usingSSA,
-			JTextField fileStem, JLabel fileStemLabel, JList postAbs) {
+			JTextField fileStem, JLabel fileStemLabel, JList postAbs, JRadioButton abstraction) {
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
 		runs.setEnabled(true);
@@ -420,9 +420,11 @@ public class Button_Enabling {
 		simulators.addItem("nmc");
 		absErr.setEnabled(false);
 		ArrayList<String> getLists = new ArrayList<String>();
-		getLists.add("distribute-transformer");
-		getLists.add("reversible-to-irreversible-transformer");
-		getLists.add("kinetic-law-constants-simplifier");
+		if (!abstraction.isSelected()) {
+			getLists.add("distribute-transformer");
+			getLists.add("reversible-to-irreversible-transformer");
+			getLists.add("kinetic-law-constants-simplifier");
+		}
 		Object[] objects = getLists.toArray();
 		postAbs.setListData(objects);
 	}
@@ -483,7 +485,7 @@ public class Button_Enabling {
 			JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
 			JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators,
 			JLabel simulatorsLabel, JLabel explanation, JLabel description, JTextField fileStem,
-			JLabel fileStemLabel, JRadioButton sbml, JList loopAbs, JList postAbs) {
+			JLabel fileStemLabel, JRadioButton abstraction, JList loopAbs, JList postAbs) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
@@ -506,7 +508,7 @@ public class Button_Enabling {
 		description.setEnabled(false);
 		fileStem.setText("");
 		ArrayList<String> getLists = new ArrayList<String>();
-		if (!sbml.isSelected())
+		if (!abstraction.isSelected())
 			getLists.add("kinetic-law-constants-simplifier");
 		Object[] objects = getLists.toArray();
 		postAbs.setListData(objects);

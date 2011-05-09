@@ -82,8 +82,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		if (complexAbstraction && specie.isAbstractable()) {
 			actExpression = abstractComplex(specie.getId(), coop);
 		} else if (complexAbstraction && specie.isSequesterable()) {
-			actExpression = sequesterSpecies(specie.getId());
-			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
+			actExpression = sequesterSpecies(specie.getId(), coop);
 		} else {
 			actExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
@@ -111,11 +110,11 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String actExpression = "";
 		if (complexAbstraction && specie.isSequesterable()) {
-			actExpression = actExpression + sequesterSpecies(specie.getId());
+			actExpression = actExpression + sequesterSpecies(specie.getId(), coop);
 		} else {
 			actExpression = specie.getId();
+			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(actExpression));
@@ -139,11 +138,11 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));;
 		String actExpression = "";
 		if (complexAbstraction && specie.isSequesterable()) {
-			actExpression = actExpression + sequesterSpecies(specie.getId());
+			actExpression = actExpression + sequesterSpecies(specie.getId(), coop);
 		} else {
 			actExpression = specie.getId();
+			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(actExpression));
@@ -167,11 +166,11 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String actExpression = "";
 		if (complexAbstraction && specie.isSequesterable()) {
-			actExpression = actExpression + sequesterSpecies(specie.getId());
+			actExpression = actExpression + sequesterSpecies(specie.getId(), coop);
 		} else {
 			actExpression = specie.getId();
+			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(actExpression));
