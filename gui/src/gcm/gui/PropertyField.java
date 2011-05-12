@@ -157,10 +157,28 @@ public class PropertyField extends JPanel implements ActionListener,
 			JLabel stepLabel = new JLabel("Step:");
 			JLabel levelLabel = new JLabel("Level:");
 			String[] list1 = { "1", "2" };
-			final JTextField start = new JTextField();
-			final JTextField stop = new JTextField();
-			final JTextField step = new JTextField();
+			String text = field.getText().trim();
+			String startText = "";
+			String stopText = "";
+			String stepText = "";
+			String levelText = "";
+			if (!text.equals("") && text.startsWith("(")) {
+				try {
+					text = text.substring(1, text.length() - 1);
+					String[] split = text.split(",");
+					startText = split[0].trim();
+					stopText = split[1].trim();
+					stepText = split[2].trim();
+					levelText = split[3].trim();
+				}
+				catch (Exception e1) {
+				}
+			}
+			final JTextField start = new JTextField(startText);
+			final JTextField stop = new JTextField(stopText);
+			final JTextField step = new JTextField(stepText);
 			final JComboBox level = new JComboBox(list1);
+			level.setSelectedItem(levelText);
 			p.add(startLabel);
 			p.add(start);
 			p.add(stopLabel);
