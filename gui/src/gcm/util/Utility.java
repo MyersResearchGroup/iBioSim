@@ -130,7 +130,7 @@ public class Utility {
 		specie.setName(id);
 		specie.setCompartment(compartment);
 		specie.setInitialAmount(amount);	
-		specie.setHasOnlySubstanceUnits(true);
+		specie.setHasOnlySubstanceUnits(false);
 		specie.setConstant(false);
 		specie.setBoundaryCondition(false);
 		return specie;
@@ -386,6 +386,7 @@ public class Utility {
 			Compartment comp = document.getModel().createCompartment();
 			comp.setId(compartment);
 			comp.setSpatialDimensions(3);
+			comp.setConstant(true);
 			return true;
 		}
 		else {
@@ -398,6 +399,7 @@ public class Utility {
 			Compartment comp = document.getModel().createCompartment();
 			comp.setId(compartment);
 			comp.setSpatialDimensions(3);
+			comp.setConstant(true);
 			return true;
 			//Give warning
 		}
