@@ -135,6 +135,7 @@ public class GeneticNetwork {
 		document.setModel(m);
 		Utility.addCompartments(document, "default");
 		document.getModel().getCompartment("default").setSize(1);
+		document.getModel().getCompartment("default").setConstant(true);
 		
 		SBMLWriter writer = new SBMLWriter();
 		printSpecies(document);
