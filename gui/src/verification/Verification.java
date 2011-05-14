@@ -915,6 +915,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	public void run() {
 		long time1 = System.nanoTime();
 		File work = new File(directory);
+		/*
 		if (!preprocStr.getText().equals("")) {
 			try {
 				String preprocCmd = preprocStr.getText();
@@ -930,6 +931,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				
 			}
 		}
+		*/
 		copyFile();
 		String[] array = directory.split(separator);
 		String tempDir = "";
@@ -950,7 +952,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			} else if (verifyFile.endsWith(".g")) {
 				Runtime.getRuntime().exec("atacs -lgsl " + verifyFile, null,
 						work);
-			}
+			} else if (verifyFile.endsWith(".hse")) {
+				Runtime.getRuntime().exec("atacs -lhsl " + verifyFile, null,
+						work);			}
 		} catch (Exception e) {
 		}
 		for (int i = 0; i < array.length - 1; i++) {
