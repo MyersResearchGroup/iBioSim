@@ -638,7 +638,7 @@ public class Utility {
 		return list;
 	}
 
-	private static void sort(Object[] sort) {
+	public static void sort(Object[] sort) {
 		int i, j;
 		String index;
 		for (i = 1; i < sort.length; i++) {
