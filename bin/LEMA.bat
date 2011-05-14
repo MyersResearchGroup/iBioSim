@@ -1,2 +1,6 @@
-java -Xmx512M -classpath "%LEMA%\gui\dist\classes";"%LEMA%\gui\lib\jcommon-1.0.16.jar";"%LEMA%\gui\lib\jfreechart-1.0.13.jar";"%LEMA%\gui\lib\iText-2.1.5.jar";"%LEMA%\gui\lib\batik-anim.jar";"%LEMA%\gui\lib\batik-awt-util.jar";"%LEMA%\gui\lib\batik-bridge.jar";"%LEMA%\gui\lib\batik-codec.jar";"%LEMA%\gui\lib\batik-css.jar";"%LEMA%\gui\lib\batik-dom.jar";"%LEMA%\gui\lib\batik-ext.jar";"%LEMA%\gui\lib\batik-extension.jar";"%LEMA%\gui\lib\batik-gui-util.jar";"%LEMA%\gui\lib\batik-gvt.jar";"%LEMA%\gui\lib\batik-parser.jar";"%LEMA%\gui\lib\batik-script.jar";"%LEMA%\gui\lib\batik-svg-dom.jar";"%LEMA%\gui\lib\batik-svggen.jar";"%LEMA%\gui\lib\batik-swing.jar";"%LEMA%\gui\lib\batik-transcoder.jar";"%LEMA%\gui\lib\batik-util.jar";"%LEMA%\gui\lib\batik-xml.jar";"%LEMA%\gui\lib\js.jar";"%LEMA%\gui\lib\pdf-transcoder.jar";"%LEMA%\gui\lib\xalan-2.6.0.jar";"%LEMA%\gui\lib\xerces_2_5_0.jar";"%LEMA%\gui\lib\xml-apis.jar";"%LEMA%\gui\lib\xml-apis-ext.jar";"%LEMA%\gui\lib\epsgraphics.jar";"%LEMA%\gui\lib\sbmlj.jar";"%LEMA%\gui\lib\org-jdesktop-layout.jar";"%LEMA%\gui\lib\swing-layout-1.0.3.jar";"%LEMA%\gui\lib\activation.jar";"%LEMA%\gui\lib\mail.jar";"%LEMA%\gui\lib\biomodelswslib-standalone-1.11.jar";"%LEMA%\gui\lib\grappa1_2.jar";"%LEMA%\gui\lib\jgraphx.jar";"%LEMA%\gui\lib\gson-1.6.jar" main.Gui -lema
+setlocal ENABLEDELAYEDEXPANSION
+set CLASSPATH="%LEMA%\gui\dist\classes"
+for /f %%a IN ('dir /b "%LEMA%\gui\lib\*.jar"') do call set CLASSPATH=!CLASSPATH!;"%LEMA%\gui\lib\%%a"
+java -Xmx512M -classpath %CLASSPATH% main.Gui -lema
+
 

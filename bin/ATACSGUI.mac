@@ -1,5 +1,12 @@
 #!/bin/sh
 #
 # run-time wrapper for BioSim gui
-export DYLD_LIBRARY_PATH=$ATACSGUI/lib:$DYLD_LIBRARY_PATH
-exec java -Xmx512M -classpath $ATACSGUI/gui/dist/classes:$ATACSGUI/gui/lib/jcommon-1.0.16.jar:$ATACSGUI/gui/lib/jfreechart-1.0.13.jar:$ATACSGUI/gui/lib/iText-2.1.5.jar:$ATACSGUI/gui/lib/batik-anim.jar:$ATACSGUI/gui/lib/batik-awt-util.jar:$ATACSGUI/gui/lib/batik-bridge.jar:$ATACSGUI/gui/lib/batik-codec.jar:$ATACSGUI/gui/lib/batik-css.jar:$ATACSGUI/gui/lib/batik-dom.jar:$ATACSGUI/gui/lib/batik-ext.jar:$ATACSGUI/gui/lib/batik-extension.jar:$ATACSGUI/gui/lib/batik-gui-util.jar:$ATACSGUI/gui/lib/batik-gvt.jar:$ATACSGUI/gui/lib/batik-parser.jar:$ATACSGUI/gui/lib/batik-script.jar:$ATACSGUI/gui/lib/batik-svg-dom.jar:$ATACSGUI/gui/lib/batik-svggen.jar:$ATACSGUI/gui/lib/batik-swing.jar:$ATACSGUI/gui/lib/batik-transcoder.jar:$ATACSGUI/gui/lib/batik-util.jar:$ATACSGUI/gui/lib/batik-xml.jar:$ATACSGUI/gui/lib/js.jar:$ATACSGUI/gui/lib/pdf-transcoder.jar:$ATACSGUI/gui/lib/xalan-2.6.0.jar:$ATACSGUI/gui/lib/xerces_2_5_0.jar:$ATACSGUI/gui/lib/xml-apis.jar:$ATACSGUI/gui/lib/xml-apis-ext.jar:$ATACSGUI/gui/lib/epsgraphics.jar:$ATACSGUI/gui/lib/libsbmlj.jar:$ATACSGUI/gui/lib/org-jdesktop-layout.jar:$ATACSGUI/gui/lib/swing-layout-1.0.3.jar:$ATACSGUI/gui/lib/activation.jar:$ATACSGUI/gui/lib/mail.jar:$ATACSGUI/gui/lib/biomodelswslib-standalone-1.11.jar:$ATACSGUI/gui/lib/grappa1_2.jar:$ATACSGUI/gui/lib/jgraphx.jar:$ATACSGUI/gui/lib/gson-1.6.jar -Dapple.laf.useScreenMenuBar=true -Xdock:name="ATACS" -Xdock:icon=$ATACSGUI/gui/icons/ATACS.png main.Gui -atacs
+export DYLD_LIBRARY_PATH=$BIOSIM/lib:$DYLD_LIBRARY_PATH
+CLASSPATH=$ATACSGUI/gui/dist/classes
+
+for jarFile in $ATACSGUI/gui/lib/*.jar
+do
+    CLASSPATH=$CLASSPATH:$jarFile
+done
+
+exec java -Xmx512M -classpath $CLASSPATH -Dapple.laf.useScreenMenuBar=true -Xdock:name="ATACSGUI" -Xdock:icon=$ATACSGUI/gui/icons/ATACS.png main.Gui -atacs
