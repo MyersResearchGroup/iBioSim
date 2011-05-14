@@ -1,3 +1,9 @@
+COPYING libsbml include files:
+
+find sbml -name \*.h | rsync -a --files-from=- .  ~/libsbml-5-include/
+
+
+
 Note: You should install graphviz in order to view reaction networks.
 
 Set the environment variable BIOSIM to the directory where you have installed
