@@ -372,7 +372,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		inputHolderLeft.add(fileStemLabel);
 		inputHolderRight.add(fileStem);
 		if (modelFile.contains(".lpn") || modelFile.contains(".gcm")) {
-			JLabel prop = new JLabel("Properties:");
+			JLabel prop = new JLabel("Property:");
 			String[] props = new String[] { "none" };
 			if (modelFile.contains(".lpn")) {
 				LhpnFile lpn = new LhpnFile();
