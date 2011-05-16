@@ -1,0 +1,28 @@
+-classpath
+'C:/svn/commons-io-2.0.1-rc1/target/classes'
+-encoding
+'iso-8859-1'
+-protected
+-quiet
+-source
+'1.5'
+-sourcepath
+'C:/svn/commons-io-2.0.1-rc1/src/main/java'
+-author
+-bottom
+'Copyright &#169; 2002-2010 <a href="http://www.apache.org/">The Apache Software Foundation</a>. All Rights Reserved.'
+-charset
+'iso-8859-1'
+-d
+'C:/svn/commons-io-2.0.1-rc1/target/site/apidocs'
+-docencoding
+'iso-8859-1'
+-doctitle
+'Commons IO 2.0.1 API'
+-link
+'http://java.sun.com/javase/6/docs/api'
+-linksource
+-use
+-version
+-windowtitle
+'Commons IO 2.0.1 API'

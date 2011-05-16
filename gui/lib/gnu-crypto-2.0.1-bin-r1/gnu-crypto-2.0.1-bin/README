@@ -1,0 +1,17 @@
+This is a binary release of GNU Crypto 2.0.1.
+
+Contained in this archive are three jar files, `javax-crypto.jar',
+`javax-security.jar', and `gnu-crypto.jar'. These contain the
+superpackages javax.crypto, javax.security, and gnu.crypto,
+respectively.
+
+To install, simply copy these jar files someplace appropriate, and add
+them to your `CLASSPATH'.
+
+See the file `BUILD' in this directory for a description of how this
+binary distribution was built.
+
+GNU Crypto is free software, and source distributions are available
+from our home page:
+
+   <http://www.gnu.org/software/gnu-crypto/>

@@ -102,6 +102,7 @@ import org.sbml.libsbml.*;
 import reb2sac.Reb2Sac;
 import reb2sac.Run;
 import sbmleditor.SBML_Editor;
+import sbol.SbolBrowser;
 import datamanager.DataManager;
 import java.net.*;
 import uk.ac.ebi.biomodels.*;
@@ -2828,6 +2829,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
+		else if (e.getActionCommand().equals("browseSbol")) {
+			SbolBrowser browser = new SbolBrowser(tree.getFile());
+		}
 		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("dotEditor")) {
 			try {
@@ -2859,7 +2863,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
-
 		// if the edit popup menu is selected on an sbml file
 		else if (e.getActionCommand().equals("sbmlEditor")) {
 			try {
@@ -8378,6 +8381,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				delete.addActionListener(this);
 				delete.addMouseListener(this);
 				delete.setActionCommand("delete");
+				JMenuItem browse = new JMenuItem("Browse");
+				browse.addActionListener(this);
+				browse.addMouseListener(this);
+				browse.setActionCommand("browseSbol");
+				popup.add(browse);
 				popup.add(delete);
 			}
 			else if (tree.getFile().length() > 3
