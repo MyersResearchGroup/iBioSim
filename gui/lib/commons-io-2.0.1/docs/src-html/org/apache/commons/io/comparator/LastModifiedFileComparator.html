@@ -1,0 +1,143 @@
+<HTML>
+<BODY BGCOLOR="white">
+<PRE>
+<FONT color="green">001</FONT>    /*<a name="line.1"></a>
+<FONT color="green">002</FONT>     * Licensed to the Apache Software Foundation (ASF) under one or more<a name="line.2"></a>
+<FONT color="green">003</FONT>     * contributor license agreements.  See the NOTICE file distributed with<a name="line.3"></a>
+<FONT color="green">004</FONT>     * this work for additional information regarding copyright ownership.<a name="line.4"></a>
+<FONT color="green">005</FONT>     * The ASF licenses this file to You under the Apache License, Version 2.0<a name="line.5"></a>
+<FONT color="green">006</FONT>     * (the "License"); you may not use this file except in compliance with<a name="line.6"></a>
+<FONT color="green">007</FONT>     * the License.  You may obtain a copy of the License at<a name="line.7"></a>
+<FONT color="green">008</FONT>     * <a name="line.8"></a>
+<FONT color="green">009</FONT>     *      http://www.apache.org/licenses/LICENSE-2.0<a name="line.9"></a>
+<FONT color="green">010</FONT>     * <a name="line.10"></a>
+<FONT color="green">011</FONT>     * Unless required by applicable law or agreed to in writing, software<a name="line.11"></a>
+<FONT color="green">012</FONT>     * distributed under the License is distributed on an "AS IS" BASIS,<a name="line.12"></a>
+<FONT color="green">013</FONT>     * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.<a name="line.13"></a>
+<FONT color="green">014</FONT>     * See the License for the specific language governing permissions and<a name="line.14"></a>
+<FONT color="green">015</FONT>     * limitations under the License.<a name="line.15"></a>
+<FONT color="green">016</FONT>     */<a name="line.16"></a>
+<FONT color="green">017</FONT>    package org.apache.commons.io.comparator;<a name="line.17"></a>
+<FONT color="green">018</FONT>    <a name="line.18"></a>
+<FONT color="green">019</FONT>    import java.io.File;<a name="line.19"></a>
+<FONT color="green">020</FONT>    import java.io.Serializable;<a name="line.20"></a>
+<FONT color="green">021</FONT>    import java.util.Comparator;<a name="line.21"></a>
+<FONT color="green">022</FONT>    <a name="line.22"></a>
+<FONT color="green">023</FONT>    /**<a name="line.23"></a>
+<FONT color="green">024</FONT>     * Compare the &lt;b&gt;last modified date/time&lt;/b&gt; of two files for order <a name="line.24"></a>
+<FONT color="green">025</FONT>     * (see {@link File#lastModified()}).<a name="line.25"></a>
+<FONT color="green">026</FONT>     * &lt;p&gt;<a name="line.26"></a>
+<FONT color="green">027</FONT>     * This comparator can be used to sort lists or arrays of files<a name="line.27"></a>
+<FONT color="green">028</FONT>     * by their last modified date/time.<a name="line.28"></a>
+<FONT color="green">029</FONT>     * &lt;p&gt;<a name="line.29"></a>
+<FONT color="green">030</FONT>     * Example of sorting a list of files using the<a name="line.30"></a>
+<FONT color="green">031</FONT>     * {@link #LASTMODIFIED_COMPARATOR} singleton instance:<a name="line.31"></a>
+<FONT color="green">032</FONT>     * &lt;pre&gt;<a name="line.32"></a>
+<FONT color="green">033</FONT>     *       List&amp;lt;File&amp;gt; list = ...<a name="line.33"></a>
+<FONT color="green">034</FONT>     *       LastModifiedFileComparator.LASTMODIFIED_COMPARATOR.sort(list);<a name="line.34"></a>
+<FONT color="green">035</FONT>     * &lt;/pre&gt;<a name="line.35"></a>
+<FONT color="green">036</FONT>     * &lt;p&gt;<a name="line.36"></a>
+<FONT color="green">037</FONT>     * Example of doing a &lt;i&gt;reverse&lt;/i&gt; sort of an array of files using the<a name="line.37"></a>
+<FONT color="green">038</FONT>     * {@link #LASTMODIFIED_REVERSE} singleton instance:<a name="line.38"></a>
+<FONT color="green">039</FONT>     * &lt;pre&gt;<a name="line.39"></a>
+<FONT color="green">040</FONT>     *       File[] array = ...<a name="line.40"></a>
+<FONT color="green">041</FONT>     *       LastModifiedFileComparator.LASTMODIFIED_REVERSE.sort(array);<a name="line.41"></a>
+<FONT color="green">042</FONT>     * &lt;/pre&gt;<a name="line.42"></a>
+<FONT color="green">043</FONT>     * &lt;p&gt;<a name="line.43"></a>
+<FONT color="green">044</FONT>     *<a name="line.44"></a>
+<FONT color="green">045</FONT>     * @version $Revision$ $Date$<a name="line.45"></a>
+<FONT color="green">046</FONT>     * @since Commons IO 1.4<a name="line.46"></a>
+<FONT color="green">047</FONT>     */<a name="line.47"></a>
+<FONT color="green">048</FONT>    public class LastModifiedFileComparator extends AbstractFileComparator implements Serializable {<a name="line.48"></a>
+<FONT color="green">049</FONT>    <a name="line.49"></a>
+<FONT color="green">050</FONT>        /** Last modified comparator instance */<a name="line.50"></a>
+<FONT color="green">051</FONT>        public static final Comparator&lt;File&gt; LASTMODIFIED_COMPARATOR = new LastModifiedFileComparator();<a name="line.51"></a>
+<FONT color="green">052</FONT>    <a name="line.52"></a>
+<FONT color="green">053</FONT>        /** Reverse last modified comparator instance */<a name="line.53"></a>
+<FONT color="green">054</FONT>        public static final Comparator&lt;File&gt; LASTMODIFIED_REVERSE = new ReverseComparator(LASTMODIFIED_COMPARATOR);<a name="line.54"></a>
+<FONT color="green">055</FONT>    <a name="line.55"></a>
+<FONT color="green">056</FONT>        /**<a name="line.56"></a>
+<FONT color="green">057</FONT>         * Compare the last the last modified date/time of two files.<a name="line.57"></a>
+<FONT color="green">058</FONT>         * <a name="line.58"></a>
+<FONT color="green">059</FONT>         * @param file1 The first file to compare<a name="line.59"></a>
+<FONT color="green">060</FONT>         * @param file2 The second file to compare<a name="line.60"></a>
+<FONT color="green">061</FONT>         * @return a negative value if the first file's lastmodified date/time<a name="line.61"></a>
+<FONT color="green">062</FONT>         * is less than the second, zero if the lastmodified date/time are the<a name="line.62"></a>
+<FONT color="green">063</FONT>         * same and a positive value if the first files lastmodified date/time<a name="line.63"></a>
+<FONT color="green">064</FONT>         * is greater than the second file.<a name="line.64"></a>
+<FONT color="green">065</FONT>         * <a name="line.65"></a>
+<FONT color="green">066</FONT>         */<a name="line.66"></a>
+<FONT color="green">067</FONT>        public int compare(File file1, File file2) {<a name="line.67"></a>
+<FONT color="green">068</FONT>            long result = file1.lastModified() - file2.lastModified();<a name="line.68"></a>
+<FONT color="green">069</FONT>            if (result &lt; 0) {<a name="line.69"></a>
+<FONT color="green">070</FONT>                return -1;<a name="line.70"></a>
+<FONT color="green">071</FONT>            } else if (result &gt; 0) {<a name="line.71"></a>
+<FONT color="green">072</FONT>                return 1;<a name="line.72"></a>
+<FONT color="green">073</FONT>            } else {<a name="line.73"></a>
+<FONT color="green">074</FONT>                return 0;<a name="line.74"></a>
+<FONT color="green">075</FONT>            }<a name="line.75"></a>
+<FONT color="green">076</FONT>        }<a name="line.76"></a>
+<FONT color="green">077</FONT>    }<a name="line.77"></a>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</PRE>
+</BODY>
+</HTML>

@@ -1,0 +1,41 @@
+Authors of GNU Crypto.
+
+Barreto, Paulo S. L. M. <paulo.barreto@terra.com.br>
+   + designing and reviewing the implementations of Anubis, Khazad and
+     Whirlpool.
+   + co-authoring the implementation of Rijndael and Square.
+
+Burdis, Keith <keith@rucus.ru.ac.za>
+   + co-authoring the SASL mechanism implementations and the
+     javax.security.sasl and javax.security.auth.callback extensions
+     classes.
+
+Kmett, Edward <ekmett@cxss.com>
+   + implementations of SHA-2 (256-, 384- and 512-bit).
+
+Louchart-Fletcher, Olivier <olivier@zipworld.com.au>
+   + enabling the build process with the GNU tools.
+
+Marshall, Casey <mstatic@metastatic.org>
+   + implementation of the Serpent symmetric-key block cipher.
+   + implementation of the MD4 hash.
+   + valuable contributions to the testing framework and classes.
+   + implementation of the Blowfish cipher.
+   + implementation of the JCE Adapters.
+   + implementation of Tiger.
+   + the bulk of the manual.
+
+Naffah, Raif S. <raif@fl.net.au>
+   + starting the project.
+   + designing the basic API.
+   + implementing the original library and tools.
+   + design and implementation of the Cascade and Assembly classes.
+   + co-authoring the SASL mechanism implementations and the
+     javax.security.sasl and javax.security.auth.callback extensions
+     classes.
+
+Wielaard, Mark <mark@klomp.org>
+   + implementation of the MD2 hash.
+
+Wu, Thomas J. <tom@arcot.com>
+   + implementation of the SRP password file management primitives.

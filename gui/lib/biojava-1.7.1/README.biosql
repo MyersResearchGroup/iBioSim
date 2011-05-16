@@ -1,0 +1,68 @@
+Biojava & BioSQL Readme
+
+We STRONGLY recommend that you use biojavax and hibernate to interact with biosql
+databases from version 1.5 on. Please refer to 
+http://biojava.org/wiki/BioJava:BioJavaXDocs#BioSQL_and_Hibernate. for details.
+
+Legacy information for biojava 1.4 is provided below. Note that we no longer actively
+support the old biojava-biosql bindings.
+
+
+##LEGACY INFORMATION##
+
+External dependencies
+
+BioJava uses the DBCP, Pool & Collections components of the Jakarta Commons project for its
+database connection pooling components.  The current versions included in the CVS are DBCP 1.1
+, Pool 1.1 and Collections 2.1.  For more information, see:
+
+  http://jakarta.apache.org/
+
+Minimal Requirements to use
+
+To use the BioSQL module within Biojava, the following jar files are required within your
+CLASSPATH:  (the jars are either in the CVS directory or are generated upon building)
+
+commons-pool-1.1.jar
+commons-dbcp-1.1.jar
+commons-collections-2.1.jar
+grammars.jar
+
+BioSQL Schema Modifications needed for Biojava
+
+Add the following table to your database:
+
+CREATE TABLE `term_relationship_term` (
+  `term_relationship_id` int(11) NOT NULL default '0',
+  `term_id` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`term_relationship_id`,`term_id`),
+  UNIQUE KEY `term_relationship_id` (`term_relationship_id`),
+  UNIQUE KEY `term_id` (`term_id`)
+) TYPE=InnoDB;
+
+If upgrading from Biojava 1.3, ontology handling has changed, thus you must remove the core
+ontology row from the ontology table.  This will also remove all references to this code
+including term & term_relationship tables.  (Under normal usage, the core ontology isn't used
+when populating the DB with data) But make sure to check you don't have any references 
+to these ontology terms elsewhere in your DB.
+
+After removing the core_ontology, launch one of your applications that uses the code and 
+it will automatically regenerate the core_ontology.
+
+MYSQL Note:
+The name field in the term table must have the attribute BINARY set.  This allows for case
+sensitive matching which is required within the ontology code.
+
+POSTGRESQL Note:
+For setup information specific to POSTGRESQL have a look at
+http://www.biojava.org/tutorials/biosql.html
+
+ORACLE Note:
+For setup information specific to ORACLE have a look at 
+http://www.biojava.org/docs/bj_in_anger/bj_and_bsql_oracle_howto.htm
+	
+Mail the BioJava mailing list (biojava-l@biojava.org) for more details.
+
+
+     This product includes software developed by the
+     Apache Software Foundation (http://www.apache.org/).

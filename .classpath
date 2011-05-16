@@ -27,7 +27,6 @@
 	<classpathentry kind="lib" path="gui/lib/libsbmlj.jar"/>
 	<classpathentry kind="lib" path="gui/lib/org-jdesktop-layout.jar"/>
 	<classpathentry kind="lib" path="gui/lib/pdf-transcoder.jar"/>
-	<classpathentry kind="lib" path="gui/lib/sbmlj.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xalan-2.6.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xerces_2_5_0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xml-apis-ext.jar"/>
@@ -39,6 +38,54 @@
 	<classpathentry kind="lib" path="gui/lib/jcommon-1.0.16.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jfreechart-1.0.13.jar"/>
 	<classpathentry kind="lib" path="gui/lib/google-gson-1.6/gson-1.6.jar"/>
+	<classpathentry kind="lib" path="gui/lib/libSBOLj.jar"/>
+	<classpathentry kind="lib" path="gui/lib/biojava-1.7.1/biojava-1.7.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/jpa/ejb3-persistence.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/clark-parsia/cp-common-openrdf-0.2.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/clark-parsia/cp-common-openrdf-0.2.3.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/sesame/openrdf-sesame-2.3.0-onejar.jar"/>
+	<classpathentry kind="lib" path="gui/lib/biojava-1.7.1/apps-1.7.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/biojava-1.7.1/bytecode.jar"/>
+	<classpathentry kind="lib" path="gui/lib/biojava-1.7.1/commons-cli.jar"/>
+	<classpathentry kind="lib" path="gui/lib/biojava-1.7.1/commons-collections-2.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/biojava-1.7.1/commons-dbcp-1.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/biojava-1.7.1/commons-pool-1.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/commons-io-2.0.1/commons-io-2.0.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="gui/lib/commons-io-2.0.1/commons-io-2.0.1-sources.jar"/>
+	<classpathentry kind="lib" path="gui/lib/commons-io-2.0.1/commons-io-2.0.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/clark-parsia/cp-common-fourstore-0.3.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/clark-parsia/cp-common-utils-1.0.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/guice/aopalliance.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/guice/guice-2.0.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/guice/guice-assistedinject-2.0.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/guice/guice-multibindings-2.0.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/javassist/javassist.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/jena/arq-2.8.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/jena/icu4j-3.4.4.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/jena/iri-0.7.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/jena/jena-2.6.2-tests.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/jena/jena-2.6.2.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/jena/junit-4.5.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/jena/log4j-1.2.13.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/jena/lucene-core-2.3.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/jena/slf4j-api-1.5.6.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/jena/slf4j-log4j12-1.5.6.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/jena/stax-api-1.0.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/jena/wstx-asl-3.2.9.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/jena/xercesImpl-2.7.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/sesame/commons-codec-1.3.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/sesame/commons-httpclient-3.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/sesame/jcl-over-slf4j-1.5.8.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/sesame/slf4j-api-1.5.8.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/sesame/slf4j-jdk14-1.5.8.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/empire-core.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/empire-fourstore.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/empire-jena.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/empire-sesame.jar"/>
+	<classpathentry kind="lib" path="gui/lib/empire/lib/empire-test.jar"/>
+	<classpathentry kind="lib" path="gui/lib/gnu-crypto-2.0.1-bin-r1/gnu-crypto-2.0.1-bin/lib/gnu-crypto.jar"/>
+	<classpathentry kind="lib" path="gui/lib/google-gson-1.6/gson-1.6-javadoc.jar"/>
+	<classpathentry kind="lib" path="gui/lib/google-gson-1.6/gson-1.6-sources.jar"/>
 	<classpathentry kind="lib" path="gui/lib/biomodels-wslib_standalone-1.12.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jgraphx1.6.1.2.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
