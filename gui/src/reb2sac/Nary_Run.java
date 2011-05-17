@@ -593,7 +593,7 @@ public class Nary_Run implements ActionListener, Runnable {
 				printer_id, printer_track_quantity, outDir, nary, 2, intSpecies, log, usingSSA,
 				ssaFile, biomodelsim, simTab, root, progress, "", null, direct, timeLimit,
 				timeLimit * run, modelFile, abstPane, abstraction, null, absError, timeStep,
-				printInterval, run, rndSeed);
+				printInterval, run, rndSeed, true);
 		running.setCursor(null);
 		running.dispose();
 		naryCancel.removeActionListener(runProgram);
