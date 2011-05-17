@@ -559,7 +559,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						createSBML(stem, sweepTwo);
 						if (run) {
 							Reb2SacThread thread = new Reb2SacThread(reb2sac);
-							thread.start(stem + sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
+							thread.start(stem + sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""), false);
 							threads.add(thread);
 							dirs.add(sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
 							reb2sac.emptyFrames();
@@ -576,7 +576,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					createSBML(stem, sweep);
 					if (run) {
 						Reb2SacThread thread = new Reb2SacThread(reb2sac);
-						thread.start(stem + sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
+						thread.start(stem + sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""), false);
 						threads.add(thread);
 						dirs.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
 						reb2sac.emptyFrames();
@@ -598,10 +598,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			createSBML(stem, ".");
 			if (run) {
 				if (!stem.equals("")) {
-					new Reb2SacThread(reb2sac).start(stem);
+					new Reb2SacThread(reb2sac).start(stem, true);
 				}
 				else {
-					new Reb2SacThread(reb2sac).start(".");
+					new Reb2SacThread(reb2sac).start(".", true);
 				}
 				reb2sac.emptyFrames();
 			}

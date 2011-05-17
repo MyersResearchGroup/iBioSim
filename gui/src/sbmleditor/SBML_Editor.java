@@ -10886,7 +10886,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 										.mkdir();
 								createSBML(stem, sweepTwo);
 								Reb2SacThread thread = new Reb2SacThread(reb2sac);
-								thread.start(stem + sweepTwo.replace("/", "-"));
+								thread.start(stem + sweepTwo.replace("/", "-"), false);
 								threads.add(thread);
 								dirs.add(sweepTwo.replace("/", "-"));
 								reb2sac.emptyFrames();
@@ -10896,7 +10896,7 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 							new File(simDir + separator + stem + sweep.replace("/", "-")).mkdir();
 							createSBML(stem, sweep);
 							Reb2SacThread thread = new Reb2SacThread(reb2sac);
-							thread.start(stem + sweep.replace("/", "-"));
+							thread.start(stem + sweep.replace("/", "-"), false);
 							threads.add(thread);
 							dirs.add(sweep.replace("/", "-"));
 							reb2sac.emptyFrames();
@@ -10911,10 +10911,10 @@ public class SBML_Editor extends JPanel implements ActionListener, MouseListener
 					}
 					createSBML(stem, ".");
 					if (!stem.equals("")) {
-						new Reb2SacThread(reb2sac).start(stem);
+						new Reb2SacThread(reb2sac).start(stem, true);
 					}
 					else {
-						new Reb2SacThread(reb2sac).start(".");
+						new Reb2SacThread(reb2sac).start(".", true);
 					}
 					reb2sac.emptyFrames();
 				}

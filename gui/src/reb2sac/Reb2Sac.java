@@ -1718,10 +1718,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				t1.outputSBML();
 				if (!stem.equals("")) {
 					new File(root + separator + simName + separator + stem).mkdir();
-					new Reb2SacThread(this).start(stem);
+					new Reb2SacThread(this).start(stem, true);
 				}
 				else {
-					new Reb2SacThread(this).start(".");
+					new Reb2SacThread(this).start(".", true);
 				}
 				emptyFrames();
 			}
@@ -2549,8 +2549,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	/**
 	 * If the run button is pressed, this method starts a new thread for the
 	 * simulation.
+	 * @param refresh 
 	 */
-	public void run(String direct) {
+	public void run(String direct, boolean refresh) {
 		double timeLimit = 100.0;
 		double printInterval = 1.0;
 		double minTimeStep = 0.0;
@@ -3187,7 +3188,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 							+ "user-defined.dat", biomodelsim, simTab, root, progress, simName
 							+ " " + direct, gcmEditor, direct, timeLimit, runTime, modelFile,
 					lhpnAbstraction, abstraction, lpnProperty, absError, timeStep, printInterval,
-					run, rndSeed);
+					run, rndSeed, refresh);
 		}
 		else {
 			if (gcmEditor != null) {
@@ -3218,7 +3219,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					intSpecies, log, usingSSA, root + separator + outDir + separator
 							+ "user-defined.dat", biomodelsim, simTab, root, progress, simName,
 					gcmEditor, null, timeLimit, runTime, modelFile, lhpnAbstraction, abstraction,
-					lpnProperty, absError, timeStep, printInterval, run, rndSeed);
+					lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh);
 		}
 		if (nary.isSelected() && gcmEditor == null && !sim.contains("markov-chain-analysis")
 				&& !lhpn.isSelected() && exit == 0) {

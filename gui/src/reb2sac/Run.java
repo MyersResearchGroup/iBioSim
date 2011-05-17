@@ -79,7 +79,8 @@ public class Run implements ActionListener {
 						|| abstractionOption.equals("operator-site-reduction-abstraction")) {
 					abs.setProperty("gcm.abstraction.method." + gcmIndex, abstractionOption);
 					gcmIndex++;
-				} else
+				}
+				else
 					abs.setProperty("reb2sac.abstraction.method.1." + (i + 1), abstractionOption);
 			}
 			for (int i = 0; i < loopAbs.getModel().getSize(); i++) {
@@ -172,32 +173,41 @@ public class Run implements ActionListener {
 			abs.setProperty("reb2sac.abstraction.method", "nary");
 		}
 		if (abstPane != null) {
-			for (Integer i=0; i<abstPane.preAbsModel.size(); i++) {
-				abs.setProperty("abstraction.transform." + abstPane.preAbsModel.getElementAt(i).toString(), "preloop" + i.toString());
+			for (Integer i = 0; i < abstPane.preAbsModel.size(); i++) {
+				abs.setProperty("abstraction.transform."
+						+ abstPane.preAbsModel.getElementAt(i).toString(), "preloop" + i.toString());
 			}
-			for (Integer i=0; i<abstPane.loopAbsModel.size(); i++) {
+			for (Integer i = 0; i < abstPane.loopAbsModel.size(); i++) {
 				if (abstPane.preAbsModel.contains(abstPane.loopAbsModel.getElementAt(i))) {
-					String value = abs.getProperty("abstraction.transform." + abstPane.loopAbsModel.getElementAt(i).toString());
+					String value = abs.getProperty("abstraction.transform."
+							+ abstPane.loopAbsModel.getElementAt(i).toString());
 					value = value + "mainloop" + i.toString();
-					abs.setProperty("abstraction.transform." + abstPane.loopAbsModel.getElementAt(i).toString(), value);
+					abs.setProperty("abstraction.transform."
+							+ abstPane.loopAbsModel.getElementAt(i).toString(), value);
 				}
 				else {
-					abs.setProperty("abstraction.transform." + abstPane.loopAbsModel.getElementAt(i).toString(), "mainloop" + i.toString());
+					abs.setProperty("abstraction.transform."
+							+ abstPane.loopAbsModel.getElementAt(i).toString(),
+							"mainloop" + i.toString());
 				}
 			}
-			for (Integer i=0; i<abstPane.postAbsModel.size(); i++) {
-				if (abstPane.preAbsModel.contains(abstPane.postAbsModel.getElementAt(i)) || abstPane.preAbsModel.contains(abstPane.postAbsModel.get(i))) {
-					String value = abs.getProperty("abstraction.transform." + abstPane.postAbsModel.getElementAt(i).toString());
+			for (Integer i = 0; i < abstPane.postAbsModel.size(); i++) {
+				if (abstPane.preAbsModel.contains(abstPane.postAbsModel.getElementAt(i))
+						|| abstPane.preAbsModel.contains(abstPane.postAbsModel.get(i))) {
+					String value = abs.getProperty("abstraction.transform."
+							+ abstPane.postAbsModel.getElementAt(i).toString());
 					value = value + "postloop" + i.toString();
-					abs.setProperty("abstraction.transform." + abstPane.postAbsModel.getElementAt(i).toString(), value);
+					abs.setProperty("abstraction.transform."
+							+ abstPane.postAbsModel.getElementAt(i).toString(), value);
 				}
 				else {
-					abs.setProperty("abstraction.transform." + abstPane.postAbsModel.getElementAt(i).toString(), "postloop" + i.toString());
+					abs.setProperty("abstraction.transform."
+							+ abstPane.postAbsModel.getElementAt(i).toString(),
+							"postloop" + i.toString());
 				}
 			}
 			for (String s : abstPane.transforms) {
-				if (!abstPane.preAbsModel.contains(s)
-						&& !abstPane.loopAbsModel.contains(s)
+				if (!abstPane.preAbsModel.contains(s) && !abstPane.loopAbsModel.contains(s)
 						&& !abstPane.postAbsModel.contains(s)) {
 					abs.remove(s);
 				}
@@ -257,9 +267,7 @@ public class Run implements ActionListener {
 				abs.setProperty("monte.carlo.simulation.print.interval", "" + printInterval);
 			}
 			else if (useInterval.equals("Minimum Print Interval")) {
-				abs
-						.setProperty("monte.carlo.simulation.minimum.print.interval", ""
-								+ printInterval);
+				abs.setProperty("monte.carlo.simulation.minimum.print.interval", "" + printInterval);
 			}
 			else {
 				abs.setProperty("monte.carlo.simulation.number.steps", "" + ((int) printInterval));
@@ -287,9 +295,7 @@ public class Run implements ActionListener {
 		}
 		for (int i = 0; i < termCond.length; i++) {
 			if (termCond[i] != "") {
-				abs
-						.setProperty("simulation.run.termination.condition." + (i + 1), ""
-								+ termCond[i]);
+				abs.setProperty("simulation.run.termination.condition." + (i + 1), "" + termCond[i]);
 			}
 		}
 		try {
@@ -303,9 +309,8 @@ public class Run implements ActionListener {
 					cut = i;
 				}
 			}
-			FileOutputStream store = new FileOutputStream(new File((filename.substring(0, filename
-					.length()
-					- getFilename[getFilename.length - 1].length()))
+			FileOutputStream store = new FileOutputStream(new File((filename.substring(0,
+					filename.length() - getFilename[getFilename.length - 1].length()))
 					+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties"));
 			abs.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
 			store.close();
@@ -341,13 +346,9 @@ public class Run implements ActionListener {
 					"File Not Found", JOptionPane.ERROR_MESSAGE);
 		}
 		nary.setProperty("reb2sac.abstraction.method.0.1", "enzyme-kinetic-qssa-1");
-		nary
-				.setProperty("reb2sac.abstraction.method.0.2",
-						"reversible-to-irreversible-transformer");
+		nary.setProperty("reb2sac.abstraction.method.0.2", "reversible-to-irreversible-transformer");
 		nary.setProperty("reb2sac.abstraction.method.0.3", "multiple-products-reaction-eliminator");
-		nary
-				.setProperty("reb2sac.abstraction.method.0.4",
-						"multiple-reactants-reaction-eliminator");
+		nary.setProperty("reb2sac.abstraction.method.0.4", "multiple-reactants-reaction-eliminator");
 		nary.setProperty("reb2sac.abstraction.method.0.5",
 				"single-reactant-product-reaction-eliminator");
 		nary.setProperty("reb2sac.abstraction.method.0.6", "dimer-to-monomer-substitutor");
@@ -379,9 +380,7 @@ public class Run implements ActionListener {
 			}
 			String[] consLevels = Utility.getList(conLevel.get(i), consLevel.get(i));
 			for (int j = 0; j < counts.get(i); j++) {
-				nary
-						.remove("reb2sac.concentration.level." + getSpeciesProps.get(i) + "."
-								+ (j + 1));
+				nary.remove("reb2sac.concentration.level." + getSpeciesProps.get(i) + "." + (j + 1));
 			}
 			for (int j = 0; j < consLevels.length; j++) {
 				nary.setProperty("reb2sac.concentration.level." + getSpeciesProps.get(i) + "."
@@ -436,11 +435,10 @@ public class Run implements ActionListener {
 		}
 		try {
 			FileOutputStream store = new FileOutputStream(new File(filename.replace(".sbml", "")
-					.replace(".xml", "")
-					+ ".properties"));
-			nary.store(store, getFilename[getFilename.length - 1].replace(".sbml", "").replace(
-					".xml", "")
-					+ " Properties");
+					.replace(".xml", "") + ".properties"));
+			nary.store(store,
+					getFilename[getFilename.length - 1].replace(".sbml", "").replace(".xml", "")
+							+ " Properties");
 			store.close();
 		}
 		catch (Exception except) {
@@ -455,6 +453,7 @@ public class Run implements ActionListener {
 	 * this method creates a Graph object.
 	 * 
 	 * @param runTime
+	 * @param refresh
 	 */
 	public int execute(String filename, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml,
 			JRadioButton lhpn, Component component, JRadioButton ode, JRadioButton monteCarlo,
@@ -464,12 +463,13 @@ public class Run implements ActionListener {
 			JProgressBar progress, String simName, GCM2SBMLEditor gcmEditor, String direct,
 			double timeLimit, double runTime, String modelFile, AbstPane abstPane,
 			JRadioButton abstraction, String lpnProperty, double absError, double timeStep,
-			double printInterval, int runs, long rndSeed) {
+			double printInterval, int runs, long rndSeed, boolean refresh) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
-			outDir = outDir.substring(0, outDir.length() - 1
-					- outDir.split(separator)[outDir.split(separator).length - 1].length());
+			outDir = outDir.substring(0,
+					outDir.length() - 1
+							- outDir.split(separator)[outDir.split(separator).length - 1].length());
 		}
 		try {
 			long time1;
@@ -496,8 +496,8 @@ public class Run implements ActionListener {
 			}
 			if (nary.isSelected() && gcmEditor != null
 					&& (monteCarlo.isSelected() || xhtml.isSelected())) {
-				String lpnName = modelFile.replace(".sbml", "").replace(".gcm", "").replace(".xml",
-						"")
+				String lpnName = modelFile.replace(".sbml", "").replace(".gcm", "")
+						.replace(".xml", "")
 						+ ".lpn";
 				ArrayList<String> specs = new ArrayList<String>();
 				ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
@@ -593,8 +593,8 @@ public class Run implements ActionListener {
 							if (!influence.equals("")) {
 								Properties influenceProps = gcm.getInfluences().get(influence);
 								influenceProps.put(
-										di.split("=")[0].split("-")[1].replace("\"", ""), di
-												.split("=")[1]);
+										di.split("=")[0].split("-")[1].replace("\"", ""),
+										di.split("=")[1]);
 							}
 						}
 						else {
@@ -741,8 +741,8 @@ public class Run implements ActionListener {
 										&& !prop.equals(GlobalConstants.PROMOTER)
 										&& !prop.equals(GlobalConstants.BIO)
 										&& !prop.equals(GlobalConstants.TYPE)) {
-									gcm.getInfluences().get(key).put(prop,
-											elements.get(key).get(prop));
+									gcm.getInfluences().get(key)
+											.put(prop, elements.get(key).get(prop));
 								}
 							}
 						}
@@ -751,8 +751,8 @@ public class Run implements ActionListener {
 							for (Object prop : elements.get(key).keySet()) {
 								if (!prop.equals(GlobalConstants.NAME)
 										&& !prop.equals(GlobalConstants.ID)) {
-									gcm.getPromoters().get(key).put(prop,
-											elements.get(key).get(prop));
+									gcm.getPromoters().get(key)
+											.put(prop, elements.get(key).get(prop));
 								}
 							}
 						}
@@ -905,8 +905,8 @@ public class Run implements ActionListener {
 										&& !prop.equals(GlobalConstants.PROMOTER)
 										&& !prop.equals(GlobalConstants.BIO)
 										&& !prop.equals(GlobalConstants.TYPE)) {
-									gcm.getInfluences().get(key).put(prop,
-											elements.get(key).get(prop));
+									gcm.getInfluences().get(key)
+											.put(prop, elements.get(key).get(prop));
 								}
 							}
 						}
@@ -915,8 +915,8 @@ public class Run implements ActionListener {
 							for (Object prop : elements.get(key).keySet()) {
 								if (!prop.equals(GlobalConstants.NAME)
 										&& !prop.equals(GlobalConstants.ID)) {
-									gcm.getPromoters().get(key).put(prop,
-											elements.get(key).get(prop));
+									gcm.getPromoters().get(key)
+											.put(prop, elements.get(key).get(prop));
 								}
 							}
 						}
@@ -1015,8 +1015,8 @@ public class Run implements ActionListener {
 						lhpnFile.load(root + separator + modelFile);
 					}
 					else {
-						new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml",
-								"")
+						new File(filename.replace(".gcm", "").replace(".sbml", "")
+								.replace(".xml", "")
 								+ ".lpn").delete();
 						ArrayList<String> specs = new ArrayList<String>();
 						ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
@@ -1054,8 +1054,8 @@ public class Run implements ActionListener {
 										&& !prop.equals(GlobalConstants.PROMOTER)
 										&& !prop.equals(GlobalConstants.BIO)
 										&& !prop.equals(GlobalConstants.TYPE)) {
-									gcm.getInfluences().get(key).put(prop,
-											elements.get(key).get(prop));
+									gcm.getInfluences().get(key)
+											.put(prop, elements.get(key).get(prop));
 								}
 							}
 						}
@@ -1064,8 +1064,8 @@ public class Run implements ActionListener {
 							for (Object prop : elements.get(key).keySet()) {
 								if (!prop.equals(GlobalConstants.NAME)
 										&& !prop.equals(GlobalConstants.ID)) {
-									gcm.getPromoters().get(key).put(prop,
-											elements.get(key).get(prop));
+									gcm.getPromoters().get(key)
+											.put(prop, elements.get(key).get(prop));
 								}
 							}
 						}
@@ -1097,15 +1097,15 @@ public class Run implements ActionListener {
 											di.split("=")[0].split("-")[0])) {
 										Properties promoterProps = gcm.getPromoters().get(
 												di.split("=")[0].split("-")[0]);
-										promoterProps.put(di.split("=")[0].split("-")[1], di
-												.split("=")[1]);
+										promoterProps.put(di.split("=")[0].split("-")[1],
+												di.split("=")[1]);
 									}
 									if (gcm.getSpecies()
 											.containsKey(di.split("=")[0].split("-")[0])) {
 										Properties speciesProps = gcm.getSpecies().get(
 												di.split("=")[0].split("-")[0]);
-										speciesProps.put(di.split("=")[0].split("-")[1], di
-												.split("=")[1]);
+										speciesProps.put(di.split("=")[0].split("-")[1],
+												di.split("=")[1]);
 									}
 									String influence = "";
 									for (String infl : gcm.getInfluences().keySet()) {
@@ -1123,8 +1123,9 @@ public class Run implements ActionListener {
 									if (!influence.equals("")) {
 										Properties influenceProps = gcm.getInfluences().get(
 												influence);
-										influenceProps.put(di.split("=")[0].split("-")[1].replace(
-												"\"", ""), di.split("=")[1]);
+										influenceProps.put(
+												di.split("=")[0].split("-")[1].replace("\"", ""),
+												di.split("=")[1]);
 									}
 								}
 								else {
@@ -1151,8 +1152,8 @@ public class Run implements ActionListener {
 									.replace(".xml", "")
 									+ ".lpn");
 							log.addText("Saving GCM file as LHPN:\n"
-									+ filename.replace(".gcm", "").replace(".sbml", "").replace(
-											".xml", "") + ".lpn" + "\n");
+									+ filename.replace(".gcm", "").replace(".sbml", "")
+											.replace(".xml", "") + ".lpn" + "\n");
 						}
 						else {
 							return 0;
@@ -1197,8 +1198,8 @@ public class Run implements ActionListener {
 								else {
 									ArrayList<String> conditions = new ArrayList<String>();
 									for (int i = 0; i < gcmEditor.getGCM().getConditions().size(); i++) {
-										if (gcmEditor.getGCM().getConditions().get(i).startsWith(
-												"St")) {
+										if (gcmEditor.getGCM().getConditions().get(i)
+												.startsWith("St")) {
 											conditions.add(Translator
 													.getProbpropExpression(gcmEditor.getGCM()
 															.getConditions().get(i)));
@@ -1215,9 +1216,10 @@ public class Run implements ActionListener {
 										simrepstream.write((simrep).getBytes());
 										simrepstream.close();
 									}
-									sg.outputStateGraph(filename.replace(".gcm", "").replace(
-											".sbml", "").replace(".xml", "")
-											+ "_sg.dot", true);
+									sg.outputStateGraph(
+											filename.replace(".gcm", "").replace(".sbml", "")
+													.replace(".xml", "")
+													+ "_sg.dot", true);
 									biomodelsim.enableTabMenu(biomodelsim.getTab()
 											.getSelectedIndex());
 								}
@@ -1225,8 +1227,7 @@ public class Run implements ActionListener {
 						}
 						else if (sim.equals("transient-markov-chain-analysis")) {
 							if (!sg.getStop()) {
-								log
-										.addText("Performing transient Markov chain analysis with uniformization.\n");
+								log.addText("Performing transient Markov chain analysis with uniformization.\n");
 								PerfromTransientMarkovAnalysisThread performMarkovAnalysis = new PerfromTransientMarkovAnalysisThread(
 										sg, progress);
 								time1 = System.nanoTime();
@@ -1248,16 +1249,20 @@ public class Run implements ActionListener {
 										simrepstream.write((simrep).getBytes());
 										simrepstream.close();
 									}
-									sg.outputStateGraph(filename.replace(".gcm", "").replace(
-											".sbml", "").replace(".xml", "")
-											+ "_sg.dot", true);
+									sg.outputStateGraph(
+											filename.replace(".gcm", "").replace(".sbml", "")
+													.replace(".xml", "")
+													+ "_sg.dot", true);
 									if (sg.outputTSD(directory + separator
 											+ "percent-term-time.tsd")) {
-										for (int i = 0; i < simTab.getComponentCount(); i++) {
-											if (simTab.getComponentAt(i).getName().equals(
-													"TSD Graph")) {
-												if (simTab.getComponentAt(i) instanceof Graph) {
-													((Graph) simTab.getComponentAt(i)).refresh();
+										if (refresh) {
+											for (int i = 0; i < simTab.getComponentCount(); i++) {
+												if (simTab.getComponentAt(i).getName()
+														.equals("TSD Graph")) {
+													if (simTab.getComponentAt(i) instanceof Graph) {
+														((Graph) simTab.getComponentAt(i))
+																.refresh();
+													}
 												}
 											}
 										}
@@ -1324,21 +1329,23 @@ public class Run implements ActionListener {
 						// }
 						// }
 						// }
-						for (int i = 0; i < simTab.getComponentCount(); i++) {
-							if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
-								if (simTab.getComponentAt(i) instanceof Graph) {
-									((Graph) simTab.getComponentAt(i)).refresh();
-								}
-								else {
-									simTab
-											.setComponentAt(i,
-													new Graph(r2s, printer_track_quantity, outDir
-															.split(separator)[outDir
-															.split(separator).length - 1]
-															+ " simulation results", printer_id,
-															outDir, "time", biomodelsim, null, log,
-															null, false, false));
-									simTab.getComponentAt(i).setName("ProbGraph");
+						if (refresh) {
+							for (int i = 0; i < simTab.getComponentCount(); i++) {
+								if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+									if (simTab.getComponentAt(i) instanceof Graph) {
+										((Graph) simTab.getComponentAt(i)).refresh();
+									}
+									else {
+										simTab.setComponentAt(
+												i,
+												new Graph(r2s, printer_track_quantity,
+														outDir.split(separator)[outDir
+																.split(separator).length - 1]
+																+ " simulation results",
+														printer_id, outDir, "time", biomodelsim,
+														null, log, null, false, false));
+										simTab.getComponentAt(i).setName("ProbGraph");
+									}
 								}
 							}
 						}
@@ -1400,8 +1407,8 @@ public class Run implements ActionListener {
 				while ((line = br.readLine()) != null) {
 					try {
 						if (line.contains("Time")) {
-							time = Double.parseDouble(line.substring(line.indexOf('=') + 1, line
-									.length()));
+							time = Double.parseDouble(line.substring(line.indexOf('=') + 1,
+									line.length()));
 							if (oldTime > time) {
 								runNum++;
 							}
@@ -1409,8 +1416,8 @@ public class Run implements ActionListener {
 							time += (runNum * timeLimit);
 							double d = ((time * 100) / runTime);
 							String s = d + "";
-							double decimal = Double.parseDouble(s.substring(s.indexOf('.'), s
-									.length()));
+							double decimal = Double.parseDouble(s.substring(s.indexOf('.'),
+									s.length()));
 							if (decimal >= 0.5) {
 								prog = (int) (Math.ceil(d));
 							}
@@ -1574,9 +1581,7 @@ public class Run implements ActionListener {
 						exec.exec("open " + out + ".xhtml", null, work);
 					}
 					else {
-						log
-								.addText("Executing:\ncmd /c start " + directory + out + ".xhtml"
-										+ "\n");
+						log.addText("Executing:\ncmd /c start " + directory + out + ".xhtml" + "\n");
 						exec.exec("cmd /c start " + out + ".xhtml", null, work);
 					}
 				}
@@ -1725,15 +1730,12 @@ public class Run implements ActionListener {
 															percentData.get(k).size() - 1));
 											for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
 												if (terms.get(k - 1).get(l) < j) {
-													data
-															.get(k)
-															.set(
-																	data.get(k).size() - 1,
+													data.get(k)
+															.set(data.get(k).size() - 1,
 																	data.get(k).get(
 																			data.get(k).size() - 1) + 1);
 													percentData.get(k)
-															.set(
-																	percentData.get(k).size() - 1,
+															.set(percentData.get(k).size() - 1,
 																	((data.get(k).get(data.get(k)
 																			.size() - 1)) * 100)
 																			/ runs);
@@ -1748,7 +1750,9 @@ public class Run implements ActionListener {
 									probData.outputTSD(directory + separator
 											+ "percent-term-time.tsd");
 								}
-								((Graph) simTab.getComponentAt(i)).refresh();
+								if (refresh) {
+									((Graph) simTab.getComponentAt(i)).refresh();
+								}
 							}
 							else {
 								simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity,
@@ -1895,15 +1899,12 @@ public class Run implements ActionListener {
 															percentData.get(k).size() - 1));
 											for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
 												if (terms.get(k - 1).get(l) < j) {
-													data
-															.get(k)
-															.set(
-																	data.get(k).size() - 1,
+													data.get(k)
+															.set(data.get(k).size() - 1,
 																	data.get(k).get(
 																			data.get(k).size() - 1) + 1);
 													percentData.get(k)
-															.set(
-																	percentData.get(k).size() - 1,
+															.set(percentData.get(k).size() - 1,
 																	((data.get(k).get(data.get(k)
 																			.size() - 1)) * 100)
 																			/ runs);
@@ -1921,25 +1922,28 @@ public class Run implements ActionListener {
 								simTab.getComponentAt(i).setName("TSD Graph");
 							}
 						}
-						if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
-							if (simTab.getComponentAt(i) instanceof Graph) {
-								((Graph) simTab.getComponentAt(i)).refresh();
-							}
-							else {
-								if (new File(filename.substring(0,
-										filename.length()
-												- filename.split(separator)[filename
-														.split(separator).length - 1].length())
-										+ "sim-rep.txt").exists()) {
-									simTab
-											.setComponentAt(i,
-													new Graph(r2s, printer_track_quantity, outDir
-															.split(separator)[outDir
-															.split(separator).length - 1]
-															+ " simulation results", printer_id,
-															outDir, "time", biomodelsim, null, log,
-															null, false, false));
-									simTab.getComponentAt(i).setName("ProbGraph");
+						if (refresh) {
+							if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+								if (simTab.getComponentAt(i) instanceof Graph) {
+									((Graph) simTab.getComponentAt(i)).refresh();
+								}
+								else {
+									if (new File(filename.substring(
+											0,
+											filename.length()
+													- filename.split(separator)[filename
+															.split(separator).length - 1].length())
+											+ "sim-rep.txt").exists()) {
+										simTab.setComponentAt(
+												i,
+												new Graph(r2s, printer_track_quantity,
+														outDir.split(separator)[outDir
+																.split(separator).length - 1]
+																+ " simulation results",
+														printer_id, outDir, "time", biomodelsim,
+														null, log, null, false, false));
+										simTab.getComponentAt(i).setName("ProbGraph");
+									}
 								}
 							}
 						}
@@ -1948,24 +1952,30 @@ public class Run implements ActionListener {
 				}
 				else if (sim.equals("atacs")) {
 					log.addText("Executing:\natacs -T0.000001 -oqoflhsgllvA "
-							+ filename
-									.substring(0,
-											filename.length()
-													- filename.split(separator)[filename
-															.split(separator).length - 1].length())
-							+ "out.hse\n");
+							+ filename.substring(
+									0,
+									filename.length()
+											- filename.split(separator)[filename.split(separator).length - 1]
+													.length()) + "out.hse\n");
 					exec.exec("atacs -T0.000001 -oqoflhsgllvA out.hse", null, work);
-					for (int i = 0; i < simTab.getComponentCount(); i++) {
-						if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
-							if (simTab.getComponentAt(i) instanceof Graph) {
-								((Graph) simTab.getComponentAt(i)).refresh();
-							}
-							else {
-								simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity,
-										outDir.split(separator)[outDir.split(separator).length - 1]
-												+ " simulation results", printer_id, outDir,
-										"time", biomodelsim, null, log, null, false, false));
-								simTab.getComponentAt(i).setName("ProbGraph");
+					if (refresh) {
+						for (int i = 0; i < simTab.getComponentCount(); i++) {
+							if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+								if (simTab.getComponentAt(i) instanceof Graph) {
+									((Graph) simTab.getComponentAt(i)).refresh();
+								}
+								else {
+									simTab.setComponentAt(
+											i,
+											new Graph(
+													r2s,
+													printer_track_quantity,
+													outDir.split(separator)[outDir.split(separator).length - 1]
+															+ " simulation results", printer_id,
+													outDir, "time", biomodelsim, null, log, null,
+													false, false));
+									simTab.getComponentAt(i).setName("ProbGraph");
+								}
 							}
 						}
 					}
@@ -2134,22 +2144,17 @@ public class Run implements ActionListener {
 																percentData.get(k).size() - 1));
 												for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
 													if (terms.get(k - 1).get(l) < j) {
-														data
+														data.get(k)
+																.set(data.get(k).size() - 1,
+																		data.get(k)
+																				.get(data.get(k)
+																						.size() - 1) + 1);
+														percentData
 																.get(k)
-																.set(
-																		data.get(k).size() - 1,
-																		data
-																				.get(k)
-																				.get(
-																						data
-																								.get(
-																										k)
-																								.size() - 1) + 1);
-														percentData.get(k).set(
-																percentData.get(k).size() - 1,
-																((data.get(k).get(data.get(k)
-																		.size() - 1)) * 100)
-																		/ runs);
+																.set(percentData.get(k).size() - 1,
+																		((data.get(k).get(data.get(
+																				k).size() - 1)) * 100)
+																				/ runs);
 														terms.get(k - 1).remove(l);
 													}
 												}
@@ -2161,17 +2166,20 @@ public class Run implements ActionListener {
 										probData.outputTSD(directory + separator
 												+ "percent-term-time.tsd");
 									}
-									((Graph) simTab.getComponentAt(i)).refresh();
+									if (refresh) {
+										((Graph) simTab.getComponentAt(i)).refresh();
+									}
 								}
 								else {
-									simTab
-											.setComponentAt(i,
-													new Graph(r2s, printer_track_quantity, outDir
-															.split(separator)[outDir
-															.split(separator).length - 1]
+									simTab.setComponentAt(
+											i,
+											new Graph(
+													r2s,
+													printer_track_quantity,
+													outDir.split(separator)[outDir.split(separator).length - 1]
 															+ " simulation results", printer_id,
-															outDir, "time", biomodelsim, null, log,
-															null, true, false));
+													outDir, "time", biomodelsim, null, log, null,
+													true, false));
 									boolean outputM = true;
 									boolean outputV = true;
 									boolean outputS = true;
@@ -2321,22 +2329,17 @@ public class Run implements ActionListener {
 																percentData.get(k).size() - 1));
 												for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
 													if (terms.get(k - 1).get(l) < j) {
-														data
+														data.get(k)
+																.set(data.get(k).size() - 1,
+																		data.get(k)
+																				.get(data.get(k)
+																						.size() - 1) + 1);
+														percentData
 																.get(k)
-																.set(
-																		data.get(k).size() - 1,
-																		data
-																				.get(k)
-																				.get(
-																						data
-																								.get(
-																										k)
-																								.size() - 1) + 1);
-														percentData.get(k).set(
-																percentData.get(k).size() - 1,
-																((data.get(k).get(data.get(k)
-																		.size() - 1)) * 100)
-																		/ runs);
+																.set(percentData.get(k).size() - 1,
+																		((data.get(k).get(data.get(
+																				k).size() - 1)) * 100)
+																				/ runs);
 														terms.get(k - 1).remove(l);
 													}
 												}
@@ -2351,24 +2354,29 @@ public class Run implements ActionListener {
 									simTab.getComponentAt(i).setName("TSD Graph");
 								}
 							}
-							if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
-								if (simTab.getComponentAt(i) instanceof Graph) {
-									((Graph) simTab.getComponentAt(i)).refresh();
-								}
-								else {
-									if (new File(filename.substring(0,
-											filename.length()
-													- filename.split(separator)[filename
-															.split(separator).length - 1].length())
-											+ "sim-rep.txt").exists()) {
-										simTab.setComponentAt(i,
-												new Graph(r2s, printer_track_quantity,
-														outDir.split(separator)[outDir
+							if (refresh) {
+								if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+									if (simTab.getComponentAt(i) instanceof Graph) {
+										((Graph) simTab.getComponentAt(i)).refresh();
+									}
+									else {
+										if (new File(filename.substring(
+												0,
+												filename.length()
+														- filename.split(separator)[filename
 																.split(separator).length - 1]
-																+ " simulation results",
-														printer_id, outDir, "time", biomodelsim,
-														null, log, null, false, false));
-										simTab.getComponentAt(i).setName("ProbGraph");
+																.length())
+												+ "sim-rep.txt").exists()) {
+											simTab.setComponentAt(
+													i,
+													new Graph(r2s, printer_track_quantity, outDir
+															.split(separator)[outDir
+															.split(separator).length - 1]
+															+ " simulation results", printer_id,
+															outDir, "time", biomodelsim, null, log,
+															null, false, false));
+											simTab.getComponentAt(i).setName("ProbGraph");
+										}
 									}
 								}
 							}
@@ -2527,22 +2535,17 @@ public class Run implements ActionListener {
 																percentData.get(k).size() - 1));
 												for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
 													if (terms.get(k - 1).get(l) < j) {
-														data
+														data.get(k)
+																.set(data.get(k).size() - 1,
+																		data.get(k)
+																				.get(data.get(k)
+																						.size() - 1) + 1);
+														percentData
 																.get(k)
-																.set(
-																		data.get(k).size() - 1,
-																		data
-																				.get(k)
-																				.get(
-																						data
-																								.get(
-																										k)
-																								.size() - 1) + 1);
-														percentData.get(k).set(
-																percentData.get(k).size() - 1,
-																((data.get(k).get(data.get(k)
-																		.size() - 1)) * 100)
-																		/ runs);
+																.set(percentData.get(k).size() - 1,
+																		((data.get(k).get(data.get(
+																				k).size() - 1)) * 100)
+																				/ runs);
 														terms.get(k - 1).remove(l);
 													}
 												}
@@ -2554,17 +2557,20 @@ public class Run implements ActionListener {
 										probData.outputTSD(directory + separator
 												+ "percent-term-time.tsd");
 									}
-									((Graph) simTab.getComponentAt(i)).refresh();
+									if (refresh) {
+										((Graph) simTab.getComponentAt(i)).refresh();
+									}
 								}
 								else {
-									simTab
-											.setComponentAt(i,
-													new Graph(r2s, printer_track_quantity, outDir
-															.split(separator)[outDir
-															.split(separator).length - 1]
+									simTab.setComponentAt(
+											i,
+											new Graph(
+													r2s,
+													printer_track_quantity,
+													outDir.split(separator)[outDir.split(separator).length - 1]
 															+ " simulation results", printer_id,
-															outDir, "time", biomodelsim, null, log,
-															null, true, false));
+													outDir, "time", biomodelsim, null, log, null,
+													true, false));
 									boolean outputM = true;
 									boolean outputV = true;
 									boolean outputS = true;
@@ -2714,22 +2720,17 @@ public class Run implements ActionListener {
 																percentData.get(k).size() - 1));
 												for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
 													if (terms.get(k - 1).get(l) < j) {
-														data
+														data.get(k)
+																.set(data.get(k).size() - 1,
+																		data.get(k)
+																				.get(data.get(k)
+																						.size() - 1) + 1);
+														percentData
 																.get(k)
-																.set(
-																		data.get(k).size() - 1,
-																		data
-																				.get(k)
-																				.get(
-																						data
-																								.get(
-																										k)
-																								.size() - 1) + 1);
-														percentData.get(k).set(
-																percentData.get(k).size() - 1,
-																((data.get(k).get(data.get(k)
-																		.size() - 1)) * 100)
-																		/ runs);
+																.set(percentData.get(k).size() - 1,
+																		((data.get(k).get(data.get(
+																				k).size() - 1)) * 100)
+																				/ runs);
 														terms.get(k - 1).remove(l);
 													}
 												}
@@ -2744,24 +2745,29 @@ public class Run implements ActionListener {
 									simTab.getComponentAt(i).setName("TSD Graph");
 								}
 							}
-							if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
-								if (simTab.getComponentAt(i) instanceof Graph) {
-									((Graph) simTab.getComponentAt(i)).refresh();
-								}
-								else {
-									if (new File(filename.substring(0,
-											filename.length()
-													- filename.split(separator)[filename
-															.split(separator).length - 1].length())
-											+ "sim-rep.txt").exists()) {
-										simTab.setComponentAt(i,
-												new Graph(r2s, printer_track_quantity,
-														outDir.split(separator)[outDir
+							if (refresh) {
+								if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
+									if (simTab.getComponentAt(i) instanceof Graph) {
+										((Graph) simTab.getComponentAt(i)).refresh();
+									}
+									else {
+										if (new File(filename.substring(
+												0,
+												filename.length()
+														- filename.split(separator)[filename
 																.split(separator).length - 1]
-																+ " simulation results",
-														printer_id, outDir, "time", biomodelsim,
-														null, log, null, false, false));
-										simTab.getComponentAt(i).setName("ProbGraph");
+																.length())
+												+ "sim-rep.txt").exists()) {
+											simTab.setComponentAt(
+													i,
+													new Graph(r2s, printer_track_quantity, outDir
+															.split(separator)[outDir
+															.split(separator).length - 1]
+															+ " simulation results", printer_id,
+															outDir, "time", biomodelsim, null, log,
+															null, false, false));
+											simTab.getComponentAt(i).setName("ProbGraph");
+										}
 									}
 								}
 							}
