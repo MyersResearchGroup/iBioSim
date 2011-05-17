@@ -1425,6 +1425,9 @@ public class Run implements ActionListener {
 								prog = (int) (d);
 							}
 						}
+						else {
+							log.addText(line);
+						}
 					}
 					catch (Exception e) {
 					}
