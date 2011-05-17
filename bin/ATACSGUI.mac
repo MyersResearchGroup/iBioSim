@@ -1,7 +1,7 @@
 #!/bin/sh
 #
 # run-time wrapper for BioSim gui
-export DYLD_LIBRARY_PATH=$BIOSIM/lib:$DYLD_LIBRARY_PATH
+export DYLD_LIBRARY_PATH=$ATACSGUI/lib:$DYLD_LIBRARY_PATH
 CLASSPATH=$ATACSGUI/gui/dist/classes
 
 for jarFile in $ATACSGUI/gui/lib/*.jar
