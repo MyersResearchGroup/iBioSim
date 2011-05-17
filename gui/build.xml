@@ -23,45 +23,7 @@
     <!-- Classpath -->
     <path id="classpath">
          <fileset dir="${lib.dir}">
-            <include name="AppleJavaExtensions.jar"/>
-            <include name="grappa1_2.jar"/>
-            <include name="jgraphx1.6.1.2.jar"/>
-            <include name="jcommon-1.0.16.jar"/>
-	    <include name="jfreechart-1.0.13.jar"/>
-	    <include name="iText-2.1.5.jar"/>
-            <include name="batik-anim.jar"/>
-            <include name="batik-awt-util.jar"/>
-            <include name="batik-bridge.jar"/>
-            <include name="batik-codec.jar"/>
-            <include name="batik-css.jar"/>
-            <include name="batik-dom.jar"/>
-	    <include name="batik-ext.jar"/>
-            <include name="batik-extension.jar"/>
-            <include name="batik-gui-util.jar"/>
-            <include name="batik-gvt.jar"/>
-            <include name="batik-parser.jar"/>
-            <include name="batik-script.jar"/>
-            <include name="batik-svg-dom.jar"/>
-	    <include name="batik-svggen.jar"/>
-            <include name="batik-swing.jar"/>
-            <include name="batik-transcoder.jar"/>
-            <include name="batik-util.jar"/>
-            <include name="batik-xml.jar"/>
-            <include name="biomodels-wslib_standalone-1.12.jar"/>
-            <include name="activation.jar"/>
-            <include name="mail.jar"/>
-            <include name="js.jar"/>
-            <include name="junit.jar"/>
-            <include name="pdf-transcoder.jar"/>
-            <include name="xalan-2.6.0.jar"/>
-            <include name="xerces_2_5_0.jar"/>
-            <include name="xml-apis.jar"/>
-            <include name="xml-apis-ext.jar"/>
-	    <include name="epsgraphics.jar"/>
-	    <include name="org-jdesktop-layout.jar"/>
-	    <include name="swing-layout-1.0.3.jar"/>
-            <include name="libsbmlj.jar"/>
-            <include name="gson-1.6.jar"/>
+            <include name="**/*.jar"/>
          </fileset>
          <pathelement path="${build_dir}"/>
      </path>
@@ -103,12 +65,12 @@
 		   classpathref="classpath">
           <src path="${src.dir}"/>
 	  </javac>	
-        <jar jarfile="${build.lib}/gui.jar" basedir="${build.classes}">
+        <!--<jar jarfile="${build.lib}/gui.jar" basedir="${build.classes}">
 	    <manifest>
 		<attribute name="Main-Class" value="main.Gui"/>
 		<attribute name="Class-Path" value="../../lib/AppleJavaExtensions.jar ../../lib/jgraphx1.6.1.2.jar ../../lib/grappa1_2.jar ../../lib/jcommon-1.0.16.jar ../../lib/jfreechart-1.0.13.jar ../../lib/iText-2.1.5.jar ../../lib/batik-anim.jar ../../lib/batik-awt-util.jar ../../lib/batik-bridge.jar ../../lib/batik-codec.jar ../../lib/batik-css.jar ../../lib/batik-dom.jar ../../lib/batik-ext.jar ../../lib/batik-extension.jar ../../lib/batik-gui-util.jar ../../lib/batik-gvt.jar ../../lib/batik-parser.jar ../../lib/batik-script.jar ../../lib/batik-svg-dom.jar ../../lib/batik-svggen.jar ../../lib/batik-swing.jar ../../lib/batik-transcoder.jar ../../lib/batik-util.jar ../../lib/batik-xml.jar ../../lib/activation.jar ../../lib/mail.jar ../../lib/js.jar ../../lib/pdf-transcoder.jar ../../lib/xalan-2.6.0.jar ../../lib/xerces_2_5_0.jar ../../lib/xml-apis.jar ../../lib/xml-apis-ext.jar ../../lib/epsgraphics.jar ../../lib/org-jdesktop-layout.jar ../../lib/swing-layout-1.0.3.jar ../../lib/libsbml/lib/libsbmlj.jar ../../lib/junit.jar ../../lib/biomodels-wslib_standalone-1.12.jar ../../lib/gson-1.6.jar"/>
       	    </manifest>
-	</jar>
+	</jar>-->
     </target>
 
     <!-- Deploy -->
