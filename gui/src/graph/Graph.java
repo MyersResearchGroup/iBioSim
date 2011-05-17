@@ -235,7 +235,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private boolean updateXNumber;
 
-	private final ReentrantLock lock;
+	private final ReentrantLock lock, lock2;
 
 	/**
 	 * Creates a Graph Object from the data given and calls the private graph
@@ -245,6 +245,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			String outDir, String time, Gui biomodelsim, String open, Log log, String graphName,
 			boolean timeSeries, boolean learnGraph) {
 		lock = new ReentrantLock(true);
+		lock2 = new ReentrantLock(true);
 		this.reb2sac = reb2sac;
 		averageOrder = null;
 		popup = new JPopupMenu();
@@ -6190,6 +6191,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	public void refresh() {
+		lock2.lock();
 		if (timeSeries) {
 			if (learnSpecs != null) {
 				updateSpecies();
@@ -7038,6 +7040,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					.getLabel(), chart.getCategoryPlot().getRangeAxis().getLabel(), histDataset,
 					rend);
 		}
+		lock2.unlock();
 	}
 
 	private class ShapeAndPaint {
