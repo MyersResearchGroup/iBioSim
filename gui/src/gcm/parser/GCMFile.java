@@ -103,6 +103,14 @@ public class GCMFile {
 		sbmlFile = file;
 	}
 
+	public SBMLDocument getSBMLDocument() {
+		return sbml;
+	}
+
+	public void setSBMLDocument(SBMLDocument sbmlDoc) {
+		sbml = sbmlDoc;
+	}
+
 	public void createLogicalModel(final String filename, final Log log, final Gui biosim,
 			final String lpnName) {
 		try {
@@ -1173,6 +1181,13 @@ public class GCMFile {
 		conditions = newConditions;
 		species.put(newName, species.get(oldName));
 		species.remove(oldName);
+		if (sbml != null) {
+			if (sbml.getModel() != null) {
+				if (sbml.getModel().getSpecies(oldName) != null) {
+					sbml.getModel().getSpecies(oldName).setId(newName);
+				}
+			}
+		}
 	}
 
 	public void changeComponentName(String oldName, String newName) {
@@ -1334,6 +1349,7 @@ public class GCMFile {
 	public void removeSpecies(String name) {
 		if (name != null && species.containsKey(name)) {
 			species.remove(name);
+			sbml.getModel().removeSpecies(name);
 		}
 	}
 
@@ -1722,7 +1738,16 @@ public class GCMFile {
 		prop.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_SPECIES_HEIGHT));
 		centerVertexOverPoint(prop, x, y);
 		getSpecies().put(id, prop);
-
+		if (sbml != null) {
+			Model m = sbml.getModel();
+			Species s = m.createSpecies();
+			s.setId(id);
+			s.setCompartment("default");
+			s.setBoundaryCondition(false);
+			s.setConstant(false);
+			s.setInitialAmount(0);
+			s.setHasOnlySubstanceUnits(false);
+		}
 	}
 
 	private int creatingPromoterID = 0;
@@ -3097,6 +3122,8 @@ public class GCMFile {
 	// "Components\\s\\{([^}]*)\\s\\}";
 
 	private String sbmlFile = "";
+	
+	private SBMLDocument sbml = null;
 
 	private HashMap<String, Properties> species;
 
