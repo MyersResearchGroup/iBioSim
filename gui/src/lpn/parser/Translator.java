@@ -30,7 +30,7 @@ import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.Trigger;
 import org.sbml.libsbml.libsbml;
 
-import sbmleditor.SBML_Editor;
+import sbmleditor.SBMLutilities;
 import lpn.parser.ExprTree;
 import main.Gui;
 
@@ -121,7 +121,7 @@ public class Translator {
 								initVarAssignRHS = initVarAssignRHS + ",";
 						}
 						initVarAssignRHS = initVarAssignRHS + ")";
-						initAssign.setMath(SBML_Editor.myParseFormula(initVarAssignRHS));
+						initAssign.setMath(SBMLutilities.myParseFormula(initVarAssignRHS));
 					}
 					// For each continuous variable v, create rate rule dv/dt and set its initial value to lhpn.getInitialRate(v). 
 					if (lhpn.isContinuous(v)){
@@ -130,7 +130,7 @@ public class Translator {
 						rateVar.setId(v + "_rate");
 						RateRule rateRule = m.createRateRule();
 						rateRule.setVariable(v);
-						rateRule.setMath(SBML_Editor.myParseFormula(rateVar.getId()));
+						rateRule.setMath(SBMLutilities.myParseFormula(rateVar.getId()));
 						String initRate= lhpn.getInitialRate(v);
 						boolean initRateIsInt = Pattern.matches(Int, initRate);
 						boolean initRateIsRange = Pattern.matches(Range, initRate);
@@ -146,7 +146,7 @@ public class Translator {
 							rateVar.setValue(0);
 							InitialAssignment initAssign = m.createInitialAssignment();
 							initAssign.setSymbol(rateVar.getId());
-							initAssign.setMath(SBML_Editor.myParseFormula(initRate));
+							initAssign.setMath(SBMLutilities.myParseFormula(initRate));
 							String initRateAssignRHS = "uniform(";
 							for (int i=1; i<=initRateRangeMatcher.groupCount();i++) {
 								initRateAssignRHS = initRateAssignRHS + initRateRangeMatcher.group(i);
@@ -154,7 +154,7 @@ public class Translator {
 									initRateAssignRHS = initRateAssignRHS + ",";
 							}
 							initRateAssignRHS = initRateAssignRHS + ")";
-							initAssign.setMath(SBML_Editor.myParseFormula(initRateAssignRHS));
+							initAssign.setMath(SBMLutilities.myParseFormula(initRateAssignRHS));
 						}
 					}
 				}
@@ -273,7 +273,7 @@ public class Translator {
 							String ruleExpBool = "or(and(" + CheckPreset + "," + EnablingBool + "), and(" + CheckPreset + "," + "eq(" + rulePersisSpeciesStr + ", 1)" +"))";
 							String ruleExpReal = "piecewise(1, " + ruleExpBool + ", 0)";
 							rulePersis.setVariable(rulePersisSpeciesStr);
-							rulePersis.setMath(SBML_Editor.myParseFormula(ruleExpReal));
+							rulePersis.setMath(SBMLutilities.myParseFormula(ruleExpReal));
 							rulePersisSpecies.setInitialAmount(0);
 							ModifierSpeciesReference modifier = r.createModifier();
 							modifier.setSpecies(rulePersisSpeciesStr);
@@ -314,7 +314,7 @@ public class Translator {
 //					e.setId("event" + counter);		
 					e.setId(t);
 					Trigger trigger = e.createTrigger();
-					trigger.setMath(SBML_Editor.myParseFormula("eq(" + product.getSpecies() + ",1)"));
+					trigger.setMath(SBMLutilities.myParseFormula("eq(" + product.getSpecies() + ",1)"));
 					// For persistent transition, it does not matter whether the trigger is persistent or not, because the delay is set to 0. 
 					trigger.setPersistent(false);
 					e.setUseValuesFromTriggerTime(false);
@@ -324,21 +324,21 @@ public class Translator {
 					for (String x : lhpn.getPostset(t)){
 						EventAssignment assign0 = e.createEventAssignment();
 						assign0.setVariable(x);
-						assign0.setMath(SBML_Editor.myParseFormula("1"));
+						assign0.setMath(SBMLutilities.myParseFormula("1"));
 		//				System.out.println("transition: " + t + " postset: " + x);
 					}
 					
 					// product = 0
 					EventAssignment assign1 = e.createEventAssignment();
 					assign1.setVariable(product.getSpecies());
-					assign1.setMath(SBML_Editor.myParseFormula("0"));
+					assign1.setMath(SBMLutilities.myParseFormula("0"));
 					
 //					if (lhpn.getTransition(t).isPersistent()){
 //						// t_preSet = 0
 //						for (String x : lhpn.getPreset(t)){
 //							EventAssignment assign0 = e.createEventAssignment();
 //							assign0.setVariable(x);
-//							assign0.setMath(SBML_Editor.myParseFormula("0"));
+//							assign0.setMath(SBMLutilities.myParseFormula("0"));
 //			//				System.out.println("transition: " + t + " preset: " + x);
 //						}
 //					}
@@ -353,7 +353,7 @@ public class Translator {
 //								System.out.println("continuous assign: "+ assignCont);
 								EventAssignment assign2 = e.createEventAssignment();
 								assign2.setVariable(var);
-								assign2.setMath(SBML_Editor.myParseFormula(assignCont));
+								assign2.setMath(SBMLutilities.myParseFormula(assignCont));
 							}
 						}
 					}
@@ -367,7 +367,7 @@ public class Translator {
 //								System.out.println("integer assignment from LHPN: " + var + " := " + assignInt);
 								EventAssignment assign3 = e.createEventAssignment();
 								assign3.setVariable(var);
-								assign3.setMath(SBML_Editor.myParseFormula(assignInt));
+								assign3.setMath(SBMLutilities.myParseFormula(assignInt));
 							}
 						}
 					}
@@ -382,7 +382,7 @@ public class Translator {
 //								System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
 								EventAssignment assign4 = e.createEventAssignment();
 								assign4.setVariable(var);
-								assign4.setMath(SBML_Editor.myParseFormula(assignBool));
+								assign4.setMath(SBMLutilities.myParseFormula(assignBool));
 							}
 						}
 					}
@@ -398,7 +398,7 @@ public class Translator {
 								
 								EventAssignment assign5 = e.createEventAssignment();
 								assign5.setVariable(var + "_rate");
-								assign5.setMath(SBML_Editor.myParseFormula(assignRate));
+								assign5.setMath(SBMLutilities.myParseFormula(assignRate));
 							}
 						}
 					}
@@ -411,10 +411,10 @@ public class Translator {
 						failVar.setValue(0);
 						EventAssignment assign6 = e.createEventAssignment();
 						assign6.setVariable(failVar.getId());
-						assign6.setMath(SBML_Editor.myParseFormula("1"));
+						assign6.setMath(SBMLutilities.myParseFormula("1"));
 						Constraint failVarConstraint = m.createConstraint();
 						failVarConstraint.setMetaId("failtrans_" + t);
-						failVarConstraint.setMath(SBML_Editor.myParseFormula("eq(" + failVar.getId() + ", 0)"));
+						failVarConstraint.setMath(SBMLutilities.myParseFormula("eq(" + failVar.getId() + ", 0)"));
 					}
 				}
 				
@@ -462,7 +462,7 @@ public class Translator {
 							trigger.setPersistent(true);
 						}
 						
-						trigger.setMath(SBML_Editor.myParseFormula("and(" + CheckPreset + "," + Enabling + ")"));
+						trigger.setMath(SBMLutilities.myParseFormula("and(" + CheckPreset + "," + Enabling + ")"));
 					}
 					else { // transition is persistent
 						// Create a rule for the persistent transition t. 
@@ -477,9 +477,9 @@ public class Translator {
 						String ruleExpBool = "or(and(" + CheckPreset + "," + Enabling + "), and(" + CheckPreset + "," + "eq(" + rulePersisTriggName + ", 1)" +"))";
 						String ruleExpReal = "piecewise(1, " + ruleExpBool + ", 0)";
 						rulePersisTrigg.setVariable(rulePersisTriggName);
-						rulePersisTrigg.setMath(SBML_Editor.myParseFormula(ruleExpReal));
+						rulePersisTrigg.setMath(SBMLutilities.myParseFormula(ruleExpReal));
 						trigger.setPersistent(false);
-						trigger.setMath(SBML_Editor.myParseFormula("eq(" + rulePersisTriggName + ", 1)"));
+						trigger.setMath(SBMLutilities.myParseFormula("eq(" + rulePersisTriggName + ", 1)"));
 					}
 										
 					// TriggerInitiallyFalse
@@ -492,27 +492,27 @@ public class Translator {
 					// Priority and delay
 					if (lhpn.getTransition(t).getDelay()!=null) {
 						e.createDelay();
-						e.getDelay().setMath(SBML_Editor.myParseFormula(lhpn.getTransition(t).getDelay()));
+						e.getDelay().setMath(SBMLutilities.myParseFormula(lhpn.getTransition(t).getDelay()));
 					}
 					if (lhpn.getTransition(t).getPriority()!=null) {
 						e.createPriority();
-						e.getPriority().setMath(SBML_Editor.myParseFormula(lhpn.getTransition(t).getPriority()));
+						e.getPriority().setMath(SBMLutilities.myParseFormula(lhpn.getTransition(t).getPriority()));
 					}
 					/*
 					if (lhpn.getTransition(t).getPriority()==null) {
 						if (lhpn.getTransition(t).getDelay()!=null) {
 							e.createDelay();
-							e.getDelay().setMath(SBML_Editor.myParseFormula(lhpn.getTransition(t).getDelay()));
+							e.getDelay().setMath(SBMLutilities.myParseFormula(lhpn.getTransition(t).getDelay()));
 						}
 					}
 					else {
 						if (lhpn.getTransition(t).getDelay()!=null) {
 							e.createDelay();
-							e.getDelay().setMath(SBML_Editor.myParseFormula("priority(" + lhpn.getTransition(t).getDelay() + "," + lhpn.getTransition(t).getPriority() + ")"));
+							e.getDelay().setMath(SBMLutilities.myParseFormula("priority(" + lhpn.getTransition(t).getDelay() + "," + lhpn.getTransition(t).getPriority() + ")"));
 						} 
 						else {
 						e.createDelay();
-						e.getDelay().setMath(SBML_Editor.myParseFormula("priority(0," + lhpn.getTransition(t).getPriority() + ")"));
+						e.getDelay().setMath(SBMLutilities.myParseFormula("priority(0," + lhpn.getTransition(t).getPriority() + ")"));
 						}
 					}
 					*/
@@ -537,7 +537,7 @@ public class Translator {
 						for (String x : lhpn.getPreset(t)){
 							EventAssignment assign0 = e.createEventAssignment();
 							assign0.setVariable(x);
-							assign0.setMath(SBML_Editor.myParseFormula("0"));
+							assign0.setMath(SBMLutilities.myParseFormula("0"));
 			//				System.out.println("transition: " + t + " preset: " + x);
 						}
 								
@@ -545,7 +545,7 @@ public class Translator {
 						for (String x : t_NoIntersect){
 							EventAssignment assign1 = e.createEventAssignment();
 							assign1.setVariable(x);
-							assign1.setMath(SBML_Editor.myParseFormula("1"));
+							assign1.setMath(SBMLutilities.myParseFormula("1"));
 			//				System.out.println("transition: " + t + " postset: " + x);
 						}
 						
@@ -555,7 +555,7 @@ public class Translator {
 						for (String x : lhpn.getPreset(t)){
 							EventAssignment assign0 = e.createEventAssignment();
 							assign0.setVariable(x);
-							assign0.setMath(SBML_Editor.myParseFormula("0"));
+							assign0.setMath(SBMLutilities.myParseFormula("0"));
 			//				System.out.println("transition: " + t + " preset: " + x);
 						}
 								
@@ -563,7 +563,7 @@ public class Translator {
 						for (String x : lhpn.getPostset(t)){
 							EventAssignment assign1 = e.createEventAssignment();
 							assign1.setVariable(x);
-							assign1.setMath(SBML_Editor.myParseFormula("1"));
+							assign1.setMath(SBMLutilities.myParseFormula("1"));
 			//				System.out.println("transition: " + t + " postset: " + x);
 						}
 					}
@@ -578,7 +578,7 @@ public class Translator {
 //								System.out.println("continuous assign: "+ assignCont);
 								EventAssignment assign2 = e.createEventAssignment();
 								assign2.setVariable(var);
-								assign2.setMath(SBML_Editor.myParseFormula(assignCont));
+								assign2.setMath(SBMLutilities.myParseFormula(assignCont));
 							}
 						}
 					}
@@ -592,7 +592,7 @@ public class Translator {
 //							    System.out.println("integer assignment from LHPN: " + var + " := " + assignInt);
 								EventAssignment assign3 = e.createEventAssignment();
 								assign3.setVariable(var);
-								assign3.setMath(SBML_Editor.myParseFormula(assignInt));
+								assign3.setMath(SBMLutilities.myParseFormula(assignInt));
 							}
 						}
 					}
@@ -608,7 +608,7 @@ public class Translator {
 						
 						EventAssignment assign4ex = e.createEventAssignment();
 						assign4ex.setVariable(extraVar);
-						assign4ex.setMath(SBML_Editor.myParseFormula("1"));
+						assign4ex.setMath(SBMLutilities.myParseFormula("1"));
 						
 						// Create other boolean assignments
 						if (lhpn.getBooleanVars(t)!= null){
@@ -620,7 +620,7 @@ public class Translator {
 									//System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
 									EventAssignment assign4 = e.createEventAssignment();
 									assign4.setVariable(var);
-									assign4.setMath(SBML_Editor.myParseFormula(assignBool));
+									assign4.setMath(SBMLutilities.myParseFormula(assignBool));
 								}
 							}
 						}
@@ -629,8 +629,8 @@ public class Translator {
 						Event extraEvent = m.createEvent();
 						extraEvent.setId("extra_" + t);	
 						Trigger triggerExtra = extraEvent.createTrigger();
-						//triggerExtra.setMath(SBML_Editor.myParseFormula("and(gt(t,0),eq(" + extraVar + ",1))"));
-						triggerExtra.setMath(SBML_Editor.myParseFormula("eq(" + extraVar + ",1)"));
+						//triggerExtra.setMath(SBMLutilities.myParseFormula("and(gt(t,0),eq(" + extraVar + ",1))"));
+						triggerExtra.setMath(SBMLutilities.myParseFormula("eq(" + extraVar + ",1)"));
 						//triggerExtra.setAnnotation("<TriggerInitiallyFalse/>");
 						triggerExtra.setPersistent(true);
 						triggerExtra.setInitialValue(false);
@@ -640,10 +640,10 @@ public class Translator {
 						for (String var : t_intersect){
 							EventAssignment assign5ex1 = extraEvent.createEventAssignment();
 							assign5ex1.setVariable(var);
-							assign5ex1.setMath(SBML_Editor.myParseFormula("1"));
+							assign5ex1.setMath(SBMLutilities.myParseFormula("1"));
 						}
 						assign5ex2.setVariable(extraVar);
-						assign5ex2.setMath(SBML_Editor.myParseFormula("0"));
+						assign5ex2.setMath(SBMLutilities.myParseFormula("0"));
 					}
 					else {
 						if (lhpn.getBooleanVars(t)!= null){
@@ -655,7 +655,7 @@ public class Translator {
 									//System.out.println("boolean assignment from LHPN: " + var + " := " + assignBool);
 									EventAssignment assign4 = e.createEventAssignment();
 									assign4.setVariable(var);
-									assign4.setMath(SBML_Editor.myParseFormula(assignBool));
+									assign4.setMath(SBMLutilities.myParseFormula(assignBool));
 								}
 							}
 						}
@@ -672,7 +672,7 @@ public class Translator {
 								
 								EventAssignment assign5 = e.createEventAssignment();
 								assign5.setVariable(var + "_rate");
-								assign5.setMath(SBML_Editor.myParseFormula(assignRate));
+								assign5.setMath(SBMLutilities.myParseFormula(assignRate));
 							}
 						}
 					}
@@ -685,10 +685,10 @@ public class Translator {
 						failVar.setValue(0);
 						EventAssignment assign6 = e.createEventAssignment();
 						assign6.setVariable(failVar.getId());
-						assign6.setMath(SBML_Editor.myParseFormula("1"));
+						assign6.setMath(SBMLutilities.myParseFormula("1"));
 						Constraint failVarConstraint = m.createConstraint();
 						failVarConstraint.setMetaId("failtrans_" + t);
-						failVarConstraint.setMath(SBML_Editor.myParseFormula("eq(" + failVar.getId() + ", 0)"));
+						failVarConstraint.setMath(SBMLutilities.myParseFormula("eq(" + failVar.getId() + ", 0)"));
 					}
 				}
 			counter --;
@@ -778,43 +778,43 @@ public class Translator {
 						case 0:{	// [l,u]   
 							// Fail: (A || (B && (t>=l))) && (t<=u)
 							// Success: !B || (t<l) || (t>u)
-							constraintFail.setMath(SBML_Editor.myParseFormula("and(" + "or("+probpropLeftSBML + "," + "and(" + probpropRightSBML + "," + GEQlower + ")" + ")" + "," + LEQupper + ")"));
-							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "or(" + "not(" + probpropRightSBML + ")" + "," + LTlower + ")" + "," + GTupper + ")"));
+							constraintFail.setMath(SBMLutilities.myParseFormula("and(" + "or("+probpropLeftSBML + "," + "and(" + probpropRightSBML + "," + GEQlower + ")" + ")" + "," + LEQupper + ")"));
+							constraintSucc.setMath(SBMLutilities.myParseFormula("or(" + "or(" + "not(" + probpropRightSBML + ")" + "," + LTlower + ")" + "," + GTupper + ")"));
 							break;
 						}
 						case 1: {  // [<=u]
 							// Fail: (A || B) && (t<=u)
 							// Success: (!B) || (t>u)
-							constraintFail.setMath(SBML_Editor.myParseFormula("and(" + "or(" + probpropLeftSBML + "," + probpropRightSBML + ")" + "," + LEQupper + ")"));
-							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + GTupper + ")"));
+							constraintFail.setMath(SBMLutilities.myParseFormula("and(" + "or(" + probpropLeftSBML + "," + probpropRightSBML + ")" + "," + LEQupper + ")"));
+							constraintSucc.setMath(SBMLutilities.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + GTupper + ")"));
 							break;
 						}
 						case 2: {	// [<u]
 							// Fail: (A || B) && (t<u)
 							// Success:(!B) || (t>=u)
-							constraintFail.setMath(SBML_Editor.myParseFormula("and(" + "or(" + probpropLeftSBML + "," + probpropRightSBML + ")" + "," + LTupper + ")"));
-							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + GEQupper + ")"));
+							constraintFail.setMath(SBMLutilities.myParseFormula("and(" + "or(" + probpropLeftSBML + "," + probpropRightSBML + ")" + "," + LTupper + ")"));
+							constraintSucc.setMath(SBMLutilities.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + GEQupper + ")"));
 							break;
 						}
 						case 3: {	// [>=l]
 							// Fail: A || (B && (t>=l))
 							// Success: (!B) || (t<l)
-							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + probpropLeftSBML + "," + "and(" + probpropRightSBML +"," + GEQlower + ")" + ")"));
-							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + LTlower + ")"));
+							constraintFail.setMath(SBMLutilities.myParseFormula("or(" + probpropLeftSBML + "," + "and(" + probpropRightSBML +"," + GEQlower + ")" + ")"));
+							constraintSucc.setMath(SBMLutilities.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + LTlower + ")"));
 							break;
 						}
 						case 4: {	// [>l]
 							// Fail: A || (B && (t>l))
 							// Success: !B || (t<=l)
-							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + probpropLeftSBML + "," + "and(" + probpropRightSBML + "," + GTlower + ")" + ")"));
-							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + LEQlower + ")"));
+							constraintFail.setMath(SBMLutilities.myParseFormula("or(" + probpropLeftSBML + "," + "and(" + probpropRightSBML + "," + GTlower + ")" + ")"));
+							constraintSucc.setMath(SBMLutilities.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + LEQlower + ")"));
 							break;
 						}
 						case 5: {	// [=k] (k was stored as lowerBound)
 							// Fail: (A && (t<=k)) || (B && (t=k))
 							// Success: !B || (t>k) || (t<k)
-							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + "and(" + probpropLeftSBML + "," + LEQlower + ")" + "," + "and(" + probpropRightSBML + "," + EQlower + ")" + ")"));
-							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "or(" + "not(" + probpropRightSBML + ")" + "," + GTlower + ")" + "," + LTlower + ")"));
+							constraintFail.setMath(SBMLutilities.myParseFormula("or(" + "and(" + probpropLeftSBML + "," + LEQlower + ")" + "," + "and(" + probpropRightSBML + "," + EQlower + ")" + ")"));
+							constraintSucc.setMath(SBMLutilities.myParseFormula("or(" + "or(" + "not(" + probpropRightSBML + ")" + "," + GTlower + ")" + "," + LTlower + ")"));
 							break;
 						}
 					}
@@ -824,43 +824,43 @@ public class Translator {
 						case 0:{	// [l,u]   
 							// Fail: t<=u
 							// Success: !A || (t<l) || (t>u)
-							constraintFail.setMath(SBML_Editor.myParseFormula(LEQupper));
-							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "or(" + "not(" + probpropRightSBML + ")" + "," + LTlower + ")" + "," + GTupper + ")"));
+							constraintFail.setMath(SBMLutilities.myParseFormula(LEQupper));
+							constraintSucc.setMath(SBMLutilities.myParseFormula("or(" + "or(" + "not(" + probpropRightSBML + ")" + "," + LTlower + ")" + "," + GTupper + ")"));
 							break;
 						}
 						case 1: {  // [<=u]
 							// Fail: t<=u
 							// Success: !A || (t>u)
-							constraintFail.setMath(SBML_Editor.myParseFormula(LEQupper));
-							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + GTupper + ")"));
+							constraintFail.setMath(SBMLutilities.myParseFormula(LEQupper));
+							constraintSucc.setMath(SBMLutilities.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + GTupper + ")"));
 							break;
 						}
 						case 2: {	// [<u]
 							// Fail: t<u
 							// Success: !A || (t>=u)
-							constraintFail.setMath(SBML_Editor.myParseFormula(LTupper));
-							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + GEQupper + ")"));
+							constraintFail.setMath(SBMLutilities.myParseFormula(LTupper));
+							constraintSucc.setMath(SBMLutilities.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + GEQupper + ")"));
 							break;
 						}
 						case 3: {	// [>=l]
 							// Fail: ---
 							// Success: !A || (t<l)
 							m.removeConstraint(0);
-							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + LTlower + ")"));
+							constraintSucc.setMath(SBMLutilities.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + LTlower + ")"));
 							break;
 						}
 						case 4: {	// [>l]
 							// Fail: ---
 							// Success: !A || (t<=l)
 							m.removeConstraint(0);
-							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + LEQlower + ")"));
+							constraintSucc.setMath(SBMLutilities.myParseFormula("or(" + "not(" + probpropRightSBML + ")" + "," + LEQlower + ")"));
 							break;
 						}
 						case 5: {	// [=k]
 							// Fail: t<=k
 							// Success: !A || (t<k) || (t>k)
-							constraintFail.setMath(SBML_Editor.myParseFormula(EQlower));
-							constraintSucc.setMath(SBML_Editor.myParseFormula("or(" + "or(" + "not(" + probpropRightSBML + ")" + "," + LTlower + ")" + "," + GTlower + ")"));
+							constraintFail.setMath(SBMLutilities.myParseFormula(EQlower));
+							constraintSucc.setMath(SBMLutilities.myParseFormula("or(" + "or(" + "not(" + probpropRightSBML + ")" + "," + LTlower + ")" + "," + GTlower + ")"));
 							break;
 						}
 					}
@@ -870,43 +870,43 @@ public class Translator {
 						case 0:{	// [l,u]   
 							// Fail: A || (t<l) || (t>u)
 							// Success: t<=u
-							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + "or(" + probpropRightSBML + "," + LTlower + ")" + "," + GTupper + ")"));
-							constraintSucc.setMath(SBML_Editor.myParseFormula(LEQupper));
+							constraintFail.setMath(SBMLutilities.myParseFormula("or(" + "or(" + probpropRightSBML + "," + LTlower + ")" + "," + GTupper + ")"));
+							constraintSucc.setMath(SBMLutilities.myParseFormula(LEQupper));
 							break;
 						}
 						case 1: {  // [<=u]
 							// Fail: A || (t>u)
 							// Success: t<=u
-							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + probpropRightSBML + "," + GTupper + ")"));
-							constraintSucc.setMath(SBML_Editor.myParseFormula(LEQupper));
+							constraintFail.setMath(SBMLutilities.myParseFormula("or(" + probpropRightSBML + "," + GTupper + ")"));
+							constraintSucc.setMath(SBMLutilities.myParseFormula(LEQupper));
 							break;
 						}
 						case 2: {	// [<u]
 							// Fail: A || (t>=u)
 							// Success: t<u
-							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + probpropRightSBML + "," + GEQupper + ")"));
-							constraintSucc.setMath(SBML_Editor.myParseFormula(LTupper));
+							constraintFail.setMath(SBMLutilities.myParseFormula("or(" + probpropRightSBML + "," + GEQupper + ")"));
+							constraintSucc.setMath(SBMLutilities.myParseFormula(LTupper));
 							break;
 						}
 						case 3: {	// [>=l]
 							// Fail: A || (t<l)
 							// Success: ---
-							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + probpropRightSBML + "," + LTlower + ")"));
+							constraintFail.setMath(SBMLutilities.myParseFormula("or(" + probpropRightSBML + "," + LTlower + ")"));
 							m.removeConstraint(1);
 							break;
 						}
 						case 4: {	// [>l]
 							// Fail: A || (t<=l)
 							// Success: ---
-							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + probpropRightSBML + "," + LEQlower + ")"));
+							constraintFail.setMath(SBMLutilities.myParseFormula("or(" + probpropRightSBML + "," + LEQlower + ")"));
 							m.removeConstraint(1);
 							break;
 						}
 						case 5: {	// [=k]
 							// Fail: A || (t>k) || (t<k)
 							// Success: t<=k
-							constraintFail.setMath(SBML_Editor.myParseFormula("or(" + "or(" + probpropRightSBML + "," + GTlower + ")" + "," + LTlower + ")"));
-							constraintSucc.setMath(SBML_Editor.myParseFormula(LEQlower));
+							constraintFail.setMath(SBMLutilities.myParseFormula("or(" + "or(" + probpropRightSBML + "," + GTlower + ")" + "," + LTlower + ")"));
+							constraintSucc.setMath(SBMLutilities.myParseFormula(LEQlower));
 							break;
 						}
 					}

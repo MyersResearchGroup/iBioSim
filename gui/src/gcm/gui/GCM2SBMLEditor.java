@@ -26,7 +26,6 @@ import java.util.Scanner;
 import java.util.Set;
 
 import javax.swing.DefaultComboBoxModel;
-import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -37,15 +36,27 @@ import javax.swing.JTextField;
 import main.Gui;
 import main.Log;
 
-import org.sbml.libsbml.InitialAssignment;
-import org.sbml.libsbml.Rule;
-import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.*;
 
 import reb2sac.ConstraintTermThread;
 import reb2sac.Reb2Sac;
 import reb2sac.Reb2SacThread;
+import sbmleditor.CompartmentTypes;
+import sbmleditor.Compartments;
+import sbmleditor.Constraints;
+import sbmleditor.Functions;
+import sbmleditor.InitialAssignments;
+import sbmleditor.ModelPanel;
+import sbmleditor.MySpecies;
+import sbmleditor.Parameters;
+import sbmleditor.Reactions;
+import sbmleditor.Rules;
 import sbmleditor.SBML_Editor;
-
+import sbmleditor.SBMLutilities;
+import sbmleditor.Events;
+import sbmleditor.SpeciesTypes;
+import sbmleditor.Units;
+import util.MutableBoolean;
 
 
 import javax.swing.event.ChangeListener;
@@ -63,6 +74,8 @@ import javax.swing.event.ChangeEvent;
  */
 public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListener {
 
+	private static final long serialVersionUID = 1L;
+
 	private String filename = "";
 
 	private String gcmname = "";
@@ -72,7 +85,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	private boolean paramsOnly;
 
 	private ArrayList<String> parameterChanges;
-
+	
+	private ArrayList<String> getParams;
+	
 	private String paramFile, refFile, simName;
 
 	private Reb2Sac reb2sac;
@@ -82,6 +97,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	private String separator;
 	
 	private GCM2SBMLEditor gcmEditor;
+	
+	private ModelPanel modelPanel;
 
 	public GCM2SBMLEditor(String path) {
 		this(path, null, null, null, false, null, null, null);
@@ -105,11 +122,13 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		this.simName = simName;
 		this.reb2sac = reb2sac;
 		sbmlParamFile = null;
+		getParams = new ArrayList<String>();
 		if (paramFile != null) {
 			try {
 				Scanner scan = new Scanner(new File(paramFile));
 				if (scan.hasNextLine()) {
 					refFile = scan.nextLine();
+					getParams.add(refFile);
 				}
 				scan.close();
 			}
@@ -128,6 +147,19 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			gcm.load(path + separator + filename);
 			this.filename = filename;
 			this.gcmname = filename.replace(".gcm", "");
+			/*
+			if ((gcm.getSBMLFile()==null || !gcm.getSBMLFile().equals(this.gcmname + ".xml")) &&
+					new File(path + separator + this.gcmname + ".xml").exists()) {
+				Object[] options = { "Overwrite", "Cancel" };
+				int value;
+				value = JOptionPane.showOptionDialog(Gui.frame, gcmname + ".xml already exists."
+						+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				if (value == JOptionPane.NO_OPTION) {
+					// TODO: fill in cancel option
+				}
+ 			}
+ 			*/
 		}
 		else {
 			this.filename = "";
@@ -242,31 +274,23 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	}
 
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-
 	}
 
 	public boolean isDirty() {
-		return dirty;
+		return dirty.booleanValue();
 	}
 	
 	public void setDirty(boolean dirty) {
-		this.dirty = dirty;
+		this.dirty.setValue(dirty);
 	}
 
 	public GCMFile getGCM() {
@@ -279,14 +303,16 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 
 	public void save(String command) {
 		//log.addText("save");
-		dirty = false;
+		dirty.setValue(false);
 
+		/*
 		if (!sbmlFiles.getSelectedItem().equals(none)) {
 			gcm.setSBMLFile(sbmlFiles.getSelectedItem().toString());
 		}
 		else {
 			gcm.setSBMLFile("");
 		}
+		*/
 		GeneticNetwork.setRoot(path + separator);
 
 		if (command.contains("GCM as")) {
@@ -305,7 +331,13 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		// Write out species and influences to a gcm file
 		gcm.save(path + separator + gcmname + ".gcm");
 		log.addText("Saving GCM file:\n" + path + separator + gcmname + ".gcm\n");
-
+		if (!gcm.getSBMLFile().equals("")) {
+			gcm.getSBMLDocument().getModel().setName(modelPanel.getModelName());
+			SBMLWriter writer = new SBMLWriter();
+			writer.writeSBML(gcm.getSBMLDocument(), path + separator + gcm.getSBMLFile());
+			log.addText("Saving SBML file:\n" + path + separator + gcm.getSBMLFile() + "\n");
+		}	
+	
 		if (command.contains("template")) {
 			GCMParser parser = new GCMParser(path + separator + gcmname + ".gcm");
 			try {
@@ -320,9 +352,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 
 			String templateName = JOptionPane.showInputDialog(Gui.frame,
 					"Enter SBML template name:", "SBML Template Name", JOptionPane.PLAIN_MESSAGE);
-			/*
-			String templateName = gcmname;
-			*/
 			if (templateName != null) {
 				if (!templateName.contains(".sbml") && !templateName.contains(".xml")) {
 					templateName = templateName + ".xml";
@@ -664,6 +693,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			for (String key : params.keySet()) {
 				gcm.setDefaultParameter(key, params.get(key));
 			}
+			getParams = new ArrayList<String>();
 			try {
 				Scanner scan = new Scanner(new File(paramFile));
 				if (scan.hasNextLine()) {
@@ -858,10 +888,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				for (String s : sbmlParamFile.getElementChanges()) {
 					for (long i = d.getModel().getNumInitialAssignments() - 1; i >= 0; i--) {
 						if (s.contains("=")) {
-							String formula = sbmlParamFile.myFormulaToString(((InitialAssignment) d.getModel()
+							String formula = SBMLutilities.myFormulaToString(((InitialAssignment) d.getModel()
 									.getListOfInitialAssignments().get(i)).getMath());
 							String sFormula = s.substring(s.indexOf('=') + 1).trim();
-							sFormula = sbmlParamFile.myFormulaToString(sbmlParamFile.myParseFormula(sFormula));
+							sFormula = SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(sFormula));
 							sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
 							if ((((InitialAssignment) d.getModel().getListOfInitialAssignments().get(i))
 									.getSymbol()
@@ -882,10 +912,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					}
 					for (long i = d.getModel().getNumRules() - 1; i >= 0; i--) {
 						if (s.contains("=")) {
-							String formula = sbmlParamFile.myFormulaToString(((Rule) d.getModel().getListOfRules()
+							String formula = SBMLutilities.myFormulaToString(((Rule) d.getModel().getListOfRules()
 									.get(i)).getMath());
 							String sFormula = s.substring(s.indexOf('=') + 1).trim();
-							sFormula = sbmlParamFile.myFormulaToString(sbmlParamFile.myParseFormula(sFormula));
+							sFormula = SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(sFormula));
 							sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
 							if ((((Rule) d.getModel().getListOfRules().get(i)).getVariable() + " = " + formula)
 									.equals(sFormula)) {
@@ -919,7 +949,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		}
 		else if (o instanceof JComboBox && !lock
 				&& !gcm.getSBMLFile().equals(sbmlFiles.getSelectedItem())) {
-			dirty = true;
+			dirty.setValue(true);
 		}
 		// System.out.println(o);
 	}
@@ -938,19 +968,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		JPanel mainPanelCenterUp = new JPanel();
 		JPanel mainPanelCenterCenter = new JPanel(new GridLayout(2, 2));
 		//JPanel mainPanelCenterDown = new JPanel(new BorderLayout());
-		JPanel tabPanel = new JPanel(new BorderLayout());
 		mainPanelCenter.add(mainPanelCenterUp, BorderLayout.NORTH);
 		mainPanelCenter.add(mainPanelCenterCenter, BorderLayout.CENTER);
-		// mainPanelCenter.add(mainPanelCenterDown, BorderLayout.SOUTH);
-		GCMNameTextField = new JTextField(filename.replace(".gcm", ""), 15);
-		GCMNameTextField.setEditable(false);
-		GCMNameTextField.addActionListener(this);
-		/*
-		JLabel GCMNameLabel = new JLabel("GCM Id:");
-		mainPanelNorth.add(GCMNameLabel);
-		mainPanelNorth.add(GCMNameTextField);
-		 */
-		
+			
 		JLabel sbmlFileLabel = new JLabel("SBML File:");
 		sbmlFiles = new JComboBox();
 		sbmlFiles.addActionListener(this);
@@ -959,40 +979,77 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			sbmlFiles.setEnabled(false);
 		}
 		reloadFiles();
-		mainPanelNorth.add(sbmlFileLabel);
-		mainPanelNorth.add(sbmlFiles);
-
-		/*JLabel dimAbsLabel = new JLabel("Dimerization abstraction:");
-		dimAbs = new JCheckBox();
-		dimAbs.addActionListener(this);
-		if (paramsOnly) {
-			dimAbsLabel.setEnabled(false);
-			dimAbs.setEnabled(false);
-		}
-		mainPanelNorth.add(dimAbsLabel);
-		mainPanelNorth.add(dimAbs);
-		if (gcm.getDimAbs()) {
-			dimAbs.setSelected(true);
-		}*/
-
-		// create the grappa panel
-		//GCIGrappaPanel grappaPanel = new GCIGrappaPanel();
+		//mainPanelNorth.add(sbmlFileLabel);
+		//mainPanelNorth.add(sbmlFiles);
 		
 		// create the modelview2 (jgraph) panel
+		modelPanel = new ModelPanel(gcm.getSBMLDocument(),dirty,paramsOnly);
 		Schematic schematic = new Schematic(gcm, biosim, this, true, null);
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
-		tabPanel.add(mainPanelNorth, "North");
+		JPanel paramPanel = new JPanel(new BorderLayout());
+		paramPanel.add(modelPanel, "North");
+		JPanel propPanel = new JPanel(new BorderLayout());
+		propPanel.add(mainPanelNorth, "North");
 		mainPanel.add(mainPanelCenter, "Center");
 		JTabbedPane tab = new JTabbedPane();
+		ArrayList<String >usedIDs = SBMLutilities.CreateListOfUsedIDs(gcm.getSBMLDocument());
 		tab.addTab("Schematic", schematic);
-		tab.addTab("Parameters/Properties", tabPanel);
+		
+		String file = filename.replace(".gcm", ".xml");
+		Compartments compartmentPanel = new Compartments(gcm.getSBMLDocument(),usedIDs,dirty,
+				paramsOnly,getParams,file,parameterChanges);
+		tab.addTab("Compartments", compartmentPanel);
+		
+		MySpecies speciesPanel = new MySpecies(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
+				paramsOnly,getParams,file,parameterChanges);
+		tab.addTab("Species", speciesPanel);
+		
+		Reactions reactionPanel = new Reactions(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
+				paramsOnly,getParams,file,parameterChanges);
+		tab.addTab("Reactions", reactionPanel);
+		
+		tab.addTab("Parameters", paramPanel);
+		
+		Functions functionPanel = new Functions(gcm.getSBMLDocument(),usedIDs,dirty);
+		Units unitPanel = new Units(biosim,gcm.getSBMLDocument(),usedIDs,dirty);
+		JPanel defnPanel = new JPanel(new BorderLayout());
+		defnPanel.add(mainPanelNorth, "North");
+		defnPanel.add(functionPanel,"Center");
+		defnPanel.add(unitPanel,"South");
+		tab.addTab("Definitions", defnPanel);
+
+		if (gcm.getSBMLDocument().getLevel() < 3) {
+			CompartmentTypes compTypePanel = new CompartmentTypes(biosim,gcm.getSBMLDocument(),usedIDs,dirty);
+			SpeciesTypes specTypePanel = new SpeciesTypes(biosim,gcm.getSBMLDocument(),usedIDs,dirty);
+			JPanel typePanel = new JPanel(new BorderLayout());
+			typePanel.add(mainPanelNorth, "North");
+			typePanel.add(compTypePanel,"Center");
+			typePanel.add(specTypePanel,"South");
+			tab.addTab("Types", typePanel);
+		}
+
+		InitialAssignments initialsPanel = new InitialAssignments(biosim,gcm.getSBMLDocument(),dirty);
+		Rules rulesPanel = new Rules(biosim,gcm.getSBMLDocument(),dirty);
+		compartmentPanel.setPanels(initialsPanel, rulesPanel);
+		functionPanel.setPanels(initialsPanel, rulesPanel);
+		speciesPanel.setPanels(initialsPanel, rulesPanel);
+		reactionPanel.setPanels(initialsPanel, rulesPanel);
+		JPanel assignPanel = new JPanel(new BorderLayout());
+		assignPanel.add(mainPanelNorth, "North");
+		assignPanel.add(initialsPanel,"Center");
+		assignPanel.add(rulesPanel,"South");
+		tab.addTab("Assignments", assignPanel);
+
+		Events eventPanel = new Events(biosim,gcm.getSBMLDocument(),usedIDs,dirty);
+		tab.addTab("Properties", propPanel);
+		tab.addTab("Events", eventPanel);
 		//tab.addTab("Main Elements", mainPanel);
  		//tab.addTab("Model View", grappaPanel);
 		setLayout(new BorderLayout());
 		if (paramsOnly) {
-			add(tabPanel, BorderLayout.CENTER);
+			add(paramPanel, BorderLayout.CENTER);
 		}
 		else {
 			add(tab, BorderLayout.CENTER);
@@ -1118,8 +1175,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		editInit = new EditButton("Edit Parameter", parameters);
 		// parameters.addAllItem(gcm.getParameters().keySet());
 		parameters.addAllItem(generateParameters());
-		initPanel = Utility.createPanel(this, "Parameters", parameters, null, null, editInit);
-		tabPanel.add(initPanel, "Center");
+		initPanel = Utility.createPanel(this, "GCM Parameters", parameters, null, null, editInit);
+		paramPanel.add(initPanel, "Center");
+		Parameters parametersPanel = new Parameters(gcm.getSBMLDocument(),usedIDs,dirty,
+				paramsOnly,getParams,file,parameterChanges);
+		parametersPanel.setPanels(initialsPanel, rulesPanel);
+		paramPanel.add(parametersPanel, "South");
 		
 		conditions = new PropertyList("Property List");
 		addInit = new EditButton("Add Property", conditions);
@@ -1134,8 +1195,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			conditions.addItem(s);
 		}
 		initPanel = Utility.createPanel(this, "Properties", conditions, addInit, removeInit, editInit);
-		tabPanel.add(initPanel, "South");
-		
+		propPanel.add(initPanel, "Center");
+		Constraints consPanel = new Constraints(biosim,gcm.getSBMLDocument(),usedIDs,dirty);
+		propPanel.add(consPanel, "South");
 	}
 
 	public void reloadFiles() {
@@ -1160,11 +1222,73 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		sbmlFiles.setSelectedItem(none);
 
 		sbmlFiles.setSelectedItem(gcm.getSBMLFile());
-		if (!gcm.getSBMLFile().equals("") && sbmlFiles.getSelectedItem().equals(none)) {
-			Utility.createErrorMessage("Warning: Missing File", "Unable to find SBML file "
-					+ gcm.getSBMLFile() + ".  Setting default SBML file to none");
-			gcm.setSBMLFile("");
+		if (!gcm.getSBMLFile().equals("")) {
+			gcm.setSBMLDocument(Gui.readSBML(path + separator + gcm.getSBMLFile()));
+			if (sbmlFiles.getSelectedItem().equals(none)) {
+				Utility.createErrorMessage("Warning: Missing File", "Unable to find SBML file "
+						+ gcm.getSBMLFile() + ".  Creating a default SBML file");
+				SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+				Model m = document.createModel();
+				document.setModel(m);
+				m.setId(gcmname);
+				Compartment c = m.createCompartment();
+				c.setId("default");
+				c.setSize(1);
+				c.setSpatialDimensions(3);
+				c.setConstant(true);
+				String[] species = gcm.getSpeciesAsArray();
+				for (int i = 0; i < species.length; i++) {
+					Species s = m.createSpecies();
+					s.setId(species[i]);
+					s.setCompartment("default");
+					s.setBoundaryCondition(false);
+					s.setConstant(false);
+					s.setInitialAmount(0);
+					s.setHasOnlySubstanceUnits(false);
+				}
+				SBMLutilities.addRandomFunctions(document);
+				SBMLWriter writer = new SBMLWriter();
+				writer.writeSBML(document, path + separator + gcmname + ".xml");
+				biosim.addToTreeNoUpdate(gcmname + ".xml");
+				setDirty(true);
+			} else {
+				SBMLDocument document = Gui.readSBML(path + separator + gcm.getSBMLFile());
+				SBMLutilities.addRandomFunctions(document);
+				SBMLWriter writer = new SBMLWriter();
+				writer.writeSBML(document, path + separator + gcmname + ".xml");
+				biosim.addToTreeNoUpdate(gcmname + ".xml");
+				setDirty(true);
+			}
+		} else {
+			SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+			Model m = document.createModel();
+			document.setModel(m);
+			m.setId(gcmname);
+			Compartment c = m.createCompartment();
+			c.setId("default");
+			c.setSize(1);
+			c.setSpatialDimensions(3);
+			c.setConstant(true);
+			String[] species = gcm.getSpeciesAsArray();
+			for (int i = 0; i < species.length; i++) {
+				Species s = m.createSpecies();
+				s.setId(species[i]);
+				s.setCompartment("default");
+				s.setBoundaryCondition(false);
+				s.setConstant(false);
+				s.setInitialAmount(0);
+				s.setHasOnlySubstanceUnits(false);
+			}
+			SBMLutilities.addRandomFunctions(document);
+			SBMLWriter writer = new SBMLWriter();
+			writer.writeSBML(document, path + separator + gcmname + ".xml");
+			biosim.addToTreeNoUpdate(gcmname + ".xml");
+			setDirty(true);
 		}
+		gcm.setSBMLFile(gcmname+".xml");
+		sbmlFiles.setSelectedItem(gcm.getSBMLFile());
+		gcm.setSBMLDocument(Gui.readSBML(path + separator + gcm.getSBMLFile()));
+		
 		unlock();
 	}
 
@@ -1396,7 +1520,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				ConditionsPanel panel = new ConditionsPanel(selected, list, gcm, paramsOnly,gcmEditor);
+				//ConditionsPanel panel = new ConditionsPanel(selected, list, gcm, paramsOnly,gcmEditor);
 			}
 			else if (getName().contains("Component")) {
 				displayChooseComponentDialog(getName().contains("Edit"), list, false);
@@ -1713,5 +1837,5 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 
 	private Log log = null;
 
-	private boolean dirty = false;
+	private MutableBoolean dirty = new MutableBoolean(false);
 }

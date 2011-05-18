@@ -35,10 +35,9 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener; //import java.awt.event.ComponentListener;
+import java.awt.event.WindowListener; 
 //import java.awt.event.ComponentEvent;
-import java.awt.event.WindowFocusListener; //import java.awt.event.FocusListener;
-//import java.awt.event.FocusEvent;
+import java.awt.event.WindowFocusListener; 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -48,11 +47,12 @@ import java.io.FileWriter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
-import java.util.regex.Pattern; //import java.net.URL;
+import java.util.regex.Pattern; 
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -80,15 +80,16 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JViewport; //import javax.swing.tree.TreePath;
+import javax.swing.JViewport; 
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
 import com.apple.eawt.Application;
+
+import java.io.Writer;
 
 import learn.LearnGCM;
 import learn.LearnLHPN;
@@ -108,8 +109,6 @@ import java.net.*;
 import uk.ac.ebi.biomodels.*;
 import util.Utility;
 import util.tabs.CloseAndMaxTabbedPane;
-
-//import datamanager.DataManagerLHPN;
 
 /**
  * This class creates a GUI for the Tstubd program. It implements the
@@ -240,7 +239,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public static String SBMLLevelVersion;
 
-	private JCheckBox Undeclared, Units, viewerCheck;
+	private JCheckBox Undeclared, Units;
 
 	private JComboBox LevelVersion;
 
@@ -250,7 +249,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 
-	private boolean async, popupFlag = false, menuFlag = false; // ,
+	private boolean async;
 	// treeSelected
 	// = false;
 
@@ -906,7 +905,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			saveAsMenu.add(saveAsGcm);
 			saveAsMenu.add(saveAsGraph);
 			saveAsMenu.add(saveAsSbml);
-			saveAsMenu.add(saveAsTemplate);
+			//saveAsMenu.add(saveAsTemplate);
 			// saveAsMenu.add(saveGcmAsLhpn);
 		}
 		else {
@@ -916,7 +915,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		file.add(saveAs);
 		if (!async) {
 			//file.add(saveAsSbml);
-			file.add(saveAsTemplate);
+			//file.add(saveAsTemplate);
 			// file.add(saveGcmAsLhpn);
 		}
 		file.add(saveModel);
@@ -3997,15 +3996,25 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								if (i != -1) {
 									tab.remove(i);
 								}
+
+								SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+								Model m = document.createModel();
+								document.setModel(m);
+								m.setId(simName);
+								Compartment c = m.createCompartment();
+								c.setId("default");
+								c.setSize(1);
+								c.setSpatialDimensions(3);
+								c.setConstant(true);
+								SBMLWriter writer = new SBMLWriter();
+								writer.writeSBML(document, root + separator + simName.replace(".gcm",".xml"));
+								addToTree(simName.replace(".gcm",".xml"));
+								
 								GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, f
 										.getName(), this, log, false, null, null, null);
 								// gcm.addMouseListener(this);
 								addTab(f.getName(), gcm, "GCM Editor");
 								addToTree(f.getName());
-								/*
-								Component comp = tab.getSelectedComponent();
-								((GCM2SBMLEditor) comp).save("Save as SBML template");
-								*/
 							}
 						}
 					}
@@ -4052,10 +4061,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						else {
 							if (overwrite(root + separator + simName, simName)) {
 								String f = new String(root + separator + simName);
-								SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL,
-										Gui.SBML_VERSION);
+								SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL,Gui.SBML_VERSION);
 								document.createModel();
-								// document.setLevel(2);
 								Compartment c = document.getModel().createCompartment();
 								c.setId("default");
 								c.setSize(1.0);
@@ -4064,9 +4071,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								SBMLWriter writer = new SBMLWriter();
 								writer.writeSBML(document, root + separator + simName);
 								SBML_Editor sbml = new SBML_Editor(f, null, log, this, null, null);
-								// sbml.addMouseListener(this);
-								addTab(f.split(separator)[f.split(separator).length - 1], sbml,
-										"SBML Editor");
+								addTab(f.split(separator)[f.split(separator).length - 1], sbml,"SBML Editor");
 								addToTree(f.split(separator)[f.split(separator).length - 1]);
 							}
 						}
@@ -5084,37 +5089,31 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				 */
 				// if (modelNumber != null && !modelNumber.equals("")) {
 				if (value == JOptionPane.YES_OPTION && ListOfBioModels.getSelectedValue() != null) {
-					String BMurl = "http://www.ebi.ac.uk/biomodels/models-main/publ/";
-					String filename = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
+					//String BMurl = "http://www.ebi.ac.uk/biomodels/models-main/publ/";
+					String ModelId = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
 					/*
 					 * String filename = "BIOMD"; for (int i = 0; i < 10 -
 					 * modelNumber.length(); i++) { filename += "0"; } filename
 					 * += modelNumber + ".xml";
 					 */
-					filename += ".xml";
+					String filename = ModelId + ".xml";
 					try {
-						URL url = new URL(BMurl + filename);
+						//URL url = new URL(BMurl + filename);
 						/*
 						 * System.out.println("Opening connection to " + BMurl +
 						 * filename + "...");
 						 */
-						URLConnection urlC = url.openConnection();
-						InputStream is = url.openStream();
+						//URLConnection urlC = url.openConnection();
+						//InputStream is = url.openStream();
 						/*
 						 * System.out.println("Copying resource (type: " +
 						 * urlC.getContentType() + ")..."); System.out.flush();
 						 */
 						if (overwrite(root + separator + filename, filename)) {
-							FileOutputStream fos = null;
-							fos = new FileOutputStream(root + separator + filename);
-							int oneChar, count = 0;
-							while ((oneChar = is.read()) != -1) {
-								fos.write(oneChar);
-								count++;
-							}
-							is.close();
-							fos.close();
-							// System.out.println(count + " byte(s) copied");
+							String model = client.getModelSBMLById(ModelId);
+							Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(root + separator + filename), "UTF-8"));
+						    out.write(model);
+						    out.close();
 							String[] file = filename.trim().split(separator);
 							SBMLDocument document = readSBML(root + separator + filename.trim());
 							long numErrors = document.checkConsistency();
@@ -7615,6 +7614,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		updateGCM();
 		mainPanel.validate();
 	}
+	
+	public void addToTreeNoUpdate(String item) {
+		tree.addToTree(item, root);
+		mainPanel.validate();
+	}
 
 	public void deleteFromTree(String item) {
 		tree.deleteFromTree(item);
@@ -7642,6 +7646,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	 */
 	public void removeTab(Component component) {
 		tab.remove(component);
+		if (tab.getTabCount()>0) {
+			tab.setSelectedIndex(tab.getTabCount()-1);
+			enableTabMenu(tab.getSelectedIndex());
+		} else {
+			enableTreeMenu();
+		}
 	}
 
 	public JTabbedPane getTab() {
@@ -8233,99 +8243,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 
 	public void mousePressed(MouseEvent e) {
-		// log.addText(e.getSource().toString());
-		if (e.getSource() == frame.getGlassPane()) {
-			Component glassPane = frame.getGlassPane();
-			Point glassPanePoint = e.getPoint();
-			// Component component = e.getComponent();
-			Container container = frame.getContentPane();
-			Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, frame
-					.getContentPane());
-			if (containerPoint.y < 0) { // we're not in the content pane
-				if (containerPoint.y + menuBar.getHeight() >= 0) {
-					Component component = menuBar.getComponentAt(glassPanePoint);
-					Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
-							component);
-					component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e
-							.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(),
-							e.isPopupTrigger()));
-					frame.getGlassPane().setVisible(false);
-				}
-			}
-			else {
-				Component deepComponent = SwingUtilities.getDeepestComponentAt(container,
-						containerPoint.x, containerPoint.y);
-				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
-						deepComponent);
-				deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
-						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
-						.isPopupTrigger()));
-				if ((deepComponent instanceof JTree) && (e.getClickCount() != 2)) {
-					enableTreeMenu();
-				}
-				else {
-					enableTabMenu(tab.getSelectedIndex());
-					frame.getGlassPane().setVisible(false);
-				}
-			}
-		}
-		else {
-			executeMouseClickEvent(e);
-		}
+		executePopupMenu(e);
 	}
 
 	public void mouseReleased(MouseEvent e) {
-		if (e.getSource() == frame.getGlassPane()) {
-			Component glassPane = frame.getGlassPane();
-			Point glassPanePoint = e.getPoint();
-			// Component component = e.getComponent();
-			Container container = frame.getContentPane();
-			Point containerPoint = SwingUtilities
-					.convertPoint(glassPane, glassPanePoint, container);
-			if (containerPoint.y < 0) { // we're not in the content pane
-				if (containerPoint.y + menuBar.getHeight() >= 0) {
-					Component component = menuBar.getComponentAt(glassPanePoint);
-					Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
-							component);
-					component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e
-							.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(),
-							e.isPopupTrigger()));
-					frame.getGlassPane().setVisible(false);
-				}
-			}
-			else {
-				try {
-					Component deepComponent = SwingUtilities.getDeepestComponentAt(container,
-							containerPoint.x, containerPoint.y);
-					Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
-							deepComponent);
-					deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e
-							.getWhen(), e.getModifiers(), componentPoint.x, componentPoint.y, e
-							.getClickCount(), e.isPopupTrigger()));
-					if ((deepComponent instanceof JTree) && (e.getClickCount() != 2)) {
-						enableTreeMenu();
-					}
-					else {
-						enableTabMenu(tab.getSelectedIndex());
-						frame.getGlassPane().setVisible(false);
-					}
-				}
-				catch (Exception e1) {
-					e1.printStackTrace();
-				}
-			}
-		}
-		else {
-			executeMouseClickEvent(e);
-		}
+		executePopupMenu(e);
 	}
 
-	public void executeMouseClickEvent(MouseEvent e) {
-		if (!(e.getSource() instanceof JTree)) {
-			enableTabMenu(tab.getSelectedIndex());
-			// frame.getGlassPane().setVisible(true);
-		}
-		else if (e.getSource() instanceof JTree && tree.getFile() != null && e.isPopupTrigger()) {
+	public void executePopupMenu(MouseEvent e) {
+		if (e.getSource() instanceof JTree && tree.getFile() != null && e.isPopupTrigger()) {
 			// frame.getGlassPane().setVisible(false);
 			popup.removeAll();
 			if (tree.getFile().length() > 4
@@ -8983,10 +8909,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
+	}	
+	
+	public void executeMouseClickEvent(MouseEvent e) {
+		if (!(e.getSource() instanceof JTree)) {
+			enableTabMenu(tab.getSelectedIndex());
+			// frame.getGlassPane().setVisible(true);
+		}		
 		else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2
 				&& e.getSource() instanceof JTree && tree.getFile() != null) {
-			int index = tab.getSelectedIndex();
-			enableTabMenu(index);
 			if (tree.getFile().length() >= 5
 					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
 					|| tree.getFile().length() >= 4
@@ -8994,9 +8925,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				try {
 					boolean done = false;
 					for (int i = 0; i < tab.getTabCount(); i++) {
-						if (tab.getTitleAt(i)
-								.equals(
-										tree.getFile().split(separator)[tree.getFile().split(
+						if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(
 												separator).length - 1])) {
 							tab.setSelectedIndex(i);
 							done = true;
@@ -9006,14 +8935,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						SBML_Editor sbml = new SBML_Editor(tree.getFile(), null, log, this, null,
 								null);
 						// sbml.addMouseListener(this);
-						addTab(
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-								sbml, "SBML Editor");
+						addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],	sbml, "SBML Editor");
 					}
 				}
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(frame, "You must select a valid sbml file.",
 							"Error", JOptionPane.ERROR_MESSAGE);
+					e1.printStackTrace();
 				}
 			}
 			else if (tree.getFile().length() >= 4
@@ -9037,16 +8965,34 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						tab.setSelectedIndex(i);
 					}
 					else {
-						GCM2SBMLEditor gcm = new GCM2SBMLEditor(work.getAbsolutePath(), theFile,
-								this, log, false, null, null, null);
-						// gcm.addMouseListener(this);
-						addTab(theFile, gcm, "GCM Editor");
+						String path = work.getAbsolutePath();
+						GCMFile gcmFile = new GCMFile(path);
+						String gcmname = theFile.replace(".gcm","");
+						gcmFile.load(filename);
+						if ((gcmFile.getSBMLFile()==null || !gcmFile.getSBMLFile().equals(gcmname + ".xml")) &&
+								new File(path + separator + gcmname + ".xml").exists()) {
+							Object[] options = { "Overwrite", "Cancel" };
+							int value;
+							value = JOptionPane.showOptionDialog(Gui.frame, gcmname + ".xml already exists."
+									+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
+									JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+							if (value == JOptionPane.YES_OPTION) {
+				 				GCM2SBMLEditor gcm = new GCM2SBMLEditor(path, theFile,
+				 						this, log, false, null, null, null);
+				 				// gcm.addMouseListener(this);
+				 				addTab(theFile, gcm, "GCM Editor");
+							} 
+						} else {
+			 				GCM2SBMLEditor gcm = new GCM2SBMLEditor(path, theFile,
+			 						this, log, false, null, null, null);
+			 				// gcm.addMouseListener(this);
+			 				addTab(theFile, gcm, "GCM Editor");
+			 			}
 					}
 				}
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(frame, "Unable to open this gcm file.", "Error",
 							JOptionPane.ERROR_MESSAGE);
-					e1.printStackTrace();
 				}
 			}
 			else if (tree.getFile().length() >= 4
@@ -9745,17 +9691,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
 				boolean done = false;
 				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab
-							.getTitleAt(i)
-							.equals(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+					if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
 						done = true;
 					}
 				}
 				if (!done) {
-					addTab(
-							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+					addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
 							new Graph(null, "Percent", "title", "tsd.printer", root, "Time", this,
 									tree.getFile(), log, tree.getFile().split(separator)[tree
 											.getFile().split(separator).length - 1], false, false),
@@ -9802,7 +9744,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else {
 			enableTreeMenu();
+			return;
 		}
+		enableTabMenu(tab.getSelectedIndex());
 	}
 
 	public void mouseMoved(MouseEvent e) {
@@ -10573,6 +10517,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								}
 							}
 							catch (Exception e) {
+								e.printStackTrace();
 								JOptionPane.showMessageDialog(frame, "Unable to load sbml file.",
 										"Error", JOptionPane.ERROR_MESSAGE);
 								return;
@@ -10768,6 +10713,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 
 	private class NewAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		NewAction() {
 			super();
 		}
@@ -10801,6 +10751,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 
 	private class SaveAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		SaveAction() {
 			super();
 		}
@@ -10815,7 +10770,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			popup.add(saveAsGraph);
 			if (!lema) {
 				popup.add(saveAsSbml);
-				popup.add(saveAsTemplate);
+				//popup.add(saveAsTemplate);
 			}
 			if (popup.getComponentCount() != 0) {
 				popup.show(mainPanel, mainPanel.getMousePosition().x,
@@ -10825,6 +10780,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 
 	private class ImportAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		ImportAction() {
 			super();
 		}
@@ -10859,6 +10819,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 
 	private class ExportAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		ExportAction() {
 			super();
 		}
@@ -10880,6 +10845,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 
 	private class ModelAction extends AbstractAction {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
 		ModelAction() {
 			super();
 		}
@@ -10895,47 +10865,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 
 	public void mouseClicked(MouseEvent e) {
-		if (e.getSource() == frame.getGlassPane()) {
-			Component glassPane = frame.getGlassPane();
-			Point glassPanePoint = e.getPoint();
-			// Component component = e.getComponent();
-			Container container = frame.getContentPane();
-			Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, frame
-					.getContentPane());
-			if (containerPoint.y < 0) { // we're not in the content pane
-				if (containerPoint.y + menuBar.getHeight() >= 0) {
-					Component component = menuBar.getComponentAt(glassPanePoint);
-					Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
-							component);
-					component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e
-							.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(),
-							e.isPopupTrigger()));
-					frame.getGlassPane().setVisible(false);
-				}
-			}
-			else {
-				Component deepComponent = SwingUtilities.getDeepestComponentAt(container,
-						containerPoint.x, containerPoint.y);
-				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
-						deepComponent);
-				// if (deepComponent instanceof ScrollableTabPanel) {
-				// deepComponent = tab.findComponentAt(componentPoint);
-				// }
-				deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
-						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
-						.isPopupTrigger()));
-				if ((deepComponent instanceof JTree) && (e.getClickCount() != 2)) {
-					enableTreeMenu();
-				}
-				else {
-					enableTabMenu(tab.getSelectedIndex());
-					frame.getGlassPane().setVisible(false);
-				}
-			}
-		}
-		else {
-			executeMouseClickEvent(e);
-		}
+		executeMouseClickEvent(e);
 	}
 
 	public void mouseEntered(MouseEvent e) {
@@ -11037,11 +10967,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 		else {
+			/*
 			String varname;
 			if (System.getProperty("mrj.version") != null)
 				varname = "DYLD_LIBRARY_PATH"; // We're on a Mac.
 			else
 				varname = "LD_LIBRARY_PATH"; // We're not on a Mac.
+				*/
 			try {
 				System.loadLibrary("sbmlj");
 				// For extra safety, check that the jar file is in the
@@ -11161,6 +11093,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							scan.close();
 						}
 						catch (Exception e) {
+							e.printStackTrace();
 							JOptionPane.showMessageDialog(frame, "Unable to load sbml file.",
 									"Error", JOptionPane.ERROR_MESSAGE);
 						}
@@ -11363,8 +11296,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (check.equals(updatedFile)) {
 					JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
 					for (int j = 0; j < sim.getTabCount(); j++) {
-						String tabName = sim.getComponentAt(j).getName();
-						boolean b = sim.getComponentAt(j).getName().equals("ModelViewMovie");
+						//String tabName = sim.getComponentAt(j).getName();
+						//boolean b = sim.getComponentAt(j).getName().equals("ModelViewMovie");
 						if (sim.getComponentAt(j) instanceof Reb2Sac) {
 							((Reb2Sac) sim.getComponentAt(j)).updateProperties();
 						}
@@ -11404,11 +11337,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							new File(properties).renameTo(new File(properties.replace(".sim",
 									".temp")));
 							try {
-								boolean dirty = ((GCM2SBMLEditor) (sim.getComponentAt(j)))
-										.isDirty();
+								boolean dirty = ((GCM2SBMLEditor) (sim.getComponentAt(j))).isDirty();
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).saveParams(false, "", true);
-								((GCM2SBMLEditor) (sim.getComponentAt(j))).reload(check.replace(
-										".gcm", ""));
+								((GCM2SBMLEditor) (sim.getComponentAt(j))).reload(check.replace(".gcm", ""));
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).refresh();
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).loadParams();
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).setDirty(dirty);
@@ -13198,7 +13129,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			f.setLocation(x, y);
 			f.setVisible(true);
 		}
-		if (document.getLevel() < 3) {
+		if (document.getLevel() < SBML_LEVEL || document.getVersion() < SBML_VERSION) {
 			document.setLevelAndVersion(SBML_LEVEL, SBML_VERSION);
 			SBMLWriter writer = new SBMLWriter();
 			writer.writeSBML(document, filename);
