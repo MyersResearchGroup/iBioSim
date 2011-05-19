@@ -116,7 +116,10 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		verification.copyFile();
 		LhpnFile lhpn = new LhpnFile();
 		lhpn.load(directory + separator + verification.verifyFile);
-
+		createGUI(lhpn);
+	}
+	
+    public void createGUI(LhpnFile lhpn) {
 		// Creates the interesting species JList
 		listModel = new DefaultListModel();
 		intSpecies = new JList(lhpn.getVariables());
@@ -262,7 +265,9 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 		this.setMaximumSize(new Dimension(300, 150));
 		LhpnFile lhpn = new LhpnFile();
 		lhpn.load(directory + separator + lpnFile);
-
+		createGUI(lhpn);
+	}
+	/*
 		// Creates the interesting species JList
 		listModel = new DefaultListModel();
 		intSpecies = new JList(lhpn.getVariables());
@@ -426,7 +431,8 @@ public class AbstPane extends JPanel implements ActionListener, Runnable {
 
 		change = false;
 	}
-
+*/
+	
 	/**
 	 * This method performs different functions depending on what menu items or
 	 * buttons are selected.
