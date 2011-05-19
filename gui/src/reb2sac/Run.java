@@ -864,7 +864,13 @@ public class Run implements ActionListener {
 					if (modelFile.contains(".lpn")) {
 						LhpnFile lhpnFile = new LhpnFile();
 						lhpnFile.load(root + separator + modelFile);
-						lhpnFile.save(root + separator + lhpnName);
+						if (abstraction.isSelected()) {
+							Abstraction abst = new Abstraction(lhpnFile, abstPane);
+							abst.abstractSTG(false);
+							abst.save(root + separator + lhpnName);
+						} else {
+							lhpnFile.save(root + separator + lhpnName);
+						}
 						time1 = System.nanoTime();
 						exitValue = 0;
 					}
@@ -969,9 +975,13 @@ public class Run implements ActionListener {
 				else if (modelFile.contains(".lpn")) {
 					LhpnFile lhpnFile = new LhpnFile();
 					lhpnFile.load(root + separator + modelFile);
-					lhpnFile.save(root + separator + simName + separator + modelFile);
-					lhpnFile.printDot(root + separator + modelFile.replace(".lpn", ".dot"));
-					// String cmd = "atacs -cPllodpl " + modelFile;
+					if (abstraction.isSelected()) {
+						Abstraction abst = new Abstraction(lhpnFile, abstPane);
+						abst.abstractSTG(false);
+						abst.printDot(root + separator + simName + separator + modelFile.replace(".lpn", ".dot"));
+					} else { 
+						lhpnFile.printDot(root + separator + simName + separator + modelFile.replace(".lpn", ".dot"));
+					}
 					// time1 = System.nanoTime();
 					// Process ATACS = exec.exec(cmd, null, work);
 					// ATACS.waitFor();
