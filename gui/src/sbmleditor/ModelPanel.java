@@ -66,6 +66,10 @@ public class ModelPanel extends JPanel implements ActionListener, MouseListener 
 		}
 	}
 
+	public void setModelId(String newId) {
+		modelID.setText(newId);
+	}
+	                                
 	/**
 	 * Creates a frame used to edit parameters or create new ones.
 	 */
