@@ -186,7 +186,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				gcm.setDefaultParameter(key, params.get(key));
 			}
 		}
-		GCMNameTextField.setText(newName);
+		// TODO
+		modelPanel.setModelId(newName);
+		//GCMNameTextField.setText(newName);
 	}
 	
 	public void refresh() {
