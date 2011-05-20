@@ -76,7 +76,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	private Rules rulesPanel;
 	
 	public MySpecies(Gui biosim,SBMLDocument document,ArrayList<String> usedIDs,MutableBoolean dirty,
-			Boolean paramsOnly,ArrayList<String> getParams,String file,ArrayList<String> parameterChanges) {
+			Boolean paramsOnly,ArrayList<String> getParams,String file,ArrayList<String> parameterChanges,Boolean editOnly) {
 		super(new BorderLayout());
 		this.document = document;
 		this.usedIDs = usedIDs;
@@ -85,7 +85,6 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
-		Model model =  document.getModel();
 		JPanel addSpecs = new JPanel();
 		addSpec = new JButton("Add Species");
 		removeSpec = new JButton("Remove Species");
@@ -96,7 +95,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		addSpec.addActionListener(this);
 		removeSpec.addActionListener(this);
 		editSpec.addActionListener(this);
-		if (paramsOnly) {
+		if (paramsOnly || editOnly) {
 			addSpec.setEnabled(false);
 			removeSpec.setEnabled(false);
 		}
@@ -105,6 +104,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scroll1 = new JScrollPane();
 		scroll1.setViewportView(species);
+		Model model =  document.getModel();
 		ListOf listOfSpecies = model.getListOfSpecies();
 		String [] specs = new String[(int) model.getNumSpecies()];
 		for (int i = 0; i < model.getNumSpecies(); i++) {
@@ -169,6 +169,27 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		this.add(addSpecs, "South");
 	}
 
+	/**
+	 * Refresh species panel
+	 */
+	public void refreshSpeciesPanel(SBMLDocument document) {
+		Model model =  document.getModel();
+		ListOf listOfSpecies = model.getListOfSpecies();
+		String [] specs = new String[(int) model.getNumSpecies()];
+		for (int i = 0; i < model.getNumSpecies(); i++) {
+			Species species = (Species) listOfSpecies.get(i);
+			specs[i] = species.getId(); 
+			if (species.isSetInitialAmount()) {
+				specs[i] += " " + species.getInitialAmount();
+			}
+			else {
+				specs[i] += " " + species.getInitialConcentration();
+			}
+		}
+		Utility.sort(specs);
+		species.setListData(specs);
+	}
+	
 	/**
 	 * Creates a frame used to edit species or create new ones.
 	 */
