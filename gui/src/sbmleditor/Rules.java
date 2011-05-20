@@ -130,7 +130,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Refresh initial assingment panel
+	 * Refresh rules panel
 	 */
 	public void refreshRulesPanel(SBMLDocument document) {
 		Model model = document.getModel();

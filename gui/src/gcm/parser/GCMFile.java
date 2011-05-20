@@ -55,6 +55,8 @@ import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
 
+import sbmleditor.MySpecies;
+
 import lpn.parser.LhpnFile;
 import main.Gui;
 import main.Log;
@@ -101,6 +103,14 @@ public class GCMFile {
 
 	public void setSBMLFile(String file) {
 		sbmlFile = file;
+	}
+
+	public MySpecies getSpeciesPanel() {
+		return speciesPanel;
+	}
+
+	public void setSpeciesPanel(MySpecies speciesPanel) {
+		this.speciesPanel = speciesPanel;
 	}
 
 	public SBMLDocument getSBMLDocument() {
@@ -1350,6 +1360,7 @@ public class GCMFile {
 		if (name != null && species.containsKey(name)) {
 			species.remove(name);
 			sbml.getModel().removeSpecies(name);
+			speciesPanel.refreshSpeciesPanel(sbml);
 		}
 	}
 
@@ -1747,6 +1758,7 @@ public class GCMFile {
 			s.setConstant(false);
 			s.setInitialAmount(0);
 			s.setHasOnlySubstanceUnits(false);
+			speciesPanel.refreshSpeciesPanel(sbml);
 		}
 	}
 
@@ -3124,6 +3136,8 @@ public class GCMFile {
 	private String sbmlFile = "";
 	
 	private SBMLDocument sbml = null;
+	
+	private MySpecies speciesPanel = null;
 
 	private HashMap<String, Properties> species;
 

@@ -6534,10 +6534,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getActionCommand().equals("copy") || e.getSource() == copy) {
 			if (!tree.getFile().equals(root)) {
 				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab
-							.getTitleAt(i)
-							.equals(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+					if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						tab.setSelectedIndex(i);
 						if (save(i, 0) == 0) {
 							return;
@@ -6557,11 +6554,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				try {
 					if (!copy.equals("")) {
 						if (tree.getFile().length() >= 5
-								&& tree.getFile().substring(tree.getFile().length() - 5).equals(
-										".sbml")
+								&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
 								|| tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".xml")) {
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
 							if (copy.length() > 4) {
 								if (!copy.substring(copy.length() - 5).equals(".sbml")
 										&& !copy.substring(copy.length() - 4).equals(".xml")) {
@@ -6581,8 +6576,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 						else if (tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".gcm")) {
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
 							if (copy.length() > 3) {
 								if (!copy.substring(copy.length() - 4).equals(".gcm")) {
 									copy += ".gcm";
@@ -6593,8 +6587,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 						else if (tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".vhd")) {
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
 							if (copy.length() > 3) {
 								if (!copy.substring(copy.length() - 4).equals(".vhd")) {
 									copy += ".vhd";
@@ -6605,8 +6598,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 						else if (tree.getFile().length() >= 2
-								&& tree.getFile().substring(tree.getFile().length() - 2).equals(
-										".s")) {
+								&& tree.getFile().substring(tree.getFile().length() - 2).equals(".s")) {
 							if (copy.length() > 1) {
 								if (!copy.substring(copy.length() - 2).equals(".s")) {
 									copy += ".s";
@@ -6617,8 +6609,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 						else if (tree.getFile().length() >= 5
-								&& tree.getFile().substring(tree.getFile().length() - 5).equals(
-										".inst")) {
+								&& tree.getFile().substring(tree.getFile().length() - 5).equals(".inst")) {
 							if (copy.length() > 4) {
 								if (!copy.substring(copy.length() - 5).equals(".inst")) {
 									copy += ".inst";
@@ -6629,8 +6620,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 						else if (tree.getFile().length() >= 2
-								&& tree.getFile().substring(tree.getFile().length() - 2).equals(
-										".g")) {
+								&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
 							if (copy.length() > 1) {
 								if (!copy.substring(copy.length() - 2).equals(".g")) {
 									copy += ".g";
@@ -6641,8 +6631,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 						else if (tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".lpn")) {
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
 							if (copy.length() > 3) {
 								if (!copy.substring(copy.length() - 4).equals(".lpn")) {
 									copy += ".lpn";
@@ -6653,8 +6642,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 						else if (tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".csp")) {
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
 							if (copy.length() > 3) {
 								if (!copy.substring(copy.length() - 4).equals(".csp")) {
 									copy += ".csp";
@@ -6665,8 +6653,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 						else if (tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".hse")) {
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
 							if (copy.length() > 3) {
 								if (!copy.substring(copy.length() - 4).equals(".hse")) {
 									copy += ".hse";
@@ -6677,8 +6664,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 						else if (tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".unc")) {
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
 							if (copy.length() > 3) {
 								if (!copy.substring(copy.length() - 4).equals(".unc")) {
 									copy += ".unc";
@@ -6689,8 +6675,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 						else if (tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".rsg")) {
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
 							if (copy.length() > 3) {
 								if (!copy.substring(copy.length() - 4).equals(".rsg")) {
 									copy += ".rsg";
@@ -6701,8 +6686,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 						else if (tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".grf")) {
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
 							if (copy.length() > 3) {
 								if (!copy.substring(copy.length() - 4).equals(".grf")) {
 									copy += ".grf";
@@ -6713,8 +6697,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 						else if (tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".prb")) {
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
 							if (copy.length() > 3) {
 								if (!copy.substring(copy.length() - 4).equals(".prb")) {
 									copy += ".prb";
@@ -6725,8 +6708,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 					}
-					if (copy
-							.equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+					if (copy.equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 						JOptionPane.showMessageDialog(frame, "Unable to copy file."
 								+ "\nNew filename must be different than old filename.", "Error",
 								JOptionPane.ERROR_MESSAGE);
@@ -6740,29 +6722,21 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							writer.writeSBML(document, root + separator + copy);
 						}
 						else if ((tree.getFile().length() >= 4
-								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".gcm")
-								|| tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".grf")
-								|| tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".vhd")
-								|| tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".csp")
-								|| tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".hse")
-								|| tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".lpn")
-								|| tree.getFile().substring(tree.getFile().length() - 4).equals(
-										".unc") || tree.getFile().substring(
-								tree.getFile().length() - 4).equals(".rsg"))
-								|| (tree.getFile().length() >= 2 && tree.getFile().substring(
-										tree.getFile().length() - 2).equals(".s"))
-								|| (tree.getFile().length() >= 5 && tree.getFile().substring(
-										tree.getFile().length() - 5).equals(".inst"))
-								|| (tree.getFile().length() >= 2 && tree.getFile().substring(
-										tree.getFile().length() - 2).equals(".g"))) {
-							FileOutputStream out = new FileOutputStream(new File(root + separator
-									+ copy));
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")
+								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")
+								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")
+								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")
+								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")
+								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")
+								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".unc") 
+								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg"))
+								|| (tree.getFile().length() >= 2 
+										&& tree.getFile().substring(tree.getFile().length() - 2).equals(".s"))
+								|| (tree.getFile().length() >= 5 
+										&& tree.getFile().substring(tree.getFile().length() - 5).equals(".inst"))
+								|| (tree.getFile().length() >= 2 
+										&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g"))) {
+							FileOutputStream out = new FileOutputStream(new File(root + separator + copy));
 							FileInputStream in = new FileInputStream(new File(tree.getFile()));
 							int read = in.read();
 							while (read != -1) {
@@ -6771,6 +6745,21 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 							in.close();
 							out.close();
+							/* TODO: is this really necessary
+							if (tree.getFile().endsWith(".gcm")) {
+								if (new File(tree.getFile().replace(".gcm",".xml")).exists()) {
+									out = new FileOutputStream(new File(root + separator + copy.replace(".gcm",".xml")));
+									in = new FileInputStream(new File(tree.getFile().replace(".gcm",".xml")));
+									read = in.read();
+									while (read != -1) {
+										out.write(read);
+										read = in.read();
+									}
+									in.close();
+									out.close();
+								}
+							}
+							*/
 						}
 						else {
 							boolean sim = false;

@@ -159,7 +159,7 @@ public class SBML_Editor extends JPanel {
 		}
 		
 		Compartments comp = new Compartments(document,usedIDs,dirty,paramsOnly,getParams,file,parameterChanges);
-		MySpecies spec = new MySpecies(biosim,document,usedIDs,dirty,paramsOnly,getParams,file,parameterChanges);
+		MySpecies spec = new MySpecies(biosim,document,usedIDs,dirty,paramsOnly,getParams,file,parameterChanges,false);
 		Parameters param = new Parameters(document,usedIDs,dirty,paramsOnly,getParams,file,parameterChanges);
 		Reactions reac = new Reactions(biosim,document,usedIDs,dirty,paramsOnly,getParams,file,parameterChanges);
 
@@ -286,7 +286,7 @@ public class SBML_Editor extends JPanel {
 			}
 			JPanel elements = new JPanel(new GridLayout(1, 4));
 			if (initsNum > 0) {
-				JPanel initsPanel = new JPanel(new GridLayout(initsNum, 1));
+				JPanel initsPanel = new JPanel(new GridLayout(initsNum+1, 1));
 				initsPanel.add(new JLabel("Initial Assignments:"));
 				for (int i = 0; i < inits.length; i++) {
 					JCheckBox temp = new JCheckBox(inits[i]);
@@ -312,7 +312,7 @@ public class SBML_Editor extends JPanel {
 				elements.add(initial);
 			}
 			if (rulNum > 0) {
-				JPanel rulPanel = new JPanel(new GridLayout(rulNum, 1));
+				JPanel rulPanel = new JPanel(new GridLayout(rulNum+1, 1));
 				rulPanel.add(new JLabel("Rules:"));
 				for (int i = 0; i < rul.length; i++) {
 					JCheckBox temp = new JCheckBox(rul[i]);
@@ -338,7 +338,7 @@ public class SBML_Editor extends JPanel {
 				elements.add(rules);
 			}
 			if (consNum > 0) {
-				JPanel consPanel = new JPanel(new GridLayout(consNum, 1));
+				JPanel consPanel = new JPanel(new GridLayout(consNum+1, 1));
 				consPanel.add(new JLabel("Constaints:"));
 				for (int i = 0; i < cons.length; i++) {
 					JCheckBox temp = new JCheckBox(cons[i]);
@@ -364,7 +364,7 @@ public class SBML_Editor extends JPanel {
 				elements.add(constaints);
 			}
 			if (evNum > 0) {
-				JPanel evPanel = new JPanel(new GridLayout(evNum, 1));
+				JPanel evPanel = new JPanel(new GridLayout(evNum+1, 1));
 				evPanel.add(new JLabel("Events:"));
 				for (int i = 0; i < ev.length; i++) {
 					JCheckBox temp = new JCheckBox(ev[i]);

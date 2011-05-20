@@ -1005,8 +1005,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		tab.addTab("Compartments", compartmentPanel);
 		
 		MySpecies speciesPanel = new MySpecies(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
-				paramsOnly,getParams,file,parameterChanges);
+				paramsOnly,getParams,file,parameterChanges,true);
 		tab.addTab("Species", speciesPanel);
+		gcm.setSpeciesPanel(speciesPanel);
 		
 		Reactions reactionPanel = new Reactions(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
 				paramsOnly,getParams,file,parameterChanges);
