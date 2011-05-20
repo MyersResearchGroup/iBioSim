@@ -2846,6 +2846,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 				}
 				int i = getTab(theFile);
+				if (i == -1) {
+					i = getTab(theFile.replace(".gcm", ".xml"));
+				}
 				if (i != -1) {
 					tab.setSelectedIndex(i);
 				}
@@ -2867,17 +2870,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			try {
 				boolean done = false;
 				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab
-							.getTitleAt(i)
-							.equals(
-									tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+					if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])
+							|| tab.getTitleAt(i).equals(tree.getFile()
+									.split(separator)[tree.getFile().split(separator).length - 1].replace(".xml",".gcm"))) {
 						tab.setSelectedIndex(i);
 						done = true;
 					}
 				}
 				if (!done) {
-					addTab(
-							tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
+					addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
 							new SBML_Editor(tree.getFile(), null, log, this, null, null),
 							"SBML Editor");
 				}
@@ -8914,15 +8915,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				try {
 					boolean done = false;
 					for (int i = 0; i < tab.getTabCount(); i++) {
-						if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(
-												separator).length - 1])) {
+						if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])
+							|| tab.getTitleAt(i).equals(tree.getFile()
+									.split(separator)[tree.getFile().split(separator).length - 1].replace(".xml",".gcm"))) {
 							tab.setSelectedIndex(i);
 							done = true;
 						}
 					}
 					if (!done) {
-						SBML_Editor sbml = new SBML_Editor(tree.getFile(), null, log, this, null,
-								null);
+						SBML_Editor sbml = new SBML_Editor(tree.getFile(), null, log, this, null, null);
 						// sbml.addMouseListener(this);
 						addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],	sbml, "SBML Editor");
 					}
@@ -8950,6 +8951,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 					File work = new File(directory);
 					int i = getTab(theFile);
+					if (i == -1) {
+						i = getTab(theFile.replace(".gcm", ".xml"));
+					}
 					if (i != -1) {
 						tab.setSelectedIndex(i);
 					}
