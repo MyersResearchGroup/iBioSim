@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>gui/lib/jgraphx.jar</name>
+			<type>1</type>
+			<locationURI>PARENT-3-PROJECT_LOC/jgraphx.jar</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>

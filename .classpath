@@ -83,6 +83,6 @@
 	<classpathentry kind="lib" path="gui/lib/empire-test.jar"/>
 	<classpathentry kind="lib" path="gui/lib/gnu-crypto.jar"/>
 	<classpathentry kind="lib" path="gui/lib/biomodels-wslib_standalone-1.12.jar"/>
-	<classpathentry kind="lib" path="gui/lib/jgraphx1.6.1.2.jar"/>
+	<classpathentry kind="lib" path="gui/lib/jgraphx.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
