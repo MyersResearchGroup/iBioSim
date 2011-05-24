@@ -7,20 +7,37 @@ import gcm.util.Utility;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Properties;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 import main.Gui;
 
 
-public class PromoterPanel extends JPanel {
+public class PromoterPanel extends JPanel implements ActionListener {
+	
+	private JTextField sbolText = new JTextField(20);
+	private JButton sbolButton = new JButton("Associate SBOL");
+	
+	private String[] options = { "Ok", "Cancel" };
+	private HashMap<String, PropertyField> fields = null;
+	private String selected = "";
+	private GCMFile gcm = null;
+	private PropertyList promoterList = null;
+	private PropertyList influenceList = null;
+	private boolean paramsOnly;
+	private GCM2SBMLEditor gcmEditor = null;
+	
 	public PromoterPanel(String selected, PropertyList promoterList,
 			PropertyList influencesList, GCMFile gcm, boolean paramsOnly, GCMFile refGCM, GCM2SBMLEditor gcmEditor) {
-		super(new GridLayout(9, 1));
+		super(new GridLayout(10, 1));
 		this.selected = selected;
 		this.promoterList = promoterList;
 		this.influenceList = influencesList;
@@ -50,6 +67,18 @@ public class PromoterPanel extends JPanel {
 		
 //		fields.put("ID", field);
 //		add(field);
+		
+		// Panel for associating SBOL element
+		JPanel sbolPanel = new JPanel();
+		sbolPanel.setLayout(new GridLayout(1, 3));
+		JLabel sbolLabel = new JLabel("SBOL Sequence Feature ");
+		sbolText.setEditable(false);
+		sbolButton.setActionCommand("browsePromoters");
+		sbolButton.addActionListener(this);
+		sbolPanel.add(sbolLabel);
+		sbolPanel.add(sbolText);
+		sbolPanel.add(sbolButton);
+		add(sbolPanel);
 		
 		// promoter count
 		String origString = "default";
@@ -431,12 +460,4 @@ public class PromoterPanel extends JPanel {
 	private boolean promoterNameChange = false;
 	public boolean wasPromoterNameChanged(){return promoterNameChange;}
 	
-	private String[] options = { "Ok", "Cancel" };
-	private HashMap<String, PropertyField> fields = null;
-	private String selected = "";
-	private GCMFile gcm = null;
-	private PropertyList promoterList = null;
-	private PropertyList influenceList = null;
-	private boolean paramsOnly;
-	private GCM2SBMLEditor gcmEditor = null;
 }
