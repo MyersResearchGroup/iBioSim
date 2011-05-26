@@ -55,41 +55,51 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitComplex(ComplexSpecies specie) {
 		loadValues(specie);
-		if ((!complexAbstraction || (!specie.isAbstractable() && !specie.isSequesterAbstractable())) && decay != 0) {	
+		if (!complexAbstraction || (!specie.isAbstractable() && !specie.isSequesterAbstractable())) {	
 			String compartment = checkCompartments(specie.getId());
 			r = Utility.Reaction("Degradation_"+specie.getId());
 			r.setCompartment(compartment);
 			r.setReversible(false);
 			r.setFast(false);
 			kl = r.createKineticLaw();
-			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
-			if (complexAbstraction && specie.isSequesterable()) 
-				kl.setFormula(decayString + "*" + sequesterSpecies(specie.getId(), 1));
-			else {
-				kl.setFormula(decayString + "*" + specie.getId());
+			String decayExpression = "";
+			if (complexAbstraction && specie.isSequesterable()) {
+				decayExpression = abstractDecay(specie.getId());
+				if (decayExpression.length() > 0) {
+					kl.setFormula(decayExpression);
+					Utility.addReaction(document, r);
+				}
+			} else if (decay > 0){
+				decayExpression = decayString + "*" + specie.getId();
+				kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
 				r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
+				kl.setFormula(decayExpression);
+				Utility.addReaction(document, r);
 			}
-			Utility.addReaction(document, r);
 		}
 	}
 
 	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues(specie);
-		if (decay != 0) {
-			String compartment = checkCompartments(specie.getId());
-			r = Utility.Reaction("Degradation_"+specie.getId());
-			r.setCompartment(compartment);
-			r.setReversible(false);
-			r.setFast(false);
-			kl = r.createKineticLaw();
-			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
-			if (complexAbstraction && specie.isSequesterable()) {
-				kl.setFormula(decayString + "*" + sequesterSpecies(specie.getId(), 1));
-			} else {
-				kl.setFormula(decayString + "*" + specie.getId());
-				r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
+		String compartment = checkCompartments(specie.getId());
+		r = Utility.Reaction("Degradation_"+specie.getId());
+		r.setCompartment(compartment);
+		r.setReversible(false);
+		r.setFast(false);
+		kl = r.createKineticLaw();
+		String decayExpression = "";
+		if (complexAbstraction && specie.isSequesterable()) {
+			decayExpression = abstractDecay(specie.getId());
+			if (decayExpression.length() > 0) {
+				kl.setFormula(decayExpression);
+				Utility.addReaction(document, r);
 			}
+		} else if (decay > 0){
+			decayExpression = decayString + "*" + specie.getId();
+			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
+			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
+			kl.setFormula(decayExpression);
 			Utility.addReaction(document, r);
 		}
 	}
@@ -102,20 +112,24 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie);
-		if (decay != 0) {
-			String compartment = checkCompartments(specie.getId());
-			r = Utility.Reaction("Degradation_"+specie.getId());
-			r.setCompartment(compartment);
-			r.setReversible(false);
-			r.setFast(false);
-			kl = r.createKineticLaw();
-			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
-			if (complexAbstraction && specie.isSequesterable()) {
-				kl.setFormula(decayString + "*" + sequesterSpecies(specie.getId(), 1));
-			} else {
-				kl.setFormula(decayString + "*" + specie.getId());
-				r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
+		String compartment = checkCompartments(specie.getId());
+		r = Utility.Reaction("Degradation_"+specie.getId());
+		r.setCompartment(compartment);
+		r.setReversible(false);
+		r.setFast(false);
+		kl = r.createKineticLaw();
+		String decayExpression = "";
+		if (complexAbstraction && specie.isSequesterable()) {
+			decayExpression = abstractDecay(specie.getId());
+			if (decayExpression.length() > 0) {
+				kl.setFormula(decayExpression);
+				Utility.addReaction(document, r);
 			}
+		} else if (decay > 0){
+			decayExpression = decayString + "*" + specie.getId();
+			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
+			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
+			kl.setFormula(decayExpression);
 			Utility.addReaction(document, r);
 		}
 	}
@@ -136,6 +150,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	private double decay;
 	private String decayUnitString;
 	private String decayString = GlobalConstants.KDECAY_STRING;
+	private String kcompString = GlobalConstants.KCOMPLEX_STRING; 
 	
 	private ArrayList<String> compartments;
 }

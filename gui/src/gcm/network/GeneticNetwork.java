@@ -1022,7 +1022,7 @@ public class GeneticNetwork {
 	
 	//Checks if parts of given complex are sequesterable so long as the parts aren't activators or repressors
 	//Marks parts that are complexes as abstractable so long as the parts aren't sequesterable/outputs and are only part of the given complex 
-	//Recursively checks parts of parts that are complexes provided the latter aren't activators, reopressors, or outputs
+	//Recursively checks parts of parts that are complexes provided the latter aren't activators, repressors, or outputs
 	private boolean checkComplex(String complexId, String payNoMind) {
 		for (Influence infl : complexMap.get(complexId)) {
 			String partId = infl.getInput();
@@ -1056,12 +1056,11 @@ public class GeneticNetwork {
 		for (Influence infl : partsMap.get(partId)) {
 			String complexId = infl.getOutput();
 			if (!complexId.equals(payNoMind) && infl.getCoop() == 1 && !species.get(complexId).isActivator() 
-						&& !species.get(complexId).isRepressor() && !partsMap.containsKey(complexId)
-						&& !species.get(complexId).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)
-						&& species.get(complexId).getDecay() == 0 && complexMap.get(complexId).size() > 1 
-						&& checkComplex(complexId, partId)) {
-					abstractableComplexes.add(complexId);
-					sequesterable = true;
+					&& !species.get(complexId).isRepressor() && !partsMap.containsKey(complexId)
+					&& !species.get(complexId).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)
+					&& complexMap.get(complexId).size() > 1 && checkComplex(complexId, partId)) {
+				abstractableComplexes.add(complexId);
+				sequesterable = true;
 			}
 		}
 		if (sequesterable) {
