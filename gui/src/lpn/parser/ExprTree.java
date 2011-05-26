@@ -3042,7 +3042,7 @@ public class ExprTree {
 							if (sbmlFlag) {
 								result = "floor(" + r1.getElement(type) + ")";
 							} else if (verilog) {
-								result = "floor(" + r1.getElement(type) + ")";
+								result = "$floor(" + r1.getElement(type) + ")";
 							} else {
 								result = "floor(" + r1.getElement(type) + ")";
 							}
@@ -3057,7 +3057,7 @@ public class ExprTree {
 							if (sbmlFlag) {
 								result = "ceil(" + r1.getElement(type) + ")";
 							} else if (verilog) {
-								result = "ceil(" + r1.getElement(type) + ")";
+								result = "$ceil(" + r1.getElement(type) + ")";
 							} else {
 								result = "ceil(" + r1.getElement(type) + ")";
 							}
@@ -3077,9 +3077,11 @@ public class ExprTree {
 										+ ",leq(" + r1.getElement(type) + ","
 										+ r2.getElement(type) + "),"
 										+ r2.getElement(type) + ")";
-							} else if (verilog) {
-								result = "min(" + r1.getElement(type) + ","
-										+ r2.getElement(type) + ")";
+							//} else if (verilog) {
+								//result = "min(" + r1.getElement(type) + ","
+									//	+ r2.getElement(type) + ")";
+								} else if (verilog) {
+								result = "("+r1.getElement(type) +"<"+r2.getElement(type) +"?"+r1.getElement(type) +":"+r2.getElement(type) +")";
 							} else {
 								result = "min(" + r1.getElement(type) + ","
 										+ r2.getElement(type) + ")";
@@ -3101,9 +3103,11 @@ public class ExprTree {
 										+ ",geq(" + r1.getElement(type) + ","
 										+ r2.getElement(type) + "),"
 										+ r2.getElement(type) + ")";
+							//} else if (verilog) {
+								//result = "max(" + r1.getElement(type) + ","
+										//+ r2.getElement(type) + ")";
 							} else if (verilog) {
-								result = "max(" + r1.getElement(type) + ","
-										+ r2.getElement(type) + ")";
+								result = "("+r1.getElement(type) +">"+r2.getElement(type) +"?"+r1.getElement(type) +":"+r2.getElement(type) +")";
 							} else {
 								result = "max(" + r1.getElement(type) + ","
 										+ r2.getElement(type) + ")";
