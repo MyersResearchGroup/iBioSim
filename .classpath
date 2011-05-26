@@ -24,7 +24,6 @@
 	<classpathentry kind="lib" path="gui/lib/epsgraphics.jar"/>
 	<classpathentry kind="lib" path="gui/lib/js.jar"/>
 	<classpathentry kind="lib" path="gui/lib/junit.jar"/>
-	<classpathentry kind="lib" path="gui/lib/libsbmlj.jar"/>
 	<classpathentry kind="lib" path="gui/lib/org-jdesktop-layout.jar"/>
 	<classpathentry kind="lib" path="gui/lib/pdf-transcoder.jar"/>
 	<classpathentry kind="lib" path="gui/lib/xalan-2.6.0.jar"/>
@@ -53,7 +52,6 @@
 	<classpathentry kind="lib" path="gui/lib/commons-io-2.0.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/cp-common-fourstore-0.3.1.jar"/>
 	<classpathentry kind="lib" path="gui/lib/cp-common-utils-1.0.1.jar"/>
-	<classpathentry kind="lib" path="gui/lib/aopalliance.jar"/>
 	<classpathentry kind="lib" path="gui/lib/guice-2.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/guice-assistedinject-2.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/guice-multibindings-2.0.jar"/>
@@ -83,6 +81,8 @@
 	<classpathentry kind="lib" path="gui/lib/empire-test.jar"/>
 	<classpathentry kind="lib" path="gui/lib/gnu-crypto.jar"/>
 	<classpathentry kind="lib" path="gui/lib/biomodels-wslib_standalone-1.12.jar"/>
+	<classpathentry kind="lib" path="gui/lib/aopalliance.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jgraphx.jar"/>
+	<classpathentry kind="lib" path="gui/lib/libsbmlj.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>

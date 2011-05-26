@@ -74,6 +74,12 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 		return expression;
 	}
 	
+	protected String abstractDecay(String speciesId) {
+		AbstractionEngine e = new AbstractionEngine(species, complexMap, partsMap, 0, r, kl);
+		String expression = e.abstractDecay(speciesId);
+		return expression;
+	}
+	
 	public void visitBaseSpecies(BaseSpecies specie) {}
 
 	public void visitComplex(ComplexSpecies specie) {}
