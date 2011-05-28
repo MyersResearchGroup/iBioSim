@@ -16,24 +16,27 @@ import main.Gui;
 public class DnaComponentPanel extends JPanel implements MouseListener {
 
 	private HashMap<String, DnaComponent> compMap;
-	private TextArea viewer;
+	private TextArea viewArea;
 	private SequenceFeaturePanel featPanel;
 	private JList compList = new JList();
 	
-	public DnaComponentPanel(HashMap<String, DnaComponent> compMap, TextArea viewer, SequenceFeaturePanel featPanel) {
-		super();
+	public DnaComponentPanel(HashMap<String, DnaComponent> compMap, TextArea viewArea, SequenceFeaturePanel featPanel) {
+		super(new BorderLayout());
 		this.compMap = compMap;
-		this.viewer = viewer;
+		this.viewArea = viewArea;
 		this.featPanel = featPanel;
 		
 		compList.addMouseListener(this);
+		
+		JLabel componentLabel = new JLabel("DNA Components:");
 		
 		JScrollPane componentScroll = new JScrollPane();
 		componentScroll.setMinimumSize(new Dimension(260, 200));
 		componentScroll.setPreferredSize(new Dimension(276, 132));
 		componentScroll.setViewportView(compList);
-		this.add(componentScroll);
 		
+		this.add(componentLabel, "North");
+		this.add(componentScroll, "Center");
 	}
 	
 	public void setComponents(Set<String> compIds) {
@@ -43,13 +46,13 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 	
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == compList) {
-			viewer.setText("");
+			viewArea.setText("");
 			Object[] selected = compList.getSelectedValues();
 			for (Object o : selected) {
 				DnaComponent dnac = compMap.get(o.toString());
-				viewer.append("Name:  " + dnac.getName() + "\n");
-				viewer.append("Description:  " + dnac.getDescription() + "\n");
-				viewer.append("Annotations:  ");
+				viewArea.append("Name:  " + dnac.getName() + "\n");
+				viewArea.append("Description:  " + dnac.getDescription() + "\n");
+				viewArea.append("Annotations:  ");
 				
 				//Creation of to-be-sorted annotation array
 				SequenceAnnotation[] sortedSA = new SequenceAnnotation[dnac.getAnnotations().size()];
@@ -69,7 +72,7 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 					}
 					sortedSA[i + 1] = keyAnnotation;
 				}
-				//Processing sorted annotations for display
+				//Processing sorted annotations and associated sequence features for display
 				String annotations = "";
 				LinkedHashSet<String> featIds = new LinkedHashSet<String>();
 				for (int k = 0; k < sortedSA.length; k++) {
@@ -83,8 +86,8 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 						sign = "";
 					annotations = annotations + sign + sortedSA[k].getStart() + " to " + sign + sortedSA[k].getStop() + ", "; 
 				}
-				viewer.append(annotations.substring(0, annotations.length() - 2) + "\n");
-				viewer.append("DNA Sequence:  " + dnac.getDnaSequence().getDnaSequence() + "\n\n");
+				viewArea.append(annotations.substring(0, annotations.length() - 2) + "\n");
+				viewArea.append("DNA Sequence:  " + dnac.getDnaSequence().getDnaSequence() + "\n\n");
 				featPanel.setFeatures(featIds);
 			}
 		} 

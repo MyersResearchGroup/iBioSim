@@ -2829,8 +2829,20 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 		else if (e.getActionCommand().equals("browseSbol")) {
-			SbolBrowser browser = new SbolBrowser(tree.getFile());
-		}
+			String filePath = tree.getFile();
+			String fileName = "";
+			if (filePath.lastIndexOf('/') >= 0) 
+				fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
+			if (filePath.lastIndexOf('\\') >= 0)
+				fileName = filePath.substring(filePath.lastIndexOf('\\') + 1);
+			int i = getTab(fileName);
+			if (i != -1) {
+				tab.setSelectedIndex(i);
+			} else {
+				SbolBrowser browser = new SbolBrowser(filePath);
+				addTab(fileName, browser, null);
+			}
+		}	
 		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("dotEditor")) {
 			try {
@@ -4768,9 +4780,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				String importPath = Utility.browse(frame, importFile, null,
 						JFileChooser.FILES_AND_DIRECTORIES, "Import SBOL", -1).trim();
-				int index = importPath.lastIndexOf('/');
+				int index = importPath.lastIndexOf("\\");
 				String filename = importPath.substring(index + 1, importPath.length()).replaceAll("[^a-zA-Z0-9_.]+", "_");
-				String exportPath = root + separator + filename;
+				String exportPath = root + "\\" + filename;
 				try {
 					if (checkFiles(exportPath, importPath) 
 							&& overwrite(exportPath, filename)) {
@@ -11559,6 +11571,34 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			saveSbml.setEnabled(true);
 			saveTemp.setEnabled(true);
 		}
+		else if (comp instanceof SbolBrowser) {
+			saveButton.setEnabled(false);
+			saveasButton.setEnabled(false);
+			runButton.setEnabled(false);
+			refreshButton.setEnabled(false);
+			checkButton.setEnabled(false);
+			exportButton.setEnabled(false);
+			save.setEnabled(true);
+			run.setEnabled(false);
+			saveAs.setEnabled(false);
+			saveAsMenu.setEnabled(false);
+			saveAsGcm.setEnabled(false);
+			saveAsLhpn.setEnabled(true);
+			saveAsGraph.setEnabled(false);
+			saveAsSbml.setEnabled(false);
+			saveAsTemplate.setEnabled(false);
+			refresh.setEnabled(false);
+			check.setEnabled(false);
+			export.setEnabled(false);
+			exportMenu.setEnabled(false);
+			viewRules.setEnabled(false);
+			viewTrace.setEnabled(false);
+			viewCircuit.setEnabled(true);
+			viewLog.setEnabled(false);
+			viewCoverage.setEnabled(false);
+			saveModel.setEnabled(false);
+			saveAsVerilog.setEnabled(false);
+		}
 		else if (comp instanceof LHPNEditor) {
 			saveButton.setEnabled(true);
 			saveasButton.setEnabled(true);
@@ -11663,8 +11703,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Component learnComponent = null;
 			Boolean learn = false;
 			Boolean learnLHPN = false;
-			for (String s : new File(root + separator + tab.getTitleAt(tab.getSelectedIndex()))
-					.list()) {
+			for (String s : new File(root + separator + tab.getTitleAt(tab.getSelectedIndex())).list()) {
 				if (s.contains("_sg.dot")) {
 					viewSG.setEnabled(true);
 				}

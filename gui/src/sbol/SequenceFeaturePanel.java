@@ -16,21 +16,25 @@ import main.Gui;
 public class SequenceFeaturePanel extends JPanel implements MouseListener {
 
 	private HashMap<String, SequenceFeature> featMap;
-	private TextArea viewer;
+	private TextArea viewArea;
 	private JList featList = new JList();
 	
-	public SequenceFeaturePanel(HashMap<String, SequenceFeature> featMap, TextArea viewer) {
-		super();
+	public SequenceFeaturePanel(HashMap<String, SequenceFeature> featMap, TextArea viewArea) {
+		super(new BorderLayout());
 		this.featMap = featMap;
-		this.viewer = viewer;
+		this.viewArea = viewArea;
 		
 		featList.addMouseListener(this);
+		
+		JLabel featureLabel = new JLabel("Sequence Features:");
 		
 		JScrollPane featureScroll = new JScrollPane();		
 		featureScroll.setMinimumSize(new Dimension(260, 200));
 		featureScroll.setPreferredSize(new Dimension(276, 132));
 		featureScroll.setViewportView(featList);
-		this.add(featureScroll);
+		
+		this.add(featureLabel, "North");
+		this.add(featureScroll, "Center");
 	}
 	
 	public void setFeatures(Set<String> featIds) {
@@ -40,20 +44,20 @@ public class SequenceFeaturePanel extends JPanel implements MouseListener {
 	
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == featList) {
-			viewer.setText("");
+			viewArea.setText("");
 			Object[] selected = featList.getSelectedValues();
 			for (Object o : selected) {
 				SequenceFeature sf = featMap.get(o.toString());
-				viewer.append("Name:  " + sf.getName() + "\n");
-				viewer.append("Description:  " + sf.getDescription() + "\n");
-				viewer.append("Types:  ");
+				viewArea.append("Name:  " + sf.getName() + "\n");
+				viewArea.append("Description:  " + sf.getDescription() + "\n");
+				viewArea.append("Types:  ");
 				String types = "";
 				for (URI uri : sf.getTypes()) {
 					if (!uri.getFragment().equals("SequenceFeature"))
 						types = types + uri.getFragment() + ", ";
 				}
-				viewer.append(types.substring(0, types.length() - 2) + "\n");
-				viewer.append("DNA Sequence:  " + sf.getDnaSequence().getDnaSequence() + "\n\n");
+				viewArea.append(types.substring(0, types.length() - 2) + "\n");
+				viewArea.append("DNA Sequence:  " + sf.getDnaSequence().getDnaSequence() + "\n\n");
 			}
 		}
 	}
