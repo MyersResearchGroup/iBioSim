@@ -434,6 +434,9 @@ public class PromoterPanel extends JPanel implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		if (e.getActionCommand().equals("browsePromoters")) {
+			
+		}
 	}
 	
 	private void loadProperties(Properties property) {
