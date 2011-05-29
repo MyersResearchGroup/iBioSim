@@ -1757,7 +1757,7 @@ public class GCMFile {
 			s.setBoundaryCondition(false);
 			s.setConstant(false);
 			s.setInitialAmount(0);
-			s.setHasOnlySubstanceUnits(false);
+			s.setHasOnlySubstanceUnits(true);
 			speciesPanel.refreshSpeciesPanel(sbml);
 		}
 	}

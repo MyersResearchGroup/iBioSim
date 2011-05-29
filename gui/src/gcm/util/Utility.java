@@ -130,7 +130,7 @@ public class Utility {
 		specie.setName(id);
 		specie.setCompartment(compartment);
 		specie.setInitialAmount(amount);	
-		specie.setHasOnlySubstanceUnits(false);
+		specie.setHasOnlySubstanceUnits(true);
 		specie.setConstant(false);
 		specie.setBoundaryCondition(false);
 		return specie;
@@ -359,11 +359,13 @@ public class Utility {
 	}
 	
 	public static boolean addSpecies(SBMLDocument document, Species species) {
-		if (document.getModel().getSpecies(species.getId()) == null) {
+		Species s = document.getModel().getSpecies(species.getId());
+		if (s == null) {
 			document.getModel().addSpecies(species);
 			return true;
 		}
 		else {
+			/*
 			ListOf s = document.getModel().getListOfSpecies();
 			for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
 				if (((Species) s.get(i)).getId().equals(species.getId())) {
@@ -371,10 +373,13 @@ public class Utility {
 				}
 			}
 			document.getModel().addSpecies(species);
+			*/
+			/* TODO: this is not quite right */
+			s.setInitialAmount(species.getInitialAmount());
+			s.setBoundaryCondition(species.getBoundaryCondition());
 			return true;
 			//Give warning
 		}
-//		return false;
 	}
 	
 	public static boolean addUnits() {
