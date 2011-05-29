@@ -1247,7 +1247,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					s.setBoundaryCondition(false);
 					s.setConstant(false);
 					s.setInitialAmount(0);
-					s.setHasOnlySubstanceUnits(false);
+					s.setHasOnlySubstanceUnits(true);
 				}
 				SBMLutilities.addRandomFunctions(document);
 				SBMLWriter writer = new SBMLWriter();
@@ -1280,7 +1280,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				s.setBoundaryCondition(false);
 				s.setConstant(false);
 				s.setInitialAmount(0);
-				s.setHasOnlySubstanceUnits(false);
+				s.setHasOnlySubstanceUnits(true);
 			}
 			SBMLutilities.addRandomFunctions(document);
 			SBMLWriter writer = new SBMLWriter();
