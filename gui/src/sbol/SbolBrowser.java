@@ -33,7 +33,7 @@ public class SbolBrowser extends JPanel {
 		browserPanel.add(viewArea, "Center");
 		
 		JTabbedPane browserTab = new JTabbedPane();
-		browserTab.add("Browser", browserPanel);
+		browserTab.add("SBOL Browser", browserPanel);
 		this.add(browserTab);
 	}
 	
@@ -47,10 +47,8 @@ public class SbolBrowser extends JPanel {
 		
 		constructBrowser();
 		
-		JPanel browserPanel = new JPanel();
-		browserPanel.add(selectionPanel);
-		browserPanel.add(viewArea);
-		this.add(browserPanel);
+		this.add(selectionPanel);
+		this.add(viewArea);
 		
 		boolean display = true;
 		while (display)
@@ -69,7 +67,7 @@ public class SbolBrowser extends JPanel {
 		
 		SequenceFeaturePanel featPanel = new SequenceFeaturePanel(featMap, viewArea);
 		DnaComponentPanel compPanel = new DnaComponentPanel(compMap, viewArea, featPanel, filter);
-		LibraryPanel libPanel = new LibraryPanel(libMap, viewArea, compPanel, featPanel, filter);
+		LibraryPanel libPanel = new LibraryPanel(libMap, compMap, featMap, viewArea, compPanel, featPanel, filter);
 		libPanel.setLibraries(libMap.keySet());
 		
 		selectionPanel.add(libPanel);
@@ -100,17 +98,6 @@ public class SbolBrowser extends JPanel {
 			for (String libId : libIds) {
 				Library lib = factory.getLibrary(libId);
 				libMap.put(libId, lib);
-				for (DnaComponent dnac : lib.getComponents()) {
-					compMap.put(dnac.getDisplayId(), dnac);
-					for (SequenceAnnotation sa : dnac.getAnnotations()) {
-						for (SequenceFeature sf : sa.getFeatures()) {
-							featMap.put(sf.getDisplayId(), sf);
-						}
-					}
-				}
-				for (SequenceFeature sf : lib.getFeatures()) {
-					featMap.put(sf.getDisplayId(), sf);
-				}
 			}		
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Error opening file.", "Error",
