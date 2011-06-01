@@ -20,18 +20,20 @@ public class LibraryPanel extends JPanel implements MouseListener {
 	private DnaComponentPanel compPanel;
 	private SequenceFeaturePanel featPanel;
 	private JList libList = new JList();
+	private String filter;
 	
-	public LibraryPanel(HashMap<String, Library> libMap, TextArea viewArea, DnaComponentPanel compPanel, SequenceFeaturePanel featPanel) {
+	public LibraryPanel(HashMap<String, Library> libMap, TextArea viewArea, DnaComponentPanel compPanel, 
+			SequenceFeaturePanel featPanel, String filter) {
 		super(new BorderLayout());
 		this.libMap = libMap;
 		this.viewArea = viewArea;
 		this.compPanel = compPanel;
 		this.featPanel = featPanel;
+		this.filter = filter;
 		
 		libList.addMouseListener(this);
 		
 		JLabel libraryLabel = new JLabel("Libraries:");
-		
 		
 		JScrollPane libraryScroll = new JScrollPane();
 		libraryScroll.setMinimumSize(new Dimension(260, 200));
@@ -62,23 +64,25 @@ public class LibraryPanel extends JPanel implements MouseListener {
 					compIdArray[n] = dnac.getDisplayId();
 					n++;
 				}
-				LinkedHashSet<String> compIds = lexoSort(compIdArray);
+				LinkedHashSet<String> compIds = lexoSort(compIdArray, n);
 				compPanel.setComponents(compIds);
 				
 				String[] featIdArray = new String[lib.getFeatures().size()];
 				n = 0;
 				for (SequenceFeature sf : lib.getFeatures()) {
-					featIdArray[n] = sf.getDisplayId();
-					n++;
+					if (filterFeature(sf, filter)) {
+						featIdArray[n] = sf.getDisplayId();
+						n++;
+					}
 				}
-				LinkedHashSet<String> featIds = lexoSort(featIdArray);
+				LinkedHashSet<String> featIds = lexoSort(featIdArray, n);
 				featPanel.setFeatures(featIds);
 			}
 		}
 	}
-	//Sorts string array lexographically
-	private LinkedHashSet<String> lexoSort(String[] sortingArray) {
-		for (int j = 1; j < sortingArray.length; j++) {
+	//Sorts first m entries of string array lexographically
+	private LinkedHashSet<String> lexoSort(String[] sortingArray, int m) {
+		for (int j = 1; j < m; j++) {
 			String key = sortingArray[j];
 			int i = j - 1;
 			while (i >= 0 && sortingArray[i].compareTo(key) > 0) {
@@ -88,9 +92,18 @@ public class LibraryPanel extends JPanel implements MouseListener {
 			sortingArray[i + 1] = key;
 		}
 		LinkedHashSet<String> sortedSet = new LinkedHashSet<String>();
-		for (int n = 0; n < sortingArray.length; n++)
+		for (int n = 0; n < m; n++)
 			sortedSet.add(sortingArray[n]);
 		return sortedSet;
+	}
+	
+	private boolean filterFeature(SequenceFeature sf, String filter) {
+		if (filter.equals(""))
+			return true;
+		HashSet<String> types = new HashSet<String>();
+ 		for (URI uri : sf.getTypes()) 
+			types.add(uri.getFragment());
+ 		return types.contains(filter);
 	}
 
 	public void mouseEntered(MouseEvent e) {

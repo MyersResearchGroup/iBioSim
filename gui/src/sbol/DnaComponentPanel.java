@@ -19,12 +19,15 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 	private TextArea viewArea;
 	private SequenceFeaturePanel featPanel;
 	private JList compList = new JList();
+	private String filter;
 	
-	public DnaComponentPanel(HashMap<String, DnaComponent> compMap, TextArea viewArea, SequenceFeaturePanel featPanel) {
+	public DnaComponentPanel(HashMap<String, DnaComponent> compMap, TextArea viewArea, 
+			SequenceFeaturePanel featPanel, String filter) {
 		super(new BorderLayout());
 		this.compMap = compMap;
 		this.viewArea = viewArea;
 		this.featPanel = featPanel;
+		this.filter = filter;
 		
 		compList.addMouseListener(this);
 		
@@ -93,6 +96,15 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 		} 
 	}
 
+	private boolean filterFeature(SequenceFeature sf, String filter) {
+		if (filter.equals(""))
+			return true;
+		HashSet<String> types = new HashSet<String>();
+ 		for (URI uri : sf.getTypes()) 
+			types.add(uri.getFragment());
+ 		return types.contains(filter);
+	}
+	
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
 		

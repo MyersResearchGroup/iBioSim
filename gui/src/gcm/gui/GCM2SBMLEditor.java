@@ -1810,6 +1810,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	public void setSBMLParamFile(SBML_Editor sbmlParamFile) {
 		this.sbmlParamFile = sbmlParamFile;
 	}
+	
+	public Gui getGui() {
+		return biosim;
+	}
 
 	private boolean lock = false;
 

@@ -8,7 +8,9 @@ import gcm.util.Utility;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Properties;
 
 import javax.swing.DefaultListModel;
@@ -17,6 +19,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.tree.TreeModel;
+
+import sbol.SbolBrowser;
 
 import main.Gui;
 
@@ -435,7 +440,15 @@ public class PromoterPanel extends JPanel implements ActionListener {
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("browsePromoters")) {
-			
+			HashSet<String> filePaths = new HashSet<String>();
+			TreeModel tree = gcmEditor.getGui().getFileTree().tree.getModel();
+			for (int i = 0; i < tree.getChildCount(tree.getRoot()); i++) {
+				String fileName = tree.getChild(tree.getRoot(), i).toString();
+				String mySeparator = File.separator;
+				if (fileName.endsWith("rdf"))
+					filePaths.add(gcmEditor.getGui().getRoot() + mySeparator + fileName);
+			}
+			SbolBrowser browser = new SbolBrowser(filePaths, "promoter");
 		}
 	}
 	
