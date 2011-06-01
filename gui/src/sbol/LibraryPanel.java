@@ -16,16 +16,21 @@ import main.Gui;
 public class LibraryPanel extends JPanel implements MouseListener {
 
 	private HashMap<String, Library> libMap;
+	private HashMap<String, DnaComponent> compMap;
+	private HashMap<String, SequenceFeature> featMap;
 	private TextArea viewArea;
 	private DnaComponentPanel compPanel;
 	private SequenceFeaturePanel featPanel;
 	private JList libList = new JList();
 	private String filter;
 	
-	public LibraryPanel(HashMap<String, Library> libMap, TextArea viewArea, DnaComponentPanel compPanel, 
+	public LibraryPanel(HashMap<String, Library> libMap, HashMap<String, DnaComponent> compMap, 
+			HashMap<String, SequenceFeature> featMap, TextArea viewArea, DnaComponentPanel compPanel, 
 			SequenceFeaturePanel featPanel, String filter) {
 		super(new BorderLayout());
 		this.libMap = libMap;
+		this.compMap = compMap;
+		this.featMap = featMap;
 		this.viewArea = viewArea;
 		this.compPanel = compPanel;
 		this.featPanel = featPanel;
@@ -63,6 +68,7 @@ public class LibraryPanel extends JPanel implements MouseListener {
 				for (DnaComponent dnac : lib.getComponents()) {
 					compIdArray[n] = dnac.getDisplayId();
 					n++;
+					compMap.put(dnac.getDisplayId(), dnac);
 				}
 				LinkedHashSet<String> compIds = lexoSort(compIdArray, n);
 				compPanel.setComponents(compIds);
@@ -73,6 +79,7 @@ public class LibraryPanel extends JPanel implements MouseListener {
 					if (filterFeature(sf, filter)) {
 						featIdArray[n] = sf.getDisplayId();
 						n++;
+						featMap.put(sf.getDisplayId(), sf);
 					}
 				}
 				LinkedHashSet<String> featIds = lexoSort(featIdArray, n);
