@@ -2831,10 +2831,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getActionCommand().equals("browseSbol")) {
 			String filePath = tree.getFile();
 			String fileName = "";
-			if (filePath.lastIndexOf('/') >= 0) 
-				fileName = filePath.substring(filePath.lastIndexOf('/') + 1);
-			if (filePath.lastIndexOf('\\') >= 0)
-				fileName = filePath.substring(filePath.lastIndexOf('\\') + 1);
+			String mySeparator = File.separator;
+			fileName = filePath.substring(filePath.lastIndexOf(mySeparator) + 1);
 			int i = getTab(fileName);
 			if (i != -1) {
 				tab.setSelectedIndex(i);
@@ -4780,9 +4778,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				String importPath = Utility.browse(frame, importFile, null,
 						JFileChooser.FILES_AND_DIRECTORIES, "Import SBOL", -1).trim();
-				int index = importPath.lastIndexOf("\\");
+				String mySeparator = File.separator;
+				int index = importPath.lastIndexOf(mySeparator);
 				String filename = importPath.substring(index + 1, importPath.length()).replaceAll("[^a-zA-Z0-9_.]+", "_");
-				String exportPath = root + "\\" + filename;
+				String exportPath = root + mySeparator + filename;
 				try {
 					if (checkFiles(exportPath, importPath) 
 							&& overwrite(exportPath, filename)) {
@@ -7628,6 +7627,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		mainPanel.validate();
 	}
 
+	public FileTree getFileTree() {
+		return tree;
+	}
+	
 	/**
 	 * This method adds the given Component to a tab.
 	 */
