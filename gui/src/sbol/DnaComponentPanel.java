@@ -81,7 +81,8 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 				for (int k = 0; k < sortedSA.length; k++) {
 					for (SequenceFeature sf : sortedSA[k].getFeatures()) {
 						annotations = annotations + sf.getName() + " + ";
-						featIds.add(sf.getDisplayId());
+						if (filterFeature(sf, filter))
+							featIds.add(sf.getDisplayId());
 					}
 					annotations = annotations.substring(0, annotations.length() - 2);
 					String sign = sortedSA[k].getStrand();
