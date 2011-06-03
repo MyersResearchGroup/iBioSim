@@ -18,14 +18,14 @@ public class LibraryPanel extends JPanel implements MouseListener {
 	private HashMap<String, Library> libMap;
 	private HashMap<String, DnaComponent> compMap;
 	private HashMap<String, SequenceFeature> featMap;
-	private TextArea viewArea;
+	private JTextArea viewArea;
 	private DnaComponentPanel compPanel;
 	private SequenceFeaturePanel featPanel;
 	private JList libList = new JList();
 	private String filter;
 	
 	public LibraryPanel(HashMap<String, Library> libMap, HashMap<String, DnaComponent> compMap, 
-			HashMap<String, SequenceFeature> featMap, TextArea viewArea, DnaComponentPanel compPanel, 
+			HashMap<String, SequenceFeature> featMap, JTextArea viewArea, DnaComponentPanel compPanel, 
 			SequenceFeaturePanel featPanel, String filter) {
 		super(new BorderLayout());
 		this.libMap = libMap;
@@ -58,33 +58,31 @@ public class LibraryPanel extends JPanel implements MouseListener {
 		if (e.getSource() == libList) {
 			viewArea.setText("");
 			Object[] selected = libList.getSelectedValues();
-			for (Object o : selected) {
-				Library lib = libMap.get(o.toString());
-				viewArea.append("Name:  " + lib.getName() + "\n");
-				viewArea.append("Description:  " + lib.getDescription() + "\n\n");
-				
-				String[] compIdArray = new String[lib.getComponents().size()];
-				int n = 0;
-				for (DnaComponent dnac : lib.getComponents()) {
-					compIdArray[n] = dnac.getDisplayId();
-					n++;
-					compMap.put(dnac.getDisplayId(), dnac);
-				}
-				LinkedHashSet<String> compIds = lexoSort(compIdArray, n);
-				compPanel.setComponents(compIds);
-				
-				String[] featIdArray = new String[lib.getFeatures().size()];
-				n = 0;
-				for (SequenceFeature sf : lib.getFeatures()) {
-					if (filterFeature(sf, filter)) {
-						featIdArray[n] = sf.getDisplayId();
-						n++;
-						featMap.put(sf.getDisplayId(), sf);
-					}
-				}
-				LinkedHashSet<String> featIds = lexoSort(featIdArray, n);
-				featPanel.setFeatures(featIds);
+			Library lib = libMap.get(selected[0].toString());
+			viewArea.append("Name:  " + lib.getName() + "\n");
+			viewArea.append("Description:  " + lib.getDescription() + "\n\n");
+
+			String[] compIdArray = new String[lib.getComponents().size()];
+			int n = 0;
+			for (DnaComponent dnac : lib.getComponents()) {
+				compIdArray[n] = dnac.getDisplayId();
+				n++;
+				compMap.put(dnac.getDisplayId(), dnac);
 			}
+			LinkedHashSet<String> compIds = lexoSort(compIdArray, n);
+			compPanel.setComponents(compIds);
+
+			String[] featIdArray = new String[lib.getFeatures().size()];
+			n = 0;
+			for (SequenceFeature sf : lib.getFeatures()) {
+				if (filterFeature(sf, filter)) {
+					featIdArray[n] = sf.getDisplayId();
+					n++;
+					featMap.put(sf.getDisplayId(), sf);
+				}
+			}
+			LinkedHashSet<String> featIds = lexoSort(featIdArray, n);
+			featPanel.setFeatures(featIds);
 		}
 	}
 	//Sorts first m entries of string array lexographically
