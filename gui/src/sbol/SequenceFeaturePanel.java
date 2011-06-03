@@ -16,10 +16,10 @@ import main.Gui;
 public class SequenceFeaturePanel extends JPanel implements MouseListener {
 
 	private HashMap<String, SequenceFeature> featMap;
-	private TextArea viewArea;
+	private JTextArea viewArea;
 	private JList featList = new JList();
 	
-	public SequenceFeaturePanel(HashMap<String, SequenceFeature> featMap, TextArea viewArea) {
+	public SequenceFeaturePanel(HashMap<String, SequenceFeature> featMap, JTextArea viewArea) {
 		super(new BorderLayout());
 		this.featMap = featMap;
 		this.viewArea = viewArea;

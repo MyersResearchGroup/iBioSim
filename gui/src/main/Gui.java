@@ -6599,6 +6599,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")) {
+							if (copy.length() > 3) {
+								if (!copy.substring(copy.length() - 4).equals(".rdf")) {
+									copy += ".rdf";
+								}
+							}
+							else {
+								copy += ".rdf";
+							}
+						}
+						else if (tree.getFile().length() >= 4
 								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
 							if (copy.length() > 3) {
 								if (!copy.substring(copy.length() - 4).equals(".vhd")) {
@@ -6735,6 +6746,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						else if ((tree.getFile().length() >= 4
 								&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")
+								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")
 								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")
 								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")
 								|| tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")
@@ -6949,6 +6961,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						else if (tree.getFile().length() >= 4
 								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
+										".rdf")) {
+							if (rename.length() > 3) {
+								if (!rename.substring(rename.length() - 4).equals(".rdf")) {
+									rename += ".rdf";
+								}
+							}
+							else {
+								rename += ".rdf";
+							}
+						}
+						else if (tree.getFile().length() >= 4
+								&& tree.getFile().substring(tree.getFile().length() - 4).equals(
 										".vhd")) {
 							if (rename.length() > 3) {
 								if (!rename.substring(rename.length() - 4).equals(".vhd")) {
@@ -7098,6 +7122,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 											.equals(".gcm")
 									|| tree.getFile().length() >= 4
 									&& tree.getFile().substring(tree.getFile().length() - 4)
+											.equals(".rdf")
+									|| tree.getFile().length() >= 4
+									&& tree.getFile().substring(tree.getFile().length() - 4)
 											.equals(".lpn")
 									|| tree.getFile().length() >= 4
 									&& tree.getFile().substring(tree.getFile().length() - 4)
@@ -7150,6 +7177,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									&& rename.substring(rename.length() - 4).equals(".xml")
 									|| rename.length() >= 4
 									&& rename.substring(rename.length() - 4).equals(".gcm")
+									|| rename.length() >= 4
+									&& rename.substring(rename.length() - 4).equals(".rdf")
 									|| rename.length() >= 4
 									&& rename.substring(rename.length() - 4).equals(".lpn")
 									|| rename.length() >= 4
@@ -7288,6 +7317,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 															".gcm")) {
 										((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename
 												.substring(0, rename.length() - 4));
+									}
+									else if (tree.getFile().length() > 3
+											&& tree.getFile()
+													.substring(tree.getFile().length() - 4).equals(
+															".rdf")) {
+										tab.setTitleAt(i, rename);
 									}
 									else if (tree.getFile().length() > 3
 											&& tree.getFile()
@@ -8308,16 +8343,26 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (tree.getFile().length() > 3
 					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")) {
+				JMenuItem view = new JMenuItem("View");
+				view.addActionListener(this);
+				view.addMouseListener(this);
+				view.setActionCommand("browseSbol");
 				JMenuItem delete = new JMenuItem("Delete");
 				delete.addActionListener(this);
 				delete.addMouseListener(this);
 				delete.setActionCommand("delete");
-				JMenuItem browse = new JMenuItem("Browse");
-				browse.addActionListener(this);
-				browse.addMouseListener(this);
-				browse.setActionCommand("browseSbol");
-				popup.add(browse);
+				JMenuItem copy = new JMenuItem("Copy");
+				copy.addActionListener(this);
+				copy.addMouseListener(this);
+				copy.setActionCommand("copy");
+				JMenuItem rename = new JMenuItem("Rename");
+				rename.addActionListener(this);
+				rename.addMouseListener(this);
+				rename.setActionCommand("rename");
+				popup.add(view);
 				popup.add(delete);
+				popup.add(copy);
+				popup.add(rename);
 			}
 			else if (tree.getFile().length() > 3
 					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
@@ -9001,6 +9046,20 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				catch (Exception e1) {
 					JOptionPane.showMessageDialog(frame, "Unable to open this gcm file.", "Error",
 							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			else if (tree.getFile().length() >= 4
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")) {
+				String filePath = tree.getFile();
+				String fileName = "";
+				String mySeparator = File.separator;
+				fileName = filePath.substring(filePath.lastIndexOf(mySeparator) + 1);
+				int i = getTab(fileName);
+				if (i != -1) {
+					tab.setSelectedIndex(i);
+				} else {
+					SbolBrowser browser = new SbolBrowser(filePath);
+					addTab(fileName, browser, null);
 				}
 			}
 			else if (tree.getFile().length() >= 4
@@ -12288,6 +12347,35 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				rename.setEnabled(true);
 				delete.setEnabled(true);
 				viewModel.setEnabled(true);
+				viewRules.setEnabled(false);
+				viewTrace.setEnabled(false);
+				viewCircuit.setEnabled(false);
+				// viewLog.setEnabled(false);
+				// viewCoverage.setEnabled(false);
+				// viewVHDL.setEnabled(false);
+				// viewVerilog.setEnabled(false);
+				viewLHPN.setEnabled(false);
+				// /saveParam.setEnabled(false);
+				saveAsVerilog.setEnabled(false);
+				saveSbml.setEnabled(false);
+				saveTemp.setEnabled(false);
+			}
+			else if (tree.getFile().length() > 3
+					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")) {
+				viewModGraph.setEnabled(false);
+				// viewModGraph.setActionCommand("graphDot");
+				viewModBrowser.setEnabled(false);
+				createAnal.setEnabled(false);
+				createLearn.setEnabled(false);
+				createVer.setEnabled(false);
+				createSbml.setEnabled(false);
+				refresh.setEnabled(false);
+				check.setEnabled(false);
+				export.setEnabled(false);
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+				viewModel.setEnabled(false);
 				viewRules.setEnabled(false);
 				viewTrace.setEnabled(false);
 				viewCircuit.setEnabled(false);

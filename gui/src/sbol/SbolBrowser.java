@@ -1,6 +1,7 @@
 package sbol;
 
 import java.awt.*;
+
 import javax.swing.*;
 
 import org.sbolstandard.libSBOLj.*;
@@ -18,7 +19,8 @@ public class SbolBrowser extends JPanel {
 	private String filter = "";
 	private String[] options = {"Ok"};
 	private JPanel selectionPanel = new JPanel(new GridLayout(1,3));
-	private TextArea viewArea = new TextArea("", 0, 0, TextArea.SCROLLBARS_VERTICAL_ONLY);
+	private JTextArea viewArea = new JTextArea();
+	private JScrollPane viewScroll = new JScrollPane();
 	
 	//Constructor when browsing a single RDF file from the main gui
 	public SbolBrowser(String filePath) {
@@ -30,7 +32,7 @@ public class SbolBrowser extends JPanel {
 		
 		JPanel browserPanel = new JPanel();
 		browserPanel.add(selectionPanel, "North");
-		browserPanel.add(viewArea, "Center");
+		browserPanel.add(viewScroll, "Center");
 		
 		JTabbedPane browserTab = new JTabbedPane();
 		browserTab.add("SBOL Browser", browserPanel);
@@ -48,7 +50,7 @@ public class SbolBrowser extends JPanel {
 		constructBrowser();
 		
 		this.add(selectionPanel);
-		this.add(viewArea);
+		this.add(viewScroll);
 		
 		boolean display = true;
 		while (display)
@@ -63,6 +65,10 @@ public class SbolBrowser extends JPanel {
 	}
 	
 	private void constructBrowser() {
+		viewScroll.setMinimumSize(new Dimension(780, 400));
+		viewScroll.setPreferredSize(new Dimension(828, 264));
+		viewScroll.setViewportView(viewArea);
+		viewArea.setLineWrap(true);
 		viewArea.setEditable(false);
 		
 		SequenceFeaturePanel featPanel = new SequenceFeaturePanel(featMap, viewArea);

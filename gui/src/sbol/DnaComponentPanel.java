@@ -16,12 +16,12 @@ import main.Gui;
 public class DnaComponentPanel extends JPanel implements MouseListener {
 
 	private HashMap<String, DnaComponent> compMap;
-	private TextArea viewArea;
+	private JTextArea viewArea;
 	private SequenceFeaturePanel featPanel;
 	private JList compList = new JList();
 	private String filter;
 	
-	public DnaComponentPanel(HashMap<String, DnaComponent> compMap, TextArea viewArea, 
+	public DnaComponentPanel(HashMap<String, DnaComponent> compMap, JTextArea viewArea, 
 			SequenceFeaturePanel featPanel, String filter) {
 		super(new BorderLayout());
 		this.compMap = compMap;
