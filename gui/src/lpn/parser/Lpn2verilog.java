@@ -130,7 +130,7 @@ public class Lpn2verilog {
 			}
 			first = true;
 			for (String v: varsList){
-				if (!lpn.isInput(v) && !lpn.isOutput(v)){
+				if (!lpn.isInput(v) && !lpn.isOutput(v) && !lpn.isContinuous(v)){
 					if (first){
 						first = false;
 						sv.write("\treal " + v);
@@ -138,7 +138,17 @@ public class Lpn2verilog {
 					else
 						sv.write("," + v);
 				}
-				if (lpn.isContinuous(v)){sv.write(", rate_"+v); }  //new code
+				
+				else
+					if (lpn.isContinuous(v)){
+					if(first){
+						first = false;
+						sv.write("\treal  "+v+", rate_"+v); 
+						}
+					else sv.write(","+v+", rate_"+v);
+					}
+				//else {}
+					//sv.write("," + v);
 			}
 			if (!first)
 				sv.write(";\n");
@@ -226,17 +236,17 @@ public class Lpn2verilog {
 							//double initRate = Double.parseDouble(lpn.getInitialRate(v));
 							if (firstCont){
 								firstCont = false;
-								initBuffer.append("\t\tentryTime<=$time;\n");
-								sv.write("\treal entryTime;\n");
+							//	initBuffer.append("\t\tentryTime<=$time;\n");
+							//	sv.write("\treal entryTime;\n");
 							}
-							sv.write("\treal rate_" + v + ", change_" + v + ";\n");
+							//sv.write("\treal rate_" + v + ", change_" + v + ";\n");
 							if ((lpn.getInitialRate(v) != null) && (!lpn.getInitialRate(v).equalsIgnoreCase("unknown"))){
 								String initBufferString = getInitBufferString(v, lpn.getInitialRate(v));
-								initBuffer.append("\t\trate_" + initBufferString);
+								//initBuffer.append("\t\trate_" + initBufferString);
 							}
 							if ((lpn.getInitialVal(v) != null)  && (!lpn.getInitialVal(v).equalsIgnoreCase("unknown"))){
 								String initBufferString = getInitBufferString(v, lpn.getInitialVal(v));
-								initBuffer.append("\t\tchange_" + initBufferString);
+							//	initBuffer.append("\t\tchange_" + initBufferString);
 							}
 						} else {
 							if ((lpn.getInitialVal(v) != null) && (!lpn.getInitialVal(v).equalsIgnoreCase("unknown"))){
