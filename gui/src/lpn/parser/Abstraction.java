@@ -1441,7 +1441,7 @@ public class Abstraction extends LhpnFile {
 						combine.add(array);
 						samesets.put(t1, same);
 					} else if (samePreset && !assign
-							&& abstPane.absListModel.contains(abstPane.xform6)) {
+							&& abstPane.preAbsModel.contains(abstPane.xform6) || abstPane.loopAbsModel.contains(abstPane.xform6) || abstPane.postAbsModel.contains(abstPane.xform6)) {
 						Place[] postset1 = t1.getPostset();
 						Place[] postset2 = t2.getPostset();
 						if (postset1.length == 1 && postset2.length == 1) {
@@ -2265,7 +2265,7 @@ public class Abstraction extends LhpnFile {
 			String[] delay = { trans1.getDelay(), trans2.getDelay() };
 			for (int i = 0; i < delay.length; i++) {
 				trans1.addDelay("uniform(min(" + delay[0] + "," + delay[1]
-						+ ")," + delay[0] + "+" + delay[1]);
+						+ ")," + delay[0] + "+" + delay[1] + ")");
 			}
 		} else {
 			trans1.addDelay("uniform(0,inf)");
