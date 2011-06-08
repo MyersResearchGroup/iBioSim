@@ -53,6 +53,7 @@ import java.util.Properties;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
 import java.util.regex.Pattern; 
+import java.util.regex.Matcher;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -8273,6 +8274,46 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					JOptionPane.ERROR_MESSAGE);
 		}
 	}
+	
+	public void copySFiles(String filename, String directory) {
+		StringBuffer data = new StringBuffer();
+
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(directory + separator + filename));
+			String str;
+			while ((str = in.readLine()) != null) {
+				data.append(str + "\n");
+			}
+			in.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			throw new IllegalStateException("Error opening file");
+		}
+		
+		Pattern sLinePattern = Pattern.compile(SFILELINE);
+		Matcher sLineMatcher = sLinePattern.matcher(data);
+		while (sLineMatcher.find()) {
+			String sFilename = sLineMatcher.group(1);
+			try {
+				File newFile = new File(directory + separator + sFilename);
+				newFile.createNewFile();
+				FileOutputStream copyin = new FileOutputStream(newFile);
+				FileInputStream copyout = new FileInputStream(new File(root
+						+ separator + sFilename));
+				int read = copyout.read();
+				while (read != -1) {
+					copyin.write(read);
+					read = copyout.read();
+				}
+				copyin.close();
+				copyout.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+				JOptionPane.showMessageDialog(Gui.frame, "Cannot copy file "
+						+ sFilename, "Copy Error", JOptionPane.ERROR_MESSAGE);
+			}
+		}
+	}
 
 	public void updateMenu(boolean logEnabled, boolean othersEnabled) {
 		viewLearnedModel.setEnabled(othersEnabled);
@@ -13363,4 +13404,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			f.setVisible(true);
 		}
 	}
+	
+	static final String SFILELINE = "input (\\S+?)\n";
+	
 }

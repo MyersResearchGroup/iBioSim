@@ -673,6 +673,7 @@ public class Synthesis extends JPanel implements ActionListener, Runnable {
 		
 		/*TODO Test Assembly File compilation */
 		if (sourceFile.endsWith(".s") || sourceFile.endsWith(".inst")) {
+			biosim.copySFiles(sourceFile, directory);
 			try {
 				String preprocCmd;
 				preprocCmd = System.getenv("BIOSIM") + "/bin/s2lpn " + sourceFile;

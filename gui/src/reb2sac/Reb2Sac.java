@@ -1170,7 +1170,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel,
 					postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
 					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, speciesInt);
-			if (modelFile.contains(".lpn")) {
+			if (modelFile.contains(".lpn") || modelFile.contains(".s") || modelFile.contains(".inst")) {
 				markov.setEnabled(true);
 				lhpn.setEnabled(true);
 			}

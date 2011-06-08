@@ -968,6 +968,16 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			abstFilename = (String) JOptionPane.showInputDialog(this,
 					"Please enter the file name for the abstracted LPN.",
 					"Enter Filename", JOptionPane.PLAIN_MESSAGE);
+			if (abstFilename != null) {
+				if (!abstFilename.endsWith(".lpn")) {
+				while (abstFilename.contains("\\.")) {
+					abstFilename = (String) JOptionPane.showInputDialog(this,
+							"Please enter a valid file name for the abstracted LPN.",
+							"Invalid Filename", JOptionPane.PLAIN_MESSAGE);
+				}
+				abstFilename = abstFilename + ".lpn";
+			}
+			}
 		} else {
 			abstFilename = lpnFile.replace(".lpn", "_abs.lpn");
 		}
@@ -1984,6 +1994,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		}
 		/* TODO Test Assembly File compilation */
 		if (sourceFile.endsWith(".s") || sourceFile.endsWith(".inst")) {
+			biosim.copySFiles(verifyFile, directory);
 			try {
 				String preprocCmd;
 				if (lema) {
