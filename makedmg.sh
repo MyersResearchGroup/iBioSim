@@ -12,7 +12,7 @@ cp gui/icons/* /Applications/iBioSim.app/Contents/Resources/gui/icons/.
 cp gui/icons/modelview/* /Applications/iBioSim.app/Contents/Resources/gui/icons/modelview/.
 cp gui/icons/modelview/movie/* /Applications/iBioSim.app/Contents/Resources/gui/icons/modelview/movie/.
 cp gui/bin/* /Applications/iBioSim.app/Contents/Resources/gui/bin/.
-cp gui/dist/lib/* /Applications/iBioSim.app/Contents/Resources/gui/dist/lib/.
+#cp gui/dist/lib/* /Applications/iBioSim.app/Contents/Resources/gui/dist/lib/.
 cp -r gui/dist/classes/* /Applications/iBioSim.app/Contents/Resources/gui/dist/classes/.
 
 

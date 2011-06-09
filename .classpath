@@ -39,6 +39,6 @@
 	<classpathentry kind="lib" path="gui/lib/biomodels-wslib_standalone-1.12.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jgraphx.jar"/>
 	<classpathentry kind="lib" path="gui/lib/libsbmlj.jar"/>
-	<classpathentry kind="lib" path="gui/lib/libSBOLj-0.3.jar"/>
+	<classpathentry kind="lib" path="gui/lib/libSBOLj-0.4.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
