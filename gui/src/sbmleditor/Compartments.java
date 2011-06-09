@@ -28,6 +28,7 @@ import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.CompartmentType;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
+import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.UnitDefinition;
@@ -76,7 +77,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 	private Rules rulesPanel;
 	
 	public Compartments(SBMLDocument document,ArrayList<String> usedIDs,MutableBoolean dirty,
-			Boolean paramsOnly,ArrayList<String> getParams,String file,ArrayList<String> parameterChanges) {
+			Boolean paramsOnly,ArrayList<String> getParams,String file,ArrayList<String> parameterChanges,Boolean editOnly) {
 		super(new BorderLayout());
 		this.document = document;
 		this.usedIDs = usedIDs;
@@ -88,7 +89,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		addCompart = new JButton("Add Compartment");
 		removeCompart = new JButton("Remove Compartment");
 		editCompart = new JButton("Edit Compartment");
-		if (paramsOnly) {
+		if (paramsOnly | editOnly) {
 			addCompart.setEnabled(false);
 			removeCompart.setEnabled(false);
 		}
@@ -157,7 +158,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 	/**
 	 * Creates a frame used to edit compartments or create new ones.
 	 */
-	private void compartEditor(String option) {
+	public void compartEditor(String option) {
 		if (option.equals("OK") && compartments.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(Gui.frame, "No compartment selected.",
 					"Must Select a Compartment", JOptionPane.ERROR_MESSAGE);
@@ -660,6 +661,12 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 							Species species = document.getModel().getSpecies(i);
 							if (species.getCompartment().equals(val)) {
 								species.setCompartment(compID.getText().trim());
+							}
+						}
+						for (int i = 0; i < document.getModel().getNumReactions(); i++) {
+							Reaction reaction = document.getModel().getReaction(i);
+							if (reaction.getCompartment().equals(val)) {
+								reaction.setCompartment(compID.getText().trim());
 							}
 						}
 						if (paramsOnly) {

@@ -87,7 +87,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	
 	public MovieContainer(Reb2Sac reb2sac_, GCMFile gcm, Gui biosim, GCM2SBMLEditor gcm2sbml){
 		super(new BorderLayout());
-		schematic = new Schematic(gcm, biosim, gcm2sbml, false, this);
+		schematic = new Schematic(gcm, biosim, gcm2sbml, false, this,null);
 		this.add(schematic, BorderLayout.CENTER);
 		
 		this.gcm = gcm;

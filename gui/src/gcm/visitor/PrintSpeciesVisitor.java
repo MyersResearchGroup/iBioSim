@@ -100,7 +100,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	
 	//Checks if species belongs in a compartment other than default
 	private String checkCompartments(String species) {
-		String compartment = "default";
+		String compartment = document.getModel().getCompartment(0).getId();
 		String[] splitted = species.split("__");
 		if (compartments != null) {
 			if (compartments.contains(splitted[0]))

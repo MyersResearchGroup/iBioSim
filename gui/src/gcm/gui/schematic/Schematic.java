@@ -38,6 +38,8 @@ import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
+import sbmleditor.Compartments;
+
 import main.Gui;
 
 
@@ -60,6 +62,7 @@ public class Schematic extends JPanel implements ActionListener {
 	private boolean editable;
 	public boolean getEditable(){return editable;};
 	private MovieContainer movieContainer;
+	private Compartments compartments;
 	
 	/**
 	 * listener stuff. Thanks to http://www.exampledepot.com/egs/java.util/custevent.html.
@@ -92,7 +95,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @param internalModel
 	 */
 	public Schematic(GCMFile gcm, Gui biosim, GCM2SBMLEditor gcm2sbml, 
-			boolean editable, MovieContainer movieContainer2){
+			boolean editable, MovieContainer movieContainer2,Compartments compartments){
 		super(new BorderLayout());
 		
 		this.gcm = gcm;
@@ -100,6 +103,7 @@ public class Schematic extends JPanel implements ActionListener {
 		this.gcm2sbml = gcm2sbml;
 		this.editable = editable;
 		this.movieContainer = movieContainer2;
+		this.compartments = compartments;
 		
 		// initialize everything on creation.
 		display();
@@ -193,6 +197,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		toolBar.add(Utils.makeToolButton("choose_layout.png", "showLayouts", "Apply Layout", this));
 		
+		toolBar.add(Utils.makeToolButton("", "compartment", "C", this));
 		toolBar.add(Utils.makeToolButton("", "undo", "Undo", this));
 		toolBar.add(Utils.makeToolButton("", "redo", "Redo", this));
 		
@@ -234,7 +239,11 @@ public class Schematic extends JPanel implements ActionListener {
 			graph.buildGraph();
 			gcm2sbml.refresh();
 			gcm2sbml.setDirty(true);
-			}else if(command == ""){
+		}else if(command == "compartment"){
+			if (compartments != null) {
+				compartments.compartEditor("OK");
+			}
+		}else if(command == ""){
 			// radio buttons don't have to do anything and have an action command of "".
 		}else{
 			throw(new Error("Invalid actionCommand: " + command));

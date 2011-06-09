@@ -1753,7 +1753,7 @@ public class GCMFile {
 			Model m = sbml.getModel();
 			Species s = m.createSpecies();
 			s.setId(id);
-			s.setCompartment("default");
+			s.setCompartment(m.getCompartment(0).getId());
 			s.setBoundaryCondition(false);
 			s.setConstant(false);
 			s.setInitialAmount(0);
