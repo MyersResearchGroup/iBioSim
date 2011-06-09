@@ -176,7 +176,7 @@ public class AbstractionEngine {
 				// np, GeneticNetwork
 				// .getMoleParameter(1)));
 				kl.addParameter(Utility.Parameter("ng__" + promoter.getId(), ng, GeneticNetwork
-						.getMoleParameter(1)));
+						.getMoleParameter(2)));
 				kl.addParameter(Utility.Parameter("kb__" + promoter.getId(), kb, GeneticNetwork
 						.getMoleTimeParameter(1)));
 				kl.addParameter(Utility.Parameter("Ko__" + promoter.getId(), Ko, GeneticNetwork
