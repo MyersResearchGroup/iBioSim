@@ -3,13 +3,11 @@ package gcm.gui;
 import gcm.gui.modelview.movie.MovieContainer;
 import gcm.gui.modelview.movie.visualizations.ColorScheme;
 import gcm.gui.modelview.movie.visualizations.ColorSchemeChooser;
-import gcm.parser.CompatibilityFixer;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,13 +22,16 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.jfree.layout.CenterLayout;
+import org.sbml.libsbml.Species;
 
 import main.Gui;
 
-import parser.TSDParser;
-
-
 public class SpeciesPanel extends JPanel implements ActionListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private static final String COPY_COLOR_TO_ALL = "copy colors to all species";
 	
@@ -293,6 +294,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						property.put(k, v);
 					}
 				}
+				Species species = gcm.getSBMLDocument().getModel().getSpecies(selected);
+				species.setId(fields.get(GlobalConstants.ID).getValue());
+				species.setName(fields.get(GlobalConstants.NAME).getValue());
+				species.setInitialAmount(Double.parseDouble(fields.get(GlobalConstants.INITIAL_STRING).getValue()));
 			}
 
 			for (PropertyField f : fields.values()) {

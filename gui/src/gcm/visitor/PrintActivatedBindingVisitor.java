@@ -32,7 +32,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		this.complexMap = complexMap;
 		this.partsMap = partsMap;
 		this.compartment = compartment;
-		if (compartment.equals("default"))
+		if (compartment.equals(document.getModel().getCompartment(0).getId()))
 			rnapId = "RNAP";
 		else
 			rnapId = compartment + "__RNAP";

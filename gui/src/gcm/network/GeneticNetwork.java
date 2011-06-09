@@ -329,10 +329,10 @@ public class GeneticNetwork {
 			if (p.getOutputs().size()==0) continue;
 			String compartment = checkCompartments(p.getId());
 			String rnapName = "RNAP";
-			if (!compartment.equals("default"))
+			if (!compartment.equals(document.getModel().getCompartment(0).getId()))
 				rnapName = compartment + "__RNAP";
 			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-			r.setCompartment(compartment);
+			r.setCompartment(document.getModel().getCompartment(0).getId());
 			r.setId("R_" + p.getId() + "_RNAP");
 			r.addReactant(Utility.SpeciesReference(rnapName, 1));
 			r.addReactant(Utility.SpeciesReference(p.getId(), 1));
@@ -564,6 +564,9 @@ public class GeneticNetwork {
 		}
 		for (int i = 0; i < model.getNumReactions(); i++) {
 			org.sbml.libsbml.Reaction reaction = (org.sbml.libsbml.Reaction) model.getListOfReactions().get(i);
+			if (reaction.getCompartment().equals(origId)) {
+				reaction.setCompartment(newId);
+			}
 			for (int j = 0; j < reaction.getNumProducts(); j++) {
 				if (reaction.getProduct(j).isSetSpecies()) {
 					SpeciesReference specRef = reaction.getProduct(j);
@@ -888,8 +891,7 @@ public class GeneticNetwork {
 	private void printOnlyPromoters(SBMLDocument document) {
 
 		for (Promoter p : promoters.values()) {
-			Species s = Utility.makeSpecies(p.getId(), "default",
-					p.getPcount());
+			Species s = Utility.makeSpecies(p.getId(), document.getModel().getCompartment(0).getId(), p.getPcount());
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);			
 		}
@@ -909,7 +911,7 @@ public class GeneticNetwork {
 			rnap = Double.parseDouble(properties
 					.getParameter(GlobalConstants.RNAP_STRING));
 		}
-		Species s = Utility.makeSpecies("RNAP", "default", rnap);		
+		Species s = Utility.makeSpecies("RNAP", document.getModel().getCompartment(0).getId(), rnap);		
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
 		//Adds RNA polymerase for compartments other than default
@@ -924,7 +926,7 @@ public class GeneticNetwork {
 	 * Checks if species belongs in a compartment other than default
 	 */
 	private String checkCompartments(String species) {
-		String compartment = "default";
+		String compartment = document.getModel().getCompartment(0).getId();
 		String[] splitted = species.split("__");
 		if (compartments.contains(splitted[0]))
 			compartment = splitted[0];

@@ -264,6 +264,8 @@ public class BioGraph extends mxGraph {
 		boolean needsPositioning = false;
 		unpositionedSpeciesComponentCount = 0;
 		
+		//createGraphCompartmentFromModel("default");
+		
 		// add species
 		for(String sp:gcm.getSpecies().keySet()){ // SPECIES
 			if(createGraphSpeciesFromModel(sp))
@@ -584,7 +586,26 @@ public class BioGraph extends mxGraph {
 	private String getComponentConnectionName(String compName, String speciesName){
 		return compName + " (component connection) " + speciesName;
 	}
-
+	
+	/**
+	 * creates a vertex on the graph using the internal model.
+	 * @param id
+	 * 
+	 * @return: A bool, true if the species had to be positioned.
+	 */
+	/*
+	private boolean createGraphCompartmentFromModel(String sp){
+		Properties prop = new Properties();
+		String id = sp;
+		CellValueObject cvo = new CellValueObject(id, prop);
+		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		this.speciesToMxCellMap.put(id, (mxCell)insertedVertex);
+		
+		this.setSpeciesStyles(sp);
+		
+		return sizeAndPositionFromProperties((mxCell)insertedVertex, prop);
+	}
+	 */
 	
 	/**
 	 * creates a vertex on the graph using the internal model.

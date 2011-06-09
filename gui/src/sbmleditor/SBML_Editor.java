@@ -158,7 +158,7 @@ public class SBML_Editor extends JPanel {
 			}
 		}
 		
-		Compartments comp = new Compartments(document,usedIDs,dirty,paramsOnly,getParams,file,parameterChanges);
+		Compartments comp = new Compartments(document,usedIDs,dirty,paramsOnly,getParams,file,parameterChanges,false);
 		MySpecies spec = new MySpecies(biosim,document,usedIDs,dirty,paramsOnly,getParams,file,parameterChanges,false);
 		Parameters param = new Parameters(document,usedIDs,dirty,paramsOnly,getParams,file,parameterChanges);
 		Reactions reac = new Reactions(biosim,document,usedIDs,dirty,paramsOnly,getParams,file,parameterChanges);

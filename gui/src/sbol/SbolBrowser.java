@@ -100,7 +100,8 @@ public class SbolBrowser extends JPanel {
 				rdfString = rdfString.concat(token) + "\n";
 			}
 			scanIn.close();
-			SBOLservice factory = SBOLutil.fromRDF(rdfString);
+			SbolService factory= IOTools.fromRdfXml(rdfString);
+			//SBOLservice factory = SBOLutil.fromRDF(rdfString);
 			for (String libId : libIds) {
 				Library lib = factory.getLibrary(libId);
 				libMap.put(libId, lib);

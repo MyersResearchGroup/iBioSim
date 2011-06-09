@@ -986,7 +986,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		
 		// create the modelview2 (jgraph) panel
 		modelPanel = new ModelPanel(gcm.getSBMLDocument(),dirty,paramsOnly);
-		Schematic schematic = new Schematic(gcm, biosim, this, true, null);
 		
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
@@ -997,12 +996,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		mainPanel.add(mainPanelCenter, "Center");
 		JTabbedPane tab = new JTabbedPane();
 		ArrayList<String >usedIDs = SBMLutilities.CreateListOfUsedIDs(gcm.getSBMLDocument());
-		tab.addTab("Schematic", schematic);
 		
 		String file = filename.replace(".gcm", ".xml");
 		Compartments compartmentPanel = new Compartments(gcm.getSBMLDocument(),usedIDs,dirty,
-				paramsOnly,getParams,file,parameterChanges);
-		tab.addTab("Compartments", compartmentPanel);
+				paramsOnly,getParams,file,parameterChanges,true);
+		//tab.addTab("Compartments", compartmentPanel);
+
+		Schematic schematic = new Schematic(gcm, biosim, this, true, null,compartmentPanel);
+		tab.addTab("Schematic", schematic);
 		
 		MySpecies speciesPanel = new MySpecies(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
 				paramsOnly,getParams,file,parameterChanges,true);
