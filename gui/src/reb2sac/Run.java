@@ -607,7 +607,7 @@ public class Run implements ActionListener {
 						}
 					}
 				}
-				if (gcm.flattenGCM(false) != null) {
+				if (gcm.flattenGCM(true) != null) {
 					time1 = System.nanoTime();
 					LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
 					if (lpnFile == null) {
@@ -762,7 +762,7 @@ public class Run implements ActionListener {
 							gcm.setParameter(key, params.get(key));
 							remove.add(key);
 						}
-						if (gcm.flattenGCM(false) != null) {
+						if (gcm.flattenGCM(true) != null) {
 							time1 = System.nanoTime();
 							LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
 							if (lpnFile == null) {
@@ -932,7 +932,7 @@ public class Run implements ActionListener {
 							gcm.setParameter(key, params.get(key));
 							remove.add(key);
 						}
-						if (gcm.flattenGCM(false) != null) {
+						if (gcm.flattenGCM(true) != null) {
 							time1 = System.nanoTime();
 							LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
 							if (lhpnFile == null) {
@@ -1149,7 +1149,7 @@ public class Run implements ActionListener {
 								}
 							}
 						}
-						if (gcm.flattenGCM(false) != null) {
+						if (gcm.flattenGCM(true) != null) {
 							time1 = System.nanoTime();
 							lhpnFile = gcm.convertToLHPN(specs, conLevel);
 							if (lhpnFile == null) {
