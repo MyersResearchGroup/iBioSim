@@ -3,21 +3,16 @@
  */
 package gcm.gui.schematic;
 
-import gcm.gui.GCM2SBMLEditor;
-import gcm.gui.InfluencePanel;
 import gcm.gui.modelview.movie.visualizations.cellvisualizations.MovieAppearance;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 
-import java.awt.Color;
-import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Properties;
 import java.util.Vector;
 import java.util.regex.Matcher;
@@ -26,7 +21,6 @@ import java.util.regex.Pattern;
 import javax.swing.JOptionPane;
 
 import main.Gui;
-import main.Log;
 
 //import javax.xml.bind.JAXBElement.GlobalScope;
 
@@ -62,7 +56,6 @@ public class BioGraph extends mxGraph {
 	
 	
 	private GCMFile gcm;
-	private GCM2SBMLEditor gcm2sbml; // needed to pull up editor windows
 	
 	public final String CELL_NOT_FULLY_CONNECTED = "cell not fully connected";
 	private final String CELL_VALUE_NOT_FOUND = "cell value not found";
@@ -76,7 +69,7 @@ public class BioGraph extends mxGraph {
 		drawnPromoterToMxCellMap = new HashMap<String, mxCell>();
 	}
 	
-	public BioGraph(GCMFile gcm, GCM2SBMLEditor gcm2sbml){
+	public BioGraph(GCMFile gcm) {
 		super();
 		
 		// Turn editing off to prevent mxGraph from letting the user change the 
@@ -84,7 +77,6 @@ public class BioGraph extends mxGraph {
 		this.setCellsEditable(false);
 		
 		this.gcm = gcm;
-		this.gcm2sbml = gcm2sbml;
 		
 		this.initializeMaps();
 	
@@ -583,9 +575,11 @@ public class BioGraph extends mxGraph {
 	 * @param speciesName
 	 * @return
 	 */
+	/*
 	private String getComponentConnectionName(String compName, String speciesName){
 		return compName + " (component connection) " + speciesName;
 	}
+	*/
 	
 	/**
 	 * creates a vertex on the graph using the internal model.

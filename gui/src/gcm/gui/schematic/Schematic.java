@@ -3,16 +3,13 @@ package gcm.gui.schematic;
 import gcm.gui.DropComponentPanel;
 import gcm.gui.GCM2SBMLEditor;
 import gcm.gui.InfluencePanel;
-import gcm.gui.PromoterPanel;
 import gcm.gui.modelview.movie.MovieContainer;
-import gcm.gui.modelview.movie.visualizations.ColorScheme;
 import gcm.gui.modelview.movie.visualizations.cellvisualizations.MovieAppearance;
 import gcm.gui.modelview.movie.visualizations.component.ComponentSchemeChooser;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Event;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -116,7 +113,7 @@ public class Schematic extends JPanel implements ActionListener {
 	public void display(){
 
 		if(graph == null){
-			graph = new BioGraph(gcm, gcm2sbml);
+			graph = new BioGraph(gcm);
 			
 			addGraphListeners();
 			gcm.makeUndoPoint();

@@ -22,6 +22,11 @@ import main.Gui;
 
 
 public class ComponentsPanel extends JPanel implements ActionListener {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private String selected = "";
 
 	private String[] options = { "Ok", "Cancel" };

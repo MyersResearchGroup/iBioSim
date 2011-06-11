@@ -2,7 +2,6 @@ package gcm.gui.schematic;
 
 import java.awt.event.ActionListener;
 
-import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.SwingConstants;
 

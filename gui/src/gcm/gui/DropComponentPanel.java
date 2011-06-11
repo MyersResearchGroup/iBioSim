@@ -15,13 +15,16 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JSlider;
 import javax.swing.JTextField;
 
 import main.Gui;
 
 public class DropComponentPanel extends JPanel implements ActionListener {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private static final String TOPLEFT = "Top Left";
 	private static final String CENTER_ON_MOUSE_CLICK = "Center on Mouse Click";
 	private static final String[] ORIENTATIONS = {TOPLEFT, CENTER_ON_MOUSE_CLICK};
@@ -43,9 +46,9 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	// returns true if at least 1 component was dropped.
 	private static DropComponentPanel panel;
 	public static boolean dropComponent(GCM2SBMLEditor gcm2sbml, GCMFile gcm, float mouseX, float mouseY){
-		if(panel == null)
-			panel = new DropComponentPanel(gcm2sbml, gcm);
-		
+		//if(panel == null)
+		panel = new DropComponentPanel(gcm2sbml, gcm);
+
 		panel.openGUI(mouseX, mouseY);
 		return panel.droppedComponent;
 	}
