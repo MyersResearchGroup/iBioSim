@@ -1,10 +1,7 @@
 package gcm.gui.schematic;
 
-import java.awt.event.MouseEvent;
-
 import javax.swing.JPopupMenu;
 //import com.mxgraph.examples.swing.editor.EditorActions.HistoryAction;
-import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.util.mxGraphActions;
 
 public class EditorPopupMenu extends JPopupMenu

@@ -2,8 +2,6 @@ package gcm.gui.schematic;
 
 import java.awt.AWTEvent;
 import java.awt.Event;
-import java.util.EventListener;
-import java.util.EventObject;
 import java.util.Properties;
 
 public class SchematicObjectClickEvent extends AWTEvent {
