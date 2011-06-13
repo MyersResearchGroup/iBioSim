@@ -34,7 +34,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		for (SpeciesInterface specie : promoter.getActivators()) {
 			String activator = specie.getId();
 			String[] splitted = activator.split("__");
-			if (splitted.length == 2)
+			if (splitted.length > 1)
 				activator = splitted[1];
 			speciesName = promoter.getId() + "_" + activator + "_RNAP";
 			reactionName = "R_act_production_" + promoter.getId() + "_" + activator;
