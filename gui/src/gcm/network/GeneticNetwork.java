@@ -341,6 +341,8 @@ public class GeneticNetwork {
 			r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
 			double[] Krnap = p.getKrnap();
+			kl.addParameter(Utility.Parameter("kf", Krnap[0], GeneticNetwork
+					.getMoleTimeParameter(2)));
 			if (Krnap.length == 2) {
 				kl.addParameter(Utility.Parameter("kr", Krnap[1], GeneticNetwork
 						.getMoleTimeParameter(1)));
@@ -352,7 +354,7 @@ public class GeneticNetwork {
 				kl.addParameter(Utility.Parameter(krnapString, Krnap[0],
 						GeneticNetwork.getMoleParameter(2)));
 			}
-			kl.setFormula("kr*" + krnapString + "*" + rnapName + "*" + p.getId() + "-kr*"
+			kl.setFormula("kf*" + rnapName + "*" + p.getId() + "-kr*"
 					+ p.getId() + "_RNAP");		
 			Utility.addReaction(document, r);
 
@@ -985,8 +987,7 @@ public class GeneticNetwork {
 	private void markAbstractable() {
 		for (Promoter p : promoters.values()) {
 			//Checks if activators are sequesterable
-			//Marks activators that are complexes as abstractable provided they're not sequesterable/outputs 
-			//and are only part of a single complex (if they're part of a complex at all)
+			//Marks activators that are complexes as abstractable provided they're not parts/outputs 
 			//Checks parts of complex activators provided the activators aren't outputs
 			for (SpeciesInterface s : p.getActivators()) {
 				boolean sequesterable = false;
@@ -1000,8 +1001,7 @@ public class GeneticNetwork {
 				}
 			}
 			//Checks if repressors are sequesterable
-			//Marks repressors that are complexes as abstractable provided they're not sequesterable/outputs 
-			//and are only part of a single complex (if they're part of a complex at all)
+			//Marks repressors that are complexes as abstractable provided they're not parts/outputs 
 			//Checks parts of complex repressors provided the repressors aren't outputs
 			for (SpeciesInterface s : p.getRepressors()) {
 				boolean sequesterable = false;
@@ -1023,7 +1023,7 @@ public class GeneticNetwork {
 	}
 	
 	//Checks if parts of given complex are sequesterable so long as the parts aren't activators or repressors
-	//Marks parts that are complexes as abstractable so long as the parts aren't sequesterable/outputs and are only part of the given complex 
+	//Marks parts that are complexes as abstractable so long as the parts aren't used elsewhere
 	//Recursively checks parts of parts that are complexes provided the latter aren't activators, repressors, or outputs
 	private boolean checkComplex(String complexId, String payNoMind) {
 		for (Influence infl : complexMap.get(complexId)) {

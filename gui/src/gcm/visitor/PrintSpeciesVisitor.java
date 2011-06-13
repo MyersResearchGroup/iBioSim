@@ -41,7 +41,8 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	public void visitComplex(ComplexSpecies specie) {
 		if (!complexAbstraction || (!specie.isAbstractable() && !specie.isSequesterAbstractable())) {
 			loadValues(specie);
-			String compartment = checkCompartments(specie.getId());
+//			String compartment = checkCompartments(specie.getId());
+			String compartment = "default";
 			Species s = Utility.makeSpecies(specie.getId(), compartment, init);
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);
@@ -52,7 +53,8 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues(specie);
-		String compartment = checkCompartments(specie.getId());
+//		String compartment = checkCompartments(specie.getId());
+		String compartment = "default";
 		Species s = Utility.makeSpecies(specie.getId(), compartment, init);
 		s.setName(specie.getName());
 		s.setHasOnlySubstanceUnits(true);
@@ -62,7 +64,8 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitConstantSpecies(ConstantSpecies specie) {
 		loadValues(specie);
-		String compartment = checkCompartments(specie.getId());
+//		String compartment = checkCompartments(specie.getId());
+		String compartment = "default";
 		Species s = Utility.makeSpecies(specie.getId(), compartment, init);
 		s.setName(specie.getName());
 		s.setHasOnlySubstanceUnits(true);
@@ -74,7 +77,8 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie);
-		String compartment = checkCompartments(specie.getId());
+//		String compartment = checkCompartments(specie.getId());
+		String compartment = "default";
 		Species s = Utility.makeSpecies(specie.getId(), compartment, init);
 		s.setName(specie.getName());
 		s.setHasOnlySubstanceUnits(true);
