@@ -98,7 +98,7 @@ public class Parser {
 			out.close();
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(component, "Error Outputting Data Into A TSD File!",
+			JOptionPane.showMessageDialog(component, "Error Outputting Data Into A CVS File!",
 					"Error Outputting Data", JOptionPane.ERROR_MESSAGE);
 		}
 	}
@@ -125,7 +125,7 @@ public class Parser {
 			out.close();
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(component, "Error Outputting Data Into A TSD File!",
+			JOptionPane.showMessageDialog(component, "Error Outputting Data Into A DAT File!",
 					"Error Outputting Data", JOptionPane.ERROR_MESSAGE);
 		}
 	}
