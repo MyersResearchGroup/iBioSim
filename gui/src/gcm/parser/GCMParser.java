@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
+import org.sbml.libsbml.SBMLWriter;
+
 /**
  * This class parses a genetic circuit model.
  * 
@@ -97,8 +99,7 @@ public class GCMParser {
 			parseReactionData(s, reactionMap.get(s));			
 		}
 		
-		GeneticNetwork network = new GeneticNetwork(species, complexMap, partsMap,
-				promoters, gcm);
+		GeneticNetwork network = new GeneticNetwork(species, complexMap, partsMap, promoters, gcm);
 		
 		network.setSBMLFile(gcm.getSBMLFile());
 		if (sbml != null) {

@@ -1,8 +1,6 @@
 package gcm.network;
 
-import gcm.parser.CompatibilityFixer;
 import gcm.parser.GCMFile;
-import gcm.parser.GCMParser;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
 import gcm.visitor.AbstractPrintVisitor;
@@ -20,29 +18,19 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
 
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
-import lpn.parser.LhpnFile;
 import lpn.parser.Translator;
 import main.Gui;
 
-import org.sbml.libsbml.ASTNode;
-import org.sbml.libsbml.Constraint;
-import org.sbml.libsbml.EventAssignment;
-import org.sbml.libsbml.FunctionDefinition;
-import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Model;
-import org.sbml.libsbml.ModifierSpeciesReference;
-import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
-import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.Unit;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
@@ -57,7 +45,7 @@ import org.sbml.libsbml.libsbml;
  */
 public class GeneticNetwork {
 	
-	private String separator;
+	//private String separator;
 	
 	/**
 	 * Constructor
@@ -79,12 +67,14 @@ public class GeneticNetwork {
 	 * Constructor 
 	 */
 	public GeneticNetwork() {
+		/*
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
 		else {
 			separator = File.separator;
 		}
+		*/
 	}
 
 	/**
@@ -102,12 +92,14 @@ public class GeneticNetwork {
 	public GeneticNetwork(HashMap<String, SpeciesInterface> species, 
 			HashMap<String, ArrayList<Influence>> complexMap, HashMap<String, ArrayList<Influence>> partsMap, 
 			HashMap<String, Promoter> promoters, GCMFile gcm) {
+		/*
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
 		else {
 			separator = File.separator;
 		}
+		*/
 		this.species = species;
 		this.promoters = promoters;
 		this.complexMap = complexMap;
@@ -147,10 +139,9 @@ public class GeneticNetwork {
 			m.setId(new File(filename).getName().replace(".xml", ""));	
 			m.setVolumeUnits("litre");
 			m.setSubstanceUnits("mole");
-			p.print(writer.writeToString(document));
+			p.print(writer.writeSBMLToString(document));
 			p.close();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -184,6 +175,14 @@ public class GeneticNetwork {
 	
 	public void setSBML(SBMLDocument doc) {
 		document = doc;
+	}
+	
+	public String getSBMLFile() {
+		return sbmlDocument;
+	}
+	
+	public SBMLDocument getSBML() {
+		return document;
 	}
 
 	/**
@@ -261,7 +260,7 @@ public class GeneticNetwork {
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
-			p.print(writer.writeToString(document));
+			p.print(writer.writeSBMLToString(document));
 
 			p.close();
 			return document;
@@ -332,7 +331,7 @@ public class GeneticNetwork {
 			if (!compartment.equals(document.getModel().getCompartment(0).getId()))
 				rnapName = compartment + "__RNAP";
 			org.sbml.libsbml.Reaction r = new org.sbml.libsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-			r.setCompartment(document.getModel().getCompartment(0).getId());
+			r.setCompartment(compartment); 
 			r.setId("R_" + p.getId() + "_RNAP");
 			r.addReactant(Utility.SpeciesReference(rnapName, 1));
 			r.addReactant(Utility.SpeciesReference(p.getId(), 1));
@@ -443,8 +442,7 @@ public class GeneticNetwork {
 	 *            the SBML document
 	 */
 	private void printSpecies(SBMLDocument document) {
-		PrintSpeciesVisitor visitor = new PrintSpeciesVisitor(document, species
-				, compartments);
+		PrintSpeciesVisitor visitor = new PrintSpeciesVisitor(document, species, compartments);
 		visitor.setComplexAbstraction(complexAbstraction);
 		visitor.run();
 	}
@@ -455,11 +453,13 @@ public class GeneticNetwork {
 		v.run();
 	}
 	
+	/*
 	private ASTNode updateMathVar(ASTNode math, String origVar, String newVar) {
 		String s = updateFormulaVar(myFormulaToString(math), origVar, newVar);
 		return myParseFormula(s);
 	}
-	
+	*/
+	/*
 	private String myFormulaToString(ASTNode mathFormula) {
 		String formula = libsbml.formulaToString(mathFormula);
 		formula = formula.replaceAll("arccot", "acot");
@@ -481,7 +481,7 @@ public class GeneticNetwork {
 		formula = formula.replaceFirst("\\.e-", ".0e-");
 		return formula;
 	}
-	
+
 	private String updateFormulaVar(String s, String origVar, String newVar) {
 		s = " " + s + " ";
 		s = s.replace(" " + origVar + " ", " " + newVar + " ");
@@ -544,7 +544,7 @@ public class GeneticNetwork {
 		for (int c = 0; c < node.getNumChildren(); c++)
 			setTimeAndTrigVar(node.getChild(c));
 	}
-	
+
 	private void updateVarId(boolean isSpecies, String origId, String newId, SBMLDocument document) {
 		if (origId.equals(newId))
 			return;
@@ -820,8 +820,10 @@ public class GeneticNetwork {
 			}
 		}
 	}
+	*/
 	
 	//This currently isn't used
+	/*
 	private void printComponents(SBMLDocument document, String filename) {
 		for (String s : properties.getComponents().keySet()) {
 			GCMParser parser = new GCMParser(currentRoot + separator +
@@ -832,6 +834,7 @@ public class GeneticNetwork {
 			unionSBML(document, d, s);
 		}
 	}
+	*/
 
 	/**
 	 * Prints the promoters in the network
@@ -1130,6 +1133,7 @@ public class GeneticNetwork {
 	 * @param doc
 	 *            the SBML document to check
 	 */
+	/*
 	private void checkConsistancy(SBMLDocument doc) {
 		if (doc.checkConsistency() > 0) {
 			for (int i = 0; i < doc.getNumErrors(); i++) {
@@ -1137,6 +1141,7 @@ public class GeneticNetwork {
 			}
 		}
 	}
+	*/
 	
 	private String sbmlDocument = "";
 	

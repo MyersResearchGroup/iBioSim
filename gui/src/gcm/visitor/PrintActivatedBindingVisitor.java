@@ -46,7 +46,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		for (SpeciesInterface specie : promoter.getActivators()) {
 			String activator = specie.getId();
 			String[] splitted = activator.split("__");
-			if (splitted.length == 2)
+			if (splitted.length > 1)
 				activator = splitted[1];
 			boundId = promoter.getId() + "_" + activator + "_RNAP";
 			reactionId = "R_RNAP_binding_" + promoter.getId() + "_" + activator;

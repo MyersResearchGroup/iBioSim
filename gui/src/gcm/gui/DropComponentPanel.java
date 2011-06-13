@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -26,8 +27,8 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 	private static final String TOPLEFT = "Top Left";
-	private static final String CENTER_ON_MOUSE_CLICK = "Center on Mouse Click";
-	private static final String[] ORIENTATIONS = {TOPLEFT, CENTER_ON_MOUSE_CLICK};
+	private static final String DROP_ON_MOUSE_CLICK = "Drop on Mouse Click";
+	private static final String[] ORIENTATIONS = {TOPLEFT, DROP_ON_MOUSE_CLICK};
 	
 	private JComboBox componentCombo;
 	private JRadioButton doTiling;
@@ -148,7 +149,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		}else{
 			rowCount = colCount = 1;
 			padding = 0;
-			orientation = CENTER_ON_MOUSE_CLICK;
+			orientation = DROP_ON_MOUSE_CLICK;
 		}
 		
 		String comp = (String)componentCombo.getSelectedItem();
@@ -161,9 +162,9 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		if(orientation.equals(TOPLEFT)){
 			topleftX = padding;
 			topleftY = padding;
-		}else if(orientation.equals(CENTER_ON_MOUSE_CLICK)){
-			topleftX = mouseX - separationX * colCount/2 + padding/2;
-			topleftY = mouseY - separationY * rowCount/2 + padding/2;
+		}else if(orientation.equals(DROP_ON_MOUSE_CLICK)){
+			topleftX = mouseX; // - separationX * colCount/2 + padding/2;
+			topleftY = mouseY; // - separationY * rowCount/2 + padding/2;
 		}
 		
 		for(int row=0; row<rowCount; row++){
@@ -175,6 +176,13 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 				properties.setProperty("graphx", String.valueOf(col * separationX + topleftX));
 				properties.setProperty("graphy", String.valueOf(row * separationY + topleftY));
 				
+				GCMFile compGCM = new GCMFile(gcm.getPath());
+				compGCM.load(gcm.getPath() + File.separator + comp);
+				if (compGCM.getIsWithinCompartment()) {
+					properties.setProperty("compartment","true");
+				} else {
+					properties.setProperty("compartment","false");
+				}
 				gcm.addComponent(null, properties);
 			}
 		}

@@ -54,7 +54,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	public ComponentsPanel(String selected, PropertyList componentsList, PropertyList influences,
 			GCMFile gcm, String[] inputs, String[] outputs, String selectedComponent, String oldPort,
 			boolean paramsOnly, GCM2SBMLEditor gcmEditor) {
-		super(new GridLayout(inputs.length + outputs.length + 3, 1));
+		super(new GridLayout(inputs.length + outputs.length + 2, 1));
 		this.selected = selected;
 		this.componentsList = componentsList;
 		this.influences = influences;
@@ -108,6 +108,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		add(field);
 		
 		//Compartment check box
+		/*
 		compartmentBox = new JCheckBox();
 		compartmentBox.addActionListener(this);
 		compartmentBox.setEnabled(true);
@@ -117,19 +118,20 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		compartmentPanel.add(compartmentLabel);
 		compartmentPanel.add(compartmentBox);
 		add(compartmentPanel);
-
+		*/
+		
 		// Port Map field
-		add(new JLabel(GlobalConstants.PORTMAP));
+		add(new JLabel("Ports" /*GlobalConstants.PORTMAP*/));
 		int i = 0;
 		for (String s : inputs) {
 			JPanel tempPanel = new JPanel();
 			JLabel tempLabel = new JLabel(s);
 			JLabel tempLabel2 = new JLabel("Input");
 			types.add("Input");
-			tempPanel.setLayout(new GridLayout(1, 3));
+			tempPanel.setLayout(new GridLayout(1, 2));
 			tempPanel.add(tempLabel);
 			tempPanel.add(tempLabel2);
-			tempPanel.add(portmapBox.get(i));
+			//tempPanel.add(portmapBox.get(i));
 			add(tempPanel);
 			i++;
 		}
@@ -138,10 +140,10 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			JLabel tempLabel = new JLabel(s);
 			JLabel tempLabel2 = new JLabel("Output");
 			types.add("Output");
-			tempPanel.setLayout(new GridLayout(1, 3));
+			tempPanel.setLayout(new GridLayout(1, 2));
 			tempPanel.add(tempLabel);
 			tempPanel.add(tempLabel2);
-			tempPanel.add(portmapBox.get(i));
+			//tempPanel.add(portmapBox.get(i));
 			add(tempPanel);
 			i++;
 		}
@@ -238,10 +240,12 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				i++;
 			}
 			property.put("gcm", selectedComponent);
+			/*
 			if (compartmentBox.getSelectedObjects() != null)
 				property.put("compartment", "true");
 			else
 				property.put("compartment", "false");
+				*/
 			if (selected != null && !oldName.equals(id)) {
 				gcm.changeComponentName(oldName, id);
 				((DefaultListModel) influences.getModel()).clear();
@@ -282,8 +286,10 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	}
 
 	private void loadProperties(Properties property) {
+		/*
 		if (property.containsKey("compartment"))
 			compartmentBox.setSelected(Boolean.parseBoolean(property.get("compartment").toString()));
+			*/
 		for (Object o : property.keySet()) {
 			if (fields.containsKey(o.toString())) {
 				fields.get(o.toString()).setValue(property.getProperty(o.toString()));

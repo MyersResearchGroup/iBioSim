@@ -94,9 +94,18 @@ public class GCMFile {
 		conditions = new ArrayList<String>();
 		globalParameters = new HashMap<String, String>();
 		parameters = new HashMap<String, String>();
+		isWithinCompartment = false;
 		loadDefaultParameters();
 	}
 
+	public boolean getIsWithinCompartment() {
+		return isWithinCompartment;
+	}
+	
+	public void setIsWithinCompartment(boolean isWithinCompartment) {
+		this.isWithinCompartment = isWithinCompartment;
+	}
+	
 	public String getSBMLFile() {
 		return sbmlFile;
 	}
@@ -306,12 +315,26 @@ public class GCMFile {
 		gcms.add(filename);
 		save(filename + ".temp");
 		ArrayList<String> comps = setToArrayList(components.keySet());
-		SBMLDocument sbml = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
-		Model m = sbml.createModel();
-		sbml.setModel(m);
-		Utility.addCompartments(sbml, "default");
-		sbml.getModel().getCompartment("default").setSize(1);
-		m.setVolumeUnits("litre");
+		SBMLDocument sbml = null;
+		if (!sbmlFile.equals("") && includeSBML) {
+			sbml = Gui.readSBML(path + separator + sbmlFile);
+		} 
+		else if (!sbmlFile.equals("") && !includeSBML) {
+			// TODO: This should likely be removed.
+			Utility.createErrorMessage("SBMLs Included",
+					"There are sbml files associated with the gcm file and its components.");
+			load(filename + ".temp");
+			new File(filename + ".temp").delete();
+			return null;
+		} else {
+			sbml = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+			Model m = sbml.createModel();
+			sbml.setModel(m);
+			Utility.addCompartments(sbml, "default");
+			sbml.getModel().getCompartment("default").setSize(1);
+			m.setVolumeUnits("litre");
+		}
+		/*
 		for (String compName : comps) {
 			// Checks if component is a compartment
 			Object testCompartment = components.get(compName).get("compartment");
@@ -323,23 +346,20 @@ public class GCMFile {
 			if (isCompartment) {
 				Utility.addCompartments(sbml, compName);
 				sbml.getModel().getCompartment(compName).setSize(1);
-				m.setVolumeUnits("litre");
+				sbml.getModel().setVolumeUnits("litre");
 				compartments.add(compName);
 			}
 		}
-		if (!sbmlFile.equals("") && includeSBML) {
-			sbml = Gui.readSBML(path + separator + sbmlFile);
-		}
-		else if (!sbmlFile.equals("") && !includeSBML) {
-			Utility.createErrorMessage("SBMLs Included",
-					"There are sbml files associated with the gcm file and its components.");
-			load(filename + ".temp");
-			new File(filename + ".temp").delete();
-			return null;
-		}
+		*/
 		for (String s : comps) {
 			GCMFile file = new GCMFile(path);
 			file.load(path + separator + components.get(s).getProperty("gcm"));
+			if (file.getIsWithinCompartment()) {
+				Utility.addCompartments(sbml, s);
+				sbml.getModel().getCompartment(s).setSize(1);
+				sbml.getModel().setVolumeUnits("litre");
+				compartments.add(s);
+			}
 			for (String p : globalParameters.keySet()) {
 				if (!file.globalParameters.containsKey(p)) {
 					file.setParameter(p, globalParameters.get(p));
@@ -354,7 +374,7 @@ public class GCMFile {
 				return null;
 			}
 			copy.add(file.getFilename());
-			sbml = unionSBML(sbml, unionGCM(this, file, s, includeSBML, copy), s);
+			sbml = unionSBML(sbml, unionGCM(this, file, s, includeSBML, copy), s, this.components, file.getIsWithinCompartment());
 			if (sbml == null && copy.isEmpty()) {
 				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n"
 						+ "There is a loop in the components.");
@@ -424,7 +444,8 @@ public class GCMFile {
 				return null;
 			}
 			copy.add(file.getFilename());
-			sbml = unionSBML(sbml, unionGCM(bottomLevel, file, s, includeSBML, copy), s);
+			sbml = unionSBML(sbml, unionGCM(bottomLevel, file, s, includeSBML, copy), s, bottomLevel.components, 
+					file.getIsWithinCompartment());
 			if (sbml == null) {
 				return null;
 			}
@@ -953,6 +974,7 @@ public class GCMFile {
 					buffer.append(s + "=" + value + "\n");
 				}
 			}
+			buffer.append("compartment="+isWithinCompartment+"\n");
 			buffer.append("}\nPromoters {\n");
 			for (String s : promoters.keySet()) {
 				if (collectGarbage) {
@@ -1989,6 +2011,14 @@ public class GCMFile {
 			String s = matcher.group(1);
 			matcher = propPattern.matcher(s);
 			while (matcher.find()) {
+				if (matcher.group(1).equals("compartment")) {
+					if (matcher.group(2).equals("true")) {
+						isWithinCompartment=true;
+					} else {
+						isWithinCompartment=false;
+					}
+					continue;
+				}
 				String prop = CompatibilityFixer.convertOLDName(matcher.group(1));
 				if (matcher.group(3) != null) {
 					globalParameters.put(prop, matcher.group(3));
@@ -2442,7 +2472,8 @@ public class GCMFile {
 		return array;
 	}
 
-	private SBMLDocument unionSBML(SBMLDocument mainDoc, SBMLDocument doc, String compName) {
+	private SBMLDocument unionSBML(SBMLDocument mainDoc, SBMLDocument doc, String compName, 
+			HashMap<String, Properties> components, boolean isWithinCompartment) {
 		Model m = doc.getModel();
 		for (int i = 0; i < m.getNumCompartmentTypes(); i++) {
 			org.sbml.libsbml.CompartmentType c = m.getCompartmentType(i);
@@ -2466,8 +2497,16 @@ public class GCMFile {
 		}
 		for (int i = 0; i < m.getNumCompartments(); i++) {
 			org.sbml.libsbml.Compartment c = m.getCompartment(i);
-			updateVarId(false, c.getId(), compName, doc);
-			c.setId(compName);
+			
+			if (isWithinCompartment) {
+				updateVarId(false, c.getId(), compName, doc);
+				c.setId(compName);
+			} else {
+				String topComp = mainDoc.getModel().getCompartment(0).getId();
+				updateVarId(false, c.getId(), topComp, doc);
+				c.setId(topComp);
+			}
+			
 			boolean add = true;
 			for (int j = 0; j < mainDoc.getModel().getNumCompartments(); j++) {
 				if (mainDoc.getModel().getCompartment(j).getId().equals(c.getId())) {
@@ -2525,10 +2564,10 @@ public class GCMFile {
 		for (int i = 0; i < m.getNumSpecies(); i++) {
 			Species spec = m.getSpecies(i);
 			String newName = compName + "__" + spec.getId();
-			for (Object port : getComponents().get(compName).keySet()) {
+			for (Object port : components.get(compName).keySet()) {
 				if (spec.getId().equals((String) port)) {
 					newName = "_" + compName + "__"
-							+ getComponents().get(compName).getProperty((String) port);
+							+ components.get(compName).getProperty((String) port);
 				}
 			}
 			updateVarId(true, spec.getId(), newName, doc);
@@ -3156,6 +3195,8 @@ public class GCMFile {
 	private HashMap<String, String> defaultParameters;
 
 	private HashMap<String, String> globalParameters;
+	
+	private boolean isWithinCompartment;
 
 	private String path;
 

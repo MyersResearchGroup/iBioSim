@@ -27,6 +27,7 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -60,6 +61,7 @@ public class Schematic extends JPanel implements ActionListener {
 	public boolean getEditable(){return editable;};
 	private MovieContainer movieContainer;
 	private Compartments compartments;
+	private JCheckBox check;
 	
 	/**
 	 * listener stuff. Thanks to http://www.exampledepot.com/egs/java.util/custevent.html.
@@ -191,10 +193,16 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(noInfluenceButton);
 		
 		toolBar.addSeparator();
+					
+		check = new JCheckBox();
+		check.setActionCommand("checkCompartment");
+		check.addActionListener(this);
+		check.setSelected(gcm.getIsWithinCompartment());
+		toolBar.add(check);
+		toolBar.add(Utils.makeToolButton("", "compartment", "Compartment", this));
 		
+		toolBar.addSeparator();
 		toolBar.add(Utils.makeToolButton("choose_layout.png", "showLayouts", "Apply Layout", this));
-		
-		toolBar.add(Utils.makeToolButton("", "compartment", "C", this));
 		toolBar.add(Utils.makeToolButton("", "undo", "Undo", this));
 		toolBar.add(Utils.makeToolButton("", "redo", "Redo", this));
 		
@@ -240,6 +248,8 @@ public class Schematic extends JPanel implements ActionListener {
 			if (compartments != null) {
 				compartments.compartEditor("OK");
 			}
+		}else if(command == "checkCompartment") {
+			gcm.setIsWithinCompartment(check.isSelected());
 		}else if(command == ""){
 			// radio buttons don't have to do anything and have an action command of "".
 		}else{

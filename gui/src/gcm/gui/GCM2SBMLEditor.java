@@ -425,8 +425,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
 					network.mergeSBML(path + separator + gcmname + ".xml");
-					log.addText("Saving GCM file as SBML file:\n" + path + separator + gcmname
-							+ ".xml\n");
+					log.addText("Saving GCM file as SBML file:\n" + path + separator + gcmname + ".xml\n");
 					biosim.addToTree(gcmname + ".xml");
 					biosim.updateOpenSBML(gcmname + ".xml");
 				}
@@ -436,9 +435,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 			else {
 				network.mergeSBML(path + separator + gcmname + ".xml");
-				log
-						.addText("Saving GCM file as SBML file:\n" + path + separator + gcmname
-								+ ".xml\n");
+				log.addText("Saving GCM file as SBML file:\n" + path + separator + gcmname + ".xml\n");
 				biosim.addToTree(gcmname + ".xml");
 			}
 		}
@@ -886,7 +883,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			else
 				network.loadProperties(gcm);
 			if (!getSBMLFile().equals(none)) {
-				SBMLDocument d = Gui.readSBML(path + separator + getSBMLFile());
+				//SBMLDocument d = Gui.readSBML(path + separator + getSBMLFile());
+				SBMLDocument d = network.getSBML();
 				for (String s : sbmlParamFile.getElementChanges()) {
 					for (long i = d.getModel().getNumInitialAssignments() - 1; i >= 0; i--) {
 						if (s.contains("=")) {
