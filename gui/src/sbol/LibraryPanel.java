@@ -20,20 +20,17 @@ public class LibraryPanel extends JPanel implements MouseListener {
 	private HashMap<String, SequenceFeature> featMap;
 	private JTextArea viewArea;
 	private DnaComponentPanel compPanel;
-	private SequenceFeaturePanel featPanel;
 	private JList libList = new JList();
 	private String filter;
 	
 	public LibraryPanel(HashMap<String, Library> libMap, HashMap<String, DnaComponent> compMap, 
-			HashMap<String, SequenceFeature> featMap, JTextArea viewArea, DnaComponentPanel compPanel, 
-			SequenceFeaturePanel featPanel, String filter) {
+			HashMap<String, SequenceFeature> featMap, JTextArea viewArea, DnaComponentPanel compPanel, String filter) {
 		super(new BorderLayout());
 		this.libMap = libMap;
 		this.compMap = compMap;
 		this.featMap = featMap;
 		this.viewArea = viewArea;
 		this.compPanel = compPanel;
-		this.featPanel = featPanel;
 		this.filter = filter;
 		
 		libList.addMouseListener(this);
@@ -62,27 +59,34 @@ public class LibraryPanel extends JPanel implements MouseListener {
 			viewArea.append("Name:  " + lib.getName() + "\n");
 			viewArea.append("Description:  " + lib.getDescription() + "\n\n");
 
-			String[] compIdArray = new String[lib.getComponents().size()];
-			int n = 0;
-			for (DnaComponent dnac : lib.getComponents()) {
-				compIdArray[n] = dnac.getDisplayId();
-				n++;
-				compMap.put(dnac.getDisplayId(), dnac);
-			}
-			LinkedHashSet<String> compIds = lexoSort(compIdArray, n);
-			compPanel.setComponents(compIds);
-
-			String[] featIdArray = new String[lib.getFeatures().size()];
-			n = 0;
-			for (SequenceFeature sf : lib.getFeatures()) {
-				if (filterFeature(sf, filter)) {
-					featIdArray[n] = sf.getDisplayId();
+			if (filter.equals("")) {
+				String[] compIdArray = new String[lib.getComponents().size() + lib.getFeatures().size()]; //remove 2nd term once libSBOL up to speed
+				int n = 0;
+				for (DnaComponent dnac : lib.getComponents()) {
+					compIdArray[n] = dnac.getDisplayId();
+					n++;
+					compMap.put(dnac.getDisplayId(), dnac);
+				}
+				for (SequenceFeature sf : lib.getFeatures()) { // remove entire loop once libSBOL up to speed
+					compIdArray[n] = sf.getDisplayId();
 					n++;
 					featMap.put(sf.getDisplayId(), sf);
 				}
+				LinkedHashSet<String> compIds = lexoSort(compIdArray, n);
+				compPanel.setComponents(compIds);
+			} else {
+				String[] featIdArray = new String[lib.getFeatures().size()];
+				int n = 0;
+				for (SequenceFeature sf : lib.getFeatures()) {
+					if (filterFeature(sf, filter)) {
+						featIdArray[n] = sf.getDisplayId();
+						n++;
+						featMap.put(sf.getDisplayId(), sf);
+					}
+				}
+				LinkedHashSet<String> featIds = lexoSort(featIdArray, n);
+				compPanel.setComponents(featIds);
 			}
-			LinkedHashSet<String> featIds = lexoSort(featIdArray, n);
-			featPanel.setFeatures(featIds);
 		}
 	}
 	//Sorts first m entries of string array lexographically
@@ -103,8 +107,6 @@ public class LibraryPanel extends JPanel implements MouseListener {
 	}
 	
 	private boolean filterFeature(SequenceFeature sf, String filter) {
-		if (filter.equals(""))
-			return true;
 		HashSet<String> types = new HashSet<String>();
  		for (URI uri : sf.getTypes()) 
 			types.add(uri.getFragment());
