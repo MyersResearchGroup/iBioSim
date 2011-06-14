@@ -41,8 +41,8 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	public void visitComplex(ComplexSpecies specie) {
 		if (!complexAbstraction || (!specie.isAbstractable() && !specie.isSequesterAbstractable())) {
 			loadValues(specie);
-//			String compartment = checkCompartments(specie.getId());
-			String compartment = "default";
+			String compartment = checkCompartments(specie.getId());
+			//String compartment = "default";
 			Species s = Utility.makeSpecies(specie.getId(), compartment, init);
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);
@@ -105,10 +105,21 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	//Checks if species belongs in a compartment other than default
 	private String checkCompartments(String species) {
 		String compartment = document.getModel().getCompartment(0).getId();
-		String[] splitted = species.split("__");
 		if (compartments != null) {
+			//String[] splitted = species.split("__");
+			String component = species;
+			while (component.contains("__")) {
+				component = component.substring(0,component.lastIndexOf("__"));
+				for (String compartmentName : compartments) {
+					if (compartmentName.substring(0,compartmentName.lastIndexOf("__")).equals(component)) {
+						return compartmentName;
+					}
+				}
+			}
+			/*
 			if (compartments.contains(splitted[0]))
 				compartment = splitted[0];
+				*/
 		}
 		return compartment;
 	}

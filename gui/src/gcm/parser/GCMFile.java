@@ -355,10 +355,11 @@ public class GCMFile {
 			GCMFile file = new GCMFile(path);
 			file.load(path + separator + components.get(s).getProperty("gcm"));
 			if (file.getIsWithinCompartment()) {
-				Utility.addCompartments(sbml, s);
-				sbml.getModel().getCompartment(s).setSize(1);
+				SBMLDocument compSBML = Gui.readSBML(path + separator + file.sbmlFile);
+				Utility.addCompartments(sbml, s + "__" + compSBML.getModel().getCompartment(0).getId());
+				sbml.getModel().getCompartment(s + "__" + compSBML.getModel().getCompartment(0).getId()).setSize(1);
 				sbml.getModel().setVolumeUnits("litre");
-				compartments.add(s);
+				compartments.add(s + "__" + compSBML.getModel().getCompartment(0).getId());
 			}
 			for (String p : globalParameters.keySet()) {
 				if (!file.globalParameters.containsKey(p)) {
@@ -2497,13 +2498,14 @@ public class GCMFile {
 		}
 		for (int i = 0; i < m.getNumCompartments(); i++) {
 			org.sbml.libsbml.Compartment c = m.getCompartment(i);
-			
-			if (isWithinCompartment) {
-				updateVarId(false, c.getId(), compName, doc);
-				c.setId(compName);
+			if (isWithinCompartment || c.getId().contains("__")) {
+				updateVarId(false, c.getId(), compName + "__" + c.getId(), doc);
+				compartments.remove(c.getId());
+				c.setId(compName + "__" + c.getId());
 			} else {
 				String topComp = mainDoc.getModel().getCompartment(0).getId();
 				updateVarId(false, c.getId(), topComp, doc);
+				compartments.remove(c.getId());
 				c.setId(topComp);
 			}
 			
@@ -2539,6 +2541,7 @@ public class GCMFile {
 				}
 				if (add) {
 					mainDoc.getModel().addCompartment(c);
+					compartments.add(c.getId());
 				}
 			}
 		}
