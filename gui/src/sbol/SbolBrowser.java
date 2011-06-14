@@ -18,7 +18,7 @@ public class SbolBrowser extends JPanel {
 	private HashMap<String, SequenceFeature> featMap = new HashMap<String, SequenceFeature>();
 	private String filter = "";
 	private String[] options = {"Ok"};
-	private JPanel selectionPanel = new JPanel(new GridLayout(1,3));
+	private JPanel selectionPanel = new JPanel(new GridLayout(1,2));
 	private JTextArea viewArea = new JTextArea();
 	private JScrollPane viewScroll = new JScrollPane();
 	
@@ -71,14 +71,12 @@ public class SbolBrowser extends JPanel {
 		viewArea.setLineWrap(true);
 		viewArea.setEditable(false);
 		
-		SequenceFeaturePanel featPanel = new SequenceFeaturePanel(featMap, viewArea);
-		DnaComponentPanel compPanel = new DnaComponentPanel(compMap, viewArea, featPanel, filter);
-		LibraryPanel libPanel = new LibraryPanel(libMap, compMap, featMap, viewArea, compPanel, featPanel, filter);
+		DnaComponentPanel compPanel = new DnaComponentPanel(compMap, featMap, viewArea);
+		LibraryPanel libPanel = new LibraryPanel(libMap, compMap, featMap, viewArea, compPanel, filter);
 		libPanel.setLibraries(libMap.keySet());
 		
 		selectionPanel.add(libPanel);
 		selectionPanel.add(compPanel);
-		selectionPanel.add(featPanel);
 	}
 	
 	private void loadRDF(String filePath) {
@@ -100,12 +98,14 @@ public class SbolBrowser extends JPanel {
 				rdfString = rdfString.concat(token) + "\n";
 			}
 			scanIn.close();
-			SbolService factory= IOTools.fromRdfXml(rdfString);
-			//SBOLservice factory = SBOLutil.fromRDF(rdfString);
-			for (String libId : libIds) {
-				Library lib = factory.getLibrary(libId);
-				libMap.put(libId, lib);
-			}		
+			SbolService factory = IOTools.fromRdfXml(rdfString);
+//			for (String libId : libIds) {
+//				Library lib = factory.getLibrary(libId);
+//				libMap.put(libId, lib);
+//			}		
+			Library lib = factory.getLibrary();
+			String libId = lib.getDisplayId();
+			libMap.put(libId, lib);
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Error opening file.", "Error",
 					JOptionPane.ERROR_MESSAGE);

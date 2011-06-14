@@ -16,18 +16,15 @@ import main.Gui;
 public class DnaComponentPanel extends JPanel implements MouseListener {
 
 	private HashMap<String, DnaComponent> compMap;
+	private HashMap<String, SequenceFeature> featMap;
 	private JTextArea viewArea;
-	private SequenceFeaturePanel featPanel;
 	private JList compList = new JList();
-	private String filter;
 	
-	public DnaComponentPanel(HashMap<String, DnaComponent> compMap, JTextArea viewArea, 
-			SequenceFeaturePanel featPanel, String filter) {
+	public DnaComponentPanel(HashMap<String, DnaComponent> compMap, HashMap<String, SequenceFeature> featMap, JTextArea viewArea) {
 		super(new BorderLayout());
 		this.compMap = compMap;
+		this.featMap = featMap;
 		this.viewArea = viewArea;
-		this.featPanel = featPanel;
-		this.filter = filter;
 		
 		compList.addMouseListener(this);
 		
@@ -52,58 +49,59 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 			viewArea.setText("");
 			Object[] selected = compList.getSelectedValues();
 			for (Object o : selected) {
-				DnaComponent dnac = compMap.get(o.toString());
-				viewArea.append("Name:  " + dnac.getName() + "\n");
-				viewArea.append("Description:  " + dnac.getDescription() + "\n");
-				viewArea.append("Annotations:  ");
-				
-				//Creation of to-be-sorted annotation array
-				SequenceAnnotation[] sortedSA = new SequenceAnnotation[dnac.getAnnotations().size()];
-				int n = 0;
-				for (SequenceAnnotation sa : dnac.getAnnotations()) {
-					sortedSA[n] = sa;
-					n++;
-				}
-				//Insert sort of annotations by starting position
-				for (int j = 1; j < sortedSA.length; j++) {
-					SequenceAnnotation keyAnnotation = sortedSA[j];
-					int key = keyAnnotation.getStart();
-					int i = j - 1;
-					while (i >= 0 && sortedSA[i].getStart() > key) {
-						sortedSA[i + 1] = sortedSA[i];
-						i = i - 1;
+				if (compMap.containsKey(o.toString())) {
+					DnaComponent dnac = compMap.get(o.toString());
+					viewArea.append("Name:  " + dnac.getName() + "\n");
+					viewArea.append("Description:  " + dnac.getDescription() + "\n");
+					viewArea.append("Annotations:  ");
+
+					//Creation of to-be-sorted annotation array
+					SequenceAnnotation[] sortedSA = new SequenceAnnotation[dnac.getAnnotations().size()];
+					int n = 0;
+					for (SequenceAnnotation sa : dnac.getAnnotations()) {
+						sortedSA[n] = sa;
+						n++;
 					}
-					sortedSA[i + 1] = keyAnnotation;
-				}
-				//Processing sorted annotations and associated sequence features for display
-				String annotations = "";
-				LinkedHashSet<String> featIds = new LinkedHashSet<String>();
-				for (int k = 0; k < sortedSA.length; k++) {
-					for (SequenceFeature sf : sortedSA[k].getFeatures()) {
-						annotations = annotations + sf.getName() + " + ";
-						if (filterFeature(sf, filter))
-							featIds.add(sf.getDisplayId());
+					//Insert sort of annotations by starting position
+					for (int j = 1; j < sortedSA.length; j++) {
+						SequenceAnnotation keyAnnotation = sortedSA[j];
+						int key = keyAnnotation.getStart();
+						int i = j - 1;
+						while (i >= 0 && sortedSA[i].getStart() > key) {
+							sortedSA[i + 1] = sortedSA[i];
+							i = i - 1;
+						}
+						sortedSA[i + 1] = keyAnnotation;
 					}
-					annotations = annotations.substring(0, annotations.length() - 2);
-					String sign = sortedSA[k].getStrand();
-					if (sign.equals("+"))
-						sign = "";
-					annotations = annotations + sign + sortedSA[k].getStart() + " to " + sign + sortedSA[k].getStop() + ", "; 
+					//Processing sorted annotations and associated sequence features for display
+					String annotations = "";
+					for (int k = 0; k < sortedSA.length; k++) {
+						for (SequenceFeature sf : sortedSA[k].getFeatures()) {
+							annotations = annotations + sf.getDisplayId() + " + "; // once libSBOL up to speed iterate over DNA components
+						}
+						annotations = annotations.substring(0, annotations.length() - 2);
+						String sign = sortedSA[k].getStrand();
+						if (sign.equals("+"))
+							sign = "";
+						annotations = annotations + sign + sortedSA[k].getStart() + " to " + sign + sortedSA[k].getStop() + ", "; 
+					}
+					viewArea.append(annotations.substring(0, annotations.length() - 2) + "\n");
+					viewArea.append("DNA Sequence:  " + dnac.getDnaSequence().getDnaSequence() + "\n\n");
+				} else if (featMap.containsKey(o.toString())) {
+					SequenceFeature sf = featMap.get(o.toString());
+					viewArea.append("Name:  " + sf.getName() + "\n");
+					viewArea.append("Description:  " + sf.getDescription() + "\n");
+					viewArea.append("Types:  ");
+					String types = "";
+					for (URI uri : sf.getTypes()) {
+						if (!uri.getFragment().equals("SequenceFeature"))
+							types = types + uri.getFragment() + ", ";
+					}
+					viewArea.append(types.substring(0, types.length() - 2) + "\n");
+					viewArea.append("DNA Sequence:  " + sf.getDnaSequence().getDnaSequence() + "\n\n");
 				}
-				viewArea.append(annotations.substring(0, annotations.length() - 2) + "\n");
-				viewArea.append("DNA Sequence:  " + dnac.getDnaSequence().getDnaSequence() + "\n\n");
-				featPanel.setFeatures(featIds);
 			}
 		} 
-	}
-
-	private boolean filterFeature(SequenceFeature sf, String filter) {
-		if (filter.equals(""))
-			return true;
-		HashSet<String> types = new HashSet<String>();
- 		for (URI uri : sf.getTypes()) 
-			types.add(uri.getFragment());
- 		return types.contains(filter);
 	}
 	
 	public void mouseEntered(MouseEvent e) {
