@@ -141,9 +141,20 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	//Checks if species belongs in a compartment other than default
 	private String checkCompartments(String species) {
 		String compartment = document.getModel().getCompartment(0).getId();
-		String[] splitted = species.split("__");
+		//String[] splitted = species.split("__");
+		String component = species;
+		while (component.contains("__")) {
+			component = component.substring(0,component.lastIndexOf("__"));
+			for (String compartmentName : compartments) {
+				if (compartmentName.substring(0,compartmentName.lastIndexOf("__")).equals(component)) {
+					return compartmentName;
+				}
+			}
+		}
+		/*
 		if (compartments.contains(splitted[0]))
 			compartment = splitted[0];
+			*/
 		return compartment;
 	}
 	
