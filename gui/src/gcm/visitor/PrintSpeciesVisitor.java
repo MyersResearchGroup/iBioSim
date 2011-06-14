@@ -43,7 +43,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 			loadValues(specie);
 			String compartment = checkCompartments(specie.getId());
 			Species s = Utility.makeSpecies(specie.getId(), compartment, init);
-			s.setName(specie.getName());
+//			s.setName(specie.getName()); this causes things to break...specie lacks name for some reason
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);
 		}
