@@ -20,6 +20,8 @@ public class GlobalConstants {
 	public static final String COMPLEX = "complex";
 	public static final String GENE_PRODUCT = "gene product";
 	public static final String TRANSCRIPTION_FACTOR = "transcription factor";
+	public static final String DIFFUSIBLE = "diffusible";
+	public static final String MEMDIFF_STRING = "kmdiff";
 	
 //	public static final String KREP_VALUE = ".5"; 
 //	public static final String KACT_VALUE = ".0033";

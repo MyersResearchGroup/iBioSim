@@ -86,6 +86,9 @@ public class CompatibilityFixer {
 
 	public final static String GUI_KCOMPLEX_STRING = "Complex formation equilibrium";
 	public final static String OLD_KCOMPLEX_STRING = "Kc";
+	
+	public final static String GUI_MEMDIFF_STRING = "Membrane diffusion rate";
+	public final static String OLD_MEMDIFF_STRING = "Kmdiff";
 
 	//Static initializer that sets up the hashing 
 	static {		
@@ -146,6 +149,9 @@ public class CompatibilityFixer {
 		
 		guiName.put(GlobalConstants.KCOMPLEX_STRING, GUI_KCOMPLEX_STRING);
 		oldName.put(GlobalConstants.KCOMPLEX_STRING, OLD_KCOMPLEX_STRING);
+		
+		guiName.put(GlobalConstants.MEMDIFF_STRING, GUI_MEMDIFF_STRING);
+		oldName.put(GlobalConstants.MEMDIFF_STRING, OLD_MEMDIFF_STRING);
 		
 		for (String i : guiName.keySet()) {
 			gcmName.put(guiName.get(i), i);

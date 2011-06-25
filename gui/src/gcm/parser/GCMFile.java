@@ -629,6 +629,15 @@ public class GCMFile {
 					}
 				}
 			}
+			else if (param.equals(GlobalConstants.MEMDIFF_STRING)) {
+				mod = setToArrayList(bottomLevel.species.keySet());
+				for (String spec : mod) {
+					if (!bottomLevel.species.get(spec).containsKey(GlobalConstants.MEMDIFF_STRING)) {
+						bottomLevel.species.get(spec).put(GlobalConstants.MEMDIFF_STRING,
+								bottomLevel.globalParameters.get(GlobalConstants.MEMDIFF_STRING));
+					}
+				}
+			}
 		}
 		for (String prom : bottomLevel.promoters.keySet()) {
 			topLevel.addPromoter(prom, bottomLevel.promoters.get(prom));
@@ -2437,6 +2446,8 @@ public class GCMFile {
 				"biosim.gcm.INITIAL_VALUE", ""));
 		defaultParameters.put(GlobalConstants.KCOMPLEX_STRING, biosimrc.get(
 				"biosim.gcm.KCOMPLEX_VALUE", ""));
+		defaultParameters.put(GlobalConstants.MEMDIFF_STRING, biosimrc.get(
+				"biosim.gcm.MEMDIFF_VALUE", ""));
 
 		for (String s : defaultParameters.keySet()) {
 			parameters.put(s, defaultParameters.get(s));

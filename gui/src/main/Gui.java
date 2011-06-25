@@ -1181,6 +1181,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (biosimrc.get("biosim.gcm.INITIAL_VALUE", "").equals("")) {
 			biosimrc.put("biosim.gcm.INITIAL_VALUE", "0");
 		}
+		if (biosimrc.get("biosim.gcm.MEMDIFF_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.MEMDIFF_VALUE", "0.5");
+		}
 		if (biosimrc.get("biosim.sim.abs", "").equals("")) {
 			biosimrc.put("biosim.sim.abs", "None");
 		}
@@ -1337,8 +1340,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(dispatcher);
 	}
 
+	//builds the edit>preferences panel
 	public void preferences() {
 		if (!async) {
+			
+			
+			//sbml preferences
 			String[] Versions = { "L2V4", "L3V1" };
 			JLabel SBMLlabel = new JLabel("SBML Level/Version");
 			LevelVersion = new JComboBox(Versions);
@@ -1362,7 +1369,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else {
 				Units.setSelected(false);
 			}
+			
 			Preferences biosimrc = Preferences.userRoot();
+			
+			//general preferences
 			JCheckBox dialog = new JCheckBox("Use File Dialog");
 			if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
 				dialog.setSelected(true);
@@ -1377,6 +1387,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else {
 				icons.setSelected(true);
 			}
+			
+			//gcm preferences
 			final JTextField ACTIVED_VALUE = new JTextField(biosimrc.get(
 					"biosim.gcm.ACTIVED_VALUE", ""));
 			final JTextField KACT_VALUE = new JTextField(biosimrc.get("biosim.gcm.KACT_VALUE", ""));
@@ -1406,7 +1418,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					"biosim.gcm.STOICHIOMETRY_VALUE", ""));
 			final JTextField KCOMPLEX_VALUE = new JTextField(biosimrc.get(
 					"biosim.gcm.KCOMPLEX_VALUE", ""));
-			JPanel labels = new JPanel(new GridLayout(14, 1));
+			final JTextField MEMDIFF_VALUE = new JTextField(biosimrc.get(
+					"biosim.gcm.MEMDIFF_VALUE", ""));
+			
+			JPanel labels = new JPanel(new GridLayout(15, 1));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVED_STRING)
 					+ " (" + GlobalConstants.ACTIVED_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KACT_STRING) + " ("
@@ -1440,7 +1455,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					+ " (" + GlobalConstants.STOICHIOMETRY_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KCOMPLEX_STRING)
 					+ " (" + GlobalConstants.KCOMPLEX_STRING + "):"));
-			JPanel fields = new JPanel(new GridLayout(14, 1));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.MEMDIFF_STRING)
+					+ " (" + GlobalConstants.MEMDIFF_STRING + "):"));
+			
+			JPanel fields = new JPanel(new GridLayout(15, 1));
 			fields.add(ACTIVED_VALUE);
 			fields.add(KACT_VALUE);
 			fields.add(KBASAL_VALUE);
@@ -1455,13 +1473,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			fields.add(KREP_VALUE);
 			fields.add(STOICHIOMETRY_VALUE);
 			fields.add(KCOMPLEX_VALUE);
+			fields.add(MEMDIFF_VALUE);
+			
+			//create gcm preferences panel
 			JPanel gcmPrefs = new JPanel(new GridLayout(1, 2));
 			gcmPrefs.add(labels);
 			gcmPrefs.add(fields);
+			
+			//analysis preferences
 			String[] choices = { "None", "Abstraction", "Logical Abstraction" };
 			JTextField simCommand = new JTextField(biosimrc.get("biosim.sim.command", ""));
 			final JComboBox abs = new JComboBox(choices);
 			abs.setSelectedItem(biosimrc.get("biosim.sim.abs", ""));
+			
 			if (abs.getSelectedItem().equals("None")) {
 				choices = new String[] { "ODE", "Monte Carlo", "SBML", "Network", "Browser" };
 			}
@@ -1472,8 +1496,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				choices = new String[] { "Monte Carlo", "Markov", "SBML", "Network", "Browser",
 						"LPN" };
 			}
+			
 			final JComboBox type = new JComboBox(choices);
 			type.setSelectedItem(biosimrc.get("biosim.sim.type", ""));
+			
 			if (type.getSelectedItem().equals("ODE")) {
 				choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
 			}
@@ -1488,6 +1514,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else {
 				choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
 			}
+			
 			final JComboBox sim = new JComboBox(choices);
 			sim.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
 			abs.addActionListener(new ActionListener() {
@@ -1525,6 +1552,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 			});
+			
 			type.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (type.getSelectedItem() == null) {
@@ -1578,6 +1606,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 			});
+			
 			JTextField limit = new JTextField(biosimrc.get("biosim.sim.limit", ""));
 			JTextField interval = new JTextField(biosimrc.get("biosim.sim.interval", ""));
 			JTextField minStep = new JTextField(biosimrc.get("biosim.sim.min.step", ""));
@@ -1592,6 +1621,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			choices = new String[] { "Print Interval", "Minimum Print Interval", "Number Of Steps" };
 			JComboBox useInterval = new JComboBox(choices);
 			useInterval.setSelectedItem(biosimrc.get("biosim.sim.useInterval", ""));
+			
 			JPanel analysisLabels = new JPanel(new GridLayout(15, 1));
 			analysisLabels.add(new JLabel("Simulation Command:"));
 			analysisLabels.add(new JLabel("Abstraction:"));
@@ -1608,6 +1638,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			analysisLabels.add(new JLabel("Rapid Equilibrium Cojdition 2:"));
 			analysisLabels.add(new JLabel("QSSA Condition:"));
 			analysisLabels.add(new JLabel("Max Concentration Threshold:"));
+			
 			JPanel analysisFields = new JPanel(new GridLayout(15, 1));
 			analysisFields.add(simCommand);
 			analysisFields.add(abs);
@@ -1624,9 +1655,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			analysisFields.add(rapid2);
 			analysisFields.add(qssa);
 			analysisFields.add(concentration);
+			
+			//create analysis preferences panel
 			JPanel analysisPrefs = new JPanel(new GridLayout(1, 2));
 			analysisPrefs.add(analysisLabels);
 			analysisPrefs.add(analysisFields);
+			
+			//learning preferences
 			final JTextField tn = new JTextField(biosimrc.get("biosim.learn.tn", ""));
 			final JTextField tj = new JTextField(biosimrc.get("biosim.learn.tj", ""));
 			final JTextField ti = new JTextField(biosimrc.get("biosim.learn.ti", ""));
@@ -1652,6 +1687,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			choices = new String[] { "True", "False" };
 			final JComboBox findbaseprob = new JComboBox(choices);
 			findbaseprob.setSelectedItem(biosimrc.get("biosim.learn.findbaseprob", ""));
+			
 			JPanel learnLabels = new JPanel(new GridLayout(13, 1));
 			learnLabels.add(new JLabel("Minimum Number Of Initial Vectors (Tn):"));
 			learnLabels.add(new JLabel("Maximum Influence Vector Size (Tj):"));
@@ -1666,6 +1702,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			learnLabels.add(new JLabel("Debug Level:"));
 			learnLabels.add(new JLabel("Successors Or Predecessors:"));
 			learnLabels.add(new JLabel("Basic FindBaseProb:"));
+			
 			JPanel learnFields = new JPanel(new GridLayout(13, 1));
 			learnFields.add(tn);
 			learnFields.add(tj);
@@ -1680,15 +1717,21 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			learnFields.add(debug);
 			learnFields.add(succpred);
 			learnFields.add(findbaseprob);
+			
+			//create learning preferences panel
 			JPanel learnPrefs = new JPanel(new GridLayout(1, 2));
 			learnPrefs.add(learnLabels);
 			learnPrefs.add(learnFields);
+			
+			//create general preferences panel
 			JPanel generalPrefsBordered = new JPanel(new BorderLayout());
 			JPanel generalPrefs = new JPanel();
 			generalPrefsBordered.add(dialog, "North");
 			generalPrefsBordered.add(icons, "Center");
 			generalPrefs.add(generalPrefsBordered);
 			((FlowLayout) generalPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
+			
+			//create sbml preferences panel
 			JPanel sbmlPrefsBordered = new JPanel(new BorderLayout());
 			JPanel sbmlPrefs = new JPanel();
 			JPanel levelPrefs = new JPanel(new GridLayout(1, 2));
@@ -1699,16 +1742,21 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			sbmlPrefsBordered.add(Units, "South");
 			sbmlPrefs.add(sbmlPrefsBordered);
 			((FlowLayout) sbmlPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
+			
+			//create tabs
 			JTabbedPane prefTabs = new JTabbedPane();
 			prefTabs.addTab("General Preferences", generalPrefs);
 			prefTabs.addTab("SBML Preferences", sbmlPrefs);
 			prefTabs.addTab("GCM Preferences", gcmPrefs);
 			prefTabs.addTab("Analysis Preferences", analysisPrefs);
 			prefTabs.addTab("Learn Preferences", learnPrefs);
+			
 			Object[] options = { "Save", "Cancel" };
 			int value = JOptionPane
 					.showOptionDialog(frame, prefTabs, "Preferences", JOptionPane.YES_NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			
+			//if user hits "save", store and/or check new data
 			if (value == JOptionPane.YES_OPTION) {
 				if (dialog.isSelected()) {
 					biosimrc.put("biosim.general.file_browser", "FileDialog");
@@ -1752,6 +1800,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					checkUnits = false;
 					biosimrc.put("biosim.check.units", "false");
 				}
+				
 				try {
 					Double.parseDouble(KREP_VALUE.getText().trim());
 					biosimrc.put("biosim.gcm.KREP_VALUE", KREP_VALUE.getText().trim());
@@ -1857,6 +1906,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				try {
 					Double.parseDouble(INITIAL_VALUE.getText().trim());
 					biosimrc.put("biosim.gcm.INITIAL_VALUE", INITIAL_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(MEMDIFF_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.MEMDIFF_VALUE", MEMDIFF_VALUE.getText().trim());
 				}
 				catch (Exception e1) {
 				}
@@ -1995,9 +2050,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 			}
+			//if user clicks "cancel"
 			else {
 			}
 		}
+		
+		//if (async)
 		else {
 			Preferences biosimrc = Preferences.userRoot();
 			JPanel prefPanel = new JPanel(new GridLayout(0, 2));
