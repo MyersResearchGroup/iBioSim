@@ -111,7 +111,6 @@ public class GCMParser {
 	public void printFile() {
 		System.out.println(data.toString());
 	}
-	
 
 	public HashMap<String, SpeciesInterface> getSpecies() {
 		return species;
@@ -306,6 +305,12 @@ public class GCMParser {
 			specie.addProperty(GlobalConstants.KDECAY_STRING, property.getProperty(GlobalConstants.KDECAY_STRING));
 		} else {
 			specie.addProperty(GlobalConstants.KDECAY_STRING, gcm.getParameter(GlobalConstants.KDECAY_STRING));
+		}
+		
+		if (property.containsKey(GlobalConstants.MEMDIFF_STRING)) {
+			specie.addProperty(GlobalConstants.MEMDIFF_STRING, property.getProperty(GlobalConstants.MEMDIFF_STRING));
+		} else {
+			specie.addProperty(GlobalConstants.MEMDIFF_STRING, gcm.getParameter(GlobalConstants.MEMDIFF_STRING));
 		}
 		
 		if (property.containsKey(GlobalConstants.TYPE)) {

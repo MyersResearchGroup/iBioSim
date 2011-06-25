@@ -55,7 +55,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
 			GCMFile refGCM,  GCM2SBMLEditor gcmEditor, MovieContainer movieContainer) {
 
-		JPanel grid = new JPanel(new GridLayout(6,1));
+		JPanel grid = new JPanel(new GridLayout(7,1));
 		this.add(grid, BorderLayout.CENTER);
 		
 
@@ -199,6 +199,31 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		}
 		fields.put(GlobalConstants.KCOMPLEX_STRING, field);
 		grid.add(field);
+		
+		// Membrane Diffusible Field
+		origString = "default";
+		if (paramsOnly) {
+			String defaultValue = refGCM.getParameter(GlobalConstants.MEMDIFF_STRING);
+			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.MEMDIFF_STRING)) {
+				defaultValue = refGCM.getSpecies().get(selected).getProperty(
+						GlobalConstants.MEMDIFF_STRING);
+				origString = "custom";
+			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.MEMDIFF_STRING)) {
+				defaultValue = gcm.getParameter(GlobalConstants.MEMDIFF_STRING);
+			}
+			field = new PropertyField(GlobalConstants.MEMDIFF_STRING, gcm
+					.getParameter(GlobalConstants.MEMDIFF_STRING), origString, defaultValue,
+					Utility.SWEEPstring, paramsOnly, origString);
+		}
+		else {
+			field = new PropertyField(GlobalConstants.MEMDIFF_STRING, gcm
+					.getParameter(GlobalConstants.MEMDIFF_STRING), origString, gcm
+					.getParameter(GlobalConstants.MEMDIFF_STRING), Utility.NUMstring, paramsOnly,
+					origString);
+		}
+		fields.put(GlobalConstants.MEMDIFF_STRING, field);
+		grid.add(field);
 
 		if (selected != null) {
 			Properties prop = gcm.getSpecies().get(selected);
@@ -330,7 +355,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						|| fields.get(GlobalConstants.KCOMPLEX_STRING).getState().equals(
 								fields.get(GlobalConstants.KCOMPLEX_STRING).getStates()[1])
 						|| fields.get(GlobalConstants.KDECAY_STRING).getState().equals(
-								fields.get(GlobalConstants.KDECAY_STRING).getStates()[1])) {
+								fields.get(GlobalConstants.KDECAY_STRING).getStates()[1])
+						|| fields.get(GlobalConstants.MEMDIFF_STRING).getState().equals(
+								fields.get(GlobalConstants.MEMDIFF_STRING).getStates()[1])) {
 					newSpeciesID += " Modified";
 				}
 			}
@@ -383,6 +410,15 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						+ GlobalConstants.KCOMPLEX_STRING + " "
 						+ fields.get(GlobalConstants.KCOMPLEX_STRING).getValue();
 			}
+			if (fields.get(GlobalConstants.MEMDIFF_STRING).getState().equals(
+					fields.get(GlobalConstants.MEMDIFF_STRING).getStates()[1])) {
+				if (!updates.equals("")) {
+					updates += "\n";
+				}
+				updates += fields.get(GlobalConstants.ID).getValue() + "/"
+						+ GlobalConstants.MEMDIFF_STRING + " "
+						+ fields.get(GlobalConstants.MEMDIFF_STRING).getValue();
+			}
 			if (updates.equals("")) {
 				updates += fields.get(GlobalConstants.ID).getValue() + "/";
 			}
@@ -400,20 +436,34 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	}
 
 	private void setType(String type) {
+		//input
 		if (type.equals(types[0])) {
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(false);
+			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(false);
 		}
+		//internal
 		else if (type.equals(types[1])) {
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
+			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(false);
 		}
+		//output
 		else if (type.equals(types[2])) {
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
-		} else {
+			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(false);
+		} 
+		//diffusible
+		else if (type.equals(types[4])) {
+			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
+			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
+			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(true);
+		} 
+		else {
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(false);
+			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(false);
 		}
 	}
 
@@ -443,7 +493,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private JComboBox typeBox = null;
 
 	private static final String[] types = new String[] { GlobalConstants.INPUT, GlobalConstants.INTERNAL, 
-		GlobalConstants.OUTPUT, GlobalConstants.SPASTIC};
+		GlobalConstants.OUTPUT, GlobalConstants.SPASTIC, GlobalConstants.DIFFUSIBLE};
 
 	private HashMap<String, PropertyField> fields = null;
 
