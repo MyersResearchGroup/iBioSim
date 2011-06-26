@@ -2413,6 +2413,7 @@ public class GCMFile {
 	public void loadDefaultParameters() {
 		Preferences biosimrc = Preferences.userRoot();
 		defaultParameters = new HashMap<String, String>();
+		
 		defaultParameters.put(GlobalConstants.KDECAY_STRING, biosimrc.get(
 				"biosim.gcm.KDECAY_VALUE", ""));
 		defaultParameters.put(GlobalConstants.KASSOCIATION_STRING, biosimrc.get(

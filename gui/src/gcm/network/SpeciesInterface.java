@@ -88,6 +88,8 @@ public interface SpeciesInterface extends VisitableSpecies {
 	
 	public double[] getKc();
 	
+	public double getMemDiff();
+	
 	public boolean isActivator();
 	
 	public void setActivator(boolean set);
