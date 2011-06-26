@@ -4,6 +4,7 @@ import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
 import gcm.network.NullSpecies;
+import gcm.network.DiffusibleSpecies;
 import gcm.network.SpasticSpecies;
 import gcm.network.SpeciesInterface;
 
@@ -44,5 +45,12 @@ public interface SpeciesVisitor {
 	 * @param specie
 	 */
 	public void visitNullSpecies(NullSpecies specie);
+	
+	
+	/**
+	 * Visits a diffusible species
+	 * @param species diffusible species to visit
+	 */
+	public void visitDiffusibleSpecies(DiffusibleSpecies species);
 }
 

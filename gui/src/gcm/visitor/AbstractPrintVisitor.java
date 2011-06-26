@@ -8,6 +8,7 @@ import gcm.network.AbstractionEngine;
 import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
+import gcm.network.DiffusibleSpecies;
 import gcm.network.GeneticNetwork;
 import gcm.network.Influence;
 import gcm.network.NullSpecies;
@@ -91,6 +92,9 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	public void visitSpasticSpecies(SpasticSpecies specie) {}
 
 	public void visitSpecies(SpeciesInterface specie) {}
+	
+	//TODO-jstev: figure out what goes here
+	public void visitDiffusibleSpecies(DiffusibleSpecies species) {}
 
 	protected static GCMFile parameters = null;
 

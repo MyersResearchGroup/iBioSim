@@ -14,6 +14,7 @@ import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
 import gcm.network.SpasticSpecies;
+import gcm.network.DiffusibleSpecies;
 import gcm.network.SpeciesInterface;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
@@ -93,6 +94,11 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 					.getParameter((GlobalConstants.OCR_STRING)))));	
 		kl.setFormula("kp");
 		Utility.addReaction(document, r);		
+	}
+	
+	//TODO-jstev: figure out what goes here
+	public void visitDiffusibleSpecies(DiffusibleSpecies species) {
+		
 	}
 	
 	private void loadValues(SpeciesInterface specie) {
