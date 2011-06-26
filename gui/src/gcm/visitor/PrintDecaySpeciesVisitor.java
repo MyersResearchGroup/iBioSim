@@ -3,6 +3,7 @@ package gcm.visitor;
 import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
+import gcm.network.DiffusibleSpecies;
 import gcm.network.GeneticNetwork;
 import gcm.network.Influence;
 import gcm.network.SpasticSpecies;
