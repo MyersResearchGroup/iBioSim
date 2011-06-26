@@ -128,11 +128,6 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		return params;
 	}
 	
-	//TODO-jstev: accessor for membrane diffusible property --make sure this is right
-	public double getMemDiff() {
-		return Double.parseDouble(getProperty(GlobalConstants.MEMDIFF_STRING));
-	}
-	
 	public boolean isActivator() {
 		return isActivator;
 	}
