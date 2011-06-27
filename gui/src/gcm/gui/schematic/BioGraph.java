@@ -20,6 +20,11 @@ import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
+import org.sbml.libsbml.Model;
+import org.sbml.libsbml.ModifierSpeciesReference;
+import org.sbml.libsbml.Reaction;
+import org.sbml.libsbml.SpeciesReference;
+
 import main.Gui;
 
 //import javax.xml.bind.JAXBElement.GlobalScope;
@@ -49,6 +54,7 @@ public class BioGraph extends mxGraph {
 	 * a node is added or deleted.
 	 */
 	private HashMap<String, mxCell> speciesToMxCellMap;
+	private HashMap<String, mxCell> reactionsToMxCellMap;
 	private HashMap<String, mxCell> influencesToMxCellMap;
 	private HashMap<String, mxCell> componentsToMxCellMap;
 	private HashMap<String, mxCell> componentsConnectionsToMxCellMap;
@@ -63,6 +69,7 @@ public class BioGraph extends mxGraph {
 	
 	private void initializeMaps(){
 		speciesToMxCellMap = new HashMap<String, mxCell>();
+		reactionsToMxCellMap = new HashMap<String, mxCell>();
 		componentsToMxCellMap = new HashMap<String, mxCell>();
 		influencesToMxCellMap = new HashMap<String, mxCell>();
 		componentsConnectionsToMxCellMap = new HashMap<String, mxCell>();
@@ -94,6 +101,9 @@ public class BioGraph extends mxGraph {
 	public void updateAllSpeciesPosition(){
 		
 		for(mxCell cell:this.speciesToMxCellMap.values()){
+			updateInternalPosition(cell);
+		}
+		for(mxCell cell:this.reactionsToMxCellMap.values()){
 			updateInternalPosition(cell);
 		}
 		for(mxCell cell:this.componentsToMxCellMap.values()){
@@ -132,7 +142,13 @@ public class BioGraph extends mxGraph {
 				return GlobalConstants.COMPONENT_CONNECTION;
 			}else if(sourceType == GlobalConstants.PROMOTER && targetType == GlobalConstants.SPECIES){
 				return GlobalConstants.PRODUCTION;
-			}else{
+			}else if (sourceType == GlobalConstants.SPECIES && targetType == GlobalConstants.SPECIES &&
+					(gcm.getSBMLDocument().getModel().getNumReactions() > 0) && cell.getValue() != null &&
+					(gcm.getSBMLDocument().getModel().getReaction((String)cell.getValue()) != null)) {
+				return GlobalConstants.REACTION_EDGE;
+			} else if (sourceType == GlobalConstants.REACTION || targetType == GlobalConstants.REACTION) {
+				return GlobalConstants.REACTION_EDGE;
+			}else {
 				return GlobalConstants.INFLUENCE;
 			}
 		}else{
@@ -143,6 +159,8 @@ public class BioGraph extends mxGraph {
 				return GlobalConstants.COMPONENT;
 			else if(gcm.getPromoters().containsValue(prop))
 				return GlobalConstants.PROMOTER;
+			else if(gcm.getReactions().containsValue(prop)) 
+				return GlobalConstants.REACTION;
 			else
 				return CELL_VALUE_NOT_FOUND;
 		}
@@ -166,6 +184,10 @@ public class BioGraph extends mxGraph {
 			return null; // Production connection don't have properties
 		else if(type == GlobalConstants.PROMOTER)
 			return gcm.getPromoters();
+		else if(type == GlobalConstants.REACTION) 
+			return gcm.getReactions();
+		else if(type == GlobalConstants.REACTION_EDGE) 
+			return null;
 		else
 			throw new Error("Invalid type: " + type);
 	}
@@ -196,6 +218,9 @@ public class BioGraph extends mxGraph {
 //	}
 	public mxCell getSpeciesCell(String id){
 		return speciesToMxCellMap.get(id);
+	}
+	public mxCell getReactionsCell(String id){
+		return reactionsToMxCellMap.get(id);
 	}
 	public mxCell getComponentCell(String id){
 		return componentsToMxCellMap.get(id);
@@ -261,6 +286,25 @@ public class BioGraph extends mxGraph {
 		// add species
 		for(String sp:gcm.getSpecies().keySet()){ // SPECIES
 			if(createGraphSpeciesFromModel(sp))
+				needsPositioning = true;
+		}
+
+		Model m = gcm.getSBMLDocument().getModel();
+		for (int i = 0; i < m.getNumReactions(); i++) {
+			Reaction r = m.getReaction(i);
+			if (gcm.getReactions().get(r.getId()) == null) {
+				if (r.getNumModifiers() > 0 || (r.getNumReactants()>1 && r.getNumProducts()>1)) {
+					Properties prop = new Properties();
+					prop.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_REACTION_WIDTH));
+					prop.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_REACTION_HEIGHT));
+					gcm.centerVertexOverPoint(prop, 50, 50);
+					gcm.getReactions().put(r.getId(), prop);
+				}
+			}
+		}
+		// add reactions
+		for(String sp:gcm.getReactions().keySet()){ 
+			if(createGraphReactionFromModel(sp))
 				needsPositioning = true;
 		}
 
@@ -336,6 +380,82 @@ public class BioGraph extends mxGraph {
 				updateInfluenceVisuals(inf);
 			}
 		}
+		for (int i = 0; i < m.getNumReactions(); i++) {
+			Reaction r = m.getReaction(i);
+			if (gcm.getReactions().get(r.getId()) != null) {
+				for (int j = 0; j < r.getNumReactants(); j++) {
+					SpeciesReference s = r.getReactant(j);
+					mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
+							s.getSpecies() + "__" + r.getId(), "", 
+							this.getSpeciesCell(s.getSpecies()), 
+							this.getReactionsCell(r.getId())
+					);
+					if (r.getReversible()) {
+						if (s.getStoichiometry() != 1.0)
+							cell.setValue(s.getStoichiometry()+",r");
+						else 
+							cell.setValue("r");
+						cell.setStyle("defaultEdge;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN +
+								";" + mxConstants.STYLE_STARTARROW + "=" + mxConstants.ARROW_OPEN);
+					} else {
+						if (s.getStoichiometry() != 1.0)
+							cell.setValue(s.getStoichiometry());
+						cell.setStyle("defaultEdge;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+					}
+				}
+				for (int j = 0; j < r.getNumModifiers(); j++) {
+					ModifierSpeciesReference s = r.getModifier(j);
+					mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
+							s.getSpecies() + "__" + r.getId(), "", 
+							this.getSpeciesCell(s.getSpecies()), 
+							this.getReactionsCell(r.getId())
+					);
+					if (r.getReversible())
+						cell.setValue("m");
+					cell.setStyle("defaultEdge;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.NONE);
+				}
+				for (int k = 0; k < r.getNumProducts(); k++) {
+					SpeciesReference s = r.getProduct(k);
+					mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
+							r.getId() + "__" + s.getSpecies(), "", 
+							this.getReactionsCell(r.getId()),
+							this.getSpeciesCell(s.getSpecies()) 
+					);
+					if (r.getReversible()) {
+						if (s.getStoichiometry() != 1.0)
+							cell.setValue(s.getStoichiometry()+",p");
+						else 
+							cell.setValue("p");
+						cell.setStyle("defaultEdge;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN +
+								";" + mxConstants.STYLE_STARTARROW + "=" + mxConstants.ARROW_OPEN);
+					} else {
+						if (s.getStoichiometry() != 1.0)
+							cell.setValue(s.getStoichiometry());
+						cell.setStyle("defaultEdge;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+					}
+				}
+			} else {
+				for (int j = 0; j < r.getNumReactants(); j++) {
+					SpeciesReference s1 = r.getReactant(j);
+					for (int k = 0; k < r.getNumProducts(); k++) {
+						SpeciesReference s2 = r.getProduct(k);
+						mxCell cell = (mxCell)this.insertEdge(this.getDefaultParent(), 
+								s1.getSpecies() + "_" + r.getId() + "_" + s2.getSpecies(), "", 
+								this.getSpeciesCell(s1.getSpecies()), 
+								this.getSpeciesCell(s2.getSpecies())
+						);
+						cell.setValue(r.getId());
+						if (r.getReversible()) {
+							cell.setStyle("defaultEdge;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN +
+									";" + mxConstants.STYLE_STARTARROW + "=" + mxConstants.ARROW_OPEN);
+						} else {
+							cell.setStyle("defaultEdge;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+						}
+					}
+				}
+			}
+		}
+		
 		addEdgeOffsets();
 		this.getModel().endUpdate();
 		
@@ -384,6 +504,85 @@ public class BioGraph extends mxGraph {
 			if(edgeHash.containsKey(key) == false)
 				edgeHash.put(key, new Vector<mxCell>());
 			edgeHash.get(key).add(cell);
+		}
+		
+		Model m = gcm.getSBMLDocument().getModel();
+		for (int i = 0; i < m.getNumReactions(); i++) {
+			Reaction r = m.getReaction(i);
+			if (gcm.getReactions().get(r.getId()) != null) {
+				for (int j = 0; j < r.getNumReactants(); j++) {
+					SpeciesReference s = r.getReactant(j);
+					String endA = s.getSpecies();
+					String endB = r.getId();
+					if(endA.compareTo(endB) > 0){
+						// swap the strings
+						String t = endA;
+						endA = endB;
+						endB = t;
+					}
+					String key = endA + " " + endB;
+					mxCell cell = this.getInfluence(s.getSpecies() + "__" + r.getId());
+					if(edgeHash.containsKey(key) == false)
+						edgeHash.put(key, new Vector<mxCell>());
+					edgeHash.get(key).add(cell);
+				}
+				for (int j = 0; j < r.getNumModifiers(); j++) {
+					ModifierSpeciesReference s = r.getModifier(j);
+					String endA = s.getSpecies();
+					String endB = r.getId();
+					if(endA.compareTo(endB) > 0){
+						// swap the strings
+						String t = endA;
+						endA = endB;
+						endB = t;
+					}
+					String key = endA + " " + endB;
+					mxCell cell = this.getInfluence(s.getSpecies() + "__" + r.getId());
+					if(edgeHash.containsKey(key) == false)
+						edgeHash.put(key, new Vector<mxCell>());
+					edgeHash.get(key).add(cell);
+				}
+				for (int k = 0; k < r.getNumProducts(); k++) {
+					SpeciesReference s = r.getProduct(k);
+					String endA = r.getId();
+					String endB = s.getSpecies();
+					if(endA.compareTo(endB) > 0){
+						// swap the strings
+						String t = endA;
+						endA = endB;
+						endB = t;
+					}
+					String key = endA + " " + endB;
+					mxCell cell = this.getInfluence(r.getId() + "__" + s.getSpecies());
+					if(edgeHash.containsKey(key) == false)
+						edgeHash.put(key, new Vector<mxCell>());
+					edgeHash.get(key).add(cell);
+				}
+			} else {
+				for (int j = 0; j < r.getNumReactants(); j++) {
+					SpeciesReference s1 = r.getReactant(j);
+					for (int k = 0; k < r.getNumProducts(); k++) {
+						SpeciesReference s2 = r.getProduct(k);
+
+						String endA = s1.getSpecies();
+						String endB = s2.getSpecies();
+						// ignore anything connected directly to a drawn promoter
+						//if(endA.equals(GlobalConstants.NONE) || endB.equals(GlobalConstants.NONE))
+						//	continue;
+						if(endA.compareTo(endB) > 0){
+							// swap the strings
+							String t = endA;
+							endA = endB;
+							endB = t;
+						}
+						String key = endA + " " + endB;
+						mxCell cell = this.getInfluence(s1.getSpecies() + "_" + r.getId() + "_" + s2.getSpecies());
+						if(edgeHash.containsKey(key) == false)
+							edgeHash.put(key, new Vector<mxCell>());
+						edgeHash.get(key).add(cell);
+					}
+				}
+			}
 		}
 		
 		// map components edges
@@ -624,6 +823,24 @@ public class BioGraph extends mxGraph {
 	}
 	
 	/**
+	 * creates a vertex on the graph using the internal model.
+	 * @param id
+	 * 
+	 * @return: A bool, true if the reaction had to be positioned.
+	 */
+	private boolean createGraphReactionFromModel(String id){
+		Properties prop = gcm.getReactions().get(id);
+
+		CellValueObject cvo = new CellValueObject(id, prop);
+		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
+		this.reactionsToMxCellMap.put(id, (mxCell)insertedVertex);
+		
+		this.setReactionStyles(id);
+		
+		return sizeAndPositionFromProperties((mxCell)insertedVertex, prop);
+	}
+	
+	/**
 	 * Creates a drawn promoter using the internal model
 	 * @param pname
 	 * @return
@@ -752,6 +969,13 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_ROUNDED, true);
 		stylesheet.putCellStyle("SPECIES", style);
 		
+		// Reactions
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
+		style.put(mxConstants.STYLE_OPACITY, 50);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#774400");
+		stylesheet.putCellStyle("REACTION", style);
+		
 		// components
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
@@ -796,7 +1020,13 @@ public class BioGraph extends mxGraph {
 		
 		mxCell cell = this.getSpeciesCell(id);
 		cell.setStyle(style);
+	}
+	
+	private void setReactionStyles(String id){
+		String style="REACTION;";
 		
+		mxCell cell = this.getReactionsCell(id);
+		cell.setStyle(style);
 	}
 	
 	private void setComponentStyles(String id){

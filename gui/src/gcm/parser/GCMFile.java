@@ -46,8 +46,11 @@ import org.sbml.libsbml.Constraint;
 import org.sbml.libsbml.EventAssignment;
 import org.sbml.libsbml.FunctionDefinition;
 import org.sbml.libsbml.InitialAssignment;
+import org.sbml.libsbml.KineticLaw;
+import org.sbml.libsbml.LocalParameter;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModifierSpeciesReference;
+import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
@@ -56,6 +59,8 @@ import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
 
 import sbmleditor.MySpecies;
+import sbmleditor.Reactions;
+import sbmleditor.SBMLutilities;
 
 import lpn.parser.LhpnFile;
 import main.Gui;
@@ -87,6 +92,7 @@ public class GCMFile {
 		}
 		this.path = path;
 		species = new HashMap<String, Properties>();
+		reactions = new HashMap<String, Properties>();
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
 		components = new HashMap<String, Properties>();
@@ -114,12 +120,24 @@ public class GCMFile {
 		sbmlFile = file;
 	}
 
+	public void setUsedIDs(ArrayList<String >usedIDs) {
+		this.usedIDs = usedIDs;
+	}
+
 	public MySpecies getSpeciesPanel() {
 		return speciesPanel;
 	}
 
 	public void setSpeciesPanel(MySpecies speciesPanel) {
 		this.speciesPanel = speciesPanel;
+	}
+
+	public Reactions getReactionPanel() {
+		return reactionPanel;
+	}
+
+	public void setReactionPanel(Reactions reactionPanel) {
+		this.reactionPanel = reactionPanel;
 	}
 
 	public SBMLDocument getSBMLDocument() {
@@ -705,8 +723,7 @@ public class GCMFile {
 			double initial = parseValue(parameters.get(GlobalConstants.INITIAL_STRING));
 			double selectedThreshold = 0;
 			try {
-				initial = parseValue(species.get(specs.get(i)).getProperty(
-						GlobalConstants.INITIAL_STRING));
+				initial = parseValue(species.get(specs.get(i)).getProperty(GlobalConstants.INITIAL_STRING));
 			}
 			catch (Exception e) {
 			}
@@ -883,6 +900,21 @@ public class GCMFile {
 			// buffer.deleteCharAt(buffer.length() - 1);
 			buffer.append("]\n");
 		}
+		for (String s : reactions.keySet()) {
+			buffer.append(s + " [");
+			Properties prop = reactions.get(s);
+			boolean first = true;
+			for (Object propName : prop.keySet()) {
+				if (!first) buffer.append(","); else first=false;
+				buffer.append(checkCompabilitySave(propName.toString()) + "=" + "\""
+						+ prop.getProperty(propName.toString()).toString() + "\"");
+			}
+			if (!prop.containsKey("shape")) {
+				if (!first) buffer.append(","); else first=false;
+				buffer.append("shape=circle");
+			}
+			buffer.append("]\n");
+		}
 		for (String s : components.keySet()) {
 			buffer.append(s + " [");
 			Properties prop = components.get(s);
@@ -910,8 +942,7 @@ public class GCMFile {
 		//List later facilitates garbage collecting of promoters that don't belong to an influence  
 		ArrayList<String> promotersWithInfluences = new ArrayList<String>();
 		for (String s : influences.keySet()) {
-			buffer.append(getInput(s) + " -> "// + getArrow(s) + " "
-					+ getOutput(s) + " [");
+			buffer.append(getInput(s) + " -> " + getOutput(s) + " [");
 			Properties prop = influences.get(s);
 			String promo = "none";
 			if (prop.containsKey(GlobalConstants.PROMOTER)) {
@@ -989,9 +1020,10 @@ public class GCMFile {
 			for (String s : promoters.keySet()) {
 				if (collectGarbage) {
 					//Only saves promoters belonging to influences
-					if (promotersWithInfluences.contains(s)) {
+					Properties prop = promoters.get(s); 
+					if (promotersWithInfluences.contains(s) ||
+							(prop.containsKey("ExplicitPromoter") && prop.getProperty("ExplicitPromoter").equals("true"))) {
 						buffer.append(s + " [");
-						Properties prop = promoters.get(s);
 						for (Object propName : prop.keySet()) {
 							if (propName.toString().equals(GlobalConstants.NAME)) {
 								buffer.append(checkCompabilitySave(propName.toString()) + "=" + "\""
@@ -1073,6 +1105,7 @@ public class GCMFile {
 	private void loadFromBuffer(StringBuffer data) {
 
 		species = new HashMap<String, Properties>();
+		reactions = new HashMap<String, Properties>();
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
 		components = new HashMap<String, Properties>();
@@ -1094,15 +1127,6 @@ public class GCMFile {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			// throw new IllegalArgumentException("Unable to parse GCM" +
-			// e.toString());
-			// JOptionPane.showMessageDialog(BioSim.frame,
-			// "Unable to parse model, creating a blank model.", "Error",
-			// JOptionPane.ERROR_MESSAGE);
-			// species = new HashMap<String, Properties>();
-			// influences = new HashMap<String, Properties>();
-			// promoters = new HashMap<String, Properties>();
-			// globalParameters = new HashMap<String, String>();
 		}
 	}
 
@@ -1272,6 +1296,38 @@ public class GCMFile {
 	public void addSpecies(String name, Properties property) {
 		species.put(name, property);
 	}
+	
+	public void addReaction(String sourceID,String targetID) {
+		Model m = sbml.getModel();
+		Reaction r = m.createReaction();
+		String reactionId = "r0";
+		int i = 0;
+		while (usedIDs.contains(reactionId)) {
+			i++;
+			reactionId = "r" + i;
+		}
+		usedIDs.add(reactionId);
+		r.setId(reactionId);
+		r.setCompartment(m.getCompartment(0).getId());
+		r.setReversible(false);
+		r.setFast(false);
+		SpeciesReference source = r.createReactant();
+		SpeciesReference target = r.createProduct();
+		source.setSpecies(sourceID);
+		source.setConstant(true);
+		source.setStoichiometry(1.0);
+		target.setSpecies(targetID);
+		target.setConstant(true);
+		target.setStoichiometry(1.0);
+		KineticLaw k = r.createKineticLaw();
+		LocalParameter p = k.createLocalParameter();
+		p.setId("kf");
+		p.setValue(0.1);
+		p = k.createLocalParameter();
+		p.setId("kr");
+		p.setValue(1.0);
+		k.setMath(SBMLutilities.myParseFormula("kf*"+sourceID));
+	}
 
 	public void addPromoter(String name, Properties properties) {
 		promoters.put(name.replace("\"", ""), properties);
@@ -1396,6 +1452,12 @@ public class GCMFile {
 		}
 	}
 
+	public void removeReaction(String name) {
+		if (name != null && reactions.containsKey(name)) {
+			reactions.remove(name);
+		}
+	}
+
 	public void removeSpeciesAndAssociations(String name) {
 		checkRemoveSpeciesAssociations(name, true);
 		removeSpecies(name);
@@ -1403,6 +1465,10 @@ public class GCMFile {
 
 	public HashMap<String, Properties> getSpecies() {
 		return species;
+	}
+
+	public HashMap<String, Properties> getReactions() {
+		return reactions;
 	}
 
 	public ArrayList<String> getInputSpecies() {
@@ -1763,6 +1829,7 @@ public class GCMFile {
 	 * @param y
 	 */
 	private int creatingSpeciesID = 0;
+	private int creatingReactionID = 0;
 
 	public void createSpecies(String id, float x, float y) {
 		if (id == null) {
@@ -1791,6 +1858,37 @@ public class GCMFile {
 			s.setInitialAmount(0);
 			s.setHasOnlySubstanceUnits(true);
 			speciesPanel.refreshSpeciesPanel(sbml);
+		}
+	}
+
+	public void createReaction(String id, float x, float y) {
+		if (id == null) {
+			do {
+				creatingReactionID++;
+				id = "R" + String.valueOf(creatingReactionID);
+			}
+			while (getReactions().containsKey(id));
+		}
+		Properties prop = new Properties();
+		prop.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_REACTION_WIDTH));
+		prop.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_REACTION_HEIGHT));
+		centerVertexOverPoint(prop, x, y);
+		getReactions().put(id, prop);
+		if (sbml != null) {
+			Model m = sbml.getModel();
+			Reaction r = m.createReaction();
+			r.setId(id);
+			r.setCompartment(m.getCompartment(0).getId());
+			r.setReversible(false);
+			r.setFast(false);
+			KineticLaw k = r.createKineticLaw();
+			LocalParameter p = k.createLocalParameter();
+			p.setId("kf");
+			p.setValue(0.1);
+			p = k.createLocalParameter();
+			p.setId("kr");
+			p.setValue(1.0);
+			k.setMath(SBMLutilities.myParseFormula("kf"));
 		}
 	}
 
@@ -1999,7 +2097,12 @@ public class GCMFile {
 				properties.put("gcm", properties.getProperty("gcm").replace("\"", ""));
 				components.put(name, properties);
 			}
-			else {
+			else if (properties.containsKey("shape") && properties.getProperty("shape").equals("circle")){
+				if (properties.containsKey(GlobalConstants.TYPE)) {
+					properties.remove(GlobalConstants.TYPE);
+				}
+				reactions.put(name, properties);
+			} else {
 				species.put(name, properties);
 			}
 		}
@@ -2163,17 +2266,16 @@ public class GCMFile {
 					}
 					else {
 						GCMFile file = new GCMFile(path);
-						file.load(path + separator
-								+ components.get(matcher.group(5)).getProperty("gcm"));
-						if (file.getSpecies().get(properties.get("port")).get(GlobalConstants.TYPE)
-								.equals(GlobalConstants.INPUT)) {
-							components.get(matcher.group(5)).put("type_" + properties.get("port"),
-									"Input");
-						}
-						else if (file.getSpecies().get(properties.get("port")).get(
-								GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
-							components.get(matcher.group(5)).put("type_" + properties.get("port"),
-									"Output");
+						file.load(path + separator + components.get(matcher.group(5)).getProperty("gcm"));
+						if (file.getSpecies().get(properties.get("port")) != null) {
+							if (file.getSpecies().get(properties.get("port")).get(GlobalConstants.TYPE)
+									.equals(GlobalConstants.INPUT)) {
+								components.get(matcher.group(5)).put("type_" + properties.get("port"),"Input");
+							}
+							else if (file.getSpecies().get(properties.get("port")).get(
+									GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
+								components.get(matcher.group(5)).put("type_" + properties.get("port"),"Output");
+							}
 						}
 					}
 				}
@@ -3192,8 +3294,12 @@ public class GCMFile {
 	private SBMLDocument sbml = null;
 	
 	private MySpecies speciesPanel = null;
+	
+	private Reactions reactionPanel = null;
 
 	private HashMap<String, Properties> species;
+
+	private HashMap<String, Properties> reactions;
 
 	private HashMap<String, Properties> influences;
 
@@ -3213,6 +3319,8 @@ public class GCMFile {
 	
 	private boolean isWithinCompartment;
 
+	private ArrayList<String >usedIDs;
+	
 	private String path;
 
 }

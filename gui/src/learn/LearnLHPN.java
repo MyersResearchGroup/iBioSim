@@ -950,9 +950,9 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				}
 				j++;
 			}
-			biosim.setGlassPane(true);
+			//biosim.setGlassPane(true);
 		} else if (e.getSource() == numBins || e.getSource() == debug) {
-			biosim.setGlassPane(true);
+			//biosim.setGlassPane(true);
 		} //else if (e.getActionCommand().contains("dmv")) {
 		//int num = Integer.parseInt(e.getActionCommand().substring(3)) - 1;
 		//editText(num);

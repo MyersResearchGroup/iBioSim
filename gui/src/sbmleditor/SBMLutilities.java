@@ -1366,11 +1366,11 @@ public class SBMLutilities {
 	/**
 	 * Checks consistency of the sbml file.
 	 */
-	public static void check(SBMLDocument document,String file) {
+	public static void check(String file) {
 		// Hack to avoid weird bug.
 		// By reloading the file before consistency checks, it seems to avoid a
 		// crash when attempting to save a newly added parameter with no units
-		document = Gui.readSBML(file);
+		SBMLDocument document = Gui.readSBML(file);
 		document.setConsistencyChecks(libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
 		document.setConsistencyChecks(libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
 		document.setConsistencyChecks(libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, true);

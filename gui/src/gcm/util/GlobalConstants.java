@@ -43,6 +43,9 @@ public class GlobalConstants {
 	public static final String INFLUENCE = "Influence";
 	public static final String COMPONENT_CONNECTION = "Component Connection";
 	public static final String PRODUCTION = "Production";
+	public static final String REACTION = "Reaction";
+	public static final String MODIFIER = "Modifier";
+	public static final String REACTION_EDGE = "Reaction_Edge";
 	public static final String PORTMAP = "Port Map";
 	public static final String NAME = "Name";
 	public static final String CONSTANT = "boundary";
@@ -81,6 +84,8 @@ public class GlobalConstants {
 
 	public static final int DEFAULT_SPECIES_WIDTH = 100;
 	public static final int DEFAULT_SPECIES_HEIGHT = 30;
+	public static final int DEFAULT_REACTION_WIDTH = 30;
+	public static final int DEFAULT_REACTION_HEIGHT = 30;
 	public static final int DEFAULT_COMPONENT_WIDTH = 80;
 	public static final int DEFAULT_COMPONENT_HEIGHT = 40;
 	

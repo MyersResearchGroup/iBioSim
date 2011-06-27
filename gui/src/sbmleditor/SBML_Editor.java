@@ -824,7 +824,7 @@ public class SBML_Editor extends JPanel {
 	}
 
 	public void check() {
-		SBMLutilities.check(document, file);
+		SBMLutilities.check(file);
 	}
 
 	public ArrayList<String> getElementChanges() {

@@ -129,7 +129,11 @@ public class Utility {
 		specie.setId(id);
 		specie.setName(id);
 		specie.setCompartment(compartment);
-		specie.setInitialAmount(amount);	
+		if (amount < 0) {
+			specie.setInitialConcentration((-1)*amount);	
+		} else{
+			specie.setInitialAmount(amount);	
+		}
 		specie.setHasOnlySubstanceUnits(true);
 		specie.setConstant(false);
 		specie.setBoundaryCondition(false);
@@ -375,8 +379,12 @@ public class Utility {
 			document.getModel().addSpecies(species);
 			*/
 			/* TODO: this is not quite right */
-			s.setInitialAmount(species.getInitialAmount());
-			s.setBoundaryCondition(species.getBoundaryCondition());
+			if (species.isSetInitialAmount()) {
+				s.setInitialAmount(species.getInitialAmount());
+			} else{
+				s.setInitialConcentration(species.getInitialConcentration());
+			}
+			//s.setBoundaryCondition(species.getBoundaryCondition());
 			return true;
 			//Give warning
 		}
@@ -413,15 +421,25 @@ public class Utility {
 	
 	private static FilenameFilter filter = null;
 
-	public static final Pattern IDpat = Pattern
-			.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
-	public static final Pattern NUMpat = Pattern
-			.compile("([\\d]*[\\.\\d]?\\d+)");
+	//public static final Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
+	//public static final Pattern NUMpat = Pattern.compile("([\\d]*[\\.\\d]?\\d+)");
 	private static Utility instance = null;
-	public static final String NUMstring = "([\\d]*[\\.\\d]?\\d+)";
-	public static final String SLASHstring = "(([\\d]*[\\.\\d]?\\d+)/)?([\\d]*[\\.\\d]?\\d+)";
-	public static final String SWEEPstring = "(\\([\\d]*[\\.\\d]?\\d+,[[\\s]*]?[\\d]*[\\.\\d]?\\d+,[[\\s]*]?[\\d]*[\\.\\d]?\\d+,[[\\s]*]?[12]\\))|([\\d]*[\\.\\d]?\\d+)";
-	public static final String SLASHSWEEPstring = "(\\((([\\d]*[\\.\\d]?\\d+)/)?([\\d]*[\\.\\d]?\\d+),[[\\s]*]?(([\\d]*[\\.\\d]?\\d+)/)?([\\d]*[\\.\\d]?\\d+),[[\\s]*]?(([\\d]*[\\.\\d]?\\d+)/)?([\\d]*[\\.\\d]?\\d+),[[\\s]*]?[12]\\))|(([\\d]*[\\.\\d]?\\d+)/)?([\\d]*[\\.\\d]?\\d+)";
+	
+	//public static final String NUMBER = "[1-9]";
+	//public static final String DIGIT = "(0|" + NUMBER + ")";
+	//public static final String EXPONENT = "([eE][+-]?" + DIGIT + "+)";
+	//public static final String LEADING = "(0|(" + NUMBER + DIGIT + "*))";
+//	public static final String FLOAT = "(((" + LEADING + "\\." + DIGIT + "*)|(\\." + DIGIT + "+))" + EXPONENT + 
+//	"?)|(" + LEADING + EXPONENT + ")";
+	//public static final String FLOAT = LEADING + "\\." + DIGIT + "*";
+//	[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?
+	public static final String NUMstring = "([\\d]*[\\.\\d]?\\d+)([eE][-+]?[\\d]+)?";
+	public static final String CONCstring = "\\[" + NUMstring + "\\]";
+	public static final String SLASHstring = "(" + NUMstring + "/)?" + NUMstring;
+	public static final String SWEEPstring = "(\\(" + NUMstring + ",[[\\s]*]?" + NUMstring + ",[[\\s]*]?" + NUMstring +
+		",[[\\s]*]?[12]\\))|" + NUMstring;
+	public static final String SLASHSWEEPstring = "(\\((" + NUMstring + "/)?" + NUMstring + ",[[\\s]*]?(" + NUMstring + "/)?" + 
+		NUMstring + ",[[\\s]*]?(" + NUMstring + "/)?" + NUMstring + ",[[\\s]*]?[12]\\))|(" + NUMstring + "/)?" + NUMstring;
 	public static final String PROPstring = "([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*";
 	public static final String IDstring = "([a-zA-Z])([a-zA-Z]|[0-9]|(_[a-zA-Z0-9]))*";
 	//public static final String IDstring = "([a-zA-Z])([a-zA-Z]|[0-9]|_)*";
@@ -429,9 +447,9 @@ public class Utility {
 	public static final String NAMEstring = "(.)*";
 	public static final String VALstring = "(.)+";
 
-	public static final String DECAY = ".0075";
-	public static final String KDIMER = ".5";
-	public static final String DIMER = "1";
+//public static final String DECAY = ".0075";
+//	public static final String KDIMER = ".5";
+//	public static final String DIMER = "1";
 	
 	public static final String directory = "/home/shang/namphuon/nobackup/BiologyProjects/muller";
 	
