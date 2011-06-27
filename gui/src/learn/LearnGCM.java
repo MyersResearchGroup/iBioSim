@@ -519,10 +519,10 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			editText(num);
 			speciesPanel.revalidate();
 			speciesPanel.repaint();
-			biosim.setGlassPane(true);
+			//biosim.setGlassPane(true);
 		}
 		else if (e.getSource() == numBins || e.getSource() == debug) {
-			biosim.setGlassPane(true);
+			//biosim.setGlassPane(true);
 		}
 		else if (e.getSource() == user) {
 			if (!firstRead) {

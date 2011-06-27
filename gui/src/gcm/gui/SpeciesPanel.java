@@ -24,6 +24,8 @@ import javax.swing.JPanel;
 import org.jfree.layout.CenterLayout;
 import org.sbml.libsbml.Species;
 
+import sbmleditor.MySpecies;
+
 import main.Gui;
 
 public class SpeciesPanel extends JPanel implements ActionListener {
@@ -55,7 +57,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
 			GCMFile refGCM,  GCM2SBMLEditor gcmEditor, MovieContainer movieContainer) {
 
-		JPanel grid = new JPanel(new GridLayout(7,1));
+		JPanel grid;
+		if (gcm.getSBMLDocument().getLevel() > 2) {
+			grid = new JPanel(new GridLayout(12,1));
+		} else {
+			grid = new JPanel(new GridLayout(11,1));
+		}
 		this.add(grid, BorderLayout.CENTER);
 		
 
@@ -103,26 +110,117 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		}
 		grid.add(tempPanel);
 
+		Species species = gcm.getSBMLDocument().getModel().getSpecies(selected);
+	
+		String[] optionsTF = { "true", "false" };
+
+		// Boundary condition field
+		tempPanel = new JPanel();
+		tempLabel = new JLabel("Boundary Condition");
+		specBoundary = new JComboBox(optionsTF);
+		if (species.getBoundaryCondition()) {
+			specBoundary.setSelectedItem("true");
+		} else {
+			specBoundary.setSelectedItem("false");
+		}
+		tempPanel.setLayout(new GridLayout(1, 2));
+		tempPanel.add(tempLabel);
+		tempPanel.add(specBoundary);
+		if (paramsOnly) {
+			tempLabel.setEnabled(false);
+			specBoundary.setEnabled(false);
+		}
+		grid.add(tempPanel);
+
+		// Constant field
+		tempPanel = new JPanel();
+		tempLabel = new JLabel("Constant");
+		specConstant = new JComboBox(optionsTF);
+		if (species.getConstant()) {
+			specConstant.setSelectedItem("true");
+		} else {
+			specConstant.setSelectedItem("false");
+		}
+		tempPanel.setLayout(new GridLayout(1, 2));
+		tempPanel.add(tempLabel);
+		tempPanel.add(specConstant);
+		if (paramsOnly) {
+			tempLabel.setEnabled(false);
+			specConstant.setEnabled(false);
+		}
+		grid.add(tempPanel);
+
+		// Has only substance units field
+		tempPanel = new JPanel();
+		tempLabel = new JLabel("Has Only Substance Units");
+		specHasOnly = new JComboBox(optionsTF);
+		if (species.getHasOnlySubstanceUnits()) {
+			specHasOnly.setSelectedItem("true");
+		} else {
+			specHasOnly.setSelectedItem("false");
+		}
+		tempPanel.setLayout(new GridLayout(1, 2));
+		tempPanel.add(tempLabel);
+		tempPanel.add(specHasOnly);
+		if (paramsOnly) {
+			tempLabel.setEnabled(false);
+			specHasOnly.setEnabled(false);
+		}
+		grid.add(tempPanel);
+		
+		// Units field
+		tempPanel = new JPanel();
+		tempLabel = new JLabel("Units");
+		unitsBox = MySpecies.createUnitsChoices(gcm.getSBMLDocument());
+		if (species.isSetUnits()) {
+			unitsBox.setSelectedItem(species.getUnits());
+		}
+		tempPanel.setLayout(new GridLayout(1, 2));
+		tempPanel.add(tempLabel);
+		tempPanel.add(unitsBox);
+		if (paramsOnly) {
+			tempLabel.setEnabled(false);
+			unitsBox.setEnabled(false);
+		}
+		grid.add(tempPanel);
+		
+		// Conversion factor field
+		if (gcm.getSBMLDocument().getLevel() > 2) {
+			tempPanel = new JPanel();
+			tempLabel = new JLabel("Conversion Factor");
+			convBox = MySpecies.createConversionFactorChoices(gcm.getSBMLDocument());
+			if (species.isSetConversionFactor()) {
+				convBox.setSelectedItem(species.getConversionFactor());
+			}
+			tempPanel.setLayout(new GridLayout(1, 2));
+			tempPanel.add(tempLabel);
+			tempPanel.add(convBox);
+			if (paramsOnly) {
+				tempLabel.setEnabled(false);
+				convBox.setEnabled(false);
+			}
+			grid.add(tempPanel);
+		}
+		
 		// Initial field
 		String origString = "default";
 		if (paramsOnly) {
 			String defaultValue = refGCM.getParameter(GlobalConstants.INITIAL_STRING);
 			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.INITIAL_STRING)) {
-				defaultValue = refGCM.getSpecies().get(selected).getProperty(
-						GlobalConstants.INITIAL_STRING);
+				defaultValue = refGCM.getSpecies().get(selected).getProperty(GlobalConstants.INITIAL_STRING);
 				origString = "custom";
 			}
 			else if (gcm.globalParameterIsSet(GlobalConstants.INITIAL_STRING)) {
 				defaultValue = gcm.getParameter(GlobalConstants.INITIAL_STRING);
 			}
-			field = new PropertyField(GlobalConstants.INITIAL_STRING, gcm
-					.getParameter(GlobalConstants.INITIAL_STRING), origString, defaultValue,
-					Utility.SWEEPstring, paramsOnly, origString);
+			field = new PropertyField(GlobalConstants.INITIAL_STRING, 
+					gcm.getParameter(GlobalConstants.INITIAL_STRING), origString, defaultValue,
+					Utility.SWEEPstring + "|" + Utility.CONCstring, paramsOnly, origString);
 		}
 		else {
-			field = new PropertyField(GlobalConstants.INITIAL_STRING, gcm
-					.getParameter(GlobalConstants.INITIAL_STRING), origString, gcm
-					.getParameter(GlobalConstants.INITIAL_STRING), Utility.NUMstring, paramsOnly,
+			field = new PropertyField(GlobalConstants.INITIAL_STRING, 
+					gcm.getParameter(GlobalConstants.INITIAL_STRING), origString, 
+					gcm.getParameter(GlobalConstants.INITIAL_STRING), Utility.NUMstring + "|" + Utility.CONCstring, paramsOnly,
 					origString);
 		}
 		fields.put(GlobalConstants.INITIAL_STRING, field);
@@ -319,10 +417,52 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						property.put(k, v);
 					}
 				}
-				Species species = gcm.getSBMLDocument().getModel().getSpecies(selected);
-				species.setId(fields.get(GlobalConstants.ID).getValue());
-				species.setName(fields.get(GlobalConstants.NAME).getValue());
-				species.setInitialAmount(Double.parseDouble(fields.get(GlobalConstants.INITIAL_STRING).getValue()));
+				if (!paramsOnly) {
+					Species species = gcm.getSBMLDocument().getModel().getSpecies(selected);
+					species.setId(fields.get(GlobalConstants.ID).getValue());
+					species.setName(fields.get(GlobalConstants.NAME).getValue());
+					if (Utility.isValid(fields.get(GlobalConstants.INITIAL_STRING).getValue(), Utility.NUMstring)) {
+						species.setInitialAmount(Double.parseDouble(fields.get(GlobalConstants.INITIAL_STRING).getValue()));
+					} else {
+						String conc = fields.get(GlobalConstants.INITIAL_STRING).getValue();
+						species.setInitialConcentration(Double.parseDouble(conc.substring(1,conc.length()-1)));
+					}
+					if (specBoundary.getSelectedItem().equals("true")) {
+						species.setBoundaryCondition(true);
+					}
+					else {
+						species.setBoundaryCondition(false);
+					}
+					if (specConstant.getSelectedItem().equals("true")) {
+						species.setConstant(true);
+					}
+					else {
+						species.setConstant(false);
+					}
+					if (specHasOnly.getSelectedItem().equals("true")) {
+						species.setHasOnlySubstanceUnits(true);
+					}
+					else {
+						species.setHasOnlySubstanceUnits(false);
+					}
+					String unit = (String) unitsBox.getSelectedItem();
+					if (unit.equals("( none )")) {
+						species.unsetUnits();
+					}
+					else {
+						species.setUnits(unit);
+					}
+					String convFactor = null;
+					if (gcm.getSBMLDocument().getLevel() > 2) {
+						convFactor = (String) convBox.getSelectedItem();
+					}
+					if (convFactor.equals("( none )")) {
+						species.unsetConversionFactor();
+					}
+					else {
+						species.setConversionFactor(convFactor);
+					}
+				}
 			}
 
 			for (PropertyField f : fields.values()) {
@@ -491,6 +631,16 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private GCMFile gcm = null;
 
 	private JComboBox typeBox = null;
+
+	private JComboBox convBox = null;
+
+	private JComboBox unitsBox = null;
+
+	private JComboBox specBoundary = null;
+
+	private JComboBox specConstant = null;
+
+	private JComboBox specHasOnly = null;
 
 	private static final String[] types = new String[] { GlobalConstants.INPUT, GlobalConstants.INTERNAL, 
 		GlobalConstants.OUTPUT, GlobalConstants.SPASTIC, GlobalConstants.DIFFUSIBLE};

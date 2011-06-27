@@ -221,38 +221,10 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		String selectedID = "";
 		Name = new JTextField();
 		init = new JTextField("0.0");
-		specUnits = new JComboBox();
-		specUnits.addItem("( none )");
 		String origAssign = "";
-		ListOf listOfUnits = document.getModel().getListOfUnitDefinitions();
-		for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
-			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
-			if ((unit.getNumUnits() == 1)
-					&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem()
-							|| unit.getUnit(0).isGram() || unit.getUnit(0).isKilogram())
-					&& (unit.getUnit(0).getExponentAsDouble() == 1)) {
-				if (!(document.getLevel() < 3 && unit.getId().equals("substance"))) {
-					specUnits.addItem(unit.getId());
-				}
-			}
-		}
-		if (document.getLevel() < 3) {
-			specUnits.addItem("substance");
-		}
-		String[] unitIds = { "dimensionless", "gram", "item", "kilogram", "mole" };
-		for (int i = 0; i < unitIds.length; i++) {
-			specUnits.addItem(unitIds[i]);
-		}
+		specUnits = createUnitsChoices(document);
 		if (document.getLevel() > 2) {
-			specConv = new JComboBox();
-			specConv.addItem("( none )");
-			ListOf listOfParameters = document.getModel().getListOfParameters();
-			for (int i = 0; i < document.getModel().getNumParameters(); i++) {
-				Parameter param = (Parameter) listOfParameters.get(i);
-				if (param.getConstant()) {
-					specConv.addItem(param.getId());
-				}
-			}
+			specConv = createConversionFactorChoices(document);
 		}
 		String[] optionsTF = { "true", "false" };
 		specBoundary = new JComboBox(optionsTF);
@@ -807,6 +779,45 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			}
 			return;
 		}
+	}
+	
+	public static JComboBox createUnitsChoices(SBMLDocument document) {
+		JComboBox specUnits = new JComboBox();
+		specUnits.addItem("( none )");
+		ListOf listOfUnits = document.getModel().getListOfUnitDefinitions();
+		for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
+			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
+			if ((unit.getNumUnits() == 1)
+					&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem()
+							|| unit.getUnit(0).isGram() || unit.getUnit(0).isKilogram())
+					&& (unit.getUnit(0).getExponentAsDouble() == 1)) {
+				if (!(document.getLevel() < 3 && unit.getId().equals("substance"))) {
+					specUnits.addItem(unit.getId());
+				}
+			}
+		}
+		if (document.getLevel() < 3) {
+			specUnits.addItem("substance");
+		}
+		String[] unitIds = { "dimensionless", "gram", "item", "kilogram", "mole" };
+		for (int i = 0; i < unitIds.length; i++) {
+			specUnits.addItem(unitIds[i]);
+		}
+		return specUnits;
+	}
+	
+	public static JComboBox createConversionFactorChoices(SBMLDocument document) {
+		JComboBox specConv;
+		specConv = new JComboBox();
+		specConv.addItem("( none )");
+		ListOf listOfParameters = document.getModel().getListOfParameters();
+		for (int i = 0; i < document.getModel().getNumParameters(); i++) {
+			Parameter param = (Parameter) listOfParameters.get(i);
+			if (param.getConstant()) {
+				specConv.addItem(param.getId());
+			}
+		}
+		return specConv;
 	}
 
 	/**

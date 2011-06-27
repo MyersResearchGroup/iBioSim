@@ -36,7 +36,13 @@ import javax.swing.JPopupMenu;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
+import org.sbml.libsbml.ListOf;
+import org.sbml.libsbml.ModifierSpeciesReference;
+import org.sbml.libsbml.Reaction;
+import org.sbml.libsbml.SpeciesReference;
+
 import sbmleditor.Compartments;
+import sbmleditor.Reactions;
 
 import main.Gui;
 
@@ -61,6 +67,7 @@ public class Schematic extends JPanel implements ActionListener {
 	public boolean getEditable(){return editable;};
 	private MovieContainer movieContainer;
 	private Compartments compartments;
+	private Reactions reactions;
 	private JCheckBox check;
 	
 	/**
@@ -94,7 +101,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @param internalModel
 	 */
 	public Schematic(GCMFile gcm, Gui biosim, GCM2SBMLEditor gcm2sbml, 
-			boolean editable, MovieContainer movieContainer2,Compartments compartments){
+			boolean editable, MovieContainer movieContainer2,Compartments compartments, Reactions reactions){
 		super(new BorderLayout());
 		
 		this.gcm = gcm;
@@ -103,6 +110,7 @@ public class Schematic extends JPanel implements ActionListener {
 		this.editable = editable;
 		this.movieContainer = movieContainer2;
 		this.compartments = compartments;
+		this.reactions = reactions;
 		
 		// initialize everything on creation.
 		display();
@@ -150,6 +158,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	AbstractButton selectButton;
 	AbstractButton addSpeciesButton;
+	AbstractButton addReactionButton;
 	AbstractButton addComponentButton;
 	AbstractButton editPromoterButton;
 	AbstractButton selfInfluenceButton;
@@ -157,6 +166,8 @@ public class Schematic extends JPanel implements ActionListener {
 	AbstractButton activationButton;
 	AbstractButton inhibitionButton;
 	AbstractButton bioActivationButton;
+	AbstractButton reactionButton;
+	AbstractButton modifierButton;
 	//AbstractButton bioInhibitionButton;
 	AbstractButton noInfluenceButton;
 	private JToolBar buildToolBar(){
@@ -164,33 +175,39 @@ public class Schematic extends JPanel implements ActionListener {
 		JToolBar toolBar = new JToolBar();
 		
 		ButtonGroup modeButtonGroup = new ButtonGroup();
-		selectButton =Utils.makeRadioToolButton("select_mode.png", "", "Select Mode", this, modeButtonGroup); 
+		selectButton =Utils.makeRadioToolButton("select_mode.png", "", "Select", this, modeButtonGroup); 
 		toolBar.add(selectButton);
 		selectButton.setSelected(true);
-		addSpeciesButton = Utils.makeRadioToolButton("add_species.png", "", "Add Species Mode", this, modeButtonGroup);
+		addSpeciesButton = Utils.makeRadioToolButton("add_species.png", "", "Add Species", this, modeButtonGroup);
 		toolBar.add(addSpeciesButton);
-		addComponentButton = Utils.makeRadioToolButton("add_component.png", "", "Add Component Mode", this, modeButtonGroup);
+		addReactionButton = Utils.makeRadioToolButton("add_reaction.png", "", "Add Reactions", this, modeButtonGroup);
+		toolBar.add(addReactionButton);
+		addComponentButton = Utils.makeRadioToolButton("add_component.png", "", "Add Components", this, modeButtonGroup);
 		toolBar.add(addComponentButton);
-		editPromoterButton = Utils.makeRadioToolButton("promoter_mode.png", "", "Add Promoter Mode", this, modeButtonGroup);
+		editPromoterButton = Utils.makeRadioToolButton("promoter_mode.png", "", "Add Promoters", this, modeButtonGroup);
 		toolBar.add(editPromoterButton);
-		selfInfluenceButton = Utils.makeRadioToolButton("self_influence.png", "", "Create Self Influences", this, modeButtonGroup);
+		selfInfluenceButton = Utils.makeRadioToolButton("self_influence.png", "", "Add Self Influences", this, modeButtonGroup);
 		toolBar.add(selfInfluenceButton);
 		//toolBar.add(Utils.makeToolButton("", "addInfluence", "Add Influence", this));
 
 		toolBar.addSeparator();
 		ButtonGroup influenceButtonGroup = new ButtonGroup();
 		
-		activationButton = Utils.makeRadioToolButton("activation.png", "", "Create Activation Influences", this, influenceButtonGroup);
+		activationButton = Utils.makeRadioToolButton("activation.png", "", "Activation", this, influenceButtonGroup);
 		activationButton.setSelected(true);
 		toolBar.add(activationButton);
-		inhibitionButton = Utils.makeRadioToolButton("inhibition.png", "", "Create Repression Influences", this, influenceButtonGroup);
+		inhibitionButton = Utils.makeRadioToolButton("inhibition.png", "", "Repression", this, influenceButtonGroup);
 		toolBar.add(inhibitionButton);
-		bioActivationButton = Utils.makeRadioToolButton("bio_activation.png", "", "Create Complex Formation Reaction", this, influenceButtonGroup);
+		noInfluenceButton = Utils.makeRadioToolButton("no_influence.png", "", "No Influence", this, influenceButtonGroup);
+		toolBar.add(noInfluenceButton);
+		bioActivationButton = Utils.makeRadioToolButton("bio_activation.png", "", "Complex Formation", this, influenceButtonGroup);
 		toolBar.add(bioActivationButton);
+		reactionButton = Utils.makeRadioToolButton("reaction.png", "", "Reaction", this, influenceButtonGroup);
+		toolBar.add(reactionButton);
+		modifierButton = Utils.makeRadioToolButton("modifier.png", "", "Modifier", this, influenceButtonGroup);
+		toolBar.add(modifierButton);
 		//bioInhibitionButton = Utils.makeRadioToolButton("bio_inhibition.png", "", "Create Biological Repression Influences", this, influenceButtonGroup);
 		//toolBar.add(bioInhibitionButton);
-		noInfluenceButton = Utils.makeRadioToolButton("no_influence.png", "", "Explicitly Set No Influences", this, influenceButtonGroup);
-		toolBar.add(noInfluenceButton);
 		
 		toolBar.addSeparator();
 					
@@ -299,18 +316,13 @@ public class Schematic extends JPanel implements ActionListener {
 							gcm2sbml.refresh();
 							gcm2sbml.setDirty(true);
 							gcm.makeUndoPoint();
+						}else if(addReactionButton.isSelected()) {
+							gcm.createReaction(null, e.getX(), e.getY());
+							graph.buildGraph();
+							gcm2sbml.refresh();
+							gcm2sbml.setDirty(true);
+							gcm.makeUndoPoint();
 						}else if(addComponentButton.isSelected()){
-
-//							String createdID = gcm2sbml.displayChooseComponentDialog(false, null, true);
-//							if(createdID != null){
-//								gcm.centerVertexOverPoint(gcm.getComponents().get(createdID), 
-//										e.getX(), e.getY());
-//								gcm2sbml.setDirty(true);
-//								graph.buildGraph();
-//								gcm2sbml.refresh();
-//								gcm.makeUndoPoint();
-//							}
-							
 							boolean dropped = DropComponentPanel.dropComponent(gcm2sbml, gcm, e.getX(), e.getY());
 							if(dropped){
 								gcm2sbml.setDirty(true);
@@ -404,6 +416,33 @@ public class Schematic extends JPanel implements ActionListener {
 			gcm2sbml.launchInfluencePanel(cell.getId());
 		}else if(cellType == GlobalConstants.PRODUCTION){
 			// do nothing
+		}else if(cellType == GlobalConstants.REACTION_EDGE){
+			mxCell source = (mxCell)cell.getSource();
+			mxCell target = (mxCell)cell.getTarget();
+			if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
+					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+				reactions.reactionsEditor("OK",(String)cell.getValue());
+			} else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
+				(graph.getCellType(target) == GlobalConstants.REACTION)) {
+				SpeciesReference reactant = gcm.getSBMLDocument().getModel().getReaction((String)target.getId()).
+					getReactant((String)source.getId());
+				if (reactant != null) {
+					reactions.reactantsEditor("OK",(String)source.getId(),reactant);
+				} 
+			} else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
+				(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+				SpeciesReference product = gcm.getSBMLDocument().getModel().getReaction((String)source.getId()).
+					getProduct((String)target.getId());
+				reactions.productsEditor("OK",(String)target.getId(),product);
+			}
+		}else if(cellType == GlobalConstants.REACTION){
+			Reaction r = gcm.getSBMLDocument().getModel().getReaction((String)cell.getId());
+			reactions.reactionsEditor("OK",(String)cell.getId());
+			if (!cell.getId().equals(r.getId())) {
+				gcm.getReactions().put(r.getId(), gcm.getReactions().get(cell.getId()));
+				gcm.getReactions().remove(cell.getId());
+				cell.setId(r.getId());
+			}
 		}else if(cellType == GlobalConstants.COMPONENT){
 			//gcm2sbml.displayChooseComponentDialog(true, null, false, cell.getId());
 			if(movieContainer == null)
@@ -487,11 +526,52 @@ public class Schematic extends JPanel implements ActionListener {
 						//System.out.print(cell.getId() + " Deleting.\n");
 						
 						String type = graph.getCellType(cell);
-						if(type == GlobalConstants.INFLUENCE){
-							//gcm.getInfluences().remove(cell.getId()); // why am I doing this twice? Was this a CVS glitch, is this really intentional, or was I up too late when I wrote it? TODO: get rid of this or put in a comment explaining whats up.
-							//gcm.getInfluences().remove(cell.getId());
+						if(type == GlobalConstants.INFLUENCE || type == GlobalConstants.PRODUCTION){
 							gcm.removeInfluence(cell.getId());
-							//graph.influenceRemoved(cell.getId());
+						}else if(type == GlobalConstants.REACTION_EDGE) {
+							mxCell source = (mxCell)cell.getSource();
+							mxCell target = (mxCell)cell.getTarget();
+							if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
+									(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+									reactions.removeTheReaction((String)cell.getValue());
+							} else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
+								(graph.getCellType(target) == GlobalConstants.REACTION)) {
+								Reaction r = gcm.getSBMLDocument().getModel().getReaction(target.getId());
+								boolean found = false;
+								ListOf reactants = r.getListOfReactants();
+								for (int i = 0; i < r.getNumReactants(); i++) {
+									SpeciesReference s = (SpeciesReference)reactants.get(i);
+									if (s.getSpecies().equals(source.getId())) {
+										reactants.remove(i);
+										found = true;
+										break;
+									}
+								}
+								if (!found) {
+									ListOf modifiers = r.getListOfModifiers();
+									for (int i = 0; i < r.getNumModifiers(); i++) {
+										ModifierSpeciesReference s = (ModifierSpeciesReference)modifiers.get(i);
+										if (s.getSpecies().equals(source.getId())) {
+											modifiers.remove(i);
+											break;
+										}
+									}
+								}
+							} else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
+								(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+								Reaction r = gcm.getSBMLDocument().getModel().getReaction(source.getId());
+								ListOf products = r.getListOfProducts();
+								for (int i = 0; i < r.getNumProducts(); i++) {
+									SpeciesReference s = (SpeciesReference)products.get(i);
+									if (s.getSpecies().equals(target.getId())) {
+										products.remove(i);
+										break;
+									}
+								}
+							}
+						}else if(type == GlobalConstants.REACTION) {
+							reactions.removeTheReaction((String)cell.getId());
+							gcm.removeReaction(cell.getId());
 						}else if(type == GlobalConstants.SPECIES){
 							//gcm.getSpecies().remove(cell.getId());
 							//gcm.getSpecies().remove(cell.getId());
@@ -683,6 +763,10 @@ public class Schematic extends JPanel implements ActionListener {
 			type = InfluencePanel.types[0];
 		}else if(bioActivationButton.isSelected()){
 			type = InfluencePanel.types[3]; 
+		}else if(reactionButton.isSelected()){
+			type = InfluencePanel.types[5]; 
+		}else if(modifierButton.isSelected()){
+			type = InfluencePanel.types[6]; 
 		}else if(noInfluenceButton.isSelected()){
 			type = InfluencePanel.types[2];
 		}else{
@@ -696,19 +780,12 @@ public class Schematic extends JPanel implements ActionListener {
 		if(numPromoters == 1){
 			if(graph.getCellType(source) == GlobalConstants.PROMOTER){
 				// source is a promoter
-				name = InfluencePanel.buildName(
-						GlobalConstants.NONE, 
-						targetID, 
-						type,  
-						sourceID);
+				type = InfluencePanel.types[1];
+				name = InfluencePanel.buildName(GlobalConstants.NONE,targetID,type,sourceID);
 				newInfluenceProperties.setProperty(GlobalConstants.PROMOTER, sourceID);
 			}else{
 				// target is a promoter
-				name = InfluencePanel.buildName(
-						sourceID, 
-						GlobalConstants.NONE, 
-						type, 
-						targetID);
+				name = InfluencePanel.buildName(sourceID,GlobalConstants.NONE,type,targetID);
 				newInfluenceProperties.setProperty(GlobalConstants.PROMOTER, targetID);
 			}
 
@@ -736,8 +813,52 @@ public class Schematic extends JPanel implements ActionListener {
 		// build the influence properties
 		newInfluenceProperties.setProperty(GlobalConstants.NAME, name);
 		newInfluenceProperties.setProperty(GlobalConstants.TYPE, type);
-		gcm.getInfluences().put(name, newInfluenceProperties);
-		
+		if (type == InfluencePanel.types[5]) {
+			if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
+					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+				gcm.addReaction(sourceID,targetID);
+			} else if ((graph.getCellType(source) == GlobalConstants.REACTION) && 
+					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+				Reaction r = gcm.getSBMLDocument().getModel().getReaction(sourceID);
+				SpeciesReference s = r.createProduct();
+				s.setSpecies(targetID);
+				s.setStoichiometry(1.0);
+				s.setConstant(true);
+			} else if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
+					(graph.getCellType(target) == GlobalConstants.REACTION)) {
+				Reaction r = gcm.getSBMLDocument().getModel().getReaction(targetID);
+				SpeciesReference s = r.createReactant();
+				s.setSpecies(sourceID);
+				s.setStoichiometry(1.0);
+				s.setConstant(true);
+			} else {
+				JOptionPane.showMessageDialog(Gui.frame, "Reaction edge can connect only species and reactions");
+				graph.buildGraph();
+				gcm2sbml.refresh();
+				return;
+			}
+		} else if (type == InfluencePanel.types[6]) {
+			if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
+				(graph.getCellType(target) == GlobalConstants.REACTION)) {
+				Reaction r = gcm.getSBMLDocument().getModel().getReaction(targetID);
+				ModifierSpeciesReference s = r.createModifier();
+				s.setSpecies(sourceID);
+			} else {
+				JOptionPane.showMessageDialog(Gui.frame, "Modifier must connect a species to a reaction");
+				graph.buildGraph();
+				gcm2sbml.refresh();
+				return;
+			}
+		} else {
+			if ((graph.getCellType(source) == GlobalConstants.REACTION) || 
+				(graph.getCellType(target) == GlobalConstants.REACTION)) {
+				JOptionPane.showMessageDialog(Gui.frame, "Can only connect reactions using reaction or modifier edge");
+				graph.buildGraph();
+				gcm2sbml.refresh();
+				return;
+			}
+			gcm.getInfluences().put(name, newInfluenceProperties);
+		}
 		
 		graph.buildGraph();
 		gcm2sbml.refresh();

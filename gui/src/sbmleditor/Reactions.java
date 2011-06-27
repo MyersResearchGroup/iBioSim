@@ -111,7 +111,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 
 	private JList products; // JList for products
 
-	private String[] product; // array for products
+	private String[] proda; // array for products
 
 	private JComboBox productConstant;
 	/*
@@ -248,16 +248,18 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		this.add(scroll2, "Center");
 		this.add(addReacs, "South");
 	}
-
+	
 	/**
 	 * Creates a frame used to edit reactions or create new ones.
 	 */
-	private void reactionsEditor(String option) {
+	public void reactionsEditor(String option,String reactionId) {
+		/*
 		if (option.equals("OK") && reactions.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(Gui.frame, "No reaction selected.",
 					"Must Select A Reaction", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		*/
 		JPanel reactionPanelNorth = new JPanel();
 		JPanel reactionPanelNorth1 = new JPanel();
 		JPanel reactionPanelNorth1b = new JPanel();
@@ -291,8 +293,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		String selectedID = "";
 		Reaction copyReact = null;
 		if (option.equals("OK")) {
-			Reaction reac = document.getModel().getReaction(
-					((String) reactions.getSelectedValue()).split(" ")[0]);
+			Reaction reac = document.getModel().getReaction(reactionId);
 			copyReact = (Reaction) reac.cloneObject();
 			reacID.setText(reac.getId());
 			selectedID = reac.getId();
@@ -314,13 +315,13 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		else {
-			String reactionId = "r0";
+			String NEWreactionId = "r0";
 			int i = 0;
-			while (usedIDs.contains(reactionId)) {
+			while (usedIDs.contains(NEWreactionId)) {
 				i++;
-				reactionId = "r" + i;
+				NEWreactionId = "r" + i;
 			}
-			reacID.setText(reactionId);
+			reacID.setText(NEWreactionId);
 		}
 		JPanel param = new JPanel(new BorderLayout());
 		JPanel addParams = new JPanel();
@@ -344,8 +345,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		changedParameters = new ArrayList<Parameter>();
 		thisReactionParams = new ArrayList<String>();
 		if (option.equals("OK")) {
-			Reaction reac = document.getModel().getReaction(
-					((String) reactions.getSelectedValue()).split(" ")[0]);
+			Reaction reac = document.getModel().getReaction(reactionId);
 			ListOf listOfParameters = reac.getKineticLaw().getListOfParameters();
 			reacParams = new String[(int) reac.getKineticLaw().getNumParameters()];
 			for (int i = 0; i < reac.getKineticLaw().getNumParameters(); i++) {
@@ -428,8 +428,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		reacta = new String[0];
 		changedReactants = new ArrayList<SpeciesReference>();
 		if (option.equals("OK")) {
-			Reaction reac = document.getModel().getReaction(
-					((String) reactions.getSelectedValue()).split(" ")[0]);
+			Reaction reac = document.getModel().getReaction(reactionId);
 			ListOf listOfReactants = reac.getListOfReactants();
 			reacta = new String[(int) reac.getNumReactants()];
 			for (int i = 0; i < reac.getNumReactants(); i++) {
@@ -470,27 +469,26 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		scroll3.setMinimumSize(new Dimension(260, 220));
 		scroll3.setPreferredSize(new Dimension(276, 152));
 		scroll3.setViewportView(products);
-		product = new String[0];
+		proda = new String[0];
 		changedProducts = new ArrayList<SpeciesReference>();
 		if (option.equals("OK")) {
-			Reaction reac = document.getModel().getReaction(
-					((String) reactions.getSelectedValue()).split(" ")[0]);
+			Reaction reac = document.getModel().getReaction(reactionId);
 			ListOf listOfProducts = reac.getListOfProducts();
-			product = new String[(int) reac.getNumProducts()];
+			proda = new String[(int) reac.getNumProducts()];
 			for (int i = 0; i < reac.getNumProducts(); i++) {
 				SpeciesReference product = (SpeciesReference) listOfProducts.get(i);
 				changedProducts.add(product);
 				if (product.isSetStoichiometryMath()) {
-					this.product[i] = product.getSpecies() + " "
+					this.proda[i] = product.getSpecies() + " "
 							+ SBMLutilities.myFormulaToString(product.getStoichiometryMath().getMath());
 				}
 				else {
-					this.product[i] = product.getSpecies() + " " + product.getStoichiometry();
+					this.proda[i] = product.getSpecies() + " " + product.getStoichiometry();
 				}
 			}
 		}
-		Utility.sort(product);
-		products.setListData(product);
+		Utility.sort(proda);
+		products.setListData(proda);
 		products.setSelectedIndex(0);
 		products.addMouseListener(this);
 		productsPanel.add(productsLabel, "North");
@@ -518,8 +516,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		modifier = new String[0];
 		changedModifiers = new ArrayList<ModifierSpeciesReference>();
 		if (option.equals("OK")) {
-			Reaction reac = document.getModel().getReaction(
-					((String) reactions.getSelectedValue()).split(" ")[0]);
+			Reaction reac = document.getModel().getReaction(reactionId);
 			ListOf listOfModifiers = reac.getListOfModifiers();
 			modifier = new String[(int) reac.getNumModifiers()];
 			for (int i = 0; i < reac.getNumModifiers(); i++) {
@@ -553,8 +550,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		scroll4.setPreferredSize(new Dimension(100, 100));
 		scroll4.setViewportView(kineticLaw);
 		if (option.equals("OK")) {
-			kineticLaw.setText(SBMLutilities.myFormulaToString(document.getModel().getReaction(
-					((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw()
+			kineticLaw.setText(SBMLutilities.myFormulaToString(document.getModel().getReaction(reactionId).getKineticLaw()
 					.getMath()));
 		}
 		JPanel kineticPanel = new JPanel(new BorderLayout());
@@ -603,6 +599,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			kineticLaw.setEditable(false);
 			useMassAction.setEnabled(false);
 			clearKineticLaw.setEnabled(false);
+			reactionComp.setEnabled(false);
 		}
 		Object[] options1 = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, reactionPanel, "Reaction Editor",
@@ -674,7 +671,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			if (!error) {
 				if (option.equals("OK")) {
 					int index = reactions.getSelectedIndex();
-					String val = ((String) reactions.getSelectedValue()).split(" ")[0];
+					String val = reactionId;
 					Reaction react = document.getModel().getReaction(val);
 					ListOf remove;
 					long size;
@@ -865,7 +862,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		if (value == JOptionPane.NO_OPTION) {
 			if (option.equals("OK")) {
-				String reac = ((String) reactions.getSelectedValue()).split(" ")[0];
+				String reac = reactionId;
 				removeTheReaction(reac);
 				document.getModel().addReaction(copyReact);
 			}
@@ -1436,12 +1433,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit products or create new ones.
 	 */
-	public void productsEditor(String option) {
-		if (option.equals("OK") && products.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No product selected.",
-					"Must Select A Product", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
+	public void productsEditor(String option,String selectedProductId,SpeciesReference product) {
 		JPanel productsPanel;
 		if (document.getLevel() < 3) {
 			productsPanel = new JPanel(new GridLayout(4, 2));
@@ -1481,11 +1473,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		productStoiciometry = new JTextField("1");
 		String selectedID = "";
 		if (option.equals("OK")) {
-			String v = ((String) products.getSelectedValue()).split(" ")[0];
-			SpeciesReference product = null;
-			for (SpeciesReference p : changedProducts) {
-				if (p.getSpecies().equals(v)) {
-					product = p;
+			String v = selectedProductId;
+			if (product == null) {
+				for (SpeciesReference p : changedProducts) {
+					if (p.getSpecies().equals(v)) {
+						product = p;
+					}
 				}
 			}
 			if (product.isSetId()) {
@@ -1572,23 +1565,25 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			int index = -1;
 			if (!error) {
-				if (option.equals("OK")) {
-					index = products.getSelectedIndex();
-				}
-				products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-				product = Utility.getList(product, products);
-				products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				if (index >= 0) {
-					products.setSelectedIndex(index);
-				}
-				for (int i = 0; i < product.length; i++) {
-					if (i != index) {
-						if (product[i].split(" ")[0].equals(productSpecies.getSelectedItem())) {
-							error = true;
-							JOptionPane.showMessageDialog(Gui.frame,
-									"Unable to add species as a product.\n"
-											+ "Each species can only be used as a product once.",
-									"Species Can Only Be Used Once", JOptionPane.ERROR_MESSAGE);
+				if (product == null) {
+					if (option.equals("OK")) {
+						index = products.getSelectedIndex();
+					}
+					products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+					proda = Utility.getList(proda, products);
+					products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					if (index >= 0) {
+						products.setSelectedIndex(index);
+					}
+					for (int i = 0; i < proda.length; i++) {
+						if (i != index) {
+							if (proda[i].split(" ")[0].equals(productSpecies.getSelectedItem())) {
+								error = true;
+								JOptionPane.showMessageDialog(Gui.frame,
+										"Unable to add species as a product.\n"
+										+ "Each species can only be used as a product once.",
+										"Species Can Only Be Used Once", JOptionPane.ERROR_MESSAGE);
+							}
 						}
 					}
 				}
@@ -1656,16 +1651,18 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if (!error) {
 				if (option.equals("OK")) {
-					String v = ((String) products.getSelectedValue()).split(" ")[0];
-					SpeciesReference produ = null;
-					for (SpeciesReference p : changedProducts) {
-						if (p.getSpecies().equals(v)) {
-							produ = p;
+					String v = selectedProductId;
+					SpeciesReference produ = product;
+					if (produ == null) {
+						for (SpeciesReference p : changedProducts) {
+							if (p.getSpecies().equals(v)) {
+								produ = p;
+							}
 						}
+						products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+						proda = Utility.getList(proda, products);
+						products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					}
-					products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					product = Utility.getList(product, products);
-					products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					produ.setId(productId.getText().trim());
 					for (int i = 0; i < usedIDs.size(); i++) {
 						if (usedIDs.get(i).equals(selectedID)) {
@@ -1690,13 +1687,17 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						produ.setConstant(false);
 					}
-					product[index] = prod;
-					Utility.sort(product);
-					products.setListData(product);
-					products.setSelectedIndex(index);
+					if (product == null) {
+						proda[index] = prod;
+						Utility.sort(proda);
+						products.setListData(proda);
+						products.setSelectedIndex(index);
+					}
 					SBMLutilities.updateVarId(document,false, selectedID, productId.getText().trim());
-					kineticLaw.setText(SBMLutilities.updateFormulaVar(kineticLaw.getText().trim(), selectedID,
-							productId.getText().trim()));
+					if (product == null) {
+						kineticLaw.setText(SBMLutilities.updateFormulaVar(kineticLaw.getText().trim(), selectedID,
+								productId.getText().trim()));
+					}
 				}
 				else {
 					// SpeciesReference produ = new
@@ -1727,14 +1728,14 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(product, products, add, false, null, null, null, null,
+					adding = Utility.add(proda, products, add, false, null, null, null, null,
 							null, null, Gui.frame);
-					product = new String[adding.length];
+					proda = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
-						product[i] = (String) adding[i];
+						proda[i] = (String) adding[i];
 					}
-					Utility.sort(product);
-					products.setListData(product);
+					Utility.sort(proda);
+					products.setListData(proda);
 					products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					products.setSelectedIndex(0);
 				}
@@ -1898,12 +1899,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit reactants or create new ones.
 	 */
-	public void reactantsEditor(String option) {
-		if (option.equals("OK") && reactants.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No reactant selected.",
-					"Must Select A Reactant", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
+	public void reactantsEditor(String option,String selectedReactantId,SpeciesReference reactant) {
 		JPanel reactantsPanel;
 		if (document.getLevel() < 3) {
 			reactantsPanel = new JPanel(new GridLayout(4, 2));
@@ -1935,19 +1931,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		reactantId = new JTextField("");
-		/*
-		 * int j = 0; while (usedIDs.contains("reactant"+j)) { j++; }
-		 * reactantId.setText("reactant"+j);
-		 */
 		reactantName = new JTextField("");
 		reactantStoiciometry = new JTextField("1");
 		String selectedID = "";
 		if (option.equals("OK")) {
-			String v = ((String) reactants.getSelectedValue()).split(" ")[0];
-			SpeciesReference reactant = null;
-			for (SpeciesReference r : changedReactants) {
-				if (r.getSpecies().equals(v)) {
-					reactant = r;
+			String v = selectedReactantId;
+			if (reactant == null) {
+				for (SpeciesReference r : changedReactants) {
+					if (r.getSpecies().equals(v)) {
+						reactant = r;
+					}
 				}
 			}
 			reactantSpecies.setSelectedItem(reactant.getSpecies());
@@ -2034,23 +2027,25 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			int index = -1;
 			if (!error) {
-				if (option.equals("OK")) {
-					index = reactants.getSelectedIndex();
-				}
-				reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-				reacta = Utility.getList(reacta, reactants);
-				reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-				if (index >= 0) {
-					reactants.setSelectedIndex(index);
-				}
-				for (int i = 0; i < reacta.length; i++) {
-					if (i != index) {
-						if (reacta[i].split(" ")[0].equals(reactantSpecies.getSelectedItem())) {
-							error = true;
-							JOptionPane.showMessageDialog(Gui.frame,
-									"Unable to add species as a reactant.\n"
-											+ "Each species can only be used as a reactant once.",
-									"Species Can Only Be Used Once", JOptionPane.ERROR_MESSAGE);
+				if (reactant==null) {
+					if (option.equals("OK")) {
+						index = reactants.getSelectedIndex();
+					}
+					reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+					reacta = Utility.getList(reacta, reactants);
+					reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+					if (index >= 0) {
+						reactants.setSelectedIndex(index);
+					}
+					for (int i = 0; i < reacta.length; i++) {
+						if (i != index) {
+							if (reacta[i].split(" ")[0].equals(reactantSpecies.getSelectedItem())) {
+								error = true;
+								JOptionPane.showMessageDialog(Gui.frame,
+										"Unable to add species as a reactant.\n"
+										+ "Each species can only be used as a reactant once.",
+										"Species Can Only Be Used Once", JOptionPane.ERROR_MESSAGE);
+							}
 						}
 					}
 				}
@@ -2118,16 +2113,18 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			if (!error) {
 				if (option.equals("OK")) {
-					String v = ((String) reactants.getSelectedValue()).split(" ")[0];
-					SpeciesReference reactan = null;
-					for (SpeciesReference r : changedReactants) {
-						if (r.getSpecies().equals(v)) {
-							reactan = r;
+					String v = selectedReactantId;
+					SpeciesReference reactan = reactant;
+					if (reactant == null) {
+						for (SpeciesReference r : changedReactants) {
+							if (r.getSpecies().equals(v)) {
+								reactan = r;
+							}
 						}
+						reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+						reacta = Utility.getList(reacta, reactants);
+						reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					}
-					reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					reacta = Utility.getList(reacta, reactants);
-					reactants.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					reactan.setId(reactantId.getText().trim());
 					for (int i = 0; i < usedIDs.size(); i++) {
 						if (usedIDs.get(i).equals(selectedID)) {
@@ -2152,19 +2149,22 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					else {
 						reactan.setConstant(false);
 					}
-					reacta[index] = react;
-					Utility.sort(reacta);
-					reactants.setListData(reacta);
-					reactants.setSelectedIndex(index);
+					if (reactant == null) {
+						reacta[index] = react;
+						Utility.sort(reacta);
+						reactants.setListData(reacta);
+						reactants.setSelectedIndex(index);
+					}
 					SBMLutilities.updateVarId(document,false, selectedID, reactantId.getText().trim());
-					kineticLaw.setText(SBMLutilities.updateFormulaVar(kineticLaw.getText().trim(), selectedID,
-							reactantId.getText().trim()));
+					if (reactant == null) {
+						kineticLaw.setText(SBMLutilities.updateFormulaVar(kineticLaw.getText().trim(), selectedID,
+								reactantId.getText().trim()));
+					}
 				}
 				else {
 					// SpeciesReference reactan = new
 					// SpeciesReference(BioSim.SBML_LEVEL, BioSim.SBML_VERSION);
-					SpeciesReference reactan = new SpeciesReference(document.getLevel(), document
-							.getVersion());
+					SpeciesReference reactan = new SpeciesReference(document.getLevel(), document.getVersion());
 					reactan.setId(reactantId.getText().trim());
 					usedIDs.add(reactan.getId());
 					reactan.setName(reactantName.getText().trim());
@@ -2238,7 +2238,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Remove the reaction
 	 */
-	private void removeTheReaction(String selected) {
+	public void removeTheReaction(String selected) {
 		Reaction tempReaction = document.getModel().getReaction(selected);
 		ListOf r = document.getModel().getListOfReactions();
 		for (int i = 0; i < document.getModel().getNumReactions(); i++) {
@@ -2286,7 +2286,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						&& !SBMLutilities.variableInUse(document,changedProducts.get(i).getId(), false)) {
 					changedProducts.remove(i);
 					products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					product = (String[]) Utility.remove(products, product);
+					proda = (String[]) Utility.remove(products, proda);
 					products.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					if (index < products.getModel().getSize()) {
 						products.setSelectedIndex(index);
@@ -2579,11 +2579,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		// if the add parameters button is clicked
 		// if the add reactions button is clicked
 		if (e.getSource() == addReac) {
-			reactionsEditor("Add");
+			reactionsEditor("Add","");
 		}
 		// if the edit reactions button is clicked
 		else if (e.getSource() == editReac) {
-			reactionsEditor("OK");
+			if (reactions.getSelectedIndex() == -1) {
+				JOptionPane.showMessageDialog(Gui.frame, "No reaction selected.",
+						"Must Select A Reaction", JOptionPane.ERROR_MESSAGE);
+				return;
+			} 
+			reactionsEditor("OK",((String)reactions.getSelectedValue()).split(" ")[0]);
 			initialsPanel.refreshInitialAssignmentPanel(document);
 			rulesPanel.refreshRulesPanel(document);
 		}
@@ -2605,11 +2610,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		// if the add reactants button is clicked
 		else if (e.getSource() == addReactant) {
-			reactantsEditor("Add");
+			reactantsEditor("Add","",null);
 		}
 		// if the edit reactants button is clicked
 		else if (e.getSource() == editReactant) {
-			reactantsEditor("OK");
+			if (reactants.getSelectedIndex() == -1) {
+				JOptionPane.showMessageDialog(Gui.frame, "No reactant selected.",
+						"Must Select A Reactant", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			reactantsEditor("OK",((String)reactants.getSelectedValue()).split(" ")[0],null);
 			initialsPanel.refreshInitialAssignmentPanel(document);
 			rulesPanel.refreshRulesPanel(document);
 		}
@@ -2619,11 +2629,16 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		// if the add products button is clicked
 		else if (e.getSource() == addProduct) {
-			productsEditor("Add");
+			productsEditor("Add","",null);
 		}
 		// if the edit products button is clicked
 		else if (e.getSource() == editProduct) {
-			productsEditor("OK");
+			if (products.getSelectedIndex() == -1) {
+				JOptionPane.showMessageDialog(Gui.frame, "No product selected.",
+						"Must Select A Product", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			productsEditor("OK",((String)products.getSelectedValue()).split(" ")[0],null);
 			initialsPanel.refreshInitialAssignmentPanel(document);
 			rulesPanel.refreshRulesPanel(document);
 		}
@@ -2657,7 +2672,12 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == reactions) {
-				reactionsEditor("OK");
+				if (reactions.getSelectedIndex() == -1) {
+					JOptionPane.showMessageDialog(Gui.frame, "No reaction selected.",
+							"Must Select A Reaction", JOptionPane.ERROR_MESSAGE);
+					return;
+				} 
+				reactionsEditor("OK",((String)reactions.getSelectedValue()).split(" ")[0]);
 				initialsPanel.refreshInitialAssignmentPanel(document);
 				rulesPanel.refreshRulesPanel(document);
 			}
@@ -2666,14 +2686,24 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 			else if (e.getSource() == reactants) {
 				if (!paramsOnly) {
-					reactantsEditor("OK");
+					if (reactants.getSelectedIndex() == -1) {
+						JOptionPane.showMessageDialog(Gui.frame, "No reactant selected.",
+								"Must Select A Reactant", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					reactantsEditor("OK",((String)reactants.getSelectedValue()).split(" ")[0],null);
 					initialsPanel.refreshInitialAssignmentPanel(document);
 					rulesPanel.refreshRulesPanel(document);
 				}
 			}
 			else if (e.getSource() == products) {
 				if (!paramsOnly) {
-					productsEditor("OK");
+					if (products.getSelectedIndex() == -1) {
+						JOptionPane.showMessageDialog(Gui.frame, "No product selected.",
+								"Must Select A Product", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					productsEditor("OK",((String)products.getSelectedValue()).split(" ")[0],null);
 					initialsPanel.refreshInitialAssignmentPanel(document);
 					rulesPanel.refreshRulesPanel(document);
 				}

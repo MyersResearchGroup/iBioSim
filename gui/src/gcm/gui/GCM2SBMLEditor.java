@@ -338,6 +338,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			SBMLWriter writer = new SBMLWriter();
 			writer.writeSBML(gcm.getSBMLDocument(), path + separator + gcm.getSBMLFile());
 			log.addText("Saving SBML file:\n" + path + separator + gcm.getSBMLFile() + "\n");
+			if (command.contains("Check")) {
+				SBMLutilities.check(path + separator + gcm.getSBMLFile());
+			}
 		}	
 	
 		if (command.contains("template")) {
@@ -994,23 +997,25 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		mainPanel.add(mainPanelCenter, "Center");
 		JTabbedPane tab = new JTabbedPane();
 		ArrayList<String >usedIDs = SBMLutilities.CreateListOfUsedIDs(gcm.getSBMLDocument());
+		gcm.setUsedIDs(usedIDs);
 		
 		String file = filename.replace(".gcm", ".xml");
 		Compartments compartmentPanel = new Compartments(gcm.getSBMLDocument(),usedIDs,dirty,
 				paramsOnly,getParams,file,parameterChanges,true);
 		//tab.addTab("Compartments", compartmentPanel);
-
-		Schematic schematic = new Schematic(gcm, biosim, this, true, null,compartmentPanel);
-		tab.addTab("Schematic", schematic);
-		
-		MySpecies speciesPanel = new MySpecies(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
-				paramsOnly,getParams,file,parameterChanges,true);
-		tab.addTab("Species", speciesPanel);
-		gcm.setSpeciesPanel(speciesPanel);
-		
 		Reactions reactionPanel = new Reactions(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
 				paramsOnly,getParams,file,parameterChanges);
-		tab.addTab("Reactions", reactionPanel);
+		//tab.addTab("Reactions", reactionPanel);
+		MySpecies speciesPanel = new MySpecies(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
+				paramsOnly,getParams,file,parameterChanges,true);
+		//tab.addTab("Species", speciesPanel);
+
+		gcm.setSpeciesPanel(speciesPanel);
+		gcm.setReactionPanel(reactionPanel);
+		
+		Schematic schematic = new Schematic(gcm, biosim, this, true, null,compartmentPanel,reactionPanel);
+
+		tab.addTab("Schematic", schematic);
 		
 		tab.addTab("Parameters", paramPanel);
 		
@@ -1180,7 +1185,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		initPanel = Utility.createPanel(this, "GCM Parameters", parameters, null, null, editInit);
 		paramPanel.add(initPanel, "Center");
 		Parameters parametersPanel = new Parameters(gcm.getSBMLDocument(),usedIDs,dirty,
-				paramsOnly,getParams,file,parameterChanges);
+				paramsOnly,getParams,path + separator + file,parameterChanges);
 		parametersPanel.setPanels(initialsPanel, rulesPanel);
 		paramPanel.add(parametersPanel, "South");
 		
