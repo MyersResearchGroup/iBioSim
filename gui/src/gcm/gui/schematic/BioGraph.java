@@ -809,11 +809,15 @@ public class BioGraph extends mxGraph {
 	private boolean createGraphSpeciesFromModel(String sp){
 		Properties prop = gcm.getSpecies().get(sp);
 		String id = prop.getProperty("ID", "");
+		String type = prop.getProperty("Type", "");
+		
 		if (id==null) {
 			id = prop.getProperty("label", "");
 		}		
+		
+		String label = id + '\n' + type;
 
-		CellValueObject cvo = new CellValueObject(id, prop);
+		CellValueObject cvo = new CellValueObject(label, prop);
 		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		this.speciesToMxCellMap.put(id, (mxCell)insertedVertex);
 		
