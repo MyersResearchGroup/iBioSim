@@ -73,7 +73,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kf", kf, GeneticNetwork.getMoleTimeParameter(2)));
+		kl.addParameter(Utility.Parameter("kf_a", kf, GeneticNetwork.getMoleTimeParameter(2)));
 		kl.addParameter(Utility.Parameter(kactString, kact,
 				GeneticNetwork.getMoleParameter(2)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
@@ -87,7 +87,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 			actExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+		kl.addParameter(Utility.Parameter("kr_a", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(actExpression));
 		Utility.addReaction(document, r);
@@ -104,7 +104,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kf", kf, GeneticNetwork.getMoleTimeParameter(2)));
+		kl.addParameter(Utility.Parameter("kf_a", kf, GeneticNetwork.getMoleTimeParameter(2)));
 		kl.addParameter(Utility.Parameter(kactString, kact,
 				GeneticNetwork.getMoleParameter(2)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
@@ -115,7 +115,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 			actExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+		kl.addParameter(Utility.Parameter("kr_a", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(actExpression));
 		Utility.addReaction(document, r);
@@ -132,7 +132,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kf", kf, GeneticNetwork.getMoleTimeParameter(2)));
+		kl.addParameter(Utility.Parameter("kf_a", kf, GeneticNetwork.getMoleTimeParameter(2)));
 		kl.addParameter(Utility.Parameter(kactString, kact,
 				GeneticNetwork.getMoleParameter(2)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));;
@@ -143,7 +143,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 			actExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+		kl.addParameter(Utility.Parameter("kr_a", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(actExpression));
 		Utility.addReaction(document, r);
@@ -160,7 +160,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kf", kf, GeneticNetwork.getMoleTimeParameter(2)));
+		kl.addParameter(Utility.Parameter("kf_a", kf, GeneticNetwork.getMoleTimeParameter(2)));
 		kl.addParameter(Utility.Parameter(kactString, kact,
 				GeneticNetwork.getMoleParameter(2)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
@@ -171,7 +171,7 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 			actExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+		kl.addParameter(Utility.Parameter("kr_a", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(actExpression));
 		Utility.addReaction(document, r);
@@ -188,8 +188,8 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 	 */
 	//Forward and reverse rate constants are of those of the activated equilibrium binding constant for RNA polymerase
 	private String generateLaw(String actExpression) {
-		String law = "kf*" + "(" + kactString + "*" + actExpression + ")" + "^"
-				+ coopString + "*" + rnapId + "*" + promoter.getId() + "-kr*" + boundId;
+		String law = "kf_a*" + "(" + kactString + "*" + actExpression + ")" + "^"
+				+ coopString + "*" + rnapId + "*" + promoter.getId() + "-kr_a*" + boundId;
 		return law;
 	}
 	

@@ -340,20 +340,20 @@ public class GeneticNetwork {
 			r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
 			double[] Krnap = p.getKrnap();
-			kl.addParameter(Utility.Parameter("kf", Krnap[0], GeneticNetwork
+			kl.addParameter(Utility.Parameter("kf_o", Krnap[0], GeneticNetwork
 					.getMoleTimeParameter(2)));
 			if (Krnap.length == 2) {
-				kl.addParameter(Utility.Parameter("kr", Krnap[1], GeneticNetwork
+				kl.addParameter(Utility.Parameter("kr_o", Krnap[1], GeneticNetwork
 						.getMoleTimeParameter(1)));
-				kl.addParameter(Utility.Parameter(krnapString, Krnap[0]/Krnap[1],
-						GeneticNetwork.getMoleParameter(2)));
+//				kl.addParameter(Utility.Parameter(krnapString, Krnap[0]/Krnap[1],
+//						GeneticNetwork.getMoleParameter(2)));
 			} else {
-				kl.addParameter(Utility.Parameter("kr", 1, GeneticNetwork
+				kl.addParameter(Utility.Parameter("kr_o", 1, GeneticNetwork
 						.getMoleTimeParameter(1)));
-				kl.addParameter(Utility.Parameter(krnapString, Krnap[0],
-						GeneticNetwork.getMoleParameter(2)));
+//				kl.addParameter(Utility.Parameter(krnapString, Krnap[0],
+//						GeneticNetwork.getMoleParameter(2)));
 			}
-			kl.setFormula("kf*" + rnapName + "*" + p.getId() + "-kr*"
+			kl.setFormula("kf_o*" + rnapName + "*" + p.getId() + "-kr_o*"
 					+ p.getId() + "_RNAP");		
 			Utility.addReaction(document, r);
 
@@ -1177,7 +1177,7 @@ public class GeneticNetwork {
 
 	private GCMFile properties = null;
 	
-	private String krnapString = GlobalConstants.RNAP_BINDING_STRING;
+//	private String krnapString = GlobalConstants.RNAP_BINDING_STRING;
 	
 	private String kBasalString = GlobalConstants.KBASAL_STRING;
 	
