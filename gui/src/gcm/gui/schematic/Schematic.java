@@ -439,23 +439,23 @@ public class Schematic extends JPanel implements ActionListener {
 			mxCell target = (mxCell)cell.getTarget();
 			if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
-				reactions.reactionsEditor("OK",(String)cell.getValue());
+				reactions.reactionsEditor(gcm.getSBMLDocument(),"OK",(String)cell.getValue());
 			} else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
 				(graph.getCellType(target) == GlobalConstants.REACTION)) {
 				SpeciesReference reactant = gcm.getSBMLDocument().getModel().getReaction((String)target.getId()).
 					getReactant((String)source.getId());
 				if (reactant != null) {
-					reactions.reactantsEditor("OK",(String)source.getId(),reactant);
+					reactions.reactantsEditor(gcm.getSBMLDocument(),"OK",(String)source.getId(),reactant);
 				} 
 			} else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
 				(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 				SpeciesReference product = gcm.getSBMLDocument().getModel().getReaction((String)source.getId()).
 					getProduct((String)target.getId());
-				reactions.productsEditor("OK",(String)target.getId(),product);
+				reactions.productsEditor(gcm.getSBMLDocument(),"OK",(String)target.getId(),product);
 			}
 		}else if(cellType == GlobalConstants.REACTION){
 			Reaction r = gcm.getSBMLDocument().getModel().getReaction((String)cell.getId());
-			reactions.reactionsEditor("OK",(String)cell.getId());
+			reactions.reactionsEditor(gcm.getSBMLDocument(),"OK",(String)cell.getId());
 			if (!cell.getId().equals(r.getId())) {
 				gcm.getReactions().put(r.getId(), gcm.getReactions().get(cell.getId()));
 				gcm.getReactions().remove(cell.getId());
@@ -552,7 +552,7 @@ public class Schematic extends JPanel implements ActionListener {
 							mxCell target = (mxCell)cell.getTarget();
 							if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
 									(graph.getCellType(target) == GlobalConstants.SPECIES)) {
-									reactions.removeTheReaction((String)cell.getValue());
+									reactions.removeTheReaction(gcm.getSBMLDocument(),(String)cell.getValue());
 							} else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
 								(graph.getCellType(target) == GlobalConstants.REACTION)) {
 								Reaction r = gcm.getSBMLDocument().getModel().getReaction(target.getId());
@@ -589,7 +589,7 @@ public class Schematic extends JPanel implements ActionListener {
 								}
 							}
 						}else if(type == GlobalConstants.REACTION) {
-							reactions.removeTheReaction((String)cell.getId());
+							reactions.removeTheReaction(gcm.getSBMLDocument(),(String)cell.getId());
 							gcm.removeReaction(cell.getId());
 						}else if(type == GlobalConstants.SPECIES){
 							//gcm.getSpecies().remove(cell.getId());
