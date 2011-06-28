@@ -70,8 +70,8 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter("kf_r", kf,
 				GeneticNetwork.getMoleTimeParameter(2)));
-		kl.addParameter(Utility.Parameter(krepString, krep,
-				GeneticNetwork.getMoleParameter(2)));
+		if (coop > 1)
+			kl.addParameter(Utility.Parameter(krepString, krep, GeneticNetwork.getMoleParameter(2)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String repExpression = "";
 		if (complexAbstraction && specie.isAbstractable()) {
@@ -100,8 +100,8 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		kl = r.createKineticLaw();
 		kl.addParameter(Utility.Parameter("kf_r", kf,
 				GeneticNetwork.getMoleTimeParameter(2)));
-		kl.addParameter(Utility.Parameter(krepString, krep,
-				GeneticNetwork.getMoleParameter(2)));
+		if (coop > 1)
+			kl.addParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String repExpression = "";
 		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
@@ -127,10 +127,9 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kf_r", kf,
-				GeneticNetwork.getMoleTimeParameter(2)));
-		kl.addParameter(Utility.Parameter(krepString, krep,
-				GeneticNetwork.getMoleParameter(2)));
+		kl.addParameter(Utility.Parameter("kf_r", kf, GeneticNetwork.getMoleTimeParameter(2)));
+		if (coop > 1)
+			kl.addParameter(Utility.Parameter(krepString, krep, GeneticNetwork.getMoleParameter(2)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String repExpression = "";
 		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
@@ -156,10 +155,9 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kf_r", kf,
-				GeneticNetwork.getMoleTimeParameter(2)));
-		kl.addParameter(Utility.Parameter(krepString, krep,
-				GeneticNetwork.getMoleParameter(2)));
+		kl.addParameter(Utility.Parameter("kf_r", kf, GeneticNetwork.getMoleTimeParameter(2)));
+		if (coop > 1)
+			kl.addParameter(Utility.Parameter(krepString, krep, GeneticNetwork.getMoleParameter(2)));
 		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
 		String repExpression = "";
 		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
@@ -188,7 +186,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		String law = "";
 		if (coop == 1)
 			law = "kf_r*" + "(" + repExpression + ")" + "^" + coopString + "*" + promoter.getId() + "-kr_r*" + boundId;
-		else
+		else if (coop > 1)
 			law = "kf_r*" + "(" + krepString + ")" + "^" + "(" + coopString + "-1" + ")" + "*" + "(" + repExpression + ")" 
 			+ "^" + coopString + "*" + promoter.getId() + "-kr_r*" + boundId;
 		return law;
