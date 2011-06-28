@@ -8,9 +8,12 @@ import gcm.gui.modelview.movie.visualizations.cellvisualizations.MovieAppearance
 import gcm.gui.modelview.movie.visualizations.component.ComponentSchemeChooser;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
+import gcm.network.Grid;
 
 import java.awt.BorderLayout;
 import java.awt.Event;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,8 +21,10 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Properties;
 
 
@@ -133,11 +138,20 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		// Create and plug in the graphComponent
 		if(graphComponent == null){
+			
 			graphComponent = new mxGraphComponent(graph);
 			graphComponent.setGraph(graph);
+			
+			//make the mxgraph stuff see-through
+			//so we can see the grid underneath the mxgraph stuff
+			graphComponent.setOpaque(false);
+			graphComponent.getViewport().setOpaque(false);
+			
 			this.add(graphComponent, BorderLayout.CENTER);
+			
 			if(this.editable)
 				this.add(buildToolBar(), BorderLayout.NORTH);
+			
 			addGraphComponentListeners();
 		}
 	
@@ -149,6 +163,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		//this.setBackground(Color.BLACK);
 		
+		Schematic.this.repaint();
 	}
 	
 	
@@ -256,11 +271,13 @@ public class Schematic extends JPanel implements ActionListener {
 			graph.buildGraph();
 			gcm2sbml.refresh();
 			gcm2sbml.setDirty(true);
+			drawGrid();
 		}else if(command == "redo"){
 			gcm.redo();
 			graph.buildGraph();
 			gcm2sbml.refresh();
 			gcm2sbml.setDirty(true);
+			drawGrid();
 		}else if(command == "compartment"){
 			if (compartments != null) {
 				compartments.compartEditor("OK");
@@ -316,12 +333,14 @@ public class Schematic extends JPanel implements ActionListener {
 							gcm2sbml.refresh();
 							gcm2sbml.setDirty(true);
 							gcm.makeUndoPoint();
+							drawGrid();
 						}else if(addReactionButton.isSelected()) {
 							gcm.createReaction(null, e.getX(), e.getY());
 							graph.buildGraph();
 							gcm2sbml.refresh();
 							gcm2sbml.setDirty(true);
 							gcm.makeUndoPoint();
+							drawGrid();
 						}else if(addComponentButton.isSelected()){
 							boolean dropped = DropComponentPanel.dropComponent(gcm2sbml, gcm, e.getX(), e.getY());
 							if(dropped){
@@ -329,6 +348,7 @@ public class Schematic extends JPanel implements ActionListener {
 								graph.buildGraph();
 								gcm2sbml.refresh();
 								gcm.makeUndoPoint();
+								drawGrid();
 							}
 						}else if(editPromoterButton.isSelected()){
 							gcm.createPromoter(null, e.getX(), e.getY(), true);
@@ -336,6 +356,7 @@ public class Schematic extends JPanel implements ActionListener {
 							graph.buildGraph();
 							gcm2sbml.setDirty(true);
 							gcm.makeUndoPoint();
+							drawGrid();
 						}
 					}else{
 						// this would create a new promoter if an influence didn't already have one. And bring up the editor for it.
@@ -484,6 +505,7 @@ public class Schematic extends JPanel implements ActionListener {
 				graph.buildGraph();
 				gcm.makeUndoPoint();
 				gcm2sbml.setDirty(true);
+				drawGrid();
 			}
 		});
 	
@@ -605,6 +627,7 @@ public class Schematic extends JPanel implements ActionListener {
 					gcm2sbml.refresh();
 					graph.buildGraph();
 					gcm.makeUndoPoint();
+					drawGrid();
 				}
 			}
 		});
@@ -960,6 +983,33 @@ public class Schematic extends JPanel implements ActionListener {
 		};
 	}
 	
+	/**
+	 * wrapper for the paintComponent() function
+	 */
+	private void drawGrid() {
+		Schematic.this.repaint();
+	}
+	
+	/**
+	 * overrides the paintComponent method in JComponent;
+	 * is called automatically whenever the component becomes visible
+	 * or when repaint is called
+	 * 
+	 * is used to draw the grid on the schematic
+	 * 
+	 * @param g Graphics object
+	 * 
+	 */
+	public void paintComponent(Graphics g) {
+				
+		super.paintComponent(g);
+		
+		//will turn these on once everything is working
+		
+		//Grid grid = gcm.getGrid();
+				
+		//grid.drawGrid(g);
+	}
 	
 	//////////////////////////////////////// ANIMATION TYPE STUFF ////////////////////////////////
 	
