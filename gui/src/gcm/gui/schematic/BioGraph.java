@@ -977,6 +977,8 @@ public class BioGraph extends mxGraph {
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
 		style.put(mxConstants.STYLE_OPACITY, 50);
+		style.put(mxConstants.STYLE_FILLCOLOR, "#0077AA");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#FFAA00");
 		style.put(mxConstants.STYLE_FONTCOLOR, "#774400");
 		stylesheet.putCellStyle("REACTION", style);
 		

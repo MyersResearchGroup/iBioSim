@@ -53,6 +53,8 @@ import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.SBMLReader;
+import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.UnitDefinition;
@@ -872,7 +874,7 @@ public class GCMFile {
 	 * 
 	 * @return
 	 */
-	public StringBuffer saveToBuffer(Boolean includeGlobals, Boolean collectGarbage) {
+	public StringBuffer saveToBuffer(Boolean includeGlobals, Boolean collectGarbage,boolean appendSBML) {
 		StringBuffer buffer = new StringBuffer("digraph G {\n");
 		for (String s : species.keySet()) {
 			buffer.append(s + " [");
@@ -1075,7 +1077,14 @@ public class GCMFile {
 			 * }
 			 */
 			buffer.append("}\n");
-			buffer.append(GlobalConstants.SBMLFILE + "=\"" + sbmlFile + "\"\n");
+			if (appendSBML) {
+				SBMLWriter writer = new SBMLWriter();
+				String SBMLstr = writer.writeSBMLToString(sbml);
+				buffer.append(GlobalConstants.SBMLFILE + "=\"" + sbmlFile + "\"\n");
+				buffer.append("SBML="+SBMLstr);
+			} else {
+				buffer.append(GlobalConstants.SBMLFILE + "=\"" + sbmlFile + "\"\n");
+			}
 		}
 		return buffer;
 	}
@@ -1089,7 +1098,7 @@ public class GCMFile {
 		try {
 			PrintStream p = new PrintStream(new FileOutputStream(filename));
 
-			StringBuffer buffer = saveToBuffer(true, true);
+			StringBuffer buffer = saveToBuffer(true, true, false);
 
 			p.print(buffer);
 			p.close();
@@ -2113,6 +2122,14 @@ public class GCMFile {
 		Matcher matcher = pattern.matcher(data.toString());
 		if (matcher.find()) {
 			sbmlFile = matcher.group(1);
+		} 
+		pattern = Pattern.compile(SBML);
+		matcher = pattern.matcher(data.toString());
+		if (matcher.find()) {
+			String sbmlData = matcher.group();
+			sbmlData = sbmlData.replaceFirst("SBML=","");
+			SBMLReader reader = new SBMLReader();
+			sbml = reader.readSBMLFromString(sbmlData);
 		}
 	}
 
@@ -3249,7 +3266,7 @@ public class GCMFile {
 	}
 
 	public void makeUndoPoint() {
-		StringBuffer up = this.saveToBuffer(true, false);
+		StringBuffer up = this.saveToBuffer(true, false, true);
 		undoManager.makeUndoPoint(up);
 	}
 
@@ -3283,6 +3300,8 @@ public class GCMFile {
 	private static final String CONDITION = "Conditions\\s\\{([^@]*)\\s\\}";
 
 	private static final String SBMLFILE = GlobalConstants.SBMLFILE + "=\"([^\"]*)\"";
+
+	private static final String SBML = "SBML=((.*)\n)*";
 
 	private static final String PROMOTERS_LIST = "Promoters\\s\\{([^}]*)\\s\\}";
 
