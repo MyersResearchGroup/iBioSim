@@ -68,7 +68,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kf", kf,
+		kl.addParameter(Utility.Parameter("kf_r", kf,
 				GeneticNetwork.getMoleTimeParameter(2)));
 		kl.addParameter(Utility.Parameter(krepString, krep,
 				GeneticNetwork.getMoleParameter(2)));
@@ -82,7 +82,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+		kl.addParameter(Utility.Parameter("kr_r", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(repExpression));
 		Utility.addReaction(document, r);
@@ -98,7 +98,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kf", kf,
+		kl.addParameter(Utility.Parameter("kf_r", kf,
 				GeneticNetwork.getMoleTimeParameter(2)));
 		kl.addParameter(Utility.Parameter(krepString, krep,
 				GeneticNetwork.getMoleParameter(2)));
@@ -111,7 +111,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+		kl.addParameter(Utility.Parameter("kr_r", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(repExpression));
 		Utility.addReaction(document, r);
@@ -127,7 +127,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kf", kf,
+		kl.addParameter(Utility.Parameter("kf_r", kf,
 				GeneticNetwork.getMoleTimeParameter(2)));
 		kl.addParameter(Utility.Parameter(krepString, krep,
 				GeneticNetwork.getMoleParameter(2)));
@@ -140,7 +140,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+		kl.addParameter(Utility.Parameter("kr_r", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(repExpression));
 		Utility.addReaction(document, r);
@@ -156,7 +156,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kf", kf,
+		kl.addParameter(Utility.Parameter("kf_r", kf,
 				GeneticNetwork.getMoleTimeParameter(2)));
 		kl.addParameter(Utility.Parameter(krepString, krep,
 				GeneticNetwork.getMoleParameter(2)));
@@ -169,7 +169,7 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+		kl.addParameter(Utility.Parameter("kr_r", kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(repExpression));
 		Utility.addReaction(document, r);
@@ -187,10 +187,10 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	private String generateLaw(String repExpression) {
 		String law = "";
 		if (coop == 1)
-			law = "kf*" + "(" + repExpression + ")" + "^" + coopString + "*" + promoter.getId() + "-kr*" + boundId;
+			law = "kf_r*" + "(" + repExpression + ")" + "^" + coopString + "*" + promoter.getId() + "-kr_r*" + boundId;
 		else
-			law = "kf*" + "(" + krepString + ")" + "^" + "(" + coopString + "-1" + ")" + "*" + "(" + repExpression + ")" 
-			+ "^" + coopString + "*" + promoter.getId() + "-kr*" + boundId;
+			law = "kf_r*" + "(" + krepString + ")" + "^" + "(" + coopString + "-1" + ")" + "*" + "(" + repExpression + ")" 
+			+ "^" + coopString + "*" + promoter.getId() + "-kr_r*" + boundId;
 		return law;
 	}
 

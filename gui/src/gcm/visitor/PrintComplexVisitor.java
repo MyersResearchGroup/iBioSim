@@ -49,12 +49,17 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
+		String kcompId = kcompString;
+		String kcompIdf = "kf_c";
+		String kcompIdr = "kr_c";
 		String compExpression = "";
 		String boundExpression = specie.getId();
-		String kcompId = kcompString + "__" + specie.getId();
 		String ncSum = "";
 		double stoich = 0;
 		if (complexAbstraction) {
+			kcompId = kcompId + "__" + specie.getId();
+			kcompIdf = kcompIdf + "__" + specie.getId();
+			kcompIdr = kcompIdr + "__" + specie.getId();
 			compExpression = abstractComplex(specie.getId(), 1);
 			int index = compExpression.indexOf('*');
 			compExpression = compExpression.substring(index, compExpression.length());
@@ -67,8 +72,6 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 			if (specie.isSequesterable())
 				boundExpression = sequesterSpecies(specie.getId(), 0);
 		} else {
-			kl.addParameter(Utility.Parameter(kcompId, kcomp,
-					GeneticNetwork.getMoleParameter(2)));
 			for (Influence infl : complexMap.get(specie.getId())) {
 				String partId = infl.getInput();
 				stoich += infl.getCoop();
@@ -78,23 +81,28 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 				ncSum = ncSum + nId + "+";
 				compExpression = compExpression + "*" + "(" + partId + ")^" + nId;
 			}
-		}
+		}	
 		if (stoich == 1)
-			kl.addParameter(Utility.Parameter("kf", kf, GeneticNetwork.getMoleTimeParameter(1)));
-		else 
-			kl.addParameter(Utility.Parameter("kf", kf, GeneticNetwork.getMoleTimeParameter(2)));
-		kl.addParameter(Utility.Parameter("kr", kr, GeneticNetwork
+			kl.addParameter(Utility.Parameter(kcompIdf, kf, GeneticNetwork.getMoleTimeParameter(1)));
+		else if (stoich >= 2) {
+			kl.addParameter(Utility.Parameter(kcompIdf, kf, GeneticNetwork.getMoleTimeParameter(2)));
+			if (stoich > 2)
+				kl.addParameter(Utility.Parameter(kcompId, kcomp, GeneticNetwork.getMoleParameter(2)));
+		}
+		kl.addParameter(Utility.Parameter(kcompIdr, kr, GeneticNetwork
 				.getMoleTimeParameter(1)));
-		kl.setFormula(generateLaw(compExpression, boundExpression, kcompId, ncSum, stoich));
+		kl.setFormula(generateLaw(compExpression, boundExpression, kcompId, kcompIdf, kcompIdr, ncSum, stoich));
 		Utility.addReaction(document, r);
 	}
 	
-	private String generateLaw(String compExpression, String boundExpression, String kcompId, String ncSum, double stoich) {
+	private String generateLaw(String compExpression, String boundExpression, String kcompId, String kcompIdf, 
+			String kcompIdr, String ncSum, double stoich) {
 		String law = "";
 		if (stoich == 1 || stoich == 2)
-			law = "kf" + compExpression + "-kr*" + boundExpression;
-		else
-			law = "kf*" + kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-2)" + compExpression + "-kr*" + boundExpression;
+			law = kcompIdf + compExpression + "-kr_c*" + boundExpression;
+		else if (stoich > 2)
+			law = kcompIdf + "*" + kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-2)" + compExpression 
+				+ "-" + kcompIdr + "*" + boundExpression;
 		return law;
 	}
 	
@@ -114,7 +122,6 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 	//Checks if species belongs in a compartment other than default
 	private String checkCompartments(String species) {
 		String compartment = document.getModel().getCompartment(0).getId();
-		//String[] splitted = species.split("__");
 		String component = species;
 		while (component.contains("__")) {
 			component = component.substring(0,component.lastIndexOf("__"));
@@ -124,10 +131,6 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 				}
 			}
 		}
-		/*
-		if (compartments.contains(splitted[0]))
-			compartment = splitted[0];
-			*/
 		return compartment;
 	}
 	

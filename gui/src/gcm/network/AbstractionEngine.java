@@ -57,15 +57,27 @@ public class AbstractionEngine {
 		String compExpression = "";
 		if (sbmlMode) {
 			String kcompId = kcompString + "__" + complexId;
+			String kcompIdf = "kf_c__" + complexId;
+			String kcompIdr = "kr_c__" + complexId;
 			double[] kcomp = species.get(complexId).getKc();
+			String kdecayId = decayString + "__" + complexId;
+			double kdecay = species.get(complexId).getDecay();
+			if (kdecay > 0) {
+				kl.addParameter(Utility.Parameter(kcompIdf, kcomp[0], GeneticNetwork.getMoleTimeParameter(2)));
+				kl.addParameter(Utility.Parameter(kdecayId, kdecay, GeneticNetwork.getMoleTimeParameter(1)));
+			}
 			// Checks if binding parameters are specified as forward and reverse rate constants
 			//  or as equilibrium binding constants before adding to kinetic law
 			if (kcomp.length == 2) {
-				kl.addParameter(Utility.Parameter(kcompId, kcomp[0] / kcomp[1], GeneticNetwork
-						.getMoleParameter(2)));
+				if (kdecay > 0)
+					kl.addParameter(Utility.Parameter(kcompIdr, kcomp[1], GeneticNetwork.getMoleTimeParameter(1)));
+				else
+					kl.addParameter(Utility.Parameter(kcompId, kcomp[0] / kcomp[1], GeneticNetwork.getMoleParameter(2)));
 			} else {
-				kl.addParameter(Utility
-						.Parameter(kcompId, kcomp[0], GeneticNetwork.getMoleParameter(2)));
+				if (kdecay > 0)
+					kl.addParameter(Utility.Parameter(kcompIdr, 1, GeneticNetwork.getMoleTimeParameter(1)));
+				else
+					kl.addParameter(Utility.Parameter(kcompId, kcomp[0], GeneticNetwork.getMoleParameter(2)));
 			}
 			String ncSum = "";
 			for (Influence infl : complexMap.get(complexId)) {
@@ -96,8 +108,11 @@ public class AbstractionEngine {
 					compExpression = compExpression + ")^" + nId;
 				}
 			}
-			compExpression = kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)"
-			+ compExpression;
+			compExpression = "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-1)" + compExpression;
+			if (kdecay > 0)
+				compExpression = "(" + kcompIdf + "/" + "(" + kcompIdr + "+" + kdecayId + "))" + compExpression;
+			else
+				compExpression = kcompId + compExpression;
 		} else {
 			double ncSum = 0;
 			for (Influence infl : complexMap.get(complexId)) {
@@ -120,10 +135,12 @@ public class AbstractionEngine {
 				}
 			}
 			double[] kcomp = species.get(complexId).getKc();
-			if (kcomp.length == 2)
-				compExpression = kcomp[0]/kcomp[1] + "^" + (ncSum - 1) + compExpression;
-			else 
-				compExpression = kcomp[0] + "^" + (ncSum - 1) + compExpression;
+			double kdecay = species.get(complexId).getDecay();
+			if (kcomp.length == 2) {
+				compExpression = kcomp[0]/(kcomp[1] + kdecay) + "^" + (ncSum - 1) + compExpression;
+			} else {
+				compExpression = kcomp[0]/(1 + kdecay) + "^" + (ncSum - 1) + compExpression;
+			}
 		}
 		return compExpression;
 	}
