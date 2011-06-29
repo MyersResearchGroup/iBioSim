@@ -252,7 +252,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit reactions or create new ones.
 	 */
-	public void reactionsEditor(SBMLDocument document,String option,String reactionId) {
+	public void reactionsEditor(SBMLDocument document,String option,String reactionId,boolean inSchematic) {
 		/*
 		if (option.equals("OK") && reactions.getSelectedIndex() == -1) {
 			JOptionPane.showMessageDialog(Gui.frame, "No reaction selected.",
@@ -260,13 +260,6 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			return;
 		}
 		*/
-		JPanel reactionPanelNorth = new JPanel();
-		JPanel reactionPanelNorth1 = new JPanel();
-		JPanel reactionPanelNorth1b = new JPanel();
-		JPanel reactionPanelNorth2 = new JPanel();
-		JPanel reactionPanelCentral = new JPanel(new GridLayout(1, 3));
-		JPanel reactionPanelSouth = new JPanel(new GridLayout(1, 2));
-		JPanel reactionPanel = new JPanel(new BorderLayout());
 		JLabel id = new JLabel("ID:");
 		reacID = new JTextField(15);
 		JLabel name = new JLabel("Name:");
@@ -557,29 +550,59 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		kineticPanel.add(kineticLabel, "North");
 		kineticPanel.add(scroll4, "Center");
 		kineticPanel.add(kineticButtons, "South");
-		reactionPanelNorth1.add(id);
-		reactionPanelNorth1.add(reacID);
-		reactionPanelNorth1.add(name);
-		reactionPanelNorth1.add(reacName);
-		if (document.getLevel() > 2) {
-			reactionPanelNorth1.add(reactionCompLabel);
-			reactionPanelNorth1.add(reactionComp);
+		JPanel reactionPanel = new JPanel(new BorderLayout());
+		if (inSchematic) {
+			JPanel reactionPanelNorth = new JPanel(new GridLayout(2, 1));
+			JPanel reactionPanelNorth1 = new JPanel();
+			JPanel reactionPanelNorth1b = new JPanel();
+			reactionPanelNorth1.add(id);
+			reactionPanelNorth1.add(reacID);
+			reactionPanelNorth1.add(name);
+			reactionPanelNorth1.add(reacName);
+			if (document.getLevel() > 2) {
+				reactionPanelNorth1b.add(reactionCompLabel);
+				reactionPanelNorth1b.add(reactionComp);
+			}
+			reactionPanelNorth1b.add(reverse);
+			reactionPanelNorth1b.add(reacReverse);
+			reactionPanelNorth1b.add(fast);
+			reactionPanelNorth1b.add(reacFast);
+			reactionPanelNorth.add(reactionPanelNorth1);
+			reactionPanelNorth.add(reactionPanelNorth1b);
+			reactionPanel.add(reactionPanelNorth, "North");
+			reactionPanel.add(param, "Center");
+			reactionPanel.add(kineticPanel, "South");
+		} else {
+			JPanel reactionPanelNorth = new JPanel();
+			JPanel reactionPanelNorth1 = new JPanel();
+			JPanel reactionPanelNorth1b = new JPanel();
+			JPanel reactionPanelNorth2 = new JPanel();
+			JPanel reactionPanelCentral = new JPanel(new GridLayout(1, 3));
+			JPanel reactionPanelSouth = new JPanel(new GridLayout(1, 2));
+			reactionPanelNorth1.add(id);
+			reactionPanelNorth1.add(reacID);
+			reactionPanelNorth1.add(name);
+			reactionPanelNorth1.add(reacName);
+			if (document.getLevel() > 2) {
+				reactionPanelNorth1.add(reactionCompLabel);
+				reactionPanelNorth1.add(reactionComp);
+			}
+			reactionPanelNorth1b.add(reverse);
+			reactionPanelNorth1b.add(reacReverse);
+			reactionPanelNorth1b.add(fast);
+			reactionPanelNorth1b.add(reacFast);
+			reactionPanelNorth2.add(reactionPanelNorth1);
+			reactionPanelNorth2.add(reactionPanelNorth1b);
+			reactionPanelNorth.add(reactionPanelNorth2);
+			reactionPanelCentral.add(reactantsPanel);
+			reactionPanelCentral.add(productsPanel);
+			reactionPanelCentral.add(modifierPanel);
+			reactionPanelSouth.add(param);
+			reactionPanelSouth.add(kineticPanel);
+			reactionPanel.add(reactionPanelNorth, "North");
+			reactionPanel.add(reactionPanelCentral, "Center");
+			reactionPanel.add(reactionPanelSouth, "South");
 		}
-		reactionPanelNorth1b.add(reverse);
-		reactionPanelNorth1b.add(reacReverse);
-		reactionPanelNorth1b.add(fast);
-		reactionPanelNorth1b.add(reacFast);
-		reactionPanelNorth2.add(reactionPanelNorth1);
-		reactionPanelNorth2.add(reactionPanelNorth1b);
-		reactionPanelNorth.add(reactionPanelNorth2);
-		reactionPanelCentral.add(reactantsPanel);
-		reactionPanelCentral.add(productsPanel);
-		reactionPanelCentral.add(modifierPanel);
-		reactionPanelSouth.add(param);
-		reactionPanelSouth.add(kineticPanel);
-		reactionPanel.add(reactionPanelNorth, "North");
-		reactionPanel.add(reactionPanelCentral, "Center");
-		reactionPanel.add(reactionPanelSouth, "South");
 		if (paramsOnly) {
 			reacID.setEditable(false);
 			reacName.setEditable(false);
@@ -2579,7 +2602,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		// if the add parameters button is clicked
 		// if the add reactions button is clicked
 		if (e.getSource() == addReac) {
-			reactionsEditor(document,"Add","");
+			reactionsEditor(document,"Add","",false);
 		}
 		// if the edit reactions button is clicked
 		else if (e.getSource() == editReac) {
@@ -2588,7 +2611,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						"Must Select A Reaction", JOptionPane.ERROR_MESSAGE);
 				return;
 			} 
-			reactionsEditor(document,"OK",((String)reactions.getSelectedValue()).split(" ")[0]);
+			reactionsEditor(document,"OK",((String)reactions.getSelectedValue()).split(" ")[0],false);
 			initialsPanel.refreshInitialAssignmentPanel(document);
 			rulesPanel.refreshRulesPanel(document);
 		}
@@ -2677,7 +2700,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 							"Must Select A Reaction", JOptionPane.ERROR_MESSAGE);
 					return;
 				} 
-				reactionsEditor(document,"OK",((String)reactions.getSelectedValue()).split(" ")[0]);
+				reactionsEditor(document,"OK",((String)reactions.getSelectedValue()).split(" ")[0],false);
 				initialsPanel.refreshInitialAssignmentPanel(document);
 				rulesPanel.refreshRulesPanel(document);
 			}
