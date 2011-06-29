@@ -857,7 +857,7 @@ public class Schematic extends JPanel implements ActionListener {
 		if (type == InfluencePanel.types[5]) {
 			if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
-				gcm.addReaction(sourceID,targetID);
+				gcm.addReaction(sourceID,targetID,false);
 			} else if ((graph.getCellType(source) == GlobalConstants.REACTION) && 
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 				Reaction r = gcm.getSBMLDocument().getModel().getReaction(sourceID);
@@ -880,12 +880,20 @@ public class Schematic extends JPanel implements ActionListener {
 			}
 		} else if (type == InfluencePanel.types[6]) {
 			if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
+					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+				gcm.addReaction(sourceID,targetID,true);
+			} else if ((graph.getCellType(source) == GlobalConstants.REACTION) && 
+				(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+				Reaction r = gcm.getSBMLDocument().getModel().getReaction(sourceID);
+				ModifierSpeciesReference s = r.createModifier();
+				s.setSpecies(targetID);
+			} else if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
 				(graph.getCellType(target) == GlobalConstants.REACTION)) {
 				Reaction r = gcm.getSBMLDocument().getModel().getReaction(targetID);
 				ModifierSpeciesReference s = r.createModifier();
 				s.setSpecies(sourceID);
 			} else {
-				JOptionPane.showMessageDialog(Gui.frame, "Modifier must connect a species to a reaction");
+				JOptionPane.showMessageDialog(Gui.frame, "Modifier must connect only species and reactions");
 				graph.buildGraph();
 				gcm2sbml.refresh();
 				return;
