@@ -101,11 +101,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	private ModelPanel modelPanel;
 
 	public GCM2SBMLEditor(String path) {
-		this(path, null, null, null, false, null, null, null);
+		this(path, null, null, null, false, null, null, null, false);
 	}
 
 	public GCM2SBMLEditor(String path, String filename, Gui biosim, Log log, boolean paramsOnly,
-			String simName, String paramFile, Reb2Sac reb2sac) {
+			String simName, String paramFile, Reb2Sac reb2sac, boolean textBased) {
 		super();
 		gcmEditor = this;
 		if (File.separator.equals("\\")) {
@@ -167,7 +167,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		if (paramsOnly) {
 			loadParams();
 		}
-		buildGui(this.filename, this.path);
+		buildGui(this.filename, this.path, textBased);
 	}
 
 	public String getFilename() {
@@ -965,7 +965,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		lock = false;
 	}
 
-	private void buildGui(String filename, String path) {
+	private void buildGui(String filename, String path, boolean textBased) {
 		JPanel mainPanelNorth = new JPanel();
 		JPanel mainPanelCenter = new JPanel(new BorderLayout());
 		JPanel mainPanelCenterUp = new JPanel();
@@ -1004,21 +1004,24 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				paramsOnly,getParams,file,parameterChanges,false);
 		Reactions reactionPanel = new Reactions(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
 				paramsOnly,getParams,file,parameterChanges);
-		//tab.addTab("Reactions", reactionPanel);
 		MySpecies speciesPanel = new MySpecies(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
 				paramsOnly,getParams,file,parameterChanges,true);
-		//tab.addTab("Species", speciesPanel);
 
 		gcm.setSpeciesPanel(speciesPanel);
 		gcm.setReactionPanel(reactionPanel);
-		
-		Schematic schematic = new Schematic(gcm, biosim, this, true, null,compartmentPanel,reactionPanel);
 
-		tab.addTab("Schematic", schematic);
-		if (gcm.getSBMLDocument().getModel().getNumCompartments() > 1) {
+		if (textBased) {
 			tab.addTab("Compartments", compartmentPanel);
+			tab.addTab("Species", speciesPanel);
+			tab.addTab("Reactions", reactionPanel);
+		} else {
+			Schematic schematic = new Schematic(gcm, biosim, this, true, null,compartmentPanel,reactionPanel);
+			tab.addTab("Schematic", schematic);
+			if (gcm.getSBMLDocument().getModel().getNumCompartments() > 1) {
+				tab.addTab("Compartments", compartmentPanel);
+			}
+			tab.addTab("Parameters", paramPanel);
 		}
-		tab.addTab("Parameters", paramPanel);
 		
 		Functions functionPanel = new Functions(gcm.getSBMLDocument(),usedIDs,dirty);
 		Units unitPanel = new Units(biosim,gcm.getSBMLDocument(),usedIDs,dirty);

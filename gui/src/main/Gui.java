@@ -2604,7 +2604,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}	
 		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("gcmEditor")) {
-			openGCM();
+			openGCM(false);
+		}
+		// if the edit popup menu is selected on a dot file
+		else if (e.getActionCommand().equals("gcmTextEditor")) {
+			openGCM(true);
 		}
 		// if the edit popup menu is selected on an sbml file
 		else if (e.getActionCommand().equals("sbmlEditor")) {
@@ -4416,7 +4420,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							addToTree(simName.replace(".gcm",".xml"));
 							
 							GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, f
-									.getName(), this, log, false, null, null, null);
+									.getName(), this, log, false, null, null, null, false);
 							// gcm.addMouseListener(this);
 							addTab(f.getName(), gcm, "GCM Editor");
 							addToTree(f.getName());
@@ -5718,7 +5722,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 	
-	private void openGCM() {
+	private void openGCM(boolean textBased) {
 		try {
 			String filename = tree.getFile();
 			String directory = "";
@@ -5752,11 +5756,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					if (value == JOptionPane.YES_OPTION) {
-		 				GCM2SBMLEditor gcm = new GCM2SBMLEditor(path, theFile, this, log, false, null, null, null);
+		 				GCM2SBMLEditor gcm = new GCM2SBMLEditor(path, theFile, this, log, false, null, null, null, textBased);
 		 				addTab(theFile, gcm, "GCM Editor");
 					} 
 				} else {
-	 				GCM2SBMLEditor gcm = new GCM2SBMLEditor(path, theFile, this, log, false, null, null, null);
+	 				GCM2SBMLEditor gcm = new GCM2SBMLEditor(path, theFile, this, log, false, null, null, null, textBased);
 	 				addTab(theFile, gcm, "GCM Editor");
 	 			}
 			}
@@ -5805,7 +5809,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					gcmFile.save(fullPath.replace(".xml",".gcm"));
 					addToTree(theGCMFile);
 				}
-				GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, theGCMFile, this, log, false, null, null, null);
+				GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, theGCMFile, this, log, false, null, null, null, false);
 				addTab(theGCMFile, gcm, "GCM Editor");
 			}
 		}
@@ -6874,10 +6878,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				createLearn.addActionListener(this);
 				createLearn.addMouseListener(this);
 				createLearn.setActionCommand("createLearn");
-				JMenuItem edit = new JMenuItem("View/Edit");
+				JMenuItem edit = new JMenuItem("View/Edit (graphical)");
 				edit.addActionListener(this);
 				edit.addMouseListener(this);
 				edit.setActionCommand("gcmEditor");
+				JMenuItem editText = new JMenuItem("View/Edit (tabular)");
+				editText.addActionListener(this);
+				editText.addMouseListener(this);
+				editText.setActionCommand("gcmTextEditor");
 				JMenuItem graph = new JMenuItem("View Model");
 				graph.addActionListener(this);
 				graph.addMouseListener(this);
@@ -6900,6 +6908,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(graph);
 				popup.addSeparator();
 				popup.add(edit);
+				popup.add(editText);
 				popup.add(copy);
 				popup.add(rename);
 				popup.add(delete);
@@ -7468,7 +7477,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (tree.getFile().length() >= 4
 					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
-				openGCM();
+				openGCM(false);
 			}
 			else if (tree.getFile().length() >= 4
 					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")) {
@@ -7720,7 +7729,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator,
 							sbml1[sbml1.length - 1], this, log, true, simName.trim(), root
 									+ separator + simName.trim() + separator + simName.trim()
-									+ ".sim", reb2sac);
+									+ ".sim", reb2sac, false);
 					reb2sac.setGcm(gcm);
 					// sbml.addMouseListener(this);
 					addModelViewTab(reb2sac, simTab, gcm);
@@ -8412,7 +8421,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									this, log, true, split[split.length - 1].trim(), root
 											+ separator + split[split.length - 1].trim()
 											+ separator + split[split.length - 1].trim() + ".sim",
-									reb2sac);
+									reb2sac, false);
 							reb2sac.setGcm(gcm);
 							// sbml.addMouseListener(this);
 							addModelViewTab(reb2sac, simTab, gcm);
@@ -8867,7 +8876,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			// 1).setName("");
 			if (gcmFile.contains(".gcm")) {
 				GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, gcmFile, this, log, true,
-						newSim, root + separator + newSim + separator + newSim + ".sim", reb2sac);
+						newSim, root + separator + newSim + separator + newSim + ".sim", reb2sac, false);
 				reb2sac.setGcm(gcm);
 				// sbml.addMouseListener(this);
 				addModelViewTab(reb2sac, simTab, gcm);
