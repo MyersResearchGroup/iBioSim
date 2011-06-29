@@ -132,6 +132,7 @@ public class Button_Enabling {
 			rapid2.setEnabled(true);
 			ArrayList<String> getLists = new ArrayList<String>();
 			getLists.add("complex-formation-and-sequestering-abstraction");
+//			getLists.add("species-sequestering-abstaction");
 			getLists.add("operator-site-reduction-abstraction");
 			Object[] objects = getLists.toArray();
 			preAbs.setListData(objects);

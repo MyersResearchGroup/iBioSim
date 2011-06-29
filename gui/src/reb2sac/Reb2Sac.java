@@ -2336,6 +2336,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			JComboBox absList = new JComboBox();
 			if (e.getSource() == addPreAbs)
 			absList.addItem("complex-formation-and-sequestering-abstraction");
+//			absList.addItem("species-sequestering-abstraction");
 			absList.addItem("operator-site-reduction-abstraction");
 			absList.addItem("absolute-activation/inhibition-generator");
 			absList.addItem("absolute-inhibition-generator");
@@ -4597,7 +4598,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		return save;
 	}
 
-	// Reports which gcm abstraction options are selected (currently only complex-formation-and-sequestering-abstraction possible)
+	// Reports which gcm abstraction options are selected
 	public ArrayList<String> getGcmAbstractions() {
 		ArrayList<String> gcmAbsList = new ArrayList<String>();
 		ListModel preAbsList = preAbs.getModel();
@@ -4605,6 +4606,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			String abstractionOption = (String) preAbsList.getElementAt(i);
 			if (abstractionOption.equals("complex-formation-and-sequestering-abstraction")
 					|| abstractionOption.equals("operator-site-reduction-abstraction"))
+//					|| abstractionOption.equals("species-sequestering-abstraction"))
 				gcmAbsList.add(abstractionOption);
 		}
 		return gcmAbsList;
@@ -4617,6 +4619,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			String abstractionOption = (String) preAbsList.getElementAt(i);
 			if (!abstractionOption.equals("complex-formation-and-sequestering-abstraction")
 					&& !abstractionOption.equals("operator-site-reduction-abstraction"))
+//					&& !abstractionOption.equals("species-sequestering-abstraction"))
 				return true;
 		}
 		ListModel loopAbsList = loopAbs.getModel();
