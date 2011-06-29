@@ -310,14 +310,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			else if (gcm.globalParameterIsSet(GlobalConstants.KCOMPLEX_STRING)) {
 				defaultValue = gcm.getParameter(GlobalConstants.KCOMPLEX_STRING);
 			}
-			field = new PropertyField(GlobalConstants.KCOMPLEX_STRING, gcm
-					.getParameter(GlobalConstants.KCOMPLEX_STRING), origString, defaultValue,
+			field = new PropertyField(GlobalConstants.KCOMPLEX_STRING, 
+					gcm.getParameter(GlobalConstants.KCOMPLEX_STRING), origString, defaultValue,
 					Utility.SLASHSWEEPstring, paramsOnly, origString);
 		}
 		else {
-			field = new PropertyField(GlobalConstants.KCOMPLEX_STRING, gcm
-					.getParameter(GlobalConstants.KCOMPLEX_STRING), origString, gcm
-					.getParameter(GlobalConstants.KCOMPLEX_STRING), Utility.SLASHstring, paramsOnly,
+			field = new PropertyField(GlobalConstants.KCOMPLEX_STRING, 
+					gcm.getParameter(GlobalConstants.KCOMPLEX_STRING), origString, 
+					gcm.getParameter(GlobalConstants.KCOMPLEX_STRING), Utility.SLASHstring, paramsOnly,
 					origString);
 		}
 		fields.put(GlobalConstants.KCOMPLEX_STRING, field);
