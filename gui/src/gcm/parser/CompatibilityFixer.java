@@ -36,7 +36,7 @@ public class CompatibilityFixer {
 //	public final static String GUI_NAME_STRING = "ID";
 //	public final static String OLD_NAME_STRING = "ID";
 
-	public final static String GUI_INITIAL_STRING = "Initial species count";
+	public final static String GUI_INITIAL_STRING = "Initial amount/concentration";
 	public final static String OLD_INITIAL_STRING = "Initial amount";
 
 //	public final static String GUI_KBIO_STRING = "Biochemical equilibrium";
