@@ -59,9 +59,17 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		JPanel grid;
 		if (gcm.getSBMLDocument().getLevel() > 2) {
-			grid = new JPanel(new GridLayout(12,1));
+			if (gcm.getSBMLDocument().getModel().getNumCompartments()==1) {
+				grid = new JPanel(new GridLayout(12,1));
+			} else {
+				grid = new JPanel(new GridLayout(13,1));
+			}
 		} else {
-			grid = new JPanel(new GridLayout(11,1));
+			if (gcm.getSBMLDocument().getModel().getNumCompartments()==1) {
+				grid = new JPanel(new GridLayout(11,1));
+			} else {
+				grid = new JPanel(new GridLayout(12,1));
+			}
 		}
 		this.add(grid, BorderLayout.CENTER);
 		
@@ -111,7 +119,24 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		grid.add(tempPanel);
 
 		Species species = gcm.getSBMLDocument().getModel().getSpecies(selected);
-	
+
+		// compartment field
+		tempPanel = new JPanel();
+		tempLabel = new JLabel("Compartment");
+		compartBox = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());
+		compartBox.setSelectedItem(species.getCompartment());
+		compartBox.addActionListener(this);
+		tempPanel.setLayout(new GridLayout(1, 2));
+		tempPanel.add(tempLabel);
+		tempPanel.add(compartBox);
+		if (paramsOnly) {
+			tempLabel.setEnabled(false);
+			compartBox.setEnabled(false);
+		}
+		if (gcm.getSBMLDocument().getModel().getNumCompartments()>1) {
+			grid.add(tempPanel);
+		}
+		
 		String[] optionsTF = { "true", "false" };
 
 		// Boundary condition field
@@ -631,6 +656,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private GCMFile gcm = null;
 
 	private JComboBox typeBox = null;
+
+	private JComboBox compartBox = null;
 
 	private JComboBox convBox = null;
 
