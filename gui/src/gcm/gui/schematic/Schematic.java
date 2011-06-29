@@ -146,9 +146,14 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			this.add(graphComponent, BorderLayout.CENTER);
 			
+			//toolbar is given a name so it can be found later
+			//among the components
+			JToolBar toolbar = buildToolBar();
+			toolbar.setName("toolbar");
+						
 			if(this.editable)
-				this.add(buildToolBar(), BorderLayout.NORTH);
-			
+				this.add(toolbar, BorderLayout.NORTH);
+						
 			addGraphComponentListeners();
 		}
 	
@@ -160,7 +165,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		//this.setBackground(Color.BLACK);
 		
-		Schematic.this.repaint();
+		drawGrid();
 	}
 	
 	
@@ -234,6 +239,8 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(Utils.makeToolButton("choose_layout.png", "showLayouts", "Apply Layout", this));
 		toolBar.add(Utils.makeToolButton("", "undo", "Undo", this));
 		toolBar.add(Utils.makeToolButton("", "redo", "Redo", this));
+		
+		toolBar.setFloatable(false);
 		
 		return toolBar;
 	}
@@ -804,11 +811,13 @@ public class Schematic extends JPanel implements ActionListener {
 			type = InfluencePanel.types[0];
 		}else if(bioActivationButton.isSelected()){
 			type = InfluencePanel.types[3]; 
-		}else if(reactionButton.isSelected()){
-			type = InfluencePanel.types[5]; 
+		}		
+		else if(reactionButton.isSelected()){
+			type = GlobalConstants.REACTION_EDGE;
 		}else if(modifierButton.isSelected()){
-			type = InfluencePanel.types[6]; 
-		}else if(noInfluenceButton.isSelected()){
+			type = GlobalConstants.MODIFIER;
+		}		
+		else if(noInfluenceButton.isSelected()){
 			type = InfluencePanel.types[2];
 		}else{
 			throw(new Error("No influence button was pressed"));
@@ -854,7 +863,7 @@ public class Schematic extends JPanel implements ActionListener {
 		// build the influence properties
 		newInfluenceProperties.setProperty(GlobalConstants.NAME, name);
 		newInfluenceProperties.setProperty(GlobalConstants.TYPE, type);
-		if (type == InfluencePanel.types[5]) {
+		if (type == GlobalConstants.REACTION_EDGE) {
 			if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 				gcm.addReaction(sourceID,targetID,false);
@@ -878,7 +887,7 @@ public class Schematic extends JPanel implements ActionListener {
 				gcm2sbml.refresh();
 				return;
 			}
-		} else if (type == InfluencePanel.types[6]) {
+		} else if (type == GlobalConstants.MODIFIER) {
 			if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
 				gcm.addReaction(sourceID,targetID,true);
@@ -1013,6 +1022,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * wrapper for the paintComponent() function
 	 */
 	private void drawGrid() {
+
 		Schematic.this.repaint();
 	}
 	
@@ -1030,11 +1040,25 @@ public class Schematic extends JPanel implements ActionListener {
 				
 		super.paintComponent(g);
 		
-		//will turn these on once everything is working
-		
-		//Grid grid = gcm.getGrid();
-				
-		//grid.drawGrid(g);
+//		Grid grid = gcm.getGrid();
+//		
+//		//System.out.print(grid.isEnabled());
+//
+//		if (grid.isEnabled()) {			
+//			
+//			Component c[] = this.getComponents();
+//			
+//			for(Component d : c) {
+//				//if there's a toolbar, adjust for it when drawing the grid
+//				if (d.getName() == "toolbar")
+//					grid.setVerticalOffset(37);
+//			}
+//			
+//			//put all of the current stuff in the GCM into the grid
+//			gcm.updateGrid();
+//			
+//			grid.drawGrid(g);
+//		}
 	}
 	
 	//////////////////////////////////////// ANIMATION TYPE STUFF ////////////////////////////////
