@@ -552,7 +552,28 @@ public class Schematic extends JPanel implements ActionListener {
 							mxCell target = (mxCell)cell.getTarget();
 							if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
 									(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+								Reaction r = gcm.getSBMLDocument().getModel().getReaction((String)cell.getValue());
+								if (r.getNumReactants()==1 && r.getNumProducts()==1) {
 									reactions.removeTheReaction(gcm.getSBMLDocument(),(String)cell.getValue());
+								} else if (r.getNumReactants() > 1) {
+									ListOf reactants = r.getListOfReactants();
+									for (int i = 0; i < r.getNumReactants(); i++) {
+										SpeciesReference s = (SpeciesReference)reactants.get(i);
+										if (s.getSpecies().equals(source.getId())) {
+											reactants.remove(i);
+											break;
+										}
+									}
+								} else if (r.getNumProducts() > 1) {
+									ListOf products = r.getListOfProducts();
+									for (int i = 0; i < r.getNumProducts(); i++) {
+										SpeciesReference s = (SpeciesReference)products.get(i);
+										if (s.getSpecies().equals(target.getId())) {
+											products.remove(i);
+											break;
+										}
+									}
+								}
 							} else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
 								(graph.getCellType(target) == GlobalConstants.REACTION)) {
 								Reaction r = gcm.getSBMLDocument().getModel().getReaction(target.getId());
