@@ -1307,7 +1307,19 @@ public class GCMFile {
 	}
 	
 	public void addReaction(String sourceID,String targetID) {
+		// TODO: add check to see if there already exists an explicit reaction from source or to target
 		Model m = sbml.getModel();
+		/*
+		for (int i=0; i < m.getNumReactions(); i++) {
+			Reaction r = m.getReaction(i);
+			if (r.getReactant(sourceID) != null) {
+				System.out.println("Found as reactant in "+r.getId());
+			}
+			if (r.getProduct(targetID) != null) {
+				System.out.println("Found as product in "+r.getId());
+			}
+		}
+		*/
 		Reaction r = m.createReaction();
 		String reactionId = "r0";
 		int i = 0;
@@ -2129,7 +2141,8 @@ public class GCMFile {
 			String sbmlData = matcher.group();
 			sbmlData = sbmlData.replaceFirst("SBML=","");
 			SBMLReader reader = new SBMLReader();
-			sbml = reader.readSBMLFromString(sbmlData);
+			SBMLDocument document = reader.readSBMLFromString(sbmlData);
+			sbml.setModel(document.getModel());
 		}
 	}
 
