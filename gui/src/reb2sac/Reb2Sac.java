@@ -659,7 +659,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		markov.addActionListener(this);
 
 		// Sets up the radio buttons for output option
-		sbml = new JRadioButton("SBML");
+		sbml = new JRadioButton("Model");
 		dot = new JRadioButton("Network");
 		xhtml = new JRadioButton("Browser");
 		lhpn = new JRadioButton("LPN");
