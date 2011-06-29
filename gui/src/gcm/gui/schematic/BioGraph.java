@@ -293,7 +293,8 @@ public class BioGraph extends mxGraph {
 		for (int i = 0; i < m.getNumReactions(); i++) {
 			Reaction r = m.getReaction(i);
 			if (gcm.getReactions().get(r.getId()) == null) {
-				if (r.getNumModifiers() > 0 || (r.getNumReactants()>1 && r.getNumProducts()>1)) {
+				if (r.getNumModifiers() > 0 || (r.getNumReactants()>1 && r.getNumProducts()>1) ||
+					r.getNumReactants()==0 || r.getNumProducts()==0) {
 					Properties prop = new Properties();
 					prop.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_REACTION_WIDTH));
 					prop.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_REACTION_HEIGHT));

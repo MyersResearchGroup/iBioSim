@@ -32,6 +32,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -47,6 +48,7 @@ import org.sbml.libsbml.EventAssignment;
 import org.sbml.libsbml.FunctionDefinition;
 import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.KineticLaw;
+import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.LocalParameter;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModifierSpeciesReference;
@@ -1307,47 +1309,74 @@ public class GCMFile {
 	}
 	
 	public void addReaction(String sourceID,String targetID) {
-		// TODO: add check to see if there already exists an explicit reaction from source or to target
 		Model m = sbml.getModel();
-		/*
+		JPanel reactionListPanel = new JPanel(new GridLayout(1, 1));
+		ArrayList<String> choices = new ArrayList<String>();
+		choices.add("Create a new reaction");
 		for (int i=0; i < m.getNumReactions(); i++) {
 			Reaction r = m.getReaction(i);
 			if (r.getReactant(sourceID) != null) {
-				System.out.println("Found as reactant in "+r.getId());
+				choices.add("Add " + targetID + " as a product of reaction " + r.getId());
 			}
 			if (r.getProduct(targetID) != null) {
-				System.out.println("Found as product in "+r.getId());
+				choices.add("Add " + sourceID + " as a reactant of reaction " + r.getId());
 			}
 		}
-		*/
-		Reaction r = m.createReaction();
-		String reactionId = "r0";
-		int i = 0;
-		while (usedIDs.contains(reactionId)) {
-			i++;
-			reactionId = "r" + i;
+		
+		Object[] options = { "OK", "Cancel" };
+		JComboBox reactionList = new JComboBox(choices.toArray());
+		if (choices.size()>1) {
+			reactionListPanel.add(reactionList);
+			int value = JOptionPane.showOptionDialog(Gui.frame, reactionListPanel, "Reaction Choice",
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if (value == JOptionPane.NO_OPTION) return;
 		}
-		usedIDs.add(reactionId);
-		r.setId(reactionId);
-		r.setCompartment(m.getCompartment(0).getId());
-		r.setReversible(false);
-		r.setFast(false);
-		SpeciesReference source = r.createReactant();
-		SpeciesReference target = r.createProduct();
-		source.setSpecies(sourceID);
-		source.setConstant(true);
-		source.setStoichiometry(1.0);
-		target.setSpecies(targetID);
-		target.setConstant(true);
-		target.setStoichiometry(1.0);
-		KineticLaw k = r.createKineticLaw();
-		LocalParameter p = k.createLocalParameter();
-		p.setId("kf");
-		p.setValue(0.1);
-		p = k.createLocalParameter();
-		p.setId("kr");
-		p.setValue(1.0);
-		k.setMath(SBMLutilities.myParseFormula("kf*"+sourceID));
+		if (((String)reactionList.getSelectedItem()).contains("reactant")) {
+			String[] selection = ((String)reactionList.getSelectedItem()).split(" ");
+			String reactionId = selection[selection.length-1];
+			Reaction r = m.getReaction(reactionId);
+			SpeciesReference s = r.createReactant();
+			s.setSpecies(sourceID);
+			s.setStoichiometry(1.0);
+			s.setConstant(true);
+		} else if (((String)reactionList.getSelectedItem()).contains("product")) {
+			String[] selection = ((String)reactionList.getSelectedItem()).split(" ");
+			String reactionId = selection[selection.length-1];
+			Reaction r = m.getReaction(reactionId);
+			SpeciesReference s = r.createProduct();
+			s.setSpecies(targetID);
+			s.setStoichiometry(1.0);
+			s.setConstant(true);
+		} else {
+			Reaction r = m.createReaction();
+			String reactionId = "r0";
+			int i = 0;
+			while (usedIDs.contains(reactionId)) {
+				i++;
+				reactionId = "r" + i;
+			}
+			usedIDs.add(reactionId);
+			r.setId(reactionId);
+			r.setCompartment(m.getCompartment(0).getId());
+			r.setReversible(false);
+			r.setFast(false);
+			SpeciesReference source = r.createReactant();
+			SpeciesReference target = r.createProduct();
+			source.setSpecies(sourceID);
+			source.setConstant(true);
+			source.setStoichiometry(1.0);
+			target.setSpecies(targetID);
+			target.setConstant(true);
+			target.setStoichiometry(1.0);
+			KineticLaw k = r.createKineticLaw();
+			LocalParameter p = k.createLocalParameter();
+			p.setId("kf");
+			p.setValue(0.1);
+			p = k.createLocalParameter();
+			p.setId("kr");
+			p.setValue(1.0);
+			k.setMath(SBMLutilities.myParseFormula("kf*"+sourceID));
+		}
 	}
 
 	public void addPromoter(String name, Properties properties) {
