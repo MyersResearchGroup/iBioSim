@@ -128,6 +128,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				Scanner scan = new Scanner(new File(paramFile));
 				if (scan.hasNextLine()) {
 					refFile = scan.nextLine();
+					if (refFile.contains(".xml"))
+						refFile = refFile.replace(".xml",".gcm");
 					getParams.add(refFile);
 				}
 				scan.close();

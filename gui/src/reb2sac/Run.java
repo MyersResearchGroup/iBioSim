@@ -647,7 +647,7 @@ public class Run implements ActionListener {
 				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + theFile, null, work);
 			}
 			else if (sbml.isSelected()) {
-				sbmlName = JOptionPane.showInputDialog(component, "Enter SBML Model ID:",
+				sbmlName = JOptionPane.showInputDialog(component, "Enter Model ID:",
 						"Model ID", JOptionPane.PLAIN_MESSAGE);
 				if (sbmlName != null && !sbmlName.trim().equals("")) {
 					sbmlName = sbmlName.trim();
@@ -1546,13 +1546,16 @@ public class Run implements ActionListener {
 				}
 				else if (sbml.isSelected()) {
 					if (sbmlName != null && !sbmlName.trim().equals("")) {
-						if (!biomodelsim.updateOpenSBML(sbmlName)) {
-							biomodelsim.addTab(sbmlName, new SBML_Editor(root + separator
-									+ sbmlName, null, log, biomodelsim, null, null), "SBML Editor");
-							biomodelsim.addToTree(sbmlName);
+						String gcmName = sbmlName.replace(".xml",".gcm"); 
+						Gui.createGCMFromSBML(root, root+separator+sbmlName, sbmlName, gcmName,true);
+						if (!biomodelsim.updateOpenGCM(gcmName)) {
+							GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, gcmName, biomodelsim, log, 
+									false, null, null, null, false);
+							biomodelsim.addTab(gcmName, gcm, "GCM Editor");
+							biomodelsim.addToTree(gcmName);
 						}
 						else {
-							biomodelsim.getTab().setSelectedIndex(biomodelsim.getTab(sbmlName));
+							biomodelsim.getTab().setSelectedIndex(biomodelsim.getTab(gcmName));
 						}
 						biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 					}

@@ -5785,30 +5785,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			if (!done) {
-				if (!new File(fullPath.replace(".xml",".gcm")).exists()) {
-					SBMLDocument document = readSBML(fullPath);
-					Model m = document.getModel();
-					GCMFile gcmFile = new GCMFile(root);
-					int x=50;
-					int y=50;
-					for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
-						gcmFile.createSpecies(document.getModel().getSpecies(i).getId(),x,y);
-						if (m.getSpecies(i).isSetInitialAmount()) {
-							gcmFile.getSpecies().get(m.getSpecies(i).getId()).setProperty(GlobalConstants.INITIAL_STRING, 
-									m.getSpecies(i).getInitialAmount()+"");
-						} else {
-							gcmFile.getSpecies().get(m.getSpecies(i).getId()).setProperty(GlobalConstants.INITIAL_STRING, 
-									"[" + m.getSpecies(i).getInitialConcentration() + "]");
-						}
-						gcmFile.getSpecies().get(m.getSpecies(i).getId()).setProperty(GlobalConstants.KDECAY_STRING, "0.0");
-						x+=50;
-						y+=50;
-					}
-					gcmFile.setSBMLDocument(document);
-					gcmFile.setSBMLFile(theSBMLFile);
-					gcmFile.save(fullPath.replace(".xml",".gcm"));
-					addToTree(theGCMFile);
-				}
+				createGCMFromSBML(root,fullPath,theSBMLFile,theGCMFile,false);
+				addToTree(theGCMFile);
 				GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, theGCMFile, this, log, false, null, null, null, false);
 				addTab(theGCMFile, gcm, "GCM Editor");
 			}
@@ -5816,6 +5794,32 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(frame, "You must select a valid SBML file.", "Error",
 					JOptionPane.ERROR_MESSAGE);
+		}
+	}
+
+	public static void createGCMFromSBML(String root,String fullPath,String theSBMLFile,String theGCMFile,boolean force) {
+		if (force || !new File(fullPath.replace(".xml",".gcm")).exists()) {
+			SBMLDocument document = readSBML(fullPath);
+			Model m = document.getModel();
+			GCMFile gcmFile = new GCMFile(root);
+			int x=50;
+			int y=50;
+			for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
+				gcmFile.createSpecies(document.getModel().getSpecies(i).getId(),x,y);
+				if (m.getSpecies(i).isSetInitialAmount()) {
+					gcmFile.getSpecies().get(m.getSpecies(i).getId()).setProperty(GlobalConstants.INITIAL_STRING, 
+							m.getSpecies(i).getInitialAmount()+"");
+				} else {
+					gcmFile.getSpecies().get(m.getSpecies(i).getId()).setProperty(GlobalConstants.INITIAL_STRING, 
+							"[" + m.getSpecies(i).getInitialConcentration() + "]");
+				}
+				gcmFile.getSpecies().get(m.getSpecies(i).getId()).setProperty(GlobalConstants.KDECAY_STRING, "0.0");
+				x+=50;
+				y+=50;
+			}
+			gcmFile.setSBMLDocument(document);
+			gcmFile.setSBMLFile(theSBMLFile);
+			gcmFile.save(fullPath.replace(".xml",".gcm"));
 		}
 	}
 
@@ -7855,6 +7859,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					if (load.containsKey("genenet.file")) {
 						learnFile = load.getProperty("genenet.file");
 						learnFile = learnFile.split(separator)[learnFile.split(separator).length - 1];
+						if (learnFile.endsWith(".xml")) {
+							learnFile = learnFile.replace(".xml", ".gcm");
+							load.setProperty("genenet.file", learnFile);
+						}
 					}
 				}
 				FileOutputStream out = new FileOutputStream(new File(lrnFile));
@@ -8297,6 +8305,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									sbmlLoadFile = s.nextLine();
 									sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile
 											.split(separator).length - 1];
+									if (sbmlLoadFile.contains(".xml"))
+										sbmlLoadFile = sbmlLoadFile.replace(".xml",".gcm");
 									if (sbmlLoadFile.equals("")) {
 										JOptionPane
 												.showMessageDialog(
@@ -8976,6 +8986,23 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				tab.setTitleAt(i, ((GCM2SBMLEditor) tab.getComponentAt(i)).getFilename());
 			}
 		}
+	}
+
+	public boolean updateOpenGCM(String gcmName) {
+		for (int i = 0; i < tab.getTabCount(); i++) {
+			String tab = this.tab.getTitleAt(i);
+			if (gcmName.equals(tab)) {
+				if (this.tab.getComponentAt(i) instanceof GCM2SBMLEditor) {
+					GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, gcmName, this, log, 
+							false, null, null, null, false);
+					this.tab.setComponentAt(i, gcm);
+					this.tab.getComponentAt(i).setName("GCM Editor");
+					//gcm.save(false, "", false, true);
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public void updateAsyncViews(String updatedFile) {
