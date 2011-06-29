@@ -242,19 +242,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		Utility.sort(specTypeList);
 		Object[] choices = specTypeList;
 		specTypeBox = new JComboBox(choices);
-		ListOf listOfCompartments = document.getModel().getListOfCompartments();
-		String[] add = new String[(int) document.getModel().getNumCompartments()];
-		for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
-			add[i] = ((Compartment) listOfCompartments.get(i)).getId();
-		}
-		try {
-			add[0].getBytes();
-		}
-		catch (Exception e) {
-			add = new String[1];
-			add[0] = "default";
-		}
-		comp = new JComboBox(add);
+		comp = createCompartmentChoices(document);
 		String[] list = { "Original", "Modified" };
 		String[] list1 = { "1", "2" };
 		final JComboBox type = new JComboBox(list);
@@ -779,6 +767,23 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			}
 			return;
 		}
+	}
+
+	public static JComboBox createCompartmentChoices(SBMLDocument document) {
+		ListOf listOfCompartments = document.getModel().getListOfCompartments();
+		String[] add = new String[(int) document.getModel().getNumCompartments()];
+		for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
+			add[i] = ((Compartment) listOfCompartments.get(i)).getId();
+		}
+		try {
+			add[0].getBytes();
+		}
+		catch (Exception e) {
+			add = new String[1];
+			add[0] = "default";
+		}
+		JComboBox comp = new JComboBox(add);
+		return comp;
 	}
 	
 	public static JComboBox createUnitsChoices(SBMLDocument document) {

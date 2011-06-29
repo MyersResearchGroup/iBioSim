@@ -1001,8 +1001,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		
 		String file = filename.replace(".gcm", ".xml");
 		Compartments compartmentPanel = new Compartments(gcm.getSBMLDocument(),usedIDs,dirty,
-				paramsOnly,getParams,file,parameterChanges,true);
-		//tab.addTab("Compartments", compartmentPanel);
+				paramsOnly,getParams,file,parameterChanges,false);
 		Reactions reactionPanel = new Reactions(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
 				paramsOnly,getParams,file,parameterChanges);
 		//tab.addTab("Reactions", reactionPanel);
@@ -1016,7 +1015,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		Schematic schematic = new Schematic(gcm, biosim, this, true, null,compartmentPanel,reactionPanel);
 
 		tab.addTab("Schematic", schematic);
-		
+		if (gcm.getSBMLDocument().getModel().getNumCompartments() > 1) {
+			tab.addTab("Compartments", compartmentPanel);
+		}
 		tab.addTab("Parameters", paramPanel);
 		
 		Functions functionPanel = new Functions(gcm.getSBMLDocument(),usedIDs,dirty);
