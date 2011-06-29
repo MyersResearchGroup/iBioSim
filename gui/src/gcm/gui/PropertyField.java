@@ -244,7 +244,7 @@ public class PropertyField extends JPanel implements ActionListener,
 
 	public void setDefault() {
 		field.setEnabled(false);
-		name.setEnabled(false);
+		//name.setEnabled(false);
 		field.setText(defaultValue);
 		if (paramsOnly) {
 			box.setSelectedItem(paramStates[0]);
@@ -262,7 +262,7 @@ public class PropertyField extends JPanel implements ActionListener,
 		if (box != null) {
 			if (isEnabled) {
 				field.setEnabled(true);
-				name.setEnabled(true);
+				//name.setEnabled(true);
 			}
 			if (paramsOnly) {
 				box.setSelectedItem(paramStates[1]);
