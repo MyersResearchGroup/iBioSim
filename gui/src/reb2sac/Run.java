@@ -77,6 +77,7 @@ public class Run implements ActionListener {
 				String abstractionOption = (String) preAbs.getModel().getElementAt(i);
 				if (abstractionOption.equals("complex-formation-and-sequestering-abstraction")
 						|| abstractionOption.equals("operator-site-reduction-abstraction")) {
+//						|| abstractionOption.equals("species-sequestering-abstraction")) {
 					abs.setProperty("gcm.abstraction.method." + gcmIndex, abstractionOption);
 					gcmIndex++;
 				}

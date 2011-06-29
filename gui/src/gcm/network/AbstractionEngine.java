@@ -113,7 +113,7 @@ public class AbstractionEngine {
 				compExpression = "(" + kcompIdf + "/" + "(" + kcompIdr + "+" + kdecayId + "))" + compExpression;
 			else
 				compExpression = kcompId + compExpression;
-		} else {
+		} else if (!sbmlMode) {
 			double ncSum = 0;
 			for (Influence infl : complexMap.get(complexId)) {
 				String partId = infl.getInput();
@@ -401,7 +401,7 @@ public class AbstractionEngine {
 			r.addReactant(Utility.SpeciesReference(speciesId, 1));
 			for (String modifier : modifiers)
 				r.addModifier(Utility.ModifierSpeciesReference(modifier));
-		} else {
+		} else if (!sbmlMode) {
 			for (Influence infl : partsMap.get(speciesId)) {
 				String complexId = infl.getOutput();
 				if (species.get(complexId).isSequesterAbstractable() && species.get(complexId).getDecay() > 0) {

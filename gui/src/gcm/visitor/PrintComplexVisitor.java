@@ -99,7 +99,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 			String kcompIdr, String ncSum, double stoich) {
 		String law = "";
 		if (stoich == 1 || stoich == 2)
-			law = kcompIdf + compExpression + "-kr_c*" + boundExpression;
+			law = kcompIdf + compExpression + "-" + kcompIdr + "*" + boundExpression;
 		else if (stoich > 2)
 			law = kcompIdf + "*" + kcompId + "^" + "(" + ncSum.substring(0, ncSum.length() - 1) + "-2)" + compExpression 
 				+ "-" + kcompIdr + "*" + boundExpression;
