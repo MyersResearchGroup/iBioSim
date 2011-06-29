@@ -1308,18 +1308,22 @@ public class GCMFile {
 		species.put(name, property);
 	}
 	
-	public void addReaction(String sourceID,String targetID) {
+	public void addReaction(String sourceID,String targetID,boolean isModifier) {
 		Model m = sbml.getModel();
 		JPanel reactionListPanel = new JPanel(new GridLayout(1, 1));
 		ArrayList<String> choices = new ArrayList<String>();
 		choices.add("Create a new reaction");
 		for (int i=0; i < m.getNumReactions(); i++) {
 			Reaction r = m.getReaction(i);
-			if (r.getReactant(sourceID) != null) {
+			if (!isModifier && r.getReactant(sourceID) != null) {
 				choices.add("Add " + targetID + " as a product of reaction " + r.getId());
 			}
 			if (r.getProduct(targetID) != null) {
-				choices.add("Add " + sourceID + " as a reactant of reaction " + r.getId());
+				if (isModifier) {
+					choices.add("Add " + sourceID + " as a modifier of reaction " + r.getId());
+				} else {
+					choices.add("Add " + sourceID + " as a reactant of reaction " + r.getId());
+				}
 			}
 		}
 		
@@ -1339,6 +1343,12 @@ public class GCMFile {
 			s.setSpecies(sourceID);
 			s.setStoichiometry(1.0);
 			s.setConstant(true);
+		} else if (((String)reactionList.getSelectedItem()).contains("modifier")) {
+			String[] selection = ((String)reactionList.getSelectedItem()).split(" ");
+			String reactionId = selection[selection.length-1];
+			Reaction r = m.getReaction(reactionId);
+			ModifierSpeciesReference s = r.createModifier();
+			s.setSpecies(sourceID);
 		} else if (((String)reactionList.getSelectedItem()).contains("product")) {
 			String[] selection = ((String)reactionList.getSelectedItem()).split(" ");
 			String reactionId = selection[selection.length-1];
@@ -1360,11 +1370,16 @@ public class GCMFile {
 			r.setCompartment(m.getCompartment(0).getId());
 			r.setReversible(false);
 			r.setFast(false);
-			SpeciesReference source = r.createReactant();
+			if (isModifier) { 
+				ModifierSpeciesReference source = r.createModifier();
+				source.setSpecies(sourceID);
+			} else {
+				SpeciesReference source = r.createReactant();
+				source.setSpecies(sourceID);
+				source.setConstant(true);
+				source.setStoichiometry(1.0);
+			}
 			SpeciesReference target = r.createProduct();
-			source.setSpecies(sourceID);
-			source.setConstant(true);
-			source.setStoichiometry(1.0);
 			target.setSpecies(targetID);
 			target.setConstant(true);
 			target.setStoichiometry(1.0);
