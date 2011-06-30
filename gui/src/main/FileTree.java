@@ -267,20 +267,18 @@ public class FileTree extends JPanel implements MouseListener {
 				dirs.add(thisObject);
 			}
 			else if (!f.getName().equals("CVS"))
-				files.add(thisObject);
-		}
-		for (int fnum = 0; fnum < files.size(); fnum++) {
-			if (curDir.getParent() == null) {
 				if (!async
-						&& files.get(fnum).toString().length() > 4
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".sbml")
+						&& thisObject.toString().length() > 4
+						&& thisObject.toString().substring(thisObject.toString().length() - 5).equals(".sbml")
 						|| !async
-						&& files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".xml")) {
-					Gui.createGCMFromSBML(curPath,curPath + separator + files.get(fnum).toString(), files.get(fnum).toString(), 
-							files.get(fnum).toString().replace(".xml",".gcm"),false);
+						&& thisObject.toString().length() > 3
+						&& thisObject.toString().substring(thisObject.toString().length() - 4).equals(".xml")) {
+					if (Gui.createGCMFromSBML(curPath,curPath + separator + thisObject.toString(), thisObject.toString(), 
+							thisObject.toString().replace(".xml",".gcm"),false)) 
+						files.add(thisObject.replace(".xml",".gcm"));
+				} else {
+					files.add(thisObject);
 				}
-			}
 		}
 		// Pass two: for files.
 		for (int fnum = 0; fnum < files.size(); fnum++) {
@@ -470,6 +468,7 @@ public class FileTree extends JPanel implements MouseListener {
 							scan.close();
 						}
 						catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
 					else if (new File(newPath + separator + d + ".lrn").exists()) {
@@ -495,6 +494,7 @@ public class FileTree extends JPanel implements MouseListener {
 							}
 						}
 						catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
 					else if (new File(newPath + separator + d + ".syn").exists()) {
@@ -512,6 +512,7 @@ public class FileTree extends JPanel implements MouseListener {
 							}
 						}
 						catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
 					else if (new File(newPath + separator + d + ".ver").exists()) {
@@ -528,6 +529,7 @@ public class FileTree extends JPanel implements MouseListener {
 							}
 						}
 						catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
 				}
@@ -573,6 +575,7 @@ public class FileTree extends JPanel implements MouseListener {
 					}
 				}
 				catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 			else if (new File(path + separator + item + ".lrn").exists()) {
@@ -633,6 +636,7 @@ public class FileTree extends JPanel implements MouseListener {
 					}
 				}
 				catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 			else if (new File(path + separator + item + ".syn").exists()) {
@@ -668,6 +672,7 @@ public class FileTree extends JPanel implements MouseListener {
 					}
 				}
 				catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 			else if (new File(path + separator + item + ".ver").exists()) {
@@ -703,6 +708,7 @@ public class FileTree extends JPanel implements MouseListener {
 					}
 				}
 				catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		}
@@ -779,6 +785,7 @@ public class FileTree extends JPanel implements MouseListener {
 								}
 							}
 							catch (Exception e) {
+								e.printStackTrace();
 							}
 						}
 						else if (new File(path + separator + f + ".lrn").exists()) {
@@ -804,6 +811,7 @@ public class FileTree extends JPanel implements MouseListener {
 								}
 							}
 							catch (Exception e) {
+								e.printStackTrace();
 							}
 						}
 						else if (new File(path + separator + f + ".syn").exists()) {
@@ -823,6 +831,7 @@ public class FileTree extends JPanel implements MouseListener {
 								}
 							}
 							catch (Exception e) {
+								e.printStackTrace();
 							}
 						}
 						else if (new File(path + separator + f + ".ver").exists()) {
@@ -842,6 +851,7 @@ public class FileTree extends JPanel implements MouseListener {
 								}
 							}
 							catch (Exception e) {
+								e.printStackTrace();
 							}
 						}
 					}
@@ -1270,6 +1280,7 @@ public class FileTree extends JPanel implements MouseListener {
 							scan.close();
 						}
 						catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
 					else if (new File(newPath + separator + d + ".lrn").exists()) {
@@ -1336,6 +1347,7 @@ public class FileTree extends JPanel implements MouseListener {
 							}
 						}
 						catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
 					else if (new File(newPath + separator + d + ".syn").exists()) {
@@ -1375,6 +1387,7 @@ public class FileTree extends JPanel implements MouseListener {
 							}
 						}
 						catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
 					else if (new File(newPath + separator + d + ".ver").exists()) {
@@ -1414,6 +1427,7 @@ public class FileTree extends JPanel implements MouseListener {
 							}
 						}
 						catch (Exception e) {
+							e.printStackTrace();
 						}
 					}
 				}
