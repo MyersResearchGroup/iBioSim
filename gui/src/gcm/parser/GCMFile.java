@@ -923,6 +923,13 @@ public class GCMFile {
 			buffer.append(s + " [");
 			Properties prop = components.get(s);
 			for (Object propName : prop.keySet()) {
+				buffer.append(checkCompabilitySave(propName.toString()) + "="
+					+ prop.getProperty(propName.toString()).toString() + ",");
+			}
+			if (buffer.charAt(buffer.length() - 1) == ',') {
+				buffer.deleteCharAt(buffer.length() - 1);
+			}
+			/*				
 				if (propName.toString().equals("gcm")) {
 					buffer.append(checkCompabilitySave(propName.toString()) + "=\""
 							+ prop.getProperty(propName.toString()).toString() + "\"");
@@ -941,6 +948,7 @@ public class GCMFile {
 						buffer.append(",compartment=false");
 				}
 			}
+			*/
 			buffer.append("]\n");
 		}
 		//List later facilitates garbage collecting of promoters that don't belong to an influence  

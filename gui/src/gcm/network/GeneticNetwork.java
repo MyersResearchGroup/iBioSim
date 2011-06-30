@@ -322,7 +322,6 @@ public class GeneticNetwork {
 	 *            the SBMLDocument to print to
 	 */
 	private void printPromoterBinding(SBMLDocument document) {
-
 		for (Promoter p : promoters.values()) {
 			// First setup RNAP binding
 			if (p.getOutputs().size()==0) continue;
@@ -371,7 +370,20 @@ public class GeneticNetwork {
 		}
 
 	}
-
+/*
+	private void printDiffusable(SBMLDocument document) {
+		Model m = document.getModel();
+		loop species
+			if diffusable
+				if not in a component
+					Species s = m.createSpecies();
+					s.setId(arg0)
+					Reaction r = m.createReaction();
+					SpeciesReference re = r.createReactant();
+					
+	}
+	*/
+	
 	/**
 	 * Prints each promoter production values
 	 * 
