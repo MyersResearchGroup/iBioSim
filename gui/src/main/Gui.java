@@ -5804,18 +5804,20 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			GCMFile gcmFile = new GCMFile(root);
 			int x=50;
 			int y=50;
-			for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
-				gcmFile.createSpecies(document.getModel().getSpecies(i).getId(),x,y);
-				if (m.getSpecies(i).isSetInitialAmount()) {
-					gcmFile.getSpecies().get(m.getSpecies(i).getId()).setProperty(GlobalConstants.INITIAL_STRING, 
-							m.getSpecies(i).getInitialAmount()+"");
-				} else {
-					gcmFile.getSpecies().get(m.getSpecies(i).getId()).setProperty(GlobalConstants.INITIAL_STRING, 
-							"[" + m.getSpecies(i).getInitialConcentration() + "]");
+			if (m != null) {
+				for (int i = 0; i < m.getNumSpecies(); i++) {
+					gcmFile.createSpecies(document.getModel().getSpecies(i).getId(),x,y);
+					if (m.getSpecies(i).isSetInitialAmount()) {
+						gcmFile.getSpecies().get(m.getSpecies(i).getId()).setProperty(GlobalConstants.INITIAL_STRING, 
+								m.getSpecies(i).getInitialAmount()+"");
+					} else {
+						gcmFile.getSpecies().get(m.getSpecies(i).getId()).setProperty(GlobalConstants.INITIAL_STRING, 
+								"[" + m.getSpecies(i).getInitialConcentration() + "]");
+					}
+					gcmFile.getSpecies().get(m.getSpecies(i).getId()).setProperty(GlobalConstants.KDECAY_STRING, "0.0");
+					x+=50;
+					y+=50;
 				}
-				gcmFile.getSpecies().get(m.getSpecies(i).getId()).setProperty(GlobalConstants.KDECAY_STRING, "0.0");
-				x+=50;
-				y+=50;
 			}
 			gcmFile.setSBMLDocument(document);
 			gcmFile.setSBMLFile(theSBMLFile);
@@ -8305,13 +8307,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								Scanner s = new Scanner(new File(simFile));
 								if (s.hasNextLine()) {
 									sbmlLoadFile = s.nextLine();
-									sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile
-											.split(separator).length - 1];
+									sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1];
 									if (sbmlLoadFile.contains(".xml"))
 										sbmlLoadFile = sbmlLoadFile.replace(".xml",".gcm");
 									if (sbmlLoadFile.equals("")) {
-										JOptionPane
-												.showMessageDialog(
+										JOptionPane.showMessageDialog(
 														frame,
 														"Unable to open view because "
 																+ "the sbml linked to this view is missing.",
@@ -8327,8 +8327,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									}
 									gcmFile = sbmlLoadFile;
 									if (sbmlLoadFile.contains(".gcm")) {
-										GCMParser parser = new GCMParser(root + separator
-												+ sbmlLoadFile);
+										GCMParser parser = new GCMParser(root + separator + sbmlLoadFile);
 										GeneticNetwork network = parser.buildNetwork();
 //										interestingSpecies.addAll(network.getInterestingSpecies());
 										GeneticNetwork.setRoot(root + separator);
