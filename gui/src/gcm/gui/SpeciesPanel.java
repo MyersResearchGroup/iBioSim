@@ -480,12 +480,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					String convFactor = null;
 					if (gcm.getSBMLDocument().getLevel() > 2) {
 						convFactor = (String) convBox.getSelectedItem();
-					}
-					if (convFactor.equals("( none )")) {
-						species.unsetConversionFactor();
-					}
-					else {
-						species.setConversionFactor(convFactor);
+						if (convFactor.equals("( none )")) {
+							species.unsetConversionFactor();
+						}
+						else {
+							species.setConversionFactor(convFactor);
+						}
 					}
 				}
 			}

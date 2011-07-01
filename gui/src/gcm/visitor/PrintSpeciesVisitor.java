@@ -1,12 +1,10 @@
 package gcm.visitor;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 
 import main.Gui;
 
-import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
 
@@ -43,7 +41,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		if (!complexAbstraction || (!specie.isAbstractable() && !specie.isSequesterAbstractable())) {
 			loadValues(specie);
 			String compartment = checkCompartments(specie.getId());
-			Species s = Utility.makeSpecies(specie.getId(), compartment, init);
+			Species s = Utility.makeSpecies(specie.getId(), compartment, amount, concentration);
 //			s.setName(specie.getName()); this causes things to break...specie lacks name for some reason
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);
@@ -55,7 +53,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	public void visitBaseSpecies(BaseSpecies specie) {
 		loadValues(specie);
 		String compartment = checkCompartments(specie.getId());
-		Species s = Utility.makeSpecies(specie.getId(), compartment, init);
+		Species s = Utility.makeSpecies(specie.getId(), compartment, amount, concentration);
 		s.setName(specie.getName());
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
@@ -65,7 +63,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	public void visitConstantSpecies(ConstantSpecies specie) {
 		loadValues(specie);
 		String compartment = checkCompartments(specie.getId());
-		Species s = Utility.makeSpecies(specie.getId(), compartment, init);
+		Species s = Utility.makeSpecies(specie.getId(), compartment, amount, concentration);
 		s.setName(specie.getName());
 		s.setHasOnlySubstanceUnits(true);
 		s.setBoundaryCondition(true);
@@ -77,7 +75,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	public void visitSpasticSpecies(SpasticSpecies specie) {
 		loadValues(specie);
 		String compartment = checkCompartments(specie.getId());
-		Species s = Utility.makeSpecies(specie.getId(), compartment, init);
+		Species s = Utility.makeSpecies(specie.getId(), compartment, amount, concentration);
 		s.setName(specie.getName());
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
@@ -102,7 +100,8 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	}
 	
 	private void loadValues(SpeciesInterface specie) {
-		init = specie.getInit();
+		amount = specie.getInitialAmount();
+		concentration = specie.getInitialConcentration();
 	}
 	
 	//Checks if species belongs in a compartment other than default
@@ -128,7 +127,8 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	}
 	
 	
-	private double init;
+	private double amount;
+	private double concentration;
 	private ArrayList<String> compartments;
 
 }

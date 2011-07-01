@@ -437,8 +437,7 @@ public class Run implements ActionListener {
 		try {
 			FileOutputStream store = new FileOutputStream(new File(filename.replace(".sbml", "")
 					.replace(".xml", "") + ".properties"));
-			nary.store(store,
-					getFilename[getFilename.length - 1].replace(".sbml", "").replace(".xml", "")
+			nary.store(store,getFilename[getFilename.length - 1].replace(".sbml", "").replace(".xml", "")
 							+ " Properties");
 			store.close();
 		}
@@ -497,9 +496,7 @@ public class Run implements ActionListener {
 			}
 			if (nary.isSelected() && gcmEditor != null
 					&& (monteCarlo.isSelected() || xhtml.isSelected())) {
-				String lpnName = modelFile.replace(".sbml", "").replace(".gcm", "")
-						.replace(".xml", "")
-						+ ".lpn";
+				String lpnName = modelFile.replace(".sbml", "").replace(".gcm", "").replace(".xml", "")	+ ".lpn";
 				ArrayList<String> specs = new ArrayList<String>();
 				ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
 				for (int i = 0; i < intSpecies.length; i++) {
@@ -634,7 +631,7 @@ public class Run implements ActionListener {
 								lpnProperty);
 					}
 					t1.setFilename(root + separator + simName + separator
-							+ lpnName.replace(".lpn", ".sbml"));
+							+ lpnName.replace(".lpn", ".xml"));
 					t1.outputSBML();
 				}
 				else {
@@ -959,18 +956,12 @@ public class Run implements ActionListener {
 			}
 			else if (dot.isSelected()) {
 				if (nary.isSelected() && gcmEditor != null) {
-					// String cmd = "atacs -cPllodpl "
-					// + theFile.replace(".sbml", "").replace(".xml", "") +
-					// ".lpn";
 					LhpnFile lhpnFile = new LhpnFile(log);
 					lhpnFile.load(directory + separator
 							+ theFile.replace(".sbml", "").replace(".xml", "") + ".lpn");
 					lhpnFile.printDot(directory + separator
 							+ theFile.replace(".sbml", "").replace(".xml", "") + ".dot");
 					time1 = System.nanoTime();
-					// Process ATACS = exec.exec(cmd, null, work);
-					// ATACS.waitFor();
-					// log.addText("Executing:\n" + cmd);
 					exitValue = 0;
 				}
 				else if (modelFile.contains(".lpn")) {
@@ -983,10 +974,6 @@ public class Run implements ActionListener {
 					} else { 
 						lhpnFile.printDot(root + separator + simName + separator + modelFile.replace(".lpn", ".dot"));
 					}
-					// time1 = System.nanoTime();
-					// Process ATACS = exec.exec(cmd, null, work);
-					// ATACS.waitFor();
-					// log.addText("Executing:\n" + cmd);
 					time1 = System.nanoTime();
 					exitValue = 0;
 				}
@@ -1026,9 +1013,7 @@ public class Run implements ActionListener {
 						lhpnFile.load(root + separator + modelFile);
 					}
 					else {
-						new File(filename.replace(".gcm", "").replace(".sbml", "")
-								.replace(".xml", "")
-								+ ".lpn").delete();
+						new File(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn").delete();
 						ArrayList<String> specs = new ArrayList<String>();
 						ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
 						for (int i = 0; i < intSpecies.length; i++) {
@@ -1159,40 +1144,14 @@ public class Run implements ActionListener {
 							if (!lpnProperty.equals("")) {
 								lhpnFile.addProperty(lpnProperty);
 							}
-							lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "")
-									.replace(".xml", "")
-									+ ".lpn");
+							lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
 							log.addText("Saving GCM file as LHPN:\n"
-									+ filename.replace(".gcm", "").replace(".sbml", "")
-											.replace(".xml", "") + ".lpn" + "\n");
+									+ filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn" + "\n");
 						}
 						else {
 							return 0;
 						}
 					}
-					// gcmEditor.getGCM().createLogicalModel(
-					// filename.replace(".gcm", "").replace(".sbml",
-					// "").replace(".xml", "")
-					// + ".lpn",
-					// log,
-					// biomodelsim,
-					// theFile.replace(".gcm", "").replace(".sbml",
-					// "").replace(".xml", "")
-					// + ".lpn");
-					// LHPNFile lhpnFile = new LHPNFile();
-					// while (new File(filename.replace(".gcm",
-					// "").replace(".sbml", "").replace(
-					// ".xml", "")
-					// + ".lpn.temp").exists()) {
-					// }
-					// if (new File(filename.replace(".gcm",
-					// "").replace(".sbml", "").replace(".xml",
-					// "")
-					// + ".lpn").exists()) {
-					// lhpnFile.load(filename.replace(".gcm",
-					// "").replace(".sbml", "").replace(
-					// ".xml", "")
-					// + ".lpn");
 					if (lhpnFile != null) {
 						sg = new StateGraph(lhpnFile);
 						BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg);
@@ -1201,8 +1160,8 @@ public class Run implements ActionListener {
 						if (sim.equals("steady-state-markov-chain-analysis")) {
 							if (!sg.getStop()) {
 								log.addText("Performing steady state Markov chain analysis.\n");
-								PerfromSteadyStateMarkovAnalysisThread performMarkovAnalysis = new PerfromSteadyStateMarkovAnalysisThread(
-										sg);
+								PerfromSteadyStateMarkovAnalysisThread performMarkovAnalysis = 
+									new PerfromSteadyStateMarkovAnalysisThread(sg);
 								if (modelFile.contains(".lpn")) {
 									performMarkovAnalysis.start(absError, null);
 								}
@@ -1228,9 +1187,7 @@ public class Run implements ActionListener {
 										simrepstream.close();
 									}
 									sg.outputStateGraph(
-											filename.replace(".gcm", "").replace(".sbml", "")
-													.replace(".xml", "")
-													+ "_sg.dot", true);
+											filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", true);
 									biomodelsim.enableTabMenu(biomodelsim.getTab()
 											.getSelectedIndex());
 								}
@@ -1261,9 +1218,7 @@ public class Run implements ActionListener {
 										simrepstream.close();
 									}
 									sg.outputStateGraph(
-											filename.replace(".gcm", "").replace(".sbml", "")
-													.replace(".xml", "")
-													+ "_sg.dot", true);
+										filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", true);
 									if (sg.outputTSD(directory + separator
 											+ "percent-term-time.tsd")) {
 										if (refresh) {
@@ -1281,65 +1236,8 @@ public class Run implements ActionListener {
 									biomodelsim.enableTabMenu(biomodelsim.getTab()
 											.getSelectedIndex());
 								}
-								// String simrep = sg.getMarkovResults();
-								// if (simrep != null) {
-								// FileOutputStream simrepstream = new
-								// FileOutputStream(new File(
-								// directory + separator + "sim-rep.txt"));
-								// simrepstream.write((simrep).getBytes());
-								// simrepstream.close();
-								// }
-								// sg.outputStateGraph(filename.replace(".gcm",
-								// "").replace(".sbml",
-								// "").replace(".xml", "")
-								// + "_sg.dot", true);
-								// biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 							}
 						}
-						// if (sg.getNumberOfStates() > 30) {
-						// String[] options = { "Yes", "No" };
-						// int value = JOptionPane
-						// .showOptionDialog(
-						// BioSim.frame,
-						// "The state graph contains more than 30 states and may not open well in dotty.\nOpen it with dotty anyway?",
-						// "More Than 30 States", JOptionPane.YES_NO_OPTION,
-						// JOptionPane.WARNING_MESSAGE, null, options,
-						// options[0]);
-						// if (value == JOptionPane.YES_OPTION) {
-						// if
-						// (System.getProperty("os.name").contentEquals("Linux"))
-						// {
-						// log.addText("Executing:\ndotty "
-						// + filename.replace(".gcm", "").replace(".sbml", "")
-						// .replace(".xml", "") + "_sg.dot" + "\n");
-						// exec.exec("dotty "
-						// + theFile.replace(".gcm", "").replace(".sbml",
-						// "").replace(
-						// ".xml", "") + "_sg.dot", null, work);
-						// }
-						// else if
-						// (System.getProperty("os.name").toLowerCase().startsWith(
-						// "mac os")) {
-						// log.addText("Executing:\nopen "
-						// + filename.replace(".gcm", "").replace(".sbml", "")
-						// .replace(".xml", "") + "_sg.dot" + "\n");
-						// exec.exec("open "
-						// + theFile.replace(".gcm", "").replace(".sbml",
-						// "").replace(
-						// ".xml", "") + "_sg.dot", null, work);
-						// }
-						// else {
-						// log.addText("Executing:\ndotty "
-						// + filename.replace(".gcm", "").replace(".sbml", "")
-						// .replace(".xml", "") + "_sg.dot" + "\n");
-						// exec.exec("dotty "
-						// + theFile.replace(".gcm", "").replace(".sbml",
-						// "").replace(
-						// ".xml", "") + "_sg.dot", null, work);
-						// }
-						// }
-						// }
-						// }
 						if (refresh) {
 							for (int i = 0; i < simTab.getComponentCount(); i++) {
 								if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
@@ -1367,10 +1265,6 @@ public class Run implements ActionListener {
 					Preferences biosimrc = Preferences.userRoot();
 					if (sim.equals("gillespieJava")) {
 						time1 = System.nanoTime();
-						// Properties props = new Properties();
-						// props.load(new FileInputStream(new File(directory +
-						// separator + modelFile.substring(0,
-						// modelFile.indexOf('.')) + ".properties")));
 						int index = -1;
 						for (int i = 0; i < simTab.getComponentCount(); i++) {
 							if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {

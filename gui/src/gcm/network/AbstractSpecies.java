@@ -113,14 +113,21 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		return true;
 	}
 	
-	public double getInit() {
+	public double getInitialAmount() {
 		if (Utility.isValid(getProperty(GlobalConstants.INITIAL_STRING), Utility.NUMstring)) {
 			return Double.parseDouble(getProperty(GlobalConstants.INITIAL_STRING));
 		} else {
-			String conc = getProperty(GlobalConstants.INITIAL_STRING);
-			return (-1)*Double.parseDouble(conc.substring(1,conc.length()-1));
+			return -1;
 		}
-		//return Double.parseDouble(getProperty(GlobalConstants.INITIAL_STRING));
+	}
+	
+	public double getInitialConcentration() {
+		if (Utility.isValid(getProperty(GlobalConstants.INITIAL_STRING), Utility.NUMstring)) {
+			return -1;
+		} else {
+			String conc = getProperty(GlobalConstants.INITIAL_STRING);
+			return Double.parseDouble(conc.substring(1,conc.length()-1));
+		}
 	}
 	
 	public double getDecay() {

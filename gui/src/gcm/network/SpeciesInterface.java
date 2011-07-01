@@ -82,7 +82,9 @@ public interface SpeciesInterface extends VisitableSpecies {
 	 */
 	public String getProperty(String key);
 	
-	public double getInit();
+	public double getInitialAmount();
+	
+	public double getInitialConcentration();
 	
 	public double getDecay();
 	
