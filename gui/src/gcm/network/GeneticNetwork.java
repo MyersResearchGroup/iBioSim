@@ -466,389 +466,6 @@ public class GeneticNetwork {
 		v.setComplexAbstraction(complexAbstraction);
 		v.run();
 	}
-	
-	/*
-	private ASTNode updateMathVar(ASTNode math, String origVar, String newVar) {
-		String s = updateFormulaVar(myFormulaToString(math), origVar, newVar);
-		return myParseFormula(s);
-	}
-	*/
-	/*
-	private String myFormulaToString(ASTNode mathFormula) {
-		String formula = libsbml.formulaToString(mathFormula);
-		formula = formula.replaceAll("arccot", "acot");
-		formula = formula.replaceAll("arccoth", "acoth");
-		formula = formula.replaceAll("arccsc", "acsc");
-		formula = formula.replaceAll("arccsch", "acsch");
-		formula = formula.replaceAll("arcsec", "asec");
-		formula = formula.replaceAll("arcsech", "asech");
-		formula = formula.replaceAll("arccosh", "acosh");
-		formula = formula.replaceAll("arcsinh", "asinh");
-		formula = formula.replaceAll("arctanh", "atanh");
-		String newformula = formula.replaceFirst("00e", "0e");
-		while (!(newformula.equals(formula))) {
-			formula = newformula;
-			newformula = formula.replaceFirst("0e\\+", "e+");
-			newformula = newformula.replaceFirst("0e-", "e-");
-		}
-		formula = formula.replaceFirst("\\.e\\+", ".0e+");
-		formula = formula.replaceFirst("\\.e-", ".0e-");
-		return formula;
-	}
-
-	private String updateFormulaVar(String s, String origVar, String newVar) {
-		s = " " + s + " ";
-		s = s.replace(" " + origVar + " ", " " + newVar + " ");
-		s = s.replace(" " + origVar + "(", " " + newVar + "(");
-		s = s.replace("(" + origVar + ")", "(" + newVar + ")");
-		s = s.replace("(" + origVar + " ", "(" + newVar + " ");
-		s = s.replace("(" + origVar + ",", "(" + newVar + ",");
-		s = s.replace(" " + origVar + ")", " " + newVar + ")");
-		s = s.replace(" " + origVar + "^", " " + newVar + "^");
-		return s.trim();
-	}
-	
-	private ASTNode myParseFormula(String formula) {
-		ASTNode mathFormula = libsbml.parseFormula(formula);
-		if (mathFormula == null)
-			return null;
-		setTimeAndTrigVar(mathFormula);
-		return mathFormula;
-	}
-	
-	private void setTimeAndTrigVar(ASTNode node) {
-		if (node.getType() == libsbml.AST_NAME) {
-			if (node.getName().equals("t")) {
-				node.setType(libsbml.AST_NAME_TIME);
-			}
-			else if (node.getName().equals("time")) {
-				node.setType(libsbml.AST_NAME_TIME);
-			}
-		}
-		if (node.getType() == libsbml.AST_FUNCTION) {
-			if (node.getName().equals("acot")) {
-				node.setType(libsbml.AST_FUNCTION_ARCCOT);
-			}
-			else if (node.getName().equals("acoth")) {
-				node.setType(libsbml.AST_FUNCTION_ARCCOTH);
-			}
-			else if (node.getName().equals("acsc")) {
-				node.setType(libsbml.AST_FUNCTION_ARCCSC);
-			}
-			else if (node.getName().equals("acsch")) {
-				node.setType(libsbml.AST_FUNCTION_ARCCSCH);
-			}
-			else if (node.getName().equals("asec")) {
-				node.setType(libsbml.AST_FUNCTION_ARCSEC);
-			}
-			else if (node.getName().equals("asech")) {
-				node.setType(libsbml.AST_FUNCTION_ARCSECH);
-			}
-			else if (node.getName().equals("acosh")) {
-				node.setType(libsbml.AST_FUNCTION_ARCCOSH);
-			}
-			else if (node.getName().equals("asinh")) {
-				node.setType(libsbml.AST_FUNCTION_ARCSINH);
-			}
-			else if (node.getName().equals("atanh")) {
-				node.setType(libsbml.AST_FUNCTION_ARCTANH);
-			}
-		}
-
-		for (int c = 0; c < node.getNumChildren(); c++)
-			setTimeAndTrigVar(node.getChild(c));
-	}
-
-	private void updateVarId(boolean isSpecies, String origId, String newId, SBMLDocument document) {
-		if (origId.equals(newId))
-			return;
-		Model model = document.getModel();
-		for (int i = 0; i < model.getNumSpecies(); i++) {
-			org.sbml.libsbml.Species species = (org.sbml.libsbml.Species) model.getListOfSpecies().get(i);
-			if (species.getCompartment().equals(origId)) {
-				species.setCompartment(newId);
-			}
-			if (species.getSpeciesType().equals(origId)) {
-				species.setSpeciesType(newId);
-			}
-		}
-		for (int i = 0; i < model.getNumCompartments(); i++) {
-			org.sbml.libsbml.Compartment compartment = (org.sbml.libsbml.Compartment) model.getListOfCompartments().get(i);
-			if (compartment.getCompartmentType().equals(origId)) {
-				compartment.setCompartmentType(newId);
-			}
-		}
-		for (int i = 0; i < model.getNumReactions(); i++) {
-			org.sbml.libsbml.Reaction reaction = (org.sbml.libsbml.Reaction) model.getListOfReactions().get(i);
-			if (reaction.getCompartment().equals(origId)) {
-				reaction.setCompartment(newId);
-			}
-			for (int j = 0; j < reaction.getNumProducts(); j++) {
-				if (reaction.getProduct(j).isSetSpecies()) {
-					SpeciesReference specRef = reaction.getProduct(j);
-					if (isSpecies && origId.equals(specRef.getSpecies())) {
-						specRef.setSpecies(newId);
-					}
-					if (specRef.isSetStoichiometryMath()) {
-						specRef.getStoichiometryMath().setMath(updateMathVar(specRef
-								.getStoichiometryMath().getMath(), origId, newId));
-					}
-				}
-			}
-			if (isSpecies) {
-				for (int j = 0; j < reaction.getNumModifiers(); j++) {
-					if (reaction.getModifier(j).isSetSpecies()) {
-						ModifierSpeciesReference specRef = reaction.getModifier(j);
-						if (origId.equals(specRef.getSpecies())) {
-							specRef.setSpecies(newId);
-						}
-					}
-				}
-			}
-			for (int j = 0; j < reaction.getNumReactants(); j++) {
-				if (reaction.getReactant(j).isSetSpecies()) {
-					SpeciesReference specRef = reaction.getReactant(j);
-					if (isSpecies && origId.equals(specRef.getSpecies())) {
-						specRef.setSpecies(newId);
-					}
-					if (specRef.isSetStoichiometryMath()) {
-						specRef.getStoichiometryMath().setMath(updateMathVar(specRef
-								.getStoichiometryMath().getMath(), origId, newId));
-					}
-				}
-			}
-			reaction.getKineticLaw().setMath(
-					updateMathVar(reaction.getKineticLaw().getMath(), origId, newId));
-		}
-		if (model.getNumInitialAssignments() > 0) {
-			for (int i = 0; i < model.getNumInitialAssignments(); i++) {
-				InitialAssignment init = (InitialAssignment) model.getListOfInitialAssignments().get(i);
-				if (origId.equals(init.getSymbol())) {
-					init.setSymbol(newId);
-				}
-				init.setMath(updateMathVar(init.getMath(), origId, newId));
-			}
-		}
-		if (model.getNumRules() > 0) {
-			for (int i = 0; i < model.getNumRules(); i++) {
-				Rule rule = (Rule) model.getListOfRules().get(i);
-				if (rule.isSetVariable() && origId.equals(rule.getVariable())) {
-					rule.setVariable(newId);
-				}
-				rule.setMath(updateMathVar(rule.getMath(), origId, newId));
-			}
-		}
-		if (model.getNumConstraints() > 0) {
-			for (int i = 0; i < model.getNumConstraints(); i++) {
-				Constraint constraint = (Constraint) model.getListOfConstraints().get(i);
-				constraint.setMath(updateMathVar(constraint.getMath(), origId, newId));
-			}
-		}
-		if (model.getNumEvents() > 0) {
-			for (int i = 0; i < model.getNumEvents(); i++) {
-				org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) model.getListOfEvents().get(i);
-				if (event.isSetTrigger()) {
-					event.getTrigger().setMath(updateMathVar(event.getTrigger().getMath(), origId, newId));
-				}
-				if (event.isSetDelay()) {
-					event.getDelay().setMath(updateMathVar(event.getDelay().getMath(), origId, newId));
-				}
-				for (int j = 0; j < event.getNumEventAssignments(); j++) {
-					EventAssignment ea = (EventAssignment) event.getListOfEventAssignments().get(j);
-					if (ea.getVariable().equals(origId)) {
-						ea.setVariable(newId);
-					}
-					if (ea.isSetMath()) {
-						ea.setMath(updateMathVar(ea.getMath(), origId, newId));
-					}
-				}
-			}
-		}
-	}
-	
-	private void unionSBML(SBMLDocument mainDoc, SBMLDocument doc, String compName) {
-		Model m = doc.getModel();
-		for (int i = 0; i < m.getNumCompartmentTypes(); i ++) {
-			org.sbml.libsbml.CompartmentType c = m.getCompartmentType(i);
-			String newName = compName + "_" + c.getId();
-			updateVarId(false, c.getId(), newName, doc);
-			c.setId(newName);
-			boolean add = true;
-			for (int j = 0; j < mainDoc.getModel().getNumCompartmentTypes(); j ++) {
-				if (mainDoc.getModel().getCompartmentType(j).getId().equals(c.getId())) {
-					add = false;
-				}
-			}
-			if (add) {
-				mainDoc.getModel().addCompartmentType(c);
-			}
-		}
-		for (int i = 0; i < m.getNumCompartments(); i ++) {
-			org.sbml.libsbml.Compartment c = m.getCompartment(i);
-			String newName = compName + "_" + c.getId();
-			updateVarId(false, c.getId(), newName, doc);
-			c.setId(newName);
-			boolean add = true;
-			for (int j = 0; j < mainDoc.getModel().getNumCompartments(); j ++) {
-				if (mainDoc.getModel().getCompartment(j).getId().equals(c.getId())) {
-					add = false;
-				}
-			}
-			if (add) {
-				mainDoc.getModel().addCompartment(c);
-			}
-		}
-		for (int i = 0; i < m.getNumSpeciesTypes(); i ++) {
-			org.sbml.libsbml.SpeciesType s = m.getSpeciesType(i);
-			String newName = compName + "_" + s.getId();
-			updateVarId(false, s.getId(), newName, doc);
-			s.setId(newName);
-			boolean add = true;
-			for (int j = 0; j < mainDoc.getModel().getNumSpeciesTypes(); j ++) {
-				if (mainDoc.getModel().getSpeciesType(j).getId().equals(s.getId())) {
-					add = false;
-				}
-			}
-			if (add) {
-				mainDoc.getModel().addSpeciesType(s);
-			}
-		}
-		for (int i = 0; i < m.getNumSpecies(); i ++) {
-			Species spec = m.getSpecies(i);
-			if (!spec.getId().equals("RNAP")) {
-				String newName = compName + "_" + spec.getId();
-				for (Object port : properties.getComponents().get(compName).keySet()) {
-					if (spec.getId().equals((String) port)) {
-						newName = "_" + compName + "_" + properties.getComponents().get(compName).getProperty((String) port);
-						int removeDeg = -1;
-						for (int j = 0; j < m.getNumReactions(); j ++) {
-							org.sbml.libsbml.Reaction r = m.getReaction(j);
-							if (r.getId().equals("Degradation_" + spec.getId())) {
-								removeDeg = j;
-							}
-						}
-						if (removeDeg != -1) {
-							m.getListOfReactions().remove(removeDeg);
-						}
-					}
-				}
-				updateVarId(true, spec.getId(), newName, doc);
-				spec.setId(newName);
-			}
-		}
-		for (int i = 0; i < m.getNumSpecies(); i ++) {
-			Species spec = m.getSpecies(i);
-			if (spec.getId().startsWith("_" + compName + "_")) {
-				updateVarId(true, spec.getId(), spec.getId().substring(2 + compName.length()), doc);
-				spec.setId(spec.getId().substring(2 + compName.length()));
-			}
-			boolean add = true;
-			for (int j = 0; j < mainDoc.getModel().getNumSpecies(); j ++) {
-				if (mainDoc.getModel().getSpecies(j).getId().equals(spec.getId())) {
-					add = false;
-				}
-			}
-			if (add) {
-				mainDoc.getModel().addSpecies(spec);
-			}
-		}
-		for (int i = 0; i < m.getNumParameters(); i ++) {
-			org.sbml.libsbml.Parameter p = m.getParameter(i);
-			String newName = compName + "_" + p.getId();
-			updateVarId(false, p.getId(), newName, doc);
-			p.setId(newName);
-			boolean add = true;
-			for (int j = 0; j < mainDoc.getModel().getNumParameters(); j ++) {
-				if (mainDoc.getModel().getParameter(j).getId().equals(p.getId())) {
-					add = false;
-				}
-			}
-			if (add) {
-				mainDoc.getModel().addParameter(p);
-			}
-		}
-		for (int i = 0; i < m.getNumReactions(); i ++) {
-			org.sbml.libsbml.Reaction r = m.getReaction(i);
-			String newName = compName + "_" + r.getId();
-			updateVarId(false, r.getId(), newName, doc);
-			r.setId(newName);
-			boolean add = true;
-			for (int j = 0; j < mainDoc.getModel().getNumReactions(); j ++) {
-				if (mainDoc.getModel().getReaction(j).getId().equals(r.getId())) {
-					add = false;
-				}
-			}
-			if (add) {
-				mainDoc.getModel().addReaction(r);
-			}
-		}
-		for (int i = 0; i < m.getNumInitialAssignments(); i ++) {
-			InitialAssignment init = (InitialAssignment) m.getListOfInitialAssignments().get(i);
-			mainDoc.getModel().addInitialAssignment(init);
-		}
-		for (int i = 0; i < m.getNumRules(); i++) {
-			org.sbml.libsbml.Rule r = m.getRule(i);
-			mainDoc.getModel().addRule(r);
-		}
-		for (int i = 0; i < m.getNumConstraints(); i++) {
-			Constraint constraint = (Constraint) m.getListOfConstraints().get(i);
-			mainDoc.getModel().addConstraint(constraint);
-		}
-		for (int i = 0; i < m.getNumEvents(); i++) {
-			org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) m.getListOfEvents().get(i);
-			String newName = compName + "_" + event.getId();
-			updateVarId(false, event.getId(), newName, doc);
-			event.setId(newName);
-			boolean add = true;
-			for (int j = 0; j < mainDoc.getModel().getNumEvents(); j ++) {
-				if (mainDoc.getModel().getEvent(j).getId().equals(event.getId())) {
-					add = false;
-				}
-			}
-			if (add) {
-				mainDoc.getModel().addEvent(event);
-			}
-		}
-		for (int i = 0; i < m.getNumUnitDefinitions(); i ++) {
-			UnitDefinition u = m.getUnitDefinition(i);
-			boolean add = true;
-			for (int j = 0; j < mainDoc.getModel().getNumUnitDefinitions(); j ++) {
-				if (mainDoc.getModel().getUnitDefinition(j).getId().equals(u.getId())) {
-					add = false;
-				}
-			}
-			if (add) {
-				mainDoc.getModel().addUnitDefinition(u);
-			}
-		}
-		for (int i = 0; i < m.getNumFunctionDefinitions(); i ++) {
-			FunctionDefinition f = m.getFunctionDefinition(i);
-			boolean add = true;
-			for (int j = 0; j < mainDoc.getModel().getNumFunctionDefinitions(); j ++) {
-				if (mainDoc.getModel().getFunctionDefinition(j).getId().equals(f.getId())) {
-					add = false;
-				}
-			}
-			if (add) {
-				mainDoc.getModel().addFunctionDefinition(f);
-			}
-		}
-	}
-	*/
-	
-	//This currently isn't used
-	/*
-	private void printComponents(SBMLDocument document, String filename) {
-		for (String s : properties.getComponents().keySet()) {
-			GCMParser parser = new GCMParser(currentRoot + separator +
-					properties.getComponents().get(s).getProperty("gcm"));
-			parser.setParameters(properties.getParameters());
-			GeneticNetwork network = parser.buildNetwork();
-			SBMLDocument d =  network.mergeSBML(filename);
-			unionSBML(document, d, s);
-		}
-	}
-	*/
 
 	/**
 	 * Prints the promoters in the network
@@ -863,16 +480,14 @@ public class GeneticNetwork {
 			// First print out the promoter, and promoter bound to RNAP
 			// But first check if promoter belongs to a compartment other than default
 			String compartment = checkCompartments(p.getId());
-			Species s = Utility.makeSpecies(p.getId(), compartment,
-					p.getPcount());
+			Species s = Utility.makeSpecies(p.getId(), compartment,	p.getPcount(), -1);
 		    if ((p.getProperties() != null) &&
 		    	(p.getProperties().containsKey(GlobalConstants.NAME))) {
 		    	s.setName(p.getProperty(GlobalConstants.NAME));
 		    }
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);			
-			s = Utility.makeSpecies(p.getId() + "_RNAP", compartment,
-					0);
+			s = Utility.makeSpecies(p.getId() + "_RNAP", compartment, 0, -1);
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);
 			// Now cycle through all activators and repressors and add 
@@ -882,8 +497,7 @@ public class GeneticNetwork {
 				String[] splitted = activator.split("__");
 				if (splitted.length > 1)
 					activator = splitted[1];
-				s = Utility.makeSpecies(p.getId() + "_"
-						+ activator + "_RNAP", compartment, 0);
+				s = Utility.makeSpecies(p.getId() + "_" + activator + "_RNAP", compartment, 0, -1);
 				s.setHasOnlySubstanceUnits(true);
 				Utility.addSpecies(document, s);
 			}
@@ -892,8 +506,7 @@ public class GeneticNetwork {
 				String[] splitted = repressor.split("__");
 				if (splitted.length > 1)
 					repressor = splitted[1];
-				s = Utility.makeSpecies(p.getId() + "_"
-						+ repressor + "_bound", compartment, 0);
+				s = Utility.makeSpecies(p.getId() + "_"	+ repressor + "_bound", compartment, 0, -1);
 				s.setHasOnlySubstanceUnits(true);
 				Utility.addSpecies(document, s);
 			}
@@ -910,7 +523,7 @@ public class GeneticNetwork {
 	private void printOnlyPromoters(SBMLDocument document) {
 
 		for (Promoter p : promoters.values()) {
-			Species s = Utility.makeSpecies(p.getId(), document.getModel().getCompartment(0).getId(), p.getPcount());
+			Species s = Utility.makeSpecies(p.getId(), document.getModel().getCompartment(0).getId(), p.getPcount(), -1);
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);			
 		}
@@ -930,12 +543,12 @@ public class GeneticNetwork {
 			rnap = Double.parseDouble(properties
 					.getParameter(GlobalConstants.RNAP_STRING));
 		}
-		Species s = Utility.makeSpecies("RNAP", document.getModel().getCompartment(0).getId(), rnap);		
+		Species s = Utility.makeSpecies("RNAP", document.getModel().getCompartment(0).getId(), rnap, -1);		
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
 		//Adds RNA polymerase for compartments other than default
 		for (String compartment : compartments) {
-			Species sc = Utility.makeSpecies(compartment + "__RNAP", compartment, rnap);
+			Species sc = Utility.makeSpecies(compartment + "__RNAP", compartment, rnap, -1);
 			sc.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, sc);
 		}

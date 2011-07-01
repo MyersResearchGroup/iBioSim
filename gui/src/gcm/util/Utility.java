@@ -123,14 +123,13 @@ public class Utility {
 		return p;
 	}
 	
-	public static Species makeSpecies(String id, String compartment,
-			double amount) {
+	public static Species makeSpecies(String id, String compartment, double amount, double concentration) {
 		Species specie = new Species(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		specie.setId(id);
 		specie.setName(id);
 		specie.setCompartment(compartment);
 		if (amount < 0) {
-			specie.setInitialConcentration((-1)*amount);	
+			specie.setInitialConcentration(concentration);
 		} else{
 			specie.setInitialAmount(amount);	
 		}

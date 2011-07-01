@@ -257,7 +257,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			GCMParser parser = new GCMParser(path + separator + refFile);
 			GeneticNetwork network = parser.buildNetwork();
 			GeneticNetwork.setRoot(path + separator);
-			network.mergeSBML(path + separator + simName + separator + gcmname + ".sbml");
+			network.mergeSBML(path + separator + simName + separator + gcmname + ".xml");
 			reb2sac.updateSpeciesList();
 		}
 		
@@ -930,11 +930,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					}
 				}
 				network.mergeSBML(path + separator + simName + separator + stem + direct
-						+ separator + gcmname + ".sbml", d);
+						+ separator + gcmname + ".xml", d);
 			}
 			else {
 				network.mergeSBML(path + separator + simName + separator + stem + direct
-						+ separator + gcmname + ".sbml");
+						+ separator + gcmname + ".xml");
 			}
 		}
 		catch (Exception e1) {

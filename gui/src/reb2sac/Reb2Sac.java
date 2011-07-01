@@ -1714,7 +1714,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					}
 				}
 				t1.setFilename(root + separator + simName + separator + stem + separator
-						+ modelFile.replace(".lpn", ".sbml"));
+						+ modelFile.replace(".lpn", ".xml"));
 				t1.outputSBML();
 				if (!stem.equals("")) {
 					new File(root + separator + simName + separator + stem).mkdir();
@@ -4118,17 +4118,17 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				String filename = "";
 				if (new File((openFile.substring(0, openFile.length()
 						- getFilename[getFilename.length - 1].length()))
-						+ getFilename[getFilename.length - 1].substring(0, cut) + ".sbml").exists()) {
-					filename = (openFile.substring(0, openFile.length()
-							- getFilename[getFilename.length - 1].length()))
-							+ getFilename[getFilename.length - 1].substring(0, cut) + ".sbml";
-				}
-				else if (new File((openFile.substring(0, openFile.length()
-						- getFilename[getFilename.length - 1].length()))
 						+ getFilename[getFilename.length - 1].substring(0, cut) + ".xml").exists()) {
 					filename = (openFile.substring(0, openFile.length()
 							- getFilename[getFilename.length - 1].length()))
 							+ getFilename[getFilename.length - 1].substring(0, cut) + ".xml";
+				}
+				else if (new File((openFile.substring(0, openFile.length()
+						- getFilename[getFilename.length - 1].length()))
+						+ getFilename[getFilename.length - 1].substring(0, cut) + ".sbml").exists()) {
+					filename = (openFile.substring(0, openFile.length()
+							- getFilename[getFilename.length - 1].length()))
+							+ getFilename[getFilename.length - 1].substring(0, cut) + ".sbml";
 				}
 				try {
 					filename = sbmlFile;

@@ -411,11 +411,11 @@ public class SBML_Editor extends JPanel {
 			if (simName.length() > 4) {
 				if (!simName.substring(simName.length() - 5).equals(".sbml")
 						&& !simName.substring(simName.length() - 4).equals(".xml")) {
-					simName += ".sbml";
+					simName += ".xml";
 				}
 			}
 			else {
-				simName += ".sbml";
+				simName += ".xml";
 			}
 			String modelID = "";
 			if (simName.length() > 4) {

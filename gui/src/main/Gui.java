@@ -8223,10 +8223,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							for (int j = 1; j < 5; j++) {
 								end = list[i].charAt(list[i].length() - j) + end;
 							}
-							if (end.equals("sbml")) {
+							if (end.equals(".xml")) {
 								getAFile = filename + separator + list[i];
 							}
-							else if (end.equals(".xml") && getAFile.equals("")) {
+							else if (end.equals("sbml") && getAFile.equals("")) {
 								getAFile = filename + separator + list[i];
 							}
 							else if (end.equals(".txt") && list[i].contains("sim-rep")) {
@@ -8333,7 +8333,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 										GeneticNetwork.setRoot(root + separator);
 										sbmlLoadFile = root + separator
 												+ split[split.length - 1].trim() + separator
-												+ sbmlLoadFile.replace(".gcm", ".sbml");
+												+ sbmlLoadFile.replace(".gcm", ".xml");
 										network.mergeSBML(sbmlLoadFile);
 									}
 									else if (sbmlLoadFile.contains(".lpn")) {
@@ -8341,7 +8341,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 										t1.BuildTemplate(root + separator + sbmlLoadFile, "");
 										sbmlLoadFile = root + separator
 												+ split[split.length - 1].trim() + separator
-												+ sbmlLoadFile.replace(".lpn", ".sbml");
+												+ sbmlLoadFile.replace(".lpn", ".xml");
 										t1.setFilename(sbmlLoadFile);
 										t1.outputSBML();
 									}
@@ -9102,10 +9102,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									GeneticNetwork network = parser.buildNetwork();
 									GeneticNetwork.setRoot(root + separator);
 									network.mergeSBML(root + separator + tab + separator
-											+ updatedFile.replace(".gcm", ".sbml"));
+											+ updatedFile.replace(".gcm", ".xml"));
 									((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
 											+ separator + tab + separator
-											+ updatedFile.replace(".gcm", ".sbml"));
+											+ updatedFile.replace(".gcm", ".xml"));
 								}
 								else {
 									((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
