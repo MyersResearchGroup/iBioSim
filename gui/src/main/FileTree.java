@@ -274,8 +274,8 @@ public class FileTree extends JPanel implements MouseListener {
 						&& thisObject.toString().length() > 3
 						&& thisObject.toString().substring(thisObject.toString().length() - 4).equals(".xml")) {
 					if (Gui.createGCMFromSBML(curPath,curPath + separator + thisObject.toString(), thisObject.toString(), 
-							thisObject.toString().replace(".xml",".gcm"),false)) 
-						files.add(thisObject.replace(".xml",".gcm"));
+							thisObject.toString().replace(".xml",".gcm").replace(".sbml",".gcm"),false)) 
+						files.add(thisObject.replace(".xml",".gcm").replace(".sbml",".gcm"));
 				} else {
 					files.add(thisObject);
 				}
