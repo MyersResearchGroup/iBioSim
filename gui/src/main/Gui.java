@@ -5798,7 +5798,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 
 	public static boolean createGCMFromSBML(String root,String fullPath,String theSBMLFile,String theGCMFile,boolean force) {
-		if (force || !new File(fullPath.replace(".xml",".gcm")).exists()) {
+		if (force || !new File(fullPath.replace(".xml",".gcm").replace(".sbml",".gcm")).exists()) {
 			SBMLDocument document = readSBML(fullPath);
 			Model m = document.getModel();
 			GCMFile gcmFile = new GCMFile(root);
@@ -5821,7 +5821,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			gcmFile.setSBMLDocument(document);
 			gcmFile.setSBMLFile(theSBMLFile);
-			gcmFile.save(fullPath.replace(".xml",".gcm"));
+			gcmFile.save(fullPath.replace(".xml",".gcm").replace(".sbml",".gcm"));
 			return true;
 		} else 
 			return false;
