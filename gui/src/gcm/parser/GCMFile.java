@@ -691,6 +691,7 @@ public class GCMFile {
 	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
 		GCMParser parser = new GCMParser(this, false);
 		GeneticNetwork network = parser.buildNetwork();
+		network.markAbstractable();
 		AbstractionEngine abs = network.createAbstractionEngine();
 		HashMap<String, ArrayList<String>> infl = new HashMap<String, ArrayList<String>>();
 		for (String influence : influences.keySet()) {
