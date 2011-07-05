@@ -83,11 +83,13 @@ public class Button_Enabling {
 			preAbs.setListData(objects);
 			loopAbs.setListData(objects);
 			getLists = new ArrayList<String>();
-//			if (monteCarlo.isSelected()) {
-//				getLists.add("distribute-transformer");
-//				getLists.add("reversible-to-irreversible-transformer");
-//			}
-//			getLists.add("kinetic-law-constants-simplifier");
+			if (monteCarlo.isSelected()) {
+				getLists.add("distribute-transformer");
+				getLists.add("reversible-to-irreversible-transformer");
+			}
+			getLists.add("irrelevant-species-remover");
+			if (monteCarlo.isSelected() || ODE.isSelected())
+				getLists.add("kinetic-law-constants-simplifier");
 			objects = getLists.toArray();
 			postAbs.setListData(objects);
 		}
@@ -148,11 +150,13 @@ public class Button_Enabling {
 			objects = getLists.toArray();
 			loopAbs.setListData(objects);
 			getLists = new ArrayList<String>();
-//			if (monteCarlo.isSelected()) {
-//				getLists.add("distribute-transformer");
-//				getLists.add("reversible-to-irreversible-transformer");
-//			}
-//			getLists.add("kinetic-law-constants-simplifier");
+			if (monteCarlo.isSelected()) {
+				getLists.add("distribute-transformer");
+				getLists.add("reversible-to-irreversible-transformer");
+			}
+			getLists.add("irrelevant-species-remover");
+			if (monteCarlo.isSelected() || ODE.isSelected())
+				getLists.add("kinetic-law-constants-simplifier");
 			objects = getLists.toArray();
 			postAbs.setListData(objects);
 		}
@@ -369,8 +373,9 @@ public class Button_Enabling {
 		simulators.addItem("rkf45");
 		simulators.setSelectedItem("rkf45");
 		ArrayList<String> getLists = new ArrayList<String>();
-		if (!abstraction.isSelected())
-			getLists.add("kinetic-law-constants-simplifier");
+		if (abstraction.isSelected())
+			getLists.add("irrelevant-species-remover");
+		getLists.add("kinetic-law-constants-simplifier");
 		Object[] objects = getLists.toArray();
 		postAbs.setListData(objects);
 	}
@@ -421,11 +426,11 @@ public class Button_Enabling {
 		simulators.addItem("nmc");
 		absErr.setEnabled(false);
 		ArrayList<String> getLists = new ArrayList<String>();
-		if (!abstraction.isSelected()) {
-			getLists.add("distribute-transformer");
-			getLists.add("reversible-to-irreversible-transformer");
-			getLists.add("kinetic-law-constants-simplifier");
-		}
+		getLists.add("distribute-transformer");
+		getLists.add("reversible-to-irreversible-transformer");
+		if (abstraction.isSelected())
+			getLists.add("irrelevant-species-remover");
+		getLists.add("kinetic-law-constants-simplifier");
 		Object[] objects = getLists.toArray();
 		postAbs.setListData(objects);
 	}
@@ -472,7 +477,7 @@ public class Button_Enabling {
 		simulators.addItem("atacs");
 		simulators.addItem("ctmc-transient");
 		ArrayList<String> getLists = new ArrayList<String>();
-		getLists.add("kinetic-law-constants-simplifier");
+//		getLists.add("kinetic-law-constants-simplifier");
 		Object[] objects = getLists.toArray();
 		postAbs.setListData(objects);
 	}
@@ -509,8 +514,9 @@ public class Button_Enabling {
 		description.setEnabled(false);
 		fileStem.setText("");
 		ArrayList<String> getLists = new ArrayList<String>();
-		if (!abstraction.isSelected())
-			getLists.add("kinetic-law-constants-simplifier");
+		if (abstraction.isSelected())
+			getLists.add("irrelevant-species-remover");
+//		getLists.add("kinetic-law-constants-simplifier");
 		Object[] objects = getLists.toArray();
 		postAbs.setListData(objects);
 	}

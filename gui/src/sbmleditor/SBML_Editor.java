@@ -608,6 +608,7 @@ public class SBML_Editor extends JPanel {
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to create sbml file.",
 					"Error Creating File", JOptionPane.ERROR_MESSAGE);
+			e1.printStackTrace();
 		}
 	}
 

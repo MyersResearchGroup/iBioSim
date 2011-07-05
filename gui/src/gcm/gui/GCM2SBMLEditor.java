@@ -882,11 +882,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			
 			if (reb2sac != null)
 				network.loadProperties(gcm, reb2sac.getGcmAbstractions(), reb2sac.getInterestingSpecies(), reb2sac.getProperty());
 			else
 				network.loadProperties(gcm);
+			network.markAbstractable();
 			if (!getSBMLFile().equals(none)) {
 				//SBMLDocument d = Gui.readSBML(path + separator + getSBMLFile());
 				SBMLDocument d = network.getSBML();
@@ -940,6 +940,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to create sbml file.",
 					"Error Creating File", JOptionPane.ERROR_MESSAGE);
+			e1.printStackTrace();
 		}
 	}
 

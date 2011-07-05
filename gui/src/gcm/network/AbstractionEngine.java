@@ -53,7 +53,7 @@ public class AbstractionEngine {
 	}
 	
 	// Recursively walks complexMap to build up abstract expression for complex formation
-	private String abstractComplexHelper(String complexId, double multiplier, String payNoMind, boolean operatorAbstraction) {
+	private String abstractComplexHelper(String complexId, double multiplier, String sequesterRoot, boolean operatorAbstraction) {
 		String compExpression = "";
 		if (sbmlMode) {
 			String kcompId = kcompString + "__" + complexId;
@@ -86,13 +86,13 @@ public class AbstractionEngine {
 				String nId = coopString + "__" + partId + "_" + complexId;
 				kl.addParameter(Utility.Parameter(nId, n, "dimensionless"));
 				ncSum = ncSum + nId + "+";
-				if (!partId.equals(payNoMind)) {
+				if (!partId.equals(sequesterRoot)) {
 					compExpression = compExpression + "*" + "(";
 					if (species.get(partId).isAbstractable()) {
-						compExpression = compExpression + abstractComplexHelper(partId, multiplier * n, "", operatorAbstraction);
-					} else if (payNoMind.equals("")) {
+						compExpression = compExpression + abstractComplexHelper(partId, multiplier * n, sequesterRoot, operatorAbstraction);
+					} else if (sequesterRoot.equals("")) {
 						if (species.get(partId).isSequesterable())
-							compExpression = compExpression + sequesterSpeciesHelper(partId, operatorAbstraction);
+							compExpression = compExpression + sequesterSpeciesHelper(partId, sequesterRoot, operatorAbstraction);
 						else
 							compExpression = compExpression + partId;
 						if (reactantStoich.containsKey(partId))
@@ -119,13 +119,13 @@ public class AbstractionEngine {
 				String partId = infl.getInput();
 				double n = infl.getCoop();
 				ncSum = ncSum + n;
-				if (!partId.equals(payNoMind)) {
+				if (!partId.equals(sequesterRoot)) {
 					compExpression = compExpression + "*" + "(";
 					if (species.get(partId).isAbstractable()) {
-						compExpression = compExpression + abstractComplexHelper(partId, multiplier * n, "", operatorAbstraction);
-					} else if (payNoMind.equals("")) {
+						compExpression = compExpression + abstractComplexHelper(partId, multiplier * n, sequesterRoot, operatorAbstraction);
+					} else if (sequesterRoot.equals("")) {
 						if (species.get(partId).isSequesterable())
-							compExpression = compExpression + sequesterSpeciesHelper(partId, operatorAbstraction);
+							compExpression = compExpression + sequesterSpeciesHelper(partId, sequesterRoot, operatorAbstraction);
 						else
 							compExpression = compExpression + partId;
 					} else {
@@ -148,11 +148,11 @@ public class AbstractionEngine {
 	public String sequesterSpecies(String speciesId, double n, boolean operatorAbstraction) {
 		if (sbmlMode)
 			modifiers = new ArrayList<String>();
-		String expression = sequesterSpeciesHelper(speciesId, operatorAbstraction);
+		String expression = sequesterSpeciesHelper(speciesId, "", operatorAbstraction);
 		if (sbmlMode) {
 			if (operatorAbstraction)
 				r.addModifier(Utility.ModifierSpeciesReference(speciesId));
-			else if (n > 0)  // necessary to ignore the case of a reverse formation reaction for a complex that's being sequestered
+			else if (n > 0)  // n = 0 in the case of a complex formation reaction for a sequestered complex (complex added as reaction product and not reactant)
 				r.addReactant(Utility.SpeciesReference(speciesId, n));
 			for (String modifier : modifiers)
 				r.addModifier(Utility.ModifierSpeciesReference(modifier));
@@ -160,14 +160,24 @@ public class AbstractionEngine {
 		return expression;
 	}
 	
-	private String sequesterSpeciesHelper(String speciesId, boolean operatorAbstraction) {
-		String sequesterFactor = speciesId + "/(1";
+	private String sequesterSpeciesHelper(String speciesId, String sequesterRoot, boolean operatorAbstraction) {
+		String sequesterFactor = "";
+		if (sequesterRoot.equals(""))
+			sequesterFactor = speciesId + "/(1";
 		for (Influence infl : partsMap.get(speciesId)) {
 			String complexId = infl.getOutput();
-			if (species.get(complexId).isSequesterAbstractable())
+			if (species.get(complexId).isSequesterAbstractable() && sequesterRoot.equals("")) {
 				sequesterFactor = sequesterFactor + "+" + abstractComplexHelper(complexId, 1, speciesId, operatorAbstraction);
+				if (partsMap.containsKey(complexId))
+					sequesterFactor = sequesterFactor + sequesterSpeciesHelper(complexId, speciesId, operatorAbstraction);
+			} else if (species.get(complexId).isSequesterAbstractable()) {
+				sequesterFactor = sequesterFactor + "+" + abstractComplexHelper(complexId, 1, sequesterRoot, operatorAbstraction);
+				if (partsMap.containsKey(complexId))
+					sequesterFactor = sequesterFactor + sequesterSpeciesHelper(complexId, sequesterRoot, operatorAbstraction);
+			}
 		}
-		sequesterFactor = sequesterFactor + ")";
+		if (sequesterRoot.equals(""))
+			sequesterFactor = sequesterFactor + ")";
 		return sequesterFactor;
 	}
 
@@ -392,11 +402,11 @@ public class AbstractionEngine {
 			kd = species.get(speciesId).getDecay();
 			if (kd > 0) {
 				kdId = decayString + "__" + speciesId;
-				decayExpression = "(" + kdId + decayExpression + ")*" + sequesterSpeciesHelper(speciesId, false);
+				decayExpression = "(" + kdId + decayExpression + ")*" + sequesterSpeciesHelper(speciesId, "", false);
 				kl.addParameter(Utility.Parameter(kdId, kd, GeneticNetwork.getMoleTimeParameter(1)));
 			} else if (decayExpression.length() > 0) {
 				decayExpression = "(" + decayExpression.substring(1, decayExpression.length()) + ")*" 
-				+ sequesterSpeciesHelper(speciesId, false);
+				+ sequesterSpeciesHelper(speciesId, "", false);
 			}
 			r.addReactant(Utility.SpeciesReference(speciesId, 1));
 			for (String modifier : modifiers)
@@ -411,10 +421,10 @@ public class AbstractionEngine {
 			}
 			kd = species.get(speciesId).getDecay();
 			if (kd > 0) {
-				decayExpression = "(" + kd + decayExpression + ")*" + sequesterSpeciesHelper(speciesId, false);
+				decayExpression = "(" + kd + decayExpression + ")*" + sequesterSpeciesHelper(speciesId, "", false);
 			} else if (decayExpression.length() > 0) {
 				decayExpression = "(" + decayExpression.substring(1, decayExpression.length()) + ")*" 
-				+ sequesterSpeciesHelper(speciesId, false);
+				+ sequesterSpeciesHelper(speciesId, "", false);
 			}
 		}
 		return decayExpression;
