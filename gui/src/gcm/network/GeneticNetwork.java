@@ -678,10 +678,12 @@ public class GeneticNetwork {
 					return false;
 				if (complexMap.containsKey(partId) && !species.get(partId).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)
 						&& !species.get(partId).isActivator() && !species.get(partId).isRepressor()) {
+					if (!sequesterRoot.equals("") && !checkComplex(partId, sequesterRoot))
+						return false;
 					if (!sequesterable && partsMap.get(partId).size() == 1)
 						species.get(partId).setAbstractable(true);
-					if (!checkComplex(partId, ""))
-						return false;
+					if (sequesterRoot.equals(""))
+						checkComplex(partId, "");
 				} else if (!sequesterable && (partsMap.get(partId).size() > 1 || species.get(partId).isActivator() || species.get(partId).isRepressor()))
 					species.get(complexId).setAbstractable(false);
 			}
