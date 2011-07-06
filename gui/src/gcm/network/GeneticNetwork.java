@@ -672,7 +672,6 @@ public class GeneticNetwork {
 						return false;
 					if (!species.get(partId).isActivator() && !species.get(partId).isRepressor())
 						sequesterable = checkSequester(partId, partId);
-//						sequesterable = checkSequester(partId, complexId);
 				}
 				if (!sequesterRoot.equals("") && (species.get(partId).isActivator() || species.get(partId).isRepressor()))
 					return false;
@@ -698,9 +697,6 @@ public class GeneticNetwork {
 		ArrayList<String> abstractableComplexes = new ArrayList<String>();
 		for (Influence infl : partsMap.get(partId)) {
 			String complexId = infl.getOutput();
-//			!complexId.equals(payNoMind) && 
-//			&& !partsMap.containsKey(complexId) 
-//			&& checkComplex(complexId, partId)
 			if (infl.getCoop() == 1 
 					&& ((!species.get(complexId).isActivator() && !species.get(complexId).isRepressor()) || (operatorAbstraction && !partsMap.containsKey(complexId))) 
 					&& !species.get(complexId).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)
