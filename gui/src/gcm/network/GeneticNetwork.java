@@ -623,10 +623,8 @@ public class GeneticNetwork {
 			//Marks activators that are complexes as abstractable provided they're not parts/outputs 
 			//Checks parts of complex activators provided the activators aren't outputs
 			for (SpeciesInterface s : p.getActivators()) {
-				boolean sequesterable = false;
 				if (partsMap.containsKey(s.getId())) {
-					sequesterable = checkSequester(s.getId(), s.getId());
-//					sequesterable = checkSequester(s.getId(), "");
+					checkSequester(s.getId(), s.getId());
 				}
 				if (complexMap.containsKey(s.getId()) && !s.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
 					checkComplex(s.getId(), "");
@@ -638,10 +636,8 @@ public class GeneticNetwork {
 			//Marks repressors that are complexes as abstractable provided they're not parts/outputs 
 			//Checks parts of complex repressors provided the repressors aren't outputs
 			for (SpeciesInterface s : p.getRepressors()) {
-				boolean sequesterable = false;
 				if (partsMap.containsKey(s.getId())) {
-					sequesterable = checkSequester(s.getId(), s.getId());
-//					sequesterable = checkSequester(s.getId(), "");
+					checkSequester(s.getId(), s.getId());
 				}
 				if (complexMap.containsKey(s.getId()) && !s.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
 					checkComplex(s.getId(), "");
