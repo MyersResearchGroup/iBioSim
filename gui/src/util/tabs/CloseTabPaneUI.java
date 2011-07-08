@@ -96,8 +96,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	private Hashtable<Integer, Integer> mnemonicToIndexMap;
 
 	/**
-	 * InputMap used for mnemonics. Only non-null if the JTabbedPane has mnemonics
-	 * associated with it. Lazily created in initMnemonics.
+	 * InputMap used for mnemonics. Only non-null if the JTabbedPane has
+	 * mnemonics associated with it. Lazily created in initMnemonics.
 	 */
 	private InputMap mnemonicInputMap;
 
@@ -143,13 +143,13 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	protected JPopupMenu actionPopupMenu;
 
 	protected JMenuItem closeItem;
-	
+
 	private Gui biosim;
-	
+
 	public CloseTabPaneUI(Gui biosim) {
 
 		super();
-		
+
 		String separator;
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
@@ -159,14 +159,13 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		}
 
 		this.biosim = biosim;
-		
+
 		closeImgB = new BufferedImage(BUTTONSIZE, BUTTONSIZE, BufferedImage.TYPE_4BYTE_ABGR);
 
 		closeImgI = new BufferedImage(BUTTONSIZE, BUTTONSIZE, BufferedImage.TYPE_4BYTE_ABGR);
 
 		closeB = new JButton();
-		closeB.setIcon(new ImageIcon(biosim.ENVVAR + separator + "gui" + separator
-				+ "icons" + separator + "close.gif"));
+		closeB.setIcon(new ImageIcon(biosim.ENVVAR + separator + "gui" + separator + "icons" + separator + "close.gif"));
 		closeB.setSize(BUTTONSIZE, BUTTONSIZE);
 
 		WindowsIconFactory.createFrameCloseIcon().paintIcon(closeB, closeImgI.createGraphics(), 0, 0);
@@ -228,8 +227,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	}
 
 	@Override
-	protected void layoutLabel(int tabPlacement, FontMetrics metrics, int tabIndex, String title,
-			Icon icon, Rectangle tabRect, Rectangle iconRect, Rectangle textRect, boolean isSelected) {
+	protected void layoutLabel(int tabPlacement, FontMetrics metrics, int tabIndex, String title, Icon icon, Rectangle tabRect, Rectangle iconRect,
+			Rectangle textRect, boolean isSelected) {
 		textRect.x = textRect.y = iconRect.x = iconRect.y = 0;
 
 		View v = getTextViewForTab(tabIndex);
@@ -237,9 +236,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			tabPane.putClientProperty("html", v);
 		}
 
-		SwingUtilities.layoutCompoundLabel(tabPane, metrics, title, icon,
-				SwingConstants.CENTER, SwingConstants.LEFT, SwingConstants.CENTER, SwingConstants.CENTER,
-				tabRect, iconRect, textRect, textIconGap);
+		SwingUtilities.layoutCompoundLabel(tabPane, metrics, title, icon, SwingConstants.CENTER, SwingConstants.LEFT, SwingConstants.CENTER,
+				SwingConstants.CENTER, tabRect, iconRect, textRect, textIconGap);
 
 		tabPane.putClientProperty("html", null);
 
@@ -501,8 +499,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	}
 
 	/**
-	 * Reloads the mnemonics. This should be invoked when a memonic changes, when
-	 * the title of a mnemonic changes, or when tabs are added/removed.
+	 * Reloads the mnemonics. This should be invoked when a memonic changes,
+	 * when the title of a mnemonic changes, or when tabs are added/removed.
 	 */
 	private void updateMnemonics() {
 		resetMnemonics();
@@ -542,10 +540,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	private void initMnemonics() {
 		mnemonicToIndexMap = new Hashtable<Integer, Integer>();
 		mnemonicInputMap = new InputMapUIResource();
-		mnemonicInputMap.setParent(SwingUtilities.getUIInputMap(tabPane,
-				JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT));
-		SwingUtilities.replaceUIInputMap(tabPane, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT,
-				mnemonicInputMap);
+		mnemonicInputMap.setParent(SwingUtilities.getUIInputMap(tabPane, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT));
+		SwingUtilities.replaceUIInputMap(tabPane, JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT, mnemonicInputMap);
 	}
 
 	// UI Rendering
@@ -570,8 +566,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	}
 
 	@Override
-	protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex,
-			Rectangle iconRect, Rectangle textRect) {
+	protected void paintTab(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect) {
 		Rectangle tabRect = rects[tabIndex];
 		int selectedIndex = tabPane.getSelectedIndex();
 		boolean isSelected = selectedIndex == tabIndex;
@@ -604,19 +599,16 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 			}
 		}
 
-		paintTabBackground(g, tabPlacement, tabIndex, tabRect.x, tabRect.y, tabRect.width,
-				tabRect.height, isSelected);
+		paintTabBackground(g, tabPlacement, tabIndex, tabRect.x, tabRect.y, tabRect.width, tabRect.height, isSelected);
 
-		paintTabBorder(g, tabPlacement, tabIndex, tabRect.x, tabRect.y, tabRect.width, tabRect.height,
-				isSelected);
+		paintTabBorder(g, tabPlacement, tabIndex, tabRect.x, tabRect.y, tabRect.width, tabRect.height, isSelected);
 
 		String title = tabPane.getTitleAt(tabIndex);
 		Font font = tabPane.getFont();
 		FontMetrics metrics = g.getFontMetrics(font);
 		Icon icon = getIconForTab(tabIndex);
 
-		layoutLabel(tabPlacement, metrics, tabIndex, title, icon, tabRect, iconRect, textRect,
-				isSelected);
+		layoutLabel(tabPlacement, metrics, tabIndex, title, icon, tabRect, iconRect, textRect, isSelected);
 
 		paintText(g, tabPlacement, font, metrics, tabIndex, title, textRect, isSelected);
 
@@ -645,8 +637,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		// g.drawImage(closeImgI, dx, dy + 1, null);
 	}
 
-	protected void paintActionButton(Graphics g, int dx, int dy, int status, boolean isOver,
-			JButton button, BufferedImage image) {
+	protected void paintActionButton(Graphics g, int dx, int dy, int status, boolean isOver, JButton button, BufferedImage image) {
 
 		button.setBorder(null);
 
@@ -668,22 +659,21 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	/*
 	 * This method will create and return a polygon shape for the given tab
-	 * rectangle which has been cropped at the specified cropline with a torn edge
-	 * visual. e.g. A "File" tab which has cropped been cropped just after the
-	 * "i": ------------- | ..... | | . | | ... . | | . . | | . . | | . . |
+	 * rectangle which has been cropped at the specified cropline with a torn
+	 * edge visual. e.g. A "File" tab which has cropped been cropped just after
+	 * the "i": ------------- | ..... | | . | | ... . | | . . | | . . | | . . |
 	 * --------------
 	 * 
 	 * The x, y arrays below define the pattern used to create a "torn" edge
 	 * segment which is repeated to fill the edge of the tab. For tabs placed on
-	 * TOP and BOTTOM, this righthand torn edge is created by line segments which
-	 * are defined by coordinates obtained by subtracting xCropLen[i] from (tab.x +
-	 * tab.width) and adding yCroplen[i] to (tab.y). For tabs placed on LEFT or
-	 * RIGHT, the bottom torn edge is created by subtracting xCropLen[i] from
-	 * (tab.y + tab.height) and adding yCropLen[i] to (tab.x).
+	 * TOP and BOTTOM, this righthand torn edge is created by line segments
+	 * which are defined by coordinates obtained by subtracting xCropLen[i] from
+	 * (tab.x + tab.width) and adding yCroplen[i] to (tab.y). For tabs placed on
+	 * LEFT or RIGHT, the bottom torn edge is created by subtracting xCropLen[i]
+	 * from (tab.y + tab.height) and adding yCropLen[i] to (tab.x).
 	 */
 
-	private void paintCroppedTabEdge(Graphics g, int tabPlacement, int tabIndex, boolean isSelected,
-			int x, int y) {
+	private void paintCroppedTabEdge(Graphics g, int tabPlacement, int tabIndex, boolean isSelected, int x, int y) {
 
 		g.setColor(shadow);
 		g.drawLine(x, y, x, y + rects[tabIndex].height);
@@ -696,8 +686,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		}
 		/*
 		 * If tabPane doesn't have a peer yet, the validate() call will silently
-		 * fail. We handle that by forcing a layout if tabPane is still invalid. See
-		 * bug 4237677.
+		 * fail. We handle that by forcing a layout if tabPane is still invalid.
+		 * See bug 4237677.
 		 */
 		if (!tabPane.isValid()) {
 			TabbedPaneLayout layout = (TabbedPaneLayout) tabPane.getLayout();
@@ -710,9 +700,9 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	 * JTabbedPane component. This is required because the tab rects are by
 	 * default defined in the coordinate space of the component where they are
 	 * rendered, which could be the JTabbedPane (for WRAP_TAB_LAYOUT) or a
-	 * ScrollableTabPanel (SCROLL_TAB_LAYOUT). This method should be used whenever
-	 * the tab rectangle must be relative to the JTabbedPane itself and the result
-	 * should be placed in a designated Rectangle object (rather than
+	 * ScrollableTabPanel (SCROLL_TAB_LAYOUT). This method should be used
+	 * whenever the tab rectangle must be relative to the JTabbedPane itself and
+	 * the result should be placed in a designated Rectangle object (rather than
 	 * instantiating and returning a new Rectangle each time). The tab index
 	 * parameter must be a valid tabbed pane tab index (0 to tab count - 1,
 	 * inclusive). The destination rectangle parameter must be a valid
@@ -720,9 +710,9 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	 * unspecified.
 	 * 
 	 * @param tabIndex
-	 *          the index of the tab
+	 *            the index of the tab
 	 * @param dest
-	 *          the rectangle where the result should be placed
+	 *            the rectangle where the result should be placed
 	 * @return the resulting rectangle
 	 * 
 	 * @since 1.4
@@ -965,9 +955,9 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	};
 
 	/**
-	 * Selects a tab in the JTabbedPane based on the String of the action command.
-	 * The tab selected is based on the first tab that has a mnemonic matching the
-	 * first character of the action command.
+	 * Selects a tab in the JTabbedPane based on the String of the action
+	 * command. The tab selected is based on the first tab that has a mnemonic
+	 * matching the first character of the action command.
 	 */
 	private static class SetSelectedIndexAction extends AbstractAction {
 		/**
@@ -1048,8 +1038,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	/**
 	 * This inner class is marked &quot;public&quot; due to a compiler bug. This
-	 * class should be treated as a &quot;protected&quot; inner class. Instantiate
-	 * it only within subclasses of BasicTabbedPaneUI.
+	 * class should be treated as a &quot;protected&quot; inner class.
+	 * Instantiate it only within subclasses of BasicTabbedPaneUI.
 	 */
 
 	private class TabbedPaneScrollLayout extends TabbedPaneLayout {
@@ -1117,8 +1107,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 					cx = tx + contentInsets.left;
 					cy = ty + th + contentInsets.top;
 					cw = bounds.width - insets.left - insets.right - contentInsets.left - contentInsets.right;
-					ch = bounds.height - insets.top - insets.bottom - th - contentInsets.top
-							- contentInsets.bottom;
+					ch = bounds.height - insets.top - insets.bottom - th - contentInsets.top - contentInsets.bottom;
 
 					for (int i = 0; i < numChildren; i++) {
 						Component child = tabPane.getComponent(i);
@@ -1161,8 +1150,7 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 								int dir = scrollbutton.scrollsForward() ? EAST : WEST;
 								scrollbutton.setDirection(dir);
 								visible = true;
-								bx = dir == EAST ? bounds.width - insets.left - bsize.width : bounds.width
-										- insets.left - 2 * bsize.width;
+								bx = dir == EAST ? bounds.width - insets.left - bsize.width : bounds.width - insets.left - 2 * bsize.width;
 								by = (tabPlacement == TOP ? ty + th - bsize.height : ty);
 							}
 
@@ -1329,16 +1317,14 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 			tabPane.repaint(vpRect.x, vpRect.y + vpRect.height, vpRect.width, contentInsets.top);
 			scrollBackwardButton.setEnabled(viewRect.x > 0);
-			scrollForwardButton.setEnabled(leadingTabIndex < tabCount - 1
-					&& viewSize.width - viewRect.x > viewRect.width);
+			scrollForwardButton.setEnabled(leadingTabIndex < tabCount - 1 && viewSize.width - viewRect.x > viewRect.width);
 
 		}
 
 		@Override
 		public String toString() {
-			return new String("viewport.viewSize=" + viewport.getViewSize() + "\n"
-					+ "viewport.viewRectangle=" + viewport.getViewRect() + "\n" + "leadingTabIndex="
-					+ leadingTabIndex + "\n" + "tabViewPosition=" + tabViewPosition);
+			return new String("viewport.viewSize=" + viewport.getViewSize() + "\n" + "viewport.viewRectangle=" + viewport.getViewRect() + "\n"
+					+ "leadingTabIndex=" + leadingTabIndex + "\n" + "tabViewPosition=" + tabViewPosition);
 		}
 
 	}
@@ -1373,17 +1359,15 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 		}
 	}
 
-	protected class ScrollableTabButton extends BasicArrowButton implements UIResource,
-			SwingConstants {
+	protected class ScrollableTabButton extends BasicArrowButton implements UIResource, SwingConstants {
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = -9177973352642315639L;
 
 		public ScrollableTabButton(int direction) {
-			super(direction, UIManager.getColor("TabbedPane.selected"), UIManager
-					.getColor("TabbedPane.shadow"), UIManager.getColor("TabbedPane.darkShadow"), UIManager
-					.getColor("TabbedPane.highlight"));
+			super(direction, UIManager.getColor("TabbedPane.selected"), UIManager.getColor("TabbedPane.shadow"), UIManager
+					.getColor("TabbedPane.darkShadow"), UIManager.getColor("TabbedPane.highlight"));
 
 		}
 
@@ -1395,8 +1379,8 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	/**
 	 * This inner class is marked &quot;public&quot; due to a compiler bug. This
-	 * class should be treated as a &quot;protected&quot; inner class. Instantiate
-	 * it only within subclasses of BasicTabbedPaneUI.
+	 * class should be treated as a &quot;protected&quot; inner class.
+	 * Instantiate it only within subclasses of BasicTabbedPaneUI.
 	 */
 	public class TabSelectionHandler implements ChangeListener {
 		public void stateChanged(ChangeEvent e) {
@@ -1415,18 +1399,18 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 
 	/**
 	 * This inner class is marked &quot;public&quot; due to a compiler bug. This
-	 * class should be treated as a &quot;protected&quot; inner class. Instantiate
-	 * it only within subclasses of BasicTabbedPaneUI.
+	 * class should be treated as a &quot;protected&quot; inner class.
+	 * Instantiate it only within subclasses of BasicTabbedPaneUI.
 	 */
 
 	/*
-	 * GES 2/3/99: The container listener code was added to support HTML rendering
-	 * of tab titles.
+	 * GES 2/3/99: The container listener code was added to support HTML
+	 * rendering of tab titles.
 	 * 
 	 * Ideally, we would be able to listen for property changes when a tab is
-	 * added or its text modified. At the moment there are no such events because
-	 * the Beans spec doesn't allow 'indexed' property changes (i.e. tab 2's text
-	 * changed from A to B).
+	 * added or its text modified. At the moment there are no such events
+	 * because the Beans spec doesn't allow 'indexed' property changes (i.e. tab
+	 * 2's text changed from A to B).
 	 * 
 	 * In order to get around this, we listen for tabs to be added or removed by
 	 * listening for the container events. we then queue up a runnable (so the
@@ -1434,14 +1418,14 @@ public class CloseTabPaneUI extends BasicTabbedPaneUI {
 	 * the new component to see if it requires HTML rendering.
 	 * 
 	 * The Views (one per tab title requiring HTML rendering) are stored in the
-	 * htmlViews Vector, which is only allocated after the first time we run into
-	 * an HTML tab. Note that this vector is kept in step with the number of
-	 * pages, and nulls are added for those pages whose tab title do not require
-	 * HTML rendering.
+	 * htmlViews Vector, which is only allocated after the first time we run
+	 * into an HTML tab. Note that this vector is kept in step with the number
+	 * of pages, and nulls are added for those pages whose tab title do not
+	 * require HTML rendering.
 	 * 
-	 * This makes it easy for the paint and layout code to tell whether to invoke
-	 * the HTML engine without having to check the string during time-sensitive
-	 * operations.
+	 * This makes it easy for the paint and layout code to tell whether to
+	 * invoke the HTML engine without having to check the string during
+	 * time-sensitive operations.
 	 * 
 	 * When we have added a way to listen for tab additions and changes to tab
 	 * text, this code should be removed and replaced by something which uses

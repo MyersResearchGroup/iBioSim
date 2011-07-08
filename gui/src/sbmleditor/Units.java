@@ -38,11 +38,11 @@ import util.MutableBoolean;
 import util.Utility;
 
 /**
-* This is a class for creating SBML units
-* 
-* @author Chris Myers
-* 
-*/
+ * This is a class for creating SBML units
+ * 
+ * @author Chris Myers
+ * 
+ */
 public class Units extends JPanel implements ActionListener, MouseListener {
 
 	private static final long serialVersionUID = 1L;
@@ -56,30 +56,30 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	private JList unitList; // JList of units
 
 	private JTextField exp, scale, mult; // unit list fields;
-	
+
 	private SBMLDocument document;
-	
+
 	private ArrayList<String> usedIDs;
-	
+
 	private MutableBoolean dirty;
-	
+
 	private Gui biosim;
-	
-	private String [] uList;
-	
-	public Units(Gui biosim,SBMLDocument document,ArrayList<String> usedIDs,MutableBoolean dirty) {
+
+	private String[] uList;
+
+	public Units(Gui biosim, SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty) {
 		super(new BorderLayout());
 		this.document = document;
 		this.usedIDs = usedIDs;
 		this.biosim = biosim;
 		this.dirty = dirty;
-		Model model =  document.getModel();
+		Model model = document.getModel();
 		addUnit = new JButton("Add Unit");
 		removeUnit = new JButton("Remove Unit");
 		editUnit = new JButton("Edit Unit");
 		unitDefs = new JList();
 		ListOf listOfUnits = model.getListOfUnitDefinitions();
-		String [] units = new String[(int) model.getNumUnitDefinitions()];
+		String[] units = new String[(int) model.getNumUnitDefinitions()];
 		for (int i = 0; i < model.getNumUnitDefinitions(); i++) {
 			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 			units[i] = unit.getId();
@@ -112,20 +112,15 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	private void unitEditor(String option) {
 		Pattern IDpat = Pattern.compile("([a-zA-Z]|_)([a-zA-Z]|[0-9]|_)*");
 		if (option.equals("OK") && unitDefs.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No unit definition selected.",
-					"Must Select a Unit Definition", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "No unit definition selected.", "Must Select a Unit Definition", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		String[] kindsL2V4 = { "ampere", "becquerel", "candela", "celsius", "coulomb",
-				"dimensionless", "farad", "gram", "gray", "henry", "hertz", "item", "joule",
-				"katal", "kelvin", "kilogram", "litre", "lumen", "lux", "metre", "mole", "newton",
-				"ohm", "pascal", "radian", "second", "siemens", "sievert", "steradian", "tesla",
-				"volt", "watt", "weber" };
-		String[] kindsL3V1 = { "ampere", "avogadro", "becquerel", "candela", "celsius", "coulomb",
-				"dimensionless", "farad", "gram", "gray", "henry", "hertz", "item", "joule",
-				"katal", "kelvin", "kilogram", "litre", "lumen", "lux", "metre", "mole", "newton",
-				"ohm", "pascal", "radian", "second", "siemens", "sievert", "steradian", "tesla",
-				"volt", "watt", "weber" };
+		String[] kindsL2V4 = { "ampere", "becquerel", "candela", "celsius", "coulomb", "dimensionless", "farad", "gram", "gray", "henry", "hertz",
+				"item", "joule", "katal", "kelvin", "kilogram", "litre", "lumen", "lux", "metre", "mole", "newton", "ohm", "pascal", "radian",
+				"second", "siemens", "sievert", "steradian", "tesla", "volt", "watt", "weber" };
+		String[] kindsL3V1 = { "ampere", "avogadro", "becquerel", "candela", "celsius", "coulomb", "dimensionless", "farad", "gram", "gray", "henry",
+				"hertz", "item", "joule", "katal", "kelvin", "kilogram", "litre", "lumen", "lux", "metre", "mole", "newton", "ohm", "pascal",
+				"radian", "second", "siemens", "sievert", "steradian", "tesla", "volt", "watt", "weber" };
 		String[] kinds;
 		if (document.getLevel() < 3) {
 			kinds = kindsL2V4;
@@ -160,8 +155,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		uList = new String[0];
 		if (option.equals("OK")) {
 			try {
-				UnitDefinition unit = document.getModel().getUnitDefinition(
-						(((String) unitDefs.getSelectedValue()).split(" ")[0]));
+				UnitDefinition unit = document.getModel().getUnitDefinition((((String) unitDefs.getSelectedValue()).split(" ")[0]));
 				unitID.setText(unit.getId());
 				unitName.setText(unit.getName());
 				uList = new String[(int) unit.getNumUnits()];
@@ -181,8 +175,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					}
 					else {
 						if (unit.getUnit(i).getExponentAsDouble() != 1) {
-							uList[i] = "( " + uList[i] + " )^"
-									+ unit.getUnit(i).getExponentAsDouble();
+							uList[i] = "( " + uList[i] + " )^" + unit.getUnit(i).getExponentAsDouble();
 						}
 					}
 				}
@@ -205,36 +198,29 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		unitDefPanel.add(unitPanel, "North");
 		unitDefPanel.add(unitListPanel, "South");
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, unitDefPanel,
-				"Unit Definition Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-				null, options, options[0]);
+		int value = JOptionPane.showOptionDialog(Gui.frame, unitDefPanel, "Unit Definition Editor", JOptionPane.YES_NO_OPTION,
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
 			if (unitID.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(Gui.frame, "A unit definition ID is required.",
-						"Enter an ID", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "A unit definition ID is required.", "Enter an ID", JOptionPane.ERROR_MESSAGE);
 				error = true;
-				value = JOptionPane.showOptionDialog(Gui.frame, unitDefPanel,
-						"Unit Definition Editor", JOptionPane.YES_NO_OPTION,
+				value = JOptionPane.showOptionDialog(Gui.frame, unitDefPanel, "Unit Definition Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
 			else {
 				String addUnit = "";
 				addUnit = unitID.getText().trim();
 				if (!(IDpat.matcher(addUnit).matches())) {
-					JOptionPane
-							.showMessageDialog(
-									Gui.frame,
-									"A unit definition ID can only contain letters, numbers, and underscores.",
-									"Invalid ID", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "A unit definition ID can only contain letters, numbers, and underscores.",
+							"Invalid ID", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 				else {
 					for (int i = 0; i < kinds.length; i++) {
 						if (kinds[i].equals(addUnit)) {
-							JOptionPane.showMessageDialog(Gui.frame,
-									"Unit ID matches a predefined unit.", "Enter a Unique ID",
+							JOptionPane.showMessageDialog(Gui.frame, "Unit ID matches a predefined unit.", "Enter a Unique ID",
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
 							break;
@@ -248,93 +234,69 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 								continue;
 						}
 						if (unitDefs.getModel().getElementAt(i).toString().equals(addUnit)) {
-							JOptionPane.showMessageDialog(Gui.frame, "Unit ID is not unique.",
-									"Enter a Unique ID", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(Gui.frame, "Unit ID is not unique.", "Enter a Unique ID", JOptionPane.ERROR_MESSAGE);
 							error = true;
 						}
 					}
 				}
 				if ((!error) && (uList.length == 0)) {
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Unit definition must have at least one unit.", "Unit Needed",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane
+							.showMessageDialog(Gui.frame, "Unit definition must have at least one unit.", "Unit Needed", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 				if ((!error)
 						&& (document.getLevel() < 3)
-						&& ((addUnit.equals("substance")) || (addUnit.equals("length"))
-								|| (addUnit.equals("area")) || (addUnit.equals("volume")) || (addUnit
+						&& ((addUnit.equals("substance")) || (addUnit.equals("length")) || (addUnit.equals("area")) || (addUnit.equals("volume")) || (addUnit
 								.equals("time")))) {
 					if (uList.length > 1) {
-						JOptionPane.showMessageDialog(Gui.frame,
-								"Redefinition of built-in unit must have a single unit.",
-								"Single Unit Required", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "Redefinition of built-in unit must have a single unit.", "Single Unit Required",
+								JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
 					if (!error && document.getLevel() < 3) {
 						if (addUnit.equals("substance")) {
 							if (!(extractUnitKind(uList[0]).equals("dimensionless")
-									|| (extractUnitKind(uList[0]).equals("mole") && 
-										Integer.valueOf(extractUnitExp(uList[0])) == 1)
-									|| (extractUnitKind(uList[0]).equals("item") && 
-										Integer.valueOf(extractUnitExp(uList[0])) == 1)
-									|| (extractUnitKind(uList[0]).equals("gram") && 
-										Integer.valueOf(extractUnitExp(uList[0])) == 1) 
-									|| (extractUnitKind(uList[0]).equals("kilogram") && 
-										Integer.valueOf(extractUnitExp(uList[0])) == 1))) {
+									|| (extractUnitKind(uList[0]).equals("mole") && Integer.valueOf(extractUnitExp(uList[0])) == 1)
+									|| (extractUnitKind(uList[0]).equals("item") && Integer.valueOf(extractUnitExp(uList[0])) == 1)
+									|| (extractUnitKind(uList[0]).equals("gram") && Integer.valueOf(extractUnitExp(uList[0])) == 1) || (extractUnitKind(
+									uList[0]).equals("kilogram") && Integer.valueOf(extractUnitExp(uList[0])) == 1))) {
 								JOptionPane.showMessageDialog(Gui.frame,
-									"Redefinition of substance must be dimensionless or\n in terms of moles, items, grams, or kilograms.",
-									"Incorrect Redefinition", JOptionPane.ERROR_MESSAGE);
+										"Redefinition of substance must be dimensionless or\n in terms of moles, items, grams, or kilograms.",
+										"Incorrect Redefinition", JOptionPane.ERROR_MESSAGE);
 								error = true;
 							}
 						}
 						else if (addUnit.equals("time")) {
-							if (!(extractUnitKind(uList[0]).equals("dimensionless") || (extractUnitKind(
-									uList[0]).equals("second") && Integer
+							if (!(extractUnitKind(uList[0]).equals("dimensionless") || (extractUnitKind(uList[0]).equals("second") && Integer
 									.valueOf(extractUnitExp(uList[0])) == 1))) {
-								JOptionPane
-										.showMessageDialog(
-												Gui.frame,
-												"Redefinition of time must be dimensionless or in terms of seconds.",
-												"Incorrect Redefinition", JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(Gui.frame, "Redefinition of time must be dimensionless or in terms of seconds.",
+										"Incorrect Redefinition", JOptionPane.ERROR_MESSAGE);
 								error = true;
 							}
 						}
 						else if (addUnit.equals("length")) {
-							if (!(extractUnitKind(uList[0]).equals("dimensionless") || (extractUnitKind(
-									uList[0]).equals("metre") && Integer
+							if (!(extractUnitKind(uList[0]).equals("dimensionless") || (extractUnitKind(uList[0]).equals("metre") && Integer
 									.valueOf(extractUnitExp(uList[0])) == 1))) {
-								JOptionPane
-										.showMessageDialog(
-												Gui.frame,
-												"Redefinition of length must be dimensionless or in terms of metres.",
-												"Incorrect Redefinition", JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(Gui.frame, "Redefinition of length must be dimensionless or in terms of metres.",
+										"Incorrect Redefinition", JOptionPane.ERROR_MESSAGE);
 								error = true;
 							}
 						}
 						else if (addUnit.equals("area")) {
-							if (!(extractUnitKind(uList[0]).equals("dimensionless") || (extractUnitKind(
-									uList[0]).equals("metre") && Integer
+							if (!(extractUnitKind(uList[0]).equals("dimensionless") || (extractUnitKind(uList[0]).equals("metre") && Integer
 									.valueOf(extractUnitExp(uList[0])) == 2))) {
-								JOptionPane
-										.showMessageDialog(
-												Gui.frame,
-												"Redefinition of area must be dimensionless or in terms of metres^2.",
-												"Incorrect Redefinition", JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(Gui.frame, "Redefinition of area must be dimensionless or in terms of metres^2.",
+										"Incorrect Redefinition", JOptionPane.ERROR_MESSAGE);
 								error = true;
 							}
 						}
 						else if (addUnit.equals("volume")) {
 							if (!(extractUnitKind(uList[0]).equals("dimensionless")
-									|| (extractUnitKind(uList[0]).equals("litre") && Integer
-											.valueOf(extractUnitExp(uList[0])) == 1) || (extractUnitKind(
-									uList[0]).equals("metre") && Integer
-									.valueOf(extractUnitExp(uList[0])) == 3))) {
-								JOptionPane
-										.showMessageDialog(
-												Gui.frame,
-												"Redefinition of volume must be dimensionless or in terms of litres or metres^3.",
-												"Incorrect Redefinition", JOptionPane.ERROR_MESSAGE);
+									|| (extractUnitKind(uList[0]).equals("litre") && Integer.valueOf(extractUnitExp(uList[0])) == 1) || (extractUnitKind(
+									uList[0]).equals("metre") && Integer.valueOf(extractUnitExp(uList[0])) == 3))) {
+								JOptionPane.showMessageDialog(Gui.frame,
+										"Redefinition of volume must be dimensionless or in terms of litres or metres^3.", "Incorrect Redefinition",
+										JOptionPane.ERROR_MESSAGE);
 								error = true;
 							}
 						}
@@ -342,8 +304,8 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				}
 				if (!error) {
 					if (option.equals("OK")) {
-						String [] units = new String[unitDefs.getModel().getSize()];
-						for (int i=0;i<unitDefs.getModel().getSize();i++) {
+						String[] units = new String[unitDefs.getModel().getSize()];
+						for (int i = 0; i < unitDefs.getModel().getSize(); i++) {
 							units[i] = unitDefs.getModel().getElementAt(i).toString();
 						}
 						int index = unitDefs.getSelectedIndex();
@@ -367,16 +329,13 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 							Unit unit = u.createUnit();
 							unit.setKind(libsbml.UnitKind_forName(extractUnitKind(uList[i])));
 							if (document.getLevel() < 3) {
-								unit.setExponent(Integer.valueOf(extractUnitExp(uList[i]))
-										.intValue());
+								unit.setExponent(Integer.valueOf(extractUnitExp(uList[i])).intValue());
 							}
 							else {
-								unit.setExponent(Double.valueOf(extractUnitExp(uList[i]))
-										.doubleValue());
+								unit.setExponent(Double.valueOf(extractUnitExp(uList[i])).doubleValue());
 							}
 							unit.setScale(Integer.valueOf(extractUnitScale(uList[i])).intValue());
-							unit.setMultiplier(Double.valueOf(extractUnitMult(uList[i]))
-									.doubleValue());
+							unit.setMultiplier(Double.valueOf(extractUnitMult(uList[i])).doubleValue());
 						}
 						// error = checkUnits();
 						if (!error) {
@@ -392,8 +351,8 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					else {
-						String [] units = new String[unitDefs.getModel().getSize()];
-						for (int i=0;i<unitDefs.getModel().getSize();i++) {
+						String[] units = new String[unitDefs.getModel().getSize()];
+						for (int i = 0; i < unitDefs.getModel().getSize(); i++) {
 							units[i] = unitDefs.getModel().getElementAt(i).toString();
 						}
 						int index = unitDefs.getSelectedIndex();
@@ -405,24 +364,20 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 							Unit unit = u.createUnit();
 							unit.setKind(libsbml.UnitKind_forName(extractUnitKind(uList[i])));
 							if (document.getLevel() < 3) {
-								unit.setExponent(Integer.valueOf(extractUnitExp(uList[i]))
-										.intValue());
+								unit.setExponent(Integer.valueOf(extractUnitExp(uList[i])).intValue());
 							}
 							else {
-								unit.setExponent(Double.valueOf(extractUnitExp(uList[i]))
-										.doubleValue());
+								unit.setExponent(Double.valueOf(extractUnitExp(uList[i])).doubleValue());
 							}
 							unit.setScale(Integer.valueOf(extractUnitScale(uList[i])).intValue());
-							unit.setMultiplier(Double.valueOf(extractUnitMult(uList[i]))
-									.doubleValue());
+							unit.setMultiplier(Double.valueOf(extractUnitMult(uList[i])).doubleValue());
 						}
 						JList add = new JList();
 						Object[] adding = { addUnit };
 						add.setListData(adding);
 						add.setSelectedIndex(0);
 						unitDefs.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						adding = Utility.add(units, unitDefs, add, false, null, null, null, null,
-								null, null, Gui.frame);
+						adding = Utility.add(units, unitDefs, add, false, null, null, null, null, null, null, Gui.frame);
 						units = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							units[i] = (String) adding[i];
@@ -440,8 +395,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					dirty.setValue(true);
 				}
 				if (error) {
-					value = JOptionPane.showOptionDialog(Gui.frame, unitDefPanel,
-							"Unit Definition Editor", JOptionPane.YES_NO_OPTION,
+					value = JOptionPane.showOptionDialog(Gui.frame, unitDefPanel, "Unit Definition Editor", JOptionPane.YES_NO_OPTION,
 							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				}
 			}
@@ -456,8 +410,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	 */
 	private void unitListEditor(String option) {
 		if (option.equals("OK") && unitList.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No unit selected.", "Must Select an Unit",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "No unit selected.", "Must Select an Unit", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		JPanel unitListPanel = new JPanel();
@@ -466,16 +419,12 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		JLabel expLabel = new JLabel("Exponent:");
 		JLabel scaleLabel = new JLabel("Scale:");
 		JLabel multLabel = new JLabel("Multiplier:");
-		String[] kindsL2V4 = { "ampere", "becquerel", "candela", "celsius", "coulomb",
-				"dimensionless", "farad", "gram", "gray", "henry", "hertz", "item", "joule",
-				"katal", "kelvin", "kilogram", "litre", "lumen", "lux", "metre", "mole", "newton",
-				"ohm", "pascal", "radian", "second", "siemens", "sievert", "steradian", "tesla",
-				"volt", "watt", "weber" };
-		String[] kindsL3V1 = { "ampere", "avogadro", "becquerel", "candela", "celsius", "coulomb",
-				"dimensionless", "farad", "gram", "gray", "henry", "hertz", "item", "joule",
-				"katal", "kelvin", "kilogram", "litre", "lumen", "lux", "metre", "mole", "newton",
-				"ohm", "pascal", "radian", "second", "siemens", "sievert", "steradian", "tesla",
-				"volt", "watt", "weber" };
+		String[] kindsL2V4 = { "ampere", "becquerel", "candela", "celsius", "coulomb", "dimensionless", "farad", "gram", "gray", "henry", "hertz",
+				"item", "joule", "katal", "kelvin", "kilogram", "litre", "lumen", "lux", "metre", "mole", "newton", "ohm", "pascal", "radian",
+				"second", "siemens", "sievert", "steradian", "tesla", "volt", "watt", "weber" };
+		String[] kindsL3V1 = { "ampere", "avogadro", "becquerel", "candela", "celsius", "coulomb", "dimensionless", "farad", "gram", "gray", "henry",
+				"hertz", "item", "joule", "katal", "kelvin", "kilogram", "litre", "lumen", "lux", "metre", "mole", "newton", "ohm", "pascal",
+				"radian", "second", "siemens", "sievert", "steradian", "tesla", "volt", "watt", "weber" };
 		String[] kinds;
 		if (document.getLevel() < 3) {
 			kinds = kindsL2V4;
@@ -507,8 +456,8 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		ULPanel.add(mult);
 		unitListPanel.add(ULPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, unitListPanel, "Unit List Editor",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		int value = JOptionPane.showOptionDialog(Gui.frame, unitListPanel, "Unit List Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+				null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
@@ -517,8 +466,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					Integer.valueOf(exp.getText().trim()).intValue();
 				}
 				catch (Exception e) {
-					JOptionPane.showMessageDialog(Gui.frame, "Exponent must be an integer.",
-							"Integer Expected", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Exponent must be an integer.", "Integer Expected", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 			}
@@ -527,8 +475,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					Double.valueOf(exp.getText().trim()).doubleValue();
 				}
 				catch (Exception e) {
-					JOptionPane.showMessageDialog(Gui.frame, "Exponent must be a double.",
-							"Double Expected", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Exponent must be a double.", "Double Expected", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 			}
@@ -537,8 +484,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					Integer.valueOf(scale.getText().trim()).intValue();
 				}
 				catch (Exception e) {
-					JOptionPane.showMessageDialog(Gui.frame, "Scale must be an integer.",
-							"Integer Expected", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Scale must be an integer.", "Integer Expected", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 			}
@@ -547,15 +493,14 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					Double.valueOf(mult.getText().trim()).doubleValue();
 				}
 				catch (Exception e) {
-					JOptionPane.showMessageDialog(Gui.frame, "Multiplier must be a double.",
-							"Double Expected", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Multiplier must be a double.", "Double Expected", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 			}
 			if (!error) {
 				if (option.equals("OK")) {
 					uList = new String[unitList.getModel().getSize()];
-					for (int i=0;i<unitList.getModel().getSize();i++) {
+					for (int i = 0; i < unitList.getModel().getSize(); i++) {
 						uList[i] = unitList.getModel().getElementAt(i).toString();
 					}
 					int index = unitList.getSelectedIndex();
@@ -579,7 +524,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				}
 				else {
 					uList = new String[unitList.getModel().getSize()];
-					for (int i=0;i<unitList.getModel().getSize();i++) {
+					for (int i = 0; i < unitList.getModel().getSize(); i++) {
 						uList[i] = unitList.getModel().getElementAt(i).toString();
 					}
 					JList add = new JList();
@@ -600,8 +545,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					unitList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(uList, unitList, add, false, null, null, null, null, null,
-							null, Gui.frame);
+					adding = Utility.add(uList, unitList, add, false, null, null, null, null, null, null, Gui.frame);
 					uList = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						uList[i] = (String) adding[i];
@@ -619,9 +563,8 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				dirty.setValue(true);
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(Gui.frame, unitListPanel,
-						"Unit List Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-						null, options, options[0]);
+				value = JOptionPane.showOptionDialog(Gui.frame, unitListPanel, "Unit List Editor", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
 		}
 		if (value == JOptionPane.NO_OPTION) {
@@ -635,8 +578,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	private void removeList() {
 		int index = unitDefs.getSelectedIndex();
 		if (index != -1) {
-			UnitDefinition tempUnit = document.getModel().getUnitDefinition(
-					((String) unitDefs.getSelectedValue()).split(" ")[0]);
+			UnitDefinition tempUnit = document.getModel().getUnitDefinition(((String) unitDefs.getSelectedValue()).split(" ")[0]);
 			if (unitList.getSelectedIndex() != -1) {
 				String selected = (String) unitList.getSelectedValue();
 				ListOf u = tempUnit.getListOfUnits();
@@ -651,8 +593,9 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			unitList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			if (index < unitList.getModel().getSize()) {
 				unitList.setSelectedIndex(index);
-			} else {
-				unitList.setSelectedIndex(index-1);
+			}
+			else {
+				unitList.setSelectedIndex(index - 1);
 			}
 			dirty.setValue(true);
 		}
@@ -665,8 +608,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		int index = unitDefs.getSelectedIndex();
 		if (index != -1) {
 			if (!unitsInUse(((String) unitDefs.getSelectedValue()).split(" ")[0])) {
-				UnitDefinition tempUnit = document.getModel().getUnitDefinition(
-						((String) unitDefs.getSelectedValue()).split(" ")[0]);
+				UnitDefinition tempUnit = document.getModel().getUnitDefinition(((String) unitDefs.getSelectedValue()).split(" ")[0]);
 				ListOf u = document.getModel().getListOfUnitDefinitions();
 				for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
 					if (((UnitDefinition) u.get(i)).getId().equals(tempUnit.getId())) {
@@ -679,8 +621,9 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				unitDefs.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				if (index < unitDefs.getModel().getSize()) {
 					unitDefs.setSelectedIndex(index);
-				} else {
-					unitDefs.setSelectedIndex(index-1);
+				}
+				else {
+					unitDefs.setSelectedIndex(index - 1);
 				}
 				dirty.setValue(true);
 			}
@@ -747,12 +690,10 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		ArrayList<String> reacParametersUsing = new ArrayList<String>();
 		for (int i = 0; i < model.getNumReactions(); i++) {
 			for (int j = 0; j < model.getReaction(i).getKineticLaw().getNumParameters(); j++) {
-				Parameter parameters = (Parameter) model.getReaction(i).getKineticLaw()
-						.getListOfParameters().get(j);
+				Parameter parameters = (Parameter) model.getReaction(i).getKineticLaw().getListOfParameters().get(j);
 				if (parameters.getUnits().equals(unit)) {
 					inUse = true;
-					reacParametersUsing
-							.add(model.getReaction(i).getId() + "/" + parameters.getId());
+					reacParametersUsing.add(model.getReaction(i).getId() + "/" + parameters.getId());
 				}
 			}
 		}
@@ -830,8 +771,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			scroll.setMinimumSize(new Dimension(350, 350));
 			scroll.setPreferredSize(new Dimension(350, 350));
 			scroll.setViewportView(messageArea);
-			JOptionPane.showMessageDialog(Gui.frame, scroll, "Unable To Remove Variable",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, scroll, "Unable To Remove Variable", JOptionPane.ERROR_MESSAGE);
 		}
 		return inUse;
 	}
@@ -988,8 +928,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 	private String extractUnitScale(String selected) {
 		if (selected.contains(")^")) {
 			if (selected.contains("10^")) {
-				return selected.substring(selected.indexOf("10^") + 3,
-						selected.lastIndexOf("*") - 1);
+				return selected.substring(selected.indexOf("10^") + 3, selected.lastIndexOf("*") - 1);
 			}
 		}
 		else if (selected.contains("10^")) {
@@ -1065,7 +1004,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 		if (model.getNumCompartments() > 0) {
-			String [] comps = new String[(int)model.getNumCompartments()];
+			String[] comps = new String[(int) model.getNumCompartments()];
 			for (int i = 0; i < model.getNumCompartments(); i++) {
 				Compartment compartment = (Compartment) model.getListOfCompartments().get(i);
 				if (compartment.getUnits().equals(origId)) {
@@ -1085,15 +1024,14 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			Utility.sort(comps);
 		}
 		if (model.getNumSpecies() > 0) {
-			String [] specs = new String[(int)model.getNumSpecies()];
+			String[] specs = new String[(int) model.getNumSpecies()];
 			for (int i = 0; i < model.getNumSpecies(); i++) {
 				Species species = (Species) model.getListOfSpecies().get(i);
 				if (species.getUnits().equals(origId)) {
 					species.setUnits(newId);
 				}
 				if (species.isSetSpeciesType()) {
-					specs[i] = species.getId() + " " + species.getSpeciesType() + " "
-							+ species.getCompartment();
+					specs[i] = species.getId() + " " + species.getSpeciesType() + " " + species.getCompartment();
 				}
 				else {
 					specs[i] = species.getId() + " " + species.getCompartment();
@@ -1111,15 +1049,14 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			Utility.sort(specs);
 		}
 		if (model.getNumParameters() > 0) {
-			String [] params = new String[(int)model.getNumParameters()];
+			String[] params = new String[(int) model.getNumParameters()];
 			for (int i = 0; i < model.getNumParameters(); i++) {
 				Parameter parameter = (Parameter) model.getListOfParameters().get(i);
 				if (parameter.getUnits().equals(origId)) {
 					parameter.setUnits(newId);
 				}
 				if (parameter.isSetUnits()) {
-					params[i] = parameter.getId() + " " + parameter.getValue() + " "
-							+ parameter.getUnits();
+					params[i] = parameter.getId() + " " + parameter.getValue() + " " + parameter.getUnits();
 				}
 				else {
 					params[i] = parameter.getId() + " " + parameter.getValue();
@@ -1136,7 +1073,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		// if the add unit button is clicked
 		if (e.getSource() == addUnit) {
@@ -1168,7 +1105,8 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == unitList) {
 				unitListEditor("OK");
-			} else if (e.getSource() == unitDefs) {
+			}
+			else if (e.getSource() == unitDefs) {
 				unitEditor("OK");
 			}
 		}

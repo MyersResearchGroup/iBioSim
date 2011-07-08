@@ -9,7 +9,7 @@ public class ConstraintTermThread extends Thread {
 	private ArrayList<Reb2SacThread> threads;
 
 	private ArrayList<String> dirs, levelOne;
-	
+
 	private String stem;
 
 	public ConstraintTermThread(Reb2Sac reb2sac) {

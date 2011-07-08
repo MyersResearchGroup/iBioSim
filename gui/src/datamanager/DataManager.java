@@ -27,8 +27,7 @@ import org.sbml.libsbml.Species;
 import parser.*;
 import util.*;
 
-public class DataManager extends JPanel implements ActionListener, TableModelListener,
-		ListSelectionListener {
+public class DataManager extends JPanel implements ActionListener, TableModelListener, ListSelectionListener {
 
 	private static final long serialVersionUID = -2669704247953218544L;
 
@@ -78,8 +77,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 		previous = null;
 		try {
 			Properties p = new Properties();
-			FileInputStream load = new FileInputStream(new File(directory + separator + lrnName
-					+ ".lrn"));
+			FileInputStream load = new FileInputStream(new File(directory + separator + lrnName + ".lrn"));
 			p.load(load);
 			load.close();
 			ArrayList<String> getValues = new ArrayList<String>();
@@ -156,38 +154,32 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == add) {
-			String dataFile = JOptionPane.showInputDialog(Gui.frame, "Enter Data File ID:",
-					"Data File ID", JOptionPane.PLAIN_MESSAGE);
+			String dataFile = JOptionPane.showInputDialog(Gui.frame, "Enter Data File ID:", "Data File ID", JOptionPane.PLAIN_MESSAGE);
 			if (dataFile != null && !dataFile.trim().equals("")) {
 				dataFile = dataFile.trim();
 				try {
 					Properties p = new Properties();
-					FileInputStream load = new FileInputStream(new File(directory + separator
-							+ lrnName + ".lrn"));
+					FileInputStream load = new FileInputStream(new File(directory + separator + lrnName + ".lrn"));
 					p.load(load);
 					load.close();
 					for (String s : p.keySet().toArray(new String[0])) {
 						if (p.getProperty(s).equals(dataFile)) {
-							JOptionPane.showMessageDialog(Gui.frame,
-									"A file with that description already exists.",
-									"Description Must Be Unique", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(Gui.frame, "A file with that description already exists.", "Description Must Be Unique",
+									JOptionPane.ERROR_MESSAGE);
 							return;
 						}
 					}
 					int run = 0;
 					String[] list = new File(directory).list();
 					for (int i = 0; i < list.length; i++) {
-						if (!(new File(directory + separator + list[i]).isDirectory())
-								&& list[i].length() > 4) {
+						if (!(new File(directory + separator + list[i]).isDirectory()) && list[i].length() > 4) {
 							String end = "";
 							for (int j = 1; j < 5; j++) {
 								end = list[i].charAt(list[i].length() - j) + end;
 							}
 							if (end.equals(".tsd")) {
 								if (list[i].contains("run-")) {
-									int tempNum = Integer.parseInt(list[i].substring(4, list[i]
-											.length()
-											- end.length()));
+									int tempNum = Integer.parseInt(list[i].substring(4, list[i].length() - end.length()));
 									if (tempNum > run) {
 										run = tempNum;
 									}
@@ -207,8 +199,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					Parser parser = new Parser(specs, data);
 					parser.outputTSD(directory + separator + end);
 					p.setProperty(end, dataFile);
-					FileOutputStream store = new FileOutputStream(new File(directory + separator
-							+ lrnName + ".lrn"));
+					FileOutputStream store = new FileOutputStream(new File(directory + separator + lrnName + ".lrn"));
 					p.store(store, "Learn File Data");
 					store.close();
 					ArrayList<String> getValues = new ArrayList<String>();
@@ -222,14 +213,10 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					files.setListData(s);
 					this.list = s;
 					files.setSelectedValue(dataFile, true);
-					biosim
-							.refreshLearn(
-									directory.split(separator)[directory.split(separator).length - 1],
-									true);
+					biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1], true);
 				}
 				catch (IOException e1) {
-					JOptionPane.showMessageDialog(Gui.frame, "Unable to add new file.",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Unable to add new file.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -237,8 +224,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 			if (files.getSelectedIndices().length > 0) {
 				try {
 					Properties p = new Properties();
-					FileInputStream load = new FileInputStream(new File(directory + separator
-							+ lrnName + ".lrn"));
+					FileInputStream load = new FileInputStream(new File(directory + separator + lrnName + ".lrn"));
 					p.load(load);
 					load.close();
 					Object[] delete = files.getSelectedValues();
@@ -246,17 +232,14 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						int run = 0;
 						String[] list = new File(directory).list();
 						for (int i = 0; i < list.length; i++) {
-							if (!(new File(directory + separator + list[i]).isDirectory())
-									&& list[i].length() > 4) {
+							if (!(new File(directory + separator + list[i]).isDirectory()) && list[i].length() > 4) {
 								String end = "";
 								for (int j = 1; j < 5; j++) {
 									end = list[i].charAt(list[i].length() - j) + end;
 								}
 								if (end.equals(".tsd")) {
 									if (list[i].contains("run-")) {
-										int tempNum = Integer.parseInt(list[i].substring(4, list[i]
-												.length()
-												- end.length()));
+										int tempNum = Integer.parseInt(list[i].substring(4, list[i].length() - end.length()));
 										if (tempNum > run) {
 											run = tempNum;
 										}
@@ -272,8 +255,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 								}
 								else {
 									new File(directory + separator + s).delete();
-									new File(directory + separator + "run-" + run + ".tsd")
-											.renameTo(new File(directory + separator + s));
+									new File(directory + separator + "run-" + run + ".tsd").renameTo(new File(directory + separator + s));
 									p.setProperty(s, p.getProperty("run-" + run + ".tsd"));
 									p.remove("run-" + run + ".tsd");
 								}
@@ -281,8 +263,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 							}
 						}
 					}
-					FileOutputStream store = new FileOutputStream(new File(directory + separator
-							+ lrnName + ".lrn"));
+					FileOutputStream store = new FileOutputStream(new File(directory + separator + lrnName + ".lrn"));
 					p.store(store, "Learn File Data");
 					store.close();
 					ArrayList<String> getValues = new ArrayList<String>();
@@ -295,10 +276,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					sort(s);
 					files.setListData(s);
 					list = s;
-					biosim
-							.refreshLearn(
-									directory.split(separator)[directory.split(separator).length - 1],
-									true);
+					biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1], true);
 					this.removeAll();
 					table = new JTable();
 					scroll1 = new JScrollPane();
@@ -316,31 +294,24 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					this.revalidate();
 					this.repaint();
 					dirty = false;
-					biosim.refreshLearn(
-							directory.split(separator)[directory.split(separator).length - 1],
-							false);
+					biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1], false);
 				}
 				catch (IOException e1) {
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Unable to remove selected files.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Unable to remove selected files.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
 		else if (e.getSource() == rename) {
 			if (files.getSelectedIndices().length > 1) {
-				JOptionPane.showMessageDialog(Gui.frame,
-						"You can only select one file to rename at a time.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "You can only select one file to rename at a time.", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			else if (files.getSelectedIndices().length < 1) {
-				JOptionPane.showMessageDialog(Gui.frame, "You must select a file to rename.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "You must select a file to rename.", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			try {
-				String rename = JOptionPane.showInputDialog(Gui.frame,
-						"Please Enter New Name:", "Rename", JOptionPane.PLAIN_MESSAGE);
+				String rename = JOptionPane.showInputDialog(Gui.frame, "Please Enter New Name:", "Rename", JOptionPane.PLAIN_MESSAGE);
 				if (rename != null && !rename.trim().equals("")) {
 					rename = rename.trim();
 				}
@@ -348,15 +319,13 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					return;
 				}
 				Properties p = new Properties();
-				FileInputStream load = new FileInputStream(new File(directory + separator + lrnName
-						+ ".lrn"));
+				FileInputStream load = new FileInputStream(new File(directory + separator + lrnName + ".lrn"));
 				p.load(load);
 				load.close();
 				for (String s : list) {
 					if (s.equals(rename)) {
-						JOptionPane.showMessageDialog(Gui.frame,
-								"A file with that description already exists.",
-								"Description Must Be Unique", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "A file with that description already exists.", "Description Must Be Unique",
+								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
@@ -365,8 +334,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						p.setProperty(s, rename);
 					}
 				}
-				FileOutputStream store = new FileOutputStream(new File(directory + separator
-						+ lrnName + ".lrn"));
+				FileOutputStream store = new FileOutputStream(new File(directory + separator + lrnName + ".lrn"));
 				p.store(store, "Learn File Data");
 				store.close();
 				ArrayList<String> getValues = new ArrayList<String>();
@@ -383,25 +351,20 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				files.setSelectedValue(rename, true);
 			}
 			catch (IOException e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to rename selected file.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to rename selected file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		else if (e.getSource() == copy) {
 			if (files.getSelectedIndices().length > 1) {
-				JOptionPane.showMessageDialog(Gui.frame,
-						"You can only select one file to copy at a time.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "You can only select one file to copy at a time.", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			else if (files.getSelectedIndices().length < 1) {
-				JOptionPane.showMessageDialog(Gui.frame, "You must select a file to copy.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "You must select a file to copy.", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			try {
-				String copy = JOptionPane.showInputDialog(Gui.frame, "Please Enter New Name:",
-						"Copy", JOptionPane.PLAIN_MESSAGE);
+				String copy = JOptionPane.showInputDialog(Gui.frame, "Please Enter New Name:", "Copy", JOptionPane.PLAIN_MESSAGE);
 				if (copy != null && !copy.trim().equals("")) {
 					copy = copy.trim();
 				}
@@ -412,17 +375,14 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				int run = 0;
 				String[] list = new File(directory).list();
 				for (int i = 0; i < list.length; i++) {
-					if (!(new File(directory + separator + list[i]).isDirectory())
-							&& list[i].length() > 4) {
+					if (!(new File(directory + separator + list[i]).isDirectory()) && list[i].length() > 4) {
 						String end = "";
 						for (int j = 1; j < 5; j++) {
 							end = list[i].charAt(list[i].length() - j) + end;
 						}
 						if (end.equals(".tsd")) {
 							if (list[i].contains("run-")) {
-								int tempNum = Integer.parseInt(list[i].substring(4, list[i]
-										.length()
-										- end.length()));
+								int tempNum = Integer.parseInt(list[i].substring(4, list[i].length() - end.length()));
 								if (tempNum > run) {
 									run = tempNum;
 								}
@@ -431,25 +391,21 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					}
 				}
 				Properties p = new Properties();
-				FileInputStream load = new FileInputStream(new File(directory + separator + lrnName
-						+ ".lrn"));
+				FileInputStream load = new FileInputStream(new File(directory + separator + lrnName + ".lrn"));
 				p.load(load);
 				load.close();
 				for (String s : this.list) {
 					if (s.equals(copy)) {
-						JOptionPane.showMessageDialog(Gui.frame,
-								"A file with that description already exists.",
-								"Description Must Be Unique", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "A file with that description already exists.", "Description Must Be Unique",
+								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
 				for (String s : p.keySet().toArray(new String[0])) {
 					if (p.getProperty(s).equals(files.getSelectedValue())) {
 						String end = "run-" + (run + 1) + ".tsd";
-						FileOutputStream out = new FileOutputStream(new File(directory + separator
-								+ end));
-						FileInputStream in = new FileInputStream(
-								new File(directory + separator + s));
+						FileOutputStream out = new FileOutputStream(new File(directory + separator + end));
+						FileInputStream in = new FileInputStream(new File(directory + separator + s));
 						int read = in.read();
 						while (read != -1) {
 							out.write(read);
@@ -460,8 +416,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						p.setProperty(end, copy);
 					}
 				}
-				FileOutputStream store = new FileOutputStream(new File(directory + separator
-						+ lrnName + ".lrn"));
+				FileOutputStream store = new FileOutputStream(new File(directory + separator + lrnName + ".lrn"));
 				p.store(store, "Learn File Data");
 				store.close();
 				ArrayList<String> getValues = new ArrayList<String>();
@@ -478,26 +433,20 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				files.setSelectedValue(copy, true);
 			}
 			catch (IOException e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to copy selected file.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to copy selected file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		else if (e.getSource() == copyFromView) {
-			String root = directory.substring(0, directory.length()
-					- directory.split(separator)[directory.split(separator).length - 1].length());
+			String root = directory.substring(0, directory.length() - directory.split(separator)[directory.split(separator).length - 1].length());
 			ArrayList<String> list = new ArrayList<String>();
 			for (String s : new File(root).list()) {
-				if (new File(root + separator + s).isDirectory()
-						&& !s
-								.equals(directory.split(separator)[directory.split(separator).length - 1])) {
+				if (new File(root + separator + s).isDirectory() && !s.equals(directory.split(separator)[directory.split(separator).length - 1])) {
 					boolean add = false;
 					for (String ss : new File(root + separator + s).list()) {
 						if (new File(root + separator + s + separator + ss).isDirectory()) {
 							boolean add2 = false;
-							for (String sss : new File(root + separator + s + separator + ss)
-									.list()) {
-								if (sss.endsWith(".tsd") && !sss.equals("mean.tsd")
-										&& !sss.equals("standard_deviation.tsd")
+							for (String sss : new File(root + separator + s + separator + ss).list()) {
+								if (sss.endsWith(".tsd") && !sss.equals("mean.tsd") && !sss.equals("standard_deviation.tsd")
 										&& !sss.equals("variance.tsd")) {
 									add2 = true;
 								}
@@ -506,9 +455,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 								list.add(s + separator + ss);
 							}
 						}
-						else if (ss.endsWith(".tsd") && !ss.equals("mean.tsd")
-								&& !ss.equals("standard_deviation.tsd")
-								&& !ss.equals("variance.tsd")) {
+						else if (ss.endsWith(".tsd") && !ss.equals("mean.tsd") && !ss.equals("standard_deviation.tsd") && !ss.equals("variance.tsd")) {
 							add = true;
 						}
 					}
@@ -528,25 +475,21 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				sims.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				sims.setSelectedIndex(0);
 				Object[] options = { "Select", "Cancel" };
-				int value = JOptionPane.showOptionDialog(Gui.frame, scroll, "Select View",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-						options[0]);
+				int value = JOptionPane.showOptionDialog(Gui.frame, scroll, "Select View", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+						null, options, options[0]);
 				if (value == JOptionPane.YES_OPTION) {
 					saveChanges(null);
 					int run = 0;
 					String[] lists = new File(directory).list();
 					for (int i = 0; i < lists.length; i++) {
-						if (!(new File(directory + separator + lists[i]).isDirectory())
-								&& lists[i].length() > 4) {
+						if (!(new File(directory + separator + lists[i]).isDirectory()) && lists[i].length() > 4) {
 							String end = "";
 							for (int j = 1; j < 5; j++) {
 								end = lists[i].charAt(lists[i].length() - j) + end;
 							}
 							if (end.equals(".tsd")) {
 								if (lists[i].contains("run-")) {
-									int tempNum = Integer.parseInt(lists[i].substring(4, lists[i]
-											.length()
-											- end.length()));
+									int tempNum = Integer.parseInt(lists[i].substring(4, lists[i].length() - end.length()));
 									if (tempNum > run) {
 										run = tempNum;
 									}
@@ -557,29 +500,23 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					String[] list1 = new File(root + separator + sims.getSelectedValue()).list();
 					Properties p = new Properties();
 					try {
-						FileInputStream load = new FileInputStream(new File(directory + separator
-								+ lrnName + ".lrn"));
+						FileInputStream load = new FileInputStream(new File(directory + separator + lrnName + ".lrn"));
 						p.load(load);
 						load.close();
 					}
 					catch (IOException e1) {
 					}
 					for (int i = 0; i < list1.length; i++) {
-						if (!(new File(root + separator + sims.getSelectedValue() + separator
-								+ list1[i]).isDirectory())
-								&& list1[i].length() > 4) {
+						if (!(new File(root + separator + sims.getSelectedValue() + separator + list1[i]).isDirectory()) && list1[i].length() > 4) {
 							String end = "";
 							for (int j = 1; j < 5; j++) {
 								end = list1[i].charAt(list1[i].length() - j) + end;
 							}
-							if (end.equals(".tsd") && !list1[i].equals("mean.tsd")
-									&& !list1[i].equals("standard_deviation.tsd")
+							if (end.equals(".tsd") && !list1[i].equals("mean.tsd") && !list1[i].equals("standard_deviation.tsd")
 									&& !list1[i].equals("variance.tsd")) {
 								try {
 									String last = "run-" + (run + 1) + ".tsd";
-									TSDParser tsd = new TSDParser(root + separator
-											+ sims.getSelectedValue() + separator + list1[i],
-											false);
+									TSDParser tsd = new TSDParser(root + separator + sims.getSelectedValue() + separator + list1[i], false);
 									ArrayList<String> specs = tsd.getSpecies();
 									ArrayList<ArrayList<Double>> data = tsd.getData();
 									int a, b;
@@ -589,8 +526,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 										index = specs.get(a);
 										index2 = data.get(a);
 										b = a;
-										while ((b > 1)
-												&& specs.get(b - 1).compareToIgnoreCase(index) > 0) {
+										while ((b > 1) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
 											specs.set(b, specs.get(b - 1));
 											data.set(b, data.get(b - 1));
 											b = b - 1;
@@ -601,14 +537,11 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 									tsd.setSpecies(specs);
 									tsd.setData(data);
 									tsd.outputTSD(directory + separator + last);
-									p.setProperty(last, sims.getSelectedValue() + separator
-											+ list1[i]);
+									p.setProperty(last, sims.getSelectedValue() + separator + list1[i]);
 									run++;
 								}
 								catch (Exception e1) {
-									JOptionPane.showMessageDialog(Gui.frame,
-											"Unable to copy from view.", "Error",
-											JOptionPane.ERROR_MESSAGE);
+									JOptionPane.showMessageDialog(Gui.frame, "Unable to copy from view.", "Error", JOptionPane.ERROR_MESSAGE);
 								}
 							}
 						}
@@ -641,13 +574,11 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						this.revalidate();
 						this.repaint();
 						dirty = false;
-						FileOutputStream store = new FileOutputStream(new File(directory
-								+ separator + lrnName + ".lrn"));
+						FileOutputStream store = new FileOutputStream(new File(directory + separator + lrnName + ".lrn"));
 						p.store(store, "Learn File Data");
 						store.close();
 						if (ss.length > 0) {
-							biosim.refreshLearn(directory.split(separator)[directory
-									.split(separator).length - 1], true);
+							biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1], true);
 						}
 					}
 					catch (IOException e1) {
@@ -655,9 +586,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				}
 			}
 			else {
-				JOptionPane
-						.showMessageDialog(Gui.frame, "There are no views to copy data from.",
-								"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "There are no views to copy data from.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		else if (e.getSource() == importFile) {
@@ -669,8 +598,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 			else {
 				file = new File(biosimrc.get("biosim.general.import_dir", ""));
 			}
-			String importFile = Utility.browse(Gui.frame, file, null,
-					JFileChooser.FILES_AND_DIRECTORIES, "Import", -1);
+			String importFile = Utility.browse(Gui.frame, file, null, JFileChooser.FILES_AND_DIRECTORIES, "Import", -1);
 			if (importFile != null && !importFile.trim().equals("")) {
 				saveChanges(null);
 				importFile = importFile.trim();
@@ -678,17 +606,14 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				int run = 0;
 				String[] list = new File(directory).list();
 				for (int i = 0; i < list.length; i++) {
-					if (!(new File(directory + separator + list[i]).isDirectory())
-							&& list[i].length() > 4) {
+					if (!(new File(directory + separator + list[i]).isDirectory()) && list[i].length() > 4) {
 						String end = "";
 						for (int j = 1; j < 5; j++) {
 							end = list[i].charAt(list[i].length() - j) + end;
 						}
 						if (end.equals(".tsd")) {
 							if (list[i].contains("run-")) {
-								int tempNum = Integer.parseInt(list[i].substring(4, list[i]
-										.length()
-										- end.length()));
+								int tempNum = Integer.parseInt(list[i].substring(4, list[i].length() - end.length()));
 								if (tempNum > run) {
 									run = tempNum;
 								}
@@ -700,16 +625,14 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					String[] list1 = new File(importFile).list();
 					Properties p = new Properties();
 					try {
-						FileInputStream load = new FileInputStream(new File(directory + separator
-								+ lrnName + ".lrn"));
+						FileInputStream load = new FileInputStream(new File(directory + separator + lrnName + ".lrn"));
 						p.load(load);
 						load.close();
 					}
 					catch (IOException e1) {
 					}
 					for (int i = 0; i < list1.length; i++) {
-						if (!(new File(importFile + separator + list1[i]).isDirectory())
-								&& list1[i].length() > 4) {
+						if (!(new File(importFile + separator + list1[i]).isDirectory()) && list1[i].length() > 4) {
 							String end = "";
 							for (int j = 1; j < 5; j++) {
 								end = list1[i].charAt(list1[i].length() - j) + end;
@@ -717,8 +640,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 							if (end.equals(".tsd")) {
 								// try {
 								String last = "run-" + (run + 1) + ".tsd";
-								TSDParser tsd = new TSDParser(importFile + separator + list1[i],
-										false);
+								TSDParser tsd = new TSDParser(importFile + separator + list1[i], false);
 								ArrayList<String> specs = tsd.getSpecies();
 								ArrayList<ArrayList<Double>> data = tsd.getData();
 								int a, b;
@@ -728,8 +650,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 									index = specs.get(a);
 									index2 = data.get(a);
 									b = a;
-									while ((b > 1)
-											&& specs.get(b - 1).compareToIgnoreCase(index) > 0) {
+									while ((b > 1) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
 										specs.set(b, specs.get(b - 1));
 										data.set(b, data.get(b - 1));
 										b = b - 1;
@@ -779,13 +700,11 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						this.revalidate();
 						this.repaint();
 						dirty = false;
-						FileOutputStream store = new FileOutputStream(new File(directory
-								+ separator + lrnName + ".lrn"));
+						FileOutputStream store = new FileOutputStream(new File(directory + separator + lrnName + ".lrn"));
 						p.store(store, "Learn File Data");
 						store.close();
 						if (s.length > 0) {
-							biosim.refreshLearn(directory.split(separator)[directory
-									.split(separator).length - 1], true);
+							biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1], true);
 						}
 					}
 					catch (IOException e1) {
@@ -793,21 +712,16 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				}
 				else {
 					if (importFile.length() > 3
-							&& (importFile.substring(importFile.length() - 4, importFile.length())
-									.equals(".tsd")
-									|| importFile.substring(importFile.length() - 4,
-											importFile.length()).equals(".csv") || importFile
-									.substring(importFile.length() - 4, importFile.length())
-									.equals(".dat"))) {
+							&& (importFile.substring(importFile.length() - 4, importFile.length()).equals(".tsd")
+									|| importFile.substring(importFile.length() - 4, importFile.length()).equals(".csv") || importFile.substring(
+									importFile.length() - 4, importFile.length()).equals(".dat"))) {
 						try {
 							String end = "run-" + (run + 1) + ".tsd";
 							Parser parse;
-							if (importFile.substring(importFile.length() - 4, importFile.length())
-									.equals(".csv")) {
+							if (importFile.substring(importFile.length() - 4, importFile.length()).equals(".csv")) {
 								parse = new CSVParser(importFile, false);
 							}
-							else if (importFile.substring(importFile.length() - 4,
-									importFile.length()).equals(".dat")) {
+							else if (importFile.substring(importFile.length() - 4, importFile.length()).equals(".dat")) {
 								parse = new DATParser(importFile, false);
 							}
 							else {
@@ -823,8 +737,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 									index = specs.get(a);
 									index2 = data.get(a);
 									b = a;
-									while ((b > 1)
-											&& specs.get(b - 1).compareToIgnoreCase(index) > 0) {
+									while ((b > 1) && specs.get(b - 1).compareToIgnoreCase(index) > 0) {
 										specs.set(b, specs.get(b - 1));
 										data.set(b, data.get(b - 1));
 										b = b - 1;
@@ -842,11 +755,9 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 								Boolean varPresent = false;
 								// Finding the intersection of all the variables
 								// present in all data files.
-								for (int i = 1; (new File(directory + separator + "run-" + i
-										+ ".tsd")).exists(); i++) {
+								for (int i = 1; (new File(directory + separator + "run-" + i + ".tsd")).exists(); i++) {
 									Properties cProp = new Properties();
-									extractVars = new TSDParser(directory + separator + "run-" + i
-											+ ".tsd", false);
+									extractVars = new TSDParser(directory + separator + "run-" + i + ".tsd", false);
 									datFileVars = extractVars.getSpecies();
 									if (i == 1) {
 										allVars.addAll(datFileVars);
@@ -867,13 +778,11 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 								species = allVars.toArray(new String[0]);
 								// ADDED END SB
 								Properties p = new Properties();
-								FileInputStream load = new FileInputStream(new File(directory
-										+ separator + lrnName + ".lrn"));
+								FileInputStream load = new FileInputStream(new File(directory + separator + lrnName + ".lrn"));
 								p.load(load);
 								load.close();
 								p.setProperty(end, importFile);
-								FileOutputStream store = new FileOutputStream(new File(directory
-										+ separator + lrnName + ".lrn"));
+								FileOutputStream store = new FileOutputStream(new File(directory + separator + lrnName + ".lrn"));
 								p.store(store, "Learn File Data");
 								store.close();
 								ArrayList<String> getValues = new ArrayList<String>();
@@ -889,22 +798,19 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 								previous = "";
 								files.setSelectedValue(importFile, true);
 								if (s.length > 0) {
-									biosim.refreshLearn(directory.split(separator)[directory
-											.split(separator).length - 1], true);
+									biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1], true);
 								}
 							}
 						}
 						catch (IOException e1) {
-							JOptionPane.showMessageDialog(Gui.frame, "Unable to import file.",
-									"Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(Gui.frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 						}
 						catch (ArrayIndexOutOfBoundsException e1) {
 						}
 					}
 					else {
-						JOptionPane.showMessageDialog(Gui.frame, "Unable to import file."
-								+ "\nImported file must be a tsd, csv, or dat file.", "Error",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "Unable to import file." + "\nImported file must be a tsd, csv, or dat file.",
+								"Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
@@ -922,8 +828,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				try {
 					String file = (String) files.getSelectedValue();
 					Properties p = new Properties();
-					FileInputStream load = new FileInputStream(new File(directory + separator
-							+ lrnName + ".lrn"));
+					FileInputStream load = new FileInputStream(new File(directory + separator + lrnName + ".lrn"));
 					p.load(load);
 					load.close();
 					for (String s : p.keySet().toArray(new String[0])) {
@@ -933,11 +838,9 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					}
 				}
 				catch (IOException e1) {
-					JOptionPane.showMessageDialog(Gui.frame, "Unable to save file.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Unable to save file.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
-				biosim.refreshLearn(
-						directory.split(separator)[directory.split(separator).length - 1], true);
+				biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1], true);
 			}
 			dirty = false;
 		}
@@ -990,8 +893,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				createTable(dat, spec);
 				if (table.getRowCount() != 0) {
 					if (removeRow > table.getRowCount() - 1) {
-						table.addRowSelectionInterval(table.getRowCount() - 1,
-								table.getRowCount() - 1);
+						table.addRowSelectionInterval(table.getRowCount() - 1, table.getRowCount() - 1);
 					}
 					else {
 						table.addRowSelectionInterval(removeRow, removeRow);
@@ -1145,10 +1047,8 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						else {
 							newData.get(i).add(0.0);
 							if (!warning) {
-								JOptionPane.showMessageDialog(Gui.frame,
-										"Data entered into the data manager must be real numbers."
-												+ "\nReplacing invalid " + "entries with 0.0.",
-										"Invalid Entries In Data", JOptionPane.WARNING_MESSAGE);
+								JOptionPane.showMessageDialog(Gui.frame, "Data entered into the data manager must be real numbers."
+										+ "\nReplacing invalid " + "entries with 0.0.", "Invalid Entries In Data", JOptionPane.WARNING_MESSAGE);
 								warning = true;
 							}
 						}
@@ -1174,15 +1074,12 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				Object[] options = { "Yes", "No" };
 				int value;
 				if (descriptor == null) {
-					value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save"
-							+ " changes to the current file?", "Save", JOptionPane.YES_NO_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save" + " changes to the current file?", "Save",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				}
 				else {
-					value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save"
-							+ " changes to the current file for " + descriptor + "?", "Save",
-							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-							options[0]);
+					value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save" + " changes to the current file for " + descriptor + "?",
+							"Save", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				}
 				if (value == JOptionPane.YES_OPTION) {
 					TableModel m = table.getModel();
@@ -1195,8 +1092,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					Parser parser = new Parser(species, data);
 					try {
 						Properties p = new Properties();
-						FileInputStream load = new FileInputStream(new File(directory + separator
-								+ lrnName + ".lrn"));
+						FileInputStream load = new FileInputStream(new File(directory + separator + lrnName + ".lrn"));
 						p.load(load);
 						load.close();
 						for (String s : p.keySet().toArray(new String[0])) {
@@ -1206,13 +1102,9 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						}
 					}
 					catch (IOException e1) {
-						JOptionPane.showMessageDialog(Gui.frame, "Unable to save file.",
-								"Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "Unable to save file.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
-					biosim
-							.refreshLearn(
-									directory.split(separator)[directory.split(separator).length - 1],
-									true);
+					biosim.refreshLearn(directory.split(separator)[directory.split(separator).length - 1], true);
 				}
 				dirty = false;
 			}
@@ -1223,27 +1115,23 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 		String background;
 		try {
 			Properties p = new Properties();
-			FileInputStream load = new FileInputStream(new File(directory + separator + lrnName
-					+ ".lrn"));
+			FileInputStream load = new FileInputStream(new File(directory + separator + lrnName + ".lrn"));
 			p.load(load);
 			load.close();
 			if (p.containsKey("genenet.file")) {
 				String[] getProp = p.getProperty("genenet.file").split(separator);
-				background = directory.substring(0, directory.length() - lrnName.length())
-						+ separator + getProp[getProp.length - 1];
+				background = directory.substring(0, directory.length() - lrnName.length()) + separator + getProp[getProp.length - 1];
 			}
 			else if (p.containsKey("learn.file")) {
 				String[] getProp = p.getProperty("learn.file").split(separator);
-				background = directory.substring(0, directory.length() - lrnName.length())
-						+ separator + getProp[getProp.length - 1];
+				background = directory.substring(0, directory.length() - lrnName.length()) + separator + getProp[getProp.length - 1];
 			}
 			else {
 				background = null;
 			}
 		}
 		catch (IOException e) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to load background file.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to load background file.", "Error", JOptionPane.ERROR_MESSAGE);
 			background = null;
 		}
 		species = null;
@@ -1276,8 +1164,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				// Finding the intersection of all the variables present in all
 				// data files.
 				for (int i = 1; (new File(directory + separator + "run-" + i + ".tsd")).exists(); i++) {
-					extractVars = new TSDParser(directory + separator + "run-" + i + ".tsd",
-							false);
+					extractVars = new TSDParser(directory + separator + "run-" + i + ".tsd", false);
 					datFileVars = extractVars.getSpecies();
 					if (i == 1) {
 						allVars.addAll(datFileVars);
@@ -1374,8 +1261,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				try {
 					saveChanges(null);
 					Properties p = new Properties();
-					FileInputStream load = new FileInputStream(new File(directory + separator
-							+ lrnName + ".lrn"));
+					FileInputStream load = new FileInputStream(new File(directory + separator + lrnName + ".lrn"));
 					p.load(load);
 					load.close();
 					for (String s : p.keySet().toArray(new String[0])) {
@@ -1421,8 +1307,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 					previous = file;
 				}
 				catch (IOException e1) {
-					JOptionPane.showMessageDialog(Gui.frame, "Unable to display file.",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Unable to display file.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}

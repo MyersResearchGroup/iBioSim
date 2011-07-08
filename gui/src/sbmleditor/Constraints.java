@@ -42,29 +42,29 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	private JButton addConstraint, removeConstraint, editConstraint;
 
 	private JList constraints; // JList of initial assignments
-	
+
 	private SBMLDocument document;
-	
+
 	private ArrayList<String> usedIDs;
-	
+
 	private MutableBoolean dirty;
-	
+
 	private Gui biosim;
-	
+
 	/* Create initial assignment panel */
-	public Constraints(Gui biosim,SBMLDocument document,ArrayList<String> usedIDs,MutableBoolean dirty) {
+	public Constraints(Gui biosim, SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty) {
 		super(new BorderLayout());
 		this.document = document;
 		this.usedIDs = usedIDs;
 		this.biosim = biosim;
 		this.dirty = dirty;
-		Model model =  document.getModel();
+		Model model = document.getModel();
 		addConstraint = new JButton("Add Constraint");
 		removeConstraint = new JButton("Remove Constraint");
 		editConstraint = new JButton("Edit Constraint");
 		constraints = new JList();
 		ListOf listOfConstraints = model.getListOfConstraints();
-		String [] cons = new String[(int) model.getNumConstraints()];
+		String[] cons = new String[(int) model.getNumConstraints()];
 		for (int i = 0; i < model.getNumConstraints(); i++) {
 			Constraint constraint = (Constraint) listOfConstraints.get(i);
 			if (!constraint.isSetMetaId()) {
@@ -105,8 +105,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 	 */
 	private void constraintEditor(String option) {
 		if (option.equals("OK") && constraints.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No constraint selected.",
-					"Must Select a Constraint", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "No constraint selected.", "Must Select a Constraint", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		JPanel constraintPanel = new JPanel();
@@ -134,8 +133,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						String message = ((Constraint) c.get(i)).getMessageString();
 						// XMLNode.convertXMLNodeToString(((Constraint)
 						// c.get(i)).getMessage());
-						message = message.substring(message.indexOf("xhtml\">") + 7, message
-								.indexOf("</p>"));
+						message = message.substring(message.indexOf("xhtml\">") + 7, message.indexOf("</p>"));
 						consMessage.setText(message);
 					}
 				}
@@ -158,30 +156,26 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 		consPanel.add(consMessage);
 		constraintPanel.add(consPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, constraintPanel,
-				"Constraint Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-				options, options[0]);
+		int value = JOptionPane.showOptionDialog(Gui.frame, constraintPanel, "Constraint Editor", JOptionPane.YES_NO_OPTION,
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(document,usedIDs,consID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(document, usedIDs, consID.getText().trim(), selectedID, false);
 			if (!error) {
-				if (consMath.getText().trim().equals("")
-						|| SBMLutilities.myParseFormula(consMath.getText().trim()) == null) {
-					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.",
-							"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+				if (consMath.getText().trim().equals("") || SBMLutilities.myParseFormula(consMath.getText().trim()) == null) {
+					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 				else if (!SBMLutilities.myParseFormula(consMath.getText().trim()).isBoolean()) {
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Constraint formula must be of type Boolean.", "Enter Valid Formula",
+					JOptionPane.showMessageDialog(Gui.frame, "Constraint formula must be of type Boolean.", "Enter Valid Formula",
 							JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
-				else if (SBMLutilities.checkNumFunctionArguments(document,SBMLutilities.myParseFormula(consMath.getText().trim()))) {
+				else if (SBMLutilities.checkNumFunctionArguments(document, SBMLutilities.myParseFormula(consMath.getText().trim()))) {
 					error = true;
 				}
 				else {
-					ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document,consMath.getText().trim(), "", false);
+					ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document, consMath.getText().trim(), "", false);
 					if (invalidVars.size() > 0) {
 						String invalid = "";
 						for (int i = 0; i < invalidVars.size(); i++) {
@@ -193,8 +187,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 							}
 						}
 						String message;
-						message = "Constraint contains unknown variables.\n\n"
-								+ "Unknown variables:\n" + invalid;
+						message = "Constraint contains unknown variables.\n\n" + "Unknown variables:\n" + invalid;
 						JTextArea messageArea = new JTextArea(message);
 						messageArea.setLineWrap(true);
 						messageArea.setWrapStyleWord(true);
@@ -203,30 +196,26 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						scrolls.setMinimumSize(new Dimension(300, 300));
 						scrolls.setPreferredSize(new Dimension(300, 300));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
 				}
 				if (!error) {
 					if (option.equals("OK")) {
-						String [] cons = new String[constraints.getModel().getSize()];
-						for (int i=0;i<constraints.getModel().getSize();i++) {
+						String[] cons = new String[constraints.getModel().getSize()];
+						for (int i = 0; i < constraints.getModel().getSize(); i++) {
 							cons[i] = constraints.getModel().getElementAt(i).toString();
 						}
 						int index = constraints.getSelectedIndex();
-						constraints
-								.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+						constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						cons = Utility.getList(cons, constraints);
 						constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						Constraint c = (Constraint) (document.getModel().getListOfConstraints())
-								.get(Cindex);
+						Constraint c = (Constraint) (document.getModel().getListOfConstraints()).get(Cindex);
 						c.setMath(SBMLutilities.myParseFormula(consMath.getText().trim()));
 						c.setMetaId(consID.getText().trim());
 						if (!consMessage.getText().trim().equals("")) {
-							XMLNode xmlNode = XMLNode
-									.convertStringToXMLNode("<message><p xmlns=\"http://www.w3.org/1999/xhtml\">"
-											+ consMessage.getText().trim() + "</p></message>");
+							XMLNode xmlNode = XMLNode.convertStringToXMLNode("<message><p xmlns=\"http://www.w3.org/1999/xhtml\">"
+									+ consMessage.getText().trim() + "</p></message>");
 							c.setMessage(xmlNode);
 						}
 						else {
@@ -243,8 +232,8 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						constraints.setSelectedIndex(index);
 					}
 					else {
-						String [] cons = new String[constraints.getModel().getSize()];
-						for (int i=0;i<constraints.getModel().getSize();i++) {
+						String[] cons = new String[constraints.getModel().getSize()];
+						for (int i = 0; i < constraints.getModel().getSize(); i++) {
 							cons[i] = constraints.getModel().getElementAt(i).toString();
 						}
 						JList add = new JList();
@@ -253,19 +242,16 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						c.setMath(SBMLutilities.myParseFormula(consMath.getText().trim()));
 						c.setMetaId(consID.getText().trim());
 						if (!consMessage.getText().trim().equals("")) {
-							XMLNode xmlNode = XMLNode
-									.convertStringToXMLNode("<message><p xmlns=\"http://www.w3.org/1999/xhtml\">"
-											+ consMessage.getText().trim() + "</p></message>");
+							XMLNode xmlNode = XMLNode.convertStringToXMLNode("<message><p xmlns=\"http://www.w3.org/1999/xhtml\">"
+									+ consMessage.getText().trim() + "</p></message>");
 							c.setMessage(xmlNode);
 						}
 						usedIDs.add(consID.getText().trim());
 						Object[] adding = { c.getMetaId() };
 						add.setListData(adding);
 						add.setSelectedIndex(0);
-						constraints
-								.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						adding = Utility.add(cons, constraints, add, false, null, null, null, null,
-								null, null, Gui.frame);
+						constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+						adding = Utility.add(cons, constraints, add, false, null, null, null, null, null, null, Gui.frame);
 						cons = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							cons[i] = (String) adding[i];
@@ -284,9 +270,8 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 				}
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(Gui.frame, constraintPanel,
-						"Constraint Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-						null, options, options[0]);
+				value = JOptionPane.showOptionDialog(Gui.frame, constraintPanel, "Constraint Editor", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
 		}
 		if (value == JOptionPane.NO_OPTION) {
@@ -314,13 +299,14 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 			constraints.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			if (index < constraints.getModel().getSize()) {
 				constraints.setSelectedIndex(index);
-			} else {
-				constraints.setSelectedIndex(index-1);
+			}
+			else {
+				constraints.setSelectedIndex(index - 1);
 			}
 			dirty.setValue(true);
 		}
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		// if the add constraint button is clicked
 		if (e.getSource() == addConstraint) {

@@ -5,7 +5,7 @@ public class TransientMarkovMatrixMultiplyThread extends Thread {
 	private StateGraph sg;
 
 	private double Gamma, timeLimit;
-	
+
 	private int startIndex, endIndex, K;
 
 	public TransientMarkovMatrixMultiplyThread(StateGraph sg) {

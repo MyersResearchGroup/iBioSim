@@ -31,11 +31,11 @@ import util.MutableBoolean;
 import util.Utility;
 
 /**
-* This is a class for creating SBML functions
-* 
-* @author Chris Myers
-* 
-*/
+ * This is a class for creating SBML functions
+ * 
+ * @author Chris Myers
+ * 
+ */
 public class Functions extends JPanel implements ActionListener, MouseListener {
 
 	private static final long serialVersionUID = 1L;
@@ -43,24 +43,24 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 	private JButton addFunction, removeFunction, editFunction;
 
 	private JList functions; // JList of functions
-	
+
 	private SBMLDocument document;
-	
+
 	private ArrayList<String> usedIDs;
-	
+
 	private MutableBoolean dirty;
-	
+
 	private InitialAssignments initialsPanel;
-	
+
 	private Rules rulesPanel;
-	
+
 	/* Create initial assignment panel */
-	public Functions(SBMLDocument document,ArrayList<String> usedIDs,MutableBoolean dirty) {
+	public Functions(SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty) {
 		super(new BorderLayout());
 		this.document = document;
 		this.usedIDs = usedIDs;
 		this.dirty = dirty;
-		Model model =  document.getModel();
+		Model model = document.getModel();
 		addFunction = new JButton("Add Function");
 		removeFunction = new JButton("Remove Function");
 		editFunction = new JButton("Edit Function");
@@ -85,8 +85,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 			funcs = sortFunctions(funcs);
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in function definitions.",
-					"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in function definitions.", "Cycle Detected", JOptionPane.ERROR_MESSAGE);
 			funcs = oldFuncs;
 		}
 		JPanel addRem = new JPanel();
@@ -165,8 +164,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 	 */
 	private void functionEditor(String option) {
 		if (option.equals("OK") && functions.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No function selected.",
-					"Must Select a Function", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "No function selected.", "Must Select a Function", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		JPanel functionPanel = new JPanel();
@@ -182,8 +180,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		String selectedID = "";
 		if (option.equals("OK")) {
 			try {
-				FunctionDefinition function = document.getModel().getFunctionDefinition(
-						(((String) functions.getSelectedValue()).split(" ")[0]));
+				FunctionDefinition function = document.getModel().getFunctionDefinition((((String) functions.getSelectedValue()).split(" ")[0]));
 				funcID.setText(function.getId());
 				selectedID = function.getId();
 				funcName.setText(function.getName());
@@ -215,17 +212,16 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		funcPanel.add(eqn);
 		functionPanel.add(funcPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, functionPanel, "Function Editor",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		int value = JOptionPane.showOptionDialog(Gui.frame, functionPanel, "Function Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+				null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(document,usedIDs,funcID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(document, usedIDs, funcID.getText().trim(), selectedID, false);
 			if (!error) {
 				String[] vars = eqn.getText().trim().split(" |\\(|\\)|\\,|\\*|\\+|\\/|\\-");
 				for (int i = 0; i < vars.length; i++) {
 					if (vars[i].equals(funcID.getText().trim())) {
-						JOptionPane.showMessageDialog(Gui.frame,
-								"Recursive functions are not allowed.", "Recursion Illegal",
+						JOptionPane.showMessageDialog(Gui.frame, "Recursive functions are not allowed.", "Recursion Illegal",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
 						break;
@@ -234,26 +230,20 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 			}
 			if (!error) {
 				if (eqn.getText().trim().equals("")) {
-					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.",
-							"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
-				else if (args.getText().trim().equals("")
-						&& libsbml.parseFormula("lambda(" + eqn.getText().trim() + ")") == null) {
-					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.",
-							"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+				else if (args.getText().trim().equals("") && libsbml.parseFormula("lambda(" + eqn.getText().trim() + ")") == null) {
+					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 				else if (!args.getText().trim().equals("")
-						&& libsbml.parseFormula("lambda(" + args.getText().trim() + ","
-								+ eqn.getText().trim() + ")") == null) {
-					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.",
-							"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+						&& libsbml.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")") == null) {
+					JOptionPane.showMessageDialog(Gui.frame, "Formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 				else {
-					ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document,eqn.getText().trim(),
-							args.getText().trim(), true);
+					ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document, eqn.getText().trim(), args.getText().trim(), true);
 					if (invalidVars.size() > 0) {
 						String invalid = "";
 						for (int i = 0; i < invalidVars.size(); i++) {
@@ -265,8 +255,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 							}
 						}
 						String message;
-						message = "Function can only contain the arguments or other function calls.\n\n"
-								+ "Illegal variables:\n" + invalid;
+						message = "Function can only contain the arguments or other function calls.\n\n" + "Illegal variables:\n" + invalid;
 						JTextArea messageArea = new JTextArea(message);
 						messageArea.setLineWrap(true);
 						messageArea.setWrapStyleWord(true);
@@ -275,19 +264,18 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 						scrolls.setMinimumSize(new Dimension(300, 300));
 						scrolls.setPreferredSize(new Dimension(300, 300));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(Gui.frame, scrolls, "Illegal Variables",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, scrolls, "Illegal Variables", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
 				}
 			}
 			if (!error) {
-				error = SBMLutilities.checkNumFunctionArguments(document,SBMLutilities.myParseFormula(eqn.getText().trim()));
+				error = SBMLutilities.checkNumFunctionArguments(document, SBMLutilities.myParseFormula(eqn.getText().trim()));
 			}
 			if (!error) {
 				if (option.equals("OK")) {
-					String [] funcs = new String[functions.getModel().getSize()];
-					for (int i=0;i<functions.getModel().getSize();i++) {
+					String[] funcs = new String[functions.getModel().getSize()];
+					for (int i = 0; i < functions.getModel().getSize(); i++) {
 						funcs[i] = functions.getModel().getElementAt(i).toString();
 					}
 					int index = functions.getSelectedIndex();
@@ -302,8 +290,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 						f.setMath(libsbml.parseFormula("lambda(" + eqn.getText().trim() + ")"));
 					}
 					else {
-						f.setMath(libsbml.parseFormula("lambda(" + args.getText().trim() + ","
-								+ eqn.getText().trim() + ")"));
+						f.setMath(libsbml.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")"));
 					}
 					for (int i = 0; i < usedIDs.size(); i++) {
 						if (usedIDs.get(i).equals(val)) {
@@ -311,37 +298,33 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					String oldVal = funcs[index];
-					funcs[index] = funcID.getText().trim() + " ( " + args.getText().trim()
-							+ " ) = " + eqn.getText().trim();
+					funcs[index] = funcID.getText().trim() + " ( " + args.getText().trim() + " ) = " + eqn.getText().trim();
 					try {
 						funcs = sortFunctions(funcs);
 					}
 					catch (Exception e) {
-						JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in functions.",
-								"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in functions.", "Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
 						funcs[index] = oldVal;
 					}
 					functions.setListData(funcs);
 					functions.setSelectedIndex(index);
-					SBMLutilities.updateVarId(document,false, val, funcID.getText().trim());
+					SBMLutilities.updateVarId(document, false, val, funcID.getText().trim());
 				}
 				else {
-					String [] funcs = new String[functions.getModel().getSize()];
-					for (int i=0;i<functions.getModel().getSize();i++) {
+					String[] funcs = new String[functions.getModel().getSize()];
+					for (int i = 0; i < functions.getModel().getSize(); i++) {
 						funcs[i] = functions.getModel().getElementAt(i).toString();
 					}
 					int index = functions.getSelectedIndex();
 					JList add = new JList();
 					String addStr;
-					addStr = funcID.getText().trim() + " ( " + args.getText().trim() + " ) = "
-							+ eqn.getText().trim();
+					addStr = funcID.getText().trim() + " ( " + args.getText().trim() + " ) = " + eqn.getText().trim();
 					Object[] adding = { addStr };
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					functions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(funcs, functions, add, false, null, null, null, null,
-							null, null, Gui.frame);
+					adding = Utility.add(funcs, functions, add, false, null, null, null, null, null, null, Gui.frame);
 					String[] oldVal = funcs;
 					funcs = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
@@ -351,8 +334,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 						funcs = sortFunctions(funcs);
 					}
 					catch (Exception e) {
-						JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in functions.",
-								"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in functions.", "Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
 						funcs = oldVal;
 					}
@@ -364,8 +346,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 							f.setMath(libsbml.parseFormula("lambda(" + eqn.getText().trim() + ")"));
 						}
 						else {
-							f.setMath(libsbml.parseFormula("lambda(" + args.getText().trim() + ","
-									+ eqn.getText().trim() + ")"));
+							f.setMath(libsbml.parseFormula("lambda(" + args.getText().trim() + "," + eqn.getText().trim() + ")"));
 						}
 						usedIDs.add(funcID.getText().trim());
 					}
@@ -381,9 +362,8 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 				dirty.setValue(true);
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(Gui.frame, functionPanel,
-						"Function Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-						null, options, options[0]);
+				value = JOptionPane.showOptionDialog(Gui.frame, functionPanel, "Function Editor", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
 		}
 		if (value == JOptionPane.NO_OPTION) {
@@ -397,9 +377,8 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 	private void removeFunction() {
 		int index = functions.getSelectedIndex();
 		if (index != -1) {
-			if (!SBMLutilities.variableInUse(document,((String) functions.getSelectedValue()).split(" ")[0], false)) {
-				FunctionDefinition tempFunc = document.getModel().getFunctionDefinition(
-						((String) functions.getSelectedValue()).split(" ")[0]);
+			if (!SBMLutilities.variableInUse(document, ((String) functions.getSelectedValue()).split(" ")[0], false)) {
+				FunctionDefinition tempFunc = document.getModel().getFunctionDefinition(((String) functions.getSelectedValue()).split(" ")[0]);
 				ListOf f = document.getModel().getListOfFunctionDefinitions();
 				for (int i = 0; i < document.getModel().getNumFunctionDefinitions(); i++) {
 					if (((FunctionDefinition) f.get(i)).getId().equals(tempFunc.getId())) {
@@ -412,15 +391,16 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 				functions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				if (index < functions.getModel().getSize()) {
 					functions.setSelectedIndex(index);
-				} else {
-					functions.setSelectedIndex(index-1);
+				}
+				else {
+					functions.setSelectedIndex(index - 1);
 				}
 				dirty.setValue(true);
 			}
 		}
 	}
-	
-	public void setPanels(InitialAssignments initialsPanel,Rules rulesPanel) {
+
+	public void setPanels(InitialAssignments initialsPanel, Rules rulesPanel) {
 		this.initialsPanel = initialsPanel;
 		this.rulesPanel = rulesPanel;
 	}

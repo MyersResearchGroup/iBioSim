@@ -75,9 +75,9 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 	private ArrayList<String> speciesList;
 
 	private boolean firstRead;
-	
+
 	private JTextField backgroundField;
-	
+
 	private JPanel advancedOptionsPanel;
 
 	/**
@@ -303,9 +303,8 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			in.close();
 			if (load.containsKey("genenet.file")) {
 				String[] getProp = load.getProperty("genenet.file").split(separator);
-				learnFile = directory.substring(0, directory.length()
-						- getFilename[getFilename.length - 1].length())
-						+ separator + getProp[getProp.length - 1];
+				learnFile = directory.substring(0, directory.length() - getFilename[getFilename.length - 1].length()) + separator
+						+ getProp[getProp.length - 1];
 				backgroundField.setText(getProp[getProp.length - 1]);
 			}
 			if (load.containsKey("genenet.Tn")) {
@@ -369,8 +368,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to load properties file!",
-					"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 		}
 
 		speciesList = new ArrayList<String>();
@@ -379,20 +377,17 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			Model model = document.getModel();
 			ListOf ids = model.getListOfSpecies();
 			try {
-				FileWriter write = new FileWriter(
-						new File(directory + separator + "background.gcm"));
+				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				write.write("digraph G {\n");
 				for (int i = 0; i < model.getNumSpecies(); i++) {
 					speciesList.add(((Species) ids.get(i)).getId());
-					write.write("s" + i + " [shape=ellipse,color=black,label=\""
-							+ ((Species) ids.get(i)).getId() + "\"" + "];\n");
+					write.write("s" + i + " [shape=ellipse,color=black,label=\"" + ((Species) ids.get(i)).getId() + "\"" + "];\n");
 				}
 				write.write("}\n");
 				write.close();
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to create background file!",
-						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to create background file!", "Error Writing Background", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		else {
@@ -403,8 +398,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 				speciesList.add(s);
 			}
 			try {
-				FileWriter write = new FileWriter(
-						new File(directory + separator + "background.gcm"));
+				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
 				String line = null;
 				while ((line = input.readLine()) != null) {
@@ -414,8 +408,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 				input.close();
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to create background file!",
-						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to create background file!", "Error Writing Background", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		sortSpecies();
@@ -495,7 +488,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 	public JPanel getAdvancedOptionsPanel() {
 		return advancedOptionsPanel;
 	}
-	
+
 	/**
 	 * This method performs different functions depending on what menu items or
 	 * buttons are selected.
@@ -519,16 +512,15 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			editText(num);
 			speciesPanel.revalidate();
 			speciesPanel.repaint();
-			//biosim.setGlassPane(true);
+			// biosim.setGlassPane(true);
 		}
 		else if (e.getSource() == numBins || e.getSource() == debug) {
-			//biosim.setGlassPane(true);
+			// biosim.setGlassPane(true);
 		}
 		else if (e.getSource() == user) {
 			if (!firstRead) {
 				try {
-					FileWriter write = new FileWriter(
-							new File(directory + separator + "levels.lvl"));
+					FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
 					write.write("time, 0\n");
 					for (int i = 0; i < species.size(); i++) {
 						if (((JTextField) species.get(i).get(0)).getText().trim().equals("")) {
@@ -543,8 +535,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 								write.write(", -1");
 							}
 							else {
-								write.write(", "
-										+ ((JTextField) species.get(i).get(j)).getText().trim());
+								write.write(", " + ((JTextField) species.get(i).get(j)).getText().trim());
 							}
 						}
 						write.write("\n");
@@ -621,8 +612,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 							write.write(", -1");
 						}
 						else {
-							write.write(", "
-									+ ((JTextField) species.get(i).get(j)).getText().trim());
+							write.write(", " + ((JTextField) species.get(i).get(j)).getText().trim());
 						}
 					}
 					write.write("\n");
@@ -765,9 +755,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 								found = true;
 								if (getString.length >= 2) {
 									((JComboBox) specs.get(1)).setSelectedItem(getString[1].trim());
-									for (int i = 0; i < Integer
-											.parseInt((String) ((JComboBox) specs.get(1))
-													.getSelectedItem()) - 1; i++) {
+									for (int i = 0; i < Integer.parseInt((String) ((JComboBox) specs.get(1)).getSelectedItem()) - 1; i++) {
 										if (getString[i + 2].trim().equals("-1")) {
 											specs.add(new JTextField(""));
 										}
@@ -776,28 +764,24 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 										}
 										sp.add(specs.get(i + 2));
 									}
-									for (int i = Integer.parseInt((String) ((JComboBox) specs
-											.get(1)).getSelectedItem()) - 1; i < max - 3; i++) {
+									for (int i = Integer.parseInt((String) ((JComboBox) specs.get(1)).getSelectedItem()) - 1; i < max - 3; i++) {
 										sp.add(new JLabel());
 									}
 								}
 							}
 						}
 						if (!found) {
-							for (int i = 0; i < Integer
-									.parseInt((String) ((JComboBox) specs.get(1)).getSelectedItem()) - 1; i++) {
+							for (int i = 0; i < Integer.parseInt((String) ((JComboBox) specs.get(1)).getSelectedItem()) - 1; i++) {
 								specs.add(new JTextField(""));
 								sp.add(specs.get(i + 2));
 							}
-							for (int i = Integer.parseInt((String) ((JComboBox) specs.get(1))
-									.getSelectedItem()) - 1; i < max - 3; i++) {
+							for (int i = Integer.parseInt((String) ((JComboBox) specs.get(1)).getSelectedItem()) - 1; i < max - 3; i++) {
 								sp.add(new JLabel());
 							}
 						}
 					}
 					else {
-						for (int i = 0; i < Integer.parseInt((String) ((JComboBox) specs.get(1))
-								.getSelectedItem()) - 1; i++) {
+						for (int i = 0; i < Integer.parseInt((String) ((JComboBox) specs.get(1)).getSelectedItem()) - 1; i++) {
 							specs.add(new JTextField(""));
 							sp.add(specs.get(i + 2));
 						}
@@ -893,8 +877,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 	public void saveGcm() {
 		try {
 			if (new File(directory + separator + "method.gcm").exists()) {
-				String copy = JOptionPane.showInputDialog(Gui.frame, "Enter Circuit Name:",
-						"Save Circuit", JOptionPane.PLAIN_MESSAGE);
+				String copy = JOptionPane.showInputDialog(Gui.frame, "Enter Circuit Name:", "Save Circuit", JOptionPane.PLAIN_MESSAGE);
 				if (copy != null) {
 					copy = copy.trim();
 				}
@@ -914,13 +897,11 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 				biosim.saveGcm(copy, directory + separator + "method.gcm");
 			}
 			else {
-				JOptionPane.showMessageDialog(Gui.frame, "No circuit has been generated yet.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "No circuit has been generated yet.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to save circuit.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to save circuit.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -950,13 +931,11 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 				}
 			}
 			else {
-				JOptionPane.showMessageDialog(Gui.frame, "No circuit has been generated yet.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "No circuit has been generated yet.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to view circuit.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to view circuit.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -976,17 +955,14 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 				scrolls.setMinimumSize(new Dimension(500, 500));
 				scrolls.setPreferredSize(new Dimension(500, 500));
 				scrolls.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(Gui.frame, scrolls, "Run Log",
-						JOptionPane.INFORMATION_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, scrolls, "Run Log", JOptionPane.INFORMATION_MESSAGE);
 			}
 			else {
-				JOptionPane.showMessageDialog(Gui.frame, "No run log exists.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "No run log exists.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to view run log.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to view run log.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -1033,8 +1009,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			else {
 				prop.setProperty("genenet.find.base.prob", "false");
 			}
-			log.addText("Saving learn parameters to file:\n" + directory + separator + lrnFile
-					+ "\n");
+			log.addText("Saving learn parameters to file:\n" + directory + separator + lrnFile + "\n");
 			FileOutputStream out = new FileOutputStream(new File(directory + separator + lrnFile));
 			prop.store(out, learnFile);
 			out.close();
@@ -1063,8 +1038,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			change = false;
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to save parameter file!",
-					"Error Saving File", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to save parameter file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -1108,8 +1082,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 				}
 			}
 			catch (Exception e2) {
-				JOptionPane.showMessageDialog(this, "Must enter numbers into input fields.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(this, "Must enter numbers into input fields.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			if (user.isSelected()) {
 				FileWriter write = new FileWriter(new File(directory + separator + "levels.lvl"));
@@ -1127,8 +1100,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 							write.write(", -1");
 						}
 						else {
-							write.write(", "
-									+ ((JTextField) species.get(i).get(j)).getText().trim());
+							write.write(", " + ((JTextField) species.get(i).get(j)).getText().trim());
 						}
 					}
 					write.write("\n");
@@ -1265,22 +1237,19 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			}
 			int exitValue = learn.waitFor();
 			if (exitValue == 143) {
-				JOptionPane.showMessageDialog(Gui.frame, "Learning was"
-						+ " canceled by the user.", "Canceled Learning", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Learning was" + " canceled by the user.", "Canceled Learning", JOptionPane.ERROR_MESSAGE);
 			}
 			else {
 				if (new File(directory + separator + "method.gcm").exists()) {
 					if (System.getProperty("os.name").contentEquals("Linux")) {
 						String command = "dotty method.gcm";
-						log.addText("Executing:\n" + "dotty " + directory + separator
-								+ "method.gcm\n");
+						log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
 						exec = Runtime.getRuntime();
 						exec.exec(command, null, work);
 					}
 					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 						String command = "open method.dot";
-						log.addText("Executing:\n" + "open " + directory + separator
-								+ "method.dot\n");
+						log.addText("Executing:\n" + "open " + directory + separator + "method.dot\n");
 						exec = Runtime.getRuntime();
 						exec.exec("cp method.gcm method.dot", null, work);
 						exec = Runtime.getRuntime();
@@ -1288,15 +1257,14 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 					}
 					else {
 						String command = "dotty method.gcm";
-						log.addText("Executing:\n" + "dotty " + directory + separator
-								+ "method.gcm\n");
+						log.addText("Executing:\n" + "dotty " + directory + separator + "method.gcm\n");
 						exec = Runtime.getRuntime();
 						exec.exec(command, null, work);
 					}
 				}
 				else {
-					JOptionPane.showMessageDialog(Gui.frame, "A gcm file was not generated."
-							+ "\nPlease see the run.log file.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "A gcm file was not generated." + "\nPlease see the run.log file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 				}
 				running.setCursor(null);
 				running.dispose();
@@ -1311,8 +1279,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to learn from data.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to learn from data.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -1355,20 +1322,17 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			Model model = document.getModel();
 			ListOf ids = model.getListOfSpecies();
 			try {
-				FileWriter write = new FileWriter(
-						new File(directory + separator + "background.gcm"));
+				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				write.write("digraph G {\n");
 				for (int i = 0; i < model.getNumSpecies(); i++) {
 					speciesList.add(((Species) ids.get(i)).getId());
-					write.write("s" + i + " [shape=ellipse,color=black,label=\""
-							+ ((Species) ids.get(i)).getId() + "\"" + "];\n");
+					write.write("s" + i + " [shape=ellipse,color=black,label=\"" + ((Species) ids.get(i)).getId() + "\"" + "];\n");
 				}
 				write.write("}\n");
 				write.close();
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to create background file!",
-						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to create background file!", "Error Writing Background", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		else {
@@ -1379,8 +1343,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 				speciesList.add(s);
 			}
 			try {
-				FileWriter write = new FileWriter(
-						new File(directory + separator + "background.gcm"));
+				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
 				String line = null;
 				while ((line = input.readLine()) != null) {
@@ -1390,8 +1353,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 				input.close();
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to create background file!",
-						"Error Writing Background", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to create background file!", "Error Writing Background", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		sortSpecies();
@@ -1428,7 +1390,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 	public void updateBackgroundFile(String updatedFile) {
 		backgroundField.setText(updatedFile);
 	}
-	
+
 	public String getBackgroundFile() {
 		return backgroundField.getText();
 	}

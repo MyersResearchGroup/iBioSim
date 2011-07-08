@@ -241,9 +241,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * Creates a Graph Object from the data given and calls the private graph
 	 * helper method.
 	 */
-	public Graph(Reb2Sac reb2sac, String printer_track_quantity, String label, String printer_id,
-			String outDir, String time, Gui biomodelsim, String open, Log log, String graphName,
-			boolean timeSeries, boolean learnGraph) {
+	public Graph(Reb2Sac reb2sac, String printer_track_quantity, String label, String printer_id, String outDir, String time, Gui biomodelsim,
+			String open, Log log, String graphName, boolean timeSeries, boolean learnGraph) {
 		lock = new ReentrantLock(true);
 		lock2 = new ReentrantLock(true);
 		this.reb2sac = reb2sac;
@@ -266,12 +265,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		else {
 			if (timeSeries) {
-				this.graphName = outDir.split(separator)[outDir.split(separator).length - 1]
-						+ ".grf";
+				this.graphName = outDir.split(separator)[outDir.split(separator).length - 1] + ".grf";
 			}
 			else {
-				this.graphName = outDir.split(separator)[outDir.split(separator).length - 1]
-						+ ".prb";
+				this.graphName = outDir.split(separator)[outDir.split(separator).length - 1] + ".prb";
 			}
 			topLevel = false;
 		}
@@ -316,10 +313,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * @param dataset
 	 * @param time
 	 */
-	private void graph(String printer_track_quantity, String label, XYSeriesCollection dataset,
-			String time) {
-		chart = ChartFactory.createXYLineChart(label, time, printer_track_quantity, dataset,
-				PlotOrientation.VERTICAL, true, true, false);
+	private void graph(String printer_track_quantity, String label, XYSeriesCollection dataset, String time) {
+		chart = ChartFactory.createXYLineChart(label, time, printer_track_quantity, dataset, PlotOrientation.VERTICAL, true, true, false);
 		chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
 		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
 		chart.getXYPlot().setDomainGridlinePaint(java.awt.Color.LIGHT_GRAY);
@@ -348,11 +343,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				if (updateXNumber && node != null) {
 					String curDir = "";
 					if (node.getParent().getParent() != null
-							&& directories.contains(((IconNode) node.getParent().getParent())
-									.getName()
-									+ separator + ((IconNode) node.getParent()).getName())) {
-						curDir = ((IconNode) node.getParent().getParent()).getName() + separator
-								+ ((IconNode) node.getParent()).getName();
+							&& directories.contains(((IconNode) node.getParent().getParent()).getName() + separator
+									+ ((IconNode) node.getParent()).getName())) {
+						curDir = ((IconNode) node.getParent().getParent()).getName() + separator + ((IconNode) node.getParent()).getName();
 					}
 					else if (directories.contains(((IconNode) node.getParent()).getName())) {
 						curDir = ((IconNode) node.getParent()).getName();
@@ -456,8 +449,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * This public helper method parses the output file of ODE, monte carlo, and
 	 * markov abstractions.
 	 */
-	public ArrayList<ArrayList<Double>> readData(String file, String label, String directory,
-			boolean warning) {
+	public ArrayList<ArrayList<Double>> readData(String file, String label, String directory, boolean warning) {
 		warn = warning;
 		String[] s = file.split(separator);
 		String getLast = s[s.length - 1];
@@ -471,8 +463,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 		catch (Exception e) {
 		}
-		if ((label.contains("average") && file.contains("mean"))
-				|| (label.contains("variance") && file.contains("variance"))
+		if ((label.contains("average") && file.contains("mean")) || (label.contains("variance") && file.contains("variance"))
 				|| (label.contains("deviation") && file.contains("standard_deviation"))) {
 			Gui.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 			TSDParser p = new TSDParser(file, warn);
@@ -612,8 +603,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			refresh();
 		}
 		else if (e.getActionCommand().equals("rename")) {
-			String rename = JOptionPane.showInputDialog(Gui.frame, "Enter A New Filename:",
-					"Rename", JOptionPane.PLAIN_MESSAGE);
+			String rename = JOptionPane.showInputDialog(Gui.frame, "Enter A New Filename:", "Rename", JOptionPane.PLAIN_MESSAGE);
 			if (rename != null) {
 				rename = rename.trim();
 			}
@@ -627,10 +617,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				else if (new File(outDir + separator + rename).exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
-					int value = JOptionPane.showOptionDialog(Gui.frame, "File already exists."
-							+ "\nDo you want to overwrite?", "Overwrite",
-							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-							options[0]);
+					int value = JOptionPane.showOptionDialog(Gui.frame, "File already exists." + "\nDo you want to overwrite?", "Overwrite",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					if (value == JOptionPane.YES_OPTION) {
 						File dir = new File(outDir + separator + rename);
 						if (dir.isDirectory()) {
@@ -640,15 +628,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							dir.delete();
 						}
 						for (int i = 0; i < simDir.getChildCount(); i++) {
-							if (((IconNode) simDir.getChildAt(i)).getChildCount() > 0
-									&& ((IconNode) simDir.getChildAt(i)).getName().equals(rename)) {
+							if (((IconNode) simDir.getChildAt(i)).getChildCount() > 0 && ((IconNode) simDir.getChildAt(i)).getName().equals(rename)) {
 								simDir.remove(i);
 							}
 						}
 						boolean checked = false;
 						for (int i = 0; i < simDir.getChildCount(); i++) {
-							if (((IconNode) simDir.getChildAt(i)).getIconName().equals(
-									"" + (char) 10003)) {
+							if (((IconNode) simDir.getChildAt(i)).getIconName().equals("" + (char) 10003)) {
 								checked = true;
 							}
 						}
@@ -689,8 +675,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					int i;
 					for (i = 0; i < simDir.getChildCount(); i++) {
 						if (((IconNode) simDir.getChildAt(i)).getChildCount() != 0) {
-							if (((IconNode) simDir.getChildAt(i)).getName().compareToIgnoreCase(
-									rename) > 0) {
+							if (((IconNode) simDir.getChildAt(i)).getName().compareToIgnoreCase(rename) > 0) {
 								simDir.insert(node, i);
 								break;
 							}
@@ -754,27 +739,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				tree.setSelectionPath(select);
 				if (!((IconNode) select.getLastPathComponent()).getName().equals("Average")
 						&& !((IconNode) select.getLastPathComponent()).getName().equals("Variance")
-						&& !((IconNode) select.getLastPathComponent()).getName().equals(
-								"Standard Deviation")
+						&& !((IconNode) select.getLastPathComponent()).getName().equals("Standard Deviation")
 						&& ((IconNode) select.getLastPathComponent()).getParent() != null) {
 					for (int i = 0; i < simDir.getChildCount(); i++) {
-						if (((IconNode) simDir.getChildAt(i)) == ((IconNode) select
-								.getLastPathComponent())) {
+						if (((IconNode) simDir.getChildAt(i)) == ((IconNode) select.getLastPathComponent())) {
 							if (((IconNode) simDir.getChildAt(i)).getChildCount() != 0) {
 								simDir.remove(i);
-								File dir = new File(outDir + separator
-										+ ((IconNode) select.getLastPathComponent()).getName());
+								File dir = new File(outDir + separator + ((IconNode) select.getLastPathComponent()).getName());
 								if (dir.isDirectory()) {
 									biomodelsim.deleteDir(dir);
 								}
 								else {
 									dir.delete();
 								}
-								directories.remove(((IconNode) select.getLastPathComponent())
-										.getName());
+								directories.remove(((IconNode) select.getLastPathComponent()).getName());
 								for (int j = 0; j < graphed.size(); j++) {
-									if (graphed.get(j).getDirectory().equals(
-											((IconNode) select.getLastPathComponent()).getName())) {
+									if (graphed.get(j).getDirectory().equals(((IconNode) select.getLastPathComponent()).getName())) {
 										graphed.remove(j);
 										j--;
 									}
@@ -782,9 +762,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 							else {
 								simDir.remove(i);
-								File dir = new File(outDir + separator
-										+ ((IconNode) select.getLastPathComponent()).getName()
-										+ "." + printer_id.substring(0, printer_id.length() - 8));
+								File dir = new File(outDir + separator + ((IconNode) select.getLastPathComponent()).getName() + "."
+										+ printer_id.substring(0, printer_id.length() - 8));
 								if (dir.isDirectory()) {
 									biomodelsim.deleteDir(dir);
 								}
@@ -809,14 +788,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						else if (((IconNode) simDir.getChildAt(i)).getChildCount() != 0) {
 							for (int j = 0; j < simDir.getChildAt(i).getChildCount(); j++) {
-								if (((IconNode) ((IconNode) simDir.getChildAt(i)).getChildAt(j)) == ((IconNode) select
-										.getLastPathComponent())) {
+								if (((IconNode) ((IconNode) simDir.getChildAt(i)).getChildAt(j)) == ((IconNode) select.getLastPathComponent())) {
 									((IconNode) simDir.getChildAt(i)).remove(j);
-									File dir = new File(outDir + separator
-											+ ((IconNode) simDir.getChildAt(i)).getName()
-											+ separator
-											+ ((IconNode) select.getLastPathComponent()).getName()
-											+ "."
+									File dir = new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName() + separator
+											+ ((IconNode) select.getLastPathComponent()).getName() + "."
 											+ printer_id.substring(0, printer_id.length() - 8));
 									if (dir.isDirectory()) {
 										biomodelsim.deleteDir(dir);
@@ -826,37 +801,31 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 									boolean checked = false;
 									for (int k = 0; k < simDir.getChildAt(i).getChildCount(); k++) {
-										if (((IconNode) simDir.getChildAt(i).getChildAt(k))
-												.getIconName().equals("" + (char) 10003)) {
+										if (((IconNode) simDir.getChildAt(i).getChildAt(k)).getIconName().equals("" + (char) 10003)) {
 											checked = true;
 										}
 									}
 									if (!checked) {
-										((IconNode) simDir.getChildAt(i)).setIcon(MetalIconFactory
-												.getTreeFolderIcon());
+										((IconNode) simDir.getChildAt(i)).setIcon(MetalIconFactory.getTreeFolderIcon());
 										((IconNode) simDir.getChildAt(i)).setIconName("");
 									}
 									int count = 0;
 									for (int k = 0; k < simDir.getChildAt(i).getChildCount(); k++) {
-										if (((IconNode) simDir.getChildAt(i).getChildAt(k))
-												.getChildCount() == 0) {
+										if (((IconNode) simDir.getChildAt(i).getChildAt(k)).getChildCount() == 0) {
 											count++;
 										}
 									}
 									if (count == 3) {
-										File dir2 = new File(outDir + separator
-												+ ((IconNode) simDir.getChildAt(i)).getName());
+										File dir2 = new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName());
 										if (dir2.isDirectory()) {
 											biomodelsim.deleteDir(dir2);
 										}
 										else {
 											dir2.delete();
 										}
-										directories.remove(((IconNode) simDir.getChildAt(i))
-												.getName());
+										directories.remove(((IconNode) simDir.getChildAt(i)).getName());
 										for (int k = 0; k < graphed.size(); k++) {
-											if (graphed.get(k).getDirectory().equals(
-													((IconNode) simDir.getChildAt(i)).getName())) {
+											if (graphed.get(k).getDirectory().equals(((IconNode) simDir.getChildAt(i)).getName())) {
 												graphed.remove(k);
 												k--;
 											}
@@ -916,10 +885,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				if (((IconNode) simDir.getChildAt(i)).getChildCount() == 0) {
 					if (!((IconNode) simDir.getChildAt(i)).getName().equals("Average")
 							&& !((IconNode) simDir.getChildAt(i)).getName().equals("Variance")
-							&& !((IconNode) simDir.getChildAt(i)).getName().equals(
-									"Standard Deviation")) {
-						File dir = new File(outDir + separator
-								+ ((IconNode) simDir.getChildAt(i)).getName() + "."
+							&& !((IconNode) simDir.getChildAt(i)).getName().equals("Standard Deviation")) {
+						File dir = new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName() + "."
 								+ printer_id.substring(0, printer_id.length() - 8));
 						if (dir.isDirectory()) {
 							biomodelsim.deleteDir(dir);
@@ -978,10 +945,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				if (((IconNode) simDir.getChildAt(i)).getChildCount() == 0) {
 					if (!((IconNode) simDir.getChildAt(i)).getName().equals("Average")
 							&& !((IconNode) simDir.getChildAt(i)).getName().equals("Variance")
-							&& !((IconNode) simDir.getChildAt(i)).getName().equals(
-									"Standard Deviation")) {
-						File dir = new File(outDir + separator
-								+ ((IconNode) simDir.getChildAt(i)).getName() + "."
+							&& !((IconNode) simDir.getChildAt(i)).getName().equals("Standard Deviation")) {
+						File dir = new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName() + "."
 								+ printer_id.substring(0, printer_id.length() - 8));
 						if (dir.isDirectory()) {
 							biomodelsim.deleteDir(dir);
@@ -993,8 +958,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					simDir.remove(i);
 				}
 				else {
-					File dir = new File(outDir + separator
-							+ ((IconNode) simDir.getChildAt(i)).getName());
+					File dir = new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName());
 					if (dir.isDirectory()) {
 						biomodelsim.deleteDir(dir);
 					}
@@ -1120,15 +1084,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		axis.setAutoTickUnitSelection(true);
 		if (LogY.isSelected()) {
 			try {
-				LogarithmicAxis rangeAxis = new LogarithmicAxis(chart.getXYPlot().getRangeAxis()
-						.getLabel());
+				LogarithmicAxis rangeAxis = new LogarithmicAxis(chart.getXYPlot().getRangeAxis().getLabel());
 				rangeAxis.setStrictValuesFlag(false);
 				plot.setRangeAxis(rangeAxis);
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(Gui.frame,
-						"Log plots are not allowed with data\nvalues less than or equal to zero.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Log plots are not allowed with data\nvalues less than or equal to zero.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 				NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis().getLabel());
 				plot.setRangeAxis(rangeAxis);
 				LogY.setSelected(false);
@@ -1164,15 +1126,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		axis.setAutoTickUnitSelection(true);
 		if (LogX.isSelected()) {
 			try {
-				LogarithmicAxis domainAxis = new LogarithmicAxis(chart.getXYPlot().getDomainAxis()
-						.getLabel());
+				LogarithmicAxis domainAxis = new LogarithmicAxis(chart.getXYPlot().getDomainAxis().getLabel());
 				domainAxis.setStrictValuesFlag(false);
 				plot.setDomainAxis(domainAxis);
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(Gui.frame,
-						"Log plots are not allowed with data\nvalues less than or equal to zero.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Log plots are not allowed with data\nvalues less than or equal to zero.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 				NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
 				plot.setRangeAxis(domainAxis);
 				LogX.setSelected(false);
@@ -1408,19 +1368,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				if (((JCheckBox) e.getSource()).isSelected()) {
 					XYPlot plot = (XYPlot) chart.getXYPlot();
 					try {
-						LogarithmicAxis domainAxis = new LogarithmicAxis(chart.getXYPlot()
-								.getDomainAxis().getLabel());
+						LogarithmicAxis domainAxis = new LogarithmicAxis(chart.getXYPlot().getDomainAxis().getLabel());
 						domainAxis.setStrictValuesFlag(false);
 						plot.setRangeAxis(domainAxis);
 					}
 					catch (Exception e1) {
-						JOptionPane
-								.showMessageDialog(
-										Gui.frame,
-										"Log plots are not allowed with data\nvalues less than or equal to zero.",
-										"Error", JOptionPane.ERROR_MESSAGE);
-						NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis()
-								.getLabel());
+						JOptionPane.showMessageDialog(Gui.frame, "Log plots are not allowed with data\nvalues less than or equal to zero.", "Error",
+								JOptionPane.ERROR_MESSAGE);
+						NumberAxis domainAxis = new NumberAxis(chart.getXYPlot().getDomainAxis().getLabel());
 						plot.setRangeAxis(domainAxis);
 						LogX.setSelected(false);
 					}
@@ -1432,19 +1387,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				if (((JCheckBox) e.getSource()).isSelected()) {
 					XYPlot plot = (XYPlot) chart.getXYPlot();
 					try {
-						LogarithmicAxis rangeAxis = new LogarithmicAxis(chart.getXYPlot()
-								.getRangeAxis().getLabel());
+						LogarithmicAxis rangeAxis = new LogarithmicAxis(chart.getXYPlot().getRangeAxis().getLabel());
 						rangeAxis.setStrictValuesFlag(false);
 						plot.setRangeAxis(rangeAxis);
 					}
 					catch (Exception e1) {
-						JOptionPane
-								.showMessageDialog(
-										Gui.frame,
-										"Semilog plots are not allowed with data\nvalues less than or equal to zero.",
-										"Error", JOptionPane.ERROR_MESSAGE);
-						NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis()
-								.getLabel());
+						JOptionPane.showMessageDialog(Gui.frame, "Semilog plots are not allowed with data\nvalues less than or equal to zero.",
+								"Error", JOptionPane.ERROR_MESSAGE);
+						NumberAxis rangeAxis = new NumberAxis(chart.getXYPlot().getRangeAxis().getLabel());
 						plot.setRangeAxis(rangeAxis);
 						LogY.setSelected(false);
 					}
@@ -1531,8 +1481,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			try {
 				String[] split = outDir.split(separator);
 				p = new Properties();
-				FileInputStream load = new FileInputStream(new File(outDir + separator
-						+ split[split.length - 1] + ".lrn"));
+				FileInputStream load = new FileInputStream(new File(outDir + separator + split[split.length - 1] + ".lrn"));
 				p.load(load);
 				load.close();
 			}
@@ -1558,11 +1507,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		boolean addConst = false;
 		directories = new ArrayList<String>();
 		for (String file : files) {
-			if (file.length() > 3
-					&& file.substring(file.length() - 4).equals(
-							"." + printer_id.substring(0, printer_id.length() - 8))) {
-				if (file.contains("run-") || file.contains("mean") || file.contains("variance")
-						|| file.contains("standard_deviation")) {
+			if (file.length() > 3 && file.substring(file.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))) {
+				if (file.contains("run-") || file.contains("mean") || file.contains("variance") || file.contains("standard_deviation")) {
 					add = true;
 				}
 				else if (file.startsWith("term-time")) {
@@ -1575,8 +1521,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					addConst = true;
 				}
 				else {
-					IconNode n = new IconNode(file.substring(0, file.length() - 4), file.substring(
-							0, file.length() - 4));
+					IconNode n = new IconNode(file.substring(0, file.length() - 4), file.substring(0, file.length() - 4));
 					boolean added = false;
 					for (int j = 0; j < simDir.getChildCount(); j++) {
 						if (simDir.getChildAt(j).toString().compareToIgnoreCase(n.toString()) > 0) {
@@ -1590,8 +1535,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 					n.setIconName("");
 					for (GraphSpecies g : graphed) {
-						if (g.getRunNumber().equals(file.substring(0, file.length() - 4))
-								&& g.getDirectory().equals("")) {
+						if (g.getRunNumber().equals(file.substring(0, file.length() - 4)) && g.getDirectory().equals("")) {
 							n.setIcon(TextIcons.getIcon("g"));
 							n.setIconName("" + (char) 10003);
 							simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
@@ -1615,17 +1559,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				// }
 				for (String getFile : files3) {
 					if (getFile.length() > 3
-							&& getFile.substring(getFile.length() - 4).equals(
-									"." + printer_id.substring(0, printer_id.length() - 8))) {
+							&& getFile.substring(getFile.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))) {
 						addIt = true;
 					}
-					else if (new File(outDir + separator + file + separator + getFile)
-							.isDirectory()) {
-						for (String getFile2 : new File(outDir + separator + file + separator
-								+ getFile).list()) {
+					else if (new File(outDir + separator + file + separator + getFile).isDirectory()) {
+						for (String getFile2 : new File(outDir + separator + file + separator + getFile).list()) {
 							if (getFile2.length() > 3
-									&& getFile2.substring(getFile2.length() - 4).equals(
-											"." + printer_id.substring(0, printer_id.length() - 8))) {
+									&& getFile2.substring(getFile2.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))) {
 								addIt = true;
 							}
 						}
@@ -1641,8 +1581,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					boolean addConst2 = false;
 					for (String f : files3) {
 						if (f.contains(printer_id.substring(0, printer_id.length() - 8))) {
-							if (f.contains("run-") || f.contains("mean") || f.contains("variance")
-									|| f.contains("standard_deviation")) {
+							if (f.contains("run-") || f.contains("mean") || f.contains("variance") || f.contains("standard_deviation")) {
 								add2 = true;
 							}
 							else if (f.startsWith("term-time")) {
@@ -1655,12 +1594,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								addConst2 = true;
 							}
 							else {
-								IconNode n = new IconNode(f.substring(0, f.length() - 4), f
-										.substring(0, f.length() - 4));
+								IconNode n = new IconNode(f.substring(0, f.length() - 4), f.substring(0, f.length() - 4));
 								boolean added = false;
 								for (int j = 0; j < d.getChildCount(); j++) {
-									if (d.getChildAt(j).toString()
-											.compareToIgnoreCase(n.toString()) > 0) {
+									if (d.getChildAt(j).toString().compareToIgnoreCase(n.toString()) > 0) {
 										d.insert(n, j);
 										added = true;
 										break;
@@ -1671,14 +1608,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								n.setIconName("");
 								for (GraphSpecies g : graphed) {
-									if (g.getRunNumber().equals(f.substring(0, f.length() - 4))
-											&& g.getDirectory().equals(d.getName())) {
+									if (g.getRunNumber().equals(f.substring(0, f.length() - 4)) && g.getDirectory().equals(d.getName())) {
 										n.setIcon(TextIcons.getIcon("g"));
 										n.setIconName("" + (char) 10003);
 										d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 										d.setIconName("" + (char) 10003);
-										simDir.setIcon(MetalIconFactory
-												.getFileChooserUpFolderIcon());
+										simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 										simDir.setIconName("" + (char) 10003);
 									}
 								}
@@ -1686,8 +1621,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						else if (new File(outDir + separator + file + separator + f).isDirectory()) {
 							boolean addIt2 = false;
-							String[] files2 = new File(outDir + separator + file + separator + f)
-									.list();
+							String[] files2 = new File(outDir + separator + file + separator + f).list();
 							// for (int i = 1; i < files2.length; i++) {
 							// String index = files2[i];
 							// int j = i;
@@ -1700,10 +1634,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							// }
 							for (String getFile2 : files2) {
 								if (getFile2.length() > 3
-										&& getFile2.substring(getFile2.length() - 4).equals(
-												"."
-														+ printer_id.substring(0, printer_id
-																.length() - 8))) {
+										&& getFile2.substring(getFile2.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))) {
 									addIt2 = true;
 								}
 							}
@@ -1716,10 +1647,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								boolean addPercent3 = false;
 								boolean addConst3 = false;
 								for (String f2 : files2) {
-									if (f2.contains(printer_id
-											.substring(0, printer_id.length() - 8))) {
-										if (f2.contains("run-") || f2.contains("mean")
-												|| f2.contains("variance")
+									if (f2.contains(printer_id.substring(0, printer_id.length() - 8))) {
+										if (f2.contains("run-") || f2.contains("mean") || f2.contains("variance")
 												|| f2.contains("standard_deviation")) {
 											add3 = true;
 										}
@@ -1733,13 +1662,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											addConst3 = true;
 										}
 										else {
-											IconNode n = new IconNode(f2.substring(0,
-													f2.length() - 4), f2.substring(0,
-													f2.length() - 4));
+											IconNode n = new IconNode(f2.substring(0, f2.length() - 4), f2.substring(0, f2.length() - 4));
 											boolean added = false;
 											for (int j = 0; j < d2.getChildCount(); j++) {
-												if (d2.getChildAt(j).toString()
-														.compareToIgnoreCase(n.toString()) > 0) {
+												if (d2.getChildAt(j).toString().compareToIgnoreCase(n.toString()) > 0) {
 													d2.insert(n, j);
 													added = true;
 													break;
@@ -1750,21 +1676,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											}
 											n.setIconName("");
 											for (GraphSpecies g : graphed) {
-												if (g.getRunNumber().equals(
-														f2.substring(0, f2.length() - 4))
-														&& g.getDirectory().equals(
-																d.getName() + separator
-																		+ d2.getName())) {
+												if (g.getRunNumber().equals(f2.substring(0, f2.length() - 4))
+														&& g.getDirectory().equals(d.getName() + separator + d2.getName())) {
 													n.setIcon(TextIcons.getIcon("g"));
 													n.setIconName("" + (char) 10003);
-													d2.setIcon(MetalIconFactory
-															.getFileChooserUpFolderIcon());
+													d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 													d2.setIconName("" + (char) 10003);
-													d.setIcon(MetalIconFactory
-															.getFileChooserUpFolderIcon());
+													d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 													d.setIconName("" + (char) 10003);
-													simDir.setIcon(MetalIconFactory
-															.getFileChooserUpFolderIcon());
+													simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 													simDir.setIconName("" + (char) 10003);
 												}
 											}
@@ -1776,20 +1696,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									d2.add(n);
 									n.setIconName("");
 									for (GraphSpecies g : graphed) {
-										if (g.getRunNumber().equals("Average")
-												&& g.getDirectory().equals(
-														d.getName() + separator + d2.getName())) {
+										if (g.getRunNumber().equals("Average") && g.getDirectory().equals(d.getName() + separator + d2.getName())) {
 											n.setIcon(TextIcons.getIcon("g"));
 											n.setIconName("" + (char) 10003);
-											d2.setIcon(MetalIconFactory
-													.getFileChooserUpFolderIcon());
+											d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											d2.setIconName("" + (char) 10003);
-											d
-													.setIcon(MetalIconFactory
-															.getFileChooserUpFolderIcon());
+											d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											d.setIconName("" + (char) 10003);
-											simDir.setIcon(MetalIconFactory
-													.getFileChooserUpFolderIcon());
+											simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											simDir.setIconName("" + (char) 10003);
 										}
 									}
@@ -1798,19 +1712,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									n.setIconName("");
 									for (GraphSpecies g : graphed) {
 										if (g.getRunNumber().equals("Standard Deviation")
-												&& g.getDirectory().equals(
-														d.getName() + separator + d2.getName())) {
+												&& g.getDirectory().equals(d.getName() + separator + d2.getName())) {
 											n.setIcon(TextIcons.getIcon("g"));
 											n.setIconName("" + (char) 10003);
-											d2.setIcon(MetalIconFactory
-													.getFileChooserUpFolderIcon());
+											d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											d2.setIconName("" + (char) 10003);
-											d
-													.setIcon(MetalIconFactory
-															.getFileChooserUpFolderIcon());
+											d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											d.setIconName("" + (char) 10003);
-											simDir.setIcon(MetalIconFactory
-													.getFileChooserUpFolderIcon());
+											simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											simDir.setIconName("" + (char) 10003);
 										}
 									}
@@ -1818,92 +1727,68 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									d2.add(n);
 									n.setIconName("");
 									for (GraphSpecies g : graphed) {
-										if (g.getRunNumber().equals("Variance")
-												&& g.getDirectory().equals(
-														d.getName() + separator + d2.getName())) {
+										if (g.getRunNumber().equals("Variance") && g.getDirectory().equals(d.getName() + separator + d2.getName())) {
 											n.setIcon(TextIcons.getIcon("g"));
 											n.setIconName("" + (char) 10003);
-											d2.setIcon(MetalIconFactory
-													.getFileChooserUpFolderIcon());
+											d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											d2.setIconName("" + (char) 10003);
-											d
-													.setIcon(MetalIconFactory
-															.getFileChooserUpFolderIcon());
+											d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											d.setIconName("" + (char) 10003);
-											simDir.setIcon(MetalIconFactory
-													.getFileChooserUpFolderIcon());
+											simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											simDir.setIconName("" + (char) 10003);
 										}
 									}
 								}
 								if (addTerm3) {
-									IconNode n = new IconNode("Termination Time",
-											"Termination Time");
+									IconNode n = new IconNode("Termination Time", "Termination Time");
 									d2.add(n);
 									n.setIconName("");
 									for (GraphSpecies g : graphed) {
 										if (g.getRunNumber().equals("Termination Time")
-												&& g.getDirectory().equals(
-														d.getName() + separator + d2.getName())) {
+												&& g.getDirectory().equals(d.getName() + separator + d2.getName())) {
 											n.setIcon(TextIcons.getIcon("g"));
 											n.setIconName("" + (char) 10003);
-											d2.setIcon(MetalIconFactory
-													.getFileChooserUpFolderIcon());
+											d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											d2.setIconName("" + (char) 10003);
-											d
-													.setIcon(MetalIconFactory
-															.getFileChooserUpFolderIcon());
+											d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											d.setIconName("" + (char) 10003);
-											simDir.setIcon(MetalIconFactory
-													.getFileChooserUpFolderIcon());
+											simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											simDir.setIconName("" + (char) 10003);
 										}
 									}
 								}
 								if (addPercent3) {
-									IconNode n = new IconNode("Percent Termination",
-											"Percent Termination");
+									IconNode n = new IconNode("Percent Termination", "Percent Termination");
 									d2.add(n);
 									n.setIconName("");
 									for (GraphSpecies g : graphed) {
 										if (g.getRunNumber().equals("Percent Termination")
-												&& g.getDirectory().equals(
-														d.getName() + separator + d2.getName())) {
+												&& g.getDirectory().equals(d.getName() + separator + d2.getName())) {
 											n.setIcon(TextIcons.getIcon("g"));
 											n.setIconName("" + (char) 10003);
-											d2.setIcon(MetalIconFactory
-													.getFileChooserUpFolderIcon());
+											d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											d2.setIconName("" + (char) 10003);
-											d
-													.setIcon(MetalIconFactory
-															.getFileChooserUpFolderIcon());
+											d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											d.setIconName("" + (char) 10003);
-											simDir.setIcon(MetalIconFactory
-													.getFileChooserUpFolderIcon());
+											simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											simDir.setIconName("" + (char) 10003);
 										}
 									}
 								}
 								if (addConst3) {
-									IconNode n = new IconNode("Constraint Termination",
-											"Constraint Termination");
+									IconNode n = new IconNode("Constraint Termination", "Constraint Termination");
 									d2.add(n);
 									n.setIconName("");
 									for (GraphSpecies g : graphed) {
 										if (g.getRunNumber().equals("Constraint Termination")
-												&& g.getDirectory().equals(
-														d.getName() + separator + d2.getName())) {
+												&& g.getDirectory().equals(d.getName() + separator + d2.getName())) {
 											n.setIcon(TextIcons.getIcon("g"));
 											n.setIconName("" + (char) 10003);
-											d2.setIcon(MetalIconFactory
-													.getFileChooserUpFolderIcon());
+											d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											d2.setIconName("" + (char) 10003);
-											d
-													.setIcon(MetalIconFactory
-															.getFileChooserUpFolderIcon());
+											d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											d.setIconName("" + (char) 10003);
-											simDir.setIcon(MetalIconFactory
-													.getFileChooserUpFolderIcon());
+											simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 											simDir.setIconName("" + (char) 10003);
 										}
 									}
@@ -1922,44 +1807,28 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											for (int j = 1; j < 5; j++) {
 												end = s.charAt(s.length() - j) + end;
 											}
-											if (end.equals(".tsd") || end.equals(".dat")
-													|| end.equals(".csv")) {
+											if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
 												if (s.contains("run-")) {
-													run = Math.max(run, Integer
-															.parseInt(s.substring(4, s.length()
-																	- end.length())));
+													run = Math.max(run, Integer.parseInt(s.substring(4, s.length() - end.length())));
 												}
 											}
 										}
 									}
 									for (int i = 0; i < run; i++) {
-										if (new File(outDir + separator + file + separator + f
-												+ separator + "run-" + (i + 1) + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
+										if (new File(outDir + separator + file + separator + f + separator + "run-" + (i + 1) + "."
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 											IconNode n;
 											if (learnSpecs != null) {
-												n = new IconNode(p.get("run-"
-														+ (i + 1)
-														+ "."
-														+ printer_id.substring(0, printer_id
-																.length() - 8)), "run-" + (i + 1));
+												n = new IconNode(p.get("run-" + (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8)),
+														"run-" + (i + 1));
 												if (d2.getChildCount() > 3) {
 													boolean added = false;
 													for (int j = 3; j < d2.getChildCount(); j++) {
-														if (d2
-																.getChildAt(j)
+														if (d2.getChildAt(j)
 																.toString()
 																.compareToIgnoreCase(
-																		(String) p
-																				.get("run-"
-																						+ (i + 1)
-																						+ "."
-																						+ printer_id
-																								.substring(
-																										0,
-																										printer_id
-																												.length() - 8))) > 0) {
+																		(String) p.get("run-" + (i + 1) + "."
+																				+ printer_id.substring(0, printer_id.length() - 8))) > 0) {
 															d2.insert(n, j);
 															added = true;
 															break;
@@ -1980,19 +1849,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											n.setIconName("");
 											for (GraphSpecies g : graphed) {
 												if (g.getRunNumber().equals("run-" + (i + 1))
-														&& g.getDirectory().equals(
-																d.getName() + separator
-																		+ d2.getName())) {
+														&& g.getDirectory().equals(d.getName() + separator + d2.getName())) {
 													n.setIcon(TextIcons.getIcon("g"));
 													n.setIconName("" + (char) 10003);
-													d2.setIcon(MetalIconFactory
-															.getFileChooserUpFolderIcon());
+													d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 													d2.setIconName("" + (char) 10003);
-													d.setIcon(MetalIconFactory
-															.getFileChooserUpFolderIcon());
+													d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 													d.setIconName("" + (char) 10003);
-													simDir.setIcon(MetalIconFactory
-															.getFileChooserUpFolderIcon());
+													simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 													simDir.setIconName("" + (char) 10003);
 												}
 											}
@@ -2001,17 +1865,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								boolean added = false;
 								for (int j = 0; j < d.getChildCount(); j++) {
-									if ((d.getChildAt(j).toString().compareToIgnoreCase(
-											d2.toString()) > 0)
-											|| new File(
-													outDir
-															+ separator
-															+ d.toString()
-															+ separator
-															+ (d.getChildAt(j).toString() + "." + printer_id
-																	.substring(0, printer_id
-																			.length() - 8)))
-													.isFile()) {
+									if ((d.getChildAt(j).toString().compareToIgnoreCase(d2.toString()) > 0)
+											|| new File(outDir + separator + d.toString() + separator
+													+ (d.getChildAt(j).toString() + "." + printer_id.substring(0, printer_id.length() - 8))).isFile()) {
 										d.insert(d2, j);
 										added = true;
 										break;
@@ -2028,8 +1884,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						d.add(n);
 						n.setIconName("");
 						for (GraphSpecies g : graphed) {
-							if (g.getRunNumber().equals("Average")
-									&& g.getDirectory().equals(d.getName())) {
+							if (g.getRunNumber().equals("Average") && g.getDirectory().equals(d.getName())) {
 								n.setIcon(TextIcons.getIcon("g"));
 								n.setIconName("" + (char) 10003);
 								d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
@@ -2042,8 +1897,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						d.add(n);
 						n.setIconName("");
 						for (GraphSpecies g : graphed) {
-							if (g.getRunNumber().equals("Standard Deviation")
-									&& g.getDirectory().equals(d.getName())) {
+							if (g.getRunNumber().equals("Standard Deviation") && g.getDirectory().equals(d.getName())) {
 								n.setIcon(TextIcons.getIcon("g"));
 								n.setIconName("" + (char) 10003);
 								d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
@@ -2056,8 +1910,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						d.add(n);
 						n.setIconName("");
 						for (GraphSpecies g : graphed) {
-							if (g.getRunNumber().equals("Variance")
-									&& g.getDirectory().equals(d.getName())) {
+							if (g.getRunNumber().equals("Variance") && g.getDirectory().equals(d.getName())) {
 								n.setIcon(TextIcons.getIcon("g"));
 								n.setIconName("" + (char) 10003);
 								d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
@@ -2072,8 +1925,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						d.add(n);
 						n.setIconName("");
 						for (GraphSpecies g : graphed) {
-							if (g.getRunNumber().equals("Termination Time")
-									&& g.getDirectory().equals(d.getName())) {
+							if (g.getRunNumber().equals("Termination Time") && g.getDirectory().equals(d.getName())) {
 								n.setIcon(TextIcons.getIcon("g"));
 								n.setIconName("" + (char) 10003);
 								d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
@@ -2088,8 +1940,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						d.add(n);
 						n.setIconName("");
 						for (GraphSpecies g : graphed) {
-							if (g.getRunNumber().equals("Percent Termination")
-									&& g.getDirectory().equals(d.getName())) {
+							if (g.getRunNumber().equals("Percent Termination") && g.getDirectory().equals(d.getName())) {
 								n.setIcon(TextIcons.getIcon("g"));
 								n.setIconName("" + (char) 10003);
 								d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
@@ -2100,13 +1951,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 					}
 					if (addConst2) {
-						IconNode n = new IconNode("Constraint Termination",
-								"Constraint Termination");
+						IconNode n = new IconNode("Constraint Termination", "Constraint Termination");
 						d.add(n);
 						n.setIconName("");
 						for (GraphSpecies g : graphed) {
-							if (g.getRunNumber().equals("Constraint Termination")
-									&& g.getDirectory().equals(d.getName())) {
+							if (g.getRunNumber().equals("Constraint Termination") && g.getDirectory().equals(d.getName())) {
 								n.setIcon(TextIcons.getIcon("g"));
 								n.setIconName("" + (char) 10003);
 								d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
@@ -2132,31 +1981,25 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
 									if (s.contains("run-")) {
-										run = Math.max(run, Integer.parseInt(s.substring(4, s
-												.length()
-												- end.length())));
+										run = Math.max(run, Integer.parseInt(s.substring(4, s.length() - end.length())));
 									}
 								}
 							}
 						}
 						for (int i = 0; i < run; i++) {
-							if (new File(outDir + separator + file + separator + "run-" + (i + 1)
-									+ "." + printer_id.substring(0, printer_id.length() - 8))
-									.exists()) {
+							if (new File(outDir + separator + file + separator + "run-" + (i + 1) + "."
+									+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								IconNode n;
 								if (learnSpecs != null) {
-									n = new IconNode(p.get("run-" + (i + 1) + "."
-											+ printer_id.substring(0, printer_id.length() - 8)),
-											"run-" + (i + 1));
+									n = new IconNode(p.get("run-" + (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8)), "run-"
+											+ (i + 1));
 									if (d.getChildCount() > 3) {
 										boolean added = false;
 										for (int j = 3; j < d.getChildCount(); j++) {
-											if (d.getChildAt(j).toString().compareToIgnoreCase(
-													(String) p.get("run-"
-															+ (i + 1)
-															+ "."
-															+ printer_id.substring(0, printer_id
-																	.length() - 8))) > 0) {
+											if (d.getChildAt(j)
+													.toString()
+													.compareToIgnoreCase(
+															(String) p.get("run-" + (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8))) > 0) {
 												d.insert(n, j);
 												added = true;
 												break;
@@ -2176,14 +2019,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								n.setIconName("");
 								for (GraphSpecies g : graphed) {
-									if (g.getRunNumber().equals("run-" + (i + 1))
-											&& g.getDirectory().equals(d.getName())) {
+									if (g.getRunNumber().equals("run-" + (i + 1)) && g.getDirectory().equals(d.getName())) {
 										n.setIcon(TextIcons.getIcon("g"));
 										n.setIconName("" + (char) 10003);
 										d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 										d.setIconName("" + (char) 10003);
-										simDir.setIcon(MetalIconFactory
-												.getFileChooserUpFolderIcon());
+										simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 										simDir.setIconName("" + (char) 10003);
 									}
 								}
@@ -2193,10 +2034,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					boolean added = false;
 					for (int j = 0; j < simDir.getChildCount(); j++) {
 						if ((simDir.getChildAt(j).toString().compareToIgnoreCase(d.toString()) > 0)
-								|| new File(outDir
-										+ separator
-										+ (simDir.getChildAt(j).toString() + "." + printer_id
-												.substring(0, printer_id.length() - 8))).isFile()) {
+								|| new File(outDir + separator
+										+ (simDir.getChildAt(j).toString() + "." + printer_id.substring(0, printer_id.length() - 8))).isFile()) {
 							simDir.insert(d, j);
 							added = true;
 							break;
@@ -2274,8 +2113,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			simDir.add(n);
 			n.setIconName("");
 			for (GraphSpecies g : graphed) {
-				if (g.getRunNumber().equals("Constraint Termination")
-						&& g.getDirectory().equals("")) {
+				if (g.getRunNumber().equals("Constraint Termination") && g.getDirectory().equals("")) {
 					n.setIcon(TextIcons.getIcon("g"));
 					n.setIconName("" + (char) 10003);
 					simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
@@ -2299,30 +2137,24 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 					if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
 						if (s.contains("run-")) {
-							run = Math.max(run, Integer.parseInt(s.substring(4, s.length()
-									- end.length())));
+							run = Math.max(run, Integer.parseInt(s.substring(4, s.length() - end.length())));
 						}
 					}
 				}
 			}
 			for (int i = 0; i < run; i++) {
-				if (new File(outDir + separator + "run-" + (i + 1) + "."
-						+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+				if (new File(outDir + separator + "run-" + (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 					IconNode n;
 					if (learnSpecs != null) {
-						n = new IconNode(p.get("run-" + (i + 1) + "."
-								+ printer_id.substring(0, printer_id.length() - 8)), "run-"
-								+ (i + 1));
+						n = new IconNode(p.get("run-" + (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8)), "run-" + (i + 1));
 						if (simDir.getChildCount() > 3) {
 							boolean added = false;
 							for (int j = 3; j < simDir.getChildCount(); j++) {
-								if (simDir.getChildAt(j).toString()
+								if (simDir
+										.getChildAt(j)
+										.toString()
 										.compareToIgnoreCase(
-												(String) p.get("run-"
-														+ (i + 1)
-														+ "."
-														+ printer_id.substring(0, printer_id
-																.length() - 8))) > 0) {
+												(String) p.get("run-" + (i + 1) + "." + printer_id.substring(0, printer_id.length() - 8))) > 0) {
 									simDir.insert(n, j);
 									added = true;
 									break;
@@ -2342,8 +2174,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					}
 					n.setIconName("");
 					for (GraphSpecies g : graphed) {
-						if (g.getRunNumber().equals("run-" + (i + 1))
-								&& g.getDirectory().equals("")) {
+						if (g.getRunNumber().equals("run-" + (i + 1)) && g.getDirectory().equals("")) {
 							n.setIcon(TextIcons.getIcon("g"));
 							n.setIconName("" + (char) 10003);
 							simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
@@ -2354,8 +2185,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		if (simDir.getChildCount() == 0) {
-			JOptionPane.showMessageDialog(Gui.frame, "No data to graph."
-					+ "\nPerform some simulations to create some data first.", "No Data",
+			JOptionPane.showMessageDialog(Gui.frame, "No data to graph." + "\nPerform some simulations to create some data first.", "No Data",
 					JOptionPane.PLAIN_MESSAGE);
 		}
 		else {
@@ -2566,24 +2396,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (n.isLeaf()) {
 							n.setIcon(MetalIconFactory.getTreeLeafIcon());
 							n.setIconName("");
-							IconNode check = (IconNode) ((DefaultMutableTreeNode) n.getParent())
-									.getChildAfter(n);
+							IconNode check = (IconNode) ((DefaultMutableTreeNode) n.getParent()).getChildAfter(n);
 							if (check == null) {
 								n = (IconNode) n.getParent();
 								if (n.getParent() == null) {
 									n = null;
 								}
 								else {
-									IconNode check2 = (IconNode) ((DefaultMutableTreeNode) n
-											.getParent()).getChildAfter(n);
+									IconNode check2 = (IconNode) ((DefaultMutableTreeNode) n.getParent()).getChildAfter(n);
 									if (check2 == null) {
 										n = (IconNode) n.getParent();
 										if (n.getParent() == null) {
 											n = null;
 										}
 										else {
-											n = (IconNode) ((DefaultMutableTreeNode) n.getParent())
-													.getChildAfter(n);
+											n = (IconNode) ((DefaultMutableTreeNode) n.getParent()).getChildAfter(n);
 										}
 									}
 									else {
@@ -2649,9 +2476,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			all.add(scrollpane, "West");
 			// all.add(buttonPanel, "South");
 			Object[] options = { "Ok", "Cancel" };
-			int value = JOptionPane
-					.showOptionDialog(Gui.frame, all, "Edit Graph", JOptionPane.YES_NO_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			int value = JOptionPane.showOptionDialog(Gui.frame, all, "Edit Graph", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+					options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				double minY;
 				double maxY;
@@ -2680,23 +2506,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					 */
 				}
 				catch (Exception e1) {
-					JOptionPane.showMessageDialog(Gui.frame, "Must enter doubles into the inputs "
-							+ "to change the graph's dimensions!", "Error",
+					JOptionPane.showMessageDialog(Gui.frame, "Must enter doubles into the inputs " + "to change the graph's dimensions!", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				lastSelected = selected;
 				selected = "";
 				ArrayList<XYSeries> graphData = new ArrayList<XYSeries>();
-				XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot()
-						.getRenderer();
+				XYLineAndShapeRenderer rend = (XYLineAndShapeRenderer) chart.getXYPlot().getRenderer();
 				int thisOne = -1;
 				for (int i = 1; i < graphed.size(); i++) {
 					GraphSpecies index = graphed.get(i);
 					int j = i;
-					while ((j > 0)
-							&& (graphed.get(j - 1).getSpecies().compareToIgnoreCase(
-									index.getSpecies()) > 0)) {
+					while ((j > 0) && (graphed.get(j - 1).getSpecies().compareToIgnoreCase(index.getSpecies()) > 0)) {
 						graphed.set(j, graphed.get(j - 1));
 						j = j - 1;
 					}
@@ -2713,29 +2535,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						rend.setSeriesShapesVisible(thisOne, g.getVisible());
 						rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
 						rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
-						if (!g.getRunNumber().equals("Average")
-								&& !g.getRunNumber().equals("Variance")
-								&& !g.getRunNumber().equals("Standard Deviation")
-								&& !g.getRunNumber().equals("Termination Time")
-								&& !g.getRunNumber().equals("Percent Termination")
-								&& !g.getRunNumber().equals("Constraint Termination")) {
-							if (new File(outDir + separator + g.getRunNumber() + "."
-									+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+						if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
+								&& !g.getRunNumber().equals("Standard Deviation") && !g.getRunNumber().equals("Termination Time")
+								&& !g.getRunNumber().equals("Percent Termination") && !g.getRunNumber().equals("Constraint Termination")) {
+							if (new File(outDir + separator + g.getRunNumber() + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								}
 								else {
-									data = readData(outDir + separator + g.getRunNumber() + "."
-											+ printer_id.substring(0, printer_id.length() - 8), g
-											.getRunNumber(), null, false);
+									data = readData(outDir + separator + g.getRunNumber() + "." + printer_id.substring(0, printer_id.length() - 8),
+											g.getRunNumber(), null, false);
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
 										int j = i;
-										while ((j > 1)
-												&& graphSpecies.get(j - 1).compareToIgnoreCase(
-														index) > 0) {
+										while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 											graphSpecies.set(j, graphSpecies.get(j - 1));
 											data.set(j, data.get(j - 1));
 											j = j - 1;
@@ -2748,8 +2563,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -2761,24 +2575,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						else {
 							if (g.getRunNumber().equals("Average")
-									&& new File(outDir + separator + "mean" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + "mean" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								}
 								else {
-									data = readData(outDir + separator + "mean."
-											+ printer_id.substring(0, printer_id.length() - 8), g
-											.getRunNumber().toLowerCase(), null, false);
+									data = readData(outDir + separator + "mean." + printer_id.substring(0, printer_id.length() - 8), g.getRunNumber()
+											.toLowerCase(), null, false);
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
 										int j = i;
-										while ((j > 1)
-												&& graphSpecies.get(j - 1).compareToIgnoreCase(
-														index) > 0) {
+										while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 											graphSpecies.set(j, graphSpecies.get(j - 1));
 											data.set(j, data.get(j - 1));
 											j = j - 1;
@@ -2791,31 +2600,25 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
 							}
 							else if (g.getRunNumber().equals("Variance")
-									&& new File(outDir + separator + "variance" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + "variance" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								}
 								else {
-									data = readData(outDir + separator + "variance."
-											+ printer_id.substring(0, printer_id.length() - 8), g
+									data = readData(outDir + separator + "variance." + printer_id.substring(0, printer_id.length() - 8), g
 											.getRunNumber().toLowerCase(), null, false);
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
 										int j = i;
-										while ((j > 1)
-												&& graphSpecies.get(j - 1).compareToIgnoreCase(
-														index) > 0) {
+										while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 											graphSpecies.set(j, graphSpecies.get(j - 1));
 											data.set(j, data.get(j - 1));
 											j = j - 1;
@@ -2828,31 +2631,26 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
 							}
 							else if (g.getRunNumber().equals("Standard Deviation")
-									&& new File(outDir + separator + "standard_deviation" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
+									&& new File(outDir + separator + "standard_deviation" + "." + printer_id.substring(0, printer_id.length() - 8))
 											.exists()) {
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								}
 								else {
-									data = readData(outDir + separator + "standard_deviation."
-											+ printer_id.substring(0, printer_id.length() - 8), g
+									data = readData(outDir + separator + "standard_deviation." + printer_id.substring(0, printer_id.length() - 8), g
 											.getRunNumber().toLowerCase(), null, false);
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
 										int j = i;
-										while ((j > 1)
-												&& graphSpecies.get(j - 1).compareToIgnoreCase(
-														index) > 0) {
+										while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 											graphSpecies.set(j, graphSpecies.get(j - 1));
 											data.set(j, data.get(j - 1));
 											j = j - 1;
@@ -2865,31 +2663,25 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
 							}
 							else if (g.getRunNumber().equals("Termination Time")
-									&& new File(outDir + separator + "term-time" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + "term-time" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								}
 								else {
-									data = readData(outDir + separator + "term-time."
-											+ printer_id.substring(0, printer_id.length() - 8), g
+									data = readData(outDir + separator + "term-time." + printer_id.substring(0, printer_id.length() - 8), g
 											.getRunNumber().toLowerCase(), null, false);
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
 										int j = i;
-										while ((j > 1)
-												&& graphSpecies.get(j - 1).compareToIgnoreCase(
-														index) > 0) {
+										while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 											graphSpecies.set(j, graphSpecies.get(j - 1));
 											data.set(j, data.get(j - 1));
 											j = j - 1;
@@ -2902,31 +2694,26 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
 							}
 							else if (g.getRunNumber().equals("Percent Termination")
-									&& new File(outDir + separator + "percent-term-time" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
+									&& new File(outDir + separator + "percent-term-time" + "." + printer_id.substring(0, printer_id.length() - 8))
 											.exists()) {
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								}
 								else {
-									data = readData(outDir + separator + "percent-term-time."
-											+ printer_id.substring(0, printer_id.length() - 8), g
+									data = readData(outDir + separator + "percent-term-time." + printer_id.substring(0, printer_id.length() - 8), g
 											.getRunNumber().toLowerCase(), null, false);
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
 										int j = i;
-										while ((j > 1)
-												&& graphSpecies.get(j - 1).compareToIgnoreCase(
-														index) > 0) {
+										while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 											graphSpecies.set(j, graphSpecies.get(j - 1));
 											data.set(j, data.get(j - 1));
 											j = j - 1;
@@ -2939,31 +2726,25 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
 							}
 							else if (g.getRunNumber().equals("Constraint Termination")
-									&& new File(outDir + separator + "sim-rep" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								}
 								else {
-									data = readData(outDir + separator + "sim-rep."
-											+ printer_id.substring(0, printer_id.length() - 8), g
+									data = readData(outDir + separator + "sim-rep." + printer_id.substring(0, printer_id.length() - 8), g
 											.getRunNumber().toLowerCase(), null, false);
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
 										int j = i;
-										while ((j > 1)
-												&& graphSpecies.get(j - 1).compareToIgnoreCase(
-														index) > 0) {
+										while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 											graphSpecies.set(j, graphSpecies.get(j - 1));
 											data.set(j, data.get(j - 1));
 											j = j - 1;
@@ -2976,8 +2757,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -2996,28 +2776,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								if (ableToGraph) {
 									int next = 1;
-									while (!new File(outDir + separator + "run-" + next + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
+									while (!new File(outDir + separator + "run-" + next + "." + printer_id.substring(0, printer_id.length() - 8))
 											.exists()) {
 										next++;
 									}
 									ArrayList<ArrayList<Double>> data;
-									if (allData.containsKey(g.getRunNumber() + " "
-											+ g.getDirectory())) {
-										data = allData.get(g.getRunNumber() + " "
-												+ g.getDirectory());
+									if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+										data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 									}
 									else {
-										data = readData(outDir + separator + "run-1."
-												+ printer_id.substring(0, printer_id.length() - 8),
-												g.getRunNumber().toLowerCase(), null, false);
+										data = readData(outDir + separator + "run-1." + printer_id.substring(0, printer_id.length() - 8), g
+												.getRunNumber().toLowerCase(), null, false);
 										for (int i = 2; i < graphSpecies.size(); i++) {
 											String index = graphSpecies.get(i);
 											ArrayList<Double> index2 = data.get(i);
 											int j = i;
-											while ((j > 1)
-													&& graphSpecies.get(j - 1).compareToIgnoreCase(
-															index) > 0) {
+											while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 												graphSpecies.set(j, graphSpecies.get(j - 1));
 												data.set(j, data.get(j - 1));
 												j = j - 1;
@@ -3025,15 +2799,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											graphSpecies.set(j, index);
 											data.set(j, index2);
 										}
-										allData
-												.put(g.getRunNumber() + " " + g.getDirectory(),
-														data);
+										allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
 									}
 									graphData.add(new XYSeries(g.getSpecies()));
 									if (data.size() != 0) {
 										for (int i = 0; i < (data.get(0)).size(); i++) {
-											graphData.get(graphData.size() - 1).add(
-													(data.get(g.getXNumber())).get(i),
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 													(data.get(g.getNumber() + 1)).get(i));
 										}
 									}
@@ -3053,31 +2824,24 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						rend.setSeriesShapesVisible(thisOne, g.getVisible());
 						rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
 						rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
-						if (!g.getRunNumber().equals("Average")
-								&& !g.getRunNumber().equals("Variance")
-								&& !g.getRunNumber().equals("Standard Deviation")
-								&& !g.getRunNumber().equals("Termination Time")
-								&& !g.getRunNumber().equals("Percent Termination")
-								&& !g.getRunNumber().equals("Constraint Termination")) {
-							if (new File(outDir + separator + g.getDirectory() + separator
-									+ g.getRunNumber() + "."
+						if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
+								&& !g.getRunNumber().equals("Standard Deviation") && !g.getRunNumber().equals("Termination Time")
+								&& !g.getRunNumber().equals("Percent Termination") && !g.getRunNumber().equals("Constraint Termination")) {
+							if (new File(outDir + separator + g.getDirectory() + separator + g.getRunNumber() + "."
 									+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								}
 								else {
-									data = readData(outDir + separator + g.getDirectory()
-											+ separator + g.getRunNumber() + "."
-											+ printer_id.substring(0, printer_id.length() - 8), g
-											.getRunNumber(), g.getDirectory(), false);
+									data = readData(
+											outDir + separator + g.getDirectory() + separator + g.getRunNumber() + "."
+													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber(), g.getDirectory(), false);
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
 										int j = i;
-										while ((j > 1)
-												&& graphSpecies.get(j - 1).compareToIgnoreCase(
-														index) > 0) {
+										while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 											graphSpecies.set(j, graphSpecies.get(j - 1));
 											data.set(j, data.get(j - 1));
 											j = j - 1;
@@ -3090,8 +2854,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -3103,26 +2866,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						else {
 							if (g.getRunNumber().equals("Average")
-									&& new File(outDir + separator + g.getDirectory() + separator
-											+ "mean" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + g.getDirectory() + separator + "mean" + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								}
 								else {
-									data = readData(outDir + separator + g.getDirectory()
-											+ separator + "mean."
-											+ printer_id.substring(0, printer_id.length() - 8), g
-											.getRunNumber().toLowerCase(), null, false);
+									data = readData(
+											outDir + separator + g.getDirectory() + separator + "mean."
+													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber().toLowerCase(), null, false);
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
 										int j = i;
-										while ((j > 1)
-												&& graphSpecies.get(j - 1).compareToIgnoreCase(
-														index) > 0) {
+										while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 											graphSpecies.set(j, graphSpecies.get(j - 1));
 											data.set(j, data.get(j - 1));
 											j = j - 1;
@@ -3135,33 +2893,27 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
 							}
 							else if (g.getRunNumber().equals("Variance")
-									&& new File(outDir + separator + g.getDirectory() + separator
-											+ "variance" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + g.getDirectory() + separator + "variance" + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								}
 								else {
-									data = readData(outDir + separator + g.getDirectory()
-											+ separator + "variance."
-											+ printer_id.substring(0, printer_id.length() - 8), g
-											.getRunNumber().toLowerCase(), null, false);
+									data = readData(
+											outDir + separator + g.getDirectory() + separator + "variance."
+													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber().toLowerCase(), null, false);
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
 										int j = i;
-										while ((j > 1)
-												&& graphSpecies.get(j - 1).compareToIgnoreCase(
-														index) > 0) {
+										while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 											graphSpecies.set(j, graphSpecies.get(j - 1));
 											data.set(j, data.get(j - 1));
 											j = j - 1;
@@ -3174,33 +2926,27 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
 							}
 							else if (g.getRunNumber().equals("Standard Deviation")
-									&& new File(outDir + separator + g.getDirectory() + separator
-											+ "standard_deviation" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + g.getDirectory() + separator + "standard_deviation" + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								}
 								else {
-									data = readData(outDir + separator + g.getDirectory()
-											+ separator + "standard_deviation."
-											+ printer_id.substring(0, printer_id.length() - 8), g
-											.getRunNumber().toLowerCase(), null, false);
+									data = readData(
+											outDir + separator + g.getDirectory() + separator + "standard_deviation."
+													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber().toLowerCase(), null, false);
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
 										int j = i;
-										while ((j > 1)
-												&& graphSpecies.get(j - 1).compareToIgnoreCase(
-														index) > 0) {
+										while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 											graphSpecies.set(j, graphSpecies.get(j - 1));
 											data.set(j, data.get(j - 1));
 											j = j - 1;
@@ -3213,33 +2959,27 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
 							}
 							else if (g.getRunNumber().equals("Termination Time")
-									&& new File(outDir + separator + g.getDirectory() + separator
-											+ "term-time" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + g.getDirectory() + separator + "term-time" + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								}
 								else {
-									data = readData(outDir + separator + g.getDirectory()
-											+ separator + "term-time."
-											+ printer_id.substring(0, printer_id.length() - 8), g
-											.getRunNumber().toLowerCase(), null, false);
+									data = readData(
+											outDir + separator + g.getDirectory() + separator + "term-time."
+													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber().toLowerCase(), null, false);
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
 										int j = i;
-										while ((j > 1)
-												&& graphSpecies.get(j - 1).compareToIgnoreCase(
-														index) > 0) {
+										while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 											graphSpecies.set(j, graphSpecies.get(j - 1));
 											data.set(j, data.get(j - 1));
 											j = j - 1;
@@ -3252,33 +2992,27 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
 							}
 							else if (g.getRunNumber().equals("Percent Termination")
-									&& new File(outDir + separator + g.getDirectory() + separator
-											+ "percent-term-time" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + g.getDirectory() + separator + "percent-term-time" + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								}
 								else {
-									data = readData(outDir + separator + g.getDirectory()
-											+ separator + "percent-term-time."
-											+ printer_id.substring(0, printer_id.length() - 8), g
-											.getRunNumber().toLowerCase(), null, false);
+									data = readData(
+											outDir + separator + g.getDirectory() + separator + "percent-term-time."
+													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber().toLowerCase(), null, false);
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
 										int j = i;
-										while ((j > 1)
-												&& graphSpecies.get(j - 1).compareToIgnoreCase(
-														index) > 0) {
+										while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 											graphSpecies.set(j, graphSpecies.get(j - 1));
 											data.set(j, data.get(j - 1));
 											j = j - 1;
@@ -3291,33 +3025,27 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
 							}
 							else if (g.getRunNumber().equals("Constraint Termination")
-									&& new File(outDir + separator + g.getDirectory() + separator
-											+ "sim-rep" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + g.getDirectory() + separator + "sim-rep" + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ArrayList<ArrayList<Double>> data;
 								if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 									data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								}
 								else {
-									data = readData(outDir + separator + g.getDirectory()
-											+ separator + "sim-rep."
-											+ printer_id.substring(0, printer_id.length() - 8), g
-											.getRunNumber().toLowerCase(), null, false);
+									data = readData(
+											outDir + separator + g.getDirectory() + separator + "sim-rep."
+													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber().toLowerCase(), null, false);
 									for (int i = 2; i < graphSpecies.size(); i++) {
 										String index = graphSpecies.get(i);
 										ArrayList<Double> index2 = data.get(i);
 										int j = i;
-										while ((j > 1)
-												&& graphSpecies.get(j - 1).compareToIgnoreCase(
-														index) > 0) {
+										while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 											graphSpecies.set(j, graphSpecies.get(j - 1));
 											data.set(j, data.get(j - 1));
 											j = j - 1;
@@ -3330,8 +3058,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -3339,8 +3066,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							else {
 								boolean ableToGraph = false;
 								try {
-									for (String s : new File(outDir + separator + g.getDirectory())
-											.list()) {
+									for (String s : new File(outDir + separator + g.getDirectory()).list()) {
 										if (s.length() > 3 && s.substring(0, 4).equals("run-")) {
 											ableToGraph = true;
 										}
@@ -3351,31 +3077,24 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								if (ableToGraph) {
 									int next = 1;
-									while (!new File(outDir + separator + g.getDirectory()
-											+ separator + "run-" + next + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									while (!new File(outDir + separator + g.getDirectory() + separator + "run-" + next + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 										next++;
 									}
 									ArrayList<ArrayList<Double>> data;
-									if (allData.containsKey(g.getRunNumber() + " "
-											+ g.getDirectory())) {
-										data = allData.get(g.getRunNumber() + " "
-												+ g.getDirectory());
+									if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
+										data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 									}
 									else {
-										data = readData(outDir + separator + g.getDirectory()
-												+ separator + "run-1."
-												+ printer_id.substring(0, printer_id.length() - 8),
-												g.getRunNumber().toLowerCase(), g.getDirectory(),
-												false);
+										data = readData(
+												outDir + separator + g.getDirectory() + separator + "run-1."
+														+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber().toLowerCase(),
+												g.getDirectory(), false);
 										for (int i = 2; i < graphSpecies.size(); i++) {
 											String index = graphSpecies.get(i);
 											ArrayList<Double> index2 = data.get(i);
 											int j = i;
-											while ((j > 1)
-													&& graphSpecies.get(j - 1).compareToIgnoreCase(
-															index) > 0) {
+											while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 												graphSpecies.set(j, graphSpecies.get(j - 1));
 												data.set(j, data.get(j - 1));
 												j = j - 1;
@@ -3383,15 +3102,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											graphSpecies.set(j, index);
 											data.set(j, index2);
 										}
-										allData
-												.put(g.getRunNumber() + " " + g.getDirectory(),
-														data);
+										allData.put(g.getRunNumber() + " " + g.getDirectory(), data);
 									}
 									graphData.add(new XYSeries(g.getSpecies()));
 									if (data.size() != 0) {
 										for (int i = 0; i < (data.get(0)).size(); i++) {
-											graphData.get(graphData.size() - 1).add(
-													(data.get(g.getXNumber())).get(i),
+											graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 													(data.get(g.getNumber() + 1)).get(i));
 										}
 									}
@@ -3507,10 +3223,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		tree.addTreeSelectionListener(new TreeSelectionListener() {
 			public void valueChanged(TreeSelectionEvent e) {
 				node = (IconNode) e.getPath().getLastPathComponent();
-				if (!directories.contains(node.getName())
-						&& node.getParent() != null
-						&& !directories.contains(((IconNode) node.getParent()).getName()
-								+ separator + node.getName())) {
+				if (!directories.contains(node.getName()) && node.getParent() != null
+						&& !directories.contains(((IconNode) node.getParent()).getName() + separator + node.getName())) {
 					selected = node.getName();
 					int select;
 					if (selected.equals("Average")) {
@@ -3550,12 +3264,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					if (select != -1) {
 						specPanel.removeAll();
 						if (node.getParent().getParent() != null
-								&& directories.contains(((IconNode) node.getParent().getParent())
-										.getName()
-										+ separator + ((IconNode) node.getParent()).getName())) {
-							specPanel.add(fixGraphChoices(((IconNode) node.getParent().getParent())
-									.getName()
-									+ separator + ((IconNode) node.getParent()).getName()));
+								&& directories.contains(((IconNode) node.getParent().getParent()).getName() + separator
+										+ ((IconNode) node.getParent()).getName())) {
+							specPanel.add(fixGraphChoices(((IconNode) node.getParent().getParent()).getName() + separator
+									+ ((IconNode) node.getParent()).getName()));
 						}
 						else if (directories.contains(((IconNode) node.getParent()).getName())) {
 							specPanel.add(fixGraphChoices(((IconNode) node.getParent()).getName()));
@@ -3574,28 +3286,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							boxes.get(i).setSelected(false);
 						}
 						if (node.getParent().getParent() != null
-								&& directories.contains(((IconNode) node.getParent().getParent())
-										.getName()
-										+ separator + ((IconNode) node.getParent()).getName())) {
+								&& directories.contains(((IconNode) node.getParent().getParent()).getName() + separator
+										+ ((IconNode) node.getParent()).getName())) {
 							for (GraphSpecies g : graphed) {
 								if (g.getRunNumber().equals(selected)
 										&& g.getDirectory().equals(
-												((IconNode) node.getParent().getParent()).getName()
-														+ separator
+												((IconNode) node.getParent().getParent()).getName() + separator
 														+ ((IconNode) node.getParent()).getName())) {
 									XVariable.setSelectedIndex(g.getXNumber());
 									boxes.get(g.getNumber()).setSelected(true);
 									series.get(g.getNumber()).setText(g.getSpecies());
 									series.get(g.getNumber()).setSelectionStart(0);
 									series.get(g.getNumber()).setSelectionEnd(0);
-									colorsButtons.get(g.getNumber()).setBackground(
-											(Color) g.getShapeAndPaint().getPaint());
-									colorsButtons.get(g.getNumber()).setForeground(
-											(Color) g.getShapeAndPaint().getPaint());
-									colorsCombo.get(g.getNumber()).setSelectedItem(
-											g.getShapeAndPaint().getPaintName().split("_")[0]);
-									shapesCombo.get(g.getNumber()).setSelectedItem(
-											g.getShapeAndPaint().getShapeName());
+									colorsButtons.get(g.getNumber()).setBackground((Color) g.getShapeAndPaint().getPaint());
+									colorsButtons.get(g.getNumber()).setForeground((Color) g.getShapeAndPaint().getPaint());
+									colorsCombo.get(g.getNumber()).setSelectedItem(g.getShapeAndPaint().getPaintName().split("_")[0]);
+									shapesCombo.get(g.getNumber()).setSelectedItem(g.getShapeAndPaint().getShapeName());
 									connected.get(g.getNumber()).setSelected(g.getConnected());
 									visible.get(g.getNumber()).setSelected(g.getVisible());
 									filled.get(g.getNumber()).setSelected(g.getFilled());
@@ -3604,22 +3310,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						else if (directories.contains(((IconNode) node.getParent()).getName())) {
 							for (GraphSpecies g : graphed) {
-								if (g.getRunNumber().equals(selected)
-										&& g.getDirectory().equals(
-												((IconNode) node.getParent()).getName())) {
+								if (g.getRunNumber().equals(selected) && g.getDirectory().equals(((IconNode) node.getParent()).getName())) {
 									XVariable.setSelectedIndex(g.getXNumber());
 									boxes.get(g.getNumber()).setSelected(true);
 									series.get(g.getNumber()).setText(g.getSpecies());
 									series.get(g.getNumber()).setSelectionStart(0);
 									series.get(g.getNumber()).setSelectionEnd(0);
-									colorsButtons.get(g.getNumber()).setBackground(
-											(Color) g.getShapeAndPaint().getPaint());
-									colorsButtons.get(g.getNumber()).setForeground(
-											(Color) g.getShapeAndPaint().getPaint());
-									colorsCombo.get(g.getNumber()).setSelectedItem(
-											g.getShapeAndPaint().getPaintName().split("_")[0]);
-									shapesCombo.get(g.getNumber()).setSelectedItem(
-											g.getShapeAndPaint().getShapeName());
+									colorsButtons.get(g.getNumber()).setBackground((Color) g.getShapeAndPaint().getPaint());
+									colorsButtons.get(g.getNumber()).setForeground((Color) g.getShapeAndPaint().getPaint());
+									colorsCombo.get(g.getNumber()).setSelectedItem(g.getShapeAndPaint().getPaintName().split("_")[0]);
+									shapesCombo.get(g.getNumber()).setSelectedItem(g.getShapeAndPaint().getShapeName());
 									connected.get(g.getNumber()).setSelected(g.getConnected());
 									visible.get(g.getNumber()).setSelected(g.getVisible());
 									filled.get(g.getNumber()).setSelected(g.getFilled());
@@ -3628,21 +3328,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						else {
 							for (GraphSpecies g : graphed) {
-								if (g.getRunNumber().equals(selected)
-										&& g.getDirectory().equals("")) {
+								if (g.getRunNumber().equals(selected) && g.getDirectory().equals("")) {
 									XVariable.setSelectedIndex(g.getXNumber());
 									boxes.get(g.getNumber()).setSelected(true);
 									series.get(g.getNumber()).setText(g.getSpecies());
 									series.get(g.getNumber()).setSelectionStart(0);
 									series.get(g.getNumber()).setSelectionEnd(0);
-									colorsButtons.get(g.getNumber()).setBackground(
-											(Color) g.getShapeAndPaint().getPaint());
-									colorsButtons.get(g.getNumber()).setForeground(
-											(Color) g.getShapeAndPaint().getPaint());
-									colorsCombo.get(g.getNumber()).setSelectedItem(
-											g.getShapeAndPaint().getPaintName().split("_")[0]);
-									shapesCombo.get(g.getNumber()).setSelectedItem(
-											g.getShapeAndPaint().getShapeName());
+									colorsButtons.get(g.getNumber()).setBackground((Color) g.getShapeAndPaint().getPaint());
+									colorsButtons.get(g.getNumber()).setForeground((Color) g.getShapeAndPaint().getPaint());
+									colorsCombo.get(g.getNumber()).setSelectedItem(g.getShapeAndPaint().getPaintName().split("_")[0]);
+									shapesCombo.get(g.getNumber()).setSelectedItem(g.getShapeAndPaint().getShapeName());
 									connected.get(g.getNumber()).setSelected(g.getConnected());
 									visible.get(g.getNumber()).setSelected(g.getVisible());
 									filled.get(g.getNumber()).setSelected(g.getFilled());
@@ -3659,30 +3354,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								String s = "";
 								s = ((IconNode) e.getPath().getLastPathComponent()).toString();
 								if (node.getParent().getParent() != null
-										&& directories.contains(((IconNode) node.getParent()
-												.getParent()).getName()
-												+ separator
+										&& directories.contains(((IconNode) node.getParent().getParent()).getName() + separator
 												+ ((IconNode) node.getParent()).getName())) {
 									if (s.equals("Average")) {
-										s = "("
-												+ ((IconNode) node.getParent().getParent())
-														.getName() + separator
-												+ ((IconNode) node.getParent()).getName() + ", "
-												+ (char) 967 + ")";
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
+												+ ((IconNode) node.getParent()).getName() + ", " + (char) 967 + ")";
 									}
 									else if (s.equals("Variance")) {
-										s = "("
-												+ ((IconNode) node.getParent().getParent())
-														.getName() + separator
-												+ ((IconNode) node.getParent()).getName() + ", "
-												+ (char) 948 + (char) 178 + ")";
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
+												+ ((IconNode) node.getParent()).getName() + ", " + (char) 948 + (char) 178 + ")";
 									}
 									else if (s.equals("Standard Deviation")) {
-										s = "("
-												+ ((IconNode) node.getParent().getParent())
-														.getName() + separator
-												+ ((IconNode) node.getParent()).getName() + ", "
-												+ (char) 948 + ")";
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
+												+ ((IconNode) node.getParent()).getName() + ", " + (char) 948 + ")";
 									}
 									else {
 										if (s.endsWith("-run")) {
@@ -3691,26 +3375,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										else if (s.startsWith("run-")) {
 											s = s.substring(4);
 										}
-										s = "("
-												+ ((IconNode) node.getParent().getParent())
-														.getName() + separator
-												+ ((IconNode) node.getParent()).getName() + ", "
-												+ s + ")";
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
+												+ ((IconNode) node.getParent()).getName() + ", " + s + ")";
 									}
 								}
-								else if (directories.contains(((IconNode) node.getParent())
-										.getName())) {
+								else if (directories.contains(((IconNode) node.getParent()).getName())) {
 									if (s.equals("Average")) {
-										s = "(" + ((IconNode) node.getParent()).getName() + ", "
-												+ (char) 967 + ")";
+										s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 967 + ")";
 									}
 									else if (s.equals("Variance")) {
-										s = "(" + ((IconNode) node.getParent()).getName() + ", "
-												+ (char) 948 + (char) 178 + ")";
+										s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 948 + (char) 178 + ")";
 									}
 									else if (s.equals("Standard Deviation")) {
-										s = "(" + ((IconNode) node.getParent()).getName() + ", "
-												+ (char) 948 + ")";
+										s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 948 + ")";
 									}
 									else {
 										if (s.endsWith("-run")) {
@@ -3719,8 +3396,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										else if (s.startsWith("run-")) {
 											s = s.substring(4);
 										}
-										s = "(" + ((IconNode) node.getParent()).getName() + ", "
-												+ s + ")";
+										s = "(" + ((IconNode) node.getParent()).getName() + ", " + s + ")";
 									}
 								}
 								else {
@@ -3769,30 +3445,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								String s = "";
 								s = ((IconNode) e.getPath().getLastPathComponent()).toString();
 								if (node.getParent().getParent() != null
-										&& directories.contains(((IconNode) node.getParent()
-												.getParent()).getName()
-												+ separator
+										&& directories.contains(((IconNode) node.getParent().getParent()).getName() + separator
 												+ ((IconNode) node.getParent()).getName())) {
 									if (s.equals("Average")) {
-										s = "("
-												+ ((IconNode) node.getParent().getParent())
-														.getName() + separator
-												+ ((IconNode) node.getParent()).getName() + ", "
-												+ (char) 967 + ")";
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
+												+ ((IconNode) node.getParent()).getName() + ", " + (char) 967 + ")";
 									}
 									else if (s.equals("Variance")) {
-										s = "("
-												+ ((IconNode) node.getParent().getParent())
-														.getName() + separator
-												+ ((IconNode) node.getParent()).getName() + ", "
-												+ (char) 948 + (char) 178 + ")";
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
+												+ ((IconNode) node.getParent()).getName() + ", " + (char) 948 + (char) 178 + ")";
 									}
 									else if (s.equals("Standard Deviation")) {
-										s = "("
-												+ ((IconNode) node.getParent().getParent())
-														.getName() + separator
-												+ ((IconNode) node.getParent()).getName() + ", "
-												+ (char) 948 + ")";
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
+												+ ((IconNode) node.getParent()).getName() + ", " + (char) 948 + ")";
 									}
 									else {
 										if (s.endsWith("-run")) {
@@ -3801,26 +3466,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										else if (s.startsWith("run-")) {
 											s = s.substring(4);
 										}
-										s = "("
-												+ ((IconNode) node.getParent().getParent())
-														.getName() + separator
-												+ ((IconNode) node.getParent()).getName() + ", "
-												+ s + ")";
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
+												+ ((IconNode) node.getParent()).getName() + ", " + s + ")";
 									}
 								}
-								else if (directories.contains(((IconNode) node.getParent())
-										.getName())) {
+								else if (directories.contains(((IconNode) node.getParent()).getName())) {
 									if (s.equals("Average")) {
-										s = "(" + ((IconNode) node.getParent()).getName() + ", "
-												+ (char) 967 + ")";
+										s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 967 + ")";
 									}
 									else if (s.equals("Variance")) {
-										s = "(" + ((IconNode) node.getParent()).getName() + ", "
-												+ (char) 948 + (char) 178 + ")";
+										s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 948 + (char) 178 + ")";
 									}
 									else if (s.equals("Standard Deviation")) {
-										s = "(" + ((IconNode) node.getParent()).getName() + ", "
-												+ (char) 948 + ")";
+										s = "(" + ((IconNode) node.getParent()).getName() + ", " + (char) 948 + ")";
 									}
 									else {
 										if (s.endsWith("-run")) {
@@ -3829,8 +3487,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										else if (s.startsWith("run-")) {
 											s = s.substring(4);
 										}
-										s = "(" + ((IconNode) node.getParent()).getName() + ", "
-												+ s + ")";
+										s = "(" + ((IconNode) node.getParent()).getName() + ", " + s + ")";
 									}
 								}
 								else {
@@ -3923,119 +3580,92 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private JPanel fixGraphChoices(final String directory) {
 		if (directory.equals("")) {
-			if (selected.equals("Average") || selected.equals("Variance")
-					|| selected.equals("Standard Deviation") || selected.equals("Termination Time")
-					|| selected.equals("Percent Termination")
-					|| selected.equals("Constraint Termination")) {
+			if (selected.equals("Average") || selected.equals("Variance") || selected.equals("Standard Deviation")
+					|| selected.equals("Termination Time") || selected.equals("Percent Termination") || selected.equals("Constraint Termination")) {
 				if (selected.equals("Average")
-						&& new File(outDir + separator + "mean" + "."
-								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-					readGraphSpecies(outDir + separator + "mean" + "."
-							+ printer_id.substring(0, printer_id.length() - 8));
+						&& new File(outDir + separator + "mean" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+					readGraphSpecies(outDir + separator + "mean" + "." + printer_id.substring(0, printer_id.length() - 8));
 				}
 				else if (selected.equals("Variance")
-						&& new File(outDir + separator + "variance" + "."
-								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-					readGraphSpecies(outDir + separator + "variance" + "."
-							+ printer_id.substring(0, printer_id.length() - 8));
+						&& new File(outDir + separator + "variance" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+					readGraphSpecies(outDir + separator + "variance" + "." + printer_id.substring(0, printer_id.length() - 8));
 				}
 				else if (selected.equals("Standard Deviation")
-						&& new File(outDir + separator + "standard_deviation" + "."
-								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-					readGraphSpecies(outDir + separator + "standard_deviation" + "."
-							+ printer_id.substring(0, printer_id.length() - 8));
+						&& new File(outDir + separator + "standard_deviation" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+					readGraphSpecies(outDir + separator + "standard_deviation" + "." + printer_id.substring(0, printer_id.length() - 8));
 				}
 				else if (selected.equals("Termination Time")
-						&& new File(outDir + separator + "term-time" + "."
-								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-					readGraphSpecies(outDir + separator + "term-time" + "."
-							+ printer_id.substring(0, printer_id.length() - 8));
+						&& new File(outDir + separator + "term-time" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+					readGraphSpecies(outDir + separator + "term-time" + "." + printer_id.substring(0, printer_id.length() - 8));
 				}
 				else if (selected.equals("Percent Termination")
-						&& new File(outDir + separator + "percent-term-time" + "."
-								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-					readGraphSpecies(outDir + separator + "percent-term-time" + "."
-							+ printer_id.substring(0, printer_id.length() - 8));
+						&& new File(outDir + separator + "percent-term-time" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+					readGraphSpecies(outDir + separator + "percent-term-time" + "." + printer_id.substring(0, printer_id.length() - 8));
 				}
 				else if (selected.equals("Constraint Termination")
-						&& new File(outDir + separator + "sim-rep" + "."
-								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-					readGraphSpecies(outDir + separator + "sim-rep" + "."
-							+ printer_id.substring(0, printer_id.length() - 8));
+						&& new File(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+					readGraphSpecies(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8));
 				}
 				else {
 					int nextOne = 1;
-					while (!new File(outDir + separator + "run-" + nextOne + "."
-							+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+					while (!new File(outDir + separator + "run-" + nextOne + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 						nextOne++;
 					}
-					readGraphSpecies(outDir + separator + "run-" + nextOne + "."
-							+ printer_id.substring(0, printer_id.length() - 8));
+					readGraphSpecies(outDir + separator + "run-" + nextOne + "." + printer_id.substring(0, printer_id.length() - 8));
 				}
 			}
 			else {
-				readGraphSpecies(outDir + separator + selected + "."
-						+ printer_id.substring(0, printer_id.length() - 8));
+				readGraphSpecies(outDir + separator + selected + "." + printer_id.substring(0, printer_id.length() - 8));
 			}
 		}
 		else {
-			if (selected.equals("Average") || selected.equals("Variance")
-					|| selected.equals("Standard Deviation") || selected.equals("Termination Time")
-					|| selected.equals("Percent Termination")
-					|| selected.equals("Constraint Termination")) {
+			if (selected.equals("Average") || selected.equals("Variance") || selected.equals("Standard Deviation")
+					|| selected.equals("Termination Time") || selected.equals("Percent Termination") || selected.equals("Constraint Termination")) {
 				if (selected.equals("Average")
-						&& new File(outDir + separator + directory + separator + "mean" + "."
-								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-					readGraphSpecies(outDir + separator + directory + separator + "mean" + "."
-							+ printer_id.substring(0, printer_id.length() - 8));
+						&& new File(outDir + separator + directory + separator + "mean" + "." + printer_id.substring(0, printer_id.length() - 8))
+								.exists()) {
+					readGraphSpecies(outDir + separator + directory + separator + "mean" + "." + printer_id.substring(0, printer_id.length() - 8));
 				}
 				else if (selected.equals("Variance")
-						&& new File(outDir + separator + directory + separator + "variance" + "."
-								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-					readGraphSpecies(outDir + separator + directory + separator + "variance" + "."
-							+ printer_id.substring(0, printer_id.length() - 8));
+						&& new File(outDir + separator + directory + separator + "variance" + "." + printer_id.substring(0, printer_id.length() - 8))
+								.exists()) {
+					readGraphSpecies(outDir + separator + directory + separator + "variance" + "." + printer_id.substring(0, printer_id.length() - 8));
 				}
 				else if (selected.equals("Standard Deviation")
-						&& new File(outDir + separator + directory + separator
-								+ "standard_deviation" + "."
+						&& new File(outDir + separator + directory + separator + "standard_deviation" + "."
 								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-					readGraphSpecies(outDir + separator + directory + separator
-							+ "standard_deviation" + "."
+					readGraphSpecies(outDir + separator + directory + separator + "standard_deviation" + "."
 							+ printer_id.substring(0, printer_id.length() - 8));
 				}
 				else if (selected.equals("Termination Time")
-						&& new File(outDir + separator + directory + separator + "term-time" + "."
-								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+						&& new File(outDir + separator + directory + separator + "term-time" + "." + printer_id.substring(0, printer_id.length() - 8))
+								.exists()) {
 					readGraphSpecies(outDir + separator + directory + separator + "term-time" + "."
 							+ printer_id.substring(0, printer_id.length() - 8));
 				}
 				else if (selected.equals("Percent Termination")
-						&& new File(outDir + separator + directory + separator
-								+ "percent-term-time" + "."
+						&& new File(outDir + separator + directory + separator + "percent-term-time" + "."
 								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-					readGraphSpecies(outDir + separator + directory + separator
-							+ "percent-term-time" + "."
+					readGraphSpecies(outDir + separator + directory + separator + "percent-term-time" + "."
 							+ printer_id.substring(0, printer_id.length() - 8));
 				}
 				else if (selected.equals("Constraint Termination")
-						&& new File(outDir + separator + directory + separator + "sim-rep" + "."
-								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-					readGraphSpecies(outDir + separator + directory + separator + "sim-rep" + "."
-							+ printer_id.substring(0, printer_id.length() - 8));
+						&& new File(outDir + separator + directory + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8))
+								.exists()) {
+					readGraphSpecies(outDir + separator + directory + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8));
 				}
 				else {
 					int nextOne = 1;
-					while (!new File(outDir + separator + directory + separator + "run-" + nextOne
-							+ "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+					while (!new File(outDir + separator + directory + separator + "run-" + nextOne + "."
+							+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 						nextOne++;
 					}
-					readGraphSpecies(outDir + separator + directory + separator + "run-" + nextOne
-							+ "." + printer_id.substring(0, printer_id.length() - 8));
+					readGraphSpecies(outDir + separator + directory + separator + "run-" + nextOne + "."
+							+ printer_id.substring(0, printer_id.length() - 8));
 				}
 			}
 			else {
-				readGraphSpecies(outDir + separator + directory + separator + selected + "."
-						+ printer_id.substring(0, printer_id.length() - 8));
+				readGraphSpecies(outDir + separator + directory + separator + selected + "." + printer_id.substring(0, printer_id.length() - 8));
 			}
 		}
 		for (int i = 2; i < graphSpecies.size(); i++) {
@@ -4206,17 +3836,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow")) {
 									cols[3]++;
-									colorsButtons.get(k)
-											.setBackground((Color) colory.get("Yellow"));
-									colorsButtons.get(k)
-											.setForeground((Color) colory.get("Yellow"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Yellow"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Yellow"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta")) {
 									cols[4]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Magenta"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Magenta"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Magenta"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Magenta"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan")) {
 									cols[5]++;
@@ -4230,55 +3856,38 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Gray (Dark)")) {
 									cols[7]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Gray (Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Gray (Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Gray (Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Gray (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Dark)")) {
 									cols[8]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Red (Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Red (Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Red (Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Red (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Dark)")) {
 									cols[9]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Blue (Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Blue (Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Blue (Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Blue (Dark)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem()
-										.equals("Green (Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Green (Dark)")) {
 									cols[10]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Green (Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Green (Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Green (Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Green (Dark)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Yellow (Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Dark)")) {
 									cols[11]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Yellow (Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Yellow (Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Yellow (Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Yellow (Dark)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Magenta (Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Dark)")) {
 									cols[12]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Magenta (Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Magenta (Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Magenta (Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Magenta (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Dark)")) {
 									cols[13]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Cyan (Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Cyan (Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Cyan (Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Cyan (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Black")) {
 									cols[14]++;
@@ -4307,108 +3916,70 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									colorsButtons.get(k).setBackground((Color) colory.get("Gray"));
 									colorsButtons.get(k).setForeground((Color) colory.get("Gray"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Red (Extra Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Extra Dark)")) {
 									cols[22]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Red (Extra Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Red (Extra Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Red (Extra Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Red (Extra Dark)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Blue (Extra Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Extra Dark)")) {
 									cols[23]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Blue (Extra Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Blue (Extra Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Blue (Extra Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Blue (Extra Dark)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Green (Extra Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Green (Extra Dark)")) {
 									cols[24]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Green (Extra Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Green (Extra Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Green (Extra Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Green (Extra Dark)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Yellow (Extra Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Extra Dark)")) {
 									cols[25]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Yellow (Extra Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Yellow (Extra Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Yellow (Extra Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Yellow (Extra Dark)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Magenta (Extra Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Extra Dark)")) {
 									cols[26]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Magenta (Extra Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Magenta (Extra Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Magenta (Extra Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Magenta (Extra Dark)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Cyan (Extra Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Extra Dark)")) {
 									cols[27]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Cyan (Extra Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Cyan (Extra Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Cyan (Extra Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Cyan (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Light)")) {
 									cols[28]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Red (Light)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Red (Light)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Red (Light)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Red (Light)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem()
-										.equals("Blue (Light)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Light)")) {
 									cols[29]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Blue (Light)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Blue (Light)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Blue (Light)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Blue (Light)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Green (Light)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Green (Light)")) {
 									cols[30]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Green (Light)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Green (Light)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Green (Light)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Green (Light)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Yellow (Light)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Light)")) {
 									cols[31]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Yellow (Light)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Yellow (Light)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Yellow (Light)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Yellow (Light)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Magenta (Light)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Light)")) {
 									cols[32]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Magenta (Light)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Magenta (Light)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Magenta (Light)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Magenta (Light)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem()
-										.equals("Cyan (Light)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Light)")) {
 									cols[33]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Cyan (Light)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Cyan (Light)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Cyan (Light)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Cyan (Light)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem()
-										.equals("Gray (Light)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Gray (Light)")) {
 									cols[34]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Gray (Light)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Gray (Light)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Gray (Light)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Gray (Light)"));
 								}
 								if (shapesCombo.get(k).getSelectedItem().equals("Square")) {
 									shaps[0]++;
@@ -4422,27 +3993,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								else if (shapesCombo.get(k).getSelectedItem().equals("Diamond")) {
 									shaps[3]++;
 								}
-								else if (shapesCombo.get(k).getSelectedItem().equals(
-										"Rectangle (Horizontal)")) {
+								else if (shapesCombo.get(k).getSelectedItem().equals("Rectangle (Horizontal)")) {
 									shaps[4]++;
 								}
-								else if (shapesCombo.get(k).getSelectedItem().equals(
-										"Triangle (Upside Down)")) {
+								else if (shapesCombo.get(k).getSelectedItem().equals("Triangle (Upside Down)")) {
 									shaps[5]++;
 								}
-								else if (shapesCombo.get(k).getSelectedItem().equals(
-										"Circle (Half)")) {
+								else if (shapesCombo.get(k).getSelectedItem().equals("Circle (Half)")) {
 									shaps[6]++;
 								}
 								else if (shapesCombo.get(k).getSelectedItem().equals("Arrow")) {
 									shaps[7]++;
 								}
-								else if (shapesCombo.get(k).getSelectedItem().equals(
-										"Rectangle (Vertical)")) {
+								else if (shapesCombo.get(k).getSelectedItem().equals("Rectangle (Vertical)")) {
 									shaps[8]++;
 								}
-								else if (shapesCombo.get(k).getSelectedItem().equals(
-										"Arrow (Backwards)")) {
+								else if (shapesCombo.get(k).getSelectedItem().equals("Arrow (Backwards)")) {
 									shaps[9]++;
 								}
 							}
@@ -4481,12 +4047,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							else if (graph.getShapeAndPaint().getPaintName().equals("Green (Dark)")) {
 								cols[10]++;
 							}
-							else if (graph.getShapeAndPaint().getPaintName()
-									.equals("Yellow (Dark)")) {
+							else if (graph.getShapeAndPaint().getPaintName().equals("Yellow (Dark)")) {
 								cols[11]++;
 							}
-							else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Magenta (Dark)")) {
+							else if (graph.getShapeAndPaint().getPaintName().equals("Magenta (Dark)")) {
 								cols[12]++;
 							}
 							else if (graph.getShapeAndPaint().getPaintName().equals("Cyan (Dark)")) {
@@ -4516,28 +4080,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							else if (graph.getShapeAndPaint().getPaintName().equals("Gray")) {
 								cols[21]++;
 							}
-							else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Red (Extra Dark)")) {
+							else if (graph.getShapeAndPaint().getPaintName().equals("Red (Extra Dark)")) {
 								cols[22]++;
 							}
-							else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Blue (Extra Dark)")) {
+							else if (graph.getShapeAndPaint().getPaintName().equals("Blue (Extra Dark)")) {
 								cols[23]++;
 							}
-							else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Green (Extra Dark)")) {
+							else if (graph.getShapeAndPaint().getPaintName().equals("Green (Extra Dark)")) {
 								cols[24]++;
 							}
-							else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Yellow (Extra Dark)")) {
+							else if (graph.getShapeAndPaint().getPaintName().equals("Yellow (Extra Dark)")) {
 								cols[25]++;
 							}
-							else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Magenta (Extra Dark)")) {
+							else if (graph.getShapeAndPaint().getPaintName().equals("Magenta (Extra Dark)")) {
 								cols[26]++;
 							}
-							else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Cyan (Extra Dark)")) {
+							else if (graph.getShapeAndPaint().getPaintName().equals("Cyan (Extra Dark)")) {
 								cols[27]++;
 							}
 							else if (graph.getShapeAndPaint().getPaintName().equals("Red (Light)")) {
@@ -4546,16 +4104,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							else if (graph.getShapeAndPaint().getPaintName().equals("Blue (Light)")) {
 								cols[29]++;
 							}
-							else if (graph.getShapeAndPaint().getPaintName()
-									.equals("Green (Light)")) {
+							else if (graph.getShapeAndPaint().getPaintName().equals("Green (Light)")) {
 								cols[30]++;
 							}
-							else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Yellow (Light)")) {
+							else if (graph.getShapeAndPaint().getPaintName().equals("Yellow (Light)")) {
 								cols[31]++;
 							}
-							else if (graph.getShapeAndPaint().getPaintName().equals(
-									"Magenta (Light)")) {
+							else if (graph.getShapeAndPaint().getPaintName().equals("Magenta (Light)")) {
 								cols[32]++;
 							}
 							else if (graph.getShapeAndPaint().getPaintName().equals("Cyan (Light)")) {
@@ -4576,27 +4131,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							else if (graph.getShapeAndPaint().getShapeName().equals("Diamond")) {
 								shaps[3]++;
 							}
-							else if (graph.getShapeAndPaint().getShapeName().equals(
-									"Rectangle (Horizontal)")) {
+							else if (graph.getShapeAndPaint().getShapeName().equals("Rectangle (Horizontal)")) {
 								shaps[4]++;
 							}
-							else if (graph.getShapeAndPaint().getShapeName().equals(
-									"Triangle (Upside Down)")) {
+							else if (graph.getShapeAndPaint().getShapeName().equals("Triangle (Upside Down)")) {
 								shaps[5]++;
 							}
-							else if (graph.getShapeAndPaint().getShapeName()
-									.equals("Circle (Half)")) {
+							else if (graph.getShapeAndPaint().getShapeName().equals("Circle (Half)")) {
 								shaps[6]++;
 							}
 							else if (graph.getShapeAndPaint().getShapeName().equals("Arrow")) {
 								shaps[7]++;
 							}
-							else if (graph.getShapeAndPaint().getShapeName().equals(
-									"Rectangle (Vertical)")) {
+							else if (graph.getShapeAndPaint().getShapeName().equals("Rectangle (Vertical)")) {
 								shaps[8]++;
 							}
-							else if (graph.getShapeAndPaint().getShapeName().equals(
-									"Arrow (Backwards)")) {
+							else if (graph.getShapeAndPaint().getShapeName().equals("Arrow (Backwards)")) {
 								shaps[9]++;
 							}
 						}
@@ -4658,11 +4208,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (color.equals("Custom")) {
 							color += "_" + colorsButtons.get(i).getBackground().getRGB();
 						}
-						graphed.add(new GraphSpecies(shapey.get(shapesCombo.get(i)
-								.getSelectedItem()), color, filled.get(i).isSelected(), visible
-								.get(i).isSelected(), connected.get(i).isSelected(), selected,
-								boxes.get(i).getName(), series.get(i).getText().trim(), XVariable
-										.getSelectedIndex(), i, directory));
+						graphed.add(new GraphSpecies(shapey.get(shapesCombo.get(i).getSelectedItem()), color, filled.get(i).isSelected(), visible
+								.get(i).isSelected(), connected.get(i).isSelected(), selected, boxes.get(i).getName(),
+								series.get(i).getText().trim(), XVariable.getSelectedIndex(), i, directory));
 					}
 					else {
 						boolean check = false;
@@ -4678,8 +4226,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							IconNode parent = ((IconNode) node.getParent());
 							while (parent != null) {
 								for (int j = 0; j < parent.getChildCount(); j++) {
-									if (((IconNode) parent.getChildAt(j)).getIconName().equals(
-											"" + (char) 10003)) {
+									if (((IconNode) parent.getChildAt(j)).getIconName().equals("" + (char) 10003)) {
 										check2 = true;
 									}
 								}
@@ -4700,8 +4247,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						ArrayList<GraphSpecies> remove = new ArrayList<GraphSpecies>();
 						for (GraphSpecies g : graphed) {
-							if (g.getRunNumber().equals(selected) && g.getNumber() == i
-									&& g.getDirectory().equals(directory)) {
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i && g.getDirectory().equals(directory)) {
 								remove.add(g);
 							}
 						}
@@ -4733,8 +4279,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							visibleLabel.setSelected(true);
 						}
 						for (GraphSpecies g : graphed) {
-							if (g.getRunNumber().equals(selected) && g.getNumber() == i
-									&& g.getDirectory().equals(directory)) {
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i && g.getDirectory().equals(directory)) {
 								g.setVisible(true);
 							}
 						}
@@ -4742,8 +4287,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					else {
 						visibleLabel.setSelected(false);
 						for (GraphSpecies g : graphed) {
-							if (g.getRunNumber().equals(selected) && g.getNumber() == i
-									&& g.getDirectory().equals(directory)) {
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i && g.getDirectory().equals(directory)) {
 								g.setVisible(false);
 							}
 						}
@@ -4768,8 +4312,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							filledLabel.setSelected(true);
 						}
 						for (GraphSpecies g : graphed) {
-							if (g.getRunNumber().equals(selected) && g.getNumber() == i
-									&& g.getDirectory().equals(directory)) {
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i && g.getDirectory().equals(directory)) {
 								g.setFilled(true);
 							}
 						}
@@ -4777,8 +4320,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					else {
 						filledLabel.setSelected(false);
 						for (GraphSpecies g : graphed) {
-							if (g.getRunNumber().equals(selected) && g.getNumber() == i
-									&& g.getDirectory().equals(directory)) {
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i && g.getDirectory().equals(directory)) {
 								g.setFilled(false);
 							}
 						}
@@ -4803,8 +4345,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							connectedLabel.setSelected(true);
 						}
 						for (GraphSpecies g : graphed) {
-							if (g.getRunNumber().equals(selected) && g.getNumber() == i
-									&& g.getDirectory().equals(directory)) {
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i && g.getDirectory().equals(directory)) {
 								g.setConnected(true);
 							}
 						}
@@ -4812,8 +4353,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					else {
 						connectedLabel.setSelected(false);
 						for (GraphSpecies g : graphed) {
-							if (g.getRunNumber().equals(selected) && g.getNumber() == i
-									&& g.getDirectory().equals(directory)) {
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i && g.getDirectory().equals(directory)) {
 								g.setConnected(false);
 							}
 						}
@@ -4828,8 +4368,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				public void keyPressed(KeyEvent e) {
 					int i = Integer.parseInt(((JTextField) e.getSource()).getName());
 					for (GraphSpecies g : graphed) {
-						if (g.getRunNumber().equals(selected) && g.getNumber() == i
-								&& g.getDirectory().equals(directory)) {
+						if (g.getRunNumber().equals(selected) && g.getNumber() == i && g.getDirectory().equals(directory)) {
 							g.setSpecies(((JTextField) e.getSource()).getText());
 						}
 					}
@@ -4838,8 +4377,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				public void keyReleased(KeyEvent e) {
 					int i = Integer.parseInt(((JTextField) e.getSource()).getName());
 					for (GraphSpecies g : graphed) {
-						if (g.getRunNumber().equals(selected) && g.getNumber() == i
-								&& g.getDirectory().equals(directory)) {
+						if (g.getRunNumber().equals(selected) && g.getNumber() == i && g.getDirectory().equals(directory)) {
 							g.setSpecies(((JTextField) e.getSource()).getText());
 						}
 					}
@@ -4848,8 +4386,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				public void keyTyped(KeyEvent e) {
 					int i = Integer.parseInt(((JTextField) e.getSource()).getName());
 					for (GraphSpecies g : graphed) {
-						if (g.getRunNumber().equals(selected) && g.getNumber() == i
-								&& g.getDirectory().equals(directory)) {
+						if (g.getRunNumber().equals(selected) && g.getNumber() == i && g.getDirectory().equals(directory)) {
 							g.setSpecies(((JTextField) e.getSource()).getText());
 						}
 					}
@@ -4871,27 +4408,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					if (!((JComboBox) (e.getSource())).getSelectedItem().equals("Custom")) {
-						colorsButtons.get(i)
-								.setBackground(
-										(Color) colors.get(((JComboBox) (e.getSource()))
-												.getSelectedItem()));
-						colorsButtons.get(i)
-								.setForeground(
-										(Color) colors.get(((JComboBox) (e.getSource()))
-												.getSelectedItem()));
+						colorsButtons.get(i).setBackground((Color) colors.get(((JComboBox) (e.getSource())).getSelectedItem()));
+						colorsButtons.get(i).setForeground((Color) colors.get(((JComboBox) (e.getSource())).getSelectedItem()));
 						for (GraphSpecies g : graphed) {
-							if (g.getRunNumber().equals(selected) && g.getNumber() == i
-									&& g.getDirectory().equals(directory)) {
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i && g.getDirectory().equals(directory)) {
 								g.setPaint((String) ((JComboBox) e.getSource()).getSelectedItem());
 							}
 						}
 					}
 					else {
 						for (GraphSpecies g : graphed) {
-							if (g.getRunNumber().equals(selected) && g.getNumber() == i
-									&& g.getDirectory().equals(directory)) {
-								g.setPaint("Custom_"
-										+ colorsButtons.get(i).getBackground().getRGB());
+							if (g.getRunNumber().equals(selected) && g.getNumber() == i && g.getDirectory().equals(directory)) {
+								g.setPaint("Custom_" + colorsButtons.get(i).getBackground().getRGB());
 							}
 						}
 					}
@@ -4903,8 +4431,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					for (GraphSpecies g : graphed) {
-						if (g.getRunNumber().equals(selected) && g.getNumber() == i
-								&& g.getDirectory().equals(directory)) {
+						if (g.getRunNumber().equals(selected) && g.getNumber() == i && g.getDirectory().equals(directory)) {
 							g.setShape((String) ((JComboBox) e.getSource()).getSelectedItem());
 						}
 					}
@@ -4921,8 +4448,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			colorButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
-					Color newColor = JColorChooser.showDialog(Gui.frame, "Choose Color",
-							((JButton) e.getSource()).getBackground());
+					Color newColor = JColorChooser.showDialog(Gui.frame, "Choose Color", ((JButton) e.getSource()).getBackground());
 					if (newColor != null) {
 						((JButton) e.getSource()).setBackground(newColor);
 						((JButton) e.getSource()).setForeground(newColor);
@@ -5056,46 +4582,29 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			else {
 				file = new File(biosimrc.get("biosim.general.export_dir", ""));
 			}
-			String filename = Utility.browse(Gui.frame, file, null, JFileChooser.FILES_ONLY,
-					export, output);
-			if ((filename.length() > 4)
-					&& (filename.substring((filename.length() - 4), filename.length())
-							.equals(".jpg"))) {
+			String filename = Utility.browse(Gui.frame, file, null, JFileChooser.FILES_ONLY, export, output);
+			if ((filename.length() > 4) && (filename.substring((filename.length() - 4), filename.length()).equals(".jpg"))) {
 				output = 0;
 			}
-			else if ((filename.length() > 4)
-					&& (filename.substring((filename.length() - 4), filename.length())
-							.equals(".png"))) {
+			else if ((filename.length() > 4) && (filename.substring((filename.length() - 4), filename.length()).equals(".png"))) {
 				output = 1;
 			}
-			else if ((filename.length() > 4)
-					&& (filename.substring((filename.length() - 4), filename.length())
-							.equals(".pdf"))) {
+			else if ((filename.length() > 4) && (filename.substring((filename.length() - 4), filename.length()).equals(".pdf"))) {
 				output = 2;
 			}
-			else if ((filename.length() > 4)
-					&& (filename.substring((filename.length() - 4), filename.length())
-							.equals(".eps"))) {
+			else if ((filename.length() > 4) && (filename.substring((filename.length() - 4), filename.length()).equals(".eps"))) {
 				output = 3;
 			}
-			else if ((filename.length() > 4)
-					&& (filename.substring((filename.length() - 4), filename.length())
-							.equals(".svg"))) {
+			else if ((filename.length() > 4) && (filename.substring((filename.length() - 4), filename.length()).equals(".svg"))) {
 				output = 4;
 			}
-			else if ((filename.length() > 4)
-					&& (filename.substring((filename.length() - 4), filename.length())
-							.equals(".csv"))) {
+			else if ((filename.length() > 4) && (filename.substring((filename.length() - 4), filename.length()).equals(".csv"))) {
 				output = 5;
 			}
-			else if ((filename.length() > 4)
-					&& (filename.substring((filename.length() - 4), filename.length())
-							.equals(".dat"))) {
+			else if ((filename.length() > 4) && (filename.substring((filename.length() - 4), filename.length()).equals(".dat"))) {
 				output = 6;
 			}
-			else if ((filename.length() > 4)
-					&& (filename.substring((filename.length() - 4), filename.length())
-							.equals(".tsd"))) {
+			else if ((filename.length() > 4) && (filename.substring((filename.length() - 4), filename.length()).equals(".tsd"))) {
 				output = 7;
 			}
 			if (!filename.equals("")) {
@@ -5104,9 +4613,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				boolean exportIt = true;
 				if (file.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
-					value = JOptionPane.showOptionDialog(Gui.frame, "File already exists."
-							+ " Overwrite?", "File Already Exists", JOptionPane.YES_NO_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					value = JOptionPane.showOptionDialog(Gui.frame, "File already exists." + " Overwrite?", "File Already Exists",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					exportIt = false;
 					if (value == JOptionPane.YES_OPTION) {
 						exportIt = true;
@@ -5114,8 +4622,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				if (exportIt) {
 					if ((output != 5) && (output != 6) && (output != 7)) {
-						value = JOptionPane.showOptionDialog(Gui.frame, sizePanel,
-								"Enter Size Of File", JOptionPane.YES_NO_OPTION,
+						value = JOptionPane.showOptionDialog(Gui.frame, sizePanel, "Enter Size Of File", JOptionPane.YES_NO_OPTION,
 								JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
 						if (value == JOptionPane.YES_OPTION) {
 							while (value == JOptionPane.YES_OPTION && (width == -1 || height == -1))
@@ -5123,25 +4630,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									width = Integer.parseInt(widthField.getText().trim());
 									height = Integer.parseInt(heightField.getText().trim());
 									if (width < 1 || height < 1) {
-										JOptionPane.showMessageDialog(Gui.frame,
-												"Width and height must be positive integers!",
-												"Error", JOptionPane.ERROR_MESSAGE);
+										JOptionPane.showMessageDialog(Gui.frame, "Width and height must be positive integers!", "Error",
+												JOptionPane.ERROR_MESSAGE);
 										width = -1;
 										height = -1;
-										value = JOptionPane.showOptionDialog(Gui.frame, sizePanel,
-												"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-												JOptionPane.PLAIN_MESSAGE, null, options2,
-												options2[0]);
+										value = JOptionPane.showOptionDialog(Gui.frame, sizePanel, "Enter Size Of File", JOptionPane.YES_NO_OPTION,
+												JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
 									}
 								}
 								catch (Exception e2) {
-									JOptionPane.showMessageDialog(Gui.frame,
-											"Width and height must be positive integers!", "Error",
+									JOptionPane.showMessageDialog(Gui.frame, "Width and height must be positive integers!", "Error",
 											JOptionPane.ERROR_MESSAGE);
 									width = -1;
 									height = -1;
-									value = JOptionPane.showOptionDialog(Gui.frame, sizePanel,
-											"Enter Size Of File", JOptionPane.YES_NO_OPTION,
+									value = JOptionPane.showOptionDialog(Gui.frame, sizePanel, "Enter Size Of File", JOptionPane.YES_NO_OPTION,
 											JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
 								}
 						}
@@ -5196,8 +4698,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable To Export File!", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable To Export File!", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -5239,17 +4740,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			else {
 				file = new File(biosimrc.get("biosim.general.export_dir", ""));
 			}
-			String filename = Utility.browse(Gui.frame, file, null, JFileChooser.FILES_ONLY,
-					export, output);
+			String filename = Utility.browse(Gui.frame, file, null, JFileChooser.FILES_ONLY, export, output);
 			if (!filename.equals("")) {
 				file = new File(filename);
 				biosimrc.put("biosim.general.export_dir", filename);
 				boolean exportIt = true;
 				if (file.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
-					value = JOptionPane.showOptionDialog(Gui.frame, "File already exists."
-							+ " Overwrite?", "File Already Exists", JOptionPane.YES_NO_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					value = JOptionPane.showOptionDialog(Gui.frame, "File already exists." + " Overwrite?", "File Already Exists",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					exportIt = false;
 					if (value == JOptionPane.YES_OPTION) {
 						exportIt = true;
@@ -5257,8 +4756,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 				if (exportIt) {
 					if ((output != 5) && (output != 6) && (output != 7)) {
-						value = JOptionPane.showOptionDialog(Gui.frame, sizePanel,
-								"Enter Size Of File", JOptionPane.YES_NO_OPTION,
+						value = JOptionPane.showOptionDialog(Gui.frame, sizePanel, "Enter Size Of File", JOptionPane.YES_NO_OPTION,
 								JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
 						if (value == JOptionPane.YES_OPTION) {
 							while (value == JOptionPane.YES_OPTION && (width == -1 || height == -1))
@@ -5266,25 +4764,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									width = Integer.parseInt(widthField.getText().trim());
 									height = Integer.parseInt(heightField.getText().trim());
 									if (width < 1 || height < 1) {
-										JOptionPane.showMessageDialog(Gui.frame,
-												"Width and height must be positive integers!",
-												"Error", JOptionPane.ERROR_MESSAGE);
+										JOptionPane.showMessageDialog(Gui.frame, "Width and height must be positive integers!", "Error",
+												JOptionPane.ERROR_MESSAGE);
 										width = -1;
 										height = -1;
-										value = JOptionPane.showOptionDialog(Gui.frame, sizePanel,
-												"Enter Size Of File", JOptionPane.YES_NO_OPTION,
-												JOptionPane.PLAIN_MESSAGE, null, options2,
-												options2[0]);
+										value = JOptionPane.showOptionDialog(Gui.frame, sizePanel, "Enter Size Of File", JOptionPane.YES_NO_OPTION,
+												JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
 									}
 								}
 								catch (Exception e2) {
-									JOptionPane.showMessageDialog(Gui.frame,
-											"Width and height must be positive integers!", "Error",
+									JOptionPane.showMessageDialog(Gui.frame, "Width and height must be positive integers!", "Error",
 											JOptionPane.ERROR_MESSAGE);
 									width = -1;
 									height = -1;
-									value = JOptionPane.showOptionDialog(Gui.frame, sizePanel,
-											"Enter Size Of File", JOptionPane.YES_NO_OPTION,
+									value = JOptionPane.showOptionDialog(Gui.frame, sizePanel, "Enter Size Of File", JOptionPane.YES_NO_OPTION,
 											JOptionPane.PLAIN_MESSAGE, null, options2, options2[0]);
 								}
 						}
@@ -5339,8 +4832,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable To Export File!", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable To Export File!", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -5349,9 +4841,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			int count = curData.getSeries(0).getItemCount();
 			for (int i = 1; i < curData.getSeriesCount(); i++) {
 				if (curData.getSeries(i).getItemCount() != count) {
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Data series do not have the same number of points!",
-							"Unable to Export Data File", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Data series do not have the same number of points!", "Unable to Export Data File",
+							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 			}
@@ -5359,9 +4850,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				Number Xval = curData.getSeries(0).getDataItem(j).getX();
 				for (int i = 1; i < curData.getSeriesCount(); i++) {
 					if (!curData.getSeries(i).getDataItem(j).getX().equals(Xval)) {
-						JOptionPane.showMessageDialog(Gui.frame,
-								"Data series time points are not the same!",
-								"Unable to Export Data File", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "Data series time points are not the same!", "Unable to Export Data File",
+								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
@@ -5441,13 +4931,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			csvFile.close();
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable To Export File!", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable To Export File!", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
-	private ArrayList<ArrayList<Double>> calculateAverageVarianceDeviation(String startFile,
-			String fileStem, int choice, String directory, boolean warning) {
+	private ArrayList<ArrayList<Double>> calculateAverageVarianceDeviation(String startFile, String fileStem, int choice, String directory,
+			boolean warning) {
 		ArrayList<ArrayList<Double>> average = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> variance = new ArrayList<ArrayList<Double>>();
 		ArrayList<ArrayList<Double>> deviation = new ArrayList<ArrayList<Double>>();
@@ -5466,8 +4955,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				for (String f : new File(outDir).list()) {
 					if (f.contains(fileStem)) {
 						try {
-							int tempNum = Integer.parseInt(f.substring(fileStem.length(), f
-									.length() - 4));
+							int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
 							if (tempNum > runsToMake) {
 								runsToMake = tempNum;
 							}
@@ -5481,8 +4969,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				for (String f : new File(outDir + separator + directory).list()) {
 					if (f.contains(fileStem)) {
 						try {
-							int tempNum = Integer.parseInt(f.substring(fileStem.length(), f
-									.length() - 4));
+							int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
 							if (tempNum > runsToMake) {
 								runsToMake = tempNum;
 							}
@@ -5508,11 +4995,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					boolean loop = true;
 					while (loop && j < runsToMake && (j + 1) != skip) {
 						if (directory == null) {
-							if (new File(outDir + separator + fileStem + (j + 1) + "."
-									+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-								ArrayList<ArrayList<Double>> newData = readData(outDir + separator
-										+ fileStem + (j + 1) + "."
-										+ printer_id.substring(0, printer_id.length() - 8), "",
+							if (new File(outDir + separator + fileStem + (j + 1) + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+								ArrayList<ArrayList<Double>> newData = readData(
+										outDir + separator + fileStem + (j + 1) + "." + printer_id.substring(0, printer_id.length() - 8), "",
 										directory, warn);
 								data = new ArrayList<ArrayList<Double>>();
 								for (int i = 0; i < averageOrder.size(); i++) {
@@ -5531,13 +5016,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 						}
 						else {
-							if (new File(outDir + separator + directory + separator + fileStem
-									+ (j + 1) + "."
+							if (new File(outDir + separator + directory + separator + fileStem + (j + 1) + "."
 									+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-								ArrayList<ArrayList<Double>> newData = readData(outDir + separator
-										+ directory + separator + fileStem + (j + 1) + "."
-										+ printer_id.substring(0, printer_id.length() - 8), "",
-										directory, warn);
+								ArrayList<ArrayList<Double>> newData = readData(outDir + separator + directory + separator + fileStem + (j + 1) + "."
+										+ printer_id.substring(0, printer_id.length() - 8), "", directory, warn);
 								data = new ArrayList<ArrayList<Double>>();
 								for (int i = 0; i < averageOrder.size(); i++) {
 									for (int k = 0; k < graphSpecies.size(); k++) {
@@ -5561,11 +5043,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					if (first) {
 						double put;
 						if (k == data.get(0).size() - 1 && k >= 2) {
-							if (data.get(0).get(k) - data.get(0).get(k - 1) != data.get(0).get(
-									k - 1)
-									- data.get(0).get(k - 2)) {
-								put = data.get(0).get(k - 1)
-										+ (data.get(0).get(k - 1) - data.get(0).get(k - 2));
+							if (data.get(0).get(k) - data.get(0).get(k - 1) != data.get(0).get(k - 1) - data.get(0).get(k - 2)) {
+								put = data.get(0).get(k - 1) + (data.get(0).get(k - 1) - data.get(0).get(k - 2));
 								dataCounts.put(put, 1);
 							}
 							else {
@@ -5592,11 +5071,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						int index = -1;
 						double put;
 						if (k == data.get(0).size() - 1 && k >= 2) {
-							if (data.get(0).get(k) - data.get(0).get(k - 1) != data.get(0).get(
-									k - 1)
-									- data.get(0).get(k - 2)) {
-								put = data.get(0).get(k - 1)
-										+ (data.get(0).get(k - 1) - data.get(0).get(k - 2));
+							if (data.get(0).get(k) - data.get(0).get(k - 1) != data.get(0).get(k - 1) - data.get(0).get(k - 2)) {
+								put = data.get(0).get(k - 1) + (data.get(0).get(k - 1) - data.get(0).get(k - 2));
 							}
 							else {
 								put = (data.get(0)).get(k);
@@ -5619,11 +5095,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							dataCounts.put(put, count + 1);
 							for (int i = 1; i < data.size(); i++) {
 								double old = (average.get(i)).get(index);
-								(average.get(i)).set(index, old
-										+ (((data.get(i)).get(k) - old) / (count + 1)));
+								(average.get(i)).set(index, old + (((data.get(i)).get(k) - old) / (count + 1)));
 								double newMean = (average.get(i)).get(index);
-								double vary = (((count - 1) * (variance.get(i)).get(index)) + ((data
-										.get(i)).get(k) - newMean)
+								double vary = (((count - 1) * (variance.get(i)).get(index)) + ((data.get(i)).get(k) - newMean)
 										* ((data.get(i)).get(k) - old))
 										/ count;
 								(variance.get(i)).set(index, vary);
@@ -5683,8 +5157,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			averageOrder = null;
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Unable to output average, variance, and standard deviation!", "Error",
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to output average, variance, and standard deviation!", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
 		lock.unlock();
@@ -5707,14 +5180,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		if (timeSeries) {
 			Properties graph = new Properties();
 			graph.setProperty("title", chart.getTitle().getText());
-			graph.setProperty("chart.background.paint", ""
-					+ ((Color) chart.getBackgroundPaint()).getRGB());
-			graph.setProperty("plot.background.paint", ""
-					+ ((Color) chart.getPlot().getBackgroundPaint()).getRGB());
-			graph.setProperty("plot.domain.grid.line.paint", ""
-					+ ((Color) chart.getXYPlot().getDomainGridlinePaint()).getRGB());
-			graph.setProperty("plot.range.grid.line.paint", ""
-					+ ((Color) chart.getXYPlot().getRangeGridlinePaint()).getRGB());
+			graph.setProperty("chart.background.paint", "" + ((Color) chart.getBackgroundPaint()).getRGB());
+			graph.setProperty("plot.background.paint", "" + ((Color) chart.getPlot().getBackgroundPaint()).getRGB());
+			graph.setProperty("plot.domain.grid.line.paint", "" + ((Color) chart.getXYPlot().getDomainGridlinePaint()).getRGB());
+			graph.setProperty("plot.range.grid.line.paint", "" + ((Color) chart.getXYPlot().getRangeGridlinePaint()).getRGB());
 			graph.setProperty("x.axis", chart.getXYPlot().getDomainAxis().getLabel());
 			graph.setProperty("y.axis", chart.getXYPlot().getRangeAxis().getLabel());
 			graph.setProperty("x.min", XMin.getText());
@@ -5736,42 +5205,31 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				graph.setProperty("species.name." + i, graphed.get(i).getSpecies());
 				graph.setProperty("species.id." + i, graphed.get(i).getID());
 				graph.setProperty("species.visible." + i, "" + graphed.get(i).getVisible());
-				graph.setProperty("species.paint." + i, graphed.get(i).getShapeAndPaint()
-						.getPaintName());
-				graph.setProperty("species.shape." + i, graphed.get(i).getShapeAndPaint()
-						.getShapeName());
+				graph.setProperty("species.paint." + i, graphed.get(i).getShapeAndPaint().getPaintName());
+				graph.setProperty("species.shape." + i, graphed.get(i).getShapeAndPaint().getShapeName());
 				graph.setProperty("species.directory." + i, graphed.get(i).getDirectory());
 			}
 			try {
-				FileOutputStream store = new FileOutputStream(new File(outDir + separator
-						+ graphName));
+				FileOutputStream store = new FileOutputStream(new File(outDir + separator + graphName));
 				graph.store(store, "Graph Data");
 				store.close();
 				log.addText("Creating graph file:\n" + outDir + separator + graphName + "\n");
 				change = false;
 			}
 			catch (Exception except) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		else {
 			Properties graph = new Properties();
 			graph.setProperty("title", chart.getTitle().getText());
-			graph.setProperty("chart.background.paint", ""
-					+ ((Color) chart.getBackgroundPaint()).getRGB());
-			graph.setProperty("plot.background.paint", ""
-					+ ((Color) chart.getPlot().getBackgroundPaint()).getRGB());
-			graph.setProperty("plot.range.grid.line.paint", ""
-					+ ((Color) chart.getCategoryPlot().getRangeGridlinePaint()).getRGB());
+			graph.setProperty("chart.background.paint", "" + ((Color) chart.getBackgroundPaint()).getRGB());
+			graph.setProperty("plot.background.paint", "" + ((Color) chart.getPlot().getBackgroundPaint()).getRGB());
+			graph.setProperty("plot.range.grid.line.paint", "" + ((Color) chart.getCategoryPlot().getRangeGridlinePaint()).getRGB());
 			graph.setProperty("x.axis", chart.getCategoryPlot().getDomainAxis().getLabel());
 			graph.setProperty("y.axis", chart.getCategoryPlot().getRangeAxis().getLabel());
-			graph.setProperty("gradient",
-					""
-							+ (((BarRenderer) chart.getCategoryPlot().getRenderer())
-									.getBarPainter() instanceof GradientBarPainter));
-			graph.setProperty("shadow", ""
-					+ ((BarRenderer) chart.getCategoryPlot().getRenderer()).getShadowsVisible());
+			graph.setProperty("gradient", "" + (((BarRenderer) chart.getCategoryPlot().getRenderer()).getBarPainter() instanceof GradientBarPainter));
+			graph.setProperty("shadow", "" + ((BarRenderer) chart.getCategoryPlot().getRenderer()).getShadowsVisible());
 			graph.setProperty("visibleLegend", "" + visibleLegend.isSelected());
 			for (int i = 0; i < probGraphed.size(); i++) {
 				graph.setProperty("species.number." + i, "" + probGraphed.get(i).getNumber());
@@ -5781,24 +5239,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				graph.setProperty("species.directory." + i, probGraphed.get(i).getDirectory());
 			}
 			try {
-				FileOutputStream store = new FileOutputStream(new File(outDir + separator
-						+ graphName));
+				FileOutputStream store = new FileOutputStream(new File(outDir + separator + graphName));
 				graph.store(store, "Probability Data");
 				store.close();
 				log.addText("Creating graph file:\n" + outDir + separator + graphName + "\n");
 				change = false;
 			}
 			catch (Exception except) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
 
 	public void saveAs() {
 		if (timeSeries) {
-			String graphName = JOptionPane.showInputDialog(Gui.frame, "Enter Graph Name:",
-					"Graph Name", JOptionPane.PLAIN_MESSAGE);
+			String graphName = JOptionPane.showInputDialog(Gui.frame, "Enter Graph Name:", "Graph Name", JOptionPane.PLAIN_MESSAGE);
 			if (graphName != null && !graphName.trim().equals("")) {
 				graphName = graphName.trim();
 				if (graphName.length() > 3) {
@@ -5814,26 +5269,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					f = new File(outDir + separator + graphName);
 				}
 				else {
-					f = new File(outDir.substring(0, outDir.length()
-							- outDir.split(separator)[outDir.split(separator).length - 1].length())
+					f = new File(outDir.substring(0, outDir.length() - outDir.split(separator)[outDir.split(separator).length - 1].length())
 							+ separator + graphName);
 				}
 				if (f.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
-					int value = JOptionPane.showOptionDialog(Gui.frame, "File already exists."
-							+ "\nDo you want to overwrite?", "Overwrite",
-							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-							options[0]);
+					int value = JOptionPane.showOptionDialog(Gui.frame, "File already exists." + "\nDo you want to overwrite?", "Overwrite",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					if (value == JOptionPane.YES_OPTION) {
 						File del;
 						if (topLevel) {
 							del = new File(outDir + separator + graphName);
 						}
 						else {
-							del = new File(outDir.substring(0, outDir.length()
-									- outDir.split(separator)[outDir.split(separator).length - 1]
-											.length())
-									+ separator + graphName);
+							del = new File(
+									outDir.substring(0, outDir.length() - outDir.split(separator)[outDir.split(separator).length - 1].length())
+											+ separator + graphName);
 						}
 						if (del.isDirectory()) {
 							biomodelsim.deleteDir(del);
@@ -5873,22 +5324,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					graph.setProperty("species.name." + i, graphed.get(i).getSpecies());
 					graph.setProperty("species.id." + i, graphed.get(i).getID());
 					graph.setProperty("species.visible." + i, "" + graphed.get(i).getVisible());
-					graph.setProperty("species.paint." + i, graphed.get(i).getShapeAndPaint()
-							.getPaintName());
-					graph.setProperty("species.shape." + i, graphed.get(i).getShapeAndPaint()
-							.getShapeName());
+					graph.setProperty("species.paint." + i, graphed.get(i).getShapeAndPaint().getPaintName());
+					graph.setProperty("species.shape." + i, graphed.get(i).getShapeAndPaint().getShapeName());
 					if (topLevel) {
 						graph.setProperty("species.directory." + i, graphed.get(i).getDirectory());
 					}
 					else {
 						if (graphed.get(i).getDirectory().equals("")) {
-							graph.setProperty("species.directory." + i,
-									outDir.split(separator)[outDir.split(separator).length - 1]);
+							graph.setProperty("species.directory." + i, outDir.split(separator)[outDir.split(separator).length - 1]);
 						}
 						else {
-							graph.setProperty("species.directory." + i,
-									outDir.split(separator)[outDir.split(separator).length - 1]
-											+ "/" + graphed.get(i).getDirectory());
+							graph.setProperty("species.directory." + i, outDir.split(separator)[outDir.split(separator).length - 1] + "/"
+									+ graphed.get(i).getDirectory());
 						}
 					}
 				}
@@ -5901,14 +5348,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					biomodelsim.addToTree(f.getName());
 				}
 				catch (Exception except) {
-					JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Graph!", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
 		else {
-			String graphName = JOptionPane.showInputDialog(Gui.frame,
-					"Enter Probability Graph Name:", "Probability Graph Name",
+			String graphName = JOptionPane.showInputDialog(Gui.frame, "Enter Probability Graph Name:", "Probability Graph Name",
 					JOptionPane.PLAIN_MESSAGE);
 			if (graphName != null && !graphName.trim().equals("")) {
 				graphName = graphName.trim();
@@ -5925,26 +5370,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					f = new File(outDir + separator + graphName);
 				}
 				else {
-					f = new File(outDir.substring(0, outDir.length()
-							- outDir.split(separator)[outDir.split(separator).length - 1].length())
+					f = new File(outDir.substring(0, outDir.length() - outDir.split(separator)[outDir.split(separator).length - 1].length())
 							+ separator + graphName);
 				}
 				if (f.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
-					int value = JOptionPane.showOptionDialog(Gui.frame, "File already exists."
-							+ "\nDo you want to overwrite?", "Overwrite",
-							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-							options[0]);
+					int value = JOptionPane.showOptionDialog(Gui.frame, "File already exists." + "\nDo you want to overwrite?", "Overwrite",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					if (value == JOptionPane.YES_OPTION) {
 						File del;
 						if (topLevel) {
 							del = new File(outDir + separator + graphName);
 						}
 						else {
-							del = new File(outDir.substring(0, outDir.length()
-									- outDir.split(separator)[outDir.split(separator).length - 1]
-											.length())
-									+ separator + graphName);
+							del = new File(
+									outDir.substring(0, outDir.length() - outDir.split(separator)[outDir.split(separator).length - 1].length())
+											+ separator + graphName);
 						}
 						if (del.isDirectory()) {
 							biomodelsim.deleteDir(del);
@@ -5966,14 +5407,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				graph.setProperty("title", chart.getTitle().getText());
 				graph.setProperty("x.axis", chart.getCategoryPlot().getDomainAxis().getLabel());
 				graph.setProperty("y.axis", chart.getCategoryPlot().getRangeAxis().getLabel());
-				graph.setProperty("gradient",
-						""
-								+ (((BarRenderer) chart.getCategoryPlot().getRenderer())
-										.getBarPainter() instanceof GradientBarPainter));
-				graph
-						.setProperty("shadow", ""
-								+ ((BarRenderer) chart.getCategoryPlot().getRenderer())
-										.getShadowsVisible());
+				graph.setProperty("gradient", ""
+						+ (((BarRenderer) chart.getCategoryPlot().getRenderer()).getBarPainter() instanceof GradientBarPainter));
+				graph.setProperty("shadow", "" + ((BarRenderer) chart.getCategoryPlot().getRenderer()).getShadowsVisible());
 				graph.setProperty("visibleLegend", "" + visibleLegend.isSelected());
 				for (int i = 0; i < probGraphed.size(); i++) {
 					graph.setProperty("species.number." + i, "" + probGraphed.get(i).getNumber());
@@ -5981,18 +5417,15 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					graph.setProperty("species.id." + i, probGraphed.get(i).getID());
 					graph.setProperty("species.paint." + i, probGraphed.get(i).getPaintName());
 					if (topLevel) {
-						graph.setProperty("species.directory." + i, probGraphed.get(i)
-								.getDirectory());
+						graph.setProperty("species.directory." + i, probGraphed.get(i).getDirectory());
 					}
 					else {
 						if (probGraphed.get(i).getDirectory().equals("")) {
-							graph.setProperty("species.directory." + i,
-									outDir.split(separator)[outDir.split(separator).length - 1]);
+							graph.setProperty("species.directory." + i, outDir.split(separator)[outDir.split(separator).length - 1]);
 						}
 						else {
-							graph.setProperty("species.directory." + i,
-									outDir.split(separator)[outDir.split(separator).length - 1]
-											+ "/" + probGraphed.get(i).getDirectory());
+							graph.setProperty("species.directory." + i, outDir.split(separator)[outDir.split(separator).length - 1] + "/"
+									+ probGraphed.get(i).getDirectory());
 						}
 					}
 				}
@@ -6005,8 +5438,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					biomodelsim.addToTree(f.getName());
 				}
 				catch (Exception except) {
-					JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Probability Graph!",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Unable To Save Probability Graph!", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -6027,24 +5459,16 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				YScale.setText(graph.getProperty("y.scale"));
 				chart.setTitle(graph.getProperty("title"));
 				if (graph.containsKey("chart.background.paint")) {
-					chart.setBackgroundPaint(new Color(Integer.parseInt(graph
-							.getProperty("chart.background.paint"))));
+					chart.setBackgroundPaint(new Color(Integer.parseInt(graph.getProperty("chart.background.paint"))));
 				}
 				if (graph.containsKey("plot.background.paint")) {
-					chart.getPlot()
-							.setBackgroundPaint(
-									new Color(Integer.parseInt(graph
-											.getProperty("plot.background.paint"))));
+					chart.getPlot().setBackgroundPaint(new Color(Integer.parseInt(graph.getProperty("plot.background.paint"))));
 				}
 				if (graph.containsKey("plot.domain.grid.line.paint")) {
-					chart.getXYPlot().setDomainGridlinePaint(
-							new Color(Integer.parseInt(graph
-									.getProperty("plot.domain.grid.line.paint"))));
+					chart.getXYPlot().setDomainGridlinePaint(new Color(Integer.parseInt(graph.getProperty("plot.domain.grid.line.paint"))));
 				}
 				if (graph.containsKey("plot.range.grid.line.paint")) {
-					chart.getXYPlot().setRangeGridlinePaint(
-							new Color(Integer.parseInt(graph
-									.getProperty("plot.range.grid.line.paint"))));
+					chart.getXYPlot().setRangeGridlinePaint(new Color(Integer.parseInt(graph.getProperty("plot.range.grid.line.paint"))));
 				}
 				chart.getXYPlot().getDomainAxis().setLabel(graph.getProperty("x.axis"));
 				chart.getXYPlot().getRangeAxis().setLabel(graph.getProperty("y.axis"));
@@ -6066,8 +5490,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				else {
 					LogY.setSelected(false);
 				}
-				if (graph.containsKey("visibleLegend")
-						&& graph.getProperty("visibleLegend").equals("false")) {
+				if (graph.containsKey("visibleLegend") && graph.getProperty("visibleLegend").equals("false")) {
 					visibleLegend.setSelected(false);
 				}
 				else {
@@ -6098,13 +5521,10 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					if (graph.containsKey("species.xnumber." + next)) {
 						xnumber = Integer.parseInt(graph.getProperty("species.xnumber." + next));
 					}
-					graphed.add(new GraphSpecies(shapes.get(graph.getProperty("species.shape."
-							+ next)), graph.getProperty("species.paint." + next).trim(), filled,
-							visible, connected, graph.getProperty("species.run.number." + next),
-							graph.getProperty("species.id." + next), graph
-									.getProperty("species.name." + next), xnumber, Integer
-									.parseInt(graph.getProperty("species.number." + next)), graph
-									.getProperty("species.directory." + next)));
+					graphed.add(new GraphSpecies(shapes.get(graph.getProperty("species.shape." + next)), graph.getProperty("species.paint." + next)
+							.trim(), filled, visible, connected, graph.getProperty("species.run.number." + next), graph.getProperty("species.id."
+							+ next), graph.getProperty("species.name." + next), xnumber,
+							Integer.parseInt(graph.getProperty("species.number." + next)), graph.getProperty("species.directory." + next)));
 					next++;
 				}
 				updateXNumber = false;
@@ -6112,8 +5532,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				refresh();
 			}
 			catch (IOException except) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable To Load Graph!", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Unable To Load Graph!", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		else {
@@ -6124,29 +5543,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				load.close();
 				chart.setTitle(graph.getProperty("title"));
 				if (graph.containsKey("chart.background.paint")) {
-					chart.setBackgroundPaint(new Color(Integer.parseInt(graph
-							.getProperty("chart.background.paint"))));
+					chart.setBackgroundPaint(new Color(Integer.parseInt(graph.getProperty("chart.background.paint"))));
 				}
 				if (graph.containsKey("plot.background.paint")) {
-					chart.getPlot()
-							.setBackgroundPaint(
-									new Color(Integer.parseInt(graph
-											.getProperty("plot.background.paint"))));
+					chart.getPlot().setBackgroundPaint(new Color(Integer.parseInt(graph.getProperty("plot.background.paint"))));
 				}
 				if (graph.containsKey("plot.range.grid.line.paint")) {
-					chart.getCategoryPlot().setRangeGridlinePaint(
-							new Color(Integer.parseInt(graph
-									.getProperty("plot.range.grid.line.paint"))));
+					chart.getCategoryPlot().setRangeGridlinePaint(new Color(Integer.parseInt(graph.getProperty("plot.range.grid.line.paint"))));
 				}
 				chart.getCategoryPlot().getDomainAxis().setLabel(graph.getProperty("x.axis"));
 				chart.getCategoryPlot().getRangeAxis().setLabel(graph.getProperty("y.axis"));
 				if (graph.containsKey("gradient") && graph.getProperty("gradient").equals("true")) {
-					((BarRenderer) chart.getCategoryPlot().getRenderer())
-							.setBarPainter(new GradientBarPainter());
+					((BarRenderer) chart.getCategoryPlot().getRenderer()).setBarPainter(new GradientBarPainter());
 				}
 				else {
-					((BarRenderer) chart.getCategoryPlot().getRenderer())
-							.setBarPainter(new StandardBarPainter());
+					((BarRenderer) chart.getCategoryPlot().getRenderer()).setBarPainter(new StandardBarPainter());
 				}
 				if (graph.containsKey("shadow") && graph.getProperty("shadow").equals("false")) {
 					((BarRenderer) chart.getCategoryPlot().getRenderer()).setShadowVisible(false);
@@ -6154,8 +5565,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				else {
 					((BarRenderer) chart.getCategoryPlot().getRenderer()).setShadowVisible(true);
 				}
-				if (graph.containsKey("visibleLegend")
-						&& graph.getProperty("visibleLegend").equals("false")) {
+				if (graph.containsKey("visibleLegend") && graph.getProperty("visibleLegend").equals("false")) {
 					visibleLegend.setSelected(false);
 				}
 				else {
@@ -6171,17 +5581,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					else {
 						paint = colors.get(color);
 					}
-					probGraphed.add(new GraphProbs(paint, color, graph.getProperty("species.id."
-							+ next), graph.getProperty("species.name." + next), Integer
-							.parseInt(graph.getProperty("species.number." + next)), graph
-							.getProperty("species.directory." + next)));
+					probGraphed.add(new GraphProbs(paint, color, graph.getProperty("species.id." + next), graph.getProperty("species.name." + next),
+							Integer.parseInt(graph.getProperty("species.number." + next)), graph.getProperty("species.directory." + next)));
 					next++;
 				}
 				refreshProb();
 			}
 			catch (Exception except) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable To Load Graph!", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Unable To Load Graph!", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -6228,8 +5635,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			for (int i = 1; i < graphed.size(); i++) {
 				GraphSpecies index = graphed.get(i);
 				int j = i;
-				while ((j > 0)
-						&& (graphed.get(j - 1).getSpecies().compareToIgnoreCase(index.getSpecies()) > 0)) {
+				while ((j > 0) && (graphed.get(j - 1).getSpecies().compareToIgnoreCase(index.getSpecies()) > 0)) {
 					graphed.set(j, graphed.get(j - 1));
 					j = j - 1;
 				}
@@ -6246,23 +5652,18 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					rend.setSeriesShapesVisible(thisOne, g.getVisible());
 					rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
 					rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
-					if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
-							&& !g.getRunNumber().equals("Standard Deviation")
-							&& !g.getRunNumber().equals("Termination Time")
-							&& !g.getRunNumber().equals("Percent Termination")
+					if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance") && !g.getRunNumber().equals("Standard Deviation")
+							&& !g.getRunNumber().equals("Termination Time") && !g.getRunNumber().equals("Percent Termination")
 							&& !g.getRunNumber().equals("Constraint Termination")) {
-						if (new File(outDir + separator + g.getRunNumber() + "."
-								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+						if (new File(outDir + separator + g.getRunNumber() + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 							ArrayList<ArrayList<Double>> data;
 							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
-								readGraphSpecies(outDir + separator + g.getRunNumber() + "."
-										+ printer_id.substring(0, printer_id.length() - 8));
+								readGraphSpecies(outDir + separator + g.getRunNumber() + "." + printer_id.substring(0, printer_id.length() - 8));
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									int j = i;
-									while ((j > 1)
-											&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+									while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 										graphSpecies.set(j, graphSpecies.get(j - 1));
 										j = j - 1;
 									}
@@ -6276,15 +5677,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								updateXNumber = true;
 							}
 							else {
-								data = readData(outDir + separator + g.getRunNumber() + "."
-										+ printer_id.substring(0, printer_id.length() - 8), g
-										.getRunNumber(), null, false);
+								data = readData(outDir + separator + g.getRunNumber() + "." + printer_id.substring(0, printer_id.length() - 8),
+										g.getRunNumber(), null, false);
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									ArrayList<Double> index2 = data.get(i);
 									int j = i;
-									while ((j > 1)
-											&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+									while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 										graphSpecies.set(j, graphSpecies.get(j - 1));
 										data.set(j, data.get(j - 1));
 										j = j - 1;
@@ -6306,8 +5705,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -6336,39 +5734,29 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						if (!ableToGraph) {
 							if (g.getRunNumber().equals("Average")
-									&& new File(outDir + separator + "mean" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + "mean" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ableToGraph = true;
 							}
 							else if (g.getRunNumber().equals("Variance")
-									&& new File(outDir + separator + "variance" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + "variance" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ableToGraph = true;
 							}
 							else if (g.getRunNumber().equals("Standard Deviation")
-									&& new File(outDir + separator + "standard_deviation" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
+									&& new File(outDir + separator + "standard_deviation" + "." + printer_id.substring(0, printer_id.length() - 8))
 											.exists()) {
 								ableToGraph = true;
 							}
 							else if (g.getRunNumber().equals("Termination Time")
-									&& new File(outDir + separator + "term-time" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + "term-time" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ableToGraph = true;
 							}
 							else if (g.getRunNumber().equals("Percent Termination")
-									&& new File(outDir + separator + "percent-term-time" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
+									&& new File(outDir + separator + "percent-term-time" + "." + printer_id.substring(0, printer_id.length() - 8))
 											.exists()) {
 								ableToGraph = true;
 							}
 							else if (g.getRunNumber().equals("Constraint Termination")
-									&& new File(outDir + separator + "sim-rep" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ableToGraph = true;
 							}
 						}
@@ -6384,62 +5772,46 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								if (g.getRunNumber().equals("Average")
-										&& new File(outDir + separator + "mean" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									readGraphSpecies(outDir + separator + "mean" + "."
-											+ printer_id.substring(0, printer_id.length() - 8));
+										&& new File(outDir + separator + "mean" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									readGraphSpecies(outDir + separator + "mean" + "." + printer_id.substring(0, printer_id.length() - 8));
 								}
 								else if (g.getRunNumber().equals("Variance")
-										&& new File(outDir + separator + "variance" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
+										&& new File(outDir + separator + "variance" + "." + printer_id.substring(0, printer_id.length() - 8))
 												.exists()) {
-									readGraphSpecies(outDir + separator + "variance" + "."
-											+ printer_id.substring(0, printer_id.length() - 8));
+									readGraphSpecies(outDir + separator + "variance" + "." + printer_id.substring(0, printer_id.length() - 8));
 								}
 								else if (g.getRunNumber().equals("Standard Deviation")
 										&& new File(outDir + separator + "standard_deviation" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									readGraphSpecies(outDir + separator + "standard_deviation"
-											+ "."
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									readGraphSpecies(outDir + separator + "standard_deviation" + "."
 											+ printer_id.substring(0, printer_id.length() - 8));
 								}
 								else if (g.getRunNumber().equals("Termination Time")
-										&& new File(outDir + separator + "term-time" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
+										&& new File(outDir + separator + "term-time" + "." + printer_id.substring(0, printer_id.length() - 8))
 												.exists()) {
-									readGraphSpecies(outDir + separator + "term-time" + "."
-											+ printer_id.substring(0, printer_id.length() - 8));
+									readGraphSpecies(outDir + separator + "term-time" + "." + printer_id.substring(0, printer_id.length() - 8));
 								}
 								else if (g.getRunNumber().equals("Percent Termination")
-										&& new File(outDir + separator + "percent-term-time" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
+										&& new File(outDir + separator + "percent-term-time" + "." + printer_id.substring(0, printer_id.length() - 8))
 												.exists()) {
 									readGraphSpecies(outDir + separator + "percent-term-time" + "."
 											+ printer_id.substring(0, printer_id.length() - 8));
 								}
 								else if (g.getRunNumber().equals("Constraint Termination")
-										&& new File(outDir + separator + "sim-rep" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									readGraphSpecies(outDir + separator + "sim-rep" + "."
-											+ printer_id.substring(0, printer_id.length() - 8));
+										&& new File(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									readGraphSpecies(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8));
 								}
 								else {
-									while (!new File(outDir + separator + "run-" + nextOne + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
+									while (!new File(outDir + separator + "run-" + nextOne + "." + printer_id.substring(0, printer_id.length() - 8))
 											.exists()) {
 										nextOne++;
 									}
-									readGraphSpecies(outDir + separator + "run-" + nextOne + "."
-											+ printer_id.substring(0, printer_id.length() - 8));
+									readGraphSpecies(outDir + separator + "run-" + nextOne + "." + printer_id.substring(0, printer_id.length() - 8));
 								}
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									int j = i;
-									while ((j > 1)
-											&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+									while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 										graphSpecies.set(j, graphSpecies.get(j - 1));
 										j = j - 1;
 									}
@@ -6454,69 +5826,52 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 							else {
 								if (g.getRunNumber().equals("Average")
-										&& new File(outDir + separator + "mean" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									data = readData(outDir + separator + "mean."
-											+ printer_id.substring(0, printer_id.length() - 8), g
-											.getRunNumber().toLowerCase(), null, false);
+										&& new File(outDir + separator + "mean" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									data = readData(outDir + separator + "mean." + printer_id.substring(0, printer_id.length() - 8), g.getRunNumber()
+											.toLowerCase(), null, false);
 								}
 								else if (g.getRunNumber().equals("Variance")
-										&& new File(outDir + separator + "variance" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
+										&& new File(outDir + separator + "variance" + "." + printer_id.substring(0, printer_id.length() - 8))
 												.exists()) {
-									data = readData(outDir + separator + "variance."
-											+ printer_id.substring(0, printer_id.length() - 8), g
+									data = readData(outDir + separator + "variance." + printer_id.substring(0, printer_id.length() - 8), g
 											.getRunNumber().toLowerCase(), null, false);
 								}
 								else if (g.getRunNumber().equals("Standard Deviation")
 										&& new File(outDir + separator + "standard_deviation" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									data = readData(outDir + separator + "standard_deviation."
-											+ printer_id.substring(0, printer_id.length() - 8), g
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									data = readData(outDir + separator + "standard_deviation." + printer_id.substring(0, printer_id.length() - 8), g
 											.getRunNumber().toLowerCase(), null, false);
 								}
 								else if (g.getRunNumber().equals("Termination Time")
-										&& new File(outDir + separator + "term-time" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
+										&& new File(outDir + separator + "term-time" + "." + printer_id.substring(0, printer_id.length() - 8))
 												.exists()) {
-									data = readData(outDir + separator + "term-time."
-											+ printer_id.substring(0, printer_id.length() - 8), g
+									data = readData(outDir + separator + "term-time." + printer_id.substring(0, printer_id.length() - 8), g
 											.getRunNumber().toLowerCase(), null, false);
 								}
 								else if (g.getRunNumber().equals("Percent Termination")
-										&& new File(outDir + separator + "percent-term-time" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
+										&& new File(outDir + separator + "percent-term-time" + "." + printer_id.substring(0, printer_id.length() - 8))
 												.exists()) {
-									data = readData(outDir + separator + "percent-term-time."
-											+ printer_id.substring(0, printer_id.length() - 8), g
+									data = readData(outDir + separator + "percent-term-time." + printer_id.substring(0, printer_id.length() - 8), g
 											.getRunNumber().toLowerCase(), null, false);
 								}
 								else if (g.getRunNumber().equals("Constraint Termination")
-										&& new File(outDir + separator + "sim-rep" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									data = readData(outDir + separator + "sim-rep."
-											+ printer_id.substring(0, printer_id.length() - 8), g
+										&& new File(outDir + separator + "sim-rep" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									data = readData(outDir + separator + "sim-rep." + printer_id.substring(0, printer_id.length() - 8), g
 											.getRunNumber().toLowerCase(), null, false);
 								}
 								else {
-									while (!new File(outDir + separator + "run-" + nextOne + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
+									while (!new File(outDir + separator + "run-" + nextOne + "." + printer_id.substring(0, printer_id.length() - 8))
 											.exists()) {
 										nextOne++;
 									}
-									data = readData(outDir + separator + "run-" + nextOne + "."
-											+ printer_id.substring(0, printer_id.length() - 8), g
+									data = readData(outDir + separator + "run-" + nextOne + "." + printer_id.substring(0, printer_id.length() - 8), g
 											.getRunNumber().toLowerCase(), null, false);
 								}
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									ArrayList<Double> index2 = data.get(i);
 									int j = i;
-									while ((j > 1)
-											&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+									while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 										graphSpecies.set(j, graphSpecies.get(j - 1));
 										data.set(j, data.get(j - 1));
 										j = j - 1;
@@ -6538,8 +5893,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -6563,25 +5917,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					rend.setSeriesShapesVisible(thisOne, g.getVisible());
 					rend.setSeriesPaint(thisOne, g.getShapeAndPaint().getPaint());
 					rend.setSeriesShape(thisOne, g.getShapeAndPaint().getShape());
-					if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance")
-							&& !g.getRunNumber().equals("Standard Deviation")
-							&& !g.getRunNumber().equals("Termination Time")
-							&& !g.getRunNumber().equals("Percent Termination")
+					if (!g.getRunNumber().equals("Average") && !g.getRunNumber().equals("Variance") && !g.getRunNumber().equals("Standard Deviation")
+							&& !g.getRunNumber().equals("Termination Time") && !g.getRunNumber().equals("Percent Termination")
 							&& !g.getRunNumber().equals("Constraint Termination")) {
-						if (new File(outDir + separator + g.getDirectory() + separator
-								+ g.getRunNumber() + "."
+						if (new File(outDir + separator + g.getDirectory() + separator + g.getRunNumber() + "."
 								+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 							ArrayList<ArrayList<Double>> data;
 							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
-								readGraphSpecies(outDir + separator + g.getDirectory() + separator
-										+ g.getRunNumber() + "."
+								readGraphSpecies(outDir + separator + g.getDirectory() + separator + g.getRunNumber() + "."
 										+ printer_id.substring(0, printer_id.length() - 8));
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									int j = i;
-									while ((j > 1)
-											&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+									while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 										graphSpecies.set(j, graphSpecies.get(j - 1));
 										j = j - 1;
 									}
@@ -6595,16 +5944,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								updateXNumber = true;
 							}
 							else {
-								data = readData(outDir + separator + g.getDirectory() + separator
-										+ g.getRunNumber() + "."
-										+ printer_id.substring(0, printer_id.length() - 8), g
-										.getRunNumber(), g.getDirectory(), false);
+								data = readData(
+										outDir + separator + g.getDirectory() + separator + g.getRunNumber() + "."
+												+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber(), g.getDirectory(), false);
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									ArrayList<Double> index2 = data.get(i);
 									int j = i;
-									while ((j > 1)
-											&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+									while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 										graphSpecies.set(j, graphSpecies.get(j - 1));
 										data.set(j, data.get(j - 1));
 										j = j - 1;
@@ -6626,8 +5973,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -6656,45 +6002,33 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						if (!ableToGraph) {
 							if (g.getRunNumber().equals("Average")
-									&& new File(outDir + separator + g.getDirectory() + separator
-											+ "mean" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + g.getDirectory() + separator + "mean" + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ableToGraph = true;
 							}
 							else if (g.getRunNumber().equals("Variance")
-									&& new File(outDir + separator + g.getDirectory() + separator
-											+ "variance" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + g.getDirectory() + separator + "variance" + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ableToGraph = true;
 							}
 							else if (g.getRunNumber().equals("Standard Deviation")
-									&& new File(outDir + separator + g.getDirectory() + separator
-											+ "standard_deviation" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + g.getDirectory() + separator + "standard_deviation" + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ableToGraph = true;
 							}
 							else if (g.getRunNumber().equals("Termination Time")
-									&& new File(outDir + separator + g.getDirectory() + separator
-											+ "term-time" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + g.getDirectory() + separator + "term-time" + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ableToGraph = true;
 							}
 							else if (g.getRunNumber().equals("Percent Termination")
-									&& new File(outDir + separator + g.getDirectory() + separator
-											+ "percent-term-time" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + g.getDirectory() + separator + "percent-term-time" + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ableToGraph = true;
 							}
 							else if (g.getRunNumber().equals("Constraint Termination")
-									&& new File(outDir + separator + g.getDirectory() + separator
-											+ "sim-rep" + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									&& new File(outDir + separator + g.getDirectory() + separator + "sim-rep" + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 								ableToGraph = true;
 							}
 						}
@@ -6711,75 +6045,53 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							if (allData.containsKey(g.getRunNumber() + " " + g.getDirectory())) {
 								data = allData.get(g.getRunNumber() + " " + g.getDirectory());
 								if (g.getRunNumber().equals("Average")
-										&& new File(outDir + separator + g.getDirectory()
-												+ separator + "mean" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									readGraphSpecies(outDir + separator + g.getDirectory()
-											+ separator + "mean" + "."
+										&& new File(outDir + separator + g.getDirectory() + separator + "mean" + "."
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									readGraphSpecies(outDir + separator + g.getDirectory() + separator + "mean" + "."
 											+ printer_id.substring(0, printer_id.length() - 8));
 								}
 								else if (g.getRunNumber().equals("Variance")
-										&& new File(outDir + separator + g.getDirectory()
-												+ separator + "variance" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									readGraphSpecies(outDir + separator + g.getDirectory()
-											+ separator + "variance" + "."
+										&& new File(outDir + separator + g.getDirectory() + separator + "variance" + "."
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									readGraphSpecies(outDir + separator + g.getDirectory() + separator + "variance" + "."
 											+ printer_id.substring(0, printer_id.length() - 8));
 								}
 								else if (g.getRunNumber().equals("Standard Deviation")
-										&& new File(outDir + separator + g.getDirectory()
-												+ separator + "standard_deviation" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									readGraphSpecies(outDir + separator + g.getDirectory()
-											+ separator + "standard_deviation" + "."
+										&& new File(outDir + separator + g.getDirectory() + separator + "standard_deviation" + "."
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									readGraphSpecies(outDir + separator + g.getDirectory() + separator + "standard_deviation" + "."
 											+ printer_id.substring(0, printer_id.length() - 8));
 								}
 								else if (g.getRunNumber().equals("Termination Time")
-										&& new File(outDir + separator + g.getDirectory()
-												+ separator + "term-time" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									readGraphSpecies(outDir + separator + g.getDirectory()
-											+ separator + "term-time" + "."
+										&& new File(outDir + separator + g.getDirectory() + separator + "term-time" + "."
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									readGraphSpecies(outDir + separator + g.getDirectory() + separator + "term-time" + "."
 											+ printer_id.substring(0, printer_id.length() - 8));
 								}
 								else if (g.getRunNumber().equals("Percent Termination")
-										&& new File(outDir + separator + g.getDirectory()
-												+ separator + "percent-term-time" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									readGraphSpecies(outDir + separator + g.getDirectory()
-											+ separator + "percent-term-time" + "."
+										&& new File(outDir + separator + g.getDirectory() + separator + "percent-term-time" + "."
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									readGraphSpecies(outDir + separator + g.getDirectory() + separator + "percent-term-time" + "."
 											+ printer_id.substring(0, printer_id.length() - 8));
 								}
 								else if (g.getRunNumber().equals("Constraint Termination")
-										&& new File(outDir + separator + g.getDirectory()
-												+ separator + "sim-rep" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									readGraphSpecies(outDir + separator + g.getDirectory()
-											+ separator + "sim-rep" + "."
+										&& new File(outDir + separator + g.getDirectory() + separator + "sim-rep" + "."
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									readGraphSpecies(outDir + separator + g.getDirectory() + separator + "sim-rep" + "."
 											+ printer_id.substring(0, printer_id.length() - 8));
 								}
 								else {
-									while (!new File(outDir + separator + g.getDirectory()
-											+ separator + "run-" + nextOne + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									while (!new File(outDir + separator + g.getDirectory() + separator + "run-" + nextOne + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 										nextOne++;
 									}
-									readGraphSpecies(outDir + separator + g.getDirectory()
-											+ separator + "run-" + nextOne + "."
+									readGraphSpecies(outDir + separator + g.getDirectory() + separator + "run-" + nextOne + "."
 											+ printer_id.substring(0, printer_id.length() - 8));
 								}
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									int j = i;
-									while ((j > 1)
-											&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+									while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 										graphSpecies.set(j, graphSpecies.get(j - 1));
 										j = j - 1;
 									}
@@ -6794,83 +6106,62 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 							else {
 								if (g.getRunNumber().equals("Average")
-										&& new File(outDir + separator + g.getDirectory()
-												+ separator + "mean" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									data = readData(outDir + separator + g.getDirectory()
-											+ separator + "mean."
-											+ printer_id.substring(0, printer_id.length() - 8), g
-											.getRunNumber().toLowerCase(), null, false);
+										&& new File(outDir + separator + g.getDirectory() + separator + "mean" + "."
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									data = readData(
+											outDir + separator + g.getDirectory() + separator + "mean."
+													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber().toLowerCase(), null, false);
 								}
 								else if (g.getRunNumber().equals("Variance")
-										&& new File(outDir + separator + g.getDirectory()
-												+ separator + "variance" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									data = readData(outDir + separator + g.getDirectory()
-											+ separator + "variance."
-											+ printer_id.substring(0, printer_id.length() - 8), g
-											.getRunNumber().toLowerCase(), null, false);
+										&& new File(outDir + separator + g.getDirectory() + separator + "variance" + "."
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									data = readData(
+											outDir + separator + g.getDirectory() + separator + "variance."
+													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber().toLowerCase(), null, false);
 								}
 								else if (g.getRunNumber().equals("Standard Deviation")
-										&& new File(outDir + separator + g.getDirectory()
-												+ separator + "standard_deviation" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									data = readData(outDir + separator + g.getDirectory()
-											+ separator + "standard_deviation."
-											+ printer_id.substring(0, printer_id.length() - 8), g
-											.getRunNumber().toLowerCase(), null, false);
+										&& new File(outDir + separator + g.getDirectory() + separator + "standard_deviation" + "."
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									data = readData(
+											outDir + separator + g.getDirectory() + separator + "standard_deviation."
+													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber().toLowerCase(), null, false);
 								}
 								else if (g.getRunNumber().equals("Termination Time")
-										&& new File(outDir + separator + g.getDirectory()
-												+ separator + "term-time" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									data = readData(outDir + separator + g.getDirectory()
-											+ separator + "term-time."
-											+ printer_id.substring(0, printer_id.length() - 8), g
-											.getRunNumber().toLowerCase(), null, false);
+										&& new File(outDir + separator + g.getDirectory() + separator + "term-time" + "."
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									data = readData(
+											outDir + separator + g.getDirectory() + separator + "term-time."
+													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber().toLowerCase(), null, false);
 								}
 								else if (g.getRunNumber().equals("Percent Termination")
-										&& new File(outDir + separator + g.getDirectory()
-												+ separator + "percent-term-time" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									data = readData(outDir + separator + g.getDirectory()
-											+ separator + "percent-term-time."
-											+ printer_id.substring(0, printer_id.length() - 8), g
-											.getRunNumber().toLowerCase(), null, false);
+										&& new File(outDir + separator + g.getDirectory() + separator + "percent-term-time" + "."
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									data = readData(
+											outDir + separator + g.getDirectory() + separator + "percent-term-time."
+													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber().toLowerCase(), null, false);
 								}
 								else if (g.getRunNumber().equals("Constraint Termination")
-										&& new File(outDir + separator + g.getDirectory()
-												+ separator + "sim-rep" + "."
-												+ printer_id.substring(0, printer_id.length() - 8))
-												.exists()) {
-									data = readData(outDir + separator + g.getDirectory()
-											+ separator + "sim-rep."
-											+ printer_id.substring(0, printer_id.length() - 8), g
-											.getRunNumber().toLowerCase(), null, false);
+										&& new File(outDir + separator + g.getDirectory() + separator + "sim-rep" + "."
+												+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									data = readData(
+											outDir + separator + g.getDirectory() + separator + "sim-rep."
+													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber().toLowerCase(), null, false);
 								}
 								else {
-									while (!new File(outDir + separator + g.getDirectory()
-											+ separator + "run-" + nextOne + "."
-											+ printer_id.substring(0, printer_id.length() - 8))
-											.exists()) {
+									while (!new File(outDir + separator + g.getDirectory() + separator + "run-" + nextOne + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
 										nextOne++;
 									}
-									data = readData(outDir + separator + g.getDirectory()
-											+ separator + "run-" + nextOne + "."
-											+ printer_id.substring(0, printer_id.length() - 8), g
-											.getRunNumber().toLowerCase(), g.getDirectory(), false);
+									data = readData(
+											outDir + separator + g.getDirectory() + separator + "run-" + nextOne + "."
+													+ printer_id.substring(0, printer_id.length() - 8), g.getRunNumber().toLowerCase(),
+											g.getDirectory(), false);
 								}
 								for (int i = 2; i < graphSpecies.size(); i++) {
 									String index = graphSpecies.get(i);
 									ArrayList<Double> index2 = data.get(i);
 									int j = i;
-									while ((j > 1)
-											&& graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
+									while ((j > 1) && graphSpecies.get(j - 1).compareToIgnoreCase(index) > 0) {
 										graphSpecies.set(j, graphSpecies.get(j - 1));
 										data.set(j, data.get(j - 1));
 										j = j - 1;
@@ -6892,8 +6183,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								graphData.add(new XYSeries(g.getSpecies()));
 								if (data.size() != 0) {
 									for (int i = 0; i < (data.get(0)).size(); i++) {
-										graphData.get(graphData.size() - 1).add(
-												(data.get(g.getXNumber())).get(i),
+										graphData.get(graphData.size() - 1).add((data.get(g.getXNumber())).get(i),
 												(data.get(g.getNumber() + 1)).get(i));
 									}
 								}
@@ -6917,8 +6207,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			for (int i = 0; i < graphData.size(); i++) {
 				dataset.addSeries(graphData.get(i));
 			}
-			fixGraph(chart.getTitle().getText(), chart.getXYPlot().getDomainAxis().getLabel(),
-					chart.getXYPlot().getRangeAxis().getLabel(), dataset);
+			fixGraph(chart.getTitle().getText(), chart.getXYPlot().getDomainAxis().getLabel(), chart.getXYPlot().getRangeAxis().getLabel(), dataset);
 			chart.getXYPlot().setRenderer(rend);
 			XYPlot plot = chart.getXYPlot();
 			if (resize.isSelected()) {
@@ -6941,9 +6230,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			for (int i = 1; i < probGraphed.size(); i++) {
 				GraphProbs index = probGraphed.get(i);
 				int j = i;
-				while ((j > 0)
-						&& (probGraphed.get(j - 1).getSpecies().compareToIgnoreCase(
-								index.getSpecies()) > 0)) {
+				while ((j > 0) && (probGraphed.get(j - 1).getSpecies().compareToIgnoreCase(index.getSpecies()) > 0)) {
 					probGraphed.set(j, probGraphed.get(j - 1));
 					j = j - 1;
 				}
@@ -6993,12 +6280,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				else {
 					thisOne++;
 					rend.setSeriesPaint(thisOne, g.getPaint());
-					if (new File(outDir + separator + g.getDirectory() + separator + "sim-rep.txt")
-							.exists()) {
-						readProbSpecies(outDir + separator + g.getDirectory() + separator
-								+ "sim-rep.txt");
-						double[] data = readProbs(outDir + separator + g.getDirectory() + separator
-								+ "sim-rep.txt");
+					if (new File(outDir + separator + g.getDirectory() + separator + "sim-rep.txt").exists()) {
+						readProbSpecies(outDir + separator + g.getDirectory() + separator + "sim-rep.txt");
+						double[] data = readProbs(outDir + separator + g.getDirectory() + separator + "sim-rep.txt");
 						for (int i = 1; i < graphProbs.size(); i++) {
 							String index = graphProbs.get(i);
 							double index2 = data[i];
@@ -7036,9 +6320,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			for (GraphProbs g : unableToGraph) {
 				probGraphed.remove(g);
 			}
-			fixProbGraph(chart.getTitle().getText(), chart.getCategoryPlot().getDomainAxis()
-					.getLabel(), chart.getCategoryPlot().getRangeAxis().getLabel(), histDataset,
-					rend);
+			fixProbGraph(chart.getTitle().getText(), chart.getCategoryPlot().getDomainAxis().getLabel(), chart.getCategoryPlot().getRangeAxis()
+					.getLabel(), histDataset, rend);
 		}
 		lock2.unlock();
 	}
@@ -7109,9 +6392,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		private int xnumber, number;
 
-		private GraphSpecies(Shape s, String p, boolean filled, boolean visible, boolean connected,
-				String runNumber, String id, String species, int xnumber, int number,
-				String directory) {
+		private GraphSpecies(Shape s, String p, boolean filled, boolean visible, boolean connected, String runNumber, String id, String species,
+				int xnumber, int number, String directory) {
 			sP = new ShapeAndPaint(s, p);
 			this.filled = filled;
 			this.visible = visible;
@@ -7214,10 +6496,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	}
 
 	private void probGraph(String label) {
-		chart = ChartFactory.createBarChart(label, "", "Percent", new DefaultCategoryDataset(),
-				PlotOrientation.VERTICAL, true, true, false);
-		((BarRenderer) chart.getCategoryPlot().getRenderer())
-				.setBarPainter(new StandardBarPainter());
+		chart = ChartFactory.createBarChart(label, "", "Percent", new DefaultCategoryDataset(), PlotOrientation.VERTICAL, true, true, false);
+		((BarRenderer) chart.getCategoryPlot().getRenderer()).setBarPainter(new StandardBarPainter());
 		chart.setBackgroundPaint(new java.awt.Color(238, 238, 238));
 		chart.getPlot().setBackgroundPaint(java.awt.Color.WHITE);
 		chart.getCategoryPlot().setRangeGridlinePaint(java.awt.Color.LIGHT_GRAY);
@@ -7276,11 +6556,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		JLabel xLabel = new JLabel("X-Axis Label:");
 		JLabel yLabel = new JLabel("Y-Axis Label:");
 		final JCheckBox gradient = new JCheckBox("Paint In Gradient Style");
-		gradient.setSelected(!(((BarRenderer) chart.getCategoryPlot().getRenderer())
-				.getBarPainter() instanceof StandardBarPainter));
+		gradient.setSelected(!(((BarRenderer) chart.getCategoryPlot().getRenderer()).getBarPainter() instanceof StandardBarPainter));
 		final JCheckBox shadow = new JCheckBox("Paint Bar Shadows");
-		shadow.setSelected(((BarRenderer) chart.getCategoryPlot().getRenderer())
-				.getShadowsVisible());
+		shadow.setSelected(((BarRenderer) chart.getCategoryPlot().getRenderer()).getShadowsVisible());
 		visibleLegend.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if (((JCheckBox) e.getSource()).isSelected()) {
@@ -7323,18 +6601,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			else if (new File(outDir + separator + file).isDirectory()) {
 				boolean addIt = false;
 				for (String getFile : new File(outDir + separator + file).list()) {
-					if (getFile.length() > 3
-							&& getFile.substring(getFile.length() - 4).equals(".txt")
-							&& getFile.contains("sim-rep")) {
+					if (getFile.length() > 3 && getFile.substring(getFile.length() - 4).equals(".txt") && getFile.contains("sim-rep")) {
 						addIt = true;
 					}
-					else if (new File(outDir + separator + file + separator + getFile)
-							.isDirectory()) {
-						for (String getFile2 : new File(outDir + separator + file + separator
-								+ getFile).list()) {
-							if (getFile2.length() > 3
-									&& getFile2.substring(getFile2.length() - 4).equals(".txt")
-									&& getFile2.contains("sim-rep")) {
+					else if (new File(outDir + separator + file + separator + getFile).isDirectory()) {
+						for (String getFile2 : new File(outDir + separator + file + separator + getFile).list()) {
+							if (getFile2.length() > 3 && getFile2.substring(getFile2.length() - 4).equals(".txt") && getFile2.contains("sim-rep")) {
 								addIt = true;
 							}
 						}
@@ -7362,11 +6634,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						}
 						else if (new File(outDir + separator + file + separator + f).isDirectory()) {
 							boolean addIt2 = false;
-							for (String getFile : new File(outDir + separator + file + separator
-									+ f).list()) {
-								if (getFile.length() > 3
-										&& getFile.substring(getFile.length() - 4).equals(".txt")
-										&& getFile.contains("sim-rep")) {
+							for (String getFile : new File(outDir + separator + file + separator + f).list()) {
+								if (getFile.length() > 3 && getFile.substring(getFile.length() - 4).equals(".txt") && getFile.contains("sim-rep")) {
 									addIt2 = true;
 								}
 							}
@@ -7374,26 +6643,20 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								directories.add(file + separator + f);
 								IconNode d2 = new IconNode(f, f);
 								d2.setIconName("");
-								for (String f2 : new File(outDir + separator + file + separator + f)
-										.list()) {
+								for (String f2 : new File(outDir + separator + file + separator + f).list()) {
 									if (f2.equals("sim-rep.txt")) {
-										IconNode n = new IconNode(f2.substring(0, f2.length() - 4),
-												f2.substring(0, f2.length() - 4));
+										IconNode n = new IconNode(f2.substring(0, f2.length() - 4), f2.substring(0, f2.length() - 4));
 										d2.add(n);
 										n.setIconName("");
 										for (GraphProbs g : probGraphed) {
-											if (g.getDirectory().equals(
-													d.getName() + separator + d2.getName())) {
+											if (g.getDirectory().equals(d.getName() + separator + d2.getName())) {
 												n.setIcon(TextIcons.getIcon("g"));
 												n.setIconName("" + (char) 10003);
-												d2.setIcon(MetalIconFactory
-														.getFileChooserUpFolderIcon());
+												d2.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 												d2.setIconName("" + (char) 10003);
-												d.setIcon(MetalIconFactory
-														.getFileChooserUpFolderIcon());
+												d.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 												d.setIconName("" + (char) 10003);
-												simDir.setIcon(MetalIconFactory
-														.getFileChooserUpFolderIcon());
+												simDir.setIcon(MetalIconFactory.getFileChooserUpFolderIcon());
 												simDir.setIconName("" + (char) 10003);
 											}
 										}
@@ -7401,11 +6664,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								boolean added = false;
 								for (int j = 0; j < d.getChildCount(); j++) {
-									if ((d.getChildAt(j).toString().compareToIgnoreCase(
-											d2.toString()) > 0)
-											|| new File(outDir + separator + d.toString()
-													+ separator
-													+ (d.getChildAt(j).toString() + ".txt"))
+									if ((d.getChildAt(j).toString().compareToIgnoreCase(d2.toString()) > 0)
+											|| new File(outDir + separator + d.toString() + separator + (d.getChildAt(j).toString() + ".txt"))
 													.isFile()) {
 										d.insert(d2, j);
 										added = true;
@@ -7436,8 +6696,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					boolean added = false;
 					for (int j = 0; j < simDir.getChildCount(); j++) {
 						if ((simDir.getChildAt(j).toString().compareToIgnoreCase(d.toString()) > 0)
-								|| new File(outDir + separator
-										+ (simDir.getChildAt(j).toString() + ".txt")).isFile()) {
+								|| new File(outDir + separator + (simDir.getChildAt(j).toString() + ".txt")).isFile()) {
 							simDir.insert(d, j);
 							added = true;
 							break;
@@ -7463,8 +6722,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		if (simDir.getChildCount() == 0) {
-			JOptionPane.showMessageDialog(Gui.frame, "No data to graph."
-					+ "\nPerform some simulations to create some data first.", "No Data",
+			JOptionPane.showMessageDialog(Gui.frame, "No data to graph." + "\nPerform some simulations to create some data first.", "No Data",
 					JOptionPane.PLAIN_MESSAGE);
 		}
 		else {
@@ -7532,16 +6790,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (select != -1) {
 							specPanel.removeAll();
 							if (node.getParent().getParent() != null
-									&& directories.contains(((IconNode) node.getParent()
-											.getParent()).getName()
-											+ separator + ((IconNode) node.getParent()).getName())) {
-								specPanel.add(fixProbChoices(((IconNode) node.getParent()
-										.getParent()).getName()
-										+ separator + ((IconNode) node.getParent()).getName()));
+									&& directories.contains(((IconNode) node.getParent().getParent()).getName() + separator
+											+ ((IconNode) node.getParent()).getName())) {
+								specPanel.add(fixProbChoices(((IconNode) node.getParent().getParent()).getName() + separator
+										+ ((IconNode) node.getParent()).getName()));
 							}
 							else if (directories.contains(((IconNode) node.getParent()).getName())) {
-								specPanel.add(fixProbChoices(((IconNode) node.getParent())
-										.getName()));
+								specPanel.add(fixProbChoices(((IconNode) node.getParent()).getName()));
 							}
 							else {
 								specPanel.add(fixProbChoices(""));
@@ -7557,41 +6812,32 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								boxes.get(i).setSelected(false);
 							}
 							if (node.getParent().getParent() != null
-									&& directories.contains(((IconNode) node.getParent()
-											.getParent()).getName()
-											+ separator + ((IconNode) node.getParent()).getName())) {
+									&& directories.contains(((IconNode) node.getParent().getParent()).getName() + separator
+											+ ((IconNode) node.getParent()).getName())) {
 								for (GraphProbs g : probGraphed) {
-									if (g.getDirectory().equals(
-											((IconNode) node.getParent().getParent()).getName()
-													+ separator
+									if (g.getDirectory()
+											.equals(((IconNode) node.getParent().getParent()).getName() + separator
 													+ ((IconNode) node.getParent()).getName())) {
 										boxes.get(g.getNumber()).setSelected(true);
 										series.get(g.getNumber()).setText(g.getSpecies());
 										series.get(g.getNumber()).setSelectionStart(0);
 										series.get(g.getNumber()).setSelectionEnd(0);
-										colorsButtons.get(g.getNumber()).setBackground(
-												(Color) g.getPaint());
-										colorsButtons.get(g.getNumber()).setForeground(
-												(Color) g.getPaint());
-										colorsCombo.get(g.getNumber()).setSelectedItem(
-												g.getPaintName().split("_")[0]);
+										colorsButtons.get(g.getNumber()).setBackground((Color) g.getPaint());
+										colorsButtons.get(g.getNumber()).setForeground((Color) g.getPaint());
+										colorsCombo.get(g.getNumber()).setSelectedItem(g.getPaintName().split("_")[0]);
 									}
 								}
 							}
 							else if (directories.contains(((IconNode) node.getParent()).getName())) {
 								for (GraphProbs g : probGraphed) {
-									if (g.getDirectory().equals(
-											((IconNode) node.getParent()).getName())) {
+									if (g.getDirectory().equals(((IconNode) node.getParent()).getName())) {
 										boxes.get(g.getNumber()).setSelected(true);
 										series.get(g.getNumber()).setText(g.getSpecies());
 										series.get(g.getNumber()).setSelectionStart(0);
 										series.get(g.getNumber()).setSelectionEnd(0);
-										colorsButtons.get(g.getNumber()).setBackground(
-												(Color) g.getPaint());
-										colorsButtons.get(g.getNumber()).setForeground(
-												(Color) g.getPaint());
-										colorsCombo.get(g.getNumber()).setSelectedItem(
-												g.getPaintName().split("_")[0]);
+										colorsButtons.get(g.getNumber()).setBackground((Color) g.getPaint());
+										colorsButtons.get(g.getNumber()).setForeground((Color) g.getPaint());
+										colorsCombo.get(g.getNumber()).setSelectedItem(g.getPaintName().split("_")[0]);
 									}
 								}
 							}
@@ -7602,12 +6848,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										series.get(g.getNumber()).setText(g.getSpecies());
 										series.get(g.getNumber()).setSelectionStart(0);
 										series.get(g.getNumber()).setSelectionEnd(0);
-										colorsButtons.get(g.getNumber()).setBackground(
-												(Color) g.getPaint());
-										colorsButtons.get(g.getNumber()).setForeground(
-												(Color) g.getPaint());
-										colorsCombo.get(g.getNumber()).setSelectedItem(
-												g.getPaintName().split("_")[0]);
+										colorsButtons.get(g.getNumber()).setBackground((Color) g.getPaint());
+										colorsButtons.get(g.getNumber()).setForeground((Color) g.getPaint());
+										colorsCombo.get(g.getNumber()).setSelectedItem(g.getPaintName().split("_")[0]);
 									}
 								}
 							}
@@ -7617,17 +6860,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									allChecked = false;
 									String s = "";
 									if (node.getParent().getParent() != null
-											&& directories.contains(((IconNode) node.getParent()
-													.getParent()).getName()
-													+ separator
+											&& directories.contains(((IconNode) node.getParent().getParent()).getName() + separator
 													+ ((IconNode) node.getParent()).getName())) {
-										s = "("
-												+ ((IconNode) node.getParent().getParent())
-														.getName() + separator
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
 												+ ((IconNode) node.getParent()).getName() + ")";
 									}
-									else if (directories.contains(((IconNode) node.getParent())
-											.getName())) {
+									else if (directories.contains(((IconNode) node.getParent()).getName())) {
 										s = "(" + ((IconNode) node.getParent()).getName() + ")";
 									}
 									String text = series.get(i).getText();
@@ -7656,17 +6894,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								else {
 									String s = "";
 									if (node.getParent().getParent() != null
-											&& directories.contains(((IconNode) node.getParent()
-													.getParent()).getName()
-													+ separator
+											&& directories.contains(((IconNode) node.getParent().getParent()).getName() + separator
 													+ ((IconNode) node.getParent()).getName())) {
-										s = "("
-												+ ((IconNode) node.getParent().getParent())
-														.getName() + separator
+										s = "(" + ((IconNode) node.getParent().getParent()).getName() + separator
 												+ ((IconNode) node.getParent()).getName() + ")";
 									}
-									else if (directories.contains(((IconNode) node.getParent())
-											.getName())) {
+									else if (directories.contains(((IconNode) node.getParent()).getName())) {
 										s = "(" + ((IconNode) node.getParent()).getName() + ")";
 									}
 									String text = graphProbs.get(i);
@@ -7726,24 +6959,21 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (n.isLeaf()) {
 							n.setIcon(MetalIconFactory.getTreeLeafIcon());
 							n.setIconName("");
-							IconNode check = (IconNode) ((DefaultMutableTreeNode) n.getParent())
-									.getChildAfter(n);
+							IconNode check = (IconNode) ((DefaultMutableTreeNode) n.getParent()).getChildAfter(n);
 							if (check == null) {
 								n = (IconNode) n.getParent();
 								if (n.getParent() == null) {
 									n = null;
 								}
 								else {
-									IconNode check2 = (IconNode) ((DefaultMutableTreeNode) n
-											.getParent()).getChildAfter(n);
+									IconNode check2 = (IconNode) ((DefaultMutableTreeNode) n.getParent()).getChildAfter(n);
 									if (check2 == null) {
 										n = (IconNode) n.getParent();
 										if (n.getParent() == null) {
 											n = null;
 										}
 										else {
-											n = (IconNode) ((DefaultMutableTreeNode) n.getParent())
-													.getChildAfter(n);
+											n = (IconNode) ((DefaultMutableTreeNode) n.getParent()).getChildAfter(n);
 										}
 									}
 									else {
@@ -7792,10 +7022,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			all.add(scroll, "Center");
 			all.add(scrollpane, "West");
 			Object[] options = { "Ok", "Cancel" };
-			int value = JOptionPane
-					.showOptionDialog(Gui.frame, all, "Edit Probability Graph",
-							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-							options[0]);
+			int value = JOptionPane.showOptionDialog(Gui.frame, all, "Edit Probability Graph", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+					null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				change = true;
 				lastSelected = selected;
@@ -7817,9 +7045,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				for (int i = 1; i < probGraphed.size(); i++) {
 					GraphProbs index = probGraphed.get(i);
 					int j = i;
-					while ((j > 0)
-							&& (probGraphed.get(j - 1).getSpecies().compareToIgnoreCase(
-									index.getSpecies()) > 0)) {
+					while ((j > 0) && (probGraphed.get(j - 1).getSpecies().compareToIgnoreCase(index.getSpecies()) > 0)) {
 						probGraphed.set(j, probGraphed.get(j - 1));
 						j = j - 1;
 					}
@@ -7838,8 +7064,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								String index = graphProbs.get(i);
 								double index2 = data[i];
 								int j = i;
-								while ((j > 0)
-										&& graphProbs.get(j - 1).compareToIgnoreCase(index) > 0) {
+								while ((j > 0) && graphProbs.get(j - 1).compareToIgnoreCase(index) > 0) {
 									graphProbs.set(j, graphProbs.get(j - 1));
 									data[j] = data[j - 1];
 									j = j - 1;
@@ -7863,18 +7088,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					else {
 						thisOne++;
 						rend.setSeriesPaint(thisOne, g.getPaint());
-						if (new File(outDir + separator + g.getDirectory() + separator
-								+ "sim-rep.txt").exists()) {
-							readProbSpecies(outDir + separator + g.getDirectory() + separator
-									+ "sim-rep.txt");
-							double[] data = readProbs(outDir + separator + g.getDirectory()
-									+ separator + "sim-rep.txt");
+						if (new File(outDir + separator + g.getDirectory() + separator + "sim-rep.txt").exists()) {
+							readProbSpecies(outDir + separator + g.getDirectory() + separator + "sim-rep.txt");
+							double[] data = readProbs(outDir + separator + g.getDirectory() + separator + "sim-rep.txt");
 							for (int i = 1; i < graphProbs.size(); i++) {
 								String index = graphProbs.get(i);
 								double index2 = data[i];
 								int j = i;
-								while ((j > 0)
-										&& graphProbs.get(j - 1).compareToIgnoreCase(index) > 0) {
+								while ((j > 0) && graphProbs.get(j - 1).compareToIgnoreCase(index) > 0) {
 									graphProbs.set(j, graphProbs.get(j - 1));
 									data[j] = data[j - 1];
 									j = j - 1;
@@ -7900,8 +7121,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				for (GraphProbs g : unableToGraph) {
 					probGraphed.remove(g);
 				}
-				fixProbGraph(title.getText().trim(), x.getText().trim(), y.getText().trim(),
-						histDataset, rend);
+				fixProbGraph(title.getText().trim(), x.getText().trim(), y.getText().trim(), histDataset, rend);
 			}
 			else {
 				selected = "";
@@ -8007,17 +7227,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow")) {
 									cols[3]++;
-									colorsButtons.get(k)
-											.setBackground((Color) colory.get("Yellow"));
-									colorsButtons.get(k)
-											.setForeground((Color) colory.get("Yellow"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Yellow"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Yellow"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta")) {
 									cols[4]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Magenta"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Magenta"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Magenta"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Magenta"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan")) {
 									cols[5]++;
@@ -8031,55 +7247,38 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Gray (Dark)")) {
 									cols[7]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Gray (Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Gray (Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Gray (Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Gray (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Dark)")) {
 									cols[8]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Red (Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Red (Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Red (Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Red (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Dark)")) {
 									cols[9]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Blue (Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Blue (Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Blue (Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Blue (Dark)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem()
-										.equals("Green (Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Green (Dark)")) {
 									cols[10]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Green (Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Green (Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Green (Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Green (Dark)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Yellow (Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Dark)")) {
 									cols[11]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Yellow (Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Yellow (Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Yellow (Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Yellow (Dark)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Magenta (Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Dark)")) {
 									cols[12]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Magenta (Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Magenta (Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Magenta (Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Magenta (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Dark)")) {
 									cols[13]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Cyan (Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Cyan (Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Cyan (Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Cyan (Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Black")) {
 									cols[14]++;
@@ -8108,108 +7307,70 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									colorsButtons.get(k).setBackground((Color) colory.get("Gray"));
 									colorsButtons.get(k).setForeground((Color) colory.get("Gray"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Red (Extra Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Extra Dark)")) {
 									cols[22]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Red (Extra Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Red (Extra Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Red (Extra Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Red (Extra Dark)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Blue (Extra Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Extra Dark)")) {
 									cols[23]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Blue (Extra Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Blue (Extra Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Blue (Extra Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Blue (Extra Dark)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Green (Extra Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Green (Extra Dark)")) {
 									cols[24]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Green (Extra Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Green (Extra Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Green (Extra Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Green (Extra Dark)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Yellow (Extra Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Extra Dark)")) {
 									cols[25]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Yellow (Extra Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Yellow (Extra Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Yellow (Extra Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Yellow (Extra Dark)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Magenta (Extra Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Extra Dark)")) {
 									cols[26]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Magenta (Extra Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Magenta (Extra Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Magenta (Extra Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Magenta (Extra Dark)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Cyan (Extra Dark)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Extra Dark)")) {
 									cols[27]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Cyan (Extra Dark)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Cyan (Extra Dark)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Cyan (Extra Dark)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Cyan (Extra Dark)"));
 								}
 								else if (colorsCombo.get(k).getSelectedItem().equals("Red (Light)")) {
 									cols[28]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Red (Light)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Red (Light)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Red (Light)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Red (Light)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem()
-										.equals("Blue (Light)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Blue (Light)")) {
 									cols[29]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Blue (Light)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Blue (Light)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Blue (Light)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Blue (Light)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Green (Light)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Green (Light)")) {
 									cols[30]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Green (Light)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Green (Light)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Green (Light)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Green (Light)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Yellow (Light)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Yellow (Light)")) {
 									cols[31]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Yellow (Light)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Yellow (Light)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Yellow (Light)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Yellow (Light)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem().equals(
-										"Magenta (Light)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Magenta (Light)")) {
 									cols[32]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Magenta (Light)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Magenta (Light)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Magenta (Light)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Magenta (Light)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem()
-										.equals("Cyan (Light)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Cyan (Light)")) {
 									cols[33]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Cyan (Light)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Cyan (Light)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Cyan (Light)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Cyan (Light)"));
 								}
-								else if (colorsCombo.get(k).getSelectedItem()
-										.equals("Gray (Light)")) {
+								else if (colorsCombo.get(k).getSelectedItem().equals("Gray (Light)")) {
 									cols[34]++;
-									colorsButtons.get(k).setBackground(
-											(Color) colory.get("Gray (Light)"));
-									colorsButtons.get(k).setForeground(
-											(Color) colory.get("Gray (Light)"));
+									colorsButtons.get(k).setBackground((Color) colory.get("Gray (Light)"));
+									colorsButtons.get(k).setForeground((Color) colory.get("Gray (Light)"));
 								}
 							}
 						}
@@ -8358,9 +7519,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						if (color.equals("Custom")) {
 							color += "_" + colorsButtons.get(i).getBackground().getRGB();
 						}
-						probGraphed.add(new GraphProbs(colorsButtons.get(i).getBackground(), color,
-								boxes.get(i).getName(), series.get(i).getText().trim(), i,
-								directory));
+						probGraphed.add(new GraphProbs(colorsButtons.get(i).getBackground(), color, boxes.get(i).getName(), series.get(i).getText()
+								.trim(), i, directory));
 					}
 					else {
 						boolean check = false;
@@ -8376,8 +7536,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							IconNode parent = ((IconNode) node.getParent());
 							while (parent != null) {
 								for (int j = 0; j < parent.getChildCount(); j++) {
-									if (((IconNode) parent.getChildAt(j)).getIconName().equals(
-											"" + (char) 10003)) {
+									if (((IconNode) parent.getChildAt(j)).getIconName().equals("" + (char) 10003)) {
 										check2 = true;
 									}
 								}
@@ -8457,28 +7616,19 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
 					if (!((JComboBox) (e.getSource())).getSelectedItem().equals("Custom")) {
-						colorsButtons.get(i)
-								.setBackground(
-										(Color) colors.get(((JComboBox) (e.getSource()))
-												.getSelectedItem()));
-						colorsButtons.get(i)
-								.setForeground(
-										(Color) colors.get(((JComboBox) (e.getSource()))
-												.getSelectedItem()));
+						colorsButtons.get(i).setBackground((Color) colors.get(((JComboBox) (e.getSource())).getSelectedItem()));
+						colorsButtons.get(i).setForeground((Color) colors.get(((JComboBox) (e.getSource())).getSelectedItem()));
 						for (GraphProbs g : probGraphed) {
 							if (g.getNumber() == i && g.getDirectory().equals(directory)) {
-								g.setPaintName((String) ((JComboBox) e.getSource())
-										.getSelectedItem());
-								g.setPaint(colory
-										.get(((JComboBox) e.getSource()).getSelectedItem()));
+								g.setPaintName((String) ((JComboBox) e.getSource()).getSelectedItem());
+								g.setPaint(colory.get(((JComboBox) e.getSource()).getSelectedItem()));
 							}
 						}
 					}
 					else {
 						for (GraphProbs g : probGraphed) {
 							if (g.getNumber() == i && g.getDirectory().equals(directory)) {
-								g.setPaintName("Custom_"
-										+ colorsButtons.get(i).getBackground().getRGB());
+								g.setPaintName("Custom_" + colorsButtons.get(i).getBackground().getRGB());
 								g.setPaint(colorsButtons.get(i).getBackground());
 							}
 						}
@@ -8496,8 +7646,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			colorButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					int i = Integer.parseInt(e.getActionCommand());
-					Color newColor = JColorChooser.showDialog(Gui.frame, "Choose Color",
-							((JButton) e.getSource()).getBackground());
+					Color newColor = JColorChooser.showDialog(Gui.frame, "Choose Color", ((JButton) e.getSource()).getBackground());
 					if (newColor != null) {
 						((JButton) e.getSource()).setBackground(newColor);
 						((JButton) e.getSource()).setForeground(newColor);
@@ -8526,8 +7675,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			Scanner s = new Scanner(new File(file));
 			while (s.hasNextLine()) {
 				String[] ss = s.nextLine().split(" ");
-				if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
-						&& ss[3].equals("count:") && ss[4].equals("0")) {
+				if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0")) {
 					return;
 				}
 				if (data.size() == 0) {
@@ -8557,8 +7705,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			Scanner s = new Scanner(new File(file));
 			while (s.hasNextLine()) {
 				String[] ss = s.nextLine().split(" ");
-				if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
-						&& ss[3].equals("count:") && ss[4].equals("0")) {
+				if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:") && ss[4].equals("0")) {
 					return new double[0];
 				}
 				if (data.size() == 0) {
@@ -8593,13 +7740,11 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		return dataSet;
 	}
 
-	private void fixProbGraph(String label, String xLabel, String yLabel,
-			DefaultCategoryDataset dataset, BarRenderer rend) {
+	private void fixProbGraph(String label, String xLabel, String yLabel, DefaultCategoryDataset dataset, BarRenderer rend) {
 		Paint chartBackground = chart.getBackgroundPaint();
 		Paint plotBackground = chart.getPlot().getBackgroundPaint();
 		Paint plotRangeGridLine = chart.getCategoryPlot().getRangeGridlinePaint();
-		chart = ChartFactory.createBarChart(label, xLabel, yLabel, dataset,
-				PlotOrientation.VERTICAL, true, true, false);
+		chart = ChartFactory.createBarChart(label, xLabel, yLabel, dataset, PlotOrientation.VERTICAL, true, true, false);
 		chart.getCategoryPlot().setRenderer(rend);
 		chart.setBackgroundPaint(chartBackground);
 		chart.getPlot().setBackgroundPaint(plotBackground);
@@ -8662,8 +7807,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		for (int i = 1; i < probGraphed.size(); i++) {
 			GraphProbs index = probGraphed.get(i);
 			int j = i;
-			while ((j > 0)
-					&& (probGraphed.get(j - 1).getSpecies().compareToIgnoreCase(index.getSpecies()) > 0)) {
+			while ((j > 0) && (probGraphed.get(j - 1).getSpecies().compareToIgnoreCase(index.getSpecies()) > 0)) {
 				probGraphed.set(j, probGraphed.get(j - 1));
 				j = j - 1;
 			}
@@ -8707,12 +7851,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			else {
 				thisOne++;
 				rend.setSeriesPaint(thisOne, g.getPaint());
-				if (new File(outDir + separator + g.getDirectory() + separator + "sim-rep.txt")
-						.exists()) {
-					readProbSpecies(outDir + separator + g.getDirectory() + separator
-							+ "sim-rep.txt");
-					double[] data = readProbs(outDir + separator + g.getDirectory() + separator
-							+ "sim-rep.txt");
+				if (new File(outDir + separator + g.getDirectory() + separator + "sim-rep.txt").exists()) {
+					readProbSpecies(outDir + separator + g.getDirectory() + separator + "sim-rep.txt");
+					double[] data = readProbs(outDir + separator + g.getDirectory() + separator + "sim-rep.txt");
 					for (int i = 1; i < graphProbs.size(); i++) {
 						String index = graphProbs.get(i);
 						double index2 = data[i];
@@ -8743,9 +7884,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		for (GraphProbs g : unableToGraph) {
 			probGraphed.remove(g);
 		}
-		fixProbGraph(chart.getTitle().getText(),
-				chart.getCategoryPlot().getDomainAxis().getLabel(), chart.getCategoryPlot()
-						.getRangeAxis().getLabel(), histDataset, rend);
+		fixProbGraph(chart.getTitle().getText(), chart.getCategoryPlot().getDomainAxis().getLabel(), chart.getCategoryPlot().getRangeAxis()
+				.getLabel(), histDataset, rend);
 	}
 
 	private void updateSpecies() {
@@ -8753,29 +7893,23 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		try {
 			Properties p = new Properties();
 			String[] split = outDir.split(separator);
-			FileInputStream load = new FileInputStream(new File(outDir + separator
-					+ split[split.length - 1] + ".lrn"));
+			FileInputStream load = new FileInputStream(new File(outDir + separator + split[split.length - 1] + ".lrn"));
 			p.load(load);
 			load.close();
 			if (p.containsKey("genenet.file")) {
 				String[] getProp = p.getProperty("genenet.file").split(separator);
-				background = outDir
-						.substring(0, outDir.length() - split[split.length - 1].length())
-						+ separator + getProp[getProp.length - 1];
+				background = outDir.substring(0, outDir.length() - split[split.length - 1].length()) + separator + getProp[getProp.length - 1];
 			}
 			else if (p.containsKey("learn.file")) {
 				String[] getProp = p.getProperty("learn.file").split(separator);
-				background = outDir
-						.substring(0, outDir.length() - split[split.length - 1].length())
-						+ separator + getProp[getProp.length - 1];
+				background = outDir.substring(0, outDir.length() - split[split.length - 1].length()) + separator + getProp[getProp.length - 1];
 			}
 			else {
 				background = null;
 			}
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to load background file.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to load background file.", "Error", JOptionPane.ERROR_MESSAGE);
 			background = null;
 		}
 		learnSpecs = new ArrayList<String>();
@@ -8854,8 +7988,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 		private int number;
 
-		private GraphProbs(Paint paint, String paintName, String id, String species, int number,
-				String directory) {
+		private GraphProbs(Paint paint, String paintName, String id, String species, int number, String directory) {
 			this.paint = paint;
 			this.paintName = paintName;
 			this.species = species;
@@ -8924,8 +8057,7 @@ class IconNodeRenderer extends DefaultTreeCellRenderer {
 	 */
 	private static final long serialVersionUID = -940588131120912851L;
 
-	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel,
-			boolean expanded, boolean leaf, int row, boolean hasFocus) {
+	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean sel, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 
 		super.getTreeCellRendererComponent(tree, value, sel, expanded, leaf, row, hasFocus);
 

@@ -49,20 +49,20 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 	private JButton addInit, removeInit, editInit;
 
 	private JList initAssigns; // JList of initial assignments
-	
+
 	private SBMLDocument document;
-	
+
 	private MutableBoolean dirty;
-	
+
 	private Gui biosim;
-	
+
 	/* Create initial assignment panel */
-	public InitialAssignments(Gui biosim,SBMLDocument document,MutableBoolean dirty) {
+	public InitialAssignments(Gui biosim, SBMLDocument document, MutableBoolean dirty) {
 		super(new BorderLayout());
 		this.document = document;
 		this.biosim = biosim;
 		this.dirty = dirty;
-		Model model =  document.getModel();
+		Model model = document.getModel();
 		/* Create initial assignment panel */
 		addInit = new JButton("Add Initial");
 		removeInit = new JButton("Remove Initial");
@@ -79,8 +79,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			inits = sortInitRules(inits);
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in initial assignments.",
-					"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in initial assignments.", "Cycle Detected", JOptionPane.ERROR_MESSAGE);
 			inits = oldInits;
 		}
 		JPanel addRem = new JPanel();
@@ -110,7 +109,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 	public void refreshInitialAssignmentPanel(SBMLDocument document) {
 		Model model = document.getModel();
 		if (model.getNumInitialAssignments() > 0) {
-			String [] inits = new String[(int)model.getNumInitialAssignments()];
+			String[] inits = new String[(int) model.getNumInitialAssignments()];
 			for (int i = 0; i < model.getNumInitialAssignments(); i++) {
 				InitialAssignment init = (InitialAssignment) model.getListOfInitialAssignments().get(i);
 				inits[i] = init.getSymbol() + " = " + SBMLutilities.myFormulaToString(init.getMath());
@@ -118,24 +117,22 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			try {
 				inits = sortInitRules(inits);
 				if (SBMLutilities.checkCycles(document)) {
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Cycle detected within initial assignments, assignment rules, and rate laws.",
+					JOptionPane.showMessageDialog(Gui.frame, "Cycle detected within initial assignments, assignment rules, and rate laws.",
 							"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in assignments.",
-						"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in assignments.", "Cycle Detected", JOptionPane.ERROR_MESSAGE);
 			}
 			initAssigns.setListData(inits);
 			initAssigns.setSelectedIndex(0);
 		}
 	}
-	
+
 	/**
 	 * Remove an initial assignment
 	 */
-	public static void removeInitialAssignment(SBMLDocument document,String variable) {
+	public static void removeInitialAssignment(SBMLDocument document, String variable) {
 		ListOf r = document.getModel().getListOfInitialAssignments();
 		for (int i = 0; i < document.getModel().getNumInitialAssignments(); i++) {
 			if (((InitialAssignment) r.get(i)).getSymbol().equals(variable)) {
@@ -143,22 +140,20 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			}
 		}
 	}
-	
+
 	/**
 	 * Try to add or edit initial assignments
 	 */
-	public static boolean addInitialAssignment(Gui biosim,SBMLDocument document,String variable,String assignment) {
+	public static boolean addInitialAssignment(Gui biosim, SBMLDocument document, String variable, String assignment) {
 		if (assignment.trim().equals("")) {
-			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is empty.",
-					"Enter Assignment", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is empty.", "Enter Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
 		if (SBMLutilities.myParseFormula(assignment.trim()) == null) {
-			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is not valid.",
-					"Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is not valid.", "Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document,assignment.trim(),"", false);
+		ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document, assignment.trim(), "", false);
 		if (invalidVars.size() > 0) {
 			String invalid = "";
 			for (int i = 0; i < invalidVars.size(); i++) {
@@ -170,8 +165,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 				}
 			}
 			String message;
-			message = "Rule contains unknown variables.\n\n" + "Unknown variables:\n"
-					+ invalid;
+			message = "Rule contains unknown variables.\n\n" + "Unknown variables:\n" + invalid;
 			JTextArea messageArea = new JTextArea(message);
 			messageArea.setLineWrap(true);
 			messageArea.setWrapStyleWord(true);
@@ -180,51 +174,44 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			scrolls.setMinimumSize(new Dimension(300, 300));
 			scrolls.setPreferredSize(new Dimension(300, 300));
 			scrolls.setViewportView(messageArea);
-			JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		if (SBMLutilities.checkNumFunctionArguments(document,SBMLutilities.myParseFormula(assignment.trim()))) {
+		if (SBMLutilities.checkNumFunctionArguments(document, SBMLutilities.myParseFormula(assignment.trim()))) {
 			return true;
 		}
 		if (SBMLutilities.myParseFormula(assignment.trim()).isBoolean()) {
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Initial assignment must evaluate to a number.", "Number Expected",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
 		boolean error = false;
 		InitialAssignment r = document.getModel().createInitialAssignment();
 		r.setSymbol(variable);
 		r.setMath(SBMLutilities.myParseFormula(assignment.trim()));
-		if (checkInitialAssignmentUnits(biosim,document,r)) {
+		if (checkInitialAssignmentUnits(biosim, document, r)) {
 			error = true;
 		}
 		if (!error && SBMLutilities.checkCycles(document)) {
-			JOptionPane.showMessageDialog(Gui.frame,
-						"Cycle detected within initial assignments, assignment rules, and rate laws.",
-						"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Cycle detected within initial assignments, assignment rules, and rate laws.", "Cycle Detected",
+					JOptionPane.ERROR_MESSAGE);
 			error = true;
 		}
 		if (error) {
-			removeInitialAssignment(document,variable);
+			removeInitialAssignment(document, variable);
 		}
 		return error;
 	}
-	
+
 	/**
 	 * Check the units of an initial assignment
 	 */
-	public static boolean checkInitialAssignmentUnits(Gui biosim,SBMLDocument document,InitialAssignment init) {
+	public static boolean checkInitialAssignmentUnits(Gui biosim, SBMLDocument document, InitialAssignment init) {
 		document.getModel().populateListFormulaUnitsData();
 		if (init.containsUndeclaredUnits()) {
 			if (biosim.checkUndeclared) {
-				JOptionPane
-						.showMessageDialog(
-								Gui.frame,
-								"Initial assignment contains literals numbers or parameters with undeclared units.\n"
-										+ "Therefore, it is not possible to completely verify the consistency of the units.",
-								"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Initial assignment contains literals numbers or parameters with undeclared units.\n"
+						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
+						JOptionPane.WARNING_MESSAGE);
 			}
 			return false;
 		}
@@ -244,11 +231,8 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 				unitDefVar = parameter.getDerivedUnitDefinition();
 			}
 			if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
-				JOptionPane
-						.showMessageDialog(
-								Gui.frame,
-								"Units on the left and right-hand side of the initial assignment do not agree.",
-								"Units Do Not Match", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Units on the left and right-hand side of the initial assignment do not agree.",
+						"Units Do Not Match", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 			// for (int i = 0; i < unitDef.getNumUnits(); i++) {
@@ -266,7 +250,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Sort initial rules in order to be evaluated
 	 */
@@ -316,18 +300,16 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 	/**
 	 * Try to add or edit initial assignments
 	 */
-	private boolean addUpdateInitialAssignment(String option,int Rindex,String variable,String assignment) {
+	private boolean addUpdateInitialAssignment(String option, int Rindex, String variable, String assignment) {
 		if (assignment.equals("")) {
-			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is empty.",
-					"Enter Assignment", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is empty.", "Enter Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
 		if (SBMLutilities.myParseFormula(assignment) == null) {
-			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is not valid.",
-					"Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is not valid.", "Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document,assignment,"", false);
+		ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document, assignment, "", false);
 		if (invalidVars.size() > 0) {
 			String invalid = "";
 			for (int i = 0; i < invalidVars.size(); i++) {
@@ -339,8 +321,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 				}
 			}
 			String message;
-			message = "Rule contains unknown variables.\n\n" + "Unknown variables:\n"
-					+ invalid;
+			message = "Rule contains unknown variables.\n\n" + "Unknown variables:\n" + invalid;
 			JTextArea messageArea = new JTextArea(message);
 			messageArea.setLineWrap(true);
 			messageArea.setWrapStyleWord(true);
@@ -349,23 +330,20 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			scrolls.setMinimumSize(new Dimension(300, 300));
 			scrolls.setPreferredSize(new Dimension(300, 300));
 			scrolls.setViewportView(messageArea);
-			JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
-		if (SBMLutilities.checkNumFunctionArguments(document,SBMLutilities.myParseFormula(assignment))) {
+		if (SBMLutilities.checkNumFunctionArguments(document, SBMLutilities.myParseFormula(assignment))) {
 			return true;
 		}
 		if (SBMLutilities.myParseFormula(assignment).isBoolean()) {
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Initial assignment must evaluate to a number.", "Number Expected",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
 		boolean error = false;
 		if (option.equals("OK")) {
-			String [] inits = new String[initAssigns.getModel().getSize()];
-			for (int i=0;i<initAssigns.getModel().getSize();i++) {
+			String[] inits = new String[initAssigns.getModel().getSize()];
+			for (int i = 0; i < initAssigns.getModel().getSize(); i++) {
 				inits[i] = initAssigns.getModel().getElementAt(i).toString();
 			}
 			int index = initAssigns.getSelectedIndex();
@@ -379,7 +357,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			r.setSymbol(variable);
 			r.setMath(SBMLutilities.myParseFormula(assignment));
 			inits[index] = variable + " = " + SBMLutilities.myFormulaToString(r.getMath());
-			if (InitialAssignments.checkInitialAssignmentUnits(biosim,document,r)) {
+			if (InitialAssignments.checkInitialAssignmentUnits(biosim, document, r)) {
 				error = true;
 			}
 			if (!error) {
@@ -387,16 +365,13 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 					inits = sortInitRules(inits);
 				}
 				catch (Exception e) {
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Cycle detected in initial assignments.", "Cycle Detected",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in initial assignments.", "Cycle Detected", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 			}
 			if (!error) {
 				if (SBMLutilities.checkCycles(document)) {
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Cycle detected within initial assignments, assignment rules, and rate laws.",
+					JOptionPane.showMessageDialog(Gui.frame, "Cycle detected within initial assignments, assignment rules, and rate laws.",
 							"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
@@ -410,8 +385,8 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			initAssigns.setSelectedIndex(index);
 		}
 		else {
-			String [] inits = new String[initAssigns.getModel().getSize()];
-			for (int i=0;i<initAssigns.getModel().getSize();i++) {
+			String[] inits = new String[initAssigns.getModel().getSize()];
+			for (int i = 0; i < initAssigns.getModel().getSize(); i++) {
 				inits[i] = initAssigns.getModel().getElementAt(i).toString();
 			}
 			JList add = new JList();
@@ -425,14 +400,13 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			add.setListData(adding);
 			add.setSelectedIndex(0);
 			initAssigns.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			adding = Utility.add(inits, initAssigns, add, false, null, null, null, null,
-					null, null, Gui.frame);
+			adding = Utility.add(inits, initAssigns, add, false, null, null, null, null, null, null, Gui.frame);
 			String[] oldInits = inits;
 			inits = new String[adding.length];
 			for (int i = 0; i < adding.length; i++) {
 				inits[i] = (String) adding[i];
 			}
-			if (InitialAssignments.checkInitialAssignmentUnits(biosim,document,r)) {
+			if (InitialAssignments.checkInitialAssignmentUnits(biosim, document, r)) {
 				error = true;
 			}
 			if (!error) {
@@ -440,26 +414,22 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 					inits = sortInitRules(inits);
 				}
 				catch (Exception e) {
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Cycle detected in initial assignments.", "Cycle Detected",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in initial assignments.", "Cycle Detected", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 			}
 			if (!error && SBMLutilities.checkCycles(document)) {
-				JOptionPane.showMessageDialog(Gui.frame,
-							"Cycle detected within initial assignments, assignment rules, and rate laws.",
-							"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Cycle detected within initial assignments, assignment rules, and rate laws.",
+						"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			if (error) {
 				inits = oldInits;
 				ListOf ia = document.getModel().getListOfInitialAssignments();
 				for (int i = 0; i < document.getModel().getNumInitialAssignments(); i++) {
-					if (SBMLutilities.myFormulaToString(((InitialAssignment) ia.get(i)).getMath())
-							.equals(SBMLutilities.myFormulaToString(r.getMath()))
-							&& ((InitialAssignment) ia.get(i)).getSymbol().equals(
-									r.getSymbol())) {
+					if (SBMLutilities.myFormulaToString(((InitialAssignment) ia.get(i)).getMath()).equals(
+							SBMLutilities.myFormulaToString(r.getMath()))
+							&& ((InitialAssignment) ia.get(i)).getSymbol().equals(r.getSymbol())) {
 						ia.remove(i);
 					}
 				}
@@ -478,14 +448,14 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		}
 		return error;
 	}
-	
+
 	/**
 	 * Creates a frame used to edit initial assignments or create new ones.
 	 */
 	private void initEditor(String option) {
 		if (option.equals("OK") && initAssigns.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No initial assignment selected.",
-					"Must Select an Initial Assignment", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "No initial assignment selected.", "Must Select an Initial Assignment",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		JPanel initAssignPanel = new JPanel();
@@ -504,23 +474,22 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		ListOf ids = model.getListOfCompartments();
 		for (int i = 0; i < model.getNumCompartments(); i++) {
 			String id = ((Compartment) ids.get(i)).getId();
-			if (keepVarInit(document,selected.split(" ")[0], id)
-					&& (document.getLevel() > 2 || ((Compartment) ids.get(i))
-							.getSpatialDimensions() != 0)) {
+			if (keepVarInit(document, selected.split(" ")[0], id)
+					&& (document.getLevel() > 2 || ((Compartment) ids.get(i)).getSpatialDimensions() != 0)) {
 				initVar.addItem(id);
 			}
 		}
 		ids = model.getListOfParameters();
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			String id = ((Parameter) ids.get(i)).getId();
-			if (keepVarInit(document,selected.split(" ")[0], id)) {
+			if (keepVarInit(document, selected.split(" ")[0], id)) {
 				initVar.addItem(id);
 			}
 		}
 		ids = model.getListOfSpecies();
 		for (int i = 0; i < model.getNumSpecies(); i++) {
 			String id = ((Species) ids.get(i)).getId();
-			if (keepVarInit(document,selected.split(" ")[0], id)) {
+			if (keepVarInit(document, selected.split(" ")[0], id)) {
 				initVar.addItem(id);
 			}
 		}
@@ -532,7 +501,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 				SpeciesReference reactant = (SpeciesReference) ids2.get(j);
 				if ((reactant.isSetId()) && (!reactant.getId().equals(""))) {
 					String id = reactant.getId();
-					if (keepVarInit(document,selected.split(" ")[0], id)) {
+					if (keepVarInit(document, selected.split(" ")[0], id)) {
 						initVar.addItem(id);
 					}
 				}
@@ -542,7 +511,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 				SpeciesReference product = (SpeciesReference) ids2.get(j);
 				if ((product.isSetId()) && (!product.getId().equals(""))) {
 					String id = product.getId();
-					if (keepVarInit(document,selected.split(" ")[0], id)) {
+					if (keepVarInit(document, selected.split(" ")[0], id)) {
 						initVar.addItem(id);
 					}
 				}
@@ -555,10 +524,8 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			initMath.setText(selected.substring(selected.indexOf('=') + 2));
 			ListOf r = document.getModel().getListOfInitialAssignments();
 			for (int i = 0; i < document.getModel().getNumInitialAssignments(); i++) {
-				if (SBMLutilities.myFormulaToString(((InitialAssignment) r.get(i)).getMath()).equals(
-						initMath.getText())
-						&& ((InitialAssignment) r.get(i)).getSymbol().equals(
-								initVar.getSelectedItem())) {
+				if (SBMLutilities.myFormulaToString(((InitialAssignment) r.get(i)).getMath()).equals(initMath.getText())
+						&& ((InitialAssignment) r.get(i)).getSymbol().equals(initVar.getSelectedItem())) {
 					Rindex = i;
 				}
 			}
@@ -569,15 +536,13 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		initPanel.add(initMath);
 		initAssignPanel.add(initPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, initAssignPanel,
-				"Initial Assignment Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-				null, options, options[0]);
+		int value = JOptionPane.showOptionDialog(Gui.frame, initAssignPanel, "Initial Assignment Editor", JOptionPane.YES_NO_OPTION,
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = addUpdateInitialAssignment(option,Rindex,(String)initVar.getSelectedItem(),initMath.getText().trim());
+			error = addUpdateInitialAssignment(option, Rindex, (String) initVar.getSelectedItem(), initMath.getText().trim());
 			if (error) {
-				value = JOptionPane.showOptionDialog(Gui.frame, initAssignPanel,
-						"Initial Assignment Editor", JOptionPane.YES_NO_OPTION,
+				value = JOptionPane.showOptionDialog(Gui.frame, initAssignPanel, "Initial Assignment Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
 		}
@@ -585,7 +550,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			return;
 		}
 	}
-	
+
 	/**
 	 * Remove an initial assignment
 	 */
@@ -607,8 +572,9 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			initAssigns.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			if (index < initAssigns.getModel().getSize()) {
 				initAssigns.setSelectedIndex(index);
-			} else {
-				initAssigns.setSelectedIndex(index-1);
+			}
+			else {
+				initAssigns.setSelectedIndex(index - 1);
 			}
 			dirty.setValue(true);
 		}
@@ -621,18 +587,20 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 		if (!selected.equals(id)) {
 			ListOf ia = document.getModel().getListOfInitialAssignments();
 			for (int i = 0; i < document.getModel().getNumInitialAssignments(); i++) {
-				InitialAssignment init = (InitialAssignment)ia.get(i);
-				if (init.getSymbol().equals(id)) return false;
+				InitialAssignment init = (InitialAssignment) ia.get(i);
+				if (init.getSymbol().equals(id))
+					return false;
 			}
 			ListOf r = document.getModel().getListOfRules();
 			for (int i = 0; i < document.getModel().getNumRules(); i++) {
-				Rule rule = (Rule)r.get(i);
-				if (rule.isAssignment() && rule.getVariable().equals(id)) return false;
+				Rule rule = (Rule) r.get(i);
+				if (rule.isAssignment() && rule.getVariable().equals(id))
+					return false;
 			}
 		}
 		return true;
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		// if the add event button is clicked
 		if (e.getSource() == addInit) {

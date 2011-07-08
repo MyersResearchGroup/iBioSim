@@ -5,7 +5,7 @@ public class Reb2SacThread extends Thread {
 	private Reb2Sac reb;
 
 	private String direct;
-	
+
 	private boolean refresh;
 
 	public Reb2SacThread(Reb2Sac reb2sac) {

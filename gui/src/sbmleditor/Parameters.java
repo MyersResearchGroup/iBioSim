@@ -49,25 +49,25 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	private JComboBox paramUnits;
 
 	private JComboBox paramConst;
-	
+
 	private SBMLDocument document;
-	
+
 	private ArrayList<String> usedIDs;
-	
+
 	private MutableBoolean dirty;
-	
+
 	private Boolean paramsOnly;
 
 	private String file;
-	
+
 	private ArrayList<String> parameterChanges;
-	
+
 	private InitialAssignments initialsPanel;
-	
+
 	private Rules rulesPanel;
-	
-	public Parameters(SBMLDocument document,ArrayList<String> usedIDs,MutableBoolean dirty,
-			Boolean paramsOnly,ArrayList<String> getParams,String file,ArrayList<String> parameterChanges) {
+
+	public Parameters(SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty, Boolean paramsOnly, ArrayList<String> getParams,
+			String file, ArrayList<String> parameterChanges) {
 		super(new BorderLayout());
 		this.document = document;
 		this.usedIDs = usedIDs;
@@ -75,7 +75,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
-		Model model =  document.getModel();
+		Model model = document.getModel();
 		JPanel addParams = new JPanel();
 		addParam = new JButton("Add Parameter");
 		removeParam = new JButton("Remove Parameter");
@@ -96,34 +96,29 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		JScrollPane scroll3 = new JScrollPane();
 		scroll3.setViewportView(parameters);
 		ListOf listOfParameters = model.getListOfParameters();
-		String [] params = new String[(int) model.getNumParameters()];
+		String[] params = new String[(int) model.getNumParameters()];
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			Parameter parameter = (Parameter) listOfParameters.get(i);
 			/*
-			if (parameter.isSetUnits()) {
-				params[i] = parameter.getId() + " " + parameter.getValue() + " "
-						+ parameter.getUnits();
-			}
-			else {*/
+			 * if (parameter.isSetUnits()) { params[i] = parameter.getId() + " "
+			 * + parameter.getValue() + " " + parameter.getUnits(); } else {
+			 */
 			params[i] = parameter.getId() + " " + parameter.getValue();
-		    //}
+			// }
 			if (paramsOnly) {
 				for (int j = 0; j < getParams.size(); j++) {
 					if (getParams.get(j).split(" ")[0].equals(parameter.getId())) {
 						parameterChanges.add(getParams.get(j));
 						String[] splits = getParams.get(j).split(" ");
-						if (splits[splits.length - 2].equals("Modified")
-								|| splits[splits.length - 2].equals("Custom")) {
+						if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
 							String value = splits[splits.length - 1];
 							parameter.setValue(Double.parseDouble(value));
 							params[i] += " Modified " + splits[splits.length - 1];
 						}
 						else if (splits[splits.length - 2].equals("Sweep")) {
 							String value = splits[splits.length - 1];
-							parameter.setValue(Double.parseDouble(value.split(",")[0].substring(1)
-									.trim()));
-							params[i] += " " + splits[splits.length - 2] + " "
-									+ splits[splits.length - 1];
+							parameter.setValue(Double.parseDouble(value.split(",")[0].substring(1).trim()));
+							params[i] += " " + splits[splits.length - 2] + " " + splits[splits.length - 1];
 						}
 					}
 				}
@@ -143,8 +138,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	 */
 	private void parametersEditor(String option) {
 		if (option.equals("OK") && parameters.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No parameter selected.",
-					"Must Select A Parameter", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "No parameter selected.", "Must Select A Parameter", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		JPanel parametersPanel;
@@ -164,31 +158,26 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		paramValue = new JTextField();
 		paramUnits = new JComboBox();
 		paramUnits.addItem("( none )");
-		Model model =  document.getModel();
+		Model model = document.getModel();
 		ListOf listOfUnits = model.getListOfUnitDefinitions();
-		String [] units = new String[(int) model.getNumUnitDefinitions()];
+		String[] units = new String[(int) model.getNumUnitDefinitions()];
 		for (int i = 0; i < model.getNumUnitDefinitions(); i++) {
 			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 			units[i] = unit.getId();
 		}
 		for (int i = 0; i < units.length; i++) {
 			if (document.getLevel() > 2
-					|| (!units[i].equals("substance") && !units[i].equals("volume")
-							&& !units[i].equals("area") && !units[i].equals("length") && !units[i]
+					|| (!units[i].equals("substance") && !units[i].equals("volume") && !units[i].equals("area") && !units[i].equals("length") && !units[i]
 							.equals("time"))) {
 				paramUnits.addItem(units[i]);
 			}
 		}
-		String[] unitIdsL2V4 = { "substance", "volume", "area", "length", "time", "ampere",
-				"becquerel", "candela", "celsius", "coulomb", "dimensionless", "farad", "gram",
-				"gray", "henry", "hertz", "item", "joule", "katal", "kelvin", "kilogram", "litre",
-				"lumen", "lux", "metre", "mole", "newton", "ohm", "pascal", "radian", "second",
-				"siemens", "sievert", "steradian", "tesla", "volt", "watt", "weber" };
-		String[] unitIdsL3V1 = { "ampere", "avogadro", "becquerel", "candela", "celsius",
-				"coulomb", "dimensionless", "farad", "gram", "gray", "henry", "hertz", "item",
-				"joule", "katal", "kelvin", "kilogram", "litre", "lumen", "lux", "metre", "mole",
-				"newton", "ohm", "pascal", "radian", "second", "siemens", "sievert", "steradian",
-				"tesla", "volt", "watt", "weber" };
+		String[] unitIdsL2V4 = { "substance", "volume", "area", "length", "time", "ampere", "becquerel", "candela", "celsius", "coulomb",
+				"dimensionless", "farad", "gram", "gray", "henry", "hertz", "item", "joule", "katal", "kelvin", "kilogram", "litre", "lumen", "lux",
+				"metre", "mole", "newton", "ohm", "pascal", "radian", "second", "siemens", "sievert", "steradian", "tesla", "volt", "watt", "weber" };
+		String[] unitIdsL3V1 = { "ampere", "avogadro", "becquerel", "candela", "celsius", "coulomb", "dimensionless", "farad", "gram", "gray",
+				"henry", "hertz", "item", "joule", "katal", "kelvin", "kilogram", "litre", "lumen", "lux", "metre", "mole", "newton", "ohm",
+				"pascal", "radian", "second", "siemens", "sievert", "steradian", "tesla", "volt", "watt", "weber" };
 		String[] unitIds;
 		if (document.getLevel() < 3) {
 			unitIds = unitIdsL2V4;
@@ -226,8 +215,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				p.add(step);
 				p.add(levelLabel);
 				p.add(level);
-				int i = JOptionPane.showOptionDialog(Gui.frame, p, "Sweep",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+				int i = JOptionPane.showOptionDialog(Gui.frame, p, "Sweep", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 						options[0]);
 				if (i == JOptionPane.YES_OPTION) {
 					double startVal = 0.0;
@@ -240,8 +228,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					}
 					catch (Exception e1) {
 					}
-					paramValue.setText("(" + startVal + "," + stopVal + "," + stepVal + ","
-							+ level.getSelectedItem() + ")");
+					paramValue.setText("(" + startVal + "," + stopVal + "," + stepVal + "," + level.getSelectedItem() + ")");
 				}
 			}
 		});
@@ -256,8 +243,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		String selectedID = "";
 		if (option.equals("OK")) {
 			try {
-				Parameter paramet = document.getModel().getParameter(
-						((String) parameters.getSelectedValue()).split(" ")[0]);
+				Parameter paramet = document.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]);
 				paramID.setText(paramet.getId());
 				selectedID = paramet.getId();
 				paramName.setText(paramet.getName());
@@ -279,18 +265,15 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					type.setSelectedItem("Modified");
 					sweep.setEnabled(true);
 					paramValue
-							.setText(((String) parameters.getSelectedValue()).split(" ")[((String) parameters
-									.getSelectedValue()).split(" ").length - 1]);
+							.setText(((String) parameters.getSelectedValue()).split(" ")[((String) parameters.getSelectedValue()).split(" ").length - 1]);
 					paramValue.setEnabled(true);
 					paramUnits.setEnabled(false);
 					if (paramValue.getText().trim().startsWith("(")) {
 						try {
-							start.setText((paramValue.getText().trim()).split(",")[0].substring(1)
-									.trim());
+							start.setText((paramValue.getText().trim()).split(",")[0].substring(1).trim());
 							stop.setText((paramValue.getText().trim()).split(",")[1].trim());
 							step.setText((paramValue.getText().trim()).split(",")[2].trim());
-							int lev = Integer.parseInt((paramValue.getText().trim()).split(",")[3]
-									.replace(")", "").trim());
+							int lev = Integer.parseInt((paramValue.getText().trim()).split(",")[3].replace(")", "").trim());
 							if (lev == 1) {
 								level.setSelectedIndex(0);
 							}
@@ -324,23 +307,14 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						paramValue.setEnabled(false);
 						paramUnits.setEnabled(false);
 						SBMLDocument d = Gui.readSBML(file);
-						if (d.getModel().getParameter(
-								((String) parameters.getSelectedValue()).split(" ")[0])
-								.isSetValue()) {
-							paramValue.setText(d.getModel().getParameter(
-									((String) parameters.getSelectedValue()).split(" ")[0])
-									.getValue()
-									+ "");
+						if (d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).isSetValue()) {
+							paramValue.setText(d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).getValue() + "");
 						}
 						else {
 							paramValue.setText("");
 						}
-						if (d.getModel().getParameter(
-								((String) parameters.getSelectedValue()).split(" ")[0])
-								.isSetUnits()) {
-							paramUnits.setSelectedItem(d.getModel().getParameter(
-									((String) parameters.getSelectedValue()).split(" ")[0])
-									.getUnits()
+						if (d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).isSetUnits()) {
+							paramUnits.setSelectedItem(d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).getUnits()
 									+ "");
 						}
 					}
@@ -360,33 +334,27 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		parametersPanel.add(constLabel);
 		parametersPanel.add(paramConst);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, parametersPanel, "Parameter Editor",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		int value = JOptionPane.showOptionDialog(Gui.frame, parametersPanel, "Parameter Editor", JOptionPane.YES_NO_OPTION,
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(document,usedIDs,paramID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(document, usedIDs, paramID.getText().trim(), selectedID, false);
 			if (!error) {
 				double val = 0.0;
-				if (paramValue.getText().trim().startsWith("(")
-						&& paramValue.getText().trim().endsWith(")")) {
+				if (paramValue.getText().trim().startsWith("(") && paramValue.getText().trim().endsWith(")")) {
 					try {
-						Double.parseDouble((paramValue.getText().trim()).split(",")[0].substring(1)
-								.trim());
+						Double.parseDouble((paramValue.getText().trim()).split(",")[0].substring(1).trim());
 						Double.parseDouble((paramValue.getText().trim()).split(",")[1].trim());
 						Double.parseDouble((paramValue.getText().trim()).split(",")[2].trim());
-						int lev = Integer.parseInt((paramValue.getText().trim()).split(",")[3]
-								.replace(")", "").trim());
+						int lev = Integer.parseInt((paramValue.getText().trim()).split(",")[3].replace(")", "").trim());
 						if (lev != 1 && lev != 2) {
 							error = true;
-							JOptionPane.showMessageDialog(Gui.frame,
-									"The level can only be 1 or 2.", "Error",
-									JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(Gui.frame, "The level can only be 1 or 2.", "Error", JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					catch (Exception e1) {
 						error = true;
-						JOptionPane.showMessageDialog(Gui.frame, "Invalid sweeping parameters.",
-								"Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "Invalid sweeping parameters.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				else {
@@ -394,9 +362,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						val = Double.parseDouble(paramValue.getText().trim());
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(Gui.frame,
-								"The value must be a real number.", "Enter A Valid Value",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane
+								.showMessageDialog(Gui.frame, "The value must be a real number.", "Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
 				}
@@ -404,33 +371,25 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					String unit = (String) paramUnits.getSelectedItem();
 					String param = "";
 					if (paramsOnly && !((String) type.getSelectedItem()).equals("Original")) {
-						String [] params = new String[parameters.getModel().getSize()];
-						for (int i=0;i<parameters.getModel().getSize();i++) {
+						String[] params = new String[parameters.getModel().getSize()];
+						for (int i = 0; i < parameters.getModel().getSize(); i++) {
 							params[i] = parameters.getModel().getElementAt(i).toString();
-						}			
+						}
 						int index = parameters.getSelectedIndex();
 						String[] splits = params[index].split(" ");
 						for (int i = 0; i < splits.length - 2; i++) {
 							param += splits[i] + " ";
 						}
-						if (!splits[splits.length - 2].equals("Modified")
-								&& !splits[splits.length - 2].equals("Custom")
+						if (!splits[splits.length - 2].equals("Modified") && !splits[splits.length - 2].equals("Custom")
 								&& !splits[splits.length - 2].equals("Sweep")) {
-							param += splits[splits.length - 2] + " " + splits[splits.length - 1]
-									+ " ";
+							param += splits[splits.length - 2] + " " + splits[splits.length - 1] + " ";
 						}
-						if (paramValue.getText().trim().startsWith("(")
-								&& paramValue.getText().trim().endsWith(")")) {
-							double startVal = Double.parseDouble((paramValue.getText().trim())
-									.split(",")[0].substring(1).trim());
-							double stopVal = Double.parseDouble((paramValue.getText().trim())
-									.split(",")[1].trim());
-							double stepVal = Double.parseDouble((paramValue.getText().trim())
-									.split(",")[2].trim());
-							int lev = Integer.parseInt((paramValue.getText().trim()).split(",")[3]
-									.replace(")", "").trim());
-							param += "Sweep (" + startVal + "," + stopVal + "," + stepVal + ","
-									+ lev + ")";
+						if (paramValue.getText().trim().startsWith("(") && paramValue.getText().trim().endsWith(")")) {
+							double startVal = Double.parseDouble((paramValue.getText().trim()).split(",")[0].substring(1).trim());
+							double stopVal = Double.parseDouble((paramValue.getText().trim()).split(",")[1].trim());
+							double stepVal = Double.parseDouble((paramValue.getText().trim()).split(",")[2].trim());
+							int lev = Integer.parseInt((paramValue.getText().trim()).split(",")[3].replace(")", "").trim());
+							param += "Sweep (" + startVal + "," + stopVal + "," + stepVal + "," + lev + ")";
 						}
 						else {
 							param += "Modified " + val;
@@ -439,32 +398,28 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					else {
 						param = paramID.getText().trim() + " " + val;
 						/*
-						if (!unit.equals("( none )")) {
-							param = paramID.getText().trim() + " " + val + " " + unit;
-						}
-						*/
+						 * if (!unit.equals("( none )")) { param =
+						 * paramID.getText().trim() + " " + val + " " + unit; }
+						 */
 					}
-					if (!error && option.equals("OK")
-							&& paramConst.getSelectedItem().equals("true")) {
+					if (!error && option.equals("OK") && paramConst.getSelectedItem().equals("true")) {
 						String v = ((String) parameters.getSelectedValue()).split(" ")[0];
-						error = SBMLutilities.checkConstant(document,"Parameters", v);
+						error = SBMLutilities.checkConstant(document, "Parameters", v);
 					}
-					if (!error && option.equals("OK")
-							&& paramConst.getSelectedItem().equals("false")) {
+					if (!error && option.equals("OK") && paramConst.getSelectedItem().equals("false")) {
 						String v = ((String) parameters.getSelectedValue()).split(" ")[0];
 						error = checkNotConstant(v);
 					}
 					if (!error) {
 						if (option.equals("OK")) {
-							String [] params = new String[parameters.getModel().getSize()];
-							for (int i=0;i<parameters.getModel().getSize();i++) {
+							String[] params = new String[parameters.getModel().getSize()];
+							for (int i = 0; i < parameters.getModel().getSize(); i++) {
 								params[i] = parameters.getModel().getElementAt(i).toString();
-							}			
+							}
 							int index = parameters.getSelectedIndex();
 							String v = ((String) parameters.getSelectedValue()).split(" ")[0];
 							Parameter paramet = document.getModel().getParameter(v);
-							parameters
-									.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 							params = Utility.getList(params, parameters);
 							parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 							paramet.setId(paramID.getText().trim());
@@ -494,8 +449,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							if (paramsOnly) {
 								int remove = -1;
 								for (int i = 0; i < parameterChanges.size(); i++) {
-									if (parameterChanges.get(i).split(" ")[0].equals(paramID
-											.getText().trim())) {
+									if (parameterChanges.get(i).split(" ")[0].equals(paramID.getText().trim())) {
 										remove = i;
 									}
 								}
@@ -507,14 +461,14 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 								}
 							}
 							else {
-								SBMLutilities.updateVarId(document,false, v, paramID.getText().trim());
+								SBMLutilities.updateVarId(document, false, v, paramID.getText().trim());
 							}
 						}
 						else {
-							String [] params = new String[parameters.getModel().getSize()];
-							for (int i=0;i<parameters.getModel().getSize();i++) {
+							String[] params = new String[parameters.getModel().getSize()];
+							for (int i = 0; i < parameters.getModel().getSize(); i++) {
 								params[i] = parameters.getModel().getElementAt(i).toString();
-							}			
+							}
 							int index = parameters.getSelectedIndex();
 							Parameter paramet = document.getModel().createParameter();
 							paramet.setId(paramID.getText().trim());
@@ -534,10 +488,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							Object[] adding = { param };
 							add.setListData(adding);
 							add.setSelectedIndex(0);
-							parameters
-									.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-							adding = Utility.add(params, parameters, add, false, null, null, null,
-									null, null, null, Gui.frame);
+							parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							adding = Utility.add(params, parameters, add, false, null, null, null, null, null, null, Gui.frame);
 							params = new String[adding.length];
 							for (int i = 0; i < adding.length; i++) {
 								params[i] = (String) adding[i];
@@ -557,9 +509,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				}
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(Gui.frame, parametersPanel,
-						"Parameter Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-						null, options, options[0]);
+				value = JOptionPane.showOptionDialog(Gui.frame, parametersPanel, "Parameter Editor", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
 		}
 		if (value == JOptionPane.NO_OPTION) {
@@ -575,9 +526,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			Species species = document.getModel().getSpecies(i);
 			if (species.getConversionFactor().equals(val)) {
 				JOptionPane.showMessageDialog(Gui.frame,
-						"Parameter must be constant because it is used as a conversion factor for "
-								+ species.getId() + ".", " Parameter Must Be Constant",
-						JOptionPane.ERROR_MESSAGE);
+						"Parameter must be constant because it is used as a conversion factor for " + species.getId() + ".",
+						" Parameter Must Be Constant", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 		}
@@ -590,9 +540,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	private void removeParameter() {
 		int index = parameters.getSelectedIndex();
 		if (index != -1) {
-			if (!SBMLutilities.variableInUse(document,((String) parameters.getSelectedValue()).split(" ")[0], false)) {
-				Parameter tempParameter = document.getModel().getParameter(
-						((String) parameters.getSelectedValue()).split(" ")[0]);
+			if (!SBMLutilities.variableInUse(document, ((String) parameters.getSelectedValue()).split(" ")[0], false)) {
+				Parameter tempParameter = document.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]);
 				ListOf p = document.getModel().getListOfParameters();
 				for (int i = 0; i < document.getModel().getNumParameters(); i++) {
 					if (((Parameter) p.get(i)).getId().equals(tempParameter.getId())) {
@@ -605,19 +554,20 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				parameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				if (index < parameters.getModel().getSize()) {
 					parameters.setSelectedIndex(index);
-				} else {
-					parameters.setSelectedIndex(index-1);
+				}
+				else {
+					parameters.setSelectedIndex(index - 1);
 				}
 				dirty.setValue(true);
 			}
 		}
 	}
-	
-	public void setPanels(InitialAssignments initialsPanel,Rules rulesPanel) {
+
+	public void setPanels(InitialAssignments initialsPanel, Rules rulesPanel) {
 		this.initialsPanel = initialsPanel;
 		this.rulesPanel = rulesPanel;
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		// if the add compartment type button is clicked
 		// if the add species type button is clicked

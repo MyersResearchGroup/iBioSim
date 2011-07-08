@@ -1,6 +1,5 @@
 package sbmleditor;
 
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -46,28 +45,28 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	private JList eventAssign; // JList of event assignments
 
 	private SBMLDocument document;
-	
+
 	private ArrayList<String> usedIDs;
-	
+
 	private MutableBoolean dirty;
-	
+
 	private Gui biosim;
-	
+
 	/* Create event panel */
-	public Events(Gui biosim,SBMLDocument document,ArrayList<String> usedIDs,MutableBoolean dirty) {
+	public Events(Gui biosim, SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty) {
 		super(new BorderLayout());
 		this.document = document;
 		this.usedIDs = usedIDs;
 		this.biosim = biosim;
 		this.dirty = dirty;
-		Model model =  document.getModel();
+		Model model = document.getModel();
 		addEvent = new JButton("Add Event");
 		removeEvent = new JButton("Remove Event");
 		editEvent = new JButton("Edit Event");
 		events = new JList();
 		eventAssign = new JList();
 		ListOf listOfEvents = model.getListOfEvents();
-		String [] ev = new String[(int) model.getNumEvents()];
+		String[] ev = new String[(int) model.getNumEvents()];
 		for (int i = 0; i < model.getNumEvents(); i++) {
 			org.sbml.libsbml.Event event = (org.sbml.libsbml.Event) listOfEvents.get(i);
 			if (!event.isSetId()) {
@@ -106,13 +105,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit events or create new ones.
 	 */
-	private void eventEditor(Gui biosim,String option,JList events,SBMLDocument document,
-			ArrayList<String> usedIDs,JList eventAssign) {
-		String [] origAssign = null;
-		String [] assign = new String[0];
+	private void eventEditor(Gui biosim, String option, JList events, SBMLDocument document, ArrayList<String> usedIDs, JList eventAssign) {
+		String[] origAssign = null;
+		String[] assign = new String[0];
 		if (option.equals("OK") && events.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No event selected.",
-					"Must Select an Event", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "No event selected.", "Must Select an Event", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		int index = events.getSelectedIndex();
@@ -168,8 +165,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					eventTrigger.setText(SBMLutilities.myFormulaToString(event.getTrigger().getMath()));
 					if (event.isSetDelay()) {
 						ASTNode delay = event.getDelay().getMath();
-						if ((delay.getType() == libsbml.AST_FUNCTION)
-								&& (delay.getName().equals("priority"))) {
+						if ((delay.getType() == libsbml.AST_FUNCTION) && (delay.getName().equals("priority"))) {
 							eventDelay.setText(SBMLutilities.myFormulaToString(delay.getLeftChild()));
 							eventPriority.setText(SBMLutilities.myFormulaToString(delay.getRightChild()));
 						}
@@ -180,15 +176,13 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if (event.getUseValuesFromTriggerTime()) {
 						assignTime.setSelected(true);
 					}
-					if (event.getTrigger().getAnnotationString()
-							.contains("<TriggerCanBeDisabled/>")) {
+					if (event.getTrigger().getAnnotationString().contains("<TriggerCanBeDisabled/>")) {
 						persistentTrigger.setSelected(false);
 					}
 					else {
 						persistentTrigger.setSelected(true);
 					}
-					if (event.getTrigger().getAnnotationString().contains(
-							"<TriggerInitiallyFalse/>")) {
+					if (event.getTrigger().getAnnotationString().contains("<TriggerInitiallyFalse/>")) {
 						initialTrigger.setSelected(false);
 					}
 					else {
@@ -252,51 +246,43 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		eventPanel.add(evPanel, "North");
 		eventPanel.add(eventAssignPanel, "South");
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, eventPanel, "Event Editor",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		int value = JOptionPane.showOptionDialog(Gui.frame, eventPanel, "Event Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+				options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			assign = new String[eventAssign.getModel().getSize()];
-			for (int i=0;i<eventAssign.getModel().getSize();i++) {
+			for (int i = 0; i < eventAssign.getModel().getSize(); i++) {
 				assign[i] = eventAssign.getModel().getElementAt(i).toString();
 			}
-			error = SBMLutilities.checkID(document,usedIDs,eventID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(document, usedIDs, eventID.getText().trim(), selectedID, false);
 			if (eventTrigger.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Event must have a trigger formula.",
-						"Enter Trigger Formula", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Event must have a trigger formula.", "Enter Trigger Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			else if (SBMLutilities.myParseFormula(eventTrigger.getText().trim()) == null) {
-				JOptionPane.showMessageDialog(Gui.frame, "Trigger formula is not valid.",
-						"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Trigger formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			else if (!SBMLutilities.myParseFormula(eventTrigger.getText().trim()).isBoolean()) {
-				JOptionPane.showMessageDialog(Gui.frame,
-						"Trigger formula must be of type Boolean.", "Enter Valid Formula",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane
+						.showMessageDialog(Gui.frame, "Trigger formula must be of type Boolean.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
-			else if (!eventDelay.getText().trim().equals("")
-					&& SBMLutilities.myParseFormula(eventDelay.getText().trim()) == null) {
-				JOptionPane.showMessageDialog(Gui.frame, "Delay formula is not valid.",
-						"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+			else if (!eventDelay.getText().trim().equals("") && SBMLutilities.myParseFormula(eventDelay.getText().trim()) == null) {
+				JOptionPane.showMessageDialog(Gui.frame, "Delay formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
-			else if (!eventPriority.getText().trim().equals("")
-					&& SBMLutilities.myParseFormula(eventPriority.getText().trim()) == null) {
-				JOptionPane.showMessageDialog(Gui.frame, "Priority formula is not valid.",
-						"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+			else if (!eventPriority.getText().trim().equals("") && SBMLutilities.myParseFormula(eventPriority.getText().trim()) == null) {
+				JOptionPane.showMessageDialog(Gui.frame, "Priority formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			else if (assign.length == 0) {
-				JOptionPane.showMessageDialog(Gui.frame,
-						"Event must have at least one event assignment.",
-						"Event Assignment Needed", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Event must have at least one event assignment.", "Event Assignment Needed",
+						JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			else {
-				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document,eventTrigger.getText().trim(),"",false);
+				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document, eventTrigger.getText().trim(), "", false);
 				if (invalidVars.size() > 0) {
 					String invalid = "";
 					for (int i = 0; i < invalidVars.size(); i++) {
@@ -308,8 +294,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					String message;
-					message = "Event trigger contains unknown variables.\n\n"
-							+ "Unknown variables:\n" + invalid;
+					message = "Event trigger contains unknown variables.\n\n" + "Unknown variables:\n" + invalid;
 					JTextArea messageArea = new JTextArea(message);
 					messageArea.setLineWrap(true);
 					messageArea.setWrapStyleWord(true);
@@ -318,12 +303,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					scrolls.setMinimumSize(new Dimension(300, 300));
 					scrolls.setPreferredSize(new Dimension(300, 300));
 					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 				if (!error) {
-					invalidVars = SBMLutilities.getInvalidVariables(document,eventDelay.getText().trim(),"",false);
+					invalidVars = SBMLutilities.getInvalidVariables(document, eventDelay.getText().trim(), "", false);
 					if (invalidVars.size() > 0) {
 						String invalid = "";
 						for (int i = 0; i < invalidVars.size(); i++) {
@@ -335,8 +319,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							}
 						}
 						String message;
-						message = "Event delay contains unknown variables.\n\n"
-								+ "Unknown variables:\n" + invalid;
+						message = "Event delay contains unknown variables.\n\n" + "Unknown variables:\n" + invalid;
 						JTextArea messageArea = new JTextArea(message);
 						messageArea.setLineWrap(true);
 						messageArea.setWrapStyleWord(true);
@@ -345,13 +328,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						scrolls.setMinimumSize(new Dimension(300, 300));
 						scrolls.setPreferredSize(new Dimension(300, 300));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
 				}
 				if (!error) {
-					invalidVars = SBMLutilities.getInvalidVariables(document,eventPriority.getText().trim(),"",false);
+					invalidVars = SBMLutilities.getInvalidVariables(document, eventPriority.getText().trim(), "", false);
 					if (invalidVars.size() > 0) {
 						String invalid = "";
 						for (int i = 0; i < invalidVars.size(); i++) {
@@ -363,8 +345,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							}
 						}
 						String message;
-						message = "Event priority contains unknown variables.\n\n"
-								+ "Unknown variables:\n" + invalid;
+						message = "Event priority contains unknown variables.\n\n" + "Unknown variables:\n" + invalid;
 						JTextArea messageArea = new JTextArea(message);
 						messageArea.setLineWrap(true);
 						messageArea.setWrapStyleWord(true);
@@ -373,31 +354,28 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						scrolls.setMinimumSize(new Dimension(300, 300));
 						scrolls.setPreferredSize(new Dimension(300, 300));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
 				}
 				if (!error) {
-					error = SBMLutilities.checkNumFunctionArguments(document,SBMLutilities.myParseFormula(eventTrigger.getText().trim()));
+					error = SBMLutilities.checkNumFunctionArguments(document, SBMLutilities.myParseFormula(eventTrigger.getText().trim()));
 				}
 				if ((!error) && (!eventDelay.getText().trim().equals(""))) {
-					error = SBMLutilities.checkNumFunctionArguments(document,SBMLutilities.myParseFormula(eventDelay.getText().trim()));
+					error = SBMLutilities.checkNumFunctionArguments(document, SBMLutilities.myParseFormula(eventDelay.getText().trim()));
 					if (!error) {
 						if (SBMLutilities.myParseFormula(eventDelay.getText().trim()).isBoolean()) {
-							JOptionPane.showMessageDialog(Gui.frame,
-									"Event delay must evaluate to a number.", "Number Expected",
+							JOptionPane.showMessageDialog(Gui.frame, "Event delay must evaluate to a number.", "Number Expected",
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
 						}
 					}
 				}
 				if ((!error) && (!eventPriority.getText().trim().equals(""))) {
-					error = SBMLutilities.checkNumFunctionArguments(document,SBMLutilities.myParseFormula(eventPriority.getText().trim()));
+					error = SBMLutilities.checkNumFunctionArguments(document, SBMLutilities.myParseFormula(eventPriority.getText().trim()));
 					if (!error) {
 						if (SBMLutilities.myParseFormula(eventPriority.getText().trim()).isBoolean()) {
-							JOptionPane.showMessageDialog(Gui.frame,
-									"Event priority must evaluate to a number.", "Number Expected",
+							JOptionPane.showMessageDialog(Gui.frame, "Event priority must evaluate to a number.", "Number Expected",
 									JOptionPane.ERROR_MESSAGE);
 							error = true;
 						}
@@ -407,13 +385,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			if (!error) {
 				if (option.equals("OK")) {
 					events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					String [] ev = new String[events.getModel().getSize()];
-					for (int i=0;i<events.getModel().getSize();i++) {
+					String[] ev = new String[events.getModel().getSize()];
+					for (int i = 0; i < events.getModel().getSize(); i++) {
 						ev[i] = events.getModel().getElementAt(i).toString();
 					}
 					events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-					org.sbml.libsbml.Event e = (org.sbml.libsbml.Event) (document.getModel()
-							.getListOfEvents()).get(Eindex);
+					org.sbml.libsbml.Event e = (org.sbml.libsbml.Event) (document.getModel().getListOfEvents()).get(Eindex);
 					e.setUseValuesFromTriggerTime(assignTime.isSelected());
 					while (e.getNumEventAssignments() > 0) {
 						e.getListOfEventAssignments().remove(0);
@@ -422,7 +399,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						EventAssignment ea = e.createEventAssignment();
 						ea.setVariable(assign[i].split(" ")[0]);
 						ea.setMath(SBMLutilities.myParseFormula(assign[i].split("=")[1].trim()));
-						error = checkEventAssignmentUnits(biosim,document,ea);
+						error = checkEventAssignmentUnits(biosim, document, ea);
 						if (error)
 							break;
 					}
@@ -437,7 +414,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 							}
 							e.createDelay();
 							e.getDelay().setMath(SBMLutilities.myParseFormula(eventDelay.getText().trim()));
-							error = checkEventDelayUnits(biosim,document,e.getDelay());
+							error = checkEventDelayUnits(biosim, document, e.getDelay());
 							if (error) {
 								if (oldDelayStr.equals("")) {
 									e.unsetDelay();
@@ -537,14 +514,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					if (!eventDelay.getText().trim().equals("")) {
 						e.createDelay();
 						e.getDelay().setMath(SBMLutilities.myParseFormula(eventDelay.getText().trim()));
-						error = checkEventDelayUnits(biosim,document,e.getDelay());
+						error = checkEventDelayUnits(biosim, document, e.getDelay());
 					}
 					if (!error) {
 						for (int i = 0; i < assign.length; i++) {
 							EventAssignment ea = e.createEventAssignment();
 							ea.setVariable(assign[i].split(" ")[0]);
 							ea.setMath(SBMLutilities.myParseFormula(assign[i].split("=")[1].trim()));
-							error = checkEventAssignmentUnits(biosim,document,ea);
+							error = checkEventAssignmentUnits(biosim, document, ea);
 							if (error)
 								break;
 						}
@@ -555,12 +532,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					String [] ev = new String[events.getModel().getSize()];
-					for (int i=0;i<events.getModel().getSize();i++) {
+					String[] ev = new String[events.getModel().getSize()];
+					for (int i = 0; i < events.getModel().getSize(); i++) {
 						ev[i] = events.getModel().getElementAt(i).toString();
 					}
-					adding = Utility.add(ev, events, add, false, null, null, null, null, null,
-							null, Gui.frame);
+					adding = Utility.add(ev, events, add, false, null, null, null, null, null, null, Gui.frame);
 					usedIDs.add(eventID.getText().trim());
 					ev = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
@@ -576,14 +552,13 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						events.setSelectedIndex(index);
 					}
 					if (error) {
-						removeTheEvent(document,SBMLutilities.myFormulaToString(e.getTrigger().getMath()));
+						removeTheEvent(document, SBMLutilities.myFormulaToString(e.getTrigger().getMath()));
 					}
 				}
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(Gui.frame, eventPanel, "Event Editor",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-						options[0]);
+				value = JOptionPane.showOptionDialog(Gui.frame, eventPanel, "Event Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+						null, options, options[0]);
 			}
 		}
 		if (value == JOptionPane.NO_OPTION) {
@@ -595,24 +570,21 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Check the units of an event delay
 	 */
-	private boolean checkEventDelayUnits(Gui biosim,SBMLDocument document,Delay delay) {
+	private boolean checkEventDelayUnits(Gui biosim, SBMLDocument document, Delay delay) {
 		document.getModel().populateListFormulaUnitsData();
 		if (delay.containsUndeclaredUnits()) {
 			if (biosim.checkUndeclared) {
-				JOptionPane
-						.showMessageDialog(
-								Gui.frame,
-								"Event assignment delay contains literals numbers or parameters with undeclared units.\n"
-										+ "Therefore, it is not possible to completely verify the consistency of the units.",
-								"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Event assignment delay contains literals numbers or parameters with undeclared units.\n"
+						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
+						JOptionPane.WARNING_MESSAGE);
 			}
 			return false;
 		}
 		else if (biosim.checkUnits) {
 			UnitDefinition unitDef = delay.getDerivedUnitDefinition();
 			if (unitDef != null && !(unitDef.isVariantOfTime())) {
-				JOptionPane.showMessageDialog(Gui.frame, "Event delay should be units of time.",
-						"Event Delay Not Time Units", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Event delay should be units of time.", "Event Delay Not Time Units",
+						JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 		}
@@ -622,18 +594,14 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Check the units of an event assignment
 	 */
-	private boolean checkEventAssignmentUnits(Gui biosim,SBMLDocument document,EventAssignment assign) {
+	private boolean checkEventAssignmentUnits(Gui biosim, SBMLDocument document, EventAssignment assign) {
 		document.getModel().populateListFormulaUnitsData();
 		if (assign.containsUndeclaredUnits()) {
 			if (biosim.checkUndeclared) {
-				JOptionPane
-						.showMessageDialog(
-								Gui.frame,
-								"Event assignment to "
-										+ assign.getVariable()
-										+ " contains literals numbers or parameters with undeclared units.\n"
-										+ "Therefore, it is not possible to completely verify the consistency of the units.",
-								"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Event assignment to " + assign.getVariable()
+						+ " contains literals numbers or parameters with undeclared units.\n"
+						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
+						JOptionPane.WARNING_MESSAGE);
 			}
 			return false;
 		}
@@ -653,45 +621,52 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				unitDefVar = parameter.getDerivedUnitDefinition();
 			}
 			if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
-				JOptionPane.showMessageDialog(Gui.frame,
-						"Units on the left and right-hand side for the event assignment "
-								+ assign.getVariable() + " do not agree.", "Units Do Not Match",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Units on the left and right-hand side for the event assignment " + assign.getVariable()
+						+ " do not agree.", "Units Do Not Match", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Remove an event from a list and SBML document
-	 * @param events  	a list of events
-	 * @param document  an SBML document from which to remove the event
-	 * @param usedIDs  	a list of all IDs current in use
-	 * @param ev  		an array of all events
+	 * 
+	 * @param events
+	 *            a list of events
+	 * @param document
+	 *            an SBML document from which to remove the event
+	 * @param usedIDs
+	 *            a list of all IDs current in use
+	 * @param ev
+	 *            an array of all events
 	 */
-	private void removeEvent(JList events,SBMLDocument document,ArrayList<String> usedIDs) {
+	private void removeEvent(JList events, SBMLDocument document, ArrayList<String> usedIDs) {
 		int index = events.getSelectedIndex();
 		if (index != -1) {
 			String selected = ((String) events.getSelectedValue());
-			removeTheEvent(document,selected);
+			removeTheEvent(document, selected);
 			usedIDs.remove(((String) events.getSelectedValue()).split(" ")[0]);
 			events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 			Utility.remove(events);
 			events.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			if (index < events.getModel().getSize()) {
 				events.setSelectedIndex(index);
-			} else {
-				events.setSelectedIndex(index-1);
+			}
+			else {
+				events.setSelectedIndex(index - 1);
 			}
 			dirty.setValue(true);
 		}
 	}
-	
+
 	/**
 	 * Remove an event from an SBML document
-	 * @param document	the SBML document from which to remove the event
-	 * @param selected  the event Id to remove
+	 * 
+	 * @param document
+	 *            the SBML document from which to remove the event
+	 * @param selected
+	 *            the event Id to remove
 	 */
 	private void removeTheEvent(SBMLDocument document, String selected) {
 		ListOf EL = document.getModel().getListOfEvents();
@@ -707,10 +682,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	 * Creates a frame used to edit event assignments or create new ones.
 	 * 
 	 */
-	private void eventAssignEditor(SBMLDocument document,JList eventAssign,String option) {
+	private void eventAssignEditor(SBMLDocument document, JList eventAssign, String option) {
 		if (option.equals("OK") && eventAssign.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No event assignment selected.",
-					"Must Select an Event Assignment", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "No event assignment selected.", "Must Select an Event Assignment", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		JPanel eventAssignPanel = new JPanel();
@@ -719,8 +693,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		JLabel eqnLabel = new JLabel("Assignment:");
 		JComboBox eaID = new JComboBox();
 		String selected;
-		String [] assign = new String[eventAssign.getModel().getSize()];
-		for (int i=0;i<eventAssign.getModel().getSize();i++) {
+		String[] assign = new String[eventAssign.getModel().getSize()];
+		for (int i = 0; i < eventAssign.getModel().getSize(); i++) {
 			assign[i] = eventAssign.getModel().getElementAt(i).toString();
 		}
 		if (option.equals("OK")) {
@@ -734,7 +708,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getNumCompartments(); i++) {
 			String id = ((Compartment) ids.get(i)).getId();
 			if (!((Compartment) ids.get(i)).getConstant()) {
-				if (keepVarEvent(document,assign,selected,id)) {
+				if (keepVarEvent(document, assign, selected, id)) {
 					eaID.addItem(id);
 				}
 			}
@@ -743,7 +717,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			String id = ((Parameter) ids.get(i)).getId();
 			if (!((Parameter) ids.get(i)).getConstant()) {
-				if (keepVarEvent(document,assign,selected,id)) {
+				if (keepVarEvent(document, assign, selected, id)) {
 					eaID.addItem(id);
 				}
 			}
@@ -752,7 +726,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getNumSpecies(); i++) {
 			String id = ((Species) ids.get(i)).getId();
 			if (!((Species) ids.get(i)).getConstant()) {
-				if (keepVarEvent(document,assign,selected,id)) {
+				if (keepVarEvent(document, assign, selected, id)) {
 					eaID.addItem(id);
 				}
 			}
@@ -763,10 +737,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			ListOf ids2 = reaction.getListOfReactants();
 			for (int j = 0; j < reaction.getNumReactants(); j++) {
 				SpeciesReference reactant = (SpeciesReference) ids2.get(j);
-				if ((reactant.isSetId()) && (!reactant.getId().equals(""))
-						&& !(reactant.getConstant())) {
+				if ((reactant.isSetId()) && (!reactant.getId().equals("")) && !(reactant.getConstant())) {
 					String id = reactant.getId();
-					if (keepVarEvent(document,assign,selected,id)) {
+					if (keepVarEvent(document, assign, selected, id)) {
 						eaID.addItem(id);
 					}
 				}
@@ -774,10 +747,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			ids2 = reaction.getListOfProducts();
 			for (int j = 0; j < reaction.getNumProducts(); j++) {
 				SpeciesReference product = (SpeciesReference) ids2.get(j);
-				if ((product.isSetId()) && (!product.getId().equals(""))
-						&& !(product.getConstant())) {
+				if ((product.isSetId()) && (!product.getId().equals("")) && !(product.getConstant())) {
 					String id = product.getId();
-					if (keepVarEvent(document,assign,selected,id)) {
+					if (keepVarEvent(document, assign, selected, id)) {
 						eaID.addItem(id);
 					}
 				}
@@ -795,24 +767,21 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		EAPanel.add(eqn);
 		eventAssignPanel.add(EAPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, eventAssignPanel,
-				"Event Asssignment Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-				null, options, options[0]);
+		int value = JOptionPane.showOptionDialog(Gui.frame, eventAssignPanel, "Event Asssignment Editor", JOptionPane.YES_NO_OPTION,
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
 			if (eqn.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Event assignment is missing.",
-						"Enter Assignment", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Event assignment is missing.", "Enter Assignment", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			else if (SBMLutilities.myParseFormula(eqn.getText().trim()) == null) {
-				JOptionPane.showMessageDialog(Gui.frame, "Event assignment is not valid.",
-						"Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Event assignment is not valid.", "Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			else {
-				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document,eqn.getText().trim(), "", false);
+				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document, eqn.getText().trim(), "", false);
 				if (invalidVars.size() > 0) {
 					String invalid = "";
 					for (int i = 0; i < invalidVars.size(); i++) {
@@ -824,8 +793,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					String message;
-					message = "Event assignment contains unknown variables.\n\n"
-							+ "Unknown variables:\n" + invalid;
+					message = "Event assignment contains unknown variables.\n\n" + "Unknown variables:\n" + invalid;
 					JTextArea messageArea = new JTextArea(message);
 					messageArea.setLineWrap(true);
 					messageArea.setWrapStyleWord(true);
@@ -834,17 +802,15 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					scrolls.setMinimumSize(new Dimension(300, 300));
 					scrolls.setPreferredSize(new Dimension(300, 300));
 					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 				if (!error) {
-					error = SBMLutilities.checkNumFunctionArguments(document,SBMLutilities.myParseFormula(eqn.getText().trim()));
+					error = SBMLutilities.checkNumFunctionArguments(document, SBMLutilities.myParseFormula(eqn.getText().trim()));
 				}
 				if (!error) {
 					if (SBMLutilities.myParseFormula(eqn.getText().trim()).isBoolean()) {
-						JOptionPane.showMessageDialog(Gui.frame,
-								"Event assignment must evaluate to a number.", "Number Expected",
+						JOptionPane.showMessageDialog(Gui.frame, "Event assignment must evaluate to a number.", "Number Expected",
 								JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
@@ -868,8 +834,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(assign, eventAssign, add, false, null, null, null, null,
-							null, null, Gui.frame);
+					adding = Utility.add(assign, eventAssign, add, false, null, null, null, null, null, null, Gui.frame);
 					assign = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						assign[i] = (String) adding[i];
@@ -886,8 +851,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(Gui.frame, eventAssignPanel,
-						"Event Assignment Editor", JOptionPane.YES_NO_OPTION,
+				value = JOptionPane.showOptionDialog(Gui.frame, eventAssignPanel, "Event Assignment Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
 		}
@@ -897,9 +861,10 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Determines if a variable is already used in assignment rule or another event assignment
+	 * Determines if a variable is already used in assignment rule or another
+	 * event assignment
 	 */
-	private boolean keepVarEvent(SBMLDocument document, String [] assign, String selected, String id) {
+	private boolean keepVarEvent(SBMLDocument document, String[] assign, String selected, String id) {
 		if (!selected.equals(id)) {
 			for (int j = 0; j < assign.length; j++) {
 				if (id.equals(assign[j].split(" ")[0])) {
@@ -908,17 +873,21 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			}
 			ListOf r = document.getModel().getListOfRules();
 			for (int i = 0; i < document.getModel().getNumRules(); i++) {
-				Rule rule = (Rule)r.get(i);
-				if (rule.isAssignment() && rule.getVariable().equals(id)) return false;
+				Rule rule = (Rule) r.get(i);
+				if (rule.isAssignment() && rule.getVariable().equals(id))
+					return false;
 			}
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Remove an event assignment
-	 * @param eventAssign	Jlist of event assignments for selected event
-	 * @param assign		String array of event assignments for selected event
+	 * 
+	 * @param eventAssign
+	 *            Jlist of event assignments for selected event
+	 * @param assign
+	 *            String array of event assignments for selected event
 	 */
 	private void removeAssignment(JList eventAssign) {
 		int index = eventAssign.getSelectedIndex();
@@ -928,8 +897,9 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 			eventAssign.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			if (index < eventAssign.getModel().getSize()) {
 				eventAssign.setSelectedIndex(index);
-			} else {
-				eventAssign.setSelectedIndex(index-1);
+			}
+			else {
+				eventAssign.setSelectedIndex(index - 1);
 			}
 		}
 	}
@@ -937,37 +907,37 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	public void actionPerformed(ActionEvent e) {
 		// if the add event button is clicked
 		if (e.getSource() == addEvent) {
-			eventEditor(biosim,"Add",events,document,usedIDs,eventAssign);
+			eventEditor(biosim, "Add", events, document, usedIDs, eventAssign);
 		}
 		// if the edit event button is clicked
 		else if (e.getSource() == editEvent) {
-			eventEditor(biosim,"OK",events,document,usedIDs,eventAssign);
+			eventEditor(biosim, "OK", events, document, usedIDs, eventAssign);
 		}
 		// if the remove event button is clicked
 		else if (e.getSource() == removeEvent) {
-			removeEvent(events,document,usedIDs);
+			removeEvent(events, document, usedIDs);
 		}
 		// if the add event assignment button is clicked
-		else if (((JButton)e.getSource()).getText().equals("Add Assignment")) {
-			eventAssignEditor(document,eventAssign,"Add");
+		else if (((JButton) e.getSource()).getText().equals("Add Assignment")) {
+			eventAssignEditor(document, eventAssign, "Add");
 		}
 		// if the edit event assignment button is clicked
-		else if (((JButton)e.getSource()).getText().equals("Edit Assignment")) {
-			eventAssignEditor(document,eventAssign,"OK");
+		else if (((JButton) e.getSource()).getText().equals("Edit Assignment")) {
+			eventAssignEditor(document, eventAssign, "OK");
 		}
 		// if the remove event assignment button is clicked
-		else if (((JButton)e.getSource()).getText().equals("Remove Assignment")) {
+		else if (((JButton) e.getSource()).getText().equals("Remove Assignment")) {
 			removeAssignment(eventAssign);
-		}	
+		}
 	}
 
 	public void mouseClicked(MouseEvent e) {
 		if (e.getClickCount() == 2) {
 			if (e.getSource() == events) {
-				eventEditor(biosim,"OK",events,document,usedIDs,eventAssign);
+				eventEditor(biosim, "OK", events, document, usedIDs, eventAssign);
 			}
 			else if (e.getSource() == eventAssign) {
-				eventAssignEditor(document,eventAssign,"OK");
+				eventAssignEditor(document, eventAssign, "OK");
 			}
 		}
 	}

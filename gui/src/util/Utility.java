@@ -18,8 +18,7 @@ public class Utility {
 	/**
 	 * Returns the pathname of the selected file in the file chooser.
 	 */
-	public static String browse(JFrame frame, File file, JTextField text, int i, String approve,
-			int fileType) {
+	public static String browse(JFrame frame, File file, JTextField text, int i, String approve, int fileType) {
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
 			FileDialog fd;
@@ -50,10 +49,8 @@ public class Utility {
 					fd = new FileDialog(frame, approve, FileDialog.SAVE);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
-							return name.endsWith(".csv") || name.endsWith(".dat")
-									|| name.endsWith(".eps") || name.endsWith(".jpg")
-									|| name.endsWith(".pdf") || name.endsWith(".png")
-									|| name.endsWith(".svg") || name.endsWith(".tsd");
+							return name.endsWith(".csv") || name.endsWith(".dat") || name.endsWith(".eps") || name.endsWith(".jpg")
+									|| name.endsWith(".pdf") || name.endsWith(".png") || name.endsWith(".svg") || name.endsWith(".tsd");
 						}
 					});
 				}
@@ -61,8 +58,7 @@ public class Utility {
 					fd = new FileDialog(frame, approve, FileDialog.SAVE);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
-							return name.endsWith(".eps") || name.endsWith(".jpg")
-									|| name.endsWith(".pdf") || name.endsWith(".png")
+							return name.endsWith(".eps") || name.endsWith(".jpg") || name.endsWith(".pdf") || name.endsWith(".png")
 									|| name.endsWith(".svg");
 						}
 					});
@@ -95,8 +91,7 @@ public class Utility {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
-							return name.endsWith(".csv") || name.endsWith(".dat")
-									|| name.endsWith(".tsd");
+							return name.endsWith(".csv") || name.endsWith(".dat") || name.endsWith(".tsd");
 						}
 					});
 				}
@@ -124,17 +119,15 @@ public class Utility {
 				if (fd.getDirectory() != null) {
 					String selectedFile = fd.getFile();
 					if (approve.equals("Export TSD")) {
-						if (!selectedFile.endsWith(".csv") && !selectedFile.endsWith(".dat")
-								&& !selectedFile.endsWith(".eps") && !selectedFile.endsWith(".jpg")
-								&& !selectedFile.endsWith(".pdf") && !selectedFile.endsWith(".png")
+						if (!selectedFile.endsWith(".csv") && !selectedFile.endsWith(".dat") && !selectedFile.endsWith(".eps")
+								&& !selectedFile.endsWith(".jpg") && !selectedFile.endsWith(".pdf") && !selectedFile.endsWith(".png")
 								&& !selectedFile.endsWith(".svg") && !selectedFile.endsWith(".tsd")) {
 							selectedFile += ".pdf";
 						}
 					}
 					else if (approve.equals("Export Probability")) {
-						if (!selectedFile.endsWith(".eps") && !selectedFile.endsWith(".jpg")
-								&& !selectedFile.endsWith(".pdf") && !selectedFile.endsWith(".png")
-								&& !selectedFile.endsWith(".svg")) {
+						if (!selectedFile.endsWith(".eps") && !selectedFile.endsWith(".jpg") && !selectedFile.endsWith(".pdf")
+								&& !selectedFile.endsWith(".png") && !selectedFile.endsWith(".svg")) {
 							selectedFile += ".pdf";
 						}
 					}
@@ -154,8 +147,7 @@ public class Utility {
 						}
 					}
 					else if (approve.equals("Import")) {
-						if (!selectedFile.endsWith(".csv") && !selectedFile.endsWith(".dat")
-								&& !selectedFile.endsWith(".tsd")) {
+						if (!selectedFile.endsWith(".csv") && !selectedFile.endsWith(".dat") && !selectedFile.endsWith(".tsd")) {
 							selectedFile += ".tsd";
 						}
 					}
@@ -381,20 +373,13 @@ public class Utility {
 				filename = file.getPath();
 				if (approve.equals("Export TSD")) {
 					if ((filename.length() < 4)
-							|| (!(filename.substring((filename.length() - 4), filename.length())
-									.equals(".jpg"))
-									&& !(filename.substring((filename.length() - 4), filename
-											.length()).equals(".png"))
-									&& !(filename.substring((filename.length() - 4), filename
-											.length()).equals(".pdf"))
-									&& !(filename.substring((filename.length() - 4), filename
-											.length()).equals(".eps"))
-									&& !(filename.substring((filename.length() - 4), filename
-											.length()).equals(".svg"))
-									&& !(filename.substring((filename.length() - 4), filename
-											.length()).equals(".dat"))
-									&& !(filename.substring((filename.length() - 4), filename
-											.length()).equals(".tsd")) && !(filename.substring(
+							|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".jpg"))
+									&& !(filename.substring((filename.length() - 4), filename.length()).equals(".png"))
+									&& !(filename.substring((filename.length() - 4), filename.length()).equals(".pdf"))
+									&& !(filename.substring((filename.length() - 4), filename.length()).equals(".eps"))
+									&& !(filename.substring((filename.length() - 4), filename.length()).equals(".svg"))
+									&& !(filename.substring((filename.length() - 4), filename.length()).equals(".dat"))
+									&& !(filename.substring((filename.length() - 4), filename.length()).equals(".tsd")) && !(filename.substring(
 									(filename.length() - 4), filename.length()).equals(".csv")))) {
 						ExampleFileFilter selectedFilter = (ExampleFileFilter) fc.getFileFilter();
 						if (selectedFilter == jpgFilter) {
@@ -425,14 +410,10 @@ public class Utility {
 				}
 				else if (approve.equals("Export Probability")) {
 					if ((filename.length() < 4)
-							|| (!(filename.substring((filename.length() - 4), filename.length())
-									.equals(".jpg"))
-									&& !(filename.substring((filename.length() - 4), filename
-											.length()).equals(".png"))
-									&& !(filename.substring((filename.length() - 4), filename
-											.length()).equals(".pdf"))
-									&& !(filename.substring((filename.length() - 4), filename
-											.length()).equals(".eps")) && !(filename.substring(
+							|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".jpg"))
+									&& !(filename.substring((filename.length() - 4), filename.length()).equals(".png"))
+									&& !(filename.substring((filename.length() - 4), filename.length()).equals(".pdf"))
+									&& !(filename.substring((filename.length() - 4), filename.length()).equals(".eps")) && !(filename.substring(
 									(filename.length() - 4), filename.length()).equals(".svg")))) {
 						ExampleFileFilter selectedFilter = (ExampleFileFilter) fc.getFileFilter();
 						if (selectedFilter == jpgFilter) {
@@ -543,9 +524,8 @@ public class Utility {
 	 * Adds the selected values in the add JList to the list JList. Stores all
 	 * these values into the currentList array and returns this array.
 	 */
-	public static Object[] add(Object[] currentList, JList list, JList add, boolean isTermCond,
-			JTextField amountTerm, JRadioButton ge, JRadioButton gt, JRadioButton eq,
-			JRadioButton lt, JRadioButton le, Component component) {
+	public static Object[] add(Object[] currentList, JList list, JList add, boolean isTermCond, JTextField amountTerm, JRadioButton ge,
+			JRadioButton gt, JRadioButton eq, JRadioButton lt, JRadioButton le, Component component) {
 		int[] select = new int[currentList.length];
 		for (int i = 0; i < currentList.length; i++) {
 			select[i] = i;
@@ -561,9 +541,8 @@ public class Utility {
 					amount = Double.parseDouble(amountTerm.getText().trim());
 				}
 				catch (Exception except) {
-					JOptionPane.showMessageDialog(component,
-							"Must Enter A Real Number Into The Termination Condition Field.",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(component, "Must Enter A Real Number Into The Termination Condition Field.", "Error",
+							JOptionPane.ERROR_MESSAGE);
 					return currentList;
 				}
 				if (ge.isSelected()) {
