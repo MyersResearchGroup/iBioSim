@@ -43,29 +43,29 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 	private JButton addCompType, removeCompType, editCompType;
 
 	private JList compTypes; // JList of compartment types
-	
+
 	private SBMLDocument document;
-	
+
 	private ArrayList<String> usedIDs;
-	
+
 	private MutableBoolean dirty;
-	
+
 	private Gui biosim;
-	
+
 	/* Create initial assignment panel */
-	public CompartmentTypes(Gui biosim,SBMLDocument document,ArrayList<String> usedIDs,MutableBoolean dirty) {
+	public CompartmentTypes(Gui biosim, SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty) {
 		super(new BorderLayout());
 		this.document = document;
 		this.usedIDs = usedIDs;
 		this.biosim = biosim;
 		this.dirty = dirty;
-		Model model =  document.getModel();
+		Model model = document.getModel();
 		addCompType = new JButton("Add Type");
 		removeCompType = new JButton("Remove Type");
 		editCompType = new JButton("Edit Type");
 		compTypes = new JList();
 		ListOf listOfCompartmentTypes = model.getListOfCompartmentTypes();
-		String [] cpTyp = new String[(int) model.getNumCompartmentTypes()];
+		String[] cpTyp = new String[(int) model.getNumCompartmentTypes()];
 		for (int i = 0; i < model.getNumCompartmentTypes(); i++) {
 			CompartmentType compType = (CompartmentType) listOfCompartmentTypes.get(i);
 			cpTyp[i] = compType.getId();
@@ -96,8 +96,7 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 	 */
 	private void compTypeEditor(String option) {
 		if (option.equals("OK") && compTypes.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No compartment type selected.",
-					"Must Select a Compartment Type", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "No compartment type selected.", "Must Select a Compartment Type", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		JPanel compTypePanel = new JPanel();
@@ -109,8 +108,7 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 		String selectedID = "";
 		if (option.equals("OK")) {
 			try {
-				CompartmentType compType = document.getModel().getCompartmentType(
-						(((String) compTypes.getSelectedValue()).split(" ")[0]));
+				CompartmentType compType = document.getModel().getCompartmentType((((String) compTypes.getSelectedValue()).split(" ")[0]));
 				compTypeID.setText(compType.getId());
 				selectedID = compType.getId();
 				compTypeName.setText(compType.getName());
@@ -124,18 +122,17 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 		cpTypPanel.add(compTypeName);
 		compTypePanel.add(cpTypPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, compTypePanel,
-				"Compartment Type Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-				null, options, options[0]);
+		int value = JOptionPane.showOptionDialog(Gui.frame, compTypePanel, "Compartment Type Editor", JOptionPane.YES_NO_OPTION,
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(document,usedIDs,compTypeID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(document, usedIDs, compTypeID.getText().trim(), selectedID, false);
 			if (!error) {
 				if (option.equals("OK")) {
-					String [] cpTyp = new String[compTypes.getModel().getSize()];
-					for (int i=0;i<compTypes.getModel().getSize();i++) {
+					String[] cpTyp = new String[compTypes.getModel().getSize()];
+					for (int i = 0; i < compTypes.getModel().getSize(); i++) {
 						cpTyp[i] = compTypes.getModel().getElementAt(i).toString();
-					}				
+					}
 					int index = compTypes.getSelectedIndex();
 					String val = ((String) compTypes.getSelectedValue()).split(" ")[0];
 					compTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -161,8 +158,8 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 					}
 				}
 				else {
-					String [] cpTyp = new String[compTypes.getModel().getSize()];
-					for (int i=0;i<compTypes.getModel().getSize();i++) {
+					String[] cpTyp = new String[compTypes.getModel().getSize()];
+					for (int i = 0; i < compTypes.getModel().getSize(); i++) {
 						cpTyp[i] = compTypes.getModel().getElementAt(i).toString();
 					}
 					int index = compTypes.getSelectedIndex();
@@ -175,8 +172,7 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					compTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(cpTyp, compTypes, add, false, null, null, null, null,
-							null, null, Gui.frame);
+					adding = Utility.add(cpTyp, compTypes, add, false, null, null, null, null, null, null, Gui.frame);
 					cpTyp = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						cpTyp[i] = (String) adding[i];
@@ -194,8 +190,7 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 				dirty.setValue(true);
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(Gui.frame, compTypePanel,
-						"Compartment Type Editor", JOptionPane.YES_NO_OPTION,
+				value = JOptionPane.showOptionDialog(Gui.frame, compTypePanel, "Compartment Type Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
 		}
@@ -213,19 +208,16 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 			boolean remove = true;
 			ArrayList<String> compartmentUsing = new ArrayList<String>();
 			for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
-				Compartment compartment = (Compartment) document.getModel().getListOfCompartments()
-						.get(i);
+				Compartment compartment = (Compartment) document.getModel().getListOfCompartments().get(i);
 				if (compartment.isSetCompartmentType()) {
-					if (compartment.getCompartmentType().equals(
-							((String) compTypes.getSelectedValue()).split(" ")[0])) {
+					if (compartment.getCompartmentType().equals(((String) compTypes.getSelectedValue()).split(" ")[0])) {
 						remove = false;
 						compartmentUsing.add(compartment.getId());
 					}
 				}
 			}
 			if (remove) {
-				CompartmentType tempCompType = document.getModel().getCompartmentType(
-						((String) compTypes.getSelectedValue()).split(" ")[0]);
+				CompartmentType tempCompType = document.getModel().getCompartmentType(((String) compTypes.getSelectedValue()).split(" ")[0]);
 				ListOf c = document.getModel().getListOfCompartmentTypes();
 				for (int i = 0; i < document.getModel().getNumCompartmentTypes(); i++) {
 					if (((CompartmentType) c.get(i)).getId().equals(tempCompType.getId())) {
@@ -238,8 +230,9 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 				compTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				if (index < compTypes.getModel().getSize()) {
 					compTypes.setSelectedIndex(index);
-				} else {
-					compTypes.setSelectedIndex(index-1);
+				}
+				else {
+					compTypes.setSelectedIndex(index - 1);
 				}
 				dirty.setValue(true);
 			}
@@ -265,12 +258,11 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 				scroll.setMinimumSize(new Dimension(300, 300));
 				scroll.setPreferredSize(new Dimension(300, 300));
 				scroll.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(Gui.frame, scroll,
-						"Unable To Remove Compartment Type", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, scroll, "Unable To Remove Compartment Type", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		// if the add compartment type button is clicked
 		if (e.getSource() == addCompType) {

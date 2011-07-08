@@ -43,28 +43,28 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 	private JButton addSpecType, removeSpecType, editSpecType;
 
 	private JList specTypes; // JList of species types
-	
+
 	private SBMLDocument document;
-	
+
 	private ArrayList<String> usedIDs;
-	
+
 	private MutableBoolean dirty;
-	
+
 	private Gui biosim;
-	
-	public SpeciesTypes(Gui biosim,SBMLDocument document,ArrayList<String> usedIDs,MutableBoolean dirty) {
+
+	public SpeciesTypes(Gui biosim, SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty) {
 		super(new BorderLayout());
 		this.document = document;
 		this.usedIDs = usedIDs;
 		this.biosim = biosim;
 		this.dirty = dirty;
-		Model model =  document.getModel();
+		Model model = document.getModel();
 		addSpecType = new JButton("Add Type");
 		removeSpecType = new JButton("Remove Type");
 		editSpecType = new JButton("Edit Type");
 		specTypes = new JList();
 		ListOf listOfSpeciesTypes = model.getListOfSpeciesTypes();
-		String [] spTyp = new String[(int) model.getNumSpeciesTypes()];
+		String[] spTyp = new String[(int) model.getNumSpeciesTypes()];
 		for (int i = 0; i < model.getNumSpeciesTypes(); i++) {
 			SpeciesType specType = (SpeciesType) listOfSpeciesTypes.get(i);
 			spTyp[i] = specType.getId();
@@ -95,8 +95,7 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 	 */
 	private void specTypeEditor(String option) {
 		if (option.equals("OK") && specTypes.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No species type selected.",
-					"Must Select a Species Type", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "No species type selected.", "Must Select a Species Type", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		JPanel specTypePanel = new JPanel();
@@ -108,8 +107,7 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 		String selectedID = "";
 		if (option.equals("OK")) {
 			try {
-				SpeciesType specType = document.getModel().getSpeciesType(
-						(((String) specTypes.getSelectedValue()).split(" ")[0]));
+				SpeciesType specType = document.getModel().getSpeciesType((((String) specTypes.getSelectedValue()).split(" ")[0]));
 				specTypeID.setText(specType.getId());
 				selectedID = specType.getId();
 				specTypeName.setText(specType.getName());
@@ -123,18 +121,17 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 		spTypPanel.add(specTypeName);
 		specTypePanel.add(spTypPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, specTypePanel,
-				"Species Type Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-				options, options[0]);
+		int value = JOptionPane.showOptionDialog(Gui.frame, specTypePanel, "Species Type Editor", JOptionPane.YES_NO_OPTION,
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(document,usedIDs,specTypeID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(document, usedIDs, specTypeID.getText().trim(), selectedID, false);
 			if (!error) {
 				if (option.equals("OK")) {
-					String [] spTyp = new String[specTypes.getModel().getSize()];
-					for (int i=0;i<specTypes.getModel().getSize();i++) {
+					String[] spTyp = new String[specTypes.getModel().getSize()];
+					for (int i = 0; i < specTypes.getModel().getSize(); i++) {
 						spTyp[i] = specTypes.getModel().getElementAt(i).toString();
-					}				
+					}
 					int index = specTypes.getSelectedIndex();
 					String val = ((String) specTypes.getSelectedValue()).split(" ")[0];
 					specTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -160,10 +157,10 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 					}
 				}
 				else {
-					String [] spTyp = new String[specTypes.getModel().getSize()];
-					for (int i=0;i<specTypes.getModel().getSize();i++) {
+					String[] spTyp = new String[specTypes.getModel().getSize()];
+					for (int i = 0; i < specTypes.getModel().getSize(); i++) {
 						spTyp[i] = specTypes.getModel().getElementAt(i).toString();
-					}				
+					}
 					int index = specTypes.getSelectedIndex();
 					SpeciesType s = document.getModel().createSpeciesType();
 					s.setId(specTypeID.getText().trim());
@@ -174,8 +171,7 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					specTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(spTyp, specTypes, add, false, null, null, null, null,
-							null, null, Gui.frame);
+					adding = Utility.add(spTyp, specTypes, add, false, null, null, null, null, null, null, Gui.frame);
 					spTyp = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						spTyp[i] = (String) adding[i];
@@ -193,8 +189,7 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 				dirty.setValue(true);
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(Gui.frame, specTypePanel,
-						"Species Type Editor", JOptionPane.YES_NO_OPTION,
+				value = JOptionPane.showOptionDialog(Gui.frame, specTypePanel, "Species Type Editor", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
 		}
@@ -214,16 +209,14 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 			for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
 				Species species = (Species) document.getModel().getListOfSpecies().get(i);
 				if (species.isSetSpeciesType()) {
-					if (species.getSpeciesType().equals(
-							((String) specTypes.getSelectedValue()).split(" ")[0])) {
+					if (species.getSpeciesType().equals(((String) specTypes.getSelectedValue()).split(" ")[0])) {
 						remove = false;
 						speciesUsing.add(species.getId());
 					}
 				}
 			}
 			if (remove) {
-				SpeciesType tempSpecType = document.getModel().getSpeciesType(
-						((String) specTypes.getSelectedValue()).split(" ")[0]);
+				SpeciesType tempSpecType = document.getModel().getSpeciesType(((String) specTypes.getSelectedValue()).split(" ")[0]);
 				ListOf s = document.getModel().getListOfSpeciesTypes();
 				for (int i = 0; i < document.getModel().getNumSpeciesTypes(); i++) {
 					if (((SpeciesType) s.get(i)).getId().equals(tempSpecType.getId())) {
@@ -236,8 +229,9 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 				specTypes.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				if (index < specTypes.getModel().getSize()) {
 					specTypes.setSelectedIndex(index);
-				} else {
-					specTypes.setSelectedIndex(index-1);
+				}
+				else {
+					specTypes.setSelectedIndex(index - 1);
 				}
 				dirty.setValue(true);
 			}
@@ -263,12 +257,11 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 				scroll.setMinimumSize(new Dimension(300, 300));
 				scroll.setPreferredSize(new Dimension(300, 300));
 				scroll.setViewportView(messageArea);
-				JOptionPane.showMessageDialog(Gui.frame, scroll,
-						"Unable To Remove Species Type", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, scroll, "Unable To Remove Species Type", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		// if the add compartment type button is clicked
 		// if the add species type button is clicked
@@ -317,4 +310,3 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 	public void mouseReleased(MouseEvent e) {
 	}
 }
-

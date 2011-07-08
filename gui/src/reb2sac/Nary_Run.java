@@ -127,17 +127,13 @@ public class Nary_Run implements ActionListener, Runnable {
 	 * input fields for the nary abstraction. This constructor initializes the
 	 * member variables and creates the nary frame.
 	 */
-	public Nary_Run(Component component, JTextField amountTerm, JRadioButton ge, JRadioButton gt,
-			JRadioButton eq, JRadioButton lt, JRadioButton le, JComboBox simulators,
-			String[] getFilename, String filename, JRadioButton sbml, JRadioButton dot,
-			JRadioButton xhtml, JRadioButton lhpn, JRadioButton nary, JRadioButton ODE,
-			JRadioButton monteCarlo, double timeLimit, String useInterval, double printInterval,
-			double minTimeStep, double timeStep, String outDir, long rndSeed, int run,
-			String printer_id, String printer_track_quantity, String[] termCond,
-			String[] intSpecies, double rap1, double rap2, double qss, int con, Log log,
-			JCheckBox usingSSA, String ssaFile, Gui biomodelsim, JTabbedPane simTab,
-			String root, String direct, String modelFile, JRadioButton abstraction,
-			AbstPane abstPane, double absError) {
+	public Nary_Run(Component component, JTextField amountTerm, JRadioButton ge, JRadioButton gt, JRadioButton eq, JRadioButton lt, JRadioButton le,
+			JComboBox simulators, String[] getFilename, String filename, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, JRadioButton lhpn,
+			JRadioButton nary, JRadioButton ODE, JRadioButton monteCarlo, double timeLimit, String useInterval, double printInterval,
+			double minTimeStep, double timeStep, String outDir, long rndSeed, int run, String printer_id, String printer_track_quantity,
+			String[] termCond, String[] intSpecies, double rap1, double rap2, double qss, int con, Log log, JCheckBox usingSSA, String ssaFile,
+			Gui biomodelsim, JTabbedPane simTab, String root, String direct, String modelFile, JRadioButton abstraction, AbstPane abstPane,
+			double absError) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -258,12 +254,10 @@ public class Nary_Run implements ActionListener, Runnable {
 		// reads in the species properties to determine which species to use
 		Properties naryProps = new Properties();
 		try {
-			FileInputStream load = new FileInputStream(new File(outDir + separator
-					+ "species.properties"));
+			FileInputStream load = new FileInputStream(new File(outDir + separator + "species.properties"));
 			naryProps.load(load);
 			load.close();
-			FileOutputStream store = new FileOutputStream(new File(outDir + separator
-					+ "species.properties"));
+			FileOutputStream store = new FileOutputStream(new File(outDir + separator + "species.properties"));
 			naryProps.store(store, "");
 			store.close();
 			naryProps = new Properties();
@@ -273,8 +267,7 @@ public class Nary_Run implements ActionListener, Runnable {
 			load.close();
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(component, "Properties File Not Found!",
-					"File Not Found", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(component, "Properties File Not Found!", "File Not Found", JOptionPane.ERROR_MESSAGE);
 		}
 		Iterator<Object> iter = naryProps.keySet().iterator();
 		getSpeciesProps = new ArrayList<String>();
@@ -433,8 +426,7 @@ public class Nary_Run implements ActionListener, Runnable {
 			Object[] adding = { highLow.getSelectedItem() + "." + speci.getSelectedItem() };
 			add.setListData(adding);
 			add.setSelectedIndex(0);
-			finalStates = Utility.add(finalStates, finalState, add, false, amountTerm, ge, gt, eq,
-					lt, le, naryFrame);
+			finalStates = Utility.add(finalStates, finalState, add, false, amountTerm, ge, gt, eq, lt, le, naryFrame);
 		}
 		// if the remove button for the final states is clicked
 		else if (e.getSource() == finalRemove) {
@@ -444,13 +436,11 @@ public class Nary_Run implements ActionListener, Runnable {
 		else {
 			// if the add button for the species properties is clicked
 			if (e.getActionCommand().contains("Add")) {
-				int number = Integer.parseInt(e.getActionCommand().substring(3,
-						e.getActionCommand().length()));
+				int number = Integer.parseInt(e.getActionCommand().substring(3, e.getActionCommand().length()));
 				try {
 					double get = Double.parseDouble(texts.get(number).getText().trim());
 					if (get < 0) {
-						JOptionPane.showMessageDialog(naryFrame,
-								"Concentration Levels Must Be Positive Real Numbers.", "Error",
+						JOptionPane.showMessageDialog(naryFrame, "Concentration Levels Must Be Positive Real Numbers.", "Error",
 								JOptionPane.ERROR_MESSAGE);
 					}
 					else {
@@ -458,8 +448,8 @@ public class Nary_Run implements ActionListener, Runnable {
 						Object[] adding = { "" + get };
 						add.setListData(adding);
 						add.setSelectedIndex(0);
-						Object[] sort = Utility.add(conLevel.get(number), consLevel.get(number),
-								add, false, amountTerm, ge, gt, eq, lt, le, naryFrame);
+						Object[] sort = Utility.add(conLevel.get(number), consLevel.get(number), add, false, amountTerm, ge, gt, eq, lt, le,
+								naryFrame);
 						int in;
 						for (int out = 1; out < sort.length; out++) {
 							double temp = Double.parseDouble((String) sort[out]);
@@ -474,16 +464,14 @@ public class Nary_Run implements ActionListener, Runnable {
 					}
 				}
 				catch (Exception e1) {
-					JOptionPane.showMessageDialog(naryFrame,
-							"Concentration Levels Must Be Positive Real Numbers.", "Error",
+					JOptionPane.showMessageDialog(naryFrame, "Concentration Levels Must Be Positive Real Numbers.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 				}
 
 			}
 			// if the remove button for the species properties is clicked
 			else if (e.getActionCommand().contains("Remove")) {
-				int number = Integer.parseInt(e.getActionCommand().substring(6,
-						e.getActionCommand().length()));
+				int number = Integer.parseInt(e.getActionCommand().substring(6, e.getActionCommand().length()));
 				Utility.remove(consLevel.get(number), conLevel.get(number));
 			}
 		}
@@ -568,19 +556,16 @@ public class Nary_Run implements ActionListener, Runnable {
 			stopR = Double.parseDouble(stopRate.getText().trim());
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(naryFrame,
-					"Must Enter A Real Number Into The Analysis Stop Rate Field.", "Error",
+			JOptionPane.showMessageDialog(naryFrame, "Must Enter A Real Number Into The Analysis Stop Rate Field.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		String[] finalS = Utility.getList(finalStates, finalState);
 		Run runProgram = new Run(null);
 		naryCancel.addActionListener(runProgram);
-		runProgram.createNaryProperties(timeLimit, useInterval, printInterval, minTimeStep,
-				timeStep, outDir, rndSeed, run, printer_id, printer_track_quantity, getFilename,
-				naryFrame, filename, monteCarlo, stopE, stopR, finalS, inhib, consLevel,
-				getSpeciesProps, conLevel, termCond, intSpecies, rap1, rap2, qss, con, counts,
-				usingSSA, ssaFile);
+		runProgram.createNaryProperties(timeLimit, useInterval, printInterval, minTimeStep, timeStep, outDir, rndSeed, run, printer_id,
+				printer_track_quantity, getFilename, naryFrame, filename, monteCarlo, stopE, stopR, finalS, inhib, consLevel, getSpeciesProps,
+				conLevel, termCond, intSpecies, rap1, rap2, qss, con, counts, usingSSA, ssaFile);
 		if (monteCarlo.isSelected()) {
 			File[] files = new File(outDir).listFiles();
 			for (File f : files) {
@@ -589,11 +574,9 @@ public class Nary_Run implements ActionListener, Runnable {
 				}
 			}
 		}
-		runProgram.execute(filename, sbml, dot, xhtml, lhpn, naryFrame, ODE, monteCarlo, sim,
-				printer_id, printer_track_quantity, outDir, nary, 2, intSpecies, log, usingSSA,
-				ssaFile, biomodelsim, simTab, root, progress, "", null, direct, timeLimit,
-				timeLimit * run, modelFile, abstPane, abstraction, null, absError, timeStep,
-				printInterval, run, rndSeed, true);
+		runProgram.execute(filename, sbml, dot, xhtml, lhpn, naryFrame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, outDir, nary, 2,
+				intSpecies, log, usingSSA, ssaFile, biomodelsim, simTab, root, progress, "", null, direct, timeLimit, timeLimit * run, modelFile,
+				abstPane, abstraction, null, absError, timeStep, printInterval, run, rndSeed, true);
 		running.setCursor(null);
 		running.dispose();
 		naryCancel.removeActionListener(runProgram);

@@ -72,8 +72,7 @@ public class Parser {
 			out.close();
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(component, "Error Outputting Data Into A TSD File!",
-					"Error Outputting Data", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(component, "Error Outputting Data Into A TSD File!", "Error Outputting Data", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -98,8 +97,7 @@ public class Parser {
 			out.close();
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(component, "Error Outputting Data Into A CVS File!",
-					"Error Outputting Data", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(component, "Error Outputting Data Into A CVS File!", "Error Outputting Data", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -125,37 +123,42 @@ public class Parser {
 			out.close();
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(component, "Error Outputting Data Into A DAT File!",
-					"Error Outputting Data", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(component, "Error Outputting Data Into A DAT File!", "Error Outputting Data", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	/**
 	 * returns the number of samples in the data.
+	 * 
 	 * @return
 	 */
-	public int getNumSamples(){
-		if(this.data.size() == 0)
+	public int getNumSamples() {
+		if (this.data.size() == 0)
 			return 0;
 		return this.data.get(0).size();
 	}
-	
+
 	/**
 	 * get the data in a different format
+	 * 
 	 * @return
 	 */
-	public HashMap<String, ArrayList<Double>> getHashMap(){
+	public HashMap<String, ArrayList<Double>> getHashMap() {
 		HashMap<String, ArrayList<Double>> out = new HashMap<String, ArrayList<Double>>();
-		for(int i=0; i<data.size(); i++){
+		for (int i = 0; i < data.size(); i++) {
 			out.put(species.get(i), data.get(i));
 		}
 		return out;
 	}
-	
+
 	/**
-	 * A helper function. Read a file into a string.
-	 * Thanks to erickson at http://stackoverflow.com/questions/326390/how-to-create-a-java-string-from-the-contents-of-a-file
-	 * @param path: the path to the file
+	 * A helper function. Read a file into a string. Thanks to erickson at
+	 * http:/
+	 * /stackoverflow.com/questions/326390/how-to-create-a-java-string-from
+	 * -the-contents-of-a-file
+	 * 
+	 * @param path
+	 *            : the path to the file
 	 * @return
 	 * @throws IOException
 	 */
@@ -171,5 +174,5 @@ public class Parser {
 			stream.close();
 		}
 	}
-	
+
 }

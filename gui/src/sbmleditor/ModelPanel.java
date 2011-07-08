@@ -33,18 +33,17 @@ public class ModelPanel extends JPanel implements ActionListener, MouseListener 
 
 	private JButton modelUnits;
 
-	private JComboBox substanceUnits, timeUnits, volumeUnits, areaUnits, lengthUnits, extentUnits,
-			conversionFactor;
-	
+	private JComboBox substanceUnits, timeUnits, volumeUnits, areaUnits, lengthUnits, extentUnits, conversionFactor;
+
 	private SBMLDocument document;
-		
+
 	private MutableBoolean dirty;
-	
-	public ModelPanel(SBMLDocument document,MutableBoolean dirty,boolean paramsOnly) {
+
+	public ModelPanel(SBMLDocument document, MutableBoolean dirty, boolean paramsOnly) {
 		super();
 		this.document = document;
 		this.dirty = dirty;
-		Model model =  document.getModel();
+		Model model = document.getModel();
 		modelName = new JTextField(model.getName(), 50);
 		modelID = new JTextField(model.getId(), 16);
 		modelName = new JTextField(model.getName(), 40);
@@ -69,7 +68,7 @@ public class ModelPanel extends JPanel implements ActionListener, MouseListener 
 	public void setModelId(String newId) {
 		modelID.setText(newId);
 	}
-	                                
+
 	/**
 	 * Creates a frame used to edit parameters or create new ones.
 	 */
@@ -101,27 +100,22 @@ public class ModelPanel extends JPanel implements ActionListener, MouseListener 
 		for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
 			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 			if ((unit.getNumUnits() == 1)
-					&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem()
-							|| unit.getUnit(0).isGram() || unit.getUnit(0).isKilogram())
+					&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem() || unit.getUnit(0).isGram() || unit.getUnit(0).isKilogram())
 					&& (unit.getUnit(0).getExponentAsDouble() == 1)) {
 				substanceUnits.addItem(unit.getId());
 				extentUnits.addItem(unit.getId());
 			}
-			if ((unit.getNumUnits() == 1) && (unit.getUnit(0).isSecond())
-					&& (unit.getUnit(0).getExponentAsDouble() == 1)) {
+			if ((unit.getNumUnits() == 1) && (unit.getUnit(0).isSecond()) && (unit.getUnit(0).getExponentAsDouble() == 1)) {
 				timeUnits.addItem(unit.getId());
 			}
-			if ((unit.getNumUnits() == 1)
-					&& (unit.getUnit(0).isLitre() && unit.getUnit(0).getExponentAsDouble() == 1)
+			if ((unit.getNumUnits() == 1) && (unit.getUnit(0).isLitre() && unit.getUnit(0).getExponentAsDouble() == 1)
 					|| (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == 3)) {
 				volumeUnits.addItem(unit.getId());
 			}
-			if ((unit.getNumUnits() == 1)
-					&& (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == 2)) {
+			if ((unit.getNumUnits() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == 2)) {
 				areaUnits.addItem(unit.getId());
 			}
-			if ((unit.getNumUnits() == 1)
-					&& (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == 1)) {
+			if ((unit.getNumUnits() == 1) && (unit.getUnit(0).isMetre() && unit.getUnit(0).getExponentAsDouble() == 1)) {
 				lengthUnits.addItem(unit.getId());
 			}
 		}
@@ -173,9 +167,8 @@ public class ModelPanel extends JPanel implements ActionListener, MouseListener 
 		modelUnitsPanel.add(conversionFactorLabel);
 		modelUnitsPanel.add(conversionFactor);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, modelUnitsPanel,
-				"Model Units Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-				options, options[0]);
+		int value = JOptionPane.showOptionDialog(Gui.frame, modelUnitsPanel, "Model Units Editor", JOptionPane.YES_NO_OPTION,
+				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
@@ -219,21 +212,19 @@ public class ModelPanel extends JPanel implements ActionListener, MouseListener 
 				document.getModel().unsetConversionFactor();
 			}
 			else {
-				document.getModel()
-						.setConversionFactor((String) conversionFactor.getSelectedItem());
+				document.getModel().setConversionFactor((String) conversionFactor.getSelectedItem());
 			}
 			dirty.setValue(true);
 			if (error) {
-				value = JOptionPane.showOptionDialog(Gui.frame, modelUnitsPanel,
-						"Model Units Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-						null, options, options[0]);
+				value = JOptionPane.showOptionDialog(Gui.frame, modelUnitsPanel, "Model Units Editor", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
 		}
 		if (value == JOptionPane.NO_OPTION) {
 			return;
 		}
 	}
-	
+
 	/**
 	 * Set the model ID
 	 */
@@ -241,7 +232,7 @@ public class ModelPanel extends JPanel implements ActionListener, MouseListener 
 		this.modelID.setText(modelID);
 		document.getModel().setId(modelID);
 	}
-	
+
 	/**
 	 * Get the model name
 	 */

@@ -48,7 +48,7 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	 * <code>enhancedUI</code> parameter is set to <code>true</code>.
 	 * 
 	 * @param enhancedUI
-	 *          whether the tabbedPane should use an enhanced UI
+	 *            whether the tabbedPane should use an enhanced UI
 	 */
 	public CloseAndMaxTabbedPane(boolean enhancedUI, Gui biosim) {
 		super.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
@@ -100,7 +100,7 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	 * Sets whether the tabbedPane should have a close icon or not.
 	 * 
 	 * @param b
-	 *          whether the tabbedPane should have a close icon or not
+	 *            whether the tabbedPane should have a close icon or not
 	 */
 	public void setCloseIcon(boolean b) {
 		paneUI.setCloseIcon(b);
@@ -111,7 +111,7 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	 * is closed, the tab is automatically reinserted into the tabbedPane.
 	 * 
 	 * @param index
-	 *          index of the tabbedPane to be detached
+	 *            index of the tabbedPane to be detached
 	 */
 	public void detachTab(int index) {
 
@@ -173,14 +173,14 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 		};
 
 		/*
-		 * This is a small hack to avoid Windows GUI bug, that prevent a new window
-		 * from stealing focus (without this windowFocusListener, most of the time
-		 * the new frame would just blink from foreground to background). A
-		 * windowFocusListener is added to the frame, and if the time between the
-		 * frame beeing in foreground and the frame beeing in background is less
-		 * that 100ms, it just brings the windows to the front once again. Then it
-		 * removes the windowFocusListener. Note that this hack would not be
-		 * required on Linux or UNIX based systems.
+		 * This is a small hack to avoid Windows GUI bug, that prevent a new
+		 * window from stealing focus (without this windowFocusListener, most of
+		 * the time the new frame would just blink from foreground to
+		 * background). A windowFocusListener is added to the frame, and if the
+		 * time between the frame beeing in foreground and the frame beeing in
+		 * background is less that 100ms, it just brings the windows to the
+		 * front once again. Then it removes the windowFocusListener. Note that
+		 * this hack would not be required on Linux or UNIX based systems.
 		 */
 
 		frame.addWindowFocusListener(windowFocusListener);
@@ -195,7 +195,7 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	 * Adds a <code>CloseListener</code> to the tabbedPane.
 	 * 
 	 * @param l
-	 *          the <code>CloseListener</code> to add
+	 *            the <code>CloseListener</code> to add
 	 * @see #fireCloseTabEvent
 	 * @see #removeCloseListener
 	 */
@@ -207,7 +207,7 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	 * Adds a <code>MaxListener</code> to the tabbedPane.
 	 * 
 	 * @param l
-	 *          the <code>MaxListener</code> to add
+	 *            the <code>MaxListener</code> to add
 	 * @see #fireMaxTabEvent
 	 * @see #removeMaxListener
 	 */
@@ -219,7 +219,7 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	 * Adds a <code>DoubleClickListener</code> to the tabbedPane.
 	 * 
 	 * @param l
-	 *          the <code>DoubleClickListener</code> to add
+	 *            the <code>DoubleClickListener</code> to add
 	 * @see #fireDoubleClickTabEvent
 	 * @see #removeDoubleClickListener
 	 */
@@ -231,7 +231,7 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	 * Adds a <code>PopupOutsideListener</code> to the tabbedPane.
 	 * 
 	 * @param l
-	 *          the <code>PopupOutsideListener</code> to add
+	 *            the <code>PopupOutsideListener</code> to add
 	 * @see #firePopupOutsideTabEvent
 	 * @see #removePopupOutsideListener
 	 */
@@ -243,7 +243,7 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	 * Removes a <code>CloseListener</code> from this tabbedPane.
 	 * 
 	 * @param l
-	 *          the <code>CloseListener</code> to remove
+	 *            the <code>CloseListener</code> to remove
 	 * @see #fireCloseTabEvent
 	 * @see #addCloseListener
 	 */
@@ -255,7 +255,7 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	 * Removes a <code>MaxListener</code> from this tabbedPane.
 	 * 
 	 * @param l
-	 *          the <code>MaxListener</code> to remove
+	 *            the <code>MaxListener</code> to remove
 	 * @see #fireMaxTabEvent
 	 * @see #addMaxListener
 	 */
@@ -267,7 +267,7 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	 * Removes a <code>DoubleClickListener</code> from this tabbedPane.
 	 * 
 	 * @param l
-	 *          the <code>DoubleClickListener</code> to remove
+	 *            the <code>DoubleClickListener</code> to remove
 	 * @see #fireDoubleClickTabEvent
 	 * @see #addDoubleClickListener
 	 */
@@ -279,7 +279,7 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	 * Removes a <code>PopupOutsideListener</code> from this tabbedPane.
 	 * 
 	 * @param l
-	 *          the <code>PopupOutsideListener</code> to remove
+	 *            the <code>PopupOutsideListener</code> to remove
 	 * @see #firePopupOutsideTabEvent
 	 * @see #addPopupOutsideListener
 	 */
@@ -296,9 +296,9 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	 * which index is <code>overTabIndex</code>.
 	 * 
 	 * @param e
-	 *          the <code>MouseEvent</code> to be sent
+	 *            the <code>MouseEvent</code> to be sent
 	 * @param overTabIndex
-	 *          the index of a tab, usually the tab over which the mouse is
+	 *            the index of a tab, usually the tab over which the mouse is
 	 * 
 	 * @see #addCloseListener
 	 * @see EventListenerList
@@ -321,13 +321,13 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	 * every <code>MaxListener</code>. The method also updates the
 	 * <code>overTabIndex</code> of the tabbedPane with a value coming from the
 	 * UI. This method method is called each time a <code>MouseEvent</code> is
-	 * received from the UI when the user clicks on the max icon of the tab which
-	 * index is <code>overTabIndex</code>.
+	 * received from the UI when the user clicks on the max icon of the tab
+	 * which index is <code>overTabIndex</code>.
 	 * 
 	 * @param e
-	 *          the <code>MouseEvent</code> to be sent
+	 *            the <code>MouseEvent</code> to be sent
 	 * @param overTabIndex
-	 *          the index of a tab, usually the tab over which the mouse is
+	 *            the index of a tab, usually the tab over which the mouse is
 	 * 
 	 * @see #addMaxListener
 	 * @see EventListenerList
@@ -346,13 +346,13 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	 * every <code>DoubleClickListener</code>. The method also updates the
 	 * <code>overTabIndex</code> of the tabbedPane with a value coming from the
 	 * UI. This method method is called each time a <code>MouseEvent</code> is
-	 * received from the UI when the user double-clicks on the tab which index is
-	 * <code>overTabIndex</code>.
+	 * received from the UI when the user double-clicks on the tab which index
+	 * is <code>overTabIndex</code>.
 	 * 
 	 * @param e
-	 *          the <code>MouseEvent</code> to be sent
+	 *            the <code>MouseEvent</code> to be sent
 	 * @param overTabIndex
-	 *          the index of a tab, usually the tab over which the mouse is
+	 *            the index of a tab, usually the tab over which the mouse is
 	 * 
 	 * @see #addDoubleClickListener
 	 * @see EventListenerList
@@ -374,7 +374,7 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 	 * right-clicks on the inactive part of a tabbedPane.
 	 * 
 	 * @param e
-	 *          the <code>MouseEvent</code> to be sent
+	 *            the <code>MouseEvent</code> to be sent
 	 * 
 	 * @see #addPopupOutsideListener
 	 * @see EventListenerList

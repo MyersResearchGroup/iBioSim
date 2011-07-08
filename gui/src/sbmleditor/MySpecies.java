@@ -44,17 +44,17 @@ import util.Utility;
 public class MySpecies extends JPanel implements ActionListener, MouseListener {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private SBMLDocument document;
-	
+
 	private ArrayList<String> usedIDs;
-	
+
 	private MutableBoolean dirty;
-	
+
 	private Boolean paramsOnly;
 
 	private String file;
-	
+
 	private ArrayList<String> parameterChanges;
 
 	private Gui biosim;
@@ -70,13 +70,13 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	private JComboBox specUnits, initLabel, specConv;
 
 	private JComboBox comp; // compartment combo box
-	
+
 	private InitialAssignments initialsPanel;
-	
+
 	private Rules rulesPanel;
-	
-	public MySpecies(Gui biosim,SBMLDocument document,ArrayList<String> usedIDs,MutableBoolean dirty,
-			Boolean paramsOnly,ArrayList<String> getParams,String file,ArrayList<String> parameterChanges,Boolean editOnly) {
+
+	public MySpecies(Gui biosim, SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty, Boolean paramsOnly,
+			ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, Boolean editOnly) {
 		super(new BorderLayout());
 		this.document = document;
 		this.usedIDs = usedIDs;
@@ -104,18 +104,18 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane scroll1 = new JScrollPane();
 		scroll1.setViewportView(species);
-		Model model =  document.getModel();
+		Model model = document.getModel();
 		ListOf listOfSpecies = model.getListOfSpecies();
-		String [] specs = new String[(int) model.getNumSpecies()];
+		String[] specs = new String[(int) model.getNumSpecies()];
 		for (int i = 0; i < model.getNumSpecies(); i++) {
 			Species species = (Species) listOfSpecies.get(i);
-			/*if (species.isSetSpeciesType()) {
-				specs[i] = species.getId() + " " + species.getSpeciesType() + " "
-						+ species.getCompartment();
-			}
-			else {*/
+			/*
+			 * if (species.isSetSpeciesType()) { specs[i] = species.getId() +
+			 * " " + species.getSpeciesType() + " " + species.getCompartment();
+			 * } else {
+			 */
 			specs[i] = species.getId(); // + " " + species.getCompartment();
-		    //}
+			// }
 			if (species.isSetInitialAmount()) {
 				specs[i] += " " + species.getInitialAmount();
 			}
@@ -123,17 +123,15 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				specs[i] += " " + species.getInitialConcentration();
 			}
 			/*
-			if (species.isSetUnits()) {
-				specs[i] += " " + species.getUnits();
-			}
-			*/
+			 * if (species.isSetUnits()) { specs[i] += " " + species.getUnits();
+			 * }
+			 */
 			if (paramsOnly) {
 				for (int j = 0; j < getParams.size(); j++) {
 					if (getParams.get(j).split(" ")[0].equals(species.getId())) {
 						parameterChanges.add(getParams.get(j));
 						String[] splits = getParams.get(j).split(" ");
-						if (splits[splits.length - 2].equals("Modified")
-								|| splits[splits.length - 2].equals("Custom")) {
+						if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
 							String value = splits[splits.length - 1];
 							if (species.isSetInitialAmount()) {
 								species.setInitialAmount(Double.parseDouble(value));
@@ -146,15 +144,12 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						else if (splits[splits.length - 2].equals("Sweep")) {
 							String value = splits[splits.length - 1];
 							if (species.isSetInitialAmount()) {
-								species.setInitialAmount(Double.parseDouble(value.split(",")[0]
-										.substring(1).trim()));
+								species.setInitialAmount(Double.parseDouble(value.split(",")[0].substring(1).trim()));
 							}
 							else {
-								species.setInitialConcentration(Double
-										.parseDouble(value.split(",")[0].substring(1).trim()));
+								species.setInitialConcentration(Double.parseDouble(value.split(",")[0].substring(1).trim()));
 							}
-							specs[i] += " " + splits[splits.length - 2] + " "
-									+ splits[splits.length - 1];
+							specs[i] += " " + splits[splits.length - 2] + " " + splits[splits.length - 1];
 						}
 					}
 				}
@@ -173,12 +168,12 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	 * Refresh species panel
 	 */
 	public void refreshSpeciesPanel(SBMLDocument document) {
-		Model model =  document.getModel();
+		Model model = document.getModel();
 		ListOf listOfSpecies = model.getListOfSpecies();
-		String [] specs = new String[(int) model.getNumSpecies()];
+		String[] specs = new String[(int) model.getNumSpecies()];
 		for (int i = 0; i < model.getNumSpecies(); i++) {
 			Species species = (Species) listOfSpecies.get(i);
-			specs[i] = species.getId(); 
+			specs[i] = species.getId();
 			if (species.isSetInitialAmount()) {
 				specs[i] += " " + species.getInitialAmount();
 			}
@@ -189,14 +184,13 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		Utility.sort(specs);
 		species.setListData(specs);
 	}
-	
+
 	/**
 	 * Creates a frame used to edit species or create new ones.
 	 */
 	private void speciesEditor(String option) {
 		if (option.equals("OK") && species.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No species selected.",
-					"Must Select A Species", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "No species selected.", "Must Select A Species", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		JPanel speciesPanel;
@@ -210,7 +204,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		JLabel nameLabel = new JLabel("Name:");
 		JLabel specTypeLabel = new JLabel("Type:");
 		JLabel compLabel = new JLabel("Compartment:");
-		String[] initLabels = { "Initial Amount", "Initial Concentration" , "Initial Assignment" };
+		String[] initLabels = { "Initial Amount", "Initial Concentration", "Initial Assignment" };
 		initLabel = new JComboBox(initLabels);
 		JLabel unitLabel = new JLabel("Units:");
 		JLabel boundLabel = new JLabel("Boundary Condition:");
@@ -267,8 +261,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				p.add(step);
 				p.add(levelLabel);
 				p.add(level);
-				int i = JOptionPane.showOptionDialog(Gui.frame, p, "Sweep",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+				int i = JOptionPane.showOptionDialog(Gui.frame, p, "Sweep", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 						options[0]);
 				if (i == JOptionPane.YES_OPTION) {
 					double startVal = 0.0;
@@ -281,8 +274,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					}
 					catch (Exception e1) {
 					}
-					init.setText("(" + startVal + "," + stopVal + "," + stepVal + ","
-							+ level.getSelectedItem() + ")");
+					init.setText("(" + startVal + "," + stopVal + "," + stepVal + "," + level.getSelectedItem() + ")");
 				}
 			}
 		});
@@ -302,8 +294,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		}
 		if (option.equals("OK")) {
 			try {
-				Species specie = document.getModel().getSpecies(
-						((String) species.getSelectedValue()).split(" ")[0]);
+				Species specie = document.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]);
 				ID.setText(specie.getId());
 				selectedID = specie.getId();
 				Name.setText(specie.getName());
@@ -326,7 +317,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				else {
 					specHasOnly.setSelectedItem("false");
 				}
-				if (document.getModel().getInitialAssignment(specie.getId())!=null) {
+				if (document.getModel().getInitialAssignment(specie.getId()) != null) {
 					origAssign = SBMLutilities.myFormulaToString(document.getModel().getInitialAssignment(specie.getId()).getMath());
 					init.setText(origAssign);
 					initLabel.setSelectedItem("Initial Assignment");
@@ -347,24 +338,19 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					specConv.setSelectedItem(specie.getConversionFactor());
 				}
 				if (paramsOnly
-						&& (((String) species.getSelectedValue()).contains("Modified")
-								|| ((String) species.getSelectedValue()).contains("Custom") || ((String) species
+						&& (((String) species.getSelectedValue()).contains("Modified") || ((String) species.getSelectedValue()).contains("Custom") || ((String) species
 								.getSelectedValue()).contains("Sweep"))) {
 					type.setSelectedItem("Modified");
 					sweep.setEnabled(true);
-					init.setText(((String) species.getSelectedValue()).split(" ")[((String) species
-							.getSelectedValue()).split(" ").length - 1]);
+					init.setText(((String) species.getSelectedValue()).split(" ")[((String) species.getSelectedValue()).split(" ").length - 1]);
 					init.setEnabled(true);
 					initLabel.setEnabled(false);
 					if (init.getText().trim().startsWith("(")) {
 						try {
-							start
-									.setText((init.getText().trim()).split(",")[0].substring(1)
-											.trim());
+							start.setText((init.getText().trim()).split(",")[0].substring(1).trim());
 							stop.setText((init.getText().trim()).split(",")[1].trim());
 							step.setText((init.getText().trim()).split(",")[2].trim());
-							int lev = Integer.parseInt((init.getText().trim()).split(",")[3]
-									.replace(")", "").trim());
+							int lev = Integer.parseInt((init.getText().trim()).split(",")[3].replace(")", "").trim());
 							if (lev == 1) {
 								level.setSelectedIndex(0);
 							}
@@ -411,17 +397,11 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						initLabel.setEnabled(false);
 						SBMLDocument d = Gui.readSBML(file);
 						if (d.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]).isSetInitialAmount()) {
-							init.setText(d.getModel().getSpecies(
-									((String) species.getSelectedValue()).split(" ")[0])
-									.getInitialAmount()
-									+ "");
+							init.setText(d.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]).getInitialAmount() + "");
 							initLabel.setSelectedItem("Initial Amount");
 						}
 						else {
-							init.setText(d.getModel().getSpecies(
-									((String) species.getSelectedValue()).split(" ")[0])
-									.getInitialConcentration()
-									+ "");
+							init.setText(d.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]).getInitialConcentration() + "");
 							initLabel.setSelectedItem("Initial Concentration");
 						}
 					}
@@ -443,52 +423,46 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			speciesPanel.add(specConv);
 		}
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, speciesPanel, "Species Editor",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		int value = JOptionPane.showOptionDialog(Gui.frame, speciesPanel, "Species Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+				null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
-			error = SBMLutilities.checkID(document,usedIDs,ID.getText().trim(), selectedID, false);
+			error = SBMLutilities.checkID(document, usedIDs, ID.getText().trim(), selectedID, false);
 			double initial = 0;
 			if (!error) {
 				if (init.getText().trim().startsWith("(") && init.getText().trim().endsWith(")")) {
 					try {
-						Double.parseDouble((init.getText().trim()).split(",")[0].substring(1)
-								.trim());
+						Double.parseDouble((init.getText().trim()).split(",")[0].substring(1).trim());
 						Double.parseDouble((init.getText().trim()).split(",")[1].trim());
 						Double.parseDouble((init.getText().trim()).split(",")[2].trim());
-						int lev = Integer.parseInt((init.getText().trim()).split(",")[3].replace(
-								")", "").trim());
+						int lev = Integer.parseInt((init.getText().trim()).split(",")[3].replace(")", "").trim());
 						if (lev != 1 && lev != 2) {
 							error = true;
-							JOptionPane.showMessageDialog(Gui.frame,
-									"The level can only be 1 or 2.", "Error",
-									JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(Gui.frame, "The level can only be 1 or 2.", "Error", JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					catch (Exception e1) {
 						error = true;
-						JOptionPane.showMessageDialog(Gui.frame, "Invalid sweeping parameters.",
-								"Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "Invalid sweeping parameters.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				else {
 					if (initLabel.getSelectedItem().equals("Initial Assignment")) {
-						InitialAssignments.removeInitialAssignment(document,selectedID);
-						error = InitialAssignments.addInitialAssignment(biosim, document, ID.getText().trim(), 
-									init.getText().trim());
+						InitialAssignments.removeInitialAssignment(document, selectedID);
+						error = InitialAssignments.addInitialAssignment(biosim, document, ID.getText().trim(), init.getText().trim());
 						initial = 0.0;
-					} else {
+					}
+					else {
 						if (!selectedID.equals("")) {
-							InitialAssignments.removeInitialAssignment(document,selectedID);
+							InitialAssignments.removeInitialAssignment(document, selectedID);
 						}
 						try {
 							initial = Double.parseDouble(init.getText().trim());
 						}
 						catch (Exception e1) {
 							error = true;
-							JOptionPane.showMessageDialog(Gui.frame,
-									"The initial value field must be a real number.",
-									"Enter a Valid Initial Value", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(Gui.frame, "The initial value field must be a real number.", "Enter a Valid Initial Value",
+									JOptionPane.ERROR_MESSAGE);
 						}
 					}
 				}
@@ -500,33 +474,25 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				String addSpec = "";
 				String selSpecType = (String) specTypeBox.getSelectedItem();
 				if (paramsOnly && !((String) type.getSelectedItem()).equals("Original")) {
-					String [] specs = new String[species.getModel().getSize()];
-					for (int i=0;i<species.getModel().getSize();i++) {
+					String[] specs = new String[species.getModel().getSize()];
+					for (int i = 0; i < species.getModel().getSize(); i++) {
 						specs[i] = species.getModel().getElementAt(i).toString();
-					}					
+					}
 					int index = species.getSelectedIndex();
 					String[] splits = specs[index].split(" ");
 					for (int i = 0; i < splits.length - 2; i++) {
 						addSpec += splits[i] + " ";
 					}
-					if (!splits[splits.length - 2].equals("Modified")
-							&& !splits[splits.length - 2].equals("Custom")
+					if (!splits[splits.length - 2].equals("Modified") && !splits[splits.length - 2].equals("Custom")
 							&& !splits[splits.length - 2].equals("Sweep")) {
-						addSpec += splits[splits.length - 2] + " " + splits[splits.length - 1]
-								+ " ";
+						addSpec += splits[splits.length - 2] + " " + splits[splits.length - 1] + " ";
 					}
-					if (init.getText().trim().startsWith("(")
-							&& init.getText().trim().endsWith(")")) {
-						double startVal = Double.parseDouble((init.getText().trim()).split(",")[0]
-								.substring(1).trim());
-						double stopVal = Double.parseDouble((init.getText().trim()).split(",")[1]
-								.trim());
-						double stepVal = Double.parseDouble((init.getText().trim()).split(",")[2]
-								.trim());
-						int lev = Integer.parseInt((init.getText().trim()).split(",")[3].replace(
-								")", "").trim());
-						addSpec += "Sweep (" + startVal + "," + stopVal + "," + stepVal + "," + lev
-								+ ")";
+					if (init.getText().trim().startsWith("(") && init.getText().trim().endsWith(")")) {
+						double startVal = Double.parseDouble((init.getText().trim()).split(",")[0].substring(1).trim());
+						double stopVal = Double.parseDouble((init.getText().trim()).split(",")[1].trim());
+						double stepVal = Double.parseDouble((init.getText().trim()).split(",")[2].trim());
+						int lev = Integer.parseInt((init.getText().trim()).split(",")[3].replace(")", "").trim());
+						addSpec += "Sweep (" + startVal + "," + stopVal + "," + stepVal + "," + lev + ")";
 					}
 					else {
 						addSpec += "Modified " + initial;
@@ -535,16 +501,13 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				else {
 					addSpec = ID.getText().trim();
 					/*
-					if (!selSpecType.equals("( none )")) {
-						addSpec += " " + selSpecType;
-					}
-					*/
-					addSpec += " " /*+ comp.getSelectedItem() + " "*/ + initial;
+					 * if (!selSpecType.equals("( none )")) { addSpec += " " +
+					 * selSpecType; }
+					 */
+					addSpec += " " /* + comp.getSelectedItem() + " " */+ initial;
 					/*
-					if (!unit.equals("( none )")) {
-						addSpec += " " + unit;
-					}
-					*/
+					 * if (!unit.equals("( none )")) { addSpec += " " + unit; }
+					 */
 				}
 				if (!error) {
 					ListOf listOfSpecies = document.getModel().getListOfSpecies();
@@ -554,35 +517,27 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					}
 					for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
 						if (!((Species) listOfSpecies.get(i)).getId().equals(selected)) {
-							if (((Species) listOfSpecies.get(i)).getCompartment().equals(
-									(String) comp.getSelectedItem())
-									&& ((Species) listOfSpecies.get(i)).getSpeciesType().equals(
-											selSpecType)) {
-								JOptionPane.showMessageDialog(Gui.frame,
-												"Compartment already contains another species of this type.",
-												"Species Type Not Unique",
-												JOptionPane.ERROR_MESSAGE);
+							if (((Species) listOfSpecies.get(i)).getCompartment().equals((String) comp.getSelectedItem())
+									&& ((Species) listOfSpecies.get(i)).getSpeciesType().equals(selSpecType)) {
+								JOptionPane.showMessageDialog(Gui.frame, "Compartment already contains another species of this type.",
+										"Species Type Not Unique", JOptionPane.ERROR_MESSAGE);
 								error = true;
 							}
 						}
 					}
 				}
 				if (!error) {
-					Compartment compartment = document.getModel().getCompartment(
-							(String) comp.getSelectedItem());
-					if (initLabel.getSelectedItem().equals("Initial Concentration")
-							&& document.getLevel() < 3 && compartment.getSpatialDimensions() == 0) {
-						JOptionPane
-								.showMessageDialog(
-										Gui.frame,
-										"Species in a 0 dimensional compartment cannot have an initial concentration.",
-										"Concentration Not Possible", JOptionPane.ERROR_MESSAGE);
+					Compartment compartment = document.getModel().getCompartment((String) comp.getSelectedItem());
+					if (initLabel.getSelectedItem().equals("Initial Concentration") && document.getLevel() < 3
+							&& compartment.getSpatialDimensions() == 0) {
+						JOptionPane.showMessageDialog(Gui.frame, "Species in a 0 dimensional compartment cannot have an initial concentration.",
+								"Concentration Not Possible", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
 				}
 				if (!error && option.equals("OK") && specConstant.getSelectedItem().equals("true")) {
 					String val = ((String) species.getSelectedValue()).split(" ")[0];
-					error = SBMLutilities.checkConstant(document,"Species", val);
+					error = SBMLutilities.checkConstant(document, "Species", val);
 				}
 				if (!error && option.equals("OK") && specBoundary.getSelectedItem().equals("false")) {
 					String val = ((String) species.getSelectedValue()).split(" ")[0];
@@ -590,10 +545,11 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				}
 				if (!error) {
 					if (option.equals("OK")) {
-						String [] specs = new String[species.getModel().getSize()];
-						for (int i=0;i<species.getModel().getSize();i++) {
+						String[] specs = new String[species.getModel().getSize()];
+						for (int i = 0; i < species.getModel().getSize(); i++) {
 							specs[i] = species.getModel().getElementAt(i).toString();
-						}									int index1 = species.getSelectedIndex();
+						}
+						int index1 = species.getSelectedIndex();
 						String val = ((String) species.getSelectedValue()).split(" ")[0];
 						species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 						specs = Utility.getList(specs, species);
@@ -635,10 +591,12 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						if (initLabel.getSelectedItem().equals("Initial Amount")) {
 							specie.unsetInitialConcentration();
 							specie.setInitialAmount(initial);
-						} else if (initLabel.getSelectedItem().equals("Initial Concentration")) {
+						}
+						else if (initLabel.getSelectedItem().equals("Initial Concentration")) {
 							specie.unsetInitialAmount();
 							specie.setInitialConcentration(initial);
-						} else {
+						}
+						else {
 							specie.unsetInitialConcentration();
 							specie.setInitialAmount(initial);
 						}
@@ -663,8 +621,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						if (paramsOnly) {
 							int remove = -1;
 							for (int i = 0; i < parameterChanges.size(); i++) {
-								if (parameterChanges.get(i).split(" ")[0].equals(ID.getText()
-										.trim())) {
+								if (parameterChanges.get(i).split(" ")[0].equals(ID.getText().trim())) {
 									remove = i;
 								}
 							}
@@ -676,14 +633,14 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 							}
 						}
 						else {
-							SBMLutilities.updateVarId(document,true, speciesName, specie.getId());
+							SBMLutilities.updateVarId(document, true, speciesName, specie.getId());
 						}
 					}
 					else {
-						String [] specs = new String[species.getModel().getSize()];
-						for (int i=0;i<species.getModel().getSize();i++) {
+						String[] specs = new String[species.getModel().getSize()];
+						for (int i = 0; i < species.getModel().getSize(); i++) {
 							specs[i] = species.getModel().getElementAt(i).toString();
-						}			
+						}
 						int index1 = species.getSelectedIndex();
 						Species specie = document.getModel().createSpecies();
 						specie.setCompartment((String) comp.getSelectedItem());
@@ -716,7 +673,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						}
 						else if (initLabel.getSelectedItem().equals("Initial Concentration")) {
 							specie.setInitialConcentration(initial);
-						} else {
+						}
+						else {
 							specie.setInitialAmount(initial);
 						}
 						if (!unit.equals("( none )")) {
@@ -735,8 +693,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 						addIt.setListData(adding);
 						addIt.setSelectedIndex(0);
 						species.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						adding = Utility.add(specs, species, addIt, false, null, null, null, null,
-								null, null, Gui.frame);
+						adding = Utility.add(specs, species, addIt, false, null, null, null, null, null, null, Gui.frame);
 						specs = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							specs[i] = (String) adding[i];
@@ -755,15 +712,14 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(Gui.frame, speciesPanel, "Species Editor",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-						options[0]);
+				value = JOptionPane.showOptionDialog(Gui.frame, speciesPanel, "Species Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+						null, options, options[0]);
 			}
 		}
 		if (value == JOptionPane.NO_OPTION) {
 			if (!origAssign.equals("")) {
-				InitialAssignments.removeInitialAssignment(document,selectedID);
-				error = InitialAssignments.addInitialAssignment(biosim,document,selectedID,origAssign);
+				InitialAssignments.removeInitialAssignment(document, selectedID);
+				error = InitialAssignments.addInitialAssignment(biosim, document, selectedID, origAssign);
 			}
 			return;
 		}
@@ -785,7 +741,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		JComboBox comp = new JComboBox(add);
 		return comp;
 	}
-	
+
 	public static JComboBox createUnitsChoices(SBMLDocument document) {
 		JComboBox specUnits = new JComboBox();
 		specUnits.addItem("( none )");
@@ -793,8 +749,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < document.getModel().getNumUnitDefinitions(); i++) {
 			UnitDefinition unit = (UnitDefinition) listOfUnits.get(i);
 			if ((unit.getNumUnits() == 1)
-					&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem()
-							|| unit.getUnit(0).isGram() || unit.getUnit(0).isKilogram())
+					&& (unit.getUnit(0).isMole() || unit.getUnit(0).isItem() || unit.getUnit(0).isGram() || unit.getUnit(0).isKilogram())
 					&& (unit.getUnit(0).getExponentAsDouble() == 1)) {
 				if (!(document.getLevel() < 3 && unit.getId().equals("substance"))) {
 					specUnits.addItem(unit.getId());
@@ -810,7 +765,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		}
 		return specUnits;
 	}
-	
+
 	public static JComboBox createConversionFactorChoices(SBMLDocument document) {
 		JComboBox specConv;
 		specConv = new JComboBox();
@@ -852,20 +807,13 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					SpeciesReference specRef = reaction.getProduct(j);
 					if (val.equals(specRef.getSpecies())) {
 						if (checkRule) {
-							JOptionPane
-									.showMessageDialog(
-											Gui.frame,
-											"Boundary condition cannot be false if a species is used\n"
-													+ "in a rule and as a reactant or product in a reaction.",
-											"Boundary Condition Cannot be False",
-											JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(Gui.frame, "Boundary condition cannot be false if a species is used\n"
+									+ "in a rule and as a reactant or product in a reaction.", "Boundary Condition Cannot be False",
+									JOptionPane.ERROR_MESSAGE);
 						}
 						else {
-							JOptionPane
-									.showMessageDialog(
-											Gui.frame,
-											"Species cannot be reactant if constant and not a boundary condition.",
-											"Invalid Species Attributes", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(Gui.frame, "Species cannot be reactant if constant and not a boundary condition.",
+									"Invalid Species Attributes", JOptionPane.ERROR_MESSAGE);
 						}
 						return true;
 					}
@@ -876,20 +824,13 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 					SpeciesReference specRef = reaction.getReactant(j);
 					if (val.equals(specRef.getSpecies())) {
 						if (checkRule) {
-							JOptionPane
-									.showMessageDialog(
-											Gui.frame,
-											"Boundary condition cannot be false if a species is used\n"
-													+ "in a rule and as a reactant or product in a reaction.",
-											"Boundary Condition Cannot be False",
-											JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(Gui.frame, "Boundary condition cannot be false if a species is used\n"
+									+ "in a rule and as a reactant or product in a reaction.", "Boundary Condition Cannot be False",
+									JOptionPane.ERROR_MESSAGE);
 						}
 						else {
-							JOptionPane
-									.showMessageDialog(
-											Gui.frame,
-											"Species cannot be product if constant and not a boundary condition.",
-											"Invalid Species Attributes", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(Gui.frame, "Species cannot be product if constant and not a boundary condition.",
+									"Invalid Species Attributes", JOptionPane.ERROR_MESSAGE);
 						}
 						return true;
 					}
@@ -905,9 +846,8 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	private void removeSpecies() {
 		int index = species.getSelectedIndex();
 		if (index != -1) {
-			if (!SBMLutilities.variableInUse(document,((String) species.getSelectedValue()).split(" ")[0], false)) {
-				Species tempSpecies = document.getModel().getSpecies(
-						((String) species.getSelectedValue()).split(" ")[0]);
+			if (!SBMLutilities.variableInUse(document, ((String) species.getSelectedValue()).split(" ")[0], false)) {
+				Species tempSpecies = document.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]);
 				ListOf s = document.getModel().getListOfSpecies();
 				for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
 					if (((Species) s.get(i)).getId().equals(tempSpecies.getId())) {
@@ -920,15 +860,16 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				species.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 				if (index < species.getModel().getSize()) {
 					species.setSelectedIndex(index);
-				} else {
-					species.setSelectedIndex(index-1);
+				}
+				else {
+					species.setSelectedIndex(index - 1);
 				}
 				dirty.setValue(true);
 			}
 		}
 	}
-	
-	public void setPanels(InitialAssignments initialsPanel,Rules rulesPanel) {
+
+	public void setPanels(InitialAssignments initialsPanel, Rules rulesPanel) {
 		this.initialsPanel = initialsPanel;
 		this.rulesPanel = rulesPanel;
 	}

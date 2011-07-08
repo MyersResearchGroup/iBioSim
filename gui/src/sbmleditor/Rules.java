@@ -54,24 +54,24 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	private JButton addRule, removeRule, editRule;
 
 	private JList rules; // JList of initial assignments
-		
+
 	private SBMLDocument document;
-		
+
 	private MutableBoolean dirty;
-		
+
 	private Gui biosim;
-	
-	private JComboBox ruleType,ruleVar;
-	
+
+	private JComboBox ruleType, ruleVar;
+
 	/* Create rule panel */
-	public Rules(Gui biosim,SBMLDocument document,MutableBoolean dirty) {
+	public Rules(Gui biosim, SBMLDocument document, MutableBoolean dirty) {
 		super(new BorderLayout());
 		this.document = document;
 		this.biosim = biosim;
 		this.dirty = dirty;
-		
+
 		/* Create rule panel */
-		Model model =  document.getModel();
+		Model model = document.getModel();
 		addRule = new JButton("Add Rule");
 		removeRule = new JButton("Remove Rule");
 		editRule = new JButton("Edit Rule");
@@ -87,8 +87,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				rul[i] = rule.getVariable() + " = " + SBMLutilities.myFormulaToString(rule.getMath());
 			}
 			else {
-				rul[i] = "d( " + rule.getVariable() + " )/dt = "
-						+ SBMLutilities.myFormulaToString(rule.getMath());
+				rul[i] = "d( " + rule.getVariable() + " )/dt = " + SBMLutilities.myFormulaToString(rule.getMath());
 			}
 		}
 		String[] oldRul = rul;
@@ -96,18 +95,16 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			rul = sortRules(rul);
 		}
 		catch (Exception e) {
-			//cycle = true;
-			JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in assignments.",
-					"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+			// cycle = true;
+			JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in assignments.", "Cycle Detected", JOptionPane.ERROR_MESSAGE);
 			rul = oldRul;
 		}
 		/*
-		if (!cycle && SBMLutilities.checkCycles(document)) {
-			JOptionPane.showMessageDialog(Gui.frame,
-					"Cycle detected within initial assignments, assignment rules, and rate laws.",
-					"Cycle Detected", JOptionPane.ERROR_MESSAGE);
-		}
-        */
+		 * if (!cycle && SBMLutilities.checkCycles(document)) {
+		 * JOptionPane.showMessageDialog(Gui.frame,
+		 * "Cycle detected within initial assignments, assignment rules, and rate laws."
+		 * , "Cycle Detected", JOptionPane.ERROR_MESSAGE); }
+		 */
 		JPanel addRem = new JPanel();
 		addRem.add(addRule);
 		addRem.add(removeRule);
@@ -135,7 +132,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	public void refreshRulesPanel(SBMLDocument document) {
 		Model model = document.getModel();
 		if (model.getNumRules() > 0) {
-			String [] rul = new String[(int)model.getNumRules()];
+			String[] rul = new String[(int) model.getNumRules()];
 			for (int i = 0; i < model.getNumRules(); i++) {
 				Rule rule = (Rule) model.getListOfRules().get(i);
 				if (rule.isAlgebraic()) {
@@ -145,34 +142,30 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					rul[i] = rule.getVariable() + " = " + SBMLutilities.myFormulaToString(rule.getMath());
 				}
 				else {
-					rul[i] = "d( " + rule.getVariable() + " )/dt = "
-							+ SBMLutilities.myFormulaToString(rule.getMath());
+					rul[i] = "d( " + rule.getVariable() + " )/dt = " + SBMLutilities.myFormulaToString(rule.getMath());
 				}
 			}
 			try {
 				rul = sortRules(rul);
 				if (SBMLutilities.checkCycles(document)) {
-					JOptionPane.showMessageDialog(Gui.frame,
-							"Cycle detected within initial assignments, assignment rules, and rate laws.",
-									"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Cycle detected within initial assignments, assignment rules, and rate laws.",
+							"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in assignments.",
-						"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in assignments.", "Cycle Detected", JOptionPane.ERROR_MESSAGE);
 			}
 			rules.setListData(rul);
 			rules.setSelectedIndex(0);
 		}
 	}
-		
+
 	/**
 	 * Creates a frame used to edit rules or create new ones.
 	 */
 	private void ruleEditor(String option) {
 		if (option.equals("OK") && rules.getSelectedIndex() == -1) {
-			JOptionPane.showMessageDialog(Gui.frame, "No rule selected.", "Must Select a Rule",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "No rule selected.", "Must Select a Rule", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		JPanel rulePanel = new JPanel();
@@ -213,8 +206,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				ListOf r = document.getModel().getListOfRules();
 				for (int i = 0; i < document.getModel().getNumRules(); i++) {
 					if ((((Rule) r.get(i)).isAlgebraic())
-							&& (SBMLutilities.myFormulaToString(((Rule) r.get(i)).getMath()).equals(ruleMath
-									.getText()))) {
+							&& (SBMLutilities.myFormulaToString(((Rule) r.get(i)).getMath()).equals(ruleMath.getText()))) {
 						Rindex = i;
 					}
 				}
@@ -227,8 +219,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				ruleMath.setText(selected.substring(selected.indexOf('=') + 2));
 				ListOf r = document.getModel().getListOfRules();
 				for (int i = 0; i < document.getModel().getNumRules(); i++) {
-					if ((((Rule) r.get(i)).isRate())
-							&& ((Rule) r.get(i)).getVariable().equals(ruleVar.getSelectedItem())) {
+					if ((((Rule) r.get(i)).isRate()) && ((Rule) r.get(i)).getVariable().equals(ruleVar.getSelectedItem())) {
 						Rindex = i;
 					}
 				}
@@ -241,8 +232,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				ruleMath.setText(selected.substring(selected.indexOf('=') + 2));
 				ListOf r = document.getModel().getListOfRules();
 				for (int i = 0; i < document.getModel().getNumRules(); i++) {
-					if ((((Rule) r.get(i)).isAssignment())
-							&& ((Rule) r.get(i)).getVariable().equals(ruleVar.getSelectedItem())) {
+					if ((((Rule) r.get(i)).isAssignment()) && ((Rule) r.get(i)).getVariable().equals(ruleVar.getSelectedItem())) {
 						Rindex = i;
 					}
 				}
@@ -270,25 +260,23 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		rulPanel.add(ruleMath);
 		rulePanel.add(rulPanel);
 		Object[] options = { option, "Cancel" };
-		int value = JOptionPane.showOptionDialog(Gui.frame, rulePanel, "Rule Editor",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		int value = JOptionPane.showOptionDialog(Gui.frame, rulePanel, "Rule Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+				options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
 			error = false;
 			String addVar = "";
 			addVar = (String) ruleVar.getSelectedItem();
 			if (ruleMath.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Rule must have formula.",
-						"Enter Rule Formula", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Rule must have formula.", "Enter Rule Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			else if (SBMLutilities.myParseFormula(ruleMath.getText().trim()) == null) {
-				JOptionPane.showMessageDialog(Gui.frame, "Rule formula is not valid.",
-						"Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Rule formula is not valid.", "Enter Valid Formula", JOptionPane.ERROR_MESSAGE);
 				error = true;
 			}
 			else {
-				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document,ruleMath.getText().trim(), "", false);
+				ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document, ruleMath.getText().trim(), "", false);
 				if (invalidVars.size() > 0) {
 					String invalid = "";
 					for (int i = 0; i < invalidVars.size(); i++) {
@@ -300,8 +288,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					String message;
-					message = "Rule contains unknown variables.\n\n" + "Unknown variables:\n"
-							+ invalid;
+					message = "Rule contains unknown variables.\n\n" + "Unknown variables:\n" + invalid;
 					JTextArea messageArea = new JTextArea(message);
 					messageArea.setLineWrap(true);
 					messageArea.setWrapStyleWord(true);
@@ -310,26 +297,23 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					scrolls.setMinimumSize(new Dimension(300, 300));
 					scrolls.setPreferredSize(new Dimension(300, 300));
 					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, scrolls, "Unknown Variables", JOptionPane.ERROR_MESSAGE);
 					error = true;
 				}
 				if (!error) {
-					error = SBMLutilities.checkNumFunctionArguments(document,SBMLutilities.myParseFormula(ruleMath.getText().trim()));
+					error = SBMLutilities.checkNumFunctionArguments(document, SBMLutilities.myParseFormula(ruleMath.getText().trim()));
 				}
 				if (!error) {
 					if (SBMLutilities.myParseFormula(ruleMath.getText().trim()).isBoolean()) {
-						JOptionPane.showMessageDialog(Gui.frame,
-								"Rule must evaluate to a number.", "Number Expected",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "Rule must evaluate to a number.", "Number Expected", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
 				}
 			}
 			if (!error) {
 				if (option.equals("OK")) {
-					String [] rul = new String[rules.getModel().getSize()];
-					for (int i=0;i<rules.getModel().getSize();i++) {
+					String[] rul = new String[rules.getModel().getSize()];
+					for (int i = 0; i < rules.getModel().getSize(); i++) {
 						rul[i] = rules.getModel().getElementAt(i).toString();
 					}
 					int index = rules.getSelectedIndex();
@@ -366,18 +350,13 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 							rul = sortRules(rul);
 						}
 						catch (Exception e) {
-							JOptionPane.showMessageDialog(Gui.frame,
-									"Cycle detected in assignments.", "Cycle Detected",
-									JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in assignments.", "Cycle Detected", JOptionPane.ERROR_MESSAGE);
 							error = true;
 						}
 					}
 					if (!error && SBMLutilities.checkCycles(document)) {
-						JOptionPane
-								.showMessageDialog(
-										Gui.frame,
-										"Cycle detected within initial assignments, assignment rules, and rate laws.",
-										"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "Cycle detected within initial assignments, assignment rules, and rate laws.",
+								"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
 					}
 					if (error) {
@@ -392,30 +371,28 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 					rules.setSelectedIndex(index);
 				}
 				else {
-					String [] rul = new String[rules.getModel().getSize()];
-					for (int i=0;i<rules.getModel().getSize();i++) {
+					String[] rul = new String[rules.getModel().getSize()];
+					for (int i = 0; i < rules.getModel().getSize(); i++) {
 						rul[i] = rules.getModel().getElementAt(i).toString();
-					}					JList add = new JList();
+					}
+					JList add = new JList();
 					int index = rules.getSelectedIndex();
 					String addStr;
 					if (ruleType.getSelectedItem().equals("Algebraic")) {
-						addStr = "0 = "
-								+ SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(ruleMath.getText().trim()));
+						addStr = "0 = " + SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(ruleMath.getText().trim()));
 					}
 					else if (ruleType.getSelectedItem().equals("Rate")) {
 						addStr = "d( " + addVar + " )/dt = "
 								+ SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(ruleMath.getText().trim()));
 					}
 					else {
-						addStr = addVar + " = "
-								+ SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(ruleMath.getText().trim()));
+						addStr = addVar + " = " + SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(ruleMath.getText().trim()));
 					}
 					Object[] adding = { addStr };
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					rules.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(rul, rules, add, false, null, null, null, null, null,
-							null, Gui.frame);
+					adding = Utility.add(rul, rules, add, false, null, null, null, null, null, null, Gui.frame);
 					String[] oldRul = rul;
 					rul = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
@@ -425,9 +402,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						rul = sortRules(rul);
 					}
 					catch (Exception e) {
-						JOptionPane.showMessageDialog(Gui.frame,
-								"Cycle detected in assignments.", "Cycle Detected",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "Cycle detected in assignments.", "Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
 						rul = oldRul;
 					}
@@ -451,11 +426,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 					if (!error && SBMLutilities.checkCycles(document)) {
-						JOptionPane
-								.showMessageDialog(
-										Gui.frame,
-										"Cycle detected within initial assignments, assignment rules, and rate laws.",
-										"Cycle Detected", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(Gui.frame, "Cycle detected within initial assignments, assignment rules, and rate laws.",
+								"Cycle Detected", JOptionPane.ERROR_MESSAGE);
 						error = true;
 						rul = oldRul;
 					}
@@ -476,9 +448,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				dirty.setValue(true);
 			}
 			if (error) {
-				value = JOptionPane.showOptionDialog(Gui.frame, rulePanel, "Rule Editor",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-						options[0]);
+				value = JOptionPane.showOptionDialog(Gui.frame, rulePanel, "Rule Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+						options, options[0]);
 			}
 		}
 		if (value == JOptionPane.NO_OPTION) {
@@ -499,8 +470,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			rules.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 			if (index < rules.getModel().getSize()) {
 				rules.setSelectedIndex(index);
-			} else {
-				rules.setSelectedIndex(index-1);
+			}
+			else {
+				rules.setSelectedIndex(index - 1);
 			}
 			dirty.setValue(true);
 		}
@@ -515,8 +487,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			String tempMath = selected.substring(4);
 			ListOf r = document.getModel().getListOfRules();
 			for (int i = 0; i < document.getModel().getNumRules(); i++) {
-				if ((((Rule) r.get(i)).isAlgebraic())
-						&& SBMLutilities.myFormulaToString(((Rule) r.get(i)).getMath()).equals(tempMath)) {
+				if ((((Rule) r.get(i)).isAlgebraic()) && SBMLutilities.myFormulaToString(((Rule) r.get(i)).getMath()).equals(tempMath)) {
 					r.remove(i);
 				}
 			}
@@ -527,8 +498,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			String tempMath = selected.substring(selected.indexOf('=') + 2);
 			ListOf r = document.getModel().getListOfRules();
 			for (int i = 0; i < document.getModel().getNumRules(); i++) {
-				if ((((Rule) r.get(i)).isRate())
-						&& SBMLutilities.myFormulaToString(((Rule) r.get(i)).getMath()).equals(tempMath)
+				if ((((Rule) r.get(i)).isRate()) && SBMLutilities.myFormulaToString(((Rule) r.get(i)).getMath()).equals(tempMath)
 						&& ((Rule) r.get(i)).getVariable().equals(tempVar)) {
 					r.remove(i);
 				}
@@ -540,8 +510,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			String tempMath = selected.substring(selected.indexOf('=') + 2);
 			ListOf r = document.getModel().getListOfRules();
 			for (int i = 0; i < document.getModel().getNumRules(); i++) {
-				if ((((Rule) r.get(i)).isAssignment())
-						&& SBMLutilities.myFormulaToString(((Rule) r.get(i)).getMath()).equals(tempMath)
+				if ((((Rule) r.get(i)).isAssignment()) && SBMLutilities.myFormulaToString(((Rule) r.get(i)).getMath()).equals(tempMath)
 						&& ((Rule) r.get(i)).getVariable().equals(tempVar)) {
 					r.remove(i);
 				}
@@ -570,15 +539,13 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		do {
 			progress = false;
 			for (int i = 0; i < rules.length; i++) {
-				if (used[i] || (rules[i].split(" ")[0].equals("0"))
-						|| (rules[i].split(" ")[0].equals("d(")))
+				if (used[i] || (rules[i].split(" ")[0].equals("0")) || (rules[i].split(" ")[0].equals("d(")))
 					continue;
 				String[] rule = rules[i].split(" ");
 				boolean insert = true;
 				for (int k = 1; k < rule.length; k++) {
 					for (int l = 0; l < rules.length; l++) {
-						if (used[l] || (rules[l].split(" ")[0].equals("0"))
-								|| (rules[l].split(" ")[0].equals("d(")))
+						if (used[l] || (rules[l].split(" ")[0].equals("0")) || (rules[l].split(" ")[0].equals("d(")))
 							continue;
 						String[] rule2 = rules[l].split(" ");
 						if (rule[k].equals(rule2[0])) {
@@ -609,7 +576,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Create comboBox for assignments rules
 	 */
@@ -621,7 +588,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getNumCompartments(); i++) {
 			String id = ((Compartment) ids.get(i)).getId();
 			if (!((Compartment) ids.get(i)).getConstant()) {
-				if (keepVarAssignRule(document,selected, id)) {
+				if (keepVarAssignRule(document, selected, id)) {
 					ruleVar.addItem(((Compartment) ids.get(i)).getId());
 					assignOK = true;
 				}
@@ -631,7 +598,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			String id = ((Parameter) ids.get(i)).getId();
 			if (!((Parameter) ids.get(i)).getConstant()) {
-				if (keepVarAssignRule(document,selected, id)) {
+				if (keepVarAssignRule(document, selected, id)) {
 					ruleVar.addItem(((Parameter) ids.get(i)).getId());
 					assignOK = true;
 				}
@@ -641,8 +608,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getNumSpecies(); i++) {
 			String id = ((Species) ids.get(i)).getId();
 			if (!((Species) ids.get(i)).getConstant()) {
-				if (keepVarAssignRule(document,selected, id))
-					if (((Species) ids.get(i)).getBoundaryCondition() || !SBMLutilities.usedInReaction(document,id)) {
+				if (keepVarAssignRule(document, selected, id))
+					if (((Species) ids.get(i)).getBoundaryCondition() || !SBMLutilities.usedInReaction(document, id)) {
 						ruleVar.addItem(((Species) ids.get(i)).getId());
 						assignOK = true;
 					}
@@ -654,10 +621,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			ListOf ids2 = reaction.getListOfReactants();
 			for (int j = 0; j < reaction.getNumReactants(); j++) {
 				SpeciesReference reactant = (SpeciesReference) ids2.get(j);
-				if ((reactant.isSetId()) && (!reactant.getId().equals(""))
-						&& !(reactant.getConstant())) {
+				if ((reactant.isSetId()) && (!reactant.getId().equals("")) && !(reactant.getConstant())) {
 					String id = reactant.getId();
-					if (keepVarAssignRule(document,selected, id)) {
+					if (keepVarAssignRule(document, selected, id)) {
 						ruleVar.addItem(id);
 						assignOK = true;
 					}
@@ -666,10 +632,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			ids2 = reaction.getListOfProducts();
 			for (int j = 0; j < reaction.getNumProducts(); j++) {
 				SpeciesReference product = (SpeciesReference) ids2.get(j);
-				if ((product.isSetId()) && (!product.getId().equals(""))
-						&& !(product.getConstant())) {
+				if ((product.isSetId()) && (!product.getId().equals("")) && !(product.getConstant())) {
 					String id = product.getId();
-					if (keepVarAssignRule(document,selected, id)) {
+					if (keepVarAssignRule(document, selected, id)) {
 						ruleVar.addItem(id);
 						assignOK = true;
 					}
@@ -690,7 +655,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getNumCompartments(); i++) {
 			String id = ((Compartment) ids.get(i)).getId();
 			if (!((Compartment) ids.get(i)).getConstant()) {
-				if (keepVarRateRule(document,selected, id)) {
+				if (keepVarRateRule(document, selected, id)) {
 					ruleVar.addItem(((Compartment) ids.get(i)).getId());
 					rateOK = true;
 				}
@@ -700,7 +665,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			String id = ((Parameter) ids.get(i)).getId();
 			if (!((Parameter) ids.get(i)).getConstant()) {
-				if (keepVarRateRule(document,selected, id)) {
+				if (keepVarRateRule(document, selected, id)) {
 					ruleVar.addItem(((Parameter) ids.get(i)).getId());
 					rateOK = true;
 				}
@@ -710,8 +675,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getNumSpecies(); i++) {
 			String id = ((Species) ids.get(i)).getId();
 			if (!((Species) ids.get(i)).getConstant()) {
-				if (keepVarRateRule(document,selected, id))
-					if (((Species) ids.get(i)).getBoundaryCondition() || !SBMLutilities.usedInReaction(document,id)) {
+				if (keepVarRateRule(document, selected, id))
+					if (((Species) ids.get(i)).getBoundaryCondition() || !SBMLutilities.usedInReaction(document, id)) {
 						ruleVar.addItem(((Species) ids.get(i)).getId());
 						rateOK = true;
 					}
@@ -723,10 +688,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			ListOf ids2 = reaction.getListOfReactants();
 			for (int j = 0; j < reaction.getNumReactants(); j++) {
 				SpeciesReference reactant = (SpeciesReference) ids2.get(j);
-				if ((reactant.isSetId()) && (!reactant.getId().equals(""))
-						&& !(reactant.getConstant())) {
+				if ((reactant.isSetId()) && (!reactant.getId().equals("")) && !(reactant.getConstant())) {
 					String id = reactant.getId();
-					if (keepVarRateRule(document,selected, id)) {
+					if (keepVarRateRule(document, selected, id)) {
 						ruleVar.addItem(id);
 						rateOK = true;
 					}
@@ -735,10 +699,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			ids2 = reaction.getListOfProducts();
 			for (int j = 0; j < reaction.getNumProducts(); j++) {
 				SpeciesReference product = (SpeciesReference) ids2.get(j);
-				if ((product.isSetId()) && (!product.getId().equals(""))
-						&& !(product.getConstant())) {
+				if ((product.isSetId()) && (!product.getId().equals("")) && !(product.getConstant())) {
 					String id = product.getId();
-					if (keepVarRateRule(document,selected, id)) {
+					if (keepVarRateRule(document, selected, id)) {
 						ruleVar.addItem(id);
 						rateOK = true;
 					}
@@ -755,12 +718,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		document.getModel().populateListFormulaUnitsData();
 		if (rule.containsUndeclaredUnits()) {
 			if (biosim.checkUndeclared) {
-				JOptionPane
-						.showMessageDialog(
-								Gui.frame,
-								"Rate rule contains literals numbers or parameters with undeclared units.\n"
-										+ "Therefore, it is not possible to completely verify the consistency of the units.",
-								"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Rate rule contains literals numbers or parameters with undeclared units.\n"
+						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
+						JOptionPane.WARNING_MESSAGE);
 			}
 			return false;
 		}
@@ -803,8 +763,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				unit.setMultiplier(1.0);
 			}
 			if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
-				JOptionPane.showMessageDialog(Gui.frame,
-						"Units on the left and right-hand side of the rate rule do not agree.",
+				JOptionPane.showMessageDialog(Gui.frame, "Units on the left and right-hand side of the rate rule do not agree.",
 						"Units Do Not Match", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
@@ -819,12 +778,9 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		document.getModel().populateListFormulaUnitsData();
 		if (rule.containsUndeclaredUnits()) {
 			if (biosim.checkUndeclared) {
-				JOptionPane
-						.showMessageDialog(
-								Gui.frame,
-								"Assignment rule contains literals numbers or parameters with undeclared units.\n"
-										+ "Therefore, it is not possible to completely verify the consistency of the units.",
-								"Contains Undeclared Units", JOptionPane.WARNING_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Assignment rule contains literals numbers or parameters with undeclared units.\n"
+						+ "Therefore, it is not possible to completely verify the consistency of the units.", "Contains Undeclared Units",
+						JOptionPane.WARNING_MESSAGE);
 			}
 			return false;
 		}
@@ -844,11 +800,8 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 				unitDefVar = parameter.getDerivedUnitDefinition();
 			}
 			if (!UnitDefinition.areEquivalent(unitDef, unitDefVar)) {
-				JOptionPane
-						.showMessageDialog(
-								Gui.frame,
-								"Units on the left and right-hand side of the assignment rule do not agree.",
-								"Units Do Not Match", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Units on the left and right-hand side of the assignment rule do not agree.",
+						"Units Do Not Match", JOptionPane.ERROR_MESSAGE);
 				return true;
 			}
 		}
@@ -858,7 +811,7 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Update rules
 	 */
-	private void updateRules(String [] rul) {
+	private void updateRules(String[] rul) {
 		ListOf r = document.getModel().getListOfRules();
 		while (document.getModel().getNumRules() > 0) {
 			r.remove(0);
@@ -882,14 +835,16 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 	}
 
 	/**
-	 * Determines if a variable is already in an initial assignment, assignment rule, or rate rule
+	 * Determines if a variable is already in an initial assignment, assignment
+	 * rule, or rate rule
 	 */
 	public static boolean keepVarAssignRule(SBMLDocument document, String selected, String id) {
 		if (!selected.equals(id)) {
 			ListOf ia = document.getModel().getListOfInitialAssignments();
 			for (int i = 0; i < document.getModel().getNumInitialAssignments(); i++) {
-				InitialAssignment init = (InitialAssignment)ia.get(i);
-				if (init.getSymbol().equals(id)) return false;
+				InitialAssignment init = (InitialAssignment) ia.get(i);
+				if (init.getSymbol().equals(id))
+					return false;
 			}
 			ListOf e = document.getModel().getListOfEvents();
 			for (int i = 0; i < document.getModel().getNumEvents(); i++) {
@@ -902,9 +857,11 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 			}
 			ListOf r = document.getModel().getListOfRules();
 			for (int i = 0; i < document.getModel().getNumRules(); i++) {
-				Rule rule = (Rule)r.get(i);
-				if (rule.isAssignment() && rule.getVariable().equals(id)) return false;
-				if (rule.isRate() && rule.getVariable().equals(id)) return false;
+				Rule rule = (Rule) r.get(i);
+				if (rule.isAssignment() && rule.getVariable().equals(id))
+					return false;
+				if (rule.isRate() && rule.getVariable().equals(id))
+					return false;
 			}
 		}
 		return true;
@@ -917,12 +874,13 @@ public class Rules extends JPanel implements ActionListener, MouseListener {
 		if (!selected.equals(id)) {
 			ListOf r = document.getModel().getListOfRules();
 			for (int i = 0; i < document.getModel().getNumRules(); i++) {
-				Rule rule = (Rule)r.get(i);
-				if (rule.isRate() && rule.getVariable().equals(id)) return false;
+				Rule rule = (Rule) r.get(i);
+				if (rule.isRate() && rule.getVariable().equals(id))
+					return false;
 			}
 		}
 		return true;
-	}	
+	}
 
 	public void actionPerformed(ActionEvent e) {
 		// if the add event button is clicked

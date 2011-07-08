@@ -34,7 +34,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener; 
+import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
-import java.util.regex.Pattern; 
+import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
 import javax.swing.ImageIcon;
@@ -78,7 +78,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.JViewport; 
+import javax.swing.JViewport;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -123,7 +123,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private JMenuBar menuBar;
 
-	private JMenu file, edit, view, tools, help, importMenu, exportMenu, newMenu, viewModel; // The file menu
+	private JMenu file, edit, view, tools, help, importMenu, exportMenu, newMenu, viewModel; // The
+																								// file
+																								// menu
 
 	private JMenuItem newProj; // The new menu item
 
@@ -152,7 +154,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem newSpice; // The new spice circuit item
 
 	private JMenuItem exit; // The exit menu item
-	
+
 	private JMenuItem importSbol;
 
 	private JMenuItem importSbml; // The import sbml menu item
@@ -193,8 +195,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private JMenuItem graph; // The graph menu item
 
-	private JMenuItem probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf, exportPng,
-			exportSvg, exportTsd;
+	private JMenuItem probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf, exportPng, exportSvg, exportTsd;
 
 	private String root; // The root directory
 
@@ -253,9 +254,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private String[] BioModelIds = null;
 
-	private JMenuItem copy, rename, delete, save, saveAs, check, run, refresh, viewCircuit, viewRules,
-			viewTrace, viewLog, viewCoverage, viewLHPN, saveModel, saveAsVerilog, viewSG, viewModGraph,
-			viewLearnedModel, viewModBrowser, createAnal, createLearn, createSbml, createSynth,
+	private JMenuItem copy, rename, delete, save, saveAs, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog, viewCoverage, viewLHPN,
+			saveModel, saveAsVerilog, viewSG, viewModGraph, viewLearnedModel, viewModBrowser, createAnal, createLearn, createSbml, createSynth,
 			createVer, close, closeAll;
 
 	public String ENVVAR;
@@ -354,18 +354,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		// Creates a new frame
 		if (lema) {
 			frame = new JFrame("LEMA");
-			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui" + separator + "icons"
-					+ separator + "LEMA.png").getImage());
+			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui" + separator + "icons" + separator + "LEMA.png").getImage());
 		}
 		else if (atacs) {
 			frame = new JFrame("ATACS");
-			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui" + separator + "icons"
-					+ separator + "ATACS.png").getImage());
+			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui" + separator + "icons" + separator + "ATACS.png").getImage());
 		}
 		else {
 			frame = new JFrame("iBioSim");
-			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui" + separator + "icons"
-					+ separator + "iBioSim.png").getImage());
+			frame.setIconImage(new ImageIcon(ENVVAR + separator + "gui" + separator + "icons" + separator + "iBioSim.png").getImage());
 		}
 
 		// Makes it so that clicking the x in the corner closes the program
@@ -624,8 +621,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		// ShortCutKey));
 		openProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ShortCutKey));
 		close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ShortCutKey));
-		closeAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ShortCutKey
-				| KeyEvent.SHIFT_MASK));
+		closeAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ShortCutKey | KeyEvent.SHIFT_MASK));
 		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
 		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey));
 		run.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ShortCutKey));
@@ -652,19 +648,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		Action importAction = new ImportAction();
 		Action exportAction = new ExportAction();
 		Action modelAction = new ModelAction();
-		newMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-				KeyStroke.getKeyStroke(KeyEvent.VK_N, ShortCutKey | KeyEvent.ALT_DOWN_MASK), "new");
+		newMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
+				.put(KeyStroke.getKeyStroke(KeyEvent.VK_N, ShortCutKey | KeyEvent.ALT_DOWN_MASK), "new");
 		newMenu.getActionMap().put("new", newAction);
-		importMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-				KeyStroke.getKeyStroke(KeyEvent.VK_I, ShortCutKey | KeyEvent.ALT_DOWN_MASK),
+		importMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_I, ShortCutKey | KeyEvent.ALT_DOWN_MASK),
 				"import");
 		importMenu.getActionMap().put("import", importAction);
-		exportMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-				KeyStroke.getKeyStroke(KeyEvent.VK_E, ShortCutKey | KeyEvent.ALT_DOWN_MASK),
+		exportMenu.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_E, ShortCutKey | KeyEvent.ALT_DOWN_MASK),
 				"export");
 		exportMenu.getActionMap().put("export", exportAction);
-		viewModel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-				KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey | KeyEvent.ALT_DOWN_MASK),
+		viewModel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey | KeyEvent.ALT_DOWN_MASK),
 				"model");
 		viewModel.getActionMap().put("model", modelAction);
 		// graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T,
@@ -804,7 +797,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (!async) {
 			newMenu.add(newGCMModel);
 			newMenu.add(newLhpn);
-			//newMenu.add(newSBMLModel);
+			// newMenu.add(newSBMLModel);
 		}
 		else if (atacs) {
 			newMenu.add(newVhdl);
@@ -1237,13 +1230,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (e.getID() == KeyEvent.KEY_TYPED) {
 					if (e.getKeyChar() == '') {
 						if (tab.getTabCount() > 0) {
-							KeyboardFocusManager.getCurrentKeyboardFocusManager()
-									.removeKeyEventDispatcher(dispatcher);
+							KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(dispatcher);
 							if (save(tab.getSelectedIndex(), 0) != 0) {
 								tab.remove(tab.getSelectedIndex());
 							}
-							KeyboardFocusManager.getCurrentKeyboardFocusManager()
-									.addKeyEventDispatcher(dispatcher);
+							KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(dispatcher);
 						}
 					}
 				}
@@ -1253,12 +1244,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(dispatcher);
 	}
 
-	//builds the edit>preferences panel
+	// builds the edit>preferences panel
 	public void preferences() {
 		if (!async) {
-			
-			
-			//sbml preferences
+
+			// sbml preferences
 			String[] Versions = { "L2V4", "L3V1" };
 			JLabel SBMLlabel = new JLabel("SBML Level/Version");
 			LevelVersion = new JComboBox(Versions);
@@ -1282,10 +1272,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else {
 				Units.setSelected(false);
 			}
-			
+
 			Preferences biosimrc = Preferences.userRoot();
-			
-			//general preferences
+
+			// general preferences
 			JCheckBox dialog = new JCheckBox("Use File Dialog");
 			if (biosimrc.get("biosim.general.file_browser", "").equals("FileDialog")) {
 				dialog.setSelected(true);
@@ -1300,77 +1290,49 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else {
 				icons.setSelected(true);
 			}
-			
-			//gcm preferences
-			final JTextField ACTIVED_VALUE = new JTextField(biosimrc.get(
-					"biosim.gcm.ACTIVED_VALUE", ""));
+
+			// gcm preferences
+			final JTextField ACTIVED_VALUE = new JTextField(biosimrc.get("biosim.gcm.ACTIVED_VALUE", ""));
 			final JTextField KACT_VALUE = new JTextField(biosimrc.get("biosim.gcm.KACT_VALUE", ""));
-			final JTextField KBASAL_VALUE = new JTextField(biosimrc.get("biosim.gcm.KBASAL_VALUE",
-					""));
+			final JTextField KBASAL_VALUE = new JTextField(biosimrc.get("biosim.gcm.KBASAL_VALUE", ""));
 			final JTextField KBIO_VALUE = new JTextField(biosimrc.get("biosim.gcm.KBIO_VALUE", ""));
-			final JTextField KDECAY_VALUE = new JTextField(biosimrc.get("biosim.gcm.KDECAY_VALUE",
-					""));
-			final JTextField COOPERATIVITY_VALUE = new JTextField(biosimrc.get(
-					"biosim.gcm.COOPERATIVITY_VALUE", ""));
-			final JTextField KASSOCIATION_VALUE = new JTextField(biosimrc.get(
-					"biosim.gcm.KASSOCIATION_VALUE", ""));
+			final JTextField KDECAY_VALUE = new JTextField(biosimrc.get("biosim.gcm.KDECAY_VALUE", ""));
+			final JTextField COOPERATIVITY_VALUE = new JTextField(biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", ""));
+			final JTextField KASSOCIATION_VALUE = new JTextField(biosimrc.get("biosim.gcm.KASSOCIATION_VALUE", ""));
 			final JTextField RNAP_VALUE = new JTextField(biosimrc.get("biosim.gcm.RNAP_VALUE", ""));
-			final JTextField PROMOTER_COUNT_VALUE = new JTextField(biosimrc.get(
-					"biosim.gcm.PROMOTER_COUNT_VALUE", ""));
-			final JTextField INITIAL_VALUE = new JTextField(biosimrc.get(
-					"biosim.gcm.INITIAL_VALUE", ""));
-			final JTextField MAX_DIMER_VALUE = new JTextField(biosimrc.get(
-					"biosim.gcm.MAX_DIMER_VALUE", ""));
+			final JTextField PROMOTER_COUNT_VALUE = new JTextField(biosimrc.get("biosim.gcm.PROMOTER_COUNT_VALUE", ""));
+			final JTextField INITIAL_VALUE = new JTextField(biosimrc.get("biosim.gcm.INITIAL_VALUE", ""));
+			final JTextField MAX_DIMER_VALUE = new JTextField(biosimrc.get("biosim.gcm.MAX_DIMER_VALUE", ""));
 			final JTextField OCR_VALUE = new JTextField(biosimrc.get("biosim.gcm.OCR_VALUE", ""));
-			final JTextField RNAP_BINDING_VALUE = new JTextField(biosimrc.get(
-					"biosim.gcm.RNAP_BINDING_VALUE", ""));
-			final JTextField ACTIVATED_RNAP_BINDING_VALUE = new JTextField(biosimrc.get(
-					"biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", ""));
+			final JTextField RNAP_BINDING_VALUE = new JTextField(biosimrc.get("biosim.gcm.RNAP_BINDING_VALUE", ""));
+			final JTextField ACTIVATED_RNAP_BINDING_VALUE = new JTextField(biosimrc.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", ""));
 			final JTextField KREP_VALUE = new JTextField(biosimrc.get("biosim.gcm.KREP_VALUE", ""));
-			final JTextField STOICHIOMETRY_VALUE = new JTextField(biosimrc.get(
-					"biosim.gcm.STOICHIOMETRY_VALUE", ""));
-			final JTextField KCOMPLEX_VALUE = new JTextField(biosimrc.get(
-					"biosim.gcm.KCOMPLEX_VALUE", ""));
-			final JTextField MEMDIFF_VALUE = new JTextField(biosimrc.get(
-					"biosim.gcm.MEMDIFF_VALUE", ""));
-			
+			final JTextField STOICHIOMETRY_VALUE = new JTextField(biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", ""));
+			final JTextField KCOMPLEX_VALUE = new JTextField(biosimrc.get("biosim.gcm.KCOMPLEX_VALUE", ""));
+			final JTextField MEMDIFF_VALUE = new JTextField(biosimrc.get("biosim.gcm.MEMDIFF_VALUE", ""));
+
 			JPanel labels = new JPanel(new GridLayout(15, 1));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVED_STRING)
-					+ " (" + GlobalConstants.ACTIVED_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KACT_STRING) + " ("
-					+ GlobalConstants.KACT_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBASAL_STRING)
-					+ " (" + GlobalConstants.KBASAL_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KDECAY_STRING)
-					+ " (" + GlobalConstants.KDECAY_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer
-					.getGuiName(GlobalConstants.COOPERATIVITY_STRING)
-					+ " (" + GlobalConstants.COOPERATIVITY_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_STRING) + " ("
-					+ GlobalConstants.RNAP_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer
-					.getGuiName(GlobalConstants.PROMOTER_COUNT_STRING)
-					+ " (" + GlobalConstants.PROMOTER_COUNT_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.INITIAL_STRING)
-					+ " (" + GlobalConstants.INITIAL_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.OCR_STRING) + " ("
-					+ GlobalConstants.OCR_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer
-					.getGuiName(GlobalConstants.RNAP_BINDING_STRING)
-					+ " (" + GlobalConstants.RNAP_BINDING_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer
-					.getGuiName(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)
-					+ " (" + GlobalConstants.ACTIVATED_RNAP_BINDING_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KREP_STRING) + " ("
-					+ GlobalConstants.KREP_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer
-					.getGuiName(GlobalConstants.STOICHIOMETRY_STRING)
-					+ " (" + GlobalConstants.STOICHIOMETRY_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KCOMPLEX_STRING)
-					+ " (" + GlobalConstants.KCOMPLEX_STRING + "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.MEMDIFF_STRING)
-					+ " (" + GlobalConstants.MEMDIFF_STRING + "):"));
-			
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVED_STRING) + " (" + GlobalConstants.ACTIVED_STRING + "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KACT_STRING) + " (" + GlobalConstants.KACT_STRING + "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBASAL_STRING) + " (" + GlobalConstants.KBASAL_STRING + "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KDECAY_STRING) + " (" + GlobalConstants.KDECAY_STRING + "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.COOPERATIVITY_STRING) + " (" + GlobalConstants.COOPERATIVITY_STRING
+					+ "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_STRING) + " (" + GlobalConstants.RNAP_STRING + "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.PROMOTER_COUNT_STRING) + " (" + GlobalConstants.PROMOTER_COUNT_STRING
+					+ "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.INITIAL_STRING) + " (" + GlobalConstants.INITIAL_STRING + "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.OCR_STRING) + " (" + GlobalConstants.OCR_STRING + "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_BINDING_STRING) + " (" + GlobalConstants.RNAP_BINDING_STRING
+					+ "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING) + " ("
+					+ GlobalConstants.ACTIVATED_RNAP_BINDING_STRING + "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KREP_STRING) + " (" + GlobalConstants.KREP_STRING + "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.STOICHIOMETRY_STRING) + " (" + GlobalConstants.STOICHIOMETRY_STRING
+					+ "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KCOMPLEX_STRING) + " (" + GlobalConstants.KCOMPLEX_STRING + "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.MEMDIFF_STRING) + " (" + GlobalConstants.MEMDIFF_STRING + "):"));
+
 			JPanel fields = new JPanel(new GridLayout(15, 1));
 			fields.add(ACTIVED_VALUE);
 			fields.add(KACT_VALUE);
@@ -1387,18 +1349,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			fields.add(STOICHIOMETRY_VALUE);
 			fields.add(KCOMPLEX_VALUE);
 			fields.add(MEMDIFF_VALUE);
-			
-			//create gcm preferences panel
+
+			// create gcm preferences panel
 			JPanel gcmPrefs = new JPanel(new GridLayout(1, 2));
 			gcmPrefs.add(labels);
 			gcmPrefs.add(fields);
-			
-			//analysis preferences
+
+			// analysis preferences
 			String[] choices = { "None", "Abstraction", "Logical Abstraction" };
 			JTextField simCommand = new JTextField(biosimrc.get("biosim.sim.command", ""));
 			final JComboBox abs = new JComboBox(choices);
 			abs.setSelectedItem(biosimrc.get("biosim.sim.abs", ""));
-			
+
 			if (abs.getSelectedItem().equals("None")) {
 				choices = new String[] { "ODE", "Monte Carlo", "SBML", "Network", "Browser" };
 			}
@@ -1406,28 +1368,25 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				choices = new String[] { "ODE", "Monte Carlo", "SBML", "Network", "Browser" };
 			}
 			else {
-				choices = new String[] { "Monte Carlo", "Markov", "SBML", "Network", "Browser",
-						"LPN" };
+				choices = new String[] { "Monte Carlo", "Markov", "SBML", "Network", "Browser", "LPN" };
 			}
-			
+
 			final JComboBox type = new JComboBox(choices);
 			type.setSelectedItem(biosimrc.get("biosim.sim.type", ""));
-			
+
 			if (type.getSelectedItem().equals("ODE")) {
 				choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
 			}
 			else if (type.getSelectedItem().equals("Monte Carlo")) {
-				choices = new String[] { "gillespie", "gillespieJava", "mpde", "mp", "mp-adaptive",
-						"mp-event", "emc-sim", "bunker", "nmc" };
+				choices = new String[] { "gillespie", "gillespieJava", "mpde", "mp", "mp-adaptive", "mp-event", "emc-sim", "bunker", "nmc" };
 			}
 			else if (type.getSelectedItem().equals("Markov")) {
-				choices = new String[] { "steady-state-markov-chain-analysis",
-						"transient-markov-chain-analysis", "atacs", "ctmc-transient" };
+				choices = new String[] { "steady-state-markov-chain-analysis", "transient-markov-chain-analysis", "atacs", "ctmc-transient" };
 			}
 			else {
 				choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
 			}
-			
+
 			final JComboBox sim = new JComboBox(choices);
 			sim.setSelectedItem(biosimrc.get("biosim.sim.sim", ""));
 			abs.addActionListener(new ActionListener() {
@@ -1465,7 +1424,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 			});
-			
+
 			type.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 					if (type.getSelectedItem() == null) {
@@ -1519,7 +1478,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 			});
-			
+
 			JTextField limit = new JTextField(biosimrc.get("biosim.sim.limit", ""));
 			JTextField interval = new JTextField(biosimrc.get("biosim.sim.interval", ""));
 			JTextField minStep = new JTextField(biosimrc.get("biosim.sim.min.step", ""));
@@ -1534,7 +1493,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			choices = new String[] { "Print Interval", "Minimum Print Interval", "Number Of Steps" };
 			JComboBox useInterval = new JComboBox(choices);
 			useInterval.setSelectedItem(biosimrc.get("biosim.sim.useInterval", ""));
-			
+
 			JPanel analysisLabels = new JPanel(new GridLayout(15, 1));
 			analysisLabels.add(new JLabel("Simulation Command:"));
 			analysisLabels.add(new JLabel("Abstraction:"));
@@ -1551,7 +1510,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			analysisLabels.add(new JLabel("Rapid Equilibrium Cojdition 2:"));
 			analysisLabels.add(new JLabel("QSSA Condition:"));
 			analysisLabels.add(new JLabel("Max Concentration Threshold:"));
-			
+
 			JPanel analysisFields = new JPanel(new GridLayout(15, 1));
 			analysisFields.add(simCommand);
 			analysisFields.add(abs);
@@ -1568,13 +1527,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			analysisFields.add(rapid2);
 			analysisFields.add(qssa);
 			analysisFields.add(concentration);
-			
-			//create analysis preferences panel
+
+			// create analysis preferences panel
 			JPanel analysisPrefs = new JPanel(new GridLayout(1, 2));
 			analysisPrefs.add(analysisLabels);
 			analysisPrefs.add(analysisFields);
-			
-			//learning preferences
+
+			// learning preferences
 			final JTextField tn = new JTextField(biosimrc.get("biosim.learn.tn", ""));
 			final JTextField tj = new JTextField(biosimrc.get("biosim.learn.tj", ""));
 			final JTextField ti = new JTextField(biosimrc.get("biosim.learn.ti", ""));
@@ -1600,7 +1559,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			choices = new String[] { "True", "False" };
 			final JComboBox findbaseprob = new JComboBox(choices);
 			findbaseprob.setSelectedItem(biosimrc.get("biosim.learn.findbaseprob", ""));
-			
+
 			JPanel learnLabels = new JPanel(new GridLayout(13, 1));
 			learnLabels.add(new JLabel("Minimum Number Of Initial Vectors (Tn):"));
 			learnLabels.add(new JLabel("Maximum Influence Vector Size (Tj):"));
@@ -1615,7 +1574,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			learnLabels.add(new JLabel("Debug Level:"));
 			learnLabels.add(new JLabel("Successors Or Predecessors:"));
 			learnLabels.add(new JLabel("Basic FindBaseProb:"));
-			
+
 			JPanel learnFields = new JPanel(new GridLayout(13, 1));
 			learnFields.add(tn);
 			learnFields.add(tj);
@@ -1630,21 +1589,21 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			learnFields.add(debug);
 			learnFields.add(succpred);
 			learnFields.add(findbaseprob);
-			
-			//create learning preferences panel
+
+			// create learning preferences panel
 			JPanel learnPrefs = new JPanel(new GridLayout(1, 2));
 			learnPrefs.add(learnLabels);
 			learnPrefs.add(learnFields);
-			
-			//create general preferences panel
+
+			// create general preferences panel
 			JPanel generalPrefsBordered = new JPanel(new BorderLayout());
 			JPanel generalPrefs = new JPanel();
 			generalPrefsBordered.add(dialog, "North");
 			generalPrefsBordered.add(icons, "Center");
 			generalPrefs.add(generalPrefsBordered);
 			((FlowLayout) generalPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
-			
-			//create sbml preferences panel
+
+			// create sbml preferences panel
 			JPanel sbmlPrefsBordered = new JPanel(new BorderLayout());
 			JPanel sbmlPrefs = new JPanel();
 			JPanel levelPrefs = new JPanel(new GridLayout(1, 2));
@@ -1655,21 +1614,20 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			sbmlPrefsBordered.add(Units, "South");
 			sbmlPrefs.add(sbmlPrefsBordered);
 			((FlowLayout) sbmlPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
-			
-			//create tabs
+
+			// create tabs
 			JTabbedPane prefTabs = new JTabbedPane();
 			prefTabs.addTab("General Preferences", generalPrefs);
 			prefTabs.addTab("SBML Preferences", sbmlPrefs);
 			prefTabs.addTab("GCM Preferences", gcmPrefs);
 			prefTabs.addTab("Analysis Preferences", analysisPrefs);
 			prefTabs.addTab("Learn Preferences", learnPrefs);
-			
+
 			Object[] options = { "Save", "Cancel" };
-			int value = JOptionPane
-					.showOptionDialog(frame, prefTabs, "Preferences", JOptionPane.YES_NO_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-			
-			//if user hits "save", store and/or check new data
+			int value = JOptionPane.showOptionDialog(frame, prefTabs, "Preferences", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+					options, options[0]);
+
+			// if user hits "save", store and/or check new data
 			if (value == JOptionPane.YES_OPTION) {
 				if (dialog.isSelected()) {
 					biosimrc.put("biosim.general.file_browser", "FileDialog");
@@ -1713,7 +1671,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					checkUnits = false;
 					biosimrc.put("biosim.check.units", "false");
 				}
-				
+
 				try {
 					Double.parseDouble(KREP_VALUE.getText().trim());
 					biosimrc.put("biosim.gcm.KREP_VALUE", KREP_VALUE.getText().trim());
@@ -1734,15 +1692,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				try {
 					Double.parseDouble(PROMOTER_COUNT_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.PROMOTER_COUNT_VALUE", PROMOTER_COUNT_VALUE.getText()
-							.trim());
+					biosimrc.put("biosim.gcm.PROMOTER_COUNT_VALUE", PROMOTER_COUNT_VALUE.getText().trim());
 				}
 				catch (Exception e1) {
 				}
 				try {
 					Double.parseDouble(KASSOCIATION_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.KASSOCIATION_VALUE", KASSOCIATION_VALUE.getText()
-							.trim());
+					biosimrc.put("biosim.gcm.KASSOCIATION_VALUE", KASSOCIATION_VALUE.getText().trim());
 				}
 				catch (Exception e1) {
 				}
@@ -1772,22 +1728,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				try {
 					Double.parseDouble(RNAP_BINDING_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.RNAP_BINDING_VALUE", RNAP_BINDING_VALUE.getText()
-							.trim());
+					biosimrc.put("biosim.gcm.RNAP_BINDING_VALUE", RNAP_BINDING_VALUE.getText().trim());
 				}
 				catch (Exception e1) {
 				}
 				try {
 					Double.parseDouble(ACTIVATED_RNAP_BINDING_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE",
-							ACTIVATED_RNAP_BINDING_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", ACTIVATED_RNAP_BINDING_VALUE.getText().trim());
 				}
 				catch (Exception e1) {
 				}
 				try {
 					Double.parseDouble(STOICHIOMETRY_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.STOICHIOMETRY_VALUE", STOICHIOMETRY_VALUE.getText()
-							.trim());
+					biosimrc.put("biosim.gcm.STOICHIOMETRY_VALUE", STOICHIOMETRY_VALUE.getText().trim());
 				}
 				catch (Exception e1) {
 				}
@@ -1799,8 +1752,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				try {
 					Double.parseDouble(COOPERATIVITY_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.COOPERATIVITY_VALUE", COOPERATIVITY_VALUE.getText()
-							.trim());
+					biosimrc.put("biosim.gcm.COOPERATIVITY_VALUE", COOPERATIVITY_VALUE.getText().trim());
 				}
 				catch (Exception e1) {
 				}
@@ -1963,12 +1915,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 			}
-			//if user clicks "cancel"
+			// if user clicks "cancel"
 			else {
 			}
 		}
-		
-		//if (async)
+
+		// if (async)
 		else {
 			Preferences biosimrc = Preferences.userRoot();
 			JPanel prefPanel = new JPanel(new GridLayout(0, 2));
@@ -2008,9 +1960,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			((FlowLayout) generalPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
 			prefPanel.add(generalPrefs);
 			Object[] options = { "Save", "Cancel" };
-			int value = JOptionPane
-					.showOptionDialog(frame, prefPanel, "Preferences", JOptionPane.YES_NO_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			int value = JOptionPane.showOptionDialog(frame, prefPanel, "Preferences", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+					options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				viewer = viewerField.getText();
 				biosimrc.put("biosim.general.viewer", viewer);
@@ -2070,8 +2021,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		credits.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Object[] options = { "Close" };
-				JOptionPane.showOptionDialog(f, developers, "Credits", JOptionPane.YES_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				JOptionPane.showOptionDialog(f, developers, "Credits", JOptionPane.YES_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
 		});
 		JButton close = new JButton("Close");
@@ -2089,16 +2039,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		uOfUPanel.add(version, "Center");
 		uOfUPanel.add(uOfU, "South");
 		if (lema) {
-			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(ENVVAR + separator
-					+ "gui" + separator + "icons" + separator + "LEMA.png")), "North");
+			aboutPanel.add(new javax.swing.JLabel(
+					new javax.swing.ImageIcon(ENVVAR + separator + "gui" + separator + "icons" + separator + "LEMA.png")), "North");
 		}
 		else if (atacs) {
-			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(ENVVAR + separator
-					+ "gui" + separator + "icons" + separator + "ATACS.png")), "North");
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(ENVVAR + separator + "gui" + separator + "icons" + separator
+					+ "ATACS.png")), "North");
 		}
 		else {
-			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(ENVVAR + separator
-					+ "gui" + separator + "icons" + separator + "iBioSim.png")), "North");
+			aboutPanel.add(new javax.swing.JLabel(new javax.swing.ImageIcon(ENVVAR + separator + "gui" + separator + "icons" + separator
+					+ "iBioSim.png")), "North");
 		}
 		// aboutPanel.add(bioSim, "North");
 		aboutPanel.add(uOfUPanel, "Center");
@@ -2250,16 +2200,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getSource() == close && tab.getSelectedComponent() != null) {
 			Component comp = tab.getSelectedComponent();
 			Point point = comp.getLocation();
-			tab.fireCloseTabEvent(new MouseEvent(comp, e.getID(), e.getWhen(), e.getModifiers(),
-					point.x, point.y, 0, false), tab.getSelectedIndex());
+			tab.fireCloseTabEvent(new MouseEvent(comp, e.getID(), e.getWhen(), e.getModifiers(), point.x, point.y, 0, false), tab.getSelectedIndex());
 		}
 		else if (e.getSource() == closeAll) {
 			while (tab.getSelectedComponent() != null) {
 				int index = tab.getSelectedIndex();
 				Component comp = tab.getComponent(index);
 				Point point = comp.getLocation();
-				tab.fireCloseTabEvent(new MouseEvent(comp, e.getID(), e.getWhen(),
-						e.getModifiers(), point.x, point.y, 0, false), index);
+				tab.fireCloseTabEvent(new MouseEvent(comp, e.getID(), e.getWhen(), e.getModifiers(), point.x, point.y, 0, false), index);
 			}
 		}
 		else if (e.getSource() == viewRules) {
@@ -2383,8 +2331,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				exec.exec(command + theFile, null, work);
 			}
 			catch (IOException e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to open manual.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Unable to open manual.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// if the exit menu item is selected
@@ -2440,9 +2387,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			catch (Exception e1) {
 				e1.printStackTrace();
-				JOptionPane.showMessageDialog(frame,
-						"You must select a valid lpn file for simulation.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "You must select a valid lpn file for simulation.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 
 		}
@@ -2453,9 +2398,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			catch (Exception e1) {
 				e1.printStackTrace();
-				JOptionPane.showMessageDialog(frame,
-						"You must select a valid gcm file for simulation.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "You must select a valid gcm file for simulation.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// if the simulate popup menu is selected on an sbml file
@@ -2465,9 +2408,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			catch (Exception e1) {
 				e1.printStackTrace();
-				JOptionPane.showMessageDialog(frame,
-						"You must select a valid sbml file for simulation.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "You must select a valid sbml file for simulation.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// if the synthesis popup menu is selected on a vhdl or lhpn file
@@ -2482,8 +2423,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						break;
 					}
 				}
-				String synthName = JOptionPane.showInputDialog(frame, "Enter Synthesis ID:",
-						"Synthesis View ID", JOptionPane.PLAIN_MESSAGE);
+				String synthName = JOptionPane.showInputDialog(frame, "Enter Synthesis ID:", "Synthesis View ID", JOptionPane.PLAIN_MESSAGE);
 				if (synthName != null && !synthName.trim().equals("")) {
 					synthName = synthName.trim();
 					try {
@@ -2493,24 +2433,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							String[] getFilename = sbmlFile.split(separator);
 							String circuitFileNoPath = getFilename[getFilename.length - 1];
 							try {
-								FileOutputStream out = new FileOutputStream(new File(root
-										+ separator + synthName.trim() + separator
+								FileOutputStream out = new FileOutputStream(new File(root + separator + synthName.trim() + separator
 										+ synthName.trim() + ".syn"));
-								out
-										.write(("synthesis.file=" + circuitFileNoPath + "\n")
-												.getBytes());
+								out.write(("synthesis.file=" + circuitFileNoPath + "\n").getBytes());
 								out.close();
 							}
 							catch (IOException e1) {
-								JOptionPane.showMessageDialog(frame,
-										"Unable to save parameter file!", "Error Saving File",
-										JOptionPane.ERROR_MESSAGE);
+								JOptionPane
+										.showMessageDialog(frame, "Unable to save parameter file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
 							}
 							try {
-								FileInputStream in = new FileInputStream(new File(root + separator
-										+ circuitFileNoPath));
-								FileOutputStream out = new FileOutputStream(new File(root
-										+ separator + synthName.trim() + separator
+								FileInputStream in = new FileInputStream(new File(root + separator + circuitFileNoPath));
+								FileOutputStream out = new FileOutputStream(new File(root + separator + synthName.trim() + separator
 										+ circuitFileNoPath));
 								int read = in.read();
 								while (read != -1) {
@@ -2521,14 +2455,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								out.close();
 							}
 							catch (Exception e1) {
-								JOptionPane.showMessageDialog(frame,
-										"Unable to copy circuit file!", "Error Saving File",
-										JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(frame, "Unable to copy circuit file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
 							}
 							addToTree(synthName.trim());
 							String work = root + separator + synthName;
-							String circuitFile = root + separator + synthName.trim() + separator
-									+ circuitFileNoPath;
+							String circuitFile = root + separator + synthName.trim() + separator + circuitFileNoPath;
 							JPanel synthPane = new JPanel();
 							Synthesis synth = new Synthesis(work, circuitFile, log, this);
 							synthPane.add(synth);
@@ -2536,15 +2467,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame,
-								"Unable to create Synthesis View directory.", "Error",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, "Unable to create Synthesis View directory.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
 			else {
-				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// if the verify popup menu is selected on a vhdl or lhpn file
@@ -2559,8 +2487,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						break;
 					}
 				}
-				String verName = JOptionPane.showInputDialog(frame, "Enter Verification ID:",
-						"Verification View ID", JOptionPane.PLAIN_MESSAGE);
+				String verName = JOptionPane.showInputDialog(frame, "Enter Verification ID:", "Verification View ID", JOptionPane.PLAIN_MESSAGE);
 				if (verName != null && !verName.trim().equals("")) {
 					verName = verName.trim();
 					// try {
@@ -2570,26 +2497,23 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						String[] getFilename = sbmlFile.split(separator);
 						String circuitFileNoPath = getFilename[getFilename.length - 1];
 						try {
-							FileOutputStream out = new FileOutputStream(new File(root + separator
-									+ verName.trim() + separator + verName.trim() + ".ver"));
+							FileOutputStream out = new FileOutputStream(new File(root + separator + verName.trim() + separator + verName.trim()
+									+ ".ver"));
 							out.write(("verification.file=" + circuitFileNoPath + "\n").getBytes());
 							out.close();
 						}
 						catch (IOException e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
-									"Error Saving File", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(frame, "Unable to save parameter file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
 						}
 						addToTree(verName.trim());
-						Verification verify = new Verification(root + separator + verName, verName,
-								circuitFileNoPath, log, this, lema, atacs);
+						Verification verify = new Verification(root + separator + verName, verName, circuitFileNoPath, log, this, lema, atacs);
 						verify.save();
 						addTab(verName, verify, "Verification");
 					}
 				}
 			}
 			else {
-				JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "You must open or create a project first.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// if the delete popup menu is selected
@@ -2598,10 +2522,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getActionCommand().equals("openLPN")) {
 			openLPN();
-		}	
+		}
 		else if (e.getActionCommand().equals("browseSbol")) {
 			openSBOL();
-		}	
+		}
 		// if the edit popup menu is selected on a dot file
 		else if (e.getActionCommand().equals("gcmEditor")) {
 			openGCM(false);
@@ -2636,12 +2560,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						return;
 					}
 				}
-				JOptionPane.showMessageDialog(frame, "State graph file has not been generated.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "State graph file has not been generated.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Error viewing state graph.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Error viewing state graph.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		else if (e.getActionCommand().equals("graphTree")) {
@@ -2716,21 +2638,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						scrolls.setMinimumSize(new Dimension(500, 500));
 						scrolls.setPreferredSize(new Dimension(500, 500));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(frame, scrolls, "Log",
-								JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(frame, scrolls, "Log", JOptionPane.INFORMATION_MESSAGE);
 					}
 					return;
 				}
-				if (out.length() > 4
-						&& out.substring(out.length() - 5, out.length()).equals(".sbml")) {
+				if (out.length() > 4 && out.substring(out.length() - 5, out.length()).equals(".sbml")) {
 					out = out.substring(0, out.length() - 5);
 				}
-				else if (out.length() > 3
-						&& out.substring(out.length() - 4, out.length()).equals(".xml")) {
+				else if (out.length() > 3 && out.substring(out.length() - 4, out.length()).equals(".xml")) {
 					out = out.substring(0, out.length() - 4);
 				}
-				else if (out.length() > 3
-						&& out.substring(out.length() - 4, out.length()).equals(".gcm")) {
+				else if (out.length() > 3 && out.substring(out.length() - 4, out.length()).equals(".gcm")) {
 					try {
 						if (System.getProperty("os.name").contentEquals("Linux")) {
 							log.addText("Executing:\ndotty " + directory + theFile + "\n");
@@ -2752,8 +2670,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						return;
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to view this gcm file.",
-								"Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, "Unable to view this gcm file.", "Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
@@ -2761,15 +2678,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
 				JList empty = new JList();
-				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1,
-						new String[0], new String[0], "tsd.printer", "amount",
-						(directory + theFile).split(separator), "none", frame, directory + theFile,
-						0.1, 0.1, 0.1, 15, dummy, "", dummy, null, empty, empty, empty, null);
-				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out
-						+ ".dot " + directory + theFile + "\n");
+				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, new String[0], new String[0], "tsd.printer", "amount",
+						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, dummy, "", dummy, null, empty,
+						empty, empty, null);
+				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot "
-						+ theFile, null, work);
+				Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot " + theFile, null, work);
 				String error = "";
 				String output = "";
 				InputStream reb = graph.getErrorStream();
@@ -2809,23 +2723,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				String remove;
 				if (theFile.substring(theFile.length() - 4).equals("sbml")) {
-					remove = (directory + theFile).substring(0, (directory + theFile).length() - 4)
-							+ "properties";
+					remove = (directory + theFile).substring(0, (directory + theFile).length() - 4) + "properties";
 				}
 				else {
-					remove = (directory + theFile).substring(0, (directory + theFile).length() - 4)
-							+ ".properties";
+					remove = (directory + theFile).substring(0, (directory + theFile).length() - 4) + ".properties";
 				}
 				System.gc();
 				new File(remove).delete();
 			}
 			catch (InterruptedException e1) {
-				JOptionPane.showMessageDialog(frame, "Error graphing SBML file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Error graphing SBML file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			catch (IOException e1) {
-				JOptionPane.showMessageDialog(frame, "Error graphing SBML file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Error graphing SBML file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		else if (e.getSource() == viewLearnedModel) {
@@ -2856,10 +2766,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab
-						.getTitleAt(i)
-						.equals(
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+				if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0) {
 						return;
@@ -2919,21 +2826,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						scrolls.setMinimumSize(new Dimension(500, 500));
 						scrolls.setPreferredSize(new Dimension(500, 500));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(frame, scrolls, "Log",
-								JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(frame, scrolls, "Log", JOptionPane.INFORMATION_MESSAGE);
 					}
 					return;
 				}
-				if (out.length() > 4
-						&& out.substring(out.length() - 5, out.length()).equals(".sbml")) {
+				if (out.length() > 4 && out.substring(out.length() - 5, out.length()).equals(".sbml")) {
 					out = out.substring(0, out.length() - 5);
 				}
-				else if (out.length() > 3
-						&& out.substring(out.length() - 4, out.length()).equals(".xml")) {
+				else if (out.length() > 3 && out.substring(out.length() - 4, out.length()).equals(".xml")) {
 					out = out.substring(0, out.length() - 4);
 				}
-				else if (out.length() > 3
-						&& out.substring(out.length() - 4, out.length()).equals(".gcm")) {
+				else if (out.length() > 3 && out.substring(out.length() - 4, out.length()).equals(".gcm")) {
 					try {
 						if (System.getProperty("os.name").contentEquals("Linux")) {
 							log.addText("Executing:\ndotty " + directory + theFile + "\n");
@@ -2955,8 +2858,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						return;
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to view this gcm file.",
-								"Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, "Unable to view this gcm file.", "Error", JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
@@ -2964,15 +2866,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JCheckBox dummy = new JCheckBox();
 				dummy.setSelected(false);
 				JList empty = new JList();
-				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1,
-						new String[0], new String[0], "tsd.printer", "amount",
-						(directory + theFile).split(separator), "none", frame, directory + theFile,
-						0.1, 0.1, 0.1, 15, dummy, "", dummy, null, empty, empty, empty, null);
-				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out
-						+ ".dot " + directory + theFile + "\n");
+				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, new String[0], new String[0], "tsd.printer", "amount",
+						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, dummy, "", dummy, null, empty,
+						empty, empty, null);
+				log.addText("Executing:\nreb2sac --target.encoding=dot --out=" + directory + out + ".dot " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot "
-						+ theFile, null, work);
+				Process graph = exec.exec("reb2sac --target.encoding=dot --out=" + out + ".dot " + theFile, null, work);
 				String error = "";
 				String output = "";
 				InputStream reb = graph.getErrorStream();
@@ -3012,23 +2911,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				String remove;
 				if (theFile.substring(theFile.length() - 4).equals("sbml")) {
-					remove = (directory + theFile).substring(0, (directory + theFile).length() - 4)
-							+ "properties";
+					remove = (directory + theFile).substring(0, (directory + theFile).length() - 4) + "properties";
 				}
 				else {
-					remove = (directory + theFile).substring(0, (directory + theFile).length() - 4)
-							+ ".properties";
+					remove = (directory + theFile).substring(0, (directory + theFile).length() - 4) + ".properties";
 				}
 				System.gc();
 				new File(remove).delete();
 			}
 			catch (IOException e1) {
-				JOptionPane.showMessageDialog(frame, "Error graphing sbml file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Error graphing sbml file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 			catch (InterruptedException e1) {
-				JOptionPane.showMessageDialog(frame, "Error graphing sbml file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Error graphing sbml file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// if the browse popup menu is selected on an sbml file
@@ -3047,10 +2942,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				theFile = filename.substring(filename.lastIndexOf('\\') + 1);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab
-						.getTitleAt(i)
-						.equals(
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+				if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0) {
 						return;
@@ -3064,8 +2956,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (out.length() > 4 && out.substring(out.length() - 5, out.length()).equals(".sbml")) {
 				out = out.substring(0, out.length() - 5);
 			}
-			else if (out.length() > 3
-					&& out.substring(out.length() - 4, out.length()).equals(".xml")) {
+			else if (out.length() > 3 && out.substring(out.length() - 4, out.length()).equals(".xml")) {
 				out = out.substring(0, out.length() - 4);
 			}
 			try {
@@ -3073,16 +2964,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JCheckBox dummy = new JCheckBox();
 				JList empty = new JList();
 				dummy.setSelected(false);
-				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1,
-						new String[0], new String[0], "tsd.printer", "amount",
-						(directory + theFile).split(separator), "none", frame, directory + theFile,
-						0.1, 0.1, 0.1, 15, dummy, "", dummy, null, empty, empty, empty, null);
+				run.createProperties(0, "Print Interval", 1, 1, 1, 1, directory, 314159, 1, new String[0], new String[0], "tsd.printer", "amount",
+						(directory + theFile).split(separator), "none", frame, directory + theFile, 0.1, 0.1, 0.1, 15, dummy, "", dummy, null, empty,
+						empty, empty, null);
 
-				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + directory + out
-						+ ".xhtml " + directory + theFile + "\n");
+				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + directory + out + ".xhtml " + directory + theFile + "\n");
 				Runtime exec = Runtime.getRuntime();
-				Process browse = exec.exec("reb2sac --target.encoding=xhtml --out=" + out
-						+ ".xhtml " + theFile, null, work);
+				Process browse = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, null, work);
 				String error = "";
 				String output = "";
 				InputStream reb = browse.getErrorStream();
@@ -3123,19 +3011,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				String remove;
 				if (theFile.substring(theFile.length() - 4).equals("sbml")) {
-					remove = (directory + theFile).substring(0, (directory + theFile).length() - 4)
-							+ "properties";
+					remove = (directory + theFile).substring(0, (directory + theFile).length() - 4) + "properties";
 				}
 				else {
-					remove = (directory + theFile).substring(0, (directory + theFile).length() - 4)
-							+ ".properties";
+					remove = (directory + theFile).substring(0, (directory + theFile).length() - 4) + ".properties";
 				}
 				System.gc();
 				new File(remove).delete();
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Error viewing SBML file in a browser.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Error viewing SBML file in a browser.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		// if the save button is pressed on the Tool Bar
@@ -3170,8 +3055,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						((LearnLHPN) component).save();
 					}
 					else if (component instanceof DataManager) {
-						((DataManager) component).saveChanges(((JTabbedPane) comp)
-								.getTitleAt(index));
+						((DataManager) component).saveChanges(((JTabbedPane) comp).getTitleAt(index));
 					}
 					else if (component instanceof SBML_Editor) {
 						((SBML_Editor) component).save(false, "", true, true);
@@ -3214,8 +3098,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					this.updateAsyncViews(fileName);
 				}
 				catch (Exception e1) {
-					JOptionPane.showMessageDialog(frame, "Error saving file " + fileName, "Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Error saving file " + fileName, "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -3224,8 +3107,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Component comp = tab.getSelectedComponent();
 			// int index = tab.getSelectedIndex();
 			if (comp instanceof LHPNEditor) {
-				String newName = JOptionPane.showInputDialog(frame, "Enter LPN name:", "LPN Name",
-						JOptionPane.PLAIN_MESSAGE);
+				String newName = JOptionPane.showInputDialog(frame, "Enter LPN name:", "LPN Name", JOptionPane.PLAIN_MESSAGE);
 				if (newName == null) {
 					return;
 				}
@@ -3236,8 +3118,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				tab.setTitleAt(tab.getSelectedIndex(), newName);
 			}
 			else if (comp instanceof GCM2SBMLEditor) {
-				String newName = JOptionPane.showInputDialog(frame, "Enter GCM name:", "GCM Name",
-						JOptionPane.PLAIN_MESSAGE);
+				String newName = JOptionPane.showInputDialog(frame, "Enter GCM name:", "GCM Name", JOptionPane.PLAIN_MESSAGE);
 				if (newName == null) {
 					return;
 				}
@@ -3271,8 +3152,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				String fileName = tab.getTitleAt(tab.getSelectedIndex());
 				String newName = "";
 				if (fileName.endsWith(".vhd")) {
-					newName = JOptionPane.showInputDialog(frame, "Enter VHDL name:", "VHDL Name",
-							JOptionPane.PLAIN_MESSAGE);
+					newName = JOptionPane.showInputDialog(frame, "Enter VHDL name:", "VHDL Name", JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
 					}
@@ -3281,8 +3161,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				else if (fileName.endsWith(".s")) {
-					newName = JOptionPane.showInputDialog(frame, "Enter Assembly File Name:",
-							"Assembly File Name", JOptionPane.PLAIN_MESSAGE);
+					newName = JOptionPane.showInputDialog(frame, "Enter Assembly File Name:", "Assembly File Name", JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
 					}
@@ -3291,8 +3170,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				else if (fileName.endsWith(".inst")) {
-					newName = JOptionPane.showInputDialog(frame, "Enter Instruction File Name:",
-							"Instruction File Name", JOptionPane.PLAIN_MESSAGE);
+					newName = JOptionPane.showInputDialog(frame, "Enter Instruction File Name:", "Instruction File Name", JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
 					}
@@ -3301,8 +3179,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				else if (fileName.endsWith(".g")) {
-					newName = JOptionPane.showInputDialog(frame, "Enter Petri net name:",
-							"Petri net Name", JOptionPane.PLAIN_MESSAGE);
+					newName = JOptionPane.showInputDialog(frame, "Enter Petri net name:", "Petri net Name", JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
 					}
@@ -3311,8 +3188,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				else if (fileName.endsWith(".csp")) {
-					newName = JOptionPane.showInputDialog(frame, "Enter CSP name:", "CSP Name",
-							JOptionPane.PLAIN_MESSAGE);
+					newName = JOptionPane.showInputDialog(frame, "Enter CSP name:", "CSP Name", JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
 					}
@@ -3321,8 +3197,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				else if (fileName.endsWith(".hse")) {
-					newName = JOptionPane.showInputDialog(frame, "Enter HSE name:", "HSE Name",
-							JOptionPane.PLAIN_MESSAGE);
+					newName = JOptionPane.showInputDialog(frame, "Enter HSE name:", "HSE Name", JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
 					}
@@ -3331,8 +3206,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				else if (fileName.endsWith(".unc")) {
-					newName = JOptionPane.showInputDialog(frame, "Enter UNC name:", "UNC Name",
-							JOptionPane.PLAIN_MESSAGE);
+					newName = JOptionPane.showInputDialog(frame, "Enter UNC name:", "UNC Name", JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
 					}
@@ -3341,8 +3215,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				else if (fileName.endsWith(".rsg")) {
-					newName = JOptionPane.showInputDialog(frame, "Enter RSG name:", "RSG Name",
-							JOptionPane.PLAIN_MESSAGE);
+					newName = JOptionPane.showInputDialog(frame, "Enter RSG name:", "RSG Name", JOptionPane.PLAIN_MESSAGE);
 					if (newName == null) {
 						return;
 					}
@@ -3371,8 +3244,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					addToTree(newName);
 				}
 				catch (Exception e1) {
-					JOptionPane.showMessageDialog(frame, "Error saving file " + newName, "Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Error saving file " + newName, "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -3426,7 +3298,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (comp instanceof SBML_Editor) {
 				((SBML_Editor) comp).save(true, "", true, true);
 				((SBML_Editor) comp).check();
-			} else if (comp instanceof GCM2SBMLEditor) {
+			}
+			else if (comp instanceof GCM2SBMLEditor) {
 				((GCM2SBMLEditor) comp).save("Save and Check GCM");
 			}
 		}
@@ -3465,18 +3338,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else {
 				file = new File(biosimrc.get("biosim.general.project_dir", ""));
 			}
-			String filename = Utility.browse(frame, file, null, JFileChooser.DIRECTORIES_ONLY,
-					"New", -1);
+			String filename = Utility.browse(frame, file, null, JFileChooser.DIRECTORIES_ONLY, "New", -1);
 			if (!filename.trim().equals("")) {
 				filename = filename.trim();
 				biosimrc.put("biosim.general.project_dir", filename);
 				File f = new File(filename);
 				if (f.exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
-					int value = JOptionPane.showOptionDialog(frame, "File already exists."
-							+ "\nDo you want to overwrite?", "Overwrite",
-							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
-							options[0]);
+					int value = JOptionPane.showOptionDialog(frame, "File already exists." + "\nDo you want to overwrite?", "Overwrite",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					if (value == JOptionPane.YES_OPTION) {
 						File dir = new File(filename);
 						if (dir.isDirectory()) {
@@ -3504,8 +3374,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				catch (IOException e1) {
-					JOptionPane.showMessageDialog(frame, "Unable to create a new project.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Unable to create a new project.", "Error", JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				root = filename;
@@ -3547,12 +3416,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getSource() == pref) {
 			preferences();
 		}
-		else if ((e.getSource() == openProj) || (e.getSource() == recentProjects[0])
-				|| (e.getSource() == recentProjects[1]) || (e.getSource() == recentProjects[2])
-				|| (e.getSource() == recentProjects[3]) || (e.getSource() == recentProjects[4])
-				|| (e.getSource() == recentProjects[5]) || (e.getSource() == recentProjects[6])
-				|| (e.getSource() == recentProjects[7]) || (e.getSource() == recentProjects[8])
-				|| (e.getSource() == recentProjects[9])) {
+		else if ((e.getSource() == openProj) || (e.getSource() == recentProjects[0]) || (e.getSource() == recentProjects[1])
+				|| (e.getSource() == recentProjects[2]) || (e.getSource() == recentProjects[3]) || (e.getSource() == recentProjects[4])
+				|| (e.getSource() == recentProjects[5]) || (e.getSource() == recentProjects[6]) || (e.getSource() == recentProjects[7])
+				|| (e.getSource() == recentProjects[8]) || (e.getSource() == recentProjects[9])) {
 			int autosave = 0;
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				int save = save(i, autosave);
@@ -3576,8 +3443,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				else {
 					file = new File(biosimrc.get("biosim.general.project_dir", ""));
 				}
-				projDir = Utility.browse(frame, file, null, JFileChooser.DIRECTORIES_ONLY, "Open",
-						-1);
+				projDir = Utility.browse(frame, file, null, JFileChooser.DIRECTORIES_ONLY, "Open", -1);
 				if (projDir.endsWith(".prj")) {
 					biosimrc.put("biosim.general.project_dir", projDir);
 					String[] tempArray = projDir.split(separator);
@@ -3671,13 +3537,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						probGraph.setEnabled(true);
 					}
 					else {
-						JOptionPane.showMessageDialog(frame, "You must select a valid project.",
-								"Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, "You must select a valid project.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				else {
-					JOptionPane.showMessageDialog(frame, "You must select a valid project.",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "You must select a valid project.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -3691,19 +3555,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		// if the new vhdl menu item is selected
 		else if (e.getSource() == newVhdl) {
-			newModel("VHDL",".vhd");
+			newModel("VHDL", ".vhd");
 		}
 		// if the new assembly menu item is selected
 		else if (e.getSource() == newS) {
-			newModel("Assembly",".s");
+			newModel("Assembly", ".s");
 		}
 		// if the new instruction file menu item is selected
 		else if (e.getSource() == newInst) {
-			newModel("Instruction",".inst");
+			newModel("Instruction", ".inst");
 		}
 		// if the new petri net menu item is selected
 		else if (e.getSource() == newG) {
-			newModel("Petri Net",".g");
+			newModel("Petri Net", ".g");
 		}
 		// if the new lhpn menu item is selected
 		else if (e.getSource() == newLhpn) {
@@ -3711,26 +3575,26 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		// if the new csp menu item is selected
 		else if (e.getSource() == newCsp) {
-			newModel("CSP",".csp");
+			newModel("CSP", ".csp");
 		}
 		// if the new hse menu item is selected
 		else if (e.getSource() == newHse) {
-			newModel("Handshaking Expansion",".hse");
+			newModel("Handshaking Expansion", ".hse");
 		}
 		// if the new unc menu item is selected
 		else if (e.getSource() == newUnc) {
-			newModel("Extended Burst Mode Machine",".unc");
+			newModel("Extended Burst Mode Machine", ".unc");
 		}
 		// if the new rsg menu item is selected
 		else if (e.getSource() == newRsg) {
-			newModel("Reduced State Graph",".rsg");
+			newModel("Reduced State Graph", ".rsg");
 		}
 		// if the new rsg menu item is selected
 		else if (e.getSource() == newSpice) {
-			newModel("Spice Circuit",".cir");
+			newModel("Spice Circuit", ".cir");
 		}
 		else if (e.getSource().equals(importSbol)) {
-			importFile("SBOL",".rdf");
+			importFile("SBOL", ".rdf");
 		}
 		// if the import sbml menu item is selected
 		else if (e.getSource() == importSbml) {
@@ -3745,39 +3609,39 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		// if the import vhdl menu item is selected
 		else if (e.getSource() == importVhdl) {
-			importFile("VHDL",".vhd");
+			importFile("VHDL", ".vhd");
 		}
 		else if (e.getSource() == importS) {
-			importFile("Assembly",".s");
+			importFile("Assembly", ".s");
 		}
 		else if (e.getSource() == importInst) {
-			importFile("Instruction",".inst");
+			importFile("Instruction", ".inst");
 		}
 		else if (e.getSource() == importLpn) {
 			importLPN();
 		}
 		else if (e.getSource() == importG) {
-			importFile("Petri Net",".g");
+			importFile("Petri Net", ".g");
 		}
 		// if the import csp menu item is selected
 		else if (e.getSource() == importCsp) {
-			importFile("CSP",".csp");
+			importFile("CSP", ".csp");
 		}
 		// if the import hse menu item is selected
 		else if (e.getSource() == importHse) {
-			importFile("Handshaking Expansion",".hse");
+			importFile("Handshaking Expansion", ".hse");
 		}
 		// if the import unc menu item is selected
 		else if (e.getSource() == importUnc) {
-			importFile("Extended Burst State Machine",".unc");
+			importFile("Extended Burst State Machine", ".unc");
 		}
 		// if the import rsg menu item is selected
 		else if (e.getSource() == importRsg) {
-			importFile("Reduced State Graph",".rsg");
+			importFile("Reduced State Graph", ".rsg");
 		}
 		// if the import spice menu item is selected
 		else if (e.getSource() == importSpice) {
-			importFile("Spice Circuit",".cir");
+			importFile("Spice Circuit", ".cir");
 		}
 		// if the Graph data menu item is clicked
 		else if (e.getSource() == graph) {
@@ -3811,8 +3675,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void delete() {
 		if (!tree.getFile().equals(root)) {
 			if (new File(tree.getFile()).isDirectory()) {
-				String dirName = tree.getFile().split(separator)[tree.getFile()
-						.split(separator).length - 1];
+				String dirName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 				for (int i = 0; i < tab.getTabCount(); i++) {
 					if (tab.getTitleAt(i).equals(dirName)) {
 						tab.remove(i);
@@ -3829,11 +3692,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				deleteFromTree(dirName);
 			}
 			else {
-				String[] views = canDelete(tree.getFile().split(separator)[tree.getFile()
-						.split(separator).length - 1]);
+				String[] views = canDelete(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]);
 				if (views.length == 0) {
-					String fileName = tree.getFile().split(separator)[tree.getFile().split(
-							separator).length - 1];
+					String fileName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 					for (int i = 0; i < tab.getTabCount(); i++) {
 						if (tab.getTitleAt(i).equals(fileName)) {
 							tab.remove(i);
@@ -3859,20 +3720,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 					String message;
 					if (gcms.equals("")) {
-						message = "Unable to delete the selected file."
-								+ "\nIt is linked to the following views:\n" + view
+						message = "Unable to delete the selected file." + "\nIt is linked to the following views:\n" + view
 								+ "Delete these views first.";
 					}
 					else if (view.equals("")) {
-						message = "Unable to delete the selected file."
-								+ "\nIt is linked to the following gcms:\n" + gcms
+						message = "Unable to delete the selected file." + "\nIt is linked to the following gcms:\n" + gcms
 								+ "Delete these gcms first.";
 					}
 					else {
-						message = "Unable to delete the selected file."
-								+ "\nIt is linked to the following views:\n" + view
-								+ "It is also linked to the following gcms:\n" + gcms
-								+ "Delete these views and gcms first.";
+						message = "Unable to delete the selected file." + "\nIt is linked to the following views:\n" + view
+								+ "It is also linked to the following gcms:\n" + gcms + "Delete these views and gcms first.";
 					}
 					JTextArea messageArea = new JTextArea(message);
 					messageArea.setEditable(false);
@@ -3880,13 +3737,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					scroll.setMinimumSize(new Dimension(300, 300));
 					scroll.setPreferredSize(new Dimension(300, 300));
 					scroll.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(frame, scroll, "Unable To Delete File",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, scroll, "Unable To Delete File", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
 	}
-	
+
 	private void importBioModel() {
 		final BioModelsWSClient client = new BioModelsWSClient();
 		if (BioModelIds == null) {
@@ -3894,8 +3750,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				BioModelIds = client.getAllCuratedModelsId();
 			}
 			catch (BioModelsWSException e2) {
-				JOptionPane.showMessageDialog(frame, "Error Contacting BioModels Database",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Error Contacting BioModels Database", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		JPanel BioModelsPanel = new JPanel(new BorderLayout());
@@ -3919,9 +3774,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						BioModelIds[i] += " " + client.getModelNameById(BioModelIds[i]);
 					}
 					catch (BioModelsWSException e1) {
-						JOptionPane.showMessageDialog(frame,
-								"Error Contacting BioModels Database", "Error",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, "Error Contacting BioModels Database", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				ListOfBioModels.setListData(BioModelIds);
@@ -3929,20 +3782,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		});
 		GetDescription.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String SelectedModel = ((String) ListOfBioModels.getSelectedValue())
-						.split(" ")[0];
+				String SelectedModel = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
 				String command = "";
 				if (System.getProperty("os.name").contentEquals("Linux")) {
-					command = "gnome-open http://www.ebi.ac.uk/compneur-srv/biomodels-main/"
-							+ SelectedModel;
+					command = "gnome-open http://www.ebi.ac.uk/compneur-srv/biomodels-main/" + SelectedModel;
 				}
 				else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
-					command = "open http://www.ebi.ac.uk/compneur-srv/biomodels-main/"
-							+ SelectedModel;
+					command = "open http://www.ebi.ac.uk/compneur-srv/biomodels-main/" + SelectedModel;
 				}
 				else {
-					command = "cmd /c start http://www.ebi.ac.uk/compneur-srv/biomodels-main/"
-							+ SelectedModel;
+					command = "cmd /c start http://www.ebi.ac.uk/compneur-srv/biomodels-main/" + SelectedModel;
 				}
 				log.addText("Executing:\n" + command + "\n");
 				Runtime exec = Runtime.getRuntime();
@@ -3950,46 +3799,34 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					exec.exec(command);
 				}
 				catch (IOException e1) {
-					JOptionPane.showMessageDialog(frame,
-							"Unable to open model description.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Unable to open model description.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
 		GetReference.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String SelectedModel = ((String) ListOfBioModels.getSelectedValue())
-						.split(" ")[0];
+				String SelectedModel = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
 				try {
-					String Pub = (client.getSimpleModelById(SelectedModel))
-							.getPublicationId();
+					String Pub = (client.getSimpleModelById(SelectedModel)).getPublicationId();
 					String command = "";
 					if (System.getProperty("os.name").contentEquals("Linux")) {
-						command = "gnome-open http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId="
-								+ Pub;
+						command = "gnome-open http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId=" + Pub;
 					}
-					else if (System.getProperty("os.name").toLowerCase().startsWith(
-							"mac os")) {
-						command = "open http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId="
-								+ Pub;
+					else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+						command = "open http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId=" + Pub;
 					}
 					else {
-						command = "cmd /c start http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId="
-								+ Pub;
+						command = "cmd /c start http://www.ebi.ac.uk/citexplore/citationDetails.do?dataSource=MED&externalId=" + Pub;
 					}
 					log.addText("Executing:\n" + command + "\n");
 					Runtime exec = Runtime.getRuntime();
 					exec.exec(command);
 				}
 				catch (BioModelsWSException e2) {
-					JOptionPane.showMessageDialog(frame,
-							"Error Contacting BioModels Database", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Error Contacting BioModels Database", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 				catch (IOException e1) {
-					JOptionPane.showMessageDialog(frame,
-							"Unable to open model description.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Unable to open model description.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -4000,8 +3837,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		BioModelsPanel.add(ScrollBioModels, "Center");
 		BioModelsPanel.add(GetButtons, "South");
 		Object[] options = { "OK", "Cancel" };
-		int value = JOptionPane.showOptionDialog(frame, BioModelsPanel,
-				"List of BioModels", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+		int value = JOptionPane.showOptionDialog(frame, BioModelsPanel, "List of BioModels", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
 				null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION && ListOfBioModels.getSelectedValue() != null) {
 			String ModelId = ((String) ListOfBioModels.getSelectedValue()).split(" ")[0];
@@ -4010,18 +3846,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (overwrite(root + separator + filename, filename)) {
 					String model = client.getModelSBMLById(ModelId);
 					Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(root + separator + filename), "UTF-8"));
-				    out.write(model);
-				    out.close();
+					out.write(model);
+					out.close();
 					String[] file = filename.trim().split(separator);
 					SBMLDocument document = readSBML(root + separator + filename.trim());
 					long numErrors = document.checkConsistency();
 					if (numErrors > 0) {
 						final JFrame f = new JFrame("SBML Errors and Warnings");
 						JTextArea messageArea = new JTextArea();
-						messageArea
-								.append("Imported SBML file contains the errors listed below. ");
-						messageArea
-								.append("It is recommended that you fix them before using this model or you may get unexpected results.\n\n");
+						messageArea.append("Imported SBML file contains the errors listed below. ");
+						messageArea.append("It is recommended that you fix them before using this model or you may get unexpected results.\n\n");
 						for (long i = 0; i < numErrors; i++) {
 							String error = document.getError(i).getMessage();
 							messageArea.append(i + ":" + error + "\n");
@@ -4072,26 +3906,22 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			catch (MalformedURLException e1) {
-				JOptionPane.showMessageDialog(frame, e1.toString(), "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, e1.toString(), "Error", JOptionPane.ERROR_MESSAGE);
 				filename = "";
 			}
 			catch (IOException e1) {
-				JOptionPane.showMessageDialog(frame, filename + " not found.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, filename + " not found.", "Error", JOptionPane.ERROR_MESSAGE);
 				filename = "";
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
-	
+
 	private void createLPN() {
 		try {
-			String lhpnName = JOptionPane.showInputDialog(frame, "Enter LPN Model ID:",
-					"Model ID", JOptionPane.PLAIN_MESSAGE);
+			String lhpnName = JOptionPane.showInputDialog(frame, "Enter LPN Model ID:", "Model ID", JOptionPane.PLAIN_MESSAGE);
 			if (lhpnName != null && !lhpnName.trim().equals("")) {
 				lhpnName = lhpnName.trim();
 				if (lhpnName.length() > 3) {
@@ -4112,11 +3942,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				if (!(IDpat.matcher(modelID).matches())) {
-					JOptionPane
-							.showMessageDialog(
-									frame,
-									"A model ID can only contain letters, numbers, and underscores.",
-									"Invalid ID", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "A model ID can only contain letters, numbers, and underscores.", "Invalid ID",
+							JOptionPane.ERROR_MESSAGE);
 				}
 				else {
 					if (overwrite(root + separator + lhpnName, lhpnName)) {
@@ -4127,8 +3954,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						if (i != -1) {
 							tab.remove(i);
 						}
-						LHPNEditor lhpn = new LHPNEditor(root + separator, f.getName(),
-								null, this, log);
+						LHPNEditor lhpn = new LHPNEditor(root + separator, f.getName(), null, this, log);
 						// lhpn.addMouseListener(this);
 						addTab(f.getName(), lhpn, "LHPN Editor");
 						addToTree(f.getName());
@@ -4137,8 +3963,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 		catch (IOException e1) {
-			JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -4151,15 +3976,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else {
 			importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 		}
-		String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY,
-				"Import LPN", -1);
-		if ((filename.length() > 1 && !filename.substring(filename.length() - 2,
-				filename.length()).equals(".g"))
-				&& (filename.length() > 3 && !filename.substring(filename.length() - 4,
-						filename.length()).equals(".lpn"))) {
-			JOptionPane.showMessageDialog(frame,
-					"You must select a valid LPN file to import.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+		String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY, "Import LPN", -1);
+		if ((filename.length() > 1 && !filename.substring(filename.length() - 2, filename.length()).equals(".g"))
+				&& (filename.length() > 3 && !filename.substring(filename.length() - 4, filename.length()).equals(".lpn"))) {
+			JOptionPane.showMessageDialog(frame, "You must select a valid LPN file to import.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		else if (!filename.equals("")) {
@@ -4167,14 +3987,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String[] file = filename.split(separator);
 			try {
 				if (new File(filename).exists()) {
-					file[file.length - 1] = file[file.length - 1].replaceAll(
-							"[^a-zA-Z0-9_.]+", "_");
-					if (checkFiles(root + separator + file[file.length - 1], filename
-							.trim())) {
-						if (overwrite(root + separator + file[file.length - 1],
-								file[file.length - 1])) {
-							FileOutputStream out = new FileOutputStream(new File(root
-									+ separator + file[file.length - 1]));
+					file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+", "_");
+					if (checkFiles(root + separator + file[file.length - 1], filename.trim())) {
+						if (overwrite(root + separator + file[file.length - 1], file[file.length - 1])) {
+							FileOutputStream out = new FileOutputStream(new File(root + separator + file[file.length - 1]));
 							FileInputStream in = new FileInputStream(new File(filename));
 							// log.addText(filename);
 							int read = in.read();
@@ -4188,15 +4004,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 					}
 				}
-				if (filename.substring(filename.length() - 2, filename.length()).equals(
-						".g")) {
+				if (filename.substring(filename.length() - 2, filename.length()).equals(".g")) {
 					// log.addText(filename + file[file.length - 1]);
 					File work = new File(root);
 					String oldName = root + separator + file[file.length - 1];
 					// String newName = oldName.replace(".lpn",
 					// "_NEW.g");
-					Process atacs = Runtime.getRuntime().exec("atacs -lgsl " + oldName,
-							null, work);
+					Process atacs = Runtime.getRuntime().exec("atacs -lgsl " + oldName, null, work);
 					atacs.waitFor();
 					String lpnName = oldName.replace(".g", ".lpn");
 					String newName = oldName.replace(".g", "_NEW.lpn");
@@ -4218,8 +4032,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			catch (Exception e1) {
 				e1.printStackTrace();
-				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -4233,8 +4046,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else {
 			importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 		}
-		String filename = Utility.browse(frame, importFile, null,
-				JFileChooser.FILES_AND_DIRECTORIES, "Import Genetic Circuit", -1);
+		String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_AND_DIRECTORIES, "Import Genetic Circuit", -1);
 		if (filename != null && !filename.trim().equals("")) {
 			biosimrc.put("biosim.general.import_dir", filename.trim());
 		}
@@ -4242,19 +4054,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			for (String s : new File(filename.trim()).list()) {
 				if (!(filename.trim() + separator + s).equals("")
 						&& (filename.trim() + separator + s).length() > 3
-						&& (filename.trim() + separator + s).substring(
-								(filename.trim() + separator + s).length() - 4,
+						&& (filename.trim() + separator + s).substring((filename.trim() + separator + s).length() - 4,
 								(filename.trim() + separator + s).length()).equals(".gcm")) {
 					try {
 						// GCMParser parser =
 						new GCMParser((filename.trim() + separator + s));
 						s = s.replaceAll("[^a-zA-Z0-9_.]+", "_");
 						if (overwrite(root + separator + s, s)) {
-							FileOutputStream out = new FileOutputStream(new File(root
-									+ separator + s));
-							FileInputStream in = new FileInputStream(new File((filename
-									.trim()
-									+ separator + s)));
+							FileOutputStream out = new FileOutputStream(new File(root + separator + s));
+							FileInputStream in = new FileInputStream(new File((filename.trim() + separator + s)));
 							int read = in.read();
 							while (read != -1) {
 								out.write(read);
@@ -4263,23 +4071,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							in.close();
 							out.close();
 							addToTree(s);
-							importSBML(filename.trim().replace(".gcm",".xml"));
+							importSBML(filename.trim().replace(".gcm", ".xml"));
 						}
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to import file.",
-								"Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
 		}
 		else {
-			if (filename.trim().length() > 3
-					&& !filename.trim().substring(filename.trim().length() - 4,
-							filename.trim().length()).equals(".gcm")) {
-				JOptionPane.showMessageDialog(frame,
-						"You must select a valid gcm file to import.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+			if (filename.trim().length() > 3 && !filename.trim().substring(filename.trim().length() - 4, filename.trim().length()).equals(".gcm")) {
+				JOptionPane.showMessageDialog(frame, "You must select a valid gcm file to import.", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			else if (!filename.trim().equals("")) {
@@ -4289,7 +4092,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					new GCMParser(filename.trim());
 					file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+", "_");
 					if (checkFiles(root + separator + file[file.length - 1], filename.trim())) {
-						if (overwrite(root + separator + file[file.length - 1],file[file.length - 1])) {
+						if (overwrite(root + separator + file[file.length - 1], file[file.length - 1])) {
 							FileOutputStream out = new FileOutputStream(new File(root + separator + file[file.length - 1]));
 							FileInputStream in = new FileInputStream(new File(filename.trim()));
 							int read = in.read();
@@ -4300,27 +4103,24 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							in.close();
 							out.close();
 							addToTree(file[file.length - 1]);
-							importSBML(filename.trim().replace(".gcm",".xml"));
+							importSBML(filename.trim().replace(".gcm", ".xml"));
 						}
 					}
 				}
 				catch (Exception e1) {
-					JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
 	}
-	
+
 	private void createSBML() {
 		try {
-			String simName = JOptionPane.showInputDialog(frame, "Enter SBML Model ID:",
-					"Model ID", JOptionPane.PLAIN_MESSAGE);
+			String simName = JOptionPane.showInputDialog(frame, "Enter SBML Model ID:", "Model ID", JOptionPane.PLAIN_MESSAGE);
 			if (simName != null && !simName.trim().equals("")) {
 				simName = simName.trim();
 				if (simName.length() > 4) {
-					if (!simName.substring(simName.length() - 5).equals(".sbml")
-							&& !simName.substring(simName.length() - 4).equals(".xml")) {
+					if (!simName.substring(simName.length() - 5).equals(".sbml") && !simName.substring(simName.length() - 4).equals(".xml")) {
 						simName += ".xml";
 					}
 				}
@@ -4337,16 +4137,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				if (!(IDpat.matcher(modelID).matches())) {
-					JOptionPane
-							.showMessageDialog(
-									frame,
-									"A model ID can only contain letters, numbers, and underscores.",
-									"Invalid ID", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "A model ID can only contain letters, numbers, and underscores.", "Invalid ID",
+							JOptionPane.ERROR_MESSAGE);
 				}
 				else {
 					if (overwrite(root + separator + simName, simName)) {
 						String f = new String(root + separator + simName);
-						SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL,Gui.SBML_VERSION);
+						SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 						document.createModel();
 						Compartment c = document.getModel().createCompartment();
 						c.setId("default");
@@ -4356,23 +4153,21 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						SBMLWriter writer = new SBMLWriter();
 						writer.writeSBML(document, root + separator + simName);
 						SBML_Editor sbml = new SBML_Editor(f, null, log, this, null, null);
-						addTab(f.split(separator)[f.split(separator).length - 1], sbml,"SBML Editor");
+						addTab(f.split(separator)[f.split(separator).length - 1], sbml, "SBML Editor");
 						addToTree(f.split(separator)[f.split(separator).length - 1]);
 					}
 				}
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
 	private void createGCM() {
 		if (root != null) {
 			try {
-				String simName = JOptionPane.showInputDialog(frame, "Enter Model ID:",
-						"Model ID", JOptionPane.PLAIN_MESSAGE);
+				String simName = JOptionPane.showInputDialog(frame, "Enter Model ID:", "Model ID", JOptionPane.PLAIN_MESSAGE);
 				if (simName != null && !simName.trim().equals("")) {
 					simName = simName.trim();
 					if (simName.length() > 3) {
@@ -4393,11 +4188,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 					}
 					if (!(IDpat.matcher(modelID).matches())) {
-						JOptionPane
-								.showMessageDialog(
-										frame,
-										"A model ID can only contain letters, numbers, and underscores.",
-										"Invalid ID", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, "A model ID can only contain letters, numbers, and underscores.", "Invalid ID",
+								JOptionPane.ERROR_MESSAGE);
 					}
 					else {
 						if (overwrite(root + separator + simName, simName)) {
@@ -4419,11 +4211,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							c.setSpatialDimensions(3);
 							c.setConstant(true);
 							SBMLWriter writer = new SBMLWriter();
-							writer.writeSBML(document, root + separator + simName.replace(".gcm",".xml"));
-							addToTree(simName.replace(".gcm",".xml"));
-							
-							GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, f
-									.getName(), this, log, false, null, null, null, false);
+							writer.writeSBML(document, root + separator + simName.replace(".gcm", ".xml"));
+							addToTree(simName.replace(".gcm", ".xml"));
+
+							GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, f.getName(), this, log, false, null, null, null, false);
 							// gcm.addMouseListener(this);
 							addTab(f.getName(), gcm, "GCM Editor");
 							addToTree(f.getName());
@@ -4432,19 +4223,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
-	
+
 	private void importSBML(String filename) {
 		Preferences biosimrc = Preferences.userRoot();
 		if (filename == null) {
 			File importFile;
 			if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
 				importFile = null;
-			} else {
+			}
+			else {
 				importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 			}
 			filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_AND_DIRECTORIES, "Import SBML", -1);
@@ -4454,8 +4245,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (new File(filename.trim()).isDirectory()) {
 				JTextArea messageArea = new JTextArea();
 				messageArea.append("Imported SBML files contain the errors listed below. ");
-				messageArea.append("It is recommended that you fix them before using these models or you may get " +
-						"unexpected results.\n\n");
+				messageArea.append("It is recommended that you fix them before using these models or you may get " + "unexpected results.\n\n");
 				boolean display = false;
 				for (String s : new File(filename.trim()).list()) {
 					if (s.endsWith(".xml") || s.endsWith(".sbml")) {
@@ -4466,11 +4256,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								long numErrors = document.checkConsistency();
 								if (numErrors > 0) {
 									display = true;
-									messageArea.append("---------------------------------------------------------------------"+
-											"-----------------\n");
+									messageArea.append("---------------------------------------------------------------------"
+											+ "-----------------\n");
 									messageArea.append(s);
-									messageArea.append("\n-------------------------------------------------------------------"+
-											"-------------------\n\n");
+									messageArea.append("\n-------------------------------------------------------------------"
+											+ "-------------------\n\n");
 									for (long i = 0; i < numErrors; i++) {
 										String error = document.getError(i).getMessage();
 										messageArea.append(i + ":" + error + "\n");
@@ -4482,8 +4272,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 						catch (Exception e1) {
-							JOptionPane.showMessageDialog(frame, "Unable to import files.",
-									"Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(frame, "Unable to import files.", "Error", JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					addToTree(s);
@@ -4534,17 +4323,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				String[] file = filename.trim().split(separator);
 				try {
 					SBMLDocument document = readSBML(filename.trim());
-					if (overwrite(root + separator + file[file.length - 1],
-							file[file.length - 1])) {
+					if (overwrite(root + separator + file[file.length - 1], file[file.length - 1])) {
 						checkModelCompleteness(document);
 						long numErrors = document.checkConsistency();
 						if (numErrors > 0) {
 							final JFrame f = new JFrame("SBML Errors and Warnings");
 							JTextArea messageArea = new JTextArea();
-							messageArea
-									.append("Imported SBML file contains the errors listed below. ");
-							messageArea
-									.append("It is recommended that you fix them before using this model or you may get unexpected results.\n\n");
+							messageArea.append("Imported SBML file contains the errors listed below. ");
+							messageArea.append("It is recommended that you fix them before using this model or you may get unexpected results.\n\n");
 							for (long i = 0; i < numErrors; i++) {
 								String error = document.getError(i).getMessage();
 								messageArea.append(i + ":" + error + "\n");
@@ -4597,14 +4383,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				catch (Exception e1) {
-					JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
 	}
-	
-	private void importFile(String fileType,String extension) {
+
+	private void importFile(String fileType, String extension) {
 		File importFile;
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
@@ -4614,18 +4399,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 		}
 		String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY, "Import " + fileType, -1);
-		if (filename.length() > 1
-				&& !filename.substring(filename.length() - 4, filename.length()).equals(extension)) {
-			JOptionPane.showMessageDialog(frame,
-					"You must select a valid " + fileType + " file to import.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+		if (filename.length() > 1 && !filename.substring(filename.length() - 4, filename.length()).equals(extension)) {
+			JOptionPane.showMessageDialog(frame, "You must select a valid " + fileType + " file to import.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		else if (!filename.equals("")) {
 			biosimrc.put("biosim.general.import_dir", filename);
 			String[] file = filename.split(separator);
 			try {
-				file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+","_");
+				file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+", "_");
 				if (checkFiles(root + separator + file[file.length - 1], filename.trim())) {
 					if (overwrite(root + separator + file[file.length - 1], file[file.length - 1])) {
 						FileOutputStream out = new FileOutputStream(new File(root + separator + file[file.length - 1]));
@@ -4642,16 +4424,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Unable to import file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
 
 	private void createGraph() {
-		String graphName = JOptionPane.showInputDialog(frame,
-				"Enter A Name For The TSD Graph:", "TSD Graph Name",
-				JOptionPane.PLAIN_MESSAGE);
+		String graphName = JOptionPane.showInputDialog(frame, "Enter A Name For The TSD Graph:", "TSD Graph Name", JOptionPane.PLAIN_MESSAGE);
 		if (graphName != null && !graphName.trim().equals("")) {
 			graphName = graphName.trim();
 			if (graphName.length() > 3) {
@@ -4663,8 +4442,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				graphName += ".grf";
 			}
 			if (overwrite(root + separator + graphName, graphName)) {
-				Graph g = new Graph(null, "Number of molecules", graphName.trim()
-						.substring(0, graphName.length() - 4), "tsd.printer", root, "Time",
+				Graph g = new Graph(null, "Number of molecules", graphName.trim().substring(0, graphName.length() - 4), "tsd.printer", root, "Time",
 						this, null, log, graphName.trim(), true, false);
 				addTab(graphName.trim(), g, "TSD Graph");
 				g.save();
@@ -4674,9 +4452,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 
 	private void createHistogram() {
-		String graphName = JOptionPane.showInputDialog(frame,
-				"Enter A Name For The Histogram:", "Histogram Name",
-				JOptionPane.PLAIN_MESSAGE);
+		String graphName = JOptionPane.showInputDialog(frame, "Enter A Name For The Histogram:", "Histogram Name", JOptionPane.PLAIN_MESSAGE);
 		if (graphName != null && !graphName.trim().equals("")) {
 			graphName = graphName.trim();
 			if (graphName.length() > 3) {
@@ -4688,8 +4464,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				graphName += ".prb";
 			}
 			if (overwrite(root + separator + graphName, graphName)) {
-				Graph g = new Graph(null, "Number of Molecules", graphName.trim()
-						.substring(0, graphName.length() - 4), "tsd.printer", root, "Time",
+				Graph g = new Graph(null, "Number of Molecules", graphName.trim().substring(0, graphName.length() - 4), "tsd.printer", root, "Time",
 						this, null, log, graphName.trim(), false, false);
 				addTab(graphName.trim(), g, "Histogram");
 				g.save();
@@ -4701,10 +4476,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void createLearn() {
 		if (root != null) {
 			for (int i = 0; i < tab.getTabCount(); i++) {
-				if (tab
-						.getTitleAt(i)
-						.equals(
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+				if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 					tab.setSelectedIndex(i);
 					if (save(i, 0) == 0) {
 						return;
@@ -4712,8 +4484,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					break;
 				}
 			}
-			String lrnName = JOptionPane.showInputDialog(frame, "Enter Learn ID:",
-					"Learn View ID", JOptionPane.PLAIN_MESSAGE);
+			String lrnName = JOptionPane.showInputDialog(frame, "Enter Learn ID:", "Learn View ID", JOptionPane.PLAIN_MESSAGE);
 			if (lrnName != null && !lrnName.trim().equals("")) {
 				lrnName = lrnName.trim();
 				// try {
@@ -4729,20 +4500,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					if (sbmlFileNoPath.endsWith(".vhd")) {
 						try {
 							File work = new File(root);
-							Runtime.getRuntime().exec("atacs -lvsl " + sbmlFileNoPath, null,
-									work);
+							Runtime.getRuntime().exec("atacs -lvsl " + sbmlFileNoPath, null, work);
 							sbmlFileNoPath = sbmlFileNoPath.replace(".vhd", ".lpn");
 							log.addText("atacs -lvsl " + sbmlFileNoPath + "\n");
 						}
 						catch (IOException e1) {
-							JOptionPane.showMessageDialog(frame,
-									"Unable to generate LPN from VHDL file!",
-									"Error Generating File", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(frame, "Unable to generate LPN from VHDL file!", "Error Generating File",
+									JOptionPane.ERROR_MESSAGE);
 						}
 					}
 					try {
-						FileOutputStream out = new FileOutputStream(new File(root + separator
-								+ lrnName.trim() + separator + lrnName.trim() + ".lrn"));
+						FileOutputStream out = new FileOutputStream(new File(root + separator + lrnName.trim() + separator + lrnName.trim() + ".lrn"));
 						if (lema) {
 							out.write(("learn.file=" + sbmlFileNoPath + "\n").getBytes());
 						}
@@ -4752,57 +4520,46 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						out.close();
 					}
 					catch (IOException e1) {
-						JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
-								"Error Saving File", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, "Unable to save parameter file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
 					}
 					addToTree(lrnName);
 					JTabbedPane lrnTab = new JTabbedPane();
 					lrnTab.addMouseListener(this);
 					DataManager data = new DataManager(root + separator + lrnName, this, lema);
 					lrnTab.addTab("Data Manager", data);
-					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
-							"Data Manager");
+					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
 					if (lema) {
 						LearnLHPN learn = new LearnLHPN(root + separator + lrnName, log, this);
 						lrnTab.addTab("Learn", learn);
-						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
-								"Learn");
+						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
 						lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
-						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
-								"Advanced Options");
+						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
 					}
 					else {
 						LearnGCM learn = new LearnGCM(root + separator + lrnName, log, this);
 						lrnTab.addTab("Learn", learn);
-						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
-								"Learn");
+						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
 						lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
-						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
-								"Advanced Options");
+						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
 					}
 					Graph tsdGraph;
-					tsdGraph = new Graph(null, "Number of molecules", lrnName + " data",
-							"tsd.printer", root + separator + lrnName, "Time", this, null, log,
-							null, true, false);
+					tsdGraph = new Graph(null, "Number of molecules", lrnName + " data", "tsd.printer", root + separator + lrnName, "Time", this,
+							null, log, null, true, false);
 					lrnTab.addTab("TSD Graph", tsdGraph);
-					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName(
-							"TSD Graph");
+					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
 					addTab(lrnName, lrnTab, null);
 				}
 			}
 		}
 		else {
-			JOptionPane.showMessageDialog(frame, "You must open or create a project first.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "You must open or create a project first.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
 	private void viewModel() {
 		try {
-			if (tree.getFile().length() >= 4
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
-				String filename = tree.getFile().split(separator)[tree.getFile().split(
-						separator).length - 1];
+			if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
+				String filename = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 				String[] findTheFile = filename.split("\\.");
 				String theFile = findTheFile[0] + ".dot";
 				File dot = new File(root + separator + theFile);
@@ -4843,14 +4600,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					scrolls.setMinimumSize(new Dimension(500, 500));
 					scrolls.setPreferredSize(new Dimension(500, 500));
 					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(frame, scrolls, "Log",
-							JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(frame, scrolls, "Log", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
-			else if (tree.getFile().length() >= 2
-					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
-				String filename = tree.getFile().split(separator)[tree.getFile().split(
-						separator).length - 1];
+			else if (tree.getFile().length() >= 2 && tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+				String filename = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 				String[] findTheFile = filename.split("\\.");
 				String theFile = findTheFile[0] + ".dot";
 				File dot = new File(root + separator + theFile);
@@ -4892,12 +4646,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					scrolls.setMinimumSize(new Dimension(500, 500));
 					scrolls.setPreferredSize(new Dimension(500, 500));
 					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(frame, scrolls, "Log",
-							JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(frame, scrolls, "Log", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
-			else if (tree.getFile().length() >= 4
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
 				try {
 					String vhdFile = tree.getFile();
 					if (new File(vhdFile).exists()) {
@@ -4917,21 +4669,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						scrolls.setMinimumSize(new Dimension(800, 500));
 						scrolls.setPreferredSize(new Dimension(800, 500));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(frame, scrolls, "VHDL Model",
-								JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(frame, scrolls, "VHDL Model", JOptionPane.INFORMATION_MESSAGE);
 					}
 					else {
-						JOptionPane.showMessageDialog(frame, "VHDL model does not exist.",
-								"Error", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, "VHDL model does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				catch (Exception e1) {
-					JOptionPane.showMessageDialog(frame, "Unable to view VHDL model.",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Unable to view VHDL model.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
-			else if (tree.getFile().length() >= 5
-					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
+			else if (tree.getFile().length() >= 5 && tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
 				try {
 					String vamsFileName = tree.getFile();
 					if (new File(vamsFileName).exists()) {
@@ -4951,22 +4699,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						scrolls.setMinimumSize(new Dimension(800, 500));
 						scrolls.setPreferredSize(new Dimension(800, 500));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(frame, scrolls, "Verilog-AMS Model",
-								JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(frame, scrolls, "Verilog-AMS Model", JOptionPane.INFORMATION_MESSAGE);
 					}
 					else {
-						JOptionPane.showMessageDialog(frame,
-								"Verilog-AMS model does not exist.", "Error",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, "Verilog-AMS model does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				catch (Exception e1) {
-					JOptionPane.showMessageDialog(frame, "Unable to view Verilog-AMS model.",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Unable to view Verilog-AMS model.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
-			else if (tree.getFile().length() >= 3
-					&& tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) {
+			else if (tree.getFile().length() >= 3 && tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) {
 				try {
 					String svFileName = tree.getFile();
 					if (new File(svFileName).exists()) {
@@ -4986,24 +4729,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						scrolls.setMinimumSize(new Dimension(800, 500));
 						scrolls.setPreferredSize(new Dimension(800, 500));
 						scrolls.setViewportView(messageArea);
-						JOptionPane.showMessageDialog(frame, scrolls, "SystemVerilog Model",
-								JOptionPane.INFORMATION_MESSAGE);
+						JOptionPane.showMessageDialog(frame, scrolls, "SystemVerilog Model", JOptionPane.INFORMATION_MESSAGE);
 					}
 					else {
-						JOptionPane.showMessageDialog(frame,
-								"SystemVerilog model does not exist.", "Error",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, "SystemVerilog model does not exist.", "Error", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				catch (Exception e1) {
-					JOptionPane.showMessageDialog(frame, "Unable to view SystemVerilog model.",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Unable to view SystemVerilog model.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
-			else if (tree.getFile().length() >= 4
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
-				String filename = tree.getFile().split(separator)[tree.getFile().split(
-						separator).length - 1];
+			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+				String filename = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 				String cmd = "atacs -lcslllodpl " + filename;
 				File work = new File(root);
 				Runtime exec = Runtime.getRuntime();
@@ -5047,14 +4784,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					scrolls.setMinimumSize(new Dimension(500, 500));
 					scrolls.setPreferredSize(new Dimension(500, 500));
 					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(frame, scrolls, "Log",
-							JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(frame, scrolls, "Log", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
-			else if (tree.getFile().length() >= 4
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
-				String filename = tree.getFile().split(separator)[tree.getFile().split(
-						separator).length - 1];
+			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+				String filename = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 				String cmd = "atacs -lhslllodpl " + filename;
 				File work = new File(root);
 				Runtime exec = Runtime.getRuntime();
@@ -5098,14 +4832,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					scrolls.setMinimumSize(new Dimension(500, 500));
 					scrolls.setPreferredSize(new Dimension(500, 500));
 					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(frame, scrolls, "Log",
-							JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(frame, scrolls, "Log", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
-			else if (tree.getFile().length() >= 4
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
-				String filename = tree.getFile().split(separator)[tree.getFile().split(
-						separator).length - 1];
+			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+				String filename = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 				String cmd = "atacs -lxodps " + filename;
 				File work = new File(root);
 				Runtime exec = Runtime.getRuntime();
@@ -5149,14 +4880,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					scrolls.setMinimumSize(new Dimension(500, 500));
 					scrolls.setPreferredSize(new Dimension(500, 500));
 					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(frame, scrolls, "Log",
-							JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(frame, scrolls, "Log", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
-			else if (tree.getFile().length() >= 4
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
-				String filename = tree.getFile().split(separator)[tree.getFile().split(
-						separator).length - 1];
+			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+				String filename = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
 				String cmd = "atacs -lsodps " + filename;
 				File work = new File(root);
 				Runtime exec = Runtime.getRuntime();
@@ -5200,21 +4928,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					scrolls.setMinimumSize(new Dimension(500, 500));
 					scrolls.setPreferredSize(new Dimension(500, 500));
 					scrolls.setViewportView(messageArea);
-					JOptionPane.showMessageDialog(frame, scrolls, "Log",
-							JOptionPane.INFORMATION_MESSAGE);
+					JOptionPane.showMessageDialog(frame, scrolls, "Log", JOptionPane.INFORMATION_MESSAGE);
 				}
 			}
 		}
 		catch (IOException e1) {
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(frame, "File cannot be read", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "File cannot be read", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 		catch (InterruptedException e2) {
 			e2.printStackTrace();
 		}
 	}
-	
+
 	private void copy() {
 		if (!tree.getFile().equals(root)) {
 			for (int i = 0; i < tab.getTabCount(); i++) {
@@ -5232,14 +4958,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			copy = copy.trim();
 			if (tree.getFile().contains(".")) {
-				String extension = tree.getFile().substring(tree.getFile().lastIndexOf("."),tree.getFile().length());
+				String extension = tree.getFile().substring(tree.getFile().lastIndexOf("."), tree.getFile().length());
 				if (!copy.endsWith(extension)) {
 					copy += extension;
 				}
 			}
 			if (copy.equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-				JOptionPane.showMessageDialog(frame, "Unable to copy file."
-						+ "\nNew filename must be different than old filename.", "Error",
+				JOptionPane.showMessageDialog(frame, "Unable to copy file." + "\nNew filename must be different than old filename.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
@@ -5247,20 +4972,22 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (overwrite(root + separator + copy, copy)) {
 					if (copy.endsWith(".xml")) {
 						SBMLDocument document = readSBML(tree.getFile());
-						document.getModel().setId(copy.substring(0,copy.lastIndexOf(".")));
+						document.getModel().setId(copy.substring(0, copy.lastIndexOf(".")));
 						SBMLWriter writer = new SBMLWriter();
 						writer.writeSBML(document, root + separator + copy);
-					} else if (copy.endsWith(".gcm")) {
-						SBMLDocument document = readSBML(tree.getFile().replace(".gcm",".xml"));
-						document.getModel().setId(copy.substring(0,copy.lastIndexOf(".")));
+					}
+					else if (copy.endsWith(".gcm")) {
+						SBMLDocument document = readSBML(tree.getFile().replace(".gcm", ".xml"));
+						document.getModel().setId(copy.substring(0, copy.lastIndexOf(".")));
 						SBMLWriter writer = new SBMLWriter();
-						writer.writeSBML(document, root + separator + copy.replace(".gcm",".xml"));
-						addToTree(copy.replace(".gcm",".xml"));
+						writer.writeSBML(document, root + separator + copy.replace(".gcm", ".xml"));
+						addToTree(copy.replace(".gcm", ".xml"));
 						GCMFile gcm = new GCMFile(root);
 						gcm.load(tree.getFile());
-						gcm.setSBMLFile(copy.replace(".gcm",".xml"));
+						gcm.setSBMLFile(copy.replace(".gcm", ".xml"));
 						gcm.save(root + separator + copy);
-					} else if (copy.contains(".")) {
+					}
+					else if (copy.contains(".")) {
 						FileOutputStream out = new FileOutputStream(new File(root + separator + copy));
 						FileInputStream in = new FileInputStream(new File(tree.getFile()));
 						int read = in.read();
@@ -5282,23 +5009,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							new File(root + separator + copy).mkdir();
 							String[] s = new File(tree.getFile()).list();
 							for (String ss : s) {
-								if (ss.length() > 4
-										&& ss.substring(ss.length() - 5).equals(".sbml")
-										|| ss.length() > 3
+								if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml") || ss.length() > 3
 										&& ss.substring(ss.length() - 4).equals(".xml")) {
-									SBMLDocument document = readSBML(tree.getFile() + separator
-											+ ss);
+									SBMLDocument document = readSBML(tree.getFile() + separator + ss);
 									SBMLWriter writer = new SBMLWriter();
-									writer.writeSBML(document, root + separator + copy
-											+ separator + ss);
+									writer.writeSBML(document, root + separator + copy + separator + ss);
 								}
-								else if (ss.length() > 10
-										&& ss.substring(ss.length() - 11).equals(".properties")) {
-									FileOutputStream out = new FileOutputStream(new File(root
-											+ separator + copy + separator + ss));
-									FileInputStream in = new FileInputStream(new File(tree
-											.getFile()
-											+ separator + ss));
+								else if (ss.length() > 10 && ss.substring(ss.length() - 11).equals(".properties")) {
+									FileOutputStream out = new FileOutputStream(new File(root + separator + copy + separator + ss));
+									FileInputStream in = new FileInputStream(new File(tree.getFile() + separator + ss));
 									int read = in.read();
 									while (read != -1) {
 										out.write(read);
@@ -5308,28 +5027,20 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									out.close();
 								}
 								else if (ss.length() > 3
-										&& (ss.substring(ss.length() - 4).equals(".tsd")
-												|| ss.substring(ss.length() - 4).equals(".dat")
-												|| ss.substring(ss.length() - 4).equals(".sad")
-												|| ss.substring(ss.length() - 4).equals(".pms") || ss
-												.substring(ss.length() - 4).equals(".sim"))
-										&& !ss.equals(".sim")) {
+										&& (ss.substring(ss.length() - 4).equals(".tsd") || ss.substring(ss.length() - 4).equals(".dat")
+												|| ss.substring(ss.length() - 4).equals(".sad") || ss.substring(ss.length() - 4).equals(".pms") || ss
+												.substring(ss.length() - 4).equals(".sim")) && !ss.equals(".sim")) {
 									FileOutputStream out;
 									if (ss.substring(ss.length() - 4).equals(".pms")) {
-										out = new FileOutputStream(new File(root + separator
-												+ copy + separator + copy + ".sim"));
+										out = new FileOutputStream(new File(root + separator + copy + separator + copy + ".sim"));
 									}
 									else if (ss.substring(ss.length() - 4).equals(".sim")) {
-										out = new FileOutputStream(new File(root + separator
-												+ copy + separator + copy + ".sim"));
+										out = new FileOutputStream(new File(root + separator + copy + separator + copy + ".sim"));
 									}
 									else {
-										out = new FileOutputStream(new File(root + separator
-												+ copy + separator + ss));
+										out = new FileOutputStream(new File(root + separator + copy + separator + ss));
 									}
-									FileInputStream in = new FileInputStream(new File(tree
-											.getFile()
-											+ separator + ss));
+									FileInputStream in = new FileInputStream(new File(tree.getFile() + separator + ss));
 									int read = in.read();
 									while (read != -1) {
 										out.write(read);
@@ -5344,21 +5055,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							new File(root + separator + copy).mkdir();
 							String[] s = new File(tree.getFile()).list();
 							for (String ss : s) {
-								if (ss.length() > 3
-										&& (ss.substring(ss.length() - 4).equals(".tsd") || ss
-												.substring(ss.length() - 4).equals(".lrn"))) {
+								if (ss.length() > 3 && (ss.substring(ss.length() - 4).equals(".tsd") || ss.substring(ss.length() - 4).equals(".lrn"))) {
 									FileOutputStream out;
 									if (ss.substring(ss.length() - 4).equals(".lrn")) {
-										out = new FileOutputStream(new File(root + separator
-												+ copy + separator + copy + ".lrn"));
+										out = new FileOutputStream(new File(root + separator + copy + separator + copy + ".lrn"));
 									}
 									else {
-										out = new FileOutputStream(new File(root + separator
-												+ copy + separator + ss));
+										out = new FileOutputStream(new File(root + separator + copy + separator + ss));
 									}
-									FileInputStream in = new FileInputStream(new File(tree
-											.getFile()
-											+ separator + ss));
+									FileInputStream in = new FileInputStream(new File(tree.getFile() + separator + ss));
 									int read = in.read();
 									while (read != -1) {
 										out.write(read);
@@ -5374,12 +5079,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to copy file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Unable to copy file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
-	
+
 	private void rename() {
 		if (!tree.getFile().equals(root)) {
 			String oldName = tree.getFile().split(separator)[tree.getFile().split(separator).length - 1];
@@ -5392,37 +5096,34 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					break;
 				}
 			}
-			String rename = JOptionPane.showInputDialog(frame, "Enter A New Filename:","Rename", JOptionPane.PLAIN_MESSAGE);
+			String rename = JOptionPane.showInputDialog(frame, "Enter A New Filename:", "Rename", JOptionPane.PLAIN_MESSAGE);
 			if (rename == null || rename.equals("")) {
 				return;
 			}
 			rename = rename.trim();
 			if (tree.getFile().contains(".")) {
-				String extension = tree.getFile().substring(tree.getFile().lastIndexOf("."),tree.getFile().length());
+				String extension = tree.getFile().substring(tree.getFile().lastIndexOf("."), tree.getFile().length());
 				if (!rename.endsWith(extension)) {
 					rename += extension;
 				}
 			}
 			if (rename.equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-				JOptionPane.showMessageDialog(frame, "Unable to rename file."
-						+ "\nNew filename must be different than old filename.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Unable to rename file." + "\nNew filename must be different than old filename.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			String modelID = rename.substring(0,rename.lastIndexOf("."));
+			String modelID = rename.substring(0, rename.lastIndexOf("."));
 			try {
 				if (overwrite(root + separator + rename, rename)) {
-					if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml") ||
-							tree.getFile().endsWith(".gcm") || tree.getFile().endsWith(".lpn") ||
-							tree.getFile().endsWith(".vhd") || tree.getFile().endsWith(".csp") ||
-							tree.getFile().endsWith(".hse") || tree.getFile().endsWith(".unc") ||
-							tree.getFile().endsWith(".rsg")) {
+					if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml") || tree.getFile().endsWith(".gcm")
+							|| tree.getFile().endsWith(".lpn") || tree.getFile().endsWith(".vhd") || tree.getFile().endsWith(".csp")
+							|| tree.getFile().endsWith(".hse") || tree.getFile().endsWith(".unc") || tree.getFile().endsWith(".rsg")) {
 						reassignViews(oldName, rename);
 					}
 					if (tree.getFile().endsWith(".gcm")) {
-						String newSBMLfile = rename.replace(".gcm",".xml");
+						String newSBMLfile = rename.replace(".gcm", ".xml");
 						new File(tree.getFile()).renameTo(new File(root + separator + rename));
-						new File(tree.getFile().replace(".gcm",".xml")).renameTo(new File(root + separator + newSBMLfile));
+						new File(tree.getFile().replace(".gcm", ".xml")).renameTo(new File(root + separator + newSBMLfile));
 						GCMFile gcm = new GCMFile(root);
 						gcm.load(root + separator + rename);
 						gcm.setSBMLFile(newSBMLfile);
@@ -5431,19 +5132,20 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						document.getModel().setId(modelID);
 						SBMLWriter writer = new SBMLWriter();
 						writer.writeSBML(document, root + separator + newSBMLfile);
-						deleteFromTree(oldName.replace(".gcm",".xml"));
+						deleteFromTree(oldName.replace(".gcm", ".xml"));
 						addToTree(newSBMLfile);
-					} else if (tree.getFile().endsWith(".xml")) {
+					}
+					else if (tree.getFile().endsWith(".xml")) {
 						new File(tree.getFile()).renameTo(new File(root + separator + rename));
 						SBMLDocument document = readSBML(root + separator + rename);
 						document.getModel().setId(modelID);
 						SBMLWriter writer = new SBMLWriter();
 						writer.writeSBML(document, root + separator + rename);
-					} else {
+					}
+					else {
 						new File(tree.getFile()).renameTo(new File(root + separator + rename));
 					}
-					if (rename.length() >= 4
-							&& rename.substring(rename.length() - 4).equals(".gcm")) {
+					if (rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".gcm")) {
 						for (String s : new File(root).list()) {
 							if (s.endsWith(".gcm")) {
 								BufferedReader in = new BufferedReader(new FileReader(root + separator + s));
@@ -5461,105 +5163,80 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 						}
 					}
-					if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml") ||
-							tree.getFile().endsWith(".gcm") || tree.getFile().endsWith(".lpn") ||
-							tree.getFile().endsWith(".vhd") || tree.getFile().endsWith(".csp") ||
-							tree.getFile().endsWith(".hse") || tree.getFile().endsWith(".unc") ||
-							tree.getFile().endsWith(".rsg")) {
+					if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml") || tree.getFile().endsWith(".gcm")
+							|| tree.getFile().endsWith(".lpn") || tree.getFile().endsWith(".vhd") || tree.getFile().endsWith(".csp")
+							|| tree.getFile().endsWith(".hse") || tree.getFile().endsWith(".unc") || tree.getFile().endsWith(".rsg")) {
 						updateAsyncViews(rename);
 					}
 					if (new File(root + separator + rename).isDirectory()) {
-						if (new File(root + separator + rename + separator +
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".sim").exists()) {
-							new File(root + separator + rename + separator +
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".sim")
-							.renameTo(new File(root + separator + rename + separator + rename + ".sim"));
+						if (new File(root + separator + rename + separator
+								+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".sim").exists()) {
+							new File(root + separator + rename + separator
+									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".sim").renameTo(new File(root
+									+ separator + rename + separator + rename + ".sim"));
 						}
-						else if (new File(root + separator + rename + separator +
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".pms").exists()) {
-							new File(root + separator + rename + separator +
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".pms")
-							.renameTo(new File(root + separator + rename + separator + rename + ".sim"));
+						else if (new File(root + separator + rename + separator
+								+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".pms").exists()) {
+							new File(root + separator + rename + separator
+									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".pms").renameTo(new File(root
+									+ separator + rename + separator + rename + ".sim"));
 						}
-						if (new File(root + separator + rename + separator +
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".lrn").exists()) {
-							new File(root + separator + rename + separator +
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".lrn")
-							.renameTo(new File(root + separator + rename + separator + rename + ".lrn"));
+						if (new File(root + separator + rename + separator
+								+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".lrn").exists()) {
+							new File(root + separator + rename + separator
+									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".lrn").renameTo(new File(root
+									+ separator + rename + separator + rename + ".lrn"));
 						}
-						if (new File(root + separator + rename + separator +
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".ver").exists()) {
-							new File(root + separator + rename + 
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".ver")
-							.renameTo(new File(root + separator + rename + separator + rename + ".ver"));
+						if (new File(root + separator + rename + separator
+								+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".ver").exists()) {
+							new File(root + separator + rename + tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".ver")
+									.renameTo(new File(root + separator + rename + separator + rename + ".ver"));
 						}
-						if (new File(root + separator + rename + separator +
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".grf").exists()) {
-							new File(root + separator + rename + separator +
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".grf")
-							.renameTo(new File(root + separator + rename + separator + rename + ".grf"));
+						if (new File(root + separator + rename + separator
+								+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".grf").exists()) {
+							new File(root + separator + rename + separator
+									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".grf").renameTo(new File(root
+									+ separator + rename + separator + rename + ".grf"));
 						}
-						if (new File(root + separator + rename + separator +
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".prb").exists()) {
-							new File(root + separator + rename + separator +
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".prb")
-							.renameTo(new File(root + separator + rename + separator + rename + ".prb"));
+						if (new File(root + separator + rename + separator
+								+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".prb").exists()) {
+							new File(root + separator + rename + separator
+									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".prb").renameTo(new File(root
+									+ separator + rename + separator + rename + ".prb"));
 						}
 					}
 					for (int i = 0; i < tab.getTabCount(); i++) {
-						if (tab.getTitleAt(i).equals(
-								tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-							if (tree.getFile().length() > 4
-									&& tree.getFile()
-									.substring(tree.getFile().length() - 5).equals(".sbml")
-											|| tree.getFile().length() > 3
-											&& tree.getFile()
-											.substring(tree.getFile().length() - 4).equals(".xml")) {
+						if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+							if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+									|| tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
 								((SBML_Editor) tab.getComponentAt(i)).setModelID(modelID);
 								((SBML_Editor) tab.getComponentAt(i)).setFile(root + separator + rename);
 								tab.setTitleAt(i, rename);
 							}
 							else if (tree.getFile().length() > 3
-									&& (tree.getFile().substring(
-											tree.getFile().length() - 4).equals(".grf") || tree
-											.getFile().substring(
-													tree.getFile().length() - 4).equals(
-															".prb"))) {
+									&& (tree.getFile().substring(tree.getFile().length() - 4).equals(".grf") || tree.getFile()
+											.substring(tree.getFile().length() - 4).equals(".prb"))) {
 								((Graph) tab.getComponentAt(i)).setGraphName(rename);
 								tab.setTitleAt(i, rename);
 							}
-							else if (tree.getFile().length() > 3
-									&& tree.getFile()
-									.substring(tree.getFile().length() - 4).equals(
-											".gcm")) {
-								((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename
-										.substring(0, rename.length() - 4));
+							else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+								((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename.length() - 4));
 							}
-							else if (tree.getFile().length() > 3
-									&& tree.getFile()
-									.substring(tree.getFile().length() - 4).equals(
-											".rdf")) {
+							else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")) {
 								tab.setTitleAt(i, rename);
 							}
-							else if (tree.getFile().length() > 3
-									&& tree.getFile()
-									.substring(tree.getFile().length() - 4).equals(
-											".lpn")) {
-								((LHPNEditor) tab.getComponentAt(i)).reload(rename
-										.substring(0, rename.length() - 4));
+							else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
+								((LHPNEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename.length() - 4));
 								tab.setTitleAt(i, rename);
 							}
 							else if (tab.getComponentAt(i) instanceof JTabbedPane) {
 								JTabbedPane t = new JTabbedPane();
 								t.addMouseListener(this);
-								int selected = ((JTabbedPane) tab.getComponentAt(i))
-								.getSelectedIndex();
+								int selected = ((JTabbedPane) tab.getComponentAt(i)).getSelectedIndex();
 								boolean analysis = false;
 								ArrayList<Component> comps = new ArrayList<Component>();
-								for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i))
-								.getTabCount(); j++) {
-									Component c = ((JTabbedPane) tab.getComponentAt(i))
-									.getComponent(j);
+								for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++) {
+									Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
 									comps.add(c);
 								}
 								SBML_Editor sbml = null;
@@ -5570,14 +5247,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 										analysis = true;
 									}
 									else if (c instanceof SBML_Editor) {
-										String properties = root + separator + rename
-										+ separator + rename + ".sim";
-										new File(properties).renameTo(new File(properties
-												.replace(".sim", ".temp")));
+										String properties = root + separator + rename + separator + rename + ".sim";
+										new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
 										try {
 											boolean dirty = ((SBML_Editor) c).isDirty();
-											((SBML_Editor) c).setParamFileAndSimDir(
-													properties, root + separator + rename);
+											((SBML_Editor) c).setParamFileAndSimDir(properties, root + separator + rename);
 											((SBML_Editor) c).save(false, "", true, true);
 											((SBML_Editor) c).updateSBML(i, 0);
 											((SBML_Editor) c).setDirty(dirty);
@@ -5586,8 +5260,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 											e1.printStackTrace();
 										}
 										new File(properties).delete();
-										new File(properties.replace(".sim", ".temp"))
-										.renameTo(new File(properties));
+										new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
 									}
 									else if (c instanceof Graph) {
 										// c.addMouseListener(this);
@@ -5612,69 +5285,51 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 										if (c instanceof Reb2Sac) {
 											reb2sac = (Reb2Sac) c;
 											t.addTab("Simulation Options", c);
-											t.getComponentAt(t.getComponents().length - 1)
-											.setName("Simulate");
+											t.getComponentAt(t.getComponents().length - 1).setName("Simulate");
 										}
 										else if (c instanceof MovieContainer) {
 											t.addTab("Schematic", c);
-											t.getComponentAt(t.getComponents().length - 1)
-											.setName("ModelViewMovie");
+											t.getComponentAt(t.getComponents().length - 1).setName("ModelViewMovie");
 										}
 										else if (c instanceof SBML_Editor) {
 											sbml = (SBML_Editor) c;
 											t.addTab("Parameter Editor", c);
-											t.getComponentAt(t.getComponents().length - 1)
-											.setName("SBML Editor");
+											t.getComponentAt(t.getComponents().length - 1).setName("SBML Editor");
 										}
 										else if (c instanceof GCM2SBMLEditor) {
 											GCM2SBMLEditor gcm = (GCM2SBMLEditor) c;
 											if (!gcm.getSBMLFile().equals("--none--")) {
-												sbml = new SBML_Editor(root + separator
-														+ gcm.getSBMLFile(), reb2sac, log,
-														this, root + separator + rename,
-														root + separator + rename
-														+ separator + rename
-														+ ".sim");
+												sbml = new SBML_Editor(root + separator + gcm.getSBMLFile(), reb2sac, log, this, root + separator
+														+ rename, root + separator + rename + separator + rename + ".sim");
 											}
 											t.addTab("Parameters", c);
-											t.getComponentAt(t.getComponents().length - 1)
-											.setName("GCM Editor");
+											t.getComponentAt(t.getComponents().length - 1).setName("GCM Editor");
 										}
 										else if (c instanceof Graph) {
 											if (((Graph) c).isTSDGraph()) {
 												t.addTab("TSD Graph", c);
-												t.getComponentAt(
-														t.getComponents().length - 1)
-														.setName("TSD Graph");
+												t.getComponentAt(t.getComponents().length - 1).setName("TSD Graph");
 											}
 											else {
 												t.addTab("Histogram", c);
-												t.getComponentAt(
-														t.getComponents().length - 1)
-														.setName("ProbGraph");
+												t.getComponentAt(t.getComponents().length - 1).setName("ProbGraph");
 											}
 										}
 										else if (c instanceof JScrollPane) {
 											if (sbml != null) {
-												t.addTab("SBML Elements", sbml
-														.getElementsPanel());
-												t.getComponentAt(
-														t.getComponents().length - 1)
-														.setName("");
+												t.addTab("SBML Elements", sbml.getElementsPanel());
+												t.getComponentAt(t.getComponents().length - 1).setName("");
 											}
 											else {
 												JScrollPane scroll = new JScrollPane();
 												scroll.setViewportView(new JPanel());
 												t.addTab("SBML Elements", scroll);
-												t.getComponentAt(
-														t.getComponents().length - 1)
-														.setName("");
+												t.getComponentAt(t.getComponents().length - 1).setName("");
 											}
 										}
 										else {
 											t.addTab("Abstraction Options", c);
-											t.getComponentAt(t.getComponents().length - 1)
-											.setName("");
+											t.getComponentAt(t.getComponents().length - 1).setName("");
 										}
 									}
 								}
@@ -5692,21 +5347,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						else if (tab.getComponentAt(i) instanceof JTabbedPane) {
 							ArrayList<Component> comps = new ArrayList<Component>();
-							for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i))
-							.getTabCount(); j++) {
-								Component c = ((JTabbedPane) tab.getComponentAt(i))
-								.getComponent(j);
+							for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++) {
+								Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
 								comps.add(c);
 							}
 							for (Component c : comps) {
-								if (c instanceof Reb2Sac
-										&& ((Reb2Sac) c).getBackgroundFile()
-										.equals(oldName)) {
+								if (c instanceof Reb2Sac && ((Reb2Sac) c).getBackgroundFile().equals(oldName)) {
 									((Reb2Sac) c).updateBackgroundFile(rename);
 								}
-								else if (c instanceof LearnGCM
-										&& ((LearnGCM) c).getBackgroundFile().equals(
-												oldName)) {
+								else if (c instanceof LearnGCM && ((LearnGCM) c).getBackgroundFile().equals(oldName)) {
 									((LearnGCM) c).updateBackgroundFile(rename);
 								}
 							}
@@ -5719,12 +5368,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to rename selected file.",
-					"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Unable to rename selected file.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
-	
+
 	private void openGCM(boolean textBased) {
 		try {
 			String filename = tree.getFile();
@@ -5749,37 +5397,36 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else {
 				String path = work.getAbsolutePath();
 				GCMFile gcmFile = new GCMFile(path);
-				String gcmname = theFile.replace(".gcm","");
+				String gcmname = theFile.replace(".gcm", "");
 				gcmFile.load(filename);
-				if ((gcmFile.getSBMLFile()==null || !gcmFile.getSBMLFile().equals(gcmname + ".xml")) &&
-						new File(path + separator + gcmname + ".xml").exists()) {
+				if ((gcmFile.getSBMLFile() == null || !gcmFile.getSBMLFile().equals(gcmname + ".xml"))
+						&& new File(path + separator + gcmname + ".xml").exists()) {
 					Object[] options = { "Overwrite", "Cancel" };
 					int value;
-					value = JOptionPane.showOptionDialog(Gui.frame, gcmname + ".xml already exists."
-							+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-							JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+					value = JOptionPane.showOptionDialog(Gui.frame, gcmname + ".xml already exists." + "\nDo you want to overwrite?", "Overwrite",
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 					if (value == JOptionPane.YES_OPTION) {
-		 				GCM2SBMLEditor gcm = new GCM2SBMLEditor(path, theFile, this, log, false, null, null, null, textBased);
-		 				addTab(theFile, gcm, "GCM Editor");
-					} 
-				} else {
-	 				GCM2SBMLEditor gcm = new GCM2SBMLEditor(path, theFile, this, log, false, null, null, null, textBased);
-	 				addTab(theFile, gcm, "GCM Editor");
-	 			}
+						GCM2SBMLEditor gcm = new GCM2SBMLEditor(path, theFile, this, log, false, null, null, null, textBased);
+						addTab(theFile, gcm, "GCM Editor");
+					}
+				}
+				else {
+					GCM2SBMLEditor gcm = new GCM2SBMLEditor(path, theFile, this, log, false, null, null, null, textBased);
+					addTab(theFile, gcm, "GCM Editor");
+				}
 			}
 		}
 		catch (Exception e1) {
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(frame, "Unable to open this GCM file.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "Unable to open this GCM file.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	private void openSBML(String fullPath) {
 		try {
 			boolean done = false;
 			String theSBMLFile = fullPath.split(separator)[fullPath.split(separator).length - 1];
-			String theGCMFile = theSBMLFile.replace(".xml",".gcm");
+			String theGCMFile = theSBMLFile.replace(".xml", ".gcm");
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (tab.getTitleAt(i).equals(theSBMLFile) || tab.getTitleAt(i).equals(theGCMFile)) {
 					tab.setSelectedIndex(i);
@@ -5788,45 +5435,46 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			if (!done) {
-				createGCMFromSBML(root,fullPath,theSBMLFile,theGCMFile,false);
+				createGCMFromSBML(root, fullPath, theSBMLFile, theGCMFile, false);
 				addToTree(theGCMFile);
 				GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, theGCMFile, this, log, false, null, null, null, false);
 				addTab(theGCMFile, gcm, "GCM Editor");
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(frame, "You must select a valid SBML file.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "You must select a valid SBML file.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
-	public static boolean createGCMFromSBML(String root,String fullPath,String theSBMLFile,String theGCMFile,boolean force) {
-		if (force || !new File(fullPath.replace(".xml",".gcm").replace(".sbml",".gcm")).exists()) {
+	public static boolean createGCMFromSBML(String root, String fullPath, String theSBMLFile, String theGCMFile, boolean force) {
+		if (force || !new File(fullPath.replace(".xml", ".gcm").replace(".sbml", ".gcm")).exists()) {
 			SBMLDocument document = readSBML(fullPath);
 			Model m = document.getModel();
 			GCMFile gcmFile = new GCMFile(root);
-			int x=50;
-			int y=50;
+			int x = 50;
+			int y = 50;
 			if (m != null) {
 				for (int i = 0; i < m.getNumSpecies(); i++) {
-					gcmFile.createSpecies(document.getModel().getSpecies(i).getId(),x,y);
+					gcmFile.createSpecies(document.getModel().getSpecies(i).getId(), x, y);
 					if (m.getSpecies(i).isSetInitialAmount()) {
-						gcmFile.getSpecies().get(m.getSpecies(i).getId()).setProperty(GlobalConstants.INITIAL_STRING, 
-								m.getSpecies(i).getInitialAmount()+"");
-					} else {
-						gcmFile.getSpecies().get(m.getSpecies(i).getId()).setProperty(GlobalConstants.INITIAL_STRING, 
-								"[" + m.getSpecies(i).getInitialConcentration() + "]");
+						gcmFile.getSpecies().get(m.getSpecies(i).getId())
+								.setProperty(GlobalConstants.INITIAL_STRING, m.getSpecies(i).getInitialAmount() + "");
+					}
+					else {
+						gcmFile.getSpecies().get(m.getSpecies(i).getId())
+								.setProperty(GlobalConstants.INITIAL_STRING, "[" + m.getSpecies(i).getInitialConcentration() + "]");
 					}
 					gcmFile.getSpecies().get(m.getSpecies(i).getId()).setProperty(GlobalConstants.KDECAY_STRING, "0.0");
-					x+=50;
-					y+=50;
+					x += 50;
+					y += 50;
 				}
 			}
 			gcmFile.setSBMLDocument(document);
 			gcmFile.setSBMLFile(theSBMLFile);
-			gcmFile.save(fullPath.replace(".xml",".gcm").replace(".sbml",".gcm"));
+			gcmFile.save(fullPath.replace(".xml", ".gcm").replace(".sbml", ".gcm"));
 			return true;
-		} else 
+		}
+		else
 			return false;
 	}
 
@@ -5838,11 +5486,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		int i = getTab(fileName);
 		if (i != -1) {
 			tab.setSelectedIndex(i);
-		} else {
+		}
+		else {
 			SbolBrowser browser = new SbolBrowser(filePath);
 			addTab(fileName, browser, null);
 		}
 	}
+
 	private void openGraph() {
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
@@ -5852,11 +5502,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 		if (!done) {
-			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-					new Graph(null, "Number of molecules", "title", "tsd.printer", root,
-							"Time", this, tree.getFile(), log, tree.getFile().split(
-									separator)[tree.getFile().split(separator).length - 1],
-							true, false), "TSD Graph");
+			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], new Graph(null, "Number of molecules", "title",
+					"tsd.printer", root, "Time", this, tree.getFile(), log,
+					tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], true, false), "TSD Graph");
 		}
 	}
 
@@ -5869,11 +5517,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 		if (!done) {
-			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-					new Graph(null, "Percent", "title", "tsd.printer", root, "Time", this,
-							tree.getFile(), log, tree.getFile().split(separator)[tree
-									.getFile().split(separator).length - 1], false, false),
-					"Histogram");
+			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], new Graph(null, "Percent", "title", "tsd.printer",
+					root, "Time", this, tree.getFile(), log, tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], false,
+					false), "Histogram");
 		}
 	}
 
@@ -5897,30 +5543,28 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				tab.setSelectedIndex(i);
 			}
 			else {
-				LHPNEditor editor = new LHPNEditor(work.getAbsolutePath(), theFile, lhpn,
-						this, log);
+				LHPNEditor editor = new LHPNEditor(work.getAbsolutePath(), theFile, lhpn, this, log);
 				addTab(theFile, editor, "LHPN Editor");
 			}
 		}
 		catch (Exception e1) {
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(frame, "Unable to view this LPN file.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "Unable to view this LPN file.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
-	private void newModel(String fileType,String extension) {
+	private void newModel(String fileType, String extension) {
 		if (root != null) {
 			try {
-				String modelID = JOptionPane.showInputDialog(frame, "Enter " + fileType + " Model ID:",
-						"Model ID", JOptionPane.PLAIN_MESSAGE);
+				String modelID = JOptionPane.showInputDialog(frame, "Enter " + fileType + " Model ID:", "Model ID", JOptionPane.PLAIN_MESSAGE);
 				if (modelID != null && !modelID.trim().equals("")) {
 					String fileName;
 					modelID = modelID.trim();
 					if (modelID.length() >= extension.length()) {
 						if (!modelID.substring(modelID.length() - extension.length()).equals(extension)) {
 							fileName = modelID + extension;
-						} else {
+						}
+						else {
 							fileName = modelID;
 							modelID = modelID.substring(0, modelID.length() - extension.length());
 						}
@@ -5929,8 +5573,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						fileName = modelID + extension;
 					}
 					if (!(IDpat.matcher(modelID).matches())) {
-						JOptionPane.showMessageDialog(frame,"A model ID can only contain letters, numbers, and underscores.",
-							"Invalid ID", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, "A model ID can only contain letters, numbers, and underscores.", "Invalid ID",
+								JOptionPane.ERROR_MESSAGE);
 					}
 					else {
 						File f = new File(root + separator + fileName);
@@ -5943,8 +5587,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								exec.exec(command);
 							}
 							catch (Exception e1) {
-								JOptionPane.showMessageDialog(frame,"Unable to open external editor.",
-									"Error Opening Editor", JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(frame, "Unable to open external editor.", "Error Opening Editor",
+										JOptionPane.ERROR_MESSAGE);
 							}
 						}
 						else {
@@ -5958,12 +5602,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			catch (IOException e1) {
-				JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Unable to create new model.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
-	
+
 	private void openModel(String fileType) {
 		try {
 			String filename = tree.getFile();
@@ -5990,9 +5633,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						exec.exec(command);
 					}
 					catch (Exception e1) {
-						JOptionPane.showMessageDialog(frame,
-								"Unable to open external editor.", "Error Opening Editor",
-								JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog(frame, "Unable to open external editor.", "Error Opening Editor", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				else {
@@ -6014,8 +5655,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(frame, "Unable to view this " + fileType + " file.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "Unable to view this " + fileType + " file.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -6045,8 +5685,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		while (!dir.delete() && count != 100);
 		if (count == 100) {
-			JOptionPane.showMessageDialog(frame, "Unable to delete.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "Unable to delete.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -6059,8 +5698,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (recentProjectPaths[i].equals(projDir)) {
 				for (int j = 0; j <= i; j++) {
 					String save = recentProjectPaths[j];
-					recentProjects[j]
-							.setText(projDir.split(separator)[projDir.split(separator).length - 1]);
+					recentProjects[j].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
 					if (file.getItem(file.getItemCount() - 1) == exit) {
 						file.insert(recentProjects[j], file.getItemCount() - 3 - numberRecentProj);
 					}
@@ -6086,8 +5724,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		for (int i = 0; i < numberRecentProj; i++) {
 			String save = recentProjectPaths[i];
-			recentProjects[i]
-					.setText(projDir.split(separator)[projDir.split(separator).length - 1]);
+			recentProjects[i].setText(projDir.split(separator)[projDir.split(separator).length - 1]);
 			if (file.getItem(file.getItemCount() - 1) == exit) {
 				file.insert(recentProjects[i], file.getItemCount() - 3 - numberRecentProj);
 			}
@@ -6125,7 +5762,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		updateGCM();
 		mainPanel.validate();
 	}
-	
+
 	public void addToTreeNoUpdate(String item) {
 		tree.addToTree(item, root);
 		mainPanel.validate();
@@ -6140,7 +5777,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public FileTree getFileTree() {
 		return tree;
 	}
-	
+
 	/**
 	 * This method adds the given Component to a tab.
 	 */
@@ -6161,10 +5798,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	 */
 	public void removeTab(Component component) {
 		tab.remove(component);
-		if (tab.getTabCount()>0) {
-			tab.setSelectedIndex(tab.getTabCount()-1);
+		if (tab.getTabCount() > 0) {
+			tab.setSelectedIndex(tab.getTabCount() - 1);
 			enableTabMenu(tab.getSelectedIndex());
-		} else {
+		}
+		else {
 			enableTreeMenu();
 		}
 	}
@@ -6177,16 +5815,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	 * Prompts the user to save work that has been done.
 	 */
 	public int save(int index, int autosave) {
-		if (tab.getComponentAt(index).getName().contains(("GCM"))
-				|| tab.getComponentAt(index).getName().contains("LHPN")) {
+		if (tab.getComponentAt(index).getName().contains(("GCM")) || tab.getComponentAt(index).getName().contains("LHPN")) {
 			if (tab.getComponentAt(index) instanceof GCM2SBMLEditor) {
 				GCM2SBMLEditor editor = (GCM2SBMLEditor) tab.getComponentAt(index);
 				if (editor.isDirty()) {
 					if (autosave == 0) {
-						int value = JOptionPane.showOptionDialog(frame,
-								"Do you want to save changes to " + tab.getTitleAt(index) + "?",
-								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+						int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to " + tab.getTitleAt(index) + "?",
+								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 						if (value == YES_OPTION) {
 							editor.save("gcm");
 							return 1;
@@ -6218,10 +5853,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				LHPNEditor editor = (LHPNEditor) tab.getComponentAt(index);
 				if (editor.isDirty()) {
 					if (autosave == 0) {
-						int value = JOptionPane.showOptionDialog(frame,
-								"Do you want to save changes to " + tab.getTitleAt(index) + "?",
-								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+						int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to " + tab.getTitleAt(index) + "?",
+								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 						if (value == YES_OPTION) {
 							editor.save();
 							return 1;
@@ -6263,10 +5896,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (tab.getComponentAt(index) instanceof SBML_Editor) {
 				if (((SBML_Editor) tab.getComponentAt(index)).isDirty()) {
 					if (autosave == 0) {
-						int value = JOptionPane.showOptionDialog(frame,
-								"Do you want to save changes to " + tab.getTitleAt(index) + "?",
-								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+						int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to " + tab.getTitleAt(index) + "?",
+								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 						if (value == YES_OPTION) {
 							((SBML_Editor) tab.getComponentAt(index)).save(false, "", true, true);
 							return 1;
@@ -6304,15 +5935,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				return 3;
 			}
 		}
-		else if (tab.getComponentAt(index).getName().contains("Graph")
-				|| tab.getComponentAt(index).getName().equals("Histogram")) {
+		else if (tab.getComponentAt(index).getName().contains("Graph") || tab.getComponentAt(index).getName().equals("Histogram")) {
 			if (tab.getComponentAt(index) instanceof Graph) {
 				if (((Graph) tab.getComponentAt(index)).hasChanged()) {
 					if (autosave == 0) {
-						int value = JOptionPane.showOptionDialog(frame,
-								"Do you want to save changes to " + tab.getTitleAt(index) + "?",
-								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-								JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+						int value = JOptionPane.showOptionDialog(frame, "Do you want to save changes to " + tab.getTitleAt(index) + "?",
+								"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 						if (value == YES_OPTION) {
 							((Graph) tab.getComponentAt(index)).save();
 							return 1;
@@ -6354,26 +5982,20 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (tab.getComponentAt(index) instanceof JTabbedPane) {
 				for (int i = 0; i < ((JTabbedPane) tab.getComponentAt(index)).getTabCount(); i++) {
 					if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName() != null) {
-						if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName()
-								.equals("Simulate")) {
-							if (((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index))
-									.getComponent(i)).hasChanged()) {
+						if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName().equals("Simulate")) {
+							if (((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
 								if (autosave == 0) {
 									int value = JOptionPane.showOptionDialog(frame,
-											"Do you want to save simulation option changes for "
-													+ tab.getTitleAt(index) + "?", "Save Changes",
-											JOptionPane.YES_NO_CANCEL_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+											"Do you want to save simulation option changes for " + tab.getTitleAt(index) + "?", "Save Changes",
+											JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 									if (value == YES_OPTION) {
-										((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i)).save();
+										((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
 									}
 									else if (value == CANCEL_OPTION) {
 										return 0;
 									}
 									else if (value == YES_TO_ALL_OPTION) {
-										((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i)).save();
+										((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
 										autosave = 1;
 									}
 									else if (value == NO_TO_ALL_OPTION) {
@@ -6381,31 +6003,24 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									}
 								}
 								else if (autosave == 1) {
-									((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index))
-											.getComponent(i)).save();
+									((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
 								}
 							}
 						}
-						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i)
-								.getName().equals("SBML Editor")) {
-							if (((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index))
-									.getComponent(i)).isDirty()) {
+						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().equals("SBML Editor")) {
+							if (((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).isDirty()) {
 								if (autosave == 0) {
 									int value = JOptionPane.showOptionDialog(frame,
-											"Do you want to save parameter changes for "
-													+ tab.getTitleAt(index) + "?", "Save Changes",
-											JOptionPane.YES_NO_CANCEL_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+											"Do you want to save parameter changes for " + tab.getTitleAt(index) + "?", "Save Changes",
+											JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 									if (value == YES_OPTION) {
-										((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i)).save(false, "", true, true);
+										((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save(false, "", true, true);
 									}
 									else if (value == CANCEL_OPTION) {
 										return 0;
 									}
 									else if (value == YES_TO_ALL_OPTION) {
-										((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i)).save(false, "", true, true);
+										((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save(false, "", true, true);
 										autosave = 1;
 									}
 									else if (value == NO_TO_ALL_OPTION) {
@@ -6413,8 +6028,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									}
 								}
 								else if (autosave == 1) {
-									((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index))
-											.getComponent(i)).save(false, "", true, true);
+									((SBML_Editor) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save(false, "", true, true);
 								}
 							}
 						}
@@ -6444,26 +6058,20 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						 * .getComponent(i)).saveParams(false, ""); } } }
 						 */
 						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof MovieContainer) {
-							if (((MovieContainer) ((JTabbedPane) tab.getComponentAt(index))
-									.getComponent(i)).getGCM2SBMLEditor().isDirty()
-									|| ((MovieContainer) ((JTabbedPane) tab.getComponentAt(index))
-											.getComponent(i)).getIsDirty()) {
+							if (((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).getGCM2SBMLEditor().isDirty()
+									|| ((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).getIsDirty()) {
 								if (autosave == 0) {
 									int value = JOptionPane.showOptionDialog(frame,
-											"Do you want to save parameter changes for "
-													+ tab.getTitleAt(index) + "?", "Save Changes",
-											JOptionPane.YES_NO_CANCEL_OPTION,
-											JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+											"Do you want to save parameter changes for " + tab.getTitleAt(index) + "?", "Save Changes",
+											JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 									if (value == YES_OPTION) {
-										((MovieContainer) ((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i)).savePreferences();
+										((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).savePreferences();
 									}
 									else if (value == CANCEL_OPTION) {
 										return 0;
 									}
 									else if (value == YES_TO_ALL_OPTION) {
-										((MovieContainer) ((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i)).savePreferences();
+										((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).savePreferences();
 										autosave = 1;
 									}
 									else if (value == NO_TO_ALL_OPTION) {
@@ -6471,40 +6079,28 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									}
 								}
 								else if (autosave == 1) {
-									((MovieContainer) ((JTabbedPane) tab.getComponentAt(index))
-											.getComponent(i)).savePreferences();
+									((MovieContainer) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).savePreferences();
 								}
 							}
 						}
-						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i)
-								.getName().equals("Learn")) {
+						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().equals("Learn")) {
 							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnGCM) {
-								if (((LearnGCM) ((JTabbedPane) tab.getComponentAt(index))
-										.getComponent(i)).hasChanged()) {
+								if (((LearnGCM) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
 									if (autosave == 0) {
 										int value = JOptionPane.showOptionDialog(frame,
-												"Do you want to save learn option changes for "
-														+ tab.getTitleAt(index) + "?",
-												"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-												JOptionPane.PLAIN_MESSAGE, null, OPTIONS,
-												OPTIONS[0]);
+												"Do you want to save learn option changes for " + tab.getTitleAt(index) + "?", "Save Changes",
+												JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 										if (value == YES_OPTION) {
-											if (((JTabbedPane) tab.getComponentAt(index))
-													.getComponent(i) instanceof LearnGCM) {
-												((LearnGCM) ((JTabbedPane) tab
-														.getComponentAt(index)).getComponent(i))
-														.save();
+											if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnGCM) {
+												((LearnGCM) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
 											}
 										}
 										else if (value == CANCEL_OPTION) {
 											return 0;
 										}
 										else if (value == YES_TO_ALL_OPTION) {
-											if (((JTabbedPane) tab.getComponentAt(index))
-													.getComponent(i) instanceof LearnGCM) {
-												((LearnGCM) ((JTabbedPane) tab
-														.getComponentAt(index)).getComponent(i))
-														.save();
+											if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnGCM) {
+												((LearnGCM) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
 											}
 											autosave = 1;
 										}
@@ -6513,41 +6109,29 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 										}
 									}
 									else if (autosave == 1) {
-										if (((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i) instanceof LearnGCM) {
-											((LearnGCM) ((JTabbedPane) tab.getComponentAt(index))
-													.getComponent(i)).save();
+										if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnGCM) {
+											((LearnGCM) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
 										}
 									}
 								}
 							}
 							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnLHPN) {
-								if (((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index))
-										.getComponent(i)).hasChanged()) {
+								if (((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
 									if (autosave == 0) {
 										int value = JOptionPane.showOptionDialog(frame,
-												"Do you want to save learn option changes for "
-														+ tab.getTitleAt(index) + "?",
-												"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-												JOptionPane.PLAIN_MESSAGE, null, OPTIONS,
-												OPTIONS[0]);
+												"Do you want to save learn option changes for " + tab.getTitleAt(index) + "?", "Save Changes",
+												JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 										if (value == YES_OPTION) {
-											if (((JTabbedPane) tab.getComponentAt(index))
-													.getComponent(i) instanceof LearnLHPN) {
-												((LearnLHPN) ((JTabbedPane) tab
-														.getComponentAt(index)).getComponent(i))
-														.save();
+											if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnLHPN) {
+												((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
 											}
 										}
 										else if (value == CANCEL_OPTION) {
 											return 0;
 										}
 										else if (value == YES_TO_ALL_OPTION) {
-											if (((JTabbedPane) tab.getComponentAt(index))
-													.getComponent(i) instanceof LearnLHPN) {
-												((LearnLHPN) ((JTabbedPane) tab
-														.getComponentAt(index)).getComponent(i))
-														.save();
+											if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnLHPN) {
+												((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
 											}
 											autosave = 1;
 										}
@@ -6556,39 +6140,28 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 										}
 									}
 									else if (autosave == 1) {
-										if (((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i) instanceof LearnLHPN) {
-											((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index))
-													.getComponent(i)).save();
+										if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnLHPN) {
+											((LearnLHPN) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
 										}
 									}
 								}
 							}
 						}
-						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i)
-								.getName().equals("Data Manager")) {
+						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().equals("Data Manager")) {
 							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof DataManager) {
-								((DataManager) ((JTabbedPane) tab.getComponentAt(index))
-										.getComponent(i)).saveChanges(tab.getTitleAt(index));
+								((DataManager) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).saveChanges(tab.getTitleAt(index));
 							}
 						}
-						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i)
-								.getName().contains("Graph")) {
+						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().contains("Graph")) {
 							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
-								if (((Graph) ((JTabbedPane) tab.getComponentAt(index))
-										.getComponent(i)).hasChanged()) {
+								if (((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
 									if (autosave == 0) {
 										int value = JOptionPane.showOptionDialog(frame,
-												"Do you want to save graph changes for "
-														+ tab.getTitleAt(index) + "?",
-												"Save Changes", JOptionPane.YES_NO_CANCEL_OPTION,
-												JOptionPane.PLAIN_MESSAGE, null, OPTIONS,
-												OPTIONS[0]);
+												"Do you want to save graph changes for " + tab.getTitleAt(index) + "?", "Save Changes",
+												JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 										if (value == YES_OPTION) {
-											if (((JTabbedPane) tab.getComponentAt(index))
-													.getComponent(i) instanceof Graph) {
-												Graph g = ((Graph) ((JTabbedPane) tab
-														.getComponentAt(index)).getComponent(i));
+											if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
+												Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i));
 												g.save();
 											}
 										}
@@ -6596,10 +6169,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 											return 0;
 										}
 										else if (value == YES_TO_ALL_OPTION) {
-											if (((JTabbedPane) tab.getComponentAt(index))
-													.getComponent(i) instanceof Graph) {
-												Graph g = ((Graph) ((JTabbedPane) tab
-														.getComponentAt(index)).getComponent(i));
+											if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
+												Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i));
 												g.save();
 											}
 											autosave = 1;
@@ -6609,10 +6180,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 										}
 									}
 									else if (autosave == 1) {
-										if (((JTabbedPane) tab.getComponentAt(index))
-												.getComponent(i) instanceof Graph) {
-											Graph g = ((Graph) ((JTabbedPane) tab
-													.getComponentAt(index)).getComponent(i));
+										if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof Graph) {
+											Graph g = ((Graph) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i));
 											g.save();
 										}
 									}
@@ -6629,10 +6198,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						if (((Synthesis) array[0]).hasChanged()) {
 							if (autosave == 0) {
 								int value = JOptionPane.showOptionDialog(frame,
-										"Do you want to save synthesis option changes for "
-												+ tab.getTitleAt(index) + "?", "Save Changes",
-										JOptionPane.YES_NO_CANCEL_OPTION,
-										JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+										"Do you want to save synthesis option changes for " + tab.getTitleAt(index) + "?", "Save Changes",
+										JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 								if (value == YES_OPTION) {
 									if (array[0] instanceof Synthesis) {
 										((Synthesis) array[0]).save();
@@ -6665,10 +6232,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						if (((Verification) array[0]).hasChanged()) {
 							if (autosave == 0) {
 								int value = JOptionPane.showOptionDialog(frame,
-										"Do you want to save verification option changes for "
-												+ tab.getTitleAt(index) + "?", "Save Changes",
-										JOptionPane.YES_NO_CANCEL_OPTION,
-										JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
+										"Do you want to save verification option changes for " + tab.getTitleAt(index) + "?", "Save Changes",
+										JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 								if (value == YES_OPTION) {
 									((Verification) array[0]).save();
 								}
@@ -6721,8 +6286,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(frame, "Unable to save genetic circuit.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "Unable to save genetic circuit.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -6744,11 +6308,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 		catch (IOException e1) {
-			JOptionPane.showMessageDialog(frame, "Unable to save LPN.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "Unable to save LPN.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
-	
+
 	public void copySFiles(String filename, String directory) {
 		StringBuffer data = new StringBuffer();
 
@@ -6759,11 +6322,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				data.append(str + "\n");
 			}
 			in.close();
-		} catch (IOException e) {
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 			throw new IllegalStateException("Error opening file");
 		}
-		
+
 		Pattern sLinePattern = Pattern.compile(SFILELINE);
 		Matcher sLineMatcher = sLinePattern.matcher(data);
 		while (sLineMatcher.find()) {
@@ -6772,8 +6336,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				File newFile = new File(directory + separator + sFilename);
 				newFile.createNewFile();
 				FileOutputStream copyin = new FileOutputStream(newFile);
-				FileInputStream copyout = new FileInputStream(new File(root
-						+ separator + sFilename));
+				FileInputStream copyout = new FileInputStream(new File(root + separator + sFilename));
 				int read = copyout.read();
 				while (read != -1) {
 					copyin.write(read);
@@ -6781,10 +6344,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				copyin.close();
 				copyout.close();
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				e.printStackTrace();
-				JOptionPane.showMessageDialog(Gui.frame, "Cannot copy file "
-						+ sFilename, "Copy Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Cannot copy file " + sFilename, "Copy Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
 	}
@@ -6809,9 +6372,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (e.getSource() instanceof JTree && tree.getFile() != null && e.isPopupTrigger()) {
 			// frame.getGlassPane().setVisible(false);
 			popup.removeAll();
-			if (tree.getFile().length() > 4
-					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
-					|| tree.getFile().length() > 3
+			if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml") || tree.getFile().length() > 3
 					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
 				JMenuItem edit = new JMenuItem("View/Edit");
 				edit.addActionListener(this);
@@ -6856,8 +6417,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")) {
+			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")) {
 				JMenuItem view = new JMenuItem("View");
 				view.addActionListener(this);
 				view.addMouseListener(this);
@@ -6879,8 +6439,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(copy);
 				popup.add(rename);
 			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
 				JMenuItem create = new JMenuItem("Create Analysis View");
 				create.addActionListener(this);
 				create.addMouseListener(this);
@@ -6924,8 +6483,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
 				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 				createSynthesis.addActionListener(this);
 				createSynthesis.addMouseListener(this);
@@ -6973,8 +6531,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 4
-					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
+			else if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
 				JMenuItem viewModel = new JMenuItem("View Model");
 				viewModel.addActionListener(this);
 				viewModel.addMouseListener(this);
@@ -6999,8 +6556,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					popup.add(delete);
 				}
 			}
-			else if (tree.getFile().length() > 2
-					&& tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) {
+			else if (tree.getFile().length() > 2 && tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) {
 				JMenuItem viewModel = new JMenuItem("View Model");
 				viewModel.addActionListener(this);
 				viewModel.addMouseListener(this);
@@ -7025,8 +6581,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					popup.add(delete);
 				}
 			}
-			else if (tree.getFile().length() > 1
-					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+			else if (tree.getFile().length() > 1 && tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
 				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 				createSynthesis.addActionListener(this);
 				createSynthesis.addMouseListener(this);
@@ -7074,8 +6629,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
+			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
 				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 				createSynthesis.addActionListener(this);
 				createSynthesis.addMouseListener(this);
@@ -7149,8 +6703,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 1
-					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".s")) {
+			else if (tree.getFile().length() > 1 && tree.getFile().substring(tree.getFile().length() - 2).equals(".s")) {
 				JMenuItem createAnalysis = new JMenuItem("Create Analysis View");
 				createAnalysis.addActionListener(this);
 				createAnalysis.addMouseListener(this);
@@ -7178,8 +6731,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 4
-					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".inst")) {
+			else if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".inst")) {
 				JMenuItem delete = new JMenuItem("Delete");
 				delete.addActionListener(this);
 				delete.addMouseListener(this);
@@ -7196,8 +6748,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
 				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 				createSynthesis.addActionListener(this);
 				createSynthesis.addMouseListener(this);
@@ -7245,8 +6796,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
 				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 				createSynthesis.addActionListener(this);
 				createSynthesis.addMouseListener(this);
@@ -7294,8 +6844,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
 				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 				createSynthesis.addActionListener(this);
 				createSynthesis.addMouseListener(this);
@@ -7324,8 +6873,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
 				JMenuItem createSynthesis = new JMenuItem("Create Synthesis View");
 				createSynthesis.addActionListener(this);
 				createSynthesis.addMouseListener(this);
@@ -7354,8 +6902,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
+			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
 				JMenuItem edit = new JMenuItem("View/Edit");
 				edit.addActionListener(this);
 				edit.addMouseListener(this);
@@ -7377,8 +6924,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(rename);
 				popup.add(delete);
 			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
+			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
 				JMenuItem edit = new JMenuItem("View/Edit");
 				edit.addActionListener(this);
 				edit.addMouseListener(this);
@@ -7471,83 +7017,64 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
-	}	
-	
+	}
+
 	public void executeMouseClickEvent(MouseEvent e) {
 		if (!(e.getSource() instanceof JTree)) {
 			enableTabMenu(tab.getSelectedIndex());
 			// frame.getGlassPane().setVisible(true);
-		}		
-		else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2
-				&& e.getSource() instanceof JTree && tree.getFile() != null) {
-			if (tree.getFile().length() >= 5
-					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
-					|| tree.getFile().length() >= 4
+		}
+		else if (e.getButton() == MouseEvent.BUTTON1 && e.getClickCount() == 2 && e.getSource() instanceof JTree && tree.getFile() != null) {
+			if (tree.getFile().length() >= 5 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml") || tree.getFile().length() >= 4
 					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
 				openSBML(tree.getFile());
 			}
-			else if (tree.getFile().length() >= 4
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
 				openGCM(false);
 			}
-			else if (tree.getFile().length() >= 4
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")) {
+			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")) {
 				openSBOL();
 			}
-			else if (tree.getFile().length() >= 4
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
+			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
 				openModel("VHDL");
 			}
-			else if (tree.getFile().length() >= 2
-					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".s")) {
+			else if (tree.getFile().length() >= 2 && tree.getFile().substring(tree.getFile().length() - 2).equals(".s")) {
 				openModel("Assembly File");
 			}
-			else if (tree.getFile().length() >= 5
-					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".inst")) {
+			else if (tree.getFile().length() >= 5 && tree.getFile().substring(tree.getFile().length() - 5).equals(".inst")) {
 				openModel("Instruction File");
 			}
-			else if (tree.getFile().length() >= 5
-					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
+			else if (tree.getFile().length() >= 5 && tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
 				openModel("Verilog-AMS");
 			}
-			else if (tree.getFile().length() >= 3
-					&& tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) {
+			else if (tree.getFile().length() >= 3 && tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) {
 				openModel("SystemVerilog");
 			}
-			else if (tree.getFile().length() >= 2
-					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+			else if (tree.getFile().length() >= 2 && tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
 				openModel("Petri Net");
 			}
-			else if (tree.getFile().length() >= 4
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
+			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
 				openLPN();
 			}
-			else if (tree.getFile().length() >= 4
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
+			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")) {
 				openModel("CSP");
 			}
-			else if (tree.getFile().length() >= 4
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
+			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")) {
 				openModel("Handshaking Expansion");
 			}
-			else if (tree.getFile().length() >= 4
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
+			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")) {
 				openModel("Extended Burst-Mode Machine");
 			}
-			else if (tree.getFile().length() >= 4
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
+			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg")) {
 				openModel("Reduced State Graph");
 			}
-			else if (tree.getFile().length() >= 4
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".cir")) {
+			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".cir")) {
 				openModel("Spice Circuit");
 			}
-			else if (tree.getFile().length() >= 4
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
+			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".grf")) {
 				openGraph();
 			}
-			else if (tree.getFile().length() >= 4
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
+			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".prb")) {
 				openHistogram();
 			}
 			else if (new File(tree.getFile()).isDirectory() && !tree.getFile().equals(root)) {
@@ -7604,39 +7131,30 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		Point glassPanePoint = e.getPoint();
 		// Component component = e.getComponent();
 		Container container = frame.getContentPane();
-		Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, frame
-				.getContentPane());
+		Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, frame.getContentPane());
 		if (containerPoint.y < 0) { // we're not in the content pane
 			if (containerPoint.y + menuBar.getHeight() >= 0) {
 				Component component = menuBar.getComponentAt(glassPanePoint);
-				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
-						component);
-				component.dispatchEvent(new MouseWheelEvent(component, e.getID(), e.getWhen(), e
-						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
-						.isPopupTrigger(), e.getScrollType(), e.getScrollAmount(), e
-						.getWheelRotation()));
+				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, component);
+				component.dispatchEvent(new MouseWheelEvent(component, e.getID(), e.getWhen(), e.getModifiers(), componentPoint.x, componentPoint.y,
+						e.getClickCount(), e.isPopupTrigger(), e.getScrollType(), e.getScrollAmount(), e.getWheelRotation()));
 				frame.getGlassPane().setVisible(false);
 			}
 		}
 		else {
-			Component deepComponent = SwingUtilities.getDeepestComponentAt(container,
-					containerPoint.x, containerPoint.y);
-			Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
-					deepComponent);
+			Component deepComponent = SwingUtilities.getDeepestComponentAt(container, containerPoint.x, containerPoint.y);
+			Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, deepComponent);
 			// if (deepComponent instanceof ScrollableTabPanel) {
 			// deepComponent = tab.findComponentAt(componentPoint);
 			// }
-			deepComponent.dispatchEvent(new MouseWheelEvent(deepComponent, e.getID(), e.getWhen(),
-					e.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
-							.isPopupTrigger(), e.getScrollType(), e.getScrollAmount(), e
-							.getWheelRotation()));
+			deepComponent.dispatchEvent(new MouseWheelEvent(deepComponent, e.getID(), e.getWhen(), e.getModifiers(), componentPoint.x,
+					componentPoint.y, e.getClickCount(), e.isPopupTrigger(), e.getScrollType(), e.getScrollAmount(), e.getWheelRotation()));
 		}
 	}
 
 	private void simulate(int fileType) throws Exception {
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(
-					tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+			if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 				tab.setSelectedIndex(i);
 				if (save(i, 0) == 0) {
 					return;
@@ -7647,8 +7165,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (fileType == 0) {
 			readSBML(tree.getFile());
 		}
-		String simName = JOptionPane.showInputDialog(frame, "Enter analysis id:", "Analysis ID",
-				JOptionPane.PLAIN_MESSAGE);
+		String simName = JOptionPane.showInputDialog(frame, "Enter analysis id:", "Analysis ID", JOptionPane.PLAIN_MESSAGE);
 		if (simName != null && !simName.trim().equals("")) {
 			simName = simName.trim();
 			if (overwrite(root + separator + simName, simName)) {
@@ -7661,34 +7178,24 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				String sbmlFileProp;
 				ArrayList<String> interestingSpecies = new ArrayList<String>();
 				if (fileType == 1) {
-					sbmlFile = (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1]
-							.length() - 3) + "xml");
+					sbmlFile = (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1].length() - 3) + "xml");
 					GCMParser parser = new GCMParser(tree.getFile());
 					GeneticNetwork network = parser.buildNetwork();
 					interestingSpecies.addAll(network.getInterestingSpecies());
 					GeneticNetwork.setRoot(root + separator);
 					network.mergeSBML(root + separator + simName + separator + sbmlFile);
-					sbmlFileProp = root
-							+ separator
-							+ simName
-							+ separator
-							+ (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1]
-									.length() - 3) + "xml");
+					sbmlFileProp = root + separator + simName + separator
+							+ (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1].length() - 3) + "xml");
 					sbmlFile = sbmlFileProp;
 				}
 				else if (fileType == 2) {
-					sbmlFile = (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1]
-							.length() - 3) + "xml");
+					sbmlFile = (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1].length() - 3) + "xml");
 					Translator t1 = new Translator();
 					t1.BuildTemplate(tree.getFile(), "");
 					t1.setFilename(root + separator + simName + separator + sbmlFile);
 					t1.outputSBML();
-					sbmlFileProp = root
-							+ separator
-							+ simName
-							+ separator
-							+ (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1]
-									.length() - 3) + "xml");
+					sbmlFileProp = root + separator + simName + separator
+							+ (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1].length() - 3) + "xml");
 					sbmlFile = sbmlFileProp;
 				}
 				else {
@@ -7696,14 +7203,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					new FileOutputStream(new File(sbmlFileProp)).close();
 				}
 				try {
-					FileOutputStream out = new FileOutputStream(new File(root + separator
-							+ simName.trim() + separator + simName.trim() + ".sim"));
+					FileOutputStream out = new FileOutputStream(new File(root + separator + simName.trim() + separator + simName.trim() + ".sim"));
 					out.write((sbml1[sbml1.length - 1] + "\n").getBytes());
 					out.close();
 				}
 				catch (IOException e1) {
-					JOptionPane.showMessageDialog(frame, "Unable to save parameter file!",
-							"Error Saving File", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Unable to save parameter file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
 				}
 				/*
 				 * try { FileOutputStream out = new FileOutputStream(new
@@ -7717,15 +7222,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				addToTree(simName);
 				JTabbedPane simTab = new JTabbedPane();
 				simTab.addMouseListener(this);
-				Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFileProp, root, this, simName.trim(),
-						log, simTab, null, sbml1[sbml1.length - 1], null, interestingSpecies);
+				Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFileProp, root, this, simName.trim(), log, simTab, null, sbml1[sbml1.length - 1], null,
+						interestingSpecies);
 				// reb2sac.addMouseListener(this);
 				simTab.addTab("Simulation Options", reb2sac);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 				// abstraction.addMouseListener(this);
 				if (fileType == 2) {
-					simTab.addTab("Abstraction Options", new AbstPane(root,
-							sbml1[sbml1.length - 1], log, this, false, false));
+					simTab.addTab("Abstraction Options", new AbstPane(root, sbml1[sbml1.length - 1], log, this, false, false));
 				}
 				else {
 					// System.out.println(fileType);
@@ -7737,20 +7241,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// simTab.getComponentAt(simTab.getComponents().length -
 				// 1).setName("");boolean
 				if (sbml1[sbml1.length - 1].contains(".gcm")) {
-					GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator,
-							sbml1[sbml1.length - 1], this, log, true, simName.trim(), root
-									+ separator + simName.trim() + separator + simName.trim()
-									+ ".sim", reb2sac, false);
+					GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, sbml1[sbml1.length - 1], this, log, true, simName.trim(), root
+							+ separator + simName.trim() + separator + simName.trim() + ".sim", reb2sac, false);
 					reb2sac.setGcm(gcm);
 					// sbml.addMouseListener(this);
 					addModelViewTab(reb2sac, simTab, gcm);
 					simTab.addTab("Parameters", gcm);
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
 					if (!gcm.getSBMLFile().equals("--none--")) {
-						SBML_Editor sbml = new SBML_Editor(root + separator + gcm.getSBMLFile(),
-								reb2sac, log, this, root + separator + simName.trim(), root
-										+ separator + simName.trim() + separator + simName.trim()
-										+ ".sim");
+						SBML_Editor sbml = new SBML_Editor(root + separator + gcm.getSBMLFile(), reb2sac, log, this, root + separator
+								+ simName.trim(), root + separator + simName.trim() + separator + simName.trim() + ".sim");
 						simTab.addTab("SBML Elements", sbml.getElementsPanel());
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 						gcm.setSBMLParamFile(sbml);
@@ -7763,11 +7263,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						gcm.setSBMLParamFile(null);
 					}
 				}
-				else if (sbml1[sbml1.length - 1].contains(".sbml")
-						|| sbml1[sbml1.length - 1].contains(".xml")) {
-					SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this, root
-							+ separator + simName.trim(), root + separator + simName.trim()
-							+ separator + simName.trim() + ".sim");
+				else if (sbml1[sbml1.length - 1].contains(".sbml") || sbml1[sbml1.length - 1].contains(".xml")) {
+					SBML_Editor sbml = new SBML_Editor(sbmlFile, reb2sac, log, this, root + separator + simName.trim(), root + separator
+							+ simName.trim() + separator + simName.trim() + ".sim");
 					reb2sac.setSbml(sbml);
 					// sbml.addMouseListener(this);
 					simTab.addTab("Parameter Editor", sbml);
@@ -7807,8 +7305,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void openLearn() {
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(
-					tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+			if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 				tab.setSelectedIndex(i);
 				done = true;
 			}
@@ -7829,9 +7326,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
 							if (list[i].contains("run-")) {
-								int tempNum = Integer.parseInt(list[i].substring(4, list[i]
-										.length()
-										- end.length()));
+								int tempNum = Integer.parseInt(list[i].substring(4, list[i].length() - end.length()));
 								if (tempNum > run) {
 									run = tempNum;
 									// graphFile = tree.getFile() + separator +
@@ -7846,9 +7341,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 
-			String lrnFile = tree.getFile() + separator
-					+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-					+ ".lrn";
+			String lrnFile = tree.getFile() + separator + tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".lrn";
 			String lrnFile2 = tree.getFile() + separator + ".lrn";
 			Properties load = new Properties();
 			String learnFile = "";
@@ -7878,8 +7371,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(frame, "Unable to load properties file!",
-						"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (tab.getTitleAt(i).equals(learnFile)) {
@@ -7891,8 +7383,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			if (!(new File(root + separator + learnFile).exists())) {
-				JOptionPane.showMessageDialog(frame, "Unable to open view because " + learnFile
-						+ " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Unable to open view because " + learnFile + " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			// if (!graphFile.equals("")) {
@@ -7906,23 +7397,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
 			lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
-			Graph tsdGraph = new Graph(null, "Number of molecules",
-					tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-							+ " data", "tsd.printer", tree.getFile(), "Time", this, open, log,
-					null, true, true);
+			Graph tsdGraph = new Graph(null, "Number of molecules", tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+					+ " data", "tsd.printer", tree.getFile(), "Time", this, open, log, null, true, true);
 			// tsdGraph.addMouseListener(this);
 			lrnTab.addTab("TSD Graph", tsdGraph);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
-			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-					lrnTab, null);
+			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], lrnTab, null);
 		}
 	}
 
 	private void openLearnLHPN() {
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(
-					tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+			if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 				tab.setSelectedIndex(i);
 				done = true;
 			}
@@ -7943,9 +7430,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
 							if (list[i].contains("run-")) {
-								int tempNum = Integer.parseInt(list[i].substring(4, list[i]
-										.length()
-										- end.length()));
+								int tempNum = Integer.parseInt(list[i].substring(4, list[i].length() - end.length()));
 								if (tempNum > run) {
 									run = tempNum;
 									// graphFile = tree.getFile() + separator +
@@ -7960,9 +7445,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 
-			String lrnFile = tree.getFile() + separator
-					+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-					+ ".lrn";
+			String lrnFile = tree.getFile() + separator + tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".lrn";
 			String lrnFile2 = tree.getFile() + separator + ".lrn";
 			Properties load = new Properties();
 			String learnFile = "";
@@ -7988,8 +7471,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(frame, "Unable to load properties file!",
-						"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (tab.getTitleAt(i).equals(learnFile)) {
@@ -8001,8 +7483,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			if (!(new File(root + separator + learnFile).exists())) {
-				JOptionPane.showMessageDialog(frame, "Unable to open view because " + learnFile
-						+ " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Unable to open view because " + learnFile + " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			DataManager data = new DataManager(tree.getFile(), this, lema);
@@ -8013,22 +7494,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
 			lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
-			Graph tsdGraph = new Graph(null, "Number of molecules",
-					tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-							+ " data", "tsd.printer", tree.getFile(), "Time", this, open, log,
-					null, true, true);
+			Graph tsdGraph = new Graph(null, "Number of molecules", tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
+					+ " data", "tsd.printer", tree.getFile(), "Time", this, open, log, null, true, true);
 			lrnTab.addTab("TSD Graph", tsdGraph);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("TSD Graph");
-			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-					lrnTab, null);
+			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], lrnTab, null);
 		}
 	}
 
 	private void openSynth() {
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(
-					tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+			if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 				tab.setSelectedIndex(i);
 				done = true;
 			}
@@ -8047,9 +7524,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")) {
 							if (list[i].contains("run-")) {
-								int tempNum = Integer.parseInt(list[i].substring(4, list[i]
-										.length()
-										- end.length()));
+								int tempNum = Integer.parseInt(list[i].substring(4, list[i].length() - end.length()));
 								if (tempNum > run) {
 									run = tempNum;
 									// graphFile = tree.getFile() + separator +
@@ -8061,9 +7536,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 
-			String synthFile = tree.getFile() + separator
-					+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
-					+ ".syn";
+			String synthFile = tree.getFile() + separator + tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".syn";
 			String synthFile2 = tree.getFile() + separator + ".syn";
 			Properties load = new Properties();
 			String synthesisFile = "";
@@ -8080,8 +7553,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					in.close();
 					if (load.containsKey("synthesis.file")) {
 						synthesisFile = load.getProperty("synthesis.file");
-						synthesisFile = synthesisFile.split(separator)[synthesisFile
-								.split(separator).length - 1];
+						synthesisFile = synthesisFile.split(separator)[synthesisFile.split(separator).length - 1];
 					}
 				}
 				FileOutputStream out = new FileOutputStream(new File(synthesisFile));
@@ -8090,8 +7562,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(frame, "Unable to load properties file!",
-						"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (tab.getTitleAt(i).equals(synthesisFile)) {
@@ -8103,24 +7574,22 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			if (!(new File(root + separator + synthesisFile).exists())) {
-				JOptionPane.showMessageDialog(frame, "Unable to open view because " + synthesisFile
-						+ " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Unable to open view because " + synthesisFile + " is missing.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			// if (!graphFile.equals("")) {
 			Synthesis synth = new Synthesis(tree.getFile(), "flag", log, this);
 			// synth.addMouseListener(this);
 			synthPanel.add(synth);
-			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-					synthPanel, "Synthesis");
+			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], synthPanel, "Synthesis");
 		}
 	}
 
 	private void openVerify() {
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(
-					tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+			if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
 				tab.setSelectedIndex(i);
 				done = true;
 			}
@@ -8163,8 +7632,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// out.close();
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(frame, "Unable to load properties file!",
-						"Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
 			}
 			for (int i = 0; i < tab.getTabCount(); i++) {
 				if (tab.getTitleAt(i).equals(verifyFile)) {
@@ -8176,13 +7644,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			if (!(new File(verFile).exists())) {
-				JOptionPane.showMessageDialog(frame, "Unable to open view because " + verifyFile
-						+ " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane
+						.showMessageDialog(frame, "Unable to open view because " + verifyFile + " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			// if (!graphFile.equals("")) {
-			Verification ver = new Verification(root + separator + verName, verName, "flag", log,
-					this, lema, atacs);
+			Verification ver = new Verification(root + separator + verName, verName, "flag", log, this, lema, atacs);
 			// ver.addMouseListener(this);
 			// verPanel.add(ver);
 			// AbstPane abst = new AbstPane(root + separator + verName, ver,
@@ -8191,8 +7658,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			// abstPanel.add(abst);
 			// verTab.add("verify", verPanel);
 			// verTab.add("abstract", abstPanel);
-			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],
-					ver, "Verification");
+			addTab(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1], ver, "Verification");
 		}
 	}
 
@@ -8200,8 +7666,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		String filename = tree.getFile();
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			if (tab.getTitleAt(i).equals(
-					filename.split(separator)[filename.split(separator).length - 1])) {
+			if (tab.getTitleAt(i).equals(filename.split(separator)[filename.split(separator).length - 1])) {
 				tab.setSelectedIndex(i);
 				done = true;
 			}
@@ -8235,28 +7700,20 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							else if (end.equals(".txt") && list[i].contains("sim-rep")) {
 								// probFile = filename + separator + list[i];
 							}
-							else if (end.equals("ties") && list[i].contains("properties")
-									&& !(list[i].equals("species.properties"))) {
+							else if (end.equals("ties") && list[i].contains("properties") && !(list[i].equals("species.properties"))) {
 								openFile = filename + separator + list[i];
 							}
-							else if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv")
-									|| end.contains("=")) {
+							else if (end.equals(".tsd") || end.equals(".dat") || end.equals(".csv") || end.contains("=")) {
 								if (list[i].contains("run-")) {
-									int tempNum = Integer.parseInt(list[i].substring(4, list[i]
-											.length()
-											- end.length()));
+									int tempNum = Integer.parseInt(list[i].substring(4, list[i].length() - end.length()));
 									if (tempNum > run) {
 										run = tempNum;
 										// graphFile = filename + separator +
 										// list[i];
 									}
 								}
-								else if (list[i].contains("euler-run.")
-										|| list[i].contains("gear1-run.")
-										|| list[i].contains("gear2-run.")
-										|| list[i].contains("rk4imp-run.")
-										|| list[i].contains("rk8pd-run.")
-										|| list[i].contains("rkf45-run.")) {
+								else if (list[i].contains("euler-run.") || list[i].contains("gear1-run.") || list[i].contains("gear2-run.")
+										|| list[i].contains("rk4imp-run.") || list[i].contains("rk8pd-run.") || list[i].contains("rkf45-run.")) {
 									// graphFile = filename + separator +
 									// list[i];
 								}
@@ -8290,10 +7747,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 					if (!getAFile.equals("")) {
 						String[] split = filename.split(separator);
-						String simFile = root + separator + split[split.length - 1].trim()
-								+ separator + split[split.length - 1].trim() + ".sim";
-						String pmsFile = root + separator + split[split.length - 1].trim()
-								+ separator + split[split.length - 1].trim() + ".pms";
+						String simFile = root + separator + split[split.length - 1].trim() + separator + split[split.length - 1].trim() + ".sim";
+						String pmsFile = root + separator + split[split.length - 1].trim() + separator + split[split.length - 1].trim() + ".pms";
 						if (new File(pmsFile).exists()) {
 							if (new File(simFile).exists()) {
 								new File(pmsFile).delete();
@@ -8304,7 +7759,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						String sbmlLoadFile = "";
 						String gcmFile = "";
-//						ArrayList<String> interestingSpecies = new ArrayList<String>();
+						// ArrayList<String> interestingSpecies = new
+						// ArrayList<String>();
 						if (new File(simFile).exists()) {
 							try {
 								Scanner s = new Scanner(new File(simFile));
@@ -8312,19 +7768,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									sbmlLoadFile = s.nextLine();
 									sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1];
 									if (sbmlLoadFile.contains(".xml"))
-										sbmlLoadFile = sbmlLoadFile.replace(".xml",".gcm");
+										sbmlLoadFile = sbmlLoadFile.replace(".xml", ".gcm");
 									if (sbmlLoadFile.equals("")) {
-										JOptionPane.showMessageDialog(
-														frame,
-														"Unable to open view because "
-																+ "the sbml linked to this view is missing.",
-														"Error", JOptionPane.ERROR_MESSAGE);
+										JOptionPane.showMessageDialog(frame, "Unable to open view because "
+												+ "the sbml linked to this view is missing.", "Error", JOptionPane.ERROR_MESSAGE);
 										return;
 									}
 									else if (!(new File(root + separator + sbmlLoadFile).exists())) {
-										JOptionPane.showMessageDialog(frame,
-												"Unable to open view because " + sbmlLoadFile
-														+ " is missing.", "Error",
+										JOptionPane.showMessageDialog(frame, "Unable to open view because " + sbmlLoadFile + " is missing.", "Error",
 												JOptionPane.ERROR_MESSAGE);
 										return;
 									}
@@ -8332,18 +7783,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									if (sbmlLoadFile.contains(".gcm")) {
 										GCMParser parser = new GCMParser(root + separator + sbmlLoadFile);
 										GeneticNetwork network = parser.buildNetwork();
-//										interestingSpecies.addAll(network.getInterestingSpecies());
+										// interestingSpecies.addAll(network.getInterestingSpecies());
 										GeneticNetwork.setRoot(root + separator);
-										sbmlLoadFile = root + separator
-												+ split[split.length - 1].trim() + separator
+										sbmlLoadFile = root + separator + split[split.length - 1].trim() + separator
 												+ sbmlLoadFile.replace(".gcm", ".xml");
 										network.mergeSBML(sbmlLoadFile);
 									}
 									else if (sbmlLoadFile.contains(".lpn")) {
 										Translator t1 = new Translator();
 										t1.BuildTemplate(root + separator + sbmlLoadFile, "");
-										sbmlLoadFile = root + separator
-												+ split[split.length - 1].trim() + separator
+										sbmlLoadFile = root + separator + split[split.length - 1].trim() + separator
 												+ sbmlLoadFile.replace(".lpn", ".xml");
 										t1.setFilename(sbmlLoadFile);
 										t1.outputSBML();
@@ -8363,15 +7812,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 							catch (Exception e) {
 								e.printStackTrace();
-								JOptionPane.showMessageDialog(frame, "Unable to load sbml file.",
-										"Error", JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(frame, "Unable to load sbml file.", "Error", JOptionPane.ERROR_MESSAGE);
 								return;
 							}
 						}
 						else {
-							sbmlLoadFile = root
-									+ separator
-									+ getAFile.split(separator)[getAFile.split(separator).length - 1];
+							sbmlLoadFile = root + separator + getAFile.split(separator)[getAFile.split(separator).length - 1];
 							if (!new File(sbmlLoadFile).exists()) {
 								sbmlLoadFile = getAFile;
 								/*
@@ -8383,17 +7829,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						if (!new File(sbmlLoadFile).exists()) {
 							JOptionPane.showMessageDialog(frame,
-									"Unable to open view because "
-											+ sbmlLoadFile.split(separator)[sbmlLoadFile
-													.split(separator).length - 1] + " is missing.",
-									"Error", JOptionPane.ERROR_MESSAGE);
+									"Unable to open view because " + sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1]
+											+ " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
 							return;
 						}
 						for (int i = 0; i < tab.getTabCount(); i++) {
-							if (tab.getTitleAt(i)
-									.equals(
-											sbmlLoadFile.split(separator)[sbmlLoadFile
-													.split(separator).length - 1])) {
+							if (tab.getTitleAt(i).equals(sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1])) {
 								tab.setSelectedIndex(i);
 								if (save(i, 0) == 0) {
 									return;
@@ -8403,22 +7844,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						JTabbedPane simTab = new JTabbedPane();
 						simTab.addMouseListener(this);
-						AbstPane lhpnAbstraction = new AbstPane(root, gcmFile, log, this, false,
-								false);
+						AbstPane lhpnAbstraction = new AbstPane(root, gcmFile, log, this, false, false);
 						Reb2Sac reb2sac;
 						if (gcmFile.contains(".lpn")) {
-							reb2sac = new Reb2Sac(sbmlLoadFile, getAFile, root, this,
-									split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
+							reb2sac = new Reb2Sac(sbmlLoadFile, getAFile, root, this, split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
 									lhpnAbstraction, null);
 						}
 						else {
-							reb2sac = new Reb2Sac(sbmlLoadFile, getAFile, root, this,
-									split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
+							reb2sac = new Reb2Sac(sbmlLoadFile, getAFile, root, this, split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
 									null, null);
 						}
 						simTab.addTab("Simulation Options", reb2sac);
-						simTab.getComponentAt(simTab.getComponents().length - 1)
-								.setName("Simulate");
+						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 						if (gcmFile.contains(".lpn")) {
 							simTab.addTab("Abstraction Options", lhpnAbstraction);
 						}
@@ -8431,42 +7868,33 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						// simTab.getComponentAt(simTab.getComponents().length -
 						// 1).setName("");
 						if (gcmFile.contains(".gcm")) {
-							GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, gcmFile,
-									this, log, true, split[split.length - 1].trim(), root
-											+ separator + split[split.length - 1].trim()
-											+ separator + split[split.length - 1].trim() + ".sim",
-									reb2sac, false);
+							GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, gcmFile, this, log, true, split[split.length - 1].trim(), root
+									+ separator + split[split.length - 1].trim() + separator + split[split.length - 1].trim() + ".sim", reb2sac,
+									false);
 							reb2sac.setGcm(gcm);
 							// sbml.addMouseListener(this);
 							addModelViewTab(reb2sac, simTab, gcm);
 							simTab.addTab("Parameters", gcm);
-							simTab.getComponentAt(simTab.getComponents().length - 1).setName(
-									"GCM Editor");
+							simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
 							if (!gcm.getSBMLFile().equals("--none--")) {
-								SBML_Editor sbml = new SBML_Editor(root + separator
-										+ gcm.getSBMLFile(), reb2sac, log, this, root + separator
-										+ split[split.length - 1].trim(), root + separator
-										+ split[split.length - 1].trim() + separator
+								SBML_Editor sbml = new SBML_Editor(root + separator + gcm.getSBMLFile(), reb2sac, log, this, root + separator
+										+ split[split.length - 1].trim(), root + separator + split[split.length - 1].trim() + separator
 										+ split[split.length - 1].trim() + ".sim");
 								simTab.addTab("SBML Elements", sbml.getElementsPanel());
-								simTab.getComponentAt(simTab.getComponents().length - 1)
-										.setName("");
+								simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 								gcm.setSBMLParamFile(sbml);
 							}
 							else {
 								JScrollPane scroll = new JScrollPane();
 								scroll.setViewportView(new JPanel());
 								simTab.addTab("SBML Elements", scroll);
-								simTab.getComponentAt(simTab.getComponents().length - 1)
-										.setName("");
+								simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 								gcm.setSBMLParamFile(null);
 							}
 						}
 						else if (gcmFile.contains(".sbml") || gcmFile.contains(".xml")) {
-							SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this,
-									root + separator + split[split.length - 1].trim(), root
-											+ separator + split[split.length - 1].trim()
-											+ separator + split[split.length - 1].trim() + ".sim");
+							SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root + separator + split[split.length - 1].trim(),
+									root + separator + split[split.length - 1].trim() + separator + split[split.length - 1].trim() + ".sim");
 							reb2sac.setSbml(sbml);
 							// sbml.addMouseListener(this);
 							simTab.addTab("Parameter Editor", sbml);
@@ -8496,8 +7924,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void addModelViewTab(Reb2Sac reb2sac, JTabbedPane tabPane, GCM2SBMLEditor gcm2sbml) {
 
 		// Add the modelview tab
-		MovieContainer movieContainer = new MovieContainer(reb2sac, gcm2sbml.getGCM(), this,
-				gcm2sbml);
+		MovieContainer movieContainer = new MovieContainer(reb2sac, gcm2sbml.getGCM(), this, gcm2sbml);
 
 		tabPane.addTab("Schematic", movieContainer);
 		tabPane.getComponentAt(tabPane.getComponents().length - 1).setName("ModelViewMovie");
@@ -8507,8 +7934,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			public void stateChanged(ChangeEvent e) {
 				JTabbedPane selectedTab = (JTabbedPane) (e.getSource());
 				if (!(selectedTab.getComponent(selectedTab.getSelectedIndex()) instanceof JScrollPane)) {
-					JPanel selectedPanel = (JPanel) selectedTab.getComponent(selectedTab
-							.getSelectedIndex());
+					JPanel selectedPanel = (JPanel) selectedTab.getComponent(selectedTab.getSelectedIndex());
 					String className = selectedPanel.getClass().getName();
 
 					// The new Schematic
@@ -8552,8 +7978,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			popup.add(graph);
 			popup.add(probGraph);
 			if (popup.getComponentCount() != 0) {
-				popup.show(mainPanel, mainPanel.getMousePosition().x,
-						mainPanel.getMousePosition().y);
+				popup.show(mainPanel, mainPanel.getMousePosition().x, mainPanel.getMousePosition().y);
 			}
 		}
 	}
@@ -8591,8 +8016,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(importSpice);
 			}
 			if (popup.getComponentCount() != 0) {
-				popup.show(mainPanel, mainPanel.getMousePosition().x,
-						mainPanel.getMousePosition().y);
+				popup.show(mainPanel, mainPanel.getMousePosition().x, mainPanel.getMousePosition().y);
 			}
 		}
 	}
@@ -8617,8 +8041,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			popup.add(exportSvg);
 			popup.add(exportTsd);
 			if (popup.getComponentCount() != 0) {
-				popup.show(mainPanel, mainPanel.getMousePosition().x,
-						mainPanel.getMousePosition().y);
+				popup.show(mainPanel, mainPanel.getMousePosition().x, mainPanel.getMousePosition().y);
 			}
 		}
 	}
@@ -8637,8 +8060,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			popup.add(viewModGraph);
 			popup.add(viewModBrowser);
 			if (popup.getComponentCount() != 0) {
-				popup.show(mainPanel, mainPanel.getMousePosition().x,
-						mainPanel.getMousePosition().y);
+				popup.show(mainPanel, mainPanel.getMousePosition().x, mainPanel.getMousePosition().y);
 			}
 		}
 	}
@@ -8660,28 +8082,22 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		Point glassPanePoint = e.getPoint();
 		// Component component = e.getComponent();
 		Container container = frame.getContentPane();
-		Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, frame
-				.getContentPane());
+		Point containerPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, frame.getContentPane());
 		if (containerPoint.y < 0) { // we're not in the content pane
 			if (containerPoint.y + menuBar.getHeight() >= 0) {
 				Component component = menuBar.getComponentAt(glassPanePoint);
-				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
-						component);
-				component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e
-						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
-						.isPopupTrigger()));
+				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, component);
+				component.dispatchEvent(new MouseEvent(component, e.getID(), e.getWhen(), e.getModifiers(), componentPoint.x, componentPoint.y, e
+						.getClickCount(), e.isPopupTrigger()));
 				frame.getGlassPane().setVisible(false);
 			}
 		}
 		else {
 			try {
-				Component deepComponent = SwingUtilities.getDeepestComponentAt(container,
-						containerPoint.x, containerPoint.y);
-				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint,
-						deepComponent);
-				deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e
-						.getModifiers(), componentPoint.x, componentPoint.y, e.getClickCount(), e
-						.isPopupTrigger()));
+				Component deepComponent = SwingUtilities.getDeepestComponentAt(container, containerPoint.x, containerPoint.y);
+				Point componentPoint = SwingUtilities.convertPoint(glassPane, glassPanePoint, deepComponent);
+				deepComponent.dispatchEvent(new MouseEvent(deepComponent, e.getID(), e.getWhen(), e.getModifiers(), componentPoint.x,
+						componentPoint.y, e.getClickCount(), e.isPopupTrigger()));
 			}
 			catch (Exception e1) {
 			}
@@ -8723,33 +8139,26 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				Class.forName("org.sbml.libsbml.libsbml");
 			}
 			catch (UnsatisfiedLinkError e) {
-				System.err.println("Error: could not link with the libSBML library."
-						+ "  It is likely\nyour " + varname
-						+ " environment variable does not include\nthe"
-						+ " directory containing the libsbml library file.");
+				System.err.println("Error: could not link with the libSBML library." + "  It is likely\nyour " + varname
+						+ " environment variable does not include\nthe" + " directory containing the libsbml library file.");
 				System.exit(1);
 			}
 			catch (ClassNotFoundException e) {
-				System.err.println("Error: unable to load the file libsbmlj.jar."
-						+ "  It is likely\nyour " + varname + " environment"
-						+ " variable or CLASSPATH variable\ndoes not include"
-						+ " the directory containing the libsbmlj.jar file.");
+				System.err.println("Error: unable to load the file libsbmlj.jar." + "  It is likely\nyour " + varname + " environment"
+						+ " variable or CLASSPATH variable\ndoes not include" + " the directory containing the libsbmlj.jar file.");
 				System.exit(1);
 			}
 			catch (SecurityException e) {
-				System.err.println("Could not load the libSBML library files due to a"
-						+ " security exception.");
+				System.err.println("Could not load the libSBML library files due to a" + " security exception.");
 				System.exit(1);
 			}
 		}
 		else {
 			/*
-			String varname;
-			if (System.getProperty("mrj.version") != null)
-				varname = "DYLD_LIBRARY_PATH"; // We're on a Mac.
-			else
-				varname = "LD_LIBRARY_PATH"; // We're not on a Mac.
-				*/
+			 * String varname; if (System.getProperty("mrj.version") != null)
+			 * varname = "DYLD_LIBRARY_PATH"; // We're on a Mac. else varname =
+			 * "LD_LIBRARY_PATH"; // We're not on a Mac.
+			 */
 			try {
 				System.loadLibrary("sbmlj");
 				// For extra safety, check that the jar file is in the
@@ -8781,18 +8190,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String sbmlLoadFile = null;
 			String gcmFile = null;
 			for (String ss : s) {
-				if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml")
-						|| ss.length() > 3 && ss.substring(ss.length() - 4).equals(".xml")) {
+				if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml") || ss.length() > 3
+						&& ss.substring(ss.length() - 4).equals(".xml")) {
 					SBMLDocument document = readSBML(root + separator + oldSim + separator + ss);
 					SBMLWriter writer = new SBMLWriter();
 					writer.writeSBML(document, root + separator + newSim + separator + ss);
 					sbmlFile = root + separator + newSim + separator + ss;
 				}
 				else if (ss.length() > 10 && ss.substring(ss.length() - 11).equals(".properties")) {
-					FileOutputStream out = new FileOutputStream(new File(root + separator + newSim
-							+ separator + ss));
-					FileInputStream in = new FileInputStream(new File(root + separator + oldSim
-							+ separator + ss));
+					FileOutputStream out = new FileOutputStream(new File(root + separator + newSim + separator + ss));
+					FileInputStream in = new FileInputStream(new File(root + separator + oldSim + separator + ss));
 					int read = in.read();
 					while (read != -1) {
 						out.write(read);
@@ -8803,25 +8210,20 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					propertiesFile = root + separator + newSim + separator + ss;
 				}
 				else if (ss.length() > 3
-						&& (ss.substring(ss.length() - 4).equals(".dat")
-								|| ss.substring(ss.length() - 4).equals(".sad")
-								|| ss.substring(ss.length() - 4).equals(".pms") || ss.substring(
-								ss.length() - 4).equals(".sim")) && !ss.equals(".sim")) {
+						&& (ss.substring(ss.length() - 4).equals(".dat") || ss.substring(ss.length() - 4).equals(".sad")
+								|| ss.substring(ss.length() - 4).equals(".pms") || ss.substring(ss.length() - 4).equals(".sim"))
+						&& !ss.equals(".sim")) {
 					FileOutputStream out;
 					if (ss.substring(ss.length() - 4).equals(".pms")) {
-						out = new FileOutputStream(new File(root + separator + newSim + separator
-								+ newSim + ".sim"));
+						out = new FileOutputStream(new File(root + separator + newSim + separator + newSim + ".sim"));
 					}
 					else if (ss.substring(ss.length() - 4).equals(".sim")) {
-						out = new FileOutputStream(new File(root + separator + newSim + separator
-								+ newSim + ".sim"));
+						out = new FileOutputStream(new File(root + separator + newSim + separator + newSim + ".sim"));
 					}
 					else {
-						out = new FileOutputStream(new File(root + separator + newSim + separator
-								+ ss));
+						out = new FileOutputStream(new File(root + separator + newSim + separator + ss));
 					}
-					FileInputStream in = new FileInputStream(new File(root + separator + oldSim
-							+ separator + ss));
+					FileInputStream in = new FileInputStream(new File(root + separator + oldSim + separator + ss));
 					int read = in.read();
 					while (read != -1) {
 						out.write(read);
@@ -8830,33 +8232,27 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					in.close();
 					out.close();
 					if (ss.substring(ss.length() - 4).equals(".pms")) {
-						if (new File(root + separator + newSim + separator
-								+ ss.substring(0, ss.length() - 4) + ".sim").exists()) {
+						if (new File(root + separator + newSim + separator + ss.substring(0, ss.length() - 4) + ".sim").exists()) {
 							new File(root + separator + newSim + separator + ss).delete();
 						}
 						else {
-							new File(root + separator + newSim + separator + ss).renameTo(new File(
-									root + separator + newSim + separator
-											+ ss.substring(0, ss.length() - 4) + ".sim"));
+							new File(root + separator + newSim + separator + ss).renameTo(new File(root + separator + newSim + separator
+									+ ss.substring(0, ss.length() - 4) + ".sim"));
 						}
 						ss = ss.substring(0, ss.length() - 4) + ".sim";
 					}
 					if (ss.substring(ss.length() - 4).equals(".sim")) {
 						try {
-							Scanner scan = new Scanner(new File(root + separator + newSim
-									+ separator + ss));
+							Scanner scan = new Scanner(new File(root + separator + newSim + separator + ss));
 							if (scan.hasNextLine()) {
 								sbmlLoadFile = scan.nextLine();
-								sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile
-										.split(separator).length - 1];
+								sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1];
 								gcmFile = sbmlLoadFile;
 								if (sbmlLoadFile.contains(".gcm")) {
-									GCMParser parser = new GCMParser(root + separator
-											+ sbmlLoadFile);
+									GCMParser parser = new GCMParser(root + separator + sbmlLoadFile);
 									GeneticNetwork network = parser.buildNetwork();
 									GeneticNetwork.setRoot(root + separator);
-									sbmlLoadFile = root + separator + newSim + separator
-											+ sbmlLoadFile.replace(".gcm", ".sbml");
+									sbmlLoadFile = root + separator + newSim + separator + sbmlLoadFile.replace(".gcm", ".sbml");
 									network.mergeSBML(sbmlLoadFile);
 								}
 								else {
@@ -8870,8 +8266,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						catch (Exception e) {
 							e.printStackTrace();
-							JOptionPane.showMessageDialog(frame, "Unable to load sbml file.",
-									"Error", JOptionPane.ERROR_MESSAGE);
+							JOptionPane.showMessageDialog(frame, "Unable to load sbml file.", "Error", JOptionPane.ERROR_MESSAGE);
 						}
 					}
 				}
@@ -8879,8 +8274,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			addToTree(newSim);
 			JTabbedPane simTab = new JTabbedPane();
 			simTab.addMouseListener(this);
-			Reb2Sac reb2sac = new Reb2Sac(sbmlLoadFile, sbmlFile, root, this, newSim, log, simTab,
-					propertiesFile, gcmFile, null, null);
+			Reb2Sac reb2sac = new Reb2Sac(sbmlLoadFile, sbmlFile, root, this, newSim, log, simTab, propertiesFile, gcmFile, null, null);
 			simTab.addTab("Simulation Options", reb2sac);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 			simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
@@ -8889,17 +8283,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			// simTab.getComponentAt(simTab.getComponents().length -
 			// 1).setName("");
 			if (gcmFile.contains(".gcm")) {
-				GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, gcmFile, this, log, true,
-						newSim, root + separator + newSim + separator + newSim + ".sim", reb2sac, false);
+				GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, gcmFile, this, log, true, newSim, root + separator + newSim + separator
+						+ newSim + ".sim", reb2sac, false);
 				reb2sac.setGcm(gcm);
 				// sbml.addMouseListener(this);
 				addModelViewTab(reb2sac, simTab, gcm);
 				simTab.addTab("Parameters", gcm);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
 				if (!gcm.getSBMLFile().equals("--none--")) {
-					SBML_Editor sbml = new SBML_Editor(root + separator + gcm.getSBMLFile(),
-							reb2sac, log, this, root + separator + newSim, root + separator
-									+ newSim + separator + newSim + ".sim");
+					SBML_Editor sbml = new SBML_Editor(root + separator + gcm.getSBMLFile(), reb2sac, log, this, root + separator + newSim, root
+							+ separator + newSim + separator + newSim + ".sim");
 					simTab.addTab("SBML Elements", sbml.getElementsPanel());
 					simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 					gcm.setSBMLParamFile(sbml);
@@ -8913,9 +8306,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			else {
-				SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root
-						+ separator + newSim, root + separator + newSim + separator + newSim
-						+ ".sim");
+				SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root + separator + newSim, root + separator + newSim + separator
+						+ newSim + ".sim");
 				reb2sac.setSbml(sbml);
 				// sbml.addMouseListener(this);
 				simTab.addTab("Parameter Editor", sbml);
@@ -8936,8 +8328,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			tab.getComponentAt(tab.getSelectedIndex()).setName(newSim);
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(frame, "Unable to copy simulation.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(frame, "Unable to copy simulation.", "Error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -8945,37 +8336,28 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			if (tab.getTitleAt(i).equals(learnName)) {
 				for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getComponentCount(); j++) {
-					if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName().equals(
-							"TSD Graph")) {
+					if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName().equals("TSD Graph")) {
 						// if (data) {
 						if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof Graph) {
-							((Graph) ((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j))
-									.refresh();
+							((Graph) ((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j)).refresh();
 						}
 						else {
-							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Graph(null,
-									"Number of molecules", learnName + " data", "tsd.printer", root
-											+ separator + learnName, "Time", this, null, log, null,
-									true, true));
-							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName(
-									"TSD Graph");
+							((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new Graph(null, "Number of molecules", learnName + " data",
+									"tsd.printer", root + separator + learnName, "Time", this, null, log, null, true, true));
+							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("TSD Graph");
 						}
 					}
-					else if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName()
-							.equals("Learn")) {
+					else if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName().equals("Learn")) {
 						if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof LearnGCM) {
 						}
 						else {
 							if (lema) {
-								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j,
-										new LearnLHPN(root + separator + learnName, log, this));
+								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new LearnLHPN(root + separator + learnName, log, this));
 							}
 							else {
-								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j,
-										new LearnGCM(root + separator + learnName, log, this));
+								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new LearnGCM(root + separator + learnName, log, this));
 							}
-							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j)
-									.setName("Learn");
+							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("Learn");
 						}
 					}
 				}
@@ -8997,11 +8379,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String tab = this.tab.getTitleAt(i);
 			if (gcmName.equals(tab)) {
 				if (this.tab.getComponentAt(i) instanceof GCM2SBMLEditor) {
-					GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, gcmName, this, log, 
-							false, null, null, null, false);
+					GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, gcmName, this, log, false, null, null, null, false);
 					this.tab.setComponentAt(i, gcm);
 					this.tab.getComponentAt(i).setName("GCM Editor");
-					//gcm.save(false, "", false, true);
+					// gcm.save(false, "", false, true);
 					return true;
 				}
 			}
@@ -9044,8 +8425,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				catch (Exception e) {
-					JOptionPane.showMessageDialog(frame, "Unable to load background file.",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Unable to load background file.", "Error", JOptionPane.ERROR_MESSAGE);
 					check = "";
 				}
 				if (check.equals(updatedFile)) {
@@ -9055,8 +8435,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							((DataManager) (learn.getComponentAt(j))).updateSpecies();
 						}
 						else if (learn.getComponentAt(j).getName().equals("Learn")) {
-							((LearnLHPN) (learn.getComponentAt(j))).updateSpecies(root + separator
-									+ updatedFile);
+							((LearnLHPN) (learn.getComponentAt(j))).updateSpecies(root + separator + updatedFile);
 							((LearnLHPN) (learn.getComponentAt(j))).reload(updatedFile);
 						}
 						else if (learn.getComponentAt(j).getName().contains("Graph")) {
@@ -9089,14 +8468,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (check.equals(updatedFile)) {
 					JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
 					for (int j = 0; j < sim.getTabCount(); j++) {
-						//String tabName = sim.getComponentAt(j).getName();
-						//boolean b = sim.getComponentAt(j).getName().equals("ModelViewMovie");
+						// String tabName = sim.getComponentAt(j).getName();
+						// boolean b =
+						// sim.getComponentAt(j).getName().equals("ModelViewMovie");
 						if (sim.getComponentAt(j) instanceof Reb2Sac) {
 							((Reb2Sac) sim.getComponentAt(j)).updateProperties();
 						}
 						else if (sim.getComponentAt(j).getName().equals("SBML Editor")) {
-							new File(properties).renameTo(new File(properties.replace(".sim",
-									".temp")));
+							new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
 							try {
 								boolean dirty = ((SBML_Editor) (sim.getComponentAt(j))).isDirty();
 								((SBML_Editor) (sim.getComponentAt(j))).save(false, "", true, true);
@@ -9104,15 +8483,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									GCMParser parser = new GCMParser(root + separator + updatedFile);
 									GeneticNetwork network = parser.buildNetwork();
 									GeneticNetwork.setRoot(root + separator);
-									network.mergeSBML(root + separator + tab + separator
-											+ updatedFile.replace(".gcm", ".xml"));
-									((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
-											+ separator + tab + separator
-											+ updatedFile.replace(".gcm", ".xml"));
+									network.mergeSBML(root + separator + tab + separator + updatedFile.replace(".gcm", ".xml"));
+									((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j,
+											root + separator + tab + separator + updatedFile.replace(".gcm", ".xml"));
 								}
 								else {
-									((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root
-											+ separator + updatedFile);
+									((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j, root + separator + updatedFile);
 								}
 								((SBML_Editor) (sim.getComponentAt(j))).setDirty(dirty);
 							}
@@ -9120,14 +8496,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								e.printStackTrace();
 							}
 							new File(properties).delete();
-							new File(properties.replace(".sim", ".temp")).renameTo(new File(
-									properties));
-							sim.setComponentAt(j + 1, ((SBML_Editor) (sim.getComponentAt(j)))
-									.getElementsPanel());
+							new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
+							sim.setComponentAt(j + 1, ((SBML_Editor) (sim.getComponentAt(j))).getElementsPanel());
 							sim.getComponentAt(j + 1).setName("");
 						}
 						else if (sim.getComponentAt(j).getName().equals("GCM Editor")) {
-							new File(properties).renameTo(new File(properties.replace(".sim",".temp")));
+							new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
 							try {
 								boolean dirty = ((GCM2SBMLEditor) (sim.getComponentAt(j))).isDirty();
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).saveParams(false, "", true);
@@ -9140,15 +8514,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								e.printStackTrace();
 							}
 							new File(properties).delete();
-							new File(properties.replace(".sim", ".temp")).renameTo(new File(
-									properties));
-							if (!((GCM2SBMLEditor) (sim.getComponentAt(j))).getSBMLFile().equals(
-									"--none--")) {
-								SBML_Editor sbml = new SBML_Editor(root + separator
-										+ ((GCM2SBMLEditor) (sim.getComponentAt(j))).getSBMLFile(),
-										((Reb2Sac) sim.getComponentAt(0)), log, this, root
-												+ separator + tab, root + separator + tab
-												+ separator + tab + ".sim");
+							new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
+							if (!((GCM2SBMLEditor) (sim.getComponentAt(j))).getSBMLFile().equals("--none--")) {
+								SBML_Editor sbml = new SBML_Editor(root + separator + ((GCM2SBMLEditor) (sim.getComponentAt(j))).getSBMLFile(),
+										((Reb2Sac) sim.getComponentAt(0)), log, this, root + separator + tab, root + separator + tab + separator
+												+ tab + ".sim");
 								sim.setComponentAt(j + 1, sbml.getElementsPanel());
 								sim.getComponentAt(j + 1).setName("");
 								((GCM2SBMLEditor) (sim.getComponentAt(j))).setSBMLParamFile(sbml);
@@ -9185,8 +8555,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				catch (Exception e) {
-					JOptionPane.showMessageDialog(frame, "Unable to load background file.",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Unable to load background file.", "Error", JOptionPane.ERROR_MESSAGE);
 					check = "";
 				}
 				if (check.equals(updatedFile)) {
@@ -9196,8 +8565,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							((DataManager) (learn.getComponentAt(j))).updateSpecies();
 						}
 						else if (learn.getComponentAt(j).getName().equals("Learn")) {
-							((LearnGCM) (learn.getComponentAt(j))).updateSpecies(root + separator
-									+ updatedFile);
+							((LearnGCM) (learn.getComponentAt(j))).updateSpecies(root + separator + updatedFile);
 						}
 						else if (learn.getComponentAt(j).getName().contains("Graph")) {
 							((Graph) (learn.getComponentAt(j))).refresh();
@@ -9259,8 +8627,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				catch (Exception e) {
 					// log.addText("verification");
 					// e.printStackTrace();
-					JOptionPane.showMessageDialog(frame, "Unable to load background file.",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Unable to load background file.", "Error", JOptionPane.ERROR_MESSAGE);
 					check = "";
 				}
 			}
@@ -9287,8 +8654,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				catch (Exception e) {
 					// log.addText("synthesis");
 					// e.printStackTrace();
-					JOptionPane.showMessageDialog(frame, "Unable to load background file.",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Unable to load background file.", "Error", JOptionPane.ERROR_MESSAGE);
 					check = "";
 				}
 			}
@@ -9314,8 +8680,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				catch (Exception e) {
 					// e.printStackTrace();
-					JOptionPane.showMessageDialog(frame, "Unable to load background file.",
-							"Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, "Unable to load background file.", "Error", JOptionPane.ERROR_MESSAGE);
 					check = "";
 				}
 			}
@@ -9427,8 +8792,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				save.setEnabled(true);
 				run.setEnabled(true);
 				if (learn) {
-					if (new File(root + separator + tab.getTitleAt(tab.getSelectedIndex())
-							+ separator + "method.gcm").exists()) {
+					if (new File(root + separator + tab.getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
 						viewLearnedModel.setEnabled(true);
 					}
 					run.setEnabled(true);
@@ -9484,8 +8848,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				run.setEnabled(true);
 			}
 			else if (component instanceof LearnGCM) {
-				if (new File(root + separator + tab.getTitleAt(tab.getSelectedIndex()) + separator
-						+ "method.gcm").exists()) {
+				if (new File(root + separator + tab.getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
 					viewLearnedModel.setEnabled(true);
 				}
 				saveButton.setEnabled(true);
@@ -9513,8 +8876,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				save.setEnabled(true);
 				saveAs.setEnabled(true);
 				if (learn) {
-					if (new File(root + separator + tab.getTitleAt(tab.getSelectedIndex())
-							+ separator + "method.gcm").exists()) {
+					if (new File(root + separator + tab.getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
 						viewLearnedModel.setEnabled(true);
 					}
 					run.setEnabled(true);
@@ -9537,8 +8899,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				save.setEnabled(true);
 				run.setEnabled(true);
 				if (learn) {
-					if (new File(root + separator + tab.getTitleAt(tab.getSelectedIndex())
-							+ separator + "method.gcm").exists()) {
+					if (new File(root + separator + tab.getTitleAt(tab.getSelectedIndex()) + separator + "method.gcm").exists()) {
 						viewLearnedModel.setEnabled(true);
 					}
 					run.setEnabled(true);
@@ -9569,8 +8930,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				runButton.setEnabled(true);
 				save.setEnabled(true);
 				run.setEnabled(true);
-				viewTrace.setEnabled(((Verification) comp).getViewTraceEnabled()); 
-				viewLog.setEnabled(((Verification) comp).getViewLogEnabled()); 
+				viewTrace.setEnabled(((Verification) comp).getViewTraceEnabled());
+				viewLog.setEnabled(((Verification) comp).getViewLogEnabled());
 			}
 			else if (comp.getName().equals("Synthesis")) {
 				saveButton.setEnabled(true);
@@ -9613,10 +8974,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (tree.getFile() != null) {
 			if (tree.getFile().equals(root)) {
 			}
-			else if (tree.getFile().length() > 4
-					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
-					|| tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+			else if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+					|| tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
 				viewModGraph.setEnabled(true);
 				viewModGraph.setActionCommand("graph");
 				viewModBrowser.setEnabled(true);
@@ -9628,8 +8987,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				delete.setEnabled(true);
 				viewModel.setEnabled(true);
 			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
 				viewModGraph.setEnabled(true);
 				createAnal.setEnabled(true);
 				createAnal.setActionCommand("createSim");
@@ -9640,27 +8998,24 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				delete.setEnabled(true);
 				viewModel.setEnabled(true);
 			}
-			else if (tree.getFile().length() > 3 && 
-					(tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf") ||
-					 tree.getFile().substring(tree.getFile().length() - 4).equals(".grf"))) {
+			else if (tree.getFile().length() > 3
+					&& (tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf") || tree.getFile().substring(tree.getFile().length() - 4)
+							.equals(".grf"))) {
 				copy.setEnabled(true);
 				rename.setEnabled(true);
 				delete.setEnabled(true);
 			}
-			else if (tree.getFile().length() > 4
-					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
+			else if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".vams")) {
 				copy.setEnabled(true);
 				rename.setEnabled(true);
 				delete.setEnabled(true);
 			}
-			else if (tree.getFile().length() > 2
-					&& tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) {
+			else if (tree.getFile().length() > 2 && tree.getFile().substring(tree.getFile().length() - 3).equals(".sv")) {
 				copy.setEnabled(true);
 				rename.setEnabled(true);
 				delete.setEnabled(true);
 			}
-			else if (tree.getFile().length() > 1
-					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
+			else if (tree.getFile().length() > 1 && tree.getFile().substring(tree.getFile().length() - 2).equals(".g")) {
 				viewModel.setEnabled(true);
 				viewModGraph.setEnabled(true);
 				createSynth.setEnabled(true);
@@ -9670,8 +9025,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				delete.setEnabled(true);
 				viewLHPN.setEnabled(true);
 			}
-			else if (tree.getFile().length() > 3
-					&& tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
+			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
 				viewModel.setEnabled(true);
 				viewModGraph.setEnabled(true);
 				createAnal.setEnabled(true);
@@ -9687,12 +9041,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewLHPN.setEnabled(true);
 				saveAsVerilog.setEnabled(true);
 			}
-			else if (tree.getFile().length() > 3 && 
-					(tree.getFile().substring(tree.getFile().length() - 4).equals(".hse") ||
-					tree.getFile().substring(tree.getFile().length() - 4).equals(".unc") ||
-					tree.getFile().substring(tree.getFile().length() - 4).equals(".csp") ||
-					tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd") ||
-					tree.getFile().substring(tree.getFile().length() - 4).equals(".rsg"))) {
+			else if (tree.getFile().length() > 3
+					&& (tree.getFile().substring(tree.getFile().length() - 4).equals(".hse")
+							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".unc")
+							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".csp")
+							|| tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd") || tree.getFile()
+							.substring(tree.getFile().length() - 4).equals(".rsg"))) {
 				viewModel.setEnabled(true);
 				viewModGraph.setEnabled(true);
 				createSynth.setEnabled(true);
@@ -9702,9 +9056,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				delete.setEnabled(true);
 				viewLHPN.setEnabled(true);
 			}
-			else if (tree.getFile().length() > 1
-					&& tree.getFile().substring(tree.getFile().length() - 2).equals(".s") || 
-					tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".inst")) {
+			else if (tree.getFile().length() > 1 && tree.getFile().substring(tree.getFile().length() - 2).equals(".s") || tree.getFile().length() > 4
+					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".inst")) {
 				createAnal.setEnabled(true);
 				createVer.setEnabled(true);
 				copy.setEnabled(true);
@@ -9749,8 +9102,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		output = output.replaceAll("//", "/");
 		if (input.equals(output)) {
 			Object[] options = { "Ok" };
-			JOptionPane.showOptionDialog(frame, "Files are the same.", "Files Same",
-					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			JOptionPane.showOptionDialog(frame, "Files are the same.", "Files Same", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+					options, options[0]);
 			return false;
 		}
 		return true;
@@ -9762,9 +9115,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Object[] options = { "Overwrite", "Cancel" };
 			int value;
 			if (views.length == 0) {
-				value = JOptionPane.showOptionDialog(frame, name + " already exists."
-						+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				value = JOptionPane.showOptionDialog(frame, name + " already exists." + "\nDo you want to overwrite?", "Overwrite",
+						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			}
 			else {
 				String view = "";
@@ -9779,20 +9131,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				String message;
 				if (gcms.equals("")) {
-					message = "The file, " + name
-							+ ", already exists, and\nit is linked to the following views:\n\n"
-							+ view + "\n\nAre you sure you want to overwrite?";
+					message = "The file, " + name + ", already exists, and\nit is linked to the following views:\n\n" + view
+							+ "\n\nAre you sure you want to overwrite?";
 				}
 				else if (view.equals("")) {
-					message = "The file, " + name
-							+ ", already exists, and\nit is linked to the following gcms:\n\n"
-							+ gcms + "\n\nAre you sure you want to overwrite?";
+					message = "The file, " + name + ", already exists, and\nit is linked to the following gcms:\n\n" + gcms
+							+ "\n\nAre you sure you want to overwrite?";
 				}
 				else {
-					message = "The file, " + name
-							+ ", already exists, and\nit is linked to the following views:\n\n"
-							+ views + "\n\nand\nit is linked to the following gcms:\n\n" + gcms
-							+ "\n\nAre you sure you want to overwrite?";
+					message = "The file, " + name + ", already exists, and\nit is linked to the following views:\n\n" + views
+							+ "\n\nand\nit is linked to the following gcms:\n\n" + gcms + "\n\nAre you sure you want to overwrite?";
 				}
 
 				JTextArea messageArea = new JTextArea(message);
@@ -9801,8 +9149,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				scroll.setMinimumSize(new Dimension(300, 300));
 				scroll.setPreferredSize(new Dimension(300, 300));
 				scroll.setViewportView(messageArea);
-				value = JOptionPane.showOptionDialog(frame, scroll, "Overwrite",
-						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+				value = JOptionPane.showOptionDialog(frame, scroll, "Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
 						options[0]);
 				value = JOptionPane.NO_OPTION;
 			}
@@ -9836,8 +9183,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String tab = this.tab.getTitleAt(i);
 			if (sbmlName.equals(tab)) {
 				if (this.tab.getComponentAt(i) instanceof SBML_Editor) {
-					SBML_Editor newSBML = new SBML_Editor(root + separator + sbmlName, null, log,
-							this, null, null);
+					SBML_Editor newSBML = new SBML_Editor(root + separator + sbmlName, null, log, this, null, null);
 					this.tab.setComponentAt(i, newSBML);
 					this.tab.getComponentAt(i).setName("SBML Editor");
 					newSBML.save(false, "", false, true);
@@ -9880,8 +9226,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				String check = "";
 				if (new File(root + separator + s + separator + s + ".sim").exists()) {
 					try {
-						Scanner scan = new Scanner(new File(root + separator + s + separator + s
-								+ ".sim"));
+						Scanner scan = new Scanner(new File(root + separator + s + separator + s + ".sim"));
 						if (scan.hasNextLine()) {
 							check = scan.nextLine();
 							check = check.split(separator)[check.split(separator).length - 1];
@@ -9894,8 +9239,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				else if (new File(root + separator + s + separator + s + ".lrn").exists()) {
 					try {
 						Properties p = new Properties();
-						FileInputStream load = new FileInputStream(new File(root + separator + s
-								+ separator + s + ".lrn"));
+						FileInputStream load = new FileInputStream(new File(root + separator + s + separator + s + ".lrn"));
 						p.load(load);
 						load.close();
 						if (p.containsKey("genenet.file")) {
@@ -9917,8 +9261,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				else if (new File(root + separator + s + separator + s + ".ver").exists()) {
 					try {
 						Properties p = new Properties();
-						FileInputStream load = new FileInputStream(new File(root + separator + s
-								+ separator + s + ".lrn"));
+						FileInputStream load = new FileInputStream(new File(root + separator + s + separator + s + ".lrn"));
 						p.load(load);
 						load.close();
 						if (p.containsKey("verification.file")) {
@@ -9936,8 +9279,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				else if (new File(root + separator + s + separator + s + ".synth").exists()) {
 					try {
 						Properties p = new Properties();
-						FileInputStream load = new FileInputStream(new File(root + separator + s
-								+ separator + s + ".lrn"));
+						FileInputStream load = new FileInputStream(new File(root + separator + s + separator + s + ".lrn"));
 						p.load(load);
 						load.close();
 						if (p.containsKey("synthesis.file")) {
@@ -9956,9 +9298,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					views.add(s);
 				}
 			}
-			else if (s.endsWith(".gcm")
-					&& (filename.endsWith(".gcm") || filename.endsWith(".xml") || filename
-							.endsWith(".sbml"))) {
+			else if (s.endsWith(".gcm") && (filename.endsWith(".gcm") || filename.endsWith(".xml") || filename.endsWith(".sbml"))) {
 				GCMFile gcm = new GCMFile(root);
 				gcm.load(root + separator + s);
 				if (gcm.getSBMLFile().equals(filename)) {
@@ -9999,8 +9339,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (new File(root + separator + s + separator + s + ".sim").exists()) {
 					try {
 						ArrayList<String> copy = new ArrayList<String>();
-						Scanner scan = new Scanner(new File(root + separator + s + separator + s
-								+ ".sim"));
+						Scanner scan = new Scanner(new File(root + separator + s + separator + s + ".sim"));
 						if (scan.hasNextLine()) {
 							check = scan.nextLine();
 							check = check.split(separator)[check.split(separator).length - 1];
@@ -10009,8 +9348,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									copy.add(scan.nextLine());
 								}
 								scan.close();
-								FileOutputStream out = new FileOutputStream(new File(root
-										+ separator + s + separator + s + ".sim"));
+								FileOutputStream out = new FileOutputStream(new File(root + separator + s + separator + s + ".sim"));
 								out.write((newName + "\n").getBytes());
 								for (String cop : copy) {
 									out.write((cop + "\n").getBytes());
@@ -10028,8 +9366,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				else if (new File(root + separator + s + separator + s + ".lrn").exists()) {
 					try {
 						Properties p = new Properties();
-						FileInputStream load = new FileInputStream(new File(root + separator + s
-								+ separator + s + ".lrn"));
+						FileInputStream load = new FileInputStream(new File(root + separator + s + separator + s + ".lrn"));
 						p.load(load);
 						load.close();
 						if (p.containsKey("genenet.file")) {
@@ -10037,8 +9374,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							check = getProp[getProp.length - 1];
 							if (check.equals(oldName)) {
 								p.setProperty("genenet.file", newName);
-								FileOutputStream store = new FileOutputStream(new File(root
-										+ separator + s + separator + s + ".lrn"));
+								FileOutputStream store = new FileOutputStream(new File(root + separator + s + separator + s + ".lrn"));
 								p.store(store, "Learn File Data");
 								store.close();
 							}
@@ -10051,8 +9387,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 
-	protected JButton makeToolButton(String imageName, String actionCommand, String toolTipText,
-			String altText) {
+	protected JButton makeToolButton(String imageName, String actionCommand, String toolTipText, String altText) {
 		JButton button = new JButton();
 		button.setActionCommand(actionCommand);
 		button.setToolTipText(toolTipText);
@@ -10065,10 +9400,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = reader.readSBML(filename);
 		JTextArea messageArea = new JTextArea();
-		messageArea.append("Conversion to SBML level " + SBML_LEVEL + " version " + SBML_VERSION
-				+ " produced the errors listed below. ");
-		messageArea
-				.append("It is recommended that you fix them before using these models or you may get unexpected results.\n\n");
+		messageArea.append("Conversion to SBML level " + SBML_LEVEL + " version " + SBML_VERSION + " produced the errors listed below. ");
+		messageArea.append("It is recommended that you fix them before using these models or you may get unexpected results.\n\n");
 		boolean display = false;
 		long numErrors = 0;
 		if (SBMLLevelVersion.equals("L2V4")) {
@@ -10079,11 +9412,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		if (numErrors > 0) {
 			display = true;
-			messageArea
-					.append("--------------------------------------------------------------------------------------\n");
+			messageArea.append("--------------------------------------------------------------------------------------\n");
 			messageArea.append(filename);
-			messageArea
-					.append("\n--------------------------------------------------------------------------------------\n\n");
+			messageArea.append("\n--------------------------------------------------------------------------------------\n\n");
 			for (long i = 0; i < numErrors; i++) {
 				String error = document.getError(i).getMessage();
 				messageArea.append(i + ":" + error + "\n");
@@ -10141,16 +9472,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public static void checkModelCompleteness(SBMLDocument document) {
 		JTextArea messageArea = new JTextArea();
-		messageArea
-				.append("Model is incomplete.  Cannot be simulated until the following information is provided.\n");
+		messageArea.append("Model is incomplete.  Cannot be simulated until the following information is provided.\n");
 		boolean display = false;
 		Model model = document.getModel();
 		ListOf list = model.getListOfCompartments();
 		for (int i = 0; i < model.getNumCompartments(); i++) {
 			Compartment compartment = (Compartment) list.get(i);
 			if (!compartment.isSetSize()) {
-				messageArea
-						.append("--------------------------------------------------------------------------\n");
+				messageArea.append("--------------------------------------------------------------------------\n");
 				messageArea.append("Compartment " + compartment.getId() + " needs a size.\n");
 				display = true;
 			}
@@ -10159,10 +9488,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		for (int i = 0; i < model.getNumSpecies(); i++) {
 			Species species = (Species) list.get(i);
 			if (!(species.isSetInitialAmount()) && !(species.isSetInitialConcentration())) {
-				messageArea
-						.append("--------------------------------------------------------------------------\n");
-				messageArea.append("Species " + species.getId()
-						+ " needs an initial amount or concentration.\n");
+				messageArea.append("--------------------------------------------------------------------------\n");
+				messageArea.append("Species " + species.getId() + " needs an initial amount or concentration.\n");
 				display = true;
 			}
 		}
@@ -10170,8 +9497,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			Parameter parameter = (Parameter) list.get(i);
 			if (!(parameter.isSetValue())) {
-				messageArea
-						.append("--------------------------------------------------------------------------\n");
+				messageArea.append("--------------------------------------------------------------------------\n");
 				messageArea.append("Parameter " + parameter.getId() + " needs an initial value.\n");
 				display = true;
 			}
@@ -10180,8 +9506,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		for (int i = 0; i < model.getNumReactions(); i++) {
 			Reaction reaction = (Reaction) list.get(i);
 			if (!(reaction.isSetKineticLaw())) {
-				messageArea
-						.append("--------------------------------------------------------------------------\n");
+				messageArea.append("--------------------------------------------------------------------------\n");
 				messageArea.append("Reaction " + reaction.getId() + " needs a kinetic law.\n");
 				display = true;
 			}
@@ -10190,10 +9515,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
 					Parameter param = (Parameter) params.get(j);
 					if (!(param.isSetValue())) {
-						messageArea
-								.append("--------------------------------------------------------------------------\n");
-						messageArea.append("Local parameter " + param.getId() + " for reaction "
-								+ reaction.getId() + " needs an initial value.\n");
+						messageArea.append("--------------------------------------------------------------------------\n");
+						messageArea.append("Local parameter " + param.getId() + " for reaction " + reaction.getId() + " needs an initial value.\n");
 						display = true;
 					}
 				}
@@ -10241,7 +9564,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			f.setVisible(true);
 		}
 	}
-	
+
 	static final String SFILELINE = "input (\\S+?)\n";
-	
+
 }

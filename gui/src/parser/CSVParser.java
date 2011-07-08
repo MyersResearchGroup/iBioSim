@@ -12,8 +12,8 @@ public class CSVParser extends Parser {
 			warning = warn;
 			boolean warning2 = warning;
 			FileInputStream fileInput = new FileInputStream(new File(filename));
-			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component,
-					"Reading Reb2sac Output Data From " + new File(filename).getName(), fileInput);
+			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component, "Reading Reb2sac Output Data From "
+					+ new File(filename).getName(), fileInput);
 			InputStream input = new BufferedInputStream(prog);
 			boolean reading = true;
 			char cha = 0;
@@ -30,17 +30,17 @@ public class CSVParser extends Parser {
 						readWord = false;
 					}
 					cha = (char) read;
-//					   if (cha == '\n') {
-//					moveToData = true;
-//				}
-//				else if (cha == ',') {
-//					readWord = false;
-//				}
-//					else if (cha == ' ' && word.equals("")) {
-//					}
-//				else {
-//					word += cha;
-//				}
+					// if (cha == '\n') {
+					// moveToData = true;
+					// }
+					// else if (cha == ',') {
+					// readWord = false;
+					// }
+					// else if (cha == ' ' && word.equals("")) {
+					// }
+					// else {
+					// word += cha;
+					// }
 					if (withinWord) {
 						if (usingQuotes) {
 							if (cha == '\"') {
@@ -55,7 +55,8 @@ public class CSVParser extends Parser {
 						else {
 							if (cha == '\n') {
 								moveToData = true;
-							} else if (cha  == ',') {
+							}
+							else if (cha == ',') {
 								withinWord = false;
 								readWord = false;
 							}
@@ -99,9 +100,8 @@ public class CSVParser extends Parser {
 					while (readWord) {
 						read = input.read();
 						cha = (char) read;
-						while (!Character.isWhitespace(cha) && cha != ',' && cha != ':' && cha != ';'
-								&& cha != '!' && cha != '?' && cha != '\"' && cha != '\'' && cha != '('
-								&& cha != ')' && cha != '{' && cha != '}' && cha != '[' && cha != ']' && cha != '<'
+						while (!Character.isWhitespace(cha) && cha != ',' && cha != ':' && cha != ';' && cha != '!' && cha != '?' && cha != '\"'
+								&& cha != '\'' && cha != '(' && cha != ')' && cha != '{' && cha != '}' && cha != '[' && cha != ']' && cha != '<'
 								&& cha != '>' && cha != '_' && cha != '*' && cha != '=' && read != -1) {
 							word += cha;
 							read = input.read();
@@ -117,16 +117,16 @@ public class CSVParser extends Parser {
 					if (!word.equals("")) {
 						if (word.equals("nan")) {
 							if (!warning) {
-								JOptionPane.showMessageDialog(component, "Found NAN in data."
-										+ "\nReplacing with 0s.", "NAN In Data", JOptionPane.WARNING_MESSAGE);
+								JOptionPane.showMessageDialog(component, "Found NAN in data." + "\nReplacing with 0s.", "NAN In Data",
+										JOptionPane.WARNING_MESSAGE);
 								warning = true;
 							}
 							word = "0";
 						}
 						if (word.equals("inf")) {
 							if (!warning2) {
-								JOptionPane.showMessageDialog(component, "Found INF in data." + "\nReplacing with "
-										+ Double.MAX_VALUE + ".", "INF In Data", JOptionPane.WARNING_MESSAGE);
+								JOptionPane.showMessageDialog(component, "Found INF in data." + "\nReplacing with " + Double.MAX_VALUE + ".",
+										"INF In Data", JOptionPane.WARNING_MESSAGE);
 								warning2 = true;
 							}
 							word = "" + Double.MAX_VALUE;
@@ -142,13 +142,13 @@ public class CSVParser extends Parser {
 						dataPoints++;
 						if (cha == '\n') {
 							if (dataPoints > species.size()) {
-								JOptionPane.showMessageDialog(component, "Time point includes more data than number of species",
-										 "Extra Data", JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(component, "Time point includes more data than number of species", "Extra Data",
+										JOptionPane.ERROR_MESSAGE);
 								throw new ArrayIndexOutOfBoundsException();
 							}
 							if (dataPoints < species.size()) {
-								JOptionPane.showMessageDialog(component, "Time point includes less data than number of species",
-										 "Missing Data", JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(component, "Time point includes less data than number of species", "Missing Data",
+										JOptionPane.ERROR_MESSAGE);
 								throw new ArrayIndexOutOfBoundsException();
 							}
 							dataPoints = 0;
@@ -161,9 +161,8 @@ public class CSVParser extends Parser {
 			fileInput.close();
 		}
 		catch (IOException e) {
-			JOptionPane.showMessageDialog(component, "Error Reading Data!"
-					+ "\nThere was an error reading the simulation output data.", "Error Reading Data",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(component, "Error Reading Data!" + "\nThere was an error reading the simulation output data.",
+					"Error Reading Data", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

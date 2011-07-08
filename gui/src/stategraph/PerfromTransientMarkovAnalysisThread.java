@@ -11,7 +11,7 @@ public class PerfromTransientMarkovAnalysisThread extends Thread {
 	private double timeLimit, timeStep, printInterval, error;
 
 	private String[] condition;
-	
+
 	private boolean globallyTrue;
 
 	public PerfromTransientMarkovAnalysisThread(StateGraph sg, JProgressBar progress) {

@@ -22,7 +22,6 @@ import javax.swing.text.View;
 
 import main.Gui;
 
-
 /**
  * This UI displays a different interface, which is independent from the look
  * and feel.
@@ -46,19 +45,18 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 	public CloseTabPaneEnhancedUI(Gui biosim) {
 		super(biosim);
 	}
-	
+
 	public static ComponentUI createUI(JComponent c, Gui biosim) {
 		return new CloseTabPaneEnhancedUI(biosim);
 	}
 
 	@Override
-	protected void paintFocusIndicator(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex,
-			Rectangle iconRect, Rectangle textRect, boolean isSelected) {
+	protected void paintFocusIndicator(Graphics g, int tabPlacement, Rectangle[] rects, int tabIndex, Rectangle iconRect, Rectangle textRect,
+			boolean isSelected) {
 	}
 
 	@Override
-	protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w,
-			int h, boolean isSelected) {
+	protected void paintTabBorder(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
 		g.setColor(shadow);
 
 		g.drawLine(x, y + 2, x, y + h - 1); // left highlight
@@ -80,8 +78,7 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 	}
 
 	@Override
-	protected void paintContentBorderTopEdge(Graphics g, int tabPlacement, int selectedIndex, int x,
-			int y, int w, int h) {
+	protected void paintContentBorderTopEdge(Graphics g, int tabPlacement, int selectedIndex, int x, int y, int w, int h) {
 
 		if (tabPane.getTabCount() < 1)
 			return;
@@ -91,8 +88,7 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 	}
 
 	@Override
-	protected void paintContentBorderLeftEdge(Graphics g, int tabPlacement, int selectedIndex, int x,
-			int y, int w, int h) {
+	protected void paintContentBorderLeftEdge(Graphics g, int tabPlacement, int selectedIndex, int x, int y, int w, int h) {
 
 		if (tabPane.getTabCount() < 1)
 			return;
@@ -103,8 +99,7 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 	}
 
 	@Override
-	protected void paintContentBorderBottomEdge(Graphics g, int tabPlacement, int selectedIndex,
-			int x, int y, int w, int h) {
+	protected void paintContentBorderBottomEdge(Graphics g, int tabPlacement, int selectedIndex, int x, int y, int w, int h) {
 
 		if (tabPane.getTabCount() < 1)
 			return;
@@ -118,8 +113,7 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 	}
 
 	@Override
-	protected void paintContentBorderRightEdge(Graphics g, int tabPlacement, int selectedIndex,
-			int x, int y, int w, int h) {
+	protected void paintContentBorderRightEdge(Graphics g, int tabPlacement, int selectedIndex, int x, int y, int w, int h) {
 
 		if (tabPane.getTabCount() < 1)
 			return;
@@ -134,8 +128,7 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 	}
 
 	@Override
-	protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y,
-			int w, int h, boolean isSelected) {
+	protected void paintTabBackground(Graphics g, int tabPlacement, int tabIndex, int x, int y, int w, int h, boolean isSelected) {
 		if (isSelected) {
 
 			GradientPaint leftGradient;
@@ -169,8 +162,8 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 	}
 
 	@Override
-	protected void paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics,
-			int tabIndex, String title, Rectangle textRect, boolean isSelected) {
+	protected void paintText(Graphics g, int tabPlacement, Font font, FontMetrics metrics, int tabIndex, String title, Rectangle textRect,
+			boolean isSelected) {
 
 		g.setFont(font);
 
@@ -189,17 +182,14 @@ public class CloseTabPaneEnhancedUI extends CloseTabPaneUI {
 				else
 					g.setColor(tabPane.getForegroundAt(tabIndex));
 
-				BasicGraphicsUtils.drawStringUnderlineCharAt(g, title, mnemIndex, textRect.x, textRect.y
-						+ metrics.getAscent());
+				BasicGraphicsUtils.drawStringUnderlineCharAt(g, title, mnemIndex, textRect.x, textRect.y + metrics.getAscent());
 
 			}
 			else { // tab disabled
 				g.setColor(tabPane.getBackgroundAt(tabIndex).brighter());
-				BasicGraphicsUtils.drawStringUnderlineCharAt(g, title, mnemIndex, textRect.x, textRect.y
-						+ metrics.getAscent());
+				BasicGraphicsUtils.drawStringUnderlineCharAt(g, title, mnemIndex, textRect.x, textRect.y + metrics.getAscent());
 				g.setColor(tabPane.getBackgroundAt(tabIndex).darker());
-				BasicGraphicsUtils.drawStringUnderlineCharAt(g, title, mnemIndex, textRect.x - 1,
-						textRect.y + metrics.getAscent() - 1);
+				BasicGraphicsUtils.drawStringUnderlineCharAt(g, title, mnemIndex, textRect.x - 1, textRect.y + metrics.getAscent() - 1);
 
 			}
 		}

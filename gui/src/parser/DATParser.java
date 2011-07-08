@@ -12,8 +12,8 @@ public class DATParser extends Parser {
 			boolean warning2 = warning;
 			boolean warning3 = warning;
 			FileInputStream fileInput = new FileInputStream(new File(filename));
-			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component,
-					"Reading Reb2sac Output Data From " + new File(filename).getName(), fileInput);
+			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component, "Reading Reb2sac Output Data From "
+					+ new File(filename).getName(), fileInput);
 			InputStream input = new BufferedInputStream(prog);
 			boolean reading = true;
 			char cha = 0;
@@ -63,7 +63,8 @@ public class DATParser extends Parser {
 								if (cha == '\n') {
 									if (junkLine) {
 										endJunk = true;
-									} else {
+									}
+									else {
 										moveToData = true;
 									}
 									junkLine = false;
@@ -136,9 +137,8 @@ public class DATParser extends Parser {
 					while (readWord) {
 						read = input.read();
 						cha = (char) read;
-						while (!Character.isWhitespace(cha) && cha != ',' && cha != ':' && cha != ';'
-								&& cha != '!' && cha != '?' && cha != '\"' && cha != '\'' && cha != '('
-								&& cha != ')' && cha != '{' && cha != '}' && cha != '[' && cha != ']' && cha != '<'
+						while (!Character.isWhitespace(cha) && cha != ',' && cha != ':' && cha != ';' && cha != '!' && cha != '?' && cha != '\"'
+								&& cha != '\'' && cha != '(' && cha != ')' && cha != '{' && cha != '}' && cha != '[' && cha != ']' && cha != '<'
 								&& cha != '>' && cha != '_' && cha != '*' && cha != '=' && read != -1) {
 							word += cha;
 							read = input.read();
@@ -154,16 +154,16 @@ public class DATParser extends Parser {
 					if (!word.equals("")) {
 						if (word.equals("nan")) {
 							if (!warning) {
-								JOptionPane.showMessageDialog(component, "Found NAN in data."
-										+ "\nReplacing with 0s.", "NAN In Data", JOptionPane.WARNING_MESSAGE);
+								JOptionPane.showMessageDialog(component, "Found NAN in data." + "\nReplacing with 0s.", "NAN In Data",
+										JOptionPane.WARNING_MESSAGE);
 								warning = true;
 							}
 							word = "0";
 						}
 						if (word.equals("inf")) {
 							if (!warning2) {
-								JOptionPane.showMessageDialog(component, "Found INF in data." + "\nReplacing with "
-										+ Double.MAX_VALUE + ".", "INF In Data", JOptionPane.WARNING_MESSAGE);
+								JOptionPane.showMessageDialog(component, "Found INF in data." + "\nReplacing with " + Double.MAX_VALUE + ".",
+										"INF In Data", JOptionPane.WARNING_MESSAGE);
 								warning2 = true;
 							}
 							word = "" + Double.MAX_VALUE;
@@ -179,13 +179,13 @@ public class DATParser extends Parser {
 						dataPoints++;
 						if (cha == '\n') {
 							if (dataPoints > species.size()) {
-								JOptionPane.showMessageDialog(component, "Time point includes more data than number of species",
-										 "Extra Data", JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(component, "Time point includes more data than number of species", "Extra Data",
+										JOptionPane.ERROR_MESSAGE);
 								throw new ArrayIndexOutOfBoundsException();
 							}
 							if (dataPoints < species.size()) {
-								JOptionPane.showMessageDialog(component, "Time point includes less data than number of species",
-										 "Missing Data", JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(component, "Time point includes less data than number of species", "Missing Data",
+										JOptionPane.ERROR_MESSAGE);
 								throw new ArrayIndexOutOfBoundsException();
 							}
 							dataPoints = 0;
@@ -198,14 +198,12 @@ public class DATParser extends Parser {
 			fileInput.close();
 		}
 		catch (IOException e) {
-			JOptionPane.showMessageDialog(component, "Error Reading Data!"
-					+ "\nThere was an error reading the simulation data file.", "Error Reading Data",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(component, "Error Reading Data!" + "\nThere was an error reading the simulation data file.",
+					"Error Reading Data", JOptionPane.ERROR_MESSAGE);
 		}
 		catch (NumberFormatException e) {
-			JOptionPane.showMessageDialog(component, "Error Reading Data!"
-					+ "\nNon-numeric data found in the simulation file.", "Error Reading Data",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(component, "Error Reading Data!" + "\nNon-numeric data found in the simulation file.",
+					"Error Reading Data", JOptionPane.ERROR_MESSAGE);
 			species.clear();
 			data.clear();
 		}

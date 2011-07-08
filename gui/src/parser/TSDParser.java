@@ -6,28 +6,34 @@ import java.util.*;
 import javax.swing.*;
 
 public class TSDParser extends Parser {
-	
+
 	private double minValue;
 	private double maxValue;
-	public double getMinValue() {return minValue;}
-	public double getMaxValue() {return maxValue;}
+
+	public double getMinValue() {
+		return minValue;
+	}
+
+	public double getMaxValue() {
+		return maxValue;
+	}
 
 	public TSDParser(String filename, boolean warn) {
 		super(new ArrayList<String>(), new ArrayList<ArrayList<Double>>());
-		
+
 		// set the min and max such that they will be overwritten immediately
 		minValue = Double.POSITIVE_INFINITY;
 		maxValue = Double.NEGATIVE_INFINITY;
-		
+
 		try {
 			warning = warn;
 			boolean warning2 = warning;
 			boolean warning3 = warning;
 			FileInputStream fileInput = new FileInputStream(new File(filename));
-			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component,
-					"Reading Reb2sac Output Data From " + new File(filename).getName(), fileInput);
+			ProgressMonitorInputStream prog = new ProgressMonitorInputStream(component, "Reading Reb2sac Output Data From "
+					+ new File(filename).getName(), fileInput);
 			InputStream input = new BufferedInputStream(prog);
-			
+
 			boolean reading = true;
 			char cha = 0;
 			while (reading) {
@@ -82,9 +88,8 @@ public class TSDParser extends Parser {
 					while (readWord) {
 						read = input.read();
 						cha = (char) read;
-						while (!Character.isWhitespace(cha) && cha != ',' && cha != ':' && cha != ';'
-								&& cha != '!' && cha != '?' && cha != '\"' && cha != '\'' && cha != '('
-								&& cha != ')' && cha != '{' && cha != '}' && cha != '[' && cha != ']' && cha != '<'
+						while (!Character.isWhitespace(cha) && cha != ',' && cha != ':' && cha != ';' && cha != '!' && cha != '?' && cha != '\"'
+								&& cha != '\'' && cha != '(' && cha != ')' && cha != '{' && cha != '}' && cha != '[' && cha != ']' && cha != '<'
 								&& cha != '>' && cha != '_' && cha != '*' && cha != '=' && read != -1) {
 							word += cha;
 							read = input.read();
@@ -100,27 +105,27 @@ public class TSDParser extends Parser {
 					if (!word.equals("")) {
 						if (word.equals("nan")) {
 							if (!warning) {
-								JOptionPane.showMessageDialog(component, "Found NAN in data."
-										+ "\nReplacing with 0s.", "NAN In Data", JOptionPane.WARNING_MESSAGE);
+								JOptionPane.showMessageDialog(component, "Found NAN in data." + "\nReplacing with 0s.", "NAN In Data",
+										JOptionPane.WARNING_MESSAGE);
 								warning = true;
 							}
 							word = "0";
 						}
 						if (word.equals("inf")) {
 							if (!warning2) {
-								JOptionPane.showMessageDialog(component, "Found INF in data." + "\nReplacing with "
-										+ Double.MAX_VALUE + ".", "INF In Data", JOptionPane.WARNING_MESSAGE);
+								JOptionPane.showMessageDialog(component, "Found INF in data." + "\nReplacing with " + Double.MAX_VALUE + ".",
+										"INF In Data", JOptionPane.WARNING_MESSAGE);
 								warning2 = true;
 							}
 							word = "" + Double.MAX_VALUE;
 						}
 						if (word.equals("-inf")) {
 							if (!warning3) {
-								JOptionPane.showMessageDialog(component, "Found -INF in data." + "\nReplacing with "
-										+ (-1)*Double.MAX_VALUE + ".", "INF In Data", JOptionPane.WARNING_MESSAGE);
+								JOptionPane.showMessageDialog(component, "Found -INF in data." + "\nReplacing with " + (-1) * Double.MAX_VALUE + ".",
+										"INF In Data", JOptionPane.WARNING_MESSAGE);
 								warning3 = true;
 							}
-							word = "" + (-1)*Double.MAX_VALUE;
+							word = "" + (-1) * Double.MAX_VALUE;
 						}
 						if (counter < species.size()) {
 							insert = counter;
@@ -130,24 +135,25 @@ public class TSDParser extends Parser {
 						}
 						double dataPoint = Double.parseDouble(word);
 						(data.get(insert)).add(dataPoint);
-						
-						// add the value to the min and max if it isn't a time value
-						if(dataPoints > 0){
+
+						// add the value to the min and max if it isn't a time
+						// value
+						if (dataPoints > 0) {
 							this.minValue = Math.min(this.minValue, dataPoint);
 							this.maxValue = Math.max(this.maxValue, dataPoint);
 						}
-						
+
 						counter++;
 						dataPoints++;
 						if (cha == ')') {
 							if (dataPoints > species.size()) {
-								JOptionPane.showMessageDialog(component, "Time point includes more data than number of species",
-										 "Extra Data", JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(component, "Time point includes more data than number of species", "Extra Data",
+										JOptionPane.ERROR_MESSAGE);
 								throw new ArrayIndexOutOfBoundsException();
 							}
 							if (dataPoints < species.size()) {
-								JOptionPane.showMessageDialog(component, "Time point includes less data than number of species",
-										 "Missing Data", JOptionPane.ERROR_MESSAGE);
+								JOptionPane.showMessageDialog(component, "Time point includes less data than number of species", "Missing Data",
+										JOptionPane.ERROR_MESSAGE);
 								throw new ArrayIndexOutOfBoundsException();
 							}
 							dataPoints = 0;
@@ -158,15 +164,14 @@ public class TSDParser extends Parser {
 			input.close();
 			prog.close();
 			fileInput.close();
-			if(Double.isInfinite(this.minValue) || Double.isInfinite(this.minValue)){
+			if (Double.isInfinite(this.minValue) || Double.isInfinite(this.minValue)) {
 				this.minValue = Double.NaN;
 				this.maxValue = Double.NaN;
 			}
 		}
 		catch (IOException e) {
-			JOptionPane.showMessageDialog(component, "Error Reading Data!"
-					+ "\nThere was an error reading the simulation output data.", "Error Reading Data",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(component, "Error Reading Data!" + "\nThere was an error reading the simulation output data.",
+					"Error Reading Data", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

@@ -54,11 +54,11 @@ public class SBML_Editor extends JPanel {
 	private ArrayList<String> parameterChanges, elementChanges;
 
 	private String refFile;
-	
+
 	private ModelPanel modelPanel;
-	
+
 	private InitialAssignments initialsPanel;
-	
+
 	private Rules rulesPanel;
 
 	private Functions funcdefnPanel;
@@ -87,8 +87,7 @@ public class SBML_Editor extends JPanel {
 				scan.close();
 			}
 			catch (Exception e) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to read parameter file.",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to read parameter file.", "Error", JOptionPane.ERROR_MESSAGE);
 				refFile = file;
 			}
 		}
@@ -157,11 +156,11 @@ public class SBML_Editor extends JPanel {
 			catch (Exception e) {
 			}
 		}
-		
-		Compartments comp = new Compartments(document,usedIDs,dirty,paramsOnly,getParams,file,parameterChanges,false);
-		MySpecies spec = new MySpecies(biosim,document,usedIDs,dirty,paramsOnly,getParams,file,parameterChanges,false);
-		Parameters param = new Parameters(document,usedIDs,dirty,paramsOnly,getParams,file,parameterChanges);
-		Reactions reac = new Reactions(biosim,document,usedIDs,dirty,paramsOnly,getParams,file,parameterChanges);
+
+		Compartments comp = new Compartments(document, usedIDs, dirty, paramsOnly, getParams, file, parameterChanges, false);
+		MySpecies spec = new MySpecies(biosim, document, usedIDs, dirty, paramsOnly, getParams, file, parameterChanges, false);
+		Parameters param = new Parameters(document, usedIDs, dirty, paramsOnly, getParams, file, parameterChanges);
+		Reactions reac = new Reactions(biosim, document, usedIDs, dirty, paramsOnly, getParams, file, parameterChanges);
 
 		// adds the main panel to the frame and displays it
 		JPanel mainPanelCenter = new JPanel(new GridLayout(2, 2));
@@ -170,7 +169,7 @@ public class SBML_Editor extends JPanel {
 		mainPanelCenter.add(reac);
 		mainPanelCenter.add(param);
 
-		modelPanel = new ModelPanel(document,dirty,paramsOnly); 
+		modelPanel = new ModelPanel(document, dirty, paramsOnly);
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
 		mainPanel.add(modelPanel, "North");
@@ -201,10 +200,10 @@ public class SBML_Editor extends JPanel {
 	 * Private helper method to create definitions/types frame.
 	 */
 	private JPanel createDefnFrame(Model model) {
-		funcdefnPanel = new Functions(document,usedIDs,dirty);
-		Units unitdefnPanel = new Units(biosim,document,usedIDs,dirty);
-		CompartmentTypes compTypePanel = new CompartmentTypes(biosim,document,usedIDs,dirty);
-		SpeciesTypes specTypePanel = new SpeciesTypes(biosim,document,usedIDs,dirty);
+		funcdefnPanel = new Functions(document, usedIDs, dirty);
+		Units unitdefnPanel = new Units(biosim, document, usedIDs, dirty);
+		CompartmentTypes compTypePanel = new CompartmentTypes(biosim, document, usedIDs, dirty);
+		SpeciesTypes specTypePanel = new SpeciesTypes(biosim, document, usedIDs, dirty);
 
 		JPanel defnPanel = new JPanel(new GridLayout(2, 2));
 		defnPanel.add(funcdefnPanel);
@@ -220,10 +219,10 @@ public class SBML_Editor extends JPanel {
 	 * Private helper method to create rules/events/constraints frame.
 	 */
 	private JPanel createRuleFrame(Model model) {
-		initialsPanel = new InitialAssignments(biosim,document,dirty);
-		rulesPanel = new Rules(biosim,document,dirty);
-		Constraints constraintPanel = new Constraints(biosim,document,usedIDs,dirty);
-		Events eventPanel = new Events(biosim,document,usedIDs,dirty);
+		initialsPanel = new InitialAssignments(biosim, document, dirty);
+		rulesPanel = new Rules(biosim, document, dirty);
+		Constraints constraintPanel = new Constraints(biosim, document, usedIDs, dirty);
+		Events eventPanel = new Events(biosim, document, usedIDs, dirty);
 
 		JPanel recPanel = new JPanel(new GridLayout(2, 2));
 		recPanel.add(initialsPanel);
@@ -237,8 +236,8 @@ public class SBML_Editor extends JPanel {
 		if (paramsOnly) {
 			Model m = document.getModel();
 			ListOf e = m.getListOfConstraints();
-			int consNum = (int)m.getNumConstraints();
-			String [] cons = new String[(int) consNum];
+			int consNum = (int) m.getNumConstraints();
+			String[] cons = new String[(int) consNum];
 			for (int i = 0; i < consNum; i++) {
 				Constraint constraint = (Constraint) e.get(i);
 				if (!constraint.isSetMetaId()) {
@@ -254,9 +253,9 @@ public class SBML_Editor extends JPanel {
 				cons[i] = constraint.getMetaId();
 			}
 			e = m.getListOfRules();
-			int rulNum = (int)m.getNumRules();
-			String [] rul = new String[rulNum];
-			for (int i=0;i<rulNum;i++) {
+			int rulNum = (int) m.getNumRules();
+			String[] rul = new String[rulNum];
+			for (int i = 0; i < rulNum; i++) {
 				Rule rule = (Rule) e.get(i);
 				if (rule.isAlgebraic()) {
 					rul[i] = "0 = " + SBMLutilities.myFormulaToString(rule.getMath());
@@ -265,28 +264,27 @@ public class SBML_Editor extends JPanel {
 					rul[i] = rule.getVariable() + " = " + SBMLutilities.myFormulaToString(rule.getMath());
 				}
 				else {
-					rul[i] = "d( " + rule.getVariable() + " )/dt = "
-							+ SBMLutilities.myFormulaToString(rule.getMath());
+					rul[i] = "d( " + rule.getVariable() + " )/dt = " + SBMLutilities.myFormulaToString(rule.getMath());
 				}
 			}
 			e = m.getListOfInitialAssignments();
-			int initsNum = (int)m.getNumInitialAssignments();
-			String [] inits = new String[initsNum];
-			for (int i=0;i<initsNum;i++) {
-				inits[i] = ((InitialAssignment)e.get(i)).getSymbol() + " = " 
-				+ SBMLutilities.myFormulaToString(((InitialAssignment)e.get(i)).getMath());
+			int initsNum = (int) m.getNumInitialAssignments();
+			String[] inits = new String[initsNum];
+			for (int i = 0; i < initsNum; i++) {
+				inits[i] = ((InitialAssignment) e.get(i)).getSymbol() + " = "
+						+ SBMLutilities.myFormulaToString(((InitialAssignment) e.get(i)).getMath());
 			}
 			e = m.getListOfEvents();
-			int evNum = (int)m.getNumEvents();
-			String [] ev = new String[evNum];
-			for (int i=0;i<evNum;i++) {
+			int evNum = (int) m.getNumEvents();
+			String[] ev = new String[evNum];
+			for (int i = 0; i < evNum; i++) {
 				if (((org.sbml.libsbml.Event) e.get(i)).isSetId()) {
 					ev[i] = ((org.sbml.libsbml.Event) e.get(i)).getId();
 				}
 			}
 			JPanel elements = new JPanel(new GridLayout(1, 4));
 			if (initsNum > 0) {
-				JPanel initsPanel = new JPanel(new GridLayout(initsNum+1, 1));
+				JPanel initsPanel = new JPanel(new GridLayout(initsNum + 1, 1));
 				initsPanel.add(new JLabel("Initial Assignments:"));
 				for (int i = 0; i < inits.length; i++) {
 					JCheckBox temp = new JCheckBox(inits[i]);
@@ -312,7 +310,7 @@ public class SBML_Editor extends JPanel {
 				elements.add(initial);
 			}
 			if (rulNum > 0) {
-				JPanel rulPanel = new JPanel(new GridLayout(rulNum+1, 1));
+				JPanel rulPanel = new JPanel(new GridLayout(rulNum + 1, 1));
 				rulPanel.add(new JLabel("Rules:"));
 				for (int i = 0; i < rul.length; i++) {
 					JCheckBox temp = new JCheckBox(rul[i]);
@@ -338,7 +336,7 @@ public class SBML_Editor extends JPanel {
 				elements.add(rules);
 			}
 			if (consNum > 0) {
-				JPanel consPanel = new JPanel(new GridLayout(consNum+1, 1));
+				JPanel consPanel = new JPanel(new GridLayout(consNum + 1, 1));
 				consPanel.add(new JLabel("Constaints:"));
 				for (int i = 0; i < cons.length; i++) {
 					JCheckBox temp = new JCheckBox(cons[i]);
@@ -364,7 +362,7 @@ public class SBML_Editor extends JPanel {
 				elements.add(constaints);
 			}
 			if (evNum > 0) {
-				JPanel evPanel = new JPanel(new GridLayout(evNum+1, 1));
+				JPanel evPanel = new JPanel(new GridLayout(evNum + 1, 1));
 				evPanel.add(new JLabel("Events:"));
 				for (int i = 0; i < ev.length; i++) {
 					JCheckBox temp = new JCheckBox(ev[i]);
@@ -405,12 +403,10 @@ public class SBML_Editor extends JPanel {
 	 * Save SBML file with a new name
 	 */
 	public void saveAs() {
-		String simName = JOptionPane.showInputDialog(Gui.frame, "Enter Model ID:", "Model ID",
-				JOptionPane.PLAIN_MESSAGE);
+		String simName = JOptionPane.showInputDialog(Gui.frame, "Enter Model ID:", "Model ID", JOptionPane.PLAIN_MESSAGE);
 		if (simName != null && !simName.equals("")) {
 			if (simName.length() > 4) {
-				if (!simName.substring(simName.length() - 5).equals(".sbml")
-						&& !simName.substring(simName.length() - 4).equals(".xml")) {
+				if (!simName.substring(simName.length() - 5).equals(".sbml") && !simName.substring(simName.length() - 4).equals(".xml")) {
 					simName += ".xml";
 				}
 			}
@@ -430,28 +426,23 @@ public class SBML_Editor extends JPanel {
 			document.getModel().setId(modelID);
 			document.getModel().setName(modelPanel.getModelName());
 			String newFile = file;
-			newFile = newFile.substring(0, newFile.length()
-					- newFile.split(separator)[newFile.split(separator).length - 1].length())
-					+ simName;
+			newFile = newFile.substring(0, newFile.length() - newFile.split(separator)[newFile.split(separator).length - 1].length()) + simName;
 			try {
 				log.addText("Saving SBML file as:\n" + newFile + "\n");
 				SBMLWriter writer = new SBMLWriter();
 				writer.writeSBML(document, newFile);
 				JTabbedPane tab = biosim.getTab();
 				for (int i = 0; i < tab.getTabCount(); i++) {
-					if (tab.getTitleAt(i).equals(
-							file.split(separator)[file.split(separator).length - 1])) {
+					if (tab.getTitleAt(i).equals(file.split(separator)[file.split(separator).length - 1])) {
 						tab.setTitleAt(i, simName);
-						tab.setComponentAt(i, new SBML_Editor(newFile, reb2sac, log, biosim,
-								simDir, paramFile));
+						tab.setComponentAt(i, new SBML_Editor(newFile, reb2sac, log, biosim, simDir, paramFile));
 						tab.getComponentAt(i).setName("SBML Editor");
 					}
 				}
 				biosim.addToTree(simName);
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to save sbml file.",
-						"Error Saving File", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to save sbml file.", "Error Saving File", JOptionPane.ERROR_MESSAGE);
 			}
 			finally {
 				document.getModel().setId(oldId);
@@ -490,8 +481,7 @@ public class SBML_Editor extends JPanel {
 			out.close();
 		}
 		catch (IOException e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to save parameter file.",
-					"Error Saving File", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to save parameter file.", "Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
 		try {
 			if (!direct.equals(".")) {
@@ -512,8 +502,7 @@ public class SBML_Editor extends JPanel {
 				}
 				for (String di : dd) {
 					if (di.contains("/")) {
-						KineticLaw KL = document.getModel().getReaction(
-								di.split("=")[0].split("/")[0]).getKineticLaw();
+						KineticLaw KL = document.getModel().getReaction(di.split("=")[0].split("/")[0]).getKineticLaw();
 						ListOf p = KL.getListOfParameters();
 						for (int i = 0; i < KL.getNumParameters(); i++) {
 							Parameter param = ((Parameter) p.get(i));
@@ -524,19 +513,14 @@ public class SBML_Editor extends JPanel {
 					}
 					else {
 						if (document.getModel().getParameter(di.split("=")[0]) != null) {
-							document.getModel().getParameter(di.split("=")[0]).setValue(
-									Double.parseDouble(di.split("=")[1]));
+							document.getModel().getParameter(di.split("=")[0]).setValue(Double.parseDouble(di.split("=")[1]));
 						}
 						else {
-							if (document.getModel().getSpecies(di.split("=")[0])
-									.isSetInitialAmount()) {
-								document.getModel().getSpecies(di.split("=")[0]).setInitialAmount(
-										Double.parseDouble(di.split("=")[1]));
+							if (document.getModel().getSpecies(di.split("=")[0]).isSetInitialAmount()) {
+								document.getModel().getSpecies(di.split("=")[0]).setInitialAmount(Double.parseDouble(di.split("=")[1]));
 							}
 							else {
-								document.getModel().getSpecies(di.split("=")[0])
-										.setInitialConcentration(
-												Double.parseDouble(di.split("=")[1]));
+								document.getModel().getSpecies(di.split("=")[0]).setInitialConcentration(Double.parseDouble(di.split("=")[1]));
 							}
 						}
 					}
@@ -548,21 +532,17 @@ public class SBML_Editor extends JPanel {
 			}
 			document.getModel().setName(modelPanel.getModelName());
 			SBMLWriter writer = new SBMLWriter();
-			writer.writeSBML(document, simDir + separator + stem + direct + separator
-					+ file.split(separator)[file.split(separator).length - 1]);
-			SBMLDocument d = Gui.readSBML(simDir + separator + stem + direct + separator
-					+ file.split(separator)[file.split(separator).length - 1]);
+			writer.writeSBML(document, simDir + separator + stem + direct + separator + file.split(separator)[file.split(separator).length - 1]);
+			SBMLDocument d = Gui.readSBML(simDir + separator + stem + direct + separator + file.split(separator)[file.split(separator).length - 1]);
 			for (String s : elementChanges) {
 				for (long i = d.getModel().getNumInitialAssignments() - 1; i >= 0; i--) {
 					if (s.contains("=")) {
-						String formula = SBMLutilities.myFormulaToString(((InitialAssignment) d.getModel()
-								.getListOfInitialAssignments().get(i)).getMath());
+						String formula = SBMLutilities.myFormulaToString(((InitialAssignment) d.getModel().getListOfInitialAssignments().get(i))
+								.getMath());
 						String sFormula = s.substring(s.indexOf('=') + 1).trim();
 						sFormula = SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(sFormula));
 						sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
-						if ((((InitialAssignment) d.getModel().getListOfInitialAssignments().get(i))
-								.getSymbol()
-								+ " = " + formula).equals(sFormula)) {
+						if ((((InitialAssignment) d.getModel().getListOfInitialAssignments().get(i)).getSymbol() + " = " + formula).equals(sFormula)) {
 							d.getModel().getListOfInitialAssignments().remove(i);
 						}
 					}
@@ -579,8 +559,7 @@ public class SBML_Editor extends JPanel {
 				}
 				for (long i = d.getModel().getNumRules() - 1; i >= 0; i--) {
 					if (s.contains("=")) {
-						String formula = SBMLutilities.myFormulaToString(((Rule) d.getModel().getListOfRules()
-								.get(i)).getMath());
+						String formula = SBMLutilities.myFormulaToString(((Rule) d.getModel().getListOfRules().get(i)).getMath());
 						String sFormula = s.substring(s.indexOf('=') + 1).trim();
 						sFormula = SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(sFormula));
 						sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
@@ -602,12 +581,10 @@ public class SBML_Editor extends JPanel {
 				}
 			}
 			writer = new SBMLWriter();
-			writer.writeSBML(d, simDir + separator + stem + direct + separator
-					+ file.split(separator)[file.split(separator).length - 1]);
+			writer.writeSBML(d, simDir + separator + stem + direct + separator + file.split(separator)[file.split(separator).length - 1]);
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to create sbml file.",
-					"Error Creating File", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to create sbml file.", "Error Creating File", JOptionPane.ERROR_MESSAGE);
 			e1.printStackTrace();
 		}
 	}
@@ -626,18 +603,11 @@ public class SBML_Editor extends JPanel {
 				ArrayList<ArrayList<Double>> sweep2 = new ArrayList<ArrayList<Double>>();
 				for (String s : parameterChanges) {
 					if (s.split(" ")[s.split(" ").length - 2].equals("Sweep")) {
-						if ((s.split(" ")[s.split(" ").length - 1]).split(",")[3].replace(")", "")
-								.trim().equals("1")) {
+						if ((s.split(" ")[s.split(" ").length - 1]).split(",")[3].replace(")", "").trim().equals("1")) {
 							sweepThese1.add(s.split(" ")[0]);
-							double start = Double
-									.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[0]
-											.substring(1).trim());
-							double stop = Double
-									.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[1]
-											.trim());
-							double step = Double
-									.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[2]
-											.trim());
+							double start = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[0].substring(1).trim());
+							double stop = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[1].trim());
+							double step = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[2].trim());
 							ArrayList<Double> add = new ArrayList<Double>();
 							for (double i = start; i <= stop; i += step) {
 								add.add(i);
@@ -646,15 +616,9 @@ public class SBML_Editor extends JPanel {
 						}
 						else {
 							sweepThese2.add(s.split(" ")[0]);
-							double start = Double
-									.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[0]
-											.substring(1).trim());
-							double stop = Double
-									.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[1]
-											.trim());
-							double step = Double
-									.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[2]
-											.trim());
+							double start = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[0].substring(1).trim());
+							double stop = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[1].trim());
+							double step = Double.parseDouble((s.split(" ")[s.split(" ").length - 1]).split(",")[2].trim());
 							ArrayList<Double> add = new ArrayList<Double>();
 							for (double i = start; i <= stop; i += step) {
 								add.add(i);
@@ -707,12 +671,10 @@ public class SBML_Editor extends JPanel {
 										sweepTwo += sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
 									}
 									else {
-										sweepTwo += "_" + sweepThese2.get(i) + "="
-												+ sweep2.get(i).get(k);
+										sweepTwo += "_" + sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
 									}
 								}
-								new File(simDir + separator + stem + sweepTwo.replace("/", "-"))
-										.mkdir();
+								new File(simDir + separator + stem + sweepTwo.replace("/", "-")).mkdir();
 								createSBML(stem, sweepTwo);
 								Reb2SacThread thread = new Reb2SacThread(reb2sac);
 								thread.start(stem + sweepTwo.replace("/", "-"), false);
@@ -769,8 +731,7 @@ public class SBML_Editor extends JPanel {
 				 */
 				SBMLWriter writer = new SBMLWriter();
 				if (!writer.writeSBML(document, file)) {
-					JOptionPane.showMessageDialog(Gui.frame, "Unable to save sbml file.",
-							"Error Saving File", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Unable to save sbml file.", "Error Saving File", JOptionPane.ERROR_MESSAGE);
 				}
 				dirty.setValue(false);
 				if (paramsOnly) {
@@ -778,8 +739,7 @@ public class SBML_Editor extends JPanel {
 				}
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to save sbml file.",
-						"Error Saving File", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to save sbml file.", "Error Saving File", JOptionPane.ERROR_MESSAGE);
 			}
 			biosim.updateViews(file.split(separator)[file.split(separator).length - 1]);
 		}
@@ -801,7 +761,7 @@ public class SBML_Editor extends JPanel {
 	public void updateSBML(int tab, int tab2) {
 		updateSBML(tab, tab2, file);
 	}
-	
+
 	/**
 	 * Set the model ID
 	 */
