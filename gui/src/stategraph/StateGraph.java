@@ -130,14 +130,17 @@ public class StateGraph implements Runnable {
 					}
 				}
 				if (lhpn.getContAssignTree(fire.getTransition(), key) != null) {
-					allVariables.put(key, ""
-							+ lhpn.getContAssignTree(fire.getTransition(), key).evaluateExpr(
-									allVariables));
+					allVariables.put(
+							key,
+							""
+									+ lhpn.getContAssignTree(fire.getTransition(), key)
+											.evaluateExpr(allVariables));
 				}
 				if (lhpn.getIntAssignTree(fire.getTransition(), key) != null) {
-					allVariables.put(key, ""
-							+ ((int) lhpn.getIntAssignTree(fire.getTransition(), key).evaluateExpr(
-									allVariables)));
+					allVariables.put(key,
+							""
+									+ ((int) lhpn.getIntAssignTree(fire.getTransition(), key)
+											.evaluateExpr(allVariables)));
 				}
 			}
 			// if (!stateGraph.containsKey(createStateVector(variables,
@@ -300,7 +303,8 @@ public class StateGraph implements Runnable {
 	}
 
 	public boolean performTransientMarkovianAnalysis(double timeLimit, double timeStep,
-			double printInterval, double error, String[] condition, JProgressBar progress, boolean globallyTrue) {
+			double printInterval, double error, String[] condition, JProgressBar progress,
+			boolean globallyTrue) {
 		if (!canPerformMarkovianAnalysis()) {
 			stop = true;
 			return false;
@@ -320,9 +324,26 @@ public class StateGraph implements Runnable {
 			temp = new ArrayList<Double>();
 			temp.add(0.0);
 			data.add(temp);
-			temp = new ArrayList<Double>();
-			temp.add(0.0);
-			data.add(temp);
+			if (globallyTrue) {
+				double successProb = 0;
+				for (State m : stateGraph) {
+					ExprTree successExpr = new ExprTree(lhpn);
+					successExpr.token = successExpr.intexpr_gettok("~(" + condition[1] + ")");
+					successExpr.intexpr_L("~(" + condition[1] + ")");
+					if (successExpr.evaluateExpr(m.getVariables()) == 1.0) {
+						successProb += m.getCurrentProb();
+					}
+				}
+				successProb = 1 - successProb;
+				temp = new ArrayList<Double>();
+				temp.add(successProb * 100);
+				data.add(temp);
+			}
+			else {
+				temp = new ArrayList<Double>();
+				temp.add(0.0);
+				data.add(temp);
+			}
 			probData = new Parser(dataLabels, data);
 			State initial = getInitialState();
 			if (initial != null) {
@@ -447,7 +468,8 @@ public class StateGraph implements Runnable {
 						failureExpr.intexpr_L("~(" + condition[0] + ")&~(" + condition[1] + ")");
 						ExprTree successExpr = new ExprTree(lhpn);
 						if (globallyTrue) {
-							successExpr.token = successExpr.intexpr_gettok("~(" + condition[1] + ")");
+							successExpr.token = successExpr.intexpr_gettok("~(" + condition[1]
+									+ ")");
 							successExpr.intexpr_L("~(" + condition[1] + ")");
 						}
 						else {
@@ -461,6 +483,9 @@ public class StateGraph implements Runnable {
 							successProb += m.getCurrentProb();
 						}
 						// }
+					}
+					if (globallyTrue) {
+						successProb = 1 - successProb;
 					}
 					if (lowerbound + i + step == nextPrint) {
 						probData.getData().get(0).add(nextPrint);
