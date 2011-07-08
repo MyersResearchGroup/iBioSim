@@ -1534,7 +1534,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				if (list.getSelectedValue() != null && getName().contains("Edit")) {
 					selected = list.getSelectedValue().toString();
 				}
-				//ConditionsPanel panel = new ConditionsPanel(selected, list, gcm, paramsOnly,gcmEditor);
+				ConditionsPanel panel = new ConditionsPanel(selected, list, gcm, paramsOnly,gcmEditor);
 			}
 			else if (getName().contains("Component")) {
 				displayChooseComponentDialog(getName().contains("Edit"), list, false);

@@ -300,7 +300,7 @@ public class StateGraph implements Runnable {
 	}
 
 	public boolean performTransientMarkovianAnalysis(double timeLimit, double timeStep,
-			double printInterval, double error, String[] condition, JProgressBar progress) {
+			double printInterval, double error, String[] condition, JProgressBar progress, boolean globallyTrue) {
 		if (!canPerformMarkovianAnalysis()) {
 			stop = true;
 			return false;
@@ -396,7 +396,12 @@ public class StateGraph implements Runnable {
 				expr.intexpr_L(condition[3]);
 				double upperbound = Math.min(expr.evaluateExpr(null) - lowerbound, timeLimit
 						- lowerbound);
-				pruneStateGraph(condition[1]);
+				if (globallyTrue) {
+					pruneStateGraph("~(" + condition[1] + ")");
+				}
+				else {
+					pruneStateGraph(condition[1]);
+				}
 				// Compute Gamma
 				Gamma = 0;
 				for (State m : stateGraph) {
@@ -441,8 +446,14 @@ public class StateGraph implements Runnable {
 								+ condition[1] + ")");
 						failureExpr.intexpr_L("~(" + condition[0] + ")&~(" + condition[1] + ")");
 						ExprTree successExpr = new ExprTree(lhpn);
-						successExpr.token = successExpr.intexpr_gettok(condition[1]);
-						successExpr.intexpr_L(condition[1]);
+						if (globallyTrue) {
+							successExpr.token = successExpr.intexpr_gettok("~(" + condition[1] + ")");
+							successExpr.intexpr_L("~(" + condition[1] + ")");
+						}
+						else {
+							successExpr.token = successExpr.intexpr_gettok(condition[1]);
+							successExpr.intexpr_L(condition[1]);
+						}
 						if (failureExpr.evaluateExpr(m.getVariables()) == 1.0) {
 							failureProb += m.getCurrentProb();
 						}
@@ -470,8 +481,14 @@ public class StateGraph implements Runnable {
 							+ condition[1] + ")");
 					failureExpr.intexpr_L("~(" + condition[0] + ")&~(" + condition[1] + ")");
 					ExprTree successExpr = new ExprTree(lhpn);
-					successExpr.token = successExpr.intexpr_gettok(condition[1]);
-					successExpr.intexpr_L(condition[1]);
+					if (globallyTrue) {
+						successExpr.token = successExpr.intexpr_gettok("~(" + condition[1] + ")");
+						successExpr.intexpr_L("~(" + condition[1] + ")");
+					}
+					else {
+						successExpr.token = successExpr.intexpr_gettok(condition[1]);
+						successExpr.intexpr_L(condition[1]);
+					}
 					if (failureExpr.evaluateExpr(m.getVariables()) == 1.0) {
 						failureProb += m.getCurrentProb();
 					}
@@ -479,9 +496,15 @@ public class StateGraph implements Runnable {
 						successProb += m.getCurrentProb();
 					}
 					else {
-						timelimitProb += m.getCurrentProb();
+						if (!globallyTrue) {
+							timelimitProb += m.getCurrentProb();
+						}
 					}
 					// }
+				}
+				if (globallyTrue) {
+					successProb = 1 - successProb;
+					timelimitProb = 1 - (failureProb + successProb);
 				}
 				output.put("~(" + condition[0].trim() + ")&~(" + condition[1].trim() + ")",
 						failureProb);

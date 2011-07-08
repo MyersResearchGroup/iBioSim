@@ -1200,13 +1200,19 @@ public class Run implements ActionListener {
 										sg, progress);
 								time1 = System.nanoTime();
 								if (lpnProperty != null && !lpnProperty.equals("")) {
-									performMarkovAnalysis.start(timeLimit, timeStep, printInterval,
-											absError, Translator.getProbpropParts(Translator
-													.getProbpropExpression(lpnProperty)));
+									String[] condition = Translator.getProbpropParts(Translator.getProbpropExpression(lpnProperty));
+									boolean globallyTrue = false;
+									if (lpnProperty.contains("PF")) {
+										condition[0] = "true";
+									}
+									else if (lpnProperty.contains("PG")) {
+										condition[0] = "true";
+										globallyTrue = true;
+									}
+									performMarkovAnalysis.start(timeLimit, timeStep, printInterval, absError, condition, globallyTrue);
 								}
 								else {
-									performMarkovAnalysis.start(timeLimit, timeStep, printInterval,
-											absError, null);
+									performMarkovAnalysis.start(timeLimit, timeStep, printInterval, absError, null, false);
 								}
 								performMarkovAnalysis.join();
 								if (!sg.getStop()) {
