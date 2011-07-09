@@ -737,10 +737,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			tree.addTreeSelectionListener(t);
 			for (TreePath select : selected) {
 				tree.setSelectionPath(select);
-				if (!((IconNode) select.getLastPathComponent()).getName().equals("Average")
-						&& !((IconNode) select.getLastPathComponent()).getName().equals("Variance")
-						&& !((IconNode) select.getLastPathComponent()).getName().equals("Standard Deviation")
-						&& ((IconNode) select.getLastPathComponent()).getParent() != null) {
+				if (((IconNode) select.getLastPathComponent()).getParent() != null) {
 					for (int i = 0; i < simDir.getChildCount(); i++) {
 						if (((IconNode) simDir.getChildAt(i)) == ((IconNode) select.getLastPathComponent())) {
 							if (((IconNode) simDir.getChildAt(i)).getChildCount() != 0) {
@@ -762,8 +759,24 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 							else {
 								simDir.remove(i);
-								File dir = new File(outDir + separator + ((IconNode) select.getLastPathComponent()).getName() + "."
-										+ printer_id.substring(0, printer_id.length() - 8));
+								String name = ((IconNode) select.getLastPathComponent()).getName();
+								if (name.equals("Average")) {
+									name = "mean";
+								}
+								else if (name.equals("Variance")) {
+									name = "variance";
+								}
+								else if (name.equals("Standard Deviation")) {
+									name = "standard_deviation";
+								}
+								else if (name.equals("Percent Termination")) {
+									name = "percent-term-time";
+								}
+								else if (name.equals("Termination Time")) {
+									name = "term-time";
+								}
+								name += "." + printer_id.substring(0, printer_id.length() - 8);
+								File dir = new File(outDir + separator + name);
 								if (dir.isDirectory()) {
 									biomodelsim.deleteDir(dir);
 								}
@@ -790,9 +803,24 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							for (int j = 0; j < simDir.getChildAt(i).getChildCount(); j++) {
 								if (((IconNode) ((IconNode) simDir.getChildAt(i)).getChildAt(j)) == ((IconNode) select.getLastPathComponent())) {
 									((IconNode) simDir.getChildAt(i)).remove(j);
-									File dir = new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName() + separator
-											+ ((IconNode) select.getLastPathComponent()).getName() + "."
-											+ printer_id.substring(0, printer_id.length() - 8));
+									String name = ((IconNode) select.getLastPathComponent()).getName();
+									if (name.equals("Average")) {
+										name = "mean";
+									}
+									else if (name.equals("Variance")) {
+										name = "variance";
+									}
+									else if (name.equals("Standard Deviation")) {
+										name = "standard_deviation";
+									}
+									else if (name.equals("Percent Termination")) {
+										name = "percent-term-time";
+									}
+									else if (name.equals("Termination Time")) {
+										name = "term-time";
+									}
+									name += "." + printer_id.substring(0, printer_id.length() - 8);
+									File dir = new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName() + separator + name);
 									if (dir.isDirectory()) {
 										biomodelsim.deleteDir(dir);
 									}
@@ -883,17 +911,29 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		else if (e.getActionCommand().equals("delete runs")) {
 			for (int i = simDir.getChildCount() - 1; i >= 0; i--) {
 				if (((IconNode) simDir.getChildAt(i)).getChildCount() == 0) {
-					if (!((IconNode) simDir.getChildAt(i)).getName().equals("Average")
-							&& !((IconNode) simDir.getChildAt(i)).getName().equals("Variance")
-							&& !((IconNode) simDir.getChildAt(i)).getName().equals("Standard Deviation")) {
-						File dir = new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName() + "."
-								+ printer_id.substring(0, printer_id.length() - 8));
-						if (dir.isDirectory()) {
-							biomodelsim.deleteDir(dir);
-						}
-						else {
-							dir.delete();
-						}
+					String name = ((IconNode) simDir.getChildAt(i)).getName();
+					if (name.equals("Average")) {
+						name = "mean";
+					}
+					else if (name.equals("Variance")) {
+						name = "variance";
+					}
+					else if (name.equals("Standard Deviation")) {
+						name = "standard_deviation";
+					}
+					else if (name.equals("Percent Termination")) {
+						name = "percent-term-time";
+					}
+					else if (name.equals("Termination Time")) {
+						name = "term-time";
+					}
+					name += "." + printer_id.substring(0, printer_id.length() - 8);
+					File dir = new File(outDir + separator + name);
+					if (dir.isDirectory()) {
+						biomodelsim.deleteDir(dir);
+					}
+					else {
+						dir.delete();
 					}
 					simDir.remove(i);
 				}
@@ -943,17 +983,29 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		else if (e.getActionCommand().equals("delete all")) {
 			for (int i = simDir.getChildCount() - 1; i >= 0; i--) {
 				if (((IconNode) simDir.getChildAt(i)).getChildCount() == 0) {
-					if (!((IconNode) simDir.getChildAt(i)).getName().equals("Average")
-							&& !((IconNode) simDir.getChildAt(i)).getName().equals("Variance")
-							&& !((IconNode) simDir.getChildAt(i)).getName().equals("Standard Deviation")) {
-						File dir = new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName() + "."
-								+ printer_id.substring(0, printer_id.length() - 8));
-						if (dir.isDirectory()) {
-							biomodelsim.deleteDir(dir);
-						}
-						else {
-							dir.delete();
-						}
+					String name = ((IconNode) simDir.getChildAt(i)).getName();
+					if (name.equals("Average")) {
+						name = "mean";
+					}
+					else if (name.equals("Variance")) {
+						name = "variance";
+					}
+					else if (name.equals("Standard Deviation")) {
+						name = "standard_deviation";
+					}
+					else if (name.equals("Percent Termination")) {
+						name = "percent-term-time";
+					}
+					else if (name.equals("Termination Time")) {
+						name = "term-time";
+					}
+					name += "." + printer_id.substring(0, printer_id.length() - 8);
+					File dir = new File(outDir + separator + name);
+					if (dir.isDirectory()) {
+						biomodelsim.deleteDir(dir);
+					}
+					else {
+						dir.delete();
 					}
 					simDir.remove(i);
 				}
