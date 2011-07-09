@@ -22,6 +22,9 @@ public class GlobalConstants {
 	public static final String TRANSCRIPTION_FACTOR = "transcription factor";
 	public static final String DIFFUSIBLE = "diffusible";
 	public static final String MEMDIFF_STRING = "kmdiff";
+	public static final String FORWARD_MEMDIFF_STRING = "kfmdiff";
+	public static final String REVERSE_MEMDIFF_STRING = "krmdiff";
+
 	
 //	public static final String KREP_VALUE = ".5"; 
 //	public static final String KACT_VALUE = ".0033";
