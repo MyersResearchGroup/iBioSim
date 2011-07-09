@@ -134,9 +134,12 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		return Double.parseDouble(getProperty(GlobalConstants.KDECAY_STRING));
 	}
 	
-	public double getKmdiff() {
-		
-		return Double.parseDouble(getProperty(GlobalConstants.MEMDIFF_STRING));
+	public double[] getKmdiff() {
+		String[] props = getProperty(GlobalConstants.MEMDIFF_STRING).split("/");
+		double[] params = new double[props.length];
+		for (int i = 0; i < props.length; i++)
+			params[i] = Double.parseDouble(props[i]);
+		return params;
 	}
 	
 	public double[] getKc() {
