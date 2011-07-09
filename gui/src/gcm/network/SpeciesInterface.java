@@ -90,7 +90,7 @@ public interface SpeciesInterface extends VisitableSpecies {
 	
 	public double[] getKc();
 		
-	public double getKmdiff();
+	public double[] getKmdiff();
 	
 	public boolean isActivator();
 	
