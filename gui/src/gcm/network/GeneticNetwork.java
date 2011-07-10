@@ -211,7 +211,7 @@ public class GeneticNetwork {
 			//printParameters(document);
 			printSpecies(document);
 			if (!operatorAbstraction) {
-				if (properties.getInfluences().size()>0) {
+				if (promoters.size()>0) {
 					printPromoters(document);
 					printRNAP(document);
 				}
