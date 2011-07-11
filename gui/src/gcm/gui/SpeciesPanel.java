@@ -60,15 +60,15 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		JPanel grid;
 		if (gcm.getSBMLDocument().getLevel() > 2) {
 			if (gcm.getSBMLDocument().getModel().getNumCompartments()==1) {
-				grid = new JPanel(new GridLayout(12,1));
+				grid = new JPanel(new GridLayout(14,1));
 			} else {
-				grid = new JPanel(new GridLayout(13,1));
+				grid = new JPanel(new GridLayout(15,1));
 			}
 		} else {
 			if (gcm.getSBMLDocument().getModel().getNumCompartments()==1) {
-				grid = new JPanel(new GridLayout(11,1));
+				grid = new JPanel(new GridLayout(13,1));
 			} else {
-				grid = new JPanel(new GridLayout(12,1));
+				grid = new JPanel(new GridLayout(14,1));
 			}
 		}
 		this.add(grid, BorderLayout.CENTER);
@@ -85,6 +85,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
+		sbolFields = new HashMap<String, SbolField>();
 
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null, Utility.IDstring,
@@ -347,6 +348,16 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		}
 		fields.put(GlobalConstants.MEMDIFF_STRING, field);
 		grid.add(field);
+		
+		// Panel for associating SBOL RBS element
+		SbolField sField = new SbolField(GlobalConstants.SBOL_RBS, gcmEditor);
+		sbolFields.put(GlobalConstants.SBOL_RBS, sField);
+		grid.add(sField);
+		
+		// Panel for associating SBOL ORF element
+		sField = new SbolField(GlobalConstants.SBOL_ORF, gcmEditor);
+		sbolFields.put(GlobalConstants.SBOL_ORF, sField);
+		grid.add(sField);
 
 		if (selected != null) {
 			Properties prop = gcm.getSpecies().get(selected);
@@ -370,6 +381,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					|| f.getValue().endsWith("_bound")) {
 				return false;
 			}
+		}
+		for (SbolField sf : sbolFields.values()) {
+			if (!sf.isValidText())
+				return false;
 		}
 		return true;
 	}
@@ -430,15 +445,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 			Properties property = new Properties();
 
-			// copy the old values into the new property. Some will then be
-			// overwritten ,
-			// but others (such as positioning info) will not and need to be
-			// preserved.
+			// preserve positioning info
 			if (selected != null) {
 				for (Object s : gcm.getSpecies().get(selected).keySet()) {
 					String k = s.toString();
-					String v = (gcm.getSpecies().get(selected).getProperty(k)).toString();
-					if (!k.equals("label")) {
+					if (k.equals("graphwidth") || k.equals("graphheight") || k.equals("graphy") || k.equals("graphx")) {
+						String v = (gcm.getSpecies().get(selected).getProperty(k)).toString();
 						property.put(k, v);
 					}
 				}
@@ -500,6 +512,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			property.put(GlobalConstants.TYPE, typeBox.getSelectedItem().toString());
 
+			// Add SBOL properties
+			for (SbolField sf : sbolFields.values()) {
+				if (!sf.getText().equals(""))
+					property.put(sf.getType(), sf.getText());
+			}
+			
 			if (selected != null && !selected.equals(newSpeciesID)) {
 				gcm.changeSpeciesName(selected, newSpeciesID);
 				((DefaultListModel) influences.getModel()).clear();
@@ -637,6 +655,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			if (fields.containsKey(o.toString())) {
 				fields.get(o.toString()).setValue(property.getProperty(o.toString()));
 				fields.get(o.toString()).setCustom();
+			} else if (sbolFields.containsKey(o.toString())) {
+				sbolFields.get(o.toString()).setText(property.getProperty(o.toString()));
 			}
 		}
 	}
@@ -673,6 +693,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		GlobalConstants.OUTPUT, GlobalConstants.SPASTIC, GlobalConstants.DIFFUSIBLE};
 
 	private HashMap<String, PropertyField> fields = null;
+	
+	private HashMap<String, SbolField> sbolFields;
 
 	private boolean paramsOnly;
 	

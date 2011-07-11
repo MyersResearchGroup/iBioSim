@@ -63,7 +63,7 @@ public class Utility {
 						}
 					});
 				}
-				else if (approve.equals("Import SBOL")) {
+				else if (approve.equals("Import SBOL") || (approve.equals("Export SBOL"))) {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
@@ -131,7 +131,7 @@ public class Utility {
 							selectedFile += ".pdf";
 						}
 					}
-					else if (approve.equals("Import SBOL")) {
+					else if (approve.equals("Import SBOL") || (approve.equals("Export SBOL"))) {
 						if (!selectedFile.endsWith(".rdf")) {
 							selectedFile += ".rdf";
 						}

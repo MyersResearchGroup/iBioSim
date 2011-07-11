@@ -7,6 +7,7 @@ import gcm.gui.modelview.movie.MovieContainer;
 import gcm.gui.modelview.movie.visualizations.cellvisualizations.MovieAppearance;
 import gcm.gui.modelview.movie.visualizations.component.ComponentSchemeChooser;
 import gcm.parser.GCMFile;
+import gcm.parser.GCMParser;
 import gcm.util.GlobalConstants;
 //import gcm.network.Grid;
 
@@ -20,9 +21,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.prefs.Preferences;
 
 
 import javax.swing.AbstractAction;
@@ -31,6 +34,7 @@ import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -45,6 +49,8 @@ import org.sbml.libsbml.SpeciesReference;
 
 import sbmleditor.Compartments;
 import sbmleditor.Reactions;
+import sbol.SbolSynthesizer;
+import util.Utility;
 
 import main.Gui;
 
@@ -239,6 +245,7 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(Utils.makeToolButton("choose_layout.png", "showLayouts", "Apply Layout", this));
 		toolBar.add(Utils.makeToolButton("", "undo", "Undo", this));
 		toolBar.add(Utils.makeToolButton("", "redo", "Redo", this));
+		toolBar.add(Utils.makeToolButton("", "exportSBOL", "Export SBOL", this));
 		
 		toolBar.setFloatable(false);
 		
@@ -288,6 +295,22 @@ public class Schematic extends JPanel implements ActionListener {
 			}
 		}else if(command == "checkCompartment") {
 			gcm.setIsWithinCompartment(check.isSelected());
+		} else if (command.equals("exportSBOL")) {
+			File lastFilePath;
+			Preferences biosimrc = Preferences.userRoot();
+			if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
+				lastFilePath = null;
+			}
+			else {
+				lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
+			}
+			String exportPath = Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "SBOL", -1);
+			if (!exportPath.equals("")) {
+				biosimrc.put("biosim.general.export_dir", exportPath);
+				GCMParser parser = new GCMParser(gcm, false);
+				SbolSynthesizer synthesizer = parser.buildSbolSynthesizer();
+				synthesizer.synthesizeDnaComponent(gcm2sbml.getSbolFiles(), exportPath);
+			}
 		}else if(command == ""){
 			// radio buttons don't have to do anything and have an action command of "".
 		}else{
