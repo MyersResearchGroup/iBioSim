@@ -61,6 +61,7 @@ import util.MutableBoolean;
 
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.tree.TreeModel;
 
 /**
  * This is the GCM2SBMLEditor class. It takes in a gcm file and allows the user
@@ -303,6 +304,18 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 
 	public String getSBMLFile() {
 		return (String) sbmlFiles.getSelectedItem();
+	}
+	
+	public HashSet<String> getSbolFiles() {
+		HashSet<String> filePaths = new HashSet<String>();
+		TreeModel tree = getGui().getFileTree().tree.getModel();
+		for (int i = 0; i < tree.getChildCount(tree.getRoot()); i++) {
+			String fileName = tree.getChild(tree.getRoot(), i).toString();
+			String mySeparator = File.separator;
+			if (fileName.endsWith("rdf"))
+				filePaths.add(getGui().getRoot() + mySeparator + fileName);
+		}
+		return filePaths;
 	}
 
 	public void save(String command) {

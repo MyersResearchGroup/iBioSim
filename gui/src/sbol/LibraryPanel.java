@@ -51,13 +51,27 @@ public class LibraryPanel extends JPanel implements MouseListener {
 		libList.setListData(idObjects);
 	}
 	
+	public String[] getSelectedIds() {
+		Object[] selected = libList.getSelectedValues();
+		String[] selectedIds = new String[selected.length];
+		for (int i = 0; i < selectedIds.length; i++)
+			selectedIds[i] = selected[i].toString();
+		return selectedIds;
+	}
+	
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == libList) {
 			viewArea.setText("");
-			Object[] selected = libList.getSelectedValues();
-			Library lib = libMap.get(selected[0].toString());
-			viewArea.append("Name:  " + lib.getName() + "\n");
-			viewArea.append("Description:  " + lib.getDescription() + "\n\n");
+			String[] selectedIds = getSelectedIds();
+			Library lib = libMap.get(selectedIds[0]);
+			if (lib.getName() != null)
+				viewArea.append("Name:  " + lib.getName() + "\n");
+			else
+				viewArea.append("Name:  NA\n");
+			if (lib.getDescription() != null)
+				viewArea.append("Description:  " + lib.getDescription() + "\n\n");
+			else
+				viewArea.append("Description:  NA\n\n");
 
 			if (filter.equals("")) {
 				String[] compIdArray = new String[lib.getComponents().size() + lib.getFeatures().size()]; //remove 2nd term once libSBOL up to speed
@@ -67,7 +81,7 @@ public class LibraryPanel extends JPanel implements MouseListener {
 					n++;
 					compMap.put(dnac.getDisplayId(), dnac);
 				}
-				for (SequenceFeature sf : lib.getFeatures()) { // remove entire loop once libSBOL up to speed
+				for (SequenceFeature sf : lib.getFeatures()) { // remove entire loop once libSBOL up to speed...or not, could be way of telling feature
 					compIdArray[n] = sf.getDisplayId();
 					n++;
 					featMap.put(sf.getDisplayId(), sf);

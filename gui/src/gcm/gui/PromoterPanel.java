@@ -26,13 +26,14 @@ import sbol.SbolBrowser;
 import main.Gui;
 
 
-public class PromoterPanel extends JPanel implements ActionListener {
+public class PromoterPanel extends JPanel {
 	
-	private JTextField sbolText = new JTextField(20);
-	private JButton sbolButton = new JButton("Associate SBOL");
+//	private JTextField sbolPromoterText = new JTextField(20);
+//	private JButton sbolPromoterButton = new JButton("Associate SBOL");
 	
 	private String[] options = { "Ok", "Cancel" };
 	private HashMap<String, PropertyField> fields = null;
+	private HashMap<String, SbolField> sbolFields;
 	private String selected = "";
 	private GCMFile gcm = null;
 	private PropertyList promoterList = null;
@@ -42,7 +43,7 @@ public class PromoterPanel extends JPanel implements ActionListener {
 	
 	public PromoterPanel(String selected, PropertyList promoterList,
 			PropertyList influencesList, GCMFile gcm, boolean paramsOnly, GCMFile refGCM, GCM2SBMLEditor gcmEditor) {
-		super(new GridLayout(10, 1));
+		super(new GridLayout(11, 1));
 		this.selected = selected;
 		this.promoterList = promoterList;
 		this.influenceList = influencesList;
@@ -51,6 +52,7 @@ public class PromoterPanel extends JPanel implements ActionListener {
 		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
+		sbolFields = new HashMap<String, SbolField>();
 
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null,
@@ -72,18 +74,6 @@ public class PromoterPanel extends JPanel implements ActionListener {
 		
 //		fields.put("ID", field);
 //		add(field);
-		
-		// Panel for associating SBOL element
-		JPanel sbolPanel = new JPanel();
-		sbolPanel.setLayout(new GridLayout(1, 3));
-		JLabel sbolLabel = new JLabel("SBOL Sequence Feature ");
-		sbolText.setEditable(false);
-		sbolButton.setActionCommand("browsePromoters");
-		sbolButton.addActionListener(this);
-		sbolPanel.add(sbolLabel);
-		sbolPanel.add(sbolText);
-		sbolPanel.add(sbolButton);
-		add(sbolPanel);
 		
 		// promoter count
 		String origString = "default";
@@ -255,6 +245,16 @@ public class PromoterPanel extends JPanel implements ActionListener {
 		}
 		fields.put(GlobalConstants.ACTIVED_STRING, field);
 		add(field);
+		
+		// Panel for associating SBOL promoter element
+		SbolField sField = new SbolField(GlobalConstants.SBOL_PROMOTER, gcmEditor);
+		sbolFields.put(GlobalConstants.SBOL_PROMOTER, sField);
+		add(sField);
+		
+		// Panel for associating SBOL terminator element
+		sField = new SbolField(GlobalConstants.SBOL_TERMINATOR, gcmEditor);
+		sbolFields.put(GlobalConstants.SBOL_TERMINATOR, sField);
+		add(sField);
 
 		String oldName = null;
 		if (selected != null) {
@@ -276,6 +276,10 @@ public class PromoterPanel extends JPanel implements ActionListener {
 					f.getValue().endsWith("_RNAP") || f.getValue().endsWith("_bound")) {
 				return false;
 			}
+		}
+		for (SbolField sf : sbolFields.values()) {
+			if (!sf.isValidText())
+				return false;
 		}
 		return true;
 	}
@@ -312,10 +316,7 @@ public class PromoterPanel extends JPanel implements ActionListener {
 			// Check to see if we need to add or edit
 			Properties property = new Properties();
 			
-			// copy the old values into the new property. Some will then be
-			// overwritten ,
-			// but others (such as positioning info) will not and need to be
-			// preserved.
+			// preserve positioning info
 			if (oldName != null) {
 				for (Object p : gcm.getPromoters().get(oldName).keySet()) {
 					String k = p.toString();
@@ -336,6 +337,12 @@ public class PromoterPanel extends JPanel implements ActionListener {
 //						property.put(GlobalConstants.NAME, f.getValue());
 //					}
 				}
+			}
+			
+			// Add SBOL properties
+			for (SbolField sf : sbolFields.values()) {
+				if (!sf.getText().equals(""))
+					property.put(sf.getType(), sf.getText());
 			}
 
 			// rename all the influences that use this promoter if name was changed
@@ -437,20 +444,6 @@ public class PromoterPanel extends JPanel implements ActionListener {
 		}
 		return updates;
 	}
-
-	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("browsePromoters")) {
-			HashSet<String> filePaths = new HashSet<String>();
-			TreeModel tree = gcmEditor.getGui().getFileTree().tree.getModel();
-			for (int i = 0; i < tree.getChildCount(tree.getRoot()); i++) {
-				String fileName = tree.getChild(tree.getRoot(), i).toString();
-				String mySeparator = File.separator;
-				if (fileName.endsWith("rdf"))
-					filePaths.add(gcmEditor.getGui().getRoot() + mySeparator + fileName);
-			}
-			SbolBrowser browser = new SbolBrowser(filePaths, "promoter");
-		}
-	}
 	
 	private void loadProperties(Properties property) {
 		for (Object o : property.keySet()) {
@@ -458,6 +451,8 @@ public class PromoterPanel extends JPanel implements ActionListener {
 				fields.get(o.toString()).setValue(
 						property.getProperty(o.toString()));
 				fields.get(o.toString()).setCustom();
+			} else if (sbolFields.containsKey(o.toString())) {
+				sbolFields.get(o.toString()).setText(property.getProperty(o.toString()));
 			}
 //			if (o.equals(GlobalConstants.NAME)) {
 //				fields.get("ID").setValue(

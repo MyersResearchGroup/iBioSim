@@ -20,6 +20,8 @@ import java.util.Properties;
 
 import org.sbml.libsbml.SBMLWriter;
 
+import sbol.SbolSynthesizer;
+
 /**
  * This class parses a genetic circuit model.
  * 
@@ -327,10 +329,53 @@ public class GCMParser {
 		return specie;
 	}
 	
+	public SbolSynthesizer buildSbolSynthesizer() {
+		HashMap<String, Properties> speciesMap = gcm.getSpecies();
+		HashMap<String, Properties> reactionMap = gcm.getInfluences();
+		HashMap<String, Properties> promoterMap = gcm.getPromoters();
+
+		species = new HashMap<String, SpeciesInterface>();
+		promoters = new HashMap<String, Promoter>();
+		
+		for (String sId : speciesMap.keySet()) {
+			SpeciesInterface s = new BaseSpecies();
+			s.setId(sId);
+			Properties sProp = speciesMap.get(sId);
+			if (sProp.containsKey(GlobalConstants.SBOL_RBS))
+				s.addProperty(GlobalConstants.SBOL_RBS, sProp.getProperty(GlobalConstants.SBOL_RBS));
+			if (sProp.containsKey(GlobalConstants.SBOL_ORF))
+				s.addProperty(GlobalConstants.SBOL_ORF, sProp.getProperty(GlobalConstants.SBOL_ORF));
+			species.put(sId, s);
+		}
+		
+		for (String pId : promoterMap.keySet()) {
+			Promoter p = new Promoter();
+			p.setId(pId);
+			Properties pProp = promoterMap.get(pId);
+			if (pProp.containsKey(GlobalConstants.SBOL_PROMOTER))
+				p.addProperty(GlobalConstants.SBOL_PROMOTER, pProp.getProperty(GlobalConstants.SBOL_PROMOTER));
+			if (pProp.containsKey(GlobalConstants.SBOL_TERMINATOR))
+				p.addProperty(GlobalConstants.SBOL_TERMINATOR, pProp.getProperty(GlobalConstants.SBOL_TERMINATOR));
+			promoters.put(pId, p);
+		}
+		
+		for (String rId : reactionMap.keySet()) {
+			if (reactionMap.get(rId).containsKey(GlobalConstants.PROMOTER)) {
+				Promoter p = promoters.get(reactionMap.get(rId).getProperty(GlobalConstants.PROMOTER));
+				String output = GCMFile.getOutput(rId);
+				if (!output.equals("none"))
+					p.addOutput(output, species.get(output));
+			}
+		}
+		
+		SbolSynthesizer synthesizer = new SbolSynthesizer(promoters);
+		return synthesizer;
+	}
+
 	public void setParameters(HashMap<String, String> parameters) {
 		gcm.setParameters(parameters);
 	}
-
+	
 	// Holds the text of the GCM
 	private StringBuffer data = null;
 
