@@ -743,15 +743,17 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 								usedIDs.set(i, reacID.getText().trim());
 							}
 						}
-						if (!paramsOnly) {
-							reacts[index] = reac;
+						if (index >= 0) {
+							if (!paramsOnly) {
+								reacts[index] = reac;
+							}
+							reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+							reacts = Utility.getList(reacts, reactions);
+							reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+							Utility.sort(reacts);
+							reactions.setListData(reacts);
+							reactions.setSelectedIndex(index);
 						}
-						reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						reacts = Utility.getList(reacts, reactions);
-						reactions.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-						Utility.sort(reacts);
-						reactions.setListData(reacts);
-						reactions.setSelectedIndex(index);
 					}
 					else {
 						changedParameters = new ArrayList<Parameter>();
