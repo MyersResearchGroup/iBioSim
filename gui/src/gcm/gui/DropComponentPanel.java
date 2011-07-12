@@ -1,6 +1,7 @@
 package gcm.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,11 +12,13 @@ import java.util.Properties;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 
+import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import main.Gui;
@@ -59,16 +62,18 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		
 		this.gcm2sbml = gcm2sbml;
 		this.gcm = gcm;
-	
 		
-//		componentCombo = new JComboBox();
-//		componentCombo.setSelectedIndex(0);
-//		this.add(componentCombo, BorderLayout.NORTH);
+		JPanel tilingPanel = new JPanel(new GridLayout(2, 1));
 		
 		// radio button to enable tiling
 		doTiling = new JRadioButton("Tile Component", false);
-		doTiling.addActionListener(this);
-		this.add(doTiling, BorderLayout.CENTER);
+		doTiling.addActionListener(this);				
+		JLabel note = new JLabel("Note: tiling does not create a grid and no diffusion will occur.");
+		
+		tilingPanel.add(doTiling);
+		tilingPanel.add(note);
+		
+		this.add(tilingPanel, BorderLayout.CENTER);
 		
 		// panel that contains tiling options
 		tilePanel = new JPanel(new GridLayout(4, 2));
@@ -114,7 +119,6 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		componentCombo.setSelectedItem(selItem);
 		this.add(componentCombo, BorderLayout.NORTH);
 		
-		
 		String[] options = { GlobalConstants.OK, GlobalConstants.CANCEL };
 		int value = JOptionPane.showOptionDialog(Gui.frame, this, "Add Component(s)",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -151,9 +155,9 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 			padding = 0;
 			orientation = DROP_ON_MOUSE_CLICK;
 		}
-		
+
 		String comp = (String)componentCombo.getSelectedItem();
-		
+				
 		float separationX = GlobalConstants.DEFAULT_COMPONENT_WIDTH + padding;
 		float separationY = GlobalConstants.DEFAULT_COMPONENT_HEIGHT + padding;
 		
@@ -167,10 +171,11 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 			topleftY = mouseY; // - separationY * rowCount/2 + padding/2;
 		}
 		
+		//sets location(s) for all of the tiled component(s)
 		for(int row=0; row<rowCount; row++){
 			for(int col=0; col<colCount; col++){
 				Properties properties = new Properties();
-				properties.put("gcm", comp);
+				properties.put("gcm", comp); //comp is the name of the gcm that the component contains
 				properties.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH));
 				properties.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
 				properties.setProperty("graphx", String.valueOf(col * separationX + topleftX));
@@ -200,7 +205,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	 */
 	private void updateTilingEnabled(){
 		boolean enabled = doTiling.isSelected();
-		
+				
 		rowsChooser.setEnabled(enabled);
 		columnsChooser.setEnabled(enabled);
 		paddingChooser.setEnabled(enabled);
