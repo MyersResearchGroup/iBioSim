@@ -1375,8 +1375,7 @@ public class Run implements ActionListener {
 								boolean outputS = true;
 								boolean outputTerm = false;
 								boolean warning = false;
-								int num = -1;
-								String run = "run-1." + printer_id.substring(0, printer_id.length() - 8);
+								ArrayList<String> run = new ArrayList<String>();
 								for (String f : work.list()) {
 									if (f.contains("mean")) {
 										outputM = false;
@@ -1387,55 +1386,16 @@ public class Run implements ActionListener {
 									else if (f.contains("standard_deviation")) {
 										outputS = false;
 									}
-									else if (f.contains("run-")) {
-										String getNumber = f.substring(4, f.length());
-										String number = "";
-										for (int j = 0; j < getNumber.length(); j++) {
-											if (Character.isDigit(getNumber.charAt(j))) {
-												number += getNumber.charAt(j);
-											}
-											else {
-												break;
-											}
-										}
-										if (num == -1) {
-											num = Integer.parseInt(number);
-										}
-										else if (Integer.parseInt(number) < num) {
-											num = Integer.parseInt(number);
-										}
-										run = "run-" + num + "." + printer_id.substring(0, printer_id.length() - 8);
+									else if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
+										run.add(f);
 									}
 									else if (f.equals("term-time.txt")) {
 										outputTerm = true;
 									}
 								}
-								if (outputM && num != -1) {
-									ArrayList<ArrayList<Double>> mean = ((Graph) simTab.getComponentAt(i)).readData(directory + separator + run,
-											"average", direct, warning);
+								if (outputM || outputV || outputS) {
 									warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-									Parser p = new TSDParser(directory + separator + run, warning);
-									warning = p.getWarning();
-									Parser p2 = new Parser(p.getSpecies(), mean);
-									p2.outputTSD(directory + separator + "mean.tsd");
-								}
-								if (outputV && num != -1) {
-									ArrayList<ArrayList<Double>> var = ((Graph) simTab.getComponentAt(i)).readData(directory + separator + run,
-											"variance", direct, warning);
-									warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-									Parser p = new TSDParser(directory + separator + run, warning);
-									warning = p.getWarning();
-									Parser p2 = new Parser(p.getSpecies(), var);
-									p2.outputTSD(directory + separator + "variance.tsd");
-								}
-								if (outputS && num != -1) {
-									ArrayList<ArrayList<Double>> stddev = ((Graph) simTab.getComponentAt(i)).readData(directory + separator + run,
-											"deviation", direct, warning);
-									warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-									Parser p = new TSDParser(directory + separator + run, warning);
-									warning = p.getWarning();
-									Parser p2 = new Parser(p.getSpecies(), stddev);
-									p2.outputTSD(directory + separator + "standard_deviation.tsd");
+									((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 								}
 								if (outputTerm) {
 									ArrayList<String> dataLabels = new ArrayList<String>();
@@ -1522,8 +1482,7 @@ public class Run implements ActionListener {
 								boolean outputS = true;
 								boolean outputTerm = false;
 								boolean warning = false;
-								int num = -1;
-								String run = "run-1." + printer_id.substring(0, printer_id.length() - 8);
+								ArrayList<String> run = new ArrayList<String>();
 								for (String f : work.list()) {
 									if (f.contains("mean")) {
 										outputM = false;
@@ -1534,55 +1493,16 @@ public class Run implements ActionListener {
 									else if (f.contains("standard_deviation")) {
 										outputS = false;
 									}
-									else if (f.contains("run-")) {
-										String getNumber = f.substring(4, f.length());
-										String number = "";
-										for (int j = 0; j < getNumber.length(); j++) {
-											if (Character.isDigit(getNumber.charAt(j))) {
-												number += getNumber.charAt(j);
-											}
-											else {
-												break;
-											}
-										}
-										if (num == -1) {
-											num = Integer.parseInt(number);
-										}
-										else if (Integer.parseInt(number) < num) {
-											num = Integer.parseInt(number);
-										}
-										run = "run-" + num + "." + printer_id.substring(0, printer_id.length() - 8);
+									else if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
+										run.add(f);
 									}
 									else if (f.equals("term-time.txt")) {
 										outputTerm = true;
 									}
 								}
-								if (outputM && num != -1) {
-									ArrayList<ArrayList<Double>> mean = ((Graph) simTab.getComponentAt(i)).readData(directory + separator + run,
-											"average", direct, warning);
+								if (outputM || outputV || outputS) {
 									warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-									Parser p = new TSDParser(directory + separator + run, warning);
-									warning = p.getWarning();
-									Parser p2 = new Parser(p.getSpecies(), mean);
-									p2.outputTSD(directory + separator + "mean.tsd");
-								}
-								if (outputV && num != -1) {
-									ArrayList<ArrayList<Double>> var = ((Graph) simTab.getComponentAt(i)).readData(directory + separator + run,
-											"variance", direct, warning);
-									warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-									Parser p = new TSDParser(directory + separator + run, warning);
-									warning = p.getWarning();
-									Parser p2 = new Parser(p.getSpecies(), var);
-									p2.outputTSD(directory + separator + "variance.tsd");
-								}
-								if (outputS && num != -1) {
-									ArrayList<ArrayList<Double>> stddev = ((Graph) simTab.getComponentAt(i)).readData(directory + separator + run,
-											"deviation", direct, warning);
-									warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-									Parser p = new TSDParser(directory + separator + run, warning);
-									warning = p.getWarning();
-									Parser p2 = new Parser(p.getSpecies(), stddev);
-									p2.outputTSD(directory + separator + "standard_deviation.tsd");
+									((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 								}
 								if (outputTerm) {
 									ArrayList<String> dataLabels = new ArrayList<String>();
@@ -1721,8 +1641,7 @@ public class Run implements ActionListener {
 									boolean outputS = true;
 									boolean outputTerm = false;
 									boolean warning = false;
-									int num = -1;
-									String run = "run-1." + printer_id.substring(0, printer_id.length() - 8);
+									ArrayList<String> run = new ArrayList<String>();
 									for (String f : work.list()) {
 										if (f.contains("mean")) {
 											outputM = false;
@@ -1733,55 +1652,16 @@ public class Run implements ActionListener {
 										else if (f.contains("standard_deviation")) {
 											outputS = false;
 										}
-										else if (f.contains("run-")) {
-											String getNumber = f.substring(4, f.length());
-											String number = "";
-											for (int j = 0; j < getNumber.length(); j++) {
-												if (Character.isDigit(getNumber.charAt(j))) {
-													number += getNumber.charAt(j);
-												}
-												else {
-													break;
-												}
-											}
-											if (num == -1) {
-												num = Integer.parseInt(number);
-											}
-											else if (Integer.parseInt(number) < num) {
-												num = Integer.parseInt(number);
-											}
-											run = "run-" + num + "." + printer_id.substring(0, printer_id.length() - 8);
+										else if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
+											run.add(f);
 										}
 										else if (f.equals("term-time.txt")) {
 											outputTerm = true;
 										}
 									}
-									if (outputM && num != -1) {
-										ArrayList<ArrayList<Double>> mean = ((Graph) simTab.getComponentAt(i)).readData(directory + separator + run,
-												"average", direct, warning);
+									if (outputM || outputV || outputS) {
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, warning);
-										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), mean);
-										p2.outputTSD(directory + separator + "mean.tsd");
-									}
-									if (outputV && num != -1) {
-										ArrayList<ArrayList<Double>> var = ((Graph) simTab.getComponentAt(i)).readData(directory + separator + run,
-												"variance", direct, warning);
-										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, warning);
-										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), var);
-										p2.outputTSD(directory + separator + "variance.tsd");
-									}
-									if (outputS && num != -1) {
-										ArrayList<ArrayList<Double>> stddev = ((Graph) simTab.getComponentAt(i)).readData(
-												directory + separator + run, "deviation", direct, warning);
-										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, warning);
-										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), stddev);
-										p2.outputTSD(directory + separator + "standard_deviation.tsd");
+										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 									}
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
@@ -1868,8 +1748,7 @@ public class Run implements ActionListener {
 									boolean outputS = true;
 									boolean outputTerm = false;
 									boolean warning = false;
-									int num = -1;
-									String run = "run-1." + printer_id.substring(0, printer_id.length() - 8);
+									ArrayList<String> run = new ArrayList<String>();
 									for (String f : work.list()) {
 										if (f.contains("mean")) {
 											outputM = false;
@@ -1880,55 +1759,16 @@ public class Run implements ActionListener {
 										else if (f.contains("standard_deviation")) {
 											outputS = false;
 										}
-										else if (f.contains("run-")) {
-											String getNumber = f.substring(4, f.length());
-											String number = "";
-											for (int j = 0; j < getNumber.length(); j++) {
-												if (Character.isDigit(getNumber.charAt(j))) {
-													number += getNumber.charAt(j);
-												}
-												else {
-													break;
-												}
-											}
-											if (num == -1) {
-												num = Integer.parseInt(number);
-											}
-											else if (Integer.parseInt(number) < num) {
-												num = Integer.parseInt(number);
-											}
-											run = "run-" + num + "." + printer_id.substring(0, printer_id.length() - 8);
+										else if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
+											run.add(f);
 										}
 										else if (f.equals("term-time.txt")) {
 											outputTerm = true;
 										}
 									}
-									if (outputM && num != -1) {
-										ArrayList<ArrayList<Double>> mean = ((Graph) simTab.getComponentAt(i)).readData(directory + separator + run,
-												"average", direct, warning);
+									if (outputM || outputV || outputS) {
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, warning);
-										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), mean);
-										p2.outputTSD(directory + separator + "mean.tsd");
-									}
-									if (outputV && num != -1) {
-										ArrayList<ArrayList<Double>> var = ((Graph) simTab.getComponentAt(i)).readData(directory + separator + run,
-												"variance", direct, warning);
-										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, warning);
-										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), var);
-										p2.outputTSD(directory + separator + "variance.tsd");
-									}
-									if (outputS && num != -1) {
-										ArrayList<ArrayList<Double>> stddev = ((Graph) simTab.getComponentAt(i)).readData(
-												directory + separator + run, "deviation", direct, warning);
-										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, warning);
-										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), stddev);
-										p2.outputTSD(directory + separator + "standard_deviation.tsd");
+										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 									}
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
@@ -2034,8 +1874,7 @@ public class Run implements ActionListener {
 									boolean outputS = true;
 									boolean outputTerm = false;
 									boolean warning = false;
-									int num = -1;
-									String run = "run-1." + printer_id.substring(0, printer_id.length() - 8);
+									ArrayList<String> run = new ArrayList<String>();
 									for (String f : work.list()) {
 										if (f.contains("mean")) {
 											outputM = false;
@@ -2046,55 +1885,16 @@ public class Run implements ActionListener {
 										else if (f.contains("standard_deviation")) {
 											outputS = false;
 										}
-										else if (f.contains("run-")) {
-											String getNumber = f.substring(4, f.length());
-											String number = "";
-											for (int j = 0; j < getNumber.length(); j++) {
-												if (Character.isDigit(getNumber.charAt(j))) {
-													number += getNumber.charAt(j);
-												}
-												else {
-													break;
-												}
-											}
-											if (num == -1) {
-												num = Integer.parseInt(number);
-											}
-											else if (Integer.parseInt(number) < num) {
-												num = Integer.parseInt(number);
-											}
-											run = "run-" + num + "." + printer_id.substring(0, printer_id.length() - 8);
+										else if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
+											run.add(f);
 										}
 										else if (f.equals("term-time.txt")) {
 											outputTerm = true;
 										}
 									}
-									if (outputM && num != -1) {
-										ArrayList<ArrayList<Double>> mean = ((Graph) simTab.getComponentAt(i)).readData(directory + separator + run,
-												"average", direct, warning);
+									if (outputM || outputV || outputS) {
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, warning);
-										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), mean);
-										p2.outputTSD(directory + separator + "mean.tsd");
-									}
-									if (outputV && num != -1) {
-										ArrayList<ArrayList<Double>> var = ((Graph) simTab.getComponentAt(i)).readData(directory + separator + run,
-												"variance", direct, warning);
-										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, warning);
-										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), var);
-										p2.outputTSD(directory + separator + "variance.tsd");
-									}
-									if (outputS && num != -1) {
-										ArrayList<ArrayList<Double>> stddev = ((Graph) simTab.getComponentAt(i)).readData(
-												directory + separator + run, "deviation", direct, warning);
-										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, warning);
-										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), stddev);
-										p2.outputTSD(directory + separator + "standard_deviation.tsd");
+										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 									}
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
@@ -2181,8 +1981,7 @@ public class Run implements ActionListener {
 									boolean outputS = true;
 									boolean outputTerm = false;
 									boolean warning = false;
-									int num = -1;
-									String run = "run-1." + printer_id.substring(0, printer_id.length() - 8);
+									ArrayList<String> run = new ArrayList<String>();
 									for (String f : work.list()) {
 										if (f.contains("mean")) {
 											outputM = false;
@@ -2193,55 +1992,16 @@ public class Run implements ActionListener {
 										else if (f.contains("standard_deviation")) {
 											outputS = false;
 										}
-										else if (f.contains("run-")) {
-											String getNumber = f.substring(4, f.length());
-											String number = "";
-											for (int j = 0; j < getNumber.length(); j++) {
-												if (Character.isDigit(getNumber.charAt(j))) {
-													number += getNumber.charAt(j);
-												}
-												else {
-													break;
-												}
-											}
-											if (num == -1) {
-												num = Integer.parseInt(number);
-											}
-											else if (Integer.parseInt(number) < num) {
-												num = Integer.parseInt(number);
-											}
-											run = "run-" + num + "." + printer_id.substring(0, printer_id.length() - 8);
+										else if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
+											run.add(f);
 										}
 										else if (f.equals("term-time.txt")) {
 											outputTerm = true;
 										}
 									}
-									if (outputM && num != -1) {
-										ArrayList<ArrayList<Double>> mean = ((Graph) simTab.getComponentAt(i)).readData(directory + separator + run,
-												"average", direct, warning);
+									if (outputM || outputV || outputS) {
 										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, warning);
-										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), mean);
-										p2.outputTSD(directory + separator + "mean.tsd");
-									}
-									if (outputV && num != -1) {
-										ArrayList<ArrayList<Double>> var = ((Graph) simTab.getComponentAt(i)).readData(directory + separator + run,
-												"variance", direct, warning);
-										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, warning);
-										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), var);
-										p2.outputTSD(directory + separator + "variance.tsd");
-									}
-									if (outputS && num != -1) {
-										ArrayList<ArrayList<Double>> stddev = ((Graph) simTab.getComponentAt(i)).readData(
-												directory + separator + run, "deviation", direct, warning);
-										warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-										Parser p = new TSDParser(directory + separator + run, warning);
-										warning = p.getWarning();
-										Parser p2 = new Parser(p.getSpecies(), stddev);
-										p2.outputTSD(directory + separator + "standard_deviation.tsd");
+										((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
 									}
 									if (outputTerm) {
 										ArrayList<String> dataLabels = new ArrayList<String>();
