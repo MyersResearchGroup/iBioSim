@@ -734,6 +734,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			}
 		}
+		else if (e.getActionCommand().equals("recalculate")) {
+
+		}
 		else if (e.getActionCommand().equals("delete")) {
 			TreePath[] selected = tree.getSelectionPaths();
 			TreeSelectionListener t = new TreeSelectionListener() {
@@ -768,7 +771,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 							}
 							else {
-								simDir.remove(i);
 								String name = ((IconNode) select.getLastPathComponent()).getName();
 								if (name.equals("Average")) {
 									name = "mean";
@@ -781,9 +783,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								}
 								else if (name.equals("Percent Termination")) {
 									name = "percent-term-time";
+									simDir.remove(i);
 								}
 								else if (name.equals("Termination Time")) {
 									name = "term-time";
+									simDir.remove(i);
+								}
+								else {
+									simDir.remove(i);
 								}
 								name += "." + printer_id.substring(0, printer_id.length() - 8);
 								File dir = new File(outDir + separator + name);
@@ -794,16 +801,41 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									dir.delete();
 								}
 								int count = 0;
+								boolean m = false;
+								if (new File(outDir + separator + "mean" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									m = true;
+								}
+								boolean v = false;
+								if (new File(outDir + separator + "variance" + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+									v = true;
+								}
+								boolean d = false;
+								if (new File(outDir + separator + "standard_deviation" + "." + printer_id.substring(0, printer_id.length() - 8))
+										.exists()) {
+									d = true;
+								}
 								for (int j = 0; j < simDir.getChildCount(); j++) {
 									if (((IconNode) simDir.getChildAt(j)).getChildCount() == 0) {
-										count++;
+										if (((IconNode) simDir.getChildAt(j)).getName().contains("run-")) {
+											count++;
+										}
 									}
 								}
-								if (count == 3) {
+								if (count == 0) {
 									for (int j = 0; j < simDir.getChildCount(); j++) {
 										if (((IconNode) simDir.getChildAt(j)).getChildCount() == 0) {
-											simDir.remove(j);
-											j--;
+											if (((IconNode) simDir.getChildAt(j)).getName().contains("Average") && !m) {
+												simDir.remove(j);
+												j--;
+											}
+											else if (((IconNode) simDir.getChildAt(j)).getName().contains("Variance") && !v) {
+												simDir.remove(j);
+												j--;
+											}
+											else if (((IconNode) simDir.getChildAt(j)).getName().contains("Deviation") && !d) {
+												simDir.remove(j);
+												j--;
+											}
 										}
 									}
 								}
@@ -812,7 +844,6 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						else if (((IconNode) simDir.getChildAt(i)).getChildCount() != 0) {
 							for (int j = 0; j < simDir.getChildAt(i).getChildCount(); j++) {
 								if (((IconNode) ((IconNode) simDir.getChildAt(i)).getChildAt(j)) == ((IconNode) select.getLastPathComponent())) {
-									((IconNode) simDir.getChildAt(i)).remove(j);
 									String name = ((IconNode) select.getLastPathComponent()).getName();
 									if (name.equals("Average")) {
 										name = "mean";
@@ -825,9 +856,14 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 									}
 									else if (name.equals("Percent Termination")) {
 										name = "percent-term-time";
+										((IconNode) simDir.getChildAt(i)).remove(j);
 									}
 									else if (name.equals("Termination Time")) {
 										name = "term-time";
+										((IconNode) simDir.getChildAt(i)).remove(j);
+									}
+									else {
+										((IconNode) simDir.getChildAt(i)).remove(j);
 									}
 									name += "." + printer_id.substring(0, printer_id.length() - 8);
 									File dir = new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName() + separator + name);
@@ -848,27 +884,45 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										((IconNode) simDir.getChildAt(i)).setIconName("");
 									}
 									int count = 0;
+									boolean m = false;
+									if (new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName() + separator + "mean" + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+										m = true;
+									}
+									boolean v = false;
+									if (new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName() + separator + "variance" + "."
+											+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
+										v = true;
+									}
+									boolean d = false;
+									if (new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName() + separator + "standard_deviation"
+											+ "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
+										d = true;
+									}
 									for (int k = 0; k < simDir.getChildAt(i).getChildCount(); k++) {
 										if (((IconNode) simDir.getChildAt(i).getChildAt(k)).getChildCount() == 0) {
-											count++;
-										}
-									}
-									if (count == 3) {
-										File dir2 = new File(outDir + separator + ((IconNode) simDir.getChildAt(i)).getName());
-										if (dir2.isDirectory()) {
-											biomodelsim.deleteDir(dir2);
-										}
-										else {
-											dir2.delete();
-										}
-										directories.remove(((IconNode) simDir.getChildAt(i)).getName());
-										for (int k = 0; k < graphed.size(); k++) {
-											if (graphed.get(k).getDirectory().equals(((IconNode) simDir.getChildAt(i)).getName())) {
-												graphed.remove(k);
-												k--;
+											if (((IconNode) simDir.getChildAt(i).getChildAt(k)).getName().contains("run-")) {
+												count++;
 											}
 										}
-										simDir.remove(i);
+									}
+									if (count == 0) {
+										for (int k = 0; k < simDir.getChildAt(i).getChildCount(); k++) {
+											if (((IconNode) simDir.getChildAt(i).getChildAt(k)).getChildCount() == 0) {
+												if (((IconNode) simDir.getChildAt(i).getChildAt(k)).getName().contains("Average") && !m) {
+													((IconNode) simDir.getChildAt(i)).remove(k);
+													k--;
+												}
+												else if (((IconNode) simDir.getChildAt(i).getChildAt(k)).getName().contains("Variance") && !v) {
+													((IconNode) simDir.getChildAt(i)).remove(k);
+													k--;
+												}
+												else if (((IconNode) simDir.getChildAt(i).getChildAt(k)).getName().contains("Deviation") && !d) {
+													((IconNode) simDir.getChildAt(i)).remove(k);
+													k--;
+												}
+											}
+										}
 									}
 								}
 							}
@@ -1262,6 +1316,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			if (e.isPopupTrigger()) {
 				popup.removeAll();
+				if (node.getChildCount() != 0) {
+					JMenuItem recalculate = new JMenuItem("Recalculate Statistics");
+					recalculate.addActionListener(this);
+					recalculate.setActionCommand("recalculate");
+					popup.add(recalculate);
+				}
 				if (node.getChildCount() != 0 && node.getParent() != null) {
 					JMenuItem rename = new JMenuItem("Rename");
 					rename.addActionListener(this);
@@ -1309,6 +1369,12 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			if (e.isPopupTrigger()) {
 				popup.removeAll();
+				if (node.getChildCount() != 0) {
+					JMenuItem recalculate = new JMenuItem("Recalculate Statistics");
+					recalculate.addActionListener(this);
+					recalculate.setActionCommand("recalculate");
+					popup.add(recalculate);
+				}
 				if (node.getChildCount() != 0 && node.getParent() != null) {
 					JMenuItem rename = new JMenuItem("Rename");
 					rename.addActionListener(this);
@@ -1563,15 +1629,23 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		// }
 		// files[j] = index;
 		// }
-		boolean add = false;
+		boolean addMean = false;
+		boolean addVar = false;
+		boolean addDev = false;
 		boolean addTerm = false;
 		boolean addPercent = false;
 		boolean addConst = false;
 		directories = new ArrayList<String>();
 		for (String file : files) {
 			if (file.length() > 3 && file.substring(file.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))) {
-				if (file.contains("run-") || file.contains("mean") || file.contains("variance") || file.contains("standard_deviation")) {
-					add = true;
+				if (file.contains("run-") || file.contains("mean")) {
+					addMean = true;
+				}
+				else if (file.contains("run-") || file.contains("variance")) {
+					addVar = true;
+				}
+				else if (file.contains("run-") || file.contains("standard_deviation")) {
+					addDev = true;
 				}
 				else if (file.startsWith("term-time")) {
 					addTerm = true;
@@ -1637,14 +1711,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					directories.add(file);
 					IconNode d = new IconNode(file, file);
 					d.setIconName("");
-					boolean add2 = false;
+					boolean addMean2 = false;
+					boolean addVar2 = false;
+					boolean addDev2 = false;
 					boolean addTerm2 = false;
 					boolean addPercent2 = false;
 					boolean addConst2 = false;
 					for (String f : files3) {
 						if (f.contains(printer_id.substring(0, printer_id.length() - 8))) {
-							if (f.contains("run-") || f.contains("mean") || f.contains("variance") || f.contains("standard_deviation")) {
-								add2 = true;
+							if (f.contains("run-") || f.contains("mean")) {
+								addMean2 = true;
+							}
+							else if (f.contains("run-") || f.contains("variance")) {
+								addVar2 = true;
+							}
+							else if (f.contains("run-") || f.contains("standard_deviation")) {
+								addDev2 = true;
 							}
 							else if (f.startsWith("term-time")) {
 								addTerm2 = true;
@@ -1704,15 +1786,22 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								directories.add(file + separator + f);
 								IconNode d2 = new IconNode(f, f);
 								d2.setIconName("");
-								boolean add3 = false;
+								boolean addMean3 = false;
+								boolean addVar3 = false;
+								boolean addDev3 = false;
 								boolean addTerm3 = false;
 								boolean addPercent3 = false;
 								boolean addConst3 = false;
 								for (String f2 : files2) {
 									if (f2.contains(printer_id.substring(0, printer_id.length() - 8))) {
-										if (f2.contains("run-") || f2.contains("mean") || f2.contains("variance")
-												|| f2.contains("standard_deviation")) {
-											add3 = true;
+										if (f2.contains("run-") || f2.contains("mean")) {
+											addMean3 = true;
+										}
+										else if (f2.contains("run-") || f2.contains("variance")) {
+											addVar3 = true;
+										}
+										else if (f2.contains("run-") || f2.contains("standard_deviation")) {
+											addDev3 = true;
 										}
 										else if (f2.startsWith("term-time")) {
 											addTerm3 = true;
@@ -1753,7 +1842,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 										}
 									}
 								}
-								if (add3) {
+								if (addMean3) {
 									IconNode n = new IconNode("Average", "Average");
 									d2.add(n);
 									n.setIconName("");
@@ -1769,7 +1858,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											simDir.setIconName("" + (char) 10003);
 										}
 									}
-									n = new IconNode("Standard Deviation", "Standard Deviation");
+								}
+								if (addDev3) {
+									IconNode n = new IconNode("Standard Deviation", "Standard Deviation");
 									d2.add(n);
 									n.setIconName("");
 									for (GraphSpecies g : graphed) {
@@ -1785,7 +1876,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 											simDir.setIconName("" + (char) 10003);
 										}
 									}
-									n = new IconNode("Variance", "Variance");
+								}
+								if (addVar3) {
+									IconNode n = new IconNode("Variance", "Variance");
 									d2.add(n);
 									n.setIconName("");
 									for (GraphSpecies g : graphed) {
@@ -1941,7 +2034,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 							}
 						}
 					}
-					if (add2) {
+					if (addMean2) {
 						IconNode n = new IconNode("Average", "Average");
 						d.add(n);
 						n.setIconName("");
@@ -1955,7 +2048,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								simDir.setIconName("" + (char) 10003);
 							}
 						}
-						n = new IconNode("Standard Deviation", "Standard Deviation");
+					}
+					if (addDev2) {
+						IconNode n = new IconNode("Standard Deviation", "Standard Deviation");
 						d.add(n);
 						n.setIconName("");
 						for (GraphSpecies g : graphed) {
@@ -1968,7 +2063,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 								simDir.setIconName("" + (char) 10003);
 							}
 						}
-						n = new IconNode("Variance", "Variance");
+					}
+					if (addVar2) {
+						IconNode n = new IconNode("Variance", "Variance");
 						d.add(n);
 						n.setIconName("");
 						for (GraphSpecies g : graphed) {
@@ -2109,7 +2206,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 				}
 			}
 		}
-		if (add) {
+		if (addMean) {
 			IconNode n = new IconNode("Average", "Average");
 			simDir.add(n);
 			n.setIconName("");
@@ -2121,7 +2218,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					simDir.setIconName("" + (char) 10003);
 				}
 			}
-			n = new IconNode("Standard Deviation", "Standard Deviation");
+		}
+		if (addDev) {
+			IconNode n = new IconNode("Standard Deviation", "Standard Deviation");
 			simDir.add(n);
 			n.setIconName("");
 			for (GraphSpecies g : graphed) {
@@ -2132,7 +2231,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 					simDir.setIconName("" + (char) 10003);
 				}
 			}
-			n = new IconNode("Variance", "Variance");
+		}
+		if (addVar) {
+			IconNode n = new IconNode("Variance", "Variance");
 			simDir.add(n);
 			n.setIconName("");
 			for (GraphSpecies g : graphed) {
