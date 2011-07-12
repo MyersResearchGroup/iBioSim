@@ -101,6 +101,7 @@ import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
 import org.w3c.dom.DOMImplementation;
 
+import parser.Parser;
 import parser.TSDParser;
 import reb2sac.Reb2Sac;
 import util.Utility;
@@ -512,23 +513,32 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			return data;
 		}
 		if (label.contains("average") || label.contains("variance") || label.contains("deviation")) {
-			int counter = 1;
-			while (!(new File(file).exists())) {
-				file = file.substring(0, file.length() - getLast.length());
-				file += stem;
-				file += counter + "";
-				file += "." + printer_id.substring(0, printer_id.length() - 8);
-				counter++;
+			ArrayList<String> runs = new ArrayList<String>();
+			if (directory == null) {
+				String[] files = new File(outDir).list();
+				for (String f : files) {
+					if (f.contains(stem) && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
+						runs.add(f);
+					}
+				}
 			}
-		}
-		if (label.contains("average")) {
-			return calculateAverageVarianceDeviation(file, stem, 0, directory, warn);
-		}
-		else if (label.contains("variance")) {
-			return calculateAverageVarianceDeviation(file, stem, 1, directory, warn);
-		}
-		else if (label.contains("deviation")) {
-			return calculateAverageVarianceDeviation(file, stem, 2, directory, warn);
+			else {
+				String[] files = new File(outDir + separator + directory).list();
+				for (String f : files) {
+					if (f.contains(stem) && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
+						runs.add(f);
+					}
+				}
+			}
+			if (label.contains("average")) {
+				return calculateAverageVarianceDeviation(runs, 0, directory, warn, false);
+			}
+			else if (label.contains("variance")) {
+				return calculateAverageVarianceDeviation(runs, 1, directory, warn, false);
+			}
+			else {
+				return calculateAverageVarianceDeviation(runs, 2, directory, warn, false);
+			}
 		}
 		else {
 			Gui.frame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
@@ -4987,241 +4997,209 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		}
 	}
 
-	private ArrayList<ArrayList<Double>> calculateAverageVarianceDeviation(String startFile, String fileStem, int choice, String directory,
-			boolean warning) {
-		ArrayList<ArrayList<Double>> average = new ArrayList<ArrayList<Double>>();
-		ArrayList<ArrayList<Double>> variance = new ArrayList<ArrayList<Double>>();
-		ArrayList<ArrayList<Double>> deviation = new ArrayList<ArrayList<Double>>();
-		lock.lock();
-		try {
-			warn = warning;
-			// TSDParser p = new TSDParser(startFile, biomodelsim, false);
-			ArrayList<ArrayList<Double>> data = readData(startFile, "", directory, warn);
-			averageOrder = graphSpecies;
-			boolean first = true;
-			int runsToMake = 1;
-			String[] findNum = startFile.split(separator);
-			String search = findNum[findNum.length - 1];
-			int firstOne = Integer.parseInt(search.substring(4, search.length() - 4));
-			if (directory == null) {
-				for (String f : new File(outDir).list()) {
-					if (f.contains(fileStem)) {
-						try {
-							int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
-							if (tempNum > runsToMake) {
-								runsToMake = tempNum;
-							}
-						}
-						catch (Exception e) {
-						}
-					}
+	public ArrayList<ArrayList<Double>> calculateAverageVarianceDeviation(ArrayList<String> files, int choice, String directory, boolean warning,
+			boolean output) {
+		if (files.size() > 0) {
+			ArrayList<ArrayList<Double>> average = new ArrayList<ArrayList<Double>>();
+			ArrayList<ArrayList<Double>> variance = new ArrayList<ArrayList<Double>>();
+			ArrayList<ArrayList<Double>> deviation = new ArrayList<ArrayList<Double>>();
+			lock.lock();
+			try {
+				warn = warning;
+				// TSDParser p = new TSDParser(startFile, biomodelsim, false);
+				ArrayList<ArrayList<Double>> data;
+				if (directory == null) {
+					data = readData(outDir + separator + files.get(0), "", directory, warn);
 				}
-			}
-			else {
-				for (String f : new File(outDir + separator + directory).list()) {
-					if (f.contains(fileStem)) {
-						try {
-							int tempNum = Integer.parseInt(f.substring(fileStem.length(), f.length() - 4));
-							if (tempNum > runsToMake) {
-								runsToMake = tempNum;
-							}
-						}
-						catch (Exception e) {
-						}
-					}
+				else {
+					data = readData(outDir + separator + directory + separator + files.get(0), "", directory, warn);
 				}
-			}
-			for (int i = 0; i < graphSpecies.size(); i++) {
-				average.add(new ArrayList<Double>());
-				variance.add(new ArrayList<Double>());
-			}
-			HashMap<Double, Integer> dataCounts = new HashMap<Double, Integer>();
-			// int count = 0;
-			int skip = firstOne;
-			for (int j = 0; j < runsToMake; j++) {
-				if (!first) {
-					if (firstOne != 1) {
-						j--;
-						firstOne = 1;
-					}
-					boolean loop = true;
-					while (loop && j < runsToMake && (j + 1) != skip) {
-						if (directory == null) {
-							if (new File(outDir + separator + fileStem + (j + 1) + "." + printer_id.substring(0, printer_id.length() - 8)).exists()) {
-								ArrayList<ArrayList<Double>> newData = readData(
-										outDir + separator + fileStem + (j + 1) + "." + printer_id.substring(0, printer_id.length() - 8), "",
-										directory, warn);
-								data = new ArrayList<ArrayList<Double>>();
-								for (int i = 0; i < averageOrder.size(); i++) {
-									for (int k = 0; k < graphSpecies.size(); k++) {
-										if (averageOrder.get(i).equals(graphSpecies.get(k))) {
-											data.add(newData.get(k));
-											break;
-										}
-									}
-								}
-								loop = false;
-								// count++;
-							}
-							else {
-								j++;
-							}
-						}
-						else {
-							if (new File(outDir + separator + directory + separator + fileStem + (j + 1) + "."
-									+ printer_id.substring(0, printer_id.length() - 8)).exists()) {
-								ArrayList<ArrayList<Double>> newData = readData(outDir + separator + directory + separator + fileStem + (j + 1) + "."
-										+ printer_id.substring(0, printer_id.length() - 8), "", directory, warn);
-								data = new ArrayList<ArrayList<Double>>();
-								for (int i = 0; i < averageOrder.size(); i++) {
-									for (int k = 0; k < graphSpecies.size(); k++) {
-										if (averageOrder.get(i).equals(graphSpecies.get(k))) {
-											data.add(newData.get(k));
-											break;
-										}
-									}
-								}
-								loop = false;
-								// count++;
-							}
-							else {
-								j++;
-							}
-						}
-					}
+				averageOrder = graphSpecies;
+				boolean first = true;
+				for (int i = 0; i < graphSpecies.size(); i++) {
+					average.add(new ArrayList<Double>());
+					variance.add(new ArrayList<Double>());
 				}
-				// ArrayList<ArrayList<Double>> data = p.getData();
-				for (int k = 0; k < data.get(0).size(); k++) {
-					if (first) {
-						double put;
-						if (k == data.get(0).size() - 1 && k >= 2) {
-							if (data.get(0).get(k) - data.get(0).get(k - 1) != data.get(0).get(k - 1) - data.get(0).get(k - 2)) {
-								put = data.get(0).get(k - 1) + (data.get(0).get(k - 1) - data.get(0).get(k - 2));
-								dataCounts.put(put, 1);
-							}
-							else {
-								put = (data.get(0)).get(k);
-								dataCounts.put(put, 1);
-							}
-						}
-						else {
-							put = (data.get(0)).get(k);
-							dataCounts.put(put, 1);
-						}
-						for (int i = 0; i < data.size(); i++) {
-							if (i == 0) {
-								variance.get(i).add((data.get(i)).get(k));
-								average.get(i).add(put);
-							}
-							else {
-								variance.get(i).add(0.0);
-								average.get(i).add((data.get(i)).get(k));
-							}
-						}
-					}
-					else {
-						int index = -1;
-						double put;
-						if (k == data.get(0).size() - 1 && k >= 2) {
-							if (data.get(0).get(k) - data.get(0).get(k - 1) != data.get(0).get(k - 1) - data.get(0).get(k - 2)) {
-								put = data.get(0).get(k - 1) + (data.get(0).get(k - 1) - data.get(0).get(k - 2));
-							}
-							else {
-								put = (data.get(0)).get(k);
-							}
-						}
-						else if (k == data.get(0).size() - 1 && k == 1) {
-							if (average.get(0).size() > 1) {
-								put = (average.get(0)).get(k);
-							}
-							else {
-								put = (data.get(0)).get(k);
-							}
-						}
-						else {
-							put = (data.get(0)).get(k);
-						}
-						if (average.get(0).contains(put)) {
-							index = average.get(0).indexOf(put);
-							int count = dataCounts.get(put);
-							dataCounts.put(put, count + 1);
-							for (int i = 1; i < data.size(); i++) {
-								double old = (average.get(i)).get(index);
-								(average.get(i)).set(index, old + (((data.get(i)).get(k) - old) / (count + 1)));
-								double newMean = (average.get(i)).get(index);
-								double vary = (((count - 1) * (variance.get(i)).get(index)) + ((data.get(i)).get(k) - newMean)
-										* ((data.get(i)).get(k) - old))
-										/ count;
-								(variance.get(i)).set(index, vary);
-							}
-						}
-						else {
-							dataCounts.put(put, 1);
-							for (int a = 0; a < average.get(0).size(); a++) {
-								if (average.get(0).get(a) > put) {
-									index = a;
-									break;
-								}
-							}
-							if (index == -1) {
-								index = average.get(0).size() - 1;
-							}
-							average.get(0).add(put);
-							variance.get(0).add(put);
-							for (int a = 1; a < average.size(); a++) {
-								average.get(a).add(data.get(a).get(k));
-								variance.get(a).add(0.0);
-							}
-							if (index != average.get(0).size() - 1) {
-								for (int a = average.get(0).size() - 2; a >= 0; a--) {
-									if (average.get(0).get(a) > average.get(0).get(a + 1)) {
-										for (int b = 0; b < average.size(); b++) {
-											double temp = average.get(b).get(a);
-											average.get(b).set(a, average.get(b).get(a + 1));
-											average.get(b).set(a + 1, temp);
-											temp = variance.get(b).get(a);
-											variance.get(b).set(a, variance.get(b).get(a + 1));
-											variance.get(b).set(a + 1, temp);
-										}
-									}
-									else {
+				HashMap<Double, Integer> dataCounts = new HashMap<Double, Integer>();
+				// int count = 0;
+				for (String run : files) {
+					if (directory == null) {
+						if (new File(outDir + separator + run).exists()) {
+							ArrayList<ArrayList<Double>> newData = readData(outDir + separator + run, "", directory, warn);
+							data = new ArrayList<ArrayList<Double>>();
+							for (int i = 0; i < averageOrder.size(); i++) {
+								for (int k = 0; k < graphSpecies.size(); k++) {
+									if (averageOrder.get(i).equals(graphSpecies.get(k))) {
+										data.add(newData.get(k));
 										break;
 									}
 								}
 							}
 						}
 					}
+					else {
+						if (new File(outDir + separator + directory + separator + run).exists()) {
+							ArrayList<ArrayList<Double>> newData = readData(outDir + separator + directory + separator + run, "", directory, warn);
+							data = new ArrayList<ArrayList<Double>>();
+							for (int i = 0; i < averageOrder.size(); i++) {
+								for (int k = 0; k < graphSpecies.size(); k++) {
+									if (averageOrder.get(i).equals(graphSpecies.get(k))) {
+										data.add(newData.get(k));
+										break;
+									}
+								}
+							}
+						}
+					}
+					// ArrayList<ArrayList<Double>> data = p.getData();
+					for (int k = 0; k < data.get(0).size(); k++) {
+						if (first) {
+							double put;
+							if (k == data.get(0).size() - 1 && k >= 2) {
+								if (data.get(0).get(k) - data.get(0).get(k - 1) != data.get(0).get(k - 1) - data.get(0).get(k - 2)) {
+									put = data.get(0).get(k - 1) + (data.get(0).get(k - 1) - data.get(0).get(k - 2));
+									dataCounts.put(put, 1);
+								}
+								else {
+									put = (data.get(0)).get(k);
+									dataCounts.put(put, 1);
+								}
+							}
+							else {
+								put = (data.get(0)).get(k);
+								dataCounts.put(put, 1);
+							}
+							for (int i = 0; i < data.size(); i++) {
+								if (i == 0) {
+									variance.get(i).add((data.get(i)).get(k));
+									average.get(i).add(put);
+								}
+								else {
+									variance.get(i).add(0.0);
+									average.get(i).add((data.get(i)).get(k));
+								}
+							}
+						}
+						else {
+							int index = -1;
+							double put;
+							if (k == data.get(0).size() - 1 && k >= 2) {
+								if (data.get(0).get(k) - data.get(0).get(k - 1) != data.get(0).get(k - 1) - data.get(0).get(k - 2)) {
+									put = data.get(0).get(k - 1) + (data.get(0).get(k - 1) - data.get(0).get(k - 2));
+								}
+								else {
+									put = (data.get(0)).get(k);
+								}
+							}
+							else if (k == data.get(0).size() - 1 && k == 1) {
+								if (average.get(0).size() > 1) {
+									put = (average.get(0)).get(k);
+								}
+								else {
+									put = (data.get(0)).get(k);
+								}
+							}
+							else {
+								put = (data.get(0)).get(k);
+							}
+							if (average.get(0).contains(put)) {
+								index = average.get(0).indexOf(put);
+								int count = dataCounts.get(put);
+								dataCounts.put(put, count + 1);
+								for (int i = 1; i < data.size(); i++) {
+									double old = (average.get(i)).get(index);
+									(average.get(i)).set(index, old + (((data.get(i)).get(k) - old) / (count + 1)));
+									double newMean = (average.get(i)).get(index);
+									double vary = (((count - 1) * (variance.get(i)).get(index)) + ((data.get(i)).get(k) - newMean)
+											* ((data.get(i)).get(k) - old))
+											/ count;
+									(variance.get(i)).set(index, vary);
+								}
+							}
+							else {
+								dataCounts.put(put, 1);
+								for (int a = 0; a < average.get(0).size(); a++) {
+									if (average.get(0).get(a) > put) {
+										index = a;
+										break;
+									}
+								}
+								if (index == -1) {
+									index = average.get(0).size() - 1;
+								}
+								average.get(0).add(put);
+								variance.get(0).add(put);
+								for (int a = 1; a < average.size(); a++) {
+									average.get(a).add(data.get(a).get(k));
+									variance.get(a).add(0.0);
+								}
+								if (index != average.get(0).size() - 1) {
+									for (int a = average.get(0).size() - 2; a >= 0; a--) {
+										if (average.get(0).get(a) > average.get(0).get(a + 1)) {
+											for (int b = 0; b < average.size(); b++) {
+												double temp = average.get(b).get(a);
+												average.get(b).set(a, average.get(b).get(a + 1));
+												average.get(b).set(a + 1, temp);
+												temp = variance.get(b).get(a);
+												variance.get(b).set(a, variance.get(b).get(a + 1));
+												variance.get(b).set(a + 1, temp);
+											}
+										}
+										else {
+											break;
+										}
+									}
+								}
+							}
+						}
+					}
+					first = false;
 				}
-				first = false;
+				deviation = new ArrayList<ArrayList<Double>>();
+				for (int i = 0; i < variance.size(); i++) {
+					deviation.add(new ArrayList<Double>());
+					for (int j = 0; j < variance.get(i).size(); j++) {
+						deviation.get(i).add(variance.get(i).get(j));
+					}
+				}
+				for (int i = 1; i < deviation.size(); i++) {
+					for (int j = 0; j < deviation.get(i).size(); j++) {
+						deviation.get(i).set(j, Math.sqrt(deviation.get(i).get(j)));
+					}
+				}
+				averageOrder = null;
 			}
-			deviation = new ArrayList<ArrayList<Double>>();
-			for (int i = 0; i < variance.size(); i++) {
-				deviation.add(new ArrayList<Double>());
-				for (int j = 0; j < variance.get(i).size(); j++) {
-					deviation.get(i).add(variance.get(i).get(j));
+			catch (Exception e) {
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to output average, variance, and standard deviation!", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			lock.unlock();
+			if (output) {
+				Parser m = new Parser(graphSpecies, average);
+				Parser d = new Parser(graphSpecies, deviation);
+				Parser v = new Parser(graphSpecies, variance);
+				if (directory == null) {
+					m.outputTSD(outDir + separator + "mean.tsd");
+					v.outputTSD(outDir + separator + "variance.tsd");
+					d.outputTSD(outDir + separator + "standard_deviation.tsd");
+				}
+				else {
+					m.outputTSD(outDir + separator + directory + separator + "mean.tsd");
+					v.outputTSD(outDir + separator + directory + separator + "variance.tsd");
+					d.outputTSD(outDir + separator + directory + separator + "standard_deviation.tsd");
 				}
 			}
-			for (int i = 1; i < deviation.size(); i++) {
-				for (int j = 0; j < deviation.get(i).size(); j++) {
-					deviation.get(i).set(j, Math.sqrt(deviation.get(i).get(j)));
-				}
+			if (choice == 0) {
+				return average;
 			}
-			averageOrder = null;
+			else if (choice == 1) {
+				return variance;
+			}
+			else {
+				return deviation;
+			}
 		}
-		catch (Exception e) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to output average, variance, and standard deviation!", "Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
-		lock.unlock();
-		if (choice == 0) {
-			return average;
-		}
-		else if (choice == 1) {
-			return variance;
-		}
-		else {
-			return deviation;
-		}
+		return null;
 	}
 
 	public void run() {
