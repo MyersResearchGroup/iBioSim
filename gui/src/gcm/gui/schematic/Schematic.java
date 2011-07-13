@@ -1,7 +1,9 @@
 package gcm.gui.schematic;
 
+import gcm.gui.GridPanel;
 import gcm.gui.DropComponentPanel;
 import gcm.gui.GCM2SBMLEditor;
+import gcm.gui.Grid;
 import gcm.gui.InfluencePanel;
 import gcm.gui.modelview.movie.MovieContainer;
 import gcm.gui.modelview.movie.visualizations.cellvisualizations.MovieAppearance;
@@ -9,9 +11,9 @@ import gcm.gui.modelview.movie.visualizations.component.ComponentSchemeChooser;
 import gcm.parser.GCMFile;
 import gcm.parser.GCMParser;
 import gcm.util.GlobalConstants;
-//import gcm.network.Grid;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Event;
 import java.awt.Graphics;
 import java.awt.Point;
@@ -185,6 +187,7 @@ public class Schematic extends JPanel implements ActionListener {
 	AbstractButton addComponentButton;
 	AbstractButton editPromoterButton;
 	AbstractButton selfInfluenceButton;
+	AbstractButton gridButton;
 	
 	AbstractButton activationButton;
 	AbstractButton inhibitionButton;
@@ -212,6 +215,8 @@ public class Schematic extends JPanel implements ActionListener {
 		selfInfluenceButton = Utils.makeRadioToolButton("self_influence.png", "", "Add Self Influences", this, modeButtonGroup);
 		toolBar.add(selfInfluenceButton);
 		//toolBar.add(Utils.makeToolButton("", "addInfluence", "Add Influence", this));
+		gridButton = Utils.makeToolButton("", "grid", "Grid", this);
+		toolBar.add(gridButton);
 
 		toolBar.addSeparator();
 		ButtonGroup influenceButtonGroup = new ButtonGroup();
@@ -1063,25 +1068,20 @@ public class Schematic extends JPanel implements ActionListener {
 				
 		super.paintComponent(g);
 		
-//		Grid grid = gcm.getGrid();
-//		
-//		//System.out.print(grid.isEnabled());
-//
-//		if (grid.isEnabled()) {			
-//			
-//			Component c[] = this.getComponents();
-//			
-//			for(Component d : c) {
-//				//if there's a toolbar, adjust for it when drawing the grid
-//				if (d.getName() == "toolbar")
-//					grid.setVerticalOffset(37);
-//			}
-//			
-//			//put all of the current stuff in the GCM into the grid
-//			gcm.updateGrid();
-//			
-//			grid.drawGrid(g);
-//		}
+		Grid grid = gcm.getGrid();
+		
+		if (grid.isEnabled()) {
+			
+			Component c[] = this.getComponents();
+			
+			//if there's a toolbar, adjust for it when drawing the grid
+			for(Component d : c) {
+				if (d.getName() == "toolbar")
+					grid.setVerticalOffset(37);
+			}
+			
+			grid.drawGrid(g);
+		}
 	}
 	
 	//////////////////////////////////////// ANIMATION TYPE STUFF ////////////////////////////////
