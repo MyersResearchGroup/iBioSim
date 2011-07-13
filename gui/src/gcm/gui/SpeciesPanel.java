@@ -338,12 +338,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			field = new PropertyField(GlobalConstants.MEMDIFF_STRING, gcm
 					.getParameter(GlobalConstants.MEMDIFF_STRING), origString, defaultValue,
-					Utility.SWEEPstring, paramsOnly, origString);
+					Utility.SLASHSWEEPstring, paramsOnly, origString);
 		}
 		else {
 			field = new PropertyField(GlobalConstants.MEMDIFF_STRING, gcm
 					.getParameter(GlobalConstants.MEMDIFF_STRING), origString, gcm
-					.getParameter(GlobalConstants.MEMDIFF_STRING), Utility.NUMstring, paramsOnly,
+					.getParameter(GlobalConstants.MEMDIFF_STRING), Utility.SLASHstring, paramsOnly,
 					origString);
 		}
 		fields.put(GlobalConstants.MEMDIFF_STRING, field);
