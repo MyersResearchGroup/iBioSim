@@ -1,5 +1,6 @@
 package gcm.parser;
 
+import gcm.gui.Grid;
 import gcm.network.AbstractionEngine;
 import gcm.network.GeneticNetwork;
 import gcm.util.GlobalConstants;
@@ -105,6 +106,7 @@ public class GCMFile {
 		globalParameters = new HashMap<String, String>();
 		parameters = new HashMap<String, String>();
 		isWithinCompartment = false;
+		grid = new Grid();
 		loadDefaultParameters();
 	}
 
@@ -373,15 +375,24 @@ public class GCMFile {
 			}
 		}
 		*/
+		
+		//loop through the keyset of the components of the gcm
 		for (String s : comps) {
 			GCMFile file = new GCMFile(path);
+			
+			//load the component's gcm into a new GCMFile
 			file.load(path + separator + components.get(s).getProperty("gcm"));
 			if (file.getIsWithinCompartment()) {
+				
+				//load the sbml associated with the component/compartment
+				//and add it to the overall sbml
 				SBMLDocument compSBML = Gui.readSBML(path + separator + file.sbmlFile);
 				Utility.addCompartments(sbml, s + "__" + compSBML.getModel().getCompartment(0).getId());
 				sbml.getModel().getCompartment(s + "__" + compSBML.getModel().getCompartment(0).getId()).setSize(1);
 				sbml.getModel().setVolumeUnits("litre");
-				compartments.add(s + "__" + compSBML.getModel().getCompartment(0).getId());
+				
+				if (!compartments.contains(s + "__" + compSBML.getModel().getCompartment(0).getId()))
+					compartments.add(s + "__" + compSBML.getModel().getCompartment(0).getId());
 			}
 			for (String p : globalParameters.keySet()) {
 				if (!file.globalParameters.containsKey(p)) {
@@ -397,6 +408,8 @@ public class GCMFile {
 				return null;
 			}
 			copy.add(file.getFilename());
+						
+			//recursively add this component's sbml (and its inside components' sbml, etc.) to the overall sbml
 			sbml = unionSBML(sbml, unionGCM(this, file, s, includeSBML, copy), s, this.components, file.getIsWithinCompartment());
 			if (sbml == null && copy.isEmpty()) {
 				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n"
@@ -473,16 +486,22 @@ public class GCMFile {
 				return null;
 			}
 		}
+		
+		//change the names of the bottom-level stuff
+		//prepend the component name to the species to preserve hierarchy
+		
 		mod = setToArrayList(bottomLevel.promoters.keySet());
 		for (String prom : mod) {
 			bottomLevel.promoters.get(prom).put(GlobalConstants.ID, compName + "__" + prom);
 			bottomLevel.changePromoterName(prom, compName + "__" + prom);
 		}
+		
 		mod = setToArrayList(bottomLevel.species.keySet());
 		for (String spec : mod) {
 			bottomLevel.species.get(spec).put(GlobalConstants.ID, compName + "__" + spec);
 			bottomLevel.changeSpeciesName(spec, compName + "__" + spec);
 		}
+		
 		mod = setToArrayList(bottomLevel.species.keySet());
 		for (String spec : mod) {
 			for (Object port : topLevel.components.get(compName).keySet()) {
@@ -494,7 +513,11 @@ public class GCMFile {
 				}
 			}
 		}
+		
+		//go through all of the global params of the bottom level gcm
+		//if the bottom level species don't have the param as a property, add it
 		for (String param : bottomLevel.globalParameters.keySet()) {
+						
 			if (param.equals(GlobalConstants.KDECAY_STRING)) {
 				mod = setToArrayList(bottomLevel.species.keySet());
 				for (String spec : mod) {
@@ -651,6 +674,9 @@ public class GCMFile {
 					}
 				}
 			}
+
+			//this is probably never going to be called, as kmdiff won't ever
+			//be a global parameter, as far as i know
 			else if (param.equals(GlobalConstants.MEMDIFF_STRING)) {
 				mod = setToArrayList(bottomLevel.species.keySet());
 				for (String spec : mod) {
@@ -661,6 +687,10 @@ public class GCMFile {
 				}
 			}
 		}
+		
+		//now that the necessary name changes have happened,
+		//put all of the bottom-level stuff into the top level
+		
 		for (String prom : bottomLevel.promoters.keySet()) {
 			topLevel.addPromoter(prom, bottomLevel.promoters.get(prom));
 		}
@@ -1132,6 +1162,8 @@ public class GCMFile {
 		conditions = new ArrayList<String>();
 		globalParameters = new HashMap<String, String>();
 		parameters = new HashMap<String, String>();
+		grid = new Grid();
+		
 		loadDefaultParameters();
 		try {
 			parseStates(data);
@@ -1148,6 +1180,8 @@ public class GCMFile {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+		
+		buildGrid(components);
 	}
 
 	public void load(String filename) {
@@ -2738,7 +2772,9 @@ public class GCMFile {
 				}
 				if (add) {
 					mainDoc.getModel().addCompartment(c);
-					compartments.add(c.getId());
+					
+					if (!compartments.contains(c.getId()))
+						compartments.add(c.getId());
 				}
 			}
 		}
@@ -3348,6 +3384,20 @@ public class GCMFile {
 			this.loadFromBuffer(p);
 	}
 
+	public Grid getGrid() {
+		return grid;
+	}
+	
+	public void setGrid(Grid g) {
+		grid = g;
+	}	
+	
+	public void buildGrid(HashMap<String, Properties> components) {
+		
+		grid.createGrid(components);
+	}
+	
+	
 	private static final String NETWORK = "digraph\\sG\\s\\{([^}]*)\\s\\}";
 
 	private static final String STATE = "(^|\\n) *([^- \\n]*) *\\[(.*)\\]";
@@ -3381,6 +3431,8 @@ public class GCMFile {
 	private MySpecies speciesPanel = null;
 	
 	private Reactions reactionPanel = null;
+	
+	private Grid grid = null;
 
 	private HashMap<String, Properties> species;
 
