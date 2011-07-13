@@ -735,7 +735,26 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 		}
 		else if (e.getActionCommand().equals("recalculate")) {
-
+			TreePath select = tree.getSelectionPath();
+			String[] files;
+			if (((IconNode) select.getLastPathComponent()).getParent() != null) {
+				files = new File(outDir + separator + ((IconNode) select.getLastPathComponent()).getName()).list();
+			}
+			else {
+				files = new File(outDir).list();
+			}
+			ArrayList<String> runs = new ArrayList<String>();
+			for (String file : files) {
+				if (file.contains("run-") && file.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
+					runs.add(file);
+				}
+			}
+			if (((IconNode) select.getLastPathComponent()).getParent() != null) {
+				calculateAverageVarianceDeviation(runs, 0, ((IconNode) select.getLastPathComponent()).getName(), warn, true);
+			}
+			else {
+				calculateAverageVarianceDeviation(runs, 0, null, warn, true);
+			}
 		}
 		else if (e.getActionCommand().equals("delete")) {
 			TreePath[] selected = tree.getSelectionPaths();
