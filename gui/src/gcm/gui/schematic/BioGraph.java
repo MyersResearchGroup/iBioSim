@@ -719,6 +719,8 @@ public class BioGraph extends mxGraph {
 		double width = Double.parseDouble(prop.getProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH)));;
 		double height = Double.parseDouble(prop.getProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_HEIGHT)));
 				
+		String compart = prop.getProperty("compartment");
+		
 		if(x < -9998 || y < -9998){
 			unpositionedSpeciesComponentCount += 1;
 			needsPositioning = true;
@@ -733,7 +735,8 @@ public class BioGraph extends mxGraph {
 		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, x, y, width, height);
 		this.componentsToMxCellMap.put(id, (mxCell)insertedVertex);
 		
-		this.setComponentStyles(id);
+		//pass whether or not the component is a compartment, as the styles are different
+		this.setComponentStyles(id, compart);
 
 		// now draw the edges that connect the component
 		for (Object propName : prop.keySet()) {
@@ -939,7 +942,6 @@ public class BioGraph extends mxGraph {
 			cell.setValue(prop.getProperty(GlobalConstants.PROMOTER));
 		
 	};
-
 	
 	public void updateComponentConnectionVisuals(mxCell cell, String label){
 		//cell.setStyle(mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
@@ -993,6 +995,16 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_STROKECOLOR, "#AA7700");
 		stylesheet.putCellStyle("COMPONENT", style);
 		
+		// compartments
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+		style.put(mxConstants.STYLE_OPACITY, 30);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#774400");
+		style.put(mxConstants.STYLE_ROUNDED, false);
+		style.put(mxConstants.STYLE_FILLCOLOR, "#61B329");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#324F17");
+		stylesheet.putCellStyle("COMPARTMENT", style);
+		
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_OPACITY, 100);
 		style.put(mxConstants.STYLE_FONTCOLOR, "#774400");
@@ -1036,8 +1048,12 @@ public class BioGraph extends mxGraph {
 		cell.setStyle(style);
 	}
 	
-	private void setComponentStyles(String id){
-		String style="COMPONENT;";
+	private void setComponentStyles(String id, String compart){
+		
+		String style;
+		
+		if (compart.equals("true")) style = "COMPARTMENT;";
+		else style = "COMPONENT;";
 		
 		mxCell cell = this.getComponentCell(id);
 		cell.setStyle(style);		
@@ -1049,7 +1065,6 @@ public class BioGraph extends mxGraph {
 		mxCell cell = this.getDrawnPromoterCell(id);
 		cell.setStyle(style);
 	}
-	
 	
 	public void applyLayout(String ident, mxGraphComponent graphComponent){
 		Layouting.applyLayout(ident, this, graphComponent);
