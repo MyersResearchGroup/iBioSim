@@ -202,8 +202,14 @@ public class GridPanel extends JPanel implements ActionListener{
 				properties.setProperty("row", String.valueOf(row+1));
 				properties.setProperty("col", String.valueOf(col+1));
 				
-				//everything gets made into a compartments, because these are cells
-				properties.setProperty("compartment","true");
+				GCMFile compGCMFile = new GCMFile(gcm.getPath());
+				compGCMFile.load(gcm.getPath() + File.separator + compGCM);
+				
+				//set the correct compartment status
+				if (compGCMFile.getIsWithinCompartment())
+					properties.setProperty("compartment","true"); 
+				
+				else properties.setProperty("compartment","false");
 				
 				gcm.addComponent(null, properties);
 			}
