@@ -316,7 +316,22 @@ public class Schematic extends JPanel implements ActionListener {
 				SbolSynthesizer synthesizer = parser.buildSbolSynthesizer();
 				synthesizer.synthesizeDnaComponent(gcm2sbml.getSbolFiles(), exportPath);
 			}
-		}else if(command == ""){
+		}
+		else if (command.equals("grid")) {
+			
+			//static method that builds the cell population panel
+			boolean built = GridPanel.showGridPanel(gcm2sbml, gcm);
+			
+			if (built) {
+				
+				gcm2sbml.setDirty(true);
+				graph.buildGraph();
+				gcm2sbml.refresh();
+				gcm.makeUndoPoint();
+				drawGrid();
+			}
+		}
+		else if(command == ""){
 			// radio buttons don't have to do anything and have an action command of "".
 		}else{
 			throw(new Error("Invalid actionCommand: " + command));
