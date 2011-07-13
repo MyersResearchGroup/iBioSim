@@ -1131,9 +1131,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						&& !((JCheckBox) speciesInt.get(i).get(0)).isSelected()) {
 					speciesInt.get(i).get(0).setEnabled(true);
 					((JCheckBox) speciesInt.get(i).get(0)).doClick();
-					speciesInt.get(i).get(0).setEnabled(false);
 					if (none.isSelected()) {
-						for (int j = 2; j < speciesInt.get(i).size(); j++) {
+						for (int j = 0; j < speciesInt.get(i).size(); j++) {
 							speciesInt.get(i).get(j).setEnabled(false);
 						}
 					}
@@ -4219,9 +4218,21 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					String[] split1 = s.split(" ");
 					for (int j = 0; j < speciesInt.size(); j++) {
 						if (((JTextField) speciesInt.get(j).get(1)).getText().equals(split1[0])) {
-							((JCheckBox) speciesInt.get(j).get(0)).doClick();
-							if (split1.length > 1) {
-								editLine(j, split1[1]);
+							if (!((JCheckBox) speciesInt.get(j).get(0)).isEnabled()) {
+								((JCheckBox) speciesInt.get(j).get(0)).setEnabled(true);
+								((JCheckBox) speciesInt.get(j).get(0)).doClick();
+								if (split1.length > 1) {
+									editLine(j, split1[1]);
+								}
+								for (int k = 0; k < speciesInt.get(j).size(); k++) {
+									((Component) speciesInt.get(j).get(k)).setEnabled(false);
+								}
+							}
+							else {
+								((JCheckBox) speciesInt.get(j).get(0)).doClick();
+								if (split1.length > 1) {
+									editLine(j, split1[1]);
+								}
 							}
 						}
 					}
@@ -4372,7 +4383,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						&& !complexSpecies.contains(((JTextField) speciesInt.get(j).get(1)).getText())
 						&& !inputSpecies.contains(((JTextField) speciesInt.get(j).get(1)).getText())) {
 					for (int i = 2; i < speciesInt.get(j).size(); i++) {
-						speciesInt.get(j).get(i).setEnabled(false);
+						speciesInt.get(j).get(i).setEnabled(true);
 					}
 				}
 			}
