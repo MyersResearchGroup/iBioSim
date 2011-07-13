@@ -80,6 +80,23 @@ public class Schematic extends JPanel implements ActionListener {
 	private Reactions reactions;
 	private JCheckBox check;
 	
+	//toolbar buttons
+	private AbstractButton selectButton;
+	private AbstractButton addSpeciesButton;
+	private AbstractButton addReactionButton;
+	private AbstractButton addComponentButton;
+	private AbstractButton editPromoterButton;
+	private AbstractButton selfInfluenceButton;
+	private AbstractButton gridButton;
+	private AbstractButton activationButton;
+	private AbstractButton inhibitionButton;
+	private AbstractButton bioActivationButton;
+	private AbstractButton reactionButton;
+	private AbstractButton modifierButton;
+	//private AbstractButton bioInhibitionButton;
+	
+	private AbstractButton noInfluenceButton;
+	
 	/**
 	 * listener stuff. Thanks to http://www.exampledepot.com/egs/java.util/custevent.html.
 	 * This makes it so that we can dispatch events that the movie container can listen for.
@@ -87,14 +104,17 @@ public class Schematic extends JPanel implements ActionListener {
 	protected javax.swing.event.EventListenerList listenerList =
         new javax.swing.event.EventListenerList();
 	// This methods allows classes to register for MyEvents
-    public void addSchematicObjectClickEventListener(SchematicObjectClickEventListener listener) {
+    
+	public void addSchematicObjectClickEventListener(SchematicObjectClickEventListener listener) {
         listenerList.add(SchematicObjectClickEventListener.class, listener);
     }
  // This methods allows classes to unregister for MyEvents
+    
     public void removeSchematicObjectClickEventListener(SchematicObjectClickEventListener listener) {
         listenerList.remove(SchematicObjectClickEventListener.class, listener);
     }
  // This private class is used to fire MyEvents
+    
     void dispatchSchematicObjectClickEvent(SchematicObjectClickEvent evt) {
         Object[] listeners = listenerList.getListenerList();
         // Each listener occupies two elements - the first is the listener class
@@ -106,7 +126,8 @@ public class Schematic extends JPanel implements ActionListener {
         }
     }
 	
-	/**
+	
+    /**
 	 * Constructor
 	 * @param internalModel
 	 */
@@ -176,26 +197,10 @@ public class Schematic extends JPanel implements ActionListener {
 		drawGrid();
 	}
 	
-	
 	/**
 	 * create the toolbar.
 	 * @return
 	 */
-	AbstractButton selectButton;
-	AbstractButton addSpeciesButton;
-	AbstractButton addReactionButton;
-	AbstractButton addComponentButton;
-	AbstractButton editPromoterButton;
-	AbstractButton selfInfluenceButton;
-	AbstractButton gridButton;
-	
-	AbstractButton activationButton;
-	AbstractButton inhibitionButton;
-	AbstractButton bioActivationButton;
-	AbstractButton reactionButton;
-	AbstractButton modifierButton;
-	//AbstractButton bioInhibitionButton;
-	AbstractButton noInfluenceButton;
 	private JToolBar buildToolBar(){
 
 		JToolBar toolBar = new JToolBar();
@@ -275,32 +280,38 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			layoutPopup.show(this, showLayoutsButton.getX(), showLayoutsButton.getY()+showLayoutsButton.getHeight());
 			
-		}else if(command.indexOf("layout_") == 0){
+		}
+		else if(command.indexOf("layout_") == 0){
 			// Layout actioncommands are prepended with "_"
 			command = command.substring(command.indexOf('_')+1);
 			graph.applyLayout(command, this.graphComponent);
 			graph.buildGraph(); // rebuild, quick way to clear out any edge midpoints.
 			gcm2sbml.setDirty(true);
 			gcm.makeUndoPoint();
-		}else if(command == "undo"){
+		}
+		else if(command == "undo"){
 			gcm.undo();
 			graph.buildGraph();
 			gcm2sbml.refresh();
 			gcm2sbml.setDirty(true);
 			drawGrid();
-		}else if(command == "redo"){
+		}
+		else if(command == "redo"){
 			gcm.redo();
 			graph.buildGraph();
 			gcm2sbml.refresh();
 			gcm2sbml.setDirty(true);
 			drawGrid();
-		}else if(command == "compartment"){
+		}
+		else if(command == "compartment"){
 			if (compartments != null) {
 				compartments.compartEditor("OK");
 			}
-		}else if(command == "checkCompartment") {
+		}
+		else if(command == "checkCompartment") {
 			gcm.setIsWithinCompartment(check.isSelected());
-		} else if (command.equals("exportSBOL")) {
+		} 
+		else if (command.equals("exportSBOL")) {
 			File lastFilePath;
 			Preferences biosimrc = Preferences.userRoot();
 			if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
@@ -322,12 +333,25 @@ public class Schematic extends JPanel implements ActionListener {
 			//static method that builds the cell population panel
 			boolean built = GridPanel.showGridPanel(gcm2sbml, gcm);
 			
+			//if the grid is built, then draw it and so on
 			if (built) {
 				
 				gcm2sbml.setDirty(true);
 				graph.buildGraph();
 				gcm2sbml.refresh();
 				gcm.makeUndoPoint();
+				
+				Component c[] = this.getComponents();
+				
+				//if there's a toolbar, adjust for it when drawing the grid
+				for(Component d : c) {
+					if (d.getName() == "toolbar") {
+						
+						Grid grid = gcm.getGrid();
+						grid.setVerticalOffset(37);
+					}
+				}
+				
 				drawGrid();
 			}
 		}
@@ -338,12 +362,39 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 	}
 	
+	
 	/**
 	 * Add listeners for the graph component
 	 */
 	private void addGraphComponentListeners(){
 		
 		final Schematic self = this;
+		
+		//mouse clicked listener for grid stuff
+		graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
+				
+			public void mouseClicked(MouseEvent event) {
+				
+				Point location = event.getPoint();
+				
+				Grid grid = gcm.getGrid();
+				grid.setMouseClickLocation(location);
+				drawGrid();
+			}
+		});
+		
+		//mouse moved listener for grid stuff
+		graphComponent.getGraphControl().addMouseMotionListener(new MouseAdapter() {
+			
+			public void mouseMoved(MouseEvent event) {
+				
+				Point location = event.getPoint();
+				
+				Grid grid = gcm.getGrid();
+				grid.setMouseLocation(location);
+				drawGrid();
+			}		
+		});
 		
 		// Add a listener for when cells get clicked on.
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter(){
@@ -561,8 +612,8 @@ public class Schematic extends JPanel implements ActionListener {
 			
 //			@Override
 			public void invoke(Object arg0, mxEventObject event) {
-				// see what events we have to work with.
-				//biosim.log.addText((event.getName()));
+
+				//System.out.println((event.getName()));
 			}
 		});
 		
@@ -1005,6 +1056,7 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 
 	// TODO: This should probably be moved to GCMFile.java, maybe as a static method?
+	
 	private Object[] getGCMPorts(Properties comp, String type){
 		String fullPath = gcm.getPath() + File.separator + comp.getProperty("gcm");
 		GCMFile compGCM = new GCMFile(gcm.getPath());
@@ -1035,6 +1087,7 @@ public class Schematic extends JPanel implements ActionListener {
 	
 	////// Copied from mxGraph example file BasicGraphEditor.java
 	
+	
 	/**
 	 * Displays the right-click menu
 	 * @param e
@@ -1048,6 +1101,7 @@ public class Schematic extends JPanel implements ActionListener {
 
 		e.consume();
 	}
+	
 	@SuppressWarnings("serial")
 	public Action bind(String name, final Action action)
 	{
@@ -1085,21 +1139,12 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		Grid grid = gcm.getGrid();
 		
-		if (grid.isEnabled()) {
-			
-			Component c[] = this.getComponents();
-			
-			//if there's a toolbar, adjust for it when drawing the grid
-			for(Component d : c) {
-				if (d.getName() == "toolbar")
-					grid.setVerticalOffset(37);
-			}
-			
-			grid.drawGrid(g);
-		}
+		if (grid.isEnabled()) grid.drawGrid(g);
 	}
 	
+	
 	//////////////////////////////////////// ANIMATION TYPE STUFF ////////////////////////////////
+	
 	
 	public void beginFrame(){
 	//	graph.getModel().beginUpdate(); // doesn't seem needed.
@@ -1108,9 +1153,11 @@ public class Schematic extends JPanel implements ActionListener {
 	public void setSpeciesAnimationValue(String s, MovieAppearance appearance){
 		graph.setSpeciesAnimationValue(s, appearance);
 	}
+	
 	public void setComponentAnimationValue(String c, MovieAppearance appearance){
 		graph.setComponentAnimationValue(c, appearance);
 	}
+	
 	
 	public void endFrame(){
 	//	graph.getModel().endUpdate();
