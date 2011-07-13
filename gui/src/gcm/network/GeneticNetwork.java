@@ -18,6 +18,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -28,6 +29,7 @@ import main.Gui;
 
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Model;
+import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
@@ -221,6 +223,7 @@ public class GeneticNetwork {
 			if (!operatorAbstraction)
 				printPromoterBinding(document);
 			printComplexBinding(document);
+			printDiffusion(document);
 			
 			PrintStream p = new PrintStream(new FileOutputStream(filename),true,"UTF-8");
 
@@ -374,19 +377,297 @@ public class GeneticNetwork {
 		}
 
 	}
-/*
-	private void printDiffusable(SBMLDocument document) {
-		Model m = document.getModel();
-		loop species
-			if diffusable
-				if not in a component
-					Species s = m.createSpecies();
-					s.setId(arg0)
-					Reaction r = m.createReaction();
-					SpeciesReference re = r.createReactant();
+
+	/**
+	 * adds all of the diffusion stuff to the sbml document
+	 * it adds the diffusible species' reactions to the model
+	 * 
+	 * @param document the sbml document to print to
+	 */
+	private void printDiffusion(SBMLDocument document) {
+		
+		HashMap<String, Properties> compos = properties.getGrid().getComponents();
+		int gridRows = properties.getGrid().getNumRows();
+		int gridCols = properties.getGrid().getNumCols();
+		
+		//default compartment for the model (ie, top-level)
+		String defaultComp = document.getModel().getCompartment(0).getId();
+		
+		//TODO-jstev: figure out what to do if the grid isn't enabled
+		//also, if things aren't in compartments?
+		boolean gridEnabled = properties.getGrid().isEnabled();
+				
+		//iterate through all the species in the model
+		for (SpeciesInterface is : species.values()) {
+			
+			//if it's a diffusible species
+			if (is.getProperty("Type").equals("diffusible")) {
+				
+				//the ID will have the component/compartment name that the "inner" species is in
+				String isID = is.getId();
+				
+				double amount = is.getInitialAmount();
+				double concentration = is.getInitialConcentration();
+				
+				//get the compartment name of the ID
+				String isComp = checkCompartments(isID);
+				
+				//if the compartment is default
+				//there's no diffusion reaction, just decay and so on
+				//so just add the species to the document
+				if (isComp.equals(defaultComp)) {
 					
+					Species s = Utility.makeSpecies(isID, isComp, amount, concentration);
+					s.setName(is.getName());
+					s.setHasOnlySubstanceUnits(true);
+					
+					Utility.addSpecies(document, s);
+				}
+				//if it's not in the default compartment, then do some stripping of the name
+				//to get the sub-compartment it's in
+				//at the moment, this will only look at the left-most compartment
+				//as there shouldn't be nested compartments support yet
+				else {
+					
+					String[] compSplit = isComp.split("__");
+					
+					//this is just the compartment ID now (e.g. C1)
+					String bottomComp = compSplit[0];
+					
+					//get the row and column from the component that the species
+					//is a part of
+					String row = compos.get(bottomComp).getProperty("row");
+					String col = compos.get(bottomComp).getProperty("col");
+					
+					//data for the species and reaction creation
+					String osID = "ROW" + row + "__" + "COL" + col + "__" + isID;
+					String osComp = defaultComp;
+					double osDecay = is.getDecay();
+					double[] kmdiff = is.getKmdiff();
+					double kfmdiff = kmdiff[0];
+					double krmdiff = kmdiff[1];
+					String osDecayString = GlobalConstants.KDECAY_STRING;
+					String fDiffusionString = GlobalConstants.FORWARD_MEMDIFF_STRING;
+					String rDiffusionString = GlobalConstants.REVERSE_MEMDIFF_STRING;
+					String osDecayUnitString = getMoleTimeParameter(1);
+					String diffusionUnitString = getMoleTimeParameter(1);
+					
+					//CREATE "INNER" SPECIES
+					//these are "inside" of the compartment
+					Species s = Utility.makeSpecies(isID, isComp, amount, concentration);
+					s.setName(is.getName());
+					s.setHasOnlySubstanceUnits(true);
+					
+					Utility.addSpecies(document, s);
+					
+					//CREATE "OUTER" SPECIES
+					//these are "outside" of the compartment, in a grid location
+					//give them initial amount and concentration of 0					
+					Species os = Utility.makeSpecies(osID, osComp, 0, 0);
+					os.setName(is.getName());
+					os.setHasOnlySubstanceUnits(true);
+					
+					Utility.addSpecies(document, os);
+					
+					//CREATE REACTIONS
+					
+					//REACTION 1:
+					//degradation reaction for the new "outer" species
+					//i'm skipping the abstraction/sequesterable stuff
+					//because i don't understand what it is
+
+					Reaction r = Utility.Reaction("Degradation_" + osID);
+					r.setCompartment(osComp);
+					r.setReversible(false);
+					r.setFast(false);
+					KineticLaw kl = r.createKineticLaw();
+					
+					if (osDecay > 0) {
+						
+						//this is the mathematical expression for the decay
+						String osDecayExpression = osDecayString + "*" + osID;
+
+						r.addReactant(Utility.SpeciesReference(osID, 1));
+						
+						//parameter: id="kd" value=osDecay (usually 0.0075) units="u_1_second_n1" (inverse seconds)
+						kl.addParameter(Utility.Parameter(osDecayString, osDecay, osDecayUnitString));
+						
+						//formula: kd * outer species
+						kl.setFormula(osDecayExpression);
+						Utility.addReaction(document, r);
+					}
+					
+					//REACTION 2:
+					//reversible between "inner" and "outer" species
+					
+					r = Utility.Reaction("Membrane_diffusion_" + osID + "_" + isID);
+					
+					//no compartment, because it takes place in the membrane and not on either side
+					r.setReversible(true);
+					r.setFast(false);
+					kl = r.createKineticLaw();
+					
+					if (kfmdiff > 0 || krmdiff > 0) {
+						
+						String diffusionExpression = fDiffusionString + " * " + isID + " - " +
+							rDiffusionString + " * " + osID;
+
+						//reactant is inner species; product is outer species
+						r.addReactant(Utility.SpeciesReference(isID, 1));
+						r.addProduct(Utility.SpeciesReference(osID, 1));
+						
+						//parameters: id="kfmdiff" or "krmdiff" value=kfmdiff or krmdiff
+						//units="u_1_second_n1" (inverse seconds)
+						kl.addParameter(Utility.Parameter(fDiffusionString, kfmdiff, diffusionUnitString));
+						kl.addParameter(Utility.Parameter(rDiffusionString, krmdiff, diffusionUnitString));
+						
+						//formula: kfmdiff * inner species - krmdiff * outer species
+						kl.setFormula(diffusionExpression);
+						Utility.addReaction(document, r);
+					}
+				}
+			}
+		}
+				
+		//now we iterate through the species again
+		//after the first for loop, all of the outer species will have been made
+		//so we know that all of the potential neighbors exist now
+		for (SpeciesInterface is : species.values()) {
+			
+			//if it's a diffusible species
+			if (is.getProperty("Type").equals("diffusible")) {
+				
+				//the ID will have the component/compartment name that the "inner" species is in
+				String isID = is.getId();
+				
+				//get the compartment name of the ID
+				String isComp = checkCompartments(isID);
+				
+				String[] compSplit = isComp.split("__");
+				
+				//this is just the compartment ID now (e.g. C1)
+				String bottomComp = compSplit[0];
+				
+				//get the row and column from the component that the species
+				//is a part of				
+				String row = compos.get(bottomComp).getProperty("row");
+				String col = compos.get(bottomComp).getProperty("col");
+				
+				//data for the reaction creation
+				String osID = "ROW" + row + "__" + "COL" + col + "__" + isID;
+				String diffusionUnitString = getMoleTimeParameter(1);
+				String diffusionString = "kdiff";
+				String diffComp = defaultComp;
+				
+				//TODO-jstev:
+				//right now this is hard-coded
+				//it needs to be an option somewhere in the program
+				//also, it's the same forward and reverse at the moment
+				double kdiff = 10.0;
+				
+				//loop through all of the neighboring "outer" species
+				//and then create a diffusion reaction between the neighbors
+				//if there isn't already one in existence
+				for (int rowMod = -1; rowMod <= 1; ++rowMod) {
+					for (int colMod = -1; colMod <= 1; ++colMod) {
+						
+						if (colMod == 0 && rowMod == 0) continue;
+						
+						int neighborRow = Integer.parseInt(row) + rowMod;
+						int neighborCol = Integer.parseInt(col) + colMod;
+						
+						String neighborID = "ROW" + neighborRow + "__" + "COL" + neighborCol + "__" + isID;
+												
+						Species neighbor = document.getModel().getSpecies(neighborID);
+						
+						//if the neighbor doesn't exist, create it if it's within the grid bounds
+						//or skip this location if it's out of the grid bounds
+						if (neighbor == null) {
+							
+							//if it's within grid bounds, make a new "outer" species
+							//then add a degredation reaction for this species
+							if (neighborRow <= gridRows && neighborRow > 0 &&
+									neighborCol <= gridCols && neighborCol > 0) {
+								
+								//ADD "OUTER" SPECIES
+								Species os = Utility.makeSpecies(neighborID, defaultComp, 0, 0);
+								os.setName(is.getName());
+								os.setHasOnlySubstanceUnits(true);
+								
+								Utility.addSpecies(document, os);
+								
+								//ADD DEGREDATION REACTION
+								//degradation reaction for the new "outer" species
+								//i'm skipping the abstraction/sequesterable stuff
+								//because i don't understand what it is
+
+								Reaction r = Utility.Reaction("Degradation_" + neighborID);
+								r.setCompartment(defaultComp);
+								r.setReversible(false);
+								r.setFast(false);
+								KineticLaw kl = r.createKineticLaw();
+								
+								double neighborDecay = is.getDecay();
+								String neighborDecayUnitString = getMoleTimeParameter(1);
+								String neighborDecayString = GlobalConstants.KDECAY_STRING;
+								
+								if (neighborDecay > 0) {
+									
+									//this is the mathematical expression for the decay
+									String neighborDecayExpression = neighborDecayString + "*" + neighborID;
+
+									r.addReactant(Utility.SpeciesReference(neighborID, 1));
+									
+									//parameter: id="kd" value=osDecay (usually 0.0075) 
+									//units="u_1_second_n1" (inverse seconds)
+									kl.addParameter(Utility.Parameter(neighborDecayString, 
+											neighborDecay, neighborDecayUnitString));
+									
+									//formula: kd * outer species
+									kl.setFormula(neighborDecayExpression);
+									Utility.addReaction(document, r);
+								}
+							}
+							else continue;							
+						}
+						
+						//make sure the reaction or the reverse reaction don't exist
+						Reaction forward = document.getModel().getReaction("Diffusion_" + osID + "_" + neighborID);
+						Reaction reverse = document.getModel().getReaction("Diffusion_" + neighborID + "_" + osID);
+						
+						//if one of them does exist, skip this neighbor
+						if (forward != null || reverse != null)
+							continue;
+						
+						//REACTION 3:
+						//reversible between neighboring "outer" species
+						//this is the diffusion across the "medium" if you will 
+						
+						Reaction r = Utility.Reaction("Diffusion_" + osID + "_" + neighborID);
+						r.setCompartment(diffComp);
+						r.setReversible(true);
+						r.setFast(false);
+						KineticLaw kl = r.createKineticLaw();
+						
+						String diffusionExpression = diffusionString + " * " + osID + " - " +
+						diffusionString + " * " + neighborID;
+
+						//reactant is inner species; product is outer species
+						r.addReactant(Utility.SpeciesReference(osID, 1));
+						r.addProduct(Utility.SpeciesReference(neighborID, 1));
+						
+						//parameters: id="kdiff"" value=kdiff units="u_1_second_n1" (inverse seconds)
+						kl.addParameter(Utility.Parameter(diffusionString, kdiff, diffusionUnitString));
+						kl.addParameter(Utility.Parameter(diffusionString, kdiff, diffusionUnitString));
+						
+						//formula: kfmdiff * inner species - krmdiff * outer species
+						kl.setFormula(diffusionExpression);
+						Utility.addReaction(document, r);
+					}
+				}
+			}
+		}
 	}
-	*/
 	
 	/**
 	 * Prints each promoter production values
