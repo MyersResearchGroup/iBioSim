@@ -1,16 +1,19 @@
 package gcm.gui;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
-import gcm.network.DiffusibleSpecies;
 import gcm.util.GlobalConstants;
 
 /*
@@ -30,12 +33,11 @@ import gcm.util.GlobalConstants;
  * make sure this won't break if there's an empty spot when loading from a file or otherwise
  * 		(ie, in createGrid)
  * 
- * turn every component into a compartment automatically?
- * 		the grid is only for cellular populations, right?  so everything must be a cell/compartment?
- * 		you'll have to set the gcm that each component contains to be a compartment
- * 
  * you shouldn't be able to move cells in the schematic during analysis view
  * 		perhaps a toggle to know that it's analysis view? (paramsOnly is this toggle, i think)
+ * 
+ * updateGridRectangles gets done twice because of the verticalOffset thing
+ * 		try to figure out how to fix this
  * 
  */
 
@@ -60,14 +62,20 @@ public class Grid {
 	//map of gridnodes and their corresponding rectangles
 	private HashMap<Rectangle, GridNode> rectToNodeMap;
 	
+	//map of x,y points and the grid they're located in
+	private HashMap<Point, GridNode> pointToNodeMap;
+	
 	//components to go on the grid
 	private HashMap<String, Properties> components;
 	
 	private int numRows, numCols;
-
 	private int verticalOffset;
 	private boolean enabled;
-		
+	private boolean mouseClicked;
+	private Rectangle gridBounds;
+	private Point mouseClickLocation;
+	private Point mouseLocation;
+	
 	//-------------
 	//CLASS METHODS
 	//-------------
@@ -89,17 +97,20 @@ public class Grid {
 	 */
 	public Grid() {
 		
-		setEnabled(false);
+		enabled = false;
 		verticalOffset = 0;
 		numRows = 0;
 		numCols = 0;
 		
+		gridBounds = new Rectangle();
+		mouseClickLocation = new Point();
+		mouseLocation = new Point();
 		grid = new ArrayList<ArrayList<GridNode>>();
 	}
 	
 	/**
 	 * creates a 2d arraylist of GridNodes of rows x cols
-	 * usually called from applyComponents in DropComponentPanel
+	 * usually called from GridPanel
 	 * 
 	 * @param rows number of rows in the grid
 	 * @param cols number of columns in the grid
@@ -127,7 +138,7 @@ public class Grid {
 		}
 		
 		updateGridRectangles();
-		createRectangleNodeHashMap();
+		createNodeMaps();
 		putComponentsOntoGrid();
 	}
 	
@@ -148,6 +159,13 @@ public class Grid {
 		int maxCol = 0;
 		
 		Iterator<Map.Entry<String, Properties>> iter = components.entrySet().iterator();
+				
+		//if there aren't any components, don't make a grid
+		if (components.size() == 0) {
+			
+			enabled = false;
+			return;
+		}
 		
 		//iterate through the components to get the number of rows and cols
 		//this is done by finding the maximum row and col numbers
@@ -170,7 +188,12 @@ public class Grid {
 					maxCol = Integer.valueOf(colProp);
 			
 			}
-			else return;
+			//if components have no row/col properties, then don't create a grid
+			else {
+				
+				enabled = false;
+				return;
+			}
 		}
 		
 		createGrid(maxRow, maxCol, components);
@@ -180,35 +203,70 @@ public class Grid {
 	 * draws the grid
 	 * usually called from Schematic
 	 * 
-	 * @param g Graphics object (from the Schematic panel)
+	 * @param g Graphics object (from the Schematic JPanel)
 	 */
 	public void drawGrid(Graphics g) {
 		
-		updateGridRectangles();
-		
 		Graphics2D g2 = (Graphics2D) g;
 		
-		for(int i = 0; i < numRows; ++i) {	
-			for(int j = 0; j < numCols; ++j) {
+		//if the user's mouse is within the grid bounds
+		if (gridBounds.contains(mouseLocation)) {
+			
+			//draw a hover-rectangle over the grid location
+			hoverGridLocation(g);
+			
+			//if the user has clicked, select/de-select that location
+			if (mouseClicked) selectGridLocation(g);
+		}
+		
+		//draw the actual grid and selection boxes for selected nodes
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
 				
-				Rectangle rect = grid.get(i).get(j).getRectangle();
+				GridNode node = grid.get(row).get(col);
+				Rectangle rect = node.getRectangle();
 				
 				g2.drawRect(rect.x, rect.y, rect.width, rect.height);
 				
-				//System.out.println(grid.get(i).get(j).getComponent());
+				if (node.isSelected())
+					drawGridSelectionBox(g, rect);
 				
-				//for debugging
-//				g2.drawString(grid.get(i).get(j).getComponent().getValue().getProperty("graphx"), rect.x, rect.y);	
-//				g2.drawString(grid.get(i).get(j).getComponent().getValue().getProperty("graphy"), rect.x+40, rect.y);
-//				g2.drawString(grid.get(i).get(j).getComponent().getKey(), rect.x, rect.y+30);
+				//g2.drawString(Boolean.toString(node.isSelected()), rect.x, rect.y);
 			}
 		}
 	}
+	
+	/**
+	 * this draws a box around the grid location when the user hovers over it
+	 * with the mouse or clicks it, which is used for grid location selection
+	 * 
+	 * @param g Graphics object from the Schematic JPanel
+	 * @param row the row of the selected location
+	 * @param col the column of the selected location
+	 */
+	public void drawGridSelectionBox(Graphics g, Rectangle rect) {
+		
+		g.setColor(Color.blue);
+		
+		//don't change the original rectangle; make a copy
+		Rectangle localRect = new Rectangle(rect);
+		
+		//have to loop to get a thickness > 1
+		for (int i = 0; i < 3; ++i) {
+			
+			localRect.x += 1; localRect.y += 1; localRect.width -= 2; localRect.height -= 2;
+			g.drawRect(localRect.x, localRect.y, localRect.width, localRect.height);
+		}
+		
+		g.setColor(Color.black);
+	}	
+	
 	
 	//PRIVATE
 	
 	/**
 	 * sets the rectangles/bounds for each node
+	 * also sets the bounds for the entire grid
 	 */
 	private void updateGridRectangles() {
 		
@@ -233,6 +291,12 @@ public class Grid {
 			currY += gridHeight;
 			currX = 10;
 		}
+		
+		//sets the total grid bounds
+		int outerX = 10 + gridWidth * numCols;
+		int outerY = 10 + gridHeight * numRows + verticalOffset;
+		
+		gridBounds.setBounds(10, 10, outerX-10, outerY-10);
 	}
 	
 	/**
@@ -272,18 +336,108 @@ public class Grid {
 	/**
 	 * creates a hash map of corresponding rectangles and nodes
 	 * this allows easy access of nodes from rectangle coordinates
+	 * 
+	 * creates a hash map of the corresponding x,y points and nodes
+	 * this allows easy access to nodes from the location coordinates
 	 */
-	private void createRectangleNodeHashMap() {
+	private void createNodeMaps() {
 		
 		rectToNodeMap = new HashMap<Rectangle, GridNode>();
+		pointToNodeMap = new HashMap<Point, GridNode>();
 		
-		for(int i = 0; i < numRows; ++i) {
-			for(int j = 0; j < numCols; ++j) {
+		//loop through the rows and columns
+		//find the grid node and rectangle then make it a map entry
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
 		
-				rectToNodeMap.put(grid.get(i).get(j).getRectangle(), grid.get(i).get(j));
+				rectToNodeMap.put(grid.get(row).get(col).getRectangle(), grid.get(row).get(col));
 			}
 		}
+		
+		int startX = gridBounds.x;
+		int startY = gridBounds.y;
+		int endX = gridBounds.x + gridBounds.width;
+		int endY = gridBounds.y + gridBounds.height;
+		
+		//loop through every point on the grid
+		//find the rectangle then the grid node then make it a map entry
+		for (int x = startX; x <= endX; ++x) {
+			for (int y = startY; y <= endY; ++y) {
+				
+				boolean nextPoint = false;
+				Point point = new Point(x, y);
+				
+				//loop through every row and column
+				//check this location's rectangle against the x,y point
+				//if it contains it, add that to the map
+				for (int row = 0; row < numRows; ++row) {
+					for (int col = 0; col < numCols; ++col) {
+						
+						Rectangle rect = grid.get(row).get(col).getRectangle();
+						
+						if (rect.contains(point)) {
+							pointToNodeMap.put(point, rectToNodeMap.get(rect));
+							nextPoint = true;
+							continue;
+						}
+					}
+					
+					//if we've found the correct location, move on
+					if (nextPoint == true) continue;
+				}
+			}
+		}
+				
+//		Iterator<Map.Entry<Point, GridNode>> iter = pointToNodeMap.entrySet().iterator();
+//		
+//		int num = 0;
+//		
+//		//iterate through the components to get the number of rows and cols
+//		//this is done by finding the maximum row and col numbers
+//		while(iter.hasNext() && num < 100) {
+//			
+//			Map.Entry<Point, GridNode> entry = (Map.Entry<Point, GridNode>)iter.next();
+//			
+//			System.out.println(entry);
+//			
+//			++num;
+//		}
 	}
+	
+	/**
+	 * based on the mouse location, draws a box around the grid location
+	 * that the user is hovering over
+	 * 
+	 * @param location the mouse location x,y coordinates
+	 */
+	private void hoverGridLocation(Graphics g) {
+		
+		GridNode hoveredNode = pointToNodeMap.get(mouseLocation);
+		
+		if (hoveredNode != null)
+			drawGridSelectionBox(g, hoveredNode.getRectangle());
+	}
+	
+	/**
+	 * based on the mouse-click location, selects the grid location
+	 * also draws a selection box
+	 * 
+	 * @param location the mouse-click x,y coordinates
+	 */
+	private void selectGridLocation(Graphics g) {
+		
+		GridNode hoveredNode = pointToNodeMap.get(mouseClickLocation);
+		
+		//select or de-select the grid location
+		if (hoveredNode != null)
+			hoveredNode.setSelected(hoveredNode.isSelected() == true ? false : true);
+		
+		//this click's action has been performed, so set it to false until
+		//the user clicks again
+		mouseClicked = false;
+	}
+	
+	
 	
 	//BORING GET/SET METHODS
 	
@@ -329,7 +483,11 @@ public class Grid {
 	 * @param verticalOffset pixels from the top of the jpanel
 	 */
 	public void setVerticalOffset(int verticalOffset) {
+		
 		this.verticalOffset = verticalOffset;
+		
+		//change the grid's rectangle locations based on this offset
+		updateGridRectangles();
 	}
 
 	/**
@@ -346,11 +504,41 @@ public class Grid {
 		return numCols;
 	}
 	
+	/**
+	 * @param mouseClickLocation the mouseClickLocation to set
+	 */
+	public void setMouseClickLocation(Point mouseClickLocation) {
+		this.mouseClickLocation = mouseClickLocation;
+		mouseClicked = true;
+	}
+
+	/**
+	 * @return the mouseClickLocation
+	 */
+	public Point getMouseClickLocation() {
+		return mouseClickLocation;
+	}
+
+	/**
+	 * @param mouseLocation the mouseLocation to set
+	 */
+	public void setMouseLocation(Point mouseLocation) {
+		this.mouseLocation = mouseLocation;
+	}
+
+	/**
+	 * @return the mouseLocation
+	 */
+	public Point getMouseLocation() {
+		return mouseLocation;
+	}
 	
 	//--------------
 	//GRIDNODE CLASS
 	//--------------
 	
+
+
 	/**
 	 * contains all of the information for a grid node
 	 * each location on the grid is a grid node
@@ -364,7 +552,9 @@ public class Grid {
 		private boolean occupied; //has a component or not
 		private Map.Entry<String, Properties> component; //component in node
 		private int row, col; //location
-		
+		private boolean isCompartment; //is a compartment or not
+		private boolean selected; //is the grid location selected or not
+
 		//contains the grid coordinates/size
 		private Rectangle gridRectangle;
 		
@@ -376,18 +566,19 @@ public class Grid {
 		 * default constructor that initializes variables
 		 */
 		public GridNode() {
+			
 			occupied = false;
-			setComponent(null);
+			isCompartment = false;
+			component = null;
 			
-			gridRectangle = new Rectangle();
-			
+			gridRectangle = new Rectangle();			
 			gridRectangle.x = 0;
 			gridRectangle.y = 0;
 			gridRectangle.height = 40;
 			gridRectangle.width = 80;
 		}
 		
-		
+
 		//BORING GET/SET METHODS
 		
 		/**
@@ -435,10 +626,13 @@ public class Grid {
 		}
 
 		/**
+		 * also sets boolean about whether the component is a compartment
 		 * @param component the component to set
 		 */
 		public void setComponent(Map.Entry<String, Properties> component) {
 			this.component = component;
+			
+			isCompartment = Boolean.getBoolean(component.getValue().getProperty("compartment"));
 		}
 		
 		/**
@@ -462,5 +656,34 @@ public class Grid {
 		public Rectangle getRectangle() {
 			return this.gridRectangle;
 		}
+	
+		/**
+		 * @return the isCompartment
+		 */
+		public boolean isCompartment() {
+			return isCompartment;
+		}
+
+		/**
+		 * @param isCompartment the isCompartment to set
+		 */
+		public void setCompartment(boolean isCompartment) {
+			this.isCompartment = isCompartment;
+		}
+
+		/**
+		 * @param selected the selected to set
+		 */
+		public void setSelected(boolean selected) {
+			this.selected = selected;
+		}
+
+		/**
+		 * @return the selected
+		 */
+		public boolean isSelected() {
+			return selected;
+		}
 	}
+	
 }
