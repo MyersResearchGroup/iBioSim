@@ -3,6 +3,7 @@ package gcm.parser;
 import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
+import gcm.network.DiffusibleSpecies;
 import gcm.network.GeneticNetwork;
 import gcm.network.Promoter;
 import gcm.network.Influence;
@@ -281,6 +282,8 @@ public class GCMParser {
 			specie = new ConstantSpecies();
 		} else if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.SPASTIC)) {
 			specie = new SpasticSpecies();
+		} else if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.DIFFUSIBLE)) {
+			specie = new DiffusibleSpecies();
 		} else {
 			specie = new BaseSpecies();
 		}
