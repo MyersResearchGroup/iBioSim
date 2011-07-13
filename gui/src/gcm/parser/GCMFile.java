@@ -382,6 +382,7 @@ public class GCMFile {
 			
 			//load the component's gcm into a new GCMFile
 			file.load(path + separator + components.get(s).getProperty("gcm"));
+			/*
 			if (file.getIsWithinCompartment()) {
 				
 				//load the sbml associated with the component/compartment
@@ -394,6 +395,7 @@ public class GCMFile {
 				if (!compartments.contains(s + "__" + compSBML.getModel().getCompartment(0).getId()))
 					compartments.add(s + "__" + compSBML.getModel().getCompartment(0).getId());
 			}
+			*/
 			for (String p : globalParameters.keySet()) {
 				if (!file.globalParameters.containsKey(p)) {
 					file.setParameter(p, globalParameters.get(p));
@@ -2744,6 +2746,7 @@ public class GCMFile {
 			for (int j = 0; j < mainDoc.getModel().getNumCompartments(); j++) {
 				if (mainDoc.getModel().getCompartment(j).getId().equals(c.getId())) {
 					add = false;
+					/*
 					org.sbml.libsbml.Compartment comp = mainDoc.getModel().getCompartment(j);
 					if (!c.getName().equals(comp.getName())) {
 						return null;
@@ -2769,13 +2772,13 @@ public class GCMFile {
 					if (!c.getUnits().equals(comp.getUnits())) {
 						return null;
 					}
+					*/
 				}
-				if (add) {
-					mainDoc.getModel().addCompartment(c);
-					
-					if (!compartments.contains(c.getId()))
-						compartments.add(c.getId());
-				}
+			}
+			if (add) {
+				mainDoc.getModel().addCompartment(c);
+				if (!compartments.contains(c.getId()))
+					compartments.add(c.getId());
 			}
 		}
 		for (int i = 0; i < m.getNumSpeciesTypes(); i++) {
