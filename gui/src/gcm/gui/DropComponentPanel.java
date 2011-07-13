@@ -43,12 +43,13 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	
 	private boolean droppedComponent;
 	
-	private GCM2SBMLEditor gcm2sbml;
-	private GCMFile gcm;
-	
 	// the public interface to this class.
 	// returns true if at least 1 component was dropped.
 	private static DropComponentPanel panel;
+	private GCM2SBMLEditor gcm2sbml;
+	private GCMFile gcm;
+
+	
 	public static boolean dropComponent(GCM2SBMLEditor gcm2sbml, GCMFile gcm, float mouseX, float mouseY){
 		//if(panel == null)
 		panel = new DropComponentPanel(gcm2sbml, gcm);
@@ -101,7 +102,6 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		
 		updateTilingEnabled();
 	}
-
 	
 	private void openGUI(float mouseX, float mouseY){
 		
@@ -113,18 +113,17 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 					"Add Another GCM To The Project", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
-		Object selItem = componentCombo != null ? componentCombo.getSelectedItem() : null;
-		if (componentCombo != null)	this.remove(componentCombo);
+ 
 		componentCombo = new JComboBox(gcmList.toArray());
-		componentCombo.setSelectedItem(selItem);
+		componentCombo.setSelectedItem(gcmList.get(0));
 		this.add(componentCombo, BorderLayout.NORTH);
 		
 		String[] options = { GlobalConstants.OK, GlobalConstants.CANCEL };
 		int value = JOptionPane.showOptionDialog(Gui.frame, this, "Add Component(s)",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 
-		// user presses escape
-		if(value == JOptionPane.OK_OPTION)
+		//if the user clicks okay
+		if(value == JOptionPane.OK_OPTION )
 			applyComponents(mouseX, mouseY);
 		else
 			this.droppedComponent = false;
