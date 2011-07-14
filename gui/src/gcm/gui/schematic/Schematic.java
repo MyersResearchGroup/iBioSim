@@ -187,12 +187,25 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 	
 	
-		// Do layouting if it hasn't been done yet
-		if(needs_layouting){
-		//	graph.applyLayout("circleLayout", graphComponent);
-		}
+//		// Do layouting if it hasn't been done yet
+//		if(needs_layouting){
+//		//	graph.applyLayout("circleLayout", graphComponent);
+//		}
+//		
+//		//this.setBackground(Color.BLACK);
 		
-		//this.setBackground(Color.BLACK);
+		Component c[] = this.getComponents();
+		Grid grid = gcm.getGrid();
+		
+		//if there's a toolbar, adjust for it when drawing the grid
+		for(Component d : c) {
+			if (d.getName() == "toolbar") {
+				
+				grid.setVerticalOffset(37);
+				continue;
+			}
+			else grid.setVerticalOffset(0);
+		}
 		
 		drawGrid();
 	}
@@ -340,17 +353,6 @@ public class Schematic extends JPanel implements ActionListener {
 				graph.buildGraph();
 				gcm2sbml.refresh();
 				gcm.makeUndoPoint();
-				
-				Component c[] = this.getComponents();
-				
-				//if there's a toolbar, adjust for it when drawing the grid
-				for(Component d : c) {
-					if (d.getName() == "toolbar") {
-						
-						Grid grid = gcm.getGrid();
-						grid.setVerticalOffset(37);
-					}
-				}
 				
 				drawGrid();
 			}
