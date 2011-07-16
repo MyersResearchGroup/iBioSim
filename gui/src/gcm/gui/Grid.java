@@ -36,9 +36,6 @@ import gcm.util.GlobalConstants;
  * you shouldn't be able to move cells in the schematic during analysis view
  * 		perhaps a toggle to know that it's analysis view? (paramsOnly is this toggle, i think)
  * 
- * updateGridRectangles gets done twice because of the verticalOffset thing
- * 		try to figure out how to fix this
- * 
  */
 
 
@@ -67,6 +64,9 @@ public class Grid {
 	
 	//components to go on the grid
 	private HashMap<String, Properties> components;
+	
+	//map of x,y grid coords to the component at that location
+	private HashMap<Point, Map.Entry<String, Properties>> locToComponentMap;
 	
 	private int numRows, numCols;
 	private int verticalOffset;
@@ -106,6 +106,9 @@ public class Grid {
 		mouseClickLocation = new Point();
 		mouseLocation = new Point();
 		grid = new ArrayList<ArrayList<GridNode>>();
+		rectToNodeMap = new HashMap<Rectangle, GridNode>();
+		pointToNodeMap = new HashMap<Point, GridNode>();
+		locToComponentMap = new HashMap<Point, Map.Entry<String, Properties>>();
 	}
 	
 	/**
@@ -138,7 +141,8 @@ public class Grid {
 		}
 		
 		updateGridRectangles();
-		createNodeMaps();
+		updateNodeMaps();
+		updateLocToComponentMap();
 		putComponentsOntoGrid();
 	}
 	
@@ -209,6 +213,8 @@ public class Grid {
 		
 		Graphics2D g2 = (Graphics2D) g;
 		
+		boolean selectionOff = false;
+		
 		//if the user's mouse is within the grid bounds
 		if (gridBounds.contains(mouseLocation)) {
 			
@@ -217,6 +223,11 @@ public class Grid {
 			
 			//if the user has clicked, select/de-select that location
 			if (mouseClicked) selectGridLocation(g);
+		}
+		//if the user clicks out of bounds
+		//de-select all grid locations
+		else {
+			if (mouseClicked) selectionOff = true;
 		}
 		
 		//draw the actual grid and selection boxes for selected nodes
@@ -227,6 +238,8 @@ public class Grid {
 				Rectangle rect = node.getRectangle();
 				
 				g2.drawRect(rect.x, rect.y, rect.width, rect.height);
+				
+				if (selectionOff) node.setSelected(false);
 				
 				if (node.isSelected())
 					drawGridSelectionBox(g, rect);
@@ -261,6 +274,16 @@ public class Grid {
 		g.setColor(Color.black);
 	}	
 	
+	/**
+	 * @return the location-to-component map
+	 */
+	public HashMap<Point, Map.Entry<String, Properties>> getLocToComponentMap() {
+		
+		updateLocToComponentMap();
+		
+		return locToComponentMap;
+	}
+	
 	
 	//PRIVATE
 	
@@ -270,33 +293,34 @@ public class Grid {
 	 */
 	private void updateGridRectangles() {
 		
-		int currX = 10;
-		int currY = 10 + verticalOffset;
-		int padding = 20;
+		int padding = 30;
+		int start = padding/2;
+		int currX = start;
+		int currY = start + verticalOffset;
 		int gridWidth = GlobalConstants.DEFAULT_COMPONENT_WIDTH + padding;
 		int gridHeight = GlobalConstants.DEFAULT_COMPONENT_HEIGHT + padding;
 		
 		//create 2d arraylist of GridNode objects
 		//give them a location and rectangle bounds
-		for(int i = 0; i < numRows; ++i) {
-			for(int j = 0; j < numCols; ++j) {
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
 								
 				Rectangle rect = new Rectangle(currX, currY, gridWidth, gridHeight);
 				
-				grid.get(i).get(j).setRectangle(rect);
+				grid.get(row).get(col).setRectangle(rect);
 				
 				currX += gridWidth;
 			}
 			
 			currY += gridHeight;
-			currX = 10;
+			currX = start;
 		}
 		
 		//sets the total grid bounds
-		int outerX = 10 + gridWidth * numCols;
-		int outerY = 10 + gridHeight * numRows + verticalOffset;
+		int outerX = start + gridWidth * numCols;
+		int outerY = start + gridHeight * numRows + verticalOffset;
 		
-		gridBounds.setBounds(10, 10, outerX-10, outerY-10);
+		gridBounds.setBounds(start, start, outerX-start, outerY-start);
 	}
 	
 	/**
@@ -306,10 +330,6 @@ public class Grid {
 	 * i think this should only be run once on grid creation
 	 */
 	private void putComponentsOntoGrid() {
-
-		//make sure they're in exactly the right place
-		//or, if they're close, "snap" them to the right place on the grid
-		//^^the snapping needs to happen elsewhere, probably
 
 		Iterator<Map.Entry<String, Properties>> iter = components.entrySet().iterator();
 		
@@ -323,12 +343,15 @@ public class Grid {
 			//use these to put the component into the correct grid location
 			Properties props = entry.getValue();
 			
+			String gcm = props.getProperty("gcm");
 			int row = Integer.valueOf(props.getProperty("row"));
 			int col = Integer.valueOf(props.getProperty("col"));
 			
-			//System.out.println((row-1) + " " + (col-1));
-			
-			grid.get(row-1).get(col-1).setComponent(entry);
+			//if the user selects no component, then don't put a component there
+			if (gcm.equals("none"))
+				grid.get(row-1).get(col-1).setOccupied(false);
+			else
+				grid.get(row-1).get(col-1).setComponent(entry);
 		}
 		
 	}
@@ -340,10 +363,10 @@ public class Grid {
 	 * creates a hash map of the corresponding x,y points and nodes
 	 * this allows easy access to nodes from the location coordinates
 	 */
-	private void createNodeMaps() {
+	private void updateNodeMaps() {
 		
-		rectToNodeMap = new HashMap<Rectangle, GridNode>();
-		pointToNodeMap = new HashMap<Point, GridNode>();
+		rectToNodeMap.clear();
+		pointToNodeMap.clear();
 		
 		//loop through the rows and columns
 		//find the grid node and rectangle then make it a map entry
@@ -437,6 +460,31 @@ public class Grid {
 		mouseClicked = false;
 	}
 	
+	/**
+	 * creates a hash map for easy access of the component at a specified grid location
+	 * with the component you can get its name and properties
+	 * used for diffusion reaction printing in printDiffusion
+	 */
+	private void updateLocToComponentMap() {
+		
+		locToComponentMap.clear();
+				
+		Iterator<Map.Entry<String, Properties>> iter = components.entrySet().iterator();
+		
+		//iterate through the components to get the number of rows and cols
+		while(iter.hasNext()) {
+			
+			Map.Entry<String, Properties> compo = (Map.Entry<String, Properties>)iter.next();
+			
+			//find the row and col from the component's properties
+			Properties props = compo.getValue();
+						
+			int row = Integer.parseInt(props.getProperty("row"));
+			int col = Integer.parseInt(props.getProperty("col"));
+			
+			locToComponentMap.put(new Point(row, col), compo);
+		}
+	}
 	
 	
 	//BORING GET/SET METHODS
@@ -488,6 +536,7 @@ public class Grid {
 		
 		//change the grid's rectangle locations based on this offset
 		updateGridRectangles();
+		updateNodeMaps();
 	}
 
 	/**
@@ -508,7 +557,8 @@ public class Grid {
 	 * @param mouseClickLocation the mouseClickLocation to set
 	 */
 	public void setMouseClickLocation(Point mouseClickLocation) {
-		this.mouseClickLocation = mouseClickLocation;
+		
+		this.mouseClickLocation = new Point(mouseClickLocation.x, mouseClickLocation.y + verticalOffset);
 		mouseClicked = true;
 	}
 
@@ -523,7 +573,9 @@ public class Grid {
 	 * @param mouseLocation the mouseLocation to set
 	 */
 	public void setMouseLocation(Point mouseLocation) {
-		this.mouseLocation = mouseLocation;
+		
+		//the mouse location is changed because of the vertical offset
+		this.mouseLocation = new Point(mouseLocation.x, mouseLocation.y + verticalOffset);
 	}
 
 	/**
