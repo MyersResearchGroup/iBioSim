@@ -42,11 +42,12 @@ public class GridPanel extends JPanel implements ActionListener{
 	/**
 	 * constructor that sets the gcm2sbmleditor and gcmfile
 	 * calls the buildPanel method
+	 * builds component and compartment lists
 	 * 
 	 * @param gcm2sbml the gui/editor
 	 * @param gcm the gcm file to work with
 	 */
-	private GridPanel(GCM2SBMLEditor gcm2sbml, GCMFile gcm) {
+	private GridPanel(GCM2SBMLEditor gcm2sbml, GCMFile gcm, boolean editMode) {
 		
 		//call the JPanel constructor to make this a border layout panel
 		super(new BorderLayout());
@@ -54,28 +55,37 @@ public class GridPanel extends JPanel implements ActionListener{
 		this.gcm = gcm;
 		this.gcm2sbml = gcm2sbml;
 		
-		//component list is the gcms that can be added to a spatial grid
-		//but components that aren't compartments are ineligible for
-		//being added to a cell population
-		componentList = gcm2sbml.getComponentsList();
-		componentList.add("none");
-		
-		compartmentList = new ArrayList<String>();
-		
-		//find all of the comPARTments, which will be available
-		//to add to the cell population
-		for(String comp : gcm2sbml.getComponentsList()) {
+		//editMode == false means creating a grid
+		if (!editMode) {
 			
-			GCMFile compGCM = new GCMFile(gcm.getPath());
-			compGCM.load(gcm.getPath() + File.separator + comp);
+			//component list is the gcms that can be added to a spatial grid
+			//but components that aren't compartments are ineligible for
+			//being added to a cell population
+			componentList = gcm2sbml.getComponentsList();
+			componentList.add("none");
 			
-			if (compGCM.getIsWithinCompartment())
-				compartmentList.add(comp);
-		}
-		
-		compartmentList.add("none");
+			compartmentList = new ArrayList<String>();
+			
+			//find all of the comPARTments, which will be available
+			//to add to the cell population
+			for(String comp : gcm2sbml.getComponentsList()) {
 				
-		built = buildPanel() == true ? true : false;
+				GCMFile compGCM = new GCMFile(gcm.getPath());
+				compGCM.load(gcm.getPath() + File.separator + comp);
+				
+				if (compGCM.getIsWithinCompartment())
+					compartmentList.add(comp);
+			}
+			
+			compartmentList.add("none");
+					
+			built = buildPanel() == true ? true : false;
+		}
+		//editMode == true means editing a grid
+		else {
+			
+			
+		}
 	}
 	
 	/**
@@ -83,9 +93,9 @@ public class GridPanel extends JPanel implements ActionListener{
 	 * 
 	 * @return if a population is being built or not
 	 */
-	public static boolean showGridPanel(GCM2SBMLEditor gcm2sbml, GCMFile gcm) {
+	public static boolean showGridPanel(GCM2SBMLEditor gcm2sbml, GCMFile gcm, boolean editMode) {
 		
-		panel = new GridPanel(gcm2sbml, gcm);
+		panel = new GridPanel(gcm2sbml, gcm, editMode);
 		
 		return built;
 	}
@@ -167,7 +177,7 @@ public class GridPanel extends JPanel implements ActionListener{
 			
 			//create the grid with these components
 			Grid grid = gcm.getGrid();
-			grid.createGrid(gcm.getComponents());
+			grid.createGrid(rowCount, colCount, gcm.getComponents());
 			
 			return true;
 		}
@@ -183,7 +193,7 @@ public class GridPanel extends JPanel implements ActionListener{
 	 */
 	private void setGCMComponents(int rows, int cols, String compGCM) {
 		
-		float padding = 20;
+		float padding = 30;
 		float width = GlobalConstants.DEFAULT_COMPONENT_WIDTH;
 		float height = GlobalConstants.DEFAULT_COMPONENT_HEIGHT;
 		
@@ -192,31 +202,34 @@ public class GridPanel extends JPanel implements ActionListener{
 		for (int row=0; row < rows; ++row){
 			for (int col=0; col < cols; ++col){
 				
-				//make a new properties field with all of the new component's properties
-				Properties properties = new Properties();
-				properties.put("gcm", compGCM); //comp is the name of the gcm that the component contains
-				properties.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH));
-				properties.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
-				properties.setProperty("graphx", String.valueOf(col * (width + padding) + padding));
-				properties.setProperty("graphy", String.valueOf(row * (height + padding) + padding));
-				properties.setProperty("row", String.valueOf(row+1));
-				properties.setProperty("col", String.valueOf(col+1));
-				
-				GCMFile compGCMFile = new GCMFile(gcm.getPath());
-				compGCMFile.load(gcm.getPath() + File.separator + compGCM);
-				
-				//set the correct compartment status
-				if (compGCMFile.getIsWithinCompartment())
-					properties.setProperty("compartment","true"); 
-				
-				else properties.setProperty("compartment","false");
-				
-				gcm.addComponent(null, properties);
+				//don't put blank components onto the grid or gcm
+				if (!compGCM.equals("none")) {
+					
+					//make a new properties field with all of the new component's properties
+					Properties properties = new Properties();
+					properties.put("gcm", compGCM); //comp is the name of the gcm that the component contains
+					properties.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH));
+					properties.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
+					properties.setProperty("graphx", String.valueOf(col * (width + padding) + padding));
+					properties.setProperty("graphy", String.valueOf(row * (height + padding) + padding));
+					properties.setProperty("row", String.valueOf(row+1));
+					properties.setProperty("col", String.valueOf(col+1));
+					
+					GCMFile compGCMFile = new GCMFile(gcm.getPath());
+					compGCMFile.load(gcm.getPath() + File.separator + compGCM);
+					
+					//set the correct compartment status
+					if (compGCMFile.getIsWithinCompartment())
+						properties.setProperty("compartment","true"); 
+					
+					else properties.setProperty("compartment","false");
+					
+					gcm.addComponent(null, properties);
+				}
 			}
 		}
 	}
 
-	
 	public void actionPerformed(ActionEvent event) {
 				
 		if (event.getActionCommand() == "spatial") {
