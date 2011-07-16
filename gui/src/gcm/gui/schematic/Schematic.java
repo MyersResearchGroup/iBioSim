@@ -21,6 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
@@ -386,7 +387,7 @@ public class Schematic extends JPanel implements ActionListener {
 		});
 		
 		//mouse moved listener for grid stuff
-		graphComponent.getGraphControl().addMouseMotionListener(new MouseAdapter() {
+		graphComponent.getGraphControl().addMouseMotionListener(new MouseMotionAdapter() {
 			
 			public void mouseMoved(MouseEvent event) {
 				
