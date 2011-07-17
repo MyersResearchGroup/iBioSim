@@ -1088,7 +1088,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			biosimrc.put("biosim.gcm.INITIAL_VALUE", "0");
 		}
 		if (biosimrc.get("biosim.gcm.MEMDIFF_VALUE", "").equals("")) {
-			biosimrc.put("biosim.gcm.MEMDIFF_VALUE", "0.5");
+			biosimrc.put("biosim.gcm.MEMDIFF_VALUE", "2.0/0.02");
 		}
 		if (biosimrc.get("biosim.sim.abs", "").equals("")) {
 			biosimrc.put("biosim.sim.abs", "None");
