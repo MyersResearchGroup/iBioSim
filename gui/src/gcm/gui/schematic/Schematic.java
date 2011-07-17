@@ -17,6 +17,7 @@ import java.awt.Component;
 import java.awt.Event;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -59,6 +60,7 @@ import main.Gui;
 
 
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
@@ -704,16 +706,45 @@ public class Schematic extends JPanel implements ActionListener {
 			
 //			@Override
 			public void invoke(Object arg0, mxEventObject event) {
+				
 				Object cells[] = (Object [])event.getProperties().get("cells");
+				
 				for(int i=0; i<cells.length; i++){
+					
 					// TODO: Disallow moving edges around.
 					mxCell cell = (mxCell)cells[i];
-					if(cell.isEdge()){ // If an edge gets moved ignore it then rebuild the graph from the model.
-						biosim.log.addText("Sorry, edges cann't be moved independently.");
-					}else{
-						graph.updateInternalPosition(cell);
+					
+					// If an edge gets moved ignore it then rebuild the graph from the model
+					if(cell.isEdge()){
+						biosim.log.addText("Sorry; edges can't be moved independently.");
+					}
+					else{
+						
+						//if there's a grid, only move to cell to an open grid location
+						if (grid.isEnabled()) {
+							
+							//see if the component/cell can be moved
+							Boolean moved = grid.moveNode(cell.getId(), 
+									cell.getGeometry().getCenterX(), cell.getGeometry().getCenterY());
+							
+							//if it can, update its position on the graph
+							//(moveComponent updates its grid position)
+							if (moved) {
+								
+								Rectangle snapRect = grid.getSnapRectangleFromCompID(cell.getId());
+								
+								//put the moved component/cell in its proper x,y location on the grid
+								mxGeometry snapGeom = 
+									new mxGeometry(snapRect.x, snapRect.y, snapRect.width, snapRect.height);
+								cell.setGeometry(snapGeom);
+								graph.updateInternalPosition(cell);
+							}
+						}
+						//if there's no grid, move the cell wherever
+						else graph.updateInternalPosition(cell);
 					}
 				}
+				
 				graph.buildGraph();
 				gcm.makeUndoPoint();
 				gcm2sbml.setDirty(true);
@@ -726,17 +757,20 @@ public class Schematic extends JPanel implements ActionListener {
 			
 //			@Override
 			public void invoke(Object arg0, mxEventObject event) {
-
+					
 				// if the graph isn't being built and this event
 				// comes through, remove all the cells from the 
 				// internal model that were specified.
 				if(graph.isBuilding == false){
 					
 					Object cells[] = (Object [])event.getProperties().get("cells");
+					
 					// sort the cells so that edges are first. This makes them
 					// get deleted before anything they are connected to.
 					Arrays.sort(cells, 0, cells.length, new Comparator<Object>() {
+						
 						public int compare(Object a, Object b){
+							
 							boolean av = ((mxCell)a).isEdge();
 							boolean bv = ((mxCell)b).isEdge();
 							if(av && !bv) return -1; // a is edge, b isn't
@@ -746,46 +780,68 @@ public class Schematic extends JPanel implements ActionListener {
 					});
 					
 					for(Object ocell:cells){
+						
 						mxCell cell = (mxCell)ocell;
 						//System.out.print(cell.getId() + " Deleting.\n");
 						
 						String type = graph.getCellType(cell);
+						
 						if(type == GlobalConstants.INFLUENCE || type == GlobalConstants.PRODUCTION){
 							gcm.removeInfluence(cell.getId());
-						}else if(type == GlobalConstants.REACTION_EDGE) {
+						}
+						else if(type == GlobalConstants.REACTION_EDGE) {
+							
 							mxCell source = (mxCell)cell.getSource();
 							mxCell target = (mxCell)cell.getTarget();
+							
 							if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
 									(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+								
 								Reaction r = gcm.getSBMLDocument().getModel().getReaction((String)cell.getValue());
+								
 								if (r.getNumReactants()==1 && r.getNumProducts()==1) {
 									reactions.removeTheReaction(gcm.getSBMLDocument(),(String)cell.getValue());
-								} else if (r.getNumReactants() > 1) {
+								} 
+								else if (r.getNumReactants() > 1) {
+									
 									ListOf reactants = r.getListOfReactants();
+									
 									for (int i = 0; i < r.getNumReactants(); i++) {
+										
 										SpeciesReference s = (SpeciesReference)reactants.get(i);
+										
 										if (s.getSpecies().equals(source.getId())) {
 											reactants.remove(i);
 											break;
 										}
 									}
-								} else if (r.getNumProducts() > 1) {
+								} 
+								else if (r.getNumProducts() > 1) {
+									
 									ListOf products = r.getListOfProducts();
+									
 									for (int i = 0; i < r.getNumProducts(); i++) {
+										
 										SpeciesReference s = (SpeciesReference)products.get(i);
+										
 										if (s.getSpecies().equals(target.getId())) {
 											products.remove(i);
 											break;
 										}
 									}
 								}
-							} else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
+							} 
+							else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
 								(graph.getCellType(target) == GlobalConstants.REACTION)) {
+								
 								Reaction r = gcm.getSBMLDocument().getModel().getReaction(target.getId());
 								boolean found = false;
 								ListOf reactants = r.getListOfReactants();
+								
 								for (int i = 0; i < r.getNumReactants(); i++) {
+									
 									SpeciesReference s = (SpeciesReference)reactants.get(i);
+									
 									if (s.getSpecies().equals(source.getId())) {
 										reactants.remove(i);
 										found = true;
@@ -793,31 +849,44 @@ public class Schematic extends JPanel implements ActionListener {
 									}
 								}
 								if (!found) {
+									
 									ListOf modifiers = r.getListOfModifiers();
+									
 									for (int i = 0; i < r.getNumModifiers(); i++) {
+										
 										ModifierSpeciesReference s = (ModifierSpeciesReference)modifiers.get(i);
+										
 										if (s.getSpecies().equals(source.getId())) {
 											modifiers.remove(i);
 											break;
 										}
 									}
 								}
-							} else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
+							} 
+							else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
 								(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+								
 								Reaction r = gcm.getSBMLDocument().getModel().getReaction(source.getId());
 								ListOf products = r.getListOfProducts();
+								
 								for (int i = 0; i < r.getNumProducts(); i++) {
+									
 									SpeciesReference s = (SpeciesReference)products.get(i);
+									
 									if (s.getSpecies().equals(target.getId())) {
 										products.remove(i);
 										break;
 									}
 								}
 							}
-						}else if(type == GlobalConstants.REACTION) {
+						}
+						else if(type == GlobalConstants.REACTION) {
+							
 							reactions.removeTheReaction(gcm.getSBMLDocument(),(String)cell.getId());
 							gcm.removeReaction(cell.getId());
-						}else if(type == GlobalConstants.SPECIES){
+						}
+						else if(type == GlobalConstants.SPECIES){
+							
 							//gcm.getSpecies().remove(cell.getId());
 							//gcm.getSpecies().remove(cell.getId());
 							if(gcm.speciesUsedInOtherGCM(cell.getId())){
@@ -828,17 +897,28 @@ public class Schematic extends JPanel implements ActionListener {
 							//gcm.removeSpecies(cell.getId());
 							//graph.speciesRemoved(cell.getId());
 							//graph.buildGraph();
-						}else if(type == GlobalConstants.COMPONENT){
+						}
+						else if(type == GlobalConstants.COMPONENT){
+							
 							gcm.getComponents().remove(cell.getId());
-						}else if(type == GlobalConstants.PROMOTER){
+														
+							//if there's a grid, remove the component from the grid as well
+							if (grid.isEnabled())
+								grid.clearNode(cell.getId());
+						}
+						else if(type == GlobalConstants.PROMOTER){
+							
 							if(gcm.removePromoterCheck(cell.getId()))
 								gcm.removePromoter(cell.getId());
-							else // this should actually never happen because the edges get deleted before the promoters.
+							// this should actually never happen because the edges get deleted before the promoters.
+							else
 								JOptionPane.showMessageDialog(Gui.frame, "Sorry, you must remove the influences connected to this promoter first.");
 								
-						}else if(type == GlobalConstants.COMPONENT_CONNECTION){
+						}
+						else if(type == GlobalConstants.COMPONENT_CONNECTION){
 							removeComponentConnection(cell);
-						}else if(type == graph.CELL_NOT_FULLY_CONNECTED){
+						}
+						else if(type == graph.CELL_NOT_FULLY_CONNECTED){
 							// do nothing. This can happen if the user deletes a species that is connected
 							// to influences or connections. The influences or connections will be 
 							// removed, but then the graph library will still fire an event to remove
@@ -846,6 +926,7 @@ public class Schematic extends JPanel implements ActionListener {
 							// do nothing.
 						}
 					}
+					
 					gcm2sbml.setDirty(true);
 					gcm2sbml.refresh();
 					graph.buildGraph();
@@ -888,7 +969,6 @@ public class Schematic extends JPanel implements ActionListener {
 					
 					}
 				}
-
 			}
 		});
 	
