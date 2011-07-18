@@ -38,6 +38,7 @@ public class GridPanel extends JPanel implements ActionListener{
 	private ArrayList<String> componentList, compartmentList;	
 	
 	private static boolean built;
+	private boolean gridSpatial; //true if grid is spatial; false if grid is cell population
 	
 	/**
 	 * constructor that sets the gcm2sbmleditor and gcmfile
@@ -55,7 +56,7 @@ public class GridPanel extends JPanel implements ActionListener{
 		this.gcm = gcm;
 		this.gcm2sbml = gcm2sbml;
 		
-		//editMode == false means creating a grid
+		//editMode is false means creating a grid
 		if (!editMode) {
 			
 			//component list is the gcms that can be added to a spatial grid
@@ -81,7 +82,7 @@ public class GridPanel extends JPanel implements ActionListener{
 					
 			built = buildPanel() == true ? true : false;
 		}
-		//editMode == true means editing a grid
+		//editMode is true means editing a grid
 		else {
 			
 			
@@ -178,6 +179,7 @@ public class GridPanel extends JPanel implements ActionListener{
 			//create the grid with these components
 			Grid grid = gcm.getGrid();
 			grid.createGrid(rowCount, colCount, gcm.getComponents());
+			grid.setGridSpatial(gridSpatial);
 			
 			return true;
 		}
@@ -193,7 +195,7 @@ public class GridPanel extends JPanel implements ActionListener{
 	 */
 	private void setGCMComponents(int rows, int cols, String compGCM) {
 		
-		float padding = 30;
+		float padding = gcm.getGrid().getPadding();
 		float width = GlobalConstants.DEFAULT_COMPONENT_WIDTH;
 		float height = GlobalConstants.DEFAULT_COMPONENT_HEIGHT;
 		
@@ -234,6 +236,8 @@ public class GridPanel extends JPanel implements ActionListener{
 				
 		if (event.getActionCommand() == "spatial") {
 			
+			gridSpatial = true;
+			
 			//only one or the other can be selected
 			spatial.setSelected(true);
 			cellPop.setSelected(false);
@@ -241,10 +245,12 @@ public class GridPanel extends JPanel implements ActionListener{
 			//change the available components to be all components
 			componentChooser.removeAllItems();
 			
-			for (String comp : componentList) 
+			for (String comp : componentList)
 				componentChooser.addItem(comp);
-		}
-		if (event.getActionCommand() == "cellPop") {
+		}		
+		else if (event.getActionCommand() == "cellPop") {
+			
+			gridSpatial = false;
 		
 			//only one or the other can be selected
 			spatial.setSelected(false);
