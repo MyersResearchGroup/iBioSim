@@ -111,6 +111,7 @@ public class SbolSynthesizer {
 					return sf;
 			}
 		}
+		JOptionPane.showMessageDialog(Gui.frame, featId + " not found in project libraries.", "Warning", JOptionPane.WARNING_MESSAGE);
 		SequenceFeature emptyFeat = new SequenceFeature();
 		emptyFeat.setDisplayId(featId);
 		DnaSequence emptySeq = new DnaSequence();
@@ -120,7 +121,7 @@ public class SbolSynthesizer {
 	}
 	
 	private int addFeature(SequenceFeature feat, DnaComponent comp, int position) {
-		if (feat.getDnaSequence().getDnaSequence().length() >=1 ) {
+		if (feat.getDnaSequence().getDnaSequence().length() >= 1) {
 			SequenceAnnotation annot = new SequenceAnnotation();
 			annot.setStart(position);
 			position += feat.getDnaSequence().getDnaSequence().length() - 1;
