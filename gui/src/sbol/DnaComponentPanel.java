@@ -59,25 +59,29 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 			for (String sid : selectedIds) {
 				if (compMap.containsKey(sid)) {
 					DnaComponent dnac = compMap.get(sid);
+					
 					if (dnac.getName() != null && !dnac.getName().equals(""))
 						viewArea.append("Name:  " + dnac.getName() + "\n");
 					else
 						viewArea.append("Name:  NA\n");
+					
 					if (dnac.getDescription() != null && !dnac.getDescription().equals(""))
 						viewArea.append("Description:  " + dnac.getDescription() + "\n");
 					else 
 						viewArea.append("Description:  NA\n");
-					if (dnac.getAnnotations() != null) {
+					
+					if (dnac.getAnnotations() != null && dnac.getAnnotations().size() > 0) {
 						viewArea.append("Annotations:  ");
 						SequenceAnnotation[] sortedSA = sortAnnotations(dnac.getAnnotations());
 						String annotations = processAnnotations(sortedSA);
-						viewArea.append(annotations.substring(0, annotations.length() - 2) + "\n");
-						if (dnac.getDnaSequence() != null)
-							viewArea.append("DNA Sequence:  " + dnac.getDnaSequence().getDnaSequence() + "\n\n");
-						else
-							viewArea.append("DNA Sequence:  NA\n\n");
+						viewArea.append(annotations + "\n");
 					} else 
-						viewArea.append("Annotations:  NA");
+						viewArea.append("Annotations:  NA\n");
+					
+					if (dnac.getDnaSequence() != null && dnac.getDnaSequence().getDnaSequence() != null && !dnac.getDnaSequence().getDnaSequence().equals(""))
+						viewArea.append("DNA Sequence:  " + dnac.getDnaSequence().getDnaSequence() + "\n\n");
+					else
+						viewArea.append("DNA Sequence:  NA\n\n");
 				} else if (featMap.containsKey(sid)) {  // this probably goes away once libSBOL up to speed, type loop gets moved to processAnnotations
 					SequenceFeature sf = featMap.get(sid);
 					if (sf.getName() != null && !sf.getName().equals(""))
@@ -94,8 +98,11 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 						if (!uri.getFragment().equals("SequenceFeature"))
 							types = types + uri.getFragment() + ", ";
 					}
-					viewArea.append(types.substring(0, types.length() - 2) + "\n");
-					if (sf.getDnaSequence() != null)
+					if (types.length() > 0)
+						viewArea.append(types.substring(0, types.length() - 2) + "\n");
+					else
+						viewArea.append("NA\n");
+					if (sf.getDnaSequence() != null && sf.getDnaSequence().getDnaSequence() != null && !sf.getDnaSequence().getDnaSequence().equals(""))
 						viewArea.append("DNA Sequence:  " + sf.getDnaSequence().getDnaSequence() + "\n\n");
 					else
 						viewArea.append("DNA Sequence:  NA\n\n");
@@ -135,8 +142,9 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 			String sign = arraySA[k].getStrand();
 			if (sign.equals("+"))
 				sign = "";
-			annotations = annotations + sign + arraySA[k].getStart() + " to " + sign + arraySA[k].getStop() + ", "; 
+				annotations = annotations + sign + arraySA[k].getStart() + " to " + sign + arraySA[k].getStop() + ", "; 
 		}
+		annotations = annotations.substring(0, annotations.length() - 2);
 		return annotations;
 	}
 	
