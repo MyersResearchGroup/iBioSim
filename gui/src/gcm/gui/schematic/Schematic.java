@@ -27,6 +27,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
@@ -48,10 +49,13 @@ import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SpeciesReference;
+import org.sbolstandard.libSBOLj.Library;
 
 import sbmleditor.Compartments;
 import sbmleditor.Reactions;
+import sbol.SbolBrowser;
 import sbol.SbolSynthesizer;
+import sbol.SbolUtility;
 import util.Utility;
 
 import main.Gui;
@@ -301,6 +305,7 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(Utils.makeToolButton("choose_layout.png", "showLayouts", "Apply Layout", this));
 		toolBar.add(Utils.makeToolButton("", "undo", "Undo", this));
 		toolBar.add(Utils.makeToolButton("", "redo", "Redo", this));
+		toolBar.add(Utils.makeToolButton("", "saveSBOL", "Save SBOL", this));
 		toolBar.add(Utils.makeToolButton("", "exportSBOL", "Export SBOL", this));
 		
 		toolBar.setFloatable(false);
@@ -356,6 +361,21 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		else if(command == "checkCompartment") {
 			gcm.setIsWithinCompartment(check.isSelected());
+		} 
+		else if (command.equals("saveSBOL")) {
+			HashSet<String> filePaths = gcm2sbml.getSbolFiles();
+			HashMap<String, String> libToFileMap = new HashMap<String, String>();
+			for (String fp : filePaths) {
+				Library lib = SbolUtility.loadRDF(fp);
+				libToFileMap.put(lib.getDisplayId(), fp);
+			}
+			SbolBrowser browser = new SbolBrowser(filePaths, "library", "");
+			String libId = browser.getSelection().split("/")[0];
+			if (!libId.equals("")) {
+				GCMParser parser = new GCMParser(gcm, false);
+				SbolSynthesizer synthesizer = parser.buildSbolSynthesizer();
+				synthesizer.synthesizeDnaComponent(gcm2sbml.getSbolFiles(), libToFileMap.get(libId));
+			}
 		} 
 		else if (command.equals("exportSBOL")) {
 			File lastFilePath;

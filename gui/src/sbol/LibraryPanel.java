@@ -73,7 +73,7 @@ public class LibraryPanel extends JPanel implements MouseListener {
 			else
 				viewArea.append("Description:  NA\n\n");
 
-			if (filter.equals("")) {
+			if (filter.equals("") || filter.equals("library")) {
 				String[] compIdArray = new String[lib.getComponents().size() + lib.getFeatures().size()]; //remove 2nd term once libSBOL up to speed
 				int n = 0;
 				for (DnaComponent dnac : lib.getComponents()) {
@@ -88,6 +88,8 @@ public class LibraryPanel extends JPanel implements MouseListener {
 				}
 				LinkedHashSet<String> compIds = lexoSort(compIdArray, n);
 				compPanel.setComponents(compIds);
+				if (filter.equals("library"))
+					compPanel.disableList();
 			} else {
 				String[] featIdArray = new String[lib.getFeatures().size()];
 				int n = 0;
