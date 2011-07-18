@@ -25,12 +25,10 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import java.io.File;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Properties;
 import java.util.prefs.Preferences;
-
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
@@ -58,7 +56,6 @@ import util.Utility;
 
 import main.Gui;
 
-
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
@@ -66,18 +63,19 @@ import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
 
+
 public class Schematic extends JPanel implements ActionListener {
 		
+	//CLASS VARIABLES
+	
 	private static final long serialVersionUID = 1L;
 	private BioGraph graph;
 	private mxGraphComponent graphComponent;
-	public mxGraphComponent getGraphComponent(){return graphComponent;};	
 	
 	private GCMFile gcm;
 	private Gui biosim;
 	private GCM2SBMLEditor gcm2sbml;
 	private boolean editable;
-	public boolean getEditable(){return editable;};
 	private MovieContainer movieContainer;
 	private Compartments compartments;
 	private Reactions reactions;
@@ -97,40 +95,15 @@ public class Schematic extends JPanel implements ActionListener {
 	private AbstractButton bioActivationButton;
 	private AbstractButton reactionButton;
 	private AbstractButton modifierButton;
-	//private AbstractButton bioInhibitionButton;
 	private AbstractButton noInfluenceButton;
 	
-	JPopupMenu layoutPopup;
+	private JPopupMenu layoutPopup;
+	
+	//keeps a list of listeners that the movie container uses
+	protected javax.swing.event.EventListenerList listenerList;
 	
 	
-	/**
-	 * listener stuff. Thanks to http://www.exampledepot.com/egs/java.util/custevent.html.
-	 * This makes it so that we can dispatch events that the movie container can listen for.
-	 */
-	protected javax.swing.event.EventListenerList listenerList =
-        new javax.swing.event.EventListenerList();
-	// This methods allows classes to register for MyEvents
-    
-	public void addSchematicObjectClickEventListener(SchematicObjectClickEventListener listener) {
-        listenerList.add(SchematicObjectClickEventListener.class, listener);
-    }
- // This methods allows classes to unregister for MyEvents
-    
-    public void removeSchematicObjectClickEventListener(SchematicObjectClickEventListener listener) {
-        listenerList.remove(SchematicObjectClickEventListener.class, listener);
-    }
- // This private class is used to fire MyEvents
-    
-    void dispatchSchematicObjectClickEvent(SchematicObjectClickEvent evt) {
-        Object[] listeners = listenerList.getListenerList();
-        // Each listener occupies two elements - the first is the listener class
-        // and the second is the listener instance
-        for (int i=0; i<listeners.length; i+=2) {
-            if (listeners[i]==SchematicObjectClickEventListener.class) {
-                ((SchematicObjectClickEventListener)listeners[i+1]).SchematicObjectClickEventOccurred(evt);
-            }
-        }
-    }
+	//CLASS METHODS
 	
     /**
 	 * Constructor
@@ -138,6 +111,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public Schematic(GCMFile gcm, Gui biosim, GCM2SBMLEditor gcm2sbml, 
 			boolean editable, MovieContainer movieContainer2,Compartments compartments, Reactions reactions){
+		
 		super(new BorderLayout());
 		
 		this.gcm = gcm;
@@ -149,13 +123,16 @@ public class Schematic extends JPanel implements ActionListener {
 		this.reactions = reactions;
 		this.grid = gcm.getGrid();
 		
+		listenerList = new javax.swing.event.EventListenerList();
+		
 		// initialize everything on creation.
 		display();
 	}
 	
 	/**
-	 * Called when the tab is clicked.
-	 * @param graph
+	 * displays the graph
+	 * called when the user opens the gcm file
+	 * or when the user creates a grid
 	 */
 	public void display(){
 
@@ -236,6 +213,9 @@ public class Schematic extends JPanel implements ActionListener {
 //		
 //		//this.setBackground(Color.BLACK);
 	}
+	
+	
+	//TOOLBAR BUILDING METHODS
 	
 	/**
 	 * toolbar for when you're looking at a grid
@@ -328,6 +308,9 @@ public class Schematic extends JPanel implements ActionListener {
 		return toolBar;
 	}
 
+	
+	//ACTION AND LISTENER METHODS
+	
 	/**
 	 * Called when a toolbar button is clicked.
 	 */
@@ -429,7 +412,27 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * Add listeners for the graph component
+	 * 
+	 * @param name
+	 * @param action
+	 * @return
+	 */
+	@SuppressWarnings("serial")
+	public Action bind(String name, final Action action) {
+		
+		return new AbstractAction(name, null)
+		{
+			public void actionPerformed(ActionEvent e)
+			{
+				action.actionPerformed(new ActionEvent(getGraphComponent(), e
+						.getID(), e.getActionCommand()));
+			}
+		};
+	}
+	
+	/**
+	 * Add (mouse) listeners for the graph component
+	 * listeners for clicking and mouse movement
 	 */
 	private void addGraphComponentListeners(){
 		
@@ -457,10 +460,10 @@ public class Schematic extends JPanel implements ActionListener {
 			}		
 		});
 		
-		// Add a listener for when cells get clicked on.
+		//mouse click listener -- on cells or on the graph
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter(){
-			@Override
-			public void mouseReleased(MouseEvent e) {
+			
+				public void mouseReleased(MouseEvent e) {
 				
 				mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
 				
@@ -475,8 +478,9 @@ public class Schematic extends JPanel implements ActionListener {
 					}
 				}
 				
+				//single right-click
 				if (e.isPopupTrigger() && SwingUtilities.isRightMouseButton(e)) {
-					// rightclick on windows
+					
 					if (editable)
 						showGraphPopupMenu(e);
 				}
@@ -486,7 +490,7 @@ public class Schematic extends JPanel implements ActionListener {
 					// First check and if the user clicked on a component, let the graph lib take care of it.
 					if(cell == null) {
 						
-						// If control gets here, the user clicked once, and not on any component.
+						//user clicked with select button
 						if(selectButton != null && selectButton.isSelected()){
 							// do the default graph lib behavior
 						}
@@ -497,8 +501,8 @@ public class Schematic extends JPanel implements ActionListener {
 							graph.buildGraph();
 							gcm2sbml.refresh();
 							gcm2sbml.setDirty(true);
-							gcm.makeUndoPoint();
 							drawGrid();
+							gcm.makeUndoPoint();
 						}
 						else if(addReactionButton != null && addReactionButton.isSelected()) {
 							
@@ -506,27 +510,37 @@ public class Schematic extends JPanel implements ActionListener {
 							graph.buildGraph();
 							gcm2sbml.refresh();
 							gcm2sbml.setDirty(true);
-							gcm.makeUndoPoint();
 							drawGrid();
+							gcm.makeUndoPoint();
 						}
 						else if(addComponentButton != null && addComponentButton.isSelected()) {
+							
+							boolean dropped;
 							
 							//if there's a grid, do a different panel than normal
 							if (grid.isEnabled()) {
 								
+								boolean gridSpatial = grid.getGridSpatial();
 								
+								//the true is to indicate the dropping is happening on a grid
+								dropped = DropComponentPanel.dropComponent(
+										gcm2sbml, gcm, e.getX(), e.getY(), true, gridSpatial);
 							}
 							else {
 								
-								boolean dropped = DropComponentPanel.dropComponent(gcm2sbml, gcm, e.getX(), e.getY());
+								//the false is to indicate the dropping isn't happening on a grid
+								dropped = DropComponentPanel.dropComponent(
+											gcm2sbml, gcm, e.getX(), e.getY(), false, false);
+							}
+							
+							//if the components dropped successfully
+							if(dropped){
 								
-								if(dropped){
-									gcm2sbml.setDirty(true);
-									graph.buildGraph();
-									gcm2sbml.refresh();
-									gcm.makeUndoPoint();
-									drawGrid();
-								}
+								gcm2sbml.setDirty(true);
+								graph.buildGraph();
+								gcm2sbml.refresh();
+								drawGrid();
+								gcm.makeUndoPoint();
 							}
 						}
 						else if(editPromoterButton != null && editPromoterButton.isSelected()) {
@@ -535,8 +549,8 @@ public class Schematic extends JPanel implements ActionListener {
 							gcm2sbml.refresh();
 							graph.buildGraph();
 							gcm2sbml.setDirty(true);
-							gcm.makeUndoPoint();
 							drawGrid();
+							gcm.makeUndoPoint();
 						}
 					}
 					else {
@@ -583,21 +597,22 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 					}
 				}
-				//double-click
+				//double-click with left mouse button
 				else if(e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
 
 					if (cell != null) {
 						
 						bringUpEditorForCell(cell);
 						graph.buildGraph();
+						drawGrid();
 						gcm.makeUndoPoint();
 					}
 				}
 			}
 		});
-		
-		// Add a special listener for the MAC. Rightclick only works on mousedown,
-		// while on windows it only works on mouseup.
+				
+		//add a special listener for right-clicking on macs
+		//they use mousePressed instead of mouseReleased for a click event
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter(){
 			@Override
 			public void mousePressed(MouseEvent e)
@@ -610,90 +625,6 @@ public class Schematic extends JPanel implements ActionListener {
 				}
 			}
 		});
-	}
-	
-	/**
-	 * Given any type of cell, bring up an editor for it if supported.
-	 * @param cell
-	 */
-	public void bringUpEditorForCell(mxCell cell){
-		
-		String cellType = graph.getCellType(cell);
-		
-		if(cellType == GlobalConstants.SPECIES){
-			
-			gcm2sbml.launchSpeciesPanel(cell.getId(), movieContainer);
-		}
-		else if(cellType == GlobalConstants.INFLUENCE){
-			
-			gcm2sbml.launchInfluencePanel(cell.getId());
-		}
-		else if(cellType == GlobalConstants.PRODUCTION){
-			// do nothing
-		}
-		else if(cellType == GlobalConstants.REACTION_EDGE){
-			
-			mxCell source = (mxCell)cell.getSource();
-			mxCell target = (mxCell)cell.getTarget();
-			
-			if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
-					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
-				
-				reactions.reactionsEditor(gcm.getSBMLDocument(),"OK",(String)cell.getValue(),true);
-			} 
-			else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
-				(graph.getCellType(target) == GlobalConstants.REACTION)) {
-				
-				SpeciesReference reactant = gcm.getSBMLDocument().getModel().getReaction((String)target.getId()).
-					getReactant((String)source.getId());
-				if (reactant != null) {
-					reactions.reactantsEditor(gcm.getSBMLDocument(),"OK",(String)source.getId(),reactant);
-				} 
-			} 
-			else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
-				(graph.getCellType(target) == GlobalConstants.SPECIES)) {
-				
-				SpeciesReference product = gcm.getSBMLDocument().getModel().getReaction((String)source.getId()).
-					getProduct((String)target.getId());
-				reactions.productsEditor(gcm.getSBMLDocument(),"OK",(String)target.getId(),product);
-			}
-		}
-		else if(cellType == GlobalConstants.REACTION){
-			
-			Reaction r = gcm.getSBMLDocument().getModel().getReaction((String)cell.getId());
-			reactions.reactionsEditor(gcm.getSBMLDocument(),"OK",(String)cell.getId(),true);
-			
-			if (!cell.getId().equals(r.getId())) {
-				
-				gcm.getReactions().put(r.getId(), gcm.getReactions().get(cell.getId()));
-				gcm.getReactions().remove(cell.getId());
-				cell.setId(r.getId());
-			}
-		}
-		else if(cellType == GlobalConstants.COMPONENT){
-			
-			//gcm2sbml.displayChooseComponentDialog(true, null, false, cell.getId());
-			if(movieContainer == null)
-				gcm2sbml.launchComponentPanel(cell.getId());
-			else{
-				
-				if(movieContainer.getTSDParser() == null)
-					JOptionPane.showMessageDialog(Gui.frame, "You must choose a simulation file before editing component properties.");
-				else
-					new ComponentSchemeChooser(cell.getId(), movieContainer);
-			}
-		}
-		else if(cellType.equals(GlobalConstants.PROMOTER)){
-			
-			gcm2sbml.launchPromoterPanel(cell.getId());
-		}
-		else{
-			// it wasn't a type that has an editor.
-		}
-		
-		// refresh everything.
-		graph.buildGraph();
-		drawGrid();
 	}
 	
 	/**
@@ -746,9 +677,9 @@ public class Schematic extends JPanel implements ActionListener {
 				}
 				
 				graph.buildGraph();
+				drawGrid();
 				gcm.makeUndoPoint();
 				gcm2sbml.setDirty(true);
-				drawGrid();
 			}
 		});
 	
@@ -930,8 +861,8 @@ public class Schematic extends JPanel implements ActionListener {
 					gcm2sbml.setDirty(true);
 					gcm2sbml.refresh();
 					graph.buildGraph();
-					gcm.makeUndoPoint();
 					drawGrid();
+					gcm.makeUndoPoint();
 				}
 			}
 		});
@@ -941,8 +872,9 @@ public class Schematic extends JPanel implements ActionListener {
 //			@Override
 			public void invoke(Object arg0, mxEventObject event) {
 				
-				// if the graph is building, ignore the creation of edges.
-				if(graph.isBuilding == false){
+				//if the graph is building, ignore the creation of edges.
+				//also, if we're on a grid, no influences are allowed
+				if(graph.isBuilding == false || grid.isEnabled()){
 					
 					// if the user tries to add anything in simulation mode, stop them.
 					if(editable == false){
@@ -972,7 +904,7 @@ public class Schematic extends JPanel implements ActionListener {
 			}
 		});
 	
-		// Listen for everything. Put breakpoints in here when trying to figure out new events.
+		// Listen for everything.  For debugging.
 		graph.addListener(null, new mxEventSource.mxIEventListener() {
 			
 			//@Override
@@ -983,6 +915,42 @@ public class Schematic extends JPanel implements ActionListener {
 		});
 		
 	}
+	
+	// This makes it so that we can dispatch events that the movie container can listen for.
+	// from http://www.exampledepot.com/egs/java.util/custevent.html.
+	
+	/**
+	 * This methods allows classes to register for MyEvents
+	 * @param listener
+	 */
+	public void addSchematicObjectClickEventListener(SchematicObjectClickEventListener listener) {
+        listenerList.add(SchematicObjectClickEventListener.class, listener);
+    }
+
+	/**
+	 * This methods allows classes to unregister for MyEvents
+	 * @param listener
+	 */
+    public void removeSchematicObjectClickEventListener(SchematicObjectClickEventListener listener) {
+        listenerList.remove(SchematicObjectClickEventListener.class, listener);
+    }
+ 
+    /**
+     *  This private class is used to fire MyEvents
+     */    
+    void dispatchSchematicObjectClickEvent(SchematicObjectClickEvent evt) {
+        Object[] listeners = listenerList.getListenerList();
+        // Each listener occupies two elements - the first is the listener class
+        // and the second is the listener instance
+        for (int i=0; i<listeners.length; i+=2) {
+            if (listeners[i]==SchematicObjectClickEventListener.class) {
+                ((SchematicObjectClickEventListener)listeners[i+1]).SchematicObjectClickEventOccurred(evt);
+            }
+        }
+    }
+	
+	
+	//INPUT/OUTPUT AND CONNECTION METHODS
 	
 	/**
 	 * Tries to properly connect an edge that is connected in the graph. Called 
@@ -1250,16 +1218,6 @@ public class Schematic extends JPanel implements ActionListener {
 		return port;
 	}
 
-	// TODO: This should probably be moved to GCMFile.java, maybe as a static method?
-	
-	private Object[] getGCMPorts(Properties comp, String type){
-		String fullPath = gcm.getPath() + File.separator + comp.getProperty("gcm");
-		GCMFile compGCM = new GCMFile(gcm.getPath());
-		compGCM.load(fullPath);
-		HashMap<String, Properties> ports = compGCM.getPorts(type);
-		return ports.keySet().toArray();
-	}
-	
 	/**
 	 * given an mxCell where either the source or target is a component, 
 	 * remove the connection.
@@ -1280,15 +1238,110 @@ public class Schematic extends JPanel implements ActionListener {
 			throw new Error("Species was not connected to the given component!");
 	}
 	
-	////// Copied from mxGraph example file BasicGraphEditor.java
+	// TODO: This should probably be moved to GCMFile.java, maybe as a static method?
+	/**
+	 * @return an array of the input/output ports for the component passed in
+	 */
+	private Object[] getGCMPorts(Properties comp, String type){
+		String fullPath = gcm.getPath() + File.separator + comp.getProperty("gcm");
+		GCMFile compGCM = new GCMFile(gcm.getPath());
+		compGCM.load(fullPath);
+		HashMap<String, Properties> ports = compGCM.getPorts(type);
+		return ports.keySet().toArray();
+	}
 	
+	
+	//MENUS
+	
+	/**
+	 * Given any type of cell, bring up an editor for it if supported.
+	 * @param cell
+	 */
+	public void bringUpEditorForCell(mxCell cell){
+		
+		String cellType = graph.getCellType(cell);
+		
+		if(cellType == GlobalConstants.SPECIES){
+			
+			gcm2sbml.launchSpeciesPanel(cell.getId(), movieContainer);
+		}
+		else if(cellType == GlobalConstants.INFLUENCE){
+			
+			gcm2sbml.launchInfluencePanel(cell.getId());
+		}
+		else if(cellType == GlobalConstants.PRODUCTION){
+			// do nothing
+		}
+		else if(cellType == GlobalConstants.REACTION_EDGE){
+			
+			mxCell source = (mxCell)cell.getSource();
+			mxCell target = (mxCell)cell.getTarget();
+			
+			if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
+					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+				
+				reactions.reactionsEditor(gcm.getSBMLDocument(),"OK",(String)cell.getValue(),true);
+			} 
+			else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
+				(graph.getCellType(target) == GlobalConstants.REACTION)) {
+				
+				SpeciesReference reactant = gcm.getSBMLDocument().getModel().getReaction((String)target.getId()).
+					getReactant((String)source.getId());
+				if (reactant != null) {
+					reactions.reactantsEditor(gcm.getSBMLDocument(),"OK",(String)source.getId(),reactant);
+				} 
+			} 
+			else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
+				(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+				
+				SpeciesReference product = gcm.getSBMLDocument().getModel().getReaction((String)source.getId()).
+					getProduct((String)target.getId());
+				reactions.productsEditor(gcm.getSBMLDocument(),"OK",(String)target.getId(),product);
+			}
+		}
+		else if(cellType == GlobalConstants.REACTION){
+			
+			Reaction r = gcm.getSBMLDocument().getModel().getReaction((String)cell.getId());
+			reactions.reactionsEditor(gcm.getSBMLDocument(),"OK",(String)cell.getId(),true);
+			
+			if (!cell.getId().equals(r.getId())) {
+				
+				gcm.getReactions().put(r.getId(), gcm.getReactions().get(cell.getId()));
+				gcm.getReactions().remove(cell.getId());
+				cell.setId(r.getId());
+			}
+		}
+		else if(cellType == GlobalConstants.COMPONENT){
+			
+			//gcm2sbml.displayChooseComponentDialog(true, null, false, cell.getId());
+			if(movieContainer == null)
+				gcm2sbml.launchComponentPanel(cell.getId());
+			else{
+				
+				if(movieContainer.getTSDParser() == null)
+					JOptionPane.showMessageDialog(Gui.frame, "You must choose a simulation file before editing component properties.");
+				else
+					new ComponentSchemeChooser(cell.getId(), movieContainer);
+			}
+		}
+		else if(cellType.equals(GlobalConstants.PROMOTER)){
+			
+			gcm2sbml.launchPromoterPanel(cell.getId());
+		}
+		else{
+			// it wasn't a type that has an editor.
+		}
+		
+		// refresh everything.
+		graph.buildGraph();
+		drawGrid();
+	}
 	
 	/**
 	 * Displays the right-click menu
 	 * @param e
 	 */
-	protected void showGraphPopupMenu(MouseEvent e)
-	{
+	protected void showGraphPopupMenu(MouseEvent e) {
 		Point pt = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(),
 				graphComponent);
 		EditorPopupMenu menu = new EditorPopupMenu(Schematic.this);
@@ -1297,18 +1350,8 @@ public class Schematic extends JPanel implements ActionListener {
 		e.consume();
 	}
 	
-	@SuppressWarnings("serial")
-	public Action bind(String name, final Action action) {
-		
-		return new AbstractAction(name, null)
-		{
-			public void actionPerformed(ActionEvent e)
-			{
-				action.actionPerformed(new ActionEvent(getGraphComponent(), e
-						.getID(), e.getActionCommand()));
-			}
-		};
-	}
+	
+	//GRID DRAWING
 	
 	/**
 	 * wrapper for the paintComponent() function
@@ -1336,9 +1379,9 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	
-	//////////////////////////////////////// ANIMATION TYPE STUFF ////////////////////////////////
+	//ANIMATION
 	
-	
+	//isn't used?
 	public void beginFrame(){
 	//	graph.getModel().beginUpdate(); // doesn't seem needed.
 	}
@@ -1356,5 +1399,23 @@ public class Schematic extends JPanel implements ActionListener {
 		graph.refresh();
 	}
 	
+	
+	//GET METHODS
+	
+	/**
+	 * @return the graph component for the schematic
+	 */
+	public mxGraphComponent getGraphComponent() {
+		return graphComponent;
+	}
+	
+	/**
+	 * editable == false means we're in analysis view
+	 * @return the editable status of the schematic
+	 */
+	public boolean getEditable() {
+		return editable;
+	}
+
 
 }

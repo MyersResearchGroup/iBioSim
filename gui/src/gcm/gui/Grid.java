@@ -56,10 +56,10 @@ public class Grid {
 	//map of x,y points and the grid node they're located in
 	private HashMap<Point, GridNode> pointToNodeMap;
 	
-	//components to go on the grid
+	//components on the grid
 	private HashMap<String, Properties> components;
 	
-	//map of x,y grid coords to the component at that location
+	//map of row, col grid locations to the component at that location
 	private HashMap<Point, Map.Entry<String, Properties>> locToComponentMap;
 	
 	private int numRows, numCols;
@@ -69,6 +69,11 @@ public class Grid {
 	private int gridHeight;
 	private boolean enabled;
 	private boolean mouseClicked;
+	
+	//true means spatial grid; false means cell population grid
+	//this is used when editing a grid, as only compartments can be added to a cell population grid
+	private boolean gridSpatial;
+	
 	private Rectangle gridBounds;
 	private Point mouseClickLocation;
 	private Point mouseLocation;
@@ -94,6 +99,7 @@ public class Grid {
 	 */
 	public Grid() {
 		
+		gridSpatial = false;
 		enabled = false;
 		verticalOffset = 0;
 		numRows = 0;
@@ -136,7 +142,6 @@ public class Grid {
 				grid.get(i).add(new GridNode());
 				grid.get(i).get(j).setRow(i);
 				grid.get(i).get(j).setCol(j);
-				grid.get(i).get(j).setOccupied(true);
 			}
 		}
 		
@@ -244,12 +249,13 @@ public class Grid {
 				if (node.isSelected())
 					drawGridSelectionBox(g, rect);
 				
-//				g2.drawString(Boolean.toString(node.isOccupied()), rect.x, rect.y);
-//				
-//				if (node.component == null) {
-//					g2.drawString("null", rect.x+40, rect.y);
-//				}
-//				else g2.drawString(node.getComponent().getKey(), rect.x+40, rect.y);
+				//some debug stuff to draw onto the grid
+				g2.drawString(Boolean.toString(node.isOccupied()), rect.x, rect.y);
+				
+				if (node.component == null) {
+					g2.drawString("null", rect.x+40, rect.y);
+				}
+				else g2.drawString(node.getComponent().getKey(), rect.x+40, rect.y);
 			}
 		}
 	}
@@ -336,9 +342,21 @@ public class Grid {
 					HashMap<String, Properties> tempMap = new HashMap<String, Properties>();
 					tempMap.put(compID, components.get(compID));
 					
+					Map.Entry<String, Properties> compo = tempMap.entrySet().iterator().next();
+					
 					//put the component in its new home
-					node.setComponent(tempMap.entrySet().iterator().next());
+					node.setComponent(compo);
 					node.setOccupied(true);
+					
+					//update the row/col properties of the component
+					Properties props = compo.getValue();
+					
+					props.setProperty("row", Integer.toString(node.getRow()+1));
+					props.setProperty("col", Integer.toString(node.getCol()+1));
+					
+					//update the location to component hash map
+					//as the component and their locations have changed
+					updateLocToComponentMap();
 					
 					return true;
 				}
@@ -359,6 +377,66 @@ public class Grid {
 		
 		return getNodeFromCompID(compID).getSnapRectangle();
 	}
+	
+	/**
+	 * returns where or not the user clicked on an occupied grid location
+	 * @param mouseX where the user clicked
+	 * @param mouseY where the user clicked
+	 * @return true if the grid location is occupied, false if not
+	 */
+	public boolean getOccupancyFromPoint(Point point) {
+		
+		point.y += verticalOffset;		
+		GridNode node = pointToNodeMap.get(point);
+		
+		if (node != null)
+			return node.isOccupied();
+		
+		//return true because it's easier to consider outside the grid as occupied
+		//so nothing can ever get placed there
+		else return true;
+	}
+	
+	/**
+	 * returns the grid row corresponding to a point
+	 * 
+	 * @param point
+	 * @return the grid row corresponding to the point
+	 */
+	public int getRowFromPoint(Point point) {
+		
+		point.y += verticalOffset;		
+		return pointToNodeMap.get(point).getRow();
+	}
+	
+	/**
+	 * returns the grid column corresponding to a point
+	 * 
+	 * @param point
+	 * @return the grid column corresponding to the point
+	 */
+	public int getColFromPoint(Point point) {
+		
+		point.y += verticalOffset;		
+		return pointToNodeMap.get(point).getCol();
+	}
+	
+	/**
+	 * takes the gcm's components and resets the grid with those components
+	 */
+	public void refreshComponents(HashMap<String, Properties> gcmComponents) {
+		
+		components = gcmComponents;
+		
+		putComponentsOntoGrid();
+		
+		//update the location to component hash map
+		//as the component and their locations have changed
+		updateLocToComponentMap();
+		
+		updateNodeMaps();
+	}
+	
 	
 	//PRIVATE
 	
@@ -418,12 +496,19 @@ public class Grid {
 			String gcm = props.getProperty("gcm");
 			int row = Integer.valueOf(props.getProperty("row"));
 			int col = Integer.valueOf(props.getProperty("col"));
+			boolean compartment = Boolean.parseBoolean(props.getProperty("compartment"));
 			
 			//if the user selects no component, then don't put a component there
 			if (gcm.equals("none"))
 				grid.get(row-1).get(col-1).setOccupied(false);
-			else
+			else {
 				grid.get(row-1).get(col-1).setComponent(entry);
+				grid.get(row-1).get(col-1).setOccupied(true);
+				
+				//if something isn't a compartment, we must be on a spatial grid
+				if (compartment == false)
+					setGridSpatial(true);
+			}
 		}
 		
 	}
@@ -569,6 +654,7 @@ public class Grid {
 		return null;
 	}
 	
+	
 	//BORING GET/SET METHODS
 	
 	/**
@@ -667,6 +753,28 @@ public class Grid {
 		return mouseLocation;
 	}
 	
+	/**
+	 * set where it's a spatial or cell population grid
+	 * 
+	 * @param gridSpatial true means spatial; false means population
+	 */
+	public void setGridSpatial(boolean gridSpatial) {
+		this.gridSpatial = gridSpatial;
+	}
+	
+	/**
+	 * @return whether it's a spatial or cell population grid
+	 */
+	public boolean getGridSpatial() {
+		return this.gridSpatial;
+	}
+	
+	/**
+	 * @return padding pixels between grid components
+	 */
+	public int getPadding() {
+		return padding;
+	}
 	
 	
 	//--------------
