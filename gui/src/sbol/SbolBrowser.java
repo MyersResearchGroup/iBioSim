@@ -1,10 +1,13 @@
 package sbol;
 
+import gcm.util.Utility;
+
 import java.awt.*;
 
 import javax.swing.*;
 
 import org.sbolstandard.libSBOLj.*;
+
 import java.io.*;
 import java.net.URI;
 import java.util.*;
@@ -13,25 +16,23 @@ import main.Gui;
 
 public class SbolBrowser extends JPanel {
 	
-	private HashMap<String, Library> libMap = new HashMap<String, Library>();
-	private HashMap<String, DnaComponent> compMap = new HashMap<String, DnaComponent>();
-	private HashMap<String, SequenceFeature> featMap = new HashMap<String, SequenceFeature>();
-	private String filter = "";
-	private String[] options = {"Ok"};
+	private String[] options = {"Ok", "Cancel"};
 	private JPanel selectionPanel = new JPanel(new GridLayout(1,2));
 	private JTextArea viewArea = new JTextArea();
 	private JScrollPane viewScroll = new JScrollPane();
 	private LibraryPanel libPanel;
 	private DnaComponentPanel compPanel;
-	private JTextField sbolText;
+	private String selection = "";
 	
 	//Constructor when browsing a single RDF file from the main gui
 	public SbolBrowser(String filePath) {
 		super(new BorderLayout());
 		
-		loadRDF(filePath);
+		HashMap<String, Library> libMap = new HashMap<String, Library>();
+		Library lib = SbolUtility.loadRDF(filePath);
+		libMap.put(lib.getDisplayId(), lib);
 		
-		constructBrowser();
+		constructBrowser(libMap, "");
 		
 		JPanel browserPanel = new JPanel();
 		browserPanel.add(selectionPanel, "North");
@@ -44,43 +45,66 @@ public class SbolBrowser extends JPanel {
 	}
 	
 	//Constructor when browsing RDF file subsets for SBOL to GCM association
-	public SbolBrowser(HashSet<String> filePaths, String filter, JTextField sbolText) {
+	public SbolBrowser(HashSet<String> filePaths, String filter, String defaultSelection) {
 		super(new GridLayout(2,1));
-		this.filter = filter;
-		this.sbolText = sbolText;
 		
-		for (String fp : filePaths)
-			loadRDF(fp);
+		HashMap<String, Library> libMap = new HashMap<String, Library>();
+		for (String fp : filePaths) {
+			Library lib = SbolUtility.loadRDF(fp);
+			libMap.put(lib.getDisplayId(), lib);
+		}
 		
-		constructBrowser();
+		constructBrowser(libMap, filter);
 		
 		this.add(selectionPanel);
 		this.add(viewScroll);
 		
 		boolean display = true;
 		while (display)
-			display = browserOpen();
+			display = browserOpen(filter, defaultSelection);
 	}
 	
-	private boolean browserOpen() {
-		int option = JOptionPane.showOptionDialog(Gui.frame, this,
-				"SBOL Browser", JOptionPane.YES_NO_OPTION,
-				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-		if (option == JOptionPane.YES_OPTION) {
-			sbolText.setText(libPanel.getSelectedIds()[0] + "/" + compPanel.getSelectedIds()[0]);
-			return false;
-		} else if (option == JOptionPane.NO_OPTION) {
-			return false;
-		}
+	private boolean browserOpen(String filter, String defaultSelection) {
+		boolean selectionValid;
+		do {
+			selectionValid = true;
+			int option = JOptionPane.showOptionDialog(Gui.frame, this,
+					"SBOL Browser", JOptionPane.YES_NO_OPTION,
+					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			if (option == JOptionPane.YES_OPTION) {
+				String[] libIds = libPanel.getSelectedIds();
+				String[] compIds = compPanel.getSelectedIds();
+				if (libIds.length > 0)
+					selection = libIds[0];
+				else {
+					selectionValid = false;
+					JOptionPane.showMessageDialog(Gui.frame, "Blank ID.",
+							"Invalid ID", JOptionPane.ERROR_MESSAGE);
+				}
+				if (compIds.length > 0)
+					selection = selection + "/" + compIds[0];
+				else if (!filter.equals("library") && libIds.length > 0) {
+					selectionValid = false;
+					JOptionPane.showMessageDialog(Gui.frame, "Component ID not selected.",
+							"Invalid ID", JOptionPane.ERROR_MESSAGE);
+				}
+			} else {
+				selection = defaultSelection;
+				selectionValid = true;
+			}
+		} while(!selectionValid);
 		return false;
 	}
 	
-	private void constructBrowser() {
+	private void constructBrowser(HashMap<String, Library> libMap, String filter) {
 		viewScroll.setMinimumSize(new Dimension(780, 400));
 		viewScroll.setPreferredSize(new Dimension(828, 264));
 		viewScroll.setViewportView(viewArea);
 		viewArea.setLineWrap(true);
 		viewArea.setEditable(false);
+		
+		HashMap<String, DnaComponent> compMap = new HashMap<String, DnaComponent>();
+		HashMap<String, SequenceFeature> featMap = new HashMap<String, SequenceFeature>();
 		
 		compPanel = new DnaComponentPanel(compMap, featMap, viewArea);
 		libPanel = new LibraryPanel(libMap, compMap, featMap, viewArea, compPanel, filter);
@@ -90,36 +114,7 @@ public class SbolBrowser extends JPanel {
 		selectionPanel.add(compPanel);
 	}
 	
-	private void loadRDF(String filePath) {
-		try {
-			FileInputStream in = new FileInputStream(filePath);
-			Scanner scanIn = new Scanner(in).useDelimiter("\n");
-			String rdfString = "";
-//			HashSet<String> libIds = new HashSet<String>();
-//			boolean libFlag = false;
-			while (scanIn.hasNext()) {
-				String token = scanIn.next();
-//				if (libFlag && token.startsWith("\t<displayId")) {
-//						int start = token.indexOf(">");
-//						int stop = token.indexOf("<", start);
-//						libIds.add(token.substring(start + 1, stop));
-//						libFlag = false;
-//				} else if (token.equals("\t<rdf:type rdf:resource=\"http://sbols.org/sbol.owl#Library\"/>"))
-//					libFlag = true;
-				rdfString = rdfString.concat(token) + "\n";
-			}
-			scanIn.close();
-			SbolService factory = IOTools.fromRdfXml(rdfString);
-//			for (String libId : libIds) {
-//				Library lib = factory.getLibrary(libId);
-//				libMap.put(libId, lib);
-//			}		
-			Library lib = factory.getLibrary();
-			String libId = lib.getDisplayId();
-			libMap.put(libId, lib);
-		} catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Error opening SBOL file.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
+	public String getSelection() {
+		return selection;
 	}
 }

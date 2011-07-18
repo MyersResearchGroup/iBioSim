@@ -7,6 +7,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.net.URI;
+import java.util.HashMap;
 import java.util.HashSet;
 
 import javax.swing.JButton;
@@ -15,7 +17,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.tree.TreeModel;
 
+import org.sbolstandard.libSBOLj.Library;
+import org.sbolstandard.libSBOLj.SequenceFeature;
+
 import sbol.SbolBrowser;
+import sbol.SbolUtility;
 
 public class SbolField extends JPanel implements ActionListener {
 	
@@ -30,8 +36,7 @@ public class SbolField extends JPanel implements ActionListener {
 	
 		this.sbolType = sbolType;
 		setLabel(sbolType);
-//		sbolText.setEditable(false);
-		sbolButton.setActionCommand(sbolType);
+		sbolButton.setActionCommand("associateSBOL");
 		sbolButton.addActionListener(this);
 		this.add(sbolLabel);
 		this.add(sbolButton);
@@ -53,23 +58,48 @@ public class SbolField extends JPanel implements ActionListener {
 	}
 	
 	public boolean isValidText() {
-		return Utility.isValid(getText(), Utility.SBOLFIELDstring);
+		if (Utility.isValid(sbolText.getText(), Utility.SBOLFIELDstring)) {
+			String libId = sbolText.getText().split("/")[0];
+			String featId = sbolText.getText().split("/")[1];
+			boolean isValid = false;
+			HashSet<String> loadPaths = gcmEditor.getSbolFiles();
+			for (String lp : loadPaths) {
+				Library lib = SbolUtility.loadRDF(lp);
+				if (lib.getDisplayId().equals(libId)) {
+					for (SequenceFeature feat : lib.getFeatures()) {
+						if (feat.getDisplayId().equals(featId)) {
+							for (URI uri : feat.getTypes()) {
+								if (uri.getFragment().equals(typeConverter(sbolType)))
+									isValid = true;
+							}
+						}
+							
+					}
+				}
+			}
+			return isValid;
+		} else
+			return false;
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals(GlobalConstants.SBOL_ORF)) {
+		if (e.getActionCommand().equals("associateSBOL")) {
 			HashSet<String> filePaths = gcmEditor.getSbolFiles();
-			SbolBrowser browser = new SbolBrowser(filePaths, "ORF", sbolText);
-		} else if (e.getActionCommand().equals(GlobalConstants.SBOL_PROMOTER)) {
-			HashSet<String> filePaths = gcmEditor.getSbolFiles();
-			SbolBrowser browser = new SbolBrowser(filePaths, "promoter", sbolText);
-		} else if (e.getActionCommand().equals(GlobalConstants.SBOL_RBS)) {
-			HashSet<String> filePaths = gcmEditor.getSbolFiles();
-			SbolBrowser browser = new SbolBrowser(filePaths, "RBS", sbolText);
-		} else if (e.getActionCommand().equals(GlobalConstants.SBOL_TERMINATOR)) {
-			HashSet<String> filePaths = gcmEditor.getSbolFiles();
-			SbolBrowser browser = new SbolBrowser(filePaths, "terminator", sbolText);
+			SbolBrowser browser = new SbolBrowser(filePaths, typeConverter(sbolType), sbolText.getText());
+			sbolText.setText(browser.getSelection());
 		} 
+	}
+	
+	private String typeConverter(String sbolType) {
+		if (sbolType.equals(GlobalConstants.SBOL_ORF))
+			return "ORF";
+		else if (sbolType.equals(GlobalConstants.SBOL_PROMOTER))
+			return "promoter";
+		else if (sbolType.equals(GlobalConstants.SBOL_RBS))
+			return "RBS";
+		else if (sbolType.equals(GlobalConstants.SBOL_TERMINATOR))
+			return "terminator";
+		return "";
 	}
 	
 	private void setLabel(String sbolType) {

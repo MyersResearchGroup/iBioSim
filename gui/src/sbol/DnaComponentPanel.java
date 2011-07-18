@@ -59,11 +59,11 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 			for (String sid : selectedIds) {
 				if (compMap.containsKey(sid)) {
 					DnaComponent dnac = compMap.get(sid);
-					if (dnac.getName() != null)
+					if (dnac.getName() != null && !dnac.getName().equals(""))
 						viewArea.append("Name:  " + dnac.getName() + "\n");
 					else
 						viewArea.append("Name:  NA\n");
-					if (dnac.getDescription() != null)
+					if (dnac.getDescription() != null && !dnac.getDescription().equals(""))
 						viewArea.append("Description:  " + dnac.getDescription() + "\n");
 					else 
 						viewArea.append("Description:  NA\n");
@@ -80,15 +80,15 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 						viewArea.append("Annotations:  NA");
 				} else if (featMap.containsKey(sid)) {  // this probably goes away once libSBOL up to speed, type loop gets moved to processAnnotations
 					SequenceFeature sf = featMap.get(sid);
-					if (sf.getName() != null)
+					if (sf.getName() != null && !sf.getName().equals(""))
 						viewArea.append("Name:  " + sf.getName() + "\n");
 					else
 						viewArea.append("Name:  NA\n");
-					if (sf.getDescription() != null)
+					if (sf.getDescription() != null && !sf.getDescription().equals(""))
 						viewArea.append("Description:  " + sf.getDescription() + "\n");
 					else
 						viewArea.append("Description:  NA\n");
-					viewArea.append("Types:  ");
+					viewArea.append("Type:  ");
 					String types = "";
 					for (URI uri : sf.getTypes()) {
 						if (!uri.getFragment().equals("SequenceFeature"))
@@ -138,6 +138,10 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 			annotations = annotations + sign + arraySA[k].getStart() + " to " + sign + arraySA[k].getStop() + ", "; 
 		}
 		return annotations;
+	}
+	
+	public void disableList() {
+		compList.setEnabled(false);
 	}
 	
 	public void mouseEntered(MouseEvent e) {
