@@ -894,7 +894,7 @@ public class Schematic extends JPanel implements ActionListener {
 				
 				//if the graph is building, ignore the creation of edges.
 				//also, if we're on a grid, no influences are allowed
-				if(graph.isBuilding == false || grid.isEnabled()){
+				if(graph.isBuilding == false){
 					
 					// if the user tries to add anything in simulation mode, stop them.
 					if(editable == false){
