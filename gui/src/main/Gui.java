@@ -8573,24 +8573,24 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 			}
-			ArrayList<String> saved = new ArrayList<String>();
-			if (this.tab.getComponentAt(i) instanceof GCM2SBMLEditor) {
-				saved.add(this.tab.getTitleAt(i));
-				GCM2SBMLEditor gcm = (GCM2SBMLEditor) this.tab.getComponentAt(i);
-				if (gcm.getSBMLFile().equals(updatedFile)) {
-					gcm.save("save");
-				}
-			}
-			String[] files = new File(root).list();
-			for (String s : files) {
-				if (s.endsWith(".gcm") && !saved.contains(s)) {
-					GCMFile gcm = new GCMFile(root);
-					gcm.load(root + separator + s);
-					if (gcm.getSBMLFile().equals(updatedFile)) {
-						updateViews(s);
-					}
-				}
-			}
+			// ArrayList<String> saved = new ArrayList<String>();
+			// if (this.tab.getComponentAt(i) instanceof GCM2SBMLEditor) {
+			// saved.add(this.tab.getTitleAt(i));
+			// GCM2SBMLEditor gcm = (GCM2SBMLEditor) this.tab.getComponentAt(i);
+			// if (gcm.getSBMLFile().equals(updatedFile)) {
+			// gcm.save("save");
+			// }
+			// }
+			// String[] files = new File(root).list();
+			// for (String s : files) {
+			// if (s.endsWith(".gcm") && !saved.contains(s)) {
+			// GCMFile gcm = new GCMFile(root);
+			// gcm.load(root + separator + s);
+			// if (gcm.getSBMLFile().equals(updatedFile)) {
+			// updateViews(s);
+			// }
+			// }
+			// }
 		}
 	}
 
