@@ -11,6 +11,7 @@ import java.awt.AWTError;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -909,7 +910,7 @@ public class GCMFile {
 	 * 
 	 * @return
 	 */
-	public StringBuffer saveToBuffer(Boolean includeGlobals, Boolean collectGarbage,boolean appendSBML) {
+	public StringBuffer saveToBuffer(Boolean includeGlobals, Boolean collectGarbage, boolean appendSBML) {
 		StringBuffer buffer = new StringBuffer("digraph G {\n");
 		for (String s : species.keySet()) {
 			buffer.append(s + " [");
@@ -1049,7 +1050,15 @@ public class GCMFile {
 				}
 			}
 		}
-		buffer.append("}\n");
+		
+		//append the grid size if there is one
+		if (getGrid().isEnabled()) {
+			
+			buffer.append("}\nGrid Size {\n");			
+			buffer.append("rows="+getGrid().getNumRows()+"\n");
+			buffer.append("cols="+getGrid().getNumCols()+"\n");			
+			buffer.append("}\n");
+		}
 
 		// For saving .gcm file before sending to dotty, omit the rest of this.
 		if (includeGlobals) {
@@ -1108,6 +1117,8 @@ public class GCMFile {
 			for (String s : conditions) {
 				buffer.append(s + "\n");
 			}
+			buffer.append("}\n");
+
 			/*
 			 * buffer.append("}\nComponents {\n"); for (String s :
 			 * components.keySet()) { buffer.append(s + " ["); Properties prop =
@@ -1118,8 +1129,7 @@ public class GCMFile {
 			 * (buffer.charAt(buffer.length() - 1) == ',') {
 			 * buffer.deleteCharAt(buffer.length() - 1); } buffer.append("]\n");
 			 * }
-			 */
-			buffer.append("}\n");
+			 */			
 			if (appendSBML) {
 				SBMLWriter writer = new SBMLWriter();
 				String SBMLstr = writer.writeSBMLToString(sbml);
@@ -1155,7 +1165,7 @@ public class GCMFile {
 	 * load the GCM file from a buffer.
 	 */
 	private void loadFromBuffer(StringBuffer data) {
-
+		
 		species = new HashMap<String, Properties>();
 		reactions = new HashMap<String, Properties>();
 		influences = new HashMap<String, Properties>();
@@ -1166,7 +1176,10 @@ public class GCMFile {
 		parameters = new HashMap<String, String>();
 		grid = new Grid();
 		
+		Point gridSize = new Point(0, 0);
+		
 		loadDefaultParameters();
+		
 		try {
 			parseStates(data);
 			boolean complexConversion = parseInfluences(data);
@@ -1174,6 +1187,7 @@ public class GCMFile {
 			parsePromoters(data);
 			parseSBMLFile(data);
 			parseConditions(data);
+			gridSize = parseGridSize(data);
 			if (complexConversion) {
 				save(this.filename);
 				load(this.filename);
@@ -1183,7 +1197,8 @@ public class GCMFile {
 			e.printStackTrace();
 		}
 		
-		buildGrid(components);
+		if (gridSize != null)
+			buildGrid(gridSize.x, gridSize.y, components);
 	}
 
 	public void load(String filename) {
@@ -2158,6 +2173,8 @@ public class GCMFile {
 		globalParameters.remove(parameter);
 	}
 
+	//PARSE METHODS
+	
 	private void parseStates(StringBuffer data) {
 		Pattern network = Pattern.compile(NETWORK);
 		Matcher matcher = network.matcher(data.toString());
@@ -2301,6 +2318,35 @@ public class GCMFile {
 		}
 	}
 
+	/**
+	 * loads the grid size from the gcm file
+	 * 
+	 * @param data string data from a gcm file
+	 */
+	private Point parseGridSize(StringBuffer data) {
+		
+		Pattern network = Pattern.compile(GRID_SIZE);
+		Matcher matcher = network.matcher(data.toString());
+		
+		if (!matcher.find()) return null;
+		
+		String info = matcher.group(1);
+		
+		if (info != null) {
+			
+			String[] rowcolInfo = info.split("\n");
+			
+			String[] rowInfo = rowcolInfo[1].split("=");
+			String[] colInfo = rowcolInfo[2].split("=");
+			
+			String row = rowInfo[1];
+			String col = colInfo[1];
+			
+			return new Point(Integer.parseInt(row), Integer.parseInt(col));
+		}
+		return null;
+	}
+	
 	/*
 	 * private void parseComponents(StringBuffer data) { Pattern network =
 	 * Pattern.compile(COMPONENTS_LIST); Matcher matcher =
@@ -3395,9 +3441,9 @@ public class GCMFile {
 		grid = g;
 	}	
 	
-	public void buildGrid(HashMap<String, Properties> components) {
+	public void buildGrid(int rows, int cols, HashMap<String, Properties> components) {
 		
-		grid.createGrid(components);
+		grid.createGrid(rows, cols, components);
 	}
 	
 	
@@ -3423,6 +3469,8 @@ public class GCMFile {
 	private static final String SBML = "SBML=((.*)\n)*";
 
 	private static final String PROMOTERS_LIST = "Promoters\\s\\{([^}]*)\\s\\}";
+	
+	private static final String GRID_SIZE = "Grid\\sSize\\s\\{([^}]*)\\s\\}";
 
 	// private static final String COMPONENTS_LIST =
 	// "Components\\s\\{([^}]*)\\s\\}";

@@ -127,6 +127,13 @@ public class Grid {
 	 */
 	public void createGrid(int rows, int cols, HashMap<String, Properties> components) {
 		
+		//if the grid size is 0 by 0, don't make it
+		if (rows == 0 && cols == 0) {
+			
+			enabled = false; //should be false already, but whatever
+			return;
+		}
+		
 		enabled = true;
 		numRows = rows;
 		numCols = cols;
@@ -149,63 +156,6 @@ public class Grid {
 		updateNodeMaps();
 		updateLocToComponentMap();
 		putComponentsOntoGrid();
-	}
-	
-	/**
-	 * assumes that the components have the row and col properties
-	 * which are then used to create a grid
-	 * 
-	 * this is called from GCMFile in loadFromBuffer, which happens
-	 * when loading a gcm from a file
-	 * 
-	 * @param components
-	 */
-	public void createGrid(HashMap<String, Properties> components) {
-		
-		//find the max row and col elements, then call createGrid
-		
-		int maxRow = 0;
-		int maxCol = 0;
-		
-		Iterator<Map.Entry<String, Properties>> iter = components.entrySet().iterator();
-				
-		//if there aren't any components, don't make a grid
-		if (components.size() == 0) {
-			
-			enabled = false;
-			return;
-		}
-		
-		//iterate through the components to get the number of rows and cols
-		//this is done by finding the maximum row and col numbers
-		while(iter.hasNext()) {
-			
-			Map.Entry<String, Properties> entry = (Map.Entry<String, Properties>)iter.next();
-			
-			//find the row and col from the component's properties
-			Properties props = entry.getValue();
-						
-			String rowProp = props.getProperty("row");
-			String colProp = props.getProperty("col");
-			
-			if (rowProp != null && colProp != null) {
-			
-				if (Integer.valueOf(rowProp) > maxRow)
-					maxRow = Integer.valueOf(rowProp);
-				
-				if (Integer.valueOf(colProp) > maxCol)
-					maxCol = Integer.valueOf(colProp);
-			
-			}
-			//if components have no row/col properties, then don't create a grid
-			else {
-				
-				enabled = false;
-				return;
-			}
-		}
-		
-		createGrid(maxRow, maxCol, components);
 	}
 	
 	/**
@@ -497,8 +447,8 @@ public class Grid {
 			int row = Integer.valueOf(props.getProperty("row"));
 			int col = Integer.valueOf(props.getProperty("col"));
 			boolean compartment = Boolean.parseBoolean(props.getProperty("compartment"));
-			
-			//if the user selects no component, then don't put a component there
+						
+			//if adding blank components, don't set the component
 			if (gcm.equals("none"))
 				grid.get(row-1).get(col-1).setOccupied(false);
 			else {
@@ -823,7 +773,7 @@ public class Grid {
 		//PUBLIC
 		
 		/**
-		 * deletes the node's component, freeing it to be re-set to another
+		 * deletes the node's component's gcm association, freeing it to be re-set to another
 		 */
 		public void clear() {
 			
@@ -885,6 +835,7 @@ public class Grid {
 		 */
 		public void setComponent(Map.Entry<String, Properties> component) {
 			
+			this.component = null;
 			this.component = component;
 			isCompartment = Boolean.getBoolean(component.getValue().getProperty("compartment"));
 		}
