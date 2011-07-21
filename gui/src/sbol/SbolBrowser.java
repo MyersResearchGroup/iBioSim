@@ -30,7 +30,8 @@ public class SbolBrowser extends JPanel {
 		
 		HashMap<String, Library> libMap = new HashMap<String, Library>();
 		Library lib = SbolUtility.loadRDF(filePath);
-		libMap.put(lib.getDisplayId(), lib);
+		String[] splitPath = filePath.split(File.separator);
+		libMap.put(splitPath[splitPath.length - 1] + "/" + lib.getDisplayId(), lib);
 		
 		constructBrowser(libMap, "");
 		
@@ -45,13 +46,14 @@ public class SbolBrowser extends JPanel {
 	}
 	
 	//Constructor when browsing RDF file subsets for SBOL to GCM association
-	public SbolBrowser(HashSet<String> filePaths, String filter, String defaultSelection) {
+	public SbolBrowser(HashSet<String> sbolFiles, String filter, String defaultSelection) {
 		super(new GridLayout(2,1));
 		
 		HashMap<String, Library> libMap = new HashMap<String, Library>();
-		for (String fp : filePaths) {
-			Library lib = SbolUtility.loadRDF(fp);
-			libMap.put(lib.getDisplayId(), lib);
+		for (String filePath : sbolFiles) {
+			Library lib = SbolUtility.loadRDF(filePath);
+			String[] splitPath = filePath.split(File.separator);
+			libMap.put(splitPath[splitPath.length - 1] + "/" + lib.getDisplayId(), lib);
 		}
 		
 		constructBrowser(libMap, filter);

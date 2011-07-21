@@ -363,18 +363,14 @@ public class Schematic extends JPanel implements ActionListener {
 			gcm.setIsWithinCompartment(check.isSelected());
 		} 
 		else if (command.equals("saveSBOL")) {
-			HashSet<String> filePaths = gcm2sbml.getSbolFiles();
-			HashMap<String, String> libToFileMap = new HashMap<String, String>();
-			for (String fp : filePaths) {
-				Library lib = SbolUtility.loadRDF(fp);
-				libToFileMap.put(lib.getDisplayId(), fp);
-			}
-			SbolBrowser browser = new SbolBrowser(filePaths, "library", "");
-			String libId = browser.getSelection().split("/")[0];
-			if (!libId.equals("")) {
+			HashSet<String> sbolFiles = gcm2sbml.getSbolFiles();
+			SbolBrowser browser = new SbolBrowser(sbolFiles, "library", "");
+			String fileId = browser.getSelection().split("/")[0]; 
+			if (!fileId.equals("")) {
+				String exportPath = gcm2sbml.getPath() + File.separator + fileId;
 				GCMParser parser = new GCMParser(gcm, false);
 				SbolSynthesizer synthesizer = parser.buildSbolSynthesizer();
-				synthesizer.synthesizeDnaComponent(gcm2sbml.getSbolFiles(), libToFileMap.get(libId));
+				synthesizer.synthesizeDnaComponent(sbolFiles, exportPath, browser.getSelection().split("/")[1]);
 			}
 		} 
 		else if (command.equals("exportSBOL")) {
@@ -391,7 +387,7 @@ public class Schematic extends JPanel implements ActionListener {
 				biosimrc.put("biosim.general.export_dir", exportPath);
 				GCMParser parser = new GCMParser(gcm, false);
 				SbolSynthesizer synthesizer = parser.buildSbolSynthesizer();
-				synthesizer.synthesizeDnaComponent(gcm2sbml.getSbolFiles(), exportPath);
+				synthesizer.synthesizeDnaComponent(gcm2sbml.getSbolFiles(), exportPath, "");
 			}
 		}
 		else if (command.equals("grid")) {
