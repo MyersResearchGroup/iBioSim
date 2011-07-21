@@ -34,10 +34,10 @@ public class SbolSynthesizer {
 		this.promoters = promoters;
 	}
 	
-	public void synthesizeDnaComponent(HashSet<String> loadPaths, String exportPath) {	
+	public void synthesizeDnaComponent(HashSet<String> sbolFiles, String exportFilePath, String exportLibId) {	
+		// Create DNA component
 		DnaComponent comp = new DnaComponent();
-		// Name DNA component
-		Library exportLib = SbolUtility.loadRDF(exportPath);
+		Library exportLib = SbolUtility.loadRDF(exportFilePath);
 		String compId = getUserInput("Enter Display ID:", "Display ID", exportLib);
 		String compName = null;
 		if (compId != null) {
@@ -53,35 +53,45 @@ public class SbolSynthesizer {
 			comp.setDescription(compDescription);
 			// Load libraries
 			HashMap<String, Library> libMap = new HashMap<String, Library>();
-			for (String lp : loadPaths) {
-				Library lib = SbolUtility.loadRDF(lp);
-				libMap.put(lib.getDisplayId(), lib);
+			for (String filePath : sbolFiles) {
+				Library lib = SbolUtility.loadRDF(filePath);
+				String[] splitPath = filePath.split(File.separator);
+				libMap.put(splitPath[splitPath.length - 1] + "/" + lib.getDisplayId(), lib);
 			}	
-			// Assemble DNA component for export
+			exportLib.addComponent(comp);
+			// Assemble DNA component annotations
 			int position = 1;
 			String sequence = "";
 			for (Promoter p : promoters.values()) {
 				SequenceFeature feat;
 				if (p.getProperty(GlobalConstants.SBOL_PROMOTER) != null) {
 					feat = loadFeature(p.getProperty(GlobalConstants.SBOL_PROMOTER), libMap);
-					position = addFeature(feat, comp, position);
+					if (checkOverwrite(p.getProperty(GlobalConstants.SBOL_PROMOTER), exportFilePath, exportLib))
+						exportLib = removeFeature(feat.getDisplayId(), exportLib);
+					position = addFeature(feat, comp, exportLib, position);
 					sequence = sequence + feat.getDnaSequence().getDnaSequence();
 				}
 				for (SpeciesInterface s : p.getOutputs()) {
 					if (s.getProperty(GlobalConstants.SBOL_RBS) != null) {
 						feat = loadFeature(s.getProperty(GlobalConstants.SBOL_RBS), libMap);
-						position = addFeature(feat, comp, position);
+						if (checkOverwrite(s.getProperty(GlobalConstants.SBOL_RBS), exportFilePath, exportLib))
+							exportLib = removeFeature(feat.getDisplayId(), exportLib);
+						position = addFeature(feat, comp, exportLib, position);
 						sequence = sequence + feat.getDnaSequence().getDnaSequence();
 					}
 					if (s.getProperty(GlobalConstants.SBOL_ORF) != null) {
 						feat = loadFeature(s.getProperty(GlobalConstants.SBOL_ORF), libMap);
-						position = addFeature(feat, comp, position);
+						if (checkOverwrite(s.getProperty(GlobalConstants.SBOL_ORF), exportFilePath, exportLib))
+							exportLib = removeFeature(feat.getDisplayId(), exportLib);
+						position = addFeature(feat, comp, exportLib, position);
 						sequence = sequence + feat.getDnaSequence().getDnaSequence();
 					}
 				}
 				if (p.getProperty(GlobalConstants.SBOL_TERMINATOR) != null) {
 					feat = loadFeature(p.getProperty(GlobalConstants.SBOL_TERMINATOR), libMap);
-					position = addFeature(feat, comp, position);
+					if (checkOverwrite(p.getProperty(GlobalConstants.SBOL_TERMINATOR), exportFilePath, exportLib))
+						exportLib = removeFeature(feat.getDisplayId(), exportLib);
+					position = addFeature(feat, comp, exportLib, position);
 					sequence = sequence + feat.getDnaSequence().getDnaSequence();
 				}
 			}
@@ -89,10 +99,9 @@ public class SbolSynthesizer {
 			compSeq.setDnaSequence(sequence);
 			comp.setDnaSequence(compSeq);
 			// Export DNA component
-			exportLib.addComponent(comp);
 			String rdf = IOTools.toRdfXml(exportLib);
 			try {
-				FileOutputStream out = new FileOutputStream(exportPath);
+				FileOutputStream out = new FileOutputStream(exportFilePath);
 				out.write(rdf.getBytes());
 				out.close();
 			} catch (Exception e1) {
@@ -102,9 +111,9 @@ public class SbolSynthesizer {
 		}
 	}
 	
-	private SequenceFeature loadFeature(String sbolIds, HashMap<String, Library> libMap) {
-		String libId = sbolIds.split("/")[0];
-		String featId = sbolIds.split("/")[1];
+	private SequenceFeature loadFeature(String featProperty, HashMap<String, Library> libMap) {
+		String libId = featProperty.split("/")[0] + "/" + featProperty.split("/")[1];
+		String featId = featProperty.split("/")[2];
 		if (libMap.containsKey(libId)) {
 			for (SequenceFeature sf : libMap.get(libId).getFeatures()) {
 				if (sf.getDisplayId().equals(featId))
@@ -120,7 +129,7 @@ public class SbolSynthesizer {
 		return emptyFeat;
 	}
 	
-	private int addFeature(SequenceFeature feat, DnaComponent comp, int position) {
+	private int addFeature(SequenceFeature feat, DnaComponent comp, Library exportLib, int position) {
 		if (feat.getDnaSequence().getDnaSequence().length() >= 1) {
 			SequenceAnnotation annot = new SequenceAnnotation();
 			annot.setStart(position);
@@ -131,16 +140,10 @@ public class SbolSynthesizer {
 			comp.addAnnotation(annot);
 			annot.generateId(comp);
 			position++;
+			SbolService factory = new SbolService();
+			factory.addSequenceFeatureToLibrary(feat, exportLib);
 		}
 		return position;
-	}
-	
-	private boolean duplicateCheck(String compId, Library lib) {
-		for (DnaComponent dnac : lib.getComponents()) {
-			if(dnac.getDisplayId().equals(compId))
-				return true;
-		}
-		return false;
 	}
 	
 	private String getUserInput(String message, String inputType, Library exportLib) {
@@ -155,7 +158,7 @@ public class SbolSynthesizer {
 				inputValid = false;
 				JOptionPane.showMessageDialog(Gui.frame, "Non-alphanumeric ID.",
 						"Invalid ID", JOptionPane.ERROR_MESSAGE);
-			} else if (inputType.equals("Display ID") && duplicateCheck(input, exportLib)) {
+			} else if (inputType.equals("Display ID") && SbolUtility.idClash(input, exportLib)) {
 				inputValid = false;
 				JOptionPane.showMessageDialog(Gui.frame, "Library already contains DNA component with chosen ID.",
 						"Invalid ID", JOptionPane.ERROR_MESSAGE);
@@ -166,6 +169,58 @@ public class SbolSynthesizer {
 			}
 		} while (!inputValid);
 		return input;
+	}
+	
+	private boolean checkOverwrite(String featProperty, String exportFilePath, Library exportLib)  {
+		String libId = featProperty.split("/")[0] + "/" + featProperty.split("/")[1];
+		String[] splitPath = exportFilePath.split(File.separator);
+		String exportLibId = splitPath[splitPath.length - 1] + "/" + exportLib.getDisplayId();
+		String featId = featProperty.split("/")[2];
+		if (SbolUtility.idClash(featId, exportLib) && !libId.equals(exportLibId)) {
+			int option = JOptionPane.showConfirmDialog(Gui.frame, libId + " already contains " + featId + ". Would you like to overwrite?", "ID Clash", 
+					JOptionPane.YES_NO_OPTION);
+			return (option == JOptionPane.YES_OPTION);
+		} else
+			return false;
+	}
+	
+	private Library removeFeature(String featId, Library lib) {
+		Library editedLib = new Library();
+		editedLib.setDisplayId(lib.getDisplayId());
+		editedLib.setName(lib.getName());
+		editedLib.setDescription(lib.getDescription());
+		for (DnaComponent dnac : lib.getComponents()) {
+			boolean target = false;
+			for (SequenceAnnotation sa : dnac.getAnnotations()) {
+				for (SequenceFeature sf : sa.getFeatures()) {
+					if (sf.getDisplayId().equals(featId))
+						target = true;
+				}
+			}
+			if (!target)
+				editedLib.addComponent(dnac);
+			else {
+				DnaComponent editedComp = new DnaComponent();
+				editedComp.setDisplayId(dnac.getDisplayId());
+				editedComp.setName(dnac.getName());
+				editedComp.setDescription(dnac.getDescription());
+				editedComp.setDnaSequence(dnac.getDnaSequence());
+				for (SequenceAnnotation sa : dnac.getAnnotations()) {
+					editedComp.addAnnotation(sa);
+					for (SequenceFeature sf : sa.getFeatures()) {
+						if (!sf.getDisplayId().equals(featId))
+							sa.addFeature(sf);
+					}
+				}
+			}
+		}
+		for (SequenceFeature sf : lib.getFeatures()) {
+			if (!sf.getDisplayId().equals(featId)) {
+				SbolService factory = new SbolService();
+				factory.addSequenceFeatureToLibrary(sf, editedLib);
+			}
+		}
+		return editedLib;
 	}
 	
 	

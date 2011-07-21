@@ -58,34 +58,33 @@ public class SbolField extends JPanel implements ActionListener {
 	}
 	
 	public boolean isValidText() {
-		if (Utility.isValid(sbolText.getText(), Utility.SBOLFIELDstring)) {
-			String libId = sbolText.getText().split("/")[0];
-			String featId = sbolText.getText().split("/")[1];
-			boolean isValid = false;
-			HashSet<String> loadPaths = gcmEditor.getSbolFiles();
-			for (String lp : loadPaths) {
-				Library lib = SbolUtility.loadRDF(lp);
-				if (lib.getDisplayId().equals(libId)) {
-					for (SequenceFeature feat : lib.getFeatures()) {
-						if (feat.getDisplayId().equals(featId)) {
-							for (URI uri : feat.getTypes()) {
-								if (uri.getFragment().equals(typeConverter(sbolType)))
-									isValid = true;
-							}
+		if (sbolText.getText().equals(""))
+			return true;
+		else if (Utility.isValid(sbolText.getText(), Utility.SBOLFIELDstring)) {
+			String fileId = sbolText.getText().split("/")[0];
+			String libId = sbolText.getText().split("/")[1];
+			String featId = sbolText.getText().split("/")[2];
+			Library lib = SbolUtility.loadRDF(gcmEditor.getPath() + File.separator + fileId);
+			if (lib.getDisplayId().equals(libId)) {
+				for (SequenceFeature feat : lib.getFeatures()) {
+					if (feat.getDisplayId().equals(featId)) {
+						for (URI uri : feat.getTypes()) {
+							if (uri.getFragment().equals(typeConverter(sbolType)))
+								return true;
 						}
-							
 					}
+
 				}
 			}
-			return isValid;
+			return false;
 		} else
 			return false;
 	}
 	
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("associateSBOL")) {
-			HashSet<String> filePaths = gcmEditor.getSbolFiles();
-			SbolBrowser browser = new SbolBrowser(filePaths, typeConverter(sbolType), sbolText.getText());
+			HashSet<String> sbolFiles = gcmEditor.getSbolFiles();
+			SbolBrowser browser = new SbolBrowser(sbolFiles, typeConverter(sbolType), sbolText.getText());
 			sbolText.setText(browser.getSelection());
 		} 
 	}

@@ -35,26 +35,17 @@ public class SbolUtility {
 		return lib;
 	}
 	
-//	// Checks if compId clashes with the display id for a DnaComponent or SequenceFeature in Library lib
-//	private boolean idClashLib(String compId, Library lib) {
-//		for (DnaComponent dnac : lib.getComponents()) {
-//			if(dnac.getDisplayId().equals(compId))
-//				return true;
-//		}
-//		for (SequenceFeature sf : lib.getFeatures()) {
-//			if(sf.getDisplayId().equals(compId))
-//				return true;
-//		}
-//		return false;
-//	}
-//	
-//	// Checks if compId clashes with display id for SequenceFeature annotating DnaComponent comp
-//	// This will have to change to accommodate hierarchy coming to SBOL
-//	private boolean idClashComp(String compId, DnaComponent comp) {
-////		for (SequenceAnnotation sa : comp.getAnnotations()) {
-////			for (SequenceFeature)
-////		}
-//			
-//		return false;
-//	}
+	// Checks if compId clashes with the display id for a DnaComponent or SequenceFeature in Library lib
+	public static boolean idClash(String compId, Library lib) {
+		for (DnaComponent dnac : lib.getComponents()) {
+			if(dnac.getDisplayId().equals(compId))
+				return true;
+		}
+		for (SequenceFeature sf : lib.getFeatures()) {
+			if(sf.getDisplayId().equals(compId))
+				return true;
+		}
+		return false;
+	}
+	
 }

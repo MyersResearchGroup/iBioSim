@@ -176,6 +176,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	public String getFilename() {
 		return filename;
 	}
+	
+	public String getPath() {
+		return path;
+	}
 
 	public void reload(String newName) {
 		filename = newName + ".gcm";
