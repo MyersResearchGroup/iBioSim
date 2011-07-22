@@ -1,8 +1,8 @@
 package gcm.gui;
 
+import gcm.gui.modelview.movie.ColorScheme;
+import gcm.gui.modelview.movie.ColorSchemeChooser;
 import gcm.gui.modelview.movie.MovieContainer;
-import gcm.gui.modelview.movie.visualizations.ColorScheme;
-import gcm.gui.modelview.movie.visualizations.ColorSchemeChooser;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
@@ -120,7 +120,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		grid.add(tempPanel);
 
 		Species species = gcm.getSBMLDocument().getModel().getSpecies(selected);
-
+		
 		// compartment field
 		tempPanel = new JPanel();
 		tempLabel = new JLabel("Compartment");

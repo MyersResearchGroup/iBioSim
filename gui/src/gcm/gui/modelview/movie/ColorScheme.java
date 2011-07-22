@@ -1,7 +1,4 @@
-package gcm.gui.modelview.movie.visualizations;
-
-import gcm.gui.modelview.movie.visualizations.cellvisualizations.MovieAppearance;
-import gcm.gui.modelview.movie.visualizations.gradient.MovieGradient;
+package gcm.gui.modelview.movie;
 
 import java.awt.Color;
 

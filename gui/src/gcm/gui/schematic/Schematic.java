@@ -5,9 +5,10 @@ import gcm.gui.DropComponentPanel;
 import gcm.gui.GCM2SBMLEditor;
 import gcm.gui.Grid;
 import gcm.gui.InfluencePanel;
+import gcm.gui.modelview.movie.ComponentSchemeChooser;
+import gcm.gui.modelview.movie.MovieAppearance;
 import gcm.gui.modelview.movie.MovieContainer;
-import gcm.gui.modelview.movie.visualizations.cellvisualizations.MovieAppearance;
-import gcm.gui.modelview.movie.visualizations.component.ComponentSchemeChooser;
+import gcm.gui.modelview.movie.SchemeChooserPanel;
 import gcm.parser.GCMFile;
 import gcm.parser.GCMParser;
 import gcm.util.GlobalConstants;
@@ -235,7 +236,7 @@ public class Schematic extends JPanel implements ActionListener {
 		selectButton.setSelected(true);
 		addComponentButton = Utils.makeRadioToolButton("add_component.png", "", "Add Components", this, modeButtonGroup);
 		toolBar.add(addComponentButton);
-		toolBar.add(Utils.makeToolButton("", "editGrid", "Edit Grid", this));
+		toolBar.add(Utils.makeToolButton("", "editGridSize", "Edit Grid Size", this));
 		
 		toolBar.addSeparator();
 		
@@ -392,8 +393,9 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		else if (command.equals("grid")) {
 			
-			//static method that builds the cell population panel
+			//static method that builds the grid panel
 			//the false field means to open the grid creation panel
+			//and not the grid editing panel
 			boolean changed = GridPanel.showGridPanel(gcm2sbml, gcm, false);
 			
 			//if the grid is built, then draw it and so on
@@ -405,7 +407,7 @@ public class Schematic extends JPanel implements ActionListener {
 				gcm.makeUndoPoint();
 			}
 		}
-		else if (command.equals("editGrid")) {
+		else if (command.equals("editGridSize")) {
 			
 			//static method that builds the cell population panel
 			//the true field means to open the grid edit panel
@@ -459,9 +461,11 @@ public class Schematic extends JPanel implements ActionListener {
 				
 			public void mouseClicked(MouseEvent event) {
 				
-				Point location = event.getPoint();
-				grid.setMouseClickLocation(location);
-				drawGrid();
+				if (grid.clickedOnGridPadding(event.getPoint())) {
+					Point location = event.getPoint();
+					grid.setMouseClickLocation(location);
+					drawGrid();
+				}
 			}
 		});
 		
@@ -615,6 +619,27 @@ public class Schematic extends JPanel implements ActionListener {
 				}
 				//double-click with left mouse button
 				else if(e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
+					
+					if (grid.isEnabled()) {
+						
+						//if the user clicks on the area outside of the component within the grid location
+						//bring up the appropriate panel
+						if (grid.clickedOnGridPadding(e.getPoint())) {
+							
+							//if we're in analysis view (ie, movie stuff)
+							//prompt the user for coloring species and whatnot for the movie
+							if (!editable) {
+								
+								//if there isn't a TSDParser, the user hasn't selected
+								//a TSD file to simulate
+								if (movieContainer.getTSDParser() == null)
+									JOptionPane.showMessageDialog(Gui.frame, "You must choose a simulation file before editing component properties.");
+								else
+									SchemeChooserPanel.showSchemeChooserPanel(movieContainer);
+							}
+						}
+						
+					}
 
 					if (cell != null) {
 						
@@ -1332,6 +1357,7 @@ public class Schematic extends JPanel implements ActionListener {
 			//gcm2sbml.displayChooseComponentDialog(true, null, false, cell.getId());
 			if(movieContainer == null)
 				gcm2sbml.launchComponentPanel(cell.getId());
+			//if in analysis view, bring up the movie options
 			else{
 				
 				if(movieContainer.getTSDParser() == null)
@@ -1380,9 +1406,9 @@ public class Schematic extends JPanel implements ActionListener {
 	/**
 	 * overrides the paintComponent method in JComponent;
 	 * is called automatically whenever the component becomes visible
-	 * or when repaint is called
+	 * or when repaint/drawGrid is called
 	 * 
-	 * is used to draw the grid on the schematic
+	 * is used to draw the grid onto the schematic
 	 * 
 	 * @param g Graphics object
 	 * 

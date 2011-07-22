@@ -3,7 +3,7 @@
  */
 package gcm.gui.schematic;
 
-import gcm.gui.modelview.movie.visualizations.cellvisualizations.MovieAppearance;
+import gcm.gui.modelview.movie.MovieAppearance;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 

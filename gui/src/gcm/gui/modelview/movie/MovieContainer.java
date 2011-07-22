@@ -1,10 +1,6 @@
 package gcm.gui.modelview.movie;
 
 import gcm.gui.GCM2SBMLEditor;
-import gcm.gui.modelview.movie.MoviePreferences;
-import gcm.gui.modelview.movie.visualizations.ColorScheme;
-import gcm.gui.modelview.movie.visualizations.cellvisualizations.MovieAppearance;
-import gcm.gui.modelview.movie.visualizations.component.ComponentScheme;
 import gcm.gui.schematic.ListChooser;
 import gcm.gui.schematic.Schematic;
 import gcm.gui.schematic.SchematicObjectClickEvent;
@@ -79,7 +75,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	TSDParser parser;
 	Timer playTimer;
 	
-	private final String PLAYING = "playing"; 
+	private final String PLAYING = "playing";
 	private final String PAUSED = "paused"; 
 	private String mode = PLAYING;
 	private MoviePreferences moviePreferences;
@@ -222,6 +218,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 		this.add(mt, BorderLayout.SOUTH);
 	}
 	
+	//this currently does nothing
+	//i'm not sure why it's here
 	private void registerEventListeners(){
 		
 	//	final MovieContainer self = this;

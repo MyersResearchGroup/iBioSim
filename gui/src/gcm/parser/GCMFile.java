@@ -1055,8 +1055,10 @@ public class GCMFile {
 		if (getGrid().isEnabled()) {
 			
 			buffer.append("}\nGrid Size {\n");			
-			buffer.append("rows="+getGrid().getNumRows()+"\n");
-			buffer.append("cols="+getGrid().getNumCols()+"\n");			
+			buffer.append("rows=" + getGrid().getNumRows() + "\n");
+			buffer.append("cols=" + getGrid().getNumCols() + "\n");	
+			buffer.append("spatial=" + Boolean.toString(getGrid().getGridSpatial()) + "\n");	
+			
 			buffer.append("}\n");
 		}
 
@@ -1176,8 +1178,6 @@ public class GCMFile {
 		parameters = new HashMap<String, String>();
 		grid = new Grid();
 		
-		Point gridSize = new Point(0, 0);
-		
 		loadDefaultParameters();
 		
 		try {
@@ -1187,7 +1187,7 @@ public class GCMFile {
 			parsePromoters(data);
 			parseSBMLFile(data);
 			parseConditions(data);
-			gridSize = parseGridSize(data);
+			parseGridSize(data);
 			if (complexConversion) {
 				save(this.filename);
 				load(this.filename);
@@ -1196,9 +1196,6 @@ public class GCMFile {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		if (gridSize != null)
-			buildGrid(gridSize.x, gridSize.y, components);
 	}
 
 	public void load(String filename) {
@@ -2173,6 +2170,7 @@ public class GCMFile {
 		globalParameters.remove(parameter);
 	}
 
+	
 	//PARSE METHODS
 	
 	private void parseStates(StringBuffer data) {
@@ -2323,12 +2321,12 @@ public class GCMFile {
 	 * 
 	 * @param data string data from a gcm file
 	 */
-	private Point parseGridSize(StringBuffer data) {
+	private void parseGridSize(StringBuffer data) {
 		
-		Pattern network = Pattern.compile(GRID_SIZE);
+		Pattern network = Pattern.compile(GRID);
 		Matcher matcher = network.matcher(data.toString());
 		
-		if (!matcher.find()) return null;
+		if (!matcher.find()) return;
 		
 		String info = matcher.group(1);
 		
@@ -2338,13 +2336,15 @@ public class GCMFile {
 			
 			String[] rowInfo = rowcolInfo[1].split("=");
 			String[] colInfo = rowcolInfo[2].split("=");
+			String[] spatialInfo = rowcolInfo[3].split("=");
 			
 			String row = rowInfo[1];
 			String col = colInfo[1];
-			
-			return new Point(Integer.parseInt(row), Integer.parseInt(col));
+			String gridSpatial = spatialInfo[1];
+						
+			buildGrid(Integer.parseInt(row), Integer.parseInt(col), 
+					components, Boolean.parseBoolean(gridSpatial));
 		}
-		return null;
 	}
 	
 	/*
@@ -3441,9 +3441,9 @@ public class GCMFile {
 		grid = g;
 	}	
 	
-	public void buildGrid(int rows, int cols, HashMap<String, Properties> components) {
+	public void buildGrid(int rows, int cols, HashMap<String, Properties> components, boolean gridSpatial) {
 		
-		grid.createGrid(rows, cols, components);
+		grid.createGrid(rows, cols, components, gridSpatial);
 	}
 	
 	
@@ -3470,7 +3470,7 @@ public class GCMFile {
 
 	private static final String PROMOTERS_LIST = "Promoters\\s\\{([^}]*)\\s\\}";
 	
-	private static final String GRID_SIZE = "Grid\\sSize\\s\\{([^}]*)\\s\\}";
+	private static final String GRID = "Grid\\s\\{([^}]*)\\s\\}";
 
 	// private static final String COMPONENTS_LIST =
 	// "Components\\s\\{([^}]*)\\s\\}";
