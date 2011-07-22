@@ -1,4 +1,4 @@
-package gcm.gui.modelview.movie.visualizations.component;
+package gcm.gui.modelview.movie;
 
 import gcm.gui.modelview.movie.MovieContainer;
 

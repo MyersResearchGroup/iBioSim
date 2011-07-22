@@ -1,6 +1,4 @@
-package gcm.gui.modelview.movie.visualizations.component;
-
-import gcm.gui.modelview.movie.visualizations.cellvisualizations.MovieAppearance;
+package gcm.gui.modelview.movie;
 
 import java.awt.Color;
 import java.util.ArrayList;

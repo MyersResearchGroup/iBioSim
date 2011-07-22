@@ -19,16 +19,6 @@ import gcm.util.GlobalConstants;
 /*
  * TODO-jstev:
  * 
- * put stuff in the listeners to update the grid's components and appearance
- * 		and also disallow moving outside of the grid and > 1 component per location and so on
- * 			create a new rectangle with the bounds and use the contains method
- * 		eg, for deletion, take the component and use a map to get the gridnode and then delete its component
- * 
- * make sure this won't break if there's an empty spot when loading from a file or otherwise
- * 		(ie, in createGrid)
- * 
- * you shouldn't be able to move cells in the schematic during analysis view
- * 		perhaps a toggle to know that it's analysis view? (paramsOnly is this toggle, i think)
  * 
  */
 
@@ -87,11 +77,11 @@ public class Grid {
 	/**
 	 * constructor to create a row x col grid of GridNodes
 	 */
-	public Grid(int rows, int cols, HashMap<String, Properties> components) {
+	public Grid(int rows, int cols, HashMap<String, Properties> components, boolean GridSpatial) {
 				
 		this();
 		
-		createGrid(rows, cols, components);
+		createGrid(rows, cols, components, gridSpatial);
 	}
 	
 	/**
@@ -125,7 +115,7 @@ public class Grid {
 	 * @param cols number of columns in the grid
 	 * @param components the components that are located on the grid
 	 */
-	public void createGrid(int rows, int cols, HashMap<String, Properties> components) {
+	public void createGrid(int rows, int cols, HashMap<String, Properties> components, boolean gridSpatial) {
 		
 		//if the grid size is 0 by 0, don't make it
 		if (rows == 0 && cols == 0) {
@@ -138,6 +128,7 @@ public class Grid {
 		numRows = rows;
 		numCols = cols;
 		
+		this.gridSpatial = gridSpatial;		
 		this.components = components;
 		
 		for(int i = 0; i < numRows; ++i) {
@@ -199,13 +190,13 @@ public class Grid {
 				if (node.isSelected())
 					drawGridSelectionBox(g, rect);
 				
-				//some debug stuff to draw onto the grid
-				g2.drawString(Boolean.toString(node.isOccupied()), rect.x, rect.y);
-				
-				if (node.component == null) {
-					g2.drawString("null", rect.x+40, rect.y);
-				}
-				else g2.drawString(node.getComponent().getKey(), rect.x+40, rect.y);
+//				//some debug stuff to draw onto the grid
+//				g2.drawString(Boolean.toString(node.isOccupied()), rect.x, rect.y);
+//				
+//				if (node.component == null) {
+//					g2.drawString("null", rect.x+40, rect.y);
+//				}
+//				else g2.drawString(node.getComponent().getKey(), rect.x+40, rect.y);
 			}
 		}
 	}
@@ -387,6 +378,38 @@ public class Grid {
 		updateNodeMaps();
 	}
 	
+	/**
+	 * returns whether or not the user clicked within a grid but outside of the component
+	 * (ie, in the grid's padding area)
+	 * 
+	 * @param clickPoint where the user clicked
+	 * @return whether or not the user clicked within a grid but outside of the component
+	 */
+	public boolean clickedOnGridPadding(Point clickPoint) {
+		
+		clickPoint.y += verticalOffset;
+		
+		//if the user clicked on the grid somewhere
+		if (gridBounds.contains(clickPoint)) {
+			
+			//get the grid node corresponding to the click point
+			GridNode node = pointToNodeMap.get(clickPoint);
+						
+			if (node == null) return true;
+			
+			//set the snap rectangles operate on mxGraph coordinates
+			//so we need to erase the vertical offset
+			clickPoint.y -= verticalOffset;
+		
+			//if the user didn't click within the component
+			if (!node.getSnapRectangle().contains(clickPoint))
+				return true;
+			else 
+				return false;
+		}
+		//allows de-selection of all on clicking out-of-bounds
+		else return true;
+	}
 	
 	//PRIVATE
 	
@@ -454,10 +477,6 @@ public class Grid {
 			else {
 				grid.get(row-1).get(col-1).setComponent(entry);
 				grid.get(row-1).get(col-1).setOccupied(true);
-				
-				//if something isn't a compartment, we must be on a spatial grid
-				if (compartment == false)
-					setGridSpatial(true);
 			}
 		}
 		

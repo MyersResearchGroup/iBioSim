@@ -1,7 +1,5 @@
 package gcm.gui.modelview.movie;
 
-import gcm.gui.modelview.movie.visualizations.ColorScheme;
-import gcm.gui.modelview.movie.visualizations.component.ComponentScheme;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 

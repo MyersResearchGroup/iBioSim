@@ -1,4 +1,4 @@
-package gcm.gui.modelview.movie.visualizations.gradient;
+package gcm.gui.modelview.movie;
 
 
 import java.awt.BorderLayout;

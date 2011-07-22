@@ -1,6 +1,4 @@
-package gcm.gui.modelview.movie.visualizations;
-
-import gcm.gui.modelview.movie.visualizations.gradient.GradientDisplayer;
+package gcm.gui.modelview.movie;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

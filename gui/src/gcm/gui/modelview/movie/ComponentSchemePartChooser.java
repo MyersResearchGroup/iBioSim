@@ -1,7 +1,4 @@
-package gcm.gui.modelview.movie.visualizations.component;
-
-import gcm.gui.modelview.movie.visualizations.ColorSchemeChooser;
-import gcm.gui.modelview.movie.visualizations.TSDKeyChooser;
+package gcm.gui.modelview.movie;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;

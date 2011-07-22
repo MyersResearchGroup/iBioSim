@@ -4,7 +4,6 @@ import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,14 +11,12 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Properties;
 
-import javax.swing.BoxLayout;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 
 import main.Gui;
 
@@ -30,9 +27,7 @@ import main.Gui;
 public class GridPanel extends JPanel implements ActionListener{
 	
 	private static final long serialVersionUID = 1L;
-	private static GridPanel panel;
 	private GCMFile gcm;
-	private GCM2SBMLEditor gcm2sbml;
 	private JRadioButton spatial, cellPop;
 	private JComboBox componentChooser;
 	private ArrayList<String> componentList, compartmentList;	
@@ -54,39 +49,34 @@ public class GridPanel extends JPanel implements ActionListener{
 		super(new BorderLayout());
 
 		this.gcm = gcm;
-		this.gcm2sbml = gcm2sbml;
+		
+		//component list is the gcms that can be added to a spatial grid
+		//but components that aren't compartments are ineligible for
+		//being added to a cell population
+		componentList = gcm2sbml.getComponentsList();
+		componentList.add("none");
+		
+		compartmentList = new ArrayList<String>();
+		
+		//find all of the comPARTments, which will be available
+		//to add to the cell population
+		for(String comp : gcm2sbml.getComponentsList()) {
+			
+			GCMFile compGCM = new GCMFile(gcm.getPath());
+			compGCM.load(gcm.getPath() + File.separator + comp);
+			
+			if (compGCM.getIsWithinCompartment())
+				compartmentList.add(comp);
+		}
+		
+		compartmentList.add("none");
 		
 		//editMode is false means creating a grid
-		if (!editMode) {
-			
-			//component list is the gcms that can be added to a spatial grid
-			//but components that aren't compartments are ineligible for
-			//being added to a cell population
-			componentList = gcm2sbml.getComponentsList();
-			componentList.add("none");
-			
-			compartmentList = new ArrayList<String>();
-			
-			//find all of the comPARTments, which will be available
-			//to add to the cell population
-			for(String comp : gcm2sbml.getComponentsList()) {
-				
-				GCMFile compGCM = new GCMFile(gcm.getPath());
-				compGCM.load(gcm.getPath() + File.separator + comp);
-				
-				if (compGCM.getIsWithinCompartment())
-					compartmentList.add(comp);
-			}
-			
-			compartmentList.add("none");
-					
+		if (!editMode)
 			built = buildPanel() == true ? true : false;
-		}
 		//editMode is true means editing a grid
-		else {
-			
-			
-		}
+		else
+			built = buildEditPanel() == true ? true : false;
 	}
 	
 	/**
@@ -96,15 +86,15 @@ public class GridPanel extends JPanel implements ActionListener{
 	 */
 	public static boolean showGridPanel(GCM2SBMLEditor gcm2sbml, GCMFile gcm, boolean editMode) {
 		
-		panel = new GridPanel(gcm2sbml, gcm, editMode);
+		new GridPanel(gcm2sbml, gcm, editMode);
 		
 		return built;
 	}
 	
 	/**
-	 * does the actual panel building
+	 * builds the grid creation panel
 	 * 
-	 * @return if a population is to be created
+	 * @return if the user hit ok or cancel
 	 */
 	private boolean buildPanel() {
 		
@@ -133,14 +123,13 @@ public class GridPanel extends JPanel implements ActionListener{
 		rowsChooser = new JTextField("3");
 		tilePanel.add(rowsChooser);
 		
-		//options that go in the tiling panel
 		tilePanel.add(new JLabel("Columns"));
 		columnsChooser = new JTextField("3");
 		tilePanel.add(columnsChooser);
 		
 		//create a panel for the selection of components to add to the cells
 		compPanel = new JPanel(new GridLayout(2,1));
-		compPanel.add(new JLabel("Choose a gcm to add to the grid"));
+		compPanel.add(new JLabel("Choose a model to add to the grid"));
 		componentChooser = new JComboBox(compartmentList.toArray());
 		compPanel.add(componentChooser);
 		this.add(compPanel, BorderLayout.NORTH);
@@ -167,7 +156,6 @@ public class GridPanel extends JPanel implements ActionListener{
 						"A number you entered could not be parsed.",
 						"Invalid number format",
 						JOptionPane.ERROR_MESSAGE);
-				//return false;
 			}
 			
 			//filename of the component
@@ -178,13 +166,91 @@ public class GridPanel extends JPanel implements ActionListener{
 			
 			//create the grid with these components
 			Grid grid = gcm.getGrid();
-			grid.createGrid(rowCount, colCount, gcm.getComponents());
-			grid.setGridSpatial(gridSpatial);
+			grid.createGrid(rowCount, colCount, gcm.getComponents(), gridSpatial);
 			
 			return true;
 		}
 		else return false;
 	}
+	
+	
+	/**
+	 * builds the grid edit panel
+	 * 
+	 * @return if the user hit ok or cancel
+	 */
+	private boolean buildEditPanel() {
+		
+		JPanel tilePanel;
+		JPanel compPanel;
+		JPanel infoPanel;
+		JTextField rowsChooser;
+		JTextField columnsChooser;
+		
+		infoPanel = new JPanel(new GridLayout(3,1));
+		infoPanel.add(new JLabel("Choose a new grid size"));
+		infoPanel.add(new JLabel("Note: A small size will result in grid truncation."));
+		this.add(infoPanel, BorderLayout.NORTH);
+		
+		//panel that contains grid size options
+		tilePanel = new JPanel(new GridLayout(3, 2));
+		this.add(tilePanel, BorderLayout.CENTER);
+
+		tilePanel.add(new JLabel("Rows"));
+		rowsChooser = new JTextField("3");
+		tilePanel.add(rowsChooser);
+		
+		tilePanel.add(new JLabel("Columns"));
+		columnsChooser = new JTextField("3");
+		tilePanel.add(columnsChooser);
+		
+		//create a panel for the selection of components to add to the cells
+		compPanel = new JPanel(new GridLayout(2,1));
+		compPanel.add(new JLabel("Populate new grid spaces with"));
+		componentChooser = new JComboBox(compartmentList.toArray());
+		compPanel.add(componentChooser);
+		this.add(compPanel, BorderLayout.SOUTH);
+		
+		String[] options = {GlobalConstants.OK, GlobalConstants.CANCEL};
+		
+		int okCancel = JOptionPane.showOptionDialog(Gui.frame, this, "Edit the Grid Size",
+				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+		//if the user clicks "ok" on the panel
+		if (okCancel == JOptionPane.OK_OPTION) {
+			
+			int rowCount = 0, colCount = 0;
+			
+			//try to get the number of rows and columns from the user
+			try{
+				
+				rowCount = Integer.parseInt(rowsChooser.getText());
+				colCount = Integer.parseInt(columnsChooser.getText());
+			}
+			catch(NumberFormatException e){
+				
+				JOptionPane.showMessageDialog(Gui.frame,
+						"A number you entered could not be parsed.",
+						"Invalid number format",
+						JOptionPane.ERROR_MESSAGE);
+			}
+			
+			//filename of the component
+			String compGCM = (String)componentChooser.getSelectedItem();
+			
+			Grid grid = gcm.getGrid();
+			
+			//if the grid size increases, then add the new components to the GCM
+			//if it decreases, delete components from the GCM (getComponents.remove(id))
+			//grid.changeGridSize(rowCount, colCount, compGCM);
+
+			
+			
+			return true;
+		}
+		else return false;
+	}
+	
 	
 	/**
 	 * 
@@ -232,6 +298,10 @@ public class GridPanel extends JPanel implements ActionListener{
 		}
 	}
 
+	/**
+	 * called when the user clicks on something
+	 * in this case i only care about the spatial and cell pop radio buttons
+	 */
 	public void actionPerformed(ActionEvent event) {
 				
 		if (event.getActionCommand() == "spatial") {

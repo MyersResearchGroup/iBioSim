@@ -1,4 +1,4 @@
-package gcm.gui.modelview.movie.visualizations.component;
+package gcm.gui.modelview.movie;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -7,9 +7,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import parser.TSDParser;
-
-import gcm.gui.modelview.movie.visualizations.ColorScheme;
-import gcm.gui.modelview.movie.visualizations.cellvisualizations.MovieAppearance;
 
 /**
  * Components can be colored based on multiple color schemes relating to multiple of their sub-species.
