@@ -158,21 +158,28 @@ public class GridPanel extends JPanel implements ActionListener{
 						JOptionPane.ERROR_MESSAGE);
 			}
 			
+			if (rowCount < 1 || colCount < 1) {
+				
+				JOptionPane.showMessageDialog(Gui.frame,
+						"The size must be positive",
+						"Invalid size",
+						JOptionPane.ERROR_MESSAGE);
+				
+				return false;		
+			}
+			
 			//filename of the component
 			String compGCM = (String)componentChooser.getSelectedItem();
 			
-			//add components to the gcm
-			setGCMComponents(rowCount, colCount, compGCM);
-			
 			//create the grid with these components
+			//these will be added to the GCM as well
 			Grid grid = gcm.getGrid();
-			grid.createGrid(rowCount, colCount, gcm.getComponents(), gridSpatial);
+			grid.createGrid(rowCount, colCount, gcm, compGCM, gridSpatial);
 			
 			return true;
 		}
 		else return false;
 	}
-	
 	
 	/**
 	 * builds the grid edit panel
@@ -187,9 +194,11 @@ public class GridPanel extends JPanel implements ActionListener{
 		JTextField rowsChooser;
 		JTextField columnsChooser;
 		
+		Grid grid = gcm.getGrid();
+		
 		infoPanel = new JPanel(new GridLayout(3,1));
 		infoPanel.add(new JLabel("Choose a new grid size"));
-		infoPanel.add(new JLabel("Note: A small size will result in grid truncation."));
+		infoPanel.add(new JLabel("Note: A smaller size will result in grid truncation."));
 		this.add(infoPanel, BorderLayout.NORTH);
 		
 		//panel that contains grid size options
@@ -197,11 +206,11 @@ public class GridPanel extends JPanel implements ActionListener{
 		this.add(tilePanel, BorderLayout.CENTER);
 
 		tilePanel.add(new JLabel("Rows"));
-		rowsChooser = new JTextField("3");
+		rowsChooser = new JTextField(Integer.toString(grid.getNumRows()));
 		tilePanel.add(rowsChooser);
 		
 		tilePanel.add(new JLabel("Columns"));
-		columnsChooser = new JTextField("3");
+		columnsChooser = new JTextField(Integer.toString(grid.getNumCols()));
 		tilePanel.add(columnsChooser);
 		
 		//create a panel for the selection of components to add to the cells
@@ -235,67 +244,26 @@ public class GridPanel extends JPanel implements ActionListener{
 						JOptionPane.ERROR_MESSAGE);
 			}
 			
+			if (rowCount < 1 || colCount < 1) {
+				
+				JOptionPane.showMessageDialog(Gui.frame,
+						"The size must be positive",
+						"Invalid size",
+						JOptionPane.ERROR_MESSAGE);
+				
+				return false;
+			}
+			
 			//filename of the component
 			String compGCM = (String)componentChooser.getSelectedItem();
 			
-			Grid grid = gcm.getGrid();
-			
 			//if the grid size increases, then add the new components to the GCM
 			//if it decreases, delete components from the GCM (getComponents.remove(id))
-			//grid.changeGridSize(rowCount, colCount, compGCM);
+			grid.changeGridSize(rowCount, colCount, compGCM, gcm);
 
-			
-			
 			return true;
 		}
 		else return false;
-	}
-	
-	
-	/**
-	 * 
-	 * 
-	 * @param rows number of rows of cells/components
-	 * @param cols number of columns of cells/components
-	 * @param compGCM name of the component's underlying gcm file
-	 */
-	private void setGCMComponents(int rows, int cols, String compGCM) {
-		
-		float padding = gcm.getGrid().getPadding();
-		float width = GlobalConstants.DEFAULT_COMPONENT_WIDTH;
-		float height = GlobalConstants.DEFAULT_COMPONENT_HEIGHT;
-		
-		//sets properties for all of the new components
-		//then adds a new component to the gcm with these properties
-		for (int row=0; row < rows; ++row){
-			for (int col=0; col < cols; ++col){
-				
-				//don't put blank components onto the grid or gcm
-				if (!compGCM.equals("none")) {
-					
-					//make a new properties field with all of the new component's properties
-					Properties properties = new Properties();
-					properties.put("gcm", compGCM); //comp is the name of the gcm that the component contains
-					properties.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH));
-					properties.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
-					properties.setProperty("graphx", String.valueOf(col * (width + padding) + padding));
-					properties.setProperty("graphy", String.valueOf(row * (height + padding) + padding));
-					properties.setProperty("row", String.valueOf(row+1));
-					properties.setProperty("col", String.valueOf(col+1));
-					
-					GCMFile compGCMFile = new GCMFile(gcm.getPath());
-					compGCMFile.load(gcm.getPath() + File.separator + compGCM);
-					
-					//set the correct compartment status
-					if (compGCMFile.getIsWithinCompartment())
-						properties.setProperty("compartment","true"); 
-					
-					else properties.setProperty("compartment","false");
-					
-					gcm.addComponent(null, properties);
-				}
-			}
-		}
 	}
 
 	/**

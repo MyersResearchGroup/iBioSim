@@ -1054,7 +1054,7 @@ public class GCMFile {
 		//append the grid size if there is one
 		if (getGrid().isEnabled()) {
 			
-			buffer.append("}\nGrid Size {\n");			
+			buffer.append("}\nGrid {\n");			
 			buffer.append("rows=" + getGrid().getNumRows() + "\n");
 			buffer.append("cols=" + getGrid().getNumCols() + "\n");	
 			buffer.append("spatial=" + Boolean.toString(getGrid().getGridSpatial()) + "\n");	
@@ -1188,6 +1188,7 @@ public class GCMFile {
 			parseSBMLFile(data);
 			parseConditions(data);
 			parseGridSize(data);
+			
 			if (complexConversion) {
 				save(this.filename);
 				load(this.filename);
@@ -2342,8 +2343,7 @@ public class GCMFile {
 			String col = colInfo[1];
 			String gridSpatial = spatialInfo[1];
 						
-			buildGrid(Integer.parseInt(row), Integer.parseInt(col), 
-					components, Boolean.parseBoolean(gridSpatial));
+			buildGrid(Integer.parseInt(row), Integer.parseInt(col), Boolean.parseBoolean(gridSpatial));
 		}
 	}
 	
@@ -3441,9 +3441,9 @@ public class GCMFile {
 		grid = g;
 	}	
 	
-	public void buildGrid(int rows, int cols, HashMap<String, Properties> components, boolean gridSpatial) {
+	public void buildGrid(int rows, int cols, boolean gridSpatial) {
 		
-		grid.createGrid(rows, cols, components, gridSpatial);
+		grid.createGrid(rows, cols, this, null, gridSpatial);
 	}
 	
 	
