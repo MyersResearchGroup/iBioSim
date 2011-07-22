@@ -440,7 +440,7 @@ public class Grid {
 			clickPoint.y -= verticalOffset;
 		
 			//if the user didn't click within the component
-			if (!node.getSnapRectangle().contains(clickPoint))
+			if (!node.getSnapRectangle().contains(clickPoint) || node.isOccupied() == false)
 				return true;
 			else 
 				return false;
@@ -491,7 +491,7 @@ public class Grid {
 				
 				for (int col = 0; col < currentNumCols; ++col) {
 					
-					Map.Entry<String, Properties> component = locToComponentMap.get(new Point(row+1, col+1));
+					Map.Entry<String, Properties> component = locToComponentMap.get(new Point(row, col));
 					
 					//if it's null, there's nothing to erase
 					if (component != null) {
@@ -528,7 +528,7 @@ public class Grid {
 				
 				for (int col = newNumCols; col < currentNumCols; ++col) {
 					
-					Map.Entry<String, Properties> component = locToComponentMap.get(new Point(row+1, col+1));
+					Map.Entry<String, Properties> component = locToComponentMap.get(new Point(row, col));
 					
 					//if it's null, there's nothing to erase
 					if (component != null) {
@@ -610,10 +610,10 @@ public class Grid {
 			
 			//if adding blank components, don't set the component
 			if (gcm.equals("none"))
-				grid.get(row-1).get(col-1).setOccupied(false);
+				grid.get(row).get(col).setOccupied(false);
 			else {
-				grid.get(row-1).get(col-1).setComponent(entry);
-				grid.get(row-1).get(col-1).setOccupied(true);
+				grid.get(row).get(col).setComponent(entry);
+				grid.get(row).get(col).setOccupied(true);
 			}
 		}
 		
@@ -785,8 +785,8 @@ public class Grid {
 			properties.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
 			properties.setProperty("graphx", String.valueOf(col * (width + padding) + padding));
 			properties.setProperty("graphy", String.valueOf(row * (height + padding) + padding));
-			properties.setProperty("row", String.valueOf(row+1));
-			properties.setProperty("col", String.valueOf(col+1));
+			properties.setProperty("row", String.valueOf(row));
+			properties.setProperty("col", String.valueOf(col));
 			
 			GCMFile compGCMFile = new GCMFile(gcm.getPath());
 			compGCMFile.load(gcm.getPath() + File.separator + compGCM);

@@ -402,8 +402,9 @@ public class Schematic extends JPanel implements ActionListener {
 			if (changed) {
 				
 				gcm2sbml.setDirty(true);
-				display();
+				graph.buildGraph();
 				gcm2sbml.refresh();
+				drawGrid();
 				gcm.makeUndoPoint();
 			}
 		}
@@ -417,14 +418,16 @@ public class Schematic extends JPanel implements ActionListener {
 			if (changed) {
 				
 				gcm2sbml.setDirty(true);
-				display();
+				graph.buildGraph();
 				gcm2sbml.refresh();
+				drawGrid();
 				gcm.makeUndoPoint();
 			}
 		}
 		else if(command == ""){
 			// radio buttons don't have to do anything and have an action command of "".
-		}else{
+		}
+		else{
 			throw(new Error("Invalid actionCommand: " + command));
 		}
 	}
@@ -483,7 +486,7 @@ public class Schematic extends JPanel implements ActionListener {
 		//mouse click listener -- on cells or on the graph
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter(){
 			
-				public void mouseReleased(MouseEvent e) {
+			public void mouseReleased(MouseEvent e) {
 				
 				mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
 				
@@ -506,7 +509,7 @@ public class Schematic extends JPanel implements ActionListener {
 				}
 				//single left-click
 				else if(e.getClickCount() == 1 && editable && SwingUtilities.isLeftMouseButton(e)) {
-
+					
 					// First check and if the user clicked on a component, let the graph lib take care of it.
 					if(cell == null) {
 						
@@ -541,7 +544,7 @@ public class Schematic extends JPanel implements ActionListener {
 							if (grid.isEnabled()) {
 								
 								boolean gridSpatial = grid.getGridSpatial();
-								
+
 								//the true is to indicate the dropping is happening on a grid
 								dropped = DropComponentPanel.dropComponent(
 										gcm2sbml, gcm, e.getX(), e.getY(), true, gridSpatial);

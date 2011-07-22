@@ -232,8 +232,8 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		properties.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
 		properties.setProperty("graphx", String.valueOf(col * (width + padding) + padding));
 		properties.setProperty("graphy", String.valueOf(row * (height + padding) + padding));
-		properties.setProperty("row", String.valueOf(row+1));
-		properties.setProperty("col", String.valueOf(col+1));
+		properties.setProperty("row", String.valueOf(row));
+		properties.setProperty("col", String.valueOf(col));
 		
 		GCMFile compGCMFile = new GCMFile(gcm.getPath());
 		compGCMFile.load(gcm.getPath() + File.separator + component);
