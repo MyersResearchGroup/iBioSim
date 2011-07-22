@@ -8,12 +8,14 @@ import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 
 /*
@@ -75,16 +77,6 @@ public class Grid {
 	//PUBLIC
 	
 	/**
-	 * constructor to create a row x col grid of GridNodes
-	 */
-	public Grid(int rows, int cols, HashMap<String, Properties> components, boolean GridSpatial) {
-				
-		this();
-		
-		createGrid(rows, cols, components, gridSpatial);
-	}
-	
-	/**
 	 * default constructor
 	 */
 	public Grid() {
@@ -115,7 +107,7 @@ public class Grid {
 	 * @param cols number of columns in the grid
 	 * @param components the components that are located on the grid
 	 */
-	public void createGrid(int rows, int cols, HashMap<String, Properties> components, boolean gridSpatial) {
+	public void createGrid(int rows, int cols, GCMFile gcm, String compGCM, boolean gridSpatial) {
 		
 		//if the grid size is 0 by 0, don't make it
 		if (rows == 0 && cols == 0) {
@@ -128,20 +120,25 @@ public class Grid {
 		numRows = rows;
 		numCols = cols;
 		
-		this.gridSpatial = gridSpatial;		
-		this.components = components;
+		this.gridSpatial = gridSpatial;
 		
-		for(int i = 0; i < numRows; ++i) {
+		for(int row = 0; row < numRows; ++row) {
 			
 			grid.add(new ArrayList<GridNode>(numCols));
 			
-			for(int j = 0; j < numCols; ++j) {
+			for(int col = 0; col < numCols; ++col) {
 				
-				grid.get(i).add(new GridNode());
-				grid.get(i).get(j).setRow(i);
-				grid.get(i).get(j).setCol(j);
+				grid.get(row).add(new GridNode());
+				grid.get(row).get(col).setRow(row);
+				grid.get(row).get(col).setCol(col);
+				
+				//null signifies that the components are already in the GCM
+				if (compGCM != null)
+					addComponentToGCM(row, col, compGCM, gcm);
 			}
 		}
+		
+		this.components = gcm.getComponents();
 		
 		updateGridRectangles();
 		updateNodeMaps();
@@ -190,13 +187,13 @@ public class Grid {
 				if (node.isSelected())
 					drawGridSelectionBox(g, rect);
 				
-//				//some debug stuff to draw onto the grid
-//				g2.drawString(Boolean.toString(node.isOccupied()), rect.x, rect.y);
-//				
-//				if (node.component == null) {
-//					g2.drawString("null", rect.x+40, rect.y);
-//				}
-//				else g2.drawString(node.getComponent().getKey(), rect.x+40, rect.y);
+				//some debug stuff to draw onto the grid
+				g2.drawString(Boolean.toString(node.isOccupied()), rect.x, rect.y);
+				
+				if (node.component == null) {
+					g2.drawString("null", rect.x+40, rect.y);
+				}
+				else g2.drawString(node.getComponent().getKey(), rect.x+40, rect.y);
 			}
 		}
 	}
@@ -237,6 +234,24 @@ public class Grid {
 	}
 	
 	/**
+	 * clears a node and then removes it from the gcm
+	 * 
+	 * @param compID component ID (uniquely identifies the node)
+	 * @param gcm gcm file
+	 */
+	public void eraseNode(String compID, GCMFile gcm) {
+		
+		//clear the grid node data (the actual node stays, though)
+		clearNode(compID);		
+		
+		//remove the component from the gcm
+		gcm.getComponents().remove(compID);
+		
+		//keep the components list updated
+		components = gcm.getComponents();
+	}
+	
+	/**
 	 * empties a node on the grid based on a component ID
 	 * 
 	 * @param compID
@@ -245,8 +260,32 @@ public class Grid {
 		
 		GridNode node = getNodeFromCompID(compID);
 		
-		if (node.getComponent() != null)
+		if (node.getComponent() != null) {
 			node.clear();
+		}
+	}
+	
+	/**
+	 * allocates a new node and sets the grid location
+	 * also adds the node to the gcm
+	 * 
+	 * @param row
+	 * @param col
+	 * @param compGCM
+	 * @param gcm
+	 */
+	public void addNode(int row, int col, String compGCM, GCMFile gcm) {
+		
+		grid.get(row).add(new GridNode());
+		grid.get(row).get(col).setRow(row);
+		grid.get(row).get(col).setCol(col);
+		
+		if (!compGCM.equals("none")) {
+			
+			grid.get(row).get(col).setOccupied(true);		
+			addComponentToGCM(row, col, compGCM, gcm);
+			components = gcm.getComponents();
+		}
 	}
 	
 	/**
@@ -257,7 +296,7 @@ public class Grid {
 	 * @param centerX center x coord of where the component is trying to be moved to
 	 * @param centerY center y coord of where the component is trying to be moved to
 	 */
-	public boolean moveNode(String compID, double centerX, double centerY) {
+	public boolean moveNode(String compID, double centerX, double centerY, GCMFile gcm) {
 		
 		Point moveToPoint = new Point((int)centerX, (int)(centerY + verticalOffset));
 		
@@ -272,10 +311,7 @@ public class Grid {
 				
 				//make sure there isn't a component in the location
 				if (node.isOccupied() == false) {
-					
-					//clear the old component's spot
-					clearNode(compID);
-					
+										
 					//NOTE:
 					//this is a horrible hack to get a Map.Entry<String, Property>
 					//i didn't realize it was an interface and not instantiable
@@ -285,11 +321,13 @@ public class Grid {
 					
 					Map.Entry<String, Properties> compo = tempMap.entrySet().iterator().next();
 					
+					//clear the old component's spot
+					clearNode(compID);
+					
 					//put the component in its new home
 					node.setComponent(compo);
 					node.setOccupied(true);
 					
-					//update the row/col properties of the component
 					Properties props = compo.getValue();
 					
 					props.setProperty("row", Integer.toString(node.getRow()+1));
@@ -411,6 +449,106 @@ public class Grid {
 		else return true;
 	}
 	
+	/**
+	 * changes the grid size
+	 * also updates the GCM components
+	 * 
+	 * @param rows number of rows in the new grid size
+	 * @param cols number of cols in the new grid size
+	 * @param compGCM the name of the gcm of the new components
+	 * @param gcm the gcm file that's being altered
+	 */
+	public void changeGridSize(int rows, int cols, String compGCM, GCMFile gcm) {
+		
+		int currentNumRows = this.numRows;
+		int currentNumCols = this.numCols;
+		int newNumRows = rows;
+		int newNumCols = cols;
+		int numRowsToAdd = newNumRows - currentNumRows;
+		int numColsToAdd = newNumCols - currentNumCols;
+		
+		if (numRowsToAdd > 0) {
+			
+			//add new rows up to the new number of columns
+			for (int row = currentNumRows; row < newNumRows; ++row) {
+				
+				//allocate grid nodes for the new rows
+				//note: this could be small than the old size
+				//but that doesn't matter
+				grid.add(new ArrayList<GridNode>(newNumCols));
+				
+				for(int col = 0; col < newNumCols; ++col) {
+					
+					addNode(row, col, compGCM, gcm);
+				}
+			}
+		}
+		else if (numRowsToAdd < 0) {
+			
+			//go from the new last row to the prior last row
+			//erase all of the nodes (which clears them and erases the components from the gcm)
+			for (int row = newNumRows; row < currentNumRows; ++row) {
+				
+				for (int col = 0; col < currentNumCols; ++col) {
+					
+					Map.Entry<String, Properties> component = locToComponentMap.get(new Point(row+1, col+1));
+					
+					//if it's null, there's nothing to erase
+					if (component != null) {
+						
+						String compID = component.getKey();
+						
+						//if it's null, there's nothing to erase
+						if (compID != null) eraseNode(compID, gcm);
+					}
+				}				
+			}
+			
+			//change this so that the columns aren't added with length past the proper number of rows
+			currentNumRows = newNumRows;
+		}
+		
+		if (numColsToAdd > 0) {
+			
+			//add new columns up to the current number of rows
+			for (int row = 0; row < currentNumRows; ++row) {
+				
+				//allocate grid nodes for the new columns
+				grid.add(new ArrayList<GridNode>(numColsToAdd));
+				
+				for(int col = currentNumCols; col < newNumCols; ++col) {
+					
+					addNode(row, col, compGCM, gcm);
+				}				
+			}
+		}
+		else if (numColsToAdd < 0) {
+			
+			for (int row = 0; row < currentNumRows; ++row) {
+				
+				for (int col = newNumCols; col < currentNumCols; ++col) {
+					
+					Map.Entry<String, Properties> component = locToComponentMap.get(new Point(row+1, col+1));
+					
+					//if it's null, there's nothing to erase
+					if (component != null) {
+						
+						String compID = component.getKey();
+						
+						//if it's null, there's nothing to erase
+						if (compID != null) eraseNode(compID, gcm);
+					}
+				}				
+			}
+		}
+		
+		this.numRows = newNumRows;
+		this.numCols = newNumCols;
+		
+		//put the components onto the grid and update hash maps
+		refreshComponents(gcm.getComponents());
+	}
+	
 	//PRIVATE
 	
 	/**
@@ -469,8 +607,7 @@ public class Grid {
 			String gcm = props.getProperty("gcm");
 			int row = Integer.valueOf(props.getProperty("row"));
 			int col = Integer.valueOf(props.getProperty("col"));
-			boolean compartment = Boolean.parseBoolean(props.getProperty("compartment"));
-						
+			
 			//if adding blank components, don't set the component
 			if (gcm.equals("none"))
 				grid.get(row-1).get(col-1).setOccupied(false);
@@ -578,6 +715,7 @@ public class Grid {
 	 * creates a hash map for easy access of the component at a specified grid location
 	 * with the component you can get its name and properties
 	 * used for diffusion reaction printing in printDiffusion
+	 * uses 1-indexed row/col numbers!!!
 	 */
 	private void updateLocToComponentMap() {
 		
@@ -621,6 +759,46 @@ public class Grid {
 		
 		//if it's not found, send back a null pointer
 		return null;
+	}
+	
+	/**
+	 * adds a component to the GCM passed in
+	 * 
+	 * @param row
+	 * @param col
+	 * @param compGCM the name of the component's gcm file
+	 * @param gcm the gcm to put the component in
+	 */
+	private void addComponentToGCM(int row, int col, String compGCM, GCMFile gcm) {
+		
+		float padding = gcm.getGrid().getPadding();
+		float width = GlobalConstants.DEFAULT_COMPONENT_WIDTH;
+		float height = GlobalConstants.DEFAULT_COMPONENT_HEIGHT;
+		
+		//don't put blank components onto the grid or gcm
+		if (!compGCM.equals("none")) {
+			
+			//make a new properties field with all of the new component's properties
+			Properties properties = new Properties();
+			properties.put("gcm", compGCM); //comp is the name of the gcm that the component contains
+			properties.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH));
+			properties.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
+			properties.setProperty("graphx", String.valueOf(col * (width + padding) + padding));
+			properties.setProperty("graphy", String.valueOf(row * (height + padding) + padding));
+			properties.setProperty("row", String.valueOf(row+1));
+			properties.setProperty("col", String.valueOf(col+1));
+			
+			GCMFile compGCMFile = new GCMFile(gcm.getPath());
+			compGCMFile.load(gcm.getPath() + File.separator + compGCM);
+			
+			//set the correct compartment status
+			if (compGCMFile.getIsWithinCompartment())
+				properties.setProperty("compartment","true"); 
+			
+			else properties.setProperty("compartment","false");
+			
+			gcm.addComponent(null, properties);
+		}
 	}
 	
 	

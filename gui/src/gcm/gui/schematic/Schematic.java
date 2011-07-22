@@ -697,7 +697,7 @@ public class Schematic extends JPanel implements ActionListener {
 							
 							//see if the component/cell can be moved
 							Boolean moved = grid.moveNode(cell.getId(), 
-									cell.getGeometry().getCenterX(), cell.getGeometry().getCenterY());
+									cell.getGeometry().getCenterX(), cell.getGeometry().getCenterY(), gcm);
 							
 							//if it can, update its position on the graph
 							//(moveComponent updates its grid position)
@@ -871,12 +871,10 @@ public class Schematic extends JPanel implements ActionListener {
 							//graph.buildGraph();
 						}
 						else if(type == GlobalConstants.COMPONENT){
-							
-							gcm.getComponents().remove(cell.getId());
-														
+																					
 							//if there's a grid, remove the component from the grid as well
 							if (grid.isEnabled())
-								grid.clearNode(cell.getId());
+								grid.eraseNode(cell.getId(), gcm);
 						}
 						else if(type == GlobalConstants.PROMOTER){
 							
