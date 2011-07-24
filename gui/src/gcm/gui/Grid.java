@@ -408,6 +408,7 @@ public class Grid {
 		components = gcmComponents;
 		
 		putComponentsOntoGrid();
+		updateGridRectangles();
 		
 		//update the location to component hash map
 		//as the component and their locations have changed

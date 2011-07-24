@@ -404,7 +404,7 @@ public class Schematic extends JPanel implements ActionListener {
 				gcm2sbml.setDirty(true);
 				graph.buildGraph();
 				gcm2sbml.refresh();
-				drawGrid();
+				display();
 				gcm.makeUndoPoint();
 			}
 		}
