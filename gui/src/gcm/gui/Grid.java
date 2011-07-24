@@ -187,13 +187,13 @@ public class Grid {
 				if (node.isSelected())
 					drawGridSelectionBox(g, rect);
 				
-				//some debug stuff to draw onto the grid
-				g2.drawString(Boolean.toString(node.isOccupied()), rect.x, rect.y);
-				
-				if (node.component == null) {
-					g2.drawString("null", rect.x+40, rect.y);
-				}
-				else g2.drawString(node.getComponent().getKey(), rect.x+40, rect.y);
+//				//some debug stuff to draw onto the grid
+//				g2.drawString(Boolean.toString(node.isOccupied()), rect.x, rect.y);
+//				
+//				if (node.component == null) {
+//					g2.drawString("null", rect.x+40, rect.y);
+//				}
+//				else g2.drawString(node.getComponent().getKey(), rect.x+40, rect.y);
 			}
 		}
 	}
@@ -260,7 +260,7 @@ public class Grid {
 		
 		GridNode node = getNodeFromCompID(compID);
 		
-		if (node.getComponent() != null) {
+		if (node != null && node.getComponent() != null) {
 			node.clear();
 		}
 	}
@@ -330,8 +330,8 @@ public class Grid {
 					
 					Properties props = compo.getValue();
 					
-					props.setProperty("row", Integer.toString(node.getRow()+1));
-					props.setProperty("col", Integer.toString(node.getCol()+1));
+					props.setProperty("row", Integer.toString(node.getRow()));
+					props.setProperty("col", Integer.toString(node.getCol()));
 					
 					//update the location to component hash map
 					//as the component and their locations have changed
