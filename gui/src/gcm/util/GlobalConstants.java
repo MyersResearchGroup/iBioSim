@@ -49,6 +49,7 @@ public class GlobalConstants {
 	public static final String REACTION = "Reaction";
 	public static final String MODIFIER = "Modifier";
 	public static final String REACTION_EDGE = "Reaction_Edge";
+	public static final String GRID_RECTANGLE = "Grid Rectangle";
 	public static final String PORTMAP = "Port Map";
 	public static final String NAME = "Name";
 	public static final String CONSTANT = "boundary";

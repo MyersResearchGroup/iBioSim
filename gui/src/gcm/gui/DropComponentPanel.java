@@ -62,6 +62,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		
 		panel = new DropComponentPanel(gcm2sbml, gcm, onGrid);
 		
+		//if we're dropping onto a grid
 		if (onGrid) {
 			
 			//if the location isn't occupied, go ahead and show the menu
@@ -218,18 +219,20 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	 */
 	private void applyGridComponent(float mouseX, float mouseY, String component) {
 		
-		int row = gcm.getGrid().getRowFromPoint(new Point((int)mouseX, (int)mouseY));
-		int col = gcm.getGrid().getColFromPoint(new Point((int)mouseX, (int)mouseY));
+		Grid grid = gcm.getGrid();
 		
-		float padding = gcm.getGrid().getPadding();
-		float width = GlobalConstants.DEFAULT_COMPONENT_WIDTH;
-		float height = GlobalConstants.DEFAULT_COMPONENT_HEIGHT;
+		int row = grid.getRowFromPoint(new Point((int)mouseX, (int)mouseY));
+		int col = grid.getColFromPoint(new Point((int)mouseX, (int)mouseY));
+		
+		double padding = 30;
+		double width = grid.getComponentGeomWidth();
+		double height = grid.getComponentGeomHeight();
 		
 		//make a new properties field with all of the new component's properties
 		Properties properties = new Properties();
 		properties.setProperty("gcm", component); //comp is the name of the gcm that the component contains
-		properties.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH));
-		properties.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
+		properties.setProperty("graphwidth", String.valueOf(width));
+		properties.setProperty("graphheight", String.valueOf(height));
 		properties.setProperty("graphx", String.valueOf(col * (width + padding) + padding));
 		properties.setProperty("graphy", String.valueOf(row * (height + padding) + padding));
 		properties.setProperty("row", String.valueOf(row));

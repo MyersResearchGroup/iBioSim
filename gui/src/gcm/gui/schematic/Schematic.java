@@ -21,9 +21,12 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseWheelEvent;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -43,6 +46,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
@@ -63,10 +68,12 @@ import main.Gui;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
+import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
+import com.mxgraph.util.mxPoint;
 
 
 public class Schematic extends JPanel implements ActionListener {
@@ -101,6 +108,8 @@ public class Schematic extends JPanel implements ActionListener {
 	private AbstractButton reactionButton;
 	private AbstractButton modifierButton;
 	private AbstractButton noInfluenceButton;
+	private AbstractButton zoomButton;
+	private AbstractButton panButton;
 	
 	private JPopupMenu layoutPopup;
 	
@@ -115,7 +124,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @param internalModel
 	 */
 	public Schematic(GCMFile gcm, Gui biosim, GCM2SBMLEditor gcm2sbml, 
-			boolean editable, MovieContainer movieContainer2,Compartments compartments, Reactions reactions){
+			boolean editable, MovieContainer movieContainer2, Compartments compartments, Reactions reactions){
 		
 		super(new BorderLayout());
 		
@@ -142,8 +151,8 @@ public class Schematic extends JPanel implements ActionListener {
 	public void display(){
 
 		if(graph == null){
-			graph = new BioGraph(gcm);
 			
+			graph = new BioGraph(gcm);			
 			addGraphListeners();
 			gcm.makeUndoPoint();
 		}
@@ -153,8 +162,23 @@ public class Schematic extends JPanel implements ActionListener {
 		// Create and plug in the graphComponent
 		if(graphComponent == null){
 			
-			graphComponent = new mxGraphComponent(graph);
+			graphComponent = new mxGraphComponent(graph) {
+				
+				private static final long serialVersionUID = 1L;
+
+			@Override 
+			   /**
+			    * enables panning
+			    * this will be tied to a radio button soon
+			    */
+			   public boolean isPanningEvent(MouseEvent event) {
+				   
+				   return panButton.isSelected();
+			   }
+			};
+			
 			graphComponent.setGraph(graph);
+			graphComponent.getVerticalScrollBar().setUnitIncrement(50);
 			
 			//make the mxgraph stuff see-through
 			//so we can see the grid underneath the mxgraph stuff
@@ -171,6 +195,8 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		//if the grid is enabled, change the toolbar
 		if (grid.isEnabled()) {
+			
+			grid.syncGridGraph(graph);
 						
 			Component[] comps = this.getComponents();
 			
@@ -209,14 +235,6 @@ public class Schematic extends JPanel implements ActionListener {
 			if(this.editable)
 				this.add(toolbar, BorderLayout.NORTH);
 		}
-	
-	
-//		// Do layouting if it hasn't been done yet
-//		if(needs_layouting){
-//		//	graph.applyLayout("circleLayout", graphComponent);
-//		}
-//		
-//		//this.setBackground(Color.BLACK);
 	}
 	
 	
@@ -237,6 +255,17 @@ public class Schematic extends JPanel implements ActionListener {
 		addComponentButton = Utils.makeRadioToolButton("add_component.png", "", "Add Components", this, modeButtonGroup);
 		toolBar.add(addComponentButton);
 		toolBar.add(Utils.makeToolButton("", "editGridSize", "Edit Grid Size", this));
+		
+		toolBar.addSeparator();
+		
+		zoomButton = new JToggleButton();
+		zoomButton.setText("Zoom");
+		
+		panButton = new JToggleButton();
+		panButton.setText("Pan");
+		
+		toolBar.add(zoomButton);
+		toolBar.add(panButton);
 		
 		toolBar.addSeparator();
 		
@@ -402,24 +431,24 @@ public class Schematic extends JPanel implements ActionListener {
 			if (changed) {
 				
 				gcm2sbml.setDirty(true);
-				graph.buildGraph();
 				gcm2sbml.refresh();
-				display();
+				graph.buildGraph();
+				drawGrid();
 				gcm.makeUndoPoint();
 			}
 		}
 		else if (command.equals("editGridSize")) {
 			
-			//static method that builds the cell population panel
+			//static method that builds the grid editing panel
 			//the true field means to open the grid edit panel
 			boolean changed = GridPanel.showGridPanel(gcm2sbml, gcm, true);
 			
-			//if the grid is built, then draw it and so on
+			//if the grid size is changed, then draw it and so on
 			if (changed) {
 				
 				gcm2sbml.setDirty(true);
-				graph.buildGraph();
 				gcm2sbml.refresh();
+				graph.buildGraph();
 				drawGrid();
 				gcm.makeUndoPoint();
 			}
@@ -459,13 +488,41 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		final Schematic self = this;
 		
+		//indicates vertical scrolling movement
+		graphComponent.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener(){
+
+			public void adjustmentValueChanged(AdjustmentEvent arg0) {				
+
+				int offset = graphComponent.getVerticalScrollBar().getValue();				
+				Point scrollOffset = new Point(grid.getScrollOffset().x, offset);
+				
+				grid.setScrollOffset(scrollOffset);
+				grid.syncGridGraph(graph);
+			}
+		});
+		
+		//indicates horizontal scrolling movement
+		graphComponent.getHorizontalScrollBar().addAdjustmentListener(new AdjustmentListener(){
+
+			public void adjustmentValueChanged(AdjustmentEvent arg0) {				
+
+				int offset = graphComponent.getHorizontalScrollBar().getValue();		
+				Point scrollOffset = new Point(offset, grid.getScrollOffset().y);
+				
+				grid.setScrollOffset(scrollOffset);
+				grid.syncGridGraph(graph);
+			}
+		});
+		
 		//mouse clicked listener for grid stuff
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
 				
 			public void mouseClicked(MouseEvent event) {
 				
-				if (grid.clickedOnGridPadding(event.getPoint())) {
-					Point location = event.getPoint();
+				Point location = event.getPoint();
+				
+				if (grid.clickedOnGridPadding(location)) {
+					
 					grid.setMouseClickLocation(location);
 					drawGrid();
 				}
@@ -478,11 +535,45 @@ public class Schematic extends JPanel implements ActionListener {
 			public void mouseMoved(MouseEvent event) {
 				
 				Point location = event.getPoint();
-				grid.setMouseLocation(location);
+				
+				grid.setMouseLocation(location);				
 				drawGrid();
-			}		
+			}
 		});
 		
+		//mouse wheel moved (ie, scrolling) listener for grid stuff
+		graphComponent.getGraphControl().addMouseWheelListener(new MouseAdapter() {
+			
+			public void mouseWheelMoved(MouseWheelEvent event) {
+				
+				if (zoomButton.isSelected()) {
+					
+					if (event.getWheelRotation() > 0) {
+						
+						graphComponent.zoomOut();
+						grid.syncGridGraph(graph);
+					}
+					else {
+						
+						graphComponent.zoomIn();
+						grid.syncGridGraph(graph);
+					}
+					
+				}
+				else {
+					
+					int scrollAmount = event.getScrollAmount();
+					
+					//make sure the scrolling happens in the right direction
+					//scrollAmount is an absolute value figure
+					if (event.getWheelRotation() < 0) scrollAmount *= -1;
+					
+					int newValue = graphComponent.getVerticalScrollBar().getValue() + scrollAmount;
+					graphComponent.getVerticalScrollBar().setValue(newValue);
+				}				
+			}		
+		});		
+	
 		//mouse click listener -- on cells or on the graph
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter(){
 			
@@ -495,7 +586,9 @@ public class Schematic extends JPanel implements ActionListener {
 					// dispatch a new event in case the movie container is listening for it
 					Event evt = new Event(this, 1000, null);
 					Properties prop = graph.getCellProperties(cell);
+					
 					if(prop != null){
+						
 						SchematicObjectClickEvent soce = new SchematicObjectClickEvent(evt, prop, graph.getCellType(cell));
 						self.dispatchSchematicObjectClickEvent(soce);
 					}
@@ -576,36 +669,35 @@ public class Schematic extends JPanel implements ActionListener {
 							gcm.makeUndoPoint();
 						}
 					}
+					//if cell != null
 					else {
-						// this would create a new promoter if an influence didn't already have one. And bring up the editor for it.
-						/*if(editPromoterButton.isSelected()){
-							// If the thing clicked on was an influence, bring up it's promoter window.
-							if(cell.isEdge()){
-								Properties prop = gcm.getInfluences().get(cell.getId());
-								String type = prop.getProperty(GlobalConstants.TYPE);
-								if (!type.equals(GlobalConstants.NOINFLUENCE) && !type.equals(GlobalConstants.COMPLEX)) {
-									String promoter = prop.getProperty(GlobalConstants.PROMOTER);
-									//System.out.print(promoter);
-									if(promoter != null){
-										gcm2sbml.launchPromoterPanel(promoter);
-									}else{
-										PromoterPanel p = gcm2sbml.launchPromoterPanel(null);
-										// set the selected influence to use the given promoter
-										prop = gcm.getInfluences().get(cell.getId());
-										// now rename the influence to incorporate the new promoter
-										if (p.getLastUsedPromoter()!=null) {
-											gcm.changeInfluencePromoter(cell.getId(), prop.getProperty(GlobalConstants.PROMOTER), p.getLastUsedPromoter());
-										}
-									}
-									graph.buildGraph();
-									gcm2sbml.refresh();
-									// no need to set dirty bit because the property window will do it for us.
-									gcm.makeUndoPoint();
-								}
-							}
-						}else */
-						if(selfInfluenceButton != null && selfInfluenceButton.isSelected()) {
+						
+						if(addComponentButton != null && addComponentButton.isSelected()) {
 							
+							boolean dropped = false;
+							
+							//if there's a grid, bring up the add-component-to-grid panel
+							if (grid.isEnabled()) {
+								
+								boolean gridSpatial = grid.getGridSpatial();
+
+								//the true is to indicate the dropping is happening on a grid
+								dropped = DropComponentPanel.dropComponent(
+										gcm2sbml, gcm, e.getX(), e.getY(), true, gridSpatial);
+							}
+							
+							//if the components dropped successfully
+							if(dropped){
+								
+								gcm2sbml.setDirty(true);
+								graph.buildGraph();
+								gcm2sbml.refresh();
+								drawGrid();
+								gcm.makeUndoPoint();
+							}
+						}
+						else if(selfInfluenceButton != null && selfInfluenceButton.isSelected()) {
+						
 							if(cell.isEdge() == false) {
 								
 								// the user clicked to add a self-influence to a component.
@@ -614,8 +706,7 @@ public class Schematic extends JPanel implements ActionListener {
 								edge.setEdge(true);
 								edge.setSource(cell);
 								edge.setTarget(cell);
-								tryAddAssociationBetweenCells(edge);
-								
+								tryAddAssociationBetweenCells(edge);								
 							}
 						}
 					}
@@ -679,7 +770,6 @@ public class Schematic extends JPanel implements ActionListener {
 		// Listen for moved cells
 		graph.addListener(mxEvent.CELLS_MOVED, new mxEventSource.mxIEventListener() {
 			
-//			@Override
 			public void invoke(Object arg0, mxEventObject event) {
 				
 				Object cells[] = (Object [])event.getProperties().get("cells");
@@ -696,11 +786,11 @@ public class Schematic extends JPanel implements ActionListener {
 					else{
 						
 						//if there's a grid, only move to cell to an open grid location
-						if (grid.isEnabled()) {
+						if (grid.isEnabled() && cells.length == 1) {
 							
 							//see if the component/cell can be moved
-							Boolean moved = grid.moveNode(cell.getId(), 
-									cell.getGeometry().getCenterX(), cell.getGeometry().getCenterY(), gcm);
+							Boolean moved = grid.moveNode(cell.getId(), cell.getGeometry().getCenterX(), 
+									cell.getGeometry().getCenterY(), gcm);
 							
 							//if it can, update its position on the graph
 							//(moveComponent updates its grid position)
@@ -730,7 +820,6 @@ public class Schematic extends JPanel implements ActionListener {
 		// Listen for deleted cells
 		graph.addListener(mxEvent.CELLS_REMOVED, new mxEventSource.mxIEventListener() {
 			
-//			@Override
 			public void invoke(Object arg0, mxEventObject event) {
 					
 				// if the graph isn't being built and this event
@@ -911,7 +1000,7 @@ public class Schematic extends JPanel implements ActionListener {
 
 		// listener for added influences
 		graph.addListener(mxEvent.CELLS_ADDED, new mxEventSource.mxIEventListener() {
-//			@Override
+		
 			public void invoke(Object arg0, mxEventObject event) {
 				
 				//if the graph is building, ignore the creation of edges.
@@ -945,8 +1034,8 @@ public class Schematic extends JPanel implements ActionListener {
 				}
 			}
 		});
-	
-		// Listen for everything.  For debugging.
+		
+		//this will print all graph events if uncommented
 		graph.addListener(null, new mxEventSource.mxIEventListener() {
 			
 			//@Override
@@ -990,8 +1079,7 @@ public class Schematic extends JPanel implements ActionListener {
             }
         }
     }
-	
-	
+    
 	//INPUT/OUTPUT AND CONNECTION METHODS
 	
 	/**
@@ -1418,7 +1506,7 @@ public class Schematic extends JPanel implements ActionListener {
 				
 		super.paintComponent(g);
 		
-		if (grid.isEnabled()) grid.drawGrid(g);
+		if (grid.isEnabled()) grid.drawGrid(g, graph);
 	}
 	
 	
@@ -1459,6 +1547,38 @@ public class Schematic extends JPanel implements ActionListener {
 	public boolean getEditable() {
 		return editable;
 	}
+	
+	
+//SOME CODE THAT WAS IN THE MOUSE-CLICKED LISTENER
+//I DOUBT IT'LL BE USED IN THE FUTURE, BUT JUST IN CASE, IT'S HERE
+
+//	// this would create a new promoter if an influence didn't already have one. And bring up the editor for it.
+//	/*if(editPromoterButton.isSelected()){
+//		// If the thing clicked on was an influence, bring up it's promoter window.
+//		if(cell.isEdge()){
+//			Properties prop = gcm.getInfluences().get(cell.getId());
+//			String type = prop.getProperty(GlobalConstants.TYPE);
+//			if (!type.equals(GlobalConstants.NOINFLUENCE) && !type.equals(GlobalConstants.COMPLEX)) {
+//				String promoter = prop.getProperty(GlobalConstants.PROMOTER);
+//				//System.out.print(promoter);
+//				if(promoter != null){
+//					gcm2sbml.launchPromoterPanel(promoter);
+//				}else{
+//					PromoterPanel p = gcm2sbml.launchPromoterPanel(null);
+//					// set the selected influence to use the given promoter
+//					prop = gcm.getInfluences().get(cell.getId());
+//					// now rename the influence to incorporate the new promoter
+//					if (p.getLastUsedPromoter()!=null) {
+//						gcm.changeInfluencePromoter(cell.getId(), prop.getProperty(GlobalConstants.PROMOTER), p.getLastUsedPromoter());
+//					}
+//				}
+//				graph.buildGraph();
+//				gcm2sbml.refresh();
+//				// no need to set dirty bit because the property window will do it for us.
+//				gcm.makeUndoPoint();
+//			}
+//		}
+//	}else */
 
 
 }
