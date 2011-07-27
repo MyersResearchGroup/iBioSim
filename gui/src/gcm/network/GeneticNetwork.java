@@ -520,8 +520,8 @@ public class GeneticNetwork {
 			
 			//CREATE OUTER SPECIES
 			//add "outer" species at all grid locations			
-			for (int row = 1; row <= gridRows; ++row) {
-				for (int col = 1; col <= gridCols; ++col) {
+			for (int row = 0; row < gridRows; ++row) {
+				for (int col = 0; col < gridCols; ++col) {
 					
 					String osID = "ROW" + row + "_COL" + col + "__" + underlyingSpeciesID;
 					String osComp = topLevelCompartment;
@@ -604,8 +604,8 @@ public class GeneticNetwork {
 			
 			//loop through all of the grid locations
 			//create diffusion reactions between all eight neighbors if they exist
-			for (int row = 1; row <= gridRows; ++row) {
-			for (int col = 1; col <= gridCols; ++col) {
+			for (int row = 0; row < gridRows; ++row) {
+			for (int col = 0; col < gridCols; ++col) {
 								
 				//ID of the outer species
 				//this will be modified if the outer species was originally in a component
