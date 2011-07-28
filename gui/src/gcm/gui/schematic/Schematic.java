@@ -173,7 +173,11 @@ public class Schematic extends JPanel implements ActionListener {
 			    */
 			   public boolean isPanningEvent(MouseEvent event) {
 				   
-				   return panButton.isSelected();
+					if (panButton != null) {
+				
+						return panButton.isSelected();
+					}
+					else return false;
 			   }
 			};
 			
