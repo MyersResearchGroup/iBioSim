@@ -84,7 +84,8 @@ public class StateGraph implements Runnable {
 		Stack<Transition> transitionsToFire = new Stack<Transition>();
 		for (String transition : lhpn.getTransitionList()) {
 			boolean addToStack = true;
-			if (lhpn.getEnablingTree(transition) != null && lhpn.getEnablingTree(transition).evaluateExpr(allVariables) == 0.0 && !state.containsPersistentTransition(transition)) {
+			if (lhpn.getEnablingTree(transition) != null && lhpn.getEnablingTree(transition).evaluateExpr(allVariables) == 0.0
+					&& !state.containsPersistentTransition(transition)) {
 				addToStack = false;
 			}
 			else if (lhpn.getTransition(transition).isPersistent() && !state.containsPersistentTransition(transition)) {
@@ -92,18 +93,21 @@ public class StateGraph implements Runnable {
 			}
 			if (lhpn.getTransitionRateTree(transition) != null && lhpn.getTransitionRateTree(transition).evaluateExpr(allVariables) == 0.0) {
 				addToStack = false;
+				state.removePersistentTransition(transition);
 			}
 			if (lhpn.getPreset(transition).length != 0) {
 				for (String place : lhpn.getPreset(transition)) {
 					if (!markedPlaces.contains(place)) {
 						addToStack = false;
+						state.removePersistentTransition(transition);
 					}
 				}
 			}
 			else {
 				addToStack = false;
+				state.removePersistentTransition(transition);
 			}
-			
+
 			if (addToStack) {
 				transitionsToFire.push(new Transition(transition, copyArrayList(markedPlaces), state));
 			}
@@ -159,7 +163,8 @@ public class StateGraph implements Runnable {
 				stateLocations.put(createStateVector(variables, allVariables), markings);
 				for (String transition : lhpn.getTransitionList()) {
 					boolean addToStack = true;
-					if (lhpn.getEnablingTree(transition) != null && lhpn.getEnablingTree(transition).evaluateExpr(allVariables) == 0.0 && !state.containsPersistentTransition(transition)) {
+					if (lhpn.getEnablingTree(transition) != null && lhpn.getEnablingTree(transition).evaluateExpr(allVariables) == 0.0
+							&& !state.containsPersistentTransition(transition)) {
 						addToStack = false;
 					}
 					else if (lhpn.getTransition(transition).isPersistent() && !state.containsPersistentTransition(transition)) {
@@ -167,16 +172,19 @@ public class StateGraph implements Runnable {
 					}
 					if (lhpn.getTransitionRateTree(transition) != null && lhpn.getTransitionRateTree(transition).evaluateExpr(allVariables) == 0.0) {
 						addToStack = false;
+						state.removePersistentTransition(transition);
 					}
 					if (lhpn.getPreset(transition).length != 0) {
 						for (String place : lhpn.getPreset(transition)) {
 							if (!markedPlaces.contains(place)) {
 								addToStack = false;
+								state.removePersistentTransition(transition);
 							}
 						}
 					}
 					else {
 						addToStack = false;
+						state.removePersistentTransition(transition);
 					}
 					if (addToStack) {
 						transitionsToFire.push(new Transition(transition, copyArrayList(markedPlaces), state));
@@ -262,7 +270,8 @@ public class StateGraph implements Runnable {
 					stateLocations.put(createStateVector(variables, allVariables), markings);
 					for (String transition : lhpn.getTransitionList()) {
 						boolean addToStack = true;
-						if (lhpn.getEnablingTree(transition) != null && lhpn.getEnablingTree(transition).evaluateExpr(allVariables) == 0.0 && !state.containsPersistentTransition(transition)) {
+						if (lhpn.getEnablingTree(transition) != null && lhpn.getEnablingTree(transition).evaluateExpr(allVariables) == 0.0
+								&& !state.containsPersistentTransition(transition)) {
 							addToStack = false;
 						}
 						else if (lhpn.getTransition(transition).isPersistent() && !state.containsPersistentTransition(transition)) {
@@ -271,16 +280,19 @@ public class StateGraph implements Runnable {
 						if (lhpn.getTransitionRateTree(transition) != null
 								&& lhpn.getTransitionRateTree(transition).evaluateExpr(allVariables) == 0.0) {
 							addToStack = false;
+							state.removePersistentTransition(transition);
 						}
 						if (lhpn.getPreset(transition).length != 0) {
 							for (String place : lhpn.getPreset(transition)) {
 								if (!markedPlaces.contains(place)) {
 									addToStack = false;
+									state.removePersistentTransition(transition);
 								}
 							}
 						}
 						else {
 							addToStack = false;
+							state.removePersistentTransition(transition);
 						}
 						if (addToStack) {
 							transitionsToFire.push(new Transition(transition, copyArrayList(markedPlaces), state));
@@ -1342,7 +1354,7 @@ public class StateGraph implements Runnable {
 		private String variables;
 
 		private double transitionSum;
-		
+
 		private String[] persistentTrans;
 
 		public State(String[] markings, StateTransitionPair[] nextStates, String id, String stateVector, HashMap<String, String> variables) {
@@ -1366,24 +1378,34 @@ public class StateGraph implements Runnable {
 			transitionSum = -1;
 			persistentTrans = new String[0];
 		}
-		
+
 		private void addPersistentTransition(String transition) {
 			String[] newTrans = new String[persistentTrans.length + 1];
-			for (int i = 0; i < persistentTrans.length; i ++) {
+			for (int i = 0; i < persistentTrans.length; i++) {
 				newTrans[i] = persistentTrans[i];
 			}
 			newTrans[newTrans.length - 1] = transition;
 			persistentTrans = newTrans;
 		}
-		
+
+		private void removePersistentTransition(String transition) {
+			ArrayList<String> newTrans = new ArrayList<String>();
+			for (String trans : persistentTrans) {
+				if (!trans.equals(transition)) {
+					newTrans.add(trans);
+				}
+			}
+			persistentTrans = newTrans.toArray(new String[0]);
+		}
+
 		private String[] getPersistentTransitions() {
 			return persistentTrans;
 		}
-		
+
 		private void setPersistentTransitions(String[] persistentTrans) {
 			this.persistentTrans = persistentTrans;
 		}
-		
+
 		private boolean containsPersistentTransition(String transition) {
 			for (String trans : persistentTrans) {
 				if (trans.equals(transition)) {
