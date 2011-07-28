@@ -1315,9 +1315,13 @@ public class Run implements ActionListener {
 						String gcmName = sbmlName.replace(".xml", ".gcm");
 						Gui.createGCMFromSBML(root, root + separator + sbmlName, sbmlName, gcmName, true);
 						if (!biomodelsim.updateOpenGCM(gcmName)) {
-							GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, gcmName, biomodelsim, log, false, null, null, null, false);
-							biomodelsim.addTab(gcmName, gcm, "GCM Editor");
-							biomodelsim.addToTree(gcmName);
+							try {
+								GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, gcmName, biomodelsim, log, false, null, null, null, false);
+								biomodelsim.addTab(gcmName, gcm, "GCM Editor");
+								biomodelsim.addToTree(gcmName);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
 						else {
 							biomodelsim.getTab().setSelectedIndex(biomodelsim.getTab(gcmName));

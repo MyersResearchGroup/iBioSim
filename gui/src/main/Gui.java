@@ -2340,7 +2340,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		// if the open popup menu is selected on a sim directory
 		else if (e.getActionCommand().equals("openSim")) {
-			openSim();
+			try {
+				openSim();
+			} catch (Exception e0) {
+			}
 		}
 		else if (e.getActionCommand().equals("openLearn")) {
 			if (lema) {
@@ -5396,6 +5399,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else {
 				String path = work.getAbsolutePath();
+				/*
 				GCMFile gcmFile = new GCMFile(path);
 				String gcmname = theFile.replace(".gcm", "");
 				gcmFile.load(filename);
@@ -5411,8 +5415,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				else {
+				*/
+				try {
 					GCM2SBMLEditor gcm = new GCM2SBMLEditor(path, theFile, this, log, false, null, null, null, textBased);
 					addTab(theFile, gcm, "GCM Editor");
+				} catch (Exception e) {
 				}
 			}
 		}
@@ -7097,7 +7104,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 				if (sim) {
-					openSim();
+					try {
+						openSim();
+					} catch (Exception e0) {
+					}
 				}
 				else if (synth) {
 					openSynth();
@@ -7662,7 +7672,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 
-	private void openSim() {
+	private void openSim() throws Exception {
 		String filename = tree.getFile();
 		boolean done = false;
 		for (int i = 0; i < tab.getTabCount(); i++) {
@@ -8379,10 +8389,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String tab = this.tab.getTitleAt(i);
 			if (gcmName.equals(tab)) {
 				if (this.tab.getComponentAt(i) instanceof GCM2SBMLEditor) {
-					GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, gcmName, this, log, false, null, null, null, false);
-					this.tab.setComponentAt(i, gcm);
-					this.tab.getComponentAt(i).setName("GCM Editor");
-					// gcm.save(false, "", false, true);
+					try {
+						GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, gcmName, this, log, false, null, null, null, false);
+						this.tab.setComponentAt(i, gcm);
+						this.tab.getComponentAt(i).setName("GCM Editor");
+						// gcm.save(false, "", false, true);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
 					return true;
 				}
 			}
