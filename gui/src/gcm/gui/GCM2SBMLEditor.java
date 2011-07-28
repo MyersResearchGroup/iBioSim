@@ -101,12 +101,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	
 	private ModelPanel modelPanel;
 
-	public GCM2SBMLEditor(String path) {
+	public GCM2SBMLEditor(String path) throws Exception {
 		this(path, null, null, null, false, null, null, null, false);
 	}
 
 	public GCM2SBMLEditor(String path, String filename, Gui biosim, Log log, boolean paramsOnly,
-			String simName, String paramFile, Reb2Sac reb2sac, boolean textBased) {
+			String simName, String paramFile, Reb2Sac reb2sac, boolean textBased) throws Exception {
 		super();
 		gcmEditor = this;
 		if (File.separator.equals("\\")) {
@@ -150,7 +150,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			gcm.load(path + separator + filename);
 			this.filename = filename;
 			this.gcmname = filename.replace(".gcm", "");
-			/*
 			if ((gcm.getSBMLFile()==null || !gcm.getSBMLFile().equals(this.gcmname + ".xml")) &&
 					new File(path + separator + this.gcmname + ".xml").exists()) {
 				Object[] options = { "Overwrite", "Cancel" };
@@ -159,10 +158,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
 						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				if (value == JOptionPane.NO_OPTION) {
-					// TODO: fill in cancel option
+					throw new Exception();
 				}
  			}
- 			*/
 		}
 		else {
 			this.filename = "";
