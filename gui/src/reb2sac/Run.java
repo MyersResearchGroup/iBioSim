@@ -917,7 +917,7 @@ public class Run implements ActionListener {
 					time1 = System.nanoTime();
 					reb2sac = exec.exec("reb2sac --target.encoding=hse2 " + theFile, null, work);
 				}
-				else if (sim.contains("markov-chain-analysis")) {
+				else if (sim.contains("markov-chain-analysis") || sim.equals("reachability-analysis")) {
 					time1 = System.nanoTime();
 					LhpnFile lhpnFile = null;
 					if (modelFile.contains(".lpn")) {
@@ -1050,7 +1050,21 @@ public class Run implements ActionListener {
 						BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg);
 						buildStateGraph.start();
 						buildStateGraph.join();
-						if (sim.equals("steady-state-markov-chain-analysis")) {
+						log.addText("Number of states found: " + sg.getNumberOfStates() + "\n");
+						if (sim.equals("reachability-analysis") && !sg.getStop()) {
+							int value = JOptionPane.YES_OPTION;
+							if (sg.getNumberOfStates() > 100) {
+								Object[] options = { "Yes", "No" };
+								value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains more than 100 states.\n"
+										+ "Do you want to output it to a dot file anyway?", "State Graph Contains Over 100 States",
+										JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+							}
+							if (value == JOptionPane.YES_OPTION) {
+								sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", true);
+							}
+							biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
+						}
+						else if (sim.equals("steady-state-markov-chain-analysis")) {
 							if (!sg.getStop()) {
 								log.addText("Performing steady state Markov chain analysis.\n");
 								PerfromSteadyStateMarkovAnalysisThread performMarkovAnalysis = new PerfromSteadyStateMarkovAnalysisThread(sg);
@@ -1074,7 +1088,16 @@ public class Run implements ActionListener {
 										simrepstream.write((simrep).getBytes());
 										simrepstream.close();
 									}
-									sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", true);
+									int value = JOptionPane.YES_OPTION;
+									if (sg.getNumberOfStates() > 100) {
+										Object[] options = { "Yes", "No" };
+										value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains more than 100 states.\n"
+												+ "Do you want to output it to a dot file anyway?", "State Graph Contains Over 100 States",
+												JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+									}
+									if (value == JOptionPane.YES_OPTION) {
+										sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", true);
+									}
 									biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 								}
 							}
@@ -1107,7 +1130,16 @@ public class Run implements ActionListener {
 										simrepstream.write((simrep).getBytes());
 										simrepstream.close();
 									}
-									sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", true);
+									int value = JOptionPane.YES_OPTION;
+									if (sg.getNumberOfStates() > 100) {
+										Object[] options = { "Yes", "No" };
+										value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains more than 100 states.\n"
+												+ "Do you want to output it to a dot file anyway?", "State Graph Contains Over 100 States",
+												JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+									}
+									if (value == JOptionPane.YES_OPTION) {
+										sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", true);
+									}
 									if (sg.outputTSD(directory + separator + "percent-term-time.tsd")) {
 										if (refresh) {
 											for (int i = 0; i < simTab.getComponentCount(); i++) {
@@ -1319,7 +1351,8 @@ public class Run implements ActionListener {
 								GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, gcmName, biomodelsim, log, false, null, null, null, false);
 								biomodelsim.addTab(gcmName, gcm, "GCM Editor");
 								biomodelsim.addToTree(gcmName);
-							} catch (Exception e) {
+							}
+							catch (Exception e) {
 								e.printStackTrace();
 							}
 						}
