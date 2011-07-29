@@ -1381,7 +1381,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				choices = new String[] { "gillespie", "gillespieJava", "mpde", "mp", "mp-adaptive", "mp-event", "emc-sim", "bunker", "nmc" };
 			}
 			else if (type.getSelectedItem().equals("Markov")) {
-				choices = new String[] { "steady-state-markov-chain-analysis", "transient-markov-chain-analysis", "atacs", "ctmc-transient" };
+				choices = new String[] { "steady-state-markov-chain-analysis", "transient-markov-chain-analysis", "reachability-analysis", "atacs",
+						"ctmc-transient" };
 			}
 			else {
 				choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
@@ -1460,6 +1461,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						sim.removeAllItems();
 						sim.addItem("steady-state-markov-chain-analysis");
 						sim.addItem("transient-markov-chain-analysis");
+						sim.addItem("reachability-analysis");
 						sim.addItem("atacs");
 						sim.addItem("ctmc-transient");
 						sim.setSelectedItem(o);
@@ -2342,7 +2344,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else if (e.getActionCommand().equals("openSim")) {
 			try {
 				openSim();
-			} catch (Exception e0) {
+			}
+			catch (Exception e0) {
 			}
 		}
 		else if (e.getActionCommand().equals("openLearn")) {
@@ -5400,26 +5403,26 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else {
 				String path = work.getAbsolutePath();
 				/*
-				GCMFile gcmFile = new GCMFile(path);
-				String gcmname = theFile.replace(".gcm", "");
-				gcmFile.load(filename);
-				if ((gcmFile.getSBMLFile() == null || !gcmFile.getSBMLFile().equals(gcmname + ".xml"))
-						&& new File(path + separator + gcmname + ".xml").exists()) {
-					Object[] options = { "Overwrite", "Cancel" };
-					int value;
-					value = JOptionPane.showOptionDialog(Gui.frame, gcmname + ".xml already exists." + "\nDo you want to overwrite?", "Overwrite",
-							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-					if (value == JOptionPane.YES_OPTION) {
-						GCM2SBMLEditor gcm = new GCM2SBMLEditor(path, theFile, this, log, false, null, null, null, textBased);
-						addTab(theFile, gcm, "GCM Editor");
-					}
-				}
-				else {
-				*/
+				 * GCMFile gcmFile = new GCMFile(path); String gcmname =
+				 * theFile.replace(".gcm", ""); gcmFile.load(filename); if
+				 * ((gcmFile.getSBMLFile() == null ||
+				 * !gcmFile.getSBMLFile().equals(gcmname + ".xml")) && new
+				 * File(path + separator + gcmname + ".xml").exists()) {
+				 * Object[] options = { "Overwrite", "Cancel" }; int value;
+				 * value = JOptionPane.showOptionDialog(Gui.frame, gcmname +
+				 * ".xml already exists." + "\nDo you want to overwrite?",
+				 * "Overwrite", JOptionPane.YES_NO_OPTION,
+				 * JOptionPane.PLAIN_MESSAGE, null, options, options[0]); if
+				 * (value == JOptionPane.YES_OPTION) { GCM2SBMLEditor gcm = new
+				 * GCM2SBMLEditor(path, theFile, this, log, false, null, null,
+				 * null, textBased); addTab(theFile, gcm, "GCM Editor"); } }
+				 * else {
+				 */
 				try {
 					GCM2SBMLEditor gcm = new GCM2SBMLEditor(path, theFile, this, log, false, null, null, null, textBased);
 					addTab(theFile, gcm, "GCM Editor");
-				} catch (Exception e) {
+				}
+				catch (Exception e) {
 				}
 			}
 		}
@@ -7106,7 +7109,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (sim) {
 					try {
 						openSim();
-					} catch (Exception e0) {
+					}
+					catch (Exception e0) {
 					}
 				}
 				else if (synth) {
@@ -8394,7 +8398,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						this.tab.setComponentAt(i, gcm);
 						this.tab.getComponentAt(i).setName("GCM Editor");
 						// gcm.save(false, "", false, true);
-					} catch (Exception e) {
+					}
+					catch (Exception e) {
 						e.printStackTrace();
 					}
 					return true;

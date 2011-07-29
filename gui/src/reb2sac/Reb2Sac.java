@@ -1098,12 +1098,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					speciesInt.get(i).get(0).setEnabled(true);
 					((JCheckBox) speciesInt.get(i).get(0)).doClick();
 					/*
-					if (none.isSelected()) {
-						for (int j = 0; j < speciesInt.get(i).size(); j++) {
-							speciesInt.get(i).get(j).setEnabled(false);
-						}
-					}
-					*/
+					 * if (none.isSelected()) { for (int j = 0; j <
+					 * speciesInt.get(i).size(); j++) {
+					 * speciesInt.get(i).get(j).setEnabled(false); } }
+					 */
 				}
 			}
 		}
@@ -1471,6 +1469,19 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 			else if (simulators.getSelectedItem().equals("atacs")) {
 				description.setText("ATACS Analysis Tool");
+				minStep.setEnabled(false);
+				minStepLabel.setEnabled(false);
+				step.setEnabled(false);
+				stepLabel.setEnabled(false);
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
+				limitLabel.setEnabled(false);
+				limit.setEnabled(false);
+				intervalLabel.setEnabled(false);
+				interval.setEnabled(false);
+			}
+			else if (simulators.getSelectedItem().equals("reachability-analysis")) {
+				description.setText("State Space Exploration");
 				minStep.setEnabled(false);
 				minStepLabel.setEnabled(false);
 				step.setEnabled(false);
@@ -4360,6 +4371,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			simulators.removeAllItems();
 			simulators.addItem("steady-state-markov-chain-analysis");
 			simulators.addItem("transient-markov-chain-analysis");
+			simulators.addItem("reachability-analysis");
 			simulators.addItem("atacs");
 			simulators.addItem("ctmc-transient");
 			if (selectedMarkovSim != null) {

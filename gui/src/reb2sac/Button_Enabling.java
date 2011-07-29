@@ -473,6 +473,7 @@ public class Button_Enabling {
 		if (gcmEditor != null || modelFile.contains(".lpn")) {
 			simulators.addItem("steady-state-markov-chain-analysis");
 			simulators.addItem("transient-markov-chain-analysis");
+			simulators.addItem("reachability-analysis");
 		}
 		simulators.addItem("atacs");
 		simulators.addItem("ctmc-transient");
