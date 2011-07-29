@@ -54,11 +54,13 @@ public class Button_Enabling {
 			addPostAbs.setEnabled(false);
 			rmPostAbs.setEnabled(false);
 			editPostAbs.setEnabled(false);
+			/*
 			for (ArrayList<Component> comp : speciesInt) {
 				for (Component c : comp) {
 					c.setEnabled(false);
 				}
 			}
+			*/
 			spLabel.setEnabled(false);
 			speciesLabel.setEnabled(false);
 			addIntSpecies.setEnabled(false);
