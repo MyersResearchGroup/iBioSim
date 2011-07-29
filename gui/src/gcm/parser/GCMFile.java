@@ -1291,6 +1291,7 @@ public class GCMFile {
 		species.remove(oldName);
 		if (sbml != null) {
 			if (sbml.getModel() != null) {
+				SBMLutilities.updateVarId(sbml, true, oldName, newName);
 				if (sbml.getModel().getSpecies(oldName) != null) {
 					sbml.getModel().getSpecies(oldName).setId(newName);
 				}
