@@ -1055,8 +1055,8 @@ public class Run implements ActionListener {
 							int value = JOptionPane.YES_OPTION;
 							if (sg.getNumberOfStates() > 100) {
 								Object[] options = { "Yes", "No" };
-								value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains more than 100 states.\n"
-										+ "Do you want to output it to a dot file anyway?", "State Graph Contains Over 100 States",
+								value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates() + " states.\n"
+										+ "Do you want to output it to a dot file?", "State Graph Contains Over 100 States",
 										JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 							}
 							if (value == JOptionPane.YES_OPTION) {
@@ -1091,8 +1091,8 @@ public class Run implements ActionListener {
 									int value = JOptionPane.YES_OPTION;
 									if (sg.getNumberOfStates() > 100) {
 										Object[] options = { "Yes", "No" };
-										value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains more than 100 states.\n"
-												+ "Do you want to output it to a dot file anyway?", "State Graph Contains Over 100 States",
+										value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates()
+												+ " states.\n" + "Do you want to output it to a dot file?", "State Graph Contains Over 100 States",
 												JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 									}
 									if (value == JOptionPane.YES_OPTION) {
