@@ -43,7 +43,7 @@ public class StateGraph implements Runnable {
 		markovResults = null;
 	}
 
-	public void buildStateGraph() {
+	public void buildStateGraph(JProgressBar progress) {
 		stateGraph = new ArrayList<State>();// HashMap<String,
 		// LinkedList<State>>();
 		HashMap<String, LinkedList<Integer>> stateLocations = new HashMap<String, LinkedList<Integer>>();
@@ -77,6 +77,7 @@ public class StateGraph implements Runnable {
 				allVariables), copyAllVariables(allVariables));
 		// markings.add(state);
 		counter++;
+		progress.setString("States found: " + counter);
 		stateGraph.add(state);// .put(createStateVector(variables,
 		// allVariables), markings);
 		markings.add(stateGraph.size() - 1);
@@ -157,6 +158,7 @@ public class StateGraph implements Runnable {
 				}
 				state.setPersistentTransitions(persistentTrans.toArray(new String[0]));
 				counter++;
+				progress.setString("States found: " + counter);
 				stateGraph.add(state);// .put(createStateVector(variables,
 				// allVariables), markings);
 				markings.add(stateGraph.size() - 1);
@@ -280,6 +282,7 @@ public class StateGraph implements Runnable {
 					}
 					state.setPersistentTransitions(persistentTrans.toArray(new String[0]));
 					counter++;
+					progress.setString("States found: " + counter);
 					stateGraph.add(state);// .put(createStateVector(variables,
 					// allVariables), markings);
 					markings.add(stateGraph.size() - 1);

@@ -919,6 +919,7 @@ public class Run implements ActionListener {
 				}
 				else if (sim.contains("markov-chain-analysis") || sim.equals("reachability-analysis")) {
 					time1 = System.nanoTime();
+					progress.setIndeterminate(true);
 					LhpnFile lhpnFile = null;
 					if (modelFile.contains(".lpn")) {
 						lhpnFile = new LhpnFile();
@@ -940,7 +941,6 @@ public class Run implements ActionListener {
 								}
 							}
 						}
-						progress.setIndeterminate(true);
 						GCMFile paramGCM = gcmEditor.getGCM();
 						GCMFile gcm = new GCMFile(root);
 						gcm.load(root + separator + gcmEditor.getRefFile());
@@ -1047,7 +1047,7 @@ public class Run implements ActionListener {
 					}
 					if (lhpnFile != null) {
 						sg = new StateGraph(lhpnFile);
-						BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg);
+						BuildStateGraphThread buildStateGraph = new BuildStateGraphThread(sg, progress);
 						buildStateGraph.start();
 						buildStateGraph.join();
 						log.addText("Number of states found: " + sg.getNumberOfStates() + "\n");
