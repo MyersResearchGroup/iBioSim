@@ -167,19 +167,19 @@ public class Schematic extends JPanel implements ActionListener {
 				
 				private static final long serialVersionUID = 1L;
 
-			@Override 
+				@Override
 			   /**
 			    * enables panning
 			    * this will be tied to a radio button soon
 			    */
-			   public boolean isPanningEvent(MouseEvent event) {
+				public boolean isPanningEvent(MouseEvent event) {
 				   
 					if (panButton != null) {
 				
 						return panButton.isSelected();
 					}
 					else return false;
-			   }
+				}
 			};
 			
 			graphComponent.setGraph(graph);
@@ -498,11 +498,14 @@ public class Schematic extends JPanel implements ActionListener {
 
 			public void adjustmentValueChanged(AdjustmentEvent arg0) {				
 
-				int offset = graphComponent.getVerticalScrollBar().getValue();				
-				Point scrollOffset = new Point(grid.getScrollOffset().x, offset);
-				
-				grid.setScrollOffset(scrollOffset);
-				grid.syncGridGraph(graph);
+				if (grid.isEnabled()) {
+					
+					int offset = graphComponent.getVerticalScrollBar().getValue();				
+					Point scrollOffset = new Point(grid.getScrollOffset().x, offset);
+					
+					grid.setScrollOffset(scrollOffset);
+					grid.syncGridGraph(graph);
+				}
 			}
 		});
 		
@@ -511,11 +514,14 @@ public class Schematic extends JPanel implements ActionListener {
 
 			public void adjustmentValueChanged(AdjustmentEvent arg0) {				
 
-				int offset = graphComponent.getHorizontalScrollBar().getValue();		
-				Point scrollOffset = new Point(offset, grid.getScrollOffset().y);
-				
-				grid.setScrollOffset(scrollOffset);
-				grid.syncGridGraph(graph);
+				if (grid.isEnabled()) {
+					
+					int offset = graphComponent.getHorizontalScrollBar().getValue();		
+					Point scrollOffset = new Point(offset, grid.getScrollOffset().y);
+					
+					grid.setScrollOffset(scrollOffset);
+					grid.syncGridGraph(graph);
+				}
 			}
 		});
 		
@@ -525,11 +531,13 @@ public class Schematic extends JPanel implements ActionListener {
 			public void mouseClicked(MouseEvent event) {
 				
 				Point location = event.getPoint();
-				
-				if (grid.clickedOnGridPadding(location)) {
+				if (grid.isEnabled()) {
 					
-					grid.setMouseClickLocation(location);
-					drawGrid();
+					if (grid.clickedOnGridPadding(location)) {
+						
+						grid.setMouseClickLocation(location);
+						drawGrid();
+					}
 				}
 			}
 		});
@@ -539,10 +547,13 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			public void mouseMoved(MouseEvent event) {
 				
-				Point location = event.getPoint();
-				
-				grid.setMouseLocation(location);				
-				drawGrid();
+				if (grid.isEnabled()) {
+					
+					Point location = event.getPoint();
+					
+					grid.setMouseLocation(location);				
+					drawGrid();
+					}
 			}
 		});
 		
@@ -551,7 +562,7 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			public void mouseWheelMoved(MouseWheelEvent event) {
 				
-				if (zoomButton.isSelected()) {
+				if (zoomButton != null && zoomButton.isSelected()) {
 					
 					if (event.getWheelRotation() > 0) {
 						
@@ -1084,6 +1095,7 @@ public class Schematic extends JPanel implements ActionListener {
             }
         }
     }
+    
     
 	//INPUT/OUTPUT AND CONNECTION METHODS
 	
