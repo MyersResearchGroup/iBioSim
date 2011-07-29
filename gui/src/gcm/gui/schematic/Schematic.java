@@ -26,6 +26,7 @@ import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
@@ -40,6 +41,7 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -47,6 +49,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -110,6 +113,7 @@ public class Schematic extends JPanel implements ActionListener {
 	private AbstractButton modifierButton;
 	private AbstractButton noInfluenceButton;
 	private AbstractButton zoomButton;
+	private AbstractButton unZoomButton;
 	private AbstractButton panButton;
 	
 	private JPopupMenu layoutPopup;
@@ -170,15 +174,17 @@ public class Schematic extends JPanel implements ActionListener {
 				@Override
 			   /**
 			    * enables panning
-			    * this will be tied to a radio button soon
 			    */
 				public boolean isPanningEvent(MouseEvent event) {
 				   
-					if (panButton != null) {
-				
+					if (this.getPanningHandler().isEnabled())
+						return true;
+					
+					else if (panButton != null)
 						return panButton.isSelected();
-					}
-					else return false;
+					
+					else 
+						return false;
 				}
 			};
 			
@@ -270,6 +276,7 @@ public class Schematic extends JPanel implements ActionListener {
 		panButton.setText("Pan");
 		
 		toolBar.add(zoomButton);
+		toolBar.add(Utils.makeToolButton("", "unZoom", "Un-Zoom", this));
 		toolBar.add(panButton);
 		
 		toolBar.addSeparator();
@@ -338,6 +345,21 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		toolBar.addSeparator();
 		toolBar.add(Utils.makeToolButton("choose_layout.png", "showLayouts", "Apply Layout", this));
+		
+		toolBar.addSeparator();
+		
+		zoomButton = new JToggleButton();
+		zoomButton.setText("Zoom");
+		
+		panButton = new JToggleButton();
+		panButton.setText("Pan");
+		
+		toolBar.add(zoomButton);
+		toolBar.add(Utils.makeToolButton("", "unZoom", "Un-Zoom", this));
+		toolBar.add(panButton);
+		
+		toolBar.addSeparator();
+		
 		toolBar.add(Utils.makeToolButton("", "undo", "Undo", this));
 		toolBar.add(Utils.makeToolButton("", "redo", "Redo", this));
 		toolBar.add(Utils.makeToolButton("", "saveSBOL", "Save SBOL", this));
@@ -458,6 +480,10 @@ public class Schematic extends JPanel implements ActionListener {
 				gcm.makeUndoPoint();
 			}
 		}
+		else if (command.equals("unZoom")) {
+			
+			graph.getView().setScale(1.0);
+		}
 		else if(command == ""){
 			// radio buttons don't have to do anything and have an action command of "".
 		}
@@ -493,7 +519,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		final Schematic self = this;
 		
-		//indicates vertical scrolling movement
+		//vertical scrolling listener for grid stuff
 		graphComponent.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener(){
 
 			public void adjustmentValueChanged(AdjustmentEvent arg0) {				
@@ -509,7 +535,7 @@ public class Schematic extends JPanel implements ActionListener {
 			}
 		});
 		
-		//indicates horizontal scrolling movement
+		//horizontal scrolling listener for grid stuff
 		graphComponent.getHorizontalScrollBar().addAdjustmentListener(new AdjustmentListener(){
 
 			public void adjustmentValueChanged(AdjustmentEvent arg0) {				
@@ -543,7 +569,7 @@ public class Schematic extends JPanel implements ActionListener {
 		});
 		
 		//mouse moved listener for grid stuff
-		graphComponent.getGraphControl().addMouseMotionListener(new MouseMotionAdapter() {
+		graphComponent.getGraphControl().addMouseMotionListener(new MouseMotionListener() {
 			
 			public void mouseMoved(MouseEvent event) {
 				
@@ -551,9 +577,20 @@ public class Schematic extends JPanel implements ActionListener {
 					
 					Point location = event.getPoint();
 					
-					grid.setMouseLocation(location);				
+					grid.setMouseLocation(location);			
 					drawGrid();
-					}
+				}
+			}
+			
+			public void mouseDragged(MouseEvent event) {
+				
+				if (event.isControlDown() || (panButton != null && panButton.isSelected())) {
+					graphComponent.getPanningHandler().setEnabled(true);
+				}
+				else {
+					graphComponent.getPanningHandler().setEnabled(false);
+				}
+				
 			}
 		});
 		
@@ -562,17 +599,21 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			public void mouseWheelMoved(MouseWheelEvent event) {
 				
-				if (zoomButton != null && zoomButton.isSelected()) {
+				if (zoomButton != null && zoomButton.isSelected() || event.isControlDown()) {
 					
 					if (event.getWheelRotation() > 0) {
 						
 						graphComponent.zoomOut();
-						grid.syncGridGraph(graph);
+						
+						if (grid.isEnabled()) 
+							grid.syncGridGraph(graph);
 					}
 					else {
 						
 						graphComponent.zoomIn();
-						grid.syncGridGraph(graph);
+						
+						if (grid.isEnabled()) 
+							grid.syncGridGraph(graph);
 					}
 					
 				}
@@ -730,6 +771,11 @@ public class Schematic extends JPanel implements ActionListener {
 				//double-click with left mouse button
 				else if(e.getClickCount() == 2 && SwingUtilities.isLeftMouseButton(e)) {
 					
+					//control + double-click is un-zoom
+					if (e.isControlDown()) {
+						graph.getView().setScale(1.0);
+					}
+					
 					if (grid.isEnabled()) {
 						
 						//if the user clicks on the area outside of the component within the grid location
@@ -779,7 +825,7 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * Listeners to take care of cell change/movement on the graph
+	 * Listeners to take care of CELL events -- cell change/movement on the graph
 	 */
 	private void addGraphListeners() {
 		
@@ -801,8 +847,9 @@ public class Schematic extends JPanel implements ActionListener {
 					}
 					else{
 						
-						//if there's a grid, only move to cell to an open grid location
-						if (grid.isEnabled() && cells.length == 1) {
+						//if there's a grid, only move cell to an open grid location
+						//only one cell at a time and you can't be in analysis view
+						if (grid.isEnabled() && cells.length == 1 && editable) {
 							
 							//see if the component/cell can be moved
 							Boolean moved = grid.moveNode(cell.getId(), cell.getGeometry().getCenterX(), 
