@@ -1185,13 +1185,7 @@ public class StateGraph implements Runnable {
 	}
 
 	public int getNumberOfStates() {
-		int count = 0;
-		// for (String s : stateGraph.keySet()) {
-		for (int i = 0; i < stateGraph.size(); i++) {// .get(s).size(); i++) {
-			count++;
-		}
-		// }
-		return count;
+		return stateGraph.size();
 	}
 
 	private ArrayList<String> copyArrayList(ArrayList<String> original) {
