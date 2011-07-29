@@ -204,7 +204,17 @@ public class StateGraph implements Runnable {
 				for (String transition : lhpn.getTransitionList()) {
 					if (lhpn.getEnablingTree(transition) != null && lhpn.getEnablingTree(transition).evaluateExpr(allVariables) != 0.0
 							&& lhpn.getTransition(transition).isPersistent() && !transitions.contains(transition)) {
-						transitions.add(transition);
+						if (lhpn.getPreset(transition).length != 0) {
+							boolean add = true;
+							for (String place : lhpn.getPreset(transition)) {
+								if (!markedPlaces.contains(place)) {
+									add = false;
+								}
+							}
+							if (add) {
+								transitions.add(transition);
+							}
+						}
 					}
 				}
 				boolean add = true;
@@ -214,6 +224,7 @@ public class StateGraph implements Runnable {
 					for (String place : mark.getMarkings()) {
 						if (!markedPlaces.contains(place)) {
 							same = false;
+							break;
 						}
 					}
 					for (String place : markedPlaces) {
@@ -221,15 +232,18 @@ public class StateGraph implements Runnable {
 						for (String place2 : mark.getMarkings()) {
 							if (place2.equals(place)) {
 								contains = true;
+								break;
 							}
 						}
 						if (!contains) {
 							same = false;
+							break;
 						}
 					}
 					for (String trans : mark.getPersistentTransitions()) {
 						if (!transitions.contains(trans)) {
 							same = false;
+							break;
 						}
 					}
 					for (String trans : transitions) {
@@ -237,10 +251,12 @@ public class StateGraph implements Runnable {
 						for (String trans2 : mark.getPersistentTransitions()) {
 							if (trans2.equals(trans)) {
 								contains = true;
+								break;
 							}
 						}
 						if (!contains) {
 							same = false;
+							break;
 						}
 					}
 					if (same) {
