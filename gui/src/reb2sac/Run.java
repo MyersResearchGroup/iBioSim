@@ -439,7 +439,8 @@ public class Run implements ActionListener {
 			outDir = outDir.substring(0, outDir.length() - 1 - outDir.split(separator)[outDir.split(separator).length - 1].length());
 		}
 		try {
-			long time1;
+			long time1, time2;
+			time2 = -1;
 			String directory = "";
 			String theFile = "";
 			String sbmlName = "";
@@ -1052,6 +1053,7 @@ public class Run implements ActionListener {
 						buildStateGraph.join();
 						log.addText("Number of states found: " + sg.getNumberOfStates() + "\n");
 						if (sim.equals("reachability-analysis") && !sg.getStop()) {
+							time2 = System.nanoTime();
 							int value = JOptionPane.YES_OPTION;
 							if (sg.getNumberOfStates() > 100) {
 								Object[] options = { "Yes", "No" };
@@ -1061,8 +1063,8 @@ public class Run implements ActionListener {
 							}
 							if (value == JOptionPane.YES_OPTION) {
 								sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", true);
+								biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 							}
-							biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 						}
 						else if (sim.equals("steady-state-markov-chain-analysis")) {
 							if (!sg.getStop()) {
@@ -1081,6 +1083,7 @@ public class Run implements ActionListener {
 									performMarkovAnalysis.start(absError, conditions);
 								}
 								performMarkovAnalysis.join();
+								time2 = System.nanoTime();
 								if (!sg.getStop()) {
 									String simrep = sg.getMarkovResults();
 									if (simrep != null) {
@@ -1097,8 +1100,8 @@ public class Run implements ActionListener {
 									}
 									if (value == JOptionPane.YES_OPTION) {
 										sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", true);
+										biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 									}
-									biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 								}
 							}
 						}
@@ -1123,6 +1126,7 @@ public class Run implements ActionListener {
 									performMarkovAnalysis.start(timeLimit, timeStep, printInterval, absError, null, false);
 								}
 								performMarkovAnalysis.join();
+								time2 = System.nanoTime();
 								if (!sg.getStop()) {
 									String simrep = sg.getMarkovResults();
 									if (simrep != null) {
@@ -1133,12 +1137,13 @@ public class Run implements ActionListener {
 									int value = JOptionPane.YES_OPTION;
 									if (sg.getNumberOfStates() > 100) {
 										Object[] options = { "Yes", "No" };
-										value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains more than 100 states.\n"
-												+ "Do you want to output it to a dot file anyway?", "State Graph Contains Over 100 States",
+										value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates()
+												+ " states.\n" + "Do you want to output it to a dot file?", "State Graph Contains Over 100 States",
 												JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 									}
 									if (value == JOptionPane.YES_OPTION) {
 										sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", true);
+										biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 									}
 									if (sg.outputTSD(directory + separator + "percent-term-time.tsd")) {
 										if (refresh) {
@@ -1151,7 +1156,6 @@ public class Run implements ActionListener {
 											}
 										}
 									}
-									biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 								}
 							}
 						}
@@ -1267,7 +1271,9 @@ public class Run implements ActionListener {
 			if (reb2sac != null) {
 				exitValue = reb2sac.waitFor();
 			}
-			long time2 = System.nanoTime();
+			if (time2 == -1) {
+				time2 = System.nanoTime();
+			}
 			long minutes;
 			long hours;
 			long days;
