@@ -102,6 +102,8 @@ public class Grid {
 		gridHeight = GlobalConstants.DEFAULT_COMPONENT_HEIGHT + padding;
 		gridGeomWidth = GlobalConstants.DEFAULT_COMPONENT_WIDTH + padding;
 		gridGeomHeight = GlobalConstants.DEFAULT_COMPONENT_HEIGHT + padding;
+		componentGeomWidth = GlobalConstants.DEFAULT_COMPONENT_WIDTH;
+		componentGeomHeight = GlobalConstants.DEFAULT_COMPONENT_HEIGHT;
 		scrollOffset = new Point(0, 0);
 		
 		gridBounds = new Rectangle();
@@ -444,7 +446,8 @@ public class Grid {
 		components = gcmComponents;
 		
 		//update the graph
-		graph.buildGraph();
+		if (graph != null)
+			graph.buildGraph();
 		
 		putComponentsOntoGrid();
 		updateGridRectangles();
