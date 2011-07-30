@@ -156,7 +156,7 @@ public class Schematic extends JPanel implements ActionListener {
 			gcm.makeUndoPoint();
 		}
 		
-		boolean needs_layouting = graph.buildGraph();
+		graph.buildGraph();
 		
 		// Create and plug in the graphComponent
 		if(graphComponent == null){
@@ -196,21 +196,15 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		
 		JToolBar toolbar = new JToolBar();
-		toolbar.setName("toolbar");
 		
 		//if the grid is enabled, change the toolbar
 		if (grid.isEnabled()) {
 			
 			grid.syncGridGraph(graph);
-						
-			Component[] comps = this.getComponents();
 			
-			for (Component c : comps) {
-								
-				//the toolbar height is 36, so this is a toolbar if found
-				if (c.getSize() != null && c.getSize().getHeight() == 36)
-					this.remove(c);
-			}
+			//remove the previous toolbar (and add back the graph)
+			this.removeAll();
+			this.add(graphComponent, BorderLayout.CENTER);
 			
 			toolbar = buildGridToolbar();
 						
@@ -218,16 +212,11 @@ public class Schematic extends JPanel implements ActionListener {
 			if(this.editable) {
 				
 				this.add(toolbar, BorderLayout.NORTH);
-				
+							
 				toolbar.repaint();
-				toolbar.revalidate();
-								
-				//if there's a toolbar, adjust for it when drawing the grid
-				//ideally, i would use the toolbar height, but that's 0 for some
-				//mysterious reason
-				grid.setVerticalOffset(32);
+				toolbar.validate();		
+				this.validate();
 			}
-			else grid.setVerticalOffset(0);
 			
 			drawGrid();
 		}
@@ -1570,7 +1559,21 @@ public class Schematic extends JPanel implements ActionListener {
 				
 		super.paintComponent(g);
 		
-		if (grid.isEnabled()) grid.drawGrid(g, graph);
+		if (grid.isEnabled()) {
+			
+			Component[] comps = this.getComponents();
+			int height = 0;
+			
+			//find the height of the toolbar
+			for (Component c : comps) {
+				
+				if (c.getSize() != null && c.getSize().getHeight() < 50)
+					height = (int) c.getSize().getHeight();
+			}
+			
+			grid.setVerticalOffset(height+1);			
+			grid.drawGrid(g, graph);
+		}
 	}
 	
 	
