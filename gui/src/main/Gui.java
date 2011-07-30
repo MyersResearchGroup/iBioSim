@@ -501,7 +501,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			saveModel = new JMenuItem("Save Learned LPN");
 		}
 		else {
-			saveModel = new JMenuItem("Save GCM");
+			saveModel = new JMenuItem("Save Learned Model");
 		}
 		saveAsVerilog = new JMenuItem("Save as Verilog");
 		saveAsVerilog.addActionListener(this);
@@ -615,26 +615,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		ShortCutKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 		copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ShortCutKey));
 		rename.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
-		delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
+		delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, ShortCutKey));
 		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ShortCutKey));
-		// newProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P,
-		// ShortCutKey));
 		openProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ShortCutKey));
 		close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ShortCutKey));
 		closeAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ShortCutKey | KeyEvent.SHIFT_MASK));
 		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
 		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey));
+		saveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | KeyEvent.SHIFT_MASK));
 		run.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ShortCutKey));
 		check.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ShortCutKey));
 		pref.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, ShortCutKey));
 		viewLog.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0));
 		if (lema) {
-			// viewCoverage.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4,
-			// 0));
-			// viewVHDL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4,
-			// 0));
-			// viewVerilog.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5,
-			// 0));
 			viewLHPN.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 			viewTrace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0));
 		}
@@ -660,22 +653,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		viewModel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey | KeyEvent.ALT_DOWN_MASK),
 				"model");
 		viewModel.getActionMap().put("model", modelAction);
-		// graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_T,
-		// ShortCutKey));
-		// probGraph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,
-		// ShortCutKey));
-		// if (!lema) {
-		// importDot.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
-		// ShortCutKey));
-		// }
-		// else {
-		// importLhpn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N,
-		// ShortCutKey));
-		// }
-		// importSbml.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_B,
-		// ShortCutKey));
-		// importVhdl.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H,
-		// ShortCutKey));
 		newMenu.setMnemonic(KeyEvent.VK_N);
 		importMenu.setMnemonic(KeyEvent.VK_I);
 		exportMenu.setMnemonic(KeyEvent.VK_E);
@@ -705,7 +682,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		importSbol.setMnemonic(KeyEvent.VK_O);
 		importSbml.setMnemonic(KeyEvent.VK_S);
-		// importBioModel.setMnemonic(KeyEvent.VK_S);
 		importVhdl.setMnemonic(KeyEvent.VK_V);
 		importSpice.setMnemonic(KeyEvent.VK_P);
 		save.setMnemonic(KeyEvent.VK_S);
@@ -788,16 +764,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		createVer.setEnabled(false);
 		edit.add(copy);
 		edit.add(rename);
-		// edit.add(refresh);
 		edit.add(delete);
-		// edit.addSeparator();
-		// edit.add(pref);
 		file.add(newMenu);
 		newMenu.add(newProj);
 		if (!async) {
 			newMenu.add(newGCMModel);
 			newMenu.add(newLhpn);
-			// newMenu.add(newSBMLModel);
 		}
 		else if (atacs) {
 			newMenu.add(newVhdl);
@@ -825,14 +797,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		file.addSeparator();
 		file.add(save);
 		file.add(saveAs);
-		file.add(saveModel);
 		if (lema)
 			file.add(saveAsVerilog);
-		// file.add(saveParam);
-		file.add(run);
 		if (!async) {
 			file.add(check);
 		}
+		file.add(run);
+		file.add(saveModel);
 		file.addSeparator();
 		file.add(importMenu);
 		if (!async) {
@@ -868,19 +839,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportMenu.add(exportSvg);
 		exportMenu.add(exportTsd);
 		file.addSeparator();
-		// file.add(save);
-		// file.add(saveAs);
-		// file.add(run);
-		// file.add(check);
-		// if (!lema) {
-		// file.add(saveParam);
-		// }
-		// file.addSeparator();
-		// file.add(export);
-		// if (!lema) {
-		// file.add(saveSbml);
-		// file.add(saveTemp);
-		// }
 		help.add(manual);
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
 			new MacOSAboutHandler();
@@ -4958,7 +4916,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					break;
 				}
 			}
-			String copy = JOptionPane.showInputDialog(frame, "Enter A New Filename:", "Copy", JOptionPane.PLAIN_MESSAGE);
+			String copy = JOptionPane.showInputDialog(frame, "Enter a New Filename:", "Copy", JOptionPane.PLAIN_MESSAGE);
 			if (copy == null || copy.equals("")) {
 				return;
 			}
@@ -5102,7 +5060,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					break;
 				}
 			}
-			String rename = JOptionPane.showInputDialog(frame, "Enter A New Filename:", "Rename", JOptionPane.PLAIN_MESSAGE);
+			String rename = JOptionPane.showInputDialog(frame, "Enter a New Filename:", "Rename", JOptionPane.PLAIN_MESSAGE);
 			if (rename == null || rename.equals("")) {
 				return;
 			}
