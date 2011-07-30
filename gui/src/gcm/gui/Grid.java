@@ -5,16 +5,19 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
+import javax.swing.AbstractAction;
 
 import com.mxgraph.model.mxCell;
 
 import gcm.gui.schematic.BioGraph;
+import gcm.gui.schematic.Schematic;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 
@@ -44,9 +47,6 @@ public class Grid {
 	
 	//map of gridnodes and their corresponding rectangles
 	private HashMap<Rectangle, GridNode> rectToNodeMap;
-	
-	//map of x,y points and the grid node they're located in
-	//private HashMap<Point, GridNode> pointToNodeMap;
 	
 	//components on the grid
 	private HashMap<String, Properties> components;
@@ -593,6 +593,90 @@ public class Grid {
 		refreshComponents(gcm.getComponents());
 	}
 	
+	/**
+	 * returns whether or not there's something selected
+	 * this is used for changing the right-click context menu
+	 * 
+	 * @return whether or not there's something selected
+	 */
+	public boolean isALocationSelected() {
+		
+		//loop through each grid node
+		//if one is selected, return true
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
+				
+				if (grid.get(row).get(col).isSelected())
+					return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * clears all nodes that are selected
+	 */
+	public void eraseSelectedNodes(GCMFile gcm) {
+		
+		//loop through all nodes
+		//if it's selected, clear it
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
+				
+				if (grid.get(row).get(col).isSelected() && grid.get(row).get(col).isOccupied())
+					eraseNode(grid.get(row).get(col).getComponent().getKey(), gcm);
+			}
+		}
+	}
+	
+	/**
+	 * sets every node to selected
+	 */
+	public void selectAllNodes() {
+		
+		//loop through each grid node to see if one is selected
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
+				
+				grid.get(row).get(col).setSelected(true);
+			}
+		}
+	}
+	
+	/**
+	 * sets every node to deselected
+	 */
+	public void deselectAllNodes() {
+		
+		//loop through each grid node to see if one is selected
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
+				
+				grid.get(row).get(col).setSelected(false);
+			}
+		}
+	}
+	
+	/**
+	 * returns the row/col of each selected node in an arraylist
+	 * @return the row/col of each selected node
+	 */
+	public ArrayList<Point> getSelectedUnoccupiedNodes() {
+		
+		ArrayList<Point> selectedNodes = new ArrayList<Point>();
+		
+		//loop through each grid node to see if one is selected
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
+				
+				if (grid.get(row).get(col).isSelected() && !grid.get(row).get(col).isOccupied())
+					selectedNodes.add(new Point(grid.get(row).get(col).getRow(), grid.get(row).get(col).getCol()));
+			}
+		}
+		
+		return selectedNodes;
+	}
 	
 	//PRIVATE
 	
@@ -1031,7 +1115,6 @@ public class Grid {
 		this.componentGeomWidth = componentGeomWidth;
 	}
 	
-
 	/**
 	 * @return the componentGeomWidth
 	 */
@@ -1039,7 +1122,6 @@ public class Grid {
 		return componentGeomWidth;
 	}
 	
-
 	/**
 	 * @return the ComponentGeomHeight
 	 */
@@ -1047,7 +1129,6 @@ public class Grid {
 		return componentGeomHeight;
 	}
 	
-
 	/**
 	 * @param ComponentGeomHeight the ComponentGeomHeight to set
 	 */
@@ -1055,7 +1136,6 @@ public class Grid {
 		this.componentGeomHeight = componentGeomHeight;
 	}
 	
-
 	/**
 	 * @return the gridGeomHeight
 	 */
@@ -1063,7 +1143,6 @@ public class Grid {
 		return gridGeomHeight;
 	}
 	
-
 	/**
 	 * @param gridGeomHeight the gridGeomHeight to set
 	 */
@@ -1071,7 +1150,6 @@ public class Grid {
 		this.gridGeomHeight = gridGeomHeight;
 	}
 	
-
 	/**
 	 * @return the gridGeomWidth
 	 */
@@ -1079,7 +1157,6 @@ public class Grid {
 		return gridGeomWidth;
 	}
 	
-
 	/**
 	 * @param gridGeomWidth the gridGeomWidth to set
 	 */
@@ -1087,7 +1164,6 @@ public class Grid {
 		this.gridGeomWidth = gridGeomWidth;
 	}
 	
-
 	/**
 	 * @return the gridHeight
 	 */
@@ -1319,5 +1395,5 @@ public class Grid {
 			return hover;
 		}
 	}
-	
+
 }
