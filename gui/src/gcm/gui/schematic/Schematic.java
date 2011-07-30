@@ -25,7 +25,7 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionAdapter;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -41,7 +41,6 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
@@ -49,8 +48,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
@@ -72,12 +69,10 @@ import main.Gui;
 
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
-import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
-import com.mxgraph.util.mxPoint;
 
 
 public class Schematic extends JPanel implements ActionListener {
@@ -113,7 +108,6 @@ public class Schematic extends JPanel implements ActionListener {
 	private AbstractButton modifierButton;
 	private AbstractButton noInfluenceButton;
 	private AbstractButton zoomButton;
-	private AbstractButton unZoomButton;
 	private AbstractButton panButton;
 	
 	private JPopupMenu layoutPopup;
@@ -377,6 +371,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * Called when a toolbar button is clicked.
 	 */
 	public void actionPerformed(ActionEvent event){
+		
 		String command = event.getActionCommand();
 				
 		if(command.equals("showLayouts")){
@@ -505,8 +500,8 @@ public class Schematic extends JPanel implements ActionListener {
 		{
 			public void actionPerformed(ActionEvent e)
 			{
-				action.actionPerformed(new ActionEvent(getGraphComponent(), e
-						.getID(), e.getActionCommand()));
+				action.actionPerformed(new ActionEvent(getGraphComponent(), 
+						e.getID(), e.getActionCommand()));
 			}
 		};
 	}
@@ -559,11 +554,14 @@ public class Schematic extends JPanel implements ActionListener {
 				Point location = event.getPoint();
 				if (grid.isEnabled()) {
 					
-					if (grid.clickedOnGridPadding(location)) {
+					//NOTE: i think it's better to just click anywhere on the grid location, 
+					//but padding-only is an option (it's a pain, though, when zoomed-out
+					
+					//if (grid.clickedOnGridPadding(location)) {
 						
 						grid.setMouseClickLocation(location);
 						drawGrid();
-					}
+					//}
 				}
 			}
 		});
@@ -1537,9 +1535,11 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @param e
 	 */
 	protected void showGraphPopupMenu(MouseEvent e) {
+		
 		Point pt = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(),
 				graphComponent);
 		EditorPopupMenu menu = new EditorPopupMenu(Schematic.this);
+		
 		menu.show(graphComponent, pt.x, pt.y);
 
 		e.consume();
@@ -1561,10 +1561,10 @@ public class Schematic extends JPanel implements ActionListener {
 	 * is called automatically whenever the component becomes visible
 	 * or when repaint/drawGrid is called
 	 * 
-	 * is used to draw the grid onto the schematic
+	 * is used to draw the grid's selection boxes onto the schematic
+	 * the actual grid is part of the biograph, so it's drawn when that's drawn
 	 * 
-	 * @param g Graphics object
-	 * 
+	 * @param g Graphics object 
 	 */
 	public void paintComponent(Graphics g) {
 				
@@ -1610,6 +1610,40 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public boolean getEditable() {
 		return editable;
+	}
+	
+	/**
+	 * returns the grid for the schematic
+	 * @return the grid for the schematic
+	 */
+	public Grid getGrid() {
+		
+		return grid;
+	}
+	
+	/**
+	 * returns the schematic's gcm
+	 * @return the gcm
+	 */
+	public GCMFile getGCM() {
+		return gcm;
+	}
+	
+	/**
+	 * returns the schematic's biograph
+	 * @return the biograph
+	 */
+	public BioGraph getGraph() {
+		return graph;
+	}
+	
+	/**
+	 * return's the gcm2sbml editor
+	 * @return the gcm2sbml editor
+	 */
+	public GCM2SBMLEditor getGCM2SBML() {
+		
+		return gcm2sbml;
 	}
 	
 	

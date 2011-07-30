@@ -67,12 +67,28 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 			
 			//if the location isn't occupied, go ahead and show the menu
 			if (!gcm.getGrid().getOccupancyFromPoint(new Point((int)mouseX, (int)mouseY)))
-				panel.openGridGUI(mouseX, mouseY, gridSpatial);
+				panel.openGridGUI(mouseX, mouseY, gridSpatial, false);
 			else 
 				return false;
 		}
 		else
 			panel.openGUI(mouseX, mouseY);
+		
+		return panel.droppedComponent;
+	}
+	
+	/**
+	 * for dropping components to selected grid locations
+	 * 
+	 * @param gcm2sbml
+	 * @param gcm
+	 * @return whether the user clicked ok/cancel
+	 */
+	public static boolean dropSelectedComponents(GCM2SBMLEditor gcm2sbml, GCMFile gcm, boolean gridSpatial) {
+		
+		panel = new DropComponentPanel(gcm2sbml, gcm, true);
+		
+		panel.openGridGUI(0, 0, gridSpatial, true);
 		
 		return panel.droppedComponent;
 	}
@@ -134,7 +150,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	 * @param mouseY where the user clicked
 	 * @param gridSpatial whether the grid is spatial or cell population
 	 */
-	private void openGridGUI(float mouseX, float mouseY, boolean gridSpatial) {
+	private void openGridGUI(float mouseX, float mouseY, boolean gridSpatial, boolean selected) {
 		
 		//component list is the gcms that can be added to a spatial grid
 		//but components that aren't compartments are ineligible for
@@ -201,7 +217,25 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 			//name of the component
 			String component = (String)componentChooser.getSelectedItem();
 			
-			applyGridComponent(mouseX, mouseY, component);
+			if (selected == false) {
+				
+				int row = gcm.getGrid().getRowFromPoint(new Point((int)mouseX, (int)mouseY));
+				int col = gcm.getGrid().getColFromPoint(new Point((int)mouseX, (int)mouseY));
+				
+				applyGridComponent(row, col, component);
+			}
+			//if we're adding components to selected location(s)
+			else {
+				
+				ArrayList<Point> selectedNodes = gcm.getGrid().getSelectedUnoccupiedNodes();
+				
+				//loop through all selected locations; apply the component to that location
+				if (selectedNodes.size() > 0) {
+					
+					for (Point rowCol : selectedNodes)
+						applyGridComponent(rowCol.x, rowCol.y, component);				
+				}
+			}
 			
 			Grid grid = gcm.getGrid();
 			grid.refreshComponents(gcm.getComponents());
@@ -217,12 +251,9 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	 * @param mouseY where the user clicked
 	 * @param compGCM name of the component
 	 */
-	private void applyGridComponent(float mouseX, float mouseY, String component) {
+	private void applyGridComponent(int row, int col, String component) {
 		
 		Grid grid = gcm.getGrid();
-		
-		int row = grid.getRowFromPoint(new Point((int)mouseX, (int)mouseY));
-		int col = grid.getColFromPoint(new Point((int)mouseX, (int)mouseY));
 		
 		double padding = 30;
 		double width = grid.getComponentGeomWidth();

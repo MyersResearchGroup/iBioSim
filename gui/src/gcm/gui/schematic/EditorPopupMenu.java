@@ -1,7 +1,9 @@
 package gcm.gui.schematic;
 
+import gcm.gui.Grid;
+import gcm.gui.GridAction;
+
 import javax.swing.JPopupMenu;
-//import com.mxgraph.examples.swing.editor.EditorActions.HistoryAction;
 import com.mxgraph.swing.util.mxGraphActions;
 
 public class EditorPopupMenu extends JPopupMenu
@@ -12,15 +14,34 @@ public class EditorPopupMenu extends JPopupMenu
 	 */
 	private static final long serialVersionUID = -3132749140550242191L;
 
-//	public EditorPopupMenu(BasicGraphEditor editor)
-	public EditorPopupMenu(Schematic editor)
-	{
+	/**
+	 * constructor
+	 * @param editor the schematic creating the popup menu
+	 */
+	public EditorPopupMenu(Schematic editor) {
+		
+		Grid grid = editor.getGrid();
+		
 		boolean selected = !editor.getGraphComponent().getGraph().isSelectionEmpty();
 		add(editor.bind("Delete", mxGraphActions.getDeleteAction())).setEnabled(selected);
 		addSeparator();
-		add(editor.bind("Select Vertices", mxGraphActions.getSelectVerticesAction()));
-		add(editor.bind("Select Edges", mxGraphActions.getSelectEdgesAction()));
-		addSeparator();
-		add(editor.bind("Select All", mxGraphActions.getSelectAllAction()));
+		
+		if (grid.isEnabled()) {
+			
+			add(new GridAction("Select All Locations", editor));
+			add(new GridAction("De-select All Locations", editor))
+				.setEnabled(editor.getGrid().isALocationSelected());
+			add(new GridAction("Clear Selected Location(s)", editor))
+				.setEnabled(editor.getGrid().isALocationSelected());
+			add(new GridAction("Add Component(s) to (Non-Occupied) Selected Location(s)", 
+				editor)).setEnabled(editor.getGrid().isALocationSelected());
+		}
+		else {	
+			
+			add(editor.bind("Select Vertices", mxGraphActions.getSelectVerticesAction()));
+			add(editor.bind("Select Edges", mxGraphActions.getSelectEdgesAction()));
+			addSeparator();
+			add(editor.bind("Select All", mxGraphActions.getSelectAllAction()));
+		}
 	}
 }
