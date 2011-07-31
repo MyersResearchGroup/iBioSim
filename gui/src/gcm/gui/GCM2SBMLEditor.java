@@ -1155,20 +1155,19 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		//add(mainPanelCenterDown, BorderLayout.SOUTH);
 		
 		// When the Graphical View panel gets clicked on, tell it to display itself.
+		/*
 		tab.addChangeListener(new ChangeListener(){
 			public void stateChanged(ChangeEvent e) {
 				JTabbedPane selectedTab = (JTabbedPane)(e.getSource());
 				JPanel selectedPanel = (JPanel)selectedTab.getComponent(selectedTab.getSelectedIndex());
 				String className = selectedPanel.getClass().getName();
 				// The new Schematic
-				/*
 				if(className.indexOf("Schematic") >= 0){
 					((Schematic)selectedPanel).display();
 				}
-				*/
 			}
 		});
-
+        */
 		promoters = new PropertyList("Promoter List");
 		EditButton addInit = new EditButton("Add Promoter", promoters);
 		RemoveButton removeInit = new RemoveButton("Remove Promoter", promoters);
