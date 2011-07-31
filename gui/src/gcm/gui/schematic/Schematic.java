@@ -193,43 +193,43 @@ public class Schematic extends JPanel implements ActionListener {
 			this.add(graphComponent, BorderLayout.CENTER);
 						
 			addGraphComponentListeners();
-
-			JToolBar toolbar = new JToolBar();
-
-			//if the grid is enabled, change the toolbar
-			if (grid.isEnabled()) {
-
-				grid.syncGridGraph(graph);
-
-				//remove the previous toolbar (and add back the graph)
-				this.removeAll();
-				this.add(graphComponent, BorderLayout.CENTER);
-
-				toolbar = buildGridToolbar();
-
-				//if we're in a non-analysis schematic
-				if(this.editable) {
-
-					this.add(toolbar, BorderLayout.NORTH);
-
-					toolbar.repaint();
-					toolbar.validate();		
-					this.validate();
-				}
-
-				drawGrid();
-			}
-			//if there's no grid, draw the usual toolbar
-			else {
-
-				toolbar = buildToolBar();
-
-				//if we're in a non-analysis schematic
-				if(this.editable)
-					this.add(toolbar, BorderLayout.NORTH);
-			}
 		}
-	}
+
+		JToolBar toolbar = new JToolBar();
+
+		//if the grid is enabled, change the toolbar
+		if (grid.isEnabled()) {
+
+			grid.syncGridGraph(graph);
+
+			//remove the previous toolbar (and add back the graph)
+			this.removeAll();
+			this.add(graphComponent, BorderLayout.CENTER);
+
+			toolbar = buildGridToolbar();
+
+			//if we're in a non-analysis schematic
+			if(this.editable) {
+
+				this.add(toolbar, BorderLayout.NORTH);
+
+				toolbar.repaint();
+				toolbar.validate();		
+				this.validate();
+			}
+
+			drawGrid();
+		}
+		//if there's no grid, draw the usual toolbar
+		else {
+
+			toolbar = buildToolBar();
+
+			//if we're in a non-analysis schematic
+			if(this.editable)
+				this.add(toolbar, BorderLayout.NORTH);
+		}
+}
 
 	
 	//TOOLBAR BUILDING METHODS
