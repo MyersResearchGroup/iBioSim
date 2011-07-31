@@ -195,7 +195,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private JMenuItem graph; // The graph menu item
 
-	private JMenuItem probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf, exportPng, exportSvg, exportTsd;
+	private JMenuItem probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf, exportPng, exportSvg, exportTsd, 
+		exportSBML, exportSBOL;
 
 	private String root; // The root directory
 
@@ -408,15 +409,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		imgName = ENVVAR + separator + "gui" + separator + "icons" + separator + "savecheck.png";
 		checkButton = makeToolButton(imgName, "check", "Save and Check", "Save and Check");
 		toolbar.add(checkButton);
+		imgName = ENVVAR + separator + "gui" + separator + "icons" + separator + "export.jpg";
+		exportButton = makeToolButton(imgName, "export", "Export", "Export");
+		toolbar.add(exportButton);
 		imgName = ENVVAR + separator + "gui" + separator + "icons" + separator + "run-icon.jpg";
 		runButton = makeToolButton(imgName, "run", "Save and Run", "Run");
 		toolbar.add(runButton);
 		imgName = ENVVAR + separator + "gui" + separator + "icons" + separator + "refresh.jpg";
 		refreshButton = makeToolButton(imgName, "refresh", "Refresh", "Refresh");
 		toolbar.add(refreshButton);
-		imgName = ENVVAR + separator + "gui" + separator + "icons" + separator + "export.jpg";
-		exportButton = makeToolButton(imgName, "export", "Export", "Export");
-		toolbar.add(exportButton);
 		saveButton.setEnabled(false);
 		runButton.setEnabled(false);
 		refreshButton.setEnabled(false);
@@ -488,6 +489,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importHse = new JMenuItem("Handshaking Expansion");
 		importUnc = new JMenuItem("Extended Burst Mode Machine");
 		importRsg = new JMenuItem("Reduced State Graph");
+		exportSBML = new JMenuItem("Systems Biology Markup Language (SBML)");
+		exportSBOL = new JMenuItem("Synthetic Biology Open Language (SBOL)");
 		exportCsv = new JMenuItem("Comma Separated Values (csv)");
 		exportDat = new JMenuItem("Tab Delimited Data (dat)");
 		exportEps = new JMenuItem("Encapsulated Postscript (eps)");
@@ -564,6 +567,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importUnc.addActionListener(this);
 		importRsg.addActionListener(this);
 		importSpice.addActionListener(this);
+		exportSBML.addActionListener(this);
+		exportSBOL.addActionListener(this);
 		exportCsv.addActionListener(this);
 		exportDat.addActionListener(this);
 		exportEps.addActionListener(this);
@@ -715,14 +720,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importRsg.setEnabled(false);
 		importSpice.setEnabled(false);
 		exportMenu.setEnabled(false);
-		// exportCsv.setEnabled(false);
-		// exportDat.setEnabled(false);
-		// exportEps.setEnabled(false);
-		// exportJpg.setEnabled(false);
-		// exportPdf.setEnabled(false);
-		// exportPng.setEnabled(false);
-		// exportSvg.setEnabled(false);
-		// exportTsd.setEnabled(false);
+		exportSBML.setEnabled(false);
+		exportSBOL.setEnabled(false);
+		exportCsv.setEnabled(false);
+		exportDat.setEnabled(false);
+		exportEps.setEnabled(false);
+		exportJpg.setEnabled(false);
+		exportPdf.setEnabled(false);
+		exportPng.setEnabled(false);
+		exportSvg.setEnabled(false);
+		exportTsd.setEnabled(false);
 		newGCMModel.setEnabled(false);
 		newSBMLModel.setEnabled(false);
 		newVhdl.setEnabled(false);
@@ -830,6 +837,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			// importMenu.add(importSpice);
 		}
 		file.add(exportMenu);
+		exportMenu.add(exportSBML);
+		exportMenu.add(exportSBOL);
+		exportMenu.addSeparator();
 		exportMenu.add(exportCsv);
 		exportMenu.add(exportDat);
 		exportMenu.add(exportEps);
@@ -2184,6 +2194,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				((Synthesis) comp).viewTrace();
 			}
 		}
+		else if (e.getSource() == exportSBML) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof GCM2SBMLEditor) {
+				((GCM2SBMLEditor) comp).exportSBML();
+			}
+		}
+		else if (e.getSource() == exportSBOL) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof GCM2SBMLEditor) {
+				((GCM2SBMLEditor) comp).exportSBOL();
+			}
+		}
 		else if (e.getSource() == exportCsv) {
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof Graph) {
@@ -3271,6 +3293,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof Graph) {
 				((Graph) comp).export();
+			} else if (comp instanceof GCM2SBMLEditor) {
+				((GCM2SBMLEditor) comp).exportSBML();
+				// TODO: should give choice of SBML or SBOL
 			}
 			else if (comp instanceof JTabbedPane) {
 				Component component = ((JTabbedPane) comp).getSelectedComponent();
@@ -3715,6 +3740,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			catch (BioModelsWSException e2) {
 				JOptionPane.showMessageDialog(frame, "Error Contacting BioModels Database", "Error", JOptionPane.ERROR_MESSAGE);
+				return;
 			}
 		}
 		JPanel BioModelsPanel = new JPanel(new BorderLayout());
@@ -8678,6 +8704,16 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		run.setEnabled(false);
 		check.setEnabled(false);
 		exportMenu.setEnabled(false);
+		exportSBML.setEnabled(false);
+		exportSBOL.setEnabled(false);
+		exportCsv.setEnabled(false);
+		exportDat.setEnabled(false);
+		exportEps.setEnabled(false);
+		exportJpg.setEnabled(false);
+		exportPdf.setEnabled(false);
+		exportPng.setEnabled(false);
+		exportSvg.setEnabled(false);
+		exportTsd.setEnabled(false);
 		saveAsVerilog.setEnabled(false);
 		viewCircuit.setEnabled(false);
 		viewSG.setEnabled(false);
@@ -8693,9 +8729,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			saveButton.setEnabled(true);
 			saveasButton.setEnabled(true);
 			checkButton.setEnabled(true);
+			exportButton.setEnabled(true);
 			save.setEnabled(true);
 			saveAs.setEnabled(true);
 			check.setEnabled(true);
+			exportMenu.setEnabled(true);
+			exportSBML.setEnabled(true);
+			exportSBOL.setEnabled(true);
 		}
 		else if (comp instanceof SbolBrowser) {
 			save.setEnabled(true);
@@ -8706,6 +8746,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			save.setEnabled(true);
 			saveAs.setEnabled(true);
 			viewCircuit.setEnabled(true);
+			exportMenu.setEnabled(true);
+			exportSBML.setEnabled(true);
 		}
 		else if (comp instanceof SBML_Editor) {
 			saveButton.setEnabled(true);

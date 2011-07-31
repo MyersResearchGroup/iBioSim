@@ -133,6 +133,10 @@ public class GCMFile {
 		this.usedIDs = usedIDs;
 	}
 
+	public ArrayList<String> getUsedIDs() {
+		return usedIDs;
+	}
+
 	public MySpecies getSpeciesPanel() {
 		return speciesPanel;
 	}
