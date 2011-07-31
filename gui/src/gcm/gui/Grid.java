@@ -199,7 +199,7 @@ public class Grid {
 			for (int col = 0; col < numCols; ++col) {
 				
 				GridNode node = grid.get(row).get(col);
-				Rectangle rect = node.getRectangle();
+				Rectangle rect = node.getZoomedRectangle();
 				
 				if (selectionOff) node.setSelected(false);
 				
@@ -320,7 +320,7 @@ public class Grid {
 	public boolean moveNode(String compID, double centerX, double centerY, GCMFile gcm) {
 		
 		//adjust the point for zoom
-		Point moveToPoint = new Point((int)((double)centerX*zoomAmount), (int)((double)(centerY + verticalOffset)*zoomAmount));
+		Point moveToPoint = new Point((int)((double)centerX*zoomAmount), (int)((double)centerY*zoomAmount + verticalOffset));
 		
 		//if the user is trying to move the component to a place within the grid
 		//then pay attention
@@ -384,7 +384,7 @@ public class Grid {
 	 */
 	public boolean getOccupancyFromPoint(Point point) {
 		
-		point.y += verticalOffset;		
+		point.y += verticalOffset;
 		GridNode node = getNodeFromPoint(point);
 		
 		if (node != null)
@@ -483,7 +483,7 @@ public class Grid {
 			clickPoint.y -= verticalOffset;
 		
 			//if the user didn't click within the component
-			if (!node.getSnapRectangle().contains(clickPoint) || node.isOccupied() == false)
+			if (!node.getZoomedSnapRectangle().contains(clickPoint) || node.isOccupied() == false)
 				return true;
 			else 
 				return false;
@@ -688,8 +688,6 @@ public class Grid {
 	 * also sets the bounds for the entire grid
 	 */
 	private void updateGridRectangles() {
-		
-		double currX = 0, currY = 0;
 
 		//create/set rectangles for each location in grid
 		for (int row = 0; row < numRows; ++row) {
@@ -721,24 +719,19 @@ public class Grid {
 					
 					//get the bounds information from the graph and set the grid
 					//rectangle's data to fit with the graph's data
-					mxCell cell = graph.getGridRectangleCellFromID(cellID);
-					Rectangle cellRect = graph.getCellBounds(cell).getRectangle();
-					
+					mxCell cell = graph.getGridRectangleCellFromID(cellID);					
 					Rectangle cellGeom = graph.getCellGeometry(cell).getRectangle();
 					
 					gridGeomHeight = cellGeom.getHeight();
 					gridGeomWidth = cellGeom.getWidth();				
-					gridHeight = cellRect.getHeight();
-					gridWidth = cellRect.getWidth();
-					currX = cellRect.getX();
-					currY = cellRect.getY() + verticalOffset;
+					gridHeight = gridGeomHeight * zoomAmount;
+					gridWidth = gridGeomWidth * zoomAmount;
 					
 					//set the current padding value (which may have changed due to zooming)
+					//this is usually going to be 30
 					padding = gridGeomWidth - componentGeomWidth;
 					
-					Rectangle rect = new Rectangle((int)(currX + 0.5), (int)(currY + 0.5), 
-							(int)(gridWidth + 0.5), (int)(gridHeight + 0.5));				
-					grid.get(row).get(col).setRectangle(rect);
+					grid.get(row).get(col).setRectangle(cellGeom);
 				}
 			}
 		}
@@ -799,9 +792,9 @@ public class Grid {
 		for (int row = 0; row < numRows; ++row) {
 			for (int col = 0; col < numCols; ++col) {
 				
-				Rectangle rect = grid.get(row).get(col).getRectangle();
+				Rectangle rect = grid.get(row).get(col).getZoomedRectangle();
 				
-				if (rect.contains(point))
+				if (rect.contains(point))					
 					return rectToNodeMap.get(rect);
 			}
 		}
@@ -825,7 +818,7 @@ public class Grid {
 		for (int row = 0; row < numRows; ++row) {
 			for (int col = 0; col < numCols; ++col) {
 		
-				rectToNodeMap.put(grid.get(row).get(col).getRectangle(), grid.get(row).get(col));				
+				rectToNodeMap.put(grid.get(row).get(col).getZoomedRectangle(), grid.get(row).get(col));				
 			}
 		}
 	}
@@ -843,7 +836,7 @@ public class Grid {
 		if (hoveredNode != null) {
 			
 			hoveredNode.setHover(true);
-			drawGridSelectionBox(g, hoveredNode.getRectangle());
+			drawGridSelectionBox(g, hoveredNode.getZoomedRectangle());
 		}
 	}
 	
@@ -1306,27 +1299,48 @@ public class Grid {
 		}
 	
 		/**
+		 * sets the geometric rectangle of the location
 		 * @param rectangle the rectangle for the node
 		 */
 		public void setRectangle(Rectangle rectangle) {
 			
 			this.gridRectangle = rectangle;
-						
-			//set the snap rectangle based on this rectangle
-			//take zoom into account
-			setSnapRectangle(new Rectangle(
-					(int)(((double)rectangle.x + padding/2.0)/(zoomAmount) + 0.5),
-					(int)(((double)rectangle.y + padding/2.0)/(zoomAmount) + 0.5),
-					(int)(gridGeomWidth - 30 + 0.5),
-					(int)(gridGeomHeight - 30 + 0.5)));
+			
+			int xCoord = (int)(col * gridGeomWidth + padding/2);
+			int yCoord = (int)(row * gridGeomHeight + padding/2);
+			
+			snapRectangle = new Rectangle(
+					(int)(xCoord + padding/2),
+					(int)(yCoord + padding/2),
+					(int)componentGeomWidth,
+					(int)componentGeomHeight);
 		}
 		
 		/**
+		 * returns the geometric rectangle of the location
+		 * to get the actual coordinates, you need the zoomed version
 		 * 
 		 * @return the grid rectangle for the node
 		 */
 		public Rectangle getRectangle() {
-			return this.gridRectangle;
+			
+			return new Rectangle(gridRectangle.x, gridRectangle.y + verticalOffset, 
+					gridRectangle.width, gridRectangle.height);
+		}
+		
+		/**
+		 * returns rectangle after applying zoom scaling
+		 * 
+		 * @return zoomed rectangle
+		 */
+		public Rectangle getZoomedRectangle() {
+			
+			return new Rectangle(
+					(int)((double)gridRectangle.x * zoomAmount + 0.5),
+					(int)((double)gridRectangle.y * zoomAmount + verticalOffset + 0.5),
+					(int)((double)gridRectangle.width * zoomAmount + 0.5),
+					(int)((double)gridRectangle.height * zoomAmount + 0.5));
+			
 		}
 	
 		/**
@@ -1335,14 +1349,13 @@ public class Grid {
 		 * 
 		 * used by the schematic to move cells around the graph
 		 * 
+		 * this is a geometric rectangle; to get actual coordinates, you need the zoomed rectangle
+		 * 
 		 * @param x
 		 * @param y
 		 */
 		public void setSnapRectangle(Rectangle r) {
 			
-			//because this is passed back to the Schematic
-			//change the y coordinate to un-offset from the toolbar
-			r.y -= (double)verticalOffset/zoomAmount;
 			snapRectangle = r;
 		}
 		
@@ -1354,6 +1367,19 @@ public class Grid {
 		public Rectangle getSnapRectangle() {
 			
 			return snapRectangle;
+		}
+		
+		/**
+		 * returns the snap rectangle after applying a zoom scaling
+		 * @return the zoomed snap rectangle
+		 */
+		public Rectangle getZoomedSnapRectangle() {
+			
+			return new Rectangle(
+					(int)(snapRectangle.x * zoomAmount),
+					(int)(snapRectangle.y * zoomAmount),
+					(int)(snapRectangle.width * zoomAmount),
+					(int)(snapRectangle.height * zoomAmount));
 		}
 		
 		/**
