@@ -24,19 +24,30 @@ import java.util.HashSet;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.Set;
+import java.util.prefs.Preferences;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.tree.TreeModel;
 
 import main.Gui;
 import main.Log;
 
-import org.sbml.libsbml.*;
+import org.sbml.libsbml.Compartment;
+import org.sbml.libsbml.InitialAssignment;
+import org.sbml.libsbml.Model;
+import org.sbml.libsbml.Rule;
+import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.SBMLWriter;
+import org.sbml.libsbml.Species;
 
 import reb2sac.ConstraintTermThread;
 import reb2sac.Reb2Sac;
@@ -44,6 +55,7 @@ import reb2sac.Reb2SacThread;
 import sbmleditor.CompartmentTypes;
 import sbmleditor.Compartments;
 import sbmleditor.Constraints;
+import sbmleditor.Events;
 import sbmleditor.Functions;
 import sbmleditor.InitialAssignments;
 import sbmleditor.ModelPanel;
@@ -53,15 +65,10 @@ import sbmleditor.Reactions;
 import sbmleditor.Rules;
 import sbmleditor.SBML_Editor;
 import sbmleditor.SBMLutilities;
-import sbmleditor.Events;
 import sbmleditor.SpeciesTypes;
 import sbmleditor.Units;
+import sbol.SbolSynthesizer;
 import util.MutableBoolean;
-
-
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
-import javax.swing.tree.TreeModel;
 
 /**
  * This is the GCM2SBMLEditor class. It takes in a gcm file and allows the user
@@ -463,6 +470,68 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 
 	}
 
+	public void exportSBOL() {
+		File lastFilePath;
+		Preferences biosimrc = Preferences.userRoot();
+		if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
+			lastFilePath = null;
+		}
+		else {
+			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
+		}
+		String exportPath = util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "SBOL", -1);
+		if (!exportPath.equals("")) {
+			biosimrc.put("biosim.general.export_dir", exportPath);
+			GCMParser parser = new GCMParser(gcm, false);
+			SbolSynthesizer synthesizer = parser.buildSbolSynthesizer();
+			synthesizer.synthesizeDnaComponent(getSbolFiles(), exportPath, "");
+		}
+	}
+	
+	public void exportSBML() {
+		File lastFilePath;
+		Preferences biosimrc = Preferences.userRoot();
+		if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
+			lastFilePath = null;
+		}
+		else {
+			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
+		}
+		String exportPath = util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "SBML", -1);
+		if (!exportPath.equals("")) {
+			biosimrc.put("biosim.general.export_dir",exportPath);
+			GCMParser parser = new GCMParser(path + separator + gcmname + ".gcm");
+			GeneticNetwork network = null;
+			try {
+				network = parser.buildNetwork();
+			}
+			catch (IllegalStateException e) {
+				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), "Error",
+						JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			network.loadProperties(gcm);
+			// Finally, output to a file
+			/*
+			if (new File(exportPath).exists()) {
+				int value = JOptionPane.showOptionDialog(Gui.frame, exportPath + " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
+						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				if (value == JOptionPane.YES_OPTION) {
+					network.mergeSBML(exportPath);
+					log.addText("Saving GCM file as SBML file:\n" + exportPath +"\n");
+					//biosim.addToTree(gcmname + ".xml");
+					//biosim.updateOpenSBML(gcmname + ".xml");
+				}
+			}
+			else {
+			*/
+			network.mergeSBML(exportPath);
+			log.addText("Saving GCM file as SBML file:\n" + exportPath + "\n");
+			//biosim.addToTree(gcmname + ".xml");
+			//}
+		}
+	}
+	
 	public void saveAs(String newName) {
 		if (new File(path + separator + newName + ".gcm").exists()) {
 			int value = JOptionPane.showOptionDialog(Gui.frame, newName
@@ -1092,9 +1161,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				JPanel selectedPanel = (JPanel)selectedTab.getComponent(selectedTab.getSelectedIndex());
 				String className = selectedPanel.getClass().getName();
 				// The new Schematic
+				/*
 				if(className.indexOf("Schematic") >= 0){
 					((Schematic)selectedPanel).display();
 				}
+				*/
 			}
 		});
 
@@ -1843,8 +1914,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 
 	private boolean lock = false;
 
-	private JTextField GCMNameTextField = null;
-
 	private String[] options = { "Ok", "Cancel" };
 
 	private PropertyList species = null;
@@ -1860,7 +1929,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	private PropertyList conditions = null;
 
 	private JComboBox sbmlFiles = null;
-
 
 	private String path = null;
 

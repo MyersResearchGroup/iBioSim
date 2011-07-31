@@ -63,7 +63,15 @@ public class Utility {
 						}
 					});
 				}
-				else if (approve.equals("Import SBOL") || (approve.equals("Export SBOL"))) {
+				else if (approve.equals("Import SBOL")) {
+					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+					fd.setFilenameFilter(new FilenameFilter() {
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".rdf");
+						}
+					});
+				}
+				else if (approve.equals("Export SBOL")) {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
@@ -73,6 +81,14 @@ public class Utility {
 				}
 				else if (approve.equals("Import SBML")) {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+					fd.setFilenameFilter(new FilenameFilter() {
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".sbml") || name.endsWith(".xml");
+						}
+					});
+				}
+				else if (approve.equals("Export SBML")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
 							return name.endsWith(".sbml") || name.endsWith(".xml");
@@ -136,7 +152,7 @@ public class Utility {
 							selectedFile += ".rdf";
 						}
 					}
-					else if (approve.equals("Import SBML")) {
+					else if (approve.equals("Import SBML") || (approve.equals("Export SMBL"))) {
 						if (!selectedFile.endsWith(".sbml") && !selectedFile.endsWith(".xml")) {
 							selectedFile += ".xml";
 						}
@@ -356,6 +372,13 @@ public class Utility {
 				fc.setFileFilter(xmlFilter);
 				retValue = fc.showDialog(frame, approve);
 			}
+			else if (approve.equals("Export SBML")) {
+				fc.addChoosableFileFilter(sbmlFilter);
+				fc.addChoosableFileFilter(xmlFilter);
+				fc.setAcceptAllFileFilterUsed(false);
+				fc.setFileFilter(xmlFilter);
+				retValue = fc.showDialog(frame, approve);
+			}
 			else if (approve.equals("Import Genetic Circuit")) {
 				fc.addChoosableFileFilter(gcmFilter);
 				fc.setAcceptAllFileFilterUsed(false);
@@ -431,6 +454,12 @@ public class Utility {
 						else if (selectedFilter == svgFilter) {
 							filename += ".svg";
 						}
+					}
+				}
+				else if (approve.equals("Export SBML")) {
+					if ((filename.length() < 4)
+							|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".xml")))) {
+						filename += ".xml";
 					}
 				}
 			}
