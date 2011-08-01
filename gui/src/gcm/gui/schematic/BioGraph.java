@@ -8,6 +8,7 @@ import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 
 import java.awt.Color;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -985,7 +986,15 @@ public class BioGraph extends mxGraph {
 		double width = Double.parseDouble(prop.getProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH)));;
 		double height = Double.parseDouble(prop.getProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_HEIGHT)));
 				
-		String compart = prop.getProperty("compartment");
+		//set the correct compartment status
+		GCMFile compGCMFile = new GCMFile(gcm.getPath());
+		boolean compart = false;
+		
+		if (compGCMFile != null) {
+			compGCMFile.load(gcm.getPath() + File.separator + prop.getProperty("gcm"));
+			compart = compGCMFile.getIsWithinCompartment();
+		}
+		
 		
 		if(x < -9998 || y < -9998){
 			
@@ -1142,26 +1151,18 @@ public class BioGraph extends mxGraph {
 			throw new Error("Invalid id '"+id+"'. Valid ids were:" + String.valueOf(gcm.getInfluences().keySet()));
 		
 		// build the edge style
-		// Look in mxConstants to see all the pre-built styles.
 		String style = "defaultEdge;" + mxConstants.STYLE_ENDARROW + "=";
 		
 		if(prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION))
-			style += mxConstants.ARROW_BLOCK;
+			style = "ACTIVATION";
 		else if(prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.REPRESSION))
-			style += mxConstants.ARROW_OVAL;
+			style = "REPRESSION";
 		else if(prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.COMPLEX))
-			style += mxConstants.ARROW_OPEN; 
-		else 
-			style += mxConstants.ARROW_DIAMOND + ";" + mxConstants.STYLE_DASHED + "=true";
-//		=[';p']
-		
-		if(prop.getProperty(GlobalConstants.TYPE) == GlobalConstants.COMPLEX){
-			style += ";" + mxConstants.STYLE_DASHED + "=true";
-		};
-		
-		//		style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
-
-		//style += ";" + mxConstants.STYLE_EDGE + "=" + mxConstants.EDGESTYLE_ENTITY_RELATION;
+			style = "COMPLEX";
+		else if(prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.REACTION_EDGE))
+			style = "REACTION_EDGE";
+		else
+			style = "DEFAULT";
 		
 		// apply the style
 		mxCell cell = this.getInfluence(id);
@@ -1170,7 +1171,6 @@ public class BioGraph extends mxGraph {
 		// apply the promoter name as a label, only if the promoter isn't drawn.
 		if(gcm.influenceHasExplicitPromoter(id) == false)
 			cell.setValue(prop.getProperty(GlobalConstants.PROMOTER));
-		
 	};
 	
 	/**
@@ -1208,8 +1208,9 @@ public class BioGraph extends mxGraph {
 		Hashtable<String, Object> style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
 		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#774400");
-		//style.put(mxConstants.RECTANGLE_ROUNDING_FACTOR, .2);
+		style.put(mxConstants.STYLE_FILLCOLOR, "#5CB4F2");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
 		style.put(mxConstants.STYLE_ROUNDED, true);
 		stylesheet.putCellStyle("SPECIES", style);
 		
@@ -1217,30 +1218,50 @@ public class BioGraph extends mxGraph {
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_ELLIPSE);
 		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#0077AA");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#FFAA00");
-		style.put(mxConstants.STYLE_FONTCOLOR, "#774400");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#C7007B");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
 		stylesheet.putCellStyle("REACTION", style);
 		
 		//components
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
-		style.put(mxConstants.STYLE_OPACITY, 30);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#774400");
+		style.put(mxConstants.STYLE_OPACITY, 50);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
 		style.put(mxConstants.STYLE_ROUNDED, false);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#FFAA00");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#FFAA00");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#FAB53E");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
 		stylesheet.putCellStyle("COMPONENT", style);
+		
+		//grid components
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+		style.put(mxConstants.STYLE_OPACITY, 100);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_ROUNDED, true);
+		style.put(mxConstants.STYLE_FILLCOLOR, "#FAB53E");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		stylesheet.putCellStyle("GRIDCOMPONENT", style);
 		
 		//compartments
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
 		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#774400");
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
 		style.put(mxConstants.STYLE_ROUNDED, false);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#009900");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#009900");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#87F274");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
 		stylesheet.putCellStyle("COMPARTMENT", style);
+		
+		//grid compartments
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
+		style.put(mxConstants.STYLE_OPACITY, 100);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_ROUNDED, true);
+		style.put(mxConstants.STYLE_FILLCOLOR, "#87F274");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		stylesheet.putCellStyle("GRIDCOMPARTMENT", style);
 		
 		//grid rectangle
 		style = new Hashtable<String, Object>();
@@ -1257,32 +1278,82 @@ public class BioGraph extends mxGraph {
 		//component edge
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_OPACITY, 100);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#774400");
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
 		style.put(mxConstants.STYLE_FILLCOLOR, "#FFAA00");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#AA7700");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
 		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
-		stylesheet.putCellStyle("COMPONENT_EDGE", style);		
+		stylesheet.putCellStyle("COMPONENT_EDGE", style);	
 
-		//production edge
+		//production edge (promoter to species)
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_OPACITY, 100);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#0000FF");
-		style.put(mxConstants.STYLE_FILLCOLOR, "#0000FF");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#AA7700");
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#34BA04");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#34BA04");
 		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
 		style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
-		//style.put(mxConstants.STYLE_ELBOW, mxConstants.)
-		stylesheet.putCellStyle("PRODUCTION", style);	
+		stylesheet.putCellStyle("PRODUCTION", style);
+		
+		//activation edge (species to species)
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_OPACITY, 100);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#34BA04");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#34BA04");
+		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_BLOCK);
+		style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
+		stylesheet.putCellStyle("ACTIVATION", style);
+		
+		//repression edge (species to species)
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_OPACITY, 100);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#FA2A2A");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#FA2A2A");
+		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OVAL);
+		style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
+		stylesheet.putCellStyle("REPRESSION", style);
+		
+		//complex formation edge (species to species)
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_OPACITY, 100);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#4E5D9C");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#4E5D9C");
+		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_DIAMOND);
+		style.put(mxConstants.STYLE_DASHED, "true");
+		style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
+		stylesheet.putCellStyle("COMPLEX", style);
+		
+		//reaction edge
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_OPACITY, 100);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#DECF00");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#DECF00");
+		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
+		style.put(mxConstants.STYLE_DASHED, "false");
+		style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
+		stylesheet.putCellStyle("REACTION_EDGE", style);
+		
+		//default edge
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_OPACITY, 100);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#000000");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_CLASSIC);
+		style.put(mxConstants.STYLE_DASHED, "false");
+		style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
+		stylesheet.putCellStyle("DEFAULT", style);
 		
 		//explicit promoter
 		style = new Hashtable<String, Object>();
-		style.put(mxConstants.STYLE_OPACITY, 30);
-		//style.put(mxConstants.STYLE_FONTCOLOR, "#0000FF");
-		style.put(mxConstants.STYLE_FILLCOLOR, "#AA7700");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#FFAA00");
 		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RHOMBUS);
 		style.put(mxConstants.STYLE_OPACITY, 50);
-		style.put(mxConstants.STYLE_FONTCOLOR, "#774400");
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#F00E0E");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
 		stylesheet.putCellStyle("EXPLICIT_PROMOTER", style);
 	}
 	
@@ -1316,12 +1387,20 @@ public class BioGraph extends mxGraph {
 	 * @param id
 	 * @param compart
 	 */
-	private void setComponentStyles(String id, String compart){
+	private void setComponentStyles(String id, boolean compart){
 		
-		String style;
+		String style = "";
 		
-		if (compart.equals("true")) style = "COMPARTMENT;";
-		else style = "COMPONENT;";
+		if (gcm.getGrid().isEnabled()) {
+			
+			if (compart) style = "GRIDCOMPARTMENT;";
+			else style = "GRIDCOMPONENT;";
+		}
+		else {
+			
+			if (compart) style = "COMPARTMENT;";
+			else style = "COMPONENT;";
+		}
 		
 		mxCell cell = this.getComponentCell(id);
 		cell.setStyle(style);	

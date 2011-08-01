@@ -1035,7 +1035,6 @@ public class GCMFile {
 			buffer.append("rows=" + getGrid().getNumRows() + "\n");
 			buffer.append("cols=" + getGrid().getNumCols() + "\n");	
 			buffer.append("spatial=" + Boolean.toString(getGrid().getGridSpatial()) + "\n");	
-			
 			buffer.append("}\n");
 		}
 
@@ -1552,7 +1551,7 @@ public class GCMFile {
 	//REMOVAL METHODS
 	
 	/**
-	 * erases everything in the model, but doesn't touch anything file-related
+	 * erases everything in the model but doesn't touch anything file-related
 	 */
 	public void clear() {
 		
