@@ -159,7 +159,7 @@ public class Schematic extends JPanel implements ActionListener {
 		graph.buildGraph();
 		
 		// Create and plug in the graphComponent
-		if(graphComponent == null){
+		if(graphComponent == null) {
 			
 			graphComponent = new mxGraphComponent(graph) {
 				
@@ -558,6 +558,7 @@ public class Schematic extends JPanel implements ActionListener {
 			public void mouseClicked(MouseEvent event) {
 				
 				Point location = event.getPoint();
+				
 				if (grid.isEnabled()) {
 					
 					//NOTE: i think it's better to just click anywhere on the grid location, 
@@ -593,8 +594,7 @@ public class Schematic extends JPanel implements ActionListener {
 				}
 				else {
 					graphComponent.getPanningHandler().setEnabled(false);
-				}
-				
+				}			
 			}
 		});
 		
@@ -1095,8 +1095,7 @@ public class Schematic extends JPanel implements ActionListener {
 							return;
 						}
 						
-						tryAddAssociationBetweenCells(edge);
-					
+						tryAddAssociationBetweenCells(edge);					
 					}
 				}
 			}
@@ -1216,23 +1215,28 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		// see if we are connecting a component to a species
 		if(numComponents == 1){
+			
 			Properties sourceProp = graph.getCellProperties(source);
 			Properties targetProp = graph.getCellProperties(target);
 			String port = null;
+			
 			if(graph.getCellType(source) == GlobalConstants.COMPONENT){
 				// source is a component
 				try{
 					port = connectComponentToSpecies(sourceProp, targetID);
-				}catch(ListChooser.EmptyListException e){
+				}
+				catch(ListChooser.EmptyListException e){
 					JOptionPane.showMessageDialog(Gui.frame, "This component has no output ports.");
 					graph.buildGraph();
 					return;
 				}
-			}else{
+			}
+			else{
 				// target is a component
 				try{
 					port = connectSpeciesToComponent(sourceID, targetProp);
-				}catch(ListChooser.EmptyListException e){
+				}
+				catch(ListChooser.EmptyListException e){
 					JOptionPane.showMessageDialog(Gui.frame, "This component has no input ports.");	
 					//graph.removeCells(cells);
 					// rebuild the graph to get rid of the edge that was created.
@@ -1243,6 +1247,7 @@ public class Schematic extends JPanel implements ActionListener {
 					return;
 				}
 			}
+			
 			if(port == null){
 				graph.buildGraph();
 				return;
@@ -1260,21 +1265,26 @@ public class Schematic extends JPanel implements ActionListener {
 		// Calculate some parameters that will be needed to build the
 		// influence we will need.
 		String type;
+		
 		if(activationButton.isSelected()){
 			type = InfluencePanel.types[1]; 
-		}else if(inhibitionButton.isSelected()){
+		}
+		else if(inhibitionButton.isSelected()){
 			type = InfluencePanel.types[0];
-		}else if(bioActivationButton.isSelected()){
+		}
+		else if(bioActivationButton.isSelected()){
 			type = InfluencePanel.types[3]; 
 		}		
 		else if(reactionButton.isSelected()){
 			type = GlobalConstants.REACTION_EDGE;
-		}else if(modifierButton.isSelected()){
+		}
+		else if(modifierButton.isSelected()){
 			type = GlobalConstants.MODIFIER;
 		}		
 		else if(noInfluenceButton.isSelected()){
 			type = InfluencePanel.types[2];
-		}else{
+		}
+		else{
 			throw(new Error("No influence button was pressed"));
 		}
 		
@@ -1288,7 +1298,8 @@ public class Schematic extends JPanel implements ActionListener {
 				type = InfluencePanel.types[1];
 				name = InfluencePanel.buildName(GlobalConstants.NONE,targetID,type,sourceID);
 				newInfluenceProperties.setProperty(GlobalConstants.PROMOTER, sourceID);
-			}else{
+			}
+			else{
 				// target is a promoter
 				name = InfluencePanel.buildName(sourceID,GlobalConstants.NONE,type,targetID);
 				newInfluenceProperties.setProperty(GlobalConstants.PROMOTER, targetID);
@@ -1298,16 +1309,19 @@ public class Schematic extends JPanel implements ActionListener {
 		else{
 			// connect two species to each other, create new implicit promoter if influence is activation or repression
 			String newPromoterName = "";
+			
 			if (activationButton.isSelected() || inhibitionButton.isSelected()) {
 				newPromoterName = gcm.createPromoter(null,0, 0, false);
 				newInfluenceProperties.setProperty(GlobalConstants.PROMOTER, newPromoterName);
 			}
 			else
 				newPromoterName = "none";
+			
 			name = InfluencePanel.buildName(sourceID, targetID, type, newPromoterName);
 		}
 		// make sure the species name is valid
 		String iia = gcm.isInfluenceAllowed(name);
+		
 		if(iia != null){
 			JOptionPane.showMessageDialog(Gui.frame, "The influence could not be added because " + iia);
 			graph.buildGraph();
@@ -1318,58 +1332,78 @@ public class Schematic extends JPanel implements ActionListener {
 		// build the influence properties
 		newInfluenceProperties.setProperty(GlobalConstants.NAME, name);
 		newInfluenceProperties.setProperty(GlobalConstants.TYPE, type);
+		
 		if (type == GlobalConstants.REACTION_EDGE) {
+			
 			if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+				
 				gcm.addReaction(sourceID,targetID,false);
-			} else if ((graph.getCellType(source) == GlobalConstants.REACTION) && 
+			} 
+			else if ((graph.getCellType(source) == GlobalConstants.REACTION) && 
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+				
 				Reaction r = gcm.getSBMLDocument().getModel().getReaction(sourceID);
 				SpeciesReference s = r.createProduct();
 				s.setSpecies(targetID);
 				s.setStoichiometry(1.0);
 				s.setConstant(true);
-			} else if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
+			} 
+			else if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
 					(graph.getCellType(target) == GlobalConstants.REACTION)) {
+				
 				Reaction r = gcm.getSBMLDocument().getModel().getReaction(targetID);
 				SpeciesReference s = r.createReactant();
 				s.setSpecies(sourceID);
 				s.setStoichiometry(1.0);
 				s.setConstant(true);
-			} else {
+			} 
+			else {
 				JOptionPane.showMessageDialog(Gui.frame, "Reaction edge can connect only species and reactions");
 				graph.buildGraph();
 				gcm2sbml.refresh();
 				return;
 			}
-		} else if (type == GlobalConstants.MODIFIER) {
+		} 
+		else if (type == GlobalConstants.MODIFIER) {
+			
 			if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+				
 				gcm.addReaction(sourceID,targetID,true);
-			} else if ((graph.getCellType(source) == GlobalConstants.REACTION) && 
+			} 
+			else if ((graph.getCellType(source) == GlobalConstants.REACTION) && 
 				(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+				
 				Reaction r = gcm.getSBMLDocument().getModel().getReaction(sourceID);
 				ModifierSpeciesReference s = r.createModifier();
 				s.setSpecies(targetID);
-			} else if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
+			} 
+			else if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
 				(graph.getCellType(target) == GlobalConstants.REACTION)) {
+				
 				Reaction r = gcm.getSBMLDocument().getModel().getReaction(targetID);
 				ModifierSpeciesReference s = r.createModifier();
 				s.setSpecies(sourceID);
-			} else {
+			} 
+			else {
+				
 				JOptionPane.showMessageDialog(Gui.frame, "Modifier must connect only species and reactions");
 				graph.buildGraph();
 				gcm2sbml.refresh();
 				return;
 			}
-		} else {
+		} 
+		else {
 			if ((graph.getCellType(source) == GlobalConstants.REACTION) || 
 				(graph.getCellType(target) == GlobalConstants.REACTION)) {
+				
 				JOptionPane.showMessageDialog(Gui.frame, "Can only connect reactions using reaction or modifier edge");
 				graph.buildGraph();
 				gcm2sbml.refresh();
 				return;
 			}
+			
 			gcm.getInfluences().put(name, newInfluenceProperties);
 		}
 		
