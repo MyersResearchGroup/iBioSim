@@ -433,6 +433,23 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		else if (command.equals("grid")) {
 			
+			//if there's stuff in the graph, the user must delete it to create a grid
+			//prompt to delete or cancel
+			if (graph.getChildCells(graph.getDefaultParent()).length > 0) {
+				
+				boolean clear = GridPanel.showGridPromptPanel();
+				
+				//clear the graph and model
+				if (clear) {
+					
+					graph.removeCells(graph.getChildCells(graph.getDefaultParent()));
+					gcm.clear();
+					grid = gcm.getGrid(); //get an updated pointer to the grid
+				}
+				//don't create a grid if they don't want to clear the model/graph
+				else return;
+			}
+			
 			//static method that builds the grid panel
 			//the false field means to open the grid creation panel
 			//and not the grid editing panel

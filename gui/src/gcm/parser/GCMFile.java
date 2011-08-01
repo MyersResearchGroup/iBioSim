@@ -1340,6 +1340,9 @@ public class GCMFile {
 		components.remove(oldName);
 	}
 
+	
+	//ADD METHODS
+	
 	public void addSpecies(String name, Properties property) {
 		species.put(name, property);
 	}
@@ -1545,6 +1548,28 @@ public class GCMFile {
 
 	}
 
+	
+	//REMOVAL METHODS
+	
+	/**
+	 * erases everything in the model, but doesn't touch anything file-related
+	 */
+	public void clear() {
+		
+		species = new HashMap<String, Properties>();
+		reactions = new HashMap<String, Properties>();
+		influences = new HashMap<String, Properties>();
+		promoters = new HashMap<String, Properties>();
+		components = new HashMap<String, Properties>();
+		compartments = new ArrayList<String>();
+		conditions = new ArrayList<String>();
+		globalParameters = new HashMap<String, String>();
+		parameters = new HashMap<String, String>();
+		isWithinCompartment = false;
+		grid = new Grid();
+		loadDefaultParameters();
+	}
+	
 	public void removeSpecies(String name) {
 		if (name != null && species.containsKey(name)) {
 			species.remove(name);
@@ -1564,6 +1589,9 @@ public class GCMFile {
 		removeSpecies(name);
 	}
 
+	
+	//GET METHODS
+	
 	public HashMap<String, Properties> getSpecies() {
 		return species;
 	}
@@ -3370,6 +3398,9 @@ public class GCMFile {
 		return path;
 	}
 
+	
+	//UNDO-REDO METHODS
+	
 	public void makeUndoPoint() {
 		StringBuffer up = this.saveToBuffer(true, false, true);
 		undoManager.makeUndoPoint(up);
@@ -3386,6 +3417,9 @@ public class GCMFile {
 		if (p != null)
 			this.loadFromBuffer(p);
 	}
+	
+	
+	//GRID
 
 	public Grid getGrid() {
 		return grid;
@@ -3400,6 +3434,8 @@ public class GCMFile {
 		grid.createGrid(rows, cols, this, null, gridSpatial);
 	}
 	
+	
+	//CONSTANTS AND VARIABLES
 	
 	private static final String NETWORK = "digraph\\sG\\s\\{([^}]*)\\s\\}";
 

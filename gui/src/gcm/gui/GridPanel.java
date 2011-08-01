@@ -47,6 +47,11 @@ public class GridPanel extends JPanel implements ActionListener{
 		
 		//call the JPanel constructor to make this a border layout panel
 		super(new BorderLayout());
+		
+		if (gcm2sbml == null && gcm == null && editMode == false) {
+			built = buildPromptPanel() == true ? true : false;
+			return;
+		}
 
 		this.gcm = gcm;
 		
@@ -87,6 +92,18 @@ public class GridPanel extends JPanel implements ActionListener{
 	public static boolean showGridPanel(GCM2SBMLEditor gcm2sbml, GCMFile gcm, boolean editMode) {
 		
 		new GridPanel(gcm2sbml, gcm, editMode);
+		
+		return built;
+	}
+	
+	/**
+	 * static method to create a prompting panel to delete graph before creating a grid
+	 * 
+	 * @return ok/cancel
+	 */
+	public static boolean showGridPromptPanel() {
+		
+		new GridPanel(null, null, false);
 		
 		return built;
 	}
@@ -266,6 +283,34 @@ public class GridPanel extends JPanel implements ActionListener{
 		else return false;
 	}
 
+	
+	/**
+	 * builds the grid prompt panel
+	 * @return ok/cancel
+	 */
+	private boolean buildPromptPanel() {
+		
+		//create a panel for the selection of components to add to the cells
+		JPanel gridPanel = new JPanel(new GridLayout(1,1));
+		
+		JLabel prompt = new JLabel("To create a grid, the model must be empty.  Press OK to clear the model first.");
+		
+		gridPanel.add(prompt);
+		this.add(gridPanel, BorderLayout.NORTH);
+		
+		String[] options = {GlobalConstants.OK, GlobalConstants.CANCEL};
+		
+		int okCancel = JOptionPane.showOptionDialog(Gui.frame, this, "Model is not empty",
+				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+		//if the user clicks "ok" on the panel
+		if (okCancel == JOptionPane.OK_OPTION) {
+			
+			return true;
+		}
+		else return false;
+	}
+	
 	/**
 	 * called when the user clicks on something
 	 * in this case i only care about the spatial and cell pop radio buttons
