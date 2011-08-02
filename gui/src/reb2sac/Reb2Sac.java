@@ -3871,13 +3871,20 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				try {
 					filename = sbmlFile;
 					ArrayList<String> listOfSpecs = new ArrayList<String>();
-					SBMLDocument document = Gui.readSBML(filename);
-					Model model = document.getModel();
-					if (model != null) {
-						ListOf listOfSpecies = model.getListOfSpecies();
-						for (int i = 0; i < model.getNumSpecies(); i++) {
-							Species species = (Species) listOfSpecies.get(i);
-							listOfSpecs.add(species.getId());
+					if (gcmEditor == null) {
+						SBMLDocument document = Gui.readSBML(filename);
+						Model model = document.getModel();
+						if (model != null) {
+							ListOf listOfSpecies = model.getListOfSpecies();
+							for (int i = 0; i < model.getNumSpecies(); i++) {
+								Species species = (Species) listOfSpecies.get(i);
+								listOfSpecs.add(species.getId());
+							}
+						}
+					}
+					else {
+						for (String species : gcmEditor.getGCM().getSpeciesAsArray()) {
+							listOfSpecs.add(species);
 						}
 					}
 					allSpecies = listOfSpecs.toArray();
@@ -4352,6 +4359,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	public void setGcm(GCM2SBMLEditor gcm) {
 		gcmEditor = gcm;
+		updateSpeciesList();
 		if (nary.isSelected()) {
 			lhpn.setEnabled(true);
 			// Disables thresholds for complex and input species
@@ -4379,18 +4387,24 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 		}
 		change = false;
-
 	}
 
 	public void updateSpeciesList() {
-		SBMLDocument document = Gui.readSBML(sbmlFile);
-		Model model = document.getModel();
 		ArrayList<String> listOfSpecs = new ArrayList<String>();
-		if (model != null) {
-			ListOf listOfSpecies = model.getListOfSpecies();
-			for (int i = 0; i < model.getNumSpecies(); i++) {
-				Species species = (Species) listOfSpecies.get(i);
-				listOfSpecs.add(species.getId());
+		if (gcmEditor == null) {
+			SBMLDocument document = Gui.readSBML(sbmlFile);
+			Model model = document.getModel();
+			if (model != null) {
+				ListOf listOfSpecies = model.getListOfSpecies();
+				for (int i = 0; i < model.getNumSpecies(); i++) {
+					Species species = (Species) listOfSpecies.get(i);
+					listOfSpecs.add(species.getId());
+				}
+			}
+		}
+		else {
+			for (String species : gcmEditor.getGCM().getSpeciesAsArray()) {
+				listOfSpecs.add(species);
 			}
 		}
 		allSpecies = listOfSpecs.toArray();
