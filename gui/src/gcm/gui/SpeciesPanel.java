@@ -407,19 +407,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				return false;
 			}
 			if (selected == null) {
-				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())
-						|| gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())
-						|| gcm.getParameters().containsKey(fields.get(GlobalConstants.ID).getValue())
-						|| gcm.getPromoters().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+				if (gcm.getUsedIDs().contains((String)fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "Id already exists.");
 					return false;
 				}
 			}
 			else if (!selected.equals(fields.get(GlobalConstants.ID).getValue())) {
-				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())
-						|| gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())
-						|| gcm.getParameters().containsKey(fields.get(GlobalConstants.ID).getValue())
-						|| gcm.getPromoters().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+				if (gcm.getUsedIDs().contains((String)fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "Id already exists.");
 					return false;
 				}
@@ -519,6 +513,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			
 			if (selected != null && !selected.equals(newSpeciesID)) {
+				while (gcm.getUsedIDs().contains(selected)) {
+					gcm.getUsedIDs().remove(selected);
+				}
 				gcm.changeSpeciesName(selected, newSpeciesID);
 				((DefaultListModel) influences.getModel()).clear();
 				influences.addAllItem(gcm.getInfluences().keySet());
@@ -530,6 +527,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 							+ gcm.getComponents().get(c).getProperty("gcm").replace(".gcm", "")
 							+ " " + gcm.getComponentPortMap(c));
 				}
+			}
+			if (!gcm.getUsedIDs().contains(newSpeciesID)) {
+				gcm.getUsedIDs().add(newSpeciesID);
 			}
 			gcm.addSpecies(newSpeciesID, property);
 			if (paramsOnly) {

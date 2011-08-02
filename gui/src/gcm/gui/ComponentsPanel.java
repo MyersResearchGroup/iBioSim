@@ -193,19 +193,13 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				return false;
 			}
 			if (oldName == null) {
-				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())
-						|| gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())
-						|| gcm.getParameters().containsKey(fields.get(GlobalConstants.ID).getValue())
-						|| gcm.getPromoters().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+				if (gcm.getUsedIDs().contains((String)fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "Id already exists.");
 					return false;
 				}
 			}
 			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-				if (gcm.getComponents().containsKey(fields.get(GlobalConstants.ID).getValue())
-						|| gcm.getSpecies().containsKey(fields.get(GlobalConstants.ID).getValue())
-						|| gcm.getParameters().containsKey(fields.get(GlobalConstants.ID).getValue())
-						|| gcm.getPromoters().containsKey(fields.get(GlobalConstants.ID).getValue())) {
+				if (gcm.getUsedIDs().contains((String)fields.get(GlobalConstants.ID).getValue())) {
 					Utility.createErrorMessage("Error", "Id already exists.");
 					return false;
 				}
@@ -247,9 +241,15 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				property.put("compartment", "false");
 				*/
 			if (selected != null && !oldName.equals(id)) {
+				while (gcm.getUsedIDs().contains(selected)) {
+					gcm.getUsedIDs().remove(selected);
+				}
 				gcm.changeComponentName(oldName, id);
 				((DefaultListModel) influences.getModel()).clear();
 				influences.addAllItem(gcm.getInfluences().keySet());
+			}
+			if (!gcm.getUsedIDs().contains(id)) {
+				gcm.getUsedIDs().add(id);
 			}
 			gcm.addComponent(id, property);
 			String newPort = "(";

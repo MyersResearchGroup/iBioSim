@@ -1218,8 +1218,7 @@ public class GCMFile {
 				// the new.
 				influences.get(newInfluenceName).remove(GlobalConstants.PROMOTER);
 				influences.get(newInfluenceName).setProperty(GlobalConstants.PROMOTER, newName);
-				influences.get(newInfluenceName)
-						.setProperty(GlobalConstants.NAME, newInfluenceName);
+				influences.get(newInfluenceName).setProperty(GlobalConstants.NAME, newInfluenceName);
 			}
 		}
 
@@ -1452,6 +1451,7 @@ public class GCMFile {
 		}
 
 		components.put(name, properties);
+		usedIDs.add(name);
 		return name;
 	}
 
@@ -1574,6 +1574,9 @@ public class GCMFile {
 			species.remove(name);
 			sbml.getModel().removeSpecies(name);
 			speciesPanel.refreshSpeciesPanel(sbml);
+		}
+		while (usedIDs.contains(name)) {
+			usedIDs.remove(name);
 		}
 	}
 
@@ -1876,11 +1879,17 @@ public class GCMFile {
 		if (name != null && promoters.containsKey(name)) {
 			promoters.remove(name);
 		}
+		while (usedIDs.contains(name)) {
+			usedIDs.remove(name);
+		}
 	}
 
 	public void removeComponent(String name) {
 		if (name != null && components.containsKey(name)) {
 			components.remove(name);
+		}
+		while (usedIDs.contains(name)) {
+			usedIDs.remove(name);
 		}
 	}
 
@@ -1980,6 +1989,7 @@ public class GCMFile {
 			Model m = sbml.getModel();
 			Species s = m.createSpecies();
 			s.setId(id);
+			usedIDs.add(id);
 			s.setCompartment(m.getCompartment(0).getId());
 			s.setBoundaryCondition(false);
 			s.setConstant(false);
@@ -2032,6 +2042,7 @@ public class GCMFile {
 		}
 		Properties prop = new Properties();
 		prop.setProperty("ID", id);
+		usedIDs.add(id);
 		prop.setProperty("name", "");
 		if (is_explicit) {
 			prop.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_SPECIES_WIDTH));
