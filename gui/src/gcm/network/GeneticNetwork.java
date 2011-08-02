@@ -27,6 +27,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import lpn.parser.LhpnFile;
 import lpn.parser.Translator;
 import main.Gui;
 
@@ -244,7 +245,8 @@ public class GeneticNetwork {
 					species.add(spec);
 					levels.add(new Object[0]);
 				}
-				Translator.generateSBMLConstraints(document, property, properties.convertToLHPN(species, levels));
+				LhpnFile lpn = properties.convertToLHPN(species, levels, property);
+				Translator.generateSBMLConstraints(document, property, lpn);
 			}
 			if (document != null) {
 				document.setConsistencyChecks(libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);

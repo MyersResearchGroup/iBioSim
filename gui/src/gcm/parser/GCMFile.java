@@ -287,7 +287,7 @@ public class GCMFile {
 		naryRun.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				flattenGCM(false);
-				convertToLHPN(specs, conLevel).save(filename);
+				convertToLHPN(specs, conLevel, null).save(filename);
 				log.addText("Saving GCM file as LPN:\n" + path + separator + lpnName + "\n");
 				biosim.addToTree(lpnName);
 				naryFrame.dispose();
@@ -698,15 +698,14 @@ public class GCMFile {
 		}
 	}
 
-	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel) {
+	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel, String lpnProperty) {
 		GCMParser parser = new GCMParser(this, false);
 		GeneticNetwork network = parser.buildNetwork();
 		network.markAbstractable();
 		AbstractionEngine abs = network.createAbstractionEngine();
 		HashMap<String, ArrayList<String>> infl = new HashMap<String, ArrayList<String>>();
 		for (String influence : influences.keySet()) {
-			if (influences.get(influence).get(GlobalConstants.TYPE).equals(
-					GlobalConstants.ACTIVATION)) {
+			if (influences.get(influence).get(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
 				String input = getInput(influence);
 				String output = getOutput(influence);
 				if (infl.containsKey(output)) {
@@ -718,8 +717,7 @@ public class GCMFile {
 					infl.put(output, out);
 				}
 			}
-			else if (influences.get(influence).get(GlobalConstants.TYPE).equals(
-					GlobalConstants.REPRESSION)) {
+			else if (influences.get(influence).get(GlobalConstants.TYPE).equals(GlobalConstants.REPRESSION)) {
 				String input = getInput(influence);
 				String output = getOutput(influence);
 				if (infl.containsKey(output)) {
@@ -756,8 +754,7 @@ public class GCMFile {
 		for (String input : getInputSpecies()) {
 			double value;
 			try {
-				value = parseValue(this.species.get(input).getProperty(
-						GlobalConstants.INITIAL_STRING));
+				value = parseValue(this.species.get(input).getProperty(GlobalConstants.INITIAL_STRING));
 			}
 			catch (Exception e) {
 				value = 0;
@@ -778,8 +775,7 @@ public class GCMFile {
 				}
 				String number = "0";
 				for (Object threshold : conLevel.get(i)) {
-					if (LHPN.getIntegers().get(specs.get(i)).equals(
-							"" + ((int) Double.parseDouble((String) threshold)))) {
+					if (LHPN.getIntegers().get(specs.get(i)).equals("" + ((int) Double.parseDouble((String) threshold)))) {
 						LHPN.addPlace(specs.get(i) + placeNum, true);
 					}
 					else {
@@ -790,8 +786,7 @@ public class GCMFile {
 						ArrayList<String> activators = new ArrayList<String>();
 						ArrayList<String> repressors = new ArrayList<String>();
 						ArrayList<String> proms = new ArrayList<String>();
-						Double global_np = parseValue(parameters
-								.get(GlobalConstants.STOICHIOMETRY_STRING));
+						Double global_np = parseValue(parameters.get(GlobalConstants.STOICHIOMETRY_STRING));
 						Double global_kd = parseValue(parameters.get(GlobalConstants.KDECAY_STRING));
 						Double np = global_np;
 						Double kd = global_kd;
@@ -814,15 +809,12 @@ public class GCMFile {
 						}
 						String rate = "";
 						for (String promoter : proms) {
-							String promRate = abs.abstractOperatorSite(network.getPromoters().get(
-									promoter));
+							String promRate = abs.abstractOperatorSite(network.getPromoters().get(promoter));
 							for (String species : this.species.keySet()) {
-								if (promRate.contains(species)
-										&& !LHPN.getIntegers().keySet().contains(species)) {
+								if (promRate.contains(species) && !LHPN.getIntegers().keySet().contains(species)) {
 									double value;
 									try {
-										value = parseValue(this.species.get(species).getProperty(
-												GlobalConstants.INITIAL_STRING));
+										value = parseValue(this.species.get(species).getProperty(GlobalConstants.INITIAL_STRING));
 									}
 									catch (Exception e) {
 										value = 0;
@@ -840,17 +832,14 @@ public class GCMFile {
 						if (!rate.equals("")) {
 							LHPN.addTransition(specs.get(i) + "_trans" + transNum);
 							LHPN.addMovement(previousPlaceName, specs.get(i) + "_trans" + transNum);
-							LHPN.addMovement(specs.get(i) + "_trans" + transNum, specs.get(i)
-									+ placeNum);
-							LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i),
-									(String) threshold);
-							LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, np + "*(("
-									+ rate + ")/" + "(" + threshold + "-" + number + "))");
+							LHPN.addMovement(specs.get(i) + "_trans" + transNum, specs.get(i) + placeNum);
+							LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), (String) threshold);
+							LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, np + "*((" + rate + ")/" + "(" + threshold + "-" + number
+									+ "))");
 							transNum++;
 						}
 						LHPN.addTransition(specs.get(i) + "_trans" + transNum);
-						LHPN.addMovement(specs.get(i) + placeNum, specs.get(i) + "_trans"
-								+ transNum);
+						LHPN.addMovement(specs.get(i) + placeNum, specs.get(i) + "_trans" + transNum);
 						LHPN.addMovement(specs.get(i) + "_trans" + transNum, previousPlaceName);
 						LHPN.addIntAssign(specs.get(i) + "_trans" + transNum, specs.get(i), number);
 						String specExpr = specs.get(i);
@@ -865,11 +854,10 @@ public class GCMFile {
 						}
 						kd = global_kd;
 						if (speciesProps.containsKey(GlobalConstants.KDECAY_STRING)) {
-							kd = parseValue((String) speciesProps
-									.get(GlobalConstants.KDECAY_STRING));
+							kd = parseValue((String) speciesProps.get(GlobalConstants.KDECAY_STRING));
 						}
-						LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specExpr
-								+ "*" + kd + ")/" + "(" + threshold + "-" + number + ")");
+						LHPN.addTransitionRate(specs.get(i) + "_trans" + transNum, "(" + specExpr + "*" + kd + ")/" + "(" + threshold + "-" + number
+								+ ")");
 						transNum++;
 					}
 					previousPlaceName = specs.get(i) + placeNum;
@@ -877,6 +865,37 @@ public class GCMFile {
 					number = (String) threshold;
 				}
 			}
+		}
+		if (lpnProperty != null) {
+			ArrayList<String> sortedSpecies = new ArrayList<String>();
+			for (String s : species.keySet()) {
+				sortedSpecies.add(s);
+			}
+			int i, j;
+			String index;
+			for (i = 1; i < sortedSpecies.size(); i++) {
+				index = sortedSpecies.get(i);
+				j = i;
+				while ((j > 0) && sortedSpecies.get(j - 1).length() < index.length()) {
+					sortedSpecies.set(j, sortedSpecies.get(j - 1));
+					j--;
+				}
+				sortedSpecies.set(j, index);
+			}
+			for (String s : sortedSpecies) {
+				String replace = null;
+				if (network.getSpecies().get(s).isSequesterable()) {
+					replace = abs.sequesterSpecies(s, 0, false);
+				}
+				else if (network.getComplexMap().containsKey(s)) {
+					replace = abs.abstractComplex(s, 0, false);
+				}
+				if (replace != null && lpnProperty.contains(s)) {
+					replace = "(" + replace + ")";
+					lpnProperty = lpnProperty.replace(s, replace);
+				}
+			}
+			LHPN.addProperty(lpnProperty);
 		}
 		return LHPN;
 	}
