@@ -676,7 +676,7 @@ public class BioGraph extends mxGraph {
 			for (int row = 0; row < gridRows; ++row) {
 				for (int col = 0; col < gridCols; ++col) {
 					
-					String id = "row_" + row + "__col_" + col;
+					String id = "ROW" + row + "_COL" + col;
 					
 					Properties prop = new Properties();
 					prop.setProperty("Type", GlobalConstants.GRID_RECTANGLE);
@@ -1301,7 +1301,6 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_FILLCOLOR, "#34BA04");
 		style.put(mxConstants.STYLE_STROKECOLOR, "#34BA04");
 		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_BLOCK);
-		style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
 		stylesheet.putCellStyle("ACTIVATION", style);
 		
 		//repression edge (species to species)
@@ -1311,7 +1310,6 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_FILLCOLOR, "#FA2A2A");
 		style.put(mxConstants.STYLE_STROKECOLOR, "#FA2A2A");
 		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OVAL);
-		style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
 		stylesheet.putCellStyle("REPRESSION", style);
 		
 		//complex formation edge (species to species)
@@ -1322,7 +1320,6 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_STROKECOLOR, "#4E5D9C");
 		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_DIAMOND);
 		style.put(mxConstants.STYLE_DASHED, "true");
-		style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
 		stylesheet.putCellStyle("COMPLEX", style);
 		
 		//reaction edge
@@ -1333,7 +1330,6 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_STROKECOLOR, "#DECF00");
 		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
 		style.put(mxConstants.STYLE_DASHED, "false");
-		style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
 		stylesheet.putCellStyle("REACTION_EDGE", style);
 		
 		//default edge
@@ -1344,7 +1340,6 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
 		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_CLASSIC);
 		style.put(mxConstants.STYLE_DASHED, "false");
-		style.put(mxConstants.STYLE_EDGE, mxConstants.EDGESTYLE_ENTITY_RELATION);
 		stylesheet.putCellStyle("DEFAULT", style);
 		
 		//explicit promoter
