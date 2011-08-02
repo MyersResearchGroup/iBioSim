@@ -566,12 +566,13 @@ public class Run implements ActionListener {
 				}
 				if (gcm.flattenGCM(true) != null) {
 					time1 = System.nanoTime();
-					LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
+					String prop = null;
+					if (!lpnProperty.equals("")) {
+						prop = lpnProperty;
+					}
+					LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel, prop);
 					if (lpnFile == null) {
 						return 0;
-					}
-					if (!lpnProperty.equals("")) {
-						lpnFile.addProperty(lpnProperty);
 					}
 					lpnFile.save(root + separator + simName + separator + lpnName);
 					Translator t1 = new Translator();
@@ -581,10 +582,10 @@ public class Run implements ActionListener {
 						Abstraction abst = new Abstraction(lhpnFile, abstPane);
 						abst.abstractSTG(false);
 						abst.save(root + separator + simName + separator + lpnName + ".temp");
-						t1.BuildTemplate(root + separator + simName + separator + lpnName + ".temp", lpnProperty);
+						t1.BuildTemplate(root + separator + simName + separator + lpnName + ".temp", prop);
 					}
 					else {
-						t1.BuildTemplate(root + separator + simName + separator + lpnName, lpnProperty);
+						t1.BuildTemplate(root + separator + simName + separator + lpnName, prop);
 					}
 					t1.setFilename(root + separator + simName + separator + lpnName.replace(".lpn", ".xml"));
 					t1.outputSBML();
@@ -701,12 +702,13 @@ public class Run implements ActionListener {
 						}
 						if (gcm.flattenGCM(true) != null) {
 							time1 = System.nanoTime();
-							LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel);
+							String prop = null;
+							if (!lpnProperty.equals("")) {
+								prop = lpnProperty;
+							}
+							LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel, prop);
 							if (lpnFile == null) {
 								return 0;
-							}
-							if (!lpnProperty.equals("")) {
-								lpnFile.addProperty(lpnProperty);
 							}
 							lpnFile.save(root + separator + simName + separator + lpnName);
 							Translator t1 = new Translator();
@@ -716,10 +718,10 @@ public class Run implements ActionListener {
 								Abstraction abst = new Abstraction(lhpnFile, abstPane);
 								abst.abstractSTG(false);
 								abst.save(root + separator + simName + separator + lpnName + ".temp");
-								t1.BuildTemplate(root + separator + simName + separator + lpnName + ".temp", lpnProperty);
+								t1.BuildTemplate(root + separator + simName + separator + lpnName + ".temp", prop);
 							}
 							else {
-								t1.BuildTemplate(root + separator + simName + separator + lpnName, lpnProperty);
+								t1.BuildTemplate(root + separator + simName + separator + lpnName, prop);
 							}
 							t1.setFilename(root + separator + sbmlName);
 							t1.outputSBML();
@@ -853,12 +855,13 @@ public class Run implements ActionListener {
 						}
 						if (gcm.flattenGCM(true) != null) {
 							time1 = System.nanoTime();
-							LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel);
+							String prop = null;
+							if (!lpnProperty.equals("")) {
+								prop = lpnProperty;
+							}
+							LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel, prop);
 							if (lhpnFile == null) {
 								return 0;
-							}
-							if (!lpnProperty.equals("")) {
-								lhpnFile.addProperty(lpnProperty);
 							}
 							lhpnFile.save(root + separator + lhpnName);
 							log.addText("Saving GCM file as LHPN:\n" + root + separator + lhpnName + "\n");
@@ -919,6 +922,7 @@ public class Run implements ActionListener {
 					reb2sac = exec.exec("reb2sac --target.encoding=hse2 " + theFile, null, work);
 				}
 				else if (sim.contains("markov-chain-analysis") || sim.equals("reachability-analysis")) {
+					String prop = null;
 					time1 = System.nanoTime();
 					progress.setIndeterminate(true);
 					LhpnFile lhpnFile = null;
@@ -947,26 +951,27 @@ public class Run implements ActionListener {
 						gcm.load(root + separator + gcmEditor.getRefFile());
 						HashMap<String, Properties> elements = paramGCM.getSpecies();
 						for (String key : elements.keySet()) {
-							for (Object prop : elements.get(key).keySet()) {
-								if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID) && !prop.equals(GlobalConstants.TYPE)) {
-									gcm.getSpecies().get(key).put(prop, elements.get(key).get(prop));
+							for (Object property : elements.get(key).keySet()) {
+								if (!property.equals(GlobalConstants.NAME) && !property.equals(GlobalConstants.ID)
+										&& !property.equals(GlobalConstants.TYPE)) {
+									gcm.getSpecies().get(key).put(property, elements.get(key).get(property));
 								}
 							}
 						}
 						elements = paramGCM.getInfluences();
 						for (String key : elements.keySet()) {
-							for (Object prop : elements.get(key).keySet()) {
-								if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.PROMOTER) && !prop.equals(GlobalConstants.BIO)
-										&& !prop.equals(GlobalConstants.TYPE)) {
-									gcm.getInfluences().get(key).put(prop, elements.get(key).get(prop));
+							for (Object property : elements.get(key).keySet()) {
+								if (!property.equals(GlobalConstants.NAME) && !property.equals(GlobalConstants.PROMOTER)
+										&& !property.equals(GlobalConstants.BIO) && !property.equals(GlobalConstants.TYPE)) {
+									gcm.getInfluences().get(key).put(property, elements.get(key).get(property));
 								}
 							}
 						}
 						elements = paramGCM.getPromoters();
 						for (String key : elements.keySet()) {
-							for (Object prop : elements.get(key).keySet()) {
-								if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID)) {
-									gcm.getPromoters().get(key).put(prop, elements.get(key).get(prop));
+							for (Object property : elements.get(key).keySet()) {
+								if (!property.equals(GlobalConstants.NAME) && !property.equals(GlobalConstants.ID)) {
+									gcm.getPromoters().get(key).put(property, elements.get(key).get(property));
 								}
 							}
 						}
@@ -1031,12 +1036,12 @@ public class Run implements ActionListener {
 						}
 						if (gcm.flattenGCM(true) != null) {
 							time1 = System.nanoTime();
-							lhpnFile = gcm.convertToLHPN(specs, conLevel);
+							if (!lpnProperty.equals("")) {
+								prop = lpnProperty;
+							}
+							lhpnFile = gcm.convertToLHPN(specs, conLevel, prop);
 							if (lhpnFile == null) {
 								return 0;
-							}
-							if (!lpnProperty.equals("")) {
-								lhpnFile.addProperty(lpnProperty);
 							}
 							lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
 							log.addText("Saving GCM file as LHPN:\n" + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn"
@@ -1110,13 +1115,13 @@ public class Run implements ActionListener {
 								log.addText("Performing transient Markov chain analysis with uniformization.\n");
 								PerfromTransientMarkovAnalysisThread performMarkovAnalysis = new PerfromTransientMarkovAnalysisThread(sg, progress);
 								time1 = System.nanoTime();
-								if (lpnProperty != null && !lpnProperty.equals("")) {
-									String[] condition = Translator.getProbpropParts(Translator.getProbpropExpression(lpnProperty));
+								if (prop != null) {
+									String[] condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
 									boolean globallyTrue = false;
-									if (lpnProperty.contains("PF")) {
+									if (prop.contains("PF")) {
 										condition[0] = "true";
 									}
-									else if (lpnProperty.contains("PG")) {
+									else if (prop.contains("PG")) {
 										condition[0] = "true";
 										globallyTrue = true;
 									}
