@@ -1030,7 +1030,8 @@ public class Schematic extends JPanel implements ActionListener {
 							//graph.buildGraph();
 						}
 						else if(type == GlobalConstants.COMPONENT){
-																					
+									
+							gcm.removeComponent(cell.getId());
 							//if there's a grid, remove the component from the grid as well
 							if (grid.isEnabled())
 								grid.eraseNode(cell.getId(), gcm);

@@ -1083,7 +1083,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		propPanel.add(mainPanelNorth, "North");
 		mainPanel.add(mainPanelCenter, "Center");
 		JTabbedPane tab = new JTabbedPane();
-		ArrayList<String >usedIDs = SBMLutilities.CreateListOfUsedIDs(gcm.getSBMLDocument());
+		ArrayList<String>usedIDs = SBMLutilities.CreateListOfUsedIDs(gcm.getSBMLDocument());
+		usedIDs.addAll(gcm.getComponents().keySet());
+		usedIDs.addAll(gcm.getPromoters().keySet());
+		usedIDs.addAll(gcm.getParameters().keySet());
+		//usedIDs.addAll(gcm.getSpecies().keySet());
 		gcm.setUsedIDs(usedIDs);
 		
 		String file = filename.replace(".gcm", ".xml");
