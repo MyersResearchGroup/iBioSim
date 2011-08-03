@@ -15,6 +15,7 @@ import gcm.util.Utility;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Properties;
 
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Reaction;
@@ -23,7 +24,7 @@ import org.sbml.libsbml.SBMLDocument;
 public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 
 	public PrintDecaySpeciesVisitor(SBMLDocument document,
-			HashMap<String, SpeciesInterface> species, ArrayList<String> compartments, 
+			HashMap<String, SpeciesInterface> species, HashMap<String, Properties> compartments, 
 			HashMap<String, ArrayList<Influence>> complexMap, HashMap<String, ArrayList<Influence>> partsMap) {
 		super(document);
 		this.species = species;
@@ -146,7 +147,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		String component = species;
 		while (component.contains("__")) {
 			component = component.substring(0,component.lastIndexOf("__"));
-			for (String compartmentName : compartments) {
+			for (String compartmentName : compartments.keySet()) {
 				if (compartmentName.substring(0,compartmentName.lastIndexOf("__")).equals(component)) {
 					return compartmentName;
 				}
@@ -164,5 +165,5 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	private String decayString = GlobalConstants.KDECAY_STRING;
 	private String kcompString = GlobalConstants.KCOMPLEX_STRING; 
 	
-	private ArrayList<String> compartments;
+	private HashMap<String, Properties> compartments;
 }

@@ -19,7 +19,6 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -1134,8 +1133,7 @@ public class GeneticNetwork {
 	 *            the SBML document
 	 */
 	private void printDecay(SBMLDocument document) {
-		PrintDecaySpeciesVisitor visitor = new PrintDecaySpeciesVisitor(
-				document, species, compartments, complexMap, partsMap);
+		PrintDecaySpeciesVisitor visitor = new PrintDecaySpeciesVisitor(document, species, compartments, complexMap, partsMap);
 		visitor.setComplexAbstraction(complexAbstraction);
 		visitor.run();
 	}
@@ -1229,14 +1227,17 @@ public class GeneticNetwork {
 	private void printRNAP(SBMLDocument document) {
 		double rnap = 30;
 		if (properties != null) {
-			rnap = Double.parseDouble(properties
-					.getParameter(GlobalConstants.RNAP_STRING));
+			rnap = Double.parseDouble(properties.getParameter(GlobalConstants.RNAP_STRING));
 		}
 		Species s = Utility.makeSpecies("RNAP", document.getModel().getCompartment(0).getId(), rnap, -1);		
 		s.setHasOnlySubstanceUnits(true);
 		Utility.addSpecies(document, s);
 		//Adds RNA polymerase for compartments other than default
-		for (String compartment : compartments) {
+		for (String compartment : compartments.keySet()) {
+			Properties prop = compartments.get(compartment);
+			if (prop.containsKey(GlobalConstants.RNAP_STRING)) {
+				rnap = Double.parseDouble((String)prop.get(GlobalConstants.RNAP_STRING));
+			}
 			Species sc = Utility.makeSpecies(compartment + "__RNAP", compartment, rnap, -1);
 			sc.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, sc);
@@ -1252,7 +1253,7 @@ public class GeneticNetwork {
 		String component = species;
 		while (component.contains("__")) {
 			component = component.substring(0,component.lastIndexOf("__"));
-			for (String compartmentName : compartments) {
+			for (String compartmentName : compartments.keySet()) {
 				if (compartmentName.substring(0,compartmentName.lastIndexOf("__")).equals(component)) {
 					return compartmentName;
 				}
@@ -1485,7 +1486,7 @@ public class GeneticNetwork {
 	
 	private HashMap<String, ArrayList<Influence>> partsMap;
 	
-	private ArrayList<String> compartments;
+	private HashMap<String, Properties> compartments;
 
 	private GCMFile properties = null;
 	
