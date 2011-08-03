@@ -6,16 +6,10 @@ import gcm.util.GlobalConstants;
 import gcm.util.Utility;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Scanner;
-
 import javax.swing.JOptionPane;
-
 import main.Gui;
 
 import org.sbolstandard.libSBOLj.DnaComponent;
