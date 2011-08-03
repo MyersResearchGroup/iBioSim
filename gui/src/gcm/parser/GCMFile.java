@@ -104,7 +104,7 @@ public class GCMFile {
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
 		components = new HashMap<String, Properties>();
-		compartments = new ArrayList<String>();
+		compartments = new HashMap<String, Properties>();
 		conditions = new ArrayList<String>();
 		globalParameters = new HashMap<String, String>();
 		parameters = new HashMap<String, String>();
@@ -417,7 +417,8 @@ public class GCMFile {
 
 			// recursively add this component's sbml (and its inside components'
 			// sbml, etc.) to the overall sbml
-			sbml = unionSBML(sbml, unionGCM(this, file, s, includeSBML, copy), s, this.components, file.getIsWithinCompartment());
+			sbml = unionSBML(sbml, unionGCM(this, file, s, includeSBML, copy), s, this.components, 
+					file.getIsWithinCompartment(),file.getParameter(GlobalConstants.RNAP_STRING));
 			if (sbml == null && copy.isEmpty()) {
 				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n" + "There is a loop in the components.");
 				load(filename + ".temp");
@@ -482,7 +483,8 @@ public class GCMFile {
 				return null;
 			}
 			copy.add(file.getFilename());
-			sbml = unionSBML(sbml, unionGCM(bottomLevel, file, s, includeSBML, copy), s, bottomLevel.components, file.getIsWithinCompartment());
+			sbml = unionSBML(sbml, unionGCM(bottomLevel, file, s, includeSBML, copy), s, bottomLevel.components, 
+					file.getIsWithinCompartment(),file.getParameter(GlobalConstants.RNAP_STRING));
 			if (sbml == null) {
 				return null;
 			}
@@ -1579,7 +1581,7 @@ public class GCMFile {
 		influences = new HashMap<String, Properties>();
 		promoters = new HashMap<String, Properties>();
 		components = new HashMap<String, Properties>();
-		compartments = new ArrayList<String>();
+		compartments = new HashMap<String, Properties>();
 		conditions = new ArrayList<String>();
 		globalParameters = new HashMap<String, String>();
 		parameters = new HashMap<String, String>();
@@ -1680,7 +1682,7 @@ public class GCMFile {
 		return components;
 	}
 
-	public ArrayList<String> getCompartments() {
+	public HashMap<String, Properties> getCompartments() {
 		return compartments;
 	}
 
@@ -2788,7 +2790,7 @@ public class GCMFile {
 	}
 
 	private SBMLDocument unionSBML(SBMLDocument mainDoc, SBMLDocument doc, String compName, HashMap<String, Properties> components,
-			boolean isWithinCompartment) {
+			boolean isWithinCompartment, String RNAPamount) {
 		Model m = doc.getModel();
 		for (int i = 0; i < m.getNumCompartmentTypes(); i++) {
 			org.sbml.libsbml.CompartmentType c = m.getCompartmentType(i);
@@ -2846,8 +2848,11 @@ public class GCMFile {
 			}
 			if (add) {
 				mainDoc.getModel().addCompartment(c);
-				if (!compartments.contains(c.getId()))
-					compartments.add(c.getId());
+				if (!compartments.containsKey(c.getId())) {
+					Properties prop = new Properties();
+					prop.put(GlobalConstants.RNAP_STRING,RNAPamount);
+					compartments.put(c.getId(),prop);
+				}
 			}
 		}
 		for (int i = 0; i < m.getNumSpeciesTypes(); i++) {
@@ -3287,6 +3292,9 @@ public class GCMFile {
 		for (int i = 0; i < model.getNumReactions(); i++) {
 			org.sbml.libsbml.Reaction reaction = (org.sbml.libsbml.Reaction) model
 					.getListOfReactions().get(i);
+			if (!reaction.isSetCompartment() || reaction.getCompartment().equals(origId)) {
+				reaction.setCompartment(newId);
+			}
 			for (int j = 0; j < reaction.getNumProducts(); j++) {
 				if (reaction.getProduct(j).isSetSpecies()) {
 					SpeciesReference specRef = reaction.getProduct(j);
@@ -3514,7 +3522,7 @@ public class GCMFile {
 
 	private HashMap<String, Properties> components;
 
-	private ArrayList<String> compartments;
+	private HashMap<String, Properties> compartments;
 
 	private ArrayList<String> conditions;
 

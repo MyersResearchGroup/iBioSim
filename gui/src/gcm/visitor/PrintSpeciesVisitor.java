@@ -2,6 +2,7 @@ package gcm.visitor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 
 import main.Gui;
 
@@ -20,7 +21,7 @@ import gcm.util.Utility;
 public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 
 	public PrintSpeciesVisitor(SBMLDocument document,
-			HashMap<String, SpeciesInterface> species, ArrayList<String> compartments) {
+			HashMap<String, SpeciesInterface> species, HashMap<String, Properties> compartments) {
 		super(document);
 		this.species = species;
 		this.compartments = compartments;
@@ -112,7 +113,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 			String component = species;
 			while (component.contains("__")) {
 				component = component.substring(0,component.lastIndexOf("__"));
-				for (String compartmentName : compartments) {
+				for (String compartmentName : compartments.keySet()) {
 					if (compartmentName.substring(0,compartmentName.lastIndexOf("__")).equals(component)) {
 						return compartmentName;
 					}
@@ -129,7 +130,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	
 	private double amount;
 	private double concentration;
-	private ArrayList<String> compartments;
+	private HashMap<String, Properties> compartments;
 
 }
 

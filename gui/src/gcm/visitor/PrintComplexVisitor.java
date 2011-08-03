@@ -3,6 +3,7 @@ package gcm.visitor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Properties;
 
 import gcm.network.ComplexSpecies;
 import gcm.network.GeneticNetwork;
@@ -19,7 +20,7 @@ import org.sbml.libsbml.SBMLDocument;
 public class PrintComplexVisitor extends AbstractPrintVisitor {
 	
 	public PrintComplexVisitor(SBMLDocument document, HashMap<String, SpeciesInterface> species,
-			ArrayList<String> compartments, HashMap<String, ArrayList<Influence>> complexMap, 
+			HashMap<String, Properties> compartments, HashMap<String, ArrayList<Influence>> complexMap, 
 			HashMap<String, ArrayList<Influence>> partsMap) {
 		super(document);
 		this.species = species;
@@ -125,7 +126,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		String component = species;
 		while (component.contains("__")) {
 			component = component.substring(0,component.lastIndexOf("__"));
-			for (String compartmentName : compartments) {
+			for (String compartmentName : compartments.keySet()) {
 				if (compartmentName.substring(0,compartmentName.lastIndexOf("__")).equals(component)) {
 					return compartmentName;
 				}
@@ -134,7 +135,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		return compartment;
 	}
 	
-	private ArrayList<String> compartments;
+	private HashMap<String, Properties> compartments;
 	
 	private double kf;
 	private double kcomp;
