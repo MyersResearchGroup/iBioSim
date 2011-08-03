@@ -320,9 +320,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		TreeModel tree = getGui().getFileTree().tree.getModel();
 		for (int i = 0; i < tree.getChildCount(tree.getRoot()); i++) {
 			String fileName = tree.getChild(tree.getRoot(), i).toString();
-			String mySeparator = File.separator;
 			if (fileName.endsWith("rdf"))
-				filePaths.add(getGui().getRoot() + mySeparator + fileName);
+				filePaths.add(getGui().getRoot() + File.separator + fileName);
 		}
 		return filePaths;
 	}
@@ -471,21 +470,21 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	}
 
 	public void exportSBOL() {
-		File lastFilePath;
-		Preferences biosimrc = Preferences.userRoot();
-		if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
-			lastFilePath = null;
-		}
-		else {
-			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
-		}
-		String exportPath = util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "SBOL", -1);
-		if (!exportPath.equals("")) {
-			biosimrc.put("biosim.general.export_dir", exportPath);
-			GCMParser parser = new GCMParser(gcm, false);
-			SbolSynthesizer synthesizer = parser.buildSbolSynthesizer();
-			synthesizer.synthesizeDnaComponent(getSbolFiles(), exportPath, "");
-		}
+//		File lastFilePath;
+//		Preferences biosimrc = Preferences.userRoot();
+//		if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
+//			lastFilePath = null;
+//		}
+//		else {
+//			lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
+//		}
+//		String exportPath = util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "SBOL", -1);
+//		if (!exportPath.equals("")) {
+//			biosimrc.put("biosim.general.export_dir", exportPath);
+//			GCMParser parser = new GCMParser(gcm, false);
+//			SbolSynthesizer synthesizer = parser.buildSbolSynthesizer();
+//			synthesizer.synthesizeDnaComponent(getSbolFiles(), exportPath, "");
+//		}
 	}
 	
 	public void exportSBML() {

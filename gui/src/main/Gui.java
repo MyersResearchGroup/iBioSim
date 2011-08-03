@@ -5476,7 +5476,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		String filePath = tree.getFile();
 		String fileName = "";
 		String mySeparator = File.separator;
-		fileName = filePath.substring(filePath.lastIndexOf(mySeparator) + 1);
+		int spacer = 1;
+		if (mySeparator.equals("\\")) {
+			mySeparator = "\\\\";
+			spacer = 2;
+		}
+		fileName = filePath.substring(filePath.lastIndexOf(mySeparator) + spacer);
 		int i = getTab(fileName);
 		if (i != -1) {
 			tab.setSelectedIndex(i);

@@ -30,7 +30,10 @@ public class SbolBrowser extends JPanel {
 		
 		HashMap<String, Library> libMap = new HashMap<String, Library>();
 		Library lib = SbolUtility.loadRDF(filePath);
-		String[] splitPath = filePath.split(File.separator);
+		String mySeparator = File.separator;
+		if (mySeparator.equals("\\"))
+			mySeparator = "\\\\";
+		String[] splitPath = filePath.split(mySeparator);
 		libMap.put(splitPath[splitPath.length - 1] + "/" + lib.getDisplayId(), lib);
 		
 		constructBrowser(libMap, "");
@@ -52,7 +55,10 @@ public class SbolBrowser extends JPanel {
 		HashMap<String, Library> libMap = new HashMap<String, Library>();
 		for (String filePath : sbolFiles) {
 			Library lib = SbolUtility.loadRDF(filePath);
-			String[] splitPath = filePath.split(File.separator);
+			String mySeparator = File.separator;
+			if (mySeparator.equals("\\"))
+				mySeparator = "\\\\";
+			String[] splitPath = filePath.split(mySeparator);
 			libMap.put(splitPath[splitPath.length - 1] + "/" + lib.getDisplayId(), lib);
 		}
 		

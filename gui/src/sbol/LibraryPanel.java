@@ -35,7 +35,7 @@ public class LibraryPanel extends JPanel implements MouseListener {
 		
 		libList.addMouseListener(this);
 		
-		JLabel libraryLabel = new JLabel("Libraries:");
+		JLabel libraryLabel = new JLabel("Collections:");
 		
 		JScrollPane libraryScroll = new JScrollPane();
 		libraryScroll.setMinimumSize(new Dimension(260, 200));
