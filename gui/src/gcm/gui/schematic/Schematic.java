@@ -100,7 +100,6 @@ public class Schematic extends JPanel implements ActionListener {
 	private AbstractButton addComponentButton;
 	private AbstractButton editPromoterButton;
 	private AbstractButton selfInfluenceButton;
-	private AbstractButton gridButton;
 	private AbstractButton activationButton;
 	private AbstractButton inhibitionButton;
 	private AbstractButton bioActivationButton;
@@ -294,9 +293,6 @@ public class Schematic extends JPanel implements ActionListener {
 		toolBar.add(editPromoterButton);
 		selfInfluenceButton = Utils.makeRadioToolButton("self_influence.png", "", "Add Self Influences", this, modeButtonGroup);
 		toolBar.add(selfInfluenceButton);
-		//toolBar.add(Utils.makeToolButton("", "addInfluence", "Add Influence", this));
-		//gridButton = Utils.makeToolButton("", "grid", "Grid", this);
-		//toolBar.add(gridButton);
 
 		toolBar.addSeparator();
 		ButtonGroup influenceButtonGroup = new ButtonGroup();
@@ -333,9 +329,11 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		zoomButton = new JToggleButton();
 		zoomButton.setText("Zoom");
+		zoomButton.setToolTipText("Use the mouse wheel to zoom");
 		
 		panButton = new JToggleButton();
 		panButton.setText("Pan");
+		panButton.setToolTipText("Use mouse dragging to pan");
 		
 		toolBar.add(zoomButton);
 		toolBar.add(Utils.makeToolButton("", "unZoom", "Un-Zoom", this));
@@ -452,40 +450,44 @@ public class Schematic extends JPanel implements ActionListener {
 				}
 			}
 		}
-		else if (command.equals("grid")) {
+		
+		//this is no longer a "grid" (creation) command, but i'll leave this here for a few weeks
+		//until we're sure things are fine the way they are
+		
+//		else if (command.equals("grid")) {
 			
-			//if there's stuff in the graph, the user must delete it to create a grid
-			//prompt to delete or cancel
-			if (graph.getChildCells(graph.getDefaultParent()).length > 0) {
-				
-				boolean clear = GridPanel.showGridPromptPanel();
-				
-				//clear the graph and model
-				if (clear) {
-					
-					graph.removeCells(graph.getChildCells(graph.getDefaultParent()));
-					gcm.clear();
-					grid = gcm.getGrid(); //get an updated pointer to the grid
-				}
-				//don't create a grid if they don't want to clear the model/graph
-				else return;
-			}
-			
-			//static method that builds the grid panel
-			//the false field means to open the grid creation panel
-			//and not the grid editing panel
-			boolean changed = GridPanel.showGridPanel(gcm2sbml, gcm, false);
-			
-			//if the grid is built, then draw it and so on
-			if (changed) {
-				
-				gcm2sbml.setDirty(true);
-				gcm2sbml.refresh();
-				graph.buildGraph();
-				display();
-				gcm.makeUndoPoint();
-			}
-		}
+//			//if there's stuff in the graph, the user must delete it to create a grid
+//			//prompt to delete or cancel
+//			if (graph.getChildCells(graph.getDefaultParent()).length > 0) {
+//				
+//				boolean clear = GridPanel.showGridPromptPanel();
+//				
+//				//clear the graph and model
+//				if (clear) {
+//					
+//					graph.removeCells(graph.getChildCells(graph.getDefaultParent()));
+//					gcm.clear();
+//					grid = gcm.getGrid(); //get an updated pointer to the grid
+//				}
+//				//don't create a grid if they don't want to clear the model/graph
+//				else return;
+//			}
+//			
+//			//static method that builds the grid panel
+//			//the false field means to open the grid creation panel
+//			//and not the grid editing panel
+//			boolean changed = GridPanel.showGridPanel(gcm2sbml, gcm, false);
+//			
+//			//if the grid is built, then draw it and so on
+//			if (changed) {
+//				
+//				gcm2sbml.setDirty(true);
+//				gcm2sbml.refresh();
+//				graph.buildGraph();
+//				display();
+//				gcm.makeUndoPoint();
+//			}
+//		}
 		else if (command.equals("editGridSize")) {
 			
 			//static method that builds the grid editing panel
