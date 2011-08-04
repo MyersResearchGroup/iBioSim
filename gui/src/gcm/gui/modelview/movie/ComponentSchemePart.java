@@ -40,6 +40,7 @@ public class ComponentSchemePart {
 		tsdKey = null;
 		colorScheme = new ColorScheme();
 	}
+	
 	public ComponentSchemePart(TSDParser tsdParser){
 		tsdKey = null;
 		colorScheme = new ColorScheme(tsdParser);

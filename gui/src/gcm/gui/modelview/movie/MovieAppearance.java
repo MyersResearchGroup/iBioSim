@@ -3,6 +3,7 @@ package gcm.gui.modelview.movie;
 import java.awt.Color;
 
 public class MovieAppearance {
+	
 	public Color color;
 	public Double size;
 	public Double opacity;
@@ -53,33 +54,36 @@ public class MovieAppearance {
 	 * @return
 	 */
 	public MovieAppearance interpolate(MovieAppearance end, float ratio, double value){
-		MovieAppearance ret;
+		
+		MovieAppearance newAppearance;
+		
 		if(ratio <= 0.0)
-			ret = new MovieAppearance(this);
+			newAppearance = new MovieAppearance(this);
 		else if(ratio >= 1.0)
-			ret = new MovieAppearance(end);
+			newAppearance = new MovieAppearance(end);
 		else{
-			ret = new MovieAppearance();
+			newAppearance = new MovieAppearance();
 			float oneMinusRatio = (float)1.0 - ratio;
 			
 			// color
 			if(this.color != null && end.color != null){
-				ret.color = new Color(
+				
+				newAppearance.color = new Color(
 						Math.round(this.color.getRed() * oneMinusRatio + end.color.getRed() * ratio),
 						Math.round(this.color.getGreen() * oneMinusRatio + end.color.getGreen() * ratio),
-						Math.round(this.color.getBlue() * oneMinusRatio + end.color.getBlue() * ratio)
-				);
+						Math.round(this.color.getBlue() * oneMinusRatio + end.color.getBlue() * ratio));
 			}
 			
 			// size
 			if(this.size != null && end.size != null)
-				ret.size = value;
+				newAppearance.size = value;
 			
 			// opacity
 			if(this.opacity != null && end.opacity != null)
-				ret.opacity = this.opacity * oneMinusRatio + end.opacity * ratio;
+				newAppearance.opacity = this.opacity * oneMinusRatio + end.opacity * ratio;
 		}
-		return ret;
+		
+		return newAppearance;
 	}
 	
 	/**
@@ -88,34 +92,44 @@ public class MovieAppearance {
 	 * @param adder
 	 */
 	public void add(MovieAppearance adder){
+		
 		if(adder == null)
 			return;
-		if(adder.color != null){
-			if(this.color == null){
+		
+		if(adder.color != null) {
+			
+			if(this.color == null) {
 				this.color = new Color(adder.color.getRGB());
-			}else{
+			}
+			else{
+				
 				int red = this.color.getRed() + adder.color.getRed();
 				int green = this.color.getGreen() + adder.color.getGreen();
 				int blue = this.color.getBlue() + adder.color.getBlue();
+				
 				red = Math.min(red, 255);
 				green = Math.min(green, 255);
 				blue = Math.min(blue, 255);
+				
 				this.color = new Color(red, green, blue);
 			}
 		}
 		
-		if(adder.opacity != null){
+		if(adder.opacity != null) {
+			
 			if(this.opacity == null)
 				this.opacity = 0.0;
+			
 			this.opacity += adder.opacity;
 			this.opacity = Math.min(this.opacity, 1.0); // clamp opacity
 		}
 		
-		if(adder.size != null){
+		if(adder.size != null) {
+			
 			if(this.size == null)
 				this.size = 0.0;
+			
 			this.size += adder.size;
 		}
-	}
-	
+	}	
 }

@@ -101,14 +101,16 @@ public class ColorSchemeChooser extends JPanel {
 	public void saveChanges(){
 		try{
 			colorScheme.setMin(Float.parseFloat(minTextField.getText()));
-		}catch(NumberFormatException e){
+		}
+		catch(NumberFormatException e){
 			// Leave the value unchanged, until we have a better idea for how to handle bad input.
 			JOptionPane.showMessageDialog(Gui.frame, "Sorry, the value entered for 'Min' was " + minTextField.getText() + " and does not look like a valid number. It was ignored.");
 		}
 		
 		try{
 			colorScheme.setMax(Float.parseFloat(maxTextField.getText()));
-		}catch(NumberFormatException e){
+		}
+		catch(NumberFormatException e){
 			JOptionPane.showMessageDialog(Gui.frame, "Sorry, the value entered for 'Max' was " + maxTextField.getText() + " and does not look like a valid number. It was ignored.");
 		}
 		

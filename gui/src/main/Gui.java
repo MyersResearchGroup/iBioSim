@@ -1,6 +1,7 @@
 package main;
 
 import gcm.gui.GCM2SBMLEditor;
+import gcm.gui.GridPanel;
 import gcm.gui.modelview.movie.MovieContainer;
 import gcm.network.GeneticNetwork;
 import gcm.parser.CompatibilityFixer;
@@ -4157,7 +4158,32 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void createGCM() {
 		if (root != null) {
 			try {
-				String simName = JOptionPane.showInputDialog(frame, "Enter Model ID:", "Model ID", JOptionPane.PLAIN_MESSAGE);
+				
+				String simName = null;
+				
+				JTextField modelChooser = new JTextField("");
+				modelChooser.setColumns(20);
+				JCheckBox gridCheckBox = new JCheckBox("Make Grid");
+				
+				JPanel modelPanel = new JPanel(new GridLayout(2, 2));
+				modelPanel.add(new JLabel("Enter Model ID: "));
+				modelPanel.add(modelChooser);
+				modelPanel.add(gridCheckBox);
+				frame.add(modelPanel);
+				
+				String[] options = {GlobalConstants.OK, GlobalConstants.CANCEL};
+				
+				int okCancel = JOptionPane.showOptionDialog(frame, modelPanel, "Model ID",
+						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+
+				//if the user clicks "ok" on the panel
+				if (okCancel == JOptionPane.OK_OPTION) {
+				
+					simName = modelChooser.getText();
+				}
+				else return;				
+				
+				//String simName = JOptionPane.showInputDialog(frame, "Enter Model ID:", "Model ID", JOptionPane.PLAIN_MESSAGE);
 				if (simName != null && !simName.trim().equals("")) {
 					simName = simName.trim();
 					if (simName.length() > 3) {
@@ -4204,10 +4230,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							writer.writeSBML(document, root + separator + simName.replace(".gcm", ".xml"));
 							addToTree(simName.replace(".gcm", ".xml"));
 
-							GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, f.getName(), this, log, false, null, null, null, false);
-							// gcm.addMouseListener(this);
-							addTab(f.getName(), gcm, "GCM Editor");
+							GCM2SBMLEditor gcm2sbml = new GCM2SBMLEditor(root + separator, f.getName(), this, log, false, null, null, null, false);
+							// gcm2sbml.addMouseListener(this);
+							addTab(f.getName(), gcm2sbml, "GCM Editor");
 							addToTree(f.getName());
+							
+							if (gridCheckBox.isSelected())
+								gcm2sbml.launchGridPanel();
 						}
 					}
 				}

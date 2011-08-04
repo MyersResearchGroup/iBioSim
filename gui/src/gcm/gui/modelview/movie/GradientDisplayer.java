@@ -69,20 +69,15 @@ public class GradientDisplayer extends JComboBox {
         GradientPaint grad;
         
         if(movieGradient.getStartAppearance().color != null && movieGradient.getEndAppearance().color != null){
-	        grad = new GradientPaint(
-	        		0, 0, 
-	        		movieGradient.getStartAppearance().color, 
-	        		this.getWidth(), 0,
-	        		movieGradient.getEndAppearance().color);
+	        grad = new GradientPaint( 0, 0, movieGradient.getStartAppearance().color, 
+	        		this.getWidth(), 0, movieGradient.getEndAppearance().color);
 	        g2d.setPaint(grad);
 	        g2d.fillRoundRect(0, 0, this.getWidth(), this.getHeight(), 4, 4);
         }
         
         grad = new GradientPaint(0,0, Color.DARK_GRAY, this.getWidth(), 0, Color.DARK_GRAY);
         g2d.setPaint(grad);
-        g2d.drawRoundRect(0, 0, this.getWidth()-1, this.getHeight()-1, 4, 4);
-        
-        
+        g2d.drawRoundRect(0, 0, this.getWidth()-1, this.getHeight()-1, 4, 4);  
     }
     
 	public void saveChanges(){

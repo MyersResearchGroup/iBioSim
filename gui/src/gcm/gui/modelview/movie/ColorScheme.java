@@ -1,7 +1,5 @@
 package gcm.gui.modelview.movie;
 
-import java.awt.Color;
-
 import parser.TSDParser;
 
 public class ColorScheme {

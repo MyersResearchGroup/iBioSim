@@ -1229,7 +1229,7 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_OPACITY, 50);
 		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
 		style.put(mxConstants.STYLE_ROUNDED, false);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#FAB53E");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#87F274");
 		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
 		stylesheet.putCellStyle("COMPONENT", style);
 		
@@ -1238,8 +1238,8 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
 		style.put(mxConstants.STYLE_OPACITY, 100);
 		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_ROUNDED, true);
-		style.put(mxConstants.STYLE_FILLCOLOR, "#FAB53E");
+		style.put(mxConstants.STYLE_ROUNDED, false);
+		style.put(mxConstants.STYLE_FILLCOLOR, "#87F274");
 		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
 		stylesheet.putCellStyle("GRIDCOMPONENT", style);
 		
@@ -1248,7 +1248,7 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_SHAPE, mxConstants.SHAPE_RECTANGLE);
 		style.put(mxConstants.STYLE_OPACITY, 50);
 		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_ROUNDED, false);
+		style.put(mxConstants.STYLE_ROUNDED, true);
 		style.put(mxConstants.STYLE_FILLCOLOR, "#87F274");
 		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
 		stylesheet.putCellStyle("COMPARTMENT", style);
@@ -1418,10 +1418,10 @@ public class BioGraph extends mxGraph {
 	/**
 	 * 
 	 */
-	public void setSpeciesAnimationValue(String s, MovieAppearance appearance){
+	public void setSpeciesAnimationValue(String species, MovieAppearance appearance){
 		
-		mxCell cell = this.speciesToMxCellMap.get(s);
-		Properties prop = gcm.getSpecies().get(s);
+		mxCell cell = this.speciesToMxCellMap.get(species);
+		Properties prop = gcm.getSpecies().get(species);
 		assert(prop != null);
 		setCellAnimationValue(cell, appearance, prop);
 	}
@@ -1429,12 +1429,18 @@ public class BioGraph extends mxGraph {
 	/**
 	 * 
 	 */
-	public void setComponentAnimationValue(String c, MovieAppearance appearance){
+	public void setComponentAnimationValue(String component, MovieAppearance appearance){
 		
-		mxCell cell = this.componentsToMxCellMap.get(c);
-		Properties prop = gcm.getComponents().get(c);
+		mxCell cell = this.componentsToMxCellMap.get(component);
+		Properties prop = gcm.getComponents().get(component);
 		assert(prop != null);
 		setCellAnimationValue(cell, appearance, prop);
+	}
+	
+	public void setGridRectangleAnimationValue(String gridLocation, MovieAppearance appearance) {
+		
+		mxCell cell = this.gridRectangleToMxCellMap.get(gridLocation);
+		setCellAnimationValue(cell, appearance, null);
 	}
 	
 	/**
@@ -1449,10 +1455,11 @@ public class BioGraph extends mxGraph {
 			return;
 		
 		// color
-		String newStyle = null;
+		String newStyle = cell.getStyle() + ";";
 		
 		if(appearance.color != null){
-			newStyle = mxConstants.STYLE_FILLCOLOR + "=" + Integer.toHexString(appearance.color.getRGB());
+			
+			newStyle += mxConstants.STYLE_FILLCOLOR + "=" + Integer.toHexString(appearance.color.getRGB());
 		}
 		
 		// opacity

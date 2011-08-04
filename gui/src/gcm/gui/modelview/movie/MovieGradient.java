@@ -6,6 +6,8 @@ import java.awt.Color;
 
 public class MovieGradient {
 
+	private MovieAppearance startAppearance;
+	private MovieAppearance endAppearance;
 	
 	// These names have to match the GRADIENT_APPEARANCES[] array.
 	public static final String GRADIENT_NAMES[] = {
@@ -18,6 +20,7 @@ public class MovieGradient {
 //		"White to Red",
 //		"White to Blue"
 		};
+	
 	public static final MovieAppearance GRADIENT_APPEARANCES[] = {
 		new MovieAppearance(Color.BLACK), new MovieAppearance(new Color(0, 255, 0)),
 		new MovieAppearance(Color.BLACK), new MovieAppearance(new Color(255, 0, 0)),
@@ -29,29 +32,7 @@ public class MovieGradient {
 //		Color.WHITE, new Color(0, 0, 255)
 	};
 
-
 	private String label;
-	public String getLabel() {
-		return label;
-	}
-	public void setLabel(String label) {
-		this.label = label;
-	}
-
-	private MovieAppearance startAppearance;
-	private MovieAppearance endAppearance;
-	public MovieAppearance getStartAppearance() {
-		return startAppearance;
-	}
-	public void setStartAppearance(MovieAppearance startColor) {
-		this.startAppearance = startColor;
-	}
-	public MovieAppearance getEndAppearance() {
-		return endAppearance;
-	}
-	public void setEndAppearance(MovieAppearance endColor) {
-		this.endAppearance = endColor;
-	}
 	
 	public MovieGradient() {
 		// default values
@@ -59,6 +40,32 @@ public class MovieGradient {
 		this.endAppearance = GRADIENT_APPEARANCES[1];
 		this.label = GRADIENT_NAMES[0];
 	}
+	
+	public String getLabel() {
+		return label;
+	}
+	
+	public void setLabel(String label) {
+		this.label = label;
+	}
+	
+	public MovieAppearance getStartAppearance() {
+		return startAppearance;
+	}
+	
+	public void setStartAppearance(MovieAppearance startColor) {
+		this.startAppearance = startColor;
+	}
+	
+	public MovieAppearance getEndAppearance() {
+		return endAppearance;
+	}
+	
+	public void setEndAppearance(MovieAppearance endColor) {
+		this.endAppearance = endColor;
+	}
+	
+
 	
 	/**
 	 * Returns a color on the gradient. The start_color 

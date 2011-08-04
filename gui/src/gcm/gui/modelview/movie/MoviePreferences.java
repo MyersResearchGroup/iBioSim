@@ -9,7 +9,6 @@ import parser.TSDParser;
 
 public class MoviePreferences {
 
-
 	private HashMap<String, ColorScheme> speciesColorSchemes;
 	private HashMap<String, ComponentScheme> componentSchemes;
 	
@@ -25,19 +24,24 @@ public class MoviePreferences {
 	 * @return
 	 */
 	public ColorScheme getOrCreateColorSchemeForSpecies(String species, TSDParser tsdParser){
+		
 		ColorScheme cs = speciesColorSchemes.get(species);
+		
 		if(cs == null){
 			cs = new ColorScheme(tsdParser);
 			speciesColorSchemes.put(species, cs);
 		}
+		
 		return cs;
 	}
+	
 	/**
 	 * Returns the ColorScheme for a given species. 
 	 * @param species
 	 * @return
 	 */
 	public ColorScheme getColorSchemeForSpecies(String species){
+		
 		ColorScheme cs = speciesColorSchemes.get(species);
 		return cs;
 	}
@@ -50,11 +54,14 @@ public class MoviePreferences {
 	 * @return
 	 */
 	public ComponentScheme getOrCreateComponentSchemeForComponent(String comp, TSDParser tsdParser){
+		
 		ComponentScheme cs = componentSchemes.get(comp);
+		
 		if(cs == null){
 			cs = new ComponentScheme(tsdParser);
 			componentSchemes.put(comp, cs);
 		}
+		
 		return cs;
 	}
 	
@@ -64,17 +71,22 @@ public class MoviePreferences {
 	 * @return
 	 */
 	public ComponentScheme getComponentSchemeForComponent(String comp){
+		
 		ComponentScheme cs = componentSchemes.get(comp);
 		return cs;
 	}
 	
 	public void copyMoviePreferencesComponent(String masterComponentName, GCMFile gcm, TSDParser tsdParser){
+		
 		ComponentScheme masterScheme = this.getComponentSchemeForComponent(masterComponentName);
 		String compGCMFileName = gcm.getComponents().get(masterComponentName).getProperty("gcm");
-		for(String currentComponentName:gcm.getComponents().keySet()){
+		
+		for(String currentComponentName : gcm.getComponents().keySet()){
 			// make sure this is the same type of component
 			if(gcm.getComponents().get(currentComponentName).getProperty("gcm").equals(compGCMFileName)){
+				
 				if(!currentComponentName.equals(masterComponentName)){ // skip the current component
+					
 					ComponentScheme currentScheme = this.getOrCreateComponentSchemeForComponent(currentComponentName, tsdParser);
 					currentScheme.duplicatePreferences(masterScheme, currentComponentName);
 				}

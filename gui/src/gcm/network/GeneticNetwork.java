@@ -517,7 +517,7 @@ public class GeneticNetwork {
 		//create membrane diffusion reactions between the new outer species and second-level compartments
 		for (String id : underlyingSpeciesIDs) {
 						
-			String underlyingSpeciesID = id;			
+			String underlyingSpeciesID = id;
 			
 			//CREATE OUTER SPECIES
 			//add "outer" species at all grid locations			
