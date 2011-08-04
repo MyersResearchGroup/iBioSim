@@ -151,7 +151,7 @@ public class Schematic extends JPanel implements ActionListener {
 
 		if(graph == null){
 			
-			graph = new BioGraph(gcm);			
+			graph = new BioGraph(gcm);		
 			addGraphListeners();
 			gcm.makeUndoPoint();
 		}
@@ -295,8 +295,8 @@ public class Schematic extends JPanel implements ActionListener {
 		selfInfluenceButton = Utils.makeRadioToolButton("self_influence.png", "", "Add Self Influences", this, modeButtonGroup);
 		toolBar.add(selfInfluenceButton);
 		//toolBar.add(Utils.makeToolButton("", "addInfluence", "Add Influence", this));
-		gridButton = Utils.makeToolButton("", "grid", "Grid", this);
-		toolBar.add(gridButton);
+		//gridButton = Utils.makeToolButton("", "grid", "Grid", this);
+		//toolBar.add(gridButton);
 
 		toolBar.addSeparator();
 		ButtonGroup influenceButtonGroup = new ButtonGroup();
@@ -384,13 +384,30 @@ public class Schematic extends JPanel implements ActionListener {
 			gcm.makeUndoPoint();
 		}
 		else if(command == "undo"){
+			
 			gcm.undo();
+			
+			if (grid.isEnabled()) {
+				grid = gcm.getGrid();
+				
+				//the new grid pointer may not have an accurate enabled state
+				//so make sure it's set to true
+				grid.setEnabled(true);
+				grid.refreshComponents(gcm.getComponents());
+			}
+			
 			display();
 			gcm2sbml.refresh();
-			gcm2sbml.setDirty(true);
+			gcm2sbml.setDirty(true);			
 		}
 		else if(command == "redo"){
 			gcm.redo();
+			
+			if (grid.isEnabled()) {
+				grid = gcm.getGrid();
+				grid.refreshComponents(gcm.getComponents());
+			}
+			
 			display();
 			gcm2sbml.refresh();
 			gcm2sbml.setDirty(true);
@@ -798,8 +815,10 @@ public class Schematic extends JPanel implements ActionListener {
 								//a TSD file to simulate
 								if (movieContainer.getTSDParser() == null)
 									JOptionPane.showMessageDialog(Gui.frame, "You must choose a simulation file before editing component properties.");
-								else
-									SchemeChooserPanel.showSchemeChooserPanel(movieContainer);
+								else {
+									if (cell != null)
+										SchemeChooserPanel.showSchemeChooserPanel(cell.getId(), movieContainer);
+								}
 							}
 						}
 						
@@ -1035,10 +1054,11 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 						else if(type == GlobalConstants.COMPONENT){
 									
-							gcm.removeComponent(cell.getId());
 							//if there's a grid, remove the component from the grid as well
 							if (grid.isEnabled())
 								grid.eraseNode(cell.getId(), gcm);
+							else
+								gcm.removeComponent(cell.getId());
 						}
 						else if(type == GlobalConstants.PROMOTER){
 							
@@ -1153,6 +1173,7 @@ public class Schematic extends JPanel implements ActionListener {
     
     
 	//INPUT/OUTPUT AND CONNECTION METHODS
+	
 	
 	/**
 	 * Tries to properly connect an edge that is connected in the graph. Called 
@@ -1558,8 +1579,10 @@ public class Schematic extends JPanel implements ActionListener {
 				
 				if(movieContainer.getTSDParser() == null)
 					JOptionPane.showMessageDialog(Gui.frame, "You must choose a simulation file before editing component properties.");
-				else
-					new ComponentSchemeChooser(cell.getId(), movieContainer);
+				else {
+					SchemeChooserPanel.showSchemeChooserPanel(cell.getId(), movieContainer);
+					//new ComponentSchemeChooser(cell.getId(), movieContainer);
+				}
 			}
 		}
 		else if(cellType.equals(GlobalConstants.PROMOTER)){

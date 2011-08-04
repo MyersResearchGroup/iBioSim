@@ -52,13 +52,9 @@ public class ComponentSchemeChooser extends JPanel implements ActionListener {
 		ListIterator<ComponentSchemePart> iter = componentScheme.getSchemes().listIterator();
 		
 		while(iter.hasNext()){
-			schemeHolder.add(
-					new ComponentSchemePartChooser(
-							iter.next(),
-							compName,
-							movieContainer.getTSDParser()
-							)
-					);
+			
+			schemeHolder.add(new ComponentSchemePartChooser(iter.next(), compName,
+								movieContainer.getTSDParser()));
 		}
 	
 		// build a special button to display the extra options
@@ -94,11 +90,10 @@ public class ComponentSchemeChooser extends JPanel implements ActionListener {
 	}
 	
 	private void applyToThis(){
-		for(Object o:schemeHolder.getComponents()){
+		for(Object o : schemeHolder.getComponents()){
 			((ComponentSchemePartChooser)o).saveChanges();
 		}	
 	}
-	
 	
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals(ADD_ANOTHER)) {

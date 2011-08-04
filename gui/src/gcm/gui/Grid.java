@@ -5,27 +5,19 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
-import javax.swing.AbstractAction;
 
 import com.mxgraph.model.mxCell;
 
 import gcm.gui.schematic.BioGraph;
-import gcm.gui.schematic.Schematic;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 
-/*
- * TODO-jstev:
- * 
- * 
- */
+
 
 
 /**
@@ -37,6 +29,7 @@ import gcm.util.GlobalConstants;
  * 
  */
 public class Grid {
+	
 	
 	//---------------
 	//CLASS VARIABLES
@@ -84,7 +77,11 @@ public class Grid {
 	//CLASS METHODS
 	//-------------
 	
+	
 	//PUBLIC
+	
+	
+	//GRID CREATION METHODS	
 	
 	/**
 	 * default constructor
@@ -161,6 +158,9 @@ public class Grid {
 		updateLocToComponentMap();
 		putComponentsOntoGrid();
 	}
+	
+	
+	//GRID DRAWING
 	
 	/**
 	 * draws the grid selection boxes and updates the local graph pointer
@@ -244,15 +244,8 @@ public class Grid {
 		g.setColor(Color.black);
 	}	
 	
-	/**
-	 * @return the location-to-component map
-	 */
-	public HashMap<Point, Map.Entry<String, Properties>> getLocToComponentMap() {
-		
-		updateLocToComponentMap();
-		
-		return locToComponentMap;
-	}
+	
+	//NODE METHODS
 	
 	/**
 	 * clears a node and then removes it from the gcm
@@ -367,6 +360,73 @@ public class Grid {
 	}
 	
 	/**
+	 * clears all nodes that are selected
+	 */
+	public void eraseSelectedNodes(GCMFile gcm) {
+		
+		//loop through all nodes
+		//if it's selected, clear it
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
+				
+				if (grid.get(row).get(col).isSelected() && grid.get(row).get(col).isOccupied())
+					eraseNode(grid.get(row).get(col).getComponent().getKey(), gcm);
+			}
+		}
+	}
+	
+	/**
+	 * sets every node to selected
+	 */
+	public void selectAllNodes() {
+		
+		//loop through each grid node to see if one is selected
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
+				
+				grid.get(row).get(col).setSelected(true);
+			}
+		}
+	}
+	
+	/**
+	 * sets every node to deselected
+	 */
+	public void deselectAllNodes() {
+		
+		//loop through each grid node to see if one is selected
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
+				
+				grid.get(row).get(col).setSelected(false);
+			}
+		}
+	}
+	
+	/**
+	 * returns the row/col of each selected node in an arraylist
+	 * @return the row/col of each selected node
+	 */
+	public ArrayList<Point> getSelectedUnoccupiedNodes() {
+		
+		ArrayList<Point> selectedNodes = new ArrayList<Point>();
+		
+		//loop through each grid node to see if one is selected
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
+				
+				if (grid.get(row).get(col).isSelected() && !grid.get(row).get(col).isOccupied())
+					selectedNodes.add(new Point(grid.get(row).get(col).getRow(), grid.get(row).get(col).getCol()));
+			}
+		}
+		
+		return selectedNodes;
+	}
+
+	
+	//INFORMATION RETRIEVAL METHODS
+	
+	/**
 	 * finds and returns the snap rectangle from the component id passed in
 	 * @param compID component id
 	 * @return the snap rectangle
@@ -420,46 +480,6 @@ public class Grid {
 	}
 	
 	/**
-	 * updates the local graph pointer and updates the grid's rectangles and maps
-	 * according to the new graph passed in
-	 * 
-	 * this is used when the grid sizes/positions change, like with scrolling or zooming
-	 * 
-	 * @param graph
-	 */
-	public void syncGridGraph(BioGraph graph) {
-
-		//need to change the default component width/height and padding values!!!
-		
-		this.graph = graph;
-		updateGridRectangles();
-		updateLocToComponentMap();
-		updateRectToNodeMap();
-	}
-	
-	/**
-	 * takes the gcm's components and resets the grid with those components
-	 * this happens after adding or deleting a node or nodes (like in resizing)
-	 */
-	public void refreshComponents(HashMap<String, Properties> gcmComponents) {
-		
-		components = gcmComponents;
-		
-		//update the graph
-		if (graph != null)
-			graph.buildGraph();
-		
-		putComponentsOntoGrid();
-		updateGridRectangles();
-		
-		//update the location to component hash map
-		//and the rectangle to node map
-		//as the components and their locations have changed
-		updateLocToComponentMap();		
-		updateRectToNodeMap();
-	}
-	
-	/**
 	 * returns whether or not the user clicked within a grid but outside of the component
 	 * (ie, in the grid's padding area)
 	 * 
@@ -490,6 +510,68 @@ public class Grid {
 		}
 		//allows de-selection of all on clicking out-of-bounds
 		else return true;
+	}
+	
+	/**
+	 * returns whether or not there's something selected
+	 * this is used for changing the right-click context menu
+	 * 
+	 * @return whether or not there's something selected
+	 */
+	public boolean isALocationSelected() {
+		
+		//loop through each grid node
+		//if one is selected, return true
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
+				
+				if (grid.get(row).get(col).isSelected())
+					return true;
+			}
+		}
+		
+		return false;
+	}
+
+	
+	//GRID UPDATING METHODS
+	
+	/**
+	 * updates the local graph pointer and updates the grid's rectangles and maps
+	 * according to the new graph passed in
+	 * 
+	 * this is used when the grid sizes/positions change, like with scrolling or zooming
+	 * 
+	 * @param graph
+	 */
+	public void syncGridGraph(BioGraph graph) {
+		
+		this.graph = graph;
+		updateGridRectangles();
+		updateLocToComponentMap();
+		updateRectToNodeMap();
+	}
+	
+	/**
+	 * takes the gcm's components and resets the grid with those components
+	 * this happens after adding or deleting a node or nodes (like in resizing)
+	 */
+	public void refreshComponents(HashMap<String, Properties> gcmComponents) {
+		
+		components = gcmComponents;
+		
+		//update the graph
+		if (graph != null)
+			graph.buildGraph();
+		
+		putComponentsOntoGrid();
+		updateGridRectangles();
+		
+		//update the location to component hash map
+		//and the rectangle to node map
+		//as the components and their locations have changed
+		updateLocToComponentMap();		
+		updateRectToNodeMap();
 	}
 	
 	/**
@@ -596,92 +678,107 @@ public class Grid {
 		refreshComponents(gcm.getComponents());
 	}
 	
-	/**
-	 * returns whether or not there's something selected
-	 * this is used for changing the right-click context menu
-	 * 
-	 * @return whether or not there's something selected
-	 */
-	public boolean isALocationSelected() {
-		
-		//loop through each grid node
-		//if one is selected, return true
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
-				
-				if (grid.get(row).get(col).isSelected())
-					return true;
-			}
-		}
-		
-		return false;
-	}
-	
-	/**
-	 * clears all nodes that are selected
-	 */
-	public void eraseSelectedNodes(GCMFile gcm) {
-		
-		//loop through all nodes
-		//if it's selected, clear it
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
-				
-				if (grid.get(row).get(col).isSelected() && grid.get(row).get(col).isOccupied())
-					eraseNode(grid.get(row).get(col).getComponent().getKey(), gcm);
-			}
-		}
-	}
-	
-	/**
-	 * sets every node to selected
-	 */
-	public void selectAllNodes() {
-		
-		//loop through each grid node to see if one is selected
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
-				
-				grid.get(row).get(col).setSelected(true);
-			}
-		}
-	}
-	
-	/**
-	 * sets every node to deselected
-	 */
-	public void deselectAllNodes() {
-		
-		//loop through each grid node to see if one is selected
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
-				
-				grid.get(row).get(col).setSelected(false);
-			}
-		}
-	}
-	
-	/**
-	 * returns the row/col of each selected node in an arraylist
-	 * @return the row/col of each selected node
-	 */
-	public ArrayList<Point> getSelectedUnoccupiedNodes() {
-		
-		ArrayList<Point> selectedNodes = new ArrayList<Point>();
-		
-		//loop through each grid node to see if one is selected
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
-				
-				if (grid.get(row).get(col).isSelected() && !grid.get(row).get(col).isOccupied())
-					selectedNodes.add(new Point(grid.get(row).get(col).getRow(), grid.get(row).get(col).getCol()));
-			}
-		}
-		
-		return selectedNodes;
-	}
 	
 	//PRIVATE
+	
+	
+	//HASH MAP UPDATING METHODS
+	
+	/**
+	 * creates a hash map of corresponding rectangles and nodes
+	 * this allows easy access of nodes from rectangle coordinates
+	 */
+	private void updateRectToNodeMap() {
+		
+		rectToNodeMap.clear();
+		
+		//loop through the rows and columns
+		//find the grid node and rectangle then make it a map entry
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
+		
+				rectToNodeMap.put(grid.get(row).get(col).getZoomedRectangle(), grid.get(row).get(col));				
+			}
+		}
+	}
+
+	/**
+	 * creates a hash map for easy access of the component at a specified grid location
+	 * with the component you can get its name and properties
+	 * used for diffusion reaction printing in printDiffusion
+	 * uses 1-indexed row/col numbers!!!
+	 */
+	private void updateLocToComponentMap() {
+		
+		locToComponentMap.clear();
+		
+		if (components == null) return;
+		
+		//iterate through the components to get the number of rows and cols			
+		for (Map.Entry<String, Properties> compo : components.entrySet()) {
+			
+			//find the row and col from the component's properties
+			Properties props = compo.getValue();
+						
+			int row = Integer.parseInt(props.getProperty("row"));
+			int col = Integer.parseInt(props.getProperty("col"));
+			
+			locToComponentMap.put(new Point(row, col), compo);
+		}
+	}
+	
+	
+	//INFORMATION RETRIEVAL METHODS
+	
+	/**
+	 * returns the corresponding grid node for the given point
+	 * 
+	 * @param point
+	 * @return the corresponding grid node
+	 */
+	private GridNode getNodeFromPoint(Point point) {
+		
+		//loop through every row and column
+		//check this location's rectangle against the x,y point
+		//if it contains it, return that node
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
+				
+				Rectangle rect = grid.get(row).get(col).getZoomedRectangle();
+				
+				if (rect.contains(point))					
+					return rectToNodeMap.get(rect);
+			}
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * finds and returns the grid node with the component id passed in
+	 * @param compID
+	 * @return the grid node with the component id
+	 */
+	private GridNode getNodeFromCompID(String compID) {
+		
+		//loop through all of the grid nodes
+		//find the grid with that compartment ID
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
+				
+				GridNode node = grid.get(row).get(col);
+				
+				if (node.getComponent() != null && node.getComponent().getKey().equals(compID))
+					return node;
+			}
+		}
+		
+		//if it's not found, send back a null pointer
+		return null;
+	}
+	
+	
+	//GRID UPDATING METHODS
 	
 	/**
 	 * sets the rectangles/bounds for each node
@@ -695,7 +792,7 @@ public class Grid {
 				
 				//find the bounds from the cell at this row/col
 				//use that rectangle as the node's rectangle
-				String cellID = "row_" + row + "__col_" + col;
+				String cellID = "ROW" + row + "_COL" + col;
 				
 				if (graph != null && graph.getGridRectangleCellFromID(cellID) != null) {
 					
@@ -750,18 +847,14 @@ public class Grid {
 	 * i think this should only be run once on grid creation
 	 */
 	private void putComponentsOntoGrid() {
-
-		Iterator<Map.Entry<String, Properties>> iter = components.entrySet().iterator();
 		
 		//iterate through the components to get the x/y coords of its top left vertex
-		//using these coords, map it to the grid
-		while(iter.hasNext()) {
-			
-			Map.Entry<String, Properties> entry = (Map.Entry<String, Properties>)iter.next();
+		//using these coords, map it to the grid	
+		for (Map.Entry<String, Properties> compo : components.entrySet()) {
 			
 			//find the row and col from the component's properties
 			//use these to put the component into the correct grid location
-			Properties props = entry.getValue();
+			Properties props = compo.getValue();
 			
 			String gcm = props.getProperty("gcm");
 			int row = Integer.valueOf(props.getProperty("row"));
@@ -771,146 +864,13 @@ public class Grid {
 			if (gcm.equals("none"))
 				grid.get(row).get(col).setOccupied(false);
 			else {
-				grid.get(row).get(col).setComponent(entry);
+				grid.get(row).get(col).setComponent(compo);
 				grid.get(row).get(col).setOccupied(true);
 			}
 		}
 		
 	}
 
-	/**
-	 * returns the corresponding grid node for the given point
-	 * 
-	 * @param point
-	 * @return the corresponding grid node
-	 */
-	private GridNode getNodeFromPoint(Point point) {
-		
-		//loop through every row and column
-		//check this location's rectangle against the x,y point
-		//if it contains it, return that node
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
-				
-				Rectangle rect = grid.get(row).get(col).getZoomedRectangle();
-				
-				if (rect.contains(point))					
-					return rectToNodeMap.get(rect);
-			}
-		}
-		
-		return null;
-	}
-	
-	/**
-	 * creates a hash map of corresponding rectangles and nodes
-	 * this allows easy access of nodes from rectangle coordinates
-	 * 
-	 * creates a hash map of the corresponding x,y points and nodes
-	 * this allows easy access to nodes from the location coordinates
-	 */
-	private void updateRectToNodeMap() {
-		
-		rectToNodeMap.clear();
-		
-		//loop through the rows and columns
-		//find the grid node and rectangle then make it a map entry
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
-		
-				rectToNodeMap.put(grid.get(row).get(col).getZoomedRectangle(), grid.get(row).get(col));				
-			}
-		}
-	}
-	
-	/**
-	 * based on the mouse location, draws a box around the grid location
-	 * that the user is hovering over
-	 * 
-	 * @param location the mouse location x,y coordinates
-	 */
-	private void hoverGridLocation(Graphics g) {
-		
-		GridNode hoveredNode = getNodeFromPoint(mouseLocation);	
-		
-		if (hoveredNode != null) {
-			
-			hoveredNode.setHover(true);
-			drawGridSelectionBox(g, hoveredNode.getZoomedRectangle());
-		}
-	}
-	
-	/**
-	 * based on the mouse-click location, selects the grid location
-	 * also draws a selection box
-	 * 
-	 * @param location the mouse-click x,y coordinates
-	 */
-	private void selectGridLocation(Graphics g) {
-		
-		GridNode hoveredNode = getNodeFromPoint(mouseClickLocation);
-		
-		//select or de-select the grid location
-		if (hoveredNode != null)
-			hoveredNode.setSelected(hoveredNode.isSelected() == true ? false : true);
-		
-		//this click's action has been performed, so set it to false until
-		//the user clicks again
-		mouseClicked = false;
-	}
-	
-	/**
-	 * creates a hash map for easy access of the component at a specified grid location
-	 * with the component you can get its name and properties
-	 * used for diffusion reaction printing in printDiffusion
-	 * uses 1-indexed row/col numbers!!!
-	 */
-	private void updateLocToComponentMap() {
-		
-		locToComponentMap.clear();
-		
-		if (components == null) return;
-				
-		Iterator<Map.Entry<String, Properties>> iter = components.entrySet().iterator();
-		
-		//iterate through the components to get the number of rows and cols
-		while(iter.hasNext()) {
-			
-			Map.Entry<String, Properties> compo = (Map.Entry<String, Properties>)iter.next();
-			
-			//find the row and col from the component's properties
-			Properties props = compo.getValue();
-						
-			int row = Integer.parseInt(props.getProperty("row"));
-			int col = Integer.parseInt(props.getProperty("col"));
-			
-			locToComponentMap.put(new Point(row, col), compo);
-		}
-	}
-	
-	/**
-	 * finds and returns the grid node with the component id passed in
-	 * @param compID
-	 * @return the grid node with the component id
-	 */
-	private GridNode getNodeFromCompID(String compID) {
-		
-		//loop through all of the grid nodes
-		//find the grid with that compartment ID
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
-				
-				GridNode node = grid.get(row).get(col);
-				
-				if (node.getComponent() != null && node.getComponent().getKey().equals(compID))
-					return node;
-			}
-		}
-		
-		//if it's not found, send back a null pointer
-		return null;
-	}
-	
 	/**
 	 * adds a component to the GCM passed in
 	 * 
@@ -950,6 +910,50 @@ public class Grid {
 			gcm.addComponent(null, properties);
 		}
 	}
+	
+	
+	//HOVER AND SELECTION METHODS
+	
+	/**
+	 * based on the mouse location, draws a box around the grid location
+	 * that the user is hovering over
+	 * 
+	 * @param location the mouse location x,y coordinates
+	 */
+	private void hoverGridLocation(Graphics g) {
+		
+		GridNode hoveredNode = getNodeFromPoint(mouseLocation);	
+		
+		if (hoveredNode != null) {
+			
+			hoveredNode.setHover(true);
+			drawGridSelectionBox(g, hoveredNode.getZoomedRectangle());
+		}
+	}
+	
+	/**
+	 * based on the mouse-click location, selects the grid location
+	 * also draws a selection box
+	 * 
+	 * @param location the mouse-click x,y coordinates
+	 */
+	private void selectGridLocation(Graphics g) {
+		
+		GridNode hoveredNode = getNodeFromPoint(mouseClickLocation);
+		
+		//select or de-select the grid location
+		if (hoveredNode != null)
+			hoveredNode.setSelected(hoveredNode.isSelected() == true ? false : true);
+		
+		//this click's action has been performed, so set it to false until
+		//the user clicks again
+		mouseClicked = false;
+	}
+	
+	
+	//UNDO/REDO METHODS
+	
+	
 	
 	
 	//BORING GET/SET METHODS
@@ -1174,14 +1178,20 @@ public class Grid {
 		this.gridHeight = gridHeight;
 	}
 	
-	
+	/**
+	 * @return the location-to-component map
+	 */
+	public HashMap<Point, Map.Entry<String, Properties>> getLocToComponentMap() {
+		
+		updateLocToComponentMap();
+		
+		return locToComponentMap;
+	}
 	
 	
 	//--------------
 	//GRIDNODE CLASS
 	//--------------
-	
-
 
 	/**
 	 * contains all of the information for a grid node
@@ -1224,7 +1234,7 @@ public class Grid {
 		//PUBLIC
 		
 		/**
-		 * deletes the node's component's gcm association, freeing it to be re-set to another
+		 * deletes the node's component, freeing it to be re-set to another
 		 */
 		public void clear() {
 			

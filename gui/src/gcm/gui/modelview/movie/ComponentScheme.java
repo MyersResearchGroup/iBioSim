@@ -20,7 +20,6 @@ public class ComponentScheme {
 	public final int NUM_PARTS = 3;
 	
 	private LinkedList<ComponentSchemePart> schemes;
-	public LinkedList<ComponentSchemePart> getSchemes(){return schemes;}
 
 	
 	public ComponentScheme() {
@@ -70,4 +69,7 @@ public class ComponentScheme {
 		}
 	}
 
+	public LinkedList<ComponentSchemePart> getSchemes(){
+		return schemes;
+	}
 }

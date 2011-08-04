@@ -107,6 +107,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	private GCM2SBMLEditor gcmEditor;
 	
 	private ModelPanel modelPanel;
+	
+	private Schematic schematic;
 
 	public GCM2SBMLEditor(String path) throws Exception {
 		this(path, null, null, null, false, null, null, null, false);
@@ -1105,7 +1107,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			tab.addTab("Species", speciesPanel);
 			tab.addTab("Reactions", reactionPanel);
 		} else {
-			Schematic schematic = new Schematic(gcm, biosim, this, true, null,compartmentPanel,reactionPanel);
+			this.schematic = new Schematic(gcm, biosim, this, true, null,compartmentPanel,reactionPanel);
 			tab.addTab("Schematic", schematic);
 			if (gcm.getSBMLDocument().getModel().getNumCompartments() > 1) {
 				tab.addTab("Compartments", compartmentPanel);
@@ -1769,6 +1771,27 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 		}
 		return displayChooseComponentDialog(true, this.components, false);
+	}
+	
+	/**
+	 * launches a panel for grid creation
+	 */
+	public void launchGridPanel() {
+		
+		//static method that builds the grid panel
+		//the false field means to open the grid creation panel
+		//and not the grid editing panel
+		boolean created = GridPanel.showGridPanel(this, gcm, false);
+		
+		//if the grid is built, then draw it and so on
+		if (created) {
+			
+			this.setDirty(true);
+			this.refresh();
+			schematic.getGraph().buildGraph();
+			schematic.display();
+			gcm.makeUndoPoint();
+		}
 	}
 	
 	public boolean checkNoComponentLoop(String gcm, String checkFile) {
