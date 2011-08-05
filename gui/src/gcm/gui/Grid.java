@@ -223,13 +223,13 @@ public class Grid {
 				if (node.isSelected())
 					drawGridSelectionBox(g, rect);
 				
-				//some debug stuff to draw onto the grid
-				g2.drawString(Boolean.toString(node.isSelected()), rect.x, rect.y);
-				
-				if (node.component == null) {
-					g2.drawString("null", rect.x+40, rect.y);
-				}
-				else g2.drawString(node.getComponent().getKey(), rect.x+40, rect.y);
+//				//some debug stuff to draw onto the grid
+//				g2.drawString(Boolean.toString(node.isSelected()), rect.x, rect.y);
+//				
+//				if (node.component == null) {
+//					g2.drawString("null", rect.x+40, rect.y);
+//				}
+//				else g2.drawString(node.getComponent().getKey(), rect.x+40, rect.y);
 			}
 		}
 	}
