@@ -183,23 +183,20 @@ public class Grid {
 		
 		boolean selectionOff = false;
 		
+		//if the user has completed dragging the rubberband
+		if (rubberbandBounds != null && rubberbandBounds.height > 0 
+				&& rubberbandBounds.width > 0 && mouseReleased == true) {
+			
+			selectGridLocationsWithRubberband(g);
+		}
 		//if the user's mouse is within the grid bounds
-		if (gridBounds.contains(mouseLocation)) {
+		else if (gridBounds.contains(mouseLocation)) {			
 			
-			//if the user has completed dragging the rubberband
-			if (rubberbandBounds != null && rubberbandBounds.height > 0 
-					&& rubberbandBounds.width > 0 && mouseReleased == true) {
-				
-				selectGridLocationsWithRubberband(g);
-			}
-			else {
+			//draw a hover-rectangle over the grid location
+			hoverGridLocation(g);
 			
-				//draw a hover-rectangle over the grid location
-				hoverGridLocation(g);
-				
-				//if the user has clicked, select/de-select that location
-				if (mouseClicked) selectGridLocation(g);
-			}
+			//if the user has clicked, select/de-select that location
+			if (mouseClicked) selectGridLocation(g);
 		}
 		//if the user clicks out of bounds
 		//de-select all grid locations
@@ -970,12 +967,14 @@ public class Grid {
 	 */
 	private void selectGridLocationsWithRubberband(Graphics g) {
 		
+		rubberbandBounds.y += verticalOffset;
+		
 		//loop through all of the grid locations
 		//if its rectangle is contained within the rubberband, select it
 		for (int row = 0; row < numRows; ++row) {
 			for (int col = 0; col < numCols; ++col) {
 				
-				if (rubberbandBounds.contains(grid.get(row).get(col).getRectangle()))
+				if (rubberbandBounds.contains(grid.get(row).get(col).getZoomedRectangle()))
 					grid.get(row).get(col).setSelected(true);
 			}
 		}
