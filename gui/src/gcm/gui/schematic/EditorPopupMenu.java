@@ -1,9 +1,15 @@
 package gcm.gui.schematic;
 
+import gcm.gui.ComponentAction;
 import gcm.gui.Grid;
 import gcm.gui.GridAction;
+import gcm.util.GlobalConstants;
 
 import javax.swing.JPopupMenu;
+
+import main.Gui;
+
+import com.mxgraph.model.mxCell;
 import com.mxgraph.swing.util.mxGraphActions;
 
 public class EditorPopupMenu extends JPopupMenu
@@ -17,15 +23,21 @@ public class EditorPopupMenu extends JPopupMenu
 	/**
 	 * constructor
 	 * @param editor the schematic creating the popup menu
+	 * @param cell 
+	 * @param biosim 
 	 */
-	public EditorPopupMenu(Schematic editor) {
+	public EditorPopupMenu(Schematic editor, mxCell cell, Gui biosim) {
 		
 		Grid grid = editor.getGrid();
-		
+
 		boolean selected = !editor.getGraphComponent().getGraph().isSelectionEmpty();
 		add(editor.bind("Delete", mxGraphActions.getDeleteAction())).setEnabled(selected);
 		addSeparator();
-		
+		if (editor.getGraph().getCellType(cell).equals(GlobalConstants.COMPONENT)) {
+			add(new ComponentAction("Open Component", editor.getGraph().getCellProperties(cell).getProperty("gcm"), biosim));
+			addSeparator();
+		}
+
 		if (grid.isEnabled()) {
 			
 			add(new GridAction("Select All Locations", editor));

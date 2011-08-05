@@ -5391,24 +5391,25 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 	}
-
+	
 	private void openGCM(boolean textBased) {
+		String file = tree.getFile();
+		String filename = "";
+		if (file.lastIndexOf('/') >= 0) {
+			filename = file.substring(file.lastIndexOf('/') + 1);
+		}
+		if (file.lastIndexOf('\\') >= 0) {
+			filename = file.substring(file.lastIndexOf('\\') + 1);
+		}
+		openGCM(filename, textBased);
+	}
+
+	public void openGCM(String filename, boolean textBased) {
 		try {
-			String filename = tree.getFile();
-			String directory = "";
-			String theFile = "";
-			if (filename.lastIndexOf('/') >= 0) {
-				directory = filename.substring(0, filename.lastIndexOf('/') + 1);
-				theFile = filename.substring(filename.lastIndexOf('/') + 1);
-			}
-			if (filename.lastIndexOf('\\') >= 0) {
-				directory = filename.substring(0, filename.lastIndexOf('\\') + 1);
-				theFile = filename.substring(filename.lastIndexOf('\\') + 1);
-			}
-			File work = new File(directory);
-			int i = getTab(theFile);
+			File work = new File(root);
+			int i = getTab(filename);
 			if (i == -1) {
-				i = getTab(theFile.replace(".gcm", ".xml"));
+				i = getTab(filename.replace(".gcm", ".xml"));
 			}
 			if (i != -1) {
 				tab.setSelectedIndex(i);
@@ -5432,8 +5433,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				 * else {
 				 */
 				try {
-					GCM2SBMLEditor gcm = new GCM2SBMLEditor(path, theFile, this, log, false, null, null, null, textBased);
-					addTab(theFile, gcm, "GCM Editor");
+					GCM2SBMLEditor gcm = new GCM2SBMLEditor(path, filename, this, log, false, null, null, null, textBased);
+					addTab(filename, gcm, "GCM Editor");
 				}
 				catch (Exception e) {
 				}
