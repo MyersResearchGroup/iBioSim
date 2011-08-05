@@ -71,6 +71,7 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.handler.mxRubberband;
+import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
@@ -127,6 +128,9 @@ public class Schematic extends JPanel implements ActionListener {
 			boolean editable, MovieContainer movieContainer2, Compartments compartments, Reactions reactions){
 		
 		super(new BorderLayout());
+		
+		//sets how much of the cell, when dragged, results in moving vs. edge creation
+		mxConstants.DEFAULT_HOTSPOT = 0.5;
 		
 		this.gcm = gcm;
 		this.biosim = biosim;
@@ -598,7 +602,9 @@ public class Schematic extends JPanel implements ActionListener {
 		graphComponent.getGraphControl().addMouseMotionListener(new MouseMotionListener() {
 			
 			public void mouseMoved(MouseEvent event) {
+				
 				if (grid.isEnabled()) {
+					
 					Point location = event.getPoint();
 					
 					grid.setMouseLocation(location);			
@@ -608,7 +614,7 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			public void mouseDragged(MouseEvent event) {
 				
-				if (event.isControlDown() || (panButton != null && panButton.isSelected())) {
+				if (event.isControlDown() || event.isAltDown() || (panButton != null && panButton.isSelected())) {
 					graphComponent.getPanningHandler().setEnabled(true);
 				}
 				else {
@@ -616,7 +622,7 @@ public class Schematic extends JPanel implements ActionListener {
 					
 					//for rubberband selection of grid rectangles					
 					grid.setRubberbandBounds(rubberband.getBounds());					
-				}
+				}				
 			}
 		});
 		
@@ -625,7 +631,7 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			public void mouseWheelMoved(MouseWheelEvent event) {
 				
-				if (zoomButton != null && zoomButton.isSelected() || event.isControlDown()) {
+				if ((zoomButton != null && zoomButton.isSelected()) || event.isControlDown() || event.isAltDown()) {
 					
 					if (event.getWheelRotation() > 0) {
 						
@@ -1129,6 +1135,8 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			//@Override
 			public void invoke(Object arg0, mxEventObject event) {
+				
+				//System.out.println(event.getName());
 			}
 		});
 		
