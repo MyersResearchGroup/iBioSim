@@ -996,18 +996,21 @@ public class Grid {
 	 */
 	private void selectGridLocationsWithRubberband(Graphics g) {
 		
+		rubberbandBounds.y += verticalOffset;
+		
 		//loop through all of the grid locations
 		//if its rectangle is contained within the rubberband, select it
 		for (int row = 0; row < numRows; ++row) {
 			for (int col = 0; col < numCols; ++col) {
 				
-				if (rubberbandBounds.contains(grid.get(row).get(col).getZoomedSnapRectangle()))
+				if (rubberbandBounds.contains(grid.get(row).get(col).getZoomedRectangle()))
 					grid.get(row).get(col).setSelected(true);
 			}
 		}
 		
 		mouseReleased = false;
 		rubberbandBounds = null;
+		mouseClicked = false;
 	}	
 	
 	
