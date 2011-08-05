@@ -83,7 +83,7 @@ public class Schematic extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private BioGraph graph;
 	private mxGraphComponent graphComponent;
-	private mxRubberband rubberband;
+	private Rubberband rubberband;
 	
 	private GCMFile gcm;
 	private Gui biosim;
@@ -191,7 +191,7 @@ public class Schematic extends JPanel implements ActionListener {
 			graphComponent.setOpaque(false);
 			graphComponent.getViewport().setOpaque(false);
 			
-			rubberband = new mxRubberband(graphComponent);
+			rubberband = new Rubberband(graphComponent);
 			
 			this.add(graphComponent, BorderLayout.CENTER);
 						
@@ -587,15 +587,9 @@ public class Schematic extends JPanel implements ActionListener {
 				Point location = event.getPoint();
 				
 				if (grid.isEnabled()) {
-					
-					//NOTE: i think it's better to just click anywhere on the grid location, 
-					//but padding-only is an option (it's a pain, though, when zoomed-out
-					
-					//if (grid.clickedOnGridPadding(location)) {
 						
-						grid.setMouseClickLocation(location);
-						drawGrid();
-					//}
+					grid.setMouseClickLocation(location);
+					drawGrid();
 				}
 			}
 		});
@@ -621,6 +615,9 @@ public class Schematic extends JPanel implements ActionListener {
 				}
 				else {
 					graphComponent.getPanningHandler().setEnabled(false);
+					
+					//for rubberband selection of grid rectangles					
+					grid.setRubberbandBounds(rubberband.getBounds());					
 				}			
 			}
 		});
@@ -666,6 +663,8 @@ public class Schematic extends JPanel implements ActionListener {
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter(){
 			
 			public void mouseReleased(MouseEvent e) {
+				
+				grid.setMouseReleased(true);
 				
 				mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
 				
@@ -1733,6 +1732,32 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		return gcm2sbml;
 	}
+	
+	
+	
+	
+	
+	
+	//RUBBERBAND CLASS	
+	
+	/**
+	 * this class solely exists for the getBound method
+	 * which doesn't exist in the mxRubberband class, unfortunately
+	 */
+	public class Rubberband extends mxRubberband {
+
+		public Rubberband(mxGraphComponent arg0) {
+			super(arg0);
+		}
+		
+		public Rectangle getBounds() {			
+			return this.bounds;
+		}		
+	}
+	
+	
+	
+	
 	
 	
 //SOME CODE THAT WAS IN THE MOUSE-CLICKED LISTENER
