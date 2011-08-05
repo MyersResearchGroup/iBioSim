@@ -59,7 +59,9 @@ public class Grid {
 	private double zoomAmount;
 	private boolean enabled;
 	private boolean mouseClicked;
+	private boolean mouseReleased; //used for rubberband release
 	private Point scrollOffset; //for drawing when scrolled
+	private Rectangle rubberbandBounds;
 	
 	//true means spatial grid; false means cell population grid
 	//this is used when editing a grid, as only compartments can be added to a cell population grid
@@ -90,6 +92,7 @@ public class Grid {
 		
 		gridSpatial = false;
 		enabled = false;
+		mouseReleased = false;
 		verticalOffset = 0;
 		numRows = 0;
 		numCols = 0;
@@ -104,6 +107,7 @@ public class Grid {
 		scrollOffset = new Point(0, 0);
 		
 		gridBounds = new Rectangle();
+		rubberbandBounds = new Rectangle();
 		mouseClickLocation = new Point();
 		mouseLocation = new Point();
 		grid = new ArrayList<ArrayList<GridNode>>();
@@ -182,11 +186,19 @@ public class Grid {
 		//if the user's mouse is within the grid bounds
 		if (gridBounds.contains(mouseLocation)) {
 			
-			//draw a hover-rectangle over the grid location
-			hoverGridLocation(g);
+			//if the user has completed dragging the rubberband
+			if (rubberbandBounds.height > 0 && rubberbandBounds.width > 0 && mouseReleased == true) {
+				
+				selectGridLocationsWithRubberband(g);
+			}
+			else {
 			
-			//if the user has clicked, select/de-select that location
-			if (mouseClicked) selectGridLocation(g);
+				//draw a hover-rectangle over the grid location
+				hoverGridLocation(g);
+				
+				//if the user has clicked, select/de-select that location
+				if (mouseClicked) selectGridLocation(g);
+			}
 		}
 		//if the user clicks out of bounds
 		//de-select all grid locations
@@ -194,7 +206,7 @@ public class Grid {
 			if (mouseClicked) selectionOff = true;
 		}
 		
-		//draw the actual grid and selection boxes for selected nodes
+		//draw the selection boxes for selected nodes
 		for (int row = 0; row < numRows; ++row) {
 			for (int col = 0; col < numCols; ++col) {
 				
@@ -950,8 +962,25 @@ public class Grid {
 		mouseClicked = false;
 	}
 	
-	
-	//UNDO/REDO METHODS
+	/**
+	 * selects grid locations using the bounds of the graph's rubberband
+	 * 
+	 * @param g
+	 */
+	private void selectGridLocationsWithRubberband(Graphics g) {
+		
+		//loop through all of the grid locations
+		//if its rectangle is contained within the rubberband, select it
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
+				
+				if (rubberbandBounds.contains(grid.get(row).get(col).getRectangle()))
+					grid.get(row).get(col).setSelected(true);
+			}
+		}
+		
+		mouseReleased = false;
+	}
 	
 	
 	
@@ -1178,6 +1207,38 @@ public class Grid {
 		this.gridHeight = gridHeight;
 	}
 	
+	/**
+	 * @param rubberbandBounds the bounds of the graph's rubberband
+	 */
+	public void setRubberbandBounds(Rectangle rubberbandBounds) {
+		this.rubberbandBounds = rubberbandBounds;
+	}
+	
+
+	/**
+	 * @return the bounds of the graph's rubberband
+	 */
+	public Rectangle getRubberbandBounds() {
+		return rubberbandBounds;
+	}
+	
+
+	/**
+	 * @param mouseReleased the mouseReleased state of the schematic
+	 */
+	public void setMouseReleased(boolean mouseReleased) {
+		this.mouseReleased = mouseReleased;
+	}
+	
+
+	/**
+	 * @return the mouseReleased state of the schematic
+	 */
+	public boolean isMouseReleased() {
+		return mouseReleased;
+	}
+	
+
 	/**
 	 * @return the location-to-component map
 	 */
