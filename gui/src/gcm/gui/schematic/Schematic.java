@@ -695,7 +695,6 @@ public class Schematic extends JPanel implements ActionListener {
 						
 						//user clicked with select button
 						if(selectButton != null && selectButton.isSelected()){
-							// do the default graph lib behavior
 						}
 						else if(addSpeciesButton != null && addSpeciesButton.isSelected()) {
 							
@@ -704,7 +703,6 @@ public class Schematic extends JPanel implements ActionListener {
 							graph.buildGraph();
 							gcm2sbml.refresh();
 							gcm2sbml.setDirty(true);
-							drawGrid();
 							gcm.makeUndoPoint();
 						}
 						else if(addReactionButton != null && addReactionButton.isSelected()) {
@@ -713,7 +711,6 @@ public class Schematic extends JPanel implements ActionListener {
 							graph.buildGraph();
 							gcm2sbml.refresh();
 							gcm2sbml.setDirty(true);
-							drawGrid();
 							gcm.makeUndoPoint();
 						}
 						else if(addComponentButton != null && addComponentButton.isSelected()) {
@@ -742,7 +739,6 @@ public class Schematic extends JPanel implements ActionListener {
 								gcm2sbml.setDirty(true);
 								graph.buildGraph();
 								gcm2sbml.refresh();
-								drawGrid();
 								gcm.makeUndoPoint();
 							}
 						}
@@ -752,7 +748,6 @@ public class Schematic extends JPanel implements ActionListener {
 							gcm2sbml.refresh();
 							graph.buildGraph();
 							gcm2sbml.setDirty(true);
-							drawGrid();
 							gcm.makeUndoPoint();
 						}
 					}
@@ -779,7 +774,6 @@ public class Schematic extends JPanel implements ActionListener {
 								gcm2sbml.setDirty(true);
 								graph.buildGraph();
 								gcm2sbml.refresh();
-								drawGrid();
 								gcm.makeUndoPoint();
 							}
 						}
@@ -833,10 +827,11 @@ public class Schematic extends JPanel implements ActionListener {
 						
 						bringUpEditorForCell(cell);
 						graph.buildGraph();
-						drawGrid();
 						gcm.makeUndoPoint();
 					}
 				}
+				
+				drawGrid();
 			}
 		});
 				
