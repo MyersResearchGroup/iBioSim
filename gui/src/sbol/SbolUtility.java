@@ -17,7 +17,9 @@ import org.sbolstandard.libSBOLj.SequenceFeature;
 public class SbolUtility {
 
 	public static Library loadRDF(String filePath) {
+		boolean error = false;
 		String rdfString = "";
+		Library lib = null;
 		try {
 			FileInputStream in = new FileInputStream(filePath);
 			Scanner scanIn = new Scanner(in).useDelimiter("\n");
@@ -27,22 +29,25 @@ public class SbolUtility {
 			}
 			scanIn.close();
 		} catch (Exception e1) {
+			error = true;
 			JOptionPane.showMessageDialog(Gui.frame, "Error opening SBOL file.", "Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
-		SbolService factory = IOTools.fromRdfXml(rdfString);
-		Library lib = factory.getLibrary();
+		if (!error) {
+			SbolService factory = IOTools.fromRdfXml(rdfString);
+			lib = factory.getLibrary();
+		}
 		return lib;
 	}
 	
 	// Checks if compId clashes with the display id for a DnaComponent or SequenceFeature in Library lib
 	public static boolean idClash(String compId, Library lib) {
 		for (DnaComponent dnac : lib.getComponents()) {
-			if(dnac.getDisplayId().equals(compId))
+			if (dnac.getDisplayId().equals(compId))
 				return true;
 		}
 		for (SequenceFeature sf : lib.getFeatures()) {
-			if(sf.getDisplayId().equals(compId))
+			if (sf.getDisplayId().equals(compId))
 				return true;
 		}
 		return false;
