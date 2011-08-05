@@ -1617,7 +1617,8 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		Point pt = SwingUtilities.convertPoint(e.getComponent(), e.getPoint(),
 				graphComponent);
-		EditorPopupMenu menu = new EditorPopupMenu(Schematic.this);
+		mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
+		EditorPopupMenu menu = new EditorPopupMenu(Schematic.this, cell, biosim);
 		
 		menu.show(graphComponent, pt.x, pt.y);
 
