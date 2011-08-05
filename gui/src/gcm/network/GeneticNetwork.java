@@ -545,7 +545,8 @@ public class GeneticNetwork {
 						//find out if this species exists and is in the top-level compartment
 						//if it is, that means we don't want to create an "outer" species
 						//because there's no compartment there for membrane diffusion
-						if (document.getModel().getSpecies(potentialID).getCompartment() != null &&
+						if (document.getModel().getSpecies(potentialID) != null &&
+								document.getModel().getSpecies(potentialID).getCompartment() != null &&
 								document.getModel().getSpecies(potentialID).getCompartment().equals(topLevelCompartment))
 							continue;
 					}
