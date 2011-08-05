@@ -187,7 +187,8 @@ public class Grid {
 		if (gridBounds.contains(mouseLocation)) {
 			
 			//if the user has completed dragging the rubberband
-			if (rubberbandBounds.height > 0 && rubberbandBounds.width > 0 && mouseReleased == true) {
+			if (rubberbandBounds != null && rubberbandBounds.height > 0 
+					&& rubberbandBounds.width > 0 && mouseReleased == true) {
 				
 				selectGridLocationsWithRubberband(g);
 			}
