@@ -282,10 +282,10 @@ public class GridPanel extends JPanel implements ActionListener{
 		}
 		else return false;
 	}
-
 	
 	/**
 	 * builds the grid prompt panel
+	 * (this isn't used anymore, but i'll leave it here for potential future use)
 	 * @return ok/cancel
 	 */
 	private boolean buildPromptPanel() {
