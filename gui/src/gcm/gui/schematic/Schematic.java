@@ -618,7 +618,7 @@ public class Schematic extends JPanel implements ActionListener {
 					
 					//for rubberband selection of grid rectangles					
 					grid.setRubberbandBounds(rubberband.getBounds());					
-				}			
+				}
 			}
 		});
 		
@@ -633,7 +633,7 @@ public class Schematic extends JPanel implements ActionListener {
 						
 						graphComponent.zoomOut();
 						
-						if (grid.isEnabled()) 
+						if (grid.isEnabled())
 							grid.syncGridGraph(graph);
 					}
 					else {
@@ -820,7 +820,6 @@ public class Schematic extends JPanel implements ActionListener {
 								}
 							}
 						}
-						
 					}
 
 					if (cell != null) {
@@ -831,7 +830,8 @@ public class Schematic extends JPanel implements ActionListener {
 					}
 				}
 				
-				drawGrid();
+				if (grid.isEnabled())
+					drawGrid();
 			}
 		});
 				
@@ -1131,8 +1131,6 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			//@Override
 			public void invoke(Object arg0, mxEventObject event) {
-
-				//System.out.println((event.getName()));
 			}
 		});
 		

@@ -184,24 +184,31 @@ public class Grid {
 		boolean selectionOff = false;
 		
 		//if the user has completed dragging the rubberband
-		if (rubberbandBounds != null && rubberbandBounds.height > 0 
-				&& rubberbandBounds.width > 0 && mouseReleased == true) {
+		if (rubberbandBounds != null && rubberbandBounds.height > 5
+				&& rubberbandBounds.width > 5 && mouseReleased == true) {
 			
 			selectGridLocationsWithRubberband(g);
 		}
 		//if the user's mouse is within the grid bounds
-		else if (gridBounds.contains(mouseLocation)) {			
+		else {
+			
+			if (gridBounds.contains(mouseLocation)) {		
 			
 			//draw a hover-rectangle over the grid location
 			hoverGridLocation(g);
+			}
 			
-			//if the user has clicked, select/de-select that location
-			if (mouseClicked) selectGridLocation(g);
-		}
-		//if the user clicks out of bounds
-		//de-select all grid locations
-		else {
-			if (mouseClicked) selectionOff = true;
+			if (gridBounds.contains(mouseClickLocation)) {
+			
+				//if the user has clicked, select/de-select that location
+				if (mouseClicked) selectGridLocation(g);
+			}
+			//if the user clicks out of bounds
+			//de-select all grid locations
+			else {
+				
+				if (mouseClicked) selectionOff = true;
+			}
 		}
 		
 		//draw the selection boxes for selected nodes
@@ -216,13 +223,13 @@ public class Grid {
 				if (node.isSelected())
 					drawGridSelectionBox(g, rect);
 				
-//				//some debug stuff to draw onto the grid
-//				g2.drawString(Boolean.toString(node.isOccupied()), rect.x, rect.y);
-//				
-//				if (node.component == null) {
-//					g2.drawString("null", rect.x+40, rect.y);
-//				}
-//				else g2.drawString(node.getComponent().getKey(), rect.x+40, rect.y);
+				//some debug stuff to draw onto the grid
+				g2.drawString(Boolean.toString(node.isSelected()), rect.x, rect.y);
+				
+				if (node.component == null) {
+					g2.drawString("null", rect.x+40, rect.y);
+				}
+				else g2.drawString(node.getComponent().getKey(), rect.x+40, rect.y);
 			}
 		}
 	}
@@ -237,7 +244,29 @@ public class Grid {
 	 */
 	public void drawGridSelectionBox(Graphics g, Rectangle rect) {
 		
-		g.setColor(Color.blue);
+		g.setColor(new Color(0, 0, 255, 30));
+		
+		//don't change the original rectangle; make a copy
+		Rectangle localRect = new Rectangle(rect);
+		localRect.x -= scrollOffset.x - 1;
+		localRect.y -= scrollOffset.y;
+
+		g.fillRect(localRect.x, localRect.y, localRect.width, localRect.height);
+		
+		g.setColor(Color.black);
+	}	
+	
+	/**
+	 * this draws a box around the grid location when the user hovers over it
+	 * with the mouse or clicks it, which is used for grid location selection
+	 * 
+	 * @param g Graphics object from the Schematic JPanel
+	 * @param row the row of the selected location
+	 * @param col the column of the selected location
+	 */
+	public void drawGridHoverBox(Graphics g, Rectangle rect) {
+		
+		g.setColor(new Color(0, 0, 255, 150));
 		
 		//don't change the original rectangle; make a copy
 		Rectangle localRect = new Rectangle(rect);
@@ -252,7 +281,7 @@ public class Grid {
 		}
 		
 		g.setColor(Color.black);
-	}	
+	}
 	
 	
 	//NODE METHODS
@@ -937,7 +966,7 @@ public class Grid {
 		if (hoveredNode != null) {
 			
 			hoveredNode.setHover(true);
-			drawGridSelectionBox(g, hoveredNode.getZoomedRectangle());
+			drawGridHoverBox(g, hoveredNode.getZoomedRectangle());
 		}
 	}
 	
@@ -979,8 +1008,7 @@ public class Grid {
 		
 		mouseReleased = false;
 		rubberbandBounds = null;
-	}
-	
+	}	
 	
 	
 	
@@ -1054,9 +1082,6 @@ public class Grid {
 	 * @param mouseClickLocation the mouseClickLocation to set
 	 */
 	public void setMouseClickLocation(Point mouseClickLocation) {
-		
-		if (graph != null)
-			graph.buildGraph();
 		
 		this.mouseClickLocation = new Point(mouseClickLocation.x, mouseClickLocation.y + verticalOffset);
 		mouseClicked = true;
