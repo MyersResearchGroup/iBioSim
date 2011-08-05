@@ -292,14 +292,14 @@ public class BioGraph extends mxGraph {
 						else 
 							cell.setValue("r");
 						
-						cell.setStyle("defaultEdge;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN +
+						cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN +
 								";" + mxConstants.STYLE_STARTARROW + "=" + mxConstants.ARROW_OPEN);
 					} 
 					else {
 						if (s.getStoichiometry() != 1.0)
 							cell.setValue(s.getStoichiometry());
 						
-						cell.setStyle("defaultEdge;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+						cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
 					}
 				}
 				
@@ -314,7 +314,7 @@ public class BioGraph extends mxGraph {
 					if (r.getReversible())
 						cell.setValue("m");
 					
-					cell.setStyle("defaultEdge;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.NONE);
+					cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.NONE);
 				}
 				
 				for (int k = 0; k < r.getNumProducts(); k++) {
@@ -332,7 +332,7 @@ public class BioGraph extends mxGraph {
 						else 
 							cell.setValue("p");
 						
-						cell.setStyle("defaultEdge;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN +
+						cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN +
 								";" + mxConstants.STYLE_STARTARROW + "=" + mxConstants.ARROW_OPEN);
 					} 
 					else {
@@ -340,7 +340,7 @@ public class BioGraph extends mxGraph {
 						if (s.getStoichiometry() != 1.0)
 							cell.setValue(s.getStoichiometry());
 						
-						cell.setStyle("defaultEdge;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+						cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
 					}
 				}
 			} 
@@ -360,11 +360,11 @@ public class BioGraph extends mxGraph {
 						cell.setValue(r.getId());
 						
 						if (r.getReversible()) {
-							cell.setStyle("defaultEdge;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN +
+							cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN +
 									";" + mxConstants.STYLE_STARTARROW + "=" + mxConstants.ARROW_OPEN);
 						} 
 						else {
-							cell.setStyle("defaultEdge;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
+							cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
 						}
 					}
 				}
@@ -1147,6 +1147,8 @@ public class BioGraph extends mxGraph {
 		
 		Properties prop = gcm.getInfluences().get(id);
 		
+		//gcm.getSBMLDocument().getModel();
+		
 		if(prop == null)
 			throw new Error("Invalid id '"+id+"'. Valid ids were:" + String.valueOf(gcm.getInfluences().keySet()));
 		
@@ -1159,8 +1161,6 @@ public class BioGraph extends mxGraph {
 			style = "REPRESSION";
 		else if(prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.COMPLEX))
 			style = "COMPLEX";
-		else if(prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.REACTION_EDGE))
-			style = "REACTION_EDGE";
 		else
 			style = "DEFAULT";
 		
@@ -1326,8 +1326,8 @@ public class BioGraph extends mxGraph {
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_OPACITY, 100);
 		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
-		style.put(mxConstants.STYLE_FILLCOLOR, "#DECF00");
-		style.put(mxConstants.STYLE_STROKECOLOR, "#DECF00");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#F2861B");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#F2861B");
 		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
 		style.put(mxConstants.STYLE_DASHED, "false");
 		stylesheet.putCellStyle("REACTION_EDGE", style);
