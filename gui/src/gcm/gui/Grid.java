@@ -981,6 +981,7 @@ public class Grid {
 		}
 		
 		mouseReleased = false;
+		rubberbandBounds = null;
 	}
 	
 	
