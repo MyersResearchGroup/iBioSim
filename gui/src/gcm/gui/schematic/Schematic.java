@@ -70,6 +70,7 @@ import main.Gui;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
+import com.mxgraph.swing.handler.mxRubberband;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
@@ -82,6 +83,7 @@ public class Schematic extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	private BioGraph graph;
 	private mxGraphComponent graphComponent;
+	private mxRubberband rubberband;
 	
 	private GCMFile gcm;
 	private Gui biosim;
@@ -188,6 +190,8 @@ public class Schematic extends JPanel implements ActionListener {
 			//so we can see the grid underneath the mxgraph stuff
 			graphComponent.setOpaque(false);
 			graphComponent.getViewport().setOpaque(false);
+			
+			rubberband = new mxRubberband(graphComponent);
 			
 			this.add(graphComponent, BorderLayout.CENTER);
 						
