@@ -25,11 +25,14 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URI;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -56,13 +59,18 @@ import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SpeciesReference;
+import org.sbolstandard.libSBOLj.DnaComponent;
+import org.sbolstandard.libSBOLj.DnaSequence;
 import org.sbolstandard.libSBOLj.Library;
+import org.sbolstandard.libSBOLj.SbolService;
+import org.sbolstandard.libSBOLj.IOTools;
+import org.sbolstandard.libSBOLj.SequenceAnnotation;
+import org.sbolstandard.libSBOLj.SequenceFeature;
 
 import sbmleditor.Compartments;
 import sbmleditor.Reactions;
 import sbol.SbolBrowser;
 import sbol.SbolSynthesizer;
-import sbol.SbolUtility;
 import util.Utility;
 
 import main.Gui;
@@ -358,7 +366,6 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		return toolBar;
 	}
-
 	
 	//ACTION AND LISTENER METHODS
 	

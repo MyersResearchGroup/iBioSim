@@ -7,6 +7,7 @@ import gcm.util.Utility;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import javax.swing.JOptionPane;
@@ -24,6 +25,7 @@ public class SbolSynthesizer {
 	
 	private HashMap<String, Promoter> promoters;
 	private HashMap<String, Library> libMap;
+	private boolean synthesizerOn;
 	
 	public SbolSynthesizer(HashMap<String, Promoter> promoters) {
 		this.promoters = promoters;
@@ -48,6 +50,7 @@ public class SbolSynthesizer {
 	}	
 	
 	public void synthesizeDnaComponent(String exportFilePath, String exportLibId) {	
+		synthesizerOn = true;
 		// Create DNA component
 		DnaComponent synthComp = new DnaComponent();
 		DnaSequence compSeq = new DnaSequence();
@@ -86,16 +89,18 @@ public class SbolSynthesizer {
 				importFeatProperty = p.getProperty(GlobalConstants.SBOL_TERMINATOR);
 				position = addFeature(position, importFeatProperty, synthComp, exportLib, exportFileId);
 			}
-			// Export DNA component
-			exportLib.addComponent(synthComp);
-			String rdf = IOTools.toRdfXml(exportLib);
-			try {
-				FileOutputStream out = new FileOutputStream(exportFilePath);
-				out.write(rdf.getBytes());
-				out.close();
-			} catch (Exception e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Error exporting to SBOL file.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+			if (synthesizerOn) {
+				// Export DNA component
+				exportLib.addComponent(synthComp);
+				String rdf = IOTools.toRdfXml(exportLib);
+				try {
+					FileOutputStream out = new FileOutputStream(exportFilePath);
+					out.write(rdf.getBytes());
+					out.close();
+				} catch (Exception e1) {
+					JOptionPane.showMessageDialog(Gui.frame, "Error exporting to SBOL file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		}
 	}
@@ -125,35 +130,48 @@ public class SbolSynthesizer {
 		return input;
 	}
 	
-	private int addFeature(int position, String importFeatProperty, DnaComponent synthComp, Library exportLib, String exportfileId) {
-		if (importFeatProperty != null) {
-			SequenceFeature importFeat = loadFeature(importFeatProperty);
-			if (checkIdClash(importFeatProperty, exportfileId, exportLib)) 
-				importFeat.setDisplayId(mungeId(importFeatProperty));
-			SbolService factory = new SbolService();
-			factory.addSequenceFeatureToLibrary(importFeat, exportLib);
-			position = addFeatureToComponent(importFeat, synthComp, position);
-			synthComp.getDnaSequence().setDnaSequence(synthComp.getDnaSequence().getDnaSequence() + importFeat.getDnaSequence().getDnaSequence());
+	private int addFeature(int position, String importFeatProperty, DnaComponent synthComp, Library exportLib, String exportFileId) {
+		if (importFeatProperty != null && synthesizerOn) {
+			String importLibId = importFeatProperty.split("/")[0] + "/" + importFeatProperty.split("/")[1];
+			String importFeatId = importFeatProperty.split("/")[2];
+			SequenceFeature importFeat = loadFeature(importFeatId, importLibId);
+			if (importFeat != null) {
+				int option = checkIdClash(importFeatId, importLibId, exportFileId, exportLib);
+				if (option == JOptionPane.YES_OPTION) {
+					String renameId = getUserInput("Enter new display ID:", "Display ID", exportLib);
+					if (renameId == null)
+						synthesizerOn = false;
+					else {
+						importFeat = kludgyRename(importFeat, renameId);
+					}
+				} else if (option == JOptionPane.NO_OPTION) {
+					for (SequenceFeature sf : exportLib.getFeatures()) {
+						if (sf.getDisplayId().equals(importFeatId)) {
+							importFeat = sf;
+						}
+					}
+				} else if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION)
+					synthesizerOn = false;
+				if (synthesizerOn) {
+					SbolService factory = new SbolService();
+					factory.addSequenceFeatureToLibrary(importFeat, exportLib);
+					position = addFeatureToComponent(importFeat, synthComp, position);
+					synthComp.getDnaSequence().setDnaSequence(synthComp.getDnaSequence().getDnaSequence() + importFeat.getDnaSequence().getDnaSequence());
+				}
+			}
 		}
 		return position;
 	}
 	
-	private SequenceFeature loadFeature(String importFeatProperty) {
-		String importLibId = importFeatProperty.split("/")[0] + "/" + importFeatProperty.split("/")[1];
-		String importFeatId = importFeatProperty.split("/")[2];
+	private SequenceFeature loadFeature(String importFeatId, String importLibId) {
 		if (libMap.containsKey(importLibId)) {
 			for (SequenceFeature sf : libMap.get(importLibId).getFeatures()) {
-				if (sf.getDisplayId().equals(importFeatId))
+				if (sf.getDisplayId().equals(importFeatId)) 
 					return sf;
 			}
 		}
 		JOptionPane.showMessageDialog(Gui.frame, importFeatId + " not found in project libraries.", "Warning", JOptionPane.WARNING_MESSAGE);
-		SequenceFeature emptyFeat = new SequenceFeature();
-		emptyFeat.setDisplayId(importFeatId);
-		DnaSequence emptySeq = new DnaSequence();
-		emptySeq.setDnaSequence("");
-		emptyFeat.setDnaSequence(emptySeq);
-		return emptyFeat;
+		return null;
 	}
 	
 	private int addFeatureToComponent(SequenceFeature importFeat, DnaComponent synthComp, int position) {
@@ -171,23 +189,36 @@ public class SbolSynthesizer {
 		return position;
 	}
 	
-	private boolean checkIdClash(String importFeatProperty, String exportFileId, Library exportLib)  {
-		String importLibId = importFeatProperty.split("/")[0] + "/" + importFeatProperty.split("/")[1];
+	private int checkIdClash(String importFeatId, String importLibId, String exportFileId, Library exportLib)  {
 		String exportLibId = exportFileId + "/" + exportLib.getDisplayId();
-		String importFeatId = importFeatProperty.split("/")[2];
 		if (SbolUtility.idClash(importFeatId, exportLib) && !importLibId.equals(exportLibId)) {
-			JOptionPane.showMessageDialog(Gui.frame, exportLibId + " already contains " + importFeatId 
-					+ ". Renaming incoming " + importFeatId + " to " + mungeId(importFeatProperty), 
-					"ID Clash", JOptionPane.WARNING_MESSAGE);
-			return true;
+			Object[] options = {"Change ID", "Use Existing", "Cancel"};
+			int n = JOptionPane.showOptionDialog(Gui.frame, exportLibId + " already contains " + importFeatId 
+					+ ".  Would you like to change display ID for incoming " + importFeatId + " or use existing " + importFeatId + "?", 
+					"ID Clash", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
+			return n;
 		} else
-			return false;
+			return 3;
 	}
 	
 	private String mungeId(String importFeatProperty) {
 		String mungedId = importFeatProperty.replace("/", "_");
 		mungedId = mungedId.replace(".rdf", "");
 		return mungedId;
+	}
+	
+	private SequenceFeature kludgyRename(SequenceFeature oldFeat, String renameId) {
+		SequenceFeature renameFeat = new SequenceFeature();
+		renameFeat.setDisplayId(renameId);
+		if (oldFeat.getName() != null)
+			renameFeat.setName(oldFeat.getName());
+		if (oldFeat.getDescription() != null)
+			renameFeat.setDescription(oldFeat.getDescription());
+		if (oldFeat.getDnaSequence() != null)
+			renameFeat.setDnaSequence(oldFeat.getDnaSequence());
+		for (URI uri : oldFeat.getTypes())
+			renameFeat.addType(uri);
+		return renameFeat;
 	}
 	
 //	private void overwriteFeature(SequenceFeature replacement, Library lib) {
