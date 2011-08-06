@@ -426,6 +426,8 @@ public class Grid {
 				grid.get(row).get(col).setSelected(true);
 			}
 		}
+		
+		mouseClicked = false;
 	}
 	
 	/**
