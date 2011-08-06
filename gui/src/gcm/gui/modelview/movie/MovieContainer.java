@@ -3,8 +3,6 @@ package gcm.gui.modelview.movie;
 import gcm.gui.GCM2SBMLEditor;
 import gcm.gui.schematic.ListChooser;
 import gcm.gui.schematic.Schematic;
-import gcm.gui.schematic.SchematicObjectClickEvent;
-import gcm.gui.schematic.SchematicObjectClickEventListener;
 import gcm.gui.schematic.TreeChooser;
 import gcm.gui.schematic.Utils;
 import gcm.parser.GCMFile;
@@ -57,7 +55,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private GCM2SBMLEditor gcm2sbml;	
 	private TSDParser parser;
 	private Timer playTimer;
-	private MoviePreferences moviePreferences;
 	private MovieScheme movieScheme;
 	
 	private boolean isUIInitialized;
@@ -101,7 +98,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 	}	
 	
 	
-	
 	//TSD FILE METHODS
 	
 	/**
@@ -132,7 +128,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		return filenames;
 	}
-	
 	
 	/**
 	 * opens a treechooser of the TSD files, then loads and parses the selected TSD file
@@ -178,7 +173,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 	}
 	
 	
-	
 	//UI METHODS
 	
 	/**
@@ -193,12 +187,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 			
 			isUIInitialized = true;
 		}
-		/*
-		if(this.parser == null)
-			prepareTSDFile();
-		 */
 	}
-	
 	
 	/**
 	 * adds the toolbar at the bottom
@@ -227,7 +216,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 
 		this.add(mt, BorderLayout.SOUTH);
 	}
-	
 	
 	
 	//EVENT METHODS
@@ -272,7 +260,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 	}
 	
-	
 	/**
 	 * event handler for when the timer ticks
 	 */
@@ -281,7 +268,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 			nextFrame();
 		}
 	};
-	
 	
 	
 	//MOVIE CONTROL METHODS
@@ -300,7 +286,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 				slider.setValue(0);
 			
 			playTimer.setDelay(FRAME_DELAY_MILLISECONDS);
-			//playPauseButton.setText("Pause");
 			Utils.setIcon(playPauseButton, "movie" + File.separator + "pause.png");
 			playTimer.start();
 			mode = PLAYING;
@@ -336,7 +321,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 		updateVisuals();
 	}
 	
-	
 	/**
 	 * updates the visual appearance of cells on the graph (ie, species, components, etc.)
 	 * gets called when the timer ticks
@@ -355,19 +339,18 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		HashMap<String, ArrayList<Double>> speciesTSData = parser.getHashMap();
 		
-		//doesn't do anything
-		//schematic.beginFrame();
-		
 		//loop through the species and set their appearances
 		for(String speciesID : gcm.getSpecies().keySet()){
 			
 			//make sure this species has data in the TSD file
-			if(speciesTSData.containsKey(speciesID)){
+			if(speciesTSData.containsKey(speciesID)){		
 				
-				double value = speciesTSData.get(speciesID).get(frameIndex);
-				MovieAppearance appearance = 
-					moviePreferences.getOrCreateColorSchemeForSpecies(speciesID, null).getAppearance(value);
-				schematic.getGraph().setSpeciesAnimationValue(speciesID, appearance);
+				//get the component's appearance and send it to the graph for updating
+				MovieAppearance speciesAppearance = 
+					movieScheme.getAppearance(speciesID, GlobalConstants.SPECIES, frameIndex, speciesTSData);
+				
+				if (speciesAppearance != null)
+					schematic.getGraph().setSpeciesAnimationValue(speciesID, speciesAppearance);
 			}
 		}
 		
@@ -380,16 +363,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 			
 			if (compAppearance != null)
 				schematic.getGraph().setComponentAnimationValue(compID, compAppearance);
-			
-			
-//			ComponentScheme componentScheme = 
-//				moviePreferences.getComponentSchemeForComponent(compID);
-//			
-//			if(componentScheme != null){
-//				
-//				MovieAppearance appearance = componentScheme.getAppearance(speciesTSData, frameIndex);
-//				schematic.getGraph().setComponentAnimationValue(compID, appearance);
-//			}
 		}
 		
 		//if there's a grid to set the appearance of
@@ -422,107 +395,103 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 * outputs the preferences file
 	 */
 	public void savePreferences(){
-		/*
-		 * TODO: This should be getting called when the properties get saved.
-		 * Save them to a file in path, then remove the test save button.
-		 * Then work on loading the properties back.
-		 */
-		Gson gson = (new GsonMaker()).makeGson();
-		String out = gson.toJson(this.getMoviePreferences());
-		
-		String fullPath = getPreferencesFullPath();
-		
-		FileOutputStream fHandle;
-		
-		try {
-			fHandle = new FileOutputStream(fullPath);
-		} 
-		catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "An error occured opening preferences file " + fullPath + "\nmessage: " + e.getMessage());
-			return;
-		}
-		
-		try {
-			fHandle.write(out.getBytes());
-		}
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "An error occured writing the preferences file " + fullPath + "\nmessage: " + e.getMessage());
-		}
-		
-		try {
-			fHandle.close();
-		} 
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "An error occured closing the preferences file " + fullPath + "\nmessage: " + e.getMessage());
-			return;
-		}
-		
-		biosim.log.addText("file saved to " + fullPath);
-		
-		this.gcm2sbml.saveParams(false, "", true);
+//		/*
+//		 * TODO: This should be getting called when the properties get saved.
+//		 * Save them to a file in path, then remove the test save button.
+//		 * Then work on loading the properties back.
+//		 */
+//		Gson gson = (new GsonMaker()).makeGson();
+//		String out = gson.toJson(this.getMoviePreferences());
+//		
+//		String fullPath = getPreferencesFullPath();
+//		
+//		FileOutputStream fHandle;
+//		
+//		try {
+//			fHandle = new FileOutputStream(fullPath);
+//		} 
+//		catch (FileNotFoundException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			JOptionPane.showMessageDialog(Gui.frame, "An error occured opening preferences file " + fullPath + "\nmessage: " + e.getMessage());
+//			return;
+//		}
+//		
+//		try {
+//			fHandle.write(out.getBytes());
+//		}
+//		catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			JOptionPane.showMessageDialog(Gui.frame, "An error occured writing the preferences file " + fullPath + "\nmessage: " + e.getMessage());
+//		}
+//		
+//		try {
+//			fHandle.close();
+//		} 
+//		catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//			JOptionPane.showMessageDialog(Gui.frame, "An error occured closing the preferences file " + fullPath + "\nmessage: " + e.getMessage());
+//			return;
+//		}
+//		
+//		biosim.log.addText("file saved to " + fullPath);
+//		
+//		this.gcm2sbml.saveParams(false, "", true);
 	}
 
-	
 	/**
 	 * Loads the preferences file if it exists and stores its values into the moviePreferences object.
 	 * If no preferences file exists, a new moviePreferences file will still be created.
 	 */
 	public void loadPreferences(){
 		
-		// load the prefs file if it exists
-		String fullPath = getPreferencesFullPath();
-		String json = null;
-		
-		try {
-			json = TSDParser.readFileToString(fullPath);
-		} 
-		catch (IOException e) {
-			// TODO Auto-generated catch block
-			//e.printStackTrace();
-		}
-		
-		if(json == null){
-			moviePreferences = new MoviePreferences();			
-		}
-		else{
-			
-			Gson gson = (new GsonMaker()).makeGson();
-			
-			try{
-				moviePreferences = gson.fromJson(json, MoviePreferences.class);
-			}
-			catch(Exception e){
-				biosim.log.addText("An error occured trying to load the preferences file " + fullPath + " ERROR: " + e.toString());
-			}
-		}
+//		// load the prefs file if it exists
+//		String fullPath = getPreferencesFullPath();
+//		String json = null;
+//		
+//		try {
+//			json = TSDParser.readFileToString(fullPath);
+//		} 
+//		catch (IOException e) {
+//			// TODO Auto-generated catch block
+//			//e.printStackTrace();
+//		}
+//		
+//		if(json == null){
+//			moviePreferences = new MoviePreferences();			
+//		}
+//		else{
+//			
+//			Gson gson = (new GsonMaker()).makeGson();
+//			
+//			try{
+//				moviePreferences = gson.fromJson(json, MoviePreferences.class);
+//			}
+//			catch(Exception e){
+//				biosim.log.addText("An error occured trying to load the preferences file " + fullPath + " ERROR: " + e.toString());
+//			}
+//		}
 	}
-	
 	
 	/**
 	 * 
 	 * @param compName
 	 */
 	public void copyMoviePreferencesComponent(String compName){
-		this.moviePreferences.copyMoviePreferencesComponent(compName, this.gcm, this.getTSDParser());
+//		this.moviePreferences.copyMoviePreferencesComponent(compName, this.gcm, this.getTSDParser());
 	}
-	
 	
 	/**
 	 * 
 	 * @param speciesName
 	 */
 	public void copyMoviePreferencesSpecies(String speciesName){
-		this.moviePreferences.copyMoviePreferencesSpecies(speciesName, this.gcm, this.getTSDParser());
+//		this.moviePreferences.copyMoviePreferencesSpecies(speciesName, this.gcm, this.getTSDParser());
 	}
 
 
-	
 	//GET/SET METHODS
 	
 	public boolean getIsDirty(){
@@ -547,9 +516,9 @@ public class MovieContainer extends JPanel implements ActionListener {
 		return fullPath;
 	}
 	
-	public MoviePreferences getMoviePreferences() {
-		return moviePreferences;
-	}
+//	public MoviePreferences getMoviePreferences() {
+//		return moviePreferences;
+//	}
 
 	public Schematic getSchematic() {
 		return schematic;
@@ -563,25 +532,4 @@ public class MovieContainer extends JPanel implements ActionListener {
 		return gcm;
 	}
 
-//	//this currently does nothing
-//	private void registerEventListeners(){
-//		
-//	//	final MovieContainer self = this;
-//		
-//		// When the user clicks on an object in the schematic
-//		this.schematic.addSchematicObjectClickEventListener(new SchematicObjectClickEventListener() {
-//			
-//			public void SchematicObjectClickEventOccurred(SchematicObjectClickEvent evt) {
-////				
-////				
-////				if(evt.getType() == GlobalConstants.SPECIES){
-////					// A species was clicked on
-////				}
-////			
-////				}else if(evt.getType() == GlobalConstants.COMPONENT){
-////					// the clicked object is a component
-////				}
-//			}
-//		});
-//	}
 }

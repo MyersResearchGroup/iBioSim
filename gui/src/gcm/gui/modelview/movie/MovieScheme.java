@@ -42,26 +42,171 @@ public class MovieScheme {
 	//SCHEME METHODS
 	
 	/**
-	 * this adds or removes a scheme or schemes to the hashmap of schemes
-	 * this is also used for updating because the hashmap will overwrite
-	 * an entry if one with the same key is added
+	 * adds a species color scheme
+	 * it's a wrapper for the applySpeciesColorScheme function
 	 * 
-	 * @param speciesID ID of the species to assign the scheme to
+	 * @param speciesID
 	 * @param colorGradient
-	 * @param min minimum number of molecules visible wrt the gradient
-	 * @param max number of molecules to color saturate wrt the gradient
+	 * @param min
+	 * @param max
+	 * @param applyTo
+	 * @param gcm
+	 * @param cellType
 	 */
-	public void applySpeciesScheme(String speciesID, GradientPaint colorGradient, 
-			int min, int max, String applyTo, GCMFile gcm, String cellType, boolean remove) {
+	public void addSpeciesColorScheme(String speciesID, GradientPaint colorGradient, 
+			int min, int max, String applyTo, GCMFile gcm, String cellType) {
+				
+		final GradientPaint gradient = colorGradient;
 		
-		if (applyTo.equals("this component only")) {
+		SchemeApplyFunction schemeApply = new SchemeApplyFunction() {
+
+			public void apply(String speciesID) {
+				
+				speciesSchemes.get(speciesID).setColorGradient(gradient);
+			}
+		};		
+		
+		applySpeciesSchemeElement(schemeApply, speciesID, min, max, applyTo, gcm, cellType, false);
+	}
+	
+	/**
+	 * removes a color scheme for the given species
+	 * it's a wrapper for the applySpeciesColorScheme function
+	 * 
+	 * @param speciesID
+	 */
+	public void removeSpeciesColorScheme(String speciesID, String cellType, String applyTo, GCMFile gcm) {
+		
+		SchemeApplyFunction schemeApply = new SchemeApplyFunction() {
+
+			public void apply(String speciesID) {
+				
+				if (speciesSchemes.get(speciesID) != null)
+					speciesSchemes.get(speciesID).setColorGradient(null);
+			}
+		};		
+		
+		applySpeciesSchemeElement(schemeApply, speciesID, 0, 0, applyTo, gcm, cellType, true);
+	}
+	
+	/**
+	 * adds an opacity scheme to the overall species scheme
+	 * 
+	 * @param speciesID
+	 * @param min
+	 * @param max
+	 * @param applyTo
+	 * @param gcm
+	 * @param cellType
+	 */
+	public void addSpeciesOpacityScheme(String speciesID, int min, int max, 
+			String applyTo, GCMFile gcm, String cellType) {
+		
+		SchemeApplyFunction schemeApply = new SchemeApplyFunction() {
+
+			public void apply(String speciesID) {
+				
+				speciesSchemes.get(speciesID).setOpacityState(true);
+			}
+		};		
+		
+		applySpeciesSchemeElement(schemeApply, speciesID, min, max, applyTo, gcm, cellType, false);
+	}
+	
+	/**
+	 * removes an opacity scheme from the overall species scheme
+	 * @param speciesID
+	 * @param cellType
+	 * @param applyTo
+	 */
+	public void removeSpeciesOpacityScheme(String speciesID, String cellType, String applyTo, GCMFile gcm) {
+				
+		SchemeApplyFunction schemeApply = new SchemeApplyFunction() {
+
+			public void apply(String speciesID) {
+				
+				if (speciesSchemes.get(speciesID) != null)
+					speciesSchemes.get(speciesID).setOpacityState(false);
+			}
+		};
+		
+		applySpeciesSchemeElement(schemeApply, speciesID, 0, 0, applyTo, gcm, cellType, true);
+	}
+	
+	/**
+	 * 
+	 * @param speciesID
+	 * @param min
+	 * @param max
+	 * @param applyTo
+	 * @param gcm
+	 * @param cellType
+	 */
+	public void addSpeciesSizeScheme(String speciesID, int min, int max, 
+			String applyTo, GCMFile gcm, String cellType) {
+		
+		SchemeApplyFunction schemeApply = new SchemeApplyFunction() {
+
+			public void apply(String speciesID) {
+				
+				speciesSchemes.get(speciesID).setSizeState(true);
+			}
+		};		
+		
+		applySpeciesSchemeElement(schemeApply, speciesID, min, max, applyTo, gcm, cellType, false);
+	}
+	
+	/**
+	 * 
+	 * @param speciesID
+	 * @param cellType
+	 * @param applyTo
+	 * @param gcm
+	 */
+	public void removeSpeciesSizeScheme(String speciesID, String cellType, String applyTo, GCMFile gcm) {
+		
+		SchemeApplyFunction schemeApply = new SchemeApplyFunction() {
+
+			public void apply(String speciesID) {
+				
+				if (speciesSchemes.get(speciesID) != null)
+					speciesSchemes.get(speciesID).setSizeState(false);
+			}
+		};
+		
+		applySpeciesSchemeElement(schemeApply, speciesID, 0, 0, applyTo, gcm, cellType, true);
+	}
+	
+	/**
+	 * uses anonymous functions to update the scheme object for the particular species scheme
+	 * given the species ID passed in
+	 * 
+	 * @param schemeApply function that applies ths schem
+	 * @param speciesID
+	 * @param min
+	 * @param max
+	 * @param applyTo
+	 * @param gcm
+	 * @param cellType
+	 * @param remove boolean representing addition or removal of the scheme
+	 */
+	public void applySpeciesSchemeElement(SchemeApplyFunction schemeApply, String speciesID,  
+			int min, int max, String applyTo, GCMFile gcm, String cellType, boolean remove) {		
+		
+		if (applyTo.equals("this component only")
+				|| applyTo.equals("this location only") 
+				|| applyTo.equals("this species only")) {
 			
-			if (remove)
-				speciesSchemes.remove(speciesID);
-			else
-				speciesSchemes.put(speciesID, new Scheme(colorGradient, min, max));
+			if (remove) {
+				schemeApply.apply(speciesID);
+			}
+			else {
+				schemeApply.apply(speciesID);
+				speciesSchemes.get(speciesID).setMin(min);
+				speciesSchemes.get(speciesID).setMax(max);
+			}
 		}
-		//if applyTo is "all components with this model"
+		//if applyTo is for all cells of that type or model or whatever
 		else {
 			
 			//take off the speciesID's component prefix
@@ -82,14 +227,18 @@ public class MovieScheme {
 						if (component.getValue().getProperty("gcm")
 								.equals(gcm.getComponents().get(compID).getProperty("gcm"))) {
 							
+							speciesID = new String(component.getKey() + "__" + speciesIDNoPrefix);
+							
 							if (remove) {
-								speciesSchemes.remove(new String(component.getKey() + "__" + speciesIDNoPrefix));
+								schemeApply.apply(speciesID);
 							}
 							else {
 								//add a scheme with this other species that's part of the same GCM
 								//as the component
-								speciesSchemes.put(new String(component.getKey() + "__" + speciesIDNoPrefix), 
-										new Scheme(colorGradient, min, max));
+								this.createOrUpdateSpeciesScheme(speciesID);
+								schemeApply.apply(speciesID);
+								speciesSchemes.get(speciesID).setMin(min);
+								speciesSchemes.get(speciesID).setMax(max);
 							}
 						}
 					}
@@ -104,48 +253,42 @@ public class MovieScheme {
 					for (int col = 0; col < gcm.getGrid().getNumCols(); ++col) {
 						
 						String gridPrefix = "ROW" + row + "_COL" + col;
+						
+						speciesID = new String(gridPrefix + "__" + speciesIDNoPrefix);
 							
-						if (remove) {
-							speciesSchemes.remove(new String(gridPrefix + "__" + speciesIDNoPrefix));
+						if (remove) {							
+							schemeApply.apply(speciesID);
 						}
 						else {
 							//add a scheme with this other species at another grid location
-							speciesSchemes.put(new String(gridPrefix + "__" + speciesIDNoPrefix), 
-									new Scheme(colorGradient, min, max));
+							this.createOrUpdateSpeciesScheme(speciesID);
+							schemeApply.apply(speciesID);
+							speciesSchemes.get(speciesID).setMin(min);
+							speciesSchemes.get(speciesID).setMax(max);
 						}
 					}
 				}
 			}
+			//if the user selected to change species
+			else if (cellType.equals(GlobalConstants.SPECIES)) {
+				
+				//loop through every species in the gcm
+				//add/remove a scheme for that species
+				for (String specID : gcm.getSpecies().keySet()) {
+					
+					if (remove) {
+						schemeApply.apply(specID);
+					}
+					else {
+						
+						this.createOrUpdateSpeciesScheme(specID);
+						schemeApply.apply(specID);
+						speciesSchemes.get(specID).setMin(min);
+						speciesSchemes.get(specID).setMax(max);
+					}
+				}				
+			}
 		}
-	}
-	
-	/**
-	 * removes a scheme for the given species
-	 * it's a wrapper for the applySpeciesScheme function
-	 * 
-	 * @param speciesID
-	 */
-	public void removeSpeciesScheme(String speciesID, String cellType, String applyTo) {
-		
-		applySpeciesScheme(speciesID, null, 0, 0, applyTo, null, cellType, true);
-	}	
-	
-	/**
-	 * adds a species scheme
-	 * it's a wrapper for the applySpeciesScheme function
-	 * 
-	 * @param speciesID
-	 * @param colorGradient
-	 * @param min
-	 * @param max
-	 * @param applyTo
-	 * @param gcm
-	 * @param cellType
-	 */
-	public void addSpeciesScheme(String speciesID, GradientPaint colorGradient, 
-			int min, int max, String applyTo, GCMFile gcm, String cellType) {
-		
-		applySpeciesScheme(speciesID, colorGradient, min, max, applyTo, gcm, cellType, false);
 	}
 	
 	/**
@@ -156,6 +299,17 @@ public class MovieScheme {
 	public Scheme getSpeciesScheme(String speciesID) {
 		
 		return speciesSchemes.get(speciesID);
+	}
+	
+	/**
+	 * creates a new scheme if one doesn't exist
+	 * 
+	 * @param speciesID
+	 */
+	public void createOrUpdateSpeciesScheme(String speciesID) {
+		
+		if (speciesSchemes.get(speciesID) == null)
+			speciesSchemes.put(speciesID, new Scheme());
 	}
 	
 	
@@ -186,6 +340,8 @@ public class MovieScheme {
 			int min = cellScheme.getValue().getMin();
 			int max = cellScheme.getValue().getMax();
 			GradientPaint colorGradient = cellScheme.getValue().getColorGradient();
+			boolean opacityState = cellScheme.getValue().getOpacityState();
+			boolean sizeState = cellScheme.getValue().getSizeState();	
 			
 			//number of molecules at this time instance
 			double speciesValue = speciesTSData.get(speciesID).get(frameIndex);
@@ -193,10 +349,8 @@ public class MovieScheme {
 			//how far along this value is on the gradient spectrum of min to max
 			double gradientValue = (double)((speciesValue - min) / (max - min));
 			
-			//now calculate the correct color along the gradient to use
-			Color cellColor = calculateIntermediateColor(colorGradient, gradientValue);
-			
-			return new MovieAppearance(cellColor);
+			//now calculate the correct appearance along the gradient to use			
+			return getIntermediateAppearance(colorGradient, gradientValue, opacityState, sizeState, cellType);
 		}
 		else if (cellSchemes.size() > 1) {
 			
@@ -213,6 +367,8 @@ public class MovieScheme {
 				int min = cellScheme.getValue().getMin();
 				int max = cellScheme.getValue().getMax();
 				GradientPaint colorGradient = cellScheme.getValue().getColorGradient();
+				boolean opacityState = cellScheme.getValue().getOpacityState();
+				boolean sizeState = cellScheme.getValue().getSizeState();
 				
 				//number of molecules at this time instance
 				double speciesValue = speciesTSData.get(speciesID).get(frameIndex);
@@ -220,12 +376,9 @@ public class MovieScheme {
 				//how far along this value is on the gradient spectrum of min to max
 				double gradientValue = (double)((speciesValue - min) / (max - min));
 				
-				//now calculate the correct color along the gradient to use
-				Color cellColor = calculateIntermediateColor(colorGradient, gradientValue);
-				
-				//add this species' appearance to the total cell appearance
-				//this adds the colors together, mainly
-				cellAppearance.add(new MovieAppearance(cellColor));
+				//now calculate the correct appearance along the gradient to use
+				cellAppearance.add(getIntermediateAppearance(
+						colorGradient, gradientValue, opacityState, sizeState, cellType));
 			}
 			
 			return cellAppearance;			
@@ -251,17 +404,24 @@ public class MovieScheme {
 		//then add that scheme to the map of cell schemes
 		for (Map.Entry<String, Scheme> speciesScheme : speciesSchemes.entrySet()) {
 			
-			//take off the speciesID's component prefix
-			//this is done so that other component or grid location prefixes can be added
-			String[] speciesParts = speciesScheme.getKey().split("__");
+			String compID = "";
 			
-			//continue if there's no component prefix
-			//or if the prefix is inconsistent with the cell type
-			if (speciesParts.length < 2
-					|| (cellType.equals(GlobalConstants.COMPONENT) && speciesParts[0].contains("ROW"))) 
-				continue;
+			if (cellType.equals(GlobalConstants.SPECIES))
+				compID = speciesScheme.getKey();
+			else {
 			
-			String compID = speciesParts[0];
+				//take off the speciesID's component prefix
+				//this is done so that other component or grid location prefixes can be added
+				String[] speciesParts = speciesScheme.getKey().split("__");
+				
+				//continue if there's no component prefix
+				//or if the prefix is inconsistent with the cell type
+				if (speciesParts.length < 2
+						|| (cellType.equals(GlobalConstants.COMPONENT) && speciesParts[0].contains("ROW")))
+					continue;
+				
+				compID = speciesParts[0];
+			}
 			
 			//if these are equal then this scheme is for this cell
 			if (compID.equals(cellID))
@@ -280,47 +440,78 @@ public class MovieScheme {
 	 * @param gradientValue the location along the gradient (on 0 to 1)
 	 * @return the intermediate color
 	 */
-	private Color calculateIntermediateColor(GradientPaint colorGradient, double gradientValue) {
+	private MovieAppearance getIntermediateAppearance(
+			GradientPaint colorGradient, double gradientValue, 
+			Boolean opacityState, Boolean sizeState, String cellType) {
 		
-		Color startColor = colorGradient.getColor1();
-		Color endColor = colorGradient.getColor2();
+		Color startColor = null, endColor = null;
 		
-		if(gradientValue <= 0.0)
-			return startColor;
-		else if(gradientValue >= 1.0)
-			return endColor;
+		if (colorGradient != null) {
+			
+			startColor = colorGradient.getColor1();
+			endColor = colorGradient.getColor2();
+		}
+			
+		Double startOpacity = 0.025;
+		Double endOpacity = 0.75;
+		Double startSize = 1.0;
+		Double endSize = GlobalConstants.DEFAULT_COMPONENT_WIDTH + 20.0;
+		
+		if (cellType.equals(GlobalConstants.SPECIES)) {
+			
+			endSize = GlobalConstants.DEFAULT_SPECIES_WIDTH + 20.0;
+		}
+		
+		MovieAppearance newAppearance = new MovieAppearance();
+		
+		if (gradientValue <= 0.0)
+			newAppearance.color = startColor;
+		else if (gradientValue >= 1.0)
+			newAppearance.color = endColor;
 		else{
 			
+			float oneMinusRatio = (float)1.0 - (float)gradientValue;
+			
+			//COLOR
 			if(startColor != null && endColor != null) {
 				
-				int newRed = (int)Math.round(startColor.getRed() * (1.0 - gradientValue) + 
+				int newRed = (int)Math.round(startColor.getRed() * oneMinusRatio + 
 						endColor.getRed() * gradientValue);
 				if (newRed > 255) newRed = 255;
 				
-				int newGreen = (int)Math.round(startColor.getGreen() * (1.0 - gradientValue) + 
+				int newGreen = (int)Math.round(startColor.getGreen() * oneMinusRatio + 
 						endColor.getGreen() * gradientValue);
 				if (newGreen > 255) newGreen = 255;
 				
-				int newBlue = (int)Math.round(startColor.getBlue() * (1.0 - gradientValue) + 
+				int newBlue = (int)Math.round(startColor.getBlue() * oneMinusRatio + 
 						endColor.getBlue() * gradientValue);
 				if (newBlue > 255) newBlue = 255;
 				
-				return new Color(newRed, newGreen, newBlue);
+				newAppearance.color = new Color(newRed, newGreen, newBlue);
 			}
-			else return startColor;
+			else newAppearance.color = endColor;
+			
+			//OPACITY
+			if(startOpacity != null && endOpacity != null && opacityState == true)
+				newAppearance.opacity = startOpacity * oneMinusRatio + endOpacity * gradientValue;
+			
+			//SIZE
+			if(startSize != null && endSize != null && sizeState == true)
+				newAppearance.size = startSize * oneMinusRatio + endSize * gradientValue;		
 		}
+		
+		return newAppearance;
 	}
 	
 	
 	
-	
-	
-	
+
 	//SCHEME CLASS
 	
 	public class Scheme {
 	
 		GradientPaint colorGradient;
+		boolean opacityState, sizeState;
 		int min, max;
 		
 		/**
@@ -330,6 +521,9 @@ public class MovieScheme {
 			
 			min = 0;
 			max = 20;
+			colorGradient = null;
+			opacityState = false;
+			sizeState = false;
 		}
 		
 		/**
@@ -338,11 +532,21 @@ public class MovieScheme {
 		 * @param min
 		 * @param max
 		 */
-		public Scheme(GradientPaint colorGradient, int min, int max) {
+		public Scheme(GradientPaint colorGradient, Boolean opacityState, Boolean sizeState, int min, int max) {
 			
-			this.colorGradient = colorGradient;
+			this();
+			
 			this.min = min;
 			this.max = max;
+			
+			if (colorGradient != null)
+				this.colorGradient = colorGradient;
+			
+			if (opacityState != null)
+				this.opacityState = opacityState;
+			
+			if (sizeState != null)
+				this.sizeState = sizeState;
 		}		
 		
 		//BORING GET/SET METHODS
@@ -360,6 +564,36 @@ public class MovieScheme {
 		 */
 		public GradientPaint getColorGradient() {
 			return colorGradient;
+		}
+		
+		/**
+		 * set whether the opacity changes or not
+		 * @param opacityState
+		 */
+		public void setOpacityState(boolean opacityState) {
+			this.opacityState = opacityState;
+		}
+		
+		/**
+		 * @return whether opacity changes or not
+		 */
+		public boolean getOpacityState() {
+			return opacityState;
+		}
+		
+		/**
+		 * set whether the size changes or not
+		 * @param sizeState
+		 */
+		public void setSizeState(boolean sizeState) {
+			this.sizeState = sizeState;
+		}
+		
+		/**
+		 * @return whether size changes or not
+		 */
+		public boolean getSizeState() {
+			return sizeState;
 		}
 		
 		/**
@@ -395,4 +629,11 @@ public class MovieScheme {
 	}
 
 
+	
+	//SCHEME APPLY FUNCTION INTERFACE
+	
+	interface SchemeApplyFunction {
+		
+		void apply(String speciesID);
+	}
 }

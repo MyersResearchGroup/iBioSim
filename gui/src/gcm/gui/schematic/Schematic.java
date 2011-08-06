@@ -5,8 +5,6 @@ import gcm.gui.DropComponentPanel;
 import gcm.gui.GCM2SBMLEditor;
 import gcm.gui.Grid;
 import gcm.gui.InfluencePanel;
-import gcm.gui.modelview.movie.ComponentSchemeChooser;
-import gcm.gui.modelview.movie.MovieAppearance;
 import gcm.gui.modelview.movie.MovieContainer;
 import gcm.gui.modelview.movie.SchemeChooserPanel;
 import gcm.parser.GCMFile;
@@ -15,7 +13,6 @@ import gcm.util.GlobalConstants;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Event;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -71,6 +68,7 @@ import sbmleditor.Compartments;
 import sbmleditor.Reactions;
 import sbol.SbolBrowser;
 import sbol.SbolSynthesizer;
+import sbol.SbolUtility;
 import util.Utility;
 
 import main.Gui;
@@ -366,6 +364,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		return toolBar;
 	}
+
 	
 	//ACTION AND LISTENER METHODS
 	
@@ -556,8 +555,6 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	private void addGraphComponentListeners(){
 		
-		final Schematic self = this;
-		
 		//vertical scrolling listener for grid stuff
 		graphComponent.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener(){
 
@@ -678,19 +675,6 @@ public class Schematic extends JPanel implements ActionListener {
 				grid.setMouseReleased(true);
 				
 				mxCell cell = (mxCell)(graphComponent.getCellAt(e.getX(), e.getY()));
-				
-				if(cell != null) {
-					
-					// dispatch a new event in case the movie container is listening for it
-					Event evt = new Event(this, 1000, null);
-					Properties prop = graph.getCellProperties(cell);
-					
-					if(prop != null){
-						
-						SchematicObjectClickEvent soce = new SchematicObjectClickEvent(evt, prop, graph.getCellType(cell));
-						self.dispatchSchematicObjectClickEvent(soce);
-					}
-				}
 				
 				//single right-click
 				if (e.isPopupTrigger() && SwingUtilities.isRightMouseButton(e)) {
@@ -1148,39 +1132,6 @@ public class Schematic extends JPanel implements ActionListener {
 		});
 		
 	}
-	
-	// This makes it so that we can dispatch events that the movie container can listen for.
-	// from http://www.exampledepot.com/egs/java.util/custevent.html.
-	
-	/**
-	 * This methods allows classes to register for MyEvents
-	 * @param listener
-	 */
-	public void addSchematicObjectClickEventListener(SchematicObjectClickEventListener listener) {
-        listenerList.add(SchematicObjectClickEventListener.class, listener);
-    }
-
-	/**
-	 * This methods allows classes to unregister for MyEvents
-	 * @param listener
-	 */
-    public void removeSchematicObjectClickEventListener(SchematicObjectClickEventListener listener) {
-        listenerList.remove(SchematicObjectClickEventListener.class, listener);
-    }
- 
-    /**
-     *  This private class is used to fire MyEvents
-     */    
-    void dispatchSchematicObjectClickEvent(SchematicObjectClickEvent evt) {
-        Object[] listeners = listenerList.getListenerList();
-        // Each listener occupies two elements - the first is the listener class
-        // and the second is the listener instance
-        for (int i=0; i<listeners.length; i+=2) {
-            if (listeners[i]==SchematicObjectClickEventListener.class) {
-                ((SchematicObjectClickEventListener)listeners[i+1]).SchematicObjectClickEventOccurred(evt);
-            }
-        }
-    }
     
     
 	//INPUT/OUTPUT AND CONNECTION METHODS
@@ -1532,7 +1483,12 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		if(cellType == GlobalConstants.SPECIES){
 			
-			gcm2sbml.launchSpeciesPanel(cell.getId(), movieContainer);
+			//if no TSD file is selected, show the sweep panel
+			if(movieContainer.getTSDParser() == null)
+				gcm2sbml.launchSpeciesPanel(cell.getId(), movieContainer);
+			//if there's a TSD file selected, show the color appearance panel
+			else
+				SchemeChooserPanel.showSchemeChooserPanel(cell.getId(), movieContainer);
 		}
 		else if(cellType == GlobalConstants.INFLUENCE){
 			
@@ -1592,7 +1548,6 @@ public class Schematic extends JPanel implements ActionListener {
 					JOptionPane.showMessageDialog(Gui.frame, "You must choose a simulation file before editing component properties.");
 				else {
 					SchemeChooserPanel.showSchemeChooserPanel(cell.getId(), movieContainer);
-					//new ComponentSchemeChooser(cell.getId(), movieContainer);
 				}
 			}
 		}
@@ -1668,27 +1623,6 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	
-	//ANIMATION
-	
-	//isn't used?
-	public void beginFrame(){
-	//	graph.getModel().beginUpdate(); // doesn't seem needed.
-	}
-	
-	public void setSpeciesAnimationValue(String s, MovieAppearance appearance){
-		graph.setSpeciesAnimationValue(s, appearance);
-	}
-	
-	public void setComponentAnimationValue(String c, MovieAppearance appearance){
-		graph.setComponentAnimationValue(c, appearance);
-	}
-	
-	public void endFrame(){
-	//	graph.getModel().endUpdate();
-		graph.refresh();
-	}
-	
-	
 	//GET METHODS
 	
 	/**
@@ -1748,7 +1682,7 @@ public class Schematic extends JPanel implements ActionListener {
 	//RUBBERBAND CLASS	
 	
 	/**
-	 * this class solely exists for the getBound method
+	 * this class solely exists for the getBounds method
 	 * which doesn't exist in the mxRubberband class, unfortunately
 	 */
 	public class Rubberband extends mxRubberband {

@@ -118,18 +118,20 @@ public class MovieAppearance {
 		if(adder.opacity != null) {
 			
 			if(this.opacity == null)
-				this.opacity = 0.0;
+				this.opacity = 0.025;
 			
 			this.opacity += adder.opacity;
-			this.opacity = Math.min(this.opacity, 1.0); // clamp opacity
+			this.opacity = Math.min(this.opacity, 0.75); // clamp opacity
 		}
 		
 		if(adder.size != null) {
 			
 			if(this.size == null)
-				this.size = 0.0;
+				this.size = 1.0;
 			
 			this.size += adder.size;
+			
+			this.size = Math.min(this.size, 100.0);
 		}
 	}	
 }

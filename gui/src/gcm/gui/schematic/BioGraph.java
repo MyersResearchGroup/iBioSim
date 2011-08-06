@@ -1459,7 +1459,8 @@ public class BioGraph extends mxGraph {
 		
 		if(appearance.color != null){
 			
-			newStyle += mxConstants.STYLE_FILLCOLOR + "=" + Integer.toHexString(appearance.color.getRGB());
+			newStyle += mxConstants.STYLE_FILLCOLOR + "=" + Integer.toHexString(appearance.color.getRGB()) + ";";
+			newStyle += mxConstants.STYLE_OPACITY + "=" + 75;
 		}
 		
 		// opacity
@@ -1472,9 +1473,6 @@ public class BioGraph extends mxGraph {
 			
 			double op = (appearance.opacity) * 100.0;
 			newStyle += mxConstants.STYLE_OPACITY + "=" + String.valueOf(op);
-			newStyle +=";" + mxConstants.STYLE_TEXT_OPACITY + "=" + String.valueOf(op);
-			//newStyle = mxConstants.STYLE_TEXT_OPACITY "opacity=.3";
-			//newStyle = "opacity=100";
 		}
 		
 		if(newStyle != null)

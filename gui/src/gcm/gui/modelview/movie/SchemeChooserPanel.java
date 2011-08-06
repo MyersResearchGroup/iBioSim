@@ -10,15 +10,12 @@ import java.awt.GradientPaint;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridLayout;
-import java.awt.List;
 import java.awt.Paint;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
@@ -61,6 +58,7 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 	private String[] opacityOptions = {"none", "enabled"};
 	private String[] applyToComponentOptions = {"this component only", "all components with this model"};
 	private String[] applyToGridOptions = {"this location only", "all grid locations"};
+	private String[] applyToSpeciesOptions = {"this species only", "all species"};
 	private String cellType;
 	private Color startColor; //the end of the gradient opposite the actual color
 	
@@ -93,8 +91,8 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 		this.cellID = cellID;
 		this.movieContainer = movieContainer;
 		this.movieScheme = movieContainer.getMovieScheme();
-		this.allSpecies = movieContainer.getTSDParser().getSpecies();
 		this.startColor = Color.black;
+		this.allSpecies = movieContainer.getTSDParser().getSpecies();
 		
 		this.colorsArray = new Color[] {this.getBackground(), Color.green, Color.red, Color.blue, Color.cyan, 
 			Color.magenta, Color.pink, Color.yellow, Color.orange};
@@ -107,6 +105,9 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 		//if this is a species, open the panel for species
 		if (cellType.equals(GlobalConstants.SPECIES)) {
 			
+			cellSpecies.add(cellID);
+				
+			changed = buildPanel() == true ? true : false;	
 		}
 		//this is a component or grid location
 		else {
@@ -166,7 +167,7 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 	private boolean buildPanel() {
 		
 		JPanel infoPanel = new JPanel(new GridLayout(1, 1));
-		infoPanel.add(new JLabel("<html>Selecting a color scheme for a species will associate a color gradient<br>" +
+		infoPanel.add(new JLabel("<html>Selecting a scheme for a species will associate a color, opacity, or size gradient<br>" +
 				"in proportion to the number of molecules present with time.<br><br></html>"));
 		this.add(infoPanel, BorderLayout.NORTH);
 		
@@ -192,12 +193,14 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 		
 		optionsPanel.add(new JLabel("Size Gradient"));
 		sizeChooser = new JComboBox(sizeOptions);
-		sizeChooser.setEnabled(false);
+		
+		if (cellType.equals(GlobalConstants.GRID_RECTANGLE))
+			sizeChooser.setEnabled(false);
+		
 		optionsPanel.add(sizeChooser);
 		
 		optionsPanel.add(new JLabel("Opacity Gradient"));
 		opacityChooser = new JComboBox(opacityOptions);
-		opacityChooser.setEnabled(false);
 		optionsPanel.add(opacityChooser);
 		
 		optionsPanel.add(new JLabel("Min. number of molecules visible"));
@@ -208,7 +211,6 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 		maxChooser = new JTextField("20");
 		optionsPanel.add(maxChooser);
 		
-		//note: if it's a species, then there's no applyToChooser
 		if (cellType.equals(GlobalConstants.GRID_RECTANGLE)) {
 		
 			optionsPanel.add(new JLabel("Apply to"));
@@ -221,20 +223,25 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 			applyToChooser = new JComboBox(applyToComponentOptions);
 			optionsPanel.add(applyToChooser);
 		}
+		else if (cellType.equals(GlobalConstants.SPECIES)) {
+			
+			optionsPanel.add(new JLabel("Apply to"));
+			applyToChooser = new JComboBox(applyToSpeciesOptions);
+			optionsPanel.add(applyToChooser);
+		}
 		
-		//populate the panel with store values if they exist
+		//populate the panel with stored values if they exist
 		updatePanelValues();
 		
 		String[] options = {"Save Changes", GlobalConstants.CANCEL};
 		
-		int okCancel = JOptionPane.showOptionDialog(Gui.frame, this, "Select inner species color scheme",
+		int okCancel = JOptionPane.showOptionDialog(Gui.frame, this, "Select inner species appearance scheme",
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 
 		//if the user clicks "save changes" on the panel
 		if (okCancel == JOptionPane.OK_OPTION) {
 			
 			updateMovieScheme();
-			
 		}
 		
 		return false;
@@ -248,7 +255,14 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 		
 		//get the data that the user selected/input
 		Color selectedColor = (Color)colorChooser.getSelectedItem();
-		String speciesID = cellID + "__" + speciesChooser.getSelectedItem().toString();
+		String opacityState = opacityChooser.getSelectedItem().toString();
+		String sizeState = sizeChooser.getSelectedItem().toString();
+		String speciesID = cellID;
+		
+		//if it's a species, the ID is the cell ID
+		if (cellType != GlobalConstants.SPECIES)
+			speciesID += "__" + speciesChooser.getSelectedItem().toString();
+		
 		String applyTo = applyToChooser.getSelectedItem().toString();
 		int min = Integer.parseInt(minChooser.getText());
 		int max = Integer.parseInt(maxChooser.getText());
@@ -256,18 +270,54 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
     	GradientPaint selectedGradient = 
     		new GradientPaint(min, 0, startColor, max, 0, selectedColor, false);
     	
+    	//if the user selected something, make a new species scheme
+    	//to populate with the data
+    	//note: the schemes are in a hashmap, so this will also update automatically
+    	if (!selectedColor.equals(colorsArray[0]) 
+    			|| !opacityState.equals(opacityOptions[0]) 
+    			|| !sizeState.equals(sizeOptions[0])) {
+    		
+    		movieContainer.getMovieScheme().createOrUpdateSpeciesScheme(speciesID);
+    	}
+    	
     	//if a color gradient was selected
     	if (!selectedColor.equals(colorsArray[0])) {
     	
     		//the false indicates that this is an addition to the scheme map
-			movieContainer.getMovieScheme().addSpeciesScheme(
+			movieContainer.getMovieScheme().addSpeciesColorScheme(
 					speciesID, selectedGradient, min, max, applyTo, movieContainer.getGCM(), cellType);
     	}
     	//if a color gradient wasn't selected (ie, "none" was selected)
     	else {
     		
-    		movieContainer.getMovieScheme().removeSpeciesScheme(speciesID, cellType, applyTo);
+    		movieContainer.getMovieScheme().removeSpeciesColorScheme(speciesID, cellType, applyTo, movieContainer.getGCM());
     	}
+    	
+    	//if opacity is enabled
+    	if (!opacityState.equals(opacityOptions[0])) {
+        	
+    		//the false indicates that this is an addition to the scheme map
+			movieContainer.getMovieScheme().addSpeciesOpacityScheme(
+					speciesID, min, max, applyTo, movieContainer.getGCM(), cellType);
+    	}
+    	//if an opacity state wasn't selected (ie, "none" was selected)
+    	else {
+    		
+    		movieContainer.getMovieScheme().removeSpeciesOpacityScheme(speciesID, cellType, applyTo, movieContainer.getGCM());
+    	}
+    	
+    	//if size is enabled
+    	if (!sizeState.equals(sizeOptions[0])) {
+        	
+    		//the false indicates that this is an addition to the scheme map
+			movieContainer.getMovieScheme().addSpeciesSizeScheme(
+					speciesID, min, max, applyTo, movieContainer.getGCM(), cellType);
+    	}
+    	//if a size state wasn't selected (ie, "none" was selected)
+    	else {
+    		
+    		movieContainer.getMovieScheme().removeSpeciesSizeScheme(speciesID, cellType, applyTo, movieContainer.getGCM());
+    	} 
 	}
 	
 	/**
@@ -285,13 +335,16 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * updates the gradient, min, max, and apply to values
+	 * updates the gradients, min, max, and apply to values
 	 * based on which species is currently selected
 	 * and which values have been saved
 	 */
 	private void updatePanelValues() {
 		
-		String speciesID = cellID + "__" + speciesChooser.getSelectedItem().toString();
+		String speciesID = cellID;
+		
+		if (cellType != GlobalConstants.SPECIES)
+			speciesID += "__" + speciesChooser.getSelectedItem().toString();
 		
 		Scheme speciesScheme = movieScheme.getSpeciesScheme(speciesID);
 		
@@ -301,6 +354,8 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 			GradientPaint colorGradient = speciesScheme.getColorGradient();
 			int min = speciesScheme.getMin();
 			int max = speciesScheme.getMax();
+			String opacityOption = speciesScheme.getOpacityState() ? opacityOptions[1] : opacityOptions[0];
+			String sizeOption = speciesScheme.getSizeState() ? sizeOptions[1] : sizeOptions[0];
 			
 			if (colorGradient != null)
 				colorChooser.setSelectedItem(colorGradient.getColor2());
@@ -309,9 +364,14 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 			
 			minChooser.setText(Integer.toString(min));
 			maxChooser.setText(Integer.toString(max));
+			opacityChooser.setSelectedItem(opacityOption);
+			sizeChooser.setSelectedItem(sizeOption);
 		}
-		else
+		else {
 			colorChooser.setSelectedItem(colorsArray[0]);
+			opacityChooser.setSelectedItem(opacityOptions[0]);
+			sizeChooser.setSelectedItem(sizeOptions[0]);
+		}
 		
 		//re-render the color combobox so that it shows the stored item
 		colorChooser.setRenderer(new ComboBoxRenderer());
