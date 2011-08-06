@@ -33,8 +33,9 @@ public class EditorPopupMenu extends JPopupMenu
 		boolean selected = !editor.getGraphComponent().getGraph().isSelectionEmpty();
 		add(editor.bind("Delete", mxGraphActions.getDeleteAction())).setEnabled(selected);
 		addSeparator();
-		if (editor.getGraph().getCellType(cell).equals(GlobalConstants.COMPONENT)) {
-			add(new ComponentAction("Open Component", editor.getGraph().getCellProperties(cell).getProperty("gcm"), biosim));
+		
+		if (cell != null && editor.getGraph().getCellType(cell).equals(GlobalConstants.COMPONENT)) {
+			add(new ComponentAction("Open Component in New Tab", editor.getGraph().getCellProperties(cell).getProperty("gcm"), biosim));
 			addSeparator();
 		}
 
