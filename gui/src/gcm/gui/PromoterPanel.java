@@ -277,6 +277,10 @@ public class PromoterPanel extends JPanel {
 				return false;
 			}
 		}
+		return true;
+	}
+	
+	private boolean checkSbolValues() {
 		for (SbolField sf : sbolFields.values()) {
 			if (!sf.isValidText())
 				return false;
@@ -289,8 +293,11 @@ public class PromoterPanel extends JPanel {
 				"Promoter Editor", JOptionPane.YES_NO_OPTION,
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
-			if (!checkValues()) {
-				Utility.createErrorMessage("Error", "Illegal values entered.");
+			boolean sbolValueCheck = checkSbolValues();
+			boolean valueCheck = checkValues();
+			if (!valueCheck || !sbolValueCheck) {
+				if (!valueCheck)
+					Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
 			if (oldName == null) {

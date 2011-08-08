@@ -17,7 +17,7 @@ import org.sbolstandard.libSBOLj.SequenceFeature;
 public class SbolUtility {
 
 	public static Library loadRDF(String filePath) {
-		boolean error = false;
+		
 		String rdfString = "";
 		Library lib = null;
 		try {
@@ -28,14 +28,11 @@ public class SbolUtility {
 				rdfString = rdfString.concat(token) + "\n";
 			}
 			scanIn.close();
-		} catch (Exception e1) {
-			error = true;
-			JOptionPane.showMessageDialog(Gui.frame, "Error opening SBOL file.", "Error",
-					JOptionPane.ERROR_MESSAGE);
-		}
-		if (!error) {
 			SbolService factory = IOTools.fromRdfXml(rdfString);
 			lib = factory.getLibrary();
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(Gui.frame, "Error opening SBOL file.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		return lib;
 	}
