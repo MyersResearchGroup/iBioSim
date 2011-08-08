@@ -416,6 +416,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				return false;
 			}
 		}
+		return true;
+	}
+	
+	private boolean checkSbolValues() {
 		for (SbolField sf : sbolFields.values()) {
 			if (!sf.isValidText())
 				return false;
@@ -436,8 +440,11 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			for(int i=0; i<options.length; i++){if(options[i] == options[1]){value = i;}}
 		
 		if (options[value].equals(options[0])) { // "OK" or "Ok and copy..."
-			if (!checkValues()) {
-				Utility.createErrorMessage("Error", "Illegal values entered.");
+			boolean sbolValueCheck = checkSbolValues();
+			boolean valueCheck = checkValues();
+			if (!valueCheck || !sbolValueCheck) {
+				if (!valueCheck)
+					Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
 			if (selected == null) {

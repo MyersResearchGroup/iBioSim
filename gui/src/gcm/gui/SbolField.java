@@ -76,8 +76,13 @@ public class SbolField extends JPanel implements ActionListener {
 
 				}
 			}
+			if (lib == null)
+				Utility.createErrorMessage("Invalid SBOL Association", fileId + " or " + libId + " is either invalid or missing from project.");
+			else
+				Utility.createErrorMessage("Invalid SBOL Association", featId + " is not a " + sbolLabel.getText());
 			return false;
 		} else
+			Utility.createErrorMessage("Invalid SBOL Association", "Associations must follow pattern fileID/collectionID/DNAcomponentID.");
 			return false;
 	}
 	

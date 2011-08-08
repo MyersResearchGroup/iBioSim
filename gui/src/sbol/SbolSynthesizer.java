@@ -170,7 +170,9 @@ public class SbolSynthesizer {
 					return sf;
 			}
 		}
-		JOptionPane.showMessageDialog(Gui.frame, importFeatId + " not found in project libraries.", "Warning", JOptionPane.WARNING_MESSAGE);
+		synthesizerOn = false;
+		JOptionPane.showMessageDialog(Gui.frame, importFeatId + " not found in " + importLibId + ".", 
+				"Component Not Found", JOptionPane.ERROR_MESSAGE);
 		return null;
 	}
 	
