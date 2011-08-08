@@ -1484,7 +1484,7 @@ public class Schematic extends JPanel implements ActionListener {
 		if(cellType == GlobalConstants.SPECIES){
 			
 			//if no TSD file is selected, show the sweep panel
-			if(movieContainer.getTSDParser() == null)
+			if(movieContainer == null || movieContainer.getTSDParser() == null)
 				gcm2sbml.launchSpeciesPanel(cell.getId(), movieContainer);
 			//if there's a TSD file selected, show the color appearance panel
 			else
