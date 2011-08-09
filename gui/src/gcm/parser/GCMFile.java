@@ -1519,7 +1519,7 @@ public class GCMFile {
 			createdHighIds.put(prefix, createdHighIds.get(prefix) + 1);
 			name = prefix + String.valueOf(createdHighIds.get(prefix));
 		}
-		while (hash.containsKey(name));
+		while (hash.containsKey(name) || usedIDs.contains(name));
 
 		return name;
 	}
@@ -2013,7 +2013,7 @@ public class GCMFile {
 				creatingSpeciesID++;
 				id = "S" + String.valueOf(creatingSpeciesID);
 			}
-			while (getSpecies().containsKey(id));
+			while (getSpecies().containsKey(id) || usedIDs.contains(id));
 		}
 		Properties prop = new Properties();
 		prop.setProperty(GlobalConstants.NAME, "");
@@ -2044,7 +2044,7 @@ public class GCMFile {
 				creatingReactionID++;
 				id = "R" + String.valueOf(creatingReactionID);
 			}
-			while (getReactions().containsKey(id));
+			while (getReactions().containsKey(id) || usedIDs.contains(id));
 		}
 		Properties prop = new Properties();
 		prop.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_REACTION_WIDTH));
@@ -2077,7 +2077,7 @@ public class GCMFile {
 				creatingPromoterID++;
 				id = "P" + String.valueOf(creatingPromoterID);
 			}
-			while (getPromoters().containsKey(id));
+			while (getPromoters().containsKey(id) || usedIDs.contains(id));
 		}
 		Properties prop = new Properties();
 		prop.setProperty("ID", id);
