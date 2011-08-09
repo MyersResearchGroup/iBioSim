@@ -1699,16 +1699,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		
 		return panel;
 	}
+
 	public SpeciesPanel launchSpeciesPanel(String id){
-		return launchSpeciesPanel(id, null);
-	}
-	public SpeciesPanel launchSpeciesPanel(String id, MovieContainer movieContainer){
 		GCMFile refGCM = null;
 		if (paramsOnly) {
 			refGCM = new GCMFile(path);
 			refGCM.load(path + separator + refFile);
 		}
-		SpeciesPanel panel = new SpeciesPanel(id, species, influences, conditions, components, gcm, paramsOnly, refGCM, this, movieContainer);
+		SpeciesPanel panel = new SpeciesPanel(id, species, influences, conditions, components, gcm, paramsOnly, refGCM, this);
 		
 		if (paramsOnly) {
 			String updates = panel.updates();

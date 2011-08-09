@@ -88,9 +88,13 @@ public interface SpeciesInterface extends VisitableSpecies {
 	
 	public double getDecay();
 	
+	public double getKecdecay();
+	
 	public double[] getKc();
 		
 	public double[] getKmdiff();
+	
+	public double getKecdiff();
 	
 	public boolean isActivator();
 	

@@ -318,6 +318,18 @@ public class GCMParser {
 			specie.addProperty(GlobalConstants.MEMDIFF_STRING, gcm.getParameter(GlobalConstants.MEMDIFF_STRING));
 		}
 		
+		if (property.containsKey(GlobalConstants.KECDIFF_STRING)) {
+			specie.addProperty(GlobalConstants.KECDIFF_STRING, property.getProperty(GlobalConstants.KECDIFF_STRING));
+		} else {
+			specie.addProperty(GlobalConstants.KECDIFF_STRING, gcm.getParameter(GlobalConstants.KECDIFF_STRING));
+		}
+		
+		if (property.containsKey(GlobalConstants.KECDECAY_STRING)) {
+			specie.addProperty(GlobalConstants.KECDECAY_STRING, property.getProperty(GlobalConstants.KECDECAY_STRING));
+		} else {
+			specie.addProperty(GlobalConstants.KECDECAY_STRING, gcm.getParameter(GlobalConstants.KECDECAY_STRING));
+		}
+		
 		if (property.containsKey(GlobalConstants.TYPE)) {
 			specie.addProperty(GlobalConstants.TYPE, property.getProperty(GlobalConstants.TYPE));
 		} else {

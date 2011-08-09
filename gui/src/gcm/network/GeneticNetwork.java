@@ -428,10 +428,12 @@ public class GeneticNetwork {
 		//stores pairs of species and its decay rate
 		//this is later used for setting the decay rate of new, outer species
 		HashMap<String, Double> specDecay = new HashMap<String, Double>();
+		HashMap<String, Double> specECDecay = new HashMap<String, Double>();
 		
-		//stores pairs of species and its
+		//stores pairs of species and its membrance diffusion rate
 		//this is later used for setting the membrane diffusion rates in the reaction
 		HashMap<String, Double[]> specDiffuse = new HashMap<String, Double[]>();
+		HashMap<String, Double> specECDiffuse = new HashMap<String, Double>();
 		
 		//unique underlying species are stored in this
 		//these IDs have NO component information; it's just the species ID
@@ -463,6 +465,8 @@ public class GeneticNetwork {
 					
 					underlyingSpeciesIDs.add(underlyingSpeciesID);
 					specDecay.put(underlyingSpeciesID, is.getDecay());
+					specECDecay.put(underlyingSpeciesID, is.getKecdecay());
+					specECDiffuse.put(underlyingSpeciesID, is.getKecdiff());
 					
 					double[] diffs = is.getKmdiff();
 					Double[] diffsd = new Double[2];
@@ -562,8 +566,9 @@ public class GeneticNetwork {
 					
 					//REACTION CREATION
 					//degredation of this new outer species
-					String osDecayString = GlobalConstants.KDECAY_STRING;
-					double osDecay = specDecay.get(underlyingSpeciesID);
+					//use the extracellular decay value
+					String osDecayString = GlobalConstants.KECDECAY_STRING;
+					double osDecay = specECDecay.get(underlyingSpeciesID);
 					String osDecayUnitString = getMoleTimeParameter(1);
 					
 					Reaction r = Utility.Reaction("Degradation_" + osID);
@@ -595,14 +600,9 @@ public class GeneticNetwork {
 			//from one grid location to another
 			
 			String diffusionUnitString = getMoleTimeParameter(1);
-			String diffusionString = "kdiff";
+			String diffusionString = GlobalConstants.KECDIFF_STRING;
 			String diffComp = topLevelCompartment;
-			
-			//TODO-jstev:
-			//right now this is hard-coded
-			//it needs to be an option somewhere in the program
-			//also, it's the same forward and reverse at the moment
-			double kdiff = 1.0;
+			double kecdiff = specECDiffuse.get(underlyingSpeciesID);
 			
 			//loop through all of the grid locations
 			//create diffusion reactions between all eight neighbors if they exist
@@ -698,11 +698,10 @@ public class GeneticNetwork {
 						r.addReactant(Utility.SpeciesReference(osID, 1));
 						r.addProduct(Utility.SpeciesReference(neighborID, 1));
 						
-						//parameters: id="kdiff"" value=kdiff units="u_1_second_n1" (inverse seconds)
-						kl.addParameter(Utility.Parameter(diffusionString, kdiff, diffusionUnitString));
-						kl.addParameter(Utility.Parameter(diffusionString, kdiff, diffusionUnitString));
+						//parameters: id="kecdiff"" value=kecdiff units="u_1_second_n1" (inverse seconds)
+						kl.addParameter(Utility.Parameter(diffusionString, kecdiff, diffusionUnitString));
+						kl.addParameter(Utility.Parameter(diffusionString, kecdiff, diffusionUnitString));
 						
-						//formula: kfmdiff * inner species - krmdiff * outer species
 						kl.setFormula(diffusionExpression);
 						Utility.addReaction(document, r);
 					}

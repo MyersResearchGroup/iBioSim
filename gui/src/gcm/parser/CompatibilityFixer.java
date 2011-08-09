@@ -51,6 +51,9 @@ public class CompatibilityFixer {
 	public final static String GUI_KDECAY_STRING = "Degradation rate";
 	public final static String OLD_KDECAY_STRING = "kdecay";
 	
+	public final static String GUI_KECDECAY_STRING = "Extracellular degradation rate";
+	public final static String OLD_KECDECAY_STRING = "kecdecay";
+	
 	public final static String GUI_PROMOTER_COUNT_STRING = "Initial promoter count";
 	public final static String OLD_PROMOTER_COUNT_STRING = "Promoter count";
 
@@ -87,8 +90,11 @@ public class CompatibilityFixer {
 	public final static String GUI_KCOMPLEX_STRING = "Complex formation equilibrium";
 	public final static String OLD_KCOMPLEX_STRING = "Kc";
 	
-	public final static String GUI_MEMDIFF_STRING = "Membrane diffusion rate";
-	public final static String OLD_MEMDIFF_STRING = "Kmdiff";
+	public final static String GUI_MEMDIFF_STRING = "Membrane diffusion rate (fd/rv)";
+	public final static String OLD_MEMDIFF_STRING = "kmdiff";
+	
+	public final static String GUI_KECDIFF_STRING = "Extracellular diffusion rate";
+	public final static String OLD_KECDIFF_STRING = "Kecdiff";
 
 	//Static initializer that sets up the hashing 
 	static {		
@@ -113,6 +119,9 @@ public class CompatibilityFixer {
 		
 		guiName.put(GlobalConstants.KDECAY_STRING, GUI_KDECAY_STRING);
 		oldName.put(GlobalConstants.KDECAY_STRING, OLD_KDECAY_STRING);
+		
+		guiName.put(GlobalConstants.KECDECAY_STRING, GUI_KECDECAY_STRING);
+		oldName.put(GlobalConstants.KECDECAY_STRING, OLD_KECDECAY_STRING);
 		
 		guiName.put(GlobalConstants.PROMOTER_COUNT_STRING, GUI_PROMOTER_COUNT_STRING);
 		oldName.put(GlobalConstants.PROMOTER_COUNT_STRING, OLD_PROMOTER_COUNT_STRING);
@@ -152,6 +161,9 @@ public class CompatibilityFixer {
 		
 		guiName.put(GlobalConstants.MEMDIFF_STRING, GUI_MEMDIFF_STRING);
 		oldName.put(GlobalConstants.MEMDIFF_STRING, OLD_MEMDIFF_STRING);
+		
+		guiName.put(GlobalConstants.KECDIFF_STRING, GUI_KECDIFF_STRING);
+		oldName.put(GlobalConstants.KECDIFF_STRING, OLD_KECDIFF_STRING);
 		
 		for (String i : guiName.keySet()) {
 			gcmName.put(guiName.get(i), i);

@@ -1,6 +1,5 @@
 package gcm.gui;
 
-import gcm.gui.modelview.movie.MovieContainer;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
@@ -13,7 +12,6 @@ import java.util.HashMap;
 import java.util.Properties;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -33,46 +31,36 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final String COPY_COLOR_TO_ALL = "copy colors to all species";
-	
 	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList influencesList,
 			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
 			GCMFile refGCM, GCM2SBMLEditor gcmEditor){
 
 		super(new BorderLayout());
-		constructor(selected, speciesList, influencesList, conditionsList, componentsList, gcm, paramsOnly, refGCM, gcmEditor, null);
-	}
-
-	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList influencesList,
-			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
-			GCMFile refGCM, GCM2SBMLEditor gcmEditor, MovieContainer movieContainer){
-
-		super(new BorderLayout());
-		constructor(selected, speciesList, influencesList, conditionsList, componentsList, gcm, paramsOnly, refGCM, gcmEditor, movieContainer);
+		constructor(selected, speciesList, influencesList, conditionsList, componentsList, gcm, paramsOnly, refGCM, gcmEditor);
 	}
 	
 	private void constructor(String selected, PropertyList speciesList, PropertyList influencesList,
 			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
-			GCMFile refGCM,  GCM2SBMLEditor gcmEditor, MovieContainer movieContainer) {
+			GCMFile refGCM,  GCM2SBMLEditor gcmEditor) {
 
 		JPanel grid;
 		
 		if (paramsOnly)
-			grid = new JPanel(new GridLayout(4,1));
+			grid = new JPanel(new GridLayout(6,1));
 		else {
 			
 			if (gcm.getSBMLDocument().getLevel() > 2) {
 				if (gcm.getSBMLDocument().getModel().getNumCompartments()==1) {
-					grid = new JPanel(new GridLayout(14,1));
+					grid = new JPanel(new GridLayout(16,1));
 				} else {
-					grid = new JPanel(new GridLayout(15,1));
+					grid = new JPanel(new GridLayout(17,1));
 				}
 			} 
 			else {
 				if (gcm.getSBMLDocument().getModel().getNumCompartments()==1) {
-					grid = new JPanel(new GridLayout(13,1));
+					grid = new JPanel(new GridLayout(15,1));
 				} else {
-					grid = new JPanel(new GridLayout(14,1));
+					grid = new JPanel(new GridLayout(16,1));
 				}
 			}
 		}
@@ -86,148 +74,145 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		this.components = componentsList;
 		this.gcm = gcm;
 		this.paramsOnly = paramsOnly;
-		this.movieContainer = movieContainer;
 		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
 		sbolFields = new HashMap<String, SbolField>();
 		
 		String origString = "default";
-		PropertyField field = null;
+		PropertyField field = null;		
 		
+		// ID field
+		field = new PropertyField(GlobalConstants.ID, "", null, null, Utility.IDstring,
+				paramsOnly, "default");
+		fields.put(GlobalConstants.ID, field);
 		
+		if (!paramsOnly) grid.add(field);
+			
+		// Name field
+		field = new PropertyField(GlobalConstants.NAME, "", null, null, Utility.NAMEstring,
+				paramsOnly, "default");
+		fields.put(GlobalConstants.NAME, field);
 		
-			// ID field
-			field = new PropertyField(GlobalConstants.ID, "", null, null, Utility.IDstring,
-					paramsOnly, "default");
-			fields.put(GlobalConstants.ID, field);
+		if (!paramsOnly) grid.add(field);		
+
+		// Type field
+		JPanel tempPanel = new JPanel();
+		JLabel tempLabel = new JLabel(GlobalConstants.TYPE);
+		typeBox = new JComboBox(types);
+		typeBox.addActionListener(this);
+		tempPanel.setLayout(new GridLayout(1, 2));
+		tempPanel.add(tempLabel);
+		tempPanel.add(typeBox);
+
+		if (!paramsOnly) grid.add(tempPanel);
+
+		Species species = gcm.getSBMLDocument().getModel().getSpecies(selected);
+		
+		// compartment field
+		tempPanel = new JPanel();
+		tempLabel = new JLabel("Compartment");
+		compartBox = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());
+		compartBox.setSelectedItem(species.getCompartment());
+		compartBox.addActionListener(this);
+		tempPanel.setLayout(new GridLayout(1, 2));
+		tempPanel.add(tempLabel);
+		tempPanel.add(compartBox);
+
+		if (gcm.getSBMLDocument().getModel().getNumCompartments()>1) {
 			
-			if (!paramsOnly) grid.add(field);
-				
-			// Name field
-			field = new PropertyField(GlobalConstants.NAME, "", null, null, Utility.NAMEstring,
-					paramsOnly, "default");
-			fields.put(GlobalConstants.NAME, field);
+			if (!paramsOnly) grid.add(tempPanel);
+		}
+		
+		String[] optionsTF = { "true", "false" };
+
+		// Boundary condition field
+		tempPanel = new JPanel();
+		tempLabel = new JLabel("Boundary Condition");
+		specBoundary = new JComboBox(optionsTF);
+		
+		if (species.getBoundaryCondition()) {
+			specBoundary.setSelectedItem("true");
+		} 
+		else {
+			specBoundary.setSelectedItem("false");
+		}
+		
+		tempPanel.setLayout(new GridLayout(1, 2));
+		tempPanel.add(tempLabel);
+		tempPanel.add(specBoundary);
+
+		if (!paramsOnly) grid.add(tempPanel);
+
+		// Constant field
+		tempPanel = new JPanel();
+		tempLabel = new JLabel("Constant");
+		specConstant = new JComboBox(optionsTF);
+		
+		if (species.getConstant()) {
+			specConstant.setSelectedItem("true");
+		} 
+		else {
+			specConstant.setSelectedItem("false");
+		}
+		
+		tempPanel.setLayout(new GridLayout(1, 2));
+		tempPanel.add(tempLabel);
+		tempPanel.add(specConstant);
+
+		if (!paramsOnly) grid.add(tempPanel);
+
+		// Has only substance units field
+		tempPanel = new JPanel();
+		tempLabel = new JLabel("Has Only Substance Units");
+		specHasOnly = new JComboBox(optionsTF);
+		
+		if (species.getHasOnlySubstanceUnits()) {
+			specHasOnly.setSelectedItem("true");
+		} 
+		else {
+			specHasOnly.setSelectedItem("false");
+		}
+		
+		tempPanel.setLayout(new GridLayout(1, 2));
+		tempPanel.add(tempLabel);
+		tempPanel.add(specHasOnly);
+
+		if (!paramsOnly) grid.add(tempPanel);
+		
+		// Units field
+		tempPanel = new JPanel();
+		tempLabel = new JLabel("Units");
+		unitsBox = MySpecies.createUnitsChoices(gcm.getSBMLDocument());
+		
+		if (species.isSetUnits()) {
 			
-			if (!paramsOnly) grid.add(field);		
-	
-			// Type field
-			JPanel tempPanel = new JPanel();
-			JLabel tempLabel = new JLabel(GlobalConstants.TYPE);
-			typeBox = new JComboBox(types);
-			typeBox.addActionListener(this);
+			unitsBox.setSelectedItem(species.getUnits());
+		}
+		
+		tempPanel.setLayout(new GridLayout(1, 2));
+		tempPanel.add(tempLabel);
+		tempPanel.add(unitsBox);
+
+		if (!paramsOnly) grid.add(tempPanel);
+		
+		// Conversion factor field
+		if (gcm.getSBMLDocument().getLevel() > 2) {
+			
+			tempPanel = new JPanel();
+			tempLabel = new JLabel("Conversion Factor");
+			convBox = MySpecies.createConversionFactorChoices(gcm.getSBMLDocument());
+			
+			if (species.isSetConversionFactor()) {
+				convBox.setSelectedItem(species.getConversionFactor());
+			}
+			
 			tempPanel.setLayout(new GridLayout(1, 2));
 			tempPanel.add(tempLabel);
-			tempPanel.add(typeBox);
+			tempPanel.add(convBox);
 
 			if (!paramsOnly) grid.add(tempPanel);
-	
-			Species species = gcm.getSBMLDocument().getModel().getSpecies(selected);
-			
-			// compartment field
-			tempPanel = new JPanel();
-			tempLabel = new JLabel("Compartment");
-			compartBox = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());
-			compartBox.setSelectedItem(species.getCompartment());
-			compartBox.addActionListener(this);
-			tempPanel.setLayout(new GridLayout(1, 2));
-			tempPanel.add(tempLabel);
-			tempPanel.add(compartBox);
-
-			if (gcm.getSBMLDocument().getModel().getNumCompartments()>1) {
-				
-				if (!paramsOnly) grid.add(tempPanel);
-			}
-			
-			String[] optionsTF = { "true", "false" };
-	
-			// Boundary condition field
-			tempPanel = new JPanel();
-			tempLabel = new JLabel("Boundary Condition");
-			specBoundary = new JComboBox(optionsTF);
-			
-			if (species.getBoundaryCondition()) {
-				specBoundary.setSelectedItem("true");
-			} 
-			else {
-				specBoundary.setSelectedItem("false");
-			}
-			
-			tempPanel.setLayout(new GridLayout(1, 2));
-			tempPanel.add(tempLabel);
-			tempPanel.add(specBoundary);
-
-			if (!paramsOnly) grid.add(tempPanel);
-	
-			// Constant field
-			tempPanel = new JPanel();
-			tempLabel = new JLabel("Constant");
-			specConstant = new JComboBox(optionsTF);
-			
-			if (species.getConstant()) {
-				specConstant.setSelectedItem("true");
-			} 
-			else {
-				specConstant.setSelectedItem("false");
-			}
-			
-			tempPanel.setLayout(new GridLayout(1, 2));
-			tempPanel.add(tempLabel);
-			tempPanel.add(specConstant);
-
-			if (!paramsOnly) grid.add(tempPanel);
-	
-			// Has only substance units field
-			tempPanel = new JPanel();
-			tempLabel = new JLabel("Has Only Substance Units");
-			specHasOnly = new JComboBox(optionsTF);
-			
-			if (species.getHasOnlySubstanceUnits()) {
-				specHasOnly.setSelectedItem("true");
-			} 
-			else {
-				specHasOnly.setSelectedItem("false");
-			}
-			
-			tempPanel.setLayout(new GridLayout(1, 2));
-			tempPanel.add(tempLabel);
-			tempPanel.add(specHasOnly);
-
-			if (!paramsOnly) grid.add(tempPanel);
-			
-			// Units field
-			tempPanel = new JPanel();
-			tempLabel = new JLabel("Units");
-			unitsBox = MySpecies.createUnitsChoices(gcm.getSBMLDocument());
-			
-			if (species.isSetUnits()) {
-				
-				unitsBox.setSelectedItem(species.getUnits());
-			}
-			
-			tempPanel.setLayout(new GridLayout(1, 2));
-			tempPanel.add(tempLabel);
-			tempPanel.add(unitsBox);
-
-			if (!paramsOnly) grid.add(tempPanel);
-			
-			// Conversion factor field
-			if (gcm.getSBMLDocument().getLevel() > 2) {
-				
-				tempPanel = new JPanel();
-				tempLabel = new JLabel("Conversion Factor");
-				convBox = MySpecies.createConversionFactorChoices(gcm.getSBMLDocument());
-				
-				if (species.isSetConversionFactor()) {
-					convBox.setSelectedItem(species.getConversionFactor());
-				}
-				
-				tempPanel.setLayout(new GridLayout(1, 2));
-				tempPanel.add(tempLabel);
-				tempPanel.add(convBox);
-
-				if (!paramsOnly) grid.add(tempPanel);
-			}
+		}
 			
 		// Initial field
 		if (paramsOnly) {
@@ -289,27 +274,38 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		
 		fields.put(GlobalConstants.KDECAY_STRING, field);
 		grid.add(field);
-
-		// add the color chooser for the movie component
-		if(paramsOnly){
-//			JPanel colorsPanel = new JPanel(new BorderLayout());
-//			this.add(colorsPanel, BorderLayout.SOUTH);
-//			ColorScheme colorScheme = movieContainer.getMoviePreferences().getOrCreateColorSchemeForSpecies(selected, movieContainer.getTSDParser());
-//			colorSchemeChooser = new ColorSchemeChooser(colorScheme);
-//			colorsPanel.add(colorSchemeChooser, BorderLayout.CENTER);
-//			
-//			
-//			// build a special button to display the extra options
-//			JPanel tpanel = new JPanel(new CenterLayout());
-//			JButton copyButton = new JButton("Copy Color Properties to All Species");
-//			copyButton.setToolTipText("This button will copy these settings to all other components of the same type.");
-//			copyButton.setActionCommand(COPY_COLOR_TO_ALL);
-//			copyButton.addActionListener(this);
-//			copyButton.setSize(200, 25);
-//			tpanel.add(copyButton);
-//			colorsPanel.add(tpanel, BorderLayout.SOUTH);
+		
+		//Extracellular decay field
+		origString = "default";
+		if (paramsOnly) {
+			
+			String defaultValue = refGCM.getParameter(GlobalConstants.KECDECAY_STRING);
+			
+			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.KECDECAY_STRING)) {
+				
+				defaultValue = refGCM.getSpecies().get(selected).getProperty(
+						GlobalConstants.KECDECAY_STRING);
+				origString = "custom";
+			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.KECDECAY_STRING)) {
+				
+				defaultValue = gcm.getParameter(GlobalConstants.KECDECAY_STRING);
+			}
+			
+			field = new PropertyField(GlobalConstants.KECDECAY_STRING, gcm
+					.getParameter(GlobalConstants.KECDECAY_STRING), origString, defaultValue,
+					Utility.SWEEPstring, paramsOnly, origString);
+		}
+		else {
+			
+			field = new PropertyField(GlobalConstants.KECDECAY_STRING, gcm
+					.getParameter(GlobalConstants.KECDECAY_STRING), origString, gcm
+					.getParameter(GlobalConstants.KECDECAY_STRING), Utility.NUMstring, paramsOnly,
+					origString);
 		}
 		
+		fields.put(GlobalConstants.KECDECAY_STRING, field);
+		grid.add(field);
 		
 		// Complex Equilibrium Constant Field
 		origString = "default";
@@ -374,6 +370,39 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		}
 		
 		fields.put(GlobalConstants.MEMDIFF_STRING, field);
+		grid.add(field);
+		
+		//extracellular diffusion field
+		origString = "default";
+		
+		if (paramsOnly) {
+			
+			String defaultValue = refGCM.getParameter(GlobalConstants.KECDIFF_STRING);
+			
+			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.KECDIFF_STRING)) {
+				
+				defaultValue = refGCM.getSpecies().get(selected).getProperty(
+						GlobalConstants.KECDIFF_STRING);
+				origString = "custom";
+			}
+			else if (gcm.globalParameterIsSet(GlobalConstants.KECDIFF_STRING)) {
+				
+				defaultValue = gcm.getParameter(GlobalConstants.KECDIFF_STRING);
+			}
+			
+			field = new PropertyField(GlobalConstants.KECDIFF_STRING, gcm
+					.getParameter(GlobalConstants.KECDIFF_STRING), origString, defaultValue,
+					Utility.SWEEPstring, paramsOnly, origString);
+		}
+		else {
+			
+			field = new PropertyField(GlobalConstants.KECDIFF_STRING, gcm
+					.getParameter(GlobalConstants.KECDIFF_STRING), origString, gcm
+					.getParameter(GlobalConstants.KECDIFF_STRING), Utility.NUMstring, paramsOnly,
+					origString);
+		}
+		
+		fields.put(GlobalConstants.KECDIFF_STRING, field);
 		grid.add(field);
 		
 		if (!paramsOnly) {
@@ -655,29 +684,39 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(false);
 			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(false);
+			fields.get(GlobalConstants.KECDIFF_STRING).setEnabled(false);
+			fields.get(GlobalConstants.KECDECAY_STRING).setEnabled(false);
 		}
 		//internal
 		else if (type.equals(types[1])) {
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
 			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(false);
+			fields.get(GlobalConstants.KECDIFF_STRING).setEnabled(false);
+			fields.get(GlobalConstants.KECDECAY_STRING).setEnabled(false);
 		}
 		//output
 		else if (type.equals(types[2])) {
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
 			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(false);
+			fields.get(GlobalConstants.KECDIFF_STRING).setEnabled(false);
+			fields.get(GlobalConstants.KECDECAY_STRING).setEnabled(false);
 		} 
 		//diffusible
 		else if (type.equals(types[4])) {
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
 			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(true);
+			fields.get(GlobalConstants.KECDIFF_STRING).setEnabled(true);
+			fields.get(GlobalConstants.KECDECAY_STRING).setEnabled(true);
 		} 
 		else {
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(false);
 			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(false);
+			fields.get(GlobalConstants.KECDIFF_STRING).setEnabled(false);
+			fields.get(GlobalConstants.KECDECAY_STRING).setEnabled(false);
 		}
 	}
 
@@ -728,8 +767,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private HashMap<String, SbolField> sbolFields;
 
 	private boolean paramsOnly;
-	
-	private MovieContainer movieContainer;
 	
 	private GCM2SBMLEditor gcmEditor;
 }
