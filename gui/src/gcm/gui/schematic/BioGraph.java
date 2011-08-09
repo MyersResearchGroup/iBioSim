@@ -995,6 +995,8 @@ public class BioGraph extends mxGraph {
 			compart = compGCMFile.getIsWithinCompartment();
 		}
 		
+		prop.setProperty("compartment", Boolean.toString(compart));
+		
 		
 		if(x < -9998 || y < -9998){
 			
