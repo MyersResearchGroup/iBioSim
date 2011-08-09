@@ -1152,6 +1152,19 @@ public class Schematic extends JPanel implements ActionListener {
 		mxCell target = (mxCell)edge.getTarget();
 		//string source = edge.getSource().getValue();
 		
+		if ((graph.getCellProperties(source).containsKey("compartment") &&
+				graph.getCellProperties(source).get("compartment").equals("true")) ||
+				(graph.getCellProperties(target).containsKey("compartment") &&
+						graph.getCellProperties(target).get("compartment").equals("true"))) {
+			
+			JOptionPane.showMessageDialog(Gui.frame, 
+					"You can't connect a compartment to another object.\n" +
+					"If you need a species to go across a compartment membrane, " +
+					"you can make it diffusible.");
+			graph.buildGraph();
+			return;
+		}
+		
 		// make sure there is at most 1 component
 		int numComponents = 0;
 		if(graph.getCellType(source)==GlobalConstants.COMPONENT)
@@ -1418,7 +1431,9 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		if(port == null)
 			return null;
+		
 		gcm.connectComponentAndSpecies(comp, port, specID, "Output");
+		
 		return port;
 	}
 	
