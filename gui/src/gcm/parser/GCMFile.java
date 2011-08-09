@@ -668,6 +668,24 @@ public class GCMFile {
 					}
 				}
 			}
+			else if (param.equals(GlobalConstants.KECDIFF_STRING)) {
+				mod = setToArrayList(bottomLevel.species.keySet());
+				for (String spec : mod) {
+					if (!bottomLevel.species.get(spec).containsKey(GlobalConstants.KECDIFF_STRING)) {
+						bottomLevel.species.get(spec).put(GlobalConstants.KECDIFF_STRING,
+								bottomLevel.globalParameters.get(GlobalConstants.KECDIFF_STRING));
+					}
+				}
+			}
+			else if (param.equals(GlobalConstants.KECDECAY_STRING)) {
+				mod = setToArrayList(bottomLevel.species.keySet());
+				for (String spec : mod) {
+					if (!bottomLevel.species.get(spec).containsKey(GlobalConstants.KECDECAY_STRING)) {
+						bottomLevel.species.get(spec).put(GlobalConstants.KECDECAY_STRING,
+								bottomLevel.globalParameters.get(GlobalConstants.KECDECAY_STRING));
+					}
+				}
+			}
 		}
 
 		// now that the necessary name changes have happened,
@@ -2720,6 +2738,8 @@ public class GCMFile {
 		
 		defaultParameters.put(GlobalConstants.KDECAY_STRING, biosimrc.get(
 				"biosim.gcm.KDECAY_VALUE", ""));
+		defaultParameters.put(GlobalConstants.KECDECAY_STRING, biosimrc.get(
+				"biosim.gcm.KECDECAY_VALUE", ""));
 		defaultParameters.put(GlobalConstants.KASSOCIATION_STRING, biosimrc.get(
 				"biosim.gcm.KASSOCIATION_VALUE", ""));
 		defaultParameters.put(GlobalConstants.KBIO_STRING, biosimrc
@@ -2753,6 +2773,8 @@ public class GCMFile {
 				"biosim.gcm.KCOMPLEX_VALUE", ""));
 		defaultParameters.put(GlobalConstants.MEMDIFF_STRING, biosimrc.get(
 				"biosim.gcm.MEMDIFF_VALUE", ""));
+		defaultParameters.put(GlobalConstants.KECDIFF_STRING, biosimrc.get(
+				"biosim.gcm.KECDIFF_VALUE", ""));
 
 		for (String s : defaultParameters.keySet()) {
 			parameters.put(s, defaultParameters.get(s));

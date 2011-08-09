@@ -1029,6 +1029,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		if (biosimrc.get("biosim.gcm.KDECAY_VALUE", "").equals("")) {
 			biosimrc.put("biosim.gcm.KDECAY_VALUE", ".0075");
 		}
+		if (biosimrc.get("biosim.gcm.KECDECAY_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.KECDECAY_VALUE", ".005");
+		}
 		if (biosimrc.get("biosim.gcm.RNAP_VALUE", "").equals("")) {
 			biosimrc.put("biosim.gcm.RNAP_VALUE", "30");
 		}
@@ -1057,7 +1060,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			biosimrc.put("biosim.gcm.INITIAL_VALUE", "0");
 		}
 		if (biosimrc.get("biosim.gcm.MEMDIFF_VALUE", "").equals("")) {
-			biosimrc.put("biosim.gcm.MEMDIFF_VALUE", "2.0/0.02");
+			biosimrc.put("biosim.gcm.MEMDIFF_VALUE", "1.0/0.01");
+		}
+		if (biosimrc.get("biosim.gcm.KECDIFF_VALUE", "").equals("")) {
+			biosimrc.put("biosim.gcm.KECDIFF_VALUE", "1.0");
 		}
 		if (biosimrc.get("biosim.sim.abs", "").equals("")) {
 			biosimrc.put("biosim.sim.abs", "None");
@@ -1266,6 +1272,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			final JTextField KBASAL_VALUE = new JTextField(biosimrc.get("biosim.gcm.KBASAL_VALUE", ""));
 			final JTextField KBIO_VALUE = new JTextField(biosimrc.get("biosim.gcm.KBIO_VALUE", ""));
 			final JTextField KDECAY_VALUE = new JTextField(biosimrc.get("biosim.gcm.KDECAY_VALUE", ""));
+			final JTextField KECDECAY_VALUE = new JTextField(biosimrc.get("biosim.gcm.KECDECAY_VALUE", ""));
 			final JTextField COOPERATIVITY_VALUE = new JTextField(biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", ""));
 			final JTextField KASSOCIATION_VALUE = new JTextField(biosimrc.get("biosim.gcm.KASSOCIATION_VALUE", ""));
 			final JTextField RNAP_VALUE = new JTextField(biosimrc.get("biosim.gcm.RNAP_VALUE", ""));
@@ -1279,12 +1286,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			final JTextField STOICHIOMETRY_VALUE = new JTextField(biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", ""));
 			final JTextField KCOMPLEX_VALUE = new JTextField(biosimrc.get("biosim.gcm.KCOMPLEX_VALUE", ""));
 			final JTextField MEMDIFF_VALUE = new JTextField(biosimrc.get("biosim.gcm.MEMDIFF_VALUE", ""));
+			final JTextField KECDIFF_VALUE = new JTextField(biosimrc.get("biosim.gcm.KECDIFF_VALUE", ""));
 
-			JPanel labels = new JPanel(new GridLayout(15, 1));
+			JPanel labels = new JPanel(new GridLayout(17, 1));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVED_STRING) + " (" + GlobalConstants.ACTIVED_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KACT_STRING) + " (" + GlobalConstants.KACT_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBASAL_STRING) + " (" + GlobalConstants.KBASAL_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KDECAY_STRING) + " (" + GlobalConstants.KDECAY_STRING + "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KECDECAY_STRING) + " (" + GlobalConstants.KECDECAY_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.COOPERATIVITY_STRING) + " (" + GlobalConstants.COOPERATIVITY_STRING
 					+ "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_STRING) + " (" + GlobalConstants.RNAP_STRING + "):"));
@@ -1301,12 +1310,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					+ "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KCOMPLEX_STRING) + " (" + GlobalConstants.KCOMPLEX_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.MEMDIFF_STRING) + " (" + GlobalConstants.MEMDIFF_STRING + "):"));
+			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KECDIFF_STRING) + " (" + GlobalConstants.KECDIFF_STRING + "):"));
 
-			JPanel fields = new JPanel(new GridLayout(15, 1));
+			JPanel fields = new JPanel(new GridLayout(17, 1));
 			fields.add(ACTIVED_VALUE);
 			fields.add(KACT_VALUE);
 			fields.add(KBASAL_VALUE);
 			fields.add(KDECAY_VALUE);
+			fields.add(KECDECAY_VALUE);
 			fields.add(COOPERATIVITY_VALUE);
 			fields.add(RNAP_VALUE);
 			fields.add(PROMOTER_COUNT_VALUE);
@@ -1318,6 +1329,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			fields.add(STOICHIOMETRY_VALUE);
 			fields.add(KCOMPLEX_VALUE);
 			fields.add(MEMDIFF_VALUE);
+			fields.add(KECDIFF_VALUE);
 
 			// create gcm preferences panel
 			JPanel gcmPrefs = new JPanel(new GridLayout(1, 2));
@@ -1692,6 +1704,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				catch (Exception e1) {
 				}
 				try {
+					Double.parseDouble(KECDECAY_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.KECDECAY_VALUE", KECDECAY_VALUE.getText().trim());
+				}
+				catch (Exception e1) {
+				}
+				try {
 					Double.parseDouble(RNAP_VALUE.getText().trim());
 					biosimrc.put("biosim.gcm.RNAP_VALUE", RNAP_VALUE.getText().trim());
 				}
@@ -1746,8 +1764,25 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				catch (Exception e1) {
 				}
 				try {
-					Double.parseDouble(MEMDIFF_VALUE.getText().trim());
-					biosimrc.put("biosim.gcm.MEMDIFF_VALUE", MEMDIFF_VALUE.getText().trim());
+					String[] fdrv = MEMDIFF_VALUE.getText().trim().split("/");
+					
+					//if the user specifies a forward and reverse rate
+					if (fdrv.length == 2) {
+						
+						biosimrc.put("biosim.gcm.MEMDIFF_VALUE", 
+								Double.parseDouble(fdrv[0]) + "/" + Double.parseDouble(fdrv[1]));
+					}
+					else if (fdrv.length == 1) {
+					
+						Double.parseDouble(MEMDIFF_VALUE.getText().trim());
+						biosimrc.put("biosim.gcm.MEMDIFF_VALUE", MEMDIFF_VALUE.getText().trim());
+					}
+				}
+				catch (Exception e1) {
+				}
+				try {
+					Double.parseDouble(KECDIFF_VALUE.getText().trim());
+					biosimrc.put("biosim.gcm.KECDIFF_VALUE", KECDIFF_VALUE.getText().trim());
 				}
 				catch (Exception e1) {
 				}

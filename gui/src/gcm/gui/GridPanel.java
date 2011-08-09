@@ -70,6 +70,10 @@ public class GridPanel extends JPanel implements ActionListener{
 			GCMFile compGCM = new GCMFile(gcm.getPath());
 			compGCM.load(gcm.getPath() + File.separator + comp);
 			
+			//don't allow grids within a grid
+			if (compGCM.getGrid().isEnabled())
+				componentList.remove(comp);
+			
 			if (compGCM.getIsWithinCompartment())
 				compartmentList.add(comp);
 		}
@@ -233,7 +237,12 @@ public class GridPanel extends JPanel implements ActionListener{
 		//create a panel for the selection of components to add to the cells
 		compPanel = new JPanel(new GridLayout(2,1));
 		compPanel.add(new JLabel("Populate new grid spaces with"));
-		componentChooser = new JComboBox(compartmentList.toArray());
+		
+		if (grid.getGridSpatial())
+			componentChooser = new JComboBox(componentList.toArray());
+		else
+			componentChooser = new JComboBox(compartmentList.toArray());
+		
 		compPanel.add(componentChooser);
 		this.add(compPanel, BorderLayout.SOUTH);
 		

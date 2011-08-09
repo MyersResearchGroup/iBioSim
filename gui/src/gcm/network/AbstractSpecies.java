@@ -156,6 +156,14 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		return params;
 	}
 	
+	public double getKecdiff() {
+		return Double.parseDouble(getProperty(GlobalConstants.KECDIFF_STRING));
+	}
+	
+	public double getKecdecay() {
+		return Double.parseDouble(getProperty(GlobalConstants.KECDECAY_STRING));
+	}
+	
 	public double[] getKc() {
 		String[] props = getProperty(GlobalConstants.KCOMPLEX_STRING).split("/");
 		double[] params = new double[props.length];
