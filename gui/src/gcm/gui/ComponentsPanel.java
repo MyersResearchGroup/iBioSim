@@ -214,7 +214,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				for(Object s:gcm.getComponents().get(oldName).keySet()){
 					String k = s.toString();
 					String v = (gcm.getComponents().get(oldName).getProperty(k)).toString();
-					if (k.contains("graph")) {
+					if (k.contains("graph") || k.contains("row") || k.contains("col")) {
 						property.put(k, v);
 					}	
 				}
