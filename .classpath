@@ -40,5 +40,10 @@
 	<classpathentry kind="lib" path="gui/lib/jgraphx.jar"/>
 	<classpathentry kind="lib" path="gui/lib/libsbmlj.jar"/>
 	<classpathentry kind="lib" path="gui/lib/libSBOLj-0.4.jar"/>
+	<classpathentry kind="lib" path="gui/lib/hadoop-0.20.2-core.jar"/>
+	<classpathentry kind="lib" path="gui/lib/commons-primitives-20070823.jar"/>
+	<classpathentry kind="lib" path="gui/lib/hppc-0.3.1.jar"/>
+	<classpathentry kind="lib" path="gui/lib/SourceLibrary.jar"/>
+	<classpathentry kind="lib" path="gui/lib/antlr-3.3-complete.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>

@@ -72,7 +72,6 @@ public class MemoryChart extends Thread {
         }
         Runnable runnable = new Runnable() {
 
-            @Override
             @SuppressWarnings("SleepWhileHoldingLock")
             public void run() {
                 SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd hh.mm.ss.SSSS");

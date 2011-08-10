@@ -76,7 +76,6 @@ public class WriteLPN {
     }
 static final Comparator<VarVal> vvComparator=new Comparator<VarVal>() {
 
-            @Override
             public int compare(VarVal o1, VarVal o2) {
                return o1.getVariable().compareTo(o2.getVariable());
             }
@@ -148,7 +147,6 @@ static final Comparator<VarVal> vvComparator=new Comparator<VarVal>() {
         LPNTran[] transitions=lpn.getTransitions().toArray(new LPNTran[0]);
         Comparator<LPNTran> comp=new Comparator<LPNTran>() {
 
-            @Override
             public int compare(LPNTran o1, LPNTran o2) {
                 return o1.getIndex()>o2.getIndex()?1:-1;
             }
