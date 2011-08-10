@@ -100,17 +100,14 @@ class IntHashMap2 {
         for(final Entry e:table){
             ret.add(new Map.Entry<Integer, Integer>(){
 
-                @Override
                 public Integer getKey() {
                     return e.hash;
                 }
 
-                @Override
                 public Integer getValue() {
                    return e.value;
                 }
 
-                @Override
                 public Integer setValue(Integer value) {
                     int old =e.value;
                     e.value=value;
