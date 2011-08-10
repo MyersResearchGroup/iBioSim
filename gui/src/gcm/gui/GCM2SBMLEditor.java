@@ -1938,6 +1938,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		return biosim;
 	}
 
+	public Reb2Sac getReb2Sac() {
+		return reb2sac;
+	}
+	
 	private boolean lock = false;
 
 	private String[] options = { "Ok", "Cancel" };

@@ -246,6 +246,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	private JTextField backgroundField;
 
 	private String selectedMarkovSim = null;
+	
+	private ArrayList<String> interestingSpecies = null;	
+	
 
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
@@ -263,6 +266,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			separator = File.separator;
 		}
 
+		this.interestingSpecies = new ArrayList<String>();
 		this.biomodelsim = biomodelsim;
 		this.sbmlFile = sbmlFile;
 		this.sbmlProp = sbmlProp;
@@ -3889,7 +3893,9 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 					}
 					allSpecies = listOfSpecs.toArray();
 					for (int i = 1; i < allSpecies.length; i++) {
+						
 						String index = (String) allSpecies[i];
+						
 						int j = i;
 						while ((j > 0) && ((String) allSpecies[j - 1]).compareToIgnoreCase(index) > 0) {
 							allSpecies[j] = allSpecies[j - 1];
@@ -4519,20 +4525,43 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	}
 
 	public String[] getInterestingSpecies() {
-		ArrayList<String> species = new ArrayList<String>();
-		for (int i = 0; i < speciesInt.size(); i++) {
-			if (((JCheckBox) speciesInt.get(i).get(0)).isSelected()) {
-				String add = ((JTextField) speciesInt.get(i).get(1)).getText();
-				String line = getLine(i);
-				if (line.equals("")) {
-					species.add(add);
-				}
-				else {
-					species.add(add + " " + line);
-				}
-			}
-		}
-		return species.toArray(new String[0]);
+//		ArrayList<String> species = new ArrayList<String>();
+//		for (int i = 0; i < speciesInt.size(); i++) {
+//			if (((JCheckBox) speciesInt.get(i).get(0)).isSelected()) {
+//				
+//				//species ID
+//				String add = ((JTextField) speciesInt.get(i).get(1)).getText();
+//				
+//				//comma-separated threshold value
+//				String line = getLine(i);
+//				
+//				if (line.equals("")) {
+//					species.add(add);
+//				}
+//				else {
+//					species.add(add + " " + line);
+//				}
+//			}
+//		}
+//		
+//		return species.toArray(new String[0]);
+		
+		return interestingSpecies.toArray(new String[0]);
+	}
+	
+	public ArrayList<String> getInterestingSpeciesAsArrayList() {
+		return interestingSpecies;
+	}
+	
+	/**
+	 * adds a string with the species ID and its threshold values to
+	 * the arraylist of interesting species
+	 * 
+	 * @param speciesAndThresholds
+	 */
+	public void addInterestingSpecies(String speciesAndThresholds) {
+		
+		interestingSpecies.add(speciesAndThresholds);		
 	}
 
 	private String[] getAllSpecies() {
