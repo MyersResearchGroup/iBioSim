@@ -1,6 +1,7 @@
 package gcm.gui.modelview.movie;
 
 import gcm.gui.GCM2SBMLEditor;
+import gcm.gui.modelview.movie.SerializableScheme;
 import gcm.gui.schematic.ListChooser;
 import gcm.gui.schematic.Schematic;
 import gcm.gui.schematic.TreeChooser;
@@ -13,6 +14,7 @@ import parser.TSDParser;
 import reb2sac.Reb2Sac;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -21,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
@@ -49,10 +52,10 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	
 	private Schematic schematic;
-	private Reb2Sac reb2sac;	
+	private Reb2Sac reb2sac;
 	private GCMFile gcm;
 	private Gui biosim;
-	private GCM2SBMLEditor gcm2sbml;	
+	private GCM2SBMLEditor gcm2sbml;
 	private TSDParser parser;
 	private Timer playTimer;
 	private MovieScheme movieScheme;
@@ -395,84 +398,77 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 * outputs the preferences file
 	 */
 	public void savePreferences(){
-//		/*
-//		 * TODO: This should be getting called when the properties get saved.
-//		 * Save them to a file in path, then remove the test save button.
-//		 * Then work on loading the properties back.
-//		 */
-//		Gson gson = (new GsonMaker()).makeGson();
-//		String out = gson.toJson(this.getMoviePreferences());
-//		
-//		String fullPath = getPreferencesFullPath();
-//		
-//		FileOutputStream fHandle;
-//		
-//		try {
-//			fHandle = new FileOutputStream(fullPath);
-//		} 
-//		catch (FileNotFoundException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//			JOptionPane.showMessageDialog(Gui.frame, "An error occured opening preferences file " + fullPath + "\nmessage: " + e.getMessage());
-//			return;
-//		}
-//		
-//		try {
-//			fHandle.write(out.getBytes());
-//		}
-//		catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//			JOptionPane.showMessageDialog(Gui.frame, "An error occured writing the preferences file " + fullPath + "\nmessage: " + e.getMessage());
-//		}
-//		
-//		try {
-//			fHandle.close();
-//		} 
-//		catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//			JOptionPane.showMessageDialog(Gui.frame, "An error occured closing the preferences file " + fullPath + "\nmessage: " + e.getMessage());
-//			return;
-//		}
-//		
-//		biosim.log.addText("file saved to " + fullPath);
-//		
-//		this.gcm2sbml.saveParams(false, "", true);
+
+		Gson gson = new Gson();
+		String out = gson.toJson(this.movieScheme.getAllSpeciesSchemes());
+		
+		String fullPath = getPreferencesFullPath();
+		
+		FileOutputStream fHandle;
+		
+		try {
+			fHandle = new FileOutputStream(fullPath);
+		} 
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "An error occured opening preferences file " + fullPath + "\nmessage: " + e.getMessage());
+			return;
+		}
+		
+		try {
+			fHandle.write(out.getBytes());
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "An error occured writing the preferences file " + fullPath + "\nmessage: " + e.getMessage());
+		}
+		
+		try {
+			fHandle.close();
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "An error occured closing the preferences file " + fullPath + "\nmessage: " + e.getMessage());
+			return;
+		}
+		
+		biosim.log.addText("file saved to " + fullPath);
+		
+		this.gcm2sbml.saveParams(false, "", true);
 	}
 
 	/**
-	 * Loads the preferences file if it exists and stores its values into the moviePreferences object.
-	 * If no preferences file exists, a new moviePreferences file will still be created.
+	 * loads the preferences file if it exists and stores its values into the movieScheme object.
 	 */
 	public void loadPreferences(){
 		
-//		// load the prefs file if it exists
-//		String fullPath = getPreferencesFullPath();
-//		String json = null;
-//		
-//		try {
-//			json = TSDParser.readFileToString(fullPath);
-//		} 
-//		catch (IOException e) {
-//			// TODO Auto-generated catch block
-//			//e.printStackTrace();
-//		}
-//		
-//		if(json == null){
-//			moviePreferences = new MoviePreferences();			
-//		}
-//		else{
-//			
-//			Gson gson = (new GsonMaker()).makeGson();
-//			
-//			try{
-//				moviePreferences = gson.fromJson(json, MoviePreferences.class);
-//			}
-//			catch(Exception e){
-//				biosim.log.addText("An error occured trying to load the preferences file " + fullPath + " ERROR: " + e.toString());
-//			}
-//		}
+		// load the prefs file if it exists
+		String fullPath = getPreferencesFullPath();
+		String json = null;
+		
+		try {
+			json = TSDParser.readFileToString(fullPath);
+		} 
+		catch (IOException e) {
+		}
+		
+		if(json == null){
+			movieScheme = new MovieScheme();
+		}
+		else{
+			
+			Gson gson = new Gson();
+			
+			try{
+				SerializableScheme[] speciesSchemes = gson.fromJson(json, SerializableScheme[].class);
+				
+				movieScheme = new MovieScheme();
+				movieScheme.populate(speciesSchemes);
+			}
+			catch(Exception e){
+				biosim.log.addText("An error occured trying to load the preferences file " + fullPath + " ERROR: " + e.toString());
+			}
+		}
 	}
 	
 	/**

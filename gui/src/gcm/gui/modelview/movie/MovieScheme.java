@@ -2,11 +2,13 @@ package gcm.gui.modelview.movie;
 
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
+import gcm.gui.modelview.movie.SerializableScheme;
 
 import java.awt.Color;
 import java.awt.GradientPaint;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -312,6 +314,52 @@ public class MovieScheme {
 			speciesSchemes.put(speciesID, new Scheme());
 	}
 	
+	/**
+	 * returns the hash map of species schemes
+	 * @return the hashmap of species schemes
+	 */
+	public SerializableScheme[] getAllSpeciesSchemes() {
+		
+		SerializableScheme[] schemes = new SerializableScheme[speciesSchemes.size()];
+		
+		Iterator<Map.Entry<String, Scheme>>  speciesSchemesIter = speciesSchemes.entrySet().iterator();
+		
+		for (int index = 0; index < schemes.length; ++index) {
+			
+			Map.Entry<String, Scheme> entry = speciesSchemesIter.next();
+				
+			schemes[index] = new SerializableScheme();
+			
+			schemes[index].min = entry.getValue().getMin();
+			schemes[index].max = entry.getValue().getMax();
+			schemes[index].opacityState = entry.getValue().getOpacityState();
+			schemes[index].sizeState = entry.getValue().getSizeState();
+			schemes[index].startColor = entry.getValue().getColorGradient().getColor1().getRGB();
+			schemes[index].endColor = entry.getValue().getColorGradient().getColor2().getRGB();
+			schemes[index].name = entry.getKey();
+		}
+		
+		return schemes;		
+	}
+	
+	/**
+	 * adds schemes to the movie scheme
+	 * this data comes from a saved file
+	 * 
+	 * @param schemes
+	 */
+	public void populate(SerializableScheme[] schemes) {
+		
+		for (SerializableScheme scheme : schemes) {
+			
+			Scheme speciesScheme = new Scheme(
+					new GradientPaint(0.0f, 0.0f, new Color(scheme.startColor), 0.0f, 50.0f, new Color(scheme.endColor)), 
+					scheme.opacityState, scheme.sizeState, scheme.min, scheme.max);
+			
+			speciesSchemes.put(scheme.name, speciesScheme);
+		}	
+	}
+	
 	
 	//APPEARANCE METHODS
 	
@@ -502,14 +550,12 @@ public class MovieScheme {
 		
 		return newAppearance;
 	}
-	
-	
-	
+
 
 	//SCHEME CLASS
-	
+
 	public class Scheme {
-	
+
 		GradientPaint colorGradient;
 		boolean opacityState, sizeState;
 		int min, max;
@@ -625,7 +671,7 @@ public class MovieScheme {
 		public int getMax() {
 			return max;
 		}
-	
+
 	}
 
 

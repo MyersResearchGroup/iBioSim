@@ -120,7 +120,7 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 				String[] speciesParts = species.split("__");
 				
 				//if there's a component or grid location prefix, strip it
-				if (speciesParts != null && speciesParts.length > 1) {
+				if (speciesParts != null && speciesParts.length > 1 && speciesParts[0].equals(cellID)) {
 					
 					String speciesIDNoPrefix = species.replace(new String(speciesParts[0] + "__"), "");
 					
