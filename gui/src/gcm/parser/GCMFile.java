@@ -348,7 +348,12 @@ public class GCMFile {
 		ArrayList<String> comps = setToArrayList(components.keySet());
 		SBMLDocument sbml = null;
 		if (!sbmlFile.equals("") && includeSBML) {
-			sbml = Gui.readSBML(path + separator + sbmlFile);
+			if (this.sbml != null) {
+				sbml = this.sbml;
+			}
+			else {
+				sbml = Gui.readSBML(path + separator + sbmlFile);
+			}
 		}
 		else if (!sbmlFile.equals("") && !includeSBML) {
 			// TODO: This should likely be removed.

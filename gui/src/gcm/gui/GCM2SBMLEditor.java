@@ -792,20 +792,20 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					String s = scan.nextLine();
 					if (!s.trim().equals("")) {
 						boolean added = false;
-						for (int i = 0; i < parameterChanges.size(); i ++) {
-							if (parameterChanges
+						for (int i = 0; i < getParams.size(); i ++) {
+							if (getParams
 									.get(i)
 									.substring(
 											0,
-											parameterChanges.get(i)
+											getParams.get(i)
 													.lastIndexOf(" "))
 									.equals(s.substring(0, s.lastIndexOf(" ")))) {
-								parameterChanges.set(i, s);
+								getParams.set(i, s);
 								added = true;
 							}
 						}
 						if (!added) {
-							parameterChanges.add(s);
+							getParams.add(s);
 						}
 					}
 					else {
@@ -816,7 +816,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 			catch (Exception e) {
 			}
-			for (String update : parameterChanges) {
+			for (String update : getParams) {
 				String id;
 				if (update.contains("/")) {
 					id = update.split("/")[0];
@@ -1187,10 +1187,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			for (String s : prom) {
 				proms.add(s);
 			}
-			for (String s : parameterChanges) {
+			for (String s : getParams) {
 				if (s.contains("/") && proms.contains(s.split("/")[0].trim())) {
 					proms.remove(s.split("/")[0].trim());
 					proms.add(s.split("/")[0].trim() + " Modified");
+					parameterChanges.add(s);
 				}
 			}
 			promoters.addAllItem(proms);
@@ -1217,10 +1218,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			for (String s : spec) {
 				specs.add(s);
 			}
-			for (String s : parameterChanges) {
+			for (String s : getParams) {
 				if (s.contains("/") && specs.contains(s.split("/")[0].trim())) {
 					specs.remove(s.split("/")[0].trim());
 					specs.add(s.split("/")[0].trim() + " Modified");
+					parameterChanges.add(s);
 				}
 			}
 			species.addAllItem(specs);
@@ -1246,10 +1248,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			for (String s : influe) {
 				influes.add(s);
 			}
-			for (String s : parameterChanges) {
+			for (String s : getParams) {
 				if (s.contains("\"") && influes.contains(s.split("\"")[1].trim())) {
 					influes.remove(s.split("\"")[1].trim());
 					influes.add(s.split("\"")[1].trim() + " Modified");
+					parameterChanges.add(s);
 				}
 			}
 			influences.addAllItem(influes);
