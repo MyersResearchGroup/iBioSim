@@ -410,9 +410,9 @@ public class Schematic extends JPanel implements ActionListener {
 				grid.refreshComponents(gcm.getComponents());
 			}
 			
-			display();
+			graph.buildGraph();
 			gcm2sbml.refresh();
-			gcm2sbml.setDirty(true);			
+			gcm2sbml.setDirty(true);		
 		}
 		else if(command == "redo"){
 			gcm.redo();
@@ -422,7 +422,7 @@ public class Schematic extends JPanel implements ActionListener {
 				grid.refreshComponents(gcm.getComponents());
 			}
 			
-			display();
+			graph.buildGraph();
 			gcm2sbml.refresh();
 			gcm2sbml.setDirty(true);
 		}
@@ -466,44 +466,6 @@ public class Schematic extends JPanel implements ActionListener {
 				}
 			}
 		}
-		
-		//this is no longer a "grid" (creation) command, but i'll leave this here for a few weeks
-		//until we're sure things are fine the way they are
-		
-//		else if (command.equals("grid")) {
-			
-//			//if there's stuff in the graph, the user must delete it to create a grid
-//			//prompt to delete or cancel
-//			if (graph.getChildCells(graph.getDefaultParent()).length > 0) {
-//				
-//				boolean clear = GridPanel.showGridPromptPanel();
-//				
-//				//clear the graph and model
-//				if (clear) {
-//					
-//					graph.removeCells(graph.getChildCells(graph.getDefaultParent()));
-//					gcm.clear();
-//					grid = gcm.getGrid(); //get an updated pointer to the grid
-//				}
-//				//don't create a grid if they don't want to clear the model/graph
-//				else return;
-//			}
-//			
-//			//static method that builds the grid panel
-//			//the false field means to open the grid creation panel
-//			//and not the grid editing panel
-//			boolean changed = GridPanel.showGridPanel(gcm2sbml, gcm, false);
-//			
-//			//if the grid is built, then draw it and so on
-//			if (changed) {
-//				
-//				gcm2sbml.setDirty(true);
-//				gcm2sbml.refresh();
-//				graph.buildGraph();
-//				display();
-//				gcm.makeUndoPoint();
-//			}
-//		}
 		else if (command.equals("editGridSize")) {
 			
 			//static method that builds the grid editing panel
@@ -669,7 +631,7 @@ public class Schematic extends JPanel implements ActionListener {
 			}		
 		});		
 	
-		//mouse click listener -- on cells or on the graph
+		//mouse released listener -- on cells or on the graph
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter(){
 			
 			public void mouseReleased(MouseEvent e) {
