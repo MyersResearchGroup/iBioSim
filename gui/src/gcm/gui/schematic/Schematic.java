@@ -438,14 +438,8 @@ public class Schematic extends JPanel implements ActionListener {
 			GCMParser parser = new GCMParser(gcm, false);
 			SbolSynthesizer synthesizer = parser.buildSbolSynthesizer();
 			HashSet<String> sbolFiles = gcm2sbml.getSbolFiles();
-			if (synthesizer.loadLibraries(sbolFiles)) {
-				SbolBrowser browser = new SbolBrowser(sbolFiles, "library", "");
-				String fileId = browser.getSelection().split("/")[0]; 
-				if (!fileId.equals("")) {
-					String exportFilePath = gcm2sbml.getPath() + File.separator + fileId;
-					synthesizer.synthesizeDnaComponent(exportFilePath, browser.getSelection().split("/")[1]);
-				}
-			}
+			if (synthesizer.loadLibraries(sbolFiles)) 
+				synthesizer.synthesizeDnaComponent(gcm2sbml.getPath());
 		} 
 		else if (command.equals("exportSBOL")) {
 			GCMParser parser = new GCMParser(gcm, false);
@@ -459,10 +453,10 @@ public class Schematic extends JPanel implements ActionListener {
 				else {
 					lastFilePath = new File(biosimrc.get("biosim.general.export_dir", ""));
 				}
-				String exportFilePath = Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export " + "SBOL", -1);
-				if (!exportFilePath.equals("")) {
-					biosimrc.put("biosim.general.export_dir", exportFilePath);
-					synthesizer.synthesizeDnaComponent(exportFilePath, "");
+				String targetFilePath = Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export DNA Component", -1);
+				if (!targetFilePath.equals("")) {
+					biosimrc.put("biosim.general.export_dir", targetFilePath);
+					synthesizer.synthesizeDnaComponent(targetFilePath);
 				}
 			}
 		}
