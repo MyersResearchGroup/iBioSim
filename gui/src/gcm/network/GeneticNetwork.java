@@ -574,6 +574,7 @@ public class GeneticNetwork {
 					//use the extracellular decay value
 					String osDecayString = GlobalConstants.KECDECAY_STRING;
 					double osDecay = specECDecay.get(underlyingSpeciesID);
+						
 					String osDecayUnitString = getMoleTimeParameter(1);
 					
 					Reaction r = Utility.Reaction("Degradation_" + osID);
