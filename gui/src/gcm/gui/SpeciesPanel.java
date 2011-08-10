@@ -8,16 +8,19 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
 
 import javax.swing.DefaultListModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTextField;
 
-import org.jfree.layout.CenterLayout;
 import org.sbml.libsbml.Species;
 
 import sbmleditor.MySpecies;
@@ -31,6 +34,19 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * calls constructor to construct the panel
+	 * 
+	 * @param selected
+	 * @param speciesList
+	 * @param influencesList
+	 * @param conditionsList
+	 * @param componentsList
+	 * @param gcm
+	 * @param paramsOnly
+	 * @param refGCM
+	 * @param gcmEditor
+	 */
 	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList influencesList,
 			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
 			GCMFile refGCM, GCM2SBMLEditor gcmEditor){
@@ -39,27 +55,43 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		constructor(selected, speciesList, influencesList, conditionsList, componentsList, gcm, paramsOnly, refGCM, gcmEditor);
 	}
 	
+	/**
+	 * constructs the species panel
+	 * 
+	 * @param selected
+	 * @param speciesList
+	 * @param influencesList
+	 * @param conditionsList
+	 * @param componentsList
+	 * @param gcm
+	 * @param paramsOnly
+	 * @param refGCM
+	 * @param gcmEditor
+	 */
 	private void constructor(String selected, PropertyList speciesList, PropertyList influencesList,
 			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
 			GCMFile refGCM,  GCM2SBMLEditor gcmEditor) {
 
 		JPanel grid;
 		
+		//if this is in analysis mode, only show the sweepable/changeable values
 		if (paramsOnly)
-			grid = new JPanel(new GridLayout(6,1));
+			grid = new JPanel(new GridLayout(7,1));
 		else {
 			
 			if (gcm.getSBMLDocument().getLevel() > 2) {
-				if (gcm.getSBMLDocument().getModel().getNumCompartments()==1) {
+				if (gcm.getSBMLDocument().getModel().getNumCompartments() == 1) {
 					grid = new JPanel(new GridLayout(16,1));
-				} else {
+				} 
+				else {
 					grid = new JPanel(new GridLayout(17,1));
 				}
 			} 
 			else {
-				if (gcm.getSBMLDocument().getModel().getNumCompartments()==1) {
+				if (gcm.getSBMLDocument().getModel().getNumCompartments() == 1) {
 					grid = new JPanel(new GridLayout(15,1));
-				} else {
+				} 
+				else {
 					grid = new JPanel(new GridLayout(16,1));
 				}
 			}
@@ -112,14 +144,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		// compartment field
 		tempPanel = new JPanel();
 		tempLabel = new JLabel("Compartment");
-		compartBox = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());
+		compartBox = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());		
 		compartBox.setSelectedItem(species.getCompartment());
 		compartBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
 		tempPanel.add(compartBox);
 
-		if (gcm.getSBMLDocument().getModel().getNumCompartments()>1) {
+		if (gcm.getSBMLDocument().getModel().getNumCompartments() > 1) {
 			
 			if (!paramsOnly) grid.add(tempPanel);
 		}
@@ -213,6 +245,37 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 			if (!paramsOnly) grid.add(tempPanel);
 		}
+		
+		//mark as interesting field
+		if (paramsOnly) {
+			
+			String thresholdText = "";
+			boolean speciesMarked = false;
+			
+			ArrayList<String> interestingSpecies = gcmEditor.getReb2Sac().getInterestingSpeciesAsArrayList();				
+			
+			//look for the selected species among the already-interesting
+			//if it is interesting, populate the field with its data
+			for (String speciesInfo : interestingSpecies) {
+				
+				if (speciesInfo.contains(selected)) {
+					
+					speciesMarked = true;
+					thresholdText = speciesInfo.replace(selected+" ", "");
+				}
+			}			
+			
+			tempPanel = new JPanel(new GridLayout(1, 2));
+			specInteresting = 
+				new JCheckBox("Mark as Interesting (Enter Comma-separated Threshold Values)");
+			specInteresting.addActionListener(this);
+			specInteresting.setSelected(speciesMarked);
+			tempPanel.add(specInteresting);
+			thresholdTextField = new JTextField(thresholdText);
+			tempPanel.add(thresholdTextField);
+			
+			grid.add(tempPanel);
+		}		
 			
 		// Initial field
 		if (paramsOnly) {
@@ -456,6 +519,50 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		return true;
 	}
 
+	/**
+	 * adds interesting species to a list in Reb2Sac.java
+	 * 
+	 * @return whether the values were okay for adding or not
+	 */
+	private boolean addInterestingSpecies() {
+		
+		String thresholdText = thresholdTextField.getText();
+		ArrayList<Integer> thresholdValues = new ArrayList<Integer>();
+		
+		try {
+			//check the threshold values for validity
+			for (String threshold : thresholdText.trim().split(",")) {
+				thresholdValues.add(Integer.parseInt(threshold));
+			}
+		}
+		catch (NumberFormatException e) {
+			
+			Utility.createErrorMessage("Error", "Threshold values must be comma-separated integers");
+			return false;
+		}
+		
+		Integer[] threshVals = thresholdValues.toArray(new Integer[0]);
+		Arrays.sort(threshVals);
+		thresholdText = "";
+		
+		for (Integer thresholdVal : threshVals)
+			thresholdText += thresholdVal.toString() + ", ";
+		
+		//take off the last ", "
+		if (threshVals.length > 0)
+			thresholdText = thresholdText.substring(0, thresholdText.length() - 2);
+		
+		//everything is okay, so add the interesting species to the list
+		gcmEditor.getReb2Sac().addInterestingSpecies(selected + " " + thresholdText);
+		
+		return true;
+	}
+	
+	/**
+	 * displays the panel and handles the panel data
+	 * 
+	 * @return
+	 */
 	private boolean openGui() {
 		
 		int value = JOptionPane.showOptionDialog(Gui.frame, this, "Species Editor",
@@ -465,97 +572,141 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		String newSpeciesID = null;
 		
 		// if the value is -1 (user hit escape) then set it equal to the cancel value
-		if(value == -1)
-			for(int i=0; i<options.length; i++){if(options[i] == options[1]){value = i;}}
+		if(value == -1) {
+			
+			for(int i=0; i<options.length; i++) {
+				
+				if(options[i] == options[1])
+					value = i;
+			}
+		}
 		
-		if (options[value].equals(options[0])) { // "OK" or "Ok and copy..."
+		// "OK"
+		if (options[value].equals(options[0])) {
+			
 			boolean sbolValueCheck = checkSbolValues();
 			boolean valueCheck = checkValues();
+			
 			if (!valueCheck || !sbolValueCheck) {
+				
 				if (!valueCheck)
 					Utility.createErrorMessage("Error", "Illegal values entered.");
+				
 				return false;
 			}
+			
 			if (selected == null) {
 				if (gcm.getUsedIDs().contains((String)fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Id already exists.");
+					Utility.createErrorMessage("Error", "ID already exists.");
 					return false;
 				}
 			}
 			else if (!selected.equals(fields.get(GlobalConstants.ID).getValue())) {
+				
 				if (gcm.getUsedIDs().contains((String)fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Id already exists.");
+					
+					Utility.createErrorMessage("Error", "ID already exists.");
 					return false;
 				}
 			}
+			
 			if (selected != null
 					&& !gcm.editSpeciesCheck(selected, typeBox.getSelectedItem().toString())) {
+				
 				Utility.createErrorMessage("Error", "Cannot change species type.  "
 						+ "Species is used as a port in a component.");
 				return false;
 			}
+			
 			if (selected != null && (typeBox.getSelectedItem().toString().equals(types[0]) || 
 					typeBox.getSelectedItem().toString().equals(types[3]))) {
+				
 				for (String infl : gcm.getInfluences().keySet()) {
+					
 					String geneProduct = GCMFile.getOutput(infl);
+					
 					if (selected.equals(geneProduct)) {
+						
 						Utility.createErrorMessage("Error", "There must be no connections to an input species " +
 						"or constitutive species.");
 						return false;
 					}
 				}
 			}
+			
 			newSpeciesID = fields.get(GlobalConstants.ID).getValue();
 
 			Properties property = new Properties();
 
-			// preserve positioning info
-			if (selected != null) {
+			if (selected != null) {			
+				
+				//check and add interesting species information
+				if (paramsOnly) {
+					if (!addInterestingSpecies())
+					return false;
+				}
+				
+				// preserve positioning info
 				for (Object s : gcm.getSpecies().get(selected).keySet()) {
+					
 					String k = s.toString();
+					
 					if (k.equals("graphwidth") || k.equals("graphheight") || k.equals("graphy") || k.equals("graphx")) {
+						
 						String v = (gcm.getSpecies().get(selected).getProperty(k)).toString();
 						property.put(k, v);
 					}
 				}
+				
 				if (!paramsOnly) {
+					
 					Species species = gcm.getSBMLDocument().getModel().getSpecies(selected);
 					species.setId(fields.get(GlobalConstants.ID).getValue());
 					species.setName(fields.get(GlobalConstants.NAME).getValue());
+					
 					if (Utility.isValid(fields.get(GlobalConstants.INITIAL_STRING).getValue(), Utility.NUMstring)) {
 						species.setInitialAmount(Double.parseDouble(fields.get(GlobalConstants.INITIAL_STRING).getValue()));
-					} else {
+					} 
+					else {
 						String conc = fields.get(GlobalConstants.INITIAL_STRING).getValue();
 						species.setInitialConcentration(Double.parseDouble(conc.substring(1,conc.length()-1)));
 					}
+					
 					if (specBoundary.getSelectedItem().equals("true")) {
 						species.setBoundaryCondition(true);
 					}
 					else {
 						species.setBoundaryCondition(false);
 					}
+					
 					if (specConstant.getSelectedItem().equals("true")) {
 						species.setConstant(true);
 					}
 					else {
 						species.setConstant(false);
 					}
+					
 					if (specHasOnly.getSelectedItem().equals("true")) {
 						species.setHasOnlySubstanceUnits(true);
 					}
 					else {
 						species.setHasOnlySubstanceUnits(false);
 					}
+					
 					String unit = (String) unitsBox.getSelectedItem();
+					
 					if (unit.equals("( none )")) {
 						species.unsetUnits();
 					}
 					else {
 						species.setUnits(unit);
 					}
+					
 					String convFactor = null;
+					
 					if (gcm.getSBMLDocument().getLevel() > 2) {
 						convFactor = (String) convBox.getSelectedItem();
+						
 						if (convFactor.equals("( none )")) {
 							species.unsetConversionFactor();
 						}
@@ -567,6 +718,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 
 			for (PropertyField f : fields.values()) {
+				
 				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 					property.put(f.getKey(), f.getValue());
 				}
@@ -574,34 +726,43 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					property.remove(f.getKey());
 				}
 			}
+			
 			property.put(GlobalConstants.TYPE, typeBox.getSelectedItem().toString());
 
 			// Add SBOL properties
 			for (SbolField sf : sbolFields.values()) {
+				
 				if (!sf.getText().equals(""))
 					property.put(sf.getType(), sf.getText());
 			}
 			
 			if (selected != null && !selected.equals(newSpeciesID)) {
+				
 				while (gcm.getUsedIDs().contains(selected)) {
 					gcm.getUsedIDs().remove(selected);
 				}
+				
 				gcm.changeSpeciesName(selected, newSpeciesID);
 				((DefaultListModel) influences.getModel()).clear();
 				influences.addAllItem(gcm.getInfluences().keySet());
 				((DefaultListModel) conditions.getModel()).clear();
 				conditions.addAllItem(gcm.getConditions());
 				((DefaultListModel) components.getModel()).clear();
+				
 				for (String c : gcm.getComponents().keySet()) {
+					
 					components.addItem(c + " "
 							+ gcm.getComponents().get(c).getProperty("gcm").replace(".gcm", "")
 							+ " " + gcm.getComponentPortMap(c));
 				}
 			}
+			
 			if (!gcm.getUsedIDs().contains(newSpeciesID)) {
 				gcm.getUsedIDs().add(newSpeciesID);
 			}
+			
 			gcm.addSpecies(newSpeciesID, property);
+			
 			if (paramsOnly) {
 				if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(
 						fields.get(GlobalConstants.INITIAL_STRING).getStates()[1])
@@ -611,9 +772,11 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 								fields.get(GlobalConstants.KDECAY_STRING).getStates()[1])
 						|| fields.get(GlobalConstants.MEMDIFF_STRING).getState().equals(
 								fields.get(GlobalConstants.MEMDIFF_STRING).getStates()[1])) {
+					
 					newSpeciesID += " Modified";
 				}
 			}
+			
 			speciesList.removeItem(selected);
 			speciesList.removeItem(selected + " Modified");
 			speciesList.addItem(newSpeciesID);
@@ -622,7 +785,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			gcmEditor.setDirty(true);
 		}
 
-		if(options[value].equals(options[1])) { // "Cancel"
+		// "Cancel"
+		if(options[value].equals(options[1])) {
 			// System.out.println();
 			return true;
 		}
@@ -630,41 +794,55 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	}
 
 	public String updates() {
+		
 		String updates = "";
+		
 		if (paramsOnly) {
+			
 			if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(
 					fields.get(GlobalConstants.INITIAL_STRING).getStates()[1])) {
+				
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
 						+ GlobalConstants.INITIAL_STRING + " "
 						+ fields.get(GlobalConstants.INITIAL_STRING).getValue();
 			}
+			
 			if (fields.get(GlobalConstants.KDECAY_STRING).getState().equals(
 					fields.get(GlobalConstants.KDECAY_STRING).getStates()[1])) {
+				
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
+				
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
 						+ GlobalConstants.KDECAY_STRING + " "
 						+ fields.get(GlobalConstants.KDECAY_STRING).getValue();
 			}
+			
 			if (fields.get(GlobalConstants.KCOMPLEX_STRING).getState().equals(
 					fields.get(GlobalConstants.KCOMPLEX_STRING).getStates()[1])) {
+				
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
+				
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
 						+ GlobalConstants.KCOMPLEX_STRING + " "
 						+ fields.get(GlobalConstants.KCOMPLEX_STRING).getValue();
 			}
+			
 			if (fields.get(GlobalConstants.MEMDIFF_STRING).getState().equals(
 					fields.get(GlobalConstants.MEMDIFF_STRING).getStates()[1])) {
+				
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
+				
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
 						+ GlobalConstants.MEMDIFF_STRING + " "
 						+ fields.get(GlobalConstants.MEMDIFF_STRING).getValue();
 			}
+			
 			if (updates.equals("")) {
 				updates += fields.get(GlobalConstants.ID).getValue() + "/";
 			}
@@ -676,6 +854,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 			setType(typeBox.getSelectedItem().toString());
 		}
+
+		thresholdTextField.setEnabled(specInteresting.isSelected());
 	}
 
 	private void setType(String type) {
@@ -758,6 +938,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private JComboBox specConstant = null;
 
 	private JComboBox specHasOnly = null;
+	
+	private JCheckBox specInteresting = null;
+	
+	private JTextField thresholdTextField = null;
 
 	private static final String[] types = new String[] { GlobalConstants.INPUT, GlobalConstants.INTERNAL, 
 		GlobalConstants.OUTPUT, GlobalConstants.SPASTIC, GlobalConstants.DIFFUSIBLE};
