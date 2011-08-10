@@ -344,7 +344,7 @@ public class MovieScheme {
 	
 	/**
 	 * adds schemes to the movie scheme
-	 * this data comes from a saved file
+	 * this data comes from a saved filebut
 	 * 
 	 * @param schemes
 	 */

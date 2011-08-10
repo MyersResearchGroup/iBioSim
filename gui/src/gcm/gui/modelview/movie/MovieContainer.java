@@ -14,7 +14,6 @@ import parser.TSDParser;
 import reb2sac.Reb2Sac;
 
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
@@ -23,7 +22,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
@@ -227,7 +225,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 * event handler for when UI buttons are pressed.
 	 */
 	public void actionPerformed(ActionEvent event) {
-		// TODO Auto-generated method stub
+
 		String command = event.getActionCommand();
 		
 		if(command.equals("rewind")){
@@ -471,22 +469,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 	}
 	
-	/**
-	 * 
-	 * @param compName
-	 */
-	public void copyMoviePreferencesComponent(String compName){
-//		this.moviePreferences.copyMoviePreferencesComponent(compName, this.gcm, this.getTSDParser());
-	}
-	
-	/**
-	 * 
-	 * @param speciesName
-	 */
-	public void copyMoviePreferencesSpecies(String speciesName){
-//		this.moviePreferences.copyMoviePreferencesSpecies(speciesName, this.gcm, this.getTSDParser());
-	}
-
 
 	//GET/SET METHODS
 	
@@ -511,10 +493,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 		String fullPath = path + File.separator + "schematic_preferences.json";
 		return fullPath;
 	}
-	
-//	public MoviePreferences getMoviePreferences() {
-//		return moviePreferences;
-//	}
 
 	public Schematic getSchematic() {
 		return schematic;
