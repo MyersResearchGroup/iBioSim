@@ -1,6 +1,5 @@
 package gcm.visitor;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -46,7 +45,8 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 //			s.setName(specie.getName()); this causes things to break...specie lacks name for some reason
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);
-		}
+		} else
+			 document.getModel().removeSpecies(specie.getId());
 
 	}
 

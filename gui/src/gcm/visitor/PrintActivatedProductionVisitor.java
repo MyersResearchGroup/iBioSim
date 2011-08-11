@@ -3,8 +3,7 @@ package gcm.visitor;
 
 
 
-import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.Reaction;
+
 import org.sbml.libsbml.SBMLDocument;
 
 import gcm.network.BaseSpecies;
@@ -14,7 +13,6 @@ import gcm.network.GeneticNetwork;
 import gcm.network.Promoter;
 import gcm.network.SpasticSpecies;
 import gcm.network.SpeciesInterface;
-import gcm.parser.CompatibilityFixer;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
 

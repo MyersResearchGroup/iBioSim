@@ -1,7 +1,6 @@
 package gcm.visitor;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Properties;
 
@@ -9,12 +8,9 @@ import gcm.network.ComplexSpecies;
 import gcm.network.GeneticNetwork;
 import gcm.network.Influence;
 import gcm.network.SpeciesInterface;
-import gcm.parser.CompatibilityFixer;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
 
-import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
 
 public class PrintComplexVisitor extends AbstractPrintVisitor {

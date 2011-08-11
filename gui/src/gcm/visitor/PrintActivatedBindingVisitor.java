@@ -14,11 +14,9 @@ import gcm.network.Promoter;
 import gcm.network.Influence;
 import gcm.network.SpasticSpecies;
 import gcm.network.SpeciesInterface;
-import gcm.parser.CompatibilityFixer;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
 
-import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.SBMLDocument;
 
 public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
