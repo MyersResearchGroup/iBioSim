@@ -256,7 +256,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private String[] BioModelIds = null;
 
-	private JMenuItem copy, rename, delete, save, saveAs, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog, viewCoverage, viewLHPN,
+	private JMenuItem copy, rename, delete, save, saveAs, saveSBOL, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog, viewCoverage, viewLHPN,
 			saveModel, saveAsVerilog, viewSG, viewModGraph, viewLearnedModel, viewModBrowser, createAnal, createLearn, createSbml, createSynth,
 			createVer, close, closeAll;
 
@@ -514,6 +514,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		saveAs = new JMenuItem("Save As");
 		run = new JMenuItem("Save and Run");
 		check = new JMenuItem("Save and Check");
+		saveSBOL = new JMenuItem("Save SBOL");
 		refresh = new JMenuItem("Refresh");
 		viewCircuit = new JMenuItem("Circuit");
 		viewRules = new JMenuItem("Production Rules");
@@ -582,6 +583,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		probGraph.addActionListener(this);
 		save.addActionListener(this);
 		saveAs.addActionListener(this);
+		saveSBOL.addActionListener(this);
 		run.addActionListener(this);
 		check.addActionListener(this);
 		saveModel.addActionListener(this);
@@ -602,6 +604,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		createVer.addActionListener(this);
 		save.setActionCommand("save");
 		saveAs.setActionCommand("saveas");
+		saveSBOL.setActionCommand("saveSBOL");
 		run.setActionCommand("run");
 		check.setActionCommand("check");
 		refresh.setActionCommand("refresh");
@@ -629,6 +632,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
 		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey));
 		saveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | KeyEvent.SHIFT_MASK));
+		//saveSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | KeyEvent.SHIFT_MASK));
 		run.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ShortCutKey));
 		check.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ShortCutKey));
 		pref.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, ShortCutKey));
@@ -748,6 +752,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		save.setEnabled(false);
 		saveModel.setEnabled(false);
 		saveAs.setEnabled(false);
+		saveSBOL.setEnabled(false);
 		run.setEnabled(false);
 		check.setEnabled(false);
 		refresh.setEnabled(false);
@@ -811,6 +816,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			file.add(check);
 		}
 		file.add(run);
+		file.add(saveSBOL);
 		file.add(saveModel);
 		file.addSeparator();
 		file.add(importMenu);
@@ -2240,6 +2246,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof GCM2SBMLEditor) {
 				((GCM2SBMLEditor) comp).exportSBOL();
+			}
+		}
+		else if (e.getSource() == saveSBOL) {
+			Component comp = tab.getSelectedComponent();
+			if (comp instanceof GCM2SBMLEditor) {
+				((GCM2SBMLEditor) comp).saveSBOL();
 			}
 		}
 		else if (e.getSource() == exportCsv) {
@@ -4251,7 +4263,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							if (i != -1) {
 								tab.remove(i);
 							}
-
+							/*
 							SBMLDocument document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 							Model m = document.createModel();
 							document.setModel(m);
@@ -4264,7 +4276,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							SBMLWriter writer = new SBMLWriter();
 							writer.writeSBML(document, root + separator + simName.replace(".gcm", ".xml"));
 							addToTree(simName.replace(".gcm", ".xml"));
-
+*/
 							GCM2SBMLEditor gcm2sbml = new GCM2SBMLEditor(root + separator, f.getName(), this, log, false, null, null, null, false);
 							// gcm2sbml.addMouseListener(this);
 							addTab(f.getName(), gcm2sbml, "GCM Editor");
@@ -8770,6 +8782,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportButton.setEnabled(false);
 		save.setEnabled(false);
 		saveAs.setEnabled(false);
+		saveSBOL.setEnabled(false);
 		saveModel.setEnabled(false);
 		run.setEnabled(false);
 		check.setEnabled(false);
@@ -8802,13 +8815,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			exportButton.setEnabled(true);
 			save.setEnabled(true);
 			saveAs.setEnabled(true);
+			saveSBOL.setEnabled(true);
 			check.setEnabled(true);
 			exportMenu.setEnabled(true);
 			exportSBML.setEnabled(true);
 			exportSBOL.setEnabled(true);
 		}
 		else if (comp instanceof SbolBrowser) {
-			save.setEnabled(true);
+			//save.setEnabled(true);
 		}
 		else if (comp instanceof LHPNEditor) {
 			saveButton.setEnabled(true);

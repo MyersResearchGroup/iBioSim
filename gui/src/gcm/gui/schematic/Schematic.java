@@ -359,8 +359,8 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		toolBar.add(Utils.makeToolButton("", "undo", "Undo", this));
 		toolBar.add(Utils.makeToolButton("", "redo", "Redo", this));
-		toolBar.add(Utils.makeToolButton("", "saveSBOL", "Save SBOL", this));
-		toolBar.add(Utils.makeToolButton("", "exportSBOL", "Export SBOL", this));
+		//toolBar.add(Utils.makeToolButton("", "saveSBOL", "Save SBOL", this));
+		//toolBar.add(Utils.makeToolButton("", "exportSBOL", "Export SBOL", this));
 		
 		toolBar.setFloatable(false);
 		
@@ -434,6 +434,7 @@ public class Schematic extends JPanel implements ActionListener {
 		else if(command == "checkCompartment") {
 			gcm.setIsWithinCompartment(check.isSelected());
 		} 
+		/*
 		else if (command.equals("saveSBOL")) {
 			GCMParser parser = new GCMParser(gcm, false);
 			SbolSynthesizer synthesizer = parser.buildSbolSynthesizer();
@@ -460,6 +461,7 @@ public class Schematic extends JPanel implements ActionListener {
 				}
 			}
 		}
+		*/
 		else if (command.equals("editGridSize")) {
 			
 			//static method that builds the grid editing panel

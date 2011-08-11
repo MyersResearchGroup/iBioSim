@@ -176,8 +176,8 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 
 	private boolean checkValues() {
 		for (PropertyField f : fields.values()) {
-			if (!f.isValidValue() || f.getValue().equals("RNAP") || 
-					f.getValue().endsWith("_RNAP") || f.getValue().endsWith("_bound")) {
+			if (!f.isValidValue() /*|| f.getValue().equals("RNAP") || 
+					f.getValue().endsWith("_RNAP") || f.getValue().endsWith("_bound")*/) {
 				return false;
 			}
 		}

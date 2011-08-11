@@ -1213,6 +1213,11 @@ public class GCMFile {
 				save(this.filename);
 				load(this.filename);
 			}
+			usedIDs = SBMLutilities.CreateListOfUsedIDs(sbml);
+			usedIDs.addAll(components.keySet());
+			usedIDs.addAll(promoters.keySet());
+			usedIDs.addAll(parameters.keySet());
+			//usedIDs.addAll(gcm.getSpecies().keySet());
 		}
 		catch (Exception e) {
 			e.printStackTrace();
