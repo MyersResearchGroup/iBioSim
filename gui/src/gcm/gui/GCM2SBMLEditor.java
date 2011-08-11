@@ -43,7 +43,10 @@ import main.Log;
 
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.InitialAssignment;
+import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
+import org.sbml.libsbml.Parameter;
+import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SBMLWriter;
@@ -906,9 +909,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
 		try {
+			ArrayList<String> dd = new ArrayList<String>();
 			if (!direct.equals(".")) {
 				String[] d = direct.split("_");
-				ArrayList<String> dd = new ArrayList<String>();
 				for (int i = 0; i < d.length; i++) {
 					if (!d[i].contains("=")) {
 						String di = d[i];
@@ -955,9 +958,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			if (direct.equals(".") && !stem.equals("")) {
 				direct = "";
 			}
-			gcm.save(path + separator + gcmname + ".gcm.temporary");
-			GCMParser parser = new GCMParser(path + separator + gcmname + ".gcm.temporary");
-			new File(path + separator + gcmname + ".gcm.temporary").delete();
+			//gcm.save(path + separator + gcmname + ".gcm.temporary");
+			GCMParser parser = new GCMParser(gcm, false);//path + separator + gcmname + ".gcm.temporary");
+			//new File(path + separator + gcmname + ".gcm.temporary").delete();
 			GeneticNetwork network = null;
 			try {
 				network = parser.buildNetwork();
@@ -1002,20 +1005,100 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					}
 					for (long i = d.getModel().getNumRules() - 1; i >= 0; i--) {
 						if (s.contains("=")) {
-							String formula = SBMLutilities.myFormulaToString(((Rule) d.getModel().getListOfRules()
-									.get(i)).getMath());
+							String formula = SBMLutilities.myFormulaToString(((Rule) d.getModel().getListOfRules().get(i)).getMath());
 							String sFormula = s.substring(s.indexOf('=') + 1).trim();
 							sFormula = SBMLutilities.myFormulaToString(SBMLutilities.myParseFormula(sFormula));
 							sFormula = s.substring(0, s.indexOf('=') + 1) + " " + sFormula;
-							if ((((Rule) d.getModel().getListOfRules().get(i)).getVariable() + " = " + formula)
-									.equals(sFormula)) {
+							if ((((Rule) d.getModel().getListOfRules().get(i)).getVariable() + " = " + formula).equals(sFormula)) {
 								d.getModel().getListOfRules().remove(i);
 							}
 						}
 					}
 				}
-				network.mergeSBML(path + separator + simName + separator + stem + direct
-						+ separator + gcmname + ".xml", d);
+				for (int i = 0; i < d.getModel().getNumCompartments(); i++) {
+					for (String change : parameterChanges) {
+						if (change.split(" ")[0].equals(d.getModel().getCompartment(i).getId())) {
+							String[] splits = change.split(" ");
+							if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
+								String value = splits[splits.length - 1];
+								d.getModel().getCompartment(i).setSize(Double.parseDouble(value));
+							}
+						}
+					}
+					for (String di : dd) {
+						if (di.split("=")[0].split(" ")[0].equals(d.getModel().getCompartment(i).getId())) {
+							String value = di.split("=")[1];
+							d.getModel().getCompartment(i).setSize(Double.parseDouble(value));
+						}
+					}
+				}
+				for (int i = 0; i < d.getModel().getNumSpecies(); i++) {
+					for (String change : parameterChanges) {
+						if (change.split(" ")[0].equals(d.getModel().getSpecies(i).getId())) {
+							String[] splits = change.split(" ");
+							if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
+								String value = splits[splits.length - 1];
+								if (d.getModel().getSpecies(i).isSetInitialAmount()) {
+									d.getModel().getSpecies(i).setInitialAmount(Double.parseDouble(value));
+								}
+								else {
+									d.getModel().getSpecies(i).setInitialConcentration(Double.parseDouble(value));
+								}
+							}
+						}
+					}
+					for (String di : dd) {
+						if (di.split("=")[0].split(" ")[0].equals(d.getModel().getSpecies(i).getId())) {
+							String value = di.split("=")[1];
+							if (d.getModel().getSpecies(i).isSetInitialAmount()) {
+								d.getModel().getSpecies(i).setInitialAmount(Double.parseDouble(value));
+							}
+							else {
+								d.getModel().getSpecies(i).setInitialConcentration(Double.parseDouble(value));
+							}
+						}
+					}
+				}
+				for (int i = 0; i < d.getModel().getNumParameters(); i++) {
+					for (String change : parameterChanges) {
+						if (change.split(" ")[0].equals(d.getModel().getParameter(i).getId())) {
+							String[] splits = change.split(" ");
+							if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
+								String value = splits[splits.length - 1];
+								d.getModel().getParameter(i).setValue(Double.parseDouble(value));
+							}
+						}
+					}
+					for (String di : dd) {
+						if (di.split("=")[0].split(" ")[0].equals(d.getModel().getParameter(i).getId())) {
+							String value = di.split("=")[1];
+							d.getModel().getParameter(i).setValue(Double.parseDouble(value));
+						}
+					}
+				}
+				for (int i = 0; i < d.getModel().getNumReactions(); i++) {
+					Reaction reaction = d.getModel().getReaction(i);
+					ListOf parameters = reaction.getKineticLaw().getListOfParameters();
+					for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
+						Parameter paramet = ((Parameter) (parameters.get(j)));
+						for (String change : parameterChanges) {
+							if (change.split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
+								String[] splits = change.split(" ");
+								if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
+									String value = splits[splits.length - 1];
+									paramet.setValue(Double.parseDouble(value));
+								}
+							}
+						}
+						for (String di : dd) {
+							if (di.split("=")[0].split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
+								String value = di.split("=")[1];
+								paramet.setValue(Double.parseDouble(value));
+							}
+						}
+					}
+				}
+				network.mergeSBML(path + separator + simName + separator + stem + direct + separator + gcmname + ".xml", d);
 			}
 			else {
 				network.mergeSBML(path + separator + simName + separator + stem + direct
