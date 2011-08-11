@@ -258,10 +258,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			//if it is interesting, populate the field with its data
 			for (String speciesInfo : interestingSpecies) {
 				
-				if (speciesInfo.contains(selected)) {
+				if (speciesInfo.split(" ")[0].equals(selected)) {
 					
 					speciesMarked = true;
-					thresholdText = speciesInfo.replace(selected, "");
+					thresholdText = speciesInfo.replace(selected, "").trim();
 					break;
 				}
 			}			
