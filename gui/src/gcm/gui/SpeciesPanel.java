@@ -690,6 +690,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						species.setConstant(false);
 					}
 					
+					if (gcm.getSBMLDocument().getModel().getNumCompartments() > 1) {
+						species.setCompartment((String)compartBox.getSelectedItem());
+					}
+
 					if (specHasOnly.getSelectedItem().equals("true")) {
 						species.setHasOnlySubstanceUnits(true);
 					}
@@ -858,8 +862,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 			setType(typeBox.getSelectedItem().toString());
 		}
-
-		thresholdTextField.setEnabled(specInteresting.isSelected());
+		if (paramsOnly) {
+			thresholdTextField.setEnabled(specInteresting.isSelected());
+		}
 	}
 
 	private void setType(String type) {

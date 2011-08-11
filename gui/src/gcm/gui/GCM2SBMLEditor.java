@@ -1197,9 +1197,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		} else {
 			this.schematic = new Schematic(gcm, biosim, this, true, null,compartmentPanel,reactionPanel);
 			tab.addTab("Schematic", schematic);
-			if (gcm.getSBMLDocument().getModel().getNumCompartments() > 1) {
+			//if (gcm.getSBMLDocument().getModel().getNumCompartments() > 1) {
 				tab.addTab("Compartments", compartmentPanel);
-			}
+			//}
 			tab.addTab("Parameters", paramPanel);
 		}
 		

@@ -2304,6 +2304,11 @@ public class GCMFile {
 		Matcher matcher = pattern.matcher(data.toString());
 		if (matcher.find()) {
 			sbmlFile = matcher.group(1);
+			if (!sbmlFile.equals("")) {
+				if (new File(path + separator + sbmlFile).exists()) {
+					sbml = Gui.readSBML(path + separator + sbmlFile);
+				} 	
+			}
 		} 
 		pattern = Pattern.compile(SBML);
 		matcher = pattern.matcher(data.toString());
