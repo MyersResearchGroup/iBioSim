@@ -132,6 +132,43 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		this.add(scroll3, "Center");
 		this.add(addParams, "South");
 	}
+	
+	/**
+	 * Refresh parameter panel
+	 */
+	public void refreshParameterPanel(SBMLDocument document) {
+		String selectedParameter = "";
+		if (!parameters.isSelectionEmpty()) {
+			selectedParameter = ((String) parameters.getSelectedValue()).split(" ")[0];
+		}
+		this.document = document;
+		Model model = document.getModel();
+		ListOf listOfParameters = model.getListOfParameters();
+		String[] params = new String[(int) model.getNumParameters()];
+		for (int i = 0; i < model.getNumParameters(); i++) {
+			Parameter parameter = (Parameter) listOfParameters.get(i);
+			params[i] = parameter.getId();
+			params[i] += " " + parameter.getValue();
+			if (paramsOnly) {
+				for (int j = 0; j < parameterChanges.size(); j++) {
+					if (parameterChanges.get(j).split(" ")[0].equals(params[i].split(" ")[0])) {
+						parameterChanges
+								.set(j, params[i] + " " + parameterChanges.get(j).split(" ")[2] + " " + parameterChanges.get(j).split(" ")[3]);
+						params[i] = parameterChanges.get(j);
+					}
+				}
+			}
+		}
+		Utility.sort(params);
+		int selected = 0;
+		for (int i = 0; i < params.length; i++) {
+			if (params[i].split(" ")[0].equals(selectedParameter)) {
+				selected = i;
+			}
+		}
+		parameters.setListData(params);
+		parameters.setSelectedIndex(selected);
+	}
 
 	/**
 	 * Creates a frame used to edit parameters or create new ones.

@@ -113,6 +113,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	
 	private Schematic schematic;
 
+	private Compartments compartmentPanel;
+	
+	private MySpecies speciesPanel;
+	
+	private Parameters parametersPanel;
+	
+	private Reactions reactionPanel;
+
 	public GCM2SBMLEditor(String path) throws Exception {
 		this(path, null, null, null, false, null, null, null, false);
 	}
@@ -275,7 +283,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			network.mergeSBML(path + separator + simName + separator + gcmname + ".xml");
 			reb2sac.updateSpeciesList();
 		}
-		
+		gcm.reloadSBMLFile();
+		compartmentPanel.refreshCompartmentPanel(gcm.getSBMLDocument());
+		speciesPanel.refreshSpeciesPanel(gcm.getSBMLDocument());
+		parametersPanel.refreshParameterPanel(gcm.getSBMLDocument());
+		reactionPanel.refreshReactionPanel(gcm.getSBMLDocument());
 	}
 
 	public String getGCMName() {
@@ -1180,11 +1192,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		ArrayList<String>usedIDs = gcm.getUsedIDs();
 		
 		String file = filename.replace(".gcm", ".xml");
-		Compartments compartmentPanel = new Compartments(gcm.getSBMLDocument(),usedIDs,dirty,
+		compartmentPanel = new Compartments(gcm.getSBMLDocument(),usedIDs,dirty,
 				paramsOnly,getParams,file,parameterChanges,false);
-		Reactions reactionPanel = new Reactions(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
+		reactionPanel = new Reactions(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
 				paramsOnly,getParams,file,parameterChanges);
-		MySpecies speciesPanel = new MySpecies(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
+		speciesPanel = new MySpecies(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
 				paramsOnly,getParams,file,parameterChanges,true);
 
 		gcm.setSpeciesPanel(speciesPanel);
@@ -1372,7 +1384,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		parameters.addAllItem(generateParameters());
 		initPanel = Utility.createPanel(this, "GCM Parameters", parameters, null, null, editInit);
 		paramPanel.add(initPanel, "Center");
-		Parameters parametersPanel = new Parameters(gcm.getSBMLDocument(),usedIDs,dirty,
+		parametersPanel = new Parameters(gcm.getSBMLDocument(),usedIDs,dirty,
 				paramsOnly,getParams,path + separator + file,parameterChanges);
 		parametersPanel.setPanels(initialsPanel, rulesPanel);
 		paramPanel.add(parametersPanel, "South");

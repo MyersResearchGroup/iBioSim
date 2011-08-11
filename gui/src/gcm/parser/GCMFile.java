@@ -160,6 +160,10 @@ public class GCMFile {
 	public void setSBMLDocument(SBMLDocument sbmlDoc) {
 		sbml = sbmlDoc;
 	}
+	
+	public void reloadSBMLFile() {
+		sbml = Gui.readSBML(path + separator + sbmlFile);
+	}
 
 	public void createLogicalModel(final String filename, final Log log, final Gui biosim,
 			final String lpnName) {

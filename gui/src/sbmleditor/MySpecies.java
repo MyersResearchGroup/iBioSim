@@ -168,6 +168,11 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	 * Refresh species panel
 	 */
 	public void refreshSpeciesPanel(SBMLDocument document) {
+		String selectedSpecies = "";
+		if (!species.isSelectionEmpty()) {
+			selectedSpecies = ((String) species.getSelectedValue()).split(" ")[0];
+		}
+		this.document = document;
 		Model model = document.getModel();
 		ListOf listOfSpecies = model.getListOfSpecies();
 		String[] specs = new String[(int) model.getNumSpecies()];
@@ -180,9 +185,24 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			else {
 				specs[i] += " " + species.getInitialConcentration();
 			}
+			if (paramsOnly) {
+				for (int j = 0; j < parameterChanges.size(); j++) {
+					if (parameterChanges.get(j).split(" ")[0].equals(specs[i].split(" ")[0])) {
+						parameterChanges.set(j, specs[i] + " " + parameterChanges.get(j).split(" ")[2] + " " + parameterChanges.get(j).split(" ")[3]);
+						specs[i] = parameterChanges.get(j);
+					}
+				}
+			}
 		}
 		Utility.sort(specs);
+		int selected = 0;
+		for (int i = 0; i < specs.length; i++) {
+			if (specs[i].split(" ")[0].equals(selectedSpecies)) {
+				selected = i;
+			}
+		}
 		species.setListData(specs);
+		species.setSelectedIndex(selected);
 	}
 
 	/**
