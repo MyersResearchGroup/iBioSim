@@ -302,8 +302,10 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 			compGCM.load(gcm.getPath() + File.separator + comp);
 			
 			//don't allow adding a component with a grid
+			/*
 			if (compGCM.getGrid().isEnabled())
 				componentList.remove(comp);
+				*/
 		}
 		
 		if(componentList.size() == 0){

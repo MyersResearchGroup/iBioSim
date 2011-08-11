@@ -329,15 +329,15 @@ public class Schematic extends JPanel implements ActionListener {
 		//bioInhibitionButton = Utils.makeRadioToolButton("bio_inhibition.png", "", "Create Biological Repression Influences", this, influenceButtonGroup);
 		//toolBar.add(bioInhibitionButton);
 		
-		if (gcm.getSBMLDocument().getModel().getNumCompartments()==1) {
-			toolBar.addSeparator();
-			check = new JCheckBox();
-			check.setActionCommand("checkCompartment");
-			check.addActionListener(this);
-			check.setSelected(gcm.getIsWithinCompartment());
-			toolBar.add(check);
-			toolBar.add(Utils.makeToolButton("", "compartment", "Compartment", this));
-		}
+		//if (gcm.getSBMLDocument().getModel().getNumCompartments()==1) {
+		toolBar.addSeparator();
+		check = new JCheckBox();
+		check.setActionCommand("checkCompartment");
+		check.addActionListener(this);
+		check.setSelected(gcm.getIsWithinCompartment());
+		toolBar.add(check);
+		toolBar.add(Utils.makeToolButton("", "compartment", "Compartment", this));
+		//}
 		toolBar.addSeparator();
 		toolBar.add(Utils.makeToolButton("choose_layout.png", "showLayouts", "Apply Layout", this));
 		
