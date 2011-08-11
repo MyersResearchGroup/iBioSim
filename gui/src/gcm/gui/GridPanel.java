@@ -70,12 +70,12 @@ public class GridPanel extends JPanel implements ActionListener{
 			GCMFile compGCM = new GCMFile(gcm.getPath());
 			compGCM.load(gcm.getPath() + File.separator + comp);
 			
+			if (compGCM.getIsWithinCompartment())
+				compartmentList.add(comp);
+			
 			//don't allow grids within a grid
 			if (compGCM.getGrid().isEnabled())
 				componentList.remove(comp);
-			
-			if (compGCM.getIsWithinCompartment())
-				compartmentList.add(comp);
 		}
 		
 		compartmentList.add("none");

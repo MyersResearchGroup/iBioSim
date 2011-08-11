@@ -168,6 +168,10 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 			
 			if (compGCM.getIsWithinCompartment())
 				compartmentList.add(comp);
+			
+			//don't allow adding a component with a grid
+			if (compGCM.getGrid().isEnabled())
+				componentList.remove(comp);
 		}
 		
 		//tell the user if there aren't any components to use
@@ -292,6 +296,16 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		
 		ArrayList<String> componentList = gcm2sbml.getComponentsList();
 		
+		for (String comp : componentList) {
+			
+			GCMFile compGCM = new GCMFile(gcm.getPath());
+			compGCM.load(gcm.getPath() + File.separator + comp);
+			
+			//don't allow adding a component with a grid
+			if (compGCM.getGrid().isEnabled())
+				componentList.remove(comp);
+		}
+		
 		if(componentList.size() == 0){
 			JOptionPane.showMessageDialog(Gui.frame,
 					"There aren't any other gcms to use as components."
@@ -403,7 +417,6 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	}
 	
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		updateTilingEnabled();
 	}
 	
