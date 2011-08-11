@@ -158,6 +158,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		ArrayList<String> componentList = gcm2sbml.getComponentsList();
 		
 		ArrayList<String> compartmentList = new ArrayList<String>();
+		ArrayList<String> gridComponents = new ArrayList<String>();
 		
 		//find all of the comPARTments, which will be available
 		//to add to the cell population
@@ -166,13 +167,15 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 			GCMFile compGCM = new GCMFile(gcm.getPath());
 			compGCM.load(gcm.getPath() + File.separator + comp);
 			
-			if (compGCM.getIsWithinCompartment())
+			if (compGCM.getIsWithinCompartment() && !compGCM.getGrid().isEnabled())
 				compartmentList.add(comp);
 			
 			//don't allow adding a component with a grid
 			if (compGCM.getGrid().isEnabled())
-				componentList.remove(comp);
+				gridComponents.add(comp);
 		}
+		
+		componentList.removeAll(gridComponents);
 		
 		//tell the user if there aren't any components to use
 		if (componentList.size() == 0) {
@@ -295,6 +298,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	private void openGUI(float mouseX, float mouseY){
 		
 		ArrayList<String> componentList = gcm2sbml.getComponentsList();
+		ArrayList<String> gridComponents = new ArrayList<String>();
 		
 		for (String comp : componentList) {
 			
@@ -302,11 +306,11 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 			compGCM.load(gcm.getPath() + File.separator + comp);
 			
 			//don't allow adding a component with a grid
-			/*
 			if (compGCM.getGrid().isEnabled())
-				componentList.remove(comp);
-				*/
+				gridComponents.add(comp);
 		}
+		
+		componentList.removeAll(gridComponents);
 		
 		if(componentList.size() == 0){
 			JOptionPane.showMessageDialog(Gui.frame,
