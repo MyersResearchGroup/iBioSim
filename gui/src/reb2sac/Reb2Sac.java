@@ -267,6 +267,10 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		}
 
 		this.interestingSpecies = new ArrayList<String>();
+		
+		if (defaultInterestingSpecies != null)
+			this.interestingSpecies = defaultInterestingSpecies;
+		
 		this.biomodelsim = biomodelsim;
 		this.sbmlFile = sbmlFile;
 		this.sbmlProp = sbmlProp;
@@ -539,16 +543,16 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		JPanel sP = new JPanel();
 		((FlowLayout) sP.getLayout()).setAlignment(FlowLayout.LEFT);
 		sP.add(speciesPanel);
-		JLabel interestingLabel = new JLabel("Interesting Species:");
 		JScrollPane sPScroll = new JScrollPane();
 		sPScroll.setMinimumSize(new Dimension(260, 200));
 		sPScroll.setPreferredSize(new Dimension(276, 132));
 		sPScroll.setViewportView(sP);
-		JPanel interestingPanel = new JPanel(new BorderLayout());
-		interestingPanel.add(interestingLabel, "North");
-		interestingPanel.add(sPScroll, "Center");
+//		JLabel interestingLabel = new JLabel("Interesting Species:");
+//		JPanel interestingPanel = new JPanel(new BorderLayout());
+//		interestingPanel.add(interestingLabel, "North");
+//		interestingPanel.add(sPScroll, "Center");
 		speciesInt = new ArrayList<ArrayList<Component>>();
-		createInterestingSpeciesPanel();
+//		createInterestingSpeciesPanel();
 
 		// Creates some abstraction options
 		JPanel advancedGrid = new JPanel(new GridLayout(2, 4));
@@ -581,7 +585,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		advAbs.add(absHolder, "Center");
 		advAbs.add(advancedGrid, "South");
 		advanced.add(advAbs, "North");
-		advanced.add(interestingPanel, "Center");
+//		advanced.add(interestingPanel, "Center");
 
 		// Sets up the radio buttons for Abstraction and Nary
 		JLabel choose = new JLabel("Abstraction:");
@@ -4208,8 +4212,20 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 				for (String s : getLists) {
 					String[] split1 = s.split(" ");
+						
+					//load the species and its thresholds into the list of interesting species
+					String speciesAndThresholds = split1[0];
+					
+					if (split1.length > 1)
+						speciesAndThresholds += " " + split1[1];
+					
+					interestingSpecies.add(speciesAndThresholds);
+					
+					
+					
 					for (int j = 0; j < speciesInt.size(); j++) {
-						if (((JTextField) speciesInt.get(j).get(1)).getText().equals(split1[0])) {
+						if (((JTextField) speciesInt.get(j).get(1)).getText().equals(split1[0])) {		
+							
 							if (!((JCheckBox) speciesInt.get(j).get(0)).isEnabled()) {
 								((JCheckBox) speciesInt.get(j).get(0)).setEnabled(true);
 								((JCheckBox) speciesInt.get(j).get(0)).doClick();
@@ -4466,38 +4482,38 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	}
 
 	private void createInterestingSpeciesPanel() {
-		speciesPanel.removeAll();
-		speciesInt = new ArrayList<ArrayList<Component>>();
-		speciesPanel.setLayout(new GridLayout(allSpecies.length + 1, 1));
-		JPanel label = new JPanel(new GridLayout());
-		label.add(new JLabel("Use"));
-		label.add(new JLabel("Species"));
-		label.add(new JLabel("Number Of Thresholds"));
-		speciesPanel.add(label);
-		int j = 0;
-		for (Object s : allSpecies) {
-			j++;
-			JPanel sp = new JPanel(new GridLayout());
-			ArrayList<Component> specs = new ArrayList<Component>();
-			JCheckBox check = new JCheckBox();
-			check.setSelected(false);
-			specs.add(check);
-			specs.add(new JTextField((String) s));
-			String[] options = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15" };
-			JComboBox combo = new JComboBox(options);
-			combo.setEnabled(false);
-			specs.add(combo);
-			((JTextField) specs.get(1)).setEditable(false);
-			sp.add(specs.get(0));
-			((JCheckBox) specs.get(0)).addActionListener(this);
-			((JCheckBox) specs.get(0)).setActionCommand("box" + j);
-			sp.add(specs.get(1));
-			sp.add(specs.get(2));
-			((JComboBox) specs.get(2)).addActionListener(this);
-			((JComboBox) specs.get(2)).setActionCommand("text" + j);
-			speciesInt.add(specs);
-			speciesPanel.add(sp);
-		}
+//		speciesPanel.removeAll();
+//		speciesInt = new ArrayList<ArrayList<Component>>();
+//		speciesPanel.setLayout(new GridLayout(allSpecies.length + 1, 1));
+//		JPanel label = new JPanel(new GridLayout());
+//		label.add(new JLabel("Use"));
+//		label.add(new JLabel("Species"));
+//		label.add(new JLabel("Number Of Thresholds"));
+//		speciesPanel.add(label);
+//		int j = 0;
+//		for (Object s : allSpecies) {
+//			j++;
+//			JPanel sp = new JPanel(new GridLayout());
+//			ArrayList<Component> specs = new ArrayList<Component>();
+//			JCheckBox check = new JCheckBox();
+//			check.setSelected(false);
+//			specs.add(check);
+//			specs.add(new JTextField((String) s));
+//			String[] options = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15" };
+//			JComboBox combo = new JComboBox(options);
+//			combo.setEnabled(false);
+//			specs.add(combo);
+//			((JTextField) specs.get(1)).setEditable(false);
+//			sp.add(specs.get(0));
+//			((JCheckBox) specs.get(0)).addActionListener(this);
+//			((JCheckBox) specs.get(0)).setActionCommand("box" + j);
+//			sp.add(specs.get(1));
+//			sp.add(specs.get(2));
+//			((JComboBox) specs.get(2)).addActionListener(this);
+//			((JComboBox) specs.get(2)).setActionCommand("text" + j);
+//			speciesInt.add(specs);
+//			speciesPanel.add(sp);
+//		}
 	}
 
 	private void editLine(int num, String thresholds) {

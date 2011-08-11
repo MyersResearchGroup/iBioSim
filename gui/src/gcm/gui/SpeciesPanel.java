@@ -261,7 +261,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				if (speciesInfo.contains(selected)) {
 					
 					speciesMarked = true;
-					thresholdText = speciesInfo.replace(selected+" ", "");
+					thresholdText = speciesInfo.replace(selected, "");
+					break;
 				}
 			}			
 			
@@ -532,7 +533,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		try {
 			//check the threshold values for validity
 			for (String threshold : thresholdText.trim().split(",")) {
-				thresholdValues.add(Integer.parseInt(threshold));
+				thresholdValues.add(Integer.parseInt(threshold.trim()));
 			}
 		}
 		catch (NumberFormatException e) {
@@ -546,11 +547,11 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		thresholdText = "";
 		
 		for (Integer thresholdVal : threshVals)
-			thresholdText += thresholdVal.toString() + ", ";
+			thresholdText += thresholdVal.toString() + ",";
 		
 		//take off the last ", "
 		if (threshVals.length > 0)
-			thresholdText = thresholdText.substring(0, thresholdText.length() - 2);
+			thresholdText = thresholdText.substring(0, thresholdText.length() - 1);
 		
 		//everything is okay, so add the interesting species to the list
 		gcmEditor.getReb2Sac().addInterestingSpecies(selected + " " + thresholdText);
