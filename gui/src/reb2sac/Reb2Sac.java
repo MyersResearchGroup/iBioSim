@@ -268,9 +268,6 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 		this.interestingSpecies = new ArrayList<String>();
 		
-		if (defaultInterestingSpecies != null)
-			this.interestingSpecies = defaultInterestingSpecies;
-		
 		this.biomodelsim = biomodelsim;
 		this.sbmlFile = sbmlFile;
 		this.sbmlProp = sbmlProp;
