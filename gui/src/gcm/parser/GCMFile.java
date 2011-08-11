@@ -162,7 +162,11 @@ public class GCMFile {
 	}
 	
 	public void reloadSBMLFile() {
-		sbml = Gui.readSBML(path + separator + sbmlFile);
+		if (sbml==null) {
+			sbml = Gui.readSBML(path + separator + sbmlFile);
+		} else {
+			sbml.setModel(Gui.readSBML(path + separator + sbmlFile).getModel());
+		}
 	}
 
 	public void createLogicalModel(final String filename, final Log log, final Gui biosim,
@@ -2310,7 +2314,12 @@ public class GCMFile {
 			sbmlFile = matcher.group(1);
 			if (!sbmlFile.equals("")) {
 				if (new File(path + separator + sbmlFile).exists()) {
-					sbml = Gui.readSBML(path + separator + sbmlFile);
+					if (sbml != null) {
+						SBMLDocument document = Gui.readSBML(path + separator + sbmlFile);
+						sbml.setModel(document.getModel());
+					} else {
+						sbml = Gui.readSBML(path + separator + sbmlFile);
+					}
 				} 	
 			}
 		} 
