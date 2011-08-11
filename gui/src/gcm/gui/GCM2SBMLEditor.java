@@ -283,11 +283,13 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			network.mergeSBML(path + separator + simName + separator + gcmname + ".xml");
 			reb2sac.updateSpeciesList();
 		}
+		/*
 		gcm.reloadSBMLFile();
 		compartmentPanel.refreshCompartmentPanel(gcm.getSBMLDocument());
 		speciesPanel.refreshSpeciesPanel(gcm.getSBMLDocument());
 		parametersPanel.refreshParameterPanel(gcm.getSBMLDocument());
 		reactionPanel.refreshReactionPanel(gcm.getSBMLDocument());
+		*/
 	}
 
 	public String getGCMName() {
@@ -1497,7 +1499,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		}
 		gcm.setSBMLFile(gcmname+".xml");
 		sbmlFiles.setSelectedItem(gcm.getSBMLFile());
-		gcm.setSBMLDocument(Gui.readSBML(path + separator + gcm.getSBMLFile()));
+		if (gcm.getSBMLDocument()==null) {
+			gcm.setSBMLDocument(Gui.readSBML(path + separator + gcm.getSBMLFile()));
+		} else {
+			gcm.getSBMLDocument().setModel(Gui.readSBML(path + separator + gcm.getSBMLFile()).getModel());
+		}
 		
 		unlock();
 	}
