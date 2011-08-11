@@ -62,6 +62,7 @@ public class GridPanel extends JPanel implements ActionListener{
 		componentList.add("none");
 		
 		compartmentList = new ArrayList<String>();
+		ArrayList<String> gridComponents = new ArrayList<String>();
 		
 		//find all of the comPARTments, which will be available
 		//to add to the cell population
@@ -70,13 +71,15 @@ public class GridPanel extends JPanel implements ActionListener{
 			GCMFile compGCM = new GCMFile(gcm.getPath());
 			compGCM.load(gcm.getPath() + File.separator + comp);
 			
-			if (compGCM.getIsWithinCompartment())
+			if (compGCM.getIsWithinCompartment() && !compGCM.getGrid().isEnabled())
 				compartmentList.add(comp);
 			
 			//don't allow grids within a grid
 			if (compGCM.getGrid().isEnabled())
-				componentList.remove(comp);
+				gridComponents.add(comp);
 		}
+		
+		componentList.removeAll(gridComponents);
 		
 		compartmentList.add("none");
 		

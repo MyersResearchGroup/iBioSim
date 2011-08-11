@@ -526,32 +526,38 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 * @return whether the values were okay for adding or not
 	 */
 	private boolean addInterestingSpecies() {
+		
 		if (specInteresting.isSelected()) {
+			
 			String thresholdText = thresholdTextField.getText();
 			ArrayList<Integer> thresholdValues = new ArrayList<Integer>();
 
-			try {
-				// check the threshold values for validity
-				for (String threshold : thresholdText.trim().split(",")) {
-					thresholdValues.add(Integer.parseInt(threshold.trim()));
+			//if the threshold text is empty, don't do anything to it
+			if (!thresholdText.isEmpty()) {
+				
+				try {
+					// check the threshold values for validity
+					for (String threshold : thresholdText.trim().split(",")) {
+						thresholdValues.add(Integer.parseInt(threshold.trim()));
+					}
 				}
+				catch (NumberFormatException e) {
+	
+					Utility.createErrorMessage("Error", "Threshold values must be comma-separated integers");
+					return false;
+				}
+	
+				Integer[] threshVals = thresholdValues.toArray(new Integer[0]);
+				Arrays.sort(threshVals);
+				thresholdText = "";
+	
+				for (Integer thresholdVal : threshVals)
+					thresholdText += thresholdVal.toString() + ",";
+	
+				// take off the last ", "
+				if (threshVals.length > 0)
+					thresholdText = thresholdText.substring(0, thresholdText.length() - 1);
 			}
-			catch (NumberFormatException e) {
-
-				Utility.createErrorMessage("Error", "Threshold values must be comma-separated integers");
-				return false;
-			}
-
-			Integer[] threshVals = thresholdValues.toArray(new Integer[0]);
-			Arrays.sort(threshVals);
-			thresholdText = "";
-
-			for (Integer thresholdVal : threshVals)
-				thresholdText += thresholdVal.toString() + ",";
-
-			// take off the last ", "
-			if (threshVals.length > 0)
-				thresholdText = thresholdText.substring(0, thresholdText.length() - 1);
 
 			// everything is okay, so add the interesting species to the list
 			gcmEditor.getReb2Sac().addInterestingSpecies(selected + " " + thresholdText);
@@ -862,9 +868,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 			setType(typeBox.getSelectedItem().toString());
 		}
-		if (paramsOnly) {
+
+		if (paramsOnly)
 			thresholdTextField.setEnabled(specInteresting.isSelected());
-		}
 	}
 
 	private void setType(String type) {
