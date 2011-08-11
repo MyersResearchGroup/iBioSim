@@ -5,22 +5,17 @@ package gcm.visitor;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
-
 import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
-import gcm.network.DiffusibleSpecies;
 import gcm.network.GeneticNetwork;
 import gcm.network.Promoter;
 import gcm.network.Influence;
 import gcm.network.SpasticSpecies;
 import gcm.network.SpeciesInterface;
-import gcm.parser.CompatibilityFixer;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
 
-import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.SBMLDocument;
 
 public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {

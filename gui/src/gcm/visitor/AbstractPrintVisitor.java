@@ -9,19 +9,17 @@ import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
 import gcm.network.DiffusibleSpecies;
-import gcm.network.GeneticNetwork;
 import gcm.network.Influence;
 import gcm.network.NullSpecies;
 import gcm.network.SpasticSpecies;
 import gcm.network.SpeciesInterface;
 import gcm.parser.GCMFile;
-import gcm.util.GlobalConstants;
-import gcm.util.Utility;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
+import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.SBMLDocument;
 
@@ -102,7 +100,7 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 	
 	protected boolean complexAbstraction = false;
 	
-	protected org.sbml.libsbml.Reaction r;
+	protected Reaction r;
 	protected KineticLaw kl;
 	protected HashMap<String, SpeciesInterface> species;
 	protected HashMap<String, ArrayList<Influence>> complexMap;
