@@ -4573,8 +4573,29 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 	 * @param speciesAndThresholds
 	 */
 	public void addInterestingSpecies(String speciesAndThresholds) {
-		
-		interestingSpecies.add(speciesAndThresholds);		
+		String species = speciesAndThresholds.split(" ")[0];
+		for (int i = 0; i < interestingSpecies.size(); i++) {
+			if (interestingSpecies.get(i).split(" ")[0].equals(species)) {
+				interestingSpecies.set(i, speciesAndThresholds);
+				return;
+			}
+		}
+		interestingSpecies.add(speciesAndThresholds);
+	}
+	
+	/**
+	 * removes a string with the species ID and its threshold values from
+	 * the arraylist of interesting species
+	 * 
+	 * @param species
+	 */
+	public void removeInterestingSpecies(String species) {
+		for (int i = 0; i < interestingSpecies.size(); i++) {
+			if (interestingSpecies.get(i).split(" ")[0].equals(species)) {
+				interestingSpecies.remove(i);
+				return;
+			}
+		}
 	}
 
 	private String[] getAllSpecies() {
