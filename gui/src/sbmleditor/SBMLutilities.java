@@ -535,8 +535,9 @@ public class SBMLutilities {
 	}
 
 	public static ArrayList<String> CreateListOfUsedIDs(SBMLDocument document) {
-		Model model = document.getModel();
 		ArrayList<String> usedIDs = new ArrayList<String>();
+		if (document==null) return usedIDs;
+		Model model = document.getModel();
 		if (model.isSetId()) {
 			usedIDs.add(model.getId());
 		}
