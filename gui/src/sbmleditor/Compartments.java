@@ -28,6 +28,7 @@ import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.CompartmentType;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
+import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
@@ -889,6 +890,43 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 				compUnits.setSelectedItem(compartment.getUnits());
 			}
 		}
+	}
+	
+	/**
+	 * Refresh compartment panel
+	 */
+	public void refreshCompartmentPanel(SBMLDocument document) {
+		String selectedCompartment = "";
+		if (!compartments.isSelectionEmpty()) {
+			selectedCompartment = ((String) compartments.getSelectedValue()).split(" ")[0];
+		}
+		this.document = document;
+		Model model = document.getModel();
+		ListOf listOfCompartments = model.getListOfCompartments();
+		String[] comparts = new String[(int) model.getNumCompartments()];
+		for (int i = 0; i < model.getNumCompartments(); i++) {
+			Compartment compartment = (Compartment) listOfCompartments.get(i);
+			comparts[i] = compartment.getId();
+			comparts[i] += " " + compartment.getSize();
+			if (paramsOnly) {
+				for (int j = 0; j < parameterChanges.size(); j++) {
+					if (parameterChanges.get(j).split(" ")[0].equals(comparts[i].split(" ")[0])) {
+						parameterChanges.set(j, comparts[i] + " " + parameterChanges.get(j).split(" ")[2] + " "
+								+ parameterChanges.get(j).split(" ")[3]);
+						comparts[i] = parameterChanges.get(j);
+					}
+				}
+			}
+		}
+		Utility.sort(comparts);
+		int selected = 0;
+		for (int i = 0; i < comparts.length; i++) {
+			if (comparts[i].split(" ")[0].equals(selectedCompartment)) {
+				selected = i;
+			}
+		}
+		compartments.setListData(comparts);
+		compartments.setSelectedIndex(selected);
 	}
 
 	/**

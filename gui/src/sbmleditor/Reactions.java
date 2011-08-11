@@ -2581,6 +2581,55 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			}
 		}
 	}
+	
+	/**
+	 * Refresh reaction panel
+	 */
+	public void refreshReactionPanel(SBMLDocument document) {
+		String selectedReaction = "";
+		if (!reactions.isSelectionEmpty()) {
+			selectedReaction = ((String) reactions.getSelectedValue()).split(" ")[0];
+		}
+		this.document = document;
+		Model model = document.getModel();
+		ListOf listOfReactions = model.getListOfReactions();
+		reacts = new String[(int) model.getNumReactions()];
+		for (int i = 0; i < model.getNumReactions(); i++) {
+			Reaction reaction = (Reaction) listOfReactions.get(i);
+			reacts[i] = reaction.getId();
+			if (paramsOnly) {
+				ListOf params = reaction.getKineticLaw().getListOfParameters();
+				for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
+					Parameter paramet = ((Parameter) (params.get(j)));
+					for (int k = 0; k < parameterChanges.size(); k++) {
+						if (parameterChanges.get(k).split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
+							String[] splits = parameterChanges.get(k).split(" ");
+							if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
+								String value = splits[splits.length - 1];
+								paramet.setValue(Double.parseDouble(value));
+							}
+							else if (splits[splits.length - 2].equals("Sweep")) {
+								String value = splits[splits.length - 1];
+								paramet.setValue(Double.parseDouble(value.split(",")[0].substring(1).trim()));
+							}
+							if (!reacts[i].contains("Modified")) {
+								reacts[i] += " Modified";
+							}
+						}
+					}
+				}
+			}
+		}
+		Utility.sort(reacts);
+		int selected = 0;
+		for (int i = 0; i < reacts.length; i++) {
+			if (reacts[i].split(" ")[0].equals(selectedReaction)) {
+				selected = i;
+			}
+		}
+		reactions.setListData(reacts);
+		reactions.setSelectedIndex(selected);
+	}
 
 	/**
 	 * This method currently does nothing.
