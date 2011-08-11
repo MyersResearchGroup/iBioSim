@@ -153,6 +153,7 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		// initialize everything on creation.
 		display();
+		gcm2sbml.setDirty(false);
 	}
 	
 	/**
