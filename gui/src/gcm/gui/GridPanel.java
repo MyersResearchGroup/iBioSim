@@ -202,7 +202,12 @@ public class GridPanel extends JPanel implements ActionListener{
 			
 			return true;
 		}
-		else return false;
+		else {
+			
+			Grid grid = gcm.getGrid();
+			grid.setEnabled(true);
+			return true;
+		}
 	}
 	
 	/**
