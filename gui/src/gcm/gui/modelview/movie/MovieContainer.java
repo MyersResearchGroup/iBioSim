@@ -12,6 +12,7 @@ import gcm.util.GlobalConstants;
 import main.Gui;
 import parser.TSDParser;
 import reb2sac.Reb2Sac;
+import sbmleditor.MySpecies;
 
 import com.google.gson.Gson;
 
@@ -26,6 +27,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -81,7 +83,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		super(new BorderLayout());
 		
-		schematic = new Schematic(gcm, biosim, gcm2sbml, false, this, null, gcm.getReactionPanel());
+		JComboBox compartmentList = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());
+		schematic = new Schematic(gcm, biosim, gcm2sbml, false, this, null, gcm.getReactionPanel(), compartmentList);
 		this.add(schematic, BorderLayout.CENTER);
 		
 		this.gcm = gcm;
