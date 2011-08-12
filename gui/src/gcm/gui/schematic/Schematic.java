@@ -326,11 +326,13 @@ public class Schematic extends JPanel implements ActionListener {
 		//compartmentList = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());
 		compartmentList.setSelectedItem(gcm.getEnclosingCompartment());
 		compartmentList.addActionListener(this);
+		/*
 		if (gcm.getIsWithinCompartment()) {
 			compartmentList.setEnabled(true);
 		} else {
 			compartmentList.setEnabled(false);
 		}
+		*/
 		compartmentList.setMaximumSize(new Dimension(200, (int)compartmentList.getPreferredSize().getHeight()));
 		compartmentList.addMouseListener(new MouseAdapter(){
 			
@@ -455,11 +457,13 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		else if(command == "checkCompartment") {
 			gcm.setIsWithinCompartment(check.isSelected());
+			/*
 			if (check.isSelected()) {
 				compartmentList.setEnabled(true);
 			} else {
 				compartmentList.setEnabled(false);
 			}
+			*/
 		} 
 		/*
 		else if (command.equals("saveSBOL")) {
