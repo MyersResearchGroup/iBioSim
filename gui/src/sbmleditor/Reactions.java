@@ -2597,24 +2597,22 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		for (int i = 0; i < model.getNumReactions(); i++) {
 			Reaction reaction = (Reaction) listOfReactions.get(i);
 			reacts[i] = reaction.getId();
-			if (paramsOnly) {
-				ListOf params = reaction.getKineticLaw().getListOfParameters();
-				for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
-					Parameter paramet = ((Parameter) (params.get(j)));
-					for (int k = 0; k < parameterChanges.size(); k++) {
-						if (parameterChanges.get(k).split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
-							String[] splits = parameterChanges.get(k).split(" ");
-							if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
-								String value = splits[splits.length - 1];
-								paramet.setValue(Double.parseDouble(value));
-							}
-							else if (splits[splits.length - 2].equals("Sweep")) {
-								String value = splits[splits.length - 1];
-								paramet.setValue(Double.parseDouble(value.split(",")[0].substring(1).trim()));
-							}
-							if (!reacts[i].contains("Modified")) {
-								reacts[i] += " Modified";
-							}
+			ListOf params = reaction.getKineticLaw().getListOfParameters();
+			for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
+				Parameter paramet = ((Parameter) (params.get(j)));
+				for (int k = 0; k < parameterChanges.size(); k++) {
+					if (parameterChanges.get(k).split(" ")[0].equals(reaction.getId() + "/" + paramet.getId())) {
+						String[] splits = parameterChanges.get(k).split(" ");
+						if (splits[splits.length - 2].equals("Modified") || splits[splits.length - 2].equals("Custom")) {
+							String value = splits[splits.length - 1];
+							paramet.setValue(Double.parseDouble(value));
+						}
+						else if (splits[splits.length - 2].equals("Sweep")) {
+							String value = splits[splits.length - 1];
+							paramet.setValue(Double.parseDouble(value.split(",")[0].substring(1).trim()));
+						}
+						if (!reacts[i].contains("Modified")) {
+							reacts[i] += " Modified";
 						}
 					}
 				}

@@ -908,13 +908,11 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			Compartment compartment = (Compartment) listOfCompartments.get(i);
 			comparts[i] = compartment.getId();
 			comparts[i] += " " + compartment.getSize();
-			if (paramsOnly) {
-				for (int j = 0; j < parameterChanges.size(); j++) {
-					if (parameterChanges.get(j).split(" ")[0].equals(comparts[i].split(" ")[0])) {
-						parameterChanges.set(j, comparts[i] + " " + parameterChanges.get(j).split(" ")[2] + " "
-								+ parameterChanges.get(j).split(" ")[3]);
-						comparts[i] = parameterChanges.get(j);
-					}
+			for (int j = 0; j < parameterChanges.size(); j++) {
+				if (parameterChanges.get(j).split(" ")[0].equals(comparts[i].split(" ")[0])) {
+					parameterChanges.set(j, comparts[i] + " " + parameterChanges.get(j).split(" ")[2] + " "
+							+ parameterChanges.get(j).split(" ")[3]);
+					comparts[i] = parameterChanges.get(j);
 				}
 			}
 		}
