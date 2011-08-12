@@ -19,7 +19,6 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import org.sbml.libsbml.Species;
@@ -134,6 +133,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		JPanel tempPanel = new JPanel();
 		JLabel tempLabel = new JLabel(GlobalConstants.TYPE);
 		typeBox = new JComboBox(types);
+		
+		//disallow input/output types for species in an enclosed GCM
+		if (!gcm.getEnclosingCompartment().isEmpty()) {
+			typeBox.removeItem(GlobalConstants.INPUT);
+			typeBox.removeItem(GlobalConstants.OUTPUT);
+		}
+		
 		typeBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
