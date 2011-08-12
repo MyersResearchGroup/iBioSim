@@ -282,14 +282,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			GeneticNetwork.setRoot(path + separator);
 			network.mergeSBML(path + separator + simName + separator + gcmname + ".xml");
 			reb2sac.updateSpeciesList();
+			gcm.reloadSBMLFile();
+			compartmentPanel.refreshCompartmentPanel(gcm.getSBMLDocument());
+			speciesPanel.refreshSpeciesPanel(gcm.getSBMLDocument());
+			parametersPanel.refreshParameterPanel(gcm.getSBMLDocument());
+			reactionPanel.refreshReactionPanel(gcm.getSBMLDocument());
 		}
-		/*
-		gcm.reloadSBMLFile();
-		compartmentPanel.refreshCompartmentPanel(gcm.getSBMLDocument());
-		speciesPanel.refreshSpeciesPanel(gcm.getSBMLDocument());
-		parametersPanel.refreshParameterPanel(gcm.getSBMLDocument());
-		reactionPanel.refreshReactionPanel(gcm.getSBMLDocument());
-		*/
 	}
 
 	public String getGCMName() {
