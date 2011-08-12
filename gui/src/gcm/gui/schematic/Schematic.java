@@ -8,7 +8,6 @@ import gcm.gui.InfluencePanel;
 import gcm.gui.modelview.movie.MovieContainer;
 import gcm.gui.modelview.movie.SchemeChooserPanel;
 import gcm.parser.GCMFile;
-import gcm.parser.GCMParser;
 import gcm.util.GlobalConstants;
 
 import java.awt.BorderLayout;
@@ -20,32 +19,24 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Properties;
-import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFileChooser;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -58,20 +49,10 @@ import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SpeciesReference;
-import org.sbolstandard.libSBOLj.DnaComponent;
-import org.sbolstandard.libSBOLj.DnaSequence;
-import org.sbolstandard.libSBOLj.Library;
-import org.sbolstandard.libSBOLj.SbolService;
-import org.sbolstandard.libSBOLj.IOTools;
-import org.sbolstandard.libSBOLj.SequenceAnnotation;
-import org.sbolstandard.libSBOLj.SequenceFeature;
 
 import sbmleditor.Compartments;
+import sbmleditor.MySpecies;
 import sbmleditor.Reactions;
-import sbol.SbolBrowser;
-import sbol.SbolSynthesizer;
-import sbol.SbolUtility;
-import util.Utility;
 
 import main.Gui;
 
@@ -102,6 +83,7 @@ public class Schematic extends JPanel implements ActionListener {
 	private Compartments compartments;
 	private Reactions reactions;
 	private JCheckBox check;
+	private JComboBox compartmentList;
 	private Grid grid;
 	
 	//toolbar buttons
@@ -337,7 +319,11 @@ public class Schematic extends JPanel implements ActionListener {
 		check.addActionListener(this);
 		check.setSelected(gcm.getIsWithinCompartment());
 		toolBar.add(check);
-		toolBar.add(Utils.makeToolButton("", "compartment", "Compartment", this));
+		compartmentList = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());
+		compartmentList.setSelectedItem(gcm.getEnclosingCompartment());
+		compartmentList.addActionListener(this);
+		toolBar.add(compartmentList);
+		//toolBar.add(Utils.makeToolButton("", "compartment", "Compartment", this));
 		//}
 		toolBar.addSeparator();
 		toolBar.add(Utils.makeToolButton("choose_layout.png", "showLayouts", "Apply Layout", this));
@@ -485,6 +471,9 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		else if(command == ""){
 			// radio buttons don't have to do anything and have an action command of "".
+		}
+		else if(command == "comboBoxChanged") {
+			gcm.setEnclosingCompartment((String)compartmentList.getSelectedItem());
 		}
 		else{
 			throw(new Error("Invalid actionCommand: " + command));
