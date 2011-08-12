@@ -432,7 +432,8 @@ public class GCMFile {
 			// recursively add this component's sbml (and its inside components'
 			// sbml, etc.) to the overall sbml
 			sbml = unionSBML(sbml, unionGCM(this, file, s, includeSBML, copy), s, this.components, 
-					file.getIsWithinCompartment(),file.getParameter(GlobalConstants.RNAP_STRING));
+					file.getIsWithinCompartment(),file.getParameter(GlobalConstants.RNAP_STRING),
+					file.getEnclosingCompartment());
 			if (sbml == null && copy.isEmpty()) {
 				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n" + "There is a loop in the components.");
 				load(filename + ".temp");
@@ -498,7 +499,8 @@ public class GCMFile {
 			}
 			copy.add(file.getFilename());
 			sbml = unionSBML(sbml, unionGCM(bottomLevel, file, s, includeSBML, copy), s, bottomLevel.components, 
-					file.getIsWithinCompartment(),file.getParameter(GlobalConstants.RNAP_STRING));
+					file.getIsWithinCompartment(),file.getParameter(GlobalConstants.RNAP_STRING),
+					file.getEnclosingCompartment());
 			if (sbml == null) {
 				return null;
 			}
@@ -1463,7 +1465,11 @@ public class GCMFile {
 			}
 			usedIDs.add(reactionId);
 			r.setId(reactionId);
-			r.setCompartment(m.getCompartment(0).getId());
+			if (enclosingCompartment.equals("")) {
+				r.setCompartment(m.getCompartment(0).getId());
+			} else {
+				r.setCompartment(enclosingCompartment);
+			}
 			r.setReversible(false);
 			r.setFast(false);
 			if (isModifier) { 
@@ -2049,7 +2055,11 @@ public class GCMFile {
 			Species s = m.createSpecies();
 			s.setId(id);
 			usedIDs.add(id);
-			s.setCompartment(m.getCompartment(0).getId());
+			if (enclosingCompartment.equals("")) {
+				s.setCompartment(m.getCompartment(0).getId());
+			} else {
+				s.setCompartment(enclosingCompartment);
+			}
 			s.setBoundaryCondition(false);
 			s.setConstant(false);
 			s.setInitialAmount(0);
@@ -2075,7 +2085,11 @@ public class GCMFile {
 			Model m = sbml.getModel();
 			Reaction r = m.createReaction();
 			r.setId(id);
-			r.setCompartment(m.getCompartment(0).getId());
+			if (enclosingCompartment.equals("")) {
+				r.setCompartment(m.getCompartment(0).getId());
+			} else {
+				r.setCompartment(enclosingCompartment);
+			}
 			r.setReversible(false);
 			r.setFast(false);
 			KineticLaw k = r.createKineticLaw();
@@ -2845,7 +2859,7 @@ public class GCMFile {
 	}
 
 	private SBMLDocument unionSBML(SBMLDocument mainDoc, SBMLDocument doc, String compName, HashMap<String, Properties> components,
-			boolean isWithinCompartment, String RNAPamount) {
+			boolean isWithinCompartment, String RNAPamount, String topComp) {
 		Model m = doc.getModel();
 		for (int i = 0; i < m.getNumCompartmentTypes(); i++) {
 			org.sbml.libsbml.CompartmentType c = m.getCompartmentType(i);
@@ -2874,7 +2888,9 @@ public class GCMFile {
 				c.setId(compName + "__" + c.getId());
 			}
 			else {
-				String topComp = mainDoc.getModel().getCompartment(0).getId();
+				if (topComp.equals("")) {
+					topComp = mainDoc.getModel().getCompartment(0).getId();
+				}
 				updateVarId(false, c.getId(), topComp, doc);
 				compartments.remove(c.getId());
 				c.setId(topComp);
