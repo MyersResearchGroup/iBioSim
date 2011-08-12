@@ -12,6 +12,7 @@ import gcm.util.GlobalConstants;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Point;
 import java.awt.Rectangle;
@@ -21,6 +22,7 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -45,6 +47,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
 
+import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Reaction;
@@ -327,6 +330,32 @@ public class Schematic extends JPanel implements ActionListener {
 		} else {
 			compartmentList.setEnabled(false);
 		}
+		compartmentList.setMaximumSize(new Dimension(200, (int)compartmentList.getPreferredSize().getHeight()));
+		compartmentList.addMouseListener(new MouseAdapter(){
+			
+			//updates whenever the mouse clicks (namely on the drop-down arrow)
+			public void mouseClicked(MouseEvent event) {
+				
+				compartmentList.removeAllItems();
+				
+				ListOf listOfCompartments = gcm.getSBMLDocument().getModel().getListOfCompartments();
+				String[] add = new String[(int) gcm.getSBMLDocument().getModel().getNumCompartments()];
+				
+				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
+					add[i] = ((Compartment) listOfCompartments.get(i)).getId();
+				}
+				try {
+					add[0].getBytes();
+				}
+				catch (Exception e) {
+					add = new String[1];
+					add[0] = "default";
+				}
+				
+				for (int i = 0; i < add.length; ++i)
+					compartmentList.addItem(add[i]);
+			}			
+		});
 		toolBar.add(compartmentList);
 		//toolBar.add(Utils.makeToolButton("", "compartment", "Compartment", this));
 		//}
