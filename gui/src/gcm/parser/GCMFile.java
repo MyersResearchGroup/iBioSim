@@ -1100,6 +1100,7 @@ public class GCMFile {
 				}
 			}
 			buffer.append("compartment="+isWithinCompartment+"\n");
+			buffer.append("compartmentId="+enclosingCompartment+"\n");
 			buffer.append("}\nPromoters {\n");
 			for (String s : promoters.keySet()) {
 				if (collectGarbage) {
@@ -2350,6 +2351,9 @@ public class GCMFile {
 					}
 					continue;
 				}
+				if (matcher.group(1).equals("compartmentId")) {
+					enclosingCompartment = matcher.group(2);
+				}
 				String prop = CompatibilityFixer.convertOLDName(matcher.group(1));
 				if (matcher.group(3) != null) {
 					globalParameters.put(prop, matcher.group(3));
@@ -3521,9 +3525,16 @@ public class GCMFile {
 		grid.createGrid(rows, cols, this, null, gridSpatial);
 	}
 	
+	public String getEnclosingCompartment() {
+		return enclosingCompartment;
+	}
+
+	public void setEnclosingCompartment(String enclosingCompartment) {
+		this.enclosingCompartment = enclosingCompartment;
+	}
 	
 	//CONSTANTS AND VARIABLES
-	
+
 	private static final String NETWORK = "digraph\\sG\\s\\{([^}]*)\\s\\}";
 
 	private static final String STATE = "(^|\\n) *([^- \\n]*) *\\[(.*)\\]";
@@ -3583,6 +3594,8 @@ public class GCMFile {
 	private HashMap<String, String> globalParameters;
 	
 	private boolean isWithinCompartment;
+	
+	private String enclosingCompartment;
 
 	private ArrayList<String >usedIDs;
 	
