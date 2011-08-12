@@ -5,6 +5,7 @@ import gcm.gui.DropComponentPanel;
 import gcm.gui.GCM2SBMLEditor;
 import gcm.gui.Grid;
 import gcm.gui.InfluencePanel;
+import gcm.gui.SpeciesPanel;
 import gcm.gui.modelview.movie.MovieContainer;
 import gcm.gui.modelview.movie.SchemeChooserPanel;
 import gcm.parser.GCMFile;
@@ -14,6 +15,7 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
@@ -39,10 +41,13 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
@@ -1492,12 +1497,49 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		if(cellType == GlobalConstants.SPECIES){
 			
-			//if no TSD file is selected, show the sweep panel
-			if(movieContainer == null || movieContainer.getTSDParser() == null)
-				gcm2sbml.launchSpeciesPanel(cell.getId());
-			//if there's a TSD file selected, show the color appearance panel
+			if (!editable) {
+				//if we're in analysis view, we need a tabbed pane
+				//to allow for changing species parameters and movie appearance
+				JTabbedPane speciesPane = new JTabbedPane();			
+				
+				SchemeChooserPanel scPanel = null;
+				SpeciesPanel speciesPanel = gcm2sbml.launchSpeciesPanel(cell.getId(), true);
+				
+				speciesPane.addTab("Parameters", speciesPanel);
+				
+				//make sure a simulation file is selected before adding the appearance panel
+				if(movieContainer != null && movieContainer.getTSDParser() != null) {
+					scPanel = gcm2sbml.getSchemeChooserPanel(cell.getId(), movieContainer, true);
+					speciesPane.addTab("Appearance", scPanel);
+				}
+				else {
+					
+					 JPanel panel = new JPanel(false);
+				        JLabel text = new JLabel(
+				        		"To modify this species' appearance, please select a simulation file");
+				        text.setHorizontalAlignment(JLabel.LEFT);
+				        text.setVerticalAlignment(JLabel.TOP);
+				        panel.setLayout(new GridLayout(1, 1));
+				        panel.add(text);
+				        
+					speciesPane.addTab("Appearance", panel);
+				}
+				
+				String[] options = {"Save Changes", GlobalConstants.CANCEL};
+				
+				int okCancel = JOptionPane.showOptionDialog(Gui.frame, speciesPane, "Edit Species",
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				
+				if (okCancel == JOptionPane.OK_OPTION) {
+					
+					if (scPanel !=null) 
+						scPanel.updateMovieScheme();
+					
+					speciesPanel.handlePanelData(0);
+				}
+			}
 			else
-				SchemeChooserPanel.showSchemeChooserPanel(cell.getId(), movieContainer);
+				gcm2sbml.launchSpeciesPanel(cell.getId(), false);
 		}
 		else if(cellType == GlobalConstants.INFLUENCE){
 			
@@ -1700,7 +1742,7 @@ public class Schematic extends JPanel implements ActionListener {
 			super(arg0);
 		}
 		
-		public Rectangle getBounds() {			
+		public Rectangle getBounds() {
 			return this.bounds;
 		}		
 	}

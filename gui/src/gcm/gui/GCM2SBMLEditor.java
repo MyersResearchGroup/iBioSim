@@ -1,6 +1,7 @@
 package gcm.gui;
 
 import gcm.gui.modelview.movie.MovieContainer;
+import gcm.gui.modelview.movie.SchemeChooserPanel;
 import gcm.gui.schematic.Schematic;
 import gcm.network.GeneticNetwork;
 import gcm.parser.CompatibilityFixer;
@@ -1706,7 +1707,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 					}
 				}
 
-				launchSpeciesPanel(selected);
+				launchSpeciesPanel(selected, false);
 
 			}
 			else if (getName().contains("Influence")) {
@@ -1811,13 +1812,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		return panel;
 	}
 
-	public SpeciesPanel launchSpeciesPanel(String id){
+	public SpeciesPanel launchSpeciesPanel(String id, boolean inTab){
 		GCMFile refGCM = null;
 		if (paramsOnly) {
 			refGCM = new GCMFile(path);
 			refGCM.load(path + separator + refFile);
 		}
-		SpeciesPanel panel = new SpeciesPanel(id, species, influences, conditions, components, gcm, paramsOnly, refGCM, this);
+		SpeciesPanel panel = new SpeciesPanel(id, species, influences, conditions, 
+				components, gcm, paramsOnly, refGCM, this, inTab);
 		
 		if (paramsOnly) {
 			String updates = panel.updates();
@@ -1837,6 +1839,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		
 		return panel;
 	}
+	
 	public InfluencePanel launchInfluencePanel(String id){
 		GCMFile refGCM = null;
 		if (paramsOnly) {
@@ -1862,6 +1865,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		}
 		return panel;
 	}
+	
 	public String launchComponentPanel(String id){
 		GCMFile refGCM = null;
 		if (paramsOnly) {
@@ -1902,6 +1906,13 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			gcm.makeUndoPoint();
 		}
 	}
+	
+	public SchemeChooserPanel getSchemeChooserPanel(
+			String cellID, MovieContainer movieContainer, boolean inTab) {
+		
+		return new SchemeChooserPanel(cellID, movieContainer, inTab);
+	}
+	
 	
 	public boolean checkNoComponentLoop(String gcm, String checkFile) {
 		boolean check = true;

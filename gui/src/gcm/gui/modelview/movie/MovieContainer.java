@@ -17,6 +17,7 @@ import sbmleditor.MySpecies;
 import com.google.gson.Gson;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -200,7 +201,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		// Add the bottom menu bar
 		JToolBar mt = new JToolBar();
 		
-		fileButton = Utils.makeToolButton("", "choose_simulation_file", "Choose TSD File", this);
+		fileButton = Utils.makeToolButton("", "choose_simulation_file", "Choose Simulation File", this);
 		mt.add(fileButton);
 		
 		rewindButton = Utils.makeToolButton("movie" + File.separator + "rewind.png", "rewind", "Rewind", this);
@@ -211,7 +212,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		playPauseButton = Utils.makeToolButton("movie" + File.separator + "play.png", "playpause", "Play", this);
 		mt.add(playPauseButton);
-		
+			
 		slider = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 0);
 		slider.setSnapToTicks(true);
 		mt.add(slider);
