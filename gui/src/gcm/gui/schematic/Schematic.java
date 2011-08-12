@@ -112,9 +112,6 @@ public class Schematic extends JPanel implements ActionListener {
 	
 	private JPopupMenu layoutPopup;
 	
-	//keeps a list of listeners that the movie container uses
-	protected javax.swing.event.EventListenerList listenerList;
-	
 	
 	//CLASS METHODS
 	
@@ -139,8 +136,6 @@ public class Schematic extends JPanel implements ActionListener {
 		this.reactions = reactions;
 		this.grid = gcm.getGrid();
 		this.compartmentList = compartmentList;
-		
-		listenerList = new javax.swing.event.EventListenerList();
 		
 		// initialize everything on creation.
 		display();
@@ -461,7 +456,32 @@ public class Schematic extends JPanel implements ActionListener {
 			}
 		}
 		else if(command == "checkCompartment") {
-			gcm.setIsWithinCompartment(check.isSelected());
+			
+			boolean disallow = false;
+			
+			//don't allow the compartment box to be ticked if there
+			//are input or output species in the GCM
+			for (Properties speciesProp : gcm.getSpecies().values()) {
+				
+				if (speciesProp.getProperty("Type").equals(GlobalConstants.INPUT) ||
+						speciesProp.getProperty("Type").equals(GlobalConstants.OUTPUT)) {
+					
+					disallow = true;
+					break;
+				}
+			}
+			
+			if (!disallow)
+				gcm.setIsWithinCompartment(check.isSelected());
+			else {
+				
+				check.setSelected(false);
+				
+				JOptionPane.showMessageDialog(Gui.frame, 
+						"A GCM cannot become a compartment with input and output species present.\n" +
+						"Diffusible species should be used to transport species across a compartment membrane.",
+						"Warning", JOptionPane.WARNING_MESSAGE);
+			}
 			/*
 			if (check.isSelected()) {
 				compartmentList.setEnabled(true);
@@ -1133,8 +1153,7 @@ public class Schematic extends JPanel implements ActionListener {
 	}
     
     
-	//INPUT/OUTPUT AND CONNECTION METHODS
-	
+	//INPUT/OUTPUT AND CONNECTION METHODS	
 	
 	/**
 	 * Tries to properly connect an edge that is connected in the graph. Called 
@@ -1596,7 +1615,8 @@ public class Schematic extends JPanel implements ActionListener {
 			else{
 				
 				if(movieContainer.getTSDParser() == null)
-					JOptionPane.showMessageDialog(Gui.frame, "You must choose a simulation file before editing component properties.");
+					JOptionPane.showMessageDialog(Gui.frame, 
+							"You must choose a simulation file before editing component properties.");
 				else {
 					SchemeChooserPanel.showSchemeChooserPanel(cell.getId(), movieContainer);
 				}
