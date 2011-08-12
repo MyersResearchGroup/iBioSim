@@ -109,6 +109,7 @@ public class GCMFile {
 		globalParameters = new HashMap<String, String>();
 		parameters = new HashMap<String, String>();
 		isWithinCompartment = false;
+		enclosingCompartment = "";
 		grid = new Grid();
 		loadDefaultParameters();
 	}
