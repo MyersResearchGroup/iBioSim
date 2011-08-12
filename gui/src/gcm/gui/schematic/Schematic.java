@@ -117,8 +117,8 @@ public class Schematic extends JPanel implements ActionListener {
 	 * Constructor
 	 * @param internalModel
 	 */
-	public Schematic(GCMFile gcm, Gui biosim, GCM2SBMLEditor gcm2sbml, 
-			boolean editable, MovieContainer movieContainer2, Compartments compartments, Reactions reactions){
+	public Schematic(GCMFile gcm, Gui biosim, GCM2SBMLEditor gcm2sbml, boolean editable, 
+			MovieContainer movieContainer2, Compartments compartments, Reactions reactions, JComboBox compartmentList){
 		
 		super(new BorderLayout());
 		
@@ -133,6 +133,7 @@ public class Schematic extends JPanel implements ActionListener {
 		this.compartments = compartments;
 		this.reactions = reactions;
 		this.grid = gcm.getGrid();
+		this.compartmentList = compartmentList;
 		
 		listenerList = new javax.swing.event.EventListenerList();
 		
@@ -322,7 +323,7 @@ public class Schematic extends JPanel implements ActionListener {
 		check.addActionListener(this);
 		check.setSelected(gcm.getIsWithinCompartment());
 		toolBar.add(check);
-		compartmentList = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());
+		//compartmentList = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());
 		compartmentList.setSelectedItem(gcm.getEnclosingCompartment());
 		compartmentList.addActionListener(this);
 		if (gcm.getIsWithinCompartment()) {

@@ -76,9 +76,11 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 	private InitialAssignments initialsPanel;
 
 	private Rules rulesPanel;
+	
+	private JComboBox compartmentList;
 
 	public Compartments(SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty, Boolean paramsOnly, ArrayList<String> getParams,
-			String file, ArrayList<String> parameterChanges, Boolean editOnly) {
+			String file, ArrayList<String> parameterChanges, Boolean editOnly, JComboBox compartmentList) {
 		super(new BorderLayout());
 		this.document = document;
 		this.usedIDs = usedIDs;
@@ -86,6 +88,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
+		this.compartmentList = compartmentList;
 		Model model = document.getModel();
 		addCompart = new JButton("Add Compartment");
 		removeCompart = new JButton("Remove Compartment");
@@ -565,6 +568,8 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						Compartment c = document.getModel().getCompartment(val);
 						c.setId(compID.getText().trim());
+						compartmentList.removeItem(val);
+						compartmentList.addItem(c.getId());
 						c.setName(compName.getText().trim());
 						if (!selCompType.equals("( none )")) {
 							c.setCompartmentType(selCompType);
@@ -655,6 +660,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						int index = compartments.getSelectedIndex();
 						Compartment c = document.getModel().createCompartment();
 						c.setId(compID.getText().trim());
+						compartmentList.addItem(c.getId());
 						c.setName(compName.getText().trim());
 						if (!selCompType.equals("( none )")) {
 							c.setCompartmentType(selCompType);
@@ -934,6 +940,13 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		int index = compartments.getSelectedIndex();
 		if (index != -1) {
 			if (document.getModel().getNumCompartments() != 1) {
+				if (((String)compartmentList.getSelectedItem()).equals(((String) compartments.getSelectedValue()).split(" ")[0])) {
+					JOptionPane.showMessageDialog(Gui.frame,
+							"Enclosing compartment cannot be removed", 
+							"Cannot remove enclosing compartment",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				}
 				boolean remove = true;
 				ArrayList<String> speciesUsing = new ArrayList<String>();
 				for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
@@ -992,6 +1005,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 					JOptionPane.showMessageDialog(Gui.frame, scroll, "Unable To Remove Compartment", JOptionPane.ERROR_MESSAGE);
 				}
 				else if (!SBMLutilities.variableInUse(document, ((String) compartments.getSelectedValue()).split(" ")[0], false)) {
+					compartmentList.removeItem(((String) compartments.getSelectedValue()).split(" ")[0]);
 					Compartment tempComp = document.getModel().getCompartment(((String) compartments.getSelectedValue()).split(" ")[0]);
 					ListOf c = document.getModel().getListOfCompartments();
 					for (int i = 0; i < document.getModel().getNumCompartments(); i++) {

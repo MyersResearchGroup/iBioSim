@@ -1192,8 +1192,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		ArrayList<String>usedIDs = gcm.getUsedIDs();
 		
 		String file = filename.replace(".gcm", ".xml");
-		compartmentPanel = new Compartments(gcm.getSBMLDocument(),usedIDs,dirty,
-				paramsOnly,getParams,file,parameterChanges,false);
+		JComboBox compartmentList = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());
+		compartmentPanel = new Compartments(gcm.getSBMLDocument(),usedIDs,dirty, paramsOnly,getParams,file,
+				parameterChanges,false,compartmentList);
 		reactionPanel = new Reactions(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
 				paramsOnly,getParams,file,parameterChanges);
 		speciesPanel = new MySpecies(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
@@ -1207,7 +1208,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			tab.addTab("Species", speciesPanel);
 			tab.addTab("Reactions", reactionPanel);
 		} else {
-			this.schematic = new Schematic(gcm, biosim, this, true, null,compartmentPanel,reactionPanel);
+			this.schematic = new Schematic(gcm, biosim, this, true, null,compartmentPanel,reactionPanel,compartmentList);
 			tab.addTab("Schematic", schematic);
 			//if (gcm.getSBMLDocument().getModel().getNumCompartments() > 1) {
 				tab.addTab("Compartments", compartmentPanel);
