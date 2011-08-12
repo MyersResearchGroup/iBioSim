@@ -23,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import main.Gui;
@@ -73,6 +74,8 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 	
 	//ID of the cell that was clicked on
 	private String cellID;
+	
+	private boolean inTab;
 
 	
 	//CLASS METHODS
@@ -80,13 +83,14 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 	/**
 	 * constructor
 	 */
-	public SchemeChooserPanel(String cellID, MovieContainer movieContainer) {
+	public SchemeChooserPanel(String cellID, MovieContainer movieContainer, boolean inTab) {
 		
 		//call the JPanel constructor to make this a border layout panel
 		super(new BorderLayout());
 		
 		cellSpecies = new ArrayList<String>();
 		
+		this.inTab = inTab;
 		this.cellType = GlobalConstants.COMPONENT;
 		this.cellID = cellID;
 		this.movieContainer = movieContainer;
@@ -154,7 +158,7 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 	 */
 	public static boolean showSchemeChooserPanel(String cellID, MovieContainer movieContainer) {
 
-		new SchemeChooserPanel(cellID, movieContainer);
+		new SchemeChooserPanel(cellID, movieContainer, false);
 		
 		return changed;
 	}
@@ -233,15 +237,18 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 		//populate the panel with stored values if they exist
 		updatePanelValues();
 		
-		String[] options = {"Save Changes", GlobalConstants.CANCEL};
+		if (!inTab) {
 		
-		int okCancel = JOptionPane.showOptionDialog(Gui.frame, this, "Select inner species appearance scheme",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-
-		//if the user clicks "save changes" on the panel
-		if (okCancel == JOptionPane.OK_OPTION) {
+			String[] options = {"Save Changes", GlobalConstants.CANCEL};
 			
-			updateMovieScheme();
+			int okCancel = JOptionPane.showOptionDialog(Gui.frame, this, "Select inner species appearance scheme",
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+	
+			//if the user clicks "save changes" on the panel
+			if (okCancel == JOptionPane.OK_OPTION) {
+				
+				updateMovieScheme();
+			}
 		}
 		
 		return false;
@@ -251,7 +258,7 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 	 * updates the movie scheme with the selected information for this cell
 	 * this happens when the user hits "okay"
 	 */
-	private void updateMovieScheme() {
+	public void updateMovieScheme() {
 		
 		//get the data that the user selected/input
 		Color selectedColor = (Color)colorChooser.getSelectedItem();

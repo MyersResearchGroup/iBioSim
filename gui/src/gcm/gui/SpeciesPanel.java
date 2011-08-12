@@ -19,6 +19,7 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 
 import org.sbml.libsbml.Species;
@@ -49,10 +50,11 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 */
 	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList influencesList,
 			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
-			GCMFile refGCM, GCM2SBMLEditor gcmEditor){
+			GCMFile refGCM, GCM2SBMLEditor gcmEditor, boolean inTab){
 
 		super(new BorderLayout());
-		constructor(selected, speciesList, influencesList, conditionsList, componentsList, gcm, paramsOnly, refGCM, gcmEditor);
+		constructor(selected, speciesList, influencesList, conditionsList, componentsList, gcm, 
+				paramsOnly, refGCM, gcmEditor, inTab);
 	}
 	
 	/**
@@ -70,7 +72,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 */
 	private void constructor(String selected, PropertyList speciesList, PropertyList influencesList,
 			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
-			GCMFile refGCM,  GCM2SBMLEditor gcmEditor) {
+			GCMFile refGCM,  GCM2SBMLEditor gcmEditor, boolean inTab) {
 
 		JPanel grid;
 		
@@ -496,9 +498,15 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		
 		boolean display = false;
 		
-		while (!display) {
+		if (!inTab) {
+			while (!display) {
 			
-			display = openGui();
+				//show the panel; handle the data
+				int value = JOptionPane.showOptionDialog(Gui.frame, this, "Species Editor",
+						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				
+				display = handlePanelData(value);
+			}
 		}
 	}
 
@@ -569,14 +577,11 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * displays the panel and handles the panel data
+	 * handles the panel data
 	 * 
 	 * @return
 	 */
-	private boolean openGui() {
-		
-		int value = JOptionPane.showOptionDialog(Gui.frame, this, "Species Editor",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+	public boolean handlePanelData(int value) {	
 		
 		// the new id of the species. Will be filled in later.
 		String newSpeciesID = null;
