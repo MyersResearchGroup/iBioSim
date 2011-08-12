@@ -322,6 +322,11 @@ public class Schematic extends JPanel implements ActionListener {
 		compartmentList = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());
 		compartmentList.setSelectedItem(gcm.getEnclosingCompartment());
 		compartmentList.addActionListener(this);
+		if (gcm.getIsWithinCompartment()) {
+			compartmentList.setEnabled(true);
+		} else {
+			compartmentList.setEnabled(false);
+		}
 		toolBar.add(compartmentList);
 		//toolBar.add(Utils.makeToolButton("", "compartment", "Compartment", this));
 		//}
@@ -420,6 +425,11 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		else if(command == "checkCompartment") {
 			gcm.setIsWithinCompartment(check.isSelected());
+			if (check.isSelected()) {
+				compartmentList.setEnabled(true);
+			} else {
+				compartmentList.setEnabled(false);
+			}
 		} 
 		/*
 		else if (command.equals("saveSBOL")) {
