@@ -473,14 +473,28 @@ public class GeneticNetwork {
 		if (grid.isEnabled()) {
 		
 		//GRID SPECIES AND GRID DIFFUSION BUSINESS
-		//iterate through all of the unique, underlying species ids
+		//iterate through all of the species
 		//create outer species at each grid location
 		//create degredation reactions for these new outer species
 		//create grid/outside diffusion reactions for these new outer species
 		//create membrane diffusion reactions between the new outer species and second-level compartments
-		for (String id : underlyingSpeciesIDs) {
-						
-			String underlyingSpeciesID = id;
+		for (SpeciesInterface spec : species.values()) {
+				
+			//all reactions will be created from inner -> outer
+			//this is the ID of the inner species
+			String isID = spec.getId();
+			String[] ids = isID.split("__");
+			
+			//this is the actual species name devoid of location
+			String underlyingSpeciesID = ids[ids.length - 1];
+			
+			//get the compartment of this inner species
+			String isCompartment = document.getModel().getSpecies(isID).getCompartment();
+			
+			String[] compartmentParts = isCompartment.split("__");
+			
+			//this implies a species is more than one level below the grid
+			if (compartmentParts.length > 2) continue;
 			
 			//CREATE OUTER SPECIES
 			//add "outer" species at all grid locations
