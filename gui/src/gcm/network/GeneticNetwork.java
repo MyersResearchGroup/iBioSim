@@ -493,8 +493,10 @@ public class GeneticNetwork {
 			
 			String[] compartmentParts = isCompartment.split("__");
 			
-			//this implies a species is more than one level below the grid
-			if (compartmentParts.length > 2) continue;
+			//if the species is more than one level below the grid or isn't diffusible, loop on
+			if (compartmentParts.length > 2 || 
+					!spec.getProperty("Type").equals(GlobalConstants.DIFFUSIBLE)) 
+				continue;
 			
 			//CREATE OUTER SPECIES
 			//add "outer" species at all grid locations
