@@ -3550,6 +3550,7 @@ public class GCMFile {
 		this.enclosingCompartment = enclosingCompartment;
 	}
 	
+	
 	//CONSTANTS AND VARIABLES
 
 	private static final String NETWORK = "digraph\\sG\\s\\{([^}]*)\\s\\}";

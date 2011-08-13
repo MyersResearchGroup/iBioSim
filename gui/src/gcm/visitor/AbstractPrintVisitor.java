@@ -91,7 +91,6 @@ public abstract class AbstractPrintVisitor implements SpeciesVisitor {
 
 	public void visitSpecies(SpeciesInterface specie) {}
 	
-	//TODO-jstev: figure out what goes here
 	public void visitDiffusibleSpecies(DiffusibleSpecies species) {}
 
 	protected static GCMFile parameters = null;

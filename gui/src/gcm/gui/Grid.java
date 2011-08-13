@@ -47,6 +47,9 @@ public class Grid {
 	//map of row, col grid locations to the component at that location
 	private HashMap<Point, Map.Entry<String, Properties>> locToComponentMap;
 	
+	//map of compartment ID strings to the corresponding grid node
+	private HashMap<String, GridNode> componentIDToNodeMap;
+	
 	private int numRows, numCols;
 	private int verticalOffset;
 	private double padding; //padding for the grid rectangles
@@ -113,6 +116,7 @@ public class Grid {
 		grid = new ArrayList<ArrayList<GridNode>>();
 		rectToNodeMap = new HashMap<Rectangle, GridNode>();
 		locToComponentMap = new HashMap<Point, Map.Entry<String, Properties>>();
+		componentIDToNodeMap = new HashMap<String, GridNode>();
 		graph = null;
 	}
 	
@@ -136,6 +140,8 @@ public class Grid {
 		enabled = true;
 		numRows = rows;
 		numCols = cols;
+		gcm.setIsWithinCompartment(true);
+		gcm.setEnclosingCompartment("gridLevel");
 		
 		this.gridSpatial = gridSpatial;
 		
@@ -160,6 +166,7 @@ public class Grid {
 		updateGridRectangles();
 		updateRectToNodeMap();
 		updateLocToComponentMap();
+		updateComponentIDToNodeMap();
 		putComponentsOntoGrid();
 	}
 	
@@ -768,6 +775,21 @@ public class Grid {
 		}
 	}
 	
+	/**
+	 * creates a hashmap for easy access to node information from a component ID
+	 */
+	private void updateComponentIDToNodeMap() {
+		
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
+				
+				GridNode node = grid.get(row).get(col);
+				
+				if (node != null && node.getComponent() != null)
+					componentIDToNodeMap.put(node.getComponent().getKey(), node);
+			}
+		}
+	}
 	
 	//INFORMATION RETRIEVAL METHODS
 	
@@ -802,20 +824,8 @@ public class Grid {
 	 */
 	private GridNode getNodeFromCompID(String compID) {
 		
-		//loop through all of the grid nodes
-		//find the grid with that compartment ID
-		for (int row = 0; row < numRows; ++row) {
-			for (int col = 0; col < numCols; ++col) {
-				
-				GridNode node = grid.get(row).get(col);
-				
-				if (node.getComponent() != null && node.getComponent().getKey().equals(compID))
-					return node;
-			}
-		}
-		
-		//if it's not found, send back a null pointer
-		return null;
+		updateComponentIDToNodeMap();
+		return componentIDToNodeMap.get(compID);
 	}
 	
 	
@@ -1243,7 +1253,6 @@ public class Grid {
 		this.rubberbandBounds = rubberbandBounds;
 	}
 	
-
 	/**
 	 * @return the bounds of the graph's rubberband
 	 */
@@ -1251,7 +1260,6 @@ public class Grid {
 		return rubberbandBounds;
 	}
 	
-
 	/**
 	 * @param mouseReleased the mouseReleased state of the schematic
 	 */
@@ -1259,7 +1267,6 @@ public class Grid {
 		this.mouseReleased = mouseReleased;
 	}
 	
-
 	/**
 	 * @return the mouseReleased state of the schematic
 	 */
@@ -1267,15 +1274,25 @@ public class Grid {
 		return mouseReleased;
 	}
 	
-
 	/**
 	 * @return the location-to-component map
 	 */
-	public HashMap<Point, Map.Entry<String, Properties>> getLocToComponentMap() {
+	public Map.Entry<String, Properties> getComponentFromLocation(Point location) {
 		
 		updateLocToComponentMap();
 		
-		return locToComponentMap;
+		return locToComponentMap.get(location);
+	}
+	
+	/**
+	 * returns the row and column of a component based on a given ID
+	 * 
+	 * @param compID the component ID
+	 * @return the row and column of that component
+	 */
+	public Point getLocationFromComponentID(String compID) {
+		
+		return new Point(getNodeFromCompID(compID).getRow(), getNodeFromCompID(compID).getCol());
 	}
 	
 	

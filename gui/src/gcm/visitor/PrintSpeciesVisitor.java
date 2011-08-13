@@ -95,9 +95,10 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);		
 	}
 	
-	//TODO-jstev: figure out what goes here
 	public void visitDiffusibleSpecies(DiffusibleSpecies species) {
 		
+		//visitBaseSpecies takes care of this
+		//as there's nothing to change from what it does
 	}
 	
 	private void loadValues(SpeciesInterface specie) {
