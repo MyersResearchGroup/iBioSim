@@ -568,8 +568,15 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						compartments.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						Compartment c = document.getModel().getCompartment(val);
 						c.setId(compID.getText().trim());
+						boolean enclosing = false;
+						if (compartmentList.getSelectedItem().equals(val)) {
+							enclosing = true;
+						}
 						compartmentList.removeItem(val);
 						compartmentList.addItem(c.getId());
+						if (enclosing) {
+							compartmentList.setSelectedItem(c.getId());
+						}
 						c.setName(compName.getText().trim());
 						if (!selCompType.equals("( none )")) {
 							c.setCompartmentType(selCompType);
