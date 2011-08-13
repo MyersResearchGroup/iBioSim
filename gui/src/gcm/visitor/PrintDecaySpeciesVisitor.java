@@ -3,6 +3,7 @@ package gcm.visitor;
 import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
+import gcm.network.DiffusibleSpecies;
 import gcm.network.GeneticNetwork;
 import gcm.network.Influence;
 import gcm.network.SpasticSpecies;
@@ -14,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
+import org.sbml.libsbml.KineticLaw;
+import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
 
 public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
@@ -131,18 +134,50 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		}
 	}
 	
+	public void visitDiffusibleSpecies(DiffusibleSpecies species) {
+		
+		loadValues(species);
+		
+		String ID = species.getId();
+		Reaction r = Utility.Reaction("Degradation_" + ID);
+		r.setCompartment(checkCompartments(ID));
+		r.setReversible(false);
+		r.setFast(false);
+		KineticLaw kl = r.createKineticLaw();
+		
+		if (decay > 0) {
+			
+			//this is the mathematical expression for the decay
+			String decayExpression = decayString + "*" + ID;
+
+			r.addReactant(Utility.SpeciesReference(ID, 1));
+			
+			//parameter: id="kd" value=isDecay (usually 0.0075) units="u_1_second_n1" (inverse seconds)
+			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
+			
+			//formula: kd * inner species
+			kl.setFormula(decayExpression);
+			Utility.addReaction(document, r);
+		}
+	}
+	
 	private void loadValues(SpeciesInterface specie) {
 		decay = specie.getDecay();
 	}
 	
 	//Checks if species belongs in a compartment other than default
 	private String checkCompartments(String species) {
+		
 		String compartment = document.getModel().getCompartment(0).getId();
 		//String[] splitted = species.split("__");
 		String component = species;
+		
 		while (component.contains("__")) {
+			
 			component = component.substring(0,component.lastIndexOf("__"));
+			
 			for (String compartmentName : compartments.keySet()) {
+				
 				if (compartmentName.substring(0,compartmentName.lastIndexOf("__")).equals(component)) {
 					return compartmentName;
 				}
