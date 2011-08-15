@@ -9,6 +9,8 @@ import org.sbml.libsbml.SBMLDocument;
 import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
+import gcm.network.DiffusibleConstitutiveSpecies;
+import gcm.network.DiffusibleSpecies;
 import gcm.network.GeneticNetwork;
 import gcm.network.Promoter;
 import gcm.network.SpasticSpecies;
@@ -116,7 +118,43 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 		kl.setFormula(actString+ "*" + speciesName);
 		Utility.addReaction(document, r);
 	}
+	
+	@Override
+	public void visitDiffusibleSpecies(DiffusibleSpecies species) {
+		loadValues();
+		r = Utility.Reaction(reactionName);
+		r.setCompartment(compartment);
+		r.addModifier(Utility.ModifierSpeciesReference(speciesName));
+		for (SpeciesInterface spec : promoter.getOutputs()) {
+			r.addProduct(Utility.SpeciesReference(spec.getId(), stoc));
+		}
+		r.setReversible(false);
+		r.setFast(false);
+		kl = r.createKineticLaw();
+		kl.addParameter(Utility.Parameter(actString, act, GeneticNetwork
+				.getMoleTimeParameter(1)));
+		kl.setFormula(actString+ "*" + speciesName);
+		Utility.addReaction(document, r);
+	}
 
+	public void visitDiffusibleConstitutiveSpecies(DiffusibleConstitutiveSpecies specie) {
+		
+		loadValues();
+		r = Utility.Reaction(reactionName);
+		r.setCompartment(compartment);
+		r.addModifier(Utility.ModifierSpeciesReference(speciesName));
+		for (SpeciesInterface species : promoter.getOutputs()) {
+			r.addProduct(Utility.SpeciesReference(species.getId(), stoc));
+		}
+		r.setReversible(false);
+		r.setFast(false);
+		kl = r.createKineticLaw();
+		kl.addParameter(Utility.Parameter(actString, act, GeneticNetwork
+				.getMoleTimeParameter(1)));
+		kl.setFormula(actString+ "*" + speciesName);
+		Utility.addReaction(document, r);
+	}
+	
 	private void loadValues() {
 		stoc = promoter.getStoich();
 		act = promoter.getKact();

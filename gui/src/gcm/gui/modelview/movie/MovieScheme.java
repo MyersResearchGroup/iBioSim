@@ -29,6 +29,8 @@ public class MovieScheme {
 	//these have the full name, including a component or grid location prefix
 	private HashMap<String, Scheme> speciesSchemes;
 	
+	private ArrayList<String> allSpecies;
+	
 	
 	//CLASS METHODS
 	
@@ -231,13 +233,15 @@ public class MovieScheme {
 							
 							speciesID = new String(component.getKey() + "__" + speciesIDNoPrefix);
 							
+							if (!allSpecies.contains(speciesID)) continue;
+							
 							if (remove) {
 								schemeApply.apply(speciesID);
 							}
 							else {
 								//add a scheme with this other species that's part of the same GCM
 								//as the component
-								this.createOrUpdateSpeciesScheme(speciesID);
+								this.createOrUpdateSpeciesScheme(speciesID, null);
 								schemeApply.apply(speciesID);
 								speciesSchemes.get(speciesID).setMin(min);
 								speciesSchemes.get(speciesID).setMax(max);
@@ -257,13 +261,15 @@ public class MovieScheme {
 						String gridPrefix = "ROW" + row + "_COL" + col;
 						
 						speciesID = new String(gridPrefix + "__" + speciesIDNoPrefix);
+						
+						if (!allSpecies.contains(speciesID)) continue;
 							
-						if (remove) {							
+						if (remove) {	
 							schemeApply.apply(speciesID);
 						}
 						else {
 							//add a scheme with this other species at another grid location
-							this.createOrUpdateSpeciesScheme(speciesID);
+							this.createOrUpdateSpeciesScheme(speciesID, null);
 							schemeApply.apply(speciesID);
 							speciesSchemes.get(speciesID).setMin(min);
 							speciesSchemes.get(speciesID).setMax(max);
@@ -283,7 +289,7 @@ public class MovieScheme {
 					}
 					else {
 						
-						this.createOrUpdateSpeciesScheme(specID);
+						this.createOrUpdateSpeciesScheme(specID, null);
 						schemeApply.apply(specID);
 						speciesSchemes.get(specID).setMin(min);
 						speciesSchemes.get(specID).setMax(max);
@@ -308,7 +314,10 @@ public class MovieScheme {
 	 * 
 	 * @param speciesID
 	 */
-	public void createOrUpdateSpeciesScheme(String speciesID) {
+	public void createOrUpdateSpeciesScheme(String speciesID, ArrayList<String> allSpecies) {
+		
+		if (allSpecies != null)
+			this.allSpecies = allSpecies;
 		
 		if (speciesSchemes.get(speciesID) == null)
 			speciesSchemes.put(speciesID, new Scheme());
@@ -390,6 +399,9 @@ public class MovieScheme {
 			GradientPaint colorGradient = cellScheme.getValue().getColorGradient();
 			boolean opacityState = cellScheme.getValue().getOpacityState();
 			boolean sizeState = cellScheme.getValue().getSizeState();	
+			
+			if (speciesTSData.get(speciesID) == null)
+				return null;
 			
 			//number of molecules at this time instance
 			double speciesValue = speciesTSData.get(speciesID).get(frameIndex);

@@ -8,6 +8,8 @@ import java.util.HashMap;
 import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
+import gcm.network.DiffusibleConstitutiveSpecies;
+import gcm.network.DiffusibleSpecies;
 import gcm.network.GeneticNetwork;
 import gcm.network.NullSpecies;
 import gcm.network.Promoter;
@@ -175,6 +177,62 @@ public class PrintActivatedBindingVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);
 	}
 
+	public void visitDiffusibleSpecies(DiffusibleSpecies specie) {
+		
+		loadValues(specie);
+		r = Utility.Reaction(reactionId);
+		r.setCompartment(compartment);
+		r.addReactant(Utility.SpeciesReference(rnapId, 1));
+		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
+		r.addProduct(Utility.SpeciesReference(boundId, 1));
+		r.setReversible(true);
+		r.setFast(false);
+		kl = r.createKineticLaw();
+		kl.addParameter(Utility.Parameter("kf_ao", kf, GeneticNetwork.getMoleTimeParameter(2)));
+		kl.addParameter(Utility.Parameter(kactString, kact,
+				GeneticNetwork.getMoleParameter(2)));
+		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+		String actExpression = "";
+		if (complexAbstraction && specie.isSequesterable()) {
+			actExpression = actExpression + sequesterSpecies(specie.getId(), coop);
+		} else {
+			actExpression = specie.getId();
+			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
+		}
+		kl.addParameter(Utility.Parameter("kr_ao", kr, GeneticNetwork
+				.getMoleTimeParameter(1)));
+		kl.setFormula(generateLaw(actExpression));
+		Utility.addReaction(document, r);
+	}
+	
+	public void visitDiffusibleConstitutiveSpecies(DiffusibleConstitutiveSpecies specie) {
+		
+		loadValues(specie);
+		r = Utility.Reaction(reactionId);
+		r.setCompartment(compartment);
+		r.addReactant(Utility.SpeciesReference(rnapId, 1));
+		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
+		r.addProduct(Utility.SpeciesReference(boundId, 1));
+		r.setReversible(true);
+		r.setFast(false);
+		kl = r.createKineticLaw();
+		kl.addParameter(Utility.Parameter("kf_ao", kf, GeneticNetwork.getMoleTimeParameter(2)));
+		kl.addParameter(Utility.Parameter(kactString, kact,
+				GeneticNetwork.getMoleParameter(2)));
+		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+		String actExpression = "";
+		if (complexAbstraction && specie.isSequesterable()) {
+			actExpression = actExpression + sequesterSpecies(specie.getId(), coop);
+		} else {
+			actExpression = specie.getId();
+			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
+		}
+		kl.addParameter(Utility.Parameter("kr_ao", kr, GeneticNetwork
+				.getMoleTimeParameter(1)));
+		kl.setFormula(generateLaw(actExpression));
+		Utility.addReaction(document, r);
+	}
+	
 	/**
 	 * Generates a kinetic law
 	 * 

@@ -1069,11 +1069,12 @@ public class BioGraph extends mxGraph {
 	private boolean createGraphSpeciesFromModel(String sp){
 		
 		Properties prop = gcm.getSpecies().get(sp);
-		String id = prop.getProperty("ID", "");
-		String type = prop.getProperty("Type", "");
+		String id = prop.getProperty("ID");
+		String type = prop.getProperty("Type")
+			.replace(GlobalConstants.DIFFUSIBLE, " (D)").replace(GlobalConstants.SPASTIC, " (C)");
 		
 		if (id==null) {
-			id = prop.getProperty("label", "");
+			id = prop.getProperty("label");
 		}		
 		
 		String label = id + '\n' + type;

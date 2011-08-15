@@ -8,6 +8,8 @@ import java.util.HashMap;
 import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
+import gcm.network.DiffusibleConstitutiveSpecies;
+import gcm.network.DiffusibleSpecies;
 import gcm.network.GeneticNetwork;
 import gcm.network.Promoter;
 import gcm.network.Influence;
@@ -168,6 +170,63 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		Utility.addReaction(document, r);
 	}
 
+	public void visitDiffusibleSpecies(DiffusibleSpecies specie) {
+		
+		loadValues(specie);
+		r = Utility.Reaction(reactionId);
+		r.setCompartment(compartment);
+		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
+		r.addProduct(Utility.SpeciesReference(boundId, 1));
+		r.setReversible(true);
+		r.setFast(false);
+		kl = r.createKineticLaw();
+		kl.addParameter(Utility.Parameter("kf_r", kf,
+				GeneticNetwork.getMoleTimeParameter(2)));
+		if (coop > 1)
+			kl.addParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
+		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+		String repExpression = "";
+		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
+		if (complexAbstraction && specie.isSequesterable()) {
+			repExpression = repExpression + sequesterSpecies(specie.getId(), coop);
+		} else {
+			repExpression = specie.getId();
+			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
+		}
+		kl.addParameter(Utility.Parameter("kr_r", kr, GeneticNetwork
+				.getMoleTimeParameter(1)));
+		kl.setFormula(generateLaw(repExpression));
+		Utility.addReaction(document, r);
+	}
+	
+	public void visitDiffusibleConstitutiveSpecies(DiffusibleConstitutiveSpecies specie) {
+		
+		loadValues(specie);
+		r = Utility.Reaction(reactionId);
+		r.setCompartment(compartment);
+		r.addReactant(Utility.SpeciesReference(promoter.getId(), 1));
+		r.addProduct(Utility.SpeciesReference(boundId, 1));
+		r.setReversible(true);
+		r.setFast(false);
+		kl = r.createKineticLaw();
+		kl.addParameter(Utility.Parameter("kf_r", kf, GeneticNetwork.getMoleTimeParameter(2)));
+		if (coop > 1)
+			kl.addParameter(Utility.Parameter(krepString, krep, GeneticNetwork.getMoleParameter(2)));
+		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+		String repExpression = "";
+		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
+		if (complexAbstraction && specie.isSequesterable()) {
+			repExpression = repExpression + sequesterSpecies(specie.getId(), coop);
+		} else {
+			repExpression = specie.getId();
+			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
+		}
+		kl.addParameter(Utility.Parameter("kr_r", kr, GeneticNetwork
+				.getMoleTimeParameter(1)));
+		kl.setFormula(generateLaw(repExpression));
+		Utility.addReaction(document, r);
+	}	
+	
 	/**
 	 * Generates a kinetic law
 	 * 

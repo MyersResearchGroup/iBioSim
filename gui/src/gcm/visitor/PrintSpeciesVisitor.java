@@ -11,6 +11,7 @@ import org.sbml.libsbml.Species;
 import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
+import gcm.network.DiffusibleConstitutiveSpecies;
 import gcm.network.SpasticSpecies;
 import gcm.network.DiffusibleSpecies;
 import gcm.network.SpeciesInterface;
@@ -30,7 +31,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	 * Prints out all the species to the file
 	 * 
 	 */
-	public void run() {		
+	public void run() {
 		for (SpeciesInterface s : species.values()) {
 			s.accept(this);
 		}
@@ -97,8 +98,35 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	
 	public void visitDiffusibleSpecies(DiffusibleSpecies species) {
 		
-		//visitBaseSpecies takes care of this
-		//as there's nothing to change from what it does
+		loadValues(species);
+		String compartment = checkCompartments(species.getId());
+		Species s = Utility.makeSpecies(species.getId(), compartment, amount, concentration);
+		s.setName(species.getName());
+		s.setHasOnlySubstanceUnits(true);
+		Utility.addSpecies(document, s);
+	}
+	
+	public void visitDiffusibleConstitutiveSpecies(DiffusibleConstitutiveSpecies specie) {
+		
+		loadValues(specie);
+		String compartment = checkCompartments(specie.getId());
+		Species s = Utility.makeSpecies(specie.getId(), compartment, amount, concentration);
+		s.setName(specie.getName());
+		s.setHasOnlySubstanceUnits(true);
+		Utility.addSpecies(document, s);
+		
+		r = new org.sbml.libsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+		r.setId("Constitutive_production_" + s.getId());
+		
+		r.addProduct(Utility.SpeciesReference(s.getId(), Double.parseDouble(parameters.getParameter(GlobalConstants.STOICHIOMETRY_STRING))));
+		
+		r.setReversible(false);
+		r.setFast(false);
+		kl = r.createKineticLaw();
+		kl.addParameter(Utility.Parameter("kp", Double.parseDouble(parameters
+					.getParameter((GlobalConstants.OCR_STRING)))));	
+		kl.setFormula("kp");
+		Utility.addReaction(document, r);	
 	}
 	
 	private void loadValues(SpeciesInterface specie) {
@@ -108,14 +136,23 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 	
 	//Checks if species belongs in a compartment other than default
 	private String checkCompartments(String species) {
+		
 		String compartment = document.getModel().getCompartment(0).getId();
+		
 		if (compartments != null) {
 			//String[] splitted = species.split("__");
 			String component = species;
+			
 			while (component.contains("__")) {
-				component = component.substring(0,component.lastIndexOf("__"));
+				
+				component = component.substring(0, component.lastIndexOf("__"));
+				
 				for (String compartmentName : compartments.keySet()) {
-					if (compartmentName.substring(0,compartmentName.lastIndexOf("__")).equals(component)) {
+					
+					if (compartmentName.equals(component))
+						return compartmentName;					
+					else if (compartmentName.contains("__") && compartmentName.substring(0, compartmentName.lastIndexOf("__"))
+							.equals(component)) {
 						return compartmentName;
 					}
 				}
