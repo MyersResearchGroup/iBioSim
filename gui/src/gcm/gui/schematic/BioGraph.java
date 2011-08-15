@@ -989,10 +989,17 @@ public class BioGraph extends mxGraph {
 		//set the correct compartment status
 		GCMFile compGCMFile = new GCMFile(gcm.getPath());
 		boolean compart = false;
+		File compFile = new File(gcm.getPath() + File.separator + prop.getProperty("gcm"));
 		
-		if (compGCMFile != null) {
+		if (compGCMFile != null && compFile.exists()) {
 			compGCMFile.load(gcm.getPath() + File.separator + prop.getProperty("gcm"));
 			compart = compGCMFile.getIsWithinCompartment();
+		} else {
+			JOptionPane.showMessageDialog(Gui.frame, 
+					"A model definition cannot be found for " + prop.getProperty("gcm") + 
+					".\nDropping component from the schematic.\n",
+					"Warning", JOptionPane.WARNING_MESSAGE);
+			return false;
 		}
 		
 		prop.setProperty("compartment", Boolean.toString(compart));
