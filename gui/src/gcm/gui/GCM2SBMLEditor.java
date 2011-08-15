@@ -492,7 +492,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		SbolSynthesizer synthesizer = parser.buildSbolSynthesizer();
 		HashSet<String> sbolFiles = getSbolFiles();
 		if (synthesizer.loadLibraries(sbolFiles)) 
-			synthesizer.synthesizeDnaComponent(getPath());
+			synthesizer.saveSbol(getPath());
 	}
 	
 	public void exportSBOL() {
@@ -510,7 +510,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			String targetFilePath = util.Utility.browse(Gui.frame, lastFilePath, null, JFileChooser.FILES_ONLY, "Export DNA Component", -1);
 			if (!targetFilePath.equals("")) {
 				biosimrc.put("biosim.general.export_dir", targetFilePath);
-				synthesizer.synthesizeDnaComponent(targetFilePath);
+				synthesizer.exportSbol(targetFilePath);
 			}
 		}
 	}
