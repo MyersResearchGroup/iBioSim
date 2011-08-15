@@ -49,8 +49,7 @@ public class SbolSynthesizer {
 			String mySeparator = File.separator;
 			if (mySeparator.equals("\\"))
 				mySeparator = "\\\\";
-			String[] splitPath = filePath.split(mySeparator);
-			libMap.put(splitPath[splitPath.length - 1] + "/" + lib.getDisplayId(), lib);
+			libMap.put(filePath.substring(filePath.lastIndexOf(mySeparator) + 1, filePath.length()) + "/" + lib.getDisplayId(), lib);
 		}
 		if (libMap.size() == 0) {
 			JOptionPane.showMessageDialog(Gui.frame, "No SBOL collections in project.", 
@@ -60,20 +59,30 @@ public class SbolSynthesizer {
 			return true;
 	}	
 	
-	public void synthesizeDnaComponent(String targetPath) {	
+	public void saveSbol(String targetPath) {
+		Object[] targets = libMap.keySet().toArray();
+		synthesizeDnaComponent(targetPath, targets);
+	}
+	
+	public void exportSbol(String targetFilePath) {
+		String mySeparator = File.separator;
+		if (mySeparator.equals("\\"))
+			mySeparator = "\\\\";
+		String targetFileId = targetFilePath.substring(targetFilePath.lastIndexOf(mySeparator) + 1, targetFilePath.length());
+		String targetPath = targetFilePath.substring(0, targetFilePath.lastIndexOf(mySeparator));
+		Object[] targets = new Object[1];
+		targets[0] = targetFileId;
+		if (!new File(targetFilePath).exists()) {
+			Library exportLib = new Library();
+			exportLib.setDisplayId(targetFileId.substring(0, targetFileId.indexOf(".")));
+			SbolUtility.exportLibrary(targetFilePath, exportLib);
+		}
+		synthesizeDnaComponent(targetPath, targets);
+	}
+	
+	private void synthesizeDnaComponent(String targetPath, Object[] targets) {	
 		synthesizerOn = true;
 		// Get user input
-		Object[] targets;
-		if (targetPath.endsWith(".rdf")) {
-			String mySeparator = File.separator;
-			if (mySeparator.equals("\\"))
-				mySeparator = "\\\\";
-			String[] splitPath = targetPath.split(mySeparator);
-			targets = new Object[1];
-			targets[0] = splitPath[splitPath.length - 1];
-			targetPath = targetPath.substring(0, targetPath.lastIndexOf(mySeparator));
-		} else 
-			targets = libMap.keySet().toArray();
 		String[] input = getUserInput(targetPath, targets);
 		if (synthesizerOn) {
 			// Create DNA component
@@ -97,15 +106,7 @@ public class SbolSynthesizer {
 				if (synthesizerOn) {
 					// Export DNA component
 					targetLib.addComponent(synthComp);
-					String rdf = IOTools.toRdfXml(targetLib);
-					try {
-						FileOutputStream out = new FileOutputStream(targetPath + File.separator + targetFileId);
-						out.write(rdf.getBytes());
-						out.close();
-					} catch (Exception e1) {
-						JOptionPane.showMessageDialog(Gui.frame, "Error exporting to SBOL file.", "Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
+					SbolUtility.exportLibrary(targetPath + File.separator + targetFileId, targetLib);
 				}
 			}
 		}

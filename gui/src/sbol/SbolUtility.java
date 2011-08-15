@@ -1,6 +1,8 @@
 package sbol;
 
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.Scanner;
 
 import javax.swing.JOptionPane;
@@ -35,6 +37,21 @@ public class SbolUtility {
 					JOptionPane.ERROR_MESSAGE);
 		}
 		return lib;
+	}
+	
+	public static void exportLibrary(String filePath, Library lib) {
+		try {
+			if (!new File(filePath).exists()) 
+				new File(filePath).createNewFile();
+			String rdf = IOTools.toRdfXml(lib);
+			new File(filePath).createNewFile();
+			FileOutputStream out = new FileOutputStream(filePath);
+			out.write(rdf.getBytes());
+			out.close();
+		} catch (Exception e1) {
+			JOptionPane.showMessageDialog(Gui.frame, "Error exporting to SBOL file.", "Error",
+					JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 }
