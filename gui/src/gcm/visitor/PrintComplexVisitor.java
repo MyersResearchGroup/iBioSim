@@ -123,7 +123,10 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		while (component.contains("__")) {
 			component = component.substring(0,component.lastIndexOf("__"));
 			for (String compartmentName : compartments.keySet()) {
-				if (compartmentName.substring(0,compartmentName.lastIndexOf("__")).equals(component)) {
+				if (compartmentName.equals(component))
+					return compartmentName;					
+				else if (compartmentName.contains("__") && compartmentName.substring(0, compartmentName.lastIndexOf("__"))
+						.equals(component)) {
 					return compartmentName;
 				}
 			}

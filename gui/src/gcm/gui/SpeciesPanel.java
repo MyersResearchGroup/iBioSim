@@ -82,18 +82,18 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			if (gcm.getSBMLDocument().getLevel() > 2) {
 				if (gcm.getSBMLDocument().getModel().getNumCompartments() == 1) {
-					grid = new JPanel(new GridLayout(16,1));
+					grid = new JPanel(new GridLayout(17,1));
 				} 
 				else {
-					grid = new JPanel(new GridLayout(17,1));
+					grid = new JPanel(new GridLayout(18,1));
 				}
 			} 
 			else {
 				if (gcm.getSBMLDocument().getModel().getNumCompartments() == 1) {
-					grid = new JPanel(new GridLayout(15,1));
+					grid = new JPanel(new GridLayout(16,1));
 				} 
 				else {
-					grid = new JPanel(new GridLayout(16,1));
+					grid = new JPanel(new GridLayout(17,1));
 				}
 			}
 		}
@@ -140,11 +140,36 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			typeBox.removeItem(GlobalConstants.OUTPUT);
 		}
 		
+		//these are now checkboxes
+		typeBox.removeItem(GlobalConstants.DIFFUSIBLE);
+		typeBox.removeItem(GlobalConstants.SPASTIC);
+		
 		typeBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
 		tempPanel.add(typeBox);
 
+		if (!paramsOnly) grid.add(tempPanel);
+		
+		//diffusible/constitutive checkboxes		
+		tempPanel = new JPanel(new GridLayout(1,2));
+		tempPanel.add(new JLabel(""));
+		
+		JPanel constDiff = new JPanel(new GridLayout(1,2));
+		specDiffusible = new JCheckBox("diffusible");
+		specDiffusible.setSelected(gcm.getSpecies().get(selected).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE));
+		specDiffusible.addActionListener(this);
+		specDiffusible.setActionCommand("constdiffChanged");
+		specConstitutive = new JCheckBox("constitutive");
+		specConstitutive.setSelected(gcm.getSpecies().get(selected).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.SPASTIC));
+		specConstitutive.addActionListener(this);
+		specConstitutive.setActionCommand("constdiffChanged");
+		
+		constDiff.add(specDiffusible);
+		constDiff.add(specConstitutive);
+		
+		tempPanel.add(constDiff);
+		
 		if (!paramsOnly) grid.add(tempPanel);
 
 		Species species = gcm.getSBMLDocument().getModel().getSpecies(selected);
@@ -494,7 +519,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			Properties prop = gcm.getSpecies().get(selected);
 			//This will generate the action command associated with changing the type combo box
-			typeBox.setSelectedItem(prop.getProperty(GlobalConstants.TYPE));
+			typeBox.setSelectedItem(((String)prop.getProperty(GlobalConstants.TYPE))
+					.replace(GlobalConstants.SPASTIC, "").replace(GlobalConstants.DIFFUSIBLE, ""));
 			loadProperties(prop);
 		}
 		else {
@@ -640,7 +666,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			
 			if (selected != null && (typeBox.getSelectedItem().toString().equals(types[0]) || 
-					typeBox.getSelectedItem().toString().equals(types[3]))) {
+					specConstitutive.isSelected())) {
 				
 				for (String infl : gcm.getInfluences().keySet()) {
 					
@@ -752,7 +778,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				}
 			}
 			
-			property.put(GlobalConstants.TYPE, typeBox.getSelectedItem().toString());
+			//create a species type concatenated with diffusible and constitutive settings
+			String speciesType = "";
+			
+			speciesType += typeBox.getSelectedItem().toString();
+			if (specDiffusible.isSelected()) speciesType += GlobalConstants.DIFFUSIBLE;
+			if (specConstitutive.isSelected()) speciesType += GlobalConstants.SPASTIC;
+			
+			property.put(GlobalConstants.TYPE, speciesType);
 
 			// Add SBOL properties
 			for (SbolField sf : sbolFields.values()) {
@@ -876,14 +909,36 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		if (e.getActionCommand().equals("comboBoxChanged")) {
-			setType(typeBox.getSelectedItem().toString());
+		
+		if (e.getActionCommand().equals("comboBoxChanged") || 
+				e.getActionCommand().equals("constdiffChanged")) {
+			
+			String type = typeBox.getSelectedItem().toString();
+			if (specDiffusible.isSelected()) type += GlobalConstants.DIFFUSIBLE;
+			if (specConstitutive.isSelected()) type += GlobalConstants.SPASTIC;
+			
+			//disallow constant == true if diffusible or constitutive are selected
+			if (specConstitutive.isSelected() || specDiffusible.isSelected()) {
+				
+				specConstant.setEnabled(false);
+				specConstant.setSelectedItem("false");
+			}
+			else {
+				
+				specConstant.setEnabled(true);
+			}
+			
+			setType(type);
 		}
 
 		if (paramsOnly)
 			thresholdTextField.setEnabled(specInteresting.isSelected());
 	}
 
+	/**
+	 * enables/disables field based on the species type
+	 * @param type
+	 */
 	private void setType(String type) {
 		//input
 		if (type.equals(types[0])) {
@@ -908,15 +963,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KECDIFF_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KECDECAY_STRING).setEnabled(false);
-		} 
-		//diffusible
-		else if (type.equals(types[4])) {
-			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
-			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KECDIFF_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KECDECAY_STRING).setEnabled(true);
-		} 
+		}
 		else {
 			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
 			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(false);
@@ -924,6 +971,15 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			fields.get(GlobalConstants.KECDIFF_STRING).setEnabled(false);
 			fields.get(GlobalConstants.KECDECAY_STRING).setEnabled(false);
 		}
+		
+		//diffusible
+		if (specDiffusible.isSelected()) {
+			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
+			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
+			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(true);
+			fields.get(GlobalConstants.KECDIFF_STRING).setEnabled(true);
+			fields.get(GlobalConstants.KECDECAY_STRING).setEnabled(true);
+		} 
 	}
 
 	private void loadProperties(Properties property) {
@@ -952,25 +1008,21 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private GCMFile gcm = null;
 
 	private JComboBox typeBox = null;
-
 	private JComboBox compartBox = null;
-
 	private JComboBox convBox = null;
-
 	private JComboBox unitsBox = null;
-
 	private JComboBox specBoundary = null;
-
 	private JComboBox specConstant = null;
-
 	private JComboBox specHasOnly = null;
 	
 	private JCheckBox specInteresting = null;
+	private JCheckBox specDiffusible = null;
+	private JCheckBox specConstitutive = null;
 	
 	private JTextField thresholdTextField = null;
 
 	private static final String[] types = new String[] { GlobalConstants.INPUT, GlobalConstants.INTERNAL, 
-		GlobalConstants.OUTPUT, GlobalConstants.SPASTIC, GlobalConstants.DIFFUSIBLE};
+		GlobalConstants.OUTPUT};
 
 	private HashMap<String, PropertyField> fields = null;
 	

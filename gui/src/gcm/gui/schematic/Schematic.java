@@ -463,8 +463,8 @@ public class Schematic extends JPanel implements ActionListener {
 			//are input or output species in the GCM
 			for (Properties speciesProp : gcm.getSpecies().values()) {
 				
-				if (speciesProp.getProperty("Type").equals(GlobalConstants.INPUT) ||
-						speciesProp.getProperty("Type").equals(GlobalConstants.OUTPUT)) {
+				if (speciesProp.getProperty("Type").contains(GlobalConstants.INPUT) ||
+						speciesProp.getProperty("Type").contains(GlobalConstants.OUTPUT)) {
 					
 					disallow = true;
 					break;
@@ -1222,9 +1222,9 @@ public class Schematic extends JPanel implements ActionListener {
 		String targetID = target.getId();
 		
 		// Disallows user from connecting to a species that is an input
-		if (graph.getCellType(target).equals(GlobalConstants.SPECIES)) {
+		if (graph.getCellType(target).contains(GlobalConstants.SPECIES)) {
 			String specType = gcm.getSpecies().get(targetID).getProperty(GlobalConstants.TYPE);
-			if (specType.equals(GlobalConstants.INPUT) || specType.equals(GlobalConstants.SPASTIC)) {
+			if (specType.contains(GlobalConstants.INPUT) || specType.contains(GlobalConstants.SPASTIC)) {
 				JOptionPane.showMessageDialog(Gui.frame, "You can't connect to a species that is an input or constitutive.");
 				graph.buildGraph();
 				return;
@@ -1448,6 +1448,22 @@ public class Schematic extends JPanel implements ActionListener {
 		if(port == null)
 			return null;
 		
+		String fullPath = gcm.getPath() + File.separator + comp.getProperty("gcm");
+		GCMFile compGCM = new GCMFile(gcm.getPath());
+		compGCM.load(fullPath);
+		
+		//make sure the types match up (sans the input/output bit)
+		if (!compGCM.getSpecies().get(port).getProperty(GlobalConstants.TYPE).replace(GlobalConstants.INPUT, "")
+				.replace(GlobalConstants.OUTPUT, "")
+					.equals(gcm.getSpecies().get(specID).getProperty(GlobalConstants.TYPE)
+						.replace(GlobalConstants.INPUT, "").replace(GlobalConstants.OUTPUT, ""))) {
+			
+			JOptionPane.showMessageDialog(Gui.frame, 
+					"To make this connection, the species types must match.");
+			
+			return null;
+		}
+		
 		gcm.connectComponentAndSpecies(comp, port, specID, "Output");
 		
 		return port;
@@ -1465,8 +1481,26 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		String port = ListChooser.selectFromList(Gui.frame, portNames, 
 				"Please Choose an Input Port");
+		
 		if(port == null)
 			return null;
+		
+		String fullPath = gcm.getPath() + File.separator + comp.getProperty("gcm");
+		GCMFile compGCM = new GCMFile(gcm.getPath());
+		compGCM.load(fullPath);
+		
+		//make sure the types match up (sans the input/output bit)
+		if (!compGCM.getSpecies().get(port).getProperty(GlobalConstants.TYPE).replace(GlobalConstants.INPUT, "")
+				.replace(GlobalConstants.OUTPUT, "")
+					.equals(gcm.getSpecies().get(specID).getProperty(GlobalConstants.TYPE)
+						.replace(GlobalConstants.INPUT, "").replace(GlobalConstants.OUTPUT, ""))) {
+			
+			JOptionPane.showMessageDialog(Gui.frame, 
+					"To make this connection, the species types must match.");
+			
+			return null;
+		}
+		
 		gcm.connectComponentAndSpecies(comp, port, specID, "Input");
 		return port;
 	}

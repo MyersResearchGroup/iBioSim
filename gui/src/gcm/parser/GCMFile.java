@@ -525,7 +525,7 @@ public class GCMFile {
 		for (String spec : mod) {
 			for (Object port : topLevel.components.get(compName).keySet()) {
 				if (spec.equals(compName + "__" + port)) {
-//						&& !bottomLevel.species.get(spec).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)) {
+//						&& !bottomLevel.species.get(spec).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.INPUT)) {
 					bottomLevel.species.get(spec).put(GlobalConstants.ID, topLevel.components.get(compName).getProperty((String) port));
 					bottomLevel.changeSpeciesName(spec, topLevel.components.get(compName).getProperty((String) port));
 				}
@@ -818,7 +818,7 @@ public class GCMFile {
 						LHPN.addPlace(specs.get(i) + placeNum, false);
 					}
 					Properties speciesProps = this.species.get(specs.get(i));
-					if (!speciesProps.get(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)) {
+					if (!((String)speciesProps.get(GlobalConstants.TYPE)).contains(GlobalConstants.INPUT)) {
 						ArrayList<String> activators = new ArrayList<String>();
 						ArrayList<String> repressors = new ArrayList<String>();
 						ArrayList<String> proms = new ArrayList<String>();
@@ -1670,7 +1670,7 @@ public class GCMFile {
 	public ArrayList<String> getInputSpecies() {
 		ArrayList<String> inputs = new ArrayList<String>();
 		for (String spec : species.keySet()) {
-			if (species.get(spec).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)) {
+			if (species.get(spec).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.INPUT)) {
 				inputs.add(spec);
 			}
 		}
@@ -1680,7 +1680,7 @@ public class GCMFile {
 	public ArrayList<String> getOutputSpecies() {
 		ArrayList<String> outputs = new ArrayList<String>();
 		for (String spec : species.keySet()) {
-			if (species.get(spec).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
+			if (species.get(spec).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT)) {
 				outputs.add(spec);
 			}
 		}
@@ -1859,7 +1859,7 @@ public class GCMFile {
 	}
 
 	public boolean speciesUsedInOtherGCM(String name) {
-		if (species.get(name).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)
+		if (species.get(name).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.INPUT)
 				|| species.get(name).getProperty(GlobalConstants.TYPE).equals(
 						GlobalConstants.OUTPUT)) {
 			for (String s : new File(path).list()) {
@@ -1894,9 +1894,8 @@ public class GCMFile {
 		if (species.get(name).getProperty(GlobalConstants.TYPE).equals(newType)) {
 			return true;
 		}
-		else if (species.get(name).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)
-				|| species.get(name).getProperty(GlobalConstants.TYPE).equals(
-						GlobalConstants.OUTPUT)) {
+		else if (species.get(name).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.INPUT)
+				|| species.get(name).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT)) {
 			for (String s : new File(path).list()) {
 				if (s.endsWith(".gcm")) {
 					GCMFile g = new GCMFile(path);
@@ -2513,13 +2512,13 @@ public class GCMFile {
 						GCMFile file = new GCMFile(path);
 						file.load(path + separator
 								+ components.get(matcher.group(2)).getProperty("gcm"));
-						if (file.getSpecies().get(properties.get("port")).get(GlobalConstants.TYPE)
-								.equals(GlobalConstants.INPUT)) {
+						if (((String)file.getSpecies().get(properties.get("port")).get(GlobalConstants.TYPE))
+								.contains(GlobalConstants.INPUT)) {
 							components.get(matcher.group(2)).put("type_" + properties.get("port"),
 									"Input");
 						}
-						else if (file.getSpecies().get(properties.get("port")).get(
-								GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
+						else if (((String)file.getSpecies().get(properties.get("port")).get(GlobalConstants.TYPE))
+								.contains(GlobalConstants.OUTPUT)) {
 							components.get(matcher.group(2)).put("type_" + properties.get("port"),
 									"Output");
 						}
@@ -2535,12 +2534,12 @@ public class GCMFile {
 						GCMFile file = new GCMFile(path);
 						file.load(path + separator + components.get(matcher.group(5)).getProperty("gcm"));
 						if (file.getSpecies().get(properties.get("port")) != null) {
-							if (file.getSpecies().get(properties.get("port")).get(GlobalConstants.TYPE)
-									.equals(GlobalConstants.INPUT)) {
+							if (((String)file.getSpecies().get(properties.get("port")).get(GlobalConstants.TYPE))
+									.contains(GlobalConstants.INPUT)) {
 								components.get(matcher.group(5)).put("type_" + properties.get("port"),"Input");
 							}
-							else if (file.getSpecies().get(properties.get("port")).get(
-									GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
+							else if (((String)file.getSpecies().get(properties.get("port")).get(
+									GlobalConstants.TYPE)).contains(GlobalConstants.OUTPUT)) {
 								components.get(matcher.group(5)).put("type_" + properties.get("port"),"Output");
 							}
 						}

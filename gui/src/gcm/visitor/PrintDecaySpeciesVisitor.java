@@ -3,6 +3,7 @@ package gcm.visitor;
 import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
+import gcm.network.DiffusibleConstitutiveSpecies;
 import gcm.network.DiffusibleSpecies;
 import gcm.network.GeneticNetwork;
 import gcm.network.Influence;
@@ -144,11 +145,21 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		r.setReversible(false);
 		r.setFast(false);
 		KineticLaw kl = r.createKineticLaw();
+		String decayExpression = "";
 		
-		if (decay > 0) {
+		if (complexAbstraction && species.isSequesterable()) {
+			
+			decayExpression = abstractDecay(species.getId());
+			
+			if (decayExpression.length() > 0) {
+				kl.setFormula(decayExpression);
+				Utility.addReaction(document, r);
+			}			
+		} 
+		else if (decay > 0) {
 			
 			//this is the mathematical expression for the decay
-			String decayExpression = decayString + "*" + ID;
+			decayExpression = decayString + "*" + ID;
 
 			r.addReactant(Utility.SpeciesReference(ID, 1));
 			
@@ -156,6 +167,31 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
 			
 			//formula: kd * inner species
+			kl.setFormula(decayExpression);
+			Utility.addReaction(document, r);
+		}
+	}
+	
+	public void visitDiffusibleConstitutiveSpecies(DiffusibleConstitutiveSpecies specie) {
+		
+		loadValues(specie);
+		String compartment = checkCompartments(specie.getId());
+		r = Utility.Reaction("Degradation_"+specie.getId());
+		r.setCompartment(compartment);
+		r.setReversible(false);
+		r.setFast(false);
+		kl = r.createKineticLaw();
+		String decayExpression = "";
+		if (complexAbstraction && specie.isSequesterable()) {
+			decayExpression = abstractDecay(specie.getId());
+			if (decayExpression.length() > 0) {
+				kl.setFormula(decayExpression);
+				Utility.addReaction(document, r);
+			}
+		} else if (decay > 0){
+			decayExpression = decayString + "*" + specie.getId();
+			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
+			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
 			kl.setFormula(decayExpression);
 			Utility.addReaction(document, r);
 		}
@@ -178,7 +214,10 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 			
 			for (String compartmentName : compartments.keySet()) {
 				
-				if (compartmentName.substring(0,compartmentName.lastIndexOf("__")).equals(component)) {
+				if (compartmentName.equals(component))
+					return compartmentName;					
+				else if (compartmentName.contains("__") && compartmentName.substring(0, compartmentName.lastIndexOf("__"))
+						.equals(component)) {
 					return compartmentName;
 				}
 			}

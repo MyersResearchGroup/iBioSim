@@ -284,7 +284,7 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
     			|| !opacityState.equals(opacityOptions[0]) 
     			|| !sizeState.equals(sizeOptions[0])) {
     		
-    		movieContainer.getMovieScheme().createOrUpdateSpeciesScheme(speciesID);
+    		movieContainer.getMovieScheme().createOrUpdateSpeciesScheme(speciesID, allSpecies);
     	}
     	
     	//if a color gradient was selected
@@ -297,7 +297,8 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
     	//if a color gradient wasn't selected (ie, "none" was selected)
     	else {
     		
-    		movieContainer.getMovieScheme().removeSpeciesColorScheme(speciesID, cellType, applyTo, movieContainer.getGCM());
+    		movieContainer.getMovieScheme()
+    			.removeSpeciesColorScheme(speciesID, cellType, applyTo, movieContainer.getGCM());
     	}
     	
     	//if opacity is enabled
@@ -310,7 +311,8 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
     	//if an opacity state wasn't selected (ie, "none" was selected)
     	else {
     		
-    		movieContainer.getMovieScheme().removeSpeciesOpacityScheme(speciesID, cellType, applyTo, movieContainer.getGCM());
+    		movieContainer.getMovieScheme()
+    			.removeSpeciesOpacityScheme(speciesID, cellType, applyTo, movieContainer.getGCM());
     	}
     	
     	//if size is enabled
@@ -323,7 +325,8 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
     	//if a size state wasn't selected (ie, "none" was selected)
     	else {
     		
-    		movieContainer.getMovieScheme().removeSpeciesSizeScheme(speciesID, cellType, applyTo, movieContainer.getGCM());
+    		movieContainer.getMovieScheme()
+    			.removeSpeciesSizeScheme(speciesID, cellType, applyTo, movieContainer.getGCM());
     	} 
 	}
 	

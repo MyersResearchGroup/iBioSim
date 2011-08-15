@@ -495,7 +495,7 @@ public class GeneticNetwork {
 			
 			//if the species is more than one level below the grid or isn't diffusible, loop on
 			if (compartmentParts.length > 2 || 
-					!spec.getProperty("Type").equals(GlobalConstants.DIFFUSIBLE)) 
+					!spec.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)) 
 				continue;
 			
 			//CREATE OUTER SPECIES
@@ -702,7 +702,7 @@ public class GeneticNetwork {
 			String underlyingSpeciesID = ids[ids.length - 1];
 			
 			//if this species isn't diffusible, then keep looping
-			if (!spec.getProperty("Type").equals(GlobalConstants.DIFFUSIBLE))
+			if (!spec.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE))
 				continue;
 			
 			//get the compartment of this inner species
@@ -792,7 +792,7 @@ public class GeneticNetwork {
 				//if the species exists and is diffusible
 				//then create a membrane diffusion reaction
 				if (document.getModel().getSpecies(osID) != null && 
-						species.get(osID).getProperty("Type").equals(GlobalConstants.DIFFUSIBLE)) {
+						species.get(osID).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)) {
 					
 					//MEMBRANE DIFFUSION REACTION CREATION
 					//between inner species and outer species
@@ -901,6 +901,7 @@ public class GeneticNetwork {
 	 *            the SBML document
 	 */
 	private void printDecay(SBMLDocument document) {
+		
 		PrintDecaySpeciesVisitor visitor = new PrintDecaySpeciesVisitor(document, species, compartments, complexMap, partsMap);
 		visitor.setComplexAbstraction(complexAbstraction);
 		visitor.run();
@@ -913,6 +914,7 @@ public class GeneticNetwork {
 	 *            the SBML document
 	 */
 	private void printSpecies(SBMLDocument document) {
+		
 		PrintSpeciesVisitor visitor = new PrintSpeciesVisitor(document, species, compartments);
 		visitor.setComplexAbstraction(complexAbstraction);
 		visitor.run();
@@ -1022,7 +1024,10 @@ public class GeneticNetwork {
 		while (component.contains("__")) {
 			component = component.substring(0,component.lastIndexOf("__"));
 			for (String compartmentName : compartments.keySet()) {
-				if (compartmentName.substring(0,compartmentName.lastIndexOf("__")).equals(component)) {
+				if (compartmentName.equals(component))
+					return compartmentName;					
+				else if (compartmentName.contains("__") && compartmentName.substring(0, compartmentName.lastIndexOf("__"))
+						.equals(component)) {
 					return compartmentName;
 				}
 			}
@@ -1078,7 +1083,7 @@ public class GeneticNetwork {
 				if (partsMap.containsKey(s.getId())) {
 					checkSequester(s.getId(), s.getId());
 				}
-				if (complexMap.containsKey(s.getId()) && !s.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
+				if (complexMap.containsKey(s.getId()) && !s.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT)) {
 					checkComplex(s.getId(), "");
 					if (!partsMap.containsKey(s.getId()))
 						s.setAbstractable(true);
@@ -1091,7 +1096,7 @@ public class GeneticNetwork {
 				if (partsMap.containsKey(s.getId())) {
 					checkSequester(s.getId(), s.getId());
 				}
-				if (complexMap.containsKey(s.getId()) && !s.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)) {
+				if (complexMap.containsKey(s.getId()) && !s.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT)) {
 					checkComplex(s.getId(), "");
 					if (!partsMap.containsKey(s.getId()))
 						s.setAbstractable(true);
@@ -1100,7 +1105,7 @@ public class GeneticNetwork {
 		}	
 		//Checks if parts of output complex species are abstractable or sequesterable
 		for (String complexId : complexMap.keySet()) {
-			if (species.get(complexId).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT))
+			if (species.get(complexId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT))
 				checkComplex(complexId, "");
 		}
 		//Removes abstractable marking from interesting species 
@@ -1123,7 +1128,7 @@ public class GeneticNetwork {
 				}
 				if (!sequesterRoot.equals("") && (species.get(partId).isActivator() || species.get(partId).isRepressor()))
 					return false;
-				if (complexMap.containsKey(partId) && !species.get(partId).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)
+				if (complexMap.containsKey(partId) && !species.get(partId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT)
 						&& !species.get(partId).isActivator() && !species.get(partId).isRepressor()) {
 					if (!sequesterRoot.equals("") && !checkComplex(partId, sequesterRoot))
 						return false;
@@ -1147,7 +1152,7 @@ public class GeneticNetwork {
 			String complexId = infl.getOutput();
 			if (infl.getCoop() == 1 
 					&& ((!species.get(complexId).isActivator() && !species.get(complexId).isRepressor()) || (operatorAbstraction && !partsMap.containsKey(complexId))) 
-					&& !species.get(complexId).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT)
+					&& !species.get(complexId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT)
 					&& (!partsMap.containsKey(complexId) || partsMap.get(complexId).size() == 1)
 					&& complexMap.get(complexId).size() > 1 && checkComplex(complexId, partId)) {
 				if (partsMap.containsKey(complexId))
@@ -1182,7 +1187,7 @@ public class GeneticNetwork {
 		ArrayList<String> interestingSpecies = new ArrayList<String>();
 		for (String id : species.keySet()) {
 			if (!complexMap.keySet().contains(id) || 
-					species.get(id).getProperty(GlobalConstants.TYPE).equals(GlobalConstants.OUTPUT))
+					species.get(id).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT))
 				interestingSpecies.add(id);
 		}
 		return interestingSpecies;

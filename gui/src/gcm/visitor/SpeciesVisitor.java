@@ -3,6 +3,7 @@ package gcm.visitor;
 import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
+import gcm.network.DiffusibleConstitutiveSpecies;
 import gcm.network.NullSpecies;
 import gcm.network.DiffusibleSpecies;
 import gcm.network.SpasticSpecies;
@@ -46,6 +47,11 @@ public interface SpeciesVisitor {
 	 */
 	public void visitNullSpecies(NullSpecies specie);
 	
+	/**
+	 * 
+	 * @param species
+	 */
+	public void visitDiffusibleConstitutiveSpecies(DiffusibleConstitutiveSpecies species);
 	
 	/**
 	 * Visits a diffusible species

@@ -3,6 +3,7 @@ package gcm.parser;
 import gcm.network.BaseSpecies;
 import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
+import gcm.network.DiffusibleConstitutiveSpecies;
 import gcm.network.DiffusibleSpecies;
 import gcm.network.GeneticNetwork;
 import gcm.network.Promoter;
@@ -275,16 +276,23 @@ public class GCMParser {
 	 *            the properties of the species
 	 */
 	private SpeciesInterface parseSpeciesData(String name, Properties property) {
+		
 		SpeciesInterface specie = null;
 
-		if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.CONSTANT) ||
-				property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.INPUT)) {
+		if (property.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.CONSTANT)) {
 			specie = new ConstantSpecies();
-		} else if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.SPASTIC)) {
-			specie = new SpasticSpecies();
-		} else if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.DIFFUSIBLE)) {
+		} 
+		else if (property.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE) &&
+				property.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.SPASTIC)) {
+			specie = new DiffusibleConstitutiveSpecies();
+		} 
+		else if (property.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)) {
 			specie = new DiffusibleSpecies();
-		} else {
+		} 
+		else if (property.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.SPASTIC)) {
+			specie = new SpasticSpecies();
+		}
+		else {
 			specie = new BaseSpecies();
 		}
 
