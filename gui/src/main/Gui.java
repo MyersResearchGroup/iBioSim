@@ -5829,13 +5829,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		mainPanel.remove(tree);
 		tree = new FileTree(new File(root), this, lema, atacs);
 		mainPanel.add(tree, "West");
-		updateGCM();
+		//updateGCM();
 		mainPanel.validate();
 	}
 
 	public void addToTree(String item) {
 		tree.addToTree(item, root);
-		updateGCM();
+		//updateGCM();
 		mainPanel.validate();
 	}
 
@@ -5846,7 +5846,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	public void deleteFromTree(String item) {
 		tree.deleteFromTree(item);
-		updateGCM();
+		//updateGCM();
 		mainPanel.validate();
 	}
 
