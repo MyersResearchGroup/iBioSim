@@ -488,6 +488,8 @@ public class GeneticNetwork {
 			//this is the actual species name devoid of location
 			String underlyingSpeciesID = ids[ids.length - 1];
 			
+			if (document.getModel().getSpecies(isID) == null) continue;
+			
 			//get the compartment of this inner species
 			String isCompartment = document.getModel().getSpecies(isID).getCompartment();
 			
