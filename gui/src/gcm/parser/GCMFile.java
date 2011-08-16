@@ -1089,7 +1089,6 @@ public class GCMFile {
 			buffer.append("}\nGrid {\n");			
 			buffer.append("rows=" + getGrid().getNumRows() + "\n");
 			buffer.append("cols=" + getGrid().getNumCols() + "\n");	
-			buffer.append("spatial=" + Boolean.toString(getGrid().getGridSpatial()) + "\n");	
 			buffer.append("}\n");
 		}
 
@@ -2438,13 +2437,11 @@ public class GCMFile {
 			
 			String[] rowInfo = rowcolInfo[1].split("=");
 			String[] colInfo = rowcolInfo[2].split("=");
-			String[] spatialInfo = rowcolInfo[3].split("=");
 			
 			String row = rowInfo[1];
 			String col = colInfo[1];
-			String gridSpatial = spatialInfo[1];
 						
-			buildGrid(Integer.parseInt(row), Integer.parseInt(col), Boolean.parseBoolean(gridSpatial));
+			buildGrid(Integer.parseInt(row), Integer.parseInt(col));
 		}
 	}
 	
@@ -3536,9 +3533,9 @@ public class GCMFile {
 		grid = g;
 	}	
 	
-	public void buildGrid(int rows, int cols, boolean gridSpatial) {
+	public void buildGrid(int rows, int cols) {
 		
-		grid.createGrid(rows, cols, this, null, gridSpatial);
+		grid.createGrid(rows, cols, this, null);
 	}
 	
 	/**
@@ -3563,6 +3560,41 @@ public class GCMFile {
 		
 		parseGridSize(data);
 	}
+	
+	public boolean getGridEnabledFromFile(String filename) {
+		
+		StringBuffer data = new StringBuffer();
+		
+		if (filename == null) return true;
+
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(filename));
+			String str;
+			while ((str = in.readLine()) != null) {
+				data.append(str + "\n");
+			}
+			in.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			throw new IllegalStateException("Error opening file");
+		}		
+		
+		Pattern network = Pattern.compile(GRID);
+		Matcher matcher = network.matcher(data.toString());
+		
+		if (!matcher.find()) return false;
+		
+		String info = matcher.group(1);
+		
+		if (info != null) return true;
+		
+		return false;
+	}
+	
+	
+	
+	//ENCLOSING COMPARTMENT
 	
 	public String getEnclosingCompartment() {
 		return enclosingCompartment;

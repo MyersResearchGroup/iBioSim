@@ -64,12 +64,7 @@ public class Grid {
 	private boolean mouseClicked;
 	private boolean mouseReleased; //used for rubberband release
 	private Point scrollOffset; //for drawing when scrolled
-	private Rectangle rubberbandBounds;
-	
-	//true means spatial grid; false means cell population grid
-	//this is used when editing a grid, as only compartments can be added to a cell population grid
-	private boolean gridSpatial;
-	
+	private Rectangle rubberbandBounds;	
 	private Rectangle gridBounds;
 	private Point mouseClickLocation;
 	private Point mouseLocation;
@@ -92,8 +87,7 @@ public class Grid {
 	 * default constructor
 	 */
 	public Grid() {
-		
-		gridSpatial = false;
+ 
 		enabled = false;
 		mouseReleased = false;
 		verticalOffset = 0;
@@ -128,7 +122,7 @@ public class Grid {
 	 * @param cols number of columns in the grid
 	 * @param components the components that are located on the grid
 	 */
-	public void createGrid(int rows, int cols, GCMFile gcm, String compGCM, boolean gridSpatial) {
+	public void createGrid(int rows, int cols, GCMFile gcm, String compGCM) {
 		
 		//if the grid size is 0 by 0, don't make it
 		if (rows == 0 && cols == 0) {
@@ -142,8 +136,6 @@ public class Grid {
 		numCols = cols;
 		gcm.setIsWithinCompartment(true);
 		gcm.setEnclosingCompartment("gridLevel");
-		
-		this.gridSpatial = gridSpatial;
 		
 		for(int row = 0; row < numRows; ++row) {
 			
@@ -1124,22 +1116,6 @@ public class Grid {
 	 */
 	public Point getMouseLocation() {
 		return mouseLocation;
-	}
-	
-	/**
-	 * set where it's a spatial or cell population grid
-	 * 
-	 * @param gridSpatial true means spatial; false means population
-	 */
-	public void setGridSpatial(boolean gridSpatial) {
-		this.gridSpatial = gridSpatial;
-	}
-	
-	/**
-	 * @return whether it's a spatial or cell population grid
-	 */
-	public boolean getGridSpatial() {
-		return this.gridSpatial;
 	}
 	
 	/**
