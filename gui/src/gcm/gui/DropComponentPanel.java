@@ -1,7 +1,6 @@
 package gcm.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
@@ -13,13 +12,11 @@ import java.util.Properties;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 
-import javax.swing.BorderFactory;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import main.Gui;
@@ -58,7 +55,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	 * @return true/false is the dropping occurred or not
 	 */
 	public static boolean dropComponent(
-			GCM2SBMLEditor gcm2sbml, GCMFile gcm, float mouseX, float mouseY, boolean onGrid, boolean gridSpatial){
+			GCM2SBMLEditor gcm2sbml, GCMFile gcm, float mouseX, float mouseY, boolean onGrid){
 		
 		panel = new DropComponentPanel(gcm2sbml, gcm, onGrid);
 		
@@ -67,7 +64,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 			
 			//if the location isn't occupied, go ahead and show the menu
 			if (!gcm.getGrid().getOccupancyFromPoint(new Point((int)mouseX, (int)mouseY)))
-				panel.openGridGUI(mouseX, mouseY, gridSpatial, false);
+				panel.openGridGUI(mouseX, mouseY, false);
 			else 
 				return false;
 		}
@@ -84,11 +81,11 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	 * @param gcm
 	 * @return whether the user clicked ok/cancel
 	 */
-	public static boolean dropSelectedComponents(GCM2SBMLEditor gcm2sbml, GCMFile gcm, boolean gridSpatial) {
+	public static boolean dropSelectedComponents(GCM2SBMLEditor gcm2sbml, GCMFile gcm) {
 		
 		panel = new DropComponentPanel(gcm2sbml, gcm, true);
 		
-		panel.openGridGUI(0, 0, gridSpatial, true);
+		panel.openGridGUI(0, 0, true);
 		
 		return panel.droppedComponent;
 	}
@@ -150,28 +147,20 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	 * @param mouseY where the user clicked
 	 * @param gridSpatial whether the grid is spatial or cell population
 	 */
-	private void openGridGUI(float mouseX, float mouseY, boolean gridSpatial, boolean selected) {
+	private void openGridGUI(float mouseX, float mouseY, boolean selected) {
 		
-		//component list is the gcms that can be added to a spatial grid
-		//but components that aren't compartments are ineligible for
-		//being added to a cell population
+		//list of all available components to drop
 		ArrayList<String> componentList = gcm2sbml.getComponentsList();
 		
-		ArrayList<String> compartmentList = new ArrayList<String>();
 		ArrayList<String> gridComponents = new ArrayList<String>();
 		
-		//find all of the comPARTments, which will be available
-		//to add to the cell population
+		//take out any components with underlying grids
 		for(String comp : gcm2sbml.getComponentsList()) {
 			
 			GCMFile compGCM = new GCMFile(gcm.getPath());
-			compGCM.load(gcm.getPath() + File.separator + comp);
 			
-			if (compGCM.getIsWithinCompartment() && !compGCM.getGrid().isEnabled())
-				compartmentList.add(comp);
-			
-			//don't allow adding a component with a grid
-			if (compGCM.getGrid().isEnabled())
+			//don't allow grids within a grid
+			if (compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + comp))
 				gridComponents.add(comp);
 		}
 		
@@ -187,28 +176,13 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 			return;
 		}
 		
-		//if gridSpatial is false, only compartments can be added
-		//so tell the user if there aren't any
-		if (gridSpatial == false && compartmentList.size() == 0) {
-			
-			JOptionPane.showMessageDialog(Gui.frame,
-					"There aren't any GCMs that are compartments.\n"
-							+ "Create a new GCM that is a compartment or import one into the project first.",
-					"No Compartments to Add", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		
 		//create a panel for the selection of components to add to the cells
 		JPanel compPanel = new JPanel(new GridLayout(2,1));
 		compPanel.add(new JLabel("Choose a gcm to add to the grid"));
 		
 		JComboBox componentChooser = new JComboBox();
 		
-		//show only compartments if it's not a spatial grid (ie, it's a cell population grid)
-		if (gridSpatial)
-			componentChooser = new JComboBox(componentList.toArray());
-		else
-			componentChooser = new JComboBox(compartmentList.toArray());
+		componentChooser = new JComboBox(componentList.toArray());
 		
 		compPanel.add(componentChooser);
 		this.add(compPanel, BorderLayout.NORTH);
@@ -297,16 +271,18 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	 */
 	private void openGUI(float mouseX, float mouseY){
 		
+		//list of all available components to drop
 		ArrayList<String> componentList = gcm2sbml.getComponentsList();
+		
 		ArrayList<String> gridComponents = new ArrayList<String>();
 		
-		for (String comp : componentList) {
+		//take out any components with underlying grids
+		for(String comp : gcm2sbml.getComponentsList()) {
 			
 			GCMFile compGCM = new GCMFile(gcm.getPath());
-			compGCM.load(gcm.getPath() + File.separator + comp);
 			
-			//don't allow adding a component with a grid
-			if (compGCM.getGrid().isEnabled())
+			//don't allow grids within a grid
+			if (compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + comp))
 				gridComponents.add(comp);
 		}
 		

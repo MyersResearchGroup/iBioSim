@@ -24,7 +24,6 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
@@ -41,7 +40,6 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -59,7 +57,6 @@ import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SpeciesReference;
 
 import sbmleditor.Compartments;
-import sbmleditor.MySpecies;
 import sbmleditor.Reactions;
 
 import main.Gui;
@@ -733,18 +730,16 @@ public class Schematic extends JPanel implements ActionListener {
 							
 							//if there's a grid, do a different panel than normal
 							if (grid.isEnabled()) {
-								
-								boolean gridSpatial = grid.getGridSpatial();
 
 								//the true is to indicate the dropping is happening on a grid
 								dropped = DropComponentPanel.dropComponent(
-										gcm2sbml, gcm, e.getX(), e.getY(), true, gridSpatial);
+										gcm2sbml, gcm, e.getX(), e.getY(), true);
 							}
 							else {
 								
 								//the false is to indicate the dropping isn't happening on a grid
 								dropped = DropComponentPanel.dropComponent(
-											gcm2sbml, gcm, e.getX(), e.getY(), false, false);
+											gcm2sbml, gcm, e.getX(), e.getY(), false);
 							}
 							
 							//if the components dropped successfully
@@ -774,12 +769,10 @@ public class Schematic extends JPanel implements ActionListener {
 							
 							//if there's a grid, bring up the add-component-to-grid panel
 							if (grid.isEnabled()) {
-								
-								boolean gridSpatial = grid.getGridSpatial();
 
 								//the true is to indicate the dropping is happening on a grid
 								dropped = DropComponentPanel.dropComponent(
-										gcm2sbml, gcm, e.getX(), e.getY(), true, gridSpatial);
+										gcm2sbml, gcm, e.getX(), e.getY(), true);
 							}
 							
 							//if the components dropped successfully

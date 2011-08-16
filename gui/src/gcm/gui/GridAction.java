@@ -33,7 +33,7 @@ public class GridAction extends AbstractAction {
 			
 			//bring up a panel so the component/gcm can be chosen to add to the selected locations
 			boolean added = DropComponentPanel.dropSelectedComponents(
-					schematic.getGCM2SBML(), schematic.getGCM(), grid.getGridSpatial());
+					schematic.getGCM2SBML(), schematic.getGCM());
 			
 			if (added) {
 				

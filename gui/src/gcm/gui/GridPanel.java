@@ -9,13 +9,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Properties;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import main.Gui;
@@ -28,12 +26,10 @@ public class GridPanel extends JPanel implements ActionListener{
 	
 	private static final long serialVersionUID = 1L;
 	private GCMFile gcm;
-	private JRadioButton spatial, cellPop;
 	private JComboBox componentChooser;
-	private ArrayList<String> componentList, compartmentList;	
+	private ArrayList<String> componentList;	
 	
 	private static boolean built;
-	private boolean gridSpatial; //true if grid is spatial; false if grid is cell population
 	
 	/**
 	 * constructor that sets the gcm2sbmleditor and gcmfile
@@ -61,27 +57,19 @@ public class GridPanel extends JPanel implements ActionListener{
 		componentList = gcm2sbml.getComponentsList();
 		componentList.add("none");
 		
-		compartmentList = new ArrayList<String>();
 		ArrayList<String> gridComponents = new ArrayList<String>();
 		
-		//find all of the comPARTments, which will be available
-		//to add to the cell population
+		//take out any components with underlying grids
 		for(String comp : gcm2sbml.getComponentsList()) {
 			
 			GCMFile compGCM = new GCMFile(gcm.getPath());
-			compGCM.load(gcm.getPath() + File.separator + comp);
-			
-			if (compGCM.getIsWithinCompartment() && !compGCM.getGrid().isEnabled())
-				compartmentList.add(comp);
 			
 			//don't allow grids within a grid
-			if (compGCM.getGrid().isEnabled())
+			if (compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + comp))
 				gridComponents.add(comp);
 		}
 		
 		componentList.removeAll(gridComponents);
-		
-		compartmentList.add("none");
 		
 		//editMode is false means creating a grid
 		if (!editMode)
@@ -130,18 +118,6 @@ public class GridPanel extends JPanel implements ActionListener{
 		//panel that contains grid size options
 		tilePanel = new JPanel(new GridLayout(3, 2));
 		this.add(tilePanel, BorderLayout.SOUTH);
-		
-		spatial = new JRadioButton("Spatial");
-		spatial.addActionListener(this);
-		spatial.setActionCommand("spatial");
-		
-		cellPop = new JRadioButton("Cell Pop.");
-		cellPop.addActionListener(this);
-		cellPop.setActionCommand("cellPop");
-		cellPop.setSelected(true);
-		
-		tilePanel.add(spatial);
-		tilePanel.add(cellPop, BorderLayout.LINE_START);
 
 		tilePanel.add(new JLabel("Rows"));
 		rowsChooser = new JTextField("3");
@@ -152,9 +128,9 @@ public class GridPanel extends JPanel implements ActionListener{
 		tilePanel.add(columnsChooser);
 		
 		//create a panel for the selection of components to add to the cells
-		compPanel = new JPanel(new GridLayout(2,1));
+		compPanel = new JPanel(new GridLayout(3, 1));
 		compPanel.add(new JLabel("Choose a model to add to the grid"));
-		componentChooser = new JComboBox(compartmentList.toArray());
+		componentChooser = new JComboBox(componentList.toArray());
 		compPanel.add(componentChooser);
 		this.add(compPanel, BorderLayout.NORTH);
 		
@@ -198,7 +174,7 @@ public class GridPanel extends JPanel implements ActionListener{
 			//create the grid with these components
 			//these will be added to the GCM as well
 			Grid grid = gcm.getGrid();
-			grid.createGrid(rowCount, colCount, gcm, compGCM, gridSpatial);
+			grid.createGrid(rowCount, colCount, gcm, compGCM);
 			
 			return true;
 		}
@@ -246,10 +222,7 @@ public class GridPanel extends JPanel implements ActionListener{
 		compPanel = new JPanel(new GridLayout(2,1));
 		compPanel.add(new JLabel("Populate new grid spaces with"));
 		
-		if (grid.getGridSpatial())
-			componentChooser = new JComboBox(componentList.toArray());
-		else
-			componentChooser = new JComboBox(compartmentList.toArray());
+		componentChooser = new JComboBox(componentList.toArray());
 		
 		compPanel.add(componentChooser);
 		this.add(compPanel, BorderLayout.SOUTH);
@@ -333,35 +306,6 @@ public class GridPanel extends JPanel implements ActionListener{
 	 * in this case i only care about the spatial and cell pop radio buttons
 	 */
 	public void actionPerformed(ActionEvent event) {
-				
-		if (event.getActionCommand() == "spatial") {
-			
-			gridSpatial = true;
-			
-			//only one or the other can be selected
-			spatial.setSelected(true);
-			cellPop.setSelected(false);
-			
-			//change the available components to be all components
-			componentChooser.removeAllItems();
-			
-			for (String comp : componentList)
-				componentChooser.addItem(comp);
-		}		
-		else if (event.getActionCommand() == "cellPop") {
-			
-			gridSpatial = false;
-		
-			//only one or the other can be selected
-			spatial.setSelected(false);
-			cellPop.setSelected(true);
-			
-			//change the available components to be compartments only
-			componentChooser.removeAllItems();
-			
-			for (String comp : compartmentList)
-				componentChooser.addItem(comp);
-		}
 		
 	}
 }
