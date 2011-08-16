@@ -147,16 +147,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = r.createKineticLaw();
 		String decayExpression = "";
 		
-		if (complexAbstraction && species.isSequesterable()) {
-			
-			decayExpression = abstractDecay(species.getId());
-			
-			if (decayExpression.length() > 0) {
-				kl.setFormula(decayExpression);
-				Utility.addReaction(document, r);
-			}			
-		} 
-		else if (decay > 0) {
+		if (decay > 0) {
 			
 			//this is the mathematical expression for the decay
 			decayExpression = decayString + "*" + ID;
@@ -182,13 +173,8 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		r.setFast(false);
 		kl = r.createKineticLaw();
 		String decayExpression = "";
-		if (complexAbstraction && specie.isSequesterable()) {
-			decayExpression = abstractDecay(specie.getId());
-			if (decayExpression.length() > 0) {
-				kl.setFormula(decayExpression);
-				Utility.addReaction(document, r);
-			}
-		} else if (decay > 0){
+
+		if (decay > 0){
 			decayExpression = decayString + "*" + specie.getId();
 			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
 			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
