@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
+import org.sbml.libsbml.Compartment;
+
 import com.mxgraph.model.mxCell;
 
 import gcm.gui.schematic.BioGraph;
@@ -134,8 +136,10 @@ public class Grid {
 		enabled = true;
 		numRows = rows;
 		numCols = cols;
+		
 		gcm.setIsWithinCompartment(true);
 		gcm.setEnclosingCompartment("gridLevel");
+		gcm.getSBMLDocument().getModel().getCompartment(0).setId("gridLevel");
 		
 		for(int row = 0; row < numRows; ++row) {
 			
