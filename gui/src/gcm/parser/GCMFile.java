@@ -3541,6 +3541,29 @@ public class GCMFile {
 		grid.createGrid(rows, cols, this, null, gridSpatial);
 	}
 	
+	/**
+	 * reloads the grid from file
+	 */
+	public void reloadGrid() {
+		
+		StringBuffer data = new StringBuffer();
+
+		try {
+			BufferedReader in = new BufferedReader(new FileReader(filename));
+			String str;
+			while ((str = in.readLine()) != null) {
+				data.append(str + "\n");
+			}
+			in.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			throw new IllegalStateException("Error opening file");
+		}
+		
+		parseGridSize(data);
+	}
+	
 	public String getEnclosingCompartment() {
 		return enclosingCompartment;
 	}

@@ -791,6 +791,7 @@ public class Grid {
 		}
 	}
 	
+	
 	//INFORMATION RETRIEVAL METHODS
 	
 	/**
@@ -1293,6 +1294,10 @@ public class Grid {
 	public Point getLocationFromComponentID(String compID) {
 		
 		return new Point(getNodeFromCompID(compID).getRow(), getNodeFromCompID(compID).getCol());
+	}
+	
+	public void setGraph(BioGraph graph) {
+		this.graph = graph;
 	}
 	
 	

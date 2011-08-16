@@ -222,6 +222,16 @@ public class MovieContainer extends JPanel implements ActionListener {
 		this.add(mt, BorderLayout.SOUTH);
 	}
 	
+	/**
+	 * reloads the schematic's grid from file
+	 * is called on an analysis view when the normal view/SBML is saved
+	 */
+	public void reloadGrid() {
+		
+		schematic.reloadGrid();
+		
+	}
+	
 	
 	//EVENT METHODS
 	

@@ -1686,7 +1686,17 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	
-	//GRID DRAWING
+	//GRID
+	
+	/**
+	 * reloads the grid from file
+	 * is called by MovieContainer when an SBML view is saved and the analysis view needs to update
+	 */
+	public void reloadGrid() {
+		
+		gcm.reloadGrid();
+		grid = gcm.getGrid();
+	}
 	
 	/**
 	 * wrapper for the paintComponent() function
