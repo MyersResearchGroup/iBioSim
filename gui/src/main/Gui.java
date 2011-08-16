@@ -8012,6 +8012,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		// itself.
 		tabPane.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
+				
 				JTabbedPane selectedTab = (JTabbedPane) (e.getSource());
 				if (!(selectedTab.getComponent(selectedTab.getSelectedIndex()) instanceof JScrollPane)) {
 					JPanel selectedPanel = (JPanel) selectedTab.getComponent(selectedTab.getSelectedIndex());
@@ -8617,7 +8618,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 							for (int k = 0; k < sim.getTabCount(); k++) {
 								if (sim.getComponentAt(k) instanceof MovieContainer) {
-									((MovieContainer) (sim.getComponentAt(k))).display();
+									
+									//display the schematic and reload the grid									
+									((MovieContainer) (sim.getComponentAt(k))).display();	
+									((MovieContainer) (sim.getComponentAt(k))).reloadGrid();
 								}
 							}
 						}
