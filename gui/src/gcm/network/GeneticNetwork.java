@@ -434,7 +434,7 @@ public class GeneticNetwork {
 		for (SpeciesInterface spec : species.values()) {
 			
 			//if it's a diffusible species
-			if (spec.getProperty("Type").equals("diffusible")) {
+			if (spec.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)) {
 				
 				//the ID will have the component/compartment name that the "inner" species is in
 				String isID = spec.getId();
