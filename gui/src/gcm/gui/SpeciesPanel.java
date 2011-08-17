@@ -297,14 +297,17 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			tempPanel = new JPanel(new GridLayout(1, 2));
 			specInteresting = 
-				new JCheckBox("Mark as Interesting (Enter Comma-separated Threshold Values)");
+				new JCheckBox("Mark as Interesting");
 			specInteresting.addActionListener(this);
 			specInteresting.setSelected(speciesMarked);
 			tempPanel.add(specInteresting);
 			thresholdTextField = new JTextField(thresholdText);
 			
-			if (!gcm.getSpecies().get(selected).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.INPUT))
+			if (!gcm.getSpecies().get(selected).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.INPUT)) {
+				
 				tempPanel.add(thresholdTextField);
+				specInteresting.setText("Mark as Interesting (Enter comma-separated thresholds");
+			}
 			
 			grid.add(tempPanel);
 		}		
