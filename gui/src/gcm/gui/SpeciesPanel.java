@@ -303,8 +303,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			tempPanel.add(specInteresting);
 			thresholdTextField = new JTextField(thresholdText);
 			
-			if (!gcm.getSpecies().get(selected).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.INPUT) && 
-					!gcmEditor.getGCM().getBiochemicalSpecies().contains(selected)) {
+			if (!gcm.getSpecies().get(selected).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.INPUT) &&
+					(gcmEditor.getGCM().getBiochemicalSpecies() != null &&
+					!gcmEditor.getGCM().getBiochemicalSpecies().contains(selected))) {
 				
 				tempPanel.add(thresholdTextField);
 				specInteresting.setText("Mark as Interesting (Enter comma-separated thresholds");
