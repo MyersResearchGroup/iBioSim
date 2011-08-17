@@ -65,24 +65,32 @@ public class SbolField extends JPanel implements ActionListener {
 			String libId = sbolText.getText().split("/")[1];
 			String featId = sbolText.getText().split("/")[2];
 			Library lib = SbolUtility.loadRDF(gcmEditor.getPath() + File.separator + fileId);
+			boolean libMatch = false;
+			boolean featMatch = false;
 			if (lib != null && lib.getDisplayId().equals(libId)) {
+				libMatch = true;
 				for (SequenceFeature feat : lib.getFeatures()) {
 					if (feat.getDisplayId().equals(featId)) {
+						featMatch = true;
 						for (URI uri : feat.getTypes()) {
 							if (uri.getFragment().equals(typeConverter(sbolType)))
 								return true;
 						}
 					}
-
 				}
 			}
-			if (lib == null)
-				Utility.createErrorMessage("Invalid SBOL Association", fileId + " or " + libId + " is either invalid or missing from project.");
-			else
-				Utility.createErrorMessage("Invalid SBOL Association", featId + " is not a " + sbolLabel.getText());
+			if (lib != null) {
+				if (!libMatch)
+					Utility.createErrorMessage("Invalid GCM to SBOL Association", "Collection " + libId + " is not found in file " + fileId + ".");
+				else if (!featMatch)
+					Utility.createErrorMessage("Invalid GCM to SBOL Association", "DNA component " + featId + " is not found in collection " +
+							libId + " from file " + fileId + ".");
+				else
+					Utility.createErrorMessage("Invalid GCM to SBOL Association", "DNA component " + featId + " is not a " + sbolLabel.getText() + ".");
+			}
 			return false;
 		} else
-			Utility.createErrorMessage("Invalid SBOL Association", "Associations must follow pattern fileID/collectionID/DNAcomponentID.");
+			Utility.createErrorMessage("Invalid GCM to SBOL Association", "Associations must follow pattern file ID/collection ID/DNA component ID.");
 			return false;
 	}
 	

@@ -32,7 +32,7 @@ import org.sbolstandard.libSBOLj.SequenceFeature;
 public class SbolSynthesizer {
 	
 	private HashMap<String, Promoter> promoters;
-	private HashMap<String, Library> libMap;
+	private HashMap<String, Library> fileLibMap;
 	private HashSet<String> targetIdSet;
 	private HashSet<String> sourceIdSet;
 	private Library targetLib;
@@ -43,24 +43,26 @@ public class SbolSynthesizer {
 	}
 	
 	public boolean loadLibraries(HashSet<String> sbolFiles) {
-		libMap = new HashMap<String, Library>();
+		fileLibMap = new HashMap<String, Library>();
 		for (String filePath : sbolFiles) {
 			Library lib = SbolUtility.loadRDF(filePath);
+			if (lib == null)
+				return false;
 			String mySeparator = File.separator;
 			if (mySeparator.equals("\\"))
 				mySeparator = "\\\\";
-			libMap.put(filePath.substring(filePath.lastIndexOf(mySeparator) + 1, filePath.length()) + "/" + lib.getDisplayId(), lib);
+			fileLibMap.put(filePath.substring(filePath.lastIndexOf(mySeparator) + 1, filePath.length()) + "/" + lib.getDisplayId(), lib);
 		}
-		if (libMap.size() == 0) {
-			JOptionPane.showMessageDialog(Gui.frame, "No SBOL collections in project.", 
-					"No Collections", JOptionPane.ERROR_MESSAGE);
+		if (fileLibMap.size() == 0) {
+			JOptionPane.showMessageDialog(Gui.frame, "No SBOL files are found in project.", 
+					"File Not Found", JOptionPane.ERROR_MESSAGE);
 			return false;
-		} else
-			return true;
+		}
+		return true;
 	}	
 	
 	public void saveSbol(String targetPath) {
-		Object[] targets = libMap.keySet().toArray();
+		Object[] targets = fileLibMap.keySet().toArray();
 		synthesizeDnaComponent(targetPath, targets);
 	}
 	
@@ -149,14 +151,19 @@ public class SbolSynthesizer {
 			if (!targetFileId.equals(userFileId)) {
 				targetFileId = userFileId;
 				targetLib = SbolUtility.loadRDF(targetPath + File.separator + targetFileId);
-				targetIdSet = new HashSet<String>();
-				for (DnaComponent dnac : targetLib.getComponents()) 
-					targetIdSet.add(dnac.getDisplayId());
-				for (SequenceFeature sf : targetLib.getFeatures()) 
-					targetIdSet.add(sf.getDisplayId());
+				if (targetLib != null) {
+					targetIdSet = new HashSet<String>();
+					for (DnaComponent dnac : targetLib.getComponents()) 
+						targetIdSet.add(dnac.getDisplayId());
+					for (SequenceFeature sf : targetLib.getFeatures()) 
+						targetIdSet.add(sf.getDisplayId());
+				} else {
+					synthesizerOn = false;
+					break;
+				}
 			}
 		} while (!isSourceIdValid(idText.getText()));
-		if (option == JOptionPane.YES_OPTION) {
+		if (synthesizerOn && option == JOptionPane.YES_OPTION) {
 			input[0] = targetFileId;
 			input[1] = idText.getText();
 			input[2] = nameText.getText();
@@ -176,7 +183,7 @@ public class SbolSynthesizer {
 				else {
 					synthesizerOn = false;
 					JOptionPane.showMessageDialog(Gui.frame, "Promoter " + p.getId() + " has no SBOL promoter assocation.",
-							"Missing SBOL Association", JOptionPane.ERROR_MESSAGE);
+							"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			for (SpeciesInterface s : p.getOutputs()) {
@@ -187,7 +194,7 @@ public class SbolSynthesizer {
 					else {
 						synthesizerOn = false;
 						JOptionPane.showMessageDialog(Gui.frame, "Species " + s.getId() + " has no SBOL RBS assocation.",
-								"Missing SBOL Association", JOptionPane.ERROR_MESSAGE);
+								"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 				if (synthesizerOn) {
@@ -197,7 +204,7 @@ public class SbolSynthesizer {
 					else {
 						synthesizerOn = false;
 						JOptionPane.showMessageDialog(Gui.frame, "Species " + s.getId() + " has no SBOL ORF assocation.",
-								"Missing SBOL Association", JOptionPane.ERROR_MESSAGE);
+								"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
 					}
 				}
 			}
@@ -208,7 +215,7 @@ public class SbolSynthesizer {
 				else {
 					synthesizerOn = false;
 					JOptionPane.showMessageDialog(Gui.frame, "Promoter " + p.getId() + " has no SBOL terminator assocation.",
-							"Missing SBOL Association", JOptionPane.ERROR_MESSAGE);
+							"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
@@ -217,15 +224,16 @@ public class SbolSynthesizer {
 	
 	private int addFeature(int position, String sourceFeatProperty, DnaComponent synthComp, String targetFileId) {
 		if (synthesizerOn) {
-			String sourceLibId = sourceFeatProperty.split("/")[0] + "/" + sourceFeatProperty.split("/")[1];
+			String sourceFileId = sourceFeatProperty.split("/")[0];
+			String sourceLibId = sourceFeatProperty.split("/")[1];
 			String sourceFeatId = sourceFeatProperty.split("/")[2];
-			SequenceFeature sourceFeat = loadFeature(sourceFeatId, sourceLibId);
-			if (sourceFeat != null) {
-				String targetLibId = targetFileId + "/" + targetLib.getDisplayId();
+			SequenceFeature sourceFeat = loadFeature(sourceFeatId, sourceLibId, sourceFileId);
+			if (synthesizerOn) {
+				String targetLibId = targetLib.getDisplayId();
 				int option = 99;
-				if (targetIdSet.contains(sourceFeatId) && !sourceLibId.equals(targetLibId)) {
+				if (targetIdSet.contains(sourceFeatId) && (!sourceLibId.equals(targetLibId) || !sourceFileId.equals(targetFileId))) {
 					Object[] options = {"Change ID", "Use Existing", "Cancel"};
-					option = JOptionPane.showOptionDialog(Gui.frame, targetLibId + " already contains " + sourceFeatId 
+					option = JOptionPane.showOptionDialog(Gui.frame, "Collection " + targetLibId + " already contains DNA component " + sourceFeatId 
 							+ ".  Would you like to change display ID for incoming " + sourceFeatId + " or use existing " + sourceFeatId + "?", 
 							"ID Clash", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
 				}
@@ -250,16 +258,29 @@ public class SbolSynthesizer {
 		return position;
 	}
 	
-	private SequenceFeature loadFeature(String sourceFeatId, String sourceLibId) {
-		if (libMap.containsKey(sourceLibId)) {
-			for (SequenceFeature sf : libMap.get(sourceLibId).getFeatures()) {
+	private SequenceFeature loadFeature(String sourceFeatId, String sourceLibId, String sourceFileId) {
+		HashSet<String> fileSet = new HashSet<String>();
+		HashSet<String> libSet = new HashSet<String>();
+		for (String s : fileLibMap.keySet()) {
+			fileSet.add(s.split("/")[0]);
+			libSet.add(s.split("/")[1]);
+		}
+		if (fileLibMap.containsKey(sourceFileId + "/" + sourceLibId)) {
+			for (SequenceFeature sf : fileLibMap.get(sourceFileId + "/" + sourceLibId).getFeatures()) {
 				if (sf.getDisplayId().equals(sourceFeatId)) 
 					return sf;
 			}
 		}
 		synthesizerOn = false;
-		JOptionPane.showMessageDialog(Gui.frame, sourceFeatId + " not found in " + sourceLibId + ".", 
-				"Component Not Found", JOptionPane.ERROR_MESSAGE);
+		if (!fileSet.contains(sourceFileId))
+			JOptionPane.showMessageDialog(Gui.frame, "File " + sourceFileId + " is not found in project.", 
+					"File Not Found", JOptionPane.ERROR_MESSAGE);
+		else if (!libSet.contains(sourceLibId))
+			JOptionPane.showMessageDialog(Gui.frame, "Collection " + sourceLibId + " is not found in file "+ sourceFileId + ".", 
+					"Collection Not Found", JOptionPane.ERROR_MESSAGE);
+		else
+			JOptionPane.showMessageDialog(Gui.frame, "DNA component " + sourceFeatId + " is not found in collection " + sourceLibId
+			        + " from file " + sourceFileId + ".", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
 		return null;
 	}
 	
@@ -308,16 +329,16 @@ public class SbolSynthesizer {
 	
 	private boolean isSourceIdValid(String sourceId) {
 		if (sourceId.equals("")) {
-			JOptionPane.showMessageDialog(Gui.frame, "Blank ID.",
+			JOptionPane.showMessageDialog(Gui.frame, "Chosen ID is blank.",
 					"Invalid ID", JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else if (!Utility.isValid(sourceId, Utility.IDstring)) {
-			JOptionPane.showMessageDialog(Gui.frame, "Non-alphanumeric ID.",
+			JOptionPane.showMessageDialog(Gui.frame, "Chosen ID is not alphanumeric.",
 					"Invalid ID", JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else if (targetIdSet.contains(sourceId)) {
 			JOptionPane.showMessageDialog(Gui.frame, "Collection already contains DNA component with chosen ID.",
-					"Invalid ID", JOptionPane.ERROR_MESSAGE);
+					"ID Clash", JOptionPane.ERROR_MESSAGE);
 			return false;
 		} 
 		return true;

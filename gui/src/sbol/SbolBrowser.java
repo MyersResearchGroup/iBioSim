@@ -25,27 +25,30 @@ public class SbolBrowser extends JPanel {
 	private String selection = "";
 	
 	//Constructor when browsing a single RDF file from the main gui
-	public SbolBrowser(String filePath) {
+	public SbolBrowser(String filePath, Gui gui) {
 		super(new BorderLayout());
 		
 		HashMap<String, Library> libMap = new HashMap<String, Library>();
+		
 		Library lib = SbolUtility.loadRDF(filePath);
-		String mySeparator = File.separator;
-		if (mySeparator.equals("\\"))
-			mySeparator = "\\\\";
-		String[] splitPath = filePath.split(mySeparator);
-		libMap.put(splitPath[splitPath.length - 1] + "/" + lib.getDisplayId(), lib);
-		
-		constructBrowser(libMap, "");
-		
-		JPanel browserPanel = new JPanel();
-		browserPanel.add(selectionPanel, "North");
-		browserPanel.add(viewScroll, "Center");
-		
-		JTabbedPane browserTab = new JTabbedPane();
-		browserTab.add("SBOL Browser", browserPanel);
-		this.add(browserTab);
-		
+		if (lib != null) {
+			String mySeparator = File.separator;
+			if (mySeparator.equals("\\"))
+				mySeparator = "\\\\";
+			String fileId = filePath.substring(filePath.lastIndexOf(mySeparator) + 1, filePath.length());
+			libMap.put(fileId + "/" + lib.getDisplayId(), lib);
+
+			constructBrowser(libMap, "");
+
+			JPanel browserPanel = new JPanel();
+			browserPanel.add(selectionPanel, "North");
+			browserPanel.add(viewScroll, "Center");
+
+			JTabbedPane browserTab = new JTabbedPane();
+			browserTab.add("SBOL Browser", browserPanel);
+			this.add(browserTab);
+			gui.addTab(fileId, this, null);
+		}
 	}
 	
 	//Constructor when browsing RDF file subsets for SBOL to GCM association
@@ -55,24 +58,28 @@ public class SbolBrowser extends JPanel {
 		HashMap<String, Library> libMap = new HashMap<String, Library>();
 		for (String filePath : sbolFiles) {
 			Library lib = SbolUtility.loadRDF(filePath);
-			String mySeparator = File.separator;
-			if (mySeparator.equals("\\"))
-				mySeparator = "\\\\";
-			String[] splitPath = filePath.split(mySeparator);
-			libMap.put(splitPath[splitPath.length - 1] + "/" + lib.getDisplayId(), lib);
+			if (lib != null) {
+				String mySeparator = File.separator;
+				if (mySeparator.equals("\\"))
+					mySeparator = "\\\\";
+				libMap.put(filePath.substring(filePath.lastIndexOf(mySeparator) + 1, filePath.length()) + "/" + lib.getDisplayId(), lib);
+			}
 		}
 		
-		constructBrowser(libMap, filter);
-		
-		this.add(selectionPanel);
-		this.add(viewScroll);
-		
-		boolean display = true;
-		while (display)
-			display = browserOpen(filter, defaultSelection);
+		if (libMap.size() > 0) {
+			constructBrowser(libMap, filter);
+
+			this.add(selectionPanel);
+			this.add(viewScroll);
+
+			boolean display = true;
+			while (display)
+				display = browserOpen(defaultSelection);
+		} else
+			selection = defaultSelection;
 	}
 	
-	private boolean browserOpen(String filter, String defaultSelection) {
+	private boolean browserOpen(String defaultSelection) {
 		boolean selectionValid;
 		do {
 			selectionValid = true;
@@ -86,15 +93,15 @@ public class SbolBrowser extends JPanel {
 					selection = libIds[0];
 				else {
 					selectionValid = false;
-					JOptionPane.showMessageDialog(Gui.frame, "Blank ID.",
-							"Invalid ID", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "No collection is selected.",
+							"Invalid Selection", JOptionPane.ERROR_MESSAGE);
 				}
 				if (compIds.length > 0)
 					selection = selection + "/" + compIds[0];
-				else if (!filter.equals("library") && libIds.length > 0) {
+				else if (libIds.length > 0) {
 					selectionValid = false;
-					JOptionPane.showMessageDialog(Gui.frame, "Component ID not selected.",
-							"Invalid ID", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "No DNA component is selected.",
+							"Invalid Selection", JOptionPane.ERROR_MESSAGE);
 				}
 			} else {
 				selection = defaultSelection;

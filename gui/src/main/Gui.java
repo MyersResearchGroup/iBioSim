@@ -5564,8 +5564,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			tab.setSelectedIndex(i);
 		}
 		else {
-			SbolBrowser browser = new SbolBrowser(filePath);
-			addTab(fileName, browser, null);
+			SbolBrowser browser = new SbolBrowser(filePath, this);
 		}
 	}
 
