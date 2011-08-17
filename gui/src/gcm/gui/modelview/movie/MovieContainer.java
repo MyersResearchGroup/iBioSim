@@ -94,12 +94,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 		this.gcm2sbml = gcm2sbml;
 		this.movieScheme = new MovieScheme();
 		
-		loadPreferences();
-		
 		this.playTimer = new Timer(0, playTimerEventHandler);
 		mode = PAUSED;
-		
-		//registerEventListeners();
 	}	
 	
 	
@@ -175,6 +171,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 		biosim.log.addText(fullFilePath + " loaded. " + 
 				String.valueOf(parser.getData().size()) +
 				" rows of data loaded.");
+		
+		loadPreferences();
 	}
 	
 	
@@ -472,10 +470,11 @@ public class MovieContainer extends JPanel implements ActionListener {
 			Gson gson = new Gson();
 			
 			try{
+				
 				SerializableScheme[] speciesSchemes = gson.fromJson(json, SerializableScheme[].class);
 				
 				movieScheme = new MovieScheme();
-				movieScheme.populate(speciesSchemes);
+				movieScheme.populate(speciesSchemes, parser.getSpecies());
 			}
 			catch(Exception e){
 				biosim.log.addText("An error occured trying to load the preferences file " + fullPath + " ERROR: " + e.toString());

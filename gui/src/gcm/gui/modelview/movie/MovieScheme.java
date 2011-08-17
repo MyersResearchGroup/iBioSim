@@ -357,9 +357,12 @@ public class MovieScheme {
 	 * 
 	 * @param schemes
 	 */
-	public void populate(SerializableScheme[] schemes) {
+	public void populate(SerializableScheme[] schemes, ArrayList<String> allSpecies) {
 		
 		for (SerializableScheme scheme : schemes) {
+			
+			//make sure not to load schemes for species that no longer exist
+			if (allSpecies.contains(scheme.name) == false) continue;
 			
 			Scheme speciesScheme = new Scheme(
 					new GradientPaint(0.0f, 0.0f, new Color(scheme.startColor), 0.0f, 50.0f, new Color(scheme.endColor)), 
@@ -429,6 +432,9 @@ public class MovieScheme {
 				GradientPaint colorGradient = cellScheme.getValue().getColorGradient();
 				boolean opacityState = cellScheme.getValue().getOpacityState();
 				boolean sizeState = cellScheme.getValue().getSizeState();
+				
+				if (speciesTSData.get(speciesID) == null)
+					continue;
 				
 				//number of molecules at this time instance
 				double speciesValue = speciesTSData.get(speciesID).get(frameIndex);
