@@ -16,6 +16,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
@@ -71,6 +72,7 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 	
 	//has every species within the particular cell (eg, component or grid location)
 	private ArrayList<String> cellSpecies;
+	private HashMap<String, String> cellSpeciesAppearanceIndicators;
 	
 	//ID of the cell that was clicked on
 	private String cellID;
@@ -89,6 +91,7 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 		super(new BorderLayout());
 		
 		cellSpecies = new ArrayList<String>();
+		cellSpeciesAppearanceIndicators = new HashMap<String, String>();
 		
 		this.inTab = inTab;
 		this.cellType = GlobalConstants.COMPONENT;
@@ -128,8 +131,44 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 					
 					String speciesIDNoPrefix = species.replace(new String(speciesParts[0] + "__"), "");
 					
-					if (speciesParts[0].contains(cellID))
+					if (speciesParts[0].contains(cellID)) {
+						
 						cellSpecies.add(speciesIDNoPrefix);
+						
+						Scheme speciesScheme = movieScheme.getSpeciesScheme(species);
+						
+						//finds the species appearance information and adds text indicators
+						//for easily finding which species do what
+						if (speciesScheme != null) {
+						
+							//get the scheme data for the species that was selected
+							GradientPaint colorGradient = speciesScheme.getColorGradient();
+							boolean opacityOption = speciesScheme.getOpacityState();
+							boolean sizeOption = speciesScheme.getSizeState();
+							
+							String appearanceIndicators = "";
+							
+							if (colorGradient != null)
+								appearanceIndicators += "C";
+							if (opacityOption == true) {
+								if (appearanceIndicators.length() > 0) 
+									appearanceIndicators += ", O";
+								else
+									appearanceIndicators += "O";
+							}
+							if (sizeOption == true) {
+								if (appearanceIndicators.length() > 0) 
+									appearanceIndicators += ", S";
+								else
+									appearanceIndicators += "S";
+							}
+							
+							if (appearanceIndicators.length() > 0)
+								appearanceIndicators = "(" + appearanceIndicators + ")";
+							
+							cellSpeciesAppearanceIndicators.put(speciesIDNoPrefix, appearanceIndicators);
+						}
+					}
 				}
 			}
 			
@@ -178,8 +217,19 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 		optionsPanel = new JPanel(new GridLayout(7, 2));
 		this.add(optionsPanel, BorderLayout.CENTER);
 		
+		//add indicators to the species names' text
+		String[] newSpeciesNames = new String[cellSpecies.size()];
+		
+		for (int i = 0; i < newSpeciesNames.length; ++i) {
+			
+			newSpeciesNames[i] = new String(cellSpecies.get(i));
+			
+			if (cellSpeciesAppearanceIndicators.containsKey(newSpeciesNames[i]))
+				newSpeciesNames[i] += " " + cellSpeciesAppearanceIndicators.get(newSpeciesNames[i]);
+		}
+		
 		optionsPanel.add(new JLabel("Species"));
-		speciesChooser = new JComboBox(cellSpecies.toArray());
+		speciesChooser = new JComboBox(newSpeciesNames);
 		speciesChooser.addActionListener(new ActionListener(){
 
 			public void actionPerformed(ActionEvent arg0) {
@@ -267,9 +317,8 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 		String sizeState = sizeChooser.getSelectedItem().toString();
 		String speciesID = cellID;
 		
-		//if it's a species, the ID is the cell ID
 		if (cellType != GlobalConstants.SPECIES)
-			speciesID += "__" + speciesChooser.getSelectedItem().toString();
+			speciesID += "__" + cellSpecies.get(speciesChooser.getSelectedIndex());
 		
 		String applyTo = applyToChooser.getSelectedItem().toString();
 		int min = Integer.parseInt(minChooser.getText());
@@ -355,7 +404,7 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 		String speciesID = cellID;
 		
 		if (cellType != GlobalConstants.SPECIES)
-			speciesID += "__" + speciesChooser.getSelectedItem().toString();
+			speciesID += "__" + cellSpecies.get(speciesChooser.getSelectedIndex());
 		
 		Scheme speciesScheme = movieScheme.getSpeciesScheme(speciesID);
 		
