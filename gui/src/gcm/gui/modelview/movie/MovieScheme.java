@@ -339,12 +339,19 @@ public class MovieScheme {
 				
 			schemes[index] = new SerializableScheme();
 			
+			if (entry.getValue().getColorGradient() == null) {
+				schemes[index].startColor = 0;
+				schemes[index].endColor = 0;
+			}
+			else {
+				schemes[index].startColor = entry.getValue().getColorGradient().getColor1().getRGB();
+				schemes[index].endColor = entry.getValue().getColorGradient().getColor2().getRGB();
+			}
+			
 			schemes[index].min = entry.getValue().getMin();
 			schemes[index].max = entry.getValue().getMax();
 			schemes[index].opacityState = entry.getValue().getOpacityState();
-			schemes[index].sizeState = entry.getValue().getSizeState();
-			schemes[index].startColor = entry.getValue().getColorGradient().getColor1().getRGB();
-			schemes[index].endColor = entry.getValue().getColorGradient().getColor2().getRGB();
+			schemes[index].sizeState = entry.getValue().getSizeState();			
 			schemes[index].name = entry.getKey();
 		}
 		
@@ -364,9 +371,16 @@ public class MovieScheme {
 			//make sure not to load schemes for species that no longer exist
 			if (allSpecies.contains(scheme.name) == false) continue;
 			
-			Scheme speciesScheme = new Scheme(
-					new GradientPaint(0.0f, 0.0f, new Color(scheme.startColor), 0.0f, 50.0f, new Color(scheme.endColor)), 
-					scheme.opacityState, scheme.sizeState, scheme.min, scheme.max);
+			GradientPaint gradient = null;
+			
+			if (!(scheme.startColor == 0 && scheme.endColor == 0)) {
+				
+				gradient = new GradientPaint(0.0f, 0.0f, 
+						new Color(scheme.startColor), 0.0f, 50.0f, new Color(scheme.endColor));
+			}
+		
+			Scheme speciesScheme = new Scheme(gradient, scheme.opacityState, 
+					scheme.sizeState, scheme.min, scheme.max);
 			
 			speciesSchemes.put(scheme.name, speciesScheme);
 		}	
