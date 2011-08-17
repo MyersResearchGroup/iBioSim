@@ -333,7 +333,7 @@ public class MovieScheme {
 		
 		Iterator<Map.Entry<String, Scheme>>  speciesSchemesIter = speciesSchemes.entrySet().iterator();
 		
-		for (int index = 0; index < schemes.length; ++index) {
+		for (int index = 0; index < speciesSchemes.size(); ++index) {
 			
 			Map.Entry<String, Scheme> entry = speciesSchemesIter.next();
 				
