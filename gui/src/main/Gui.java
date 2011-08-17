@@ -468,7 +468,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		newVhdl = new JMenuItem("VHDL Model");
 		newS = new JMenuItem("Assembly File");
 		newInst = new JMenuItem("Instruction File");
-		newLhpn = new JMenuItem("Labeled Petri Net");
+		newLhpn = new JMenuItem("LPN Model");
 		newG = new JMenuItem("Petri Net");
 		newCsp = new JMenuItem("CSP Model");
 		newHse = new JMenuItem("Handshaking Expansion");
@@ -476,12 +476,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		newRsg = new JMenuItem("Reduced State Graph");
 		graph = new JMenuItem("TSD Graph");
 		probGraph = new JMenuItem("Histogram");
-		importSbol = new JMenuItem("SBOL File");
+		importSbol = new JMenuItem("SBOL Library");
 		importSbml = new JMenuItem("SBML Model");
 		importBioModel = new JMenuItem("BioModel");
 		importDot = new JMenuItem("Genetic Circuit Model");
 		importG = new JMenuItem("Petri Net");
-		importLpn = new JMenuItem("Labeled Petri Net");
+		importLpn = new JMenuItem("LPN Model");
 		importVhdl = new JMenuItem("VHDL Model");
 		importS = new JMenuItem("Assembly File");
 		importInst = new JMenuItem("Instruction File");
@@ -626,6 +626,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		rename.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
 		delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, ShortCutKey));
 		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ShortCutKey));
+		newProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ShortCutKey));
 		openProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ShortCutKey));
 		close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ShortCutKey));
 		closeAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ShortCutKey | KeyEvent.SHIFT_MASK));
@@ -679,7 +680,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		newVhdl.setMnemonic(KeyEvent.VK_V);
 		newLhpn.setMnemonic(KeyEvent.VK_L);
 		newG.setMnemonic(KeyEvent.VK_N);
-		newSpice.setMnemonic(KeyEvent.VK_P);
+		//newSpice.setMnemonic(KeyEvent.VK_P);
 		about.setMnemonic(KeyEvent.VK_A);
 		manual.setMnemonic(KeyEvent.VK_M);
 		graph.setMnemonic(KeyEvent.VK_T);
@@ -690,10 +691,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else {
 			importLpn.setMnemonic(KeyEvent.VK_L);
 		}
-		importSbol.setMnemonic(KeyEvent.VK_O);
+		//importSbol.setMnemonic(KeyEvent.VK_O);
 		importSbml.setMnemonic(KeyEvent.VK_S);
 		importVhdl.setMnemonic(KeyEvent.VK_V);
-		importSpice.setMnemonic(KeyEvent.VK_P);
+		//importSpice.setMnemonic(KeyEvent.VK_P);
 		save.setMnemonic(KeyEvent.VK_S);
 		run.setMnemonic(KeyEvent.VK_R);
 		check.setMnemonic(KeyEvent.VK_K);
@@ -705,7 +706,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportPng.setMnemonic(KeyEvent.VK_G);
 		exportSvg.setMnemonic(KeyEvent.VK_S);
 		exportTsd.setMnemonic(KeyEvent.VK_T);
-		pref.setMnemonic(KeyEvent.VK_P);
+		//pref.setMnemonic(KeyEvent.VK_P);
 		viewModGraph.setMnemonic(KeyEvent.VK_G);
 		viewModBrowser.setMnemonic(KeyEvent.VK_B);
 		createAnal.setMnemonic(KeyEvent.VK_A);
@@ -821,11 +822,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		file.addSeparator();
 		file.add(importMenu);
 		if (!async) {
-			importMenu.add(importBioModel);
 			importMenu.add(importDot);
-			importMenu.add(importLpn);
 			importMenu.add(importSbml);
+			importMenu.add(importBioModel);
 			importMenu.add(importSbol);
+			importMenu.add(importLpn);
 		}
 		else if (atacs) {
 			importMenu.add(importVhdl);
