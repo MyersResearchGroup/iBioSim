@@ -73,31 +73,29 @@ public class LibraryPanel extends JPanel implements MouseListener {
 			else
 				viewArea.append("Description:  NA\n\n");
 
-			if (filter.equals("") || filter.equals("library")) {
+			if (filter.equals("")) {
 				String[] compIdArray = new String[lib.getComponents().size() + lib.getFeatures().size()]; //remove 2nd term once libSBOL up to speed
 				int n = 0;
 				for (DnaComponent dnac : lib.getComponents()) {
 					compIdArray[n] = dnac.getDisplayId();
-					n++;
 					compMap.put(dnac.getDisplayId(), dnac);
+					n++;
 				}
 				for (SequenceFeature sf : lib.getFeatures()) { // remove entire loop once libSBOL up to speed...or not, could be way of telling feature
 					compIdArray[n] = sf.getDisplayId();
-					n++;
 					featMap.put(sf.getDisplayId(), sf);
+					n++;
 				}
 				LinkedHashSet<String> compIds = lexoSort(compIdArray, n);
 				compPanel.setComponents(compIds);
-				if (filter.equals("library"))
-					compPanel.disableList();
 			} else {
 				String[] featIdArray = new String[lib.getFeatures().size()];
 				int n = 0;
 				for (SequenceFeature sf : lib.getFeatures()) {
 					if (filterFeature(sf, filter)) {
 						featIdArray[n] = sf.getDisplayId();
-						n++;
 						featMap.put(sf.getDisplayId(), sf);
+						n++;
 					}
 				}
 				LinkedHashSet<String> featIds = lexoSort(featIdArray, n);

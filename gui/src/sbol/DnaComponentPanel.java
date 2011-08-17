@@ -148,10 +148,6 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 		return annotations;
 	}
 	
-	public void disableList() {
-		compList.setEnabled(false);
-	}
-	
 	public void mouseEntered(MouseEvent e) {
 		// TODO Auto-generated method stub
 		
