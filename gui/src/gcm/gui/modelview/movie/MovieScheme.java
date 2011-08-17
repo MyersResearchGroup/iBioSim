@@ -583,7 +583,15 @@ public class MovieScheme {
 		return newAppearance;
 	}
 
-
+	/**
+	 * empties the scheme hashmap
+	 */
+	public void clearAppearances() {
+		
+		speciesSchemes = new HashMap<String, Scheme>();
+	}
+	
+	
 	//SCHEME CLASS
 
 	public class Scheme {

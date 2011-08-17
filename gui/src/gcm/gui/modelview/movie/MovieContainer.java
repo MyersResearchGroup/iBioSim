@@ -69,6 +69,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private JButton playPauseButton;
 	private JButton rewindButton;
 	private JButton singleStepButton;
+	private JButton clearButton;
 	private JSlider slider;
 	
 	
@@ -199,8 +200,13 @@ public class MovieContainer extends JPanel implements ActionListener {
 		// Add the bottom menu bar
 		JToolBar mt = new JToolBar();
 		
-		fileButton = Utils.makeToolButton("", "choose_simulation_file", "Choose Simulation File", this);
+		fileButton = Utils.makeToolButton("", "choose_simulation_file", "Choose Simulation", this);
 		mt.add(fileButton);
+		
+		clearButton = Utils.makeToolButton("", "clearAppearances", "Clear Appearances", this);
+		mt.add(clearButton);
+		
+		mt.addSeparator();
 		
 		rewindButton = Utils.makeToolButton("movie" + File.separator + "rewind.png", "rewind", "Rewind", this);
 		mt.add(rewindButton);
@@ -267,6 +273,10 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 		else if(command.equals("choose_simulation_file")){
 			prepareTSDFile();
+		}
+		else if(command.equals("clearAppearances")){
+			movieScheme.clearAppearances();
+			schematic.getGraph().buildGraph();
 		}
 		else{
 			throw new Error("Unrecognized command '" + command + "'!");
