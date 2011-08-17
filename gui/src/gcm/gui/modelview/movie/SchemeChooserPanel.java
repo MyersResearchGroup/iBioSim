@@ -239,7 +239,7 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 		
 		if (!inTab) {
 		
-			String[] options = {"Save Changes", GlobalConstants.CANCEL};
+			String[] options = {GlobalConstants.OK, GlobalConstants.CANCEL};
 			
 			int okCancel = JOptionPane.showOptionDialog(Gui.frame, this, "Select inner species appearance scheme",
 					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -248,6 +248,7 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 			if (okCancel == JOptionPane.OK_OPTION) {
 				
 				updateMovieScheme();
+				movieContainer.setIsDirty(true);
 			}
 		}
 		

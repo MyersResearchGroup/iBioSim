@@ -140,10 +140,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			typeBox.removeItem(GlobalConstants.OUTPUT);
 		}
 		
-		//these are now checkboxes
-		typeBox.removeItem(GlobalConstants.DIFFUSIBLE);
-		typeBox.removeItem(GlobalConstants.SPASTIC);
-		
 		typeBox.addActionListener(this);
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
@@ -306,7 +302,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			specInteresting.setSelected(speciesMarked);
 			tempPanel.add(specInteresting);
 			thresholdTextField = new JTextField(thresholdText);
-			tempPanel.add(thresholdTextField);
+			
+			if (!gcm.getSpecies().get(selected).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.INPUT))
+				tempPanel.add(thresholdTextField);
 			
 			grid.add(tempPanel);
 		}		

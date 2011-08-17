@@ -1571,7 +1571,7 @@ public class Schematic extends JPanel implements ActionListener {
 					speciesPane.addTab("Appearance", panel);
 				}
 				
-				String[] options = {"Save Changes", GlobalConstants.CANCEL};
+				String[] options = {GlobalConstants.OK, GlobalConstants.CANCEL};
 				
 				int okCancel = JOptionPane.showOptionDialog(Gui.frame, speciesPane, "Edit Species",
 					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
@@ -1582,6 +1582,8 @@ public class Schematic extends JPanel implements ActionListener {
 						scPanel.updateMovieScheme();
 					
 					speciesPanel.handlePanelData(0);
+					
+					movieContainer.setIsDirty(true);
 				}
 			}
 			else
