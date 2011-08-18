@@ -544,10 +544,16 @@ public class MovieScheme {
 		
 		MovieAppearance newAppearance = new MovieAppearance();
 		
-		if (gradientValue <= 0.0)
+		if (gradientValue <= 0.0) {
 			newAppearance.color = startColor;
-		else if (gradientValue >= 1.0)
+			newAppearance.opacity = startOpacity;
+			newAppearance.size = startSize;
+		}
+		else if (gradientValue >= 1.0) {
 			newAppearance.color = endColor;
+			newAppearance.opacity = endOpacity;
+			newAppearance.size = endSize;
+		}
 		else{
 			
 			float oneMinusRatio = (float)1.0 - (float)gradientValue;
