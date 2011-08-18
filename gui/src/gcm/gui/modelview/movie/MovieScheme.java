@@ -233,7 +233,7 @@ public class MovieScheme {
 							
 							speciesID = new String(component.getKey() + "__" + speciesIDNoPrefix);
 							
-							if (!allSpecies.contains(speciesID)) continue;
+							//if (!allSpecies.contains(speciesID)) continue;
 							
 							if (remove) {
 								schemeApply.apply(speciesID);
@@ -546,13 +546,13 @@ public class MovieScheme {
 		
 		if (gradientValue <= 0.0) {
 			newAppearance.color = startColor;
-			newAppearance.opacity = startOpacity;
-			newAppearance.size = startSize;
+			if (opacityState == true) newAppearance.opacity = startOpacity;
+			if (sizeState == true) newAppearance.size = startSize;
 		}
 		else if (gradientValue >= 1.0) {
 			newAppearance.color = endColor;
-			newAppearance.opacity = endOpacity;
-			newAppearance.size = endSize;
+			if (opacityState == true) newAppearance.opacity = endOpacity;
+			if (sizeState == true) newAppearance.size = endSize;
 		}
 		else{
 			
