@@ -12,6 +12,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.LinkedList;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -97,7 +98,7 @@ public class SbolSynthesizer {
 			synthComp.setName(input[2]);
 			synthComp.setDescription(input[3]);
 			// Assemble component annotations
-			LinkedHashSet<String> sourceFeatProperties = getSourceFeatProperties();
+			LinkedList<String> sourceFeatProperties = getSourceFeatProperties();
 			if (synthesizerOn) {
 				sourceIdSet = new HashSet<String>();
 				for (String importFeatProperty : sourceFeatProperties)
@@ -173,8 +174,8 @@ public class SbolSynthesizer {
 		return input;
 	}
 	
-	private LinkedHashSet<String> getSourceFeatProperties() {
-		LinkedHashSet<String> sourceFeatProperties = new LinkedHashSet<String>();
+	private LinkedList<String> getSourceFeatProperties() {
+		LinkedList<String> sourceFeatProperties = new LinkedList<String>();
 		for (Promoter p : promoters.values()) {
 			if (synthesizerOn) {
 				String sbolPromoter = p.getProperty(GlobalConstants.SBOL_PROMOTER);
@@ -231,7 +232,7 @@ public class SbolSynthesizer {
 			if (synthesizerOn) {
 				String targetLibId = targetLib.getDisplayId();
 				int option = 99;
-				if (targetIdSet.contains(sourceFeatId) && (!sourceLibId.equals(targetLibId) || !sourceFileId.equals(targetFileId))) {
+				if (targetIdSet.contains(sourceFeatId) && (!sourceFileId.equals(targetFileId) || !sourceLibId.equals(targetLibId))) {
 					Object[] options = {"Change ID", "Use Existing", "Cancel"};
 					option = JOptionPane.showOptionDialog(Gui.frame, "Collection " + targetLibId + " already contains DNA component " + sourceFeatId 
 							+ ".  Would you like to change display ID for incoming " + sourceFeatId + " or use existing " + sourceFeatId + "?", 
@@ -251,7 +252,8 @@ public class SbolSynthesizer {
 					SbolService factory = new SbolService();
 					factory.addSequenceFeatureToLibrary(sourceFeat, targetLib);
 					position = addFeatureToComponent(sourceFeat, synthComp, position);
-					synthComp.getDnaSequence().setDnaSequence(synthComp.getDnaSequence().getDnaSequence() + sourceFeat.getDnaSequence().getDnaSequence());
+					if (synthesizerOn)
+						synthComp.getDnaSequence().setDnaSequence(synthComp.getDnaSequence().getDnaSequence() + sourceFeat.getDnaSequence().getDnaSequence());
 				}
 			}
 		}
@@ -313,7 +315,8 @@ public class SbolSynthesizer {
 	}
 	
 	private int addFeatureToComponent(SequenceFeature sourceFeat, DnaComponent synthComp, int position) {
-		if (sourceFeat.getDnaSequence().getDnaSequence().length() >= 1) {
+		if (sourceFeat.getDnaSequence() != null && sourceFeat.getDnaSequence().getDnaSequence() != null 
+				&& sourceFeat.getDnaSequence().getDnaSequence().length() >= 1) {
 			SequenceAnnotation annot = new SequenceAnnotation();
 			annot.setStart(position);
 			position += sourceFeat.getDnaSequence().getDnaSequence().length() - 1;
@@ -323,22 +326,23 @@ public class SbolSynthesizer {
 			synthComp.addAnnotation(annot);
 			annot.generateId(synthComp);
 			position++;
-		}
+		} else {
+			synthesizerOn = false;
+			JOptionPane.showMessageDialog(Gui.frame, "DNA Component " + sourceFeat.getDisplayId() + " has no DNA sequence.", 
+					"Invalid DNA Sequence", JOptionPane.ERROR_MESSAGE);
+		}	
 		return position;
 	}
 	
 	private boolean isSourceIdValid(String sourceId) {
 		if (sourceId.equals("")) {
-			JOptionPane.showMessageDialog(Gui.frame, "Chosen ID is blank.",
-					"Invalid ID", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Chosen ID is blank.", "Invalid ID", JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else if (!Utility.isValid(sourceId, Utility.IDstring)) {
-			JOptionPane.showMessageDialog(Gui.frame, "Chosen ID is not alphanumeric.",
-					"Invalid ID", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Chosen ID is not alphanumeric.", "Invalid ID", JOptionPane.ERROR_MESSAGE);
 			return false;
 		} else if (targetIdSet.contains(sourceId)) {
-			JOptionPane.showMessageDialog(Gui.frame, "Collection already contains DNA component with chosen ID.",
-					"ID Clash", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Collection already contains DNA component with chosen ID.", "ID Clash", JOptionPane.ERROR_MESSAGE);
 			return false;
 		} 
 		return true;
