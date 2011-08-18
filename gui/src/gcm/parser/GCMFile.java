@@ -1890,7 +1890,10 @@ public class GCMFile {
 	}
 
 	public boolean editSpeciesCheck(String name, String newType) {
-		if (species.get(name).getProperty(GlobalConstants.TYPE).equals(newType)) {
+		if ((species.get(name).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.INPUT) && 
+				newType.contains(GlobalConstants.INPUT)) || 
+			(species.get(name).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT) &&
+				newType.contains(GlobalConstants.OUTPUT))) {
 			return true;
 		}
 		else if (species.get(name).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.INPUT)
