@@ -84,7 +84,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		
 		r = new org.sbml.libsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		r.setId("Constitutive_production_" + s.getId());
-		
+		r.setCompartment(compartment);
 		r.addProduct(Utility.SpeciesReference(s.getId(), Double.parseDouble(parameters.getParameter(GlobalConstants.STOICHIOMETRY_STRING))));
 		
 		r.setReversible(false);
@@ -117,7 +117,7 @@ public class PrintSpeciesVisitor extends AbstractPrintVisitor {
 		
 		r = new org.sbml.libsbml.Reaction(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 		r.setId("Constitutive_production_" + s.getId());
-		
+		r.setCompartment(compartment);
 		r.addProduct(Utility.SpeciesReference(s.getId(), Double.parseDouble(parameters.getParameter(GlobalConstants.STOICHIOMETRY_STRING))));
 		
 		r.setReversible(false);

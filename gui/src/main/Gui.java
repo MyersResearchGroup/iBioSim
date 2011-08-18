@@ -429,11 +429,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		// Creates a menu for the frame
 		menuBar = new JMenuBar();
 		file = new JMenu("File");
-		file.setMnemonic(KeyEvent.VK_F);
 		help = new JMenu("Help");
-		help.setMnemonic(KeyEvent.VK_H);
 		edit = new JMenu("Edit");
-		edit.setMnemonic(KeyEvent.VK_E);
 		importMenu = new JMenu("Import");
 		exportMenu = new JMenu("Export");
 		newMenu = new JMenu("New");
@@ -476,10 +473,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		newRsg = new JMenuItem("Reduced State Graph");
 		graph = new JMenuItem("TSD Graph");
 		probGraph = new JMenuItem("Histogram");
-		importSbol = new JMenuItem("SBOL Library");
+		importSbol = new JMenuItem("SBOL File");
 		importSbml = new JMenuItem("SBML Model");
 		importBioModel = new JMenuItem("BioModel");
-		importDot = new JMenuItem("Genetic Circuit Model");
+		importDot = new JMenuItem("iBioSim Model");
 		importG = new JMenuItem("Petri Net");
 		importLpn = new JMenuItem("LPN Model");
 		importVhdl = new JMenuItem("VHDL Model");
@@ -490,6 +487,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importHse = new JMenuItem("Handshaking Expansion");
 		importUnc = new JMenuItem("Extended Burst Mode Machine");
 		importRsg = new JMenuItem("Reduced State Graph");
+		/*
 		exportSBML = new JMenuItem("Systems Biology Markup Language (SBML)");
 		exportSBOL = new JMenuItem("Synthetic Biology Open Language (SBOL)");
 		exportCsv = new JMenuItem("Comma Separated Values (csv)");
@@ -500,6 +498,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportPng = new JMenuItem("Portable Network Graphics (png)");
 		exportSvg = new JMenuItem("Scalable Vector Graphics (svg)");
 		exportTsd = new JMenuItem("Time Series Data (tsd)");
+		*/
+		exportSBML = new JMenuItem("SBML");
+		exportSBOL = new JMenuItem("SBOL");
+		exportCsv = new JMenuItem("CSV");
+		exportDat = new JMenuItem("DAT");
+		exportEps = new JMenuItem("EPS");
+		exportJpg = new JMenuItem("JPG");
+		exportPdf = new JMenuItem("PDF");
+		exportPng = new JMenuItem("PNG");
+		exportSvg = new JMenuItem("SVG");
+		exportTsd = new JMenuItem("TSD");
 		save = new JMenuItem("Save");
 		if (async) {
 			saveModel = new JMenuItem("Save Learned LPN");
@@ -621,23 +630,35 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		createSbml.setActionCommand("createSBML");
 		createSynth.setActionCommand("createSynthesis");
 		createVer.setActionCommand("createVerify");
+
 		ShortCutKey = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
-		copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ShortCutKey));
-		rename.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F2, 0));
-		delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, ShortCutKey));
-		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ShortCutKey));
 		newProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ShortCutKey));
 		openProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, ShortCutKey));
 		close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ShortCutKey));
 		closeAll.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, ShortCutKey | KeyEvent.SHIFT_MASK));
-		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
 		save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey));
 		saveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | KeyEvent.SHIFT_MASK));
-		//saveSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | KeyEvent.SHIFT_MASK));
 		run.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_R, ShortCutKey));
-		check.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ShortCutKey));
+		if (lema) {
+			
+		} else {
+			check.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ShortCutKey));
+			saveSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | KeyEvent.CTRL_MASK));
+			saveModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey | KeyEvent.CTRL_MASK));
+			newGCMModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
+			createAnal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey | KeyEvent.SHIFT_MASK));
+			createLearn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey | KeyEvent.SHIFT_MASK));
+		}
+		newLhpn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey));
+		graph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey));
+		probGraph.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_H, ShortCutKey | KeyEvent.SHIFT_MASK));
+		copy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, ShortCutKey | KeyEvent.SHIFT_MASK));
+		rename.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, ShortCutKey | KeyEvent.SHIFT_MASK));
+		delete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ShortCutKey | KeyEvent.SHIFT_MASK));
+		manual.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey | KeyEvent.SHIFT_MASK));
+		exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, ShortCutKey));
 		pref.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_COMMA, ShortCutKey));
-		viewLog.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0));
+		/*
 		if (lema) {
 			viewLHPN.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 			viewTrace.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F6, 0));
@@ -645,9 +666,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else {
 			viewCircuit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F1, 0));
 			refresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
-			createAnal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey));
-			createLearn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey));
 		}
+		viewLog.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0));
+
 		Action newAction = new NewAction();
 		Action importAction = new ImportAction();
 		Action exportAction = new ExportAction();
@@ -664,6 +685,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		viewModel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey | KeyEvent.ALT_DOWN_MASK),
 				"model");
 		viewModel.getActionMap().put("model", modelAction);
+
 		newMenu.setMnemonic(KeyEvent.VK_N);
 		importMenu.setMnemonic(KeyEvent.VK_I);
 		exportMenu.setMnemonic(KeyEvent.VK_E);
@@ -711,6 +733,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		viewModBrowser.setMnemonic(KeyEvent.VK_B);
 		createAnal.setMnemonic(KeyEvent.VK_A);
 		createLearn.setMnemonic(KeyEvent.VK_L);
+		*/
+		
 		importDot.setEnabled(false);
 		importSbol.setEnabled(false);
 		importSbml.setEnabled(false);
@@ -811,13 +835,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		file.addSeparator();
 		file.add(save);
 		file.add(saveAs);
-		if (lema)
-			file.add(saveAsVerilog);
 		if (!async) {
+			file.add(saveSBOL);
 			file.add(check);
 		}
 		file.add(run);
-		file.add(saveSBOL);
+		if (lema) {
+			file.add(saveAsVerilog);
+		}
 		file.add(saveModel);
 		file.addSeparator();
 		file.add(importMenu);
@@ -825,8 +850,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			importMenu.add(importDot);
 			importMenu.add(importSbml);
 			importMenu.add(importBioModel);
-			importMenu.add(importSbol);
 			importMenu.add(importLpn);
+			importMenu.add(importSbol);
 		}
 		else if (atacs) {
 			importMenu.add(importVhdl);
@@ -848,6 +873,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportMenu.add(exportSBML);
 		exportMenu.add(exportSBOL);
 		exportMenu.addSeparator();
+		exportMenu.add(exportTsd);
 		exportMenu.add(exportCsv);
 		exportMenu.add(exportDat);
 		exportMenu.add(exportEps);
@@ -855,7 +881,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportMenu.add(exportPdf);
 		exportMenu.add(exportPng);
 		exportMenu.add(exportSvg);
-		exportMenu.add(exportTsd);
 		file.addSeparator();
 		help.add(manual);
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
@@ -892,7 +917,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else {
 			view.add(viewModGraph);
-			view.add(viewModBrowser);
+			//view.add(viewModBrowser);
 			view.add(viewLearnedModel);
 			view.add(viewSG);
 			view.add(viewLog);
