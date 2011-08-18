@@ -75,8 +75,11 @@ public class SbolBrowser extends JPanel {
 			boolean display = true;
 			while (display)
 				display = browserOpen(defaultSelection);
-		} else
+		} else {
 			selection = defaultSelection;
+			JOptionPane.showMessageDialog(Gui.frame, "No SBOL files are found in project.", 
+					"File Not Found", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 	
 	private boolean browserOpen(String defaultSelection) {
