@@ -23,6 +23,7 @@ import platu.stategraph.state.StateTran;
 
 
 @SuppressWarnings("StaticNonFinalUsedInInitialization")
+// TODO: (Utah) remove "extends LPN" 
 public class StateGraph extends LPN {
 
     private static int UPDATE_DURATION = 1000;//millisec
@@ -43,7 +44,9 @@ public class StateGraph extends LPN {
     }
     
     public State sgInitState;
+    // TODO: (Utah) remove deisgnPrj? It is only used in setStateGraph(). But setStateGraph() never gets called.
     private Project designPrj;
+    // TODO: (Utah) add new object: LhpnFile lhpn;
     protected HashSet<String> inputs;
     protected HashSet<String> outputs;
     protected HashSet<String> internals;
@@ -64,6 +67,7 @@ public class StateGraph extends LPN {
     protected List<State> frontierStateSet = new LinkedList<State>();
     protected List<State> entryStateSet = new LinkedList<State>();
 
+    // TODO: (Utah) Rewrite the two StateGraph() constructors below to adapt our LPN? 
     public StateGraph(Project prj, String label, VarSet inputs, VarSet outputs,
             VarSet internals, LpnTranList transitions, State initState) {
         super(prj, label, inputs, outputs, internals, transitions, initState);
@@ -392,7 +396,7 @@ public class StateGraph extends LPN {
 ////    public void setLabel(String label){
 //////    	this.label = label;
 ////    }
-    
+    // TODO: (Utah) Replace LPN with our LPN object.
     public void printStates(){
     	LPN lpn = (LPN) this;
     	System.out.println(String.format("%-8s    %5s", lpn.getLabel(), "|States| = " + reachSize()));
