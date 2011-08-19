@@ -262,7 +262,9 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 		three.add(both);
 		((FlowLayout) three.getLayout()).setAlignment(FlowLayout.LEFT);
 		thresholdPanel2.add(three);
-		thresholdPanel2.add(new JPanel());
+		viewLog = new JButton("View Run Log");
+		thresholdPanel2.add(viewLog);
+//		thresholdPanel2.add(new JPanel());
 		thresholdPanel2.add(basicFBP);
 		thresholdPanel2.add(new JPanel());
 		JPanel thresholdPanelHold2 = new JPanel();
@@ -439,8 +441,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 		saveGcm.setMnemonic(KeyEvent.VK_C);
 
 		// Creates the view circuit button
-		viewLog = new JButton("View Run Log");
-		runHolder.add(viewLog);
+		//runHolder.add(viewLog);
 		viewLog.addActionListener(this);
 		viewLog.setMnemonic(KeyEvent.VK_R);
 		if (!(new File(directory + separator + "method.gcm").exists())) {
@@ -1271,6 +1272,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 				if (new File(directory + separator + "method.gcm").exists()) {
 					viewGcm.setEnabled(true);
 					saveGcm.setEnabled(true);
+					saveGcm();
 				}
 				if (new File(directory + separator + "run.log").exists()) {
 					viewLog.setEnabled(true);

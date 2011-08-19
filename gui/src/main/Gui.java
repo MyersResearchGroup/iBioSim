@@ -1,7 +1,6 @@
 package main;
 
 import gcm.gui.GCM2SBMLEditor;
-import gcm.gui.GridPanel;
 import gcm.gui.modelview.movie.MovieContainer;
 import gcm.network.GeneticNetwork;
 import gcm.parser.CompatibilityFixer;
@@ -57,7 +56,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -78,7 +76,6 @@ import javax.swing.JTree;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.JViewport;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
@@ -439,7 +436,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		tools = new JMenu("Tools");
 		menuBar.add(file);
 		menuBar.add(edit);
-		menuBar.add(view);
+		//menuBar.add(view);
 		menuBar.add(tools);
 		menuBar.add(help);
 		// menuBar.addFocusListener(this);
@@ -595,6 +592,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		saveSBOL.addActionListener(this);
 		run.addActionListener(this);
 		check.addActionListener(this);
+		refresh.addActionListener(this);
 		saveModel.addActionListener(this);
 		viewCircuit.addActionListener(this);
 		viewRules.addActionListener(this);
@@ -643,8 +641,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			
 		} else {
 			check.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ShortCutKey));
-			saveSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | KeyEvent.CTRL_MASK));
-			saveModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey | KeyEvent.CTRL_MASK));
+			saveSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | KeyEvent.ALT_MASK));
+			refresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
 			newGCMModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
 			createAnal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey | KeyEvent.SHIFT_MASK));
 			createLearn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey | KeyEvent.SHIFT_MASK));
@@ -842,8 +840,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		file.add(run);
 		if (lema) {
 			file.add(saveAsVerilog);
+		} else {
+			file.addSeparator();
+			file.add(refresh);
 		}
-		file.add(saveModel);
+		//file.add(saveModel);
 		file.addSeparator();
 		file.add(importMenu);
 		if (!async) {
@@ -921,8 +922,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			view.add(viewLearnedModel);
 			view.add(viewSG);
 			view.add(viewLog);
-			view.addSeparator();
-			view.add(refresh);
+			//view.addSeparator();
+			//view.add(refresh);
 		}
 		if (LPN2SBML) {
 			tools.add(createAnal);
@@ -2034,20 +2035,20 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		final String developers;
 		if (lema) {
 			name = new JLabel("LEMA", JLabel.CENTER);
-			version = new JLabel("Version 1.6.1", JLabel.CENTER);
+			version = new JLabel("Version 1.9", JLabel.CENTER);
 			developers = "Satish Batchu\nKevin Jones\nScott Little\nCurtis Madsen\nChris Myers\nNicholas Seegmiller\n"
 					+ "Robert Thacker\nDavid Walter";
 		}
 		else if (atacs) {
 			name = new JLabel("ATACS", JLabel.CENTER);
-			version = new JLabel("Version 6.6.1", JLabel.CENTER);
+			version = new JLabel("Version 6.9", JLabel.CENTER);
 			developers = "Wendy Belluomini\nJeff Cuthbert\nHans Jacobson\nKevin Jones\nSung-Tae Jung\n"
 					+ "Christopher Krieger\nScott Little\nCurtis Madsen\nEric Mercer\nChris Myers\n"
 					+ "Curt Nelson\nEric Peskin\nNicholas Seegmiller\nDavid Walter\nHao Zheng";
 		}
 		else {
 			name = new JLabel("iBioSim", JLabel.CENTER);
-			version = new JLabel("Version 1.6.1", JLabel.CENTER);
+			version = new JLabel("Version 2.0", JLabel.CENTER);
 			developers = "Nathan Barker\nKevin Jones\nHiroyuki Kuwahara\n"
 					+ "Curtis Madsen\nChris Myers\nNam Nguyen\nNicholas Roehner\nTyler Patterson";
 		}
@@ -9092,7 +9093,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		createLearn.setEnabled(false);
 		createVer.setEnabled(false);
 		createSbml.setEnabled(false);
-		refresh.setEnabled(false);
 		check.setEnabled(false);
 		copy.setEnabled(false);
 		rename.setEnabled(false);
