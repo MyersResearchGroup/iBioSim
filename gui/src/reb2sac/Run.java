@@ -56,17 +56,18 @@ public class Run implements ActionListener {
 	}
 
 	/**
-	 * This method is given which buttons are selected and creates the
-	 * properties file from all the other information given.
+	 * This method is given which buttons are selected and creates the properties
+	 * file from all the other information given.
 	 * 
 	 * @param useInterval
 	 * 
 	 * @param stem
 	 */
-	public void createProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep, double timeStep, double absError,
-			String outDir, long rndSeed, int run, String[] termCond, String[] intSpecies, String printer_id, String printer_track_quantity,
-			String[] getFilename, String selectedButtons, Component component, String filename, double rap1, double rap2, double qss, int con,
-			JCheckBox usingSSA, String ssaFile, JCheckBox usingSad, File sadFile, JList preAbs, JList loopAbs, JList postAbs, AbstPane abstPane) {
+	public void createProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep,
+			double timeStep, double absError, String outDir, long rndSeed, int run, String[] termCond, String[] intSpecies,
+			String printer_id, String printer_track_quantity, String[] getFilename, String selectedButtons,
+			Component component, String filename, double rap1, double rap2, double qss, int con, JCheckBox usingSSA,
+			String ssaFile, JCheckBox usingSad, File sadFile, JList preAbs, JList loopAbs, JList postAbs, AbstPane abstPane) {
 		Properties abs = new Properties();
 		if (selectedButtons.contains("abs") || selectedButtons.contains("nary")) {
 			int gcmIndex = 1;
@@ -171,7 +172,8 @@ public class Run implements ActionListener {
 		}
 		if (abstPane != null) {
 			for (Integer i = 0; i < abstPane.preAbsModel.size(); i++) {
-				abs.setProperty("abstraction.transform." + abstPane.preAbsModel.getElementAt(i).toString(), "preloop" + i.toString());
+				abs.setProperty("abstraction.transform." + abstPane.preAbsModel.getElementAt(i).toString(),
+						"preloop" + i.toString());
 			}
 			for (Integer i = 0; i < abstPane.loopAbsModel.size(); i++) {
 				if (abstPane.preAbsModel.contains(abstPane.loopAbsModel.getElementAt(i))) {
@@ -180,7 +182,8 @@ public class Run implements ActionListener {
 					abs.setProperty("abstraction.transform." + abstPane.loopAbsModel.getElementAt(i).toString(), value);
 				}
 				else {
-					abs.setProperty("abstraction.transform." + abstPane.loopAbsModel.getElementAt(i).toString(), "mainloop" + i.toString());
+					abs.setProperty("abstraction.transform." + abstPane.loopAbsModel.getElementAt(i).toString(),
+							"mainloop" + i.toString());
 				}
 			}
 			for (Integer i = 0; i < abstPane.postAbsModel.size(); i++) {
@@ -191,11 +194,13 @@ public class Run implements ActionListener {
 					abs.setProperty("abstraction.transform." + abstPane.postAbsModel.getElementAt(i).toString(), value);
 				}
 				else {
-					abs.setProperty("abstraction.transform." + abstPane.postAbsModel.getElementAt(i).toString(), "postloop" + i.toString());
+					abs.setProperty("abstraction.transform." + abstPane.postAbsModel.getElementAt(i).toString(),
+							"postloop" + i.toString());
 				}
 			}
 			for (String s : abstPane.transforms) {
-				if (!abstPane.preAbsModel.contains(s) && !abstPane.loopAbsModel.contains(s) && !abstPane.postAbsModel.contains(s)) {
+				if (!abstPane.preAbsModel.contains(s) && !abstPane.loopAbsModel.contains(s)
+						&& !abstPane.postAbsModel.contains(s)) {
 					abs.remove(s);
 				}
 			}
@@ -296,15 +301,15 @@ public class Run implements ActionListener {
 					cut = i;
 				}
 			}
-			FileOutputStream store = new FileOutputStream(new File((filename.substring(0,
-					filename.length() - getFilename[getFilename.length - 1].length()))
+			FileOutputStream store = new FileOutputStream(new File((filename.substring(0, filename.length()
+					- getFilename[getFilename.length - 1].length()))
 					+ getFilename[getFilename.length - 1].substring(0, cut) + ".properties"));
 			abs.store(store, getFilename[getFilename.length - 1].substring(0, cut) + " Properties");
 			store.close();
 		}
 		catch (Exception except) {
-			JOptionPane.showMessageDialog(component, "Unable To Save Properties File!" + "\nMake sure you select a model for abstraction.",
-					"Unable To Save File", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(component, "Unable To Save Properties File!"
+					+ "\nMake sure you select a model for abstraction.", "Unable To Save File", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -312,11 +317,12 @@ public class Run implements ActionListener {
 	 * This method is given what data is entered into the nary frame and creates
 	 * the nary properties file from that information.
 	 */
-	public void createNaryProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep, double timeStep, String outDir,
-			long rndSeed, int run, String printer_id, String printer_track_quantity, String[] getFilename, Component component, String filename,
-			JRadioButton monteCarlo, String stopE, double stopR, String[] finalS, ArrayList<JTextField> inhib, ArrayList<JList> consLevel,
-			ArrayList<String> getSpeciesProps, ArrayList<Object[]> conLevel, String[] termCond, String[] intSpecies, double rap1, double rap2,
-			double qss, int con, ArrayList<Integer> counts, JCheckBox usingSSA, String ssaFile) {
+	public void createNaryProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep,
+			double timeStep, String outDir, long rndSeed, int run, String printer_id, String printer_track_quantity,
+			String[] getFilename, Component component, String filename, JRadioButton monteCarlo, String stopE, double stopR,
+			String[] finalS, ArrayList<JTextField> inhib, ArrayList<JList> consLevel, ArrayList<String> getSpeciesProps,
+			ArrayList<Object[]> conLevel, String[] termCond, String[] intSpecies, double rap1, double rap2, double qss,
+			int con, ArrayList<Integer> counts, JCheckBox usingSSA, String ssaFile) {
 		Properties nary = new Properties();
 		try {
 			FileInputStream load = new FileInputStream(new File(outDir + separator + "species.properties"));
@@ -324,7 +330,8 @@ public class Run implements ActionListener {
 			load.close();
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(component, "Species Properties File Not Found!", "File Not Found", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(component, "Species Properties File Not Found!", "File Not Found",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		nary.setProperty("reb2sac.abstraction.method.0.1", "enzyme-kinetic-qssa-1");
 		nary.setProperty("reb2sac.abstraction.method.0.2", "reversible-to-irreversible-transformer");
@@ -355,7 +362,8 @@ public class Run implements ActionListener {
 		nary.setProperty("reb2sac.analysis.stop.rate", "" + stopR);
 		for (int i = 0; i < getSpeciesProps.size(); i++) {
 			if (!(inhib.get(i).getText().trim() != "<<none>>")) {
-				nary.setProperty("reb2sac.absolute.inhibition.threshold." + getSpeciesProps.get(i), inhib.get(i).getText().trim());
+				nary.setProperty("reb2sac.absolute.inhibition.threshold." + getSpeciesProps.get(i), inhib.get(i).getText()
+						.trim());
 			}
 			String[] consLevels = Utility.getList(conLevel.get(i), consLevel.get(i));
 			for (int j = 0; j < counts.get(i); j++) {
@@ -410,13 +418,14 @@ public class Run implements ActionListener {
 			}
 		}
 		try {
-			FileOutputStream store = new FileOutputStream(new File(filename.replace(".sbml", "").replace(".xml", "") + ".properties"));
+			FileOutputStream store = new FileOutputStream(new File(filename.replace(".sbml", "").replace(".xml", "")
+					+ ".properties"));
 			nary.store(store, getFilename[getFilename.length - 1].replace(".sbml", "").replace(".xml", "") + " Properties");
 			store.close();
 		}
 		catch (Exception except) {
-			JOptionPane.showMessageDialog(component, "Unable To Save Properties File!" + "\nMake sure you select a model for simulation.",
-					"Unable To Save File", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(component, "Unable To Save Properties File!"
+					+ "\nMake sure you select a model for simulation.", "Unable To Save File", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -427,16 +436,18 @@ public class Run implements ActionListener {
 	 * @param runTime
 	 * @param refresh
 	 */
-	public int execute(String filename, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, JRadioButton lhpn, Component component,
-			JRadioButton ode, JRadioButton monteCarlo, String sim, String printer_id, String printer_track_quantity, String outDir,
-			JRadioButton nary, int naryRun, String[] intSpecies, Log log, JCheckBox usingSSA, String ssaFile, Gui biomodelsim, JTabbedPane simTab,
-			String root, JProgressBar progress, String simName, GCM2SBMLEditor gcmEditor, String direct, double timeLimit, double runTime,
-			String modelFile, AbstPane abstPane, JRadioButton abstraction, String lpnProperty, double absError, double timeStep,
+	public int execute(String filename, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, JRadioButton lhpn,
+			Component component, JRadioButton ode, JRadioButton monteCarlo, String sim, String printer_id,
+			String printer_track_quantity, String outDir, JRadioButton nary, int naryRun, String[] intSpecies, Log log,
+			JCheckBox usingSSA, String ssaFile, Gui biomodelsim, JTabbedPane simTab, String root, JProgressBar progress,
+			String simName, GCM2SBMLEditor gcmEditor, String direct, double timeLimit, double runTime, String modelFile,
+			AbstPane abstPane, JRadioButton abstraction, String lpnProperty, double absError, double timeStep,
 			double printInterval, int runs, long rndSeed, boolean refresh) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
-			outDir = outDir.substring(0, outDir.length() - 1 - outDir.split(separator)[outDir.split(separator).length - 1].length());
+			outDir = outDir.substring(0,
+					outDir.length() - 1 - outDir.split(separator)[outDir.split(separator).length - 1].length());
 		}
 		try {
 			long time1, time2;
@@ -483,7 +494,8 @@ public class Run implements ActionListener {
 				HashMap<String, Properties> elements = paramGCM.getSpecies();
 				for (String key : elements.keySet()) {
 					for (Object prop : elements.get(key).keySet()) {
-						if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID) && !prop.equals(GlobalConstants.TYPE)) {
+						if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID)
+								&& !prop.equals(GlobalConstants.TYPE)) {
 							gcm.getSpecies().get(key).put(prop, elements.get(key).get(prop));
 						}
 					}
@@ -491,8 +503,8 @@ public class Run implements ActionListener {
 				elements = paramGCM.getInfluences();
 				for (String key : elements.keySet()) {
 					for (Object prop : elements.get(key).keySet()) {
-						if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.PROMOTER) && !prop.equals(GlobalConstants.BIO)
-								&& !prop.equals(GlobalConstants.TYPE)) {
+						if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.PROMOTER)
+								&& !prop.equals(GlobalConstants.BIO) && !prop.equals(GlobalConstants.TYPE)) {
 							gcm.getInfluences().get(key).put(prop, elements.get(key).get(prop));
 						}
 					}
@@ -594,7 +606,8 @@ public class Run implements ActionListener {
 					return 0;
 				}
 			}
-			if (nary.isSelected() && gcmEditor == null && !sim.contains("markov-chain-analysis") && !lhpn.isSelected() && naryRun == 1) {
+			if (nary.isSelected() && gcmEditor == null && !sim.contains("markov-chain-analysis") && !lhpn.isSelected()
+					&& naryRun == 1) {
 				log.addText("Executing:\nreb2sac --target.encoding=nary-level " + filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=nary-level " + theFile, null, work);
@@ -604,7 +617,8 @@ public class Run implements ActionListener {
 				if (sbmlName != null && !sbmlName.trim().equals("")) {
 					sbmlName = sbmlName.trim();
 					if (sbmlName.length() > 4) {
-						if (!sbmlName.substring(sbmlName.length() - 3).equals(".xml") || !sbmlName.substring(sbmlName.length() - 4).equals(".sbml")) {
+						if (!sbmlName.substring(sbmlName.length() - 3).equals(".xml")
+								|| !sbmlName.substring(sbmlName.length() - 4).equals(".sbml")) {
 							sbmlName += ".xml";
 						}
 					}
@@ -614,8 +628,8 @@ public class Run implements ActionListener {
 					File f = new File(root + separator + sbmlName);
 					if (f.exists()) {
 						Object[] options = { "Overwrite", "Cancel" };
-						int value = JOptionPane.showOptionDialog(component, "File already exists." + "\nDo you want to overwrite?", "Overwrite",
-								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						int value = JOptionPane.showOptionDialog(component, "File already exists." + "\nDo you want to overwrite?",
+								"Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 						if (value == JOptionPane.YES_OPTION) {
 							File dir = new File(root + separator + sbmlName);
 							if (dir.isDirectory()) {
@@ -672,7 +686,8 @@ public class Run implements ActionListener {
 						HashMap<String, Properties> elements = paramGCM.getSpecies();
 						for (String key : elements.keySet()) {
 							for (Object prop : elements.get(key).keySet()) {
-								if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID) && !prop.equals(GlobalConstants.TYPE)) {
+								if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID)
+										&& !prop.equals(GlobalConstants.TYPE)) {
 									gcm.getSpecies().get(key).put(prop, elements.get(key).get(prop));
 								}
 							}
@@ -680,8 +695,8 @@ public class Run implements ActionListener {
 						elements = paramGCM.getInfluences();
 						for (String key : elements.keySet()) {
 							for (Object prop : elements.get(key).keySet()) {
-								if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.PROMOTER) && !prop.equals(GlobalConstants.BIO)
-										&& !prop.equals(GlobalConstants.TYPE)) {
+								if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.PROMOTER)
+										&& !prop.equals(GlobalConstants.BIO) && !prop.equals(GlobalConstants.TYPE)) {
 									gcm.getInfluences().get(key).put(prop, elements.get(key).get(prop));
 								}
 							}
@@ -734,9 +749,11 @@ public class Run implements ActionListener {
 					}
 					else {
 						if (r2s.reb2sacAbstraction() && (abstraction.isSelected() || nary.isSelected())) {
-							log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + ".." + separator + sbmlName + " " + filename + "\n");
+							log.addText("Executing:\nreb2sac --target.encoding=sbml --out=" + ".." + separator + sbmlName + " "
+									+ filename + "\n");
 							time1 = System.nanoTime();
-							reb2sac = exec.exec("reb2sac --target.encoding=sbml --out=" + ".." + separator + sbmlName + " " + theFile, null, work);
+							reb2sac = exec.exec(
+									"reb2sac --target.encoding=sbml --out=" + ".." + separator + sbmlName + " " + theFile, null, work);
 						}
 						else {
 							log.addText("Outputting SBML file:\n" + root + separator + sbmlName + "\n");
@@ -773,8 +790,8 @@ public class Run implements ActionListener {
 					File f = new File(root + separator + lhpnName);
 					if (f.exists()) {
 						Object[] options = { "Overwrite", "Cancel" };
-						int value = JOptionPane.showOptionDialog(component, "File already exists." + "\nDo you want to overwrite?", "Overwrite",
-								JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+						int value = JOptionPane.showOptionDialog(component, "File already exists." + "\nDo you want to overwrite?",
+								"Overwrite", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 						if (value == JOptionPane.YES_OPTION) {
 							File dir = new File(root + separator + lhpnName);
 							if (dir.isDirectory()) {
@@ -825,7 +842,8 @@ public class Run implements ActionListener {
 						HashMap<String, Properties> elements = paramGCM.getSpecies();
 						for (String key : elements.keySet()) {
 							for (Object prop : elements.get(key).keySet()) {
-								if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID) && !prop.equals(GlobalConstants.TYPE)) {
+								if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.ID)
+										&& !prop.equals(GlobalConstants.TYPE)) {
 									gcm.getSpecies().get(key).put(prop, elements.get(key).get(prop));
 								}
 							}
@@ -833,8 +851,8 @@ public class Run implements ActionListener {
 						elements = paramGCM.getInfluences();
 						for (String key : elements.keySet()) {
 							for (Object prop : elements.get(key).keySet()) {
-								if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.PROMOTER) && !prop.equals(GlobalConstants.BIO)
-										&& !prop.equals(GlobalConstants.TYPE)) {
+								if (!prop.equals(GlobalConstants.NAME) && !prop.equals(GlobalConstants.PROMOTER)
+										&& !prop.equals(GlobalConstants.BIO) && !prop.equals(GlobalConstants.TYPE)) {
 									gcm.getInfluences().get(key).put(prop, elements.get(key).get(prop));
 								}
 							}
@@ -1044,8 +1062,8 @@ public class Run implements ActionListener {
 								return 0;
 							}
 							lhpnFile.save(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn");
-							log.addText("Saving GCM file as LHPN:\n" + filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn"
-									+ "\n");
+							log.addText("Saving GCM file as LHPN:\n"
+									+ filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + ".lpn" + "\n");
 						}
 						else {
 							return 0;
@@ -1059,22 +1077,43 @@ public class Run implements ActionListener {
 						log.addText("Number of states found: " + sg.getNumberOfStates() + "\n");
 						if (sim.equals("reachability-analysis") && !sg.getStop()) {
 							time2 = System.nanoTime();
-							int value = JOptionPane.YES_OPTION;
-							if (sg.getNumberOfStates() > 100) {
-								Object[] options = { "Yes", "No" };
-								value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates() + " states.\n"
-										+ "Do you want to output it to a dot file?", "State Graph Contains Over 100 States",
-										JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-							}
+							Object[] options = { "Yes", "No" };
+							int value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates()
+									+ " states.\n" + "Do you want to view it in Graphviz?", "View State Graph",
+									JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 							if (value == JOptionPane.YES_OPTION) {
-								sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", true);
-								biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
+								String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot";
+								sg.outputStateGraph(graphFile, true);
+								try {
+									Runtime execGraph = Runtime.getRuntime();
+									if (System.getProperty("os.name").contentEquals("Linux")) {
+										log.addText("Executing:\ndotty " + graphFile + "\n");
+										execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+												+ "_sg.dot", null, new File(directory));
+									}
+									else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+										log.addText("Executing:\nopen " + graphFile + "\n");
+										execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+												+ "_sg.dot", null, new File(directory));
+									}
+									else {
+										log.addText("Executing:\ndotty " + graphFile + "\n");
+										execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+												+ "_sg.dot", null, new File(directory));
+									}
+								}
+								catch (Exception e1) {
+									JOptionPane.showMessageDialog(Gui.frame, "Error viewing state graph.", "Error",
+											JOptionPane.ERROR_MESSAGE);
+								}
+								// biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 							}
 						}
 						else if (sim.equals("steady-state-markov-chain-analysis")) {
 							if (!sg.getStop()) {
 								log.addText("Performing steady state Markov chain analysis.\n");
-								PerfromSteadyStateMarkovAnalysisThread performMarkovAnalysis = new PerfromSteadyStateMarkovAnalysisThread(sg);
+								PerfromSteadyStateMarkovAnalysisThread performMarkovAnalysis = new PerfromSteadyStateMarkovAnalysisThread(
+										sg);
 								if (modelFile.contains(".lpn")) {
 									performMarkovAnalysis.start(absError, null);
 								}
@@ -1092,20 +1131,43 @@ public class Run implements ActionListener {
 								if (!sg.getStop()) {
 									String simrep = sg.getMarkovResults();
 									if (simrep != null) {
-										FileOutputStream simrepstream = new FileOutputStream(new File(directory + separator + "sim-rep.txt"));
+										FileOutputStream simrepstream = new FileOutputStream(
+												new File(directory + separator + "sim-rep.txt"));
 										simrepstream.write((simrep).getBytes());
 										simrepstream.close();
 									}
-									int value = JOptionPane.YES_OPTION;
-									if (sg.getNumberOfStates() > 100) {
-										Object[] options = { "Yes", "No" };
-										value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates()
-												+ " states.\n" + "Do you want to output it to a dot file?", "State Graph Contains Over 100 States",
-												JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-									}
+									Object[] options = { "Yes", "No" };
+									int value = JOptionPane.showOptionDialog(Gui.frame,
+											"The state graph contains " + sg.getNumberOfStates() + " states.\n"
+													+ "Do you want to view it in Graphviz?", "View State Graph", JOptionPane.YES_NO_OPTION,
+											JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 									if (value == JOptionPane.YES_OPTION) {
-										sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", true);
-										biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
+										String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+												+ "_sg.dot";
+										sg.outputStateGraph(graphFile, true);
+										try {
+											Runtime execGraph = Runtime.getRuntime();
+											if (System.getProperty("os.name").contentEquals("Linux")) {
+												log.addText("Executing:\ndotty " + graphFile + "\n");
+												execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+														+ "_sg.dot", null, new File(directory));
+											}
+											else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+												log.addText("Executing:\nopen " + graphFile + "\n");
+												execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+														+ "_sg.dot", null, new File(directory));
+											}
+											else {
+												log.addText("Executing:\ndotty " + graphFile + "\n");
+												execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+														+ "_sg.dot", null, new File(directory));
+											}
+										}
+										catch (Exception e1) {
+											JOptionPane.showMessageDialog(Gui.frame, "Error viewing state graph.", "Error",
+													JOptionPane.ERROR_MESSAGE);
+										}
+										// biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 									}
 								}
 							}
@@ -1113,7 +1175,8 @@ public class Run implements ActionListener {
 						else if (sim.equals("transient-markov-chain-analysis")) {
 							if (!sg.getStop()) {
 								log.addText("Performing transient Markov chain analysis with uniformization.\n");
-								PerfromTransientMarkovAnalysisThread performMarkovAnalysis = new PerfromTransientMarkovAnalysisThread(sg, progress);
+								PerfromTransientMarkovAnalysisThread performMarkovAnalysis = new PerfromTransientMarkovAnalysisThread(
+										sg, progress);
 								time1 = System.nanoTime();
 								if (prop != null) {
 									String[] condition = Translator.getProbpropParts(Translator.getProbpropExpression(prop));
@@ -1135,20 +1198,43 @@ public class Run implements ActionListener {
 								if (!sg.getStop()) {
 									String simrep = sg.getMarkovResults();
 									if (simrep != null) {
-										FileOutputStream simrepstream = new FileOutputStream(new File(directory + separator + "sim-rep.txt"));
+										FileOutputStream simrepstream = new FileOutputStream(
+												new File(directory + separator + "sim-rep.txt"));
 										simrepstream.write((simrep).getBytes());
 										simrepstream.close();
 									}
-									int value = JOptionPane.YES_OPTION;
-									if (sg.getNumberOfStates() > 100) {
-										Object[] options = { "Yes", "No" };
-										value = JOptionPane.showOptionDialog(Gui.frame, "The state graph contains " + sg.getNumberOfStates()
-												+ " states.\n" + "Do you want to output it to a dot file?", "State Graph Contains Over 100 States",
-												JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-									}
+									Object[] options = { "Yes", "No" };
+									int value = JOptionPane.showOptionDialog(Gui.frame,
+											"The state graph contains " + sg.getNumberOfStates() + " states.\n"
+													+ "Do you want to view it in Graphviz?", "View State Graph", JOptionPane.YES_NO_OPTION,
+											JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 									if (value == JOptionPane.YES_OPTION) {
-										sg.outputStateGraph(filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "") + "_sg.dot", true);
-										biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
+										String graphFile = filename.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+												+ "_sg.dot";
+										sg.outputStateGraph(graphFile, true);
+										try {
+											Runtime execGraph = Runtime.getRuntime();
+											if (System.getProperty("os.name").contentEquals("Linux")) {
+												log.addText("Executing:\ndotty " + graphFile + "\n");
+												execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+														+ "_sg.dot", null, new File(directory));
+											}
+											else if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+												log.addText("Executing:\nopen " + graphFile + "\n");
+												execGraph.exec("open " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+														+ "_sg.dot", null, new File(directory));
+											}
+											else {
+												log.addText("Executing:\ndotty " + graphFile + "\n");
+												execGraph.exec("dotty " + theFile.replace(".gcm", "").replace(".sbml", "").replace(".xml", "")
+														+ "_sg.dot", null, new File(directory));
+											}
+										}
+										catch (Exception e1) {
+											JOptionPane.showMessageDialog(Gui.frame, "Error viewing state graph.", "Error",
+													JOptionPane.ERROR_MESSAGE);
+										}
+										// biomodelsim.enableTabMenu(biomodelsim.getTab().getSelectedIndex());
 									}
 									if (sg.outputTSD(directory + separator + "percent-term-time.tsd")) {
 										if (refresh) {
@@ -1172,9 +1258,9 @@ public class Run implements ActionListener {
 									}
 									else {
 										simTab.setComponentAt(i,
-												new Graph(r2s, printer_track_quantity, outDir.split(separator)[outDir.split(separator).length - 1]
-														+ " simulation results", printer_id, outDir, "time", biomodelsim, null, log, null, false,
-														false));
+												new Graph(r2s, printer_track_quantity,
+														outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
+														printer_id, outDir, "time", biomodelsim, null, log, null, false, false));
 										simTab.getComponentAt(i).setName("ProbGraph");
 									}
 								}
@@ -1196,7 +1282,8 @@ public class Run implements ActionListener {
 						}
 						GillespieSSAJavaSingleStep javaSim = new GillespieSSAJavaSingleStep();
 						String SBMLFileName = directory + separator + theFile;
-						javaSim.PerformSim(SBMLFileName, outDir, timeLimit, timeStep, rndSeed, ((Graph) simTab.getComponentAt(index)));
+						javaSim.PerformSim(SBMLFileName, outDir, timeLimit, timeStep, rndSeed,
+								((Graph) simTab.getComponentAt(index)));
 						exitValue = 0;
 						return exitValue;
 					}
@@ -1338,16 +1425,16 @@ public class Run implements ActionListener {
 			log.addText("Total Simulation Time: " + time + " for " + simName + "\n\n");
 			if (exitValue != 0) {
 				if (exitValue == 143) {
-					JOptionPane.showMessageDialog(Gui.frame, "The simulation was" + " canceled by the user.", "Canceled Simulation",
-							JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "The simulation was" + " canceled by the user.",
+							"Canceled Simulation", JOptionPane.ERROR_MESSAGE);
 				}
 				else if (exitValue == 139) {
-					JOptionPane.showMessageDialog(Gui.frame, "The selected model is not a valid sbml file." + "\nYou must select an sbml file.",
-							"Not An SBML File", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "The selected model is not a valid sbml file."
+							+ "\nYou must select an sbml file.", "Not An SBML File", JOptionPane.ERROR_MESSAGE);
 				}
 				else {
-					JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!\n" + "Bad Return Value!\n" + "The reb2sac program returned "
-							+ exitValue + " as an exit value.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Error In Execution!\n" + "Bad Return Value!\n"
+							+ "The reb2sac program returned " + exitValue + " as an exit value.", "Error", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 			else {
@@ -1359,7 +1446,8 @@ public class Run implements ActionListener {
 						Gui.createGCMFromSBML(root, root + separator + sbmlName, sbmlName, gcmName, true);
 						if (!biomodelsim.updateOpenGCM(gcmName)) {
 							try {
-								GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, gcmName, biomodelsim, log, false, null, null, null, false);
+								GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, gcmName, biomodelsim, log, false, null, null,
+										null, false);
 								biomodelsim.addTab(gcmName, gcm, "GCM Editor");
 								biomodelsim.addToTree(gcmName);
 							}
@@ -1522,9 +1610,11 @@ public class Run implements ActionListener {
 								}
 							}
 							else {
-								simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity,
-										outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results", printer_id, outDir,
-										"time", biomodelsim, null, log, null, true, false));
+								simTab
+										.setComponentAt(i,
+												new Graph(r2s, printer_track_quantity,
+														outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
+														printer_id, outDir, "time", biomodelsim, null, log, null, true, false));
 								boolean outputM = true;
 								boolean outputV = true;
 								boolean outputS = true;
@@ -1633,13 +1723,13 @@ public class Run implements ActionListener {
 									((Graph) simTab.getComponentAt(i)).refresh();
 								}
 								else {
-									if (new File(filename.substring(0, filename.length()
-											- filename.split(separator)[filename.split(separator).length - 1].length())
+									if (new File(filename.substring(0,
+											filename.length() - filename.split(separator)[filename.split(separator).length - 1].length())
 											+ "sim-rep.txt").exists()) {
 										simTab.setComponentAt(i,
-												new Graph(r2s, printer_track_quantity, outDir.split(separator)[outDir.split(separator).length - 1]
-														+ " simulation results", printer_id, outDir, "time", biomodelsim, null, log, null, false,
-														false));
+												new Graph(r2s, printer_track_quantity,
+														outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
+														printer_id, outDir, "time", biomodelsim, null, log, null, false, false));
 										simTab.getComponentAt(i).setName("ProbGraph");
 									}
 								}
@@ -1650,8 +1740,8 @@ public class Run implements ActionListener {
 				}
 				else if (sim.equals("atacs")) {
 					log.addText("Executing:\natacs -T0.000001 -oqoflhsgllvA "
-							+ filename.substring(0, filename.length() - filename.split(separator)[filename.split(separator).length - 1].length())
-							+ "out.hse\n");
+							+ filename.substring(0, filename.length()
+									- filename.split(separator)[filename.split(separator).length - 1].length()) + "out.hse\n");
 					exec.exec("atacs -T0.000001 -oqoflhsgllvA out.hse", null, work);
 					if (refresh) {
 						for (int i = 0; i < simTab.getComponentCount(); i++) {
@@ -1660,9 +1750,10 @@ public class Run implements ActionListener {
 									((Graph) simTab.getComponentAt(i)).refresh();
 								}
 								else {
-									simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity,
-											outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results", printer_id, outDir,
-											"time", biomodelsim, null, log, null, false, false));
+									simTab.setComponentAt(i,
+											new Graph(r2s, printer_track_quantity,
+													outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
+													printer_id, outDir, "time", biomodelsim, null, log, null, false, false));
 									simTab.getComponentAt(i).setName("ProbGraph");
 								}
 							}
@@ -1788,9 +1879,10 @@ public class Run implements ActionListener {
 									}
 								}
 								else {
-									simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity,
-											outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results", printer_id, outDir,
-											"time", biomodelsim, null, log, null, true, false));
+									simTab.setComponentAt(i,
+											new Graph(r2s, printer_track_quantity,
+													outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
+													printer_id, outDir, "time", biomodelsim, null, log, null, true, false));
 									boolean outputM = true;
 									boolean outputV = true;
 									boolean outputS = true;
@@ -1899,8 +1991,8 @@ public class Run implements ActionListener {
 										((Graph) simTab.getComponentAt(i)).refresh();
 									}
 									else {
-										if (new File(filename.substring(0, filename.length()
-												- filename.split(separator)[filename.split(separator).length - 1].length())
+										if (new File(filename.substring(0,
+												filename.length() - filename.split(separator)[filename.split(separator).length - 1].length())
 												+ "sim-rep.txt").exists()) {
 											simTab.setComponentAt(i,
 													new Graph(r2s, printer_track_quantity,
@@ -2021,9 +2113,10 @@ public class Run implements ActionListener {
 									}
 								}
 								else {
-									simTab.setComponentAt(i, new Graph(r2s, printer_track_quantity,
-											outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results", printer_id, outDir,
-											"time", biomodelsim, null, log, null, true, false));
+									simTab.setComponentAt(i,
+											new Graph(r2s, printer_track_quantity,
+													outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
+													printer_id, outDir, "time", biomodelsim, null, log, null, true, false));
 									boolean outputM = true;
 									boolean outputV = true;
 									boolean outputS = true;
@@ -2132,8 +2225,8 @@ public class Run implements ActionListener {
 										((Graph) simTab.getComponentAt(i)).refresh();
 									}
 									else {
-										if (new File(filename.substring(0, filename.length()
-												- filename.split(separator)[filename.split(separator).length - 1].length())
+										if (new File(filename.substring(0,
+												filename.length() - filename.split(separator)[filename.split(separator).length - 1].length())
 												+ "sim-rep.txt").exists()) {
 											simTab.setComponentAt(i,
 													new Graph(r2s, printer_track_quantity,
