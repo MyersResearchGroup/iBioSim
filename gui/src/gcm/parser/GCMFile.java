@@ -2112,11 +2112,11 @@ public class GCMFile {
 				creatingPromoterID++;
 				id = "P" + String.valueOf(creatingPromoterID);
 			}
-			while (getPromoters().containsKey(id) || usedIDs.contains(id));
+			while (getPromoters().containsKey(id) || ((usedIDs != null) && usedIDs.contains(id)));
 		}
 		Properties prop = new Properties();
 		prop.setProperty("ID", id);
-		usedIDs.add(id);
+		if (usedIDs != null) usedIDs.add(id);
 		prop.setProperty("name", "");
 		if (is_explicit) {
 			prop.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_SPECIES_WIDTH));
