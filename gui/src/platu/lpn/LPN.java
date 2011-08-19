@@ -811,6 +811,7 @@ public class LPN {
     }
 
     // Return the set of all LPN transitions that are enabled in 'state'.
+    // TODO: (Utah) move getENabled() to StateGraph and re-write it to use our LPN object
     public LpnTranList getEnabled(State curState) {
     	if (curState == null) {
             throw new NullPointerException();
@@ -837,13 +838,14 @@ public class LPN {
     public int reachSize() {
     	return this.stateCache.size();
     }
-
+    
+    //TODO: (Utah) move getState() to StateGraph
     public State getState(int stateIdx) {
     	return (State)this.stateCache.get(stateIdx);
 //    	State tmp = this.index2StateTbl.get(index);
 //    	return tmp;
     }
-
+    // TODO: (Utah) move addState() to StateGraph
     public State addState(State aState) {
     	return (State)this.stateCache.add(aState);
 //    	State tmp = reachableSet.get(aState);
@@ -856,6 +858,7 @@ public class LPN {
 //    	return tmp;
     }
     
+    // TODO: (Utah) move addReachable() to StateGraph
     /**
      * Adds state into the state graph.
      * @param st - state to be inserted
