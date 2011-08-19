@@ -1205,12 +1205,87 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 
 		gcm.setSpeciesPanel(speciesPanel);
 		gcm.setReactionPanel(reactionPanel);
+		
+		promoters = new PropertyList("Promoter List");
+		EditButton addInit = new EditButton("Add Promoter", promoters);
+		RemoveButton removeInit = new RemoveButton("Remove Promoter", promoters);
+		if (paramsOnly) {
+			addInit.setEnabled(false);
+			removeInit.setEnabled(false);
+		}
+		EditButton editInit = new EditButton("Edit Promoter", promoters);
+		if (paramsOnly) {
+			Set<String> prom = gcm.getPromoters().keySet();
+			ArrayList<String> proms = new ArrayList<String>();
+			for (String s : prom) {
+				proms.add(s);
+			}
+			for (String s : getParams) {
+				if (s.contains("/") && proms.contains(s.split("/")[0].trim())) {
+					proms.remove(s.split("/")[0].trim());
+					proms.add(s.split("/")[0].trim() + " Modified");
+					parameterChanges.add(s);
+				}
+			}
+			promoters.addAllItem(proms);
+		}
+		else {
+			promoters.addAllItem(gcm.getPromoters().keySet());
+		}
+		JPanel promoterPanel = Utility.createPanel(this, "Promoters", promoters, addInit, removeInit, editInit);
+		mainPanelCenterCenter.add(promoterPanel);
 
+		influences = new PropertyList("Influence List");
+		addInit = new EditButton("Add Influence", influences);
+		removeInit = new RemoveButton("Remove Influence", influences);
+		if (paramsOnly) {
+			addInit.setEnabled(false);
+			removeInit.setEnabled(false);
+		}
+		editInit = new EditButton("Edit Influence", influences);
+		if (paramsOnly) {
+			Set<String> influe = gcm.getInfluences().keySet();
+			ArrayList<String> influes = new ArrayList<String>();
+			for (String s : influe) {
+				influes.add(s);
+			}
+			for (String s : getParams) {
+				if (s.contains("\"") && influes.contains(s.split("\"")[1].trim())) {
+					influes.remove(s.split("\"")[1].trim());
+					influes.add(s.split("\"")[1].trim() + " Modified");
+					parameterChanges.add(s);
+				}
+			}
+			influences.addAllItem(influes);
+		}
+		else {
+			influences.addAllItem(gcm.getInfluences().keySet());
+		}
+		JPanel influencesPanel = Utility.createPanel(this, "Influences", influences, addInit, removeInit, editInit);
+		mainPanelCenterCenter.add(influencesPanel);
+
+		components = new PropertyList("Component List");
+		addInit = new EditButton("Add Component", components);
+		removeInit = new RemoveButton("Remove Component", components);
+		editInit = new EditButton("Edit Component", components);
+		for (String s : gcm.getComponents().keySet()) {
+			if (gcm.getComponents().get(s).getProperty("gcm") != null) {
+				components.addItem(s + " "
+						+ gcm.getComponents().get(s).getProperty("gcm").replace(".gcm", "") + " "
+						+ gcm.getComponentPortMap(s));
+			}
+		}
+		JPanel componentsPanel = Utility.createPanel(this, "Components", components, addInit, removeInit, editInit);
+		mainPanelCenterCenter.add(componentsPanel);
+		
 		if (textBased) {
 			if (!gcm.getGrid().isEnabled()) 
 				tab.addTab("Compartments", compartmentPanel);
 			tab.addTab("Species", speciesPanel);
+			tab.addTab("Promoters", promoterPanel);
 			tab.addTab("Reactions", reactionPanel);
+			tab.addTab("Influences", influencesPanel);
+			tab.addTab("Components", componentsPanel);
 		} 
 		else {
 			this.schematic = new Schematic(gcm, biosim, this, true, null,compartmentPanel,reactionPanel,compartmentList);
@@ -1255,7 +1330,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		Events eventPanel = new Events(biosim,gcm.getSBMLDocument(),usedIDs,dirty);
 		tab.addTab("Properties", propPanel);
 		tab.addTab("Events", eventPanel);
-		//tab.addTab("Main Elements", mainPanel);
  		//tab.addTab("Model View", grappaPanel);
 		setLayout(new BorderLayout());
 		if (paramsOnly) {
@@ -1280,36 +1354,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			}
 		});
         */
-		promoters = new PropertyList("Promoter List");
-		EditButton addInit = new EditButton("Add Promoter", promoters);
-		RemoveButton removeInit = new RemoveButton("Remove Promoter", promoters);
-		if (paramsOnly) {
-			addInit.setEnabled(false);
-			removeInit.setEnabled(false);
-		}
-		EditButton editInit = new EditButton("Edit Promoter", promoters);
-		if (paramsOnly) {
-			Set<String> prom = gcm.getPromoters().keySet();
-			ArrayList<String> proms = new ArrayList<String>();
-			for (String s : prom) {
-				proms.add(s);
-			}
-			for (String s : getParams) {
-				if (s.contains("/") && proms.contains(s.split("/")[0].trim())) {
-					proms.remove(s.split("/")[0].trim());
-					proms.add(s.split("/")[0].trim() + " Modified");
-					parameterChanges.add(s);
-				}
-			}
-			promoters.addAllItem(proms);
-		}
-		else {
-			promoters.addAllItem(gcm.getPromoters().keySet());
-		}
-
-		JPanel initPanel = Utility.createPanel(this, "Promoters", promoters, addInit, removeInit,
-				editInit);
-		mainPanelCenterCenter.add(initPanel);
 
 		species = new PropertyList("Species List");
 		addInit = new EditButton("Add Species", species);
@@ -1337,52 +1381,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		else {
 			species.addAllItem(gcm.getSpecies().keySet());
 		}
-
-		initPanel = Utility.createPanel(this, "Species", species, addInit, removeInit, editInit);
-		mainPanelCenterCenter.add(initPanel);
-
-		influences = new PropertyList("Influence List");
-		addInit = new EditButton("Add Influence", influences);
-		removeInit = new RemoveButton("Remove Influence", influences);
-		if (paramsOnly) {
-			addInit.setEnabled(false);
-			removeInit.setEnabled(false);
-		}
-		editInit = new EditButton("Edit Influence", influences);
-		if (paramsOnly) {
-			Set<String> influe = gcm.getInfluences().keySet();
-			ArrayList<String> influes = new ArrayList<String>();
-			for (String s : influe) {
-				influes.add(s);
-			}
-			for (String s : getParams) {
-				if (s.contains("\"") && influes.contains(s.split("\"")[1].trim())) {
-					influes.remove(s.split("\"")[1].trim());
-					influes.add(s.split("\"")[1].trim() + " Modified");
-					parameterChanges.add(s);
-				}
-			}
-			influences.addAllItem(influes);
-		}
-		else {
-			influences.addAllItem(gcm.getInfluences().keySet());
-		}
-
-		initPanel = Utility.createPanel(this, "Influences", influences, addInit, removeInit, editInit);
-		mainPanelCenterCenter.add(initPanel);
-
-		components = new PropertyList("Component List");
-		addInit = new EditButton("Add Component", components);
-		removeInit = new RemoveButton("Remove Component", components);
-		editInit = new EditButton("Edit Component", components);
-		for (String s : gcm.getComponents().keySet()) {
-			if (gcm.getComponents().get(s).getProperty("gcm") != null) {
-				components.addItem(s + " "
-						+ gcm.getComponents().get(s).getProperty("gcm").replace(".gcm", "") + " "
-						+ gcm.getComponentPortMap(s));
-			}
-		}
-		initPanel = Utility.createPanel(this, "Components", components, addInit, removeInit, editInit);
+		JPanel initPanel = Utility.createPanel(this, "Species", species, addInit, removeInit, editInit);
 		mainPanelCenterCenter.add(initPanel);
 		
 		parameters = new PropertyList("Parameter List");
