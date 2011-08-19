@@ -5511,6 +5511,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					addTab(filename, gcm, "GCM Editor");
 				}
 				catch (Exception e) {
+					e.printStackTrace();
 				}
 			}
 		}
@@ -6524,10 +6525,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				view.addActionListener(this);
 				view.addMouseListener(this);
 				view.setActionCommand("browseSbol");
-				JMenuItem delete = new JMenuItem("Delete");
-				delete.addActionListener(this);
-				delete.addMouseListener(this);
-				delete.setActionCommand("delete");
 				JMenuItem copy = new JMenuItem("Copy");
 				copy.addActionListener(this);
 				copy.addMouseListener(this);
@@ -6536,10 +6533,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				rename.addActionListener(this);
 				rename.addMouseListener(this);
 				rename.setActionCommand("rename");
+				JMenuItem delete = new JMenuItem("Delete");
+				delete.addActionListener(this);
+				delete.addMouseListener(this);
+				delete.setActionCommand("delete");
 				popup.add(view);
-				popup.add(delete);
 				popup.add(copy);
 				popup.add(rename);
+				popup.add(delete);
 			}
 			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
 				JMenuItem create = new JMenuItem("Create Analysis View");
@@ -6558,10 +6559,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				editText.addActionListener(this);
 				editText.addMouseListener(this);
 				editText.setActionCommand("gcmTextEditor");
-				JMenuItem graph = new JMenuItem("View Model");
-				graph.addActionListener(this);
-				graph.addMouseListener(this);
-				graph.setActionCommand("graphTree");
+				//JMenuItem graph = new JMenuItem("View Model");
+				//graph.addActionListener(this);
+				//graph.addMouseListener(this);
+				//graph.setActionCommand("graphTree");
 				JMenuItem delete = new JMenuItem("Delete");
 				delete.addActionListener(this);
 				delete.addMouseListener(this);
@@ -6577,8 +6578,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(create);
 				popup.add(createLearn);
 				popup.addSeparator();
-				popup.add(graph);
-				popup.addSeparator();
+				//popup.add(graph);
+				//popup.addSeparator();
 				popup.add(edit);
 				popup.add(editText);
 				popup.add(copy);
@@ -6784,17 +6785,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				if (lema) {
 					popup.add(createLearn);
+					popup.addSeparator();
+					popup.add(viewModel);
 				}
 				if (atacs || lema) {
 					popup.add(createVerification);
 				}
-				popup.addSeparator();
 				// popup.add(createAnalysis); // TODO
-				popup.add(viewModel);
 				// popup.add(viewStateGraph);
+				/*
 				if (!atacs && !lema && LPN2SBML) {
 					popup.add(convertToSBML); // changed the order. SB
 				}
+				*/
 				if (atacs || lema) {
 					popup.add(convertToVerilog);
 				}
