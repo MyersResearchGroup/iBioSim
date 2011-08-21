@@ -1,27 +1,16 @@
 package gcm.gui;
 
-import gcm.parser.CompatibilityFixer;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
 
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Properties;
 
 import javax.swing.DefaultListModel;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.tree.TreeModel;
-
-import sbol.SbolBrowser;
 
 import main.Gui;
 
@@ -30,7 +19,8 @@ public class PromoterPanel extends JPanel {
 	
 //	private JTextField sbolPromoterText = new JTextField(20);
 //	private JButton sbolPromoterButton = new JButton("Associate SBOL");
-	
+
+	private static final long serialVersionUID = 5873800942710657929L;
 	private String[] options = { "Ok", "Cancel" };
 	private HashMap<String, PropertyField> fields = null;
 	private HashMap<String, SbolField> sbolFields;
@@ -322,7 +312,7 @@ public class PromoterPanel extends JPanel {
 				for (Object p : gcm.getPromoters().get(oldName).keySet()) {
 					String k = p.toString();
 					if (k.equals("graphwidth") || k.equals("graphheight") || k.equals("graphy") || k.equals("graphx")
-							|| k.equals("drawn_promoter")) {
+							|| k.equals("drawn_promoter") || k.equals("ExplicitPromoter")) {
 						String v = (gcm.getPromoters().get(oldName).getProperty(k)).toString();
 						property.put(k, v);
 					}
