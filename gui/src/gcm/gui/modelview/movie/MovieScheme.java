@@ -262,7 +262,7 @@ public class MovieScheme {
 						
 						speciesID = new String(gridPrefix + "__" + speciesIDNoPrefix);
 						
-						if (!allSpecies.contains(speciesID)) continue;
+						if (allSpecies != null && !allSpecies.contains(speciesID)) continue;
 							
 						if (remove) {	
 							schemeApply.apply(speciesID);
