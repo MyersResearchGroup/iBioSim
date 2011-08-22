@@ -41,6 +41,8 @@ import org.sbml.libsbml.Unit;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
 
+import sbmleditor.SBMLutilities;
+
 
 
 /**
@@ -1109,7 +1111,9 @@ public class GeneticNetwork {
 				}
 				if (complexMap.containsKey(s.getId()) && !s.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT)) {
 					checkComplex(s.getId(), "");
-					if (!partsMap.containsKey(s.getId()))
+					if (!partsMap.containsKey(s.getId()) && !isGenetic(s.getId()) 
+							&& !s.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)
+							&& !SBMLutilities.variableInUse(document, s.getId(), false, false))
 						s.setAbstractable(true);
 				}
 			}
@@ -1122,7 +1126,9 @@ public class GeneticNetwork {
 				}
 				if (complexMap.containsKey(s.getId()) && !s.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT)) {
 					checkComplex(s.getId(), "");
-					if (!partsMap.containsKey(s.getId()))
+					if (!partsMap.containsKey(s.getId()) && !isGenetic(s.getId()) 
+							&& !s.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)
+							&& !SBMLutilities.variableInUse(document, s.getId(), false, false))
 						s.setAbstractable(true);
 				}
 			}
@@ -1156,7 +1162,9 @@ public class GeneticNetwork {
 						&& !species.get(partId).isActivator() && !species.get(partId).isRepressor()) {
 					if (!sequesterRoot.equals("") && !checkComplex(partId, sequesterRoot))
 						return false;
-					if (!sequesterable && partsMap.get(partId).size() == 1)
+					if (!sequesterable && partsMap.get(partId).size() == 1 && !isGenetic(partId)
+							&& !species.get(partId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)
+							&& !SBMLutilities.variableInUse(document, partId, false, false))
 						species.get(partId).setAbstractable(true);
 					if (sequesterRoot.equals(""))
 						checkComplex(partId, "");
@@ -1176,8 +1184,10 @@ public class GeneticNetwork {
 			String complexId = infl.getOutput();
 			if (infl.getCoop() == 1 
 					&& ((!species.get(complexId).isActivator() && !species.get(complexId).isRepressor()) || (operatorAbstraction && !partsMap.containsKey(complexId))) 
-					&& !species.get(complexId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT)
-					&& (!partsMap.containsKey(complexId) || partsMap.get(complexId).size() == 1)
+					&& !species.get(complexId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT) 
+					&& (!partsMap.containsKey(complexId) || partsMap.get(complexId).size() == 1) && !isGenetic(complexId)
+					&& !species.get(complexId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)
+					&& !SBMLutilities.variableInUse(document, complexId, false, false) 
 					&& complexMap.get(complexId).size() > 1 && checkComplex(complexId, partId)) {
 				if (partsMap.containsKey(complexId))
 					checkSequester(complexId, sequesterRoot);
@@ -1243,6 +1253,13 @@ public class GeneticNetwork {
 	
 	public HashMap<String, ArrayList<Influence>> getComplexMap() {
 		return complexMap;
+	}
+	
+	private boolean isGenetic(String speciesId) {
+		for (Promoter p : getPromoters().values())
+			if (p.getOutputs().toString().contains(speciesId))
+				return true;
+		return false;
 	}
 
 	/**

@@ -792,7 +792,7 @@ public class SBMLutilities {
 	/**
 	 * Check if a variable is in use.
 	 */
-	public static boolean variableInUse(SBMLDocument document, String species, boolean zeroDim) {
+	public static boolean variableInUse(SBMLDocument document, String species, boolean zeroDim, boolean displayMessage) {
 		Model model = document.getModel();
 		boolean inUse = false;
 		if (species.equals("")) {
@@ -1104,13 +1104,15 @@ public class SBMLutilities {
 			if (eventsUsing.size() != 0) {
 				message += "\n\nIt is used in the following events:\n" + events;
 			}
-			JTextArea messageArea = new JTextArea(message);
-			messageArea.setEditable(false);
-			JScrollPane scroll = new JScrollPane();
-			scroll.setMinimumSize(new Dimension(400, 400));
-			scroll.setPreferredSize(new Dimension(400, 400));
-			scroll.setViewportView(messageArea);
-			JOptionPane.showMessageDialog(Gui.frame, scroll, "Unable To Remove Variable", JOptionPane.ERROR_MESSAGE);
+			if (displayMessage) {
+				JTextArea messageArea = new JTextArea(message);
+				messageArea.setEditable(false);
+				JScrollPane scroll = new JScrollPane();
+				scroll.setMinimumSize(new Dimension(400, 400));
+				scroll.setPreferredSize(new Dimension(400, 400));
+				scroll.setViewportView(messageArea);
+				JOptionPane.showMessageDialog(Gui.frame, scroll, "Unable To Remove Variable", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		return inUse;
 	}
