@@ -231,7 +231,7 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	
 	protected boolean isAbstractable = false;
 	
-	protected boolean isSequesterAbstractable;
+	protected boolean isSequesterAbstractable = false;
 	
 	protected boolean isSequesterable = false;
 	

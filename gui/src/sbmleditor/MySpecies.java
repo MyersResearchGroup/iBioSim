@@ -866,7 +866,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 	private void removeSpecies() {
 		int index = species.getSelectedIndex();
 		if (index != -1) {
-			if (!SBMLutilities.variableInUse(document, ((String) species.getSelectedValue()).split(" ")[0], false)) {
+			if (!SBMLutilities.variableInUse(document, ((String) species.getSelectedValue()).split(" ")[0], false, true)) {
 				Species tempSpecies = document.getModel().getSpecies(((String) species.getSelectedValue()).split(" ")[0]);
 				ListOf s = document.getModel().getListOfSpecies();
 				for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
