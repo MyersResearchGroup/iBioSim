@@ -1,4 +1,4 @@
-package gcm.network;
+ package gcm.network;
 
 import gcm.gui.Grid;
 import gcm.parser.GCMFile;
@@ -712,7 +712,7 @@ public class GeneticNetwork {
 			
 			String[] compartmentParts = isCompartment.split("__");
 			
-			//this implies a species one level below the grid
+			//this implies a species one level below the grid (or top level)
 			if (compartmentParts.length == 2) {
 				
 				//create a reaction between the species and the outer grid species at this location
@@ -742,8 +742,18 @@ public class GeneticNetwork {
 				
 				if (grid.isEnabled())
 					osID = "ROW" + rowCol.x + "_COL" + rowCol.y + "__" + underlyingSpeciesID;
-				else
+				else {
+					
+					//if there isn't a grid, the outer level is the top level, so
+					//the potential species ID is the underlying ID
 					osID = underlyingSpeciesID;
+					
+					//see if this species exists and is diffusible
+					//if it doesn't, don't create the reaction and move on
+					if (document.getModel().getSpecies(underlyingSpeciesID) == null && 
+							species.get(osID).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE))
+						continue;
+				}
 				
 				Reaction r = Utility.Reaction("Membrane_diffusion_" + isID + "_" + osID);
 				
