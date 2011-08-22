@@ -157,8 +157,8 @@ public class BioGraph extends mxGraph {
 
 		Model m = gcm.getSBMLDocument().getModel();
 		
-		int x = 75;
-		int y = 75;
+		int x = 225;
+		int y = 50;
 		for (int i = 0; i < m.getNumReactions(); i++) {
 			
 			Reaction r = m.getReaction(i);
@@ -172,8 +172,8 @@ public class BioGraph extends mxGraph {
 					prop.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_REACTION_WIDTH));
 					prop.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_REACTION_HEIGHT));
 					gcm.centerVertexOverPoint(prop, x, y);
-					x+=75;
-					y+=75;
+					x+=50;
+					y+=25;
 					gcm.getReactions().put(r.getId(), prop);
 				}
 			}
