@@ -577,8 +577,7 @@ public class GeneticNetwork {
 			//CREATE GRID DIFFUSION REACTIONS
 			//INCLUDING COMPONENT SPECIES DIFFUSION ON THE GRID
 			//this is not membrane diffusion, just diffusion of the "outer" species
-			//from one grid location to another
-			
+			//from one grid location to another			
 			String diffusionUnitString = getMoleTimeParameter(1);
 			String diffusionString = GlobalConstants.KECDIFF_STRING;
 			String diffComp = topLevelCompartment;
@@ -611,8 +610,11 @@ public class GeneticNetwork {
 						String potentialID = compoName + "__" + underlyingSpeciesID;
 						
 						//find out if this species exists and is in the top-level compartment
-						//if it is, that means we use this for diffusion and don't do membrane diffusion
-						if (document.getModel().getSpecies(potentialID) != null)
+						//if it is and is diffusible, that means we use this for diffusion and don't do membrane diffusion
+						if (document.getModel().getSpecies(potentialID) != null && 
+								species.get(potentialID) != null && 
+								species.get(potentialID).getProperty(GlobalConstants.TYPE)
+								.contains(GlobalConstants.DIFFUSIBLE))
 							osID = potentialID;
 					}
 					else continue;
@@ -647,17 +649,19 @@ public class GeneticNetwork {
 								//if this location's component had this species inside
 								String potentialID = compoName + "__" + underlyingSpeciesID;
 								
-								//if this neighbor exists, use this one
+								//if this neighbor exists and is diffusible, use this one
 								//if it's still not there, move on to another grid location
-								if (document.getModel().getSpecies(potentialID) != null)
+								if (document.getModel().getSpecies(potentialID) != null && 
+										species.get(potentialID) != null && 
+										species.get(potentialID).getProperty(GlobalConstants.TYPE)
+										.contains(GlobalConstants.DIFFUSIBLE))
 									neighborID = potentialID;
 								else continue;
 							}
 							else continue;
 						}
 						
-						//if the forward or reverse reaction already exists or if the neighbor
-						//doesn't exist, then skip this neighbor
+						//if the forward or reverse reaction already exists then skip this neighbor
 						if (document.getModel().getReaction("Diffusion_" + osID + "_" + neighborID) != null ||
 								document.getModel().getReaction("Diffusion_" + neighborID + "_" + osID) != null)
 							continue;
@@ -720,6 +724,7 @@ public class GeneticNetwork {
 				//species to diffuse to
 				Point rowCol = null;
 				
+				//if there's a grid, get the row and column of the component
 				if (grid.isEnabled())
 					rowCol = properties.getGrid().getLocationFromComponentID(compartmentParts[0]);
 				
@@ -738,10 +743,16 @@ public class GeneticNetwork {
 				String diffusionUnitString = getMoleTimeParameter(1);
 				
 				//species within the top-level compartment ("outer" species)
-				String osID = null;
+				String osID = "";
 				
-				if (grid.isEnabled())
+				if (grid.isEnabled()) {
+					
 					osID = "ROW" + rowCol.x + "_COL" + rowCol.y + "__" + underlyingSpeciesID;
+					
+					//if the species doesn't exist for some reason, continue
+					if (document.getModel().getSpecies(osID) == null)
+						continue;
+				}
 				else {
 					
 					//if there isn't a grid, the outer level is the top level, so
@@ -749,9 +760,10 @@ public class GeneticNetwork {
 					osID = underlyingSpeciesID;
 					
 					//see if this species exists and is diffusible
-					//if it doesn't, don't create the reaction and move on
-					if (document.getModel().getSpecies(underlyingSpeciesID) == null && 
-							species.get(osID).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE))
+					//if it doesn't exist or isn't diffusible, don't create the reaction and move on
+					if (document.getModel().getSpecies(osID) == null || species.get(osID) == null ||
+							(species.get(osID) != null &&
+							!species.get(osID).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)))
 						continue;
 				}
 				
