@@ -169,9 +169,9 @@ void Probproperty():
 {}
 {
  LOOKAHEAD(3)<Pr> Relop() <REAL> <OBRACE> Probprop() <CBRACE>
- | <Pr> <EQUAL> <QMARK> <OBRACE> Probprop() <CBRACE>
+ | <Pr> <OBRACE> Probprop() <CBRACE>
  | LOOKAHEAD(3)<Ss> Relop() <REAL> <OBRACE> Probproperty() <CBRACE>
- | <Ss> <EQUAL> <QMARK> <OBRACE> Probproperty() <CBRACE>
+ | <Ss> <OBRACE> Probproperty() <CBRACE>
  | Hsf()
 }
 
