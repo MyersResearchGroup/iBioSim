@@ -2,6 +2,8 @@ package lpn.parser;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Transition {
 
@@ -303,6 +305,20 @@ public class Transition {
 			i++;
 		}
 		return returnSet;
+	}
+	
+	public Set<String> getConflictSetTransNames() {
+		Set<String> conflictSet = new HashSet<String>();
+		for (Place p : getPreset()) {
+			for (Transition t : p.getPostset()) {
+				if (!this.toString().equals(t.toString())) {
+					conflictSet.add(t.getName());
+				}
+			}
+		}
+		return conflictSet;
+		
+		
 	}
 
 	public String getEnabling() {
@@ -663,5 +679,4 @@ public class Transition {
 	public void changeName(String newName) {
 		name = newName;
 	}
-
 }
