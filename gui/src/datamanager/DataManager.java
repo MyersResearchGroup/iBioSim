@@ -446,8 +446,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 						if (new File(root + separator + s + separator + ss).isDirectory()) {
 							boolean add2 = false;
 							for (String sss : new File(root + separator + s + separator + ss).list()) {
-								if (sss.endsWith(".tsd") && !sss.equals("mean.tsd") && !sss.equals("standard_deviation.tsd")
-										&& !sss.equals("variance.tsd")) {
+								if (sss.endsWith(".tsd") && sss.startsWith("run-")) {
 									add2 = true;
 								}
 							}
@@ -455,7 +454,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 								list.add(s + separator + ss);
 							}
 						}
-						else if (ss.endsWith(".tsd") && !ss.equals("mean.tsd") && !ss.equals("standard_deviation.tsd") && !ss.equals("variance.tsd")) {
+						else if (ss.endsWith(".tsd") && ss.startsWith("run-")) {
 							add = true;
 						}
 					}
@@ -512,8 +511,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 							for (int j = 1; j < 5; j++) {
 								end = list1[i].charAt(list1[i].length() - j) + end;
 							}
-							if (end.equals(".tsd") && !list1[i].equals("mean.tsd") && !list1[i].equals("standard_deviation.tsd")
-									&& !list1[i].equals("variance.tsd")) {
+							if (end.equals(".tsd") && list1[i].startsWith("run-")) {
 								try {
 									String last = "run-" + (run + 1) + ".tsd";
 									TSDParser tsd = new TSDParser(root + separator + sims.getSelectedValue() + separator + list1[i], false);
