@@ -81,20 +81,24 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		else {
 			
 			if (gcm.getSBMLDocument().getLevel() > 2) {
+				/*
 				if (gcm.getSBMLDocument().getModel().getNumCompartments() == 1) {
 					grid = new JPanel(new GridLayout(17,1));
 				} 
 				else {
-					grid = new JPanel(new GridLayout(18,1));
-				}
+				*/
+				grid = new JPanel(new GridLayout(18,1));
+				//}
 			} 
 			else {
+				/*
 				if (gcm.getSBMLDocument().getModel().getNumCompartments() == 1) {
 					grid = new JPanel(new GridLayout(16,1));
 				} 
 				else {
-					grid = new JPanel(new GridLayout(17,1));
-				}
+				*/
+				grid = new JPanel(new GridLayout(17,1));
+				//}
 			}
 		}
 		
@@ -180,10 +184,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		tempPanel.add(tempLabel);
 		tempPanel.add(compartBox);
 
-		if (gcm.getSBMLDocument().getModel().getNumCompartments() > 1) {
+		//if (gcm.getSBMLDocument().getModel().getNumCompartments() > 1) {
 			
-			if (!paramsOnly) grid.add(tempPanel);
-		}
+		if (!paramsOnly) grid.add(tempPanel);
+		//}
 		
 		String[] optionsTF = { "true", "false" };
 

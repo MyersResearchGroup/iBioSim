@@ -1447,10 +1447,10 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		//make sure the types match up (sans the input/output bit)
 		if (!compGCM.getSpecies().get(port).getProperty(GlobalConstants.TYPE).replace(GlobalConstants.INPUT, "")
-				.replace(GlobalConstants.OUTPUT, "")
+				.replace(GlobalConstants.OUTPUT, "").replace(GlobalConstants.INTERNAL, "")
 					.equals(gcm.getSpecies().get(specID).getProperty(GlobalConstants.TYPE)
-						.replace(GlobalConstants.INPUT, "").replace(GlobalConstants.OUTPUT, ""))) {
-			
+							.replace(GlobalConstants.INPUT, "").replace(GlobalConstants.OUTPUT, "")
+							.replace(GlobalConstants.INTERNAL, ""))) {
 			JOptionPane.showMessageDialog(Gui.frame, 
 					"To make this connection, the species types must match.");
 			
@@ -1484,13 +1484,12 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		//make sure the types match up (sans the input/output bit)
 		if (!compGCM.getSpecies().get(port).getProperty(GlobalConstants.TYPE).replace(GlobalConstants.INPUT, "")
-				.replace(GlobalConstants.OUTPUT, "")
+				.replace(GlobalConstants.OUTPUT, "").replace(GlobalConstants.INTERNAL, "")
 					.equals(gcm.getSpecies().get(specID).getProperty(GlobalConstants.TYPE)
-						.replace(GlobalConstants.INPUT, "").replace(GlobalConstants.OUTPUT, ""))) {
-			
+						.replace(GlobalConstants.INPUT, "").replace(GlobalConstants.OUTPUT, "")
+						.replace(GlobalConstants.INTERNAL, ""))) {
 			JOptionPane.showMessageDialog(Gui.frame, 
 					"To make this connection, the species types must match.");
-			
 			return null;
 		}
 		
