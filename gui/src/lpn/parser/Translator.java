@@ -955,8 +955,8 @@ public class Translator {
 							"Error in Property", JOptionPane.ERROR_MESSAGE);
 				}
 			}
-			else if(property.startsWith("=") && property.contains("?")){
-				property=property.substring(3);
+			else if(property.startsWith("{")) {//if(property.startsWith("=") && property.contains("?")){
+				property=property.substring(1);
 				property=property.replace("}", "");
 				probprop=property;
 			}
@@ -983,6 +983,7 @@ public class Translator {
 		String upperBound="";
 		String lowerBound="";
 		String relopType = "";
+		probprop.replaceAll("\\W", "");
 		if (!probprop.contains(" ")) {
 			if (!probprop.equals("")){
 				// property should be in this format at this stage: probprop
