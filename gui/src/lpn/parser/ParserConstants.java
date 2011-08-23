@@ -75,151 +75,161 @@ public interface ParserConstants {
   /** RegularExpression Id. */
   int NAME = 32;
   /** RegularExpression Id. */
-  int UNIFORM = 33;
+  int MINF = 33;
   /** RegularExpression Id. */
-  int NORMAL = 34;
+  int MAXF = 34;
   /** RegularExpression Id. */
-  int EXPONENTIAL = 35;
+  int IDIV = 35;
   /** RegularExpression Id. */
-  int GAMMA = 36;
+  int FLOOR = 36;
   /** RegularExpression Id. */
-  int LOGNORMAL = 37;
+  int CEIL = 37;
   /** RegularExpression Id. */
-  int CHISQ = 38;
+  int UNIFORM = 38;
   /** RegularExpression Id. */
-  int LAPLACE = 39;
+  int NORMAL = 39;
   /** RegularExpression Id. */
-  int CAUCHY = 40;
+  int EXPONENTIAL = 40;
   /** RegularExpression Id. */
-  int RAYLEIGH = 41;
+  int GAMMA = 41;
   /** RegularExpression Id. */
-  int POISSON = 42;
+  int LOGNORMAL = 42;
   /** RegularExpression Id. */
-  int BINOMIAL = 43;
+  int CHISQ = 43;
   /** RegularExpression Id. */
-  int BERNOULLI = 44;
+  int LAPLACE = 44;
   /** RegularExpression Id. */
-  int BITNOT = 45;
+  int CAUCHY = 45;
   /** RegularExpression Id. */
-  int BITOR = 46;
+  int RAYLEIGH = 46;
   /** RegularExpression Id. */
-  int BITAND = 47;
+  int POISSON = 47;
   /** RegularExpression Id. */
-  int BITXOR = 48;
+  int BINOMIAL = 48;
   /** RegularExpression Id. */
-  int INT = 49;
+  int BERNOULLI = 49;
   /** RegularExpression Id. */
-  int BOOL = 50;
+  int BITNOT = 50;
   /** RegularExpression Id. */
-  int BIT = 51;
+  int BITOR = 51;
   /** RegularExpression Id. */
-  int RATE = 52;
+  int BITAND = 52;
   /** RegularExpression Id. */
-  int VERIFY = 53;
+  int BITXOR = 53;
   /** RegularExpression Id. */
-  int SEARCH = 54;
+  int INT = 54;
   /** RegularExpression Id. */
-  int ASSIGN = 55;
+  int BOOL = 55;
   /** RegularExpression Id. */
-  int IMPLIC = 56;
+  int BIT = 56;
   /** RegularExpression Id. */
-  int COMMA = 57;
+  int RATE = 57;
   /** RegularExpression Id. */
-  int QMARK = 58;
+  int VERIFY = 58;
   /** RegularExpression Id. */
-  int EQUAL = 59;
+  int SEARCH = 59;
   /** RegularExpression Id. */
-  int OBRACE = 60;
+  int ASSIGN = 60;
   /** RegularExpression Id. */
-  int LESSTHAN = 61;
+  int IMPLIC = 61;
   /** RegularExpression Id. */
-  int BOOL_FALSE = 62;
+  int COMMA = 62;
   /** RegularExpression Id. */
-  int BOOL_TRUE = 63;
+  int QMARK = 63;
   /** RegularExpression Id. */
-  int AU = 64;
+  int EQUAL = 64;
   /** RegularExpression Id. */
-  int EU = 65;
+  int OBRACE = 65;
   /** RegularExpression Id. */
-  int EG = 66;
+  int LESSTHAN = 66;
   /** RegularExpression Id. */
-  int EF = 67;
+  int BOOL_FALSE = 67;
   /** RegularExpression Id. */
-  int AG = 68;
+  int BOOL_TRUE = 68;
   /** RegularExpression Id. */
-  int AF = 69;
+  int AU = 69;
   /** RegularExpression Id. */
-  int PG = 70;
+  int EU = 70;
   /** RegularExpression Id. */
-  int PF = 71;
+  int EG = 71;
   /** RegularExpression Id. */
-  int PU = 72;
+  int EF = 72;
   /** RegularExpression Id. */
-  int PX = 73;
+  int AG = 73;
   /** RegularExpression Id. */
-  int Pr = 74;
+  int AF = 74;
   /** RegularExpression Id. */
-  int Ss = 75;
+  int PG = 75;
   /** RegularExpression Id. */
-  int OSQUARE = 76;
+  int PF = 76;
   /** RegularExpression Id. */
-  int CSQUARE = 77;
+  int PU = 77;
   /** RegularExpression Id. */
-  int GREATERTHAN = 78;
+  int PX = 78;
   /** RegularExpression Id. */
-  int CBRACE = 79;
+  int Pr = 79;
   /** RegularExpression Id. */
-  int DISABLE = 80;
+  int Ss = 80;
   /** RegularExpression Id. */
-  int INF = 81;
+  int OSQUARE = 81;
   /** RegularExpression Id. */
-  int SYMBOL = 82;
+  int CSQUARE = 82;
   /** RegularExpression Id. */
-  int ID = 83;
+  int GREATERTHAN = 83;
   /** RegularExpression Id. */
-  int NUM = 84;
+  int CBRACE = 84;
   /** RegularExpression Id. */
-  int INTEGER = 85;
+  int DISABLE = 85;
   /** RegularExpression Id. */
-  int REAL = 86;
+  int INF = 86;
   /** RegularExpression Id. */
-  int LETTER = 87;
+  int SYMBOL = 87;
   /** RegularExpression Id. */
-  int DIGIT = 88;
+  int ID = 88;
   /** RegularExpression Id. */
-  int PLUS = 89;
+  int NUM = 89;
   /** RegularExpression Id. */
-  int MINUS = 90;
+  int INTEGER = 90;
   /** RegularExpression Id. */
-  int OPAR = 91;
+  int REAL = 91;
   /** RegularExpression Id. */
-  int CPAR = 92;
+  int LETTER = 92;
   /** RegularExpression Id. */
-  int MULT = 93;
+  int DIGIT = 93;
   /** RegularExpression Id. */
-  int MOD = 94;
+  int PLUS = 94;
   /** RegularExpression Id. */
-  int POWER = 95;
+  int MINUS = 95;
   /** RegularExpression Id. */
-  int NOT = 96;
+  int OPAR = 96;
   /** RegularExpression Id. */
-  int DIV = 97;
+  int CPAR = 97;
   /** RegularExpression Id. */
-  int AND = 98;
+  int MULT = 98;
   /** RegularExpression Id. */
-  int OR = 99;
+  int MOD = 99;
   /** RegularExpression Id. */
-  int GEQ = 100;
+  int POWER = 100;
   /** RegularExpression Id. */
-  int LEQ = 101;
+  int NOT = 101;
   /** RegularExpression Id. */
-  int SEMICOLON = 102;
+  int DIV = 102;
   /** RegularExpression Id. */
-  int UNKNOWN = 103;
+  int AND = 103;
   /** RegularExpression Id. */
-  int COMMENTS = 109;
+  int OR = 104;
   /** RegularExpression Id. */
-  int DELIM = 110;
+  int GEQ = 105;
+  /** RegularExpression Id. */
+  int LEQ = 106;
+  /** RegularExpression Id. */
+  int SEMICOLON = 107;
+  /** RegularExpression Id. */
+  int UNKNOWN = 108;
+  /** RegularExpression Id. */
+  int COMMENTS = 114;
+  /** RegularExpression Id. */
+  int DELIM = 115;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -259,6 +269,11 @@ public interface ParserConstants {
     "<PROPERTY>",
     "<MARKING>",
     "<NAME>",
+    "\"min\"",
+    "\"max\"",
+    "\"idiv\"",
+    "\"floor\"",
+    "\"ceil\"",
     "\"uniform\"",
     "\"normal\"",
     "\"exponential\"",
