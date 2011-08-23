@@ -997,7 +997,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				network.loadProperties(gcm, reb2sac.getGcmAbstractions(), reb2sac.getInterestingSpecies(), reb2sac.getProperty());
 			else
 				network.loadProperties(gcm);
-			network.markAbstractable();
 			if (!getSBMLFile().equals(none)) {
 				//SBMLDocument d = Gui.readSBML(path + separator + getSBMLFile());
 				SBMLDocument d = network.getSBML();
@@ -1121,6 +1120,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 						}
 					}
 				}
+				network.markAbstractable();
 				network.mergeSBML(path + separator + simName + separator + stem + direct + separator + gcmname + ".xml", d);
 			}
 			else {
