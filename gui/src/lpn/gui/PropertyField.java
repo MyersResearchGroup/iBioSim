@@ -6,6 +6,8 @@ import gcm.util.Utility;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
@@ -18,6 +20,11 @@ import main.Gui;
 
 
 public class PropertyField extends JPanel implements ActionListener {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	public PropertyField(String name, String value, String state,
 			String defaultValue, String repExp) {
@@ -84,7 +91,6 @@ public class PropertyField extends JPanel implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		// TODO: Need to check source
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 			if (box.getSelectedItem().equals(states[0])) {
 				setDefault();
@@ -128,7 +134,12 @@ public class PropertyField extends JPanel implements ActionListener {
 	}
 
 	public String getValue() {
-		return field.getText();
+		String propertyTemp0 = field.getText();
+		// Find and remove blank spaces.
+		Pattern pattern = Pattern.compile("\\s*");
+		Matcher matcher = pattern.matcher(propertyTemp0);
+		String propertyTemp = matcher.replaceAll("");
+		return propertyTemp;
 	}
 
 	public void setKey(String key) {
