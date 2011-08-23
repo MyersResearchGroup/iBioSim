@@ -1502,7 +1502,9 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			setDirty(true);
 		}
 		gcm.setSBMLFile(gcmname+".xml");
-		gcm.save(path + separator + gcmname + ".gcm");
+		if (!paramsOnly) { 
+			gcm.save(path + separator + gcmname + ".gcm");
+		}
 		sbmlFiles.setSelectedItem(gcm.getSBMLFile());
 		if (gcm.getSBMLDocument()==null) {
 			gcm.setSBMLDocument(Gui.readSBML(path + separator + gcm.getSBMLFile()));
