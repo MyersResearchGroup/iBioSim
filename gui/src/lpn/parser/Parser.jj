@@ -4,7 +4,7 @@ options {
 
 PARSER_BEGIN(Parser)
 
-  package lhpn2sbml.parser;
+  package lpn.parser;
 
   public class Parser {
 
