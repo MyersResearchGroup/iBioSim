@@ -1388,7 +1388,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		editInit = new EditButton("Edit Parameter", parameters);
 		// parameters.addAllItem(gcm.getParameters().keySet());
 		parameters.addAllItem(generateParameters());
-		initPanel = Utility.createPanel(this, "GCM Parameters", parameters, null, null, editInit);
+		initPanel = Utility.createPanel(this, "Model Generation Parameters", parameters, null, null, editInit);
 		paramPanel.add(initPanel, "Center");
 		parametersPanel = new Parameters(gcm.getSBMLDocument(),usedIDs,dirty,
 				paramsOnly,getParams,path + separator + file,parameterChanges);
@@ -1502,6 +1502,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			setDirty(true);
 		}
 		gcm.setSBMLFile(gcmname+".xml");
+		gcm.save(path + separator + gcmname + ".gcm");
 		sbmlFiles.setSelectedItem(gcm.getSBMLFile());
 		if (gcm.getSBMLDocument()==null) {
 			gcm.setSBMLDocument(Gui.readSBML(path + separator + gcm.getSBMLFile()));

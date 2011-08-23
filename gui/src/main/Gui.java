@@ -436,7 +436,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		tools = new JMenu("Tools");
 		menuBar.add(file);
 		menuBar.add(edit);
-		//menuBar.add(view);
+		if (lema) {
+			menuBar.add(view);
+		}
 		menuBar.add(tools);
 		menuBar.add(help);
 		// menuBar.addFocusListener(this);
@@ -844,7 +846,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			file.addSeparator();
 			file.add(refresh);
 		}
-		//file.add(saveModel);
+		if (lema) {
+			file.add(saveModel);
+		}
 		file.addSeparator();
 		file.add(importMenu);
 		if (!async) {
@@ -1299,6 +1303,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				icons.setSelected(true);
 			}
 
+			// create sbml preferences panel
+			JPanel levelPrefs = new JPanel(new GridLayout(1, 2));
+			levelPrefs.add(SBMLlabel);
+			levelPrefs.add(LevelVersion);
+
 			// gcm preferences
 			final JTextField ACTIVED_VALUE = new JTextField(biosimrc.get("biosim.gcm.ACTIVED_VALUE", ""));
 			final JTextField KACT_VALUE = new JTextField(biosimrc.get("biosim.gcm.KACT_VALUE", ""));
@@ -1321,7 +1330,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			final JTextField MEMDIFF_VALUE = new JTextField(biosimrc.get("biosim.gcm.MEMDIFF_VALUE", ""));
 			final JTextField KECDIFF_VALUE = new JTextField(biosimrc.get("biosim.gcm.KECDIFF_VALUE", ""));
 
-			JPanel labels = new JPanel(new GridLayout(17, 1));
+			JPanel labels = new JPanel(new GridLayout(19, 1));
+			labels.add(SBMLlabel);
+			labels.add(Undeclared);
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVED_STRING) + " (" + GlobalConstants.ACTIVED_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KACT_STRING) + " (" + GlobalConstants.KACT_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KBASAL_STRING) + " (" + GlobalConstants.KBASAL_STRING + "):"));
@@ -1345,7 +1356,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.MEMDIFF_STRING) + " (" + GlobalConstants.MEMDIFF_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KECDIFF_STRING) + " (" + GlobalConstants.KECDIFF_STRING + "):"));
 
-			JPanel fields = new JPanel(new GridLayout(17, 1));
+			JPanel fields = new JPanel(new GridLayout(19, 1));
+			fields.add(LevelVersion);
+			fields.add(Units);
 			fields.add(ACTIVED_VALUE);
 			fields.add(KACT_VALUE);
 			fields.add(KBASAL_VALUE);
@@ -1411,7 +1424,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						type.removeAllItems();
 						type.addItem("ODE");
 						type.addItem("Monte Carlo");
-						type.addItem("SBML");
+						type.addItem("Model");
 						type.addItem("Network");
 						type.addItem("Browser");
 						type.setSelectedItem(o);
@@ -1421,7 +1434,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						type.removeAllItems();
 						type.addItem("ODE");
 						type.addItem("Monte Carlo");
-						type.addItem("SBML");
+						type.addItem("Model");
 						type.addItem("Network");
 						type.addItem("Browser");
 						type.setSelectedItem(o);
@@ -1431,7 +1444,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						type.removeAllItems();
 						type.addItem("Monte Carlo");
 						type.addItem("Markov");
-						type.addItem("SBML");
+						type.addItem("Model");
 						type.addItem("Network");
 						type.addItem("Browser");
 						type.addItem("LPN");
@@ -1619,23 +1632,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			generalPrefs.add(generalPrefsBordered);
 			((FlowLayout) generalPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
 
-			// create sbml preferences panel
-			JPanel sbmlPrefsBordered = new JPanel(new BorderLayout());
-			JPanel sbmlPrefs = new JPanel();
-			JPanel levelPrefs = new JPanel(new GridLayout(1, 2));
-			levelPrefs.add(SBMLlabel);
-			levelPrefs.add(LevelVersion);
-			sbmlPrefsBordered.add(levelPrefs, "North");
-			sbmlPrefsBordered.add(Undeclared, "Center");
-			sbmlPrefsBordered.add(Units, "South");
-			sbmlPrefs.add(sbmlPrefsBordered);
-			((FlowLayout) sbmlPrefs.getLayout()).setAlignment(FlowLayout.LEFT);
-
 			// create tabs
 			JTabbedPane prefTabs = new JTabbedPane();
 			prefTabs.addTab("General Preferences", generalPrefs);
-			prefTabs.addTab("SBML Preferences", sbmlPrefs);
-			prefTabs.addTab("GCM Preferences", gcmPrefs);
+			prefTabs.addTab("Model Preferences", gcmPrefs);
 			prefTabs.addTab("Analysis Preferences", analysisPrefs);
 			prefTabs.addTab("Learn Preferences", learnPrefs);
 

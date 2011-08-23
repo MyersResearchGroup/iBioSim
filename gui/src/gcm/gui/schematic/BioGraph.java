@@ -7,7 +7,6 @@ import gcm.gui.modelview.movie.MovieAppearance;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 
-import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -1173,6 +1172,8 @@ public class BioGraph extends mxGraph {
 			style = "ACTIVATION";
 		else if(prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.REPRESSION))
 			style = "REPRESSION";
+		else if(prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.NOINFLUENCE))
+			style = "NOINFLUENCE";
 		else if(prop.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.COMPLEX))
 			style = "COMPLEX";
 		else
@@ -1326,13 +1327,23 @@ public class BioGraph extends mxGraph {
 		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OVAL);
 		stylesheet.putCellStyle("REPRESSION", style);
 		
+		//no influence (species to species)
+		style = new Hashtable<String, Object>();
+		style.put(mxConstants.STYLE_OPACITY, 100);
+		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
+		style.put(mxConstants.STYLE_FILLCOLOR, "#000000");
+		style.put(mxConstants.STYLE_STROKECOLOR, "#000000");
+		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_DIAMOND);
+		style.put(mxConstants.STYLE_DASHED, "true");
+		stylesheet.putCellStyle("NOINFLUENCE", style);
+		
 		//complex formation edge (species to species)
 		style = new Hashtable<String, Object>();
 		style.put(mxConstants.STYLE_OPACITY, 100);
 		style.put(mxConstants.STYLE_FONTCOLOR, "#000000");
 		style.put(mxConstants.STYLE_FILLCOLOR, "#4E5D9C");
 		style.put(mxConstants.STYLE_STROKECOLOR, "#4E5D9C");
-		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_DIAMOND);
+		style.put(mxConstants.STYLE_ENDARROW, mxConstants.ARROW_OPEN);
 		style.put(mxConstants.STYLE_DASHED, "true");
 		stylesheet.putCellStyle("COMPLEX", style);
 		
