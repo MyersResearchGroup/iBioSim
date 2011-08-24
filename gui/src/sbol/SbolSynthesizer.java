@@ -231,23 +231,8 @@ public class SbolSynthesizer {
 			SequenceFeature sourceFeat = loadFeature(sourceFeatId, sourceLibId, sourceFileId);
 			if (synthesizerOn) {
 				String targetLibId = targetLib.getDisplayId();
-				int option = 99;
-				if (targetIdSet.contains(sourceFeatId) && (!sourceFileId.equals(targetFileId) || !sourceLibId.equals(targetLibId))) {
-					Object[] options = {"Change ID", "Use Existing", "Cancel"};
-					option = JOptionPane.showOptionDialog(Gui.frame, "Collection " + targetLibId + " already contains DNA component " + sourceFeatId 
-							+ ".  Would you like to change display ID for incoming " + sourceFeatId + " or use existing " + sourceFeatId + "?", 
-							"ID Clash", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[0]);
-				}
-				if (option == JOptionPane.YES_OPTION) {
-					sourceFeat = renameId(sourceFeat);
-				} else if (option == JOptionPane.NO_OPTION) {
-					for (SequenceFeature sf : targetLib.getFeatures()) {
-						if (sf.getDisplayId().equals(sourceFeatId)) {
-							sourceFeat = sf;
-						}
-					}
-				} else if (option == JOptionPane.CANCEL_OPTION || option == JOptionPane.CLOSED_OPTION)
-					synthesizerOn = false;
+				if (targetIdSet.contains(sourceFeatId) && (!sourceFileId.equals(targetFileId) || !sourceLibId.equals(targetLibId))) 
+					sourceFeat = resolveIdClash(sourceFeat);
 				if (synthesizerOn) {
 					SbolService factory = new SbolService();
 					factory.addSequenceFeatureToLibrary(sourceFeat, targetLib);
@@ -286,17 +271,53 @@ public class SbolSynthesizer {
 		return null;
 	}
 	
+	private SequenceFeature resolveIdClash(SequenceFeature sourceFeat) {
+		int option;
+		String sourceFeatId = sourceFeat.getDisplayId();
+		boolean overwriteMode = false;
+		if (isAnnotation(sourceFeatId)) {
+			String[] options = {"Change ID", "Use Existing", "Cancel"};
+			option = JOptionPane.showOptionDialog(Gui.frame, "Collection " + targetLib.getDisplayId() + " already contains DNA component " 
+					+ sourceFeatId + ".  Would you like to change display ID for incoming " + sourceFeatId + " or use existing " + sourceFeatId + "?", 
+					"ID Clash", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+		} else {
+			overwriteMode = true;
+			String[] options = {"Change ID", "Overwrite", "Cancel"};
+			option = JOptionPane.showOptionDialog(Gui.frame, "Collection " + targetLib.getDisplayId() + " already contains DNA component " 
+					+ sourceFeatId + ".  Would you like to change display ID for incoming " + sourceFeatId + " or overwrite existing " 
+					+ sourceFeatId + "?", 
+					"ID Clash", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+		}
+		if (option == 0) {
+			sourceFeat = renameId(sourceFeat);
+		} else if (option == 1) {
+			if (overwriteMode)
+				deleteComponent(sourceFeatId);
+			else {
+				for (SequenceFeature sf : targetLib.getFeatures()) {
+					if (sf.getDisplayId().equals(sourceFeatId)) {
+						sourceFeat = sf;
+					}
+				}
+			}
+		} else 
+			synthesizerOn = false;
+		return sourceFeat;
+	}
+	
 	private SequenceFeature renameId(SequenceFeature sourceFeat) {
 		String renameId;
 		do {
 			renameId = JOptionPane.showInputDialog(Gui.frame, "Enter new display ID:", "Display ID", JOptionPane.PLAIN_MESSAGE);
 			if (renameId == null)
 				break;
-			if (sourceIdSet.contains(renameId))
+			if (!sourceFeat.getDisplayId().equals(renameId) && sourceIdSet.contains(renameId))
 				JOptionPane.showMessageDialog(Gui.frame, "Collection would contain another DNA component with the chosen ID.",
 						"Invalid ID", JOptionPane.ERROR_MESSAGE);
-		} while (!isSourceIdValid(renameId) || sourceIdSet.contains(renameId));
+		} while ((!sourceFeat.getDisplayId().equals(renameId) && sourceIdSet.contains(renameId)) || !isSourceIdValid(renameId));
 		if (renameId != null) {
+			sourceIdSet.remove(sourceFeat.getDisplayId());
+			sourceIdSet.add(renameId);
 			SequenceFeature renameFeat = new SequenceFeature();
 			renameFeat.setDisplayId(renameId);
 			if (sourceFeat.getName() != null)
@@ -341,11 +362,53 @@ public class SbolSynthesizer {
 		} else if (!Utility.isValid(sourceId, Utility.IDstring)) {
 			JOptionPane.showMessageDialog(Gui.frame, "Chosen ID is not alphanumeric.", "Invalid ID", JOptionPane.ERROR_MESSAGE);
 			return false;
-		} else if (targetIdSet.contains(sourceId)) {
-			JOptionPane.showMessageDialog(Gui.frame, "Collection already contains DNA component with chosen ID.", "ID Clash", JOptionPane.ERROR_MESSAGE);
-			return false;
-		} 
+		} else if (targetIdSet.contains(sourceId))
+			return checkOverwrite(sourceId);
 		return true;
+	}
+	
+	private boolean checkOverwrite(String sourceId) {
+		if (isAnnotation(sourceId)) {
+			JOptionPane.showMessageDialog(Gui.frame, "Collection " + targetLib.getDisplayId() 
+					+ " already contains DNA component " + sourceId + ".", "ID Clash", JOptionPane.ERROR_MESSAGE);
+			return false;
+		} else {
+			String[] options = { "Ok", "Cancel" };
+			int option = JOptionPane.showOptionDialog(Gui.frame, "Collection " + targetLib.getDisplayId() 
+					+ " already contains DNA component " + sourceId + ".  Would you like to overwrite?",
+					"ID Clash", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
+			if (option == JOptionPane.YES_OPTION) {
+				deleteComponent(sourceId);
+				return true;
+			} else
+				return false;
+		}
+	}
+	
+	private boolean isAnnotation(String compId) {
+		for (DnaComponent dnac : targetLib.getComponents())
+			for (SequenceAnnotation sa : dnac.getAnnotations())
+				for (SequenceFeature sf : sa.getFeatures())
+					if (sf.getDisplayId().equals(compId))
+						return true;
+		return false;
+	}
+	
+	private void deleteComponent(String compId) {
+		Library editedLib = new Library();
+		editedLib.setDisplayId(targetLib.getDisplayId());
+		if (targetLib.getName() != null)
+			editedLib.setName(targetLib.getName());
+		if (targetLib.getDescription() != null)
+			editedLib.setDescription(targetLib.getDescription());
+		for (DnaComponent dnac : targetLib.getComponents())
+			if (!dnac.getDisplayId().equals(compId))
+				editedLib.addComponent(dnac);
+		for (SequenceFeature sf : targetLib.getFeatures()) {
+			SbolService factory = new SbolService();
+			factory.addSequenceFeatureToLibrary(sf, editedLib);
+		}
+		targetLib = editedLib;
 	}
 	
 	private String mungeId(String importFeatProperty) {
