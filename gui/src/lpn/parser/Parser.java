@@ -30,7 +30,7 @@
 
     }
 
-  static final public void Goal() throws ParseException {
+  final public void Goal() throws ParseException {
     label_1:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -86,7 +86,7 @@
     jj_consume_token(0);
   }
 
-  static final public void Property() throws ParseException {
+  final public void Property() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case OBRACE:
     case EG:
@@ -140,7 +140,7 @@
     }
   }
 
-  static final public void Probproperty() throws ParseException {
+  final public void Probproperty() throws ParseException {
     if (jj_2_1(3)) {
       jj_consume_token(Pr);
       Relop();
@@ -219,7 +219,7 @@
     }
   }
 
-  static final public void Probprop() throws ParseException {
+  final public void Probprop() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case PG:
       jj_consume_token(PG);
@@ -291,16 +291,16 @@
 // | LOOKAHEAD(3) Prop() Impliesprop()
 // | Prop()
 //}
-  static final public void Props() throws ParseException {
+  final public void Props() throws ParseException {
     Prop();
     Props_prime();
   }
 
-  static final public void Props_prime() throws ParseException {
+  final public void Props_prime() throws ParseException {
     Andprop();
   }
 
-  static final public void Andprop() throws ParseException {
+  final public void Andprop() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case AND:
       jj_consume_token(AND);
@@ -313,7 +313,7 @@
     }
   }
 
-  static final public void Orprop() throws ParseException {
+  final public void Orprop() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case OR:
       jj_consume_token(OR);
@@ -326,7 +326,7 @@
     }
   }
 
-  static final public void Impliesprop() throws ParseException {
+  final public void Impliesprop() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case MINUS:
       jj_consume_token(MINUS);
@@ -347,7 +347,7 @@
 // | Fronttype() <OPAR> Bound() Prop()<CPAR>
 // | Midprop()
 //}
-  static final public void Prop() throws ParseException {
+  final public void Prop() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case EG:
     case EF:
@@ -369,7 +369,7 @@
     }
   }
 
-  static final public void Prop_prime() throws ParseException {
+  final public void Prop_prime() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case MINF:
     case MAXF:
@@ -432,7 +432,7 @@
 //{
 // <OPAR> Propinner() <CPAR> 
 //}
-  static final public void Midprop() throws ParseException {
+  final public void Midprop() throws ParseException {
     jj_consume_token(OBRACE);
     Propinner();
     jj_consume_token(CBRACE);
@@ -446,7 +446,7 @@
 // | LOOKAHEAD(3) Hsf() Midtype() Bound() Prop()
 // | Hsf() Midtype() Bound() Hsf()
 //}
-  static final public void Propinner() throws ParseException {
+  final public void Propinner() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case MINF:
     case MAXF:
@@ -504,7 +504,7 @@
     }
   }
 
-  static final public void Propinner_prime() throws ParseException {
+  final public void Propinner_prime() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case OBRACE:
     case EG:
@@ -556,7 +556,7 @@
     }
   }
 
-  static final public void Fronttype() throws ParseException {
+  final public void Fronttype() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case AG:
       jj_consume_token(AG);
@@ -577,7 +577,7 @@
     }
   }
 
-  static final public void Midtype() throws ParseException {
+  final public void Midtype() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case AU:
       jj_consume_token(AU);
@@ -592,7 +592,7 @@
     }
   }
 
-  static final public void Bound() throws ParseException {
+  final public void Bound() throws ParseException {
     if (jj_2_3(2)) {
       jj_consume_token(OSQUARE);
       Relop();
@@ -614,12 +614,12 @@
     }
   }
 
-  static final public void Hsf() throws ParseException {
+  final public void Hsf() throws ParseException {
     Andexpr();
     Hsf_prime();
   }
 
-  static final public void Hsf_prime() throws ParseException {
+  final public void Hsf_prime() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case OR:
       jj_consume_token(OR);
@@ -637,12 +637,12 @@
     }
   }
 
-  static final public void Andexpr() throws ParseException {
+  final public void Andexpr() throws ParseException {
     Relation();
     Andexpr_prime();
   }
 
-  static final public void Andexpr_prime() throws ParseException {
+  final public void Andexpr_prime() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case AND:
       jj_consume_token(AND);
@@ -655,7 +655,7 @@
     }
   }
 
-  static final public void Relation() throws ParseException {
+  final public void Relation() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case MINF:
     case MAXF:
@@ -711,7 +711,7 @@
     }
   }
 
-  static final public void Relation_prime() throws ParseException {
+  final public void Relation_prime() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case EQUAL:
     case LESSTHAN:
@@ -727,12 +727,12 @@
     }
   }
 
-  static final public void Arithexpr() throws ParseException {
+  final public void Arithexpr() throws ParseException {
     Multexpr();
     Arithexpr_prime();
   }
 
-  static final public void Arithexpr_prime() throws ParseException {
+  final public void Arithexpr_prime() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case PLUS:
       jj_consume_token(PLUS);
@@ -750,12 +750,12 @@
     }
   }
 
-  static final public void Multexpr() throws ParseException {
+  final public void Multexpr() throws ParseException {
     Term();
     Multexpr_prime();
   }
 
-  static final public void Multexpr_prime() throws ParseException {
+  final public void Multexpr_prime() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case MULT:
       jj_consume_token(MULT);
@@ -786,7 +786,7 @@
     }
   }
 
-  static final public void Term() throws ParseException {
+  final public void Term() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case OPAR:
       jj_consume_token(OPAR);
@@ -868,7 +868,7 @@
     }
   }
 
-  static final public void Relop() throws ParseException {
+  final public void Relop() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case EQUAL:
       jj_consume_token(EQUAL);
@@ -902,7 +902,7 @@
     }
   }
 
-  static final public void Unop() throws ParseException {
+  final public void Unop() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case BITNOT:
       jj_consume_token(BITNOT);
@@ -944,7 +944,7 @@
     }
   }
 
-  static final public void Binop() throws ParseException {
+  final public void Binop() throws ParseException {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case BITOR:
       jj_consume_token(BITOR);
@@ -986,52 +986,52 @@
     }
   }
 
-  static final public void Id() throws ParseException {
+  final public void Id() throws ParseException {
     jj_consume_token(ID);
   }
 
-  static private boolean jj_2_1(int xla) {
+  private boolean jj_2_1(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_1(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(0, xla); }
   }
 
-  static private boolean jj_2_2(int xla) {
+  private boolean jj_2_2(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_2(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(1, xla); }
   }
 
-  static private boolean jj_2_3(int xla) {
+  private boolean jj_2_3(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_3(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(2, xla); }
   }
 
-  static private boolean jj_2_4(int xla) {
+  private boolean jj_2_4(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_4(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(3, xla); }
   }
 
-  static private boolean jj_2_5(int xla) {
+  private boolean jj_2_5(int xla) {
     jj_la = xla; jj_lastpos = jj_scanpos = token;
     try { return !jj_3_5(); }
     catch(LookaheadSuccess ls) { return true; }
     finally { jj_save(4, xla); }
   }
 
-  static private boolean jj_3_3() {
+  private boolean jj_3_3() {
     if (jj_scan_token(OSQUARE)) return true;
     if (jj_3R_2()) return true;
     return false;
   }
 
-  static private boolean jj_3R_2() {
+  private boolean jj_3R_2() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_scan_token(64)) {
@@ -1050,43 +1050,42 @@
     return false;
   }
 
-  static private boolean jj_3_1() {
+  private boolean jj_3_1() {
     if (jj_scan_token(Pr)) return true;
     if (jj_3R_2()) return true;
     if (jj_scan_token(REAL)) return true;
     return false;
   }
 
-  static private boolean jj_3_5() {
+  private boolean jj_3_5() {
     if (jj_scan_token(GREATERTHAN)) return true;
     return false;
   }
 
-  static private boolean jj_3_2() {
+  private boolean jj_3_2() {
     if (jj_scan_token(Ss)) return true;
     if (jj_3R_2()) return true;
     if (jj_scan_token(REAL)) return true;
     return false;
   }
 
-  static private boolean jj_3_4() {
+  private boolean jj_3_4() {
     if (jj_scan_token(LESSTHAN)) return true;
     return false;
   }
 
-  static private boolean jj_initialized_once = false;
   /** Generated Token Manager. */
-  static public ParserTokenManager token_source;
-  static JavaCharStream jj_input_stream;
+  public ParserTokenManager token_source;
+  JavaCharStream jj_input_stream;
   /** Current token. */
-  static public Token token;
+  public Token token;
   /** Next token. */
-  static public Token jj_nt;
-  static private int jj_ntk;
-  static private Token jj_scanpos, jj_lastpos;
-  static private int jj_la;
-  static private int jj_gen;
-  static final private int[] jj_la1 = new int[27];
+  public Token jj_nt;
+  private int jj_ntk;
+  private Token jj_scanpos, jj_lastpos;
+  private int jj_la;
+  private int jj_gen;
+  final private int[] jj_la1 = new int[27];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static private int[] jj_la1_2;
@@ -1109,9 +1108,9 @@
    private static void jj_la1_init_3() {
       jj_la1_3 = new int[] {0x21,0x21,0x0,0x21,0x21,0x80,0x100,0x0,0x0,0x21,0x21,0x21,0x0,0x0,0x0,0x100,0x80,0x21,0x600,0x0,0x5c,0x1,0x0,0x400,0x200,0x0,0x0,};
    }
-  static final private JJCalls[] jj_2_rtns = new JJCalls[5];
-  static private boolean jj_rescan = false;
-  static private int jj_gc = 0;
+  final private JJCalls[] jj_2_rtns = new JJCalls[5];
+  private boolean jj_rescan = false;
+  private int jj_gc = 0;
 
   /** Constructor with InputStream. */
   public Parser(java.io.InputStream stream) {
@@ -1119,13 +1118,6 @@
   }
   /** Constructor with InputStream and supplied encoding */
   public Parser(java.io.InputStream stream, String encoding) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser.  ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     try { jj_input_stream = new JavaCharStream(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source = new ParserTokenManager(jj_input_stream);
     token = new Token();
@@ -1136,11 +1128,11 @@
   }
 
   /** Reinitialise. */
-  static public void ReInit(java.io.InputStream stream) {
+  public void ReInit(java.io.InputStream stream) {
      ReInit(stream, null);
   }
   /** Reinitialise. */
-  static public void ReInit(java.io.InputStream stream, String encoding) {
+  public void ReInit(java.io.InputStream stream, String encoding) {
     try { jj_input_stream.ReInit(stream, encoding, 1, 1); } catch(java.io.UnsupportedEncodingException e) { throw new RuntimeException(e); }
     token_source.ReInit(jj_input_stream);
     token = new Token();
@@ -1152,13 +1144,6 @@
 
   /** Constructor. */
   public Parser(java.io.Reader stream) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser. ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     jj_input_stream = new JavaCharStream(stream, 1, 1);
     token_source = new ParserTokenManager(jj_input_stream);
     token = new Token();
@@ -1169,7 +1154,7 @@
   }
 
   /** Reinitialise. */
-  static public void ReInit(java.io.Reader stream) {
+  public void ReInit(java.io.Reader stream) {
     jj_input_stream.ReInit(stream, 1, 1);
     token_source.ReInit(jj_input_stream);
     token = new Token();
@@ -1181,13 +1166,6 @@
 
   /** Constructor with generated Token Manager. */
   public Parser(ParserTokenManager tm) {
-    if (jj_initialized_once) {
-      System.out.println("ERROR: Second call to constructor of static parser. ");
-      System.out.println("       You must either use ReInit() or set the JavaCC option STATIC to false");
-      System.out.println("       during parser generation.");
-      throw new Error();
-    }
-    jj_initialized_once = true;
     token_source = tm;
     token = new Token();
     jj_ntk = -1;
@@ -1206,7 +1184,7 @@
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
-  static private Token jj_consume_token(int kind) throws ParseException {
+  private Token jj_consume_token(int kind) throws ParseException {
     Token oldToken;
     if ((oldToken = token).next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
@@ -1230,9 +1208,10 @@
     throw generateParseException();
   }
 
-  static private final class LookaheadSuccess extends java.lang.Error { }
-  static final private LookaheadSuccess jj_ls = new LookaheadSuccess();
-  static private boolean jj_scan_token(int kind) {
+  @SuppressWarnings("serial")
+static private final class LookaheadSuccess extends java.lang.Error { }
+  final private LookaheadSuccess jj_ls = new LookaheadSuccess();
+  private boolean jj_scan_token(int kind) {
     if (jj_scanpos == jj_lastpos) {
       jj_la--;
       if (jj_scanpos.next == null) {
@@ -1255,7 +1234,7 @@
 
 
 /** Get the next Token. */
-  static final public Token getNextToken() {
+  final public Token getNextToken() {
     if (token.next != null) token = token.next;
     else token = token.next = token_source.getNextToken();
     jj_ntk = -1;
@@ -1264,7 +1243,7 @@
   }
 
 /** Get the specific Token. */
-  static final public Token getToken(int index) {
+  final public Token getToken(int index) {
     Token t = token;
     for (int i = 0; i < index; i++) {
       if (t.next != null) t = t.next;
@@ -1273,20 +1252,20 @@
     return t;
   }
 
-  static private int jj_ntk() {
+  private int jj_ntk() {
     if ((jj_nt=token.next) == null)
       return (jj_ntk = (token.next=token_source.getNextToken()).kind);
     else
       return (jj_ntk = jj_nt.kind);
   }
 
-  static private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
-  static private int[] jj_expentry;
-  static private int jj_kind = -1;
-  static private int[] jj_lasttokens = new int[100];
-  static private int jj_endpos;
+  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
+  private int[] jj_expentry;
+  private int jj_kind = -1;
+  private int[] jj_lasttokens = new int[100];
+  private int jj_endpos;
 
-  static private void jj_add_error_token(int kind, int pos) {
+  private void jj_add_error_token(int kind, int pos) {
     if (pos >= 100) return;
     if (pos == jj_endpos + 1) {
       jj_lasttokens[jj_endpos++] = kind;
@@ -1312,7 +1291,7 @@
   }
 
   /** Generate ParseException. */
-  static public ParseException generateParseException() {
+  public ParseException generateParseException() {
     jj_expentries.clear();
     boolean[] la1tokens = new boolean[116];
     if (jj_kind >= 0) {
@@ -1355,14 +1334,14 @@
   }
 
   /** Enable tracing. */
-  static final public void enable_tracing() {
+  final public void enable_tracing() {
   }
 
   /** Disable tracing. */
-  static final public void disable_tracing() {
+  final public void disable_tracing() {
   }
 
-  static private void jj_rescan_token() {
+  private void jj_rescan_token() {
     jj_rescan = true;
     for (int i = 0; i < 5; i++) {
     try {
@@ -1385,7 +1364,7 @@
     jj_rescan = false;
   }
 
-  static private void jj_save(int index, int xla) {
+  private void jj_save(int index, int xla) {
     JJCalls p = jj_2_rtns[index];
     while (p.gen > jj_gen) {
       if (p.next == null) { p = p.next = new JJCalls(); break; }
