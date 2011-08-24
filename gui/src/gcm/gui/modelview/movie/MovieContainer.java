@@ -473,7 +473,10 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 		
 		if(json == null){
-			movieScheme = new MovieScheme();
+			
+			if (movieScheme == null ||
+					movieScheme.getAllSpeciesSchemes().length == 0)
+				movieScheme = new MovieScheme();
 		}
 		else{
 			
@@ -483,8 +486,13 @@ public class MovieContainer extends JPanel implements ActionListener {
 				
 				SerializableScheme[] speciesSchemes = gson.fromJson(json, SerializableScheme[].class);
 				
-				movieScheme = new MovieScheme();
-				movieScheme.populate(speciesSchemes, parser.getSpecies());
+				//if there's already a scheme, keep it
+				if (movieScheme == null ||
+						movieScheme.getAllSpeciesSchemes().length == 0) {
+					
+					movieScheme = new MovieScheme();
+					movieScheme.populate(speciesSchemes, parser.getSpecies());
+				}				
 			}
 			catch(Exception e){
 				biosim.log.addText("An error occured trying to load the preferences file " + fullPath + " ERROR: " + e.toString());
