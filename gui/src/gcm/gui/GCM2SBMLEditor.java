@@ -1185,7 +1185,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		JPanel mainPanel = new JPanel(new BorderLayout());
 		mainPanel.setLayout(new BorderLayout());
 		JPanel paramPanel = new JPanel(new BorderLayout());
-		paramPanel.add(modelPanel, "North");
+		//paramPanel.add(modelPanel, "North");
 		JPanel propPanel = new JPanel(new BorderLayout());
 		propPanel.add(mainPanelNorth, "North");
 		mainPanel.add(mainPanelCenter, "Center");
@@ -1202,6 +1202,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				paramsOnly,getParams,file,parameterChanges);
 		speciesPanel = new MySpecies(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
 				paramsOnly,getParams,file,parameterChanges,true);
+		
+		JPanel compPanel = new JPanel(new BorderLayout());
+		compPanel.add(modelPanel, "North");
+		compPanel.add(compartmentPanel,"Center");
+		//compPanel.add(compartmentPanel,"South");
 
 		gcm.setSpeciesPanel(speciesPanel);
 		gcm.setReactionPanel(reactionPanel);
@@ -1279,10 +1284,11 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		mainPanelCenterCenter.add(componentsPanel);
 		
 		if (textBased) {
-			if (!gcm.getGrid().isEnabled()) 
-				tab.addTab("Compartments", compartmentPanel);
+			//if (!gcm.getGrid().isEnabled()) 
+			tab.addTab("Compartments", compPanel);
 			tab.addTab("Species", speciesPanel);
 			tab.addTab("Promoters", promoterPanel);
+			tab.addTab("Parameters", paramPanel);
 			tab.addTab("Reactions", reactionPanel);
 			tab.addTab("Influences", influencesPanel);
 			tab.addTab("Components", componentsPanel);
@@ -1291,8 +1297,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			this.schematic = new Schematic(gcm, biosim, this, true, null,compartmentPanel,reactionPanel,compartmentList);
 			tab.addTab("Schematic", schematic);
 			//if (gcm.getSBMLDocument().getModel().getNumCompartments() > 1) {
-				if (!gcm.getGrid().isEnabled()) 
-					tab.addTab("Compartments", compartmentPanel);
+				//if (!gcm.getGrid().isEnabled()) 
+			tab.addTab("Compartments", compPanel);
 			//}
 			tab.addTab("Parameters", paramPanel);
 		}
