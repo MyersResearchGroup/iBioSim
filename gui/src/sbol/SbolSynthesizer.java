@@ -177,7 +177,7 @@ public class SbolSynthesizer {
 	private LinkedList<String> getSourceFeatProperties() {
 		LinkedList<String> sourceFeatProperties = new LinkedList<String>();
 		for (Promoter p : promoters.values()) {
-			if (synthesizerOn) {
+			if (synthesizerOn && p.getOutputs().size() > 0) {
 				String sbolPromoter = p.getProperty(GlobalConstants.SBOL_PROMOTER);
 				if (sbolPromoter != null)
 					sourceFeatProperties.add(sbolPromoter);
@@ -186,37 +186,37 @@ public class SbolSynthesizer {
 					JOptionPane.showMessageDialog(Gui.frame, "Promoter " + p.getId() + " has no SBOL promoter assocation.",
 							"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
 				}
-			}
-			for (SpeciesInterface s : p.getOutputs()) {
-				if (synthesizerOn) {
-					String sbolRbs = s.getProperty(GlobalConstants.SBOL_RBS);
-					if (sbolRbs != null)
-						sourceFeatProperties.add(sbolRbs);
-					else {
-						synthesizerOn = false;
-						JOptionPane.showMessageDialog(Gui.frame, "Species " + s.getId() + " has no SBOL RBS assocation.",
-								"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
+				for (SpeciesInterface s : p.getOutputs()) {
+					if (synthesizerOn) {
+						String sbolRbs = s.getProperty(GlobalConstants.SBOL_RBS);
+						if (sbolRbs != null)
+							sourceFeatProperties.add(sbolRbs);
+						else {
+							synthesizerOn = false;
+							JOptionPane.showMessageDialog(Gui.frame, "Species " + s.getId() + " has no SBOL RBS assocation.",
+									"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
+						}
+					}
+					if (synthesizerOn) {
+						String sbolOrf = s.getProperty(GlobalConstants.SBOL_ORF);
+						if (sbolOrf != null)
+							sourceFeatProperties.add(sbolOrf);
+						else {
+							synthesizerOn = false;
+							JOptionPane.showMessageDialog(Gui.frame, "Species " + s.getId() + " has no SBOL ORF assocation.",
+									"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
+						}
 					}
 				}
 				if (synthesizerOn) {
-					String sbolOrf = s.getProperty(GlobalConstants.SBOL_ORF);
-					if (sbolOrf != null)
-						sourceFeatProperties.add(sbolOrf);
+					String sbolTerminator = p.getProperty(GlobalConstants.SBOL_TERMINATOR);
+					if (sbolTerminator != null)
+						sourceFeatProperties.add(sbolTerminator);
 					else {
 						synthesizerOn = false;
-						JOptionPane.showMessageDialog(Gui.frame, "Species " + s.getId() + " has no SBOL ORF assocation.",
+						JOptionPane.showMessageDialog(Gui.frame, "Promoter " + p.getId() + " has no SBOL terminator assocation.",
 								"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
 					}
-				}
-			}
-			if (synthesizerOn) {
-				String sbolTerminator = p.getProperty(GlobalConstants.SBOL_TERMINATOR);
-				if (sbolTerminator != null)
-					sourceFeatProperties.add(sbolTerminator);
-				else {
-					synthesizerOn = false;
-					JOptionPane.showMessageDialog(Gui.frame, "Promoter " + p.getId() + " has no SBOL terminator assocation.",
-							"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		}
