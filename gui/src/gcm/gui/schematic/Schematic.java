@@ -28,6 +28,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -1581,6 +1582,20 @@ public class Schematic extends JPanel implements ActionListener {
 						scPanel.updateMovieScheme();
 					
 					speciesPanel.handlePanelData(0);
+					ArrayList<String> parameterChanges = gcm2sbml.getParameterChanges();
+					String updates = speciesPanel.updates();
+					if (!updates.equals("")) {
+						for (int i = parameterChanges.size() - 1; i >= 0; i--) {
+							if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
+								parameterChanges.remove(i);
+							}
+						}
+						if (updates.contains(" ")) {
+							for (String s : updates.split("\n")) {
+								parameterChanges.add(s);
+							}
+						}
+					}
 					
 					movieContainer.setIsDirty(true);
 				}

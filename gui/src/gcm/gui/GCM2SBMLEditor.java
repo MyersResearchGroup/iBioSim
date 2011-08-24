@@ -1828,21 +1828,21 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		SpeciesPanel panel = new SpeciesPanel(id, species, influences, conditions, 
 				components, gcm, paramsOnly, refGCM, this, inTab);
 		
-		if (paramsOnly) {
-			String updates = panel.updates();
-			if (!updates.equals("")) {
-				for (int i = parameterChanges.size() - 1; i >= 0; i--) {
-					if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
-						parameterChanges.remove(i);
-					}
-				}
-				if (updates.contains(" ")) {
-					for (String s : updates.split("\n")) {
-						parameterChanges.add(s);
-					}
-				}
-			}
-		}
+//		if (paramsOnly) {
+//			String updates = panel.updates();
+//			if (!updates.equals("")) {
+//				for (int i = parameterChanges.size() - 1; i >= 0; i--) {
+//					if (parameterChanges.get(i).startsWith(updates.split("/")[0])) {
+//						parameterChanges.remove(i);
+//					}
+//				}
+//				if (updates.contains(" ")) {
+//					for (String s : updates.split("\n")) {
+//						parameterChanges.add(s);
+//					}
+//				}
+//			}
+//		}
 		
 		return panel;
 	}
@@ -1965,6 +1965,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		}
 		
 		return components;
+	}
+	
+	public ArrayList<String> getParameterChanges() {
+		return parameterChanges;
 	}
 	
 	/*
