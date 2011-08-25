@@ -12,6 +12,7 @@ import java.util.Properties;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -32,7 +33,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	private static final String[] ORIENTATIONS = {TOPLEFT, DROP_ON_MOUSE_CLICK};
 	
 	private JComboBox componentCombo;
-	private JRadioButton doTiling;
+	private JCheckBox doTiling;
 	private JPanel tilePanel;
 	private JTextField rowsChooser;
 	private JTextField columnsChooser;
@@ -100,15 +101,12 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		//no tiling if we're on a grid
 		if (!onGrid) {
 		
-			JPanel tilingPanel = new JPanel(new GridLayout(2, 1));
+			JPanel tilingPanel = new JPanel(new GridLayout(1, 1));
 		
 			// radio button to enable tiling
-			doTiling = new JRadioButton("Tile Component", false);
-			doTiling.addActionListener(this);				
-			JLabel note = new JLabel("Note: tiling does not create a grid and no diffusion will occur.");
-			
+			doTiling = new JCheckBox("Tile Component", false);
+			doTiling.addActionListener(this);	
 			tilingPanel.add(doTiling);
-			tilingPanel.add(note);
 			
 			this.add(tilingPanel, BorderLayout.CENTER);
 		
