@@ -1413,7 +1413,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		for (String s : gcm.getConditions()) {
 			conditions.addItem(s);
 		}
-		initPanel = Utility.createPanel(this, "Properties", conditions, addInit, removeInit, editInit);
+		initPanel = Utility.createPanel(this, "CSL Properties", conditions, addInit, removeInit, editInit);
 		propPanel.add(initPanel, "Center");
 		Constraints consPanel = new Constraints(biosim,gcm.getSBMLDocument(),usedIDs,dirty);
 		propPanel.add(consPanel, "South");
