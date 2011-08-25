@@ -5205,7 +5205,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						JOptionPane.ERROR_MESSAGE);
 				return;
 			}
-			String modelID = rename.substring(0, rename.lastIndexOf("."));
+			int index = rename.lastIndexOf(".");
+			String modelID = rename;
+			if (index != -1) {
+				modelID = rename.substring(0, rename.lastIndexOf("."));
+			}
 			try {
 				if (overwrite(root + separator + rename, rename)) {
 					if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml") || tree.getFile().endsWith(".gcm")
@@ -5314,6 +5318,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							}
 							else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
 								((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename.length() - 4));
+								tab.setTitleAt(i, rename);
 							}
 							else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")) {
 								tab.setTitleAt(i, rename);
