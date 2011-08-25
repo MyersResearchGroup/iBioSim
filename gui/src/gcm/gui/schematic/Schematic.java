@@ -611,7 +611,7 @@ public class Schematic extends JPanel implements ActionListener {
 				
 				Point location = event.getPoint();
 				
-				if (grid.isEnabled()) {
+				if (grid.isEnabled() && SwingUtilities.isLeftMouseButton(event)) {
 						
 					grid.setMouseClickLocation(location);
 					drawGrid();
