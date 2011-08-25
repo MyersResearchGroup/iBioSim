@@ -582,7 +582,9 @@ public class Run implements ActionListener {
 					if (!lpnProperty.equals("")) {
 						prop = lpnProperty;
 					}
-					LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel, prop);
+					MutableString mutProp = new MutableString(prop);
+					LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
+					prop = mutProp.getString();
 					if (lpnFile == null) {
 						return 0;
 					}
@@ -721,7 +723,9 @@ public class Run implements ActionListener {
 							if (!lpnProperty.equals("")) {
 								prop = lpnProperty;
 							}
-							LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel, prop);
+							MutableString mutProp = new MutableString(prop);
+							LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
+							prop = mutProp.getString();
 							if (lpnFile == null) {
 								return 0;
 							}
@@ -877,7 +881,9 @@ public class Run implements ActionListener {
 							if (!lpnProperty.equals("")) {
 								prop = lpnProperty;
 							}
-							LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel, prop);
+							MutableString mutProp = new MutableString(prop);
+							LhpnFile lhpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
+							prop = mutProp.getString();
 							if (lhpnFile == null) {
 								return 0;
 							}
@@ -1057,7 +1063,9 @@ public class Run implements ActionListener {
 							if (!lpnProperty.equals("")) {
 								prop = lpnProperty;
 							}
-							lhpnFile = gcm.convertToLHPN(specs, conLevel, prop);
+							MutableString mutProp = new MutableString(prop);
+							lhpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
+							prop = mutProp.getString();
 							if (lhpnFile == null) {
 								return 0;
 							}

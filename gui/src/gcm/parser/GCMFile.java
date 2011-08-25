@@ -69,6 +69,7 @@ import com.sun.mail.handlers.multipart_mixed;
 import sbmleditor.MySpecies;
 import sbmleditor.Reactions;
 import sbmleditor.SBMLutilities;
+import util.MutableString;
 
 import lpn.parser.LhpnFile;
 import main.Gui;
@@ -296,7 +297,7 @@ public class GCMFile {
 		naryRun.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				flattenGCM(false);
-				convertToLHPN(specs, conLevel, null).save(filename);
+				convertToLHPN(specs, conLevel, new MutableString()).save(filename);
 				log.addText("Saving GCM file as LPN:\n" + path + separator + lpnName + "\n");
 				biosim.addToTree(lpnName);
 				naryFrame.dispose();
@@ -734,7 +735,7 @@ public class GCMFile {
 		}
 	}
 
-	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel, String lpnProperty) {
+	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel, MutableString lpnProperty) {
 		GCMParser parser = new GCMParser(this, false);
 		GeneticNetwork network = parser.buildNetwork();
 		network.markAbstractable();
@@ -902,7 +903,7 @@ public class GCMFile {
 				}
 			}
 		}
-		if (lpnProperty != null) {
+		if (lpnProperty.getString() != null) {
 			ArrayList<String> sortedSpecies = new ArrayList<String>();
 			for (String s : species.keySet()) {
 				sortedSpecies.add(s);
@@ -926,12 +927,12 @@ public class GCMFile {
 				else if (network.getComplexMap().containsKey(s)) {
 					replace = abs.abstractComplex(s, 0, false);
 				}
-				if (replace != null && lpnProperty.contains(s)) {
+				if (replace != null && lpnProperty.getString().contains(s)) {
 					replace = "(" + replace + ")";
-					lpnProperty = lpnProperty.replace(s, replace);
+					lpnProperty.setString(lpnProperty.getString().replaceAll(s, replace));
 				}
 			}
-			LHPN.addProperty(lpnProperty);
+			LHPN.addProperty(lpnProperty.getString());
 		}
 		return LHPN;
 	}
