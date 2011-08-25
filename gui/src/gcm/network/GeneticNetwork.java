@@ -42,6 +42,7 @@ import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.libsbml;
 
 import sbmleditor.SBMLutilities;
+import util.MutableString;
 
 
 
@@ -245,7 +246,9 @@ public class GeneticNetwork {
 					species.add(spec);
 					levels.add(new Object[0]);
 				}
-				LhpnFile lpn = properties.convertToLHPN(species, levels, property);
+				MutableString prop = new MutableString(property);
+				LhpnFile lpn = properties.convertToLHPN(species, levels, prop);
+				property = prop.getString();
 				Translator.generateSBMLConstraints(document, property, lpn);
 			}
 			if (document != null) {
