@@ -7285,14 +7285,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				String sbmlFile = tree.getFile();
 				String[] sbml1 = tree.getFile().split(separator);
 				String sbmlFileProp;
-				ArrayList<String> interestingSpecies = new ArrayList<String>();
+				//ArrayList<String> interestingSpecies = new ArrayList<String>();
 				if (fileType == 1) {
 					sbmlFile = (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1].length() - 3) + "xml");
-					GCMParser parser = new GCMParser(tree.getFile());
-					GeneticNetwork network = parser.buildNetwork();
-					interestingSpecies.addAll(network.getInterestingSpecies());
-					GeneticNetwork.setRoot(root + separator);
-					network.mergeSBML(root + separator + simName + separator + sbmlFile);
+					//GCMParser parser = new GCMParser(tree.getFile());
+					//GeneticNetwork network = parser.buildNetwork();
+					//interestingSpecies.addAll(network.getInterestingSpecies());
+					//GeneticNetwork.setRoot(root + separator);
+					//network.mergeSBML(root + separator + simName + separator + sbmlFile);
+					new File(root + separator + simName + separator + sbmlFile).createNewFile();
 					sbmlFileProp = root + separator + simName + separator
 							+ (sbml1[sbml1.length - 1].substring(0, sbml1[sbml1.length - 1].length() - 3) + "xml");
 					sbmlFile = sbmlFileProp;
@@ -7332,7 +7333,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				JTabbedPane simTab = new JTabbedPane();
 				simTab.addMouseListener(this);
 				Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFileProp, root, this, simName.trim(), log, simTab, null, sbml1[sbml1.length - 1], null,
-						interestingSpecies);
+						null);
 				// reb2sac.addMouseListener(this);
 				simTab.addTab("Simulation Options", reb2sac);
 				simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
@@ -7890,21 +7891,21 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									}
 									gcmFile = sbmlLoadFile;
 									if (sbmlLoadFile.contains(".gcm")) {
-										GCMParser parser = new GCMParser(root + separator + sbmlLoadFile);
-										GeneticNetwork network = parser.buildNetwork();
+										//GCMParser parser = new GCMParser(root + separator + sbmlLoadFile);
+										//GeneticNetwork network = parser.buildNetwork();
 										// interestingSpecies.addAll(network.getInterestingSpecies());
-										GeneticNetwork.setRoot(root + separator);
+										//GeneticNetwork.setRoot(root + separator);
 										sbmlLoadFile = root + separator + split[split.length - 1].trim() + separator
 												+ sbmlLoadFile.replace(".gcm", ".xml");
-										network.mergeSBML(sbmlLoadFile);
+										//network.mergeSBML(sbmlLoadFile);
 									}
 									else if (sbmlLoadFile.contains(".lpn")) {
-										Translator t1 = new Translator();
-										t1.BuildTemplate(root + separator + sbmlLoadFile, "");
+										//Translator t1 = new Translator();
+										//t1.BuildTemplate(root + separator + sbmlLoadFile, "");
 										sbmlLoadFile = root + separator + split[split.length - 1].trim() + separator
 												+ sbmlLoadFile.replace(".lpn", ".xml");
-										t1.setFilename(sbmlLoadFile);
-										t1.outputSBML();
+										//t1.setFilename(sbmlLoadFile);
+										//t1.outputSBML();
 									}
 									else {
 										sbmlLoadFile = root + separator + sbmlLoadFile;
@@ -8359,11 +8360,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1];
 								gcmFile = sbmlLoadFile;
 								if (sbmlLoadFile.contains(".gcm")) {
-									GCMParser parser = new GCMParser(root + separator + sbmlLoadFile);
-									GeneticNetwork network = parser.buildNetwork();
-									GeneticNetwork.setRoot(root + separator);
+									//GCMParser parser = new GCMParser(root + separator + sbmlLoadFile);
+									//GeneticNetwork network = parser.buildNetwork();
+									//GeneticNetwork.setRoot(root + separator);
 									sbmlLoadFile = root + separator + newSim + separator + sbmlLoadFile.replace(".gcm", ".sbml");
-									network.mergeSBML(sbmlLoadFile);
+									//network.mergeSBML(sbmlLoadFile);
 								}
 								else {
 									sbmlLoadFile = root + separator + sbmlLoadFile;
@@ -8595,10 +8596,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								boolean dirty = ((SBML_Editor) (sim.getComponentAt(j))).isDirty();
 								((SBML_Editor) (sim.getComponentAt(j))).save(false, "", true, true);
 								if (updatedFile.contains(".gcm")) {
-									GCMParser parser = new GCMParser(root + separator + updatedFile);
-									GeneticNetwork network = parser.buildNetwork();
-									GeneticNetwork.setRoot(root + separator);
-									network.mergeSBML(root + separator + tab + separator + updatedFile.replace(".gcm", ".xml"));
+									//GCMParser parser = new GCMParser(root + separator + updatedFile);
+									//GeneticNetwork network = parser.buildNetwork();
+									//GeneticNetwork.setRoot(root + separator);
+									//network.mergeSBML(root + separator + tab + separator + updatedFile.replace(".gcm", ".xml"));
 									((SBML_Editor) (sim.getComponentAt(j))).updateSBML(i, j,
 											root + separator + tab + separator + updatedFile.replace(".gcm", ".xml"));
 								}
