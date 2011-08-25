@@ -607,7 +607,7 @@ public class Schematic extends JPanel implements ActionListener {
 		//mouse clicked listener for grid stuff
 		graphComponent.getGraphControl().addMouseListener(new MouseAdapter() {
 				
-			public void mouseClicked(MouseEvent event) {
+			public void mouseReleased(MouseEvent event) {
 				
 				Point location = event.getPoint();
 				
