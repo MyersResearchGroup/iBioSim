@@ -269,6 +269,9 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		toolBar.setFloatable(false);
 		
+		compartmentList.setSelectedItem(gcm.getEnclosingCompartment());
+		compartmentList.addActionListener(this);
+		
 		return toolBar;
 	}
 	
