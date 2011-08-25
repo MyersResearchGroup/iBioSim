@@ -338,6 +338,8 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		resize = new JCheckBox("Auto Resize");
 		resize.setSelected(true);
 		XVariable = new JComboBox();
+		Dimension dim = new Dimension(1,1);
+		XVariable.setPreferredSize(dim);
 		updateXNumber = false;
 		XVariable.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
