@@ -169,19 +169,24 @@ public class Schematic extends JPanel implements ActionListener {
 			    */
 				public boolean isPanningEvent(MouseEvent event) {
 				   
-					if (this.getPanningHandler().isEnabled())
+					if ((panButton != null && (panButton.isSelected())) || event.isAltDown() || event.isControlDown()) {
+						
+						rubberband.setEnabled(false);
+						graphComponent.getPanningHandler().setEnabled(true);
 						return true;
-					
-					else if (panButton != null)
-						return panButton.isSelected();
-					
-					else 
+					}
+					else {
+						
+						graphComponent.getPanningHandler().setEnabled(false);
+						rubberband.setEnabled(true);
 						return false;
+					}
 				}
 			};
 			
 			graphComponent.setGraph(graph);
 			graphComponent.getVerticalScrollBar().setUnitIncrement(50);
+			graphComponent.getPanningHandler().setEnabled(false);
 			
 			//make the mxgraph stuff see-through
 			//so we can see the grid underneath the mxgraph stuff
@@ -189,6 +194,7 @@ public class Schematic extends JPanel implements ActionListener {
 			graphComponent.getViewport().setOpaque(false);
 			
 			rubberband = new Rubberband(graphComponent);
+			rubberband.setEnabled(true);
 			
 			this.add(graphComponent, BorderLayout.CENTER);
 						
@@ -638,14 +644,10 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			public void mouseDragged(MouseEvent event) {
 				
-				if (event.isControlDown() || event.isAltDown() || (panButton != null && panButton.isSelected())) {
-					graphComponent.getPanningHandler().setEnabled(true);
-				}
-				else {
-					graphComponent.getPanningHandler().setEnabled(false);
+				if (rubberband.isEnabled()){
 					
-					//for rubberband selection of grid rectangles					
-					grid.setRubberbandBounds(rubberband.getBounds());					
+					//for rubberband selection of grid rectangles
+					grid.setRubberbandBounds(rubberband.getBounds());
 				}				
 			}
 		});
