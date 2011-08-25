@@ -138,8 +138,7 @@ public class Grid {
 		numCols = cols;
 		
 		gcm.setIsWithinCompartment(true);
-		gcm.setEnclosingCompartment("gridLevel");
-		gcm.getSBMLDocument().getModel().getCompartment(0).setId("gridLevel");
+		gcm.setEnclosingCompartment(gcm.getSBMLDocument().getModel().getCompartment(0).getId());
 		
 		for(int row = 0; row < numRows; ++row) {
 			
