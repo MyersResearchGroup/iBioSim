@@ -33,7 +33,7 @@
 \section{Introduction}
 
 \noindent
-iBioSim has been developed for the modeling, analysis, and design of genetic circuits.  While the primary target of iBioSim is models of genetic circuits, models representing metabolic networks, cell-signaling pathways, and other biological and chemical systems can also be analyzed.  Recently, modeling and visualization support has been added for the modeling of multi-cellular and population models as well.
+{\tt iBioSim} has been developed for the modeling, analysis, and design of genetic circuits.  While the primary target of {\tt iBioSim} is models of genetic circuits, models representing metabolic networks, cell-signaling pathways, and other biological and chemical systems can also be analyzed.  Recently, modeling and visualization support has been added for static multi-cellular and spatial models as well.
 It is capable of importing and exporting models specified using the %%tth:\begin{html}<A HREF="http://www.sbml.org/">\end{html}
 \emph{Systems Biology Markup Language}
 %%tth:\begin{html}</A>\end{html}
@@ -99,7 +99,7 @@ Nathan Barker is now with Southern Utah University, Kevin Jones is now with Rayt
 
 \noindent
 Within {\tt iBioSim}, all files are collected within projects.   
-A project is a collection of models, analysis views, learn views, and graphs.  As shown below, {\tt iBioSim} displays all project files on the left, the open models, views, and graphs on the right, and a log of all external commands on the bottom.  The menu bar is located on the top of the window in the Windows and Linux versions.  It is located on the top of the screen in the MacOS version.
+A project is a collection of models, analysis views, learn views, and graphs.  As shown below, {\tt iBioSim} displays all project files on the left; the open models, views, and graphs on the right; and a log of all external commands on the bottom.  The menu bar is located on the top of the window in the Windows and Linux versions.  It is located on the top of the screen in the MacOS version.
 
 \begin{center}
 \includegraphics[height=90mm]{screenshots/iBioSim}
@@ -121,10 +121,10 @@ To create a new project, select New $\rightarrow$ Project from the File menu as 
 \subsection{Creating and Opening Models and Graphs}
 
 \noindent
-After you have created or opened a project, you can create a new model or graph to add to the project.  To create a new model, select New $\rightarrow$ Model from the File menu as shown below. You will then be prompted to enter a model id.  At this point, a Model editor (see Section~\ref{ModelEdit}) will open in a new tab.  To create a new LPN model, select New $\rightarrow$ LPN Model from the File menu. You will then be prompted to give a model id.  At this point, an LPN model editor 
+After you have created or opened a project, you can create a new model or graph to add to the project.  To create a new model, select New $\rightarrow$ Model from the File menu as shown below. You will then be prompted to enter a model ID.  At this point, a Model editor (see Section~\ref{ModelEdit}) will open in a new tab.  To create a new LPN model, select New $\rightarrow$ LPN Model from the File menu. You will then be prompted to give a model ID.  At this point, an LPN model editor 
 %% TODO:
 %(see Section~\ref{LPNEdit}) 
-will open in a new tab. To create a new TSD graph, select New $\rightarrow$ TSD Graph from the File menu. You will then be prompted to give a name to the TSD graph.  At this point, a TSD graph editor (see Section~\ref{TSDGraph}) will open in a new tab. To create a new histogram, select New $\rightarrow$ Histogram from the File menu. You will then be prompted to give a name to the histogram.  At this point, a histogram editor (see Section~\ref{Histogram}) will open in a new tab.  Once a model or graph is created, it can be opened again later by right clicking on the object in the project window and selecting ``View/Edit'', or alternatively double-clicking on the object.  Note that a model can be opened in either a graphical or textual editor.  An open model or graph can be closed by either clicking on the ``X'' in the tab or by selecting File $\rightarrow$ Close.  The File $\rightarrow$ Close All will close all tabs.
+will open in a new tab. To create a new TSD graph, select New $\rightarrow$ TSD Graph from the File menu. You will then be prompted to give a name to the TSD graph.  At this point, a TSD graph editor (see Section~\ref{TSDGraph}) will open in a new tab. To create a new histogram, select New $\rightarrow$ Histogram from the File menu. You will then be prompted to give a name to the histogram.  At this point, a histogram editor (see Section~\ref{Histogram}) will open in a new tab.  Once a model or graph is created, it can be opened again later by right-clicking on the object in the project window and selecting ``View/Edit'' or, alternatively, double-clicking on the object.  Note that a model can be opened in either a graphical or textual editor.  An open model or graph can be closed by either clicking on the ``X'' in the tab or by selecting File $\rightarrow$ Close.  The File $\rightarrow$ Close All option will close all tabs.
 
 \begin{center}
 \includegraphics[height=80mm]{screenshots/newModel}
@@ -139,24 +139,24 @@ You can also import models into the current working project.  These can be model
 %%tth:\begin{html}<A HREF="http://www.sbml.org/">\end{html}
 \emph{Systems Biology Markup Language}
 %%tth:\begin{html}</A>\end{html}
-~(SBML),  models from the
+~(SBML), models from the
 %%tth:\begin{html}<A HREF="http://www.ebi.ac.uk/biomodels-main/">\end{html}
 \emph{BioModels database}
-%%tth:\begin{html}</A>\end{html}, 
-LPN models, or a 
+%%tth:\begin{html}</A>\end{html}
+, LPN models, or a 
 %%tth:\begin{html}<A HREF="http://www.sbolstandard.org/">\end{html}
 \emph{Synthetic Biology Open Language}
 %%tth:\begin{html}</A>\end{html}  
 (SBOL) file (see Section~\ref{SBOL}). 
 To import an {\tt iBioSim} model, select File $\rightarrow$ Import $\rightarrow$ iBioSim Model.  
 You will then be able to browse to find a model to import.  After  selecting the desired model, click the import button to bring the model into the project.  Before bringing the model into the project, it will be checked to see if it is a valid model file.  To import an SBML model, the procedure is the same except use the Import $\rightarrow$ SBML Model option.  Before bringing the model into the project, it will be checked to see if it a valid SBML file.  
-The model will also be checked for consistency, and any errors or warnings will be reported.  These should be corrected before analysis of the model is performed.  Importing of an LPN model or an SBOL file are similar in that the you are asked to locate the appropriate file to import.
+The model will also be checked for consistency, and any errors or warnings will be reported.  These should be corrected before analysis of the model is performed.  Importing of an LPN model or an SBOL file are similar in that you are asked to locate the appropriate file to import.
 
 \begin{center}
 \includegraphics[height=80mm]{screenshots/import}
 \end{center} 
 
-When importing a model from the BioModels database, the window below will open initially only listing the BioModel numbers.  Selecting ``Get Names'' will fetch the model names from the database.  Beware that this can take a significant amount of time.  When you click on a model to select it, you can use the ``Get Description'' button to fetch a description of the model which will open in a browser.  Similarly, the ``Get Reference'' button will fetch the reference describing this model and again open it in a browser.
+When importing a model from the BioModels database, the window below will open, initially only listing the BioModel numbers.  Selecting ``Get Names'' will fetch the model names from the database.  Beware that this can take a significant amount of time.  When you click on a model to select it, you can use the ``Get Description'' button to fetch a description of the model which will open in a browser.  Similarly, the ``Get Reference'' button will fetch the reference describing this model and again open it in a browser.
 
 \begin{center}
 \includegraphics[height=80mm]{screenshots/BioModels}
@@ -182,7 +182,7 @@ You can also export a model in either SBML or SBOL format.  To export an SBML mo
 \subsection{Editing Project Objects and Creating Tool Views}
 
 \noindent
-All project objects can be modified by highlighting the object and using a right mouse click to open a menu of options as shown below. Using this menu, every type of object can be copied, renamed, or deleted (these actions can also be done from the Edit menu).  For a model file, ``View/Edit'' option opens the model editor (see Section~\ref{ModelEdit}).  For an LPN model, the ``View/Edit'' option opens the LPN model editor. 
+All project objects can be modified by highlighting the object and using a right mouse click to open a menu of options, as shown below. Using this menu, every type of object can be copied, renamed, or deleted (these actions can also be done from the Edit menu).  For a model file, the ``View/Edit'' option opens the model editor (see Section~\ref{ModelEdit}).  For an LPN model, the ``View/Edit'' option opens the LPN model editor. 
 % TODO:
 % (see Section~\ref{LPNEdit}).
 For a TSD graph, the ``View/Edit'' option opens the TSD graph editor (see Section~\ref{TSDGraph}).  For a histogram, the ``View/Edit'' option opens the histogram graph editor 
@@ -230,7 +230,7 @@ For a TSD graph, the ``View/Edit'' option opens the TSD graph editor (see Sectio
 % \subsection{Creating Tool Views}
 
 \noindent
-To perform analysis or learning, right click on a model and select ``Create Analysis View'' (see Section~\ref{Analysis}) to perform analysis or ``Create Learn View'' (see Section~\ref{Learn}) to perform learning. You will then be prompted to give a name to your analysis or learn view. After a name is entered, a tab with the newly created view will open.  Views can also be created using the Tools menu.  Once a view is created, it can be opened again later by right clicking on an analysis directory and selecting ``Open Analysis/Learn View'' or alternatively double-clicking on the view.
+To perform analysis or learning, right-click on a model and select ``Create Analysis View'' (see Section~\ref{Analysis}) to perform analysis or ``Create Learn View'' (see Section~\ref{Learn}) to perform learning. You will then be prompted to give a name to your analysis or learn view. After a name is entered, a tab with the newly created view will open.  Views can also be created using the Tools menu.  Once a view is created, it can be opened again later by right-clicking on an analysis directory and selecting ``Open Analysis/Learn View'' or, alternatively, double-clicking on the view.
 
 % \begin{center}
 % \begin{tabular}{ccc}
@@ -244,7 +244,7 @@ To perform analysis or learning, right click on a model and select ``Create Anal
 \section{\label{ModelEdit}Model Editor}
 
 \noindent
-The model editor allows the user to create or modify a model of a genetic circuit or other biochemical system.  {\tt iBioSim} models are based on SBML Level 3 Version 1 models with added features to support visualization, hierarchy, and modeling of genetic regulation.  SBML models can be imported and exported to allow interfacing with SBML complaint tools.  When exporting an SBML model, the hierarchy and genetic regulation are flattened to create a single SBML model.  The model editor includes both a schematic editor as well as several textual editors.  For large models, the schematic portion can also be edited textually instead.  As shown below, when creating a new model, you can select whether the model should be on a grid or not.  Let us focus initially on models that are not on a grid.
+The model editor allows the user to create or modify a model of a genetic circuit or other biochemical system.  {\tt iBioSim} models are based on SBML Level 3 Version 1 models with added features to support visualization, hierarchy, and modeling of genetic regulation.  SBML models can be imported and exported to allow interfacing with SBML-compliant tools.  When exporting an SBML model, the hierarchy and genetic regulation are flattened to create a single SBML model.  The model editor includes both a schematic editor as well as several textual editors.  For large models, the schematic portion can also be edited textually instead.  As shown below, when creating a new model, you can select whether the model should be on a grid or not.  Let us focus initially on models that are not on a grid.
 
 \begin{center}
 \includegraphics[height=25mm]{screenshots/ModelId}
@@ -255,25 +255,24 @@ The schematic editor shown below allows one to add \emph{chemical species} (see 
 \emph{chemical reactions} (see Section~\ref{Reactions}), \emph{components} (see Section~\ref{Components}),
 and \emph{promoters} (see Section~\ref{Promoters}) to a model depending on the icon selected in the toolbar.   Chemical species are the molecules such as proteins.  Chemical reactions change \emph{reactant} species into \emph{product} species.  Components are instances of other models within the project.  Finally, promoters are locations on a DNA sequence in which transcription is initiated.  
 % 
-There are several types of relationships between species that can be specified.  A species may \emph{activate} or \emph{repress} the production of other species (see Section~\ref{Influences}).  One can also specify when there is no influence between two species or a self-influence.  Species can also be related by complex formation reactions  which indicate that multiple identical or different species can be combined to form a complex species.  A species can also be a reactant or product in a chemical reaction indicating that the reaction consumes or produces the species, respectively (see Section~\ref{Reactions}).  Finally, a species can be a \emph{modifier} to a chemical reactions indicating that it affects the rate of the reaction but is neither produced nor consumed by the reaction (see Section~\ref{Reactions}).
+There are several types of relationships between species that can be specified.  A species may \emph{activate} or \emph{repress} the production of other species (see Section~\ref{Influences}).  One can also specify when there is no influence between two species or when a self-influence exists.  Species can also be related by complex-formation reactions  which indicate that multiple identical or different species can be combined to form a complex species.  A species can also be a reactant or product in a chemical reaction, indicating that the reaction consumes or produces the species, respectively (see Section~\ref{Reactions}).  Finally, a species can be a \emph{modifier} to a chemical reaction, indicating that it affects the rate of the reaction but is neither produced nor consumed by the reaction (see Section~\ref{Reactions}).
 %
-The next item on the toolbar is a checkbox used to indicate if the model is to be considered enclosed within a \emph{compartment}.  The combo box is used to select the enclosing compartment for the model.  The remaining items on the toolbar allow you to apply an automatically layout routine \includegraphics{../gui/icons/modelview/choose_layout_selected}, zoom, restore to default size (Un-Zoom), pan, undo, and redo.
+The next item on the toolbar is a checkbox used to indicate if the model is to be considered enclosed within a \emph{compartment}.  The combo box is used to select the enclosing compartment for the model.  The remaining items on the toolbar allow you to apply an automatic layout routine \includegraphics{../gui/icons/modelview/choose_layout_selected}, zoom, restore to default size (Un-Zoom), pan, undo, and redo.
 % 
-Finally, the additional tabs allow the user to add, edit, or remove compartments (membrane enclosed objects where reactions take place, see Section~\ref{Compartments}), \emph{parameters} (values used in model generation and within math equations, see Section~\ref{Parameters}), \emph{definitions} (custom functions and units, see Section~\ref{Definitions}), \emph{assignments} (mathematical equations that govern the values of variables in the model, see Section~\ref{Assignments}), \emph{properties} (mathematical equations that describe either desired or un-desired behaviors, see Section~\ref{Properties}), and \emph{events} (objects that describe discrete state changes, see Section~\ref{Events}).
+Finally, the additional tabs allow the user to add, edit, or remove compartments (membrane-enclosed objects where reactions take place, see Section~\ref{Compartments}), \emph{parameters} (values used in model generation and within math equations, see Section~\ref{Parameters}), \emph{definitions} (custom functions and units, see Section~\ref{Definitions}), \emph{assignments} (mathematical equations that govern the values of variables in the model, see Section~\ref{Assignments}), \emph{properties} (mathematical equations that describe either desired or undesired behaviors, see Section~\ref{Properties}), and \emph{events} (objects that describe discrete state changes, see Section~\ref{Events}).
 
 \begin{center}
 \includegraphics[height=80mm]{screenshots/ModelEditor}
 \end{center}
 
 \noindent
-{\tt iBioSim} also supports the creation of models on a grid.  The idea of a grid is to provide a coarse grain spatial representation.  A single model can be instantiated within each grid location.  The models can be for individual cells allowing one to model population dynamics.  The models can also be different segments of a single cell allow one to model diffusion within a cell.  Key to grid-based modeling are diffusible species described in Section~\ref{Species}.  When performing analysis, reactions are automatically added to represent the movement of these species between the grid locations.  When the models within grid locations are compartment enclosed components, reactions are also added to represent the movement of these diffusible species between the compartment and the area outside the compartment within the grid location.
-To use a grid, check the Make Grid option when creating the model.  A window will then open asking for the number of rows and columns in the grid.  It also asks which model to use to populate the grid.  You can select ``none'' if you wish to populate it later.
+{\tt iBioSim} also supports the creation of models on a grid.  The idea of a grid is to provide a coarse-grain spatial representation.  A single model can be instantiated within each grid location.  The models can be for individual cells, allowing one to model population dynamics.  The models can also be different segments of a single cell, allowing one to model diffusion within a cell.  Key to grid-based modeling are diffusible species, described in Section~\ref{Species}.  When the models within grid locations are compartment-enclosed components, reactions are added to represent the movement of these diffusible species between the compartment and the area outside the compartment within the grid location (i.e., membrane diffusion).  When performing analysis, reactions are also automatically added to represent the movement of these diffusible species between the grid locations.  To use a grid, check the Make Grid option when creating the model.  A window will then open asking for the number of rows and columns in the grid.  It also asks which model to use to populate the grid.  You can select ``none'' if you wish to populate it later.
 
 \begin{center}
 \includegraphics[height=40mm]{screenshots/createGrid}
 \end{center}
 
-The schematic for a model on a grid is a bit different than for a ordinary model which is evident from the toolbar.  Namely, a grid-based model can only include components with at most one component per grid location.  By pressing the Add Component icon \includegraphics{../gui/icons/modelview/add_component_selected} and clicking on an empty grid location, you are allowed to select a model to instantiate within that grid location.  You can also select Edit Grid Size to change the size of the grid.  If the grid is larger in one dimension than before, you can select a model to populate into the new grid locations.  A smaller grid size simply removes the component instantiations that fall outside the new grid.  You can also edit the grid by selecting individual grid locations by click on them.  When you then use the right mouse button, it brings up the menu showed below.  This menu allows you to delete the last selected component or open its model in a Model Editor.  You can also use this menu to select or de-select all grid locations.  Finally, you can either clear occupied or populate non-occupied selected grid locations.
+The schematic for a model on a grid is a bit different than for an ordinary model, which is evident from the toolbar.  Namely, a grid-based model can only include components, with at most one component per grid location.  By pressing the Add Component icon \includegraphics{../gui/icons/modelview/add_component_selected} and clicking on an empty grid location, you are allowed to select a model to instantiate within that grid location.  You can also select Edit Grid Size to change the size of the grid.  If the grid is larger in one or more dimensions than before, you can select a model to populate the new grid locations.  A smaller grid size simply removes the component instantiations that fall outside the new grid.  You can also edit the grid by selecting individual grid locations by clicking on them.  When you then use the right mouse button, it brings up the menu shown below.  This menu allows you to delete the component that was right-clicked on or to open its model in a Model Editor.  You can also use this menu to select or de-select all grid locations, and you can either clear occupied, or populate non-occupied, selected grid locations.
 
 \begin{center}
 \includegraphics[height=80mm]{screenshots/gridModel}
@@ -290,25 +289,25 @@ The schematic for a model on a grid is a bit different than for a ordinary model
 \subsection{\label{Species}Species}
 
 \noindent
-Species are the molecules such as proteins either produced by genes or chemical reactions.  To add a species to the model, select the Add Species icon \includegraphics{../gui/icons/modelview/add_species_selected} and click on the schematic canvas.  This will drop a new species with default ID and other values.  You may change these defaults by double-clicking on the species to open the Species Editor.  A species has the following elements:
+Species are the molecules, such as proteins, that are produced by genes or chemical reactions.  To add a species to the model, select the Add Species icon \includegraphics{../gui/icons/modelview/add_species_selected} and click on the schematic canvas.  This will drop a new species with default ID and other values.  You may change these defaults by double-clicking on the species to open the Species Editor.  A species has the following elements:
 \begin{itemize} 
 \item ID: a unique ID composed of only alphanumeric characters and underscores.
 \item Name: an arbitrary string description of the species (optional).
-\item Type: used to indicate how this species can be connected to in hierarchical models.  The \emph{input} type is used to indicate that a species that is produced outside this model, the \emph{internal} type is used to indicat that a species is produced inside this model but cannot be used in other models, and the \emph{output} type is used to indicate that a species is produced by this model and can be used in other models. 
-\item Diffusible: this checkbox indicates if this species can diffuse in multi-compartment or grid-based models.
+\item Type: used to indicate how this species can be connected in hierarchical models.  The \emph{input} type is used to indicate a species that is produced outside this model, the \emph{internal} type is used to indicate that a species is produced inside this model but cannot be used in other models, and the \emph{output} type is used to indicate that a species is produced by this model and can be used in other models. 
+\item Diffusible: this checkbox indicates if this species can diffuse in multi-compartment and grid-based models.
 \item Constitutive: this checkbox indicates that a default production reaction should be created for this species.
 \item Compartment: location of the species (default=default).
 \item Boundary Condition: Boolean indicating if the species amount/concentration cannot be changed by reactions (default=false).
 \item Constant: Boolean indicating if the species amount/concentration is constant (default=false).
-\item Has Only Substance Units: Boolean indicating if the species is to be consider an amount in mathematical equations (default=true).
+\item Has Only Substance Units: Boolean indicating if the species is to be considered an amount in mathematical equations (default=true).
 \item Units: the units for the amount/concentration (default=none).
-\item Conversion Factor: is a constant global parameter that's value is used to convert this species units into the units used for extent (i.e., the units of change due to reactions).
+\item Conversion Factor: is a constant global parameter, the value of which is used to convert this species' units into the units used for extent (i.e., the units of change due to reactions).
 \item Initial amount/concentration (ns): initial value of the amount or concentration of the species.  If the value is enclosed in brakets (i.e., $[number]$), it is a concentration, otherwise it is an amount.  The default is the value of the global parameter ns.
 \item Degradation rate (kd): the degradation rate for this species.  The default is the value of the global parameter kd.  Note that a value of 0 will result in no degradation reaction being produced for this species.
-\item Extracellular degradation rate (kecd): the rate that this species degrades when it is outside a cell.  The default is the global parameter kecd.
+\item Extracellular degradation rate (kecd): the rate at which this species degrades when it is outside a cell (i.e., on the grid level).  If a species is present in different models (i.e., has the same ID), be sure to keep these rates consistent.  The default is the global parameter kecd.
 \item Complex formation equilibrium (Kc): the equilibrium constant for formation of this species when it is produced by a complex formation reaction.  The default is the global parameter Kc.  The equilibrium constant can be specified as a forward and reverse rate constant using the $\langle$ forward rate $\rangle / \langle$ reverse rate $\rangle$ form.
-\item Membrane diffusion rate (fd/rv) (kmdiff): the forward and reverse rate constants for diffusion of this species through compartment membranes.  The default is the global parameter kmdiff.
-\item Extracellular diffusion rate (kecdiff): the rate that this species diffuses between grid locations in a grid-based model.  The default is the global parameter kecdiff.
+\item Membrane diffusion rate (fd/rv) (kmdiff): the forward (in to out) and reverse (out to in) rate constants (slash-separated) for diffusion of this species through its compartment's membrane.  Note that when membrane diffusion reactions are generated, the rates are taken from the inner species.  If no reverse rate is given, a default of 1.0 is used.  The default is the global parameter kmdiff.
+\item Extracellular diffusion rate (kecdiff): the rate at which this species diffuses between grid locations in a grid-based model.  This rate is used for both the forward and reverse diffusion reactions.  If a species is present in different models (i.e., has the same ID), be sure to keep these rates consistent.  The default is the global parameter kecdiff.
 \item SBOL Ribosome Binding Site: the DNA component for the ribosome binding site that is associated with this species.     Either a full path can be specified (i.e., $\langle$ filename $\rangle$ / $\langle$ collection $\rangle$ / $\langle$ DNA component $\rangle$) or clicking on the Associate SBOL button opens the SBOL browser described in Section~\ref{SBOL}.
 \item SBOL Open Reading Frame: the DNA component for the open reading frame (gene) that is associated with this species.    Either a full path can be specified (i.e., $\langle$ filename $\rangle$ / $\langle$ collection $\rangle$ / $\langle$ DNA component $\rangle$) or clicking on the Associate SBOL button opens the SBOL browser described in Section~\ref{SBOL}.
 \end{itemize}
@@ -327,15 +326,15 @@ To add a reaction, select the Add Reaction icon \includegraphics{../gui/icons/mo
 \includegraphics[height=80mm]{screenshots/reaction}
 \end{center}
 
-Reactions convert reactant species into product species with perhaps modifier species (enzymes or catalysts) affecting the rate of this conversion.  The next step, therefore, is to indicate which species are reactants, products, and modifiers for the reaction.  This is accomplished by selecting the Reaction icon \includegraphics{../gui/icons/modelview/reaction_selected} or Modifier icon \includegraphics{../gui/icons/modelview/modifier_selected}.  With the Reaction icon selected, selecting a species, holding the mouse button, and dragging the arc to a reactions makes the selected species a reactant to that reaction.  Similarly, selecting a reaction, holding the mouse button, and dragging the arc to a species makes the species a product to the selected reaction.  Finally, with the Modifier icon selected, dragging an arc between a species and reaction (in either direction) adds the species as a modifier to the reaction.  When you select a reactant edge, it opens a Reatants Editor.  This editor allows you to change the following things:
+Reactions convert reactant species into product species with perhaps modifier species (e.g., enzymes or catalysts) affecting the rate of this conversion.  The next step, therefore, is to indicate which species are reactants, products, and modifiers for the reaction.  This is accomplished by selecting the Reaction icon \includegraphics{../gui/icons/modelview/reaction_selected} or Modifier icon \includegraphics{../gui/icons/modelview/modifier_selected}.  With the Reaction icon selected, selecting a species, holding the mouse button, and dragging the arc to a reaction makes the selected species a reactant in that reaction.  Similarly, selecting a reaction, holding the mouse button, and dragging the arc to a species makes the species a product in the selected reaction.  Finally, with the Modifier icon selected, dragging an arc between a species and reaction (in either direction) adds the species as a modifier in the reaction.  When you select a reactant edge, it opens a Reactants Editor.  This editor allows you to change the following things:
 \begin{itemize}
-\item ID: this is the Id for this reactant and should not be confused with the Species Id.  This Id can be used in equations such as initial, rule, or event assignments.  Use this Id when you want the stoichiometry to be determined by an equation or used in an equation.  The Id is optional.
+\item ID: this is the ID for this reactant and should not be confused with the Species ID.  This ID can be used in equations such as initial, rule, or event assignments.  Use this ID when you want the stoichiometry to be determined by an equation or used in an equation.  The ID is optional.
 \item Name: an arbitrary string description of the species (optional).
-\item Species: the Id of the reactant species.
-\item Stoichiometry: the number of molecules consumed by the reaction.  Note that this value will be overridden when the reactant Id is used on the left-hand size of an assignment.
+\item Species: the ID of the reactant species.
+\item Stoichiometry: the number of molecules consumed by the reaction.  Note that this value will be overridden when the reactant ID is used on the left-hand size of an assignment.
 \item Constant: indicates whether the stoichiometry can change dynamically.  
 \end{itemize}
-Similarly, the Id, Name, Species, Stoichiometry, and Constant fields can be edited for a Product edge as shown below.  Modifiers edges do not have any of these fields, so they cannot be edited.
+Similarly, the ID, Name, Species, Stoichiometry, and Constant fields can be edited for a Product edge as shown below.  Modifiers' edges do not have any of these fields, so they cannot be edited.
 
 \begin{center}
 \includegraphics[height=80mm]{screenshots/reactant} 
