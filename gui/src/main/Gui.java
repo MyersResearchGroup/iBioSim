@@ -315,8 +315,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 		class QuitHandler extends ApplicationAdapter {
 			public void handleQuit(ApplicationEvent event) {
-				exit();
-				event.setHandled(true);
+				if (exit()) event.setHandled(true);
 			}
 		}
 
@@ -2116,12 +2115,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		f.setVisible(true);
 	}
 
-	public void exit() {
+	public boolean exit() {
 		int autosave = 0;
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			int save = save(i, autosave);
 			if (save == 0) {
-				return;
+				return false;
 			}
 			else if (save == 2) {
 				autosave = 1;
@@ -2146,6 +2145,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 		System.exit(1);
+		return true;
 	}
 
 	/**
@@ -5062,113 +5062,115 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				return;
 			}
 			try {
-				if (overwrite(root + separator + copy, copy)) {
-					if (copy.endsWith(".xml")) {
-						SBMLDocument document = readSBML(tree.getFile());
-						document.getModel().setId(copy.substring(0, copy.lastIndexOf(".")));
-						SBMLWriter writer = new SBMLWriter();
-						writer.writeSBML(document, root + separator + copy);
-					}
-					else if (copy.endsWith(".gcm")) {
-						SBMLDocument document = readSBML(tree.getFile().replace(".gcm", ".xml"));
-						document.getModel().setId(copy.substring(0, copy.lastIndexOf(".")));
-						SBMLWriter writer = new SBMLWriter();
-						writer.writeSBML(document, root + separator + copy.replace(".gcm", ".xml"));
-						addToTree(copy.replace(".gcm", ".xml"));
-						GCMFile gcm = new GCMFile(root);
-						gcm.load(tree.getFile());
-						gcm.setSBMLFile(copy.replace(".gcm", ".xml"));
-						gcm.save(root + separator + copy);
-					}
-					else if (copy.contains(".")) {
-						FileOutputStream out = new FileOutputStream(new File(root + separator + copy));
-						FileInputStream in = new FileInputStream(new File(tree.getFile()));
-						int read = in.read();
-						while (read != -1) {
-							out.write(read);
-							read = in.read();
+				if (checkFiles(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],copy)) {
+					if (overwrite(root + separator + copy, copy)) {
+						if (copy.endsWith(".xml")) {
+							SBMLDocument document = readSBML(tree.getFile());
+							document.getModel().setId(copy.substring(0, copy.lastIndexOf(".")));
+							SBMLWriter writer = new SBMLWriter();
+							writer.writeSBML(document, root + separator + copy);
 						}
-						in.close();
-						out.close();
-					}
-					else {
-						boolean sim = false;
-						for (String s : new File(tree.getFile()).list()) {
-							if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
-								sim = true;
-							}
+						else if (copy.endsWith(".gcm")) {
+							SBMLDocument document = readSBML(tree.getFile().replace(".gcm", ".xml"));
+							document.getModel().setId(copy.substring(0, copy.lastIndexOf(".")));
+							SBMLWriter writer = new SBMLWriter();
+							writer.writeSBML(document, root + separator + copy.replace(".gcm", ".xml"));
+							addToTree(copy.replace(".gcm", ".xml"));
+							GCMFile gcm = new GCMFile(root);
+							gcm.load(tree.getFile());
+							gcm.setSBMLFile(copy.replace(".gcm", ".xml"));
+							gcm.save(root + separator + copy);
 						}
-						if (sim) {
-							new File(root + separator + copy).mkdir();
-							String[] s = new File(tree.getFile()).list();
-							for (String ss : s) {
-								if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml") || ss.length() > 3
-										&& ss.substring(ss.length() - 4).equals(".xml")) {
-									SBMLDocument document = readSBML(tree.getFile() + separator + ss);
-									SBMLWriter writer = new SBMLWriter();
-									writer.writeSBML(document, root + separator + copy + separator + ss);
-								}
-								else if (ss.length() > 10 && ss.substring(ss.length() - 11).equals(".properties")) {
-									FileOutputStream out = new FileOutputStream(new File(root + separator + copy + separator + ss));
-									FileInputStream in = new FileInputStream(new File(tree.getFile() + separator + ss));
-									int read = in.read();
-									while (read != -1) {
-										out.write(read);
-										read = in.read();
-									}
-									in.close();
-									out.close();
-								}
-								else if (ss.length() > 3
-										&& (ss.substring(ss.length() - 4).equals(".tsd") || ss.substring(ss.length() - 4).equals(".dat")
-												|| ss.substring(ss.length() - 4).equals(".sad") || ss.substring(ss.length() - 4).equals(".pms") || ss
-												.substring(ss.length() - 4).equals(".sim")) && !ss.equals(".sim")) {
-									FileOutputStream out;
-									if (ss.substring(ss.length() - 4).equals(".pms")) {
-										out = new FileOutputStream(new File(root + separator + copy + separator + copy + ".sim"));
-									}
-									else if (ss.substring(ss.length() - 4).equals(".sim")) {
-										out = new FileOutputStream(new File(root + separator + copy + separator + copy + ".sim"));
-									}
-									else {
-										out = new FileOutputStream(new File(root + separator + copy + separator + ss));
-									}
-									FileInputStream in = new FileInputStream(new File(tree.getFile() + separator + ss));
-									int read = in.read();
-									while (read != -1) {
-										out.write(read);
-										read = in.read();
-									}
-									in.close();
-									out.close();
-								}
+						else if (copy.contains(".")) {
+							FileOutputStream out = new FileOutputStream(new File(root + separator + copy));
+							FileInputStream in = new FileInputStream(new File(tree.getFile()));
+							int read = in.read();
+							while (read != -1) {
+								out.write(read);
+								read = in.read();
 							}
+							in.close();
+							out.close();
 						}
 						else {
-							new File(root + separator + copy).mkdir();
-							String[] s = new File(tree.getFile()).list();
-							for (String ss : s) {
-								if (ss.length() > 3 && (ss.substring(ss.length() - 4).equals(".tsd") || ss.substring(ss.length() - 4).equals(".lrn"))) {
-									FileOutputStream out;
-									if (ss.substring(ss.length() - 4).equals(".lrn")) {
-										out = new FileOutputStream(new File(root + separator + copy + separator + copy + ".lrn"));
+							boolean sim = false;
+							for (String s : new File(tree.getFile()).list()) {
+								if (s.length() > 3 && s.substring(s.length() - 4).equals(".sim")) {
+									sim = true;
+								}
+							}
+							if (sim) {
+								new File(root + separator + copy).mkdir();
+								String[] s = new File(tree.getFile()).list();
+								for (String ss : s) {
+									if (ss.length() > 4 && ss.substring(ss.length() - 5).equals(".sbml") || ss.length() > 3
+											&& ss.substring(ss.length() - 4).equals(".xml")) {
+										SBMLDocument document = readSBML(tree.getFile() + separator + ss);
+										SBMLWriter writer = new SBMLWriter();
+										writer.writeSBML(document, root + separator + copy + separator + ss);
 									}
-									else {
-										out = new FileOutputStream(new File(root + separator + copy + separator + ss));
+									else if (ss.length() > 10 && ss.substring(ss.length() - 11).equals(".properties")) {
+										FileOutputStream out = new FileOutputStream(new File(root + separator + copy + separator + ss));
+										FileInputStream in = new FileInputStream(new File(tree.getFile() + separator + ss));
+										int read = in.read();
+										while (read != -1) {
+											out.write(read);
+											read = in.read();
+										}
+										in.close();
+										out.close();
 									}
-									FileInputStream in = new FileInputStream(new File(tree.getFile() + separator + ss));
-									int read = in.read();
-									while (read != -1) {
-										out.write(read);
-										read = in.read();
+									else if (ss.length() > 3
+											&& (ss.substring(ss.length() - 4).equals(".tsd") || ss.substring(ss.length() - 4).equals(".dat")
+													|| ss.substring(ss.length() - 4).equals(".sad") || ss.substring(ss.length() - 4).equals(".pms") || ss
+													.substring(ss.length() - 4).equals(".sim")) && !ss.equals(".sim")) {
+										FileOutputStream out;
+										if (ss.substring(ss.length() - 4).equals(".pms")) {
+											out = new FileOutputStream(new File(root + separator + copy + separator + copy + ".sim"));
+										}
+										else if (ss.substring(ss.length() - 4).equals(".sim")) {
+											out = new FileOutputStream(new File(root + separator + copy + separator + copy + ".sim"));
+										}
+										else {
+											out = new FileOutputStream(new File(root + separator + copy + separator + ss));
+										}
+										FileInputStream in = new FileInputStream(new File(tree.getFile() + separator + ss));
+										int read = in.read();
+										while (read != -1) {
+											out.write(read);
+											read = in.read();
+										}
+										in.close();
+										out.close();
 									}
-									in.close();
-									out.close();
+								}
+							}
+							else {
+								new File(root + separator + copy).mkdir();
+								String[] s = new File(tree.getFile()).list();
+								for (String ss : s) {
+									if (ss.length() > 3 && (ss.substring(ss.length() - 4).equals(".tsd") || ss.substring(ss.length() - 4).equals(".lrn"))) {
+										FileOutputStream out;
+										if (ss.substring(ss.length() - 4).equals(".lrn")) {
+											out = new FileOutputStream(new File(root + separator + copy + separator + copy + ".lrn"));
+										}
+										else {
+											out = new FileOutputStream(new File(root + separator + copy + separator + ss));
+										}
+										FileInputStream in = new FileInputStream(new File(tree.getFile() + separator + ss));
+										int read = in.read();
+										while (read != -1) {
+											out.write(read);
+											read = in.read();
+										}
+										in.close();
+										out.close();
+									}
 								}
 							}
 						}
+						addToTree(copy);
 					}
-					addToTree(copy);
 				}
 			}
 			catch (Exception e1) {
@@ -5211,258 +5213,260 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				modelID = rename.substring(0, rename.lastIndexOf("."));
 			}
 			try {
-				if (overwrite(root + separator + rename, rename)) {
-					if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml") || tree.getFile().endsWith(".gcm")
-							|| tree.getFile().endsWith(".lpn") || tree.getFile().endsWith(".vhd") || tree.getFile().endsWith(".csp")
-							|| tree.getFile().endsWith(".hse") || tree.getFile().endsWith(".unc") || tree.getFile().endsWith(".rsg")) {
-						reassignViews(oldName, rename);
-					}
-					if (tree.getFile().endsWith(".gcm")) {
-						String newSBMLfile = rename.replace(".gcm", ".xml");
-						new File(tree.getFile()).renameTo(new File(root + separator + rename));
-						new File(tree.getFile().replace(".gcm", ".xml")).renameTo(new File(root + separator + newSBMLfile));
-						GCMFile gcm = new GCMFile(root);
-						gcm.load(root + separator + rename);
-						gcm.setSBMLFile(newSBMLfile);
-						gcm.save(root + separator + rename);
-						SBMLDocument document = readSBML(root + separator + newSBMLfile);
-						document.getModel().setId(modelID);
-						SBMLWriter writer = new SBMLWriter();
-						writer.writeSBML(document, root + separator + newSBMLfile);
-						deleteFromTree(oldName.replace(".gcm", ".xml"));
-						addToTree(newSBMLfile);
-					}
-					else if (tree.getFile().endsWith(".xml")) {
-						new File(tree.getFile()).renameTo(new File(root + separator + rename));
-						SBMLDocument document = readSBML(root + separator + rename);
-						document.getModel().setId(modelID);
-						SBMLWriter writer = new SBMLWriter();
-						writer.writeSBML(document, root + separator + rename);
-					}
-					else {
-						new File(tree.getFile()).renameTo(new File(root + separator + rename));
-					}
-					if (rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".gcm")) {
-						for (String s : new File(root).list()) {
-							if (s.endsWith(".gcm")) {
-								BufferedReader in = new BufferedReader(new FileReader(root + separator + s));
-								String line = null;
-								String file = "";
-								while ((line = in.readLine()) != null) {
-									line = line.replace(oldName, rename);
-									file += line;
-									file += "\n";
+				if (checkFiles(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1],rename)) {
+					if (overwrite(root + separator + rename, rename)) {
+						if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml") || tree.getFile().endsWith(".gcm")
+								|| tree.getFile().endsWith(".lpn") || tree.getFile().endsWith(".vhd") || tree.getFile().endsWith(".csp")
+								|| tree.getFile().endsWith(".hse") || tree.getFile().endsWith(".unc") || tree.getFile().endsWith(".rsg")) {
+							reassignViews(oldName, rename);
+						}
+						if (tree.getFile().endsWith(".gcm")) {
+							String newSBMLfile = rename.replace(".gcm", ".xml");
+							new File(tree.getFile()).renameTo(new File(root + separator + rename));
+							new File(tree.getFile().replace(".gcm", ".xml")).renameTo(new File(root + separator + newSBMLfile));
+							GCMFile gcm = new GCMFile(root);
+							gcm.load(root + separator + rename);
+							gcm.setSBMLFile(newSBMLfile);
+							gcm.save(root + separator + rename);
+							SBMLDocument document = readSBML(root + separator + newSBMLfile);
+							document.getModel().setId(modelID);
+							SBMLWriter writer = new SBMLWriter();
+							writer.writeSBML(document, root + separator + newSBMLfile);
+							deleteFromTree(oldName.replace(".gcm", ".xml"));
+							addToTree(newSBMLfile);
+						}
+						else if (tree.getFile().endsWith(".xml")) {
+							new File(tree.getFile()).renameTo(new File(root + separator + rename));
+							SBMLDocument document = readSBML(root + separator + rename);
+							document.getModel().setId(modelID);
+							SBMLWriter writer = new SBMLWriter();
+							writer.writeSBML(document, root + separator + rename);
+						}
+						else {
+							new File(tree.getFile()).renameTo(new File(root + separator + rename));
+						}
+						if (rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".gcm")) {
+							for (String s : new File(root).list()) {
+								if (s.endsWith(".gcm")) {
+									BufferedReader in = new BufferedReader(new FileReader(root + separator + s));
+									String line = null;
+									String file = "";
+									while ((line = in.readLine()) != null) {
+										line = line.replace(oldName, rename);
+										file += line;
+										file += "\n";
+									}
+									in.close();
+									BufferedWriter out = new BufferedWriter(new FileWriter(root + separator + s));
+									out.write(file);
+									out.close();
 								}
-								in.close();
-								BufferedWriter out = new BufferedWriter(new FileWriter(root + separator + s));
-								out.write(file);
-								out.close();
 							}
 						}
-					}
-					if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml") || tree.getFile().endsWith(".gcm")
-							|| tree.getFile().endsWith(".lpn") || tree.getFile().endsWith(".vhd") || tree.getFile().endsWith(".csp")
-							|| tree.getFile().endsWith(".hse") || tree.getFile().endsWith(".unc") || tree.getFile().endsWith(".rsg")) {
-						updateAsyncViews(rename);
-					}
-					if (new File(root + separator + rename).isDirectory()) {
-						if (new File(root + separator + rename + separator
-								+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".sim").exists()) {
-							new File(root + separator + rename + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".sim").renameTo(new File(root
-									+ separator + rename + separator + rename + ".sim"));
+						if (tree.getFile().endsWith(".sbml") || tree.getFile().endsWith(".xml") || tree.getFile().endsWith(".gcm")
+								|| tree.getFile().endsWith(".lpn") || tree.getFile().endsWith(".vhd") || tree.getFile().endsWith(".csp")
+								|| tree.getFile().endsWith(".hse") || tree.getFile().endsWith(".unc") || tree.getFile().endsWith(".rsg")) {
+							updateAsyncViews(rename);
 						}
-						else if (new File(root + separator + rename + separator
-								+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".pms").exists()) {
-							new File(root + separator + rename + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".pms").renameTo(new File(root
-									+ separator + rename + separator + rename + ".sim"));
-						}
-						if (new File(root + separator + rename + separator
-								+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".lrn").exists()) {
-							new File(root + separator + rename + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".lrn").renameTo(new File(root
-									+ separator + rename + separator + rename + ".lrn"));
-						}
-						if (new File(root + separator + rename + separator
-								+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".ver").exists()) {
-							new File(root + separator + rename + tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".ver")
-									.renameTo(new File(root + separator + rename + separator + rename + ".ver"));
-						}
-						if (new File(root + separator + rename + separator
-								+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".grf").exists()) {
-							new File(root + separator + rename + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".grf").renameTo(new File(root
-									+ separator + rename + separator + rename + ".grf"));
-						}
-						if (new File(root + separator + rename + separator
-								+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".prb").exists()) {
-							new File(root + separator + rename + separator
-									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".prb").renameTo(new File(root
-									+ separator + rename + separator + rename + ".prb"));
-						}
-					}
-					for (int i = 0; i < tab.getTabCount(); i++) {
-						if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
-							if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
-									|| tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
-								((SBML_Editor) tab.getComponentAt(i)).setModelID(modelID);
-								((SBML_Editor) tab.getComponentAt(i)).setFile(root + separator + rename);
-								tab.setTitleAt(i, rename);
+						if (new File(root + separator + rename).isDirectory()) {
+							if (new File(root + separator + rename + separator
+									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".sim").exists()) {
+								new File(root + separator + rename + separator
+										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".sim").renameTo(new File(root
+												+ separator + rename + separator + rename + ".sim"));
 							}
-							else if (tree.getFile().length() > 3
-									&& (tree.getFile().substring(tree.getFile().length() - 4).equals(".grf") || tree.getFile()
-											.substring(tree.getFile().length() - 4).equals(".prb"))) {
-								((Graph) tab.getComponentAt(i)).setGraphName(rename);
-								tab.setTitleAt(i, rename);
+							else if (new File(root + separator + rename + separator
+									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".pms").exists()) {
+								new File(root + separator + rename + separator
+										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".pms").renameTo(new File(root
+												+ separator + rename + separator + rename + ".sim"));
 							}
-							else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
-								((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename.length() - 4));
-								tab.setTitleAt(i, rename);
+							if (new File(root + separator + rename + separator
+									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".lrn").exists()) {
+								new File(root + separator + rename + separator
+										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".lrn").renameTo(new File(root
+												+ separator + rename + separator + rename + ".lrn"));
 							}
-							else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")) {
-								tab.setTitleAt(i, rename);
+							if (new File(root + separator + rename + separator
+									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".ver").exists()) {
+								new File(root + separator + rename + tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".ver")
+								.renameTo(new File(root + separator + rename + separator + rename + ".ver"));
 							}
-							else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
-								((LHPNEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename.length() - 4));
-								tab.setTitleAt(i, rename);
+							if (new File(root + separator + rename + separator
+									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".grf").exists()) {
+								new File(root + separator + rename + separator
+										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".grf").renameTo(new File(root
+												+ separator + rename + separator + rename + ".grf"));
+							}
+							if (new File(root + separator + rename + separator
+									+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".prb").exists()) {
+								new File(root + separator + rename + separator
+										+ tree.getFile().split(separator)[tree.getFile().split(separator).length - 1] + ".prb").renameTo(new File(root
+												+ separator + rename + separator + rename + ".prb"));
+							}
+						}
+						for (int i = 0; i < tab.getTabCount(); i++) {
+							if (tab.getTitleAt(i).equals(tree.getFile().split(separator)[tree.getFile().split(separator).length - 1])) {
+								if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbml")
+										|| tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".xml")) {
+									((SBML_Editor) tab.getComponentAt(i)).setModelID(modelID);
+									((SBML_Editor) tab.getComponentAt(i)).setFile(root + separator + rename);
+									tab.setTitleAt(i, rename);
+								}
+								else if (tree.getFile().length() > 3
+										&& (tree.getFile().substring(tree.getFile().length() - 4).equals(".grf") || tree.getFile()
+												.substring(tree.getFile().length() - 4).equals(".prb"))) {
+									((Graph) tab.getComponentAt(i)).setGraphName(rename);
+									tab.setTitleAt(i, rename);
+								}
+								else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
+									((GCM2SBMLEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename.length() - 4));
+									tab.setTitleAt(i, rename);
+								}
+								else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")) {
+									tab.setTitleAt(i, rename);
+								}
+								else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
+									((LHPNEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename.length() - 4));
+									tab.setTitleAt(i, rename);
+								}
+								else if (tab.getComponentAt(i) instanceof JTabbedPane) {
+									JTabbedPane t = new JTabbedPane();
+									t.addMouseListener(this);
+									int selected = ((JTabbedPane) tab.getComponentAt(i)).getSelectedIndex();
+									boolean analysis = false;
+									ArrayList<Component> comps = new ArrayList<Component>();
+									for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++) {
+										Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
+										comps.add(c);
+									}
+									SBML_Editor sbml = null;
+									Reb2Sac reb2sac = null;
+									for (Component c : comps) {
+										if (c instanceof Reb2Sac) {
+											((Reb2Sac) c).setSim(rename);
+											analysis = true;
+										}
+										else if (c instanceof SBML_Editor) {
+											String properties = root + separator + rename + separator + rename + ".sim";
+											new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
+											try {
+												boolean dirty = ((SBML_Editor) c).isDirty();
+												((SBML_Editor) c).setParamFileAndSimDir(properties, root + separator + rename);
+												((SBML_Editor) c).save(false, "", true, true);
+												((SBML_Editor) c).updateSBML(i, 0);
+												((SBML_Editor) c).setDirty(dirty);
+											}
+											catch (Exception e1) {
+												e1.printStackTrace();
+											}
+											new File(properties).delete();
+											new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
+										}
+										else if (c instanceof Graph) {
+											// c.addMouseListener(this);
+											Graph g = ((Graph) c);
+											g.setDirectory(root + separator + rename);
+											if (g.isTSDGraph()) {
+												g.setGraphName(rename + ".grf");
+											}
+											else {
+												g.setGraphName(rename + ".prb");
+											}
+										}
+										else if (c instanceof LearnGCM) {
+											LearnGCM l = ((LearnGCM) c);
+											l.setDirectory(root + separator + rename);
+										}
+										else if (c instanceof DataManager) {
+											DataManager d = ((DataManager) c);
+											d.setDirectory(root + separator + rename);
+										}
+										if (analysis) {
+											if (c instanceof Reb2Sac) {
+												reb2sac = (Reb2Sac) c;
+												t.addTab("Simulation Options", c);
+												t.getComponentAt(t.getComponents().length - 1).setName("Simulate");
+											}
+											else if (c instanceof MovieContainer) {
+												t.addTab("Schematic", c);
+												t.getComponentAt(t.getComponents().length - 1).setName("ModelViewMovie");
+											}
+											else if (c instanceof SBML_Editor) {
+												sbml = (SBML_Editor) c;
+												t.addTab("Parameter Editor", c);
+												t.getComponentAt(t.getComponents().length - 1).setName("SBML Editor");
+											}
+											else if (c instanceof GCM2SBMLEditor) {
+												GCM2SBMLEditor gcm = (GCM2SBMLEditor) c;
+												if (!gcm.getSBMLFile().equals("--none--")) {
+													sbml = new SBML_Editor(root + separator + gcm.getSBMLFile(), reb2sac, log, this, root + separator
+															+ rename, root + separator + rename + separator + rename + ".sim");
+												}
+												t.addTab("Parameters", c);
+												t.getComponentAt(t.getComponents().length - 1).setName("GCM Editor");
+											}
+											else if (c instanceof Graph) {
+												if (((Graph) c).isTSDGraph()) {
+													t.addTab("TSD Graph", c);
+													t.getComponentAt(t.getComponents().length - 1).setName("TSD Graph");
+												}
+												else {
+													t.addTab("Histogram", c);
+													t.getComponentAt(t.getComponents().length - 1).setName("ProbGraph");
+												}
+											}
+											else if (c instanceof JScrollPane) {
+												if (sbml != null) {
+													t.addTab("SBML Elements", sbml.getElementsPanel());
+													t.getComponentAt(t.getComponents().length - 1).setName("");
+												}
+												else {
+													JScrollPane scroll = new JScrollPane();
+													scroll.setViewportView(new JPanel());
+													t.addTab("SBML Elements", scroll);
+													t.getComponentAt(t.getComponents().length - 1).setName("");
+												}
+											}
+											else {
+												t.addTab("Abstraction Options", c);
+												t.getComponentAt(t.getComponents().length - 1).setName("");
+											}
+										}
+									}
+									if (analysis) {
+										t.setSelectedIndex(selected);
+										tab.setComponentAt(i, t);
+									}
+									tab.setTitleAt(i, rename);
+									tab.getComponentAt(i).setName(rename);
+								}
+								else {
+									tab.setTitleAt(i, rename);
+									tab.getComponentAt(i).setName(rename);
+								}
 							}
 							else if (tab.getComponentAt(i) instanceof JTabbedPane) {
-								JTabbedPane t = new JTabbedPane();
-								t.addMouseListener(this);
-								int selected = ((JTabbedPane) tab.getComponentAt(i)).getSelectedIndex();
-								boolean analysis = false;
 								ArrayList<Component> comps = new ArrayList<Component>();
 								for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++) {
 									Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
 									comps.add(c);
 								}
-								SBML_Editor sbml = null;
-								Reb2Sac reb2sac = null;
 								for (Component c : comps) {
-									if (c instanceof Reb2Sac) {
-										((Reb2Sac) c).setSim(rename);
-										analysis = true;
+									if (c instanceof Reb2Sac && ((Reb2Sac) c).getBackgroundFile().equals(oldName)) {
+										((Reb2Sac) c).updateBackgroundFile(rename);
 									}
-									else if (c instanceof SBML_Editor) {
-										String properties = root + separator + rename + separator + rename + ".sim";
-										new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
-										try {
-											boolean dirty = ((SBML_Editor) c).isDirty();
-											((SBML_Editor) c).setParamFileAndSimDir(properties, root + separator + rename);
-											((SBML_Editor) c).save(false, "", true, true);
-											((SBML_Editor) c).updateSBML(i, 0);
-											((SBML_Editor) c).setDirty(dirty);
-										}
-										catch (Exception e1) {
-											e1.printStackTrace();
-										}
-										new File(properties).delete();
-										new File(properties.replace(".sim", ".temp")).renameTo(new File(properties));
+									else if (c instanceof LearnGCM && ((LearnGCM) c).getBackgroundFile().equals(oldName)) {
+										((LearnGCM) c).updateBackgroundFile(rename);
 									}
-									else if (c instanceof Graph) {
-										// c.addMouseListener(this);
-										Graph g = ((Graph) c);
-										g.setDirectory(root + separator + rename);
-										if (g.isTSDGraph()) {
-											g.setGraphName(rename + ".grf");
-										}
-										else {
-											g.setGraphName(rename + ".prb");
-										}
-									}
-									else if (c instanceof LearnGCM) {
-										LearnGCM l = ((LearnGCM) c);
-										l.setDirectory(root + separator + rename);
-									}
-									else if (c instanceof DataManager) {
-										DataManager d = ((DataManager) c);
-										d.setDirectory(root + separator + rename);
-									}
-									if (analysis) {
-										if (c instanceof Reb2Sac) {
-											reb2sac = (Reb2Sac) c;
-											t.addTab("Simulation Options", c);
-											t.getComponentAt(t.getComponents().length - 1).setName("Simulate");
-										}
-										else if (c instanceof MovieContainer) {
-											t.addTab("Schematic", c);
-											t.getComponentAt(t.getComponents().length - 1).setName("ModelViewMovie");
-										}
-										else if (c instanceof SBML_Editor) {
-											sbml = (SBML_Editor) c;
-											t.addTab("Parameter Editor", c);
-											t.getComponentAt(t.getComponents().length - 1).setName("SBML Editor");
-										}
-										else if (c instanceof GCM2SBMLEditor) {
-											GCM2SBMLEditor gcm = (GCM2SBMLEditor) c;
-											if (!gcm.getSBMLFile().equals("--none--")) {
-												sbml = new SBML_Editor(root + separator + gcm.getSBMLFile(), reb2sac, log, this, root + separator
-														+ rename, root + separator + rename + separator + rename + ".sim");
-											}
-											t.addTab("Parameters", c);
-											t.getComponentAt(t.getComponents().length - 1).setName("GCM Editor");
-										}
-										else if (c instanceof Graph) {
-											if (((Graph) c).isTSDGraph()) {
-												t.addTab("TSD Graph", c);
-												t.getComponentAt(t.getComponents().length - 1).setName("TSD Graph");
-											}
-											else {
-												t.addTab("Histogram", c);
-												t.getComponentAt(t.getComponents().length - 1).setName("ProbGraph");
-											}
-										}
-										else if (c instanceof JScrollPane) {
-											if (sbml != null) {
-												t.addTab("SBML Elements", sbml.getElementsPanel());
-												t.getComponentAt(t.getComponents().length - 1).setName("");
-											}
-											else {
-												JScrollPane scroll = new JScrollPane();
-												scroll.setViewportView(new JPanel());
-												t.addTab("SBML Elements", scroll);
-												t.getComponentAt(t.getComponents().length - 1).setName("");
-											}
-										}
-										else {
-											t.addTab("Abstraction Options", c);
-											t.getComponentAt(t.getComponents().length - 1).setName("");
-										}
-									}
-								}
-								if (analysis) {
-									t.setSelectedIndex(selected);
-									tab.setComponentAt(i, t);
-								}
-								tab.setTitleAt(i, rename);
-								tab.getComponentAt(i).setName(rename);
-							}
-							else {
-								tab.setTitleAt(i, rename);
-								tab.getComponentAt(i).setName(rename);
-							}
-						}
-						else if (tab.getComponentAt(i) instanceof JTabbedPane) {
-							ArrayList<Component> comps = new ArrayList<Component>();
-							for (int j = 0; j < ((JTabbedPane) tab.getComponentAt(i)).getTabCount(); j++) {
-								Component c = ((JTabbedPane) tab.getComponentAt(i)).getComponent(j);
-								comps.add(c);
-							}
-							for (Component c : comps) {
-								if (c instanceof Reb2Sac && ((Reb2Sac) c).getBackgroundFile().equals(oldName)) {
-									((Reb2Sac) c).updateBackgroundFile(rename);
-								}
-								else if (c instanceof LearnGCM && ((LearnGCM) c).getBackgroundFile().equals(oldName)) {
-									((LearnGCM) c).updateBackgroundFile(rename);
 								}
 							}
 						}
+						// updateAsyncViews(rename);
+						updateViewNames(tree.getFile(), rename);
+						deleteFromTree(oldName);
+						addToTree(rename);
 					}
-					// updateAsyncViews(rename);
-					updateViewNames(tree.getFile(), rename);
-					deleteFromTree(oldName);
-					addToTree(rename);
 				}
 			}
 			catch (Exception e1) {
@@ -9241,11 +9245,20 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	public boolean checkFiles(String input, String output) {
 		input = input.replaceAll("//", "/");
 		output = output.replaceAll("//", "/");
-		if (input.equals(output)) {
-			Object[] options = { "Ok" };
-			JOptionPane.showOptionDialog(frame, "Files are the same.", "Files Same", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-					options, options[0]);
-			return false;
+		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
+			if (input.toLowerCase().equals(output.toLowerCase())) {
+				Object[] options = { "Ok" };
+				JOptionPane.showOptionDialog(frame, "Files are the same.", "Files Same", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+						options, options[0]);
+				return false;
+			}
+		} else {
+			if (input.equals(output)) {
+				Object[] options = { "Ok" };
+				JOptionPane.showOptionDialog(frame, "Files are the same.", "Files Same", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
+						options, options[0]);
+				return false;
+			}
 		}
 		return true;
 	}
