@@ -64,32 +64,32 @@ Finally, it is one of the first tools to also support the
 The iBioSim tool is being developed at the University of Utah
 by 
 %%tth:\begin{html}<A HREF="http://www.async.ece.utah.edu/~myers">\end{html}
-Chris Myers
+Chris Myers, 
 %%tth:\begin{html}</A>\end{html},
 %%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~barkern">\end{html}
-Nathan Barker
+Nathan Barker, 
 %%tth:\begin{html}</A>\end{html},
 %%tth:\begin{html}<A HREF="http://www.async.ece.utah.edu/~kjones">\end{html}
-Kevin Jones
+Kevin Jones, 
 %%tth:\begin{html}</A>\end{html},
 %%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~kuwahara">\end{html}
-Hiroyuki Kuwahara
+Hiroyuki Kuwahara, 
 %%tth:\begin{html}</A>\end{html},
 %%tth:\begin{html}<A HREF="http://www.async.ece.utah.edu/~cmadsen">\end{html}
-Curtis Madsen
+Curtis Madsen, 
 %%tth:\begin{html}</A>\end{html},
 %%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~namphuon">\end{html}
-Nam Nguyen
+Nam Nguyen, 
 %%tth:\begin{html}</A>\end{html},
 %%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~patterson">\end{html}
-Tyler Patterson
+Tyler Patterson, 
 %%tth:\begin{html}</A>\end{html},
 %%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~patterson">\end{html}
-Nicholas Roehner
+Nicholas Roehner, 
 %%tth:\begin{html}</A>\end{html}, 
 and
 %%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~patterson">\end{html}
-Jason Stevens
+Jason Stevens.  
 %%tth:\begin{html}</A>\end{html}.
 Nathan Barker is now with Southern Utah University, Kevin Jones is now with Raytheon, Hiroyuki Kuwahara is now with Carnegie Mellon University, and Nam Nguyen is now with the University of Texas in Austin.
 
@@ -673,7 +673,7 @@ Events are used to specify discrete changes of compartment sizes, species amount
 SBOL is an emerging standard under development for the exchange of information about synthetic biology designs.  An SBOL file includes \emph{Collections} of \emph{DNA Components}.  Each DNA component has a unique ID, name, description, type, and a DNA sequence.  A DNA component can be a simple sequence feature like a promoter, ribosome binding site, open reading frame (i.e., gene), or terminator.  It can also be an annotated DNA sequence that includes a several of these individual features perhaps organized hierarchically.  For example, a DNA component may include a promoter followed by a ribosome binding site followed by a open reading frame followed by a terminator.  {\tt iBioSim} includes an SBOL browser that allows the user to view an individual SBOL file by clicking on it in the list of project files.  In this browser, you can highlight individual DNA components and see the information stored about them.
 
 \begin{center}
-\includegraphics[height=80mm]{screenshots/SBOLbrowser}
+\includegraphics[height=80mm]{screenshots/SBOLBrowser}
 \end{center}
 
 A similar SBOL browser is available for associating DNA components to a model.  Namely, for a promoter, you can associate both a DNA component to the promoter as well as a terminator for the transcription initiated at this promoter.  For a species, you can associate both a DNA component for the open reading frame for the gene that produces this species as well as the ribosome binding site where translation begins for this gene.  This SBOL browser is opened by clicking on an Associate SBOL button within either the Species Editor (see Section~\ref{Species}) or Promoter Editor (see Section~\ref{Promoters}).  This browser only shows DNA components of the appropriate type.  For example, when associating a species to its open reading frame, only DNA components of the type open reading frame are shown.
