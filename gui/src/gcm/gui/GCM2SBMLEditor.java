@@ -634,78 +634,105 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	}
 	
 	public void saveParams(boolean run, String stem, boolean ignoreSweep) {
-		ArrayList<String> sweepThese1 = new ArrayList<String>();
-		ArrayList<ArrayList<Double>> sweep1 = new ArrayList<ArrayList<Double>>();
-		ArrayList<String> sweepThese2 = new ArrayList<String>();
-		ArrayList<ArrayList<Double>> sweep2 = new ArrayList<ArrayList<Double>>();
-		for (String s : parameterChanges) {
-			if (s.split(" ")[s.split(" ").length - 1].startsWith("(")) {
-				if ((s.split(" ")[s.split(" ").length - 1]).split(",")[3].replace(")", "").trim().equals(
-						"1")) {
-					sweepThese1.add(s.substring(0, s.lastIndexOf(" ")));
-					sweepHelper(sweep1, s);
-				}
-				else {
-					sweepThese2.add(s.substring(0, s.lastIndexOf(" ")));
-					sweepHelper(sweep2, s);
+		try {
+			FileOutputStream out = new FileOutputStream(new File(paramFile));
+			out.write((refFile + "\n").getBytes());
+			for (String s : parameterChanges) {
+				if (!s.trim().equals("")) {
+					out.write((s + "\n").getBytes());
 				}
 			}
-		}
-		if (sweepThese1.size() == 0 && (sweepThese2.size() > 0)) {
-			sweepThese1 = sweepThese2;
-			sweepThese2 = new ArrayList<String>();
-			sweep1 = sweep2;
-			sweep2 = new ArrayList<ArrayList<Double>>();
-		}
-		if (sweepThese1.size() > 0) {
-			ArrayList<Reb2SacThread> threads = new ArrayList<Reb2SacThread>();
-			ArrayList<String> dirs = new ArrayList<String>();
-			ArrayList<String> levelOne = new ArrayList<String>();
-			int max = 0;
-			for (ArrayList<Double> d : sweep1) {
-				max = Math.max(max, d.size());
+			out.write(("\n").getBytes());
+			if (sbmlParamFile != null) {
+				for (String s : sbmlParamFile.getElementChanges()) {
+					out.write((s + "\n").getBytes());
+				}
 			}
-			for (int j = 0; j < max; j++) {
-				String sweep = "";
-				for (int i = 0; i < sweepThese1.size(); i++) {
-					int k = j;
-					if (k >= sweep1.get(i).size()) {
-						k = sweep1.get(i).size() - 1;
-					}
-					if (sweep.equals("")) {
-						sweep += sweepThese1.get(i) + "=" + sweep1.get(i).get(k);
+			out.close();
+		}
+		catch (Exception e1) {
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to save parameter file.", "Error Saving File", JOptionPane.ERROR_MESSAGE);
+		}
+		if (run) {
+			ArrayList<String> sweepThese1 = new ArrayList<String>();
+			ArrayList<ArrayList<Double>> sweep1 = new ArrayList<ArrayList<Double>>();
+			ArrayList<String> sweepThese2 = new ArrayList<String>();
+			ArrayList<ArrayList<Double>> sweep2 = new ArrayList<ArrayList<Double>>();
+			for (String s : parameterChanges) {
+				if (s.split(" ")[s.split(" ").length - 1].startsWith("(")) {
+					if ((s.split(" ")[s.split(" ").length - 1]).split(",")[3].replace(")", "").trim().equals("1")) {
+						sweepThese1.add(s.substring(0, s.lastIndexOf(" ")));
+						sweepHelper(sweep1, s);
 					}
 					else {
-						sweep += "_" + sweepThese1.get(i) + "=" + sweep1.get(i).get(k);
+						sweepThese2.add(s.substring(0, s.lastIndexOf(" ")));
+						sweepHelper(sweep2, s);
 					}
 				}
-				if (sweepThese2.size() > 0) {
-					int max2 = 0;
-					for (ArrayList<Double> d : sweep2) {
-						max2 = Math.max(max2, d.size());
-					}
-					for (int l = 0; l < max2; l++) {
-						String sweepTwo = sweep;
-						for (int i = 0; i < sweepThese2.size(); i++) {
-							int k = l;
-							if (k >= sweep2.get(i).size()) {
-								k = sweep2.get(i).size() - 1;
-							}
-							if (sweepTwo.equals("")) {
-								sweepTwo += sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
-							}
-							else {
-								sweepTwo += "_" + sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
-							}
+			}
+			if (sweepThese1.size() == 0 && (sweepThese2.size() > 0)) {
+				sweepThese1 = sweepThese2;
+				sweepThese2 = new ArrayList<String>();
+				sweep1 = sweep2;
+				sweep2 = new ArrayList<ArrayList<Double>>();
+			}
+			if (sweepThese1.size() > 0) {
+				ArrayList<Reb2SacThread> threads = new ArrayList<Reb2SacThread>();
+				ArrayList<String> dirs = new ArrayList<String>();
+				ArrayList<String> levelOne = new ArrayList<String>();
+				int max = 0;
+				for (ArrayList<Double> d : sweep1) {
+					max = Math.max(max, d.size());
+				}
+				for (int j = 0; j < max; j++) {
+					String sweep = "";
+					for (int i = 0; i < sweepThese1.size(); i++) {
+						int k = j;
+						if (k >= sweep1.get(i).size()) {
+							k = sweep1.get(i).size() - 1;
 						}
-						new File(path + separator + simName + separator + stem
-								+ sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "")).mkdir();
-						createSBML(stem, sweepTwo);
-						if (run) {
+						if (sweep.equals("")) {
+							sweep += sweepThese1.get(i) + "=" + sweep1.get(i).get(k);
+						}
+						else {
+							sweep += "_" + sweepThese1.get(i) + "=" + sweep1.get(i).get(k);
+						}
+					}
+					if (sweepThese2.size() > 0) {
+						int max2 = 0;
+						for (ArrayList<Double> d : sweep2) {
+							max2 = Math.max(max2, d.size());
+						}
+						for (int l = 0; l < max2; l++) {
+							String sweepTwo = sweep;
+							for (int i = 0; i < sweepThese2.size(); i++) {
+								int k = l;
+								if (k >= sweep2.get(i).size()) {
+									k = sweep2.get(i).size() - 1;
+								}
+								if (sweepTwo.equals("")) {
+									sweepTwo += sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
+								}
+								else {
+									sweepTwo += "_" + sweepThese2.get(i) + "=" + sweep2.get(i).get(k);
+								}
+							}
+							new File(path
+									+ separator
+									+ simName
+									+ separator
+									+ stem
+									+ sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
+											.replace("\"", "").replace(" ", "_").replace(",", "")).mkdir();
+							createSBML(stem, sweepTwo);
 							Reb2SacThread thread = new Reb2SacThread(reb2sac);
-							thread.start(stem + sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""), false);
+							thread.start(
+									stem
+											+ sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
+													.replace("\"", "").replace(" ", "_").replace(",", ""), false);
 							threads.add(thread);
-							dirs.add(sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
+							dirs.add(sweepTwo.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
+									.replace("\"", "").replace(" ", "_").replace(",", ""));
 							reb2sac.emptyFrames();
 							if (ignoreSweep) {
 								l = max2;
@@ -713,34 +740,38 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 							}
 						}
 					}
-				}
-				else {
-					new File(path + separator + simName + separator + stem
-							+ sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", "")).mkdir();
-					createSBML(stem, sweep);
-					if (run) {
+					else {
+						new File(path
+								+ separator
+								+ simName
+								+ separator
+								+ stem
+								+ sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
+										.replace("\"", "").replace(" ", "_").replace(",", "")).mkdir();
+						createSBML(stem, sweep);
 						Reb2SacThread thread = new Reb2SacThread(reb2sac);
-						thread.start(stem + sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""), false);
+						thread.start(
+								stem
+										+ sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
+												.replace("\"", "").replace(" ", "_").replace(",", ""), false);
 						threads.add(thread);
-						dirs.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
+						dirs.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
+								.replace("\"", "").replace(" ", "_").replace(",", ""));
 						reb2sac.emptyFrames();
 						if (ignoreSweep) {
 							j = max;
 						}
 					}
+					levelOne.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "")
+							.replace("\"", "").replace(" ", "_").replace(",", ""));
 				}
-				levelOne.add(sweep.replace("/", "-").replace("-> ", "").replace("+> ", "").replace("-| ", "").replace("x> ", "").replace("\"", "").replace(" ", "_").replace(",", ""));
-			}
-			if (run) {
 				new ConstraintTermThread(reb2sac).start(threads, dirs, levelOne, stem);
 			}
-		}
-		else {
-			if (!stem.equals("")) {
-				new File(path + separator + simName + separator + stem).mkdir();
-			}
-			createSBML(stem, ".");
-			if (run) {
+			else {
+				if (!stem.equals("")) {
+					new File(path + separator + simName + separator + stem).mkdir();
+				}
+				createSBML(stem, ".");
 				if (!stem.equals("")) {
 					new Reb2SacThread(reb2sac).start(stem, true);
 				}
@@ -910,26 +941,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		for (String key : params.keySet()) {
 			gcm.setParameter(key, params.get(key));
 			remove.add(key);
-		}
-		try {
-			FileOutputStream out = new FileOutputStream(new File(paramFile));
-			out.write((refFile + "\n").getBytes());
-			for (String s : parameterChanges) {
-				if (!s.trim().equals("")) {
-					out.write((s + "\n").getBytes());
-				}
-			}
-			out.write(("\n").getBytes());
-			if (sbmlParamFile != null) {
-				for (String s : sbmlParamFile.getElementChanges()) {
-					out.write((s + "\n").getBytes());
-				}
-			}
-			out.close();
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to save parameter file.",
-					"Error Saving File", JOptionPane.ERROR_MESSAGE);
 		}
 		try {
 			ArrayList<String> dd = new ArrayList<String>();
