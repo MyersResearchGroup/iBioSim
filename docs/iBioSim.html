@@ -90,7 +90,7 @@
 <a href="#tth_sEc9"
 >9&nbsp; Preferences</a><br />
 <a href="#tth_sEc10"
->10&nbsp; Model Math Formulas</a><br />
+>10&nbsp; Mathematical Formulas</a><br />
 <a href="#tth_sEc11"
 >11&nbsp; Continuous Stochastic Logic (CSL) Formulas</a><br />
 <a href="#tth_sEc12"
@@ -99,8 +99,6 @@
 >13&nbsp; Tutorial</a><br />
 <a href="#tth_sEc14"
 >14&nbsp; Reporting Bugs and Feature Requests</a><br />
-<a href="#tth_sEc15"
->15&nbsp; Credits</a><br />
 
 
 <div class="p"><!----></div>
@@ -110,24 +108,35 @@
 1</a>&nbsp;&nbsp;Introduction</h2>
 
 <div class="p"><!----></div>
-iBioSim has been developed for the modeling, analysis, and design of genetic circuits.  While the primary target of iBioSim is models of genetic circuits, models representing metabolic networks, cell-signaling pathways, and other biological and chemical systems can also be analyzed.  iBioSim includes the following components: 
-
-<div class="p"><!----></div>
+iBioSim has been developed for the modeling, analysis, and design of genetic circuits.  While the primary target of iBioSim is models of genetic circuits, models representing metabolic networks, cell-signaling pathways, and other biological and chemical systems can also be analyzed.  Recently, modeling and visualization support has been added for the modeling of multi-cellular and population models as well.
+It is capable of importing and exporting models specified using the <A HREF="http://www.sbml.org/">
+<em>Systems Biology Markup Language</em>
+</A>
+&nbsp;(SBML).  It can import all levels and versions while being able to export Level 2 Version 4 or Level 3 Version 1.  It supports all SBML modeling constructs except the <em>delay</em> function and some types of <em>fast</em> reactions.  It was the first tool to produce correct results for all examples in the SBML benchmark suite.  It has also been tested successfully on the stochastic benchmark suite and the curated models in the 
+<A HREF="http://www.ebi.ac.uk/biomodels-main/">
+<em>BioModels database</em>.
+</A>
+Finally, it is one of the first tools to also support the 
+<A HREF="http://www.sbolstandard.org/">
+<em>Synthetic Biology Open Language</em>
+</A>  
+(SBOL), an emerging standard for information exchange in synthetic biology.
+<tt>iBioSim</tt> includes the following components: 
 
 <ul>
-<li> Model Editor - a tool to create a model of a genetic circuit or other biological system.<br />
+<li> Model Editor - a tool to create a model of a genetic circuit or other biological system.
 <div class="p"><!----></div>
 </li>
 
-<li> LPN Model Editor - a tool to create a model using a <em>labeled Petri net</em> (LPN).<br />
+<li> SBOL Browser - a tool to view SBOL files and associate DNA components to model elements.
 <div class="p"><!----></div>
 </li>
 
-<li> Analysis Tool - an abstraction-based ODE, Monte Carlo, and Markov analysis tool.<br /><A HREF="http://www.async.ece.utah.edu/publications"></A>
+<li> Analysis Tool - an abstraction-based ODE, Monte Carlo, and Markov analysis tool.
 <div class="p"><!----></div>
 </li>
 
-<li> Learn Tool - a tool to learn a model from <em>time series data</em> (TSD).<br /><A HREF="http://www.async.ece.utah.edu/publications"></A>
+<li> Learn Tool - a tool to learn a model from <em>time series data</em> (TSD).
 <div class="p"><!----></div>
 </li>
 
@@ -139,6 +148,43 @@ iBioSim has been developed for the modeling, analysis, and design of genetic cir
 <div class="p"><!----></div>
 </li>
 </ul>
+
+<div class="p"><!----></div>
+
+<h2>Credits</h2>
+
+<div class="p"><!----></div>
+The iBioSim tool is being developed at the University of Utah
+by 
+<A HREF="http://www.async.ece.utah.edu/~myers">
+Chris Myers
+</A>,
+<A HREF="http://www.cs.utah.edu/~barkern">
+Nathan Barker
+</A>,
+<A HREF="http://www.async.ece.utah.edu/~kjones">
+Kevin Jones
+</A>,
+<A HREF="http://www.cs.utah.edu/~kuwahara">
+Hiroyuki Kuwahara
+</A>,
+<A HREF="http://www.async.ece.utah.edu/~cmadsen">
+Curtis Madsen
+</A>,
+<A HREF="http://www.cs.utah.edu/~namphuon">
+Nam Nguyen
+</A>,
+<A HREF="http://www.cs.utah.edu/~patterson">
+Tyler Patterson
+</A>,
+<A HREF="http://www.cs.utah.edu/~patterson">
+Nicholas Roehner
+</A>, 
+and
+<A HREF="http://www.cs.utah.edu/~patterson">
+Jason Stevens
+</A>.
+Nathan Barker is now with Southern Utah University, Kevin Jones is now with Raytheon, Hiroyuki Kuwahara is now with Carnegie Mellon University, and Nam Nguyen is now with the University of Texas in Austin.
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc2">
@@ -221,35 +267,35 @@ When importing a model from the BioModels database, the window below will open i
 You can also export a model in either SBML or SBOL format.  To export an SBML model, select File &#8594; Export &#8594; Systems Biology Markup Language (SBML).  Then, you will be able to browse to find a location to export the SBML file.  Currently, the SBML model generated is a single flattened chemical reaction model.  When exporting model as an SBOL component, you must browse to find an SBOL library.  The SBOL component will then be added to the selected library.  Graphs of time series data or histograms can be exported from the project in many formats.  The supported file formats are:  
 
 <ul>
-<li> Time series data format (TSD).
+<li> Time series data format (tsd), see Section&nbsp;<a href="#TSD">12</a>..
 <div class="p"><!----></div>
 </li>
 
-<li> Comma separated value (CSV).
+<li> Comma separated value (csv).
 <div class="p"><!----></div>
 </li>
 
-<li> Column separated data (DAT).
+<li> Column separated data (dat).
 <div class="p"><!----></div>
 </li>
 
-<li> Encapsulated postscript (EPS).
+<li> Encapsulated postscript (eps).
 <div class="p"><!----></div>
 </li>
 
-<li> Joint Photographic Experts Group (JPG).
+<li> Joint Photographic Experts Group (jpg).
 <div class="p"><!----></div>
 </li>
 
-<li> Portable document format (PDF).
+<li> Portable document format (pdf).
 <div class="p"><!----></div>
 </li>
 
-<li> Portable network graphics (PNG).
+<li> Portable network graphics (png).
 <div class="p"><!----></div>
 </li>
 
-<li> Scalable vector graphics (SVG).
+<li> Scalable vector graphics (svg).
 <div class="p"><!----></div>
 </li>
 </ul>
@@ -587,7 +633,7 @@ When adding a component to a grid, you are simply asked which model to instantia
 </a>Promoters</h3>
 
 <div class="p"><!----></div>
-Promoters are the locations on a DNA sequence in which transcription is initiated to create a <em>messager</em> RNA (mRNA) which can then be translated by a ribosome into a protein.  To add a promoter to a model, select the Add Promoter icon <img src="../gui/icons/modelview/promoter_mode_selected.png" alt="../gui/icons/modelview/promoter_mode_selected.png" /> and click on the schematic canvas in the location that you want the promoter creating a new promoter with a default ID and parameter values.  Clicking on the promoter opens the Promoter Editor which allows you to edit the following fields:
+Promoters are the locations on a DNA sequence in which transcription is initiated to create a <em>messager</em> RNA (mRNA) which can then be translated by a ribosome into a protein.  To add a promoter to a model, select the Add Promoter icon <img src="../gui/icons/modelview/promoter_mode_selected.png" alt="../gui/icons/modelview/promoter_mode_selected.png" /> and click on the schematic canvas creating a new promoter with a default ID and parameter values.  Clicking on the promoter opens the Promoter Editor and allows you to edit the following fields:
 
 <ul>
 <li> ID: a unique ID composed only of alphanumeric characters and underscores.
@@ -635,8 +681,6 @@ Promoters are the locations on a DNA sequence in which transcription is initiate
 
 <center><img src="screenshots/promoter.png" alt="screenshots/promoter.png" />
 </center>
-
-<div class="p"><!----></div>
 
 <div class="p"><!----></div>
      <h3><a name="tth_sEc3.5">
@@ -847,12 +891,7 @@ Unit definitions are used to construct user-defined units which are derived from
 There are two types of assignments: initial assignments and rules.  Initial assignments as shown below are used to provide a mathematical formula (see Section&nbsp;<a href="#SBMLMath">10</a>) that is evaluated at time 0 to determine the initial value of a compartment size, species amount or concentration, or parameter.  The value of this formula takes precedence over the initial value specified in the object.  
 
 <div class="p"><!----></div>
-
-<center><img src="screenshots/initial.png" alt="screenshots/initial.png" />
-</center>
-
-<div class="p"><!----></div>
-There are three types of rules: algebraic, assignment, and rate rules which are in the following form:
+There are three types of rules: algebraic, assignment, and rate rules:
 
 <center>
 
@@ -863,6 +902,13 @@ There are three types of rules: algebraic, assignment, and rate rules which are 
 </td></tr></table>
 
 </center>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/initial.png" alt="screenshots/initial.png" />
+</center>
+
+<div class="p"><!----></div>
 Algebraic rules specify relationships which must be maintained.  Assignment rules specify the value of a compartment size, species amount or concentration, or parameter in terms of a mathematical formula (see
 Section&nbsp;<a href="#SBMLMath">10</a>).  A variable cannot be determined by both an assignment rule and initial assignment.  Rate rules specify the rate of change of a compartment size, species amount or concentration, or parameter in terms of a mathematical formula (see Section&nbsp;<a href="#SBMLMath">10</a>).  A variable cannot be determined by both an assignment rule and a rate rule.  A species that is a reactant or a product of any reaction cannot be updated by either an assignment rule or rate rule.  
 When adding a rule, the user first selects the type of rule as shown below.  This automatically restricts the set of variables available for the left-hand side to those that are valid.  The user should then select a variable (except in the case of an algebraic rule), and enter a mathematical formula (see Section&nbsp;<a href="#SBMLMath">10</a>) for the rule.  When editing a rule, the user cannot modify the rule type. 
@@ -1115,10 +1161,10 @@ The next field specifies the simulation method you want to use based on the simu
 <tr><td align="center">ODE  </td><td align="center">rkf45     </td><td>Embedded Runge-Kutta-Fehlberg (4, 5) method </td></tr>
 <tr><td align="center">Monte carlo </td><td align="center">Gillespie </td><td>Gillespie's SSA direct method </td></tr>
 <tr><td align="center">Monte carlo </td><td align="center">GillespieJava </td><td>Java implementation of Gillespie's SSA direct method </td></tr>
-<tr><td align="center">Monte carlo </td><td align="center">mpde </td><td>An incremental SSA using marginal probability density evolution </td></tr>
-<tr><td align="center">Monte carlo </td><td align="center">mp </td><td>An incremental SSA using the mean path </td></tr>
-<tr><td align="center">Monte carlo </td><td align="center">mp-adaptive </td><td>An incremental SSA using the mean path and adaptive step size</td></tr>
-<tr><td align="center">Monte carlo </td><td align="center">mp-event </td><td>An incremental SSA using the mean path and event count step size </td></tr>
+<tr><td align="center">Monte carlo </td><td align="center">mpde </td><td>iSSA using marginal probability density evolution </td></tr>
+<tr><td align="center">Monte carlo </td><td align="center">mp </td><td>iSSA using the mean path </td></tr>
+<tr><td align="center">Monte carlo </td><td align="center">mp-adaptive </td><td>iSSA using the mean path and adaptive step size</td></tr>
+<tr><td align="center">Monte carlo </td><td align="center">mp-event </td><td>iSSA using the mean path and event count step size </td></tr>
 <tr><td align="center">Monte carlo </td><td align="center">emc-sim   </td><td>Use jump count as next reaction time </td></tr>
 <tr><td align="center">Monte carlo </td><td align="center">bunker    </td><td>Uses mean for next reaction time </td></tr>
 <tr><td align="center">Monte carlo </td><td align="center">nmc       </td><td>Uses normally distributed next reaction time </td></tr>
@@ -1228,8 +1274,6 @@ Using the schematic tab, you can adjust initial values and parameters allowing o
 
 <center><img src="screenshots/paramEdit.png" alt="screenshots/paramEdit.png" />
 </center>
-
-<div class="p"><!----></div>
 
 <div class="p"><!----></div>
 In addition to making single changes, you can also sweep a value as shown below.   When you click on the Sweep button, it brings up a window where you can select the start value, the stop value, and the step value.  The level indicates how the sweep should perform when multiple variables are swept at the same time.  A variables at the same level are changed at the same time.  Furthermore, all variables on level 2 are stepped through all their values before changing the values of those variables on level 1.  After the values on level 1 are changed, the values on level 2 are stepped through all their values again.  
@@ -1537,35 +1581,35 @@ Note that a check mark appears on a data set to indicate that some species have 
 When in a TSD graph editor, pressing the Save icon <img src="../gui/icons/save.png" alt="../gui/icons/save.png" /> saves the settings for the graph to a file, so when you re-open the graph, it will reload this data and display in the same way as before.  Pressing the Save As icon <img src="../gui/icons/saveas.png" alt="../gui/icons/saveas.png" /> prompts for a new filename and creates a new top-level graph with that name.  Finally, pressing the Export icon <img src="../gui/icons/export.jpg" alt="../gui/icons/export.jpg" /> prompts for a filename and exports the data to the given name.  The extension provided for the filename is used to determine how the graph is to be exported. The supported file types are: 
 
 <ul>
-<li> csv - comma separated value data file.
+<li> Time series data format (tsd), see Section&nbsp;<a href="#TSD">12</a>..
 <div class="p"><!----></div>
 </li>
 
-<li> dat - column separated data file.
+<li> Comma separated value (csv).
 <div class="p"><!----></div>
 </li>
 
-<li> eps - encapsulated postscript.
+<li> Column separated data (dat).
 <div class="p"><!----></div>
 </li>
 
-<li> jpg - JPEG (Joint Photographic Experts Group).
+<li> Encapsulated postscript (eps).
 <div class="p"><!----></div>
 </li>
 
-<li> pdf - portable document format.
+<li> Joint Photographic Experts Group (jpg).
 <div class="p"><!----></div>
 </li>
 
-<li> png - portable network graphics.
+<li> Portable document format (pdf).
 <div class="p"><!----></div>
 </li>
 
-<li> svg - scalable vector graphics.
+<li> Portable network graphics (png).
 <div class="p"><!----></div>
 </li>
 
-<li> tsd - time series data format (see Section&nbsp;<a href="#TSD">12</a>).
+<li> Scalable vector graphics (svg).
 <div class="p"><!----></div>
 </li>
 </ul>
@@ -1647,23 +1691,23 @@ Note that a check mark appears on a data set to indicate that some constraints h
 When in a histogram graph editor, pressing the Save icon <img src="../gui/icons/save.png" alt="../gui/icons/save.png" /> saves the settings for the graph to a file, so when you re-open the graph, it will reload this data and display in the same way as before.  Pressing the Save As icon <img src="../gui/icons/saveas.png" alt="../gui/icons/saveas.png" /> prompts for a new filename and creates a new top-level graph with that name.  Finally, pressing the Export icon <img src="../gui/icons/export.jpg" alt="../gui/icons/export.jpg" /> prompts for a filename and exports the data to the given name.  The extension provided for the filename is used to determine how the graph is to be exported. The supported file types are: 
 
 <ul>
-<li> eps - encapsulated postscript.
+<li> Encapsulated postscript (eps).
 <div class="p"><!----></div>
 </li>
 
-<li> jpg - JPEG (Joint Photographic Experts Group).
+<li> Joint Photographic Experts Group (jpg).
 <div class="p"><!----></div>
 </li>
 
-<li> pdf - portable document format.
+<li> Portable document format (pdf).
 <div class="p"><!----></div>
 </li>
 
-<li> png - portable network graphics.
+<li> Portable network graphics (png).
 <div class="p"><!----></div>
 </li>
 
-<li> svg - scalable vector graphics.
+<li> Scalable vector graphics (svg).
 <div class="p"><!----></div>
 </li>
 </ul>
@@ -1726,7 +1770,7 @@ user can decide whether they wish to use a File Dialog for selecting files.  If 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc10">
 10</a>&nbsp;&nbsp;<a name="SBMLMath">
-</a>Model Math Formulas</h2>
+</a>Mathematical Formulas</h2>
 
 <div class="p"><!----></div>
 Math formulas appear in many model constructs.  These formulas are expressed as text strings using a simple syntax.  In particular, model math formulas can include: 
@@ -1800,6 +1844,50 @@ Math formulas appear in many model constructs.  These formulas are expressed as 
 </a>Continuous Stochastic Logic (CSL) Formulas</h2>
 
 <div class="p"><!----></div>
+To analyze a probabilistic models using <tt>iBioSim</tt>, it is necessary to specify one or more properties of
+the model.  <tt>iBioSim</tt> accepts property specifications using a subset of probabilistic temporal logic <em>Continuous Stochastic Logic</em> (CSL).  There are four types of CSL properties currently supported:
+
+<ul>
+<li> Transient global formula of the form Pr{PG [ &#968; ]( &#936; )} where &#968; is a time bound &#936; is state formula.  This formula determines the probability that &#936; is always true in the interval defined by &#968;.
+<div class="p"><!----></div>
+</li>
+
+<li> Transient eventually formula of the form Pr{PF [ &#968; ]( &#936; )} where &#968; is a time bound &#936; is a state formula.  This formula determines the probability that &#936; is becomes true during the interval defined by &#968;.
+<div class="p"><!----></div>
+</li>
+
+<li> Transient until formula of the form Pr{&#936;<sub>1</sub> PU [ &#968; ] &#936;<sub>1</sub>} where &#968; is a time bound &#936;<sub>1</sub> and &#936;<sub>2</sub> are state formula.  This formula determines the probability that &#936;<sub>1</sub> remains true until &#936;<sub>2</sub> becomes true during the interval defined by &#968;.
+<div class="p"><!----></div>
+</li>
+
+<li> Steady-state formula of the form St{&#936;} where &#936; is a state formula.  This formula determines the probability of being in a state that satisfies &#936; as time goes to infinity.
+<div class="p"><!----></div>
+</li>
+</ul>
+The time bounds, &#968;, can either be a relational operator ( &lt; ,  &#8804; , =,  &#8805; ,  &gt; ) followed by a constant integer time value.  They can also be a time bound of the form [ l, u ] where l and u are constant integer time values.  The state formula, &#936;, can include:
+
+<ul>
+<li> Variables (compartment, species, parameter IDs, and reaction IDs)
+<div class="p"><!----></div>
+</li>
+
+<li> Real Numbers
+<div class="p"><!----></div>
+</li>
+
+<li> Mathematical operators: add (+), subtract (-), multiply (*), divide (/), and power (^).
+<div class="p"><!----></div>
+</li>
+
+<li> Logical functions: and (&amp;), or (&#124;), and not (&#160;&#8764;&#160;).
+<div class="p"><!----></div>
+</li>
+
+<li> Relational functions: equals (=), greater-or-equals ( &#8805; ), greater-than ( &gt; ), less-or-equals ( &#8804; ), and less-than ( &lt; ).
+
+<div class="p"><!----></div>
+</li>
+</ul>
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc12">
@@ -1852,47 +1940,10 @@ mail will be filtered by our spam filters:
 </ul>
 
 <div class="p"><!----></div>
- <h2><a name="tth_sEc15">
-15</a>&nbsp;&nbsp;Credits</h2>
-
-<div class="p"><!----></div>
-The iBioSim tool is being developed at the University of Utah
-by 
-<A HREF="http://www.async.ece.utah.edu/~myers">
-Chris Myers
-</A>,
-<A HREF="http://www.cs.utah.edu/~barkern">
-Nathan Barker
-</A>,
-<A HREF="http://www.async.ece.utah.edu/~kjones">
-Kevin Jones
-</A>,
-<A HREF="http://www.cs.utah.edu/~kuwahara">
-Hiroyuki Kuwahara
-</A>,
-<A HREF="http://www.async.ece.utah.edu/~cmadsen">
-Curtis Madsen
-</A>,
-<A HREF="http://www.cs.utah.edu/~namphuon">
-Nam Nguyen
-</A>,
-<A HREF="http://www.cs.utah.edu/~patterson">
-Tyler Patterson
-</A>,
-<A HREF="http://www.cs.utah.edu/~patterson">
-Nicholas Roehner
-</A>, 
-and
-<A HREF="http://www.cs.utah.edu/~patterson">
-Jason Stevens
-</A>.
-Nathan Barker is now with Southern Utah University, Kevin Jones is now with Raytheon, Hiroyuki Kuwahara is now with Carnegie Mellon University, and Nam Nguyen is now with the University of Texas in Austin.
-
-<div class="p"><!----></div>
 
 <br /><br /><hr /><small>File translated from
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 25 Aug 2011, 19:38.</small>
+version 3.81.<br />On 26 Aug 2011, 09:47.</small>
 </html>
