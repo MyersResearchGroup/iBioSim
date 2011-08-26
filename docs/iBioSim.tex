@@ -1337,10 +1337,11 @@ the model.  {\tt iBioSim} accepts property specifications using a subset of prob
 \begin{itemize}
 \item Transient global formula of the form Pr\{PG [ $\psi$ ]( $\Psi$ )\} where $\psi$ is a time bound $\Psi$ is state formula.  This formula determines the probability that $\Psi$ is always true in the interval defined by $\psi$.
 \item Transient eventually formula of the form Pr\{PF [ $\psi$ ]( $\Psi$ )\} where $\psi$ is a time bound $\Psi$ is a state formula.  This formula determines the probability that $\Psi$ is becomes true during the interval defined by $\psi$.
-\item Transient until formula of the form Pr\{$\Psi_1$ PU [ $\psi$ ] $\Psi_1$\} where $\psi$ is a time bound $\Psi_1$ and $\Psi_2$ are state formula.  This formula determines the probability that $\Psi_1$ remains true until $\Psi_2$ becomes true during the interval defined by $\psi$.
+\item Transient until formula of the form Pr\{$\Psi_1$ PU [ $\psi$ ] $\Psi_2$\} where $\psi$ is a time bound $\Psi_1$ and $\Psi_2$ are state formula.  This formula determines the probability that $\Psi_1$ remains true until $\Psi_2$ becomes true during the interval defined by $\psi$.
 \item Steady-state formula of the form St\{$\Psi$\} where $\Psi$ is a state formula.  This formula determines the probability of being in a state that satisfies $\Psi$ as time goes to infinity.
 \end{itemize}
-The time bounds, $\psi$, can either be a relational operator ($<$, $\leq$, $=$, $\geq$, $>$) followed by a constant integer time value.  They can also be a time bound of the form $[ l, u ]$ where $l$ and $u$ are constant integer time values.  The state formula, $\Psi$, can include:
+The time bounds, $\psi$, can either be a relational operator ($<$, $\leq$, $=$, $\geq$, $>$) followed by a constant real time value.  They can also be a time bound of the form $[ l, u ]$ where $l$ and $u$
+are constant real time values.  The state formula, $\Psi$, should evaluate to a Boolean, and it can include:
 \begin{itemize}
 \item Variables (compartment, species, parameter IDs, and reaction IDs)
 \item Real Numbers

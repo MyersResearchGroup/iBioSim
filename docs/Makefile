@@ -6,7 +6,7 @@ DVI2PDF = dvipdf
 DVIFLAGS = -t letter
 PDFLATEX = pdflatex
 
-all: iBioSim.html iBioSim_Tutorial.html iBioSim_Install.html LEMA.html ATACS.html
+all: iBioSim.html iBioSim_Tutorial.html iBioSim_Grid_Tutorial.html iBioSim_Install.html LEMA.html ATACS.html
 
 iBioSim.pdf: iBioSim.tex
 	$(PDFLATEX) iBioSim
@@ -35,6 +35,13 @@ iBioSim_Tutorial.pdf: iBioSim_Tutorial.tex
 
 iBioSim_Tutorial.html: iBioSim_Tutorial.pdf
 	tth -u -e2 -LiBioSim_Tutorial < iBioSim_Tutorial.tex > iBioSim_Tutorial.html
+
+iBioSim_Grid_Tutorial.pdf: iBioSim_Grid_Tutorial.tex
+	$(PDFLATEX) iBioSim_Grid_Tutorial
+	$(PDFLATEX) iBioSim_Grid_Tutorial
+
+iBioSim_Grid_Tutorial.html: iBioSim_Grid_Tutorial.pdf
+	tth -u -e2 -LiBioSim_Grid_Tutorial < iBioSim_Grid_Tutorial.tex > iBioSim_Grid_Tutorial.html
 
 iBioSim_Install.pdf: iBioSim_Install.tex
 	$(PDFLATEX) iBioSim_Install

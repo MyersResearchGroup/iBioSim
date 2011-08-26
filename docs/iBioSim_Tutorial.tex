@@ -128,53 +128,76 @@ Finally, CII species activates the production of the CI species from the PRE pro
 \includegraphics[height=80mm]{screenshots/activated_promoter}
 \end{center}
 
-%% TODO: ADD COMPARTMENT
-% Highlight the {\tt default} compartment, select {\tt Edit Compartment}, and change its ID to {\tt Cytoplasm}.  Also, change the units to {\tt volume}.
-
-%% TODO: ADD DEFINITIONS
-% Select {\tt Definitions/Types} tab, and select {\tt Add Unit} and enter {\tt per\_second} as the ID.  Select {\tt Add to List},  select {\tt second} as the kind, change the exponent to $-1$,  and click {\tt Add}.  Click {\tt Add} in the {\tt Unit Definition Editor}.   Repeat these steps to create a {\tt per\_second\_mole} unit  (i.e., (second)$^{-1}$(mole)$^{-1}$).
+Next, lets go look at some of the other model tabs.  Click on the Definitions tab.  Here one can add/remove/edit definitions for functions and units.  Every model starts with some predefined random functions.  For example, click on the uniform function.  This function takes arguments $a$ and $b$ and returns a uniform random number between $a$ and $b$ in our simulator.  In other simulators that do not support this function, it simply returns the mean which is $(a + b)/2$.
 
 \begin{center}
 \includegraphics[height=70mm]{screenshots/function}
 \end{center}
 
-%% TODO: define nanomoles and microliters and set to model units
+Unit definitions allow the user to create custom units for use in models.  As an example, click Add Unit and enter the ID nanoMole.  A unit is defined using pre-defined base units.  Click on Add to List and find mole in the Kind combo box, and change the multiplier to $1e-9$ to define a nanoMole in terms of moles. The exponent and multiplier are real numbers, and the scale is an integer that specifies the relationship between the derived unit and the base unit using the relation below:
+\begin{eqnarray*}
+\mathrm{unit} & = & (\mathrm{multiplier} * 10^\mathrm{scale} * \mathrm{baseUnit})^\mathrm{exponent}
+\end{eqnarray*}
+Follow the same steps to create a unit for microLitre.
+
 \begin{center}
 \includegraphics[height=70mm]{screenshots/units}
 \end{center}
+
+Next, click on the Compartments tab.  This tab includes both general model information like its ID, name, and default units as well as a list of compartments.  Click on the Model Units button bring up a window of default units for this model.  These are the units to be used for various things when no units are provided.  For this model, lets make the Substance Units be in nanoMoles, Time Units be in seconds, and Volume Units be in microLitres.  The Extent Units indicate the units of change for reactions.  Let's make that also be nanoMole.
 
 \begin{center}
 \includegraphics[height=70mm]{screenshots/ModelUnits}
 \end{center}
 
-%% TODO: remove liter units
+Compartments are the membrane enclosed regions where species can be found and reactions take place.  All models must include at least one compartment.  {\tt iBioSim}, therefore, creates the default compartment initially.  Let's click on Edit Compartment to give this the more meaningful name of Cell.  If you go back to the schematic now, you will find the combo box in the toolbar has also changed to Cell.  This combo box specifies the name of the compartment which encloses this model.  The check box next to it indicates whether this model is to be considered to be membrane enclosed by this compartment.  If this model is part of a larger model within a single compartment, you should leave this unchecked.  If, however, it is a complete model within the specified compartment, it should be checked.  In this case, let's check it.
+
 \begin{center}
 \includegraphics[height=65mm]{screenshots/compartment}
 \end{center}
 
-% The next item on the toolbar is a checkbox used to indicate if the model is to be considered enclosed within a \emph{compartment}.  The combo box is used to select the enclosing compartment for the model.  
-
-%% TODO: ADD PARAMETER
-% Select {\tt Add Parameter} and enter {\tt nd} as the ID, {\tt Number of molecules in dimer} as the name, the value to be 2, and change the units to {\tt dimensionless}.
+Next, click on the Parameters tab.  This tab includes the default model generation parameters as well as additional global variables.  The model generation parameters are used for default values when creating a reaction-based model from our higher level model.  These parameters can be edited by selecting them and changing default to custom and entering a new value.  They cannot be removed.
 
 \begin{center}
 \includegraphics[height=65mm]{screenshots/GCMparam}
 \end{center}
 
+Global parameters can be used to specify constants and additional variables.  For example, click on Add Parameter, so we can specify a variable, CI\_total, for the total amount of the species CI in both monomer and dimer form.  Its units are in nanoMole, and it is not constant.
+
 \begin{center}
 \includegraphics[height=65mm]{screenshots/parameter}
 \end{center}
+
+Now, let's go to the Assignments tab.  This tab includes initial assignments and rules.  Initial assignments are used when you want the initial value of a compartment size, species amount or concentration, or parameter to be determined by a mathematical equation rather than a constant.  Click on Add Initial, and select CI2 as the Symbol, and enter the assignment 5*CI which cause CI2's initial value to be 5 times that of CI's initial value.  Therefore, if we were to go change CI's initial value, CI2's initial value would also change due to this initial assignment.
 
 \begin{center}
 \includegraphics[height=80mm]{screenshots/initial}
 \end{center}
 
+There are three types of rules: algebraic, assignment, and rate.  Algebraic rules are used to specify relationships that must be maintained.  Assignment rules are used to define one variable in terms of a mathematical expression.  Finally, rate rules are used to indicate a differential equation to govern the evolution of a variable in terms of a mathematical expression on other variables.  As an example, let's add now our definition for CI\_total.  Click on the Add Rule button, select Assignment, select the variable CI\_total, and enter the expression 2*CI2+CI.  This indicates that the amount of CI in total is 2 times the number of dimer molecules plus the number of monomer molecules.
+
 \begin{center}
 \includegraphics[height=80mm]{screenshots/rule}
 \end{center}
 
-%% TODO: add properties/constraints
-%% TODO: add events
+The next tab is the properties tab.  Here you can specify probabilistic temporal logic properties using \emph{Continuous Stochastic Logic} (CSL) that you wish to check.  For example, the property shown,
+Pr\{PF[0,2100](CI>20\}, would ask the analyzer to determine the probability that CI exceeds 20 molecules within 2100 seconds.
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/properties}
+\end{center}
+
+This tab also allows the user to enter constraints which are conditions that must be satisfied or simulation should terminate.  Click on the Add Constraint button to add a constraint that states that CI remains less than or equal to 25 molecules as shown below.  Add a second constraint that states that CII remains less than or equal to 35 molecules.
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/constraint}
+\end{center}
+
+The last tab is the Events tab which is used to specify discrete state changes.  For example, let's describe an event for cell division.  Click on the Add Event button, enter the ID CellDivision, trigger true, and delay of 2100.  The trigger specifies the condition that should be satisfied to enable this event.  In this case, we want it to be enabled initially.  The delay indicates the time after which it is enabled that it should execute.  This combination results in a cell division event at 2100 seconds after simulation begins.  The event assignments specify the state change(s) for this event.  Click on the Add Assignment button and select the CI variable, and enter the assignment CI/2.  In other words, the number of molecules is being divided between the two daughter cells.  Similarly, add event assignments to divide up CI2 and CII.
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/event}
+\end{center}
 
 At this point, make sure your model has been saved by either clicking on the Save icon \includegraphics{../gui/icons/save} or selecting the Save option from the File menu.
 
@@ -201,13 +224,13 @@ In order to perform analysis, the analysis tool first converts the model into a 
 \includegraphics[height=80mm]{screenshots/reactionModel}
 \end{center}
 
-Next, click on the SBML elements tab.  This tab allows you to select which SBML model elements to include in your analysis.  This includes initial assignments, rules, constraints, and events.  Initially, let's only include the rule to compute CI\_total.  Uncheck all the elements.
+Next, click on the SBML elements tab.  This tab allows you to select which SBML model elements to include in your analysis.  This includes initial assignments, rules, constraints, and events.  Initially, let's only include the rule to compute CI\_total.  Uncheck all the other elements.
 
 \begin{center}
 \includegraphics[height=80mm]{screenshots/SBMLElements}
 \end{center}
 
-Now, go back to the simulation options tab.  Here, change the simulation type back to ODE, change the time limit to 2100.0, change the print interval to 10.0, and enter a Simulation ID of {\tt ode}.  Then, either press the Save and Run icon \includegraphics{../gui/icons/run-icon} or select Save and Run option from the File menu.
+Now, go back to the simulation options tab.  Here, change the simulation type back to ODE, change the time limit to 2100.0, change the print interval to 10.0, enter a Simulation ID of {\tt ode}, and make sure the selected Property is none.  Then, either press the Save and Run icon \includegraphics{../gui/icons/run-icon} or select Save and Run option from the File menu.
 After the simulation completes, click on the TSD Graph tab.  Double click on the graph to bring up the graph editor.
 Open the {\tt ode} simulation, highlight Average, select CI\_total and CII, change the Title to ``ODE Simulation Results'', change the X-Axis Label to ``Time (seconds)'', and change the Y-Axis Label to ``Number of Molecules''.  
 Press the OK button.  
@@ -289,6 +312,24 @@ One way to understand why abstraction is so much faster is by looking at the com
 \includegraphics[height=80mm]{screenshots/viewNetworkAbs}
 \end{center}
 
+Next, let's try checking some properties.  To do this, go to the SBML Elements tab and check the boxes next to the constraints.  Recall that these constraints terminate simulation whenever CI goes above 25 molecules and CII goes above 35 molecules.  Go back to the Simulation Options tab and change the Simulation ID to prob, and press the Save and Run icon.  Now, let's plot the results on a histogram by clicking on the Histogram tab and then double clicking on the graph to bring up the histogram graph editor shown below.  Open the prob folder, select the sim-rep file, and check the Use check box to get all fields.  
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/editProbGraph}
+\end{center}
+
+The histogram shown here indicates that CI goes above 25 molecules first about 23 percent of the time, CII goes above 35 molecules first about 71 percent of the time, and the simulation terminates before either happens about 6 percent of the time.
+
+\begin{center} 
+\includegraphics[height=80mm]{screenshots/probResults}
+\end{center}
+
+This results can also be visualized using the TSD graph tool.  Click on the TSD graph tab, click on the graph, Deselect All, open the prob folder, select the Percent Termination file, and add both constraints to the graph.  The result, shown below is the probability of each constraint terminating the simulation as time evolves.  
+
+\begin{center} 
+\includegraphics[height=80mm]{screenshots/probResultsTSD}
+\end{center}
+
 \section{Learn Tool}
 
 This section describes how a model can be learned from time series data using {\tt iBioSim}'s Learn Tool.  To demonstrate the Learn Tool, first create a simple model, {\tt lambdaLearn}, which just includes the two species CI and CII as shown below.  Next, create a learn view by right clicking on this model file and selecting Create Learn View.  Give this learn view the ID {\tt learnLambda}.  At this point, a new learn view should open.  You should also notice that an icon appears next to your model file.  When you click on this, it will show you all of the analysis and learn views associated with this model.
@@ -311,115 +352,86 @@ using Graphviz's dotty program, and ask you for a model ID for the generated mod
 \includegraphics[height=80mm]{screenshots/learn}
 \end{center}
 
-\end{document} 
+\section{Advanced Modeling}
 
-\section{Hierarchical Modeling}
-
-This example illustrates how {\tt iBioSim} can be used for
-probabilistic analysis.
-\begin{enumerate}
-\item Go back to the GCM editor for {\tt CI\_CII}.  
-Select {\tt Save as SBML Template} and give it the name {\tt
-  CI\_CIIenv}.  Use the {\tt SBML File} pulldown menu to select
-{\tt CI\_CIIenv.sbml} to associate with this GCM.  Press the
-{\tt Save GCM} button.
-
-\includegraphics[height=80mm]{screenshots/linkSBML}
-
-\item Double click on the {\tt CI\_CIIenv.sbml} file to open it in an
-  SBML editor.  Select the {\tt Initial
-    Assignments/Rules/Constraints/Events} tab, and select {\tt Add
-    Constraint}.  Add a constraint with ID {\tt CI20}, constraint
-{\tt geq(CI, 20)}, and message {\tt CI greater than 20 molecules}.
-Repeat these steps to add constraints for $CII \geq 30$, and $t \geq
-200$. Be sure to press the {\tt Save SBML} button when you are done.
-
-\includegraphics[height=30mm]{screenshots/constraint}
-
-\includegraphics[height=30mm]{screenshots/properties}
-
-\clearpage
-
-\item Go back to your analysis view by clicking on the {\tt sim} tab.
-Remove the simulation ID and press {\tt Save and Run}.  Click on the 
-{\tt Probability Graph} tab.
-%% \includegraphics[height=80mm]{screenshots/emptyProbGraph}
-%% \item 
-Double click on the graph to bring up the probability graph
-  editor.  Change the title to {\tt Probability Results} and the 
-Y-axis label to {\tt Percent}.  Click on the {\tt sim-rep} file on the 
-left-hand side.  Select {\tt CI20}, {\tt CII30}, and {\tt t200} to
-graph them.  Press {\tt Ok}.
-
-\includegraphics[height=80mm]{screenshots/editProbGraph}
-
-\item Export the graph as a jpg file by selecting the {\tt Export}
-  button and entering the filename {\tt prob.jpg}.
-
-\includegraphics[height=90mm]{screenshots/probResults}
+This section is less detailed than the others but it gives some intuition about modeling using reactions, compartments, and grids.  It also introduces our preliminary support of the emerging \emph{synthetic biology open language standard} (SBOL).  Let us take the last of these first.  An SBOL file includes \emph{Collections} of \emph{DNA Components}.  Each DNA component has a unique ID, name, description, type, and a DNA sequence.  A DNA component can be a simple sequence feature like a promoter, ribosome binding site, open reading frame (i.e., gene), or terminator.  It can also be an annotated DNA sequence that includes a several of these individual features perhaps organized hierarchically.  For example, a DNA component may include a promoter followed by a ribosome binding site followed by a open reading frame followed by a terminator.  When editing the model, you may have noticed the various SBOL fields.  Namely, for a promoter, you can associate both a DNA component to the promoter as well as a terminator for the transcription initiated at this promoter.  For a species, you can associate both a DNA component for the open reading frame for the gene that produces this species as well as the ribosome binding site where translation begins for this gene.  This SBOL browser is opened by clicking on an Associate SBOL button within either the Species Editor or Promoter Editor.  This browser only shows DNA components of the appropriate type.  For example, when associating a species to its open reading frame, only DNA components of the type open reading frame are shown.  After you have associated all genetically produced species (i.e., CI and CII in our model) and all promoters (i.e., PR and PRE in our model), you can then save the DNA component for your model into your SBOL file.  You can also export it into a new or existing SBOL file outside your project.
 
 \begin{center}
-\includegraphics[height=20mm]{screenshots/createGrid}
+\includegraphics[height=80mm]{screenshots/AssociateSBOL}
 \end{center}
 
-\begin{center}
-\includegraphics[height=80mm]{screenshots/gridModel}
-\end{center}
-
-\end{enumerate}
-
-\clearpage
-
-% \includegraphics{../gui/icons/modelview/self_influence_selected}
-
-%% TODO: CREATE CII DEGRADATION COMPONENT
-
-% \includegraphics{../gui/icons/modelview/add_reaction_selected}
-% \includegraphics{../gui/icons/modelview/reaction_selected} 
-% \includegraphics{../gui/icons/modelview/modifier_selected} 
+In the next example, let's consider an alternative model of CII degradation which we are going to model using chemical reactions.  To do this, create a new model named {\tt CII\_degradation}.  In this model, create species CII, P1, and CII\_P1 making CII have the input type, so we can connect to it later.  
 
 \begin{center}
 \includegraphics[height=65mm]{screenshots/P1}
 \end{center}
 
+Now, select the Add Reaction icon \includegraphics{../gui/icons/modelview/add_reaction_selected} and click on the schematic canvas to drop a reaction.  This creates a reaction with a default ID and parameter values that we can change later, if we wish.
+
 \begin{center}
 \includegraphics[height=65mm]{screenshots/reaction}
 \end{center}
+
+Now, let's connect up the reactant species.  To do this, select the Reaction icon \includegraphics{../gui/icons/modelview/reaction_selected}, select the reactant species CII and while holding the mouse button drag the reaction edge to the reaction R1.  Similarly, add P1 as a reactant as well.  If you double click on a reactant edge, it brings up a Reactant editor where you can change the stoichiometry, if desired.
 
 \begin{center}
 \includegraphics[height=40mm]{screenshots/reactant}
 \end{center}
 
+Connecting product species is accomplished in much the same way except in this case you select reaction R1 and drag the reaction edge to the product CII\_P1.  Again, there is a Product editor for changing the stoichiometry.  Note that modifiers (i.e., species that are neither produced nor consumed by a reaction but simply catalyze a reaction) can be added in a similar way using the Modifier icon \includegraphics{../gui/icons/modelview/modifier_selected} instead.
+
 \begin{center}
 \includegraphics[height=50mm]{screenshots/product}
 \end{center}
 
-% Highlight {\tt kf} and select {\tt Edit Selected Parameter}, change  {\tt kf} to {\tt k2f}, and change the units to {\tt per\_second\_mole}.   Highlight {\tt kr} and select {\tt Edit Selected Parameter}, change {\tt kr} to {\tt k2r}, and change the units to {\tt per\_second}.
+Now, let's adjust the parameters for this reaction by clicking on it to open the Reaction Editor.  Lets make this reaction reversible and adjust is forward reaction rate to be 1.0.  Finally, prese the Use Mass Action button to automatically create a kinetic law for this reaction.
 
 \begin{center}
 \includegraphics[height=50mm]{screenshots/localParam}
 \end{center}
 
-% Select {\tt Use Mass Action}, select {\tt Add},  and select {\tt Save and Check SBML}.  There should be no errors.
+Follow the same steps to add another reaction that degrades CII in the CII\_P1 form and releases the protease molecule P1.  This reaction is not reversible and it should have a forward rate of 0.002.
 
 \begin{center}
 \includegraphics[height=60mm]{screenshots/kineticLaw}
 \end{center}
 
-% \includegraphics{../gui/icons/modelview/add_component_selected}
+Let's now go and add this new degradation mechanism to our lambda model (you might actually want to copy your old model before you do this which you can do by highlighting the file and selecting Edit $\rightarrow$ Copy or using the right mouse button menu).  First, open the Species Editor on CII and change its degradation rate to 0.  Next, select the Add Component icon \includegraphics{../gui/icons/modelview/add_component_selected} and click on the Schematic canvas opening the Add Component(s) window.  In this window, browse the combo box to find your CII\_degradation model.  Pressing OK will then add it to your schematic.
 
 \begin{center}
 \includegraphics[height=60mm]{screenshots/addComponent}
 \end{center}
 
+Now, let's connect CII to this new component to relate the CII within the component to the outer CII species.  To do this, select the CII species and holding the mouse button drag a connection to the component connecting CII to the CII port on the component.  
+You may want to now go and try simulating this model, if you like.
+
 \begin{center}
 \includegraphics[height=60mm]{screenshots/addPort}
 \end{center}
 
-%% TODO: include??
-% \includegraphics{../gui/icons/modelview/no_influence_selected}
+In the last example, we will build a model with a grid.  Before doing this, create another copy of your lambda model, and go into this copy and remove the initial assignments, rules, properties, constraints, and events as they will get in the way.  Also, edit the CII species and make it diffusible.  Now, create a new model named {\tt Population} and select the Make Grid check box bring up the Create a Grid window.  In this window, select your copy of your lambda model and change the number of rows and columns to 5.  
 
-%% TODO: include??
-%  The remaining items on the toolbar allow you to apply an automatically layout routine \includegraphics{../gui/icons/modelview/choose_layout_selected}, zoom, restore to default size (unzoom), pan, undo, and redo.
- 
-\end{document}
+\begin{center}
+\includegraphics[height=20mm]{screenshots/createGrid}
+\end{center}
+
+The schematic in a grid model is a bit different.  It includes a grid in which each location can be empty or contain exactly one component.  Nothing else can be added to this model.
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/gridModel}
+\end{center}
+
+The interesting thing about grids is when you do analysis on them.  When you create a reaction-based model for girds, it creates reactions to move the diffusible species between the grid locations to provide a course form of spatial modeling.  If the component within a grid location is enclosed in a compartment membrane (indicated by the rounded corners), the model generated also includes reactions to diffuse the species in and out of the compartment.  In the analysis schematic, you can visualize your grid models by clicking on the component in the grid and selecting the species that you would like to see.  For each such species, you can set its color, size, and/or opacity gradient.  You can also copy these settings to all like models in your grid.  Finally, you can click on the area outside of the component within the grid to allow you to also visualize the species that are in the medium.
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/compAppearances}
+\end{center}
+
+\noindent
+A more detailed 
+%%tth:\begin{html}<a href="iBioSim_Grid_Tutorial.html">\end{html}
+grid tutorial
+%%tth:\begin{html}</a>\end{html}
+is available in the {\tt docs} directory that comes with the distribution.
+
+\end{document} 
