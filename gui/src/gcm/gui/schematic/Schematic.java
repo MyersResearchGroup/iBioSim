@@ -50,6 +50,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingUtilities;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.ListOf;
@@ -91,6 +93,7 @@ public class Schematic extends JPanel implements ActionListener {
 	private JCheckBox check;
 	private JComboBox compartmentList;
 	private Grid grid;
+	private JTabbedPane tabbedPane;
 	
 	//toolbar buttons
 	private AbstractButton selectButton;
@@ -118,7 +121,8 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @param internalModel
 	 */
 	public Schematic(GCMFile gcm, Gui biosim, GCM2SBMLEditor gcm2sbml, boolean editable, 
-			MovieContainer movieContainer2, Compartments compartments, Reactions reactions, JComboBox compartmentList){
+			MovieContainer movieContainer2, Compartments compartments, Reactions reactions, 
+			JComboBox compartmentList){
 		
 		super(new BorderLayout());
 		
@@ -134,6 +138,7 @@ public class Schematic extends JPanel implements ActionListener {
 		this.reactions = reactions;
 		this.grid = gcm.getGrid();
 		this.compartmentList = compartmentList;
+		this.tabbedPane = biosim.getTab();
 		
 		// initialize everything on creation.
 		display();
@@ -580,6 +585,19 @@ public class Schematic extends JPanel implements ActionListener {
 	 * listeners for clicking and mouse movement
 	 */
 	private void addGraphComponentListeners(){
+		
+		if (tabbedPane != null) {
+			
+			//if the component tab changes, then rebuild the graph
+			//this is useful if component/compartment status changes
+			tabbedPane.addChangeListener(new ChangeListener(){
+	
+				public void stateChanged(ChangeEvent event) {
+			        
+			        graph.buildGraph();
+				}			
+			});
+		}
 		
 		//vertical scrolling listener for grid stuff
 		graphComponent.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener(){
