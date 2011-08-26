@@ -1388,6 +1388,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		Utility.sort(speciesList);
 		productSpecies = new JComboBox();
+		productSpecies.setEnabled(false);
 		for (int i = 0; i < speciesList.length; i++) {
 			Species species = document.getModel().getSpecies(speciesList[i]);
 			if (species.getBoundaryCondition() || (!species.getConstant() && Rules.keepVarRateRule(document, "", speciesList[i]))) {
@@ -1824,6 +1825,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		}
 		Utility.sort(speciesList);
 		reactantSpecies = new JComboBox();
+		reactantSpecies.setEnabled(false);
 		for (int i = 0; i < speciesList.length; i++) {
 			Species species = document.getModel().getSpecies(speciesList[i]);
 			if (species.getBoundaryCondition() || (!species.getConstant() && Rules.keepVarRateRule(document, "", speciesList[i]))) {
