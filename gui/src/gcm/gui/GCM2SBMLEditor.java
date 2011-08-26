@@ -1952,7 +1952,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		// get a list of components
 		ArrayList<String> components = new ArrayList<String>();
 		for (String s : new File(path).list()) {
-			if (s.endsWith(".gcm") && !s.equals(filename) && checkNoComponentLoop(filename, s)) {
+			if (s.endsWith(".gcm") && !s.equals(filename) /*&& checkNoComponentLoop(filename, s)*/) {
 				components.add(s);
 			}
 		}

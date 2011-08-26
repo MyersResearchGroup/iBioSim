@@ -317,14 +317,17 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 				
 				//don't allow grids within a grid
 				if (compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + component)) {
-					
 					JOptionPane.showMessageDialog(Gui.frame,
 							"Dropping grid components is disallowed.\n" +
 							"Please choose a different component.",
 							"Cannot drop a grid component", JOptionPane.ERROR_MESSAGE);
 				}
-				else {
-				
+				else if (!gcm2sbml.checkNoComponentLoop(gcm2sbml.getFilename(), component)) {
+					JOptionPane.showMessageDialog(Gui.frame,
+							"Dropping this component creates a cycle of instantiations.\n" +
+							"Please choose a different component.",
+							"Cannot drop a component", JOptionPane.ERROR_MESSAGE);
+				} else {
 					applyComponents(mouseX, mouseY);
 					error = false;
 				}
