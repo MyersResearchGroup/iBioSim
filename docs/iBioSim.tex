@@ -1332,18 +1332,18 @@ Math formulas appear in many model constructs.  These formulas are expressed as 
 \section{\label{CSL}Continuous Stochastic Logic (CSL) Formulas}
 
 \noindent
-To analyze a probabilistic models using {\tt iBioSim}, it is necessary to specify one or more properties of
-the model.  {\tt iBioSim} accepts property specifications using a subset of probabilistic temporal logic \emph{Continuous Stochastic Logic} (CSL).  There are four types of CSL properties currently supported:
+To analyze probabilistic models using {\tt iBioSim}, it is necessary to specify one or more properties of
+the model.  {\tt iBioSim} accepts property specifications using a subset of probabilistic temporal logic called \emph{Continuous Stochastic Logic} (CSL).  There are four types of CSL properties currently supported:
 \begin{itemize}
-\item Transient global formula of the form Pr\{PG [ $\psi$ ]( $\Psi$ )\} where $\psi$ is a time bound $\Psi$ is state formula.  This formula determines the probability that $\Psi$ is always true in the interval defined by $\psi$.
-\item Transient eventually formula of the form Pr\{PF [ $\psi$ ]( $\Psi$ )\} where $\psi$ is a time bound $\Psi$ is a state formula.  This formula determines the probability that $\Psi$ is becomes true during the interval defined by $\psi$.
-\item Transient until formula of the form Pr\{$\Psi_1$ PU [ $\psi$ ] $\Psi_2$\} where $\psi$ is a time bound $\Psi_1$ and $\Psi_2$ are state formula.  This formula determines the probability that $\Psi_1$ remains true until $\Psi_2$ becomes true during the interval defined by $\psi$.
+\item Transient global formula of the form Pr\{PG [ $\psi$ ]( $\Psi$ )\} where $\psi$ is a time bound and $\Psi$ is state formula.  This formula determines the probability that $\Psi$ is always true in the interval defined by $\psi$.
+\item Transient eventually formula of the form Pr\{PF [ $\psi$ ]( $\Psi$ )\} where $\psi$ is a time bound and $\Psi$ is a state formula.  This formula determines the probability that $\Psi$ becomes true during the interval defined by $\psi$.
+\item Transient until formula of the form Pr\{$\Psi_1$ PU [ $\psi$ ] $\Psi_2$\} where $\psi$ is a time bound and $\Psi_1$ and $\Psi_2$ are state formula.  This formula determines the probability that $\Psi_1$ remains true until $\Psi_2$ becomes true during the interval defined by $\psi$.
 \item Steady-state formula of the form St\{$\Psi$\} where $\Psi$ is a state formula.  This formula determines the probability of being in a state that satisfies $\Psi$ as time goes to infinity.
 \end{itemize}
-The time bounds, $\psi$, can either be a relational operator ($<$, $\leq$, $=$, $\geq$, $>$) followed by a constant real time value.  They can also be a time bound of the form $[ l, u ]$ where $l$ and $u$
+The time bound, $\psi$, can either be a relational operator ($<$, $\leq$, $=$, $\geq$, $>$) followed by a constant real time value or a time bound of the form $[ l, u ]$ where $l$ and $u$
 are constant real time values.  The state formula, $\Psi$, should evaluate to a Boolean, and it can include:
 \begin{itemize}
-\item Variables (compartment, species, parameter IDs, and reaction IDs)
+\item Variables (compartment IDs, species IDs, parameter IDs, and reaction IDs)
 \item Real Numbers
 %\item Built-in constants: exponentiale, pi, true, and false.
 %\item Special variable time or t which returns the current simulation time.
@@ -1352,7 +1352,7 @@ are constant real time values.  The state formula, $\Psi$, should evaluate to a 
 %\item A function defined in the list of function definitions.
 \item Logical functions: and ($\&$), or ($|$), and not ($\sim$).
 %\item Logical functions: and, or, xor, not.
-\item Relational functions: equals ($=$), greater-or-equals ($\geq$), greater-than ($>$), less-or-equals ($\leq$), and less-than ($<$).
+\item Relational functions: equals ($=$), greater-than-or-equals ($\geq$), greater-than ($>$), less-than-or-equals ($\leq$), and less-than ($<$).
 %\item Relational functions: eq, neq, geq, gt, leq, and lt.
 %\item Unary functions: abs, ceiling, exp, factorial, floor, ln, log, sqr, and sqrt.
 %\item Trigonometric functions: cos, cosh, sin, sinh, tan, tanh, cot, coth, csc, csch, sec, sech, arccos, arccosh, arcsin, arcsinh, arctan, arctanh, arccot, arccoth, arccsc, arccsch, arcsec, and arcsech.
