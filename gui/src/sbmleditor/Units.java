@@ -65,7 +65,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 
 	private Gui biosim;
 
-	private String[] uList;
+	//private String[] uList;
 
 	public Units(Gui biosim, SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty) {
 		super(new BorderLayout());
@@ -152,7 +152,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 		scroll.setMinimumSize(new Dimension(260, 220));
 		scroll.setPreferredSize(new Dimension(276, 152));
 		scroll.setViewportView(unitList);
-		uList = new String[0];
+		String [] uList = new String[0];
 		if (option.equals("OK")) {
 			try {
 				UnitDefinition unit = document.getModel().getUnitDefinition((((String) unitDefs.getSelectedValue()).split(" ")[0]));
@@ -202,6 +202,10 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 				JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		boolean error = true;
 		while (error && value == JOptionPane.YES_OPTION) {
+			uList = new String[unitList.getModel().getSize()];
+			for (int i = 0; i < unitList.getModel().getSize(); i++) {
+				uList[i] = unitList.getModel().getElementAt(i).toString();
+			}
 			error = false;
 			if (unitID.getText().trim().equals("")) {
 				JOptionPane.showMessageDialog(Gui.frame, "A unit definition ID is required.", "Enter an ID", JOptionPane.ERROR_MESSAGE);
@@ -499,7 +503,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 			}
 			if (!error) {
 				if (option.equals("OK")) {
-					uList = new String[unitList.getModel().getSize()];
+					String [] uList = new String[unitList.getModel().getSize()];
 					for (int i = 0; i < unitList.getModel().getSize(); i++) {
 						uList[i] = unitList.getModel().getElementAt(i).toString();
 					}
@@ -523,7 +527,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					unitList.setSelectedIndex(index);
 				}
 				else {
-					uList = new String[unitList.getModel().getSize()];
+					String [] uList = new String[unitList.getModel().getSize()];
 					for (int i = 0; i < unitList.getModel().getSize(); i++) {
 						uList[i] = unitList.getModel().getElementAt(i).toString();
 					}
