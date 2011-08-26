@@ -3209,6 +3209,19 @@ public class GCMFile {
 		}
 		for (int i = 0; i < m.getNumConstraints(); i++) {
 			Constraint constraint = (Constraint) m.getListOfConstraints().get(i);
+			String newName = compName + "__" + constraint.getMetaId();
+			constraint.setMetaId(newName);
+			for (int j = 0; j < mainDoc.getModel().getNumConstraints(); j++) {
+				if (mainDoc.getModel().getConstraint(j).getMetaId().equals(constraint.getMetaId())) {
+					Constraint c = mainDoc.getModel().getConstraint(j);
+					if (!c.getMessageString().equals(constraint.getMessageString())) {
+						return null;
+					}
+					if (c.getMath() != constraint.getMath()) {
+						return null;
+					}
+				}
+			}
 			mainDoc.getModel().addConstraint(constraint);
 		}
 		for (int i = 0; i < m.getNumEvents(); i++) {
@@ -3216,10 +3229,8 @@ public class GCMFile {
 			String newName = compName + "__" + event.getId();
 			updateVarId(false, event.getId(), newName, doc);
 			event.setId(newName);
-			boolean add = true;
 			for (int j = 0; j < mainDoc.getModel().getNumEvents(); j++) {
 				if (mainDoc.getModel().getEvent(j).getId().equals(event.getId())) {
-					add = false;
 					org.sbml.libsbml.Event e = mainDoc.getModel().getEvent(j);
 					if (!e.getName().equals(event.getName())) {
 						return null;
@@ -3254,9 +3265,7 @@ public class GCMFile {
 					}
 				}
 			}
-			if (add) {
-				mainDoc.getModel().addEvent(event);
-			}
+			mainDoc.getModel().addEvent(event);
 		}
 		for (int i = 0; i < m.getNumUnitDefinitions(); i++) {
 			UnitDefinition u = m.getUnitDefinition(i);
