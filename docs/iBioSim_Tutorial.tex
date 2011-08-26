@@ -31,312 +31,289 @@
 
 \section{Introduction}
 
-The example described in this tutorial constructs a simple model for
-the \emph{cI} and \emph{cII} genes and the $P_R$ and $P_{RE}$
-promoters from the phage $\lambda$ decision circuit.  This example
-illustrates many of the features of {\tt iBioSim}.
+\noindent
+{\tt iBioSim} has been developed for the modeling, analysis, and design of genetic circuits.  While the primary target of {\tt iBioSim} is models of genetic circuits, models representing metabolic networks, cell-signaling pathways, and other biological and chemical systems can also be analyzed.  {\tt iBioSim} includes the following components: 
+
+\begin{itemize}
+\item Model Editor - a tool to create a model of a genetic circuit or other biological system.
+\item LPN Model Editor - a tool to create a model using a \emph{labeled Petri net} (LPN).
+\item Analysis Tool - an abstraction-based ODE, Monte Carlo, and Markov analysis tool.
+\item TSD Graph Editor- a tool to visualize TSD files. 
+\item Histogram Graph Editor - a tool to visualize probability data. 
+\end{itemize}
+
+This tutorial illustrates each of these features of {\tt iBioSim} using a simple model for the \emph{cI} and \emph{cII} genes and the $P_R$ and $P_{RE}$ promoters from the phage $\lambda$ decision circuit.  
 
 % TODO: add figures and more description of the example
 
-\section{SBML Editor}
+\section{Project Management}
 
 \noindent
-After starting {\tt iBioSim}, complete the following steps to create
-an SBML model for this example:
-\begin{enumerate}
-\item Select {\tt File} $\rightarrow$ {\tt New} $\rightarrow$ {\tt Project}.
-      Browse to desired path and create a project named {\tt demo}.
-
-\includegraphics[height=50mm]{screenshots/project}
-
-\item Select {\tt File} $\rightarrow$ {\tt New} $\rightarrow$ {\tt SBML Model}.
-      Enter {\tt lambda} as the SBML model ID at which point an SBML
-      editor will open.
-
-\includegraphics[height=45mm]{screenshots/newModel}
-
-\clearpage
-
-\item Highlight the {\tt default} compartment, select {\tt Edit
-    Compartment}, and change its ID to {\tt Cytoplasm}.  Also, change 
-    the units to {\tt volume}.
-
-\includegraphics[height=65mm]{screenshots/compartment}
-
-\item Select {\tt Add Species} and enter {\tt CI} as the ID, 
-{\tt The lambda repressor} as the name, change the units 
-to {\tt mole}, and set the {\tt Has Only Substance Units} flag to
-true.  Select {\tt Add Species} again and enter {\tt CI2} as the ID,
-{\tt CI dimer} as the name, change the units to {\tt mole}, and set the
-{\tt Has Only Substance Units} flag to true. 
-
-\includegraphics[height=60mm]{screenshots/species}
-
-\item Select {\tt Add Parameter} and enter {\tt nd} as the ID,
-      {\tt Number of molecules in dimer} as the name, the value to be 2,
-      and change the units to {\tt dimensionless}.
-
-\includegraphics[height=50mm]{screenshots/parameter}
-
-\item Select {\tt Definitions/Types} tab, and select {\tt Add Unit}
-      and enter {\tt per\_second} as the ID.  Select {\tt Add to List}, 
-      select {\tt second} as the kind, change the exponent to $-1$, 
-      and click {\tt Add}.  Click {\tt Add} in the {\tt Unit Definition Editor}.
-      Repeat these steps to create a {\tt per\_second\_mole} unit 
-      (i.e., (second)$^{-1}$(mole)$^{-1}$).
-
-\includegraphics[height=70mm]{screenshots/units}
-
-\item Select {\tt Main Elements} tab.  Select {\tt Add Reaction} and
-  enter {\tt Dimerize\_CI} as the ID, {\tt Reaction to dimerize CI} as
-  the name, and change reversible to {\tt true}.
-
-\includegraphics[height=65mm]{screenshots/reaction}
-
-\item Select {\tt Add Reactant} and select {\tt CI} as the species,
-      change {\tt Stoichiometry} to {\tt Stoichiometry math}, and set its
-      value to {\tt nd}.
-
-\includegraphics[height=40mm]{screenshots/reactant}
-
-\item Select {\tt Add Product} and select {\tt CI2} as the species.
-      Leave the stoichiometry as 1.
-
-\includegraphics[height=50mm]{screenshots/product}
-
-\item Highlight {\tt kf} and select {\tt Edit Selected Parameter}, change
-      {\tt kf} to {\tt k2f}, and change the units to {\tt per\_second\_mole}.
-      Highlight {\tt kr} and select {\tt Edit Selected Parameter}, change
-      {\tt kr} to {\tt k2r}, and change the units to {\tt per\_second}.
-
-\includegraphics[height=50mm]{screenshots/localParam}
-
-\item Select {\tt Use Mass Action}, select {\tt Add}, 
-      and select {\tt Save and Check SBML}.  There should be no errors.
-
-\includegraphics[height=60mm]{screenshots/kineticLaw}
-
-\clearpage
-
-\item Highlight {\tt lambda.sbml}, using right mouse button, select 
-      {\tt View Network}.
-      Highlight {\tt lambda.sbml}, using right mouse button, select 
-      {\tt View in Browser}.
-
-\includegraphics[height=60mm]{screenshots/viewNet}\\
-\begin{tabular}{cc}
-\includegraphics[height=60mm]{screenshots/viewNetwork} &
-\includegraphics[height=100mm]{screenshots/viewBrowser}
-\end{tabular}
-
-\clearpage
-
-\item Go back to the SBML editor complete the construction of the
-      chemical reaction network shown below:
-\begin{eqnarray*}
-PRE + \mathrm{RNAP} & \stackrel{KPRE2}{\longleftrightarrow} &
-PRE\_\mathrm{RNAP} \\
-PRE + \mathrm{CII} + \mathrm{RNAP} &
-\stackrel{KPRE4}{\longleftrightarrow} &
-PRE\_\mathrm{CII}\_\mathrm{RNAP} \\
-PRE\_\mathrm{RNAP} & \stackrel{kPREb}{\longrightarrow} & 
-PRE\_\mathrm{RNAP} + n\mathrm{CI} \\
-PRE\_\mathrm{CII}\_\mathrm{RNAP} 
-& \stackrel{kPRE}{\longrightarrow} & 
-PRE\_\mathrm{CII}\_\mathrm{RNAP} + n\mathrm{CI} \\
-PR + \mathrm{RNAP} & \stackrel{KOR9}{\longleftrightarrow} &
-PR\_\mathrm{RNAP} \\
-PR + 2 \mathrm{CI2} & \stackrel{KOR10}{\longleftrightarrow} &
-PR\_2 \mathrm{CI2} \\
-PR\_\mathrm{RNAP} & \stackrel{kPR}{\longrightarrow} & 
-PR\_\mathrm{RNAP} + n\mathrm{CII} \\
-2 \mathrm{CI} & \stackrel{K2}{\longleftrightarrow} & \mathrm{CI2} \\
-\mathrm{CI} & \stackrel{k1}{\longrightarrow} & () \\ 
-\mathrm{CII} & \stackrel{k10}{\longrightarrow} & ()
-\end{eqnarray*}
+Within {\tt iBioSim}, all files are collected within projects.   A project is a collection of models, analysis views, learn views, and graphs.  As shown below, {\tt iBioSim} displays all project files on the left, the open models, views, and graphs on the right, and a log of all external commands on the bottom.  The menu bar is located on the top of the window in the Windows and Linux versions.  It is located on the top of the screen in the MacOS version.
 
 \begin{center}
-\begin{math}
-\begin{array}{|c|c|c|c|c|c|}
-\hline
-Constant & Value & Constant & Value & Constant & Value \\ \hline \hline
-KPRE2  & 0.01~M^{-1} & KPRE4  & 0.00161~M^{-2} & 
-kPREb  & 0.00004~\mathrm{sec}^{-1} \\ \hline
-kPRE   & 0.015~\mathrm{sec}^{-1} &
-KOR9  & 0.69422~M^{-1} & KOR10  & 0.06568~M^{-2} \\ \hline
-kPR    & 0.014~\mathrm{sec}^{-1} &
-K2       & 0.1 M^{-1} & k1       & 0.0007~\mathrm{sec}^{-1} \\ \hline
-k10    & 0.002~\mathrm{sec}^{-1} & n         & 10 & ~ & ~ \\ \hline
-\end{array}
-\end{math} \\
-Set an initial amount of 1.0 for PRE and OR, 30.0 for RNAP, and 0.0 
-for the rest.
+\includegraphics[height=90mm]{screenshots/iBioSim}
 \end{center}
-\end{enumerate}
 
-% \item Add a new species ``CI\_total'' with units of {\tt mole}.
-%       Click on the ``Initial Assignments/Rules/Constraints/Events'' tab
-%       and press the ``Add Rule'' button.
-%       Select Assignment Type, select Variable ``CI\_total'', 
-%       and enter the following as the Rule:
-% \begin{eqnarray*}
-% & 2 * CI2 + CI &
-% \end{eqnarray*}
+\noindent
+To create a new project, select New $\rightarrow$ Project from the File menu as shown below.  You will then be prompted to browse to a desired location and to give a name to the project directory.  Enter the name {\tt Tutorial}.  After you do this, click the new button and a new project directory will be created.  
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/project}
+\end{center}
+
+\section{Model Editor}
+
+\noindent
+After you have created a project, you can create a new model to add to the project by selecting New $\rightarrow$ Model from the File menu as shown below. You will then be prompted to enter a model id.  Enter {\tt lambda} (do not select ``Make Grid'' at this time).  At this point, a Model editor will open in a new tab.
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/newModel}
+\end{center}
+
+\begin{center}
+\includegraphics[height=25mm]{screenshots/ModelId}
+\end{center}
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/ModelEditor}
+\end{center}
+
+To add a chemical species, select the Add Species icon \includegraphics{../gui/icons/modelview/add_species_selected} and click on the schematic canvas.  This will drop a new species with default ID and other values.  You may change these defaults by double-clicking on the species to open the Species Editor.  In this case, let us change the ID to CI and units to mole.  We will leave all other values at their default values.  One thing that is important to note is that when this model is analyzed a default degradation reaction will be created which has a rate of 0.0075.  If you do not want a degradation reaction, you must change ``default'' to ``custom'' and change the degradation rate to 0.
+
+%% TODO: remove mole setting
+\begin{center}
+\includegraphics[height=80mm]{screenshots/species}
+\end{center}
+
+Add another species for the CI dimer molecule.  Edit this species to set its ID to CI2 and change its units to mole.  This species is created using a complex formation reaction with an equilibrium constant of 0.1 M$^{-1}$.  Change default to custom for the complex formation rate and set it to this rate as shown below.
+
+%% TODO: remove mole setting
+\begin{center}
+\includegraphics[height=80mm]{screenshots/species2} 
+\end{center}
+
+The next step is to add a complex formation reaction to convert CI monomers into CI dimers.  Select the complex formation icon \includegraphics{../gui/icons/modelview/bio_activation_selected}, highlight the CI species, and while holding the mouse button stretch the complex formation arc to the CI2 species.   If you double click on the complex formation arc, an influence editor will open which indicates that this is a complex formation arc and the stoichiometry of binding (i.e., the number of molecules of the source species used to construct the sink species) is 2.  The default in this case is correct as it does take two molecules of CI to make CI2.
+
+\begin{center}
+\includegraphics[height=60mm]{screenshots/complex} 
+\end{center}
+
+Next, let's add the PR promoter which initiates transcription of the gene that produces the protein CII.  To do this, select the promoter icon \includegraphics{../gui/icons/modelview/promoter_mode_selected}, and click on the schematic canvas to drop the promoter with a default ID and parameter values.  Double click on the promoter to bring up the promoter editor.  Change the ID to PR and customize the RNAP binding equilibrium to be 0.69422, as well as, the open complex production rate to be 0.014. 
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/promoter} 
+\end{center}
+
+The PR promoter is repressed by the CI2 species.  To create this relationship, select the repression arc icon 
+\includegraphics{../gui/icons/modelview/inhibition_selected}, highlight the CI2 species, and while holding the mouse button stretch the repression arc to the PR promoter.  Next, double click on the repression arc to bring up the influence editor.  In this editor, customize the stoichiometry of binding to 1 indicating that just one CI dimer is necessary to repress this promoter and change the repression binding equilibrium to 0.2165.
+
+\begin{center}
+\includegraphics[height=60mm]{screenshots/repression} 
+\end{center}
+
+As mentioned earlier, the PR promoter initiations the production of the CII species.  Add the CII species following the steps given earlier for adding a species.  Then, highlight the PR promoter and while holding the mouse button stretch the production arc to the CII species.  Note that the icons selected for this are not important because all arcs from promoters to species are always production arcs.
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/production}
+\end{center}
+
+Finally, CII species activates the production of the CI species from the PRE promoter.  Promoters do not need to always be drawn.  They can also be implicit on an influence.  To add an activation arc with an implicit promoter, select the activation arc icon \includegraphics{../gui/icons/modelview/activation_selected}, highlight the CII species, and while holding the mouse button stretch the activation arc to the CI species.  This creates not only the influence but also a default promoter.   Double click on the activation arc to bring up the influence editor.  In this editor, customize the stoichiometry of binding to 1 indicating that just one CII molecule is necessary to activate this promoter and change the activation binding equilibrium to 0.00161.  Finally, click on the edit promoter button and change the ID of this promoter to PRE.  Also, customize the RNAP binding equilibrium to be 0.01, the basal production rate to be 0.00004, and the activated production rate to be 0.015.
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/activation}
+\end{center}
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/activated_promoter}
+\end{center}
+
+%% TODO: ADD COMPARTMENT
+% Highlight the {\tt default} compartment, select {\tt Edit Compartment}, and change its ID to {\tt Cytoplasm}.  Also, change the units to {\tt volume}.
+
+%% TODO: ADD DEFINITIONS
+% Select {\tt Definitions/Types} tab, and select {\tt Add Unit} and enter {\tt per\_second} as the ID.  Select {\tt Add to List},  select {\tt second} as the kind, change the exponent to $-1$,  and click {\tt Add}.  Click {\tt Add} in the {\tt Unit Definition Editor}.   Repeat these steps to create a {\tt per\_second\_mole} unit  (i.e., (second)$^{-1}$(mole)$^{-1}$).
+
+\begin{center}
+\includegraphics[height=70mm]{screenshots/function}
+\end{center}
+
+%% TODO: define nanomoles and microliters and set to model units
+\begin{center}
+\includegraphics[height=70mm]{screenshots/units}
+\end{center}
+
+\begin{center}
+\includegraphics[height=70mm]{screenshots/ModelUnits}
+\end{center}
+
+%% TODO: remove liter units
+\begin{center}
+\includegraphics[height=65mm]{screenshots/compartment}
+\end{center}
+
+% The next item on the toolbar is a checkbox used to indicate if the model is to be considered enclosed within a \emph{compartment}.  The combo box is used to select the enclosing compartment for the model.  
+
+%% TODO: ADD PARAMETER
+% Select {\tt Add Parameter} and enter {\tt nd} as the ID, {\tt Number of molecules in dimer} as the name, the value to be 2, and change the units to {\tt dimensionless}.
+
+\begin{center}
+\includegraphics[height=65mm]{screenshots/GCMparam}
+\end{center}
+
+\begin{center}
+\includegraphics[height=65mm]{screenshots/parameter}
+\end{center}
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/initial}
+\end{center}
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/rule}
+\end{center}
+
+%% TODO: add properties/constraints
+%% TODO: add events
+
+At this point, make sure your model has been saved by either clicking on the Save icon \includegraphics{../gui/icons/save} or selecting the Save option from the File menu.
+
+\section{Analysis Tool}
+
+This section describes how to analyze the model just created.  The first step is to create an analysis view.  To do this, right click on the model file and select Create Analysis View.  Enter the analysis ID {\tt simLambda}.  At this point, a new analysis view should open.  You should also notice that an icon appears next to your model file.  When you click on this, it will show you all of the analysis and learn views associated with this model.
+
+\begin{center}
+\includegraphics[height=60mm]{screenshots/GCMAnalysis}\\
+\includegraphics[height=90mm]{screenshots/analysisView}
+\end{center}
+
+In order to perform analysis, the analysis tool first converts the model into a reaction-based model in the \emph{Systems Biology Markup Language} (SBML).  There are three different ways to see the reaction-based model that is produced.  If GraphViz is installed on your computer, you can select Network for your Simulation Type.  Then, either press the Save and Run icon \includegraphics{../gui/icons/run-icon} or select the Save and Run option from the File menu.  The result will be a GraphViz window will open showing the reaction-based model such as the one shown below for our example.  If it does not open in GraphViz, make sure that you have files with the {\tt .dot} file extension associated with GraphViz on your computer.  You can also view the model in a web browser by selecting Browser for your simulation type.  In this case, you should ensure that you have files with the {\tt .xhtml} extension associated with your favorite browser.  Finally, you can save the reaction-based model by selecting Model as your simulation type.  In this case, you must provide a new model ID.  This new model will appear in your project, and it can be opened in the Model Editor.  Since this model does not include any layout information, you will need to either lay it out by hand or using one of the default layout routines selectable using the Apply Layout icon \includegraphics{../gui/icons/modelview/choose_layout_selected},
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/viewNetwork}
+\end{center}
+
+\begin{center}
+\includegraphics[height=110mm]{screenshots/viewBrowser}
+\end{center}
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/reactionModel}
+\end{center}
+
+Next, click on the SBML elements tab.  This tab allows you to select which SBML model elements to include in your analysis.  This includes initial assignments, rules, constraints, and events.  Initially, let's only include the rule to compute CI\_total.  Uncheck all the elements.
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/SBMLElements}
+\end{center}
+
+Now, go back to the simulation options tab.  Here, change the simulation type back to ODE, change the time limit to 2100.0, change the print interval to 10.0, and enter a Simulation ID of {\tt ode}.  Then, either press the Save and Run icon \includegraphics{../gui/icons/run-icon} or select Save and Run option from the File menu.
+After the simulation completes, click on the TSD Graph tab.  Double click on the graph to bring up the graph editor.
+Open the {\tt ode} simulation, highlight Average, select CI\_total and CII, change the Title to ``ODE Simulation Results'', change the X-Axis Label to ``Time (seconds)'', and change the Y-Axis Label to ``Number of Molecules''.  
+Press the OK button.  
  
-% \includegraphics[height=60mm]{screenshots/rule}
+\begin{center}
+\includegraphics[height=90mm]{screenshots/odeResults}\\
+\includegraphics[height=80mm]{screenshots/odeSimResults}
+\end{center}
 
-\clearpage
+Graphs can be exported in a variety of formats including:
+\begin{itemize}
+\item Time series data format (TSD).
+\item Comma separated value (CSV).
+\item Column separated data (DAT).
+\item Encapsulated postscript (EPS). 
+\item Joint Photographic Experts Group (JPG). 
+\item Portable document format (PDF).
+\item Portable network graphics (PNG). 
+\item Scalable vector graphics (SVG).
+\end{itemize}
+In order to export a graph, you can either click on the Export icon \includegraphics{../gui/icons/export} or select one of the graph export options from the File menu.  When using the Export icon, the type of file exported will depend on the extension provided to the file name.  Click on the Export icon, browse to a location on your file system and enter the file name of {\tt ode.pdf} to create a PDF file for your graph.
 
-\section{GCM Editor}
+\begin{center}
+\includegraphics[height=60mm]{screenshots/exportTSD}
+\end{center}
 
-This section describes how to construct a GCM model for this example:
-\begin{enumerate}
-\item Select {\tt File} $\rightarrow$ {\tt New} $\rightarrow$ 
-      {\tt Genetic Circuit Model}.
-      Enter {\tt CI\_CII} as the GCM model ID at which point a GCM
-      editor will open.
-
-\includegraphics[height=45mm]{screenshots/newModel}
-
-\item Select {\tt Add Promoter}, enter {\tt PR} as the ID, and press
-  {\tt Ok}.  Next, add the {\tt PRE} promoter in the same way.
-
-\includegraphics[height=60mm]{screenshots/promoter}
-
-\item Select {\tt Add Species}, enter {\tt CI} as the ID, and press
-  {\tt Ok}.  Next, add the {\tt CII} species in the same way.
-
-\includegraphics[height=55mm]{screenshots/GCMspecies}
-
-\clearpage
-
-\item Select {\tt Add Influence}, change the input to {\tt CI}, change
-  the output to {\tt CII}, change the promoter to {\tt PR}, and the
-  type to {\tt repression}.  Next, add an activation influence between
-  {\tt CII} and {\tt CI} on promoter {\tt PRE}.
-
-\includegraphics[height=75mm]{screenshots/influence}
-
-\item Select {\tt Save GCM}, highlight {\tt CI\_CII.gcm} file, and
-  right click to select {\tt View Genetic Circuit}.
-
-\begin{tabular}{cc}
-\includegraphics[height=60mm]{screenshots/viewGenNet}&
-\includegraphics[height=60mm]{screenshots/viewGCM}
-\end{tabular}
-\end{enumerate}
-
-\clearpage 
-
-\section{Analysis}
-
-The following instructions describe how to analyze the GCM file just 
-created.  The SBML file can also be simulated using the following steps.  
-\begin{enumerate}
-\item Select {\tt Save GCM}, highlight {\tt CI\_CII.gcm} file,
-  right click to select {\tt Create Analysis View}, and set the
-  analysis ID to {\tt sim}.
-
-\includegraphics[height=60mm]{screenshots/GCMAnalysis}
-
-\item In the newly opened window, select {\tt ODE}.
-      Also, in this window, change the time limit to 2100.0 and print interval
-      to 10.0. Finally, select {\tt Save and Run} at the bottom of the window.
-
-\includegraphics[height=80mm]{screenshots/analysisView}
-
-\clearpage
-
-\item After the simulation completes, click on the {\tt TSD Graph} tab.
-%% \includegraphics[height=30mm]{screenshots/emptyGraph}
-%% \item 
-Double click on the graph to bring up the graph editor.
-  Highlight Average, if not already highlighted, select CI and CII, 
-change the Title to ``ODE Simulation Results'', 
-change the X-Axis Label to ``Time
-(seconds)'', and change the Y-Axis Label to ``Number of Molecules''.  
-Press the OK button.  Click on Export and enter file name of {\tt ode.jpg}.
-
-\includegraphics[height=80mm]{screenshots/odeResults}\\
-\includegraphics[height=90mm]{screenshots/odeSimResults}
-
-\clearpage
-
-\item Select the simulation options tab again, select {\tt Monte
-    Carlo}, change the number of runs to 100, and set the simulation ID
-  to {\tt ssa}.  Click on {\tt Save and Run}.  Click on the {\tt TSD
-    Graph} tab.
-Double click on the graph to bring up the graph editor.
-Open the ssa simulation directory, and highlight {\tt run-1}.
-Select CI and CII, change Title to ``SSA Simulation Results'', 
-change the X-Axis Label to ``Time (seconds)'', and change the Y-Axis
-Label to ``Number of Molecules''.  Press the OK button.  Click on
-Export and enter file name of {\tt ssa-1.jpg}.
-Repeat these steps to generate graphs for the average ({\tt
-  average.jpg}) and standard deviation ({\tt stddev.jpg}).
-Note that you can use the ``Deselect All'' button to
+Now, select the Simulation Options tab again, select {\tt Monte Carlo}, change the number of runs to 100, set the simulation ID to {\tt ssa}, and click on the Save and Run icon.  Click on the TSD Graph tab.  Double click on the graph to bring up the graph editor.  Open the {\tt ssa} simulation directory, and highlight {\tt run-1}.
+Select CI\_Total and CII, change the title to ``SSA Simulation Results'', change the X-Axis Label to ``Time (seconds)'', and change the Y-Axis Label to ``Number of Molecules''.  Press the OK button.  Click on the
+Export icon and enter the file name {\tt ssa-1.pdf}.  Repeat these steps to generate graphs for the average ({\tt
+  average.pdf}) and standard deviation ({\tt stddev.pdf}).  Note that you can use the ``Deselect All'' button to
 remove all items from the graph.
 
-\includegraphics[height=80mm]{screenshots/ssaResults}\\
-\includegraphics[height=90mm]{screenshots/ssaSimResults}
+\begin{center}
+\includegraphics[height=90mm]{screenshots/ssaResults}\\
+\includegraphics[height=80mm]{screenshots/ssaSimResults}
+\end{center}
 
-\clearpage
+Another way to view simulation results is on the schematic.  To do this, click on the schematic tab.  At the bottom of the window, select the Choose Simulation button which brings up a window with all the simulations in this analysis view.  Open the {\tt ssa} directory, select {\tt run-1.tsd}, and press OK. 
 
-\item Click on the parameter editor tab.  Highlight the {\tt PR} 
-      species, and select {\tt Edit Species}.  Select {\tt Custom} for
-      the initial amount of {\tt PR} and change it to 5.  
-      Click on the simulation options tab and change the simulation ID to
-      {\tt ssa5}.
-      Press the Save and Run button.
-      Click on the {\tt TSD Graph} tab and following the steps above, 
-      create the 
-      following plots {\tt ssa-1\_5.jpg}, {\tt average\_5.jpg}, and
-      {\tt stddev\_5.jpg}.  
+\begin{center}
+\includegraphics[height=80mm]{screenshots/chooseSim}
+\end{center}
 
-\includegraphics[height=70mm]{screenshots/paramEdit}\\
-\includegraphics[height=90mm]{screenshots/ssaSimResults5}
+Now, click on the CI species which brings up the Edit Species window.  Select the Appearance tab.  Here you can select how you want the species to appear as you playback the simulation.  You can have it change color on a gradient, change size, or change opacity.  You can also select the range of molecule counts to use for the gradients.  Finally, you can indicate that these selections are either for this species or all species in the model.  For our example, let's make CI follow a green color gradient, CI2 follow a red color gradient, and CII follow a blue color gradient.
+\begin{center}
+\includegraphics[height=50mm]{screenshots/editSpeciesAppearance}
+\end{center}
 
-\clearpage
+Once you have made your selections, you can now playback the simulation.  You can either single step the simulation by pressing the \includegraphics{../gui/icons/modelview/movie/single_step} icon or play continuously by pressing the \includegraphics{../gui/icons/modelview/movie/play} icon.  The playback can also be paused by pressing the \includegraphics{../gui/icons/modelview/movie/pause} icon and restarted by pressing the  \includegraphics{../gui/icons/modelview/movie/rewind} icon. 
 
-\item Now go back to the parameter editor tab, 
-      and change the initial amount for {\tt PR} to {\tt Sweep}, set
-      the start to 2, stop to 8, step to 3.  Press the save and run
-      button.  Click on the {\tt TSD Graph} tab and double click on the graph to
-      open the graph editor.  Notice the new simulations id's
-      generated for each of the run with PR of 2, PR of 5, and PR of
-      8.  Deselect all from the current graph, and go and add the 
-      average value of {\tt CI} from each of these simulation runs. 
+\begin{center}
+\includegraphics[height=80mm]{screenshots/movieView}
+\end{center}
 
-\includegraphics[height=80mm]{screenshots/sweep}\\
-\includegraphics[height=90mm]{screenshots/sweepPR}
+Using the schematic tab, you can also adjust initial values and parameters allowing one to perform simulations to determine the effect of these changes.  Clicking on any species, promoter, reaction, or influence brings up the corresponding editor.  To change a value, switch the corresponding combo box to modified which will then allow you to change the value.  For example, as shown below, we have reduced the degradation rate for CI to 0.00075.  Now, rerun the simulation and observe the change in the simulation data.
 
-% \item Simulate your lambda model with BioSim using the ODE method rkf45 with
-%       a time limit of 2100 and print interval of 50.
-%       Make a note of the simulation time and plot CI2 and CII.  
-%       Next, simulate using the Euler method.  Make a note of the simulation time
-%       and add CI2 and CII from the euler results to your graph.  
-%       How do the simulation times and results compare?
-%       Change the time step and rerun the Euler method.  Repeat until the results
-%       match up well.  What time step is required for a good match?
-%       How do the simulation times compare?
+%% TODO: show results
+\begin{center}
+\includegraphics[height=50mm]{screenshots/paramEdit}
+\end{center}
 
-\clearpage
+In addition to making single changes, you can also sweep a value as shown below.   When you click on the Sweep button, it brings up a window where you can select the start value, the stop value, and the step value.  In this example, simulations are generated using degradation rates of 0.001, 0.003, 0.005, and 0.007.  The level indicates how the sweep should perform when multiple variables are swept at the same time.  A variables at the same level are changed at the same time.  Furthermore, all variables on level 2 are stepped through all their values before changing the values of those variables on level 1.  After the values on level 1 are changed, the values on level 2 are stepped through all their values again.  Rerun the simulation and create a graph that shows the value of CI for each of the different degradation rates.
 
-\item Go back to the Parameter Editor tab and change {\tt PR} back to 
-{\tt Original} value type.  Go back to the Simulation Options tab,
-select {\tt Abstraction} and change the simulation ID to {\tt abs}.
-Press {\tt Save and Run} and note that the simulation time should be
-substantially faster.
-Go back to the {\tt TSD Graph} tab and double click on the graph to bring up
-the graph editor.  Deselect all and add the average value of {\tt CI}
-from both the {\tt abs} and {\tt ssa} simulations.  
-\end{enumerate}
+%% TODO: show results
+\begin{center}
+\includegraphics[height=50mm]{screenshots/sweep}
+%\includegraphics[height=90mm]{screenshots/sweepPR}
+\end{center}
 
+The efficiency of simulation can be improved by employing various automatic abstraction techniques.  Go back to the Schematic tab and change the degradation rate of CI back to the default value.  Also, go to the SBML elements tab and uncheck the rule for CI\_total.  To activate abstraction, click on the Simulation Options tab, select Abstraction and change the simulation ID to {\tt abs}.  Press the Save and Run icon and note that the simulation time is substantially faster.  Plot both the SSA results for CI\_total and CII with the abstraction results for CI (note this is now equivalent to CI\_total after abstraction) and CII.
+
+\begin{center}
 \includegraphics[height=90mm]{screenshots/absResults}
+\end{center}
 
-\clearpage 
+One way to understand why abstraction is so much faster is by looking at the complexity of the reaction-based model before and after abstraction.  The reaction-based model after abstraction is shown below which is clearly much simpler than the full model shown earlier.
 
-\section{Probabilistic Analysis}
+\begin{center}
+\includegraphics[height=80mm]{screenshots/viewNetworkAbs}
+\end{center}
+
+\section{Learn Tool}
+
+This section describes how a model can be learned from time series data using {\tt iBioSim}'s Learn Tool.  To demonstrate the Learn Tool, first create a simple model, {\tt lambdaLearn}, which just includes the two species CI and CII as shown below.  Next, create a learn view by right clicking on this model file and selecting Create Learn View.  Give this learn view the ID {\tt learnLambda}.  At this point, a new learn view should open.  You should also notice that an icon appears next to your model file.  When you click on this, it will show you all of the analysis and learn views associated with this model.
+
+\begin{center}
+\includegraphics[height=60mm]{screenshots/createLearn}
+\end{center}
+
+The next step is to add some experimental data from which you wish to learn a model.  In this demo, we will just utilize our simulation data as synthetic experimental data.  To do this, click Copy From View, and select {\tt simLambda/abs}.  Highlight {\tt simLambda/abs/run-1.tsd}, and you should see the simulation data for CI and CII appear on the right in the data editor. 
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/dataManager}
+\end{center}
+
+Now, click on the Learn tab.  Here you can edit the various learning options.  For example, you can either use auto generated levels or user generated levels for your data encoding.  Select Use User Generated Levels which will make the levels below editable.  You can also select how many bins to use.  Change the number of bins for both CI and CII to 3.  At this point, you can ask the tool to suggest levels by clicking on the Suggest Levels button.  Finally, click on the Save and Run icon which will bring up the model that has been learned from this experimental data
+using Graphviz's dotty program, and ask you for a model ID for the generated model.  
+
+%% TODO: double check with new results
+\begin{center}
+\includegraphics[height=80mm]{screenshots/learn}
+\end{center}
+
+\end{document} 
+
+\section{Hierarchical Modeling}
 
 This example illustrates how {\tt iBioSim} can be used for
 probabilistic analysis.
@@ -359,6 +336,8 @@ Repeat these steps to add constraints for $CII \geq 30$, and $t \geq
 
 \includegraphics[height=30mm]{screenshots/constraint}
 
+\includegraphics[height=30mm]{screenshots/properties}
+
 \clearpage
 
 \item Go back to your analysis view by clicking on the {\tt sim} tab.
@@ -379,95 +358,68 @@ graph them.  Press {\tt Ok}.
 
 \includegraphics[height=90mm]{screenshots/probResults}
 
+\begin{center}
+\includegraphics[height=20mm]{screenshots/createGrid}
+\end{center}
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/gridModel}
+\end{center}
+
 \end{enumerate}
 
 \clearpage
 
-\section{GCM Learning}
+% \includegraphics{../gui/icons/modelview/self_influence_selected}
 
-This section describes how a GCM can be learned from time series data.
-\begin{enumerate}
-\item Highlight {\tt CI\_CII.gcm}, right click on it, and select
-{\tt Create Learn View}.  Give the learn view the ID {\tt learn}.
+%% TODO: CREATE CII DEGRADATION COMPONENT
 
-\includegraphics[height=60mm]{screenshots/createLearn}
+% \includegraphics{../gui/icons/modelview/add_reaction_selected}
+% \includegraphics{../gui/icons/modelview/reaction_selected} 
+% \includegraphics{../gui/icons/modelview/modifier_selected} 
 
-\item At this point a {\tt Learn View} will open, and you could begin
-to add your experimental data.  In this demo, we will just utilize our
-simulation data as synthetic experimental data.  To do this, click
-{\tt Copy From View}, and select {\tt sim/ssa}.  Highlight 
-{\tt sim/ssa/run-1.tsd}, and you should see the simulation data for 
-{\tt CI} and {\tt CII} appear on the right in the data editor. 
+\begin{center}
+\includegraphics[height=65mm]{screenshots/P1}
+\end{center}
 
-\includegraphics[height=80mm]{screenshots/dataManager}
+\begin{center}
+\includegraphics[height=65mm]{screenshots/reaction}
+\end{center}
 
-\clearpage
+\begin{center}
+\includegraphics[height=40mm]{screenshots/reactant}
+\end{center}
 
-\item Click on the {\tt Learn} tab.  Here you can edit the various
-  learning options.  For example, you can either use auto generated
-  levels or user generated levels for your data encoding.  Select 
-{\tt Use User Generated Levels} which will make the levels below
-editable.  You can also select how many bins to use.  Change the
-number of bins for both {\tt CI} and {\tt CII} to 3.  At this point,
-you can ask the tool to suggest levels by clicking on the {\tt Suggest
-  Levels} button.  Finally, press {\tt Save and Learn} which will
-bring up the GCM that has been learned from this experimental data
-using Graphviz's dotty program.
+\begin{center}
+\includegraphics[height=50mm]{screenshots/product}
+\end{center}
 
-\includegraphics[height=80mm]{screenshots/learn}
-\end{enumerate}
+% Highlight {\tt kf} and select {\tt Edit Selected Parameter}, change  {\tt kf} to {\tt k2f}, and change the units to {\tt per\_second\_mole}.   Highlight {\tt kr} and select {\tt Edit Selected Parameter}, change {\tt kr} to {\tt k2r}, and change the units to {\tt per\_second}.
+
+\begin{center}
+\includegraphics[height=50mm]{screenshots/localParam}
+\end{center}
+
+% Select {\tt Use Mass Action}, select {\tt Add},  and select {\tt Save and Check SBML}.  There should be no errors.
+
+\begin{center}
+\includegraphics[height=60mm]{screenshots/kineticLaw}
+\end{center}
+
+% \includegraphics{../gui/icons/modelview/add_component_selected}
+
+\begin{center}
+\includegraphics[height=60mm]{screenshots/addComponent}
+\end{center}
+
+\begin{center}
+\includegraphics[height=60mm]{screenshots/addPort}
+\end{center}
+
+%% TODO: include??
+% \includegraphics{../gui/icons/modelview/no_influence_selected}
+
+%% TODO: include??
+%  The remaining items on the toolbar allow you to apply an automatically layout routine \includegraphics{../gui/icons/modelview/choose_layout_selected}, zoom, restore to default size (unzoom), pan, undo, and redo.
  
-\clearpage
-
-\section{Genetic Circuit Design}
-
-This last section describes how {\tt iBioSim} can be used to design
-genetic logic gates.
-\begin{enumerate}
-\item Select {\tt File $\rightarrow$ New $\rightarrow$ Genetic Circuit
-    Model} and give it the ID {\tt gate}.
-\item Add promoters {\tt P1} and {\tt P2}, species {\tt A}, {\tt B},
-  and {\tt C} (make {\tt A} and {\tt B} type {\tt boundary} and {\tt
-    C} type normal), and repression influences from {\tt A} to {\tt C} on
-  {\tt P1} and {\tt B} to {\tt C} on {\tt P2}.  Save as an SBML
-  template named {\tt gateEnv}, and associate that SBML file with this
-  GCM.  Finally, save the GCM.
-\item Open {\tt gateEnv.sbml} in an SBML editor.  Click on the\\ 
-      {\tt Initial Assignments/Rules/Constraints/Events} tab, and
-      select {\tt Add Event}.
-\item In the event editor, give a trigger of {\tt geq(t,2000)}.   
-      Press {\tt Add Assignment}, select variable {\tt A}, and enter
-      60 in the {\tt Assignment} field.  Press {\tt Add} for the event
-      assignment and {\tt Add} for the event.  Repeat these steps to
-      create an assignment to {\tt B} of 60 at time 4000.  Note that
-      you may ignore the warnings.  These can be suppressed by
-      changing your preferences and deselecting {\tt Check for
-        undeclared units in SBML}.  Be sure to press {\tt Save SBML}
-      when you are done.
-\item Highlight {\tt gate.gcm}, right-click, and select {\tt Create
-    Analysis View}.  Give it the ID {\tt simGate}.
-\item In the analysis view, change the options to 
-      {\tt Monte Carlo}, time limit of 6000, print interval of 30,
-      runs of 100.  
-%% Click on the {\tt Abstractions Options} tab.
-%%      Highlight {\tt A} and press {\tt Add Species}.  Repeat for {\tt
-%%        B} and {\tt C} to also make them interesting species.
-      Press {\tt Save and Run}.
-\item Select the {\tt TSD Graph} tab and graph the averages of {\tt
-    A},  {\tt B}, and {\tt C}.  The behavior should be that of a Nand
-  gate.
-
-\includegraphics[height=90mm]{screenshots/nandResults}
-
-\clearpage
-
-\item Go back to the GCM editor for {\tt gate}.  Change the promoter
-  on the influence from {\tt B} to {\tt C} to {\tt P1}, and save the
-  GCM.  Go back to your analysis view and press {\tt Save and Run}.
-  The behavior should now be that of a Nor gate.
-
-\includegraphics[height=90mm]{screenshots/norResults}
-
-\end{enumerate}
-  
 \end{document}

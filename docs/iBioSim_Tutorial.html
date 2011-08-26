@@ -31,17 +31,13 @@
 <h1>Contents </h1><a href="#tth_sEc1"
 >1&nbsp; Introduction</a><br />
 <a href="#tth_sEc2"
->2&nbsp; SBML Editor</a><br />
+>2&nbsp; Project Management</a><br />
 <a href="#tth_sEc3"
->3&nbsp; GCM Editor</a><br />
+>3&nbsp; Model Editor</a><br />
 <a href="#tth_sEc4"
->4&nbsp; Analysis</a><br />
+>4&nbsp; Analysis Tool</a><br />
 <a href="#tth_sEc5"
->5&nbsp; Probabilistic Analysis</a><br />
-<a href="#tth_sEc6"
->6&nbsp; GCM Learning</a><br />
-<a href="#tth_sEc7"
->7&nbsp; Genetic Circuit Design</a><br />
+>5&nbsp; Learn Tool</a><br />
 
 
 <div class="p"><!----></div>
@@ -51,675 +47,391 @@
 1</a>&nbsp;&nbsp;Introduction</h2>
 
 <div class="p"><!----></div>
-The example described in this tutorial constructs a simple model for
-the <em>cI</em> and <em>cII</em> genes and the P<sub>R</sub> and P<sub>RE</sub>
-promoters from the phage &#955; decision circuit.  This example
-illustrates many of the features of <tt>iBioSim</tt>.
+<tt>iBioSim</tt> has been developed for the modeling, analysis, and design of genetic circuits.  While the primary target of <tt>iBioSim</tt> is models of genetic circuits, models representing metabolic networks, cell-signaling pathways, and other biological and chemical systems can also be analyzed.  <tt>iBioSim</tt> includes the following components: 
+
+<div class="p"><!----></div>
+
+<ul>
+<li> Model Editor - a tool to create a model of a genetic circuit or other biological system.
+<div class="p"><!----></div>
+</li>
+
+<li> LPN Model Editor - a tool to create a model using a <em>labeled Petri net</em> (LPN).
+<div class="p"><!----></div>
+</li>
+
+<li> Analysis Tool - an abstraction-based ODE, Monte Carlo, and Markov analysis tool.
+<div class="p"><!----></div>
+</li>
+
+<li> TSD Graph Editor- a tool to visualize TSD files.
+<div class="p"><!----></div>
+</li>
+
+<li> Histogram Graph Editor - a tool to visualize probability data.
+<div class="p"><!----></div>
+</li>
+</ul>
+
+<div class="p"><!----></div>
+This tutorial illustrates each of these features of <tt>iBioSim</tt> using a simple model for the <em>cI</em> and <em>cII</em> genes and the P<sub>R</sub> and P<sub>RE</sub> promoters from the phage &#955; decision circuit.  
 
 <div class="p"><!----></div>
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc2">
-2</a>&nbsp;&nbsp;SBML Editor</h2>
+2</a>&nbsp;&nbsp;Project Management</h2>
 
 <div class="p"><!----></div>
-After starting <tt>iBioSim</tt>, complete the following steps to create
-an SBML model for this example:
-
-<ol type="1">
-<li> Select <tt>File</tt> &#8594; <tt>New</tt> &#8594; <tt>Project</tt>.
-      Browse to desired path and create a project named <tt>demo</tt>.
-
-<div class="p"><!----></div>
-<img src="screenshots/project.png" alt="screenshots/project.png" />
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>File</tt> &#8594; <tt>New</tt> &#8594; <tt>SBML Model</tt>.
-      Enter <tt>lambda</tt> as the SBML model ID at which point an SBML
-      editor will open.
-
-<div class="p"><!----></div>
-<img src="screenshots/newModel.png" alt="screenshots/newModel.png" />
+Within <tt>iBioSim</tt>, all files are collected within projects.   A project is a collection of models, analysis views, learn views, and graphs.  As shown below, <tt>iBioSim</tt> displays all project files on the left, the open models, views, and graphs on the right, and a log of all external commands on the bottom.  The menu bar is located on the top of the window in the Windows and Linux versions.  It is located on the top of the screen in the MacOS version.
 
 <div class="p"><!----></div>
 
-<div class="p"><!----></div>
-</li>
-
-<li> Highlight the <tt>default</tt> compartment, select <tt>Edit
-    Compartment</tt>, and change its ID to <tt>Cytoplasm</tt>.  Also, change 
-    the units to <tt>volume</tt>.
+<center><img src="screenshots/iBioSim.png" alt="screenshots/iBioSim.png" />
+</center>
 
 <div class="p"><!----></div>
-<img src="screenshots/compartment.png" alt="screenshots/compartment.png" />
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Species</tt> and enter <tt>CI</tt> as the ID, 
-<tt>The lambda repressor</tt> as the name, change the units 
-to <tt>mole</tt>, and set the <tt>Has Only Substance Units</tt> flag to
-true.  Select <tt>Add Species</tt> again and enter <tt>CI2</tt> as the ID,
-<tt>CI dimer</tt> as the name, change the units to <tt>mole</tt>, and set the
-<tt>Has Only Substance Units</tt> flag to true. 
-
-<div class="p"><!----></div>
-<img src="screenshots/species.png" alt="screenshots/species.png" />
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Parameter</tt> and enter <tt>nd</tt> as the ID,
-      <tt>Number of molecules in dimer</tt> as the name, the value to be 2,
-      and change the units to <tt>dimensionless</tt>.
-
-<div class="p"><!----></div>
-<img src="screenshots/parameter.png" alt="screenshots/parameter.png" />
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Definitions/Types</tt> tab, and select <tt>Add Unit</tt>
-      and enter <tt>per_second</tt> as the ID.  Select <tt>Add to List</tt>, 
-      select <tt>second</tt> as the kind, change the exponent to &#8722;1, 
-      and click <tt>Add</tt>.  Click <tt>Add</tt> in the <tt>Unit Definition Editor</tt>.
-      Repeat these steps to create a <tt>per_second_mole</tt> unit 
-      (i.e., (second)<sup>&#8722;1</sup>(mole)<sup>&#8722;1</sup>).
-
-<div class="p"><!----></div>
-<img src="screenshots/units.png" alt="screenshots/units.png" />
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Main Elements</tt> tab.  Select <tt>Add Reaction</tt> and
-  enter <tt>Dimerize_CI</tt> as the ID, <tt>Reaction to dimerize CI</tt> as
-  the name, and change reversible to <tt>true</tt>.
-
-<div class="p"><!----></div>
-<img src="screenshots/reaction.png" alt="screenshots/reaction.png" />
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Reactant</tt> and select <tt>CI</tt> as the species,
-      change <tt>Stoichiometry</tt> to <tt>Stoichiometry math</tt>, and set its
-      value to <tt>nd</tt>.
-
-<div class="p"><!----></div>
-<img src="screenshots/reactant.png" alt="screenshots/reactant.png" />
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Product</tt> and select <tt>CI2</tt> as the species.
-      Leave the stoichiometry as 1.
-
-<div class="p"><!----></div>
-<img src="screenshots/product.png" alt="screenshots/product.png" />
-<div class="p"><!----></div>
-</li>
-
-<li> Highlight <tt>kf</tt> and select <tt>Edit Selected Parameter</tt>, change
-      <tt>kf</tt> to <tt>k2f</tt>, and change the units to <tt>per_second_mole</tt>.
-      Highlight <tt>kr</tt> and select <tt>Edit Selected Parameter</tt>, change
-      <tt>kr</tt> to <tt>k2r</tt>, and change the units to <tt>per_second</tt>.
-
-<div class="p"><!----></div>
-<img src="screenshots/localParam.png" alt="screenshots/localParam.png" />
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Use Mass Action</tt>, select <tt>Add</tt>, 
-      and select <tt>Save and Check SBML</tt>.  There should be no errors.
-
-<div class="p"><!----></div>
-<img src="screenshots/kineticLaw.png" alt="screenshots/kineticLaw.png" />
+To create a new project, select New &#8594; Project from the File menu as shown below.  You will then be prompted to browse to a desired location and to give a name to the project directory.  Enter the name <tt>Tutorial</tt>.  After you do this, click the new button and a new project directory will be created.  
 
 <div class="p"><!----></div>
 
-<div class="p"><!----></div>
-</li>
-
-<li> Highlight <tt>lambda.sbml</tt>, using right mouse button, select 
-      <tt>View Network</tt>.
-      Highlight <tt>lambda.sbml</tt>, using right mouse button, select 
-      <tt>View in Browser</tt>.
+<center><img src="screenshots/project.png" alt="screenshots/project.png" />
+</center>
 
 <div class="p"><!----></div>
-<img src="screenshots/viewNet.png" alt="screenshots/viewNet.png" /><br />
+ <h2><a name="tth_sEc3">
+3</a>&nbsp;&nbsp;Model Editor</h2>
 
-<table>
-<tr><td align="center"><img src="screenshots/viewNetwork.png" alt="screenshots/viewNetwork.png" /> </td><td align="center"><img src="screenshots/viewBrowser.png" alt="screenshots/viewBrowser.png" />
-</td></tr></table>
-
+<div class="p"><!----></div>
+After you have created a project, you can create a new model to add to the project by selecting New &#8594; Model from the File menu as shown below. You will then be prompted to enter a model id.  Enter <tt>lambda</tt> (do not select "Make Grid" at this time).  At this point, a Model editor will open in a new tab.
 
 <div class="p"><!----></div>
 
+<center><img src="screenshots/newModel.png" alt="screenshots/newModel.png" />
+</center>
+
 <div class="p"><!----></div>
-</li>
 
-<li> Go back to the SBML editor complete the construction of the
-      chemical reaction network shown below:
+<center><img src="screenshots/ModelId.png" alt="screenshots/ModelId.png" />
+</center>
 
-<br clear="all" /><table border="0" width="95%"><tr><td>
-<table border="0" cellspacing="0" cellpadding="0">
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PRE + <span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>KPRE2</small><!--sup
---><br />&#8596; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PRE_<span class="roman">RNAP</span> </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PRE + <span class="roman">CII</span> + <span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>KPRE4</small><!--sup
---><br />&#8596; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PRE_<span class="roman">CII</span>_<span class="roman">RNAP</span> </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PRE_<span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>kPREb</small><!--sup
---><br />&#8594; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PRE_<span class="roman">RNAP</span> + n<span class="roman">CI</span> </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PRE_<span class="roman">CII</span>_<span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>kPRE</small><!--sup
---><br />&#8594; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PRE_<span class="roman">CII</span>_<span class="roman">RNAP</span> + n<span class="roman">CI</span> </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PR + <span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>KOR9</small><!--sup
---><br />&#8596; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PR_<span class="roman">RNAP</span> </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PR + 2 <span class="roman">CI</span><span class="roman">2</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>KOR10</small><!--sup
---><br />&#8596; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PR_2 <span class="roman">CI</span><span class="roman">2</span> </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PR_<span class="roman">RNAP</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>kPR</small><!--sup
---><br />&#8594; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-PR_<span class="roman">RNAP</span> + n<span class="roman">CII</span> </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-2 <span class="roman">CI</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>K2</small><!--sup
---><br />&#8596; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-<span class="roman">CI</span><span class="roman">2</span> </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-<span class="roman">CI</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>k1</small><!--sup
---><br />&#8594; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-() </td></tr></table></td><td width="50%"></td></tr>
- <tr><td width="50%"></td><td nowrap="nowrap" align="right" colspan="1"><table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-<span class="roman">CII</span> </td></tr></table></td><td nowrap="nowrap" align="left">
-<table border="0" cellspacing="0" cellpadding="2"><tr><td nowrap="nowrap" align="left">
-</td><td nowrap="nowrap" align="center">
-<small>k10</small><!--sup
---><br />&#8594; <br />
-<small></small>&nbsp;<br /></td><td nowrap="nowrap" align="center">
-</td></tr></table></td><td nowrap="nowrap" align="left">
-<table><tr><td nowrap="nowrap" align="right" colspan="1">()</td></tr></table></td><td width="50%"></td></tr></table>
-</td></tr></table>
+<div class="p"><!----></div>
 
+<center><img src="screenshots/ModelEditor.png" alt="screenshots/ModelEditor.png" />
+</center>
 
+<div class="p"><!----></div>
+To add a chemical species, select the Add Species icon <img src="../gui/icons/modelview/add_species_selected.png" alt="../gui/icons/modelview/add_species_selected.png" /> and click on the schematic canvas.  This will drop a new species with default ID and other values.  You may change these defaults by double-clicking on the species to open the Species Editor.  In this case, let us change the ID to CI and units to mole.  We will leave all other values at their default values.  One thing that is important to note is that when this model is analyzed a default degradation reaction will be created which has a rate of 0.0075.  If you do not want a degradation reaction, you must change "default" to "custom" and change the degradation rate to 0.
 
 <div class="p"><!----></div>
 
 <center>
-<table border="1">
-<tr><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-Constant </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-Value </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-Constant </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-Value </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-Constant </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-Value </td></tr></table></td></tr><tr><td></td></tr>
-<tr><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-KPRE2 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.01&nbsp;M<sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-KPRE4 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.00161&nbsp;M<sup>&#8722;2</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-kPREb </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.00004&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td></tr>
-<tr><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-kPRE </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.015&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-KOR9 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.69422&nbsp;M<sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-KOR10 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.06568&nbsp;M<sup>&#8722;2</sup> </td></tr></table></td></tr>
-<tr><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-kPR </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.014&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-K2 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.1 M<sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-k1 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.0007&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td></tr>
-<tr><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-k10 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-0.002&nbsp;<span class="roman">sec</span><sup>&#8722;1</sup> </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-n </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-10 </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-&nbsp; </td></tr></table></td><td align="center"><table border="0" cellspacing="0" cellpadding="0"><tr><td nowrap="nowrap" align="center">
-&nbsp; </td></tr></table></td></tr></table>
- <br />
-Set an initial amount of 1.0 for PRE and OR, 30.0 for RNAP, and 0.0 
-for the rest.
+<img src="screenshots/species.png" alt="screenshots/species.png" />
 </center>
-<div class="p"><!----></div>
-</li>
-</ol>
 
 <div class="p"><!----></div>
+Add another species for the CI dimer molecule.  Edit this species to set its ID to CI2 and change its units to mole.  This species is created using a complex formation reaction with an equilibrium constant of 0.1 M<sup>&#8722;1</sup>.  Change default to custom for the complex formation rate and set it to this rate as shown below.
 
 <div class="p"><!----></div>
 
-<div class="p"><!----></div>
- <h2><a name="tth_sEc3">
-3</a>&nbsp;&nbsp;GCM Editor</h2>
+<center>
+<img src="screenshots/species2.png" alt="screenshots/species2.png" /> 
+</center>
 
 <div class="p"><!----></div>
-This section describes how to construct a GCM model for this example:
-
-<ol type="1">
-<li> Select <tt>File</tt> &#8594; <tt>New</tt> &#8594; 
-      <tt>Genetic Circuit Model</tt>.
-      Enter <tt>CI_CII</tt> as the GCM model ID at which point a GCM
-      editor will open.
-
-<div class="p"><!----></div>
-<img src="screenshots/newModel.png" alt="screenshots/newModel.png" />
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Promoter</tt>, enter <tt>PR</tt> as the ID, and press
-  <tt>Ok</tt>.  Next, add the <tt>PRE</tt> promoter in the same way.
-
-<div class="p"><!----></div>
-<img src="screenshots/promoter.png" alt="screenshots/promoter.png" />
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Species</tt>, enter <tt>CI</tt> as the ID, and press
-  <tt>Ok</tt>.  Next, add the <tt>CII</tt> species in the same way.
-
-<div class="p"><!----></div>
-<img src="screenshots/GCMspecies.png" alt="screenshots/GCMspecies.png" />
+The next step is to add a complex formation reaction to convert CI monomers into CI dimers.  Select the complex formation icon <img src="../gui/icons/modelview/bio_activation_selected.png" alt="../gui/icons/modelview/bio_activation_selected.png" />, highlight the CI species, and while holding the mouse button stretch the complex formation arc to the CI2 species.   If you double click on the complex formation arc, an influence editor will open which indicates that this is a complex formation arc and the stoichiometry of binding (i.e., the number of molecules of the source species used to construct the sink species) is 2.  The default in this case is correct as it does take two molecules of CI to make CI2.
 
 <div class="p"><!----></div>
 
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Add Influence</tt>, change the input to <tt>CI</tt>, change
-  the output to <tt>CII</tt>, change the promoter to <tt>PR</tt>, and the
-  type to <tt>repression</tt>.  Next, add an activation influence between
-  <tt>CII</tt> and <tt>CI</tt> on promoter <tt>PRE</tt>.
+<center><img src="screenshots/complex.png" alt="screenshots/complex.png" /> 
+</center>
 
 <div class="p"><!----></div>
-<img src="screenshots/influence.png" alt="screenshots/influence.png" />
-<div class="p"><!----></div>
-</li>
-
-<li> Select <tt>Save GCM</tt>, highlight <tt>CI_CII.gcm</tt> file, and
-  right click to select <tt>View Genetic Circuit</tt>.
+Next, let's add the PR promoter which initiates transcription of the gene that produces the protein CII.  To do this, select the promoter icon <img src="../gui/icons/modelview/promoter_mode_selected.png" alt="../gui/icons/modelview/promoter_mode_selected.png" />, and click on the schematic canvas to drop the promoter with a default ID and parameter values.  Double click on the promoter to bring up the promoter editor.  Change the ID to PR and customize the RNAP binding equilibrium to be 0.69422, as well as, the open complex production rate to be 0.014. 
 
 <div class="p"><!----></div>
 
-<table>
-<tr><td align="center"><img src="screenshots/viewGenNet.png" alt="screenshots/viewGenNet.png" /></td><td align="center"><img src="screenshots/viewGCM.png" alt="screenshots/viewGCM.png" />
-</td></tr></table>
+<center><img src="screenshots/promoter.png" alt="screenshots/promoter.png" /> 
+</center>
 
 <div class="p"><!----></div>
-</li>
-</ol>
+The PR promoter is repressed by the CI2 species.  To create this relationship, select the repression arc icon 
+<img src="../gui/icons/modelview/inhibition_selected.png" alt="../gui/icons/modelview/inhibition_selected.png" />, highlight the CI2 species, and while holding the mouse button stretch the repression arc to the PR promoter.  Next, double click on the repression arc to bring up the influence editor.  In this editor, customize the stoichiometry of binding to 1 indicating that just one CI dimer is necessary to repress this promoter and change the repression binding equilibrium to 0.2165.
 
 <div class="p"><!----></div>
-  <h2><a name="tth_sEc4">
-4</a>&nbsp;&nbsp;Analysis</h2>
+
+<center><img src="screenshots/repression.png" alt="screenshots/repression.png" /> 
+</center>
 
 <div class="p"><!----></div>
-The following instructions describe how to analyze the GCM file just 
-created.  The SBML file can also be simulated using the following steps.  
-
-<ol type="1">
-<li> Select <tt>Save GCM</tt>, highlight <tt>CI_CII.gcm</tt> file,
-  right click to select <tt>Create Analysis View</tt>, and set the
-  analysis ID to <tt>sim</tt>.
+As mentioned earlier, the PR promoter initiations the production of the CII species.  Add the CII species following the steps given earlier for adding a species.  Then, highlight the PR promoter and while holding the mouse button stretch the production arc to the CII species.  Note that the icons selected for this are not important because all arcs from promoters to species are always production arcs.
 
 <div class="p"><!----></div>
-<img src="screenshots/GCMAnalysis.png" alt="screenshots/GCMAnalysis.png" />
-<div class="p"><!----></div>
-</li>
 
-<li> In the newly opened window, select <tt>ODE</tt>.
-      Also, in this window, change the time limit to 2100.0 and print interval
-      to 10.0. Finally, select <tt>Save and Run</tt> at the bottom of the window.
+<center><img src="screenshots/production.png" alt="screenshots/production.png" />
+</center>
 
 <div class="p"><!----></div>
+Finally, CII species activates the production of the CI species from the PRE promoter.  Promoters do not need to always be drawn.  They can also be implicit on an influence.  To add an activation arc with an implicit promoter, select the activation arc icon <img src="../gui/icons/modelview/activation_selected.png" alt="../gui/icons/modelview/activation_selected.png" />, highlight the CII species, and while holding the mouse button stretch the activation arc to the CI species.  This creates not only the influence but also a default promoter.   Double click on the activation arc to bring up the influence editor.  In this editor, customize the stoichiometry of binding to 1 indicating that just one CII molecule is necessary to activate this promoter and change the activation binding equilibrium to 0.00161.  Finally, click on the edit promoter button and change the ID of this promoter to PRE.  Also, customize the RNAP binding equilibrium to be 0.01, the basal production rate to be 0.00004, and the activated production rate to be 0.015.
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/activation.png" alt="screenshots/activation.png" />
+</center>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/activated_promoter.png" alt="screenshots/activated_promoter.png" />
+</center>
+
+<div class="p"><!----></div>
+
+<div class="p"><!----></div>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/function.png" alt="screenshots/function.png" />
+</center>
+
+<div class="p"><!----></div>
+
+<center>
+<img src="screenshots/units.png" alt="screenshots/units.png" />
+</center>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/ModelUnits.png" alt="screenshots/ModelUnits.png" />
+</center>
+
+<div class="p"><!----></div>
+
+<center>
+<img src="screenshots/compartment.png" alt="screenshots/compartment.png" />
+</center>
+
+<div class="p"><!----></div>
+
+<div class="p"><!----></div>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/GCMparam.png" alt="screenshots/GCMparam.png" />
+</center>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/parameter.png" alt="screenshots/parameter.png" />
+</center>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/initial.png" alt="screenshots/initial.png" />
+</center>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/rule.png" alt="screenshots/rule.png" />
+</center>
+
+<div class="p"><!----></div>
+
+<div class="p"><!----></div>
+At this point, make sure your model has been saved by either clicking on the Save icon <img src="../gui/icons/save.png" alt="../gui/icons/save.png" /> or selecting the Save option from the File menu.
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc4">
+4</a>&nbsp;&nbsp;Analysis Tool</h2>
+
+<div class="p"><!----></div>
+This section describes how to analyze the model just created.  The first step is to create an analysis view.  To do this, right click on the model file and select Create Analysis View.  Enter the analysis ID <tt>simLambda</tt>.  At this point, a new analysis view should open.  You should also notice that an icon appears next to your model file.  When you click on this, it will show you all of the analysis and learn views associated with this model.
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/GCMAnalysis.png" alt="screenshots/GCMAnalysis.png" /><br />
 <img src="screenshots/analysisView.png" alt="screenshots/analysisView.png" />
+</center>
+
+<div class="p"><!----></div>
+In order to perform analysis, the analysis tool first converts the model into a reaction-based model in the <em>Systems Biology Markup Language</em> (SBML).  There are three different ways to see the reaction-based model that is produced.  If GraphViz is installed on your computer, you can select Network for your Simulation Type.  Then, either press the Save and Run icon <img src="../gui/icons/run-icon.jpg" alt="../gui/icons/run-icon.jpg" /> or select the Save and Run option from the File menu.  The result will be a GraphViz window will open showing the reaction-based model such as the one shown below for our example.  If it does not open in GraphViz, make sure that you have files with the <tt>.dot</tt> file extension associated with GraphViz on your computer.  You can also view the model in a web browser by selecting Browser for your simulation type.  In this case, you should ensure that you have files with the <tt>.xhtml</tt> extension associated with your favorite browser.  Finally, you can save the reaction-based model by selecting Model as your simulation type.  In this case, you must provide a new model ID.  This new model will appear in your project, and it can be opened in the Model Editor.  Since this model does not include any layout information, you will need to either lay it out by hand or using one of the default layout routines selectable using the Apply Layout icon <img src="../gui/icons/modelview/choose_layout_selected.png" alt="../gui/icons/modelview/choose_layout_selected.png" />,
 
 <div class="p"><!----></div>
 
-<div class="p"><!----></div>
-</li>
-
-<li> After the simulation completes, click on the <tt>TSD Graph</tt> tab.
-Double click on the graph to bring up the graph editor.
-  Highlight Average, if not already highlighted, select CI and CII, 
-change the Title to "ODE Simulation Results", 
-change the X-Axis Label to "Time
-(seconds)", and change the Y-Axis Label to "Number of Molecules".  
-Press the OK button.  Click on Export and enter file name of <tt>ode.jpg</tt>.
+<center><img src="screenshots/viewNetwork.png" alt="screenshots/viewNetwork.png" />
+</center>
 
 <div class="p"><!----></div>
-<img src="screenshots/odeResults.png" alt="screenshots/odeResults.png" /><br />
+
+<center><img src="screenshots/viewBrowser.png" alt="screenshots/viewBrowser.png" />
+</center>
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/reactionModel.png" alt="screenshots/reactionModel.png" />
+</center>
+
+<div class="p"><!----></div>
+Next, click on the SBML elements tab.  This tab allows you to select which SBML model elements to include in your analysis.  This includes initial assignments, rules, constraints, and events.  Initially, let's only include the rule to compute CI_total.  Uncheck all the elements.
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/SBMLElements.png" alt="screenshots/SBMLElements.png" />
+</center>
+
+<div class="p"><!----></div>
+Now, go back to the simulation options tab.  Here, change the simulation type back to ODE, change the time limit to 2100.0, change the print interval to 10.0, and enter a Simulation ID of <tt>ode</tt>.  Then, either press the Save and Run icon <img src="../gui/icons/run-icon.jpg" alt="../gui/icons/run-icon.jpg" /> or select Save and Run option from the File menu.
+After the simulation completes, click on the TSD Graph tab.  Double click on the graph to bring up the graph editor.
+Open the <tt>ode</tt> simulation, highlight Average, select CI_total and CII, change the Title to "ODE Simulation Results", change the X-Axis Label to "Time (seconds)", and change the Y-Axis Label to "Number of Molecules".  
+Press the OK button.  
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/odeResults.png" alt="screenshots/odeResults.png" /><br />
 <img src="screenshots/odeSimResults.png" alt="screenshots/odeSimResults.png" />
+</center>
 
 <div class="p"><!----></div>
+Graphs can be exported in a variety of formats including:
 
+<ul>
+<li> Time series data format (TSD).
 <div class="p"><!----></div>
 </li>
 
-<li> Select the simulation options tab again, select <tt>Monte
-    Carlo</tt>, change the number of runs to 100, and set the simulation ID
-  to <tt>ssa</tt>.  Click on <tt>Save and Run</tt>.  Click on the <tt>TSD
-    Graph</tt> tab.
-Double click on the graph to bring up the graph editor.
-Open the ssa simulation directory, and highlight <tt>run-1</tt>.
-Select CI and CII, change Title to "SSA Simulation Results", 
-change the X-Axis Label to "Time (seconds)", and change the Y-Axis
-Label to "Number of Molecules".  Press the OK button.  Click on
-Export and enter file name of <tt>ssa-1.jpg</tt>.
-Repeat these steps to generate graphs for the average (<tt>
-  average.jpg</tt>) and standard deviation (<tt>stddev.jpg</tt>).
-Note that you can use the "Deselect All" button to
+<li> Comma separated value (CSV).
+<div class="p"><!----></div>
+</li>
+
+<li> Column separated data (DAT).
+<div class="p"><!----></div>
+</li>
+
+<li> Encapsulated postscript (EPS).
+<div class="p"><!----></div>
+</li>
+
+<li> Joint Photographic Experts Group (JPG).
+<div class="p"><!----></div>
+</li>
+
+<li> Portable document format (PDF).
+<div class="p"><!----></div>
+</li>
+
+<li> Portable network graphics (PNG).
+<div class="p"><!----></div>
+</li>
+
+<li> Scalable vector graphics (SVG).
+<div class="p"><!----></div>
+</li>
+</ul>
+In order to export a graph, you can either click on the Export icon <img src="../gui/icons/export.jpg" alt="../gui/icons/export.jpg" /> or select one of the graph export options from the File menu.  When using the Export icon, the type of file exported will depend on the extension provided to the file name.  Click on the Export icon, browse to a location on your file system and enter the file name of <tt>ode.pdf</tt> to create a PDF file for your graph.
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/exportTSD.png" alt="screenshots/exportTSD.png" />
+</center>
+
+<div class="p"><!----></div>
+Now, select the Simulation Options tab again, select <tt>Monte Carlo</tt>, change the number of runs to 100, set the simulation ID to <tt>ssa</tt>, and click on the Save and Run icon.  Click on the TSD Graph tab.  Double click on the graph to bring up the graph editor.  Open the <tt>ssa</tt> simulation directory, and highlight <tt>run-1</tt>.
+Select CI_Total and CII, change the title to "SSA Simulation Results", change the X-Axis Label to "Time (seconds)", and change the Y-Axis Label to "Number of Molecules".  Press the OK button.  Click on the
+Export icon and enter the file name <tt>ssa-1.pdf</tt>.  Repeat these steps to generate graphs for the average (<tt>
+  average.pdf</tt>) and standard deviation (<tt>stddev.pdf</tt>).  Note that you can use the "Deselect All" button to
 remove all items from the graph.
 
 <div class="p"><!----></div>
-<img src="screenshots/ssaResults.png" alt="screenshots/ssaResults.png" /><br />
+
+<center><img src="screenshots/ssaResults.png" alt="screenshots/ssaResults.png" /><br />
 <img src="screenshots/ssaSimResults.png" alt="screenshots/ssaSimResults.png" />
+</center>
+
+<div class="p"><!----></div>
+Another way to view simulation results is on the schematic.  To do this, click on the schematic tab.  At the bottom of the window, select the Choose Simulation button which brings up a window with all the simulations in this analysis view.  Open the <tt>ssa</tt> directory, select <tt>run-1.tsd</tt>, and press OK. 
 
 <div class="p"><!----></div>
 
-<div class="p"><!----></div>
-</li>
-
-<li> Click on the parameter editor tab.  Highlight the <tt>PR</tt> 
-      species, and select <tt>Edit Species</tt>.  Select <tt>Custom</tt> for
-      the initial amount of <tt>PR</tt> and change it to 5.  
-      Click on the simulation options tab and change the simulation ID to
-      <tt>ssa5</tt>.
-      Press the Save and Run button.
-      Click on the <tt>TSD Graph</tt> tab and following the steps above, 
-      create the 
-      following plots <tt>ssa-1_5.jpg</tt>, <tt>average_5.jpg</tt>, and
-      <tt>stddev_5.jpg</tt>.  
+<center><img src="screenshots/chooseSim.png" alt="screenshots/chooseSim.png" />
+</center>
 
 <div class="p"><!----></div>
-<img src="screenshots/paramEdit.png" alt="screenshots/paramEdit.png" /><br />
-<img src="screenshots/ssaSimResults5.png" alt="screenshots/ssaSimResults5.png" />
+Now, click on the CI species which brings up the Edit Species window.  Select the Appearance tab.  Here you can select how you want the species to appear as you playback the simulation.  You can have it change color on a gradient, change size, or change opacity.  You can also select the range of molecule counts to use for the gradients.  Finally, you can indicate that these selections are either for this species or all species in the model.  For our example, let's make CI follow a green color gradient, CI2 follow a red color gradient, and CII follow a blue color gradient.
+
+<center>
+<img src="screenshots/editSpeciesAppearance.png" alt="screenshots/editSpeciesAppearance.png" />
+</center>
+
+<div class="p"><!----></div>
+Once you have made your selections, you can now playback the simulation.  You can either single step the simulation by pressing the <img src="../gui/icons/modelview/movie/single_step.png" alt="../gui/icons/modelview/movie/single_step.png" /> icon or play continuously by pressing the <img src="../gui/icons/modelview/movie/play.png" alt="../gui/icons/modelview/movie/play.png" /> icon.  The playback can also be paused by pressing the <img src="../gui/icons/modelview/movie/pause.png" alt="../gui/icons/modelview/movie/pause.png" /> icon and restarted by pressing the  <img src="../gui/icons/modelview/movie/rewind.png" alt="../gui/icons/modelview/movie/rewind.png" /> icon. 
 
 <div class="p"><!----></div>
 
-<div class="p"><!----></div>
-</li>
-
-<li> Now go back to the parameter editor tab, 
-      and change the initial amount for <tt>PR</tt> to <tt>Sweep</tt>, set
-      the start to 2, stop to 8, step to 3.  Press the save and run
-      button.  Click on the <tt>TSD Graph</tt> tab and double click on the graph to
-      open the graph editor.  Notice the new simulations id's
-      generated for each of the run with PR of 2, PR of 5, and PR of
-      8.  Deselect all from the current graph, and go and add the 
-      average value of <tt>CI</tt> from each of these simulation runs. 
+<center><img src="screenshots/movieView.png" alt="screenshots/movieView.png" />
+</center>
 
 <div class="p"><!----></div>
-<img src="screenshots/sweep.png" alt="screenshots/sweep.png" /><br />
-<img src="screenshots/sweepPR.png" alt="screenshots/sweepPR.png" />
+Using the schematic tab, you can also adjust initial values and parameters allowing one to perform simulations to determine the effect of these changes.  Clicking on any species, promoter, reaction, or influence brings up the corresponding editor.  To change a value, switch the corresponding combo box to modified which will then allow you to change the value.  For example, as shown below, we have reduced the degradation rate for CI to 0.00075.  Now, rerun the simulation and observe the change in the simulation data.
 
 <div class="p"><!----></div>
 
-<div class="p"><!----></div>
+<center>
+<img src="screenshots/paramEdit.png" alt="screenshots/paramEdit.png" />
+</center>
 
 <div class="p"><!----></div>
-</li>
-
-<li> Go back to the Parameter Editor tab and change <tt>PR</tt> back to 
-<tt>Original</tt> value type.  Go back to the Simulation Options tab,
-select <tt>Abstraction</tt> and change the simulation ID to <tt>abs</tt>.
-Press <tt>Save and Run</tt> and note that the simulation time should be
-substantially faster.
-Go back to the <tt>TSD Graph</tt> tab and double click on the graph to bring up
-the graph editor.  Deselect all and add the average value of <tt>CI</tt>
-from both the <tt>abs</tt> and <tt>ssa</tt> simulations.
-<div class="p"><!----></div>
-</li>
-</ol>
-
-<div class="p"><!----></div>
-<img src="screenshots/absResults.png" alt="screenshots/absResults.png" />
-
-<div class="p"><!----></div>
-  <h2><a name="tth_sEc5">
-5</a>&nbsp;&nbsp;Probabilistic Analysis</h2>
-
-<div class="p"><!----></div>
-This example illustrates how <tt>iBioSim</tt> can be used for
-probabilistic analysis.
-
-<ol type="1">
-<li> Go back to the GCM editor for <tt>CI_CII</tt>.  
-Select <tt>Save as SBML Template</tt> and give it the name <tt>
-  CI_CIIenv</tt>.  Use the <tt>SBML File</tt> pulldown menu to select
-<tt>CI_CIIenv.sbml</tt> to associate with this GCM.  Press the
-<tt>Save GCM</tt> button.
-
-<div class="p"><!----></div>
-<img src="screenshots/linkSBML.png" alt="screenshots/linkSBML.png" />
-<div class="p"><!----></div>
-</li>
-
-<li> Double click on the <tt>CI_CIIenv.sbml</tt> file to open it in an
-  SBML editor.  Select the <tt>Initial
-    Assignments/Rules/Constraints/Events</tt> tab, and select <tt>Add
-    Constraint</tt>.  Add a constraint with ID <tt>CI20</tt>, constraint
-<tt>geq(CI, 20)</tt>, and message <tt>CI greater than 20 molecules</tt>.
-Repeat these steps to add constraints for CII  &#8805; 30, and t  &#8805; 200. Be sure to press the <tt>Save SBML</tt> button when you are done.
-
-<div class="p"><!----></div>
-<img src="screenshots/constraint.png" alt="screenshots/constraint.png" />
+In addition to making single changes, you can also sweep a value as shown below.   When you click on the Sweep button, it brings up a window where you can select the start value, the stop value, and the step value.  In this example, simulations are generated using degradation rates of 0.001, 0.003, 0.005, and 0.007.  The level indicates how the sweep should perform when multiple variables are swept at the same time.  A variables at the same level are changed at the same time.  Furthermore, all variables on level 2 are stepped through all their values before changing the values of those variables on level 1.  After the values on level 1 are changed, the values on level 2 are stepped through all their values again.  Rerun the simulation and create a graph that shows the value of CI for each of the different degradation rates.
 
 <div class="p"><!----></div>
 
-<div class="p"><!----></div>
-</li>
-
-<li> Go back to your analysis view by clicking on the <tt>sim</tt> tab.
-Remove the simulation ID and press <tt>Save and Run</tt>.  Click on the 
-<tt>Probability Graph</tt> tab.
-Double click on the graph to bring up the probability graph
-  editor.  Change the title to <tt>Probability Results</tt> and the 
-Y-axis label to <tt>Percent</tt>.  Click on the <tt>sim-rep</tt> file on the 
-left-hand side.  Select <tt>CI20</tt>, <tt>CII30</tt>, and <tt>t200</tt> to
-graph them.  Press <tt>Ok</tt>.
+<center>
+<img src="screenshots/sweep.png" alt="screenshots/sweep.png" />
+</center>
 
 <div class="p"><!----></div>
-<img src="screenshots/editProbGraph.png" alt="screenshots/editProbGraph.png" />
-<div class="p"><!----></div>
-</li>
-
-<li> Export the graph as a jpg file by selecting the <tt>Export</tt>
-  button and entering the filename <tt>prob.jpg</tt>.
-
-<div class="p"><!----></div>
-<img src="screenshots/probResults.png" alt="screenshots/probResults.png" />
-<div class="p"><!----></div>
-</li>
-</ol>
-
-<div class="p"><!----></div>
- <h2><a name="tth_sEc6">
-6</a>&nbsp;&nbsp;GCM Learning</h2>
-
-<div class="p"><!----></div>
-This section describes how a GCM can be learned from time series data.
-
-<ol type="1">
-<li> Highlight <tt>CI_CII.gcm</tt>, right click on it, and select
-<tt>Create Learn View</tt>.  Give the learn view the ID <tt>learn</tt>.
-
-<div class="p"><!----></div>
-<img src="screenshots/createLearn.png" alt="screenshots/createLearn.png" />
-<div class="p"><!----></div>
-</li>
-
-<li> At this point a <tt>Learn View</tt> will open, and you could begin
-to add your experimental data.  In this demo, we will just utilize our
-simulation data as synthetic experimental data.  To do this, click
-<tt>Copy From View</tt>, and select <tt>sim/ssa</tt>.  Highlight 
-<tt>sim/ssa/run-1.tsd</tt>, and you should see the simulation data for 
-<tt>CI</tt> and <tt>CII</tt> appear on the right in the data editor. 
-
-<div class="p"><!----></div>
-<img src="screenshots/dataManager.png" alt="screenshots/dataManager.png" />
+The efficiency of simulation can be improved by employing various automatic abstraction techniques.  Go back to the Schematic tab and change the degradation rate of CI back to the default value.  Also, go to the SBML elements tab and uncheck the rule for CI_total.  To activate abstraction, click on the Simulation Options tab, select Abstraction and change the simulation ID to <tt>abs</tt>.  Press the Save and Run icon and note that the simulation time is substantially faster.  Plot both the SSA results for CI_total and CII with the abstraction results for CI (note this is now equivalent to CI_total after abstraction) and CII.
 
 <div class="p"><!----></div>
 
-<div class="p"><!----></div>
-</li>
-
-<li> Click on the <tt>Learn</tt> tab.  Here you can edit the various
-  learning options.  For example, you can either use auto generated
-  levels or user generated levels for your data encoding.  Select 
-<tt>Use User Generated Levels</tt> which will make the levels below
-editable.  You can also select how many bins to use.  Change the
-number of bins for both <tt>CI</tt> and <tt>CII</tt> to 3.  At this point,
-you can ask the tool to suggest levels by clicking on the <tt>Suggest
-  Levels</tt> button.  Finally, press <tt>Save and Learn</tt> which will
-bring up the GCM that has been learned from this experimental data
-using Graphviz's dotty program.
+<center><img src="screenshots/absResults.png" alt="screenshots/absResults.png" />
+</center>
 
 <div class="p"><!----></div>
+One way to understand why abstraction is so much faster is by looking at the complexity of the reaction-based model before and after abstraction.  The reaction-based model after abstraction is shown below which is clearly much simpler than the full model shown earlier.
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/viewNetworkAbs.png" alt="screenshots/viewNetworkAbs.png" />
+</center>
+
+<div class="p"><!----></div>
+ <h2><a name="tth_sEc5">
+5</a>&nbsp;&nbsp;Learn Tool</h2>
+
+<div class="p"><!----></div>
+This section describes how a model can be learned from time series data using <tt>iBioSim</tt>'s Learn Tool.  To demonstrate the Learn Tool, first create a simple model, <tt>lambdaLearn</tt>, which just includes the two species CI and CII as shown below.  Next, create a learn view by right clicking on this model file and selecting Create Learn View.  Give this learn view the ID <tt>learnLambda</tt>.  At this point, a new learn view should open.  You should also notice that an icon appears next to your model file.  When you click on this, it will show you all of the analysis and learn views associated with this model.
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/createLearn.png" alt="screenshots/createLearn.png" />
+</center>
+
+<div class="p"><!----></div>
+The next step is to add some experimental data from which you wish to learn a model.  In this demo, we will just utilize our simulation data as synthetic experimental data.  To do this, click Copy From View, and select <tt>simLambda/abs</tt>.  Highlight <tt>simLambda/abs/run-1.tsd</tt>, and you should see the simulation data for CI and CII appear on the right in the data editor. 
+
+<div class="p"><!----></div>
+
+<center><img src="screenshots/dataManager.png" alt="screenshots/dataManager.png" />
+</center>
+
+<div class="p"><!----></div>
+Now, click on the Learn tab.  Here you can edit the various learning options.  For example, you can either use auto generated levels or user generated levels for your data encoding.  Select Use User Generated Levels which will make the levels below editable.  You can also select how many bins to use.  Change the number of bins for both CI and CII to 3.  At this point, you can ask the tool to suggest levels by clicking on the Suggest Levels button.  Finally, click on the Save and Run icon which will bring up the model that has been learned from this experimental data
+using Graphviz's dotty program, and ask you for a model ID for the generated model.  
+
+<div class="p"><!----></div>
+
+<center>
 <img src="screenshots/learn.png" alt="screenshots/learn.png" />
-<div class="p"><!----></div>
-</li>
-</ol>
-
-<div class="p"><!----></div>
- <h2><a name="tth_sEc7">
-7</a>&nbsp;&nbsp;Genetic Circuit Design</h2>
-
-<div class="p"><!----></div>
-This last section describes how <tt>iBioSim</tt> can be used to design
-genetic logic gates.
-
-<ol type="1">
-<li> Select <tt>File &#8594; New &#8594; Genetic Circuit
-    Model</tt> and give it the ID <tt>gate</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Add promoters <tt>P1</tt> and <tt>P2</tt>, species <tt>A</tt>, <tt>B</tt>,
-  and <tt>C</tt> (make <tt>A</tt> and <tt>B</tt> type <tt>boundary</tt> and <tt>
-    C</tt> type normal), and repression influences from <tt>A</tt> to <tt>C</tt> on
-  <tt>P1</tt> and <tt>B</tt> to <tt>C</tt> on <tt>P2</tt>.  Save as an SBML
-  template named <tt>gateEnv</tt>, and associate that SBML file with this
-  GCM.  Finally, save the GCM.
-<div class="p"><!----></div>
-</li>
-
-<li> Open <tt>gateEnv.sbml</tt> in an SBML editor.  Click on the<br />
-      <tt>Initial Assignments/Rules/Constraints/Events</tt> tab, and
-      select <tt>Add Event</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> In the event editor, give a trigger of <tt>geq(t,2000)</tt>.   
-      Press <tt>Add Assignment</tt>, select variable <tt>A</tt>, and enter
-      60 in the <tt>Assignment</tt> field.  Press <tt>Add</tt> for the event
-      assignment and <tt>Add</tt> for the event.  Repeat these steps to
-      create an assignment to <tt>B</tt> of 60 at time 4000.  Note that
-      you may ignore the warnings.  These can be suppressed by
-      changing your preferences and deselecting <tt>Check for
-        undeclared units in SBML</tt>.  Be sure to press <tt>Save SBML</tt>
-      when you are done.
-<div class="p"><!----></div>
-</li>
-
-<li> Highlight <tt>gate.gcm</tt>, right-click, and select <tt>Create
-    Analysis View</tt>.  Give it the ID <tt>simGate</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> In the analysis view, change the options to 
-      <tt>Monte Carlo</tt>, time limit of 6000, print interval of 30,
-      runs of 100.  
-      Press <tt>Save and Run</tt>.
-<div class="p"><!----></div>
-</li>
-
-<li> Select the <tt>TSD Graph</tt> tab and graph the averages of <tt>
-    A</tt>,  <tt>B</tt>, and <tt>C</tt>.  The behavior should be that of a Nand
-  gate.
-
-<div class="p"><!----></div>
-<img src="screenshots/nandResults.png" alt="screenshots/nandResults.png" />
-
-<div class="p"><!----></div>
-
-<div class="p"><!----></div>
-</li>
-
-<li> Go back to the GCM editor for <tt>gate</tt>.  Change the promoter
-  on the influence from <tt>B</tt> to <tt>C</tt> to <tt>P1</tt>, and save the
-  GCM.  Go back to your analysis view and press <tt>Save and Run</tt>.
-  The behavior should now be that of a Nor gate.
-
-<div class="p"><!----></div>
-<img src="screenshots/norResults.png" alt="screenshots/norResults.png" />
-<div class="p"><!----></div>
-</li>
-</ol>
+</center>
 
 <div class="p"><!----></div>
 
@@ -727,5 +439,5 @@ genetic logic gates.
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.81.<br />On 16 Mar 2011, 18:25.</small>
+version 3.81.<br />On 25 Aug 2011, 19:20.</small>
 </html>
