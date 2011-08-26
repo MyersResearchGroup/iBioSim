@@ -27,8 +27,11 @@ public class GridAction extends AbstractAction {
 
 	public void actionPerformed(ActionEvent event) {
 
-		if (event.getActionCommand().equals("Clear Selected Location(s)"))
+		if (event.getActionCommand().equals("Clear Selected Location(s)")) {
+			
 			grid.eraseSelectedNodes(schematic.getGCM());
+			schematic.getGCM().makeUndoPoint();
+		}
 		else if (event.getActionCommand().equals("Add Component(s) to (Non-Occupied) Selected Location(s)")) {
 			
 			//bring up a panel so the component/gcm can be chosen to add to the selected locations
