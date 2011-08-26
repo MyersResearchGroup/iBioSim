@@ -33,26 +33,67 @@
 \section{Introduction}
 
 \noindent
-iBioSim has been developed for the modeling, analysis, and design of genetic circuits.  While the primary target of iBioSim is models of genetic circuits, models representing metabolic networks, cell-signaling pathways, and other biological and chemical systems can also be analyzed.  iBioSim includes the following components: 
-
+iBioSim has been developed for the modeling, analysis, and design of genetic circuits.  While the primary target of iBioSim is models of genetic circuits, models representing metabolic networks, cell-signaling pathways, and other biological and chemical systems can also be analyzed.  Recently, modeling and visualization support has been added for the modeling of multi-cellular and population models as well.
+It is capable of importing and exporting models specified using the %%tth:\begin{html}<A HREF="http://www.sbml.org/">\end{html}
+\emph{Systems Biology Markup Language}
+%%tth:\begin{html}</A>\end{html}
+~(SBML).  It can import all levels and versions while being able to export Level 2 Version 4 or Level 3 Version 1.  It supports all SBML modeling constructs except the \emph{delay} function and some types of \emph{fast} reactions.  It was the first tool to produce correct results for all examples in the SBML benchmark suite.  It has also been tested successfully on the stochastic benchmark suite and the curated models in the 
+%%tth:\begin{html}<A HREF="http://www.ebi.ac.uk/biomodels-main/">\end{html}
+\emph{BioModels database}.
+%%tth:\begin{html}</A>\end{html}
+Finally, it is one of the first tools to also support the 
+%%tth:\begin{html}<A HREF="http://www.sbolstandard.org/">\end{html}
+\emph{Synthetic Biology Open Language}
+%%tth:\begin{html}</A>\end{html}  
+(SBOL), an emerging standard for information exchange in synthetic biology.
+{\tt iBioSim} includes the following components: 
 \begin{itemize}
-\item Model Editor - a tool to create a model of a genetic circuit or other biological system.\\
-\item LPN Model Editor - a tool to create a model using a \emph{labeled Petri net} (LPN).\\
-\item Analysis Tool - an abstraction-based ODE, Monte Carlo, and Markov analysis tool.\\
-% This tool is described in 
-% %%tth:\begin{html}<A HREF="http://www.async.ece.utah.edu/publications">\end{html}
-% Kuwahara's PhD Dissertation
-% %%tth:\begin{html}</A>\end{html}
-% (UofUtah 2007).
-\item Learn Tool - a tool to learn a model from \emph{time series data} (TSD).\\
-% This tool is described in 
-% %%tth:\begin{html}<A HREF="http://www.async.ece.utah.edu/publications">\end{html}
-% Barker's PhD Dissertation
-% %%tth:\begin{html}</A>\end{html}
-% (UofUtah 2007).
+\item Model Editor - a tool to create a model of a genetic circuit or other biological system.
+%% TODO: FIX THIS
+%\item LPN Model Editor - a tool to create a model using a \emph{labeled Petri net} (LPN).
+\item SBOL Browser - a tool to view SBOL files and associate DNA components to model elements.
+\item Analysis Tool - an abstraction-based ODE, Monte Carlo, and Markov analysis tool.
+\item Learn Tool - a tool to learn a model from \emph{time series data} (TSD).
 \item TSD Graph Editor- a tool to visualize TSD files. 
 \item Histogram Graph Editor - a tool to visualize probability data. 
 \end{itemize}
+
+\section*{Credits}
+
+\noindent
+The iBioSim tool is being developed at the University of Utah
+by 
+%%tth:\begin{html}<A HREF="http://www.async.ece.utah.edu/~myers">\end{html}
+Chris Myers
+%%tth:\begin{html}</A>\end{html},
+%%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~barkern">\end{html}
+Nathan Barker
+%%tth:\begin{html}</A>\end{html},
+%%tth:\begin{html}<A HREF="http://www.async.ece.utah.edu/~kjones">\end{html}
+Kevin Jones
+%%tth:\begin{html}</A>\end{html},
+%%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~kuwahara">\end{html}
+Hiroyuki Kuwahara
+%%tth:\begin{html}</A>\end{html},
+%%tth:\begin{html}<A HREF="http://www.async.ece.utah.edu/~cmadsen">\end{html}
+Curtis Madsen
+%%tth:\begin{html}</A>\end{html},
+%%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~namphuon">\end{html}
+Nam Nguyen
+%%tth:\begin{html}</A>\end{html},
+%%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~patterson">\end{html}
+Tyler Patterson
+%%tth:\begin{html}</A>\end{html},
+%%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~patterson">\end{html}
+Nicholas Roehner
+%%tth:\begin{html}</A>\end{html}, 
+and
+%%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~patterson">\end{html}
+Jason Stevens
+%%tth:\begin{html}</A>\end{html}.
+Nathan Barker is now with Southern Utah University, Kevin Jones is now with Raytheon, Hiroyuki Kuwahara is now with Carnegie Mellon University, and Nam Nguyen is now with the University of Texas in Austin.
+
+\clearpage
 
 \section{Project Management}
 
@@ -61,8 +102,10 @@ Within {\tt iBioSim}, all files are collected within projects.
 A project is a collection of models, analysis views, learn views, and graphs.  As shown below, {\tt iBioSim} displays all project files on the left, the open models, views, and graphs on the right, and a log of all external commands on the bottom.  The menu bar is located on the top of the window in the Windows and Linux versions.  It is located on the top of the screen in the MacOS version.
 
 \begin{center}
-\includegraphics[height=80mm]{screenshots/iBioSim}
+\includegraphics[height=90mm]{screenshots/iBioSim}
 \end{center}
+
+\clearpage
 
 \subsection{Creating and Opening Projects}
 
@@ -72,6 +115,8 @@ To create a new project, select New $\rightarrow$ Project from the File menu as 
 \begin{center}
 \includegraphics[height=80mm]{screenshots/project}
 \end{center}
+
+\clearpage
 
 \subsection{Creating and Opening Models and Graphs}
 
@@ -84,6 +129,8 @@ will open in a new tab. To create a new TSD graph, select New $\rightarrow$ TSD 
 \begin{center}
 \includegraphics[height=80mm]{screenshots/newModel}
 \end{center}
+
+\clearpage
 
 \subsection{Importing Models}
 
@@ -120,15 +167,17 @@ When importing a model from the BioModels database, the window below will open i
 \noindent
 You can also export a model in either SBML or SBOL format.  To export an SBML model, select File $\rightarrow$ Export $\rightarrow$ Systems Biology Markup Language (SBML).  Then, you will be able to browse to find a location to export the SBML file.  Currently, the SBML model generated is a single flattened chemical reaction model.  When exporting model as an SBOL component, you must browse to find an SBOL library.  The SBOL component will then be added to the selected library.  Graphs of time series data or histograms can be exported from the project in many formats.  The supported file formats are:  
 \begin{itemize}
-\item Time series data format (TSD).
-\item Comma separated value (CSV).
-\item Column separated data (DAT).
-\item Encapsulated postscript (EPS). 
-\item Joint Photographic Experts Group (JPG). 
-\item Portable document format (PDF).
-\item Portable network graphics (PNG). 
-\item Scalable vector graphics (SVG).
+\item Time series data format (tsd), see Section~\ref{TSD}..
+\item Comma separated value (csv).
+\item Column separated data (dat).
+\item Encapsulated postscript (eps). 
+\item Joint Photographic Experts Group (jpg). 
+\item Portable document format (pdf).
+\item Portable network graphics (png). 
+\item Scalable vector graphics (svg).
 \end{itemize}
+
+\clearpage
 
 \subsection{Editing Project Objects and Creating Tool Views}
 
@@ -189,6 +238,8 @@ To perform analysis or learning, right click on a model and select ``Create Anal
 % \includegraphics[height=55mm]{screenshots/createLearn}
 % \end{tabular}
 % \end{center}
+
+\clearpage
 
 \section{\label{ModelEdit}Model Editor}
 
@@ -352,12 +403,12 @@ When a component has ports, connections to input ports can be made by selecting 
 When adding a component to a grid, you are simply asked which model to instantiate, and you cannot connect to ports as species are not allowed on a grid.
 
 \begin{center}
-\includegraphics[height=70mm]{screenshots/addCompGrid}
+\includegraphics[height=60mm]{screenshots/addCompGrid}
 \end{center}
 
 \subsection{\label{Promoters}Promoters}
 
-Promoters are the locations on a DNA sequence in which transcription is initiated to create a \emph{messager} RNA (mRNA) which can then be translated by a ribosome into a protein.  To add a promoter to a model, select the Add Promoter icon \includegraphics{../gui/icons/modelview/promoter_mode_selected} and click on the schematic canvas in the location that you want the promoter creating a new promoter with a default ID and parameter values.  Clicking on the promoter opens the Promoter Editor which allows you to edit the following fields:
+Promoters are the locations on a DNA sequence in which transcription is initiated to create a \emph{messager} RNA (mRNA) which can then be translated by a ribosome into a protein.  To add a promoter to a model, select the Add Promoter icon \includegraphics{../gui/icons/modelview/promoter_mode_selected} and click on the schematic canvas creating a new promoter with a default ID and parameter values.  Clicking on the promoter opens the Promoter Editor and allows you to edit the following fields:
 \begin{itemize}
 \item ID: a unique ID composed only of alphanumeric characters and underscores.
 \item Name: an arbitrary string description (optional).
@@ -374,8 +425,6 @@ Promoters are the locations on a DNA sequence in which transcription is initiate
 \begin{center}
 \includegraphics[height=80mm]{screenshots/promoter}
 \end{center}
-
-%% TODO: need to fix influnences
 
 \subsection{\label{Influences}Influences}
 
@@ -555,12 +604,8 @@ dimensionless         & item & lumen      & pascal & tesla      & ~\\ \hline
 \noindent
 There are two types of assignments: initial assignments and rules.  Initial assignments as shown below are used to provide a mathematical formula (see Section~\ref{SBMLMath}) that is evaluated at time 0 to determine the initial value of a compartment size, species amount or concentration, or parameter.  The value of this formula takes precedence over the initial value specified in the object.  
 
-\begin{center}
-\includegraphics[height=80mm]{screenshots/initial}
-\end{center}
-
 \noindent
-There are three types of rules: algebraic, assignment, and rate rules which are in the following form:
+There are three types of rules: algebraic, assignment, and rate rules:
 \begin{center}
 \begin{tabular}{|c|c|c|}
 \hline
@@ -570,6 +615,12 @@ Rate       & left-hand side is a rate-of-change & $\frac{dx}{dt} = f(W)$
 \\ \hline
 \end{tabular}
 \end{center}
+
+\begin{center}
+\includegraphics[height=80mm]{screenshots/initial}
+\end{center}
+
+\noindent
 Algebraic rules specify relationships which must be maintained.  Assignment rules specify the value of a compartment size, species amount or concentration, or parameter in terms of a mathematical formula (see
 Section~\ref{SBMLMath}).  A variable cannot be determined by both an assignment rule and initial assignment.  Rate rules specify the rate of change of a compartment size, species amount or concentration, or parameter in terms of a mathematical formula (see Section~\ref{SBMLMath}).  A variable cannot be determined by both an assignment rule and a rate rule.  A species that is a reactant or a product of any reaction cannot be updated by either an assignment rule or rate rule.  
 When adding a rule, the user first selects the type of rule as shown below.  This automatically restricts the set of variables available for the left-hand side to those that are valid.  The user should then select a variable (except in the case of an algebraic rule), and enter a mathematical formula (see Section~\ref{SBMLMath}) for the rule.  When editing a rule, the user cannot modify the rule type. 
@@ -615,6 +666,8 @@ Events are used to specify discrete changes of compartment sizes, species amount
 \includegraphics[height=80mm]{screenshots/event}
 \end{center}
 
+\clearpage
+
 \section{\label{SBOL}SBOL Browser}
 
 SBOL is an emerging standard under development for the exchange of information about synthetic biology designs.  An SBOL file includes \emph{Collections} of \emph{DNA Components}.  Each DNA component has a unique ID, name, description, type, and a DNA sequence.  A DNA component can be a simple sequence feature like a promoter, ribosome binding site, open reading frame (i.e., gene), or terminator.  It can also be an annotated DNA sequence that includes a several of these individual features perhaps organized hierarchically.  For example, a DNA component may include a promoter followed by a ribosome binding site followed by a open reading frame followed by a terminator.  {\tt iBioSim} includes an SBOL browser that allows the user to view an individual SBOL file by clicking on it in the list of project files.  In this browser, you can highlight individual DNA components and see the information stored about them.
@@ -654,6 +707,8 @@ A similar SBOL browser is available for associating DNA components to a model.  
 % \subsection{\label{LPN Properties}Properties}
 
 % NEED STUFF HERE
+
+\clearpage
 
 \section{\label{Analysis}Analysis Tool}
 
@@ -723,10 +778,10 @@ ODE  & rk8pd     & Embedded Runge-Kutta Prince-Dormand (8,9) method \\ \hline
 ODE  & rkf45     & Embedded Runge-Kutta-Fehlberg (4, 5) method \\ \hline
 Monte carlo & Gillespie & Gillespie's SSA direct method \\ \hline 
 Monte carlo & GillespieJava & Java implementation of Gillespie's SSA direct method \\ \hline  
-Monte carlo & mpde & An incremental SSA using marginal probability density evolution \\ \hline   
-Monte carlo & mp & An incremental SSA using the mean path \\ \hline    
-Monte carlo & mp-adaptive & An incremental SSA using the mean path and adaptive step size\\ \hline     
-Monte carlo & mp-event & An incremental SSA using the mean path and event count step size \\ \hline     
+Monte carlo & mpde & iSSA using marginal probability density evolution \\ \hline   
+Monte carlo & mp & iSSA using the mean path \\ \hline    
+Monte carlo & mp-adaptive & iSSA using the mean path and adaptive step size\\ \hline     
+Monte carlo & mp-event & iSSA using the mean path and event count step size \\ \hline     
 Monte carlo & emc-sim   & Use jump count as next reaction time \\ \hline
 Monte carlo & bunker    & Uses mean for next reaction time \\ \hline
 Monte carlo & nmc       & Uses normally distributed next reaction time \\ \hline
@@ -860,8 +915,6 @@ Using the schematic tab, you can adjust initial values and parameters allowing o
 \includegraphics[height=50mm]{screenshots/paramEdit}
 \end{center}
 
-%% TODO: add other editors?
-
 In addition to making single changes, you can also sweep a value as shown below.   When you click on the Sweep button, it brings up a window where you can select the start value, the stop value, and the step value.  The level indicates how the sweep should perform when multiple variables are swept at the same time.  A variables at the same level are changed at the same time.  Furthermore, all variables on level 2 are stepped through all their values before changing the values of those variables on level 1.  After the values on level 1 are changed, the values on level 2 are stepped through all their values again.  
 
 \begin{center}
@@ -892,6 +945,8 @@ Once you have made your selections, you can now playback the simulation.  You ca
 \includegraphics[height=80mm]{screenshots/movieView}
 \end{center}
 
+\clearpage
+
 \subsection{\label{AnalysisParameters}Parameters}
 
 \noindent
@@ -908,6 +963,8 @@ The SBML elements tab allows you to select which SBML model elements to include 
 \begin{center}
 \includegraphics[height=80mm]{screenshots/SBMLElements}
 \end{center}
+
+\clearpage
 
 \section{\label{Learn}Learn Tool}
 
@@ -974,6 +1031,8 @@ Opens a window contain the log file generated by GeneNet during the learn proces
 
 Once the Learn Tool has been provided data and configured as desired, pressing the Save and Run icon \includegraphics{../gui/icons/run-icon} causes the tool to attempt to produce a model that may have produced this data.  The resulting model is displayed using GraphViz, and the user is prompted to provide a model ID for the resulting model.  If learning fails, an error message will be reported instead.
 
+\clearpage
+
 \section{\label{TSDGraph}TSD Graph Editor}
 
 \noindent
@@ -1023,17 +1082,19 @@ Note that a check mark appears on a data set to indicate that some species have 
 
 When in a TSD graph editor, pressing the Save icon \includegraphics{../gui/icons/save} saves the settings for the graph to a file, so when you re-open the graph, it will reload this data and display in the same way as before.  Pressing the Save As icon \includegraphics{../gui/icons/saveas} prompts for a new filename and creates a new top-level graph with that name.  Finally, pressing the Export icon \includegraphics{../gui/icons/export} prompts for a filename and exports the data to the given name.  The extension provided for the filename is used to determine how the graph is to be exported. The supported file types are: 
 \begin{itemize}
-\item csv - comma separated value data file. 
-\item dat - column separated data file. 
-\item eps - encapsulated postscript. 
-\item jpg - JPEG (Joint Photographic Experts Group). 
-\item pdf - portable document format.
-\item png - portable network graphics. 
-\item svg - scalable vector graphics.
-\item tsd - time series data format (see Section~\ref{TSD}).
+\item Time series data format (tsd), see Section~\ref{TSD}..
+\item Comma separated value (csv).
+\item Column separated data (dat).
+\item Encapsulated postscript (eps). 
+\item Joint Photographic Experts Group (jpg). 
+\item Portable document format (pdf).
+\item Portable network graphics (png). 
+\item Scalable vector graphics (svg).
 \end{itemize}
 If no extension is given, then the file type is the one specified in the file filter (default is pdf).  For image (i.e.,
 not data) file types, you will be prompted to give a desired pixel height and width for the file before the file is exported. 
+
+\clearpage
 
 \section{\label{Histogram}Histogram Graph Editor}
 
@@ -1071,11 +1132,11 @@ Note that a check mark appears on a data set to indicate that some constraints h
 
 When in a histogram graph editor, pressing the Save icon \includegraphics{../gui/icons/save} saves the settings for the graph to a file, so when you re-open the graph, it will reload this data and display in the same way as before.  Pressing the Save As icon \includegraphics{../gui/icons/saveas} prompts for a new filename and creates a new top-level graph with that name.  Finally, pressing the Export icon \includegraphics{../gui/icons/export} prompts for a filename and exports the data to the given name.  The extension provided for the filename is used to determine how the graph is to be exported. The supported file types are: 
 \begin{itemize}
-\item eps - encapsulated postscript. 
-\item jpg - JPEG (Joint Photographic Experts Group). 
-\item pdf - portable document format.
-\item png - portable network graphics. 
-\item svg - scalable vector graphics.
+\item Encapsulated postscript (eps). 
+\item Joint Photographic Experts Group (jpg). 
+\item Portable document format (pdf).
+\item Portable network graphics (png). 
+\item Scalable vector graphics (svg).
 \end{itemize}
 If no extension is given, then the file type is the one specified in the file filter (default is pdf).  For image (i.e.,
 not data) file types, you will be prompted to give a desired pixel height and width for the file before the file is exported. 
@@ -1241,7 +1302,9 @@ user can decide whether they wish to use a File Dialog for selecting files.  If 
 % \item Ctrl-Y - Probability Graph % Alt-Y
 % \end{itemize}
 
-\section{\label{SBMLMath}Model Math Formulas}
+\clearpage
+
+\section{\label{SBMLMath}Mathematical Formulas}
 
 \noindent
 Math formulas appear in many model constructs.  These formulas are expressed as text strings using a simple syntax.  In particular, model math formulas can include: 
@@ -1268,7 +1331,33 @@ Math formulas appear in many model constructs.  These formulas are expressed as 
 
 \section{\label{CSL}Continuous Stochastic Logic (CSL) Formulas}
 
-%% TODO: add property language
+\noindent
+To analyze a probabilistic models using {\tt iBioSim}, it is necessary to specify one or more properties of
+the model.  {\tt iBioSim} accepts property specifications using a subset of probabilistic temporal logic \emph{Continuous Stochastic Logic} (CSL).  There are four types of CSL properties currently supported:
+\begin{itemize}
+\item Transient global formula of the form Pr\{PG [ $\psi$ ]( $\Psi$ )\} where $\psi$ is a time bound $\Psi$ is state formula.  This formula determines the probability that $\Psi$ is always true in the interval defined by $\psi$.
+\item Transient eventually formula of the form Pr\{PF [ $\psi$ ]( $\Psi$ )\} where $\psi$ is a time bound $\Psi$ is a state formula.  This formula determines the probability that $\Psi$ is becomes true during the interval defined by $\psi$.
+\item Transient until formula of the form Pr\{$\Psi_1$ PU [ $\psi$ ] $\Psi_1$\} where $\psi$ is a time bound $\Psi_1$ and $\Psi_2$ are state formula.  This formula determines the probability that $\Psi_1$ remains true until $\Psi_2$ becomes true during the interval defined by $\psi$.
+\item Steady-state formula of the form St\{$\Psi$\} where $\Psi$ is a state formula.  This formula determines the probability of being in a state that satisfies $\Psi$ as time goes to infinity.
+\end{itemize}
+The time bounds, $\psi$, can either be a relational operator ($<$, $\leq$, $=$, $\geq$, $>$) followed by a constant integer time value.  They can also be a time bound of the form $[ l, u ]$ where $l$ and $u$ are constant integer time values.  The state formula, $\Psi$, can include:
+\begin{itemize}
+\item Variables (compartment, species, parameter IDs, and reaction IDs)
+\item Real Numbers
+%\item Built-in constants: exponentiale, pi, true, and false.
+%\item Special variable time or t which returns the current simulation time.
+\item Mathematical operators: add (+), subtract (-), multiply (*), divide (/), and power ($\char`\^$).
+%\item Mathematical operators including add (+), subtract (-), multiply (*), divide (/), and power (pow(x,y)).
+%\item A function defined in the list of function definitions.
+\item Logical functions: and ($\&$), or ($|$), and not ($\sim$).
+%\item Logical functions: and, or, xor, not.
+\item Relational functions: equals ($=$), greater-or-equals ($\geq$), greater-than ($>$), less-or-equals ($\leq$), and less-than ($<$).
+%\item Relational functions: eq, neq, geq, gt, leq, and lt.
+%\item Unary functions: abs, ceiling, exp, factorial, floor, ln, log, sqr, and sqrt.
+%\item Trigonometric functions: cos, cosh, sin, sinh, tan, tanh, cot, coth, csc, csch, sec, sech, arccos, arccosh, arcsin, arcsinh, arctan, arctanh, arccot, arccoth, arccsc, arccsch, arcsec, and arcsech.
+%\item The delay(expr1,expr2) function which returns the value of expr1 at a time expr2 time units earlier (not currently supported by analysis).
+%\item The piecewise(value1, case1, value2, case2, ..., otherwise) function returns value1 if case1 is true, value2 if case2 is true, etc.  If no cases are true, it returns the otherwise value.
+\end{itemize}
 
 \section{\label{TSD}Time Series Data Format}
 
@@ -1302,40 +1391,5 @@ mail will be filtered by our spam filters:
 \item CHANGE - something which can be improved
 \item FEATURE - something new
 \end{itemize}
-
-\section{Credits}
-
-\noindent
-The iBioSim tool is being developed at the University of Utah
-by 
-%%tth:\begin{html}<A HREF="http://www.async.ece.utah.edu/~myers">\end{html}
-Chris Myers
-%%tth:\begin{html}</A>\end{html},
-%%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~barkern">\end{html}
-Nathan Barker
-%%tth:\begin{html}</A>\end{html},
-%%tth:\begin{html}<A HREF="http://www.async.ece.utah.edu/~kjones">\end{html}
-Kevin Jones
-%%tth:\begin{html}</A>\end{html},
-%%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~kuwahara">\end{html}
-Hiroyuki Kuwahara
-%%tth:\begin{html}</A>\end{html},
-%%tth:\begin{html}<A HREF="http://www.async.ece.utah.edu/~cmadsen">\end{html}
-Curtis Madsen
-%%tth:\begin{html}</A>\end{html},
-%%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~namphuon">\end{html}
-Nam Nguyen
-%%tth:\begin{html}</A>\end{html},
-%%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~patterson">\end{html}
-Tyler Patterson
-%%tth:\begin{html}</A>\end{html},
-%%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~patterson">\end{html}
-Nicholas Roehner
-%%tth:\begin{html}</A>\end{html}, 
-and
-%%tth:\begin{html}<A HREF="http://www.cs.utah.edu/~patterson">\end{html}
-Jason Stevens
-%%tth:\begin{html}</A>\end{html}.
-Nathan Barker is now with Southern Utah University, Kevin Jones is now with Raytheon, Hiroyuki Kuwahara is now with Carnegie Mellon University, and Nam Nguyen is now with the University of Texas in Austin.
-  
+ 
 \end{document}
