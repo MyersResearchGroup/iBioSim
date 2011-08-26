@@ -5248,11 +5248,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						if (rename.length() >= 4 && rename.substring(rename.length() - 4).equals(".gcm")) {
 							for (String s : new File(root).list()) {
 								if (s.endsWith(".gcm")) {
+									boolean update = false;
 									BufferedReader in = new BufferedReader(new FileReader(root + separator + s));
 									String line = null;
 									String file = "";
 									while ((line = in.readLine()) != null) {
-										line = line.replace(oldName, rename);
+										if (line.contains(oldName)) {
+											line = line.replaceAll(oldName, rename);
+											update = true;
+										}
 										file += line;
 										file += "\n";
 									}
@@ -5260,6 +5264,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									BufferedWriter out = new BufferedWriter(new FileWriter(root + separator + s));
 									out.write(file);
 									out.close();
+									if (update) {
+										updateOpenGCM(s);
+									}
 								}
 							}
 						}
@@ -8499,15 +8506,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String tab = this.tab.getTitleAt(i);
 			if (gcmName.equals(tab)) {
 				if (this.tab.getComponentAt(i) instanceof GCM2SBMLEditor) {
-					try {
-						GCM2SBMLEditor gcm = new GCM2SBMLEditor(root + separator, gcmName, this, log, false, null, null, null, false);
-						this.tab.setComponentAt(i, gcm);
-						this.tab.getComponentAt(i).setName("GCM Editor");
-						// gcm.save(false, "", false, true);
-					}
-					catch (Exception e) {
-						e.printStackTrace();
-					}
+					((GCM2SBMLEditor) this.tab.getComponentAt(i)).reload(gcmName.replace(".gcm", ""));
+					((GCM2SBMLEditor) this.tab.getComponentAt(i)).refresh();
+					((GCM2SBMLEditor) this.tab.getComponentAt(i)).getSchematic().getGraph().buildGraph();
 					return true;
 				}
 			}

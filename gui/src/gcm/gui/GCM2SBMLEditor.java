@@ -2084,6 +2084,10 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	public Gui getGui() {
 		return biosim;
 	}
+	
+	public Schematic getSchematic() {
+		return schematic;
+	}
 
 	public Reb2Sac getReb2Sac() {
 		return reb2sac;
