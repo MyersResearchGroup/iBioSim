@@ -909,7 +909,10 @@ public class Schematic extends JPanel implements ActionListener {
 							}
 						}
 						//if there's no grid, move the cell wherever
-						else graph.updateInternalPosition(cell);
+						else {
+							if (!grid.isEnabled())
+								graph.updateInternalPosition(cell);
+						}
 					}
 				}
 				
@@ -1152,7 +1155,7 @@ public class Schematic extends JPanel implements ActionListener {
 	}
     
     
-	//INPUT/OUTPUT AND CONNECTION METHODS	
+	//INPUT/OUTPUT AND CONNECTION METHODS
 	
 	/**
 	 * Tries to properly connect an edge that is connected in the graph. Called 
