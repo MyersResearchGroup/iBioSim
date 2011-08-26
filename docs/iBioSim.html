@@ -1,7 +1,7 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
            "http://www.w3.org/TR/REC-html40/loose.dtd">
 <html>
-<meta name="GENERATOR" content="TtHgold 4.00">
+<meta name="GENERATOR" content="TtH 3.85">
  <style type="text/css"> div.p { margin-top: 7pt;}</style>
  <style type="text/css"><!--
  td div.comp { margin-top: -0.6ex; margin-bottom: -1ex;}
@@ -158,33 +158,27 @@ The iBioSim tool is being developed at the University of Utah
 by 
 <A HREF="http://www.async.ece.utah.edu/~myers">
 Chris Myers, 
-</A>,
+</A>
 <A HREF="http://www.cs.utah.edu/~barkern">
 Nathan Barker, 
-</A>,
+</A>
 <A HREF="http://www.async.ece.utah.edu/~kjones">
 Kevin Jones, 
-</A>,
+</A>
 <A HREF="http://www.cs.utah.edu/~kuwahara">
 Hiroyuki Kuwahara, 
-</A>,
+</A>
 <A HREF="http://www.async.ece.utah.edu/~cmadsen">
 Curtis Madsen, 
-</A>,
+</A>
 <A HREF="http://www.cs.utah.edu/~namphuon">
 Nam Nguyen, 
-</A>,
+</A>
 <A HREF="http://www.cs.utah.edu/~patterson">
 Tyler Patterson, 
-</A>,
-<A HREF="http://www.cs.utah.edu/~patterson">
+</A>
 Nicholas Roehner, 
-</A>, 
-and
-<A HREF="http://www.cs.utah.edu/~patterson">
-Jason Stevens.  
-</A>.
-Nathan Barker is now with Southern Utah University, Kevin Jones is now with Raytheon, Hiroyuki Kuwahara is now with Carnegie Mellon University, and Nam Nguyen is now with the University of Texas in Austin.
+and Jason Stevens.  Nathan Barker is now with Southern Utah University, Kevin Jones is now with Raytheon, Hiroyuki Kuwahara is now with Carnegie Mellon University, and Nam Nguyen is now with the University of Texas in Austin.
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc2">
@@ -362,7 +356,7 @@ Finally, the additional tabs allow the user to add, edit, or remove compartments
 </center>
 
 <div class="p"><!----></div>
-The schematic for a model on a grid is a bit different than for an ordinary model, which is evident from the toolbar.  Namely, a grid-based model can only include components, with at most one component per grid location.  By pressing the Add Component icon <img src="../gui/icons/modelview/add_component_selected.png" alt="../gui/icons/modelview/add_component_selected.png" /> and clicking on an empty grid location, you are allowed to select a model to instantiate within that grid location.  You can also select Edit Grid Size to change the size of the grid.  If the grid is larger in one or more dimensions than before, you can select a model to populate the new grid locations.  A smaller grid size simply removes the component instantiations that fall outside the new grid.  You can also edit the grid by selecting individual grid locations by clicking on them.  When you then use the right mouse button, it brings up the menu shown below.  This menu allows you to delete the component that was right-clicked on or to open its model in a Model Editor.  You can also use this menu to select or de-select all grid locations, and you can either clear occupied, or populate non-occupied, selected grid locations.
+The schematic for a model on a grid is a bit different than for an ordinary model, which is evident from the toolbar.  Namely, a grid-based model can only include components, with at most one component per grid location.  By pressing the Add Component icon <img src="../gui/icons/modelview/add_component_selected.png" alt="../gui/icons/modelview/add_component_selected.png" /> and clicking on an empty grid location, you are allowed to select a model to instantiate within that grid location.  You can also select Edit Grid Size to change the size of the grid.  If the grid is larger in one or more dimensions than before, you can select a model to populate the new grid locations.  A smaller grid size simply removes the component instantiations that fall outside the new grid.  You can also edit the grid by selecting individual grid locations by clicking on them or selecting multiple grid locations using the rectangle selection tool by left-clicking and dragging the mouse.  When you then use the right mouse button, it brings up the menu shown below.  This menu allows you to delete the component that was right-clicked on or to open its model in a Model Editor.  You can also use this menu to select or de-select all grid locations, and you can either clear occupied, or populate non-occupied, selected grid locations.
 
 <div class="p"><!----></div>
 
@@ -687,10 +681,10 @@ Promoters are the locations on a DNA sequence in which transcription is initiate
 </a>Influences</h3>
 
 <div class="p"><!----></div>
-There are several types of influences between species that can be specified.  A species may <em>activate</em> or <em>repress</em> the production of other species.  This relationship is made from a species to the promoter that it activates or represses.  It can also be made directly between two species with an implicit promoter annotating the edge.  One can also specify when there is no influence between two species.  An activating or repressing self-influence can also be specified.  Species can also be related by complex formation reactions which indicate that multiple identical or different species can be combined to form a complex species.  
+There are several types of influences between species that can be specified.  A species may <em>activate</em> or <em>repress</em> the production of other species.  This relationship is made from a species to the promoter that it activates or represses.  It can also be made directly between two species with an implicit promoter annotating the edge.  One can also specify when there is no influence between two species.  An activating or repressing self-influence can also be specified.  Species can also be related by complex-formation reactions, which indicate that multiple identical or different species can be combined to form a complex species.  
 
 <div class="p"><!----></div>
-To add a complex formation reaction, select the complex formation icon <img src="../gui/icons/modelview/bio_activation_selected.png" alt="../gui/icons/modelview/bio_activation_selected.png" />, highlight a species that is part of a complex, and while holding the mouse button stretch the complex formation arc to the complex species.   If you double click on the complex formation arc, an influence editor will open which indicates that this is a complex formation arc and the stoichiometry of binding (i.e., the number of molecules of the source species used to construct the sink species) is 2 which you can customize, if desired.
+To add a complex-formation reaction, select the complex formation icon <img src="../gui/icons/modelview/bio_activation_selected.png" alt="../gui/icons/modelview/bio_activation_selected.png" />, highlight a species that is part of a complex, and, while holding the mouse button, stretch the complex formation arc to the complex species.  If you double-click on the complex formation arc, an influence editor will open, which indicates that this is a complex formation arc and the stoichiometry of binding (i.e., the number of molecules of the source species used to construct the sink species) is 2, which you can customize, if desired.
 
 <div class="p"><!----></div>
 
@@ -699,7 +693,7 @@ To add a complex formation reaction, select the complex formation icon <img src=
 
 <div class="p"><!----></div>
 To create a repression influence, select the Repression icon 
-<img src="../gui/icons/modelview/inhibition_selected.png" alt="../gui/icons/modelview/inhibition_selected.png" />, highlight the species that is acting as a repressor, and while holding the mouse button stretch the repression arc to either the promoter or another species.  In the later, case, an implicit promoter is added.  Double clicking on the repression arc brings up an influence editor.  In this editor, you can customize the stoichiometry of binding as well as the repression binding equilibrium.
+<img src="../gui/icons/modelview/inhibition_selected.png" alt="../gui/icons/modelview/inhibition_selected.png" />, highlight the species that is acting as a repressor, and, while holding the mouse button, stretch the repression arc to either the promoter or another species.  In the later, case, an implicit promoter is added.  Double clicking on the repression arc brings up an influence editor.  In this editor, you can customize the stoichiometry of binding as well as the repression binding equilibrium.
 
 <div class="p"><!----></div>
 
@@ -708,7 +702,7 @@ To create a repression influence, select the Repression icon
 
 <div class="p"><!----></div>
 To create an activation influence, select the Activation icon 
-<img src="../gui/icons/modelview/activation_selected.png" alt="../gui/icons/modelview/activation_selected.png" />, highlight the species that is acting as an activator, and while holding the mouse button stretch the activation arc to either the promoter or another species.  In the later, case, an implicit promoter is added.  Double clicking on the activation arc brings up an influence editor.  In this editor, you can customize the stoichiometry of binding as well as the activation binding equilibrium.
+<img src="../gui/icons/modelview/activation_selected.png" alt="../gui/icons/modelview/activation_selected.png" />, highlight the species that is acting as an activator, and while holding the mouse button stretch the activation arc to either the promoter or another species.  In the latter case, an implicit promoter is added.  Double-clicking on the activation arc brings up an influence editor.  In this editor, you can customize the stoichiometry of binding as well as the activation binding equilibrium.
 
 <div class="p"><!----></div>
 
@@ -717,7 +711,7 @@ To create an activation influence, select the Activation icon
 
 <div class="p"><!----></div>
 To indicate that a species has no influence on another species, select the No Influence icon 
-<img src="../gui/icons/modelview/no_influence.png" alt="../gui/icons/modelview/no_influence.png" />, highlight the species that has no influence, and while holding the mouse button stretch the no influence arc to the species it has no influence upon.  Double clicking on the no influence arc brings up an influence editor.  In this editor, you can change its type to indicate that it actually has an influence, if you like, and the edit accordingly.  No influence arcs are used by the Learn Tool to avoid adding influences where you are certain there is none.
+<img src="../gui/icons/modelview/no_influence.png" alt="../gui/icons/modelview/no_influence.png" />, highlight the species that has no influence, and, while holding the mouse button, stretch the no-influence arc to the species it has no influence upon.  Double-clicking on the no-influence arc brings up an influence editor.  In this editor, you can change its type to indicate that it actually has an influence, if you like, and edit accordingly.  No-influence arcs are used by the Learn Tool to avoid adding influences where you are certain there isn't one.
 
 <div class="p"><!----></div>
 
@@ -738,7 +732,7 @@ The last type of influence is a self-influence.  A self-influence can be either 
 </a>Compartments</h3>
 
 <div class="p"><!----></div>
-Compartments are used to specify membrane enclosed regions where species are found. Every model must include at least one compartment. A new model includes a compartment named <tt>default</tt>.  While its ID and other parameters can be changed, it cannot be removed unless a new compartment is added.  A compartment to which species or reactions have been assigned also cannot be removed.  
+Compartments are used to specify membrane-enclosed regions where species are found. Every model must include at least one compartment. A new model includes a compartment named <tt>default</tt>.  While its ID and other parameters can be changed, it cannot be removed unless a new compartment is added.  A compartment to which species or reactions have been assigned also cannot be removed.  
 As shown below, a compartment has the following fields:
 
 <ul>
@@ -773,7 +767,7 @@ As shown below, a compartment has the following fields:
 </center>
 
 <div class="p"><!----></div>
-In addition to the list of compartments, this tab also includes the Model ID (which cannot be changed), the Model Name (an arbitrary string description of this model), and the Model Units.  Clicking on the Model Units button allows you to see and edit this model's default units.  The substance units is the default units for species, the time units is the default units for time, the volume units are the default units for 3-dimensional compartments, the area units are the default units for 2-dimensional compartments, the length units are the default units for 1-dimensional compartments, the extent units are the defaults units for what the amount changed due to a reaction.  Kinetic laws have a default units of extent units / time units.  The conversion factor is the constant global parameter to be used as the default conversion factor to convert species units into extent units.
+In addition to the list of compartments, this tab also includes the Model ID (which cannot be changed), the Model Name (an arbitrary string description of this model), and the Model Units.  Clicking on the Model Units button allows you to see and edit this model's default units.  The substance units are the default units for species, the time units are the default units for time, the volume units are the default units for 3-dimensional compartments, the area units are the default units for 2-dimensional compartments, the length units are the default units for 1-dimensional compartments, the extent units are the defaults units for the amount changed due to a reaction.  Kinetic laws have default units of extent units / time units.  The conversion factor is the constant global parameter to be used as the default conversion factor to convert species units into extent units.
 
 <div class="p"><!----></div>
 
@@ -834,7 +828,7 @@ Global Parameters are variables that can be used in math formulas (see Section&n
 </a>Definitions</h3>
 
 <div class="p"><!----></div>
-The Definitions tab allows users to provide function and unit definitions. Function definitions are used to create user defined functions that can then be used in math formulas (see Section&nbsp;<a href="#SBMLMath">10</a>).  As shown below, function definitions include an ID, an optional name field, a comma-separated list of arguments, and its definition.  The definition is a math formula though it is restricted to only use variable names which are arguments to the function.  While functions can call other functions, they cannot be recursive (i.e., call themselves) either directly or indirectly (i.e., through a cycle of function calls).  Several random functions supported by <tt>iBioSim</tt>'s simulators are added automatically to every model.
+The Definitions tab allows users to provide function and unit definitions. Function definitions are used to create user-defined functions that can then be used in math formulas (see Section&nbsp;<a href="#SBMLMath">10</a>).  As shown below, function definitions include an ID, an optional name field, a comma-separated list of arguments, and its definition.  The definition is a math formula, though it is restricted to the use of variable names which are arguments to the function.  While functions can call other functions, they cannot be recursive (i.e., call themselves) either directly or indirectly (i.e., through a cycle of function calls).  Several random functions supported by <tt>iBioSim</tt>'s simulators are added automatically to every model.
 
 <div class="p"><!----></div>
 
@@ -910,7 +904,7 @@ There are three types of rules: algebraic, assignment, and rate rules:
 <div class="p"><!----></div>
 Algebraic rules specify relationships which must be maintained.  Assignment rules specify the value of a compartment size, species amount or concentration, or parameter in terms of a mathematical formula (see
 Section&nbsp;<a href="#SBMLMath">10</a>).  A variable cannot be determined by both an assignment rule and initial assignment.  Rate rules specify the rate of change of a compartment size, species amount or concentration, or parameter in terms of a mathematical formula (see Section&nbsp;<a href="#SBMLMath">10</a>).  A variable cannot be determined by both an assignment rule and a rate rule.  A species that is a reactant or a product of any reaction cannot be updated by either an assignment rule or rate rule.  
-When adding a rule, the user first selects the type of rule as shown below.  This automatically restricts the set of variables available for the left-hand side to those that are valid.  The user should then select a variable (except in the case of an algebraic rule), and enter a mathematical formula (see Section&nbsp;<a href="#SBMLMath">10</a>) for the rule.  When editing a rule, the user cannot modify the rule type. 
+When adding a rule, the user first selects the type of rule as shown below.  This automatically restricts the set of variables available for the left-hand side to those that are valid.  The user should then select a variable (except in the case of an algebraic rule) and enter a mathematical formula (see Section&nbsp;<a href="#SBMLMath">10</a>) for the rule.  When editing a rule, the user cannot modify the rule type. 
 
 <div class="p"><!----></div>
 
@@ -923,7 +917,7 @@ When adding a rule, the user first selects the type of rule as shown below.  Thi
 </a>Properties</h3>
 
 <div class="p"><!----></div>
-The properties tab allows users to provide formula for either desired or un-desired behavior.  These formula can be provided in two forms as either a <em>Continuous Stochastic Logic</em> (CSL) property (see Section&nbsp;<a href="#CSL">11</a>) or as a constraint.  CSL is a temporal logic which allows one to specify probabilistic temporal logic properties.  Analysis of a CSL property should return the probability that the property is true.  These properties can either be transient properties to ask if something happens within a certain amount of time, or steady-state properties to ask the probability of a given state as time goes to infinity.  The syntax for our CSL properties is given in Section&nbsp;<a href="#CSL">11</a>.
+The properties tab allows users to provide formulas for either desired or un-desired behavior.  These formulas can be provided in two forms as either a <em>Continuous Stochastic Logic</em> (CSL) property (see Section&nbsp;<a href="#CSL">11</a>) or as a constraint.  CSL is a temporal logic which allows one to specify probabilistic temporal logic properties.  Analysis of a CSL property should return the probability that the property is true.  These properties can either be transient properties to ask if something happens within a certain amount of time, or steady-state properties to ask the probability of a given state as time goes to infinity.  The syntax for our CSL properties is given in Section&nbsp;<a href="#CSL">11</a>.
 
 <div class="p"><!----></div>
 
@@ -931,7 +925,7 @@ The properties tab allows users to provide formula for either desired or un-desi
 </center>
 
 <div class="p"><!----></div>
-Constraints are used to specify properties that should cause simulation to terminate.  As shown below, each constraint is composed of an ID which is used to identify it in graphs, a constraint given as a mathematical formula (see Section&nbsp;<a href="#SBMLMath">10</a>), and a message describing the constraint.  A default id is automatically generated when a new constraint is created.
+Constraints are used to specify properties that should cause simulation to terminate.  As shown below, each constraint is composed of an ID which is used to identify it in graphs, a constraint given as a mathematical formula (see Section&nbsp;<a href="#SBMLMath">10</a>), and a message describing the constraint.  A default ID is automatically generated when a new constraint is created.
 
 <div class="p"><!----></div>
 
@@ -939,7 +933,7 @@ Constraints are used to specify properties that should cause simulation to termi
 </center>
 
 <div class="p"><!----></div>
-Our analysis methods can provide histograms that show the proportion of simulations that either satisfy a CSL property or are terminated due to a constraint.  Analysis can also show time series plots showing the proportion of simulations at each time point that have either satisfied a CSL property or terminated due to a constraint. 
+Our analysis methods can provide histograms that show the proportion of simulations that either satisfy a CSL property or are terminated due to a constraint.  Analysis can also show time-series plots showing the proportion of simulations at each time point that have either satisfied a CSL property or terminated due to a constraint. 
 
 <div class="p"><!----></div>
      <h3><a name="tth_sEc3.11">
@@ -958,7 +952,7 @@ Events are used to specify discrete changes of compartment sizes, species amount
 <div class="p"><!----></div>
 </li>
 
-<li> Trigger: a mathematical formula which when it changes evaluation from false to true indicates that the event is triggered.
+<li> Trigger: a mathematical formula which, when it changes evaluation from false to true, indicates that the event is triggered.
 <div class="p"><!----></div>
 </li>
 
@@ -982,7 +976,7 @@ Events are used to specify discrete changes of compartment sizes, species amount
 <div class="p"><!----></div>
 </li>
 
-<li> List of Event Assignments: these indicate how the state is supposed to change when the event executes.  The add, remove, and edit assignment buttons to update them.  In the event assignment editor, the variable to change must be selected and the assignment to be performed must be specified as a mathematical formula.
+<li> List of Event Assignments: these indicate how the state is supposed to change when the event executes.  Use the add, remove, and edit assignment buttons to update them.  In the event assignment editor, the variable to change must be selected and the assignment to be performed must be specified as a mathematical formula.
 <div class="p"><!----></div>
 </li>
 </ul>
@@ -998,7 +992,7 @@ Events are used to specify discrete changes of compartment sizes, species amount
 </a>SBOL Browser</h2>
 
 <div class="p"><!----></div>
-SBOL is an emerging standard under development for the exchange of information about synthetic biology designs.  An SBOL file includes <em>Collections</em> of <em>DNA Components</em>.  Each DNA component has a unique ID, name, description, type, and a DNA sequence.  A DNA component can be a simple sequence feature like a promoter, ribosome binding site, open reading frame (i.e., gene), or terminator.  It can also be an annotated DNA sequence that includes a several of these individual features perhaps organized hierarchically.  For example, a DNA component may include a promoter followed by a ribosome binding site followed by a open reading frame followed by a terminator.  <tt>iBioSim</tt> includes an SBOL browser that allows the user to view an individual SBOL file by clicking on it in the list of project files.  In this browser, you can highlight individual DNA components and see the information stored about them.
+SBOL is an emerging standard under development for the exchange of information about synthetic biology designs.  An SBOL file includes <em>Collections</em> of <em>DNA Components</em>.  Each DNA component has a unique ID, name, description, type, and a DNA sequence.  A DNA component can be a simple sequence feature like a promoter, ribosome binding site, open reading frame (i.e., gene), or terminator.  It can also be an annotated DNA sequence that includes several of these individual features, perhaps organized hierarchically.  For example, a DNA component may include a promoter followed by a ribosome binding site followed by an open reading frame followed by a terminator.  <tt>iBioSim</tt> includes an SBOL browser that allows the user to view an individual SBOL file by clicking on it in the list of project files.  In this browser, you can highlight individual DNA components and see the information stored about them.
 
 <div class="p"><!----></div>
 
@@ -1006,7 +1000,7 @@ SBOL is an emerging standard under development for the exchange of information a
 </center>
 
 <div class="p"><!----></div>
-A similar SBOL browser is available for associating DNA components to a model.  Namely, for a promoter, you can associate both a DNA component to the promoter as well as a terminator for the transcription initiated at this promoter.  For a species, you can associate both a DNA component for the open reading frame for the gene that produces this species as well as the ribosome binding site where translation begins for this gene.  This SBOL browser is opened by clicking on an Associate SBOL button within either the Species Editor (see Section&nbsp;<a href="#Species">3.1</a>) or Promoter Editor (see Section&nbsp;<a href="#Promoters">3.4</a>).  This browser only shows DNA components of the appropriate type.  For example, when associating a species to its open reading frame, only DNA components of the type open reading frame are shown.
+A similar SBOL browser is available for associating DNA components to a model.  Namely, for a promoter, you can associate both a DNA component to the promoter as well as a terminator for the transcription initiated at this promoter.  For a species, you can associate both a DNA component for the open reading frame for the gene that produces this species as well as the ribosome binding site where translation begins for this gene.  This SBOL browser is opened by clicking on an Associate SBOL button within either the Species Editor (see Section&nbsp;<a href="#Species">3.1</a>) or Promoter Editor (see Section&nbsp;<a href="#Promoters">3.4</a>).  This browser only shows DNA components of the appropriate type.  For example, when associating a species to its open reading frame, only DNA components of the open reading frame type are shown.
 
 <div class="p"><!----></div>
 
@@ -1048,9 +1042,9 @@ A similar SBOL browser is available for associating DNA components to a model.  
 The analysis tool is used to analyze biochemical reaction network models.  <tt>iBioSim</tt> comes with a number of simulation methods, ranging from continuous-deterministic (ODE) simulation methods to discrete-stochastic (Monte Carlo) simulation methods.  In order to perform efficient temporal behavior analysis, various model abstractions can also be automatically applied.  Many of the analysis and abstraction routines are implemented
 within the reb2sac tool described in 
 <A HREF="http://www.async.ece.utah.edu/publications">
-Kuwahara's PhD Dissertation (UofUtah 2007)
+Kuwahara's PhD Dissertation (UofUtah 2007).
 </A>
-.  An analysis view includes several tabs.  The Simulation Options tab described in Section&nbsp;<a href="#simOptions">5.1</a> selects the different simulation methods and parameters.  The Abstraction Options tab described in Section&nbsp;<a href="#absOptions">5.2</a> configures model abstraction.  The Schematic tab described in Section&nbsp;<a href="#AnalysisSchematic">5.3</a> allows the user to modify or sweep various parameters on the schematic.  It also provides an alternative way of visualizing simulation data upon the schematic.  The Parameters tab allows the user to modify or sweep model generation and global parameters, and it is described in Section&nbsp;<a href="#AnalysisParameters">5.4</a>.  The SBML elements tab described in Section&nbsp;<a href="#SBMLElements">5.5</a> allows the user to add or remove parts of the model during analysis.  The TSD Graph tab is a graph editor for some series data, and it is described in Section&nbsp;<a href="#TSDGraph">7</a>.  Finally, the Histogram tab is a graph editor for probability data, and it is described in Section&nbsp;<a href="#Histogram">8</a>.
+  An analysis view includes several tabs.  The Simulation Options tab, described in Section&nbsp;<a href="#simOptions">5.1</a>, selects the different simulation methods and parameters.  The Abstraction Options tab described in Section&nbsp;<a href="#absOptions">5.2</a> configures model abstraction.  The Schematic tab, described in Section&nbsp;<a href="#AnalysisSchematic">5.3</a>, allows the user to modify or sweep various parameters on the schematic.  It also provides an alternative way of visualizing simulation data upon the schematic.  The Parameters tab allows the user to modify or sweep model generation and global parameters, and it is described in Section&nbsp;<a href="#AnalysisParameters">5.4</a>.  The SBML elements tab described in Section&nbsp;<a href="#SBMLElements">5.5</a> allows the user to add or remove parts of the model during analysis.  The TSD Graph tab is a graph editor for some series data, and it is described in Section&nbsp;<a href="#TSDGraph">7</a>.  Finally, the Histogram tab is a graph editor for probability data, and it is described in Section&nbsp;<a href="#Histogram">8</a>.
 
 <div class="p"><!----></div>
 
@@ -1091,7 +1085,7 @@ The second set of radio buttons specify the type of analysis.
 <div class="p"><!----></div>
 </li>
 
-<li> Markov performs temporal probability distribution analysis on finite-state Markov chain models (this requires logical abstraction).
+<li> Markov: performs temporal probability distribution analysis on finite-state Markov chain models (this requires logical abstraction).
 <div class="p"><!----></div>
 </li>
 
@@ -1129,18 +1123,18 @@ Some results selecting Model, Network, and Browser are shown below.
 </center>
 
 <div class="p"><!----></div>
-The next group of options are for simulation based analysis only.
+The next group of options are for simulation-based analysis only.
 
 <ul>
 <li> Report concentrations: if checked, report concentrations rather than amounts (default=amounts).
 <div class="p"><!----></div>
 </li>
 
-<li> Do Not Generate Runs: if checked, simulation data is not produced though summary probabilistic data is still produced (default=Generate Runs).
+<li> Do Not Generate Runs: if checked, simulation data is not produced, though summary probabilistic data is still produced (default=Generate Runs).
 <div class="p"><!----></div>
 </li>
 
-<li> Append Simulation Runs: if checked, additional simulation runs are added to the existing set of simulation runs rather than first removing the previous runs (default=overwrite).  Note that the seed changes automatically when this gets checked because otherwise the additional runs will likely be the same as the previous set.
+<li> Append Simulation Runs: if checked, additional simulation runs are added to the existing set of simulation runs rather than first removing the previous runs (default=overwrite).  Note that the seed changes automatically when this gets checked, because otherwise the additional runs will likely be the same as the previous set.
 <div class="p"><!----></div>
 </li>
 </ul> 
@@ -1205,7 +1199,7 @@ The table below specifies these:
 </a>Abstraction Options</h3>
 
 <div class="p"><!----></div>
-Abstraction is performed in three steps.  There is a preprocess step which is a sequence of abstractions performed once on the initial model.  The main loop iterates through a group of abstractions until there is no change in the model.  Finally, there is a postprocess step which is a sequence of abstractions performed once at the end.  Clicking on the Add button brings up a list of all the possible abstraction methods.  The selected abstraction method is added after the highlighted abstraction method in the list.  If not method is highlighted, it makes it the first abstraction in the list.
+Abstraction is performed in three steps.  There is a preprocess step, which is a sequence of abstractions performed once on the initial model.  The main loop iterates through a group of abstractions until there is no change in the model.  Finally, there is a postprocess step, which is a sequence of abstractions performed once at the end.  Clicking on the Add button brings up a list of all the possible abstraction methods.  The selected abstraction method is added after the highlighted abstraction method in the list.  If no method is highlighted, it makes it the first abstraction in the list.
 
 <div class="p"><!----></div>
 
@@ -1224,11 +1218,11 @@ Abstraction is performed in three steps.  There is a preprocess step which is a 
 <div class="p"><!----></div>
 </li>
 
-<li> distribute-transformer: applies the distributive law to kinetic law formula to make them easier to identify the forward and reverse rates within a reversible reaction.
+<li> distribute-transformer: applies the distributive law to kinetic law formulas to make it easier to identify the forward and reverse rates within a reversible reaction.
 <div class="p"><!----></div>
 </li>
 
-<li> reversible-to-irreversible-transformer: this converts a reversible reaction into two irreversible reaction.  This is critical for the Monte Carlo simulation methods that require there to be no reversible reactions.
+<li> reversible-to-irreversible-transformer: this converts a reversible reaction into two irreversible reactions.  This is critical for the Monte Carlo simulation methods that require there to be no reversible reactions.
 <div class="p"><!----></div>
 </li>
 
@@ -1267,7 +1261,7 @@ Note that these are not used by the common abstractions listed above.
 </a>Schematic</h3>
 
 <div class="p"><!----></div>
-Using the schematic tab, you can adjust initial values and parameters allowing one to perform simulations to determine the effect of these changes.  Clicking on any species, promoter, reaction, or influence brings up the corresponding editor.  To change a value, switch the corresponding combo box to modified which will then allow you to change the value.  
+Using the schematic tab, you can adjust initial values and parameters, allowing one to perform simulations to determine the effect of these changes.  Clicking on any species, promoter, reaction, or influence brings up the corresponding editor.  To change a value, switch the corresponding combo box to modified, which will then allow you to change the value.  
 
 <div class="p"><!----></div>
 
@@ -1275,7 +1269,7 @@ Using the schematic tab, you can adjust initial values and parameters allowing o
 </center>
 
 <div class="p"><!----></div>
-In addition to making single changes, you can also sweep a value as shown below.   When you click on the Sweep button, it brings up a window where you can select the start value, the stop value, and the step value.  The level indicates how the sweep should perform when multiple variables are swept at the same time.  A variables at the same level are changed at the same time.  Furthermore, all variables on level 2 are stepped through all their values before changing the values of those variables on level 1.  After the values on level 1 are changed, the values on level 2 are stepped through all their values again.  
+In addition to making single changes, you can also sweep a value as shown below.  When you click on the Sweep button, it brings up a window where you can select the start value, the stop value, and the step value.  The level indicates how the sweep should perform when multiple variables are swept at the same time.  Variables at the same level are changed at the same time.  Furthermore, all variables on level 2 are stepped through all their values before changing the values of those variables on level 1.  After the values on level 1 are changed, the values on level 2 are stepped through all their values again.  
 
 <div class="p"><!----></div>
 
@@ -1291,7 +1285,7 @@ The schematic tab can also be used to visualize simulation results.  To do this,
 </center>
 
 <div class="p"><!----></div>
-If you now click on a species, component, or grid location, you can modify how it appears as you playback the simulation.  You can have it change color on a gradient, change size, or change opacity.  You can also select the range of molecule counts to use for the gradients.  Finally, you can indicate that these selections are either for this species or all species in the model.  
+If you now click on a species, component, or grid location, you can modify how it appears as you playback the simulation.  You can have it change color, size, and/or opacity on a gradient.  You can also select the range of molecule counts to specify the ends of the gradient(s).  Finally, you can indicate that these selections are either for this species or all species in the model.  Appearances can be saved by clicking the save button.
 
 <div class="p"><!----></div>
 
@@ -1307,7 +1301,7 @@ The appearances editor for components and grid locations is similar.  The differ
 </center>
 
 <div class="p"><!----></div>
-Once you have made your selections, you can now playback the simulation.  You can either single step the simulation by pressing the <img src="../gui/icons/modelview/movie/single_step.png" alt="../gui/icons/modelview/movie/single_step.png" /> icon or play continuously by pressing the <img src="../gui/icons/modelview/movie/play.png" alt="../gui/icons/modelview/movie/play.png" /> icon.  The playback can also be paused by pressing the <img src="../gui/icons/modelview/movie/pause.png" alt="../gui/icons/modelview/movie/pause.png" /> icon and restarted by pressing the  <img src="../gui/icons/modelview/movie/rewind.png" alt="../gui/icons/modelview/movie/rewind.png" /> icon. 
+Once you have made your selections, you can now playback the simulation.  You can either single-step the simulation by pressing the <img src="../gui/icons/modelview/movie/single_step.png" alt="../gui/icons/modelview/movie/single_step.png" /> icon or play continuously by pressing the <img src="../gui/icons/modelview/movie/play.png" alt="../gui/icons/modelview/movie/play.png" /> icon.  The playback can also be paused by pressing the <img src="../gui/icons/modelview/movie/pause.png" alt="../gui/icons/modelview/movie/pause.png" /> icon and restarted by pressing the  <img src="../gui/icons/modelview/movie/rewind.png" alt="../gui/icons/modelview/movie/rewind.png" /> icon.  The slider can be dragged around to quickly reach a particular spot in simulation
 
 <div class="p"><!----></div>
 
@@ -1348,9 +1342,9 @@ The SBML elements tab allows you to select which SBML model elements to include 
 <div class="p"><!----></div>
 The Learn Tool is used to discover genetic circuit connectivity from time series data.  This tool uses the GeneNet algorithm described in
 <A HREF="http://www.async.ece.utah.edu/publications">
-Barker's PhD dissertation (University of Utah 2007)
+Barker's PhD dissertation (University of Utah 2007).
 </A>
-The first tab of the Learn Tool is the <em>data manager</em> which is shown below.  It is used to both enter time series experimental data as well as bring data into the learn view.  The Add button is used to create a new data file. After pressing this button, enter the name of the new data file, and then enter the data for this file using the data editor to the right.  The Remove button deletes all highlighted files.  Note that after highlighting one file, you can use the ctrl key to highlight additional files or the shift key to highlight a range of files.  The Rename button is used to change the name of a data file. The Copy button copies a data file. The Copy From View button brings up a list of all analysis and learn views in the current project, and data from the selected view will be copied into this learn view.  Finally, the Import button brings up a file browser, and it allows you to import a data file from outside
+  The first tab of the Learn Tool is the <em>data manager</em> which is shown below.  It is used to both enter time series experimental data as well as bring data into the learn view.  The Add button is used to create a new data file. After pressing this button, enter the name of the new data file, and then enter the data for this file using the data editor to the right.  The Remove button deletes all highlighted files.  Note that after highlighting one file, you can use the ctrl key to highlight additional files or the shift key to highlight a range of files.  The Rename button is used to change the name of a data file. The Copy button copies a data file. The Copy From View button brings up a list of all analysis and learn views in the current project, and data from the selected view will be copied into this learn view.  Finally, the Import button brings up a file browser, and it allows you to import a data file from outside
 this project.  These files can be in time series data (TSD) format (see Section&nbsp;<a href="#TSD">12</a>), comma separated value (CSV) format, or tab delimited format (DAT).  
 The contents of the data file highlighted on the left appear in the data editor on the right.  Individual data entries can be modified, new data points can be added using the Add Data Point button, data points can be removed using the Remove Data Point button, and data points can be copied using the Copy Data Point button.  When you are
 satisfied with all your changes, you should press the Save button to record your changes.
@@ -1464,7 +1458,7 @@ Once the Learn Tool has been provided data and configured as desired, pressing t
 </a>TSD Graph Editor</h2>
 
 <div class="p"><!----></div>
-The TSD graph editor appears as a tab in both analysis and learn views.  TSD graphs can also be created at the top-level of the project to allow you to integrate results from several analysis or learn views. These graphs can be created using the New &#8594; TSD Graph menu option in the File menu. Once created, they can be viewed and edited by double clicking on the graph in the project window.  An example graph is shown below.
+The TSD graph editor appears as a tab in both analysis and learn views.  TSD graphs can also be created at the top-level of the project to allow you to integrate results from several analysis or learn views. These graphs can be created using the New &#8594; TSD Graph menu option in the File menu. Once created, they can be viewed and edited by double-clicking on the graph in the project window.  An example graph is shown below.
 
 <div class="p"><!----></div>
 
@@ -1472,7 +1466,7 @@ The TSD graph editor appears as a tab in both analysis and learn views.  TSD gra
 </center>
 
 <div class="p"><!----></div>
-In the TSD graph editor, a graph is created by double clicking on the graph. You can then set various parameters and select what values you would like to have graphed. The parameters that you can select for a graph include: 
+In the TSD graph editor, a graph is created by double-clicking on the graph. You can then set various parameters and select what values you would like to have graphed. The parameters that you can select for a graph include: 
 
 <ul>
 <li> Title - the title of the graph.
@@ -1507,7 +1501,7 @@ In the TSD graph editor, a graph is created by double clicking on the graph. You
 <div class="p"><!----></div>
 </li>
 
-<li> Y-Step - the increment for the y-Axis.
+<li> Y-Step - the increment for the y-axis.
 <div class="p"><!----></div>
 </li>
 
@@ -1538,8 +1532,10 @@ In the TSD graph editor, a graph is created by double clicking on the graph. You
 </center>
 
 <div class="p"><!----></div>
-The data selection menu on the left displays all of the available sets of data that can be graphed.  For a top-level graph, these data sets are organized hierarchically.  Hierarchy is also introduced when different simulations in an analysis view are given different simulation IDs or after performing an analysis while sweeping parameter values.  In addition to being able to plot results from individual simulation runs, the average, standard deviation, and variance are also provided.  Finally, when constraints are used, the Termination TIme and Percent Termination data is also computed.  The Termination Time gives a plot fo the number of runs that have terminated versus time while Percent Termination gives the percentage of runs that have terminated versus time.
-After selecting a data set, one can select individual variables (typically species) to graph and how they are to be displayed.  In other words, for each species, there are the following options: 
+The data selection menu on the left displays all of the available sets of data that can be graphed.  For a top-level graph, these data sets are organized hierarchically.  Hierarchy is also introduced when different simulations in an analysis view are given different simulation IDs or after performing an analysis while sweeping parameter values.  In addition to being able to plot results from individual simulation runs, the average, standard deviation, and variance are also provided.  Finally, when constraints are used, the Termination Time and Percent Termination data is also computed.  The Termination Time gives a plot of the number of runs that have terminated versus time, while Percent Termination gives the percentage of runs that have terminated versus time.
+
+<div class="p"><!----></div>
+After selecting a data set, one can select individual variables (typically species) to graph and how they are to be displayed.  In other words, for each species there are the following options: 
 
 <ul>
 <li> Use Check Box - determines whether or not this species is displayed on the graph.  Checking or unchecking the box at the top changes the state for all species in the data set.
@@ -1574,7 +1570,7 @@ After selecting a data set, one can select individual variables (typically speci
 <div class="p"><!----></div>
 </li>
 </ul>
-Note that a check mark appears on a data set to indicate that some species have been selected in that data set. Also, all species can be deselected by pressing the Deselect All button.
+Note that a checkmark appears on a data set to indicate that some species have been selected in that data set. Also, all species can be deselected by pressing the Deselect All button.
 
 <div class="p"><!----></div>
 When in a TSD graph editor, pressing the Save icon <img src="../gui/icons/save.png" alt="../gui/icons/save.png" /> saves the settings for the graph to a file, so when you re-open the graph, it will reload this data and display in the same way as before.  Pressing the Save As icon <img src="../gui/icons/saveas.png" alt="../gui/icons/saveas.png" /> prompts for a new filename and creates a new top-level graph with that name.  Finally, pressing the Export icon <img src="../gui/icons/export.jpg" alt="../gui/icons/export.jpg" /> prompts for a filename and exports the data to the given name.  The extension provided for the filename is used to determine how the graph is to be exported. The supported file types are: 
@@ -1621,8 +1617,8 @@ not data) file types, you will be prompted to give a desired pixel height and wi
 </a>Histogram Graph Editor</h2>
 
 <div class="p"><!----></div>
-<tt>iBioSim</tt> includes a histogram graph editor for visualizing probability data.  In particular, this editor can display the reasons that a simulation terminated.  Namely, it displays statistics on which constraint failed to hold allowing the user to determine the likelihood of various conditions.  The histogram graph editor appears as a tab in analysis
-views.  Histograms can also be created at the top-level of the project to allow you to integrate results from several analysis views.  These graphs can be created using the New &#8594; Histogram menu option in the File menu. Once created, they can be viewed and edited by double clicking on the graph in the project window.  An example histogram is shown below.
+<tt>iBioSim</tt> includes a histogram graph editor for visualizing probability data.  In particular, this editor can display the reasons that a simulation terminated.  Namely, it displays statistics on which constraints failed to hold, allowing the user to determine the likelihood of various conditions.  The histogram graph editor appears as a tab in analysis
+views.  Histograms can also be created at the top-level of the project to allow you to integrate results from several analysis views.  These graphs can be created using the New &#8594; Histogram menu option in the File menu. Once created, they can be viewed and edited by double-clicking on the graph in the project window.  An example histogram is shown below.
 
 <div class="p"><!----></div>
 
@@ -1630,7 +1626,7 @@ views.  Histograms can also be created at the top-level of the project to allow 
 </center>
 
 <div class="p"><!----></div>
-In the histogram graph editor, a graph is created by double clicking on the graph. You can then set various parameters and select what values you would like to have graphed. The parameters that you can select for a graph include: 
+In the histogram graph editor, a graph is created by double-clicking on the graph. You can then set various parameters and select what values you would like to have graphed. The parameters that you can select for a graph include: 
 
 <ul>
 <li> Title - the title of the graph.
@@ -1664,7 +1660,7 @@ In the histogram graph editor, a graph is created by double clicking on the grap
 </center>
 
 <div class="p"><!----></div>
-The data selection menu on the left displays all of the available sets of data that can be graphed.  For a top-level graph, these data sets are organized hierarchically.  Hierarchy is also introduced when different simulations in an analysis view are given different simulation IDs or after performing an analysis while sweeping parameter values.  After selecting a data set, one can select individual constraints to graph.  The constraint labeled time-limit indicates that the simulation terminated while all constraints were still satisfied.  One can also select how each result is to be displayed.  In other words, for each constraint, there are the following options: 
+The data selection menu on the left displays all of the available sets of data that can be graphed.  For a top-level graph, these data sets are organized hierarchically.  Hierarchy is also introduced when different simulations in an analysis view are given different simulation IDs or after performing an analysis while sweeping parameter values.  After selecting a data set, one can select individual constraints to graph.  The constraint labeled time-limit indicates that the simulation terminated while all constraints were still satisfied.  One can also select how each result is to be displayed.  In other words, for each constraint there are the following options: 
 
 <ul>
 <li> Use Check Box - determines whether or not this constraint is displayed on the graph.  Checking or 
@@ -1684,7 +1680,7 @@ unchecking the box at the top changes the state for all constraints in the data 
 <div class="p"><!----></div>
 </li>
 </ul>
-Note that a check mark appears on a data set to indicate that some constraints have been selected in that data set.  Also, all constraints can be deselected by pressing the Deselect All button.
+Note that a checkmark appears on a data set to indicate that some constraints have been selected in that data set.  Also, all constraints can be deselected by pressing the Deselect All button.
 
 <div class="p"><!----></div>
 When in a histogram graph editor, pressing the Save icon <img src="../gui/icons/save.png" alt="../gui/icons/save.png" /> saves the settings for the graph to a file, so when you re-open the graph, it will reload this data and display in the same way as before.  Pressing the Save As icon <img src="../gui/icons/saveas.png" alt="../gui/icons/saveas.png" /> prompts for a new filename and creates a new top-level graph with that name.  Finally, pressing the Export icon <img src="../gui/icons/export.jpg" alt="../gui/icons/export.jpg" /> prompts for a filename and exports the data to the given name.  The extension provided for the filename is used to determine how the graph is to be exported. The supported file types are: 
@@ -1720,7 +1716,7 @@ not data) file types, you will be prompted to give a desired pixel height and wi
 
 <div class="p"><!----></div>
 User preferences can be set by selecting the <tt>Preferences</tt> option under the <tt>File</tt> menu on Linux and Windows or the <tt>iBioSim</tt> menu on MacOS.  As shown below, under the General Preferences tab, the
-user can decide whether they wish to use a File Dialog for selecting files.  If this is not checked, files are selected using the default Java File Chooser.  One can also choose whether or not they want to use plus/minus for expanding and collapsing file trees.  The Model Preferences tab allows users to select between Level 3 Version 1 of SBML or Level 2 Version 4.  One can also select whether they wish to see warnings about undeclared units in SBML and whether they wish to check units at all.  Finally, it allows users to change the default model generation parameter values.  The Analysis Preferences tab allows users to change the default values used by the analysis tool.  The simulation command in particular can be useful to either select an alternative simulator.  We've used it to select a script that executes the simulation on a compute server.  Finally, the Learn Preferences tab allows users to change the default values used by the learn tool.
+user can decide whether they wish to use a File Dialog for selecting files.  If this is not checked, files are selected using the default Java File Chooser.  One can also choose whether or not they want to use plus/minus for expanding and collapsing file trees.  The Model Preferences tab allows users to select between Level 3 Version 1 of SBML or Level 2 Version 4.  One can also select whether they wish to see warnings about undeclared units in SBML and whether they wish to check units at all.  Finally, it allows users to change the default model generation parameter values.  The Analysis Preferences tab allows users to change the default values used by the analysis tool.  The simulation command in particular can be useful to select an alternative simulator.  We've used it to select a script that executes the simulation on a compute server.  Finally, the Learn Preferences tab allows users to change the default values used by the learn tool.
 
 <div class="p"><!----></div>
 
@@ -1783,11 +1779,11 @@ Math formulas appear in many model constructs.  These formulas are expressed as 
 <div class="p"><!----></div>
 </li>
 
-<li> Built-in constants: exponentiale, pi, true, and false.
+<li> Built-in constants: exponential, pi, true, and false.
 <div class="p"><!----></div>
 </li>
 
-<li> Special variable time or t which returns the current simulation time.
+<li> Special variable time or t, which returns the current simulation time.
 <div class="p"><!----></div>
 </li>
 
@@ -1815,7 +1811,7 @@ Math formulas appear in many model constructs.  These formulas are expressed as 
 <div class="p"><!----></div>
 </li>
 
-<li> The delay(expr1,expr2) function which returns the value of expr1 at a time expr2 time units earlier (not currently supported by analysis).
+<li> The delay(expr1,expr2) function, which returns the value of expr1 at a time expr2 time units earlier (not currently supported by analysis).
 <div class="p"><!----></div>
 </li>
 
@@ -1843,26 +1839,27 @@ Math formulas appear in many model constructs.  These formulas are expressed as 
 </a>Continuous Stochastic Logic (CSL) Formulas</h2>
 
 <div class="p"><!----></div>
-To analyze probabilistic models using <tt>iBioSim</tt>, it is necessary to specify one or more properties of
-the model.  <tt>iBioSim</tt> accepts property specifications using a subset of probabilistic temporal logic called <em>Continuous Stochastic Logic</em> (CSL).  There are four types of CSL properties currently supported:
+To analyze a probabilistic models using <tt>iBioSim</tt>, it is necessary to specify one or more properties of
+the model.  <tt>iBioSim</tt> accepts property specifications using a subset of probabilistic temporal logic <em>Continuous Stochastic Logic</em> (CSL).  There are four types of CSL properties currently supported:
 
 <ul>
-<li> Transient global formula of the form Pr{PG [ &#968; ]( &#936; )} where &#968; is a time bound and &#936; is state formula.  This formula determines the probability that &#936; is always true in the interval defined by &#968;.
+<li> Transient global formula of the form Pr{PG [ &#968; ]( &#936; )}, where &#968; is a time bound and &#936; is a state formula.  This formula determines the probability that &#936; is always true in the interval defined by &#968;.
 <div class="p"><!----></div>
 </li>
 
-<li> Transient eventually formula of the form Pr{PF [ &#968; ]( &#936; )} where &#968; is a time bound and &#936; is a state formula.  This formula determines the probability that &#936; becomes true during the interval defined by &#968;.
+<li> Transient eventually formula of the form Pr{PF [ &#968; ]( &#936; )}, where &#968; is a time bound and &#936; is a state formula.  This formula determines the probability that &#936; becomes true during the interval defined by &#968;.
 <div class="p"><!----></div>
 </li>
 
-<li> Transient until formula of the form Pr{&#936;<sub>1</sub> PU [ &#968; ] &#936;<sub>2</sub>} where &#968; is a time bound and &#936;<sub>1</sub> and &#936;<sub>2</sub> are state formula.  This formula determines the probability that &#936;<sub>1</sub> remains true until &#936;<sub>2</sub> becomes true during the interval defined by &#968;.
+<li> Transient until formula of the form Pr{&#936;<sub>1</sub> PU [ &#968; ] &#936;<sub>2</sub>}, where &#968; is a time bound and &#936;<sub>1</sub> and &#936;<sub>2</sub> are state formula.  This formula determines the probability that &#936;<sub>1</sub> remains true until &#936;<sub>2</sub> becomes true during the interval defined by &#968;.
 <div class="p"><!----></div>
 </li>
 
-<li> Steady-state formula of the form St{&#936;} where &#936; is a state formula.  This formula determines the probability of being in a state that satisfies &#936; as time goes to infinity.
+<li> Steady-state formula of the form St{&#936;}, where &#936; is a state formula.  This formula determines the probability of being in a state that satisfies &#936; as time goes to infinity.
 <div class="p"><!----></div>
 </li>
 </ul>
+The time bounds, &#968;, can be a relational operator ( &lt; ,  &#8804; , =,  &#8805; ,  &gt; ) followed by a constant real time value.  They can also be a time bound of the form [ l, u ], where l and u are constant real-time values.  The state formula, &#936;, should evaluate to a Boolean, and it can include:
 The time bound, &#968;, can either be a relational operator ( &lt; ,  &#8804; , =,  &#8805; ,  &gt; ) followed by a constant real time value or a time bound of the form [ l, u ] where l and u
 are constant real time values.  The state formula, &#936;, should evaluate to a Boolean, and it can include:
 
@@ -1895,7 +1892,7 @@ are constant real time values.  The state formula, &#936;, should evaluate to a 
 </a>Time Series Data Format</h2>
 
 <div class="p"><!----></div>
-The time series data (tsd) format is composed of a parenthesized and comma-separated set of time points. Each time point is composed of a parenthesized and comma-separated set of data for that time point. This first time point is composed of a set of strings that are the labels for the data entries. The first entry in each time point is by convention the time for that time point. Below is an example simulation of the species CI and CII from 0 to 1000 seconds with time points separated by 100 seconds. 
+The time series data (tsd) format is composed of a parenthesized and comma-separated set of time points. Each time point is composed of a parenthesized and comma-separated set of data for that time point. This first time point is composed of a set of strings that are the labels for the data entries. The first entry in each time point is, by convention, the time for that time point. Below is an example simulation of the species CI and CII from 0 to 1000 seconds with time points separated by 100 seconds. 
 
 <div class="p"><!----></div>
 (("time","CI","CII"), (0,0,0), (100,0,19), (200,20,25), (300,19,18), (400,17,20), (500,17,46), <br />
@@ -1910,7 +1907,11 @@ A detailed
 <a href="iBioSim_Tutorial.html">
 tutorial
 </a>
-is available in the <tt>docs</tt> directory that comes with the distribution.
+and a separate
+<a href="iBioSim_Grid_Tutorial.html">
+grid tutorial
+</a>
+are available in the <tt>docs</tt> directory that comes with the distribution.
 
 <div class="p"><!----></div>
  <h2><a name="tth_sEc14">
@@ -1920,7 +1921,7 @@ is available in the <tt>docs</tt> directory that comes with the distribution.
 In order to report a bug or to request a change or feature, please
 send an email to:<br />
 <a href="mailto:atacs-bugs@vlsigroup.ece.utah.edu">
-<tt>atacs-bugs@vlsigroup.ece.utah.edu</tt>.<br />
+<tt>atacs-bugs@vlsigroup.ece.utah.edu</tt>.
 </a>
 The subject line must begin with one of the following keywords or the
 mail will be filtered by our spam filters:
@@ -1944,6 +1945,6 @@ mail will be filtered by our spam filters:
 <br /><br /><hr /><small>File translated from
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
-T<sub><font size="-1">T</font></sub>Hgold</a>,
-version 4.00.<br />On 26 Aug 2011, 12:30.</small>
+T<sub><font size="-1">T</font></sub>H</a>,
+version 3.85.<br />On 26 Aug 2011, 13:39.</small>
 </html>
