@@ -331,10 +331,10 @@ Reactions convert reactant species into product species with perhaps modifier sp
 \item ID: this is the ID for this reactant and should not be confused with the Species ID.  This ID can be used in equations such as initial, rule, or event assignments.  Use this ID when you want the stoichiometry to be determined by an equation or used in an equation.  The ID is optional.
 \item Name: an arbitrary string description of the species (optional).
 \item Species: the ID of the reactant species.
-\item Stoichiometry: the number of molecules consumed by the reaction.  Note that this value will be overridden when the reactant ID is used on the left-hand size of an assignment.
+\item Stoichiometry: the number of molecules consumed by the reaction.  Note that this value will be overridden when the reactant ID is used on the left-hand side of an assignment.
 \item Constant: indicates whether the stoichiometry can change dynamically.  
 \end{itemize}
-Similarly, the ID, Name, Species, Stoichiometry, and Constant fields can be edited for a Product edge as shown below.  Modifiers' edges do not have any of these fields, so they cannot be edited.
+Similarly, the ID, Name, Species, Stoichiometry, and Constant fields can be edited for a Product edge as shown below.  Modifier edges do not have any of these fields, so they cannot be edited.
 
 \begin{center}
 \includegraphics[height=80mm]{screenshots/reactant} 
@@ -364,7 +364,7 @@ The Clear button clears the kinetic law editor.  Note that the kinetic law formu
 \includegraphics[height=80mm]{screenshots/kineticLaw} 
 \end{center}
 
-To simplify a schematic, one can use implicit reactions in some limited situations.  To create an implicit reaction, with the Reaction icon highlighted and the mouse button selected, drag a reaction edge between two species.  This action creates a reaction with a default ID and parameters including the source species as a reactant and sink species as a product.  If you connect an additional reaction edge to either species, you are asked if you wish to create a new reaction or add this new relationship to an existing reaction on the source and/or sink species.  Implicit reactions can only be used when the following conditions hold:
+To simplify a schematic, one can use implicit reactions in some limited situations.  To create an implicit reaction, with the Reaction icon highlighted and the mouse button selected, drag a reaction edge between two species.  This action creates a reaction with a default ID and parameters, including the source species as a reactant and sink species as a product.  If you connect an additional reaction edge to either species, you are asked if you wish to create a new reaction or add this new relationship to an existing reaction on the source and/or sink species.  Implicit reactions can only be used when the following conditions hold:
 \begin{itemize}
 \item The stoichiometry of all reactants and products for the reaction is 1.
 \item The reaction has either a single reactant OR a single product.
@@ -385,7 +385,7 @@ Components are instances of other models within the project, and they are used t
 \includegraphics[height=80mm]{screenshots/addComponent}
 \end{center}
 
-When a component is added, it appears in the schematic either with sharp or rounded corners.  A component with sharp corners is not enclosed within a compartment, so it may have ports to which species may be connected.  In other words, this is likely part of a hierarchical model.  On the other hand, rounded corners indicate that it is enclosed within a compartment, so it cannot have any ports.  In this case, this component is likely to be part of either a multi-compartment or cellular population model, and diffusible species can move between the compartments.  Clicking on the component opens the Component Editor which allows you to change the instance name for the component as well as see a list of the components ports.
+When a component is added, it appears in the schematic either with sharp or rounded corners.  A component with sharp corners is not enclosed within a compartment, so it may have ports to which species may be connected.  In other words, this is likely part of a hierarchical model.  On the other hand, rounded corners indicate that it is enclosed within a compartment, so it cannot have any ports.  In this case, the component is likely to be part of either a multi-compartment or cellular population model.  If a diffusible species with the same ID exists inside and outside of a compartment-enclosed component, a membrane diffusion reaction will be created, allowing the species to be transported to/from the compartment-enclosed component.  If the compartment-enclosed component is on a grid, the outside diffusible species will be automatically created if the inside diffusible species exists.  Clicking on the component opens the Component Editor, which allows you to change the instance name for the component as well as see a list of the components ports.
 
 \begin{center}
 \includegraphics[height=60mm]{screenshots/editComp}
@@ -393,7 +393,7 @@ When a component is added, it appears in the schematic either with sharp or roun
 
 %% TODO: NEED MORE HERE ABOUT WHERE BEHAVIOR IS SPECIFIED
 
-When a component has ports, connections to input ports can be made by selecting a species and while holding the mouse button drag an arc to the component.  If there are multiple input ports, you are asked which input port to connect this species to.  To connect to output ports, begin by selecting the component and drag an arc to the species to be connected to the output port.  Note that when you make these connections you are specifying the species in the top-level model is the same species in the component that it is connected too.  
+When a component has ports, connections to input ports can be made by selecting a species and, while holding the mouse button, drag an arc to the component.  If there are multiple input ports, you are asked which input port to connect this species to.  To connect to output ports, begin by selecting the component and drag an arc to the species to be connected to the output port.  Note that when you make these connections you are specifying that the species in the top-level model is the same species as the one in the component that it is connected too.  
 
 \begin{center}
 \includegraphics[height=80mm]{screenshots/addPort}
@@ -407,7 +407,8 @@ When adding a component to a grid, you are simply asked which model to instantia
 
 \subsection{\label{Promoters}Promoters}
 
-Promoters are the locations on a DNA sequence in which transcription is initiated to create a \emph{messager} RNA (mRNA) which can then be translated by a ribosome into a protein.  To add a promoter to a model, select the Add Promoter icon \includegraphics{../gui/icons/modelview/promoter_mode_selected} and click on the schematic canvas creating a new promoter with a default ID and parameter values.  Clicking on the promoter opens the Promoter Editor and allows you to edit the following fields:
+\noindent
+Promoters are the locations on a DNA sequence in which transcription is initiated to create a \emph{messager} RNA (mRNA), which can then be translated by a ribosome into a protein.  To add a promoter to a model, select the Add Promoter icon \includegraphics{../gui/icons/modelview/promoter_mode_selected} and click on the schematic canvas, which creates a new promoter with a default ID and parameter values.  Clicking on the promoter opens the Promoter Editor and allows you to edit the following fields:
 \begin{itemize}
 \item ID: a unique ID composed only of alphanumeric characters and underscores.
 \item Name: an arbitrary string description (optional).

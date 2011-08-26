@@ -500,7 +500,7 @@ Reactions convert reactant species into product species with perhaps modifier sp
 <div class="p"><!----></div>
 </li>
 
-<li> Stoichiometry: the number of molecules consumed by the reaction.  Note that this value will be overridden when the reactant ID is used on the left-hand size of an assignment.
+<li> Stoichiometry: the number of molecules consumed by the reaction.  Note that this value will be overridden when the reactant ID is used on the left-hand side of an assignment.
 <div class="p"><!----></div>
 </li>
 
@@ -508,7 +508,7 @@ Reactions convert reactant species into product species with perhaps modifier sp
 <div class="p"><!----></div>
 </li>
 </ul>
-Similarly, the ID, Name, Species, Stoichiometry, and Constant fields can be edited for a Product edge as shown below.  Modifiers' edges do not have any of these fields, so they cannot be edited.
+Similarly, the ID, Name, Species, Stoichiometry, and Constant fields can be edited for a Product edge as shown below.  Modifier edges do not have any of these fields, so they cannot be edited.
 
 <div class="p"><!----></div>
 
@@ -565,7 +565,7 @@ The Clear button clears the kinetic law editor.  Note that the kinetic law formu
 </center>
 
 <div class="p"><!----></div>
-To simplify a schematic, one can use implicit reactions in some limited situations.  To create an implicit reaction, with the Reaction icon highlighted and the mouse button selected, drag a reaction edge between two species.  This action creates a reaction with a default ID and parameters including the source species as a reactant and sink species as a product.  If you connect an additional reaction edge to either species, you are asked if you wish to create a new reaction or add this new relationship to an existing reaction on the source and/or sink species.  Implicit reactions can only be used when the following conditions hold:
+To simplify a schematic, one can use implicit reactions in some limited situations.  To create an implicit reaction, with the Reaction icon highlighted and the mouse button selected, drag a reaction edge between two species.  This action creates a reaction with a default ID and parameters, including the source species as a reactant and sink species as a product.  If you connect an additional reaction edge to either species, you are asked if you wish to create a new reaction or add this new relationship to an existing reaction on the source and/or sink species.  Implicit reactions can only be used when the following conditions hold:
 
 <ul>
 <li> The stoichiometry of all reactants and products for the reaction is 1.
@@ -601,7 +601,7 @@ Components are instances of other models within the project, and they are used t
 </center>
 
 <div class="p"><!----></div>
-When a component is added, it appears in the schematic either with sharp or rounded corners.  A component with sharp corners is not enclosed within a compartment, so it may have ports to which species may be connected.  In other words, this is likely part of a hierarchical model.  On the other hand, rounded corners indicate that it is enclosed within a compartment, so it cannot have any ports.  In this case, this component is likely to be part of either a multi-compartment or cellular population model, and diffusible species can move between the compartments.  Clicking on the component opens the Component Editor which allows you to change the instance name for the component as well as see a list of the components ports.
+When a component is added, it appears in the schematic either with sharp or rounded corners.  A component with sharp corners is not enclosed within a compartment, so it may have ports to which species may be connected.  In other words, this is likely part of a hierarchical model.  On the other hand, rounded corners indicate that it is enclosed within a compartment, so it cannot have any ports.  In this case, the component is likely to be part of either a multi-compartment or cellular population model.  If a diffusible species with the same ID exists inside and outside of a compartment-enclosed component, a membrane diffusion reaction will be created, allowing the species to be transported to/from the compartment-enclosed component.  If the compartment-enclosed component is on a grid, the outside diffusible species will be automatically created if the inside diffusible species exists.  Clicking on the component opens the Component Editor, which allows you to change the instance name for the component as well as see a list of the components ports.
 
 <div class="p"><!----></div>
 
@@ -611,7 +611,7 @@ When a component is added, it appears in the schematic either with sharp or roun
 <div class="p"><!----></div>
 
 <div class="p"><!----></div>
-When a component has ports, connections to input ports can be made by selecting a species and while holding the mouse button drag an arc to the component.  If there are multiple input ports, you are asked which input port to connect this species to.  To connect to output ports, begin by selecting the component and drag an arc to the species to be connected to the output port.  Note that when you make these connections you are specifying the species in the top-level model is the same species in the component that it is connected too.  
+When a component has ports, connections to input ports can be made by selecting a species and, while holding the mouse button, drag an arc to the component.  If there are multiple input ports, you are asked which input port to connect this species to.  To connect to output ports, begin by selecting the component and drag an arc to the species to be connected to the output port.  Note that when you make these connections you are specifying that the species in the top-level model is the same species as the one in the component that it is connected too.  
 
 <div class="p"><!----></div>
 
@@ -632,7 +632,7 @@ When adding a component to a grid, you are simply asked which model to instantia
 </a>Promoters</h3>
 
 <div class="p"><!----></div>
-Promoters are the locations on a DNA sequence in which transcription is initiated to create a <em>messager</em> RNA (mRNA) which can then be translated by a ribosome into a protein.  To add a promoter to a model, select the Add Promoter icon <img src="../gui/icons/modelview/promoter_mode_selected.png" alt="../gui/icons/modelview/promoter_mode_selected.png" /> and click on the schematic canvas creating a new promoter with a default ID and parameter values.  Clicking on the promoter opens the Promoter Editor and allows you to edit the following fields:
+Promoters are the locations on a DNA sequence in which transcription is initiated to create a <em>messager</em> RNA (mRNA), which can then be translated by a ribosome into a protein.  To add a promoter to a model, select the Add Promoter icon <img src="../gui/icons/modelview/promoter_mode_selected.png" alt="../gui/icons/modelview/promoter_mode_selected.png" /> and click on the schematic canvas, which creates a new promoter with a default ID and parameter values.  Clicking on the promoter opens the Promoter Editor and allows you to edit the following fields:
 
 <ul>
 <li> ID: a unique ID composed only of alphanumeric characters and underscores.
@@ -1944,5 +1944,5 @@ mail will be filtered by our spam filters:
 T<sub><font size="-1">E</font></sub>X
 by <a href="http://hutchinson.belmont.ma.us/tth/">
 T<sub><font size="-1">T</font></sub>H</a>,
-version 3.85.<br />On 26 Aug 2011, 11:40.</small>
+version 3.85.<br />On 26 Aug 2011, 12:00.</small>
 </html>
