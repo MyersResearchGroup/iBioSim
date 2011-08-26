@@ -143,26 +143,11 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	 * 
 	 * @param mouseX where the user clicked
 	 * @param mouseY where the user clicked
-	 * @param gridSpatial whether the grid is spatial or cell population
 	 */
 	private void openGridGUI(float mouseX, float mouseY, boolean selected) {
 		
 		//list of all available components to drop
 		ArrayList<String> componentList = gcm2sbml.getComponentsList();
-		
-		ArrayList<String> gridComponents = new ArrayList<String>();
-		
-		//take out any components with underlying grids
-		for(String comp : gcm2sbml.getComponentsList()) {
-			
-			GCMFile compGCM = new GCMFile(gcm.getPath());
-			
-			//don't allow grids within a grid
-			if (compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + comp))
-				gridComponents.add(comp);
-		}
-		
-		componentList.removeAll(gridComponents);
 		
 		//tell the user if there aren't any components to use
 		if (componentList.size() == 0) {
@@ -187,39 +172,66 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		
 		String[] options = {GlobalConstants.OK, GlobalConstants.CANCEL};
 		
-		int okCancel = JOptionPane.showOptionDialog(Gui.frame, this, "Add GCM",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-
-		//if the user clicks "ok" on the panel
-		if (okCancel == JOptionPane.OK_OPTION) {
+		boolean error = true;
+		
+		while (error) {
 			
-			//name of the component
-			String component = (String)componentChooser.getSelectedItem();
+			int value = JOptionPane.showOptionDialog(Gui.frame, this, "Add Component(s)",
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+	
+			//if the user clicks okay
+			//add the components to the gcm
+			if (value == JOptionPane.OK_OPTION) {			
 			
-			if (selected == false) {
+				//name of the component
+				String component = (String)componentChooser.getSelectedItem();
 				
-				int row = gcm.getGrid().getRowFromPoint(new Point((int)mouseX, (int)mouseY));
-				int col = gcm.getGrid().getColFromPoint(new Point((int)mouseX, (int)mouseY));
+				GCMFile compGCM = new GCMFile(gcm.getPath());
 				
-				applyGridComponent(row, col, component);
-			}
-			//if we're adding components to selected location(s)
-			else {
-				
-				ArrayList<Point> selectedNodes = gcm.getGrid().getSelectedUnoccupiedNodes();
-				
-				//loop through all selected locations; apply the component to that location
-				if (selectedNodes.size() > 0) {
+				//don't allow dropping a grid component
+				if (compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + component)) {
 					
-					for (Point rowCol : selectedNodes)
-						applyGridComponent(rowCol.x, rowCol.y, component);				
+					JOptionPane.showMessageDialog(Gui.frame,
+							"Dropping grid components is disallowed.\n" +
+							"Please choose a different component.",
+							"Cannot drop a grid component", JOptionPane.ERROR_MESSAGE);
+				}
+				else {
+					
+					error = false;
+				
+					//if we're adding a single component
+					if (selected == false) {
+						
+						int row = gcm.getGrid().getRowFromPoint(new Point((int)mouseX, (int)mouseY));
+						int col = gcm.getGrid().getColFromPoint(new Point((int)mouseX, (int)mouseY));
+						
+						applyGridComponent(row, col, component);
+					}
+					//if we're adding components to selected location(s)
+					else {
+						
+						ArrayList<Point> selectedNodes = gcm.getGrid().getSelectedUnoccupiedNodes();
+						
+						//loop through all selected locations; apply the component to that location
+						if (selectedNodes.size() > 0) {
+							
+							for (Point rowCol : selectedNodes)
+								applyGridComponent(rowCol.x, rowCol.y, component);				
+						}
+					}
+					
+					Grid grid = gcm.getGrid();
+					grid.refreshComponents(gcm.getComponents());
+					
+					droppedComponent = true;
 				}
 			}
-			
-			Grid grid = gcm.getGrid();
-			grid.refreshComponents(gcm.getComponents());
-			
-			droppedComponent = true;
+			else {
+				
+				this.droppedComponent = false;
+				error = false;
+			}
 		}
 	}
 	
@@ -272,20 +284,6 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		//list of all available components to drop
 		ArrayList<String> componentList = gcm2sbml.getComponentsList();
 		
-		ArrayList<String> gridComponents = new ArrayList<String>();
-		
-		//take out any components with underlying grids
-		for(String comp : gcm2sbml.getComponentsList()) {
-			
-			GCMFile compGCM = new GCMFile(gcm.getPath());
-			
-			//don't allow grids within a grid
-			if (compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + comp))
-				gridComponents.add(comp);
-		}
-		
-		componentList.removeAll(gridComponents);
-		
 		if(componentList.size() == 0){
 			JOptionPane.showMessageDialog(Gui.frame,
 					"There aren't any other gcms to use as components."
@@ -301,15 +299,41 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		
 		String[] options = { GlobalConstants.OK, GlobalConstants.CANCEL };
 		
-		int value = JOptionPane.showOptionDialog(Gui.frame, this, "Add Component(s)",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-
-		//if the user clicks okay
-		//add the components to the gcm
-		if (value == JOptionPane.OK_OPTION)
-			applyComponents(mouseX, mouseY);
-		else
-			this.droppedComponent = false;
+		boolean error = true;
+		
+		while (error) {
+		
+			int value = JOptionPane.showOptionDialog(Gui.frame, this, "Add Component(s)",
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+	
+			//if the user clicks okay
+			//add the components to the gcm
+			if (value == JOptionPane.OK_OPTION) {		
+			
+				//name of the component
+				String component = (String)componentCombo.getSelectedItem();
+				
+				GCMFile compGCM = new GCMFile(gcm.getPath());
+				
+				//don't allow grids within a grid
+				if (compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + component)) {
+					
+					JOptionPane.showMessageDialog(Gui.frame,
+							"Dropping grid components is disallowed.\n" +
+							"Please choose a different component.",
+							"Cannot drop a grid component", JOptionPane.ERROR_MESSAGE);
+				}
+				else {
+				
+					applyComponents(mouseX, mouseY);
+					error = false;
+				}
+			}
+			else {
+				this.droppedComponent = false;
+				error = false;
+			}
+		}
 	}
 	
 	/**

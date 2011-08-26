@@ -57,20 +57,6 @@ public class GridPanel extends JPanel implements ActionListener{
 		componentList = gcm2sbml.getComponentsList();
 		componentList.add("none");
 		
-		ArrayList<String> gridComponents = new ArrayList<String>();
-		
-		//take out any components with underlying grids
-		for(String comp : gcm2sbml.getComponentsList()) {
-			
-			GCMFile compGCM = new GCMFile(gcm.getPath());
-			
-			//don't allow grids within a grid
-			if (compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + comp))
-				gridComponents.add(comp);
-		}
-		
-		componentList.removeAll(gridComponents);
-		
 		//editMode is false means creating a grid
 		if (!editMode)
 			built = buildPanel() == true ? true : false;
@@ -136,54 +122,79 @@ public class GridPanel extends JPanel implements ActionListener{
 		
 		String[] options = {GlobalConstants.OK, GlobalConstants.CANCEL};
 		
-		int okCancel = JOptionPane.showOptionDialog(Gui.frame, this, "Create a Grid",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-
-		//if the user clicks "ok" on the panel
-		if (okCancel == JOptionPane.OK_OPTION) {
-			
-			int rowCount = 0, colCount = 0;
-			
-			//try to get the number of rows and columns from the user
-			try{
+		boolean error = true;
+		
+		while (error) {
+		
+			int okCancel = JOptionPane.showOptionDialog(Gui.frame, this, "Create a Grid",
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+	
+			//if the user clicks "ok" on the panel
+			if (okCancel == JOptionPane.OK_OPTION) {			
 				
-				rowCount = Integer.parseInt(rowsChooser.getText());
-				colCount = Integer.parseInt(columnsChooser.getText());
+				//name of the component
+				String component = (String)componentChooser.getSelectedItem();
+				
+				GCMFile compGCM = new GCMFile(gcm.getPath());
+				
+				//don't allow dropping a grid component
+				if (compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + component)) {
+					
+					JOptionPane.showMessageDialog(Gui.frame,
+							"Dropping grid components is disallowed.\n" +
+							"Please choose a different component.",
+							"Cannot drop a grid component", JOptionPane.ERROR_MESSAGE);
+					
+					continue;
+				}
+				else {			
+				
+					int rowCount = 0, colCount = 0;
+					
+					//try to get the number of rows and columns from the user
+					try{
+						
+						rowCount = Integer.parseInt(rowsChooser.getText());
+						colCount = Integer.parseInt(columnsChooser.getText());
+					}
+					catch(NumberFormatException e){
+						
+						JOptionPane.showMessageDialog(Gui.frame,
+								"A number you entered could not be parsed.",
+								"Invalid number format",
+								JOptionPane.ERROR_MESSAGE);
+					}
+					
+					if (rowCount < 1 || colCount < 1) {
+						
+						JOptionPane.showMessageDialog(Gui.frame,
+								"The size must be positive",
+								"Invalid size",
+								JOptionPane.ERROR_MESSAGE);
+						
+						return false;		
+					}
+					
+					//filename of the component
+					String compGCMName = (String)componentChooser.getSelectedItem();
+					
+					//create the grid with these components
+					//these will be added to the GCM as well
+					Grid grid = gcm.getGrid();
+					grid.createGrid(rowCount, colCount, gcm, compGCMName);
+					
+					return true;
+				}
 			}
-			catch(NumberFormatException e){
+			else {
 				
-				JOptionPane.showMessageDialog(Gui.frame,
-						"A number you entered could not be parsed.",
-						"Invalid number format",
-						JOptionPane.ERROR_MESSAGE);
+				Grid grid = gcm.getGrid();
+				grid.setEnabled(true);
+				return true;
 			}
-			
-			if (rowCount < 1 || colCount < 1) {
-				
-				JOptionPane.showMessageDialog(Gui.frame,
-						"The size must be positive",
-						"Invalid size",
-						JOptionPane.ERROR_MESSAGE);
-				
-				return false;		
-			}
-			
-			//filename of the component
-			String compGCM = (String)componentChooser.getSelectedItem();
-			
-			//create the grid with these components
-			//these will be added to the GCM as well
-			Grid grid = gcm.getGrid();
-			grid.createGrid(rowCount, colCount, gcm, compGCM);
-			
-			return true;
 		}
-		else {
-			
-			Grid grid = gcm.getGrid();
-			grid.setEnabled(true);
-			return true;
-		}
+		
+		return false;
 	}
 	
 	/**
@@ -229,48 +240,73 @@ public class GridPanel extends JPanel implements ActionListener{
 		
 		String[] options = {GlobalConstants.OK, GlobalConstants.CANCEL};
 		
-		int okCancel = JOptionPane.showOptionDialog(Gui.frame, this, "Edit the Grid Size",
-				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-
-		//if the user clicks "ok" on the panel
-		if (okCancel == JOptionPane.OK_OPTION) {
-			
-			int rowCount = 0, colCount = 0;
-			
-			//try to get the number of rows and columns from the user
-			try{
+		boolean error = true;
+		
+		while (error) {
+		
+			int okCancel = JOptionPane.showOptionDialog(Gui.frame, this, "Edit the Grid Size",
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+	
+			//if the user clicks "ok" on the panel
+			if (okCancel == JOptionPane.OK_OPTION) {
 				
-				rowCount = Integer.parseInt(rowsChooser.getText());
-				colCount = Integer.parseInt(columnsChooser.getText());
+				//name of the component
+				String component = (String)componentChooser.getSelectedItem();
+				
+				GCMFile compGCM = new GCMFile(gcm.getPath());
+				
+				//don't allow dropping a grid component
+				if (compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + component)) {
+					
+					JOptionPane.showMessageDialog(Gui.frame,
+							"Dropping grid components is disallowed.\n" +
+							"Please choose a different component.",
+							"Cannot drop a grid component", JOptionPane.ERROR_MESSAGE);
+					
+					continue;
+				}
+				else {		
+				
+					int rowCount = 0, colCount = 0;
+					
+					//try to get the number of rows and columns from the user
+					try{
+						
+						rowCount = Integer.parseInt(rowsChooser.getText());
+						colCount = Integer.parseInt(columnsChooser.getText());
+					}
+					catch(NumberFormatException e){
+						
+						JOptionPane.showMessageDialog(Gui.frame,
+								"A number you entered could not be parsed.",
+								"Invalid number format",
+								JOptionPane.ERROR_MESSAGE);
+					}
+					
+					if (rowCount < 1 || colCount < 1) {
+						
+						JOptionPane.showMessageDialog(Gui.frame,
+								"The size must be positive",
+								"Invalid size",
+								JOptionPane.ERROR_MESSAGE);
+						
+						return false;
+					}
+					
+					//filename of the component
+					String compGCMName = (String)componentChooser.getSelectedItem();
+					
+					//if the grid size increases, then add the new components to the GCM
+					//if it decreases, delete components from the GCM (getComponents.remove(id))
+					grid.changeGridSize(rowCount, colCount, compGCMName, gcm);
+		
+					return true;
+				}
 			}
-			catch(NumberFormatException e){
-				
-				JOptionPane.showMessageDialog(Gui.frame,
-						"A number you entered could not be parsed.",
-						"Invalid number format",
-						JOptionPane.ERROR_MESSAGE);
-			}
-			
-			if (rowCount < 1 || colCount < 1) {
-				
-				JOptionPane.showMessageDialog(Gui.frame,
-						"The size must be positive",
-						"Invalid size",
-						JOptionPane.ERROR_MESSAGE);
-				
-				return false;
-			}
-			
-			//filename of the component
-			String compGCM = (String)componentChooser.getSelectedItem();
-			
-			//if the grid size increases, then add the new components to the GCM
-			//if it decreases, delete components from the GCM (getComponents.remove(id))
-			grid.changeGridSize(rowCount, colCount, compGCM, gcm);
-
-			return true;
+			else return false;
 		}
-		else return false;
+		
+		return false;
 	}
 	
 	/**
