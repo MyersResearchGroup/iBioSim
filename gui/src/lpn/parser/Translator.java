@@ -961,7 +961,7 @@ public class Translator {
 				probprop=property;
 			}
 			else if(property.startsWith("=") && property.contains("?")){ // full version: Pr=?{Psi} and St=?{Psi}
-				property=property.substring(1);
+				property=property.substring(3);
 				property=property.replace("}", "");
 				probprop=property;
 			}
