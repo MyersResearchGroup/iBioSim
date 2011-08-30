@@ -5253,8 +5253,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									String line = null;
 									String file = "";
 									while ((line = in.readLine()) != null) {
-										if (line.contains(oldName)) {
-											line = line.replaceAll(oldName, rename);
+										if (line.contains("gcm=" + oldName)) {
+											line = line.replaceAll("gcm=" + oldName, "gcm=" + rename);
 											update = true;
 										}
 										file += line;
