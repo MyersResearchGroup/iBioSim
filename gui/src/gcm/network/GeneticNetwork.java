@@ -673,26 +673,29 @@ public class GeneticNetwork {
 						
 						//REACTION
 						//reversible between neighboring "outer" species
-						//this is the diffusion across the "medium" if you will					
+						//this is the diffusion across the "medium" if you will				
 						Reaction r = Utility.Reaction("Diffusion_" + osID + "_" + neighborID);
 						r.setCompartment(diffComp);
 						r.setReversible(true);
 						r.setFast(false);
 						KineticLaw kl = r.createKineticLaw();
 						
-						String diffusionExpression = diffusionString + " * " + osID + " - " +
-						diffusionString + " * " + neighborID;
-	
-						//reactant is current outer species; product is neighboring species
-						r.addReactant(Utility.SpeciesReference(osID, 1));
-						r.addProduct(Utility.SpeciesReference(neighborID, 1));
+						if (kecdiff > 0) {
 						
-						//parameters: id="kecdiff"" value=kecdiff units="u_1_second_n1" (inverse seconds)
-						kl.addParameter(Utility.Parameter(diffusionString, kecdiff, diffusionUnitString));
-						kl.addParameter(Utility.Parameter(diffusionString, kecdiff, diffusionUnitString));
-						
-						kl.setFormula(diffusionExpression);
-						Utility.addReaction(document, r);
+							String diffusionExpression = diffusionString + " * " + osID + " - " +
+							diffusionString + " * " + neighborID;
+		
+							//reactant is current outer species; product is neighboring species
+							r.addReactant(Utility.SpeciesReference(osID, 1));
+							r.addProduct(Utility.SpeciesReference(neighborID, 1));
+							
+							//parameters: id="kecdiff"" value=kecdiff units="u_1_second_n1" (inverse seconds)
+							kl.addParameter(Utility.Parameter(diffusionString, kecdiff, diffusionUnitString));
+							kl.addParameter(Utility.Parameter(diffusionString, kecdiff, diffusionUnitString));
+							
+							kl.setFormula(diffusionExpression);
+							Utility.addReaction(document, r);
+						}
 					}
 				}
 			}
