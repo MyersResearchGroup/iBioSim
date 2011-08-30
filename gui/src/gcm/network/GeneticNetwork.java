@@ -691,7 +691,6 @@ public class GeneticNetwork {
 							
 							//parameters: id="kecdiff"" value=kecdiff units="u_1_second_n1" (inverse seconds)
 							kl.addParameter(Utility.Parameter(diffusionString, kecdiff, diffusionUnitString));
-							kl.addParameter(Utility.Parameter(diffusionString, kecdiff, diffusionUnitString));
 							
 							kl.setFormula(diffusionExpression);
 							Utility.addReaction(document, r);
