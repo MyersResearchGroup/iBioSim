@@ -5922,6 +5922,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			enableTreeMenu();
 		}
 	}
+	
+	public void refreshTabListeners() {
+		for (ChangeListener l : tab.getChangeListeners()) {
+			tab.removeChangeListener(l);
+		}
+		for (int i = 0; i < tab.getTabCount(); i ++) {
+			if (tab.getComponent(i) instanceof GCM2SBMLEditor) {
+				((GCM2SBMLEditor)tab.getComponent(i)).getSchematic().addChangeListener();
+			}
+		}
+	}
 
 	public JTabbedPane getTab() {
 		return tab;

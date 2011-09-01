@@ -307,6 +307,7 @@ public class CloseAndMaxTabbedPane extends JTabbedPane {
 		if (biosim.save(overTabIndex, 0) != 0) {
 			this.remove(overTabIndex);
 			biosim.enableTabMenu(this.getSelectedIndex());
+			biosim.refreshTabListeners();
 		}
 		this.overTabIndex = overTabIndex;
 
