@@ -580,24 +580,28 @@ public class Schematic extends JPanel implements ActionListener {
 		};
 	}
 	
+	public void addChangeListener() {
+		if (tabbedPane != null) {
+
+			// if the component tab changes, then rebuild the graph
+			// this is useful if component/compartment status changes
+			tabbedPane.addChangeListener(new ChangeListener() {
+
+				public void stateChanged(ChangeEvent event) {
+
+					graph.buildGraph();
+				}
+			});
+		}
+	}
+	
 	/**
 	 * Add (mouse) listeners for the graph component
 	 * listeners for clicking and mouse movement
 	 */
 	private void addGraphComponentListeners(){
 		
-		if (tabbedPane != null) {
-			
-			//if the component tab changes, then rebuild the graph
-			//this is useful if component/compartment status changes
-			tabbedPane.addChangeListener(new ChangeListener(){
-	
-				public void stateChanged(ChangeEvent event) {
-			        
-			        graph.buildGraph();
-				}			
-			});
-		}
+		addChangeListener();
 		
 		//vertical scrolling listener for grid stuff
 		graphComponent.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener(){
