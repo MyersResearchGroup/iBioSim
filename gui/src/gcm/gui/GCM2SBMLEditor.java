@@ -217,6 +217,24 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		//GCMNameTextField.setText(newName);
 	}
 	
+	public void renameComponents(String oldname, String newName) {
+		for (String key : gcm.getComponents().keySet()) {
+			Properties props = gcm.getComponents().get(key);
+			if (props.getProperty("gcm").equals(oldname)) {
+				props.setProperty("gcm", newName);
+			}
+		}
+		Set<String> comp = gcm.getComponents().keySet();
+		ArrayList<String> comps = new ArrayList<String>();
+		for (String c : comp) {
+			String listVal = c + " " + gcm.getComponents().get(c).getProperty("gcm").replace(".gcm", "") + " " + gcm.getComponentPortMap(c);
+			comps.add(listVal);
+		}
+		components.removeAllItem();
+		components.addAllItem(comps);
+		schematic.getGraph().buildGraph();
+	}
+	
 	public void refresh() {
 		Set<String> prom = gcm.getPromoters().keySet();
 		ArrayList<String> proms = new ArrayList<String>();
