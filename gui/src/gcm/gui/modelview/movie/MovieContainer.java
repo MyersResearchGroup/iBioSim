@@ -521,15 +521,26 @@ public class MovieContainer extends JPanel implements ActionListener {
 
 		String path = outputFilename.substring(0, outputFilename.lastIndexOf(separator));
 		String movieName = outputFilename.substring(outputFilename.lastIndexOf(separator)+1, outputFilename.length());
-		movieName = movieName.substring(0, movieName.indexOf("."));
+		
+		if (movieName.contains(".")) {
+			movieName = movieName.substring(0, movieName.indexOf("."));
+		}
+		
+		String args = "";
+		
+		//if we're on windows, add "cmd" to the front of the command line argument
+		if (System.getProperty("os.name").contains("Windows")) {
+			
+			args += "cmd ";
+		}
 		
 		//args for ffmpeg
-		String args = new String(
+		args +=
 			"ffmpeg " + "-y " +
 			"-r " + "5 " +
 			"-b " + "5000k " +
 			"-i " + reb2sac.getRootPath() + separator + "%09d.jpg " +
-			path + separator + movieName + ".avi");
+			path + separator + movieName + ".avi";
 		
 		//run ffmpeg to generate the AVI movie file
 		try {					
