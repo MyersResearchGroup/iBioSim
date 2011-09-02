@@ -12,7 +12,9 @@ import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -27,13 +29,18 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Properties;
 
+import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractButton;
 import javax.swing.Action;
@@ -41,11 +48,13 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -68,6 +77,8 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.handler.mxRubberband;
+import com.mxgraph.util.mxCellRenderer;
+import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
@@ -1829,7 +1840,42 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	
+	//FRAME PRINTING
 	
+	
+	/**
+	 * prints the current graph to the filename passed in
+	 * 
+	 * @param filename the filename to print the frame to
+	 */
+	public void outputFrame(String filename) {
+
+		FileOutputStream out = null;
+		
+		try {
+			out = new FileOutputStream(filename);
+		} 
+		catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		
+		BufferedImage image = mxCellRenderer.createBufferedImage(graph, null,
+			      1, Color.WHITE, true, null);
+		
+		try {
+			ImageIO.write(image, "jpg", out);
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			out.close();
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 	
 	
 	

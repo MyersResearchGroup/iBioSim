@@ -13,25 +13,30 @@ import main.Gui;
 import parser.TSDParser;
 import reb2sac.Reb2Sac;
 import sbmleditor.MySpecies;
+import util.Utility;
 
 import com.google.gson.Gson;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Vector;
+
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
@@ -60,9 +65,11 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private TSDParser parser;
 	private Timer playTimer;
 	private MovieScheme movieScheme;
+	private int initialSliderValue;
 	
 	private boolean isUIInitialized;
 	private boolean isDirty = false;
+	private String outputFilename = "";
 	
 	//movie toolbar/UI elements
 	private JButton fileButton;
@@ -70,6 +77,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private JButton rewindButton;
 	private JButton singleStepButton;
 	private JButton clearButton;
+	private JToggleButton aviButton;
 	private JSlider slider;
 	
 	
@@ -206,6 +214,64 @@ public class MovieContainer extends JPanel implements ActionListener {
 		clearButton = Utils.makeToolButton("", "clearAppearances", "Clear Appearances", this);
 		mt.add(clearButton);
 		
+		aviButton = new JToggleButton("Make AVI");
+		aviButton.addActionListener(new ActionListener() {
+
+			public void actionPerformed(ActionEvent event) {
+				
+				if (aviButton.isSelected()) {
+					
+					if(parser == null){
+						JOptionPane.showMessageDialog(Gui.frame, "Must first choose a simulation file.");
+						aviButton.setSelected(false);
+					} 
+					else {
+						
+						outputFilename = Utility.browse(
+								Gui.frame, null, null, JFileChooser.FILES_AND_DIRECTORIES, "Save AVI", -1);
+						
+						if (outputFilename == null || outputFilename.length() == 0) {
+							
+							aviButton.setSelected(false);
+							return;
+						}
+						
+						aviButton.setText("Stop AVI");
+						pause();
+						playPauseButtonPress();
+						initialSliderValue = slider.getValue();
+						
+						//disable all buttons and stuff
+						fileButton.setEnabled(false);
+						playPauseButton.setEnabled(false);
+						rewindButton.setEnabled(false);
+						singleStepButton.setEnabled(false);
+						clearButton.setEnabled(false);
+						slider.setEnabled(false);
+					}
+				}
+				else {
+					
+					aviButton.setSelected(false);
+					aviButton.setText("Make AVI");
+					
+					//remove all image files
+					removeJPGs();
+					pause();
+					slider.setValue(0);					
+					
+					//enable the buttons and stuff
+					fileButton.setEnabled(true);
+					playPauseButton.setEnabled(true);
+					rewindButton.setEnabled(true);
+					singleStepButton.setEnabled(true);
+					clearButton.setEnabled(true);
+					slider.setEnabled(true);
+				}			
+			}
+		});
+		mt.add(aviButton);
+		
 		mt.addSeparator();
 		
 		rewindButton = Utils.makeToolButton("movie" + File.separator + "rewind.png", "rewind", "Rewind", this);
@@ -275,13 +341,16 @@ public class MovieContainer extends JPanel implements ActionListener {
 			prepareTSDFile();
 		}
 		else if(command.equals("clearAppearances")){
+			
 			movieScheme.clearAppearances();
 			schematic.getGraph().buildGraph();
+			this.setIsDirty(true);
 		}
 		else{
 			throw new Error("Unrecognized command '" + command + "'!");
 		}
 	}
+	
 	
 	/**
 	 * event handler for when the timer ticks
@@ -335,9 +404,37 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 */
 	private void nextFrame(){
 		
+		//if the user wants output, print it to file
+		if (aviButton.isSelected() && slider.getValue() > 0) {
+			
+			outputJPG();
+						
+			//if the simulation ends, generate the AVI file using ffmpeg
+			//also, remove all of the image files created
+			if (slider.getValue() + 1 >= slider.getMaximum()){
+				
+				outputAVI();
+				
+				aviButton.setSelected(false);
+				aviButton.setText("Make AVI");
+				
+				//remove all image files
+				pause();
+				slider.setValue(0);					
+				
+				//enable the buttons and stuff
+				fileButton.setEnabled(true);
+				playPauseButton.setEnabled(true);
+				rewindButton.setEnabled(true);
+				singleStepButton.setEnabled(true);
+				clearButton.setEnabled(true);
+				slider.setEnabled(true);
+			}
+		}
+		
 		slider.setValue(slider.getValue()+1);
 		
-		if(slider.getValue() >= slider.getMaximum()){
+		if (slider.getValue() >= slider.getMaximum()){			
 			pause();
 		}
 		
@@ -410,6 +507,90 @@ public class MovieContainer extends JPanel implements ActionListener {
 		schematic.getGraph().refresh();	
 	}
 
+	/**
+	 * creates an AVI using JPG frames of the simulation
+	 */
+	private void outputAVI() {
+		
+		String separator = "";
+		
+		if (File.separator.equals("\\"))
+			separator = "\\\\";
+		else
+			separator = File.separator;
+
+		String path = outputFilename.substring(0, outputFilename.lastIndexOf(separator));
+		String movieName = outputFilename.substring(outputFilename.lastIndexOf(separator)+1, outputFilename.length());
+		movieName = movieName.substring(0, movieName.indexOf("."));
+		
+		//args for ffmpeg
+		String args = new String(
+			"ffmpeg " + "-y " +
+			"-r " + "5 " +
+			"-b " + "5000k " +
+			"-i " + reb2sac.getRootPath() + separator + "%09d.jpg " +
+			path + separator + movieName + ".avi");
+		
+		//run ffmpeg to generate the AVI movie file
+		try {					
+			Process p = Runtime.getRuntime().exec(args, null, new File(reb2sac.getRootPath()));
+			
+			String line = "";
+			
+		    BufferedReader input =
+		    	new BufferedReader(new InputStreamReader(p.getErrorStream()));
+		    
+		    while ((line = input.readLine()) != null) {
+		    	biosim.log.addText(line);
+		    }				    
+		    
+		    removeJPGs();    
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}		
+	}
+	
+	/**
+	 * creates a JPG of the current graph frame
+	 */
+	private void outputJPG() {
+		
+		String separator = "";
+		
+		if (File.separator.equals("\\"))
+			separator = "\\\\";
+		else
+			separator = File.separator;
+		
+		String filenum = String.format("%09d", slider.getValue() - initialSliderValue);			
+		schematic.outputFrame(reb2sac.getRootPath() + separator + filenum  + ".jpg");
+	}
+	
+	/**
+	 * removes all created JPGs
+	 */
+	private void removeJPGs() {
+		
+		String separator = "";
+		
+		if (File.separator.equals("\\"))
+			separator = "\\\\";
+		else
+			separator = File.separator;
+		
+		//remove all created jpg files
+	    for (int jpgNum = 0; jpgNum <= slider.getMaximum(); ++jpgNum) {
+	    	
+	    	String jpgNumString = String.format("%09d", jpgNum);				    	
+	    	String jpgFilename = 
+	    		reb2sac.getRootPath() + separator + jpgNumString + ".jpg";
+		    File jpgFile = new File(jpgFilename);
+		    
+		    if (jpgFile != null && jpgFile.exists() && jpgFile.canWrite())
+		    	jpgFile.delete();		    	
+	    }
+	}
 	
 	
 	//PREFERENCES METHODS
