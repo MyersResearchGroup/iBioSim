@@ -83,6 +83,7 @@ import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
 import com.mxgraph.util.mxEventObject;
 import com.mxgraph.util.mxEventSource;
+import com.mxgraph.util.mxRectangle;
 
 
 public class Schematic extends JPanel implements ActionListener {
@@ -1850,7 +1851,25 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public void outputFrame(String filename) {
 
-		FileOutputStream out = null;
+		FileOutputStream out = null;		
+		String separator = "";
+		
+		if (File.separator.equals("\\"))
+			separator = "\\\\";
+		else
+			separator = File.separator;
+		
+		String path = "";
+		
+		if (filename.contains(separator)) {
+			path = filename.substring(0, filename.lastIndexOf(separator));
+			filename = filename.substring(filename.lastIndexOf(separator)+1, filename.length());
+		}
+		
+		if (filename.contains("."))
+			filename = filename.substring(0, filename.indexOf("."));		
+		
+		filename = path + separator + filename + ".jpg";
 		
 		try {
 			out = new FileOutputStream(filename);
@@ -1859,8 +1878,15 @@ public class Schematic extends JPanel implements ActionListener {
 			e.printStackTrace();
 		}
 		
+		//add some padding to the edges of the graph
+		mxRectangle paddedGraphBounds = graph.getGraphBounds();
+		paddedGraphBounds.setWidth(paddedGraphBounds.getWidth() + 80);
+		paddedGraphBounds.setHeight(paddedGraphBounds.getHeight() + 80);
+		paddedGraphBounds.setX(paddedGraphBounds.getX() - 40);
+		paddedGraphBounds.setY(paddedGraphBounds.getY() - 40);
+		
 		BufferedImage image = mxCellRenderer.createBufferedImage(graph, null,
-			      1, Color.WHITE, true, null);
+			      1, Color.WHITE, true, paddedGraphBounds);
 		
 		try {
 			ImageIO.write(image, "jpg", out);

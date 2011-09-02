@@ -518,9 +518,15 @@ public class MovieContainer extends JPanel implements ActionListener {
 			separator = "\\\\";
 		else
 			separator = File.separator;
+		
+		String path = "";
+		String movieName = "";
 
-		String path = outputFilename.substring(0, outputFilename.lastIndexOf(separator));
-		String movieName = outputFilename.substring(outputFilename.lastIndexOf(separator)+1, outputFilename.length());
+		if (outputFilename.contains(separator)) {
+			
+			path = outputFilename.substring(0, outputFilename.lastIndexOf(separator));
+			movieName = outputFilename.substring(outputFilename.lastIndexOf(separator)+1, outputFilename.length());
+		}
 		
 		if (movieName.contains(".")) {
 			movieName = movieName.substring(0, movieName.indexOf("."));

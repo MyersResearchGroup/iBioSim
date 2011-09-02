@@ -11,6 +11,7 @@ import gcm.util.GlobalConstants;
 import gcm.util.Utility;
 
 import java.awt.BorderLayout;
+import java.awt.FileDialog;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -601,6 +602,22 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		reload(newName);
 	}
 
+	/**
+	 * user selects a file; schematic is printed there as a JPG file
+	 */
+	public void saveSchematic() {
+		
+		JFileChooser fc = new JFileChooser("Save Schematic");
+		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		int returnVal = fc.showDialog(Gui.frame, "Save Schematic");
+		
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+			
+            File file = fc.getSelectedFile();
+            schematic.outputFrame(file.getAbsoluteFile().toString());
+        }
+	}
+	
 	private void sweepHelper(ArrayList<ArrayList<Double>> sweep, String s) {
 		double[] start = {0, 0};
 		double[] stop = {0, 0};
