@@ -121,78 +121,41 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private JMenuBar menuBar;
 
-	private JMenu file, edit, view, tools, help, importMenu, exportMenu, newMenu, viewModel; // The
-																								// file
-																								// menu
-
+	private JMenu file, edit, view, tools, help, importMenu, exportMenu, newMenu, viewModel;
 	private JMenuItem newProj; // The new menu item
-
 	private JMenuItem newSBMLModel; // The new menu item
-
-	private JMenuItem newGCMModel; // The new menu item
-
+	private JMenuItem newGCMModel; // The new menu item	
+	private JMenuItem newGridModel;
 	private JMenuItem newVhdl; // The new vhdl menu item
-
 	private JMenuItem newS; // The new assembly file menu item
-
 	private JMenuItem newInst; // The new instruction file menu item
-
 	private JMenuItem newLhpn; // The new lhpn menu item
-
 	private JMenuItem newG; // The new petri net menu item
-
 	private JMenuItem newCsp; // The new csp menu item
-
 	private JMenuItem newHse; // The new handshaking extension menu item
-
 	private JMenuItem newUnc; // The new extended burst mode menu item
-
 	private JMenuItem newRsg; // The new rsg menu item
-
 	private JMenuItem newSpice; // The new spice circuit item
-
 	private JMenuItem exit; // The exit menu item
-
 	private JMenuItem importSbol;
-
 	private JMenuItem importSbml; // The import sbml menu item
-
 	private JMenuItem importBioModel; // The import sbml menu item
-
 	private JMenuItem importDot; // The import dot menu item
-
 	private JMenuItem importVhdl; // The import vhdl menu item
-
 	private JMenuItem importS; // The import assembly file menu item
-
 	private JMenuItem importInst; // The import instruction file menu item
-
 	private JMenuItem importLpn; // The import lpn menu item
-
 	private JMenuItem importG; // The import .g file menu item
-
 	private JMenuItem importCsp; // The import csp menu item
-
 	private JMenuItem importHse; // The import handshaking extension menu
-
-	// item
-
 	private JMenuItem importUnc; // The import extended burst mode menu item
-
 	private JMenuItem importRsg; // The import rsg menu item
-
 	private JMenuItem importSpice; // The import spice circuit item
-
 	private JMenuItem manual; // The manual menu item
-
 	private JMenuItem about; // The about menu item
-
 	private JMenuItem openProj; // The open menu item
-
 	private JMenuItem pref; // The preferences menu item
-
 	private JMenuItem graph; // The graph menu item
-
 	private JMenuItem probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf, exportPng, exportSvg, exportTsd, exportSBML, exportSBOL;
 
 	private String root; // The root directory
@@ -458,6 +421,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		pref = new JMenuItem("Preferences");
 		newProj = new JMenuItem("Project");
 		newGCMModel = new JMenuItem("Model");
+		newGridModel = new JMenuItem("Grid Model");
 		newSBMLModel = new JMenuItem("SBML Model");
 		newSpice = new JMenuItem("Spice Circuit");
 		newVhdl = new JMenuItem("VHDL Model");
@@ -550,6 +514,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		manual.addActionListener(this);
 		newProj.addActionListener(this);
 		newGCMModel.addActionListener(this);
+		newGridModel.addActionListener(this);
 		newSBMLModel.addActionListener(this);
 		newVhdl.addActionListener(this);
 		newS.addActionListener(this);
@@ -650,6 +615,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			saveSchematic.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ShortCutKey | KeyEvent.ALT_MASK));
 			refresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
 			newGCMModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
+			newGridModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey | KeyEvent.ALT_MASK));
 			createAnal.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, ShortCutKey | KeyEvent.SHIFT_MASK));
 			createLearn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_L, ShortCutKey | KeyEvent.SHIFT_MASK));
 		}
@@ -758,6 +724,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportSvg.setEnabled(false);
 		exportTsd.setEnabled(false);
 		newGCMModel.setEnabled(false);
+		newGridModel.setEnabled(false);
 		newSBMLModel.setEnabled(false);
 		newVhdl.setEnabled(false);
 		newS.setEnabled(false);
@@ -805,6 +772,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		newMenu.add(newProj);
 		if (!async) {
 			newMenu.add(newGCMModel);
+			newMenu.add(newGridModel);
 			newMenu.add(newLhpn);
 		}
 		else if (atacs) {
@@ -3468,6 +3436,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				importRsg.setEnabled(true);
 				importSpice.setEnabled(true);
 				newGCMModel.setEnabled(true);
+				newGridModel.setEnabled(true);
 				newSBMLModel.setEnabled(true);
 				newVhdl.setEnabled(true);
 				newS.setEnabled(true);
@@ -3593,6 +3562,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						importRsg.setEnabled(true);
 						importSpice.setEnabled(true);
 						newGCMModel.setEnabled(true);
+						newGridModel.setEnabled(true);
 						newSBMLModel.setEnabled(true);
 						newVhdl.setEnabled(true);
 						newS.setEnabled(true);
@@ -3618,7 +3588,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		// if the new circuit model menu item is selected
 		else if (e.getSource() == newGCMModel) {
-			createGCM();
+			createGCM(false);
+		}
+		else if (e.getSource() == newGridModel) {
+			createGCM(true);
 		}
 		// if the new SBML model menu item is selected
 		else if (e.getSource() == newSBMLModel) {
@@ -4236,7 +4209,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 
-	private void createGCM() {
+	private void createGCM(boolean grid) {
 		if (root != null) {
 			try {
 
@@ -4244,12 +4217,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 				JTextField modelChooser = new JTextField("");
 				modelChooser.setColumns(20);
-				JCheckBox gridCheckBox = new JCheckBox("Make Grid");
 
-				JPanel modelPanel = new JPanel(new GridLayout(2, 2));
+				JPanel modelPanel = new JPanel(new GridLayout(2, 1));
 				modelPanel.add(new JLabel("Enter Model ID: "));
 				modelPanel.add(modelChooser);
-				modelPanel.add(gridCheckBox);
 				frame.add(modelPanel);
 
 				String[] options = { GlobalConstants.OK, GlobalConstants.CANCEL };
@@ -4317,7 +4288,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							addTab(f.getName(), gcm2sbml, "GCM Editor");
 							addToTree(f.getName());
 
-							if (gridCheckBox.isSelected())
+							if (grid == true)
 								gcm2sbml.launchGridPanel();
 						}
 					}
@@ -8112,6 +8083,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			popup.add(newProj);
 			if (!async) {
 				popup.add(newGCMModel);
+				popup.add(newGridModel);
 				popup.add(newSBMLModel);
 			}
 			else if (atacs) {
