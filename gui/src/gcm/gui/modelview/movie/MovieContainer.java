@@ -226,9 +226,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 						aviButton.setSelected(false);
 					} 
 					else {
-						
-						outputFilename = Utility.browse(
-								Gui.frame, null, null, JFileChooser.FILES_AND_DIRECTORIES, "Save AVI", -1);
+
+						outputFilename = Utility.browse(Gui.frame, null, null, JFileChooser.FILES_ONLY, "Save AVI", -1);
 						
 						if (outputFilename == null || outputFilename.length() == 0) {
 							
@@ -547,7 +546,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 			"-b " + "5000k " +
 			"-i " + reb2sac.getRootPath() + separator + "%09d.jpg " +
 			path + separator + movieName + ".avi";
-		
 		//run ffmpeg to generate the AVI movie file
 		try {					
 			Process p = Runtime.getRuntime().exec(args, null, new File(reb2sac.getRootPath()));

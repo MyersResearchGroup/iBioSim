@@ -95,6 +95,14 @@ public class Utility {
 						}
 					});
 				}
+				else if (approve.equals("Save AVI")) {
+					fd = new FileDialog(frame, approve, FileDialog.SAVE);
+					fd.setFilenameFilter(new FilenameFilter() {
+						public boolean accept(File dir, String name) {
+							return name.endsWith(".avi");
+						}
+					});
+				}
 				else if (approve.equals("Import Genetic Circuit")) {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 					fd.setFilenameFilter(new FilenameFilter() {
@@ -282,6 +290,9 @@ public class Utility {
 			ExampleFileFilter sbmlFilter = new ExampleFileFilter();
 			sbmlFilter.addExtension("sbml");
 			sbmlFilter.setDescription("Systems Biology Markup Language");
+			ExampleFileFilter aviFilter = new ExampleFileFilter();
+			aviFilter.addExtension("avi");
+			aviFilter.setDescription("Audio Visual Files");
 			ExampleFileFilter xmlFilter = new ExampleFileFilter();
 			xmlFilter.addExtension("xml");
 			xmlFilter.setDescription("Extensible Markup Language");
@@ -385,6 +396,12 @@ public class Utility {
 				fc.setFileFilter(xmlFilter);
 				retValue = fc.showDialog(frame, approve);
 			}
+			else if (approve.equals("Save AVI")) {
+				fc.addChoosableFileFilter(aviFilter);
+				fc.setAcceptAllFileFilterUsed(false);
+				fc.setFileFilter(xmlFilter);
+				retValue = fc.showDialog(frame, approve);
+			}
 			else if (approve.equals("Import Genetic Circuit")) {
 				fc.addChoosableFileFilter(gcmFilter);
 				fc.setAcceptAllFileFilterUsed(false);
@@ -466,6 +483,12 @@ public class Utility {
 					if ((filename.length() < 4)
 							|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".xml")))) {
 						filename += ".xml";
+					}
+				}
+				else if (approve.equals("Save AVI")) {
+					if ((filename.length() < 4)
+							|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".avi")))) {
+						filename += ".avi";
 					}
 				}
 				else if (approve.equals("Export DNA Component")) {
