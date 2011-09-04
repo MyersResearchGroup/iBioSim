@@ -543,9 +543,9 @@ public class MovieContainer extends JPanel implements ActionListener {
 		args +=
 			"ffmpeg " + "-y " +
 			"-r " + "5 " +
-			"-b " + "5000k " +
+			"-b " + "5000k " + //"-sameq -flags +ilme+ildct -flags +alt -top 1 " +
 			"-i " + reb2sac.getRootPath() + separator + "%09d.jpg " +
-			path + separator + movieName + ".avi";
+			path + separator + movieName + ".mp4";
 		//run ffmpeg to generate the AVI movie file
 		try {					
 			Process p = Runtime.getRuntime().exec(args, null, new File(reb2sac.getRootPath()));
