@@ -77,7 +77,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private JButton rewindButton;
 	private JButton singleStepButton;
 	private JButton clearButton;
-	private JToggleButton aviButton;
+	private JToggleButton mp4Button;
 	private JSlider slider;
 	
 	
@@ -214,28 +214,28 @@ public class MovieContainer extends JPanel implements ActionListener {
 		clearButton = Utils.makeToolButton("", "clearAppearances", "Clear Appearances", this);
 		mt.add(clearButton);
 		
-		aviButton = new JToggleButton("Make AVI");
-		aviButton.addActionListener(new ActionListener() {
+		mp4Button = new JToggleButton("Make MP4");
+		mp4Button.addActionListener(new ActionListener() {
 
 			public void actionPerformed(ActionEvent event) {
 				
-				if (aviButton.isSelected()) {
+				if (mp4Button.isSelected()) {
 					
 					if(parser == null){
 						JOptionPane.showMessageDialog(Gui.frame, "Must first choose a simulation file.");
-						aviButton.setSelected(false);
+						mp4Button.setSelected(false);
 					} 
 					else {
 
-						outputFilename = Utility.browse(Gui.frame, null, null, JFileChooser.FILES_ONLY, "Save AVI", -1);
+						outputFilename = Utility.browse(Gui.frame, null, null, JFileChooser.FILES_ONLY, "Save MP4", -1);
 						
 						if (outputFilename == null || outputFilename.length() == 0) {
 							
-							aviButton.setSelected(false);
+							mp4Button.setSelected(false);
 							return;
 						}
 						
-						aviButton.setText("Stop AVI");
+						mp4Button.setText("Stop MP4");
 						pause();
 						playPauseButtonPress();
 						initialSliderValue = slider.getValue();
@@ -251,8 +251,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 				}
 				else {
 					
-					aviButton.setSelected(false);
-					aviButton.setText("Make AVI");
+					mp4Button.setSelected(false);
+					mp4Button.setText("Make MP4");
 					
 					//remove all image files
 					removeJPGs();
@@ -269,7 +269,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 				}			
 			}
 		});
-		mt.add(aviButton);
+		mt.add(mp4Button);
 		
 		mt.addSeparator();
 		
@@ -404,18 +404,18 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private void nextFrame(){
 		
 		//if the user wants output, print it to file
-		if (aviButton.isSelected() && slider.getValue() > 0) {
+		if (mp4Button.isSelected() && slider.getValue() > 0) {
 			
 			outputJPG();
 						
-			//if the simulation ends, generate the AVI file using ffmpeg
+			//if the simulation ends, generate the MP4 file using ffmpeg
 			//also, remove all of the image files created
 			if (slider.getValue() + 1 >= slider.getMaximum()){
 				
-				outputAVI();
+				outputMP4();
 				
-				aviButton.setSelected(false);
-				aviButton.setText("Make AVI");
+				mp4Button.setSelected(false);
+				mp4Button.setText("Make MP4");
 				
 				//remove all image files
 				pause();
@@ -507,9 +507,9 @@ public class MovieContainer extends JPanel implements ActionListener {
 	}
 
 	/**
-	 * creates an AVI using JPG frames of the simulation
+	 * creates an MP4 using JPG frames of the simulation
 	 */
-	private void outputAVI() {
+	private void outputMP4() {
 		
 		String separator = "";
 		
@@ -546,7 +546,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 			"-b " + "5000k " + //"-sameq -flags +ilme+ildct -flags +alt -top 1 " +
 			"-i " + reb2sac.getRootPath() + separator + "%09d.jpg " +
 			path + separator + movieName + ".mp4";
-		//run ffmpeg to generate the AVI movie file
+		//run ffmpeg to generate the MP4 movie file
 		try {					
 			Process p = Runtime.getRuntime().exec(args, null, new File(reb2sac.getRootPath()));
 			

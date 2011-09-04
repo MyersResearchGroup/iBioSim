@@ -95,11 +95,11 @@ public class Utility {
 						}
 					});
 				}
-				else if (approve.equals("Save AVI")) {
+				else if (approve.equals("Save MP4")) {
 					fd = new FileDialog(frame, approve, FileDialog.SAVE);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
-							return name.endsWith(".avi");
+							return name.endsWith(".mp4");
 						}
 					});
 				}
@@ -485,10 +485,10 @@ public class Utility {
 						filename += ".xml";
 					}
 				}
-				else if (approve.equals("Save AVI")) {
+				else if (approve.equals("Save MP4")) {
 					if ((filename.length() < 4)
-							|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".avi")))) {
-						filename += ".avi";
+							|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".mp4")))) {
+						filename += ".mp4";
 					}
 				}
 				else if (approve.equals("Export DNA Component")) {
