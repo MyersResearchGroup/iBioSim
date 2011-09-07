@@ -1005,8 +1005,7 @@ public class BioGraph extends mxGraph {
 			return false;
 		}
 		
-		prop.setProperty("compartment", Boolean.toString(compart));
-		
+		prop.setProperty("compartment", Boolean.toString(compart));		
 		
 		if(x < -9998 || y < -9998){
 			
@@ -1020,7 +1019,18 @@ public class BioGraph extends mxGraph {
 			y = (unpositionedSpeciesComponentCount%10) * (GlobalConstants.DEFAULT_SPECIES_HEIGHT + 10);
 		}
 		
-		String label = id + "\n" + prop.getProperty("gcm").replace(".gcm", "");
+		String truncGCM = prop.getProperty("gcm").replace(".gcm", "");
+		String truncID = "";
+		
+		//if the id is too long, truncate it
+		if (truncGCM.length() > 10)
+			truncGCM = truncGCM.substring(0, 9) + "...";
+		
+		if (id.length() > 10)
+			truncID = id.substring(0, 9) + "...";
+		else truncID = id;
+		
+		String label = truncID + "\n" + truncGCM;
 		CellValueObject cvo = new CellValueObject(label, prop);
 		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, x, y, width, height);
 		this.componentsToMxCellMap.put(id, (mxCell)insertedVertex);
@@ -1078,9 +1088,15 @@ public class BioGraph extends mxGraph {
 		
 		if (id==null) {
 			id = prop.getProperty("label");
-		}		
+		}
 		
-		String label = id + '\n' + type;
+		String truncID = "";
+		
+		if (id.length() > 12)
+			truncID = id.substring(0, 11) + "...";
+		else truncID = id;
+		
+		String label = truncID + '\n' + type;
 
 		CellValueObject cvo = new CellValueObject(label, prop);
 		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
@@ -1125,11 +1141,17 @@ public class BioGraph extends mxGraph {
 		
 		String id = prop.getProperty("ID", "");
 		
-		if (id==null) {
+		if (id == null) {
 			id = prop.getProperty("label", "");
 		}
+		
+		String truncID;
+		
+		if (id.length() > 8)
+			truncID = id.substring(0, 7) + "...";
+		else truncID = id;
 
-		CellValueObject cvo = new CellValueObject(id, prop);
+		CellValueObject cvo = new CellValueObject(truncID, prop);
 		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		this.drawnPromoterToMxCellMap.put(id, (mxCell)insertedVertex);
 		
