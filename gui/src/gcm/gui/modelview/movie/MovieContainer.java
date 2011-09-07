@@ -406,6 +406,9 @@ public class MovieContainer extends JPanel implements ActionListener {
 		//if the user wants output, print it to file
 		if (movieButton.isSelected() && slider.getValue() > 0) {
 			
+			//un-zoom so that the frames print properly
+			schematic.getGraph().getView().setScale(1.0);
+			
 			outputJPG();
 						
 			//if the simulation ends, generate the Movie file using ffmpeg

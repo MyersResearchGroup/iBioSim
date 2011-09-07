@@ -629,6 +629,9 @@ public class GeneticNetwork {
 				for (int rowMod = -1; rowMod <= 1; ++rowMod) {
 					for (int colMod = -1; colMod <= 1; ++colMod) {
 						
+						//four-way diffusion instead of eight
+						if (rowMod * colMod == 1 || rowMod * colMod == -1) continue;
+						
 						//don't diffuse with self
 						if (colMod == 0 && rowMod == 0) continue;
 						
