@@ -11,7 +11,6 @@ import gcm.util.GlobalConstants;
 import gcm.util.Utility;
 
 import java.awt.BorderLayout;
-import java.awt.FileDialog;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,8 +35,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.tree.TreeModel;
 
 import main.Gui;
@@ -73,6 +70,7 @@ import sbmleditor.SBMLutilities;
 import sbmleditor.SpeciesTypes;
 import sbmleditor.Units;
 import sbol.SbolSynthesizer;
+import util.ExampleFileFilter;
 import util.MutableBoolean;
 
 /**
@@ -608,7 +606,16 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	public void saveSchematic() {
 		
 		JFileChooser fc = new JFileChooser("Save Schematic");
-		fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		
+		ExampleFileFilter jpgFilter = new ExampleFileFilter();
+		jpgFilter.addExtension("jpg");
+		jpgFilter.setDescription("Image Files");		
+		
+		fc.addChoosableFileFilter(jpgFilter);
+		fc.setAcceptAllFileFilterUsed(false);
+		fc.setFileFilter(jpgFilter);
+		
 		int returnVal = fc.showDialog(Gui.frame, "Save Schematic");
 		
 		if (returnVal == JFileChooser.APPROVE_OPTION) {

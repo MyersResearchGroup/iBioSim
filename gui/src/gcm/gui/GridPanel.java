@@ -138,7 +138,7 @@ public class GridPanel extends JPanel implements ActionListener{
 				GCMFile compGCM = new GCMFile(gcm.getPath());
 				
 				//don't allow dropping a grid component
-				if (compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + component)) {
+				if (component != "none" && compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + component)) {
 					
 					JOptionPane.showMessageDialog(Gui.frame,
 							"Dropping grid components is disallowed.\n" +
