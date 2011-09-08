@@ -3,23 +3,49 @@ package platu.logicAnalysis;
 import platu.lpn.LPNTran;
 
 public class CompositeStateTran {
-	int hashCode = 0;
-	private CompositeState headState = null;
-	private CompositeState tailState = null;
+	private int nextState = 0;
+	private int currentState = 0;
 	private LPNTran lpnTransition = null;
+	private boolean visible = false;
 	
-	public CompositeStateTran(CompositeState tailState, CompositeState headState, LPNTran lpnTransition){
-		this.tailState = tailState;
-		this.headState = headState;
+	public CompositeStateTran(CompositeState currentState, CompositeState nextState, LPNTran lpnTransition){
+		this.currentState = currentState.getIndex();
+		this.nextState = nextState.getIndex();
 		this.lpnTransition = lpnTransition;
 	}
 	
-	public CompositeState getHeadState(){
-		return this.headState;
+	public CompositeStateTran(int currentState, int nextState, LPNTran lpnTransition){
+		this.currentState = currentState;
+		this.nextState = nextState;
+		this.lpnTransition = lpnTransition;
 	}
 	
-	public CompositeState getTailState(){
-		return this.tailState;
+	public void setVisibility(){
+		this.visible = true;
+	}
+	
+	public boolean visible(){
+		return this.visible;
+	}
+	
+	public void setCurrentState(int currState){
+		this.currentState = currState;
+	}
+	
+	public void setNextState(int nxtState){
+		this.nextState = nxtState;
+	}
+	
+	public void setLpnTran(LPNTran lpnTran){
+		this.lpnTransition = lpnTran;
+	}
+	
+	public int getCurrentState(){
+		return this.currentState;
+	}
+	
+	public int getNextState(){
+		return this.nextState;
 	}
 	
 	public LPNTran getLPNTran(){
@@ -28,16 +54,13 @@ public class CompositeStateTran {
 
 	@Override
 	public int hashCode() {
-		if(hashCode == 0){
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((headState == null) ? 0 : headState.hashCode());
-			result = prime * result+ ((lpnTransition == null) ? 0 : lpnTransition.hashCode());
-			result = prime * result+ ((tailState == null) ? 0 : tailState.hashCode());
-			hashCode = result;
-		}
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + this.nextState;
+		result = prime * result + this.lpnTransition.hashCode();
+		result = prime * result + this.currentState;
 		
-		return hashCode;
+		return result;
 	}
 
 	@Override
@@ -52,29 +75,20 @@ public class CompositeStateTran {
 			return false;
 		
 		CompositeStateTran other = (CompositeStateTran) obj;
-		if (headState == null) {
-			if (other.headState != null)
-				return false;
-		} 
-		else if (!headState.equals(other.headState))
+		if (this.nextState != other.nextState)
 			return false;
 		
-		if (lpnTransition == null) {
-			if (other.lpnTransition != null)
-				return false;
-		} 
-		else if (!lpnTransition.equals(other.lpnTransition))
+		if (this.lpnTransition != other.lpnTransition)
 			return false;
 		
-		if (tailState == null) {
-			if (other.tailState != null)
-				return false;
-		} 
-		else if (!tailState.equals(other.tailState))
+		if (this.currentState != other.currentState)
 			return false;
 		
 		return true;
 	}
 	
-	
+	@Override
+	public String toString(){
+		return (this.currentState + " --" + this.lpnTransition.getFullLabel() + "--> " + this.nextState);
+	}
 }

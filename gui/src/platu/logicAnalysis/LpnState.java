@@ -2,10 +2,11 @@ package platu.logicAnalysis;
 
 
 import java.util.*;
+
+import platu.common.PlatuObj;
 import platu.lpn.LPN;
 import platu.lpn.LPNTran;
-import platu.stategraph.state.*;
-import platu.PlatuObj;
+import platu.stategraph.*;
 
 /**
  * State

@@ -1,756 +1,761 @@
 package platu.logicAnalysis;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.Stack;
-
-import platu.Options;
+import platu.common.Pair;
 import platu.expression.VarNode;
 import platu.lpn.LPN;
 import platu.lpn.LPNTran;
 import platu.lpn.VarSet;
+import platu.main.Options;
+import platu.stategraph.State;
 import platu.stategraph.StateGraph;
-import platu.stategraph.state.State;
 
 public class CompositionalAnalysis {  
-	public CompositionalAnalysis(List<StateGraph> du){
-		//super(du);
+	public CompositionalAnalysis(){
 	}
 	
-	public CompositeStateGraph compose(StateGraph sg1, StateGraph sg2){
-		long start = System.currentTimeMillis(); 
-		
-		// check an output drives an input
-		boolean compatible = false;
-		for(String output : sg1.getOutputs()){
-			VarSet inputs = sg2.getInputs();
-			if(inputs.contains(output)){
-				compatible = true;
-				break;
-			}
-		}
-		
-		if(!compatible){
-			VarSet inputs = sg1.getInputs();
-			for(String output : sg2.getOutputs()){
-				if(inputs.contains(output)){
-					compatible = true;
-					break;
-				}
-			}
-		}
-		
-		if(!compatible){
-			System.out.println("state graphs " + sg1.getLabel() + " and " + sg2.getLabel() + " cannot be composed\n");
-			return null;
-		}
-		
-		// create new node with init states
-		State[] initStates = new State[2];
-		initStates[0] = sg1.getInitialState();
-		initStates[1] = sg2.getInitialState();
-		CompositeState initNode = new CompositeState(initStates);
-		
-		HashSet<LPNTran> synchronousTrans = new HashSet<LPNTran>();
-		synchronousTrans.addAll(sg1.getInputTranSet());
-		synchronousTrans.retainAll(sg2.getOutputTranSet());
-		
-		HashSet<LPNTran> temp = new HashSet<LPNTran>();
-		temp.addAll(sg2.getInputTranSet());
-		temp.retainAll(sg1.getOutputTranSet());
-		synchronousTrans.addAll(temp);
-		
-		List<LPNTran> inputTrans1 = new ArrayList<LPNTran>();
-		inputTrans1.addAll(sg1.getInputTranSet());
-		inputTrans1.removeAll(synchronousTrans);
-		
-		List<LPNTran> inputTrans2 = new ArrayList<LPNTran>();
-		inputTrans2.addAll(sg2.getInputTranSet());
-		inputTrans2.removeAll(synchronousTrans);
-		
-		// create new composite state graph
-		StateGraph[] sgArray = new StateGraph[2];
-		sgArray[0] = sg1;
-		sgArray[1] = sg2;
-		CompositeStateGraph compositeSG = new CompositeStateGraph(initNode, sgArray);
-		
-		// create CompositeState stack
-		Stack<CompositeState> compositeStateStack = new Stack<CompositeState>();
-		
-		// initialize with initial MDD node
-		compositeStateStack.push(initNode);
-		
-		List<LPNTran> tranList1 = new ArrayList<LPNTran>();
-		List<State> stateList1 = new ArrayList<State>();
-		List<LPNTran> tranList2 = new ArrayList<LPNTran>();
-		List<State> stateList2 = new ArrayList<State>();
-		List<State> intersect1 = new ArrayList<State>();
-		List<State> intersect2 = new ArrayList<State>();
-		List<LPNTran> intersectTran = new ArrayList<LPNTran>();
-		
-		long peakUsed = 0;
-		long peakTotal = 0;
-		
-		//while stack is not empty
-		while(!compositeStateStack.isEmpty()){
-			//pop stack
-			CompositeState currentCompositeState = compositeStateStack.pop();
-			
-			State[] stateTuple = currentCompositeState.getStateTuple();
-			State s1 = stateTuple[0];
-			State s2 = stateTuple[1];
-			
-			// find next state transitions for each state
-//			LPNTranSet enabled1 = sg1.getEnabled(s1);
-//			LPNTranSet enabled2 = sg2.getEnabled(s2);
-			List<LPNTran> enabled1 = sg1.lpnTransitionMap.get(s1);
-			List<LPNTran> enabled2 = sg2.lpnTransitionMap.get(s2);
-			
-			tranList1.clear();
-			stateList1.clear();
-			tranList2.clear();
-			stateList2.clear();
-			intersect1.clear();
-			intersect2.clear();
-			intersectTran.clear();
-			
-			for(LPNTran lpnTran : enabled1){
-				if(lpnTran.local()){
-					tranList1.add(lpnTran);
-					stateList1.add((State) lpnTran.getNextState(s1));
-				}
-				else{
-					if(synchronousTrans.contains(lpnTran)){
-//						State st = lpnTran.constraintTranMap.get(s2);
-						State st = lpnTran.getNextState(s2);
-						if(st != null){
-							intersect1.add((State) lpnTran.getNextState(s1));
-							intersect2.add(st);
-							intersectTran.add(lpnTran);
-						}
-					}
-					else{
-						tranList1.add(lpnTran);
-						stateList1.add((State) lpnTran.getNextState(s1));
-					}
-				}
-			}
-			
-			
-			for(LPNTran lpnTran : enabled2){
-				if(lpnTran.local()){
-					tranList2.add(lpnTran);
-					stateList2.add((State) lpnTran.getNextState(s2));
-				}
-				else{
-					if(synchronousTrans.contains(lpnTran)){
-//						State st = lpnTran.constraintTranMap.get(s1);
-						State st = lpnTran.getNextState(s1);
-						if(st != null){
-							intersect1.add(st);
-							intersect2.add((State) lpnTran.getNextState(s2));
-							intersectTran.add(lpnTran);
-						}
-					}
-					else{
-						tranList2.add(lpnTran);
-						stateList2.add((State) lpnTran.getNextState(s2));
-					}
-				}
-			}
-			
-			for(LPNTran lpnTran : inputTrans1){
-//				State st = lpnTran.constraintTranMap.get(s1);
-				State st = lpnTran.getNextState(s1);
-				if(st != null){
-					tranList1.add(lpnTran);
-					stateList1.add(st);
-				}
-			}
-			
-			for(LPNTran lpnTran : inputTrans2){
-//				State st = lpnTran.constraintTranMap.get(s2);
-				State st = lpnTran.getNextState(s2);
-				if(st != null){
-					tranList2.add(lpnTran);
-					stateList2.add(st);
-				}
-			}
-			
-//			int size = tranList1.size() + tranList2.size() + intersect1.size();
-//			CompositeState[] nextStateArray = new CompositeState[size];
-//			LPNTran[] tranArray = new LPNTran[size];
-//			size--;
-			
-			// for each transition
-			// create new MDD node and push onto stack
-			for(int i = 0; i < tranList1.size(); i++){
-				LPNTran lpnTran = tranList1.get(i);
-				
-				State nextState = stateList1.get(i);
-				State[] newStateTuple = new State[2];
-				newStateTuple[0] = nextState;
-				newStateTuple[1] = s2;
-				
-				CompositeState newCompositeState = new CompositeState(newStateTuple);
-				CompositeState st = compositeSG.addState(newCompositeState);
-				if(st == null){
-					compositeStateStack.push(newCompositeState);
-					st = newCompositeState;
-				}
-				
-				// create a new CompositeStateTran
-//				CompositeStateTran newCompositeStateTran = new CompositeStateTran(currentCompositeState, st, lpnTran);
-//				if(compositeSG.addStateTran(newCompositeStateTran)){
-					// add an edge between the current and new state
-//					currentCompositeState.addEdge(newCompositeStateTran);
+//	public CompositeStateGraph compose(StateGraph sg1, StateGraph sg2){
+//		long start = System.currentTimeMillis(); 
+//		
+//		// check an output drives an input
+//		boolean compatible = false;
+//		for(String output : sg1.getOutputs()){
+//			VarSet inputs = sg2.getInputs();
+//			if(inputs.contains(output)){
+//				compatible = true;
+//				break;
+//			}
+//		}
+//		
+//		if(!compatible){
+//			VarSet inputs = sg1.getInputs();
+//			for(String output : sg2.getOutputs()){
+//				if(inputs.contains(output)){
+//					compatible = true;
+//					break;
 //				}
-				
-//				nextStateArray[size] = st;
-//				tranArray[size] = lpnTran;
-//				size--;
-				
-//				currentCompositeState.addNextState(st);
-//				currentCompositeState.addTran(lpnTran);
-				
-				currentCompositeState.nextStateList.add(st);
-				currentCompositeState.enabledTranList.add(lpnTran);
-				st.incomingStateList.add(currentCompositeState);
-			}
-			
-			for(int i = 0; i < tranList2.size(); i++){
-				LPNTran lpnTran = tranList2.get(i);
-				
-				State nextState = stateList2.get(i);
-				State[] newStateTuple = new State[2];
-				newStateTuple[0] = s1;
-				newStateTuple[1] = nextState;
-				
-				CompositeState newCompositeState = new CompositeState(newStateTuple);
-				CompositeState st = compositeSG.addState(newCompositeState);
-				if(st == null){
-					compositeStateStack.push(newCompositeState);
-					st = newCompositeState;
-				}
-				
-				// create new CompositeStateTran
-//				CompositeStateTran newCompositeStateTran = new CompositeStateTran(currentCompositeState, st, lpnTran);
-//				if(compositeSG.addStateTran(newCompositeStateTran)){
-					// add an edge between the current and new state
-//					currentCompositeState.addEdge(newCompositeStateTran);
-//				}
-				
-//				nextStateArray[size] = st;
-//				tranArray[size] = lpnTran;
-//				size--;
-				
-//				currentCompositeState.addNextState(st);
-//				currentCompositeState.addTran(lpnTran);
-				
-				currentCompositeState.nextStateList.add(st);
-				currentCompositeState.enabledTranList.add(lpnTran);
-				st.incomingStateList.add(currentCompositeState);
-			}
-			
-			for(int i = 0; i < intersect1.size(); i++){
-				LPNTran lpnTran = intersectTran.get(i);
-				
-				State nextState1 = intersect1.get(i);
-				State nextState2 = intersect2.get(i);
-				
-				State[] newStateTuple = new State[2];
-				newStateTuple[0] = nextState1;
-				newStateTuple[1] = nextState2;
-				
-				CompositeState newCompositeState = new CompositeState(newStateTuple);
-				CompositeState st = compositeSG.addState(newCompositeState);
-				if(st == null){
-					compositeStateStack.push(newCompositeState);
-					st = newCompositeState;
-				}
-				
-				// create a new CompositeStateTran
-//				CompositeStateTran newCompositeStateTran = new CompositeStateTran(currentCompositeState, st, lpnTran);
-//				if(compositeSG.addStateTran(newCompositeStateTran)){
-					// add an edge between the current and new state
-//					currentCompositeState.addEdge(newCompositeStateTran);
-//				}
-				
-//				nextStateArray[size] = st;
-//				tranArray[size] = lpnTran;
-//				size--;
-				
-//				currentCompositeState.addNextState(st);
-//				currentCompositeState.addTran(lpnTran);
-				
-				currentCompositeState.nextStateList.add(st);
-				currentCompositeState.enabledTranList.add(lpnTran);
-				st.incomingStateList.add(currentCompositeState);
-			}
-			
-//			currentCompositeState.setNextStateArray(nextStateArray);
-//			currentCompositeState.setTranArray(tranArray);
-			
-			long curTotalMem = Runtime.getRuntime().totalMemory();
-			if(curTotalMem > peakTotal)
-				peakTotal = curTotalMem;
-			
-			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-			if(curUsedMem > peakUsed)
-				peakUsed = curUsedMem;
-		}
-		
-		System.out.println("\n   " + compositeSG.getLabel() + ": ");
-		System.out.println("   --> # states: " + compositeSG.numCompositeStates());
-//		System.out.println("   --> # transitions: " + compositeSG.numCompositeStateTrans());
-
-		System.out.println("   --> Peak used memory: " + peakUsed/1000000F + " MB");
-		System.out.println("   --> Peak total memory: " + peakTotal/1000000F + " MB");
-		System.out.println("   --> Final used memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1000000F + " MB");
-		
-		long elapsedTimeMillis = System.currentTimeMillis()-start; 
-		float elapsedTimeSec = elapsedTimeMillis/1000F;
-		System.out.println("   --> Elapsed time: " + elapsedTimeSec + " sec");
-		
-		if(elapsedTimeSec > 60){
-			float elapsedTime = elapsedTimeSec;
-			elapsedTime = elapsedTimeSec/(float)60;
-			System.out.println("   --> Elapsed time: " + elapsedTime + " min");
-		}
-		
-		System.out.println();
-
-//		System.out.println();
-//		for(CompositeState cState : compositeSG.compositeStateSet){
-//			State[] stateTuple = cState.getStateTuple();
+//			}
+//		}
+//		
+//		if(!compatible){
+//			System.out.println("state graphs " + sg1.getLabel() + " and " + sg2.getLabel() + " cannot be composed\n");
+//			return null;
+//		}
+//		
+//		// create new node with init states
+//		State[] initStates = new State[2];
+//		initStates[0] = sg1.getInitialState();
+//		initStates[1] = sg2.getInitialState();
+//		CompositeState initNode = new CompositeState(initStates);
+//		
+//		HashSet<LPNTran> synchronousTrans = new HashSet<LPNTran>();
+//		synchronousTrans.addAll(sg1.getInputTranSet());
+//		synchronousTrans.retainAll(sg2.getOutputTranSet());
+//		
+//		HashSet<LPNTran> temp = new HashSet<LPNTran>();
+//		temp.addAll(sg2.getInputTranSet());
+//		temp.retainAll(sg1.getOutputTranSet());
+//		synchronousTrans.addAll(temp);
+//		
+//		List<LPNTran> inputTrans1 = new ArrayList<LPNTran>();
+//		inputTrans1.addAll(sg1.getInputTranSet());
+//		inputTrans1.removeAll(synchronousTrans);
+//		
+//		List<LPNTran> inputTrans2 = new ArrayList<LPNTran>();
+//		inputTrans2.addAll(sg2.getInputTranSet());
+//		inputTrans2.removeAll(synchronousTrans);
+//		
+//		// create new composite state graph
+//		StateGraph[] sgArray = new StateGraph[2];
+//		sgArray[0] = sg1;
+//		sgArray[1] = sg2;
+//		CompositeStateGraph compositeSG = new CompositeStateGraph(initNode, sgArray);
+//		
+//		// create CompositeState stack
+//		Stack<CompositeState> compositeStateStack = new Stack<CompositeState>();
+//		
+//		// initialize with initial MDD node
+//		compositeStateStack.push(initNode);
+//		
+//		List<LPNTran> tranList1 = new ArrayList<LPNTran>();
+//		List<State> stateList1 = new ArrayList<State>();
+//		List<LPNTran> tranList2 = new ArrayList<LPNTran>();
+//		List<State> stateList2 = new ArrayList<State>();
+//		List<State> intersect1 = new ArrayList<State>();
+//		List<State> intersect2 = new ArrayList<State>();
+//		List<LPNTran> intersectTran = new ArrayList<LPNTran>();
+//		
+//		long peakUsed = 0;
+//		long peakTotal = 0;
+//		
+//		//while stack is not empty
+//		while(!compositeStateStack.isEmpty()){
+//			//pop stack
+//			CompositeState currentCompositeState = compositeStateStack.pop();
+//			
+//			State[] stateTuple = currentCompositeState.getStateTuple();
 //			State s1 = stateTuple[0];
 //			State s2 = stateTuple[1];
 //			
-//			System.out.println(s1.getLabel() + ", " + s2.getLabel());
-//		}
-		
-		return compositeSG;
-	}
-	
-	public CompositeStateGraph compose(CompositeStateGraph csg, StateGraph sg){
-		if(csg == null || sg == null){
-			return csg;
-		}
-		
-		long start = System.currentTimeMillis(); 
-		
-		// check an output drives an input
-		boolean compatible = false;
-		for(String output : sg.getOutputs()){
-			for(StateGraph sg2 : csg.stateGraphArray){
-				VarSet inputs = sg2.getInputs();
-				if(inputs.contains(output)){
-					compatible = true;
-					break;
-				}
-			}
-			
-			if(compatible){
-				break;
-			}
-		}
-		
-		if(!compatible){
-			VarSet inputs = sg.getInputs();
-			for(StateGraph sg2 : csg.stateGraphArray){
-				for(String output : sg2.getOutputs()){
-					if(inputs.contains(output)){
-						compatible = true;
-						break;
-					}
-				}
-				
-				if(compatible){
-					break;
-				}
-			}
-			
-		}
-		
-		if(!compatible){
-			System.out.println("state graphs " + csg.getLabel() + " and " + sg.getLabel() + " cannot be composed");
-			return null;
-		}
-		
-		for(StateGraph sg2 : csg.stateGraphArray){
-			if(sg2 == sg){
-				return csg;
-			}
-		}
-		
-		// create new node with init states
-		int size = csg.getSize() + 1;
-		State[] initStates = new State[size];
-		initStates[0] = sg.getInitialState();
-		for(int i = 1; i < size; i++){
-			initStates[i] = csg.stateGraphArray[i-1].getInitialState();
-		}
-		
-		CompositeState initNode = new CompositeState(initStates);
-		
-		HashSet<LPNTran> synchronousTrans = new HashSet<LPNTran>();
-		
-		for(StateGraph sg2 : csg.stateGraphArray){
-			HashSet<LPNTran> inputTrans = new HashSet<LPNTran>();
-			inputTrans.addAll(sg.getInputTranSet());
-			inputTrans.retainAll(sg2.getOutputTranSet());
-			
-			HashSet<LPNTran> outputTrans = new HashSet<LPNTran>();
-			outputTrans.addAll(sg2.getInputTranSet());
-			outputTrans.retainAll(sg.getOutputTranSet());
-			
-			synchronousTrans.addAll(inputTrans);
-			synchronousTrans.addAll(outputTrans);
-		}
-		
-		List<LPNTran> inputTrans = new ArrayList<LPNTran>();
-		inputTrans.addAll(sg.getInputTranSet());
-		inputTrans.removeAll(synchronousTrans);
-		
-		// create new composite state graph
-		StateGraph[] sgArray = new StateGraph[size];
-		sgArray[0] = sg;
-		for(int i = 1; i < size; i++){
-			sgArray[i] = csg.stateGraphArray[i-1];
-		}
-		
-		CompositeStateGraph compositeSG = new CompositeStateGraph(initNode, sgArray);
-		
-		// create CompositeState stack
-		Stack<State> stateStack = new Stack<State>();
-		Stack<CompositeState> compositeStateStack = new Stack<CompositeState>();
-		Stack<CompositeState> newStateStack = new Stack<CompositeState>();
-		
-//		Queue<State> stateQueue = new LinkedList<State>();
-//		Queue<CompositeState> compositeStateQueue = new LinkedList<CompositeState>();
-//		Queue<CompositeState> newStateQueue = new LinkedList<CompositeState>();
-		
-		// initialize with initial MDD node
-		newStateStack.push(initNode);
-		stateStack.push(sg.getInitialState());
-		compositeStateStack.push(csg.getInitState());
-		
-//		stateQueue.offer(sg.init);
-//		compositeStateQueue.offer(csg.getInitState());
-//		newStateQueue.offer(initNode);
-		
-//		HashMap<LPNTran, StateTran> tranMap = new HashMap<LPNTran, StateTran>();
-//		List<CompositeStateTran> csgStateTranList = new ArrayList<CompositeStateTran>();
-//		List<StateTran> sgIntersect = new ArrayList<StateTran>();
-//		List<CompositeStateTran> csgIntersect = new ArrayList<CompositeStateTran>();
-		
-		List<LPNTran> tranList1 = new ArrayList<LPNTran>();
-		List<State> stateList1 = new ArrayList<State>();
-		List<LPNTran> tranList2 = new ArrayList<LPNTran>();
-		List<CompositeState> stateList2 = new ArrayList<CompositeState>();
-		List<State> intersect1 = new ArrayList<State>();
-		List<CompositeState> intersect2 = new ArrayList<CompositeState>();
-		List<LPNTran> intersectTran = new ArrayList<LPNTran>();
-		
-		long peakUsed = 0;
-		long peakTotal = 0;
-		
-		//while stack is not empty
-		while(!newStateStack.isEmpty()){
-//		while(!newStateQueue.isEmpty()){
-			long s1 = System.currentTimeMillis(); 
-			
-			//pop stack
-			CompositeState currentCompositeState = newStateStack.pop();
-			State subState = stateStack.pop();
-			CompositeState subCompositeState = compositeStateStack.pop();
-			
-//			CompositeState currentCompositeState = newStateQueue.poll();
-//			State subState = stateQueue.poll();
-//			CompositeState subCompositeState = compositeStateQueue.poll();
-			
-			State[] subCompositeTuple = subCompositeState.getStateTuple();
-			
-			tranList1.clear();
-			stateList1.clear();
-			tranList2.clear();
-			stateList2.clear();
-			intersect1.clear();
-			intersect2.clear();
-			intersectTran.clear();
-			
-			// find next state transitions for each state
-			List<LPNTran> enabled1 = sg.lpnTransitionMap.get(subState);
-//			List<LPNTran> enabled2 = subCompositeState.getTranList();
-//			List<CompositeState> edgeList = subCompositeState.getNextStateList();
-//			LPNTran[] enabled2 = subCompositeState.getTranArray();
-//			CompositeState[] edgeList = subCompositeState.getNextStateArray();
-			List<LPNTran> enabled2 = subCompositeState.enabledTranList;
-			List<CompositeState> edgeList = subCompositeState.nextStateList;
-			               
-//			System.out.println("    enabled1: " + enabled1.size());
-			for(LPNTran lpnTran : enabled1){
-				if(lpnTran.local()){
-					tranList1.add(lpnTran);
-					stateList1.add((State) lpnTran.getNextState(subState));
-				}
-				else{
-					if(synchronousTrans.contains(lpnTran)){
-						boolean synch = false;
-						CompositeState st = null;
-						for(int i = 0; i < enabled2.size(); i++){
-							if(enabled2.get(i) == lpnTran){
-								synch = true;
-								st = edgeList.get(i);
-								break;
-							}
-						}
-						
-						if(synch){
-							intersect1.add((State) lpnTran.getNextState(subState));
-							intersect2.add(st);
-							intersectTran.add(lpnTran);
-						}
-						else{
-							System.out.println("ST == NULL1\n");
-						}
-					}
-					else{
-						tranList1.add(lpnTran);
-						stateList1.add((State) lpnTran.getNextState(subState));
-					}
-				}
-			}
-			
-//			System.out.println("    enabled2: " + enabled2.size());
-			for(int i = 0; i < enabled2.size(); i++){
-				LPNTran lpnTran = enabled2.get(i);
-				
-				if(synchronousTrans.contains(lpnTran)){
-//					State st = lpnTran.constraintTranMap.get(subState);
-					State st = lpnTran.getNextState(subState);
-					if(st != null){
-						intersectTran.add(lpnTran);
-						intersect1.add(st);
-						intersect2.add(edgeList.get(i));
-					}
-				}
-				else{
-					tranList2.add(lpnTran);
-					stateList2.add(edgeList.get(i));
-				}
-			}
-			
-//			System.out.println("    inputTrans: " + inputTrans.size());
-			for(LPNTran lpnTran : inputTrans){
-//				State st = lpnTran.constraintTranMap.get(subState);
-				State st = lpnTran.getNextState(subState);
-				if(st != null){
-					tranList1.add(lpnTran);
-					stateList1.add(st);
-				}
-			}
-			
-//			int items = tranList1.size() + tranList2.size() + intersect1.size();
-//			CompositeState[] nextStateArray = new CompositeState[items];
-//			LPNTran[] tranArray = new LPNTran[items];
-//			items--;
-			
-			long s2 = System.currentTimeMillis(); 
-			// for each transition
-			// create new MDD node and push onto stack
-			for(int i = 0; i < tranList1.size(); i++){
-				LPNTran lpnTran = tranList1.get(i);
-				State nextState = stateList1.get(i);
-				State[] newStateTuple = new State[size];
-				newStateTuple[0] = nextState;
-				for(int j = 1; j < size; j++){
-					newStateTuple[j] = subCompositeTuple[j-1];
-				}
-				
-				CompositeState newCompositeState = new CompositeState(newStateTuple);
-				CompositeState st = compositeSG.addState(newCompositeState);
-				if(st == null){
-					newStateStack.push(newCompositeState);
-					stateStack.push(nextState);
-					compositeStateStack.push(subCompositeState);
-//					newStateQueue.offer(newCompositeState);
-//					stateQueue.offer(nextState);
-//					compositeStateQueue.offer(subCompositeState);
-					
-					st = newCompositeState;
-				}
-				
-				// create a new CompositeStateTran
-//				CompositeStateTran newCompositeStateTran = new CompositeStateTran(currentCompositeState, st, lpnTran);
-//				if(compositeSG.addStateTran(newCompositeStateTran)){
-					// add an edge between the current and new state
-//				currentCompositeState.addEdge(newCompositeStateTran);
-//				}
-				
-//				nextStateArray[items] = st;
-//				tranArray[items] = lpnTran;
-//				items--;
-				
-//				currentCompositeState.addNextState(st);
-//				currentCompositeState.addTran(lpnTran);
-				
-				currentCompositeState.nextStateList.add(st);
-				currentCompositeState.enabledTranList.add(lpnTran);
-				st.incomingStateList.add(currentCompositeState);
-			}
-			
-//			System.out.println("    transList2: " + tranList2.size());
-			for(int i = 0; i < tranList2.size(); i++){
-				LPNTran lpnTran = tranList2.get(i);
-				CompositeState nextState = stateList2.get(i);
-				State[] nextStateTuple = nextState.getStateTuple();
-				State[] newStateTuple = new State[size];
-				newStateTuple[0] = subState;
-				for(int j = 1; j < size; j++){
-					newStateTuple[j] = nextStateTuple[j-1];
-				}
-				
-				CompositeState newCompositeState = new CompositeState(newStateTuple);
-				CompositeState st = compositeSG.addState(newCompositeState);
-				if(st == null){
-					newStateStack.push(newCompositeState);
-					stateStack.push(subState);
-					compositeStateStack.push(nextState);
-//					newStateQueue.offer(newCompositeState);
-//					stateQueue.offer(subState);
-//					compositeStateQueue.offer(nextState);
-					
-					st = newCompositeState;
-				}
-				
-				// create a new CompositeStateTran
-//				CompositeStateTran newCompositeStateTran = new CompositeStateTran(currentCompositeState, st, lpnTran);
-//				if(compositeSG.addStateTran(newCompositeStateTran)){
-					// add an edge between the current and new state
-//					currentCompositeState.addEdge(newCompositeStateTran);
-//				}
-				
-//				nextStateArray[items] = st;
-//				tranArray[items] = lpnTran;
-//				items--;
-				
-//				currentCompositeState.addNextState(st);
-//				currentCompositeState.addTran(lpnTran);
-				
-				currentCompositeState.nextStateList.add(st);
-				currentCompositeState.enabledTranList.add(lpnTran);
-				st.incomingStateList.add(currentCompositeState);
-			}
-			
-//			System.out.println("    intersect: " + intersect1.size());
-			for(int i = 0; i < intersect1.size(); i++){
-				LPNTran lpnTran = intersectTran.get(i);
-				
-				State nextState1 = intersect1.get(i);
-				CompositeState nextState2 = intersect2.get(i);
-				State[] nextStateTuple = nextState2.getStateTuple();
-				
-				State[] newStateTuple = new State[size];
-				newStateTuple[0] = nextState1;
-				for(int j = 1; j < size; j++){
-					newStateTuple[j] = nextStateTuple[j-1];
-				}
-				
-				CompositeState newCompositeState = new CompositeState(newStateTuple);
-				CompositeState st = compositeSG.addState(newCompositeState);
-				if(st == null){
-					newStateStack.push(newCompositeState);
-					compositeStateStack.push(nextState2);
-					stateStack.push(nextState1);
-//					newStateQueue.offer(newCompositeState);
-//					stateQueue.offer(nextState1);
-//					compositeStateQueue.offer(nextState2);
-					
-					st = newCompositeState;
-				}
-				
-				// create a new CompositeStateTran
-//				CompositeStateTran newCompositeStateTran = new CompositeStateTran(currentCompositeState, st, stTran1.lpnTran);
-//				if(compositeSG.addStateTran(newCompositeStateTran)){
-					// add an edge between the current and new state
-//					currentCompositeState.addEdge(newCompositeStateTran);
-//				}
-				
-//				nextStateArray[items] = st;
-//				tranArray[items] = lpnTran;
-//				items--;
-				
-//				currentCompositeState.addNextState(st);
-//				currentCompositeState.addTran(lpnTran);
-				
-				currentCompositeState.nextStateList.add(st);
-				currentCompositeState.enabledTranList.add(lpnTran);
-				st.incomingStateList.add(currentCompositeState);
-			}
-			
-//			currentCompositeState.setNextStateArray(nextStateArray);
-//			currentCompositeState.setTranArray(tranArray);
-			
-			long curTotalMem = Runtime.getRuntime().totalMemory();
-			if(curTotalMem > peakTotal)
-				peakTotal = curTotalMem;
-			
-			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
-			if(curUsedMem > peakUsed)
-				peakUsed = curUsedMem;
-		}
-		
-		System.out.println("\n   " + compositeSG.getLabel() + ": ");
-		System.out.println("   --> # states: " + compositeSG.numCompositeStates());
-//		System.out.println("   --> # transitions: " + compositeSG.numCompositeStateTrans());
-		
-		System.out.println("   --> Peak used memory: " + peakUsed/1000000F + " MB");
-		System.out.println("   --> Peak total memory: " + peakTotal/1000000F + " MB");
-		System.out.println("   --> Final used memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1000000F + " MB");
-		
-		long elapsedTimeMillis = System.currentTimeMillis()-start; 
-		float elapsedTimeSec = elapsedTimeMillis/1000F;
-		System.out.println("   --> Elapsed time: " + elapsedTimeSec + " sec");
-		
-		if(elapsedTimeSec > 60){
-			float elapsedTime = elapsedTimeSec;
-			elapsedTime = elapsedTimeSec/(float)60;
-			System.out.println("   --> Elapsed time: " + elapsedTime + " min");
-		}
-		
-		System.out.println();
-		
-//		System.out.println();
-//		for(CompositeState cState : compositeSG.compositeStateSet){
-//			State[] stateTuple = cState.getStateTuple();
-//			State s1 = stateTuple[0];
-//			State s2 = stateTuple[1];
+//			// find next state transitions for each state
+////			LPNTranSet enabled1 = sg1.getEnabled(s1);
+////			LPNTranSet enabled2 = sg2.getEnabled(s2);
+//			List<LPNTran> enabled1 = sg1.lpnTransitionMap.get(s1);
+//			List<LPNTran> enabled2 = sg2.lpnTransitionMap.get(s2);
 //			
-//			System.out.println(s1.getLabel() + ", " + s2.getLabel());
+//			tranList1.clear();
+//			stateList1.clear();
+//			tranList2.clear();
+//			stateList2.clear();
+//			intersect1.clear();
+//			intersect2.clear();
+//			intersectTran.clear();
+//			
+//			for(LPNTran lpnTran : enabled1){
+//				if(lpnTran.local()){
+//					tranList1.add(lpnTran);
+//					stateList1.add((State) lpnTran.getNextState(s1));
+//				}
+//				else{
+//					if(synchronousTrans.contains(lpnTran)){
+////						State st = lpnTran.constraintTranMap.get(s2);
+//						State st = lpnTran.getNextState(s2);
+//						if(st != null){
+//							intersect1.add((State) lpnTran.getNextState(s1));
+//							intersect2.add(st);
+//							intersectTran.add(lpnTran);
+//						}
+//					}
+//					else{
+//						tranList1.add(lpnTran);
+//						stateList1.add((State) lpnTran.getNextState(s1));
+//					}
+//				}
+//			}
+//			
+//			
+//			for(LPNTran lpnTran : enabled2){
+//				if(lpnTran.local()){
+//					tranList2.add(lpnTran);
+//					stateList2.add((State) lpnTran.getNextState(s2));
+//				}
+//				else{
+//					if(synchronousTrans.contains(lpnTran)){
+////						State st = lpnTran.constraintTranMap.get(s1);
+//						State st = lpnTran.getNextState(s1);
+//						if(st != null){
+//							intersect1.add(st);
+//							intersect2.add((State) lpnTran.getNextState(s2));
+//							intersectTran.add(lpnTran);
+//						}
+//					}
+//					else{
+//						tranList2.add(lpnTran);
+//						stateList2.add((State) lpnTran.getNextState(s2));
+//					}
+//				}
+//			}
+//			
+//			for(LPNTran lpnTran : inputTrans1){
+////				State st = lpnTran.constraintTranMap.get(s1);
+//				State st = lpnTran.getNextState(s1);
+//				if(st != null){
+//					tranList1.add(lpnTran);
+//					stateList1.add(st);
+//				}
+//			}
+//			
+//			for(LPNTran lpnTran : inputTrans2){
+////				State st = lpnTran.constraintTranMap.get(s2);
+//				State st = lpnTran.getNextState(s2);
+//				if(st != null){
+//					tranList2.add(lpnTran);
+//					stateList2.add(st);
+//				}
+//			}
+//			
+////			int size = tranList1.size() + tranList2.size() + intersect1.size();
+////			CompositeState[] nextStateArray = new CompositeState[size];
+////			LPNTran[] tranArray = new LPNTran[size];
+////			size--;
+//			
+//			// for each transition
+//			// create new MDD node and push onto stack
+//			for(int i = 0; i < tranList1.size(); i++){
+//				LPNTran lpnTran = tranList1.get(i);
+//				
+//				State nextState = stateList1.get(i);
+//				State[] newStateTuple = new State[2];
+//				newStateTuple[0] = nextState;
+//				newStateTuple[1] = s2;
+//				
+//				CompositeState newCompositeState = new CompositeState(newStateTuple);
+//				CompositeState st = compositeSG.addState(newCompositeState);
+//				if(st == null){
+//					compositeStateStack.push(newCompositeState);
+//					st = newCompositeState;
+//				}
+//				
+//				// create a new CompositeStateTran
+////				CompositeStateTran newCompositeStateTran = new CompositeStateTran(currentCompositeState, st, lpnTran);
+////				if(compositeSG.addStateTran(newCompositeStateTran)){
+//					// add an edge between the current and new state
+////					currentCompositeState.addEdge(newCompositeStateTran);
+////				}
+//				
+////				nextStateArray[size] = st;
+////				tranArray[size] = lpnTran;
+////				size--;
+//				
+////				currentCompositeState.addNextState(st);
+////				currentCompositeState.addTran(lpnTran);
+//				
+//				currentCompositeState.nextStateList.add(st);
+//				currentCompositeState.enabledTranList.add(lpnTran);
+//				st.incomingStateList.add(currentCompositeState);
+//			}
+//			
+//			for(int i = 0; i < tranList2.size(); i++){
+//				LPNTran lpnTran = tranList2.get(i);
+//				
+//				State nextState = stateList2.get(i);
+//				State[] newStateTuple = new State[2];
+//				newStateTuple[0] = s1;
+//				newStateTuple[1] = nextState;
+//				
+//				CompositeState newCompositeState = new CompositeState(newStateTuple);
+//				CompositeState st = compositeSG.addState(newCompositeState);
+//				if(st == null){
+//					compositeStateStack.push(newCompositeState);
+//					st = newCompositeState;
+//				}
+//				
+//				// create new CompositeStateTran
+////				CompositeStateTran newCompositeStateTran = new CompositeStateTran(currentCompositeState, st, lpnTran);
+////				if(compositeSG.addStateTran(newCompositeStateTran)){
+//					// add an edge between the current and new state
+////					currentCompositeState.addEdge(newCompositeStateTran);
+////				}
+//				
+////				nextStateArray[size] = st;
+////				tranArray[size] = lpnTran;
+////				size--;
+//				
+////				currentCompositeState.addNextState(st);
+////				currentCompositeState.addTran(lpnTran);
+//				
+//				currentCompositeState.nextStateList.add(st);
+//				currentCompositeState.enabledTranList.add(lpnTran);
+//				st.incomingStateList.add(currentCompositeState);
+//			}
+//			
+//			for(int i = 0; i < intersect1.size(); i++){
+//				LPNTran lpnTran = intersectTran.get(i);
+//				
+//				State nextState1 = intersect1.get(i);
+//				State nextState2 = intersect2.get(i);
+//				
+//				State[] newStateTuple = new State[2];
+//				newStateTuple[0] = nextState1;
+//				newStateTuple[1] = nextState2;
+//				
+//				CompositeState newCompositeState = new CompositeState(newStateTuple);
+//				CompositeState st = compositeSG.addState(newCompositeState);
+//				if(st == null){
+//					compositeStateStack.push(newCompositeState);
+//					st = newCompositeState;
+//				}
+//				
+//				// create a new CompositeStateTran
+////				CompositeStateTran newCompositeStateTran = new CompositeStateTran(currentCompositeState, st, lpnTran);
+////				if(compositeSG.addStateTran(newCompositeStateTran)){
+//					// add an edge between the current and new state
+////					currentCompositeState.addEdge(newCompositeStateTran);
+////				}
+//				
+////				nextStateArray[size] = st;
+////				tranArray[size] = lpnTran;
+////				size--;
+//				
+////				currentCompositeState.addNextState(st);
+////				currentCompositeState.addTran(lpnTran);
+//				
+//				currentCompositeState.nextStateList.add(st);
+//				currentCompositeState.enabledTranList.add(lpnTran);
+//				st.incomingStateList.add(currentCompositeState);
+//			}
+//			
+////			currentCompositeState.setNextStateArray(nextStateArray);
+////			currentCompositeState.setTranArray(tranArray);
+//			
+//			long curTotalMem = Runtime.getRuntime().totalMemory();
+//			if(curTotalMem > peakTotal)
+//				peakTotal = curTotalMem;
+//			
+//			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//			if(curUsedMem > peakUsed)
+//				peakUsed = curUsedMem;
 //		}
-		
-		return compositeSG;
-	}
+//		
+//		System.out.println("\n   " + compositeSG.getLabel() + ": ");
+//		System.out.println("   --> # states: " + compositeSG.numCompositeStates());
+////		System.out.println("   --> # transitions: " + compositeSG.numCompositeStateTrans());
+//
+//		System.out.println("   --> Peak used memory: " + peakUsed/1000000F + " MB");
+//		System.out.println("   --> Peak total memory: " + peakTotal/1000000F + " MB");
+//		System.out.println("   --> Final used memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1000000F + " MB");
+//		
+//		long elapsedTimeMillis = System.currentTimeMillis()-start; 
+//		float elapsedTimeSec = elapsedTimeMillis/1000F;
+//		System.out.println("   --> Elapsed time: " + elapsedTimeSec + " sec");
+//		
+//		if(elapsedTimeSec > 60){
+//			float elapsedTime = elapsedTimeSec;
+//			elapsedTime = elapsedTimeSec/(float)60;
+//			System.out.println("   --> Elapsed time: " + elapsedTime + " min");
+//		}
+//		
+//		System.out.println();
+//
+////		System.out.println();
+////		for(CompositeState cState : compositeSG.compositeStateMap){
+////			State[] stateTuple = cState.getStateTuple();
+////			State s1 = stateTuple[0];
+////			State s2 = stateTuple[1];
+////			
+////			System.out.println(s1.getLabel() + ", " + s2.getLabel());
+////		}
+//		
+//		return compositeSG;
+//	}
+//	
+//	public CompositeStateGraph compose(CompositeStateGraph csg, StateGraph sg){
+//		if(csg == null || sg == null){
+//			return csg;
+//		}
+//		
+//		long start = System.currentTimeMillis(); 
+//		
+//		// check an output drives an input
+//		boolean compatible = false;
+//		for(String output : sg.getOutputs()){
+//			for(StateGraph sg2 : csg.stateGraphArray){
+//				VarSet inputs = sg2.getInputs();
+//				if(inputs.contains(output)){
+//					compatible = true;
+//					break;
+//				}
+//			}
+//			
+//			if(compatible){
+//				break;
+//			}
+//		}
+//		
+//		if(!compatible){
+//			VarSet inputs = sg.getInputs();
+//			for(StateGraph sg2 : csg.stateGraphArray){
+//				for(String output : sg2.getOutputs()){
+//					if(inputs.contains(output)){
+//						compatible = true;
+//						break;
+//					}
+//				}
+//				
+//				if(compatible){
+//					break;
+//				}
+//			}
+//			
+//		}
+//		
+//		if(!compatible){
+//			System.out.println("state graphs " + csg.getLabel() + " and " + sg.getLabel() + " cannot be composed");
+//			return null;
+//		}
+//		
+//		for(StateGraph sg2 : csg.stateGraphArray){
+//			if(sg2 == sg){
+//				return csg;
+//			}
+//		}
+//		
+//		// create new node with init states
+//		int size = csg.getSize() + 1;
+//		State[] initStates = new State[size];
+//		initStates[0] = sg.getInitialState();
+//		for(int i = 1; i < size; i++){
+//			initStates[i] = csg.stateGraphArray[i-1].getInitialState();
+//		}
+//		
+//		CompositeState initNode = new CompositeState(initStates);
+//		
+//		HashSet<LPNTran> synchronousTrans = new HashSet<LPNTran>();
+//		
+//		for(StateGraph sg2 : csg.stateGraphArray){
+//			HashSet<LPNTran> inputTrans = new HashSet<LPNTran>();
+//			inputTrans.addAll(sg.getInputTranSet());
+//			inputTrans.retainAll(sg2.getOutputTranSet());
+//			
+//			HashSet<LPNTran> outputTrans = new HashSet<LPNTran>();
+//			outputTrans.addAll(sg2.getInputTranSet());
+//			outputTrans.retainAll(sg.getOutputTranSet());
+//			
+//			synchronousTrans.addAll(inputTrans);
+//			synchronousTrans.addAll(outputTrans);
+//		}
+//		
+//		List<LPNTran> inputTrans = new ArrayList<LPNTran>();
+//		inputTrans.addAll(sg.getInputTranSet());
+//		inputTrans.removeAll(synchronousTrans);
+//		
+//		// create new composite state graph
+//		StateGraph[] sgArray = new StateGraph[size];
+//		sgArray[0] = sg;
+//		for(int i = 1; i < size; i++){
+//			sgArray[i] = csg.stateGraphArray[i-1];
+//		}
+//		
+//		CompositeStateGraph compositeSG = new CompositeStateGraph(initNode, sgArray);
+//		
+//		// create CompositeState stack
+//		Stack<State> stateStack = new Stack<State>();
+//		Stack<CompositeState> compositeStateStack = new Stack<CompositeState>();
+//		Stack<CompositeState> newStateStack = new Stack<CompositeState>();
+//		
+////		Queue<State> stateQueue = new LinkedList<State>();
+////		Queue<CompositeState> compositeStateQueue = new LinkedList<CompositeState>();
+////		Queue<CompositeState> newStateQueue = new LinkedList<CompositeState>();
+//		
+//		// initialize with initial MDD node
+//		newStateStack.push(initNode);
+//		stateStack.push(sg.getInitialState());
+//		compositeStateStack.push(csg.getInitState());
+//		
+////		stateQueue.offer(sg.init);
+////		compositeStateQueue.offer(csg.getInitState());
+////		newStateQueue.offer(initNode);
+//		
+////		HashMap<LPNTran, StateTran> tranMap = new HashMap<LPNTran, StateTran>();
+////		List<CompositeStateTran> csgStateTranList = new ArrayList<CompositeStateTran>();
+////		List<StateTran> sgIntersect = new ArrayList<StateTran>();
+////		List<CompositeStateTran> csgIntersect = new ArrayList<CompositeStateTran>();
+//		
+//		List<LPNTran> tranList1 = new ArrayList<LPNTran>();
+//		List<State> stateList1 = new ArrayList<State>();
+//		List<LPNTran> tranList2 = new ArrayList<LPNTran>();
+//		List<CompositeState> stateList2 = new ArrayList<CompositeState>();
+//		List<State> intersect1 = new ArrayList<State>();
+//		List<CompositeState> intersect2 = new ArrayList<CompositeState>();
+//		List<LPNTran> intersectTran = new ArrayList<LPNTran>();
+//		
+//		long peakUsed = 0;
+//		long peakTotal = 0;
+//		
+//		//while stack is not empty
+//		while(!newStateStack.isEmpty()){
+////		while(!newStateQueue.isEmpty()){
+//			long s1 = System.currentTimeMillis(); 
+//			
+//			//pop stack
+//			CompositeState currentCompositeState = newStateStack.pop();
+//			State subState = stateStack.pop();
+//			CompositeState subCompositeState = compositeStateStack.pop();
+//			
+////			CompositeState currentCompositeState = newStateQueue.poll();
+////			State subState = stateQueue.poll();
+////			CompositeState subCompositeState = compositeStateQueue.poll();
+//			
+//			State[] subCompositeTuple = subCompositeState.getStateTuple();
+//			
+//			tranList1.clear();
+//			stateList1.clear();
+//			tranList2.clear();
+//			stateList2.clear();
+//			intersect1.clear();
+//			intersect2.clear();
+//			intersectTran.clear();
+//			
+//			// find next state transitions for each state
+//			List<LPNTran> enabled1 = sg.lpnTransitionMap.get(subState);
+////			List<LPNTran> enabled2 = subCompositeState.getTranList();
+////			List<CompositeState> edgeList = subCompositeState.getNextStateList();
+////			LPNTran[] enabled2 = subCompositeState.getTranArray();
+////			CompositeState[] edgeList = subCompositeState.getNextStateArray();
+//			List<LPNTran> enabled2 = subCompositeState.enabledTranList;
+//			List<CompositeState> edgeList = subCompositeState.nextStateList;
+//			               
+////			System.out.println("    enabled1: " + enabled1.size());
+//			for(LPNTran lpnTran : enabled1){
+//				if(lpnTran.local()){
+//					tranList1.add(lpnTran);
+//					stateList1.add((State) lpnTran.getNextState(subState));
+//				}
+//				else{
+//					if(synchronousTrans.contains(lpnTran)){
+//						boolean synch = false;
+//						CompositeState st = null;
+//						for(int i = 0; i < enabled2.size(); i++){
+//							if(enabled2.get(i) == lpnTran){
+//								synch = true;
+//								st = edgeList.get(i);
+//								break;
+//							}
+//						}
+//						
+//						if(synch){
+//							intersect1.add((State) lpnTran.getNextState(subState));
+//							intersect2.add(st);
+//							intersectTran.add(lpnTran);
+//						}
+//						else{
+//							System.out.println("ST == NULL1\n");
+//						}
+//					}
+//					else{
+//						tranList1.add(lpnTran);
+//						stateList1.add((State) lpnTran.getNextState(subState));
+//					}
+//				}
+//			}
+//			
+////			System.out.println("    enabled2: " + enabled2.size());
+//			for(int i = 0; i < enabled2.size(); i++){
+//				LPNTran lpnTran = enabled2.get(i);
+//				
+//				if(synchronousTrans.contains(lpnTran)){
+////					State st = lpnTran.constraintTranMap.get(subState);
+//					State st = lpnTran.getNextState(subState);
+//					if(st != null){
+//						intersectTran.add(lpnTran);
+//						intersect1.add(st);
+//						intersect2.add(edgeList.get(i));
+//					}
+//				}
+//				else{
+//					tranList2.add(lpnTran);
+//					stateList2.add(edgeList.get(i));
+//				}
+//			}
+//			
+////			System.out.println("    inputTrans: " + inputTrans.size());
+//			for(LPNTran lpnTran : inputTrans){
+////				State st = lpnTran.constraintTranMap.get(subState);
+//				State st = lpnTran.getNextState(subState);
+//				if(st != null){
+//					tranList1.add(lpnTran);
+//					stateList1.add(st);
+//				}
+//			}
+//			
+////			int items = tranList1.size() + tranList2.size() + intersect1.size();
+////			CompositeState[] nextStateArray = new CompositeState[items];
+////			LPNTran[] tranArray = new LPNTran[items];
+////			items--;
+//			
+//			long s2 = System.currentTimeMillis(); 
+//			// for each transition
+//			// create new MDD node and push onto stack
+//			for(int i = 0; i < tranList1.size(); i++){
+//				LPNTran lpnTran = tranList1.get(i);
+//				State nextState = stateList1.get(i);
+//				State[] newStateTuple = new State[size];
+//				newStateTuple[0] = nextState;
+//				for(int j = 1; j < size; j++){
+//					newStateTuple[j] = subCompositeTuple[j-1];
+//				}
+//				
+//				CompositeState newCompositeState = new CompositeState(newStateTuple);
+//				CompositeState st = compositeSG.addState(newCompositeState);
+//				if(st == null){
+//					newStateStack.push(newCompositeState);
+//					stateStack.push(nextState);
+//					compositeStateStack.push(subCompositeState);
+////					newStateQueue.offer(newCompositeState);
+////					stateQueue.offer(nextState);
+////					compositeStateQueue.offer(subCompositeState);
+//					
+//					st = newCompositeState;
+//				}
+//				
+//				// create a new CompositeStateTran
+////				CompositeStateTran newCompositeStateTran = new CompositeStateTran(currentCompositeState, st, lpnTran);
+////				if(compositeSG.addStateTran(newCompositeStateTran)){
+//					// add an edge between the current and new state
+////				currentCompositeState.addEdge(newCompositeStateTran);
+////				}
+//				
+////				nextStateArray[items] = st;
+////				tranArray[items] = lpnTran;
+////				items--;
+//				
+////				currentCompositeState.addNextState(st);
+////				currentCompositeState.addTran(lpnTran);
+//				
+//				currentCompositeState.nextStateList.add(st);
+//				currentCompositeState.enabledTranList.add(lpnTran);
+//				st.incomingStateList.add(currentCompositeState);
+//			}
+//			
+////			System.out.println("    transList2: " + tranList2.size());
+//			for(int i = 0; i < tranList2.size(); i++){
+//				LPNTran lpnTran = tranList2.get(i);
+//				CompositeState nextState = stateList2.get(i);
+//				State[] nextStateTuple = nextState.getStateTuple();
+//				State[] newStateTuple = new State[size];
+//				newStateTuple[0] = subState;
+//				for(int j = 1; j < size; j++){
+//					newStateTuple[j] = nextStateTuple[j-1];
+//				}
+//				
+//				CompositeState newCompositeState = new CompositeState(newStateTuple);
+//				CompositeState st = compositeSG.addState(newCompositeState);
+//				if(st == null){
+//					newStateStack.push(newCompositeState);
+//					stateStack.push(subState);
+//					compositeStateStack.push(nextState);
+////					newStateQueue.offer(newCompositeState);
+////					stateQueue.offer(subState);
+////					compositeStateQueue.offer(nextState);
+//					
+//					st = newCompositeState;
+//				}
+//				
+//				// create a new CompositeStateTran
+////				CompositeStateTran newCompositeStateTran = new CompositeStateTran(currentCompositeState, st, lpnTran);
+////				if(compositeSG.addStateTran(newCompositeStateTran)){
+//					// add an edge between the current and new state
+////					currentCompositeState.addEdge(newCompositeStateTran);
+////				}
+//				
+////				nextStateArray[items] = st;
+////				tranArray[items] = lpnTran;
+////				items--;
+//				
+////				currentCompositeState.addNextState(st);
+////				currentCompositeState.addTran(lpnTran);
+//				
+//				currentCompositeState.nextStateList.add(st);
+//				currentCompositeState.enabledTranList.add(lpnTran);
+//				st.incomingStateList.add(currentCompositeState);
+//			}
+//			
+////			System.out.println("    intersect: " + intersect1.size());
+//			for(int i = 0; i < intersect1.size(); i++){
+//				LPNTran lpnTran = intersectTran.get(i);
+//				
+//				State nextState1 = intersect1.get(i);
+//				CompositeState nextState2 = intersect2.get(i);
+//				State[] nextStateTuple = nextState2.getStateTuple();
+//				
+//				State[] newStateTuple = new State[size];
+//				newStateTuple[0] = nextState1;
+//				for(int j = 1; j < size; j++){
+//					newStateTuple[j] = nextStateTuple[j-1];
+//				}
+//				
+//				CompositeState newCompositeState = new CompositeState(newStateTuple);
+//				CompositeState st = compositeSG.addState(newCompositeState);
+//				if(st == null){
+//					newStateStack.push(newCompositeState);
+//					compositeStateStack.push(nextState2);
+//					stateStack.push(nextState1);
+////					newStateQueue.offer(newCompositeState);
+////					stateQueue.offer(nextState1);
+////					compositeStateQueue.offer(nextState2);
+//					
+//					st = newCompositeState;
+//				}
+//				
+//				// create a new CompositeStateTran
+////				CompositeStateTran newCompositeStateTran = new CompositeStateTran(currentCompositeState, st, stTran1.lpnTran);
+////				if(compositeSG.addStateTran(newCompositeStateTran)){
+//					// add an edge between the current and new state
+////					currentCompositeState.addEdge(newCompositeStateTran);
+////				}
+//				
+////				nextStateArray[items] = st;
+////				tranArray[items] = lpnTran;
+////				items--;
+//				
+////				currentCompositeState.addNextState(st);
+////				currentCompositeState.addTran(lpnTran);
+//				
+//				currentCompositeState.nextStateList.add(st);
+//				currentCompositeState.enabledTranList.add(lpnTran);
+//				st.incomingStateList.add(currentCompositeState);
+//			}
+//			
+////			currentCompositeState.setNextStateArray(nextStateArray);
+////			currentCompositeState.setTranArray(tranArray);
+//			
+//			long curTotalMem = Runtime.getRuntime().totalMemory();
+//			if(curTotalMem > peakTotal)
+//				peakTotal = curTotalMem;
+//			
+//			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+//			if(curUsedMem > peakUsed)
+//				peakUsed = curUsedMem;
+//		}
+//		
+//		System.out.println("\n   " + compositeSG.getLabel() + ": ");
+//		System.out.println("   --> # states: " + compositeSG.numCompositeStates());
+////		System.out.println("   --> # transitions: " + compositeSG.numCompositeStateTrans());
+//		
+//		System.out.println("   --> Peak used memory: " + peakUsed/1000000F + " MB");
+//		System.out.println("   --> Peak total memory: " + peakTotal/1000000F + " MB");
+//		System.out.println("   --> Final used memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1000000F + " MB");
+//		
+//		long elapsedTimeMillis = System.currentTimeMillis()-start; 
+//		float elapsedTimeSec = elapsedTimeMillis/1000F;
+//		System.out.println("   --> Elapsed time: " + elapsedTimeSec + " sec");
+//		
+//		if(elapsedTimeSec > 60){
+//			float elapsedTime = elapsedTimeSec;
+//			elapsedTime = elapsedTimeSec/(float)60;
+//			System.out.println("   --> Elapsed time: " + elapsedTime + " min");
+//		}
+//		
+//		System.out.println();
+//		
+////		System.out.println();
+////		for(CompositeState cState : compositeSG.compositeStateMap){
+////			State[] stateTuple = cState.getStateTuple();
+////			State s1 = stateTuple[0];
+////			State s2 = stateTuple[1];
+////			
+////			System.out.println(s1.getLabel() + ", " + s2.getLabel());
+////		}
+//		
+//		return compositeSG;
+//	}
 	
-	public CompositeStateGraph compose(CompositeStateGraph sg1, CompositeStateGraph sg2){
+	public CompositeStateGraph compose2(CompositeStateGraph sg1, CompositeStateGraph sg2){
 		long start = System.currentTimeMillis(); 
 		
 		if(sg1 == null || sg2 == null){
 			return null;
 		}
 		
+		StateGraph[] stateGraphArray1 = sg1.getStateGraphArray();
+		StateGraph[] stateGraphArray2 = sg2.getStateGraphArray();
+		
 		// check an output drives an input
 		boolean compatible = false;
-		for(StateGraph g : sg1.stateGraphArray){
-			for(String output : g.getOutputs()){
-				for(StateGraph g2 : sg2.stateGraphArray){
-					VarSet inputs = g2.getInputs();
+		for(StateGraph g : stateGraphArray1){
+			for(String output : g.getLpn().getOutputs()){
+				for(StateGraph g2 : stateGraphArray2){
+					VarSet inputs = g2.getLpn().getInputs();
 					if(inputs.contains(output)){
 						compatible = true;
 						break;
@@ -768,10 +773,10 @@ public class CompositionalAnalysis {
 		}
 		
 		if(!compatible){
-			for(StateGraph g1 : sg1.stateGraphArray){
-				VarSet inputs = g1.getInputs();
-				for(StateGraph g2 : sg2.stateGraphArray){
-					for(String output : g2.getOutputs()){
+			for(StateGraph g1 : stateGraphArray1){
+				VarSet inputs = g1.getLpn().getInputs();
+				for(StateGraph g2 : stateGraphArray2){
+					for(String output : g2.getLpn().getOutputs()){
 						if(inputs.contains(output)){
 							compatible = true;
 							break;
@@ -795,14 +800,14 @@ public class CompositionalAnalysis {
 		}
 		
 		HashSet<StateGraph> sgSet = new HashSet<StateGraph>();
-		for(StateGraph sg : sg1.stateGraphArray){
+		for(StateGraph sg : stateGraphArray1){
 			if(sgSet.add(sg) == false){
 				System.out.println("state graphs " + sg1.getLabel() + " and " + sg2.getLabel() + " cannot be composed\n");
 				return null;
 			}
 		}
 		
-		for(StateGraph sg : sg2.stateGraphArray){
+		for(StateGraph sg : stateGraphArray2){
 			if(sgSet.add(sg) == false){
 				System.out.println("state graphs " + sg1.getLabel() + " and " + sg2.getLabel() + " cannot be composed\n");
 				return null;
@@ -812,27 +817,364 @@ public class CompositionalAnalysis {
 		// create new node with init states
 		int size = sg1.getSize() + sg2.getSize();
 		int sg1Size = sg1.getSize();
-		State[] initStates = new State[size];
+		int[] initStates = new int[size];
 		for(int i = 0; i < sg1Size; i++){
-			initStates[i] = sg1.stateGraphArray[i].getInitialState();
+			initStates[i] = stateGraphArray1[i].getInitialState().getIndex();
 		}
 		
 		for(int i = sg1Size; i < size; i++){
-			initStates[i] = sg2.stateGraphArray[i-sg1Size].getInitialState();
+			initStates[i] = stateGraphArray2[i-sg1Size].getInitialState().getIndex();
+		}
+		
+		CompositeState initNode = new CompositeState(initStates);
+		
+		HashSet<Integer> synchronousTrans = new HashSet<Integer>();
+		for(StateGraph g1 : stateGraphArray1){
+			LPN lpn1 = g1.getLpn();
+			for(StateGraph g2 : stateGraphArray2){
+				LPN lpn2 = g2.getLpn();
+				
+				HashSet<LPNTran> inputTrans = new HashSet<LPNTran>();
+				inputTrans.addAll(lpn1.getInputTranSet());
+				inputTrans.retainAll(lpn2.getOutputTranSet());
+				
+				HashSet<LPNTran> outputTrans = new HashSet<LPNTran>();
+				outputTrans.addAll(lpn2.getInputTranSet());
+				outputTrans.retainAll(lpn1.getOutputTranSet());
+				
+				for(LPNTran lpnTran : inputTrans){
+					synchronousTrans.add(lpnTran.getIndex());
+				}
+				
+				for(LPNTran lpnTran : outputTrans){
+					synchronousTrans.add(lpnTran.getIndex());
+				}
+			}
+		}
+		
+		// create new composite state graph
+		StateGraph[] sgArray = new StateGraph[size];
+		List<LPN> lpnList = new ArrayList<LPN>(size);
+		for(int i = 0; i < sg1Size; i++){
+			sgArray[i] = stateGraphArray1[i];
+			lpnList.add(stateGraphArray1[i].getLpn());
+		}
+		
+		for(int i = sg1Size; i < size; i++){
+			sgArray[i] = stateGraphArray2[i-sg1Size];
+			lpnList.add(stateGraphArray2[i-sg1Size].getLpn());
+		}
+		
+		CompositeStateGraph compositeSG = new CompositeStateGraph(initNode, sgArray);
+
+		// create CompositeState stack
+		Stack<CompositeState> newStateStack = new Stack<CompositeState>();
+		Stack<CompositeState> subStateStack1 = new Stack<CompositeState>();
+		Stack<CompositeState> subStateStack2 = new Stack<CompositeState>();
+		
+		// initialize with initial CompositionalState
+		newStateStack.push(initNode);
+		subStateStack1.push(sg1.getInitState());
+		subStateStack2.push(sg2.getInitState());
+		
+		List<CompositeStateTran> intersectingTrans1 = new LinkedList<CompositeStateTran>();
+		List<CompositeStateTran> intersectingTrans2 = new LinkedList<CompositeStateTran>();
+		List<CompositeStateTran> independentTrans1 = new LinkedList<CompositeStateTran>();
+		List<CompositeStateTran> independentTrans2 = new LinkedList<CompositeStateTran>();
+		
+		long peakUsed = 0;
+		long peakTotal = 0;
+		
+		CompositeState tempState = null;
+		while(!newStateStack.isEmpty()){
+			CompositeState currentState = newStateStack.pop();
+			CompositeState subState1 = subStateStack1.pop();
+			CompositeState subState2 = subStateStack2.pop();
+			
+			int[] subState1Tuple = subState1.getStateTuple();
+			int[] subState2Tuple = subState2.getStateTuple();
+			
+			List<CompositeStateTran> stateTrans1 = subState1.getOutgoingStateTranList();
+			List<CompositeStateTran> stateTrans2 = subState2.getOutgoingStateTranList();
+			
+			// clear reused lists
+			intersectingTrans1.clear();
+			intersectingTrans2.clear();
+			independentTrans1.clear();
+			independentTrans2.clear();
+			
+			for(CompositeStateTran stateTran : stateTrans1){
+				LPNTran lpnTran = stateTran.getLPNTran();
+
+				if(!stateTran.visible()){
+					independentTrans1.add(stateTran);
+				}
+				else{
+					if(synchronousTrans.contains(lpnTran.getIndex())){
+						for(CompositeStateTran stateTran2 : stateTrans2){
+							LPNTran lpnTran2  = stateTran2.getLPNTran();
+							if(lpnTran == lpnTran2){
+								intersectingTrans1.add(stateTran);
+								intersectingTrans2.add(stateTran2);
+							}
+						}
+					}
+					else{
+						independentTrans1.add(stateTran);
+					}
+				}
+			}
+			
+			for(CompositeStateTran stateTran : stateTrans2){
+				LPNTran lpnTran = stateTran.getLPNTran();
+
+				if(!stateTran.visible()){
+					independentTrans2.add(stateTran);
+				}
+				else{
+					if(!synchronousTrans.contains(lpnTran.getIndex())){
+						independentTrans2.add(stateTran);
+					}
+				}
+			}
+
+			for(CompositeStateTran stateTran : independentTrans1){
+				LPNTran lpnTran = stateTran.getLPNTran();
+				CompositeState nextState = sg1.getState(stateTran.getNextState());
+				int[] nextStateTuple = nextState.getStateTuple();
+				int[] newStateTuple = new int[size];
+				
+				for(int j = 0; j < sg1Size; j++){
+					newStateTuple[j] = nextStateTuple[j];
+				}
+				
+				for(int j = sg1Size; j < size; j++){
+					newStateTuple[j] = subState2Tuple[j-sg1Size];
+				}
+				
+				CompositeState newCompositeState = new CompositeState(newStateTuple);
+				tempState = compositeSG.addState(newCompositeState);
+				if(tempState == newCompositeState){
+					newStateStack.push(newCompositeState);
+					subStateStack1.push(nextState);
+					subStateStack2.push(subState2);
+				}
+				else{
+					newCompositeState = tempState;
+				}
+				
+				CompositeStateTran newStateTran = compositeSG.addStateTran(currentState, newCompositeState, lpnTran);
+				if(!lpnTran.local()){
+					newStateTran.setVisibility();
+//					System.out.println(newStateTran);
+				}
+			}
+			
+			for(CompositeStateTran stateTran : independentTrans2){
+				LPNTran lpnTran = stateTran.getLPNTran();
+				CompositeState nextState = sg2.getState(stateTran.getNextState());
+				int[] nextStateTuple = nextState.getStateTuple();
+				int[] newStateTuple = new int[size];
+				
+				for(int i = 0; i < sg1Size; i++){
+					newStateTuple[i] = subState1Tuple[i];
+				}
+				
+				for(int i = sg1Size; i < size; i++){
+					newStateTuple[i] = nextStateTuple[i-sg1Size];
+				}
+				
+				CompositeState newCompositeState = new CompositeState(newStateTuple);
+				tempState = compositeSG.addState(newCompositeState);
+				if(tempState == newCompositeState){
+					newStateStack.push(newCompositeState);
+					subStateStack1.push(subState1);
+					subStateStack2.push(nextState);
+				}
+				else{
+					newCompositeState = tempState;
+				}
+
+				CompositeStateTran newStateTran = compositeSG.addStateTran(currentState, newCompositeState, lpnTran);
+				if(!lpnTran.local()){
+					newStateTran.setVisibility();
+//					System.out.println(newStateTran);
+				}
+			}
+			
+			Iterator<CompositeStateTran> iter1 = intersectingTrans1.iterator();
+			Iterator<CompositeStateTran> iter2 = intersectingTrans2.iterator();
+			
+			while(iter1.hasNext()){
+				CompositeStateTran stateTran1 = iter1.next();
+				CompositeStateTran stateTran2 = iter2.next();
+				
+				LPNTran lpnTran = stateTran1.getLPNTran();
+				CompositeState nextState1 = sg1.getState(stateTran1.getNextState());
+				int[] nextState1Tuple = nextState1.getStateTuple();
+				CompositeState nextState2 = sg2.getState(stateTran2.getNextState());
+				int[] nextState2Tuple = nextState2.getStateTuple();
+				int[] newStateTuple = new int[size];
+				
+				for(int i = 0; i < sg1Size; i++){
+					newStateTuple[i] = nextState1Tuple[i];
+				}
+				
+				for(int i = sg1Size; i < size; i++){
+					newStateTuple[i] = nextState2Tuple[i-sg1Size];
+				}
+				
+				CompositeState newCompositeState = new CompositeState(newStateTuple);
+				tempState = compositeSG.addState(newCompositeState);
+				if(tempState == newCompositeState){
+					newStateStack.push(newCompositeState);
+					subStateStack1.push(nextState1);
+					subStateStack2.push(nextState2);
+				}
+				else{
+					newCompositeState = tempState;
+				}
+				
+				CompositeStateTran newStateTran = compositeSG.addStateTran(currentState, newCompositeState, lpnTran);
+				if(!lpnList.containsAll(lpnTran.getDstLpnList())){
+					newStateTran.setVisibility();
+//					System.out.println(newStateTran);
+				}
+			}
+			
+			long curTotalMem = Runtime.getRuntime().totalMemory();
+			if(curTotalMem > peakTotal)
+				peakTotal = curTotalMem;
+			
+			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			if(curUsedMem > peakUsed)
+				peakUsed = curUsedMem;
+
+		}
+		
+		System.out.println("\n   " + compositeSG.getLabel() + ": ");
+		System.out.println("   --> # states: " + compositeSG.numStates());
+		System.out.println("   --> # transitions: " + compositeSG.numStateTrans());
+
+		System.out.println("   --> Peak used memory: " + peakUsed/1000000F + " MB");
+		System.out.println("   --> Peak total memory: " + peakTotal/1000000F + " MB");
+		System.out.println("   --> Final used memory: " + (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory())/1000000F + " MB");
+		
+		long elapsedTimeMillis = System.currentTimeMillis()-start; 
+		float elapsedTimeSec = elapsedTimeMillis/1000F;
+		System.out.println("   --> Elapsed time: " + elapsedTimeSec + " sec");
+		
+		if(elapsedTimeSec > 60){
+			float elapsedTime = elapsedTimeSec;
+			elapsedTime = elapsedTimeSec/(float)60;
+			System.out.println("   --> Elapsed time: " + elapsedTime + " min");
+		}
+		
+		System.out.println();
+		
+		return compositeSG;
+	}
+	
+	public CompositeStateGraph compose(CompositeStateGraph sg1, CompositeStateGraph sg2){
+		long start = System.currentTimeMillis(); 
+		
+		if(sg1 == null || sg2 == null){
+			return null;
+		}
+		
+		StateGraph[] stateGraphArray1 = sg1.getStateGraphArray();
+		StateGraph[] stateGraphArray2 = sg2.getStateGraphArray();
+		
+		// check an output drives an input
+		boolean compatible = false;
+		for(StateGraph g : stateGraphArray1){
+			for(String output : g.getLpn().getOutputs()){
+				for(StateGraph g2 : stateGraphArray2){
+					VarSet inputs = g2.getLpn().getInputs();
+					if(inputs.contains(output)){
+						compatible = true;
+						break;
+					}
+				}
+				
+				if(compatible){
+					break;
+				}
+			}
+			
+			if(compatible){
+				break;
+			}
+		}
+		
+		if(!compatible){
+			for(StateGraph g1 : stateGraphArray1){
+				VarSet inputs = g1.getLpn().getInputs();
+				for(StateGraph g2 : stateGraphArray2){
+					for(String output : g2.getLpn().getOutputs()){
+						if(inputs.contains(output)){
+							compatible = true;
+							break;
+						}
+					}
+					
+					if(compatible){
+						break;
+					}
+				}
+				
+				if(compatible){
+					break;
+				}
+			}
+		}
+		
+		if(!compatible){
+			System.out.println("state graphs " + sg1.getLabel() + " and " + sg2.getLabel() + " cannot be composed\n");
+			return null;
+		}
+		
+		HashSet<StateGraph> sgSet = new HashSet<StateGraph>();
+		for(StateGraph sg : stateGraphArray1){
+			if(sgSet.add(sg) == false){
+				System.out.println("state graphs " + sg1.getLabel() + " and " + sg2.getLabel() + " cannot be composed\n");
+				return null;
+			}
+		}
+		
+		for(StateGraph sg : stateGraphArray2){
+			if(sgSet.add(sg) == false){
+				System.out.println("state graphs " + sg1.getLabel() + " and " + sg2.getLabel() + " cannot be composed\n");
+				return null;
+			}
+		}
+		
+		// create new node with init states
+		int size = sg1.getSize() + sg2.getSize();
+		int sg1Size = sg1.getSize();
+		int[] initStates = new int[size];
+		for(int i = 0; i < sg1Size; i++){
+			initStates[i] = stateGraphArray1[i].getInitialState().getIndex();
+		}
+		
+		for(int i = sg1Size; i < size; i++){
+			initStates[i] = stateGraphArray2[i-sg1Size].getInitialState().getIndex();
 		}
 		
 		CompositeState initNode = new CompositeState(initStates);
 		
 		HashSet<LPNTran> synchronousTrans = new HashSet<LPNTran>();
-		for(StateGraph g1 :sg1.stateGraphArray){
-			for(StateGraph g2 : sg2.stateGraphArray){
+		for(StateGraph g1 : stateGraphArray1){
+			LPN lpn1 = g1.getLpn();
+			for(StateGraph g2 : stateGraphArray2){
+				LPN lpn2 = g2.getLpn();
 				HashSet<LPNTran> inputTrans = new HashSet<LPNTran>();
-				inputTrans.addAll(g1.getInputTranSet());
-				inputTrans.retainAll(g2.getOutputTranSet());
+				inputTrans.addAll(lpn1.getInputTranSet());
+				inputTrans.retainAll(lpn2.getOutputTranSet());
 				
 				HashSet<LPNTran> outputTrans = new HashSet<LPNTran>();
-				outputTrans.addAll(g2.getInputTranSet());
-				outputTrans.retainAll(g1.getOutputTranSet());
+				outputTrans.addAll(lpn2.getInputTranSet());
+				outputTrans.retainAll(lpn1.getOutputTranSet());
 				
 				synchronousTrans.addAll(inputTrans);
 				synchronousTrans.addAll(outputTrans);
@@ -841,16 +1183,19 @@ public class CompositionalAnalysis {
 		
 		// create new composite state graph
 		StateGraph[] sgArray = new StateGraph[size];
+		List<LPN> lpnList = new ArrayList<LPN>(size);
 		for(int i = 0; i < sg1Size; i++){
-			sgArray[i] = sg1.stateGraphArray[i];
+			sgArray[i] = stateGraphArray1[i];
+			lpnList.add(stateGraphArray1[i].getLpn());
 		}
 		
 		for(int i = sg1Size; i < size; i++){
-			sgArray[i] = sg2.stateGraphArray[i-sg1Size];
+			sgArray[i] = stateGraphArray2[i-sg1Size];
+			lpnList.add(stateGraphArray2[i-sg1Size].getLpn());
 		}
 		
 		CompositeStateGraph compositeSG = new CompositeStateGraph(initNode, sgArray);
-	
+
 		// create CompositeState stack
 		Stack<CompositeState> newStateStack = new Stack<CompositeState>();
 		Stack<CompositeState> subStateStack1 = new Stack<CompositeState>();
@@ -878,14 +1223,13 @@ public class CompositionalAnalysis {
 			CompositeState subState1 = subStateStack1.pop();
 			CompositeState subState2 = subStateStack2.pop();
 			
-			State[] subState1Tuple = subState1.getStateTuple();
-			State[] subState2Tuple = subState2.getStateTuple();
+			int[] subState1Tuple = subState1.getStateTuple();
+			int[] subState2Tuple = subState2.getStateTuple();
 			
-			List<LPNTran> enabledTrans1 = subState1.enabledTranList;
-			List<CompositeState> nextStates1 = subState1.nextStateList;
-			List<LPNTran> enabledTrans2 = subState2.enabledTranList;
-			List<CompositeState> nextStates2 = subState2.nextStateList;
+			List<CompositeStateTran> stateTrans1 = subState1.getOutgoingStateTranList();
+			List<CompositeStateTran> stateTrans2 = subState2.getOutgoingStateTranList();
 			
+			// clear reused lists
 			intersectingTrans.clear();
 			intStateList1.clear();
 			intStateList2.clear();
@@ -894,43 +1238,45 @@ public class CompositionalAnalysis {
 			independentTrans2.clear();
 			indStateList2.clear();
 			
-			for(int i = 0; i < enabledTrans1.size(); i++){
-				LPNTran lpnTran = enabledTrans1.get(i);
-				if(lpnTran.local()){
+			for(CompositeStateTran stateTran : stateTrans1){
+				LPNTran lpnTran = stateTran.getLPNTran();
+				CompositeState nextState = sg1.getState(stateTran.getNextState());
+				
+				if(!stateTran.visible()){
 					independentTrans1.add(lpnTran);
-					indStateList1.add(nextStates1.get(i));
+					indStateList1.add(nextState);
 				}
 				else{
 					if(synchronousTrans.contains(lpnTran)){
-						for(int j = 0; j < enabledTrans2.size(); j++){
-							if(lpnTran == enabledTrans2.get(j)){
-								if(synchronousTrans.contains(lpnTran)){
-									intersectingTrans.add(lpnTran);
-									intStateList1.add(nextStates1.get(i));
-									intStateList2.add(nextStates2.get(j));
-								}
-								
-								break;
+						for(CompositeStateTran stateTran2 : stateTrans2){
+							LPNTran lpnTran2  = stateTran2.getLPNTran();
+							CompositeState nextState2 = sg2.getState(stateTran2.getNextState());
+							if(lpnTran == lpnTran2){
+								intersectingTrans.add(lpnTran);
+								intStateList1.add(nextState);
+								intStateList2.add(nextState2);
 							}
 						}
 					}
 					else{
 						independentTrans1.add(lpnTran);
-						indStateList1.add(nextStates1.get(i));
+						indStateList1.add(nextState);
 					}
 				}
 			}
 			
-			for(int i = 0; i < enabledTrans2.size(); i++){
-				LPNTran lpnTran = enabledTrans2.get(i);
-				if(lpnTran.local()){
+			for(CompositeStateTran stateTran : stateTrans2){
+				LPNTran lpnTran = stateTran.getLPNTran();
+				CompositeState nextState = sg2.getState(stateTran.getNextState());
+				
+				if(!stateTran.visible()){
 					independentTrans2.add(lpnTran);
-					indStateList2.add(nextStates2.get(i));
+					indStateList2.add(nextState);
 				}
 				else{
 					if(!synchronousTrans.contains(lpnTran)){
 						independentTrans2.add(lpnTran);
-						indStateList2.add(nextStates2.get(i));
+						indStateList2.add(nextState);
 					}
 				}
 			}
@@ -938,8 +1284,8 @@ public class CompositionalAnalysis {
 			for(int i = 0; i < independentTrans1.size(); i++){
 				LPNTran lpnTran = independentTrans1.get(i);
 				CompositeState nextState = indStateList1.get(i);
-				State[] nextStateTuple = nextState.getStateTuple();
-				State[] newStateTuple = new State[size];
+				int[] nextStateTuple = nextState.getStateTuple();
+				int[] newStateTuple = new int[size];
 				
 				for(int j = 0; j < sg1Size; j++){
 					newStateTuple[j] = nextStateTuple[j];
@@ -951,7 +1297,7 @@ public class CompositionalAnalysis {
 				
 				CompositeState newCompositeState = new CompositeState(newStateTuple);
 				tempState = compositeSG.addState(newCompositeState);
-				if(tempState == null){
+				if(tempState == newCompositeState){
 					newStateStack.push(newCompositeState);
 					subStateStack1.push(nextState);
 					subStateStack2.push(subState2);
@@ -960,17 +1306,18 @@ public class CompositionalAnalysis {
 					newCompositeState = tempState;
 				}
 				
-				currentState.nextStateList.add(newCompositeState);
-				currentState.enabledTranList.add(lpnTran);
-				newCompositeState.incomingStateList.add(currentState);
-				compositeSG.numTransitions++;
+				CompositeStateTran newStateTran = compositeSG.addStateTran(currentState, newCompositeState, lpnTran);
+				if(!lpnTran.local()){
+					newStateTran.setVisibility();
+//					System.out.println(newStateTran);
+				}
 			}
 			
 			for(int j = 0; j < independentTrans2.size(); j++){
 				LPNTran lpnTran = independentTrans2.get(j);
 				CompositeState nextState = indStateList2.get(j);
-				State[] nextStateTuple = nextState.getStateTuple();
-				State[] newStateTuple = new State[size];
+				int[] nextStateTuple = nextState.getStateTuple();
+				int[] newStateTuple = new int[size];
 				
 				for(int i = 0; i < sg1Size; i++){
 					newStateTuple[i] = subState1Tuple[i];
@@ -982,7 +1329,7 @@ public class CompositionalAnalysis {
 				
 				CompositeState newCompositeState = new CompositeState(newStateTuple);
 				tempState = compositeSG.addState(newCompositeState);
-				if(tempState == null){
+				if(tempState == newCompositeState){
 					newStateStack.push(newCompositeState);
 					subStateStack1.push(subState1);
 					subStateStack2.push(nextState);
@@ -990,20 +1337,21 @@ public class CompositionalAnalysis {
 				else{
 					newCompositeState = tempState;
 				}
-				
-				currentState.nextStateList.add(newCompositeState);
-				currentState.enabledTranList.add(lpnTran);
-				newCompositeState.incomingStateList.add(currentState);
-				compositeSG.numTransitions++;
+
+				CompositeStateTran newStateTran = compositeSG.addStateTran(currentState, newCompositeState, lpnTran);
+				if(!lpnTran.local()){
+					newStateTran.setVisibility();
+//					System.out.println(newStateTran);
+				}
 			}
 			
 			for(int j = 0; j < intersectingTrans.size(); j++){
 				LPNTran lpnTran = intersectingTrans.get(j);
 				CompositeState nextState1 = intStateList1.get(j);
-				State[] nextState1Tuple = nextState1.getStateTuple();
+				int[] nextState1Tuple = nextState1.getStateTuple();
 				CompositeState nextState2 = intStateList2.get(j);
-				State[] nextState2Tuple = nextState2.getStateTuple();
-				State[] newStateTuple = new State[size];
+				int[] nextState2Tuple = nextState2.getStateTuple();
+				int[] newStateTuple = new int[size];
 				
 				for(int i = 0; i < sg1Size; i++){
 					newStateTuple[i] = nextState1Tuple[i];
@@ -1015,7 +1363,7 @@ public class CompositionalAnalysis {
 				
 				CompositeState newCompositeState = new CompositeState(newStateTuple);
 				tempState = compositeSG.addState(newCompositeState);
-				if(tempState == null){
+				if(tempState == newCompositeState){
 					newStateStack.push(newCompositeState);
 					subStateStack1.push(nextState1);
 					subStateStack2.push(nextState2);
@@ -1024,10 +1372,11 @@ public class CompositionalAnalysis {
 					newCompositeState = tempState;
 				}
 				
-				currentState.nextStateList.add(newCompositeState);
-				currentState.enabledTranList.add(lpnTran);
-				newCompositeState.incomingStateList.add(currentState);
-				compositeSG.numTransitions++;
+				CompositeStateTran newStateTran = compositeSG.addStateTran(currentState, newCompositeState, lpnTran);
+				if(!lpnList.containsAll(lpnTran.getDstLpnList())){
+					newStateTran.setVisibility();
+//					System.out.println(newStateTran);
+				}
 			}
 			
 			long curTotalMem = Runtime.getRuntime().totalMemory();
@@ -1041,8 +1390,8 @@ public class CompositionalAnalysis {
 		}
 		
 		System.out.println("\n   " + compositeSG.getLabel() + ": ");
-		System.out.println("   --> # states: " + compositeSG.numCompositeStates());
-//		System.out.println("   --> # transitions: " + compositeSG.numCompositeStateTrans());
+		System.out.println("   --> # states: " + compositeSG.numStates());
+		System.out.println("   --> # transitions: " + compositeSG.numStateTrans());
 
 		System.out.println("   --> Peak used memory: " + peakUsed/1000000F + " MB");
 		System.out.println("   --> Peak total memory: " + peakTotal/1000000F + " MB");
@@ -1064,88 +1413,121 @@ public class CompositionalAnalysis {
 	}
 	
 	public void compositionalAnalsysis(List<StateGraph> designUnitSet) {
-		System.out.println("\n****** Compositional Analysis ******");
-		long start = System.currentTimeMillis(); 
-		
-		if(Options.getParallelFlag()){
-			parallelCompositionalFindSG(designUnitSet);
-		}
-		else{
-			compositionalFindSG(designUnitSet);
-		}
+//		System.out.println("\n****** Compositional Analysis ******");
+//		long start = System.currentTimeMillis(); 
+//		
+//		if(Options.getParallelFlag()){
+//			parallelCompositionalFindSG(designUnitSet);
+//		}
+//		else{
+//			compositionalFindSG(designUnitSet);
+//		}
 		
 		findReducedSG(designUnitSet);
 		
-		long totalMillis = System.currentTimeMillis()-start; 
-		float totalSec = totalMillis/1000F;
-		System.out.println("\n***** Total Elapsed Time: " + totalSec + " sec *****");
-		
-		if(totalSec > 60){
-			float totalTime = totalSec/(float)60;
-			System.out.println("***** Total Elapsed Time: " + totalTime + " min *****");
-		}
-		
-		System.out.println();
+//		long totalMillis = System.currentTimeMillis()-start; 
+//		float totalSec = totalMillis/1000F;
+//		System.out.println("\n***** Total Elapsed Time: " + totalSec + " sec *****");
+//		
+//		if(totalSec > 60){
+//			float totalTime = totalSec/(float)60;
+//			System.out.println("***** Total Elapsed Time: " + totalTime + " min *****");
+//		}
+//		
+//		System.out.println();
 	}
 	
 	public void findReducedSG(List<StateGraph> designUnitSet) {
+		System.out.println("\n****** Compositional Analysis ******");
+		long start = System.currentTimeMillis(); 
+		
+		compositionalFindSG(designUnitSet);
+		
 		List<CompositeStateGraph> sgList = new ArrayList<CompositeStateGraph>();
 		System.out.println();
+		
+		long peakTotal = 0;
+		long peakUsed = 0;
+		int largestSG = 0;
+		
 		for(StateGraph sg : designUnitSet){
 			CompositeStateGraph csg = new CompositeStateGraph(sg);
-			
-			if(Options.getCompositionalMinimization().equals("reduction")){
-				reduce(csg);
+			if(csg.numStates() > largestSG){
+				largestSG = csg.numStates();
 			}
 			
-			if(Options.getCompositionalMinimization().equals("abstraction")){
-				System.out.println("transitionBasedAbstraction");
+//			csg.draw();
+			if(Options.getCompositionalMinimization().equals("reduction")){
+//				reduce(csg);
+			}
+			else if(Options.getCompositionalMinimization().equals("abstraction")){
+				System.out.println(csg.getLabel() + ": transitionBasedAbstraction");
 				transitionBasedAbstraction(csg);
-				System.out.println("redundantStateRemoval\n");
-				redundantStateRemoval(csg);
+//				csg.draw();
+				System.out.println(csg.getLabel() + ": mergeOutgoing");
+				mergeOutgoing(csg);
+//				csg.draw();
+				System.out.println(csg.getLabel() + ": mergeIncoming");
+				mergeIncoming(csg);
+				System.out.println();
+				
+//				csg.draw();
+			}
+			
+			if(csg.numStates() > largestSG){
+				largestSG = csg.numStates();
 			}
 			
 			sgList.add(csg);
+			
+			long curTotalMem = Runtime.getRuntime().totalMemory();
+			if(curTotalMem > peakTotal)
+				peakTotal = curTotalMem;
+			
+			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			if(curUsedMem > peakUsed)
+				peakUsed = curUsedMem;
 		}
 		
-		CompositeStateGraph sg1 = sgList.get(0);
-		sgList.remove(0);
 		CompositeStateGraph csg = null;
-		for(CompositeStateGraph sg2 : sgList){
-			csg = compose(sg1, sg2);
-			if(csg != null){
-				if(Options.getCompositionalMinimization().equals("reduction")){
-					reduce(csg);
-				}
-				
-				if(Options.getCompositionalMinimization().equals("abstraction")){
-					System.out.println("transitionBasedAbstraction");
-					transitionBasedAbstraction(csg);
-					System.out.println("redundantStateRemoval\n");
-					redundantStateRemoval(csg);
-				}
-				
-				sgList.remove(sg2);
-				break;
-			}
+		if(sgList.size() > 0){
+			csg = sgList.get(0);
+			sgList.remove(0);
 		}
-		
-		while(!sgList.isEmpty()){
+
+		while(sgList.size() > 1){
 			CompositeStateGraph tmpSG = null;
+			
 			for(CompositeStateGraph sg2 : sgList){
 				tmpSG = compose(csg, sg2);
+
+				if(csg.numStates() > largestSG){
+					largestSG = csg.numStates();
+				}
+				
 				if(tmpSG != null){
 					sgList.remove(sg2);
-
+//					tmpSG.draw();
+					System.out.println();
 					if(Options.getCompositionalMinimization().equals("reduction")){
-						reduce(csg);
+//						reduce(tmpSG);
+					}
+					else if(Options.getCompositionalMinimization().equals("abstraction")){
+						System.out.println(tmpSG.getLabel() + ": transitionBasedAbstraction");
+						transitionBasedAbstraction(tmpSG);
+//						tmpSG.draw();
+						System.out.println(tmpSG.getLabel() + ": mergeOutgoing");
+						mergeOutgoing(tmpSG);
+//						tmpSG.draw();
+						System.out.println(tmpSG.getLabel() + ": mergeIncoming");
+						mergeIncoming(tmpSG);
+						System.out.println();
+						
+//						tmpSG.draw();
 					}
 					
-					if(Options.getCompositionalMinimization().equals("abstraction")){
-						System.out.println("transitionBasedAbstraction");
-						transitionBasedAbstraction(csg);
-						System.out.println("redundantStateRemoval\n");
-						redundantStateRemoval(csg);
+					if(csg.numStates() > largestSG){
+						largestSG = csg.numStates();
 					}
 					
 					break;
@@ -1153,167 +1535,442 @@ public class CompositionalAnalysis {
 			}
 			
 			csg = tmpSG;
+			
+			long curTotalMem = Runtime.getRuntime().totalMemory();
+			if(curTotalMem > peakTotal)
+				peakTotal = curTotalMem;
+			
+			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			if(curUsedMem > peakUsed)
+				peakUsed = curUsedMem;
 		}
 		
-		System.out.println(csg.numCompositeStates());
+		if(sgList.size() == 1){
+			csg = compose(csg, sgList.get(0));
+			
+			if(csg.numStates() > largestSG){
+				largestSG = csg.numStates();
+			}
+			
+			long curTotalMem = Runtime.getRuntime().totalMemory();
+			if(curTotalMem > peakTotal)
+				peakTotal = curTotalMem;
+			
+			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+			if(curUsedMem > peakUsed)
+				peakUsed = curUsedMem;
+		}
+		
 //		csg.draw();
+		
+		long curTotalMem = Runtime.getRuntime().totalMemory();
+		if(curTotalMem > peakTotal)
+			peakTotal = curTotalMem;
+		
+		long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+		if(curUsedMem > peakUsed)
+			peakUsed = curUsedMem;
+		
+		long totalMillis = System.currentTimeMillis()-start; 
+		float totalSec = totalMillis/1000F;
+		System.out.println("\n****** Total Elapsed Time: " + totalSec + " sec ******");
+		
+		if(totalSec > 60){
+			float totalTime = totalSec/(float)60;
+			System.out.println("****** Total Elapsed Time: " + totalTime + " min ******");
+		}
+		
+		System.out.println("****** Peak Memory Used: " + peakUsed/1000000F + " MB ******");
+		System.out.println("****** Peak Memory Total: " + peakTotal/1000000F + " MB ******");
+		System.out.println("****** Lastest SG: " + largestSG + " states ******");
+		System.out.println();
 	}
 	
-	public void reduce(CompositeStateGraph sg){
-		long startTime = System.currentTimeMillis();
-		int initNumTrans = sg.numTransitions;
-		int initNumStates = sg.compositeStateSet.size();
-		int totalReducedTrans = sg.numTransitions;
-		
-		int case2StateMin = 0;
-		int case3StateMin = 0;
-		int case2TranMin = 0;
-		int case3TranMin = 0;
-		
-		int iter = 0;
-		while(totalReducedTrans > 0){
-			totalReducedTrans = 0;
-			
-			int numStates = sg.compositeStateSet.size();
-			int numTrans = sg.numTransitions;
-			int tranDiff = 0;
-			
-			case2(sg);
-			
-			case2TranMin += numTrans - sg.numTransitions;
-			tranDiff = numStates - sg.compositeStateSet.size();
-			case2StateMin += tranDiff;
-			totalReducedTrans += tranDiff;
-			
-			numTrans = sg.numTransitions;
-			numStates = sg.compositeStateSet.size();
-			
-			case3(sg);
-			
-			case3TranMin += numTrans - sg.numTransitions;
-			tranDiff = numStates - sg.compositeStateSet.size();
-			case3StateMin += tranDiff;
-			totalReducedTrans += tranDiff;
-			
-			iter++;
-		}
-		
-		System.out.println("   Reduce " + sg.getLabel() + ": ");
-		System.out.println("   --> case2: -" + case2StateMin + " states");
-		System.out.println("   --> case2: -" + case2TranMin + " transitions");
-		System.out.println("   --> case3: -" + case3StateMin + " states");
-		System.out.println("   --> case3: -" + case3TranMin + " transitions");
-		System.out.println("   --> # states: " + sg.compositeStateSet.size());
-		System.out.println("   --> # transitions: " + sg.numTransitions);
-		System.out.println("   --> # iterations: " + iter);
-		long elapsedTimeMillis = System.currentTimeMillis()-startTime; 
-		float elapsedTimeSec = elapsedTimeMillis/1000F;
-		System.out.println("   --> Elapsed time: " + elapsedTimeSec + " sec\n");
-	}
+//	public void reduce(CompositeStateGraph sg){
+//		long startTime = System.currentTimeMillis();
+//		int initNumTrans = sg.numTransitions;
+//		int initNumStates = sg.compositeStateMap.size();
+//		int totalReducedTrans = sg.numTransitions;
+//		
+//		int case2StateMin = 0;
+//		int case3StateMin = 0;
+//		int case2TranMin = 0;
+//		int case3TranMin = 0;
+//		
+//		int iter = 0;
+//		while(totalReducedTrans > 0){
+//			totalReducedTrans = 0;
+//			
+//			int numStates = sg.compositeStateMap.size();
+//			int numTrans = sg.numTransitions;
+//			int tranDiff = 0;
+//			
+//			case2(sg);
+//			
+//			case2TranMin += numTrans - sg.numTransitions;
+//			tranDiff = numStates - sg.compositeStateMap.size();
+//			case2StateMin += tranDiff;
+//			totalReducedTrans += tranDiff;
+//			
+//			numTrans = sg.numTransitions;
+//			numStates = sg.compositeStateMap.size();
+//			
+//			case3(sg);
+//			
+//			case3TranMin += numTrans - sg.numTransitions;
+//			tranDiff = numStates - sg.compositeStateMap.size();
+//			case3StateMin += tranDiff;
+//			totalReducedTrans += tranDiff;
+//			
+//			iter++;
+//		}
+//		
+//		System.out.println("   Reduce " + sg.getLabel() + ": ");
+//		System.out.println("   --> case2: -" + case2StateMin + " states");
+//		System.out.println("   --> case2: -" + case2TranMin + " transitions");
+//		System.out.println("   --> case3: -" + case3StateMin + " states");
+//		System.out.println("   --> case3: -" + case3TranMin + " transitions");
+//		System.out.println("   --> # states: " + sg.compositeStateMap.size());
+//		System.out.println("   --> # transitions: " + sg.numTransitions);
+//		System.out.println("   --> # iterations: " + iter);
+//		long elapsedTimeMillis = System.currentTimeMillis()-startTime; 
+//		float elapsedTimeSec = elapsedTimeMillis/1000F;
+//		System.out.println("   --> Elapsed time: " + elapsedTimeSec + " sec\n");
+//	}
 	
 	public void transitionBasedAbstraction(CompositeStateGraph sg){
-		HashSet<CompositeState> visitedStates = new HashSet<CompositeState>();
-		Stack<CompositeState> stateStack = new Stack<CompositeState>();
-		CompositeState init = sg.getInitState();
+		HashSet<Integer> stateSet = new HashSet<Integer>();
+		HashSet<CompositeStateTran> tranSet = new HashSet<CompositeStateTran>();
+		CompositeState initialState = sg.getInitState();
 		
-		int abstractCount = 1;
-		while(abstractCount > 0){
-			abstractCount = 0;
+		Stack<CompositeStateTran> stateTranStack = new Stack<CompositeStateTran>();
+		HashSet<Integer> loopSet = new HashSet<Integer>();  // set used to detect loops
+		HashSet<Integer> traversalSet = new HashSet<Integer>();  // set used to avoid duplicate work
+		
+//		int count = 0;
+		for(CompositeStateTran nonlocalStateTran : sg.getStateTranSet()){
+//			count++;
+//			System.out.println(count + "/" + sg.getStateTranSet().size());
+//			if(!sg.containsStateTran(nonlocalStateTran)) continue;
 			
-			visitedStates.clear();
-			stateStack.clear();
-			stateStack.push(init);
-			visitedStates.add(init);
-		
-			while(!stateStack.isEmpty()){
-				CompositeState currentState = stateStack.pop();
-				int enabledSize = currentState.enabledTranList.size();
-				Object[] enabled = currentState.enabledTranList.toArray();
-				Object[] nextStateArray = currentState.nextStateList.toArray();
-				
-				for(int i = 0; i < enabledSize; i++){
-					LPNTran invisibleTran = (LPNTran) enabled[i];
-					CompositeState nextState = (CompositeState) nextStateArray[i];
-					if(nextState == sg.getInitState()) continue;
-					
-					if(!invisibleTran.local()){
-						if(!visitedStates.contains(nextState)){
-							stateStack.push(nextState);
-							visitedStates.add(nextState);
-						}
-						
-						continue;
-					}
-					
-					abstractCount++;
-					
-					// remove invisible transition
-					currentState.nextStateList.remove(nextState);
-					currentState.enabledTranList.remove(invisibleTran);
-					nextState.incomingStateList.remove(currentState);
-					sg.numTransitions--;
-					
-					if(nextState.incomingStateList.isEmpty()){
-						sg.compositeStateSet.remove(nextState);
-						sg.numTransitions -= nextState.nextStateList.size();
-					}
-					else if(!visitedStates.contains(nextState)){
-						stateStack.push(nextState);
-						visitedStates.add(nextState);
-					}
-					
-					
-					int nextEnabledSize = nextState.enabledTranList.size();
-					Object[] nextEnabled = nextState.enabledTranList.toArray();
-					Object[] nextNextStateArray = nextState.nextStateList.toArray();
-					
-					// add next state transitions to current state
-					for(int j = 0; j < nextEnabledSize; j++){
-						LPNTran lpnTran = (LPNTran) nextEnabled[j];
-						CompositeState st = (CompositeState) nextNextStateArray[j];
-						
-						boolean add = true;
-						for(int k = 0; k < currentState.nextStateList.size(); k++){
-							if(currentState.nextStateList.get(k) == st && currentState.enabledTranList.get(k) == lpnTran){
-								add = false;
-								break;
-							}
-						}
-						
-						if(add){
-							currentState.nextStateList.add(st);
-							currentState.enabledTranList.add(lpnTran);
-							st.incomingStateList.add(currentState);
-							sg.numTransitions++;
-						}
-					}
+			LPNTran lpnTran = nonlocalStateTran.getLPNTran();
+			if(!nonlocalStateTran.visible()){
+				continue;
+			}
+			else if(nonlocalStateTran.getNextState() == sg.getInitState().getIndex()){
+				// add current state transition
+				tranSet.add(nonlocalStateTran);
+				stateSet.add(nonlocalStateTran.getCurrentState());
+				stateSet.add(nonlocalStateTran.getNextState());
+				continue;
+			}
+			
+			// state transition stack for dfs traversal
+			stateTranStack.clear();
+			
+			// set used to detect loops
+			loopSet.clear();
+			loopSet.add(nonlocalStateTran.getNextState());
+			
+			// set used to avoid duplicate work
+			traversalSet.clear();
+			traversalSet.add(nonlocalStateTran.getNextState());
+			
+			boolean flag = false;
+			CompositeState nextState = sg.getState(nonlocalStateTran.getNextState());
+			for(CompositeStateTran outgoingTran : nextState.getOutgoingStateTranList()){
+				if(!outgoingTran.visible()){
+					stateTranStack.push(outgoingTran);
+					loopSet.add(outgoingTran.getNextState());
+//					traversalSet.add(outgoingTran.getNextState());
+				}
+				else{
+					flag = true;
 				}
 			}
+			
+			// keep nonlocal state transition if a visible successor state transition exists
+			if(flag){
+				tranSet.add(nonlocalStateTran);
+				stateSet.add(nonlocalStateTran.getCurrentState());
+				stateSet.add(nonlocalStateTran.getNextState());
+			}
+			
+//			System.out.println(nonlocalStateTran);
+			while(!stateTranStack.empty()){
+				CompositeStateTran currentStateTran = stateTranStack.pop();
+				CompositeState currentNextState = sg.getState(currentStateTran.getNextState());
+				
+//				// if state has already been encountered skip
+				if(!traversalSet.add(currentStateTran.getNextState())){
+//					System.out.println("    " + currentStateTran);
+//					System.out.println("skip");
+					continue;
+				}
+
+				if(currentNextState == initialState){
+					CompositeStateTran newStateTran = new CompositeStateTran(nonlocalStateTran.getCurrentState(), 
+							currentStateTran.getNextState(), lpnTran);
+					
+					System.out.println(newStateTran.getCurrentState() + " -> " + newStateTran.getNextState());
+					newStateTran.setVisibility();
+					tranSet.add(newStateTran);
+					stateSet.add(newStateTran.getCurrentState());
+					stateSet.add(newStateTran.getCurrentState());
+					
+					continue;
+				}
+				
+				// if the state transition does not have successor transitions create a state transition to last state in path
+				if(currentNextState.numOutgoingTrans() == 0){
+					CompositeStateTran newStateTran = new CompositeStateTran(nonlocalStateTran.getCurrentState(), 
+							currentStateTran.getNextState(), lpnTran);
+					
+					newStateTran.setVisibility();
+					tranSet.add(newStateTran);
+					stateSet.add(newStateTran.getCurrentState());
+					stateSet.add(newStateTran.getNextState());
+				}
+				
+				// add local outgoing state trans to stack
+				// for each nonlocal state tran create a state transition from nonlocalStateTran.currentState to stateTran.currentState
+				for(CompositeStateTran stateTran : currentNextState.getOutgoingStateTranList()){
+					if(stateTran.visible()){
+						CompositeStateTran newStateTran = new CompositeStateTran(nonlocalStateTran.getCurrentState(), 
+								stateTran.getCurrentState(), lpnTran);
+						
+						newStateTran.setVisibility();
+						tranSet.add(newStateTran);
+						stateSet.add(nonlocalStateTran.getCurrentState());
+						stateSet.add(stateTran.getCurrentState());
+					}
+					else{
+//						if(!loopSet.add(stateTran.getNextState())){
+//							// create self loop after visible state transition
+//							if(flag){								
+//								CompositeStateTran newStateTran = new CompositeStateTran(nonlocalStateTran.getNextState(), 
+//										nonlocalStateTran.getNextState(), currentStateTran.getLPNTran());
+//
+//								tranSet.add(newStateTran);
+//							}
+//							else{
+//								tranSet.add(nonlocalStateTran);
+//								stateSet.add(nonlocalStateTran.getCurrentState());
+//								stateSet.add(nonlocalStateTran.getNextState());
+//								flag = true;
+//								
+//								CompositeStateTran newStateTran = new CompositeStateTran(nonlocalStateTran.getNextState(), 
+//										nonlocalStateTran.getNextState(), currentStateTran.getLPNTran());
+//
+//								tranSet.add(newStateTran);
+//							}
+//							
+////							traversalSet.add(stateTran.getNextState());
+//							continue;
+//						}
+//						else if(!traversalSet.add(stateTran.getNextState())){
+//							continue;
+//						}
+						
+						stateTranStack.push(stateTran);
+					}
+				}
+				
+				loopSet.remove(currentNextState.getIndex());
+			}
 		}
+
+		System.out.println(stateSet.size());
+		System.out.println(tranSet.size());
+//		System.out.println("INITIAL STATE");
+		// handle initial state
+		loopSet.clear();
+		loopSet.add(initialState.getIndex());
+		
+		traversalSet.clear();
+		traversalSet.add(initialState.getIndex());
+		
+		for(CompositeStateTran stateTran : initialState.getOutgoingStateTranList()){
+			if(!stateTran.visible()){
+				stateTranStack.push(stateTran);
+				loopSet.add(stateTran.getNextState());
+//				traversalSet.add(stateTran.getNextState());
+			}
+		}
+		
+		stateSet.add(initialState.getIndex());
+		
+		while(!stateTranStack.empty()){
+			CompositeStateTran stateTran = stateTranStack.pop();
+			
+//			// if state has already been encountered skip
+			if(!traversalSet.add(stateTran.getNextState())){
+				continue;
+			}
+			
+			CompositeState nextState = sg.getState(stateTran.getNextState());
+			
+			// if the state transition does not have successor transitions create a state transition to last state in path
+			if(nextState.numOutgoingTrans() == 0){
+				CompositeStateTran newStateTran = new CompositeStateTran(initialState, sg.getState(stateTran.getNextState()), 
+						stateTran.getLPNTran());
+
+				newStateTran.setVisibility();
+				tranSet.add(newStateTran);
+				stateSet.add(stateTran.getNextState());
+			}
+			
+			for(CompositeStateTran succStateTran : nextState.getOutgoingStateTranList()){
+				LPNTran lpnTran = succStateTran.getLPNTran();
+				
+				if(succStateTran.visible()){
+					// create a state tran from initial state to succStateTran.currentState
+					CompositeStateTran newStateTran = new CompositeStateTran(initialState, sg.getState(succStateTran.getNextState()), lpnTran);
+					newStateTran.setVisibility();
+					tranSet.add(newStateTran);
+					stateSet.add(succStateTran.getNextState());
+				}
+				else{
+//					if(!loopSet.add(succStateTran.getNextState())){
+//						CompositeStateTran newStateTran = new CompositeStateTran(initialState, initialState, lpnTran);
+//						tranSet.add(newStateTran);
+//						
+////						traversalSet.add(succStateTran.getNextState());
+//						continue;
+//					}
+//					else if(!traversalSet.add(succStateTran.getNextState())){
+//						continue;
+//					}
+					
+					// add to stack
+					stateTranStack.push(succStateTran);
+				}
+			}
+			
+			loopSet.remove(stateTran.getNextState());
+		}
+
+//		System.out.println();
+//		for(CompositeStateTran stateTran : tranSet){
+//			System.out.println(stateTran);
+//		}
+//		System.out.println();
+//		
+//		System.out.println();
+//		for(Integer state : stateSet){
+//			System.out.println(state);
+//		}
+//		System.out.println();
+		
+//		System.out.println("COMPOSITE STATE SET");
+		HashMap<CompositeState, CompositeState> stateMap = new HashMap<CompositeState, CompositeState>();
+		HashMap<Integer, CompositeState> indexStateMap = new HashMap<Integer, CompositeState>();
+		for(Integer stateIndex : stateSet){
+			CompositeState currentState = sg.getState(stateIndex);
+			currentState.clear();
+			
+			stateMap.put(currentState, currentState);
+			indexStateMap.put(stateIndex, currentState);
+		}
+		
+		sg.indexStateMap = indexStateMap;
+		sg.stateMap = stateMap;
+		
+		sg.stateTranMap = new HashMap<CompositeStateTran, CompositeStateTran>();
+		for(CompositeStateTran stateTran : tranSet){
+			sg.addStateTran(stateTran);
+		}
+		
+		System.out.println("   --> # states: " + stateSet.size());
+		System.out.println("   --> # transitions: " + tranSet.size());
+	}
+
+	private void removeUnreachableState(CompositeStateGraph sg, CompositeState currentState){
+		if(currentState == sg.getInitState()){
+			return;
+		}
+		else if(currentState.numIncomingTrans() != 0){
+			return;
+		}
+		
+		boolean rc = sg.containsState(currentState.getIndex());
+		if(rc == false){
+			return;
+		}
+		
+		for(CompositeStateTran stateTran : currentState.getOutgoingStateTranList().toArray(new CompositeStateTran[currentState.numOutgoingTrans()])){
+			sg.removeStateTran(stateTran);
+			
+			CompositeState nextState = sg.getState(stateTran.getNextState());
+			if(nextState.numIncomingTrans() == 0){
+				removeUnreachableState(sg, nextState);
+			}
+		}
+		
+		sg.removeState(currentState);
+	}
+	
+	private void removeDanglingState(CompositeStateGraph sg, CompositeState currentState){
+		if(currentState == sg.getInitState()){
+			return;
+		}
+		else if(currentState.numOutgoingTrans() != 0){
+			return;
+		}
+		
+		boolean rc = sg.containsState(currentState.getIndex());
+		if(rc == false){
+			return;
+		}
+
+		for(CompositeStateTran stateTran : currentState.getIncomingStateTranList().toArray(new CompositeStateTran[currentState.numIncomingTrans()])){
+			sg.removeStateTran(stateTran);
+			
+			CompositeState previousState = sg.getState(stateTran.getCurrentState());
+			if(previousState.numOutgoingTrans() == 0){
+				removeDanglingState(sg, previousState);
+			}
+		}
+		
+		sg.removeState(currentState);
 	}
 	
 	public void redundantStateRemoval(CompositeStateGraph sg){
-		HashSet<CompositeStatePair> equivalentPairSet = findInitialEquivalentPairs(sg);
-		
+		this.mergeOutgoing(sg);
+		this.mergeIncoming(sg);
+	}
+	
+	public void mergeOutgoing(CompositeStateGraph sg){
+//		System.out.println("FIND EQUIVALENT PAIRS");
+		HashSet<Pair<Integer, Integer>> equivalentPairSet = findInitialEquivalentPairs(sg);
+//		System.out.println("REMOVE STATES");
 		// remove states that are not equivalent
-		for(Object o : equivalentPairSet.toArray()){
-			CompositeStatePair eqPair = (CompositeStatePair) o;
-			CompositeState state1 = eqPair.getState1();
-			CompositeState state2 = eqPair.getState2();
+		for(Pair<Integer, Integer> eqPair : equivalentPairSet.toArray(new Pair[equivalentPairSet.size()])){
+			CompositeState state1 = sg.getState(eqPair.getLeft());
+			CompositeState state2 = sg.getState(eqPair.getRight());
 			
-			List<CompositeState> nextStateList1 = state1.nextStateList;
-			List<CompositeState> nextStateList2 = state2.nextStateList;
-			
+			List<CompositeStateTran> stateTranList1 = state1.getOutgoingStateTranList();
+			List<CompositeStateTran> stateTranList2 = state2.getOutgoingStateTranList();
+
 			boolean eq = true;
-			for(CompositeState succ1 : nextStateList1){
+			for(CompositeStateTran stateTran1 : stateTranList1){
 				boolean succEq = false;
-				for(CompositeState succ2 : nextStateList2){
-					if(succ1 == succ2){
+				for(CompositeStateTran stateTran2 : stateTranList2){
+					int nextState1 = stateTran1.getNextState();
+					int nextState2 = stateTran2.getNextState();
+					
+					if(nextState1 == nextState2){
 						succEq = true;
 						continue;
 					}
 					
-					CompositeStatePair statePair = new CompositeStatePair(succ1, succ2);
+					if(nextState2 < nextState1){
+						int tmp = nextState2;
+						nextState2 = nextState1;
+						nextState1 = tmp;
+					}
+					
+					Pair<Integer, Integer> statePair = new Pair<Integer, Integer>(nextState1, nextState2);
 					if(equivalentPairSet.contains(statePair)){
 						succEq = true;
 						continue;
@@ -1330,20 +1987,87 @@ public class CompositionalAnalysis {
 				equivalentPairSet.remove(eqPair);
 			}
 		}
+
+		for(Pair<Integer, Integer> statePair : equivalentPairSet){
+			int stateIndex1 = statePair.getLeft();
+			int stateIndex2 = statePair.getRight();
+
+			if(!sg.containsState(stateIndex1) || !sg.containsState(stateIndex2)) 
+				continue;
+			
+			System.out.println(stateIndex1 + " - " + stateIndex2);
+			CompositeState state2 = sg.getState(stateIndex2);
+			
+			// merge
+			for(CompositeStateTran incomingStateTran : state2.getIncomingStateTranList().toArray(new CompositeStateTran[state2.numIncomingTrans()])){
+				sg.removeStateTran(incomingStateTran);
+				
+				incomingStateTran.setNextState(stateIndex1);
+				sg.addStateTran(incomingStateTran);
+			}
+			
+			this.removeUnreachableState(sg, state2);
+		}
+		
+		System.out.println("   --> # states: " + sg.numStates());
+		System.out.println("   --> # transitions: " + sg.numStateTrans());
 	}
 	
-	private HashSet<CompositeStatePair> findInitialEquivalentPairs(CompositeStateGraph sg){
-		HashSet<CompositeStatePair> equivalentSet = new HashSet<CompositeStatePair>();
+	public void mergeIncoming(CompositeStateGraph sg){
+		HashSet<Pair<Integer, Integer>> equivalentPairSet = findInitialEquivalentPairs2(sg);
 		
-		for(CompositeState state1 : sg.getStateSet()){
-			for(CompositeState state2 : sg.getStateSet()){
-				if(state1 == state2) continue;
+		for(Pair<Integer, Integer> statePair : equivalentPairSet){
+			int stateIndex1 = statePair.getLeft();
+			int stateIndex2 = statePair.getRight();
+
+			System.out.println(stateIndex1 + " - " + stateIndex2);
+			
+			if(!sg.containsState(stateIndex1) || !sg.containsState(stateIndex2)) 
+				continue;
+			
+			CompositeState state2 = sg.getState(stateIndex2);
+			
+			// merge outgoing state transitions
+			for(CompositeStateTran outgoingStateTran : state2.getOutgoingStateTranList().toArray(new CompositeStateTran[state2.numOutgoingTrans()])){
+				sg.removeStateTran(outgoingStateTran);
 				
-				List<LPNTran> enabled1 = state1.enabledTranList;
-				List<LPNTran> enabled2 = state2.enabledTranList;
+				outgoingStateTran.setCurrentState(stateIndex1);
+				sg.addStateTran(outgoingStateTran);
+			}
+			
+			this.removeDanglingState(sg, state2);
+		}
+		
+		System.out.println("   --> # states: " + sg.numStates());
+		System.out.println("   --> # transitions: " + sg.numStateTrans());
+	}
+	
+	private HashSet<Pair<Integer, Integer>> findInitialEquivalentPairs(CompositeStateGraph sg){
+		HashSet<Pair<Integer, Integer>> equivalentSet = new HashSet<Pair<Integer, Integer>>();
+		CompositeState[] stateArray = sg.getStateSet().toArray(new CompositeState[sg.numStates()]);
+		
+		for(int i = 0; i < stateArray.length; i++){
+//			System.out.println("  " + i + "/" + stateArray.length);
+			CompositeState state1 = stateArray[i];
+			List<LPNTran> enabled1 = sg.getEnabled(state1);
+//			HashSet<LPNTran> enabled1Set = new HashSet<LPNTran>();
+//			enabled1Set.addAll(enabled1);
+			
+			for(int j = i + 1; j < stateArray.length; j++){
+//				System.out.println("    " + j + "/" + stateArray.length);
+				CompositeState state2 = stateArray[j];
+				CompositeState state = state1;
 				
-				if(enabled1.size() == enabled2.size() && enabled1.containsAll(enabled2)){
-					equivalentSet.add(new CompositeStatePair(state1, state2));
+				List<LPNTran> enabled2 = sg.getEnabled(state2);
+				
+				if(enabled1.containsAll(enabled2) && enabled2.containsAll(enabled1)){
+					if(state2.getIndex() < state.getIndex()){
+						CompositeState temp = state;
+						state = state2;
+						state2 = temp;
+					}
+					
+					equivalentSet.add(new Pair<Integer, Integer>(state.getIndex(), state2.getIndex()));
 				}
 			}
 		}
@@ -1351,244 +2075,295 @@ public class CompositionalAnalysis {
 		return equivalentSet;
 	}
 	
-	public void case2(CompositeStateGraph sg){
-		long start = System.currentTimeMillis();
-		int trans = sg.numTransitions;
-		int states = sg.numCompositeStates();
+	private boolean equivalentOutgoing(Set<LPNTran> enabled1, List<LPNTran> enabled2){
+//		enabled2.containsAll(enabled1) && enabled1.containsAll(enabled2)
+		HashSet<LPNTran> enabled2Set = new HashSet<LPNTran>();
+		enabled2Set.addAll(enabled2);
 		
-		List<LPNTran> localTrans = new ArrayList<LPNTran>();
-		List<CompositeState> localStates = new ArrayList<CompositeState>();
-		List<LPNTran> nonLocalTrans = new ArrayList<LPNTran>();
-		List<CompositeState> nonLocalStates = new ArrayList<CompositeState>();
+		if(enabled2Set.size() == enabled1.size() && enabled1.containsAll(enabled2Set))
+			return true;
 		
-		for(Object o : sg.getStateSet().toArray()){
-			CompositeState currentState = (CompositeState) o;
+		return false;
+	}
+	private HashSet<Pair<Integer, Integer>> findInitialEquivalentPairs2(CompositeStateGraph sg){
+		HashSet<Pair<Integer, Integer>> equivalentSet = new HashSet<Pair<Integer, Integer>>();
+		
+		CompositeState[] stateArray = sg.getStateSet().toArray(new CompositeState[sg.numStates()]);
+		for(int i = 0; i < stateArray.length; i++){
+			CompositeState state1 = stateArray[i];
+			List<LPNTran> enabled1 = this.getIncomingLpnTrans(state1);
 			
-			List<LPNTran> enabledTrans = currentState.enabledTranList;
-			List<CompositeState> nextStates = currentState.nextStateList;
-			
-			localTrans.clear();
-			localStates.clear();
-			nonLocalTrans.clear();
-			nonLocalStates.clear();
-			
-			for(int i = 0; i < enabledTrans.size(); i++){
-				LPNTran lpnTran = enabledTrans.get(i);
-				CompositeState nextState = (nextStates.get(i));
-				if(lpnTran.local()){
-					localTrans.add(lpnTran);
-					localStates.add(nextState);
-				}
-//				else{
-					nonLocalTrans.add(lpnTran);
-					nonLocalStates.add(nextState);
-//				}
-			}
-			
-			if(nonLocalTrans.isEmpty()){
-				continue;
-			}
-			
-			for(int i = 0; i < nonLocalTrans.size(); i++){
-				LPNTran nonLocalTran = nonLocalTrans.get(i);
-				CompositeState s2 = nonLocalStates.get(i);
+			for(int j = i + 1; j < stateArray.length; j++){
+				CompositeState state2 = stateArray[j];
+				CompositeState state = state1;
 				
-				List<LPNTran> s2Enabled = s2.enabledTranList;
-				if(s2Enabled.size() > 1 || s2Enabled.size() < 1){
-					continue;
-				}
-//				else if(s2 == sg.getInitState()){
-//					continue;
-//				}
+				List<LPNTran> enabled2 = this.getIncomingLpnTrans(state2);
 				
-				List<CompositeState> s2NextState = s2.nextStateList;
-				for(int j = 0; j < s2Enabled.size(); j++){
-					LPNTran invTran2 = s2Enabled.get(j);
-					if(invTran2.local()){
-						CompositeState s4 = s2NextState.get(j);
-						
-						for(int k = 0; k < localTrans.size(); k++){
-							LPNTran invTran = localTrans.get(k);
-							if(invTran == nonLocalTran) continue;
-							
-							CompositeState s3 = localStates.get(k);
-							
-							List<LPNTran> s3Enabled = s3.enabledTranList;
-							List<CompositeState> s3NextState = s3.nextStateList;
-							for(int n = 0; n < s3Enabled.size(); n++){
-								LPNTran nonLocalTran2 = s3Enabled.get(n);
-								CompositeState nextState = s3NextState.get(n);
-								
-								if(nonLocalTran2 == nonLocalTran && nextState == s4){
-									currentState.enabledTranList.remove(nonLocalTran);
-									currentState.nextStateList.remove(s2);
-									sg.numTransitions --;
-									
-									List<CompositeState> incomingStates = s2.incomingStateList;
-									for(int m = 0; m < incomingStates.size(); m++){
-										CompositeState curr = incomingStates.get(m);
-										List<CompositeState> incomingNextStateList = curr.nextStateList;
-										
-										for(int idx = 0; idx < incomingNextStateList.size(); idx++){
-											CompositeState tmpState = incomingNextStateList.get(idx);
-											if(tmpState == s2){
-												incomingNextStateList.set(idx, s4);
-												s4.incomingStateList.add(curr);
-												break;
-											}
-										}
-									}
-									
-									s2.nextStateList.clear();
-									s2.incomingStateList.clear();
-									s2.enabledTranList.clear();
-									
-									sg.compositeStateSet.remove(s2);
-									if(sg.getInitState() == s2){
-										sg.setInitState(s4);
-									}
-									sg.numTransitions --;
-								}
-							}
-						}
+				if(enabled2.containsAll(enabled1) && enabled1.containsAll(enabled2)){
+					if(state2.getIndex() < state.getIndex()){
+						CompositeState temp = state;
+						state = state2;
+						state2 = temp;
 					}
+					
+					equivalentSet.add(new Pair<Integer, Integer>(state.getIndex(), state2.getIndex()));
 				}
 			}
 		}
 		
-//		System.out.println(sg.getLabel() + " case2 transitions: " + trans + " - " + sg.numTransitions);
-//		System.out.println(sg.getLabel() + " case2 states: " + states + " - " + sg.numCompositeStates());
-//		long elapsedTimeMillis = System.currentTimeMillis()-start; 
-//		float elapsedTimeSec = elapsedTimeMillis/1000F;
-//		System.out.println("   --> Elapsed time: " + elapsedTimeSec + " sec");
+		return equivalentSet;
 	}
 	
-	public void case3(CompositeStateGraph sg){
-		long start = System.currentTimeMillis();
-		int trans = sg.numTransitions;
-		int states = sg.numCompositeStates();
+	private List<LPNTran> getIncomingLpnTrans(CompositeState currentState){
+		Set<LPNTran> lpnTranSet = new HashSet<LPNTran>(currentState.numOutgoingTrans());
+		List<LPNTran> enabled = new ArrayList<LPNTran>(currentState.numOutgoingTrans());
 		
-		List<LPNTran> localTrans = new ArrayList<LPNTran>();
-		List<CompositeState> localStates = new ArrayList<CompositeState>();
-		List<LPNTran> nonLocalTrans = new ArrayList<LPNTran>();
-		List<CompositeState> nonLocalStates = new ArrayList<CompositeState>();
-		
-		for(Object o : sg.getStateSet().toArray()){
-			CompositeState currentState = (CompositeState) o;
-			
-			List<LPNTran> enabledTrans = currentState.enabledTranList;
-			List<CompositeState> nextStates = currentState.nextStateList;
-			
-			localTrans.clear();
-			localStates.clear();
-			nonLocalTrans.clear();
-			nonLocalStates.clear();
-			
-			for(int i = 0; i < enabledTrans.size(); i++){
-				LPNTran lpnTran = enabledTrans.get(i);
-				CompositeState nextState = (nextStates.get(i));
-				if(lpnTran.local()){
-					localTrans.add(lpnTran);
-					localStates.add(nextState);
-				}
-//				else{
-					nonLocalTrans.add(lpnTran);
-					nonLocalStates.add(nextState);
-//				}
-			}
-			
-			if(nonLocalTrans.isEmpty()){
-				continue;
-			}
-			
-			for(int i = 0; i < localTrans.size(); i++){
-				LPNTran localTran = localTrans.get(i);
-				CompositeState s3 = localStates.get(i);
-				if(s3.incomingStateList.size() != 1){
-					continue;
-				}
-//				else if(s3 == sg.getInitState()){
-//					continue;
-//				}
-				
-				List<LPNTran> s3Enabled = s3.enabledTranList;
-				List<CompositeState> s3NextState = s3.nextStateList;
-				
-				boolean remove = false;
-				List<LPNTran> removeTran = new ArrayList<LPNTran>();
-				
-				for(int j = 0; j < s3Enabled.size(); j++){
-					LPNTran nonLocalTran2 = s3Enabled.get(j);
-					if(!nonLocalTran2.local()){
-						CompositeState s4 = s3NextState.get(j);
-						
-						for(int k = 0; k < nonLocalTrans.size(); k++){
-							LPNTran nonLocalTran = nonLocalTrans.get(k);
-							if(localTran == nonLocalTran) continue;
-							
-							CompositeState s2 = nonLocalStates.get(k);
-							
-							List<LPNTran> s2Enabled = s2.enabledTranList;
-							List<CompositeState> s2NextState = s2.nextStateList;
-							for(int n = 0; n < s2Enabled.size(); n++){
-								LPNTran invTran2 = s2Enabled.get(n);
-								if(invTran2.local()){
-									CompositeState nextState = s2NextState.get(n);
-									
-									if(nonLocalTran2 == nonLocalTran && nextState == s4){
-										removeTran.add(nonLocalTran2);
-										remove = true;
-									}
-								}
-							}
-						}
-					}
-				}
-				
-				if(remove){
-					currentState.enabledTranList.remove(localTran);
-					currentState.nextStateList.remove(s3);
-					sg.numTransitions--;
-					
-					for(int m = 0; m < s3Enabled.size(); m++){
-						CompositeState currState = s3NextState.get(m);
-						LPNTran currTran = s3Enabled.get(m);
-						
-						if(removeTran.contains(currTran)){
-							removeTran.remove(currTran);
-							sg.numTransitions--;
-							continue;
-						}
-						
-						currentState.enabledTranList.add(currTran);
-						currentState.nextStateList.add(currState);
-						
-						List<CompositeState> currIncomingList = currState.incomingStateList;
-						for(int idx = 0; idx < currIncomingList.size(); idx++){
-							if(currIncomingList.get(idx) == s3){
-								currIncomingList.set(idx, currState);
-							}
-						}
-					}
-					
-					sg.compositeStateSet.remove(s3);
-					if(sg.getInitState() == s3){
-						sg.setInitState(currentState);
-					}
-					
-					s3.nextStateList.clear();
-					s3.enabledTranList.clear();
-					s3.incomingStateList.clear();
-				}
-			}
+		for(CompositeStateTran stTran : currentState.getIncomingStateTranList()){
+			LPNTran lpnTran = stTran.getLPNTran();
+			if(lpnTranSet.add(lpnTran))
+				enabled.add(lpnTran);
 		}
 		
-//		System.out.println(sg.getLabel() + " case3 transitions: " + trans + " - " + sg.numTransitions);
-//		System.out.println(sg.getLabel() + " case3 states: " + states + " - " + sg.numCompositeStates());
-//		long elapsedTimeMillis = System.currentTimeMillis()-start; 
-//		float elapsedTimeSec = elapsedTimeMillis/1000F;
-//		System.out.println("   --> Elapsed time: " + elapsedTimeSec + " sec");
+		return enabled;
 	}
+//	public void case2(CompositeStateGraph sg){
+//		long start = System.currentTimeMillis();
+//		int trans = sg.numTransitions;
+//		int states = sg.numCompositeStates();
+//		
+//		List<LPNTran> localTrans = new ArrayList<LPNTran>();
+//		List<CompositeState> localStates = new ArrayList<CompositeState>();
+//		List<LPNTran> nonLocalTrans = new ArrayList<LPNTran>();
+//		List<CompositeState> nonLocalStates = new ArrayList<CompositeState>();
+//		
+//		for(Object o : sg.getStateMap().values().toArray()){
+//			CompositeState currentState = (CompositeState) o;
+//			
+//			List<LPNTran> enabledTrans = currentState.enabledTranList;
+//			List<CompositeState> nextStates = currentState.nextStateList;
+//			
+//			localTrans.clear();
+//			localStates.clear();
+//			nonLocalTrans.clear();
+//			nonLocalStates.clear();
+//			
+//			for(int i = 0; i < enabledTrans.size(); i++){
+//				LPNTran lpnTran = enabledTrans.get(i);
+//				CompositeState nextState = (nextStates.get(i));
+//				if(lpnTran.local()){
+//					localTrans.add(lpnTran);
+//					localStates.add(nextState);
+//				}
+////				else{
+//					nonLocalTrans.add(lpnTran);
+//					nonLocalStates.add(nextState);
+////				}
+//			}
+//			
+//			if(nonLocalTrans.isEmpty()){
+//				continue;
+//			}
+//			
+//			for(int i = 0; i < nonLocalTrans.size(); i++){
+//				LPNTran nonLocalTran = nonLocalTrans.get(i);
+//				CompositeState s2 = nonLocalStates.get(i);
+//				
+//				List<LPNTran> s2Enabled = s2.enabledTranList;
+//				if(s2Enabled.size() > 1 || s2Enabled.size() < 1){
+//					continue;
+//				}
+////				else if(s2 == sg.getInitState()){
+////					continue;
+////				}
+//				
+//				List<CompositeState> s2NextState = s2.nextStateList;
+//				for(int j = 0; j < s2Enabled.size(); j++){
+//					LPNTran invTran2 = s2Enabled.get(j);
+//					if(invTran2.local()){
+//						CompositeState s4 = s2NextState.get(j);
+//						
+//						for(int k = 0; k < localTrans.size(); k++){
+//							LPNTran invTran = localTrans.get(k);
+//							if(invTran == nonLocalTran) continue;
+//							
+//							CompositeState s3 = localStates.get(k);
+//							
+//							List<LPNTran> s3Enabled = s3.enabledTranList;
+//							List<CompositeState> s3NextState = s3.nextStateList;
+//							for(int n = 0; n < s3Enabled.size(); n++){
+//								LPNTran nonLocalTran2 = s3Enabled.get(n);
+//								CompositeState nextState = s3NextState.get(n);
+//								
+//								if(nonLocalTran2 == nonLocalTran && nextState == s4){
+//									currentState.enabledTranList.remove(nonLocalTran);
+//									currentState.nextStateList.remove(s2);
+//									sg.numTransitions --;
+//									
+//									List<CompositeState> incomingStates = s2.incomingStateList;
+//									for(int m = 0; m < incomingStates.size(); m++){
+//										CompositeState curr = incomingStates.get(m);
+//										List<CompositeState> incomingNextStateList = curr.nextStateList;
+//										
+//										for(int idx = 0; idx < incomingNextStateList.size(); idx++){
+//											CompositeState tmpState = incomingNextStateList.get(idx);
+//											if(tmpState == s2){
+//												incomingNextStateList.set(idx, s4);
+//												s4.incomingStateList.add(curr);
+//												break;
+//											}
+//										}
+//									}
+//									
+//									s2.nextStateList.clear();
+//									s2.incomingStateList.clear();
+//									s2.enabledTranList.clear();
+//									
+//									sg.compositeStateMap.remove(s2);
+//									if(sg.getInitState() == s2){
+//										sg.setInitState(s4);
+//									}
+//									sg.numTransitions --;
+//								}
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//		
+////		System.out.println(sg.getLabel() + " case2 transitions: " + trans + " - " + sg.numTransitions);
+////		System.out.println(sg.getLabel() + " case2 states: " + states + " - " + sg.numCompositeStates());
+////		long elapsedTimeMillis = System.currentTimeMillis()-start; 
+////		float elapsedTimeSec = elapsedTimeMillis/1000F;
+////		System.out.println("   --> Elapsed time: " + elapsedTimeSec + " sec");
+//	}
+//	
+//	public void case3(CompositeStateGraph sg){
+//		long start = System.currentTimeMillis();
+//		int trans = sg.numTransitions;
+//		int states = sg.numCompositeStates();
+//		
+//		List<LPNTran> localTrans = new ArrayList<LPNTran>();
+//		List<CompositeState> localStates = new ArrayList<CompositeState>();
+//		List<LPNTran> nonLocalTrans = new ArrayList<LPNTran>();
+//		List<CompositeState> nonLocalStates = new ArrayList<CompositeState>();
+//		
+//		for(Object o : sg.getStateMap().values().toArray()){
+//			CompositeState currentState = (CompositeState) o;
+//			
+//			List<LPNTran> enabledTrans = currentState.enabledTranList;
+//			List<CompositeState> nextStates = currentState.nextStateList;
+//			
+//			localTrans.clear();
+//			localStates.clear();
+//			nonLocalTrans.clear();
+//			nonLocalStates.clear();
+//			
+//			for(int i = 0; i < enabledTrans.size(); i++){
+//				LPNTran lpnTran = enabledTrans.get(i);
+//				CompositeState nextState = (nextStates.get(i));
+//				if(lpnTran.local()){
+//					localTrans.add(lpnTran);
+//					localStates.add(nextState);
+//				}
+////				else{
+//					nonLocalTrans.add(lpnTran);
+//					nonLocalStates.add(nextState);
+////				}
+//			}
+//			
+//			if(nonLocalTrans.isEmpty()){
+//				continue;
+//			}
+//			
+//			for(int i = 0; i < localTrans.size(); i++){
+//				LPNTran localTran = localTrans.get(i);
+//				CompositeState s3 = localStates.get(i);
+//				if(s3.incomingStateList.size() != 1){
+//					continue;
+//				}
+////				else if(s3 == sg.getInitState()){
+////					continue;
+////				}
+//				
+//				List<LPNTran> s3Enabled = s3.enabledTranList;
+//				List<CompositeState> s3NextState = s3.nextStateList;
+//				
+//				boolean remove = false;
+//				List<LPNTran> removeTran = new ArrayList<LPNTran>();
+//				
+//				for(int j = 0; j < s3Enabled.size(); j++){
+//					LPNTran nonLocalTran2 = s3Enabled.get(j);
+//					if(!nonLocalTran2.local()){
+//						CompositeState s4 = s3NextState.get(j);
+//						
+//						for(int k = 0; k < nonLocalTrans.size(); k++){
+//							LPNTran nonLocalTran = nonLocalTrans.get(k);
+//							if(localTran == nonLocalTran) continue;
+//							
+//							CompositeState s2 = nonLocalStates.get(k);
+//							
+//							List<LPNTran> s2Enabled = s2.enabledTranList;
+//							List<CompositeState> s2NextState = s2.nextStateList;
+//							for(int n = 0; n < s2Enabled.size(); n++){
+//								LPNTran invTran2 = s2Enabled.get(n);
+//								if(invTran2.local()){
+//									CompositeState nextState = s2NextState.get(n);
+//									
+//									if(nonLocalTran2 == nonLocalTran && nextState == s4){
+//										removeTran.add(nonLocalTran2);
+//										remove = true;
+//									}
+//								}
+//							}
+//						}
+//					}
+//				}
+//				
+//				if(remove){
+//					currentState.enabledTranList.remove(localTran);
+//					currentState.nextStateList.remove(s3);
+//					sg.numTransitions--;
+//					
+//					for(int m = 0; m < s3Enabled.size(); m++){
+//						CompositeState currState = s3NextState.get(m);
+//						LPNTran currTran = s3Enabled.get(m);
+//						
+//						if(removeTran.contains(currTran)){
+//							removeTran.remove(currTran);
+//							sg.numTransitions--;
+//							continue;
+//						}
+//						
+//						currentState.enabledTranList.add(currTran);
+//						currentState.nextStateList.add(currState);
+//						
+//						List<CompositeState> currIncomingList = currState.incomingStateList;
+//						for(int idx = 0; idx < currIncomingList.size(); idx++){
+//							if(currIncomingList.get(idx) == s3){
+//								currIncomingList.set(idx, currState);
+//							}
+//						}
+//					}
+//					
+//					sg.compositeStateMap.remove(s3);
+//					if(sg.getInitState() == s3){
+//						sg.setInitState(currentState);
+//					}
+//					
+//					s3.nextStateList.clear();
+//					s3.enabledTranList.clear();
+//					s3.incomingStateList.clear();
+//				}
+//			}
+//		}
+//		
+////		System.out.println(sg.getLabel() + " case3 transitions: " + trans + " - " + sg.numTransitions);
+////		System.out.println(sg.getLabel() + " case3 states: " + states + " - " + sg.numCompositeStates());
+////		long elapsedTimeMillis = System.currentTimeMillis()-start; 
+////		float elapsedTimeSec = elapsedTimeMillis/1000F;
+////		System.out.println("   --> Elapsed time: " + elapsedTimeSec + " sec");
+//	}
 	
 	/**
      * Constructs the compositional state graphs.
@@ -1607,20 +2382,24 @@ public class CompositionalAnalysis {
 		HashMap<StateGraph, List<StateGraph>> inputSrcMap = new HashMap<StateGraph, List<StateGraph>>();
 		
 		for (StateGraph sg : designUnitSet) {
+			LPN lpn = sg.getLpn();
+			
             // Add initial state to state graph
-			State init = sg.getInitStateUntimed();
+			State init = lpn.getInitState();
 			sg.setInitialState(init);
-			sg.addReachable(init);
+			sg.addState(init);
+			sg.addFrontierState(init);
             
-			VarSet inputSet = sg.getInputs();
-			VarSet outputSet = sg.getOutputs();
+			VarSet inputSet = lpn.getInputs();
+			VarSet outputSet = lpn.getOutputs();
 			int numSrc = 0;
 
 			// Find lpn interfaces
-			for(StateGraph sg2 : designUnitSet){				
+			for(StateGraph sg2 : designUnitSet){
+				LPN lpn2 = sg2.getLpn();
 				if(sg == sg2) continue;
 				
-				VarSet outputs = sg2.getOutputs();
+				VarSet outputs = lpn2.getOutputs();
 				for(String output : outputs){
 					if (inputSet.contains(output)){
 						numSrc++;
@@ -1647,12 +2426,13 @@ public class CompositionalAnalysis {
 			
 			if(numSrc > 0){
 				int index = 0;
-				for(StateGraph sg2 : designUnitSet){				
+				for(StateGraph sg2 : designUnitSet){	
+					LPN lpn2 = sg2.getLpn();
 					if(sg == sg2) continue;
 					
 					int interfaceSize = 0;
-					VarSet outputs = sg2.getOutputs();
-					VarSet inputs = sg2.getInputs();
+					VarSet outputs = lpn2.getOutputs();
+					VarSet inputs = lpn2.getInputs();
 					
 					for(String output : outputs){
 						if (inputSet.contains(output)){
@@ -1681,36 +2461,33 @@ public class CompositionalAnalysis {
 					if(interfaceSize > 0){
 						int[] thisIndexList = new int[interfaceSize];
 						int[] otherIndexList = new int[interfaceSize];
-						sg.genIndexLists(thisIndexList, otherIndexList, sg2);
+						lpn.genIndexLists(thisIndexList, otherIndexList, lpn2);
 						
-						thisInterfaceList.set(sg2.ID-1, thisIndexList);
-						otherInterfaceList.set(sg2.ID-1, otherIndexList);
+						thisInterfaceList.set(lpn2.ID-1, thisIndexList);
+						otherInterfaceList.set(lpn2.ID-1, otherIndexList);
 						srcArray.add(sg2);
 						index++;
 					}
 				}
 			}
 			
-			sg.setThisIndexList(thisInterfaceList);
-			sg.setOtherIndexList(otherInterfaceList);
+			lpn.setThisIndexList(thisInterfaceList);
+			lpn.setOtherIndexList(otherInterfaceList);
 			inputSrcMap.put(sg, srcArray);
 		}
 		
 		LPN[] lpnList = new LPN[designUnitSet.size()];
 
 		int idx = 0;
-		for (LPN lpn : designUnitSet) {
-			lpnList[idx] = lpn;
-			idx++;
+		for (StateGraph sg : designUnitSet) {
+			lpnList[idx++] = sg.getLpn();
 		}	
-		
-		List<LPNTran> emptyTranList = new ArrayList<LPNTran>(0);
 		
 		// Run initial findSG
 		for (StateGraph sg : designUnitSet) {
 			int result = 0;
 			if(Options.getStickySemantics()){
-				result = sg.constrStickyFindSG(sg.getInitialState(), emptyTranList);
+//				result = sg.constrStickyFindSG(sg.getInitialState(), emptyTranList);
 			}
 			else{
 				result = sg.constrFindSG(sg.getInitialState());
@@ -1756,12 +2533,17 @@ public class CompositionalAnalysis {
 		int numTrans = 0;
 		int numConstr = 0;
 		for (StateGraph sg : designUnitSet) {
+			sg.genConstraints();
+			sg.genFrontier();
+			
 			System.out.print("   ");
 			sg.printStates();
 			
+//			sg.clear();
+			
 			numStates += sg.reachSize();
-			//numTrans += sg.numTransitions();
-//			numConstr += sg.constraintSetSize();
+//			numTrans += sg.numTransitions();
+			numConstr += sg.numConstraints();
 		}
 		
 		System.out.println("\n   --> # states: " + numStates);
@@ -1780,7 +2562,7 @@ public class CompositionalAnalysis {
 		if(elapsedTimeSec > 60){
 			float elapsedTime = elapsedTimeSec/(float)60;
 			System.out.println("   --> Elapsed time: " + elapsedTime + " min");
-		}	
+		}
 	}
 	
 	/**
@@ -1800,20 +2582,23 @@ public class CompositionalAnalysis {
 		HashMap<StateGraph, StateGraph[]> inputSrcMap = new HashMap<StateGraph, StateGraph[]>();
 		
 		for (StateGraph sg : designUnitSet) {
+			LPN lpn = sg.getLpn();
+			
             // Add initial state to state graph
-			State init = sg.getInitStateUntimed();
+			State init = lpn.getInitState();
 			sg.setInitialState(init);
-			sg.addReachable(init);
+			sg.addState(init);
+			sg.addFrontierState(init);
             
-			VarSet inputSet = sg.getInputs();
-			VarSet outputSet = sg.getOutputs();
+			VarSet inputSet = lpn.getInputs();
+			VarSet outputSet = lpn.getOutputs();
 			int size = 0;
 			
 			// Find lpn interfaces
 			for(StateGraph sg2 : designUnitSet){				
 				if(sg == sg2) continue;
 				
-				VarSet outputs = sg2.getOutputs();
+				VarSet outputs = sg2.getLpn().getOutputs();
 				for(String output : outputs){
 					if (inputSet.contains(output)){
 						size++;
@@ -1833,12 +2618,13 @@ public class CompositionalAnalysis {
 			
 			if(size > 0){
 				int index = 0;
-				for(StateGraph sg2 : designUnitSet){				
+				for(StateGraph sg2 : designUnitSet){	
+					LPN lpn2 = sg2.getLpn();
 					if(sg == sg2) continue;
 					
 					boolean src = false;
 					int interfaceSize = 0;
-					VarSet outputs = sg2.getOutputs();
+					VarSet outputs = lpn2.getOutputs();
 					for(String output : outputs){
 						if (inputSet.contains(output)){
 							interfaceSize++;
@@ -1847,7 +2633,7 @@ public class CompositionalAnalysis {
 					}
 
 					if(src){
-						VarSet inputs = sg2.getInputs();
+						VarSet inputs = lpn2.getInputs();
 						for(String input : inputs){
 							if (outputSet.contains(input)){
 								interfaceSize++;
@@ -1868,26 +2654,26 @@ public class CompositionalAnalysis {
 						
 						int[] thisIndexList = new int[interfaceSize];
 						int[] otherIndexList = new int[interfaceSize];
-						sg.genIndexLists(thisIndexList, otherIndexList, sg2);
+						lpn.genIndexLists(thisIndexList, otherIndexList, lpn2);
 						
-						thisInterfaceList.set(sg2.ID, thisIndexList);
-						otherInterfaceList.set(sg2.ID, otherIndexList);
+						thisInterfaceList.set(lpn2.ID, thisIndexList);
+						otherInterfaceList.set(lpn2.ID, otherIndexList);
 						srcArray[index] = sg2;
 						index++;
 					}
 				}
 			}
 			
-			sg.setThisIndexList(thisInterfaceList);
-			sg.setOtherIndexList(otherInterfaceList);
+			lpn.setThisIndexList(thisInterfaceList);
+			lpn.setOtherIndexList(otherInterfaceList);
 			inputSrcMap.put(sg, srcArray);
 		}
 		
 		LPN[] lpnList = new LPN[designUnitSet.size()];
 
 		int idx = 0;
-		for (LPN lpn : designUnitSet) {
-			lpnList[idx] = lpn;
+		for (StateGraph sg : designUnitSet) {
+			lpnList[idx] = sg.getLpn();
 			idx++;
 		}	
 		
@@ -1946,7 +2732,7 @@ public class CompositionalAnalysis {
 			
 			numStates += sg.reachSize();
 			//numTrans += sg.numTransitions();
-//			numConstr += sg.constraintSetSize();
+			numConstr += sg.numConstraints();
 		}
 		
 		System.out.println("\n   --> # states: " + numStates);
@@ -1975,13 +2761,13 @@ public class CompositionalAnalysis {
 	private int applyConstraintSet(StateGraph sg, StateGraph srcSG, int iter, List<Constraint> newConstraintSet, List<Constraint> oldConstraintSet){
 		int newTransitions = 0;
 
-		int[] thisIndexList = sg.getThisIndexArray(srcSG.ID - 1);
-		int[] otherIndexList = sg.getOtherIndexArray(srcSG.ID - 1);
+		LPN srcLpn = srcSG.getLpn();
+		LPN lpn = sg.getLpn();
+		int[] thisIndexList = lpn.getThisIndexArray(srcLpn.ID - 1);
+		int[] otherIndexList = lpn.getOtherIndexArray(srcLpn.ID - 1);
 		
 		if(newConstraintSet.size() > 0){
-			for(Object obj : sg.getStateSet().toArray()){
-				State currentState = (State) obj;
-
+			for(State currentState : sg.getStateSet()){
 				for(Constraint c : newConstraintSet){
 					if(compatible(currentState, c, thisIndexList, otherIndexList)){
 						newTransitions += createNewState(sg, currentState, c);
@@ -2020,7 +2806,7 @@ public class CompositionalAnalysis {
 		newConstraintSet.clear();
 		oldConstraintSet.clear();
 		
-		LPN srcLpn = (LPN) srcSG;
+		LPN srcLpn = srcSG.getLpn();
 		for(Constraint newConstraint : sg.getNewConstraintSet()){
 			if(newConstraint.getLpn() != srcLpn) continue;
 	    	
@@ -2068,19 +2854,20 @@ public class CompositionalAnalysis {
 		List<VarNode> variableList = c.getVariableList();
 		List<Integer> valueList = c.getValueList();
 		
+		int[] compatibleVector = compatibleState.getVector();
 		for(int i = 0; i < variableList.size(); i++){
-			int index = variableList.get(i).getIndex(compatibleState);
+			int index = variableList.get(i).getIndex(compatibleVector);
 			newVector[index] = valueList.get(i);
 		}
 		
-		State nextState = sg.addReachable(newState);
-		if(nextState == null){
-			nextState = newState;
-            
+		State nextState = sg.addState(newState);
+		if(nextState == newState){
 			int result = 0;
 			
+			sg.addFrontierState(nextState);
+
 			if(Options.getStickySemantics()){
-				result = sg.constrStickyFindSG(nextState, sg.getEnabled(compatibleState));
+//				result = sg.constrStickyFindSG(nextState, sg.getEnabled(compatibleState));
 			}
 			else{
 				result = sg.constrFindSG(nextState);
@@ -2091,11 +2878,8 @@ public class CompositionalAnalysis {
 			newTransitions += result;
 		}
 
-//    	StateTran stTran = new StateTran(compatibleState, constraintTran, state);
-
 		LPNTran constraintTran = c.getLpnTransition();
-		constraintTran.addStateTran(compatibleState, nextState);
-    	sg.lpnTransitionMap.get(compatibleState).add(constraintTran);
+		sg.addStateTran(compatibleState, constraintTran, nextState);
     	newTransitions++;
 		
 		return newTransitions;

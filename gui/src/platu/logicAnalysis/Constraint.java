@@ -8,7 +8,7 @@ import platu.expression.VarNode;
 import platu.lpn.DualHashMap;
 import platu.lpn.LPN;
 import platu.lpn.LPNTran;
-import platu.stategraph.state.State;
+import platu.stategraph.State;
 
 public class Constraint{
 	private LPN lpn;

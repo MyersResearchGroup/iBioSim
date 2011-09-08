@@ -5,15 +5,15 @@ import platu.project.*;
 import platu.MDD.MDT;
 import platu.MDD.Mdd;
 import platu.MDD.mddNode;
+import platu.common.Common;
+import platu.common.IndexObjMap;
 import platu.logicAnalysis.Analysis;
-import platu.lpn.LPN;
 import platu.lpn.LPNTran;
 import platu.lpn.LPNTranRelation;
 import platu.lpn.LpnTranList;
-import platu.IndexObjMap;
+import platu.main.Options;
 import platu.stategraph.*;
 
-import platu.stategraph.state.State;
 import platu.por1.*;
 
 public class Analysis {
@@ -21,20 +21,30 @@ public class Analysis {
 	private LinkedList<LPNTran> traceCex;
 	protected Mdd mddMgr = null;
 
+	
+	static
+	{
+		System.loadLibrary("ArrayImplementation");
+	}
+
+	private static native boolean arrayLookup(int[] array);
+	
+	
 	public Analysis(StateGraph[] lpnList, State[] initStateArray, LPNTranRelation lpnTranRelation, String method) {
 		traceCex = new LinkedList<LPNTran>();
 		mddMgr = new Mdd(lpnList.length);
-		
-		if (method == "dfs")
-			this.search_dfs(lpnList, initStateArray);
-		else if (method == "dfs_mdd_1")
-			this.search_dfs_mdd_1(lpnList, initStateArray);
-		else if (method == "dfs_mdd_2")
-			this.search_dfs_mdd_2(lpnList, initStateArray);
-		else if (method == "bfs_mdd")
-			this.search_bfs_mdd(lpnList, initStateArray);
-		else if (method == "dfs_por")
-			this.search_dfs_por(lpnList, initStateArray, lpnTranRelation, "state");
+
+		if (method.equals("dfs")) {
+			if (Options.getPOR().equals("off")) {
+				this.search_dfs(lpnList, initStateArray);
+				//this.search_dfs_mdd_1(lpnList, initStateArray);
+				//this.search_dfs_mdd_2(lpnList, initStateArray);
+			}
+			else
+				this.search_dfs_por(lpnList, initStateArray, lpnTranRelation, "state");
+		}
+		else if (method.equals("bfs")==true)
+			this.search_bfs(lpnList, initStateArray);
 		else if (method == "dfs_noDisabling")
 			//this.search_dfs_noDisabling(lpnList, initStateArray);
 			this.search_dfs_noDisabling_fireOrder(lpnList, initStateArray);
@@ -51,9 +61,9 @@ public class Analysis {
 	public void search_recursive(final StateGraph[] lpnList,
 			final State[] curPrjState,
 			final ArrayList<LinkedList<LPNTran>> enabledList,
-			HashSet<prjState> stateTrace) {		
+			HashSet<PrjState> stateTrace) {		
 		int lpnCnt = lpnList.length;
-		HashSet<prjState> prjStateSet = new HashSet<prjState>();
+		HashSet<PrjState> prjStateSet = new HashSet<PrjState>();
 
 		stack_depth++;
 		if (stack_depth > max_stack_depth)
@@ -75,13 +85,12 @@ public class Analysis {
 				// while(curEnabledSet.size() != 0) {
 				// LPNTran firedTran = curEnabledSet.removeFirst();
 
-				State[] nextStateArray = firedTran.fire(lpnList, curPrjState,
-						index);
+				State[] nextStateArray = firedTran.fire(lpnList, curPrjState);
 
 				// Add nextPrjState into prjStateSet
 				// If nextPrjState has been traversed before, skip to the next
 				// enabled transition.
-				prjState nextPrjState = new prjState(nextStateArray);
+				PrjState nextPrjState = new PrjState(nextStateArray);
 
 				if (stateTrace.contains(nextPrjState) == true)
 					;// System.out.println("found a cycle");
@@ -95,9 +104,8 @@ public class Analysis {
 				ArrayList<LinkedList<LPNTran>> nextEnabledList = new ArrayList<LinkedList<LPNTran>>();
 				for (int i = 0; i < lpnCnt; i++) {
 					if (curPrjState[i] != nextStateArray[i]) {
-						LPN Lpn_tmp = lpnList[i];
-						nextEnabledList.add(i, Lpn_tmp.getEnabled(
-								nextStateArray[i]));// firedTran,
+						StateGraph Lpn_tmp = lpnList[i];
+						nextEnabledList.add(i, Lpn_tmp.getEnabled(nextStateArray[i]));// firedTran,
 																		// enabledList.get(i),
 																		// false));
 					} else {
@@ -120,54 +128,61 @@ public class Analysis {
 	 * @param curLocalStateArray
 	 * @param enabledArray
 	 */
+	
 	public Stack<State[]> search_dfs(final StateGraph[] lpnList, final State[] initStateArray) {
-		long peakUsedMem = 0;
-		long peakTotalMem = 0;
+		System.out.println("---> calling function search_dfs");
+				
+		double peakUsedMem = 0;
+		double peakTotalMem = 0;
 		boolean failure = false;
-		boolean allowDisabling = true;
 		int tranFiringCnt = 0;
+		int totalStates = 1;
 		int arraySize = lpnList.length;
-
-		Stack<State[]> stateStack = new Stack<State[]>();
+		
+		//Stack<State[]> stateStack = new Stack<State[]>();
+		HashSet<PrjState> stateStack = new HashSet<PrjState>();
 		Stack<LinkedList<LPNTran>> lpnTranStack = new Stack<LinkedList<LPNTran>>();
 		Stack<Integer> curIndexStack = new Stack<Integer>();
 
-		stateStack.push(initStateArray);
+		HashSet<PrjState> prjStateSet = new HashSet<PrjState>();
+		
+		PrjState initPrjState = new PrjState(initStateArray);
+		prjStateSet.add(initPrjState);
+		
+		PrjState stateStackTop = initPrjState;
+		stateStack.add(stateStackTop);
 		LpnTranList initEnabled = lpnList[0].getEnabled(initStateArray[0]);
 		lpnTranStack.push(initEnabled.clone());
 		curIndexStack.push(0);
 
-		HashSet<Object> prjStateSet = new HashSet<Object>();
+		main_while_loop: while (failure == false && stateStack.size() != 0) {
 
-		main_while_loop: while (failure == false && stateStack.empty() == false) {
 			long curTotalMem = Runtime.getRuntime().totalMemory();
-			long curUsedMem = Runtime.getRuntime().totalMemory()
-					- Runtime.getRuntime().freeMemory();
+			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
 			if (curTotalMem > peakTotalMem)
 				peakTotalMem = curTotalMem;
 
 			if (curUsedMem > peakUsedMem)
 				peakUsedMem = curUsedMem;
-			
+
 			if (stateStack.size() > max_stack_depth)
 				max_stack_depth = stateStack.size();
-
+			
 			iterations++;
-			if(iterations>2)break;
-			if (iterations % 100000 == 0)
+			if (iterations % 100000 == 0) {
 				System.out.println("---> #iteration " + iterations
 						+ "> # LPN transition firings: " + tranFiringCnt
-						+ ", # of prjStates found: " + prjStateSet.size()
-						+ ", max_stack_depth: " + max_stack_depth
-						+ ", total MDD nodes: " + mddMgr.nodeCnt()
+						+ ", # of prjStates found: " + totalStates
+						+ ", stack_depth: " + stateStack.size()
 						+ " used memory: " + (float) curUsedMem / 1000000
 						+ " free memory: "
 						+ (float) Runtime.getRuntime().freeMemory() / 1000000);
+			}
 
+			State[] curStateArray = stateStackTop.toStateArray(); //stateStack.peek();
 			int curIndex = curIndexStack.peek();
 			LinkedList<LPNTran> curEnabled = lpnTranStack.peek();
-			State[] curStateArray = stateStack.peek();
 
 			// If all enabled transitions of the current LPN are considered,
 			// then consider the next LPN
@@ -179,35 +194,32 @@ public class Analysis {
 				curIndexStack.pop();
 
 				curIndex++;
-				while (true) {
-					if (curIndex == arraySize)
-						break;
-					curEnabled = lpnList[curIndex].getEnabled(
-							curStateArray[curIndex]).clone();
+				while (curIndex < arraySize) {
+					curEnabled = (lpnList[curIndex].getEnabled(curStateArray[curIndex])).clone();
 					if (curEnabled.size() > 0) {
 						lpnTranStack.push(curEnabled);
 						curIndexStack.push(curIndex);
 						break;
-					} else
-						curIndex++;
+					} 					
+					curIndex++;
 				}
 			}
-
 			if (curIndex == arraySize) {
-				stateStack.pop();
+				prjStateSet.add(stateStackTop);
+				stateStack.remove(stateStackTop);
+				stateStackTop = stateStackTop.getFather();
 				continue;
 			}
 
-			LPNTran firedTran = curEnabled.removeFirst();
-			System.out.println("firedTran"+firedTran.getFullLabel());
-			State[] nextStateArray = firedTran.fire(lpnList, curStateArray, curIndex);
+			LPNTran firedTran = curEnabled.removeLast();			
+			State[] nextStateArray = firedTran.fire(lpnList, curStateArray);
 			tranFiringCnt++;
 
 			// Check if the firedTran causes disabling error or deadlock.
 			LinkedList<LPNTran>[] curEnabledArray = new LinkedList[arraySize];
 			LinkedList<LPNTran>[] nextEnabledArray = new LinkedList[arraySize];
 			for (int i = 0; i < arraySize; i++) {
-				LPN lpn_tmp = lpnList[i];
+				StateGraph lpn_tmp = lpnList[i];
 				LinkedList<LPNTran> enabledList = lpn_tmp.getEnabled(curStateArray[i]);
 				curEnabledArray[i] = enabledList;
 				enabledList = lpn_tmp.getEnabled(nextStateArray[i]);
@@ -216,83 +228,46 @@ public class Analysis {
 				LPNTran disabledTran = firedTran.disablingError(
 						curEnabledArray[i], nextEnabledArray[i]);
 				if (disabledTran != null) {
-					System.out.println("---> Disabling Error: "
+					System.err.println("Disabling Error: "
 							+ disabledTran.getFullLabel() + " is disabled by "
 							+ firedTran.getFullLabel());
-
-					System.out.println("Current state:");
-					for (int ii = 0; ii < arraySize; ii++) {
-						System.out.println("module " + lpnList[ii].getLabel());
-						System.out.println(curStateArray[ii]);
-						System.out.println("Enabled set: "
-								+ curEnabledArray[ii]);
-					}
-
-					System.out.println("======================\nNext state:");
-					for (int ii = 0; ii < arraySize; ii++) {
-						System.out.println("module " + lpnList[ii].getLabel());
-						System.out.println(nextStateArray[ii]);
-						System.out.println("Enabled set: "
-								+ nextEnabledArray[ii]);
-					}
-					System.out.println();
-
 					failure = true;
 					break main_while_loop;
 				}
 			}
 
-			if (this.deadLock(lpnList, nextStateArray) == true) {
-				System.out.println("---> Deadlock.");
-				System.out.println("Deadlock state:");
-				for (int ii = 0; ii < arraySize; ii++) {
-					System.out.println("module " + lpnList[ii].getLabel());
-					System.out.println(nextStateArray[ii]);
-					System.out.println("Enabled set: " + nextEnabledArray[ii]);
-				}
-
+			if (Analysis.deadLock(lpnList, nextStateArray) == true) {
+				System.out.println("*** Verification failed: deadlock.");
 				failure = true;
 				break main_while_loop;
 			}
 
-			for (int ii = 0; ii < arraySize; ii++) {
-				System.out.println("module " + lpnList[ii].getLabel());
-				System.out.println(curStateArray[ii]);
-				System.out.println("Enabled set: "
-						+ curEnabledArray[ii]);
+			PrjState nextPrjState = new PrjState(nextStateArray);
+			Boolean	existingState = prjStateSet.contains(nextPrjState) || stateStack.contains(nextPrjState);
+			
+			
+			if (existingState == false) {
+				//prjStateSet.add(nextPrjState);
+				stateStackTop.setChild(nextPrjState);
+				nextPrjState.setFather(stateStackTop);
+				stateStackTop = nextPrjState;
+				stateStack.add(stateStackTop);
+				lpnTranStack.push((LpnTranList) nextEnabledArray[0].clone());
+				curIndexStack.push(0);
+				totalStates++;
 			}
+		}
 
-			System.out.println("======================\nNext state:");
-			for (int ii = 0; ii < arraySize; ii++) {
-				System.out.println("module " + lpnList[ii].getLabel());
-				System.out.println(nextStateArray[ii]);
-				System.out.println("Enabled set: "
-						+ nextEnabledArray[ii]);
-			}
-			System.out.println();
-			// Add nextPrjState into prjStateSet
-			// If nextPrjState has been traversed before, skip to the next
-			// enabled transition.
-			prjState nextPrjState = new prjState(nextStateArray);
-			if (prjStateSet.add(nextPrjState) == false)
-				continue;
+		double totalStateCnt = prjStateSet.size();
+		
+		System.out.println("---> final numbers: # LPN transition firings: "	+ tranFiringCnt 
+				+ ", # of prjStates found: " + totalStateCnt 
+				+ ", max_stack_depth: " + max_stack_depth 
+				+ ", peak total memory: " + peakTotalMem / 1000000 + " MB"
+				+ ", peak used memory: " + peakUsedMem / 1000000 + " MB");
 
-			stateStack.push(nextStateArray);
-			lpnTranStack.push((LpnTranList) (nextEnabledArray[0].clone()));
-			curIndexStack.push(0);
-		}// END while (stateStack.empty() == false)
-
-		// graph.write(String.format("graph_%s_%s-tran_%s-state.gv",mode,tranFiringCnt,
-		// prjStateSet.size()));
-		System.out.println("SUMMARY: # LPN transition firings: "
-				+ tranFiringCnt + ", # of prjStates found: "
-				+ prjStateSet.size() + ", max_stack_depth: " + max_stack_depth);
-
-		if (failure == true)
-			return stateStack;
 		return null;
 	}
-
 
 	
 	/**
@@ -319,8 +294,8 @@ public class Analysis {
 		int arraySize = lpnList.length;
 
 		HashSet<PrjLpnState> globalStateTbl = new HashSet<PrjLpnState>();
-		IndexObjMap[]  lpnStateCache = new IndexObjMap[arraySize];
-		//HashMap<LpnState, LpnState>[] lpnStateCache = new HashMap[arraySize];
+		IndexObjMap<LpnState>[]  lpnStateCache = new IndexObjMap[arraySize];
+		//HashMap<LpnState, LpnState>[] lpnStateCache1 = new HashMap[arraySize];
 
 		Stack<LpnState[]> stateStack = new Stack<LpnState[]>();
 		Stack<LpnTranList[]> lpnTranStack = new Stack<LpnTranList[]>();
@@ -331,7 +306,7 @@ public class Analysis {
 		LpnState[] initLpnStateArray = new LpnState[arraySize];
 		for (int i = 0; i < arraySize; i++) 
 		{
-			lpnStateCache[i] = new IndexObjMap();
+			lpnStateCache[i] = new IndexObjMap<LpnState>();
 			LinkedList<LPNTran> enabledTrans = lpnList[i].getEnabled(initStateArray[i]);
 			HashSet<LPNTran> enabledSet = new HashSet<LPNTran>();
 			if(!enabledTrans.isEmpty())
@@ -341,7 +316,7 @@ public class Analysis {
 					initEnabled.add(tran);
 				}
 			}
-			LpnState curLpnState = new LpnState(lpnList[i], initStateArray[i], enabledSet);
+			LpnState curLpnState = new LpnState(lpnList[i].getLpn(), initStateArray[i], enabledSet);
 			lpnStateCache[i].add(curLpnState);
 			initLpnStateArray[i] = curLpnState;
 		}
@@ -408,7 +383,7 @@ public class Analysis {
 			for( int i = 0; i < arraySize; i++)
 				curStateArray[i] = curLpnStateArray[i].getState();
 			
-			State[] nextStateArray = firedTran.fire(lpnList, curStateArray, firedTran.getLpn().getIndex());			
+			State[] nextStateArray = firedTran.fire(lpnList, curStateArray);			
 
 			// Check if the firedTran causes disabling error or deadlock.
 			HashSet<LPNTran>[] extendedNextEnabledArray = new HashSet[arraySize];
@@ -478,7 +453,7 @@ public class Analysis {
 				for(LPNTran tran : extendedNextEnabledArray[i]) {
 					lpnEnabledSet.add(tran);
 				}
-				LpnState tmp = new LpnState(lpnList[i], nextStateArray[i], lpnEnabledSet);
+				LpnState tmp = new LpnState(lpnList[i].getLpn(), nextStateArray[i], lpnEnabledSet);
 				LpnState tmpCached = (LpnState)(lpnStateCache[i].add(tmp));
 				nextLpnStateArray[i] = tmpCached; 
 			}
@@ -537,7 +512,7 @@ public class Analysis {
 		
 		System.out.println("Modules' local states: ");
 		for (int i = 0; i < arraySize; i++) {
-			System.out.println("module " + lpnList[i].getLabel() + ": "
+			System.out.println("module " + lpnList[i].getLpn().getLabel() + ": "
 					+ lpnList[i].reachSize());
 			
 		}
@@ -559,32 +534,38 @@ public class Analysis {
 	 * @return a linked list of a sequence of LPN transitions leading to the
 	 *         failure if it is not empty.
 	 */
-	public Stack<State[]> search_dfs_mdd_1(final StateGraph[] lpnList,
-			final State[] initStateArray) {
+	public Stack<State[]> search_dfs_mdd_1(final StateGraph[] lpnList, final State[] initStateArray) {
+		System.out.println("---> calling function search_dfs_mdd_1");
+				
 		long peakUsedMem = 0;
 		long peakTotalMem = 0;
+		long peakMddNodeCnt = 0;
 		int memUpBound = 500; // Set an upper bound of memory in MB usage to
 								// trigger MDD compression.
-
+		boolean compressed = false;
 		boolean failure = false;
 		int tranFiringCnt = 0;
 		int totalStates = 1;
 		int arraySize = lpnList.length;
+		int newStateCnt = 0;
 		
 		Stack<State[]> stateStack = new Stack<State[]>();
 		Stack<LinkedList<LPNTran>> lpnTranStack = new Stack<LinkedList<LPNTran>>();
 		Stack<Integer> curIndexStack = new Stack<Integer>();
 
-		boolean compressed = false;
 		mddNode reachAll = null;
 		mddNode reach = mddMgr.newNode();
-		mddMgr.add(reach, initStateArray, compressed);
-
+		
+		int[] localIdxArray = Analysis.getLocalStateIdxArray(lpnList, initStateArray, true);
+		mddMgr.add(reach, localIdxArray, compressed);
+		
 		stateStack.push(initStateArray);
 		LpnTranList initEnabled = lpnList[0].getEnabled(initStateArray[0]);
 		lpnTranStack.push(initEnabled.clone());
 		curIndexStack.push(0);
-
+		
+		int numMddCompression = 0;
+		
 		main_while_loop: while (failure == false && stateStack.empty() == false) {
 
 			long curTotalMem = Runtime.getRuntime().totalMemory();
@@ -601,29 +582,36 @@ public class Analysis {
 
 			iterations++;
 			if (iterations % 100000 == 0) {
+				long curMddNodeCnt = mddMgr.nodeCnt();
+				peakMddNodeCnt = peakMddNodeCnt > curMddNodeCnt ? peakMddNodeCnt : curMddNodeCnt;
+				
 				System.out.println("---> #iteration " + iterations
 						+ "> # LPN transition firings: " + tranFiringCnt
 						+ ", # of prjStates found: " + totalStates
-						+ ", max_stack_depth: " + max_stack_depth
-						+ ", total MDD nodes: " + mddMgr.nodeCnt()
+						+ ", stack depth: " + stateStack.size()
+						+ ", total MDD nodes: " + curMddNodeCnt
 						+ " used memory: " + (float) curUsedMem / 1000000
 						+ " free memory: "
 						+ (float) Runtime.getRuntime().freeMemory() / 1000000);
 
-				if (curUsedMem >= memUpBound * 1000000) {
-					mddMgr.compress(reach);
-					if (reachAll == null)
-						reachAll = reach;
-					else {
-						mddNode newReachAll = mddMgr.union(reachAll, reach);
-						if (newReachAll != reachAll) {
-							mddMgr.remove(reachAll);
-							reachAll = newReachAll;
+					if (curUsedMem >= memUpBound * 1000000) {
+						mddMgr.compress(reach);
+						numMddCompression++;
+						if (reachAll == null)
+							reachAll = reach;
+						else {
+							mddNode newReachAll = mddMgr.union(reachAll, reach);
+							if (newReachAll != reachAll) {
+								mddMgr.remove(reachAll);
+								reachAll = newReachAll;
+							}
 						}
+						mddMgr.remove(reach);
+						reach = mddMgr.newNode();
+
+						if(memUpBound < 1500)
+							memUpBound *= numMddCompression;
 					}
-					mddMgr.remove(reach);
-					reach = mddMgr.newNode();
-				}
 			}
 
 			State[] curStateArray = stateStack.peek();
@@ -640,12 +628,10 @@ public class Analysis {
 				curIndexStack.pop();
 
 				curIndex++;
-				while (true) {
-					if (curIndex == arraySize)
-						break;
-					curEnabled = (lpnList[curIndex]
-							.getEnabled(curStateArray[curIndex])).clone();
-					if (curEnabled.size() > 0) {
+				while (curIndex < arraySize) {
+					LpnTranList enabledCached = (lpnList[curIndex].getEnabled(curStateArray[curIndex]));
+					if (enabledCached.size() > 0) {
+						curEnabled = enabledCached.clone();
 						lpnTranStack.push(curEnabled);
 						curIndexStack.push(curIndex);
 						break;
@@ -660,17 +646,15 @@ public class Analysis {
 			}
 
 			LPNTran firedTran = curEnabled.removeLast();
-			State[] nextStateArray = firedTran.fire(lpnList, curStateArray,
-					curIndex);
+			State[] nextStateArray = firedTran.fire(lpnList, curStateArray);
 			tranFiringCnt++;
 
 			// Check if the firedTran causes disabling error or deadlock.
 			LinkedList<LPNTran>[] curEnabledArray = new LinkedList[arraySize];
 			LinkedList<LPNTran>[] nextEnabledArray = new LinkedList[arraySize];
 			for (int i = 0; i < arraySize; i++) {
-				LPN lpn_tmp = lpnList[i];
-				LinkedList<LPNTran> enabledList = lpn_tmp
-						.getEnabled(curStateArray[i]);
+				StateGraph lpn_tmp = lpnList[i];
+				LinkedList<LPNTran> enabledList = lpn_tmp.getEnabled(curStateArray[i]);
 				curEnabledArray[i] = enabledList;
 				enabledList = lpn_tmp.getEnabled(nextStateArray[i]);
 				nextEnabledArray[i] = enabledList;
@@ -692,15 +676,21 @@ public class Analysis {
 				break main_while_loop;
 			}
 
-			Boolean existingState = false;
-			if (reachAll != null
-					&& mddMgr.contains(reachAll, nextStateArray) == true)
-				existingState = true;
-			else if (mddMgr.contains(reach, nextStateArray) == true)
-				existingState = true;
+			/*
+			 * Check if the local indices of nextStateArray already exist.
+			 * if not, add it into reachable set, and push it onto stack.
+			 */
+			localIdxArray = Analysis.getLocalStateIdxArray(lpnList, nextStateArray, true);
 
+			Boolean existingState = false;
+			if (reachAll != null && mddMgr.contains(reachAll, localIdxArray) == true)
+				existingState = true;
+			else if (mddMgr.contains(reach, localIdxArray) == true)
+				existingState = true;
+			
 			if (existingState == false) {
-				mddMgr.add(reach, nextStateArray, compressed);
+				mddMgr.add(reach, localIdxArray, compressed);
+				newStateCnt++;
 				stateStack.push(nextStateArray);
 				lpnTranStack.push((LpnTranList) nextEnabledArray[0].clone());
 				curIndexStack.push(0);
@@ -708,10 +698,15 @@ public class Analysis {
 			}
 		}
 
-		System.out.println("---> final numbers: # LPN transition firings: "
-				+ tranFiringCnt + ", # of prjStates found: "
-				+ mddMgr.numberOfStates(reach) + ", max_stack_depth: "
-				+ max_stack_depth + ", total MDD nodes: " + mddMgr.nodeCnt());
+		double totalStateCnt = mddMgr.numberOfStates(reach);
+		
+		System.out.println("---> run statistics: \n"
+				+ "# LPN transition firings: "	+ tranFiringCnt + "\n" 
+				+ "# of prjStates found: " + totalStateCnt + "\n" 
+				+ "max_stack_depth: " + max_stack_depth + "\n" 
+				+ "peak MDD nodes: " + peakMddNodeCnt + "\n"
+				+ "peak used memory: " + peakUsedMem / 1000000 + " MB\n"
+				+ "peak total memory: " + peakTotalMem / 1000000 + " MB\n");
 
 		return null;
 	}
@@ -731,30 +726,34 @@ public class Analysis {
 	 *         failure if it is not empty.
 	 */
 	public Stack<State[]> search_dfs_mdd_2(final StateGraph[] lpnList, final State[] initStateArray) {
-		LinkedList<State[]> traceCex = new LinkedList<State[]>();
+		System.out.println("---> calling function search_dfs_mdd_2");
+
 		int tranFiringCnt = 0;
 		int totalStates = 0;
 		int arraySize = lpnList.length;
 		long peakUsedMem = 0;
 		long peakTotalMem = 0;
+		long peakMddNodeCnt = 0;
 		int memUpBound = 1000; // Set an upper bound of memory in MB usage to
 								// trigger MDD compression.
 		boolean failure = false;
 
 		MDT state2Explore = new MDT(arraySize);
 		state2Explore.push(initStateArray);
+		totalStates++;
+		long peakState2Explore = 0;
 
+		Stack<Integer> searchDepth = new Stack<Integer>();
+		searchDepth.push(1);
+		
 		boolean compressed = false;
 		mddNode reachAll = null;
 		mddNode reach = mddMgr.newNode();
-		mddMgr.add(reach, initStateArray, compressed);
-		totalStates++;
 
 		main_while_loop: 
 		while (failure == false	&& state2Explore.empty() == false) {
 			long curTotalMem = Runtime.getRuntime().totalMemory();
-			long curUsedMem = Runtime.getRuntime().totalMemory()
-					- Runtime.getRuntime().freeMemory();
+			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
 			if (curTotalMem > peakTotalMem)
 				peakTotalMem = curTotalMem;
@@ -762,16 +761,19 @@ public class Analysis {
 			if (curUsedMem > peakUsedMem)
 				peakUsedMem = curUsedMem;
 
-			// if (stateStack.size() > max_stack_depth)
-			// max_stack_depth = stateStack.size();
-
 			iterations++;
 			if (iterations % 100000 == 0) {
+				int mddNodeCnt = mddMgr.nodeCnt();
+				peakMddNodeCnt = peakMddNodeCnt > mddNodeCnt ? peakMddNodeCnt : mddNodeCnt;
+				int state2ExploreSize = state2Explore.size();
+				peakState2Explore = peakState2Explore > state2ExploreSize ? peakState2Explore : state2ExploreSize;
+				
 				System.out.println("---> #iteration " + iterations
 						+ "> # LPN transition firings: " + tranFiringCnt
 						+ ", # of prjStates found: " + totalStates
-						+ ", max_stack_depth: " + max_stack_depth
-						+ ", total MDD nodes: " + mddMgr.nodeCnt()
+						+ ", # states to explore: " + state2ExploreSize
+						+ ", # MDT nodes: " + state2Explore.nodeCnt()
+						+ ", total MDD nodes: " + mddNodeCnt
 						+ " used memory: " + (float) curUsedMem / 1000000
 						+ " free memory: "
 						+ (float) Runtime.getRuntime().freeMemory() / 1000000);
@@ -791,35 +793,39 @@ public class Analysis {
 					reach = mddMgr.newNode();
 				}
 			}
-
+			
 			State[] curStateArray = state2Explore.pop();
 			State[] nextStateArray = null;
-
+			
+			int states2ExploreCurLevel = searchDepth.pop();
+			if(states2ExploreCurLevel > 1) 
+				searchDepth.push(states2ExploreCurLevel-1);
+			
+			int[] localIdxArray = Analysis.getLocalStateIdxArray(lpnList, curStateArray, false);
+			mddMgr.add(reach, localIdxArray, compressed);
+					
+			int nextStates2Explore = 0;
 			for (int index = arraySize - 1; index >= 0; index--) {
-				LPN curLpn = lpnList[index];
+				StateGraph curLpn = lpnList[index];
 				State curState = curStateArray[index];
 				LinkedList<LPNTran> curEnabledSet = curLpn.getEnabled(curState);
 
 				LpnTranList curEnabled = (LpnTranList) curEnabledSet.clone();
 				while (curEnabled.size() > 0) {
 					LPNTran firedTran = curEnabled.removeLast();
-					nextStateArray = firedTran.fire(lpnList, curStateArray, index);
+					nextStateArray = firedTran.fire(lpnList, curStateArray);
 					tranFiringCnt++;
 
 					for (int i = 0; i < arraySize; i++) {
-						LPN lpn_tmp = lpnList[i];
+						StateGraph lpn_tmp = lpnList[i];
 						if (curStateArray[i] == nextStateArray[i])
 							continue;
 
-						LinkedList<LPNTran> curEnabled_l = lpn_tmp
-								.getEnabled(curStateArray[i]);
-						LinkedList<LPNTran> nextEnabled = lpn_tmp
-								.getEnabled(nextStateArray[i]);
-						LPNTran disabledTran = firedTran.disablingError(
-								curEnabled_l, nextEnabled);
+						LinkedList<LPNTran> curEnabled_l = lpn_tmp.getEnabled(curStateArray[i]);
+						LinkedList<LPNTran> nextEnabled = lpn_tmp.getEnabled(nextStateArray[i]);
+						LPNTran disabledTran = firedTran.disablingError(curEnabled_l, nextEnabled);
 						if (disabledTran != null) {
-							System.err
-									.println("Verification failed: disabling error: "
+							System.err.println("Verification failed: disabling error: "
 											+ disabledTran.getFullLabel()
 											+ " disabled by "
 											+ firedTran.getFullLabel() + "!!!");
@@ -834,31 +840,184 @@ public class Analysis {
 						break main_while_loop;
 					}
 
+					/*
+					 * Check if the local indices of nextStateArray already exist.
+					 */
+					localIdxArray = Analysis.getLocalStateIdxArray(lpnList, nextStateArray, false);
+
 					Boolean existingState = false;
-					if (reachAll != null && mddMgr.contains(reachAll, nextStateArray) == true)
+					if (reachAll != null && mddMgr.contains(reachAll, localIdxArray) == true)
 						existingState = true;
-					else if (mddMgr.contains(reach, nextStateArray) == true)
+					else if (mddMgr.contains(reach, localIdxArray) == true)
+						existingState = true;
+					else if(state2Explore.contains(nextStateArray)==true)
 						existingState = true;
 
 					if (existingState == false) {
 						totalStates++;
-						mddMgr.add(reach, nextStateArray, compressed);
+						//mddMgr.add(reach, localIdxArray, compressed);
 						state2Explore.push(nextStateArray);
+						nextStates2Explore++;
 					}
 				}
 			}
+			if(nextStates2Explore > 0)
+				searchDepth.push(nextStates2Explore);
 		}
 
-		endoffunction: System.out
-				.println("---> final numbers: # LPN transition firings: "
-						+ tranFiringCnt + ", # of prjStates found: "
-						+ totalStates + ", max_stack_depth: " + max_stack_depth
-						+ ", total MDD nodes: " + mddMgr.nodeCnt());
+		endoffunction: System.out.println("-------------------------------------\n"
+						+ "---> run statistics: \n"
+						+ " # Depth of search (Length of Cex): " + searchDepth.size() + "\n"
+						+ " # LPN transition firings: " + (double)tranFiringCnt/1000000 + " M\n"
+						+ " # of prjStates found: " + (double)totalStates / 1000000 + " M\n"
+						+ " peak states to explore : " + (double) peakState2Explore / 1000000 + " M\n"
+						+ " peak MDD nodes: " + peakMddNodeCnt + "\n"
+						+ " peak used memory: " + peakUsedMem / 1000000 + " MB\n"
+						+ " peak total memory: " + peakTotalMem /1000000 + " MB\n"
+						+ "_____________________________________");
 
 		return null;
 	}
 
 
+	public LinkedList<LPNTran> search_bfs(final StateGraph[] sgList, final State[] initStateArray) {
+		System.out.println("---> starting search_bfs");
+		
+		long peakUsedMem = 0;
+		long peakTotalMem = 0;
+		long peakMddNodeCnt = 0;
+		int memUpBound = 1000; 	// Set an upper bound of memory in MB usage to
+								// trigger MDD compression.
+		
+		int arraySize = sgList.length;
+
+		for (int i = 0; i < arraySize; i++)
+			sgList[i].addState(initStateArray[i]);
+		
+		mddNode reachSet = null;
+		mddNode reach = mddMgr.newNode();
+		MDT frontier = new MDT(arraySize);
+		MDT image = new MDT(arraySize);
+
+		frontier.push(initStateArray);
+
+		State[] curStateArray = null;
+		int tranFiringCnt = 0;
+		int totalStates = 0;
+		int imageSize = 0;
+		
+		boolean verifyError = false;
+
+		bfsWhileLoop: while (true) {
+			if (verifyError == true)
+				break;
+
+			long curTotalMem = Runtime.getRuntime().totalMemory();
+			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
+
+			if (curTotalMem > peakTotalMem)
+				peakTotalMem = curTotalMem;
+
+			if (curUsedMem > peakUsedMem)
+				peakUsedMem = curUsedMem;
+
+			long curMddNodeCnt = mddMgr.nodeCnt();
+			peakMddNodeCnt = peakMddNodeCnt > curMddNodeCnt ? peakMddNodeCnt : curMddNodeCnt;
+			
+				iterations++;
+				System.out.println("iteration " + iterations
+						+ "> # LPN transition firings: " + tranFiringCnt 
+						+ ", # of prjStates found: "	+ totalStates
+						+ ", total MDD nodes: " + curMddNodeCnt
+						+ " used memory: " + (float) curUsedMem / 1000000
+						+ " free memory: "
+						+ (float) Runtime.getRuntime().freeMemory() / 1000000);
+				
+				if (curUsedMem >= memUpBound * 1000000) {
+					mddMgr.compress(reach);
+					if (reachSet == null)
+						reachSet = reach;
+					else {
+						mddNode newReachSet = mddMgr.union(reachSet, reach);
+						if (newReachSet != reachSet) {
+							mddMgr.remove(reachSet);
+							reachSet = newReachSet;
+						}
+					}
+					mddMgr.remove(reach);
+					reach = mddMgr.newNode();
+				}
+			
+			while(frontier.empty() == false) {
+				boolean deadlock = true;
+				
+				curStateArray = frontier.pop();
+				int[] localIdxArray = Analysis.getLocalStateIdxArray(sgList, curStateArray, false);
+				mddMgr.add(reach, localIdxArray, false);
+				totalStates++;
+				
+				for (int i = 0; i < arraySize; i++) {
+					LinkedList<LPNTran> curEnabled = sgList[i].getEnabled(curStateArray[i]);
+					if (curEnabled.size() > 0)
+						deadlock = false;
+					
+					for (LPNTran firedTran : curEnabled) {
+						State[] nextStateArray = firedTran.fire(sgList, curStateArray);
+						tranFiringCnt++;
+				
+						/*
+						 * Check if any transitions can be disabled by fireTran.
+						 */
+						LinkedList<LPNTran> nextEnabled = sgList[i].getEnabled(nextStateArray[i]);
+						LPNTran disabledTran = firedTran.disablingError(curEnabled, nextEnabled);
+						if (disabledTran != null) {
+							System.err.println("*** Verification failed: disabling error: "
+											+ disabledTran.getFullLabel()
+											+ " disabled by "
+											+ firedTran.getFullLabel() + "!!!");
+							verifyError = true;
+							break bfsWhileLoop;
+						}
+						
+						localIdxArray = Analysis.getLocalStateIdxArray(sgList, nextStateArray, false);
+						if (mddMgr.contains(reachSet, localIdxArray) == false && mddMgr.contains(reach, localIdxArray) == false && frontier.contains(nextStateArray) == false) {
+							if(image.contains(nextStateArray)==false) {
+							image.push(nextStateArray);
+							imageSize++;
+							}
+						}
+					}
+				}
+
+				
+				
+				/*
+				 * If curStateArray deadlocks (no enabled transitions), terminate.
+				 */
+				if (deadlock == true) {
+					System.err.println("*** Verification failed: deadlock.");
+					verifyError = true;
+					break bfsWhileLoop;
+				}
+			}
+			
+			if(image.empty()==true) break;
+
+			System.out.println("---> size of image: " + imageSize);
+
+			frontier = image;		
+			image = new MDT(arraySize);
+			imageSize = 0;
+		}
+
+		System.out.println("---> final numbers: # LPN transition firings: " + tranFiringCnt / 1000000 + "M\n"
+				+ "---> # of prjStates found: " + (double) totalStates / 1000000 + "M\n"
+				+ "---> peak total memory: " + peakTotalMem / 1000000F + " MB\n" 
+				+ "---> peak used memory: " + peakUsedMem / 1000000F + " MB\n" 
+				+ "---> peak MDD nodes: " + peakMddNodeCnt);
+
+		return null;
+	}
 
 	/**
 	 * BFS findsg using iterative approach. THe states found are stored in MDD.
@@ -869,20 +1028,17 @@ public class Analysis {
 	 * @return a linked list of a sequence of LPN transitions leading to the
 	 *         failure if it is not empty.
 	 */
-	public LinkedList<LPNTran> search_bfs_mdd(final StateGraph[] lpnList,
-			final State[] curLocalStateArray) {
+	public LinkedList<LPNTran> search_bfs_mdd_localFirings(final StateGraph[] lpnList, final State[] initStateArray) {
+		System.out.println("---> starting search_bfs");
+		
 		long peakUsedMem = 0;
 		long peakTotalMem = 0;
 
 		int arraySize = lpnList.length;
-		prjState initPrjState = new prjState(curLocalStateArray);
 
 		for (int i = 0; i < arraySize; i++)
-			lpnList[i].addState(curLocalStateArray[i]);
-
-		LinkedList<int[]> curSet = new LinkedList<int[]>();
-		LinkedList<int[]> nextSet = new LinkedList<int[]>();
-
+			lpnList[i].addState(initStateArray[i]);
+		
 		// mddNode reachSet = mddMgr.newNode();
 		// mddMgr.add(reachSet, curLocalStateArray);
 		mddNode reachSet = null;
@@ -891,31 +1047,23 @@ public class Analysis {
 		for (int i = 0; i < arraySize; i++)
 			nextSetArray[i] = new LinkedList<State>();
 
-		mddNode initMdd = mddMgr.doLocalFirings(lpnList, curLocalStateArray,
-				null, nextSet);
+		mddNode initMdd = mddMgr.doLocalFirings(lpnList, initStateArray, null);
 		mddNode curMdd = initMdd;
 		reachSet = curMdd;
 		mddNode nextMdd = null;
-		curSet = nextSet;
-		nextSet = new LinkedList<int[]>();
 
 		int[] curStateArray = null;
 		int tranFiringCnt = 0;
 		int totalStates = 1;
 
-		HashSet<State[]> nextStateCache = null;
-
 		boolean verifyError = false;
-
-		HashSet<State[]> nextHashSet = new HashSet<State[]>(1);
 
 		bfsWhileLoop: while (true) {
 			if (verifyError == true)
 				break;
 
 			long curTotalMem = Runtime.getRuntime().totalMemory();
-			long curUsedMem = Runtime.getRuntime().totalMemory()
-					- Runtime.getRuntime().freeMemory();
+			long curUsedMem = Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory();
 
 			if (curTotalMem > peakTotalMem)
 				peakTotalMem = curTotalMem;
@@ -925,35 +1073,12 @@ public class Analysis {
 
 			curStateArray = mddMgr.next(curMdd, curStateArray);
 
-			// if(curStateIdxArray != null) {
-			// for(int i = 0; i < arraySize; i++)
-			// System.out.print(curStateIdxArray[i] + " ");
-			// System.out.println("\n# state in curMdd = " +
-			// mddMgr.numberOfStates(curMdd));
-			// }
-
 			if (curStateArray == null) {
 				// Break the loop if no new next states are found.
 				// System.out.println("nextSet size " + nextSet.size());
 				if (nextMdd == null)
 					break bfsWhileLoop;
 
-				// LinkedList<int[]> tmpnext = new LinkedList<int[]>();
-				// int[] curIdxArray = mddMgr.next(nextMdd, null);
-				// System.out.println("next state from nextMdd");
-				// System.out.println("number of states in nextMdd = " +
-				// mddMgr.numberOfStates(nextMdd));
-				// while(curIdxArray != null) {
-				// // for(int i = 0; i < arraySize; i++)
-				// // System.out.print(curIdxArray[i] + " ");
-				// // System.out.println();
-				// tmpnext.addLast(curIdxArray);
-				// int[] tmp = mddMgr.next(nextMdd, curIdxArray);
-				// curIdxArray = tmp;
-				// }
-				// System.out.println("extracted states " + tmpnext.size());
-				//
-				//
 				if (exploredSet == null)
 					exploredSet = curMdd;
 				else {
@@ -967,22 +1092,6 @@ public class Analysis {
 				curMdd = nextMdd;
 				nextMdd = null;
 
-				// if(nextSet.size()==0)
-				// break bfsWhileLoop;
-				//
-
-				//
-				// System.out.println("\nnext state from nextSet");
-				// for(int[] tmpst : nextSet) {
-				// for(int i = 0; i < arraySize; i++)
-				// System.out.print(tmpst[i] + " ");
-				// System.out.println();
-				// }
-				//
-				// curSet = tmpnext;
-				// nextSet = new LinkedList<int[]>();
-				// nextMdd = null;
-
 				iterations++;
 				System.out.println("iteration " + iterations
 						+ "> # LPN transition firings: " + tranFiringCnt
@@ -992,21 +1101,13 @@ public class Analysis {
 						+ " used memory: " + (float) curUsedMem / 1000000
 						+ " free memory: "
 						+ (float) Runtime.getRuntime().freeMemory() / 1000000);
-				System.out.println("---> # of prjStates found: "
-						+ mddMgr.numberOfStates(reachSet) + ",  CurSet.Size = "
-						+ mddMgr.numberOfStates(curMdd));
+				System.out.println("---> # of prjStates found: " + mddMgr.numberOfStates(reachSet) 
+						+ ",  CurSet.Size = " + mddMgr.numberOfStates(curMdd));
 				continue;
 			}
 
 			if (exploredSet != null && mddMgr.contains(exploredSet, curStateArray) == true)
 				continue;
-
-			// int[] curStateArray = curSet.getFirst();
-			// curSet.removeFirst();
-			// System.out.println("curStateArray");
-			// for(int i = 0; i < arraySize; i++)
-			// System.out.print(curStateArray[i] + " ");
-			// System.out.println();
 
 			// If curStateArray deadlocks (no enabled transitions), terminate.
 			if (Analysis.deadLock(lpnList, curStateArray) == true) {
@@ -1017,10 +1118,8 @@ public class Analysis {
 
 			// Do firings of non-local LPN transitions.
 			for (int index = arraySize - 1; index >= 0; index--) {
-
-				LPN curLpn = lpnList[index];
-				LinkedList<LPNTran> curLocalEnabled = curLpn
-						.getEnabled(curStateArray[index]);
+				StateGraph curLpn = lpnList[index];
+				LinkedList<LPNTran> curLocalEnabled = curLpn.getEnabled(curStateArray[index]);
 
 				if (curLocalEnabled.size() == 0 || curLocalEnabled.getFirst().local() == true)
 					continue;
@@ -1029,32 +1128,22 @@ public class Analysis {
 
 					if (firedTran.local() == true)
 						continue;
-					// System.out.println("firedTran = " +
-					// firedTran.getFullLabel() + ": local = " +
-					// firedTran.local()
-					// + " cur index = " + index);
-					State[] nextStateArray = firedTran.fire(lpnList,
-							curStateArray, index);
+
+					State[] nextStateArray = firedTran.fire(lpnList, curStateArray);
 					tranFiringCnt++;
 
-					int nextSize = 0;
-					ArrayList<LinkedList<LPNTran>> nextEnabledArray = new ArrayList<LinkedList<LPNTran>>(
-							1);
+					ArrayList<LinkedList<LPNTran>> nextEnabledArray = new ArrayList<LinkedList<LPNTran>>(1);
 					for (int i = 0; i < arraySize; i++) {
 						if (curStateArray[i] == nextStateArray[i].getIndex())
 							continue;
 
-						LPN lpn_tmp = lpnList[i];
-						LinkedList<LPNTran> curEnabledList = lpn_tmp
-								.getEnabled(curStateArray[i]);
-						LinkedList<LPNTran> nextEnabledList = lpn_tmp
-								.getEnabled(nextStateArray[i].getIndex());
+						StateGraph lpn_tmp = lpnList[i];
+						LinkedList<LPNTran> curEnabledList = lpn_tmp.getEnabled(curStateArray[i]);
+						LinkedList<LPNTran> nextEnabledList = lpn_tmp.getEnabled(nextStateArray[i].getIndex());
 
-						LPNTran disabledTran = firedTran.disablingError(
-								curEnabledList, nextEnabledList);
+						LPNTran disabledTran = firedTran.disablingError(curEnabledList, nextEnabledList);
 						if (disabledTran != null) {
-							System.err
-									.println("Verification failed: disabling error: "
+							System.err.println("Verification failed: disabling error: "
 											+ disabledTran.getFullLabel()
 											+ ": is disabled by "
 											+ firedTran.getFullLabel() + "!!!");
@@ -1073,16 +1162,11 @@ public class Analysis {
 					// If nextPrjState has been traversed before, skip to the
 					// next
 					// enabled transition.
-					if (reachSet != null
-							&& mddMgr.contains(reachSet, nextStateArray) == true)
+					int[] nextIdxArray = Analysis.getIdxArray(nextStateArray);
+					if (reachSet != null && mddMgr.contains(reachSet, nextIdxArray) == true)
 						continue;
 
-					// mddMgr.add(reachSet, nextStateArray);
-
-					// mddMgr.add(reachSet, nextStateArray);
-
-					mddNode newNextMdd = mddMgr.doLocalFirings(lpnList,
-							nextStateArray, reachSet, nextSet);
+					mddNode newNextMdd = mddMgr.doLocalFirings(lpnList, nextStateArray, reachSet);
 
 					mddNode newReachSet = mddMgr.union(reachSet, newNextMdd);
 					if (newReachSet != reachSet)
@@ -1101,10 +1185,6 @@ public class Analysis {
 				}
 			}
 		}
-		// System.out.println("num of union calls: " + mddNode.numCalls);
-		// //reachSet.print();
-		// System.out.println("\n");
-		// mddMgr.check();
 
 		System.out.println("---> final numbers: # LPN transition firings: "
 				+ tranFiringCnt + "\n" + "---> # of prjStates found: "
@@ -1151,14 +1231,14 @@ public class Analysis {
 		int tranFiringCnt = 0;
 		int arraySize = lpnList.length;;
 
-		HashSet<prjState> stateStack = new HashSet<prjState>();
+		HashSet<PrjState> stateStack = new HashSet<PrjState>();
 		Stack<LpnTranList> lpnTranStack = new Stack<LpnTranList>();
 		Stack<HashSet<LPNTran>> firedTranStack = new Stack<HashSet<LPNTran>>();  
 		
 		//get initial enable transition set
 		LinkedList<LPNTran>[] initEnabledArray = new LinkedList[arraySize];
 		for (int i = 0; i < arraySize; i++) {
-			lpnList[i].setIndex(i);
+			lpnList[i].getLpn().setIndex(i);
 			initEnabledArray[i] = lpnList[i].getEnabled(initStateArray[i]);
 		}
 		
@@ -1169,16 +1249,18 @@ public class Analysis {
 		/*
 		 * Initialize the reach state set with the initial state.
 		 */
-		HashSet<prjState> prjStateSet = new HashSet<prjState>();
-		prjState initPrjState = new prjState(initStateArray);
+		HashSet<PrjState> prjStateSet = new HashSet<PrjState>();
+		PrjState initPrjState = new PrjState(initStateArray);
 
-		if (useMdd) 
-			mddMgr.add(reach, initStateArray, true);
+		if (useMdd) {
+			int[] initIdxArray = Analysis.getIdxArray(initStateArray);
+			mddMgr.add(reach, initIdxArray, true);
+		}
 		else 
 			prjStateSet.add(initPrjState);
 		
 		stateStack.add(initPrjState);
-		prjState stateStackTop = initPrjState;
+		PrjState stateStackTop = initPrjState;
 		lpnTranStack.push(initEnableSubset);
 		firedTranStack.push(new HashSet<LPNTran>());
 				
@@ -1246,15 +1328,15 @@ public class Analysis {
 			
 			//System.out.println(tranFiringCnt + ": firedTran: "+ firedTran.getFullLabel());
 			
-			State[] nextStateArray = firedTran.fire(lpnList, curStateArray, firedTran.getLpn().getIndex());
+			State[] nextStateArray = firedTran.fire(lpnList, curStateArray);
 			tranFiringCnt++;
 			
 			// Check if the firedTran causes disabling error or deadlock.
 			LinkedList<LPNTran>[] curEnabledArray = new LinkedList[arraySize];
 			LinkedList<LPNTran>[] nextEnabledArray = new LinkedList[arraySize];
 			for (int i = 0; i < arraySize; i++) {
-				lpnList[i].setIndex(i);
-				LPN lpn_tmp = lpnList[i];
+				lpnList[i].getLpn().setIndex(i);
+				StateGraph lpn_tmp = lpnList[i];
 				LinkedList<LPNTran> enabledList = lpn_tmp.getEnabled(curStateArray[i]);
 				curEnabledArray[i] = enabledList;
 				enabledList = lpn_tmp.getEnabled(nextStateArray[i]);
@@ -1266,14 +1348,14 @@ public class Analysis {
 
 					System.out.println("Current state:");
 					for(int ii = 0; ii < arraySize; ii++) {
-						System.out.println("module " + lpnList[ii].getLabel());
+						System.out.println("module " + lpnList[ii].getLpn().getLabel());
 						System.out.println(curStateArray[ii]);
 						System.out.println("Enabled set: " + curEnabledArray[ii]);
 					}
 					
 					System.out.println("======================\nNext state:");
 					for(int ii = 0; ii < arraySize; ii++) {
-						System.out.println("module " + lpnList[ii].getLabel());
+						System.out.println("module " + lpnList[ii].getLpn().getLabel());
 						System.out.println(nextStateArray[ii]);
 						System.out.println("Enabled set: " + nextEnabledArray[ii]);
 					}
@@ -1304,17 +1386,22 @@ public class Analysis {
 			//exist cycle
 			*/
 			
-			prjState nextPrjState = new prjState(nextStateArray);
+			PrjState nextPrjState = new PrjState(nextStateArray);
 			boolean isExisting = false;
+			int[] nextIdxArray = null;
+			if(useMdd==true)
+				nextIdxArray = Analysis.getIdxArray(nextStateArray);
 			
 			if (useMdd == true) 
-				isExisting = mddMgr.contains(reach, nextStateArray);
+				isExisting = mddMgr.contains(reach, nextIdxArray);
 			else
 				isExisting = prjStateSet.contains(nextPrjState);
 			
 			if (isExisting == false) {				
-				if (useMdd == true) 
-					mddMgr.add(reach, nextStateArray, true);
+				if (useMdd == true) {
+					
+					mddMgr.add(reach, nextIdxArray, true);
+				}
 				else
 					prjStateSet.add(nextPrjState);
 				
@@ -1487,7 +1574,7 @@ public class Analysis {
 	/*
 	 * Check if this project deadlocks in the current state 'stateArray'.
 	 */
-	public static boolean deadLock(LPN[] lpnArray, State[] stateArray) {
+	public static boolean deadLock(StateGraph[] lpnArray, State[] stateArray) {
 		boolean deadlock = true;
 		for (int i = 0; i < stateArray.length; i++) {
 			LinkedList<LPNTran> tmp = lpnArray[i].getEnabled(stateArray[i]);
@@ -1500,7 +1587,7 @@ public class Analysis {
 		return deadlock;
 	}
 
-	public static boolean deadLock(LPN[] lpnArray, int[] stateIdxArray) {
+	public static boolean deadLock(StateGraph[] lpnArray, int[] stateIdxArray) {
 		boolean deadlock = true;
 		for (int i = 0; i < stateIdxArray.length; i++) {
 			LinkedList<LPNTran> tmp = lpnArray[i].getEnabled(stateIdxArray[i]);
@@ -1589,5 +1676,33 @@ public class Analysis {
 		}
 		
 		return stickyTransArray;
+	}
+	
+	/*
+	 * Return an array of indices for the given stateArray.
+	 */
+	private static int[] getIdxArray(State[] stateArray) {
+		int[] idxArray = new int[stateArray.length];
+		
+		for(int i = 0; i < stateArray.length; i++) {
+			idxArray[i] = stateArray[i].getIndex();
+		}
+		return idxArray;
+	}
+	
+	private static int[] getLocalStateIdxArray(StateGraph[] sgList, State[] stateArray, boolean reverse) {
+		int arraySize = sgList.length;
+		int[] localIdxArray = new int[arraySize];
+		
+		for(int i = 0; i < arraySize; i++) {
+			if(reverse == false)
+				localIdxArray[i] = sgList[i].getLocalState(stateArray[i]).getIndex();
+			else
+				localIdxArray[arraySize - i - 1] = sgList[i].getLocalState(stateArray[i]).getIndex();
+
+			//System.out.print(localIdxArray[i] + " ");
+		}
+		//System.out.println();
+		return localIdxArray;
 	}
 }
