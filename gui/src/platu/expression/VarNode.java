@@ -4,8 +4,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import platu.lpn.VarType;
 
-import platu.stategraph.state.State;
-
 public class VarNode implements ExpressionNode {
 	protected String name;		 // if input, associated output var name
 	protected String alias = ""; 	 // if input, original var name
@@ -50,27 +48,15 @@ public class VarNode implements ExpressionNode {
 		return this.value;
 	}
 	
-	public int evaluate(State currentState){
-		int[] currentVector = currentState.getVector();
-		
-		if(this.index < 0){
-			Integer i = currentState.getLpn().getVarIndexMap().getValue(name);
-			if(i == null){
-				System.err.println("error: variable " + name + " does not exist in " + currentState.getLpn().getLabel());
-				System.exit(1);
-			}
-			
-			this.index = i;
-		}
-		
-		return currentVector[this.index];
+	public int evaluate(int[] stateVector){
+		return stateVector[this.index];
 	}
 	
 	public void setIndex(int index){
 		this.index = index;
 	}
 	
-	public int getIndex(State currentState){
+	public int getIndex(int[] stateVector){
 		return this.index;
 	}
 	

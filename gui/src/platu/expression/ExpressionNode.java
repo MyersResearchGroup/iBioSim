@@ -3,10 +3,8 @@ package platu.expression;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import platu.stategraph.state.State;
-
 public interface ExpressionNode {
-    public int evaluate(State currentState);
+    public int evaluate(int[] stateVector);
 	public void getVariables(HashSet<VarNode> variables);
 	@Override
 	public String toString();

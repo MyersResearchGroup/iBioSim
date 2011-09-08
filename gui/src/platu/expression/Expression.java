@@ -3,8 +3,6 @@ package platu.expression;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import platu.stategraph.state.State;
-
 public class Expression {
 	String ExprString = null;
 	ExpressionNode ExprNode = null;
@@ -19,8 +17,8 @@ public class Expression {
 		this.ExprNode = expression;
 	}
 	
-	public int evaluate(State statevector){
-		return ExprNode.evaluate(statevector);
+	public int evaluate(int[] stateVector){
+		return ExprNode.evaluate(stateVector);
 	}
 	
 	public HashSet<VarNode> getVariables(){

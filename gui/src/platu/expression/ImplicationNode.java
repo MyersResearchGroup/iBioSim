@@ -3,8 +3,6 @@ package platu.expression;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import platu.stategraph.state.State;
-
 public class ImplicationNode implements ExpressionNode {
 	ExpressionNode LeftOperand = null;
 	ExpressionNode RightOperand = null;
@@ -14,8 +12,8 @@ public class ImplicationNode implements ExpressionNode {
 		this.RightOperand = rightOperand;
 	}
 
-	public int evaluate(State statevector){
-		if(LeftOperand.evaluate(statevector) == 0 || RightOperand.evaluate(statevector) != 0)
+	public int evaluate(int[] stateVector){
+		if(LeftOperand.evaluate(stateVector) == 0 || RightOperand.evaluate(stateVector) != 0)
 			return 1;
 		
 		return 0;
