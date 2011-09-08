@@ -1,7 +1,8 @@
 package platu.TimingAnalysis;
 
 import java.util.*;
-import platu.stategraph.state.*;
+
+import platu.stategraph.*;
 
 public class mdtNode {
 	static public int totalStates = 0;

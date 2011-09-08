@@ -7,7 +7,7 @@ import platu.lpn.*;
  * This class implements the POSET algorithm in C Myers's book, section 7.5.
  */
 public class Poset {
-	public static final int INFINITY = platu.Common.INFINITY;
+	public static final int INFINITY = platu.common.Common.INFINITY;
 
 	protected HashMap<LPNTran, HashSet<LPNTran>> causalityFwd;
 	protected HashMap<LPNTran, LPNTran> causalityBwd;

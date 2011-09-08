@@ -2,8 +2,9 @@ package platu.MDD;
 
 import java.util.*;
 
-import platu.stategraph.state.*;
-import platu.lpn.*;
+import platu.common.Common;
+import platu.stategraph.*;
+
 public class Mdd {
 	static mddNode terminal = new mddNode();
 
@@ -34,24 +35,20 @@ public class Mdd {
 		return new mddNode(0);
 	}
 	
+	/*
+	 * Return a MDD node that is the root of MDD representing the union of states encoded in MDD 'target' and MDD 'source'
+	 */
 	public mddNode union(mddNode target, mddNode source) {
 		HashMap<mddNode, HashMap<mddNode, mddNode>> unionCache = new HashMap<mddNode, HashMap<mddNode, mddNode>>();
 		mddNode unionResult = target.union(source, nodeTbl, unionCache);
 		return unionResult;
 	}
+	
+
+	
    	/*
 	 * create a MDD for stateArray. The nodes in the created MDD are added into the nodeTbl.
-	 */
-	public boolean add(mddNode target, State[] stateArray) {	
-		int[] idxArray = new int[stateArray.length];
-		
-		for(int i = 0; i < stateArray.length; i++)
-			idxArray[i] = stateArray[i].getIndex();
-		
-		target.add(idxArray, nodeTbl, 20);
-		return true;
-	}
-	
+	 */	
 	public boolean add(mddNode target, int[] idxArray) {					
 		target = target.add(idxArray, nodeTbl, 20);
 
@@ -64,14 +61,9 @@ public class Mdd {
 
 		stateCount++;
 		return true;
-	}
+	}	
 	
-	public boolean add(mddNode target, State[] stateArray, boolean sharing) {
-		int[] idxArray = new int[stateArray.length];
-		
-		for(int i = 0; i < stateArray.length; i++)
-			idxArray[i] = stateArray[i].getIndex();
-		
+	public boolean add(mddNode target, int[] idxArray, boolean sharing) {
 		if(sharing==true)
 			target.add(idxArray, nodeTbl, 20);
 		else
@@ -86,9 +78,7 @@ public class Mdd {
 	}
 	
 	
-	public mddNode doLocalFirings(LPN[] curLpnArray, State[] curStateArray,
-								mddNode reachSet,
-								LinkedList<int[]> nextArraySet) {
+	public mddNode doLocalFirings(StateGraph[] curLpnArray, State[] curStateArray, mddNode reachSet) {
 		mddNode result = this.newNode();
 		LinkedList<State>[] nextSetArray = (LinkedList<State>[])(new LinkedList[curLpnArray.length]);
 		for(int i = 0; i < curLpnArray.length; i++)
@@ -113,16 +103,9 @@ public class Mdd {
 	/*
 	 * Check if there is a path in MDD that corresponds to stateArray. Return true if so.
 	 */
-	public boolean contains(mddNode target, State[] stateArray) {
-		int[] idxArray = new int[stateArray.length];
-		
-		for(int i = 0; i < stateArray.length; i++)
-			idxArray[i] = stateArray[i].getIndex();
-		
-		return target.contains(idxArray)==Mdd.terminal;
-	}
-	
 	public boolean contains(mddNode target, int[] idxArray) {
+		if(target == null)
+			return false;
 		return target.contains(idxArray)==Mdd.terminal;
 	}
 	

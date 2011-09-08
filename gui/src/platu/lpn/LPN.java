@@ -2,18 +2,13 @@ package platu.lpn;
 
 import java.util.*;
 import java.util.Map.Entry;
-
-import lmoore.TimedState;
-import lmoore.zone.Zone;
-import platu.logicAnalysis.Constraint;
 import platu.lpn.VarType;
 import platu.expression.ArrayElement;
 import platu.expression.ArrayNode;
 import platu.expression.VarNode;
 import platu.project.Project;
+import platu.stategraph.State;
 import platu.stategraph.StateGraph;
-import platu.stategraph.state.State;
-import platu.IndexObjMap;
 
 public class LPN {
 	public static int nextID=1;
@@ -21,44 +16,52 @@ public class LPN {
     static private List<int[]> emptyArrayList = new ArrayList<int[]>();
     static private String[] emptyStringArray = new String[0];
     static private int[] emptyIntArray = new int[0];
-    public static int[] counts = new int[10];
-    public static boolean ENABLE_PRINT = false;
 
     public int ID=nextID++;
+    
     protected Project prj;  // Pointer to the top-level ProjDef..
+    
     protected String label;  // Label of this LPN.
+    
     protected int index;
+    
+    /* Variables read by this LPN but defined by other LPNs*/
     protected VarSet inputs;
+    
+    /* Variables defined this LPN. Shared variables can be defined by this and other LPNs */
     protected VarSet outputs;
+    
+    /* Variables defined and read only by this LPN*/
     protected VarSet internals;
+    
     protected HashMap<String, VarNode> varNodeMap;
+    
     protected LpnTranList transitions;
-    protected Object initState;
+    
+    //protected Object initState;
     private int[] initMark;
     private HashMap<String, Integer> initVector;
-    private Zone initZone;
+
     protected DualHashMap<String, Integer> varIndexMap = new DualHashMap<String, Integer>(); 
     
+    /* Transitions that modify the input variables in 'inputs'*/
     protected List<LPNTran> inputTranSet = new ArrayList<LPNTran>();
+    
+    /* Transitions that modify the output variables in 'outputs'*/
     protected List<LPNTran> outputTranSet = new ArrayList<LPNTran>();
-    protected List<Constraint> oldConstraintSet = new LinkedList<Constraint>();
-    protected List<Constraint> newConstraintSet = new LinkedList<Constraint>();
-    protected List<Constraint> frontierConstraintSet = new LinkedList<Constraint>();
-    protected Set<Constraint> constraintSet = new HashSet<Constraint>();
+    
+    protected StateGraph stateGraph;
     protected String[] interfaceVariables = emptyStringArray;
     protected int[] interfaceIndices = emptyIntArray;
     protected List<int[]> thisIndexList = emptyArrayList;
     protected List<int[]> otherIndexList = emptyArrayList;
     protected List<String> argumentList = emptyStringList;
     
-	/*
-     * The following members are dynamically updated and maintained during state space traversal
-     */
-    //protected HashMap<State, State> reachableSet;
-    //protected HashMap<Integer, State> index2StateTbl;
-    IndexObjMap stateCache;
-    private HashMap<State, LpnTranList> enabledSetTbl;
 
+    public StateGraph getStateGraph(){
+    	return this.stateGraph;
+    }
+    
     @Override
     public String toString() {
         String ret = "";
@@ -68,7 +71,6 @@ public class LPN {
         ret += getOutputs() + "\n";
         ret += getInternals() + "\n";
         ret += getTransitions() + "\n";
-//        ret += getInitStateTimed() + "\n";
         ret += this.varIndexMap + "\n";
         ret += this.initVector + "\n";
         ret += this.varNodeMap + "\n";
@@ -76,38 +78,30 @@ public class LPN {
     }
 
     public LPN(Project prj, String label, VarSet inputs, VarSet outputs,
-            VarSet internals, LpnTranList transitions, State initState) {
+            VarSet internals, LpnTranList transitions) {
         this.prj = prj;
         this.label = label;
         this.inputs = inputs;
         this.outputs = outputs;
         this.internals = internals;
         this.transitions = transitions;
-        this.initState = initState;
         if (prj == null || label == null || inputs == null ||//
                 outputs == null || internals == null
-                || transitions == null || initState == null) {
+                || transitions == null) {
             new NullPointerException().printStackTrace();
-        }
-        if (ENABLE_PRINT) {
-            System.out.println("new LPN()1: \t" + description());
         }
 
         // Adjust the visibility of lpn transitions.
         for (LPNTran curTran : transitions) {
             curTran.initialize(this, outputs);
         }
-
-        //reachableSet = new HashMap<State, State>();
-        //index2StateTbl = new HashMap<Integer, State>();
-        enabledSetTbl = new HashMap<State, LpnTranList>();
-
-        counts[0]++;
+        
+        this.stateGraph = new StateGraph(this);
     }
     
     public LPN(Project prj, String label, VarSet inputs, VarSet outputs,
             VarSet internals, HashMap<String, VarNode> varNodeMap, LpnTranList transitions, 
-            HashMap<String, Integer> initialVector, int[] initialMarkings, Zone initialZone) {
+            HashMap<String, Integer> initialVector, int[] initialMarkings) {
         this.prj = prj;
         this.label = label;
         this.inputs = inputs;
@@ -116,7 +110,6 @@ public class LPN {
         this.transitions = transitions;
         this.initVector = initialVector;
         this.initMark = initialMarkings;
-        this.initZone = initialZone;
         this.varNodeMap = varNodeMap;
         
         if (prj == null || label == null || inputs == null ||//
@@ -125,21 +118,12 @@ public class LPN {
             new NullPointerException().printStackTrace();
         }
         
-        if (ENABLE_PRINT) {
-            System.out.println("new LPN()1: \t" + description());
-        }
-
         // Adjust the visibility of lpn transitions.
         for (LPNTran curTran : transitions) {
             curTran.initialize(this, outputs);
         }
-
-        //reachableSet = new HashMap<State, State>();
-        //index2StateTbl = new HashMap<Integer, State>();
-        this.stateCache = new IndexObjMap();
-        enabledSetTbl = new HashMap<State, LpnTranList>();
-
-        counts[0]++;
+        
+        this.stateGraph = new StateGraph(this);
     }
 
     @Override
@@ -173,8 +157,8 @@ public class LPN {
         HashMap<String, Integer> initVector = new HashMap<String, Integer>(this.initVector);
         
         // copy of zone
-        LPN newLPN = new StateGraph(this.prj, this.label, this.inputs.clone(), this.outputs.clone(),
-                this.internals.clone(), varNodeMap, transitions, initVector, this.initMark, this.initZone);
+        LPN newLPN = new LPN(this.prj, this.label, this.inputs.clone(), this.outputs.clone(),
+                this.internals.clone(), varNodeMap, transitions, initVector, this.initMark);
         
         transitions.setLPN(newLPN);
         newLPN.setVarIndexMap(varIndexMap);
@@ -201,11 +185,12 @@ public class LPN {
     		        		if(ArrayElement.class.isAssignableFrom(assignedVar.getClass()) && ((ArrayElement)assignedVar).getArray() == var){
     		        			this.addOutputTran(lpnTran);
     		        			lpnTran.setLocalFlag(false);
-    		        			for(LPN dstLpn : designUnitSet){
+    		        			for(StateGraph sg : designUnitSet){
+    		        				LPN dstLpn = sg.getLpn();
     	    	    				if(dstLpn == this) continue;
     	    	    				
     		    	    			dstLpn.addInputTran(lpnTran);
-    		    	    			lpnTran.addLpnList(dstLpn);  
+    		    	    			lpnTran.addDstLpn(dstLpn);  
     	    	    			}
     		        		}
     	    			}
@@ -218,11 +203,12 @@ public class LPN {
 	    	    			this.addOutputTran(lpnTran);
 	    	    			lpnTran.setLocalFlag(false);
 	    	    			
-	    	    			for(LPN dstLpn : designUnitSet){
+	    	    			for(StateGraph sg : designUnitSet){
+	    	    				LPN dstLpn = sg.getLpn();
 	    	    				if(dstLpn == this) continue;
 	    	    				
 		    	    			dstLpn.addInputTran(lpnTran);
-		    	    			lpnTran.addLpnList(dstLpn);  
+		    	    			lpnTran.addDstLpn(dstLpn);  
 	    	    			}
 	    	    		}
 	    	    	}
@@ -236,7 +222,7 @@ public class LPN {
     
     public LPN instantiate(String label){
     	LPN newLpn = this.clone();
-    	State currentState = newLpn.getInitStateUntimed();
+    	int[] currentVector = newLpn.getInitState().getVector();
     	newLpn.setLabel(label);
 //    	StateGraph sg = (StateGraph) newLpn;
 //    	sg.setLabel(label);
@@ -277,7 +263,7 @@ public class LPN {
     				
     				varNodeMap.put(elementName, elementNode);
     				initialVector.put(elementName, val);
-    				varIndexMap.insert(elementName, elementNode.getIndex(currentState));
+    				varIndexMap.insert(elementName, elementNode.getIndex(currentVector));
     			}
     		}
     		else{
@@ -286,7 +272,7 @@ public class LPN {
 	    		initialVector.put(newName, val);
 	    		
 	    		varIndexMap.delete(output);
-	    		varIndexMap.insert(newName, var.getIndex(currentState));
+	    		varIndexMap.insert(newName, var.getIndex(currentVector));
     		}
     	}
     	
@@ -320,7 +306,7 @@ public class LPN {
     				
     				varNodeMap.put(elementName, elementNode);
     				initialVector.put(elementName, val);
-    				varIndexMap.insert(elementName, elementNode.getIndex(currentState));
+    				varIndexMap.insert(elementName, elementNode.getIndex(currentVector));
     			}
     		}
     		else{
@@ -329,7 +315,7 @@ public class LPN {
 	    		initialVector.put(newName, val);
 	    		
 	    		varIndexMap.delete(internal);
-	    		varIndexMap.insert(newName, var.getIndex(currentState));
+	    		varIndexMap.insert(newName, var.getIndex(currentVector));
     		}
     	}
     	
@@ -341,6 +327,8 @@ public class LPN {
     }
     
     public void connect(String outputVar, LPN dstLpn, String inputVar){
+    	int[] initVector = this.getInitState().getVector();
+    	
     	// change outputVar to an output if not already
     		// move to output list
     		// set type
@@ -360,7 +348,7 @@ public class LPN {
     			this.addOutputTran(lpnTran);
     			dstLpn.addInputTran(lpnTran);
     			lpnTran.setLocalFlag(false);
-    			lpnTran.addLpnList(dstLpn);
+    			lpnTran.addDstLpn(dstLpn);
     		}
     	}
     	
@@ -443,7 +431,7 @@ public class LPN {
 		        			this.addOutputTran(lpnTran);
 		        			dstLpn.addInputTran(lpnTran);
 		        			lpnTran.setLocalFlag(false);
-		        			lpnTran.addLpnList(dstLpn);
+		        			lpnTran.addDstLpn(dstLpn);
 		        		}
 	    			}
 	        	}
@@ -466,7 +454,7 @@ public class LPN {
 //		    	inputs.add(outputVar);
 		    	DualHashMap<String, Integer> varIndexMap = dstLpn.getVarIndexMap();
 		    	varIndexMap.delete(inputVarNode.getName());
-		    	varIndexMap.insert(outputVarNode.getName(), inputVarNode.getIndex(this.getInitStateUntimed()));
+		    	varIndexMap.insert(outputVarNode.getName(), inputVarNode.getIndex(initVector));
 		    	
 		    	inputVarNode.setAlias(inputVarNode.getName());
 		    	inputVarNode.setName(outputVarNode.getName());
@@ -509,7 +497,7 @@ public class LPN {
 	    	inputs.add(outputVar);
 	    	DualHashMap<String, Integer> varIndexMap = dstLpn.getVarIndexMap();
 	    	varIndexMap.delete(inputVar);
-	    	varIndexMap.insert(outputVar, inputVarNode.getIndex(this.getInitStateUntimed()));
+	    	varIndexMap.insert(outputVar, inputVarNode.getIndex(initVector));
     	}
     }
     
@@ -520,8 +508,6 @@ public class LPN {
     public void insert(LPNTran tran) {
         tran.setLpn(this);
         this.getTransitions().add(tran);
-
-        counts[3]++;
     }
 
 //    public final VarVal insert(final VarVal prop) {
@@ -711,7 +697,7 @@ public class LPN {
     /**
     @return the InitState
      */
-    public TimedState getInitStateTimed() {
+    public State getInitState() {	
     	// create initial vector
 		int size = this.varIndexMap.size();
     	int[] initialVector = new int[size];
@@ -721,31 +707,7 @@ public class LPN {
     		initialVector[i] = val;
     	}
     	
-		this.initState = new TimedState(this.initMark, initialVector, this.initZone);
-		TimedState s = (TimedState) this.initState;
-		s.setLpn(this);
-    	
-    	return ((TimedState) this.initState);
-    }
-
-    /**
-    @return the InitState
-     */
-    public State getInitStateUntimed() {	
-    	// create initial vector
-		int size = this.varIndexMap.size();
-    	int[] initialVector = new int[size];
-    	for(int i = 0; i < size; i++) {
-    		String var = this.varIndexMap.getKey(i);
-    		int val = this.initVector.get(var);
-    		initialVector[i] = val;
-    	}
-
-		this.initState = new TimedState(this.initMark, initialVector, this.initZone);
-		TimedState s = (TimedState) this.initState;
-		s.setLpn(this);
-
-    	return new State(this.initState);
+		return new State(this, this.initMark, initialVector);
     }
     
     public HashMap<String, Integer> getInitVector(){
@@ -787,13 +749,6 @@ public class LPN {
         this.transitions = transitions;
     }
 
-    /**
-     * @param initState the initState to set
-     */
-    public void setInitState(TimedState initState) {
-        this.initState = initState;
-    }
-
     public void setVarIndexMap(DualHashMap<String, Integer> m) {
         this.varIndexMap = m;
     }
@@ -801,93 +756,11 @@ public class LPN {
     public DualHashMap<String, Integer> getVarIndexMap() {
         return this.varIndexMap;
     }
-
-    /*
-     * Return the enabled transitions in the state with index 'stateIdx'.
-     */
-    public LpnTranList getEnabled(int stateIdx) {
-    	State curState = this.getState(stateIdx);
-        return this.getEnabled(curState);
-    }
-
-    // Return the set of all LPN transitions that are enabled in 'state'.
-    // TODO: (Utah) move getENabled() to StateGraph and re-write it to use our LPN object
-    public LpnTranList getEnabled(State curState) {
-    	if (curState == null) {
-            throw new NullPointerException();
-        }
-    	
-    	if(enabledSetTbl.containsKey(curState) == true){
-            return (LpnTranList)enabledSetTbl.get(curState).clone();
-        }
-    	
-        LpnTranList curEnabled = new LpnTranList();
-        for (LPNTran tran : this.transitions) {
-        	if (tran.isEnabled(curState)) {
-        		if(tran.local()==true)
-        			curEnabled.addLast(tran);
-                else
-                	curEnabled.addFirst(tran);
-             } 
-        }
-        
-        this.enabledSetTbl.put(curState, curEnabled);
-        return curEnabled;
-    }
-
-    public int reachSize() {
-    	return this.stateCache.size();
-    }
     
-    //TODO: (Utah) move getState() to StateGraph
-    public State getState(int stateIdx) {
-    	return (State)this.stateCache.get(stateIdx);
-//    	State tmp = this.index2StateTbl.get(index);
-//    	return tmp;
-    }
-    // TODO: (Utah) move addState() to StateGraph
-    public State addState(State aState) {
-    	return (State)this.stateCache.add(aState);
-//    	State tmp = reachableSet.get(aState);
-//    	if(tmp == null) {
-//    		aState.setIndex(reachableSet.size());
-//    		this.reachableSet.put(aState, aState);
-//    		this.index2StateTbl.put(aState.getIndex(), aState);
-//    		return aState;
-//    	}
-//    	return tmp;
-    }
-    
-    // TODO: (Utah) move addReachable() to StateGraph
-    /**
-     * Adds state into the state graph.
-     * @param st - state to be inserted
-     * @return null if the state is new, otherwise the existing state
-     */
-    public State addReachable(State st) {
-    	State s = this.addState(st); //reachableSet.get(st);
-    	
-    	if(s == st){
-//	    	reachableSet.put(st, st);
-//	    	st.setIndex(reachableSet.size());
-//	    	
-	    	StateGraph sg = (StateGraph) this;
-	    	sg.addState(st);
-	    	
-	    	sg.lpnTransitionMap.put(st, new LinkedList<LPNTran>());
-    	}
-    	
-    	return s;
-    }
-    
-//    public Set<State> reachable(){
-//    	return this.reachableSet.keySet();
-//    }
-    
-    public void genIndexLists(int[] thisIndexList, int[] otherIndexList, StateGraph otherSG){
+    public void genIndexLists(int[] thisIndexList, int[] otherIndexList, LPN otherLpn){
     	int arrayIndex = 0;
-    	DualHashMap<String, Integer> otherVarIndexMap = otherSG.getVarIndexMap();
-    	String[] interfaceVars = otherSG.getInterfaceVariables();
+    	DualHashMap<String, Integer> otherVarIndexMap = otherLpn.getVarIndexMap();
+    	String[] interfaceVars = otherLpn.getInterfaceVariables();
 
     	for(int i = 0; i < interfaceVars.length; i++){
 			String var = interfaceVars[i];
@@ -941,49 +814,6 @@ public class LPN {
     	return this.otherIndexList;
     }
     
-    public List<Constraint> getOldConstraintSet(){
-    	return this.oldConstraintSet;
-    }
-    
-    /**
-	 * Adds constraint to the constraintSet.
-	 * @param c - Constraint to be added.
-	 * @return True if added, otherwise false.
-	 */
-    public boolean addConstraint(Constraint c){
-    	if(this.constraintSet.add(c)){
-    		this.frontierConstraintSet.add(c);
-    		return true;
-    	}
-    	
-    	return false;
-    }
-    
-    /**
-	 * Adds constraint to the constraintSet.  Synchronized version of addConstraint().
-	 * @param c - Constraint to be added.
-	 * @return True if added, otherwise false.
-	 */
-    public synchronized boolean synchronizedAddConstraint(Constraint c){
-    	if(this.constraintSet.add(c)){
-    		this.frontierConstraintSet.add(c);
-    		return true;
-    	}
-    	
-    	return false;
-    }
-    
-    public List<Constraint> getNewConstraintSet(){
-    	return this.newConstraintSet;
-    }
-    
-    public void genConstraints(){
-    	oldConstraintSet.addAll(newConstraintSet);
-    	newConstraintSet.clear();
-    	newConstraintSet.addAll(frontierConstraintSet);
-    	frontierConstraintSet.clear();
-    }
-    
     public String[] getInterfaceVariables(){
     	if(interfaceVariables.length == 0){
     		int size = inputs.size() + outputs.size();
@@ -1021,4 +851,37 @@ public class LPN {
     	
     	return interfaceIndices;
     }
+    
+    public boolean isInput(LPNTran lpnTr) {
+    	return this.inputTranSet.contains(lpnTr);
+    }
+    
+    public boolean isOutput(LPNTran lpnTr) {
+    	return this.outputTranSet.contains(lpnTr);
+    }
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LPN other = (LPN) obj;
+		if (label == null) {
+			if (other.label != null)
+				return false;
+		} else if (!label.equals(other.label))
+			return false;
+		return true;
+	}
 }

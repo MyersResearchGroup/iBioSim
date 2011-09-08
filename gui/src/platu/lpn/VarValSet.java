@@ -7,7 +7,8 @@ package platu.lpn;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import platu.Main;
+
+import platu.main.Main;
 
 /**
  *

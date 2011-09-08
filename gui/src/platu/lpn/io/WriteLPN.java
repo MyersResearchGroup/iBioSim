@@ -1,7 +1,6 @@
 
 package platu.lpn.io;
 
-import com.carrotsearch.hppc.cursors.ObjectIntCursor;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -12,8 +11,6 @@ import java.util.Iterator;
 import java.util.*;
 import java.util.Map.Entry;
 import java.util.Set;
-import org.apache.commons.collections.primitives.IntIterator;
-import org.apache.commons.collections.primitives.adapters.IntIteratorIterator;
 import platu.lpn.LPN;
 import platu.lpn.LPNTran;
 import platu.lpn.VarSet;
@@ -76,6 +73,7 @@ public class WriteLPN {
     }
 static final Comparator<VarVal> vvComparator=new Comparator<VarVal>() {
 
+            @Override
             public int compare(VarVal o1, VarVal o2) {
                return o1.getVariable().compareTo(o2.getVariable());
             }
@@ -129,8 +127,8 @@ static final Comparator<VarVal> vvComparator=new Comparator<VarVal>() {
         out.write(("{").getBytes());
         
         List<Integer> tmp1 = new ArrayList<Integer>();
-        for(int i = 0; i < lpn.getInitStateTimed().getMarking().length; i++)
-        	tmp1.add(lpn.getInitStateTimed().getMarking()[i]);
+//        for(int i = 0; i < lpn.getInitStateTimed().getMarking().length; i++)
+//        	tmp1.add(lpn.getInitStateTimed().getMarking()[i]);
         Iterator it = tmp1.iterator();
 
         // debugPrint("MARK>>");
@@ -147,6 +145,7 @@ static final Comparator<VarVal> vvComparator=new Comparator<VarVal>() {
         LPNTran[] transitions=lpn.getTransitions().toArray(new LPNTran[0]);
         Comparator<LPNTran> comp=new Comparator<LPNTran>() {
 
+            @Override
             public int compare(LPNTran o1, LPNTran o2) {
                 return o1.getIndex()>o2.getIndex()?1:-1;
             }

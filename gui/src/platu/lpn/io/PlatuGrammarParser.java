@@ -1,4 +1,4 @@
-// $ANTLR 3.3 Nov 30, 2010 12:50:56 /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g 2011-08-07 04:18:08
+// $ANTLR 3.3 Nov 30, 2010 12:50:56 /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g 2011-09-05 15:36:20
 
     package platu.lpn.io;
     
@@ -17,8 +17,7 @@
     import platu.lpn.VarExprList;
     import platu.stategraph.StateGraph;
     import platu.project.Project;
-    import platu.expression.*;
-    import platu.Main;    
+    import platu.expression.*; 
 
 
 import org.antlr.runtime.*;
@@ -149,13 +148,13 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "parseLpnFile"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:81:1: parseLpnFile[Project prj, boolean instance, HashMap<String, String> portMap] returns [Set<LPN> lpnSet] : ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:80:1: parseLpnFile[Project prj, boolean instance, HashMap<String, String> portMap] returns [Set<LPN> lpnSet] : ;
     public final Set<LPN> parseLpnFile(Project prj, boolean instance, HashMap<String, String> portMap) throws RecognitionException {
         Set<LPN> lpnSet = null;
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:82:2: ()
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:83:2: 
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:81:2: ()
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:82:2: 
             {
             }
 
@@ -168,7 +167,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "lpn"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:85:1: lpn[Project prj] returns [Set<LPN> lpnSet] : ( ( globalConstants globalVariables ) | ( globalVariables globalConstants ) | ( globalVariables ) | ( globalConstants ) )? ( module[prj] | main[prj] )+ EOF ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:84:1: lpn[Project prj] returns [Set<LPN> lpnSet] : ( ( globalConstants globalVariables ) | ( globalVariables globalConstants ) | ( globalVariables ) | ( globalConstants ) )? ( module[prj] | main[prj] )+ EOF ;
     public final Set<LPN> lpn(Project prj) throws RecognitionException {
         Set<LPN> lpnSet = null;
 
@@ -176,19 +175,19 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:86:5: ( ( ( globalConstants globalVariables ) | ( globalVariables globalConstants ) | ( globalVariables ) | ( globalConstants ) )? ( module[prj] | main[prj] )+ EOF )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:86:9: ( ( globalConstants globalVariables ) | ( globalVariables globalConstants ) | ( globalVariables ) | ( globalConstants ) )? ( module[prj] | main[prj] )+ EOF
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:85:5: ( ( ( globalConstants globalVariables ) | ( globalVariables globalConstants ) | ( globalVariables ) | ( globalConstants ) )? ( module[prj] | main[prj] )+ EOF )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:85:9: ( ( globalConstants globalVariables ) | ( globalVariables globalConstants ) | ( globalVariables ) | ( globalConstants ) )? ( module[prj] | main[prj] )+ EOF
             {
             lpnSet = new HashSet<LPN>();
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:87:9: ( ( globalConstants globalVariables ) | ( globalVariables globalConstants ) | ( globalVariables ) | ( globalConstants ) )?
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:86:9: ( ( globalConstants globalVariables ) | ( globalVariables globalConstants ) | ( globalVariables ) | ( globalConstants ) )?
             int alt1=5;
             alt1 = dfa1.predict(input);
             switch (alt1) {
                 case 1 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:87:10: ( globalConstants globalVariables )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:86:10: ( globalConstants globalVariables )
                     {
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:87:10: ( globalConstants globalVariables )
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:87:11: globalConstants globalVariables
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:86:10: ( globalConstants globalVariables )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:86:11: globalConstants globalVariables
                     {
                     pushFollow(FOLLOW_globalConstants_in_lpn86);
                     globalConstants();
@@ -207,10 +206,10 @@ public class PlatuGrammarParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:87:46: ( globalVariables globalConstants )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:86:46: ( globalVariables globalConstants )
                     {
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:87:46: ( globalVariables globalConstants )
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:87:47: globalVariables globalConstants
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:86:46: ( globalVariables globalConstants )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:86:47: globalVariables globalConstants
                     {
                     pushFollow(FOLLOW_globalVariables_in_lpn94);
                     globalVariables();
@@ -229,10 +228,10 @@ public class PlatuGrammarParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:87:82: ( globalVariables )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:86:82: ( globalVariables )
                     {
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:87:82: ( globalVariables )
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:87:83: globalVariables
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:86:82: ( globalVariables )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:86:83: globalVariables
                     {
                     pushFollow(FOLLOW_globalVariables_in_lpn102);
                     globalVariables();
@@ -246,10 +245,10 @@ public class PlatuGrammarParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:87:102: ( globalConstants )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:86:102: ( globalConstants )
                     {
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:87:102: ( globalConstants )
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:87:103: globalConstants
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:86:102: ( globalConstants )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:86:103: globalConstants
                     {
                     pushFollow(FOLLOW_globalConstants_in_lpn108);
                     globalConstants();
@@ -272,7 +271,7 @@ public class PlatuGrammarParser extends Parser {
                     			System.exit(1);
                     		}
                     	
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:95:8: ( module[prj] | main[prj] )+
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:94:8: ( module[prj] | main[prj] )+
             int cnt2=0;
             loop2:
             do {
@@ -319,7 +318,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt2) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:95:9: module[prj]
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:94:9: module[prj]
             	    {
             	    pushFollow(FOLLOW_module_in_lpn133);
             	    module1=module(prj);
@@ -333,7 +332,7 @@ public class PlatuGrammarParser extends Parser {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:99:11: main[prj]
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:98:11: main[prj]
             	    {
             	    pushFollow(FOLLOW_main_in_lpn160);
             	    main(prj);
@@ -376,11 +375,11 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "main"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:106:1: main[Project prj] : '<' 'mod' 'name' '=' '\"' 'main' '\"' '>' ( instantiation )+ '<' '/' 'mod' '>' ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:105:1: main[Project prj] : '<' 'mod' 'name' '=' '\"' 'main' '\"' '>' ( instantiation )+ '<' '/' 'mod' '>' ;
     public final void main(Project prj) throws RecognitionException {
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:107:2: ( '<' 'mod' 'name' '=' '\"' 'main' '\"' '>' ( instantiation )+ '<' '/' 'mod' '>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:107:4: '<' 'mod' 'name' '=' '\"' 'main' '\"' '>' ( instantiation )+ '<' '/' 'mod' '>'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:106:2: ( '<' 'mod' 'name' '=' '\"' 'main' '\"' '>' ( instantiation )+ '<' '/' 'mod' '>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:106:4: '<' 'mod' 'name' '=' '\"' 'main' '\"' '>' ( instantiation )+ '<' '/' 'mod' '>'
             {
             match(input,LESS,FOLLOW_LESS_in_main204); 
             match(input,MODULE,FOLLOW_MODULE_in_main206); 
@@ -398,7 +397,7 @@ public class PlatuGrammarParser extends Parser {
             				
             				main = true;
             			
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:116:3: ( instantiation )+
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:115:3: ( instantiation )+
             int cnt3=0;
             loop3:
             do {
@@ -418,7 +417,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt3) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:116:3: instantiation
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:115:3: instantiation
             	    {
             	    pushFollow(FOLLOW_instantiation_in_main227);
             	    instantiation();
@@ -461,7 +460,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "module"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:120:1: module[Project prj] returns [LPN lpn] : ( '<' 'mod' 'name' '=' '\"' ID '\"' '>' ( constants )? variables ( instantiation )? ( logic )? '<' '/' 'mod' '>' ) ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:119:1: module[Project prj] returns [LPN lpn] : ( '<' 'mod' 'name' '=' '\"' ID '\"' '>' ( constants )? variables ( instantiation )? ( logic )? '<' '/' 'mod' '>' ) ;
     public final LPN module(Project prj) throws RecognitionException {
         LPN lpn = null;
 
@@ -470,11 +469,11 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:121:5: ( ( '<' 'mod' 'name' '=' '\"' ID '\"' '>' ( constants )? variables ( instantiation )? ( logic )? '<' '/' 'mod' '>' ) )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:121:7: ( '<' 'mod' 'name' '=' '\"' ID '\"' '>' ( constants )? variables ( instantiation )? ( logic )? '<' '/' 'mod' '>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:120:5: ( ( '<' 'mod' 'name' '=' '\"' ID '\"' '>' ( constants )? variables ( instantiation )? ( logic )? '<' '/' 'mod' '>' ) )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:120:7: ( '<' 'mod' 'name' '=' '\"' ID '\"' '>' ( constants )? variables ( instantiation )? ( logic )? '<' '/' 'mod' '>' )
             {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:121:7: ( '<' 'mod' 'name' '=' '\"' ID '\"' '>' ( constants )? variables ( instantiation )? ( logic )? '<' '/' 'mod' '>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:121:9: '<' 'mod' 'name' '=' '\"' ID '\"' '>' ( constants )? variables ( instantiation )? ( logic )? '<' '/' 'mod' '>'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:120:7: ( '<' 'mod' 'name' '=' '\"' ID '\"' '>' ( constants )? variables ( instantiation )? ( logic )? '<' '/' 'mod' '>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:120:9: '<' 'mod' 'name' '=' '\"' ID '\"' '>' ( constants )? variables ( instantiation )? ( logic )? '<' '/' 'mod' '>'
             {
             match(input,LESS,FOLLOW_LESS_in_module262); 
             match(input,MODULE,FOLLOW_MODULE_in_module264); 
@@ -505,7 +504,7 @@ public class PlatuGrammarParser extends Parser {
                 		
             match(input,QUOTE,FOLLOW_QUOTE_in_module288); 
             match(input,GREATER,FOLLOW_GREATER_in_module290); 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:143:14: ( constants )?
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:142:14: ( constants )?
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -518,7 +517,7 @@ public class PlatuGrammarParser extends Parser {
             }
             switch (alt4) {
                 case 1 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:143:14: constants
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:142:14: constants
                     {
                     pushFollow(FOLLOW_constants_in_module292);
                     constants();
@@ -536,7 +535,7 @@ public class PlatuGrammarParser extends Parser {
 
             state._fsp--;
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:143:35: ( instantiation )?
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:142:35: ( instantiation )?
             int alt5=2;
             int LA5_0 = input.LA(1);
 
@@ -549,7 +548,7 @@ public class PlatuGrammarParser extends Parser {
             }
             switch (alt5) {
                 case 1 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:143:35: instantiation
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:142:35: instantiation
                     {
                     pushFollow(FOLLOW_instantiation_in_module297);
                     instantiation();
@@ -562,7 +561,7 @@ public class PlatuGrammarParser extends Parser {
 
             }
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:143:50: ( logic )?
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:142:50: ( logic )?
             int alt6=2;
             int LA6_0 = input.LA(1);
 
@@ -575,7 +574,7 @@ public class PlatuGrammarParser extends Parser {
             }
             switch (alt6) {
                 case 1 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:143:50: logic
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:142:50: logic
                     {
                     pushFollow(FOLLOW_logic_in_module300);
                     logic3=logic();
@@ -617,18 +616,18 @@ public class PlatuGrammarParser extends Parser {
             	            	initialMarking[i++] = mark;
             	            }
 
-            				lpn = new StateGraph(prj, (ID2!=null?ID2.getText():null), Inputs, Outputs, Internals, VarNodeMap, (logic3!=null?logic3.lpnTranSet:null), 
-            	         			StatevectorMap, initialMarking, null);
+            				lpn = new LPN(prj, (ID2!=null?ID2.getText():null), Inputs, Outputs, Internals, VarNodeMap, (logic3!=null?logic3.lpnTranSet:null), 
+            	         			StatevectorMap, initialMarking);
             				
             				for(LPNTran tran : inputTranList){
-            					tran.addLpnList(lpn);
+            					tran.addDstLpn(lpn);
             				}
             				
             				lpn.addAllInputTrans(inputTranList);
             				lpn.addAllOutputTrans(outputTranList);
             	            lpn.setVarIndexMap(VarIndexMap);         
             	            (logic3!=null?logic3.lpnTranSet:null).setLPN(lpn);     
-            	            prj.getDesignUnitSet().add((StateGraph)lpn);
+            	            prj.getDesignUnitSet().add(lpn.getStateGraph());
             	            
             	            LpnMap.put(lpn.getLabel(), lpn);
             	            
@@ -676,19 +675,19 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "constants"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:209:1: constants : '<' 'const' '>' (const1= ID '=' val1= INT ';' )* '<' '/' 'const' '>' ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:208:1: constants : '<' 'const' '>' (const1= ID '=' val1= INT ';' )* '<' '/' 'const' '>' ;
     public final void constants() throws RecognitionException {
         Token const1=null;
         Token val1=null;
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:210:2: ( '<' 'const' '>' (const1= ID '=' val1= INT ';' )* '<' '/' 'const' '>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:210:4: '<' 'const' '>' (const1= ID '=' val1= INT ';' )* '<' '/' 'const' '>'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:209:2: ( '<' 'const' '>' (const1= ID '=' val1= INT ';' )* '<' '/' 'const' '>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:209:4: '<' 'const' '>' (const1= ID '=' val1= INT ';' )* '<' '/' 'const' '>'
             {
             match(input,LESS,FOLLOW_LESS_in_constants336); 
             match(input,58,FOLLOW_58_in_constants338); 
             match(input,GREATER,FOLLOW_GREATER_in_constants340); 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:210:20: (const1= ID '=' val1= INT ';' )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:209:20: (const1= ID '=' val1= INT ';' )*
             loop7:
             do {
                 int alt7=2;
@@ -701,7 +700,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt7) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:210:21: const1= ID '=' val1= INT ';'
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:209:21: const1= ID '=' val1= INT ';'
             	    {
             	    const1=(Token)match(input,ID,FOLLOW_ID_in_constants345); 
             	    match(input,EQUALS,FOLLOW_EQUALS_in_constants347); 
@@ -760,19 +759,19 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "globalConstants"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:235:1: globalConstants : '<' 'const' '>' (const1= ID '=' val1= INT ';' )* '<' '/' 'const' '>' ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:234:1: globalConstants : '<' 'const' '>' (const1= ID '=' val1= INT ';' )* '<' '/' 'const' '>' ;
     public final void globalConstants() throws RecognitionException {
         Token const1=null;
         Token val1=null;
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:236:5: ( '<' 'const' '>' (const1= ID '=' val1= INT ';' )* '<' '/' 'const' '>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:236:9: '<' 'const' '>' (const1= ID '=' val1= INT ';' )* '<' '/' 'const' '>'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:235:5: ( '<' 'const' '>' (const1= ID '=' val1= INT ';' )* '<' '/' 'const' '>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:235:9: '<' 'const' '>' (const1= ID '=' val1= INT ';' )* '<' '/' 'const' '>'
             {
             match(input,LESS,FOLLOW_LESS_in_globalConstants389); 
             match(input,58,FOLLOW_58_in_globalConstants391); 
             match(input,GREATER,FOLLOW_GREATER_in_globalConstants393); 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:236:25: (const1= ID '=' val1= INT ';' )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:235:25: (const1= ID '=' val1= INT ';' )*
             loop8:
             do {
                 int alt8=2;
@@ -785,7 +784,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt8) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:236:26: const1= ID '=' val1= INT ';'
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:235:26: const1= ID '=' val1= INT ';'
             	    {
             	    const1=(Token)match(input,ID,FOLLOW_ID_in_globalConstants398); 
             	    match(input,EQUALS,FOLLOW_EQUALS_in_globalConstants400); 
@@ -836,20 +835,20 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "globalVariables"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:254:1: globalVariables : '<' 'var' '>' (var= ID '=' (val= INT | var2= ID ) ';' )* '<' '/' 'var' '>' ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:253:1: globalVariables : '<' 'var' '>' (var= ID '=' (val= INT | var2= ID ) ';' )* '<' '/' 'var' '>' ;
     public final void globalVariables() throws RecognitionException {
         Token var=null;
         Token val=null;
         Token var2=null;
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:255:2: ( '<' 'var' '>' (var= ID '=' (val= INT | var2= ID ) ';' )* '<' '/' 'var' '>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:255:4: '<' 'var' '>' (var= ID '=' (val= INT | var2= ID ) ';' )* '<' '/' 'var' '>'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:254:2: ( '<' 'var' '>' (var= ID '=' (val= INT | var2= ID ) ';' )* '<' '/' 'var' '>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:254:4: '<' 'var' '>' (var= ID '=' (val= INT | var2= ID ) ';' )* '<' '/' 'var' '>'
             {
             match(input,LESS,FOLLOW_LESS_in_globalVariables455); 
             match(input,INTERNAL,FOLLOW_INTERNAL_in_globalVariables457); 
             match(input,GREATER,FOLLOW_GREATER_in_globalVariables459); 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:255:18: (var= ID '=' (val= INT | var2= ID ) ';' )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:254:18: (var= ID '=' (val= INT | var2= ID ) ';' )*
             loop10:
             do {
                 int alt10=2;
@@ -862,7 +861,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt10) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:255:19: var= ID '=' (val= INT | var2= ID ) ';'
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:254:19: var= ID '=' (val= INT | var2= ID ) ';'
             	    {
             	    var=(Token)match(input,ID,FOLLOW_ID_in_globalVariables464); 
 
@@ -887,7 +886,7 @@ public class PlatuGrammarParser extends Parser {
             	    				GlobalCount++;
             	    			
             	    match(input,EQUALS,FOLLOW_EQUALS_in_globalVariables474); 
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:277:7: (val= INT | var2= ID )
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:276:7: (val= INT | var2= ID )
             	    int alt9=2;
             	    int LA9_0 = input.LA(1);
 
@@ -905,7 +904,7 @@ public class PlatuGrammarParser extends Parser {
             	    }
             	    switch (alt9) {
             	        case 1 :
-            	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:277:8: val= INT
+            	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:276:8: val= INT
             	            {
             	            val=(Token)match(input,INT,FOLLOW_INT_in_globalVariables479); 
 
@@ -926,7 +925,7 @@ public class PlatuGrammarParser extends Parser {
             	            }
             	            break;
             	        case 2 :
-            	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:292:5: var2= ID
+            	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:291:5: var2= ID
             	            {
             	            var2=(Token)match(input,ID,FOLLOW_ID_in_globalVariables493); 
 
@@ -997,7 +996,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "variables"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:326:1: variables : '<' 'var' '>' ( (var= ID '=' (val= INT | var2= ID ) ';' ) | (arrayName= ID ( '[' (dim= ID | val2= INT ) ']' )+ '=' ( '(' (val3= INT ',' )* val4= INT ')' )+ ';' ) )* '<' '/' 'var' '>' ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:325:1: variables : '<' 'var' '>' ( (var= ID '=' (val= INT | var2= ID ) ';' ) | (arrayName= ID ( '[' (dim= ID | val2= INT ) ']' )+ '=' ( '(' (val3= INT ',' )* val4= INT ')' )+ ';' ) )* '<' '/' 'var' '>' ;
     public final void variables() throws RecognitionException {
         Token var=null;
         Token val=null;
@@ -1009,14 +1008,14 @@ public class PlatuGrammarParser extends Parser {
         Token val4=null;
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:327:2: ( '<' 'var' '>' ( (var= ID '=' (val= INT | var2= ID ) ';' ) | (arrayName= ID ( '[' (dim= ID | val2= INT ) ']' )+ '=' ( '(' (val3= INT ',' )* val4= INT ')' )+ ';' ) )* '<' '/' 'var' '>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:327:4: '<' 'var' '>' ( (var= ID '=' (val= INT | var2= ID ) ';' ) | (arrayName= ID ( '[' (dim= ID | val2= INT ) ']' )+ '=' ( '(' (val3= INT ',' )* val4= INT ')' )+ ';' ) )* '<' '/' 'var' '>'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:326:2: ( '<' 'var' '>' ( (var= ID '=' (val= INT | var2= ID ) ';' ) | (arrayName= ID ( '[' (dim= ID | val2= INT ) ']' )+ '=' ( '(' (val3= INT ',' )* val4= INT ')' )+ ';' ) )* '<' '/' 'var' '>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:326:4: '<' 'var' '>' ( (var= ID '=' (val= INT | var2= ID ) ';' ) | (arrayName= ID ( '[' (dim= ID | val2= INT ) ']' )+ '=' ( '(' (val3= INT ',' )* val4= INT ')' )+ ';' ) )* '<' '/' 'var' '>'
             {
             Integer value = null; Token varNode = null;
             match(input,LESS,FOLLOW_LESS_in_variables529); 
             match(input,INTERNAL,FOLLOW_INTERNAL_in_variables531); 
             match(input,GREATER,FOLLOW_GREATER_in_variables533); 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:328:17: ( (var= ID '=' (val= INT | var2= ID ) ';' ) | (arrayName= ID ( '[' (dim= ID | val2= INT ) ']' )+ '=' ( '(' (val3= INT ',' )* val4= INT ')' )+ ';' ) )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:327:17: ( (var= ID '=' (val= INT | var2= ID ) ';' ) | (arrayName= ID ( '[' (dim= ID | val2= INT ) ']' )+ '=' ( '(' (val3= INT ',' )* val4= INT ')' )+ ';' ) )*
             loop16:
             do {
                 int alt16=3;
@@ -1038,10 +1037,10 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt16) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:328:18: (var= ID '=' (val= INT | var2= ID ) ';' )
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:327:18: (var= ID '=' (val= INT | var2= ID ) ';' )
             	    {
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:328:18: (var= ID '=' (val= INT | var2= ID ) ';' )
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:328:19: var= ID '=' (val= INT | var2= ID ) ';'
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:327:18: (var= ID '=' (val= INT | var2= ID ) ';' )
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:327:19: var= ID '=' (val= INT | var2= ID ) ';'
             	    {
             	    var=(Token)match(input,ID,FOLLOW_ID_in_variables539); 
 
@@ -1061,7 +1060,7 @@ public class PlatuGrammarParser extends Parser {
             	    				varNode = var;
             	    			
             	    match(input,EQUALS,FOLLOW_EQUALS_in_variables549); 
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:345:7: (val= INT | var2= ID )
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:344:7: (val= INT | var2= ID )
             	    int alt11=2;
             	    int LA11_0 = input.LA(1);
 
@@ -1079,7 +1078,7 @@ public class PlatuGrammarParser extends Parser {
             	    }
             	    switch (alt11) {
             	        case 1 :
-            	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:345:8: val= INT
+            	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:344:8: val= INT
             	            {
             	            val=(Token)match(input,INT,FOLLOW_INT_in_variables554); 
 
@@ -1090,7 +1089,7 @@ public class PlatuGrammarParser extends Parser {
             	            }
             	            break;
             	        case 2 :
-            	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:350:5: var2= ID
+            	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:349:5: var2= ID
             	            {
             	            var2=(Token)match(input,ID,FOLLOW_ID_in_variables568); 
 
@@ -1160,16 +1159,16 @@ public class PlatuGrammarParser extends Parser {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:405:5: (arrayName= ID ( '[' (dim= ID | val2= INT ) ']' )+ '=' ( '(' (val3= INT ',' )* val4= INT ')' )+ ';' )
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:404:5: (arrayName= ID ( '[' (dim= ID | val2= INT ) ']' )+ '=' ( '(' (val3= INT ',' )* val4= INT ')' )+ ';' )
             	    {
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:405:5: (arrayName= ID ( '[' (dim= ID | val2= INT ) ']' )+ '=' ( '(' (val3= INT ',' )* val4= INT ')' )+ ';' )
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:405:6: arrayName= ID ( '[' (dim= ID | val2= INT ) ']' )+ '=' ( '(' (val3= INT ',' )* val4= INT ')' )+ ';'
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:404:5: (arrayName= ID ( '[' (dim= ID | val2= INT ) ']' )+ '=' ( '(' (val3= INT ',' )* val4= INT ')' )+ ';' )
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:404:6: arrayName= ID ( '[' (dim= ID | val2= INT ) ']' )+ '=' ( '(' (val3= INT ',' )* val4= INT ')' )+ ';'
             	    {
             	    arrayName=(Token)match(input,ID,FOLLOW_ID_in_variables593); 
 
             	    				List<Integer> dimensionsList = new ArrayList<Integer>();
             	    			
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:409:3: ( '[' (dim= ID | val2= INT ) ']' )+
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:408:3: ( '[' (dim= ID | val2= INT ) ']' )+
             	    int cnt13=0;
             	    loop13:
             	    do {
@@ -1183,10 +1182,10 @@ public class PlatuGrammarParser extends Parser {
 
             	        switch (alt13) {
             	    	case 1 :
-            	    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:409:4: '[' (dim= ID | val2= INT ) ']'
+            	    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:408:4: '[' (dim= ID | val2= INT ) ']'
             	    	    {
             	    	    match(input,59,FOLLOW_59_in_variables603); 
-            	    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:409:8: (dim= ID | val2= INT )
+            	    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:408:8: (dim= ID | val2= INT )
             	    	    int alt12=2;
             	    	    int LA12_0 = input.LA(1);
 
@@ -1204,7 +1203,7 @@ public class PlatuGrammarParser extends Parser {
             	    	    }
             	    	    switch (alt12) {
             	    	        case 1 :
-            	    	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:409:9: dim= ID
+            	    	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:408:9: dim= ID
             	    	            {
             	    	            dim=(Token)match(input,ID,FOLLOW_ID_in_variables608); 
 
@@ -1232,7 +1231,7 @@ public class PlatuGrammarParser extends Parser {
             	    	            }
             	    	            break;
             	    	        case 2 :
-            	    	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:431:5: val2= INT
+            	    	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:430:5: val2= INT
             	    	            {
             	    	            val2=(Token)match(input,INT,FOLLOW_INT_in_variables622); 
 
@@ -1262,7 +1261,7 @@ public class PlatuGrammarParser extends Parser {
 
             	    				List<Integer> valueList = new ArrayList<Integer>();
             	    			
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:439:3: ( '(' (val3= INT ',' )* val4= INT ')' )+
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:438:3: ( '(' (val3= INT ',' )* val4= INT ')' )+
             	    int cnt15=0;
             	    loop15:
             	    do {
@@ -1276,10 +1275,10 @@ public class PlatuGrammarParser extends Parser {
 
             	        switch (alt15) {
             	    	case 1 :
-            	    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:439:4: '(' (val3= INT ',' )* val4= INT ')'
+            	    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:438:4: '(' (val3= INT ',' )* val4= INT ')'
             	    	    {
             	    	    match(input,LPAREN,FOLLOW_LPAREN_in_variables649); 
-            	    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:439:8: (val3= INT ',' )*
+            	    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:438:8: (val3= INT ',' )*
             	    	    loop14:
             	    	    do {
             	    	        int alt14=2;
@@ -1298,7 +1297,7 @@ public class PlatuGrammarParser extends Parser {
 
             	    	        switch (alt14) {
             	    	    	case 1 :
-            	    	    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:439:9: val3= INT ','
+            	    	    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:438:9: val3= INT ','
             	    	    	    {
             	    	    	    val3=(Token)match(input,INT,FOLLOW_INT_in_variables654); 
             	    	    	    match(input,COMMA,FOLLOW_COMMA_in_variables656); 
@@ -1411,7 +1410,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "instantiation"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:495:1: instantiation : '<' 'inst' '>' modName= ID instName= ID '(' (mod= ID '.' var= ID )+ ')' '<' '/' 'inst' '>' ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:494:1: instantiation : '<' 'inst' '>' modName= ID instName= ID '(' (mod= ID '.' var= ID )+ ')' '<' '/' 'inst' '>' ;
     public final void instantiation() throws RecognitionException {
         Token modName=null;
         Token instName=null;
@@ -1419,8 +1418,8 @@ public class PlatuGrammarParser extends Parser {
         Token var=null;
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:496:5: ( '<' 'inst' '>' modName= ID instName= ID '(' (mod= ID '.' var= ID )+ ')' '<' '/' 'inst' '>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:496:9: '<' 'inst' '>' modName= ID instName= ID '(' (mod= ID '.' var= ID )+ ')' '<' '/' 'inst' '>'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:495:5: ( '<' 'inst' '>' modName= ID instName= ID '(' (mod= ID '.' var= ID )+ ')' '<' '/' 'inst' '>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:495:9: '<' 'inst' '>' modName= ID instName= ID '(' (mod= ID '.' var= ID )+ ')' '<' '/' 'inst' '>'
             {
             HashMap<String, String> portMap = new HashMap<String, String>();
             match(input,LESS,FOLLOW_LESS_in_instantiation736); 
@@ -1429,7 +1428,7 @@ public class PlatuGrammarParser extends Parser {
             modName=(Token)match(input,ID,FOLLOW_ID_in_instantiation749); 
             instName=(Token)match(input,ID,FOLLOW_ID_in_instantiation753); 
             match(input,LPAREN,FOLLOW_LPAREN_in_instantiation755); 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:498:32: (mod= ID '.' var= ID )+
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:497:32: (mod= ID '.' var= ID )+
             int cnt17=0;
             loop17:
             do {
@@ -1443,7 +1442,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt17) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:498:33: mod= ID '.' var= ID
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:497:33: mod= ID '.' var= ID
             	    {
             	    mod=(Token)match(input,ID,FOLLOW_ID_in_instantiation759); 
             	    match(input,PERIOD,FOLLOW_PERIOD_in_instantiation761); 
@@ -1489,7 +1488,7 @@ public class PlatuGrammarParser extends Parser {
     };
 
     // $ANTLR start "logic"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:502:1: logic returns [List<Integer> initMarking, LPNTranSet lpnTranSet] : marking ( transition )+ ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:501:1: logic returns [List<Integer> initMarking, LpnTranList lpnTranSet] : marking ( transition )+ ;
     public final PlatuGrammarParser.logic_return logic() throws RecognitionException {
         PlatuGrammarParser.logic_return retval = new PlatuGrammarParser.logic_return();
         retval.start = input.LT(1);
@@ -1500,8 +1499,8 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:503:5: ( marking ( transition )+ )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:503:9: marking ( transition )+
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:502:5: ( marking ( transition )+ )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:502:9: marking ( transition )+
             {
             retval.lpnTranSet = new LpnTranList();
             pushFollow(FOLLOW_marking_in_logic812);
@@ -1509,7 +1508,7 @@ public class PlatuGrammarParser extends Parser {
 
             state._fsp--;
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:504:14: ( transition )+
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:503:14: ( transition )+
             int cnt18=0;
             loop18:
             do {
@@ -1529,7 +1528,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt18) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:504:15: transition
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:503:15: transition
             	    {
             	    pushFollow(FOLLOW_transition_in_logic815);
             	    transition4=transition();
@@ -1574,7 +1573,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "marking"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:510:1: marking returns [List mark] : ( '<' 'marking' '>' ( (m1= INT | c1= ID ) ( ',' (m2= INT | c2= ID ) )* )? '<' '/' 'marking' '>' )? ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:509:1: marking returns [List mark] : ( '<' 'marking' '>' ( (m1= INT | c1= ID ) ( ',' (m2= INT | c2= ID ) )* )? '<' '/' 'marking' '>' )? ;
     public final List marking() throws RecognitionException {
         List mark = null;
 
@@ -1584,11 +1583,11 @@ public class PlatuGrammarParser extends Parser {
         Token c2=null;
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:511:5: ( ( '<' 'marking' '>' ( (m1= INT | c1= ID ) ( ',' (m2= INT | c2= ID ) )* )? '<' '/' 'marking' '>' )? )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:511:9: ( '<' 'marking' '>' ( (m1= INT | c1= ID ) ( ',' (m2= INT | c2= ID ) )* )? '<' '/' 'marking' '>' )?
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:510:5: ( ( '<' 'marking' '>' ( (m1= INT | c1= ID ) ( ',' (m2= INT | c2= ID ) )* )? '<' '/' 'marking' '>' )? )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:510:9: ( '<' 'marking' '>' ( (m1= INT | c1= ID ) ( ',' (m2= INT | c2= ID ) )* )? '<' '/' 'marking' '>' )?
             {
             mark = new LinkedList<Integer>(); Integer result;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:512:9: ( '<' 'marking' '>' ( (m1= INT | c1= ID ) ( ',' (m2= INT | c2= ID ) )* )? '<' '/' 'marking' '>' )?
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:511:9: ( '<' 'marking' '>' ( (m1= INT | c1= ID ) ( ',' (m2= INT | c2= ID ) )* )? '<' '/' 'marking' '>' )?
             int alt23=2;
             int LA23_0 = input.LA(1);
 
@@ -1601,12 +1600,12 @@ public class PlatuGrammarParser extends Parser {
             }
             switch (alt23) {
                 case 1 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:512:10: '<' 'marking' '>' ( (m1= INT | c1= ID ) ( ',' (m2= INT | c2= ID ) )* )? '<' '/' 'marking' '>'
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:511:10: '<' 'marking' '>' ( (m1= INT | c1= ID ) ( ',' (m2= INT | c2= ID ) )* )? '<' '/' 'marking' '>'
                     {
                     match(input,LESS,FOLLOW_LESS_in_marking868); 
                     match(input,MARKING,FOLLOW_MARKING_in_marking870); 
                     match(input,GREATER,FOLLOW_GREATER_in_marking872); 
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:512:28: ( (m1= INT | c1= ID ) ( ',' (m2= INT | c2= ID ) )* )?
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:511:28: ( (m1= INT | c1= ID ) ( ',' (m2= INT | c2= ID ) )* )?
                     int alt22=2;
                     int LA22_0 = input.LA(1);
 
@@ -1615,9 +1614,9 @@ public class PlatuGrammarParser extends Parser {
                     }
                     switch (alt22) {
                         case 1 :
-                            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:512:29: (m1= INT | c1= ID ) ( ',' (m2= INT | c2= ID ) )*
+                            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:511:29: (m1= INT | c1= ID ) ( ',' (m2= INT | c2= ID ) )*
                             {
-                            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:512:29: (m1= INT | c1= ID )
+                            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:511:29: (m1= INT | c1= ID )
                             int alt19=2;
                             int LA19_0 = input.LA(1);
 
@@ -1635,7 +1634,7 @@ public class PlatuGrammarParser extends Parser {
                             }
                             switch (alt19) {
                                 case 1 :
-                                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:512:30: m1= INT
+                                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:511:30: m1= INT
                                     {
                                     m1=(Token)match(input,INT,FOLLOW_INT_in_marking878); 
 
@@ -1645,7 +1644,7 @@ public class PlatuGrammarParser extends Parser {
                                     }
                                     break;
                                 case 2 :
-                                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:516:11: c1= ID
+                                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:515:11: c1= ID
                                     {
                                     c1=(Token)match(input,ID,FOLLOW_ID_in_marking904); 
 
@@ -1663,7 +1662,7 @@ public class PlatuGrammarParser extends Parser {
 
                             }
 
-                            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:526:11: ( ',' (m2= INT | c2= ID ) )*
+                            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:525:11: ( ',' (m2= INT | c2= ID ) )*
                             loop21:
                             do {
                                 int alt21=2;
@@ -1676,10 +1675,10 @@ public class PlatuGrammarParser extends Parser {
 
                                 switch (alt21) {
                             	case 1 :
-                            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:526:12: ',' (m2= INT | c2= ID )
+                            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:525:12: ',' (m2= INT | c2= ID )
                             	    {
                             	    match(input,COMMA,FOLLOW_COMMA_in_marking928); 
-                            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:526:16: (m2= INT | c2= ID )
+                            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:525:16: (m2= INT | c2= ID )
                             	    int alt20=2;
                             	    int LA20_0 = input.LA(1);
 
@@ -1697,7 +1696,7 @@ public class PlatuGrammarParser extends Parser {
                             	    }
                             	    switch (alt20) {
                             	        case 1 :
-                            	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:526:17: m2= INT
+                            	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:525:17: m2= INT
                             	            {
                             	            m2=(Token)match(input,INT,FOLLOW_INT_in_marking933); 
 
@@ -1707,7 +1706,7 @@ public class PlatuGrammarParser extends Parser {
                             	            }
                             	            break;
                             	        case 2 :
-                            	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:530:11: c2= ID
+                            	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:529:11: c2= ID
                             	            {
                             	            c2=(Token)match(input,ID,FOLLOW_ID_in_marking959); 
 
@@ -1769,7 +1768,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "transition"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:543:1: transition returns [LPNTran lpnTran] : '<' 'transition' 'label' '=' '\"' lbl= ( ID | INT ) '\"' 'preset' '=' ( '\"' '\"' | ( '\"' (pre= INT | pre1= ID ) ( ',' pre2= INT | ',' pre3= ID )* '\"' ) ) 'postset' '=' ( '\"' '\"' | ( '\"' (post= INT | post1= ID ) ( ( ',' post2= INT ) | ( ',' post3= ID ) )* '\"' ) ) '>' ( guard )? ( delay )? ( ( assertion ) | ( assignment ) )* '<' '/' 'transition' '>' ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:542:1: transition returns [LPNTran lpnTran] : '<' 'transition' 'label' '=' '\"' lbl= ( ID | INT ) '\"' 'preset' '=' ( '\"' '\"' | ( '\"' (pre= INT | pre1= ID ) ( ',' pre2= INT | ',' pre3= ID )* '\"' ) ) 'postset' '=' ( '\"' '\"' | ( '\"' (post= INT | post1= ID ) ( ( ',' post2= INT ) | ( ',' post3= ID ) )* '\"' ) ) '>' ( guard )? ( delay )? ( ( assertion ) | ( assignment ) )* '<' '/' 'transition' '>' ;
     public final LPNTran transition() throws RecognitionException {
         LPNTran lpnTran = null;
 
@@ -1792,8 +1791,8 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:544:5: ( '<' 'transition' 'label' '=' '\"' lbl= ( ID | INT ) '\"' 'preset' '=' ( '\"' '\"' | ( '\"' (pre= INT | pre1= ID ) ( ',' pre2= INT | ',' pre3= ID )* '\"' ) ) 'postset' '=' ( '\"' '\"' | ( '\"' (post= INT | post1= ID ) ( ( ',' post2= INT ) | ( ',' post3= ID ) )* '\"' ) ) '>' ( guard )? ( delay )? ( ( assertion ) | ( assignment ) )* '<' '/' 'transition' '>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:544:10: '<' 'transition' 'label' '=' '\"' lbl= ( ID | INT ) '\"' 'preset' '=' ( '\"' '\"' | ( '\"' (pre= INT | pre1= ID ) ( ',' pre2= INT | ',' pre3= ID )* '\"' ) ) 'postset' '=' ( '\"' '\"' | ( '\"' (post= INT | post1= ID ) ( ( ',' post2= INT ) | ( ',' post3= ID ) )* '\"' ) ) '>' ( guard )? ( delay )? ( ( assertion ) | ( assignment ) )* '<' '/' 'transition' '>'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:543:5: ( '<' 'transition' 'label' '=' '\"' lbl= ( ID | INT ) '\"' 'preset' '=' ( '\"' '\"' | ( '\"' (pre= INT | pre1= ID ) ( ',' pre2= INT | ',' pre3= ID )* '\"' ) ) 'postset' '=' ( '\"' '\"' | ( '\"' (post= INT | post1= ID ) ( ( ',' post2= INT ) | ( ',' post3= ID ) )* '\"' ) ) '>' ( guard )? ( delay )? ( ( assertion ) | ( assignment ) )* '<' '/' 'transition' '>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:543:10: '<' 'transition' 'label' '=' '\"' lbl= ( ID | INT ) '\"' 'preset' '=' ( '\"' '\"' | ( '\"' (pre= INT | pre1= ID ) ( ',' pre2= INT | ',' pre3= ID )* '\"' ) ) 'postset' '=' ( '\"' '\"' | ( '\"' (post= INT | post1= ID ) ( ( ',' post2= INT ) | ( ',' post3= ID ) )* '\"' ) ) '>' ( guard )? ( delay )? ( ( assertion ) | ( assignment ) )* '<' '/' 'transition' '>'
             {
 
             	    		Integer result = null;
@@ -1824,7 +1823,7 @@ public class PlatuGrammarParser extends Parser {
             match(input,QUOTE,FOLLOW_QUOTE_in_transition1044); 
             match(input,PRESET,FOLLOW_PRESET_in_transition1046); 
             match(input,EQUALS,FOLLOW_EQUALS_in_transition1048); 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:555:69: ( '\"' '\"' | ( '\"' (pre= INT | pre1= ID ) ( ',' pre2= INT | ',' pre3= ID )* '\"' ) )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:554:69: ( '\"' '\"' | ( '\"' (pre= INT | pre1= ID ) ( ',' pre2= INT | ',' pre3= ID )* '\"' ) )
             int alt26=2;
             int LA26_0 = input.LA(1);
 
@@ -1852,7 +1851,7 @@ public class PlatuGrammarParser extends Parser {
             }
             switch (alt26) {
                 case 1 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:555:70: '\"' '\"'
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:554:70: '\"' '\"'
                     {
                     match(input,QUOTE,FOLLOW_QUOTE_in_transition1051); 
                     match(input,QUOTE,FOLLOW_QUOTE_in_transition1053); 
@@ -1860,13 +1859,13 @@ public class PlatuGrammarParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:555:80: ( '\"' (pre= INT | pre1= ID ) ( ',' pre2= INT | ',' pre3= ID )* '\"' )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:554:80: ( '\"' (pre= INT | pre1= ID ) ( ',' pre2= INT | ',' pre3= ID )* '\"' )
                     {
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:555:80: ( '\"' (pre= INT | pre1= ID ) ( ',' pre2= INT | ',' pre3= ID )* '\"' )
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:555:81: '\"' (pre= INT | pre1= ID ) ( ',' pre2= INT | ',' pre3= ID )* '\"'
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:554:80: ( '\"' (pre= INT | pre1= ID ) ( ',' pre2= INT | ',' pre3= ID )* '\"' )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:554:81: '\"' (pre= INT | pre1= ID ) ( ',' pre2= INT | ',' pre3= ID )* '\"'
                     {
                     match(input,QUOTE,FOLLOW_QUOTE_in_transition1058); 
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:555:85: (pre= INT | pre1= ID )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:554:85: (pre= INT | pre1= ID )
                     int alt24=2;
                     int LA24_0 = input.LA(1);
 
@@ -1884,7 +1883,7 @@ public class PlatuGrammarParser extends Parser {
                     }
                     switch (alt24) {
                         case 1 :
-                            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:555:86: pre= INT
+                            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:554:86: pre= INT
                             {
                             pre=(Token)match(input,INT,FOLLOW_INT_in_transition1063); 
 
@@ -1894,7 +1893,7 @@ public class PlatuGrammarParser extends Parser {
                             }
                             break;
                         case 2 :
-                            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:559:7: pre1= ID
+                            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:558:7: pre1= ID
                             {
                             pre1=(Token)match(input,ID,FOLLOW_ID_in_transition1083); 
 
@@ -1912,7 +1911,7 @@ public class PlatuGrammarParser extends Parser {
 
                     }
 
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:569:6: ( ',' pre2= INT | ',' pre3= ID )*
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:568:6: ( ',' pre2= INT | ',' pre3= ID )*
                     loop25:
                     do {
                         int alt25=3;
@@ -1934,7 +1933,7 @@ public class PlatuGrammarParser extends Parser {
 
                         switch (alt25) {
                     	case 1 :
-                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:569:8: ',' pre2= INT
+                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:568:8: ',' pre2= INT
                     	    {
                     	    match(input,COMMA,FOLLOW_COMMA_in_transition1099); 
                     	    pre2=(Token)match(input,INT,FOLLOW_INT_in_transition1103); 
@@ -1945,7 +1944,7 @@ public class PlatuGrammarParser extends Parser {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:573:7: ',' pre3= ID
+                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:572:7: ',' pre3= ID
                     	    {
                     	    match(input,COMMA,FOLLOW_COMMA_in_transition1121); 
                     	    pre3=(Token)match(input,ID,FOLLOW_ID_in_transition1125); 
@@ -1979,7 +1978,7 @@ public class PlatuGrammarParser extends Parser {
 
             match(input,POSTSET,FOLLOW_POSTSET_in_transition1144); 
             match(input,EQUALS,FOLLOW_EQUALS_in_transition1146); 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:583:27: ( '\"' '\"' | ( '\"' (post= INT | post1= ID ) ( ( ',' post2= INT ) | ( ',' post3= ID ) )* '\"' ) )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:582:27: ( '\"' '\"' | ( '\"' (post= INT | post1= ID ) ( ( ',' post2= INT ) | ( ',' post3= ID ) )* '\"' ) )
             int alt29=2;
             int LA29_0 = input.LA(1);
 
@@ -2007,7 +2006,7 @@ public class PlatuGrammarParser extends Parser {
             }
             switch (alt29) {
                 case 1 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:583:29: '\"' '\"'
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:582:29: '\"' '\"'
                     {
                     match(input,QUOTE,FOLLOW_QUOTE_in_transition1150); 
                     match(input,QUOTE,FOLLOW_QUOTE_in_transition1152); 
@@ -2015,13 +2014,13 @@ public class PlatuGrammarParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:583:39: ( '\"' (post= INT | post1= ID ) ( ( ',' post2= INT ) | ( ',' post3= ID ) )* '\"' )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:582:39: ( '\"' (post= INT | post1= ID ) ( ( ',' post2= INT ) | ( ',' post3= ID ) )* '\"' )
                     {
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:583:39: ( '\"' (post= INT | post1= ID ) ( ( ',' post2= INT ) | ( ',' post3= ID ) )* '\"' )
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:583:40: '\"' (post= INT | post1= ID ) ( ( ',' post2= INT ) | ( ',' post3= ID ) )* '\"'
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:582:39: ( '\"' (post= INT | post1= ID ) ( ( ',' post2= INT ) | ( ',' post3= ID ) )* '\"' )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:582:40: '\"' (post= INT | post1= ID ) ( ( ',' post2= INT ) | ( ',' post3= ID ) )* '\"'
                     {
                     match(input,QUOTE,FOLLOW_QUOTE_in_transition1157); 
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:583:44: (post= INT | post1= ID )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:582:44: (post= INT | post1= ID )
                     int alt27=2;
                     int LA27_0 = input.LA(1);
 
@@ -2039,7 +2038,7 @@ public class PlatuGrammarParser extends Parser {
                     }
                     switch (alt27) {
                         case 1 :
-                            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:583:46: post= INT
+                            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:582:46: post= INT
                             {
                             post=(Token)match(input,INT,FOLLOW_INT_in_transition1163); 
 
@@ -2049,7 +2048,7 @@ public class PlatuGrammarParser extends Parser {
                             }
                             break;
                         case 2 :
-                            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:587:8: post1= ID
+                            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:586:8: post1= ID
                             {
                             post1=(Token)match(input,ID,FOLLOW_ID_in_transition1183); 
 
@@ -2067,7 +2066,7 @@ public class PlatuGrammarParser extends Parser {
 
                     }
 
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:598:6: ( ( ',' post2= INT ) | ( ',' post3= ID ) )*
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:597:6: ( ( ',' post2= INT ) | ( ',' post3= ID ) )*
                     loop28:
                     do {
                         int alt28=3;
@@ -2089,10 +2088,10 @@ public class PlatuGrammarParser extends Parser {
 
                         switch (alt28) {
                     	case 1 :
-                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:598:8: ( ',' post2= INT )
+                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:597:8: ( ',' post2= INT )
                     	    {
-                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:598:8: ( ',' post2= INT )
-                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:598:9: ',' post2= INT
+                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:597:8: ( ',' post2= INT )
+                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:597:9: ',' post2= INT
                     	    {
                     	    match(input,COMMA,FOLLOW_COMMA_in_transition1208); 
                     	    post2=(Token)match(input,INT,FOLLOW_INT_in_transition1212); 
@@ -2106,10 +2105,10 @@ public class PlatuGrammarParser extends Parser {
                     	    }
                     	    break;
                     	case 2 :
-                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:602:8: ( ',' post3= ID )
+                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:601:8: ( ',' post3= ID )
                     	    {
-                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:602:8: ( ',' post3= ID )
-                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:602:9: ',' post3= ID
+                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:601:8: ( ',' post3= ID )
+                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:601:9: ',' post3= ID
                     	    {
                     	    match(input,COMMA,FOLLOW_COMMA_in_transition1232); 
                     	    post3=(Token)match(input,ID,FOLLOW_ID_in_transition1235); 
@@ -2145,7 +2144,7 @@ public class PlatuGrammarParser extends Parser {
             }
 
             match(input,GREATER,FOLLOW_GREATER_in_transition1259); 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:612:20: ( guard )?
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:611:20: ( guard )?
             int alt30=2;
             switch ( input.LA(1) ) {
                 case INT:
@@ -2188,7 +2187,7 @@ public class PlatuGrammarParser extends Parser {
 
             switch (alt30) {
                 case 1 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:612:21: guard
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:611:21: guard
                     {
                     pushFollow(FOLLOW_guard_in_transition1262);
                     guard6=guard();
@@ -2204,7 +2203,7 @@ public class PlatuGrammarParser extends Parser {
 
             }
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:616:9: ( delay )?
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:615:9: ( delay )?
             int alt31=2;
             int LA31_0 = input.LA(1);
 
@@ -2213,7 +2212,7 @@ public class PlatuGrammarParser extends Parser {
             }
             switch (alt31) {
                 case 1 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:616:10: delay
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:615:10: delay
                     {
                     pushFollow(FOLLOW_delay_in_transition1282);
                     delay7=delay();
@@ -2230,7 +2229,7 @@ public class PlatuGrammarParser extends Parser {
 
             }
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:621:9: ( ( assertion ) | ( assignment ) )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:620:9: ( ( assertion ) | ( assignment ) )*
             loop32:
             do {
                 int alt32=3;
@@ -2246,10 +2245,10 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt32) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:621:10: ( assertion )
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:620:10: ( assertion )
             	    {
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:621:10: ( assertion )
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:621:11: assertion
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:620:10: ( assertion )
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:620:11: assertion
             	    {
             	    pushFollow(FOLLOW_assertion_in_transition1303);
             	    assertion8=assertion();
@@ -2268,10 +2267,10 @@ public class PlatuGrammarParser extends Parser {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:627:10: ( assignment )
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:626:10: ( assignment )
             	    {
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:627:10: ( assignment )
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:627:11: assignment
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:626:10: ( assignment )
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:626:11: assignment
             	    {
             	    pushFollow(FOLLOW_assignment_in_transition1323);
             	    assignment9=assignment();
@@ -2313,7 +2312,7 @@ public class PlatuGrammarParser extends Parser {
                     			if(GlobalInputMap.containsKey(var.getName())){
             	        			for(LPN lpn : GlobalInputMap.get(var.getName())){
             	        				lpn.addInputTran(lpnTran);
-            	        				lpnTran.addLpnList(lpn);
+            	        				lpnTran.addDstLpn(lpn);
             	        			}
                     			}
                     		}
@@ -2353,7 +2352,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "assertion"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:671:1: assertion returns [Expression booleanExpr] : 'assert' '(' expression ')' ';' ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:670:1: assertion returns [Expression booleanExpr] : 'assert' '(' expression ')' ';' ;
     public final Expression assertion() throws RecognitionException {
         Expression booleanExpr = null;
 
@@ -2361,8 +2360,8 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:672:2: ( 'assert' '(' expression ')' ';' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:672:4: 'assert' '(' expression ')' ';'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:671:2: ( 'assert' '(' expression ')' ';' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:671:4: 'assert' '(' expression ')' ';'
             {
             booleanExpr = null;
             match(input,62,FOLLOW_62_in_assertion1382); 
@@ -2396,7 +2395,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "guard"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:679:1: guard returns [Expression expr] : expression ';' ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:678:1: guard returns [Expression expr] : expression ';' ;
     public final Expression guard() throws RecognitionException {
         Expression expr = null;
 
@@ -2404,8 +2403,8 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:680:5: ( expression ';' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:680:9: expression ';'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:679:5: ( expression ';' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:679:9: expression ';'
             {
             pushFollow(FOLLOW_expression_in_guard1416);
             expression11=expression();
@@ -2439,7 +2438,7 @@ public class PlatuGrammarParser extends Parser {
     };
 
     // $ANTLR start "delay"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:686:1: delay returns [int delayLB, int delayUB] : '(' lb= INT ',' (ub= INT | 'inf' ) ')' ';' ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:685:1: delay returns [int delayLB, int delayUB] : '(' lb= INT ',' (ub= INT | 'inf' ) ')' ';' ;
     public final PlatuGrammarParser.delay_return delay() throws RecognitionException {
         PlatuGrammarParser.delay_return retval = new PlatuGrammarParser.delay_return();
         retval.start = input.LT(1);
@@ -2448,8 +2447,8 @@ public class PlatuGrammarParser extends Parser {
         Token ub=null;
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:687:5: ( '(' lb= INT ',' (ub= INT | 'inf' ) ')' ';' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:687:8: '(' lb= INT ',' (ub= INT | 'inf' ) ')' ';'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:686:5: ( '(' lb= INT ',' (ub= INT | 'inf' ) ')' ';' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:686:8: '(' lb= INT ',' (ub= INT | 'inf' ) ')' ';'
             {
             match(input,LPAREN,FOLLOW_LPAREN_in_delay1452); 
             lb=(Token)match(input,INT,FOLLOW_INT_in_delay1456); 
@@ -2457,7 +2456,7 @@ public class PlatuGrammarParser extends Parser {
                 			retval.delayLB = Integer.parseInt((lb!=null?lb.getText():null));
                			
             match(input,COMMA,FOLLOW_COMMA_in_delay1470); 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:691:8: (ub= INT | 'inf' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:690:8: (ub= INT | 'inf' )
             int alt33=2;
             int LA33_0 = input.LA(1);
 
@@ -2475,7 +2474,7 @@ public class PlatuGrammarParser extends Parser {
             }
             switch (alt33) {
                 case 1 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:691:9: ub= INT
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:690:9: ub= INT
                     {
                     ub=(Token)match(input,INT,FOLLOW_INT_in_delay1475); 
 
@@ -2498,7 +2497,7 @@ public class PlatuGrammarParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:708:6: 'inf'
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:707:6: 'inf'
                     {
                     match(input,63,FOLLOW_63_in_delay1490); 
 
@@ -2533,7 +2532,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "assignment"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:715:1: assignment returns [VarExpr assign] : ( (var= ID '=' expression ';' ) | (var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';' ) );
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:714:1: assignment returns [VarExpr assign] : ( (var= ID '=' expression ';' ) | (var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';' ) );
     public final VarExpr assignment() throws RecognitionException {
         VarExpr assign = null;
 
@@ -2543,7 +2542,7 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:716:5: ( (var= ID '=' expression ';' ) | (var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';' ) )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:715:5: ( (var= ID '=' expression ';' ) | (var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';' ) )
             int alt35=2;
             int LA35_0 = input.LA(1);
 
@@ -2571,10 +2570,10 @@ public class PlatuGrammarParser extends Parser {
             }
             switch (alt35) {
                 case 1 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:716:9: (var= ID '=' expression ';' )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:715:9: (var= ID '=' expression ';' )
                     {
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:716:9: (var= ID '=' expression ';' )
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:716:10: var= ID '=' expression ';'
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:715:9: (var= ID '=' expression ';' )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:715:10: var= ID '=' expression ';'
                     {
                     var=(Token)match(input,ID,FOLLOW_ID_in_assignment1531); 
                     match(input,EQUALS,FOLLOW_EQUALS_in_assignment1533); 
@@ -2615,17 +2614,17 @@ public class PlatuGrammarParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:742:10: (var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';' )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:741:10: (var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';' )
                     {
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:742:10: (var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';' )
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:742:11: var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';'
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:741:10: (var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';' )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:741:11: var2= ID ( '[' ( INT | ID ) ']' )+ '=' expression ';'
                     {
                     var2=(Token)match(input,ID,FOLLOW_ID_in_assignment1573); 
 
                     	   			List<Integer> indexList = new ArrayList<Integer>();
                     	   			
                     	   		
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:747:6: ( '[' ( INT | ID ) ']' )+
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:746:6: ( '[' ( INT | ID ) ']' )+
                     int cnt34=0;
                     loop34:
                     do {
@@ -2639,7 +2638,7 @@ public class PlatuGrammarParser extends Parser {
 
                         switch (alt34) {
                     	case 1 :
-                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:747:7: '[' ( INT | ID ) ']'
+                    	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:746:7: '[' ( INT | ID ) ']'
                     	    {
                     	    match(input,59,FOLLOW_59_in_assignment1590); 
                     	    if ( (input.LA(1)>=ID && input.LA(1)<=INT) ) {
@@ -2699,7 +2698,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "term"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:755:1: term returns [ExpressionNode expr] : ( ID | LPAREN expression RPAREN | INT | TRUE | FALSE );
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:754:1: term returns [ExpressionNode expr] : ( ID | LPAREN expression RPAREN | INT | TRUE | FALSE );
     public final ExpressionNode term() throws RecognitionException {
         ExpressionNode expr = null;
 
@@ -2709,7 +2708,7 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:756:5: ( ID | LPAREN expression RPAREN | INT | TRUE | FALSE )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:755:5: ( ID | LPAREN expression RPAREN | INT | TRUE | FALSE )
             int alt36=5;
             switch ( input.LA(1) ) {
             case ID:
@@ -2746,7 +2745,7 @@ public class PlatuGrammarParser extends Parser {
 
             switch (alt36) {
                 case 1 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:756:9: ID
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:755:9: ID
                     {
                     ID13=(Token)match(input,ID,FOLLOW_ID_in_term1651); 
 
@@ -2810,7 +2809,7 @@ public class PlatuGrammarParser extends Parser {
                     }
                     break;
                 case 2 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:814:9: LPAREN expression RPAREN
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:813:9: LPAREN expression RPAREN
                     {
                     match(input,LPAREN,FOLLOW_LPAREN_in_term1669); 
                     pushFollow(FOLLOW_expression_in_term1671);
@@ -2824,7 +2823,7 @@ public class PlatuGrammarParser extends Parser {
                     }
                     break;
                 case 3 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:815:9: INT
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:814:9: INT
                     {
                     INT15=(Token)match(input,INT,FOLLOW_INT_in_term1685); 
                     expr = new ConstNode("name", Integer.parseInt((INT15!=null?INT15.getText():null)));
@@ -2832,7 +2831,7 @@ public class PlatuGrammarParser extends Parser {
                     }
                     break;
                 case 4 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:816:9: TRUE
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:815:9: TRUE
                     {
                     match(input,TRUE,FOLLOW_TRUE_in_term1697); 
                     expr = ONE;
@@ -2840,7 +2839,7 @@ public class PlatuGrammarParser extends Parser {
                     }
                     break;
                 case 5 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:817:9: FALSE
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:816:9: FALSE
                     {
                     match(input,FALSE,FOLLOW_FALSE_in_term1709); 
                     expr = ZERO;
@@ -2865,7 +2864,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "unary"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:820:1: unary returns [ExpressionNode expr] : ( '+' | ( '-' ) )* term ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:819:1: unary returns [ExpressionNode expr] : ( '+' | ( '-' ) )* term ;
     public final ExpressionNode unary() throws RecognitionException {
         ExpressionNode expr = null;
 
@@ -2873,11 +2872,11 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:821:5: ( ( '+' | ( '-' ) )* term )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:821:9: ( '+' | ( '-' ) )* term
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:820:5: ( ( '+' | ( '-' ) )* term )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:820:9: ( '+' | ( '-' ) )* term
             {
             boolean positive = true;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:822:6: ( '+' | ( '-' ) )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:821:6: ( '+' | ( '-' ) )*
             loop37:
             do {
                 int alt37=3;
@@ -2893,17 +2892,17 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt37) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:822:7: '+'
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:821:7: '+'
             	    {
             	    match(input,PLUS,FOLLOW_PLUS_in_unary1746); 
 
             	    }
             	    break;
             	case 2 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:822:13: ( '-' )
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:821:13: ( '-' )
             	    {
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:822:13: ( '-' )
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:822:14: '-'
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:821:13: ( '-' )
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:821:14: '-'
             	    {
             	    match(input,MINUS,FOLLOW_MINUS_in_unary1751); 
             	    if(positive){ positive = false;} else {positive = true;}
@@ -2951,7 +2950,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "bitwiseNegation"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:833:1: bitwiseNegation returns [ExpressionNode expr] : ( '~' )* unary ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:832:1: bitwiseNegation returns [ExpressionNode expr] : ( '~' )* unary ;
     public final ExpressionNode bitwiseNegation() throws RecognitionException {
         ExpressionNode expr = null;
 
@@ -2959,11 +2958,11 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:834:2: ( ( '~' )* unary )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:834:5: ( '~' )* unary
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:833:2: ( ( '~' )* unary )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:833:5: ( '~' )* unary
             {
             boolean neg = false;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:835:3: ( '~' )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:834:3: ( '~' )*
             loop38:
             do {
                 int alt38=2;
@@ -2976,7 +2975,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt38) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:835:4: '~'
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:834:4: '~'
             	    {
             	    match(input,BITWISE_NEGATION,FOLLOW_BITWISE_NEGATION_in_bitwiseNegation1789); 
             	    if(neg){neg = false;} else{neg = true;}
@@ -3021,7 +3020,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "negation"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:846:1: negation returns [ExpressionNode expr] : ( '!' )* bitwiseNegation ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:845:1: negation returns [ExpressionNode expr] : ( '!' )* bitwiseNegation ;
     public final ExpressionNode negation() throws RecognitionException {
         ExpressionNode expr = null;
 
@@ -3029,11 +3028,11 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:847:2: ( ( '!' )* bitwiseNegation )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:847:4: ( '!' )* bitwiseNegation
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:846:2: ( ( '!' )* bitwiseNegation )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:846:4: ( '!' )* bitwiseNegation
             {
             boolean neg = false;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:848:3: ( '!' )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:847:3: ( '!' )*
             loop39:
             do {
                 int alt39=2;
@@ -3046,7 +3045,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt39) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:848:4: '!'
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:847:4: '!'
             	    {
             	    match(input,NEGATION,FOLLOW_NEGATION_in_negation1821); 
             	    if(neg){neg = false;} else{neg = true;}
@@ -3091,7 +3090,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "mult"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:859:1: mult returns [ExpressionNode expr] : op1= negation ( '*' op2= negation | '/' op2= negation | '%' op2= negation )* ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:858:1: mult returns [ExpressionNode expr] : op1= negation ( '*' op2= negation | '/' op2= negation | '%' op2= negation )* ;
     public final ExpressionNode mult() throws RecognitionException {
         ExpressionNode expr = null;
 
@@ -3101,8 +3100,8 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:860:5: (op1= negation ( '*' op2= negation | '/' op2= negation | '%' op2= negation )* )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:860:9: op1= negation ( '*' op2= negation | '/' op2= negation | '%' op2= negation )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:859:5: (op1= negation ( '*' op2= negation | '/' op2= negation | '%' op2= negation )* )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:859:9: op1= negation ( '*' op2= negation | '/' op2= negation | '%' op2= negation )*
             {
             pushFollow(FOLLOW_negation_in_mult1855);
             op1=negation();
@@ -3110,7 +3109,7 @@ public class PlatuGrammarParser extends Parser {
             state._fsp--;
 
             expr = op1;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:861:6: ( '*' op2= negation | '/' op2= negation | '%' op2= negation )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:860:6: ( '*' op2= negation | '/' op2= negation | '%' op2= negation )*
             loop40:
             do {
                 int alt40=4;
@@ -3135,7 +3134,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt40) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:861:8: '*' op2= negation
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:860:8: '*' op2= negation
             	    {
             	    match(input,TIMES,FOLLOW_TIMES_in_mult1867); 
             	    pushFollow(FOLLOW_negation_in_mult1871);
@@ -3148,7 +3147,7 @@ public class PlatuGrammarParser extends Parser {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:862:8: '/' op2= negation
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:861:8: '/' op2= negation
             	    {
             	    match(input,DIV,FOLLOW_DIV_in_mult1882); 
             	    pushFollow(FOLLOW_negation_in_mult1886);
@@ -3161,7 +3160,7 @@ public class PlatuGrammarParser extends Parser {
             	    }
             	    break;
             	case 3 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:863:8: '%' op2= negation
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:862:8: '%' op2= negation
             	    {
             	    match(input,MOD,FOLLOW_MOD_in_mult1897); 
             	    pushFollow(FOLLOW_negation_in_mult1901);
@@ -3198,7 +3197,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "add"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:867:1: add returns [ExpressionNode expr] : op1= mult ( '+' op2= mult | '-' op2= mult )* ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:866:1: add returns [ExpressionNode expr] : op1= mult ( '+' op2= mult | '-' op2= mult )* ;
     public final ExpressionNode add() throws RecognitionException {
         ExpressionNode expr = null;
 
@@ -3208,8 +3207,8 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:868:5: (op1= mult ( '+' op2= mult | '-' op2= mult )* )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:868:9: op1= mult ( '+' op2= mult | '-' op2= mult )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:867:5: (op1= mult ( '+' op2= mult | '-' op2= mult )* )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:867:9: op1= mult ( '+' op2= mult | '-' op2= mult )*
             {
             pushFollow(FOLLOW_mult_in_add1940);
             op1=mult();
@@ -3217,7 +3216,7 @@ public class PlatuGrammarParser extends Parser {
             state._fsp--;
 
             expr = op1;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:869:6: ( '+' op2= mult | '-' op2= mult )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:868:6: ( '+' op2= mult | '-' op2= mult )*
             loop41:
             do {
                 int alt41=3;
@@ -3233,7 +3232,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt41) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:869:8: '+' op2= mult
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:868:8: '+' op2= mult
             	    {
             	    match(input,PLUS,FOLLOW_PLUS_in_add1951); 
             	    pushFollow(FOLLOW_mult_in_add1955);
@@ -3246,7 +3245,7 @@ public class PlatuGrammarParser extends Parser {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:870:9: '-' op2= mult
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:869:9: '-' op2= mult
             	    {
             	    match(input,MINUS,FOLLOW_MINUS_in_add1967); 
             	    pushFollow(FOLLOW_mult_in_add1971);
@@ -3283,7 +3282,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "shift"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:874:1: shift returns [ExpressionNode expr] : op1= add ( '<<' op2= add | '>>' op2= add )* ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:873:1: shift returns [ExpressionNode expr] : op1= add ( '<<' op2= add | '>>' op2= add )* ;
     public final ExpressionNode shift() throws RecognitionException {
         ExpressionNode expr = null;
 
@@ -3293,8 +3292,8 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:875:5: (op1= add ( '<<' op2= add | '>>' op2= add )* )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:875:9: op1= add ( '<<' op2= add | '>>' op2= add )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:874:5: (op1= add ( '<<' op2= add | '>>' op2= add )* )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:874:9: op1= add ( '<<' op2= add | '>>' op2= add )*
             {
             pushFollow(FOLLOW_add_in_shift2010);
             op1=add();
@@ -3302,7 +3301,7 @@ public class PlatuGrammarParser extends Parser {
             state._fsp--;
 
             expr = op1;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:876:6: ( '<<' op2= add | '>>' op2= add )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:875:6: ( '<<' op2= add | '>>' op2= add )*
             loop42:
             do {
                 int alt42=3;
@@ -3318,7 +3317,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt42) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:876:8: '<<' op2= add
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:875:8: '<<' op2= add
             	    {
             	    match(input,BITWISE_LSHIFT,FOLLOW_BITWISE_LSHIFT_in_shift2021); 
             	    pushFollow(FOLLOW_add_in_shift2025);
@@ -3331,7 +3330,7 @@ public class PlatuGrammarParser extends Parser {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:877:9: '>>' op2= add
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:876:9: '>>' op2= add
             	    {
             	    match(input,BITWISE_RSHIFT,FOLLOW_BITWISE_RSHIFT_in_shift2037); 
             	    pushFollow(FOLLOW_add_in_shift2041);
@@ -3368,7 +3367,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "relation"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:881:1: relation returns [ExpressionNode expr] : op1= shift ( '<' op2= shift | '<=' op2= shift | '>=' op2= shift | '>' op2= shift )* ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:880:1: relation returns [ExpressionNode expr] : op1= shift ( '<' op2= shift | '<=' op2= shift | '>=' op2= shift | '>' op2= shift )* ;
     public final ExpressionNode relation() throws RecognitionException {
         ExpressionNode expr = null;
 
@@ -3378,8 +3377,8 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:882:5: (op1= shift ( '<' op2= shift | '<=' op2= shift | '>=' op2= shift | '>' op2= shift )* )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:882:9: op1= shift ( '<' op2= shift | '<=' op2= shift | '>=' op2= shift | '>' op2= shift )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:881:5: (op1= shift ( '<' op2= shift | '<=' op2= shift | '>=' op2= shift | '>' op2= shift )* )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:881:9: op1= shift ( '<' op2= shift | '<=' op2= shift | '>=' op2= shift | '>' op2= shift )*
             {
             pushFollow(FOLLOW_shift_in_relation2076);
             op1=shift();
@@ -3387,7 +3386,7 @@ public class PlatuGrammarParser extends Parser {
             state._fsp--;
 
             expr = op1;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:883:6: ( '<' op2= shift | '<=' op2= shift | '>=' op2= shift | '>' op2= shift )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:882:6: ( '<' op2= shift | '<=' op2= shift | '>=' op2= shift | '>' op2= shift )*
             loop43:
             do {
                 int alt43=5;
@@ -3417,7 +3416,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt43) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:883:8: '<' op2= shift
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:882:8: '<' op2= shift
             	    {
             	    match(input,LESS,FOLLOW_LESS_in_relation2087); 
             	    pushFollow(FOLLOW_shift_in_relation2091);
@@ -3430,7 +3429,7 @@ public class PlatuGrammarParser extends Parser {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:884:9: '<=' op2= shift
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:883:9: '<=' op2= shift
             	    {
             	    match(input,LESS_EQUAL,FOLLOW_LESS_EQUAL_in_relation2103); 
             	    pushFollow(FOLLOW_shift_in_relation2107);
@@ -3443,7 +3442,7 @@ public class PlatuGrammarParser extends Parser {
             	    }
             	    break;
             	case 3 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:885:9: '>=' op2= shift
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:884:9: '>=' op2= shift
             	    {
             	    match(input,GREATER_EQUAL,FOLLOW_GREATER_EQUAL_in_relation2119); 
             	    pushFollow(FOLLOW_shift_in_relation2123);
@@ -3456,7 +3455,7 @@ public class PlatuGrammarParser extends Parser {
             	    }
             	    break;
             	case 4 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:886:9: '>' op2= shift
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:885:9: '>' op2= shift
             	    {
             	    match(input,GREATER,FOLLOW_GREATER_in_relation2135); 
             	    pushFollow(FOLLOW_shift_in_relation2139);
@@ -3493,7 +3492,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "equivalence"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:890:1: equivalence returns [ExpressionNode expr] : op1= relation ( '==' op2= relation | '!=' op2= relation )* ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:889:1: equivalence returns [ExpressionNode expr] : op1= relation ( '==' op2= relation | '!=' op2= relation )* ;
     public final ExpressionNode equivalence() throws RecognitionException {
         ExpressionNode expr = null;
 
@@ -3503,8 +3502,8 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:891:5: (op1= relation ( '==' op2= relation | '!=' op2= relation )* )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:891:9: op1= relation ( '==' op2= relation | '!=' op2= relation )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:890:5: (op1= relation ( '==' op2= relation | '!=' op2= relation )* )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:890:9: op1= relation ( '==' op2= relation | '!=' op2= relation )*
             {
             pushFollow(FOLLOW_relation_in_equivalence2178);
             op1=relation();
@@ -3512,7 +3511,7 @@ public class PlatuGrammarParser extends Parser {
             state._fsp--;
 
             expr = op1;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:892:6: ( '==' op2= relation | '!=' op2= relation )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:891:6: ( '==' op2= relation | '!=' op2= relation )*
             loop44:
             do {
                 int alt44=3;
@@ -3528,7 +3527,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt44) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:892:8: '==' op2= relation
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:891:8: '==' op2= relation
             	    {
             	    match(input,EQUIV,FOLLOW_EQUIV_in_equivalence2189); 
             	    pushFollow(FOLLOW_relation_in_equivalence2193);
@@ -3541,7 +3540,7 @@ public class PlatuGrammarParser extends Parser {
             	    }
             	    break;
             	case 2 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:893:8: '!=' op2= relation
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:892:8: '!=' op2= relation
             	    {
             	    match(input,NOT_EQUIV,FOLLOW_NOT_EQUIV_in_equivalence2204); 
             	    pushFollow(FOLLOW_relation_in_equivalence2208);
@@ -3578,7 +3577,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "bitwiseAnd"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:897:1: bitwiseAnd returns [ExpressionNode expr] : op1= equivalence ( '&' op2= equivalence )* ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:896:1: bitwiseAnd returns [ExpressionNode expr] : op1= equivalence ( '&' op2= equivalence )* ;
     public final ExpressionNode bitwiseAnd() throws RecognitionException {
         ExpressionNode expr = null;
 
@@ -3588,8 +3587,8 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:898:5: (op1= equivalence ( '&' op2= equivalence )* )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:898:9: op1= equivalence ( '&' op2= equivalence )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:897:5: (op1= equivalence ( '&' op2= equivalence )* )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:897:9: op1= equivalence ( '&' op2= equivalence )*
             {
             pushFollow(FOLLOW_equivalence_in_bitwiseAnd2247);
             op1=equivalence();
@@ -3597,7 +3596,7 @@ public class PlatuGrammarParser extends Parser {
             state._fsp--;
 
             expr = op1;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:899:6: ( '&' op2= equivalence )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:898:6: ( '&' op2= equivalence )*
             loop45:
             do {
                 int alt45=2;
@@ -3610,7 +3609,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt45) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:899:8: '&' op2= equivalence
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:898:8: '&' op2= equivalence
             	    {
             	    match(input,BITWISE_AND,FOLLOW_BITWISE_AND_in_bitwiseAnd2259); 
             	    pushFollow(FOLLOW_equivalence_in_bitwiseAnd2263);
@@ -3647,7 +3646,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "bitwiseXor"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:903:1: bitwiseXor returns [ExpressionNode expr] : op1= bitwiseAnd ( '^' op2= bitwiseAnd )* ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:902:1: bitwiseXor returns [ExpressionNode expr] : op1= bitwiseAnd ( '^' op2= bitwiseAnd )* ;
     public final ExpressionNode bitwiseXor() throws RecognitionException {
         ExpressionNode expr = null;
 
@@ -3657,8 +3656,8 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:904:5: (op1= bitwiseAnd ( '^' op2= bitwiseAnd )* )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:904:9: op1= bitwiseAnd ( '^' op2= bitwiseAnd )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:903:5: (op1= bitwiseAnd ( '^' op2= bitwiseAnd )* )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:903:9: op1= bitwiseAnd ( '^' op2= bitwiseAnd )*
             {
             pushFollow(FOLLOW_bitwiseAnd_in_bitwiseXor2302);
             op1=bitwiseAnd();
@@ -3666,7 +3665,7 @@ public class PlatuGrammarParser extends Parser {
             state._fsp--;
 
             expr = op1;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:905:6: ( '^' op2= bitwiseAnd )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:904:6: ( '^' op2= bitwiseAnd )*
             loop46:
             do {
                 int alt46=2;
@@ -3679,7 +3678,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt46) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:905:8: '^' op2= bitwiseAnd
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:904:8: '^' op2= bitwiseAnd
             	    {
             	    match(input,BITWISE_XOR,FOLLOW_BITWISE_XOR_in_bitwiseXor2313); 
             	    pushFollow(FOLLOW_bitwiseAnd_in_bitwiseXor2317);
@@ -3716,7 +3715,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "bitwiseOr"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:909:1: bitwiseOr returns [ExpressionNode expr] : op1= bitwiseXor ( '|' op2= bitwiseXor )* ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:908:1: bitwiseOr returns [ExpressionNode expr] : op1= bitwiseXor ( '|' op2= bitwiseXor )* ;
     public final ExpressionNode bitwiseOr() throws RecognitionException {
         ExpressionNode expr = null;
 
@@ -3726,8 +3725,8 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:910:5: (op1= bitwiseXor ( '|' op2= bitwiseXor )* )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:910:9: op1= bitwiseXor ( '|' op2= bitwiseXor )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:909:5: (op1= bitwiseXor ( '|' op2= bitwiseXor )* )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:909:9: op1= bitwiseXor ( '|' op2= bitwiseXor )*
             {
             pushFollow(FOLLOW_bitwiseXor_in_bitwiseOr2356);
             op1=bitwiseXor();
@@ -3735,7 +3734,7 @@ public class PlatuGrammarParser extends Parser {
             state._fsp--;
 
             expr = op1;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:911:6: ( '|' op2= bitwiseXor )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:910:6: ( '|' op2= bitwiseXor )*
             loop47:
             do {
                 int alt47=2;
@@ -3748,7 +3747,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt47) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:911:8: '|' op2= bitwiseXor
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:910:8: '|' op2= bitwiseXor
             	    {
             	    match(input,BITWISE_OR,FOLLOW_BITWISE_OR_in_bitwiseOr2367); 
             	    pushFollow(FOLLOW_bitwiseXor_in_bitwiseOr2371);
@@ -3785,7 +3784,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "and"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:915:1: and returns [ExpressionNode expr] : op1= bitwiseOr ( '&&' op2= bitwiseOr )* ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:914:1: and returns [ExpressionNode expr] : op1= bitwiseOr ( '&&' op2= bitwiseOr )* ;
     public final ExpressionNode and() throws RecognitionException {
         ExpressionNode expr = null;
 
@@ -3795,8 +3794,8 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:916:5: (op1= bitwiseOr ( '&&' op2= bitwiseOr )* )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:916:9: op1= bitwiseOr ( '&&' op2= bitwiseOr )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:915:5: (op1= bitwiseOr ( '&&' op2= bitwiseOr )* )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:915:9: op1= bitwiseOr ( '&&' op2= bitwiseOr )*
             {
             pushFollow(FOLLOW_bitwiseOr_in_and2410);
             op1=bitwiseOr();
@@ -3804,7 +3803,7 @@ public class PlatuGrammarParser extends Parser {
             state._fsp--;
 
             expr = op1;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:917:6: ( '&&' op2= bitwiseOr )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:916:6: ( '&&' op2= bitwiseOr )*
             loop48:
             do {
                 int alt48=2;
@@ -3817,7 +3816,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt48) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:917:8: '&&' op2= bitwiseOr
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:916:8: '&&' op2= bitwiseOr
             	    {
             	    match(input,AND,FOLLOW_AND_in_and2421); 
             	    pushFollow(FOLLOW_bitwiseOr_in_and2425);
@@ -3854,7 +3853,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "or"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:921:1: or returns [ExpressionNode expr] : op1= and ( '||' op2= and )* ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:920:1: or returns [ExpressionNode expr] : op1= and ( '||' op2= and )* ;
     public final ExpressionNode or() throws RecognitionException {
         ExpressionNode expr = null;
 
@@ -3864,8 +3863,8 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:922:5: (op1= and ( '||' op2= and )* )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:922:9: op1= and ( '||' op2= and )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:921:5: (op1= and ( '||' op2= and )* )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:921:9: op1= and ( '||' op2= and )*
             {
             pushFollow(FOLLOW_and_in_or2464);
             op1=and();
@@ -3873,7 +3872,7 @@ public class PlatuGrammarParser extends Parser {
             state._fsp--;
 
             expr = op1;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:923:6: ( '||' op2= and )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:922:6: ( '||' op2= and )*
             loop49:
             do {
                 int alt49=2;
@@ -3886,7 +3885,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt49) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:923:8: '||' op2= and
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:922:8: '||' op2= and
             	    {
             	    match(input,OR,FOLLOW_OR_in_or2475); 
             	    pushFollow(FOLLOW_and_in_or2479);
@@ -3923,7 +3922,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "implication"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:927:1: implication returns [ExpressionNode expr] : op1= or ( '->' op2= or )* ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:926:1: implication returns [ExpressionNode expr] : op1= or ( '->' op2= or )* ;
     public final ExpressionNode implication() throws RecognitionException {
         ExpressionNode expr = null;
 
@@ -3933,8 +3932,8 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:928:5: (op1= or ( '->' op2= or )* )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:928:7: op1= or ( '->' op2= or )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:927:5: (op1= or ( '->' op2= or )* )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:927:7: op1= or ( '->' op2= or )*
             {
             pushFollow(FOLLOW_or_in_implication2512);
             op1=or();
@@ -3942,7 +3941,7 @@ public class PlatuGrammarParser extends Parser {
             state._fsp--;
 
             expr = op1;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:929:6: ( '->' op2= or )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:928:6: ( '->' op2= or )*
             loop50:
             do {
                 int alt50=2;
@@ -3955,7 +3954,7 @@ public class PlatuGrammarParser extends Parser {
 
                 switch (alt50) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:929:8: '->' op2= or
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:928:8: '->' op2= or
             	    {
             	    match(input,IMPLICATION,FOLLOW_IMPLICATION_in_implication2523); 
             	    pushFollow(FOLLOW_or_in_implication2527);
@@ -3992,7 +3991,7 @@ public class PlatuGrammarParser extends Parser {
 
 
     // $ANTLR start "expression"
-    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:933:1: expression returns [ExpressionNode expr] : op1= implication ( '?' op2= expression ':' op3= expression )? ;
+    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:932:1: expression returns [ExpressionNode expr] : op1= implication ( '?' op2= expression ':' op3= expression )? ;
     public final ExpressionNode expression() throws RecognitionException {
         ExpressionNode expr = null;
 
@@ -4004,8 +4003,8 @@ public class PlatuGrammarParser extends Parser {
 
 
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:934:5: (op1= implication ( '?' op2= expression ':' op3= expression )? )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:934:9: op1= implication ( '?' op2= expression ':' op3= expression )?
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:933:5: (op1= implication ( '?' op2= expression ':' op3= expression )? )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:933:9: op1= implication ( '?' op2= expression ':' op3= expression )?
             {
             pushFollow(FOLLOW_implication_in_expression2567);
             op1=implication();
@@ -4013,7 +4012,7 @@ public class PlatuGrammarParser extends Parser {
             state._fsp--;
 
             expr = op1;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:935:6: ( '?' op2= expression ':' op3= expression )?
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:934:6: ( '?' op2= expression ':' op3= expression )?
             int alt51=2;
             int LA51_0 = input.LA(1);
 
@@ -4022,7 +4021,7 @@ public class PlatuGrammarParser extends Parser {
             }
             switch (alt51) {
                 case 1 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:935:7: '?' op2= expression ':' op3= expression
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:934:7: '?' op2= expression ':' op3= expression
                     {
                     match(input,QMARK,FOLLOW_QMARK_in_expression2577); 
                     pushFollow(FOLLOW_expression_in_expression2581);
@@ -4143,7 +4142,7 @@ public class PlatuGrammarParser extends Parser {
             this.transition = DFA1_transition;
         }
         public String getDescription() {
-            return "87:9: ( ( globalConstants globalVariables ) | ( globalVariables globalConstants ) | ( globalVariables ) | ( globalConstants ) )?";
+            return "86:9: ( ( globalConstants globalVariables ) | ( globalVariables globalConstants ) | ( globalVariables ) | ( globalConstants ) )?";
         }
     }
  

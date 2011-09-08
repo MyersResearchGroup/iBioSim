@@ -4,7 +4,7 @@ import java.util.*;
 import platu.lpn.*;
 
 public class Zone1 {
-	public static final int INFINITY = platu.Common.INFINITY;
+	public static final int INFINITY = platu.common.Common.INFINITY;
 	
 	public static HashMap<Zone1, Zone1> uniqueCache = null;
 	public static HashMap<DualHashMap, DualHashMap> enabledArrayCache = null;

@@ -3,9 +3,9 @@ package platu.project;
 import java.util.Arrays;
 
 import lmoore.zone.Zone;
-import platu.stategraph.state.State;
+import platu.stategraph.State;
 
-public class prjStateTimed extends prjState {
+public class prjStateTimed extends PrjState {
 
     private Object zone;
 

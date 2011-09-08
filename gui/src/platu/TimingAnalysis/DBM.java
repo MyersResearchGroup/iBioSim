@@ -1,7 +1,8 @@
 package platu.TimingAnalysis;
 
 import java.util.*;
-import platu.Pair;
+
+import platu.common.Pair;
 
 public class DBM {
 	
@@ -57,7 +58,7 @@ public class DBM {
 				if(x==y) continue;
 				for(int i = 0; i < dim; i++) {
 					if(i==x || i==y) continue;
-					if(matrix[x][i]==platu.Common.INFINITY || matrix[i][y]==platu.Common.INFINITY)
+					if(matrix[x][i]==platu.common.Common.INFINITY || matrix[i][y]==platu.common.Common.INFINITY)
 						continue;
 					if(matrix[x][y] > matrix[x][i] + matrix[i][y])
 						matrix[x][y] = matrix[x][i] + matrix[i][y];
@@ -114,7 +115,7 @@ public class DBM {
 				if(x==y) continue;
 				for(int i = 0; i < dim; i++) {
 					if(i==x || i==y) continue;
-					if(matrix[x][i]==platu.Common.INFINITY || matrix[i][y]==platu.Common.INFINITY)
+					if(matrix[x][i]==platu.common.Common.INFINITY || matrix[i][y]==platu.common.Common.INFINITY)
 						continue;
 					if(matrix[x][i] + matrix[i][y] > matrix[x][y]) 
 						constrSet.put(new Pair<Integer,Integer>(x,y), this.matrix[x][y]);
@@ -166,7 +167,7 @@ public class DBM {
     	String strOut = new String();
     	for(int x = 0; x < dim; x++) {
         	for(int y = 0; y < dim; y++) {
-        		if(this.matrix[x][y] == platu.Common.INFINITY)
+        		if(this.matrix[x][y] == platu.common.Common.INFINITY)
         			strOut  += "\tINF";
         		else
         			strOut += "\t" + this.matrix[x][y];

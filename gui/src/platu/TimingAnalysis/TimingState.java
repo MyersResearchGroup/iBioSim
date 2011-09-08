@@ -3,7 +3,7 @@ package platu.TimingAnalysis;
 import java.util.*;
 
 import platu.lpn.LPN;
-import platu.stategraph.state.State;
+import platu.stategraph.State;
 
 public class TimingState {
 	

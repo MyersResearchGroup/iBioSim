@@ -1,4 +1,4 @@
-// $ANTLR 3.3 Nov 30, 2010 12:50:56 /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g 2011-08-07 04:16:34
+// $ANTLR 3.3 Nov 30, 2010 12:50:56 /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g 2011-09-05 15:36:31
 
     package platu.lpn.io;
 
@@ -30,6 +30,8 @@ public class PlatuInstLexer extends Lexer {
     public static final int T__77=77;
     public static final int T__78=78;
     public static final int T__79=79;
+    public static final int T__80=80;
+    public static final int T__81=81;
     public static final int PATH=4;
     public static final int ID=5;
     public static final int INT=6;
@@ -189,10 +191,10 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = T__64;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:15:7: ( 'class' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:15:9: 'class'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:15:7: ( 'process' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:15:9: 'process'
             {
-            match("class"); 
+            match("process"); 
 
 
             }
@@ -210,10 +212,10 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = T__65;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:16:7: ( 'arg' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:16:9: 'arg'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:16:7: ( '/process' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:16:9: '/process'
             {
-            match("arg"); 
+            match("/process"); 
 
 
             }
@@ -231,10 +233,11 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = T__66;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:17:7: ( '[' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:17:9: '['
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:17:7: ( 'class' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:17:9: 'class'
             {
-            match('['); 
+            match("class"); 
+
 
             }
 
@@ -251,10 +254,11 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = T__67;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:18:7: ( ']' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:18:9: ']'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:18:7: ( 'arg' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:18:9: 'arg'
             {
-            match(']'); 
+            match("arg"); 
+
 
             }
 
@@ -271,11 +275,10 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = T__68;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:19:7: ( '/class' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:19:9: '/class'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:19:7: ( '[' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:19:9: '['
             {
-            match("/class"); 
-
+            match('['); 
 
             }
 
@@ -292,11 +295,10 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = T__69;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:20:7: ( 'const' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:20:9: 'const'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:20:7: ( ']' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:20:9: ']'
             {
-            match("const"); 
-
+            match(']'); 
 
             }
 
@@ -313,10 +315,10 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = T__70;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:21:7: ( '/const' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:21:9: '/const'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:21:7: ( '/class' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:21:9: '/class'
             {
-            match("/const"); 
+            match("/class"); 
 
 
             }
@@ -334,10 +336,10 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = T__71;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:22:7: ( '/var' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:22:9: '/var'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:22:7: ( 'const' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:22:9: 'const'
             {
-            match("/var"); 
+            match("const"); 
 
 
             }
@@ -355,10 +357,11 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = T__72;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:23:7: ( '{' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:23:9: '{'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:23:7: ( '/const' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:23:9: '/const'
             {
-            match('{'); 
+            match("/const"); 
+
 
             }
 
@@ -375,10 +378,11 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = T__73;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:24:7: ( '}' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:24:9: '}'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:24:7: ( '/var' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:24:9: '/var'
             {
-            match('}'); 
+            match("/var"); 
+
 
             }
 
@@ -395,11 +399,10 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = T__74;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:25:7: ( '/marking' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:25:9: '/marking'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:25:7: ( '{' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:25:9: '{'
             {
-            match("/marking"); 
-
+            match('{'); 
 
             }
 
@@ -416,11 +419,10 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = T__75;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:26:7: ( '/transition' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:26:9: '/transition'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:26:7: ( '}' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:26:9: '}'
             {
-            match("/transition"); 
-
+            match('}'); 
 
             }
 
@@ -437,10 +439,10 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = T__76;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:27:7: ( 'assert' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:27:9: 'assert'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:27:7: ( '/marking' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:27:9: '/marking'
             {
-            match("assert"); 
+            match("/marking"); 
 
 
             }
@@ -458,10 +460,10 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = T__77;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:28:7: ( 'condition' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:28:9: 'condition'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:28:7: ( '/transition' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:28:9: '/transition'
             {
-            match("condition"); 
+            match("/transition"); 
 
 
             }
@@ -479,10 +481,10 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = T__78;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:29:7: ( 'delay' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:29:9: 'delay'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:29:7: ( 'assert' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:29:9: 'assert'
             {
-            match("delay"); 
+            match("assert"); 
 
 
             }
@@ -500,10 +502,10 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = T__79;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:30:7: ( 'inf' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:30:9: 'inf'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:30:7: ( 'condition' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:30:9: 'condition'
             {
-            match("inf"); 
+            match("condition"); 
 
 
             }
@@ -516,13 +518,55 @@ public class PlatuInstLexer extends Lexer {
     }
     // $ANTLR end "T__79"
 
+    // $ANTLR start "T__80"
+    public final void mT__80() throws RecognitionException {
+        try {
+            int _type = T__80;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:31:7: ( 'delay' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:31:9: 'delay'
+            {
+            match("delay"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__80"
+
+    // $ANTLR start "T__81"
+    public final void mT__81() throws RecognitionException {
+        try {
+            int _type = T__81;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:32:7: ( 'inf' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:32:9: 'inf'
+            {
+            match("inf"); 
+
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        }
+    }
+    // $ANTLR end "T__81"
+
     // $ANTLR start "LPAREN"
     public final void mLPAREN() throws RecognitionException {
         try {
             int _type = LPAREN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1412:7: ( '(' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1412:9: '('
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1426:7: ( '(' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1426:9: '('
             {
             match('('); 
 
@@ -541,8 +585,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = RPAREN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1413:7: ( ')' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1413:9: ')'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1427:7: ( ')' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1427:9: ')'
             {
             match(')'); 
 
@@ -561,8 +605,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = QMARK;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1414:6: ( '?' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1414:8: '?'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1428:6: ( '?' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1428:8: '?'
             {
             match('?'); 
 
@@ -581,8 +625,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = COLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1415:6: ( ':' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1415:8: ':'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1429:6: ( ':' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1429:8: ':'
             {
             match(':'); 
 
@@ -601,8 +645,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = SEMICOLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1416:10: ( ';' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1416:12: ';'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1430:10: ( ';' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1430:12: ';'
             {
             match(';'); 
 
@@ -621,8 +665,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = PERIOD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1417:7: ( '.' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1417:9: '.'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1431:7: ( '.' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1431:9: '.'
             {
             match('.'); 
 
@@ -641,8 +685,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = UNDERSCORE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1418:11: ( '_' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1418:13: '_'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1432:11: ( '_' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1432:13: '_'
             {
             match('_'); 
 
@@ -661,8 +705,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = COMMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1419:6: ( ',' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1419:8: ','
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1433:6: ( ',' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1433:8: ','
             {
             match(','); 
 
@@ -681,8 +725,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = QUOTE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1420:6: ( '\"' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1420:8: '\"'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1434:6: ( '\"' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1434:8: '\"'
             {
             match('\"'); 
 
@@ -701,8 +745,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = MODULE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1423:7: ( 'mod' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1423:9: 'mod'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1437:7: ( 'mod' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1437:9: 'mod'
             {
             match("mod"); 
 
@@ -722,8 +766,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = NAME;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1424:5: ( 'name' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1424:7: 'name'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1438:5: ( 'name' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1438:7: 'name'
             {
             match("name"); 
 
@@ -743,8 +787,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = INPUT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1425:6: ( 'input' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1425:8: 'input'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1439:6: ( 'input' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1439:8: 'input'
             {
             match("input"); 
 
@@ -764,8 +808,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = OUTPUT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1426:7: ( 'output' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1426:9: 'output'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1440:7: ( 'output' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1440:9: 'output'
             {
             match("output"); 
 
@@ -785,8 +829,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = INTERNAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1427:9: ( 'var' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1427:11: 'var'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1441:9: ( 'var' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1441:11: 'var'
             {
             match("var"); 
 
@@ -806,8 +850,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = MARKING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1428:8: ( 'marking' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1428:10: 'marking'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1442:8: ( 'marking' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1442:10: 'marking'
             {
             match("marking"); 
 
@@ -827,8 +871,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = STATE_VECTOR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1429:13: ( 'statevector' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1429:15: 'statevector'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1443:13: ( 'statevector' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1443:15: 'statevector'
             {
             match("statevector"); 
 
@@ -848,8 +892,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = TRANSITION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1430:11: ( 'transition' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1430:13: 'transition'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1444:11: ( 'transition' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1444:13: 'transition'
             {
             match("transition"); 
 
@@ -869,8 +913,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = LABEL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1431:6: ( 'label' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1431:8: 'label'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1445:6: ( 'label' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1445:8: 'label'
             {
             match("label"); 
 
@@ -890,8 +934,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = PRESET;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1432:7: ( 'preset' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1432:9: 'preset'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1446:7: ( 'preset' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1446:9: 'preset'
             {
             match("preset"); 
 
@@ -911,8 +955,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = POSTSET;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1433:8: ( 'postset' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1433:10: 'postset'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1447:8: ( 'postset' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1447:10: 'postset'
             {
             match("postset"); 
 
@@ -932,8 +976,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = TRUE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1434:5: ( 'true' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1434:7: 'true'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1448:5: ( 'true' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1448:7: 'true'
             {
             match("true"); 
 
@@ -953,8 +997,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = FALSE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1435:6: ( 'false' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1435:8: 'false'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1449:6: ( 'false' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1449:8: 'false'
             {
             match("false"); 
 
@@ -974,8 +1018,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = PLUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1438:5: ( '+' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1438:7: '+'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1452:5: ( '+' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1452:7: '+'
             {
             match('+'); 
 
@@ -994,8 +1038,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = MINUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1439:6: ( '-' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1439:8: '-'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1453:6: ( '-' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1453:8: '-'
             {
             match('-'); 
 
@@ -1014,8 +1058,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = TIMES;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1440:6: ( '*' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1440:8: '*'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1454:6: ( '*' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1454:8: '*'
             {
             match('*'); 
 
@@ -1034,8 +1078,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = DIV;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1441:4: ( '/' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1441:6: '/'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1455:4: ( '/' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1455:6: '/'
             {
             match('/'); 
 
@@ -1054,8 +1098,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = MOD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1442:4: ( '%' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1442:6: '%'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1456:4: ( '%' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1456:6: '%'
             {
             match('%'); 
 
@@ -1074,8 +1118,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = EQUALS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1443:7: ( '=' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1443:9: '='
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1457:7: ( '=' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1457:9: '='
             {
             match('='); 
 
@@ -1094,8 +1138,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = GREATER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1446:8: ( '>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1446:10: '>'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1460:8: ( '>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1460:10: '>'
             {
             match('>'); 
 
@@ -1114,8 +1158,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = LESS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1447:5: ( '<' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1447:7: '<'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1461:5: ( '<' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1461:7: '<'
             {
             match('<'); 
 
@@ -1134,8 +1178,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = GREATER_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1448:14: ( '>=' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1448:16: '>='
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1462:14: ( '>=' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1462:16: '>='
             {
             match(">="); 
 
@@ -1155,8 +1199,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = LESS_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1449:11: ( '<=' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1449:13: '<='
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1463:11: ( '<=' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1463:13: '<='
             {
             match("<="); 
 
@@ -1176,8 +1220,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = EQUIV;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1450:6: ( '==' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1450:8: '=='
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1464:6: ( '==' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1464:8: '=='
             {
             match("=="); 
 
@@ -1197,8 +1241,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = NOT_EQUIV;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1451:10: ( '!=' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1451:12: '!='
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1465:10: ( '!=' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1465:12: '!='
             {
             match("!="); 
 
@@ -1218,8 +1262,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = NEGATION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1454:9: ( '!' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1454:11: '!'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1468:9: ( '!' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1468:11: '!'
             {
             match('!'); 
 
@@ -1238,8 +1282,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = AND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1455:4: ( '&&' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1455:6: '&&'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1469:4: ( '&&' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1469:6: '&&'
             {
             match("&&"); 
 
@@ -1259,8 +1303,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = OR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1456:3: ( '||' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1456:5: '||'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1470:3: ( '||' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1470:5: '||'
             {
             match("||"); 
 
@@ -1280,8 +1324,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = IMPLICATION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1457:12: ( '->' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1457:14: '->'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1471:12: ( '->' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1471:14: '->'
             {
             match("->"); 
 
@@ -1301,8 +1345,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = BITWISE_NEGATION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1460:17: ( '~' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1460:19: '~'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1474:17: ( '~' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1474:19: '~'
             {
             match('~'); 
 
@@ -1321,8 +1365,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = BITWISE_AND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1461:12: ( '&' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1461:14: '&'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1475:12: ( '&' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1475:14: '&'
             {
             match('&'); 
 
@@ -1341,8 +1385,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = BITWISE_OR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1462:11: ( '|' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1462:13: '|'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1476:11: ( '|' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1476:13: '|'
             {
             match('|'); 
 
@@ -1361,8 +1405,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = BITWISE_XOR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1463:12: ( '^' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1463:14: '^'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1477:12: ( '^' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1477:14: '^'
             {
             match('^'); 
 
@@ -1381,8 +1425,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = BITWISE_LSHIFT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1464:15: ( '<<' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1464:17: '<<'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1478:15: ( '<<' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1478:17: '<<'
             {
             match("<<"); 
 
@@ -1402,8 +1446,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = BITWISE_RSHIFT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1465:15: ( '>>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1465:17: '>>'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1479:15: ( '>>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1479:17: '>>'
             {
             match(">>"); 
 
@@ -1421,8 +1465,8 @@ public class PlatuInstLexer extends Lexer {
     // $ANTLR start "LETTER"
     public final void mLETTER() throws RecognitionException {
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1475:16: ( ( 'a' .. 'z' | 'A' .. 'Z' ) )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1475:18: ( 'a' .. 'z' | 'A' .. 'Z' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1489:16: ( ( 'a' .. 'z' | 'A' .. 'Z' ) )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1489:18: ( 'a' .. 'z' | 'A' .. 'Z' )
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -1445,8 +1489,8 @@ public class PlatuInstLexer extends Lexer {
     // $ANTLR start "DIGIT"
     public final void mDIGIT() throws RecognitionException {
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1476:15: ( '0' .. '9' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1476:17: '0' .. '9'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1490:15: ( '0' .. '9' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1490:17: '0' .. '9'
             {
             matchRange('0','9'); 
 
@@ -1461,8 +1505,8 @@ public class PlatuInstLexer extends Lexer {
     // $ANTLR start "FILE"
     public final void mFILE() throws RecognitionException {
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1477:14: ( ( LETTER | DIGIT ) ( ( '_' )? ( LETTER | DIGIT ) )* )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1477:16: ( LETTER | DIGIT ) ( ( '_' )? ( LETTER | DIGIT ) )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1491:14: ( ( LETTER | DIGIT ) ( ( '_' )? ( LETTER | DIGIT ) )* )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1491:16: ( LETTER | DIGIT ) ( ( '_' )? ( LETTER | DIGIT ) )*
             {
             if ( (input.LA(1)>='0' && input.LA(1)<='9')||(input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -1473,7 +1517,7 @@ public class PlatuInstLexer extends Lexer {
                 recover(mse);
                 throw mse;}
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1477:33: ( ( '_' )? ( LETTER | DIGIT ) )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1491:33: ( ( '_' )? ( LETTER | DIGIT ) )*
             loop2:
             do {
                 int alt2=2;
@@ -1486,9 +1530,9 @@ public class PlatuInstLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1477:34: ( '_' )? ( LETTER | DIGIT )
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1491:34: ( '_' )? ( LETTER | DIGIT )
             	    {
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1477:34: ( '_' )?
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1491:34: ( '_' )?
             	    int alt1=2;
             	    int LA1_0 = input.LA(1);
 
@@ -1497,7 +1541,7 @@ public class PlatuInstLexer extends Lexer {
             	    }
             	    switch (alt1) {
             	        case 1 :
-            	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1477:34: '_'
+            	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1491:34: '_'
             	            {
             	            match('_'); 
 
@@ -1538,10 +1582,10 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1478:4: ( ( '-' )? ( DIGIT )+ )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1478:6: ( '-' )? ( DIGIT )+
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1492:4: ( ( '-' )? ( DIGIT )+ )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1492:6: ( '-' )? ( DIGIT )+
             {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1478:6: ( '-' )?
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1492:6: ( '-' )?
             int alt3=2;
             int LA3_0 = input.LA(1);
 
@@ -1550,7 +1594,7 @@ public class PlatuInstLexer extends Lexer {
             }
             switch (alt3) {
                 case 1 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1478:6: '-'
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1492:6: '-'
                     {
                     match('-'); 
 
@@ -1559,7 +1603,7 @@ public class PlatuInstLexer extends Lexer {
 
             }
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1478:11: ( DIGIT )+
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1492:11: ( DIGIT )+
             int cnt4=0;
             loop4:
             do {
@@ -1573,7 +1617,7 @@ public class PlatuInstLexer extends Lexer {
 
                 switch (alt4) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1478:11: DIGIT
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1492:11: DIGIT
             	    {
             	    mDIGIT(); 
 
@@ -1605,11 +1649,11 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1479:3: ( LETTER ( ( UNDERSCORE )? ( LETTER | DIGIT ) )* )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1479:5: LETTER ( ( UNDERSCORE )? ( LETTER | DIGIT ) )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1493:3: ( LETTER ( ( UNDERSCORE )? ( LETTER | DIGIT ) )* )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1493:5: LETTER ( ( UNDERSCORE )? ( LETTER | DIGIT ) )*
             {
             mLETTER(); 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1479:12: ( ( UNDERSCORE )? ( LETTER | DIGIT ) )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1493:12: ( ( UNDERSCORE )? ( LETTER | DIGIT ) )*
             loop6:
             do {
                 int alt6=2;
@@ -1622,9 +1666,9 @@ public class PlatuInstLexer extends Lexer {
 
                 switch (alt6) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1479:13: ( UNDERSCORE )? ( LETTER | DIGIT )
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1493:13: ( UNDERSCORE )? ( LETTER | DIGIT )
             	    {
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1479:13: ( UNDERSCORE )?
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1493:13: ( UNDERSCORE )?
             	    int alt5=2;
             	    int LA5_0 = input.LA(1);
 
@@ -1633,7 +1677,7 @@ public class PlatuInstLexer extends Lexer {
             	    }
             	    switch (alt5) {
             	        case 1 :
-            	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1479:13: UNDERSCORE
+            	            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1493:13: UNDERSCORE
             	            {
             	            mUNDERSCORE(); 
 
@@ -1676,10 +1720,10 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = PATH;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1480:5: ( ( ( LETTER ':' ) | '/' )? ( FILE ( '/' | '\\\\' ) )* FILE '.lpn' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1480:7: ( ( LETTER ':' ) | '/' )? ( FILE ( '/' | '\\\\' ) )* FILE '.lpn'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1494:5: ( ( ( LETTER ':' ) | '/' )? ( FILE ( '/' | '\\\\' ) )* FILE '.lpn' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1494:7: ( ( LETTER ':' ) | '/' )? ( FILE ( '/' | '\\\\' ) )* FILE '.lpn'
             {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1480:7: ( ( LETTER ':' ) | '/' )?
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1494:7: ( ( LETTER ':' ) | '/' )?
             int alt7=3;
             int LA7_0 = input.LA(1);
 
@@ -1695,10 +1739,10 @@ public class PlatuInstLexer extends Lexer {
             }
             switch (alt7) {
                 case 1 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1480:8: ( LETTER ':' )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1494:8: ( LETTER ':' )
                     {
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1480:8: ( LETTER ':' )
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1480:9: LETTER ':'
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1494:8: ( LETTER ':' )
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1494:9: LETTER ':'
                     {
                     mLETTER(); 
                     match(':'); 
@@ -1709,7 +1753,7 @@ public class PlatuInstLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1480:23: '/'
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1494:23: '/'
                     {
                     match('/'); 
 
@@ -1718,14 +1762,14 @@ public class PlatuInstLexer extends Lexer {
 
             }
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1480:29: ( FILE ( '/' | '\\\\' ) )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1494:29: ( FILE ( '/' | '\\\\' ) )*
             loop8:
             do {
                 int alt8=2;
                 alt8 = dfa8.predict(input);
                 switch (alt8) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1480:30: FILE ( '/' | '\\\\' )
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1494:30: FILE ( '/' | '\\\\' )
             	    {
             	    mFILE(); 
             	    if ( input.LA(1)=='/'||input.LA(1)=='\\' ) {
@@ -1765,8 +1809,8 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = MEMBER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1481:7: ( ID '.' ID )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1481:9: ID '.' ID
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1495:7: ( ID '.' ID )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1495:9: ID '.' ID
             {
             mID(); 
             match('.'); 
@@ -1787,10 +1831,10 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1482:3: ( ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+ )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1482:5: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1496:3: ( ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+ )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1496:5: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
             {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1482:5: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1496:5: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
             int cnt9=0;
             loop9:
             do {
@@ -1845,12 +1889,12 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1483:8: ( '//' ( . )* ( '\\n' | '\\r' ) )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1483:10: '//' ( . )* ( '\\n' | '\\r' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1497:8: ( '//' ( . )* ( '\\n' | '\\r' ) )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1497:10: '//' ( . )* ( '\\n' | '\\r' )
             {
             match("//"); 
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1483:15: ( . )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1497:15: ( . )*
             loop10:
             do {
                 int alt10=2;
@@ -1866,7 +1910,7 @@ public class PlatuInstLexer extends Lexer {
 
                 switch (alt10) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1483:15: .
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1497:15: .
             	    {
             	    matchAny(); 
 
@@ -1904,12 +1948,12 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = MULTILINECOMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1484:17: ( '/*' ( . )* '*/' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1484:19: '/*' ( . )* '*/'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1498:17: ( '/*' ( . )* '*/' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1498:19: '/*' ( . )* '*/'
             {
             match("/*"); 
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1484:24: ( . )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1498:24: ( . )*
             loop11:
             do {
                 int alt11=2;
@@ -1934,7 +1978,7 @@ public class PlatuInstLexer extends Lexer {
 
                 switch (alt11) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1484:24: .
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1498:24: .
             	    {
             	    matchAny(); 
 
@@ -1965,11 +2009,11 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = XMLCOMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1485:11: ( ( '<' '!' '-' '-' ) ( . )* ( '-' '-' '>' ) )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1485:13: ( '<' '!' '-' '-' ) ( . )* ( '-' '-' '>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1499:11: ( ( '<' '!' '-' '-' ) ( . )* ( '-' '-' '>' ) )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1499:13: ( '<' '!' '-' '-' ) ( . )* ( '-' '-' '>' )
             {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1485:13: ( '<' '!' '-' '-' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1485:14: '<' '!' '-' '-'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1499:13: ( '<' '!' '-' '-' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1499:14: '<' '!' '-' '-'
             {
             match('<'); 
             match('!'); 
@@ -1978,7 +2022,7 @@ public class PlatuInstLexer extends Lexer {
 
             }
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1485:31: ( . )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1499:31: ( . )*
             loop12:
             do {
                 int alt12=2;
@@ -2012,7 +2056,7 @@ public class PlatuInstLexer extends Lexer {
 
                 switch (alt12) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1485:31: .
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1499:31: .
             	    {
             	    matchAny(); 
 
@@ -2024,8 +2068,8 @@ public class PlatuInstLexer extends Lexer {
                 }
             } while (true);
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1485:34: ( '-' '-' '>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1485:35: '-' '-' '>'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1499:34: ( '-' '-' '>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1499:35: '-' '-' '>'
             {
             match('-'); 
             match('-'); 
@@ -2050,12 +2094,12 @@ public class PlatuInstLexer extends Lexer {
         try {
             int _type = IGNORE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1486:7: ( '<' '?' ( . )* '?' '>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1486:9: '<' '?' ( . )* '?' '>'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1500:7: ( '<' '?' ( . )* '?' '>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1500:9: '<' '?' ( . )* '?' '>'
             {
             match('<'); 
             match('?'); 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1486:17: ( . )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1500:17: ( . )*
             loop13:
             do {
                 int alt13=2;
@@ -2080,7 +2124,7 @@ public class PlatuInstLexer extends Lexer {
 
                 switch (alt13) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1486:17: .
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1500:17: .
             	    {
             	    matchAny(); 
 
@@ -2107,8 +2151,8 @@ public class PlatuInstLexer extends Lexer {
     // $ANTLR end "IGNORE"
 
     public void mTokens() throws RecognitionException {
-        // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:8: ( T__60 | T__61 | T__62 | T__63 | T__64 | T__65 | T__66 | T__67 | T__68 | T__69 | T__70 | T__71 | T__72 | T__73 | T__74 | T__75 | T__76 | T__77 | T__78 | T__79 | LPAREN | RPAREN | QMARK | COLON | SEMICOLON | PERIOD | UNDERSCORE | COMMA | QUOTE | MODULE | NAME | INPUT | OUTPUT | INTERNAL | MARKING | STATE_VECTOR | TRANSITION | LABEL | PRESET | POSTSET | TRUE | FALSE | PLUS | MINUS | TIMES | DIV | MOD | EQUALS | GREATER | LESS | GREATER_EQUAL | LESS_EQUAL | EQUIV | NOT_EQUIV | NEGATION | AND | OR | IMPLICATION | BITWISE_NEGATION | BITWISE_AND | BITWISE_OR | BITWISE_XOR | BITWISE_LSHIFT | BITWISE_RSHIFT | INT | ID | PATH | MEMBER | WS | COMMENT | MULTILINECOMMENT | XMLCOMMENT | IGNORE )
-        int alt14=73;
+        // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:8: ( T__60 | T__61 | T__62 | T__63 | T__64 | T__65 | T__66 | T__67 | T__68 | T__69 | T__70 | T__71 | T__72 | T__73 | T__74 | T__75 | T__76 | T__77 | T__78 | T__79 | T__80 | T__81 | LPAREN | RPAREN | QMARK | COLON | SEMICOLON | PERIOD | UNDERSCORE | COMMA | QUOTE | MODULE | NAME | INPUT | OUTPUT | INTERNAL | MARKING | STATE_VECTOR | TRANSITION | LABEL | PRESET | POSTSET | TRUE | FALSE | PLUS | MINUS | TIMES | DIV | MOD | EQUALS | GREATER | LESS | GREATER_EQUAL | LESS_EQUAL | EQUIV | NOT_EQUIV | NEGATION | AND | OR | IMPLICATION | BITWISE_NEGATION | BITWISE_AND | BITWISE_OR | BITWISE_XOR | BITWISE_LSHIFT | BITWISE_RSHIFT | INT | ID | PATH | MEMBER | WS | COMMENT | MULTILINECOMMENT | XMLCOMMENT | IGNORE )
+        int alt14=75;
         alt14 = dfa14.predict(input);
         switch (alt14) {
             case 1 :
@@ -2252,371 +2296,385 @@ public class PlatuInstLexer extends Lexer {
                 }
                 break;
             case 21 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:130: LPAREN
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:130: T__80
+                {
+                mT__80(); 
+
+                }
+                break;
+            case 22 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:136: T__81
+                {
+                mT__81(); 
+
+                }
+                break;
+            case 23 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:142: LPAREN
                 {
                 mLPAREN(); 
 
                 }
                 break;
-            case 22 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:137: RPAREN
+            case 24 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:149: RPAREN
                 {
                 mRPAREN(); 
 
                 }
                 break;
-            case 23 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:144: QMARK
+            case 25 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:156: QMARK
                 {
                 mQMARK(); 
 
                 }
                 break;
-            case 24 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:150: COLON
+            case 26 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:162: COLON
                 {
                 mCOLON(); 
 
                 }
                 break;
-            case 25 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:156: SEMICOLON
+            case 27 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:168: SEMICOLON
                 {
                 mSEMICOLON(); 
 
                 }
                 break;
-            case 26 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:166: PERIOD
+            case 28 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:178: PERIOD
                 {
                 mPERIOD(); 
 
                 }
                 break;
-            case 27 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:173: UNDERSCORE
+            case 29 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:185: UNDERSCORE
                 {
                 mUNDERSCORE(); 
 
                 }
                 break;
-            case 28 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:184: COMMA
+            case 30 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:196: COMMA
                 {
                 mCOMMA(); 
 
                 }
                 break;
-            case 29 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:190: QUOTE
+            case 31 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:202: QUOTE
                 {
                 mQUOTE(); 
 
                 }
                 break;
-            case 30 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:196: MODULE
+            case 32 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:208: MODULE
                 {
                 mMODULE(); 
 
                 }
                 break;
-            case 31 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:203: NAME
+            case 33 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:215: NAME
                 {
                 mNAME(); 
 
                 }
                 break;
-            case 32 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:208: INPUT
+            case 34 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:220: INPUT
                 {
                 mINPUT(); 
 
                 }
                 break;
-            case 33 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:214: OUTPUT
+            case 35 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:226: OUTPUT
                 {
                 mOUTPUT(); 
 
                 }
                 break;
-            case 34 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:221: INTERNAL
+            case 36 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:233: INTERNAL
                 {
                 mINTERNAL(); 
 
                 }
                 break;
-            case 35 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:230: MARKING
+            case 37 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:242: MARKING
                 {
                 mMARKING(); 
 
                 }
                 break;
-            case 36 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:238: STATE_VECTOR
+            case 38 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:250: STATE_VECTOR
                 {
                 mSTATE_VECTOR(); 
 
                 }
                 break;
-            case 37 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:251: TRANSITION
+            case 39 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:263: TRANSITION
                 {
                 mTRANSITION(); 
 
                 }
                 break;
-            case 38 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:262: LABEL
+            case 40 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:274: LABEL
                 {
                 mLABEL(); 
 
                 }
                 break;
-            case 39 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:268: PRESET
+            case 41 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:280: PRESET
                 {
                 mPRESET(); 
 
                 }
                 break;
-            case 40 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:275: POSTSET
+            case 42 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:287: POSTSET
                 {
                 mPOSTSET(); 
 
                 }
                 break;
-            case 41 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:283: TRUE
+            case 43 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:295: TRUE
                 {
                 mTRUE(); 
 
                 }
                 break;
-            case 42 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:288: FALSE
+            case 44 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:300: FALSE
                 {
                 mFALSE(); 
 
                 }
                 break;
-            case 43 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:294: PLUS
+            case 45 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:306: PLUS
                 {
                 mPLUS(); 
 
                 }
                 break;
-            case 44 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:299: MINUS
+            case 46 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:311: MINUS
                 {
                 mMINUS(); 
 
                 }
                 break;
-            case 45 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:305: TIMES
+            case 47 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:317: TIMES
                 {
                 mTIMES(); 
 
                 }
                 break;
-            case 46 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:311: DIV
+            case 48 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:323: DIV
                 {
                 mDIV(); 
 
                 }
                 break;
-            case 47 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:315: MOD
+            case 49 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:327: MOD
                 {
                 mMOD(); 
 
                 }
                 break;
-            case 48 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:319: EQUALS
+            case 50 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:331: EQUALS
                 {
                 mEQUALS(); 
 
                 }
                 break;
-            case 49 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:326: GREATER
+            case 51 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:338: GREATER
                 {
                 mGREATER(); 
 
                 }
                 break;
-            case 50 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:334: LESS
+            case 52 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:346: LESS
                 {
                 mLESS(); 
 
                 }
                 break;
-            case 51 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:339: GREATER_EQUAL
+            case 53 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:351: GREATER_EQUAL
                 {
                 mGREATER_EQUAL(); 
 
                 }
                 break;
-            case 52 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:353: LESS_EQUAL
+            case 54 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:365: LESS_EQUAL
                 {
                 mLESS_EQUAL(); 
 
                 }
                 break;
-            case 53 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:364: EQUIV
+            case 55 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:376: EQUIV
                 {
                 mEQUIV(); 
 
                 }
                 break;
-            case 54 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:370: NOT_EQUIV
+            case 56 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:382: NOT_EQUIV
                 {
                 mNOT_EQUIV(); 
 
                 }
                 break;
-            case 55 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:380: NEGATION
+            case 57 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:392: NEGATION
                 {
                 mNEGATION(); 
 
                 }
                 break;
-            case 56 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:389: AND
+            case 58 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:401: AND
                 {
                 mAND(); 
 
                 }
                 break;
-            case 57 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:393: OR
+            case 59 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:405: OR
                 {
                 mOR(); 
 
                 }
                 break;
-            case 58 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:396: IMPLICATION
+            case 60 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:408: IMPLICATION
                 {
                 mIMPLICATION(); 
 
                 }
                 break;
-            case 59 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:408: BITWISE_NEGATION
+            case 61 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:420: BITWISE_NEGATION
                 {
                 mBITWISE_NEGATION(); 
 
                 }
                 break;
-            case 60 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:425: BITWISE_AND
+            case 62 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:437: BITWISE_AND
                 {
                 mBITWISE_AND(); 
 
                 }
                 break;
-            case 61 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:437: BITWISE_OR
+            case 63 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:449: BITWISE_OR
                 {
                 mBITWISE_OR(); 
 
                 }
                 break;
-            case 62 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:448: BITWISE_XOR
+            case 64 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:460: BITWISE_XOR
                 {
                 mBITWISE_XOR(); 
 
                 }
                 break;
-            case 63 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:460: BITWISE_LSHIFT
+            case 65 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:472: BITWISE_LSHIFT
                 {
                 mBITWISE_LSHIFT(); 
 
                 }
                 break;
-            case 64 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:475: BITWISE_RSHIFT
+            case 66 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:487: BITWISE_RSHIFT
                 {
                 mBITWISE_RSHIFT(); 
 
                 }
                 break;
-            case 65 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:490: INT
+            case 67 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:502: INT
                 {
                 mINT(); 
 
                 }
                 break;
-            case 66 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:494: ID
+            case 68 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:506: ID
                 {
                 mID(); 
 
                 }
                 break;
-            case 67 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:497: PATH
+            case 69 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:509: PATH
                 {
                 mPATH(); 
 
                 }
                 break;
-            case 68 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:502: MEMBER
+            case 70 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:514: MEMBER
                 {
                 mMEMBER(); 
 
                 }
                 break;
-            case 69 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:509: WS
+            case 71 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:521: WS
                 {
                 mWS(); 
 
                 }
                 break;
-            case 70 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:512: COMMENT
+            case 72 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:524: COMMENT
                 {
                 mCOMMENT(); 
 
                 }
                 break;
-            case 71 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:520: MULTILINECOMMENT
+            case 73 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:532: MULTILINECOMMENT
                 {
                 mMULTILINECOMMENT(); 
 
                 }
                 break;
-            case 72 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:537: XMLCOMMENT
+            case 74 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:549: XMLCOMMENT
                 {
                 mXMLCOMMENT(); 
 
                 }
                 break;
-            case 73 :
-                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:548: IGNORE
+            case 75 :
+                // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuInst.g:1:560: IGNORE
                 {
                 mIGNORE(); 
 
@@ -2683,174 +2741,177 @@ public class PlatuInstLexer extends Lexer {
             this.transition = DFA8_transition;
         }
         public String getDescription() {
-            return "()* loopback of 1480:29: ( FILE ( '/' | '\\\\' ) )*";
+            return "()* loopback of 1494:29: ( FILE ( '/' | '\\\\' ) )*";
         }
     }
     static final String DFA14_eotS =
-        "\1\uffff\1\54\1\70\3\54\4\uffff\1\54\11\uffff\10\54\1\uffff\1\112"+
-        "\2\uffff\1\115\1\120\1\125\1\127\1\131\1\133\2\uffff\1\113\1\54"+
-        "\1\uffff\1\54\2\uffff\1\54\12\uffff\20\54\23\uffff\1\113\1\54\1"+
-        "\174\1\54\1\141\10\uffff\2\54\1\u0088\2\54\1\u008c\4\54\1\u0091"+
-        "\10\54\1\uffff\1\54\1\141\1\uffff\1\u009d\3\uffff\1\u00a1\1\uffff"+
-        "\1\u00a3\1\54\1\uffff\3\54\1\uffff\2\54\1\u00aa\1\54\1\uffff\2\54"+
-        "\1\u00ae\5\54\1\u00b4\1\57\10\uffff\1\54\1\u00bb\1\u00bc\2\54\1"+
-        "\u00bf\1\uffff\3\54\1\uffff\1\u00c3\2\54\1\u00c6\1\54\3\uffff\1"+
-        "\u00ca\1\u00cb\1\uffff\1\54\2\uffff\1\54\1\u00cf\1\uffff\1\u00d0"+
-        "\2\54\1\uffff\1\u00d3\1\54\1\uffff\1\u00d5\5\uffff\1\u00d9\1\54"+
-        "\2\uffff\2\54\1\uffff\1\u00dd\1\uffff\1\u00de\1\u00df\2\uffff\3"+
-        "\54\4\uffff\1\u00e5\2\54\2\uffff\1\54\1\u00ea\1\u00eb\1\u00ec\3"+
-        "\uffff";
+        "\1\uffff\1\54\1\71\4\54\4\uffff\1\54\11\uffff\7\54\1\uffff\1\113"+
+        "\2\uffff\1\116\1\121\1\126\1\130\1\132\1\134\2\uffff\1\114\1\54"+
+        "\1\uffff\1\54\2\uffff\1\54\13\uffff\20\54\23\uffff\1\114\1\54\1"+
+        "\177\1\54\1\142\11\uffff\2\54\1\u008c\5\54\1\u0093\4\54\1\u0098"+
+        "\6\54\1\uffff\1\54\1\142\1\uffff\1\u00a2\4\uffff\1\u00a7\1\uffff"+
+        "\1\u00a9\1\54\1\uffff\6\54\1\uffff\2\54\1\u00b3\1\54\1\uffff\2\54"+
+        "\1\u00b7\3\54\1\u00bb\1\57\11\uffff\4\54\1\u00c6\1\u00c7\2\54\1"+
+        "\u00ca\1\uffff\3\54\1\uffff\1\u00ce\1\u00cf\1\54\4\uffff\1\u00d4"+
+        "\1\u00d5\1\uffff\2\54\1\u00d9\1\54\2\uffff\1\54\1\u00dc\1\uffff"+
+        "\1\u00dd\2\54\2\uffff\1\u00e0\6\uffff\1\u00e5\1\u00e6\1\uffff\1"+
+        "\u00e7\1\54\2\uffff\2\54\1\uffff\1\u00eb\1\u00ec\1\u00ed\4\uffff"+
+        "\3\54\4\uffff\1\u00f3\2\54\2\uffff\1\54\1\u00f8\1\u00f9\1\u00fa"+
+        "\3\uffff";
     static final String DFA14_eofS =
-        "\u00ed\uffff";
+        "\u00fb\uffff";
     static final String DFA14_minS =
-        "\1\11\1\56\1\52\3\56\4\uffff\1\56\11\uffff\10\56\1\uffff\1\60\2"+
-        "\uffff\2\75\1\41\1\75\1\46\1\174\2\uffff\2\56\1\uffff\1\56\1\uffff"+
-        "\1\60\1\56\1\uffff\1\101\5\56\3\uffff\20\56\23\uffff\4\56\1\160"+
-        "\1\uffff\32\56\1\uffff\1\56\1\156\11\56\1\uffff\3\56\1\uffff\4\56"+
-        "\1\uffff\11\56\1\60\1\56\1\uffff\3\56\1\uffff\1\56\1\uffff\6\56"+
-        "\1\uffff\3\56\1\uffff\5\56\1\uffff\6\56\2\uffff\2\56\1\uffff\3\56"+
-        "\1\uffff\2\56\1\uffff\3\56\2\uffff\3\56\2\uffff\2\56\1\uffff\1\56"+
-        "\1\uffff\3\56\1\uffff\3\56\3\uffff\5\56\1\uffff\4\56\3\uffff";
+        "\1\11\1\56\1\52\4\56\4\uffff\1\56\11\uffff\7\56\1\uffff\1\60\2\uffff"+
+        "\2\75\1\41\1\75\1\46\1\174\2\uffff\2\56\1\uffff\1\56\1\uffff\1\60"+
+        "\1\56\1\uffff\1\101\6\56\3\uffff\20\56\23\uffff\4\56\1\160\1\uffff"+
+        "\34\56\1\uffff\1\56\1\156\12\56\1\uffff\6\56\1\uffff\4\56\1\uffff"+
+        "\7\56\1\60\1\56\1\uffff\4\56\1\uffff\1\56\1\uffff\11\56\1\uffff"+
+        "\3\56\1\uffff\3\56\1\uffff\12\56\2\uffff\2\56\1\uffff\3\56\2\uffff"+
+        "\4\56\2\uffff\3\56\1\uffff\2\56\2\uffff\2\56\1\uffff\4\56\3\uffff"+
+        "\3\56\3\uffff\5\56\1\uffff\4\56\3\uffff";
     static final String DFA14_maxS =
-        "\1\176\5\172\4\uffff\1\172\11\uffff\10\172\1\uffff\1\76\2\uffff"+
-        "\1\75\1\76\1\77\1\75\1\46\1\174\2\uffff\2\172\1\uffff\1\172\1\uffff"+
-        "\2\172\1\uffff\6\172\3\uffff\20\172\23\uffff\4\172\1\160\1\uffff"+
-        "\32\172\1\uffff\1\172\1\156\11\172\1\uffff\3\172\1\uffff\4\172\1"+
-        "\uffff\13\172\1\uffff\3\172\1\uffff\1\172\1\uffff\6\172\1\uffff"+
-        "\3\172\1\uffff\5\172\1\uffff\6\172\2\uffff\2\172\1\uffff\3\172\1"+
-        "\uffff\2\172\1\uffff\3\172\2\uffff\3\172\2\uffff\2\172\1\uffff\1"+
-        "\172\1\uffff\3\172\1\uffff\3\172\3\uffff\5\172\1\uffff\4\172\3\uffff";
+        "\1\176\6\172\4\uffff\1\172\11\uffff\7\172\1\uffff\1\76\2\uffff\1"+
+        "\75\1\76\1\77\1\75\1\46\1\174\2\uffff\2\172\1\uffff\1\172\1\uffff"+
+        "\2\172\1\uffff\7\172\3\uffff\20\172\23\uffff\4\172\1\160\1\uffff"+
+        "\34\172\1\uffff\1\172\1\156\12\172\1\uffff\6\172\1\uffff\4\172\1"+
+        "\uffff\11\172\1\uffff\4\172\1\uffff\1\172\1\uffff\11\172\1\uffff"+
+        "\3\172\1\uffff\3\172\1\uffff\12\172\2\uffff\2\172\1\uffff\3\172"+
+        "\2\uffff\4\172\2\uffff\3\172\1\uffff\2\172\2\uffff\2\172\1\uffff"+
+        "\4\172\3\uffff\3\172\3\uffff\5\172\1\uffff\4\172\3\uffff";
     static final String DFA14_acceptS =
-        "\6\uffff\1\7\1\10\1\15\1\16\1\uffff\1\25\1\26\1\27\1\30\1\31\1\32"+
-        "\1\33\1\34\1\35\10\uffff\1\53\1\uffff\1\55\1\57\6\uffff\1\73\1\76"+
-        "\2\uffff\1\105\1\uffff\1\102\2\uffff\1\103\6\uffff\1\106\1\107\1"+
-        "\56\20\uffff\1\72\1\54\1\101\1\65\1\60\1\63\1\100\1\61\1\64\1\77"+
-        "\1\110\1\111\1\62\1\66\1\67\1\70\1\74\1\71\1\75\5\uffff\1\104\32"+
-        "\uffff\1\24\13\uffff\1\36\3\uffff\1\6\4\uffff\1\42\13\uffff\1\4"+
-        "\3\uffff\1\14\1\uffff\1\3\6\uffff\1\37\3\uffff\1\51\5\uffff\1\40"+
-        "\6\uffff\1\5\1\12\2\uffff\1\23\3\uffff\1\46\2\uffff\1\52\3\uffff"+
-        "\1\11\1\13\3\uffff\1\21\1\41\2\uffff\1\47\1\uffff\1\1\3\uffff\1"+
-        "\43\3\uffff\1\50\1\2\1\17\5\uffff\1\22\4\uffff\1\45\1\20\1\44";
+        "\7\uffff\1\11\1\12\1\17\1\20\1\uffff\1\27\1\30\1\31\1\32\1\33\1"+
+        "\34\1\35\1\36\1\37\7\uffff\1\55\1\uffff\1\57\1\61\6\uffff\1\75\1"+
+        "\100\2\uffff\1\107\1\uffff\1\104\2\uffff\1\105\7\uffff\1\110\1\111"+
+        "\1\60\20\uffff\1\74\1\56\1\103\1\67\1\62\1\65\1\102\1\63\1\66\1"+
+        "\101\1\112\1\113\1\64\1\70\1\71\1\72\1\76\1\73\1\77\5\uffff\1\106"+
+        "\34\uffff\1\26\14\uffff\1\40\6\uffff\1\10\4\uffff\1\44\11\uffff"+
+        "\1\4\4\uffff\1\16\1\uffff\1\3\11\uffff\1\41\3\uffff\1\53\3\uffff"+
+        "\1\42\12\uffff\1\7\1\14\2\uffff\1\25\3\uffff\1\50\1\54\4\uffff\1"+
+        "\13\1\15\3\uffff\1\51\2\uffff\1\23\1\43\2\uffff\1\1\4\uffff\1\45"+
+        "\1\5\1\52\3\uffff\1\2\1\21\1\6\5\uffff\1\24\4\uffff\1\47\1\22\1"+
+        "\46";
     static final String DFA14_specialS =
-        "\u00ed\uffff}>";
+        "\u00fb\uffff}>";
     static final String[] DFA14_transitionS = {
-            "\2\52\1\uffff\2\52\22\uffff\1\52\1\43\1\23\2\uffff\1\37\1\44"+
-            "\1\uffff\1\13\1\14\1\36\1\34\1\22\1\35\1\20\1\2\12\50\1\16\1"+
-            "\17\1\42\1\40\1\41\1\15\1\uffff\32\51\1\6\1\uffff\1\7\1\47\1"+
-            "\21\1\uffff\1\5\1\51\1\4\1\12\1\51\1\33\2\51\1\1\2\51\1\31\1"+
-            "\3\1\24\1\25\1\32\2\51\1\27\1\30\1\51\1\26\4\51\1\10\1\45\1"+
-            "\11\1\46",
+            "\2\52\1\uffff\2\52\22\uffff\1\52\1\43\1\24\2\uffff\1\37\1\44"+
+            "\1\uffff\1\14\1\15\1\36\1\34\1\23\1\35\1\21\1\2\12\50\1\17\1"+
+            "\20\1\42\1\40\1\41\1\16\1\uffff\32\51\1\7\1\uffff\1\10\1\47"+
+            "\1\22\1\uffff\1\6\1\51\1\5\1\13\1\51\1\33\2\51\1\1\2\51\1\32"+
+            "\1\3\1\25\1\26\1\4\2\51\1\30\1\31\1\51\1\27\4\51\1\11\1\45\1"+
+            "\12\1\46",
             "\1\60\1\57\12\56\1\57\6\uffff\32\56\1\uffff\1\57\2\uffff\1"+
             "\55\1\uffff\15\56\1\53\14\56",
-            "\1\67\4\uffff\1\66\12\57\7\uffff\32\57\6\uffff\2\57\1\63\5"+
-            "\57\1\61\3\57\1\62\6\57\1\65\1\57\1\64\4\57",
+            "\1\70\4\uffff\1\67\12\57\7\uffff\32\57\6\uffff\2\57\1\64\5"+
+            "\57\1\61\3\57\1\62\2\57\1\63\3\57\1\66\1\57\1\65\4\57",
             "\1\60\1\57\12\56\1\57\6\uffff\32\56\1\uffff\1\57\2\uffff\1"+
-            "\55\1\uffff\1\71\15\56\1\72\13\56",
+            "\55\1\uffff\1\72\15\56\1\73\13\56",
             "\1\60\1\57\12\56\1\57\6\uffff\32\56\1\uffff\1\57\2\uffff\1"+
-            "\55\1\uffff\13\56\1\73\2\56\1\74\13\56",
+            "\55\1\uffff\16\56\1\75\2\56\1\74\10\56",
             "\1\60\1\57\12\56\1\57\6\uffff\32\56\1\uffff\1\57\2\uffff\1"+
-            "\55\1\uffff\21\56\1\75\1\76\7\56",
-            "",
-            "",
-            "",
-            "",
+            "\55\1\uffff\13\56\1\76\2\56\1\77\13\56",
             "\1\60\1\57\12\56\1\57\6\uffff\32\56\1\uffff\1\57\2\uffff\1"+
-            "\55\1\uffff\4\56\1\77\25\56",
-            "",
-            "",
-            "",
-            "",
-            "",
+            "\55\1\uffff\21\56\1\100\1\101\7\56",
             "",
             "",
             "",
             "",
             "\1\60\1\57\12\56\1\57\6\uffff\32\56\1\uffff\1\57\2\uffff\1"+
-            "\55\1\uffff\1\100\31\56",
+            "\55\1\uffff\4\56\1\102\25\56",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
             "\1\60\1\57\12\56\1\57\6\uffff\32\56\1\uffff\1\57\2\uffff\1"+
-            "\55\1\uffff\24\56\1\101\5\56",
+            "\55\1\uffff\1\103\31\56",
             "\1\60\1\57\12\56\1\57\6\uffff\32\56\1\uffff\1\57\2\uffff\1"+
-            "\55\1\uffff\1\102\31\56",
-            "\1\60\1\57\12\56\1\57\6\uffff\32\56\1\uffff\1\57\2\uffff\1"+
-            "\55\1\uffff\23\56\1\103\6\56",
-            "\1\60\1\57\12\56\1\57\6\uffff\32\56\1\uffff\1\57\2\uffff\1"+
-            "\55\1\uffff\21\56\1\104\10\56",
+            "\55\1\uffff\24\56\1\104\5\56",
             "\1\60\1\57\12\56\1\57\6\uffff\32\56\1\uffff\1\57\2\uffff\1"+
             "\55\1\uffff\1\105\31\56",
             "\1\60\1\57\12\56\1\57\6\uffff\32\56\1\uffff\1\57\2\uffff\1"+
-            "\55\1\uffff\16\56\1\107\2\56\1\106\10\56",
+            "\55\1\uffff\23\56\1\106\6\56",
+            "\1\60\1\57\12\56\1\57\6\uffff\32\56\1\uffff\1\57\2\uffff\1"+
+            "\55\1\uffff\21\56\1\107\10\56",
             "\1\60\1\57\12\56\1\57\6\uffff\32\56\1\uffff\1\57\2\uffff\1"+
             "\55\1\uffff\1\110\31\56",
+            "\1\60\1\57\12\56\1\57\6\uffff\32\56\1\uffff\1\57\2\uffff\1"+
+            "\55\1\uffff\1\111\31\56",
             "",
-            "\12\113\4\uffff\1\111",
-            "",
-            "",
-            "\1\114",
-            "\1\116\1\117",
-            "\1\123\32\uffff\1\122\1\121\1\uffff\1\124",
-            "\1\126",
-            "\1\130",
-            "\1\132",
+            "\12\114\4\uffff\1\112",
             "",
             "",
-            "\2\57\12\134\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff"+
+            "\1\115",
+            "\1\117\1\120",
+            "\1\124\32\uffff\1\123\1\122\1\uffff\1\125",
+            "\1\127",
+            "\1\131",
+            "\1\133",
+            "",
+            "",
+            "\2\57\12\135\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff"+
             "\32\57",
             "\1\60\1\57\12\56\1\57\6\uffff\32\56\1\uffff\1\57\2\uffff\1"+
             "\55\1\uffff\32\56",
             "",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\2\56\1\135\2\56\1\136\11\56\1\137\12\56",
+            "\uffff\2\56\1\136\2\56\1\137\11\56\1\140\12\56",
             "",
             "\12\56\7\uffff\32\56\6\uffff\32\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\32\56",
             "",
-            "\32\141\6\uffff\13\141\1\140\16\141",
+            "\32\142\6\uffff\13\142\1\141\16\142",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\15\57"+
-            "\1\142\14\57",
-            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\1\144"+
-            "\15\57\1\143\13\57",
+            "\1\143\14\57",
+            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\1\145"+
+            "\15\57\1\144\13\57",
+            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\21\57"+
+            "\1\146\10\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\13\57"+
-            "\1\145\2\57\1\146\13\57",
-            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\1\147"+
+            "\1\147\2\57\1\150\13\57",
+            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\1\151"+
             "\31\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\21\57"+
-            "\1\150\10\57",
+            "\1\152\10\57",
             "",
             "",
             "",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\10\56\1\151\10\56\1\152\10\56",
+            "\uffff\10\56\1\153\10\56\1\154\10\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\3\56\1\153\26\56",
+            "\uffff\3\56\1\155\26\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\1\154\31\56",
+            "\uffff\4\56\1\157\11\56\1\156\13\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\15\56\1\155\14\56",
+            "\uffff\22\56\1\160\7\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\6\56\1\156\23\56",
+            "\uffff\1\161\31\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\22\56\1\157\7\56",
+            "\uffff\15\56\1\162\14\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\13\56\1\160\16\56",
+            "\uffff\6\56\1\163\23\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\14\56\1\161\15\56",
+            "\uffff\22\56\1\164\7\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\23\56\1\162\6\56",
+            "\uffff\13\56\1\165\16\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\21\56\1\163\10\56",
+            "\uffff\14\56\1\166\15\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\1\164\31\56",
+            "\uffff\23\56\1\167\6\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\1\165\23\56\1\166\5\56",
+            "\uffff\21\56\1\170\10\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\1\56\1\167\30\56",
+            "\uffff\1\171\31\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\4\56\1\170\25\56",
+            "\uffff\1\172\23\56\1\173\5\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\22\56\1\171\7\56",
+            "\uffff\1\56\1\174\30\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\13\56\1\172\16\56",
+            "\uffff\13\56\1\175\16\56",
             "",
             "",
             "",
@@ -2870,159 +2931,151 @@ public class PlatuInstLexer extends Lexer {
             "",
             "",
             "",
-            "\2\57\12\134\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff"+
+            "\2\57\12\135\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff"+
             "\32\57",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\13\56\1\173\16\56",
+            "\uffff\13\56\1\176\16\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\32\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\24\56\1\175\5\56",
-            "\1\176",
+            "\uffff\24\56\1\u0080\5\56",
+            "\1\u0081",
             "",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\2\57"+
-            "\1\177\27\57",
+            "\1\u0082\27\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\3\57"+
-            "\1\u0080\26\57",
-            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\21\57"+
-            "\1\u0081\10\57",
-            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\1\u0082"+
-            "\31\57",
-            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\15\57"+
-            "\1\u0083\14\57",
+            "\1\u0083\26\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\21\57"+
             "\1\u0084\10\57",
-            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\1\u0085"+
+            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\16\57"+
+            "\1\u0085\13\57",
+            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\1\u0086"+
+            "\31\57",
+            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\15\57"+
+            "\1\u0087\14\57",
+            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\21\57"+
+            "\1\u0088\10\57",
+            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\1\u0089"+
             "\31\57",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\15\56\1\u0086\14\56",
+            "\uffff\15\56\1\u008a\14\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\12\56\1\u0087\17\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\32\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\22\56\1\u0089\7\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\3\56\1\u008b\16\56\1\u008a\7\56",
+            "\uffff\12\56\1\u008b\17\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\32\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\4\56\1\u008d\25\56",
+            "\uffff\2\56\1\u008d\27\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\1\u008e\31\56",
+            "\uffff\22\56\1\u008e\7\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\4\56\1\u008f\25\56",
+            "\uffff\23\56\1\u008f\6\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\17\56\1\u0090\12\56",
+            "\uffff\22\56\1\u0090\7\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\3\56\1\u0092\16\56\1\u0091\7\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\32\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\23\56\1\u0092\6\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\15\56\1\u0093\14\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\4\56\1\u0094\25\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\4\56\1\u0095\25\56",
+            "\uffff\1\u0095\31\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\22\56\1\u0096\7\56",
+            "\uffff\4\56\1\u0096\25\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\23\56\1\u0097\6\56",
+            "\uffff\17\56\1\u0097\12\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\22\56\1\u0098\7\56",
+            "\uffff\32\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\24\56\1\u0099\5\56",
+            "\uffff\23\56\1\u0099\6\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\15\56\1\u009a\14\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\4\56\1\u009b\25\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\4\56\1\u009c\25\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\22\56\1\u009d\7\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\24\56\1\u009e\5\56",
             "",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\23\56\1\u009a\6\56",
-            "\1\u009b",
+            "\uffff\23\56\1\u009f\6\56",
+            "\1\u00a0",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\13\57"+
-            "\1\u009c\16\57",
+            "\1\u00a1\16\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\32\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\12\57"+
-            "\1\u009e\17\57",
+            "\1\u00a3\17\57",
+            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\2\57"+
+            "\1\u00a4\27\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\22\57"+
-            "\1\u009f\7\57",
+            "\1\u00a5\7\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\22\57"+
-            "\1\u00a0\7\57",
+            "\1\u00a6\7\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\32\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\15\57"+
-            "\1\u00a2\14\57",
+            "\1\u00a8\14\57",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\32\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\10\56\1\u00a4\21\56",
+            "\uffff\10\56\1\u00aa\21\56",
             "",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\22\56\1\u00a5\7\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\23\56\1\u00a6\6\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\10\56\1\u00a7\21\56",
-            "",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\21\56\1\u00a8\10\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\30\56\1\u00a9\1\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\32\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\24\56\1\u00ab\5\56",
-            "",
+            "\uffff\4\56\1\u00ab\25\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\4\56\1\u00ac\25\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\22\56\1\u00ad\7\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\22\56\1\u00ae\7\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\23\56\1\u00af\6\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\10\56\1\u00b0\21\56",
+            "",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\21\56\1\u00b1\10\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\30\56\1\u00b2\1\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\32\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\13\56\1\u00af\16\56",
+            "\uffff\24\56\1\u00b4\5\56",
+            "",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\4\56\1\u00b0\25\56",
+            "\uffff\4\56\1\u00b5\25\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\22\56\1\u00b1\7\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\4\56\1\u00b2\25\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\3\56\1\u00b3\26\56",
+            "\uffff\22\56\1\u00b6\7\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\32\56",
-            "\12\141\7\uffff\32\141\4\uffff\1\141\1\uffff\32\141",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\13\56\1\u00b8\16\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\4\56\1\u00b9\25\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\3\56\1\u00ba\26\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\32\56",
+            "\12\142\7\uffff\32\142\4\uffff\1\142\1\uffff\32\142",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\24\57"+
-            "\1\u00b5\5\57",
+            "\1\u00bc\5\57",
             "",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\10\57"+
-            "\1\u00b6\21\57",
+            "\1\u00bd\21\57",
+            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\4\57"+
+            "\1\u00be\25\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\22\57"+
-            "\1\u00b7\7\57",
+            "\1\u00bf\7\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\23\57"+
-            "\1\u00b8\6\57",
+            "\1\u00c0\6\57",
             "",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\22\57"+
-            "\1\u00b9\7\57",
+            "\1\u00c1\7\57",
             "",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\15\56\1\u00ba\14\56",
+            "\uffff\15\56\1\u00c2\14\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\32\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\32\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\23\56\1\u00bd\6\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\23\56\1\u00be\6\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\32\56",
-            "",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\23\56\1\u00c0\6\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\25\56\1\u00c1\4\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\10\56\1\u00c2\21\56",
-            "",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\32\56",
+            "\uffff\22\56\1\u00c3\7\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\23\56\1\u00c4\6\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
@@ -3030,88 +3083,119 @@ public class PlatuInstLexer extends Lexer {
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\32\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\4\56\1\u00c7\25\56",
+            "\uffff\32\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\23\56\1\u00c8\6\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\23\56\1\u00c9\6\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\32\56",
+            "",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\23\56\1\u00cb\6\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\25\56\1\u00cc\4\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\10\56\1\u00cd\21\56",
+            "",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\32\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\32\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\4\56\1\u00d0\25\56",
             "",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\3\57"+
-            "\1\u00c8\26\57",
+            "\1\u00d1\26\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\15\57"+
-            "\1\u00c9\14\57",
+            "\1\u00d2\14\57",
+            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\22\57"+
+            "\1\u00d3\7\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\32\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\32\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\10\57"+
-            "\1\u00cc\21\57",
+            "\1\u00d6\21\57",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\6\56\1\u00cd\23\56",
+            "\uffff\6\56\1\u00d7\23\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\22\56\1\u00d8\7\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\32\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\23\56\1\u00da\6\56",
             "",
             "",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\10\56\1\u00ce\21\56",
+            "\uffff\10\56\1\u00db\21\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\32\56",
             "",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\32\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\4\56\1\u00d1\25\56",
+            "\uffff\4\56\1\u00de\25\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\23\56\1\u00d2\6\56",
+            "\uffff\23\56\1\u00df\6\56",
             "",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\32\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\23\56\1\u00d4\6\56",
             "",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\32\56",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\4\57"+
-            "\1\u00d6\25\57",
+            "\1\u00e1\25\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\6\57"+
-            "\1\u00d7\23\57",
+            "\1\u00e2\23\57",
+            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\22\57"+
+            "\1\u00e3\7\57",
             "",
             "",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\23\57"+
-            "\1\u00d8\6\57",
+            "\1\u00e4\6\57",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\32\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\16\56\1\u00da\13\56",
-            "",
-            "",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\2\56\1\u00db\27\56",
-            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\10\56\1\u00dc\21\56",
+            "\uffff\32\56",
             "",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\32\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\16\56\1\u00e8\13\56",
             "",
+            "",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\2\56\1\u00e9\27\56",
+            "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
+            "\uffff\10\56\1\u00ea\21\56",
+            "",
+            "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\32\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\32\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\32\57",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\10\57"+
-            "\1\u00e0\21\57",
+            "\1\u00ee\21\57",
+            "",
+            "",
             "",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\15\56\1\u00e1\14\56",
+            "\uffff\15\56\1\u00ef\14\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\23\56\1\u00e2\6\56",
+            "\uffff\23\56\1\u00f0\6\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\16\56\1\u00e3\13\56",
+            "\uffff\16\56\1\u00f1\13\56",
             "",
             "",
             "",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\16\57"+
-            "\1\u00e4\13\57",
+            "\1\u00f2\13\57",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\32\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\16\56\1\u00e6\13\56",
+            "\uffff\16\56\1\u00f4\13\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\15\56\1\u00e7\14\56",
+            "\uffff\15\56\1\u00f5\14\56",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\15\57"+
-            "\1\u00e8\14\57",
+            "\1\u00f6\14\57",
             "",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
-            "\uffff\21\56\1\u00e9\10\56",
+            "\uffff\21\56\1\u00f7\10\56",
             "\1\60\1\57\12\56\7\uffff\32\56\1\uffff\1\57\2\uffff\1\55\1"+
             "\uffff\32\56",
             "\14\57\7\uffff\32\57\1\uffff\1\57\2\uffff\1\57\1\uffff\32\57",
@@ -3152,7 +3236,7 @@ public class PlatuInstLexer extends Lexer {
             this.transition = DFA14_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( T__60 | T__61 | T__62 | T__63 | T__64 | T__65 | T__66 | T__67 | T__68 | T__69 | T__70 | T__71 | T__72 | T__73 | T__74 | T__75 | T__76 | T__77 | T__78 | T__79 | LPAREN | RPAREN | QMARK | COLON | SEMICOLON | PERIOD | UNDERSCORE | COMMA | QUOTE | MODULE | NAME | INPUT | OUTPUT | INTERNAL | MARKING | STATE_VECTOR | TRANSITION | LABEL | PRESET | POSTSET | TRUE | FALSE | PLUS | MINUS | TIMES | DIV | MOD | EQUALS | GREATER | LESS | GREATER_EQUAL | LESS_EQUAL | EQUIV | NOT_EQUIV | NEGATION | AND | OR | IMPLICATION | BITWISE_NEGATION | BITWISE_AND | BITWISE_OR | BITWISE_XOR | BITWISE_LSHIFT | BITWISE_RSHIFT | INT | ID | PATH | MEMBER | WS | COMMENT | MULTILINECOMMENT | XMLCOMMENT | IGNORE );";
+            return "1:1: Tokens : ( T__60 | T__61 | T__62 | T__63 | T__64 | T__65 | T__66 | T__67 | T__68 | T__69 | T__70 | T__71 | T__72 | T__73 | T__74 | T__75 | T__76 | T__77 | T__78 | T__79 | T__80 | T__81 | LPAREN | RPAREN | QMARK | COLON | SEMICOLON | PERIOD | UNDERSCORE | COMMA | QUOTE | MODULE | NAME | INPUT | OUTPUT | INTERNAL | MARKING | STATE_VECTOR | TRANSITION | LABEL | PRESET | POSTSET | TRUE | FALSE | PLUS | MINUS | TIMES | DIV | MOD | EQUALS | GREATER | LESS | GREATER_EQUAL | LESS_EQUAL | EQUIV | NOT_EQUIV | NEGATION | AND | OR | IMPLICATION | BITWISE_NEGATION | BITWISE_AND | BITWISE_OR | BITWISE_XOR | BITWISE_LSHIFT | BITWISE_RSHIFT | INT | ID | PATH | MEMBER | WS | COMMENT | MULTILINECOMMENT | XMLCOMMENT | IGNORE );";
         }
     }
  

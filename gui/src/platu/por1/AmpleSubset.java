@@ -9,13 +9,14 @@ import platu.lpn.LPN;
 import platu.lpn.LPNTran;
 import platu.lpn.LPNTranRelation;
 import platu.lpn.LpnTranList;
+import platu.stategraph.StateGraph;
 
 public class AmpleSubset {
 	
 	private HashSet<LPNTran> allInterleavingTrans = new HashSet<LPNTran>();
 	private HashMap<LPNTran, HashSet<LPNTran>> interleavingSet = new HashMap<LPNTran, HashSet<LPNTran>>();
 	
-	public HashMap<LPNTran,HashSet<LPNTran>> getIndepTranSet_FromState(LPN[] lpnList,
+	public HashMap<LPNTran,HashSet<LPNTran>> getIndepTranSet_FromState(StateGraph[] lpnList,
 			                                                           LPNTranRelation lpnTranRelation)
    {
 		HashMap<LPNTran,HashSet<LPNTran>> indepTranSet = new HashMap<LPNTran,HashSet<LPNTran>>();
@@ -26,7 +27,7 @@ public class AmpleSubset {
 		return indepTranSet;
    }
 	
-	public HashMap<LPNTran,HashSet<LPNTran>> getIndepTranSet_FromLPN(LPN[] lpnList)
+	public HashMap<LPNTran,HashSet<LPNTran>> getIndepTranSet_FromLPN(StateGraph[] lpnList)
     {
 		HashMap<LPNTran,HashSet<LPNTran>> indepTranSet = new HashMap<LPNTran,HashSet<LPNTran>>();
 		SearchDepFromLPN sg = new SearchDepFromLPN();

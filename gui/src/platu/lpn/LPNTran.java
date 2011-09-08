@@ -1,23 +1,19 @@
 package platu.lpn;
 
-import java.io.*;
 import platu.expression.Expression;
 import platu.expression.VarNode;
-import platu.logicAnalysis.Constraint;
-import java.util.*;
-import java.util.Map.Entry;
+import platu.stategraph.State;
+import platu.stategraph.StateGraph;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import lmoore.zone.Zone;
-import platu.Main;
-import platu.stategraph.state.State;
 
 public class LPNTran {
-    public static final Collection<Integer> toList(int[] arr) {
-        TreeSet<Integer> l = new TreeSet<Integer>();
-        for (int i : arr) {
-            l.add(i);
-        }
-        return l;
-    }
 
     public static final int[] toArray(Collection<Integer> set) {
         int[] arr = new int[set.size()];
@@ -28,38 +24,42 @@ public class LPNTran {
         return arr;
     }
     
-    public static PrintStream out = Main.out;
-    public static int[] counts = new int[15];
-    public static boolean ENABLE_PRINT = true;
-    public static int PRINT_LEVEL = 10;
+    /* LPN where this transition is defined. */
+    private LPN lpn;
     
-    public LpnTranList mSet = new LpnTranList();
-    private LPN lpn; // Pointer to the LPN where this tran is defined.
+    /* Transition labels in the same LPN must be unique. */
     private String label;   
-    private int index; // Index of this transition in LPN
+    
+    /* Index of this transition in the this.lpn. */
+    private int index;
+    
     private int[] preSet;
     private int[] postSet;
+    
     private Expression enablingGuard; // Enabling condition
+    
     private VarExprList assignments = new VarExprList();
+    
     private int delayLB;  // Lower bound of the delay
     private int delayUB;  // Upper bound of the delay.
-    private boolean visible; // if output variables defined.
-    private HashSet<VarNode> assignedVarSet;
-    private HashSet<String> supportSet;
-    private boolean local = true;
-    private ArrayList<Expression> assertions = new ArrayList<Expression>(1);
-    private HashMap<Object, Object> nextStateMap;  //current state, next state
-    private Set<Constraint> constraintSet = new HashSet<Constraint>();
-    private List<LPN> lpnList = new ArrayList<LPN>();
-    private boolean stickyFlag = true;
     
-    public void setSticky(){
-    	this.stickyFlag = true;
-    }
-
-    public boolean sticky(){
-    	return this.stickyFlag;
-    }
+    /* Variables on LHS of assignments of this transition. */
+    private HashSet<VarNode> assignedVarSet;
+    
+    /* Variables in the enablingGuard and in the expressions on RHS of assignments. */
+    private HashSet<String> supportSet;
+    
+    /* True if all variables in assignedVarSet are in the set 'internals' of this.lpn. */
+    private boolean local = true;
+    
+    /* A set of Boolean formulas that should hold after firing this transition. */
+    private ArrayList<Expression> assertions = new ArrayList<Expression>(1);
+    
+    /* LPNs that share variables in the assignedVarSet of this transition. */
+    private List<LPN> dstLpnList = new ArrayList<LPN>();
+    
+    /* true indicating this transition follows non-disabling semantics. */
+    private boolean stickyFlag = true;
     
     public LPNTran(String Label, int index, Collection<Integer> preSet, Collection<Integer> postSet,
             Expression enablingGuard, VarExprList assignments, int DelayLB, int DelayUB, boolean local) {
@@ -73,15 +73,12 @@ public class LPNTran {
         this.delayLB = DelayLB;
         this.delayUB = DelayUB;
         this.local = local;
-        visible = true;
         assignedVarSet = new HashSet<VarNode>();
-        nextStateMap = new HashMap<Object, Object>();
+        //nextStateMap = new HashMap<Object, Object>();
 
         if (preSet == null || postSet == null || enablingGuard == null || assignments == null) {
             new NullPointerException().printStackTrace();
         }
-
-        counts[0]++;
     }
     
     public LPNTran(String Label, int index, int[] preSet, int[] postSet, Expression enablingGuard, 
@@ -95,47 +92,13 @@ public class LPNTran {
         this.delayLB = DelayLB;
         this.delayUB = DelayUB;
         this.local = local;
-        visible = true;
         assignedVarSet = new HashSet<VarNode>();
-        nextStateMap = new HashMap<Object, Object>();
+        //nextStateMap = new HashMap<Object, Object>();
 
         if (preSet == null || postSet == null || enablingGuard == null || assignments == null) {
             new NullPointerException().printStackTrace();
         }
-
-        counts[0]++;
     }
-    
-    public LPNTran(LPNTran lpnTran) {
-    	this.label = lpnTran.label;
-    	this.preSet = lpnTran.preSet;
-    	this.postSet = lpnTran.postSet;
-    	this.enablingGuard = lpnTran.enablingGuard;
-    	this.assignments = lpnTran.assignments;
-    	this.delayLB = lpnTran.delayLB;
-    	this.delayUB = lpnTran.delayUB;
-    	this.local = lpnTran.local;
-    	this.assignedVarSet = new HashSet<VarNode>();
-    	nextStateMap = new HashMap<Object, Object>();
-    }
-    
-//    @Override
-//	public boolean equals(final Object other) {
-//		LPNTran otherTran = (LPNTran)other;
-//
-//		if(this.lpn != otherTran.lpn)
-//			return false;
-//
-//		if(this.label != otherTran.label)
-//			return false;
-//
-//		return true;
-//	}
-	
-//	@Override
-//	public int hashCode() {
-//		return Integer.rotateLeft(this.lpn.getLabel().hashCode(), this.getLabel());
-//	}
     
     public void initialize(final LPN lpnModel, final VarSet outputs) {
     	// Computer the variables on the left hand side of the assignments.
@@ -148,13 +111,8 @@ public class LPNTran {
 		}
     	
     	// Determine the visibility of this tran.
-    	this.visible = false;
     	for (VarExpr assign : this.assignments) {
     		assignedVarSet.add(assign.getVar());
-    		
-    		if(outputs.contains(assign.getVar().getName()) == true) {
-    			this.visible = true;
-         	}
     		
     		HashSet<VarNode> tmp = assign.getExpr().getVariables();
     		for(VarNode var : tmp){
@@ -208,7 +166,6 @@ public class LPNTran {
    }
    
    static public LPNTran disablingError(final LPNTran[] current_enabled_transitions, final LPNTran[] next_enabled_transitions,LPNTran ths) {
-        counts[10]++;
         //  current_enabled_transitions.remove(fired_transition);
         // return current_enabled_transitions.containsAll(next_enabled_transitions);
 
@@ -223,10 +180,6 @@ public class LPNTran {
             boolean disabled = true;
             if(next_enabled_transitions != null) {
             	for (LPNTran net:next_enabled_transitions) {
-
-//            		System.out.println("checking curTran " + cet.getLpn().getLabel()+":"+cet.getLabel()
-//            				+ " with " + net.getLpn().getLabel()+":"+net.getLabel());
-
             		if (cet.label == net.label) {
             			disabled = false;
             			break;
@@ -234,38 +187,15 @@ public class LPNTran {
             	}
             }
 
-            if (disabled == true) {
-                if (ths.sharePreSet(cet)==false) {
-                    //disabling not due to choice places
-                    if (ENABLE_PRINT) {
-                        prDbg(9, "Verification failed: LPN transition "
-                                + cet.getLabel() + " disabled by " + ths.getFullLabel());
-                    }
+            if (disabled == true) 
+                if (ths.sharePreSet(cet)==false)
                     return cet;
-                }
-            }
         }
 
         return null;
     }
-
-//	public boolean isInput() {
-//        for (VarExpr ve : getAssignments()) {
-//            for (String s : lpn.getInputs()) {
-//                if (s.equals(ve.getVar())) {
-//                    return true;
-//                }
-//            }
-//        }
-//        return false;
-//    }
-    
-    public boolean isVisible() {
-    	return visible;
-    }
     
     final public boolean isEnabled(final State curState) {
-        counts[5]++;
         if (curState == null) {
             throw new NullPointerException();
         }
@@ -289,7 +219,7 @@ public class LPNTran {
         
         int[] curVector = curState.getVector();
         if (curVector.length > 0) {
-            if(getEnablingGuard().evaluate(curState) == 0)
+            if(getEnablingGuard().evaluate(curVector) == 0)
                 return false;
         }
 
@@ -370,25 +300,23 @@ public class LPNTran {
                 }
             }
         }
-        counts[9]++;
         return false;
-    }
-
-    @Override
-    public final LPNTran clone(){
-    	return new LPNTran(this);
     }
     
     @Override
     final public String toString() {
-        String ret = ""
-                + label + ":{\n\t{"
-                + toList(preSet).toString().replace("[", "").replace("]", "") + "};\n\t{"
-                + toList(postSet).toString().replace("[", "").replace("]", "") + "};\n\t"
-                + getEnablingGuard() + ";\n\t"
-                + getAssignments() + ";\n\t["
-                + (delayLB == Integer.MAX_VALUE ? "inf" : delayLB) + ", "
-                + (delayUB == Integer.MAX_VALUE ? "inf" : delayUB) + "];\n}\n";
+    	String ret = lpn.getLabel() + ": transition: " + getLabel() + ": \n" 
+    				+ "preset: [\n";
+    	
+        for(int i = 0; i < preSet.length; i++)
+        	ret += preSet[i]+ ",";
+        ret += "]\n" 
+        	+ "postset: [";
+        
+        for(int i = 0; i < postSet.length; i++)
+        	ret += postSet[i]+ ",";
+        ret += "]\n";
+       
         return ret;
     }
     
@@ -427,16 +355,19 @@ public class LPNTran {
     /**
      * @return the PostSet
      */
-    public Collection<Integer> getPostSet() {
-        return toList(postSet);
+    public HashSet<Integer> getPostSet() {
+       	HashSet<Integer> ret = new HashSet<Integer>();
+       	for(int i : this.postSet)
+       		ret.add(i);
+       	return ret;
     }
 
-    /**
-     * @param postSet the PostSet to set
-     */
-    public void setPostSet(Collection<Integer> PostSet) {
-        this.postSet = toArray(PostSet);
-    }
+//    /**
+//     * @param postSet the PostSet to set
+//     */
+//    public void setPostSet(Collection<Integer> PostSet) {
+//        this.postSet = toArray(PostSet);
+//    }
 
     /**
      * @return the EnablingGuard
@@ -491,12 +422,6 @@ public class LPNTran {
         String s = "+T." + getLabel();
         return s;
     }
-
-    public static void prDbg(int level, Object o) {
-        if (level >= PRINT_LEVEL) {
-            out.println(o);
-        }
-    }
     
     /**
      * Fire a transition on a state array, find new local states, and return the new state array formed by the new local states.
@@ -505,78 +430,76 @@ public class LPNTran {
      * @param curLpnIndex
      * @return
      */
-    public State[] fire(final LPN[] curLpnArray, final int[] curStateIdxArray, int curLpnIndex) {
-    	State[] stateArray = new State[curLpnArray.length];
-    	for(int i = 0; i < curLpnArray.length; i++)
-    		stateArray[i] = curLpnArray[i].getState(curStateIdxArray[i]);
+    public State[] fire(final StateGraph[] curSgArray, final int[] curStateIdxArray) {
+    	State[] stateArray = new State[curSgArray.length];
+    	for(int i = 0; i < curSgArray.length; i++)
+    		stateArray[i] = curSgArray[i].getState(curStateIdxArray[i]);
 
-    	return this.fire(curLpnArray, stateArray, curLpnIndex);
+    	return this.fire(curSgArray, stateArray);
     }
 
-    public State[] fire(final LPN[] curLpnArray, final State[] curStateArray, int curLpnIndex) {
-    	int stateLength = curLpnArray.length;
+    public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray) {
+    	int thisLpnIndex = this.getLpn().getIndex(); 
     	State[] nextStateArray = curStateArray.clone();
     	
-    	State curState = curStateArray[curLpnIndex];
-    	State nextState = this.fire(curState);   
+    	State curState = curStateArray[thisLpnIndex];
+    	State nextState = this.fire(curSgArray[thisLpnIndex], curState);   
+    	
+    	int[] nextVector = nextState.getVector();
+    	int[] curVector = curState.getVector();
     	
         for(Expression e : assertions){
-        	if(e.evaluate(nextState) == 0){
+        	if(e.evaluate(nextVector) == 0){
         		System.err.println("Assertion " + e.toString() + " failed in LPN transition " + this.lpn.getLabel() + ":" + this.label);
         		System.exit(1);
 			}
 		}
 
         if(this.local()==true) {
-    		nextStateArray[curLpnIndex] = curLpnArray[curLpnIndex].addState(nextState);
+    		nextStateArray[thisLpnIndex] = curSgArray[thisLpnIndex].addState(nextState);
         	return nextStateArray;
 		}
 
-        int[] nextVector = nextState.getVector();
         HashMap<String, Integer> vvSet = new HashMap<String, Integer>();
         for (VarExpr s : this.getAssignments()) {
-            int newValue = nextVector[s.getVar().getIndex(curState)];
+            int newValue = nextVector[s.getVar().getIndex(curVector)];
             vvSet.put(s.getVar().getName(), newValue);   
         }
         
+        
         // Update other local states with the new values generated for the shared variables.
-        for(int i = 0; i < stateLength; i++) {
-        	if(i == curLpnIndex)
-        		nextStateArray[i] = nextState;
+		nextStateArray[this.lpn.getIndex()] = nextState;
+        for(LPN curLpn : this.dstLpnList) {
+        	int curIdx = curLpn.getIndex();
+    		State newState = curSgArray[curIdx].getNextState(curStateArray[curIdx], this);
+    		if(newState != null) 
+        		nextStateArray[curIdx] = newState;
         	else {
-        		boolean toUpdate = false;
-        		for(VarNode var : this.assignedVarSet) {
-        			if(curLpnArray[i].getInputs().contains(var.getName()) == true) {
-        				toUpdate = true;
-        				break;
-        			}
+        		State newOther = curStateArray[curIdx].update(vvSet, curSgArray[curIdx].getLpn().getVarIndexMap());
+        		if (newOther == null)
+        			nextStateArray[curIdx] = curStateArray[curIdx];
+        		else {
+        			State cachedOther = curSgArray[curIdx].addState(newOther);
+					//nextStateArray[curIdx] = newOther;
+            		nextStateArray[curIdx] = cachedOther;
+            		curSgArray[curIdx].addStateTran(curStateArray[curIdx], this, cachedOther);
         		}
-        		
-        		if(toUpdate == true) {
-        			State newOther = curStateArray[i].update(vvSet, curLpnArray[i].getVarIndexMap());
-        			if(newOther == null) 
-        				nextStateArray[i] = curStateArray[i];
-        			else
-        				nextStateArray[i] = newOther;
-        		}
-        		else
-        			nextStateArray[i] = curStateArray[i];
-        	}
-        	
-        	// Get the reference to the nextLocalState that is already in localStateSets.
-        	// Otherwise, add the new nextLocalState into the set.
-        	if (curStateArray[i] != nextStateArray[i]) {
-        		nextStateArray[i] = curLpnArray[i].addState(nextStateArray[i]);
         	}
         }
-
+        
         return nextStateArray;
     }
     
-    public State fire(final State curState) {  		
-    	if(this.nextStateMap.containsKey(curState) == true)
-    		return (State)this.nextStateMap.get(curState);
-	
+    public State fire(final StateGraph thisSg, final State curState) {  		
+    	/* Search for and return cached next state first. */
+//    	if(this.nextStateMap.containsKey(curState) == true)
+//    		return (State)this.nextStateMap.get(curState);
+    	
+    	State nextState = thisSg.getNextState(curState, this);
+    	if(nextState != null)
+    		return nextState;
+    	
+    	/* If no cached next state exists, do regular firing. */
     	// Marking update
         int[] curOldMarking = curState.getMarking();
         int[] curNewMarking = null;
@@ -606,99 +529,33 @@ public class LPNTran {
 
         //  State vector update
         int[] newVectorArray = curState.getVector().clone();
+        int[] curVector = curState.getVector();
+        
         for (VarExpr s : getAssignments()) {
-            int newValue = (int) s.getExpr().evaluate(curState);
-            newVectorArray[s.getVar().getIndex(curState)] = newValue;
+            int newValue = (int) s.getExpr().evaluate(curVector);
+            newVectorArray[s.getVar().getIndex(curVector)] = newValue;
         }
         
-        State newState = this.lpn.addState(new State(this.lpn, curNewMarking, newVectorArray));
-
+        State newState = thisSg.addState(new State(this.lpn, curNewMarking, newVectorArray));
+        
+        int[] newVector = newState.getVector();
 		for(Expression e : assertions){
-        	if(e.evaluate(newState) == 0){
+        	if(e.evaluate(newVector) == 0){
         		System.err.println("Assertion " + e.toString() + " failed in LPN transition " + this.lpn.getLabel() + ":" + this.label);
         		System.exit(1);
         	}
         }
 		
-		this.nextStateMap.put(curState, newState);
+		thisSg.addStateTran(curState, this, newState);
 		return newState;
     }
     
-    public int numConstraints(){
-    	return this.constraintSet.size();
+    public List<LPN> getDstLpnList(){
+    	return this.dstLpnList;
     }
     
-    public Set<Entry<Object, Object>> getNextStateMapEntrySet(){
-    	return this.nextStateMap.entrySet();
-    }
-    
-    public Set<Constraint> getConstraintSet(){
-    	return this.constraintSet;
-    }
-    
-    /**
-	 * Adds constraint into Set<Constraint> constraintSet.
-	 * @param c - constraint to add
-	 * @return True if added, otherwise false.
-	 */
-    public boolean constrainSetContains(Constraint c){
-    	return this.constraintSet.contains(c);
-    }
-    
-    /**
-	 * Adds constraint into Set<Constraint> constraintSet.
-	 * @param c - constraint to add
-	 * @return True if added, otherwise false.
-	 */
-    public boolean addConstraint(Constraint c){
-    	return this.constraintSet.add(c);
-    }
-    
-    /**
-	 * Find associated state.
-	 * @param s - key
-	 * @return The state associated with the key s, otherwise null.
-	 */
-    public State getNextState(State s){
-    	return (State) this.nextStateMap.get(s);
-    }
-    
-    /**
-	 * Adds a pair of states into HashMap<Object, Object> nextStateMap
-	 * @param s1 - key
-	 * @param s2 - value
-	 * @return The state associated with the key s1, otherwise null.
-	 */
-    public State addStateTran(State s1, State s2){
-    	State s = (State) this.nextStateMap.get(s1);
-    	if(s == null){
-    		this.nextStateMap.put(s1, s2);
-    	}
-    	
-    	return s;
-    }
-    
-    /**
-	 * Adds a pair of states into HashMap<Object, Object> nextStateMap.  Synchronized version of addStateTran().
-	 * @param s1 - key
-	 * @param s2 - value
-	 * @return The state associated with the key s1, otherwise null.
-	 */
-    public synchronized State synchronizedAddStateTran(State s1, State s2){
-    	State s = (State) this.nextStateMap.get(s1);
-    	if(s == null){
-    		this.nextStateMap.put(s1, s2);
-    	}
-    	
-    	return s;
-    }
-    
-    public List<LPN> getLpnList(){
-    	return this.lpnList;
-    }
-    
-    public void addLpnList(LPN lpn){
-    	this.lpnList.add(lpn);
+    public void addDstLpn(LPN lpn){
+    	this.dstLpnList.add(lpn);
     }
     
     public State constrFire(final State curState) {
@@ -741,15 +598,17 @@ public class LPNTran {
         int[] newVectorArray = new int[size];
         System.arraycopy(oldVector, 0, newVectorArray, 0, size);
         
+        int[] curVector = curState.getVector();
         for (VarExpr s : getAssignments()) {
-            int newValue = s.getExpr().evaluate(curState);
-            newVectorArray[s.getVar().getIndex(curState)] = newValue;
+            int newValue = s.getExpr().evaluate(curVector);
+            newVectorArray[s.getVar().getIndex(curVector)] = newValue;
         }
         
         State newState = new State(this.lpn, curNewMarking, newVectorArray);
         
+        int[] newVector = newState.getVector();
 		for(Expression e : assertions){
-        	if(e.evaluate(newState) == 0){
+        	if(e.evaluate(newVector) == 0){
         		System.err.println("Assertion " + e.toString() + " failed in LPN transition " + this.lpn.getLabel() + ":" + this.label);
         		System.exit(1);
         	}
@@ -804,34 +663,33 @@ public class LPNTran {
     }
 
     /**
-     * @return the lpn
+     * @return LPN object containing this LPN transition.
      */
     public LPN getLpn() {
         return lpn;
     }
 
     /**
-     * @param lpn the lpn to set
+     * @param lpn - Associated LPN containing this LPN transition.
      */
     public void setLpn(LPN lpn) {
         this.lpn = lpn;
-//    	ID=lpn.ID;
     }
 
-    static public void printUsageStats() {
-        System.out.printf("%-20s %11s\n", "LPNTran", counts[0]);
-//         System.out.printf("\t%-20s %11s\n",   "clone",  counts[1]);
-        System.out.printf("\t%-20s %11s\n", "getEnabledLpnTrans", counts[2]);
-//         System.out.printf("\t%-20s %11s\n",   "getMarkedLpnTrans",  counts[3]);
-//        System. out.printf("\t%-20s %11s\n",   "equals",  counts[4]);
-        System.out.printf("\t%-20s %11s\n", "isEnabled", counts[5]);
-        System.out.printf("\t%-20s %11s\n", "isTimeEnabled", counts[6]);
-//       System.  out.printf("\t%-20s %11s\n",   "isMarked",  counts[7]);
-        System.out.printf("\t%-20s %11s\n", "fire", counts[8]);
-//      System.   out.printf("\t%-20s %11s\n",   "sharePreSet",  counts[9]);
-        System.out.printf("\t%-20s %11s\n", "disablingError", counts[10]);
-//       System.  out.println("getEnTrans: "+stats.toString());
-    }
+//    static public void printUsageStats() {
+//        System.out.printf("%-20s %11s\n", "LPNTran", counts[0]);
+////         System.out.printf("\t%-20s %11s\n",   "clone",  counts[1]);
+//        System.out.printf("\t%-20s %11s\n", "getEnabledLpnTrans", counts[2]);
+////         System.out.printf("\t%-20s %11s\n",   "getMarkedLpnTrans",  counts[3]);
+////        System. out.printf("\t%-20s %11s\n",   "equals",  counts[4]);
+//        System.out.printf("\t%-20s %11s\n", "isEnabled", counts[5]);
+//        System.out.printf("\t%-20s %11s\n", "isTimeEnabled", counts[6]);
+////       System.  out.printf("\t%-20s %11s\n",   "isMarked",  counts[7]);
+//        System.out.printf("\t%-20s %11s\n", "fire", counts[8]);
+////      System.   out.printf("\t%-20s %11s\n",   "sharePreSet",  counts[9]);
+//        System.out.printf("\t%-20s %11s\n", "disablingError", counts[10]);
+////       System.  out.println("getEnTrans: "+stats.toString());
+//    }
 
     public void print() {
         System.out.println(lpn.getLabel() + ": transition: " + getLabel() + ": ");
@@ -914,5 +772,13 @@ public class LPNTran {
      */
     public int getID() {
     	return 0;
+    }
+    
+    public void setSticky(){
+    	this.stickyFlag = true;
+    }
+
+    public boolean sticky(){
+    	return this.stickyFlag;
     }
 }
