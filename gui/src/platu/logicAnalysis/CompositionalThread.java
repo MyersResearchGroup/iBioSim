@@ -2,12 +2,10 @@ package platu.logicAnalysis;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import platu.expression.VarNode;
 import platu.lpn.LPN;
 import platu.lpn.LPNTran;
 import platu.stategraph.StateGraph;
-import platu.stategraph.state.State;
 
 public class CompositionalThread extends Thread{
 	
@@ -63,12 +61,15 @@ public class CompositionalThread extends Thread{
 //		int index = sg.getInterfaceIndex(srcSG.getLabel());
 //		int[] thisIndexList = sg.getThisIndexArray(index);
 //		int[] otherIndexList = sg.getOtherIndexArray(index);
-		int[] thisIndexList = sg.getThisIndexArray(srcSG.ID);
-		int[] otherIndexList = sg.getOtherIndexArray(srcSG.ID);
+		LPN srcLpn = srcSG.getLpn();
+		LPN lpn = sg.getLpn();
+		
+		int[] thisIndexList = lpn.getThisIndexArray(srcLpn.ID);
+		int[] otherIndexList = lpn.getOtherIndexArray(srcLpn.ID);
 		
 		if(newConstraintSet.size() > 0){
 			for(Object obj : sg.getStateSet().toArray()){
-				platu.stategraph.state.State currentState = (platu.stategraph.state.State) obj;
+				platu.stategraph.State currentState = (platu.stategraph.State) obj;
 
 				for(Constraint c : newConstraintSet){
 					if(compatible(currentState, c, thisIndexList, otherIndexList)){
@@ -77,7 +78,7 @@ public class CompositionalThread extends Thread{
 				}
 			}
 
-			for(platu.stategraph.state.State currentState : sg.getFrontierStateSet()){
+			for(platu.stategraph.State currentState : sg.getFrontierStateSet()){
 				for(Constraint c : newConstraintSet){
 					if(compatible(currentState, c, thisIndexList, otherIndexList)){						
 						newTransitions += createNewState(sg, currentState, c);
@@ -87,7 +88,7 @@ public class CompositionalThread extends Thread{
 		}
 
 		if(oldConstraintSet.size() > 0){
-			for(platu.stategraph.state.State currentState : sg.getFrontierStateSet()){
+			for(platu.stategraph.State currentState : sg.getFrontierStateSet()){
 				for(Constraint c : oldConstraintSet){
 					if(compatible(currentState, c, thisIndexList, otherIndexList)){						
 						newTransitions += createNewState(sg, currentState, c);
@@ -108,7 +109,7 @@ public class CompositionalThread extends Thread{
 		newConstraintSet.clear();
 		oldConstraintSet.clear();
 		
-		LPN srcLpn = (LPN) srcSG;
+		LPN srcLpn = srcSG.getLpn();
 		for(Constraint newConstraint : sg.getNewConstraintSet()){
 			if(newConstraint.getLpn() != srcLpn) continue;
 	    	
@@ -126,7 +127,7 @@ public class CompositionalThread extends Thread{
      * Determines whether a constraint is compatible with a state.
      * @return True if compatible, otherwise False.
      */
-	private boolean compatible(platu.stategraph.state.State currentState, Constraint constr, int[] thisIndexList, int[] otherIndexList){
+	private boolean compatible(platu.stategraph.State currentState, Constraint constr, int[] thisIndexList, int[] otherIndexList){
 		int[] constraintVector = constr.getVector();
 		int[] currentVector = currentState.getVector();
 		
@@ -146,35 +147,36 @@ public class CompositionalThread extends Thread{
      * Creates a state from a given constraint and compatible state.  If the state is new, then findSG is called.
      * @return Number of new transitions.
      */
-	private int createNewState(StateGraph sg, platu.stategraph.state.State compatibleState, Constraint c){
+	private int createNewState(StateGraph sg, platu.stategraph.State compatibleState, Constraint c){
 		int newTransitions = 0;
 
 		// Create new state and insert into state graph
-		platu.stategraph.state.State newState = new platu.stategraph.state.State(compatibleState);
+		platu.stategraph.State newState = new platu.stategraph.State(compatibleState);
 		int[] newVector = newState.getVector();
 		
 		List<VarNode> variableList = c.getVariableList();
 		List<Integer> valueList = c.getValueList();
 		
+		int[] compatibleVector = compatibleState.getVector();
 		for(int i = 0; i < variableList.size(); i++){
-			int index = variableList.get(i).getIndex(compatibleState);
+			int index = variableList.get(i).getIndex(compatibleVector);
 			newVector[index] = valueList.get(i);
 		}
 		
-		platu.stategraph.state.State nextState = sg.addReachable(newState);
-		if(nextState == null){
-			nextState = newState;
+		platu.stategraph.State nextState = sg.addState(newState);
+		if(nextState == newState){
 			int result = sg.synchronizedConstrFindSG(nextState);
 			if(result < 0) return newTransitions;
 			
+//			sg.initializeTranList(nextState);
 			newTransitions += result;
 		}
 
 //    	StateTran stTran = new StateTran(compatibleState, constraintTran, state);
 
 		LPNTran constraintTran = c.getLpnTransition();
-		constraintTran.synchronizedAddStateTran(compatibleState, nextState);
-    	sg.lpnTransitionMap.get(compatibleState).add(constraintTran);
+//		constraintTran.synchronizedAddStateTran(compatibleState, nextState);
+//    	sg.addEnabledTran(compatibleState, constraintTran);
     	newTransitions++;
 		
 		return newTransitions;

@@ -3,24 +3,134 @@ package platu.logicAnalysis;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
-import java.util.Stack;
-
 import platu.lpn.LPNTran;
+import platu.main.Main;
+import platu.main.Options;
+import platu.stategraph.State;
 import platu.stategraph.StateGraph;
-import platu.stategraph.state.State;
 
 public class CompositeStateGraph {
-	public Map<CompositeState, CompositeState> compositeStateSet = null;
-//	public Set<CompositeStateTran> compositeStateTranSet = new HashSet<CompositeStateTran>();
-	public StateGraph[] stateGraphArray = null;
+	public Map<Integer, CompositeState> indexStateMap = new HashMap<Integer, CompositeState>();
+	public Map<CompositeState, CompositeState> stateMap = new HashMap<CompositeState, CompositeState>();
+	public Map<CompositeStateTran, CompositeStateTran> stateTranMap = new HashMap<CompositeStateTran, CompositeStateTran>();
+	private StateGraph[] stateGraphArray = null;
 	private CompositeState initState = null;
 	private String label = "";
-	public int numTransitions = 0;
+	
+	public StateGraph[] getStateGraphArray(){
+		return this.stateGraphArray;
+	}
+	
+	public void setReachableStates(Map<Integer, CompositeState> indexMap, Map<CompositeState, CompositeState> stateMap){
+		this.indexStateMap = indexMap;
+		this.stateMap = stateMap;
+	}
+	
+	public List<LPNTran> getEnabled(CompositeState currentState){
+		Set<LPNTran> lpnTranSet = new HashSet<LPNTran>(currentState.numOutgoingTrans());
+		List<LPNTran> enabled = new ArrayList<LPNTran>(currentState.numOutgoingTrans());
+		
+		for(CompositeStateTran stTran : currentState.getOutgoingStateTranList()){
+			LPNTran lpnTran = stTran.getLPNTran();
+			if(lpnTranSet.add(lpnTran))
+				enabled.add(lpnTran);
+		}
+		
+		return enabled;
+	}
+	
+	public CompositeState getState(int index){
+		return this.indexStateMap.get(index);
+	}
+	
+	public CompositeStateTran addStateTran(CompositeState currentState, CompositeState nextState, LPNTran lpnTran){
+		CompositeStateTran stateTran = new CompositeStateTran(currentState, nextState, lpnTran);
+		
+		CompositeStateTran tmpTran = this.stateTranMap.get(stateTran);
+		if(tmpTran != null){
+			return tmpTran;
+		}
+		
+		this.stateTranMap.put(stateTran, stateTran);
+		currentState.addOutgoingStateTran(stateTran);
+		nextState.addIncomingStateTran(stateTran);
+
+		return stateTran;
+	}
+	
+	public CompositeStateTran addStateTran(int currentStateIndex, int nextStateIndex, LPNTran lpnTran){
+		CompositeState currentState = this.indexStateMap.get(currentStateIndex);
+		CompositeState nextState = this.indexStateMap.get(nextStateIndex);
+		CompositeStateTran stateTran = new CompositeStateTran(currentState, nextState, lpnTran);
+		
+		CompositeStateTran tmpTran = this.stateTranMap.get(stateTran);
+		if(tmpTran != null){
+			return tmpTran;
+		}
+		
+		this.stateTranMap.put(stateTran, stateTran);
+		currentState.addOutgoingStateTran(stateTran);
+		nextState.addIncomingStateTran(stateTran);
+
+		return stateTran;
+	}
+	
+	public CompositeStateTran addStateTran(CompositeStateTran stateTran){
+		CompositeStateTran tmpTran = this.stateTranMap.get(stateTran);
+		if(tmpTran != null){
+			return tmpTran;
+		}
+
+		this.stateTranMap.put(stateTran, stateTran);
+		CompositeState currentState = this.getState(stateTran.getCurrentState());
+		CompositeState nextState = this.getState(stateTran.getNextState());
+		
+		currentState.addOutgoingStateTran(stateTran);
+		nextState.addIncomingStateTran(stateTran);
+
+		return stateTran;
+	}
+	
+	public void removeStateTran(CompositeStateTran stateTran){
+		if(this.stateTranMap.remove(stateTran) == null){
+			return;
+		}
+		
+		CompositeState currentState = this.getState(stateTran.getCurrentState());
+		CompositeState nextState = this.getState(stateTran.getNextState());
+
+		currentState.removeOutgoingStateTran(stateTran);
+		nextState.removeIncomingStateTran(stateTran);
+	}
+	
+	public boolean removeState(CompositeState st){
+		CompositeState retState = this.stateMap.remove(st);
+		if(retState == null){
+			return false;
+		}
+		
+		this.indexStateMap.remove(st.getIndex());
+		
+		return true;
+	}
+	
+	public boolean removeState(int stateIndex){
+		CompositeState retState = this.indexStateMap.remove(stateIndex);
+		if(retState == null){
+			return false;
+		}
+		
+		this.stateMap.remove(retState);
+		
+		return true;
+	}
 	
 	public CompositeStateGraph(CompositeState initialState, StateGraph[] sgArray){
 		this.initState = initialState;
@@ -28,7 +138,7 @@ public class CompositeStateGraph {
 		
 		int size = 0;
 		for(int i = 0; i < sgArray.length; i++){
-			label += sgArray[i].getLabel();
+			label += sgArray[i].getLpn().getLabel();
 			
 			if(i < sgArray.length - 1){
 				label += "||";
@@ -37,13 +147,12 @@ public class CompositeStateGraph {
 			size *= sgArray[i].reachSize();
 		}
 		
-		compositeStateSet = new HashMap<CompositeState, CompositeState>();
-		this.compositeStateSet.put(this.initState, this.initState);
+		this.addState(this.initState);
 	}
 	
 	public CompositeStateGraph(StateGraph sg){
-		State[] initStateArray = new State[1];
-		initStateArray[0] = sg.getInitialState();
+		int[] initStateArray = new int[1];
+		initStateArray[0] = sg.getInitialState().getIndex();
 		CompositeState init = new CompositeState(initStateArray);
 		
 		StateGraph[] sgArray = new StateGraph[1];
@@ -53,9 +162,10 @@ public class CompositeStateGraph {
 		this.initState = init;
 		this.stateGraphArray = sgArray;
 		
+		// construct label
 		int size = 0;
 		for(int i = 0; i < sgArray.length; i++){
-			label += sgArray[i].getLabel();
+			label += sgArray[i].getLpn().getLabel();
 			
 			if(i < sgArray.length - 1){
 				label += "||";
@@ -64,47 +174,45 @@ public class CompositeStateGraph {
 			size *= sgArray[i].reachSize();
 		}
 		
-		compositeStateSet = new HashMap<CompositeState, CompositeState>();
-		this.compositeStateSet.put(this.initState, this.initState);
-		
+		this.addState(this.initState);
 		
 		CompositeState tempState = null;
-		//for(State currentState : sg.reachable()) {
-		for(int stateIdx = 0; stateIdx < sg.reachSize(); stateIdx++) {
-			State currentState = sg.getState(stateIdx);
-			State[] currentStateArray = new State[1];
-			currentStateArray[0] = currentState;
-			
+		for(int i = 0; i < sg.reachSize(); i++){
+			State currentState = sg.getState(i);
+//		for(State currentState : sg.getStateSet()){
+			int[] currentStateArray = new int[1];
+			currentStateArray[0] = currentState.getIndex();
+
 			CompositeState currentCompositeState = new CompositeState(currentStateArray);
 			tempState = this.addState(currentCompositeState);
-			if(tempState != null){
+			if(tempState != currentCompositeState){
 				currentCompositeState = tempState;
 			}
-
-			List<LPNTran> enabledTrans = sg.lpnTransitionMap.get(currentState);
-			int numTrans = enabledTrans.size();
-			this.numTransitions += numTrans;
 			
-			for(LPNTran lpnTran : enabledTrans){
-				State nextState = lpnTran.getNextState(currentState);
-				State[] nextStateArray = new State[1];
-				nextStateArray[0] = nextState;
+			Set<Entry<LPNTran, State>> stateSet = sg.getOutgoingTrans(currentState);
+			for(Entry<LPNTran, State> stateTran : stateSet){
+				State nextState = stateTran.getValue();
+				LPNTran lpnTran = stateTran.getKey();
+				int[] nextStateArray = new int[1];
+				nextStateArray[0] = nextState.getIndex();
 				
 				CompositeState nextCompositeState = new CompositeState(nextStateArray);
 				tempState = this.addState(nextCompositeState);
-				if(tempState != null){
+				if(tempState != nextCompositeState){
 					nextCompositeState = tempState;
 				}
 				
-				currentCompositeState.enabledTranList.add(lpnTran);
-				currentCompositeState.nextStateList.add(nextCompositeState);
-				nextCompositeState.incomingStateList.add(currentCompositeState);
+				CompositeStateTran newStateTran = new CompositeStateTran(currentCompositeState, nextCompositeState, lpnTran);
+				this.addStateTran(newStateTran);
+				if(!lpnTran.local()){
+					newStateTran.setVisibility();
+				}
 			}
 		}
 	}
 	
 	public Set<CompositeState> getStateSet(){
-		return this.compositeStateSet.keySet();
+		return this.stateMap.keySet();
 	}
 	
 	public int getSize(){
@@ -118,21 +226,21 @@ public class CompositeStateGraph {
 	/**
      * Adds a composite state to the composite state graph
      * @param st - CompositeState to be added
-     * @return Equivalent CompositeState object, otherwise null.
+     * @return Equivalent CompositeState object it exists, otherwise CompositeState st.
      */
 	public CompositeState addState(CompositeState st){
-		if(this.compositeStateSet.containsKey(st)){
-			return this.compositeStateSet.get(st);
+		CompositeState retState = this.stateMap.get(st);
+		if(retState == null){
+			int index = this.indexStateMap.size();
+			st.setIndex(index);
+			this.indexStateMap.put(index, st);
+			this.stateMap.put(st, st);
+			
+			return st;
 		}
 		
-		this.compositeStateSet.put(st, st);
-		
-		return null;
+		return retState;
 	}
-	
-//	public boolean addStateTran(CompositeStateTran stTran){
-//		return this.compositeStateTranSet.add(stTran);
-//	}
 	
 	public final CompositeState getInitState(){
 		return this.initState;
@@ -142,16 +250,36 @@ public class CompositeStateGraph {
 		this.initState = init;
 	}
 	
-	public int numCompositeStates(){
-		return this.compositeStateSet.size();
+	public int numStates(){
+		return this.stateMap.size();
 	}
 	
-//	public int numCompositeStateTrans(){
-//		return this.compositeStateTranSet.size();
-//	}
+	public int numStateTrans(){
+		return this.stateTranMap.size();
+	}
+	
+	public Set<CompositeStateTran> getStateTranSet(){
+		return this.stateTranMap.keySet();
+	}
+	
+	public boolean containsState(int stateIndex){
+		return this.indexStateMap.containsKey(stateIndex);
+	}
+	
+	public boolean containsStateTran(CompositeStateTran stateTran){
+		return this.stateTranMap.containsKey(stateTran);
+	}
 	
 	public void draw(){
-    	String dotFile = this.label + ".dot";
+		String dotFile = Options.getDotPath();
+		if(!dotFile.endsWith("/") && !dotFile.endsWith("\\")){
+			String dirSlash = "/";
+			if(Main.isWindows) dirSlash = "\\";
+			
+			dotFile = dotFile += dirSlash;
+		}
+		
+		dotFile += this.label + ".dot";
     	PrintStream graph = null;
     	
 		try {
@@ -162,13 +290,12 @@ public class CompositeStateGraph {
     	
     	graph.println("digraph SG{");
     	
-    	for(CompositeState currentState : this.compositeStateSet.keySet()){
-    		String currentLabel = currentState.getLabel();
-    		for(int i = 0; i < currentState.nextStateList.size(); i++){
-    			CompositeState nextState = currentState.nextStateList.get(i);
-    			LPNTran lpnTran = currentState.enabledTranList.get(i);
-    			
-    			graph.println("  \"" + currentLabel + "\" " + " -> " + "\"" + nextState.getLabel() + "\"" + " [label=\"" + lpnTran.getFullLabel() + "\"]");
+    	for(CompositeState currentState : this.stateMap.keySet()){
+    		for(CompositeStateTran stateTran : currentState.getOutgoingStateTranList()){
+    			CompositeState nextState = this.indexStateMap.get(stateTran.getNextState());
+    			LPNTran lpnTran = stateTran.getLPNTran();
+//    			System.out.println("  " + nextState.getIndex());
+    			graph.println("  \"" + currentState.getIndex() + "\" " + " -> " + "\"" + nextState.getIndex() + "\"" + " [label=\"" + lpnTran.getFullLabel() + "\"]");
     		}
     	}
     	

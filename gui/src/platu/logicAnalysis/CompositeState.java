@@ -1,26 +1,49 @@
 package platu.logicAnalysis;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
-import platu.lpn.LPNTran;
-import platu.stategraph.state.State;
-
-public class CompositeState {
-	private int hashCode = 0;
-	private State[] stateTuple = null;
-//	private LPNTran[] tranArray = null;
-//	private CompositeState[] nextStateArray = null;
-	public List<LPNTran> enabledTranList = new ArrayList<LPNTran>();
-	public List<CompositeState> nextStateList = new ArrayList<CompositeState>();
-	public List<CompositeState> incomingStateList = new ArrayList<CompositeState>();
+public class CompositeState{
+	private int[] stateTuple = null;
+	private List<CompositeStateTran> incomingStateTranList = new LinkedList<CompositeStateTran>();
+	private List<CompositeStateTran> outgoingStateTranList = new LinkedList<CompositeStateTran>();
 	private String label = null;
-//	public Map<LPNTran, CompositeState> nextStateMap = new HashMap<LPNTran, CompositeState>();
-//	public Map<LPNTran, CompositeState> previousStateMap = new HashMap<LPNTran, CompositeState>();
-	public CompositeState(State[] stateArray){
+	private int index = 0;
+	
+	public void addIncomingStateTran(CompositeStateTran incomingTran){
+		this.incomingStateTranList.add(incomingTran);
+	}
+	
+	public boolean removeIncomingStateTran(CompositeStateTran incomingTran){
+		return this.incomingStateTranList.remove(incomingTran);
+	}
+	
+	public boolean removeOutgoingStateTran(CompositeStateTran outgoingTran){
+		return this.outgoingStateTranList.remove(outgoingTran);
+	}
+	
+	public List<CompositeStateTran> getIncomingStateTranList(){
+		return this.incomingStateTranList;
+	}
+	
+	public void addOutgoingStateTran(CompositeStateTran outgoingTran){
+		this.outgoingStateTranList.add(outgoingTran);
+	}
+	
+	public List<CompositeStateTran> getOutgoingStateTranList(){
+		return this.outgoingStateTranList;
+	}
+	
+	public int numIncomingTrans(){
+		return this.incomingStateTranList.size();
+	}
+	
+	public int numOutgoingTrans(){
+		return this.outgoingStateTranList.size();
+	}
+	
+	public CompositeState(int[] stateArray){
 		this.stateTuple = stateArray;
 	}
 	
@@ -60,12 +83,16 @@ public class CompositeState {
 //		return this.nextStateArray;
 //	}
 	
+	public void setLabel(String lbl){
+		this.label = lbl;
+	}
+	
 	public String getLabel(){
 		if(this.label == null){
 			this.label = "";
 			
 			for(int i = 0; i < this.stateTuple.length; i++){
-				label += this.stateTuple[i].getIndex();
+				label += this.stateTuple[i];
 				
 				if(i < this.stateTuple.length - 1){
 					label += ",";
@@ -76,12 +103,52 @@ public class CompositeState {
 		return this.label;
 	}
 	
+	public void setIndex(int idx){
+		this.index = idx;
+	}
+	
+	public int getIndex(){
+		return this.index;
+	}
+	
+	public void clear(){
+		this.outgoingStateTranList.clear();
+		this.incomingStateTranList.clear();
+	}
+	
+	@Override
+	public String toString(){
+		return "" + getIndex();
+	}
+	
 	public int getSize(){
 		return this.stateTuple.length;
 	}
 	
-	public State[] getStateTuple(){
+	public int[] getStateTuple(){
 		return this.stateTuple;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(stateTuple);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		CompositeState other = (CompositeState) obj;
+		if (!Arrays.equals(stateTuple, other.stateTuple))
+			return false;
+		return true;
 	}
 	
 //	public void addEdge(CompositeStateTran edge){
@@ -108,35 +175,5 @@ public class CompositeState {
 //		return this.nextStateList;
 //	}
 
-	@Override
-	public int hashCode() {
-		if(hashCode == 0){
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + Arrays.hashCode(stateTuple);
-			hashCode = result;
-		}
-		
-		return hashCode;
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		
-		if (obj == null)
-			return false;
-		
-		if (getClass() != obj.getClass())
-			return false;
-		
-		CompositeState other = (CompositeState) obj;		
-		if (!Arrays.equals(stateTuple, other.stateTuple))
-			return false;
-		
-		return true;
-	}
-	
 	
 }
