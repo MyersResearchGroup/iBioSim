@@ -3,8 +3,6 @@ package platu.expression;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import platu.stategraph.state.State;
-
 public class TernaryNode implements ExpressionNode {
 	ExpressionNode Condition = null;
 	ExpressionNode LeftOperand = null;
@@ -16,11 +14,11 @@ public class TernaryNode implements ExpressionNode {
 		this.RightOperand = rightOperand;
 	}
 	
-	public int evaluate(State statevector){
-		if(this.Condition.evaluate(statevector) != 0)
-			return LeftOperand.evaluate(statevector);
+	public int evaluate(int[] stateVector){
+		if(this.Condition.evaluate(stateVector) != 0)
+			return LeftOperand.evaluate(stateVector);
 		
-		return RightOperand.evaluate(statevector);
+		return RightOperand.evaluate(stateVector);
 	}
 	
 	public void getVariables(HashSet<VarNode> variables){

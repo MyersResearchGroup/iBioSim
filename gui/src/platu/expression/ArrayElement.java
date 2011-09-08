@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
-import platu.stategraph.state.State;
-
 public class ArrayElement extends VarNode{
 	List<ExpressionNode> indexVariables = null;
 	ArrayNode array = null;
@@ -21,7 +19,7 @@ public class ArrayElement extends VarNode{
 		return this.array;
 	}
 	
-	public int evaluate(State statevector){
+	public int evaluate(int[] statevector){
 		List<Integer> indexValues = new ArrayList<Integer>(this.indexVariables.size());
 		for(ExpressionNode n : this.indexVariables){
 			indexValues.add(n.evaluate(statevector));
@@ -45,13 +43,13 @@ public class ArrayElement extends VarNode{
 	}
 	
 	@Override
-	public int getIndex(State currentState){
+	public int getIndex(int[] stateVector){
 		List<Integer> indexValues = new ArrayList<Integer>(this.indexVariables.size());
 		for(ExpressionNode n : this.indexVariables){
-			indexValues.add(n.evaluate(currentState));
+			indexValues.add(n.evaluate(stateVector));
 		}
 		
-		return this.array.getElement(indexValues).getIndex(currentState);
+		return this.array.getElement(indexValues).getIndex(stateVector);
 	}
 	
 	public ExpressionNode copy(HashMap<String, VarNode> variables){
