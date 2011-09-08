@@ -14,6 +14,7 @@ import platu.expression.VarNode;
 import platu.lpn.LPN;
 import platu.lpn.LPNTran;
 import platu.lpn.LpnTranList;
+import platu.stategraph.StateGraph;
 
 /**
  * in this approach, we consider 7 conditions for dependent transition
@@ -41,17 +42,18 @@ public class SearchDepFromLPN {
     	return this.interleavingSet;
     }
     
-    public void setIndep(LPN[] lpnList)
+    public void setIndep(StateGraph[] lpnList)
     {
     	int number = 0;
-    	for(LPN lpn : lpnList)
-    		number = number + lpn.getTransitions().size();
+    	for(StateGraph sg : lpnList)
+    		number = number + sg.getLpn().getTransitions().size();
+    	
     	LPNTran[] wholeSet = new LPNTran[number];
     	
     	int i=0;
-    	for(LPN lpn : lpnList)
+    	for(StateGraph sg : lpnList)
     	{
-    		for(LPNTran tran : lpn.getTransitions())
+    		for(LPNTran tran : sg.getLpn().getTransitions())
     		{
     			wholeSet[i] = tran;
     			i++;

@@ -5,9 +5,9 @@ import platu.lpn.DualHashMap;
 import platu.lpn.LPN;
 import platu.lpn.LPNTran;
 import platu.lpn.LpnTranList;
-import platu.project.prjState;
+import platu.project.PrjState;
+import platu.stategraph.State;
 import platu.stategraph.StateGraph;
-import platu.stategraph.state.State;
 import platu.logicAnalysis.*;
 
 public class TimingAnalysis {
@@ -20,13 +20,11 @@ public class TimingAnalysis {
 	/*
 	 * Member function section
 	 */
-	public TimingAnalysis(final LPN[] SgArray) {
+	public TimingAnalysis(final StateGraph[] SgArray) {
 
 		int ArraySize = SgArray.length;
 
 		timingStateCache = new HashMap[ArraySize];
-
-		StateGraph.setUPDATE_DURATION(5000);
 
 		long start = System.currentTimeMillis();
 
@@ -36,8 +34,8 @@ public class TimingAnalysis {
 		ArrayList<LinkedList<LPNTran>> enabledList = new ArrayList<LinkedList<LPNTran>>(
 				1);
 		for (int index = 0; index < ArraySize; index++) {
-			LPN curLpn = SgArray[index];
-			initStateArray[index] = curLpn.getInitStateUntimed();
+			LPN curLpn = SgArray[index].getLpn();
+			initStateArray[index] = curLpn.getInitState();
 			int[] curStateVector = initStateArray[index].getVector();
 			HashSet<String> outVars = curLpn.getOutputs();
 			DualHashMap<String, Integer> VarIndexMap = curLpn.getVarIndexMap();
@@ -48,10 +46,9 @@ public class TimingAnalysis {
 
 		// Adjust the value of the input variables in LPN in the initial state.
 		for (int index = 0; index < ArraySize; index++) {
-			LPN curLpn = SgArray[index];
-			initStateArray[index].update(varValMap, curLpn.getVarIndexMap());
-			initStateArray[index] = curLpn.addState
-			(initStateArray[index]);
+			StateGraph curLpn = SgArray[index];
+			initStateArray[index].update(varValMap, curLpn.getLpn().getVarIndexMap());
+			initStateArray[index] = curLpn.addState(initStateArray[index]);
 			enabledList.add(index, curLpn.getEnabled(initStateArray[index]));
 		}
 
@@ -63,8 +60,8 @@ public class TimingAnalysis {
 
 		// Add the initial project state into the prjStateSet, and invoke
 		// findsg_recursive().
-		HashSet<prjState> stateTrace = new HashSet<prjState>(1);
-		prjState curPrjState = new prjState(initStateArray);
+		HashSet<PrjState> stateTrace = new HashSet<PrjState>(1);
+		PrjState curPrjState = new PrjState(initStateArray);
 		stateTrace.add(curPrjState);
 
 		LinkedList<LPNTran> traceCex = new LinkedList<LPNTran>();
@@ -84,7 +81,7 @@ public class TimingAnalysis {
 
 		System.out.println("Modules' local states: ");
 		for (int i = 0; i < ArraySize; i++) {
-			System.out.println("module " + SgArray[i].getLabel() + ": "
+			System.out.println("module " + SgArray[i].getLpn().getLabel() + ": "
 					+ SgArray[i].reachSize());
 		}
 
@@ -94,7 +91,7 @@ public class TimingAnalysis {
 		System.out.println("---> total runtime: " + elapsedTimeSec + " sec\n");// </editor-fold>
 	}
 
-	private void search_dfs(LPN[] lpnList, State[] initStateArray) {
+	private void search_dfs(StateGraph[] lpnList, State[] initStateArray) {
 		System.out.println("---> Calling TimingAnalysis.search_dfs");
 
 		int zoneType = 0;
@@ -108,7 +105,7 @@ public class TimingAnalysis {
 		/*
 		 * Create objects to hold state space information
 		 */
-		HashMap<prjState, HashSet<DBM>> prjStateZoneSet = new HashMap<prjState, HashSet<DBM>>();
+		HashMap<PrjState, HashSet<DBM>> prjStateZoneSet = new HashMap<PrjState, HashSet<DBM>>();
 		// /*
 		// * Compute the set of input transitions for each module
 		// */
@@ -187,7 +184,7 @@ public class TimingAnalysis {
 		posetStack.push(null);
 		lpnTranStack.push(initTimedEnabled);
 
-		prjState initPrjState = new prjState(initStateArray);
+		PrjState initPrjState = new PrjState(initStateArray);
 		HashSet initStateZoneSet = prjStateZoneSet.get(initPrjState);
 		if (initStateZoneSet == null) {
 			initStateZoneSet = new HashSet<DBM>();
@@ -247,15 +244,13 @@ public class TimingAnalysis {
 
 			// System.out.println("firedTran " + firedTran.getFullLabel());
 
-			int curIndex = firedTran.getLpn().getIndex();
-			State[] nextStateArray = firedTran.fire(lpnList, curStateArray,
-					curIndex);
+			State[] nextStateArray = firedTran.fire(lpnList, curStateArray);
 			tranFiringCnt++;
 
 			LpnTranList[] curEnabledArray = new LpnTranList[arraySize];
 			LpnTranList[] nextEnabledArray = new LpnTranList[arraySize];
 			for (int i = 0; i < arraySize; i++) {
-				LPN lpn_tmp = lpnList[i];
+				StateGraph lpn_tmp = lpnList[i];
 				LpnTranList enabledList = null;
 				enabledList = lpn_tmp.getEnabled(curStateArray[i]);
 				curEnabledArray[i] = enabledList;
@@ -323,7 +318,7 @@ public class TimingAnalysis {
 
 				System.out.println("Current state:");
 				for (int ii = 0; ii < arraySize; ii++) {
-					System.out.println("module " + lpnList[ii].getLabel());
+					System.out.println("module " + lpnList[ii].getLpn().getLabel());
 					System.out.println(curStateArray[ii]);
 					System.out.println("Enabled set: " + curEnabledArray[ii]);
 				}
@@ -332,7 +327,7 @@ public class TimingAnalysis {
 
 				System.out.println("======================\nNext state:");
 				for (int ii = 0; ii < arraySize; ii++) {
-					System.out.println("module " + lpnList[ii].getLabel());
+					System.out.println("module " + lpnList[ii].getLpn().getLabel());
 					System.out.println(nextStateArray[ii]);
 					System.out.println("Enabled set: " + nextEnabledArray[ii]);
 				}
@@ -351,7 +346,7 @@ public class TimingAnalysis {
 			if (nextTimedEnabled.size() == 0) {
 				System.out.println("---> ERROR: Verification failed: deadlock.");
 				for (int ii = 0; ii < arraySize; ii++) {
-					System.out.println("module " + lpnList[ii].getLabel());
+					System.out.println("module " + lpnList[ii].getLpn().getLabel());
 					System.out.println(nextStateArray[ii]);
 					System.out.println("Enabled set: " + nextEnabledArray[ii]);
 				}
@@ -365,7 +360,7 @@ public class TimingAnalysis {
 			 * Zone subset relation is checked to reduce redundant zones.
 			 */
 			boolean isNew = false;
-			prjState nxtPrjState = new prjState(nextStateArray);
+			PrjState nxtPrjState = new PrjState(nextStateArray);
 			HashSet<DBM> nxtStateZoneSet = prjStateZoneSet.get(nxtPrjState);
 			if (nxtStateZoneSet == null) {
 				nxtStateZoneSet = new HashSet<DBM>();
@@ -402,9 +397,9 @@ public class TimingAnalysis {
 		}
 
 		int dbmCnt = 0;
-		Set<prjState> stateSet = prjStateZoneSet.keySet();
+		Set<PrjState> stateSet = prjStateZoneSet.keySet();
 		HashSet<DBM> allDbmSet = new HashSet<DBM>();
-		for (prjState curState : stateSet) {
+		for (PrjState curState : stateSet) {
 			HashSet<DBM> curDbmSet = prjStateZoneSet.get(curState);
 			for (DBM dbm_i : curDbmSet)
 				allDbmSet.add(dbm_i);
@@ -422,7 +417,7 @@ public class TimingAnalysis {
 				+ tranFiringCnt + ", max_stack_depth: " + max_stack_depth);
 	}
 
-	private void search_dfs_abstraction(LPN[] lpnList, State[] initStateArray) {
+	private void search_dfs_abstraction(StateGraph[] lpnList, State[] initStateArray) {
 		System.out.println("---> Calling timedProject.findsg_dfs");
 
 		int arraySize = lpnList.length;
@@ -435,12 +430,12 @@ public class TimingAnalysis {
 		/*
 		 * Create objects to hold state space information
 		 */
-		HashMap<prjState, DBM> prjStateSet = null;
+		HashMap<PrjState, DBM> prjStateSet = null;
 		mdtNode reachSet = null;
 		if(useMDT==true)
 			reachSet = new mdtNode();
 		else
-			prjStateSet = new HashMap<prjState, DBM>();
+			prjStateSet = new HashMap<PrjState, DBM>();
 
 		// /*
 		// * Compute the set of input transitions for each module
@@ -520,7 +515,7 @@ public class TimingAnalysis {
 		posetStack.push(null);
 		lpnTranStack.push(initTimedEnabled);
 
-		prjState initPrjState = new prjState(initStateArray);
+		PrjState initPrjState = new PrjState(initStateArray);
 		if (useMDT==true)
 			reachSet.merge(initStateArray, initZone.getDbm(), 0);
 		else
@@ -563,7 +558,7 @@ public class TimingAnalysis {
 
 			State[] curStateArray = stateStack.peek();
 			Zone1 curZone = zone1Stack.peek();
-			prjState curPrjState = new prjState(curStateArray);
+			PrjState curPrjState = new PrjState(curStateArray);
 			DBM curExistingDbm = null;
 			if (useMDT==true)
 				curExistingDbm = reachSet.getDbm(curStateArray, 0);
@@ -589,13 +584,13 @@ public class TimingAnalysis {
 //			System.out.println("firedTran " + firedTran.getFullLabel());
 
 			int curIndex = firedTran.getLpn().getIndex();
-			State[] nextStateArray = firedTran.fire(lpnList, curStateArray, curIndex);
+			State[] nextStateArray = firedTran.fire(lpnList, curStateArray);
 			tranFiringCnt++;
 
 			LpnTranList[] curEnabledArray = new LpnTranList[arraySize];
 			LpnTranList[] nextEnabledArray = new LpnTranList[arraySize];
 			for (int i = 0; i < arraySize; i++) {
-				LPN lpn_tmp = lpnList[i];
+				StateGraph lpn_tmp = lpnList[i];
 				LpnTranList enabledList = null;
 				enabledList = lpn_tmp.getEnabled(curStateArray[i]);
 				curEnabledArray[i] = enabledList;
@@ -663,7 +658,7 @@ public class TimingAnalysis {
 
 				System.out.println("Current state:");
 				for (int ii = 0; ii < arraySize; ii++) {
-					System.out.println("module " + lpnList[ii].getLabel());
+					System.out.println("module " + lpnList[ii].getLpn().getLabel());
 					System.out.println(curStateArray[ii]);
 					System.out.println("Enabled set: " + curEnabledArray[ii]);
 				}
@@ -672,7 +667,7 @@ public class TimingAnalysis {
 
 				System.out.println("======================\nNext state:");
 				for (int ii = 0; ii < arraySize; ii++) {
-					System.out.println("module " + lpnList[ii].getLabel());
+					System.out.println("module " + lpnList[ii].getLpn().getLabel());
 					System.out.println(nextStateArray[ii]);
 					System.out.println("Enabled set: " + nextEnabledArray[ii]);
 				}
@@ -692,7 +687,7 @@ public class TimingAnalysis {
 				System.out
 						.println("---> ERROR: Verification failed: deadlock.");
 				for (int ii = 0; ii < arraySize; ii++) {
-					System.out.println("module " + lpnList[ii].getLabel());
+					System.out.println("module " + lpnList[ii].getLpn().getLabel());
 					System.out.println(nextStateArray[ii]);
 					System.out.println("Enabled set: " + nextEnabledArray[ii]);
 				}
@@ -707,7 +702,7 @@ public class TimingAnalysis {
 			 */
 			boolean isNew = false;
 
-			prjState nextPrjState = new prjState(nextStateArray);
+			PrjState nextPrjState = new PrjState(nextStateArray);
 			DBM existingDBM = null;
 			if (useMDT==true)
 				existingDBM = reachSet.getDbm(nextStateArray, 0);

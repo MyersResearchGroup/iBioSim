@@ -15,15 +15,14 @@ options {
     import java.util.Arrays;
     import platu.lpn.LPN;
     import platu.lpn.VarSet;
-    import platu.lpn.LPNTranSet;
+    import platu.lpn.LpnTranList;
     import platu.lpn.LPNTran;
     import platu.lpn.DualHashMap;
     import platu.lpn.VarExpr;
     import platu.lpn.VarExprList;
     import platu.stategraph.StateGraph;
     import platu.project.Project;
-    import platu.expression.*;
-    import platu.Main;    
+    import platu.expression.*; 
 }
 
 @members{
@@ -166,18 +165,18 @@ module[Project prj] returns [LPN lpn]
 	            	initialMarking[i++] = mark;
 	            }
 
-				$lpn = new StateGraph(prj, $ID.text, Inputs, Outputs, Internals, VarNodeMap, $logic.lpnTranSet, 
-	         			StatevectorMap, initialMarking, null);
+				$lpn = new LPN(prj, $ID.text, Inputs, Outputs, Internals, VarNodeMap, $logic.lpnTranSet, 
+	         			StatevectorMap, initialMarking);
 				
 				for(LPNTran tran : inputTranList){
-					tran.addLpnList($lpn);
+					tran.addDstLpn($lpn);
 				}
 				
 				$lpn.addAllInputTrans(inputTranList);
 				$lpn.addAllOutputTrans(outputTranList);
 	            $lpn.setVarIndexMap(VarIndexMap);         
 	            $logic.lpnTranSet.setLPN($lpn);     
-	            prj.getDesignUnitSet().add((StateGraph)$lpn);
+	            prj.getDesignUnitSet().add($lpn.getStateGraph());
 	            
 	            LpnMap.put($lpn.getLabel(), $lpn);
 	            
@@ -499,8 +498,8 @@ instantiation
     	'<' '/' 'inst' '>'
     ;
 
-logic returns [List<Integer> initMarking, LPNTranSet lpnTranSet]
-    :   {$lpnTranSet = new LPNTranSet();}
+logic returns [List<Integer> initMarking, LpnTranList lpnTranSet]
+    :   {$lpnTranSet = new LpnTranList();}
     	marking (transition {$lpnTranSet.add($transition.lpnTran);})+
         {
             $initMarking = $marking.mark;
@@ -645,7 +644,7 @@ transition returns [LPNTran lpnTran]
         			if(GlobalInputMap.containsKey(var.getName())){
 	        			for(LPN lpn : GlobalInputMap.get(var.getName())){
 	        				lpn.addInputTran($lpnTran);
-	        				$lpnTran.addLpnList(lpn);
+	        				$lpnTran.addDstLpn(lpn);
 	        			}
         			}
         		}

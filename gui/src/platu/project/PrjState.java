@@ -1,0 +1,110 @@
+package platu.project;
+
+import java.util.*;
+
+import platu.lpn.*;
+import platu.stategraph.*;
+
+public class PrjState {
+	protected  State[] stateArray;
+	private PrjState father;
+	private PrjState child;
+	
+	public PrjState() {
+		stateArray = null;
+		father = null;
+		child = null;
+	}
+	
+	public PrjState(final State[] other) {
+		stateArray = other;
+		father = null;
+		child = null;
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(stateArray);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		
+		PrjState other = (PrjState) obj;
+		if(this.stateArray == other.stateArray)
+			return true;
+		if (!Arrays.equals(stateArray, other.stateArray))
+			return false;
+		return true;
+	}
+
+	public State get(int index) {
+		return stateArray[index];
+	}
+	
+	public void add(int index, State other) {
+		stateArray[index] = other;
+	}
+	
+	public State[] toStateArray() {
+		return stateArray;
+	}
+	
+	public void setFather(final PrjState state) {
+		this.father = state;
+	}
+	
+	public void setChild(final PrjState state) {
+		this.child = state; 
+	}
+	
+	public PrjState getFather() {
+		return this.father;
+	}
+	
+	public PrjState getChild() {
+		return this.child; 
+	}
+	
+	public String toString() {
+		String line ="";
+
+		for(int i = 0; i < stateArray.length; i++) {
+			line += stateArray[i].toString()+"+"+stateArray[i].getLpn().getLabel() + "   ";
+		}
+
+		return line;
+//            return toList(stateArray).toString();
+	}
+	public void print(final LPN[] lpnList) {
+		for(int i = 0; i < stateArray.length; i++) {
+			System.out.print(i +": ");
+			stateArray[i].print(lpnList[i].getVarIndexMap());
+			System.out.println();
+		}
+	}
+          public static final Collection<Object> toList(Object[] arr) {
+        Set<Object> l = new HashSet<Object>(1);
+        l.addAll(Arrays.asList(arr));
+        return l;
+    }
+
+    public static final Object[] toArray(Collection<Object> set) {
+        Object[] arr = new Object[set.size()];
+        int idx = 0;
+        for (Object i : set) {
+            arr[idx++] = i;
+        }
+        return arr;
+    }
+}            
+

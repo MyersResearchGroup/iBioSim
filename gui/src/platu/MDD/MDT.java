@@ -1,7 +1,6 @@
 package platu.MDD;
 
-import java.util.*;
-import platu.stategraph.state.*;
+import platu.stategraph.*;
 
 /*
  * This data structure cannot be used as stack as it allows node sharing.
@@ -36,9 +35,9 @@ public class MDT {
 		return root.pop(0);
 	}
 	
-	public State[] peek() {
-		return root.peek(0);
-	}
+//	public State[] peek() {
+//		return root.peek(0);
+//	}
 	
 	public boolean contains(State[] stateArray) {
 		return root.contains(stateArray, 0);
@@ -50,5 +49,9 @@ public class MDT {
 	
 	public int size() {
 		return this.Size;
+	}
+	
+	public int nodeCnt() {
+		return root.nodeCnt();
 	}
 }

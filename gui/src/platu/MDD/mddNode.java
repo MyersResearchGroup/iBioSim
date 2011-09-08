@@ -5,7 +5,7 @@ import java.util.*;
 import platu.lpn.LPN;
 import platu.lpn.LPNTran;
 import platu.project.Project;
-import platu.stategraph.state.*;
+import platu.stategraph.*;
 
 public class mddNode {
 	static int blockSize = 8;
@@ -175,9 +175,9 @@ public class mddNode {
 			}			
 		}
 		else if(nextNode == Mdd.terminal) {
-			System.out.println("mddNode: should not reach here. Abort!");
-			System.exit(0);
-			return null;
+			//System.out.println("mddNode: should not reach here. Abort!");
+			//System.exit(0);
+			return Mdd.terminal;
 		}
 		else {
 			mddNode newNextNode = nextNode;
@@ -390,29 +390,26 @@ public class mddNode {
 			System.out.println("level is not right 2");
 			System.exit(0);
 		}
-			
-		mddNode curNode = this;
-		//for(int index = 0; index < stateArray.length - 1; index++) {
-		while(true) {
-			int curIdx = idxArray[curNode.level];
-			int blockIdx = curIdx & mddNode.blockIdxMask;
-			int arrayIdx = curIdx >> mddNode.arrayIdxoffset;
-	
-			mddNode nextNode = curNode.getSucc(blockIdx, arrayIdx);
-			if(nextNode == null)
-				return null;
-			
-			if(nextNode == Mdd.terminal)
-				return Mdd.terminal;
 		
-			curNode = nextNode;
-		}
+		int curIdx = idxArray[this.level];
+		int blockIdx = curIdx & mddNode.blockIdxMask;
+		int arrayIdx = curIdx >> mddNode.arrayIdxoffset;
+
+		mddNode nextNode = this.getSucc(blockIdx, arrayIdx);
+		
+		if (nextNode == null)
+			return null;
+		
+		if (nextNode == Mdd.terminal)
+			return Mdd.terminal;
+
+		return nextNode.contains(idxArray);
 	}	
 	
 	/*
 	 * Exhaustively fire all local LPN transitions from each local state in curStateArray 
 	 */
-	public mddNode doLocalFirings(LPN[] curLpnArray, State[] curStateArray,
+	public mddNode doLocalFirings(StateGraph[] curLpnArray, State[] curStateArray,
 			LinkedList<State>[] nextSetArray,
 			mddNode reachSet,
 			HashMap<mddNode, mddNode>[] nodeTbl) {
@@ -434,7 +431,7 @@ public class mddNode {
 		/*
 		 * Do exhaustive local firings at this level.
 		 */
-		LPN curLpn = curLpnArray[this.level];
+		StateGraph curLpn = curLpnArray[this.level];
 		State curState = curStateArray[this.level];
 //		HashMap<State, State> curLocalStateSet = localStateSets[this.level];
 		nextSetArray[this.level].addLast(curState); 
@@ -470,7 +467,7 @@ public class mddNode {
 			LinkedList<LPNTran> curLocalEnabled = enabledStack.pop();
 			for(LPNTran tran2fire : curLocalEnabled) {
 				//System.out.println("tran2fire = " + tran2fire.getLabel() + " in  curlocalState = " + curState.getLabel());
-				State nextState = tran2fire.fire(curState); 
+				State nextState = tran2fire.fire(curLpnArray[tran2fire.getLpn().getIndex()], curState); 
 				
 //				System.out.println("1 nextLocalState = " + nextState.getLabel());
 				if(curLocalNewStates.contains(nextState) == true)

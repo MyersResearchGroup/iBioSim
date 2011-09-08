@@ -17,15 +17,14 @@ options {
     import java.util.Queue;
     import platu.lpn.LPN;
     import platu.lpn.VarSet;
-    import platu.lpn.LPNTranSet;
+    import platu.lpn.LpnTranList;
     import platu.lpn.LPNTran;
     import platu.lpn.DualHashMap;
     import platu.lpn.VarExpr;
     import platu.lpn.VarExprList;
     import platu.stategraph.StateGraph;
     import platu.project.Project;
-    import platu.expression.*;
-    import platu.Main;    
+    import platu.expression.*;   
 }
 
 @members{
@@ -268,9 +267,13 @@ main[Project prj]
 					createGlobalArray(arrayNode.getName(), arrayNode.getDimensionList());
 	    		}
 			}
-		instantiation '<' '/mod' '>'
+		variables? constants? instantiation '<' '/mod' '>'
 	;
     
+process
+	:	'<' 'process' 'name' '=' '"' processName=ID '"' '>' '<' '/process' '>'
+	;
+	
 // TODO: don't enforce order
 moduleClass[Project prj] returns [LPN lpn]
     :	( '<' 'class' 'name' '=' '"' modName=ID
@@ -460,8 +463,8 @@ moduleClass[Project prj] returns [LPN lpn]
 	            	initialMarking[i++] = mark;
 	            }
 	            
-				$lpn = new StateGraph(prj, $modName.text, Inputs, Outputs, Internals, VarNodeMap, $logic.lpnTranSet, 
-	         			StatevectorMap, initialMarking, null);
+				$lpn = new LPN(prj, $modName.text, Inputs, Outputs, Internals, VarNodeMap, $logic.lpnTranSet, 
+	         			StatevectorMap, initialMarking);
 				
 				$lpn.addAllInputTrans(inputTranList);
 				$lpn.addAllOutputTrans(outputTranList);
@@ -867,8 +870,8 @@ instantiation
     	)+
     ;
 
-logic returns [List<Integer> initMarking, LPNTranSet lpnTranSet]
-    :   {$lpnTranSet = new LPNTranSet();}
+logic returns [List<Integer> initMarking, LpnTranList lpnTranSet]
+    :   {$lpnTranSet = new LpnTranList();}
     	marking (transition {$lpnTranSet.add($transition.lpnTran);})+
         {
             $initMarking = $marking.mark;
@@ -1397,6 +1400,7 @@ implication returns [ExpressionNode expr, int value]
     	(	'->' op2=or  {$expr = new ImplicationNode($expr, $op2.expr); $value = ($value == 0 || $op2.value != 0) ? 1 : 0;}
     	)*
     ;
+    
 expression returns [ExpressionNode expr, int value]
     :   op1=implication {$expr = $op1.expr; $value = $op1.value;}
     	('?' op2=expression ':' op3=expression 
@@ -1407,6 +1411,16 @@ expression returns [ExpressionNode expr, int value]
     	)?
     ;
     
+//CTL formula
+ctlTerm
+	:	ID
+	|	LPAREN ctl LPAREN
+	;
+	
+ctl
+	:
+	;
+	
 
 // Tokens
 LPAREN: '(';

@@ -51,6 +51,7 @@ public abstract class UpdateTimer {
         final long startTime = lastTime;
         int lastStates = 0;
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             try {
                 System.gc();

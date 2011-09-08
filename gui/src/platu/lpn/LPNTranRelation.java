@@ -6,13 +6,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import platu.stategraph.State;
 import platu.stategraph.StateGraph;
-import platu.stategraph.state.State;
-import platu.stategraph.state.StateTran;
 
 /**
- * The LPNTranRelation class stores information about lpn transitions such  as dependency, 
- * interleaving, and independency.
+ * The LPNTranRelation class stores information about LPN transitions such  as dependence, 
+ * interleaving, and independence.
  */
 public class LPNTranRelation {
 	private List<StateGraph> designUnitSet = null;
@@ -34,15 +33,16 @@ public class LPNTranRelation {
 	public void findCompositionalDependencies(){
 		for(StateGraph sg : this.designUnitSet){
 			//for(State currentState : sg.reachable()){
-			for(int stateIdx = 0; stateIdx < sg.reachSize(); stateIdx++) {
-				State currentState = sg.getState(stateIdx);
-				List<LPNTran> enabledTrans = sg.lpnTransitionMap.get(currentState);
-				if(enabledTrans == null) continue;
-				for(LPNTran lpnTran : enabledTrans){
+			for(State currentState : sg.getStateSet()) {
+				Set<Entry<LPNTran, State>> stateTranSet = sg.getOutgoingTrans(currentState);
+				if(stateTranSet == null) continue;
+				
+				for(Entry<LPNTran, State> stateTran: stateTranSet){
 					State startState = currentState;
-					State endState = lpnTran.getNextState(currentState);
-//					LPNTran lpnTran = tran.lpnTran;
+					State endState = stateTran.getValue();
+					LPNTran lpnTran = stateTran.getKey();
 					
+					//TODO: only get enabled trans from lpn or input transitions also?
 					LpnTranList currentEnabledTransitions = sg.getEnabled(startState);
 		        	LpnTranList nextEnabledTransitions = sg.getEnabled(endState);
 		        	
@@ -93,14 +93,14 @@ public class LPNTranRelation {
 		        	LpnTranList remainEnabled = currentEnabledTransitions;
 		        	remainEnabled.removeAll(current_minus_next);
 		        	for(LPNTran remainTran : remainEnabled){
-		        		State s1 = (State) remainTran.getNextState(startState);
+		        		State s1 = sg.getNextState(currentState, remainTran);
 		        		if(s1 == null) continue;
 		        		
 		        		LpnTranList en = sg.getEnabled(s1);
 		        		if(!en.contains(lpnTran)) continue;
 		        		
-		        		State s3 = (State) lpnTran.getNextState(s1);
-		        		State s2 = (State) remainTran.getNextState(endState);
+		        		State s3 = sg.getNextState(s1, lpnTran);
+		        		State s2 = sg.getNextState(endState, remainTran);
 		        		if(s2 == null) continue;
 		        		if(s3 == null) continue;
 		        		

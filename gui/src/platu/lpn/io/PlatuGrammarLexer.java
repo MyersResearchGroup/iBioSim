@@ -1,4 +1,4 @@
-// $ANTLR 3.3 Nov 30, 2010 12:50:56 /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g 2011-08-07 04:18:09
+// $ANTLR 3.3 Nov 30, 2010 12:50:56 /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g 2011-09-05 15:36:21
 
     package platu.lpn.io;
 
@@ -234,8 +234,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = LPAREN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1023:7: ( '(' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1023:9: '('
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1022:7: ( '(' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1022:9: '('
             {
             match('('); 
 
@@ -254,8 +254,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = RPAREN;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1024:7: ( ')' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1024:9: ')'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1023:7: ( ')' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1023:9: ')'
             {
             match(')'); 
 
@@ -274,8 +274,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = QMARK;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1025:6: ( '?' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1025:8: '?'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1024:6: ( '?' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1024:8: '?'
             {
             match('?'); 
 
@@ -294,8 +294,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = COLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1026:6: ( ':' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1026:8: ':'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1025:6: ( ':' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1025:8: ':'
             {
             match(':'); 
 
@@ -314,8 +314,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = SEMICOLON;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1027:10: ( ';' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1027:12: ';'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1026:10: ( ';' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1026:12: ';'
             {
             match(';'); 
 
@@ -334,8 +334,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = PERIOD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1028:7: ( '.' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1028:9: '.'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1027:7: ( '.' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1027:9: '.'
             {
             match('.'); 
 
@@ -354,8 +354,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = UNDERSCORE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1029:11: ( '_' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1029:13: '_'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1028:11: ( '_' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1028:13: '_'
             {
             match('_'); 
 
@@ -374,8 +374,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = COMMA;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1030:6: ( ',' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1030:8: ','
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1029:6: ( ',' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1029:8: ','
             {
             match(','); 
 
@@ -394,8 +394,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = QUOTE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1031:6: ( '\"' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1031:8: '\"'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1030:6: ( '\"' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1030:8: '\"'
             {
             match('\"'); 
 
@@ -414,8 +414,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = MODULE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1034:7: ( 'mod' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1034:9: 'mod'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1033:7: ( 'mod' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1033:9: 'mod'
             {
             match("mod"); 
 
@@ -435,8 +435,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = NAME;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1035:5: ( 'name' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1035:7: 'name'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1034:5: ( 'name' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1034:7: 'name'
             {
             match("name"); 
 
@@ -456,8 +456,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = INPUT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1036:6: ( 'input' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1036:8: 'input'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1035:6: ( 'input' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1035:8: 'input'
             {
             match("input"); 
 
@@ -477,8 +477,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = OUTPUT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1037:7: ( 'output' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1037:9: 'output'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1036:7: ( 'output' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1036:9: 'output'
             {
             match("output"); 
 
@@ -498,8 +498,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = INTERNAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1038:9: ( 'var' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1038:11: 'var'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1037:9: ( 'var' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1037:11: 'var'
             {
             match("var"); 
 
@@ -519,8 +519,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = MARKING;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1039:8: ( 'marking' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1039:10: 'marking'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1038:8: ( 'marking' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1038:10: 'marking'
             {
             match("marking"); 
 
@@ -540,8 +540,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = STATE_VECTOR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1040:13: ( 'statevector' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1040:15: 'statevector'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1039:13: ( 'statevector' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1039:15: 'statevector'
             {
             match("statevector"); 
 
@@ -561,8 +561,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = TRANSITION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1041:11: ( 'transition' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1041:13: 'transition'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1040:11: ( 'transition' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1040:13: 'transition'
             {
             match("transition"); 
 
@@ -582,8 +582,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = LABEL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1042:6: ( 'label' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1042:8: 'label'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1041:6: ( 'label' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1041:8: 'label'
             {
             match("label"); 
 
@@ -603,8 +603,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = PRESET;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1043:7: ( 'preset' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1043:9: 'preset'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1042:7: ( 'preset' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1042:9: 'preset'
             {
             match("preset"); 
 
@@ -624,8 +624,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = POSTSET;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1044:8: ( 'postset' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1044:10: 'postset'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1043:8: ( 'postset' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1043:10: 'postset'
             {
             match("postset"); 
 
@@ -645,8 +645,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = TRUE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1045:5: ( 'true' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1045:7: 'true'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1044:5: ( 'true' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1044:7: 'true'
             {
             match("true"); 
 
@@ -666,8 +666,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = FALSE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1046:6: ( 'false' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1046:8: 'false'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1045:6: ( 'false' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1045:8: 'false'
             {
             match("false"); 
 
@@ -687,8 +687,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = PLUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1049:5: ( '+' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1049:7: '+'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1048:5: ( '+' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1048:7: '+'
             {
             match('+'); 
 
@@ -707,8 +707,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = MINUS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1050:6: ( '-' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1050:8: '-'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1049:6: ( '-' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1049:8: '-'
             {
             match('-'); 
 
@@ -727,8 +727,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = TIMES;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1051:6: ( '*' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1051:8: '*'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1050:6: ( '*' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1050:8: '*'
             {
             match('*'); 
 
@@ -747,8 +747,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = DIV;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1052:4: ( '/' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1052:6: '/'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1051:4: ( '/' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1051:6: '/'
             {
             match('/'); 
 
@@ -767,8 +767,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = MOD;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1053:4: ( '%' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1053:6: '%'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1052:4: ( '%' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1052:6: '%'
             {
             match('%'); 
 
@@ -787,8 +787,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = EQUALS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1054:7: ( '=' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1054:9: '='
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1053:7: ( '=' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1053:9: '='
             {
             match('='); 
 
@@ -807,8 +807,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = GREATER;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1057:8: ( '>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1057:10: '>'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1056:8: ( '>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1056:10: '>'
             {
             match('>'); 
 
@@ -827,8 +827,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = LESS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1058:5: ( '<' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1058:7: '<'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1057:5: ( '<' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1057:7: '<'
             {
             match('<'); 
 
@@ -847,8 +847,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = GREATER_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1059:14: ( '>=' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1059:16: '>='
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1058:14: ( '>=' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1058:16: '>='
             {
             match(">="); 
 
@@ -868,8 +868,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = LESS_EQUAL;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1060:11: ( '<=' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1060:13: '<='
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1059:11: ( '<=' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1059:13: '<='
             {
             match("<="); 
 
@@ -889,8 +889,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = EQUIV;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1061:6: ( '==' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1061:8: '=='
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1060:6: ( '==' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1060:8: '=='
             {
             match("=="); 
 
@@ -910,8 +910,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = NOT_EQUIV;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1062:10: ( '!=' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1062:12: '!='
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1061:10: ( '!=' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1061:12: '!='
             {
             match("!="); 
 
@@ -931,8 +931,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = NEGATION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1065:9: ( '!' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1065:11: '!'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1064:9: ( '!' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1064:11: '!'
             {
             match('!'); 
 
@@ -951,8 +951,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = AND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1066:4: ( '&&' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1066:6: '&&'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1065:4: ( '&&' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1065:6: '&&'
             {
             match("&&"); 
 
@@ -972,8 +972,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = OR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1067:3: ( '||' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1067:5: '||'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1066:3: ( '||' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1066:5: '||'
             {
             match("||"); 
 
@@ -993,8 +993,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = IMPLICATION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1068:12: ( '->' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1068:14: '->'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1067:12: ( '->' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1067:14: '->'
             {
             match("->"); 
 
@@ -1014,8 +1014,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = BITWISE_NEGATION;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1071:17: ( '~' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1071:19: '~'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1070:17: ( '~' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1070:19: '~'
             {
             match('~'); 
 
@@ -1034,8 +1034,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = BITWISE_AND;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1072:12: ( '&' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1072:14: '&'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1071:12: ( '&' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1071:14: '&'
             {
             match('&'); 
 
@@ -1054,8 +1054,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = BITWISE_OR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1073:11: ( '|' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1073:13: '|'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1072:11: ( '|' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1072:13: '|'
             {
             match('|'); 
 
@@ -1074,8 +1074,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = BITWISE_XOR;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1074:12: ( '^' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1074:14: '^'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1073:12: ( '^' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1073:14: '^'
             {
             match('^'); 
 
@@ -1094,8 +1094,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = BITWISE_LSHIFT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1075:15: ( '<<' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1075:17: '<<'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1074:15: ( '<<' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1074:17: '<<'
             {
             match("<<"); 
 
@@ -1115,8 +1115,8 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = BITWISE_RSHIFT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1076:15: ( '>>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1076:17: '>>'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1075:15: ( '>>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1075:17: '>>'
             {
             match(">>"); 
 
@@ -1134,8 +1134,8 @@ public class PlatuGrammarLexer extends Lexer {
     // $ANTLR start "LETTER"
     public final void mLETTER() throws RecognitionException {
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1078:16: ( ( 'a' .. 'z' | 'A' .. 'Z' ) )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1078:18: ( 'a' .. 'z' | 'A' .. 'Z' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1077:16: ( ( 'a' .. 'z' | 'A' .. 'Z' ) )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1077:18: ( 'a' .. 'z' | 'A' .. 'Z' )
             {
             if ( (input.LA(1)>='A' && input.LA(1)<='Z')||(input.LA(1)>='a' && input.LA(1)<='z') ) {
                 input.consume();
@@ -1158,8 +1158,8 @@ public class PlatuGrammarLexer extends Lexer {
     // $ANTLR start "DIGIT"
     public final void mDIGIT() throws RecognitionException {
         try {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1079:15: ( '0' .. '9' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1079:17: '0' .. '9'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1078:15: ( '0' .. '9' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1078:17: '0' .. '9'
             {
             matchRange('0','9'); 
 
@@ -1176,10 +1176,10 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1080:4: ( ( '-' )? ( DIGIT )+ )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1080:6: ( '-' )? ( DIGIT )+
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1079:4: ( ( '-' )? ( DIGIT )+ )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1079:6: ( '-' )? ( DIGIT )+
             {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1080:6: ( '-' )?
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1079:6: ( '-' )?
             int alt1=2;
             int LA1_0 = input.LA(1);
 
@@ -1188,7 +1188,7 @@ public class PlatuGrammarLexer extends Lexer {
             }
             switch (alt1) {
                 case 1 :
-                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1080:6: '-'
+                    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1079:6: '-'
                     {
                     match('-'); 
 
@@ -1197,7 +1197,7 @@ public class PlatuGrammarLexer extends Lexer {
 
             }
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1080:11: ( DIGIT )+
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1079:11: ( DIGIT )+
             int cnt2=0;
             loop2:
             do {
@@ -1211,7 +1211,7 @@ public class PlatuGrammarLexer extends Lexer {
 
                 switch (alt2) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1080:11: DIGIT
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1079:11: DIGIT
             	    {
             	    mDIGIT(); 
 
@@ -1243,11 +1243,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1081:3: ( LETTER ( ( UNDERSCORE | PERIOD )? ( LETTER | DIGIT ) )* )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1081:5: LETTER ( ( UNDERSCORE | PERIOD )? ( LETTER | DIGIT ) )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1080:3: ( LETTER ( ( UNDERSCORE | PERIOD )? ( LETTER | DIGIT ) )* )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1080:5: LETTER ( ( UNDERSCORE | PERIOD )? ( LETTER | DIGIT ) )*
             {
             mLETTER(); 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1081:12: ( ( UNDERSCORE | PERIOD )? ( LETTER | DIGIT ) )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1080:12: ( ( UNDERSCORE | PERIOD )? ( LETTER | DIGIT ) )*
             loop4:
             do {
                 int alt4=2;
@@ -1260,9 +1260,9 @@ public class PlatuGrammarLexer extends Lexer {
 
                 switch (alt4) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1081:13: ( UNDERSCORE | PERIOD )? ( LETTER | DIGIT )
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1080:13: ( UNDERSCORE | PERIOD )? ( LETTER | DIGIT )
             	    {
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1081:13: ( UNDERSCORE | PERIOD )?
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1080:13: ( UNDERSCORE | PERIOD )?
             	    int alt3=2;
             	    int LA3_0 = input.LA(1);
 
@@ -1322,10 +1322,10 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1082:3: ( ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+ )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1082:5: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1081:3: ( ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+ )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1081:5: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
             {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1082:5: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1081:5: ( ' ' | '\\t' | '\\n' | '\\r' | '\\f' )+
             int cnt5=0;
             loop5:
             do {
@@ -1380,12 +1380,12 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = COMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1083:8: ( '//' ( . )* ( '\\n' | '\\r' ) )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1083:10: '//' ( . )* ( '\\n' | '\\r' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1082:8: ( '//' ( . )* ( '\\n' | '\\r' ) )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1082:10: '//' ( . )* ( '\\n' | '\\r' )
             {
             match("//"); 
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1083:15: ( . )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1082:15: ( . )*
             loop6:
             do {
                 int alt6=2;
@@ -1401,7 +1401,7 @@ public class PlatuGrammarLexer extends Lexer {
 
                 switch (alt6) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1083:15: .
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1082:15: .
             	    {
             	    matchAny(); 
 
@@ -1439,12 +1439,12 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = MULTILINECOMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:17: ( '/*' ( . )* '*/' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:19: '/*' ( . )* '*/'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1083:17: ( '/*' ( . )* '*/' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1083:19: '/*' ( . )* '*/'
             {
             match("/*"); 
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:24: ( . )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1083:24: ( . )*
             loop7:
             do {
                 int alt7=2;
@@ -1469,7 +1469,7 @@ public class PlatuGrammarLexer extends Lexer {
 
                 switch (alt7) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:24: .
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1083:24: .
             	    {
             	    matchAny(); 
 
@@ -1500,11 +1500,11 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = XMLCOMMENT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1085:11: ( ( '<' '!' '-' '-' ) ( . )* ( '-' '-' '>' ) )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1085:13: ( '<' '!' '-' '-' ) ( . )* ( '-' '-' '>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:11: ( ( '<' '!' '-' '-' ) ( . )* ( '-' '-' '>' ) )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:13: ( '<' '!' '-' '-' ) ( . )* ( '-' '-' '>' )
             {
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1085:13: ( '<' '!' '-' '-' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1085:14: '<' '!' '-' '-'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:13: ( '<' '!' '-' '-' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:14: '<' '!' '-' '-'
             {
             match('<'); 
             match('!'); 
@@ -1513,7 +1513,7 @@ public class PlatuGrammarLexer extends Lexer {
 
             }
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1085:31: ( . )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:31: ( . )*
             loop8:
             do {
                 int alt8=2;
@@ -1547,7 +1547,7 @@ public class PlatuGrammarLexer extends Lexer {
 
                 switch (alt8) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1085:31: .
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:31: .
             	    {
             	    matchAny(); 
 
@@ -1559,8 +1559,8 @@ public class PlatuGrammarLexer extends Lexer {
                 }
             } while (true);
 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1085:34: ( '-' '-' '>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1085:35: '-' '-' '>'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:34: ( '-' '-' '>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1084:35: '-' '-' '>'
             {
             match('-'); 
             match('-'); 
@@ -1585,12 +1585,12 @@ public class PlatuGrammarLexer extends Lexer {
         try {
             int _type = IGNORE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1086:7: ( '<' '?' ( . )* '?' '>' )
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1086:9: '<' '?' ( . )* '?' '>'
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1085:7: ( '<' '?' ( . )* '?' '>' )
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1085:9: '<' '?' ( . )* '?' '>'
             {
             match('<'); 
             match('?'); 
-            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1086:17: ( . )*
+            // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1085:17: ( . )*
             loop9:
             do {
                 int alt9=2;
@@ -1615,7 +1615,7 @@ public class PlatuGrammarLexer extends Lexer {
 
                 switch (alt9) {
             	case 1 :
-            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1086:17: .
+            	    // /Users/erodrig9/workspace/platu/src/platu/lpn/io/PlatuGrammar.g:1085:17: .
             	    {
             	    matchAny(); 
 

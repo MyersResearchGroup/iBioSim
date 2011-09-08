@@ -14,7 +14,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import platu.Options;
+
+import platu.main.Options;
 import lmoore.TimedState;
 import lmoore.zone.Zone;
 

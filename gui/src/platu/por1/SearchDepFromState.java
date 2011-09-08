@@ -11,6 +11,7 @@ import platu.lpn.LPN;
 import platu.lpn.LPNTran;
 import platu.lpn.LPNTranRelation;
 import platu.lpn.LpnTranList;
+import platu.stategraph.StateGraph;
 
 /**
  * in this approach, we do not consider transition interleaving
@@ -28,7 +29,7 @@ public class SearchDepFromState {
 	private HashMap<LPNTran, HashSet<LPNTran>> interleavingSet = new HashMap<LPNTran, HashSet<LPNTran>>();
 	
 	
-	public SearchDepFromState(LPN[] lpnList,LPNTranRelation lpnTranRelation)
+	public SearchDepFromState(StateGraph[] lpnList,LPNTranRelation lpnTranRelation)
 	{
 		this.getInitialDepTran(lpnTranRelation);      //get dependent and interleaving transitions
 		this.setInterleavingTrans(initialInterleavingTrans);
@@ -137,13 +138,13 @@ public class SearchDepFromState {
 	 * @param lpnList
 	 * @return
 	 */
-	private void setInitIndepTrans(LPN[] lpnList)
+	private void setInitIndepTrans(StateGraph[] lpnList)
 	{
 		//get all transitions
 		LpnTranList allTran = new LpnTranList();
-		for(LPN lpn:lpnList)
+		for(StateGraph sg : lpnList)
 		{
-			LpnTranList trans = lpn.getTransitions();
+			LpnTranList trans = sg.getLpn().getTransitions();
 			for(LPNTran tran: trans)
 			{
 				allTran.add(tran);
