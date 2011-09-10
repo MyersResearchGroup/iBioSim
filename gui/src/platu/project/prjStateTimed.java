@@ -2,7 +2,7 @@ package platu.project;
 
 import java.util.Arrays;
 
-import lmoore.zone.Zone;
+import platu.TimingAnalysis.Zone1;
 import platu.stategraph.State;
 
 public class prjStateTimed extends PrjState {
@@ -32,8 +32,8 @@ public class prjStateTimed extends PrjState {
      /**
      * @return the zone
      */
-    public Zone getZone() {
-        return (Zone) zone;
+    public Zone1 getZone() {
+        return (Zone1) zone;
     }
 
     /**

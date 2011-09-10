@@ -59,7 +59,6 @@ public class MemoryWindow extends Thread {
             EventQueue.invokeLater(new Thread(new Runnable() {
 
                 JFrame frame;
-                @Override
                 public void run() {
                     frame = new JFrame();
                     f = frame;
