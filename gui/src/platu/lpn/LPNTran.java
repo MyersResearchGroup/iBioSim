@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import lmoore.zone.Zone;
+import platu.TimingAnalysis.Zone1;
 
 public class LPNTran {
 
@@ -228,7 +228,7 @@ public class LPNTran {
     
     // Check if this LPN transition satisfies the timing constraint: its lower bound of delay
     // is larger than the maximal value of its timed in curZone.
-    public boolean isTimedEnabled(final State curState, final Zone curZone) {
+    public boolean isTimedEnabled(final State curState, final Zone1 curZone) {
     	if(this.isEnabled(curState) == false)
     		return false;
     	
