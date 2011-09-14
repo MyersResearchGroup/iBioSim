@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import lpn.parser.LhpnFile;
 import platu.lpn.LPN;
 import platu.stategraph.StateGraph;
 
@@ -103,7 +105,7 @@ public class Interpretor {
             return 0;
         } else if (command.compareToIgnoreCase(mapCMD.get(enCMD.del)) == 0) {
             for (StateGraph sg : prj.getDesignUnitSet()) {
-            	LPN lpn = sg.getLpn();
+            	LhpnFile lpn = sg.getLpn();
             	
                 if (lpn.getLabel().compareTo(argument1) == 0) {
                     prj.getDesignUnitSet().remove(lpn);
@@ -143,7 +145,7 @@ public class Interpretor {
         }else if (command.compareToIgnoreCase(mapCMD.get(enCMD.draw)) == 0){
         	if(argumentcount > 0){
         		for(StateGraph sg : prj.getDesignUnitSet()){
-        			LPN lpn = sg.getLpn();
+        			LhpnFile lpn = sg.getLpn();
         			
         			if(argument1.equals(lpn.getLabel())){
         				System.out.print("drawing " + lpn.getLabel() + "...");
@@ -154,7 +156,7 @@ public class Interpretor {
         	}
         	else{
         		for(StateGraph sg : prj.getDesignUnitSet()){
-        			LPN lpn = sg.getLpn();
+        			LhpnFile lpn = sg.getLpn();
         			System.out.print("drawing " + lpn.getLabel() + "...");
         			sg.draw();
         			System.out.println("Done");

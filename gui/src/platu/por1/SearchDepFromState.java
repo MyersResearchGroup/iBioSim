@@ -144,11 +144,14 @@ public class SearchDepFromState {
 		LpnTranList allTran = new LpnTranList();
 		for(StateGraph sg : lpnList)
 		{
+			// TODO: change to use our LPN
+			/*
 			LpnTranList trans = sg.getLpn().getTransitions();
 			for(LPNTran tran: trans)
 			{
 				allTran.add(tran);
 			}
+			*/
 		}
 		//save to indepTranSet
 		for(LPNTran key: allTran)

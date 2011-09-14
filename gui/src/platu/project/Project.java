@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import lpn.parser.LhpnFile;
+
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
@@ -69,7 +72,7 @@ public class Project {
         StateGraph[] sgArray = new StateGraph[lpnCnt];
         int idx = 0;
 		for (StateGraph du : designUnitSet) {
-			LPN lpn = du.getLpn();
+			LhpnFile lpn = du.getLpn();
 			lpn.setIndex(idx++);
 			sgArray[lpn.getIndex()] = du;
 		}
@@ -79,7 +82,9 @@ public class Project {
 		State[] initStateArray = new State[lpnCnt];
 		
 		for (int index = 0; index < lpnCnt; index++) {
-			LPN curLpn = sgArray[index].getLpn();
+			LhpnFile curLpn = sgArray[index].getLpn();
+			// TODO: need to change this to use our LPN 
+			/*
 			initStateArray[index] = curLpn.getInitState();
 			int[] curStateVector = initStateArray[index].getVector();
 			HashSet<String> outVars = curLpn.getOutputs();
@@ -87,14 +92,18 @@ public class Project {
 			for(String var : outVars) {
 				varValMap.put(var, curStateVector[VarIndexMap.getValue(var)]);
 			}
+			*/
 		}
 
 		// Adjust the value of the input variables in LPN in the initial state.
 		// Add the initial states into their respective LPN.
 		for (int index = 0; index < lpnCnt; index++) {
+			// TODO: need to change this to use our LPN 
+			/*
 			StateGraph curLpn = sgArray[index];
 			initStateArray[index].update(varValMap, curLpn.getLpn().getVarIndexMap());
 			initStateArray[index] = curLpn.addState(initStateArray[index]);
+			*/
 		}		
 		
 
@@ -217,9 +226,12 @@ public class Project {
 			this.designUnitSet.add(instLpn.getStateGraph());
 		}
 		
+		// TODO: Is this really needed???
+		/*
 		for(StateGraph sg : this.designUnitSet){
 			sg.getLpn().setGlobals(this.designUnitSet);
 		}
+		*/
 		
 		for(Instance inst : PlatuInstParser.InstanceList){
 			LPN dstLpn = instanceMap.get(inst.getName());
@@ -264,12 +276,12 @@ public class Project {
     private void validateInputs(){
     	boolean error = false;
     	for(StateGraph sg : designUnitSet){
-	        for(String input : sg.getLpn().getInputs()){
+	        for(String input : sg.getLpn().getAllInputs().keySet()){
 	        	boolean connected = false;
 	        	for(StateGraph sg2 : designUnitSet){
 	        		if(sg == sg2) continue;
 	        		
-	        		if(sg2.getLpn().getOutputs().contains(input)){
+	        		if(sg2.getLpn().getAllOutputs().keySet().contains(input)){
 	        			connected = true;
 	        			break;
 	        		}

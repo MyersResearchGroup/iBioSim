@@ -96,7 +96,8 @@ public class LPN {
             curTran.initialize(this, outputs);
         }
         
-        this.stateGraph = new StateGraph(this);
+        // TODO: Hack here, but no problem as LPN.java will go away.
+        this.stateGraph = null; //new StateGraph(this);
     }
     
     public LPN(Project prj, String label, VarSet inputs, VarSet outputs,
@@ -123,7 +124,8 @@ public class LPN {
             curTran.initialize(this, outputs);
         }
         
-        this.stateGraph = new StateGraph(this);
+        // TODO: Hack here, but no problem as LPN.java will go away.
+        this.stateGraph = null;  // new StateGraph(this);
     }
 
     @Override
@@ -186,11 +188,14 @@ public class LPN {
     		        			this.addOutputTran(lpnTran);
     		        			lpnTran.setLocalFlag(false);
     		        			for(StateGraph sg : designUnitSet){
+    		        				// TODO: broken but okay depracting this class
+    		        				/*
     		        				LPN dstLpn = sg.getLpn();
     	    	    				if(dstLpn == this) continue;
     	    	    				
     		    	    			dstLpn.addInputTran(lpnTran);
     		    	    			lpnTran.addDstLpn(dstLpn);  
+    		    	    			*/
     	    	    			}
     		        		}
     	    			}
@@ -204,11 +209,14 @@ public class LPN {
 	    	    			lpnTran.setLocalFlag(false);
 	    	    			
 	    	    			for(StateGraph sg : designUnitSet){
+		        				// TODO: broken but okay depracting this class
+	    	    				/*
 	    	    				LPN dstLpn = sg.getLpn();
 	    	    				if(dstLpn == this) continue;
 	    	    				
 		    	    			dstLpn.addInputTran(lpnTran);
 		    	    			lpnTran.addDstLpn(dstLpn);  
+		    	    			*/
 	    	    			}
 	    	    		}
 	    	    	}

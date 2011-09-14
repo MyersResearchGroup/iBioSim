@@ -475,6 +475,8 @@ public class LPNTran {
     		if(newState != null) 
         		nextStateArray[curIdx] = newState;
         	else {
+        		// TODO: may not need to be updated, but could change to use our var index map
+        		/*
         		State newOther = curStateArray[curIdx].update(vvSet, curSgArray[curIdx].getLpn().getVarIndexMap());
         		if (newOther == null)
         			nextStateArray[curIdx] = curStateArray[curIdx];
@@ -484,6 +486,7 @@ public class LPNTran {
             		nextStateArray[curIdx] = cachedOther;
             		curSgArray[curIdx].addStateTran(curStateArray[curIdx], this, cachedOther);
         		}
+        		*/
         	}
         }
         

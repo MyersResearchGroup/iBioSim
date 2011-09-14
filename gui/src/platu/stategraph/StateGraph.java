@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Stack;
+
+import lpn.parser.LhpnFile;
 import platu.common.IndexObjMap;
 import platu.logicAnalysis.Constraint;
 import platu.lpn.DualHashMap;
@@ -33,13 +35,13 @@ public class StateGraph {
     protected List<Constraint> newConstraintSet = new LinkedList<Constraint>();
     protected List<Constraint> frontierConstraintSet = new LinkedList<Constraint>();
     protected Set<Constraint> constraintSet = new HashSet<Constraint>();
-    protected LPN lpn;
+    protected LhpnFile lpn;
     
-    public LPN getLpn(){
+    public LhpnFile getLpn(){
     	return this.lpn;
     }
     
-    public StateGraph(LPN lpn) {
+    public StateGraph(LhpnFile lpn) {
     	this.lpn = lpn;
     	
         this.stateCache = new IndexObjMap<State>();
@@ -299,10 +301,11 @@ public class StateGraph {
     	graph.println("digraph SG{");
     	//graph.println("  fixedsize=true");
     	
-    	int size = this.lpn.getOutputs().size() + this.lpn.getInputs().size() + this.lpn.getInternals().size();
+    	int size = this.lpn.getAllOutputs().size() + this.lpn.getAllInputs().size() + this.lpn.getAllInternals().size();
     	String[] variables = new String[size];
     	
-    	DualHashMap<String, Integer> varIndexMap = this.lpn.getVarIndexMap();
+    	// TODO: Zhen create a variable index map 
+    	DualHashMap<String, Integer> varIndexMap = null; //this.lpn.getVarIndexMap();
     	
     	int i;
     	for(i = 0; i < size; i++){
@@ -394,6 +397,8 @@ public class StateGraph {
         }
     	
         LpnTranList curEnabled = new LpnTranList();
+        // TODO: change this to get transitions from the LPN, but compute the enabling in a function here in the StateGraph class
+        /*
         for (LPNTran tran : this.lpn.getTransitions()) {
         	if (tran.isEnabled(curState)) {
         		if(tran.local()==true)
@@ -402,6 +407,7 @@ public class StateGraph {
                 	curEnabled.addFirst(tran);
              } 
         }
+        */
         
         this.enabledSetTbl.put(curState, curEnabled);
         return curEnabled;
