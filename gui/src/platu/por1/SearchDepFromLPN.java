@@ -44,12 +44,14 @@ public class SearchDepFromLPN {
     
     public void setIndep(StateGraph[] lpnList)
     {
+    	// TODO: change to use our LPN transitions
     	int number = 0;
+    	/*
     	for(StateGraph sg : lpnList)
     		number = number + sg.getLpn().getTransitions().size();
-    	
+    	*/
     	LPNTran[] wholeSet = new LPNTran[number];
-    	
+    	/*
     	int i=0;
     	for(StateGraph sg : lpnList)
     	{
@@ -59,6 +61,7 @@ public class SearchDepFromLPN {
     			i++;
     		}
     	}
+    	*/
     	//System.out.println("wholeSet.size():"+wholeSet.length + " i : "+i);
     	
     	for(int t1=0;t1<wholeSet.length-1;t1++)

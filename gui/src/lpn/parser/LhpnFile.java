@@ -14,6 +14,8 @@ import verification.Verification;
 
 public class LhpnFile {
 
+	private String separator;
+
 	protected HashMap<String, Transition> transitions;
 
 	protected HashMap<String, Place> places;
@@ -29,8 +31,18 @@ public class LhpnFile {
 	protected ArrayList<String> properties;
 
 	protected Log log;
+	
+	protected String label;
+	
+	protected int index;
 
 	public LhpnFile(Log log) {
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		}
+		else {
+			separator = File.separator;
+		}
 		this.log = log;
 		transitions = new HashMap<String, Transition>();
 		places = new HashMap<String, Place>();
@@ -42,6 +54,12 @@ public class LhpnFile {
 	}
 
 	public LhpnFile() {
+		if (File.separator.equals("\\")) {
+			separator = "\\\\";
+		}
+		else {
+			separator = File.separator;
+		}
 		transitions = new HashMap<String, Transition>();
 		places = new HashMap<String, Place>();
 		booleans = new HashMap<String, Variable>();
@@ -422,7 +440,7 @@ public class LhpnFile {
 
 	public void load(String filename) {
 		StringBuffer data = new StringBuffer();
-
+		label = filename.split(separator)[filename.split(separator).length - 1].replace(".lpn","");
 		try {
 			BufferedReader in = new BufferedReader(new FileReader(filename));
 			String str;
@@ -847,6 +865,14 @@ public class LhpnFile {
 		return transitions.get(transition).getEnablingTree();
 	}
 
+	public String getLabel() {
+		return label;
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
 	public String[] getPlaceList() {
 		String[] placeList = new String[places.size()];
 		int i = 0;
@@ -965,11 +991,21 @@ public class LhpnFile {
 	public HashMap<String, String> getAllInputs() {
 		HashMap<String, String> inputs = new HashMap<String, String>();
 		for (Variable v : variables) {
-			if (!v.isOutput()) {
+			if (v.isInput()) {
 				inputs.put(v.getName(), v.getInitValue());
 			}
 		}
 		return inputs;
+	}
+	
+	public HashMap<String, String> getAllInternals() {
+		HashMap<String, String> internals = new HashMap<String, String>();
+		for (Variable v : variables) {
+			if (!v.isInput() && !v.isOutput()) {
+				internals.put(v.getName(), v.getInitValue());
+			}
+		}
+		return internals;
 	}
 
 	public HashMap<String, String> getAllOutputs() {
@@ -1244,6 +1280,14 @@ public class LhpnFile {
 				t.removeAssignment(name);
 			}
 		}
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
 	}
 
 	public boolean isTransition(String name) {

@@ -2,6 +2,8 @@ package platu.logicAnalysis;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import lpn.parser.LhpnFile;
 import platu.expression.VarNode;
 import platu.lpn.LPN;
 import platu.lpn.LPNTran;
@@ -61,9 +63,11 @@ public class CompositionalThread extends Thread{
 //		int index = sg.getInterfaceIndex(srcSG.getLabel());
 //		int[] thisIndexList = sg.getThisIndexArray(index);
 //		int[] otherIndexList = sg.getOtherIndexArray(index);
-		LPN srcLpn = srcSG.getLpn();
-		LPN lpn = sg.getLpn();
+		LhpnFile srcLpn = srcSG.getLpn();
+		LhpnFile lpn = sg.getLpn();
 		
+		// TODO: need to update for our LPN
+		/*
 		int[] thisIndexList = lpn.getThisIndexArray(srcLpn.ID);
 		int[] otherIndexList = lpn.getOtherIndexArray(srcLpn.ID);
 		
@@ -96,6 +100,7 @@ public class CompositionalThread extends Thread{
 				}
 			}
 		}
+		*/
 		
 		return newTransitions;
 	}
@@ -109,7 +114,9 @@ public class CompositionalThread extends Thread{
 		newConstraintSet.clear();
 		oldConstraintSet.clear();
 		
-		LPN srcLpn = srcSG.getLpn();
+		LhpnFile srcLpn = srcSG.getLpn();
+		// TODO: need to update for our LPN
+		/*
 		for(Constraint newConstraint : sg.getNewConstraintSet()){
 			if(newConstraint.getLpn() != srcLpn) continue;
 	    	
@@ -121,6 +128,7 @@ public class CompositionalThread extends Thread{
 			
 			oldConstraintSet.add(oldConstraint);
 		}
+		*/
 	}
 	
 	/**

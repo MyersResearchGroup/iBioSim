@@ -1,6 +1,8 @@
 package platu.TimingAnalysis;
 
 import java.util.*;
+
+import lpn.parser.LhpnFile;
 import platu.lpn.DualHashMap;
 import platu.lpn.LPN;
 import platu.lpn.LPNTran;
@@ -34,7 +36,9 @@ public class TimingAnalysis {
 		ArrayList<LinkedList<LPNTran>> enabledList = new ArrayList<LinkedList<LPNTran>>(
 				1);
 		for (int index = 0; index < ArraySize; index++) {
-			LPN curLpn = SgArray[index].getLpn();
+			LhpnFile curLpn = SgArray[index].getLpn();
+			// TODO: change to use our LPN
+			/*
 			initStateArray[index] = curLpn.getInitState();
 			int[] curStateVector = initStateArray[index].getVector();
 			HashSet<String> outVars = curLpn.getOutputs();
@@ -42,12 +46,14 @@ public class TimingAnalysis {
 			for (String var : outVars) {
 				varValMap.put(var, curStateVector[VarIndexMap.getValue(var)]);
 			}
+			*/
 		}
 
 		// Adjust the value of the input variables in LPN in the initial state.
 		for (int index = 0; index < ArraySize; index++) {
 			StateGraph curLpn = SgArray[index];
-			initStateArray[index].update(varValMap, curLpn.getLpn().getVarIndexMap());
+			// TODO: change to use our LPN
+			//initStateArray[index].update(varValMap, curLpn.getLpn().getVarIndexMap());
 			initStateArray[index] = curLpn.addState(initStateArray[index]);
 			enabledList.add(index, curLpn.getEnabled(initStateArray[index]));
 		}
