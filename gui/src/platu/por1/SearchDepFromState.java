@@ -144,7 +144,7 @@ public class SearchDepFromState {
 		LpnTranList allTran = new LpnTranList();
 		for(StateGraph sg : lpnList)
 		{
-			// TODO: change to use our LPN
+			// TODO: need to user our transitions.
 			/*
 			LpnTranList trans = sg.getLpn().getTransitions();
 			for(LPNTran tran: trans)

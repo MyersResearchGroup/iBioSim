@@ -309,12 +309,11 @@ public class Analysis {
 					initEnabled.add(tran);
 				}
 			}
-			// TODO: need to change LpnState to use our LPN
-			/*
+			// TODO: (Done) need to change LpnState to use our LPN
 		    LpnState curLpnState = new LpnState(lpnList[i].getLpn(), initStateArray[i], enabledSet);
 			lpnStateCache[i].add(curLpnState);
 			initLpnStateArray[i] = curLpnState;
-			*/
+			
 		}
 		LpnTranList[] initEnabledSet = new LpnTranList[2];
 		initEnabledSet[0] = initFireFirst;
@@ -449,12 +448,11 @@ public class Analysis {
 				for(LPNTran tran : extendedNextEnabledArray[i]) {
 					lpnEnabledSet.add(tran);
 				}
-				// TODO: need to change LpnState to use our LPN
-				/*
+				// TODO: (Done) need to change LpnState to use our LPN
 				LpnState tmp = new LpnState(lpnList[i].getLpn(), nextStateArray[i], lpnEnabledSet);
 				LpnState tmpCached = (LpnState)(lpnStateCache[i].add(tmp));
 				nextLpnStateArray[i] = tmpCached; 
-				*/
+				
 			}
 			
 			boolean newState = globalStateTbl.add(new PrjLpnState(nextLpnStateArray));

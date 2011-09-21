@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+
+import lpn.parser.LhpnFile;
 import platu.expression.VarNode;
 
 final public class LpnTranList extends LinkedList<LPNTran> {
@@ -38,12 +40,12 @@ final public class LpnTranList extends LinkedList<LPNTran> {
     }
 
     /**
-     * @param lpn the lpn to set
+     * @param lpn2 the lpn to set
      */
-    public void setLPN(LPN lpn) {
-        this.lpn = lpn;
+    public void setLPN(LPN lpn2) {
+        this.lpn = lpn2;
         for (LPNTran t : this) {
-            t.setLpn(lpn);
+            t.setLpn(lpn2);
         }
     }
 
