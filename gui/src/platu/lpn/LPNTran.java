@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+
+import lpn.parser.LhpnFile;
 import platu.TimingAnalysis.Zone1;
 
 public class LPNTran {
@@ -430,6 +432,7 @@ public class LPNTran {
      * @param curLpnIndex
      * @return
      */
+    // TODO: (?) Move fire to StateGraph
     public State[] fire(final StateGraph[] curSgArray, final int[] curStateIdxArray) {
     	State[] stateArray = new State[curSgArray.length];
     	for(int i = 0; i < curSgArray.length; i++)
@@ -437,7 +440,8 @@ public class LPNTran {
 
     	return this.fire(curSgArray, stateArray);
     }
-
+    
+ // TODO: (?) Move fire to StateGraph
     public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray) {
     	int thisLpnIndex = this.getLpn().getIndex(); 
     	State[] nextStateArray = curStateArray.clone();
@@ -493,8 +497,9 @@ public class LPNTran {
         return nextStateArray;
     }
     
+    // TODO: (?) Move fire to StateGraph    
     public State fire(final StateGraph thisSg, final State curState) {  		
-    	/* Search for and return cached next state first. */
+    	// Search for and return cached next state first. 
 //    	if(this.nextStateMap.containsKey(curState) == true)
 //    		return (State)this.nextStateMap.get(curState);
     	
@@ -502,7 +507,7 @@ public class LPNTran {
     	if(nextState != null)
     		return nextState;
     	
-    	/* If no cached next state exists, do regular firing. */
+    	// If no cached next state exists, do regular firing. 
     	// Marking update
         int[] curOldMarking = curState.getMarking();
         int[] curNewMarking = null;
@@ -539,7 +544,8 @@ public class LPNTran {
             newVectorArray[s.getVar().getIndex(curVector)] = newValue;
         }
         
-        State newState = thisSg.addState(new State(this.lpn, curNewMarking, newVectorArray));
+        //TODO: Commented out the old code.
+        State newState = null; //= thisSg.addState(new State(this.lpn, curNewMarking, newVectorArray));
         
         int[] newVector = newState.getVector();
 		for(Expression e : assertions){
@@ -552,6 +558,7 @@ public class LPNTran {
 		thisSg.addStateTran(curState, this, newState);
 		return newState;
     }
+	
     
     public List<LPN> getDstLpnList(){
     	return this.dstLpnList;
@@ -561,6 +568,7 @@ public class LPNTran {
     	this.dstLpnList.add(lpn);
     }
     
+    // TODO: (?) Move constrFire to StateGraph  
     public State constrFire(final State curState) {
     	// Marking update
         int[] curOldMarking = curState.getMarking();
@@ -607,7 +615,8 @@ public class LPNTran {
             newVectorArray[s.getVar().getIndex(curVector)] = newValue;
         }
         
-        State newState = new State(this.lpn, curNewMarking, newVectorArray);
+        //TODO: Commented out the old code.
+        State newState = null; //= new State(this.lpn, curNewMarking, newVectorArray);
         
         int[] newVector = newState.getVector();
 		for(Expression e : assertions){
@@ -619,7 +628,7 @@ public class LPNTran {
 		
 		return newState;
     }
-    
+        
     /**
      * CHeck if enabling of 'other' depends on 'this'.
      * @param other

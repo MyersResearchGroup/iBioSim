@@ -230,7 +230,8 @@ public class LPN {
     
     public LPN instantiate(String label){
     	LPN newLpn = this.clone();
-    	int[] currentVector = newLpn.getInitState().getVector();
+    	// TODO: (Done) Moved getInitState() to StateGraph and changed to use our LPN. 
+    	int[] currentVector = null;//newLpn.getInitState().getVector();
     	newLpn.setLabel(label);
 //    	StateGraph sg = (StateGraph) newLpn;
 //    	sg.setLabel(label);
@@ -335,7 +336,8 @@ public class LPN {
     }
     
     public void connect(String outputVar, LPN dstLpn, String inputVar){
-    	int[] initVector = this.getInitState().getVector();
+    	// TODO: (Done) Moved getInitState() to StateGraph and changed to use our LPN.
+    	int[] initVector = null; // this.getInitState().getVector();
     	
     	// change outputVar to an output if not already
     		// move to output list
@@ -705,6 +707,8 @@ public class LPN {
     /**
     @return the InitState
      */
+    // TODO: (Done) Moved getInitState() to StateGraph, and changed to use our LPN.
+    /*
     public State getInitState() {	
     	// create initial vector
 		int size = this.varIndexMap.size();
@@ -717,7 +721,7 @@ public class LPN {
     	
 		return new State(this, this.initMark, initialVector);
     }
-    
+    */
     public HashMap<String, Integer> getInitVector(){
     	return this.initVector;
     }

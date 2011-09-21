@@ -83,27 +83,26 @@ public class Project {
 		
 		for (int index = 0; index < lpnCnt; index++) {
 			LhpnFile curLpn = sgArray[index].getLpn();
-			// TODO: need to change this to use our LPN 
-			/*
-			initStateArray[index] = curLpn.getInitState();
+			StateGraph curSg = sgArray[index];
+			// TODO: (Done) get InitState should be created in StateGraph, not in LhpnFile.
+			initStateArray[index] = curSg.getInitState(); //curLpn.getInitState();
 			int[] curStateVector = initStateArray[index].getVector();
-			HashSet<String> outVars = curLpn.getOutputs();
+			HashMap<String, String> outVars = curLpn.getAllOutputs();
 			DualHashMap<String, Integer> VarIndexMap = curLpn.getVarIndexMap();
-			for(String var : outVars) {
+			for(String var : outVars.keySet()) {
 				varValMap.put(var, curStateVector[VarIndexMap.getValue(var)]);
 			}
-			*/
+			
 		}
 
 		// Adjust the value of the input variables in LPN in the initial state.
 		// Add the initial states into their respective LPN.
 		for (int index = 0; index < lpnCnt; index++) {
-			// TODO: need to change this to use our LPN 
-			/*
+			// TODO: (Done) need to change this to use our LPN 
 			StateGraph curLpn = sgArray[index];
 			initStateArray[index].update(varValMap, curLpn.getLpn().getVarIndexMap());
 			initStateArray[index] = curLpn.addState(initStateArray[index]);
-			*/
+			
 		}		
 		
 
