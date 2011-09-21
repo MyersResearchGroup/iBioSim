@@ -2397,13 +2397,12 @@ public class CompositionalAnalysis {
 			LhpnFile lpn = sg.getLpn();
 			
             // Add initial state to state graph
-			// TODO: need to change to use our LPN
-			/*
-			State init = lpn.getInitState();
+			// TODO: (Done) now getInitState() is in StateGraph (before it was in LPN)
+			State init = sg.getInitState();
 			sg.setInitialState(init);
 			sg.addState(init);
 			sg.addFrontierState(init);
-            */
+
 			
 			VarSet inputSet = (VarSet) lpn.getAllInputs().keySet();
 			VarSet outputSet = (VarSet) lpn.getAllOutputs().keySet();
@@ -2604,13 +2603,11 @@ public class CompositionalAnalysis {
 			LhpnFile lpn = sg.getLpn();
 			
             // Add initial state to state graph
-			// TODO: need to use our LPN 
-			/*
-			State init = lpn.getInitState();
+			// TODO: (Done) need to use our LPN 
+			State init = sg.getInitState();
 			sg.setInitialState(init);
 			sg.addState(init);
 			sg.addFrontierState(init);
-            */
 			
 			VarSet inputSet = (VarSet) lpn.getAllInputs().keySet();
 			VarSet outputSet = (VarSet) lpn.getAllOutputs().keySet();
@@ -2676,7 +2673,7 @@ public class CompositionalAnalysis {
 						
 						int[] thisIndexList = new int[interfaceSize];
 						int[] otherIndexList = new int[interfaceSize];
-						// TODO: update for our LPN
+						// TODO: need to add getThisIndexArray in LhpnFile
 						/*
 						lpn.genIndexLists(thisIndexList, otherIndexList, lpn2);
 						
@@ -2688,7 +2685,7 @@ public class CompositionalAnalysis {
 					}
 				}
 			}
-			// TODO: update for our LPN
+			// TODO: need to add getThisIndexArray in LhpnFile.
 			/*
 			lpn.setThisIndexList(thisInterfaceList);
 			lpn.setOtherIndexList(otherInterfaceList);
@@ -2790,7 +2787,7 @@ public class CompositionalAnalysis {
 
 		LhpnFile srcLpn = srcSG.getLpn();
 		LhpnFile lpn = sg.getLpn();
-		// TODO: update for our LPN
+		// TODO: need to add getThisIndexArray in LhpnFile.
 		/*
 		int[] thisIndexList = lpn.getThisIndexArray(srcLpn.ID - 1);
 		int[] otherIndexList = lpn.getOtherIndexArray(srcLpn.ID - 1);
@@ -2836,7 +2833,7 @@ public class CompositionalAnalysis {
 		oldConstraintSet.clear();
 		
 		LhpnFile srcLpn = srcSG.getLpn();
-		// TODO: update for our LPN
+		// TODO: (?) Constraint?
 		/*
 		for(Constraint newConstraint : sg.getNewConstraintSet()){
 			if(newConstraint.getLpn() != srcLpn) continue;

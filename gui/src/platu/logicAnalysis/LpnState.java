@@ -3,6 +3,8 @@ package platu.logicAnalysis;
 
 import java.util.*;
 
+import lpn.parser.LhpnFile;
+
 import platu.common.PlatuObj;
 import platu.lpn.LPN;
 import platu.lpn.LPNTran;
@@ -14,7 +16,7 @@ import platu.stategraph.*;
  */
 public class LpnState extends PlatuObj {
     
-    private LPN lpn;
+    private LhpnFile lpn;
     private State state;
     private HashSet<LPNTran> enabledSet;
     int index;
@@ -28,17 +30,17 @@ public class LpnState extends PlatuObj {
         this.index = -1;
     }
 
-    public LpnState(final LPN newLpn, final State newState, final HashSet<LPNTran> newEnabledSet) {
-    	this.lpn = newLpn;
+    public LpnState(final LhpnFile lhpnFile, final State newState, final HashSet<LPNTran> newEnabledSet) {
+    	this.lpn = lhpnFile;
     	this.state = newState;
     	this.enabledSet = newEnabledSet;
     }
     
-    public void setLpn(final LPN thisLpn) {
+    public void setLpn(final LhpnFile thisLpn) {
     	this.lpn = thisLpn;
     }
     
-    public LPN getLpn() {
+    public LhpnFile getLpn() {
     	return this.lpn;
     }
     

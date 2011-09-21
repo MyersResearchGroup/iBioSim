@@ -13,11 +13,14 @@ import java.util.Stack;
 
 import lpn.parser.LhpnFile;
 import platu.common.IndexObjMap;
+import platu.expression.Expression;
+import platu.expression.VarNode;
 import platu.logicAnalysis.Constraint;
 import platu.lpn.DualHashMap;
 import platu.lpn.LPN;
 import platu.lpn.LPNTran;
 import platu.lpn.LpnTranList;
+import platu.lpn.VarExpr;
 import platu.main.Main;
 import platu.main.Options;
 
@@ -304,8 +307,8 @@ public class StateGraph {
     	int size = this.lpn.getAllOutputs().size() + this.lpn.getAllInputs().size() + this.lpn.getAllInternals().size();
     	String[] variables = new String[size];
     	
-    	// TODO: Zhen create a variable index map 
-    	DualHashMap<String, Integer> varIndexMap = null; //this.lpn.getVarIndexMap();
+    	// TODO: (Done) Create a variable index map 
+    	DualHashMap<String, Integer> varIndexMap = this.lpn.getVarIndexMap(); 
     	
     	int i;
     	for(i = 0; i < size; i++){
@@ -397,7 +400,10 @@ public class StateGraph {
         }
     	
         LpnTranList curEnabled = new LpnTranList();
-        // TODO: change this to get transitions from the LPN, but compute the enabling in a function here in the StateGraph class
+        // TODO: (!) Change this to get transitions from the LPN, but compute the enabling in a function here in the StateGraph class
+        for (String tran: this.lpn.getTransitionList()) {
+        	
+        }
         /*
         for (LPNTran tran : this.lpn.getTransitions()) {
         	if (tran.isEnabled(curState)) {
@@ -412,7 +418,41 @@ public class StateGraph {
         this.enabledSetTbl.put(curState, curEnabled);
         return curEnabled;
     }
+    
+    // TODO: (!) Change isEnabled to work with our transitions.
+    /*
+    final public boolean isEnabled(final State curState) {
+        if (curState == null) {
+            throw new NullPointerException();
+        }
 
+		if (this.preSet != null && this.preSet.length > 0) {
+			for (int pp : this.preSet) {
+				int[] curMarking = curState.getMarking();
+				boolean included = false;
+				
+				for (int i = 0; i < curMarking.length; i++) {
+					if (curMarking[i] == pp) {
+						included = true;
+						break;
+					}
+				}
+				
+				if (included == false)
+					return false;
+            }
+		}
+        
+        int[] curVector = curState.getVector();
+        if (curVector.length > 0) {
+            if(getEnablingGuard().evaluate(curVector) == 0)
+                return false;
+        }
+
+        return true;
+    }
+	*/
+	
     public int reachSize() {
     	if(this.stateCache == null){
     		return this.stateSet.size();
@@ -420,6 +460,7 @@ public class StateGraph {
     	
 		return this.stateCache.size();
     }
+    
 
     /*
      * Add the module state mState into the local cache, and also add its local portion into
@@ -500,4 +541,210 @@ public class StateGraph {
     	this.entryStateSet = null;
     	this.stateCache = null;
     }
+    
+    public State getInitState() {	
+    	// create initial vector
+		int size = this.lpn.getVarIndexMap().size();
+    	int[] initialVector = new int[size];
+    	for(int i = 0; i < size; i++) {
+    		String var = this.lpn.getVarIndexMap().getKey(i);
+    		// TODO: (?) Should we convert all boolean, continuous and integer values to int? 
+    		int val = this.lpn.getInitVector(var);// this.initVector.get(var);
+    		initialVector[i] = val;
+    	}
+		return new State(this.lpn, this.lpn.getInitalMarkingsArray(), initialVector);
+    }
+    
+    /**
+     * Fire a transition on a state array, find new local states, and return the new state array formed by the new local states.
+     * @param curLpnArray
+     * @param curStateArray
+     * @param curLpnIndex
+     * @return
+     */
+    /*
+    public State[] fire(final StateGraph[] curSgArray, final int[] curStateIdxArray) {
+    	State[] stateArray = new State[curSgArray.length];
+    	for(int i = 0; i < curSgArray.length; i++)
+    		stateArray[i] = curSgArray[i].getState(curStateIdxArray[i]);
+
+    	return this.fire(curSgArray, stateArray);
+    }
+
+    public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray) {
+    	int thisLpnIndex = this.getLpn().getIndex(); 
+    	State[] nextStateArray = curStateArray.clone();
+    	
+    	State curState = curStateArray[thisLpnIndex];
+    	State nextState = this.fire(curSgArray[thisLpnIndex], curState);   
+    	
+    	int[] nextVector = nextState.getVector();
+    	int[] curVector = curState.getVector();
+    	
+        for(Expression e : assertions){
+        	if(e.evaluate(nextVector) == 0){
+        		System.err.println("Assertion " + e.toString() + " failed in LPN transition " + this.lpn.getLabel() + ":" + this.label);
+        		System.exit(1);
+			}
+		}
+
+        if(this.local()==true) {
+    		nextStateArray[thisLpnIndex] = curSgArray[thisLpnIndex].addState(nextState);
+        	return nextStateArray;
+		}
+
+        HashMap<String, Integer> vvSet = new HashMap<String, Integer>();
+        for (VarExpr s : this.getAssignments()) {
+            int newValue = nextVector[s.getVar().getIndex(curVector)];
+            vvSet.put(s.getVar().getName(), newValue);   
+        }
+        
+        
+        // Update other local states with the new values generated for the shared variables.
+		nextStateArray[this.lpn.getIndex()] = nextState;
+        for(LPN curLpn : this.dstLpnList) {
+        	int curIdx = curLpn.getIndex();
+    		State newState = curSgArray[curIdx].getNextState(curStateArray[curIdx], this);
+    		if(newState != null) 
+        		nextStateArray[curIdx] = newState;
+        	else {
+        		// TODO: may not need to be updated, but could change to use our var index map
+        		
+        		State newOther = curStateArray[curIdx].update(vvSet, curSgArray[curIdx].getLpn().getVarIndexMap());
+        		if (newOther == null)
+        			nextStateArray[curIdx] = curStateArray[curIdx];
+        		else {
+        			State cachedOther = curSgArray[curIdx].addState(newOther);
+					//nextStateArray[curIdx] = newOther;
+            		nextStateArray[curIdx] = cachedOther;
+            		curSgArray[curIdx].addStateTran(curStateArray[curIdx], this, cachedOther);
+        		}
+        		
+        	}
+        }
+        
+        return nextStateArray;
+    }
+    
+    
+    public State fire(final StateGraph thisSg, final State curState) {  		
+    	// Search for and return cached next state first. 
+//    	if(this.nextStateMap.containsKey(curState) == true)
+//    		return (State)this.nextStateMap.get(curState);
+    	
+    	State nextState = thisSg.getNextState(curState, this);
+    	if(nextState != null)
+    		return nextState;
+    	
+    	// If no cached next state exists, do regular firing. 
+    	// Marking update
+        int[] curOldMarking = curState.getMarking();
+        int[] curNewMarking = null;
+        if(preSet.length==0 && postSet.length==0)
+        	curNewMarking = curOldMarking;
+		else {
+			curNewMarking = new int[curOldMarking.length - preSet.length + postSet.length];
+			int index = 0;
+			for (int i : curOldMarking) {
+				boolean existed = false;
+				for (int prep : preSet) {
+					if (i == prep) {
+						existed = true;
+						break;
+					}
+				}
+				if (existed == false) {
+					curNewMarking[index] = i;
+					index++;
+				}
+			}
+			for (int postp : postSet) {
+				curNewMarking[index] = postp;
+				index++;
+			}
+        }
+
+        //  State vector update
+        int[] newVectorArray = curState.getVector().clone();
+        int[] curVector = curState.getVector();
+        
+        for (VarExpr s : getAssignments()) {
+            int newValue = (int) s.getExpr().evaluate(curVector);
+            newVectorArray[s.getVar().getIndex(curVector)] = newValue;
+        }
+        
+        State newState = thisSg.addState(new State(this.lpn, curNewMarking, newVectorArray));
+        
+        int[] newVector = newState.getVector();
+		for(Expression e : assertions){
+        	if(e.evaluate(newVector) == 0){
+        		System.err.println("Assertion " + e.toString() + " failed in LPN transition " + this.lpn.getLabel() + ":" + this.label);
+        		System.exit(1);
+        	}
+        }
+		
+		thisSg.addStateTran(curState, this, newState);
+		return newState;
+    }
+    
+    public State constrFire(final State curState) {
+    	// Marking update
+        int[] curOldMarking = curState.getMarking();
+        int[] curNewMarking = null;
+        if(this.preSet.length==0 && this.postSet.length==0){
+        	curNewMarking = curOldMarking;
+        }
+		else {
+			curNewMarking = new int[curOldMarking.length - this.preSet.length + this.postSet.length];
+			int index = 0;			
+			for (int i : curOldMarking) {
+				boolean existed = false;
+				for (int prep : this.preSet) {
+					if (i == prep) {
+						existed = true;
+						break;
+					}
+					else if(prep > i){
+						break;
+					}
+				}
+				
+				if (existed == false) {
+					curNewMarking[index] = i;
+					index++;
+				}
+			}
+			
+			for (int postp : postSet) {
+				curNewMarking[index] = postp;
+				index++;
+			}
+        }
+
+        //  State vector update
+        int[] oldVector = curState.getVector();
+        int size = oldVector.length;
+        int[] newVectorArray = new int[size];
+        System.arraycopy(oldVector, 0, newVectorArray, 0, size);
+        
+        int[] curVector = curState.getVector();
+        for (VarExpr s : getAssignments()) {
+            int newValue = s.getExpr().evaluate(curVector);
+            newVectorArray[s.getVar().getIndex(curVector)] = newValue;
+        }
+        
+        State newState = new State(this.lpn, curNewMarking, newVectorArray);
+        
+        int[] newVector = newState.getVector();
+		for(Expression e : assertions){
+        	if(e.evaluate(newVector) == 0){
+        		System.err.println("Assertion " + e.toString() + " failed in LPN transition " + this.lpn.getLabel() + ":" + this.label);
+        		System.exit(1);
+        	}
+        }
+		
+		return newState;
+    }
+    */
+    
 }
