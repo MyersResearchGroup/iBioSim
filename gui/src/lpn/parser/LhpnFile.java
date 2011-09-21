@@ -7,6 +7,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import platu.lpn.DualHashMap;
+
 import main.Log;
 
 import verification.Verification;
@@ -35,6 +37,11 @@ public class LhpnFile {
 	protected String label;
 	
 	protected int index;
+
+	public static int nextID = 1;
+	
+	public int ID = nextID++;
+	
 
 	public LhpnFile(Log log) {
 		if (File.separator.equals("\\")) {
@@ -799,6 +806,15 @@ public class LhpnFile {
 		}
 		return transitionList;
 	}
+	
+	public ArrayList<String> getTransitionListArrayList() {
+		ArrayList<String> transitionList = new ArrayList<String>(transitions.size());
+		int i = 0;
+		for (String t: transitions.keySet()) {
+			transitionList.add(i++, t);
+		}
+		return transitionList;
+	}
 
 	public Transition getTransition(String transition) {
 		return transitions.get(transition);
@@ -881,6 +897,15 @@ public class LhpnFile {
 		}
 		return placeList;
 	}
+	
+	public ArrayList<String> getPlaceListArrayList() {
+		ArrayList<String> placeList = new ArrayList<String>(places.size());
+		int i = 0;
+		for (String t: places.keySet()) {
+			placeList.add(i++, t);
+		}
+		return placeList;
+	}
 
 	public Place getPlace(String place) {
 		return places.get(place);
@@ -948,6 +973,20 @@ public class LhpnFile {
 		return places.get(place).isMarked();
 	}
 
+	public int[] getInitalMarkingsArray() {
+		int[] initialMarkings = new int[this.getPlaceList().length];
+		int i = 0;
+		for (String place : this.getPlaceList()) {
+			if(places.get(place).isMarked()) {
+				initialMarkings[i] = 1;
+			}
+			else {
+				initialMarkings[i] = 0;
+			}
+		}
+		return initialMarkings;
+	}
+	
 	public String[] getVariables() {
 		String[] vars = new String[variables.size()];
 		int i = 0;
@@ -955,6 +994,16 @@ public class LhpnFile {
 			vars[i++] = v.getName();
 		}
 		return vars;
+	}
+	
+	public DualHashMap<String, Integer> getVarIndexMap() {
+		DualHashMap<String, Integer> varIndexMap = new DualHashMap<String, Integer>(variables.size());
+		int i = 0;
+		for (Variable v: variables) {
+			varIndexMap.put(v.getName(), i);
+			i++;
+		}
+		return varIndexMap;
 	}
 
 	public Variable getVariable(String name) {
@@ -1131,6 +1180,22 @@ public class LhpnFile {
 			return continuous.get(var).getInitRate();
 		} else
 			return null;
+	}
+	
+	// This method converts all variable values (boolean, continuous and integer) to int.
+	public int getInitVector(String var) {
+		if (isBoolean(var)) {
+			if(booleans.get(var).getInitValue().equals("true"))
+				return 1;
+			else 
+				return 0;
+		}
+		else if (isInteger(var)) {
+			return Integer.parseInt(integers.get(var).getInitValue());
+		}
+		else {
+			return (int) Double.parseDouble(continuous.get(var).getInitValue());
+		}
 	}
 
 	public String getBoolAssign(String transition, String variable) {
