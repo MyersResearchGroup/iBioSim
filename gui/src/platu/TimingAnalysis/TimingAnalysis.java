@@ -37,23 +37,22 @@ public class TimingAnalysis {
 				1);
 		for (int index = 0; index < ArraySize; index++) {
 			LhpnFile curLpn = SgArray[index].getLpn();
-			// TODO: change to use our LPN
-			/*
-			initStateArray[index] = curLpn.getInitState();
+			StateGraph curSg = SgArray[index];
+			// TODO: (Check) check if curSg is correct
+			initStateArray[index] = curSg.getInitState();
 			int[] curStateVector = initStateArray[index].getVector();
-			HashSet<String> outVars = curLpn.getOutputs();
+			HashSet<String> outVars = (HashSet<String>) curLpn.getAllOutputs().keySet();
 			DualHashMap<String, Integer> VarIndexMap = curLpn.getVarIndexMap();
 			for (String var : outVars) {
 				varValMap.put(var, curStateVector[VarIndexMap.getValue(var)]);
 			}
-			*/
+		
 		}
-
 		// Adjust the value of the input variables in LPN in the initial state.
 		for (int index = 0; index < ArraySize; index++) {
 			StateGraph curLpn = SgArray[index];
-			// TODO: change to use our LPN
-			//initStateArray[index].update(varValMap, curLpn.getLpn().getVarIndexMap());
+			// TODO: (Done) change to use our LPN
+			initStateArray[index].update(varValMap, curLpn.getLpn().getVarIndexMap());
 			initStateArray[index] = curLpn.addState(initStateArray[index]);
 			enabledList.add(index, curLpn.getEnabled(initStateArray[index]));
 		}

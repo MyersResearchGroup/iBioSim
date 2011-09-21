@@ -3,6 +3,8 @@ package platu.stategraph;
 import java.io.*;
 import java.util.*;
 
+import lpn.parser.LhpnFile;
+
 import platu.common.PlatuObj;
 import platu.lpn.DualHashMap;
 import platu.lpn.LPN;
@@ -19,7 +21,8 @@ public class State extends PlatuObj {
     protected int[] marking;
     protected int[] vector;
     private int hashVal = 0;
-    private LPN lpnModel = null;
+    // TODO: (Done) Changed to our LPN.
+    private LhpnFile lpnModel = null;
     private int index;
     private boolean localEnabledOnly;
     protected boolean failure = false;
@@ -32,8 +35,9 @@ public class State extends PlatuObj {
     	return this.print();
     }
 
-    public State(final LPN thisLpn, int[] new_marking, int[] new_vector) {
-    	this.lpnModel = thisLpn;
+    // TODO: (Done) need to change to use our LPN
+    public State(final LhpnFile lpn, int[] new_marking, int[] new_vector) {
+    	this.lpnModel = lpn;
         this.marking = new_marking;
         this.vector = new_vector;
 
@@ -96,11 +100,11 @@ public class State extends PlatuObj {
         counts[0]++;
     }
     
-    public void setLpn(final LPN thisLpn) {
+    public void setLpn(final LhpnFile thisLpn) {
     	this.lpnModel = thisLpn;
     }
     
-    public LPN getLpn() {
+    public LhpnFile getLpn() {
     	return this.lpnModel;
     }
     
@@ -244,8 +248,11 @@ public class State extends PlatuObj {
     }
 
     public State getLocalState() {
-    	VarSet lpnOutputs = this.lpnModel.getOutputs();
-    	VarSet lpnInternals = this.lpnModel.getInternals();
+    	// TODO: (Done) Changed VarSet to HashSet<String>
+    	//VarSet lpnOutputs = this.lpnModel.getOutputs();
+    	//VarSet lpnInternals = this.lpnModel.getInternals();
+    	Set<String> lpnOutputs = this.lpnModel.getAllOutputs().keySet();
+    	Set<String> lpnInternals = this.lpnModel.getAllInternals().keySet();
     	DualHashMap<String,Integer> varIndexMap = this.lpnModel.getVarIndexMap();
     	
     	int[] outVec = new int[this.vector.length];

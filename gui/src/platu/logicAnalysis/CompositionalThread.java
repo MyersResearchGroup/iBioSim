@@ -66,7 +66,7 @@ public class CompositionalThread extends Thread{
 		LhpnFile srcLpn = srcSG.getLpn();
 		LhpnFile lpn = sg.getLpn();
 		
-		// TODO: need to update for our LPN
+		// TODO: need to add getThisIndexArray in LhpnFile. ID has been added.
 		/*
 		int[] thisIndexList = lpn.getThisIndexArray(srcLpn.ID);
 		int[] otherIndexList = lpn.getOtherIndexArray(srcLpn.ID);
@@ -101,7 +101,6 @@ public class CompositionalThread extends Thread{
 			}
 		}
 		*/
-		
 		return newTransitions;
 	}
 	
@@ -115,7 +114,7 @@ public class CompositionalThread extends Thread{
 		oldConstraintSet.clear();
 		
 		LhpnFile srcLpn = srcSG.getLpn();
-		// TODO: need to update for our LPN
+		// TODO: (?) need to update for our LPN
 		/*
 		for(Constraint newConstraint : sg.getNewConstraintSet()){
 			if(newConstraint.getLpn() != srcLpn) continue;
