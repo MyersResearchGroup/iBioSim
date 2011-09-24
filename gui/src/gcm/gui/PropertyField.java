@@ -3,6 +3,8 @@ package gcm.gui;
 import gcm.parser.CompatibilityFixer;
 import gcm.util.Utility;
 
+import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,7 +15,10 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.text.JTextComponent;
 
 import main.Gui;
 
@@ -21,13 +26,18 @@ import main.Gui;
 public class PropertyField extends JPanel implements ActionListener,
 		PropertyProvider {
 
+	private static final long serialVersionUID = 1L;
+
 	public PropertyField(String name, String value, String state,
-			String defaultValue, String repExp, boolean paramsOnly, String origString) {
+			String defaultValue, String repExp, boolean paramsOnly, String origString, boolean textArea) {
 		super(new GridLayout(1, 3));
+		this.textArea = textArea;
 		paramStates = new String[] { origString, "modified" };
 		this.paramsOnly = paramsOnly;
-		if (state == null) {
+		if (state == null && !textArea) {
 			setLayout(new GridLayout(1, 2));
+		} else if (textArea) {
+			setLayout(new BorderLayout());
 		}
 		this.defaultValue = defaultValue;
 		init(name, value, state);
@@ -36,7 +46,7 @@ public class PropertyField extends JPanel implements ActionListener,
 
 	public PropertyField(String name, String value, String state,
 			String defaultValue) {
-		this(name, value, state, defaultValue, null, false, "default");
+		this(name, value, state, defaultValue, null, false, "default", false);
 	}
 	
 	public String[] getStates() {
@@ -84,7 +94,11 @@ public class PropertyField extends JPanel implements ActionListener,
 		name = new JLabel(nameString);
 		name.setName(nameString);
 		name.setText(nameString);
-		this.add(name);
+		if (textArea) {
+			this.add(name,"North");
+		} else {
+			this.add(name);
+		}
 		if (!(valueString == null) && !(stateString == null)) {
 			name.setText(CompatibilityFixer.getGuiName(nameString) + " (" + nameString + ") ");
 //			idLabel = new JLabel("ID");
@@ -94,7 +108,17 @@ public class PropertyField extends JPanel implements ActionListener,
 //			idField.setEditable(false);
 //			this.add(idField);
 		}
-		field = new JTextField(20);
+		if (textArea) {
+			field = new JTextArea(3,20);
+			((JTextArea) field).setLineWrap(true);
+			((JTextArea) field).setWrapStyleWord(true);
+			scroll = new JScrollPane();
+			scroll.setMinimumSize(new Dimension(100, 100));
+			scroll.setPreferredSize(new Dimension(100, 100));
+			scroll.setViewportView(field);
+		} else {
+			field = new JTextField(20);
+		}
 		field.setText(valueString);
 		if (stateString != null) {
 			if (paramsOnly) {
@@ -120,8 +144,14 @@ public class PropertyField extends JPanel implements ActionListener,
 				}
 			}
 		}
-		field.addActionListener(this);
-		this.add(field);
+		if (!textArea) {
+			((JTextField)field).addActionListener(this);
+		}
+		if (textArea) {
+			this.add(scroll,"Center");
+		} else {
+			this.add(field);
+		}
 		if (paramsOnly && box != null) {
 			sweep = new JButton("Sweep");
 			sweep.addActionListener(this);
@@ -133,7 +163,6 @@ public class PropertyField extends JPanel implements ActionListener,
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		// TODO: Need to check source
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 			if (paramsOnly) {
 				if (box.getSelectedItem().equals(paramStates[0]) || box.getSelectedItem().equals(states[0])) {
@@ -317,13 +346,11 @@ public class PropertyField extends JPanel implements ActionListener,
 
 	private JLabel name = null;
 
-	private JLabel idLabel = null;
-
 	private JComboBox box = null;
 
-	private JTextField field = null;
-
-	private JTextField idField = null;
+	private JTextComponent field = null;
+	
+	private JScrollPane scroll = null;
 	
 	private JButton sweep = null;
 
@@ -336,4 +363,6 @@ public class PropertyField extends JPanel implements ActionListener,
 	private String defaultValue = null;
 	
 	private boolean paramsOnly;
+	
+	private boolean textArea;
 }

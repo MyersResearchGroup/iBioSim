@@ -121,14 +121,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		
 		// ID field
 		field = new PropertyField(GlobalConstants.ID, "", null, null, Utility.IDstring,
-				paramsOnly, "default");
+				paramsOnly, "default", false);
 		fields.put(GlobalConstants.ID, field);
 		
 		if (!paramsOnly) grid.add(field);
 			
 		// Name field
 		field = new PropertyField(GlobalConstants.NAME, "", null, null, Utility.NAMEstring,
-				paramsOnly, "default");
+				paramsOnly, "default", false);
 		fields.put(GlobalConstants.NAME, field);
 		
 		if (!paramsOnly) grid.add(field);		
@@ -333,14 +333,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			field = new PropertyField(GlobalConstants.INITIAL_STRING, 
 					gcm.getParameter(GlobalConstants.INITIAL_STRING), origString, defaultValue,
-					Utility.SWEEPstring + "|" + Utility.CONCstring, paramsOnly, origString);
+					Utility.SWEEPstring + "|" + Utility.CONCstring, paramsOnly, origString, false);
 		}
 		else {
 			
 			field = new PropertyField(GlobalConstants.INITIAL_STRING, 
 					gcm.getParameter(GlobalConstants.INITIAL_STRING), origString, 
 					gcm.getParameter(GlobalConstants.INITIAL_STRING), Utility.NUMstring + "|" + Utility.CONCstring, paramsOnly,
-					origString);
+					origString, false);
 		}
 		
 		fields.put(GlobalConstants.INITIAL_STRING, field);
@@ -366,14 +366,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			field = new PropertyField(GlobalConstants.KDECAY_STRING, gcm
 					.getParameter(GlobalConstants.KDECAY_STRING), origString, defaultValue,
-					Utility.SWEEPstring, paramsOnly, origString);
+					Utility.SWEEPstring, paramsOnly, origString, false);
 		}
 		else {
 			
 			field = new PropertyField(GlobalConstants.KDECAY_STRING, gcm
 					.getParameter(GlobalConstants.KDECAY_STRING), origString, gcm
 					.getParameter(GlobalConstants.KDECAY_STRING), Utility.NUMstring, paramsOnly,
-					origString);
+					origString, false);
 		}
 		
 		fields.put(GlobalConstants.KDECAY_STRING, field);
@@ -398,14 +398,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			field = new PropertyField(GlobalConstants.KECDECAY_STRING, gcm
 					.getParameter(GlobalConstants.KECDECAY_STRING), origString, defaultValue,
-					Utility.SWEEPstring, paramsOnly, origString);
+					Utility.SWEEPstring, paramsOnly, origString, false);
 		}
 		else {
 			
 			field = new PropertyField(GlobalConstants.KECDECAY_STRING, gcm
 					.getParameter(GlobalConstants.KECDECAY_STRING), origString, gcm
 					.getParameter(GlobalConstants.KECDECAY_STRING), Utility.NUMstring, paramsOnly,
-					origString);
+					origString, false);
 		}
 		
 		fields.put(GlobalConstants.KECDECAY_STRING, field);
@@ -431,14 +431,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			field = new PropertyField(GlobalConstants.KCOMPLEX_STRING, 
 					gcm.getParameter(GlobalConstants.KCOMPLEX_STRING), origString, defaultValue,
-					Utility.SLASHSWEEPstring, paramsOnly, origString);
+					Utility.SLASHSWEEPstring, paramsOnly, origString, false);
 		}
 		else {
 			
 			field = new PropertyField(GlobalConstants.KCOMPLEX_STRING, 
 					gcm.getParameter(GlobalConstants.KCOMPLEX_STRING), origString, 
 					gcm.getParameter(GlobalConstants.KCOMPLEX_STRING), Utility.SLASHstring, paramsOnly,
-					origString);
+					origString, false);
 		}
 		
 		fields.put(GlobalConstants.KCOMPLEX_STRING, field);
@@ -463,14 +463,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			field = new PropertyField(GlobalConstants.MEMDIFF_STRING, gcm
 					.getParameter(GlobalConstants.MEMDIFF_STRING), origString, defaultValue,
-					Utility.SLASHSWEEPstring, paramsOnly, origString);
+					Utility.SLASHSWEEPstring, paramsOnly, origString, false);
 		}
 		else {
 			
 			field = new PropertyField(GlobalConstants.MEMDIFF_STRING, gcm
 					.getParameter(GlobalConstants.MEMDIFF_STRING), origString, gcm
 					.getParameter(GlobalConstants.MEMDIFF_STRING), Utility.SLASHstring, paramsOnly,
-					origString);
+					origString, false);
 		}
 		
 		fields.put(GlobalConstants.MEMDIFF_STRING, field);
@@ -496,14 +496,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			field = new PropertyField(GlobalConstants.KECDIFF_STRING, gcm
 					.getParameter(GlobalConstants.KECDIFF_STRING), origString, defaultValue,
-					Utility.SWEEPstring, paramsOnly, origString);
+					Utility.SWEEPstring, paramsOnly, origString, false);
 		}
 		else {
 			
 			field = new PropertyField(GlobalConstants.KECDIFF_STRING, gcm
 					.getParameter(GlobalConstants.KECDIFF_STRING), origString, gcm
 					.getParameter(GlobalConstants.KECDIFF_STRING), Utility.NUMstring, paramsOnly,
-					origString);
+					origString, false);
 		}
 		
 		fields.put(GlobalConstants.KECDIFF_STRING, field);

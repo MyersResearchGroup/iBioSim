@@ -36,7 +36,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 
 		// Name field
 		PropertyField field = new PropertyField(GlobalConstants.NAME, "", null,
-				null, "(.*)", paramsOnly, "default");
+				null, "(.*)", paramsOnly, "default", false);
 		field.setEnabled(false);
 		fields.put(GlobalConstants.NAME, field);
 		add(field);
@@ -116,13 +116,13 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			field = new PropertyField(GlobalConstants.COOPERATIVITY_STRING, gcm
 					.getParameter(GlobalConstants.COOPERATIVITY_STRING),
 					defString, defaultValue,
-					Utility.SWEEPstring, paramsOnly, defString);
+					Utility.SWEEPstring, paramsOnly, defString, false);
 		} else {
 			field = new PropertyField(GlobalConstants.COOPERATIVITY_STRING, gcm
 					.getParameter(GlobalConstants.COOPERATIVITY_STRING),
 					defString, gcm
 							.getParameter(GlobalConstants.COOPERATIVITY_STRING),
-					Utility.NUMstring, paramsOnly, defString);
+					Utility.NUMstring, paramsOnly, defString, false);
 		}
 		fields.put(GlobalConstants.COOPERATIVITY_STRING, field);
 		add(field);
@@ -141,13 +141,13 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			field = new PropertyField(GlobalConstants.KREP_STRING, gcm
 					.getParameter(GlobalConstants.KREP_STRING),
 					defString, defaultValue,
-					Utility.SLASHSWEEPstring, paramsOnly, defString);
+					Utility.SLASHSWEEPstring, paramsOnly, defString, false);
 		} else {
 			field = new PropertyField(GlobalConstants.KREP_STRING, gcm
 					.getParameter(GlobalConstants.KREP_STRING),
 					defString, gcm
 							.getParameter(GlobalConstants.KREP_STRING),
-					Utility.SLASHstring, paramsOnly, defString);
+					Utility.SLASHstring, paramsOnly, defString, false);
 		}
 		fields.put(GlobalConstants.KREP_STRING, field);
 		add(field);
@@ -166,13 +166,13 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			field = new PropertyField(GlobalConstants.KACT_STRING, gcm
 					.getParameter(GlobalConstants.KACT_STRING),
 					defString, defaultValue,
-					Utility.SLASHSWEEPstring, paramsOnly, defString);
+					Utility.SLASHSWEEPstring, paramsOnly, defString, false);
 		} else {
 			field = new PropertyField(GlobalConstants.KACT_STRING, gcm
 					.getParameter(GlobalConstants.KACT_STRING),
 					defString, gcm
 							.getParameter(GlobalConstants.KACT_STRING),
-					Utility.SLASHstring, paramsOnly, defString);
+					Utility.SLASHstring, paramsOnly, defString, false);
 		}
 		fields.put(GlobalConstants.KACT_STRING, field);
 		field.setEnabled(false);
