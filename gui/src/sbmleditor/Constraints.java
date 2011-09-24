@@ -109,13 +109,31 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 			return;
 		}
 		JPanel constraintPanel = new JPanel();
-		JPanel consPanel = new JPanel();
+		JPanel consPanel = new JPanel(new BorderLayout());
+		JPanel IDPanel = new JPanel();
+		JPanel mathPanel = new JPanel(new BorderLayout());
+		JPanel messagePanel = new JPanel(new BorderLayout());
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel mathLabel = new JLabel("Constraint:");
 		JLabel messageLabel = new JLabel("Messsage:");
 		JTextField consID = new JTextField(12);
-		JTextField consMath = new JTextField(30);
-		JTextField consMessage = new JTextField(30);
+		
+		JTextArea consMath = new JTextArea(3,30);
+		consMath.setLineWrap(true);
+		consMath.setWrapStyleWord(true);
+		JScrollPane scroll = new JScrollPane();
+		scroll.setMinimumSize(new Dimension(100, 100));
+		scroll.setPreferredSize(new Dimension(100, 100));
+		scroll.setViewportView(consMath);
+		
+		JTextArea consMessage = new JTextArea(3,30);
+		consMessage.setLineWrap(true);
+		consMessage.setWrapStyleWord(true);
+		JScrollPane scroll2 = new JScrollPane();
+		scroll2.setMinimumSize(new Dimension(100, 100));
+		scroll2.setPreferredSize(new Dimension(100, 100));
+		scroll2.setViewportView(consMessage);
+
 		String selectedID = "";
 		int Cindex = -1;
 		if (option.equals("OK")) {
@@ -148,12 +166,15 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 			}
 			consID.setText(constraintId);
 		}
-		consPanel.add(IDLabel);
-		consPanel.add(consID);
-		consPanel.add(mathLabel);
-		consPanel.add(consMath);
-		consPanel.add(messageLabel);
-		consPanel.add(consMessage);
+		IDPanel.add(IDLabel);
+		IDPanel.add(consID);
+		mathPanel.add(mathLabel,"North");
+		mathPanel.add(scroll,"Center");
+		messagePanel.add(messageLabel,"North");
+		messagePanel.add(scroll2,"Center");
+		consPanel.add(IDPanel,"North");
+		consPanel.add(mathPanel,"Center");
+		consPanel.add(messagePanel,"South");
 		constraintPanel.add(consPanel);
 		Object[] options = { option, "Cancel" };
 		int value = JOptionPane.showOptionDialog(Gui.frame, constraintPanel, "Constraint Editor", JOptionPane.YES_NO_OPTION,
