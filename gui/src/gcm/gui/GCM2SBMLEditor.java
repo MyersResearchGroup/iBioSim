@@ -142,6 +142,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		this.paramFile = paramFile;
 		this.simName = simName;
 		this.reb2sac = reb2sac;
+		this.textBased = textBased;
 		sbmlParamFile = null;
 		getParams = new ArrayList<String>();
 		if (paramFile != null) {
@@ -188,7 +189,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		if (paramsOnly) {
 			loadParams();
 		}
-		buildGui(this.filename, this.path, textBased);
+		buildGui();
 	}
 
 	public String getFilename() {
@@ -1211,8 +1212,13 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	public synchronized void unlock() {
 		lock = false;
 	}
+	
+	public void rebuildGui() {
+		removeAll();
+		buildGui();
+	}
 
-	private void buildGui(String filename, String path, boolean textBased) {
+	private void buildGui() {
 		JPanel mainPanelNorth = new JPanel();
 		JPanel mainPanelCenter = new JPanel(new BorderLayout());
 		JPanel mainPanelCenterUp = new JPanel();
@@ -2135,6 +2141,14 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		return reb2sac;
 	}
 	
+	public boolean isTextBased() {
+		return textBased;
+	}
+
+	public void setTextBased(boolean textBased) {
+		this.textBased = textBased;
+	}
+
 	private boolean lock = false;
 
 	private String[] options = { "Ok", "Cancel" };
@@ -2160,6 +2174,8 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	private Gui biosim = null;
 
 	private Log log = null;
+	
+	private boolean textBased = false;
 
 	private MutableBoolean dirty = new MutableBoolean(false);
 }

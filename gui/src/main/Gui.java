@@ -4602,15 +4602,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
 					if (lema) {
 						LearnLHPN learn = new LearnLHPN(root + separator + lrnName, log, this);
-						lrnTab.addTab("Learn", learn);
-						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
+						lrnTab.addTab("Learn Options", learn);
+						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
 						lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
 						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
 					}
 					else {
 						LearnGCM learn = new LearnGCM(root + separator + lrnName, log, this);
-						lrnTab.addTab("Learn", learn);
-						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
+						lrnTab.addTab("Learn Options", learn);
+						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
 						lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
 						lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
 					}
@@ -5482,6 +5482,17 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				i = getTab(filename.replace(".gcm", ".xml"));
 			}
 			if (i != -1) {
+				if (((GCM2SBMLEditor)tab.getComponentAt(i)).isTextBased()) {
+					if (!textBased) {
+						((GCM2SBMLEditor)tab.getComponentAt(i)).setTextBased(textBased);
+						((GCM2SBMLEditor)tab.getComponentAt(i)).rebuildGui();
+					} 
+				} else {
+					if (textBased) {
+						((GCM2SBMLEditor)tab.getComponentAt(i)).setTextBased(textBased);
+						((GCM2SBMLEditor)tab.getComponentAt(i)).rebuildGui();
+					} 
+				}
 				tab.setSelectedIndex(i);
 			}
 			else {
@@ -6193,7 +6204,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								}
 							}
 						}
-						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().equals("Learn")) {
+						else if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i).getName().equals("Learn Options")) {
 							if (((JTabbedPane) tab.getComponentAt(index)).getComponent(i) instanceof LearnGCM) {
 								if (((LearnGCM) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
 									if (autosave == 0) {
@@ -7511,8 +7522,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
 			LearnGCM learn = new LearnGCM(tree.getFile(), log, this);
 			// learn.addMouseListener(this);
-			lrnTab.addTab("Learn", learn);
-			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
+			lrnTab.addTab("Learn Options", learn);
+			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
 			lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
 			Graph tsdGraph = new Graph(null, "Number of molecules", tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
@@ -7608,8 +7619,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			lrnTab.addTab("Data Manager", data);
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Data Manager");
 			LearnLHPN learn = new LearnLHPN(tree.getFile(), log, this);
-			lrnTab.addTab("Learn", learn);
-			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn");
+			lrnTab.addTab("Learn Options", learn);
+			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Learn Options");
 			lrnTab.addTab("Advanced Options", learn.getAdvancedOptionsPanel());
 			lrnTab.getComponentAt(lrnTab.getComponents().length - 1).setName("Advanced Options");
 			Graph tsdGraph = new Graph(null, "Number of molecules", tree.getFile().split(separator)[tree.getFile().split(separator).length - 1]
@@ -8473,7 +8484,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("TSD Graph");
 						}
 					}
-					else if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName().equals("Learn")) {
+					else if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).getName().equals("Learn Options")) {
 						if (((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j) instanceof LearnGCM) {
 						}
 						else {
@@ -8483,7 +8494,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							else {
 								((JTabbedPane) tab.getComponentAt(i)).setComponentAt(j, new LearnGCM(root + separator + learnName, log, this));
 							}
-							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("Learn");
+							((JTabbedPane) tab.getComponentAt(i)).getComponentAt(j).setName("Learn Options");
 						}
 					}
 				}
@@ -8571,7 +8582,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						if (learn.getComponentAt(j).getName().equals("Data Manager")) {
 							((DataManager) (learn.getComponentAt(j))).updateSpecies();
 						}
-						else if (learn.getComponentAt(j).getName().equals("Learn")) {
+						else if (learn.getComponentAt(j).getName().equals("Learn Options")) {
 							((LearnLHPN) (learn.getComponentAt(j))).updateSpecies(root + separator + updatedFile);
 							((LearnLHPN) (learn.getComponentAt(j))).reload(updatedFile);
 						}
@@ -8708,7 +8719,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						if (learn.getComponentAt(j).getName().equals("Data Manager")) {
 							((DataManager) (learn.getComponentAt(j))).updateSpecies();
 						}
-						else if (learn.getComponentAt(j).getName().equals("Learn")) {
+						else if (learn.getComponentAt(j).getName().equals("Learn Options")) {
 							((LearnGCM) (learn.getComponentAt(j))).updateSpecies(root + separator + updatedFile);
 						}
 						else if (learn.getComponentAt(j).getName().contains("Graph")) {
