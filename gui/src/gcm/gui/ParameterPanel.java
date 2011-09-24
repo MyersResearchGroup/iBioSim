@@ -36,17 +36,17 @@ public class ParameterPanel extends JPanel {
 			if (refGCM.getGlobalParameters().containsKey(selected)) {
 				origString = "custom";
 				field = new PropertyField(selected, gcm.getParameter(selected), origString, refGCM
-						.getParameter(selected), Utility.SWEEPstring, paramsOnly, origString);
+						.getParameter(selected), Utility.SWEEPstring, paramsOnly, origString, false);
 			}
 			else {
 				field = new PropertyField(selected, gcm.getParameter(selected), origString, refGCM
-						.getParameter(selected), Utility.SWEEPstring, paramsOnly, origString);
+						.getParameter(selected), Utility.SWEEPstring, paramsOnly, origString, false);
 			}
 		}
 		else {
 			field = new PropertyField(selected, gcm.getParameter(selected), origString, gcm
 					.getDefaultParameters().get(selected), Utility.NUMstring, paramsOnly,
-					origString);
+					origString, false);
 		}
 		fields.put(selected, field);
 		if (gcm.getGlobalParameters().containsKey(selected)) {

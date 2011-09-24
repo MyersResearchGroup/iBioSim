@@ -103,7 +103,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		
 		// ID field
 		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null,
-				Utility.IDstring, paramsOnly, "default");
+				Utility.IDstring, paramsOnly, "default", false);
 		fields.put(GlobalConstants.ID, field);
 		add(field);
 		

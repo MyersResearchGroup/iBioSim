@@ -45,8 +45,7 @@ public class PromoterPanel extends JPanel {
 		sbolFields = new HashMap<String, SbolField>();
 
 		// ID field
-		PropertyField field = new PropertyField(GlobalConstants.ID, "", null,
-				null, Utility.IDstring, paramsOnly, "default");
+		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null, Utility.IDstring, paramsOnly, "default", false);
 		if (paramsOnly) {
 			field.setEnabled(false);
 		}
@@ -54,8 +53,7 @@ public class PromoterPanel extends JPanel {
 		add(field);		
 
 		// Name field
-		field = new PropertyField(GlobalConstants.NAME, "", null,
-				null, Utility.NAMEstring, paramsOnly, "default");
+		field = new PropertyField(GlobalConstants.NAME, "", null, null, Utility.NAMEstring, paramsOnly, "default", false);
 		if (paramsOnly) {
 			field.setEnabled(false);
 		}
@@ -78,12 +76,12 @@ public class PromoterPanel extends JPanel {
 			}
 			field = new PropertyField(GlobalConstants.PROMOTER_COUNT_STRING, gcm
 					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING),
-					origString, defaultValue, Utility.SWEEPstring, paramsOnly, origString);
+					origString, defaultValue, Utility.SWEEPstring, paramsOnly, origString, false);
 		} else {
 			field = new PropertyField(GlobalConstants.PROMOTER_COUNT_STRING, gcm
 					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING),
 					origString, gcm
-					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING), Utility.NUMstring, paramsOnly, origString);
+					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING), Utility.NUMstring, paramsOnly, origString, false);
 		}
 		fields.put(GlobalConstants.PROMOTER_COUNT_STRING, field);
 		add(field);		
@@ -109,12 +107,12 @@ public class PromoterPanel extends JPanel {
 			}
 			field = new PropertyField(GlobalConstants.RNAP_BINDING_STRING, gcm
 					.getParameter(GlobalConstants.RNAP_BINDING_STRING),
-					origString, defaultValue, Utility.SLASHSWEEPstring, paramsOnly, origString);
+					origString, defaultValue, Utility.SLASHSWEEPstring, paramsOnly, origString, false);
 		} else {
 			field = new PropertyField(GlobalConstants.RNAP_BINDING_STRING, gcm
 					.getParameter(GlobalConstants.RNAP_BINDING_STRING),
 					origString, gcm
-					.getParameter(GlobalConstants.RNAP_BINDING_STRING), Utility.SLASHstring, paramsOnly, origString);
+					.getParameter(GlobalConstants.RNAP_BINDING_STRING), Utility.SLASHstring, paramsOnly, origString, false);
 		}
 		fields.put(GlobalConstants.RNAP_BINDING_STRING, field);
 		add(field);
@@ -132,12 +130,12 @@ public class PromoterPanel extends JPanel {
 			}
 			field = new PropertyField(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, gcm
 					.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING),
-					origString, defaultValue, Utility.SLASHSWEEPstring, paramsOnly, origString);
+					origString, defaultValue, Utility.SLASHSWEEPstring, paramsOnly, origString, false);
 		} else {
 			field = new PropertyField(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, gcm
 					.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING),
 					origString, gcm
-					.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING), Utility.SLASHstring, paramsOnly, origString);
+					.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING), Utility.SLASHstring, paramsOnly, origString, false);
 		}
 		fields.put(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, field);
 		add(field);
@@ -155,12 +153,12 @@ public class PromoterPanel extends JPanel {
 			}
 			field = new PropertyField(GlobalConstants.OCR_STRING, gcm
 					.getParameter(GlobalConstants.OCR_STRING),
-					origString, defaultValue, Utility.SWEEPstring, paramsOnly, origString);
+					origString, defaultValue, Utility.SWEEPstring, paramsOnly, origString, false);
 		} else {
 			field = new PropertyField(GlobalConstants.OCR_STRING, gcm
 					.getParameter(GlobalConstants.OCR_STRING),
 					origString, gcm
-					.getParameter(GlobalConstants.OCR_STRING), Utility.NUMstring, paramsOnly, origString);
+					.getParameter(GlobalConstants.OCR_STRING), Utility.NUMstring, paramsOnly, origString, false);
 		}
 		fields.put(GlobalConstants.OCR_STRING, field);
 		add(field);
@@ -178,12 +176,12 @@ public class PromoterPanel extends JPanel {
 			}
 			field = new PropertyField(GlobalConstants.STOICHIOMETRY_STRING, gcm
 					.getParameter(GlobalConstants.STOICHIOMETRY_STRING),
-					origString, defaultValue, Utility.SWEEPstring, paramsOnly, origString);
+					origString, defaultValue, Utility.SWEEPstring, paramsOnly, origString, false);
 		} else {
 			field = new PropertyField(GlobalConstants.STOICHIOMETRY_STRING, gcm
 					.getParameter(GlobalConstants.STOICHIOMETRY_STRING),
 					origString, gcm
-					.getParameter(GlobalConstants.STOICHIOMETRY_STRING), Utility.NUMstring, paramsOnly, origString);
+					.getParameter(GlobalConstants.STOICHIOMETRY_STRING), Utility.NUMstring, paramsOnly, origString, false);
 		}
 		fields.put(GlobalConstants.STOICHIOMETRY_STRING, field);
 		add(field);		
@@ -202,13 +200,13 @@ public class PromoterPanel extends JPanel {
 			field = new PropertyField(GlobalConstants.KBASAL_STRING, gcm
 					.getParameter(GlobalConstants.KBASAL_STRING),
 					origString, defaultValue,
-					Utility.SWEEPstring, paramsOnly, origString);
+					Utility.SWEEPstring, paramsOnly, origString, false);
 		} else {
 			field = new PropertyField(GlobalConstants.KBASAL_STRING, gcm
 					.getParameter(GlobalConstants.KBASAL_STRING),
 					origString, gcm
 							.getParameter(GlobalConstants.KBASAL_STRING),
-					Utility.NUMstring, paramsOnly, origString);
+					Utility.NUMstring, paramsOnly, origString, false);
 		}
 		fields.put(GlobalConstants.KBASAL_STRING, field);
 		add(field);
@@ -226,12 +224,12 @@ public class PromoterPanel extends JPanel {
 			}
 			field = new PropertyField(GlobalConstants.ACTIVED_STRING, gcm
 					.getParameter(GlobalConstants.ACTIVED_STRING),
-					origString, defaultValue, Utility.SWEEPstring, paramsOnly, origString);
+					origString, defaultValue, Utility.SWEEPstring, paramsOnly, origString, false);
 		} else {
 			field = new PropertyField(GlobalConstants.ACTIVED_STRING, gcm
 					.getParameter(GlobalConstants.ACTIVED_STRING),
 					origString, gcm
-					.getParameter(GlobalConstants.ACTIVED_STRING), Utility.NUMstring, paramsOnly, origString);
+					.getParameter(GlobalConstants.ACTIVED_STRING), Utility.NUMstring, paramsOnly, origString, false);
 		}
 		fields.put(GlobalConstants.ACTIVED_STRING, field);
 		add(field);

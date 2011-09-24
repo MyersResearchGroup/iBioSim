@@ -35,7 +35,7 @@ public class ConditionsPanel extends JPanel {
 		this.gcmEditor = gcmEditor;
 
 		// Condition field
-		field = new PropertyField("Property", "", null, null, "Property", paramsOnly, "default");
+		field = new PropertyField("Property", "", null, null, "Property", paramsOnly, "default", true);
 		add(field);
 
 		String oldProperty = null;
