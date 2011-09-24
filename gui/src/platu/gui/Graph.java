@@ -22,7 +22,7 @@ public class Graph extends javax.swing.JFrame {
     /** Creates new form Graph */
     public Graph(JPanel p) {
         initComponents();
-setContentPane(p);
+        setContentPane(p);
         show();
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         validate();
