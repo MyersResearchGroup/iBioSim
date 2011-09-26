@@ -38,11 +38,6 @@ public class LhpnFile {
 	
 	protected int index;
 
-	public static int nextID = 1;
-	
-	public int ID = nextID++;
-	
-
 	public LhpnFile(Log log) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
