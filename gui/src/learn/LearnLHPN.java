@@ -1028,7 +1028,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 						((JTextField) variables.get(i).get(4)).setEnabled(true);
 						((JComboBox) variables.get(i).get(5)).setEnabled(true);
 						if ( auto.isSelected()) {
-							//TODO:could disable the comboboxes & thresholds though
+							//TODO: could disable the comboboxes & thresholds though
 							// they would already be disabled here.
 						}
 						else{
