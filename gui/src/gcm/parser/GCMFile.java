@@ -664,6 +664,7 @@ public class GCMFile {
 					}
 				}
 			}
+			/*
 			else if (param.equals(GlobalConstants.INITIAL_STRING)) {
 				mod = setToArrayList(bottomLevel.species.keySet());
 				for (String spec : mod) {
@@ -673,7 +674,8 @@ public class GCMFile {
 					}
 				}
 			}
-
+			*/
+			
 			// this is probably never going to be called, as kmdiff won't ever
 			// be a global parameter, as far as i know
 			else if (param.equals(GlobalConstants.MEMDIFF_STRING)) {
@@ -726,6 +728,7 @@ public class GCMFile {
 	}
 	
 	private double parseValue(String value) {
+		if (value == null) return 0.0;
 		if (value.contains("/")) {
 			String[] parts = value.split("/");
 			return Double.parseDouble(parts[0]) / Double.parseDouble(parts[1]);
@@ -2814,8 +2817,11 @@ public class GCMFile {
 				"biosim.gcm.ACTIVED_VALUE", ""));
 		defaultParameters.put(GlobalConstants.MAX_DIMER_STRING, biosimrc.get(
 				"biosim.gcm.MAX_DIMER_VALUE", ""));
+		/*
 		defaultParameters.put(GlobalConstants.INITIAL_STRING, biosimrc.get(
 				"biosim.gcm.INITIAL_VALUE", ""));
+				*/
+		defaultParameters.put(GlobalConstants.INITIAL_STRING, "0.0");
 		defaultParameters.put(GlobalConstants.KCOMPLEX_STRING, biosimrc.get(
 				"biosim.gcm.KCOMPLEX_VALUE", ""));
 		defaultParameters.put(GlobalConstants.MEMDIFF_STRING, biosimrc.get(

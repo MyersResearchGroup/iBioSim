@@ -20,6 +20,7 @@ import javax.swing.ListSelectionModel;
 
 import main.Gui;
 
+import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
@@ -66,7 +67,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 
 	private Rules rulesPanel;
 
-	public Parameters(SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty, Boolean paramsOnly, ArrayList<String> getParams,
+	private Gui biosim;
+
+	public Parameters(Gui biosim, SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty, Boolean paramsOnly, ArrayList<String> getParams,
 			String file, ArrayList<String> parameterChanges) {
 		super(new BorderLayout());
 		this.document = document;
@@ -75,6 +78,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		this.paramsOnly = paramsOnly;
 		this.file = file;
 		this.parameterChanges = parameterChanges;
+		this.biosim = biosim;
 		Model model = document.getModel();
 		JPanel addParams = new JPanel();
 		addParam = new JButton("Add Parameter");
@@ -185,7 +189,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		}
 		JLabel idLabel = new JLabel("ID:");
 		JLabel nameLabel = new JLabel("Name:");
-		JLabel valueLabel = new JLabel("Value:");
+		JLabel valueLabel = new JLabel("Initial Value:");
 		JLabel unitLabel = new JLabel("Units:");
 		JLabel constLabel = new JLabel("Constant:");
 		paramID = new JTextField();
@@ -288,8 +292,17 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 				else {
 					paramConst.setSelectedItem("false");
 				}
-				if (paramet.isSetValue()) {
-					paramValue.setText("" + paramet.getValue());
+				if (paramsOnly) {
+					if (paramet.isSetValue()) {
+						paramValue.setText("" + paramet.getValue());
+					}
+				} else {
+					InitialAssignment init = document.getModel().getInitialAssignment(selectedID);
+					if (init!=null) {
+						paramValue.setText(SBMLutilities.myFormulaToString(init.getMath()));
+					} else if (paramet.isSetValue()) {
+						paramValue.setText("" + paramet.getValue());
+					}
 				}
 				if (paramet.isSetUnits()) {
 					paramUnits.setSelectedItem(paramet.getUnits());
@@ -393,13 +406,19 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					}
 				}
 				else {
+					InitialAssignments.removeInitialAssignment(document, selectedID);
 					try {
 						val = Double.parseDouble(paramValue.getText().trim());
 					}
 					catch (Exception e1) {
-						JOptionPane
-								.showMessageDialog(Gui.frame, "The value must be a real number.", "Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
+						error = InitialAssignments.addInitialAssignment(biosim, document, paramID.getText().trim(), 
+								paramValue.getText().trim());
+						val = 0.0;
+						/*
+						JOptionPane.showMessageDialog(Gui.frame, 
+								"The value must be a real number.", "Enter A Valid Value", JOptionPane.ERROR_MESSAGE);
 						error = true;
+						*/
 					}
 				}
 				if (!error) {

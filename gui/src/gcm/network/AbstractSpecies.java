@@ -114,7 +114,8 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	}
 	
 	public double getInitialAmount() {
-		if (Utility.isValid(getProperty(GlobalConstants.INITIAL_STRING), Utility.NUMstring)) {
+		if (getProperty(GlobalConstants.INITIAL_STRING) != null &&
+			Utility.isValid(getProperty(GlobalConstants.INITIAL_STRING), Utility.NUMstring)) {
 			return Double.parseDouble(getProperty(GlobalConstants.INITIAL_STRING));
 		} else {
 			return -1;
@@ -122,12 +123,16 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	}
 	
 	public double getInitialConcentration() {
-		if (Utility.isValid(getProperty(GlobalConstants.INITIAL_STRING), Utility.NUMstring)) {
+		if (getProperty(GlobalConstants.INITIAL_STRING) != null &&
+			Utility.isValid(getProperty(GlobalConstants.INITIAL_STRING), Utility.NUMstring)) {
 			return -1;
-		} else {
+		} else if (getProperty(GlobalConstants.INITIAL_STRING) != null) {
 			String conc = getProperty(GlobalConstants.INITIAL_STRING);
 			return Double.parseDouble(conc.substring(1,conc.length()-1));
+		} else {
+			return -1;
 		}
+			
 	}
 	
 	public double getDecay() {

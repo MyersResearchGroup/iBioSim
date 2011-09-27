@@ -1298,7 +1298,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			final JTextField MEMDIFF_VALUE = new JTextField(biosimrc.get("biosim.gcm.MEMDIFF_VALUE", ""));
 			final JTextField KECDIFF_VALUE = new JTextField(biosimrc.get("biosim.gcm.KECDIFF_VALUE", ""));
 
-			JPanel labels = new JPanel(new GridLayout(19, 1));
+			JPanel labels = new JPanel(new GridLayout(18, 1));
 			labels.add(SBMLlabel);
 			labels.add(Undeclared);
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.ACTIVED_STRING) + " (" + GlobalConstants.ACTIVED_STRING + "):"));
@@ -1311,7 +1311,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_STRING) + " (" + GlobalConstants.RNAP_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.PROMOTER_COUNT_STRING) + " (" + GlobalConstants.PROMOTER_COUNT_STRING
 					+ "):"));
-			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.INITIAL_STRING) + " (" + GlobalConstants.INITIAL_STRING + "):"));
+			//labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.INITIAL_STRING) + " (" + GlobalConstants.INITIAL_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.OCR_STRING) + " (" + GlobalConstants.OCR_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.RNAP_BINDING_STRING) + " (" + GlobalConstants.RNAP_BINDING_STRING
 					+ "):"));
@@ -1324,7 +1324,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.MEMDIFF_STRING) + " (" + GlobalConstants.MEMDIFF_STRING + "):"));
 			labels.add(new JLabel(CompatibilityFixer.getGuiName(GlobalConstants.KECDIFF_STRING) + " (" + GlobalConstants.KECDIFF_STRING + "):"));
 
-			JPanel fields = new JPanel(new GridLayout(19, 1));
+			JPanel fields = new JPanel(new GridLayout(18, 1));
 			fields.add(LevelVersion);
 			fields.add(Units);
 			fields.add(ACTIVED_VALUE);
@@ -1335,7 +1335,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			fields.add(COOPERATIVITY_VALUE);
 			fields.add(RNAP_VALUE);
 			fields.add(PROMOTER_COUNT_VALUE);
-			fields.add(INITIAL_VALUE);
+			//fields.add(INITIAL_VALUE);
 			fields.add(OCR_VALUE);
 			fields.add(RNAP_BINDING_VALUE);
 			fields.add(ACTIVATED_RNAP_BINDING_VALUE);

@@ -26,6 +26,7 @@ import main.Gui;
 
 import org.sbml.libsbml.Compartment;
 import org.sbml.libsbml.CompartmentType;
+import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
@@ -78,9 +79,12 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 	private Rules rulesPanel;
 	
 	private JComboBox compartmentList;
+	
+	private Gui biosim;
 
-	public Compartments(SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty, Boolean paramsOnly, ArrayList<String> getParams,
-			String file, ArrayList<String> parameterChanges, Boolean editOnly, JComboBox compartmentList) {
+	public Compartments(Gui biosim, SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty, Boolean paramsOnly, 
+			ArrayList<String> getParams, String file, ArrayList<String> parameterChanges, Boolean editOnly, 
+			JComboBox compartmentList) {
 		super(new BorderLayout());
 		this.document = document;
 		this.usedIDs = usedIDs;
@@ -89,6 +93,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 		this.file = file;
 		this.parameterChanges = parameterChanges;
 		this.compartmentList = compartmentList;
+		this.biosim = biosim;
 		Model model = document.getModel();
 		addCompart = new JButton("Add Compartment");
 		removeCompart = new JButton("Remove Compartment");
@@ -313,7 +318,10 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 				dimText.setText(String.valueOf(compartment.getSpatialDimensionsAsDouble()));
 				setCompartOptions(((String) compartments.getSelectedValue()).split(" ")[0],
 						String.valueOf(compartment.getSpatialDimensionsAsDouble()));
-				if (compartment.isSetSize()) {
+				InitialAssignment init = document.getModel().getInitialAssignment(selectedID);
+				if (init!=null) {
+					compSize.setText(SBMLutilities.myFormulaToString(init.getMath()));
+				} else if (compartment.isSetSize()) {
 					compSize.setText("" + compartment.getSize());
 				}
 				if (compartment.isSetUnits()) {
@@ -467,13 +475,19 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 					}
 				}
 				else {
+					InitialAssignments.removeInitialAssignment(document, selectedID);
 					try {
 						addCompSize = Double.parseDouble(compSize.getText().trim());
 					}
 					catch (Exception e1) {
-						error = true;
+						error = InitialAssignments.addInitialAssignment(biosim, document, compID.getText().trim(), 
+								compSize.getText().trim());
+						addCompSize = 1.0;
+						/*
 						JOptionPane.showMessageDialog(Gui.frame, "The compartment size must be a real number.", "Enter a Valid Size",
 								JOptionPane.ERROR_MESSAGE);
+						error = true;
+						*/
 					}
 				}
 			}
@@ -594,7 +608,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 							c.unsetSize();
 						}
 						else {
-							c.setSize(Double.parseDouble(compSize.getText().trim()));
+							c.setSize(addCompSize);
 						}
 						if (compUnits.getSelectedItem().equals("( none )")) {
 							c.unsetUnits();

@@ -153,6 +153,13 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			JOptionPane.showMessageDialog(Gui.frame, "Initial assignment is not valid.", "Enter Valid Assignment", JOptionPane.ERROR_MESSAGE);
 			return true;
 		}
+		Rule rule = document.getModel().getRule(variable);
+		if (rule != null && rule.isAssignment()) {
+			JOptionPane.showMessageDialog(Gui.frame, 
+					"Cannot have both an assignment rule and an initial assignment on the same variable.", 
+					"Multiple Assignment", JOptionPane.ERROR_MESSAGE);
+			return true;
+		}
 		ArrayList<String> invalidVars = SBMLutilities.getInvalidVariables(document, assignment.trim(), "", false);
 		if (invalidVars.size() > 0) {
 			String invalid = "";

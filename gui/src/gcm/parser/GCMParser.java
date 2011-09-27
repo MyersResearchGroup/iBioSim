@@ -310,10 +310,10 @@ public class GCMParser {
 
 		if (property.containsKey(GlobalConstants.INITIAL_STRING)) {
 			specie.addProperty(GlobalConstants.INITIAL_STRING, property.getProperty(GlobalConstants.INITIAL_STRING));
-		} else {
+		} /*else {
 			specie.addProperty(GlobalConstants.INITIAL_STRING, gcm.getParameter(GlobalConstants.INITIAL_STRING));
 		}
-
+        */
 		if (property.containsKey(GlobalConstants.KDECAY_STRING)) {
 			specie.addProperty(GlobalConstants.KDECAY_STRING, property.getProperty(GlobalConstants.KDECAY_STRING));
 		} else {
