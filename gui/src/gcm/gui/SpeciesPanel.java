@@ -1,5 +1,6 @@
 package gcm.gui;
 
+import gcm.parser.CompatibilityFixer;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
@@ -21,9 +22,12 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.Species;
 
+import sbmleditor.InitialAssignments;
 import sbmleditor.MySpecies;
+import sbmleditor.SBMLutilities;
 
 import main.Gui;
 
@@ -47,11 +51,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 * @param refGCM
 	 * @param gcmEditor
 	 */
-	public SpeciesPanel(String selected, PropertyList speciesList, PropertyList influencesList,
+	public SpeciesPanel(Gui biosim, String selected, PropertyList speciesList, PropertyList influencesList,
 			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
 			GCMFile refGCM, GCM2SBMLEditor gcmEditor, boolean inTab){
 
 		super(new BorderLayout());
+		this.biosim = biosim;
 		constructor(selected, speciesList, influencesList, conditionsList, componentsList, gcm, 
 				paramsOnly, refGCM, gcmEditor, inTab);
 	}
@@ -320,9 +325,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 		// Initial field
 		if (paramsOnly) {
-			
 			String defaultValue = refGCM.getParameter(GlobalConstants.INITIAL_STRING);
-			
+			/*
 			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.INITIAL_STRING)) {
 				defaultValue = refGCM.getSpecies().get(selected).getProperty(GlobalConstants.INITIAL_STRING);
 				origString = "custom";
@@ -330,22 +334,51 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			else if (gcm.globalParameterIsSet(GlobalConstants.INITIAL_STRING)) {
 				defaultValue = gcm.getParameter(GlobalConstants.INITIAL_STRING);
 			}
-			
+			*/
+			if (species.isSetInitialAmount()) {
+				defaultValue = "" + species.getInitialAmount();
+			} else if (species.isSetInitialConcentration()) {
+				defaultValue = "[" + species.getInitialConcentration() + "]";
+			}
 			field = new PropertyField(GlobalConstants.INITIAL_STRING, 
 					gcm.getParameter(GlobalConstants.INITIAL_STRING), origString, defaultValue,
 					Utility.SWEEPstring + "|" + Utility.CONCstring, paramsOnly, origString, false);
+			/*
+			String defaultValue = "";
+			
+			field = new PropertyField("Initial Amount/Concentration", null, origString, defaultValue,
+					Utility.SWEEPstring + "|" + Utility.CONCstring, paramsOnly, origString, false);
+					*/
+			fields.put(GlobalConstants.INITIAL_STRING, field);
+			grid.add(field);
 		}
 		else {
-			
+			tempPanel = new JPanel();
+			tempLabel = new JLabel("Initial Amount/Concentration");
+			initialField = new JTextField("");
+			InitialAssignment init = gcm.getSBMLDocument().getModel().getInitialAssignment(species.getId());
+			if (init!=null) {
+				initialField.setText(SBMLutilities.myFormulaToString(init.getMath()));
+			} else if (species.isSetInitialAmount()) {
+				initialField.setText("" + species.getInitialAmount());
+			} else if (species.isSetInitialConcentration()) {
+				initialField.setText("[" + species.getInitialConcentration() + "]");
+			}
+			tempPanel.setLayout(new GridLayout(1, 2));
+			tempPanel.add(tempLabel);
+			tempPanel.add(initialField);
+			grid.add(tempPanel);
+			/* 
 			field = new PropertyField(GlobalConstants.INITIAL_STRING, 
 					gcm.getParameter(GlobalConstants.INITIAL_STRING), origString, 
 					gcm.getParameter(GlobalConstants.INITIAL_STRING), Utility.NUMstring + "|" + Utility.CONCstring, paramsOnly,
 					origString, false);
+			*/
 		}
-		
-		fields.put(GlobalConstants.INITIAL_STRING, field);
+		/*
 		grid.add(field);
-
+        */
+		
 		// Decay field
 		origString = "default";
 		
@@ -718,12 +751,27 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					species.setId(fields.get(GlobalConstants.ID).getValue());
 					species.setName(fields.get(GlobalConstants.NAME).getValue());
 					
+					/*
 					if (Utility.isValid(fields.get(GlobalConstants.INITIAL_STRING).getValue(), Utility.NUMstring)) {
 						species.setInitialAmount(Double.parseDouble(fields.get(GlobalConstants.INITIAL_STRING).getValue()));
 					} 
 					else {
 						String conc = fields.get(GlobalConstants.INITIAL_STRING).getValue();
 						species.setInitialConcentration(Double.parseDouble(conc.substring(1,conc.length()-1)));
+					}
+					*/
+					InitialAssignments.removeInitialAssignment(gcm.getSBMLDocument(), selected);
+					if (Utility.isValid(initialField.getText(), Utility.NUMstring)) {
+						species.setInitialAmount(Double.parseDouble(initialField.getText()));
+					} 
+					else if (Utility.isValid(initialField.getText(), Utility.CONCstring)) {
+						//String conc = fields.get(GlobalConstants.INITIAL_STRING).getValue();
+						species.setInitialConcentration(Double.parseDouble(initialField.getText().substring(1,initialField.getText().length()-1)));
+					} else {
+						boolean error = InitialAssignments.addInitialAssignment(biosim, gcm.getSBMLDocument(), species.getId(), 
+								initialField.getText().trim());
+						if (error) return false;
+						species.setInitialAmount(Double.parseDouble("0.0"));
 					}
 					
 					if (specBoundary.getSelectedItem().equals("true")) {
@@ -863,7 +911,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		String updates = "";
 		
 		if (paramsOnly) {
-			
+
 			if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(
 					fields.get(GlobalConstants.INITIAL_STRING).getStates()[1])) {
 				
@@ -871,7 +919,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						+ GlobalConstants.INITIAL_STRING + " "
 						+ fields.get(GlobalConstants.INITIAL_STRING).getValue();
 			}
-			
+
 			if (fields.get(GlobalConstants.KDECAY_STRING).getState().equals(
 					fields.get(GlobalConstants.KDECAY_STRING).getStates()[1])) {
 				
@@ -1021,13 +1069,14 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private JComboBox specBoundary = null;
 	private JComboBox specConstant = null;
 	private JComboBox specHasOnly = null;
+	private JTextField initialField = null;
 	
 	private JCheckBox specInteresting = null;
 	private JCheckBox specDiffusible = null;
 	private JCheckBox specConstitutive = null;
 	
 	private JTextField thresholdTextField = null;
-
+	
 	private static final String[] types = new String[] { GlobalConstants.INPUT, GlobalConstants.INTERNAL, 
 		GlobalConstants.OUTPUT};
 
@@ -1038,4 +1087,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private boolean paramsOnly;
 	
 	private GCM2SBMLEditor gcmEditor;
+	
+	private Gui biosim;
 }

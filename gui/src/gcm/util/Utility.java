@@ -368,22 +368,12 @@ public class Utility {
 			return true;
 		}
 		else {
-			/*
-			ListOf s = document.getModel().getListOfSpecies();
-			for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
-				if (((Species) s.get(i)).getId().equals(species.getId())) {
-					s.remove(i);
-				}
-			}
-			document.getModel().addSpecies(species);
-			*/
-			/* TODO: this is not quite right */
-			if (species.isSetInitialAmount()) {
+			/* TODO: this is not quite right  */
+			if (species.isSetInitialAmount() && species.getInitialAmount() >= 0) {
 				s.setInitialAmount(species.getInitialAmount());
-			} else{
+			} else if (species.isSetInitialConcentration() && species.getInitialConcentration() >= 0){
 				s.setInitialConcentration(species.getInitialConcentration());
 			}
-			//s.setBoundaryCondition(species.getBoundaryCondition());
 			return true;
 			//Give warning
 		}

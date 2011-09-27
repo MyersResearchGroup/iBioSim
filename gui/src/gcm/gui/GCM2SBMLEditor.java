@@ -212,7 +212,6 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 				gcm.setDefaultParameter(key, params.get(key));
 			}
 		}
-		// TODO
 		modelPanel.setModelId(newName);
 		//GCMNameTextField.setText(newName);
 	}
@@ -1216,6 +1215,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 	public void rebuildGui() {
 		removeAll();
 		buildGui();
+		revalidate();
 	}
 
 	private void buildGui() {
@@ -1255,7 +1255,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		
 		JComboBox compartmentList = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());
 		
-		compartmentPanel = new Compartments(gcm.getSBMLDocument(),usedIDs,dirty, paramsOnly,getParams,file,
+		compartmentPanel = new Compartments(biosim,gcm.getSBMLDocument(),usedIDs,dirty, paramsOnly,getParams,file,
 					parameterChanges,false,compartmentList);
 		reactionPanel = new Reactions(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
 				paramsOnly,getParams,file,parameterChanges);
@@ -1386,11 +1386,12 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		functionPanel.setPanels(initialsPanel, rulesPanel);
 		speciesPanel.setPanels(initialsPanel, rulesPanel);
 		reactionPanel.setPanels(initialsPanel, rulesPanel);
-		JPanel assignPanel = new JPanel(new BorderLayout());
-		assignPanel.add(mainPanelNorth, "North");
-		assignPanel.add(initialsPanel,"Center");
-		assignPanel.add(rulesPanel,"South");
-		tab.addTab("Assignments", assignPanel);
+		//JPanel assignPanel = new JPanel(new BorderLayout());
+		//assignPanel.add(mainPanelNorth, "North");
+		//assignPanel.add(initialsPanel,"Center");
+		//assignPanel.add(rulesPanel,"South");
+		//tab.addTab("Assignments", assignPanel);
+		tab.addTab("Rules", rulesPanel);
 
 		Events eventPanel = new Events(biosim,gcm.getSBMLDocument(),usedIDs,dirty);
 		tab.addTab("Properties", propPanel);
@@ -1455,7 +1456,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 		parameters.addAllItem(generateParameters());
 		initPanel = Utility.createPanel(this, "Model Generation Parameters", parameters, null, null, editInit);
 		paramPanel.add(initPanel, "Center");
-		parametersPanel = new Parameters(gcm.getSBMLDocument(),usedIDs,dirty,
+		parametersPanel = new Parameters(biosim, gcm.getSBMLDocument(),usedIDs,dirty,
 				paramsOnly,getParams,path + separator + file,parameterChanges);
 		parametersPanel.setPanels(initialsPanel, rulesPanel);
 		paramPanel.add(parametersPanel, "South");
@@ -1890,7 +1891,7 @@ public class GCM2SBMLEditor extends JPanel implements ActionListener, MouseListe
 			refGCM = new GCMFile(path);
 			refGCM.load(path + separator + refFile);
 		}
-		SpeciesPanel panel = new SpeciesPanel(id, species, influences, conditions, 
+		SpeciesPanel panel = new SpeciesPanel(biosim, id, species, influences, conditions, 
 				components, gcm, paramsOnly, refGCM, this, inTab);
 		
 //		if (paramsOnly) {
