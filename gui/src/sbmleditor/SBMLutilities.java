@@ -765,6 +765,21 @@ public class SBMLutilities {
 		}
 		return false;
 	}
+	
+	/**
+	 * Checks if species is a reactant in a non-degradation reaction
+	 */
+	public static boolean usedInNonDegradationReaction(SBMLDocument document, String id) {
+		for (int i = 0; i < document.getModel().getNumReactions(); i++) {
+			for (int j = 0; j < document.getModel().getReaction(i).getNumReactants(); j++) {
+				if (document.getModel().getReaction(i).getReactant(j).getSpecies().equals(id)
+						&& (document.getModel().getReaction(i).getNumProducts() > 0 || document.getModel().getReaction(i).getNumReactants() > 1)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * Update variable in math formula using String
