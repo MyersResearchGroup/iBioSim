@@ -454,7 +454,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 					else {
 						param = paramID.getText().trim(); // + " " + val;
 						if (paramsOnly)
-							param += val;
+							param += " " + val;
 						/*
 						 * if (!unit.equals("( none )")) { param =
 						 * paramID.getText().trim() + " " + val + " " + unit; }
