@@ -107,9 +107,10 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 			 * if (parameter.isSetUnits()) { params[i] = parameter.getId() + " "
 			 * + parameter.getValue() + " " + parameter.getUnits(); } else {
 			 */
-			params[i] = parameter.getId() + " " + parameter.getValue();
 			// }
+			params[i] = parameter.getId(); // + " " + parameter.getValue();
 			if (paramsOnly) {
+				params[i] = parameter.getId() + " " + parameter.getValue();
 				for (int j = 0; j < getParams.size(); j++) {
 					if (getParams.get(j).split(" ")[0].equals(parameter.getId())) {
 						parameterChanges.add(getParams.get(j));
@@ -152,7 +153,8 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			Parameter parameter = (Parameter) listOfParameters.get(i);
 			params[i] = parameter.getId();
-			params[i] += " " + parameter.getValue();
+			if (paramsOnly)
+				params[i] += " " + parameter.getValue();
 			for (int j = 0; j < parameterChanges.size(); j++) {
 				if (parameterChanges.get(j).split(" ")[0].equals(params[i].split(" ")[0])) {
 					parameterChanges.set(j,
@@ -450,7 +452,9 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 						}
 					}
 					else {
-						param = paramID.getText().trim() + " " + val;
+						param = paramID.getText().trim(); // + " " + val;
+						if (paramsOnly)
+							param += val;
 						/*
 						 * if (!unit.equals("( none )")) { param =
 						 * paramID.getText().trim() + " " + val + " " + unit; }
