@@ -114,9 +114,11 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			 */
 			comps[i] = compartment.getId();
 			// }
+			/*
 			if (compartment.isSetSize()) {
 				comps[i] += " " + compartment.getSize();
 			}
+			*/
 			/*
 			 * if (compartment.isSetUnits()) { comps[i] += " " +
 			 * compartment.getUnits(); }
@@ -566,7 +568,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 					 * selCompType; } if (!unit.equals("( none )")) { addComp +=
 					 * " " + addCompSize + " " + unit; } else {
 					 */
-					addComp += " " + addCompSize;
+					//addComp += " " + addCompSize;
 					// }
 				}
 				if (!error) {
@@ -715,7 +717,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						 * compID.getText().trim() + " " + selCompType + " " +
 						 * compSize.getText().trim(); } else {
 						 */
-						addStr = compID.getText().trim() + " " + compSize.getText().trim();
+						addStr = compID.getText().trim(); // + " " + compSize.getText().trim();
 						/*
 						 * } if
 						 * (!compUnits.getSelectedItem().equals("( none )")) {
