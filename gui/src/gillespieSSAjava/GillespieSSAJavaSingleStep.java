@@ -259,7 +259,7 @@ public class GillespieSSAJavaSingleStep {
           CustomParamsUpdateFireEvents = UpdateFireEvents(graph);
           int optVal = Integer.parseInt(CustomParamsUpdateFireEvents[0]);
           boolean eventDelayNegative = Boolean.parseBoolean(CustomParamsUpdateFireEvents[1]);
-          if (eventDelayNegative || optVal == 2 || (time > 0 && optVal == -1)) 
+          if (eventDelayNegative || optVal == 2 /*|| (time > 0 && optVal == -1)*/) 
         	  break;
           else 
         	  
