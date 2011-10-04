@@ -8,6 +8,8 @@ import java.util.prefs.Preferences;
 
 import javax.swing.*;
 
+import dynamicsim.DynamicGillespie;
+
 import parser.*;
 
 import lpn.gui.LHPNEditor;
@@ -1293,6 +1295,17 @@ public class Run implements ActionListener {
 						javaSim.PerformSim(SBMLFileName, outDir, timeLimit, timeStep, rndSeed,
 								((Graph) simTab.getComponentAt(index)));
 						exitValue = 0;
+						return exitValue;
+					}
+					else if (sim.equals("gillespieSSA-CR (Java)")) {
+						
+						time1 = System.nanoTime();
+
+						DynamicGillespie dynSim = new DynamicGillespie();						
+						String SBMLFileName = directory + separator + theFile;
+						dynSim.Simulate(SBMLFileName, outDir, timeLimit, timeStep, rndSeed);						
+						exitValue = 0;
+						
 						return exitValue;
 					}
 					else if (biosimrc.get("biosim.sim.command", "").equals("")) {
