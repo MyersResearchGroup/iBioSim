@@ -1396,6 +1396,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
+			else if (((String) simulators.getSelectedItem()).contains("gillespieSSA-CR (Java)")) {
+				description.setText("Gillespie SSA-CR Method");
+				minStep.setEnabled(true);
+				minStepLabel.setEnabled(true);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
+			}
 			else if (simulators.getSelectedItem().equals("mpde")) {
 				description.setText("iSSA (Marginal Probability Density Evolution)");
 				minStep.setEnabled(true);
