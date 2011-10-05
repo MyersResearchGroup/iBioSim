@@ -154,7 +154,9 @@ public class DynamicGillespie {
 			step2Time += System.nanoTime() - step2Initial;
 			
 			//System.err.println(totalPropensity + " " + currentTime + " " + delta_t + " ");			
-			//System.out.println("step 2: time is " + currentTime);	
+			//System.out.println("step 2: time is " + currentTime);
+			
+			System.err.println(numGroups);
 			
 			
 			//STEP 3A: select a group
@@ -180,11 +182,12 @@ public class DynamicGillespie {
 		
 			step3aTime += System.nanoTime() - step3aInitial;
 			
+			
+			
 			//STEP 3B: select a reaction within the group
 			
 			long step3bInitial = System.nanoTime();
 			
-			//the reaction hashset gets cast to an array in order to index into it randomly
 			HashSet<String> reactionSet = groupToReactionSetList.get(selectedGroup);
 			
 			randomIndex = (int) Math.floor(r3 * reactionSet.size());
@@ -346,15 +349,8 @@ public class DynamicGillespie {
 					if (newPropensity <= minPropensity) {
 						
 						group = 1;
-						//minPropensity = newPropensity;
-												
-//						groupToMaxValueMap.clear();
-//						groupToPropensityFloorMap.clear();
-//						groupToPropensityCeilingMap.clear();
-//						groupToReactionSetList = new ArrayList<HashSet<String> >(50);
-//						nonemptyGroupSet.clear();
-//						
-//						CreateAndPopulateInitialGroups();
+						minPropensity = newPropensity;
+						ReassignAllReactionsToGroups();
 					}
 					else {
 						
@@ -367,15 +363,15 @@ public class DynamicGillespie {
 					
 					if (group < numGroups) {
 						
-						HashSet<String> newReactionSet = groupToReactionSetList.get(group);
+						HashSet<String> groupReactionSet = groupToReactionSetList.get(group);
 						
 						//update group collections
 						groupToReactionSetList.get(0).remove(affectedReactionID);
 						reactionToGroupMap.put(affectedReactionID, group);
-						newReactionSet.add(affectedReactionID);
+						groupReactionSet.add(affectedReactionID);
 						
 						//if the group that the reaction was just added to is now nonempty
-						if (newReactionSet.size() == 1)
+						if (groupReactionSet.size() == 1)
 							nonemptyGroupSet.add(group);
 						
 						if (newPropensity > groupToMaxValueMap.get(group))
@@ -396,7 +392,7 @@ public class DynamicGillespie {
 						groupToReactionSetList.get(group).add(affectedReactionID);						
 						nonemptyGroupSet.add(group);
 						groupToMaxValueMap.put(group, newPropensity);
-					}
+					}					
 				}
 				else {
 					if (newPropensity > groupToPropensityCeilingMap.get(oldGroup) ||
@@ -407,15 +403,8 @@ public class DynamicGillespie {
 						if (newPropensity <= minPropensity) {
 							
 							group = 1;
-							//minPropensity = newPropensity;
-							
-//							groupToMaxValueMap.clear();
-//							groupToPropensityFloorMap.clear();
-//							groupToPropensityCeilingMap.clear();
-//							groupToReactionSetList = new ArrayList<HashSet<String> >(50);
-//							nonemptyGroupSet.clear();
-//							
-//							CreateAndPopulateInitialGroups();
+							minPropensity = newPropensity;
+							ReassignAllReactionsToGroups();
 						}
 						else {
 							
@@ -428,19 +417,19 @@ public class DynamicGillespie {
 						
 						if (group < numGroups) {
 							
-							HashSet<String> newReactionSet = groupToReactionSetList.get(group);
-							HashSet<String> oldReactionSet = groupToReactionSetList.get(oldGroup);
+							HashSet<String> newGroupReactionSet = groupToReactionSetList.get(group);
+							HashSet<String> oldGroupReactionSet = groupToReactionSetList.get(oldGroup);
 							
 							//update group collections
-							oldReactionSet.remove(affectedReactionID);
+							oldGroupReactionSet.remove(affectedReactionID);
 							reactionToGroupMap.put(affectedReactionID, group);
-							newReactionSet.add(affectedReactionID);
+							newGroupReactionSet.add(affectedReactionID);
 							
 							//if the group that the reaction was just added to is now nonempty
-							if (newReactionSet.size() == 1)
+							if (newGroupReactionSet.size() == 1)
 								nonemptyGroupSet.add(group);
 							
-							if (oldReactionSet.size() == 0)
+							if (oldGroupReactionSet.size() == 0)
 								nonemptyGroupSet.remove(oldGroup);
 							
 							if (newPropensity > groupToMaxValueMap.get(group))
@@ -488,14 +477,14 @@ public class DynamicGillespie {
 		} //end simulation loop
 		
 		
-		System.err.println("total time: " + String.valueOf((System.nanoTime() - timeBeforeSim)/1e9f));
-		System.err.println("total step 1 time: " + String.valueOf(step1Time/1e9f));
-		System.err.println("total step 2 time: " + String.valueOf(step2Time/1e9f));
-		System.err.println("total step 3a time: " + String.valueOf(step3aTime/1e9f));
-		System.err.println("total step 3b time: " + String.valueOf(step3bTime/1e9f));
-		System.err.println("total step 4 time: " + String.valueOf(step4Time/1e9f));
-		System.err.println("total step 5 time: " + String.valueOf(step5Time/1e9f));
-		System.err.println("total step 6 time: " + String.valueOf(step6Time/1e9f));
+		System.err.println("total time: " + String.valueOf((System.nanoTime() - timeBeforeSim) / 1e9f));
+		System.err.println("total step 1 time: " + String.valueOf(step1Time / 1e9f));
+		System.err.println("total step 2 time: " + String.valueOf(step2Time / 1e9f));
+		System.err.println("total step 3a time: " + String.valueOf(step3aTime / 1e9f));
+		System.err.println("total step 3b time: " + String.valueOf(step3bTime / 1e9f));
+		System.err.println("total step 4 time: " + String.valueOf(step4Time / 1e9f));
+		System.err.println("total step 5 time: " + String.valueOf(step5Time / 1e9f));
+		System.err.println("total step 6 time: " + String.valueOf(step6Time / 1e9f));
 	}
 	
 	/**
@@ -794,7 +783,7 @@ public class DynamicGillespie {
 		numGroups = currentGroup + 1;
 		
 		//start at 0 to make a group for zero propensities
-		for (int j = 0; j < numGroups; ++j) {
+		for (int groupNum = 0; groupNum < numGroups; ++groupNum) {
 
 			groupToReactionSetList.add(new HashSet<String>(500));
 		}
@@ -903,6 +892,83 @@ public class DynamicGillespie {
 	}
 	
 	/**
+	 * assigns all reactions to (possibly new) groups
+	 * this is called when the minPropensity changes, which
+	 * changes the groups' floor/ceiling propensity values
+	 */
+	private void ReassignAllReactionsToGroups() {
+		
+		int currentGroup = 1;
+		double groupPropensityCeiling = 2 * minPropensity;
+		
+		//re-calulate and store group propensity floors/ceilings
+		groupToPropensityCeilingMap.clear();
+		groupToPropensityFloorMap.clear();
+		groupToPropensityFloorMap.put(1, minPropensity);
+		
+		while (groupPropensityCeiling < maxPropensity) {
+			
+			groupToPropensityCeilingMap.put(currentGroup, groupPropensityCeiling);
+			groupToPropensityFloorMap.put(currentGroup + 1, groupPropensityCeiling);
+			
+			groupPropensityCeiling *= 2;
+			++currentGroup;
+		}
+		
+		groupToPropensityCeilingMap.put(currentGroup, groupPropensityCeiling);
+		int newNumGroups = currentGroup + 1;
+		
+		//allocate memory if the number of groups expands
+		if (newNumGroups > numGroups) {
+			
+			for (int groupNum = numGroups; groupNum < newNumGroups; ++groupNum)
+				groupToReactionSetList.add(new HashSet<String>(500));
+		}
+		
+		//clear the reaction set for each group
+		//start at 1, as the zero propensity group isn't going to change
+		for (int groupNum = 1; groupNum < numGroups; ++groupNum) {
+			
+			groupToReactionSetList.get(groupNum).clear();
+			groupToMaxValueMap.put(groupNum, 0.0);
+		}
+		
+		numGroups = newNumGroups;
+		
+		
+		//assign reactions to groups
+		for (String reaction : reactionToPropensityMap.keySet()) {
+			
+			double propensity = reactionToPropensityMap.get(reaction);
+			
+			//the zero-propensity group doesn't need altering
+			if (propensity == 0.0) continue;
+			
+			FRExpResultf frexpResult = FastMath.frexp((float) (propensity / minPropensity));
+			int group = frexpResult.exponent;
+			
+			groupToReactionSetList.get(group).add(reaction);
+			reactionToGroupMap.put(reaction, group);
+			
+			if (propensity > groupToMaxValueMap.get(group))
+				groupToMaxValueMap.put(group, propensity);
+		}
+		
+		//find out which (if any) groups are empty
+		//this is done so that empty groups are never chosen during simulation
+		
+		nonemptyGroupSet.clear();
+		
+		for (int groupNum = 1; groupNum < numGroups; ++groupNum) {
+			
+			if (groupToReactionSetList.get(groupNum).isEmpty())
+				continue;
+			
+			nonemptyGroupSet.add(groupNum);
+		}		
+	}
+	
+	/**
 	 * class to combine a string and a double
 	 */
 	private class StringDoublePair {
@@ -922,10 +988,6 @@ public class DynamicGillespie {
 /*
 IMPLEMENTATION NOTES:
 	
-don't forget to deal with new min propensity
-	--re-do all group allocations unless there's an easier way
-	
-time can go one step beyond the limit (shouldn't happen)
 
 if the top node of a reversible reaction isn't a minus sign, then give an error
 	
