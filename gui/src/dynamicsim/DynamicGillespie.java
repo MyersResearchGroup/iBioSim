@@ -1,10 +1,12 @@
 package dynamicsim;
 
 import java.io.FileNotFoundException;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Stack;
 
 import gnu.trove.iterator.TIntIterator;
 import gnu.trove.map.hash.TIntDoubleHashMap;
@@ -54,6 +56,9 @@ public class DynamicGillespie {
 	//allows for access to a kinetic formula tree from a reaction
 	private HashMap<String, ASTNode> reactionToFormulaMap = null;
 	
+	//allows for access to a kinetic formula tree from a reaction
+	private HashMap<String, ArrayDeque<ASTNode> > reactionToFormulaMap2 = null;
+	
 	//allows for access to a group number from a reaction ID
 	private TObjectIntHashMap<String> reactionToGroupMap = null;
 	
@@ -84,7 +89,9 @@ public class DynamicGillespie {
 	double minPropensity = Double.MAX_VALUE;
 	double maxPropensity = Double.MIN_VALUE;
 	
-	
+	/**
+	 * empty constructor
+	 */
 	public DynamicGillespie() {
 	}
 	
@@ -116,7 +123,8 @@ public class DynamicGillespie {
 			return;
 		}
 		
-		System.err.println("initialization time: " + (System.nanoTime() - timeBeforeSim)/1e9f);
+		System.err.println("initialization time: " + (System.nanoTime() - timeBeforeSim) / 1e9f);		
+		
 		
 		//SIMULATION LOOP
 		//simulate until the time limit is reached
@@ -306,8 +314,10 @@ public class DynamicGillespie {
 				
 				if (notEnoughMoleculesFlag == true)
 					newPropensity = 0.0;
-				else
-					newPropensity = CalculatePropensity(reactionToFormulaMap.get(affectedReactionID));
+				else {
+					//newPropensity = CalculatePropensity(reactionToFormulaMap.get(affectedReactionID));
+					newPropensity = CalculatePropensityIterative(affectedReactionID);
+				}
 				
 				double oldPropensity = reactionToPropensityMap.get(affectedReactionID);
 				
@@ -528,7 +538,8 @@ public class DynamicGillespie {
 		reactionToPropensityMap = new TObjectDoubleHashMap<String>((int) (numReactions * 1.5));		
 		reactionToSpeciesAndStoichiometrySetMap = new HashMap<String, HashSet<StringDoublePair> >((int) (numReactions * 1.5));	
 		reactionToReactantStoichiometrySetMap = new HashMap<String, HashSet<StringDoublePair> >((int) (numReactions * 1.5));
-		reactionToFormulaMap = new HashMap<String, ASTNode>((int) (numReactions * 1.5));	
+		reactionToFormulaMap = new HashMap<String, ASTNode>((int) (numReactions * 1.5));
+		reactionToFormulaMap2 = new HashMap<String, ArrayDeque<ASTNode> >((int) (numReactions * 1.5));
 		reactionToGroupMap = new TObjectIntHashMap<String>((int) (numReactions * 1.5));
 		reactionToSBMLReactionMap = new HashMap<String, Reaction>((int) numReactions);
 		
@@ -570,7 +581,7 @@ public class DynamicGillespie {
 			
 			Reaction reaction = model.getReaction(i);
 			String reactionID = reaction.getId();
-			KineticLaw reactionKineticLaw = reaction.getKineticLaw();			
+			KineticLaw reactionKineticLaw = reaction.getKineticLaw();
 			ASTNode reactionFormula = reactionKineticLaw.getMath();
 			ListOf<LocalParameter> reactionParameters = reactionKineticLaw.getListOfLocalParameters();
 			boolean notEnoughMoleculesFlagFd = false;
@@ -655,12 +666,18 @@ public class DynamicGillespie {
 				
 				double propensity;
 				
+				reactionToFormulaMap.put(reactionID + "_rv", reactionFormula.getRightChild());
+				reactionToFormulaMap2.put(reactionID + "_rv", GetPrefixQueueFromASTNode(reactionFormula.getRightChild()));
+				reactionToFormulaMap.put(reactionID + "_fd", reactionFormula.getLeftChild());
+				reactionToFormulaMap2.put(reactionID + "_fd", GetPrefixQueueFromASTNode(reactionFormula.getLeftChild()));
+				
 				//calculate forward reaction propensity
 				if (notEnoughMoleculesFlagFd == true)
 					propensity = 0.0;
 				else {
 					//the left child is what's left of the minus sign
-					propensity = CalculatePropensity(reactionFormula.getLeftChild());
+					//propensity = CalculatePropensity(reactionFormula.getLeftChild());
+					propensity = CalculatePropensityIterative(reactionID + "_fd");
 					
 					if (propensity < minPropensity && propensity > 0) 
 						minPropensity = propensity;
@@ -671,14 +688,14 @@ public class DynamicGillespie {
 				}
 				
 				reactionToPropensityMap.put(reactionID + "_fd", propensity);
-				reactionToFormulaMap.put(reactionID + "_fd", reactionFormula.getLeftChild());
 				
 				//calculate reverse reaction propensity
 				if (notEnoughMoleculesFlagRv == true)
 					propensity = 0.0;
 				else {
 					//the right child is what's right of the minus sign
-					propensity = CalculatePropensity(reactionFormula.getRightChild());
+					//propensity = CalculatePropensity(reactionFormula.getRightChild());
+					propensity = CalculatePropensityIterative(reactionID + "_rv");
 					
 					if (propensity < minPropensity && propensity > 0) 
 						minPropensity = propensity;
@@ -689,7 +706,6 @@ public class DynamicGillespie {
 				}
 				
 				reactionToPropensityMap.put(reactionID + "_rv", propensity);
-				reactionToFormulaMap.put(reactionID + "_rv", reactionFormula.getRightChild());
 			}
 			//if it's not a reversible reaction
 			else {
@@ -728,13 +744,15 @@ public class DynamicGillespie {
 					
 					//as a modifier, this species affects the reaction
 					speciesToAffectedReactionSetMap.get(modifierID).add(reactionID);
-					
-					//modifiers don't have stoichiometry, so -1.0 is used
-					reactantAndModifierStoichiometrySet.add(new StringDoublePair(modifierID, -1.0));
 				}
 
 				reactionToSpeciesAndStoichiometrySetMap.put(reactionID, speciesAndStoichiometrySet);
 				reactionToReactantStoichiometrySetMap.put(reactionID, reactantAndModifierStoichiometrySet);
+				reactionToFormulaMap.put(reactionID, reactionFormula);
+				
+				ArrayDeque<ASTNode> prefixQueue = new ArrayDeque<ASTNode>();
+				prefixQueue = GetPrefixQueueFromASTNode(reactionFormula);
+				reactionToFormulaMap2.put(reactionID, prefixQueue);
 				
 				double propensity;
 				
@@ -743,7 +761,8 @@ public class DynamicGillespie {
 				else {
 				
 					//calculate propensity
-					propensity = CalculatePropensity(reactionFormula);
+					//propensity = CalculatePropensity(reactionFormula);
+					propensity = CalculatePropensityIterative(reactionID);
 					
 					if (propensity < minPropensity && propensity > 0) minPropensity = propensity;
 					if (propensity > maxPropensity) maxPropensity = propensity;
@@ -752,9 +771,8 @@ public class DynamicGillespie {
 				}
 				
 				reactionToPropensityMap.put(reactionID, propensity);
-				reactionToFormulaMap.put(reactionID, reactionFormula);
 			}
-		}		
+		}
 	}
 	
 	/**
@@ -817,10 +835,10 @@ public class DynamicGillespie {
 	}
 
 	/**
+	 * calculates a reaction's propensity using a recursive algorithm
 	 * 
-	 * @param reactionFormula
-	 * @param reactionParameters
-	 * @return
+	 * @param node the AST with the kinetic formula
+	 * @return the propensity
 	 */
 	private double CalculatePropensity(ASTNode node) {
 		
@@ -844,12 +862,9 @@ public class DynamicGillespie {
 //				return;
 			}
 		}
-		//if it's an integer
-		else if (node.isInteger())
-			return node.getInteger();
 		
-		//if it's a non-integer
-		else if (node.isReal())
+		//if it's a number
+		else if (node.isNumber())
 			return node.getReal();
 		
 		//if it's a user-defined variable
@@ -884,9 +899,154 @@ public class DynamicGillespie {
 			
 		}
 		
-		//System.err.println("returning 0");
+		System.err.println("returning 0");
 		
 		return 0.0;
+	}
+	
+	/**
+	 * calculates a reaction's propensity using an iterative algorithm
+	 * 
+	 * @param node the AST with the kinetic formula
+	 * @return the propensity
+	 */
+	private double CalculatePropensityIterative(String reactionID) {
+		
+		ArrayDeque<ASTNode> expressionQueue = reactionToFormulaMap2.get(reactionID).clone();
+		Stack<Double> resultStack = new Stack<Double>();
+		
+		while (!expressionQueue.isEmpty()) {
+			
+			ASTNode currentNode = expressionQueue.removeLast();
+			ASTNode.Type nodeType = currentNode.getType();
+			
+			if (currentNode.isOperator()) {
+				
+				//evaluate using currentNode (an operator) and push
+				switch(nodeType) {
+				
+				case PLUS: {
+					
+					double operandSum = 0.0;					
+					
+					while (!resultStack.isEmpty()) 
+						operandSum += resultStack.pop();
+					
+					resultStack.push(operandSum);
+					
+					break;
+				}
+					
+				case MINUS: {
+					
+					double operand1 = resultStack.pop();
+					double operand2 = resultStack.pop();			
+					resultStack.push(operand2 - operand1);
+					
+					break;
+				}
+					
+				case TIMES: {
+					
+					double operandProduct = 0.0;		
+					
+					while (!resultStack.isEmpty()) 
+						operandProduct += resultStack.pop();
+					
+					resultStack.push(operandProduct);
+					
+					break;
+				}
+					
+				case DIVIDE: {
+					
+					double operand1 = resultStack.pop();
+					double operand2 = resultStack.pop();			
+					resultStack.push(operand2 / operand1);
+					
+					break;
+				}
+					
+				case FUNCTION_POWER: {
+					
+					double operand1 = resultStack.pop();
+					double operand2 = resultStack.pop();					
+					resultStack.push(Math.pow(operand2, operand1));
+					
+					break;
+				}
+				}
+			}
+			else if (currentNode.isFunction()) {
+				
+				//you'll have to check all the functions, then pop once to get the argument
+				//note, this does not deal with user-defined functions, i don't think
+				//you can do a switch for all the functions
+			}
+			else {
+				
+				//evaluate (get real or function value, etc.) and push
+				if (currentNode.isConstant()) {
+					
+					switch (currentNode.getType()) {
+					
+					case CONSTANT_E:
+						resultStack.push(Math.E);
+						break;
+						
+					case CONSTANT_PI:
+						resultStack.push(Math.PI);
+						break;
+						
+//					case CONSTANT_TRUE:
+//						return;
+//						
+//					case CONSTANT_FALSE:
+//						return;
+					}
+				}
+				
+				//if it's a number
+				else if (currentNode.isNumber())
+					resultStack.push(currentNode.getReal());
+				
+				//if it's a user-defined variable
+				//eg, a species name or global/local parameter
+				else if (currentNode.isName())			
+					resultStack.push(variableToValueMap.get(currentNode.getName()));
+			}
+			
+		}
+		
+		return resultStack.pop();
+	}
+	
+	/**
+	 * generates a preorder/prefix queue from an AST expression
+	 * 
+	 * @param root the root node
+	 * @return the prefix queue
+	 */
+	private ArrayDeque<ASTNode> GetPrefixQueueFromASTNode(ASTNode root) {
+		
+		ArrayDeque<ASTNode> expressionQueue = new ArrayDeque<ASTNode>();		
+		Stack<ASTNode> nodeStack = new Stack<ASTNode>();
+		nodeStack.push(root);
+        ASTNode currentNode = null;
+ 
+        while (!nodeStack.isEmpty()) {
+	
+        	currentNode = nodeStack.pop();
+            expressionQueue.add(currentNode);
+				
+			if (currentNode.getChildCount() > 0) {
+				
+				for (int childIter = 0; childIter < currentNode.getChildCount(); ++childIter)
+		            nodeStack.push(currentNode.getChild(childIter));
+    		}
+        }
+		
+		return expressionQueue;
 	}
 	
 	/**
@@ -1008,6 +1168,5 @@ OPTIMIZATION THINGS:
 look into final and static keywords
 
 get rid of the inner class (ie, make it non-inner)?
-
 
 */
