@@ -156,7 +156,7 @@ public class DynamicGillespie {
 			//System.err.println(totalPropensity + " " + currentTime + " " + delta_t + " ");			
 			//System.out.println("step 2: time is " + currentTime);
 			
-			System.err.println(numGroups);
+			//System.err.println(numGroups);
 			
 			
 			//STEP 3A: select a group
@@ -824,10 +824,6 @@ public class DynamicGillespie {
 	 */
 	private double CalculatePropensity(ASTNode node) {
 		
-//		if (node == null) {
-//			System.err.println("  is null");
-//		}
-//		
 		//these if/else-ifs before the else are leaf conditions
 		
 		//if it's a mathematical or logical constant
@@ -887,6 +883,8 @@ public class DynamicGillespie {
 			} //end switch
 			
 		}
+		
+		//System.err.println("returning 0");
 		
 		return 0.0;
 	}
