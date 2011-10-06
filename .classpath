@@ -48,5 +48,6 @@
 	<classpathentry kind="lib" path="gui/lib/trove-3.0.0.jar"/>
 	<classpathentry kind="lib" path="gui/lib/openmali.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jsbml-0.8-b2-with-dependencies.jar"/>
+	<classpathentry kind="lib" path="gui/lib/jafama.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
