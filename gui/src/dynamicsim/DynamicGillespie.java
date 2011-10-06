@@ -1,19 +1,18 @@
 package dynamicsim;
 
 import java.io.FileNotFoundException;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Stack;
 
-import gnu.trove.iterator.TIntIterator;
-import gnu.trove.iterator.TObjectDoubleIterator;
 import gnu.trove.map.hash.TIntDoubleHashMap;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
+
 import gnu.trove.set.hash.TIntHashSet;
 import gnu.trove.stack.array.TDoubleArrayStack;
 
@@ -32,10 +31,8 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLErrorLog;
-import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.jsbml.ASTNode.Type;
 
 
 public class DynamicGillespie {
@@ -67,6 +64,8 @@ public class DynamicGillespie {
 	//allows for access to a group number from a reaction ID
 	private TObjectIntHashMap<String> reactionToGroupMap = null;
 	
+	private TObjectIntHashMap<String> reactionToTimesFiredMap = null;
+	
 	//allows for access to a set of reactions that a species is in (as a reactant or modifier) from a species ID
 	private HashMap<String, HashSet<String> > speciesToAffectedReactionSetMap = null;
 	
@@ -83,6 +82,9 @@ public class DynamicGillespie {
 	//allows for access to the reactionIDs in a group from a group ID
 	private ArrayList<HashSet<String> > groupToReactionSetList = new ArrayList<HashSet<String> >(50);
 	
+	//allows for access to the group's total propensity from a group ID
+	private TIntDoubleHashMap groupToTotalGroupPropensityMap = new TIntDoubleHashMap(50);
+	
 	//stores group numbers that are nonempty
 	private TIntHashSet nonemptyGroupSet = new TIntHashSet(50);
 	
@@ -90,10 +92,9 @@ public class DynamicGillespie {
 	private int numGroups = 0;
 	
 	//propensity variables
-	double totalPropensity = 0.0;
-	double minPropensity = Double.MAX_VALUE;
-	double maxPropensity = Double.MIN_VALUE;
-	
+	private double totalPropensity = 0.0;
+	private double minPropensity = Double.MAX_VALUE;
+	private double maxPropensity = Double.MIN_VALUE;
 	
 	/**
 	 * empty constructor
@@ -116,18 +117,8 @@ public class DynamicGillespie {
 		long timeBeforeSim = System.nanoTime();
 		
 		//initialization will fail if the SBML model has errors
-		try {
-			if (!Initialize(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed))
-				return;
-		} 
-		catch (FileNotFoundException e) {
-			e.printStackTrace();
+		if (!Initialize(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed))
 			return;
-		} 
-		catch (XMLStreamException e) {
-			e.printStackTrace();
-			return;
-		}
 		
 		System.err.println("initialization time: " + (System.nanoTime() - timeBeforeSim) / 1e9f);	
 		
@@ -163,25 +154,25 @@ public class DynamicGillespie {
 			
 			//STEP 1: generate random numbers
 			
-			long step1Initial = System.nanoTime();
+			//long step1Initial = System.nanoTime();
 			
 			double r1 = randomNumberGenerator.nextDouble();
 			double r2 = randomNumberGenerator.nextDouble();
 			double r3 = randomNumberGenerator.nextDouble();
 			double r4 = randomNumberGenerator.nextDouble();
 			
-			step1Time += System.nanoTime() - step1Initial;
+			//step1Time += System.nanoTime() - step1Initial;
 			
 			
 			//STEP 2: calculate delta_t, the time till the next reaction execution
 			
-			long step2Initial = System.nanoTime();
+			//long step2Initial = System.nanoTime();
 			 
 			double delta_t = FastMath.log(1 / r1) / totalPropensity;
 			
-			step2Time += System.nanoTime() - step2Initial;
+			//step2Time += System.nanoTime() - step2Initial;
 			
-			//System.err.println(totalPropensity + " " + currentTime + " " + delta_t + " ");			
+			System.err.println(totalPropensity + " " + currentTime + " " + delta_t + " ");			
 			//System.out.println("step 2: time is " + currentTime);
 			
 			//System.err.println(numGroups);
@@ -189,37 +180,61 @@ public class DynamicGillespie {
 			
 			//STEP 3A: select a group
 			
-			long step3aInitial = System.nanoTime();
+			//long step3aInitial = System.nanoTime();
 			
-			//pick a random index, loop through the nonempty groups until that index is reached
-			int randomIndex = (int) FastMath.floor(r2 * (nonemptyGroupSet.size() - 0.0000001));
-			int indexIter = 0;
-			TIntIterator nonemptyGroupSetIterator = nonemptyGroupSet.iterator();
+//			//pick a random index, loop through the nonempty groups until that index is reached
+//			int randomIndex = (int) FastMath.floor(r2 * (nonemptyGroupSet.size() - 0.0000001));
+//			int indexIter = 0;
+//			TIntIterator nonemptyGroupSetIterator = nonemptyGroupSet.iterator();
+//			
+//			while (nonemptyGroupSetIterator.hasNext() && (indexIter < randomIndex)) {
+//				
+//				//System.out.println("step 3a");
+//				
+//				nonemptyGroupSetIterator.next();
+//				++indexIter;
+//			}
+//				
+//			int selectedGroup = nonemptyGroupSetIterator.next();
 			
-			while (nonemptyGroupSetIterator.hasNext() && (indexIter < randomIndex)) {
+			double randomPropensity = r2 * (totalPropensity);
+			double totalGroupsPropensity = 0.0;
+			int selectedGroup = 1;
+			
+			for (; selectedGroup < numGroups; ++selectedGroup) {
 				
-				//System.out.println("step 3a");
+				totalGroupsPropensity += groupToTotalGroupPropensityMap.get(selectedGroup);
 				
-				nonemptyGroupSetIterator.next();
-				++indexIter;
+				if (randomPropensity < totalGroupsPropensity && nonemptyGroupSet.contains(selectedGroup))
+					break;
 			}
-				
-			int selectedGroup = nonemptyGroupSetIterator.next();
+			
+//			totalGroupsPropensity = 0.0;
+//			int groupNum = 1;
+//			
+//			for (; groupNum < numGroups; ++groupNum) {
+//				
+//				totalGroupsPropensity += groupToTotalGroupPropensityMap.get(groupNum);
+//			}
+//			
+//			if (totalPropensity - totalGroupsPropensity > 0.001) {
+//				System.err.println(totalGroupsPropensity + "  " + totalPropensity);
+//			}
 			
 			//System.err.println(" index: " + randomIndex + " group: " + selectedGroup);
 		
-			step3aTime += System.nanoTime() - step3aInitial;
+			//step3aTime += System.nanoTime() - step3aInitial;
 			
 			
 			
 			//STEP 3B: select a reaction within the group
 			
-			long step3bInitial = System.nanoTime();
+			//long step3bInitial = System.nanoTime();
 			
 			HashSet<String> reactionSet = groupToReactionSetList.get(selectedGroup);
 			
-			randomIndex = (int) FastMath.floor(r3 * reactionSet.size());
-			indexIter = 0;
+			double randomIndex = (int) FastMath.floor(r3 * reactionSet.size());
+			int indexIter = 0;
 			Iterator<String> reactionSetIterator = reactionSet.iterator();
 			
 			while (reactionSetIterator.hasNext() && indexIter < randomIndex) {
@@ -232,7 +247,7 @@ public class DynamicGillespie {
 			double reactionPropensity = reactionToPropensityMap.get(selectedReactionID);
 			
 			//this is choosing a value between 0 and the max propensity in the group
-			double randomPropensity = r4 * groupToMaxValueMap.get(selectedGroup);
+			randomPropensity = r4 * groupToMaxValueMap.get(selectedGroup);
 			
 			//loop until there's no reaction rejection
 			//if the random propensity is higher than the selected reaction's propensity, another random reaction is chosen
@@ -258,17 +273,26 @@ public class DynamicGillespie {
 				randomPropensity = r4 * groupToMaxValueMap.get(selectedGroup);
 			}
 			
-			step3bTime += System.nanoTime() - step3bInitial;
+			//step3bTime += System.nanoTime() - step3bInitial;
 			
-			//System.err.println("reaction fired: " + selectedReactionID + " propensity: " + reactionPropensity);
+//			System.err.println();
+//			System.err.println();
+//			System.err.println("reaction fired: " + selectedReactionID + " propensity: " + reactionPropensity);
+//			try {
+//				System.err.println("  " + ASTNode.formulaToString(reactionToFormulaMap.get(selectedReactionID)));
+//			} catch (SBMLException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			
 			
 			//STEP 4: perform selected reaction and update species counts
 			
-			long step4Initial = System.nanoTime();
+			//long step4Initial = System.nanoTime();
 
 			//set of all affected reactions that need propensity updating
 			HashSet<String> totalAffectedReactionSet = new HashSet<String>(20);
+			totalAffectedReactionSet.add(selectedReactionID);
 			
 			//loop through the reaction's reactants and products and update their amounts
 			for (StringDoublePair speciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap.get(selectedReactionID)) {
@@ -279,14 +303,19 @@ public class DynamicGillespie {
 				String speciesID = speciesAndStoichiometry.string;
 				
 				//System.err.println(selectedReactionID + " " + speciesID + "  " + variableToValueMap.get(speciesID) + "  " + stoichiometry);
+				//System.err.println("   " + speciesID + "  " + variableToValueMap.get(speciesID) + "  " + stoichiometry);
 				
 				//update the species count
-				variableToValueMap.adjustValue(speciesID, stoichiometry * delta_t);
+				variableToValueMap.adjustValue(speciesID, stoichiometry);
+				
+				//System.err.println("   " + speciesID + "  " + variableToValueMap.get(speciesID));
 				
 				//System.out.println(" " + speciesID + "  " + variableToValueMap.get(speciesID));				
 				
 				totalAffectedReactionSet.addAll(speciesToAffectedReactionSetMap.get(speciesID));
 			}
+			
+			//System.err.println();
 			
 			
 //			for (String reaction : reactionToFormulaMap.keySet())
@@ -297,7 +326,7 @@ public class DynamicGillespie {
 //					System.out.println(species + "   " + reaction);
 			
 			
-			step4Time += System.nanoTime() - step4Initial;
+			//step4Time += System.nanoTime() - step4Initial;
 			
 			
 			//STEP 5: compute affected reactions' new propensities and update total propensity			
@@ -310,7 +339,7 @@ public class DynamicGillespie {
 				//System.err.println(affectedReactionID + "  " + model.getReaction(affectedReactionID.replace("_fd","").replace("_rv","")).getKineticLaw().getFormula());
 				//System.err.println(reactionToPropensityMap.get(affectedReactionID) + " " + totalAffectedReactionSet.size());
 				
-				long step5Initial = System.nanoTime();
+				//long step5Initial = System.nanoTime();
 				
 				boolean notEnoughMoleculesFlag = false;
 				
@@ -340,24 +369,24 @@ public class DynamicGillespie {
 				}
 				
 				double oldPropensity = reactionToPropensityMap.get(affectedReactionID);
+				int oldGroup = reactionToGroupMap.get(affectedReactionID);
+				
+				//remove the old propensity from the group's total
+				//later on, add the new propensity to the (possibly new) group's total
+				groupToTotalGroupPropensityMap.adjustValue(oldGroup, -oldPropensity);
 				
 				//add the difference of new v. old propensity to the total propensity
 				totalPropensity += newPropensity - oldPropensity;
 				
-				//System.err.println(String.valueOf(totalPropensity) + " " + String.valueOf(newPropensity - oldPropensity));
-				//System.err.println(affectedReactionID + ": " + oldPropensity + " -> " + newPropensity);
-				
 				reactionToPropensityMap.put(affectedReactionID, newPropensity);				
 				
-				step5Time += System.nanoTime() - step5Initial;				
+				//step5Time += System.nanoTime() - step5Initial;				
 				
 				
 				
 				//STEP 6: re-assign affected reactions to appropriate groups
 				
-				long step6Initial = System.nanoTime();
-				
-				int oldGroup = reactionToGroupMap.get(affectedReactionID);				
+				//long step6Initial = System.nanoTime();								
 				
 				if (newPropensity == 0.0) {
 					
@@ -372,59 +401,63 @@ public class DynamicGillespie {
 					if (oldReactionSet.size() == 0)
 						nonemptyGroupSet.remove(oldGroup);			
 				}
-				else if (oldPropensity == 0.0) {
-					
-					int group;
-					
-					if (newPropensity <= minPropensity) {
-						
-						group = 1;
-						minPropensity = newPropensity;
-						ReassignAllReactionsToGroups();
-					}
-					else {
-						
-						if (newPropensity > maxPropensity)
-							maxPropensity = newPropensity;
-						
-						org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath.frexp((float) (newPropensity / minPropensity));
-						group = frexpResult.exponent;
-					}
-					
-					if (group < numGroups) {
-						
-						HashSet<String> groupReactionSet = groupToReactionSetList.get(group);
-						
-						//update group collections
-						groupToReactionSetList.get(0).remove(affectedReactionID);
-						reactionToGroupMap.put(affectedReactionID, group);
-						groupReactionSet.add(affectedReactionID);
-						
-						//if the group that the reaction was just added to is now nonempty
-						if (groupReactionSet.size() == 1)
-							nonemptyGroupSet.add(group);
-						
-						if (newPropensity > groupToMaxValueMap.get(group))
-							groupToMaxValueMap.put(group, newPropensity);
-					}
-					//this means the propensity goes into a group that doesn't currently exist
-					else {
-						
-						//groupToReactionSetList is a list, so the group needs to be the index
-						for (int iter = numGroups; iter <= group; ++iter)			
-							groupToReactionSetList.add(new HashSet<String>(500));
-						
-						numGroups = group + 1;
-						
-						//update group collections
-						groupToReactionSetList.get(0).remove(affectedReactionID);
-						reactionToGroupMap.put(affectedReactionID, group);
-						groupToReactionSetList.get(group).add(affectedReactionID);						
-						nonemptyGroupSet.add(group);
-						groupToMaxValueMap.put(group, newPropensity);
-					}					
-				}
+//				else if (oldPropensity == 0.0) {
+//					
+//					int group;
+//					
+//					if (newPropensity <= minPropensity) {
+//						
+//						group = 1;
+//						minPropensity = newPropensity;
+//						ReassignAllReactionsToGroups();
+//					}
+//					else {
+//						
+//						if (newPropensity > maxPropensity)
+//							maxPropensity = newPropensity;
+//						
+//						org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath.frexp((float) (newPropensity / minPropensity));
+//						group = frexpResult.exponent;
+//						groupToTotalGroupPropensityMap.adjustValue(group, newPropensity);
+//					
+//						if (group < numGroups) {
+//							
+//							HashSet<String> groupReactionSet = groupToReactionSetList.get(group);
+//							
+//							//update group collections
+//							groupToReactionSetList.get(0).remove(affectedReactionID);
+//							reactionToGroupMap.put(affectedReactionID, group);
+//							groupReactionSet.add(affectedReactionID);
+//							
+//							//if the group that the reaction was just added to is now nonempty
+//							if (groupReactionSet.size() == 1)
+//								nonemptyGroupSet.add(group);
+//							
+//							if (newPropensity > groupToMaxValueMap.get(group))
+//								groupToMaxValueMap.put(group, newPropensity);
+//						}
+//						//this means the propensity goes into a group that doesn't currently exist
+//						else {
+//							
+//							//groupToReactionSetList is a list, so the group needs to be the index
+//							for (int iter = numGroups; iter <= group; ++iter)			
+//								groupToReactionSetList.add(new HashSet<String>(500));
+//							
+//							System.err.println("here1");
+//							
+//							numGroups = group + 1;
+//							
+//							//update group collections
+//							groupToReactionSetList.get(0).remove(affectedReactionID);
+//							reactionToGroupMap.put(affectedReactionID, group);
+//							groupToReactionSetList.get(group).add(affectedReactionID);						
+//							nonemptyGroupSet.add(group);
+//							groupToMaxValueMap.put(group, newPropensity);
+//						}
+//					}
+//				} // end if (oldPropensity == 0.0)
 				else {
+					//if it's outside of the old group's boundaries
 					if (newPropensity > groupToPropensityCeilingMap.get(oldGroup) ||
 							newPropensity < groupToPropensityFloorMap.get(oldGroup)) {
 						
@@ -443,50 +476,54 @@ public class DynamicGillespie {
 							
 							org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath.frexp((float) (newPropensity / minPropensity));
 							group = frexpResult.exponent;
-						}
 						
-						if (group < numGroups) {
-							
-							HashSet<String> newGroupReactionSet = groupToReactionSetList.get(group);
-							HashSet<String> oldGroupReactionSet = groupToReactionSetList.get(oldGroup);
-							
-							//update group collections
-							oldGroupReactionSet.remove(affectedReactionID);
-							reactionToGroupMap.put(affectedReactionID, group);
-							newGroupReactionSet.add(affectedReactionID);
-							
-							//if the group that the reaction was just added to is now nonempty
-							if (newGroupReactionSet.size() == 1)
+							if (group < numGroups) {
+								
+								HashSet<String> newGroupReactionSet = groupToReactionSetList.get(group);
+								HashSet<String> oldGroupReactionSet = groupToReactionSetList.get(oldGroup);
+								
+								//update group collections
+								oldGroupReactionSet.remove(affectedReactionID);
+								reactionToGroupMap.put(affectedReactionID, group);
+								newGroupReactionSet.add(affectedReactionID);
+								groupToTotalGroupPropensityMap.adjustValue(group, newPropensity);
+								
+								//if the group that the reaction was just added to is now nonempty
+								if (newGroupReactionSet.size() == 1)
+									nonemptyGroupSet.add(group);
+								
+								if (oldGroupReactionSet.size() == 0)
+									nonemptyGroupSet.remove(oldGroup);
+								
+								if (newPropensity > groupToMaxValueMap.get(group))
+									groupToMaxValueMap.put(group, newPropensity);
+							}
+							//this means the propensity goes into a group that doesn't currently exist
+							else {
+								
+								//groupToReactionSetList is a list, so the group needs to be the index
+								for (int iter = numGroups; iter <= group; ++iter) {				
+									groupToReactionSetList.add(new HashSet<String>(500));
+									groupToTotalGroupPropensityMap.put(iter, 0.0);
+								}
+								
+								numGroups = group + 1;
+								
+								HashSet<String> oldReactionSet = groupToReactionSetList.get(oldGroup);
+								
+								//update group collections
+								groupToTotalGroupPropensityMap.adjustValue(group, newPropensity);
+								groupToReactionSetList.get(oldGroup).remove(affectedReactionID);
+								reactionToGroupMap.put(affectedReactionID, group);
+								groupToReactionSetList.get(group).add(affectedReactionID);						
 								nonemptyGroupSet.add(group);
-							
-							if (oldGroupReactionSet.size() == 0)
-								nonemptyGroupSet.remove(oldGroup);
-							
-							if (newPropensity > groupToMaxValueMap.get(group))
 								groupToMaxValueMap.put(group, newPropensity);
+								
+								if (oldReactionSet.size() == 0)
+									nonemptyGroupSet.remove(oldGroup);
+							}			
 						}
-						//this means the propensity goes into a group that doesn't currently exist
-						else {
-							
-							//groupToReactionSetList is a list, so the group needs to be the index
-							for (int iter = numGroups; iter <= group; ++iter)							
-								groupToReactionSetList.add(new HashSet<String>(500));
-							
-							numGroups = group + 1;
-							
-							HashSet<String> oldReactionSet = groupToReactionSetList.get(oldGroup);
-							
-							//update group collections
-							groupToReactionSetList.get(oldGroup).remove(affectedReactionID);
-							reactionToGroupMap.put(affectedReactionID, group);
-							groupToReactionSetList.get(group).add(affectedReactionID);						
-							nonemptyGroupSet.add(group);
-							groupToMaxValueMap.put(group, newPropensity);
-							
-							if (oldReactionSet.size() == 0)
-								nonemptyGroupSet.remove(oldGroup);
-						}					
-					}
+					} // end if outside group's boundaries
 					else {
 
 						//maintain current group
@@ -496,10 +533,12 @@ public class DynamicGillespie {
 						
 						if (newPropensity > groupToMaxValueMap.get(oldGroup))
 							groupToMaxValueMap.put(oldGroup, newPropensity);
+						
+						groupToTotalGroupPropensityMap.adjustValue(oldGroup, newPropensity);
 					}
 				}
 				
-				step6Time += System.nanoTime() - step6Initial;				
+				//step6Time += System.nanoTime() - step6Initial;				
 				
 			}//end step 5/6 for loop
 			
@@ -511,6 +550,41 @@ public class DynamicGillespie {
 				currentTime += maxTimeStep;
 			
 		} //end simulation loop
+		
+		
+//		System.err.println("final species counts: ");
+//		
+//		TObjectDoubleIterator<String> speciesIter = variableToValueMap.iterator();
+//		
+//		while (speciesIter.hasNext()) {
+//			
+//			speciesIter.advance();
+//			System.err.println(speciesIter.key() + "  " + speciesIter.value());
+//		}
+//		
+//		System.err.println("-----------------------------");
+//		
+//		TObjectDoubleIterator<String> reactionIter = reactionToPropensityMap.iterator();
+//		
+//		while (reactionIter.hasNext()) {
+//			
+//			reactionIter.advance();
+//			System.err.println(reactionIter.key() + "  " + reactionIter.value());
+//		}
+		
+//		System.err.println("-----------------------------");
+//		
+//		TObjectIntIterator<String> reactionIter = reactionToTimesFiredMap.iterator();
+//		
+//		DecimalFormat df = new DecimalFormat("#.##");
+//		
+//		while (reactionIter.hasNext()) {
+//			
+//			reactionIter.advance();
+//			System.err.println(reactionIter.key() + "  \n   " + df.format(reactionToPropensityMap.get(reactionIter.key())) +
+//				"  " + df.format((double)reactionIter.value()/(double)totalFirings));
+//		}
+			
 		
 		
 		System.err.println("total time: " + String.valueOf((System.nanoTime() - timeBeforeSim) / 1e9f));
@@ -529,12 +603,21 @@ public class DynamicGillespie {
 	 * @throws FileNotFoundException 
 	 */
 	private boolean Initialize(String SBMLFileName, String outputDirectory, double timeLimit, 
-			double maxTimeStep, long randomSeed) throws FileNotFoundException, XMLStreamException {
+			double maxTimeStep, long randomSeed) {
 		
 		randomNumberGenerator = new XORShiftRandom(randomSeed);	
 		
 		SBMLReader reader = new SBMLReader();
-		SBMLDocument document = reader.readSBML(SBMLFileName);	
+		SBMLDocument document = null;
+		
+		try {
+			document = reader.readSBML(SBMLFileName);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (XMLStreamException e) {
+			e.printStackTrace();
+		}	
+		
 		SBMLErrorLog errors = document.getListOfErrors();
 		
 		//if the sbml document has errors, tell the user and don't simulate
@@ -568,6 +651,7 @@ public class DynamicGillespie {
 		//reactionToFormulaMap2 = new HashMap<String, ArrayDeque<ASTNode> >((int) (numReactions * 1.5));
 		reactionToGroupMap = new TObjectIntHashMap<String>((int) (numReactions * 1.5));
 		reactionToSBMLReactionMap = new HashMap<String, Reaction>((int) numReactions);
+		reactionToTimesFiredMap = new TObjectIntHashMap<String>((int) (numReactions * 1.5));
 		
 		//add values to hashmap for easy access to species amounts
 		for (int i = 0; i < numSpecies; ++i) {
@@ -636,6 +720,9 @@ public class DynamicGillespie {
 			//split into a forward and reverse reaction (based on the minus sign in the middle)
 			//and calculate both propensities
 			if (reaction.getReversible()) {
+				
+				reactionToTimesFiredMap.put(reactionID + "_fd", 0);
+				reactionToTimesFiredMap.put(reactionID + "_rv", 0);
 				
 				//associate the reaction's reactants/products and their stoichiometries with the reaction ID
 				//this is a reversible reaction, so the stoichiometries are switched for the reverse reaction
@@ -742,6 +829,9 @@ public class DynamicGillespie {
 			}
 			//if it's not a reversible reaction
 			else {
+				
+				reactionToTimesFiredMap.put(reactionID, 0);
+				
 				//associate the reaction's reactants/products and their stoichiometries with the reaction ID
 				HashSet<StringDoublePair> speciesAndStoichiometrySet = new HashSet<StringDoublePair>();
 				HashSet<StringDoublePair> reactantStoichiometrySet = new HashSet<StringDoublePair>();
@@ -836,8 +926,8 @@ public class DynamicGillespie {
 		for (int groupNum = 0; groupNum < numGroups; ++groupNum) {
 
 			groupToReactionSetList.add(new HashSet<String>(500));
-		}
-		
+			groupToTotalGroupPropensityMap.put(groupNum, 0.0);
+		}		
 		
 		//assign reactions to groups
 		for (String reaction : reactionToPropensityMap.keySet()) {
@@ -848,12 +938,13 @@ public class DynamicGillespie {
 			
 			//System.out.println(reaction + "   " + propensity + "   " + group);
 			
+			groupToTotalGroupPropensityMap.adjustValue(group, propensity);
 			groupToReactionSetList.get(group).add(reaction);
 			reactionToGroupMap.put(reaction, group);
 			
 			if (propensity > groupToMaxValueMap.get(group))
 				groupToMaxValueMap.put(group, propensity);
-		}		
+		}
 		
 		//find out which (if any) groups are empty
 		//this is done so that empty groups are never chosen during simulation
@@ -1146,6 +1237,7 @@ public class DynamicGillespie {
 			
 			groupToReactionSetList.get(groupNum).clear();
 			groupToMaxValueMap.put(groupNum, 0.0);
+			groupToTotalGroupPropensityMap.put(groupNum, 0.0);
 		}
 		
 		numGroups = newNumGroups;
@@ -1164,6 +1256,7 @@ public class DynamicGillespie {
 			
 			groupToReactionSetList.get(group).add(reaction);
 			reactionToGroupMap.put(reaction, group);
+			groupToTotalGroupPropensityMap.adjustValue(group, propensity);
 			
 			if (propensity > groupToMaxValueMap.get(group))
 				groupToMaxValueMap.put(group, propensity);
@@ -1220,6 +1313,12 @@ look at the util sbml formula functions to see what happens with strings
 	--i'm not sure this is still relevant
 
 add a gc call after reach run
+	
+make sure reaction selection is happening properly
+
+i think you can collapse the last two parts of step 6
+	--i don't think it matters what the oldPropensity was
+	--confirm that this is fine (looks like it)
 	
 	
 OPTIMIZATION THINGS:
