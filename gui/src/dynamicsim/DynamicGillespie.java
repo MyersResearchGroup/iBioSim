@@ -6,21 +6,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Stack;
 
 import gnu.trove.iterator.TIntIterator;
+import gnu.trove.iterator.TObjectDoubleIterator;
 import gnu.trove.map.hash.TIntDoubleHashMap;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import gnu.trove.set.hash.TIntHashSet;
+import gnu.trove.stack.array.TDoubleArrayStack;
 
 import javax.swing.JOptionPane;
 import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
 
-import org.openmali.FastMath;
-import org.openmali.FastMath.FRExpResultf;
+import odk.lang.FastMath;
+
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
@@ -32,6 +35,7 @@ import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.ASTNode.Type;
 
 
 public class DynamicGillespie {
@@ -125,7 +129,21 @@ public class DynamicGillespie {
 			return;
 		}
 		
-		System.err.println("initialization time: " + (System.nanoTime() - timeBeforeSim) / 1e9f);		
+		System.err.println("initialization time: " + (System.nanoTime() - timeBeforeSim) / 1e9f);	
+		
+//		TObjectDoubleIterator<String> iter1 = reactionToPropensityMap.iterator();
+//		
+//		while (iter1.hasNext()) {
+//			
+//			iter1.advance();
+//			System.out.println(iter1.key() + "   " + iter1.value());
+//		}
+		
+//		for (Map.Entry<String, ArrayDeque<ASTNode>> node : reactionToFormulaMap2.entrySet()) {
+//			
+//			System.err.println(node);
+//		}
+//		
 		
 		
 		//SIMULATION LOOP
@@ -159,7 +177,7 @@ public class DynamicGillespie {
 			
 			long step2Initial = System.nanoTime();
 			 
-			double delta_t = Math.log(1 / r1) / totalPropensity;
+			double delta_t = FastMath.log(1 / r1) / totalPropensity;
 			
 			step2Time += System.nanoTime() - step2Initial;
 			
@@ -174,7 +192,7 @@ public class DynamicGillespie {
 			long step3aInitial = System.nanoTime();
 			
 			//pick a random index, loop through the nonempty groups until that index is reached
-			int randomIndex = (int) Math.floor(r2 * (nonemptyGroupSet.size() - 0.0000001));
+			int randomIndex = (int) FastMath.floor(r2 * (nonemptyGroupSet.size() - 0.0000001));
 			int indexIter = 0;
 			TIntIterator nonemptyGroupSetIterator = nonemptyGroupSet.iterator();
 			
@@ -200,7 +218,7 @@ public class DynamicGillespie {
 			
 			HashSet<String> reactionSet = groupToReactionSetList.get(selectedGroup);
 			
-			randomIndex = (int) Math.floor(r3 * reactionSet.size());
+			randomIndex = (int) FastMath.floor(r3 * reactionSet.size());
 			indexIter = 0;
 			Iterator<String> reactionSetIterator = reactionSet.iterator();
 			
@@ -225,7 +243,7 @@ public class DynamicGillespie {
 				
 				r4 = randomNumberGenerator.nextDouble();
 				
-				randomIndex = (int) Math.floor(r4 * reactionSet.size());
+				randomIndex = (int) FastMath.floor(r4 * reactionSet.size());
 				indexIter = 0;
 				reactionSetIterator = reactionSet.iterator();
 				
@@ -242,7 +260,7 @@ public class DynamicGillespie {
 			
 			step3bTime += System.nanoTime() - step3bInitial;
 			
-			//System.err.println("\nreaction fired: " + selectedReactionID + " propensity: " + reactionPropensity);
+			//System.err.println("reaction fired: " + selectedReactionID + " propensity: " + reactionPropensity);
 			
 			
 			//STEP 4: perform selected reaction and update species counts
@@ -317,8 +335,8 @@ public class DynamicGillespie {
 				if (notEnoughMoleculesFlag == true)
 					newPropensity = 0.0;
 				else {
-					//newPropensity = CalculatePropensity(reactionToFormulaMap.get(affectedReactionID));
-					newPropensity = CalculatePropensityIterative(affectedReactionID);
+					newPropensity = CalculatePropensityRecursive(reactionToFormulaMap.get(affectedReactionID));
+					//newPropensity = CalculatePropensityIterative(affectedReactionID);
 				}
 				
 				double oldPropensity = reactionToPropensityMap.get(affectedReactionID);
@@ -369,7 +387,7 @@ public class DynamicGillespie {
 						if (newPropensity > maxPropensity)
 							maxPropensity = newPropensity;
 						
-						FRExpResultf frexpResult = FastMath.frexp((float) (newPropensity / minPropensity));
+						org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath.frexp((float) (newPropensity / minPropensity));
 						group = frexpResult.exponent;
 					}
 					
@@ -423,7 +441,7 @@ public class DynamicGillespie {
 							if (newPropensity > maxPropensity)
 								maxPropensity = newPropensity;
 							
-							FRExpResultf frexpResult = FastMath.frexp((float) (newPropensity / minPropensity));
+							org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath.frexp((float) (newPropensity / minPropensity));
 							group = frexpResult.exponent;
 						}
 						
@@ -471,7 +489,13 @@ public class DynamicGillespie {
 					}
 					else {
 
-						//maintain current group; do nothing
+						//maintain current group
+						
+						if (newPropensity > maxPropensity)
+							maxPropensity = newPropensity;
+						
+						if (newPropensity > groupToMaxValueMap.get(oldGroup))
+							groupToMaxValueMap.put(oldGroup, newPropensity);
 					}
 				}
 				
@@ -541,7 +565,7 @@ public class DynamicGillespie {
 		reactionToSpeciesAndStoichiometrySetMap = new HashMap<String, HashSet<StringDoublePair> >((int) (numReactions * 1.5));	
 		reactionToReactantStoichiometrySetMap = new HashMap<String, HashSet<StringDoublePair> >((int) (numReactions * 1.5));
 		reactionToFormulaMap = new HashMap<String, ASTNode>((int) (numReactions * 1.5));
-		reactionToFormulaMap2 = new HashMap<String, ArrayDeque<ASTNode> >((int) (numReactions * 1.5));
+		//reactionToFormulaMap2 = new HashMap<String, ArrayDeque<ASTNode> >((int) (numReactions * 1.5));
 		reactionToGroupMap = new TObjectIntHashMap<String>((int) (numReactions * 1.5));
 		reactionToSBMLReactionMap = new HashMap<String, Reaction>((int) numReactions);
 		
@@ -589,6 +613,13 @@ public class DynamicGillespie {
 			boolean notEnoughMoleculesFlagFd = false;
 			boolean notEnoughMoleculesFlagRv = false;
 			boolean notEnoughMoleculesFlag = false;
+			
+//			try {
+//				System.err.println(reactionID + " " + ASTNode.formulaToString(reactionFormula));
+//			} catch (SBMLException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 			
 			reactionToSBMLReactionMap.put(reactionID, reaction);
 			
@@ -669,17 +700,17 @@ public class DynamicGillespie {
 				double propensity;
 				
 				reactionToFormulaMap.put(reactionID + "_rv", reactionFormula.getRightChild());
-				reactionToFormulaMap2.put(reactionID + "_rv", GetPrefixQueueFromASTNode(reactionFormula.getRightChild()));
+				//reactionToFormulaMap2.put(reactionID + "_rv", GetPrefixQueueFromASTNode(reactionFormula.getRightChild()));
 				reactionToFormulaMap.put(reactionID + "_fd", reactionFormula.getLeftChild());
-				reactionToFormulaMap2.put(reactionID + "_fd", GetPrefixQueueFromASTNode(reactionFormula.getLeftChild()));
+				//reactionToFormulaMap2.put(reactionID + "_fd", GetPrefixQueueFromASTNode(reactionFormula.getLeftChild()));
 				
 				//calculate forward reaction propensity
 				if (notEnoughMoleculesFlagFd == true)
 					propensity = 0.0;
 				else {
 					//the left child is what's left of the minus sign
-					//propensity = CalculatePropensity(reactionFormula.getLeftChild());
-					propensity = CalculatePropensityIterative(reactionID + "_fd");
+					propensity = CalculatePropensityRecursive(reactionFormula.getLeftChild());
+					//propensity = CalculatePropensityIterative(reactionID + "_fd");
 					
 					if (propensity < minPropensity && propensity > 0) 
 						minPropensity = propensity;
@@ -696,8 +727,8 @@ public class DynamicGillespie {
 					propensity = 0.0;
 				else {
 					//the right child is what's right of the minus sign
-					//propensity = CalculatePropensity(reactionFormula.getRightChild());
-					propensity = CalculatePropensityIterative(reactionID + "_rv");
+					propensity = CalculatePropensityRecursive(reactionFormula.getRightChild());
+					//propensity = CalculatePropensityIterative(reactionID + "_rv");
 					
 					if (propensity < minPropensity && propensity > 0) 
 						minPropensity = propensity;
@@ -713,7 +744,7 @@ public class DynamicGillespie {
 			else {
 				//associate the reaction's reactants/products and their stoichiometries with the reaction ID
 				HashSet<StringDoublePair> speciesAndStoichiometrySet = new HashSet<StringDoublePair>();
-				HashSet<StringDoublePair> reactantAndModifierStoichiometrySet = new HashSet<StringDoublePair>();
+				HashSet<StringDoublePair> reactantStoichiometrySet = new HashSet<StringDoublePair>();
 				
 				for (int a = 0; a < reaction.getNumReactants(); ++a) {
 					
@@ -722,7 +753,7 @@ public class DynamicGillespie {
 					double reactantStoichiometry = reactant.getStoichiometry();
 					
 					speciesAndStoichiometrySet.add(new StringDoublePair(reactantID, -reactantStoichiometry));
-					reactantAndModifierStoichiometrySet.add(new StringDoublePair(reactantID, reactantStoichiometry));
+					reactantStoichiometrySet.add(new StringDoublePair(reactantID, reactantStoichiometry));
 					
 					//as a reactant, this species affects the reaction
 					speciesToAffectedReactionSetMap.get(reactantID).add(reactionID);
@@ -749,12 +780,9 @@ public class DynamicGillespie {
 				}
 
 				reactionToSpeciesAndStoichiometrySetMap.put(reactionID, speciesAndStoichiometrySet);
-				reactionToReactantStoichiometrySetMap.put(reactionID, reactantAndModifierStoichiometrySet);
-				reactionToFormulaMap.put(reactionID, reactionFormula);
-				
-				ArrayDeque<ASTNode> prefixQueue = new ArrayDeque<ASTNode>();
-				prefixQueue = GetPrefixQueueFromASTNode(reactionFormula);
-				reactionToFormulaMap2.put(reactionID, prefixQueue);
+				reactionToReactantStoichiometrySetMap.put(reactionID, reactantStoichiometrySet);
+				reactionToFormulaMap.put(reactionID, reactionFormula);				
+				//reactionToFormulaMap2.put(reactionID, GetPrefixQueueFromASTNode(reactionFormula));
 				
 				double propensity;
 				
@@ -763,11 +791,13 @@ public class DynamicGillespie {
 				else {
 				
 					//calculate propensity
-					//propensity = CalculatePropensity(reactionFormula);
-					propensity = CalculatePropensityIterative(reactionID);
+					propensity = CalculatePropensityRecursive(reactionFormula);
+					//propensity = CalculatePropensityIterative(reactionID);
 					
-					if (propensity < minPropensity && propensity > 0) minPropensity = propensity;
-					if (propensity > maxPropensity) maxPropensity = propensity;
+					if (propensity < minPropensity && propensity > 0) 
+						minPropensity = propensity;
+					if (propensity > maxPropensity) 
+						maxPropensity = propensity;
 					
 					totalPropensity += propensity;
 				}
@@ -813,7 +843,7 @@ public class DynamicGillespie {
 		for (String reaction : reactionToPropensityMap.keySet()) {
 			
 			double propensity = reactionToPropensityMap.get(reaction);			
-			FRExpResultf frexpResult = FastMath.frexp((float) (propensity / minPropensity));
+			org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath.frexp((float) (propensity / minPropensity));
 			int group = frexpResult.exponent;
 			
 			//System.out.println(reaction + "   " + propensity + "   " + group);
@@ -846,65 +876,77 @@ public class DynamicGillespie {
 	 */
 	private double CalculatePropensityRecursive(ASTNode node) {
 		
-//		//these if/else-ifs before the else are leaf conditions
-//		
-//		//if it's a mathematical or logical constant
-//		if (node.isConstant()) {
-//			
-//			switch (node.getType()) {
-//			
-//			case CONSTANT_E:
-//				return Math.E;
+		//these if/else-ifs before the else are leaf conditions
+		
+		//if it's a mathematical or logical constant
+		if (node.isConstant()) {
+			
+			switch (node.getType()) {
+			
+			case CONSTANT_E:
+				return Math.E;
+				
+			case CONSTANT_PI:
+				return Math.PI;
+				
+//			case libsbml.AST_CONSTANT_TRUE:
+//				return;
 //				
-//			case CONSTANT_PI:
-//				return Math.PI;
-//				
-////			case libsbml.AST_CONSTANT_TRUE:
-////				return;
-////				
-////			case libsbml.AST_CONSTANT_FALSE:
-////				return;
-//			}
-//		}
-//		
-//		//if it's a number
-//		else if (node.isNumber())
-//			return node.getReal();
-//		
-//		//if it's a user-defined variable
-//		//eg, a species name or global/local parameter
-//		else if (node.isName())			
-//			return variableToValueMap.get(node.getName());
-//		
-//		//not a leaf node
-//		else {
-//			
-//			ASTNode leftChild = node.getLeftChild();
-//			ASTNode rightChild = node.getRightChild();
-//			
-//			switch(node.getType()) {
-//			
-//			case PLUS:
-//				return (CalculatePropensity(leftChild) + CalculatePropensity(rightChild));
-//				
-//			case MINUS:
-//				return (CalculatePropensity(leftChild) - CalculatePropensity(rightChild));
-//				
-//			case TIMES:
-//				return (CalculatePropensity(leftChild) * CalculatePropensity(rightChild));
-//				
-//			case DIVIDE:
-//				return (CalculatePropensity(leftChild) / CalculatePropensity(rightChild));
-//				
-//			case FUNCTION_POWER:
-//				return (Math.pow(CalculatePropensity(leftChild), CalculatePropensity(rightChild)));
-//				
-//			} //end switch
-//			
-//		}
-//		
-//		System.err.println("returning 0");
-//		
+//			case libsbml.AST_CONSTANT_FALSE:
+//				return;
+			}
+		}
+		
+		//if it's a number
+		else if (node.isNumber())
+			return node.getReal();
+		
+		//if it's a user-defined variable
+		//eg, a species name or global/local parameter
+		else if (node.isName())			
+			return variableToValueMap.get(node.getName());
+		
+		//not a leaf node
+		else {
+			
+			ASTNode leftChild = node.getLeftChild();
+			ASTNode rightChild = node.getRightChild();
+			
+			switch(node.getType()) {
+			
+			case PLUS: {
+				
+				double sum = 0.0;
+				
+				for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
+					sum += CalculatePropensityRecursive(node.getChild(childIter));					
+					
+				return sum;
+			}
+				
+			case MINUS:
+				return (CalculatePropensityRecursive(leftChild) - CalculatePropensityRecursive(rightChild));
+				
+			case TIMES: {
+				
+				double product = 1.0;
+				
+				for (int childIter = 0; childIter < node.getChildCount(); ++childIter)
+					product *= CalculatePropensityRecursive(node.getChild(childIter));
+				
+				return product;
+			}
+				
+			case DIVIDE:
+				return (CalculatePropensityRecursive(leftChild) / CalculatePropensityRecursive(rightChild));
+				
+			case FUNCTION_POWER:
+				return (FastMath.pow(CalculatePropensityRecursive(leftChild), CalculatePropensityRecursive(rightChild)));
+				
+			} //end switch
+			
+		}
+		
 		return 0.0;
 	}
 	
@@ -924,7 +966,7 @@ public class DynamicGillespie {
 //		}
 		
 		ArrayDeque<ASTNode> expressionQueue = reactionToFormulaMap2.get(reactionID).clone();
-		Stack<Double> resultStack = new Stack<Double>();
+		TDoubleArrayStack resultStack = new TDoubleArrayStack(20);
 		
 		while (!expressionQueue.isEmpty()) {
 			
@@ -938,12 +980,12 @@ public class DynamicGillespie {
 				
 				case PLUS: {
 					
-					double operandSum = 0.0;					
+					double sum = 0.0;
 					
-					while (!resultStack.isEmpty()) 
-						operandSum += resultStack.pop();
-					
-					resultStack.push(operandSum);
+					for (int childIter = 0; childIter < currentNode.getChildCount(); ++childIter)
+						sum += CalculatePropensityRecursive(currentNode.getChild(childIter));					
+						
+					resultStack.push(sum);
 					
 					break;
 				}
@@ -951,7 +993,7 @@ public class DynamicGillespie {
 				case MINUS: {
 					
 					double operand1 = resultStack.pop();
-					double operand2 = resultStack.pop();			
+					double operand2 = resultStack.pop();
 					resultStack.push(operand2 - operand1);
 					
 					break;
@@ -959,12 +1001,12 @@ public class DynamicGillespie {
 					
 				case TIMES: {
 					
-					double operandProduct = 1.0;		
+					double product = 1.0;
 					
-					while (!resultStack.isEmpty()) 
-						operandProduct *= resultStack.pop();
-					
-					resultStack.push(operandProduct);
+					for (int childIter = 0; childIter < currentNode.getChildCount(); ++childIter)
+						product *= CalculatePropensityRecursive(currentNode.getChild(childIter));					
+						
+					resultStack.push(product);
 					
 					break;
 				}
@@ -972,7 +1014,7 @@ public class DynamicGillespie {
 				case DIVIDE: {
 					
 					double operand1 = resultStack.pop();
-					double operand2 = resultStack.pop();			
+					double operand2 = resultStack.pop();
 					resultStack.push(operand2 / operand1);
 					
 					break;
@@ -981,8 +1023,8 @@ public class DynamicGillespie {
 				case FUNCTION_POWER: {
 					
 					double operand1 = resultStack.pop();
-					double operand2 = resultStack.pop();					
-					resultStack.push(Math.pow(operand2, operand1));
+					double operand2 = resultStack.pop();				
+					resultStack.push(FastMath.pow(operand2, operand1));
 					
 					break;
 				}
@@ -1031,7 +1073,7 @@ public class DynamicGillespie {
 		}
 		
 //		double propensity = resultStack.pop();		
-//		System.err.println(propensity);
+//		System.err.println(propensity);			
 		
 		return resultStack.pop();
 	}
@@ -1100,7 +1142,7 @@ public class DynamicGillespie {
 		
 		//clear the reaction set for each group
 		//start at 1, as the zero propensity group isn't going to change
-		for (int groupNum = 1; groupNum < numGroups; ++groupNum) {
+		for (int groupNum = 1; groupNum < newNumGroups; ++groupNum) {
 			
 			groupToReactionSetList.get(groupNum).clear();
 			groupToMaxValueMap.put(groupNum, 0.0);
@@ -1117,7 +1159,7 @@ public class DynamicGillespie {
 			//the zero-propensity group doesn't need altering
 			if (propensity == 0.0) continue;
 			
-			FRExpResultf frexpResult = FastMath.frexp((float) (propensity / minPropensity));
+			org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath.frexp((float) (propensity / minPropensity));
 			int group = frexpResult.exponent;
 			
 			groupToReactionSetList.get(group).add(reaction);
@@ -1176,6 +1218,8 @@ by index and hashkey in constant time.  to get the map.entry you'll have to use 
 
 look at the util sbml formula functions to see what happens with strings
 	--i'm not sure this is still relevant
+
+add a gc call after reach run
 	
 	
 OPTIMIZATION THINGS:
