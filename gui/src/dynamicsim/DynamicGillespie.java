@@ -29,6 +29,7 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLErrorLog;
+import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.SpeciesReference;
 
@@ -88,6 +89,7 @@ public class DynamicGillespie {
 	double totalPropensity = 0.0;
 	double minPropensity = Double.MAX_VALUE;
 	double maxPropensity = Double.MIN_VALUE;
+	
 	
 	/**
 	 * empty constructor
@@ -258,7 +260,7 @@ public class DynamicGillespie {
 				double stoichiometry = speciesAndStoichiometry.doub;
 				String speciesID = speciesAndStoichiometry.string;
 				
-				//System.out.println(selectedReactionID + " " + speciesID + "  " + variableToValueMap.get(speciesID) + "  " + stoichiometry);
+				//System.err.println(selectedReactionID + " " + speciesID + "  " + variableToValueMap.get(speciesID) + "  " + stoichiometry);
 				
 				//update the species count
 				variableToValueMap.adjustValue(speciesID, stoichiometry * delta_t);
@@ -836,71 +838,73 @@ public class DynamicGillespie {
 
 	/**
 	 * calculates a reaction's propensity using a recursive algorithm
+	 * NOTE: this is currently not working properly, as it incorrectly assumes
+	 * that ASTs are binary and they are not
 	 * 
 	 * @param node the AST with the kinetic formula
 	 * @return the propensity
 	 */
-	private double CalculatePropensity(ASTNode node) {
+	private double CalculatePropensityRecursive(ASTNode node) {
 		
-		//these if/else-ifs before the else are leaf conditions
-		
-		//if it's a mathematical or logical constant
-		if (node.isConstant()) {
-			
-			switch (node.getType()) {
-			
-			case CONSTANT_E:
-				return Math.E;
-				
-			case CONSTANT_PI:
-				return Math.PI;
-				
-//			case libsbml.AST_CONSTANT_TRUE:
-//				return;
+//		//these if/else-ifs before the else are leaf conditions
+//		
+//		//if it's a mathematical or logical constant
+//		if (node.isConstant()) {
+//			
+//			switch (node.getType()) {
+//			
+//			case CONSTANT_E:
+//				return Math.E;
 //				
-//			case libsbml.AST_CONSTANT_FALSE:
-//				return;
-			}
-		}
-		
-		//if it's a number
-		else if (node.isNumber())
-			return node.getReal();
-		
-		//if it's a user-defined variable
-		//eg, a species name or global/local parameter
-		else if (node.isName())			
-			return variableToValueMap.get(node.getName());
-		
-		//not a leaf node
-		else {
-			
-			ASTNode leftChild = node.getLeftChild();
-			ASTNode rightChild = node.getRightChild();
-			
-			switch(node.getType()) {
-			
-			case PLUS:
-				return (CalculatePropensity(leftChild) + CalculatePropensity(rightChild));
-				
-			case MINUS:
-				return (CalculatePropensity(leftChild) - CalculatePropensity(rightChild));
-				
-			case TIMES:
-				return (CalculatePropensity(leftChild) * CalculatePropensity(rightChild));
-				
-			case DIVIDE:
-				return (CalculatePropensity(leftChild) / CalculatePropensity(rightChild));
-				
-			case FUNCTION_POWER:
-				return (Math.pow(CalculatePropensity(leftChild), CalculatePropensity(rightChild)));
-				
-			} //end switch
-			
-		}
-		
-		System.err.println("returning 0");
-		
+//			case CONSTANT_PI:
+//				return Math.PI;
+//				
+////			case libsbml.AST_CONSTANT_TRUE:
+////				return;
+////				
+////			case libsbml.AST_CONSTANT_FALSE:
+////				return;
+//			}
+//		}
+//		
+//		//if it's a number
+//		else if (node.isNumber())
+//			return node.getReal();
+//		
+//		//if it's a user-defined variable
+//		//eg, a species name or global/local parameter
+//		else if (node.isName())			
+//			return variableToValueMap.get(node.getName());
+//		
+//		//not a leaf node
+//		else {
+//			
+//			ASTNode leftChild = node.getLeftChild();
+//			ASTNode rightChild = node.getRightChild();
+//			
+//			switch(node.getType()) {
+//			
+//			case PLUS:
+//				return (CalculatePropensity(leftChild) + CalculatePropensity(rightChild));
+//				
+//			case MINUS:
+//				return (CalculatePropensity(leftChild) - CalculatePropensity(rightChild));
+//				
+//			case TIMES:
+//				return (CalculatePropensity(leftChild) * CalculatePropensity(rightChild));
+//				
+//			case DIVIDE:
+//				return (CalculatePropensity(leftChild) / CalculatePropensity(rightChild));
+//				
+//			case FUNCTION_POWER:
+//				return (Math.pow(CalculatePropensity(leftChild), CalculatePropensity(rightChild)));
+//				
+//			} //end switch
+//			
+//		}
+//		
+//		System.err.println("returning 0");
+//		
 		return 0.0;
 	}
 	
@@ -911,6 +915,13 @@ public class DynamicGillespie {
 	 * @return the propensity
 	 */
 	private double CalculatePropensityIterative(String reactionID) {
+		
+//		try {
+//			System.err.println(ASTNode.formulaToString(model.getReaction(reactionID.replace("_fd","").replace("_rv","")).getKineticLaw().getMath()));
+//		} catch (SBMLException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
 		
 		ArrayDeque<ASTNode> expressionQueue = reactionToFormulaMap2.get(reactionID).clone();
 		Stack<Double> resultStack = new Stack<Double>();
@@ -948,10 +959,10 @@ public class DynamicGillespie {
 					
 				case TIMES: {
 					
-					double operandProduct = 0.0;		
+					double operandProduct = 1.0;		
 					
 					while (!resultStack.isEmpty()) 
-						operandProduct += resultStack.pop();
+						operandProduct *= resultStack.pop();
 					
 					resultStack.push(operandProduct);
 					
@@ -1012,11 +1023,15 @@ public class DynamicGillespie {
 				
 				//if it's a user-defined variable
 				//eg, a species name or global/local parameter
-				else if (currentNode.isName())			
+				else if (currentNode.isName()) {
+					
 					resultStack.push(variableToValueMap.get(currentNode.getName()));
-			}
-			
+				}
+			}			
 		}
+		
+//		double propensity = resultStack.pop();		
+//		System.err.println(propensity);
 		
 		return resultStack.pop();
 	}
