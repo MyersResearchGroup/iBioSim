@@ -1,12 +1,16 @@
 package dynamicsim;
 
+import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.Stack;
 
 import gnu.trove.map.hash.TIntDoubleHashMap;
@@ -71,6 +75,9 @@ public class DynamicGillespie {
 	//allows for access to a set of reactions that a species is in (as a reactant or modifier) from a species ID
 	private HashMap<String, HashSet<String> > speciesToAffectedReactionSetMap = null;
 	
+	//a linked (ordered) set of all species IDs, to allow easy access to their values via the variableToValue map
+	private LinkedHashSet<String> speciesIDSet = null;
+	
 	//allows for access to species and parameter values from a variable ID
 	private TObjectDoubleHashMap<String> variableToValueMap = null;
 	
@@ -98,7 +105,9 @@ public class DynamicGillespie {
 	private double minPropensity = Double.MAX_VALUE;
 	private double maxPropensity = Double.MIN_VALUE;
 	
-	
+	//file writing variables
+	private FileWriter TSDWriter = null;
+	private BufferedWriter bufferedTSDWriter = null;
 	
 	
 	
@@ -118,7 +127,7 @@ public class DynamicGillespie {
 	 * @param randomSeed
 	 */
 	public void Simulate(String SBMLFileName, String outputDirectory, double timeLimit, 
-			double maxTimeStep, long randomSeed, JProgressBar progress) {
+			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval) {
 		
 		long timeBeforeSim = System.nanoTime();
 		
@@ -140,11 +149,27 @@ public class DynamicGillespie {
 //		long step6Time = 0;
 		
 		double currentTime = 0.0;
+		double printTime = -0.1;
 		
 		while (currentTime <= timeLimit) {
 			
 			//update progress bar			
-			progress.setValue((int)(currentTime / timeLimit * 100.0));
+			progress.setValue((int)((currentTime / timeLimit) * 100.0));
+			
+			//print to TSD if the next print interval arrives
+			if (currentTime > printTime) {
+				
+				PrintToTSD();
+				
+				try {
+					bufferedTSDWriter.write(",\n");
+				} 
+				catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+				printTime += printInterval;
+			}
 			
 			
 			//STEP 1: generate random numbers
@@ -244,6 +269,17 @@ public class DynamicGillespie {
 //		System.err.println("total step 4 time: " + String.valueOf(step4Time / 1e9f));
 //		System.err.println("total step 5 time: " + String.valueOf(step5Time / 1e9f));
 //		System.err.println("total step 6 time: " + String.valueOf(step6Time / 1e9f));
+		
+		//print the final species counts
+		PrintToTSD();
+		
+		try {
+			bufferedTSDWriter.write(')');
+			bufferedTSDWriter.flush();
+		} 
+		catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 	
 	/**
@@ -254,7 +290,23 @@ public class DynamicGillespie {
 	private boolean Initialize(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, long randomSeed) {
 		
-		randomNumberGenerator = new XORShiftRandom(randomSeed);	
+		randomNumberGenerator = new XORShiftRandom(randomSeed);
+		
+		try {
+			TSDWriter = new FileWriter(outputDirectory + "run-1.tsd");
+		} 
+		catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		bufferedTSDWriter = new BufferedWriter(TSDWriter);
+		try {
+			bufferedTSDWriter.write('(');
+		} 
+		catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
 		
 		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = null;
@@ -292,6 +344,7 @@ public class DynamicGillespie {
 		
 		//set initial capacities for collections (1.5 is used to multiply numReactions due to reversible reactions)
 		speciesToAffectedReactionSetMap = new HashMap<String, HashSet<String> >((int) numSpecies);
+		speciesIDSet = new LinkedHashSet<String>((int) numSpecies);
 		variableToValueMap = new TObjectDoubleHashMap<String>((int) numSpecies + (int) numParameters);		
 		reactionToPropensityMap = new TObjectDoubleHashMap<String>((int) (numReactions * 1.5));		
 		reactionToSpeciesAndStoichiometrySetMap = new HashMap<String, HashSet<StringDoublePair> >((int) (numReactions * 1.5));	
@@ -302,11 +355,38 @@ public class DynamicGillespie {
 		reactionToSBMLReactionMap = new HashMap<String, Reaction>((int) numReactions);
 		reactionToTimesFiredMap = new TObjectIntHashMap<String>((int) (numReactions * 1.5));
 		
+		String commaSpace = "";
+		
+		try {
+			bufferedTSDWriter.write('(');
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 		//add values to hashmap for easy access to species amounts
 		for (int i = 0; i < numSpecies; ++i) {
 			
-			variableToValueMap.put(model.getSpecies(i).getId(), model.getSpecies(i).getInitialAmount());
-			speciesToAffectedReactionSetMap.put(model.getSpecies(i).getId(), new HashSet<String>(20));
+			String speciesID = model.getSpecies(i).getId();
+			
+			variableToValueMap.put(speciesID, model.getSpecies(i).getInitialAmount());
+			speciesToAffectedReactionSetMap.put(speciesID, new HashSet<String>(20));
+			speciesIDSet.add(speciesID);
+			
+			try {
+				bufferedTSDWriter.write(commaSpace + "\"" + speciesID + "\"");
+				commaSpace = ", ";
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		try {
+			bufferedTSDWriter.write(")\n");
+		} 
+		catch (IOException e) {
+			e.printStackTrace();
 		}
 		
 		//add values to hashmap for easy access to global parameter values
@@ -891,6 +971,40 @@ public class DynamicGillespie {
 	}
 	
 	/**
+	 * appends the current species states to the TSD file
+	 */
+	private void PrintToTSD() {
+		
+		try {
+			bufferedTSDWriter.write('(');
+		} 
+		catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		String commaSpace = "";
+		
+		//loop through the speciesIDs and print their current value to the file
+		for (String speciesID : speciesIDSet) {
+			
+			try {
+				bufferedTSDWriter.write(commaSpace + (int) variableToValueMap.get(speciesID));
+				commaSpace = ", ";
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}		
+		
+		try {
+			bufferedTSDWriter.write(")");
+		} 
+		catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
+	/**
 	 * assigns all reactions to (possibly new) groups
 	 * this is called when the minPropensity changes, which
 	 * changes the groups' floor/ceiling propensity values
@@ -1249,6 +1363,8 @@ look at the util sbml formula functions to see what happens with strings
 add a gc call after reach run
 	
 make sure reaction selection is happening properly
+
+make a linked species ID set
 	
 		
 	

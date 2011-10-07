@@ -1303,7 +1303,7 @@ public class Run implements ActionListener {
 
 						DynamicGillespie dynSim = new DynamicGillespie();						
 						String SBMLFileName = directory + separator + theFile;
-						dynSim.Simulate(SBMLFileName, outDir, timeLimit, timeStep, rndSeed, progress);						
+						dynSim.Simulate(SBMLFileName, outDir + separator, timeLimit, timeStep, rndSeed, progress, printInterval);						
 						exitValue = 0;
 						
 						return exitValue;
