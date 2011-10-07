@@ -9,4 +9,4 @@ do
     CLASSPATH=$CLASSPATH:$jarFile
 done
 
-exec java -Xmx512M -classpath $CLASSPATH -Dapple.laf.useScreenMenuBar=true -Xdock:name="LEMA" -Xdock:icon=$LEMA/gui/icons/LEMA.png main.Gui -lema
+exec java -Xmx2048M -Xms2048M -XX:+UseSerialGC -classpath $CLASSPATH -Dapple.laf.useScreenMenuBar=true -Xdock:name="LEMA" -Xdock:icon=$LEMA/gui/icons/LEMA.png main.Gui -lema

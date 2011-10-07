@@ -8,4 +8,4 @@ do
     CLASSPATH=$CLASSPATH:$jarFile
 done
 
-exec java -Xmx512M -classpath $CLASSPATH main.Gui -lema
+exec java -Xmx2048M -Xms2048M -XX:+UseSerialGC -classpath $CLASSPATH main.Gui -lema

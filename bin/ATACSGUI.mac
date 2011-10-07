@@ -9,4 +9,4 @@ do
     CLASSPATH=$CLASSPATH:$jarFile
 done
 
-exec java -Xmx512M -classpath $CLASSPATH -Dapple.laf.useScreenMenuBar=true -Xdock:name="ATACSGUI" -Xdock:icon=$ATACSGUI/gui/icons/ATACS.png main.Gui -atacs
+exec java -Xmx2048M -Xms2048M -XX:+UseSerialGC -classpath $CLASSPATH -Dapple.laf.useScreenMenuBar=true -Xdock:name="ATACSGUI" -Xdock:icon=$ATACSGUI/gui/icons/ATACS.png main.Gui -atacs
