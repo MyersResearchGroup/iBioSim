@@ -1297,13 +1297,13 @@ public class Run implements ActionListener {
 						exitValue = 0;
 						return exitValue;
 					}
-					else if (sim.equals("gillespieSSA-CR (Java)")) {
+					else if (sim.equals("Gillespie SSA-CR (Java)")) {
 						
 						time1 = System.nanoTime();
 
 						DynamicGillespie dynSim = new DynamicGillespie();						
 						String SBMLFileName = directory + separator + theFile;
-						dynSim.Simulate(SBMLFileName, outDir, timeLimit, timeStep, rndSeed);						
+						dynSim.Simulate(SBMLFileName, outDir, timeLimit, timeStep, rndSeed, progress);						
 						exitValue = 0;
 						
 						return exitValue;
