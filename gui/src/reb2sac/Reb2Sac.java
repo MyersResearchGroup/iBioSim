@@ -1396,8 +1396,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
-			else if (((String) simulators.getSelectedItem()).contains("gillespieSSA-CR (Java)")) {
-				description.setText("Gillespie SSA-CR Method");
+			else if (((String) simulators.getSelectedItem()).contains("Gillespie SSA-CR (Java)")) {
+				description.setText("Gillespie SSA Composition and Rejection Method");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);

@@ -17,6 +17,7 @@ import gnu.trove.set.hash.TIntHashSet;
 import gnu.trove.stack.array.TDoubleArrayStack;
 
 import javax.swing.JOptionPane;
+import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
 import main.Gui;
@@ -112,45 +113,34 @@ public class DynamicGillespie {
 	 * @param randomSeed
 	 */
 	public void Simulate(String SBMLFileName, String outputDirectory, double timeLimit, 
-			double maxTimeStep, long randomSeed) {
+			double maxTimeStep, long randomSeed, JProgressBar progress) {
 		
-		long timeBeforeSim = System.nanoTime();
+		//long timeBeforeSim = System.nanoTime();
 		
 		//initialization will fail if the SBML model has errors
 		if (!Initialize(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed))
 			return;
 		
-		System.err.println("initialization time: " + (System.nanoTime() - timeBeforeSim) / 1e9f);	
-		
-//		TObjectDoubleIterator<String> iter1 = reactionToPropensityMap.iterator();
-//		
-//		while (iter1.hasNext()) {
-//			
-//			iter1.advance();
-//			System.out.println(iter1.key() + "   " + iter1.value());
-//		}
-		
-//		for (Map.Entry<String, ArrayDeque<ASTNode>> node : reactionToFormulaMap2.entrySet()) {
-//			
-//			System.err.println(node);
-//		}
-//		
-		
+		//System.err.println("initialization time: " + (System.nanoTime() - timeBeforeSim) / 1e9f);		
 		
 		//SIMULATION LOOP
 		//simulate until the time limit is reached
 		
-		long step1Time = 0;
-		long step2Time = 0;
-		long step3aTime = 0;
-		long step3bTime = 0;
-		long step4Time = 0;
-		long step5Time = 0;
-		long step6Time = 0;
+//		long step1Time = 0;
+//		long step2Time = 0;
+//		long step3aTime = 0;
+//		long step3bTime = 0;
+//		long step4Time = 0;
+//		long step5Time = 0;
+//		long step6Time = 0;
 		
 		double currentTime = 0.0;
 		
 		while (currentTime <= timeLimit) {
+			
+			//update progress bar
+			
+			progress.setValue((int)(currentTime / timeLimit * 100.0));
 			
 			//STEP 1: generate random numbers
 			
@@ -172,30 +162,10 @@ public class DynamicGillespie {
 			
 			//step2Time += System.nanoTime() - step2Initial;
 			
-			System.err.println(totalPropensity + " " + currentTime + " " + delta_t + " ");			
-			//System.out.println("step 2: time is " + currentTime);
-			
-			//System.err.println(numGroups);
-			
 			
 			//STEP 3A: select a group
 			
 			//long step3aInitial = System.nanoTime();
-			
-//			//pick a random index, loop through the nonempty groups until that index is reached
-//			int randomIndex = (int) FastMath.floor(r2 * (nonemptyGroupSet.size() - 0.0000001));
-//			int indexIter = 0;
-//			TIntIterator nonemptyGroupSetIterator = nonemptyGroupSet.iterator();
-//			
-//			while (nonemptyGroupSetIterator.hasNext() && (indexIter < randomIndex)) {
-//				
-//				//System.out.println("step 3a");
-//				
-//				nonemptyGroupSetIterator.next();
-//				++indexIter;
-//			}
-//				
-//			int selectedGroup = nonemptyGroupSetIterator.next();
 			
 			double randomPropensity = r2 * (totalPropensity);
 			double totalGroupsPropensity = 0.0;
@@ -208,20 +178,6 @@ public class DynamicGillespie {
 				if (randomPropensity < totalGroupsPropensity && nonemptyGroupSet.contains(selectedGroup))
 					break;
 			}
-			
-//			totalGroupsPropensity = 0.0;
-//			int groupNum = 1;
-//			
-//			for (; groupNum < numGroups; ++groupNum) {
-//				
-//				totalGroupsPropensity += groupToTotalGroupPropensityMap.get(groupNum);
-//			}
-//			
-//			if (totalPropensity - totalGroupsPropensity > 0.001) {
-//				System.err.println(totalGroupsPropensity + "  " + totalPropensity);
-//			}
-			
-			//System.err.println(" index: " + randomIndex + " group: " + selectedGroup);
 		
 			//step3aTime += System.nanoTime() - step3aInitial;
 			
@@ -253,9 +209,6 @@ public class DynamicGillespie {
 			//if the random propensity is higher than the selected reaction's propensity, another random reaction is chosen
 			while (randomPropensity > reactionPropensity) {
 				
-				//System.out.println("step 3b");
-				//System.out.println(randomPropensity + "   " + reactionPropensity);
-				
 				r4 = randomNumberGenerator.nextDouble();
 				
 				randomIndex = (int) FastMath.floor(r4 * reactionSet.size());
@@ -275,16 +228,6 @@ public class DynamicGillespie {
 			
 			//step3bTime += System.nanoTime() - step3bInitial;
 			
-//			System.err.println();
-//			System.err.println();
-//			System.err.println("reaction fired: " + selectedReactionID + " propensity: " + reactionPropensity);
-//			try {
-//				System.err.println("  " + ASTNode.formulaToString(reactionToFormulaMap.get(selectedReactionID)));
-//			} catch (SBMLException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-			
 			
 			//STEP 4: perform selected reaction and update species counts
 			
@@ -297,34 +240,14 @@ public class DynamicGillespie {
 			//loop through the reaction's reactants and products and update their amounts
 			for (StringDoublePair speciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap.get(selectedReactionID)) {
 				
-				//System.out.println("step 4");
-				
 				double stoichiometry = speciesAndStoichiometry.doub;
 				String speciesID = speciesAndStoichiometry.string;
 				
-				//System.err.println(selectedReactionID + " " + speciesID + "  " + variableToValueMap.get(speciesID) + "  " + stoichiometry);
-				//System.err.println("   " + speciesID + "  " + variableToValueMap.get(speciesID) + "  " + stoichiometry);
-				
 				//update the species count
-				variableToValueMap.adjustValue(speciesID, stoichiometry);
-				
-				//System.err.println("   " + speciesID + "  " + variableToValueMap.get(speciesID));
-				
-				//System.out.println(" " + speciesID + "  " + variableToValueMap.get(speciesID));				
+				variableToValueMap.adjustValue(speciesID, stoichiometry);				
 				
 				totalAffectedReactionSet.addAll(speciesToAffectedReactionSetMap.get(speciesID));
-			}
-			
-			//System.err.println();
-			
-			
-//			for (String reaction : reactionToFormulaMap.keySet())
-//				System.out.println("reactionToFormula Key: " + reaction);
-			
-//			for (String species : speciesToAffectedReactionSetMap.keySet())
-//				for (String reaction : speciesToAffectedReactionSetMap.get(species))
-//					System.out.println(species + "   " + reaction);
-			
+			}			
 			
 			//step4Time += System.nanoTime() - step4Initial;
 			
@@ -333,11 +256,6 @@ public class DynamicGillespie {
 			
 			//loop through the affected reactions and update the propensities
 			for (String affectedReactionID : totalAffectedReactionSet) {
-				
-				//System.out.println("step 5");
-				
-				//System.err.println(affectedReactionID + "  " + model.getReaction(affectedReactionID.replace("_fd","").replace("_rv","")).getKineticLaw().getFormula());
-				//System.err.println(reactionToPropensityMap.get(affectedReactionID) + " " + totalAffectedReactionSet.size());
 				
 				//long step5Initial = System.nanoTime();
 				
@@ -549,52 +467,16 @@ public class DynamicGillespie {
 			else
 				currentTime += maxTimeStep;
 			
-		} //end simulation loop
+		} //end simulation loop	
 		
-		
-//		System.err.println("final species counts: ");
-//		
-//		TObjectDoubleIterator<String> speciesIter = variableToValueMap.iterator();
-//		
-//		while (speciesIter.hasNext()) {
-//			
-//			speciesIter.advance();
-//			System.err.println(speciesIter.key() + "  " + speciesIter.value());
-//		}
-//		
-//		System.err.println("-----------------------------");
-//		
-//		TObjectDoubleIterator<String> reactionIter = reactionToPropensityMap.iterator();
-//		
-//		while (reactionIter.hasNext()) {
-//			
-//			reactionIter.advance();
-//			System.err.println(reactionIter.key() + "  " + reactionIter.value());
-//		}
-		
-//		System.err.println("-----------------------------");
-//		
-//		TObjectIntIterator<String> reactionIter = reactionToTimesFiredMap.iterator();
-//		
-//		DecimalFormat df = new DecimalFormat("#.##");
-//		
-//		while (reactionIter.hasNext()) {
-//			
-//			reactionIter.advance();
-//			System.err.println(reactionIter.key() + "  \n   " + df.format(reactionToPropensityMap.get(reactionIter.key())) +
-//				"  " + df.format((double)reactionIter.value()/(double)totalFirings));
-//		}
-			
-		
-		
-		System.err.println("total time: " + String.valueOf((System.nanoTime() - timeBeforeSim) / 1e9f));
-		System.err.println("total step 1 time: " + String.valueOf(step1Time / 1e9f));
-		System.err.println("total step 2 time: " + String.valueOf(step2Time / 1e9f));
-		System.err.println("total step 3a time: " + String.valueOf(step3aTime / 1e9f));
-		System.err.println("total step 3b time: " + String.valueOf(step3bTime / 1e9f));
-		System.err.println("total step 4 time: " + String.valueOf(step4Time / 1e9f));
-		System.err.println("total step 5 time: " + String.valueOf(step5Time / 1e9f));
-		System.err.println("total step 6 time: " + String.valueOf(step6Time / 1e9f));
+//		System.err.println("total time: " + String.valueOf((System.nanoTime() - timeBeforeSim) / 1e9f));
+//		System.err.println("total step 1 time: " + String.valueOf(step1Time / 1e9f));
+//		System.err.println("total step 2 time: " + String.valueOf(step2Time / 1e9f));
+//		System.err.println("total step 3a time: " + String.valueOf(step3aTime / 1e9f));
+//		System.err.println("total step 3b time: " + String.valueOf(step3bTime / 1e9f));
+//		System.err.println("total step 4 time: " + String.valueOf(step4Time / 1e9f));
+//		System.err.println("total step 5 time: " + String.valueOf(step5Time / 1e9f));
+//		System.err.println("total step 6 time: " + String.valueOf(step6Time / 1e9f));
 	}
 	
 	/**
