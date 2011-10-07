@@ -9,4 +9,4 @@ do
     CLASSPATH=$CLASSPATH:$jarFile
 done
 
-exec java -Xmx512M -classpath $CLASSPATH -Dapple.laf.useScreenMenuBar=true -Xdock:name="iBioSim" -Xdock:icon=$BIOSIM/gui/icons/iBioSim.jpg main.Gui
+exec java -Xmx2048M -Xms2048M -XX:+UseSerialGC -classpath $CLASSPATH -Dapple.laf.useScreenMenuBar=true -Xdock:name="iBioSim" -Xdock:icon=$BIOSIM/gui/icons/iBioSim.jpg main.Gui
