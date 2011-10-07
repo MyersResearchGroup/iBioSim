@@ -383,7 +383,7 @@ public class DynamicGillespie {
 		}
 		
 		try {
-			bufferedTSDWriter.write(")\n");
+			bufferedTSDWriter.write("),\n");
 		} 
 		catch (IOException e) {
 			e.printStackTrace();
@@ -1363,8 +1363,6 @@ look at the util sbml formula functions to see what happens with strings
 add a gc call after reach run
 	
 make sure reaction selection is happening properly
-
-make a linked species ID set
 	
 		
 	
