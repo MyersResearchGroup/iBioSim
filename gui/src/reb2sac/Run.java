@@ -44,6 +44,8 @@ public class Run implements ActionListener {
 	private String separator;
 
 	private Reb2Sac r2s;
+	
+	DynamicGillespie dynSim = null;
 
 	StateGraph sg;
 
@@ -1298,12 +1300,10 @@ public class Run implements ActionListener {
 						return exitValue;
 					}
 					else if (sim.equals("Gillespie SSA-CR (Java)")) {
-						
-						time1 = System.nanoTime();
 
-						DynamicGillespie dynSim = new DynamicGillespie();						
+						dynSim = new DynamicGillespie();					
 						String SBMLFileName = directory + separator + theFile;
-						dynSim.Simulate(SBMLFileName, outDir + separator, timeLimit, timeStep, rndSeed, progress, printInterval);						
+						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, timeStep, rndSeed, progress, printInterval);						
 						exitValue = 0;
 						
 						return exitValue;
@@ -2279,6 +2279,10 @@ public class Run implements ActionListener {
 	 * This method is called if a button that cancels the simulation is pressed.
 	 */
 	public void actionPerformed(ActionEvent e) {
+		
+		if (dynSim != null) {
+			dynSim.cancel();		
+		}
 		if (reb2sac != null) {
 			reb2sac.destroy();
 		}
