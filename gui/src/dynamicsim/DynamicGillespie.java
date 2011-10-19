@@ -31,6 +31,8 @@ import main.Gui;
 
 import odk.lang.FastMath;
 
+import org.sbml.jsbml.AssignmentRule;
+import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.EventAssignment;
 import org.sbml.jsbml.ListOf;
@@ -38,13 +40,17 @@ import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.KineticLaw;
+import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Rule;
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLErrorLog;
 import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
+import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
-import org.sbml.jsbml.ASTNode.Type;
+
+import util.MutableBoolean;
 
 
 public class DynamicGillespie {
@@ -121,9 +127,19 @@ public class DynamicGillespie {
 	//allows for access to the set of events that a variable is in
 	private HashMap<String, HashSet<String> > variableToEventSetMap = null;
 	
+	//allows for access to the set of assignment rules that a variable (rhs) in an assignment rule affects
+	private HashMap<String, HashSet<AssignmentRule> > variableToAffectedAssignmentRuleSetMap = null;
+	
+	//allows to access to whether or not a variable is in an assignment rule (RHS)
+	private HashMap<String, Boolean> variableToIsInAssignmentRuleMap = null;
+	
+	//allows for access to the set of constraints that a variable affects
+	private HashMap<String, HashSet<ASTNode> > variableToAffectedConstraintSetMap = null;
+	
+	private HashMap<String, Boolean> variableToIsInConstraintMap = null;	
+	
 	//compares two events based on fire time and priority
 	private EventComparator eventComparator = new EventComparator();
-	
 	
 	//number of groups including the empty groups and zero-propensity group
 	private int numGroups = 0;
@@ -138,8 +154,8 @@ public class DynamicGillespie {
 	private BufferedWriter bufferedTSDWriter = null;
 	
 	//boolean flags
-	private boolean cancelFlag = false;;
-	
+	private boolean cancelFlag = false;
+	private boolean constraintFailureFlag = false;	
 	
 	
 	/**
@@ -162,11 +178,13 @@ public class DynamicGillespie {
 		
 		long timeBeforeSim = System.nanoTime();
 		
-		Boolean eventsFlag = false;
+		MutableBoolean eventsFlag = new MutableBoolean(false);
+		MutableBoolean rulesFlag = new MutableBoolean(false);
+		MutableBoolean constraintsFlag = new MutableBoolean(false);
 		
 		//initialization will fail if the SBML model has errors
 		try {
-			if (!initialize(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed, eventsFlag))
+			if (!initialize(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed, eventsFlag, rulesFlag, constraintsFlag))
 				return;
 		} catch (IOException e2) {
 			e2.printStackTrace();
@@ -174,7 +192,9 @@ public class DynamicGillespie {
 			e2.printStackTrace();
 		}
 		
-		final boolean noEventsFlag = eventsFlag;
+		final boolean noEventsFlag = (Boolean) eventsFlag.getValue();
+		final boolean noAssignmentRulesFlag = (Boolean) rulesFlag.getValue();
+		final boolean noConstraintsFlag = (Boolean) constraintsFlag.getValue();
 		
 		System.err.println("initialization time: " + (System.nanoTime() - timeBeforeSim) / 1e9f);
 		
@@ -199,6 +219,14 @@ public class DynamicGillespie {
 				
 				JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled",
 						"Canceled", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			//if a constraint fails
+			if (constraintFailureFlag == true) {
+				
+				JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled Due To Constraint Failure",
+						"Constraint Failure", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			
@@ -230,7 +258,7 @@ public class DynamicGillespie {
 			//EVENT HANDLING
 			//trigger and/or fire events, etc.
 			if (noEventsFlag == false)
-				handleEvents(currentTime);			
+				handleEvents(currentTime, noAssignmentRulesFlag, noConstraintsFlag);			
 			
 			
 			
@@ -281,7 +309,7 @@ public class DynamicGillespie {
 			
 			//long step4Initial = System.nanoTime();
 			
-			performReaction(selectedReactionID);
+			performReaction(selectedReactionID, noAssignmentRulesFlag, noConstraintsFlag);
 			
 			//step4Time += System.nanoTime() - step4Initial;
 			
@@ -292,7 +320,7 @@ public class DynamicGillespie {
 			//long step5Initial = System.nanoTime();
 			
 			//create a set (precludes duplicates) of reactions that the selected reaction's species affect
-			HashSet<String> affectedReactionSet = getAffectedReactionSet(selectedReactionID);
+			HashSet<String> affectedReactionSet = getAffectedReactionSet(selectedReactionID, noAssignmentRulesFlag);
 			
 			boolean newMinPropensityFlag = updatePropensities(affectedReactionSet);
 			
@@ -356,7 +384,8 @@ public class DynamicGillespie {
 	 * @throws FileNotFoundException 
 	 */
 	private boolean initialize(String SBMLFileName, String outputDirectory, double timeLimit, 
-			double maxTimeStep, long randomSeed, Boolean noEventsFlag) 
+			double maxTimeStep, long randomSeed, MutableBoolean noEventsFlag, 
+			MutableBoolean noAssignmentRulesFlag, MutableBoolean noConstraintsFlag) 
 	throws IOException, XMLStreamException {
 		
 		randomNumberGenerator = new XORShiftRandom(randomSeed);
@@ -391,6 +420,8 @@ public class DynamicGillespie {
 		long numParameters = model.getNumParameters();
 		long numReactions = model.getNumReactions();
 		long numEvents = model.getNumEvents();
+		long numRules = model.getNumRules();
+		long numConstraints = model.getNumConstraints();
 		
 		//set initial capacities for collections (1.5 is used to multiply numReactions due to reversible reactions)
 		speciesToAffectedReactionSetMap = new HashMap<String, HashSet<String> >((int) numSpecies);
@@ -405,28 +436,47 @@ public class DynamicGillespie {
 		reactionToGroupMap = new TObjectIntHashMap<String>((int) (numReactions * 1.5));
 		reactionToSBMLReactionMap = new HashMap<String, Reaction>((int) numReactions);
 		
-		triggeredEventQueue = new PriorityQueue<EventToFire>((int) numEvents, eventComparator);
-		untriggeredEventSet = new HashSet<String>((int) numEvents);
-		eventToPriorityMap = new TObjectDoubleHashMap<String>((int) numEvents);
-		eventToDelayMap = new HashMap<String, ASTNode>((int) numEvents);
-		eventToHasDelayMap = new HashMap<String, Boolean>((int) numEvents);
-		eventToTriggerMap = new HashMap<String, ASTNode>((int) numEvents);
-		eventToTriggerPersistenceMap = new HashMap<String, Boolean>((int) numEvents);
-		eventToUseValuesFromTriggerTimeMap = new HashMap<String, Boolean>((int) numEvents);
-		eventToAssignmentSetMap = new HashMap<String, HashSet<Object> >((int) numEvents);
-		eventToAffectedReactionSetMap = new HashMap<String, HashSet<String> >((int) numEvents);
-		variableToEventSetMap = new HashMap<String, HashSet<String> >((int) numEvents);
+		if (numEvents > 0) {
+			triggeredEventQueue = new PriorityQueue<EventToFire>((int) numEvents, eventComparator);
+			untriggeredEventSet = new HashSet<String>((int) numEvents);
+			eventToPriorityMap = new TObjectDoubleHashMap<String>((int) numEvents);
+			eventToDelayMap = new HashMap<String, ASTNode>((int) numEvents);
+			eventToHasDelayMap = new HashMap<String, Boolean>((int) numEvents);
+			eventToTriggerMap = new HashMap<String, ASTNode>((int) numEvents);
+			eventToTriggerPersistenceMap = new HashMap<String, Boolean>((int) numEvents);
+			eventToUseValuesFromTriggerTimeMap = new HashMap<String, Boolean>((int) numEvents);
+			eventToAssignmentSetMap = new HashMap<String, HashSet<Object> >((int) numEvents);
+			eventToAffectedReactionSetMap = new HashMap<String, HashSet<String> >((int) numEvents);		
+			variableToEventSetMap = new HashMap<String, HashSet<String> >((int) numEvents);
+		}
+		
+		if (numRules > 0) {
+			variableToAffectedAssignmentRuleSetMap = new HashMap<String, HashSet<AssignmentRule> >((int) numRules);
+			variableToIsInAssignmentRuleMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
+		}
+		
+		if (numConstraints > 0) {
+			variableToAffectedConstraintSetMap = new HashMap<String, HashSet<ASTNode> >((int) numConstraints);		
+			variableToIsInConstraintMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
+		}
 		
 		bufferedTSDWriter.write('(');
 		
 		String commaSpace = "";
 		
 		//add values to hashmap for easy access to species amounts
-		for (int i = 0; i < numSpecies; ++i) {
+		for (Species species : model.getListOfSpecies()) {
 			
-			String speciesID = model.getSpecies(i).getId();
+			String speciesID = species.getId();
 			
-			variableToValueMap.put(speciesID, model.getSpecies(i).getInitialAmount());
+			variableToValueMap.put(speciesID, species.getInitialAmount());
+			
+			if (numRules > 0)
+				variableToIsInAssignmentRuleMap.put(speciesID, false);
+			
+			if (numConstraints > 0)
+				variableToIsInConstraintMap.put(speciesID, false);
+			
 			speciesToAffectedReactionSetMap.put(speciesID, new HashSet<String>(20));
 			speciesIDSet.add(speciesID);
 			
@@ -439,15 +489,80 @@ public class DynamicGillespie {
 		//add values to hashmap for easy access to global parameter values
 		//NOTE: the IDs for the parameters and species must be unique, so putting them in the
 		//same hashmap is okay
-		for (int i = 0; i < numParameters; ++i) {
+		for (Parameter parameter : model.getListOfParameters()) {
 			
-			variableToValueMap.put(model.getParameter(i).getId(), model.getParameter(i).getValue());
+			String parameterID = parameter.getId();
+			
+			variableToValueMap.put(parameterID, parameter.getValue());
+			
+			if (numRules > 0)
+				variableToIsInAssignmentRuleMap.put(parameterID, false);
+			
+			if (numConstraints > 0)
+				variableToIsInConstraintMap.put(parameterID, false);
+		}
+
+		int numAssignmentRules = 0;
+		
+		//loop through all assignment rules
+		//store which variables (RHS) affect the rule variable (LHS)
+		//so when those RHS variables change, we know to re-evaluate the rule
+		//and change the value of the LHS variable
+		for (Rule rule : model.getListOfRules()) {
+			
+			if (rule.isAssignment()) {
+				
+				//Rules don't have a getVariable method, so this needs to be cast to an ExplicitRule
+				AssignmentRule assignmentRule = (AssignmentRule) rule;
+				
+				for (ASTNode ruleNode : assignmentRule.getMath().getListOfNodes()) {
+					
+					if (ruleNode.isName()) {
+						
+						String nodeName = ruleNode.getName();
+						
+						variableToAffectedAssignmentRuleSetMap.put(nodeName, new HashSet<AssignmentRule>());
+						variableToAffectedAssignmentRuleSetMap.get(nodeName).add(assignmentRule);
+						variableToIsInAssignmentRuleMap.put(nodeName, true);
+					}
+				}
+				
+				++numAssignmentRules;				
+			}
 		}
 		
+		//loop through all constraints to find out which variables affect which constraints
+		//this is stored in a hashmap, as is whether the variable is in a constraint
+		for (Constraint constraint : model.getListOfConstraints()) {
+			
+			for (ASTNode constraintNode : constraint.getMath().getListOfNodes()) {
+				
+				if (constraintNode.isName()) {
+					
+					String nodeName = constraintNode.getName();
+					
+					variableToAffectedConstraintSetMap.put(nodeName, new HashSet<ASTNode>());
+					variableToAffectedConstraintSetMap.get(nodeName).add(constraintNode);
+					variableToIsInConstraintMap.put(nodeName, true);
+				}
+			}
+		}		
+		
+		
 		if (numEvents == 0)
-			noEventsFlag = true;
+			noEventsFlag.setValue(true);
 		else
-			noEventsFlag = false;
+			noEventsFlag.setValue(false);
+		
+		if (numAssignmentRules == 0)
+			noAssignmentRulesFlag.setValue(true);
+		else
+			noAssignmentRulesFlag.setValue(false);
+		
+		if (numConstraints == 0)
+			noConstraintsFlag.setValue(true);
+		else
+			noConstraintsFlag.setValue(false);
 		
 		
 		//STEP 0A: calculate initial propensities (including the total)		
@@ -457,52 +572,48 @@ public class DynamicGillespie {
 		createAndPopulateInitialGroups();
 		
 		
-		if (noEventsFlag == false) {
+		//add event information to hashmaps for easy/fast access
+		//this needs to happen after calculating initial propensities
+		//so that the speciesToAffectedReactionSetMap is populated
+		for (Event event : model.getListOfEvents()) {
 			
-			//add event information to hashmaps for easy/fast access
-			//this needs to happen after calculating initial propensities
-			//so that the speciesToAffectedReactionSetMap is populated
-			for (int i = 0; i < numEvents; ++i) {
+			String eventID = event.getId();
+			
+			if (event.isSetPriority())
+				eventToPriorityMap.put(eventID, evaluateExpressionRecursive(event.getPriority().getMath()));
+			
+			if (event.isSetDelay()) {
 				
-				Event event = model.getEvent(i);
-				String eventID = event.getId();
+				eventToDelayMap.put(eventID, event.getDelay().getMath());
+				eventToHasDelayMap.put(eventID, true);
+			}
+			else
+				eventToHasDelayMap.put(eventID, false);
+			
+			eventToTriggerMap.put(eventID, event.getTrigger().getMath());
+			eventToTriggerPersistenceMap.put(eventID, event.getTrigger().getPersistent());
+			eventToUseValuesFromTriggerTimeMap.put(eventID, event.isUseValuesFromTriggerTime());
+			eventToAssignmentSetMap.put(eventID, new HashSet<Object>());
+			eventToAffectedReactionSetMap.put(eventID, new HashSet<String>());
+			
+			untriggeredEventSet.add(eventID);
+			
+			for (EventAssignment assignment : event.getListOfEventAssignments()) {
 				
-				if (event.isSetPriority())
-					eventToPriorityMap.put(eventID, evaluateExpressionRecursive(event.getPriority().getMath()));
+				String variableID = assignment.getVariable();
 				
-				if (event.isSetDelay()) {
+				eventToAssignmentSetMap.get(eventID).add(assignment);					
+				variableToEventSetMap.put(variableID, new HashSet<String>());
+				variableToEventSetMap.get(variableID).add(eventID);
+				
+				//if the variable is a species, add the reactions it's in
+				//to the event to affected reaction hashmap, which is used
+				//for updating propensities after an event fires
+				if (speciesToAffectedReactionSetMap.containsKey(variableID)) {
 					
-					eventToDelayMap.put(eventID, event.getDelay().getMath());
-					eventToHasDelayMap.put(eventID, true);
-				}
-				else
-					eventToHasDelayMap.put(eventID, false);
-				
-				eventToTriggerMap.put(eventID, event.getTrigger().getMath());
-				eventToTriggerPersistenceMap.put(eventID, event.getTrigger().getPersistent());
-				eventToUseValuesFromTriggerTimeMap.put(eventID, event.isUseValuesFromTriggerTime());
-				eventToAssignmentSetMap.put(eventID, new HashSet<Object>());
-				eventToAffectedReactionSetMap.put(eventID, new HashSet<String>());
-				
-				untriggeredEventSet.add(eventID);
-				
-				for (EventAssignment assignment : event.getListOfEventAssignments()) {
-					
-					String variableID = assignment.getVariable();
-					
-					eventToAssignmentSetMap.get(eventID).add(assignment);					
-					variableToEventSetMap.put(variableID, new HashSet<String>());
-					variableToEventSetMap.get(variableID).add(eventID);
-					
-					//if the variable is a species, add the reactions it's in
-					//to the event to affected reaction hashmap, which is used
-					//for updating propensities after an event fires
-					if (speciesToAffectedReactionSetMap.containsKey(variableID)) {
-						
-						eventToAffectedReactionSetMap.get(eventID).addAll(
-								speciesToAffectedReactionSetMap.get(variableID));
-					}					
-				}
+					eventToAffectedReactionSetMap.get(eventID).addAll(
+							speciesToAffectedReactionSetMap.get(variableID));
+				}					
 			}
 		}
 		
@@ -1241,16 +1352,27 @@ public class DynamicGillespie {
 	 * @param selectedReactionID the reaction that was recently performed
 	 * @return the set of all reactions that the performed reaction affects the propensity of
 	 */
-	private HashSet<String> getAffectedReactionSet(String selectedReactionID) {
+	private HashSet<String> getAffectedReactionSet(String selectedReactionID, final boolean noAssignmentRulesFlag) {
 		
 		HashSet<String> affectedReactionSet = new HashSet<String>(20);
 		affectedReactionSet.add(selectedReactionID);
 		
-		//loop through the reaction's reactants and products and update their amounts
+		//loop through the reaction's reactants and products
 		for (StringDoublePair speciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap.get(selectedReactionID)) {
 			
 			String speciesID = speciesAndStoichiometry.string;
 			affectedReactionSet.addAll(speciesToAffectedReactionSetMap.get(speciesID));
+			
+			//if the species is involved in an assignment rule then it its changing may affect a reaction's propensity
+			if (noAssignmentRulesFlag == false && variableToIsInAssignmentRuleMap.get(speciesID)) {
+				
+				//this assignment rule is going to be evaluated, so the rule's variable's value will change
+				for (AssignmentRule assignmentRule : variableToAffectedAssignmentRuleSetMap.get(speciesID)) {
+				
+					affectedReactionSet.addAll(speciesToAffectedReactionSetMap
+							.get(assignmentRule.getVariable()));
+				}
+			}
 		}
 		
 		return affectedReactionSet;
@@ -1288,7 +1410,7 @@ public class DynamicGillespie {
 	 * updates the event queue and fires events and so on
 	 * @param currentTime the current time in the simulation
 	 */
-	private void handleEvents(double currentTime) {
+	private void handleEvents(double currentTime, final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
 		
 		HashSet<String> triggeredEvents = new HashSet<String>();
 		
@@ -1355,11 +1477,12 @@ public class DynamicGillespie {
 				untriggeredEvents.add(triggeredEventID);
 		}
 		
-		triggeredEventQueue.removeAll(untriggeredEvents);
+		triggeredEventQueue.removeAll(untriggeredEvents);		
 		
-		
-		//temporary set of affected reactions whose propensity/groups needs to be recalculated
+		//these are sets of things that need to be re-evaluated or tested due to the event firing
 		HashSet<String> affectedReactionSet = new HashSet<String>();
+		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
+		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
 		
 		//set of fired events to add to the untriggered set
 		HashSet<String> firedEvents = new HashSet<String>();
@@ -1391,13 +1514,31 @@ public class DynamicGillespie {
 					assignmentValue = evaluateExpressionRecursive(((EventAssignment) eventAssignment).getMath());
 				}
 				
-				variableToValueMap.put(variable, assignmentValue);				
-			}					
+				variableToValueMap.put(variable, assignmentValue);
+				
+				//if this variable that was just updated is part of an assignment rule (RHS)
+				//then re-evaluate that assignment rule
+				if (noAssignmentRulesFlag == false && variableToIsInAssignmentRuleMap.get(variable) == true) 
+					affectedAssignmentRuleSet.addAll(variableToAffectedAssignmentRuleSetMap.get(variable));
+				
+				if (noConstraintsFlag == false && variableToIsInConstraintMap.get(variable) == true)
+					affectedConstraintSet.addAll(variableToAffectedConstraintSetMap.get(variable));
+					
+			}
 		}
 		
 		//add the fired events back into the untriggered set
 		//this allows them to trigger/fire again later
 		untriggeredEventSet.addAll(firedEvents);
+		
+		if (affectedAssignmentRuleSet.size() > 0)
+			performAssignmentRules(affectedAssignmentRuleSet);
+		
+		if (affectedConstraintSet.size() > 0) {
+			
+			if (testConstraints(affectedConstraintSet) == false)
+				constraintFailureFlag = true;
+		}
 		
 		//recalculate propensties/groups for affected reactions
 		if (affectedReactionSet.size() > 0) {
@@ -1408,11 +1549,30 @@ public class DynamicGillespie {
 	}
 	
 	/**
+	 * performs assignment rules that may have changed due to events or reactions firing
+	 * 
+	 * @param affectedAssignmentRuleSet the set of assignment rules that have been affected
+	 */
+	private void performAssignmentRules(HashSet<AssignmentRule> affectedAssignmentRuleSet) {
+		
+		for (AssignmentRule assignmentRule : affectedAssignmentRuleSet) {
+			
+			//update the species count
+			variableToValueMap.adjustValue(assignmentRule.getVariable(), 
+					evaluateExpressionRecursive(assignmentRule.getMath()));
+		}
+	}
+	
+	/**
 	 * updates reactant/product species counts based on their stoichiometries
 	 * 
 	 * @param selectedReactionID the reaction to perform
 	 */
-	private void performReaction(String selectedReactionID) {
+	private void performReaction(String selectedReactionID, final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
+		
+		//these are sets of things that need to be re-evaluated or tested due to the reaction firing
+		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
+		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
 		
 		//loop through the reaction's reactants and products and update their amounts
 		for (StringDoublePair speciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap.get(selectedReactionID)) {
@@ -1422,7 +1582,24 @@ public class DynamicGillespie {
 			
 			//update the species count
 			//note that the stoichiometries are earlier modified with the correct +/- sign
-			variableToValueMap.adjustValue(speciesID, stoichiometry);	
+			variableToValueMap.adjustValue(speciesID, stoichiometry);
+			
+			//if this variable that was just updated is part of an assignment rule (RHS)
+			//then re-evaluate that assignment rule
+			if (noAssignmentRulesFlag == false && variableToIsInAssignmentRuleMap.get(speciesID) == true)
+				affectedAssignmentRuleSet.addAll(variableToAffectedAssignmentRuleSetMap.get(speciesID));
+			
+			if (noConstraintsFlag == false && variableToIsInConstraintMap.get(speciesID) == true)
+				affectedConstraintSet.addAll(variableToAffectedConstraintSetMap.get(speciesID));
+		}
+		
+		if (affectedAssignmentRuleSet.size() > 0)
+			performAssignmentRules(affectedAssignmentRuleSet);
+		
+		if (affectedConstraintSet.size() > 0) {
+			
+			if (testConstraints(affectedConstraintSet) == false)
+				constraintFailureFlag = true;
 		}
 	}
 	
@@ -1602,6 +1779,26 @@ public class DynamicGillespie {
 		}		
 		
 		return selectedReactionID;
+	}
+	
+	/**
+	 * this evaluates a set of constraints that have been affected by an event or reaction firing
+	 * and returns the OR'd boolean result
+	 * 
+	 * @param affectedConstraintSet the set of constraints affected
+	 * @return the boolean result of the constraints' evaluation
+	 */
+	private boolean testConstraints(HashSet<ASTNode> affectedConstraintSet) {
+		
+		//check all of the affected constraints
+		//if one evaluates to true, then the simulation halts
+		for (ASTNode constraint : affectedConstraintSet) {
+			
+			if (getBooleanFromDouble(evaluateExpressionRecursive(constraint)))
+				return true;
+		}
+		
+		return false;
 	}
 	
 	/**
@@ -1847,6 +2044,7 @@ look at the util sbml formula functions to see what happens with strings
 	--i'm not sure this is still relevant
 
 add a gc call after reach run??
+	--you need to understand how multiple runs happens first
 	
 make sure reaction selection is happening properly
 
@@ -1857,17 +2055,21 @@ you don't currently take volumes into account
 EVALUATION NOTES:
 
 apparently minus can be non-binary?  (need to check this)
-AND/XOR/OR are all (potentially) non-binary
-
-for binary shit:
-	--if you know the arguments need to be boolean, you can force them to be boolean
-		by converting the double to a boolean (1.0 to true, 0.0 to false) and returning 1.0 or 0.0
-		hmmmm . . . kind of hack-ish, but it's probably the fastest way to handle it
+	--maybe just unary and binary
 
 
 EVENT NOTES:
 
 
 if trigger is initially true, then should it fire immediately?
+
+
+CONSTRAINTS:
+
+every time-step, evaluate/check appropriate constraints and cancel if the constraint fails
+	--you should do basically the same thing as you did with assignment rules: dependency graph
+	--after each variable is updated, check if the affected constraints hold
+	--if not, set a cancel flag to true
+
 
 */
