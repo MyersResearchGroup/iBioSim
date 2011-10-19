@@ -542,7 +542,7 @@ public class DynamicGillespie {
 					String nodeName = constraintNode.getName();
 					
 					variableToAffectedConstraintSetMap.put(nodeName, new HashSet<ASTNode>());
-					variableToAffectedConstraintSetMap.get(nodeName).add(constraintNode);
+					variableToAffectedConstraintSetMap.get(nodeName).add(constraint.getMath());
 					variableToIsInConstraintMap.put(nodeName, true);
 				}
 			}
@@ -1794,7 +1794,7 @@ public class DynamicGillespie {
 		//if one evaluates to true, then the simulation halts
 		for (ASTNode constraint : affectedConstraintSet) {
 			
-			if (getBooleanFromDouble(evaluateExpressionRecursive(constraint)))
+			if (getBooleanFromDouble(evaluateExpressionRecursive(constraint)) == true)
 				return true;
 		}
 		
@@ -2066,10 +2066,6 @@ if trigger is initially true, then should it fire immediately?
 
 CONSTRAINTS:
 
-every time-step, evaluate/check appropriate constraints and cancel if the constraint fails
-	--you should do basically the same thing as you did with assignment rules: dependency graph
-	--after each variable is updated, check if the affected constraints hold
-	--if not, set a cancel flag to true
-
+you need to display the message if it fails?
 
 */
