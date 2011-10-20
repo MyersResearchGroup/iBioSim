@@ -289,6 +289,7 @@ public class Button_Enabling {
 			simulators.addItem("gillespie");
 			simulators.addItem("gillespieJava");
 			simulators.addItem("Gillespie SSA-CR (Java)");
+			simulators.addItem("Gillespie Direct (Java)");
 			simulators.addItem("mpde");
 			simulators.addItem("mp");
 			simulators.addItem("mp-adaptive");
@@ -415,6 +416,7 @@ public class Button_Enabling {
 		simulators.addItem("gillespie");
 		simulators.addItem("gillespieJava");
 		simulators.addItem("Gillespie SSA-CR (Java)");
+		simulators.addItem("Gillespie Direct (Java)");
 		simulators.addItem("mpde");
 		simulators.addItem("mp");
 		simulators.addItem("mp-adaptive");

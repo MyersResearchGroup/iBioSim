@@ -1387,8 +1387,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				errorLabel.setEnabled(true);
 				description.setText("Embedded Runge-Kutta-Fehlberg (4, 5) method");
 			}
-			else if (((String) simulators.getSelectedItem()).contains("gillespie")) {
-				description.setText("Gillespie's direct method");
+			else if (((String) simulators.getSelectedItem()).equals("Gillespie SSA-CR (Java)")) {
+				description.setText("Gillespie SSA Composition and Rejection Method");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);
@@ -1396,8 +1396,17 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
-			else if (((String) simulators.getSelectedItem()).contains("Gillespie SSA-CR (Java)")) {
-				description.setText("Gillespie SSA Composition and Rejection Method");
+			else if (((String) simulators.getSelectedItem()).equals("Gillespie Direct (Java)")) {
+				description.setText("Gillespie SSA Direct Method");
+				minStep.setEnabled(true);
+				minStepLabel.setEnabled(true);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
+			}
+			else if (((String) simulators.getSelectedItem()).contains("gillespie")) {
+				description.setText("Gillespie's direct method");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);
