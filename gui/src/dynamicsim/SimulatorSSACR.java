@@ -18,9 +18,7 @@ import main.Gui;
 import odk.lang.FastMath;
 import util.MutableBoolean;
 
-public class SimulatorSSACR extends Simulator{
-	
-	
+public class SimulatorSSACR extends Simulator{	
 	
 	//allows for access to a group number from a reaction ID
 	private TObjectIntHashMap<String> reactionToGroupMap = null;
@@ -43,8 +41,6 @@ public class SimulatorSSACR extends Simulator{
 	
 	//number of groups including the empty groups and zero-propensity group
 	private int numGroups = 0;
-	
-	
 	
 	
 	public SimulatorSSACR(String SBMLFileName, String outputDirectory, double timeLimit, 
@@ -150,8 +146,12 @@ public class SimulatorSSACR extends Simulator{
 				//recalculate propensties/groups for affected reactions
 				if (affectedReactionSet.size() > 0) {
 					
-					updatePropensities(affectedReactionSet);
-					updateGroups(affectedReactionSet);
+					boolean newMinPropensityFlag = updatePropensities(affectedReactionSet);
+					
+					if (newMinPropensityFlag == true)
+						reassignAllReactionsToGroups();
+					else
+						updateGroups(affectedReactionSet);
 				}
 			}
 			
@@ -456,14 +456,17 @@ public class SimulatorSSACR extends Simulator{
 	private int selectGroup(double r2) {
 		
 		double randomPropensity = r2 * (totalPropensity);
-		double totalGroupsPropensity = 0.0;
+		double runningTotalGroupsPropensity = 0.0;
 		int selectedGroup = 1;
 		
+		//finds the group that the random propensity lies in
+		//it keeps adding the next group's total propensity to a running total
+		//until the running total is greater than the random propensity
 		for (; selectedGroup < numGroups; ++selectedGroup) {
 			
-			totalGroupsPropensity += groupToTotalGroupPropensityMap.get(selectedGroup);
+			runningTotalGroupsPropensity += groupToTotalGroupPropensityMap.get(selectedGroup);
 			
-			if (randomPropensity < totalGroupsPropensity && nonemptyGroupSet.contains(selectedGroup))
+			if (randomPropensity < runningTotalGroupsPropensity && nonemptyGroupSet.contains(selectedGroup))
 				break;
 		}
 		
@@ -559,9 +562,6 @@ public class SimulatorSSACR extends Simulator{
 				//if it's outside of the old group's boundaries
 				if (newPropensity > groupToPropensityCeilingMap.get(oldGroup) ||
 						newPropensity < groupToPropensityFloorMap.get(oldGroup)) {
-						
-					if (newPropensity > maxPropensity)
-						maxPropensity = newPropensity;
 					
 					org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath.frexp((float) (newPropensity / minPropensity));
 					int group = frexpResult.exponent;
@@ -621,9 +621,6 @@ public class SimulatorSSACR extends Simulator{
 
 					//maintain current group
 					
-					if (newPropensity > maxPropensity)
-						maxPropensity = newPropensity;
-					
 					if (newPropensity > groupToMaxValueMap.get(oldGroup))
 						groupToMaxValueMap.put(oldGroup, newPropensity);
 					
@@ -676,6 +673,9 @@ public class SimulatorSSACR extends Simulator{
 				minPropensity = newPropensity;
 				newMinPropensityFlag = true;
 			}
+			
+			if (newPropensity > maxPropensity)
+				maxPropensity = newPropensity;
 			
 			double oldPropensity = reactionToPropensityMap.get(affectedReactionID);
 			int oldGroup = reactionToGroupMap.get(affectedReactionID);

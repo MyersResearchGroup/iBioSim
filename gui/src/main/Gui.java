@@ -1373,7 +1373,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				choices = new String[] { "euler", "gear1", "gear2", "rk4imp", "rk8pd", "rkf45" };
 			}
 			else if (type.getSelectedItem().equals("Monte Carlo")) {
-				choices = new String[] { "gillespie", "gillespieJava", "Gillespie SSA-CR (Java)", "Gillespie Direct (Java)", "mpde", "mp", "mp-adaptive", "mp-event", "emc-sim", "bunker", "nmc"};
+				choices = new String[] { "gillespie", "gillespieJava", "Gillespie SSA-CR (Java)", "Gillespie SSA-Direct (Java)", "mpde", "mp", "mp-adaptive", "mp-event", "emc-sim", "bunker", "nmc"};
 			}
 			else if (type.getSelectedItem().equals("Markov")) {
 				choices = new String[] { "steady-state-markov-chain-analysis", "transient-markov-chain-analysis", "reachability-analysis", "atacs",
@@ -1443,7 +1443,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						sim.addItem("gillespie");
 						sim.addItem("gillespieJava");
 						sim.addItem("Gillespie SSA-CR (Java)");
-						sim.addItem("Gillespie Direct (Java)");
+						sim.addItem("Gillespie SSA-Direct (Java)");
 						sim.addItem("mpde");
 						sim.addItem("mp");
 						sim.addItem("mp-adaptive");
