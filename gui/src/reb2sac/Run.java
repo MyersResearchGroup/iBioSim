@@ -1308,7 +1308,7 @@ public class Run implements ActionListener {
 						
 						return exitValue;
 					}
-					else if (sim.equals("Gillespie Direct (Java)")) {
+					else if (sim.equals("Gillespie SSA-Direct (Java)")) {
 
 						dynSim = new DynamicGillespie("direct");					
 						String SBMLFileName = directory + separator + theFile;
