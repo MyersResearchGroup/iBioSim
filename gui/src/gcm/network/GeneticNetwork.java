@@ -235,7 +235,8 @@ public class GeneticNetwork {
 				printPromoterBinding(document);
 			printComplexBinding(document);
 			
-			printDiffusion(document);
+			//printDiffusion(document);
+			printDiffusionWithArrays(document);
 			
 			PrintStream p = new PrintStream(new FileOutputStream(filename),true,"UTF-8");
 

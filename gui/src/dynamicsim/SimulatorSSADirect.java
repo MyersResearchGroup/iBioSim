@@ -12,13 +12,15 @@ import odk.lang.FastMath;
 import util.MutableBoolean;
 
 public class SimulatorSSADirect extends Simulator{
+	
+	private static Long initializationTime = new Long(0);
 
 	public SimulatorSSADirect(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval) 
 	throws IOException, XMLStreamException {
 		
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed,
-				progress, printInterval);
+				progress, printInterval, initializationTime);
 	}
 
 	public void simulate() {
@@ -26,7 +28,7 @@ public class SimulatorSSADirect extends Simulator{
 		if (sbmlHasErrorsFlag == true)
 			return;
 		
-		long timeBeforeSim = System.nanoTime();
+		long initTime2 = System.nanoTime();
 		
 		MutableBoolean eventsFlag = new MutableBoolean(false);
 		MutableBoolean rulesFlag = new MutableBoolean(false);
@@ -44,7 +46,10 @@ public class SimulatorSSADirect extends Simulator{
 		final boolean noAssignmentRulesFlag = (Boolean) rulesFlag.getValue();
 		final boolean noConstraintsFlag = (Boolean) constraintsFlag.getValue();
 		
-		System.err.println("initialization time: " + (System.nanoTime() - timeBeforeSim) / 1e9f);
+		initializationTime += System.nanoTime() - initTime2;
+		long initTime3 = System.nanoTime() - initTime2;
+		
+		System.err.println("initialization time: " + initializationTime / 1e9f);
 		
 		//SIMULATION LOOP
 		//simulate until the time limit is reached
@@ -142,7 +147,7 @@ public class SimulatorSSADirect extends Simulator{
 			
 			String selectedReactionID = selectReaction(r2);
 			
-			//step3Time += System.nanoTime() - step3bInitial;
+			//step3Time += System.nanoTime() - step3Initial;
 			
 		
 			
@@ -177,10 +182,11 @@ public class SimulatorSSADirect extends Simulator{
 			
 		} //end simulation loop
 		
-		System.err.println("total time: " + String.valueOf((System.nanoTime() - timeBeforeSim) / 1e9f));
+		System.err.println("total time: " + String.valueOf((initializationTime + System.nanoTime() - 
+				initTime2 - initTime3) / 1e9f));
 		System.err.println("total step 1 time: " + String.valueOf(step1Time / 1e9f));
 		System.err.println("total step 2 time: " + String.valueOf(step2Time / 1e9f));
-		System.err.println("total step 3a time: " + String.valueOf(step3Time / 1e9f));
+		System.err.println("total step 3 time: " + String.valueOf(step3Time / 1e9f));
 		System.err.println("total step 4 time: " + String.valueOf(step4Time / 1e9f));
 		System.err.println("total step 5 time: " + String.valueOf(step5Time / 1e9f));
 		
