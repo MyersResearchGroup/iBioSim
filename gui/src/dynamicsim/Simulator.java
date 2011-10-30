@@ -83,12 +83,13 @@ public abstract class Simulator {
 	protected HashSet<String> untriggeredEventSet = null;
 	
 	//hashmaps that allow for access to event information from the event's id
-	private TObjectDoubleHashMap<String> eventToPriorityMap = null;
+	protected TObjectDoubleHashMap<String> eventToPriorityMap = null;
 	protected HashMap<String, ASTNode> eventToDelayMap = null;
 	protected HashMap<String, Boolean> eventToHasDelayMap = null;
 	protected HashMap<String, Boolean> eventToTriggerPersistenceMap = null;
 	protected HashMap<String, Boolean> eventToUseValuesFromTriggerTimeMap = null;
 	protected HashMap<String, ASTNode> eventToTriggerMap = null;
+	protected HashMap<String, Boolean> eventToTriggerInitiallyTrueMap = null;
 	protected HashMap<String, HashSet<Object> > eventToAssignmentSetMap = null;
 	
 	//allows for access to the reactions whose propensity changes when an event fires
@@ -142,10 +143,26 @@ public abstract class Simulator {
 	
 	
 	
-	
+	/**
+	 * does lots of initialization
+	 * 
+	 * @param SBMLFileName
+	 * @param outputDirectory
+	 * @param timeLimit
+	 * @param maxTimeStep
+	 * @param randomSeed
+	 * @param progress
+	 * @param printInterval
+	 * @param initializationTime
+	 * @throws IOException
+	 * @throws XMLStreamException
+	 */
 	public Simulator(String SBMLFileName, String outputDirectory, double timeLimit, 
-			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval) 
+			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval,
+			Long initializationTime) 
 	throws IOException, XMLStreamException {
+		
+		long initTime1 = System.nanoTime();
 		
 		this.SBMLFileName = SBMLFileName;
 		this.timeLimit = timeLimit;
@@ -209,6 +226,7 @@ public abstract class Simulator {
 			eventToDelayMap = new HashMap<String, ASTNode>((int) numEvents);
 			eventToHasDelayMap = new HashMap<String, Boolean>((int) numEvents);
 			eventToTriggerMap = new HashMap<String, ASTNode>((int) numEvents);
+			eventToTriggerInitiallyTrueMap = new HashMap<String, Boolean>((int) numEvents);
 			eventToTriggerPersistenceMap = new HashMap<String, Boolean>((int) numEvents);
 			eventToUseValuesFromTriggerTimeMap = new HashMap<String, Boolean>((int) numEvents);
 			eventToAssignmentSetMap = new HashMap<String, HashSet<Object> >((int) numEvents);
@@ -224,7 +242,9 @@ public abstract class Simulator {
 		if (numConstraints > 0) {
 			variableToAffectedConstraintSetMap = new HashMap<String, HashSet<ASTNode> >((int) numConstraints);		
 			variableToIsInConstraintMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
-		}		
+		}
+		
+		initializationTime = System.nanoTime() - initTime1;
 	}
 	
 	/**
@@ -820,6 +840,10 @@ public abstract class Simulator {
 			//if the trigger evaluates to true
 			if (getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap.get(untriggeredEventID))) == true) {
 				
+				//skip the event if it's initially true and this is time == 0
+				if (currentTime == 0.0 && eventToTriggerInitiallyTrueMap.get(untriggeredEventID) == true)
+					continue;
+				
 				triggeredEvents.add(untriggeredEventID);
 				
 				//if assignment is to be evaluated at trigger time, evaluate it and replace the ASTNode assignment
@@ -1173,6 +1197,7 @@ public abstract class Simulator {
 				eventToHasDelayMap.put(eventID, false);
 			
 			eventToTriggerMap.put(eventID, event.getTrigger().getMath());
+			eventToTriggerInitiallyTrueMap.put(eventID, event.getTrigger().isInitialValue());
 			eventToTriggerPersistenceMap.put(eventID, event.getTrigger().getPersistent());
 			eventToUseValuesFromTriggerTimeMap.put(eventID, event.isUseValuesFromTriggerTime());
 			eventToAssignmentSetMap.put(eventID, new HashSet<Object>());

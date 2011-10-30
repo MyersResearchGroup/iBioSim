@@ -42,13 +42,15 @@ public class SimulatorSSACR extends Simulator{
 	//number of groups including the empty groups and zero-propensity group
 	private int numGroups = 0;
 	
+	private static Long initializationTime = new Long(0);
+	
 	
 	public SimulatorSSACR(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval) 
 	throws IOException, XMLStreamException {
 		
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed,
-				progress, printInterval);
+				progress, printInterval, initializationTime);
 	}
 
 	/**
@@ -59,7 +61,7 @@ public class SimulatorSSACR extends Simulator{
 		if (sbmlHasErrorsFlag == true)
 			return;
 		
-		long timeBeforeSim = System.nanoTime();
+		long initTime2 = System.nanoTime();
 		
 		MutableBoolean eventsFlag = new MutableBoolean(false);
 		MutableBoolean rulesFlag = new MutableBoolean(false);
@@ -77,7 +79,10 @@ public class SimulatorSSACR extends Simulator{
 		final boolean noAssignmentRulesFlag = (Boolean) rulesFlag.getValue();
 		final boolean noConstraintsFlag = (Boolean) constraintsFlag.getValue();
 		
-		System.err.println("initialization time: " + (System.nanoTime() - timeBeforeSim) / 1e9f);
+		initializationTime += System.nanoTime() - initTime2;
+		long initTime3 = System.nanoTime() - initTime2;
+		
+		System.err.println("initialization time: " + initializationTime / 1e9f);
 		
 		//SIMULATION LOOP
 		//simulate until the time limit is reached
@@ -246,7 +251,8 @@ public class SimulatorSSACR extends Simulator{
 			
 		} //end simulation loop
 		
-		System.err.println("total time: " + String.valueOf((System.nanoTime() - timeBeforeSim) / 1e9f));
+		System.err.println("total time: " + String.valueOf((initializationTime + System.nanoTime() - 
+				initTime2 - initTime3) / 1e9f));
 		System.err.println("total step 1 time: " + String.valueOf(step1Time / 1e9f));
 		System.err.println("total step 2 time: " + String.valueOf(step2Time / 1e9f));
 		System.err.println("total step 3a time: " + String.valueOf(step3aTime / 1e9f));
@@ -329,16 +335,26 @@ public class SimulatorSSACR extends Simulator{
 			++currentGroup;
 		}
 		
-		groupToPropensityCeilingMap.put(currentGroup, groupPropensityCeiling);
-		groupToMaxValueMap.put(currentGroup, 0.0);
-		numGroups = currentGroup + 1;
-		
-		//start at 0 to make a group for zero propensities
-		for (int groupNum = 0; groupNum < numGroups; ++groupNum) {
-
+		//if there are no non-zero groups
+		if (minPropensity == 0) {
+			
+			numGroups = 1;
 			groupToReactionSetList.add(new HashSet<String>(500));
-			groupToTotalGroupPropensityMap.put(groupNum, 0.0);
-		}		
+		}
+		else {
+			
+			numGroups = currentGroup + 1;
+			
+			groupToPropensityCeilingMap.put(currentGroup, groupPropensityCeiling);
+			groupToMaxValueMap.put(currentGroup, 0.0);
+		
+			//start at 0 to make a group for zero propensities
+			for (int groupNum = 0; groupNum < numGroups; ++groupNum) {
+	
+				groupToReactionSetList.add(new HashSet<String>(500));
+				groupToTotalGroupPropensityMap.put(groupNum, 0.0);
+			}
+		}
 		
 		//assign reactions to groups
 		for (String reaction : reactionToPropensityMap.keySet()) {
@@ -346,8 +362,6 @@ public class SimulatorSSACR extends Simulator{
 			double propensity = reactionToPropensityMap.get(reaction);			
 			org.openmali.FastMath.FRExpResultf frexpResult = org.openmali.FastMath.frexp((float) (propensity / minPropensity));
 			int group = frexpResult.exponent;
-			
-			//System.out.println(reaction + "   " + propensity + "   " + group);
 			
 			groupToTotalGroupPropensityMap.adjustValue(group, propensity);
 			groupToReactionSetList.get(group).add(reaction);
@@ -469,6 +483,9 @@ public class SimulatorSSACR extends Simulator{
 			if (randomPropensity < runningTotalGroupsPropensity && nonemptyGroupSet.contains(selectedGroup))
 				break;
 		}
+		
+		if (numGroups == 1)
+			return 0;
 		
 		return selectedGroup;
 	}

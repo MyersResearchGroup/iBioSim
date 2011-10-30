@@ -8276,6 +8276,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				Class.forName("org.sbml.libsbml.libsbml");
 			}
 			catch (UnsatisfiedLinkError e) {
+				e.printStackTrace();
 				System.err.println("Error: could not link with the libSBML library." + "  It is likely\nyour " + varname
 						+ " environment variable does not include\nthe" + " directory containing the libsbml library file.");
 				System.exit(1);
