@@ -5,6 +5,7 @@ import gcm.util.Utility;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Reaction;
@@ -36,17 +37,18 @@ public class AbstractionEngine {
 	// Creates abstract expression for formation of given complex and adds associated SBML constructs if in sbmlMode
 	public String abstractComplex(String complexId, double multiplier, boolean operatorAbstraction) {
 		if (sbmlMode) {
-			reactantStoich = new HashMap<String, Double>();
-			modifiers = new ArrayList<String>();
+//			reactantStoich = new HashMap<String, Double>();
+			modifiers = new HashSet<String>();
 		}
 		String expression = abstractComplexHelper(complexId, multiplier, "", operatorAbstraction);
 		if (sbmlMode) {
-			for (String reactant : reactantStoich.keySet())
-				if (operatorAbstraction) {
-					r.removeModifier(reactant);
-					r.addModifier(Utility.ModifierSpeciesReference(reactant));
-				} else
-					r.addReactant(Utility.SpeciesReference(reactant, reactantStoich.get(reactant)));
+//			for (String reactant : reactantStoich.keySet()) {
+//				if (operatorAbstraction) {
+//					r.removeModifier(reactant);
+//					r.addModifier(Utility.ModifierSpeciesReference(reactant));
+//				} else
+//					r.addReactant(Utility.SpeciesReference(reactant, reactantStoich.get(reactant)));
+//			}
 			for (String modifier : modifiers) {
 				r.removeModifier(modifier);
 				r.addModifier(Utility.ModifierSpeciesReference(modifier));
@@ -93,20 +95,20 @@ public class AbstractionEngine {
 					compExpression = compExpression + "*" + "(";
 					if (species.get(partId).isAbstractable()) {
 						compExpression = compExpression + abstractComplexHelper(partId, multiplier * n, sequesterRoot, operatorAbstraction);
-					} else if (sequesterRoot.equals("")) {
-						if (species.get(partId).isSequesterable())
-							compExpression = compExpression + sequesterSpeciesHelper(partId, sequesterRoot, operatorAbstraction);
-						else
-							compExpression = compExpression + partId;
-						if (reactantStoich.containsKey(partId))
-							reactantStoich.put(partId, reactantStoich.get(partId)
-									+ multiplier * n);
-						else
-							reactantStoich.put(partId, multiplier * n);
+					} else if (sequesterRoot.equals("") && species.get(partId).isSequesterable()) {
+//						if (species.get(partId).isSequesterable())
+						compExpression = compExpression + sequesterSpeciesHelper(partId, sequesterRoot, operatorAbstraction);
+//						else
+//							compExpression = compExpression + partId;
+//						if (reactantStoich.containsKey(partId))
+//							reactantStoich.put(partId, reactantStoich.get(partId)
+//									+ multiplier * n);
+//						else
+//							reactantStoich.put(partId, multiplier * n);
+						modifiers.add(partId);
 					} else {
 						compExpression = compExpression + partId;
-						if (!modifiers.contains(partId))
-							modifiers.add(partId);
+						modifiers.add(partId);
 					}
 					compExpression = compExpression + ")^" + nId;
 				}
@@ -150,14 +152,16 @@ public class AbstractionEngine {
 
 	public String sequesterSpecies(String speciesId, double n, boolean operatorAbstraction) {
 		if (sbmlMode)
-			modifiers = new ArrayList<String>();
+			modifiers = new HashSet<String>();
 		String expression = sequesterSpeciesHelper(speciesId, "", operatorAbstraction);
 		if (sbmlMode) {
-			if (operatorAbstraction) {
+//			if (operatorAbstraction) {
+			if (n > 0) {
 				r.removeModifier(speciesId);
 				r.addModifier(Utility.ModifierSpeciesReference(speciesId));
-			} else if (n > 0)  // n = 0 in the case of a complex formation reaction for a sequestered complex (complex added as reaction product and not reactant)
-				r.addReactant(Utility.SpeciesReference(speciesId, n));
+			} 
+//			} else if (n > 0)  // n = 0 in the case of a complex formation reaction for a sequestered complex (complex added as reaction product and not reactant)
+//				r.addReactant(Utility.SpeciesReference(speciesId, n));
 			for (String modifier : modifiers) {
 				r.removeModifier(modifier);
 				r.addModifier(Utility.ModifierSpeciesReference(modifier));
@@ -400,7 +404,7 @@ public class AbstractionEngine {
 			} else
 				decayExpression = kd + "*" + speciesId;
 		} else if (sbmlMode) {
-			modifiers = new ArrayList<String>();
+			modifiers = new HashSet<String>();
 			String kdId;
 			for (Influence infl : partsMap.get(speciesId)) {
 				String complexId = infl.getOutput();
@@ -459,8 +463,8 @@ public class AbstractionEngine {
 	private Reaction r;
 	private KineticLaw kl;
 	private HashMap<String, SpeciesInterface> species;
-	private HashMap<String, Double> reactantStoich;
-	private ArrayList<String> modifiers;
+//	private HashMap<String, Double> reactantStoich;
+	private HashSet<String> modifiers;
 	private HashMap<String, ArrayList<Influence>> complexMap;
 	private HashMap<String, ArrayList<Influence>> partsMap;
 	private double RNAP;

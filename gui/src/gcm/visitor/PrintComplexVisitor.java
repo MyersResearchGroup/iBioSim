@@ -42,43 +42,43 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 		String compartment = checkCompartments(specie.getId());
 		r = Utility.Reaction("Complex_formation_" + specie.getId());
 		r.setCompartment(compartment);
-		r.addProduct(Utility.SpeciesReference(specie.getId(), 1));
 		r.setReversible(true);
 		r.setFast(false);
+		r.addProduct(Utility.SpeciesReference(specie.getId(), 1));
 		kl = r.createKineticLaw();
 		String kcompId = kcompString;
 		String kcompIdf = "kf_c";
 		String kcompIdr = "kr_c";
 		String compExpression = "";
 		String boundExpression = specie.getId();
-		String ncSum = "";
+		String ncSum = ""; 
 		double stoich = 0;
-		if (complexAbstraction) {
-			kcompId = kcompId + "__" + specie.getId();
-			kcompIdf = kcompIdf + "__" + specie.getId();
-			kcompIdr = kcompIdr + "__" + specie.getId();
-			compExpression = abstractComplex(specie.getId(), 1);
-			int index = compExpression.indexOf('*');
-			compExpression = compExpression.substring(index, compExpression.length());
-			for (Influence infl : complexMap.get(specie.getId())) {
-				stoich += infl.getCoop();
-				String partId = infl.getInput();
-				String nId = coopString + "__" + partId + "_" + specie.getId();
-				ncSum = ncSum + nId + "+";
-			}
-			if (specie.isSequesterable())
-				boundExpression = sequesterSpecies(specie.getId(), 0);
-		} else {
-			for (Influence infl : complexMap.get(specie.getId())) {
-				String partId = infl.getInput();
-				stoich += infl.getCoop();
-				r.addReactant(Utility.SpeciesReference(partId, infl.getCoop()));
-				String nId = coopString + "__" + partId + "_" + specie.getId();
-				kl.addParameter(Utility.Parameter(nId, infl.getCoop(), "dimensionless"));
-				ncSum = ncSum + nId + "+";
-				compExpression = compExpression + "*" + "(" + partId + ")^" + nId;
-			}
-		}	
+//		if (complexAbstraction) {
+//			kcompId = kcompId + "__" + specie.getId();
+//			kcompIdf = kcompIdf + "__" + specie.getId();
+//			kcompIdr = kcompIdr + "__" + specie.getId();
+//			compExpression = abstractComplex(specie.getId(), 1);
+//			int index = compExpression.indexOf('*');
+//			compExpression = compExpression.substring(index, compExpression.length());
+//			for (Influence infl : complexMap.get(specie.getId())) {
+//				stoich += infl.getCoop();
+//				String partId = infl.getInput();
+//				String nId = coopString + "__" + partId + "_" + specie.getId();
+//				ncSum = ncSum + nId + "+";
+//			}
+		if (complexAbstraction && specie.isSequesterable())
+			boundExpression = sequesterSpecies(specie.getId(), 0);
+//		} else {
+		for (Influence infl : complexMap.get(specie.getId())) {
+			String partId = infl.getInput();
+			stoich += infl.getCoop();
+			r.addReactant(Utility.SpeciesReference(partId, infl.getCoop()));
+			String nId = coopString + "__" + partId + "_" + specie.getId();
+			kl.addParameter(Utility.Parameter(nId, infl.getCoop(), "dimensionless"));
+			ncSum = ncSum + nId + "+";
+			compExpression = compExpression + "*" + "(" + partId + ")^" + nId;
+		}
+//		}	
 		if (stoich == 1)
 			kl.addParameter(Utility.Parameter(kcompIdf, kf, GeneticNetwork.getMoleTimeParameter(1)));
 		else if (stoich >= 2) {

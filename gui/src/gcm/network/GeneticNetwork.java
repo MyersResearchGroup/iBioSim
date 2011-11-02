@@ -20,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 
@@ -1762,169 +1763,163 @@ public class GeneticNetwork {
 	}
 	
 	public void markAbstractable() {
-		for (Promoter p : promoters.values()) {
-			//Checks if activators are sequesterable
-			//Marks activators that are complexes as abstractable provided they're not parts/outputs 
-			//Checks parts of complex activators provided the activators aren't outputs
-			for (SpeciesInterface s : p.getActivators()) {
-				if (partsMap.containsKey(s.getId())) {
-					checkSequester(s.getId(), s.getId());
-				}
-			}
-			//Checks if repressors are sequesterable
-			//Marks repressors that are complexes as abstractable provided they're not parts/outputs 
-			//Checks parts of complex repressors provided the repressors aren't outputs
-			for (SpeciesInterface s : p.getRepressors()) {
-				if (partsMap.containsKey(s.getId())) {
-					checkSequester(s.getId(), s.getId());
-				}
-			}
-		}
-		for (Promoter p : promoters.values()) {
-			for (SpeciesInterface s : p.getActivators()) {
-				if (complexMap.containsKey(s.getId()) && !s.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT)) {
-					if (!partsMap.containsKey(s.getId()) && !isGenetic(s.getId()) 
-							&& !s.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)
-							&& !SBMLutilities.variableInUse(document, s.getId(), false, false)
-							&& !SBMLutilities.usedInNonDegradationReaction(document, s.getId()))
-						s.setAbstractable(true);
-					checkComplex(s.getId());
-				}
-			}
-			for (SpeciesInterface s : p.getRepressors()) {
-				if (complexMap.containsKey(s.getId()) && !s.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT)) {
-					if (!partsMap.containsKey(s.getId()) && !isGenetic(s.getId()) 
-							&& !s.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)
-							&& !SBMLutilities.variableInUse(document, s.getId(), false, false)
-							&& !SBMLutilities.usedInNonDegradationReaction(document, s.getId()))
-						s.setAbstractable(true);
-					checkComplex(s.getId());
-				}
-			}
-		}	
-		//Checks if parts of output complex species are abstractable or sequesterable
 		for (String complexId : complexMap.keySet()) {
-			if (species.get(complexId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT))
+			if (!partsMap.containsKey(complexId)) {
 				checkComplex(complexId);
+			}
 		}
+		for (String partId : partsMap.keySet()) {
+			SpeciesInterface part = species.get(partId);
+			if ((partsMap.get(partId).size() > 1 || part.isActivator() || part.isRepressor()) 
+					&& !part.isSequesterAbstractable()) 
+				checkSequester(partId, partId);
+		}
+//		for (Promoter p : promoters.values()) {
+//			for (SpeciesInterface s : p.getActivators()) {
+//				if (partsMap.containsKey(s.getId())) {
+//					checkSequester(s.getId(), s.getId());
+//				}
+//			}
+//			for (SpeciesInterface s : p.getRepressors()) {
+//				if (partsMap.containsKey(s.getId())) {
+//					checkSequester(s.getId(), s.getId());
+//				}
+//			}
+//		}
+//		for (Promoter p : promoters.values()) {
+//			for (SpeciesInterface s : p.getActivators()) {
+//				if (complexMap.containsKey(s.getId()) && !s.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT)
+////						) { if (
+//						&& !partsMap.containsKey(s.getId()) && !isGenetic(s.getId()) 
+//						&& !s.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)
+//						&& !SBMLutilities.variableInUse(document, s.getId(), false, false)
+//						&& !SBMLutilities.usedInNonDegradationReaction(document, s.getId())) {
+//					s.setAbstractable(true);
+//					checkComplex(s.getId());
+//				}
+//			}
+//			for (SpeciesInterface s : p.getRepressors()) {
+//				if (complexMap.containsKey(s.getId()) && !s.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT)
+////						) { if (
+//						&& !partsMap.containsKey(s.getId()) && !isGenetic(s.getId()) 
+//						&& !s.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)
+//						&& !SBMLutilities.variableInUse(document, s.getId(), false, false)
+//						&& !SBMLutilities.usedInNonDegradationReaction(document, s.getId())) {
+//					s.setAbstractable(true);
+//					checkComplex(s.getId());
+//				}
+//			}
+//		}	
+//		//Checks if parts of output complex species are abstractable or sequesterable
+//		for (String complexId : complexMap.keySet()) {
+//			if (species.get(complexId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT))
+//				checkComplex(complexId);
+//		}
 		//Removes abstractable marking from interesting species 
-		unMarkInterestingSpecies(interestingSpecies);
+//		unMarkInterestingSpecies(interestingSpecies);
 	}
 	
 	//Checks if parts of given complex are sequesterable so long as the parts aren't activators or repressors
 	//Marks parts that are complexes as abstractable so long as the parts aren't used elsewhere
 	//Recursively checks parts of parts that are complexes provided the latter aren't activators, repressors, or outputs
 	private void checkComplex(String complexId) {
-		for (Influence infl : complexMap.get(complexId)) {
-			String partId = infl.getInput();
-			if (partsMap.get(partId).size() > 1 && !species.get(partId).isActivator() && !species.get(partId).isRepressor()) {
-				checkSequester(partId, partId);
-			}
-			if (complexMap.containsKey(partId) 
-					&& !species.get(partId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT)
-					&& !species.get(partId).isActivator() && !species.get(partId).isRepressor()) {
-				if (!species.get(partId).isSequesterable() 
-						&& partsMap.get(partId).size() == 1 && !isGenetic(partId)
-						&& !species.get(partId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)
-						&& !SBMLutilities.variableInUse(document, partId, false, false)
-						&& !SBMLutilities.usedInNonDegradationReaction(document, partId))
-					species.get(partId).setAbstractable(true);
-				checkComplex(partId);
-			} /*else if (!species.get(partId).isSequesterable() && (partsMap.get(partId).size() > 1 
-					|| species.get(partId).isActivator() || species.get(partId).isRepressor()
-					|| species.get(partId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)
-					|| SBMLutilities.variableInUse(document, partId, false, false)
-					|| SBMLutilities.usedInNonDegradationReaction(document, partId)))
-				species.get(complexId).setAbstractable(false);*/
+		SpeciesInterface complex = species.get(complexId);
+		if (!complex.isAbstractable()) {
+			if (!isGenetic(complexId)
+					&& !complex.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)
+					&& !SBMLutilities.variableInUse(document, complexId, false, false)
+					&& !SBMLutilities.usedInNonDegradationReaction(document, complexId)) {
+				complex.setAbstractable(true);
+				for (Influence infl : complexMap.get(complexId)) {
+					String partId = infl.getInput();
+					if (complexMap.containsKey(partId)) {
+						checkComplex(partId);
+					}
+				}
+			} else
+				unAbstractDown(complexId, "");
 		}
 	}
-	
-//	private boolean checkComplex(String complexId, String lastSequester, String sequesterRoot) {
-//		for (Influence infl : complexMap.get(complexId)) {
-//			String partId = infl.getInput();
-//			if (!partId.equals(lastSequester)) {
-//				if (partId.equals(sequesterRoot))
-//					return false;
-//				boolean sequesterable = false;
-//				if (partsMap.get(partId).size() > 1) {
-//					if (!sequesterRoot.equals(""))  //i.e. checkComplex called by checkSequester to determine if sequestering species are used elsewhere
-//						return false;
-//					if (!species.get(partId).isActivator() && !species.get(partId).isRepressor())
-//						sequesterable = checkSequester(partId, partId);
-//				}
-//				if (!sequesterRoot.equals("") && (species.get(partId).isActivator() || species.get(partId).isRepressor() 
-//						|| species.get(partId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)
-//						|| SBMLutilities.variableInUse(document, partId, false, false)
-//						|| SBMLutilities.usedInNonDegradationReaction(document, partId)))
-//					return false;
-//				if (complexMap.containsKey(partId) && !species.get(partId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT)
-//						&& !species.get(partId).isActivator() && !species.get(partId).isRepressor()) {
-//					if (!sequesterRoot.equals("") && !checkComplex(partId, "", sequesterRoot))
-//						return false;
-//					if (!sequesterable && partsMap.get(partId).size() == 1 && !isGenetic(partId)
-//							&& !species.get(partId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)
-//							&& !SBMLutilities.variableInUse(document, partId, false, false)
-//							&& !SBMLutilities.usedInNonDegradationReaction(document, partId))
-//						species.get(partId).setAbstractable(true);
-//					if (sequesterRoot.equals(""))
-//						checkComplex(partId, "", "");
-//				} else if (!sequesterable && (partsMap.get(partId).size() > 1 || species.get(partId).isActivator() 
-//						|| species.get(partId).isRepressor() || SBMLutilities.usedInNonDegradationReaction(document, partId)))
-//					species.get(complexId).setAbstractable(false);
-//			}
-//		}
-//		return true;
-//	}
 	
 	//Marks given species as sequesterable and its sequestering complexes as sequester-abstractable if (1) those complexes
 	//and the sequestering species which make them up are not used elsewhere and (2) the sequestered species's stoichiometry of binding is one
-	private void checkSequester(String partId, String sequesterRoot) {
-		boolean sequesterable = false;
-		ArrayList<String> abstractableComplexes = new ArrayList<String>();
+	private boolean checkSequester(String partId, String sequesterRoot) {
+//		boolean sequesterable = false;
+		HashSet<SpeciesInterface> abstractableComplexes = new HashSet<SpeciesInterface>();
 		for (Influence infl : partsMap.get(partId)) {
 			String complexId = infl.getOutput();
-			if (infl.getCoop() == 1 
-					&& ((!species.get(complexId).isActivator() && !species.get(complexId).isRepressor()) || (operatorAbstraction && !partsMap.containsKey(complexId))) 
-					&& !species.get(complexId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT) 
-					&& (!partsMap.containsKey(complexId) || partsMap.get(complexId).size() == 1) && !isGenetic(complexId)
-					&& !species.get(complexId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)
-					&& !SBMLutilities.variableInUse(document, complexId, false, false) 
-					&& !SBMLutilities.usedInNonDegradationReaction(document, complexId)
-					&& complexMap.get(complexId).size() > 1 && checkSequesterComplex(complexId, partId, sequesterRoot)) {
-				if (partsMap.containsKey(complexId))
-					checkSequester(complexId, sequesterRoot);
-				abstractableComplexes.add(complexId);
-				sequesterable = true;
+			SpeciesInterface complex = species.get(complexId);
+			if (complex.isAbstractable() 
+//					&& ((!species.get(complexId).isActivator() && !species.get(complexId).isRepressor()) || operatorAbstraction) 
+//					&& !species.get(complexId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT) && !isGenetic(complexId)
+//					&& !species.get(complexId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)
+//					&& !SBMLutilities.variableInUse(document, complexId, false, false) 
+//					&& !SBMLutilities.usedInNonDegradationReaction(document, complexId)
+					&& infl.getCoop() == 1 
+					&& complexMap.get(complexId).size() > 1 
+					&& checkSequesterComplex(complexId, partId)
+					&& (!partsMap.containsKey(complexId) || complex.isSequesterable() || checkSequester(complexId, sequesterRoot))) 
+//				if (partsMap.containsKey(complexId) && !species.get(complexId).isSequesterable())
+//					checkSequester(complexId, sequesterRoot);
+				abstractableComplexes.add(complex);
+			//				sequesterable = true;
+			else {
+				if (partId.equals(sequesterRoot)) {
+					unAbstractUp(partId);
+					if (complexMap.containsKey(partId))
+						unAbstractDown(partId, "");
+				}
+				return false;
 			}
 		}
-		if (sequesterable) {
-			if (partId.equals(sequesterRoot))
-				species.get(partId).setSequesterable(true);
-			for (String complexId : abstractableComplexes)
-				species.get(complexId).setSequesterAbstractable(true);
+//		if (sequesterable) {
+		if (partId.equals(sequesterRoot)) {
+			species.get(partId).setSequesterable(true);
+			if (complexMap.containsKey(partId))
+				unAbstractDown(partId, "");
+		} 
+		for (SpeciesInterface complex: abstractableComplexes) {
+			complex.setSequesterable(false);
+			complex.setSequesterAbstractable(true);
+			//				species.get(complexId).setAbstractable(true);
 		}
+//		}
+//		return sequesterable;
+		return true;
 	}
 	
-	private boolean checkSequesterComplex(String complexId, String lastSequester, String sequesterRoot) {
+	private boolean checkSequesterComplex(String complexId, String lastSequester) {
 		for (Influence infl : complexMap.get(complexId)) {
 			String partId = infl.getInput();
+			SpeciesInterface part = species.get(partId);
 			if (!partId.equals(lastSequester)) {
-				if (partId.equals(sequesterRoot) 
-						|| partsMap.get(partId).size() > 1 
-						|| species.get(partId).isActivator() || species.get(partId).isRepressor() 
-						|| species.get(partId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)
-						|| SBMLutilities.variableInUse(document, partId, false, false)
-						|| SBMLutilities.usedInNonDegradationReaction(document, partId))
+				if (partsMap.get(partId).size() > 1 
+						|| part.isActivator() || part.isRepressor() 
+						|| (complexMap.containsKey(partId) && (!part.isAbstractable() || !checkSequesterComplex(partId, ""))))
 					return false;
-				if (complexMap.containsKey(partId) && !species.get(partId).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT)) {
-					if (!checkSequesterComplex(partId, "", sequesterRoot))
-						return false;
-					if (!isGenetic(partId))
-						species.get(partId).setAbstractable(true);
-				} 
 			}
 		}
 		return true;
+	}
+	
+	public void unAbstractDown(String complexId, String payNoMind) {
+		species.get(complexId).setAbstractable(false);
+		for (Influence infl : complexMap.get(complexId)) {
+			String partId = infl.getInput();
+			if (!partId.equals(payNoMind) && complexMap.containsKey(partId)) {
+				unAbstractDown(partId, "");
+			}
+		}
+	}
+	
+	public void unAbstractUp(String partId) {
+		for (Influence infl : partsMap.get(partId)) {
+			String complexId = infl.getOutput();
+			unAbstractDown(complexId, partId);
+			if (partsMap.containsKey(complexId))
+				unAbstractUp(complexId);
+			
+		}
 	}
 	
 	//Unmarks complex species as abstractable (and their parts as sequesterable) if they are interesting
