@@ -116,4 +116,8 @@ public interface SpeciesInterface extends VisitableSpecies {
 	
 	public void setSequesterable(boolean set);
 	
+	public boolean isConvergent();
+	
+	public void setConvergent(boolean set);
+	
 }

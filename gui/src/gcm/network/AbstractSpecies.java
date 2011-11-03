@@ -217,6 +217,14 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		isSequesterable = set;
 	}
 	
+	public boolean isConvergent() {
+		return isConvergent;
+	}
+	
+	public void setConvergent(boolean set) {
+		isConvergent = set;
+	}
+	
 	protected Properties properties;
 	
 	// The id of the species
@@ -239,5 +247,7 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	protected boolean isSequesterAbstractable = false;
 	
 	protected boolean isSequesterable = false;
+	
+	protected boolean isConvergent = false;
 	
 }
