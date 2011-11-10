@@ -49,7 +49,7 @@ public class SimulatorSSADirect extends Simulator{
 		initializationTime += System.nanoTime() - initTime2;
 		long initTime3 = System.nanoTime() - initTime2;
 		
-		System.err.println("initialization time: " + initializationTime / 1e9f);
+		//System.err.println("initialization time: " + initializationTime / 1e9f);
 		
 		//SIMULATION LOOP
 		//simulate until the time limit is reached
@@ -60,8 +60,12 @@ public class SimulatorSSADirect extends Simulator{
 		long step4Time = 0;
 		long step5Time = 0;
 		
-		double currentTime = 0.0;
-		double printTime = -0.1;
+		currentTime = 0.0;
+		double printTime = -0.00001;
+		
+		//add events to queue if they trigger
+		if (noEventsFlag == false)
+			handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
 		
 		while (currentTime <= timeLimit) {
 			
@@ -81,43 +85,38 @@ public class SimulatorSSADirect extends Simulator{
 				return;
 			}
 			
-			//update progress bar			
-			progress.setValue((int)((currentTime / timeLimit) * 100.0));
-			
-			//TSD PRINTING
-			//print to TSD if the next print interval arrives
-			//this obviously prints the previous timestep's data
-			if (currentTime > printTime) {
-				
-				try {
-					printToTSD();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				
-				try {
-					bufferedTSDWriter.write(",\n");
-				} 
-				catch (IOException e) {
-					e.printStackTrace();
-				}
-				
-				printTime += printInterval;
-			}
-			
-			
 			//EVENT HANDLING
 			//trigger and/or fire events, etc.
 			if (noEventsFlag == false) {
 				
 				HashSet<String> affectedReactionSet = 
-					handleEvents(currentTime, noAssignmentRulesFlag, noConstraintsFlag);				
+					fireEvents(noAssignmentRulesFlag, noConstraintsFlag);				
 				
 				//recalculate propensties/groups for affected reactions
 				if (affectedReactionSet.size() > 0)
 					updatePropensities(affectedReactionSet);
 			}
 			
+			//TSD PRINTING
+			//print to TSD if the next print interval arrives
+			//this obviously prints the previous timestep's data
+			if (currentTime >= printTime) {
+				
+				if (printTime < 0)
+					printTime = 0.0;
+					
+				try {
+					printToTSD(printTime);
+					bufferedTSDWriter.write(",\n");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+				printTime += printInterval;
+			}			
+			
+			//update progress bar			
+			progress.setValue((int)((currentTime / timeLimit) * 100.0));
 			
 			
 			//STEP 1: generate random numbers
@@ -173,26 +172,49 @@ public class SimulatorSSADirect extends Simulator{
 			//step5Time += System.nanoTime() - step5Initial;
 			
 			
-			
 			//update time for next iteration: choose the smaller of delta_t and the given max timestep
-			if (delta_t <= maxTimeStep)
+			if (delta_t <= maxTimeStep) {
+				
 				currentTime += delta_t;
+				
+				//add events to queue if they trigger
+				if (noEventsFlag == false) {
+					
+					handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
+				
+					//step to the next event fire time if it comes before the next time step
+					if (!triggeredEventQueue.isEmpty() && triggeredEventQueue.peek().fireTime <= currentTime)
+						currentTime = triggeredEventQueue.peek().fireTime;
+				}
+				
+				while (currentTime > printTime && printTime <= timeLimit) {
+					
+					try {
+						printToTSD(printTime);
+						bufferedTSDWriter.write(",\n");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					
+					printTime += printInterval;
+				}
+			}
 			else
-				currentTime += maxTimeStep;
+				currentTime += maxTimeStep;	
 			
 		} //end simulation loop
 		
-		System.err.println("total time: " + String.valueOf((initializationTime + System.nanoTime() - 
-				initTime2 - initTime3) / 1e9f));
-		System.err.println("total step 1 time: " + String.valueOf(step1Time / 1e9f));
-		System.err.println("total step 2 time: " + String.valueOf(step2Time / 1e9f));
-		System.err.println("total step 3 time: " + String.valueOf(step3Time / 1e9f));
-		System.err.println("total step 4 time: " + String.valueOf(step4Time / 1e9f));
-		System.err.println("total step 5 time: " + String.valueOf(step5Time / 1e9f));
+//		System.err.println("total time: " + String.valueOf((initializationTime + System.nanoTime() - 
+//				initTime2 - initTime3) / 1e9f));
+//		System.err.println("total step 1 time: " + String.valueOf(step1Time / 1e9f));
+//		System.err.println("total step 2 time: " + String.valueOf(step2Time / 1e9f));
+//		System.err.println("total step 3 time: " + String.valueOf(step3Time / 1e9f));
+//		System.err.println("total step 4 time: " + String.valueOf(step4Time / 1e9f));
+//		System.err.println("total step 5 time: " + String.valueOf(step5Time / 1e9f));
 		
 		//print the final species counts
 		try {
-			printToTSD();
+			printToTSD(printTime);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -206,11 +228,20 @@ public class SimulatorSSADirect extends Simulator{
 		}
 	}
 	
-	
+	/**
+	 * sets up data structures local to the SSA-Direct method
+	 * 
+	 * @param noEventsFlag
+	 * @param noAssignmentRulesFlag
+	 * @param noConstraintsFlag
+	 * @throws IOException
+	 * @throws XMLStreamException
+	 */
 	private void initialize(MutableBoolean noEventsFlag,
 			MutableBoolean noAssignmentRulesFlag, MutableBoolean noConstraintsFlag) 
 	throws IOException, XMLStreamException {	
 		
+		setupArrays();
 		setupSpecies();
 		setupInitialAssignments();
 		setupParameters();
@@ -234,7 +265,7 @@ public class SimulatorSSADirect extends Simulator{
 		
 		
 		//STEP 0: calculate initial propensities (including the total)		
-		calculateInitialPropensities(numReactions);
+		calculateInitialPropensities();
 		
 		setupEvents();
 	}
@@ -310,14 +341,39 @@ public class SimulatorSSADirect extends Simulator{
 		
 		return selectedReaction;		
 	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
 
+	
+	/**
+	 * clears data structures for new run
+	 */
+	protected void clear() {
+		
+		variableToValueMap.clear();		
+		reactionToPropensityMap.clear();
+		
+		if (numEvents > 0) {
+			
+			triggeredEventQueue.clear();
+			untriggeredEventSet.clear();
+			eventToPriorityMap.clear();
+			eventToDelayMap.clear();
+		}
+	}
+
+
+	/**
+	 * does minimized initalization process to prepare for a new run
+	 */
+	protected void setupForNewRun(int newRun) {
+		
+		setupNewRun(0, newRun);
+		
+		totalPropensity = 0.0;
+		
+		//STEP 0A: calculate initial propensities (including the total)		
+		calculateInitialPropensities();
+		
+		setupEvents();
+	}
+	
 }

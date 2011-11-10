@@ -24,20 +24,20 @@ public class SimulatorSSACR extends Simulator{
 	private TObjectIntHashMap<String> reactionToGroupMap = null;
 	
 	//allows for access to a group's min/max propensity from a group ID
-	private TIntDoubleHashMap groupToMaxValueMap = new TIntDoubleHashMap(50);
+	private TIntDoubleHashMap groupToMaxValueMap = null;
 	
 	//allows for access to the minimum/maximum possible propensity in the group from a group ID
-	private TIntDoubleHashMap groupToPropensityFloorMap = new TIntDoubleHashMap(50);
-	private TIntDoubleHashMap groupToPropensityCeilingMap = new TIntDoubleHashMap(50);
+	private TIntDoubleHashMap groupToPropensityFloorMap = null;
+	private TIntDoubleHashMap groupToPropensityCeilingMap = null;
 	
 	//allows for access to the reactionIDs in a group from a group ID
-	private ArrayList<HashSet<String> > groupToReactionSetList = new ArrayList<HashSet<String> >(50);
+	private ArrayList<HashSet<String> > groupToReactionSetList = null;
 	
 	//allows for access to the group's total propensity from a group ID
-	private TIntDoubleHashMap groupToTotalGroupPropensityMap = new TIntDoubleHashMap(50);
+	private TIntDoubleHashMap groupToTotalGroupPropensityMap = null;
 	
 	//stores group numbers that are nonempty
-	private TIntHashSet nonemptyGroupSet = new TIntHashSet(50);
+	private TIntHashSet nonemptyGroupSet = null;
 	
 	//number of groups including the empty groups and zero-propensity group
 	private int numGroups = 0;
@@ -82,7 +82,7 @@ public class SimulatorSSACR extends Simulator{
 		initializationTime += System.nanoTime() - initTime2;
 		long initTime3 = System.nanoTime() - initTime2;
 		
-		System.err.println("initialization time: " + initializationTime / 1e9f);
+		//System.err.println("initialization time: " + initializationTime / 1e9f);
 		
 		//SIMULATION LOOP
 		//simulate until the time limit is reached
@@ -95,8 +95,12 @@ public class SimulatorSSACR extends Simulator{
 		long step5Time = 0;
 		long step6Time = 0;
 		
-		double currentTime = 0.0;
-		double printTime = -0.1;
+		currentTime = 0.0;
+		double printTime = -0.00001;
+		
+		//add events to queue if they trigger
+		if (noEventsFlag == false)
+			handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
 		
 		while (currentTime <= timeLimit) {
 			
@@ -116,37 +120,11 @@ public class SimulatorSSACR extends Simulator{
 				return;
 			}
 			
-			//update progress bar			
-			progress.setValue((int)((currentTime / timeLimit) * 100.0));
-			
-			//TSD PRINTING
-			//print to TSD if the next print interval arrives
-			//this obviously prints the previous timestep's data
-			if (currentTime > printTime) {
-				
-				try {
-					printToTSD();
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				
-				try {
-					bufferedTSDWriter.write(",\n");
-				} 
-				catch (IOException e) {
-					e.printStackTrace();
-				}
-				
-				printTime += printInterval;
-			}
-			
-			
 			//EVENT HANDLING
 			//trigger and/or fire events, etc.
 			if (noEventsFlag == false) {
 				
-				HashSet<String> affectedReactionSet = 
-					handleEvents(currentTime, noAssignmentRulesFlag, noConstraintsFlag);				
+				HashSet<String> affectedReactionSet = fireEvents(noAssignmentRulesFlag, noConstraintsFlag);
 				
 				//recalculate propensties/groups for affected reactions
 				if (affectedReactionSet.size() > 0) {
@@ -160,6 +138,26 @@ public class SimulatorSSACR extends Simulator{
 				}
 			}
 			
+			//TSD PRINTING
+			//print to TSD if the next print interval arrives
+			//this obviously prints the previous timestep's data
+			if (currentTime >= printTime) {
+				
+				if (printTime < 0)
+					printTime = 0.0;
+					
+				try {
+					printToTSD(printTime);
+					bufferedTSDWriter.write(",\n");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+				printTime += printInterval;
+			}
+			
+			//update progress bar
+			progress.setValue((int)((currentTime / timeLimit) * 100.0));			
 			
 			
 			//STEP 1: generate random numbers
@@ -190,6 +188,13 @@ public class SimulatorSSACR extends Simulator{
 			//long step3aInitial = System.nanoTime();
 			
 			int selectedGroup = selectGroup(r2);
+			
+			//this happens when there aren't any nonempty groups
+			if (selectedGroup == 0) {				
+				
+				currentTime = printTime + printInterval/2;
+				continue;
+			}
 		
 			//step3aTime += System.nanoTime() - step3aInitial;
 			
@@ -244,27 +249,51 @@ public class SimulatorSSACR extends Simulator{
 			
 			
 			//update time for next iteration: choose the smaller of delta_t and the given max timestep
-			if (delta_t <= maxTimeStep)
+			if (delta_t <= maxTimeStep) {
+				
 				currentTime += delta_t;
+				
+				//add events to queue if they trigger
+				if (noEventsFlag == false) {
+					
+					handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
+				
+					if (!triggeredEventQueue.isEmpty() && triggeredEventQueue.peek().fireTime <= currentTime)
+						currentTime = triggeredEventQueue.peek().fireTime;
+				}
+				
+				while (currentTime > printTime && printTime <= timeLimit) {
+					
+					try {
+						printToTSD(printTime);
+						bufferedTSDWriter.write(",\n");
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+					
+					printTime += printInterval;
+				}
+			}
 			else
 				currentTime += maxTimeStep;
 			
 		} //end simulation loop
 		
-		System.err.println("total time: " + String.valueOf((initializationTime + System.nanoTime() - 
-				initTime2 - initTime3) / 1e9f));
-		System.err.println("total step 1 time: " + String.valueOf(step1Time / 1e9f));
-		System.err.println("total step 2 time: " + String.valueOf(step2Time / 1e9f));
-		System.err.println("total step 3a time: " + String.valueOf(step3aTime / 1e9f));
-		System.err.println("total step 3b time: " + String.valueOf(step3bTime / 1e9f));
-		System.err.println("total step 4 time: " + String.valueOf(step4Time / 1e9f));
-		System.err.println("total step 5 time: " + String.valueOf(step5Time / 1e9f));
-		System.err.println("total step 6 time: " + String.valueOf(step6Time / 1e9f));
+//		System.err.println("total time: " + String.valueOf((initializationTime + System.nanoTime() - 
+//				initTime2 - initTime3) / 1e9f));
+//		System.err.println("total step 1 time: " + String.valueOf(step1Time / 1e9f));
+//		System.err.println("total step 2 time: " + String.valueOf(step2Time / 1e9f));
+//		System.err.println("total step 3a time: " + String.valueOf(step3aTime / 1e9f));
+//		System.err.println("total step 3b time: " + String.valueOf(step3bTime / 1e9f));
+//		System.err.println("total step 4 time: " + String.valueOf(step4Time / 1e9f));
+//		System.err.println("total step 5 time: " + String.valueOf(step5Time / 1e9f));
+//		System.err.println("total step 6 time: " + String.valueOf(step6Time / 1e9f));
 		
 		//print the final species counts
 		try {
-			printToTSD();
-		} catch (IOException e) {
+			printToTSD(printTime);
+		} 
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 		
@@ -277,12 +306,30 @@ public class SimulatorSSACR extends Simulator{
 		}
 	}
 
+	/**
+	 * initializes data structures local to the SSA-CR method
+	 * calculates initial propensities and assigns reactions to groups
+	 * 
+	 * @param noEventsFlag
+	 * @param noAssignmentRulesFlag
+	 * @param noConstraintsFlag
+	 * 
+	 * @throws IOException
+	 * @throws XMLStreamException
+	 */
 	private void initialize(MutableBoolean noEventsFlag,
 			MutableBoolean noAssignmentRulesFlag, MutableBoolean noConstraintsFlag) 
 	throws IOException, XMLStreamException {
 		
-		reactionToGroupMap = new TObjectIntHashMap<String>((int) (numReactions * 1.5));		
+		reactionToGroupMap = new TObjectIntHashMap<String>((int) (numReactions * 1.5));
+		groupToMaxValueMap = new TIntDoubleHashMap();
+		groupToPropensityFloorMap = new TIntDoubleHashMap();
+		groupToPropensityCeilingMap = new TIntDoubleHashMap();
+		groupToReactionSetList = new ArrayList<HashSet<String> >();
+		groupToTotalGroupPropensityMap = new TIntDoubleHashMap();
+		nonemptyGroupSet = new TIntHashSet();
 		
+		setupArrays();
 		setupSpecies();
 		setupInitialAssignments();
 		setupParameters();
@@ -306,7 +353,7 @@ public class SimulatorSSACR extends Simulator{
 		
 		
 		//STEP 0A: calculate initial propensities (including the total)		
-		calculateInitialPropensities(numReactions);
+		calculateInitialPropensities();
 		
 		//STEP OB: create and populate initial groups		
 		createAndPopulateInitialGroups();
@@ -383,6 +430,31 @@ public class SimulatorSSACR extends Simulator{
 	}
 	
 	/**
+	 * clears data structures for new run
+	 */
+	protected void clear() {
+		
+		variableToValueMap.clear();		
+		reactionToPropensityMap.clear();
+		
+		if (numEvents > 0) {
+			
+			triggeredEventQueue.clear();
+			untriggeredEventSet.clear();
+			eventToPriorityMap.clear();
+			eventToDelayMap.clear();
+		}
+		
+		reactionToGroupMap.clear();
+		groupToMaxValueMap.clear();
+		groupToPropensityFloorMap.clear();
+		groupToPropensityCeilingMap.clear();
+		groupToReactionSetList.clear();
+		groupToTotalGroupPropensityMap.clear();
+		nonemptyGroupSet.clear();
+	}
+	
+	/**
 	 * assigns all reactions to (possibly new) groups
 	 * this is called when the minPropensity changes, which
 	 * changes the groups' floor/ceiling propensity values
@@ -397,7 +469,7 @@ public class SimulatorSSACR extends Simulator{
 		groupToPropensityFloorMap.clear();
 		groupToPropensityFloorMap.put(1, minPropensity);
 		
-		while (groupPropensityCeiling < maxPropensity) {
+		while (groupPropensityCeiling <= maxPropensity) {
 			
 			groupToPropensityCeilingMap.put(currentGroup, groupPropensityCeiling);
 			groupToPropensityFloorMap.put(currentGroup + 1, groupPropensityCeiling);
@@ -469,6 +541,9 @@ public class SimulatorSSACR extends Simulator{
 	 */
 	private int selectGroup(double r2) {
 		
+		if (nonemptyGroupSet.size() == 0)
+			return 0;
+		
 		double randomPropensity = r2 * (totalPropensity);
 		double runningTotalGroupsPropensity = 0.0;
 		int selectedGroup = 1;
@@ -483,9 +558,6 @@ public class SimulatorSSACR extends Simulator{
 			if (randomPropensity < runningTotalGroupsPropensity && nonemptyGroupSet.contains(selectedGroup))
 				break;
 		}
-		
-		if (numGroups == 1)
-			return 0;
 		
 		return selectedGroup;
 	}
@@ -547,6 +619,24 @@ public class SimulatorSSACR extends Simulator{
 	}
 	
 	/**
+	 * does a minimized initialization process to prepare for a new run
+	 */
+	protected void setupForNewRun(int newRun) {
+		
+		setupNewRun(0, newRun);
+		
+		totalPropensity = 0.0;
+		
+		//STEP 0A: calculate initial propensities (including the total)		
+		calculateInitialPropensities();
+		
+		//STEP OB: create and populate initial groups		
+		createAndPopulateInitialGroups();
+		
+		setupEvents();
+	}
+	
+	/**
 	 * updates the groups of the reactions affected by the recently performed reaction
 	 * ReassignAllReactionsToGroups() is called instead when all reactions need changing
 	 * 
@@ -559,7 +649,7 @@ public class SimulatorSSACR extends Simulator{
 		for (String affectedReactionID : affectedReactionSet) {
 			
 			double newPropensity = reactionToPropensityMap.get(affectedReactionID);
-			int oldGroup = reactionToGroupMap.get(affectedReactionID);								
+			int oldGroup = reactionToGroupMap.get(affectedReactionID);		
 			
 			if (newPropensity == 0.0) {
 				
@@ -644,7 +734,7 @@ public class SimulatorSSACR extends Simulator{
 					groupToTotalGroupPropensityMap.adjustValue(oldGroup, newPropensity);
 				}
 			}			
-		}		
+		}
 	}
 	
 	/**
@@ -709,6 +799,7 @@ public class SimulatorSSACR extends Simulator{
 		
 		return newMinPropensityFlag;
 	}
+
 	
 	
 }
