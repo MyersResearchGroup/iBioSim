@@ -5,7 +5,9 @@ import gnu.trove.map.hash.TObjectDoubleHashMap;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,8 +22,11 @@ import main.Gui;
 
 import odk.lang.FastMath;
 
+import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
+
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.AssignmentRule;
+import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.Event;
 import org.sbml.jsbml.EventAssignment;
@@ -30,6 +35,7 @@ import org.sbml.jsbml.KineticLaw;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.LocalParameter;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Parameter;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Rule;
@@ -39,6 +45,9 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+
+import parser.Parser;
+import parser.TSDParser;
 
 public abstract class Simulator {
 
@@ -72,8 +81,18 @@ public abstract class Simulator {
 	//allows for access to a set of reactions that a species is in (as a reactant or modifier) from a species ID
 	protected HashMap<String, HashSet<String> > speciesToAffectedReactionSetMap = null;
 	
+	//allows for access to species booleans from a species ID
+	protected HashMap<String, Boolean> speciesToIsBoundaryConditionMap = null;
+	protected HashMap<String, Boolean> speciesToIsConstantMap = null;
+	protected HashMap<String, Boolean> speciesToHasOnlySubstanceUnitsMap = null;
+	protected HashMap<String, Boolean> speciesToIsArrayedMap = null;
+	protected TObjectDoubleHashMap<String> speciesToCompartmentSizeMap = null;
+	
 	//a linked (ordered) set of all species IDs, to allow easy access to their values via the variableToValue map
 	protected LinkedHashSet<String> speciesIDSet = null;
+	
+	//allows access to upper/lower row/col bounds for a species array
+	protected HashMap<String, SpeciesDimensions> arrayedSpeciesToDimensionsMap = null;
 	
 	//allows for access to species and parameter values from a variable ID
 	protected TObjectDoubleHashMap<String> variableToValueMap = null;
@@ -90,6 +109,7 @@ public abstract class Simulator {
 	protected HashMap<String, Boolean> eventToUseValuesFromTriggerTimeMap = null;
 	protected HashMap<String, ASTNode> eventToTriggerMap = null;
 	protected HashMap<String, Boolean> eventToTriggerInitiallyTrueMap = null;
+	protected HashMap<String, Boolean> eventToPreviousTriggerValueMap = null;
 	protected HashMap<String, HashSet<Object> > eventToAssignmentSetMap = null;
 	
 	//allows for access to the reactions whose propensity changes when an event fires
@@ -126,11 +146,14 @@ public abstract class Simulator {
 	protected boolean constraintFailureFlag = false;
 	protected boolean sbmlHasErrorsFlag = false;
 	
+	protected double currentTime;
 	protected String SBMLFileName;
 	protected double timeLimit;
 	protected double maxTimeStep;
 	protected JProgressBar progress;
 	protected double printInterval;
+	protected int currentRun;
+	protected String outputDirectory;
 	
 	protected long numSpecies;
 	protected long numParameters;
@@ -158,8 +181,7 @@ public abstract class Simulator {
 	 * @throws XMLStreamException
 	 */
 	public Simulator(String SBMLFileName, String outputDirectory, double timeLimit, 
-			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval,
-			Long initializationTime) 
+			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, Long initializationTime) 
 	throws IOException, XMLStreamException {
 		
 		long initTime1 = System.nanoTime();
@@ -169,15 +191,14 @@ public abstract class Simulator {
 		this.maxTimeStep = maxTimeStep;
 		this.progress = progress;
 		this.printInterval = printInterval;
+		this.outputDirectory = outputDirectory;
 		
-		randomNumberGenerator = new XORShiftRandom(randomSeed);
-		
-		TSDWriter = new FileWriter(outputDirectory + "run-1.tsd");		
-		bufferedTSDWriter = new BufferedWriter(TSDWriter);
-		bufferedTSDWriter.write('(');		
+		setupNewRun(randomSeed, 1);
 		
 		SBMLReader reader = new SBMLReader();
-		SBMLDocument document = reader.readSBML(SBMLFileName);
+		SBMLDocument document = null;
+		
+		document = reader.readSBML(SBMLFileName);
 		
 		SBMLErrorLog errors = document.getListOfErrors();
 		
@@ -208,7 +229,13 @@ public abstract class Simulator {
 		numInitialAssignments = model.getNumInitialAssignments();
 		
 		//set initial capacities for collections (1.5 is used to multiply numReactions due to reversible reactions)
+		arrayedSpeciesToDimensionsMap = new HashMap<String, SpeciesDimensions>((int) numSpecies);
 		speciesToAffectedReactionSetMap = new HashMap<String, HashSet<String> >((int) numSpecies);
+		speciesToIsArrayedMap = new HashMap<String, Boolean >((int) numSpecies);
+		speciesToIsBoundaryConditionMap = new HashMap<String, Boolean>((int) numSpecies);
+		speciesToIsConstantMap = new HashMap<String, Boolean>((int) numSpecies);
+		speciesToHasOnlySubstanceUnitsMap = new HashMap<String, Boolean>((int) numSpecies);
+		speciesToCompartmentSizeMap = new TObjectDoubleHashMap<String>((int) numSpecies);
 		speciesIDSet = new LinkedHashSet<String>((int) numSpecies);
 		variableToValueMap = new TObjectDoubleHashMap<String>((int) numSpecies + (int) numParameters);
 		
@@ -220,6 +247,7 @@ public abstract class Simulator {
 		reactionToSBMLReactionMap = new HashMap<String, Reaction>((int) numReactions);
 		
 		if (numEvents > 0) {
+			
 			triggeredEventQueue = new PriorityQueue<EventToFire>((int) numEvents, eventComparator);
 			untriggeredEventSet = new HashSet<String>((int) numEvents);
 			eventToPriorityMap = new TObjectDoubleHashMap<String>((int) numEvents);
@@ -230,21 +258,46 @@ public abstract class Simulator {
 			eventToTriggerPersistenceMap = new HashMap<String, Boolean>((int) numEvents);
 			eventToUseValuesFromTriggerTimeMap = new HashMap<String, Boolean>((int) numEvents);
 			eventToAssignmentSetMap = new HashMap<String, HashSet<Object> >((int) numEvents);
-			eventToAffectedReactionSetMap = new HashMap<String, HashSet<String> >((int) numEvents);		
+			eventToAffectedReactionSetMap = new HashMap<String, HashSet<String> >((int) numEvents);
+			eventToPreviousTriggerValueMap = new HashMap<String, Boolean>((int) numEvents);
 			variableToEventSetMap = new HashMap<String, HashSet<String> >((int) numEvents);
 		}
 		
 		if (numRules > 0) {
+			
 			variableToAffectedAssignmentRuleSetMap = new HashMap<String, HashSet<AssignmentRule> >((int) numRules);
 			variableToIsInAssignmentRuleMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
 		}
 		
 		if (numConstraints > 0) {
+			
 			variableToAffectedConstraintSetMap = new HashMap<String, HashSet<ASTNode> >((int) numConstraints);		
 			variableToIsInConstraintMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
 		}
 		
 		initializationTime = System.nanoTime() - initTime1;
+	}
+	
+	/**
+	 * opens output file and seeds rng for new run
+	 * 
+	 * @param randomSeed
+	 * @param currentRun
+	 * @throws IOException
+	 */
+	protected void setupNewRun(long randomSeed, int currentRun) {
+		
+		this.currentRun = currentRun;
+		
+		randomNumberGenerator = new XORShiftRandom(randomSeed);
+		
+		try {
+			TSDWriter = new FileWriter(outputDirectory + "run-" + currentRun + ".tsd");
+			bufferedTSDWriter = new BufferedWriter(TSDWriter);
+			bufferedTSDWriter.write('(');
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
 	}
 	
 	/**
@@ -261,12 +314,11 @@ public abstract class Simulator {
 	 * 
 	 * @param numReactions the number of reactions in the model
 	 */
-	protected void calculateInitialPropensities(long numReactions) {
+	protected void calculateInitialPropensities() {
 		
 		//loop through all reactions and calculate their propensities
-		for (int i = 0; i < numReactions; ++i) {
+		for (Reaction reaction : model.getListOfReactions()) {
 			
-			Reaction reaction = model.getReaction(i);
 			String reactionID = reaction.getId();
 			KineticLaw reactionKineticLaw = reaction.getKineticLaw();
 			ASTNode reactionFormula = reactionKineticLaw.getMath();
@@ -475,6 +527,11 @@ public abstract class Simulator {
 	}
 
 	/**
+	 * clears data structures for new run
+	 */
+	protected abstract void clear();
+	
+	/**
 	 * calculates an expression using a recursive algorithm
 	 * 
 	 * @param node the AST with the formula
@@ -589,6 +646,21 @@ public abstract class Simulator {
 				
 				return ((upperBound - lowerBound) * randomNumberGenerator.nextDouble()) + lowerBound;
 			}
+			else if (nodeName.equals("get2DArrayElement")) {
+				
+				int leftIndex = node.getChild(1).getInteger();
+				int rightIndex = node.getChild(2).getInteger();
+				String speciesName = "ROW" + leftIndex + "_COL" + rightIndex + "__" + node.getChild(0).getName();
+				
+				//check bounds
+				//if species exists, return its value/amount
+				if (variableToValueMap.containsKey(speciesName))
+					return variableToValueMap.get(speciesName);
+			}
+			else if (node.getType().equals(org.sbml.jsbml.ASTNode.Type.NAME_TIME)) {
+				
+				return currentTime;
+			}
 			else
 				return variableToValueMap.get(node.getName());
 		}
@@ -636,8 +708,6 @@ public abstract class Simulator {
 				//i'm not sure what to do with completely user-defined functions, though
 				String nodeName = node.getName();
 				
-				System.err.println(nodeName);
-				
 				//generates a uniform random number between the upper and lower bound
 				if (nodeName.equals("uniform")) {
 					
@@ -645,8 +715,6 @@ public abstract class Simulator {
 					double rightChildValue = evaluateExpressionRecursive(node.getRightChild());
 					double lowerBound = FastMath.min(leftChildValue, rightChildValue);
 					double upperBound = FastMath.max(leftChildValue, rightChildValue);
-					
-					System.err.println("uniform" + leftChildValue + " " + rightChildValue);
 					
 					return ((upperBound - lowerBound) * randomNumberGenerator.nextDouble()) + lowerBound;
 				}
@@ -828,8 +896,7 @@ public abstract class Simulator {
 	 * updates the event queue and fires events and so on
 	 * @param currentTime the current time in the simulation
 	 */
-	protected HashSet<String> handleEvents(double currentTime, 
-			final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
+	protected void handleEvents(final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
 		
 		HashSet<String> triggeredEvents = new HashSet<String>();
 		
@@ -842,6 +909,10 @@ public abstract class Simulator {
 				
 				//skip the event if it's initially true and this is time == 0
 				if (currentTime == 0.0 && eventToTriggerInitiallyTrueMap.get(untriggeredEventID) == true)
+					continue;
+				
+				//switch from false to true must happen
+				if (eventToPreviousTriggerValueMap.get(untriggeredEventID) == true)
 					continue;
 				
 				triggeredEvents.add(untriggeredEventID);
@@ -883,6 +954,15 @@ public abstract class Simulator {
 		//remove recently triggered events from the untriggered set
 		//when they're fired, they get put back into the untriggered set
 		untriggeredEventSet.removeAll(triggeredEvents);
+	}
+		
+	/**
+	 * fires events
+	 * 
+	 * @param noAssignmentRulesFlag
+	 * @param noConstraintsFlag
+	 */
+	protected HashSet<String> fireEvents(final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
 		
 		
 		//temporary set of events to remove from the triggeredEventQueue
@@ -895,12 +975,25 @@ public abstract class Simulator {
 			
 			String triggeredEventID = triggeredEvent.eventID;
 			
-			//if the trigger evaluates to false
-			if (getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap.get(triggeredEventID))) == false)
+			//if the trigger evaluates to false and the trigger isn't persistent
+			if (eventToTriggerPersistenceMap.get(triggeredEventID) == false && 
+					getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap.get(triggeredEventID))) == false) {
+				
 				untriggeredEvents.add(triggeredEventID);
+				eventToPreviousTriggerValueMap.put(triggeredEventID, false);
+			}
 		}
 		
-		triggeredEventQueue.removeAll(untriggeredEvents);		
+		triggeredEventQueue.removeAll(untriggeredEvents);
+		
+		//loop through untriggered events
+		//if the trigger is no longer true
+		//set the previous trigger value to false
+		for (String untriggeredEventID : untriggeredEventSet) {
+			
+			if (getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap.get(untriggeredEventID))) == false)
+				eventToPreviousTriggerValueMap.put(untriggeredEventID, false);			
+		}
 		
 		//these are sets of things that need to be re-evaluated or tested due to the event firing
 		HashSet<String> affectedReactionSet = new HashSet<String>();
@@ -918,6 +1011,7 @@ public abstract class Simulator {
 			affectedReactionSet.addAll(eventToAffectedReactionSetMap.get(eventToFireID));
 			
 			firedEvents.add(eventToFireID);
+			eventToPreviousTriggerValueMap.put(eventToFireID, true);
 			
 			//execute all assignments for this event
 			for (Object eventAssignment : eventToFire.eventAssignmentSet) {
@@ -937,7 +1031,9 @@ public abstract class Simulator {
 					assignmentValue = evaluateExpressionRecursive(((EventAssignment) eventAssignment).getMath());
 				}
 				
-				variableToValueMap.put(variable, assignmentValue);
+				//update the species, but only if it's not a constant
+				if (speciesToIsConstantMap.get(variable) == false)
+					variableToValueMap.put(variable, assignmentValue);
 				
 				//if this variable that was just updated is part of an assignment rule (RHS)
 				//then re-evaluate that assignment rule
@@ -974,9 +1070,12 @@ public abstract class Simulator {
 		
 		for (AssignmentRule assignmentRule : affectedAssignmentRuleSet) {
 			
-			//update the species count
-			variableToValueMap.adjustValue(assignmentRule.getVariable(), 
-					evaluateExpressionRecursive(assignmentRule.getMath()));
+			//update the species count (but only if the species isn't constant)
+			if (speciesToIsConstantMap.get(assignmentRule.getVariable()) == false) {
+				
+				variableToValueMap.put(assignmentRule.getVariable(), 
+						evaluateExpressionRecursive(assignmentRule.getMath()));
+			}
 		}
 	}
 	
@@ -997,9 +1096,17 @@ public abstract class Simulator {
 			double stoichiometry = speciesAndStoichiometry.doub;
 			String speciesID = speciesAndStoichiometry.string;
 			
-			//update the species count
+			//update the species count if the species isn't a boundary condition or constant
 			//note that the stoichiometries are earlier modified with the correct +/- sign
-			variableToValueMap.adjustValue(speciesID, stoichiometry);
+			if (speciesToIsBoundaryConditionMap.get(speciesID) == false &&
+					speciesToIsConstantMap.get(speciesID) == false) {
+				
+				if (speciesToHasOnlySubstanceUnitsMap.get(speciesID) == false)
+					variableToValueMap.adjustValue(speciesID, 
+							(stoichiometry / speciesToCompartmentSizeMap.get(speciesID)));				
+				else				
+					variableToValueMap.adjustValue(speciesID, stoichiometry);
+			}
 			
 			//if this variable that was just updated is part of an assignment rule (RHS)
 			//then re-evaluate that assignment rule
@@ -1025,11 +1132,14 @@ public abstract class Simulator {
 	 * 
 	 * @throws IOException 
 	 */
-	protected void printToTSD() throws IOException {
+	protected void printToTSD(double printTime) throws IOException {
 		
 		bufferedTSDWriter.write('(');
 		
 		String commaSpace = "";
+		
+		//print the current time
+		bufferedTSDWriter.write(printTime + ", ");
 		
 		//loop through the speciesIDs and print their current value to the file
 		for (String speciesID : speciesIDSet) {
@@ -1042,13 +1152,373 @@ public abstract class Simulator {
 	}
 	
 	/**
+	 * parses TSD files for all runs and prints mean and standard deviation TSDs
+	 * 
+	 * @throws IOException
+	 */
+	protected void printStatisticsTSD() throws IOException {
+		
+		//the last run is the number of runs
+		int numRuns = currentRun;
+		
+		HashMap<String, ArrayList<DescriptiveStatistics> > speciesStatistics = 
+			new HashMap<String, ArrayList<DescriptiveStatistics> >();
+		
+		ArrayList<String> allSpecies = new ArrayList<String>();
+		
+		//store the TSD data for analysis
+		for (int run = 1; run <= numRuns; ++run) {
+			
+			TSDParser tsdParser = new TSDParser(outputDirectory + "run-" + run + ".tsd" , false);
+			allSpecies = tsdParser.getSpecies();
+			
+			HashMap<String, ArrayList<Double> > runStatistics = tsdParser.getHashMap();
+			
+			for (int speciesIndex = 0; speciesIndex < allSpecies.size(); ++speciesIndex) {
+			
+				String species = allSpecies.get(speciesIndex);
+				
+				for (int index = 0; index < runStatistics.get(species).size(); ++index) {
+					
+					Double speciesData = runStatistics.get(species).get(index);
+					
+					if (speciesStatistics.size() <= speciesIndex)
+						speciesStatistics.put(species, new ArrayList<DescriptiveStatistics>());
+					
+					if (speciesStatistics.get(species).size() <= index)
+						speciesStatistics.get(species).add(new DescriptiveStatistics());
+					
+					speciesStatistics.get(species).get(index).addValue(speciesData.doubleValue());
+				}
+			}
+		}
+		
+		Parser statsParser = new Parser(null, null);
+		ArrayList<ArrayList<Double> > meanTSDData = new ArrayList<ArrayList<Double> >();		
+		
+		//calculate and print the mean tsd
+		for (String species : allSpecies) {
+			
+			ArrayList<Double> speciesData = new ArrayList<Double>();
+			
+			for (int index = 0; index < speciesStatistics.get(species).size(); ++index)
+				speciesData.add(speciesStatistics.get(species).get(index).getMean());
+			
+			meanTSDData.add(speciesData);
+		}
+		
+		statsParser.setData(meanTSDData);
+		statsParser.setSpecies(allSpecies);
+		statsParser.outputTSD(outputDirectory + "mean.tsd");
+		
+		//calculate and print the standard deviation tsd
+		ArrayList<ArrayList<Double> > standardDeviationTSDData = new ArrayList<ArrayList<Double> >();
+		
+		for (String species : allSpecies) {
+			
+			ArrayList<Double> speciesData = new ArrayList<Double>();
+			
+			if (species.equals("time")) {
+				
+				for (int index = 0; index < speciesStatistics.get(species).size(); ++index)
+					speciesData.add(speciesStatistics.get(species).get(index).getMean());
+			}
+			else {
+				
+				for (int index = 0; index < speciesStatistics.get(species).size(); ++index)
+					speciesData.add(speciesStatistics.get(species).get(index).getStandardDeviation());
+			}
+			
+			standardDeviationTSDData.add(speciesData);
+		}
+		
+		statsParser.setData(standardDeviationTSDData);
+		statsParser.setSpecies(allSpecies);
+		statsParser.outputTSD(outputDirectory + "standard_deviation.tsd");		
+		
+		
+		//calculate and print the variance tsd
+		ArrayList<ArrayList<Double> > varianceTSDData = new ArrayList<ArrayList<Double> >();
+		
+		for (String species : allSpecies) {
+			
+			ArrayList<Double> speciesData = new ArrayList<Double>();
+			
+			if (species.equals("time")) {
+				
+				for (int index = 0; index < speciesStatistics.get(species).size(); ++index)
+					speciesData.add(speciesStatistics.get(species).get(index).getMean());
+			}
+			else {
+				
+				for (int index = 0; index < speciesStatistics.get(species).size(); ++index)
+					speciesData.add(speciesStatistics.get(species).get(index).getVariance());
+			}
+			
+			varianceTSDData.add(speciesData);
+		}
+		
+		statsParser.setData(varianceTSDData);
+		statsParser.setSpecies(allSpecies);
+		statsParser.outputTSD(outputDirectory + "variance.tsd");
+	}
+	
+	/**
+	 * adds species and reactions to the model that are implicit in arrays
+	 */
+	protected void setupArrays() {
+				
+		//ARRAYED SPECIES BUSINESS
+		//create all new species that are implicit in the arrays and put them into the model
+		
+		
+		ArrayList<Species> speciesToAdd = new ArrayList<Species>();
+		ArrayList<String> speciesToRemove = new ArrayList<String>();
+		
+		for (Species species : model.getListOfSpecies()) {
+			
+			String speciesID = species.getId();
+			
+			//check to see if the species is arrayed			
+			if (!species.getAnnotationString().isEmpty()) {
+				
+				speciesToIsArrayedMap.put(speciesID, true);
+				speciesToRemove.add(speciesID);
+				
+				int numRowsLower = 0;
+				int numColsLower = 0;
+				int numRowsUpper = 0;
+				int numColsUpper = 0;
+				
+				String[] annotationString = species.getAnnotationString().split("=");
+				numRowsLower = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
+				numRowsUpper = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
+				numColsLower = Integer.valueOf(((String[])(annotationString[3].split(" ")))[0].replace("\"",""));
+				numColsUpper = Integer.valueOf(((String[])(annotationString[4].split(" ")))[0].replace("\"",""));
+				
+				arrayedSpeciesToDimensionsMap.put(speciesID, 
+						new SpeciesDimensions(numRowsLower, numRowsUpper, numColsLower, numColsUpper));
+				
+				//loop through all species in the array
+				//prepend the row/col information to create a new ID
+				for (int row = numRowsLower; row <= numRowsUpper; ++row) {
+					for (int col = numColsLower; col <= numColsUpper; ++col) {
+						
+						speciesID = "ROW" + row + "_COL" + col + "__" + species.getId();
+						
+						Species newSpecies = new Species();
+						newSpecies = species.clone();
+						newSpecies.setId(speciesID);
+						speciesToAdd.add(newSpecies);
+					}
+				}
+			}
+			else
+				speciesToIsArrayedMap.put(speciesID, false);
+		} //end species for loop
+		
+		//add new row/col species to the model
+		for (Species species : speciesToAdd)
+			model.addSpecies(species);
+		
+		
+		//ARRAYED REACTION BUSINESS
+		//if a reaction has arrayed species
+		//new reactions that are implicit are created and added to the model
+		
+		ArrayList<Reaction> reactionsToAdd = new ArrayList<Reaction>();
+		ArrayList<String> reactionsToRemove = new ArrayList<String>();
+		
+		for (Reaction reaction : model.getListOfReactions()) {
+			
+			String reactionID = reaction.getId();
+			
+			//if reaction itself is arrayed
+			if (!reaction.getAnnotationString().isEmpty()) {				
+				
+				//would the reaction itself ever be arrayed???
+				//i don't think so . . .
+			}
+			
+			//check to see if the reaction has arrayed species
+			//right now i'm only checking the first reactant species, due to a bad assumption
+			//about the homogeneity of the arrayed reaction (ie, if one species is arrayed, they all are)
+			if (reaction.getNumReactants() > 0 &&
+					speciesToIsArrayedMap.get(reaction.getReactant(0).getSpeciesInstance().getId()) == true) {
+				
+				reactionsToRemove.add(reaction.getId());
+				
+				//get the reactant dimensions, which tells us how many new reactions are going to be created
+				SpeciesDimensions reactantDimensions = 
+					arrayedSpeciesToDimensionsMap.get(reaction.getReactant(0).getSpeciesInstance().getId());
+				
+				//loop through all of the new formerly-implicit reactants
+				for (int row = reactantDimensions.numRowsLower; row <= reactantDimensions.numRowsUpper; ++row) {
+				for (int col = reactantDimensions.numColsLower; col <= reactantDimensions.numColsUpper; ++col) {	
+					
+					//create a new reaction and set the ID
+					Reaction newReaction = new Reaction();
+					newReaction = reaction.clone();
+					newReaction.setListOfReactants(new ListOf<SpeciesReference>());
+					newReaction.setListOfProducts(new ListOf<SpeciesReference>());
+					newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
+					newReaction.setId("ROW" + row + "_COL" + col + "__" + reactionID);
+					
+					//get the nodes to alter
+					ArrayList<ASTNode> get2DArrayElementNodes = new ArrayList<ASTNode>();
+					
+					getSatisfyingNodes(newReaction.getKineticLaw().getMath(), 
+							"get2DArrayElement", get2DArrayElementNodes);
+					
+					//loop through all reactants
+					for (SpeciesReference reactant : reaction.getListOfReactants()) {
+						
+						//find offsets
+						int rowOffset = 0;
+						int colOffset = 0;
+						
+						String[] annotationString = reactant.getAnnotationString().split("=");
+						rowOffset = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
+						colOffset = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
+						
+						//alter the kinetic law to so that it has the correct indexes as children for the
+						//get2DArrayElement function
+						ASTNode arrayChild1 = new ASTNode();
+						arrayChild1.setValue(row + rowOffset);
+						
+						ASTNode arrayChild2 = new ASTNode();
+						arrayChild2.setValue(col + colOffset);
+						
+						//adjust the node so that the get2DArrayElement function knows where to find the
+						//relevant species amount
+						for (ASTNode node : get2DArrayElementNodes) {
+							
+							//make sure that the node is a reactant and not a modifier
+							//if it is a reactant, add the appropriate indexes as children								
+							if (node.getLeftChild().getName().contains("_r")) {
+								
+								node.getLeftChild().setName(node.getLeftChild().getName().replace("_r",""));
+								node.addChild(arrayChild1);
+								node.addChild(arrayChild2);
+							}
+						}
+						
+						//create a new reactant and add it to the new reaction
+						SpeciesReference newReactant = new SpeciesReference();
+						newReactant = reactant.clone();
+						newReactant.setSpecies("ROW" + row + "_COL" + col + "__" + newReactant.getSpecies());
+						newReaction.addReactant(newReactant);
+					}// end looping through reactants
+					
+					//loop through all modifiers
+					for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
+						
+						
+					}
+					
+					
+					//loop through all products
+					for (SpeciesReference product : reaction.getListOfProducts()) {
+						
+						//find offsets
+						int rowOffset = 0;
+						int colOffset = 0;
+						
+						String[] annotationString = product.getAnnotationString().split("=");
+						rowOffset = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
+						colOffset = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
+						
+						//alter the kinetic law to so that it has the correct indexes as children for the
+						//get2DArrayElement function
+						ASTNode arrayChild1 = new ASTNode();
+						arrayChild1.setValue(row + rowOffset);
+						
+						ASTNode arrayChild2 = new ASTNode();
+						arrayChild2.setValue(col + colOffset);
+						
+						//adjust the node so that the get2DArrayElement function knows where to find the
+						//relevant species amount
+						for (ASTNode node : get2DArrayElementNodes) {
+							
+							//make sure that the node is a product and not a modifier
+							//if it is a product, add the appropriate indexes as children
+							if (node.getLeftChild().getName().contains("_p")) {
+								
+								node.getLeftChild().setName(node.getLeftChild().getName().replace("_p",""));
+								node.addChild(arrayChild1);
+								node.addChild(arrayChild2);
+							}
+						}
+						
+						//create a new reactant and add it to the new reaction
+						SpeciesReference newProduct = new SpeciesReference();
+						newProduct = product.clone();
+						newProduct.setSpecies("ROW" + row + "_COL" + col + "__" + newProduct.getSpecies());
+						newReaction.addProduct(newProduct);
+					} //end looping through products
+					
+					reactionsToAdd.add(newReaction);
+				}
+				}
+				
+			}
+		}// end looping through reactions
+		
+		//add in the new explicit array reactions
+		for (Reaction reactionToAdd : reactionsToAdd)
+			model.addReaction(reactionToAdd);
+		
+		ListOf<Reaction> allReactions = model.getListOfReactions();
+		
+		//remove original array reaction(s)
+		for (String reactionToRemove : reactionsToRemove)
+			allReactions.remove(reactionToRemove);
+		
+		model.setListOfReactions(allReactions);
+		
+		ListOf<Species> allSpecies = model.getListOfSpecies();
+		
+		//remove the original array species from the model
+		for (String speciesID : speciesToRemove)
+			allSpecies.remove(speciesID);
+		
+		model.setListOfSpecies(allSpecies);
+		
+//		for (Reaction reaction : model.getListOfReactions()) {
+//			System.out.println("id " + reaction.getId());
+//			for (SpeciesReference reactant : reaction.getListOfReactants())
+//				System.out.println(reactant.getSpecies());
+//			for (SpeciesReference reactant : reaction.getListOfProducts())
+//				System.out.println(reactant.getSpecies());
+//		}
+	}
+	
+	/**
+	 * recursively puts the nodes that have the same name as the quarry string passed in into the arraylist passed in
+	 * so, the entire tree is searched through, which i don't think is possible with the jsbml methods
+	 * 
+	 * @param node node to search through
+	 * @param quarry string to search for
+	 * @param satisfyingNodes list of nodes that satisfy the condition
+	 */
+	protected void getSatisfyingNodes(ASTNode node, String quarry, ArrayList<ASTNode> satisfyingNodes) {
+		
+		if (node.isName() && node.getName().equals(quarry))
+			satisfyingNodes.add(node);
+		else {
+			for (ASTNode childNode : node.getChildren())
+				getSatisfyingNodes(childNode, quarry, satisfyingNodes);
+		}		
+	}
+	
+	/**
 	 * puts species-related information into data structures
 	 * 
 	 * @throws IOException
 	 */
 	protected void setupSpecies() throws IOException {
 		
-		bufferedTSDWriter.write('(');
+		bufferedTSDWriter.write("(" + "\"" + "time" + "\"" + ", ");
 		
 		String commaSpace = "";
 		
@@ -1056,7 +1526,7 @@ public abstract class Simulator {
 		for (Species species : model.getListOfSpecies()) {
 			
 			String speciesID = species.getId();
-			
+
 			variableToValueMap.put(speciesID, species.getInitialAmount());
 			
 			if (numRules > 0)
@@ -1065,7 +1535,13 @@ public abstract class Simulator {
 			if (numConstraints > 0)
 				variableToIsInConstraintMap.put(speciesID, false);
 			
+			if (species.hasOnlySubstanceUnits() == false)
+				speciesToCompartmentSizeMap.put(speciesID, species.getCompartmentInstance().getSize());
+			
 			speciesToAffectedReactionSetMap.put(speciesID, new HashSet<String>(20));
+			speciesToIsBoundaryConditionMap.put(speciesID, species.isBoundaryCondition());
+			speciesToIsConstantMap.put(speciesID, species.isConstant());
+			speciesToHasOnlySubstanceUnitsMap.put(speciesID, species.hasOnlySubstanceUnits());
 			speciesIDSet.add(speciesID);
 			
 			bufferedTSDWriter.write(commaSpace + "\"" + speciesID + "\"");
@@ -1076,7 +1552,7 @@ public abstract class Simulator {
 	}
 
 	/**
-	 * puts initial assignment-related informatino into data structures
+	 * puts initial assignment-related information into data structures
 	 */
 	protected void setupInitialAssignments() {
 		
@@ -1091,10 +1567,21 @@ public abstract class Simulator {
 						evaluateExpressionRecursive(initialAssignment.getMath()));				
 			}			
 		}
+		
+		HashSet<AssignmentRule> allAssignmentRules = new HashSet<AssignmentRule>();
+		
+		//perform all assignment rules
+		for (Rule rule : model.getListOfRules()) {
+			
+			if (rule.isAssignment())
+				allAssignmentRules.add((AssignmentRule)rule);
+		}
+		
+		performAssignmentRules(allAssignmentRules);
 	}
 
 	/**
-	 * puts parameter-related informatino into data structures
+	 * puts parameter-related information into data structures
 	 */
 	protected void setupParameters() {
 		
@@ -1112,11 +1599,25 @@ public abstract class Simulator {
 			
 			if (numConstraints > 0)
 				variableToIsInConstraintMap.put(parameterID, false);
-		}		
+		}
+		
+		//add compartment sizes in
+		for (Compartment compartment : model.getListOfCompartments()) {
+			
+			String compartmentID = compartment.getId();
+			
+			variableToValueMap.put(compartmentID, compartment.getSize());
+			
+			if (numRules > 0)
+				variableToIsInAssignmentRuleMap.put(compartmentID, false);
+			
+			if (numConstraints > 0)
+				variableToIsInConstraintMap.put(compartmentID, false);
+		}
 	}
 	
 	/**
-	 * puts rule-related informatino into data structures
+	 * puts rule-related information into data structures
 	 */
 	protected void setupRules() {
 		
@@ -1151,7 +1652,7 @@ public abstract class Simulator {
 	}
 
 	/**
-	 * puts constraint-related informatino into data structures
+	 * puts constraint-related information into data structures
 	 */
 	protected void setupConstraints() {
 		
@@ -1198,6 +1699,7 @@ public abstract class Simulator {
 			
 			eventToTriggerMap.put(eventID, event.getTrigger().getMath());
 			eventToTriggerInitiallyTrueMap.put(eventID, event.getTrigger().isInitialValue());
+			eventToPreviousTriggerValueMap.put(eventID, event.getTrigger().isInitialValue());
 			eventToTriggerPersistenceMap.put(eventID, event.getTrigger().getPersistent());
 			eventToUseValuesFromTriggerTimeMap.put(eventID, event.isUseValuesFromTriggerTime());
 			eventToAssignmentSetMap.put(eventID, new HashSet<Object>());
@@ -1224,6 +1726,11 @@ public abstract class Simulator {
 			}
 		}
 	}
+	
+	/**
+	 * does a minimized initialization process to prepare for a new run
+	 */
+	protected abstract void setupForNewRun(int newRun);
 	
 	/**
 	 * abstract simulate method
@@ -1317,6 +1824,21 @@ public abstract class Simulator {
 	}
 	
 	
-	
+	//SPECIES DIMENSIONS INNER CLASS
+	protected class SpeciesDimensions {
+		
+		public int numRowsUpper;
+		public int numColsUpper;
+		public int numRowsLower;
+		public int numColsLower;
+		
+		public SpeciesDimensions(int rLower, int rUpper, int cLower, int cUpper) {
+			
+			numRowsUpper = rUpper;
+			numRowsLower = rLower;
+			numColsUpper = cUpper;
+			numColsLower = cLower;
+		}
+	}
 
 }

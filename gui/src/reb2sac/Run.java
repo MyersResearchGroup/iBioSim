@@ -446,7 +446,7 @@ public class Run implements ActionListener {
 			JCheckBox usingSSA, String ssaFile, Gui biomodelsim, JTabbedPane simTab, String root, JProgressBar progress,
 			String simName, GCM2SBMLEditor gcmEditor, String direct, double timeLimit, double runTime, String modelFile,
 			AbstPane abstPane, JRadioButton abstraction, String lpnProperty, double absError, double timeStep,
-			double printInterval, int runs, long rndSeed, boolean refresh) {
+			double printInterval, int runs, long rndSeed, boolean refresh, JLabel progressLabel) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
@@ -1300,10 +1300,11 @@ public class Run implements ActionListener {
 						return exitValue;
 					}
 					else if (sim.equals("Gillespie SSA-CR (Java)")) {
-
-						dynSim = new DynamicGillespie("cr");					
+						
+						dynSim = new DynamicGillespie("cr");
 						String SBMLFileName = directory + separator + theFile;
-						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, timeStep, rndSeed, progress, printInterval);						
+						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
+								timeStep, rndSeed, progress, printInterval, runs, progressLabel);						
 						exitValue = 0;
 						
 						return exitValue;
@@ -1312,7 +1313,8 @@ public class Run implements ActionListener {
 
 						dynSim = new DynamicGillespie("direct");					
 						String SBMLFileName = directory + separator + theFile;
-						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, timeStep, rndSeed, progress, printInterval);						
+						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
+								timeStep, rndSeed, progress, printInterval, runs, progressLabel);						
 						exitValue = 0;
 						
 						return exitValue;

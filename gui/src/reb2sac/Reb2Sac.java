@@ -3054,7 +3054,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, Gui.frame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, root
 					+ separator + simName, nary, 1, intSpecies, log, usingSSA, root + separator + outDir + separator + "user-defined.dat",
 					biomodelsim, simTab, root, progress, simName + " " + direct, gcmEditor, direct, timeLimit, runTime, modelFile, lhpnAbstraction,
-					abstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh);
+					abstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label);
 		}
 		else {
 			if (gcmEditor != null) {
@@ -3081,7 +3081,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, Gui.frame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, root
 					+ separator + simName, nary, 1, intSpecies, log, usingSSA, root + separator + outDir + separator + "user-defined.dat",
 					biomodelsim, simTab, root, progress, simName, gcmEditor, null, timeLimit, runTime, modelFile, lhpnAbstraction, abstraction,
-					lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh);
+					lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label);
 		}
 		if (nary.isSelected() && gcmEditor == null && !sim.contains("markov-chain-analysis") && !lhpn.isSelected() && exit == 0) {
 			String d = null;
