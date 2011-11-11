@@ -964,7 +964,6 @@ public abstract class Simulator {
 	 */
 	protected HashSet<String> fireEvents(final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
 		
-		
 		//temporary set of events to remove from the triggeredEventQueue
 		HashSet<String> untriggeredEvents = new HashSet<String>();
 		
