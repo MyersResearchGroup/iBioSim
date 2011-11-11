@@ -247,35 +247,29 @@ public class SimulatorSSACR extends Simulator{
 			//step6Time += System.nanoTime() - step6Initial;
 			
 			
+			//update time for next iteration
+			currentTime += delta_t;
 			
-			//update time for next iteration: choose the smaller of delta_t and the given max timestep
-			if (delta_t <= maxTimeStep) {
+			//add events to queue if they trigger
+			if (noEventsFlag == false) {
 				
-				currentTime += delta_t;
-				
-				//add events to queue if they trigger
-				if (noEventsFlag == false) {
-					
-					handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
-				
-					if (!triggeredEventQueue.isEmpty() && triggeredEventQueue.peek().fireTime <= currentTime)
-						currentTime = triggeredEventQueue.peek().fireTime;
-				}
-				
-				while (currentTime > printTime && printTime <= timeLimit) {
-					
-					try {
-						printToTSD(printTime);
-						bufferedTSDWriter.write(",\n");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					
-					printTime += printInterval;
-				}
+				handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
+			
+				if (!triggeredEventQueue.isEmpty() && (triggeredEventQueue.peek().fireTime <= currentTime))
+					currentTime = triggeredEventQueue.peek().fireTime;
 			}
-			else
-				currentTime += maxTimeStep;
+			
+			while ((currentTime > printTime) && (printTime <= timeLimit)) {
+				
+				try {
+					printToTSD(printTime);
+					bufferedTSDWriter.write(",\n");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+				printTime += printInterval;
+			}
 			
 		} //end simulation loop
 		

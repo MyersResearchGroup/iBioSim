@@ -172,35 +172,30 @@ public class SimulatorSSADirect extends Simulator{
 			//step5Time += System.nanoTime() - step5Initial;
 			
 			
-			//update time for next iteration: choose the smaller of delta_t and the given max timestep
-			if (delta_t <= maxTimeStep) {
+			//update time for next iteration
+			currentTime += delta_t;
+			
+			//add events to queue if they trigger
+			if (noEventsFlag == false) {
 				
-				currentTime += delta_t;
-				
-				//add events to queue if they trigger
-				if (noEventsFlag == false) {
-					
-					handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
-				
-					//step to the next event fire time if it comes before the next time step
-					if (!triggeredEventQueue.isEmpty() && triggeredEventQueue.peek().fireTime <= currentTime)
-						currentTime = triggeredEventQueue.peek().fireTime;
-				}
-				
-				while (currentTime > printTime && printTime <= timeLimit) {
-					
-					try {
-						printToTSD(printTime);
-						bufferedTSDWriter.write(",\n");
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-					
-					printTime += printInterval;
-				}
+				handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
+			
+				//step to the next event fire time if it comes before the next time step
+				if (!triggeredEventQueue.isEmpty() && triggeredEventQueue.peek().fireTime <= currentTime)
+					currentTime = triggeredEventQueue.peek().fireTime;
 			}
-			else
-				currentTime += maxTimeStep;	
+			
+			while (currentTime > printTime && printTime <= timeLimit) {
+				
+				try {
+					printToTSD(printTime);
+					bufferedTSDWriter.write(",\n");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				
+				printTime += printInterval;
+			}
 			
 		} //end simulation loop
 		

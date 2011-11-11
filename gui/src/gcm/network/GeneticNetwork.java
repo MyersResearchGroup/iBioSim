@@ -236,8 +236,8 @@ public class GeneticNetwork {
 				printPromoterBinding(document);
 			printComplexBinding(document);
 			
-			//printDiffusion(document);
-			printDiffusionWithArrays(document);
+			printDiffusion(document);
+			//printDiffusionWithArrays(document);
 			
 			PrintStream p = new PrintStream(new FileOutputStream(filename),true,"UTF-8");
 
@@ -539,18 +539,13 @@ public class GeneticNetwork {
 			s.setName("");
 			s.setHasOnlySubstanceUnits(true);
 			
-			String rowsIndexID = osID + "rows";
-			String colsIndexID = osID + "cols";
-			
 			//tag:arrays
 			XMLAttributes attr = new XMLAttributes();
 			attr.add("xmlns:array", "http://www.fakeuri.com");
-			attr.add("array:rowsIndexID", rowsIndexID);
-			attr.add("array:colsIndexID", colsIndexID);
 			attr.add("array:rowsLowerLimit", "0");
-			attr.add("array:colsLowerLimit", "0");	
-			attr.add("array:rowsUpperLimit", String.valueOf(gridRows));
-			attr.add("array:colsUpperLimit", String.valueOf(gridCols));
+			attr.add("array:colsLowerLimit", "0");
+			attr.add("array:rowsUpperLimit", String.valueOf(gridRows - 1));
+			attr.add("array:colsUpperLimit", String.valueOf(gridCols - 1));
 			XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);					
 			s.appendAnnotation(node);		
 			
@@ -574,9 +569,19 @@ public class GeneticNetwork {
 			if (osDecay > 0) {
 				
 				//this is the mathematical expression for the decay
-				String isDecayExpression = osDecayString + "*" + osID;
+				String isDecayExpression = osDecayString + "* get2DArrayElement(" + osID + "_r)";
+				
+				SpeciesReference reactant = Utility.SpeciesReference(osID, 1);
+				
+				attr = new XMLAttributes();
+				attr.add("xmlns:array", "http://www.fakeuri.com");
+				attr.add("array:rowOffset", "0");
+				attr.add("array:colOffset", "0");
+				node = new XMLNode(new XMLTriple("array","","array"), attr);
+				
+				reactant.appendAnnotation(node);
 
-				r.addReactant(Utility.SpeciesReference(osID, 1));
+				r.addReactant(reactant);
 				
 				//parameter: id="kd" value=isDecay (usually 0.0075) units="u_1_second_n1" (inverse seconds)
 				kl.addParameter(Utility.Parameter(osDecayString, osDecay, osDecayUnitString));
@@ -600,15 +605,15 @@ public class GeneticNetwork {
 			for (int i = 0; i < 4; ++i) {
 				
 				String direction = "";
-				String neighborRowIndexOffset = "";
-				String neighborColIndexOffset = "";
+				String neighborRowIndexOffset = "0";
+				String neighborColIndexOffset = "0";
 				
 				switch (i) {
 				
-					case 0: {direction = "Above"; neighborRowIndexOffset = "-1"; neighborColIndexOffset = ""; break;}						
-					case 1: {direction = "Below"; neighborRowIndexOffset = "+1"; neighborColIndexOffset = ""; break;}						
-					case 2: {direction = "Left"; neighborRowIndexOffset = ""; neighborColIndexOffset = "-1"; break;}						
-					case 3: {direction = "Right"; neighborRowIndexOffset = ""; neighborColIndexOffset = "+1"; break;}			
+					case 0: {direction = "Above"; neighborRowIndexOffset = "-1"; neighborColIndexOffset = "0"; break;}						
+					case 1: {direction = "Below"; neighborRowIndexOffset = "1"; neighborColIndexOffset = "0"; break;}						
+					case 2: {direction = "Left"; neighborRowIndexOffset = "0"; neighborColIndexOffset = "-1"; break;}						
+					case 3: {direction = "Right"; neighborRowIndexOffset = "0"; neighborColIndexOffset = "1"; break;}			
 				}
 				
 				
@@ -625,19 +630,18 @@ public class GeneticNetwork {
 				
 					//this is the rate times the current species minus the rate times the neighbor species
 					String diffusionExpression = 
-						diffusionString + " * " + "get2DArrayElement(" 
-						+ osID + "," + rowsIndexID + "," + colsIndexID + ")" + "-"
-						+ diffusionString + " * " + "get2DArrayElement(" 
-						+ osID + "," + rowsIndexID + neighborRowIndexOffset + "," 
-						+ colsIndexID + neighborColIndexOffset + ")";
+						diffusionString + " * " + "get2DArrayElement(" + osID + "_r"
+						+ ")" + "-"
+						+ diffusionString + " * " + "get2DArrayElement(" + osID + "_p"
+						+ ")";
 
 					//reactant is current outer species
 					SpeciesReference reactant = Utility.SpeciesReference(osID, 1);
 					
 					attr = new XMLAttributes();
 					attr.add("xmlns:array", "http://fakeuri");
-					attr.add("array:rowsIndex", rowsIndexID);
-					attr.add("array:colsIndex", colsIndexID);
+					attr.add("array:rowOffset", "0");
+					attr.add("array:colOffset", "0");
 					node = new XMLNode(new XMLTriple("array","","array"), attr);			
 					reactant.setAnnotation(node);				
 					
@@ -648,8 +652,8 @@ public class GeneticNetwork {
 					
 					attr = new XMLAttributes();
 					attr.add("xmlns:array", "http://fakeuri");
-					attr.add("array:rowsIndex", rowsIndexID + neighborRowIndexOffset);
-					attr.add("array:colsIndex", colsIndexID + neighborColIndexOffset);
+					attr.add("array:rowOffset", neighborRowIndexOffset);
+					attr.add("array:colOffset", neighborColIndexOffset);
 					node = new XMLNode(new XMLTriple("array","","array"), attr);
 					product.setAnnotation(node);
 					
