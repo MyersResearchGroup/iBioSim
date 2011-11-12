@@ -14,6 +14,10 @@ import util.MutableBoolean;
 public class SimulatorSSADirect extends Simulator{
 	
 	private static Long initializationTime = new Long(0);
+	
+	MutableBoolean eventsFlag = new MutableBoolean(false);
+	MutableBoolean rulesFlag = new MutableBoolean(false);
+	MutableBoolean constraintsFlag = new MutableBoolean(false);
 
 	public SimulatorSSADirect(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval) 
@@ -30,12 +34,8 @@ public class SimulatorSSADirect extends Simulator{
 		
 		long initTime2 = System.nanoTime();
 		
-		MutableBoolean eventsFlag = new MutableBoolean(false);
-		MutableBoolean rulesFlag = new MutableBoolean(false);
-		MutableBoolean constraintsFlag = new MutableBoolean(false);
-		
 		try {
-			initialize(eventsFlag, rulesFlag, constraintsFlag);
+			initialize();
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		} catch (XMLStreamException e2) {
@@ -232,8 +232,7 @@ public class SimulatorSSADirect extends Simulator{
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
-	private void initialize(MutableBoolean noEventsFlag,
-			MutableBoolean noAssignmentRulesFlag, MutableBoolean noConstraintsFlag) 
+	private void initialize() 
 	throws IOException, XMLStreamException {	
 		
 		setupArrays();
@@ -243,20 +242,24 @@ public class SimulatorSSADirect extends Simulator{
 		setupRules();
 		setupConstraints();
 		
+		eventsFlag = new MutableBoolean(false);
+		rulesFlag = new MutableBoolean(false);
+		constraintsFlag = new MutableBoolean(false);
+		
 		if (numEvents == 0)
-			noEventsFlag.setValue(true);
+			eventsFlag.setValue(true);
 		else
-			noEventsFlag.setValue(false);
+			eventsFlag.setValue(false);
 		
 		if (numAssignmentRules == 0)
-			noAssignmentRulesFlag.setValue(true);
+			rulesFlag.setValue(true);
 		else
-			noAssignmentRulesFlag.setValue(false);
+			rulesFlag.setValue(false);
 		
 		if (numConstraints == 0)
-			noConstraintsFlag.setValue(true);
+			constraintsFlag.setValue(true);
 		else
-			noConstraintsFlag.setValue(false);
+			constraintsFlag.setValue(false);
 		
 		
 		//STEP 0: calculate initial propensities (including the total)		
@@ -363,7 +366,35 @@ public class SimulatorSSADirect extends Simulator{
 		
 		setupNewRun(0, newRun);
 		
+		setupArrays();
+		try {
+			setupSpecies();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		setupInitialAssignments();
+		setupParameters();
+		setupRules();
+		setupConstraints();
+		
 		totalPropensity = 0.0;
+		minPropensity = Double.MAX_VALUE;
+		maxPropensity = Double.MIN_VALUE;
+		
+		if (numEvents == 0)
+			eventsFlag.setValue(true);
+		else
+			eventsFlag.setValue(false);
+		
+		if (numAssignmentRules == 0)
+			rulesFlag.setValue(true);
+		else
+			rulesFlag.setValue(false);
+		
+		if (numConstraints == 0)
+			constraintsFlag.setValue(true);
+		else
+			constraintsFlag.setValue(false);
 		
 		//STEP 0A: calculate initial propensities (including the total)		
 		calculateInitialPropensities();

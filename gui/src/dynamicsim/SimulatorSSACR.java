@@ -1,18 +1,29 @@
 package dynamicsim;
 
 import gnu.trove.map.hash.TIntDoubleHashMap;
+import gnu.trove.map.hash.TObjectDoubleHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import gnu.trove.set.hash.TIntHashSet;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.PriorityQueue;
 
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
+
+import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.AssignmentRule;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLReader;
 
 import main.Gui;
 import odk.lang.FastMath;
@@ -44,6 +55,10 @@ public class SimulatorSSACR extends Simulator{
 	
 	private static Long initializationTime = new Long(0);
 	
+	MutableBoolean eventsFlag = new MutableBoolean(false);
+	MutableBoolean rulesFlag = new MutableBoolean(false);
+	MutableBoolean constraintsFlag = new MutableBoolean(false);
+	
 	
 	public SimulatorSSACR(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval) 
@@ -51,6 +66,14 @@ public class SimulatorSSACR extends Simulator{
 		
 		super(SBMLFileName, outputDirectory, timeLimit, maxTimeStep, randomSeed,
 				progress, printInterval, initializationTime);
+		
+		try {
+			initialize();
+		} catch (IOException e2) {
+			e2.printStackTrace();
+		} catch (XMLStreamException e2) {
+			e2.printStackTrace();
+		}
 	}
 
 	/**
@@ -62,18 +85,6 @@ public class SimulatorSSACR extends Simulator{
 			return;
 		
 		long initTime2 = System.nanoTime();
-		
-		MutableBoolean eventsFlag = new MutableBoolean(false);
-		MutableBoolean rulesFlag = new MutableBoolean(false);
-		MutableBoolean constraintsFlag = new MutableBoolean(false);
-		
-		try {
-			initialize(eventsFlag, rulesFlag, constraintsFlag);
-		} catch (IOException e2) {
-			e2.printStackTrace();
-		} catch (XMLStreamException e2) {
-			e2.printStackTrace();
-		}
 		
 		final boolean noEventsFlag = (Boolean) eventsFlag.getValue();
 		final boolean noAssignmentRulesFlag = (Boolean) rulesFlag.getValue();
@@ -311,8 +322,7 @@ public class SimulatorSSACR extends Simulator{
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
-	private void initialize(MutableBoolean noEventsFlag,
-			MutableBoolean noAssignmentRulesFlag, MutableBoolean noConstraintsFlag) 
+	private void initialize() 
 	throws IOException, XMLStreamException {
 		
 		reactionToGroupMap = new TObjectIntHashMap<String>((int) (numReactions * 1.5));
@@ -323,6 +333,10 @@ public class SimulatorSSACR extends Simulator{
 		groupToTotalGroupPropensityMap = new TIntDoubleHashMap();
 		nonemptyGroupSet = new TIntHashSet();
 		
+		eventsFlag = new MutableBoolean(false);
+		rulesFlag = new MutableBoolean(false);
+		constraintsFlag = new MutableBoolean(false);
+		
 		setupArrays();
 		setupSpecies();
 		setupInitialAssignments();
@@ -331,19 +345,19 @@ public class SimulatorSSACR extends Simulator{
 		setupConstraints();
 		
 		if (numEvents == 0)
-			noEventsFlag.setValue(true);
+			eventsFlag.setValue(true);
 		else
-			noEventsFlag.setValue(false);
+			eventsFlag.setValue(false);
 		
 		if (numAssignmentRules == 0)
-			noAssignmentRulesFlag.setValue(true);
+			rulesFlag.setValue(true);
 		else
-			noAssignmentRulesFlag.setValue(false);
+			rulesFlag.setValue(false);
 		
 		if (numConstraints == 0)
-			noConstraintsFlag.setValue(true);
+			constraintsFlag.setValue(true);
 		else
-			noConstraintsFlag.setValue(false);
+			constraintsFlag.setValue(false);
 		
 		
 		//STEP 0A: calculate initial propensities (including the total)		
@@ -428,7 +442,7 @@ public class SimulatorSSACR extends Simulator{
 	 */
 	protected void clear() {
 		
-		variableToValueMap.clear();		
+		variableToValueMap.clear();
 		reactionToPropensityMap.clear();
 		
 		if (numEvents > 0) {
@@ -619,7 +633,36 @@ public class SimulatorSSACR extends Simulator{
 		
 		setupNewRun(0, newRun);
 		
+		setupArrays();
+		try {
+			setupSpecies();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		setupInitialAssignments();
+		setupParameters();
+		setupRules();
+		setupConstraints();
+		
 		totalPropensity = 0.0;
+		numGroups = 0;
+		minPropensity = Double.MAX_VALUE;
+		maxPropensity = Double.MIN_VALUE;
+		
+		if (numEvents == 0)
+			eventsFlag.setValue(true);
+		else
+			eventsFlag.setValue(false);
+		
+		if (numAssignmentRules == 0)
+			rulesFlag.setValue(true);
+		else
+			rulesFlag.setValue(false);
+		
+		if (numConstraints == 0)
+			constraintsFlag.setValue(true);
+		else
+			constraintsFlag.setValue(false);
 		
 		//STEP 0A: calculate initial propensities (including the total)		
 		calculateInitialPropensities();

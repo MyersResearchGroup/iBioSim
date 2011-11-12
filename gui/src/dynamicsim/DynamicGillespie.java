@@ -48,7 +48,7 @@ public class DynamicGillespie {
 			simulator.clear();
 			
 			if ((runs - run) >= 1)
-				simulator.setupForNewRun(run);
+				simulator.setupForNewRun(run + 1);
 			
 //			//garbage collect every twenty-five runs
 //			if ((run % 25) == 0)
