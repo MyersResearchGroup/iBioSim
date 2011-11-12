@@ -18,6 +18,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
 
+import flanagan.math.Fmath;
+import flanagan.math.PsRandom;
+
 import main.Gui;
 
 import odk.lang.FastMath;
@@ -200,6 +203,8 @@ public abstract class Simulator {
 		
 		document = reader.readSBML(SBMLFileName);
 		
+		//document.checkConsistency();
+		
 		SBMLErrorLog errors = document.getListOfErrors();
 		
 		//if the sbml document has errors, tell the user and don't simulate
@@ -276,28 +281,6 @@ public abstract class Simulator {
 		}
 		
 		initializationTime = System.nanoTime() - initTime1;
-	}
-	
-	/**
-	 * opens output file and seeds rng for new run
-	 * 
-	 * @param randomSeed
-	 * @param currentRun
-	 * @throws IOException
-	 */
-	protected void setupNewRun(long randomSeed, int currentRun) {
-		
-		this.currentRun = currentRun;
-		
-		randomNumberGenerator = new XORShiftRandom(randomSeed);
-		
-		try {
-			TSDWriter = new FileWriter(outputDirectory + "run-" + currentRun + ".tsd");
-			bufferedTSDWriter = new BufferedWriter(TSDWriter);
-			bufferedTSDWriter.write('(');
-		} catch (IOException e) {
-			e.printStackTrace();
-		}		
 	}
 	
 	/**
@@ -644,7 +627,71 @@ public abstract class Simulator {
 				double lowerBound = FastMath.min(leftChildValue, rightChildValue);
 				double upperBound = FastMath.max(leftChildValue, rightChildValue);
 				
-				return ((upperBound - lowerBound) * randomNumberGenerator.nextDouble()) + lowerBound;
+				PsRandom prng = new PsRandom();
+				
+				return prng.nextDouble(lowerBound, upperBound);
+			}
+			else if (nodeName.equals("exponential")) {
+				
+				PsRandom prng = new PsRandom();
+				
+				return prng.nextExponential(evaluateExpressionRecursive(node.getLeftChild()), 1);
+			}
+			else if (nodeName.equals("gamma")) {
+				
+				PsRandom prng = new PsRandom();
+				
+				return prng.nextGamma(1, evaluateExpressionRecursive(node.getLeftChild()), 
+						evaluateExpressionRecursive(node.getRightChild()));
+			}
+			else if (nodeName.equals("chisq")) {
+				
+				PsRandom prng = new PsRandom();
+				
+				return prng.nextChiSquare((int) evaluateExpressionRecursive(node.getLeftChild()));
+			}
+			else if (nodeName.equals("lognormal")) {
+				
+				PsRandom prng = new PsRandom();
+				
+				return prng.nextLogNormal(evaluateExpressionRecursive(node.getLeftChild()), 
+						evaluateExpressionRecursive(node.getRightChild()));
+			}
+			else if (nodeName.equals("laplace")) {
+				
+				//function doesn't exist in current libraries
+			}
+			else if (nodeName.equals("cauchy")) {
+				
+				PsRandom prng = new PsRandom();
+				
+				return prng.nextLorentzian(0, evaluateExpressionRecursive(node.getLeftChild()));
+			}
+			else if (nodeName.equals("poisson")) {
+				
+				PsRandom prng = new PsRandom();
+				
+				return prng.nextPoissonian(evaluateExpressionRecursive(node.getLeftChild()));
+			}
+			else if (nodeName.equals("binomial")) {
+				
+				PsRandom prng = new PsRandom();
+				
+				return prng.nextBinomial(evaluateExpressionRecursive(node.getLeftChild()),
+						(int) evaluateExpressionRecursive(node.getRightChild()));
+			}
+			else if (nodeName.equals("bernoulli")) {
+				
+				PsRandom prng = new PsRandom();
+				
+				return prng.nextBinomial(evaluateExpressionRecursive(node.getLeftChild()), 1);
+			}
+			else if (nodeName.equals("normal")) {
+				
+				PsRandom prng = new PsRandom();
+				
+				return prng.nextGaussian(evaluateExpressionRecursive(node.getLeftChild()),
+						evaluateExpressionRecursive(node.getRightChild()));	
 			}
 			else if (nodeName.equals("get2DArrayElement")) {
 				
@@ -683,8 +730,15 @@ public abstract class Simulator {
 				return sum;
 			}
 				
-			case MINUS:
-				return (evaluateExpressionRecursive(leftChild) - evaluateExpressionRecursive(rightChild));
+			case MINUS: {
+				
+				double sum = evaluateExpressionRecursive(leftChild);
+				
+				for (int childIter = 1; childIter < node.getChildCount(); ++childIter)
+					sum -= evaluateExpressionRecursive(node.getChild(childIter));					
+					
+				return sum;
+			}
 				
 			case TIMES: {
 				
@@ -706,18 +760,8 @@ public abstract class Simulator {
 			case FUNCTION: {
 				//use node name to determine function
 				//i'm not sure what to do with completely user-defined functions, though
-				String nodeName = node.getName();
 				
-				//generates a uniform random number between the upper and lower bound
-				if (nodeName.equals("uniform")) {
-					
-					double leftChildValue = evaluateExpressionRecursive(node.getLeftChild());
-					double rightChildValue = evaluateExpressionRecursive(node.getRightChild());
-					double lowerBound = FastMath.min(leftChildValue, rightChildValue);
-					double upperBound = FastMath.max(leftChildValue, rightChildValue);
-					
-					return ((upperBound - lowerBound) * randomNumberGenerator.nextDouble()) + lowerBound;
-				}
+				//String nodeName = node.getName();
 				
 				break;
 			}
@@ -767,62 +811,74 @@ public abstract class Simulator {
 			case FUNCTION_TANH:		
 				return FastMath.tanh(evaluateExpressionRecursive(node.getChild(0)));
 				
-			case FUNCTION_PIECEWISE:
-				//function doesn't exist in current libraries
+			case FUNCTION_PIECEWISE: {
+				
+				//loop through child pairs
+				//if child 1 is true, return child 2				
+				for (int childIter = 0; childIter < node.getChildCount(); childIter += 2) {
+					
+					if (getBooleanFromDouble(evaluateExpressionRecursive(node.getChild(childIter))) &&
+							(childIter + 1) < node.getChildCount())		
+							return evaluateExpressionRecursive(node.getChild(childIter + 1));
+				}
+				
+				return 0;
+			}
 			
 			case FUNCTION_ROOT:
-				//function doesn't exist in current libraries
+				return FastMath.pow(evaluateExpressionRecursive(node.getRightChild()), 
+						1 / evaluateExpressionRecursive(node.getLeftChild()));
 			
 			case FUNCTION_SEC:
-				//function doesn't exist in current libraries
+				return Fmath.sec(evaluateExpressionRecursive(node.getChild(0)));
 			
 			case FUNCTION_SECH:
-				//function doesn't exist in current libraries
+				return Fmath.sech(evaluateExpressionRecursive(node.getChild(0)));
 			
 			case FUNCTION_FACTORIAL:
-				//function doesn't exist in current libraries
+				return Fmath.factorial(evaluateExpressionRecursive(node.getChild(0)));
 				
 			case FUNCTION_COT:
-				//function doesn't exist in current libraries
+				return Fmath.cot(evaluateExpressionRecursive(node.getChild(0)));
 			
 			case FUNCTION_COTH:
-				//function doesn't exist in current libraries
+				return Fmath.coth(evaluateExpressionRecursive(node.getChild(0)));
 			
 			case FUNCTION_CSC:
-				//function doesn't exist in current libraries
+				return Fmath.csc(evaluateExpressionRecursive(node.getChild(0)));
 			
 			case FUNCTION_CSCH:
-				//function doesn't exist in current libraries
+				return Fmath.csch(evaluateExpressionRecursive(node.getChild(0)));
 			
 			case FUNCTION_DELAY:
-				//function doesn't exist in current libraries				
+				//NOT PLANNING TO SUPPORT THIS		
 				
 			case FUNCTION_ARCTANH:
-				//function doesn't exist in current libraries
+				Fmath.atanh(evaluateExpressionRecursive(node.getChild(0)));
 			
 			case FUNCTION_ARCSINH:
-				//function doesn't exist in current libraries
+				Fmath.asinh(evaluateExpressionRecursive(node.getChild(0)));
 			
 			case FUNCTION_ARCCOSH:
-				//function doesn't exist in current libraries
+				Fmath.acosh(evaluateExpressionRecursive(node.getChild(0)));
 			
 			case FUNCTION_ARCCOT:
-				//function doesn't exist in current libraries
+				Fmath.acot(evaluateExpressionRecursive(node.getChild(0)));
 			
 			case FUNCTION_ARCCOTH:
-				//function doesn't exist in current libraries
+				Fmath.acoth(evaluateExpressionRecursive(node.getChild(0)));
 			
 			case FUNCTION_ARCCSC:
-				//function doesn't exist in current libraries
+				Fmath.acsc(evaluateExpressionRecursive(node.getChild(0)));
 			
 			case FUNCTION_ARCCSCH:
-				//function doesn't exist in current libraries
+				Fmath.acsch(evaluateExpressionRecursive(node.getChild(0)));
 			
 			case FUNCTION_ARCSEC:
-				//function doesn't exist in current libraries
+				Fmath.asec(evaluateExpressionRecursive(node.getChild(0)));
 			
 			case FUNCTION_ARCSECH:
-				//function doesn't exist in current libraries
+				Fmath.asech(evaluateExpressionRecursive(node.getChild(0)));
 				
 			} //end switch
 			
@@ -1031,8 +1087,14 @@ public abstract class Simulator {
 				}
 				
 				//update the species, but only if it's not a constant
-				if (speciesToIsConstantMap.get(variable) == false)
-					variableToValueMap.put(variable, assignmentValue);
+				if (speciesToIsConstantMap.get(variable) == false) {
+					
+					if (speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
+						variableToValueMap.put(variable, 
+								(int)(assignmentValue / speciesToCompartmentSizeMap.get(variable)));				
+					else				
+						variableToValueMap.put(variable, assignmentValue);
+				}
 				
 				//if this variable that was just updated is part of an assignment rule (RHS)
 				//then re-evaluate that assignment rule
@@ -1069,11 +1131,17 @@ public abstract class Simulator {
 		
 		for (AssignmentRule assignmentRule : affectedAssignmentRuleSet) {
 			
+			String variable = assignmentRule.getVariable();
+			
 			//update the species count (but only if the species isn't constant)
-			if (speciesToIsConstantMap.get(assignmentRule.getVariable()) == false) {
+			if (speciesToIsConstantMap.get(variable) == false) {
 				
-				variableToValueMap.put(assignmentRule.getVariable(), 
-						evaluateExpressionRecursive(assignmentRule.getMath()));
+				if (speciesToHasOnlySubstanceUnitsMap.get(variable) == false) {
+					variableToValueMap.put(variable, 
+							(int)(evaluateExpressionRecursive(assignmentRule.getMath()) / speciesToCompartmentSizeMap.get(variable)));
+				}
+				else
+					variableToValueMap.put(variable, evaluateExpressionRecursive(assignmentRule.getMath()));
 			}
 		}
 	}
@@ -1102,7 +1170,7 @@ public abstract class Simulator {
 				
 				if (speciesToHasOnlySubstanceUnitsMap.get(speciesID) == false)
 					variableToValueMap.adjustValue(speciesID, 
-							(stoichiometry / speciesToCompartmentSizeMap.get(speciesID)));				
+							(int)(stoichiometry / speciesToCompartmentSizeMap.get(speciesID)));				
 				else				
 					variableToValueMap.adjustValue(speciesID, stoichiometry);
 			}
@@ -1730,6 +1798,28 @@ public abstract class Simulator {
 	 * does a minimized initialization process to prepare for a new run
 	 */
 	protected abstract void setupForNewRun(int newRun);
+	
+	/**
+	 * opens output file and seeds rng for new run
+	 * 
+	 * @param randomSeed
+	 * @param currentRun
+	 * @throws IOException
+	 */
+	protected void setupNewRun(long randomSeed, int currentRun) {
+		
+		this.currentRun = currentRun;
+		
+		randomNumberGenerator = new XORShiftRandom(randomSeed);
+		
+		try {
+			TSDWriter = new FileWriter(outputDirectory + "run-" + currentRun + ".tsd");
+			bufferedTSDWriter = new BufferedWriter(TSDWriter);
+			bufferedTSDWriter.write('(');
+		} catch (IOException e) {
+			e.printStackTrace();
+		}		
+	}
 	
 	/**
 	 * abstract simulate method
