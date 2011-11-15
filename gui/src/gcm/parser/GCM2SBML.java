@@ -455,6 +455,8 @@ public class GCM2SBML {
 					else {
 						String defaultPromoterName = "Promoter_" + getOutput(name);
 						name = name + ", Promoter " + defaultPromoterName;
+						Properties prom_prop = new Properties();
+						promoters.put(defaultPromoterName, prom_prop);
 						//createPromoter(defaultPromoterName, 0, 0, false);
 						properties.setProperty(GlobalConstants.PROMOTER, defaultPromoterName);
 					}
