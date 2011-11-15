@@ -4,6 +4,7 @@ import gcm.gui.ModelEditor;
 import gcm.gui.modelview.movie.MovieContainer;
 import gcm.network.GeneticNetwork;
 import gcm.parser.CompatibilityFixer;
+import gcm.parser.GCM2SBML;
 import gcm.parser.GCMFile;
 import gcm.parser.GCMParser;
 import gcm.util.GlobalConstants;
@@ -2253,11 +2254,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (e.getSource() == viewTrace) {
 			Component comp = tab.getSelectedComponent();
-			if (comp instanceof Verification) {
-				((Verification) comp).viewTrace();
+			if (comp.getName().equals("Verification")) {
+				Component[] array = ((JPanel) comp).getComponents();
+				((Verification) array[0]).viewTrace();
 			}
-			else if (comp instanceof Synthesis) {
-				((Synthesis) comp).viewTrace();
+			else if (comp.getName().equals("Synthesis")) {
+				Component[] array = ((JPanel) comp).getComponents();
+				((Synthesis) array[0]).viewTrace();
 			}
 		}
 		else if (e.getSource() == exportSBML) {
@@ -3336,13 +3339,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					}
 				}
 			}
-			else if (comp instanceof Verification) {
-				((Verification) comp).save();
-				new Thread((Verification) comp).start();
+			else if (comp.getName().equals("Verification")) {
+				Component[] array = ((JPanel) comp).getComponents();
+				((Verification) array[0]).save();
+				new Thread((Verification) array[0]).start();
 			}
-			else if (comp instanceof Synthesis) {
-				((Synthesis) comp).save();
-				new Thread((Synthesis) comp).start();
+			else if (comp.getName().equals("Synthesis")) {
+				Component[] array = ((JPanel) comp).getComponents();
+				((Synthesis) array[0]).save();
+				new Thread((Synthesis) array[0]).start();
 			}
 		}
 		else if (e.getActionCommand().equals("refresh")) {
@@ -6421,7 +6426,15 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				in.close();
 				out.close();
-				addToTree(filename);
+				
+				GCMFile gcm = new GCMFile(root);
+				gcm.load(root + separator + filename);
+				GCM2SBML gcm2sbml = new GCM2SBML(gcm);
+				gcm2sbml.load(root + separator + filename);
+				gcm2sbml.convertGCM2SBML(root + separator + filename);
+				String sbmlFile = filename.replace(".gcm", ".xml");
+				gcm.save(root + separator + sbmlFile);
+				addToTree(sbmlFile);
 			}
 		}
 		catch (Exception e1) {
@@ -7559,8 +7572,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					if (load.containsKey("genenet.file")) {
 						learnFile = load.getProperty("genenet.file");
 						learnFile = learnFile.split(separator)[learnFile.split(separator).length - 1];
-						if (learnFile.endsWith(".xml")) {
-							learnFile = learnFile.replace(".xml", ".gcm");
+						if (learnFile.endsWith(".gcm")) {
+							learnFile = learnFile.replace(".gcm", ".xml");
 							load.setProperty("genenet.file", learnFile);
 						}
 					}
@@ -7967,8 +7980,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								if (s.hasNextLine()) {
 									sbmlLoadFile = s.nextLine();
 									sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1];
-									if (sbmlLoadFile.contains(".xml"))
-										sbmlLoadFile = sbmlLoadFile.replace(".xml", ".gcm");
+									if (sbmlLoadFile.contains(".gcm"))
+										sbmlLoadFile = sbmlLoadFile.replace(".gcm", ".xml");
 									if (sbmlLoadFile.equals("")) {
 										JOptionPane.showMessageDialog(frame, "Unable to open view because "
 												+ "the sbml linked to this view is missing.", "Error", JOptionPane.ERROR_MESSAGE);
