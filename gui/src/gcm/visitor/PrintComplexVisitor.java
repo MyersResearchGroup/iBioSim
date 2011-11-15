@@ -86,8 +86,7 @@ public class PrintComplexVisitor extends AbstractPrintVisitor {
 			if (stoich > 2)
 				kl.addParameter(Utility.Parameter(kcompId, kcomp, GeneticNetwork.getMoleParameter(2)));
 		}
-		kl.addParameter(Utility.Parameter(kcompIdr, kr, GeneticNetwork
-				.getMoleTimeParameter(1)));
+		kl.addParameter(Utility.Parameter(kcompIdr, kr, GeneticNetwork.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(compExpression, boundExpression, kcompId, kcompIdf, kcompIdr, ncSum, stoich));
 		Utility.addReaction(document, r);
 	}

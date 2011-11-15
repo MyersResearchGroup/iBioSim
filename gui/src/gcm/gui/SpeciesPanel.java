@@ -1,6 +1,5 @@
 package gcm.gui;
 
-import gcm.parser.CompatibilityFixer;
 import gcm.parser.GCMFile;
 import gcm.util.GlobalConstants;
 import gcm.util.Utility;
@@ -12,7 +11,6 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Properties;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JCheckBox;
@@ -23,7 +21,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import org.sbml.libsbml.InitialAssignment;
+import org.sbml.libsbml.LocalParameter;
+import org.sbml.libsbml.Model;
+import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.Species;
+import org.sbml.libsbml.Submodel;
 
 import sbmleditor.InitialAssignments;
 import sbmleditor.MySpecies;
@@ -51,14 +53,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 * @param refGCM
 	 * @param gcmEditor
 	 */
-	public SpeciesPanel(Gui biosim, String selected, PropertyList speciesList, PropertyList influencesList,
+	public SpeciesPanel(Gui biosim, String selected, PropertyList speciesList, 
 			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
-			GCMFile refGCM, GCM2SBMLEditor gcmEditor, boolean inTab){
+			GCMFile refGCM, ModelEditor gcmEditor, boolean inTab){
 
 		super(new BorderLayout());
 		this.biosim = biosim;
-		constructor(selected, speciesList, influencesList, conditionsList, componentsList, gcm, 
-				paramsOnly, refGCM, gcmEditor, inTab);
+		constructor(selected, speciesList, conditionsList, componentsList, gcm, paramsOnly, refGCM, gcmEditor, inTab);
 	}
 	
 	/**
@@ -74,36 +75,22 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 * @param refGCM
 	 * @param gcmEditor
 	 */
-	private void constructor(String selected, PropertyList speciesList, PropertyList influencesList,
-			PropertyList conditionsList, PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
-			GCMFile refGCM,  GCM2SBMLEditor gcmEditor, boolean inTab) {
+	private void constructor(String selected, PropertyList speciesList, PropertyList conditionsList, 
+			PropertyList componentsList, GCMFile gcm, boolean paramsOnly,
+			GCMFile refGCM,  ModelEditor gcmEditor, boolean inTab) {
 
 		JPanel grid;
 		
 		//if this is in analysis mode, only show the sweepable/changeable values
 		if (paramsOnly)
-			grid = new JPanel(new GridLayout(7,1));
+			grid = new JPanel(new GridLayout(5,1));
 		else {
 			
 			if (gcm.getSBMLDocument().getLevel() > 2) {
-				/*
-				if (gcm.getSBMLDocument().getModel().getNumCompartments() == 1) {
-					grid = new JPanel(new GridLayout(17,1));
-				} 
-				else {
-				*/
-				grid = new JPanel(new GridLayout(18,1));
-				//}
+				grid = new JPanel(new GridLayout(16,1));
 			} 
 			else {
-				/*
-				if (gcm.getSBMLDocument().getModel().getNumCompartments() == 1) {
-					grid = new JPanel(new GridLayout(16,1));
-				} 
-				else {
-				*/
-				grid = new JPanel(new GridLayout(17,1));
-				//}
+				grid = new JPanel(new GridLayout(15,1));
 			}
 		}
 		
@@ -111,29 +98,31 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 		this.selected = selected;
 		this.speciesList = speciesList;
-		this.influences = influencesList;
 		this.conditions = conditionsList;
 		this.components = componentsList;
 		this.gcm = gcm;
+		this.refGCM = refGCM;
 		this.paramsOnly = paramsOnly;
 		this.gcmEditor = gcmEditor;
 
 		fields = new HashMap<String, PropertyField>();
 		sbolFields = new HashMap<String, SbolField>();
-		
+
+		Model model = gcm.getSBMLDocument().getModel();
+		species = model.getSpecies(selected);
+
 		String origString = "default";
 		PropertyField field = null;		
 		
 		// ID field
-		field = new PropertyField(GlobalConstants.ID, "", null, null, Utility.IDstring,
-				paramsOnly, "default", false);
+		field = new PropertyField(GlobalConstants.ID, species.getId(), null, null, Utility.IDstring, paramsOnly, "default", false);
 		fields.put(GlobalConstants.ID, field);
 		
 		if (!paramsOnly) grid.add(field);
 			
 		// Name field
-		field = new PropertyField(GlobalConstants.NAME, "", null, null, Utility.NAMEstring,
-				paramsOnly, "default", false);
+		field = new PropertyField(GlobalConstants.NAME, species.getName(), null, null, Utility.NAMEstring, paramsOnly, 
+				"default", false);
 		fields.put(GlobalConstants.NAME, field);
 		
 		if (!paramsOnly) grid.add(field);		
@@ -159,25 +148,45 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		//diffusible/constitutive checkboxes		
 		tempPanel = new JPanel(new GridLayout(1,2));
 		tempPanel.add(new JLabel(""));
+
+		diffusion = model.getReaction("Diffusion_"+selected);
+		if (diffusion != null) {
+			if (!diffusion.isSetAnnotation() || !diffusion.getAnnotationString().contains("Diffusion")) diffusion = null;
+		}
+		constitutive = model.getReaction("Constitutive_"+selected);
+		if (constitutive != null) {
+			if (!constitutive.isSetAnnotation() || !constitutive.getAnnotationString().contains("Constitutive")) constitutive = null;
+		}
+		degradation = model.getReaction("Degradation_"+selected);
+		if (degradation != null) {
+			if (!degradation.isSetAnnotation() || !degradation.getAnnotationString().contains("Degradation")) degradation = null;
+		}
+		complex = model.getReaction("Complex_"+selected);
+		if (complex != null) {
+			if (!complex.isSetAnnotation() || !complex.getAnnotationString().contains("Complex")) complex = null;
+		}
 		
-		JPanel constDiff = new JPanel(new GridLayout(1,2));
+		JPanel constDiff = new JPanel(new GridLayout(1,3));
 		specDiffusible = new JCheckBox("diffusible");
-		specDiffusible.setSelected(gcm.getSpecies().get(selected).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE));
+		specDiffusible.setSelected(diffusion != null);
 		specDiffusible.addActionListener(this);
 		specDiffusible.setActionCommand("constdiffChanged");
 		specConstitutive = new JCheckBox("constitutive");
-		specConstitutive.setSelected(gcm.getSpecies().get(selected).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.SPASTIC));
+		specConstitutive.setSelected(constitutive != null);
 		specConstitutive.addActionListener(this);
 		specConstitutive.setActionCommand("constdiffChanged");
+		specDegradable = new JCheckBox("degrades");
+		specDegradable.setSelected(degradation != null);
+		specDegradable.addActionListener(this);
+		specDegradable.setActionCommand("constdiffChanged");
 		
 		constDiff.add(specDiffusible);
 		constDiff.add(specConstitutive);
-		
+		constDiff.add(specDegradable);
+
 		tempPanel.add(constDiff);
 		
 		if (!paramsOnly) grid.add(tempPanel);
-
-		Species species = gcm.getSBMLDocument().getModel().getSpecies(selected);
 		
 		// compartment field
 		tempPanel = new JPanel();
@@ -188,11 +197,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		tempPanel.setLayout(new GridLayout(1, 2));
 		tempPanel.add(tempLabel);
 		tempPanel.add(compartBox);
-
-		//if (gcm.getSBMLDocument().getModel().getNumCompartments() > 1) {
 			
 		if (!paramsOnly) grid.add(tempPanel);
-		//}
 		
 		String[] optionsTF = { "true", "false" };
 
@@ -295,9 +301,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			//look for the selected species among the already-interesting
 			//if it is interesting, populate the field with its data
 			for (String speciesInfo : interestingSpecies) {
-				
 				if (speciesInfo.split(" ")[0].equals(selected)) {
-					
 					speciesMarked = true;
 					thresholdText = speciesInfo.replace(selected, "").trim();
 					break;
@@ -305,17 +309,15 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}			
 			
 			tempPanel = new JPanel(new GridLayout(1, 2));
-			specInteresting = 
-				new JCheckBox("Mark as Interesting");
+			specInteresting = new JCheckBox("Mark as Interesting");
 			specInteresting.addActionListener(this);
 			specInteresting.setSelected(speciesMarked);
 			tempPanel.add(specInteresting);
 			thresholdTextField = new JTextField(thresholdText);
 			
-			if (!gcm.getSpecies().get(selected).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.INPUT) &&
+			if (!gcm.getSpeciesType(selected).equals(GlobalConstants.INPUT) &&
 					(gcmEditor.getGCM().getBiochemicalSpecies() != null &&
 					!gcmEditor.getGCM().getBiochemicalSpecies().contains(selected))) {
-				
 				tempPanel.add(thresholdTextField);
 				specInteresting.setText("Mark as Interesting (Enter comma-separated thresholds");
 			}
@@ -326,30 +328,22 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		// Initial field
 		if (paramsOnly) {
 			String defaultValue = refGCM.getParameter(GlobalConstants.INITIAL_STRING);
-			/*
-			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.INITIAL_STRING)) {
-				defaultValue = refGCM.getSpecies().get(selected).getProperty(GlobalConstants.INITIAL_STRING);
-				origString = "custom";
-			}
-			else if (gcm.globalParameterIsSet(GlobalConstants.INITIAL_STRING)) {
-				defaultValue = gcm.getParameter(GlobalConstants.INITIAL_STRING);
-			}
-			*/
-			if (species.isSetInitialAmount()) {
-				defaultValue = "" + species.getInitialAmount();
-			} else if (species.isSetInitialConcentration()) {
-				defaultValue = "[" + species.getInitialConcentration() + "]";
+			if (refGCM.getSBMLDocument().getModel().getSpecies(selected).isSetInitialAmount()) {
+				defaultValue = "" + refGCM.getSBMLDocument().getModel().getSpecies(selected).getInitialAmount();
+			} else if (refGCM.getSBMLDocument().getModel().getSpecies(selected).isSetInitialConcentration()) {
+				defaultValue = "[" + refGCM.getSBMLDocument().getModel().getSpecies(selected).getInitialConcentration() + "]";
 			}
 			field = new PropertyField(GlobalConstants.INITIAL_STRING, 
 					gcm.getParameter(GlobalConstants.INITIAL_STRING), origString, defaultValue,
 					Utility.SWEEPstring + "|" + Utility.CONCstring, paramsOnly, origString, false);
-			/*
-			String defaultValue = "";
-			
-			field = new PropertyField("Initial Amount/Concentration", null, origString, defaultValue,
-					Utility.SWEEPstring + "|" + Utility.CONCstring, paramsOnly, origString, false);
-					*/
 			fields.put(GlobalConstants.INITIAL_STRING, field);
+			if (species.isSetInitialAmount() &&	!defaultValue.equals("" + species.getInitialAmount())) {
+				field.setValue("" + species.getInitialAmount());
+				field.setCustom();
+			} else if (species.isSetInitialConcentration() && !defaultValue.equals("["+species.getInitialConcentration()+"]")) {
+				field.setValue("[" + species.getInitialConcentration() + "]");
+				field.setCustom();
+			}
 			grid.add(field);
 		}
 		else {
@@ -368,64 +362,49 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			tempPanel.add(tempLabel);
 			tempPanel.add(initialField);
 			grid.add(tempPanel);
-			/* 
-			field = new PropertyField(GlobalConstants.INITIAL_STRING, 
-					gcm.getParameter(GlobalConstants.INITIAL_STRING), origString, 
-					gcm.getParameter(GlobalConstants.INITIAL_STRING), Utility.NUMstring + "|" + Utility.CONCstring, paramsOnly,
-					origString, false);
-			*/
 		}
-		/*
-		grid.add(field);
-        */
 		
 		// Decay field
 		origString = "default";
-		
+		String defaultValue = gcm.getParameter(GlobalConstants.KDECAY_STRING);
+		String formatString = Utility.NUMstring;
 		if (paramsOnly) {
-			
-			String defaultValue = refGCM.getParameter(GlobalConstants.KDECAY_STRING);
-			
-			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.KDECAY_STRING)) {
-				
-				defaultValue = refGCM.getSpecies().get(selected).getProperty(
-						GlobalConstants.KDECAY_STRING);
-				origString = "custom";
+			if (degradation != null) {
+				Reaction refDeg = refGCM.getSBMLDocument().getModel().getReaction(degradation.getId());
+				LocalParameter kd = refDeg.getKineticLaw().getLocalParameter(GlobalConstants.KDECAY_STRING);
+				if (kd != null) {
+					defaultValue = kd.getValue()+"";
+					origString = "custom";
+				}
 			}
-			else if (gcm.globalParameterIsSet(GlobalConstants.KDECAY_STRING)) {
-				
-				defaultValue = gcm.getParameter(GlobalConstants.KDECAY_STRING);
+			formatString = Utility.SWEEPstring;
+		}
+		field = new PropertyField(GlobalConstants.KDECAY_STRING, 
+				gcm.getParameter(GlobalConstants.KDECAY_STRING), origString, defaultValue,
+				formatString, paramsOnly, origString, false);
+		if (degradation != null) {
+			LocalParameter kd = degradation.getKineticLaw().getLocalParameter(GlobalConstants.KDECAY_STRING);
+			if (kd != null && !defaultValue.equals(""+kd.getValue())) {
+				field.setValue(""+kd.getValue());
+				field.setCustom();
 			}
-			
-			field = new PropertyField(GlobalConstants.KDECAY_STRING, gcm
-					.getParameter(GlobalConstants.KDECAY_STRING), origString, defaultValue,
-					Utility.SWEEPstring, paramsOnly, origString, false);
 		}
-		else {
-			
-			field = new PropertyField(GlobalConstants.KDECAY_STRING, gcm
-					.getParameter(GlobalConstants.KDECAY_STRING), origString, gcm
-					.getParameter(GlobalConstants.KDECAY_STRING), Utility.NUMstring, paramsOnly,
-					origString, false);
-		}
-		
 		fields.put(GlobalConstants.KDECAY_STRING, field);
 		grid.add(field);
 		
 		//Extracellular decay field
+		/*
 		origString = "default";
 		if (paramsOnly) {
 			
 			String defaultValue = refGCM.getParameter(GlobalConstants.KECDECAY_STRING);
 			
 			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.KECDECAY_STRING)) {
-				
 				defaultValue = refGCM.getSpecies().get(selected).getProperty(
 						GlobalConstants.KECDECAY_STRING);
 				origString = "custom";
 			}
-			else if (gcm.globalParameterIsSet(GlobalConstants.KECDECAY_STRING)) {
-				
+			else { 
 				defaultValue = gcm.getParameter(GlobalConstants.KECDECAY_STRING);
 			}
 			
@@ -443,87 +422,83 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		
 		fields.put(GlobalConstants.KECDECAY_STRING, field);
 		grid.add(field);
+		*/
 		
 		// Complex Equilibrium Constant Field
 		origString = "default";
-		
+		defaultValue = gcm.getParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING) + "/" + 
+				gcm.getParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING); 
+		formatString = Utility.SLASHstring;
 		if (paramsOnly) {
-			
-			String defaultValue = refGCM.getParameter(GlobalConstants.KCOMPLEX_STRING);
-			
-			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.KCOMPLEX_STRING)) {
-				
-				defaultValue = refGCM.getSpecies().get(selected).getProperty(
-						GlobalConstants.KCOMPLEX_STRING);
-				origString = "custom";
+			if (complex != null) {
+				Reaction refComp = refGCM.getSBMLDocument().getModel().getReaction(complex.getId());
+				LocalParameter kc_f = refComp.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING);
+				LocalParameter kc_r = refComp.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING);
+				if (kc_f != null && kc_r != null) {
+					defaultValue = kc_f.getValue()+"/"+kc_r.getValue();
+					origString = "custom";
+				}
 			}
-			else if (gcm.globalParameterIsSet(GlobalConstants.KCOMPLEX_STRING)) {
-				
-				defaultValue = gcm.getParameter(GlobalConstants.KCOMPLEX_STRING);
+			formatString = Utility.SLASHSWEEPstring;
+		}
+		field = new PropertyField(GlobalConstants.KCOMPLEX_STRING, 
+				gcm.getParameter(GlobalConstants.KCOMPLEX_STRING), origString, defaultValue,
+				formatString, paramsOnly, origString, false);
+		if (complex != null) {
+			LocalParameter kc_f = complex.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING);
+			LocalParameter kc_r = complex.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING);
+			if (kc_f != null && kc_r != null && !defaultValue.equals(kc_f.getValue()+"/"+kc_r.getValue())) {
+				field.setValue(kc_f.getValue()+"/"+kc_r.getValue());
+				field.setCustom();
 			}
-			
-			field = new PropertyField(GlobalConstants.KCOMPLEX_STRING, 
-					gcm.getParameter(GlobalConstants.KCOMPLEX_STRING), origString, defaultValue,
-					Utility.SLASHSWEEPstring, paramsOnly, origString, false);
 		}
-		else {
-			
-			field = new PropertyField(GlobalConstants.KCOMPLEX_STRING, 
-					gcm.getParameter(GlobalConstants.KCOMPLEX_STRING), origString, 
-					gcm.getParameter(GlobalConstants.KCOMPLEX_STRING), Utility.SLASHstring, paramsOnly,
-					origString, false);
-		}
-		
 		fields.put(GlobalConstants.KCOMPLEX_STRING, field);
 		grid.add(field);
-		
+
 		// Membrane Diffusible Field
 		origString = "default";
+		defaultValue = gcm.getParameter(GlobalConstants.FORWARD_MEMDIFF_STRING) + "/" + 
+				gcm.getParameter(GlobalConstants.REVERSE_MEMDIFF_STRING); 
+		formatString = Utility.SLASHstring;
 		if (paramsOnly) {
-			
-			String defaultValue = refGCM.getParameter(GlobalConstants.MEMDIFF_STRING);
-			
-			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.MEMDIFF_STRING)) {
-				
-				defaultValue = refGCM.getSpecies().get(selected).getProperty(
-						GlobalConstants.MEMDIFF_STRING);
-				origString = "custom";
+			if (diffusion != null) {
+				Reaction refDiff = refGCM.getSBMLDocument().getModel().getReaction(diffusion.getId());
+				LocalParameter kmdiff_f = refDiff.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_MEMDIFF_STRING);
+				LocalParameter kmdiff_r = refDiff.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_MEMDIFF_STRING);
+				if (kmdiff_f != null && kmdiff_r != null) {
+					defaultValue = kmdiff_f.getValue()+"/"+kmdiff_r.getValue();
+					origString = "custom";
+				}
 			}
-			else if (gcm.globalParameterIsSet(GlobalConstants.MEMDIFF_STRING)) {
-				
-				defaultValue = gcm.getParameter(GlobalConstants.MEMDIFF_STRING);
+			formatString = Utility.SLASHSWEEPstring;
+		}
+		field = new PropertyField(GlobalConstants.MEMDIFF_STRING, gcm
+				.getParameter(GlobalConstants.MEMDIFF_STRING), origString, defaultValue,
+				formatString, paramsOnly, origString, false);
+		if (diffusion != null) {
+			LocalParameter kmdiff_f = diffusion.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_MEMDIFF_STRING);
+			LocalParameter kmdiff_r = diffusion.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_MEMDIFF_STRING);
+			if (kmdiff_f != null && kmdiff_r != null && !defaultValue.equals(kmdiff_f.getValue()+"/"+kmdiff_r.getValue())) {
+				field.setValue(kmdiff_f.getValue()+"/"+kmdiff_r.getValue());
+				field.setCustom();
 			}
-			
-			field = new PropertyField(GlobalConstants.MEMDIFF_STRING, gcm
-					.getParameter(GlobalConstants.MEMDIFF_STRING), origString, defaultValue,
-					Utility.SLASHSWEEPstring, paramsOnly, origString, false);
 		}
-		else {
-			
-			field = new PropertyField(GlobalConstants.MEMDIFF_STRING, gcm
-					.getParameter(GlobalConstants.MEMDIFF_STRING), origString, gcm
-					.getParameter(GlobalConstants.MEMDIFF_STRING), Utility.SLASHstring, paramsOnly,
-					origString, false);
-		}
-		
 		fields.put(GlobalConstants.MEMDIFF_STRING, field);
 		grid.add(field);
 		
 		//extracellular diffusion field
+		/*
 		origString = "default";
-		
 		if (paramsOnly) {
 			
 			String defaultValue = refGCM.getParameter(GlobalConstants.KECDIFF_STRING);
 			
 			if (refGCM.getSpecies().get(selected).containsKey(GlobalConstants.KECDIFF_STRING)) {
-				
 				defaultValue = refGCM.getSpecies().get(selected).getProperty(
 						GlobalConstants.KECDIFF_STRING);
 				origString = "custom";
 			}
-			else if (gcm.globalParameterIsSet(GlobalConstants.KECDIFF_STRING)) {
-				
+			else { 
 				defaultValue = gcm.getParameter(GlobalConstants.KECDIFF_STRING);
 			}
 			
@@ -541,42 +516,60 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		
 		fields.put(GlobalConstants.KECDIFF_STRING, field);
 		grid.add(field);
+		*/
+		setFieldEnablings();
 		
 		if (!paramsOnly) {
-		
 			// Panel for associating SBOL RBS element
-			SbolField sField = new SbolField(GlobalConstants.SBOL_RBS, gcmEditor);
-			sbolFields.put(GlobalConstants.SBOL_RBS, sField);			
-			grid.add(sField);
+			SbolField RBS_Field = new SbolField(GlobalConstants.SBOL_RBS, gcmEditor);
+			sbolFields.put(GlobalConstants.SBOL_RBS, RBS_Field);			
+			grid.add(RBS_Field);
 			
 			// Panel for associating SBOL ORF element
-			sField = new SbolField(GlobalConstants.SBOL_ORF, gcmEditor);
-			sbolFields.put(GlobalConstants.SBOL_ORF, sField);
-			grid.add(sField);
+			SbolField ORF_Field = new SbolField(GlobalConstants.SBOL_ORF, gcmEditor);
+			sbolFields.put(GlobalConstants.SBOL_ORF, ORF_Field);
+			grid.add(ORF_Field);
+
+			String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
+			String [] annotations = annotation.split(",");
+			for (int i=0;i<annotations.length;i++) {
+				if (annotations[i].startsWith(GlobalConstants.TYPE)) {
+					String [] type = annotations[i].split("=");
+					typeBox.setSelectedItem(type[1]);
+				}
+				if (annotations[i].startsWith(GlobalConstants.SBOL_RBS)) {
+					String [] sbolRBS = annotations[i].split("=");
+					RBS_Field.setText(sbolRBS[1]);
+				}
+				if (annotations[i].startsWith(GlobalConstants.SBOL_ORF)) {
+					String [] sbolORF = annotations[i].split("=");
+					ORF_Field.setText(sbolORF[1]);
+				}
+			}
 		}
 			
+		/*
 		if (selected != null) {
 			
 			Properties prop = gcm.getSpecies().get(selected);
 			//This will generate the action command associated with changing the type combo box
 			typeBox.setSelectedItem(((String)prop.getProperty(GlobalConstants.TYPE))
 					.replace(GlobalConstants.SPASTIC, "").replace(GlobalConstants.DIFFUSIBLE, ""));
-			loadProperties(prop);
+			//loadProperties(prop);
 		}
 		else {
 			
 			typeBox.setSelectedItem(types[1]);
 		}
+		*/
 		
 		boolean display = false;
 		
 		if (!inTab) {
 			while (!display) {
-			
 				//show the panel; handle the data
 				int value = JOptionPane.showOptionDialog(Gui.frame, this, "Species Editor",
 						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				
 				display = handlePanelData(value);
 			}
 		}
@@ -584,8 +577,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	private boolean checkValues() {
 		for (PropertyField f : fields.values()) {
-			if (!f.isValidValue() /*|| f.getValue().equals("RNAP") || f.getValue().endsWith("_RNAP")
-					|| f.getValue().endsWith("_bound")*/) {
+			if (!f.isValidValue()) {
 				return false;
 			}
 		}
@@ -697,14 +689,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				}
 			}
 			
-			if (selected != null
-					&& !gcm.editSpeciesCheck(selected, typeBox.getSelectedItem().toString())) {
-				
-				Utility.createErrorMessage("Error", "Cannot change species type.  "
-						+ "Species is used as a port in a component.");
-				return false;
-			}
-			
+			// TOOD: FIX ME
+			/*
 			if (selected != null && (typeBox.getSelectedItem().toString().equals(types[0]) || 
 					specConstitutive.isSelected())) {
 				
@@ -720,10 +706,11 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					}
 				}
 			}
+			*/
 			
 			newSpeciesID = fields.get(GlobalConstants.ID).getValue();
 
-			Properties property = new Properties();
+			//Properties property = new Properties();
 
 			if (selected != null) {			
 				
@@ -734,6 +721,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				}
 				
 				// preserve positioning info
+				/*
 				for (Object s : gcm.getSpecies().get(selected).keySet()) {
 					
 					String k = s.toString();
@@ -744,22 +732,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						property.put(k, v);
 					}
 				}
+				*/
 				
 				if (!paramsOnly) {
 					
-					Species species = gcm.getSBMLDocument().getModel().getSpecies(selected);
 					species.setId(fields.get(GlobalConstants.ID).getValue());
 					species.setName(fields.get(GlobalConstants.NAME).getValue());
 					
-					/*
-					if (Utility.isValid(fields.get(GlobalConstants.INITIAL_STRING).getValue(), Utility.NUMstring)) {
-						species.setInitialAmount(Double.parseDouble(fields.get(GlobalConstants.INITIAL_STRING).getValue()));
-					} 
-					else {
-						String conc = fields.get(GlobalConstants.INITIAL_STRING).getValue();
-						species.setInitialConcentration(Double.parseDouble(conc.substring(1,conc.length()-1)));
-					}
-					*/
 					InitialAssignments.removeInitialAssignment(gcm.getSBMLDocument(), selected);
 					if (Utility.isValid(initialField.getText(), Utility.NUMstring)) {
 						species.setInitialAmount(Double.parseDouble(initialField.getText()));
@@ -820,34 +799,68 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 							species.setConversionFactor(convFactor);
 						}
 					}
+				} else {
+					PropertyField f = fields.get(GlobalConstants.INITIAL_STRING);
+					if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
+						if (Utility.isValid(f.getValue(), Utility.NUMstring)) {
+							species.setInitialAmount(Double.parseDouble(f.getValue()));
+						} 
+						else if (Utility.isValid(f.getValue(), Utility.CONCstring)) {
+							species.setInitialConcentration(Double.parseDouble(f.getValue().substring(1,f.getValue().length()-1)));
+						} 
+					} else {
+						if (refGCM.getSBMLDocument().getModel().getSpecies(selected).isSetInitialAmount()) {
+							species.setInitialAmount(refGCM.getSBMLDocument().getModel().getSpecies(selected).getInitialAmount());
+						} else if (refGCM.getSBMLDocument().getModel().getSpecies(selected).isSetInitialConcentration()) {
+							species.setInitialConcentration(refGCM.getSBMLDocument().getModel().getSpecies(selected).getInitialConcentration());
+						}
+
+					}
 				}
 			}
-
-			for (PropertyField f : fields.values()) {
-				
-				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
-					property.put(f.getKey(), f.getValue());
-				}
-				else {
-					property.remove(f.getKey());
-				}
+			String speciesType = typeBox.getSelectedItem().toString();
+			
+			double kd = -1;
+			PropertyField f = fields.get(GlobalConstants.KDECAY_STRING);
+			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
+				kd = Double.parseDouble(f.getValue());
+			}
+			if (degradation != null && !specDegradable.isSelected()) {
+				gcm.removeReaction(degradation.getId());
+			} else if (specDegradable.isSelected()) {
+				gcm.createDegradationReaction(selected, kd);		
+			} 
+			String kmdiffStr = null;
+			f = fields.get(GlobalConstants.MEMDIFF_STRING);
+			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
+				kmdiffStr = f.getValue();
+			}
+			if (diffusion != null && !specDiffusible.isSelected()) {
+				gcm.removeReaction(diffusion.getId());
+			} else if (specDiffusible.isSelected()) {
+				gcm.createDiffusionReaction(selected, kmdiffStr);		
+			} 
+			if (constitutive != null && !specConstitutive.isSelected()) {
+				gcm.removeReaction(constitutive.getId());
+			} else if (specConstitutive.isSelected()) {
+				gcm.createConstitutiveReaction(selected);		
+			} 
+			String KcStr = null;
+			f = fields.get(GlobalConstants.KCOMPLEX_STRING);
+			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
+				KcStr = f.getValue();
+			}
+			if (complex != null) {
+				gcm.createComplexReaction(selected, KcStr);
 			}
 			
-			//create a species type concatenated with diffusible and constitutive settings
-			String speciesType = "";
-			
-			speciesType += typeBox.getSelectedItem().toString();
-			if (specDiffusible.isSelected()) speciesType += GlobalConstants.DIFFUSIBLE;
-			if (specConstitutive.isSelected()) speciesType += GlobalConstants.SPASTIC;
-			
-			property.put(GlobalConstants.TYPE, speciesType);
-
+			String annotation = GlobalConstants.TYPE + "=" + speciesType;
 			// Add SBOL properties
 			for (SbolField sf : sbolFields.values()) {
-				
 				if (!sf.getText().equals(""))
-					property.put(sf.getType(), sf.getText());
+					annotation += "," + sf.getType() + "=" + sf.getText();
 			}
+			species.setAnnotation(annotation);
 			
 			if (selected != null && !selected.equals(newSpeciesID)) {
 				
@@ -856,17 +869,16 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				}
 				
 				gcm.changeSpeciesName(selected, newSpeciesID);
-				((DefaultListModel) influences.getModel()).clear();
-				influences.addAllItem(gcm.getInfluences().keySet());
+				// TODO: REMOVED 
+				/*
 				((DefaultListModel) conditions.getModel()).clear();
 				conditions.addAllItem(gcm.getConditions());
+				*/
 				((DefaultListModel) components.getModel()).clear();
-				
-				for (String c : gcm.getComponents().keySet()) {
-					
-					components.addItem(c + " "
-							+ gcm.getComponents().get(c).getProperty("gcm").replace(".gcm", "")
-							+ " " + gcm.getComponentPortMap(c));
+
+				for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
+					Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
+					components.addItem(submodel.getId() + " " + submodel.getModelRef() + " " + gcm.getComponentPortMap(submodel.getId()));
 				}
 			}
 			
@@ -874,7 +886,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				gcm.getUsedIDs().add(newSpeciesID);
 			}
 			
-			gcm.addSpecies(newSpeciesID, property);
+			//gcm.addSpecies(newSpeciesID, property);
 			
 			if (paramsOnly) {
 				if (fields.get(GlobalConstants.INITIAL_STRING).getState().equals(
@@ -885,7 +897,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 								fields.get(GlobalConstants.KDECAY_STRING).getStates()[1])
 						|| fields.get(GlobalConstants.MEMDIFF_STRING).getState().equals(
 								fields.get(GlobalConstants.MEMDIFF_STRING).getStates()[1])) {
-					
 					newSpeciesID += " Modified";
 				}
 			}
@@ -946,11 +957,9 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			
 			if (fields.get(GlobalConstants.MEMDIFF_STRING).getState().equals(
 					fields.get(GlobalConstants.MEMDIFF_STRING).getStates()[1])) {
-				
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
-				
 				updates += fields.get(GlobalConstants.ID).getValue() + "/"
 						+ GlobalConstants.MEMDIFF_STRING + " "
 						+ fields.get(GlobalConstants.MEMDIFF_STRING).getValue();
@@ -968,22 +977,15 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		if (e.getActionCommand().equals("comboBoxChanged") || 
 				e.getActionCommand().equals("constdiffChanged")) {
 			
-			String type = typeBox.getSelectedItem().toString();
-			if (specDiffusible.isSelected()) type += GlobalConstants.DIFFUSIBLE;
-			if (specConstitutive.isSelected()) type += GlobalConstants.SPASTIC;
-			
 			//disallow constant == true if diffusible or constitutive are selected
 			if (specConstitutive.isSelected() || specDiffusible.isSelected()) {
-				
 				specConstant.setEnabled(false);
 				specConstant.setSelectedItem("false");
 			}
 			else {
-				
 				specConstant.setEnabled(true);
 			}
-			
-			setType(type);
+			setFieldEnablings();
 		}
 
 		if (paramsOnly)
@@ -994,65 +996,26 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	 * enables/disables field based on the species type
 	 * @param type
 	 */
-	private void setType(String type) {
-		//input
-		if (type.equals(types[0])) {
-			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(false);
-			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(false);
-			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(false);
-			fields.get(GlobalConstants.KECDIFF_STRING).setEnabled(false);
-			fields.get(GlobalConstants.KECDECAY_STRING).setEnabled(false);
-		}
-		//internal
-		else if (type.equals(types[1])) {
-			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
-			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(false);
-			fields.get(GlobalConstants.KECDIFF_STRING).setEnabled(false);
-			fields.get(GlobalConstants.KECDECAY_STRING).setEnabled(false);
-		}
-		//output
-		else if (type.equals(types[2])) {
-			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
-			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(false);
-			fields.get(GlobalConstants.KECDIFF_STRING).setEnabled(false);
-			fields.get(GlobalConstants.KECDECAY_STRING).setEnabled(false);
-		}
-		else {
-			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(false);
-			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(false);
-			fields.get(GlobalConstants.KECDIFF_STRING).setEnabled(false);
-			fields.get(GlobalConstants.KECDECAY_STRING).setEnabled(false);
-		}
+	private void setFieldEnablings() {
+		fields.get(GlobalConstants.KDECAY_STRING).setEnabled(false);
+		fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(false);
+		fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(false);
 		
 		//diffusible
 		if (specDiffusible.isSelected()) {
-			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
 			fields.get(GlobalConstants.MEMDIFF_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KECDIFF_STRING).setEnabled(true);
-			fields.get(GlobalConstants.KECDECAY_STRING).setEnabled(true);
 		} 
-	}
-
-	private void loadProperties(Properties property) {
-		for (Object o : property.keySet()) {
-			if (fields.containsKey(o.toString())) {
-				fields.get(o.toString()).setValue(property.getProperty(o.toString()));
-				fields.get(o.toString()).setCustom();
-			} else if (sbolFields.containsKey(o.toString())) {
-				sbolFields.get(o.toString()).setText(property.getProperty(o.toString()));
-			}
+		if (specDegradable.isSelected()) {
+			fields.get(GlobalConstants.KDECAY_STRING).setEnabled(true);
+		}
+		if (complex != null) {
+			fields.get(GlobalConstants.KCOMPLEX_STRING).setEnabled(true);
 		}
 	}
 	
 	private String selected = "";
 
 	private PropertyList speciesList = null;
-
-	private PropertyList influences = null;
 	
 	private PropertyList conditions = null;
 	
@@ -1061,6 +1024,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private String[] options = { "Ok", "Cancel" };
 
 	private GCMFile gcm = null;
+	private GCMFile refGCM = null;
 
 	private JComboBox typeBox = null;
 	private JComboBox compartBox = null;
@@ -1074,6 +1038,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 	private JCheckBox specInteresting = null;
 	private JCheckBox specDiffusible = null;
 	private JCheckBox specConstitutive = null;
+	private JCheckBox specDegradable = null;
+	
+	private Species species = null;
+	private Reaction diffusion = null;
+	private Reaction constitutive = null;
+	private Reaction degradation = null;
+	private Reaction complex = null;
 	
 	private JTextField thresholdTextField = null;
 	
@@ -1086,7 +1057,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 
 	private boolean paramsOnly;
 	
-	private GCM2SBMLEditor gcmEditor;
+	private ModelEditor gcmEditor;
 	
 	private Gui biosim;
 }

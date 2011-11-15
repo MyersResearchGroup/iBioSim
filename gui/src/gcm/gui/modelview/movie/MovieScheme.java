@@ -12,6 +12,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
+import org.sbml.libsbml.Submodel;
+
 
 /**
  * this class contains all of the information related to a movie appearance scheme
@@ -222,30 +224,27 @@ public class MovieScheme {
 			//if the user selected to change components
 			if (cellType.equals(GlobalConstants.COMPONENT)) {
 			
-				for (Map.Entry<String, Properties> component : gcm.getComponents().entrySet()) {
-					
-					if (component != null) {
+				String modelRefId = gcm.getSBMLCompModel().getSubmodel(compID).getModelRef();
+				for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
+					Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
+					//if the component has the same GCM as the component whose appearance
+					//was just altered via the scheme chooser panel				
+					if (submodel.getModelRef().equals(modelRefId)) {
+							
+						speciesID = new String(submodel.getId() + "__" + speciesIDNoPrefix);
+							
+						//if (!allSpecies.contains(speciesID)) continue;
 						
-						//if the component has the same GCM as the component whose appearance
-						//was just altered via the scheme chooser panel				
-						if (component.getValue().getProperty("gcm")
-								.equals(gcm.getComponents().get(compID).getProperty("gcm"))) {
-							
-							speciesID = new String(component.getKey() + "__" + speciesIDNoPrefix);
-							
-							//if (!allSpecies.contains(speciesID)) continue;
-							
-							if (remove) {
-								schemeApply.apply(speciesID);
-							}
-							else {
-								//add a scheme with this other species that's part of the same GCM
-								//as the component
-								this.createOrUpdateSpeciesScheme(speciesID, null);
-								schemeApply.apply(speciesID);
-								speciesSchemes.get(speciesID).setMin(min);
-								speciesSchemes.get(speciesID).setMax(max);
-							}
+						if (remove) {
+							schemeApply.apply(speciesID);
+						}
+						else {
+							//add a scheme with this other species that's part of the same GCM
+							//as the component
+							this.createOrUpdateSpeciesScheme(speciesID, null);
+							schemeApply.apply(speciesID);
+							speciesSchemes.get(speciesID).setMin(min);
+							speciesSchemes.get(speciesID).setMax(max);
 						}
 					}
 				}
@@ -282,7 +281,7 @@ public class MovieScheme {
 				
 				//loop through every species in the gcm
 				//add/remove a scheme for that species
-				for (String specID : gcm.getSpecies().keySet()) {
+				for (String specID : gcm.getSpecies()) {
 					
 					if (remove) {
 						schemeApply.apply(specID);

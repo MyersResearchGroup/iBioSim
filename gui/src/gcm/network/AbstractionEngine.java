@@ -197,7 +197,7 @@ public class AbstractionEngine {
 		String promRate = "";
 		if (promoter.getActivators().size() != 0) {
 			double np = promoter.getStoich();
-			double ng = promoter.getPcount();
+			double ng = promoter.getInitialAmount();
 			double kb = promoter.getKbasal();
 			double[] KoArray = promoter.getKrnap();
 			double Ko;
@@ -257,8 +257,7 @@ public class AbstractionEngine {
 									+ promoter.getId(), nc, "dimensionless"));
 							kl.addParameter(Utility.Parameter("Ka__" + activator + "_"
 									+ promoter.getId(), Ka, GeneticNetwork.getMoleParameter(2)));
-							kl
-									.addParameter(Utility.Parameter("ka__" + activator + "_"
+							kl.addParameter(Utility.Parameter("ka__" + activator + "_"
 											+ promoter.getId(), ka, GeneticNetwork
 											.getMoleTimeParameter(1)));
 						}
@@ -323,7 +322,7 @@ public class AbstractionEngine {
 		}
 		else {
 			double np = promoter.getStoich();
-			double ng = promoter.getPcount();
+			double ng = promoter.getInitialAmount();
 			double ko = promoter.getKoc();
 			double[] KoArray = promoter.getKrnap();
 			double Ko;

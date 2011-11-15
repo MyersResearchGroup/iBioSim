@@ -51,7 +51,6 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitSpecies(SpeciesInterface specie) {
-		// TODO Auto-generated method stub
 
 	}
 
@@ -65,11 +64,16 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kf_r", kf,
-				GeneticNetwork.getMoleTimeParameter(2)));
-		if (coop > 1)
-			kl.addParameter(Utility.Parameter(krepString, krep, GeneticNetwork.getMoleParameter(2)));
-		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+		if (kf >= 0) {
+			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
+			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
+		}
+		if ((coop > 1)&&(krep >= 0))
+			kl.addParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
+		if (coop >= 0)
+			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+		else 
+			coop = document.getModel().getParameter(coopString).getValue();
 		String repExpression = "";
 		if (complexAbstraction && specie.isAbstractable()) {
 			repExpression = abstractComplex(specie.getId(), coop);
@@ -79,8 +83,6 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.addParameter(Utility.Parameter("kr_r", kr, GeneticNetwork
-				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(repExpression));
 		Utility.addReaction(document, r);
 	}
@@ -95,11 +97,16 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kf_r", kf,
-				GeneticNetwork.getMoleTimeParameter(2)));
-		if (coop > 1)
+		if (kf >= 0) {
+			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
+			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
+		}
+		if ((coop > 1)&&(krep >= 0))
 			kl.addParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
-		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+		if (coop >= 0)
+			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+		else 
+			coop = document.getModel().getParameter(coopString).getValue();
 		String repExpression = "";
 		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
 		if (complexAbstraction && specie.isSequesterable()) {
@@ -108,8 +115,6 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.addParameter(Utility.Parameter("kr_r", kr, GeneticNetwork
-				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(repExpression));
 		Utility.addReaction(document, r);
 	}
@@ -124,10 +129,16 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kf_r", kf, GeneticNetwork.getMoleTimeParameter(2)));
-		if (coop > 1)
-			kl.addParameter(Utility.Parameter(krepString, krep, GeneticNetwork.getMoleParameter(2)));
-		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+		if (kf >= 0) {
+			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
+			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
+		}
+		if ((coop > 1)&&(krep >= 0))
+			kl.addParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
+		if (coop >= 0)
+			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+		else 
+			coop = document.getModel().getParameter(coopString).getValue();
 		String repExpression = "";
 		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
 		if (complexAbstraction && specie.isSequesterable()) {
@@ -136,8 +147,6 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.addParameter(Utility.Parameter("kr_r", kr, GeneticNetwork
-				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(repExpression));
 		Utility.addReaction(document, r);
 	}
@@ -152,10 +161,16 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kf_r", kf, GeneticNetwork.getMoleTimeParameter(2)));
-		if (coop > 1)
-			kl.addParameter(Utility.Parameter(krepString, krep, GeneticNetwork.getMoleParameter(2)));
-		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+		if (kf >= 0) {
+			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
+			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
+		}
+		if ((coop > 1)&&(krep >= 0))
+			kl.addParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
+		if (coop >= 0)
+			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+		else 
+			coop = document.getModel().getParameter(coopString).getValue();
 		String repExpression = "";
 		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
 		if (complexAbstraction && specie.isSequesterable()) {
@@ -164,8 +179,6 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.addParameter(Utility.Parameter("kr_r", kr, GeneticNetwork
-				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(repExpression));
 		Utility.addReaction(document, r);
 	}
@@ -180,11 +193,16 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kf_r", kf,
-				GeneticNetwork.getMoleTimeParameter(2)));
-		if (coop > 1)
+		if (kf >= 0) {
+			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
+			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
+		}
+		if ((coop > 1)&&(krep >= 0))
 			kl.addParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
-		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+		if (coop >= 0)
+			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+		else 
+			coop = document.getModel().getParameter(coopString).getValue();
 		String repExpression = "";
 		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
 		if (complexAbstraction && specie.isSequesterable()) {
@@ -193,8 +211,6 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.addParameter(Utility.Parameter("kr_r", kr, GeneticNetwork
-				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(repExpression));
 		Utility.addReaction(document, r);
 	}
@@ -209,10 +225,16 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 		r.setReversible(true);
 		r.setFast(false);
 		kl = r.createKineticLaw();
-		kl.addParameter(Utility.Parameter("kf_r", kf, GeneticNetwork.getMoleTimeParameter(2)));
-		if (coop > 1)
-			kl.addParameter(Utility.Parameter(krepString, krep, GeneticNetwork.getMoleParameter(2)));
-		kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+		if (kf >= 0) {
+			kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_KREP_STRING, kf, GeneticNetwork.getMoleTimeParameter(2)));
+			kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_KREP_STRING, kr, GeneticNetwork.getMoleTimeParameter(1)));
+		}
+		if ((coop > 1)&&(krep >= 0))
+			kl.addParameter(Utility.Parameter(krepString, krep,	GeneticNetwork.getMoleParameter(2)));
+		if (coop >= 0)
+			kl.addParameter(Utility.Parameter(coopString, coop, "dimensionless"));
+		else 
+			coop = document.getModel().getParameter(coopString).getValue();
 		String repExpression = "";
 		//Checks for valid complex sequestering of repressing species if complex abstraction is selected
 		if (complexAbstraction && specie.isSequesterable()) {
@@ -221,8 +243,6 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 			repExpression = specie.getId();
 			r.addReactant(Utility.SpeciesReference(specie.getId(), coop));
 		}
-		kl.addParameter(Utility.Parameter("kr_r", kr, GeneticNetwork
-				.getMoleTimeParameter(1)));
 		kl.setFormula(generateLaw(repExpression));
 		Utility.addReaction(document, r);
 	}	
@@ -239,10 +259,12 @@ public class PrintRepressionBindingVisitor extends AbstractPrintVisitor {
 	private String generateLaw(String repExpression) {
 		String law = "";
 		if (coop == 1)
-			law = "kf_r*" + "(" + repExpression + ")" + "^" + coopString + "*" + promoter.getId() + "-kr_r*" + boundId;
+			law = GlobalConstants.FORWARD_KREP_STRING + "*" + "(" + repExpression + ")" + "^" + coopString + "*" + 
+					promoter.getId() + "-" + GlobalConstants.REVERSE_KREP_STRING + "*" + boundId;
 		else if (coop > 1)
-			law = "kf_r*" + "(" + krepString + ")" + "^" + "(" + coopString + "-1" + ")" + "*" + "(" + repExpression + ")" 
-			+ "^" + coopString + "*" + promoter.getId() + "-kr_r*" + boundId;
+			law = GlobalConstants.FORWARD_KREP_STRING + "*" + "(" + krepString + ")" + "^" + "(" + coopString + 
+			"-1" + ")" + "*" + "(" + repExpression + ")" + "^" + coopString + "*" + promoter.getId() + 
+			"-" + GlobalConstants.REVERSE_KREP_STRING + "*" + boundId;
 		return law;
 	}
 

@@ -395,10 +395,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 		else {
 			GCMFile gcm = new GCMFile(biosim.getRoot());
 			gcm.load(learnFile);
-			HashMap<String, Properties> speciesMap = gcm.getSpecies();
-			for (String s : speciesMap.keySet()) {
-				speciesList.add(s);
-			}
+			speciesList = gcm.getSpecies();
 			try {
 				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));
@@ -1340,10 +1337,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 		else {
 			GCMFile gcm = new GCMFile(biosim.getRoot());
 			gcm.load(learnFile);
-			HashMap<String, Properties> speciesMap = gcm.getSpecies();
-			for (String s : speciesMap.keySet()) {
-				speciesList.add(s);
-			}
+			speciesList = gcm.getSpecies();
 			try {
 				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				BufferedReader input = new BufferedReader(new FileReader(new File(learnFile)));

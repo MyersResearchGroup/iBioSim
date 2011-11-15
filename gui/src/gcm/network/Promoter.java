@@ -40,7 +40,31 @@ public class Promoter {
 	public void setId(String id) {
 		this.id = id;
 	}
+	
+	public String getPromoter() {
+		return promoter;
+	}
+	
+	public void setPromoter(String promoter) {
+		this.promoter = promoter;
+	}
+	
+	public String getTerminator() {
+		return terminator;
+	}
+	
+	public void setTerminator(String terminator) {
+		this.terminator = terminator;
+	}
 
+	public double getInitialAmount() {
+		return amount;
+	}
+	
+	public void setInitialAmount(double amount) {
+		this.amount = amount;
+	}
+	
 	/**
 	 * Creates a unique name
 	 * 
@@ -134,31 +158,49 @@ public class Promoter {
 		return repressionMap;
 	}
 	
+	/*
 	public double getPcount() {
 		return Double.parseDouble(getProperty(GlobalConstants.PROMOTER_COUNT_STRING));
 	}
+	*/
 	
 	/**
 	 * Get the activated, open complex (constitutive), and basal production
 	 * rate constants
 	 */
 	public double getKact() {
-		return Double.parseDouble(getProperty(GlobalConstants.ACTIVED_STRING));
+		return ka;
+	}
+
+	public void setKact(double ka) {
+		this.ka = ka;
+	}
+
+	public double getKbasal() {
+		return kb;
+	}
+
+	public void setKbasal(double kb) {
+		this.kb = kb;
 	}
 	
 	public double getKoc() {
-		return Double.parseDouble(getProperty(GlobalConstants.OCR_STRING));
+		return ko;
 	}
 	
-	public double getKbasal() {
-		return Double.parseDouble(getProperty(GlobalConstants.KBASAL_STRING));
+	public void setKoc(double ko) {
+		this.ko = ko;
 	}
-	
+		
 	/**
 	 * Gets the production stoichiometry
 	 */
 	public double getStoich() {
-		return Double.parseDouble(getProperty(GlobalConstants.STOICHIOMETRY_STRING));
+		return np;
+	}
+
+	public void setStoich(double np) {
+		this.np = np;
 	}
 	
 	/**
@@ -166,20 +208,52 @@ public class Promoter {
 	 * an activator TF bound
 	 */
 	public double[] getKrnap() {
-		String[] props = getProperty(GlobalConstants.RNAP_BINDING_STRING).split("/");
-		double[] params = new double[props.length];
-		for (int i = 0; i < props.length; i++)
-			params[i] = Double.parseDouble(props[i]);
-		return params;
+		/*
+		if (getProperty(GlobalConstants.RNAP_BINDING_STRING)!=null) {
+			String[] props = getProperty(GlobalConstants.RNAP_BINDING_STRING).split("/");
+			double[] params = new double[props.length];
+			for (int i = 0; i < props.length; i++)
+				params[i] = Double.parseDouble(props[i]);
+			return params;
+		} else {
+			double[] params = new double[1];
+			params[0] = -1;
+			return params;
+		}
+		*/
+		return Ko;
 	}
 	
-	public double[] getKArnap() {
-		String[] props = getProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING).split("/");
-		double[] params = new double[props.length];
-		for (int i = 0; i < props.length; i++)
-			params[i] = Double.parseDouble(props[i]);
-		return params;
+	public void setKrnap(double ko_f,double ko_r) {
+		Ko = new double[2];
+		Ko[0] = ko_f;
+		Ko[1] = ko_r;
 	}
+		
+	public double[] getKArnap() {
+		/*
+		if (getProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)!=null) {
+			String[] props = getProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING).split("/");
+			double[] params = new double[props.length];
+			for (int i = 0; i < props.length; i++)
+				params[i] = Double.parseDouble(props[i]);
+			return params;
+		} else {
+			double[] params = new double[1];
+			params[0] = -1;
+			return params;
+		}
+		*/
+		return Kao;
+	}
+	
+	
+	public void setKArnap(double kao_f,double kao_r) {
+		Kao = new double[2];
+		Kao[0] = kao_f;
+		Kao[1] = kao_r;
+	}
+
 	
 	/**
 	 * @param reactions
@@ -197,6 +271,7 @@ public class Promoter {
 		this.repressionMap = repressionMap;
 	}
 	
+	/*
 	public void setProperties(Properties properties) {
 		this.properties = properties;
 	}
@@ -227,11 +302,30 @@ public class Promoter {
 		}
 		return properties.get(key).toString();
 	}
+	*/
 	
-	protected Properties properties = null;
+	//protected Properties properties = null;
 
 	// id of promoter
 	protected String id = "";
+	
+	protected double amount;
+	
+	protected String promoter = "";
+	
+	protected String terminator = "";
+	
+	protected double ka;
+	
+	protected double kb;
+	
+	protected double ko;
+	
+	protected double np;
+	
+	protected double[] Ko;
+	
+	protected double[] Kao;
 
 	// Outputs of promoter
 	protected HashMap<String, SpeciesInterface> outputs;

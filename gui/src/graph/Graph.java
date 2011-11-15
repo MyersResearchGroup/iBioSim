@@ -8064,16 +8064,13 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			if (background.contains(".gcm")) {
 				GCMFile gcm = new GCMFile(biomodelsim.getRoot());
 				gcm.load(background);
-				HashMap<String, Properties> speciesMap = gcm.getSpecies();
-				for (String s : speciesMap.keySet()) {
-					learnSpecs.add(s);
-				}
+				learnSpecs = gcm.getSpecies();
 			}
 			else if (background.contains(".lpn")) {
 				LhpnFile lhpn = new LhpnFile(biomodelsim.log);
 				lhpn.load(background);
-				HashMap<String, Properties> speciesMap = lhpn.getContinuous();
 				/*
+				HashMap<String, Properties> speciesMap = lhpn.getContinuous();
 				 * for (String s : speciesMap.keySet()) { learnSpecs.add(s); }
 				 */
 				// ADDED BY SB.

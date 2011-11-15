@@ -11,9 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JComboBox;
-import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -33,15 +31,13 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 
 	private ArrayList<JComboBox> portmapBox = null;
 	
-	private JCheckBox compartmentBox = null;
-	
 	private ArrayList<String> types = null;
 
 	private GCMFile gcm = null;
 
 	private PropertyList componentsList = null;
 
-	private PropertyList influences = null;
+	//private PropertyList influences = null;
 
 	private HashMap<String, PropertyField> fields = null;
 
@@ -49,15 +45,15 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 
 	private String selectedComponent, oldPort;
 	
-	private GCM2SBMLEditor gcmEditor;
+	private ModelEditor gcmEditor;
 
 	public ComponentsPanel(String selected, PropertyList componentsList, PropertyList influences,
 			GCMFile gcm, String[] inputs, String[] outputs, String selectedComponent, String oldPort,
-			boolean paramsOnly, GCM2SBMLEditor gcmEditor) {
+			boolean paramsOnly, ModelEditor gcmEditor) {
 		super(new GridLayout(inputs.length + outputs.length + 2, 1));
 		this.selected = selected;
 		this.componentsList = componentsList;
-		this.influences = influences;
+		//this.influences = influences;
 		this.gcm = gcm;
 		this.gcmEditor = gcmEditor;
 		species = new String[inputs.length + outputs.length];
@@ -73,7 +69,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		fields = new HashMap<String, PropertyField>();
 		portmapBox = new ArrayList<JComboBox>();
 		types = new ArrayList<String>();
-		String[] specs = gcm.getSpecies().keySet().toArray(new String[0]);
+		String[] specs = gcm.getSpecies().toArray(new String[0]);
 		int j, k;
 		String index;
 		for (j = 1; j < specs.length; j++) {
@@ -107,22 +103,8 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 		fields.put(GlobalConstants.ID, field);
 		add(field);
 		
-		//Compartment check box
-		/*
-		compartmentBox = new JCheckBox();
-		compartmentBox.addActionListener(this);
-		compartmentBox.setEnabled(true);
-		JPanel compartmentPanel = new JPanel();
-		JLabel compartmentLabel = new JLabel("Compartment");
-		compartmentPanel.setLayout(new GridLayout(1, 2));
-		compartmentPanel.add(compartmentLabel);
-		compartmentPanel.add(compartmentBox);
-		add(compartmentPanel);
-		*/
-		
 		// Port Map field
-		add(new JLabel("Ports" /*GlobalConstants.PORTMAP*/));
-		int i = 0;
+		add(new JLabel("Ports"));
 		for (String s : inputs) {
 			JPanel tempPanel = new JPanel();
 			JLabel tempLabel = new JLabel(s);
@@ -131,9 +113,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			tempPanel.setLayout(new GridLayout(1, 2));
 			tempPanel.add(tempLabel);
 			tempPanel.add(tempLabel2);
-			//tempPanel.add(portmapBox.get(i));
 			add(tempPanel);
-			i++;
 		}
 		for (String s : outputs) {
 			JPanel tempPanel = new JPanel();
@@ -143,16 +123,15 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			tempPanel.setLayout(new GridLayout(1, 2));
 			tempPanel.add(tempLabel);
 			tempPanel.add(tempLabel2);
-			//tempPanel.add(portmapBox.get(i));
 			add(tempPanel);
-			i++;
 		}
 		
 		String oldName = null;
 		if (selected != null) {
 			oldName = selected;
-			Properties prop = gcm.getComponents().get(selected);
 			fields.get(GlobalConstants.ID).setValue(selected);
+			/*
+			Properties prop = gcm.getComponents().get(selected);
 			i = 0;
 			for (String s : species) {
 				if (prop.containsKey(s)) {
@@ -165,6 +144,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			}
 			// typeBox.setSelectedItem(prop.getProperty(GlobalConstants.TYPE));
 			loadProperties(prop);
+			*/
 		}
 
 		// setType(types[0]);
@@ -210,6 +190,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			Properties property = new Properties();
 			
 			// copy the old positioning values.
+			/*
 			if(oldName != null){
 				for(Object s:gcm.getComponents().get(oldName).keySet()){
 					String k = s.toString();
@@ -219,6 +200,7 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 					}	
 				}
 			}
+			*/
 			
 			for (PropertyField f : fields.values()) {
 				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
@@ -234,24 +216,15 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 				i++;
 			}
 			property.put("gcm", selectedComponent);
-			/*
-			if (compartmentBox.getSelectedObjects() != null)
-				property.put("compartment", "true");
-			else
-				property.put("compartment", "false");
-				*/
 			if (selected != null && !oldName.equals(id)) {
 				while (gcm.getUsedIDs().contains(selected)) {
 					gcm.getUsedIDs().remove(selected);
 				}
 				gcm.changeComponentName(oldName, id);
-				((DefaultListModel) influences.getModel()).clear();
-				influences.addAllItem(gcm.getInfluences().keySet());
 			}
 			if (!gcm.getUsedIDs().contains(id)) {
 				gcm.getUsedIDs().add(id);
 			}
-			gcm.addComponent(id, property);
 			String newPort = "(";
 			boolean added = false;
 			for (int j = 0; j < species.length; j++) {
@@ -273,7 +246,6 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 			gcmEditor.setDirty(true);
 		}
 		else if (value == JOptionPane.NO_OPTION) {
-			// System.out.println();
 			return true;
 		}
 		return true;
@@ -282,19 +254,6 @@ public class ComponentsPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("comboBoxChanged")) {
 			// setType(typeBox.getSelectedItem().toString());
-		}
-	}
-
-	private void loadProperties(Properties property) {
-		/*
-		if (property.containsKey("compartment"))
-			compartmentBox.setSelected(Boolean.parseBoolean(property.get("compartment").toString()));
-			*/
-		for (Object o : property.keySet()) {
-			if (fields.containsKey(o.toString())) {
-				fields.get(o.toString()).setValue(property.getProperty(o.toString()));
-				fields.get(o.toString()).setCustom();
-			}
 		}
 	}
 	

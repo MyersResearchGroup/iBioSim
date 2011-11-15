@@ -35,7 +35,7 @@ public class EditorPopupMenu extends JPopupMenu
 		addSeparator();
 		
 		if (cell != null && editor.getGraph().getCellType(cell).equals(GlobalConstants.COMPONENT)) {
-			add(new ComponentAction("Open Component in New Tab", editor.getGraph().getCellProperties(cell).getProperty("gcm"), biosim));
+			add(new ComponentAction("Open Component in New Tab", editor.getGraph().getModelFileName(cell.getId()), biosim));
 			addSeparator();
 		}
 

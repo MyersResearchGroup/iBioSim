@@ -44,7 +44,6 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitSpecies(SpeciesInterface specie) {
-		// TODO Auto-generated method stub
 
 	}
 	
@@ -165,7 +164,7 @@ public class PrintActivatedProductionVisitor extends AbstractPrintVisitor {
 	private double act;
 	private double stoc;
 
-	private String actString = GlobalConstants.ACTIVED_STRING;
+	private String actString = GlobalConstants.ACTIVATED_STRING;
 	
 	private String speciesName;
 	private String reactionName;

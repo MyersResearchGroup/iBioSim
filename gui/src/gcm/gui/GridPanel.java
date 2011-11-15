@@ -39,7 +39,7 @@ public class GridPanel extends JPanel implements ActionListener{
 	 * @param gcm2sbml the gui/editor
 	 * @param gcm the gcm file to work with
 	 */
-	private GridPanel(GCM2SBMLEditor gcm2sbml, GCMFile gcm, boolean editMode) {
+	private GridPanel(ModelEditor gcm2sbml, GCMFile gcm, boolean editMode) {
 		
 		//call the JPanel constructor to make this a border layout panel
 		super(new BorderLayout());
@@ -70,7 +70,7 @@ public class GridPanel extends JPanel implements ActionListener{
 	 * 
 	 * @return if a population is being built or not
 	 */
-	public static boolean showGridPanel(GCM2SBMLEditor gcm2sbml, GCMFile gcm, boolean editMode) {
+	public static boolean showGridPanel(ModelEditor gcm2sbml, GCMFile gcm, boolean editMode) {
 		
 		new GridPanel(gcm2sbml, gcm, editMode);
 		
@@ -252,17 +252,16 @@ public class GridPanel extends JPanel implements ActionListener{
 				
 				//name of the component
 				String component = (String)componentChooser.getSelectedItem();
-				
 				GCMFile compGCM = new GCMFile(gcm.getPath());
 				
 				//don't allow dropping a grid component
-				if (compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + component)) {
+				if (!component.equals("none") &&
+					compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + component)) {
 					
 					JOptionPane.showMessageDialog(Gui.frame,
-							"Dropping grid components is disallowed.\n" +
-							"Please choose a different component.",
-							"Cannot drop a grid component", JOptionPane.ERROR_MESSAGE);
-					
+						"Dropping grid components is disallowed.\n" +
+						"Please choose a different component.",
+						"Cannot drop a grid component", JOptionPane.ERROR_MESSAGE);
 					continue;
 				}
 				else {		

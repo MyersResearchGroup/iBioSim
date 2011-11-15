@@ -16,15 +16,20 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Properties;
 import java.util.Vector;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.swing.JOptionPane;
 
+import org.sbml.libsbml.CompartmentGlyph;
+import org.sbml.libsbml.Layout;
+import org.sbml.libsbml.LineSegment;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Reaction;
+import org.sbml.libsbml.ReactionGlyph;
+import org.sbml.libsbml.SpeciesGlyph;
 import org.sbml.libsbml.SpeciesReference;
+import org.sbml.libsbml.SpeciesReferenceGlyph;
+import org.sbml.libsbml.TextGlyph;
 
 import main.Gui;
 
@@ -66,7 +71,6 @@ public class BioGraph extends mxGraph {
 	
 	// only bother the user about bad promoters once. 
 	//This should be improved to happen once per GCM file if this will be a common error.
-	private int _badPromoters = 0;
 	public boolean isBuilding = false;
 	
 	// Keep track of how many elements did not have positioning info.
@@ -148,7 +152,7 @@ public class BioGraph extends mxGraph {
 		addGridCells();
 		
 		// add species
-		for(String sp : gcm.getSpecies().keySet()){
+		for(String sp : gcm.getSpecies()){
 			
 			if(createGraphSpeciesFromModel(sp))
 				needsPositioning = true;
@@ -158,49 +162,59 @@ public class BioGraph extends mxGraph {
 		
 		int x = 225;
 		int y = 50;
+		
+		// add reactions
+		Layout layout = gcm.createLayout();
 		for (int i = 0; i < m.getNumReactions(); i++) {
 			
 			Reaction r = m.getReaction(i);
+			if (r.getAnnotationString().contains("Production")) continue;
+			if (r.getAnnotationString().contains("Complex")) continue;
+			if (r.getAnnotationString().contains("Degradation")) continue;
+			if (r.getAnnotationString().contains("Diffusion")) continue;
+			if (r.getAnnotationString().contains("Constitutive")) continue;
 			
-			if (gcm.getReactions().get(r.getId()) == null) {
-				
+			if (layout.getReactionGlyph(r.getId()) != null || r.getId().startsWith("Production_")) {
+				if(!r.getId().startsWith("Production_") && createGraphReactionFromModel(r.getId()))
+					needsPositioning = true;			
+			} else {
 				if (r.getNumModifiers() > 0 || (r.getNumReactants()>1 && r.getNumProducts()>1) ||
 					r.getNumReactants()==0 || r.getNumProducts()==0) {
-					
-					Properties prop = new Properties();
-					prop.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_REACTION_WIDTH));
-					prop.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_REACTION_HEIGHT));
-					gcm.centerVertexOverPoint(prop, x, y);
+					ReactionGlyph reactionGlyph = gcm.getSBMLLayout().getLayout("iBioSim").createReactionGlyph();
+					reactionGlyph.setId(r.getId());
+					reactionGlyph.setReactionId(r.getId());
+					reactionGlyph.getBoundingBox().setX(x);
+					reactionGlyph.getBoundingBox().setY(y);
+					reactionGlyph.getBoundingBox().setWidth(GlobalConstants.DEFAULT_REACTION_WIDTH);
+					reactionGlyph.getBoundingBox().setHeight(GlobalConstants.DEFAULT_REACTION_HEIGHT);
+					TextGlyph textGlyph = null;
+					if (layout.getTextGlyph(r.getId())!=null) {
+						textGlyph = layout.getTextGlyph(r.getId());
+					} else {
+						textGlyph = layout.createTextGlyph();
+					}
+					textGlyph.setId(r.getId());
+					textGlyph.setGraphicalObjectId(r.getId());
+					textGlyph.setText(r.getId());
+					textGlyph.setBoundingBox(reactionGlyph.getBoundingBox());
 					x+=50;
 					y+=25;
-					gcm.getReactions().put(r.getId(), prop);
+					if(createGraphReactionFromModel(r.getId()))
+						needsPositioning = true;			
 				}
 			}
 		}
-		
-		// add reactions
-		for(String sp : gcm.getReactions().keySet()){ 
-			
-			if(createGraphReactionFromModel(sp))
-				needsPositioning = true;
-		}
 
 		// add all components
-		for(String comp : gcm.getComponents().keySet()){
-			
+		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
+			String comp = gcm.getSBMLCompModel().getSubmodel(i).getId();
 			if(createGraphComponentFromModel(comp))
 				needsPositioning = true;
 		}
 		
 		// add all the drawn promoters
-		for(String prom : gcm.getPromoters().keySet()){
-			
-			Properties pprop = gcm.getPromoters().get(prom);
-			
-			if(pprop.get(GlobalConstants.EXPLICIT_PROMOTER) != null && 
-					pprop.get(GlobalConstants.EXPLICIT_PROMOTER).equals(GlobalConstants.TRUE)){
-				//System.out.printf("Please draw this promoter!");
-				
+		for(String prom : gcm.getPromoters()){
+			if (gcm.isPromoterExplicit(prom)) {
 				if(createGraphDrawnPromoterFromModel(prom))
 					needsPositioning = true;
 			}
@@ -209,7 +223,125 @@ public class BioGraph extends mxGraph {
 		boolean needsRedrawn = false;
 		
 		// add all the edges. 
-		for(String inf : gcm.getInfluences().keySet()){
+		for (int i = 0; i < m.getNumReactions(); i++) {
+			Reaction r = m.getReaction(i);
+			if (r.getAnnotationString().contains("Complex")) {
+				for (int j = 0; j < r.getNumReactants(); j++) {
+					String id = r.getReactant(j).getSpecies() + "+>" + r.getProduct(0).getSpecies();
+					this.insertEdge(this.getDefaultParent(), id, "", this.getSpeciesCell(r.getReactant(j).getSpecies()), 
+							this.getSpeciesCell(r.getProduct(0).getSpecies()));
+					String style = "COMPLEX";
+					mxCell cell = this.getInfluence(id);
+					cell.setStyle(style);
+				}
+			} else if (r.getAnnotationString().contains("Production")) {
+				String promoterId = r.getId().substring(r.getId().indexOf("_")+1);
+				if (gcm.isPromoterExplicit(promoterId)) {
+					for (int j = 0; j < r.getNumProducts(); j++) {
+						if (r.getProduct(j).getSpecies().endsWith("_mRNA")) continue;
+						String id = promoterId + "->" + r.getProduct(j).getSpecies();
+						mxCell production = (mxCell)this.insertEdge(this.getDefaultParent(), id, "", 
+								this.getDrawnPromoterCell(promoterId), 
+								this.getSpeciesCell(r.getProduct(j).getSpecies()));
+						production.setStyle("PRODUCTION");
+					}
+					for (int j = 0; j < r.getNumModifiers(); j++) {
+						if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.REPRESSION)) {
+							String id = r.getModifier(j).getSpecies() + "-|" + promoterId;
+							this.insertEdge(this.getDefaultParent(), id, "", 
+									this.getSpeciesCell(r.getModifier(j).getSpecies()), 
+									this.getDrawnPromoterCell(promoterId));
+							String style = "REPRESSION";
+							mxCell cell = this.getInfluence(id);
+							cell.setStyle(style);
+						} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.ACTIVATION)) {
+							String id = r.getModifier(j).getSpecies() + "->" + promoterId;
+							this.insertEdge(this.getDefaultParent(), id, "", 
+									this.getSpeciesCell(r.getModifier(j).getSpecies()), 
+									this.getDrawnPromoterCell(promoterId));
+							String style = "ACTIVATION";
+							mxCell cell = this.getInfluence(id);
+							cell.setStyle(style);
+						} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.NOINFLUENCE)) {
+							String id = r.getModifier(j).getSpecies() + "x>" + promoterId;
+							this.insertEdge(this.getDefaultParent(), id, "", 
+									this.getSpeciesCell(r.getModifier(j).getSpecies()), 
+									this.getDrawnPromoterCell(promoterId));
+							String style = "NOINFLUENCE";
+							mxCell cell = this.getInfluence(id);
+							cell.setStyle(style);
+						} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.REGULATION)) {
+							String id = r.getModifier(j).getSpecies() + "-|" + promoterId;
+							this.insertEdge(this.getDefaultParent(), id, "", 
+									this.getSpeciesCell(r.getModifier(j).getSpecies()),
+									this.getDrawnPromoterCell(promoterId));
+							String style = "REPRESSION";
+							mxCell cell = this.getInfluence(id);
+							cell.setStyle(style);
+							id = r.getModifier(j).getSpecies() + "->" + promoterId;
+							this.insertEdge(this.getDefaultParent(), id, "", 
+									this.getSpeciesCell(r.getModifier(j).getSpecies()), 
+									this.getDrawnPromoterCell(promoterId));
+							style = "ACTIVATION";
+							cell = this.getInfluence(id);
+							cell.setStyle(style);
+						}
+					}
+				} else {
+					for (int j = 0; j < r.getNumModifiers(); j++) {
+						for (int k = 0; k < r.getNumProducts(); k++) {
+							if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.REPRESSION)) {
+								String id = r.getModifier(j).getSpecies() + "-|" + r.getProduct(k).getSpecies() + "," + promoterId;
+								this.insertEdge(this.getDefaultParent(), id, "", 
+										this.getSpeciesCell(r.getModifier(j).getSpecies()), 
+										this.getSpeciesCell(r.getProduct(k).getSpecies()));
+								String style = "REPRESSION";
+								mxCell cell = this.getInfluence(id);
+								cell.setStyle(style);
+								cell.setValue(promoterId);
+							} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.ACTIVATION)) {
+								String id = r.getModifier(j).getSpecies() + "->" + r.getProduct(k).getSpecies() + "," + promoterId;
+								this.insertEdge(this.getDefaultParent(), id, "", 
+										this.getSpeciesCell(r.getModifier(j).getSpecies()), 
+										this.getSpeciesCell(r.getProduct(k).getSpecies()));
+								String style = "ACTIVATION";
+								mxCell cell = this.getInfluence(id);
+								cell.setStyle(style);
+								cell.setValue(promoterId);
+							} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.NOINFLUENCE)) {
+								String id = r.getModifier(j).getSpecies() + "x>" + r.getProduct(k).getSpecies() + "," + promoterId;
+								this.insertEdge(this.getDefaultParent(), id, "", 
+										this.getSpeciesCell(r.getModifier(j).getSpecies()), 
+										this.getSpeciesCell(r.getProduct(k).getSpecies()));
+								String style = "NOINFLUENCE";
+								mxCell cell = this.getInfluence(id);
+								cell.setStyle(style);
+								cell.setValue(promoterId);
+							} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.REGULATION)) {
+								String id = r.getModifier(j).getSpecies() + "-|" + r.getProduct(k).getSpecies() + "," + promoterId;
+								this.insertEdge(this.getDefaultParent(), id, "", 
+										this.getSpeciesCell(r.getModifier(j).getSpecies()), 
+										this.getSpeciesCell(r.getProduct(k).getSpecies()));
+								String style = "REPRESSION";
+								mxCell cell = this.getInfluence(id);
+								cell.setStyle(style);
+								cell.setValue(promoterId);
+								id = r.getModifier(j).getSpecies() + "->" + r.getProduct(k).getSpecies() + "," + promoterId;
+								this.insertEdge(this.getDefaultParent(), id, "", 
+										this.getSpeciesCell(r.getModifier(j).getSpecies()), 
+										this.getSpeciesCell(r.getProduct(k).getSpecies()));
+								style = "ACTIVATION";
+								cell = this.getInfluence(id);
+								cell.setStyle(style);
+								cell.setValue(promoterId);
+							}
+						}
+					}
+				}
+			}
+		}
+		/*
+ 		for(String inf : gcm.getInfluences().keySet()){
 			
 			String ins = GCMFile.getInput(inf);
 			String outs = GCMFile.getOutput(inf);
@@ -228,16 +360,12 @@ public class BioGraph extends mxGraph {
 					continue;
 				}
 				
-				Properties promProp = gcm.getPromoters().get(promName);
-				
 				// If an edge is found with a drawn promoter, 
 				// this is a recoverable error case. Flag the promoter as drawn, re-call this 
 				// function and bail. This will ensure that legacy gcm files and files
 				// created with the other interface get built correctly.
 				// make sure the promoter is set to be drawn. If not, set it and try this function again.
-				if(!promProp.getProperty(GlobalConstants.EXPLICIT_PROMOTER, "").equals(GlobalConstants.TRUE)){
-					
-					promProp.setProperty(GlobalConstants.EXPLICIT_PROMOTER, GlobalConstants.TRUE);
+				if(!gcm.isPromoterExplicit(promName)) {
 					needsRedrawn = true;
 					// we can't draw this edge because the promoter isn't drawn. 
 					// It will be drawn in the next pass.
@@ -272,14 +400,22 @@ public class BioGraph extends mxGraph {
 				updateInfluenceVisuals(inf);
 			}
 		}
+		*/
 		
 		//add reactions
 		for (int i = 0; i < m.getNumReactions(); i++) {
 			
 			Reaction r = m.getReaction(i);
+			if (r.getAnnotationString().contains("Production")) continue;
+			if (r.getAnnotationString().contains("Complex")) continue;
+			if (r.getAnnotationString().contains("Degradation")) continue;
+			if (r.getAnnotationString().contains("Diffusion")) continue;
+			if (r.getAnnotationString().contains("Constitutive")) continue;
 			
-			if (gcm.getReactions().get(r.getId()) != null) {
-				
+			ReactionGlyph reactionGlyph = gcm.getSBMLLayout().getLayout("iBioSim").getReactionGlyph(r.getId());
+			if (reactionGlyph != null) {
+				while (reactionGlyph.getNumSpeciesReferenceGlyphs() > 0) 
+					reactionGlyph.removeSpeciesReferenceGlyph(0);
 				for (int j = 0; j < r.getNumReactants(); j++) {
 					
 					SpeciesReference s = r.getReactant(j);
@@ -287,7 +423,7 @@ public class BioGraph extends mxGraph {
 							s.getSpecies() + "__" + r.getId(), "", 
 							this.getSpeciesCell(s.getSpecies()), 
 							this.getReactionsCell(r.getId()));
-					
+
 					if (r.getReversible()) {
 						
 						if (s.getStoichiometry() != 1.0)
@@ -304,6 +440,16 @@ public class BioGraph extends mxGraph {
 						
 						cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
 					}
+					String reactant = s.getSpecies();
+					SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph();
+					speciesReferenceGlyph.setId(reactant);
+					speciesReferenceGlyph.setSpeciesGlyphId(reactant);
+					speciesReferenceGlyph.setRole("substrate");
+					/*
+					LineSegment lineSegment = speciesReferenceGlyph.createLineSegment();
+					lineSegment.setStart(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY());
+					lineSegment.setEnd(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY());
+					*/
 				}
 				
 				for (int j = 0; j < r.getNumModifiers(); j++) {
@@ -313,11 +459,21 @@ public class BioGraph extends mxGraph {
 							s.getSpecies() + "__" + r.getId(), "", 
 							this.getSpeciesCell(s.getSpecies()), 
 							this.getReactionsCell(r.getId()));
-					
+
 					if (r.getReversible())
 						cell.setValue("m");
 					
 					cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.NONE);
+					String modifier = s.getSpecies();
+					SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph();
+					speciesReferenceGlyph.setId(modifier);
+					speciesReferenceGlyph.setSpeciesGlyphId(modifier);
+					speciesReferenceGlyph.setRole("modifier");
+					/*
+					LineSegment lineSegment = speciesReferenceGlyph.createLineSegment();
+					lineSegment.setStart(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY());
+					lineSegment.setEnd(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY());
+					*/
 				}
 				
 				for (int k = 0; k < r.getNumProducts(); k++) {
@@ -345,6 +501,16 @@ public class BioGraph extends mxGraph {
 						
 						cell.setStyle("REACTION_EDGE;" + mxConstants.STYLE_ENDARROW + "=" + mxConstants.ARROW_OPEN);
 					}
+					String product = s.getSpecies();
+					SpeciesReferenceGlyph speciesReferenceGlyph = reactionGlyph.createSpeciesReferenceGlyph();
+					speciesReferenceGlyph.setId(product);
+					speciesReferenceGlyph.setSpeciesGlyphId(product);
+					speciesReferenceGlyph.setRole("product");
+					/*
+					LineSegment lineSegment = speciesReferenceGlyph.createLineSegment();
+					lineSegment.setStart(cell.getSource().getGeometry().getCenterX(),cell.getSource().getGeometry().getCenterY());
+					lineSegment.setEnd(cell.getTarget().getGeometry().getCenterX(),cell.getTarget().getGeometry().getCenterY());
+					*/
 				}
 			} 
 			else {
@@ -384,7 +550,7 @@ public class BioGraph extends mxGraph {
 		if(needsRedrawn){
 			return buildGraph();
 		}
-		
+
 		return needsPositioning;
 	}
 	
@@ -404,38 +570,145 @@ public class BioGraph extends mxGraph {
 		// build a temporary structure mapping sets of edge endpoints to edges 
 		
 		// map influences
-		for(String inf:gcm.getInfluences().keySet()){
-			
-			String endA = GCMFile.getInput(inf);
-			String endB = GCMFile.getOutput(inf);
-			
-			// ignore anything connected directly to a drawn promoter
-			if(endA.equals(GlobalConstants.NONE) || endB.equals(GlobalConstants.NONE))
-				continue;
-			
-			if(endA.compareTo(endB) > 0){
-				// swap the strings
-				String t = endA;
-				endA = endB;
-				endB = t;
-			}
-			
-			String key = endA + " " + endB;
-			mxCell cell = this.getInfluence(inf);
-			
-			if(edgeHash.containsKey(key) == false)
-				edgeHash.put(key, new Vector<mxCell>());
-			
-			edgeHash.get(key).add(cell);
-		}
-		
 		Model m = gcm.getSBMLDocument().getModel();
+		for (int i = 0; i < m.getNumReactions(); i++) {
+			Reaction r = m.getReaction(i);
+			if (r.getAnnotationString().contains("Complex")) {
+				for (int j = 0; j < r.getNumReactants(); j++) {
+					String endA = r.getReactant(j).getSpecies();
+					String endB = r.getProduct(0).getSpecies();
+					String id = r.getReactant(j).getSpecies() + "+>" + r.getProduct(0).getSpecies();
+					if(endA.compareTo(endB) > 0){
+						// swap the strings
+						String t = endA;
+						endA = endB;
+						endB = t;
+					}
+					String key = endA + " " + endB;
+					mxCell cell = this.getInfluence(id);
+					if(edgeHash.containsKey(key) == false)
+						edgeHash.put(key, new Vector<mxCell>());
+					edgeHash.get(key).add(cell);
+				}
+			} else if (r.getAnnotationString().contains("Production")) {
+				String promoterId = r.getId().substring(r.getId().indexOf("_")+1);
+				if (!gcm.isPromoterExplicit(promoterId)) {
+					for (int j = 0; j < r.getNumModifiers(); j++) {
+						for (int k = 0; k < r.getNumProducts(); k++) {
+							String endA = r.getModifier(j).getSpecies();
+							String endB = r.getProduct(k).getSpecies();
+							if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.REPRESSION)) {
+								String id = r.getModifier(j).getSpecies() + "-|" + r.getProduct(k).getSpecies() + "," + promoterId;
+								if(endA.compareTo(endB) > 0){
+									// swap the strings
+									String t = endA;
+									endA = endB;
+									endB = t;
+								}
+								String key = endA + " " + endB;
+								mxCell cell = this.getInfluence(id);
+								if(edgeHash.containsKey(key) == false)
+									edgeHash.put(key, new Vector<mxCell>());
+								edgeHash.get(key).add(cell);
+							} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.ACTIVATION)) {
+								String id = r.getModifier(j).getSpecies() + "->" + r.getProduct(k).getSpecies() + "," + promoterId;
+								if(endA.compareTo(endB) > 0){
+									// swap the strings
+									String t = endA;
+									endA = endB;
+									endB = t;
+								}
+								String key = endA + " " + endB;
+								mxCell cell = this.getInfluence(id);
+								if(edgeHash.containsKey(key) == false)
+									edgeHash.put(key, new Vector<mxCell>());
+								edgeHash.get(key).add(cell);
+							} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.NOINFLUENCE)) {
+								String id = r.getModifier(j).getSpecies() + "x>" + r.getProduct(k).getSpecies() + "," + promoterId;
+								if(endA.compareTo(endB) > 0){
+									// swap the strings
+									String t = endA;
+									endA = endB;
+									endB = t;
+								}
+								String key = endA + " " + endB;
+								mxCell cell = this.getInfluence(id);
+								if(edgeHash.containsKey(key) == false)
+									edgeHash.put(key, new Vector<mxCell>());
+								edgeHash.get(key).add(cell);
+							} else if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.REGULATION)) {
+								String id = r.getModifier(j).getSpecies() + "->" + r.getProduct(k).getSpecies() + "," + promoterId;
+								if(endA.compareTo(endB) > 0){
+									// swap the strings
+									String t = endA;
+									endA = endB;
+									endB = t;
+								}
+								String key = endA + " " + endB;
+								mxCell cell = this.getInfluence(id);
+								if(edgeHash.containsKey(key) == false)
+									edgeHash.put(key, new Vector<mxCell>());
+								edgeHash.get(key).add(cell);
+								id = r.getModifier(j).getSpecies() + "-|" + r.getProduct(k).getSpecies() + "," + promoterId;
+								if(endA.compareTo(endB) > 0){
+									// swap the strings
+									String t = endA;
+									endA = endB;
+									endB = t;
+								}
+								key = endA + " " + endB;
+								cell = this.getInfluence(id);
+								if(edgeHash.containsKey(key) == false)
+									edgeHash.put(key, new Vector<mxCell>());
+								edgeHash.get(key).add(cell);
+							}  
+						}
+					}
+				} else {
+					for (int j = 0; j < r.getNumModifiers(); j++) {
+						String endA = r.getModifier(j).getSpecies();
+						String endB = promoterId;
+						if (r.getModifier(j).getAnnotationString().contains(GlobalConstants.REGULATION)) {
+							String id = r.getModifier(j).getSpecies() + "->" + promoterId;
+							if(endA.compareTo(endB) > 0){
+								// swap the strings
+								String t = endA;
+								endA = endB;
+								endB = t;
+							}
+							String key = endA + " " + endB;
+							mxCell cell = this.getInfluence(id);
+							if(edgeHash.containsKey(key) == false)
+								edgeHash.put(key, new Vector<mxCell>());
+							edgeHash.get(key).add(cell);
+							id = r.getModifier(j).getSpecies() + "-|" + promoterId;
+							if(endA.compareTo(endB) > 0){
+								// swap the strings
+								String t = endA;
+								endA = endB;
+								endB = t;
+							}
+							key = endA + " " + endB;
+							cell = this.getInfluence(id);
+							if(edgeHash.containsKey(key) == false)
+								edgeHash.put(key, new Vector<mxCell>());
+							edgeHash.get(key).add(cell);
+						}
+					}
+				}
+			}
+		}
 		
 		for (int i = 0; i < m.getNumReactions(); i++) {
 			
 			Reaction r = m.getReaction(i);
+			if (r.getAnnotationString().contains("Production")) continue;
+			if (r.getAnnotationString().contains("Complex")) continue;
+			if (r.getAnnotationString().contains("Degradation")) continue;
+			if (r.getAnnotationString().contains("Diffusion")) continue;
+			if (r.getAnnotationString().contains("Constitutive")) continue;
 			
-			if (gcm.getReactions().get(r.getId()) != null) {
+			if (gcm.getSBMLLayout().getLayout("iBioSim").getReactionGlyph(r.getId()) != null) {
 				
 				for (int j = 0; j < r.getNumReactants(); j++) {
 					
@@ -538,32 +811,27 @@ public class BioGraph extends mxGraph {
 		}
 		
 		// map components edges
-		Pattern getPropNamePattern = Pattern.compile("^type_([\\w\\_\\d]+)");
-		
-		for(String compName:gcm.getComponents().keySet()){
-
-			Properties comp = gcm.getComponents().get(compName);
-			
-			for(Object propNameO:comp.keySet()){
-				
-				String propName = propNameO.toString();
-				
-				if(propName.startsWith("type_")){
-					
-					Matcher matcher = getPropNamePattern.matcher(propName);
-					matcher.find();
-					String compInternalName = matcher.group(1);
-					String targetName = comp.get(compInternalName).toString();
-					String type = comp.get(propName).toString(); // Input or Output
-					String key = compName + " "+type+" " + targetName;
-					mxCell cell = componentsConnectionsToMxCellMap.get(key);
-					String simpleKey = compName + " " + targetName;
-					
-					if(edgeHash.containsKey(simpleKey) == false)
-						edgeHash.put(simpleKey, new Vector<mxCell>());
-					
-					edgeHash.get(simpleKey).add(cell);
-				}
+		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
+			String compName = gcm.getSBMLCompModel().getSubmodel(i).getId();
+			for (String propName : gcm.getInputs(compName).keySet()) {
+				String targetName = gcm.getInputs(compName).get(propName);
+				String type = "Input";
+				String key = compName + " "+type+" " + targetName;
+				mxCell cell = componentsConnectionsToMxCellMap.get(key);
+				String simpleKey = compName + " " + targetName;
+				if(edgeHash.containsKey(simpleKey) == false)
+					edgeHash.put(simpleKey, new Vector<mxCell>());
+				edgeHash.get(simpleKey).add(cell);
+			}
+			for (String propName : gcm.getOutputs(compName).keySet()) {
+				String targetName = gcm.getOutputs(compName).get(propName);
+				String type = "Output";
+				String key = compName + " "+type+" " + targetName;
+				mxCell cell = componentsConnectionsToMxCellMap.get(key);
+				String simpleKey = compName + " " + targetName;
+				if(edgeHash.containsKey(simpleKey) == false)
+					edgeHash.put(simpleKey, new Vector<mxCell>());
+				edgeHash.get(simpleKey).add(cell);
 			}
 		}
 		
@@ -681,13 +949,10 @@ public class BioGraph extends mxGraph {
 					
 					String id = "ROW" + row + "_COL" + col;
 					
-					Properties prop = new Properties();
-					prop.setProperty("Type", GlobalConstants.GRID_RECTANGLE);
-					
 					double currX = 15 + col*gridWidth;
 					double currY = 15 + row*gridHeight;
 					
-					CellValueObject cvo = new CellValueObject(id, prop);
+					CellValueObject cvo = new CellValueObject(id, "Rectangle", null);
 					
 					Object vertex = this.insertVertex(this.getDefaultParent(), id, cvo, currX, currY, gridWidth, gridHeight);
 					
@@ -735,47 +1000,194 @@ public class BioGraph extends mxGraph {
 	 */
 	public void updateInternalPosition(mxCell cell){
 		
-		Properties prop = ((CellValueObject)cell.getValue()).prop;
 		mxGeometry geom = cell.getGeometry();
-		prop.setProperty("graphx", String.valueOf(geom.getX()));
-		prop.setProperty("graphy", String.valueOf(geom.getY()));
-		prop.setProperty("graphwidth", String.valueOf(geom.getWidth()));
-		prop.setProperty("graphheight", String.valueOf(geom.getHeight()));
+		if (getCellType(cell).equals(GlobalConstants.SPECIES) ||
+			getCellType(cell).equals(GlobalConstants.PROMOTER)) {
+			Layout layout = null;
+			if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
+				layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+			} else {
+				layout = gcm.getSBMLLayout().createLayout();
+				layout.setId("iBioSim");
+			}
+			SpeciesGlyph speciesGlyph = null;
+			if (layout.getSpeciesGlyph((String)cell.getId())!=null) {
+				speciesGlyph = layout.getSpeciesGlyph((String)cell.getId());
+			} else {
+				speciesGlyph = layout.createSpeciesGlyph();
+				speciesGlyph.setId((String)cell.getId());
+				speciesGlyph.setSpeciesId((String)cell.getId());
+			}
+			speciesGlyph.getBoundingBox().setX(geom.getX());
+			speciesGlyph.getBoundingBox().setY(geom.getY());
+			speciesGlyph.getBoundingBox().setWidth(geom.getWidth());
+			speciesGlyph.getBoundingBox().setHeight(geom.getHeight());
+			TextGlyph textGlyph = null;
+			if (layout.getTextGlyph((String)cell.getId())!=null) {
+				textGlyph = layout.getTextGlyph((String)cell.getId());
+			} else {
+				textGlyph = layout.createTextGlyph();
+			}
+			textGlyph.setId((String)cell.getId());
+			textGlyph.setGraphicalObjectId((String)cell.getId());
+			textGlyph.setText((String)cell.getId());
+			textGlyph.setBoundingBox(speciesGlyph.getBoundingBox());
+		} else if (getCellType(cell).equals(GlobalConstants.REACTION)) {
+			Layout layout = null;
+			if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
+				layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+			} else {
+				layout = gcm.getSBMLLayout().createLayout();
+				layout.setId("iBioSim");
+			}
+			ReactionGlyph reactionGlyph = null;
+			if (layout.getReactionGlyph((String)cell.getId())!=null) {
+				reactionGlyph = layout.getReactionGlyph((String)cell.getId());
+			} else {
+				reactionGlyph = layout.createReactionGlyph();
+				reactionGlyph.setId((String)cell.getId());
+				reactionGlyph.setReactionId((String)cell.getId());
+			}
+			reactionGlyph.getBoundingBox().setX(geom.getX());
+			reactionGlyph.getBoundingBox().setY(geom.getY());
+			reactionGlyph.getBoundingBox().setWidth(geom.getWidth());
+			reactionGlyph.getBoundingBox().setHeight(geom.getHeight());
+			TextGlyph textGlyph = null;
+			if (layout.getTextGlyph((String)cell.getId())!=null) {
+				textGlyph = layout.getTextGlyph((String)cell.getId());
+			} else {
+				textGlyph = layout.createTextGlyph();
+			}
+			textGlyph.setId((String)cell.getId());
+			textGlyph.setGraphicalObjectId((String)cell.getId());
+			textGlyph.setText((String)cell.getId());
+			textGlyph.setBoundingBox(reactionGlyph.getBoundingBox());
+		} else if (getCellType(cell).equals(GlobalConstants.COMPONENT)) {
+			Layout layout = null;
+			if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
+				layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+			} else {
+				layout = gcm.getSBMLLayout().createLayout();
+				layout.setId("iBioSim");
+			}
+			CompartmentGlyph compGlyph = null;
+			if (layout.getCompartmentGlyph((String)cell.getId())!=null) {
+				compGlyph = layout.getCompartmentGlyph((String)cell.getId());
+			} else {
+				compGlyph = layout.createCompartmentGlyph();
+				compGlyph.setId((String)cell.getId());
+				compGlyph.setCompartmentId((String)cell.getId());
+			}
+			compGlyph.getBoundingBox().setX(geom.getX());
+			compGlyph.getBoundingBox().setY(geom.getY());
+			compGlyph.getBoundingBox().setWidth(geom.getWidth());
+			compGlyph.getBoundingBox().setHeight(geom.getHeight());
+			TextGlyph textGlyph = null;
+			if (layout.getTextGlyph((String)cell.getId())!=null) {
+				textGlyph = layout.getTextGlyph((String)cell.getId());
+			} else {
+				textGlyph = layout.createTextGlyph();
+			}
+			textGlyph.setId((String)cell.getId());
+			textGlyph.setGraphicalObjectId((String)cell.getId());
+			textGlyph.setText((String)cell.getId());
+			textGlyph.setBoundingBox(compGlyph.getBoundingBox());
+		} 
 	}
 	
 	/**
 	 * Given a species, component, or drawn promoter cell, position it 
 	 * using the properties.
 	 */
-	private boolean sizeAndPositionFromProperties(mxCell cell, Properties prop){
+	private boolean sizeAndPositionFromProperties(mxCell cell){
 		
-		double x = Double.parseDouble(prop.getProperty("graphx", "-9999"));
-		double y = Double.parseDouble(prop.getProperty("graphy", "-9999"));;
-		double width = Double.parseDouble(prop.getProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_SPECIES_WIDTH)));;
-		double height = Double.parseDouble(prop.getProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_SPECIES_HEIGHT)));
-
-		/*
-		String id = !(prop.getProperty(GlobalConstants.NAME, "").equals("")) ? 
-						prop.getProperty(GlobalConstants.NAME) : 
-							!prop.getProperty("ID", "").equals("") ? prop.getProperty("ID", ""):
-								prop.getProperty("label");
-								*/
+		double x = 0;
+		double y = 0;
+		double width = 0;
+		double height = 0;
 		boolean needsPositioning = false;	
-		
-		if(x < -9998 || y < -9998){
-			
-			unpositionedSpeciesComponentCount += 1;
-			needsPositioning = true;
-			
-			// Line the unpositioned species up nicely. The mod is there as a rough
-			// and dirty way to prevent
-			// them going off the bottom or right hand side of the screen.
-			x = (unpositionedSpeciesComponentCount%50) * 20;
-			y = (unpositionedSpeciesComponentCount%10) * (GlobalConstants.DEFAULT_SPECIES_HEIGHT + 10);
-		}
-		
+
+		if (getCellType(cell).equals(GlobalConstants.SPECIES)||
+			getCellType(cell).equals(GlobalConstants.PROMOTER)) {
+			if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
+				Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+				if (layout.getSpeciesGlyph((String)cell.getId())!=null) {
+					SpeciesGlyph speciesGlyph = layout.getSpeciesGlyph((String)cell.getId());
+					x = speciesGlyph.getBoundingBox().getPosition().getXOffset();
+					y = speciesGlyph.getBoundingBox().getPosition().getYOffset();
+					width = speciesGlyph.getBoundingBox().getDimensions().getWidth();
+					height = speciesGlyph.getBoundingBox().getDimensions().getHeight();
+				} else {
+					unpositionedSpeciesComponentCount += 1;
+					needsPositioning = true;
+					x = (unpositionedSpeciesComponentCount%50) * 20;
+					y = (unpositionedSpeciesComponentCount%10) * (GlobalConstants.DEFAULT_SPECIES_HEIGHT + 10);
+					width = GlobalConstants.DEFAULT_SPECIES_WIDTH;
+					height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
+					gcm.placeSpecies((String)cell.getId(), x, y, height, width);
+				}
+			} else {
+				unpositionedSpeciesComponentCount += 1;
+				needsPositioning = true;
+				x = (unpositionedSpeciesComponentCount%50) * 20;
+				y = (unpositionedSpeciesComponentCount%10) * (GlobalConstants.DEFAULT_SPECIES_HEIGHT + 10);
+				width = GlobalConstants.DEFAULT_SPECIES_WIDTH;
+				height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
+			}
+		} else if (getCellType(cell).equals(GlobalConstants.REACTION)) {
+			if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
+				Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+				if (layout.getReactionGlyph((String)cell.getId())!=null) {
+					ReactionGlyph reactionGlyph = layout.getReactionGlyph((String)cell.getId());
+					x = reactionGlyph.getBoundingBox().getPosition().getXOffset();
+					y = reactionGlyph.getBoundingBox().getPosition().getYOffset();
+					width = reactionGlyph.getBoundingBox().getDimensions().getWidth();
+					height = reactionGlyph.getBoundingBox().getDimensions().getHeight();
+				} else {
+					unpositionedSpeciesComponentCount += 1;
+					needsPositioning = true;
+					x = (unpositionedSpeciesComponentCount%50) * 20;
+					y = (unpositionedSpeciesComponentCount%10) * (GlobalConstants.DEFAULT_SPECIES_HEIGHT + 10);
+					width = GlobalConstants.DEFAULT_REACTION_WIDTH;
+					height = GlobalConstants.DEFAULT_REACTION_HEIGHT;
+					gcm.placeReaction((String)cell.getId(), x, y, height, width);
+				} 
+			} else {
+				unpositionedSpeciesComponentCount += 1;
+				needsPositioning = true;
+				x = (unpositionedSpeciesComponentCount%50) * 20;
+				y = (unpositionedSpeciesComponentCount%10) * (GlobalConstants.DEFAULT_SPECIES_HEIGHT + 10);
+				width = GlobalConstants.DEFAULT_REACTION_WIDTH;
+				height = GlobalConstants.DEFAULT_REACTION_HEIGHT;
+			}
+		} else if (getCellType(cell).equals(GlobalConstants.COMPONENT)) {
+			if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
+				Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+				if (layout.getCompartmentGlyph((String)cell.getId())!=null) {
+					CompartmentGlyph compGlyph = layout.getCompartmentGlyph((String)cell.getId());
+					x = compGlyph.getBoundingBox().getPosition().getXOffset();
+					y = compGlyph.getBoundingBox().getPosition().getYOffset();
+					width = compGlyph.getBoundingBox().getDimensions().getWidth();
+					height = compGlyph.getBoundingBox().getDimensions().getHeight();
+				} else {
+					unpositionedSpeciesComponentCount += 1;
+					needsPositioning = true;
+					x = (unpositionedSpeciesComponentCount%50) * 20;
+					y = (unpositionedSpeciesComponentCount%10) * (GlobalConstants.DEFAULT_SPECIES_HEIGHT + 10);
+					width = GlobalConstants.DEFAULT_COMPONENT_WIDTH;
+					height = GlobalConstants.DEFAULT_COMPONENT_HEIGHT;
+					gcm.placeCompartment((String)cell.getId(), x, y, height, width);
+				} 
+			} else {
+				unpositionedSpeciesComponentCount += 1;
+				needsPositioning = true;
+				x = (unpositionedSpeciesComponentCount%50) * 20;
+				y = (unpositionedSpeciesComponentCount%10) * (GlobalConstants.DEFAULT_SPECIES_HEIGHT + 10);
+				width = GlobalConstants.DEFAULT_COMPONENT_WIDTH;
+				height = GlobalConstants.DEFAULT_COMPONENT_HEIGHT;
+			}
+		} 
 		cell.setGeometry(new mxGeometry(x, y, width, height));
-		
 		return needsPositioning;
 	}
 	
@@ -816,17 +1228,17 @@ public class BioGraph extends mxGraph {
 		}
 		//cell is a vertex
 		else{
-			Properties prop = ((CellValueObject)(cell.getValue())).prop;
+			String type = ((CellValueObject)(cell.getValue())).type;
 			
-			if(gcm.getSpecies().containsValue(prop))
-				return GlobalConstants.SPECIES;
-			else if(gcm.getComponents().containsValue(prop))
+			if(type.equals("Component"))
 				return GlobalConstants.COMPONENT;
-			else if(gcm.getPromoters().containsValue(prop))
+			else if(type.equals("Species"))
+				return GlobalConstants.SPECIES;
+			else if(type.equals("Promoter"))
 				return GlobalConstants.PROMOTER;
-			else if(gcm.getReactions().containsValue(prop)) 
+			else if(type.equals("Reaction"))
 				return GlobalConstants.REACTION;
-			else if (prop.getProperty("Type").equals(GlobalConstants.GRID_RECTANGLE))
+			else if (type.equals("Rectangle"))
 				return GlobalConstants.GRID_RECTANGLE;
 			else
 				return CELL_VALUE_NOT_FOUND;
@@ -843,54 +1255,8 @@ public class BioGraph extends mxGraph {
 		return getCellType((mxCell)cell);
 	}
 	
-	/**
-	 * Given a cell, return the list that it belongs to.
-	 */
-	public HashMap<String, Properties> getPropertiesList(mxCell cell){
-		
-		String type = this.getCellType(cell);
-		
-		if(type == GlobalConstants.SPECIES)
-			return gcm.getSpecies();
-		else if(type == GlobalConstants.COMPONENT)
-			return gcm.getComponents();
-		else if(type == GlobalConstants.INFLUENCE)
-			return gcm.getInfluences();
-		else if(type == GlobalConstants.COMPONENT_CONNECTION)
-			return null; // Component connection don't have properties
-		else if(type == GlobalConstants.PRODUCTION)
-			return null; // Production connection don't have properties
-		else if(type == GlobalConstants.PROMOTER)
-			return gcm.getPromoters();
-		else if(type == GlobalConstants.REACTION) 
-			return gcm.getReactions();
-		else if(type == GlobalConstants.REACTION_EDGE) 
-			return null;
-		else if(type == GlobalConstants.GRID_RECTANGLE)
-			return null;
-		else
-			throw new Error("Invalid type: " + type);
-	}
-
-	/**
-	 * A convenience function
-	 * @param cell
-	 * @return
-	 */
-	public Properties getCellProperties(mxCell cell){
-		if(cell.getId() == null || getPropertiesList(cell) == null)
-			return null;
-		
-		return getPropertiesList(cell).get(cell.getId());
-	}
-	
-	/**
-	 * 
-	 * @param cell
-	 * @return
-	 */
-	public Properties getCellProperties(mxICell cell){
-		return getCellProperties((mxCell)cell);
+	public String getModelFileName(String compId) {
+		return gcm.getModelFileName(compId).replace(".xml", ".gcm");
 	}
 	
 	/**
@@ -981,31 +1347,48 @@ public class BioGraph extends mxGraph {
 		//{invb={ID=invb, gcm=inv.gcm}, i1={b=S3, ID=i1, a=S1, gcm=inv.gcm, type_b=Output, type_a=Input}}
 
 		boolean needsPositioning = false;
-		
-		Properties prop = gcm.getComponents().get(id);
 
-		double x = Double.parseDouble(prop.getProperty("graphx", "-9999"));
-		double y = Double.parseDouble(prop.getProperty("graphy", "-9999"));;
-		double width = Double.parseDouble(prop.getProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH)));;
-		double height = Double.parseDouble(prop.getProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_HEIGHT)));
+		double x = 0;
+		double y = 0;
+		double width = 0;
+		double height = 0;
+		if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
+			Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+			if (layout.getCompartmentGlyph(id)!=null) {
+				CompartmentGlyph compGlyph = layout.getCompartmentGlyph(id);
+				x = compGlyph.getBoundingBox().getPosition().getXOffset();
+				y = compGlyph.getBoundingBox().getPosition().getYOffset();
+				width = compGlyph.getBoundingBox().getDimensions().getWidth();
+				height = compGlyph.getBoundingBox().getDimensions().getHeight();
+			} else {
+				x = -9999;
+				y = -9999;
+				width = GlobalConstants.DEFAULT_COMPONENT_WIDTH;
+				height = GlobalConstants.DEFAULT_COMPONENT_HEIGHT;
+			}
+		} else {
+			x = -9999;
+			y = -9999;
+			width = GlobalConstants.DEFAULT_COMPONENT_WIDTH;
+			height = GlobalConstants.DEFAULT_COMPONENT_HEIGHT;
+		}
 				
 		//set the correct compartment status
 		GCMFile compGCMFile = new GCMFile(gcm.getPath());
 		boolean compart = false;
-		File compFile = new File(gcm.getPath() + File.separator + prop.getProperty("gcm"));
+		String modelFileName = gcm.getModelFileName(id).replace(".xml", ".gcm");
+		File compFile = new File(gcm.getPath() + File.separator + modelFileName);
 		
 		if (compGCMFile != null && compFile.exists()) {
-			compGCMFile.load(gcm.getPath() + File.separator + prop.getProperty("gcm"));
+			compGCMFile.load(gcm.getPath() + File.separator + modelFileName);
 			compart = compGCMFile.getIsWithinCompartment();
 		} else {
 			JOptionPane.showMessageDialog(Gui.frame, 
-					"A model definition cannot be found for " + prop.getProperty("gcm") + 
+					"A model definition cannot be found for " + modelFileName + 
 					".\nDropping component from the schematic.\n",
 					"Warning", JOptionPane.WARNING_MESSAGE);
 			return false;
 		}
-		
-		prop.setProperty("compartment", Boolean.toString(compart));		
 		
 		if(x < -9998 || y < -9998){
 			
@@ -1019,7 +1402,7 @@ public class BioGraph extends mxGraph {
 			y = (unpositionedSpeciesComponentCount%10) * (GlobalConstants.DEFAULT_SPECIES_HEIGHT + 10);
 		}
 		
-		String truncGCM = prop.getProperty("gcm").replace(".gcm", "");
+		String truncGCM = modelFileName.replace(".gcm", "");
 		String truncID = "";
 		
 		//if the id is too long, truncate it
@@ -1031,7 +1414,7 @@ public class BioGraph extends mxGraph {
 		else truncID = id;
 		
 		String label = truncID + "\n" + truncGCM;
-		CellValueObject cvo = new CellValueObject(label, prop);
+		CellValueObject cvo = new CellValueObject(label, "Component", null);
 		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, x, y, width, height);
 		this.componentsToMxCellMap.put(id, (mxCell)insertedVertex);
 		
@@ -1039,35 +1422,25 @@ public class BioGraph extends mxGraph {
 		this.setComponentStyles(id, compart);
 
 		// now draw the edges that connect the component
-		for (Object propName : prop.keySet()) {
-			
-			if (!propName.toString().equals("gcm")
-					&& !propName.toString().equals(GlobalConstants.ID)
-					&& prop.keySet().contains("type_" + propName)) {
-				
-				Object createdEdge;
-				
-				if (prop.getProperty("type_" + propName).equals("Output")) {
-					
-					// output, the arrow should point out to the species
-					createdEdge = this.insertEdge(this.getDefaultParent(), "", "", insertedVertex, 
-							this.getSpeciesCell(prop.getProperty(propName.toString()).toString()));
+		for (String propName : gcm.getInputs(id).keySet()) {
+			// input, the arrow should point in from the species
+			String topSpecies = gcm.getInputs(id).get(propName);
+			Object createdEdge = this.insertEdge(this.getDefaultParent(), "", "", 
+					this.getSpeciesCell(topSpecies),insertedVertex);
+			String key = id + " Input " + topSpecies;
+			componentsConnectionsToMxCellMap.put(key, (mxCell)createdEdge);
+			this.updateComponentConnectionVisuals((mxCell)createdEdge, propName);
+		}
 
-					String key = id + " Output " + prop.getProperty(propName.toString()).toString();
-					componentsConnectionsToMxCellMap.put(key, (mxCell)createdEdge);
-				}
-				else {
-					// input, the arrow should point in from the species
-					createdEdge = this.insertEdge(this.getDefaultParent(), "", "", 
-							this.getSpeciesCell(prop.getProperty(propName.toString()).toString()),
-							insertedVertex);
-
-					String key = id + " Input " + prop.getProperty(propName.toString()).toString();
-					componentsConnectionsToMxCellMap.put(key, (mxCell)createdEdge);
-				}
-				
-				this.updateComponentConnectionVisuals((mxCell)createdEdge, propName.toString());
-			}
+		// now draw the edges that connect the component
+		for (String propName : gcm.getOutputs(id).keySet()) {
+			// output, the arrow should point out to the species
+			String topSpecies = gcm.getOutputs(id).get(propName);
+			Object createdEdge = this.insertEdge(this.getDefaultParent(), "", "", insertedVertex, 
+					this.getSpeciesCell(topSpecies));
+			String key = id + " Output " + topSpecies;
+			componentsConnectionsToMxCellMap.put(key, (mxCell)createdEdge);
+			this.updateComponentConnectionVisuals((mxCell)createdEdge, propName);
 		}
 		
 		return needsPositioning;
@@ -1081,30 +1454,26 @@ public class BioGraph extends mxGraph {
 	 */
 	private boolean createGraphSpeciesFromModel(String sp){
 		
-		Properties prop = gcm.getSpecies().get(sp);
-		String id = prop.getProperty("ID");
-		String type = prop.getProperty("Type")
-			.replace(GlobalConstants.DIFFUSIBLE, " (D)").replace(GlobalConstants.SPASTIC, " (C)");
-		
-		if (id==null) {
-			id = prop.getProperty("label");
-		}
+		String type = gcm.getSpeciesType(sp);
+		if (gcm.isSpeciesDiffusible(sp)) type += " (D)";
+		if (gcm.isSpeciesConstitutive(sp)) type += " (C)";
+		if (type.equals(GlobalConstants.MRNA)) return false; 
 		
 		String truncID = "";
 		
-		if (id.length() > 12)
-			truncID = id.substring(0, 11) + "...";
-		else truncID = id;
+		if (sp.length() > 12)
+			truncID = sp.substring(0, 11) + "...";
+		else truncID = sp;
 		
 		String label = truncID + '\n' + type;
 
-		CellValueObject cvo = new CellValueObject(label, prop);
-		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
-		this.speciesToMxCellMap.put(id, (mxCell)insertedVertex);
+		CellValueObject cvo = new CellValueObject(label, "Species", null);
+		Object insertedVertex = this.insertVertex(this.getDefaultParent(), sp, cvo, 1, 1, 1, 1);
+		this.speciesToMxCellMap.put(sp, (mxCell)insertedVertex);
 		
 		this.setSpeciesStyles(sp);
 		
-		return sizeAndPositionFromProperties((mxCell)insertedVertex, prop);
+		return sizeAndPositionFromProperties((mxCell)insertedVertex);
 	}
 	
 	/**
@@ -1114,16 +1483,13 @@ public class BioGraph extends mxGraph {
 	 * @return: A bool, true if the reaction had to be positioned.
 	 */
 	private boolean createGraphReactionFromModel(String id){
-		
-		Properties prop = gcm.getReactions().get(id);
-
-		CellValueObject cvo = new CellValueObject(id, prop);
+		CellValueObject cvo = new CellValueObject(id, "Reaction", null);
 		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		this.reactionsToMxCellMap.put(id, (mxCell)insertedVertex);
 		
 		this.setReactionStyles(id);
 		
-		return sizeAndPositionFromProperties((mxCell)insertedVertex, prop);
+		return sizeAndPositionFromProperties((mxCell)insertedVertex);
 	}
 	
 	/**
@@ -1131,19 +1497,7 @@ public class BioGraph extends mxGraph {
 	 * @param pname
 	 * @return
 	 */
-	private boolean createGraphDrawnPromoterFromModel(String pname){
-		
-		Properties prop = gcm.getPromoters().get(pname);
-		
-		if(prop == null){
-			throw new Error("No promoter could be found that matches the name " + pname);
-		}
-		
-		String id = prop.getProperty("ID", "");
-		
-		if (id == null) {
-			id = prop.getProperty("label", "");
-		}
+	private boolean createGraphDrawnPromoterFromModel(String id){
 		
 		String truncID;
 		
@@ -1151,13 +1505,13 @@ public class BioGraph extends mxGraph {
 			truncID = id.substring(0, 7) + "...";
 		else truncID = id;
 
-		CellValueObject cvo = new CellValueObject(truncID, prop);
+		CellValueObject cvo = new CellValueObject(truncID, "Promoter", null);
 		Object insertedVertex = this.insertVertex(this.getDefaultParent(), id, cvo, 1, 1, 1, 1);
 		this.drawnPromoterToMxCellMap.put(id, (mxCell)insertedVertex);
 		
-		this.setDrawnPromoterStyles(pname);
+		this.setDrawnPromoterStyles(id);
 		
-		return sizeAndPositionFromProperties((mxCell)insertedVertex, prop);
+		return sizeAndPositionFromProperties((mxCell)insertedVertex);
 	}
 	
 	/**
@@ -1178,6 +1532,7 @@ public class BioGraph extends mxGraph {
 	/**
 	 * Given an id, update the style of the influence based on the internal model.
 	 */
+	/*
 	private void updateInfluenceVisuals(String id){
 		
 		Properties prop = gcm.getInfluences().get(id);
@@ -1209,6 +1564,7 @@ public class BioGraph extends mxGraph {
 		if(gcm.influenceHasExplicitPromoter(id) == false)
 			cell.setValue(prop.getProperty(GlobalConstants.PROMOTER));
 	};
+	*/
 	
 	/**
 	 * 
@@ -1468,9 +1824,7 @@ public class BioGraph extends mxGraph {
 	public void setSpeciesAnimationValue(String species, MovieAppearance appearance){
 		
 		mxCell cell = this.speciesToMxCellMap.get(species);
-		Properties prop = gcm.getSpecies().get(species);
-		assert(prop != null);
-		setCellAnimationValue(cell, appearance, prop);
+		setCellAnimationValue(cell, appearance);
 	}
 	
 	/**
@@ -1479,15 +1833,13 @@ public class BioGraph extends mxGraph {
 	public void setComponentAnimationValue(String component, MovieAppearance appearance){
 		
 		mxCell cell = this.componentsToMxCellMap.get(component);
-		Properties prop = gcm.getComponents().get(component);
-		assert(prop != null);
-		setCellAnimationValue(cell, appearance, prop);
+		setCellAnimationValue(cell, appearance);
 	}
 	
 	public void setGridRectangleAnimationValue(String gridLocation, MovieAppearance appearance) {
 		
 		mxCell cell = this.gridRectangleToMxCellMap.get(gridLocation);
-		setCellAnimationValue(cell, appearance, null);
+		setCellAnimationValue(cell, appearance);
 	}
 	
 	/**
@@ -1496,7 +1848,7 @@ public class BioGraph extends mxGraph {
 	 * @param appearance
 	 * @param properties
 	 */
-	private void setCellAnimationValue(mxCell cell, MovieAppearance appearance, Properties prop){
+	private void setCellAnimationValue(mxCell cell, MovieAppearance appearance){
 		
 		if(appearance == null)
 			return;
@@ -1513,10 +1865,7 @@ public class BioGraph extends mxGraph {
 		// opacity
 		if(appearance.opacity != null){
 			
-			if(newStyle == null)
-				newStyle = "";
-			else
-				newStyle += ";";
+			newStyle += ";";
 			
 			double op = (appearance.opacity) * 100.0;
 			newStyle += mxConstants.STYLE_OPACITY + "=" + String.valueOf(op);
@@ -1527,20 +1876,82 @@ public class BioGraph extends mxGraph {
 		
 		// size
 		if(appearance.size != null){
+
+			double x = 0;
+			double y = 0;
+			double width = 0;
+			double height = 0;
+
+			if (getCellType(cell).equals(GlobalConstants.SPECIES)||
+					getCellType(cell).equals(GlobalConstants.PROMOTER)) {
+				if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
+					Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+					if (layout.getSpeciesGlyph((String)cell.getId())!=null) {
+						SpeciesGlyph speciesGlyph = layout.getSpeciesGlyph((String)cell.getId());
+						x = speciesGlyph.getBoundingBox().getPosition().getXOffset();
+						y = speciesGlyph.getBoundingBox().getPosition().getYOffset();
+						width = speciesGlyph.getBoundingBox().getDimensions().getWidth();
+						height = speciesGlyph.getBoundingBox().getDimensions().getHeight();
+					} else {
+						x = -9999;
+						y = -9999;
+						width = GlobalConstants.DEFAULT_SPECIES_WIDTH;
+						height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
+					}
+				} else {
+					x = -9999;
+					y = -9999;
+					width = GlobalConstants.DEFAULT_SPECIES_WIDTH;
+					height = GlobalConstants.DEFAULT_SPECIES_HEIGHT;
+				}
+			} else if (getCellType(cell).equals(GlobalConstants.REACTION)) {
+				if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
+					Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+					if (layout.getReactionGlyph((String)cell.getId())!=null) {
+						ReactionGlyph reactionGlyph = layout.getReactionGlyph((String)cell.getId());
+						x = reactionGlyph.getBoundingBox().getPosition().getXOffset();
+						y = reactionGlyph.getBoundingBox().getPosition().getYOffset();
+						width = reactionGlyph.getBoundingBox().getDimensions().getWidth();
+						height = reactionGlyph.getBoundingBox().getDimensions().getHeight();
+					} else {
+						x = -9999;
+						y = -9999;
+						width = GlobalConstants.DEFAULT_REACTION_WIDTH;
+						height = GlobalConstants.DEFAULT_REACTION_HEIGHT;
+					} 
+				} else {
+					x = -9999;
+					y = -9999;
+					width = GlobalConstants.DEFAULT_REACTION_WIDTH;
+					height = GlobalConstants.DEFAULT_REACTION_HEIGHT;
+				}
+			} else if (getCellType(cell).equals(GlobalConstants.COMPONENT)) {
+				if (gcm.getSBMLLayout().getLayout("iBioSim") != null) {
+					Layout layout = gcm.getSBMLLayout().getLayout("iBioSim"); 
+					if (layout.getCompartmentGlyph((String)cell.getId())!=null) {
+						CompartmentGlyph compGlyph = layout.getCompartmentGlyph((String)cell.getId());
+						x = compGlyph.getBoundingBox().getPosition().getXOffset();
+						y = compGlyph.getBoundingBox().getPosition().getYOffset();
+						width = compGlyph.getBoundingBox().getDimensions().getWidth();
+						height = compGlyph.getBoundingBox().getDimensions().getHeight();
+					} else {
+						x = -9999;
+						y = -9999;
+						width = GlobalConstants.DEFAULT_COMPONENT_WIDTH;
+						height = GlobalConstants.DEFAULT_COMPONENT_HEIGHT;
+					} 
+				} else {
+					x = -9999;
+					y = -9999;
+					width = GlobalConstants.DEFAULT_COMPONENT_WIDTH;
+					height = GlobalConstants.DEFAULT_COMPONENT_HEIGHT;
+				}
+			} 
 			
-			double gcmX = Double.parseDouble(
-					prop.getProperty("graphx", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH)));
-			double gcmY = Double.parseDouble(
-					prop.getProperty("graphy", String.valueOf(GlobalConstants.DEFAULT_SPECIES_HEIGHT)));
-			double gcmWidth = Double.parseDouble(
-					prop.getProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH)));
-			double gcmHeight = Double.parseDouble(
-					prop.getProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_SPECIES_HEIGHT)));
+			double aspect_ratio = height / width;
 			
-			double aspect_ratio = gcmHeight	/ gcmWidth;
-			
-			double centerX = gcmX + gcmWidth/2.0;
-			double centerY = gcmY + gcmHeight/2.0;
+			double centerX = x + width/2.0;
+			double centerY = y + height/2.0;
 			
 			mxGeometry startG = cell.getGeometry();
 			startG.setWidth(appearance.size);
@@ -1563,6 +1974,7 @@ public class BioGraph extends mxGraph {
 		private static final long serialVersionUID = 918273645;
 		public Properties prop;
 		public String label;
+		public String type;
 		
 		@Override
 		/**
@@ -1603,12 +2015,13 @@ public class BioGraph extends mxGraph {
 		 * @param label
 		 * @param prop
 		 */
-		public CellValueObject(String label, Properties prop){
+		public CellValueObject(String label, String type, Properties prop){
 			
-			if(prop == null || label == null)
-				throw new Error("Neither Properties nor label can not be null!");
+			if(label == null || type == null)
+				throw new Error("Neither label nor type can be null!");
 			
 			this.label = label;
+			this.type = type;
 			this.prop = prop;
 		}
 	}	

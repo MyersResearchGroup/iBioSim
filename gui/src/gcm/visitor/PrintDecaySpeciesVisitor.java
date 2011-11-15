@@ -49,7 +49,6 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitSpecies(SpeciesInterface specie) {
-		// TODO Auto-generated method stub
 
 	}
 	
@@ -70,9 +69,10 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 					kl.setFormula(decayExpression);
 					Utility.addReaction(document, r);
 				}
-			} else if (decay > 0){
+			} else if (decay > 0 || decay==-1){
 				decayExpression = decayString + "*" + specie.getId();
-				kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
+				if (decay > 0)
+					kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
 				r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
 				kl.setFormula(decayExpression);
 				Utility.addReaction(document, r);
@@ -96,9 +96,10 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 				kl.setFormula(decayExpression);
 				Utility.addReaction(document, r);
 			}
-		} else if (decay > 0){
+		} else if (decay > 0 || decay==-1){
 			decayExpression = decayString + "*" + specie.getId();
-			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
+			if (decay > 0)
+				kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
 			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
 			kl.setFormula(decayExpression);
 			Utility.addReaction(document, r);
@@ -126,9 +127,10 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 				kl.setFormula(decayExpression);
 				Utility.addReaction(document, r);
 			}
-		} else if (decay > 0){
+		} else if (decay > 0 || decay==-1){
 			decayExpression = decayString + "*" + specie.getId();
-			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
+			if (decay > 0)
+				kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
 			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
 			kl.setFormula(decayExpression);
 			Utility.addReaction(document, r);
@@ -147,15 +149,16 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		KineticLaw kl = r.createKineticLaw();
 		String decayExpression = "";
 		
-		if (decay > 0) {
+		if (decay > 0 || decay==-1) {
 			
 			//this is the mathematical expression for the decay
 			decayExpression = decayString + "*" + ID;
 
 			r.addReactant(Utility.SpeciesReference(ID, 1));
-			
+
 			//parameter: id="kd" value=isDecay (usually 0.0075) units="u_1_second_n1" (inverse seconds)
-			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
+			if (decay > 0)
+				kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
 			
 			//formula: kd * inner species
 			kl.setFormula(decayExpression);
@@ -174,9 +177,10 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 		kl = r.createKineticLaw();
 		String decayExpression = "";
 
-		if (decay > 0){
+		if (decay > 0 || decay == -1){
 			decayExpression = decayString + "*" + specie.getId();
-			kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
+			if (decay>0)
+				kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
 			r.addReactant(Utility.SpeciesReference(specie.getId(), 1));
 			kl.setFormula(decayExpression);
 			Utility.addReaction(document, r);
@@ -218,7 +222,7 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	private double decay;
 	private String decayUnitString;
 	private String decayString = GlobalConstants.KDECAY_STRING;
-	private String kcompString = GlobalConstants.KCOMPLEX_STRING; 
+	//private String kcompString = GlobalConstants.KCOMPLEX_STRING; 
 	
 	private HashMap<String, Properties> compartments;
 }

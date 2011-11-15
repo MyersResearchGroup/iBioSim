@@ -8,10 +8,8 @@ import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
 
-import org.sbml.libsbml.Compartment;
+import org.sbml.libsbml.Submodel;
 
 import com.mxgraph.model.mxCell;
 
@@ -44,10 +42,11 @@ public class Grid {
 	private HashMap<Rectangle, GridNode> rectToNodeMap;
 	
 	//components on the grid
-	private HashMap<String, Properties> components;
+	//private HashMap<String, Properties> components;
+	private GCMFile gcm;
 	
 	//map of row, col grid locations to the component at that location
-	private HashMap<Point, Map.Entry<String, Properties>> locToComponentMap;
+	private HashMap<Point, String> locToComponentMap;
 	
 	//map of compartment ID strings to the corresponding grid node
 	private HashMap<String, GridNode> componentIDToNodeMap;
@@ -111,7 +110,7 @@ public class Grid {
 		mouseLocation = new Point();
 		grid = new ArrayList<ArrayList<GridNode>>();
 		rectToNodeMap = new HashMap<Rectangle, GridNode>();
-		locToComponentMap = new HashMap<Point, Map.Entry<String, Properties>>();
+		locToComponentMap = new HashMap<Point, String>();
 		componentIDToNodeMap = new HashMap<String, GridNode>();
 		graph = null;
 	}
@@ -156,7 +155,7 @@ public class Grid {
 			}
 		}
 		
-		this.components = gcm.getComponents();
+		this.gcm = gcm;
 		
 		updateGridRectangles();
 		updateRectToNodeMap();
@@ -300,10 +299,7 @@ public class Grid {
 		clearNode(compID);		
 		
 		//remove the component from the gcm
-		gcm.getComponents().remove(compID);
-		
-		//keep the components list updated
-		components = gcm.getComponents();
+		gcm.removeComponent(compID);
 	}
 	
 	/**
@@ -339,7 +335,6 @@ public class Grid {
 			
 			grid.get(row).get(col).setOccupied(true);		
 			addComponentToGCM(row, col, compGCM, gcm);
-			components = gcm.getComponents();
 		}
 	}
 	
@@ -370,22 +365,21 @@ public class Grid {
 										
 					//this is a horrible hack to get a Map.Entry<String, Property>
 					//i didn't realize it was an interface and not instantiable
-					HashMap<String, Properties> tempMap = new HashMap<String, Properties>();
-					tempMap.put(compID, components.get(compID));
+					//HashMap<String, Properties> tempMap = new HashMap<String, Properties>();
+					//tempMap.put(compID, components.get(compID));
 					
-					Map.Entry<String, Properties> compo = tempMap.entrySet().iterator().next();
+					//Map.Entry<String, Properties> compo = tempMap.entrySet().iterator().next();
 					
 					//clear the old component's spot
 					clearNode(compID);
 					
 					//put the component in its new home
-					node.setComponent(compo);
+					node.setComponent(compID);
 					node.setOccupied(true);
 					
-					Properties props = compo.getValue();
+					//Properties props = compo.getValue();
 					
-					props.setProperty("row", Integer.toString(node.getRow()));
-					props.setProperty("col", Integer.toString(node.getCol()));
+					gcm.setSubmodelRowCol(compID, node.getRow(), node.getCol());
 					
 					//update the location to component hash map
 					//as the component and their locations have changed
@@ -411,7 +405,7 @@ public class Grid {
 			for (int col = 0; col < numCols; ++col) {
 				
 				if (grid.get(row).get(col).isSelected() && grid.get(row).get(col).isOccupied())
-					eraseNode(grid.get(row).get(col).getComponent().getKey(), gcm);
+					eraseNode(grid.get(row).get(col).getComponent(), gcm);
 			}
 		}
 	}
@@ -599,9 +593,7 @@ public class Grid {
 	 * takes the gcm's components and resets the grid with those components
 	 * this happens after adding or deleting a node or nodes (like in resizing)
 	 */
-	public void refreshComponents(HashMap<String, Properties> gcmComponents) {
-		
-		components = gcmComponents;
+	public void refreshComponents() {
 		
 		//update the graph
 		if (graph != null)
@@ -660,12 +652,10 @@ public class Grid {
 			for (int row = newNumRows; row < currentNumRows; ++row) {				
 				for (int col = 0; col < currentNumCols; ++col) {
 					
-					Map.Entry<String, Properties> component = locToComponentMap.get(new Point(row, col));
+					String compID = locToComponentMap.get(new Point(row, col));
 					
 					//if it's null, there's nothing to erase
-					if (component != null) {
-						
-						String compID = component.getKey();
+					if (compID != null) {
 						
 						//if it's null, there's nothing to erase
 						if (compID != null) eraseNode(compID, gcm);
@@ -700,12 +690,10 @@ public class Grid {
 			for (int row = 0; row < currentNumRows; ++row) {				
 				for (int col = newNumCols; col < currentNumCols; ++col) {
 					
-					Map.Entry<String, Properties> component = locToComponentMap.get(new Point(row, col));
+					String compID = locToComponentMap.get(new Point(row, col));
 					
 					//if it's null, there's nothing to erase
-					if (component != null) {
-						
-						String compID = component.getKey();
+					if (compID != null) {
 						
 						//if it's null, there's nothing to erase
 						if (compID != null) eraseNode(compID, gcm);
@@ -718,7 +706,7 @@ public class Grid {
 		this.numCols = newNumCols;
 		
 		//put the components onto the grid and update hash maps and update the graph
-		refreshComponents(gcm.getComponents());
+		refreshComponents();
 	}
 	
 	
@@ -755,18 +743,14 @@ public class Grid {
 		
 		locToComponentMap.clear();
 		
-		if (components == null) return;
-		
 		//iterate through the components to get the number of rows and cols			
-		for (Map.Entry<String, Properties> compo : components.entrySet()) {
-			
-			//find the row and col from the component's properties
-			Properties props = compo.getValue();
+		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
+			Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
 						
-			int row = Integer.parseInt(props.getProperty("row"));
-			int col = Integer.parseInt(props.getProperty("col"));
+			int row = gcm.getSubmodelRow(submodel);
+			int col = gcm.getSubmodelCol(submodel);
 			
-			locToComponentMap.put(new Point(row, col), compo);
+			locToComponentMap.put(new Point(row, col), submodel.getId());
 		}
 	}
 	
@@ -781,7 +765,7 @@ public class Grid {
 				GridNode node = grid.get(row).get(col);
 				
 				if (node != null && node.getComponent() != null)
-					componentIDToNodeMap.put(node.getComponent().getKey(), node);
+					componentIDToNodeMap.put(node.getComponent(), node);
 			}
 		}
 	}
@@ -844,11 +828,11 @@ public class Grid {
 				if (graph != null && graph.getGridRectangleCellFromID(cellID) != null) {
 					
 					//set the component sizes (which may have changed due to zooming)
-					Map.Entry<String, Properties> comp = grid.get(row).get(col).getComponent();
+					String compId = grid.get(row).get(col).getComponent();
 					
-					if (comp != null) {
+					if (compId != null) {
 						
-						mxCell compCell = graph.getComponentCell(comp.getKey());
+						mxCell compCell = graph.getComponentCell(compId);
 						
 						if (compCell != null) {
 							
@@ -897,21 +881,20 @@ public class Grid {
 		
 		//iterate through the components to get the x/y coords of its top left vertex
 		//using these coords, map it to the grid	
-		for (Map.Entry<String, Properties> compo : components.entrySet()) {
-			
+		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
+			Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
 			//find the row and col from the component's properties
 			//use these to put the component into the correct grid location
-			Properties props = compo.getValue();
 			
-			String gcm = props.getProperty("gcm");
-			int row = Integer.valueOf(props.getProperty("row"));
-			int col = Integer.valueOf(props.getProperty("col"));
+			String gcmName = gcm.getSBMLComp().getExternalModelDefinition(submodel.getModelRef()).getSource();
+			int row = gcm.getSubmodelRow(submodel);
+			int col = gcm.getSubmodelCol(submodel);
 			
 			//if adding blank components, don't set the component
-			if (gcm.equals("none"))
+			if (gcmName.equals("none"))
 				grid.get(row).get(col).setOccupied(false);
 			else {
-				grid.get(row).get(col).setComponent(compo);
+				grid.get(row).get(col).setComponent(submodel.getId());
 				grid.get(row).get(col).setOccupied(true);
 			}
 		}
@@ -934,27 +917,11 @@ public class Grid {
 		
 		//don't put blank components onto the grid or gcm
 		if (!compGCM.equals("none")) {
-			
-			//make a new properties field with all of the new component's properties
-			Properties properties = new Properties();
-			properties.put("gcm", compGCM); //comp is the name of the gcm that the component contains
-			properties.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH));
-			properties.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
-			properties.setProperty("graphx", String.valueOf(col * (width + padding) + padding));
-			properties.setProperty("graphy", String.valueOf(row * (height + padding) + padding));
-			properties.setProperty("row", String.valueOf(row));
-			properties.setProperty("col", String.valueOf(col));
-			
 			GCMFile compGCMFile = new GCMFile(gcm.getPath());
 			compGCMFile.load(gcm.getPath() + File.separator + compGCM);
 			
-			//set the correct compartment status
-			if (compGCMFile.getIsWithinCompartment())
-				properties.setProperty("compartment","true"); 
-			
-			else properties.setProperty("compartment","false");
-			
-			gcm.addComponent(null, properties);
+			gcm.addComponent(null, compGCM, compGCMFile.getIsWithinCompartment(), row, col, 
+					col * (width + padding) + padding, row * (height + padding) + padding);
 		}
 	}
 	
@@ -1037,21 +1004,6 @@ public class Grid {
 	 */
 	public boolean isEnabled() {
 		return enabled;
-	}
-
-	/**
-	 * 
-	 * @return the components on the grid
-	 */
-	public HashMap<String, Properties> getComponents() {
-		return components;
-	}
-
-	/**
-	 * @param components the components on the grid
-	 */
-	public void setComponents(HashMap<String, Properties> components) {
-		this.components = components;	
 	}
 
 	/**
@@ -1257,7 +1209,7 @@ public class Grid {
 	/**
 	 * @return the location-to-component map
 	 */
-	public Map.Entry<String, Properties> getComponentFromLocation(Point location) {
+	public String getComponentFromLocation(Point location) {
 		
 		updateLocToComponentMap();
 		
@@ -1295,7 +1247,8 @@ public class Grid {
 		//---------------
 		
 		private boolean occupied; //has a component or not
-		private Map.Entry<String, Properties> component; //component in node
+		//private Map.Entry<String, Properties> component; //component in node
+		private String compId;
 		private int row, col; //location on the grid (not x,y coords)
 		private Rectangle snapRectangle; //x,y coordinate of the top-left of the component (not grid) rectangle
 		private boolean isCompartment; //component is a compartment or not
@@ -1314,7 +1267,7 @@ public class Grid {
 			
 			occupied = false;
 			isCompartment = false;
-			component = null;
+			compId = null;
 			selected = false;
 			hover = false;
 			snapRectangle = new Rectangle(0, 0, 0, 0);
@@ -1330,7 +1283,7 @@ public class Grid {
 		public void clear() {
 			
 			occupied = false;
-			component = null;
+			compId = null;
 			isCompartment = false;
 		}
 		
@@ -1385,18 +1338,18 @@ public class Grid {
 		 * also sets boolean about whether the component is a compartment
 		 * @param component the component to set
 		 */
-		public void setComponent(Map.Entry<String, Properties> component) {
+		public void setComponent(String compId) {
 			
-			this.component = null;
-			this.component = component;
-			isCompartment = Boolean.getBoolean(component.getValue().getProperty("compartment"));
+			this.compId = compId;
+//			isCompartment = gcm.getSBMLComp().getExternalModelDefinition(
+//					gcm.getSBMLCompModel().getSubmodel(compId).getModelRef()).getAnnotation().toXMLString().contains("compartment");
 		}
 		
 		/**
 		 * @return the component
 		 */
-		public Map.Entry<String, Properties> getComponent() {
-			return component;
+		public String getComponent() {
+			return compId;
 		}
 	
 		/**

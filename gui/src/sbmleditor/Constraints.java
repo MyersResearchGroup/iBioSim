@@ -49,14 +49,11 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 
 	private MutableBoolean dirty;
 
-	private Gui biosim;
-
 	/* Create initial assignment panel */
-	public Constraints(Gui biosim, SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty) {
+	public Constraints(SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty) {
 		super(new BorderLayout());
 		this.document = document;
 		this.usedIDs = usedIDs;
-		this.biosim = biosim;
 		this.dirty = dirty;
 		Model model = document.getModel();
 		addConstraint = new JButton("Add Constraint");

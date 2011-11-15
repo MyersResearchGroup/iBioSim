@@ -754,7 +754,6 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 								// Finding the intersection of all the variables
 								// present in all data files.
 								for (int i = 1; (new File(directory + separator + "run-" + i + ".tsd")).exists(); i++) {
-									Properties cProp = new Properties();
 									extractVars = new TSDParser(directory + separator + "run-" + i + ".tsd", false);
 									datFileVars = extractVars.getSpecies();
 									if (i == 1) {
@@ -1138,10 +1137,7 @@ public class DataManager extends JPanel implements ActionListener, TableModelLis
 				ArrayList<String> getSpecies = new ArrayList<String>();
 				GCMFile gcm = new GCMFile(biosim.getRoot());
 				gcm.load(background);
-				HashMap<String, Properties> speciesMap = gcm.getSpecies();
-				for (String s : speciesMap.keySet()) {
-					getSpecies.add(s);
-				}
+				getSpecies = gcm.getSpecies();
 				species = getSpecies.toArray(new String[0]);
 			}
 			else if (background.contains(".lpn")) {
@@ -1456,12 +1452,6 @@ class TableSorter extends TableMap implements TableModelListener {
 			else {
 				return 0;
 			}
-			/*
-			 * int result = s1.compareTo(s2);
-			 * 
-			 * if (result < 0) return -1; else if (result > 0) return 1; else
-			 * return 0;
-			 */
 		}
 	}
 

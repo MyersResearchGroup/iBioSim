@@ -10,6 +10,7 @@ import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -313,7 +314,6 @@ public class Utility {
 	public static FilenameFilter getTSDFilter() {
 		final class TSDFilter implements java.io.FilenameFilter {
 			public boolean accept(File dir, String name) {
-				// TODO Auto-generated method stub
 				return name.contains("tsd") && name.contains("run");
 			}
 		}
@@ -325,7 +325,6 @@ public class Utility {
 	public static FilenameFilter getFilter(final String ext) {
 		final class Filter implements java.io.FilenameFilter {
 			public boolean accept(File dir, String name) {
-				// TODO Auto-generated method stub
 				return name.contains(ext);
 			}
 		}
@@ -406,6 +405,33 @@ public class Utility {
 			//Give warning
 		}
 //		return false;
+	}
+	
+	public static double[] getEquilibrium(String Keq) {
+		if (Keq==null) {
+			double[] params = new double[1];
+			params[0]=-1;
+			return params;
+		}
+		String[] props = Keq.split("/");
+		
+		double[] params = new double[2];
+		
+		if (props.length == 2) {
+			
+			params[0] = Double.parseDouble(props[0]);
+			params[1] = Double.parseDouble(props[1]);
+		}
+		else if (props.length == 1) {
+			params[0] = Double.parseDouble(props[0]);
+			params[1] = 1.0;			
+		}
+		else {
+			params[0] = 1.0;
+			params[1] = 1.0;
+		}
+		
+		return params;
 	}
 	
 	private static FilenameFilter filter = null;

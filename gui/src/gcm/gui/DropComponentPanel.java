@@ -20,6 +20,15 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
+import org.sbml.libsbml.CompExtension;
+import org.sbml.libsbml.CompModelPlugin;
+import org.sbml.libsbml.CompSBMLDocumentPlugin;
+import org.sbml.libsbml.CompartmentGlyph;
+import org.sbml.libsbml.ExternalModelDefinition;
+import org.sbml.libsbml.Layout;
+import org.sbml.libsbml.SpeciesGlyph;
+import org.sbml.libsbml.Submodel;
+
 import main.Gui;
 
 public class DropComponentPanel extends JPanel implements ActionListener {
@@ -43,7 +52,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	private boolean droppedComponent;
 	
 	private static DropComponentPanel panel;
-	private GCM2SBMLEditor gcm2sbml;
+	private ModelEditor gcm2sbml;
 	private GCMFile gcm;
 
 	/**
@@ -56,7 +65,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	 * @return true/false is the dropping occurred or not
 	 */
 	public static boolean dropComponent(
-			GCM2SBMLEditor gcm2sbml, GCMFile gcm, float mouseX, float mouseY, boolean onGrid){
+			ModelEditor gcm2sbml, GCMFile gcm, float mouseX, float mouseY, boolean onGrid){
 		
 		panel = new DropComponentPanel(gcm2sbml, gcm, onGrid);
 		
@@ -82,7 +91,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 	 * @param gcm
 	 * @return whether the user clicked ok/cancel
 	 */
-	public static boolean dropSelectedComponents(GCM2SBMLEditor gcm2sbml, GCMFile gcm) {
+	public static boolean dropSelectedComponents(ModelEditor gcm2sbml, GCMFile gcm) {
 		
 		panel = new DropComponentPanel(gcm2sbml, gcm, true);
 		
@@ -91,7 +100,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		return panel.droppedComponent;
 	}
 	
-	private DropComponentPanel(GCM2SBMLEditor gcm2sbml, GCMFile gcm, boolean onGrid){
+	private DropComponentPanel(ModelEditor gcm2sbml, GCMFile gcm, boolean onGrid){
 		
 		super(new BorderLayout());
 		
@@ -222,7 +231,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 					}
 					
 					Grid grid = gcm.getGrid();
-					grid.refreshComponents(gcm.getComponents());
+					grid.refreshComponents();
 					
 					droppedComponent = true;
 				}
@@ -250,26 +259,11 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		double width = grid.getComponentGeomWidth();
 		double height = grid.getComponentGeomHeight();
 		
-		//make a new properties field with all of the new component's properties
-		Properties properties = new Properties();
-		properties.setProperty("gcm", component); //comp is the name of the gcm that the component contains
-		properties.setProperty("graphwidth", String.valueOf(width));
-		properties.setProperty("graphheight", String.valueOf(height));
-		properties.setProperty("graphx", String.valueOf(col * (width + padding) + padding));
-		properties.setProperty("graphy", String.valueOf(row * (height + padding) + padding));
-		properties.setProperty("row", String.valueOf(row));
-		properties.setProperty("col", String.valueOf(col));
-		
 		GCMFile compGCMFile = new GCMFile(gcm.getPath());
 		compGCMFile.load(gcm.getPath() + File.separator + component);
 		
-		//set the correct compartment status
-		if (compGCMFile.getIsWithinCompartment())
-			properties.setProperty("compartment","true"); 		
-		else 
-			properties.setProperty("compartment","false");
-		
-		gcm.addComponent(null, properties);
+		String id = gcm.addComponent(null, component, compGCMFile.getIsWithinCompartment(), row, col, 
+				col * (width + padding) + padding, row * (height + padding) + padding);
 	}
 	
 	/**
@@ -399,10 +393,11 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 				
 				Properties properties = new Properties();
 				properties.put("gcm", comp); //comp is the name of the gcm that the component contains
-				properties.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH));
-				properties.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
-				properties.setProperty("graphx", String.valueOf(col * separationX + topleftX));
-				properties.setProperty("graphy", String.valueOf(row * separationY + topleftY));
+				
+				//properties.setProperty("graphwidth", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_WIDTH));
+				//properties.setProperty("graphheight", String.valueOf(GlobalConstants.DEFAULT_COMPONENT_HEIGHT));
+				//properties.setProperty("graphx", String.valueOf(col * separationX + topleftX));
+				//properties.setProperty("graphy", String.valueOf(row * separationY + topleftY));
 				
 				//find out if the component is a compartment by looking at the gcm data
 				//set the property appropriately
@@ -416,7 +411,8 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 					properties.setProperty("compartment","false");
 				}
 				
-				gcm.addComponent(null, properties);
+				String id = gcm.addComponent(null, comp, compGCM.getIsWithinCompartment(), -1, -1, 
+						col * separationX + topleftX, row * separationY + topleftY);
 			}
 		}
 		

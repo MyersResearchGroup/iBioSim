@@ -22,7 +22,7 @@ import parser.Parser;
 import sbmleditor.*;
 import util.*;
 import verification.AbstPane;
-import gcm.gui.GCM2SBMLEditor;
+import gcm.gui.ModelEditor;
 import gcm.parser.GCMFile;
 import graph.*;
 
@@ -179,7 +179,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 
 	private SBML_Editor sbmlEditor; // sbml editor
 
-	private GCM2SBMLEditor gcmEditor; // gcm editor
+	private ModelEditor gcmEditor; // gcm editor
 
 	// private JRadioButton overwrite, append;
 
@@ -389,12 +389,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			else {
 				GCMFile gcm = new GCMFile(root);
 				gcm.load(root + separator + modelFile);
-				String[] getProps = gcm.getConditions().toArray(new String[0]);
-				props = new String[getProps.length + 1];
+				// TODO: THIS NEEDS FIXING
+				String[] getProps = null; //gcm.getConditions().toArray(new String[0]);
+				props = new String[/*getProps.length + */1];
 				props[0] = "none";
+				/*
 				for (int i = 0; i < getProps.length; i++) {
 					props[i + 1] = getProps[i];
 				}
+				*/
 			}
 			transientProperties = new JComboBox(props);
 			transientProperties.setPreferredSize(new Dimension(5, 10));
@@ -1573,8 +1576,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 								}
 							}
 						}
-						else if (biomodelsim.getTab().getComponentAt(i) instanceof GCM2SBMLEditor) {
-							GCM2SBMLEditor gcm = ((GCM2SBMLEditor) (biomodelsim.getTab().getComponentAt(i)));
+						else if (biomodelsim.getTab().getComponentAt(i) instanceof ModelEditor) {
+							ModelEditor gcm = ((ModelEditor) (biomodelsim.getTab().getComponentAt(i)));
 							if (gcm.isDirty()) {
 								Object[] options = { "Yes", "No" };
 								int value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save changes to " + sbmlEditor.getRefFile()
@@ -1589,8 +1592,8 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 				}
 				else if (gcmEditor != null) {
 					if (biomodelsim.getTab().getTitleAt(i).equals(gcmEditor.getRefFile())) {
-						if (biomodelsim.getTab().getComponentAt(i) instanceof GCM2SBMLEditor) {
-							GCM2SBMLEditor gcm = ((GCM2SBMLEditor) (biomodelsim.getTab().getComponentAt(i)));
+						if (biomodelsim.getTab().getComponentAt(i) instanceof ModelEditor) {
+							ModelEditor gcm = ((ModelEditor) (biomodelsim.getTab().getComponentAt(i)));
 							if (gcm.isDirty()) {
 								Object[] options = { "Yes", "No" };
 								int value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save changes to " + gcmEditor.getRefFile()
@@ -3906,7 +3909,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 						}
 					}
 					else {
-						for (String species : gcmEditor.getGCM().getSpeciesAsArray()) {
+						for (String species : gcmEditor.getGCM().getSpecies()) {
 							listOfSpecs.add(species);
 						}
 					}
@@ -4394,7 +4397,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 		sbmlEditor = sbml;
 	}
 
-	public void setGcm(GCM2SBMLEditor gcm) {
+	public void setGcm(ModelEditor gcm) {
 		gcmEditor = gcm;
 		updateSpeciesList();
 		if (nary.isSelected()) {
@@ -4440,7 +4443,7 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			}
 		}
 		else {
-			for (String species : gcmEditor.getGCM().getSpeciesAsArray()) {
+			for (String species : gcmEditor.getGCM().getSpecies()) {
 				listOfSpecs.add(species);
 			}
 		}
@@ -4925,12 +4928,15 @@ public class Reb2Sac extends JPanel implements ActionListener, Runnable, MouseLi
 			else {
 				GCMFile gcm = new GCMFile(root);
 				gcm.load(root + separator + modelFile);
-				String[] getProps = gcm.getConditions().toArray(new String[0]);
-				props = new String[getProps.length + 1];
+				// TODO: THIS NEEDS FIXING
+				String[] getProps = null; //gcm.getConditions().toArray(new String[0]);
+				props = new String[/*getProps.length + */1];
 				props[0] = "none";
+				/*
 				for (int i = 0; i < getProps.length; i++) {
 					props[i + 1] = getProps[i];
 				}
+				*/
 			}
 			transientProperties.removeAllItems();
 			for (String s : props) {

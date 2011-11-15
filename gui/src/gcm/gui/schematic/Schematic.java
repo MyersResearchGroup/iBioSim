@@ -2,9 +2,8 @@ package gcm.gui.schematic;
 
 import gcm.gui.GridPanel;
 import gcm.gui.DropComponentPanel;
-import gcm.gui.GCM2SBMLEditor;
+import gcm.gui.ModelEditor;
 import gcm.gui.Grid;
-import gcm.gui.InfluencePanel;
 import gcm.gui.SpeciesPanel;
 import gcm.gui.modelview.movie.MovieContainer;
 import gcm.gui.modelview.movie.SchemeChooserPanel;
@@ -14,7 +13,6 @@ import gcm.util.GlobalConstants;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.GridLayout;
@@ -37,8 +35,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Properties;
 
 import javax.imageio.ImageIO;
 import javax.swing.AbstractAction;
@@ -48,13 +44,11 @@ import javax.swing.ButtonGroup;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -63,10 +57,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.sbml.libsbml.Compartment;
+import org.sbml.libsbml.Layout;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Reaction;
+import org.sbml.libsbml.ReactionGlyph;
 import org.sbml.libsbml.SpeciesReference;
+import org.sbml.libsbml.TextGlyph;
 
 import sbmleditor.Compartments;
 import sbmleditor.Reactions;
@@ -77,7 +74,6 @@ import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
 import com.mxgraph.swing.mxGraphComponent;
 import com.mxgraph.swing.handler.mxRubberband;
-import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.util.mxCellRenderer;
 import com.mxgraph.util.mxConstants;
 import com.mxgraph.util.mxEvent;
@@ -97,7 +93,7 @@ public class Schematic extends JPanel implements ActionListener {
 	
 	private GCMFile gcm;
 	private Gui biosim;
-	private GCM2SBMLEditor gcm2sbml;
+	private ModelEditor gcm2sbml;
 	private boolean editable;
 	private MovieContainer movieContainer;
 	private Compartments compartments;
@@ -132,7 +128,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * Constructor
 	 * @param internalModel
 	 */
-	public Schematic(GCMFile gcm, Gui biosim, GCM2SBMLEditor gcm2sbml, boolean editable, 
+	public Schematic(GCMFile gcm, Gui biosim, ModelEditor gcm2sbml, boolean editable, 
 			MovieContainer movieContainer2, Compartments compartments, Reactions reactions, 
 			JComboBox compartmentList){
 		
@@ -455,7 +451,7 @@ public class Schematic extends JPanel implements ActionListener {
 				//the new grid pointer may not have an accurate enabled state
 				//so make sure it's set to true
 				grid.setEnabled(true);
-				grid.refreshComponents(gcm.getComponents());
+				grid.refreshComponents();
 			}
 			
 			graph.buildGraph();
@@ -467,7 +463,7 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			if (grid.isEnabled()) {
 				grid = gcm.getGrid();
-				grid.refreshComponents(gcm.getComponents());
+				grid.refreshComponents();
 			}
 			
 			graph.buildGraph();
@@ -485,20 +481,23 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			//don't allow the compartment box to be ticked if there
 			//are input or output species in the GCM
-			for (Properties speciesProp : gcm.getSpecies().values()) {
+			for (String species : gcm.getSpecies()) {
 				
-				if (speciesProp.getProperty("Type").contains(GlobalConstants.INPUT) ||
-						speciesProp.getProperty("Type").contains(GlobalConstants.OUTPUT)) {
+				if (gcm.getSpeciesType(species).equals(GlobalConstants.INPUT) ||
+					gcm.getSpeciesType(species).equals(GlobalConstants.OUTPUT)) {
 					
 					disallow = true;
 					break;
 				}
 			}
 			
-			if (!disallow)
+			if (!disallow) {
 				gcm.setIsWithinCompartment(check.isSelected());
-			else {
-				
+				if (check.isSelected())
+					gcm.setEnclosingCompartment((String)compartmentList.getSelectedItem());
+				else 
+					gcm.setEnclosingCompartment("");
+			} else {
 				check.setSelected(false);
 				
 				JOptionPane.showMessageDialog(Gui.frame, 
@@ -566,7 +565,8 @@ public class Schematic extends JPanel implements ActionListener {
 			// radio buttons don't have to do anything and have an action command of "".
 		}
 		else if(command == "comboBoxChanged") {
-			gcm.setEnclosingCompartment((String)compartmentList.getSelectedItem());
+			if (gcm.getIsWithinCompartment())
+				gcm.setEnclosingCompartment((String)compartmentList.getSelectedItem());
 		}
 		else{
 			throw(new Error("Invalid actionCommand: " + command));
@@ -912,7 +912,6 @@ public class Schematic extends JPanel implements ActionListener {
 				
 				for(int i=0; i<cells.length; i++){
 					
-					// TODO: Disallow moving edges around.
 					mxCell cell = (mxCell)cells[i];
 					
 					// If an edge gets moved ignore it then rebuild the graph from the model
@@ -1086,21 +1085,20 @@ public class Schematic extends JPanel implements ActionListener {
 						}
 						else if(type == GlobalConstants.REACTION) {
 							
-							reactions.removeTheReaction(gcm.getSBMLDocument(),(String)cell.getId());
+							//reactions.removeTheReaction(gcm.getSBMLDocument(),(String)cell.getId());
 							gcm.removeReaction(cell.getId());
 						}
 						else if(type == GlobalConstants.SPECIES){
 							
-							//gcm.getSpecies().remove(cell.getId());
-							//gcm.getSpecies().remove(cell.getId());
+							/*
 							if(gcm.speciesUsedInOtherGCM(cell.getId())){
 								JOptionPane.showMessageDialog(Gui.frame, "Sorry, the species \""+cell.getId()+"\" is used in another component and cannot be removed.");
 								continue;
 							}
-							gcm.removeSpeciesAndAssociations(cell.getId());
-							//gcm.removeSpecies(cell.getId());
+							*/
+							//gcm.removeSpeciesAndAssociations(cell.getId());
+							gcm.removeSpecies(cell.getId());
 							//graph.speciesRemoved(cell.getId());
-							//graph.buildGraph();
 						}
 						else if(type == GlobalConstants.COMPONENT){
 									
@@ -1111,16 +1109,10 @@ public class Schematic extends JPanel implements ActionListener {
 								gcm.removeComponent(cell.getId());
 						}
 						else if(type == GlobalConstants.PROMOTER){
-							
-							if(gcm.removePromoterCheck(cell.getId()))
-								gcm.removePromoter(cell.getId());
-							// this should actually never happen because the edges get deleted before the promoters.
-							else
-								JOptionPane.showMessageDialog(Gui.frame, "Sorry, you must remove the influences connected to this promoter first.");
-								
+							gcm.removePromoter(cell.getId());
 						}
 						else if(type == GlobalConstants.COMPONENT_CONNECTION){
-							removeComponentConnection(cell);
+							//removeComponentConnection(cell);
 						}
 						else if(type == graph.CELL_NOT_FULLY_CONNECTED){
 							// do nothing. This can happen if the user deletes a species that is connected
@@ -1204,11 +1196,8 @@ public class Schematic extends JPanel implements ActionListener {
 		mxCell target = (mxCell)edge.getTarget();
 		//string source = edge.getSource().getValue();
 		
-		if ((graph.getCellProperties(source).containsKey("compartment") &&
-				graph.getCellProperties(source).get("compartment").equals("true")) ||
-				(graph.getCellProperties(target).containsKey("compartment") &&
-						graph.getCellProperties(target).get("compartment").equals("true"))) {
-			
+		if (gcm.isCompartmentEnclosed(source.getId()) ||
+ 			gcm.isCompartmentEnclosed(target.getId())) {
 			JOptionPane.showMessageDialog(Gui.frame, 
 					"You can't connect a compartment to another object.\n" +
 					"If you need a species to go across a compartment membrane, " +
@@ -1259,8 +1248,9 @@ public class Schematic extends JPanel implements ActionListener {
 		
 		// Disallows user from connecting to a species that is an input
 		if (graph.getCellType(target).contains(GlobalConstants.SPECIES)) {
-			String specType = gcm.getSpecies().get(targetID).getProperty(GlobalConstants.TYPE);
-			if (specType.contains(GlobalConstants.INPUT) || specType.contains(GlobalConstants.SPASTIC)) {
+			String specType = gcm.getSpeciesType(targetID);
+			if (specType.equals(GlobalConstants.INPUT)) {
+				// TOOD: REMOVED THIS || specType.contains(GlobalConstants.SPASTIC)) {
 				JOptionPane.showMessageDialog(Gui.frame, "You can't connect to a species that is an input or constitutive.");
 				graph.buildGraph();
 				return;
@@ -1271,14 +1261,12 @@ public class Schematic extends JPanel implements ActionListener {
 		// see if we are connecting a component to a species
 		if(numComponents == 1){
 			
-			Properties sourceProp = graph.getCellProperties(source);
-			Properties targetProp = graph.getCellProperties(target);
 			String port = null;
 			
 			if(graph.getCellType(source) == GlobalConstants.COMPONENT){
 				// source is a component
 				try{
-					port = connectComponentToSpecies(sourceProp, targetID);
+					port = connectComponentToSpecies(sourceID, targetID);
 				}
 				catch(ListChooser.EmptyListException e){
 					JOptionPane.showMessageDialog(Gui.frame, "This component has no output ports.");
@@ -1289,7 +1277,7 @@ public class Schematic extends JPanel implements ActionListener {
 			else{
 				// target is a component
 				try{
-					port = connectSpeciesToComponent(sourceID, targetProp);
+					port = connectSpeciesToComponent(sourceID, targetID);
 				}
 				catch(ListChooser.EmptyListException e){
 					JOptionPane.showMessageDialog(Gui.frame, "This component has no input ports.");	
@@ -1315,66 +1303,11 @@ public class Schematic extends JPanel implements ActionListener {
 			graph.buildGraph();
 			gcm.makeUndoPoint();
 			return;
-		} // end connect species to component
+		} 
 		
-		// Calculate some parameters that will be needed to build the
-		// influence we will need.
-		String type;
-		
-		if(activationButton.isSelected()){
-			type = InfluencePanel.types[1]; 
-		}
-		else if(inhibitionButton.isSelected()){
-			type = InfluencePanel.types[0];
-		}
-		else if(bioActivationButton.isSelected()){
-			type = InfluencePanel.types[3]; 
-		}		
-		else if(reactionButton.isSelected()){
-			type = GlobalConstants.REACTION_EDGE;
-		}
-		else if(modifierButton.isSelected()){
-			type = GlobalConstants.MODIFIER;
-		}		
-		else if(noInfluenceButton.isSelected()){
-			type = InfluencePanel.types[2];
-		}
-		else{
-			throw(new Error("No influence button was pressed"));
-		}
-		
-		String name; // the species name
-		Properties newInfluenceProperties = new Properties(); // the new influence
-		
-		// see if we need to connect a species to a promoter
-		if(numPromoters == 1){
-			if(graph.getCellType(source) == GlobalConstants.PROMOTER){
-				// source is a promoter
-				type = InfluencePanel.types[1];
-				name = InfluencePanel.buildName(GlobalConstants.NONE,targetID,type,sourceID);
-				newInfluenceProperties.setProperty(GlobalConstants.PROMOTER, sourceID);
-			}
-			else{
-				// target is a promoter
-				name = InfluencePanel.buildName(sourceID,GlobalConstants.NONE,type,targetID);
-				newInfluenceProperties.setProperty(GlobalConstants.PROMOTER, targetID);
-			}
-
-		}// end connect species to promoter
-		else{
-			// connect two species to each other, create new implicit promoter if influence is activation or repression
-			String newPromoterName = "";
-			
-			if (activationButton.isSelected() || inhibitionButton.isSelected()) {
-				newPromoterName = gcm.createPromoter(null,0, 0, false);
-				newInfluenceProperties.setProperty(GlobalConstants.PROMOTER, newPromoterName);
-			}
-			else
-				newPromoterName = "none";
-			
-			name = InfluencePanel.buildName(sourceID, targetID, type, newPromoterName);
-		}
 		// make sure the species name is valid
+		// TODO: FIX ME
+		/*
 		String iia = gcm.isInfluenceAllowed(name);
 		
 		if(iia != null){
@@ -1383,12 +1316,9 @@ public class Schematic extends JPanel implements ActionListener {
 			gcm2sbml.refresh();
 			return;
 		}
+		*/
 		
-		// build the influence properties
-		newInfluenceProperties.setProperty(GlobalConstants.NAME, name);
-		newInfluenceProperties.setProperty(GlobalConstants.TYPE, type);
-		
-		if (type == GlobalConstants.REACTION_EDGE) {
+		if (reactionButton.isSelected()) {
 			
 			if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
@@ -1420,7 +1350,7 @@ public class Schematic extends JPanel implements ActionListener {
 				return;
 			}
 		} 
-		else if (type == GlobalConstants.MODIFIER) {
+		else if (modifierButton.isSelected()) {
 			
 			if ((graph.getCellType(source) == GlobalConstants.SPECIES) && 
 					(graph.getCellType(target) == GlobalConstants.SPECIES)) {
@@ -1459,7 +1389,43 @@ public class Schematic extends JPanel implements ActionListener {
 				return;
 			}
 			
-			gcm.getInfluences().put(name, newInfluenceProperties);
+			// see if we need to connect a species to a promoter
+			if(numPromoters == 1){
+				if(graph.getCellType(source) == GlobalConstants.PROMOTER){
+					// source is a promoter
+					gcm.addActivatorToProductionReaction(sourceID, "none", targetID, null, null, null);
+				}
+				else{
+					// target is a promoter
+					if (activationButton.isSelected()) {
+						gcm.addActivatorToProductionReaction(targetID, sourceID, "none", null, null, null);
+					} else if (inhibitionButton.isSelected()) {
+						gcm.addRepressorToProductionReaction(targetID, sourceID, "none", null, null, null);
+					} else if (noInfluenceButton.isSelected()) {
+						gcm.addNoInfluenceToProductionReaction(targetID, sourceID, "none");
+					}
+				}
+
+			}
+			else{
+				// connect two species to each other, create new implicit promoter if influence is activation or repression
+				String newPromoterName = "";
+				
+				if (activationButton.isSelected() || inhibitionButton.isSelected() || noInfluenceButton.isSelected()) {
+					newPromoterName = gcm.createPromoter(null,0, 0, false);
+					gcm.createProductionReaction(newPromoterName,null,null,null,null,null,null);
+					if (activationButton.isSelected()) {
+						gcm.addActivatorToProductionReaction(newPromoterName, sourceID, targetID, null, null, null);
+					} else if (inhibitionButton.isSelected()) {
+						gcm.addRepressorToProductionReaction(newPromoterName, sourceID, targetID, null, null, null);
+					} else if (noInfluenceButton.isSelected()) {
+						gcm.addNoInfluenceToProductionReaction(newPromoterName, sourceID, targetID);
+					}
+				}
+				else if (bioActivationButton.isSelected()) {
+					gcm.addReactantToComplexReaction(sourceID, targetID, null, null);
+				}
+			}
 		}
 		
 		graph.buildGraph();
@@ -1474,21 +1440,22 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @param spec_id
 	 * @return: A boolean representing success or failure. True means it worked, false, means there was no output in the component.
 	 */
-	public String connectComponentToSpecies(Properties comp, String specID) throws ListChooser.EmptyListException{
+	public String connectComponentToSpecies(String compID, String specID) throws ListChooser.EmptyListException{
 
-		Object[] portNames = getGCMPorts(comp, GlobalConstants.OUTPUT);
+		ArrayList<String> portNames = getGCMPorts(compID, GlobalConstants.OUTPUT);
 		
-		String port = ListChooser.selectFromList(Gui.frame, portNames, 
-				"Please Choose an Output Port");
+		String port = ListChooser.selectFromList(Gui.frame, portNames.toArray(), "Please Choose an Output Port");
 		
 		if(port == null)
 			return null;
 		
-		String fullPath = gcm.getPath() + File.separator + comp.getProperty("gcm");
+		String fullPath = gcm.getPath() + File.separator + gcm.getModelFileName(compID).replace(".xml", ".gcm");
 		GCMFile compGCM = new GCMFile(gcm.getPath());
 		compGCM.load(fullPath);
 		
 		//make sure the types match up (sans the input/output bit)
+		// TODO: REMOVED TEMPORARILTY
+		/*
 		if (!compGCM.getSpecies().get(port).getProperty(GlobalConstants.TYPE).replace(GlobalConstants.INPUT, "")
 				.replace(GlobalConstants.OUTPUT, "").replace(GlobalConstants.INTERNAL, "")
 					.equals(gcm.getSpecies().get(specID).getProperty(GlobalConstants.TYPE)
@@ -1499,8 +1466,9 @@ public class Schematic extends JPanel implements ActionListener {
 			
 			return null;
 		}
+		*/
 		
-		gcm.connectComponentAndSpecies(comp, port, specID, "Output");
+		gcm.connectComponentAndSpecies(compID, port, specID, "Output");
 		
 		return port;
 	}
@@ -1511,21 +1479,23 @@ public class Schematic extends JPanel implements ActionListener {
 	 * @param comp_id
 	 * @return a boolean representing success or failure.
 	 */
-	public String connectSpeciesToComponent(String specID, Properties comp) throws ListChooser.EmptyListException{
+	public String connectSpeciesToComponent(String specID, String compID) throws ListChooser.EmptyListException{
 
-		Object[] portNames = getGCMPorts(comp, GlobalConstants.INPUT);
+		ArrayList<String> portNames = getGCMPorts(compID, GlobalConstants.INPUT);
 		
-		String port = ListChooser.selectFromList(Gui.frame, portNames, 
+		String port = ListChooser.selectFromList(Gui.frame, portNames.toArray(), 
 				"Please Choose an Input Port");
 		
 		if(port == null)
 			return null;
 		
-		String fullPath = gcm.getPath() + File.separator + comp.getProperty("gcm");
+		String fullPath = gcm.getPath() + File.separator + gcm.getModelFileName(compID).replace(".xml",".gcm");
 		GCMFile compGCM = new GCMFile(gcm.getPath());
 		compGCM.load(fullPath);
 		
 		//make sure the types match up (sans the input/output bit)
+		// TODO: REMOVED TEMPORARILY
+		/*
 		if (!compGCM.getSpecies().get(port).getProperty(GlobalConstants.TYPE).replace(GlobalConstants.INPUT, "")
 				.replace(GlobalConstants.OUTPUT, "").replace(GlobalConstants.INTERNAL, "")
 					.equals(gcm.getSpecies().get(specID).getProperty(GlobalConstants.TYPE)
@@ -1535,8 +1505,9 @@ public class Schematic extends JPanel implements ActionListener {
 					"To make this connection, the species types must match.");
 			return null;
 		}
+		*/
 		
-		gcm.connectComponentAndSpecies(comp, port, specID, "Input");
+		gcm.connectComponentAndSpecies(compID, port, specID, "Input");
 		return port;
 	}
 
@@ -1544,6 +1515,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * given an mxCell where either the source or target is a component, 
 	 * remove the connection.
 	 */
+	/*
 	private void removeComponentConnection(mxCell cell){
 		Properties comp;
 		String speciesId;
@@ -1559,17 +1531,18 @@ public class Schematic extends JPanel implements ActionListener {
 		if(gcm.checkDisconnectComponentAndSpecies(comp, speciesId, true) == false)
 			throw new Error("Species was not connected to the given component!");
 	}
+	*/
 	
 	// TODO: This should probably be moved to GCMFile.java, maybe as a static method?
 	/**
 	 * @return an array of the input/output ports for the component passed in
 	 */
-	private Object[] getGCMPorts(Properties comp, String type){
-		String fullPath = gcm.getPath() + File.separator + comp.getProperty("gcm");
+	private ArrayList<String> getGCMPorts(String compId, String type){
+		String fullPath = gcm.getPath() + File.separator + gcm.getModelFileName(compId).replace(".xml", ".gcm");
 		GCMFile compGCM = new GCMFile(gcm.getPath());
 		compGCM.load(fullPath);
-		HashMap<String, Properties> ports = compGCM.getPorts(type);
-		return ports.keySet().toArray();
+		ArrayList<String> ports = compGCM.getPorts(type);
+		return ports;
 	}
 	
 	
@@ -1685,9 +1658,20 @@ public class Schematic extends JPanel implements ActionListener {
 			reactions.reactionsEditor(gcm.getSBMLDocument(),"OK",(String)cell.getId(),true);
 			
 			if (!cell.getId().equals(r.getId())) {
-				
-				gcm.getReactions().put(r.getId(), gcm.getReactions().get(cell.getId()));
-				gcm.getReactions().remove(cell.getId());
+				if (gcm.getSBMLLayout().getNumLayouts() != 0) {
+					Layout layout = gcm.getSBMLLayout().getLayout(0); 
+					if (layout.getReactionGlyph(cell.getId())!=null) {
+						ReactionGlyph reactionGlyph = layout.getReactionGlyph(cell.getId());
+						reactionGlyph.setId(r.getId());
+						reactionGlyph.setReactionId(r.getId());
+					}
+					if (layout.getTextGlyph(cell.getId())!=null) {
+						TextGlyph textGlyph = layout.getTextGlyph(cell.getId());
+						textGlyph.setId(r.getId());
+						textGlyph.setGraphicalObjectId(r.getId());
+						textGlyph.setText(r.getId());
+					}
+				}
 				cell.setId(r.getId());
 			}
 		}
@@ -1835,7 +1819,7 @@ public class Schematic extends JPanel implements ActionListener {
 	 * return's the gcm2sbml editor
 	 * @return the gcm2sbml editor
 	 */
-	public GCM2SBMLEditor getGCM2SBML() {
+	public ModelEditor getGCM2SBML() {
 		
 		return gcm2sbml;
 	}

@@ -60,39 +60,65 @@ public interface SpeciesInterface extends VisitableSpecies {
 	 * Sets the properties of the specie
 	 * @param properties the property to set
 	 */
-	public void setProperties(Properties properties);
+	//public void setProperties(Properties properties);
 	
 	/**
 	 * Returns the property of the specie
 	 * @return the property of the specie
 	 */
-	public Properties getProperties();
+	//public Properties getProperties();
 
 	/**
 	 * Adds a new value to the specie
 	 * @param key the key of the value
 	 * @param value the value to add
 	 */
-	public void addProperty(String key, String value);
+	//public void addProperty(String key, String value);
 	
 	/**
 	 * Returns the property with the given key
 	 * @param key the key of the property
 	 * @return
 	 */
-	public String getProperty(String key);
+	//public String getProperty(String key);
+	
+	public String getType();
+
+	public void setType(String type);
+
+	public void setDiffusible(boolean diffusible);
+
+	public boolean isDiffusible();
 	
 	public double getInitialAmount();
 	
+	public void setInitialAmount(double amount);
+	
 	public double getInitialConcentration();
+	
+	public void setInitialConcentration(double concentration);
+	
+	public String getRBS();
+	
+	public void setRBS(String RBS);
+	
+	public String getORF();
+	
+	public void setORF(String ORF);
 	
 	public double getDecay();
 	
-	public double getKecdecay();
+	public void setDecay(double kd);
 	
 	public double[] getKc();
-		
+	
+	public void setKc(double kc_f,double kc_r);
+	
 	public double[] getKmdiff();
+
+	public void setKmdiff(double kmdiff_f,double kmdiff_r);
+	
+	public double getKecdecay();
 	
 	public double getKecdiff();
 	

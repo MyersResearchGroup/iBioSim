@@ -66,8 +66,20 @@ public class CompatibilityFixer {
 	public final static String GUI_COOPERATIVITY_STRING = "Stoichiometry of binding";
 	public final static String OLD_COOPERATIVITY_STRING = "Binding site count for transciption factors";
 
+	public final static String GUI_FORWARD_RNAP_BINDING_STRING = "Forward RNAP binding rate";
+	public final static String OLD_FORWARD_RNAP_BINDING_STRING = "KRNAP";
+
+	public final static String GUI_REVERSE_RNAP_BINDING_STRING = "Reverse RNAP binding rate";
+	public final static String OLD_REVERSE_RNAP_BINDING_STRING = "KRNAP";
+
 	public final static String GUI_RNAP_BINDING_STRING = "RNAP binding equilibrium";
 	public final static String OLD_RNAP_BINDING_STRING = "KRNAP";
+
+	public final static String GUI_FORWARD_ACTIVATED_RNAP_BINDING_STRING = "Forward activated RNAP binding rate";
+	public final static String OLD_FORWARD_ACTIVATED_RNAP_BINDING_STRING = "kao_f";
+
+	public final static String GUI_REVERSE_ACTIVATED_RNAP_BINDING_STRING = "Reverse activated RNAP binding rate";
+	public final static String OLD_REVERSE_ACTIVATED_RNAP_BINDING_STRING = "kao_r";
 
 	public final static String GUI_ACTIVATED_RNAP_BINDING_STRING = "Activated RNAP binding equilibrium";
 	public final static String OLD_ACTIVATED_RNAP_BINDING_STRING = "Kao";
@@ -81,17 +93,41 @@ public class CompatibilityFixer {
 	public final static String GUI_ACTIVED_STRING = "Activated production rate";
 	public final static String OLD_ACTIVED_STRING = "Activated kocr";
 
+	public final static String GUI_FORWARD_KREP_STRING = "Forward repression binding rate";
+	public final static String OLD_FORWARD_KREP_STRING = "krep_f";
+
+	public final static String GUI_REVERSE_KREP_STRING = "Reverse repression binding rate";
+	public final static String OLD_REVERSE_KREP_STRING = "krep_r";
+
 	public final static String GUI_KREP_STRING = "Repression binding equilibrium";
 	public final static String OLD_KREP_STRING = "Krep";
 
+	public final static String GUI_FORWARD_KACT_STRING = "Forward activation binding rate";
+	public final static String OLD_FORWARD_KACT_STRING = "kact_f";
+
+	public final static String GUI_REVERSE_KACT_STRING = "Reverse activation binding rate";
+	public final static String OLD_REVERSE_KACT_STRING = "kact_r";
+
 	public final static String GUI_KACT_STRING = "Activation binding equilibrium";
 	public final static String OLD_KACT_STRING = "Kact";
+
+	public final static String GUI_FORWARD_KCOMPLEX_STRING = "Forward complex formation rate";
+	public final static String OLD_FORWARD_KCOMPLEX_STRING = "kc_f";
+
+	public final static String GUI_REVERSE_KCOMPLEX_STRING = "Reverse complex formation rate";
+	public final static String OLD_REVERSE_KCOMPLEX_STRING = "kc_r";
 
 	public final static String GUI_KCOMPLEX_STRING = "Complex formation equilibrium";
 	public final static String OLD_KCOMPLEX_STRING = "Kc";
 	
 	public final static String GUI_MEMDIFF_STRING = "Membrane diffusion rate (fd/rv)";
 	public final static String OLD_MEMDIFF_STRING = "kmdiff";
+	
+	public final static String GUI_FORWARD_MEMDIFF_STRING = "Forward membrane diffusion rate";
+	public final static String OLD_FORWARD_MEMDIFF_STRING = "kfmdiff";
+	
+	public final static String GUI_REVERSE_MEMDIFF_STRING = "Reverse membrane diffusion rate";
+	public final static String OLD_REVERSE_MEMDIFF_STRING = "krmdiff";
 	
 	public final static String GUI_KECDIFF_STRING = "Extracellular diffusion rate";
 	public final static String OLD_KECDIFF_STRING = "Kecdiff";
@@ -137,9 +173,21 @@ public class CompatibilityFixer {
 
 		guiName.put(GlobalConstants.RNAP_BINDING_STRING, GUI_RNAP_BINDING_STRING);
 		oldName.put(GlobalConstants.RNAP_BINDING_STRING, OLD_RNAP_BINDING_STRING);
+
+		guiName.put(GlobalConstants.FORWARD_RNAP_BINDING_STRING, GUI_FORWARD_RNAP_BINDING_STRING);
+		oldName.put(GlobalConstants.FORWARD_RNAP_BINDING_STRING, OLD_FORWARD_RNAP_BINDING_STRING);
+
+		guiName.put(GlobalConstants.REVERSE_RNAP_BINDING_STRING, GUI_REVERSE_RNAP_BINDING_STRING);
+		oldName.put(GlobalConstants.REVERSE_RNAP_BINDING_STRING, OLD_REVERSE_RNAP_BINDING_STRING);
 		
 		guiName.put(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, GUI_ACTIVATED_RNAP_BINDING_STRING);
 		oldName.put(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, OLD_ACTIVATED_RNAP_BINDING_STRING);
+		
+		guiName.put(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, GUI_FORWARD_ACTIVATED_RNAP_BINDING_STRING);
+		oldName.put(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, OLD_FORWARD_ACTIVATED_RNAP_BINDING_STRING);
+		
+		guiName.put(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, GUI_REVERSE_ACTIVATED_RNAP_BINDING_STRING);
+		oldName.put(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, OLD_REVERSE_ACTIVATED_RNAP_BINDING_STRING);
 
 		guiName.put(GlobalConstants.OCR_STRING, GUI_OCR_STRING);
 		oldName.put(GlobalConstants.OCR_STRING, OLD_OCR_STRING);
@@ -147,20 +195,44 @@ public class CompatibilityFixer {
 		guiName.put(GlobalConstants.KBASAL_STRING, GUI_KBASAL_STRING);
 		oldName.put(GlobalConstants.KBASAL_STRING, OLD_KBASAL_STRING);
 
-		guiName.put(GlobalConstants.ACTIVED_STRING, GUI_ACTIVED_STRING);
-		oldName.put(GlobalConstants.ACTIVED_STRING, OLD_ACTIVED_STRING);
+		guiName.put(GlobalConstants.ACTIVATED_STRING, GUI_ACTIVED_STRING);
+		oldName.put(GlobalConstants.ACTIVATED_STRING, OLD_ACTIVED_STRING);
 
 		guiName.put(GlobalConstants.KREP_STRING, GUI_KREP_STRING);
 		oldName.put(GlobalConstants.KREP_STRING, OLD_KREP_STRING);
+
+		guiName.put(GlobalConstants.FORWARD_KREP_STRING, GUI_FORWARD_KREP_STRING);
+		oldName.put(GlobalConstants.FORWARD_KREP_STRING, OLD_FORWARD_KREP_STRING);
+
+		guiName.put(GlobalConstants.REVERSE_KREP_STRING, GUI_REVERSE_KREP_STRING);
+		oldName.put(GlobalConstants.REVERSE_KREP_STRING, OLD_REVERSE_KREP_STRING);
 		
 		guiName.put(GlobalConstants.KACT_STRING, GUI_KACT_STRING);
 		oldName.put(GlobalConstants.KACT_STRING, OLD_KACT_STRING);
 		
+		guiName.put(GlobalConstants.FORWARD_KACT_STRING, GUI_FORWARD_KACT_STRING);
+		oldName.put(GlobalConstants.FORWARD_KACT_STRING, OLD_FORWARD_KACT_STRING);
+		
+		guiName.put(GlobalConstants.REVERSE_KACT_STRING, GUI_REVERSE_KACT_STRING);
+		oldName.put(GlobalConstants.REVERSE_KACT_STRING, OLD_REVERSE_KACT_STRING);
+		
 		guiName.put(GlobalConstants.KCOMPLEX_STRING, GUI_KCOMPLEX_STRING);
 		oldName.put(GlobalConstants.KCOMPLEX_STRING, OLD_KCOMPLEX_STRING);
 		
+		guiName.put(GlobalConstants.FORWARD_KCOMPLEX_STRING, GUI_FORWARD_KCOMPLEX_STRING);
+		oldName.put(GlobalConstants.FORWARD_KCOMPLEX_STRING, OLD_FORWARD_KCOMPLEX_STRING);
+		
+		guiName.put(GlobalConstants.REVERSE_KCOMPLEX_STRING, GUI_REVERSE_KCOMPLEX_STRING);
+		oldName.put(GlobalConstants.REVERSE_KCOMPLEX_STRING, OLD_REVERSE_KCOMPLEX_STRING);
+		
 		guiName.put(GlobalConstants.MEMDIFF_STRING, GUI_MEMDIFF_STRING);
 		oldName.put(GlobalConstants.MEMDIFF_STRING, OLD_MEMDIFF_STRING);
+		
+		guiName.put(GlobalConstants.FORWARD_MEMDIFF_STRING, GUI_FORWARD_MEMDIFF_STRING);
+		oldName.put(GlobalConstants.FORWARD_MEMDIFF_STRING, OLD_FORWARD_MEMDIFF_STRING);
+		
+		guiName.put(GlobalConstants.REVERSE_MEMDIFF_STRING, GUI_REVERSE_MEMDIFF_STRING);
+		oldName.put(GlobalConstants.REVERSE_MEMDIFF_STRING, OLD_REVERSE_MEMDIFF_STRING);
 		
 		guiName.put(GlobalConstants.KECDIFF_STRING, GUI_KECDIFF_STRING);
 		oldName.put(GlobalConstants.KECDIFF_STRING, OLD_KECDIFF_STRING);

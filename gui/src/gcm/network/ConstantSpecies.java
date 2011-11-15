@@ -11,7 +11,7 @@ import gcm.visitor.SpeciesVisitor;
  */
 public class ConstantSpecies extends AbstractSpecies {
 	public ConstantSpecies(String name, String stateName, Properties properties) {
-		this.properties = properties;
+		//this.properties = properties;
 		this.id = name;
 		this.stateName = stateName;
 	}

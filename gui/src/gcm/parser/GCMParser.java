@@ -1,7 +1,6 @@
 package gcm.parser;
 
 import gcm.network.BaseSpecies;
-import gcm.network.ComplexSpecies;
 import gcm.network.ConstantSpecies;
 import gcm.network.DiffusibleConstitutiveSpecies;
 import gcm.network.DiffusibleSpecies;
@@ -18,9 +17,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Properties;
 
+import org.sbml.libsbml.ModifierSpeciesReference;
+import org.sbml.libsbml.Reaction;
+import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SBMLWriter;
+import org.sbml.libsbml.Species;
+import org.sbml.libsbml.SpeciesReference;
 
 import sbol.SbolSynthesizer;
 
@@ -45,7 +48,7 @@ public class GCMParser {
 		else {
 			separator = File.separator;
 		}
-		this.debug = debug;
+		//this.debug = debug;
 		gcm = new GCMFile(filename.substring(0, filename.length()
 				- filename.split(separator)[filename.split(separator).length - 1]
 						.length()));
@@ -71,39 +74,32 @@ public class GCMParser {
 		else {
 			separator = File.separator;
 		}
-		this.debug = debug;
+		//this.debug = debug;
 		this.gcm = gcm;
 	}
 
 	public GeneticNetwork buildNetwork() {
-		org.sbml.libsbml.SBMLDocument sbml = gcm.flattenGCM(true);
+		SBMLDocument sbml = gcm.flattenGCM();
 		return buildTopLevelNetwork(sbml);
 	}
 	
-	public GeneticNetwork buildTopLevelNetwork(org.sbml.libsbml.SBMLDocument sbml) {
-		HashMap<String, Properties> speciesMap = gcm.getSpecies();
-		HashMap<String, Properties> reactionMap = gcm.getInfluences();
-		HashMap<String, Properties> promoterMap = gcm.getPromoters();
-
-		species = new HashMap<String, SpeciesInterface>();
-		promoters = new HashMap<String, Promoter>();
+	public GeneticNetwork buildTopLevelNetwork(SBMLDocument sbml) {
+		speciesList = new HashMap<String, SpeciesInterface>();
+		promoterList = new HashMap<String, Promoter>();
 		complexMap = new HashMap<String, ArrayList<Influence>>();
 		partsMap = new HashMap<String, ArrayList<Influence>>();
 
-		for (String s : speciesMap.keySet()) {
-			SpeciesInterface specie = parseSpeciesData(s, speciesMap.get(s));
-			species.put(specie.getId(), specie);
+		for (long i=0; i<sbml.getModel().getNumSpecies(); i++) {
+			Species species = sbml.getModel().getSpecies(i);
+			if (species.isSetAnnotation() && 
+				species.getAnnotationString().contains(GlobalConstants.TYPE+"="+GlobalConstants.PROMOTER)) { 
+				parsePromoterData(sbml,species);
+			} else {
+				parseSpeciesData(sbml,species);
+			}
 		}
 		
-		for (String s : promoterMap.keySet()) {
-			parsePromoterData(s, promoterMap.get(s));	
-		}
-		
-		for (String s : reactionMap.keySet()) {
-			parseReactionData(s, reactionMap.get(s));			
-		}
-		
-		GeneticNetwork network = new GeneticNetwork(species, complexMap, partsMap, promoters, gcm);
+		GeneticNetwork network = new GeneticNetwork(speciesList, complexMap, partsMap, promoterList, gcm);
 		
 		network.setSBMLFile(gcm.getSBMLFile());
 		if (sbml != null) {
@@ -117,155 +113,146 @@ public class GCMParser {
 	}
 
 	public HashMap<String, SpeciesInterface> getSpecies() {
-		return species;
+		return speciesList;
 	}
 
-	public void setSpecies(HashMap<String, SpeciesInterface> species) {
-		this.species = species;
+	public void setSpecies(HashMap<String, SpeciesInterface> speciesList) {
+		this.speciesList = speciesList;
 	}
 
 	public HashMap<String, Promoter> getPromoters() {
-		return promoters;
+		return promoterList;
 	}
 
-	public void setPromoters(HashMap<String, Promoter> promoters) {
-		this.promoters = promoters;
+	public void setPromoters(HashMap<String, Promoter> promoterList) {
+		this.promoterList = promoterList;
 	}
 
-	private Promoter parsePromoterData(String promoterID, Properties property) {
+	private void parsePromoterData(SBMLDocument sbml, Species promoter) {
 		Promoter p = new Promoter();
-		p.setId(promoterID);
-		promoters.put(promoterID, p);
-		
-		if (property != null && property.containsKey(GlobalConstants.PROMOTER_COUNT_STRING)) {
-			p.addProperty(GlobalConstants.PROMOTER_COUNT_STRING, property.getProperty(GlobalConstants.PROMOTER_COUNT_STRING));
-		} else {
-			p.addProperty(GlobalConstants.PROMOTER_COUNT_STRING, gcm.getParameter(GlobalConstants.PROMOTER_COUNT_STRING));
-		} 
-		
-		if (property != null && property.containsKey(GlobalConstants.ACTIVED_STRING)) {
-			p.addProperty(GlobalConstants.ACTIVED_STRING, property.getProperty(GlobalConstants.ACTIVED_STRING));
-		} else {
-			p.addProperty(GlobalConstants.ACTIVED_STRING, gcm.getParameter(GlobalConstants.ACTIVED_STRING));
-		} 
-		
-		if (property != null && property.containsKey(GlobalConstants.STOICHIOMETRY_STRING)) {
-			p.addProperty(GlobalConstants.STOICHIOMETRY_STRING, property.getProperty(GlobalConstants.STOICHIOMETRY_STRING));
-		} else {
-			p.addProperty(GlobalConstants.STOICHIOMETRY_STRING, gcm.getParameter(GlobalConstants.STOICHIOMETRY_STRING));
-		} 
-		
-		if (property != null && property.containsKey(GlobalConstants.OCR_STRING)) {
-			p.addProperty(GlobalConstants.OCR_STRING, property.getProperty(GlobalConstants.OCR_STRING));
-		} else {
-			p.addProperty(GlobalConstants.OCR_STRING, gcm.getParameter(GlobalConstants.OCR_STRING));
-		} 
-		
-		if (property != null && property.containsKey(GlobalConstants.KBASAL_STRING)) {
-			p.addProperty(GlobalConstants.KBASAL_STRING, property.getProperty(GlobalConstants.KBASAL_STRING));
-		} else {
-			p.addProperty(GlobalConstants.KBASAL_STRING, gcm.getParameter(GlobalConstants.KBASAL_STRING));
-		} 
-		
-
-		if (property != null && property.containsKey(GlobalConstants.RNAP_BINDING_STRING)) {
-			p.addProperty(GlobalConstants.RNAP_BINDING_STRING, property.getProperty(GlobalConstants.RNAP_BINDING_STRING));
-		} else {
-			p.addProperty(GlobalConstants.RNAP_BINDING_STRING, gcm.getParameter(GlobalConstants.RNAP_BINDING_STRING));
-		} 
-		
-		if (property != null && property.containsKey(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)) {
-			p.addProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, property.getProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING));
-		} else {
-			p.addProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, gcm.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING));
-		} 
-		return p;
-		
-	}
-	
-	
-	/**
-	 * Parses the reactions in the network
-	 * 
-	 * @param reaction
-	 *            the reaction to parse
-	 * @param stateNameOutput
-	 *            the name of the output
-	 * 
-	 */
-	// TODO: Match rate constants
-	private void parseReactionData(String reaction, Properties property) {
-		Influence infl = new Influence();		
-		infl.generateName();		
-		
-		if (property.containsKey(GlobalConstants.COOPERATIVITY_STRING)) {
-			infl.addProperty(GlobalConstants.COOPERATIVITY_STRING, property.getProperty(GlobalConstants.COOPERATIVITY_STRING));
-		} else {
-			infl.addProperty(GlobalConstants.COOPERATIVITY_STRING, gcm.getParameter(GlobalConstants.COOPERATIVITY_STRING));
-		} 
-		
-		if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
-			infl.setType("vee");
-			if (property.containsKey(GlobalConstants.KACT_STRING)) {
-				infl.addProperty(GlobalConstants.KACT_STRING, property.getProperty(GlobalConstants.KACT_STRING));
-			} else {
-				infl.addProperty(GlobalConstants.KACT_STRING, gcm.getParameter(GlobalConstants.KACT_STRING));
-			} 
-		} else if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.REPRESSION)) {
-			infl.setType("tee");
-			if (property.containsKey(GlobalConstants.KREP_STRING)) {
-				infl.addProperty(GlobalConstants.KREP_STRING, property.getProperty(GlobalConstants.KREP_STRING));
-			} else {
-				infl.addProperty(GlobalConstants.KREP_STRING, gcm.getParameter(GlobalConstants.KREP_STRING));
-			} 	
-		} else if (property.getProperty(GlobalConstants.TYPE).equals(GlobalConstants.COMPLEX)) {
-			infl.setType("plus");
+		p.setId(promoter.getId());
+		promoterList.put(promoter.getId(), p);
+		p.setInitialAmount(promoter.getInitialAmount());
+		String annotation = promoter.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
+		String [] annotations = annotation.split(",");
+		for (int i=0;i<annotations.length;i++) {
+			if (annotations[i].startsWith(GlobalConstants.SBOL_PROMOTER)) {
+				String [] type = annotations[i].split("=");
+				p.setPromoter(type[1]);
+			} else if (annotations[i].startsWith(GlobalConstants.SBOL_TERMINATOR)) {
+				String [] type = annotations[i].split("=");
+				p.setTerminator(type[1]);
+			}  
 		}
-		else {
-			infl.setType("dot");
-		}	
-		
-		String input = GCMFile.getInput(reaction);
-		String output = GCMFile.getOutput(reaction);
-		infl.setInput(input);
-		infl.setOutput(output);
-		if (infl.getType().equals("plus")) {
-			//Maps complex species to complex formation influences of which they're outputs
-			ArrayList<Influence> complexInfl = null;
-			if (complexMap.containsKey(output)) {
-				complexInfl = complexMap.get(output);
-			} else { 
-				complexInfl = new ArrayList<Influence>();
-				complexMap.put(output, complexInfl);
+		Reaction production = sbml.getModel().getReaction("Production_"+promoter.getId());
+		if (production != null) {
+			if (production.getKineticLaw().getLocalParameter(GlobalConstants.ACTIVATED_STRING) != null) {
+				p.setKact(production.getKineticLaw().getLocalParameter(GlobalConstants.ACTIVATED_STRING).getValue());
+			} else {
+				p.setKact(sbml.getModel().getParameter(GlobalConstants.ACTIVATED_STRING).getValue());
 			}
-			complexInfl.add(infl);
-			//Maps part species to complex formation influences of which they're inputs
-			complexInfl = null;
-			if (partsMap.containsKey(input)) {
-				complexInfl = partsMap.get(input);
-			} else { 
-				complexInfl = new ArrayList<Influence>();
-				partsMap.put(input, complexInfl);
+			if (production.getKineticLaw().getLocalParameter(GlobalConstants.KBASAL_STRING) != null) {
+				p.setKbasal(production.getKineticLaw().getLocalParameter(GlobalConstants.KBASAL_STRING).getValue());
+			} else {
+				p.setKbasal(sbml.getModel().getParameter(GlobalConstants.KBASAL_STRING).getValue());
 			}
-			complexInfl.add(infl);
-		} else if (!infl.getType().equals("dot")) {	
-			String promoterName = property.getProperty(GlobalConstants.PROMOTER);
-			Promoter p = promoters.get(promoterName);
-			if (!input.equals("none")) {
-				p.addToReactionMap(input, infl);
-				if (infl.getType().equals("vee")) {
-					p.addActivator(input, species.get(input));
-					species.get(input).setActivator(true);
+			if (production.getKineticLaw().getLocalParameter(GlobalConstants.OCR_STRING) != null) {
+				p.setKoc(production.getKineticLaw().getLocalParameter(GlobalConstants.OCR_STRING).getValue());
+			} else {
+				p.setKoc(sbml.getModel().getParameter(GlobalConstants.OCR_STRING).getValue());
+			}
+			if (production.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING) != null) {
+				p.setStoich(production.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue());
+			} else {
+				p.setStoich(sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue());
+			}
+			if (production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING)!=null &&
+				production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING)!=null) {
+				p.setKrnap(production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING).getValue(),
+						   production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING).getValue());
+			} else {
+				p.setKrnap(sbml.getModel().getParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING).getValue(),
+						   sbml.getModel().getParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING).getValue());
+			}
+			if (production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING)!=null &&
+					production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING)!=null) {
+					p.setKArnap(production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING).getValue(),
+							    production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING).getValue());
 				} else {
-					p.addRepressor(input, species.get(input));
-					species.get(input).setRepressor(true);
+					p.setKArnap(sbml.getModel().getParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING).getValue(),
+							    sbml.getModel().getParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING).getValue());
 				}
+			for (long i = 0; i < production.getNumModifiers(); i++) {
+				ModifierSpeciesReference modifier = production.getModifier(i);
+				if (modifier.getAnnotationString().contains(GlobalConstants.REPRESSION) ||
+					modifier.getAnnotationString().contains(GlobalConstants.REGULATION)) {
+					for (long j = 0; j < production.getNumProducts(); j++) {
+						SpeciesReference product = production.getProduct(j);
+						Influence infl = new Influence();		
+						infl.generateName();
+						infl.setType("tee");
+						infl.setInput(modifier.getSpecies());
+						if (sbml.getModel().getSpecies(product.getSpecies())
+								.getAnnotationString().contains(GlobalConstants.TYPE + "=" + GlobalConstants.MRNA)) {
+							infl.setOutput("none");
+						} else {
+							infl.setOutput(product.getSpecies());
+							p.addOutput(product.getSpecies(),speciesList.get(product.getSpecies()));
+						}
+						p.addToReactionMap(modifier.getSpecies(), infl);
+						p.addRepressor(modifier.getSpecies(), speciesList.get(modifier.getSpecies()));
+						speciesList.get(modifier.getSpecies()).setRepressor(true);
+						if (production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+modifier.getId()+"_"))!=null &&
+							production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KREP_STRING.replace("_","_"+modifier.getId()+"_"))!=null) {
+							infl.setRep(production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KREP_STRING.replace("_","_"+modifier.getId()+"_")).getValue(),
+									production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KREP_STRING.replace("_","_"+modifier.getId()+"_")).getValue());
+						} else {
+							infl.setRep(sbml.getModel().getParameter(GlobalConstants.FORWARD_KREP_STRING).getValue(),
+									sbml.getModel().getParameter(GlobalConstants.REVERSE_KREP_STRING).getValue());
+						}
+						if (production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + modifier.getId() + "_r") != null) {
+							infl.setCoop(production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + modifier.getId() + "_r").getValue());
+						} else {
+							infl.setCoop(sbml.getModel().getParameter(GlobalConstants.COOPERATIVITY_STRING).getValue());
+						}
+					}
+				} 
+				if (modifier.getAnnotationString().contains(GlobalConstants.ACTIVATION) ||
+					modifier.getAnnotationString().contains(GlobalConstants.REGULATION)) {
+					for (long j = 0; j < production.getNumProducts(); j++) {
+						SpeciesReference product = production.getProduct(j);
+						Influence infl = new Influence();		
+						infl.generateName();
+						infl.setType("vee");
+						infl.setInput(modifier.getSpecies());
+						if (sbml.getModel().getSpecies(product.getSpecies())
+								.getAnnotationString().contains(GlobalConstants.TYPE + "=" + GlobalConstants.MRNA)) {
+							infl.setOutput("none");
+						} else {
+							infl.setOutput(product.getSpecies());
+							p.addOutput(product.getSpecies(),speciesList.get(product.getSpecies()));
+						}
+						p.addToReactionMap(modifier.getSpecies(), infl);
+						p.addActivator(modifier.getSpecies(), speciesList.get(modifier.getSpecies()));
+						speciesList.get(modifier.getSpecies()).setActivator(true);
+						if (production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_"+modifier.getId()+"_"))!=null &&
+								production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_"+modifier.getId()+"_"))!=null) {
+							infl.setAct(production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KACT_STRING.replace("_","_"+modifier.getId()+"_")).getValue(),
+									production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_"+modifier.getId()+"_")).getValue());
+						} else {
+							infl.setAct(sbml.getModel().getParameter(GlobalConstants.FORWARD_KACT_STRING).getValue(),
+									sbml.getModel().getParameter(GlobalConstants.REVERSE_KACT_STRING).getValue());
+						}
+						if (production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + modifier.getId() + "_a") != null) {
+							infl.setCoop(production.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + modifier.getId() + "_a").getValue());
+						} else {
+							infl.setCoop(sbml.getModel().getParameter(GlobalConstants.COOPERATIVITY_STRING).getValue());
+						}
+					}
+				} 
 			}
-			if (!output.equals("none"))
-				p.addOutput(output,species.get(output));
 		}
 	}
-	
 
 	/**
 	 * Parses the data and put it into the species
@@ -275,55 +262,92 @@ public class GCMParser {
 	 * @param properties
 	 *            the properties of the species
 	 */
-	private SpeciesInterface parseSpeciesData(String name, Properties property) {
+	private void parseSpeciesData(SBMLDocument sbml,Species species) {
 		
-		SpeciesInterface specie = null;
+		SpeciesInterface speciesIF = null;
 
-		if (property.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.CONSTANT)) {
-			specie = new ConstantSpecies();
+		Reaction degradation = sbml.getModel().getReaction("Degradation_"+species.getId());
+		Reaction diffusion = sbml.getModel().getReaction("Diffusion_"+species.getId());
+		Reaction constitutive = sbml.getModel().getReaction("Constitutive_"+species.getId());
+		Reaction complex = sbml.getModel().getReaction("Complex_"+species.getId());
+		
+		/*if (property.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.CONSTANT)) {
+			speciesIF = new ConstantSpecies();
 		} 
-		else if (property.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE) &&
-				property.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.SPASTIC)) {
-			specie = new DiffusibleConstitutiveSpecies();
+		else*/ 
+		if (diffusion != null && constitutive != null) {
+			speciesIF = new DiffusibleConstitutiveSpecies();
+			speciesIF.setDiffusible(true);
 		} 
-		else if (property.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)) {
-			specie = new DiffusibleSpecies();
+		else if (diffusion != null) {
+			speciesIF = new DiffusibleSpecies();
+			speciesIF.setDiffusible(true);
 		} 
-		else if (property.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.SPASTIC)) {
-			specie = new SpasticSpecies();
+		else if (constitutive != null) {
+			speciesIF = new SpasticSpecies();
+			speciesIF.setDiffusible(false);
 		}
 		else {
-			specie = new BaseSpecies();
+			speciesIF = new BaseSpecies();
+			speciesIF.setDiffusible(false);
 		}
-
-		if (property.containsKey(GlobalConstants.KCOMPLEX_STRING)) {
-			specie.addProperty(GlobalConstants.KCOMPLEX_STRING, property.getProperty(GlobalConstants.KCOMPLEX_STRING));
-		} else {
-			specie.addProperty(GlobalConstants.KCOMPLEX_STRING, gcm.getParameter(GlobalConstants.KCOMPLEX_STRING));
+		speciesList.put(species.getId(), speciesIF);
+		
+		String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
+		String [] annotations = annotation.split(",");
+		for (int i=0;i<annotations.length;i++) {
+			if (annotations[i].startsWith(GlobalConstants.TYPE)) {
+				String [] type = annotations[i].split("=");
+				speciesIF.setType(type[1]);
+			} else if (annotations[i].startsWith(GlobalConstants.SBOL_RBS)) {
+				String [] type = annotations[i].split("=");
+				speciesIF.setRBS(type[1]);
+			} else if (annotations[i].startsWith(GlobalConstants.SBOL_ORF)) {
+				String [] type = annotations[i].split("=");
+				speciesIF.setORF(type[1]);
+			}  
 		}
 		
+		if (species.isSetInitialAmount()) {
+			speciesIF.setInitialAmount(species.getInitialAmount());
+		} else if (species.isSetInitialConcentration()) {
+			speciesIF.setInitialConcentration(species.getInitialConcentration());
+		}  
+		
+		if (degradation != null) {
+			if (degradation.getKineticLaw().getLocalParameter(GlobalConstants.KDECAY_STRING)!=null) {
+				speciesIF.setDecay(degradation.getKineticLaw().getLocalParameter(GlobalConstants.KDECAY_STRING).getValue());
+			} else {
+				speciesIF.setDecay(sbml.getModel().getParameter(GlobalConstants.KDECAY_STRING).getValue());
+			}
+		}
+		
+		if (complex != null) {
+			if (complex.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING)!=null &&
+					complex.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING)!=null) {
+				speciesIF.setKc(complex.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING).getValue(),
+						complex.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING).getValue());
+			} else {
+				speciesIF.setKc(sbml.getModel().getParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING).getValue(),
+						sbml.getModel().getParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING).getValue());
+			}
+		}
+		
+		if (diffusion != null) {
+			if (diffusion.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_MEMDIFF_STRING)!=null &&
+				diffusion.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_MEMDIFF_STRING)!=null) {
+				speciesIF.setKmdiff(diffusion.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_MEMDIFF_STRING).getValue(),
+						diffusion.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_MEMDIFF_STRING).getValue());
+			} else {
+				speciesIF.setKmdiff(sbml.getModel().getParameter(GlobalConstants.FORWARD_MEMDIFF_STRING).getValue(),
+						sbml.getModel().getParameter(GlobalConstants.REVERSE_MEMDIFF_STRING).getValue());
+			}
+		}
+		/*
 		if (property.containsKey(GlobalConstants.KASSOCIATION_STRING)) {
 			specie.addProperty(GlobalConstants.KASSOCIATION_STRING, property.getProperty(GlobalConstants.KASSOCIATION_STRING));
 		} else {
 			specie.addProperty(GlobalConstants.KASSOCIATION_STRING, gcm.getParameter(GlobalConstants.KASSOCIATION_STRING));
-		}
-
-		if (property.containsKey(GlobalConstants.INITIAL_STRING)) {
-			specie.addProperty(GlobalConstants.INITIAL_STRING, property.getProperty(GlobalConstants.INITIAL_STRING));
-		} /*else {
-			specie.addProperty(GlobalConstants.INITIAL_STRING, gcm.getParameter(GlobalConstants.INITIAL_STRING));
-		}
-        */
-		if (property.containsKey(GlobalConstants.KDECAY_STRING)) {
-			specie.addProperty(GlobalConstants.KDECAY_STRING, property.getProperty(GlobalConstants.KDECAY_STRING));
-		} else {
-			specie.addProperty(GlobalConstants.KDECAY_STRING, gcm.getParameter(GlobalConstants.KDECAY_STRING));
-		}
-		
-		if (property.containsKey(GlobalConstants.MEMDIFF_STRING)) {
-			specie.addProperty(GlobalConstants.MEMDIFF_STRING, property.getProperty(GlobalConstants.MEMDIFF_STRING));
-		} else {
-			specie.addProperty(GlobalConstants.MEMDIFF_STRING, gcm.getParameter(GlobalConstants.MEMDIFF_STRING));
 		}
 		
 		if (property.containsKey(GlobalConstants.KECDIFF_STRING)) {
@@ -337,94 +361,93 @@ public class GCMParser {
 		} else {
 			specie.addProperty(GlobalConstants.KECDECAY_STRING, gcm.getParameter(GlobalConstants.KECDECAY_STRING));
 		}
+		*/
 		
-		if (property.containsKey(GlobalConstants.TYPE)) {
-			specie.addProperty(GlobalConstants.TYPE, property.getProperty(GlobalConstants.TYPE));
-		} else {
-			specie.addProperty(GlobalConstants.TYPE, gcm.getParameter(GlobalConstants.TYPE));
+		speciesIF.setId(species.getId());
+		speciesIF.setName(species.getName());
+		speciesIF.setStateName(species.getId());
+		
+		if (complex != null) {
+			for (long i = 0; i < complex.getNumReactants(); i++) {
+				Influence infl = new Influence();		
+				infl.generateName();		
+				infl.setType("plus");
+				String input = complex.getReactant(i).getSpecies();
+				String output = complex.getProduct(0).getSpecies();
+				infl.setInput(input);
+				infl.setOutput(output);
+				//Maps complex species to complex formation influences of which they're outputs
+				ArrayList<Influence> complexInfl = null;
+				if (complexMap.containsKey(output)) {
+					complexInfl = complexMap.get(output);
+				} else { 
+					complexInfl = new ArrayList<Influence>();
+					complexMap.put(output, complexInfl);
+				}
+				complexInfl.add(infl);
+				//Maps part species to complex formation influences of which they're inputs
+				complexInfl = null;
+				if (partsMap.containsKey(input)) {
+					complexInfl = partsMap.get(input);
+				} else { 
+					complexInfl = new ArrayList<Influence>();
+					partsMap.put(input, complexInfl);
+				}
+				complexInfl.add(infl);
+			} 
 		}
-		
-		specie.setId(property.getProperty(GlobalConstants.ID));
-		specie.setName(property.getProperty(GlobalConstants.NAME,
-				property.getProperty(GlobalConstants.ID)));
-		specie.setStateName(property.getProperty(GlobalConstants.ID));
-		
-		return specie;
 	}
 	
 	public SbolSynthesizer buildSbolSynthesizer() {
-		HashMap<String, Properties> speciesMap = gcm.getSpecies();
-		HashMap<String, Properties> reactionMap = gcm.getInfluences();
-		HashMap<String, Properties> promoterMap = gcm.getPromoters();
+		speciesList = new HashMap<String, SpeciesInterface>();
+		promoterList = new HashMap<String, Promoter>();
+		complexMap = new HashMap<String, ArrayList<Influence>>();
+		partsMap = new HashMap<String, ArrayList<Influence>>();
 
-		species = new HashMap<String, SpeciesInterface>();
-		promoters = new HashMap<String, Promoter>();
-		
-		for (String sId : speciesMap.keySet()) {
-			SpeciesInterface s = new BaseSpecies();
-			s.setId(sId);
-			Properties sProp = speciesMap.get(sId);
-			if (sProp.containsKey(GlobalConstants.SBOL_RBS))
-				s.addProperty(GlobalConstants.SBOL_RBS, sProp.getProperty(GlobalConstants.SBOL_RBS));
-			if (sProp.containsKey(GlobalConstants.SBOL_ORF))
-				s.addProperty(GlobalConstants.SBOL_ORF, sProp.getProperty(GlobalConstants.SBOL_ORF));
-			species.put(sId, s);
-		}
-		
-		for (String pId : promoterMap.keySet()) {
-			Promoter p = new Promoter();
-			p.setId(pId);
-			Properties pProp = promoterMap.get(pId);
-			if (pProp.containsKey(GlobalConstants.SBOL_PROMOTER))
-				p.addProperty(GlobalConstants.SBOL_PROMOTER, pProp.getProperty(GlobalConstants.SBOL_PROMOTER));
-			if (pProp.containsKey(GlobalConstants.SBOL_TERMINATOR))
-				p.addProperty(GlobalConstants.SBOL_TERMINATOR, pProp.getProperty(GlobalConstants.SBOL_TERMINATOR));
-			promoters.put(pId, p);
-		}
-		
-		for (String rId : reactionMap.keySet()) {
-			if (reactionMap.get(rId).containsKey(GlobalConstants.PROMOTER)) {
-				Promoter p = promoters.get(reactionMap.get(rId).getProperty(GlobalConstants.PROMOTER));
-				String output = GCMFile.getOutput(rId);
-				if (!output.equals("none"))
-					p.addOutput(output, species.get(output));
+		for (long i=0; i<gcm.getSBMLDocument().getModel().getNumSpecies(); i++) {
+			Species species = gcm.getSBMLDocument().getModel().getSpecies(i);
+			if (species.isSetAnnotation() && 
+				species.getAnnotationString().contains(GlobalConstants.TYPE+"="+GlobalConstants.PROMOTER)) { 
+				parsePromoterData(gcm.getSBMLDocument(),species);
+			} else {
+				parseSpeciesData(gcm.getSBMLDocument(),species);
 			}
 		}
 		
-		SbolSynthesizer synthesizer = new SbolSynthesizer(promoters);
+		SbolSynthesizer synthesizer = new SbolSynthesizer(promoterList);
 		return synthesizer;
 	}
 
+	/*
 	public void setParameters(HashMap<String, String> parameters) {
 		gcm.setParameters(parameters);
 	}
+	*/
 	
 	// Holds the text of the GCM
 	private StringBuffer data = null;
 
-	private HashMap<String, SpeciesInterface> species;
-
-	private HashMap<String, Promoter> promoters;
-	
+	private HashMap<String, SpeciesInterface> speciesList;
+	private HashMap<String, Promoter> promoterList;
 	private HashMap<String, ArrayList<Influence>> complexMap;
 	private HashMap<String, ArrayList<Influence>> partsMap;
 
 	private GCMFile gcm = null;
 
 	// A regex that matches information
-	private static final String STATE = "(^|\\n) *([^- \\n]*) *\\[(.*)\\]";
+	//private static final String STATE = "(^|\\n) *([^- \\n]*) *\\[(.*)\\]";
 
-	private static final String REACTION = "(^|\\n) *([^ \\n]*) *\\-\\> *([^ \n]*) *\\[(.*)arrowhead=([^,\\]]*)(.*)";
+	//private static final String REACTION = "(^|\\n) *([^ \\n]*) *\\-\\> *([^ \n]*) *\\[(.*)arrowhead=([^,\\]]*)(.*)";
 
-	private static final String PROPERTY_NUMBER = "([a-zA-Z]+)=\"([\\d]*[\\.\\d]?\\d+)\"";
+	//private static final String PROPERTY_NUMBER = "([a-zA-Z]+)=\"([\\d]*[\\.\\d]?\\d+)\"";
 
 	// private static final String PROPERTY_STATE = "([a-zA-Z]+)=([^\\s,.\"]+)";
 
 	// private static final String PROPERTY_QUOTE =
 	// "([a-zA-Z]+)=\"([^\\s,.\"]+)\"";
 
-	private static final String PROPERTY_STATE = "([a-zA-Z\\s\\-]+)=([^\\s,]+)";
+	//private static final String PROPERTY_STATE = "([a-zA-Z\\s\\-]+)=([^\\s,]+)";
 
 	// Debug level
-	private boolean debug = false;
+	//private boolean debug = false;
 }

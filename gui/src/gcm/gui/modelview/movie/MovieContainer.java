@@ -1,6 +1,6 @@
 package gcm.gui.modelview.movie;
 
-import gcm.gui.GCM2SBMLEditor;
+import gcm.gui.ModelEditor;
 import gcm.gui.modelview.movie.SerializableScheme;
 import gcm.gui.schematic.ListChooser;
 import gcm.gui.schematic.Schematic;
@@ -61,7 +61,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private Reb2Sac reb2sac;
 	private GCMFile gcm;
 	private Gui biosim;
-	private GCM2SBMLEditor gcm2sbml;
+	private ModelEditor gcm2sbml;
 	private TSDParser parser;
 	private Timer playTimer;
 	private MovieScheme movieScheme;
@@ -89,7 +89,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 * @param biosim
 	 * @param gcm2sbml
 	 */
-	public MovieContainer(Reb2Sac reb2sac_, GCMFile gcm, Gui biosim, GCM2SBMLEditor gcm2sbml){
+	public MovieContainer(Reb2Sac reb2sac_, GCMFile gcm, Gui biosim, ModelEditor gcm2sbml){
 		
 		super(new BorderLayout());
 		
@@ -462,7 +462,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		HashMap<String, ArrayList<Double>> speciesTSData = parser.getHashMap();
 		
 		//loop through the species and set their appearances
-		for(String speciesID : gcm.getSpecies().keySet()){
+		for(String speciesID : gcm.getSpecies()){
 			
 			//make sure this species has data in the TSD file
 			if(speciesTSData.containsKey(speciesID)){		
@@ -477,7 +477,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 		
 		//loop through the components and set their appearances
-		for(String compID : gcm.getComponents().keySet()){
+		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
+			String compID = gcm.getSBMLCompModel().getSubmodel(i).getId();
 			
 			//get the component's appearance and send it to the graph for updating
 			MovieAppearance compAppearance = 
@@ -714,7 +715,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		return parser;
 	}
 
-	public GCM2SBMLEditor getGCM2SBMLEditor() {
+	public ModelEditor getGCM2SBMLEditor() {
 		return gcm2sbml;
 	}
 	
