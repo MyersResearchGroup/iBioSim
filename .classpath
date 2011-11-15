@@ -49,5 +49,7 @@
 	<classpathentry kind="lib" path="gui/lib/openmali.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jsbml-0.8-b2-with-dependencies.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jafama.jar"/>
+	<classpathentry kind="lib" path="gui/lib/commons-math-2.2.jar"/>
+	<classpathentry kind="lib" path="gui/lib/flanagan.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
