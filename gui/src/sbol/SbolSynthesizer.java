@@ -178,7 +178,7 @@ public class SbolSynthesizer {
 		LinkedList<String> sourceFeatProperties = new LinkedList<String>();
 		for (Promoter p : promoters.values()) {
 			if (synthesizerOn && p.getOutputs().size() > 0) {
-				String sbolPromoter = p.getProperty(GlobalConstants.SBOL_PROMOTER);
+				String sbolPromoter = p.getPromoter();
 				if (sbolPromoter != null)
 					sourceFeatProperties.add(sbolPromoter);
 				else {
@@ -188,7 +188,7 @@ public class SbolSynthesizer {
 				}
 				for (SpeciesInterface s : p.getOutputs()) {
 					if (synthesizerOn) {
-						String sbolRbs = s.getProperty(GlobalConstants.SBOL_RBS);
+						String sbolRbs = s.getRBS();
 						if (sbolRbs != null)
 							sourceFeatProperties.add(sbolRbs);
 						else {
@@ -198,7 +198,7 @@ public class SbolSynthesizer {
 						}
 					}
 					if (synthesizerOn) {
-						String sbolOrf = s.getProperty(GlobalConstants.SBOL_ORF);
+						String sbolOrf = s.getORF();
 						if (sbolOrf != null)
 							sourceFeatProperties.add(sbolOrf);
 						else {
@@ -209,7 +209,7 @@ public class SbolSynthesizer {
 					}
 				}
 				if (synthesizerOn) {
-					String sbolTerminator = p.getProperty(GlobalConstants.SBOL_TERMINATOR);
+					String sbolTerminator = p.getTerminator();
 					if (sbolTerminator != null)
 						sourceFeatProperties.add(sbolTerminator);
 					else {

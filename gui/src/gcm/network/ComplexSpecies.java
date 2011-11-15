@@ -8,7 +8,7 @@ public class ComplexSpecies extends AbstractSpecies {
 
 	public ComplexSpecies(SpeciesInterface s) {
 		id = s.getId();
-		properties = s.getProperties();
+		//properties = s.getProperties();
 	}
 	
 	/**

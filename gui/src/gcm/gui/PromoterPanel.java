@@ -6,11 +6,14 @@ import gcm.util.Utility;
 
 import java.awt.GridLayout;
 import java.util.HashMap;
-import java.util.Properties;
 
-import javax.swing.DefaultListModel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import org.sbml.libsbml.LocalParameter;
+import org.sbml.libsbml.Model;
+import org.sbml.libsbml.Reaction;
+import org.sbml.libsbml.Species;
 
 import main.Gui;
 
@@ -26,17 +29,15 @@ public class PromoterPanel extends JPanel {
 	private HashMap<String, SbolField> sbolFields;
 	private String selected = "";
 	private GCMFile gcm = null;
-	private PropertyList promoterList = null;
-	private PropertyList influenceList = null;
 	private boolean paramsOnly;
-	private GCM2SBMLEditor gcmEditor = null;
+	private ModelEditor gcmEditor = null;
+	private Species promoter = null;
+	private Reaction production = null;
 	
-	public PromoterPanel(String selected, PropertyList promoterList,
-			PropertyList influencesList, GCMFile gcm, boolean paramsOnly, GCMFile refGCM, GCM2SBMLEditor gcmEditor) {
-		super(new GridLayout(11, 1));
+	public PromoterPanel(String selected, GCMFile gcm, boolean paramsOnly, GCMFile refGCM, 
+			ModelEditor gcmEditor) {
+		super(new GridLayout(paramsOnly?7:11, 1));
 		this.selected = selected;
-		this.promoterList = promoterList;
-		this.influenceList = influencesList;
 		this.gcm = gcm;
 		this.paramsOnly = paramsOnly;
 		this.gcmEditor = gcmEditor;
@@ -44,213 +45,250 @@ public class PromoterPanel extends JPanel {
 		fields = new HashMap<String, PropertyField>();
 		sbolFields = new HashMap<String, SbolField>();
 
-		// ID field
-		PropertyField field = new PropertyField(GlobalConstants.ID, "", null, null, Utility.IDstring, paramsOnly, "default", false);
-		if (paramsOnly) {
-			field.setEnabled(false);
-		}
-		fields.put(GlobalConstants.ID, field);
-		add(field);		
+		Model model = gcm.getSBMLDocument().getModel();
+		promoter = model.getSpecies(selected);
 
-		// Name field
-		field = new PropertyField(GlobalConstants.NAME, "", null, null, Utility.NAMEstring, paramsOnly, "default", false);
-		if (paramsOnly) {
-			field.setEnabled(false);
+		PropertyField field  = null;
+		if (!paramsOnly) {
+			// ID field
+			field = new PropertyField(GlobalConstants.ID, promoter.getId(), null, null, Utility.IDstring, paramsOnly, "default", false);
+			fields.put(GlobalConstants.ID, field);
+			add(field);		
+			// Name field
+			field = new PropertyField(GlobalConstants.NAME, promoter.getName(), null, null, Utility.NAMEstring, paramsOnly, "default", false);
+			fields.put(GlobalConstants.NAME, field);
+			add(field);		
 		}
-		fields.put(GlobalConstants.NAME, field);
-		add(field);		
-		
-//		fields.put("ID", field);
-//		add(field);
+	
+		production = model.getReaction("Production_"+selected);
+		if (production != null) {
+			if (!production.isSetAnnotation() || !production.getAnnotationString().contains("Production")) production = null;
+		}
 		
 		// promoter count
 		String origString = "default";
+		String defaultValue = gcm.getParameter(GlobalConstants.PROMOTER_COUNT_STRING);
+		String formatString = Utility.NUMstring;
 		if (paramsOnly) {
-			String defaultValue = refGCM.getParameter(GlobalConstants.PROMOTER_COUNT_STRING);
-			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.PROMOTER_COUNT_STRING)) {
-				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.PROMOTER_COUNT_STRING);
+			if (refGCM.getSBMLDocument().getModel().getSpecies(promoter.getId()).getInitialAmount() != 
+					model.getParameter(GlobalConstants.PROMOTER_COUNT_STRING).getValue()) {
+				defaultValue = ""+refGCM.getSBMLDocument().getModel().getSpecies(promoter.getId()).getInitialAmount();
 				origString = "custom";
 			}
-			else if (gcm.globalParameterIsSet(GlobalConstants.PROMOTER_COUNT_STRING)) {
-				defaultValue = gcm.getParameter(GlobalConstants.PROMOTER_COUNT_STRING);
-			}
-			field = new PropertyField(GlobalConstants.PROMOTER_COUNT_STRING, gcm
-					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING),
-					origString, defaultValue, Utility.SWEEPstring, paramsOnly, origString, false);
-		} else {
-			field = new PropertyField(GlobalConstants.PROMOTER_COUNT_STRING, gcm
-					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING),
-					origString, gcm
-					.getParameter(GlobalConstants.PROMOTER_COUNT_STRING), Utility.NUMstring, paramsOnly, origString, false);
+			formatString = Utility.SWEEPstring;
+		} 
+		field = new PropertyField(GlobalConstants.PROMOTER_COUNT_STRING, 
+				gcm.getParameter(GlobalConstants.PROMOTER_COUNT_STRING), origString, 
+				defaultValue, formatString, paramsOnly, origString, false);
+		if (!defaultValue.equals(""+promoter.getInitialAmount())) {
+			field.setValue(""+promoter.getInitialAmount());
+			field.setCustom();
 		}
 		fields.put(GlobalConstants.PROMOTER_COUNT_STRING, field);
-		add(field);		
-		
-		// cooperativity
-//		field = new PropertyField(GlobalConstants.COOPERATIVITY_STRING, gcm
-//				.getParameter(GlobalConstants.COOPERATIVITY_STRING),
-//				PropertyField.states[0], gcm
-//				.getParameter(GlobalConstants.COOPERATIVITY_STRING), Utility.NUMstring);
-//		fields.put(GlobalConstants.COOPERATIVITY_STRING, field);
-//		add(field);		
+		add(field);	
 
 		// RNAP binding
 		origString = "default";
+		defaultValue = gcm.getParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING) + "/" + 
+				gcm.getParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING); 
+		formatString = Utility.SLASHstring;
 		if (paramsOnly) {
-			String defaultValue = refGCM.getParameter(GlobalConstants.RNAP_BINDING_STRING);
-			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.RNAP_BINDING_STRING)) {
-				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.RNAP_BINDING_STRING);
-				origString = "custom";
+			/*
+			defaultValue = refGCM.getParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING)+"/"+
+					refGCM.getParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING); */
+			if (production != null) {
+				Reaction refProd = refGCM.getSBMLDocument().getModel().getReaction(production.getId());
+				LocalParameter ko_f = refProd.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING);
+				LocalParameter ko_r = refProd.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING);
+				if (ko_f != null && ko_r != null) {
+					defaultValue = ko_f.getValue()+"/"+ko_r.getValue();
+					origString = "custom";
+				}
 			}
-			else if (gcm.globalParameterIsSet(GlobalConstants.RNAP_BINDING_STRING)) {
-				defaultValue = gcm.getParameter(GlobalConstants.RNAP_BINDING_STRING);
+			formatString = Utility.SLASHSWEEPstring;
+		} 
+		field = new PropertyField(GlobalConstants.RNAP_BINDING_STRING, defaultValue, origString, defaultValue, formatString, paramsOnly,
+				origString, false);
+		if (production != null) {
+			LocalParameter ko_f = production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING);
+			LocalParameter ko_r = production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING);
+			if (ko_f != null && ko_r != null && !defaultValue.equals(ko_f.getValue()+"/"+ko_r.getValue())) {
+				field.setValue(ko_f.getValue()+"/"+ko_r.getValue());
+				field.setCustom();
 			}
-			field = new PropertyField(GlobalConstants.RNAP_BINDING_STRING, gcm
-					.getParameter(GlobalConstants.RNAP_BINDING_STRING),
-					origString, defaultValue, Utility.SLASHSWEEPstring, paramsOnly, origString, false);
-		} else {
-			field = new PropertyField(GlobalConstants.RNAP_BINDING_STRING, gcm
-					.getParameter(GlobalConstants.RNAP_BINDING_STRING),
-					origString, gcm
-					.getParameter(GlobalConstants.RNAP_BINDING_STRING), Utility.SLASHstring, paramsOnly, origString, false);
 		}
 		fields.put(GlobalConstants.RNAP_BINDING_STRING, field);
 		add(field);
 		
 		// Activated RNAP binding
 		origString = "default";
+		defaultValue = gcm.getParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING) + "/" + 
+				gcm.getParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING); 
+		formatString = Utility.SLASHstring;
 		if (paramsOnly) {
-			String defaultValue = refGCM.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING);
-			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)) {
-				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING);
-				origString = "custom";
+			/*
+			defaultValue = refGCM.getParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING) + "/" + 
+					refGCM.getParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING); */
+			if (production != null) {
+				Reaction refProd = refGCM.getSBMLDocument().getModel().getReaction(production.getId());
+				LocalParameter kao_f = refProd.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING);
+				LocalParameter kao_r = refProd.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING);
+				if (kao_f != null && kao_r != null) {
+					defaultValue =  kao_f.getValue()+"/"+kao_r.getValue();
+					origString = "custom";
+				}
 			}
-			else if (gcm.globalParameterIsSet(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)) {
-				defaultValue = gcm.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING);
+			formatString = Utility.SLASHSWEEPstring;
+		} 
+		field = new PropertyField(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, defaultValue, origString, defaultValue, 
+				formatString, paramsOnly, origString, false);
+		if (production != null) {
+			LocalParameter kao_f = production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING);
+			LocalParameter kao_r = production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING);
+			if (kao_f != null && kao_r != null && !defaultValue.equals(kao_f.getValue()+"/"+kao_r.getValue())) {
+				field.setValue(kao_f.getValue()+"/"+kao_r.getValue());
+				field.setCustom();
 			}
-			field = new PropertyField(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, gcm
-					.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING),
-					origString, defaultValue, Utility.SLASHSWEEPstring, paramsOnly, origString, false);
-		} else {
-			field = new PropertyField(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, gcm
-					.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING),
-					origString, gcm
-					.getParameter(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING), Utility.SLASHstring, paramsOnly, origString, false);
 		}
 		fields.put(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING, field);
 		add(field);
 		
 		// kocr
 		origString = "default";
+		defaultValue = gcm.getParameter(GlobalConstants.OCR_STRING);
+		formatString = Utility.NUMstring;
 		if (paramsOnly) {
-			String defaultValue = refGCM.getParameter(GlobalConstants.OCR_STRING);
-			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.OCR_STRING)) {
-				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.OCR_STRING);
-				origString = "custom";
+			//defaultValue = refGCM.getParameter(GlobalConstants.OCR_STRING);
+			if (production != null) {
+				Reaction refProd = refGCM.getSBMLDocument().getModel().getReaction(production.getId());
+				LocalParameter ko = refProd.getKineticLaw().getLocalParameter(GlobalConstants.OCR_STRING);
+				if (ko != null) {
+					defaultValue = ko.getValue()+"";
+					origString = "custom";
+				}
 			}
-			else if (gcm.globalParameterIsSet(GlobalConstants.OCR_STRING)) {
-				defaultValue = gcm.getParameter(GlobalConstants.OCR_STRING);
-			}
-			field = new PropertyField(GlobalConstants.OCR_STRING, gcm
-					.getParameter(GlobalConstants.OCR_STRING),
-					origString, defaultValue, Utility.SWEEPstring, paramsOnly, origString, false);
-		} else {
-			field = new PropertyField(GlobalConstants.OCR_STRING, gcm
-					.getParameter(GlobalConstants.OCR_STRING),
-					origString, gcm
-					.getParameter(GlobalConstants.OCR_STRING), Utility.NUMstring, paramsOnly, origString, false);
+			formatString = Utility.SWEEPstring;
+		}
+		field = new PropertyField(GlobalConstants.OCR_STRING, gcm.getParameter(GlobalConstants.OCR_STRING),
+				origString, defaultValue, Utility.NUMstring, paramsOnly, origString, false);
+		if (production != null) {
+			LocalParameter ko = production.getKineticLaw().getLocalParameter(GlobalConstants.OCR_STRING);
+			if (ko != null && !defaultValue.equals(ko.getValue()+"")) {
+				field.setValue(ko.getValue()+"");
+				field.setCustom();
+			}	
 		}
 		fields.put(GlobalConstants.OCR_STRING, field);
 		add(field);
 		
-		// stoichiometry
-		origString = "default";
-		if (paramsOnly) {
-			String defaultValue = refGCM.getParameter(GlobalConstants.STOICHIOMETRY_STRING);
-			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.STOICHIOMETRY_STRING)) {
-				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.STOICHIOMETRY_STRING);
-				origString = "custom";
-			}
-			else if (gcm.globalParameterIsSet(GlobalConstants.STOICHIOMETRY_STRING)) {
-				defaultValue = gcm.getParameter(GlobalConstants.STOICHIOMETRY_STRING);
-			}
-			field = new PropertyField(GlobalConstants.STOICHIOMETRY_STRING, gcm
-					.getParameter(GlobalConstants.STOICHIOMETRY_STRING),
-					origString, defaultValue, Utility.SWEEPstring, paramsOnly, origString, false);
-		} else {
-			field = new PropertyField(GlobalConstants.STOICHIOMETRY_STRING, gcm
-					.getParameter(GlobalConstants.STOICHIOMETRY_STRING),
-					origString, gcm
-					.getParameter(GlobalConstants.STOICHIOMETRY_STRING), Utility.NUMstring, paramsOnly, origString, false);
-		}
-		fields.put(GlobalConstants.STOICHIOMETRY_STRING, field);
-		add(field);		
-		
 		// kbasal
 		origString = "default";
+		defaultValue = gcm.getParameter(GlobalConstants.KBASAL_STRING);
+		formatString = Utility.NUMstring;
 		if (paramsOnly) {
-			String defaultValue = refGCM.getParameter(GlobalConstants.KBASAL_STRING);
-			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.KBASAL_STRING)) {
-				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.KBASAL_STRING);
-				origString = "custom";
+			if (production != null) {
+				Reaction refProd = refGCM.getSBMLDocument().getModel().getReaction(production.getId());
+				LocalParameter kb = refProd.getKineticLaw().getLocalParameter(GlobalConstants.KBASAL_STRING);
+				if (kb != null) {
+					defaultValue = kb.getValue()+"";
+					origString = "custom";
+				}
 			}
-			else if (gcm.globalParameterIsSet(GlobalConstants.KBASAL_STRING)) {
-				defaultValue = gcm.getParameter(GlobalConstants.KBASAL_STRING);
-			}
-			field = new PropertyField(GlobalConstants.KBASAL_STRING, gcm
-					.getParameter(GlobalConstants.KBASAL_STRING),
-					origString, defaultValue,
-					Utility.SWEEPstring, paramsOnly, origString, false);
-		} else {
-			field = new PropertyField(GlobalConstants.KBASAL_STRING, gcm
-					.getParameter(GlobalConstants.KBASAL_STRING),
-					origString, gcm
-							.getParameter(GlobalConstants.KBASAL_STRING),
-					Utility.NUMstring, paramsOnly, origString, false);
+			formatString = Utility.SWEEPstring;
+		}
+		field = new PropertyField(GlobalConstants.KBASAL_STRING, gcm.getParameter(GlobalConstants.KBASAL_STRING),
+				origString, defaultValue, Utility.SWEEPstring, paramsOnly, origString, false);
+		if (production != null) {
+			LocalParameter kb = production.getKineticLaw().getLocalParameter(GlobalConstants.KBASAL_STRING);
+			if (kb != null && !defaultValue.equals(kb.getValue()+"")) {
+				field.setValue(kb.getValue()+"");
+				field.setCustom();
+			}	
 		}
 		fields.put(GlobalConstants.KBASAL_STRING, field);
 		add(field);
 		
 		// kactived production
 		origString = "default";
+		defaultValue = gcm.getParameter(GlobalConstants.ACTIVATED_STRING);
+		formatString = Utility.NUMstring;
 		if (paramsOnly) {
-			String defaultValue = refGCM.getParameter(GlobalConstants.ACTIVED_STRING);
-			if (refGCM.getPromoters().get(selected).containsKey(GlobalConstants.ACTIVED_STRING)) {
-				defaultValue = refGCM.getPromoters().get(selected).getProperty(GlobalConstants.ACTIVED_STRING);
-				origString = "custom";
+			if (production != null) {
+				Reaction refProd = refGCM.getSBMLDocument().getModel().getReaction(production.getId());
+				LocalParameter ka = refProd.getKineticLaw().getLocalParameter(GlobalConstants.ACTIVATED_STRING);
+				if (ka != null) {
+					defaultValue = ka.getValue()+"";
+					origString = "custom";
+				}
 			}
-			else if (gcm.globalParameterIsSet(GlobalConstants.ACTIVED_STRING)) {
-				defaultValue = gcm.getParameter(GlobalConstants.ACTIVED_STRING);
-			}
-			field = new PropertyField(GlobalConstants.ACTIVED_STRING, gcm
-					.getParameter(GlobalConstants.ACTIVED_STRING),
-					origString, defaultValue, Utility.SWEEPstring, paramsOnly, origString, false);
-		} else {
-			field = new PropertyField(GlobalConstants.ACTIVED_STRING, gcm
-					.getParameter(GlobalConstants.ACTIVED_STRING),
-					origString, gcm
-					.getParameter(GlobalConstants.ACTIVED_STRING), Utility.NUMstring, paramsOnly, origString, false);
+			formatString = Utility.SWEEPstring;
 		}
-		fields.put(GlobalConstants.ACTIVED_STRING, field);
+		field = new PropertyField(GlobalConstants.ACTIVATED_STRING, gcm.getParameter(GlobalConstants.ACTIVATED_STRING),
+				origString, defaultValue, formatString, paramsOnly, origString, false);
+		if (production != null) {
+			LocalParameter ka = production.getKineticLaw().getLocalParameter(GlobalConstants.ACTIVATED_STRING);
+			if (ka != null && !defaultValue.equals(ka.getValue()+"")) {
+				field.setValue(ka.getValue()+"");
+				field.setCustom();
+			}	
+		}
+		fields.put(GlobalConstants.ACTIVATED_STRING, field);
 		add(field);
 		
-		// Panel for associating SBOL promoter element
-		SbolField sField = new SbolField(GlobalConstants.SBOL_PROMOTER, gcmEditor);
-		sbolFields.put(GlobalConstants.SBOL_PROMOTER, sField);
-		add(sField);
+		// stoichiometry
+		origString = "default";
+		defaultValue = gcm.getParameter(GlobalConstants.STOICHIOMETRY_STRING);
+		formatString = Utility.NUMstring;
+		if (paramsOnly) {
+			if (production != null) {
+				Reaction refProd = refGCM.getSBMLDocument().getModel().getReaction(production.getId());
+				LocalParameter np = refProd.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING);
+				if (np != null) {
+					defaultValue = np.getValue()+"";
+					origString = "custom";
+				}
+			}
+			formatString = Utility.SWEEPstring;
+		}
+		field = new PropertyField(GlobalConstants.STOICHIOMETRY_STRING, gcm.getParameter(GlobalConstants.STOICHIOMETRY_STRING),
+				origString, defaultValue, formatString, paramsOnly, origString, false);
+		if (production != null) {
+			LocalParameter np = production.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING);
+			if (np != null && !defaultValue.equals(np.getValue()+"")) {
+				field.setValue(np.getValue()+"");
+				field.setCustom();
+			}	
+		}
+		fields.put(GlobalConstants.STOICHIOMETRY_STRING, field);
+		add(field);		
 		
-		// Panel for associating SBOL terminator element
-		sField = new SbolField(GlobalConstants.SBOL_TERMINATOR, gcmEditor);
-		sbolFields.put(GlobalConstants.SBOL_TERMINATOR, sField);
-		add(sField);
+		// Panel for associating SBOL promoter element
+		if (!paramsOnly) {
+			SbolField Prom_Field = new SbolField(GlobalConstants.SBOL_PROMOTER, gcmEditor);
+			sbolFields.put(GlobalConstants.SBOL_PROMOTER, Prom_Field);
+			add(Prom_Field);
+		
+			// Panel for associating SBOL terminator element
+			SbolField Term_Field = new SbolField(GlobalConstants.SBOL_TERMINATOR, gcmEditor);
+			sbolFields.put(GlobalConstants.SBOL_TERMINATOR, Term_Field);
+			add(Term_Field);
+
+			String annotation = promoter.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
+			String [] annotations = annotation.split(",");
+			for (int i=0;i<annotations.length;i++) {
+				if (annotations[i].startsWith(GlobalConstants.SBOL_PROMOTER)) {
+					String [] sbolRBS = annotations[i].split("=");
+					Prom_Field.setText(sbolRBS[1]);
+				}
+				if (annotations[i].startsWith(GlobalConstants.SBOL_TERMINATOR)) {
+					String [] sbolORF = annotations[i].split("=");
+					Term_Field.setText(sbolORF[1]);
+				}
+			}
+		}
 
 		String oldName = null;
-		if (selected != null) {
-			oldName = selected;
-			Properties prop = gcm.getPromoters().get(selected);
-			fields.get(GlobalConstants.ID).setValue(selected);
-			loadProperties(prop);
-		}
+		oldName = selected;
 
 		boolean display = false;
 		while (!display) {
@@ -260,8 +298,7 @@ public class PromoterPanel extends JPanel {
 	
 	private boolean checkValues() {
 		for (PropertyField f : fields.values()) {
-			if (!f.isValidValue()/* || f.getValue().equals("RNAP") || 
-					f.getValue().endsWith("_RNAP") || f.getValue().endsWith("_bound")*/) {
+			if (!f.isValidValue()) {
 				return false;
 			}
 		}
@@ -288,88 +325,93 @@ public class PromoterPanel extends JPanel {
 					Utility.createErrorMessage("Error", "Illegal values entered.");
 				return false;
 			}
-			if (oldName == null) {
-				if (gcm.getUsedIDs().contains((String)fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error", "Id already exists.");
-					return false;
-				}
-			}
-			else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
-				if (gcm.getUsedIDs().contains((String)fields.get(GlobalConstants.ID).getValue())) {
-					Utility.createErrorMessage("Error","Id already exists.");
-					return false;
-				}
-			}
-			String id = fields.get(GlobalConstants.ID).getValue();
-
-			// Check to see if we need to add or edit
-			Properties property = new Properties();
-			
-			// preserve positioning info
-			if (oldName != null) {
-				for (Object p : gcm.getPromoters().get(oldName).keySet()) {
-					String k = p.toString();
-					if (k.equals("graphwidth") || k.equals("graphheight") || k.equals("graphy") || k.equals("graphx")
-							|| k.equals("drawn_promoter") || k.equals("ExplicitPromoter")) {
-						String v = (gcm.getPromoters().get(oldName).getProperty(k)).toString();
-						property.put(k, v);
+			String id = selected;
+			if (!paramsOnly) {
+				if (oldName == null) {
+					if (gcm.getUsedIDs().contains((String)fields.get(GlobalConstants.ID).getValue())) {
+						Utility.createErrorMessage("Error", "Id already exists.");
+						return false;
 					}
 				}
-			}
-			
-			
-			for (PropertyField f : fields.values()) {
-				if (f.getState() == null
-						|| f.getState().equals(f.getStates()[1])) {
-					property.put(f.getKey(), f.getValue());
-//					if (f.getKey().equals("ID")) {
-//						property.put(GlobalConstants.NAME, f.getValue());
-//					}
+				else if (!oldName.equals(fields.get(GlobalConstants.ID).getValue())) {
+					if (gcm.getUsedIDs().contains((String)fields.get(GlobalConstants.ID).getValue())) {
+						Utility.createErrorMessage("Error","Id already exists.");
+						return false;
+					}
 				}
+				id = fields.get(GlobalConstants.ID).getValue();
+				promoter.setId(id);
+				promoter.setName(fields.get(GlobalConstants.NAME).getValue());
 			}
-			
-			// Add SBOL properties
-			for (SbolField sf : sbolFields.values()) {
-				if (!sf.getText().equals(""))
-					property.put(sf.getType(), sf.getText());
+			promoter.setInitialAmount(Double.parseDouble(fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getValue()));
+			String kaStr = null;
+			production.getKineticLaw().removeLocalParameter(GlobalConstants.STOICHIOMETRY_STRING);
+			production.getKineticLaw().removeLocalParameter(GlobalConstants.OCR_STRING);
+			production.getKineticLaw().removeLocalParameter(GlobalConstants.KBASAL_STRING);
+			production.getKineticLaw().removeLocalParameter(GlobalConstants.ACTIVATED_STRING);
+			production.getKineticLaw().removeLocalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING);
+			production.getKineticLaw().removeLocalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING);
+			production.getKineticLaw().removeLocalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING);
+			production.getKineticLaw().removeLocalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING);
+			PropertyField f = fields.get(GlobalConstants.ACTIVATED_STRING);
+			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
+				kaStr = f.getValue();
 			}
+			String npStr = null;
+			f = fields.get(GlobalConstants.STOICHIOMETRY_STRING);
+			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
+				npStr = f.getValue();
+			}
+			String koStr = null;
+			f = fields.get(GlobalConstants.OCR_STRING);
+			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
+				koStr = f.getValue();
+			}
+			String kbStr = null;
+			f = fields.get(GlobalConstants.KBASAL_STRING);
+			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
+				kbStr = f.getValue();
+			}
+			String KoStr = null;
+			f = fields.get(GlobalConstants.RNAP_BINDING_STRING);
+			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
+				KoStr = f.getValue();
+			}
+			String KaoStr = null;
+			f = fields.get(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING);
+			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
+				KaoStr = f.getValue();
+			}
+			gcm.createProductionReaction(selected,kaStr,npStr,koStr,kbStr,KoStr,KaoStr);
 
-			// rename all the influences that use this promoter if name was changed
-			if (selected != null && !oldName.equals(id)) {
-				while (gcm.getUsedIDs().contains(selected)) {
-					gcm.getUsedIDs().remove(selected);
+			if (!paramsOnly) {
+				String annotation = "";
+				// Add SBOL properties
+				for (SbolField sf : sbolFields.values()) {
+					if (!sf.getText().equals(""))
+						annotation += "," + sf.getType() + "=" + sf.getText();
 				}
-				gcm.changePromoterName(oldName, id);
-				((DefaultListModel) influenceList.getModel()).clear();
-				influenceList.addAllItem(gcm.getInfluences().keySet());
-				this.secondToLastUsedPromoter = oldName;
-				promoterNameChange = true;
-			}
-			if (!gcm.getUsedIDs().contains(id)) {
-				gcm.getUsedIDs().add(id);
-			}
-			gcm.addPromoter(id, property);
-			this.lastUsedPromoter = id;
-			
-			
-			if (paramsOnly) {
-				if (fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getState().equals(fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getStates()[1]) ||
-						fields.get(GlobalConstants.RNAP_BINDING_STRING).getState().equals(fields.get(GlobalConstants.RNAP_BINDING_STRING).getStates()[1]) ||
-						fields.get(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING).getState().equals(fields.get(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING).getStates()[1]) ||
-						fields.get(GlobalConstants.OCR_STRING).getState().equals(fields.get(GlobalConstants.OCR_STRING).getStates()[1]) ||
-						fields.get(GlobalConstants.STOICHIOMETRY_STRING).getState().equals(fields.get(GlobalConstants.STOICHIOMETRY_STRING).getStates()[1]) ||
-						fields.get(GlobalConstants.KBASAL_STRING).getState().equals(fields.get(GlobalConstants.KBASAL_STRING).getStates()[1]) ||
-						fields.get(GlobalConstants.ACTIVED_STRING).getState().equals(fields.get(GlobalConstants.ACTIVED_STRING).getStates()[1])) {
-					id += " Modified";
+				promoter.setAnnotation(GlobalConstants.TYPE + "=" + GlobalConstants.PROMOTER);
+				if (!annotation.equals("")) {
+					promoter.appendAnnotation(annotation);
+				} 
+
+				// rename all the influences that use this promoter if name was changed
+				if (selected != null && !oldName.equals(id)) {
+					while (gcm.getUsedIDs().contains(selected)) {
+						gcm.getUsedIDs().remove(selected);
+					}
+					gcm.changePromoterName(oldName, id);
+					this.secondToLastUsedPromoter = oldName;
+					promoterNameChange = true;
 				}
+				if (!gcm.getUsedIDs().contains(id)) {
+					gcm.getUsedIDs().add(id);
+				}
+				this.lastUsedPromoter = id;
 			}
-			promoterList.removeItem(oldName);
-			promoterList.removeItem(oldName + " Modified");
-			promoterList.addItem(id);
-			promoterList.setSelectedValue(id, true);
 			gcmEditor.setDirty(true);
 		} else if (value == JOptionPane.NO_OPTION) {
-			// System.out.println();
 			return true;
 		}
 		return true;
@@ -379,8 +421,7 @@ public class PromoterPanel extends JPanel {
 		String updates = "";
 		if (paramsOnly) {
 			if (fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getState().equals(fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getStates()[1])) {
-				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-						+ GlobalConstants.PROMOTER_COUNT_STRING + " "
+				updates += selected + "/" + GlobalConstants.PROMOTER_COUNT_STRING + " "
 						+ fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.RNAP_BINDING_STRING).getState()
@@ -388,72 +429,50 @@ public class PromoterPanel extends JPanel {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
-				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-				+ GlobalConstants.RNAP_BINDING_STRING + " "
-				+ fields.get(GlobalConstants.RNAP_BINDING_STRING).getValue();
+				updates += selected + "/" + GlobalConstants.RNAP_BINDING_STRING + " "
+						+ fields.get(GlobalConstants.RNAP_BINDING_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING).getState()
 					.equals(fields.get(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING).getStates()[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
-				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-				+ GlobalConstants.ACTIVATED_RNAP_BINDING_STRING + " "
-				+ fields.get(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING).getValue();
+				updates += selected + "/" + GlobalConstants.ACTIVATED_RNAP_BINDING_STRING + " "
+						+ fields.get(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.OCR_STRING).getState().equals(fields.get(GlobalConstants.OCR_STRING).getStates()[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
-				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-				+ GlobalConstants.OCR_STRING + " "
-				+ fields.get(GlobalConstants.OCR_STRING).getValue();
+				updates += selected + "/" + GlobalConstants.OCR_STRING + " "
+						+ fields.get(GlobalConstants.OCR_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.STOICHIOMETRY_STRING).getState().equals(fields.get(GlobalConstants.STOICHIOMETRY_STRING).getStates()[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
-				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-				+ GlobalConstants.STOICHIOMETRY_STRING + " "
-				+ fields.get(GlobalConstants.STOICHIOMETRY_STRING).getValue();
+				updates += selected + "/" + GlobalConstants.STOICHIOMETRY_STRING + " "
+						+ fields.get(GlobalConstants.STOICHIOMETRY_STRING).getValue();
 			}
 			if (fields.get(GlobalConstants.KBASAL_STRING).getState().equals(fields.get(GlobalConstants.KBASAL_STRING).getStates()[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
-				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-				+ GlobalConstants.KBASAL_STRING + " "
-				+ fields.get(GlobalConstants.KBASAL_STRING).getValue();
+				updates += selected + "/" + GlobalConstants.KBASAL_STRING + " "
+						+ fields.get(GlobalConstants.KBASAL_STRING).getValue();
 			}
-			if (fields.get(GlobalConstants.ACTIVED_STRING).getState().equals(fields.get(GlobalConstants.ACTIVED_STRING).getStates()[1])) {
+			if (fields.get(GlobalConstants.ACTIVATED_STRING).getState().equals(fields.get(GlobalConstants.ACTIVATED_STRING).getStates()[1])) {
 				if (!updates.equals("")) {
 					updates += "\n";
 				}
-				updates += fields.get(GlobalConstants.ID).getValue() + "/"
-				+ GlobalConstants.ACTIVED_STRING + " "
-				+ fields.get(GlobalConstants.ACTIVED_STRING).getValue();
+				updates += selected + "/" + GlobalConstants.ACTIVATED_STRING + " "
+						+ fields.get(GlobalConstants.ACTIVATED_STRING).getValue();
 			}
 			if (updates.equals("")) {
-				updates += fields.get(GlobalConstants.ID).getValue() + "/";
+				updates += selected + "/";
 			}
 		}
 		return updates;
-	}
-	
-	private void loadProperties(Properties property) {
-		for (Object o : property.keySet()) {
-			if (fields.containsKey(o.toString())) {
-				fields.get(o.toString()).setValue(
-						property.getProperty(o.toString()));
-				fields.get(o.toString()).setCustom();
-			} else if (sbolFields.containsKey(o.toString())) {
-				sbolFields.get(o.toString()).setText(property.getProperty(o.toString()));
-			}
-//			if (o.equals(GlobalConstants.NAME)) {
-//				fields.get("ID").setValue(
-//						property.getProperty(o.toString()));
-//			}
-		}
 	}
 	
 	// Provide a public way to query what the last used (or created) promoter was.

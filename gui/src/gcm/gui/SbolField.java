@@ -29,9 +29,9 @@ public class SbolField extends JPanel implements ActionListener {
 	private JLabel sbolLabel;
 	private JTextField sbolText = new JTextField(20);
 	private JButton sbolButton = new JButton("Associate SBOL");
-	private GCM2SBMLEditor gcmEditor;
+	private ModelEditor gcmEditor;
 	
-	public SbolField(String sbolType, GCM2SBMLEditor gcmEditor) {
+	public SbolField(String sbolType, ModelEditor gcmEditor) {
 		super(new GridLayout(1, 3));
 	
 		this.sbolType = sbolType;

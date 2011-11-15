@@ -15,7 +15,7 @@ import main.Gui;
 
 public class ParameterPanel extends JPanel {
 	public ParameterPanel(String totalSelected, PropertyList parameterList,
-			GCMFile gcm, boolean paramsOnly, GCMFile refGCM, GCM2SBMLEditor gcmEditor) {
+			GCMFile gcm, boolean paramsOnly, GCMFile refGCM, ModelEditor gcmEditor) {
 		super(new GridLayout(1, 2));
 		this.totalSelected = totalSelected;
 		this.parameterList = parameterList;
@@ -30,9 +30,11 @@ public class ParameterPanel extends JPanel {
 		selected = CompatibilityFixer.getGCMName(selected);
 
 		// Initial field
+		// TODO: REMOVED NOT VALID ANYMORE
+		/*
 		PropertyField field;
 		String origString = "default";
-		if (paramsOnly) {
+				if (paramsOnly) {
 			if (refGCM.getGlobalParameters().containsKey(selected)) {
 				origString = "custom";
 				field = new PropertyField(selected, gcm.getParameter(selected), origString, refGCM
@@ -56,6 +58,7 @@ public class ParameterPanel extends JPanel {
 			field.setDefault();
 		}
 		add(field);
+		*/
 
 		boolean display = false;
 		while (!display) {
@@ -82,6 +85,8 @@ public class ParameterPanel extends JPanel {
 				return false;
 			}
 			String newItem = CompatibilityFixer.getGuiName(selected);
+			// TODO: REMOVED NOT VALID ANYMORE
+			/*
 			if (fields.get(selected).getState().equals(fields.get(selected).getStates()[1])) {
 				gcm.setParameter(selected, fields.get(selected).getValue());
 				newItem = newItem + " (" + selected + "), ";
@@ -119,6 +124,7 @@ public class ParameterPanel extends JPanel {
 							+ "), Default, " + gcm.getParameter(selected);
 				}
 			}
+			*/
 			parameterList.removeItem(totalSelected);
 			parameterList.addItem(newItem);
 			parameterList.setSelectedValue(newItem, true);
@@ -144,5 +150,5 @@ public class ParameterPanel extends JPanel {
 	private GCMFile refGCM = null;
 	private PropertyList parameterList = null;
 	private HashMap<String, PropertyField> fields = null;
-	private GCM2SBMLEditor gcmEditor = null;
+	private ModelEditor gcmEditor = null;
 }

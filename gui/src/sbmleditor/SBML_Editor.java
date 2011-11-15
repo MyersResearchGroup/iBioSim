@@ -222,7 +222,7 @@ public class SBML_Editor extends JPanel {
 	private JPanel createRuleFrame(Model model) {
 		initialsPanel = new InitialAssignments(biosim, document, dirty);
 		rulesPanel = new Rules(biosim, document, dirty);
-		Constraints constraintPanel = new Constraints(biosim, document, usedIDs, dirty);
+		Constraints constraintPanel = new Constraints(document, usedIDs, dirty);
 		Events eventPanel = new Events(biosim, document, usedIDs, dirty);
 
 		JPanel recPanel = new JPanel(new GridLayout(2, 2));

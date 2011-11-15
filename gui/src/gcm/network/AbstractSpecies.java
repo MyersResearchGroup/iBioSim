@@ -19,7 +19,7 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	 * 
 	 */
 	public AbstractSpecies() {
-		properties = new Properties();
+		//properties = new Properties();
 	}
 	
 	/**
@@ -84,6 +84,7 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		return getId();
 	}
 	
+	/*
 	public void setProperties(Properties properties) {
 		this.properties = properties;
 	}
@@ -112,17 +113,58 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		}
 		return true;
 	}
+	*/
+	
+	public boolean isDiffusible() {
+		return diffusible;
+	}
+	
+	public void setDiffusible(boolean diffusible) {
+		this.diffusible = diffusible;
+	}
+	
+	public String getType() {
+		return type;
+	}
+	
+	public void setType(String type) {
+		this.type = type;
+	}
+	
+	public String getRBS() {
+		return RBS;
+	}
+	
+	public void setRBS(String RBS) {
+		this.RBS = RBS;
+	}
+	
+	public String getORF() {
+		return ORF;
+	}
+	
+	public void setORF(String ORF) {
+		this.ORF = ORF;
+	}
 	
 	public double getInitialAmount() {
+		/*
 		if (getProperty(GlobalConstants.INITIAL_STRING) != null &&
 			Utility.isValid(getProperty(GlobalConstants.INITIAL_STRING), Utility.NUMstring)) {
 			return Double.parseDouble(getProperty(GlobalConstants.INITIAL_STRING));
-		} else {
-			return -1;
-		}
+		} 
+		return -1;
+		*/
+		return amount;
+	}
+	
+	public void setInitialAmount(double amount) {
+		this.amount = amount;
+		this.concentration = -1;
 	}
 	
 	public double getInitialConcentration() {
+		/*
 		if (getProperty(GlobalConstants.INITIAL_STRING) != null &&
 			Utility.isValid(getProperty(GlobalConstants.INITIAL_STRING), Utility.NUMstring)) {
 			return -1;
@@ -132,14 +174,30 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		} else {
 			return -1;
 		}
-			
+			*/
+		return concentration;
+	}
+	
+	public void setInitialConcentration(double concentration) {
+		this.amount = -1;
+		this.concentration = concentration;
 	}
 	
 	public double getDecay() {
-		return Double.parseDouble(getProperty(GlobalConstants.KDECAY_STRING));
+		return kd;
+	}
+	
+	public void setDecay(double kd) {
+		this.kd = kd;
 	}
 	
 	public double[] getKmdiff() {
+		/*
+		if (getProperty(GlobalConstants.MEMDIFF_STRING)==null) {
+			double[] params = new double[1];
+			params[0]=-1;
+			return params;
+		}
 		String[] props = getProperty(GlobalConstants.MEMDIFF_STRING).split("/");
 		
 		double[] params = new double[2];
@@ -159,22 +217,52 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		}
 		
 		return params;
+		*/
+		return Kmdiff;
+	}
+	
+	public void setKmdiff(double kmdiff_f,double kmdiff_r) {
+		Kmdiff = new double[2];
+		Kmdiff[0] = kmdiff_f;
+		Kmdiff[1] = kmdiff_r;
 	}
 	
 	public double getKecdiff() {
-		return Double.parseDouble(getProperty(GlobalConstants.KECDIFF_STRING));
+		/*
+		if (getProperty(GlobalConstants.KECDIFF_STRING)!=null) 
+			return Double.parseDouble(getProperty(GlobalConstants.KECDIFF_STRING));
+			*/
+		return -1;
 	}
 	
 	public double getKecdecay() {
-		return Double.parseDouble(getProperty(GlobalConstants.KECDECAY_STRING));
+		/*
+		if (getProperty(GlobalConstants.KECDECAY_STRING)!=null) 
+			return Double.parseDouble(getProperty(GlobalConstants.KECDECAY_STRING));
+			*/
+		return -1;
 	}
 	
 	public double[] getKc() {
+		/*
+		if (getProperty(GlobalConstants.KCOMPLEX_STRING)==null) {
+			double[] params = new double[1];
+			params[0]=-1;
+			return params;
+		}
 		String[] props = getProperty(GlobalConstants.KCOMPLEX_STRING).split("/");
 		double[] params = new double[props.length];
 		for (int i = 0; i < props.length; i++)
 			params[i] = Double.parseDouble(props[i]);
 		return params;
+		*/
+		return Kc;
+	}
+	
+	public void setKc(double kc_f,double kc_r) {
+		Kc = new double[2];
+		Kc[0] = kc_f;
+		Kc[1] = kc_r;
 	}
 	
 	public boolean isActivator() {
@@ -232,6 +320,24 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 
 	// The name of the species
 	protected String name;
+	
+	protected String type;
+	
+	protected boolean diffusible;
+	
+	protected double amount;
+	
+	protected double concentration;
+	
+	protected String RBS;
+	
+	protected String ORF;
+	
+	protected double[] Kc;
+	
+	protected double kd;
+	
+	protected double[] Kmdiff;
 
 	// The state associated with the species
 	protected String stateName;

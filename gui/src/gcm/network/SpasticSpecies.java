@@ -11,7 +11,7 @@ import gcm.visitor.SpeciesVisitor;
  */
 public class SpasticSpecies extends AbstractSpecies {
 	public SpasticSpecies(String name, String stateName, Properties properties) {
-		this.properties = properties;
+		//this.properties = properties;
 		this.id = name;
 		this.stateName = stateName;
 	}

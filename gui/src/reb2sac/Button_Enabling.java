@@ -3,7 +3,7 @@ package reb2sac;
 import java.awt.Component;
 import java.util.*;
 
-import gcm.gui.GCM2SBMLEditor;
+import gcm.gui.ModelEditor;
 
 import javax.swing.*;
 
@@ -212,7 +212,7 @@ public class Button_Enabling {
 			JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel, JCheckBox usingSSA, JButton clearIntSpecies, JTextField fileStem,
 			JLabel fileStemLabel, JList preAbs, JList loopAbs, JList postAbs, JLabel preAbsLabel, JLabel loopAbsLabel, JLabel postAbsLabel,
 			JButton addPreAbs, JButton rmPreAbs, JButton editPreAbs, JButton addLoopAbs, JButton rmLoopAbs, JButton editLoopAbs, JButton addPostAbs,
-			JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn, GCM2SBMLEditor gcmEditor, ArrayList<ArrayList<Component>> speciesInt) {
+			JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn, ModelEditor gcmEditor, ArrayList<ArrayList<Component>> speciesInt) {
 		ODE.setEnabled(false);
 		monteCarlo.setEnabled(true);
 		if (!usingSSA.isSelected()) {
@@ -443,7 +443,7 @@ public class Button_Enabling {
 	public static void enableMarkov(JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel, JLabel minStepLabel, JTextField minStep,
 			JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
 			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JCheckBox usingSSA,
-			JTextField fileStem, JLabel fileStemLabel, GCM2SBMLEditor gcmEditor, JList postAbs, String modelFile) {
+			JTextField fileStem, JLabel fileStemLabel, ModelEditor gcmEditor, JList postAbs, String modelFile) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);

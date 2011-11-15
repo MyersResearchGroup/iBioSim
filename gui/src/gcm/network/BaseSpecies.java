@@ -25,7 +25,7 @@ public class BaseSpecies extends AbstractSpecies {
 	 * 			  the maximum monomers can combine to form dimer
 	 */
 	public BaseSpecies(String name, String stateName, Properties properties) {
-		this.properties = properties;
+		//this.properties = properties;
 		this.id = name;
 		this.stateName = stateName;
 	}

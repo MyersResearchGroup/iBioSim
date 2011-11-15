@@ -40,7 +40,7 @@ public class GridAction extends AbstractAction {
 			
 			if (added) {
 				
-				GCM2SBMLEditor gcm2sbml = schematic.getGCM2SBML();
+				ModelEditor gcm2sbml = schematic.getGCM2SBML();
 				gcm2sbml.setDirty(true);
 				gcm2sbml.refresh();
 				schematic.getGraph().buildGraph();

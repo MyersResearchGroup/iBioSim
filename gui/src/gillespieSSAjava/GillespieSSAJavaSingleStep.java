@@ -99,6 +99,25 @@ public class GillespieSSAJavaSingleStep {
 		 else
 			 NumIrreversible ++;
 	 }
+/*
+    model = document.getModel();
+    long num = model.getNumReactions();	
+    int iter = 0;
+    while (iter < 100000) {
+    	for (long i = 0; i < num; i++) {
+   		  Reaction reaction = model.getReaction(i);
+   		  for (long a = 0; a < reaction.getNumReactants(); a++) {
+   			  SpeciesReference reactant = reaction.getReactant(a);
+   			  reactant.getSpecies();
+   			  reactant.getStoichiometry();
+   		  }
+ 		}
+    	System.out.println(""+iter);
+    	++iter;
+    }
+    System.out.println("GOT HERE");
+*/
+	 
 	 NumReactions = 2*NumReversible + NumIrreversible;
 	 StateChangeVector=new double[(int) NumReactions][(int) model.getNumSpecies()];
 	 

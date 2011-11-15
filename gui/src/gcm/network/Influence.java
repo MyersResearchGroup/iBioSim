@@ -89,31 +89,68 @@ public class Influence {
 	 * @return Returns the dimer.
 	 */
 	public double getCoop() {
-		return Double.parseDouble(getProperty(GlobalConstants.COOPERATIVITY_STRING));
+		/*
+		if (getProperty(GlobalConstants.COOPERATIVITY_STRING)!=null) {
+			return Double.parseDouble(getProperty(GlobalConstants.COOPERATIVITY_STRING));
+		} else {
+			return -1;
+		}
+		*/
+		return nc;
+	}
+	
+	public void setCoop(double nc) {
+		this.nc = nc;
 	}
 	
 	public double getDimer() {
 		return Double.parseDouble(getProperty(GlobalConstants.MAX_DIMER_STRING));
 	}
 	
-	public double getKbio() {
-		return Double.parseDouble(getProperty(GlobalConstants.KBIO_STRING));
+	public double[] getAct() {
+		/*
+		if (getProperty(GlobalConstants.KACT_STRING)!=null) {
+			String[] props = getProperty(GlobalConstants.KACT_STRING).split("/");
+			double[] params = new double[props.length];
+			for (int i = 0; i < props.length; i++)
+				params[i] = Double.parseDouble(props[i]);
+			return params;
+		} else {
+			double[] params = new double[1];
+			params[0] = -1;
+			return params;
+		}
+		*/
+		return Ka;
 	}
 	
-	public double[] getAct() {
-		String[] props = getProperty(GlobalConstants.KACT_STRING).split("/");
-		double[] params = new double[props.length];
-		for (int i = 0; i < props.length; i++)
-			params[i] = Double.parseDouble(props[i]);
-		return params;
+	public void setAct(double ka_f,double ka_r) {
+		Ka = new double[2];
+		Ka[0] = ka_f;
+		Ka[1] = ka_r;
 	}
 	
 	public double[] getRep() {
-		String[] props = getProperty(GlobalConstants.KREP_STRING).split("/");
-		double[] params = new double[props.length];
-		for (int i = 0; i < props.length; i++)
-			params[i] = Double.parseDouble(props[i]);
-		return params;
+		/*
+		if (getProperty(GlobalConstants.KACT_STRING)!=null) {
+			String[] props = getProperty(GlobalConstants.KREP_STRING).split("/");
+			double[] params = new double[props.length];
+			for (int i = 0; i < props.length; i++)
+				params[i] = Double.parseDouble(props[i]);
+			return params;
+		} else {
+			double[] params = new double[1];
+			params[0] = -1;
+			return params;
+		}
+		*/
+		return Kr;
+	}
+	
+	public void setRep(double kr_f,double kr_r) {
+		Kr = new double[2];
+		Kr[0] = kr_f;
+		Kr[1] = kr_r;
 	}
 	
 	public void setProperties(Properties properties) {
@@ -132,7 +169,10 @@ public class Influence {
 	}
 	
 	public String getProperty(String key) {
-		return properties.getProperty(key);
+		if (properties!=null)
+			return properties.getProperty(key);
+		else 
+			return null;
 	}	
 	
 	private static int uid = 0;
@@ -144,11 +184,18 @@ public class Influence {
 	//Activation or repression
 	private String type = "";
 	//The name of the reaction
-	private String name = null;		
+	private String name = null;	
+	
+	private double[] Ka;
+	
+	private double[] Kr;
+	
+	private double nc;
+	
 	//The production constant
 	private double productionConstant = 0.0001;
 	//Biochemical reaction
-	private boolean isBiochemical = false;
+	//private boolean isBiochemical = false;
 	//Number property
 	private Properties properties = null;
 

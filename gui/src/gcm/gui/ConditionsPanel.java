@@ -24,10 +24,10 @@ public class ConditionsPanel extends JPanel {
 	private GCMFile gcm = null;
 	private PropertyList conditionList = null;
 	
-	private GCM2SBMLEditor gcmEditor = null;
+	private ModelEditor gcmEditor = null;
 
 	public ConditionsPanel(String selected, PropertyList conditionList, GCMFile gcm,
-			boolean paramsOnly,GCM2SBMLEditor gcmEditor) {
+			boolean paramsOnly,ModelEditor gcmEditor) {
 		super(new GridLayout(1, 1));
 		this.selected = selected;
 		this.conditionList = conditionList;
@@ -78,6 +78,8 @@ public class ConditionsPanel extends JPanel {
 				JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 		if (value == JOptionPane.YES_OPTION) {
 			gcmEditor.setDirty(true);
+			// TODO: REMOVED BECAUSE CONDITIONS REMOVED
+			/*
 			if (!checkValues()) {
 				return false;
 			}
@@ -107,6 +109,7 @@ public class ConditionsPanel extends JPanel {
 			else {
 				return false;
 			}
+			*/
 		}
 		else if (value == JOptionPane.NO_OPTION) {
 			// System.out.println();

@@ -612,7 +612,11 @@ public class SBMLutilities {
 		String[] rateLaws = new String[(int) model.getNumReactions()];
 		for (int i = 0; i < model.getNumReactions(); i++) {
 			Reaction reaction = (Reaction) listOfReactions.get(i);
-			rateLaws[i] = reaction.getId() + " = " + myFormulaToString(reaction.getKineticLaw().getMath());
+			if (reaction.getKineticLaw()==null || reaction.getKineticLaw().getMath()==null) {
+				rateLaws[i] = reaction.getId() + " = 0.0"; 
+			} else {
+				rateLaws[i] = reaction.getId() + " = " + myFormulaToString(reaction.getKineticLaw().getMath());
+			}
 		}
 		ListOf listOfInitials = model.getListOfInitialAssignments();
 		String[] initRules = new String[(int) model.getNumInitialAssignments()];
@@ -735,12 +739,14 @@ public class SBMLutilities {
 		document.setConsistencyChecks(libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
 		document.setConsistencyChecks(libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
 		long numErrors = document.checkConsistency();
+		/*
 		String message = "";
 		for (long i = 0; i < numErrors; i++) {
 			String error = document.getError(i).getMessage(); // .replace(". ",
 			// ".\n");
 			message += i + ":" + error + "\n";
 		}
+		*/
 		if (numErrors > 0) {
 			JOptionPane.showMessageDialog(Gui.frame, "Algebraic rules make model overdetermined.", "Model is Overdetermined",
 					JOptionPane.WARNING_MESSAGE);
@@ -787,6 +793,7 @@ public class SBMLutilities {
 	public static String updateFormulaVar(String s, String origVar, String newVar) {
 		s = " " + s + " ";
 		s = s.replace(" " + origVar + " ", " " + newVar + " ");
+		s = s.replace(" " + origVar + ",", " " + newVar + ",");
 		s = s.replace(" " + origVar + "(", " " + newVar + "(");
 		s = s.replace("(" + origVar + ")", "(" + newVar + ")");
 		s = s.replace("(" + origVar + " ", "(" + newVar + " ");

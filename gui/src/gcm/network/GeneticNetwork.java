@@ -120,7 +120,11 @@ public class GeneticNetwork {
 		this.complexMap = complexMap;
 		this.partsMap = partsMap;
 		this.properties = gcm;
-		this.compartments = gcm.getCompartments();
+		// TODO: THIS IS BROKEN
+		this.compartments = new HashMap<String,Properties>(); 
+		for (long i=0; i < gcm.getSBMLDocument().getModel().getNumCompartments(); i++) {
+			compartments.put(gcm.getSBMLDocument().getModel().getCompartment(i).getId(), null);
+		}
 		
 		AbstractPrintVisitor.setGCMFile(gcm);
 		
@@ -245,10 +249,10 @@ public class GeneticNetwork {
 			m.setId(new File(filename).getName().replace(".xml", ""));			
 			m.setVolumeUnits("litre");
 			m.setSubstanceUnits("mole");
-			if (property != null) {
+			if (property != null && !property.equals("")) {
 				ArrayList<String> species = new ArrayList<String>();
 				ArrayList<Object[]> levels = new ArrayList<Object[]>();
-				for (String spec : properties.getSpecies().keySet()) {
+				for (String spec : properties.getSpecies()) {
 					species.add(spec);
 					levels.add(new Object[0]);
 				}
@@ -363,21 +367,18 @@ public class GeneticNetwork {
 			r.setFast(false);
 			KineticLaw kl = r.createKineticLaw();
 			double[] Krnap = p.getKrnap();
-			kl.addParameter(Utility.Parameter("kf_o", Krnap[0], GeneticNetwork
-					.getMoleTimeParameter(2)));
-			if (Krnap.length == 2) {
-				kl.addParameter(Utility.Parameter("kr_o", Krnap[1], GeneticNetwork
-						.getMoleTimeParameter(1)));
-//				kl.addParameter(Utility.Parameter(krnapString, Krnap[0]/Krnap[1],
-//						GeneticNetwork.getMoleParameter(2)));
-			} else {
-				kl.addParameter(Utility.Parameter("kr_o", 1, GeneticNetwork
-						.getMoleTimeParameter(1)));
-//				kl.addParameter(Utility.Parameter(krnapString, Krnap[0],
-//						GeneticNetwork.getMoleParameter(2)));
+			if (Krnap[0] >= 0) {
+				kl.addParameter(Utility.Parameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING, Krnap[0], 
+						GeneticNetwork.getMoleTimeParameter(2)));
+				if (Krnap.length == 2) {
+					kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING, Krnap[1], 
+							GeneticNetwork.getMoleTimeParameter(1)));
+				} else {
+					kl.addParameter(Utility.Parameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING, 1, GeneticNetwork.getMoleTimeParameter(1)));
+				}
 			}
-			kl.setFormula("kf_o*" + rnapName + "*" + p.getId() + "-kr_o*"
-					+ p.getId() + "_RNAP");		
+			kl.setFormula(GlobalConstants.FORWARD_RNAP_BINDING_STRING + "*" + rnapName + "*" + p.getId() + "-"+ 
+					GlobalConstants.REVERSE_RNAP_BINDING_STRING + "*" + p.getId() + "_RNAP");		
 			Utility.addReaction(document, r);
 
 			// Next setup activated binding
@@ -444,7 +445,7 @@ public class GeneticNetwork {
 		for (SpeciesInterface spec : species.values()) {
 			
 			//if it's a diffusible species
-			if (spec.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)) {
+			if (spec.isDiffusible()) {
 				
 				//the ID will have the component/compartment name that the "inner" species is in
 				String isID = spec.getId();
@@ -507,7 +508,7 @@ public class GeneticNetwork {
 			
 			//if the species is more than one level below the grid or isn't diffusible, loop on
 			if (compartmentParts.length > 2 || 
-					!spec.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)) 
+					!spec.isDiffusible())
 				continue;
 			
 			
@@ -1097,7 +1098,7 @@ public class GeneticNetwork {
 		for (SpeciesInterface spec : species.values()) {
 			
 			//if it's a diffusible species
-			if (spec.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)) {
+			if (spec.isDiffusible()) {
 				
 				//the ID will have the component/compartment name that the "inner" species is in
 				String isID = spec.getId();
@@ -1159,8 +1160,7 @@ public class GeneticNetwork {
 			String[] compartmentParts = isCompartment.split("__");
 			
 			//if the species is more than one level below the grid or isn't diffusible, loop on
-			if (compartmentParts.length > 2 || 
-					!spec.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)) 
+			if (compartmentParts.length > 2 || !spec.isDiffusible())
 				continue;
 			
 			//CREATE OUTER SPECIES
@@ -1175,13 +1175,11 @@ public class GeneticNetwork {
 					//if the species already exists, move on
 					if (document.getModel().getSpecies(osID) != null) continue;
 
-					Map.Entry<String, Properties> componentAtLoc = grid.getComponentFromLocation(new Point(row, col));
+					String compoName = grid.getComponentFromLocation(new Point(row, col));
 					
 					//if there is a component at this location
 					//(if there isn't skip this and make an outer species)
-					if (componentAtLoc != null) {
-						
-						String compoName = componentAtLoc.getKey();
+					if (compoName != null) {
 
 						//create the hypothetical species name that might exist
 						//if this location's component had this species inside
@@ -1262,11 +1260,9 @@ public class GeneticNetwork {
 				//with this underlying species ID, probably from a top-level component
 				if (document.getModel().getSpecies(osID) == null) {
 					
-					Map.Entry<String, Properties> componentAtLoc = grid.getComponentFromLocation(new Point(row, col));
+					String compoName = grid.getComponentFromLocation(new Point(row, col));
 					
-					if (componentAtLoc != null) {
-						
-						String compoName = componentAtLoc.getKey();
+					if (compoName != null) {
 
 						//create the hypothetical species name that might exist
 						//if this location's component had this species inside
@@ -1276,8 +1272,7 @@ public class GeneticNetwork {
 						//if it is and is diffusible, that means we use this for diffusion and don't do membrane diffusion
 						if (document.getModel().getSpecies(potentialID) != null && 
 								species.get(potentialID) != null && 
-								species.get(potentialID).getProperty(GlobalConstants.TYPE)
-								.contains(GlobalConstants.DIFFUSIBLE))
+								species.get(potentialID).isDiffusible())
 							osID = potentialID;
 					}
 					else continue;
@@ -1304,12 +1299,9 @@ public class GeneticNetwork {
 						if (document.getModel().getSpecies(neighborID) == null) {
 							
 							//find a potential component at this neighboring location
-							Map.Entry<String, Properties> componentAtLoc = 
-								grid.getComponentFromLocation(new Point(neighborRow, neighborCol));
+							String compoName = grid.getComponentFromLocation(new Point(neighborRow, neighborCol));
 							
-							if (componentAtLoc != null) {
-								
-								String compoName = componentAtLoc.getKey();
+							if (compoName != null) {
 
 								//create the hypothetical species name that might exist
 								//if this location's component had this species inside
@@ -1319,8 +1311,7 @@ public class GeneticNetwork {
 								//if it's still not there, move on to another grid location
 								if (document.getModel().getSpecies(potentialID) != null && 
 										species.get(potentialID) != null && 
-										species.get(potentialID).getProperty(GlobalConstants.TYPE)
-										.contains(GlobalConstants.DIFFUSIBLE))
+										species.get(potentialID).isDiffusible())
 									neighborID = potentialID;
 								else continue;
 							}
@@ -1376,8 +1367,7 @@ public class GeneticNetwork {
 			String underlyingSpeciesID = ids[ids.length - 1];
 			
 			//if this species isn't diffusible, then keep looping
-			if (!spec.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE))
-				continue;
+			if (!spec.isDiffusible()) continue;
 			
 			//get the compartment of this inner species
 			String isCompartment = document.getModel().getSpecies(isID).getCompartment();
@@ -1430,8 +1420,7 @@ public class GeneticNetwork {
 					//see if this species exists and is diffusible
 					//if it doesn't exist or isn't diffusible, don't create the reaction and move on
 					if (document.getModel().getSpecies(osID) == null || species.get(osID) == null ||
-							(species.get(osID) != null &&
-							!species.get(osID).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)))
+							(species.get(osID) != null && !species.get(osID).isDiffusible()))
 						continue;
 				}
 				
@@ -1484,7 +1473,7 @@ public class GeneticNetwork {
 				//if the species exists and is diffusible
 				//then create a membrane diffusion reaction
 				if (document.getModel().getSpecies(osID) != null && 
-						species.get(osID).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)) {
+						species.get(osID).isDiffusible()) {
 					
 					//MEMBRANE DIFFUSION REACTION CREATION
 					//between inner species and outer species
@@ -1566,14 +1555,12 @@ public class GeneticNetwork {
 				r.addModifier(Utility.ModifierSpeciesReference(p.getId() + "_RNAP"));
 				if (p.getActivators().size() > 0) {
 					r.setId("R_basal_production_" + p.getId());
-					kl.addParameter(Utility.Parameter(kBasalString, p.getKbasal(),
-							getMoleTimeParameter(1)));
+					kl.addParameter(Utility.Parameter(kBasalString, p.getKbasal(), getMoleTimeParameter(1)));
 					kl.setFormula(kBasalString + "*" + p.getId() + "_RNAP");
 
 				} else {
 					r.setId("R_constitutive_production_" + p.getId());
-					kl.addParameter(Utility.Parameter(kOcString, p.getKoc(),
-							getMoleTimeParameter(1)));
+					kl.addParameter(Utility.Parameter(kOcString, p.getKoc(), getMoleTimeParameter(1)));
 					kl.setFormula(kOcString + "*" + p.getId() + "_RNAP");
 				}
 				Utility.addReaction(document, r);
@@ -1631,11 +1618,13 @@ public class GeneticNetwork {
 			// First print out the promoter, and promoter bound to RNAP
 			// But first check if promoter belongs to a compartment other than default
 			String compartment = checkCompartments(p.getId());
-			Species s = Utility.makeSpecies(p.getId(), compartment,	p.getPcount(), -1);
+			Species s = Utility.makeSpecies(p.getId(), compartment,	p.getInitialAmount(), -1);
+			/*
 		    if ((p.getProperties() != null) &&
 		    	(p.getProperties().containsKey(GlobalConstants.NAME))) {
 		    	s.setName(p.getProperty(GlobalConstants.NAME));
 		    }
+		    */
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);			
 			s = Utility.makeSpecies(p.getId() + "_RNAP", compartment, 0, -1);
@@ -1674,7 +1663,7 @@ public class GeneticNetwork {
 	private void printOnlyPromoters(SBMLDocument document) {
 
 		for (Promoter p : promoters.values()) {
-			Species s = Utility.makeSpecies(p.getId(), document.getModel().getCompartment(0).getId(), p.getPcount(), -1);
+			Species s = Utility.makeSpecies(p.getId(), document.getModel().getCompartment(0).getId(), p.getInitialAmount(), -1);
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);			
 		}
@@ -1697,7 +1686,7 @@ public class GeneticNetwork {
 		//Adds RNA polymerase for compartments other than default
 		for (String compartment : compartments.keySet()) {
 			Properties prop = compartments.get(compartment);
-			if (prop.containsKey(GlobalConstants.RNAP_STRING)) {
+			if (prop != null && prop.containsKey(GlobalConstants.RNAP_STRING)) {
 				rnap = Double.parseDouble((String)prop.get(GlobalConstants.RNAP_STRING));
 			}
 			Species sc = Utility.makeSpecies(compartment + "__RNAP", compartment, rnap, -1);
@@ -1733,7 +1722,7 @@ public class GeneticNetwork {
 
 	public AbstractionEngine createAbstractionEngine() {
 		return new AbstractionEngine(species, complexMap, partsMap, Double.parseDouble(properties
-				.getParameters().get(GlobalConstants.RNAP_STRING)));
+				.getParameter(GlobalConstants.RNAP_STRING)));
 	}
 
 	/**
@@ -1781,6 +1770,7 @@ public class GeneticNetwork {
 		}
 	}
 	
+
 	//Marks complex as abstractable if it isn't genetic, diffusible, used in an event or rule, or used in a non-degradation reaction.
 	//Otherwise unmarks all downstream complexes as abstractable.
 	//Marks species as convergent if encountered on more than one downstream branch
@@ -1789,7 +1779,7 @@ public class GeneticNetwork {
 		SpeciesInterface complex = species.get(complexId);
 		if (!complex.isAbstractable()) {
 			if (!isGenetic(complexId)
-					&& !complex.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.DIFFUSIBLE)
+					&& !complex.isDiffusible()
 					&& !SBMLutilities.variableInUse(document, complexId, false, false)
 					&& !SBMLutilities.usedInNonDegradationReaction(document, complexId)) {
 				complex.setAbstractable(true);
@@ -1898,7 +1888,7 @@ public class GeneticNetwork {
 		ArrayList<String> interestingSpecies = new ArrayList<String>();
 		for (String id : species.keySet()) {
 			if (!complexMap.keySet().contains(id) || 
-					species.get(id).getProperty(GlobalConstants.TYPE).contains(GlobalConstants.OUTPUT))
+					species.get(id).getType().equals(GlobalConstants.OUTPUT))
 				interestingSpecies.add(id);
 		}
 		return interestingSpecies;
