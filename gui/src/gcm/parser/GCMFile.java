@@ -2930,40 +2930,40 @@ public class GCMFile {
 
 			// recursively add this component's sbml (and its inside components'
 			// sbml, etc.) to the overall sbml
-			sbml = unionSBML(gcm, unionGCM(this, file, s, copy), s, 
+			gcm.setSBMLDocument(unionSBML(gcm, unionGCM(this, file, s, copy), s, 
 					file.getIsWithinCompartment(),file.getParameter(GlobalConstants.RNAP_STRING),
-					file.getEnclosingCompartment());
-			if (sbml == null && copy.isEmpty()) {
+					file.getEnclosingCompartment()));
+			if (gcm.getSBMLDocument() == null && copy.isEmpty()) {
 				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n" + "There is a loop in the components.");
 				load(filename + ".temp");
 				new File(filename + ".temp").delete();
 				return null;
 			}
-			else if (sbml == null) {
+			else if (gcm.getSBMLDocument() == null) {
 				Utility.createErrorMessage("Cannot Merge SBMLs", "Unable to merge sbml files from components.");
 				load(filename + ".temp");
 				new File(filename + ".temp").delete();
 				return null;
 			}
 		}
-		sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
-		sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", false);
+		gcm.getSBMLDocument().enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", false);
+		gcm.getSBMLDocument().enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", false);
 		//components = new HashMap<String, Properties>();
-		if (sbml != null) {
-			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
-			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
-			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, false);
-			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
-			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
-			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
-			sbml.setConsistencyChecks(libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
-			long numErrors = sbml.checkConsistency();
+		if (gcm.getSBMLDocument() != null) {
+			gcm.getSBMLDocument().setConsistencyChecks(libsbml.LIBSBML_CAT_GENERAL_CONSISTENCY, true);
+			gcm.getSBMLDocument().setConsistencyChecks(libsbml.LIBSBML_CAT_IDENTIFIER_CONSISTENCY, true);
+			gcm.getSBMLDocument().setConsistencyChecks(libsbml.LIBSBML_CAT_UNITS_CONSISTENCY, false);
+			gcm.getSBMLDocument().setConsistencyChecks(libsbml.LIBSBML_CAT_MATHML_CONSISTENCY, false);
+			gcm.getSBMLDocument().setConsistencyChecks(libsbml.LIBSBML_CAT_SBO_CONSISTENCY, false);
+			gcm.getSBMLDocument().setConsistencyChecks(libsbml.LIBSBML_CAT_MODELING_PRACTICE, false);
+			gcm.getSBMLDocument().setConsistencyChecks(libsbml.LIBSBML_CAT_OVERDETERMINED_MODEL, true);
+			long numErrors = gcm.getSBMLDocument().checkConsistency();
 			if (numErrors > 0) {
 				Utility.createErrorMessage("Merged SBMLs Are Inconsistent", "The merged sbml files have inconsistencies.");
 			}
 		}
 		new File(filename + ".temp").delete();
-		return sbml;
+		return gcm.getSBMLDocument();
 	}
 
 	private GCMFile unionGCM(GCMFile topLevel, GCMFile bottomLevel, String compName, ArrayList<String> gcms) {
