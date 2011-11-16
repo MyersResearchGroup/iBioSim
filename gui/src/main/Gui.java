@@ -7980,6 +7980,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								if (s.hasNextLine()) {
 									sbmlLoadFile = s.nextLine();
 									sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1];
+									gcmFile = sbmlLoadFile;
 									if (sbmlLoadFile.contains(".gcm"))
 										sbmlLoadFile = sbmlLoadFile.replace(".gcm", ".xml");
 									if (sbmlLoadFile.equals("")) {
@@ -7992,7 +7993,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 												JOptionPane.ERROR_MESSAGE);
 										return;
 									}
-									gcmFile = sbmlLoadFile;
 									if (sbmlLoadFile.contains(".gcm")) {
 										// GCMParser parser = new GCMParser(root
 										// + separator + sbmlLoadFile);
