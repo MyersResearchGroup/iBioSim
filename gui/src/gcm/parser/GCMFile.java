@@ -2957,6 +2957,7 @@ public class GCMFile {
 				}
 			}
 		}
+		loadGridSize();
 	}
 	
 	public SBMLDocument flattenGCM() {
