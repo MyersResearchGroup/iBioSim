@@ -142,7 +142,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem importSbol;
 	private JMenuItem importSbml; // The import sbml menu item
 	private JMenuItem importBioModel; // The import sbml menu item
-	private JMenuItem importDot; // The import dot menu item
+	//private JMenuItem importDot; // The import dot menu item
 	private JMenuItem importVhdl; // The import vhdl menu item
 	private JMenuItem importS; // The import assembly file menu item
 	private JMenuItem importInst; // The import instruction file menu item
@@ -422,7 +422,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		closeAll = new JMenuItem("Close All");
 		pref = new JMenuItem("Preferences");
 		newProj = new JMenuItem("Project");
-		newGCMModel = new JMenuItem("Model");
+		newGCMModel = new JMenuItem("SBML Model");
 		newGridModel = new JMenuItem("Grid Model");
 		newSBMLModel = new JMenuItem("SBML Model");
 		newSpice = new JMenuItem("Spice Circuit");
@@ -440,7 +440,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importSbol = new JMenuItem("SBOL File");
 		importSbml = new JMenuItem("SBML Model");
 		importBioModel = new JMenuItem("BioModel");
-		importDot = new JMenuItem("iBioSim Model");
+		//importDot = new JMenuItem("iBioSim Model");
 		importG = new JMenuItem("Petri Net");
 		importLpn = new JMenuItem("LPN Model");
 		importVhdl = new JMenuItem("VHDL Model");
@@ -533,7 +533,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		importSbol.addActionListener(this);
 		importSbml.addActionListener(this);
 		importBioModel.addActionListener(this);
-		importDot.addActionListener(this);
+		//importDot.addActionListener(this);
 		importVhdl.addActionListener(this);
 		importS.addActionListener(this);
 		importInst.addActionListener(this);
@@ -700,7 +700,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		 * createLearn.setMnemonic(KeyEvent.VK_L);
 		 */
 
-		importDot.setEnabled(false);
+		//importDot.setEnabled(false);
 		importSbol.setEnabled(false);
 		importSbml.setEnabled(false);
 		importBioModel.setEnabled(false);
@@ -822,7 +822,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		file.addSeparator();
 		file.add(importMenu);
 		if (!async) {
-			importMenu.add(importDot);
+			//importMenu.add(importDot);
 			importMenu.add(importSbml);
 			importMenu.add(importBioModel);
 			importMenu.add(importLpn);
@@ -3455,7 +3455,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				tab.removeAll();
 				addRecentProject(filename);
 
-				importDot.setEnabled(true);
+				//importDot.setEnabled(true);
 				importSbol.setEnabled(true);
 				importSbml.setEnabled(true);
 				importBioModel.setEnabled(true);
@@ -3581,7 +3581,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						refresh();
 						tab.removeAll();
 						addRecentProject(projDir);
-						importDot.setEnabled(true);
+						//importDot.setEnabled(true);
 						importSbol.setEnabled(true);
 						importSbml.setEnabled(true);
 						importBioModel.setEnabled(true);
@@ -3682,9 +3682,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			importBioModel();
 		}
 		// if the import dot menu item is selected
+		/*
 		else if (e.getSource() == importDot) {
 			importGCM();
 		}
+		*/
 		// if the import vhdl menu item is selected
 		else if (e.getSource() == importVhdl) {
 			importFile("VHDL", ".vhd");
@@ -4116,6 +4118,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 
+	/*
 	private void importGCM() {
 		File importFile;
 		Preferences biosimrc = Preferences.userRoot();
@@ -4192,6 +4195,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 		}
 	}
+	*/
 
 	private void createSBML() {
 		try {
@@ -8210,7 +8214,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 		public void actionPerformed(ActionEvent e) {
 			if (!lema) {
-				popup.add(importDot);
+				//popup.add(importDot);
 				popup.add(importSbol);
 				popup.add(importSbml);
 				popup.add(importBioModel);
