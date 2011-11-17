@@ -320,6 +320,8 @@ public class GCMParser {
 			} else {
 				speciesIF.setDecay(sbml.getModel().getParameter(GlobalConstants.KDECAY_STRING).getValue());
 			}
+		} else {
+			speciesIF.setDecay(0.0);
 		}
 		
 		if (complex != null) {
@@ -331,6 +333,8 @@ public class GCMParser {
 				speciesIF.setKc(sbml.getModel().getParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING).getValue(),
 						sbml.getModel().getParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING).getValue());
 			}
+		} else {
+			speciesIF.setKc(0.0,1.0);
 		}
 		
 		if (diffusion != null) {
@@ -342,6 +346,8 @@ public class GCMParser {
 				speciesIF.setKmdiff(sbml.getModel().getParameter(GlobalConstants.FORWARD_MEMDIFF_STRING).getValue(),
 						sbml.getModel().getParameter(GlobalConstants.REVERSE_MEMDIFF_STRING).getValue());
 			}
+		} else {
+			speciesIF.setKmdiff(0.0,1.0);
 		}
 		/*
 		if (property.containsKey(GlobalConstants.KASSOCIATION_STRING)) {

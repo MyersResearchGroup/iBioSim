@@ -224,9 +224,7 @@ public class GeneticNetwork {
 	public SBMLDocument outputSBML(String filename, SBMLDocument document) {
 		try {
 			Model m = document.getModel();
-			//checkConsistancy(document);
 			SBMLWriter writer = new SBMLWriter();
-			//printParameters(document);
 			printSpecies(document);
 			if (!operatorAbstraction) {
 				if (promoters.size()>0) {
@@ -1619,12 +1617,6 @@ public class GeneticNetwork {
 			// But first check if promoter belongs to a compartment other than default
 			String compartment = checkCompartments(p.getId());
 			Species s = Utility.makeSpecies(p.getId(), compartment,	p.getInitialAmount(), -1);
-			/*
-		    if ((p.getProperties() != null) &&
-		    	(p.getProperties().containsKey(GlobalConstants.NAME))) {
-		    	s.setName(p.getProperty(GlobalConstants.NAME));
-		    }
-		    */
 			s.setHasOnlySubstanceUnits(true);
 			Utility.addSpecies(document, s);			
 			s = Utility.makeSpecies(p.getId() + "_RNAP", compartment, 0, -1);
