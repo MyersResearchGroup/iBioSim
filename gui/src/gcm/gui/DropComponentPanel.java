@@ -262,7 +262,7 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 		GCMFile compGCMFile = new GCMFile(gcm.getPath());
 		compGCMFile.load(gcm.getPath() + File.separator + component);
 		
-		String id = gcm.addComponent(null, component, compGCMFile.getIsWithinCompartment(), row, col, 
+		String id = gcm.addComponent(null, component, compGCMFile.IsWithinCompartment(), row, col, 
 				col * (width + padding) + padding, row * (height + padding) + padding);
 	}
 	
@@ -404,14 +404,14 @@ public class DropComponentPanel extends JPanel implements ActionListener {
 				GCMFile compGCM = new GCMFile(gcm.getPath());
 				compGCM.load(gcm.getPath() + File.separator + comp);
 				
-				if (compGCM.getIsWithinCompartment()) {
+				if (compGCM.IsWithinCompartment()) {
 					properties.setProperty("compartment","true");
 				} 
 				else {
 					properties.setProperty("compartment","false");
 				}
 				
-				String id = gcm.addComponent(null, comp, compGCM.getIsWithinCompartment(), -1, -1, 
+				String id = gcm.addComponent(null, comp, compGCM.IsWithinCompartment(), -1, -1, 
 						col * separationX + topleftX, row * separationY + topleftY);
 			}
 		}

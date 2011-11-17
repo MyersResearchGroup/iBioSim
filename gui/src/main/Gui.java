@@ -3779,8 +3779,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 					}
 					System.gc();
-					if (tree.getFile().endsWith(".gcm")) {
-						new File(tree.getFile().replace(".gcm", ".xml")).delete();
+					if (tree.getFile().endsWith(".xml")) {
+						new File(tree.getFile().replace(".xml", ".gcm")).delete();
 					}
 					new File(tree.getFile()).delete();
 					deleteFromTree(fileName);

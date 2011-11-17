@@ -133,7 +133,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		typeBox = new JComboBox(types);
 		
 		//disallow input/output types for species in an enclosed GCM
-		if (gcm.getIsWithinCompartment()) {
+		if (gcm.IsWithinCompartment()) {
 			typeBox.removeItem(GlobalConstants.INPUT);
 			typeBox.removeItem(GlobalConstants.OUTPUT);
 		}
@@ -767,9 +767,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						species.setConstant(false);
 					}
 					
-					if (gcm.getSBMLDocument().getModel().getNumCompartments() > 1) {
-						species.setCompartment((String)compartBox.getSelectedItem());
-					}
+					species.setCompartment((String)compartBox.getSelectedItem());
 
 					if (specHasOnly.getSelectedItem().equals("true")) {
 						species.setHasOnlySubstanceUnits(true);
