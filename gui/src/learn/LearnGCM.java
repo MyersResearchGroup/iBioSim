@@ -1,6 +1,7 @@
 package learn;
 
 import gcm.parser.GCMFile;
+import gcm.util.GlobalConstants;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -382,8 +383,43 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 				FileWriter write = new FileWriter(new File(directory + separator + "background.gcm"));
 				write.write("digraph G {\n");
 				for (int i = 0; i < model.getNumSpecies(); i++) {
+					if (((Species)ids.get(i)).isSetAnnotation() && 
+							((Species)ids.get(i)).getAnnotationString().contains(GlobalConstants.TYPE+"="+GlobalConstants.PROMOTER)) continue;
 					speciesList.add(((Species) ids.get(i)).getId());
-					write.write("s" + i + " [shape=ellipse,color=black,label=\"" + ((Species) ids.get(i)).getId() + "\"" + "];\n");
+					write.write(((Species) ids.get(i)).getId() + " [shape=ellipse,color=black,label=\"" + ((Species) ids.get(i)).getId() + "\"" + "];\n");
+				}
+				for (int i = 0; i < model.getNumReactions(); i++) {
+					Reaction r = model.getReaction(i);
+					if (r.isSetAnnotation() && r.getAnnotationString().contains("Production")) {
+						for (int j = 0; j < r.getNumModifiers(); j++) {
+							ModifierSpeciesReference modifier = r.getModifier(j);
+							if (modifier.isSetAnnotation() && modifier.getAnnotationString().contains(GlobalConstants.NOINFLUENCE)) {
+								for (int k = 0; k < r.getNumProducts(); k++) {
+									SpeciesReference product = r.getProduct(k);
+									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=diamond];\n");
+								}
+							}
+							if (modifier.isSetAnnotation() && modifier.getAnnotationString().contains(GlobalConstants.ACTIVATION)) {
+								for (int k = 0; k < r.getNumProducts(); k++) {
+									SpeciesReference product = r.getProduct(k);
+									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=vee];\n");
+								}
+							}
+							if (modifier.isSetAnnotation() && modifier.getAnnotationString().contains(GlobalConstants.REPRESSION)) {
+								for (int k = 0; k < r.getNumProducts(); k++) {
+									SpeciesReference product = r.getProduct(k);
+									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=tee];\n");
+								}
+							}
+							if (modifier.isSetAnnotation() && modifier.getAnnotationString().contains(GlobalConstants.REGULATION)) {
+								for (int k = 0; k < r.getNumProducts(); k++) {
+									SpeciesReference product = r.getProduct(k);
+									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=tee];\n");
+									write.write(modifier.getSpecies() + " -> " + product.getSpecies() + " [arrowhead=vee];\n");
+								}
+							}
+						}
+					}
 				}
 				write.write("}\n");
 				write.close();
