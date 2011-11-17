@@ -341,7 +341,7 @@ public class Schematic extends JPanel implements ActionListener {
 		check = new JCheckBox();
 		check.setActionCommand("checkCompartment");
 		check.addActionListener(this);
-		check.setSelected(gcm.getIsWithinCompartment());
+		check.setSelected(gcm.IsWithinCompartment());
 		toolBar.add(check);
 		//compartmentList = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());
 		compartmentList.setSelectedItem(gcm.getEnclosingCompartment());
@@ -565,7 +565,7 @@ public class Schematic extends JPanel implements ActionListener {
 			// radio buttons don't have to do anything and have an action command of "".
 		}
 		else if(command == "comboBoxChanged") {
-			if (gcm.getIsWithinCompartment())
+			if (gcm.IsWithinCompartment() && compartmentList.getSelectedItem()!=null)
 				gcm.setEnclosingCompartment((String)compartmentList.getSelectedItem());
 		}
 		else{

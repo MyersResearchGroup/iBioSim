@@ -1381,7 +1381,7 @@ public class BioGraph extends mxGraph {
 		
 		if (compGCMFile != null && compFile.exists()) {
 			compGCMFile.load(gcm.getPath() + File.separator + modelFileName);
-			compart = compGCMFile.getIsWithinCompartment();
+			compart = compGCMFile.IsWithinCompartment();
 		} else {
 			JOptionPane.showMessageDialog(Gui.frame, 
 					"A model definition cannot be found for " + modelFileName + 

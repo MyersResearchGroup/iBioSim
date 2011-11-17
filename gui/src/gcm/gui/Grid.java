@@ -920,7 +920,7 @@ public class Grid {
 			GCMFile compGCMFile = new GCMFile(gcm.getPath());
 			compGCMFile.load(gcm.getPath() + File.separator + compGCM);
 			
-			gcm.addComponent(null, compGCM, compGCMFile.getIsWithinCompartment(), row, col, 
+			gcm.addComponent(null, compGCM, compGCMFile.IsWithinCompartment(), row, col, 
 					col * (width + padding) + padding, row * (height + padding) + padding);
 		}
 	}

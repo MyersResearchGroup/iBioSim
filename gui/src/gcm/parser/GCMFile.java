@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Properties;
+import java.util.prefs.Preferences;
 
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -119,7 +120,6 @@ public class GCMFile {
 		enclosingCompartment = "";
 		grid = new Grid();
 		compartments = new HashMap<String, Properties>();
-		//loadDefaultParameters();
 	}
 	
 	public void createSBMLDocument(String modelId) {
@@ -133,6 +133,7 @@ public class GCMFile {
 		c.setSpatialDimensions(3);
 		c.setConstant(true);
 		SBMLutilities.addRandomFunctions(sbml);
+		loadDefaultParameters();
 		sbmlFile = modelId + ".xml";
 		sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
 		sbml.setPkgRequired("layout", false); 
@@ -143,8 +144,48 @@ public class GCMFile {
 		sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
 	}
 
-	public boolean getIsWithinCompartment() {
-		return isWithinCompartment;
+	private void loadDefaultParameters() {
+		Preferences biosimrc = Preferences.userRoot();
+
+		createGlobalParameter(GlobalConstants.FORWARD_KREP_STRING, biosimrc.get("biosim.gcm.KREP_VALUE", ""));
+		createGlobalParameter(GlobalConstants.REVERSE_KREP_STRING, "1");
+		
+		createGlobalParameter(GlobalConstants.FORWARD_KACT_STRING, biosimrc.get("biosim.gcm.KACT_VALUE", ""));
+		createGlobalParameter(GlobalConstants.REVERSE_KACT_STRING, "1");
+
+		createGlobalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING, biosimrc.get("biosim.gcm.KCOMPLEX_VALUE", ""));
+		createGlobalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING, "1");
+
+		createGlobalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING, biosimrc.get("biosim.gcm.RNAP_BINDING_VALUE", ""));
+		createGlobalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING, "1");
+
+		createGlobalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING, 
+				biosimrc.get("biosim.gcm.ACTIVATED_RNAP_BINDING_VALUE", ""));
+		createGlobalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING, "1");
+
+		createGlobalParameter(GlobalConstants.FORWARD_MEMDIFF_STRING, biosimrc.get("biosim.gcm.FORWARD_MEMDIFF_VALUE", ""));
+		createGlobalParameter(GlobalConstants.REVERSE_MEMDIFF_STRING, biosimrc.get("biosim.gcm.REVERSE_MEMDIFF_VALUE", ""));
+
+		createGlobalParameter(GlobalConstants.KDECAY_STRING, biosimrc.get("biosim.gcm.KDECAY_VALUE", ""));
+		createGlobalParameter(GlobalConstants.KECDECAY_STRING, biosimrc.get("biosim.gcm.KECDECAY_VALUE", ""));
+		createGlobalParameter(GlobalConstants.COOPERATIVITY_STRING, biosimrc.get("biosim.gcm.COOPERATIVITY_VALUE", ""));
+		createGlobalParameter(GlobalConstants.RNAP_STRING, biosimrc.get("biosim.gcm.RNAP_VALUE", ""));
+		createGlobalParameter(GlobalConstants.OCR_STRING, biosimrc.get("biosim.gcm.OCR_VALUE", ""));
+		createGlobalParameter(GlobalConstants.KBASAL_STRING, biosimrc.get("biosim.gcm.KBASAL_VALUE", ""));
+		createGlobalParameter(GlobalConstants.PROMOTER_COUNT_STRING, biosimrc.get("biosim.gcm.PROMOTER_COUNT_VALUE", ""));
+		createGlobalParameter(GlobalConstants.STOICHIOMETRY_STRING, biosimrc.get("biosim.gcm.STOICHIOMETRY_VALUE", ""));
+		createGlobalParameter(GlobalConstants.ACTIVATED_STRING, biosimrc.get("biosim.gcm.ACTIVED_VALUE", ""));
+		createGlobalParameter(GlobalConstants.KECDIFF_STRING, biosimrc.get("biosim.gcm.KECDIFF_VALUE", ""));
+	}
+	
+	public boolean IsWithinCompartment() {
+		for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {
+			Compartment compartment = sbml.getModel().getCompartment(i);
+			if (compartment.isSetAnnotation() || compartment.getAnnotationString().contains("EnclosingCompartment")) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public void setIsWithinCompartment(boolean isWithinCompartment) {
@@ -1584,16 +1625,34 @@ public class GCMFile {
 					LocalParameter param = k.getLocalParameter(j);
 					if (param.getId().equals(GlobalConstants.COOPERATIVITY_STRING + "_" + oldName + "_r")) {
 						param.setId(GlobalConstants.COOPERATIVITY_STRING + "_" + newName + "_r");
+						k.setMath(SBMLutilities.updateMathVar(k.getMath(), 
+								GlobalConstants.COOPERATIVITY_STRING + "_" + oldName + "_r",
+								GlobalConstants.COOPERATIVITY_STRING + "_" + newName + "_r"));
 					} else if (param.getId().equals(GlobalConstants.COOPERATIVITY_STRING + "_" + oldName + "_a")) {
 						param.setId(GlobalConstants.COOPERATIVITY_STRING + "_" + newName + "_a");
+						k.setMath(SBMLutilities.updateMathVar(k.getMath(), 
+								GlobalConstants.COOPERATIVITY_STRING + "_" + oldName + "_a",
+								GlobalConstants.COOPERATIVITY_STRING + "_" + newName + "_a"));
 					} else if (param.getId().equals(GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + oldName + "_"))) {
 						param.setId(GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + newName + "_"));
+						k.setMath(SBMLutilities.updateMathVar(k.getMath(), 
+								GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + oldName + "_"),
+								GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + newName + "_")));
 					} else if (param.getId().equals(GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + oldName + "_"))) {
 						param.setId(GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + newName + "_"));
+						k.setMath(SBMLutilities.updateMathVar(k.getMath(), 
+								GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + oldName + "_"),
+								GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + newName + "_")));
 					} else if (param.getId().equals(GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + oldName + "_"))) {
 						param.setId(GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + newName + "_"));
+						k.setMath(SBMLutilities.updateMathVar(k.getMath(), 
+								GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + oldName + "_"),
+								GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + newName + "_")));
 					} else if (param.getId().equals(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + oldName + "_"))) {
 						param.setId(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + newName + "_"));
+						k.setMath(SBMLutilities.updateMathVar(k.getMath(), 
+								GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + oldName + "_"),
+								GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + newName + "_")));
 					}
 				}
 			}
@@ -2930,8 +2989,8 @@ public class GCMFile {
 
 			// recursively add this component's sbml (and its inside components'
 			// sbml, etc.) to the overall sbml
-			gcm.setSBMLDocument(unionSBML(gcm, unionGCM(this, file, s, copy), s, 
-					file.getIsWithinCompartment(),file.getParameter(GlobalConstants.RNAP_STRING),
+			gcm.setSBMLDocument(unionSBML(gcm, unionGCM(gcm, file, s, copy), s, 
+					file.IsWithinCompartment(),file.getParameter(GlobalConstants.RNAP_STRING),
 					file.getEnclosingCompartment()));
 			if (gcm.getSBMLDocument() == null && copy.isEmpty()) {
 				Utility.createErrorMessage("Loop Detected", "Cannot flatten GCM.\n" + "There is a loop in the components.");
@@ -2985,7 +3044,7 @@ public class GCMFile {
 			}
 			copy.add(file.getFilename());
 			bottomLevel.setSBMLDocument(unionSBML(bottomLevel, unionGCM(bottomLevel, file, s, copy), s, 
-					file.getIsWithinCompartment(),file.getParameter(GlobalConstants.RNAP_STRING),
+					file.IsWithinCompartment(),file.getParameter(GlobalConstants.RNAP_STRING),
 					file.getEnclosingCompartment()));
 		}
 
@@ -3791,12 +3850,16 @@ public class GCMFile {
 		return false;
 	}
 	
-	
-	
 	//ENCLOSING COMPARTMENT
 	
 	public String getEnclosingCompartment() {
-		return enclosingCompartment;
+		for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {
+			Compartment compartment = sbml.getModel().getCompartment(i);
+			if (compartment.isSetAnnotation() || compartment.getAnnotationString().contains("EnclosingCompartment")) {
+				return compartment.getId();
+			}
+		}
+		return "";
 	}
 
 	public void setEnclosingCompartment(String enclosingCompartment) {
