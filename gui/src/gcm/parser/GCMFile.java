@@ -2420,9 +2420,26 @@ public class GCMFile {
 	}
 
 	public void removeComponent(String name) {
+		String modelRef = "";
 		for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
 			if (sbmlCompModel.getSubmodel(i).getId().equals(name)) {
+				modelRef = sbmlCompModel.getSubmodel(i).getModelRef();
 				sbmlCompModel.removeSubmodel(i);
+			} 
+		}
+		boolean keepExtDefn = false;
+		for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
+			if (sbmlCompModel.getSubmodel(i).getModelRef().equals(modelRef)) {
+				keepExtDefn = true;
+				break;
+			}
+		}
+		if (!keepExtDefn) {
+			for (long i = 0; i < sbmlComp.getNumExternalModelDefinitions(); i++) {
+				if (sbmlComp.getExternalModelDefinition(i).getId().equals(modelRef)) {
+					sbmlComp.removeExternalModelDefinition(i);
+					break;
+				}
 			}
 		}
 		for (long i = 0; i < sbml.getModel().getNumSpecies(); i++) {
