@@ -253,6 +253,7 @@ public class GCMParser {
 					}
 				} 
 			}
+			sbml.getModel().removeReaction(production.getId());
 		}
 	}
 
@@ -294,6 +295,9 @@ public class GCMParser {
 			speciesIF.setDiffusible(false);
 		}
 		speciesList.put(species.getId(), speciesIF);
+		if (constitutive != null) {
+			sbml.getModel().removeReaction(constitutive.getId());
+		}
 		
 		String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
 		String [] annotations = annotation.split(",");
@@ -322,6 +326,7 @@ public class GCMParser {
 			} else {
 				speciesIF.setDecay(sbml.getModel().getParameter(GlobalConstants.KDECAY_STRING).getValue());
 			}
+			sbml.getModel().removeReaction(degradation.getId());
 		} else {
 			speciesIF.setDecay(0.0);
 		}
@@ -348,6 +353,7 @@ public class GCMParser {
 				speciesIF.setKmdiff(sbml.getModel().getParameter(GlobalConstants.FORWARD_MEMDIFF_STRING).getValue(),
 						sbml.getModel().getParameter(GlobalConstants.REVERSE_MEMDIFF_STRING).getValue());
 			}
+			sbml.getModel().removeReaction(diffusion.getId());
 		} else {
 			speciesIF.setKmdiff(0.0,1.0);
 		}
@@ -380,6 +386,7 @@ public class GCMParser {
 				Influence infl = new Influence();		
 				infl.generateName();		
 				infl.setType("plus");
+				infl.setCoop(complex.getReactant(i).getStoichiometry());
 				String input = complex.getReactant(i).getSpecies();
 				String output = complex.getProduct(0).getSpecies();
 				infl.setInput(input);
@@ -403,6 +410,7 @@ public class GCMParser {
 				}
 				complexInfl.add(infl);
 			} 
+			sbml.getModel().removeReaction(complex.getId());
 		}
 	}
 	
