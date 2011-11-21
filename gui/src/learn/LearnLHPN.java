@@ -4,13 +4,15 @@ import verification.AbstPane;
 import lpn.parser.Abstraction;
 import lpn.parser.LhpnFile;
 import main.*;
-import parser.*;
+import main.util.dataparser.*;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import java.util.prefs.Preferences;
 import javax.swing.*;
+
 
 //import org.sbml.libsbml.*;
 

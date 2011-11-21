@@ -1,12 +1,13 @@
 package sbol;
 
-import gcm.util.Utility;
 
 import java.awt.*;
 
 import javax.swing.*;
 
 import org.sbolstandard.libSBOLj.*;
+
+import biomodel.util.Utility;
 
 import java.io.*;
 import java.net.URI;

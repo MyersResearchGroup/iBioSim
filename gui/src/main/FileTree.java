@@ -1,7 +1,5 @@
 package main;
 
-import gcm.parser.GCM2SBML;
-import gcm.parser.GCMFile;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -12,6 +10,10 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.tree.*;
+
+import biomodel.parser.BioModel;
+import biomodel.parser.GCM2SBML;
+
 
 /**
  * Display a file system in a JTree view
@@ -261,7 +263,7 @@ public class FileTree extends JPanel implements MouseListener {
 				if (!async && thisObject.toString().length() > 3 && 
 						thisObject.toString().substring(thisObject.toString().length() - 4).equals(".gcm")) {
 					String sbmlFile = thisObject.replace(".gcm",".xml");
-					GCMFile gcm = new GCMFile(curPath);
+					BioModel gcm = new BioModel(curPath);
 					gcm.load(curPath + separator + sbmlFile);
 					GCM2SBML gcm2sbml = new GCM2SBML(gcm);
 					gcm2sbml.load(curPath + separator + thisObject.toString());

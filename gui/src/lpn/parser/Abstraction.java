@@ -1,10 +1,11 @@
 package lpn.parser;
 
-import gcm.util.Utility;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import biomodel.util.Utility;
 
 import main.Log;
 

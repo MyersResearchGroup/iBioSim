@@ -4,10 +4,6 @@ import lpn.parser.*;
 import main.Gui;
 import main.Log;
 
-import gcm.gui.AbstractRunnableNamedButton;
-import gcm.gui.PropertyList;
-import gcm.gui.Runnable;
-import gcm.util.Utility;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -28,6 +24,11 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JButton;
+
+import biomodel.gui.AbstractRunnableNamedButton;
+import biomodel.gui.PropertyList;
+import biomodel.gui.Runnable;
+import biomodel.util.Utility;
 
 
 /**

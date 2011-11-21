@@ -3,9 +3,6 @@ package lpn.gui;
 import lpn.parser.*;
 import main.Gui;
 
-import gcm.gui.*;
-import gcm.util.GlobalConstants;
-import gcm.util.Utility;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -16,6 +13,10 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import biomodel.gui.*;
+import biomodel.util.GlobalConstants;
+import biomodel.util.Utility;
 
 
 public class PlacePanel extends JPanel implements ActionListener {

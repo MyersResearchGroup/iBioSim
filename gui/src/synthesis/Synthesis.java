@@ -1,9 +1,10 @@
 package synthesis;
 
-import gcm.gui.PropertyList;
-import gcm.util.Utility;
 
 import javax.swing.*;
+
+import biomodel.gui.PropertyList;
+import biomodel.util.Utility;
 
 import main.*;
 

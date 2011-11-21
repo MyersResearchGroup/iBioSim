@@ -3,14 +3,15 @@ package lpn.gui;
 import lpn.parser.*;
 import main.Gui;
 
-import gcm.gui.*;
-import gcm.util.Utility;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+
+import biomodel.gui.*;
+import biomodel.util.Utility;
 
 
 public class PropertyPanel extends JPanel implements ActionListener {

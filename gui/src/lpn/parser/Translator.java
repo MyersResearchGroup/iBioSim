@@ -30,7 +30,8 @@ import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.Trigger;
 import org.sbml.libsbml.libsbml;
 
-import sbmleditor.SBMLutilities;
+import biomodel.gui.textualeditor.SBMLutilities;
+
 import lpn.parser.ExprTree;
 import main.Gui;
 
