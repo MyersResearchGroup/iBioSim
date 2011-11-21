@@ -2,6 +2,8 @@ package verification;
 
 import javax.swing.*;
 
+import biomodel.gui.PropertyList;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.BufferedReader;
@@ -15,7 +17,6 @@ import java.util.Properties;
 import lpn.parser.LhpnFile;
 import main.*;
 
-import gcm.gui.PropertyList;
 
 
 /**

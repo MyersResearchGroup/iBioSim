@@ -4,9 +4,6 @@ import lpn.parser.*;
 import main.Gui;
 import main.Log;
 
-import gcm.gui.*;
-import gcm.util.GlobalConstants;
-import gcm.util.Utility;
 
 import java.awt.GridLayout;
 import java.awt.GridBagLayout;
@@ -15,15 +12,19 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Properties;
+import java.lang.Runnable;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JCheckBox;
 
+import biomodel.gui.*;
+import biomodel.util.GlobalConstants;
+import biomodel.util.Utility;
+
 import java.awt.event.MouseListener;
 import java.awt.event.MouseEvent;
-import gcm.gui.Runnable;
 
 public class TransitionsPanel extends JPanel implements ActionListener, MouseListener {
 

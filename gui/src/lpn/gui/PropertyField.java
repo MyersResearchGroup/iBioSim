@@ -1,7 +1,5 @@
 package lpn.gui;
 
-import gcm.parser.CompatibilityFixer;
-import gcm.util.Utility;
 
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -15,6 +13,9 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import biomodel.parser.CompatibilityFixer;
+import biomodel.util.Utility;
 
 import main.Gui;
 

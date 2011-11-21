@@ -1,6 +1,5 @@
 package graph;
 
-import gcm.parser.GCMFile;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -68,6 +67,9 @@ import javax.swing.tree.TreePath;
 import lpn.parser.LhpnFile;
 import main.Gui;
 import main.Log;
+import main.util.Utility;
+import main.util.dataparser.DataParser;
+import main.util.dataparser.TSDParser;
 
 import org.apache.batik.dom.GenericDOMImplementation;
 import org.apache.batik.svggen.SVGGraphics2D;
@@ -101,10 +103,9 @@ import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
 import org.w3c.dom.DOMImplementation;
 
-import parser.Parser;
-import parser.TSDParser;
-import reb2sac.Reb2Sac;
-import util.Utility;
+
+import analysis.AnalysisView;
+import biomodel.parser.BioModel;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.Rectangle;
@@ -112,6 +113,7 @@ import com.lowagie.text.pdf.DefaultFontMapper;
 import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfTemplate;
 import com.lowagie.text.pdf.PdfWriter;
+
 
 /**
  * This is the Graph class. It takes in data and draws a graph of that data. The
@@ -212,7 +214,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 
 	private IconNode node, simDir;
 
-	private Reb2Sac reb2sac; // reb2sac options
+	private AnalysisView reb2sac; // reb2sac options
 
 	private ArrayList<String> learnSpecs;
 
@@ -242,7 +244,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 	 * Creates a Graph Object from the data given and calls the private graph
 	 * helper method.
 	 */
-	public Graph(Reb2Sac reb2sac, String printer_track_quantity, String label, String printer_id, String outDir, String time, Gui biomodelsim,
+	public Graph(AnalysisView reb2sac, String printer_track_quantity, String label, String printer_id, String outDir, String time, Gui biomodelsim,
 			String open, Log log, String graphName, boolean timeSeries, boolean learnGraph) {
 		lock = new ReentrantLock(true);
 		lock2 = new ReentrantLock(true);
@@ -5292,9 +5294,9 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 			}
 			lock.unlock();
 			if (output) {
-				Parser m = new Parser(graphSpecies, average);
-				Parser d = new Parser(graphSpecies, deviation);
-				Parser v = new Parser(graphSpecies, variance);
+				DataParser m = new DataParser(graphSpecies, average);
+				DataParser d = new DataParser(graphSpecies, deviation);
+				DataParser v = new DataParser(graphSpecies, variance);
 				if (directory == null) {
 					m.outputTSD(outDir + separator + "mean.tsd");
 					v.outputTSD(outDir + separator + "variance.tsd");
@@ -8062,7 +8064,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 		learnSpecs = new ArrayList<String>();
 		if (background != null) {
 			if (background.contains(".gcm")) {
-				GCMFile gcm = new GCMFile(biomodelsim.getRoot());
+				BioModel gcm = new BioModel(biomodelsim.getRoot());
 				gcm.load(background);
 				learnSpecs = gcm.getSpecies();
 			}

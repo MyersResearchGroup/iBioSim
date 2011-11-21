@@ -4,12 +4,15 @@ package learn;
 import lpn.parser.LhpnFile;
 import lpn.parser.Lpn2verilog;
 import main.*;
-import parser.*;
+import main.util.dataparser.*;
+
 import java.io.*;
 import java.util.*;
 
 //import javax.jws.soap.InitParam;
 import javax.swing.*;
+
+
 
 //import org.sbml.libsbml.*;
 

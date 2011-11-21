@@ -1,17 +1,18 @@
 package lpn.parser;
 
-import gcm.util.Utility;
 
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import platu.lpn.DualHashMap;
+import biomodel.util.Utility;
+
 
 import main.Log;
 
 import verification.Verification;
+import verification.platu.lpn.DualHashMap;
 
 
 public class LhpnFile {

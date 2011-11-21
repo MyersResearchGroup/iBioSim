@@ -1,13 +1,5 @@
 package main;
 
-import gcm.gui.ModelEditor;
-import gcm.gui.modelview.movie.MovieContainer;
-import gcm.network.GeneticNetwork;
-import gcm.parser.CompatibilityFixer;
-import gcm.parser.GCM2SBML;
-import gcm.parser.GCMFile;
-import gcm.parser.GCMParser;
-import gcm.util.GlobalConstants;
 import lpn.gui.*;
 import lpn.parser.LhpnFile;
 import lpn.parser.Lpn2verilog;
@@ -82,6 +74,19 @@ import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import analysis.AnalysisView;
+import analysis.Run;
+import biomodel.gui.ModelEditor;
+import biomodel.gui.movie.MovieContainer;
+import biomodel.gui.textualeditor.ElementsPanel;
+import biomodel.gui.textualeditor.SBML_Editor;
+import biomodel.network.GeneticNetwork;
+import biomodel.parser.BioModel;
+import biomodel.parser.CompatibilityFixer;
+import biomodel.parser.GCM2SBML;
+import biomodel.parser.GCMParser;
+import biomodel.util.GlobalConstants;
+
 import com.apple.eawt.ApplicationAdapter;
 import com.apple.eawt.ApplicationEvent;
 import com.apple.eawt.Application;
@@ -90,6 +95,9 @@ import java.io.Writer;
 
 import learn.LearnGCM;
 import learn.LearnLHPN;
+import learn.datamanager.DataManager;
+import main.util.Utility;
+import main.util.tabs.CloseAndMaxTabbedPane;
 
 import synthesis.Synthesis;
 
@@ -97,16 +105,9 @@ import verification.*;
 
 import org.sbml.libsbml.*;
 
-import reb2sac.Reb2Sac;
-import reb2sac.Run;
-import sbmleditor.ElementsPanel;
-import sbmleditor.SBML_Editor;
 import sbol.SbolBrowser;
-import datamanager.DataManager;
 import java.net.*;
 import uk.ac.ebi.biomodels.*;
-import util.Utility;
-import util.tabs.CloseAndMaxTabbedPane;
 
 /**
  * This class creates a GUI for the Tstubd program. It implements the
@@ -3130,8 +3131,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 					else if (component instanceof ModelEditor) {
 						((ModelEditor) component).saveParams(false, "", true);
 					}
-					else if (component instanceof Reb2Sac) {
-						((Reb2Sac) component).save();
+					else if (component instanceof AnalysisView) {
+						((AnalysisView) component).save();
 					}
 					else if (component instanceof MovieContainer) {
 						((MovieContainer) component).savePreferences();
@@ -3323,8 +3324,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				// int index = -1;
 				for (int i = 0; i < ((JTabbedPane) comp).getTabCount(); i++) {
 					Component component = ((JTabbedPane) comp).getComponent(i);
-					if (component instanceof Reb2Sac) {
-						((Reb2Sac) component).getRunButton().doClick();
+					if (component instanceof AnalysisView) {
+						((AnalysisView) component).getRunButton().doClick();
 						break;
 					}
 					else if (component instanceof LearnGCM) {
@@ -4303,7 +4304,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						if (overwrite(root + separator + simName, simName)) {
 							File f = new File(root + separator + simName);
 							f.createNewFile();
-							GCMFile gcm = new GCMFile(root);
+							BioModel gcm = new BioModel(root);
 							gcm.createSBMLDocument(simName.replace(".gcm", ""));
 							gcm.save(f.getAbsolutePath());
 							int i = getTab(f.getName());
@@ -5081,7 +5082,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							SBMLWriter writer = new SBMLWriter();
 							writer.writeSBML(document, root + separator + copy.replace(".gcm", ".xml"));
 							addToTree(copy.replace(".gcm", ".xml"));
-							GCMFile gcm = new GCMFile(root);
+							BioModel gcm = new BioModel(root);
 							gcm.load(tree.getFile());
 							gcm.setSBMLFile(copy.replace(".gcm", ".xml"));
 							gcm.save(root + separator + copy);
@@ -5230,7 +5231,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							String newSBMLfile = rename.replace(".gcm", ".xml");
 							new File(tree.getFile()).renameTo(new File(root + separator + rename));
 							new File(tree.getFile().replace(".gcm", ".xml")).renameTo(new File(root + separator + newSBMLfile));
-							GCMFile gcm = new GCMFile(root);
+							BioModel gcm = new BioModel(root);
 							gcm.load(root + separator + rename);
 							gcm.setSBMLFile(newSBMLfile);
 							gcm.save(root + separator + rename);
@@ -5354,10 +5355,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 										comps.add(c);
 									}
 									SBML_Editor sbml = null;
-									Reb2Sac reb2sac = null;
+									AnalysisView reb2sac = null;
 									for (Component c : comps) {
-										if (c instanceof Reb2Sac) {
-											((Reb2Sac) c).setSim(rename);
+										if (c instanceof AnalysisView) {
+											((AnalysisView) c).setSim(rename);
 											analysis = true;
 										}
 										else if (c instanceof SBML_Editor) {
@@ -5396,8 +5397,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 											d.setDirectory(root + separator + rename);
 										}
 										if (analysis) {
-											if (c instanceof Reb2Sac) {
-												reb2sac = (Reb2Sac) c;
+											if (c instanceof AnalysisView) {
+												reb2sac = (AnalysisView) c;
 												t.addTab("Simulation Options", c);
 												t.getComponentAt(t.getComponents().length - 1).setName("Simulate");
 											}
@@ -5466,8 +5467,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									comps.add(c);
 								}
 								for (Component c : comps) {
-									if (c instanceof Reb2Sac && ((Reb2Sac) c).getBackgroundFile().equals(oldName)) {
-										((Reb2Sac) c).updateBackgroundFile(rename);
+									if (c instanceof AnalysisView && ((AnalysisView) c).getBackgroundFile().equals(oldName)) {
+										((AnalysisView) c).updateBackgroundFile(rename);
 									}
 									else if (c instanceof LearnGCM && ((LearnGCM) c).getBackgroundFile().equals(oldName)) {
 										((LearnGCM) c).updateBackgroundFile(rename);
@@ -6131,19 +6132,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				for (int i = 0; i < ((JTabbedPane) tab.getComponentAt(index)).getTabCount(); i++) {
 					if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName() != null) {
 						if (((JTabbedPane) tab.getComponentAt(index)).getComponentAt(i).getName().equals("Simulate")) {
-							if (((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
+							if (((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).hasChanged()) {
 								if (autosave == 0) {
 									int value = JOptionPane.showOptionDialog(frame,
 											"Do you want to save simulation option changes for " + tab.getTitleAt(index) + "?", "Save Changes",
 											JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.PLAIN_MESSAGE, null, OPTIONS, OPTIONS[0]);
 									if (value == YES_OPTION) {
-										((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
+										((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
 									}
 									else if (value == CANCEL_OPTION) {
 										return 0;
 									}
 									else if (value == YES_TO_ALL_OPTION) {
-										((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
+										((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
 										autosave = 1;
 									}
 									else if (value == NO_TO_ALL_OPTION) {
@@ -6151,7 +6152,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									}
 								}
 								else if (autosave == 1) {
-									((Reb2Sac) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
+									((AnalysisView) ((JTabbedPane) tab.getComponentAt(index)).getComponent(i)).save();
 								}
 							}
 						}
@@ -6431,7 +6432,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				in.close();
 				out.close();
 				
-				GCMFile gcm = new GCMFile(root);
+				BioModel gcm = new BioModel(root);
 				gcm.load(root + separator + filename);
 				GCM2SBML gcm2sbml = new GCM2SBML(gcm);
 				gcm2sbml.load(root + separator + filename);
@@ -7431,7 +7432,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				addToTree(simName);
 				JTabbedPane simTab = new JTabbedPane();
 				simTab.addMouseListener(this);
-				Reb2Sac reb2sac = new Reb2Sac(sbmlFile, sbmlFileProp, root, this, simName.trim(), log, simTab, null, sbml1[sbml1.length - 1], null,
+				AnalysisView reb2sac = new AnalysisView(sbmlFile, sbmlFileProp, root, this, simName.trim(), log, simTab, null, sbml1[sbml1.length - 1], null,
 						null);
 				// reb2sac.addMouseListener(this);
 				simTab.addTab("Simulation Options", reb2sac);
@@ -8066,13 +8067,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						JTabbedPane simTab = new JTabbedPane();
 						simTab.addMouseListener(this);
 						AbstPane lhpnAbstraction = new AbstPane(root, gcmFile, log, this, false, false);
-						Reb2Sac reb2sac;
+						AnalysisView reb2sac;
 						if (gcmFile.contains(".lpn")) {
-							reb2sac = new Reb2Sac(sbmlLoadFile, getAFile, root, this, split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
+							reb2sac = new AnalysisView(sbmlLoadFile, getAFile, root, this, split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
 									lhpnAbstraction, null);
 						}
 						else {
-							reb2sac = new Reb2Sac(sbmlLoadFile, getAFile, root, this, split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
+							reb2sac = new AnalysisView(sbmlLoadFile, getAFile, root, this, split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
 									null, null);
 						}
 						simTab.addTab("Simulation Options", reb2sac);
@@ -8138,7 +8139,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	 * 
 	 * @return
 	 */
-	private void addModelViewTab(Reb2Sac reb2sac, JTabbedPane tabPane, ModelEditor gcm2sbml) {
+	private void addModelViewTab(AnalysisView reb2sac, JTabbedPane tabPane, ModelEditor gcm2sbml) {
 
 		// Add the modelview tab
 		MovieContainer movieContainer = new MovieContainer(reb2sac, gcm2sbml.getGCM(), this, gcm2sbml);
@@ -8496,7 +8497,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			addToTree(newSim);
 			JTabbedPane simTab = new JTabbedPane();
 			simTab.addMouseListener(this);
-			Reb2Sac reb2sac = new Reb2Sac(sbmlLoadFile, sbmlFile, root, this, newSim, log, simTab, propertiesFile, gcmFile, null, null);
+			AnalysisView reb2sac = new AnalysisView(sbmlLoadFile, sbmlFile, root, this, newSim, log, simTab, propertiesFile, gcmFile, null, null);
 			simTab.addTab("Simulation Options", reb2sac);
 			simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 			simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
@@ -8701,8 +8702,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						// String tabName = sim.getComponentAt(j).getName();
 						// boolean b =
 						// sim.getComponentAt(j).getName().equals("ModelViewMovie");
-						if (sim.getComponentAt(j) instanceof Reb2Sac) {
-							((Reb2Sac) sim.getComponentAt(j)).updateProperties();
+						if (sim.getComponentAt(j) instanceof AnalysisView) {
+							((AnalysisView) sim.getComponentAt(j)).updateProperties();
 						}
 						else if (sim.getComponentAt(j).getName().equals("SBML Editor")) {
 							new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
@@ -9082,7 +9083,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				exportPng.setEnabled(true);
 				exportSvg.setEnabled(true);
 			}
-			else if (component instanceof Reb2Sac) {
+			else if (component instanceof AnalysisView) {
 				saveButton.setEnabled(true);
 				runButton.setEnabled(true);
 				save.setEnabled(true);
@@ -9561,7 +9562,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			else if (s.endsWith(".gcm") && (filename.endsWith(".gcm") || filename.endsWith(".xml") || filename.endsWith(".sbml"))) {
-				GCMFile gcm = new GCMFile(root);
+				BioModel gcm = new BioModel(root);
 				gcm.load(root + separator + s);
 				/*
 				if (gcm.getSBMLFile().equals(filename)) {

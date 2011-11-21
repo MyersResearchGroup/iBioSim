@@ -1,9 +1,5 @@
 package sbol;
 
-import gcm.network.Promoter;
-import gcm.network.SpeciesInterface;
-import gcm.util.GlobalConstants;
-import gcm.util.Utility;
 
 import java.awt.GridLayout;
 import java.io.File;
@@ -29,6 +25,11 @@ import org.sbolstandard.libSBOLj.Library;
 import org.sbolstandard.libSBOLj.SbolService;
 import org.sbolstandard.libSBOLj.SequenceAnnotation;
 import org.sbolstandard.libSBOLj.SequenceFeature;
+
+import biomodel.network.Promoter;
+import biomodel.network.SpeciesInterface;
+import biomodel.util.GlobalConstants;
+import biomodel.util.Utility;
 
 public class SbolSynthesizer {
 	

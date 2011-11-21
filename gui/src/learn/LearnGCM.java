@@ -1,7 +1,5 @@
 package learn;
 
-import gcm.parser.GCMFile;
-import gcm.util.GlobalConstants;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -14,6 +12,9 @@ import javax.swing.*;
 import main.*;
 
 import org.sbml.libsbml.*;
+
+import biomodel.parser.BioModel;
+import biomodel.util.GlobalConstants;
 
 /**
  * This class creates a GUI for the Learn program. It implements the
@@ -429,7 +430,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		else {
-			GCMFile gcm = new GCMFile(biosim.getRoot());
+			BioModel gcm = new BioModel(biosim.getRoot());
 			gcm.load(learnFile);
 			speciesList = gcm.getSpecies();
 			try {
@@ -1371,7 +1372,7 @@ public class LearnGCM extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		else {
-			GCMFile gcm = new GCMFile(biosim.getRoot());
+			BioModel gcm = new BioModel(biosim.getRoot());
 			gcm.load(learnFile);
 			speciesList = gcm.getSpecies();
 			try {

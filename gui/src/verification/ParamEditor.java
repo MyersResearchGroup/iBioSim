@@ -2,6 +2,11 @@ package verification;
 
 import javax.swing.*;
 
+import biomodel.gui.AbstractRunnableNamedButton;
+import biomodel.gui.PropertyList;
+import biomodel.gui.Runnable;
+import biomodel.util.Utility;
+
 import main.*;
 
 import java.awt.*;
@@ -12,11 +17,6 @@ import java.io.File;
 //import java.io.FileOutputStream;
 //import java.io.FileReader;
 
-import gcm.gui.AbstractRunnableNamedButton;
-import gcm.gui.PropertyList;
-import gcm.gui.Runnable;
-import gcm.util.Utility;
-//import gcm2sbml.util.Utility;
 
 
 /**
