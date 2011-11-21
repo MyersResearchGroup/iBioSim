@@ -315,7 +315,7 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		isConvergent = set;
 	}
 	
-	protected Properties properties;
+	//protected Properties properties;
 	
 	// The id of the species
 	protected String id;
@@ -348,7 +348,7 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	
 	protected boolean isRepressor = false;
 	
-	protected boolean isInteresting = false;
+//	protected boolean isInteresting = false;
 	
 	protected boolean isAbstractable = false;
 	
