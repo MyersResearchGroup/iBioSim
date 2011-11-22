@@ -26,9 +26,13 @@ import org.sbml.libsbml.InitialAssignment;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
+import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.Species;
+import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.UnitDefinition;
+
+import biomodel.util.GlobalConstants;
 
 
 /**
@@ -364,8 +368,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							paramValue.setText("");
 						}
 						if (d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).isSetUnits()) {
-							paramUnits.setSelectedItem(d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).getUnits()
-									+ "");
+							paramUnits.setSelectedItem(d.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]).getUnits()	+ "");
 						}
 					}
 				}
@@ -520,6 +523,30 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							}
 							else {
 								SBMLutilities.updateVarId(document, false, v, paramID.getText().trim());
+							}
+							if (paramet.getId().equals(GlobalConstants.STOICHIOMETRY_STRING)) {
+								for (long i=0; i<model.getNumReactions(); i++) {
+									Reaction r = model.getReaction(i);
+									if (r.getAnnotationString().contains(GlobalConstants.PRODUCTION)) {
+										if (r.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING)==null) {
+											for (long j=0; j<r.getNumProducts(); j++) {
+												r.getProduct(j).setStoichiometry(paramet.getValue());
+											}
+										}
+									}
+								}
+							} else if (paramet.getId().equals(GlobalConstants.COOPERATIVITY_STRING)) {
+								for (long i=0; i<model.getNumReactions(); i++) {
+									Reaction r = model.getReaction(i);
+									if (r.getAnnotationString().contains("Complex")) {
+										for (long j=0; j<r.getNumReactants(); j++) {
+											SpeciesReference reactant = r.getReactant(j);
+											if (r.getKineticLaw().getLocalParameter(GlobalConstants.COOPERATIVITY_STRING + "_" + reactant.getSpecies())==null) {
+												reactant.setStoichiometry(paramet.getValue());
+											}
+										}
+									}
+								}
 							}
 						}
 						else {

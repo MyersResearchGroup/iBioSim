@@ -1202,21 +1202,28 @@ public class BioModel {
 
 	public Reaction addReactantToComplexReaction(String reactantId,String productId,String KcStr,String CoopStr) {
 		Reaction r = createComplexReaction(productId,KcStr);
-		if (r.getReactant(reactantId)==null) {
-			SpeciesReference reactant = r.createReactant();
+		SpeciesReference reactant = r.getReactant(reactantId);
+		if (reactant==null) {
+			reactant = r.createReactant();
 			reactant.setSpecies(reactantId);
 			reactant.setConstant(true);
-			KineticLaw k = r.getKineticLaw();
-			if (CoopStr != null && k.getLocalParameter(GlobalConstants.COOPERATIVITY_STRING+"_"+reactantId)==null) {
-				LocalParameter p = k.createLocalParameter();
+		}
+		KineticLaw k = r.getKineticLaw();
+		LocalParameter p = k.getLocalParameter(GlobalConstants.COOPERATIVITY_STRING+"_"+reactantId);
+		if (CoopStr != null) {
+			if (p==null) {
+				p = k.createLocalParameter();
 				p.setId(GlobalConstants.COOPERATIVITY_STRING+"_"+reactantId);
-				double nc = Double.parseDouble(CoopStr);
-				p.setValue(nc);
-				reactant.setStoichiometry(nc);
-			} else {
-				Parameter p = sbml.getModel().getParameter(GlobalConstants.COOPERATIVITY_STRING);
-				reactant.setStoichiometry(p.getValue());
+			} 
+			double nc = Double.parseDouble(CoopStr);
+			p.setValue(nc);
+			reactant.setStoichiometry(nc);
+		} else {
+			if (p != null) {
+				k.removeLocalParameter(GlobalConstants.COOPERATIVITY_STRING+"_"+reactantId);
 			}
+			Parameter gp = sbml.getModel().getParameter(GlobalConstants.COOPERATIVITY_STRING);
+			reactant.setStoichiometry(gp.getValue());
 		}
 		createComplexKineticLaw(r);
 		return r;
@@ -1339,17 +1346,23 @@ public class BioModel {
 			product.setConstant(true);
 		}
 		k = r.getKineticLaw();
-			if (ka != null) {
+		if (ka != null) {
 			LocalParameter p = k.createLocalParameter();
 			p.setId(GlobalConstants.ACTIVATED_STRING);
 			p.setValue(Double.parseDouble(ka));
 		} 		
-		// TODO: WHEN THIS IS UPDATED NEED TO UPDATE STOICHIOMETRY OF PRODUCT
 		if (np != null) {
 			LocalParameter p = k.createLocalParameter();
 			p.setId(GlobalConstants.STOICHIOMETRY_STRING);
 			p.setValue(Double.parseDouble(np));
-		} 							
+			for (long i = 0; i < r.getNumProducts(); i++) {
+				r.getProduct(i).setStoichiometry(Double.parseDouble(np));
+			}
+		} else {
+			for (long i = 0; i < r.getNumProducts(); i++) {
+				r.getProduct(i).setStoichiometry(sbml.getModel().getParameter(GlobalConstants.STOICHIOMETRY_STRING).getValue());
+			}
+		}
 		if (ko != null) {
 			LocalParameter p = k.createLocalParameter();
 			p.setId(GlobalConstants.OCR_STRING);

@@ -314,7 +314,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				production.getKineticLaw().removeLocalParameter(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + regulator + "_"));
 			}
 
-			if (!promoterBox.getSelectedItem().equals(promoterId)) {
+			if (promoterId != null && !promoterBox.getSelectedItem().equals(promoterId)) {
 				production.removeModifier(regulator);
 				production = gcm.getSBMLDocument().getModel().getReaction("Production_"+promoterBox.getSelectedItem());
 				ModifierSpeciesReference modifier = production.getModifier(regulator);
@@ -351,6 +351,7 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				production.getModifier(regulator).setAnnotation(GlobalConstants.NOINFLUENCE);
 			}
 			PropertyField f = fields.get(GlobalConstants.COOPERATIVITY_STRING);
+			String CoopStr = null;
 			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 				if (typeBox.getSelectedItem().equals(GlobalConstants.REPRESSION)) {
 					LocalParameter nc = production.getKineticLaw().createLocalParameter();
@@ -361,9 +362,10 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					nc.setId(GlobalConstants.COOPERATIVITY_STRING +  "_" + regulator + "_a");
 					nc.setValue(Double.parseDouble(f.getValue()));
 				} else if (typeBox.getSelectedItem().equals(GlobalConstants.COMPLEX)) {
-					LocalParameter nc = production.getKineticLaw().createLocalParameter();
-					nc.setId(GlobalConstants.COOPERATIVITY_STRING +  "_" + regulator);
-					nc.setValue(Double.parseDouble(f.getValue()));
+					//LocalParameter nc = production.getKineticLaw().createLocalParameter();
+					//nc.setId(GlobalConstants.COOPERATIVITY_STRING +  "_" + regulator);
+					//nc.setValue(Double.parseDouble(f.getValue()));
+					CoopStr = f.getValue();
 				}
 			} 
 			f = fields.get(GlobalConstants.KREP_STRING);
@@ -390,42 +392,17 @@ public class InfluencePanel extends JPanel implements ActionListener {
 					p.setValue(Ka[1]);
 				} 
 			} 
-			gcm.createProductionKineticLaw(production);
-			/* 
-			String id;
-			if (selection.contains(",")) {
-				if (typeBox.getSelectedItem().equals(GlobalConstants.ACTIVATION)) {
-					id = regulator + "->" + product + "," + promoterBox.getSelectedItem().toString();
-				} else { //if (typeBox.getSelectedItem().equals(GlobalConstants.REPRESSION)) {
-					id = regulator + "-|" + product + "," + promoterBox.getSelectedItem().toString();
-				}
+			if (promoterId != null) {
+				gcm.createProductionKineticLaw(production);
 			} else {
-				if (typeBox.getSelectedItem().equals(GlobalConstants.ACTIVATION)) {
-					id = regulator + promoterBox.getSelectedItem().toString();
-				} else if (typeBox.getSelectedItem().equals(GlobalConstants.REPRESSION)) {
-					id = regulator + promoterBox.getSelectedItem().toString();
-				} else {
-					id = regulator + "->" + product;
+				String KcStr = null;
+				if (production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING)!=null &&
+						production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING)!=null) {
+					KcStr = production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING).getValue() + "/" +
+							production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING).getValue();
 				}
+				gcm.addReactantToComplexReaction(regulator, product, KcStr, CoopStr);
 			}
-			if (selection != null && !selection.equals(id)) {
-				list.removeItem(selection);
-				list.removeItem(selection + " Modified");
-				//gcm.removeInfluence(selection);
-			}
-			list.removeItem(id);
-			list.removeItem(id + " Modified");
-			gcm.addInfluences(id, property);
-			if (paramsOnly) {
-				if (fields.get(GlobalConstants.COOPERATIVITY_STRING).getState().equals(fields.get(GlobalConstants.COOPERATIVITY_STRING).getStates()[1]) ||
-						fields.get(GlobalConstants.KREP_STRING).getState().equals(fields.get(GlobalConstants.KREP_STRING).getStates()[1]) ||
-						fields.get(GlobalConstants.KACT_STRING).getState().equals(fields.get(GlobalConstants.KACT_STRING).getStates()[1])) {
-					id += " Modified";
-				}
-			}
-			list.addItem(id);
-			list.setSelectedValue(id, true);
-			*/
 			gcmEditor.setDirty(true);
 		} else if (value == JOptionPane.NO_OPTION) {
 			return true;
