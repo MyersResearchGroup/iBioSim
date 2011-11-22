@@ -5511,11 +5511,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			if (i != -1) {
 				if (((ModelEditor)tab.getComponentAt(i)).isTextBased()) {
 					if (!textBased) {
+						save(i,0);
 						((ModelEditor)tab.getComponentAt(i)).setTextBased(textBased);
 						((ModelEditor)tab.getComponentAt(i)).rebuildGui();
 					} 
 				} else {
 					if (textBased) {
+						save(i,0);
 						((ModelEditor)tab.getComponentAt(i)).setTextBased(textBased);
 						((ModelEditor)tab.getComponentAt(i)).rebuildGui();
 					} 
