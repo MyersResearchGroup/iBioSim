@@ -177,6 +177,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	private InitialAssignments initialsPanel;
 
 	private Rules rulesPanel;
+	
+	private String selectedReaction;
 
 	public Reactions(Gui biosim, SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty, Boolean paramsOnly,
 			ArrayList<String> getParams, String file, ArrayList<String> parameterChanges) {
@@ -255,6 +257,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		 * JOptionPane.showMessageDialog(Gui.frame, "No reaction selected.",
 		 * "Must Select A Reaction", JOptionPane.ERROR_MESSAGE); return; }
 		 */
+		selectedReaction = reactionId;
 		JLabel id = new JLabel("ID:");
 		reacID = new JTextField(15);
 		JLabel name = new JLabel("Name:");
@@ -359,8 +362,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 				}
 				if (paramsOnly) {
 					for (int j = 0; j < parameterChanges.size(); j++) {
-						if (parameterChanges.get(j).split(" ")[0].equals(((String) reactions.getSelectedValue()).split(" ")[0] + "/"
-								+ parameter.getId())) {
+						if (parameterChanges.get(j).split(" ")[0].equals(selectedReaction + "/"	+ parameter.getId())) {
 							p = parameterChanges.get(j).split("/")[1];
 						}
 					}
@@ -1139,7 +1141,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reacParamValue.setEnabled(false);
 						reacParamUnits.setEnabled(false);
 						SBMLDocument d = Gui.readSBML(file);
-						KineticLaw KL = d.getModel().getReaction(((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw();
+						KineticLaw KL = d.getModel().getReaction(selectedReaction).getKineticLaw();
 						ListOf list = KL.getListOfParameters();
 						int number = -1;
 						for (int i = 0; i < KL.getNumParameters(); i++) {
@@ -1147,17 +1149,15 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 								number = i;
 							}
 						}
-						reacParamValue.setText(d.getModel().getReaction(((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw()
+						reacParamValue.setText(d.getModel().getReaction(selectedReaction).getKineticLaw()
 								.getParameter(number).getValue()
 								+ "");
-						if (d.getModel().getReaction(((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw().getParameter(number)
+						if (d.getModel().getReaction(selectedReaction).getKineticLaw().getParameter(number)
 								.isSetUnits()) {
-							reacParamUnits.setSelectedItem(d.getModel().getReaction(((String) reactions.getSelectedValue()).split(" ")[0])
+							reacParamUnits.setSelectedItem(d.getModel().getReaction(selectedReaction)
 									.getKineticLaw().getParameter(number).getUnits());
 						}
-						reacParamValue.setText(d.getModel().getReaction(((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw()
-								.getParameter(number).getValue()
-								+ "");
+						reacParamValue.setText(d.getModel().getReaction(selectedReaction).getKineticLaw().getParameter(number).getValue()	+ "");
 					}
 				}
 			});
@@ -1277,12 +1277,11 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						if (paramsOnly) {
 							int remove = -1;
 							for (int i = 0; i < parameterChanges.size(); i++) {
-								if (parameterChanges.get(i).split(" ")[0].equals(((String) reactions.getSelectedValue()).split(" ")[0] + "/"
-										+ reacParamID.getText().trim())) {
+								if (parameterChanges.get(i).split(" ")[0].equals(selectedReaction + "/"	+ reacParamID.getText().trim())) {
 									remove = i;
 								}
 							}
-							String reacValue = ((String) reactions.getSelectedValue()).split(" ")[0];
+							String reacValue = selectedReaction;
 							int index1 = reactions.getSelectedIndex();
 							if (remove != -1) {
 								parameterChanges.remove(remove);
@@ -1336,7 +1335,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						reacParameters.setListData(reacParams);
 						reacParameters.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 						try {
-							if (document.getModel().getReaction(((String) reactions.getSelectedValue()).split(" ")[0]).getKineticLaw()
+							if (document.getModel().getReaction(selectedReaction).getKineticLaw()
 									.getNumParameters() == 1) {
 								reacParameters.setSelectedIndex(0);
 							}
@@ -1775,7 +1774,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					modifiers.setListData(modifier);
 					modifiers.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 					try {
-						if (document.getModel().getReaction(((String) reactions.getSelectedValue()).split(" ")[0]).getNumModifiers() == 1) {
+						if (document.getModel().getReaction(selectedReaction).getNumModifiers() == 1) {
 							modifiers.setSelectedIndex(0);
 						}
 						else {
@@ -2588,9 +2587,9 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 	 * Refresh reaction panel
 	 */
 	public void refreshReactionPanel(SBMLDocument document) {
-		String selectedReaction = "";
+		String selectedReactionId = "";
 		if (!reactions.isSelectionEmpty()) {
-			selectedReaction = ((String) reactions.getSelectedValue()).split(" ")[0];
+			selectedReactionId = ((String) reactions.getSelectedValue()).split(" ")[0];
 		}
 		this.document = document;
 		Model model = document.getModel();
@@ -2623,7 +2622,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		Utility.sort(reacts);
 		int selected = 0;
 		for (int i = 0; i < reacts.length; i++) {
-			if (reacts[i].split(" ")[0].equals(selectedReaction)) {
+			if (reacts[i].split(" ")[0].equals(selectedReactionId)) {
 				selected = i;
 			}
 		}

@@ -1366,14 +1366,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		
 		JComboBox compartmentList = MySpecies.createCompartmentChoices(gcm.getSBMLDocument());
 		
-		compartmentPanel = new Compartments(biosim,gcm.getSBMLDocument(),usedIDs,dirty, paramsOnly,getParams,file,
-					parameterChanges,false,compartmentList);
-		reactionPanel = new Reactions(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
-				paramsOnly,getParams,file,parameterChanges);
-		speciesPanel = new MySpecies(biosim,gcm.getSBMLDocument(),usedIDs,dirty,
-				paramsOnly,getParams,file,parameterChanges,true);
-		parametersPanel = new Parameters(biosim, gcm.getSBMLDocument(),usedIDs,dirty,
-				paramsOnly,getParams,path + separator + file,parameterChanges);
+		compartmentPanel = new Compartments(biosim,gcm.getSBMLDocument(),usedIDs,dirty, paramsOnly,getParams, path + separator + file,	parameterChanges,false,compartmentList);
+		reactionPanel = new Reactions(biosim,gcm.getSBMLDocument(),usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges);
+		speciesPanel = new MySpecies(biosim,gcm.getSBMLDocument(),usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges,true);
+		parametersPanel = new Parameters(biosim, gcm.getSBMLDocument(),usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges);
 		
 		JPanel compPanel = new JPanel(new BorderLayout());
 		compPanel.add(modelPanel, "North");
