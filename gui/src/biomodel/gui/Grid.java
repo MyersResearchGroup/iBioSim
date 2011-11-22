@@ -887,7 +887,7 @@ public class Grid {
 			Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
 			//find the row and col from the component's properties
 			//use these to put the component into the correct grid location
-			
+
 			String gcmName = gcm.getSBMLComp().getExternalModelDefinition(submodel.getModelRef()).getSource();
 			int row = gcm.getSubmodelRow(submodel);
 			int col = gcm.getSubmodelCol(submodel);
