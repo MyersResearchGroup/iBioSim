@@ -39,7 +39,6 @@
 	<classpathentry kind="lib" path="gui/lib/biomodels-wslib_standalone-1.12.jar"/>
 	<classpathentry kind="lib" path="gui/lib/jgraphx.jar"/>
 	<classpathentry kind="lib" path="gui/lib/libsbmlj.jar"/>
-	<classpathentry kind="lib" path="gui/lib/libSBOLj-0.4.jar"/>
 	<classpathentry kind="lib" path="gui/lib/hadoop-0.20.2-core.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-primitives-20070823.jar"/>
 	<classpathentry kind="lib" path="gui/lib/hppc-0.3.1.jar"/>
@@ -51,5 +50,7 @@
 	<classpathentry kind="lib" path="gui/lib/jafama.jar"/>
 	<classpathentry kind="lib" path="gui/lib/commons-math-2.2.jar"/>
 	<classpathentry kind="lib" path="gui/lib/flanagan.jar"/>
+	<classpathentry kind="lib" path="gui/lib/libSBOLxml.jar"/>
+	<classpathentry kind="lib" path="gui/lib/gson-2.0.jar"/>
 	<classpathentry kind="output" path="gui/dist/classes"/>
 </classpath>
