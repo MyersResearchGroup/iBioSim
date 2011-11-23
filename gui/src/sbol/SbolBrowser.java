@@ -5,12 +5,12 @@ import java.awt.*;
 
 import javax.swing.*;
 
-import org.sbolstandard.libSBOLj.*;
+import org.sbolstandard.core.*;
 
 import biomodel.util.Utility;
 
 import java.io.*;
-import java.net.URI;
+
 import java.util.*;
 
 import main.Gui;
@@ -29,9 +29,9 @@ public class SbolBrowser extends JPanel {
 	public SbolBrowser(String filePath, Gui gui) {
 		super(new BorderLayout());
 		
-		HashMap<String, Library> libMap = new HashMap<String, Library>();
+		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
 		
-		Library lib = SbolUtility.loadRDF(filePath);
+		org.sbolstandard.core.Collection lib = SbolUtility.loadXML(filePath);
 		if (lib != null) {
 			String mySeparator = File.separator;
 			if (mySeparator.equals("\\"))
@@ -56,9 +56,9 @@ public class SbolBrowser extends JPanel {
 	public SbolBrowser(HashSet<String> sbolFiles, String filter, String defaultSelection) {
 		super(new GridLayout(2,1));
 		
-		HashMap<String, Library> libMap = new HashMap<String, Library>();
+		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
 		for (String filePath : sbolFiles) {
-			Library lib = SbolUtility.loadRDF(filePath);
+			org.sbolstandard.core.Collection lib = SbolUtility.loadXML(filePath);
 			if (lib != null) {
 				String mySeparator = File.separator;
 				if (mySeparator.equals("\\"))
@@ -115,18 +115,19 @@ public class SbolBrowser extends JPanel {
 		return false;
 	}
 	
-	private void constructBrowser(HashMap<String, Library> libMap, String filter) {
+	private void constructBrowser(HashMap<String, org.sbolstandard.core.Collection> libMap, String filter) {
 		viewScroll.setMinimumSize(new Dimension(780, 400));
 		viewScroll.setPreferredSize(new Dimension(828, 264));
+//		viewScroll.setMinimumSize(new Dimension(552, 80));
+//		viewScroll.setPreferredSize(new Dimension(552, 80));
 		viewScroll.setViewportView(viewArea);
 		viewArea.setLineWrap(true);
 		viewArea.setEditable(false);
 		
 		HashMap<String, DnaComponent> compMap = new HashMap<String, DnaComponent>();
-		HashMap<String, SequenceFeature> featMap = new HashMap<String, SequenceFeature>();
 		
-		compPanel = new DnaComponentPanel(compMap, featMap, viewArea);
-		libPanel = new LibraryPanel(libMap, compMap, featMap, viewArea, compPanel, filter);
+		compPanel = new DnaComponentPanel(compMap, viewArea);
+		libPanel = new LibraryPanel(libMap, compMap, viewArea, compPanel, filter);
 		libPanel.setLibraries(libMap.keySet());
 		
 		selectionPanel.add(libPanel);

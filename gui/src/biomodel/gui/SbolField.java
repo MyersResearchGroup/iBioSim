@@ -1,23 +1,18 @@
 package biomodel.gui;
 
-
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.URI;
-import java.util.HashMap;
 import java.util.HashSet;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.tree.TreeModel;
 
-
-import org.sbolstandard.libSBOLj.Library;
-import org.sbolstandard.libSBOLj.SequenceFeature;
+import org.sbolstandard.core.*;
 
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
@@ -66,15 +61,15 @@ public class SbolField extends JPanel implements ActionListener {
 			String fileId = sbolText.getText().split("/")[0];
 			String libId = sbolText.getText().split("/")[1];
 			String featId = sbolText.getText().split("/")[2];
-			Library lib = SbolUtility.loadRDF(gcmEditor.getPath() + File.separator + fileId);
+			org.sbolstandard.core.Collection lib = SbolUtility.loadXML(gcmEditor.getPath() + File.separator + fileId);
 			boolean libMatch = false;
 			boolean featMatch = false;
 			if (lib != null && lib.getDisplayId().equals(libId)) {
 				libMatch = true;
-				for (SequenceFeature feat : lib.getFeatures()) {
-					if (feat.getDisplayId().equals(featId)) {
+				for (DnaComponent dnac : lib.getComponents()) {
+					if (dnac.getDisplayId().equals(featId)) {
 						featMatch = true;
-						for (URI uri : feat.getTypes()) {
+						for (URI uri : dnac.getTypes()) {
 							if (uri.getFragment().equals(typeConverter(sbolType)))
 								return true;
 						}

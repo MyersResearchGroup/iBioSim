@@ -5,30 +5,25 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import org.sbolstandard.libSBOLj.*;
+import org.sbolstandard.core.*;
 
-import java.io.*;
 import java.net.URI;
 import java.util.*;
 
-import main.Gui;
-
 public class LibraryPanel extends JPanel implements MouseListener {
 
-	private HashMap<String, Library> libMap;
+	private HashMap<String, org.sbolstandard.core.Collection> libMap;
 	private HashMap<String, DnaComponent> compMap;
-	private HashMap<String, SequenceFeature> featMap;
 	private JTextArea viewArea;
 	private DnaComponentPanel compPanel;
 	private JList libList = new JList();
 	private String filter;
 	
-	public LibraryPanel(HashMap<String, Library> libMap, HashMap<String, DnaComponent> compMap, 
-			HashMap<String, SequenceFeature> featMap, JTextArea viewArea, DnaComponentPanel compPanel, String filter) {
+	public LibraryPanel(HashMap<String, org.sbolstandard.core.Collection> libMap, HashMap<String, DnaComponent> compMap, 
+			JTextArea viewArea, DnaComponentPanel compPanel, String filter) {
 		super(new BorderLayout());
 		this.libMap = libMap;
 		this.compMap = compMap;
-		this.featMap = featMap;
 		this.viewArea = viewArea;
 		this.compPanel = compPanel;
 		this.filter = filter;
@@ -40,6 +35,8 @@ public class LibraryPanel extends JPanel implements MouseListener {
 		JScrollPane libraryScroll = new JScrollPane();
 		libraryScroll.setMinimumSize(new Dimension(260, 200));
 		libraryScroll.setPreferredSize(new Dimension(276, 132));
+//		libraryScroll.setMinimumSize(new Dimension(276, 50));
+//		libraryScroll.setPreferredSize(new Dimension(276, 50));
 		libraryScroll.setViewportView(libList);
 		
 		this.add(libraryLabel, "North");
@@ -63,7 +60,7 @@ public class LibraryPanel extends JPanel implements MouseListener {
 		if (e.getSource() == libList) {
 			viewArea.setText("");
 			String[] selectedIds = getSelectedIds();
-			Library lib = libMap.get(selectedIds[0]);
+			org.sbolstandard.core.Collection lib = libMap.get(selectedIds[0]);
 			if (lib.getName() != null)
 				viewArea.append("Name:  " + lib.getName() + "\n");
 			else
@@ -73,34 +70,18 @@ public class LibraryPanel extends JPanel implements MouseListener {
 			else
 				viewArea.append("Description:  NA\n\n");
 
-			if (filter.equals("")) {
-				String[] compIdArray = new String[lib.getComponents().size() + lib.getFeatures().size()]; //remove 2nd term once libSBOL up to speed
-				int n = 0;
-				for (DnaComponent dnac : lib.getComponents()) {
+			String[] compIdArray = new String[lib.getComponents().size()];
+			int n = 0;
+			for (DnaComponent dnac : lib.getComponents()) {
+				if (filter.equals("") || filterFeature(dnac, filter)) {
 					compIdArray[n] = dnac.getDisplayId();
 					compMap.put(dnac.getDisplayId(), dnac);
 					n++;
 				}
-				for (SequenceFeature sf : lib.getFeatures()) { // remove entire loop once libSBOL up to speed...or not, could be way of telling feature
-					compIdArray[n] = sf.getDisplayId();
-					featMap.put(sf.getDisplayId(), sf);
-					n++;
-				}
-				LinkedHashSet<String> compIds = lexoSort(compIdArray, n);
-				compPanel.setComponents(compIds);
-			} else {
-				String[] featIdArray = new String[lib.getFeatures().size()];
-				int n = 0;
-				for (SequenceFeature sf : lib.getFeatures()) {
-					if (filterFeature(sf, filter)) {
-						featIdArray[n] = sf.getDisplayId();
-						featMap.put(sf.getDisplayId(), sf);
-						n++;
-					}
-				}
-				LinkedHashSet<String> featIds = lexoSort(featIdArray, n);
-				compPanel.setComponents(featIds);
 			}
+			LinkedHashSet<String> compIds = lexoSort(compIdArray, n);
+			compPanel.setComponents(compIds);
+
 		}
 	}
 	//Sorts first m entries of string array lexographically
@@ -120,9 +101,9 @@ public class LibraryPanel extends JPanel implements MouseListener {
 		return sortedSet;
 	}
 	
-	private boolean filterFeature(SequenceFeature sf, String filter) {
+	private boolean filterFeature(DnaComponent dnac, String filter) {
 		HashSet<String> types = new HashSet<String>();
- 		for (URI uri : sf.getTypes()) 
+ 		for (URI uri : dnac.getTypes()) 
 			types.add(uri.getFragment());
  		return types.contains(filter);
 	}

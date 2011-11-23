@@ -283,8 +283,8 @@ public class FileTree extends JPanel implements MouseListener {
 					!async && files.get(fnum).toString().length() > 3 && 
 						files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".xml")) { 
 					file = new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files.get(fnum))); 
-				} else if (!async && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".rdf")) {
+				} else if (!async && files.get(fnum).toString().length() > 4
+						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".sbol")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_SBOL, null, files.get(fnum)));
 				}
 				/*
@@ -352,8 +352,8 @@ public class FileTree extends JPanel implements MouseListener {
 					!async && files.get(fnum).toString().length() > 3 &&
 					 	files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".xml")) { 
 					file = new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files.get(fnum))); 
-				} else if (!async && files.get(fnum).toString().length() > 3
-						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".rdf")) {
+				} else if (!async && files.get(fnum).toString().length() > 4
+						&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".sbol")) {
 					file = new DefaultMutableTreeNode(new IconData(ICON_SBOL, null, files.get(fnum)));
 				}
 				/*
@@ -674,7 +674,7 @@ public class FileTree extends JPanel implements MouseListener {
 			}
 			if (!async && item.endsWith(".sbml") || !async && item.endsWith(".xml")) { 
 				node = new DefaultMutableTreeNode(new IconData(ICON_SBML, null, item)); 
-			} else if (!async && item.endsWith(".rdf")) {
+			} else if (!async && item.endsWith(".sbol")) {
 				node = new DefaultMutableTreeNode(new IconData(ICON_SBOL, null, item));
 			}
 			/*
@@ -967,8 +967,8 @@ public class FileTree extends JPanel implements MouseListener {
 						!async && files.get(fnum).toString().length() > 3 &&
 							files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".xml")) { 
 						file = new DefaultMutableTreeNode(new IconData(ICON_SBML, null, files.get(fnum))); 
-					} else if (!async && files.get(fnum).toString().length() > 3
-							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 4).equals(".rdf")) {
+					} else if (!async && files.get(fnum).toString().length() > 4
+							&& files.get(fnum).toString().substring(files.get(fnum).toString().length() - 5).equals(".sbol")) {
 						file = new DefaultMutableTreeNode(new IconData(ICON_SBOL, null, files.get(fnum)));
 					}
 					/*
