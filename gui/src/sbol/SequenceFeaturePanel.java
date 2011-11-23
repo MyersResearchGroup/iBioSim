@@ -6,12 +6,10 @@ import java.awt.event.*;
 import javax.swing.*;
 
 import org.sbolstandard.libSBOLj.*;
+import org.sbolstandard.xml.*;
 
-import java.io.*;
 import java.net.URI;
 import java.util.*;
-
-import main.Gui;
 
 public class SequenceFeaturePanel extends JPanel implements MouseListener {
 

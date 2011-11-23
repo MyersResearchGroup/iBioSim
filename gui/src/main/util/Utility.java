@@ -67,7 +67,7 @@ public class Utility {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
-							return name.endsWith(".rdf");
+							return name.endsWith(".sbol");
 						}
 					});
 				}
@@ -75,7 +75,7 @@ public class Utility {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
-							return name.endsWith(".rdf");
+							return name.endsWith(".sbol");
 						}
 					});
 				}
@@ -156,8 +156,8 @@ public class Utility {
 						}
 					}
 					else if (approve.equals("Import SBOL") || (approve.equals("Export DNA Component"))) {
-						if (!selectedFile.endsWith(".rdf")) {
-							selectedFile += ".rdf";
+						if (!selectedFile.endsWith(".sbol")) {
+							selectedFile += ".sbol";
 						}
 					}
 					else if (approve.equals("Import SBML") || (approve.equals("Export SMBL"))) {
@@ -284,9 +284,9 @@ public class Utility {
 			ExampleFileFilter svgFilter = new ExampleFileFilter();
 			svgFilter.addExtension("svg");
 			svgFilter.setDescription("Scalable Vector Graphics");
-			ExampleFileFilter rdfFilter = new ExampleFileFilter();
-			rdfFilter.addExtension("rdf");
-			rdfFilter.setDescription("Resource Description Framework");
+			ExampleFileFilter sbolFilter = new ExampleFileFilter();
+			sbolFilter.addExtension("sbol");
+			sbolFilter.setDescription("Synthetic Biology Open Language");
 			ExampleFileFilter sbmlFilter = new ExampleFileFilter();
 			sbmlFilter.addExtension("sbml");
 			sbmlFilter.setDescription("Systems Biology Markup Language");
@@ -371,15 +371,15 @@ public class Utility {
 				retValue = fc.showDialog(frame, approve);
 			}
 			else if (approve.equals("Import SBOL")) {
-				fc.addChoosableFileFilter(rdfFilter);
+				fc.addChoosableFileFilter(sbolFilter);
 				fc.setAcceptAllFileFilterUsed(false);
-				fc.setFileFilter(rdfFilter);
+				fc.setFileFilter(sbolFilter);
 				retValue = fc.showDialog(frame, approve);
 			}
 			else if (approve.equals("Export DNA Component")) {
-				fc.addChoosableFileFilter(rdfFilter);
+				fc.addChoosableFileFilter(sbolFilter);
 				fc.setAcceptAllFileFilterUsed(false);
-				fc.setFileFilter(rdfFilter);
+				fc.setFileFilter(sbolFilter);
 				retValue = fc.showDialog(frame, approve);
 			}
 			else if (approve.equals("Import SBML")) {
@@ -492,9 +492,9 @@ public class Utility {
 					}
 				}
 				else if (approve.equals("Export DNA Component")) {
-					if ((filename.length() < 4)
-							|| (!(filename.substring((filename.length() - 4), filename.length()).equals(".rdf")))) {
-						filename += ".rdf";
+					if ((filename.length() < 5)
+							|| (!(filename.substring((filename.length() - 5), filename.length()).equals(".sbol")))) {
+						filename += ".sbol";
 					}
 				}
 			}

@@ -2,40 +2,31 @@ package sbol;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.util.Scanner;
 
 import javax.swing.JOptionPane;
+import javax.xml.bind.JAXBException;
 
 import main.Gui;
 
-import org.sbolstandard.libSBOLj.DnaComponent;
-import org.sbolstandard.libSBOLj.IOTools;
-import org.sbolstandard.libSBOLj.Library;
-import org.sbolstandard.libSBOLj.SbolService;
-import org.sbolstandard.libSBOLj.SequenceFeature;
+import org.sbolstandard.core.*;
+import org.sbolstandard.xml.*;
 
 public class SbolUtility {
 
-	public static Library loadRDF(String filePath) {
-		boolean libValid = true;
-		String rdfString = "";
-		FileInputStream in = null;
+	public static CollectionImpl loadXML(String filePath) {
+		Parser p = new Parser();
+		CollectionImpl lib = null;
 		try {
-			in = new FileInputStream(filePath);
-		} catch (Exception e1) {
+			lib = p.parse(new FileInputStream(new File(filePath)));
+		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(Gui.frame, "SBOL file is not found.", "File Not Found",
 					JOptionPane.ERROR_MESSAGE);
 			return null;
+		} catch (JAXBException e) {
+			e.printStackTrace();
 		}
-		Scanner scanIn = new Scanner(in).useDelimiter("\n");
-		while (scanIn.hasNext()) {
-			String token = scanIn.next();
-			rdfString = rdfString.concat(token) + "\n";
-		}
-		scanIn.close();
-		SbolService factory = IOTools.fromRdfXml(rdfString);
-		Library lib = factory.getLibrary();
 		String mySeparator = File.separator;
 		if (mySeparator.equals("\\"))
 			mySeparator = "\\\\";
@@ -46,13 +37,14 @@ public class SbolUtility {
 			return null;
 	}
 	
-	public static void exportLibrary(String filePath, Library lib) {
+	public static void exportLibrary(String filePath, CollectionImpl lib) {
 		try {
 			if (!new File(filePath).exists()) 
 				new File(filePath).createNewFile();
-			String rdf = IOTools.toRdfXml(lib);
+			Parser p = new Parser();
+			String xml = p.serialize(lib);
 			FileOutputStream out = new FileOutputStream(filePath);
-			out.write(rdf.getBytes());
+			out.write(xml.getBytes());
 			out.close();
 		} catch (Exception e1) {
 			JOptionPane.showMessageDialog(Gui.frame, "SBOL file is not found.", "File Not Found",
@@ -61,12 +53,12 @@ public class SbolUtility {
 	}
 	
 	//Use to check if newly created collection is valid
-	public static boolean isLibraryValid(Library lib) {
+	public static boolean isLibraryValid(org.sbolstandard.core.Collection lib) {
 		return isLibraryValid(lib, "");
 	}
 	
 	//Use to check if collection loaded from file is valid
-	public static boolean isLibraryValid(Library lib, String fileId) {
+	public static boolean isLibraryValid(org.sbolstandard.core.Collection lib, String fileId) {
 		String libMessage = "";
 		String compMessage = "";
 		String errorType = "";
@@ -85,11 +77,6 @@ public class SbolUtility {
 		}
 		for (DnaComponent dnac : lib.getComponents())
 			if (dnac.getDisplayId() == null) {
-				JOptionPane.showMessageDialog(Gui.frame, compMessage, errorType, JOptionPane.ERROR_MESSAGE);
-				return false;
-			}
-		for (SequenceFeature sf : lib.getFeatures())
-			if (sf.getDisplayId() == null) {
 				JOptionPane.showMessageDialog(Gui.frame, compMessage, errorType, JOptionPane.ERROR_MESSAGE);
 				return false;
 			}

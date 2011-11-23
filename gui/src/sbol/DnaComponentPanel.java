@@ -5,25 +5,20 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-import org.sbolstandard.libSBOLj.*;
+import org.sbolstandard.core.*;
 
-import java.io.*;
 import java.net.URI;
 import java.util.*;
-
-import main.Gui;
 
 public class DnaComponentPanel extends JPanel implements MouseListener {
 
 	private HashMap<String, DnaComponent> compMap;
-	private HashMap<String, SequenceFeature> featMap;
 	private JTextArea viewArea;
 	private JList compList = new JList();
 	
-	public DnaComponentPanel(HashMap<String, DnaComponent> compMap, HashMap<String, SequenceFeature> featMap, JTextArea viewArea) {
+	public DnaComponentPanel(HashMap<String, DnaComponent> compMap, JTextArea viewArea) {
 		super(new BorderLayout());
 		this.compMap = compMap;
-		this.featMap = featMap;
 		this.viewArea = viewArea;
 		
 		compList.addMouseListener(this);
@@ -33,6 +28,8 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 		JScrollPane componentScroll = new JScrollPane();
 		componentScroll.setMinimumSize(new Dimension(260, 200));
 		componentScroll.setPreferredSize(new Dimension(276, 132));
+//		componentScroll.setMinimumSize(new Dimension(276, 50));
+//		componentScroll.setPreferredSize(new Dimension(276, 50));
 		componentScroll.setViewportView(compList);
 		
 		this.add(componentLabel, "North");
@@ -70,31 +67,16 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 					else 
 						viewArea.append("Description:  NA\n");
 					
-					if (dnac.getAnnotations() != null && dnac.getAnnotations().size() > 0) {
-						viewArea.append("Annotations:  ");
-						SequenceAnnotation[] sortedSA = sortAnnotations(dnac.getAnnotations());
-						String annotations = processAnnotations(sortedSA);
-						viewArea.append(annotations + "\n");
-					} else 
-						viewArea.append("Annotations:  NA\n");
-					
-					if (dnac.getDnaSequence() != null && dnac.getDnaSequence().getDnaSequence() != null && !dnac.getDnaSequence().getDnaSequence().equals(""))
-						viewArea.append("DNA Sequence:  " + dnac.getDnaSequence().getDnaSequence() + "\n\n");
-					else
-						viewArea.append("DNA Sequence:  NA\n\n");
-				} else if (featMap.containsKey(sid)) {  // this probably goes away once libSBOL up to speed, type loop gets moved to processAnnotations
-					SequenceFeature sf = featMap.get(sid);
-					if (sf.getName() != null && !sf.getName().equals(""))
-						viewArea.append("Name:  " + sf.getName() + "\n");
-					else
-						viewArea.append("Name:  NA\n");
-					if (sf.getDescription() != null && !sf.getDescription().equals(""))
-						viewArea.append("Description:  " + sf.getDescription() + "\n");
-					else
-						viewArea.append("Description:  NA\n");
-					viewArea.append("Type:  ");
+//					if (dnac.getAnnotations() != null && dnac.getAnnotations().size() > 0) {
+//						viewArea.append("Annotations:  ");
+//						SequenceAnnotation[] sortedSA = sortAnnotations(dnac.getAnnotations());
+//						String annotations = processAnnotations(sortedSA);
+//						viewArea.append(annotations + "\n");
+//					} else 
+//						viewArea.append("Annotations:  NA\n");
+					viewArea.append("Types:  ");
 					String types = "";
-					for (URI uri : sf.getTypes()) {
+					for (URI uri : dnac.getTypes()) {
 						if (!uri.getFragment().equals("SequenceFeature"))
 							types = types + uri.getFragment() + ", ";
 					}
@@ -102,16 +84,19 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 						viewArea.append(types.substring(0, types.length() - 2) + "\n");
 					else
 						viewArea.append("NA\n");
-					if (sf.getDnaSequence() != null && sf.getDnaSequence().getDnaSequence() != null && !sf.getDnaSequence().getDnaSequence().equals(""))
-						viewArea.append("DNA Sequence:  " + sf.getDnaSequence().getDnaSequence() + "\n\n");
+					
+					if (dnac.getDnaSequence() != null && dnac.getDnaSequence().getNucleotides() != null && !dnac.getDnaSequence().getNucleotides().equals(""))
+						viewArea.append("DNA Sequence:  " + dnac.getDnaSequence().getNucleotides() + "\n");
 					else
-						viewArea.append("DNA Sequence:  NA\n\n");
+						viewArea.append("DNA Sequence:  NA\n");
+					
+					
 				}
 			}
 		} 
 	}
 	
-	private SequenceAnnotation[] sortAnnotations(Collection<SequenceAnnotation> unsortedSA) {
+	private SequenceAnnotation[] sortAnnotations(java.util.Collection<SequenceAnnotation> unsortedSA) {
 		SequenceAnnotation[] sortedSA = new SequenceAnnotation[unsortedSA.size()];
 		int n = 0;
 		for (SequenceAnnotation sa : unsortedSA) {
@@ -121,9 +106,9 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 		//Insert sort of annotations by starting position
 		for (int j = 1; j < sortedSA.length; j++) {
 			SequenceAnnotation keyAnnotation = sortedSA[j];
-			int key = keyAnnotation.getStart();
+			int key = keyAnnotation.getBioStart();
 			int i = j - 1;
-			while (i >= 0 && sortedSA[i].getStart() > key) {
+			while (i >= 0 && sortedSA[i].getBioStart() > key) {
 				sortedSA[i + 1] = sortedSA[i];
 				i = i - 1;
 			}
@@ -135,14 +120,13 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 	private String processAnnotations(SequenceAnnotation[] arraySA) {
 		String annotations = "";
 		for (int k = 0; k < arraySA.length; k++) {
-			for (SequenceFeature sf : arraySA[k].getFeatures()) {
-				annotations = annotations + sf.getDisplayId() + " + "; // once libSBOL up to speed iterate over DNA components
-			}
-			annotations = annotations.substring(0, annotations.length() - 2);
+			SequenceAnnotation sa = arraySA[k];
+			DnaComponent dnac = arraySA[k].getSubComponent();
+			annotations = annotations + arraySA[k].getSubComponent().getDisplayId();
 			String sign = arraySA[k].getStrand();
 			if (sign.equals("+"))
 				sign = "";
-				annotations = annotations + sign + arraySA[k].getStart() + " to " + sign + arraySA[k].getStop() + ", "; 
+				annotations = annotations + sign + arraySA[k].getBioStart() + " to " + sign + arraySA[k].getBioEnd() + ", "; 
 		}
 		annotations = annotations.substring(0, annotations.length() - 2);
 		return annotations;
