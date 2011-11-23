@@ -12,7 +12,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import java.util.Properties;
-import java.lang.Runnable;
+//import java.lang.Runnable;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -20,6 +20,7 @@ import javax.swing.JPanel;
 import javax.swing.JCheckBox;
 
 import biomodel.gui.*;
+import biomodel.gui.Runnable;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
 
