@@ -8069,22 +8069,20 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						JTabbedPane simTab = new JTabbedPane();
 						simTab.addMouseListener(this);
-						AbstPane lhpnAbstraction = new AbstPane(root, gcmFile, log, this, false, false);
 						AnalysisView reb2sac;
 						if (gcmFile.contains(".lpn")) {
+							AbstPane lhpnAbstraction = new AbstPane(root, gcmFile, log, this, false, false);
 							reb2sac = new AnalysisView(sbmlLoadFile, getAFile, root, this, split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
 									lhpnAbstraction, null);
+							simTab.addTab("Simulation Options", reb2sac);
+							simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
+							simTab.addTab("Abstraction Options", lhpnAbstraction);
 						}
 						else {
 							reb2sac = new AnalysisView(sbmlLoadFile, getAFile, root, this, split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
 									null, null);
-						}
-						simTab.addTab("Simulation Options", reb2sac);
-						simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
-						if (gcmFile.contains(".lpn")) {
-							simTab.addTab("Abstraction Options", lhpnAbstraction);
-						}
-						else {
+							simTab.addTab("Simulation Options", reb2sac);
+							simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 							simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
 						}
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
