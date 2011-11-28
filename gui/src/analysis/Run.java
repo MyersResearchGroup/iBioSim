@@ -477,7 +477,7 @@ public class Run implements ActionListener {
 			else if (out.length() > 3 && out.substring(out.length() - 4, out.length()).equals(".xml")) {
 				out = out.substring(0, out.length() - 4);
 			}
-			if (nary.isSelected() && gcmEditor != null && (monteCarlo.isSelected() || xhtml.isSelected())) {
+			if (nary.isSelected() && gcmEditor != null && (monteCarlo.isSelected() || xhtml.isSelected() || dot.isSelected())) {
 				String lpnName = modelFile.replace(".sbml", "").replace(".gcm", "").replace(".xml", "") + ".lpn";
 				ArrayList<String> specs = new ArrayList<String>();
 				ArrayList<Object[]> conLevel = new ArrayList<Object[]>();
@@ -497,37 +497,32 @@ public class Run implements ActionListener {
 				BioModel gcm = new BioModel(root);
 				gcm.load(root + separator + gcmEditor.getRefFile());
 				//gcm.getSBMLDocument().setModel(paramGCM.getSBMLDocument().getModel().cloneObject());
-				if (gcm.flattenGCM() != null) {
-					time1 = System.nanoTime();
-					String prop = null;
-					if (!lpnProperty.equals("")) {
-						prop = lpnProperty;
-					}
-					MutableString mutProp = new MutableString(prop);
-					LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
-					prop = mutProp.getString();
-					if (lpnFile == null) {
-						return 0;
-					}
-					lpnFile.save(root + separator + simName + separator + lpnName);
-					Translator t1 = new Translator();
-					if (abstraction.isSelected()) {
-						LhpnFile lhpnFile = new LhpnFile();
-						lhpnFile.load(root + separator + simName + separator + lpnName);
-						Abstraction abst = new Abstraction(lhpnFile, abstPane);
-						abst.abstractSTG(false);
-						abst.save(root + separator + simName + separator + lpnName + ".temp");
-						t1.BuildTemplate(root + separator + simName + separator + lpnName + ".temp", prop);
-					}
-					else {
-						t1.BuildTemplate(root + separator + simName + separator + lpnName, prop);
-					}
-					t1.setFilename(root + separator + simName + separator + lpnName.replace(".lpn", ".xml"));
-					t1.outputSBML();
+				time1 = System.nanoTime();
+				String prop = null;
+				if (!lpnProperty.equals("")) {
+					prop = lpnProperty;
 				}
-				else {
+				MutableString mutProp = new MutableString(prop);
+				LhpnFile lpnFile = gcm.convertToLHPN(specs, conLevel, mutProp);
+				prop = mutProp.getString();
+				if (lpnFile == null) {
 					return 0;
 				}
+				lpnFile.save(root + separator + simName + separator + lpnName);
+				Translator t1 = new Translator();
+				if (abstraction.isSelected()) {
+					LhpnFile lhpnFile = new LhpnFile();
+					lhpnFile.load(root + separator + simName + separator + lpnName);
+					Abstraction abst = new Abstraction(lhpnFile, abstPane);
+					abst.abstractSTG(false);
+					abst.save(root + separator + simName + separator + lpnName + ".temp");
+					t1.BuildTemplate(root + separator + simName + separator + lpnName + ".temp", prop);
+				}
+				else {
+					t1.BuildTemplate(root + separator + simName + separator + lpnName, prop);
+				}
+				t1.setFilename(root + separator + simName + separator + lpnName.replace(".lpn", ".xml"));
+				t1.outputSBML();
 			}
 			if (nary.isSelected() && gcmEditor == null && !sim.contains("markov-chain-analysis") && !lhpn.isSelected()
 					&& naryRun == 1) {

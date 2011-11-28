@@ -475,38 +475,9 @@ public class BioModel {
 	public LhpnFile convertToLHPN(ArrayList<String> specs, ArrayList<Object[]> conLevel, MutableString lpnProperty) {
 		GCMParser parser = new GCMParser(this, false);
 		GeneticNetwork network = parser.buildNetwork();
+		if (network == null) return null;
 		network.markAbstractable();
 		AbstractionEngine abs = network.createAbstractionEngine();
-		HashMap<String, ArrayList<String>> infl = new HashMap<String, ArrayList<String>>();
-		// TODO: THIS NEEDS TO BE UPDATED
-		/*
-		for (String influence : influences.keySet()) {
-			if (influences.get(influence).get(GlobalConstants.TYPE).equals(GlobalConstants.ACTIVATION)) {
-				String input = getInput(influence);
-				String output = getOutput(influence);
-				if (infl.containsKey(output)) {
-					infl.get(output).add("act:" + input + ":" + influence);
-				}
-				else {
-					ArrayList<String> out = new ArrayList<String>();
-					out.add("act:" + input + ":" + influence);
-					infl.put(output, out);
-				}
-			}
-			else if (influences.get(influence).get(GlobalConstants.TYPE).equals(GlobalConstants.REPRESSION)) {
-				String input = getInput(influence);
-				String output = getOutput(influence);
-				if (infl.containsKey(output)) {
-					infl.get(output).add("rep:" + input + ":" + influence);
-				}
-				else {
-					ArrayList<String> out = new ArrayList<String>();
-					out.add("rep:" + input + ":" + influence);
-					infl.put(output, out);
-				}
-			}
-		}
-		*/
 		ArrayList<String> biochemical = getBiochemicalSpecies();
 		LhpnFile LHPN = new LhpnFile();
 		for (int i = 0; i < specs.size(); i++) {

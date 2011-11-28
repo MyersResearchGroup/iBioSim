@@ -222,6 +222,7 @@ public class Translator {
 					
 					Reaction r = m.createReaction();
 					r.setReversible(false);
+					r.setFast(false);
 					r.setId("r" + counter);
 					
 					//test En(t)
@@ -286,6 +287,7 @@ public class Translator {
 							SpeciesReference reactant = r.createReactant();
 							reactant.setSpecies(x);
 							reactant.setStoichiometry(1.0);
+							reactant.setConstant(true);
 							reactantStr =  reactantStr + reactant.getSpecies().toString() + "*";
 						}
 					}
@@ -294,6 +296,7 @@ public class Translator {
 					SpeciesReference product  = r.createProduct();
 					product.setSpecies(t);
 					product.setStoichiometry(1.0);
+					product.setConstant(true);
 						
 					KineticLaw rateReaction = r.createKineticLaw(); // rate of reaction
 					//Parameter p_local = rateReaction.createParameter();
@@ -313,7 +316,7 @@ public class Translator {
 					
 					Event e = m.createEvent();
 //					e.setId("event" + counter);		
-					e.setId(t);
+					e.setId("Event_"+t);
 					Trigger trigger = e.createTrigger();
 					trigger.setMath(SBMLutilities.myParseFormula("eq(" + product.getSpecies() + ",1)"));
 					// For persistent transition, it does not matter whether the trigger is persistent or not, because the delay is set to 0. 
@@ -423,7 +426,7 @@ public class Translator {
 //					System.out.println("Event Only");
 					Event e = m.createEvent();
 //					e.setId("event" + counter);	
-					e.setId(t);
+					e.setId("Event_"+t);
 					Trigger trigger = e.createTrigger();
 
 					//trigger = CheckPreset(t) && En(t);

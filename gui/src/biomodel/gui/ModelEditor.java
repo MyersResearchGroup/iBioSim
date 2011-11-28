@@ -240,48 +240,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 	
 	public void refresh() {
-		/*
-		ArrayList<String> proms = gcm.getPromoters();
-		if (paramsOnly) {
-			for (String s : parameterChanges) {
-				if (s.contains("/") && proms.contains(s.split("/")[0].trim())) {
-					proms.remove(s.split("/")[0].trim());
-					proms.add(s.split("/")[0].trim() + " Modified");
-				}
-			}
-		}
-		promoters.removeAllItem();
-		promoters.addAllItem(proms);
-
-		ArrayList<String> specs = gcm.getSpecies();
-		if (paramsOnly) {
-			for (String s : parameterChanges) {
-				if (s.contains("/") && specs.contains(s.split("/")[0].trim())) {
-					specs.remove(s.split("/")[0].trim());
-					specs.add(s.split("/")[0].trim() + " Modified");
-				}
-			}
-		}
-		species.removeAllItem();
-		species.addAllItem(specs);
-
-		Set<String> influe = gcm.getInfluences().keySet();
-		ArrayList<String> influes = new ArrayList<String>();
-		for (String s : influe) {
-			influes.add(s);
-		}
-		if (paramsOnly) {
-			for (String s : parameterChanges) {
-				if (s.contains("\"") && influes.contains(s.split("\"")[1].trim())) {
-					influes.remove(s.split("\"")[1].trim());
-					influes.add(s.split("\"")[1].trim() + " Modified");
-				}
-			}
-		}
-		influences.removeAllItem();
-		influences.addAllItem(influes);
-		*/
-		
 		ArrayList<String> comps = new ArrayList<String>();
 		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
 			Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
@@ -292,10 +250,12 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		
 		reloadParameters();
 		if (paramsOnly) {
+			/*
 			GCMParser parser = new GCMParser(path + separator + refFile);
 			GeneticNetwork network = parser.buildNetwork();
 			GeneticNetwork.setRoot(path + separator);
 			network.mergeSBML(path + separator + simName + separator + gcmname + ".xml");
+			*/
 			reb2sac.updateSpeciesList();
 			gcm.reloadSBMLFile();
 			compartmentPanel.refreshCompartmentPanel(gcm.getSBMLDocument());
@@ -463,14 +423,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			// Then read in the file with the GCMParser
 			GCMParser parser = new GCMParser(path + separator + gcmname + ".gcm");
 			GeneticNetwork network = null;
-			try {
-				network = parser.buildNetwork();
-			}
-			catch (IllegalStateException e) {
-				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), "Error",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
+			network = parser.buildNetwork();
+			if (network == null) return;
 			network.loadProperties(gcm);
 			// Finally, output to a file
 			if (new File(path + separator + gcmname + ".xml").exists()) {
@@ -539,33 +493,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			biosimrc.put("biosim.general.export_dir",exportPath);
 			GCMParser parser = new GCMParser(path + separator + gcmname + ".gcm");
 			GeneticNetwork network = null;
-			try {
-				network = parser.buildNetwork();
-			}
-			catch (IllegalStateException e) {
-				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), "Error",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
+			network = parser.buildNetwork();
+			if (network==null) return;
 			network.loadProperties(gcm);
-			// Finally, output to a file
-			/*
-			if (new File(exportPath).exists()) {
-				int value = JOptionPane.showOptionDialog(Gui.frame, exportPath + " already exists.  Overwrite file?", "Save file", JOptionPane.YES_NO_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				if (value == JOptionPane.YES_OPTION) {
-					network.mergeSBML(exportPath);
-					log.addText("Saving GCM file as SBML file:\n" + exportPath +"\n");
-					//biosim.addToTree(gcmname + ".xml");
-					//biosim.updateOpenSBML(gcmname + ".xml");
-				}
-			}
-			else {
-			*/
 			network.mergeSBML(exportPath);
 			log.addText("Saving GCM file as SBML file:\n" + exportPath + "\n");
-			//biosim.addToTree(gcmname + ".xml");
-			//}
 		}
 	}
 	
@@ -1163,14 +1095,8 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			}
 			GCMParser parser = new GCMParser(gcm, false);
 			GeneticNetwork network = null;
-			try {
-				network = parser.buildNetwork();
-			}
-			catch (IllegalStateException e) {
-				JOptionPane.showMessageDialog(Gui.frame, e.getMessage(), "Error",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
+			network = parser.buildNetwork();
+			if (network==null) return;
 			if (reb2sac != null)
 				network.loadProperties(gcm, reb2sac.getGcmAbstractions(), reb2sac.getInterestingSpecies(), reb2sac.getProperty());
 			else
