@@ -3341,9 +3341,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			else if (comp.getName().equals("Verification")) {
-				Component[] array = ((JPanel) comp).getComponents();
-				((Verification) array[0]).save();
-				new Thread((Verification) array[0]).start();
+				//Component[] array = ((JPanel) comp).getComponents();
+				((Verification) comp).save();
+				new Thread((Verification) comp).start();
 			}
 			else if (comp.getName().equals("Synthesis")) {
 				Component[] array = ((JPanel) comp).getComponents();
