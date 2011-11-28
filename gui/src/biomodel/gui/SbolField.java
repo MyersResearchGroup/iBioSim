@@ -61,7 +61,7 @@ public class SbolField extends JPanel implements ActionListener {
 			String fileId = sbolText.getText().split("/")[0];
 			String libId = sbolText.getText().split("/")[1];
 			String featId = sbolText.getText().split("/")[2];
-			org.sbolstandard.core.Collection lib = SbolUtility.loadXML(gcmEditor.getPath() + File.separator + fileId);
+			Collection lib = SbolUtility.loadXML(gcmEditor.getPath() + File.separator + fileId);
 			boolean libMatch = false;
 			boolean featMatch = false;
 			if (lib != null && lib.getDisplayId().equals(libId)) {
