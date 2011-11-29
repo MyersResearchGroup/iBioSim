@@ -7929,18 +7929,12 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									int tempNum = Integer.parseInt(list[i].substring(4, list[i].length() - end.length()));
 									if (tempNum > run) {
 										run = tempNum;
-										// graphFile = filename + separator +
-										// list[i];
 									}
 								}
 								else if (list[i].contains("euler-run.") || list[i].contains("gear1-run.") || list[i].contains("gear2-run.")
 										|| list[i].contains("rk4imp-run.") || list[i].contains("rk8pd-run.") || list[i].contains("rkf45-run.")) {
-									// graphFile = filename + separator +
-									// list[i];
 								}
 								else if (end.contains("=")) {
-									// graphFile = filename + separator +
-									// list[i];
 								}
 							}
 							else if (end.equals(".grf")) {
@@ -7954,14 +7948,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							String[] s = new File(filename + separator + list[i]).list();
 							for (int j = 0; j < s.length; j++) {
 								if (s[j].contains("sim-rep")) {
-									// probFile = filename + separator + list[i]
-									// + separator +
-									// s[j];
 								}
 								else if (s[j].contains(".tsd")) {
-									// graphFile = filename + separator +
-									// list[i] + separator +
-									// s[j];
 								}
 							}
 						}
@@ -7978,88 +7966,26 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 								new File(pmsFile).renameTo(new File(simFile));
 							}
 						}
-						String sbmlLoadFile = "";
-						String gcmFile = "";
-						// ArrayList<String> interestingSpecies = new
-						// ArrayList<String>();
-						if (new File(simFile).exists()) {
-							try {
-								Scanner s = new Scanner(new File(simFile));
-								if (s.hasNextLine()) {
-									sbmlLoadFile = s.nextLine();
-									sbmlLoadFile = sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1];
-									gcmFile = sbmlLoadFile;
-									if (sbmlLoadFile.contains(".gcm"))
-										sbmlLoadFile = sbmlLoadFile.replace(".gcm", ".xml");
-									if (sbmlLoadFile.equals("")) {
-										JOptionPane.showMessageDialog(frame, "Unable to open view because "
-												+ "the sbml linked to this view is missing.", "Error", JOptionPane.ERROR_MESSAGE);
-										return;
-									}
-									else if (!(new File(root + separator + sbmlLoadFile).exists())) {
-										JOptionPane.showMessageDialog(frame, "Unable to open view because " + sbmlLoadFile + " is missing.", "Error",
-												JOptionPane.ERROR_MESSAGE);
-										return;
-									}
-									if (sbmlLoadFile.contains(".gcm")) {
-										// GCMParser parser = new GCMParser(root
-										// + separator + sbmlLoadFile);
-										// GeneticNetwork network =
-										// parser.buildNetwork();
-										// interestingSpecies.addAll(network.getInterestingSpecies());
-										// GeneticNetwork.setRoot(root +
-										// separator);
-										sbmlLoadFile = root + separator + split[split.length - 1].trim() + separator
-												+ sbmlLoadFile.replace(".gcm", ".xml");
-										// network.mergeSBML(sbmlLoadFile);
-									}
-									else if (sbmlLoadFile.contains(".lpn")) {
-										// Translator t1 = new Translator();
-										// t1.BuildTemplate(root + separator +
-										// sbmlLoadFile, "");
-										sbmlLoadFile = root + separator + split[split.length - 1].trim() + separator
-												+ sbmlLoadFile.replace(".lpn", ".xml");
-										// t1.setFilename(sbmlLoadFile);
-										// t1.outputSBML();
-									}
-									else {
-										sbmlLoadFile = root + separator + sbmlLoadFile;
-									}
-								}
-								while (s.hasNextLine()) {
-									s.nextLine();
-								}
-								s.close();
-								File f = new File(sbmlLoadFile);
-								if (!f.exists()) {
-									sbmlLoadFile = root + separator + f.getName();
-								}
-							}
-							catch (Exception e) {
-								e.printStackTrace();
-								JOptionPane.showMessageDialog(frame, "Unable to load sbml file.", "Error", JOptionPane.ERROR_MESSAGE);
+						String modelFile = "";
+						if (!(new File(simFile).exists())) {
+							JOptionPane.showMessageDialog(frame, "Unable to open view because simulation file is missing.",
+									"Error", JOptionPane.ERROR_MESSAGE);
+							return;
+						}							
+						Scanner s = new Scanner(new File(simFile));
+						if (s.hasNextLine()) {
+							modelFile = s.nextLine();
+							modelFile = modelFile.split(separator)[modelFile.split(separator).length - 1];
+							modelFile = modelFile.replace(".gcm", ".xml");
+							if (!(new File(root + separator + modelFile).exists())) {
+								JOptionPane.showMessageDialog(frame, "Unable to open view because " + modelFile + 
+										" is missing.", "Error", JOptionPane.ERROR_MESSAGE);
 								return;
 							}
-						}
-						else {
-							sbmlLoadFile = root + separator + getAFile.split(separator)[getAFile.split(separator).length - 1];
-							if (!new File(sbmlLoadFile).exists()) {
-								sbmlLoadFile = getAFile;
-								/*
-								 * JOptionPane.showMessageDialog(frame, "Unable
-								 * to load sbml file.", "Error",
-								 * JOptionPane.ERROR_MESSAGE); return;
-								 */
-							}
-						}
-						if (!new File(sbmlLoadFile).exists()) {
-							JOptionPane.showMessageDialog(frame,
-									"Unable to open view because " + sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1]
-											+ " is missing.", "Error", JOptionPane.ERROR_MESSAGE);
-							return;
+							s.close();
 						}
 						for (int i = 0; i < tab.getTabCount(); i++) {
-							if (tab.getTitleAt(i).equals(sbmlLoadFile.split(separator)[sbmlLoadFile.split(separator).length - 1])) {
+							if (tab.getTitleAt(i).equals(modelFile)) {
 								tab.setSelectedIndex(i);
 								if (save(i, 0) == 0) {
 									return;
@@ -8070,37 +7996,27 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						JTabbedPane simTab = new JTabbedPane();
 						simTab.addMouseListener(this);
 						AnalysisView reb2sac;
-						if (gcmFile.contains(".lpn")) {
-							AbstPane lhpnAbstraction = new AbstPane(root, gcmFile, log, this, false, false);
-							reb2sac = new AnalysisView(sbmlLoadFile, getAFile, root, this, split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
-									lhpnAbstraction, null);
+						if (modelFile.endsWith(".lpn")) {
+							AbstPane lhpnAbstraction = new AbstPane(root, modelFile, log, this, false, false);
+							reb2sac = new AnalysisView(modelFile, getAFile, root, this, split[split.length - 1].trim(), log, 
+									simTab, openFile, modelFile, lhpnAbstraction, null);
 							simTab.addTab("Simulation Options", reb2sac);
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 							simTab.addTab("Abstraction Options", lhpnAbstraction);
 						}
 						else {
-							reb2sac = new AnalysisView(sbmlLoadFile, getAFile, root, this, split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
-									null, null);
+							reb2sac = new AnalysisView(modelFile, getAFile, root, this, split[split.length - 1].trim(), log, 
+									simTab, openFile, modelFile, null, null);
 							simTab.addTab("Simulation Options", reb2sac);
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName("Simulate");
 							simTab.addTab("Abstraction Options", reb2sac.getAdvanced());
 						}
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-						// simTab.addTab("Advanced Options",
-						// reb2sac.getProperties());
-						// simTab.getComponentAt(simTab.getComponents().length -
-						// 1).setName("");
-						if (gcmFile.contains(".gcm")) {
-							/*
-							SBML_Editor sbml = new SBML_Editor(root + separator + gcmFile.replace(".gcm",".xml"), reb2sac, log, this, root + separator
-									+ split[split.length - 1].trim(), root + separator + split[split.length - 1].trim() + separator
-									+ split[split.length - 1].trim() + ".sim");
-									*/
-							ModelEditor gcm = new ModelEditor(root + separator, gcmFile, this, log, true, split[split.length - 1].trim(), root
-									+ separator + split[split.length - 1].trim() + separator + split[split.length - 1].trim() + ".sim", reb2sac,
-									false);
+						if (modelFile.endsWith(".xml")) {
+							ModelEditor gcm = new ModelEditor(root + separator, modelFile, this, log, true, 
+									split[split.length - 1].trim(), root + separator + split[split.length - 1].trim() + 
+									separator + split[split.length - 1].trim() + ".sim", reb2sac, false);
 							reb2sac.setGcm(gcm);
-							// sbml.addMouseListener(this);
 							addModelViewTab(reb2sac, simTab, gcm);
 							simTab.addTab("Parameters", gcm);
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName("GCM Editor");
@@ -8111,16 +8027,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
 							gcm.setElementsPanel(elementsPanel);
 						}
-						else if (gcmFile.contains(".sbml") || gcmFile.contains(".xml")) {
-							SBML_Editor sbml = new SBML_Editor(sbmlLoadFile, reb2sac, log, this, root + separator + split[split.length - 1].trim(),
-									root + separator + split[split.length - 1].trim() + separator + split[split.length - 1].trim() + ".sim");
-							reb2sac.setSbml(sbml);
-							// sbml.addMouseListener(this);
-							simTab.addTab("Parameter Editor", sbml);
-							simTab.getComponentAt(simTab.getComponents().length - 1).setName("SBML Editor");
-							simTab.addTab("SBML Elements", sbml.getElementsPanel());
-							simTab.getComponentAt(simTab.getComponents().length - 1).setName("");
-						}
 						Graph tsdGraph = reb2sac.createGraph(open);
 						simTab.addTab("TSD Graph", tsdGraph);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("TSD Graph");
@@ -8128,7 +8034,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						simTab.addTab("Histogram", probGraph);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
 						addTab(split[split.length - 1], simTab, null);
-
 					}
 				}
 			}
