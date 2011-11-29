@@ -28,8 +28,10 @@ import main.Log;
 import main.util.ExampleFileFilter;
 import main.util.MutableBoolean;
 
+import org.sbml.libsbml.CompExtension;
 import org.sbml.libsbml.ExternalModelDefinition;
 import org.sbml.libsbml.InitialAssignment;
+import org.sbml.libsbml.LayoutExtension;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.LocalParameter;
 import org.sbml.libsbml.Parameter;
