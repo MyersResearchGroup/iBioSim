@@ -70,7 +70,9 @@ import org.sbml.libsbml.Submodel;
 import org.sbml.libsbml.TextGlyph;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.Layout;
+import org.sbml.libsbml.XMLAttributes;
 import org.sbml.libsbml.XMLNode;
+import org.sbml.libsbml.XMLTriple;
 import org.sbml.libsbml.libsbml;
 
 import biomodel.gui.Grid;
@@ -2961,6 +2963,9 @@ public class BioModel {
 		//remove the grid species from the model
 		for (String specToRemove : speciesToRemove)
 			sbml.getModel().removeSpecies(specToRemove);
+		
+		if (speciesToRemove.size() > 0)
+			removeGridSpeciesReactions(speciesToRemove);
 	}
 	
 	/**
@@ -3011,6 +3016,86 @@ public class BioModel {
 				newSpecies.setHasOnlySubstanceUnits(specToAdd.getHasOnlySubstanceUnits());
 			}
 		}
+		
+		//if new grid species were added, create diffusion reactions for them
+		if (speciesToAdd.size() > 0)
+			createGridSpeciesReactions(speciesToAdd);
+	}
+	
+	/**
+	 * create grid species reactions for the new grid species
+	 * 
+	 * @param newGridSpecies
+	 */
+	public void createGridSpeciesReactions(ArrayList<Species> newGridSpecies) {
+		
+		//create functions for getting an array element
+		SBMLutilities.createFunction(
+				sbml.getModel(), "get2DArrayElement", "get2DArrayElement", "lambda(a,b,a)");
+		
+		for (Species newSpecies : newGridSpecies) {
+			
+			String speciesID = newSpecies.getId();
+			
+			//create array of degredation reactions
+			String decayString = GlobalConstants.KECDECAY_STRING;
+			double decayRate = sbml.getModel().getParameter("kecd").getValue();
+				
+			String decayUnitString = "u_1_second_n1";
+			
+			Reaction r = Utility.Reaction("Degradation_" + speciesID);
+			r.setCompartment(sbml.getModel().getCompartment(0).getId());
+			r.setReversible(false);
+			r.setFast(false);
+			r.setAnnotation("Type=Grid");
+			KineticLaw kl = r.createKineticLaw();
+			
+			if (decayRate > 0) {
+				
+				//this is the mathematical expression for the decay
+				String isDecayExpression = decayString + "* get2DArrayElement(" + speciesID + "_r)";
+				
+				SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);
+				
+				reactant.setAnnotation("rowOffset=0, colOffset=0");
+
+				r.addReactant(reactant);
+				
+				//parameter: id="kd" value=isDecay (usually 0.0075) units="u_1_second_n1" (inverse seconds)
+				kl.addParameter(Utility.Parameter(decayString, decayRate, decayUnitString));
+				
+				//formula: kd * inner species
+				kl.setFormula(isDecayExpression);
+				Utility.addReaction(sbml, r);
+			}
+			
+			
+			
+			
+			
+			
+			//create array of grid diffusion reactions
+			
+			
+			
+			
+			
+		}
+	}
+	
+	/**
+	 * removes grid species reactions for the old species that no longer exist
+	 * @param oldSpecies
+	 */
+	public void removeGridSpeciesReactions(ArrayList<String> oldGridSpecies) {
+		
+		for (String oldSpeciesID : oldGridSpecies) {
+			
+			//remove degredation reaction
+			String reactionID = "Degradation_" + oldSpeciesID;
+			
+			sbml.getModel().removeReaction(reactionID);
+		}		
 	}
 
 	public void createSpecies(String id, float x, float y) {

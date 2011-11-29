@@ -177,6 +177,7 @@ public class BioGraph extends mxGraph {
 			if (r.getAnnotationString().contains("Degradation")) continue;
 			if (r.getAnnotationString().contains("Diffusion")) continue;
 			if (r.getAnnotationString().contains("Constitutive")) continue;
+			if (r.getAnnotationString().contains("Grid")) continue;
 			
 			if (layout.getReactionGlyph(r.getId()) != null || r.getId().startsWith("Production_")) {
 				if(!r.getId().startsWith("Production_") && createGraphReactionFromModel(r.getId()))
@@ -217,7 +218,7 @@ public class BioGraph extends mxGraph {
 			//String comp = gcm.getSBMLCompModel().getSubmodel(i).getId();
 			
 			//these are not meant to be displayed
-			if (comp.contains("__GRID_") || comp.contains("GRID__"))
+			if (comp.contains("GRID__"))
 				continue;
 			
 			if(createGraphComponentFromModel(comp))
@@ -236,7 +237,11 @@ public class BioGraph extends mxGraph {
 		
 		// add all the edges. 
 		for (int i = 0; i < m.getNumReactions(); i++) {
+			
 			Reaction r = m.getReaction(i);
+			if (r.getAnnotationString().contains("Grid"))
+				continue;
+			
 			if (r.getAnnotationString().contains("Complex")) {
 				for (int j = 0; j < r.getNumReactants(); j++) {
 					String id = r.getReactant(j).getSpecies() + "+>" + r.getProduct(0).getSpecies();
@@ -423,6 +428,7 @@ public class BioGraph extends mxGraph {
 			if (r.getAnnotationString().contains("Degradation")) continue;
 			if (r.getAnnotationString().contains("Diffusion")) continue;
 			if (r.getAnnotationString().contains("Constitutive")) continue;
+			if (r.getAnnotationString().contains("Grid")) continue;
 			
 			ReactionGlyph reactionGlyph = gcm.getSBMLLayout().getLayout("iBioSim").getReactionGlyph(r.getId());
 			if (reactionGlyph != null) {
