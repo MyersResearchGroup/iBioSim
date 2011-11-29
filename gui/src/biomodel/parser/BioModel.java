@@ -1830,70 +1830,138 @@ public class BioModel {
 	 * 
 	 * @return: the id of the created component.
 	 */
-	public String addComponent(String id, String modelFile, boolean enclosed, int row, int col, double x, double y) {
+	public String addComponent(String submodelID, String modelFile, boolean enclosed, int row, int col, double x, double y) {
+		
 		ExternalModelDefinition extModel = null;
-		String extId = modelFile.replace(".gcm","");
-		if (sbmlComp.getExternalModelDefinition(extId)==null) { 	
+		String extId = modelFile.replace(".gcm","").replace(".xml","");
+		
+		if (sbmlComp.getExternalModelDefinition(extId) == null)
 			extModel = sbmlComp.createExternalModelDefinition();
-		} else {
+		else
 			extModel = sbmlComp.getExternalModelDefinition(extId);
-		}
+		
 		extModel.setId(extId);
 		extModel.setSource("file://" + modelFile.replace(".gcm",".xml"));
-		if (enclosed) {
-			extModel.setAnnotation("compartment");
-		} else {
-			extModel.unsetAnnotation();
-		}
-		Submodel subModel = null;
-		if (id == null) {
+		
+		if (enclosed && extModel.getAnnotationString().contains("compartment") == false)
+			extModel.appendAnnotation("compartment");
+		else
+			extModel.setAnnotation(extModel.getAnnotationString().replace("compartment",""));
+		
+		//figure out what the submodel's ID should be if it's not provided
+		if (submodelID == null) {
+			
 			int count = 1;
-			id = "C" + count;
-			while (sbmlCompModel.getSubmodel(id)!=null) {
-				count++;
-				id = "C" + count;
-			}
-			subModel = sbmlCompModel.createSubmodel();
-		} else {
-			if (sbmlCompModel.getSubmodel(id)==null) {
-				subModel = sbmlCompModel.createSubmodel();
-			} else {
-				subModel = sbmlCompModel.getSubmodel(id);
+			submodelID = "C" + count;			
+			
+			while (sbml.getModel().getParameter(extId + "__locations") != null) {
+				
+				++count;
+				submodelID = "C" + count;
+				
+				if (sbml.getModel().getParameter(extId + "__locations")
+						.getAnnotationString().contains("[[" + submodelID + "]]") == false)
+					break;
 			}
 		}
-		subModel.setId(id);
-		subModel.setModelRef(extId);
+		
+		//if the submodel is on a grid
 		if (row >= 0 && col >= 0) {
-			subModel.setAnnotation("grid=(" + row + "," + col + ")");
-		} else {
-			subModel.unsetAnnotation();
-		}
+			
+			//if a gridded/arrayed submodel exists, it'll have this ID
+			String gridSubmodelID = "GRID__" + extId;
+			
+			Submodel potentialGridSubmodel = sbmlCompModel.getSubmodel(gridSubmodelID);
+			
+			if (potentialGridSubmodel != null) {
+				
+				//if the annotation string already exists, then one of these existed before
+				//so update its count
+				if (potentialGridSubmodel.getAnnotationString().length() > 0) {
+					
+					int size = Integer.parseInt(potentialGridSubmodel.getAnnotationString().split("=")[1].replace("</annotation>",""));				
+					potentialGridSubmodel.setAnnotation("Count=" + ++size);
+				}
+				else {
+					potentialGridSubmodel.setAnnotation("Count=1");			
+				}
+			}
+			else {
+				
+				potentialGridSubmodel = sbmlCompModel.createSubmodel();
+				potentialGridSubmodel.setId(gridSubmodelID);
+				potentialGridSubmodel.setAnnotation("Count=1");		
+			}
+			
+			potentialGridSubmodel.setModelRef(extId);
+			
+			//add an entry to the location parameter for the external model			
+			String locationParameterID = extModel.getId() + "__locations";
+			
+			Parameter locationParameter = sbml.getModel().getParameter(locationParameterID);
+			
+			if (locationParameter == null) {
+				
+				locationParameter = sbml.getModel().createParameter();
+				locationParameter.setId(locationParameterID);
+			}
+			
+			if (locationParameter.getAnnotationString().length() > 0)
+				locationParameter.appendAnnotation(", ");
+			
+			locationParameter.appendAnnotation("(" + row + "," + col + ")=[[" + submodelID + "]]");			
+			
+			createGridSpecies(gridSubmodelID);
+		} 
+		//if we're not on a grid
+		else {
+			
+			Submodel submodel = null;
+			
+			if (sbmlCompModel.getSubmodel(submodelID) == null)
+				submodel = sbmlCompModel.createSubmodel();
+			else
+				submodel = sbmlCompModel.getSubmodel(submodelID);
+	
+			submodel.setId(submodelID);
+			submodel.setModelRef(extId);
+		}	
+		
+		//set layout information
+		
 		Layout layout = null;
+		
 		if (sbmlLayout.getLayout("iBioSim") != null) {
 			layout = sbmlLayout.getLayout("iBioSim"); 
 		} else {
 			layout = sbmlLayout.createLayout();
 			layout.setId("iBioSim");
 		}
+		
 		CompartmentGlyph compartmentGlyph = null;
-		if (layout.getCompartmentGlyph(id)!=null) {
-			compartmentGlyph = layout.getCompartmentGlyph(id);
+		
+		if (layout.getCompartmentGlyph(submodelID)!=null) {
+			compartmentGlyph = layout.getCompartmentGlyph(submodelID);
 		} else {
 			compartmentGlyph = layout.createCompartmentGlyph();
-			compartmentGlyph.setId(id);
-			compartmentGlyph.setCompartmentId(id);
+			compartmentGlyph.setId(submodelID);
+			compartmentGlyph.setCompartmentId(submodelID);
 		}
+		
 		compartmentGlyph.getBoundingBox().setX(x);
 		compartmentGlyph.getBoundingBox().setY(y);
 		compartmentGlyph.getBoundingBox().setWidth(GlobalConstants.DEFAULT_COMPONENT_WIDTH);
 		compartmentGlyph.getBoundingBox().setHeight(GlobalConstants.DEFAULT_COMPONENT_HEIGHT);
+		
 		TextGlyph textGlyph = layout.createTextGlyph();
-		textGlyph.setId(id);
-		textGlyph.setGraphicalObjectId(id);
-		textGlyph.setText(id);
+		textGlyph.setId(submodelID);
+		textGlyph.setGraphicalObjectId(submodelID);
+		textGlyph.setText(submodelID);
 		textGlyph.setBoundingBox(compartmentGlyph.getBoundingBox());
-		usedIDs.add(id);
-		return id;
+		
+		usedIDs.add(submodelID);
+		
+		return submodelID;
 	}
 
 	// used by createNewObjectName
@@ -2056,8 +2124,34 @@ public class BioModel {
 	}
 
 	public String getModelFileName(String id) {
-		Submodel submodel = sbmlCompModel.getSubmodel(id);
-		ExternalModelDefinition extModel = sbmlComp.getExternalModelDefinition(submodel.getModelRef());
+		
+		String componentModelRef = "";
+		
+		if (sbmlCompModel.getSubmodel(id) != null) {
+			
+			componentModelRef = sbmlCompModel.getSubmodel(id).getModelRef();
+		}
+		else {
+			
+			//search through the parameter location arrays to find the correct one
+			for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+				
+				Parameter parameter = sbml.getModel().getParameter(i);
+				
+				//if it's a location parameter
+				if (parameter.getId().contains("__locations")) {
+					
+					if (parameter.getAnnotationString().contains("[[" + id + "]]")) {
+						
+						componentModelRef = parameter.getId().replace("__locations","");
+						break;
+					}		
+				}				
+			}
+		}
+		
+		ExternalModelDefinition extModel = sbmlComp.getExternalModelDefinition(componentModelRef);
+		
 		return extModel.getSource().substring(7);
 	}
 
@@ -2112,25 +2206,163 @@ public class BioModel {
 	}
 	*/
 	
-	public int getSubmodelRow(Submodel submodel) {
-		String annotation = submodel.getAnnotation().toXMLString();
-		int first = annotation.indexOf("(");
-		int middle = annotation.indexOf(",");
-		int row = Integer.valueOf(annotation.substring(first+1,middle));
-		return row;
+	/**
+	 * returns the submodel's row from the location annotation
+	 */
+	public int getSubmodelRow(String submodelID) {
+		
+		String componentModelRefID = "";
+		
+		//search through the parameter location arrays to find the correct one
+		for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+			
+			Parameter parameter = sbml.getModel().getParameter(i);
+			
+			//if it's a location parameter
+			if (parameter.getId().contains("__locations")) {
+				
+				if (parameter.getAnnotationString().contains("[[" + submodelID + "]]")) {
+					
+					componentModelRefID = parameter.getId().replace("__locations","");
+					break;
+				}		
+			}				
+		}
+		
+		String locationParameterString = componentModelRefID + "__locations";
+		
+		//get rid of the component from the location-lookup array and the modelref array
+		String locationAnnotationString = sbml.getModel().getParameter(locationParameterString).getAnnotationString();
+		
+		String leftPart = locationAnnotationString.substring(0, locationAnnotationString.indexOf("[[" + submodelID + "]]", 0));
+		
+		String rowString = "";
+		boolean startReading = false;
+		
+		//read off the grid location part of the term (until the previous term is reached)
+		while (leftPart.length() > 0 && !(leftPart.charAt(leftPart.length()-1) == '(')) {				
+			
+			if (startReading == true && leftPart.charAt(leftPart.length() - 1) != ',')
+				rowString += leftPart.charAt(leftPart.length()-1);
+			
+			leftPart = leftPart.substring(0, leftPart.length()-1);
+			
+			if (leftPart.charAt(leftPart.length() - 1) == ',')
+				startReading = true;
+		}
+		
+		return Integer.parseInt(rowString);
 	}
 	
-	public int getSubmodelCol(Submodel submodel) {
-		String annotation = submodel.getAnnotation().toXMLString();
-		int middle = annotation.indexOf(",");
-		int last = annotation.indexOf(")");
-		int col = Integer.valueOf(annotation.substring(middle+1,last));
-		return col;
+	/**
+	 * returns the submodel's col from the location annotation
+	 */
+	public int getSubmodelCol(String submodelID) {
+		
+		String componentModelRefID = "";
+		
+		//search through the parameter location arrays to find the correct one
+		for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+			
+			Parameter parameter = sbml.getModel().getParameter(i);
+			
+			//if it's a location parameter
+			if (parameter.getId().contains("__locations")) {
+				
+				if (parameter.getAnnotationString().contains("[[" + submodelID + "]]")) {
+					
+					componentModelRefID = parameter.getId().replace("__locations","");
+					break;
+				}		
+			}				
+		}
+		
+		String locationParameterString = componentModelRefID + "__locations";
+		
+		//get rid of the component from the location-lookup array and the modelref array
+		String locationAnnotationString = sbml.getModel().getParameter(locationParameterString).getAnnotationString();
+		String leftPart = locationAnnotationString.substring(0, locationAnnotationString.indexOf("[[" + submodelID + "]]", 0));
+		
+		String colString = "";
+		boolean startReading = false;
+		boolean stopReading = false;
+		
+		//read off the grid location part of the term (until the previous term is reached)
+		while (leftPart.length() > 0 && !(leftPart.charAt(leftPart.length()-1) == '(')) {				
+			
+			if (stopReading == false && startReading == true && leftPart.charAt(leftPart.length() - 1) != ')')
+				colString += leftPart.charAt(leftPart.length()-1);
+			
+			leftPart = leftPart.substring(0, leftPart.length()-1);
+			
+			if (leftPart.charAt(leftPart.length() - 1) == ')')
+				startReading = true;
+			
+			if (leftPart.charAt(leftPart.length() - 1) == ',')
+				stopReading = true;
+		}
+		
+		return Integer.parseInt(colString);
 	}
 	
-	public void setSubmodelRowCol(String compId,int row,int col) {
-		Submodel submodel = sbmlCompModel.getSubmodel(compId);
-		submodel.setAnnotation("grid=(" + row + "," + col + ")");
+	/**
+	 * changes the row/col of a specified submodel
+	 * 
+	 * @param submodelID
+	 * @param row
+	 * @param col
+	 */
+	public void setSubmodelRowCol(String submodelID, int row, int col) {
+		
+		String componentModelRefID = "";
+		
+		//search through the parameter location arrays to find the correct one
+		for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+			
+			Parameter parameter = sbml.getModel().getParameter(i);
+			
+			//if it's a location parameter
+			if (parameter.getId().contains("__locations")) {
+				
+				if (parameter.getAnnotationString().contains("[[" + submodelID + "]]")) {
+					
+					componentModelRefID = parameter.getId().replace("__locations","");
+					break;
+				}		
+			}				
+		}
+		
+		String locationParameterString = componentModelRefID + "__locations";
+		
+		//get rid of the component from the location-lookup array and the modelref array
+		String locationAnnotationString = sbml.getModel().getParameter(locationParameterString).getAnnotationString();
+		
+		String leftPart = locationAnnotationString.substring(0, locationAnnotationString.indexOf("[[" + submodelID + "]]", 0));
+		String rightPart = locationAnnotationString.substring(
+				locationAnnotationString.indexOf("[[" + submodelID + "]]", 0), locationAnnotationString.length());
+		
+		//chew off the grid location part of the term (until the previous term is reached)
+		while (leftPart.length() > 1 && 
+				!(leftPart.charAt(leftPart.length()-1) == ']') && !(leftPart.charAt(leftPart.length()-2) == ']')) {
+			
+			leftPart = leftPart.substring(0, leftPart.length()-1);
+		}
+		
+		//get rid of the comma
+		leftPart = leftPart.substring(0, leftPart.length()-1);
+		
+		leftPart = leftPart.replace("<annotation>","");
+		rightPart = rightPart.replace("</annotation>","");
+		rightPart = rightPart.replace("[[" + submodelID + "]]", "");
+		
+		Parameter locationParameter = sbml.getModel().getParameter(componentModelRefID + "__locations");		
+		locationParameter.setAnnotation(leftPart + rightPart);
+		
+		//now append the new location for the submodel
+		if (locationParameter.getAnnotationString().length() > 0)
+			locationParameter.appendAnnotation(", ");
+		
+		locationParameter.appendAnnotation("(" + row + "," + col + ")=[[" + submodelID + "]]");
 	}
 
 	/**
@@ -2405,29 +2637,98 @@ public class BioModel {
 		}
 	}
 
+	/**
+	 * removes a component from the model
+	 * 
+	 * @param name
+	 */
 	public void removeComponent(String name) {
-		String modelRef = "";
-		for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
-			if (sbmlCompModel.getSubmodel(i).getId().equals(name)) {
-				modelRef = sbmlCompModel.getSubmodel(i).getModelRef();
-				sbmlCompModel.removeSubmodel(i);
-			} 
+		
+		String componentModelRef = "";
+		
+		if (sbmlCompModel.getSubmodel(name) != null) {
+			
+			componentModelRef = sbmlCompModel.getSubmodel(name).getModelRef();
 		}
-		boolean keepExtDefn = false;
-		for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
-			if (sbmlCompModel.getSubmodel(i).getModelRef().equals(modelRef)) {
-				keepExtDefn = true;
-				break;
+		else {
+			
+			//look through the location parameter arrays to find the correct model ref
+			for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+				
+				Parameter parameter = sbml.getModel().getParameter(i);
+				
+				//if it's a location parameter
+				if (parameter.getId().contains("__locations")) {
+					
+					if (parameter.getAnnotationString().contains("[[" + name + "]]")) {
+						
+						componentModelRef = parameter.getId().replace("__locations","");
+						break;
+					}					
+				}				
 			}
 		}
-		if (!keepExtDefn) {
-			for (long i = 0; i < sbmlComp.getNumExternalModelDefinitions(); i++) {
-				if (sbmlComp.getExternalModelDefinition(i).getId().equals(modelRef)) {
-					sbmlComp.removeExternalModelDefinition(i);
-					break;
+		
+		String locationParameterString = componentModelRef + "__locations";
+		
+		//get rid of the component from the location-lookup array and the modelref array
+		String locationAnnotationString = sbml.getModel().getParameter(locationParameterString).getAnnotationString();
+		
+		String leftPart = locationAnnotationString.substring(0, locationAnnotationString.indexOf("[[" + name + "]]", 0));
+		String rightPart = locationAnnotationString.substring(
+				locationAnnotationString.indexOf("[[" + name + "]]", 0), locationAnnotationString.length());
+		
+		//chew off the grid location part of the term (until the previous term is reached)
+		while (leftPart.length() > 1 && 
+				!(leftPart.charAt(leftPart.length()-1) == ']') && !(leftPart.charAt(leftPart.length()-2) == ']')) {
+			
+			leftPart = leftPart.substring(0, leftPart.length()-1);
+		}
+		
+		//get rid of the left comma
+		leftPart = leftPart.substring(0, leftPart.length()-1);		
+		leftPart = leftPart.replace("<annotation>","");
+		
+		rightPart = rightPart.replace("</annotation>","");
+		rightPart = rightPart.replace("[[" + name + "]]", "");
+		
+		//get rid of the right comma and space if they're there
+		if (leftPart.length() == 0 && rightPart.length() > 1 && rightPart.charAt(0) == ',')
+			rightPart = rightPart.substring(2);
+		
+		sbml.getModel().getParameter(locationParameterString).setAnnotation(leftPart + rightPart);
+		
+		//if a gridded/arrayed submodel exists, it'll have this ID	
+		String gridSubmodelID = "GRID__" + componentModelRef;
+		
+		Submodel potentialGridSubmodel = sbmlCompModel.getSubmodel(gridSubmodelID);
+		
+		if (potentialGridSubmodel != null) {
+			
+			//if the annotation string already exists, then one of these existed before
+			//so update its count
+			if (potentialGridSubmodel.getAnnotationString().length() > 0) {
+				
+				int size = Integer.parseInt(potentialGridSubmodel.getAnnotationString().split("=")[1].replace("</annotation>",""));
+				
+				//if we're getting rid of the last submodel of its kind
+				//then delete its grid species (if they exist) and the GRID__ submodel
+				if (size == 1) {
+					
+					for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
+						
+						if (sbmlCompModel.getSubmodel(i).getId().equals(gridSubmodelID)) {
+							sbmlCompModel.removeSubmodel(i);
+						}		
+					}
+					
+					removeGridSpecies(name, componentModelRef);
 				}
+				else				
+					potentialGridSubmodel.setAnnotation("Count=" + --size);
 			}
-		}
+		}	
+		
 		for (long i = 0; i < sbml.getModel().getNumSpecies(); i++) {
 			CompSBasePlugin sbmlSBase = (CompSBasePlugin)sbml.getModel().getSpecies(i).getPlugin("comp");
 			ReplacedElement replacement = null;
@@ -2438,6 +2739,7 @@ public class BioModel {
 				}
 			}
 		}
+		
 		if (sbmlLayout.getLayout("iBioSim") != null) {
 			Layout layout = sbmlLayout.getLayout("iBioSim"); 
 			if (layout.getCompartmentGlyph(name)!=null) {
@@ -2447,6 +2749,7 @@ public class BioModel {
 				layout.removeTextGlyph(name);
 			}
 		}
+		
 		while (usedIDs.contains(name)) {
 			usedIDs.remove(name);
 		}
@@ -2586,6 +2889,129 @@ public class BioModel {
 	 */
 	private int creatingSpeciesID = 0;
 	private int creatingReactionID = 0;
+	
+	/**
+	 * removes the diffusible grid species from the model if the last component with those species was deleted
+	 * as they no longer exist in a component
+	 * 
+	 * @param componentID
+	 */
+	public void removeGridSpecies(String componentID, String componentModelRef) {
+		
+		//find the sbml file for the component
+		String externalModelID = 
+			this.getSBMLComp().getExternalModelDefinition(componentModelRef).getSource().substring(7);
+		
+		SBMLReader reader = new SBMLReader();
+		SBMLDocument document = null;
+		
+		//load the sbml file
+		document = reader.readSBML(this.getPath() + externalModelID);
+		Model componentModel = document.getModel();
+		
+		ArrayList<String> speciesToRemove = new ArrayList<String>();
+		
+		//check all species in the component for diffusibility
+		//if they're diffusible, they're candidates for being removed from the model
+		for (int speciesIndex = 0; speciesIndex < componentModel.getNumSpecies(); ++speciesIndex) {
+			
+			String speciesID = componentModel.getListOfSpecies().get(speciesIndex).getId();			
+			Reaction diffusionReaction = componentModel.getReaction("Diffusion_" + speciesID);
+			
+			if (diffusionReaction != null && diffusionReaction.isSetAnnotation() 
+					&& diffusionReaction.getAnnotationString().contains("Diffusion"))
+				speciesToRemove.add(speciesID);
+		}
+		
+		//check all other submodels to make sure the species really should be removed
+		//(ie, they don't exist anywhere else)		
+		for (int submodelIndex = 0; submodelIndex < sbmlCompModel.getNumSubmodels(); ++submodelIndex) {
+			
+			//only check the "GRID__" submodels
+			if (sbmlCompModel.getSubmodel(submodelIndex).getId().equals("__GRID_LOCATIONS__"))
+				continue;
+			
+			componentModelRef = sbmlCompModel.getSubmodel(submodelIndex).getModelRef();
+			
+			//find the sbml file for the component
+			externalModelID = 
+				this.getSBMLComp().getExternalModelDefinition(componentModelRef).getSource().substring(7);
+			
+			//load the sbml file
+			document = reader.readSBML(this.getPath() + externalModelID);
+			componentModel = document.getModel();
+			
+			//check all species in the component for diffusibility
+			//if they're diffusible and they're in the removal list, they shouldn't be removed as grid species
+			for (int speciesIndex = 0; speciesIndex < componentModel.getNumSpecies(); ++speciesIndex) {
+				
+				String speciesID = componentModel.getListOfSpecies().get(speciesIndex).getId();			
+				Reaction diffusionReaction = componentModel.getReaction("Diffusion_" + speciesID);
+				
+				//if this is true, then this species shouldn't be removed because it exists elsewhere
+				if (diffusionReaction != null && diffusionReaction.isSetAnnotation() 
+						&& diffusionReaction.getAnnotationString().contains("Diffusion") &&
+						speciesToRemove.contains(speciesID)) {
+					
+					speciesToRemove.remove(speciesID);
+				}
+			}			
+		}
+		
+		//remove the grid species from the model
+		for (String specToRemove : speciesToRemove)
+			sbml.getModel().removeSpecies(specToRemove);
+	}
+	
+	/**
+	 * searches a component for diffusible species and adds them to the grid level
+	 * 
+	 * @param componentID
+	 */
+	public void createGridSpecies(String componentID) {
+		
+		String componentModelRef = sbmlCompModel.getSubmodel(componentID).getModelRef();
+		
+		//find the sbml file for the component
+		String externalModelID = 
+			this.getSBMLComp().getExternalModelDefinition(componentModelRef).getSource().substring(7);
+		
+		SBMLReader reader = new SBMLReader();
+		SBMLDocument document = null;
+		
+		//load the sbml file
+		document = reader.readSBML(this.getPath() + externalModelID);
+		Model componentModel = document.getModel();
+		
+		ArrayList<Species> speciesToAdd = new ArrayList<Species>();
+		
+		//check all species in the component for diffusibility
+		//if they're diffusible, they're candidates for being added as a grid species
+		for (int speciesIndex = 0; speciesIndex < componentModel.getNumSpecies(); ++speciesIndex) {
+			
+			String speciesID = componentModel.getListOfSpecies().get(speciesIndex).getId();			
+			Reaction diffusionReaction = componentModel.getReaction("Diffusion_" + speciesID);
+			
+			if (diffusionReaction != null && diffusionReaction.isSetAnnotation() 
+					&& diffusionReaction.getAnnotationString().contains("Diffusion"))
+				speciesToAdd.add(componentModel.getListOfSpecies().get(speciesIndex));
+		}
+		
+		//add diffusible species as grid species if they don't already exist
+		for (Species specToAdd : speciesToAdd) {
+			
+			if (sbml.getModel().getSpecies(specToAdd.getId()) == null) {
+			
+				Species newSpecies = this.getSBMLDocument().getModel().createSpecies();
+				newSpecies.setId(specToAdd.getId());
+				newSpecies.setAnnotation("Type=Grid");
+				newSpecies.setInitialAmount(0.0);
+				newSpecies.setBoundaryCondition(specToAdd.getBoundaryCondition());
+				newSpecies.setConstant(specToAdd.getConstant());
+				newSpecies.setHasOnlySubstanceUnits(specToAdd.getHasOnlySubstanceUnits());
+			}
+		}
+	}
 
 	public void createSpecies(String id, float x, float y) {
 		if (id == null) {
@@ -2881,12 +3307,12 @@ public class BioModel {
 				if (sbml != null) {
 					SBMLDocument document = Gui.readSBML(path + separator + sbmlFile);
 					sbml.setModel(document.getModel());
-					//sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
-					//sbml.setPkgRequired("layout", false); 
-					//sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-					//sbml.setPkgRequired("comp", true); 
+					sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
+					sbml.setPkgRequired("layout", false); 
 					sbmlLayout = (LayoutModelPlugin)sbml.getModel().getPlugin("layout");
-					sbmlComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
+					sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
+					sbml.setPkgRequired("comp", true); 
+					sbmlComp = (CompSBMLDocumentPlugin)sbml.getPlugin("comp");
 					sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
 				} else {
 					sbml = Gui.readSBML(path + separator + sbmlFile);
@@ -2939,16 +3365,17 @@ public class BioModel {
 		loadGridSize();
 	}
 
-	private void loadSBMLFromBuffer(StringBuffer buffer) {
+	private void loadSBMLFromBuffer(StringBuffer buffer) {	
+		
 		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = reader.readSBMLFromString(buffer.toString());
 		sbml.setModel(document.getModel());
-		//sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
-		//sbml.setPkgRequired("layout", false); 
-		//sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-		//sbml.setPkgRequired("comp", true); 
+		sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
+		sbml.setPkgRequired("layout", false); 
 		sbmlLayout = (LayoutModelPlugin)sbml.getModel().getPlugin("layout");
-		sbmlComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
+		sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
+		sbml.setPkgRequired("comp", true);
+		sbmlComp = (CompSBMLDocumentPlugin)sbml.getPlugin("comp");
 		sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
 		if (sbml != null) {
 			for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {
@@ -2960,6 +3387,7 @@ public class BioModel {
 				}
 			}
 		}
+		
 		loadGridSize();
 	}
 	
@@ -3767,6 +4195,7 @@ public class BioModel {
 
 	public void undo() {
 		StringBuffer p = (StringBuffer) undoManager.undo();
+		
 		if (p != null)
 			this.loadSBMLFromBuffer(p);
 	}
@@ -3796,30 +4225,11 @@ public class BioModel {
 	}
 	
 	/**
-	 * reloads the grid from file
+	 * looks in the file to see if it is a gridded file
+	 * 
+	 * @param filename
+	 * @return
 	 */
-	public void reloadGrid() {
-		// TODO: This should be done with SBML file
-		/*
-		StringBuffer data = new StringBuffer();
-
-		try {
-			BufferedReader in = new BufferedReader(new FileReader(filename));
-			String str;
-			while ((str = in.readLine()) != null) {
-				data.append(str + "\n");
-			}
-			in.close();
-		}
-		catch (IOException e) {
-			e.printStackTrace();
-			throw new IllegalStateException("Error opening file");
-		}
-		
-		parseGridSize(data);
-		*/
-	}
-	
 	public boolean getGridEnabledFromFile(String filename) {
 		
 		StringBuffer data = new StringBuffer();
@@ -3839,19 +4249,11 @@ public class BioModel {
 			throw new IllegalStateException("Error opening file");
 		}		
 		
-		// TODO: THIS SHOULD BE GOTTEN FROM SBML FILE
-		/*
-		Pattern network = Pattern.compile(GRID);
-		Matcher matcher = network.matcher(data.toString());
-		
-		if (!matcher.find()) return false;
-		
-		String info = matcher.group(1);
-		
-		if (info != null) return true;
-		*/
-		
-		return false;
+		//grid=(0,0) means there's no grid
+		if (data.toString().contains("grid=(0,0)") == false)
+			return true;
+		else
+			return false;
 	}
 	
 	//ENCLOSING COMPARTMENT

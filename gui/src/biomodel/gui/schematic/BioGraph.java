@@ -155,6 +155,9 @@ public class BioGraph extends mxGraph {
 		// add species
 		for(String sp : gcm.getSpecies()){
 			
+			if (gcm.getSBMLDocument().getModel().getSpecies(sp).getAnnotationString().contains("Type=Grid"))
+				continue;
+			
 			if(createGraphSpeciesFromModel(sp))
 				needsPositioning = true;
 		}
@@ -207,8 +210,16 @@ public class BioGraph extends mxGraph {
 		}
 
 		// add all components
-		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
-			String comp = gcm.getSBMLCompModel().getSubmodel(i).getId();
+		for (long i = 0; i < layout.getNumCompartmentGlyphs(); i++) {
+			
+			String comp = layout.getCompartmentGlyph(i).getId();
+			
+			//String comp = gcm.getSBMLCompModel().getSubmodel(i).getId();
+			
+			//these are not meant to be displayed
+			if (comp.contains("__GRID_") || comp.contains("GRID__"))
+				continue;
+			
 			if(createGraphComponentFromModel(comp))
 				needsPositioning = true;
 		}
@@ -1344,8 +1355,6 @@ public class BioGraph extends mxGraph {
 	 * @return
 	 */
 	private boolean createGraphComponentFromModel(String id){
-		//{invb={ID=invb, gcm=inv.gcm}
-		//{invb={ID=invb, gcm=inv.gcm}, i1={b=S3, ID=i1, a=S1, gcm=inv.gcm, type_b=Output, type_a=Input}}
 
 		boolean needsPositioning = false;
 
@@ -1377,7 +1386,8 @@ public class BioGraph extends mxGraph {
 		//set the correct compartment status
 		BioModel compGCMFile = new BioModel(gcm.getPath());
 		boolean compart = false;
-		String modelFileName = gcm.getModelFileName(id).replace(".xml", ".gcm");
+		//String modelFileName = gcm.getModelFileName(id).replace(".xml", ".gcm");
+		String modelFileName = gcm.getModelFileName(id);
 		File compFile = new File(gcm.getPath() + File.separator + modelFileName);
 		
 		if (compGCMFile != null && compFile.exists()) {

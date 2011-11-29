@@ -16,7 +16,8 @@ public class GridAction extends AbstractAction {
 	
 	private static final long serialVersionUID = 1L;
 	
-	Schematic schematic; Grid grid;
+	Schematic schematic; 
+	Grid grid;
 
 	public GridAction(String name, Schematic schematic) {
 		
@@ -32,6 +33,7 @@ public class GridAction extends AbstractAction {
 		if (event.getActionCommand().equals("Clear Selected Location(s)")) {
 			
 			grid.eraseSelectedNodes(schematic.getGCM());
+			schematic.getGCM2SBML().getSpeciesPanel().refreshSpeciesPanel(schematic.getGCM().getSBMLDocument());
 			schematic.getGCM().makeUndoPoint();
 		}
 		else if (event.getActionCommand().equals("Add Component(s) to (Non-Occupied) Selected Location(s)")) {
@@ -47,6 +49,7 @@ public class GridAction extends AbstractAction {
 				gcm2sbml.refresh();
 				schematic.getGraph().buildGraph();
 				schematic.repaint();
+				schematic.getGCM2SBML().getSpeciesPanel().refreshSpeciesPanel(schematic.getGCM().getSBMLDocument());
 				schematic.getGCM().makeUndoPoint();
 				
 				return;

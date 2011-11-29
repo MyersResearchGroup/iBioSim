@@ -322,7 +322,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 
 	public void save(String command) {
 		//log.addText("save");
-		dirty.setValue(false);
+		dirty.setValue(false);	
+		
+		speciesPanel.refreshSpeciesPanel(gcm.getSBMLDocument());
 
 		/*
 		if (!sbmlFiles.getSelectedItem().equals(none)) {
@@ -1239,6 +1241,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	public void actionPerformed(ActionEvent e) {
+		
 		Object o = e.getSource();
 		if (o instanceof Runnable) {
 			((Runnable) o).run();
@@ -1265,6 +1268,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	private void buildGui() {
+		
 		JPanel mainPanelNorth = new JPanel();
 		JPanel mainPanelCenter = new JPanel(new BorderLayout());
 		JPanel mainPanelCenterUp = new JPanel();
@@ -1375,11 +1379,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		
 		if (textBased) {
 			tab.addTab("Compartments", compPanel);
-			if (!gcm.getGrid().isEnabled()) {
+			
+			if (gcm.getGrid().isEnabled() == false) {
 				tab.addTab("Species", speciesPanel);
 				//tab.addTab("Promoters", promoterPanel);
 				tab.addTab("Reactions", reactionPanel);
 			}
+			
 			tab.addTab("Parameters", parametersPanel);
 			tab.addTab("Components", componentsPanel);
 		} 
@@ -1391,6 +1397,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			tab.addTab("Compartments", compPanel);
 			//}
 			tab.addTab("Parameters", parametersPanel);
+		}
+		
+		if (gcm.getGrid().isEnabled()) {
+			
+			tab.addTab("Grid Species", speciesPanel);
 		}
 		
 		Functions functionPanel = new Functions(gcm.getSBMLDocument(),usedIDs,dirty);
@@ -1779,6 +1790,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		}
 
 		public void run() {
+			
 			if (name == null || name.equals("")) {
 				Utility.createErrorMessage("Error", "Nothing selected to edit");
 				return;
@@ -1905,6 +1917,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 
 	public SpeciesPanel launchSpeciesPanel(String id, boolean inTab){
+		
 		BioModel refGCM = null;
 		if (paramsOnly) {
 			refGCM = new BioModel(path);
@@ -2031,7 +2044,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		// get a list of components
 		ArrayList<String> components = new ArrayList<String>();
 		for (String s : new File(path).list()) {
-			if (s.endsWith(".gcm") && !s.equals(filename) /*&& checkNoComponentLoop(filename, s)*/) {
+			if (s.endsWith(".xml") && !s.equals(filename) /*&& checkNoComponentLoop(filename, s)*/) {
 				components.add(s);
 			}
 		}
@@ -2164,6 +2177,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		return textBased;
 	}
 
+	public MySpecies getSpeciesPanel() {
+		
+		return speciesPanel;
+	}
+	
 	public void setTextBased(boolean textBased) {
 		this.textBased = textBased;
 	}

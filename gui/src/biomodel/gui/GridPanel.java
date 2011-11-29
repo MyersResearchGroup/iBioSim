@@ -1,6 +1,5 @@
 package biomodel.gui;
 
-
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -16,6 +15,7 @@ import javax.swing.JTextField;
 
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
+
 
 import main.Gui;
 
@@ -139,7 +139,8 @@ public class GridPanel extends JPanel implements ActionListener{
 				BioModel compGCM = new BioModel(gcm.getPath());
 				
 				//don't allow dropping a grid component
-				if (component != "none" && compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + component)) {
+				if (component != "none" && compGCM.getGridEnabledFromFile(gcm.getPath() + 
+						File.separator + component.replace(".gcm",".xml"))) {
 					
 					JOptionPane.showMessageDialog(Gui.frame,
 							"Dropping grid components is disallowed.\n" +
@@ -173,7 +174,7 @@ public class GridPanel extends JPanel implements ActionListener{
 								"Invalid size",
 								JOptionPane.ERROR_MESSAGE);
 						
-						return false;		
+						return false;
 					}
 					
 					//filename of the component
@@ -182,6 +183,7 @@ public class GridPanel extends JPanel implements ActionListener{
 					//create the grid with these components
 					//these will be added to the GCM as well
 					Grid grid = gcm.getGrid();
+					grid.setEnabled(true);
 					grid.createGrid(rowCount, colCount, gcm, compGCMName);
 					
 					return true;
@@ -256,8 +258,8 @@ public class GridPanel extends JPanel implements ActionListener{
 				BioModel compGCM = new BioModel(gcm.getPath());
 				
 				//don't allow dropping a grid component
-				if (!component.equals("none") &&
-					compGCM.getGridEnabledFromFile(gcm.getPath() + File.separator + component)) {
+				if (!component.equals("none") && compGCM.getGridEnabledFromFile(gcm.getPath() + 
+							File.separator + component.replace(".gcm",".xml"))) {
 					
 					JOptionPane.showMessageDialog(Gui.frame,
 						"Dropping grid components is disallowed.\n" +
