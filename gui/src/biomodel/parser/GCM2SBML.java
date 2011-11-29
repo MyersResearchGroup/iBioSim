@@ -2,6 +2,7 @@ package biomodel.parser;
 
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -1022,6 +1023,7 @@ public class GCM2SBML {
 
 			p.print(buffer);
 			p.close();
+			new File(filename).delete();
 		}
 		catch (FileNotFoundException e) {
 			e.printStackTrace();
