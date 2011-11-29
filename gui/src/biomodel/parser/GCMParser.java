@@ -40,7 +40,7 @@ public class GCMParser {
 	private String separator;
 
 	public GCMParser(String filename) {
-		this(filename, false);
+		//this(filename, false);
 	}
 
 	public GCMParser(String filename, boolean debug) {
