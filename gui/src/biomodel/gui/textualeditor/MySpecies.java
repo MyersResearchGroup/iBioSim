@@ -1020,8 +1020,9 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			if (species.getModel().getSize() > 0) {
 								
 				//if we're dealing with grid species, use a different species editor
-				if (document.getModel().getSpecies((String)species.getModel().getElementAt(0)).getAnnotation() != null &&						
-						document.getModel().getSpecies((String)species.getModel().getElementAt(0))
+				if (document.getModel().getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0])
+						.getAnnotation() != null &&						
+						document.getModel().getSpecies(((String)species.getModel().getElementAt(0)).split(" ")[0])
 						.getAnnotationString().contains("Type=Grid")) {
 					
 					openGridSpeciesEditor();
