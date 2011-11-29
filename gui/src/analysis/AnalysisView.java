@@ -3035,6 +3035,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		int exit;
 		if (!direct.equals(".")) {
+			/*
 			if (gcmEditor != null) {
 				try {
 					FileInputStream source = new FileInputStream(new File(root + separator + modelFile));
@@ -3051,6 +3052,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				catch (Exception e) {
 				}
 			}
+			*/
 			String lpnProperty = "";
 			if (transientProperties != null) {
 				if (!((String) transientProperties.getSelectedItem()).equals("none")) {
@@ -3063,6 +3065,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					abstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label);
 		}
 		else {
+			/*
 			if (gcmEditor != null) {
 				try {
 					FileInputStream source = new FileInputStream(new File(root + separator + modelFile));
@@ -3078,6 +3081,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				catch (Exception e) {
 				}
 			}
+			*/
 			String lpnProperty = "";
 			if (transientProperties != null) {
 				if (!((String) transientProperties.getSelectedItem()).equals("none")) {
