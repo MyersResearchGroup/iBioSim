@@ -1104,8 +1104,10 @@ public class Schematic extends JPanel implements ActionListener {
 						else if(type == GlobalConstants.COMPONENT){
 									
 							//if there's a grid, remove the component from the grid as well
-							if (grid.isEnabled())
+							if (grid.isEnabled()) {
 								grid.eraseNode(cell.getId(), gcm);
+								gcm2sbml.getSpeciesPanel().refreshSpeciesPanel(gcm.getSBMLDocument());
+							}
 							else
 								gcm.removeComponent(cell.getId());
 						}
@@ -1730,7 +1732,8 @@ public class Schematic extends JPanel implements ActionListener {
 	 */
 	public void reloadGrid() {
 		
-		gcm.reloadGrid();
+		//this reload grid call isn't necessary anymore
+		//gcm.reloadGrid();
 		grid = gcm.getGrid();
 	}
 	
@@ -1817,7 +1820,7 @@ public class Schematic extends JPanel implements ActionListener {
 	}
 	
 	/**
-	 * return's the gcm2sbml editor
+	 * return's the gcm2sbml/model editor
 	 * @return the gcm2sbml editor
 	 */
 	public ModelEditor getGCM2SBML() {

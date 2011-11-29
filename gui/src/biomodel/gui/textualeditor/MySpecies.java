@@ -34,7 +34,6 @@ import org.sbml.libsbml.SpeciesReference;
 import org.sbml.libsbml.SpeciesType;
 import org.sbml.libsbml.UnitDefinition;
 
-
 /**
  * This is a class for creating SBML species
  * 
@@ -745,6 +744,121 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		}
 	}
 
+	/**
+	 * creates a frame for editing grid species
+	 */
+	private void openGridSpeciesEditor() {
+		
+		JPanel speciesPanel = new JPanel(new GridLayout(8, 2));
+		
+		String[] initLabels = {"Initial Amount", "Initial Concentration", "Initial Assignment"};
+		initLabel = new JComboBox(initLabels);
+		
+		ID = new JTextField();
+		ID.setEditable(false);
+		
+		Name = new JTextField();
+		
+		init = new JTextField("0.0");
+		init.setEditable(false);
+		
+		JTextField kecdiff = new JTextField("0.0");
+		JTextField kecd = new JTextField("0.0");		
+		
+		String[] optionsTF = { "true", "false" };
+		
+		specBoundary = new JComboBox(optionsTF);
+		specBoundary.setSelectedItem("false");
+		
+		specConstant = new JComboBox(optionsTF);
+		specConstant.setSelectedItem("false");
+		
+		specHasOnly = new JComboBox(optionsTF);
+		specHasOnly.setSelectedItem("true");
+		
+		speciesPanel.add(new JLabel("ID:"));
+		speciesPanel.add(ID);
+		speciesPanel.add(new JLabel("Name:"));
+		speciesPanel.add(Name);
+		speciesPanel.add(new JLabel("Boundary Condition:"));
+		speciesPanel.add(specBoundary);
+		speciesPanel.add(new JLabel("Constant:"));
+		speciesPanel.add(specConstant);
+		speciesPanel.add(new JLabel("Has Only Substance Units:"));
+		speciesPanel.add(specHasOnly);
+		speciesPanel.add(initLabel);
+		speciesPanel.add(init);
+		speciesPanel.add(new JLabel("Extracellular diffusion rate (kecdiff)"));
+		speciesPanel.add(kecdiff);
+		speciesPanel.add(new JLabel("Extracellular degradation rate (kecd)"));
+		speciesPanel.add(kecd);
+		
+		//set the values of the species using the sbml document
+		try {
+			
+			Species selectedSpecies = document.getModel().getSpecies(((String)species.getSelectedValue()).split(" ")[0]);
+			
+			ID.setText(selectedSpecies.getId());
+			ID.setEditable(false);
+			Name.setText(selectedSpecies.getName());
+			
+			if (selectedSpecies.getBoundaryCondition())
+				specBoundary.setSelectedItem("true");
+			else
+				specBoundary.setSelectedItem("false");
+			
+			if (selectedSpecies.getConstant())
+				specConstant.setSelectedItem("true");
+			else
+				specConstant.setSelectedItem("false");
+			
+			if (selectedSpecies.getHasOnlySubstanceUnits())
+				specHasOnly.setSelectedItem("true");
+			else
+				specHasOnly.setSelectedItem("false");
+			
+			if (document.getModel().getInitialAssignment(selectedSpecies.getId()) != null) {
+				
+				init.setText(SBMLutilities.myFormulaToString(
+						document.getModel().getInitialAssignment(selectedSpecies.getId()).getMath()));
+				initLabel.setSelectedItem("Initial Assignment");
+			}
+			else if (selectedSpecies.isSetInitialAmount()) {
+				
+				init.setText("" + selectedSpecies.getInitialAmount());
+				initLabel.setSelectedItem("Initial Amount");
+			}
+			else {
+				
+				init.setText("" + selectedSpecies.getInitialConcentration());
+				initLabel.setSelectedItem("Initial Concentration");
+			}
+		}
+		catch (Exception e) {			
+			e.printStackTrace();
+		}
+
+		//show the frame
+		Object[] options = { "OK", "Cancel" };
+		int value = JOptionPane.showOptionDialog(Gui.frame, speciesPanel, "Species Editor", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+				null, options, options[0]);
+		
+		if (value == JOptionPane.YES_OPTION) {
+			
+			Species selectedSpecies = document.getModel().getSpecies(((String)species.getSelectedValue()).split(" ")[0]);
+			
+			//set the species settings in the sbml model
+			selectedSpecies.setBoundaryCondition(Boolean.valueOf((String) specBoundary.getModel().getSelectedItem()));
+			selectedSpecies.setHasOnlySubstanceUnits(Boolean.valueOf((String) specHasOnly.getModel().getSelectedItem()));
+			selectedSpecies.setConstant(Boolean.valueOf((String) specConstant.getModel().getSelectedItem()));
+			
+			//not quite sure what to do with these just yet
+			//they need to be stored somewhere
+			Double.parseDouble(kecdiff.getSelectedText());
+			Double.parseDouble(kecd.getSelectedText());
+		}
+	}
+	
 	public static JComboBox createCompartmentChoices(SBMLDocument document) {
 		ListOf listOfCompartments = document.getModel().getListOfCompartments();
 		String[] add = new String[(int) document.getModel().getNumCompartments()];
@@ -901,9 +1015,29 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		}
 		// if the edit species button is clicked
 		else if (e.getSource() == editSpec) {
-			speciesEditor("OK");
-			initialsPanel.refreshInitialAssignmentPanel(document);
-			rulesPanel.refreshRulesPanel(document);
+			
+			
+			if (species.getModel().getSize() > 0) {
+								
+				//if we're dealing with grid species, use a different species editor
+				if (document.getModel().getSpecies((String)species.getModel().getElementAt(0)).getAnnotation() != null &&						
+						document.getModel().getSpecies((String)species.getModel().getElementAt(0))
+						.getAnnotationString().contains("Type=Grid")) {
+					
+					openGridSpeciesEditor();
+				}
+				else {
+					
+					speciesEditor("OK");
+					initialsPanel.refreshInitialAssignmentPanel(document);
+					rulesPanel.refreshRulesPanel(document);
+				}
+			}
+			else {
+				
+				JOptionPane.showMessageDialog(Gui.frame, "No species selected.", 
+						"Must Select A Species", JOptionPane.ERROR_MESSAGE);
+			}
 		}
 		// if the remove species button is clicked
 		else if (e.getSource() == removeSpec) {

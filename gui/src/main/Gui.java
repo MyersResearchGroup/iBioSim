@@ -4311,11 +4311,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							if (i != -1) {
 								tab.remove(i);
 							}
+							
 							ModelEditor gcm2sbml = new ModelEditor(root + separator, f.getName(), this, log, false, null, null, null, false);
 							addTab(f.getName().replace(".gcm",".xml"), gcm2sbml, "GCM Editor");
 							addToTree(f.getName().replace(".gcm",".xml"));
-							if (grid == true)
+							if (grid == true) {
 								gcm2sbml.launchGridPanel();
+								gcm2sbml.rebuildGui();
+							}
 						}
 					}
 				}
@@ -8641,7 +8644,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							sim.setComponentAt(j + 1, ((SBML_Editor) (sim.getComponentAt(j))).getElementsPanel());
 							sim.getComponentAt(j + 1).setName("");
 						}
-						else if (sim.getComponentAt(j).getName().equals("GCM Editor")) {
+						else if (sim.getComponentAt(j).getName().equals("GCM Editor")) {							
+							
 							new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
 							try {
 								boolean dirty = ((ModelEditor) (sim.getComponentAt(j))).isDirty();
