@@ -624,6 +624,7 @@ public class GeneticNetwork {
 				r.setCompartment(diffComp);
 				r.setReversible(true);
 				r.setFast(false);
+				r.setAnnotation("Type=Grid");
 				kl = r.createKineticLaw();
 				
 				if (kecdiff > 0) {

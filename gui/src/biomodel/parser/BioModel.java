@@ -3055,10 +3055,8 @@ public class BioModel {
 				//this is the mathematical expression for the decay
 				String isDecayExpression = decayString + "* get2DArrayElement(" + speciesID + "_r)";
 				
-				SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);
-				
+				SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);				
 				reactant.setAnnotation("rowOffset=0, colOffset=0");
-
 				r.addReactant(reactant);
 				
 				//parameter: id="kd" value=isDecay (usually 0.0075) units="u_1_second_n1" (inverse seconds)
@@ -3070,16 +3068,65 @@ public class BioModel {
 			}
 			
 			
-			
-			
-			
-			
 			//create array of grid diffusion reactions
+			//NOTE: does not do diffusion with component species
+			//loop though each of the four directions and add a diffusion reaction
+			//implicitly, these will be arrays of reactions
 			
+			String diffusionUnitString = "u_1_second_n1";
+			String diffusionString = GlobalConstants.KECDIFF_STRING;
+			String diffComp = sbml.getModel().getCompartment(0).getId();
+			double kecdiff = sbml.getModel().getParameter("kecdiff").getValue();
 			
-			
-			
-			
+			for (int i = 0; i < 4; ++i) {
+				
+				String direction = "";
+				String neighborRowIndexOffset = "0";
+				String neighborColIndexOffset = "0";
+				
+				switch (i) {
+				
+					case 0: {direction = "Above"; neighborRowIndexOffset = "-1"; neighborColIndexOffset = "0"; break;}						
+					case 1: {direction = "Below"; neighborRowIndexOffset = "1"; neighborColIndexOffset = "0"; break;}						
+					case 2: {direction = "Left"; neighborRowIndexOffset = "0"; neighborColIndexOffset = "-1"; break;}						
+					case 3: {direction = "Right"; neighborRowIndexOffset = "0"; neighborColIndexOffset = "1"; break;}			
+				}
+				
+				
+				//reversible between neighboring "outer" species
+				//this is the diffusion across the "medium" if you will				
+				r = Utility.Reaction("Diffusion_" + speciesID + "_" + direction);
+				r.setCompartment(diffComp);
+				r.setReversible(true);
+				r.setFast(false);
+				r.setAnnotation("Type=Grid");
+				kl = r.createKineticLaw();
+				
+				if (kecdiff > 0) {
+				
+					//this is the rate times the current species minus the rate times the neighbor species
+					String diffusionExpression = 
+						diffusionString + " * " + "get2DArrayElement(" + speciesID + "_r" + ")" + "-"
+						+ diffusionString + " * " + "get2DArrayElement(" + speciesID + "_p" + ")";
+
+					//reactant is current outer species					
+					SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);		
+					reactant.setAnnotation("rowOffset=0, colOffset=0");
+					r.addReactant(reactant);
+					
+					//product is neighboring species
+					SpeciesReference product = Utility.SpeciesReference(speciesID, 1);					
+					product.setAnnotation("rowOffset=" + neighborRowIndexOffset + ", " +
+							"colOffset=" + neighborColIndexOffset);
+					r.addProduct(product);
+					
+					//parameters: id="kecdiff"" value=kecdiff units="u_1_second_n1" (inverse seconds)
+					kl.addParameter(Utility.Parameter(diffusionString, kecdiff, diffusionUnitString));
+					
+					kl.setFormula(diffusionExpression);
+					Utility.addReaction(sbml, r);
+				}				
+			}
 		}
 	}
 	
@@ -3092,10 +3139,26 @@ public class BioModel {
 		for (String oldSpeciesID : oldGridSpecies) {
 			
 			//remove degredation reaction
-			String reactionID = "Degradation_" + oldSpeciesID;
-			
+			String reactionID = "Degradation_" + oldSpeciesID;			
 			sbml.getModel().removeReaction(reactionID);
-		}		
+			
+			
+			//remove diffusion reactions
+			for (int i = 0; i < 4; ++i) {
+				
+				String direction = "";
+				
+				switch (i) {
+				
+					case 0: {direction = "Above"; break;}						
+					case 1: {direction = "Below"; break;}						
+					case 2: {direction = "Left"; break;}						
+					case 3: {direction = "Right"; break;}			
+				}
+				
+				sbml.getModel().removeReaction("Diffusion_" + oldSpeciesID + "_" + direction);				
+			}
+		}
 	}
 
 	public void createSpecies(String id, float x, float y) {

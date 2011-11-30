@@ -9,6 +9,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.sbml.libsbml.Parameter;
+
 import biomodel.gui.schematic.BioGraph;
 import biomodel.parser.BioModel;
 
@@ -739,45 +741,38 @@ public class Grid {
 	 */
 	private void updateLocToComponentMap() {
 		
-//		//iterate through the components to get the number of rows and cols			
-//		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
-//			
-//			Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
-//			
-//			//skip submodels that aren't meant to be on the grid
-//			if (submodel.getAnnotationString().contains("grid") == false)
-//				continue;
-//						
-//			int row = gcm.getSubmodelRow(submodel);
-//			int col = gcm.getSubmodelCol(submodel);
-//			
-//			
-//		}
-		
 		locToComponentMap.clear();	
 		
-		//go through the external model definitions to loop through all of the components
-		for (long i = 0; i < gcm.getSBMLComp().getNumExternalModelDefinitions(); i++) {
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); ++i) {
 			
-			String externalModelAnnotation = gcm.getSBMLComp().getExternalModelDefinition(i).getAnnotationString();
+			Parameter parameter = gcm.getSBMLDocument().getModel().getParameter(i);
 			
-			String[] splitAnnotation = externalModelAnnotation.replace("<annotation>","")
-			.replace("</annotation>","").replace("]]","").replace("[[","").split(",");
+			//if it's a location parameter
+			if (parameter.getId().contains("__locations")) {
+				
+				String[] splitAnnotation = parameter.getAnnotationString().replace("<annotation>","")
+				.replace("</annotation>","").replace("]]","").replace("[[","").split("=");
 			
-			for (int j = 0; j < splitAnnotation.length; ++j) {
-				
-				splitAnnotation[j] = splitAnnotation[j].trim();
-				String submodelID = splitAnnotation[j];
-				
-				if (submodelID.length() == 0)
-					continue;
-				
-				String gcmName = gcm.getSBMLComp().getExternalModelDefinition(i).getSource();
-				int row = gcm.getSubmodelRow(submodelID);
-				int col = gcm.getSubmodelCol(submodelID);
-				
-				locToComponentMap.put(new Point(row, col), submodelID);
-			}			
+				for (int j = 1; j < splitAnnotation.length; ++j) {
+					
+					splitAnnotation[j] = splitAnnotation[j].trim();
+					int commaIndex = splitAnnotation[j].indexOf(',');
+					
+					if (commaIndex > 0)
+						splitAnnotation[j] = splitAnnotation[j].substring(0, splitAnnotation[j].indexOf(','));
+					
+					String submodelID = splitAnnotation[j];
+					
+					if (submodelID.length() == 0)
+						continue;
+					
+					String gcmName = parameter.getId().replace("__locations","");
+					int row = gcm.getSubmodelRow(submodelID);
+					int col = gcm.getSubmodelCol(submodelID);
+					
+					locToComponentMap.put(new Point(row, col), submodelID);
+				}
+			}
 		}
 	}
 	
@@ -906,71 +901,44 @@ public class Grid {
 	 */
 	private void putComponentsOntoGrid() {
 		
-		//go through the external model definitions to loop through all of the components
-		for (long i = 0; i < gcm.getSBMLComp().getNumExternalModelDefinitions(); i++) {
+		for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); ++i) {
 			
-			String externalModelAnnotation = gcm.getSBMLComp().getExternalModelDefinition(i).getAnnotationString();
+			Parameter parameter = gcm.getSBMLDocument().getModel().getParameter(i);
 			
-			String[] splitAnnotation = externalModelAnnotation.replace("<annotation>","")
-			.replace("</annotation>","").replace("]]","").replace("[[","").split(",");
+			//if it's a location parameter
+			if (parameter.getId().contains("__locations")) {
 			
-			for (int j = 0; j < splitAnnotation.length; ++j) {
+				String[] splitAnnotation = parameter.getAnnotationString().replace("<annotation>","")
+				.replace("</annotation>","").replace("]]","").replace("[[","").split("=");
 				
-				splitAnnotation[j] = splitAnnotation[j].trim();
-				String submodelID = splitAnnotation[j];
-				
-				if (submodelID.length() == 0)
-					continue;
-				
-				String gcmName = gcm.getSBMLComp().getExternalModelDefinition(i).getSource();
-				int row = gcm.getSubmodelRow(submodelID);
-				int col = gcm.getSubmodelCol(submodelID);
-				
-				//if adding blank components, don't set the component
-				if (gcmName.equals("none"))
-					grid.get(row).get(col).setOccupied(false);
-				else {
-
-					grid.get(row).get(col).setComponent(submodelID);
-					grid.get(row).get(col).setOccupied(true);
+				for (int j = 1; j < splitAnnotation.length; ++j) {
+					
+					splitAnnotation[j] = splitAnnotation[j].trim();
+					int commaIndex = splitAnnotation[j].indexOf(',');
+					
+					if (commaIndex > 0)
+						splitAnnotation[j] = splitAnnotation[j].substring(0, splitAnnotation[j].indexOf(','));
+					
+					String submodelID = splitAnnotation[j];
+					
+					if (submodelID.length() == 0)
+						continue;
+					
+					String gcmName = parameter.getId().replace("__locations","");
+					int row = gcm.getSubmodelRow(submodelID);
+					int col = gcm.getSubmodelCol(submodelID);
+					
+					//if adding blank components, don't set the component
+					if (gcmName.equals("none"))
+						grid.get(row).get(col).setOccupied(false);
+					else {
+	
+						grid.get(row).get(col).setComponent(submodelID);
+						grid.get(row).get(col).setOccupied(true);
+					}
 				}
-			}			
-		}
-		
-//		//get the count for each submodel and loop through that
-//		//get the row and col information from the __GRID_LOCATIONS__ submodel		
-//		
-//		//iterate through the components to get the x/y coords of its top left vertex
-//		//using these coords, map it to the grid	
-//		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
-//			
-//			Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
-//			
-//			if (submodel.getId().equals("__GRID_LOCATIONS__"))
-//				continue;
-//				
-//			int size = Integer.parseInt(submodel.getAnnotationString().split("=")[1].replace("</annotation>",""));
-//			
-//			//loop through the count of the submodel
-//			for (int j = 0; j < size; ++j) {
-//			
-//				//find the row and col; use these to put the component into the correct grid location			
-//				String gcmName = gcm.getSBMLComp().getExternalModelDefinition(submodel.getModelRef()).getSource();
-//				int row = gcm.getSubmodelRow(submodel);
-//				int col = gcm.getSubmodelCol(submodel);
-//				
-//				//if adding blank components, don't set the component
-//				if (gcmName.equals("none"))
-//					grid.get(row).get(col).setOccupied(false);
-//				else {
-//					
-//					//CHANGE THIS SETCOMPONENT THING
-//					grid.get(row).get(col).setComponent(submodel.getId());
-//					grid.get(row).get(col).setOccupied(true);
-//				}
-//			}
-//		}
-		
+			}
+		}		
 	}
 
 	/**

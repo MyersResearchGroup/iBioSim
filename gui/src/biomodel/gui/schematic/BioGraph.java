@@ -856,10 +856,10 @@ public class BioGraph extends mxGraph {
 		// loop through every set of edge endpoints and then move them if needed.
 		for(Vector<mxCell> vec:edgeHash.values()){
 			
-			if(vec.size() > 1){
+			if(vec.size() > 1 && vec.get(0) != null){
 				
 				mxCell source = (mxCell)vec.get(0).getSource();
-				mxCell target = (mxCell)vec.get(0).getTarget();
+				mxCell target = (mxCell)vec.get(0).getTarget(); 
 				
 				// find the end and center points
 				mxGeometry t;
