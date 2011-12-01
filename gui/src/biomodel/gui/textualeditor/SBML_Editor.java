@@ -736,9 +736,11 @@ public class SBML_Editor extends JPanel {
 					JOptionPane.showMessageDialog(Gui.frame, "Unable to save sbml file.", "Error Saving File", JOptionPane.ERROR_MESSAGE);
 				}
 				dirty.setValue(false);
+				/*
 				if (paramsOnly) {
 					reb2sac.updateSpeciesList();
 				}
+				*/
 			}
 			catch (Exception e1) {
 				JOptionPane.showMessageDialog(Gui.frame, "Unable to save sbml file.", "Error Saving File", JOptionPane.ERROR_MESSAGE);
@@ -751,7 +753,7 @@ public class SBML_Editor extends JPanel {
 		SBML_Editor sbml = new SBML_Editor(newFile, reb2sac, log, biosim, simDir, paramFile);
 		((JTabbedPane) (biosim.getTab().getComponentAt(tab))).setComponentAt(tab2, sbml);
 		reb2sac.setSbml(sbml);
-		reb2sac.updateSpeciesList();
+		//reb2sac.updateSpeciesList();
 		for (int i = 0; i < ((JTabbedPane) biosim.getTab().getComponentAt(tab)).getTabCount(); i++) {
 			Component c = ((JTabbedPane) (biosim.getTab().getComponentAt(tab))).getComponentAt(i);
 			if (c instanceof SBML_Editor) {

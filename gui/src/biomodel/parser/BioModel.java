@@ -361,8 +361,7 @@ public class BioModel {
 							add.setListData(adding);
 							add.setSelectedIndex(0);
 							Object[] sort = main.util.Utility.add(conLevel.get(number),
-									consLevel.get(number), add, false, null, null, null, null,
-									null, null, naryFrame);
+									consLevel.get(number), add, null, null, null, null, null, naryFrame);
 							int in;
 							for (int out = 1; out < sort.length; out++) {
 								int temp = Integer.parseInt((String) sort[out]);
@@ -3455,12 +3454,12 @@ public class BioModel {
 				if (sbml != null) {
 					SBMLDocument document = Gui.readSBML(path + separator + sbmlFile);
 					sbml.setModel(document.getModel());
-					sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
-					sbml.setPkgRequired("layout", false); 
+					//sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
+					//sbml.setPkgRequired("layout", false); 
+					//sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
+					//sbml.setPkgRequired("comp", true); 
 					sbmlLayout = (LayoutModelPlugin)sbml.getModel().getPlugin("layout");
-					sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-					sbml.setPkgRequired("comp", true); 
-					sbmlComp = (CompSBMLDocumentPlugin)sbml.getPlugin("comp");
+					sbmlComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
 					sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
 				} else {
 					sbml = Gui.readSBML(path + separator + sbmlFile);
@@ -3518,12 +3517,12 @@ public class BioModel {
 		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = reader.readSBMLFromString(buffer.toString());
 		sbml.setModel(document.getModel());
-		sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
-		sbml.setPkgRequired("layout", false); 
+		//sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
+		//sbml.setPkgRequired("layout", false); 
+		//sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
+		//sbml.setPkgRequired("comp", true);
 		sbmlLayout = (LayoutModelPlugin)sbml.getModel().getPlugin("layout");
-		sbml.enablePackage(CompExtension.getXmlnsL3V1V1(), "comp", true);
-		sbml.setPkgRequired("comp", true);
-		sbmlComp = (CompSBMLDocumentPlugin)sbml.getPlugin("comp");
+		sbmlComp = (CompSBMLDocumentPlugin)document.getPlugin("comp");
 		sbmlCompModel = (CompModelPlugin)sbml.getModel().getPlugin("comp");
 		if (sbml != null) {
 			for (long i = 0; i < sbml.getModel().getNumCompartments(); i++) {

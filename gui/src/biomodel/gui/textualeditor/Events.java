@@ -536,7 +536,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					for (int i = 0; i < events.getModel().getSize(); i++) {
 						ev[i] = events.getModel().getElementAt(i).toString();
 					}
-					adding = Utility.add(ev, events, add, false, null, null, null, null, null, null, Gui.frame);
+					adding = Utility.add(ev, events, add, null, null, null, null, null, Gui.frame);
 					usedIDs.add(eventID.getText().trim());
 					ev = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
@@ -834,7 +834,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					eventAssign.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(assign, eventAssign, add, false, null, null, null, null, null, null, Gui.frame);
+					adding = Utility.add(assign, eventAssign, add, null, null, null, null, null, Gui.frame);
 					assign = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						assign[i] = (String) adding[i];

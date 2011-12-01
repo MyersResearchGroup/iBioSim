@@ -171,7 +171,7 @@ public class SpeciesTypes extends JPanel implements ActionListener, MouseListene
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					specTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(spTyp, specTypes, add, false, null, null, null, null, null, null, Gui.frame);
+					adding = Utility.add(spTyp, specTypes, add, null, null, null, null, null, Gui.frame);
 					spTyp = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						spTyp[i] = (String) adding[i];

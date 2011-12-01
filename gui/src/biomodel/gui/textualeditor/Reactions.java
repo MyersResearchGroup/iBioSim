@@ -833,7 +833,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						add.setListData(adding);
 						add.setSelectedIndex(0);
 						reactions.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						adding = Utility.add(reacts, reactions, add, false, null, null, null, null, null, null, Gui.frame);
+						adding = Utility.add(reacts, reactions, add, null, null, null, null, null, Gui.frame);
 						reacts = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							reacts[i] = (String) adding[i];
@@ -1326,7 +1326,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 						add.setListData(adding);
 						add.setSelectedIndex(0);
 						reacParameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						adding = Utility.add(reacParams, reacParameters, add, false, null, null, null, null, null, null, Gui.frame);
+						adding = Utility.add(reacParams, reacParameters, add, null, null, null, null, null, Gui.frame);
 						reacParams = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							reacParams[i] = (String) adding[i];
@@ -1641,7 +1641,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(proda, products, add, false, null, null, null, null, null, null, Gui.frame);
+					adding = Utility.add(proda, products, add, null, null, null, null, null, Gui.frame);
 					proda = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						proda[i] = (String) adding[i];
@@ -1765,7 +1765,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					modifiers.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(modifier, modifiers, add, false, null, null, null, null, null, null, Gui.frame);
+					adding = Utility.add(modifier, modifiers, add, null, null, null, null, null, Gui.frame);
 					modifier = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						modifier[i] = (String) adding[i];
@@ -2075,7 +2075,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(reacta, reactants, add, false, null, null, null, null, null, null, Gui.frame);
+					adding = Utility.add(reacta, reactants, add, null, null, null, null, null, Gui.frame);
 					reacta = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						reacta[i] = (String) adding[i];

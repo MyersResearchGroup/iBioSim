@@ -407,7 +407,7 @@ public class InitialAssignments extends JPanel implements ActionListener, MouseL
 			add.setListData(adding);
 			add.setSelectedIndex(0);
 			initAssigns.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-			adding = Utility.add(inits, initAssigns, add, false, null, null, null, null, null, null, Gui.frame);
+			adding = Utility.add(inits, initAssigns, add, null, null, null, null, null, Gui.frame);
 			String[] oldInits = inits;
 			inits = new String[adding.length];
 			for (int i = 0; i < adding.length; i++) {

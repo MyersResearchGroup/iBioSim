@@ -20,8 +20,6 @@ import main.util.dataparser.DataParser;
 
 import org.sbml.libsbml.*;
 
-
-import analysis.termcond.TermCond;
 import biomodel.gui.ModelEditor;
 import biomodel.gui.textualeditor.*;
 import biomodel.parser.BioModel;
@@ -43,12 +41,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	private static final long serialVersionUID = 3181014495993143825L;
 
-	private JTextField amountTerm; // Amount for termination condition
+	//private JTextField amountTerm; // Amount for termination condition
 
 	/*
 	 * Buttons for adding and removing conditions and species
 	 */
-	private JButton addIntSpecies, removeIntSpecies, editIntSpecies, addTermCond, removeTermCond, clearIntSpecies, clearTermCond;
+	//private JButton addIntSpecies, removeIntSpecies, editIntSpecies, addTermCond, removeTermCond, clearIntSpecies, clearTermCond;
 
 	/*
 	 * Radio Buttons that represent the different abstractions
@@ -66,15 +64,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	/*
 	 * Added interesting species and termination conditions
 	 */
-	private JList terminations;
+	//private JList terminations;
 
-	private JList termCond; // List of species in sbml file
+	//private JList termCond; // List of species in sbml file
 
-	private JLabel spLabel, speciesLabel; // Labels for interesting species
+	//private JLabel spLabel, speciesLabel; // Labels for interesting species
 
-	private JPanel speciesPanel;
+	//private JPanel speciesPanel;
 
-	private ArrayList<ArrayList<Component>> speciesInt;
+	//private ArrayList<ArrayList<Component>> speciesInt;
 
 	/*
 	 * Text fields for changes in the abstraction
@@ -96,7 +94,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	/*
 	 * List of interesting species
 	 */
-	private Object[] allSpecies = new Object[0];
+	//private Object[] allSpecies = new Object[0];
 
 	private Object[] preAbstractions = new Object[0];
 
@@ -107,7 +105,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	/*
 	 * List of species with termination conditions
 	 */
-	private Object[] termConditions = new Object[0];
+	//private Object[] termConditions = new Object[0];
 
 	private JComboBox simulators; // Combo Box for possible simulators
 
@@ -120,51 +118,49 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	 */
 	private JLabel rapidLabel1, rapidLabel2, qssaLabel, maxConLabel;
 
-	private JCheckBox usingSSA, usingSAD; // check box for using ssa
+	//private JComboBox availSpecies; // species for SSA
 
-	private JComboBox availSpecies; // species for SSA
+	//private JList ssa, sad; // list of ssa
 
-	private JList ssa, sad; // list of ssa
+	//private JTextField time; // time for ssa
 
-	private JTextField time; // time for ssa
+	//private JTextField TCid; // id for sad
 
-	private JTextField TCid; // id for sad
+	//private JTextField desc; // description for sad
 
-	private JTextField desc; // description for sad
+	//private JTextField cond; // condition for sad
 
-	private JTextField cond; // condition for sad
+	//private JTextField ssaModNum; // number that the ssa is changed by
 
-	private JTextField ssaModNum; // number that the ssa is changed by
+	//private JComboBox ssaMod; // amount to mod the ssa species by
 
-	private JComboBox ssaMod; // amount to mod the ssa species by
+	//private JButton addSSA, editSSA, removeSSA; // Buttons for editing SSA
 
-	private JButton addSSA, editSSA, removeSSA; // Buttons for editing SSA
+	//private JButton addSAD, editSAD, removeSAD; // Buttons for editing SAD
 
-	private JButton addSAD, editSAD, removeSAD; // Buttons for editing SAD
+	//private JButton newSSA; // Buttons for SSA file
 
-	private JButton newSSA; // Buttons for SSA file
+	//private JButton newSAD; // Buttons for SAD file
 
-	private JButton newSAD; // Buttons for SAD file
+	//private JLabel timeLabel; // Label for SSA
 
-	private JLabel timeLabel; // Label for SSA
+	//private JLabel idLabel; // ID label for SAD
 
-	private JLabel idLabel; // ID label for SAD
+	//private JLabel descLabel; // Description label for SAD
 
-	private JLabel descLabel; // Description label for SAD
+	//private JLabel condLabel; // Condition label for SAD
 
-	private JLabel condLabel; // Condition label for SAD
+	//private Object[] ssaList, sadList; // array for ssa/sad JList
 
-	private Object[] ssaList, sadList; // array for ssa/sad JList
+	//private JList properties; // JList for properties
 
-	private JList properties; // JList for properties
+	//private JTextField prop, value; // text areas for properties
 
-	private JTextField prop, value; // text areas for properties
-
-	private JButton addProp, editProp, removeProp, newProp; // buttons for
+	//private JButton addProp, editProp, removeProp, newProp; // buttons for
 
 	// properties
 
-	private Object[] props; // array for properties JList
+	//private Object[] props; // array for properties JList
 
 	private String sbmlFile, root; // sbml file and root directory
 
@@ -286,6 +282,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 		SBMLDocument document = Gui.readSBML(sbmlFile);
 		Model model = document.getModel();
+		/*
 		ArrayList<String> listOfSpecs = new ArrayList<String>();
 		if (model != null) {
 			ListOf listOfSpecies = model.getListOfSpecies();
@@ -304,7 +301,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			}
 			allSpecies[j] = index;
 		}
-
+        */
+		
 		// Creates the input fields for the changes in abstraction
 		Preferences biosimrc = Preferences.userRoot();
 		String[] odeSimulators = new String[6];
@@ -498,6 +496,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 		// Creates the interesting species JList intSpecies = new JList();
 		// species = new JList();
+		/*
 		spLabel = new JLabel("Available Species:");
 		speciesLabel = new JLabel("Interesting Species:");
 		JPanel speciesHolder = new JPanel(new BorderLayout());
@@ -541,7 +540,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		removeIntSpecies.addActionListener(this);
 		clearIntSpecies.setEnabled(false);
 		clearIntSpecies.addActionListener(this);
-
 		speciesPanel = new JPanel();
 		JPanel sP = new JPanel();
 		((FlowLayout) sP.getLayout()).setAlignment(FlowLayout.LEFT);
@@ -556,7 +554,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 //		interestingPanel.add(sPScroll, "Center");
 		speciesInt = new ArrayList<ArrayList<Component>>();
 //		createInterestingSpeciesPanel();
-
+	    */
+		
 		// Creates some abstraction options
 		JPanel advancedGrid = new JPanel(new GridLayout(2, 4));
 		advanced = new JPanel(new BorderLayout());
@@ -716,6 +715,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		save.setMnemonic(KeyEvent.VK_S);
 
 		// Creates the termination conditions tab
+		/*
 		termCond = new JList();
 		terminations = new JList();
 		addTermCond = new JButton("Add Condition");
@@ -775,10 +775,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		mainTermCond.add(termOptionsPanel, "South");
 
 		JPanel sadTermCondPanel = new JPanel(new BorderLayout());
-		// sadFile = new JTextArea();
-		// JScrollPane scroll9 = new JScrollPane();
-		// scroll9.setViewportView(sadFile);
-		// sadTermCondPanel.add(scroll9, "Center");
 		newSAD = new JButton("Clear Conditions");
 		newSAD.setEnabled(false);
 		newSAD.addActionListener(this);
@@ -828,7 +824,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		sadAddPanel3.add(removeSAD);
 		sadAddPanel3.add(newSAD);
 		sadAddPanel.add(sadAddPanel1, "North");
-		// sadAddPanel.add(sadAddPanel2, "Center");
 		sadAddPanel.add(sadAddPanel3, "South");
 		sadTermCondPanel.add(usingSAD, "North");
 		sadTermCondPanel.add(scroll9, "Center");
@@ -995,14 +990,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			editSSA.setEnabled(true);
 			removeSSA.setEnabled(true);
 		}
-
+		
 		// Creates tab for adding properties
 		propertiesPanel = new JPanel(new BorderLayout());
 		JPanel propertiesPanel1 = new JPanel(new BorderLayout());
 		JPanel propertiesPanel2 = new JPanel(new BorderLayout());
 		JPanel propertiesInput = new JPanel();
 		JPanel propertiesButtons = new JPanel();
-		// JLabel propertiesLabel = new JLabel("Properties To Add:");
 		JLabel propLabel = new JLabel("Option:");
 		JLabel valueLabel = new JLabel("Value:");
 		properties = new JList();
@@ -1035,8 +1029,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		propertiesPanel1.add(scroll6, "Center");
 		propertiesPanel.add(propertiesPanel1, "Center");
 		propertiesPanel.add(propertiesPanel2, "South");
-		this.setLayout(new BorderLayout());
-		this.add(mainTabbedPanel, "Center");
 		termCond.setListData(allSpecies);
 		int rem = availSpecies.getItemCount();
 		for (int i = 0; i < rem; i++) {
@@ -1045,6 +1037,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		for (int i = 0; i < allSpecies.length; i++) {
 			availSpecies.addItem(((String) allSpecies[i]).replace(" ", "_"));
 		}
+		*/
+
+		this.setLayout(new BorderLayout());
+		this.add(mainTabbedPanel, "Center");
 		runFiles = false;
 		String[] searchForRunFiles = new File(root + separator + simName).list();
 		for (String s : searchForRunFiles) {
@@ -1102,20 +1098,17 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			open(open);
 		}
 		// Marks default interesting species
+		/*
 		if (defaultInterestingSpecies != null) {
 			for (int i = 0; i < speciesInt.size(); i++) {
 				if (defaultInterestingSpecies.contains(((JTextField) speciesInt.get(i).get(1)).getText())
 						&& !((JCheckBox) speciesInt.get(i).get(0)).isSelected()) {
 					speciesInt.get(i).get(0).setEnabled(true);
 					((JCheckBox) speciesInt.get(i).get(0)).doClick();
-					/*
-					 * if (none.isSelected()) { for (int j = 0; j <
-					 * speciesInt.get(i).size(); j++) {
-					 * speciesInt.get(i).get(j).setEnabled(false); } }
-					 */
 				}
 			}
 		}
+		*/
 	}
 
 	/**
@@ -1128,10 +1121,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		if (e.getSource() == none) {
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
 					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, none,
-					spLabel, speciesLabel, addIntSpecies, editIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2,
-					qssaLabel, maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel,
-					postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn,
-					speciesInt);
+					rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2,
+					qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel,
+					postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, 
+					addPostAbs, rmPostAbs, editPostAbs, lhpn);
 			if (modelFile.contains(".lpn") || modelFile.contains(".s") || modelFile.contains(".inst")) {
 				markov.setEnabled(true);
 				lhpn.setEnabled(true);
@@ -1159,10 +1152,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (e.getSource() == abstraction) {
 			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
 					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, none,
-					spLabel, speciesLabel, addIntSpecies, editIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2,
-					qssaLabel, maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel,
-					postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn,
-					speciesInt);
+					rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2,
+					qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel,
+					postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, 
+					addPostAbs, rmPostAbs, editPostAbs, lhpn);
 			if (modelFile.contains(".lpn")) {
 				markov.setEnabled(true);
 				lhpn.setEnabled(true);
@@ -1189,10 +1182,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		// if the nary Radio Button is selected
 		else if (e.getSource() == nary) {
 			Button_Enabling.enableNary(ODE, monteCarlo, markov, seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel,
-					absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, spLabel, speciesLabel,
-					addIntSpecies, editIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel,
-					usingSSA, clearIntSpecies, fileStem, fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs,
-					rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, gcmEditor, speciesInt);
+					absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, 
+					rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel,
+					fileStem, fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs,
+					rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, gcmEditor);
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
 				append.setEnabled(true);
 				concentrations.setEnabled(true);
@@ -1215,7 +1208,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		// if the ODE Radio Button is selected
 		else if (e.getSource() == ODE) {
 			Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel,
-					limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, usingSSA, fileStem, fileStemLabel,
+					limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
 					postAbs, abstraction);
 			append.setEnabled(true);
 			concentrations.setEnabled(true);
@@ -1225,7 +1218,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		// if the monteCarlo Radio Button is selected
 		else if (e.getSource() == monteCarlo) {
 			Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
-					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, usingSSA, fileStem,
+					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, fileStem,
 					fileStemLabel, postAbs, abstraction, nary);
 			if (runFiles) {
 				append.setEnabled(true);
@@ -1249,7 +1242,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		// if the markov Radio Button is selected
 		else if (e.getSource() == markov) {
 			Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel,
-					limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, usingSSA, fileStem, fileStemLabel,
+					limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
 					gcmEditor, postAbs, modelFile);
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
@@ -1322,6 +1315,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		// removeIntSpecies();
 		// }
 		// if the add termination conditions button is clicked
+		/*
 		else if (e.getSource() == addTermCond) {
 			termConditions = Utility.add(termConditions, terminations, termCond, true, amountTerm, ge, gt, eq, lt, le, this);
 		}
@@ -1334,6 +1328,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			termConditions = new Object[0];
 			terminations.setListData(termConditions);
 		}
+		*/
 		// if the simulators combo box is selected
 		else if (e.getSource() == simulators) {
 			if (simulators.getItemCount() == 0) {
@@ -1697,6 +1692,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			save();
 		}
 		// if the using ssa check box is clicked
+		/*
 		else if (e.getSource() == usingSSA) {
 			if (usingSSA.isSelected()) {
 				newSSA.setEnabled(true);
@@ -2264,6 +2260,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				}
 			}
 		}
+		*/
 		else if ((e.getSource() == addPreAbs) || (e.getSource() == addLoopAbs) || (e.getSource() == addPostAbs)) {
 			JPanel addAbsPanel = new JPanel(new BorderLayout());
 			JComboBox absList = new JComboBox();
@@ -2345,6 +2342,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			Utility.remove(postAbs);
 		}
 		// if the remove ssa button is clicked
+		/*
 		else if (e.getSource() == removeSSA) {
 			ssaList = Utility.remove(ssa, ssaList);
 		}
@@ -2402,6 +2400,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			addPropery.setSelectedIndex(0);
 			props = Utility.add(props, properties, addPropery, false, null, null, null, null, null, null, this);
 		}
+		*/
 		else if (e.getSource() == append) {
 			if (append.isSelected()) {
 				limit.setEnabled(false);
@@ -2444,6 +2443,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				JOptionPane.showMessageDialog(Gui.frame, "Unable to restore time limit and print interval.", "Error", JOptionPane.ERROR_MESSAGE);
 			}
 		}
+		/*
 		else if (e.getActionCommand().contains("box")) {
 			int num = Integer.parseInt(e.getActionCommand().substring(3)) - 1;
 			if (!((JCheckBox) speciesInt.get(num).get(0)).isSelected()) {
@@ -2467,6 +2467,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			speciesPanel.revalidate();
 			speciesPanel.repaint();
 		}
+		*/
 	}
 
 	/**
@@ -2622,21 +2623,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		if (concentrations.isSelected()) {
 			printer_track_quantity = "concentration";
 		}
-		int[] index = terminations.getSelectedIndices();
-		String[] termCond = Utility.getList(termConditions, terminations);
-		terminations.setSelectedIndices(index);
-		// index = species.getSelectedIndices();
 		String[] intSpecies = getInterestingSpecies();
-		// if (none.isSelected()) {
-		// intSpecies = new String[allSpecies.length];
-		// for (int j = 0; j < allSpecies.length; j++) {
-		// intSpecies[j] = (String) allSpecies[j];
-		// }
-		// }
-		// else {
-		// intSpecies = Buttons.getList(interestingSpecies, species);
-		// }
-		// species.setSelectedIndices(index);
 		String selectedButtons = "";
 		double rap1 = 0.1;
 		double rap2 = 0.1;
@@ -2741,6 +2728,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (abstraction.isSelected() && lhpn.isSelected()) {
 			selectedButtons = "abs_lhpn";
 		}
+		/*
 		try {
 			FileOutputStream out = new FileOutputStream(new File(root + separator + outDir + separator + "user-defined.dat"));
 			int[] indecies = ssa.getSelectedIndices();
@@ -2758,7 +2746,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			byte[] output = save.getBytes();
 			out.write(output);
 			out.close();
-			if (!usingSSA.isSelected() && save.trim().equals("")) {
+			if (save.trim().equals("")) {
 				new File(root + separator + outDir + separator + "user-defined.dat").delete();
 			}
 		}
@@ -2766,6 +2754,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to save user defined file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		*/
 		int cut = 0;
 		String simProp = sbmlProp;
 		boolean saveTopLevel = false;
@@ -2942,18 +2931,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		Run runProgram = new Run(this);
 		cancel.addActionListener(runProgram);
 		biomodelsim.getExitButton().addActionListener(runProgram);
-		saveSAD(outDir);
+		//saveSAD(outDir);
 		runProgram.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, absError,
-				".",
-				// root + separator + outDir,
-				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, simProp.split(separator), selectedButtons, this, simProp,
-				rap1, rap2, qss, con, usingSSA,
-				// root + separator + simName + separator +
-				"user-defined.dat", usingSAD, new File(root + separator + outDir + separator + "termCond.sad"), preAbs, loopAbs, postAbs,
-				lhpnAbstraction);
-		int[] indecies = properties.getSelectedIndices();
-		props = Utility.getList(props, properties);
-		properties.setSelectedIndices(indecies);
+				".", rndSeed, run, intSpecies, printer_id, printer_track_quantity, simProp.split(separator), selectedButtons, this, simProp,
+				rap1, rap2, qss, con, preAbs, loopAbs, postAbs, lhpnAbstraction);
+		//int[] indecies = properties.getSelectedIndices();
+		//props = Utility.getList(props, properties);
+		//properties.setSelectedIndices(indecies);
 		try {
 			Properties getProps = new Properties();
 			FileInputStream load = new FileInputStream(new File(propName));
@@ -3060,7 +3044,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				}
 			}
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, Gui.frame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, root
-					+ separator + simName, nary, 1, intSpecies, log, usingSSA, root + separator + outDir + separator + "user-defined.dat",
+					+ separator + simName, nary, 1, intSpecies, log, 
 					biomodelsim, simTab, root, progress, simName + " " + direct, gcmEditor, direct, timeLimit, runTime, modelFile, lhpnAbstraction,
 					abstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label);
 		}
@@ -3089,7 +3073,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				}
 			}
 			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, Gui.frame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, root
-					+ separator + simName, nary, 1, intSpecies, log, usingSSA, root + separator + outDir + separator + "user-defined.dat",
+					+ separator + simName, nary, 1, intSpecies, log, 
 					biomodelsim, simTab, root, progress, simName, gcmEditor, null, timeLimit, runTime, modelFile, lhpnAbstraction, abstraction,
 					lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label);
 		}
@@ -3098,9 +3082,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			if (!direct.equals(".")) {
 				d = direct;
 			}
-			new Nary_Run(this, amountTerm, ge, gt, eq, lt, le, simulators, simProp.split(separator), simProp, sbml, dot, xhtml, lhpn, nary, ODE,
+			new Nary_Run(this, ge, gt, eq, lt, le, simulators, simProp.split(separator), simProp, sbml, dot, xhtml, lhpn, nary, ODE,
 					monteCarlo, timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, root + separator
-							+ simName, rndSeed, run, printer_id, printer_track_quantity, termCond, intSpecies, rap1, rap2, qss, con, log, usingSSA,
+							+ simName, rndSeed, run, printer_id, printer_track_quantity, intSpecies, rap1, rap2, qss, con, log, 
 					root + separator + outDir + separator + "user-defined.dat", biomodelsim, simTab, root, d, modelFile, abstraction,
 					lhpnAbstraction, absError);
 		}
@@ -3161,6 +3145,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			// else if (e.getSource() == species) {
 			// editInterstingSpecies();
 			// }
+			/*
 			if (e.getSource() == termCond) {
 				termConditions = Utility.add(termConditions, terminations, termCond, true, amountTerm, ge, gt, eq, lt, le, this);
 			}
@@ -3173,6 +3158,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			else if (e.getSource() == properties) {
 				props = Utility.remove(properties, props);
 			}
+			*/
 		}
 	}
 
@@ -3309,9 +3295,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		if (concentrations.isSelected()) {
 			printer_track_quantity = "concentration";
 		}
-		int[] index = terminations.getSelectedIndices();
-		String[] termCond = Utility.getList(termConditions, terminations);
-		terminations.setSelectedIndices(index);
+		//int[] index = terminations.getSelectedIndices();
+		//String[] termCond = Utility.getList(termConditions, terminations);
+		//terminations.setSelectedIndices(index);
 		// index = species.getSelectedIndices();
 		String[] intSpecies = getInterestingSpecies();
 		// if (none.isSelected()) {
@@ -3428,6 +3414,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		else if (abstraction.isSelected() && lhpn.isSelected()) {
 			selectedButtons = "abs_lhpn";
 		}
+		/*
 		try {
 			FileOutputStream out = new FileOutputStream(new File(root + separator + simName + separator + "user-defined.dat"));
 			int[] indecies = ssa.getSelectedIndices();
@@ -3445,7 +3432,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			byte[] output = save.getBytes();
 			out.write(output);
 			out.close();
-			if (!usingSSA.isSelected() && save.trim().equals("")) {
+			if (save.trim().equals("")) {
 				new File(root + separator + simName + separator + "user-defined.dat").delete();
 			}
 		}
@@ -3453,6 +3440,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			JOptionPane.showMessageDialog(Gui.frame, "Unable to save user defined file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
+		*/
 		Run runProgram = new Run(this);
 		int cut = 0;
 		String[] getFilename = sbmlProp.split(separator);
@@ -3485,18 +3473,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		// JOptionPane.ERROR_MESSAGE);
 		// }
 		log.addText("Creating properties file:\n" + propName + "\n");
-		saveSAD(simName);
+		//saveSAD(simName);
 		runProgram.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, absError,
-				".",
-				// outDir,
-				rndSeed, run, termCond, intSpecies, printer_id, printer_track_quantity, sbmlProp.split(separator), selectedButtons, this, sbmlProp,
-				rap1, rap2, qss, con, usingSSA,
-				// root + separator + simName + separator +
-				"user-defined.dat", usingSAD, new File(root + separator + outDir + separator + "termCond.sad"), preAbs, loopAbs, postAbs,
-				lhpnAbstraction);
-		int[] indecies = properties.getSelectedIndices();
-		props = Utility.getList(props, properties);
-		properties.setSelectedIndices(indecies);
+				".", rndSeed, run, intSpecies, printer_id, printer_track_quantity, sbmlProp.split(separator), selectedButtons, this, sbmlProp,
+				rap1, rap2, qss, con, preAbs, loopAbs, postAbs,lhpnAbstraction);
+		//int[] indecies = properties.getSelectedIndices();
+		//props = Utility.getList(props, properties);
+		//properties.setSelectedIndices(indecies);
 		try {
 			Properties getProps = new Properties();
 			FileInputStream load = new FileInputStream(new File(propName));
@@ -3523,6 +3506,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		change = false;
 	}
 
+	/*
 	public void saveSAD(String outDir) {
 		try {
 			int[] indecies = sad.getSelectedIndices();
@@ -3548,6 +3532,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			return;
 		}
 	}
+	*/
 
 	/**
 	 * Loads the simulate options.
@@ -3735,10 +3720,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					else if (key.equals("monte.carlo.simulation.out.dir")) {
 					}
 					else if (key.equals("simulation.run.termination.decider")) {
+						/*
 						if (load.getProperty("simulation.run.termination.decider").equals("sad")) {
 							sad.setEnabled(true);
 							newSAD.setEnabled(true);
-							usingSAD.setSelected(true);
+							//usingSAD.setSelected(true);
 							idLabel.setEnabled(true);
 							TCid.setEnabled(true);
 							descLabel.setEnabled(true);
@@ -3753,6 +3739,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							// + load.getProperty(
 							// "simulation.run.termination.decider"));
 						}
+						*/
 					}
 					else if (key.equals("computation.analysis.sad.path")) {
 					}
@@ -3881,8 +3868,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					lhpnAbstraction.loopAbs.setListData(lhpnAbstraction.loopAbsModel.toArray());
 					lhpnAbstraction.postAbs.setListData(lhpnAbstraction.postAbsModel.toArray());
 				}
-				props = loadProperties.toArray(props);
-				properties.setListData(props);
+				//props = loadProperties.toArray(props);
+				//properties.setListData(props);
 				String[] getFilename = openFile.split(separator);
 				int cut = 0;
 				for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
@@ -3903,6 +3890,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				}
 				try {
 					filename = sbmlFile;
+					/*
 					ArrayList<String> listOfSpecs = new ArrayList<String>();
 					if (gcmEditor == null) {
 						SBMLDocument document = Gui.readSBML(filename);
@@ -3932,9 +3920,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						}
 						allSpecies[j] = index;
 					}
+					*/
 					// intSpecies.setListData(list);
-					termCond.setListData(allSpecies);
-					int rem = availSpecies.getItemCount();
+					//termCond.setListData(allSpecies);
+					//int rem = availSpecies.getItemCount();
+					/*
 					for (int i = 0; i < rem; i++) {
 						availSpecies.removeItemAt(0);
 					}
@@ -3959,19 +3949,20 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 					speciesPanel.revalidate();
 					speciesPanel.repaint();
+					*/
 				}
 				catch (Exception e1) {
 				}
 				// species.setListData(new Object[0]);
-				terminations.setListData(new Object[0]);
+				//terminations.setListData(new Object[0]);
 				if (load.getProperty("reb2sac.abstraction.method").equals("none")) {
 					none.setSelected(true);
 					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
 							stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-							explanation, description, none, spLabel, speciesLabel, addIntSpecies, editIntSpecies, removeIntSpecies, rapid1, rapid2,
-							qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel,
+							explanation, description, none, rapid1, rapid2,
+							qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel,
 							preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs,
-							rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, speciesInt);
+							rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
 					if (modelFile.contains(".lpn")) {
 						markov.setEnabled(true);
 						lhpn.setEnabled(true);
@@ -3981,10 +3972,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					abstraction.setSelected(true);
 					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
 							stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-							explanation, description, none, spLabel, speciesLabel, addIntSpecies, editIntSpecies, removeIntSpecies, rapid1, rapid2,
-							qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel,
+							explanation, description, none, rapid1, rapid2,
+							qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel,
 							preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs,
-							rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, speciesInt);
+							rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
 					if (modelFile.contains(".lpn")) {
 						markov.setEnabled(true);
 						lhpn.setEnabled(true);
@@ -3994,10 +3985,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					nary.setSelected(true);
 					Button_Enabling.enableNary(ODE, monteCarlo, markov, seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
 							errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description,
-							spLabel, speciesLabel, addIntSpecies, editIntSpecies, removeIntSpecies, rapid1, rapid2, qssa, maxCon, rapidLabel1,
-							rapidLabel2, qssaLabel, maxConLabel, usingSSA, clearIntSpecies, fileStem, fileStemLabel, preAbs, loopAbs, postAbs,
+							rapid1, rapid2, qssa, maxCon, rapidLabel1,
+							rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs, postAbs,
 							preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs,
-							rmPostAbs, editPostAbs, lhpn, gcmEditor, speciesInt);
+							rmPostAbs, editPostAbs, lhpn, gcmEditor);
 				}
 				if (load.containsKey("ode.simulation.absolute.error")) {
 					absErr.setText(load.getProperty("ode.simulation.absolute.error"));
@@ -4044,10 +4035,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				if (load.containsKey("monte.carlo.simulation.runs")) {
 					runs.setText(load.getProperty("monte.carlo.simulation.runs"));
 				}
+				/*
 				if (load.containsKey("simulation.run.termination.decider") && load.getProperty("simulation.run.termination.decider").equals("sad")) {
 					sad.setEnabled(true);
 					newSAD.setEnabled(true);
-					usingSAD.setSelected(true);
+					//usingSAD.setSelected(true);
 					idLabel.setEnabled(true);
 					TCid.setEnabled(true);
 					descLabel.setEnabled(true);
@@ -4058,25 +4050,26 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					editSAD.setEnabled(true);
 					removeSAD.setEnabled(true);
 				}
+				*/
 				if (load.containsKey("simulation.time.series.species.level.file")) {
-					usingSSA.doClick();
+					//usingSSA.doClick();
 				}
 				else {
 					description.setEnabled(true);
 					explanation.setEnabled(true);
 					simulators.setEnabled(true);
 					simulatorsLabel.setEnabled(true);
-					newSSA.setEnabled(false);
-					usingSSA.setSelected(false);
-					ssa.setEnabled(false);
-					timeLabel.setEnabled(false);
-					time.setEnabled(false);
-					availSpecies.setEnabled(false);
-					ssaMod.setEnabled(false);
-					ssaModNum.setEnabled(false);
-					addSSA.setEnabled(false);
-					editSSA.setEnabled(false);
-					removeSSA.setEnabled(false);
+					//newSSA.setEnabled(false);
+					//usingSSA.setSelected(false);
+					//ssa.setEnabled(false);
+					//timeLabel.setEnabled(false);
+					//time.setEnabled(false);
+					//availSpecies.setEnabled(false);
+					//ssaMod.setEnabled(false);
+					//ssaModNum.setEnabled(false);
+					//addSSA.setEnabled(false);
+					//editSSA.setEnabled(false);
+					//removeSSA.setEnabled(false);
 					if (!nary.isSelected()) {
 						ODE.setEnabled(true);
 					}
@@ -4119,7 +4112,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							minStep.setText(load.getProperty("ode.simulation.min.time.step"));
 						}
 						Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
-								limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, usingSSA,
+								limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, 
 								fileStem, fileStemLabel, postAbs, abstraction);
 						if (load.containsKey("selected.simulator")) {
 							simulators.setSelectedItem(load.getProperty("selected.simulator"));
@@ -4136,7 +4129,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							// choose3.setEnabled(true);
 						}
 						Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel,
-								absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, usingSSA,
+								absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, 
 								fileStem, fileStemLabel, postAbs, abstraction, nary);
 						if (load.containsKey("selected.simulator")) {
 							simulators.setSelectedItem(load.getProperty("selected.simulator"));
@@ -4149,7 +4142,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					else if (load.getProperty("reb2sac.simulation.method").equals("markov")) {
 						markov.setSelected(true);
 						Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
-								limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, usingSSA,
+								limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, 
 								fileStem, fileStemLabel, gcmEditor, postAbs, modelFile);
 						if (load.containsKey("selected.simulator")) {
 							selectedMarkovSim = load.getProperty("selected.simulator");
@@ -4214,8 +4207,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					getLists.add(load.getProperty("simulation.run.termination.condition." + i));
 					i++;
 				}
-				termConditions = getLists.toArray();
-				terminations.setListData(termConditions);
+				//termConditions = getLists.toArray();
+				//terminations.setListData(termConditions);
 				getLists = new ArrayList<String>();
 				i = 1;
 				while (load.containsKey("reb2sac.interesting.species." + i)) {
@@ -4247,7 +4240,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					interestingSpecies.add(speciesAndThresholds);
 					
 					
-					
+					/*
 					for (int j = 0; j < speciesInt.size(); j++) {
 						if (((JTextField) speciesInt.get(j).get(1)).getText().equals(split1[0])) {		
 							
@@ -4269,6 +4262,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							}
 						}
 					}
+					*/
 				}
 				// species.setListData(interestingSpecies);
 
@@ -4406,10 +4400,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	public void setGcm(ModelEditor gcm) {
 		gcmEditor = gcm;
-		updateSpeciesList();
+		//updateSpeciesList();
 		if (nary.isSelected()) {
 			lhpn.setEnabled(true);
 			// Disables thresholds for complex and input species
+			/*
 			ArrayList<String> complexSpecies = gcmEditor.getGCM().getBiochemicalSpecies();
 			ArrayList<String> inputSpecies = gcmEditor.getGCM().getInputSpecies();
 			for (int j = 0; j < speciesInt.size(); j++) {
@@ -4421,6 +4416,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 				}
 			}
+			*/
 		}
 		if (markov.isSelected()) {
 			simulators.removeAllItems();
@@ -4436,6 +4432,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		change = false;
 	}
 
+	/*
 	public void updateSpeciesList() {
 		ArrayList<String> listOfSpecs = new ArrayList<String>();
 		if (gcmEditor == null) {
@@ -4492,6 +4489,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		speciesPanel.revalidate();
 		speciesPanel.repaint();
 	}
+	*/
 
 	public void setSim(String newSimName) {
 		sbmlProp = root + separator + newSimName + separator + sbmlFile.split(separator)[sbmlFile.split(separator).length - 1];
@@ -4506,6 +4504,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		lhpnAbstraction = pane;
 	}
 
+	/*
 	private void createInterestingSpeciesPanel() {
 //		speciesPanel.removeAll();
 //		speciesInt = new ArrayList<ArrayList<Component>>();
@@ -4540,7 +4539,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 //			speciesPanel.add(sp);
 //		}
 	}
+	*/
 
+	/*
 	private void editLine(int num, String thresholds) {
 		String[] thresh = thresholds.split(",");
 		ArrayList<Component> specs = speciesInt.get(num);
@@ -4564,6 +4565,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			return line.substring(0, line.length() - 1);
 		}
 	}
+	*/
 
 	public String[] getInterestingSpecies() {
 //		ArrayList<String> species = new ArrayList<String>();
@@ -4626,6 +4628,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 	}
 
+	/*
 	private String[] getAllSpecies() {
 		ArrayList<String> species = new ArrayList<String>();
 		for (Object s : allSpecies) {
@@ -4730,6 +4733,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		catch (Exception e) {
 		}
 	}
+	*/
 
 	public Graph createProbGraph(String open) {
 		String outDir = root + separator + simName;

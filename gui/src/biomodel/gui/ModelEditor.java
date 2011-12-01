@@ -258,7 +258,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			GeneticNetwork.setRoot(path + separator);
 			network.mergeSBML(path + separator + simName + separator + gcmname + ".xml");
 			*/
-			reb2sac.updateSpeciesList();
+			//reb2sac.updateSpeciesList();
 			gcm.reloadSBMLFile();
 			compartmentPanel.refreshCompartmentPanel(gcm.getSBMLDocument());
 			speciesPanel.refreshSpeciesPanel(gcm.getSBMLDocument());

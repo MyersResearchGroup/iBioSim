@@ -69,10 +69,10 @@ public class Run implements ActionListener {
 	 * @param stem
 	 */
 	public void createProperties(double timeLimit, String useInterval, double printInterval, double minTimeStep,
-			double timeStep, double absError, String outDir, long rndSeed, int run, String[] termCond, String[] intSpecies,
+			double timeStep, double absError, String outDir, long rndSeed, int run, String[] intSpecies,
 			String printer_id, String printer_track_quantity, String[] getFilename, String selectedButtons,
-			Component component, String filename, double rap1, double rap2, double qss, int con, JCheckBox usingSSA,
-			String ssaFile, JCheckBox usingSad, File sadFile, JList preAbs, JList loopAbs, JList postAbs, AbstPane abstPane) {
+			Component component, String filename, double rap1, double rap2, double qss, int con, 
+			JList preAbs, JList loopAbs, JList postAbs, AbstPane abstPane) {
 		Properties abs = new Properties();
 		if (selectedButtons.contains("abs") || selectedButtons.contains("nary")) {
 			int gcmIndex = 1;
@@ -279,22 +279,15 @@ public class Run implements ActionListener {
 			abs.setProperty("monte.carlo.simulation.random.seed", "" + rndSeed);
 			abs.setProperty("monte.carlo.simulation.runs", "" + run);
 			abs.setProperty("monte.carlo.simulation.out.dir", outDir);
-			if (usingSad.isSelected()) {
-				abs.setProperty("simulation.run.termination.decider", "sad");
-				abs.setProperty("computation.analysis.sad.path", sadFile.getName());
-			}
 		}
-		if (!usingSad.isSelected()) {
-			abs.setProperty("simulation.run.termination.decider", "constraint");
-		}
-		if (usingSSA.isSelected() && selectedButtons.contains("monteCarlo")) {
-			abs.setProperty("simulation.time.series.species.level.file", ssaFile);
-		}
+		abs.setProperty("simulation.run.termination.decider", "constraint");
+		/*
 		for (int i = 0; i < termCond.length; i++) {
 			if (termCond[i] != "") {
 				abs.setProperty("simulation.run.termination.condition." + (i + 1), "" + termCond[i]);
 			}
 		}
+		*/
 		try {
 			if (!getFilename[getFilename.length - 1].contains(".")) {
 				getFilename[getFilename.length - 1] += ".";
@@ -327,7 +320,7 @@ public class Run implements ActionListener {
 			String[] getFilename, Component component, String filename, JRadioButton monteCarlo, String stopE, double stopR,
 			String[] finalS, ArrayList<JTextField> inhib, ArrayList<JList> consLevel, ArrayList<String> getSpeciesProps,
 			ArrayList<Object[]> conLevel, String[] termCond, String[] intSpecies, double rap1, double rap2, double qss,
-			int con, ArrayList<Integer> counts, JCheckBox usingSSA, String ssaFile) {
+			int con, ArrayList<Integer> counts) {
 		Properties nary = new Properties();
 		try {
 			FileInputStream load = new FileInputStream(new File(outDir + separator + "species.properties"));
@@ -405,9 +398,6 @@ public class Run implements ActionListener {
 				nary.setProperty("reb2sac.final.state." + (i + 1), "" + finalS[i]);
 			}
 		}
-		if (usingSSA.isSelected() && monteCarlo.isSelected()) {
-			nary.setProperty("simulation.time.series.species.level.file", ssaFile);
-		}
 		for (int i = 0; i < intSpecies.length; i++) {
 			if (intSpecies[i] != "") {
 				nary.setProperty("reb2sac.interesting.species." + (i + 1), "" + intSpecies[i]);
@@ -444,7 +434,7 @@ public class Run implements ActionListener {
 	public int execute(String filename, JRadioButton sbml, JRadioButton dot, JRadioButton xhtml, JRadioButton lhpn,
 			Component component, JRadioButton ode, JRadioButton monteCarlo, String sim, String printer_id,
 			String printer_track_quantity, String outDir, JRadioButton nary, int naryRun, String[] intSpecies, Log log,
-			JCheckBox usingSSA, String ssaFile, Gui biomodelsim, JTabbedPane simTab, String root, JProgressBar progress,
+			Gui biomodelsim, JTabbedPane simTab, String root, JProgressBar progress,
 			String simName, ModelEditor gcmEditor, String direct, double timeLimit, double runTime, String modelFile,
 			AbstPane abstPane, JRadioButton abstraction, String lpnProperty, double absError, double timeStep,
 			double printInterval, int runs, long rndSeed, boolean refresh, JLabel progressLabel) {
@@ -787,11 +777,6 @@ public class Run implements ActionListener {
 				log.addText("Executing:\nreb2sac --target.encoding=xhtml --out=" + out + ".xhtml " + filename + "\n");
 				time1 = System.nanoTime();
 				reb2sac = exec.exec("reb2sac --target.encoding=xhtml --out=" + out + ".xhtml " + theFile, null, work);
-			}
-			else if (usingSSA.isSelected()) {
-				log.addText("Executing:\nreb2sac --target.encoding=ssa-with-user-update " + filename + "\n");
-				time1 = System.nanoTime();
-				reb2sac = exec.exec("reb2sac --target.encoding=ssa-with-user-update " + theFile, null, work);
 			}
 			else {
 				if (sim.equals("atacs")) {
@@ -1301,243 +1286,6 @@ public class Run implements ActionListener {
 						log.addText("Executing:\ncmd /c start " + directory + out + ".xhtml" + "\n");
 						exec.exec("cmd /c start " + out + ".xhtml", null, work);
 					}
-				}
-				else if (usingSSA.isSelected()) {
-					// if (!printer_id.equals("null.printer")) {
-					for (int i = 0; i < simTab.getComponentCount(); i++) {
-						if (simTab.getComponentAt(i).getName().equals("TSD Graph")) {
-							if (simTab.getComponentAt(i) instanceof Graph) {
-								boolean outputM = true;
-								boolean outputV = true;
-								boolean outputS = true;
-								boolean outputTerm = false;
-								boolean warning = false;
-								ArrayList<String> run = new ArrayList<String>();
-								for (String f : work.list()) {
-									if (f.contains("mean")) {
-										outputM = false;
-									}
-									else if (f.contains("variance")) {
-										outputV = false;
-									}
-									else if (f.contains("standard_deviation")) {
-										outputS = false;
-									}
-									else if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
-										run.add(f);
-									}
-									else if (f.equals("term-time.txt")) {
-										outputTerm = true;
-									}
-								}
-								if (outputM || outputV || outputS) {
-									warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-									((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
-								}
-								if (outputTerm) {
-									ArrayList<String> dataLabels = new ArrayList<String>();
-									dataLabels.add("time");
-									ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-									if (new File(directory + separator + "sim-rep.txt").exists()) {
-										try {
-											Scanner s = new Scanner(new File(directory + separator + "sim-rep.txt"));
-											if (s.hasNextLine()) {
-												String[] ss = s.nextLine().split(" ");
-												if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
-														&& ss[3].equals("count:") && ss[4].equals("0")) {
-												}
-												else {
-													for (String add : ss) {
-														if (!add.equals("#total") && !add.equals("time-limit")) {
-															dataLabels.add(add);
-															ArrayList<Double> times = new ArrayList<Double>();
-															terms.add(times);
-														}
-													}
-												}
-											}
-										}
-										catch (Exception e) {
-										}
-									}
-									Scanner scan = new Scanner(new File(directory + separator + "term-time.txt"));
-									while (scan.hasNextLine()) {
-										String line = scan.nextLine();
-										String[] term = line.split(" ");
-										if (!dataLabels.contains(term[0])) {
-											dataLabels.add(term[0]);
-											ArrayList<Double> times = new ArrayList<Double>();
-											times.add(Double.parseDouble(term[1]));
-											terms.add(times);
-										}
-										else {
-											terms.get(dataLabels.indexOf(term[0]) - 1).add(Double.parseDouble(term[1]));
-										}
-									}
-									scan.close();
-									ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
-									ArrayList<ArrayList<Double>> percentData = new ArrayList<ArrayList<Double>>();
-									for (int j = 0; j < dataLabels.size(); j++) {
-										ArrayList<Double> temp = new ArrayList<Double>();
-										temp.add(0.0);
-										data.add(temp);
-										temp = new ArrayList<Double>();
-										temp.add(0.0);
-										percentData.add(temp);
-									}
-									for (double j = printInterval; j <= timeLimit; j += printInterval) {
-										data.get(0).add(j);
-										percentData.get(0).add(j);
-										for (int k = 1; k < dataLabels.size(); k++) {
-											data.get(k).add(data.get(k).get(data.get(k).size() - 1));
-											percentData.get(k).add(percentData.get(k).get(percentData.get(k).size() - 1));
-											for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
-												if (terms.get(k - 1).get(l) < j) {
-													data.get(k).set(data.get(k).size() - 1, data.get(k).get(data.get(k).size() - 1) + 1);
-													percentData.get(k).set(percentData.get(k).size() - 1,
-															((data.get(k).get(data.get(k).size() - 1)) * 100) / runs);
-													terms.get(k - 1).remove(l);
-												}
-											}
-										}
-									}
-									DataParser probData = new DataParser(dataLabels, data);
-									probData.outputTSD(directory + separator + "term-time.tsd");
-									probData = new DataParser(dataLabels, percentData);
-									probData.outputTSD(directory + separator + "percent-term-time.tsd");
-								}
-								if (refresh) {
-									((Graph) simTab.getComponentAt(i)).refresh();
-								}
-							}
-							else {
-								simTab
-										.setComponentAt(i,
-												new Graph(r2s, printer_track_quantity,
-														outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
-														printer_id, outDir, "time", biomodelsim, null, log, null, true, false));
-								boolean outputM = true;
-								boolean outputV = true;
-								boolean outputS = true;
-								boolean outputTerm = false;
-								boolean warning = false;
-								ArrayList<String> run = new ArrayList<String>();
-								for (String f : work.list()) {
-									if (f.contains("mean")) {
-										outputM = false;
-									}
-									else if (f.contains("variance")) {
-										outputV = false;
-									}
-									else if (f.contains("standard_deviation")) {
-										outputS = false;
-									}
-									else if (f.contains("run-") && f.endsWith("." + printer_id.substring(0, printer_id.length() - 8))) {
-										run.add(f);
-									}
-									else if (f.equals("term-time.txt")) {
-										outputTerm = true;
-									}
-								}
-								if (outputM || outputV || outputS) {
-									warning = ((Graph) simTab.getComponentAt(i)).getWarning();
-									((Graph) simTab.getComponentAt(i)).calculateAverageVarianceDeviation(run, 0, direct, warning, true);
-								}
-								if (outputTerm) {
-									ArrayList<String> dataLabels = new ArrayList<String>();
-									dataLabels.add("time");
-									ArrayList<ArrayList<Double>> terms = new ArrayList<ArrayList<Double>>();
-									if (new File(directory + separator + "sim-rep.txt").exists()) {
-										try {
-											Scanner s = new Scanner(new File(directory + separator + "sim-rep.txt"));
-											if (s.hasNextLine()) {
-												String[] ss = s.nextLine().split(" ");
-												if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
-														&& ss[3].equals("count:") && ss[4].equals("0")) {
-												}
-												else {
-													for (String add : ss) {
-														if (!add.equals("#total") && !add.equals("time-limit")) {
-															dataLabels.add(add);
-															ArrayList<Double> times = new ArrayList<Double>();
-															terms.add(times);
-														}
-													}
-												}
-											}
-										}
-										catch (Exception e) {
-										}
-									}
-									Scanner scan = new Scanner(new File(directory + separator + "term-time.txt"));
-									while (scan.hasNextLine()) {
-										String line = scan.nextLine();
-										String[] term = line.split(" ");
-										if (!dataLabels.contains(term[0])) {
-											dataLabels.add(term[0]);
-											ArrayList<Double> times = new ArrayList<Double>();
-											times.add(Double.parseDouble(term[1]));
-											terms.add(times);
-										}
-										else {
-											terms.get(dataLabels.indexOf(term[0]) - 1).add(Double.parseDouble(term[1]));
-										}
-									}
-									scan.close();
-									ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
-									ArrayList<ArrayList<Double>> percentData = new ArrayList<ArrayList<Double>>();
-									for (int j = 0; j < dataLabels.size(); j++) {
-										ArrayList<Double> temp = new ArrayList<Double>();
-										temp.add(0.0);
-										data.add(temp);
-										temp = new ArrayList<Double>();
-										temp.add(0.0);
-										percentData.add(temp);
-									}
-									for (double j = printInterval; j <= timeLimit; j += printInterval) {
-										data.get(0).add(j);
-										percentData.get(0).add(j);
-										for (int k = 1; k < dataLabels.size(); k++) {
-											data.get(k).add(data.get(k).get(data.get(k).size() - 1));
-											percentData.get(k).add(percentData.get(k).get(percentData.get(k).size() - 1));
-											for (int l = terms.get(k - 1).size() - 1; l >= 0; l--) {
-												if (terms.get(k - 1).get(l) < j) {
-													data.get(k).set(data.get(k).size() - 1, data.get(k).get(data.get(k).size() - 1) + 1);
-													percentData.get(k).set(percentData.get(k).size() - 1,
-															((data.get(k).get(data.get(k).size() - 1)) * 100) / runs);
-													terms.get(k - 1).remove(l);
-												}
-											}
-										}
-									}
-									DataParser probData = new DataParser(dataLabels, data);
-									probData.outputTSD(directory + separator + "term-time.tsd");
-									probData = new DataParser(dataLabels, percentData);
-									probData.outputTSD(directory + separator + "percent-term-time.tsd");
-								}
-								simTab.getComponentAt(i).setName("TSD Graph");
-							}
-						}
-						if (refresh) {
-							if (simTab.getComponentAt(i).getName().equals("ProbGraph")) {
-								if (simTab.getComponentAt(i) instanceof Graph) {
-									((Graph) simTab.getComponentAt(i)).refresh();
-								}
-								else {
-									if (new File(filename.substring(0,
-											filename.length() - filename.split(separator)[filename.split(separator).length - 1].length())
-											+ "sim-rep.txt").exists()) {
-										simTab.setComponentAt(i,
-												new Graph(r2s, printer_track_quantity,
-														outDir.split(separator)[outDir.split(separator).length - 1] + " simulation results",
-														printer_id, outDir, "time", biomodelsim, null, log, null, false, false));
-										simTab.getComponentAt(i).setName("ProbGraph");
-									}
-								}
-							}
-						}
-					}
-					// }
 				}
 				else if (sim.equals("atacs")) {
 					log.addText("Executing:\natacs -T0.000001 -oqoflhsgllvA "

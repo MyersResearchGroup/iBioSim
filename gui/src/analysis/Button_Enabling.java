@@ -27,16 +27,13 @@ public class Button_Enabling {
 	public static void enableNoneOrAbs(JRadioButton ODE, JRadioButton monteCarlo, JRadioButton markov, JRadioButton sbml, JTextField seed,
 			JLabel seedLabel, JTextField runs, JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step,
 			JLabel errorLabel, JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
-			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JRadioButton none, JLabel spLabel,
-			JLabel speciesLabel, JButton addIntSpecies, JButton editIntSpecies, JButton removeIntSpecies, JTextField rapid1, JTextField rapid2,
-			JTextField qssa, JTextField maxCon, JLabel rapidLabel1, JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel, JCheckBox usingSSA,
-			JButton clearIntSpecies, JTextField fileStem, JLabel fileStemLabel, JList preAbs, JList loopAbs, JList postAbs, JLabel preAbsLabel,
+			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JRadioButton none, 
+			JTextField rapid1, JTextField rapid2,
+			JTextField qssa, JTextField maxCon, JLabel rapidLabel1, JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel, 
+			JTextField fileStem, JLabel fileStemLabel, JList preAbs, JList loopAbs, JList postAbs, JLabel preAbsLabel,
 			JLabel loopAbsLabel, JLabel postAbsLabel, JButton addPreAbs, JButton rmPreAbs, JButton editPreAbs, JButton addLoopAbs, JButton rmLoopAbs,
-			JButton editLoopAbs, JButton addPostAbs, JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn,
-			ArrayList<ArrayList<Component>> speciesInt) {
-		if (!usingSSA.isSelected()) {
-			ODE.setEnabled(true);
-		}
+			JButton editLoopAbs, JButton addPostAbs, JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn) {
+		ODE.setEnabled(true);
 		monteCarlo.setEnabled(true);
 		markov.setEnabled(false);
 		lhpn.setEnabled(false);
@@ -63,12 +60,12 @@ public class Button_Enabling {
 				}
 			}
 			*/
-			spLabel.setEnabled(false);
-			speciesLabel.setEnabled(false);
-			addIntSpecies.setEnabled(false);
-			editIntSpecies.setEnabled(false);
-			removeIntSpecies.setEnabled(false);
-			clearIntSpecies.setEnabled(false);
+			//spLabel.setEnabled(false);
+			//speciesLabel.setEnabled(false);
+			//addIntSpecies.setEnabled(false);
+			//editIntSpecies.setEnabled(false);
+			//removeIntSpecies.setEnabled(false);
+			//clearIntSpecies.setEnabled(false);
 			maxConLabel.setEnabled(false);
 			maxCon.setEnabled(false);
 			qssaLabel.setEnabled(false);
@@ -107,6 +104,7 @@ public class Button_Enabling {
 			addPostAbs.setEnabled(true);
 			rmPostAbs.setEnabled(true);
 			editPostAbs.setEnabled(true);
+			/*
 			for (ArrayList<Component> comp : speciesInt) {
 				comp.get(0).setEnabled(true);
 				comp.get(1).setEnabled(true);
@@ -118,10 +116,11 @@ public class Button_Enabling {
 			}
 			spLabel.setEnabled(true);
 			speciesLabel.setEnabled(true);
-			addIntSpecies.setEnabled(true);
-			editIntSpecies.setEnabled(true);
-			removeIntSpecies.setEnabled(true);
-			clearIntSpecies.setEnabled(true);
+			*/
+			//addIntSpecies.setEnabled(true);
+			//editIntSpecies.setEnabled(true);
+			//removeIntSpecies.setEnabled(true);
+			//clearIntSpecies.setEnabled(true);
 			maxConLabel.setEnabled(true);
 			maxCon.setEnabled(true);
 			qssaLabel.setEnabled(true);
@@ -158,12 +157,7 @@ public class Button_Enabling {
 			postAbs.setListData(objects);
 		}
 		if (markov.isSelected() || lhpn.isSelected()) {
-			if (!usingSSA.isSelected()) {
-				ODE.setSelected(true);
-			}
-			else {
-				monteCarlo.setSelected(true);
-			}
+			ODE.setSelected(true);
 			monteCarlo.setSelected(false);
 			markov.setSelected(false);
 			lhpn.setEnabled(false);
@@ -183,12 +177,10 @@ public class Button_Enabling {
 			limit.setEnabled(true);
 			intervalLabel.setEnabled(true);
 			interval.setEnabled(true);
-			if (!usingSSA.isSelected()) {
-				simulators.setEnabled(true);
-				simulatorsLabel.setEnabled(true);
-				explanation.setEnabled(true);
-				description.setEnabled(true);
-			}
+			simulators.setEnabled(true);
+			simulatorsLabel.setEnabled(true);
+			explanation.setEnabled(true);
+			description.setEnabled(true);
 			simulators.removeAllItems();
 			simulators.addItem("euler");
 			simulators.addItem("gear1");
@@ -209,17 +201,14 @@ public class Button_Enabling {
 	public static void enableNary(JRadioButton ODE, JRadioButton monteCarlo, JRadioButton markov, JTextField seed, JLabel seedLabel, JTextField runs,
 			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr,
 			JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators, JLabel simulatorsLabel,
-			JLabel explanation, JLabel description, JLabel spLabel, JLabel speciesLabel, JButton addIntSpecies, JButton editIntSpecies,
-			JButton removeIntSpecies, JTextField rapid1, JTextField rapid2, JTextField qssa, JTextField maxCon, JLabel rapidLabel1,
-			JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel, JCheckBox usingSSA, JButton clearIntSpecies, JTextField fileStem,
+			JLabel explanation, JLabel description, JTextField rapid1, JTextField rapid2, JTextField qssa, JTextField maxCon, JLabel rapidLabel1,
+			JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel, JTextField fileStem,
 			JLabel fileStemLabel, JList preAbs, JList loopAbs, JList postAbs, JLabel preAbsLabel, JLabel loopAbsLabel, JLabel postAbsLabel,
 			JButton addPreAbs, JButton rmPreAbs, JButton editPreAbs, JButton addLoopAbs, JButton rmLoopAbs, JButton editLoopAbs, JButton addPostAbs,
-			JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn, ModelEditor gcmEditor, ArrayList<ArrayList<Component>> speciesInt) {
+			JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn, ModelEditor gcmEditor) {
 		ODE.setEnabled(false);
 		monteCarlo.setEnabled(true);
-		if (!usingSSA.isSelected()) {
-			markov.setEnabled(true);
-		}
+		markov.setEnabled(true);
 		if (gcmEditor != null) {
 			lhpn.setEnabled(true);
 		}
@@ -238,6 +227,7 @@ public class Button_Enabling {
 		addPostAbs.setEnabled(false);
 		rmPostAbs.setEnabled(false);
 		editPostAbs.setEnabled(false);
+		/*
 		for (ArrayList<Component> comp : speciesInt) {
 			comp.get(0).setEnabled(true);
 			comp.get(1).setEnabled(true);
@@ -249,10 +239,11 @@ public class Button_Enabling {
 		}
 		spLabel.setEnabled(true);
 		speciesLabel.setEnabled(true);
-		addIntSpecies.setEnabled(true);
-		editIntSpecies.setEnabled(true);
-		removeIntSpecies.setEnabled(true);
-		clearIntSpecies.setEnabled(true);
+		*/
+		//addIntSpecies.setEnabled(true);
+		//editIntSpecies.setEnabled(true);
+		//removeIntSpecies.setEnabled(true);
+		//clearIntSpecies.setEnabled(true);
 		maxConLabel.setEnabled(true);
 		maxCon.setEnabled(true);
 		qssaLabel.setEnabled(true);
@@ -281,12 +272,10 @@ public class Button_Enabling {
 			limit.setEnabled(true);
 			intervalLabel.setEnabled(true);
 			interval.setEnabled(true);
-			if (!usingSSA.isSelected()) {
-				simulators.setEnabled(true);
-				simulatorsLabel.setEnabled(true);
-				explanation.setEnabled(true);
-				description.setEnabled(true);
-			}
+			simulators.setEnabled(true);
+			simulatorsLabel.setEnabled(true);
+			explanation.setEnabled(true);
+			description.setEnabled(true);
 			simulators.removeAllItems();
 			simulators.addItem("gillespie");
 			simulators.addItem("gillespieJava");
@@ -344,7 +333,7 @@ public class Button_Enabling {
 	 */
 	public static void enableODE(JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel, JLabel minStepLabel, JTextField minStep,
 			JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
-			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JCheckBox usingSSA,
+			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, 
 			JTextField fileStem, JLabel fileStemLabel, JList postAbs, JRadioButton abstraction) {
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
@@ -362,12 +351,10 @@ public class Button_Enabling {
 		limit.setEnabled(true);
 		intervalLabel.setEnabled(true);
 		interval.setEnabled(true);
-		if (!usingSSA.isSelected()) {
-			simulators.setEnabled(true);
-			simulatorsLabel.setEnabled(true);
-			explanation.setEnabled(true);
-			description.setEnabled(true);
-		}
+		simulators.setEnabled(true);
+		simulatorsLabel.setEnabled(true);
+		explanation.setEnabled(true);
+		description.setEnabled(true);
 		simulators.removeAllItems();
 		simulators.addItem("euler");
 		simulators.addItem("gear1");
@@ -392,7 +379,7 @@ public class Button_Enabling {
 	public static void enableMonteCarlo(JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel, JLabel minStepLabel,
 			JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel, JTextField limit,
 			JComboBox intervalLabel, JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description,
-			JCheckBox usingSSA, JTextField fileStem, JLabel fileStemLabel, JList postAbs, JRadioButton abstraction, JRadioButton nary) {
+			JTextField fileStem, JLabel fileStemLabel, JList postAbs, JRadioButton abstraction, JRadioButton nary) {
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
 		runs.setEnabled(true);
@@ -408,12 +395,10 @@ public class Button_Enabling {
 		limit.setEnabled(true);
 		intervalLabel.setEnabled(true);
 		interval.setEnabled(true);
-		if (!usingSSA.isSelected()) {
-			simulators.setEnabled(true);
-			simulatorsLabel.setEnabled(true);
-			explanation.setEnabled(true);
-			description.setEnabled(true);
-		}
+		simulators.setEnabled(true);
+		simulatorsLabel.setEnabled(true);
+		explanation.setEnabled(true);
+		description.setEnabled(true);
 		simulators.removeAllItems();
 		simulators.addItem("gillespie");
 		simulators.addItem("gillespieJava");
@@ -444,7 +429,7 @@ public class Button_Enabling {
 	 */
 	public static void enableMarkov(JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel, JLabel minStepLabel, JTextField minStep,
 			JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
-			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JCheckBox usingSSA,
+			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, 
 			JTextField fileStem, JLabel fileStemLabel, ModelEditor gcmEditor, JList postAbs, String modelFile) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
@@ -462,12 +447,10 @@ public class Button_Enabling {
 		limit.setEnabled(false);
 		intervalLabel.setEnabled(false);
 		interval.setEnabled(false);
-		if (!usingSSA.isSelected()) {
-			simulators.setEnabled(true);
-			simulatorsLabel.setEnabled(true);
-			explanation.setEnabled(true);
-			description.setEnabled(true);
-		}
+		simulators.setEnabled(true);
+		simulatorsLabel.setEnabled(true);
+		explanation.setEnabled(true);
+		description.setEnabled(true);
 		simulators.removeAllItems();
 		if (gcmEditor != null || modelFile.contains(".lpn")) {
 			simulators.addItem("steady-state-markov-chain-analysis");
