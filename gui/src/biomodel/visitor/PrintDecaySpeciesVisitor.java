@@ -5,9 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
 
-
-import org.sbml.libsbml.KineticLaw;
-import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
 
 import biomodel.network.BaseSpecies;
@@ -84,6 +81,10 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 
 	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
+		
+		if (specie.getId().contains("__") == false)
+			return;
+		
 		loadValues(specie);
 		String compartment = checkCompartments(specie.getId());
 		r = Utility.Reaction("Degradation_"+specie.getId());
@@ -141,31 +142,35 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	
 	public void visitDiffusibleSpecies(DiffusibleSpecies species) {
 		
-		loadValues(species);
+		//this is now added during component dropping
 		
-		String ID = species.getId();
-		Reaction r = Utility.Reaction("Degradation_" + ID);
-		r.setCompartment(checkCompartments(ID));
-		r.setReversible(false);
-		r.setFast(false);
-		KineticLaw kl = r.createKineticLaw();
-		String decayExpression = "";
 		
-		if (decay > 0 || decay==-1) {
-			
-			//this is the mathematical expression for the decay
-			decayExpression = decayString + "*" + ID;
-
-			r.addReactant(Utility.SpeciesReference(ID, 1));
-
-			//parameter: id="kd" value=isDecay (usually 0.0075) units="u_1_second_n1" (inverse seconds)
-			if (decay > 0)
-				kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
-			
-			//formula: kd * inner species
-			kl.setFormula(decayExpression);
-			Utility.addReaction(document, r);
-		}
+		
+//		loadValues(species);
+//		
+//		String ID = species.getId();
+//		Reaction r = Utility.Reaction("Degradation_" + ID);
+//		r.setCompartment(checkCompartments(ID));
+//		r.setReversible(false);
+//		r.setFast(false);
+//		KineticLaw kl = r.createKineticLaw();
+//		String decayExpression = "";
+//		
+//		if (decay > 0 || decay==-1) {
+//			
+//			//this is the mathematical expression for the decay
+//			decayExpression = decayString + "*" + ID;
+//
+//			r.addReactant(Utility.SpeciesReference(ID, 1));
+//
+//			//parameter: id="kd" value=isDecay (usually 0.0075) units="u_1_second_n1" (inverse seconds)
+//			if (decay > 0)
+//				kl.addParameter(Utility.Parameter(decayString, decay, decayUnitString));
+//			
+//			//formula: kd * inner species
+//			kl.setFormula(decayExpression);
+//			Utility.addReaction(document, r);
+//		}
 	}
 	
 	public void visitDiffusibleConstitutiveSpecies(DiffusibleConstitutiveSpecies specie) {

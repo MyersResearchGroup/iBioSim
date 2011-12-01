@@ -150,7 +150,7 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		tempPanel = new JPanel(new GridLayout(1,2));
 		tempPanel.add(new JLabel(""));
 
-		diffusion = model.getReaction("Diffusion_"+selected);
+		diffusion = model.getReaction("MembraneDiffusion_"+selected);
 		if (diffusion != null) {
 			if (!diffusion.isSetAnnotation() || !diffusion.getAnnotationString().contains("Diffusion")) diffusion = null;
 		}

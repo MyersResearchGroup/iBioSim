@@ -81,12 +81,13 @@ public class GCMParser {
 	}
 
 	public GeneticNetwork buildNetwork() {
-		SBMLDocument sbml = gcm.flattenGCM();
+		SBMLDocument sbml = gcm.flattenGCM();		
 		if (sbml == null) return null;
 		return buildTopLevelNetwork(sbml);
 	}
 	
-	public GeneticNetwork buildTopLevelNetwork(SBMLDocument sbml) {
+	public GeneticNetwork buildTopLevelNetwork(SBMLDocument sbml) {		
+		
 		speciesList = new HashMap<String, SpeciesInterface>();
 		promoterList = new HashMap<String, Promoter>();
 		complexMap = new HashMap<String, ArrayList<Influence>>();
@@ -108,6 +109,7 @@ public class GCMParser {
 		if (sbml != null) {
 			network.setSBML(sbml);
 		}
+		
 		return network;		
 	}
 
@@ -271,7 +273,7 @@ public class GCMParser {
 		SpeciesInterface speciesIF = null;
 
 		Reaction degradation = sbml.getModel().getReaction("Degradation_"+species.getId());
-		Reaction diffusion = sbml.getModel().getReaction("Diffusion_"+species.getId());
+		Reaction diffusion = sbml.getModel().getReaction("MembraneDiffusion_"+species.getId());
 		Reaction constitutive = sbml.getModel().getReaction("Constitutive_"+species.getId());
 		Reaction complex = sbml.getModel().getReaction("Complex_"+species.getId());
 		
@@ -327,7 +329,9 @@ public class GCMParser {
 			} else {
 				speciesIF.setDecay(sbml.getModel().getParameter(GlobalConstants.KDECAY_STRING).getValue());
 			}
-			sbml.getModel().removeReaction(degradation.getId());
+			
+			if (degradation.getAnnotationString().contains("Grid") == false)
+				sbml.getModel().removeReaction(degradation.getId());
 		} else {
 			speciesIF.setDecay(0.0);
 		}
