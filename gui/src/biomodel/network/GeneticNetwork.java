@@ -226,6 +226,7 @@ public class GeneticNetwork {
 		try {
 			Model m = document.getModel();
 			SBMLWriter writer = new SBMLWriter();
+			
 			printSpecies(document);
 			if (!operatorAbstraction) {
 				if (promoters.size()>0) {
@@ -239,8 +240,9 @@ public class GeneticNetwork {
 				printPromoterBinding(document);
 			printComplexBinding(document);
 			
-			printDiffusion(document);
+			//printDiffusion(document);
 			//printDiffusionWithArrays(document);
+			printMembraneDiffusion(document);
 			
 			PrintStream p = new PrintStream(new FileOutputStream(filename),true,"UTF-8");
 
@@ -395,6 +397,100 @@ public class GeneticNetwork {
 
 	}
 
+	/**
+	 * turns the incomplete membrane diffusion reactions into a membrane diffusion reaction array with full information
+	 * 
+	 * @param document
+	 */
+	private void printMembraneDiffusion(SBMLDocument document) {
+		
+		ArrayList<Reaction> membraneDiffusionReactions = new ArrayList<Reaction>();
+		
+		//find all individual membrane diffusion reactions
+		for (int i = 0; i < document.getModel().getNumReactions(); ++i) {
+			
+			if (document.getModel().getReaction(i).getId().contains("MembraneDiffusion"))
+				membraneDiffusionReactions.add(document.getModel().getReaction(i));
+		}
+		
+		//map from membrane diffusion species ID to the locations/indices valid for that ID
+		HashMap<String, ArrayList<String> > speciesIDToLocationListMap = new HashMap<String, ArrayList<String> >();
+		
+		//old non-arrayed membrane diffusion reactions that are being replaced
+		HashSet<String> reactionsToRemoveSet = new HashSet<String>();
+		
+		//turn the individual membrane diffusion reactions into arrays for each species
+		for (Reaction membraneDiffusionReaction : membraneDiffusionReactions) {
+			
+			String reactionID = membraneDiffusionReaction.getId();
+			
+			reactionsToRemoveSet.add(reactionID);
+			
+			reactionID = reactionID.replace("MembraneDiffusion","_");
+			String[] reactionIDParts = reactionID.split("____");
+			
+			String compartmentID = reactionIDParts[0];
+			String speciesID = reactionIDParts[1];
+			
+			//take off the top compartment of the species ID
+			speciesID = speciesID.substring(speciesID.indexOf("__") + 2, speciesID.length());
+			
+			if (speciesIDToLocationListMap.containsKey(speciesID) == false)
+				speciesIDToLocationListMap.put(speciesID, new ArrayList<String>());				
+			
+			//get the row and column of this compartment
+			int row = properties.getSubmodelRow(compartmentID);
+			int col = properties.getSubmodelCol(compartmentID);
+			
+			speciesIDToLocationListMap.get(speciesID).add("(" + row + "," + col + ")");
+		}		
+		
+		//remove the old reactions
+		for (String reactionToRemove : reactionsToRemoveSet)
+			document.getModel().removeReaction(reactionToRemove);
+		
+		//now go through the hashmap and create the array of reactions
+		for (String speciesID : speciesIDToLocationListMap.keySet()) {
+			
+			//this is the list of locations where a membrane diffusion reaction exists for this species
+			ArrayList<String> diffusionLocations = speciesIDToLocationListMap.get(speciesID);
+			String diffusionLocationAnnotation = "";
+			
+			for (String diffusionLocation : diffusionLocations) {
+				
+				if (diffusionLocationAnnotation.length() > 0)
+					diffusionLocationAnnotation += ", ";
+				
+				diffusionLocationAnnotation += diffusionLocation;
+			}
+			
+			//create the new membrane diffusion reaction array for this species
+			Reaction membraneDiffusionReaction = Utility.Reaction("MembraneDiffusion_" + speciesID);
+			
+			membraneDiffusionReaction.setAnnotation(diffusionLocationAnnotation);
+			membraneDiffusionReaction.setCompartment(document.getModel().getCompartment(0).getId());
+			membraneDiffusionReaction.setReversible(true);
+			membraneDiffusionReaction.setFast(false);
+			
+			//add reactant and product
+			SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);
+			reactant.setAnnotation("rowOffset=0, colOffset=0");
+			SpeciesReference product = Utility.SpeciesReference(speciesID, 1);
+			product.setAnnotation("rowOffset=0, colOffset=0");
+			
+			membraneDiffusionReaction.addProduct(reactant);
+			membraneDiffusionReaction.addProduct(product);
+			
+			KineticLaw kl = membraneDiffusionReaction.createKineticLaw();
+			String klExpression = "get2DArrayElement(kmdiff_f) * get2DArrayElement(" + speciesID +
+				") - get2DArrayElement(kmdiff_r) * get2DArrayElement(" + speciesID + ")";
+			
+			kl.setFormula(klExpression);
+			
+			Utility.addReaction(document, membraneDiffusionReaction);			
+		}		
+	}
+	
 	/**
 	 * does the diffusion printing using array annotations
 	 * 

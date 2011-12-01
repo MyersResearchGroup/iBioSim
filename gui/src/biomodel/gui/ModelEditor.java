@@ -824,7 +824,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 							kc_r.setValue(Kc[1]);
 						}
 					} else if (prop.equals(GlobalConstants.MEMDIFF_STRING)) {
-						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("Diffusion_"+id);
+						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("MembraneDiffusion_"+id);
 						if (reaction != null) {
 							LocalParameter kmdiff_f = reaction.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_MEMDIFF_STRING);
 							if (kmdiff_f == null) {
@@ -1097,6 +1097,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			if (direct.equals(".") && !stem.equals("")) {
 				direct = "";
 			}
+			
 			GCMParser parser = new GCMParser(gcm, false);
 			GeneticNetwork network = null;
 			network = parser.buildNetwork();
@@ -1206,6 +1207,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			}
 			for (int i = 0; i < d.getModel().getNumReactions(); i++) {
 				Reaction reaction = d.getModel().getReaction(i);
+				
 				ListOf parameters = reaction.getKineticLaw().getListOfParameters();
 				for (int j = 0; j < reaction.getKineticLaw().getNumParameters(); j++) {
 					Parameter paramet = ((Parameter) (parameters.get(j)));

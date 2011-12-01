@@ -1202,10 +1202,10 @@ public class BioModel {
 	}
 	
 	public Reaction createDiffusionReaction(String s,String kmdiffStr) {
-		Reaction reaction = sbml.getModel().getReaction("Diffusion_"+s);
+		Reaction reaction = sbml.getModel().getReaction("MembraneDiffusion_"+s);
 		if (reaction==null) {
 			reaction = sbml.getModel().createReaction();
-			reaction.setId("Diffusion_"+s);
+			reaction.setId("MembraneDiffusion_"+s);
 			reaction.setAnnotation("Diffusion");
 			if (enclosingCompartment.equals("")) {
 				reaction.setCompartment(sbml.getModel().getCompartment(0).getId());
@@ -1584,8 +1584,8 @@ public class BioModel {
 			reaction.setId("Constitutive_"+newName);
 		}
 		if (isSpeciesDiffusible(oldName)) {
-			Reaction reaction = sbml.getModel().getReaction("Diffusion_"+oldName);
-			reaction.setId("Diffusion_"+newName);
+			Reaction reaction = sbml.getModel().getReaction("MembraneDiffusion_"+oldName);
+			reaction.setId("MembraneDiffusion_"+newName);
 		}
 		if (isSpeciesDegradable(oldName)) {
 			Reaction reaction = sbml.getModel().getReaction("Degradation_"+oldName);
@@ -2022,7 +2022,7 @@ public class BioModel {
 				removeReaction("Constitutive_"+id);
 			}
 			if (isSpeciesDiffusible(id)) {
-				removeReaction("Diffusion_"+id);
+				removeReaction("MembraneDiffusion_"+id);
 			}
 			if (isSpeciesDegradable(id)) {
 				removeReaction("Degradation_"+id);
@@ -2397,7 +2397,7 @@ public class BioModel {
 	}
 	
 	public boolean isSpeciesDiffusible(String speciesId) {
-		Reaction diffusion = sbml.getModel().getReaction("Diffusion_"+speciesId);
+		Reaction diffusion = sbml.getModel().getReaction("MembraneDiffusion_"+speciesId);
 		if (diffusion != null) {
 			if (diffusion.isSetAnnotation() && diffusion.getAnnotationString().contains("Diffusion")) return true;
 		}
@@ -2917,7 +2917,7 @@ public class BioModel {
 		for (int speciesIndex = 0; speciesIndex < componentModel.getNumSpecies(); ++speciesIndex) {
 			
 			String speciesID = componentModel.getListOfSpecies().get(speciesIndex).getId();			
-			Reaction diffusionReaction = componentModel.getReaction("Diffusion_" + speciesID);
+			Reaction diffusionReaction = componentModel.getReaction("MembraneDiffusion_" + speciesID);
 			
 			if (diffusionReaction != null && diffusionReaction.isSetAnnotation() 
 					&& diffusionReaction.getAnnotationString().contains("Diffusion"))
@@ -2947,7 +2947,7 @@ public class BioModel {
 			for (int speciesIndex = 0; speciesIndex < componentModel.getNumSpecies(); ++speciesIndex) {
 				
 				String speciesID = componentModel.getListOfSpecies().get(speciesIndex).getId();			
-				Reaction diffusionReaction = componentModel.getReaction("Diffusion_" + speciesID);
+				Reaction diffusionReaction = componentModel.getReaction("MembraneDiffusion_" + speciesID);
 				
 				//if this is true, then this species shouldn't be removed because it exists elsewhere
 				if (diffusionReaction != null && diffusionReaction.isSetAnnotation() 
@@ -2994,7 +2994,7 @@ public class BioModel {
 		for (int speciesIndex = 0; speciesIndex < componentModel.getNumSpecies(); ++speciesIndex) {
 			
 			String speciesID = componentModel.getListOfSpecies().get(speciesIndex).getId();			
-			Reaction diffusionReaction = componentModel.getReaction("Diffusion_" + speciesID);
+			Reaction diffusionReaction = componentModel.getReaction("MembraneDiffusion_" + speciesID);
 			
 			if (diffusionReaction != null && diffusionReaction.isSetAnnotation() 
 					&& diffusionReaction.getAnnotationString().contains("Diffusion"))
@@ -3093,7 +3093,7 @@ public class BioModel {
 				
 				
 				//reversible between neighboring "outer" species
-				//this is the diffusion across the "medium" if you will				
+				//this is the diffusion across the "medium" if you will
 				r = Utility.Reaction("Diffusion_" + speciesID + "_" + direction);
 				r.setCompartment(diffComp);
 				r.setReversible(true);
@@ -3119,13 +3119,13 @@ public class BioModel {
 							"colOffset=" + neighborColIndexOffset);
 					r.addProduct(product);
 					
-					//parameters: id="kecdiff"" value=kecdiff units="u_1_second_n1" (inverse seconds)
+					//parameters: id="kecdiff" value=kecdiff units="u_1_second_n1" (inverse seconds)
 					kl.addParameter(Utility.Parameter(diffusionString, kecdiff, diffusionUnitString));
 					
 					kl.setFormula(diffusionExpression);
 					Utility.addReaction(sbml, r);
-				}				
-			}
+				}
+			}		
 		}
 	}
 	
@@ -3543,19 +3543,83 @@ public class BioModel {
 		gcms.add(filename);
 		save(filename + ".temp");
 		ArrayList<String> comps = new ArrayList<String>();
-		for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
-			comps.add(sbmlCompModel.getSubmodel(i).getId());
+		
+		//get the list of submodels
+		if (this.getGridEnabledFromFile(filename.replace(".gcm",".xml"))) {
+			
+			for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+				
+				Parameter parameter = sbml.getModel().getParameter(i);
+				
+				//if it's a location parameter
+				if (parameter.getId().contains("__locations")) {
+					
+					String[] splitAnnotation = parameter.getAnnotationString().replace("<annotation>","")
+					.replace("</annotation>","").replace("]]","").replace("[[","").split("=");
+				
+					for (int j = 1; j < splitAnnotation.length; ++j) {
+						
+						splitAnnotation[j] = splitAnnotation[j].trim();
+						int commaIndex = splitAnnotation[j].indexOf(',');
+						
+						if (commaIndex > 0)
+							splitAnnotation[j] = splitAnnotation[j].substring(0, splitAnnotation[j].indexOf(','));
+						
+						String submodelID = splitAnnotation[j];
+						
+						if (submodelID.length() == 0)
+							continue;
+						
+						comps.add(submodelID);
+					}
+				}
+			}		
 		}
+		else {
+		
+			for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
+				comps.add(sbmlCompModel.getSubmodel(i).getId());
+			}
+		}
+		
 		BioModel gcm = new BioModel(path);
 		gcm.load(filename + ".temp");
 
 		// loop through the keyset of the components of the gcm
 		for (String s : comps) {
-			BioModel file = new BioModel(path);
+			
+			BioModel file = new BioModel(path);		
+			
+			String componentModelRef = "";
+			String extModel = "";
+			
+			if (this.getGridEnabledFromFile(filename.replace(".gcm",".xml"))) {
+			
+				//look through the location parameter arrays to find the correct model ref
+				for (int i = 0; i < sbml.getModel().getNumParameters(); ++i) {
+					
+					Parameter parameter = sbml.getModel().getParameter(i);
+					
+					//if it's a location parameter
+					if (parameter.getId().contains("__locations")) {
+						
+						if (parameter.getAnnotationString().contains("[[" + s + "]]")) {
+							
+							componentModelRef = parameter.getId().replace("__locations","");
+							break;
+						}					
+					}				
+				}
+				
+				extModel = componentModelRef + ".gcm";
+			}
+			else {
 
-			// load the component's gcm into a new GCMFile
-			String extModel = sbmlComp.getExternalModelDefinition(sbmlCompModel.getSubmodel(s)
-					.getModelRef()).getSource().substring(7).replace(".xml",".gcm");
+				// load the component's gcm into a new GCMFile
+				extModel = sbmlComp.getExternalModelDefinition(sbmlCompModel.getSubmodel(s)
+						.getModelRef()).getSource().substring(7).replace(".xml",".gcm");
+			}		
+			
 			file.load(path + separator + extModel);
 			ArrayList<String> copy = copyArray(gcms);
 			if (copy.contains(file.getFilename())) {
@@ -3606,9 +3670,11 @@ public class BioModel {
 
 	private BioModel unionGCM(BioModel topLevel, BioModel bottomLevel, String compName, ArrayList<String> gcms) {
 		ArrayList<String> mod = new ArrayList<String>();
+		
 		for (long i = 0; i < bottomLevel.getSBMLCompModel().getNumSubmodels(); i++) {
 			mod.add(bottomLevel.getSBMLCompModel().getSubmodel(i).getId());
 		}
+		
 		for (String s : mod) {
 			BioModel file = new BioModel(path);
 			String extModel = bottomLevel.getSBMLComp().getExternalModelDefinition(bottomLevel.getSBMLCompModel().getSubmodel(s)
@@ -3656,9 +3722,11 @@ public class BioModel {
 	
 	private SBMLDocument unionSBML(BioModel mainGCM, BioModel gcm, String compName, 
 			boolean isWithinCompartment, String RNAPamount, String topComp) {
+		
 		SBMLDocument mainDoc = mainGCM.getSBMLDocument();
 		SBMLDocument doc = gcm.getSBMLDocument();
 		Model m = doc.getModel();
+		
 		for (int i = 0; i < m.getNumCompartmentTypes(); i++) {
 			org.sbml.libsbml.CompartmentType c = m.getCompartmentType(i);
 			String newName = compName + "__" + c.getId();
@@ -3680,6 +3748,7 @@ public class BioModel {
 		}
 		for (int i = 0; i < m.getNumCompartments(); i++) {
 			org.sbml.libsbml.Compartment c = m.getCompartment(i);
+			
 			if (isWithinCompartment || c.getId().contains("__")) {
 				updateVarId(false, c.getId(), compName + "__" + c.getId(), doc);
 				compartments.remove(c.getId());
@@ -3746,6 +3815,7 @@ public class BioModel {
 		for (long i = 0; i < m.getNumSpecies(); i++) {
 			Species spec = m.getSpecies(i);
 			String newName = compName + "__" + spec.getId();
+			
 			for (long j = 0; j < mainDoc.getModel().getNumSpecies(); j++) {
 				CompSBasePlugin sbmlSBase = (CompSBasePlugin)mainDoc.getModel().getSpecies(j).getPlugin("comp");
 				ReplacedElement replacement = null;

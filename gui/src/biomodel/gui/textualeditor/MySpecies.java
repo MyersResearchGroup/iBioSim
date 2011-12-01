@@ -793,7 +793,7 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 		speciesPanel.add(new JLabel("Extracellular degradation rate (kecd)"));
 		speciesPanel.add(kecd);
 		
-		//set the values of the species using the sbml document
+		//set the values of the species fields using the sbml document
 		try {
 			
 			Species selectedSpecies = document.getModel().getSpecies(((String)species.getSelectedValue()).split(" ")[0]);
@@ -833,6 +833,11 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 				init.setText("" + selectedSpecies.getInitialConcentration());
 				initLabel.setSelectedItem("Initial Concentration");
 			}
+			
+			kecdiff.setText(String.valueOf(document.getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Above")
+					.getKineticLaw().getParameter("kecdiff").getValue()));
+			kecd.setText(String.valueOf(document.getModel().getReaction("Degradation_" + selectedSpecies.getId())
+					.getKineticLaw().getParameter("kecd").getValue()));			
 		}
 		catch (Exception e) {			
 			e.printStackTrace();
@@ -852,10 +857,20 @@ public class MySpecies extends JPanel implements ActionListener, MouseListener {
 			selectedSpecies.setHasOnlySubstanceUnits(Boolean.valueOf((String) specHasOnly.getModel().getSelectedItem()));
 			selectedSpecies.setConstant(Boolean.valueOf((String) specConstant.getModel().getSelectedItem()));
 			
-			//not quite sure what to do with these just yet
-			//they need to be stored somewhere
-			Double.parseDouble(kecdiff.getSelectedText());
-			Double.parseDouble(kecd.getSelectedText());
+			//set the local parameters in the diffusion/degredation reactions
+			double kecdiffRate = Double.parseDouble(kecdiff.getText());
+			double kecdRate = Double.parseDouble(kecd.getText());
+			
+			document.getModel().getReaction("Degradation_" + selectedSpecies.getId())
+				.getKineticLaw().getParameter("kecd").setValue(kecdRate);			
+			document.getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Above")
+				.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);			
+			document.getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Below")
+				.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);
+			document.getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Left")
+				.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);
+			document.getModel().getReaction("Diffusion_" + selectedSpecies.getId() + "_Right")
+				.getKineticLaw().getParameter("kecdiff").setValue(kecdiffRate);		
 		}
 	}
 	
