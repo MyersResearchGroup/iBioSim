@@ -381,7 +381,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 						add.setListData(adding);
 						add.setSelectedIndex(0);
 						unitDefs.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						adding = Utility.add(units, unitDefs, add, false, null, null, null, null, null, null, Gui.frame);
+						adding = Utility.add(units, unitDefs, add, null, null, null, null, null, Gui.frame);
 						units = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							units[i] = (String) adding[i];
@@ -549,7 +549,7 @@ public class Units extends JPanel implements ActionListener, MouseListener {
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					unitList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(uList, unitList, add, false, null, null, null, null, null, null, Gui.frame);
+					adding = Utility.add(uList, unitList, add, null, null, null, null, null, Gui.frame);
 					uList = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						uList[i] = (String) adding[i];

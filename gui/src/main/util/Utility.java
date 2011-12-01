@@ -588,7 +588,7 @@ public class Utility {
 	 * Adds the selected values in the add JList to the list JList. Stores all
 	 * these values into the currentList array and returns this array.
 	 */
-	public static Object[] add(Object[] currentList, JList list, JList add, boolean isTermCond, JTextField amountTerm, JRadioButton ge,
+	public static Object[] add(Object[] currentList, JList list, JList add, JRadioButton ge,
 			JRadioButton gt, JRadioButton eq, JRadioButton lt, JRadioButton le, Component component) {
 		int[] select = new int[currentList.length];
 		for (int i = 0; i < currentList.length; i++) {
@@ -597,35 +597,6 @@ public class Utility {
 		list.setSelectedIndices(select);
 		currentList = list.getSelectedValues();
 		Object[] newSelected = add.getSelectedValues();
-		if (isTermCond) {
-			for (int i = 0; i < newSelected.length; i++) {
-				String temp = (String) newSelected[i];
-				double amount = 0.0;
-				try {
-					amount = Double.parseDouble(amountTerm.getText().trim());
-				}
-				catch (Exception except) {
-					JOptionPane.showMessageDialog(component, "Must Enter A Real Number Into The Termination Condition Field.", "Error",
-							JOptionPane.ERROR_MESSAGE);
-					return currentList;
-				}
-				if (ge.isSelected()) {
-					newSelected[i] = temp + ".amount.ge." + amount;
-				}
-				else if (gt.isSelected()) {
-					newSelected[i] = temp + ".amount.gt." + amount;
-				}
-				else if (eq.isSelected()) {
-					newSelected[i] = temp + ".amount.eq." + amount;
-				}
-				else if (lt.isSelected()) {
-					newSelected[i] = temp + ".amount.lt." + amount;
-				}
-				else if (le.isSelected()) {
-					newSelected[i] = temp + ".amount.le." + amount;
-				}
-			}
-		}
 		Object[] temp = currentList;
 		int newLength = temp.length;
 		for (int i = 0; i < newSelected.length; i++) {

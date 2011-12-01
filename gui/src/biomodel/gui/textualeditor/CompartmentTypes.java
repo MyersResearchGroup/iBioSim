@@ -172,7 +172,7 @@ public class CompartmentTypes extends JPanel implements ActionListener, MouseLis
 					add.setListData(adding);
 					add.setSelectedIndex(0);
 					compTypes.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-					adding = Utility.add(cpTyp, compTypes, add, false, null, null, null, null, null, null, Gui.frame);
+					adding = Utility.add(cpTyp, compTypes, add, null, null, null, null, null, Gui.frame);
 					cpTyp = new String[adding.length];
 					for (int i = 0; i < adding.length; i++) {
 						cpTyp[i] = (String) adding[i];

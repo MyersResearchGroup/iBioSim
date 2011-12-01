@@ -727,7 +727,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 						add.setListData(adding);
 						add.setSelectedIndex(0);
 						compartments.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						adding = Utility.add(comps, compartments, add, false, null, null, null, null, null, null, Gui.frame);
+						adding = Utility.add(comps, compartments, add, null, null, null, null, null, Gui.frame);
 						comps = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							comps[i] = (String) adding[i];

@@ -574,7 +574,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 							add.setListData(adding);
 							add.setSelectedIndex(0);
 							parameters.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-							adding = Utility.add(params, parameters, add, false, null, null, null, null, null, null, Gui.frame);
+							adding = Utility.add(params, parameters, add, null, null, null, null, null, Gui.frame);
 							params = new String[adding.length];
 							for (int i = 0; i < adding.length; i++) {
 								params[i] = (String) adding[i];

@@ -269,7 +269,7 @@ public class Constraints extends JPanel implements ActionListener, MouseListener
 						add.setListData(adding);
 						add.setSelectedIndex(0);
 						constraints.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-						adding = Utility.add(cons, constraints, add, false, null, null, null, null, null, null, Gui.frame);
+						adding = Utility.add(cons, constraints, add, null, null, null, null, null, Gui.frame);
 						cons = new String[adding.length];
 						for (int i = 0; i < adding.length; i++) {
 							cons[i] = (String) adding[i];

@@ -1,6 +1,5 @@
 package biomodel.gui.textualeditor;
 
-import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
@@ -12,7 +11,6 @@ import java.util.Scanner;
 import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import org.sbml.libsbml.Constraint;
 import org.sbml.libsbml.InitialAssignment;
