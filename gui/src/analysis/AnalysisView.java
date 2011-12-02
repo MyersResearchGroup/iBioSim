@@ -18,8 +18,6 @@ import main.*;
 import main.util.*;
 import main.util.dataparser.DataParser;
 
-import org.sbml.libsbml.*;
-
 import biomodel.gui.ModelEditor;
 import biomodel.gui.textualeditor.*;
 import biomodel.parser.BioModel;
@@ -280,9 +278,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		String[] tempArray = modelFile.split(separator);
 		this.modelFile = tempArray[tempArray.length - 1];
 
+		/*
 		SBMLDocument document = Gui.readSBML(sbmlFile);
 		Model model = document.getModel();
-		/*
 		ArrayList<String> listOfSpecs = new ArrayList<String>();
 		if (model != null) {
 			ListOf listOfSpecies = model.getListOfSpecies();
@@ -391,7 +389,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				BioModel gcm = new BioModel(root);
 				gcm.load(root + separator + modelFile);
 				// TODO: THIS NEEDS FIXING
-				String[] getProps = null; //gcm.getConditions().toArray(new String[0]);
+				//String[] getProps = gcm.getConditions().toArray(new String[0]);
 				props = new String[/*getProps.length + */1];
 				props[0] = "none";
 				/*
@@ -3195,7 +3193,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		double minTimeStep = 0.0;
 		double timeStep = 1.0;
 		double absError = 1.0e-9;
-		String outDir = ".";
 		long rndSeed = 314159;
 		int run = 1;
 		try {
@@ -3259,8 +3256,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			// }
 			return;
 		}
-		outDir = simName;
-		// outDir = root + separator + simName;
 		try {
 			// if (seed.isEnabled()) {
 			rndSeed = Long.parseLong(seed.getText().trim());
@@ -3870,6 +3865,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				}
 				//props = loadProperties.toArray(props);
 				//properties.setListData(props);
+				/*
 				String[] getFilename = openFile.split(separator);
 				int cut = 0;
 				for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
@@ -3890,7 +3886,6 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				}
 				try {
 					filename = sbmlFile;
-					/*
 					ArrayList<String> listOfSpecs = new ArrayList<String>();
 					if (gcmEditor == null) {
 						SBMLDocument document = Gui.readSBML(filename);
@@ -3920,11 +3915,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						}
 						allSpecies[j] = index;
 					}
-					*/
 					// intSpecies.setListData(list);
 					//termCond.setListData(allSpecies);
 					//int rem = availSpecies.getItemCount();
-					/*
 					for (int i = 0; i < rem; i++) {
 						availSpecies.removeItemAt(0);
 					}
@@ -3949,10 +3942,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 					speciesPanel.revalidate();
 					speciesPanel.repaint();
-					*/
 				}
 				catch (Exception e1) {
 				}
+					*/
 				// species.setListData(new Object[0]);
 				//terminations.setListData(new Object[0]);
 				if (load.getProperty("reb2sac.abstraction.method").equals("none")) {
@@ -4940,7 +4933,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				BioModel gcm = new BioModel(root);
 				gcm.load(root + separator + modelFile);
 				// TODO: THIS NEEDS FIXING
-				String[] getProps = null; //gcm.getConditions().toArray(new String[0]);
+				//String[] getProps = gcm.getConditions().toArray(new String[0]);
 				props = new String[/*getProps.length + */1];
 				props[0] = "none";
 				/*
