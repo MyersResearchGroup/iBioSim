@@ -67,13 +67,13 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 					else 
 						viewArea.append("Description:  NA\n");
 					
-//					if (dnac.getAnnotations() != null && dnac.getAnnotations().size() > 0) {
-//						viewArea.append("Annotations:  ");
-//						SequenceAnnotation[] sortedSA = sortAnnotations(dnac.getAnnotations());
-//						String annotations = processAnnotations(sortedSA);
-//						viewArea.append(annotations + "\n");
-//					} else 
-//						viewArea.append("Annotations:  NA\n");
+					if (dnac.getAnnotations() != null && dnac.getAnnotations().size() > 0) {
+						viewArea.append("Annotations:  ");
+						SequenceAnnotation[] sortedSA = sortAnnotations(dnac.getAnnotations());
+						String annotations = processAnnotations(sortedSA);
+						viewArea.append(annotations + "\n");
+					} else 
+						viewArea.append("Annotations:  NA\n");
 					viewArea.append("Types:  ");
 					String types = "";
 					for (URI uri : dnac.getTypes()) {
@@ -120,13 +120,11 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 	private String processAnnotations(SequenceAnnotation[] arraySA) {
 		String annotations = "";
 		for (int k = 0; k < arraySA.length; k++) {
-			SequenceAnnotation sa = arraySA[k];
-			DnaComponent dnac = arraySA[k].getSubComponent();
 			annotations = annotations + arraySA[k].getSubComponent().getDisplayId();
 			String sign = arraySA[k].getStrand();
-			if (sign.equals("+"))
-				sign = "";
-				annotations = annotations + sign + arraySA[k].getBioStart() + " to " + sign + arraySA[k].getBioEnd() + ", "; 
+//			if (sign.equals("+"))
+//				sign = "";
+			annotations = annotations + " " + sign + arraySA[k].getBioStart() + " to " + sign + arraySA[k].getBioEnd() + ", "; 
 		}
 		annotations = annotations.substring(0, annotations.length() - 2);
 		return annotations;

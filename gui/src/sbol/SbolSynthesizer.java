@@ -169,7 +169,8 @@ public class SbolSynthesizer {
 	private LinkedList<String> getSourceCompProperties() {
 		LinkedList<String> sourceFeatProperties = new LinkedList<String>();
 		for (Promoter p : promoters.values()) {
-			if (synthesizerOn && p.getOutputs().size() > 0) {
+//			&& p.getOutputs().size() > 0
+			if (synthesizerOn ) {
 				String sbolPromoter = p.getPromoter();
 				if (sbolPromoter != null)
 					sourceFeatProperties.add(sbolPromoter);
