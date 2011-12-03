@@ -95,12 +95,16 @@ public class GCMParser {
 
 		for (long i=0; i<sbml.getModel().getNumSpecies(); i++) {
 			Species species = sbml.getModel().getSpecies(i);
-			if (species.isSetAnnotation() && 
-				species.getAnnotationString().contains(GlobalConstants.TYPE+"="+GlobalConstants.PROMOTER)) { 
-				parsePromoterData(sbml,species);
-			} else {
+			if (!species.isSetAnnotation() || 
+					!species.getAnnotationString().contains(GlobalConstants.TYPE+"="+GlobalConstants.PROMOTER))
 				parseSpeciesData(sbml,species);
-			}
+			
+		}
+		for (long i=0; i<sbml.getModel().getNumSpecies(); i++) {
+			Species species = sbml.getModel().getSpecies(i);
+			if (species.isSetAnnotation() && 
+					species.getAnnotationString().contains(GlobalConstants.TYPE+"="+GlobalConstants.PROMOTER)) 
+				parsePromoterData(sbml,species);
 		}
 		
 		GeneticNetwork network = new GeneticNetwork(speciesList, complexMap, partsMap, promoterList, gcm);
@@ -187,6 +191,12 @@ public class GCMParser {
 					p.setKArnap(sbml.getModel().getParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING).getValue(),
 							    sbml.getModel().getParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING).getValue());
 				}
+			for (long j = 0; j < production.getNumProducts(); j++) {
+				SpeciesReference product = production.getProduct(j);
+				if (!sbml.getModel().getSpecies(product.getSpecies())
+						.getAnnotationString().contains(GlobalConstants.TYPE + "=" + GlobalConstants.MRNA)) 
+					p.addOutput(product.getSpecies(),speciesList.get(product.getSpecies()));
+			}
 			for (long i = 0; i < production.getNumModifiers(); i++) {
 				ModifierSpeciesReference modifier = production.getModifier(i);
 				if (modifier.getAnnotationString().contains(GlobalConstants.REPRESSION) ||
@@ -202,7 +212,7 @@ public class GCMParser {
 							infl.setOutput("none");
 						} else {
 							infl.setOutput(product.getSpecies());
-							p.addOutput(product.getSpecies(),speciesList.get(product.getSpecies()));
+//							p.addOutput(product.getSpecies(),speciesList.get(product.getSpecies()));
 						}
 						p.addToReactionMap(modifier.getSpecies(), infl);
 						p.addRepressor(modifier.getSpecies(), speciesList.get(modifier.getSpecies()));
@@ -235,7 +245,7 @@ public class GCMParser {
 							infl.setOutput("none");
 						} else {
 							infl.setOutput(product.getSpecies());
-							p.addOutput(product.getSpecies(),speciesList.get(product.getSpecies()));
+//							p.addOutput(product.getSpecies(),speciesList.get(product.getSpecies()));
 						}
 						p.addToReactionMap(modifier.getSpecies(), infl);
 						p.addActivator(modifier.getSpecies(), speciesList.get(modifier.getSpecies()));
@@ -425,14 +435,19 @@ public class GCMParser {
 		complexMap = new HashMap<String, ArrayList<Influence>>();
 		partsMap = new HashMap<String, ArrayList<Influence>>();
 
-		for (long i=0; i<gcm.getSBMLDocument().getModel().getNumSpecies(); i++) {
-			Species species = gcm.getSBMLDocument().getModel().getSpecies(i);
+		SBMLDocument sbml = gcm.getSBMLDocument();
+		for (long i=0; i<sbml.getModel().getNumSpecies(); i++) {
+			Species species = sbml.getModel().getSpecies(i);
+			if (!species.isSetAnnotation() || 
+					!species.getAnnotationString().contains(GlobalConstants.TYPE+"="+GlobalConstants.PROMOTER))
+				parseSpeciesData(sbml,species);
+			
+		}
+		for (long i=0; i<sbml.getModel().getNumSpecies(); i++) {
+			Species species = sbml.getModel().getSpecies(i);
 			if (species.isSetAnnotation() && 
-				species.getAnnotationString().contains(GlobalConstants.TYPE+"="+GlobalConstants.PROMOTER)) { 
-				parsePromoterData(gcm.getSBMLDocument(),species);
-			} else {
-				parseSpeciesData(gcm.getSBMLDocument(),species);
-			}
+					species.getAnnotationString().contains(GlobalConstants.TYPE+"="+GlobalConstants.PROMOTER)) 
+				parsePromoterData(sbml,species);
 		}
 		
 		SbolSynthesizer synthesizer = new SbolSynthesizer(promoterList);

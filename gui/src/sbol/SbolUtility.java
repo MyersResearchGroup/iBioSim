@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.Scanner;
 
 import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBException;
@@ -18,14 +19,36 @@ public class SbolUtility {
 	public static CollectionImpl loadXML(String filePath) {
 		Parser p = new Parser();
 		CollectionImpl lib = null;
+//		try {
+//			lib = p.parse(new FileInputStream(new File(filePath)));
+//		} catch (FileNotFoundException e) {
+//			JOptionPane.showMessageDialog(Gui.frame, "SBOL file is not found.", "File Not Found",
+//					JOptionPane.ERROR_MESSAGE);
+//			return null;
+//		} catch (JAXBException e) {
+//			e.printStackTrace();
+//		}
+		StringBuilder text = new StringBuilder();
+		String NL = System.getProperty("line.separator");
+		Scanner scanner = null;
 		try {
-			lib = p.parse(new FileInputStream(new File(filePath)));
+			scanner = new Scanner(new FileInputStream(new File(filePath)));
 		} catch (FileNotFoundException e) {
 			JOptionPane.showMessageDialog(Gui.frame, "SBOL file is not found.", "File Not Found",
 					JOptionPane.ERROR_MESSAGE);
-			return null;
+		}
+		try {
+			while (scanner.hasNextLine()){
+				text.append(scanner.nextLine() + NL);
+			}
+		} finally {
+			scanner.close();
+		}
+		try {
+			lib = p.parse(text.toString());
 		} catch (JAXBException e) {
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(Gui.frame, "There was an error parsing a SBOL file.", "Parsing Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		String mySeparator = File.separator;
 		if (mySeparator.equals("\\"))
