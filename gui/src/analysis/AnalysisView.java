@@ -20,7 +20,6 @@ import main.util.dataparser.DataParser;
 
 import biomodel.gui.ModelEditor;
 import biomodel.gui.textualeditor.*;
-import biomodel.parser.BioModel;
 
 import verification.AbstPane;
 import graph.*;
@@ -372,31 +371,16 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		inputHolderRight.add(runs);
 		inputHolderLeft.add(fileStemLabel);
 		inputHolderRight.add(fileStem);
-		if (modelFile.contains(".lpn") || modelFile.contains(".gcm")) {
+		if (modelFile.contains(".lpn")) {
 			JLabel prop = new JLabel("Property:");
 			String[] props = new String[] { "none" };
-			if (modelFile.contains(".lpn")) {
-				LhpnFile lpn = new LhpnFile();
-				lpn.load(root + separator + modelFile);
-				String[] getProps = lpn.getProperties().toArray(new String[0]);
-				props = new String[getProps.length + 1];
-				props[0] = "none";
-				for (int i = 0; i < getProps.length; i++) {
-					props[i + 1] = getProps[i];
-				}
-			}
-			else {
-				BioModel gcm = new BioModel(root);
-				gcm.load(root + separator + modelFile);
-				// TODO: THIS NEEDS FIXING
-				//String[] getProps = gcm.getConditions().toArray(new String[0]);
-				props = new String[/*getProps.length + */1];
-				props[0] = "none";
-				/*
-				for (int i = 0; i < getProps.length; i++) {
-					props[i + 1] = getProps[i];
-				}
-				*/
+			LhpnFile lpn = new LhpnFile();
+			lpn.load(root + separator + modelFile);
+			String[] getProps = lpn.getProperties().toArray(new String[0]);
+			props = new String[getProps.length + 1];
+			props[0] = "none";
+			for (int i = 0; i < getProps.length; i++) {
+				props[i + 1] = getProps[i];
 			}
 			transientProperties = new JComboBox(props);
 			transientProperties.setPreferredSize(new Dimension(5, 10));
@@ -4916,31 +4900,16 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	}
 
 	public void updateProperties() {
-		if (transientProperties != null) {
+		if (transientProperties != null	&& modelFile.contains(".lpn")) {
 			Object selected = transientProperties.getSelectedItem();
 			String[] props = new String[] { "none" };
-			if (modelFile.contains(".lpn")) {
-				LhpnFile lpn = new LhpnFile();
-				lpn.load(root + separator + modelFile);
-				String[] getProps = lpn.getProperties().toArray(new String[0]);
-				props = new String[getProps.length + 1];
-				props[0] = "none";
-				for (int i = 0; i < getProps.length; i++) {
-					props[i + 1] = getProps[i];
-				}
-			}
-			else {
-				BioModel gcm = new BioModel(root);
-				gcm.load(root + separator + modelFile);
-				// TODO: THIS NEEDS FIXING
-				//String[] getProps = gcm.getConditions().toArray(new String[0]);
-				props = new String[/*getProps.length + */1];
-				props[0] = "none";
-				/*
-				for (int i = 0; i < getProps.length; i++) {
-					props[i + 1] = getProps[i];
-				}
-				*/
+			LhpnFile lpn = new LhpnFile();
+			lpn.load(root + separator + modelFile);
+			String[] getProps = lpn.getProperties().toArray(new String[0]);
+			props = new String[getProps.length + 1];
+			props[0] = "none";
+			for (int i = 0; i < getProps.length; i++) {
+				props[i + 1] = getProps[i];
 			}
 			transientProperties.removeAllItems();
 			for (String s : props) {
