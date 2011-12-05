@@ -68,7 +68,8 @@ public class DynamicGillespie {
 	 */
 	public void cancel() {
 		
-		simulator.cancel();
+		if (simulator != null)
+			simulator.cancel();
 	}
 }
 

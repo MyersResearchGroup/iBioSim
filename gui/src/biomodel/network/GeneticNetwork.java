@@ -24,6 +24,7 @@ import main.util.MutableString;
 
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.Model;
+import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SBMLWriter;
@@ -415,6 +416,7 @@ public class GeneticNetwork {
 		
 		//map from membrane diffusion species ID to the locations/indices valid for that ID
 		HashMap<String, ArrayList<String> > speciesIDToLocationListMap = new HashMap<String, ArrayList<String> >();
+		HashMap<String, ArrayList<String> > speciesIDToComponentListMap = new HashMap<String, ArrayList<String> >();
 		
 		//old non-arrayed membrane diffusion reactions that are being replaced
 		HashSet<String> reactionsToRemoveSet = new HashSet<String>();
@@ -436,13 +438,17 @@ public class GeneticNetwork {
 			speciesID = speciesID.substring(speciesID.indexOf("__") + 2, speciesID.length());
 			
 			if (speciesIDToLocationListMap.containsKey(speciesID) == false)
-				speciesIDToLocationListMap.put(speciesID, new ArrayList<String>());				
+				speciesIDToLocationListMap.put(speciesID, new ArrayList<String>());	
+			
+			if (speciesIDToComponentListMap.containsKey(speciesID) == false)
+				speciesIDToComponentListMap.put(speciesID, new ArrayList<String>());	
 			
 			//get the row and column of this compartment
 			int row = properties.getSubmodelRow(compartmentID);
 			int col = properties.getSubmodelCol(compartmentID);
 			
 			speciesIDToLocationListMap.get(speciesID).add("(" + row + "," + col + ")");
+			speciesIDToComponentListMap.get(speciesID).add(compartmentID);
 		}		
 		
 		//remove the old reactions
@@ -454,31 +460,59 @@ public class GeneticNetwork {
 			
 			//this is the list of locations where a membrane diffusion reaction exists for this species
 			ArrayList<String> diffusionLocations = speciesIDToLocationListMap.get(speciesID);
-			String diffusionLocationAnnotation = "";
+			ArrayList<String> components = speciesIDToComponentListMap.get(speciesID);
+			//String diffusionLocationAnnotation = "";
+			
+			XMLAttributes attr = new XMLAttributes();
+			attr.add("xmlns:array", "http://www.fakeuri.com");
+			
+			int componentIndex = 0;
 			
 			for (String diffusionLocation : diffusionLocations) {
 				
-				if (diffusionLocationAnnotation.length() > 0)
-					diffusionLocationAnnotation += ", ";
+				attr.add("array:" + components.get(componentIndex), diffusionLocation);
 				
-				diffusionLocationAnnotation += diffusionLocation;
+//				if (diffusionLocationAnnotation.length() > 0)
+//					diffusionLocationAnnotation += ", ";
+//				
+//				diffusionLocationAnnotation += diffusionLocation;
+				
+				++componentIndex;
 			}
+			
+			XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
 			
 			//create the new membrane diffusion reaction array for this species
 			Reaction membraneDiffusionReaction = Utility.Reaction("MembraneDiffusion_" + speciesID);
 			
-			membraneDiffusionReaction.setAnnotation(diffusionLocationAnnotation);
+			membraneDiffusionReaction.setAnnotation(node);
 			membraneDiffusionReaction.setCompartment(document.getModel().getCompartment(0).getId());
 			membraneDiffusionReaction.setReversible(true);
 			membraneDiffusionReaction.setFast(false);
 			
 			//add reactant and product
 			SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);
-			reactant.setAnnotation("rowOffset=0, colOffset=0");
-			SpeciesReference product = Utility.SpeciesReference(speciesID, 1);
-			product.setAnnotation("rowOffset=0, colOffset=0");
 			
-			membraneDiffusionReaction.addProduct(reactant);
+			attr = new XMLAttributes();
+			attr.add("xmlns:array", "http://www.fakeuri.com");
+			attr.add("array:rowOffset", "0");
+			attr.add("array:colOffset", "0");
+			node = new XMLNode(new XMLTriple("array","","array"), attr);
+			reactant.setAnnotation(node);
+			
+			//reactant.setAnnotation("rowOffset=0, colOffset=0");
+			SpeciesReference product = Utility.SpeciesReference(speciesID, 1);
+			
+			attr = new XMLAttributes();
+			attr.add("xmlns:array", "http://www.fakeuri.com");
+			attr.add("array:rowOffset", "0");
+			attr.add("array:colOffset", "0");
+			node = new XMLNode(new XMLTriple("array","","array"), attr);
+			product.setAnnotation(node);
+			
+			//product.setAnnotation("rowOffset=0, colOffset=0");
+			
+			membraneDiffusionReaction.addReactant(reactant);
 			membraneDiffusionReaction.addProduct(product);
 			
 			KineticLaw kl = membraneDiffusionReaction.createKineticLaw();
@@ -488,6 +522,99 @@ public class GeneticNetwork {
 			kl.setFormula(klExpression);
 			
 			Utility.addReaction(document, membraneDiffusionReaction);			
+		}
+		
+		
+		//replace all Type=Grid occurences with more complete information
+		for (int i = 0; i < document.getModel().getNumReactions(); ++i) {
+			
+			if (document.getModel().getReaction(i).getAnnotationString() != null &&
+					document.getModel().getReaction(i).getAnnotationString().contains("Type=Grid")) {
+				
+				document.getModel().getReaction(i).setAnnotation("");
+			}
+				
+				
+//				document.getModel().getReaction(i).setAnnotation("numRowsLower=0, numRowsUpper=" +
+//						(properties.getGrid().getNumRows() - 1) + ", numColsLower=0, numColsUpper=" +
+//						(properties.getGrid().getNumCols() - 1));
+		}
+		
+		//replace all Type=Grid occurences with more complete information
+		for (int i = 0; i < document.getModel().getNumSpecies(); ++i) {
+			
+			if (document.getModel().getSpecies(i).getAnnotationString() != null &&
+					document.getModel().getSpecies(i).getAnnotationString().contains("Type=Grid")) {
+				
+//				document.getModel().getSpecies(i).setAnnotation("numRowsLower=0, numRowsUpper=" +
+//						(properties.getGrid().getNumRows() - 1) + ", numColsLower=0, numColsUpper=" +
+//						(properties.getGrid().getNumCols() - 1));
+				
+				XMLAttributes attr = new XMLAttributes();
+				attr.add("xmlns:array", "http://www.fakeuri.com");
+				attr.add("array:rowsLowerLimit", "0");
+				attr.add("array:colsLowerLimit", "0");
+				attr.add("array:rowsUpperLimit", String.valueOf(properties.getGrid().getNumRows() - 1));
+				attr.add("array:colsUpperLimit", String.valueOf(properties.getGrid().getNumCols() - 1));
+				XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
+				document.getModel().getSpecies(i).setAnnotation(node);
+			}
+		}
+		
+		//get a list of all components
+		ArrayList<String> components = new ArrayList<String>();
+		
+		//search through the parameter location arrays
+		for (int i = 0; i < document.getModel().getNumParameters(); ++i) {
+			
+			Parameter parameter = document.getModel().getParameter(i);
+			
+			//if it's a location parameter
+			if (parameter.getId().contains("__locations")) {
+				
+				String parameterAnnotation = parameter.getAnnotationString();
+				
+				for (int j = 0; j < parameterAnnotation.length(); ++j) {
+					
+					if (parameterAnnotation.charAt(j) == '[' &&
+							parameterAnnotation.charAt(j+1) == '[') {
+						
+						String componentID = "";
+						
+						for (j = j + 2; parameterAnnotation.charAt(j) != ']'; ++j)
+							componentID += parameterAnnotation.charAt(j);
+						
+						components.add(componentID);
+					}				
+				}
+				
+				//replace the locations arrays with correctly-formated versions				
+				XMLAttributes attr = new XMLAttributes();				
+				attr.add("xmlns:array", "http://www.fakeuri.com");
+				
+				for (String componentID : components)
+//					attr.add("array:(" + properties.getSubmodelRow(componentID) + "," +
+//						properties.getSubmodelCol(componentID) + ")", "[[" + componentID + "]]");
+					attr.add("array:" + componentID, "(" + properties.getSubmodelRow(componentID) + "," +
+							properties.getSubmodelCol(componentID) + ")");
+				
+				XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
+				parameter.setAnnotation(node);
+			}
+		}		
+		
+		//convert the compartment annotations so that they can be preserved
+		for (int i = 0; i < document.getModel().getNumCompartments(); ++i) {
+			
+			if (document.getModel().getCompartment(i).getAnnotationString() != null &&
+					document.getModel().getCompartment(i).getAnnotationString().contains("EnclosingCompartment")) {
+								
+				XMLAttributes attr = new XMLAttributes();				
+				attr.add("xmlns:compartment", "http://www.fakeuri.com");				
+				attr.add("compartment:type", "enclosing");				
+				XMLNode node = new XMLNode(new XMLTriple("compartment","","compartment"), attr);
+				document.getModel().getCompartment(i).setAnnotation(node);
+			}		
 		}		
 	}
 	
