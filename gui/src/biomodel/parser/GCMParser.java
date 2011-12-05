@@ -153,7 +153,11 @@ public class GCMParser {
 				p.setTerminator(type[1]);
 			}  
 		}
-		Reaction production = sbml.getModel().getReaction("Production_"+promoter.getId());
+		String component = "";
+		if (promoter.getId().contains("__")) {
+			component = promoter.getId().substring(0,promoter.getId().lastIndexOf("__")+2);
+		}
+		Reaction production = sbml.getModel().getReaction(component+"Production_"+promoter.getId());
 		if (production != null) {
 			if (production.getKineticLaw().getLocalParameter(GlobalConstants.ACTIVATED_STRING) != null) {
 				p.setKact(production.getKineticLaw().getLocalParameter(GlobalConstants.ACTIVATED_STRING).getValue());
@@ -282,10 +286,14 @@ public class GCMParser {
 		
 		SpeciesInterface speciesIF = null;
 
-		Reaction degradation = sbml.getModel().getReaction("Degradation_"+species.getId());
-		Reaction diffusion = sbml.getModel().getReaction("MembraneDiffusion_"+species.getId());
-		Reaction constitutive = sbml.getModel().getReaction("Constitutive_"+species.getId());
-		Reaction complex = sbml.getModel().getReaction("Complex_"+species.getId());
+		String component = "";
+		if (species.getId().contains("__")) {
+			component = species.getId().substring(0,species.getId().lastIndexOf("__")+2);
+		}
+		Reaction degradation = sbml.getModel().getReaction(component+"Degradation_"+species.getId());
+		Reaction diffusion = sbml.getModel().getReaction(component+"MembraneDiffusion_"+species.getId());
+		Reaction constitutive = sbml.getModel().getReaction(component+"Constitutive_"+species.getId());
+		Reaction complex = sbml.getModel().getReaction(component+"Complex_"+species.getId());
 		
 		/*if (property.getProperty(GlobalConstants.TYPE).contains(GlobalConstants.CONSTANT)) {
 			speciesIF = new ConstantSpecies();
