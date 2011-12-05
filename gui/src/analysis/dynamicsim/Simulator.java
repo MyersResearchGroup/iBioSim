@@ -3,8 +3,12 @@ package analysis.dynamicsim;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
 
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.UnsupportedEncodingException;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -30,7 +34,9 @@ import odk.lang.FastMath;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 import org.sbml.jsbml.ASTNode;
+import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.AssignmentRule;
+import org.sbml.jsbml.CallableSBase;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.Event;
@@ -50,6 +56,8 @@ import org.sbml.jsbml.SBMLException;
 import org.sbml.jsbml.SBMLReader;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.SBMLWriter;
+import org.sbml.jsbml.text.parser.ParseException;
 
 
 
@@ -1338,8 +1346,7 @@ public abstract class Simulator {
 	protected void setupArrays() {
 				
 		//ARRAYED SPECIES BUSINESS
-		//create all new species that are implicit in the arrays and put them into the model
-		
+		//create all new species that are implicit in the arrays and put them into the model		
 		
 		ArrayList<Species> speciesToAdd = new ArrayList<Species>();
 		ArrayList<String> speciesToRemove = new ArrayList<String>();
@@ -1349,7 +1356,7 @@ public abstract class Simulator {
 			String speciesID = species.getId();
 			
 			//check to see if the species is arrayed			
-			if (!species.getAnnotationString().isEmpty()) {
+			if (species.getAnnotationString().isEmpty() == false) {
 				
 				speciesToIsArrayedMap.put(speciesID, true);
 				speciesToRemove.add(speciesID);
@@ -1360,6 +1367,7 @@ public abstract class Simulator {
 				int numColsUpper = 0;
 				
 				String[] annotationString = species.getAnnotationString().split("=");
+				
 				numRowsLower = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
 				numRowsUpper = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
 				numColsLower = Integer.valueOf(((String[])(annotationString[3].split(" ")))[0].replace("\"",""));
@@ -1377,7 +1385,9 @@ public abstract class Simulator {
 						
 						Species newSpecies = new Species();
 						newSpecies = species.clone();
+						newSpecies.setMetaId(speciesID);
 						newSpecies.setId(speciesID);
+						newSpecies.setAnnotation(null);
 						speciesToAdd.add(newSpecies);
 					}
 				}
@@ -1403,16 +1413,112 @@ public abstract class Simulator {
 			String reactionID = reaction.getId();
 			
 			//if reaction itself is arrayed
-			if (!reaction.getAnnotationString().isEmpty()) {				
-				
-				//would the reaction itself ever be arrayed???
-				//i don't think so . . .
+			if (reaction.getAnnotationString().isEmpty() == false) {				
 			}
 			
-			//check to see if the reaction has arrayed species
+			ArrayList<Integer> membraneDiffusionRows = new ArrayList<Integer>();
+			ArrayList<Integer> membraneDiffusionCols = new ArrayList<Integer>();
+			ArrayList<String> membraneDiffusionCompartments = new ArrayList<String>();
+			
+			//if it's a membrane diffusion reaction it'll have the appropriate locations as an annotation
+			//so parse them and store them in the above arraylists
+			if (reactionID.contains("MembraneDiffusion")) {
+				
+				String annotationString = reaction.getAnnotationString().replace("<annotation>","").
+					replace("</annotation>","").replace("\"","");
+				String[] splitAnnotation = annotationString.split("array:");
+				
+				splitAnnotation[splitAnnotation.length - 2] = ((String[])splitAnnotation[splitAnnotation.length - 2].split("xmlns:"))[0];
+				
+				for (int i = 2; i < splitAnnotation.length - 1; ++i) {
+					
+					String compartmentID = ((String[])splitAnnotation[i].split("="))[0];
+					String row = ((String[])((String[])splitAnnotation[i].split("="))[1].split(","))[0].replace("(","");
+					String col = ((String[])((String[])splitAnnotation[i].split("="))[1].split(","))[1].replace(")","");
+					
+					membraneDiffusionRows.add(Integer.valueOf(row.trim()));
+					membraneDiffusionCols.add(Integer.valueOf(col.trim()));
+					membraneDiffusionCompartments.add(compartmentID);
+				}
+				
+				int membraneDiffusionIndex = 0;
+				
+				reactionsToRemove.add(reaction.getId());
+				
+				//loop through all appropriate row/col pairs and create a membrane diffusion reaction for each one
+				for (String compartmentID : membraneDiffusionCompartments) {
+					
+					int row = membraneDiffusionRows.get(membraneDiffusionIndex);
+					int col = membraneDiffusionCols.get(membraneDiffusionIndex);
+					
+					//create a new reaction and set the ID
+					Reaction newReaction = new Reaction();
+					newReaction = reaction.clone();
+					newReaction.setListOfReactants(new ListOf<SpeciesReference>());
+					newReaction.setListOfProducts(new ListOf<SpeciesReference>());
+					newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
+					newReaction.setId("ROW" + row + "_COL" + col  + "__" + reactionID);
+					
+					//alter the kinetic law to so that it has the correct indexes as children for the
+					//get2DArrayElement function
+					//get the nodes to alter (that are arguments for the get2DArrayElement method)
+					ArrayList<ASTNode> get2DArrayElementNodes = new ArrayList<ASTNode>();
+					
+					getSatisfyingNodes(newReaction.getKineticLaw().getMath(), 
+							"get2DArrayElement", get2DArrayElementNodes);
+					
+					//adjust the node so that the get2DArrayElement function knows where to find the
+					//relevant species amount
+					for (ASTNode node : get2DArrayElementNodes) {
+												
+						if (node.getLeftChild().getName().contains("kmdiff")) {
+							
+							String parameterName = node.getLeftChild().getName();
+							node.setVariable(model.getParameter(compartmentID + "__" + parameterName));
+						}
+						//this means it's a species, which we need to prepend with the row/col prefix
+						else {
+							
+							node.setVariable(model.getSpecies("ROW" + row + "_COL" + col + "__" + node.getLeftChild().getName()));
+						}						
+					}
+					
+					//loop through reactants
+					for (SpeciesReference reactant : reaction.getListOfReactants()) {
+						
+
+						
+						try {
+							System.err.println(newReaction.getKineticLaw().getMath().toFormula());
+						} catch (SBMLException e) {
+							e.printStackTrace();
+						}
+						
+						//create a new reactant and add it to the new reaction
+						SpeciesReference newReactant = new SpeciesReference();
+						newReactant = reactant.clone();
+						newReactant.setSpecies("ROW" + row + "_COL" + col + "__" + newReactant.getSpecies());
+						newReactant.setAnnotation(null);
+						newReaction.addReactant(newReactant);
+					}
+					
+					//loop through products
+					for (SpeciesReference product : reaction.getListOfProducts()) {
+						
+						
+					}
+					
+					
+					
+					reactionsToAdd.add(newReaction);
+					++membraneDiffusionIndex;
+				}
+			}
+			
+			//check to see if the (non-membrane-diffusion) reaction has arrayed species
 			//right now i'm only checking the first reactant species, due to a bad assumption
 			//about the homogeneity of the arrayed reaction (ie, if one species is arrayed, they all are)
-			if (reaction.getNumReactants() > 0 &&
+			else if (reaction.getNumReactants() > 0 &&
 					speciesToIsArrayedMap.get(reaction.getReactant(0).getSpeciesInstance().getId()) == true) {
 				
 				reactionsToRemove.add(reaction.getId());
@@ -1420,6 +1526,8 @@ public abstract class Simulator {
 				//get the reactant dimensions, which tells us how many new reactions are going to be created
 				SpeciesDimensions reactantDimensions = 
 					arrayedSpeciesToDimensionsMap.get(reaction.getReactant(0).getSpeciesInstance().getId());
+				
+				boolean abort = false;
 				
 				//loop through all of the new formerly-implicit reactants
 				for (int row = reactantDimensions.numRowsLower; row <= reactantDimensions.numRowsUpper; ++row) {
@@ -1476,6 +1584,7 @@ public abstract class Simulator {
 						SpeciesReference newReactant = new SpeciesReference();
 						newReactant = reactant.clone();
 						newReactant.setSpecies("ROW" + row + "_COL" + col + "__" + newReactant.getSpecies());
+						newReactant.setAnnotation(null);
 						newReaction.addReactant(newReactant);
 					}// end looping through reactants
 					
@@ -1496,6 +1605,16 @@ public abstract class Simulator {
 						String[] annotationString = product.getAnnotationString().split("=");
 						rowOffset = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
 						colOffset = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
+						
+						//don't create reactions with products that don't exist 
+						if (row + rowOffset < reactantDimensions.numRowsLower || 
+								col + colOffset < reactantDimensions.numColsLower ||
+								row + rowOffset > reactantDimensions.numRowsUpper ||
+								col + colOffset > reactantDimensions.numColsUpper) {
+							
+							abort = true;
+							break;
+						}
 						
 						//alter the kinetic law to so that it has the correct indexes as children for the
 						//get2DArrayElement function
@@ -1519,14 +1638,18 @@ public abstract class Simulator {
 							}
 						}
 						
-						//create a new reactant and add it to the new reaction
+						//create a new product and add it to the new reaction
 						SpeciesReference newProduct = new SpeciesReference();
 						newProduct = product.clone();
-						newProduct.setSpecies("ROW" + row + "_COL" + col + "__" + newProduct.getSpecies());
+						newProduct.setSpecies("ROW" + (row + rowOffset) + "_COL" + (col + colOffset) + "__" + newProduct.getSpecies());
+						newProduct.setAnnotation(null);
 						newReaction.addProduct(newProduct);
 					} //end looping through products
 					
-					reactionsToAdd.add(newReaction);
+					if (abort == false)
+						reactionsToAdd.add(newReaction);
+					else
+						abort = false;
 				}
 				}
 				
@@ -1560,6 +1683,16 @@ public abstract class Simulator {
 //			for (SpeciesReference reactant : reaction.getListOfProducts())
 //				System.out.println(reactant.getSpecies());
 //		}
+		
+		SBMLWriter writer = new SBMLWriter();
+		PrintStream p;
+		
+		try {
+			p = new PrintStream(new FileOutputStream("/home/beauregard/Desktop/output.xml"), true, "UTF-8");
+			p.print(writer.writeSBMLToString(model.getSBMLDocument()));
+		} catch (Exception e) {
+			//e.printStackTrace();
+		}
 	}
 	
 	/**
