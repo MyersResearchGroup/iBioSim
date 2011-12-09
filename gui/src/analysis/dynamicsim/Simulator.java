@@ -315,21 +315,11 @@ public abstract class Simulator {
 			String reactionID = reaction.getId();
 			KineticLaw reactionKineticLaw = reaction.getKineticLaw();
 			ASTNode reactionFormula = reactionKineticLaw.getMath();
-			ListOf<LocalParameter> reactionParameters = reactionKineticLaw.getListOfLocalParameters();
 			boolean notEnoughMoleculesFlagFd = false;
 			boolean notEnoughMoleculesFlagRv = false;
 			boolean notEnoughMoleculesFlag = false;
 			
 			reactionToSBMLReactionMap.put(reactionID, reaction);
-			
-			//put the local parameters into a hashmap for easy access
-			//NOTE: these may overwrite some global parameters but that's fine,
-			//because for each reaction the local parameters are the ones we want
-			//and they're always defined
-			for (int j = 0; j < reactionParameters.size(); ++j) {
-				
-				variableToValueMap.put(reactionParameters.get(j).getId(), reactionParameters.get(j).getValue());
-			}
 						
 			//if it's a reversible reaction
 			//split into a forward and reverse reaction (based on the minus sign in the middle)
@@ -1444,6 +1434,7 @@ public abstract class Simulator {
 				int membraneDiffusionIndex = 0;
 				
 				reactionsToRemove.add(reaction.getId());
+				reaction.setAnnotation(null);
 				
 				//loop through all appropriate row/col pairs and create a membrane diffusion reaction for each one
 				for (String compartmentID : membraneDiffusionCompartments) {
@@ -1467,37 +1458,42 @@ public abstract class Simulator {
 					getSatisfyingNodes(newReaction.getKineticLaw().getMath(), 
 							"get2DArrayElement", get2DArrayElementNodes);
 					
-					//adjust the node so that the get2DArrayElement function knows where to find the
-					//relevant species amount
+					//replace the get2darrayelement stuff with the proper explicit species/parameters
 					for (ASTNode node : get2DArrayElementNodes) {
 												
 						if (node.getLeftChild().getName().contains("kmdiff")) {
 							
 							String parameterName = node.getLeftChild().getName();
-							node.setVariable(model.getParameter(compartmentID + "__" + parameterName));
+							node.setVariable(model.getParameter(compartmentID + "__" + parameterName));							
+							node.removeChild(0);
 						}
 						//this means it's a species, which we need to prepend with the row/col prefix
 						else {
 							
-							node.setVariable(model.getSpecies("ROW" + row + "_COL" + col + "__" + node.getLeftChild().getName()));
+							//product
+							if (node.getLeftChild().getName().contains("_p")) {
+								
+								node.setVariable(model.getSpecies(
+										"ROW" + row + "_COL" + col + "__" + node.getLeftChild().getName().replace("_p","")));
+							}
+							//reactant
+							else {
+								
+								node.setVariable(model.getSpecies(
+										compartmentID + "__" + node.getLeftChild().getName().replace("_r","")));
+							}								
+								
+							node.removeChild(0);
 						}						
 					}
 					
 					//loop through reactants
 					for (SpeciesReference reactant : reaction.getListOfReactants()) {
 						
-
-						
-						try {
-							System.err.println(newReaction.getKineticLaw().getMath().toFormula());
-						} catch (SBMLException e) {
-							e.printStackTrace();
-						}
-						
 						//create a new reactant and add it to the new reaction
 						SpeciesReference newReactant = new SpeciesReference();
 						newReactant = reactant.clone();
-						newReactant.setSpecies("ROW" + row + "_COL" + col + "__" + newReactant.getSpecies());
+						newReactant.setSpecies(compartmentID + "__" + newReactant.getSpecies());
 						newReactant.setAnnotation(null);
 						newReaction.addReactant(newReactant);
 					}
@@ -1505,10 +1501,13 @@ public abstract class Simulator {
 					//loop through products
 					for (SpeciesReference product : reaction.getListOfProducts()) {
 						
-						
-					}
-					
-					
+						//create a new reactant and add it to the new reaction
+						SpeciesReference newProduct = new SpeciesReference();
+						newProduct = product.clone();
+						newProduct.setSpecies("ROW" + row + "_COL" + col + "__" + newProduct.getSpecies());
+						newProduct.setAnnotation(null);
+						newReaction.addProduct(newProduct);
+					}					
 					
 					reactionsToAdd.add(newReaction);
 					++membraneDiffusionIndex;
@@ -1555,6 +1554,7 @@ public abstract class Simulator {
 						int colOffset = 0;
 						
 						String[] annotationString = reactant.getAnnotationString().split("=");
+												
 						rowOffset = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
 						colOffset = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
 						
@@ -1786,6 +1786,40 @@ public abstract class Simulator {
 	 * puts parameter-related information into data structures
 	 */
 	protected void setupParameters() {
+		
+		//add local parameters
+		for (Reaction reaction : model.getListOfReactions()) {
+			
+			KineticLaw kineticLaw = reaction.getKineticLaw();
+			
+			for (LocalParameter localParameter : kineticLaw.getListOfLocalParameters()) {
+				
+				String parameterID = "";
+				
+				//the parameters don't get reset after each run, so don't re-do this prepending
+				if (localParameter.getId().contains(reaction.getId() + "_") == false)					
+					parameterID = reaction.getId() + "_" + localParameter.getId();
+				else 
+					parameterID = localParameter.getId();
+								
+				String oldParameterID = localParameter.getId();
+				variableToValueMap.put(parameterID, localParameter.getValue());
+				
+				//alter the local parameter ID so that it goes to the local and not global value
+				localParameter.setId(parameterID);
+				
+				//for some reason, changing the local parameter sometimes changes the kinetic law instances
+				//of that parameter id, so those ones are fine and ignore them
+				if (kineticLaw.getFormula().contains(parameterID) == false) {
+				
+					try {
+						kineticLaw.setFormula(kineticLaw.getFormula().replace(oldParameterID, parameterID));
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 		
 		//add values to hashmap for easy access to global parameter values
 		//NOTE: the IDs for the parameters and species must be unique, so putting them in the

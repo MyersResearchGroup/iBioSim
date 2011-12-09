@@ -1,29 +1,18 @@
 package analysis.dynamicsim;
 
 import gnu.trove.map.hash.TIntDoubleHashMap;
-import gnu.trove.map.hash.TObjectDoubleHashMap;
 import gnu.trove.map.hash.TObjectIntHashMap;
 import gnu.trove.set.hash.TIntHashSet;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.PriorityQueue;
 
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 import javax.xml.stream.XMLStreamException;
-
-import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.AssignmentRule;
-import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.SBMLReader;
 
 import main.Gui;
 import main.util.MutableBoolean;
@@ -113,7 +102,7 @@ public class SimulatorSSACR extends Simulator{
 		if (noEventsFlag == false)
 			handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
 		
-		while (currentTime <= timeLimit) {
+		while (currentTime < timeLimit) {
 			
 			//if the user cancels the simulation
 			if (cancelFlag == true) {
@@ -270,7 +259,7 @@ public class SimulatorSSACR extends Simulator{
 					currentTime = triggeredEventQueue.peek().fireTime;
 			}
 			
-			while ((currentTime > printTime) && (printTime <= timeLimit)) {
+			while ((currentTime > printTime) && (printTime < timeLimit)) {
 				
 				try {
 					printToTSD(printTime);

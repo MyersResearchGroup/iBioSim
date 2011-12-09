@@ -464,10 +464,12 @@ public class MovieContainer extends JPanel implements ActionListener {
 		HashMap<String, ArrayList<Double>> speciesTSData = parser.getHashMap();
 		
 		//loop through the species and set their appearances
-		for(String speciesID : gcm.getSpecies()){
+		for (String speciesID : gcm.getSpecies()) {
 			
 			//make sure this species has data in the TSD file
-			if(speciesTSData.containsKey(speciesID)){		
+			if (speciesTSData.containsKey(speciesID)) {
+				
+				System.err.println(speciesID);
 				
 				//get the component's appearance and send it to the graph for updating
 				MovieAppearance speciesAppearance = 
@@ -479,15 +481,33 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 		
 		//loop through the components and set their appearances
-		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
-			String compID = gcm.getSBMLCompModel().getSubmodel(i).getId();
+		for (long i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); i++) {
 			
-			//get the component's appearance and send it to the graph for updating
-			MovieAppearance compAppearance = 
-				movieScheme.getAppearance(compID, GlobalConstants.COMPONENT, frameIndex, speciesTSData);
+			if (gcm.getSBMLDocument().getModel().getParameter(i).getId().contains("__locations")) {
+				
+				String[] splitAnnotation = gcm.getSBMLDocument().getModel().getParameter(i)
+				.getAnnotationString().replace("<annotation>","")
+				.replace("</annotation>","").replace("]]","").replace("[[","").split("=");
 			
-			if (compAppearance != null)
-				schematic.getGraph().setComponentAnimationValue(compID, compAppearance);
+				//loop through all components in the locations parameter array
+				for (int j = 1; j < splitAnnotation.length; ++j) {
+					
+					splitAnnotation[j] = splitAnnotation[j].trim();
+					int commaIndex = splitAnnotation[j].indexOf(',');
+					
+					if (commaIndex > 0)
+						splitAnnotation[j] = splitAnnotation[j].substring(0, splitAnnotation[j].indexOf(','));
+					
+					String submodelID = splitAnnotation[j];
+					
+					//get the component's appearance and send it to the graph for updating
+					MovieAppearance compAppearance = 
+						movieScheme.getAppearance(submodelID, GlobalConstants.COMPONENT, frameIndex, speciesTSData);
+					
+					if (compAppearance != null)
+						schematic.getGraph().setComponentAnimationValue(submodelID, compAppearance);
+				}
+			}
 		}
 		
 		//if there's a grid to set the appearance of

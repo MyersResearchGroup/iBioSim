@@ -1905,6 +1905,7 @@ public class BioModel {
 				
 				locationParameter = sbml.getModel().createParameter();
 				locationParameter.setId(locationParameterID);
+				locationParameter.setConstant(false);
 			}
 			
 			if (locationParameter.getAnnotationString().length() > 0)
@@ -3013,6 +3014,7 @@ public class BioModel {
 				newSpecies.setBoundaryCondition(specToAdd.getBoundaryCondition());
 				newSpecies.setConstant(specToAdd.getConstant());
 				newSpecies.setHasOnlySubstanceUnits(specToAdd.getHasOnlySubstanceUnits());
+				newSpecies.setCompartment(specToAdd.getCompartment());
 			}
 		}
 		
@@ -3054,8 +3056,15 @@ public class BioModel {
 				//this is the mathematical expression for the decay
 				String isDecayExpression = decayString + "* get2DArrayElement(" + speciesID + "_r)";
 				
-				SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);				
-				reactant.setAnnotation("rowOffset=0, colOffset=0");
+				SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);
+				
+				XMLAttributes attr = new XMLAttributes();
+				attr.add("xmlns:array", "http://www.fakeuri.com");
+				attr.add("array:rowOffset", "0");
+				attr.add("array:colOffset", "0");
+				XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
+				reactant.setAnnotation(node);
+				
 				r.addReactant(reactant);
 				
 				//parameter: id="kd" value=isDecay (usually 0.0075) units="u_1_second_n1" (inverse seconds)
@@ -3109,14 +3118,27 @@ public class BioModel {
 						+ diffusionString + " * " + "get2DArrayElement(" + speciesID + "_p" + ")";
 
 					//reactant is current outer species					
-					SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);		
-					reactant.setAnnotation("rowOffset=0, colOffset=0");
+					SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);
+					
+					XMLAttributes attr = new XMLAttributes();
+					attr.add("xmlns:array", "http://www.fakeuri.com");
+					attr.add("array:rowOffset", "0");
+					attr.add("array:colOffset", "0");
+					XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
+					reactant.setAnnotation(node);
+					
 					r.addReactant(reactant);
 					
 					//product is neighboring species
-					SpeciesReference product = Utility.SpeciesReference(speciesID, 1);					
-					product.setAnnotation("rowOffset=" + neighborRowIndexOffset + ", " +
-							"colOffset=" + neighborColIndexOffset);
+					SpeciesReference product = Utility.SpeciesReference(speciesID, 1);
+					
+					attr = new XMLAttributes();
+					attr.add("xmlns:array", "http://www.fakeuri.com");
+					attr.add("array:rowOffset", String.valueOf(neighborRowIndexOffset));
+					attr.add("array:colOffset", String.valueOf(neighborColIndexOffset));
+					node = new XMLNode(new XMLTriple("array","","array"), attr);
+					product.setAnnotation(node);
+					
 					r.addProduct(product);
 					
 					//parameters: id="kecdiff" value=kecdiff units="u_1_second_n1" (inverse seconds)

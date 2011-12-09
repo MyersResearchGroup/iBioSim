@@ -376,7 +376,7 @@ public class GCMParser {
 				speciesIF.setKmdiff(sbml.getModel().getParameter(GlobalConstants.FORWARD_MEMDIFF_STRING).getValue(),
 						sbml.getModel().getParameter(GlobalConstants.REVERSE_MEMDIFF_STRING).getValue());
 			}
-			sbml.getModel().removeReaction(diffusion.getId());
+			//sbml.getModel().removeReaction(diffusion.getId());
 		} else {
 			speciesIF.setKmdiff(0.0,1.0);
 		}
