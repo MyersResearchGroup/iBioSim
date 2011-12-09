@@ -516,8 +516,8 @@ public class GeneticNetwork {
 			membraneDiffusionReaction.addProduct(product);
 			
 			KineticLaw kl = membraneDiffusionReaction.createKineticLaw();
-			String klExpression = "get2DArrayElement(kmdiff_f) * get2DArrayElement(" + speciesID +
-				") - get2DArrayElement(kmdiff_r) * get2DArrayElement(" + speciesID + ")";
+			String klExpression = "get2DArrayElement(kmdiff_f) * get2DArrayElement(" + speciesID + "_r" +
+				") - get2DArrayElement(kmdiff_r) * get2DArrayElement(" + speciesID + "_p" + ")";
 			
 			kl.setFormula(klExpression);
 			
@@ -533,7 +533,49 @@ public class GeneticNetwork {
 				
 				document.getModel().getReaction(i).setAnnotation("");
 			}
+			
+			//replace the row/col offsets annotations with proper annotations
+			//loop through reactants and products
+			
+			for (int j = 0; j < document.getModel().getReaction(i).getNumReactants(); ++j) {
 				
+				if (document.getModel().getReaction(i).getReactant(j).getAnnotationString().contains("rowOffset") &&
+						document.getModel().getReaction(i).getReactant(j).getAnnotationString().contains("array") == false) {
+					
+					String[] annotationString = document.getModel().getReaction(i)
+					.getReactant(j).getAnnotationString().replace("<annotation>","").replace("</annotation>","")
+					.split("=");
+					int rowOffset = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace(",",""));
+					int colOffset = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0]);
+					
+					XMLAttributes attr = new XMLAttributes();
+					attr.add("xmlns:array", "http://www.fakeuri.com");
+					attr.add("array:rowOffset", String.valueOf(rowOffset));
+					attr.add("array:colOffset", String.valueOf(colOffset));
+					XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);					
+					document.getModel().getReaction(i).getReactant(j).setAnnotation(node);
+				}
+			}
+			
+			for (int j = 0; j < document.getModel().getReaction(i).getNumProducts(); ++j) {
+				
+				if (document.getModel().getReaction(i).getProduct(j).getAnnotationString().contains("rowOffset") &&
+						document.getModel().getReaction(i).getReactant(j).getAnnotationString().contains("array") == false) {
+					
+					String[] annotationString = document.getModel().getReaction(i)
+					.getProduct(j).getAnnotationString().replace("<annotation>","").replace("</annotation>","")
+					.split("=");
+					int rowOffset = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace(",",""));
+					int colOffset = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0]);
+					
+					XMLAttributes attr = new XMLAttributes();
+					attr.add("xmlns:array", "http://www.fakeuri.com");
+					attr.add("array:rowOffset", String.valueOf(rowOffset));
+					attr.add("array:colOffset", String.valueOf(colOffset));
+					XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);					
+					document.getModel().getReaction(i).getProduct(j).setAnnotation(node);
+				}
+			}				
 				
 //				document.getModel().getReaction(i).setAnnotation("numRowsLower=0, numRowsUpper=" +
 //						(properties.getGrid().getNumRows() - 1) + ", numColsLower=0, numColsUpper=" +

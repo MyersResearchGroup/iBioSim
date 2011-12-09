@@ -7,10 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 
-
-import org.sbml.libsbml.Submodel;
+import org.sbml.libsbml.Parameter;
 
 import biomodel.gui.movie.SerializableScheme;
 import biomodel.parser.BioModel;
@@ -225,30 +223,50 @@ public class MovieScheme {
 			
 			//if the user selected to change components
 			if (cellType.equals(GlobalConstants.COMPONENT)) {
-			
-				String modelRefId = gcm.getSBMLCompModel().getSubmodel(compID).getModelRef();
-				for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
-					Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
-					//if the component has the same GCM as the component whose appearance
-					//was just altered via the scheme chooser panel				
-					if (submodel.getModelRef().equals(modelRefId)) {
-							
-						speciesID = new String(submodel.getId() + "__" + speciesIDNoPrefix);
-							
-						//if (!allSpecies.contains(speciesID)) continue;
+				
+				//look through the location parameter arrays to find the correct model ref
+				for (int i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); ++i) {
+					
+					Parameter parameter = gcm.getSBMLDocument().getModel().getParameter(i);
+					
+					//if it's a location parameter
+					if (parameter.getId().contains("__locations")) {
 						
-						if (remove) {
-							schemeApply.apply(speciesID);
-						}
-						else {
-							//add a scheme with this other species that's part of the same GCM
-							//as the component
-							this.createOrUpdateSpeciesScheme(speciesID, null);
-							schemeApply.apply(speciesID);
-							speciesSchemes.get(speciesID).setMin(min);
-							speciesSchemes.get(speciesID).setMax(max);
-						}
-					}
+						if (parameter.getAnnotationString().contains("[[" + compID + "]]")) {
+							
+							String[] splitAnnotation = parameter.getAnnotationString().replace("<annotation>","")
+							.replace("</annotation>","").replace("]]","").replace("[[","").split("=");
+						
+							//loop through all components in the locations parameter array
+							for (int j = 1; j < splitAnnotation.length; ++j) {
+								
+								splitAnnotation[j] = splitAnnotation[j].trim();
+								int commaIndex = splitAnnotation[j].indexOf(',');
+								
+								if (commaIndex > 0)
+									splitAnnotation[j] = splitAnnotation[j].substring(0, splitAnnotation[j].indexOf(','));
+								
+								String submodelID = splitAnnotation[j];
+								
+								speciesID = submodelID + "__" + speciesIDNoPrefix;
+																
+								if (submodelID.length() == 0)
+									continue;
+								
+								if (remove) {
+									schemeApply.apply(speciesID);
+								}
+								else {
+									//add a scheme with this other species that's part of the same GCM
+									//as the component
+									this.createOrUpdateSpeciesScheme(speciesID, null);
+									schemeApply.apply(speciesID);
+									speciesSchemes.get(speciesID).setMin(min);
+									speciesSchemes.get(speciesID).setMax(max);
+								}
+							}
+						}					
+					}				
 				}
 			}
 			//if the user selected to change grid rectangles
