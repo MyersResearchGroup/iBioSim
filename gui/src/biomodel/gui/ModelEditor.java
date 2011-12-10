@@ -1356,7 +1356,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		
 		compartmentPanel = new Compartments(biosim,gcm.getSBMLDocument(),usedIDs,dirty, paramsOnly,getParams, path + separator + file,	parameterChanges,false,compartmentList);
 		reactionPanel = new Reactions(biosim,gcm.getSBMLDocument(),usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges);
-		speciesPanel = new MySpecies(biosim,gcm.getSBMLDocument(),usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges,true);
+		speciesPanel = new MySpecies(biosim,gcm.getSBMLDocument(),usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges,gcm.getGrid().isEnabled());
 		parametersPanel = new Parameters(biosim, gcm.getSBMLDocument(),usedIDs,dirty, paramsOnly,getParams,path + separator + file,parameterChanges);
 		
 		JPanel compPanel = new JPanel(new BorderLayout());

@@ -1461,7 +1461,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			String prod = "";
 			double val = 1.0;
 			if (productId.getText().trim().equals("")) {
-				error = SBMLutilities.variableInUse(document, selectedID, false, true);
+				error = SBMLutilities.variableInUse(document, selectedID, false, true, true);
 			}
 			else {
 				error = SBMLutilities.checkID(document, usedIDs, productId.getText().trim(), selectedID, false);
@@ -1894,7 +1894,7 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 			String react = "";
 			double val = 1.0;
 			if (reactantId.getText().trim().equals("")) {
-				error = SBMLutilities.variableInUse(document, selectedID, false, true);
+				error = SBMLutilities.variableInUse(document, selectedID, false, true, true);
 			}
 			else {
 				error = SBMLutilities.checkID(document, usedIDs, reactantId.getText().trim(), selectedID, false);
@@ -2141,7 +2141,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if (index != -1) {
 			String v = ((String) reactants.getSelectedValue()).split(" ")[0];
 			for (int i = 0; i < changedReactants.size(); i++) {
-				if (changedReactants.get(i).getSpecies().equals(v) && !SBMLutilities.variableInUse(document, changedReactants.get(i).getId(), false, true)) {
+				if (changedReactants.get(i).getSpecies().equals(v) && 
+						!SBMLutilities.variableInUse(document, changedReactants.get(i).getId(), false, true,true)) {
 					changedReactants.remove(i);
 					reactants.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					reacta = (String[]) Utility.remove(reactants, reacta);
@@ -2166,7 +2167,8 @@ public class Reactions extends JPanel implements ActionListener, MouseListener {
 		if (index != -1) {
 			String v = ((String) products.getSelectedValue()).split(" ")[0];
 			for (int i = 0; i < changedProducts.size(); i++) {
-				if (changedProducts.get(i).getSpecies().equals(v) && !SBMLutilities.variableInUse(document, changedProducts.get(i).getId(), false, true)) {
+				if (changedProducts.get(i).getSpecies().equals(v) && 
+						!SBMLutilities.variableInUse(document, changedProducts.get(i).getId(), false, true, true)) {
 					changedProducts.remove(i);
 					products.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					proda = (String[]) Utility.remove(products, proda);

@@ -506,7 +506,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 			}
 			if (!error) {
 				if (document.getLevel() < 3) {
-					if (((String) dimBox.getSelectedItem()).equals("0") && (SBMLutilities.variableInUse(document, selected, true, true))) {
+					if (((String) dimBox.getSelectedItem()).equals("0") && (SBMLutilities.variableInUse(document, selected, true, true, true))) {
 						error = true;
 					}
 				}
@@ -1027,7 +1027,7 @@ public class Compartments extends JPanel implements ActionListener, MouseListene
 					scroll.setViewportView(messageArea);
 					JOptionPane.showMessageDialog(Gui.frame, scroll, "Unable To Remove Compartment", JOptionPane.ERROR_MESSAGE);
 				}
-				else if (!SBMLutilities.variableInUse(document, ((String) compartments.getSelectedValue()).split(" ")[0], false, true)) {
+				else if (!SBMLutilities.variableInUse(document, ((String) compartments.getSelectedValue()).split(" ")[0], false, true, true)) {
 					compartmentList.removeItem(((String) compartments.getSelectedValue()).split(" ")[0]);
 					Compartment tempComp = document.getModel().getCompartment(((String) compartments.getSelectedValue()).split(" ")[0]);
 					ListOf c = document.getModel().getListOfCompartments();
