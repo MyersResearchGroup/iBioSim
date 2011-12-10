@@ -385,7 +385,7 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 	private void removeFunction() {
 		int index = functions.getSelectedIndex();
 		if (index != -1) {
-			if (!SBMLutilities.variableInUse(document, ((String) functions.getSelectedValue()).split(" ")[0], false, true)) {
+			if (!SBMLutilities.variableInUse(document, ((String) functions.getSelectedValue()).split(" ")[0], false, true, true)) {
 				FunctionDefinition tempFunc = document.getModel().getFunctionDefinition(((String) functions.getSelectedValue()).split(" ")[0]);
 				ListOf f = document.getModel().getListOfFunctionDefinitions();
 				for (int i = 0; i < document.getModel().getNumFunctionDefinitions(); i++) {

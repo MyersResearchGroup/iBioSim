@@ -865,7 +865,8 @@ public class SBMLutilities {
 	/**
 	 * Check if a variable is in use.
 	 */
-	public static boolean variableInUse(SBMLDocument document, String species, boolean zeroDim, boolean displayMessage) {
+	public static boolean variableInUse(SBMLDocument document, String species, boolean zeroDim, boolean displayMessage, 
+			boolean checkReactions) {
 		Model model = document.getModel();
 		boolean inUse = false;
 		if (species.equals("")) {
@@ -898,63 +899,65 @@ public class SBMLutilities {
 				}
 			}
 		}
-		for (int i = 0; i < model.getNumReactions(); i++) {
-			Reaction reaction = (Reaction) model.getListOfReactions().get(i);
-			for (int j = 0; j < reaction.getNumProducts(); j++) {
-				if (reaction.getProduct(j).isSetSpecies()) {
-					String specRef = reaction.getProduct(j).getSpecies();
-					if (species.equals(specRef)) {
-						inUse = true;
-						productsUsing.add(reaction.getId());
-					}
-					else if (reaction.getProduct(j).isSetStoichiometryMath()) {
-						String[] vars = SBMLutilities.myFormulaToString(reaction.getProduct(j).getStoichiometryMath().getMath()).split(
-								" |\\(|\\)|\\,");
-						for (int k = 0; k < vars.length; k++) {
-							if (vars[k].equals(species)) {
-								stoicMathUsing.add(reaction.getId() + "/" + specRef);
-								inUse = true;
-								break;
+		if (checkReactions) {
+			for (int i = 0; i < model.getNumReactions(); i++) {
+				Reaction reaction = (Reaction) model.getListOfReactions().get(i);
+				for (int j = 0; j < reaction.getNumProducts(); j++) {
+					if (reaction.getProduct(j).isSetSpecies()) {
+						String specRef = reaction.getProduct(j).getSpecies();
+						if (species.equals(specRef)) {
+							inUse = true;
+							productsUsing.add(reaction.getId());
+						}
+						else if (reaction.getProduct(j).isSetStoichiometryMath()) {
+							String[] vars = SBMLutilities.myFormulaToString(reaction.getProduct(j).getStoichiometryMath().getMath()).split(
+									" |\\(|\\)|\\,");
+							for (int k = 0; k < vars.length; k++) {
+								if (vars[k].equals(species)) {
+									stoicMathUsing.add(reaction.getId() + "/" + specRef);
+									inUse = true;
+									break;
+								}
 							}
 						}
 					}
 				}
-			}
-			for (int j = 0; j < reaction.getNumReactants(); j++) {
-				if (reaction.getReactant(j).isSetSpecies()) {
-					String specRef = reaction.getReactant(j).getSpecies();
-					if (species.equals(specRef)) {
-						inUse = true;
-						reactantsUsing.add(reaction.getId());
-					}
-					else if (reaction.getReactant(j).isSetStoichiometryMath()) {
-						String[] vars = SBMLutilities.myFormulaToString(reaction.getReactant(j).getStoichiometryMath().getMath()).split(
-								" |\\(|\\)|\\,");
-						for (int k = 0; k < vars.length; k++) {
-							if (vars[k].equals(species)) {
-								stoicMathUsing.add(reaction.getId() + "/" + specRef);
-								inUse = true;
-								break;
+				for (int j = 0; j < reaction.getNumReactants(); j++) {
+					if (reaction.getReactant(j).isSetSpecies()) {
+						String specRef = reaction.getReactant(j).getSpecies();
+						if (species.equals(specRef)) {
+							inUse = true;
+							reactantsUsing.add(reaction.getId());
+						}
+						else if (reaction.getReactant(j).isSetStoichiometryMath()) {
+							String[] vars = SBMLutilities.myFormulaToString(reaction.getReactant(j).getStoichiometryMath().getMath()).split(
+									" |\\(|\\)|\\,");
+							for (int k = 0; k < vars.length; k++) {
+								if (vars[k].equals(species)) {
+									stoicMathUsing.add(reaction.getId() + "/" + specRef);
+									inUse = true;
+									break;
+								}
 							}
 						}
 					}
 				}
-			}
-			for (int j = 0; j < reaction.getNumModifiers(); j++) {
-				if (reaction.getModifier(j).isSetSpecies()) {
-					String specRef = reaction.getModifier(j).getSpecies();
-					if (species.equals(specRef)) {
-						inUse = true;
-						modifiersUsing.add(reaction.getId());
+				for (int j = 0; j < reaction.getNumModifiers(); j++) {
+					if (reaction.getModifier(j).isSetSpecies()) {
+						String specRef = reaction.getModifier(j).getSpecies();
+						if (species.equals(specRef)) {
+							inUse = true;
+							modifiersUsing.add(reaction.getId());
+						}
 					}
 				}
-			}
-			String[] vars = SBMLutilities.myFormulaToString(reaction.getKineticLaw().getMath()).split(" |\\(|\\)|\\,");
-			for (int j = 0; j < vars.length; j++) {
-				if (vars[j].equals(species)) {
-					kineticLawsUsing.add(reaction.getId());
-					inUse = true;
-					break;
+				String[] vars = SBMLutilities.myFormulaToString(reaction.getKineticLaw().getMath()).split(" |\\(|\\)|\\,");
+				for (int j = 0; j < vars.length; j++) {
+					if (vars[j].equals(species)) {
+						kineticLawsUsing.add(reaction.getId());
+						inUse = true;
+						break;
+					}
 				}
 			}
 		}
@@ -975,17 +978,20 @@ public class SBMLutilities {
 		for (int i = 0; i < document.getModel().getNumRules(); i++) {
 			Rule rule = (Rule) r.get(i);
 			String initStr = SBMLutilities.myFormulaToString(rule.getMath());
+			if (rule.isAssignment() || rule.isRate()) {
+				initStr += " = " + rule.getVariable();
+			}
 			String[] vars = initStr.split(" |\\(|\\)|\\,");
 			for (int j = 0; j < vars.length; j++) {
 				if (vars[j].equals(species)) {
 					if (rule.isAssignment()) {
-						initsUsing.add(rule.getVariable() + " = " + SBMLutilities.myFormulaToString(rule.getMath()));
+						rulesUsing.add(rule.getVariable() + " = " + SBMLutilities.myFormulaToString(rule.getMath()));
 					}
 					else if (rule.isRate()) {
-						initsUsing.add("d(" + rule.getVariable() + ") = " + SBMLutilities.myFormulaToString(rule.getMath()));
+						rulesUsing.add("d(" + rule.getVariable() + ")/dt = " + SBMLutilities.myFormulaToString(rule.getMath()));
 					}
 					else {
-						initsUsing.add("0 = " + SBMLutilities.myFormulaToString(rule.getMath()));
+						rulesUsing.add("0 = " + SBMLutilities.myFormulaToString(rule.getMath()));
 					}
 					inUse = true;
 					break;
@@ -1020,7 +1026,7 @@ public class SBMLutilities {
 			String[] vars = eventStr.split(" |\\(|\\)|\\,");
 			for (int j = 0; j < vars.length; j++) {
 				if (vars[j].equals(species)) {
-					eventsUsing.add(trigger);
+					eventsUsing.add(event.getId());
 					inUse = true;
 					break;
 				}

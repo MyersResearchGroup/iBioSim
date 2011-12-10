@@ -2039,7 +2039,7 @@ public class GeneticNetwork {
 		if (!complex.isAbstractable()) {
 			if (!isGenetic(complexId)
 					&& !complex.isDiffusible()
-					&& !SBMLutilities.variableInUse(document, complexId, false, false)
+					&& !SBMLutilities.variableInUse(document, complexId, false, false, true)
 					&& !SBMLutilities.usedInNonDegradationReaction(document, complexId)) {
 				complex.setAbstractable(true);
 				for (Influence infl : complexMap.get(complexId)) {

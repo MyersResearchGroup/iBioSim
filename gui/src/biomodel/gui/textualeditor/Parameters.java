@@ -625,7 +625,7 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 	private void removeParameter() {
 		int index = parameters.getSelectedIndex();
 		if (index != -1) {
-			if (!SBMLutilities.variableInUse(document, ((String) parameters.getSelectedValue()).split(" ")[0], false, true)) {
+			if (!SBMLutilities.variableInUse(document, ((String) parameters.getSelectedValue()).split(" ")[0], false, true, true)) {
 				Parameter tempParameter = document.getModel().getParameter(((String) parameters.getSelectedValue()).split(" ")[0]);
 				ListOf p = document.getModel().getListOfParameters();
 				for (int i = 0; i < document.getModel().getNumParameters(); i++) {

@@ -68,6 +68,7 @@ import biomodel.gui.movie.MovieContainer;
 import biomodel.gui.movie.SchemeChooserPanel;
 import biomodel.gui.textualeditor.Compartments;
 import biomodel.gui.textualeditor.Reactions;
+import biomodel.gui.textualeditor.SBMLutilities;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
 
@@ -982,6 +983,25 @@ public class Schematic extends JPanel implements ActionListener {
 							return 0; // both are the same
 						}
 					});
+					
+					boolean doNotRemove = false;
+					for(Object ocell:cells){
+						
+						mxCell cell = (mxCell)ocell;
+						String type = graph.getCellType(cell);
+
+						if(type == GlobalConstants.SPECIES){
+							if (SBMLutilities.variableInUse(gcm.getSBMLDocument(), cell.getId(), false, true, false)) {
+								doNotRemove = true;
+							}
+						}
+						if (doNotRemove) {
+							gcm2sbml.refresh();
+							graph.buildGraph();
+							drawGrid();
+							return;
+						}
+					}
 					
 					for(Object ocell:cells){
 						
