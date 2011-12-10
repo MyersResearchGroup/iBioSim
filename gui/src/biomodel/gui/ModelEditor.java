@@ -28,10 +28,8 @@ import main.Log;
 import main.util.ExampleFileFilter;
 import main.util.MutableBoolean;
 
-import org.sbml.libsbml.CompExtension;
 import org.sbml.libsbml.ExternalModelDefinition;
 import org.sbml.libsbml.InitialAssignment;
-import org.sbml.libsbml.LayoutExtension;
 import org.sbml.libsbml.ListOf;
 import org.sbml.libsbml.LocalParameter;
 import org.sbml.libsbml.Parameter;
@@ -168,27 +166,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			gcm.load(path + separator + filename);
 			this.filename = filename;
 			this.gcmname = filename.replace(".gcm", "").replace(".xml", "");
-			/*
-			if ((gcm.getSBMLFile()==null || !gcm.getSBMLFile().equals(this.gcmname + ".xml")) &&
-					new File(path + separator + this.gcmname + ".xml").exists()) {
-				Object[] options = { "Overwrite", "Cancel" };
-				int value;
-				value = JOptionPane.showOptionDialog(Gui.frame, gcmname + ".xml already exists."
-						+ "\nDo you want to overwrite?", "Overwrite", JOptionPane.YES_NO_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				if (value == JOptionPane.NO_OPTION) {
-					throw new Exception();
-				}
- 			}
- 			*/
 		}
 		else {
 			this.filename = "";
 		}
-		buildGui();
 		if (paramsOnly) {
 			loadParams();
 		}
+		buildGui();
 	}
 
 	public String getFilename() {
@@ -203,16 +188,16 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		filename = newName + ".gcm";
 		gcmname = newName;
 		gcm.load(path + separator + newName + ".gcm");
-		/*
 		if (paramsOnly) {
+			/*
 			GCMFile refGCM = new GCMFile(path);
 			refGCM.load(path + separator + refFile);
 			HashMap<String, String> params = refGCM.getGlobalParameters();
 			for (String key : params.keySet()) {
 				gcm.setDefaultParameter(key, params.get(key));
 			}
+			 */
 		}
-		*/
 		modelPanel.setModelId(newName);
 		//GCMNameTextField.setText(newName);
 	}
@@ -352,7 +337,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		// Write out species and influences to a gcm file
 		gcm.getSBMLDocument().getModel().setName(modelPanel.getModelName());
 		gcm.save(path + separator + gcmname + ".gcm");
-		log.addText("Saving GCM file:\n" + path + separator + gcmname + ".gcm\n");
+		//log.addText("Saving GCM file:\n" + path + separator + gcmname + ".gcm\n");
 		log.addText("Saving SBML file:\n" + path + separator + gcm.getSBMLFile() + "\n");
 		if (command.contains("Check")) {
 			SBMLutilities.check(path + separator + gcm.getSBMLFile());
@@ -794,7 +779,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 					if (prop.equals(GlobalConstants.INITIAL_STRING)) {
 						Species species = gcm.getSBMLDocument().getModel().getSpecies(id);
 						if (species!=null) {
-							species.setInitialAmount(Double.parseDouble(value));
+							if (value.startsWith("(")) {
+								species.appendAnnotation(","+GlobalConstants.INITIAL_STRING + "=" + value);
+							} else {
+								species.setInitialAmount(Double.parseDouble(value));
+							}
 						}
 					} else if (prop.equals(GlobalConstants.KDECAY_STRING)) {
 						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("Degradation_"+id);
@@ -804,7 +793,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								kd = reaction.getKineticLaw().createLocalParameter();
 								kd.setId(GlobalConstants.KDECAY_STRING);
 							}
-							kd.setValue(Double.parseDouble(value));
+							if (value.startsWith("(")) {
+								kd.setAnnotation(GlobalConstants.KDECAY_STRING + "=" + value);
+							} else {
+								kd.setValue(Double.parseDouble(value));
+							}
 						}
 					} else if (prop.equals(GlobalConstants.KCOMPLEX_STRING)) {
 						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("Complex_"+id);
@@ -819,9 +812,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								kc_r = reaction.getKineticLaw().createLocalParameter();
 								kc_r.setId(GlobalConstants.REVERSE_KCOMPLEX_STRING);
 							}
-							double [] Kc = Utility.getEquilibrium(value);
-							kc_f.setValue(Kc[0]);
-							kc_r.setValue(Kc[1]);
+							if (value.startsWith("(")) {
+								kc_f.setAnnotation(GlobalConstants.FORWARD_KCOMPLEX_STRING + "=" + value);
+							} else {
+								double [] Kc = Utility.getEquilibrium(value);
+								kc_f.setValue(Kc[0]);
+								kc_r.setValue(Kc[1]);
+							}
 						}
 					} else if (prop.equals(GlobalConstants.MEMDIFF_STRING)) {
 						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("MembraneDiffusion_"+id);
@@ -836,14 +833,22 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								kmdiff_r = reaction.getKineticLaw().createLocalParameter();
 								kmdiff_r.setId(GlobalConstants.REVERSE_MEMDIFF_STRING);
 							}
-							double [] Kmdiff = Utility.getEquilibrium(value);
-							kmdiff_f.setValue(Kmdiff[0]);
-							kmdiff_r.setValue(Kmdiff[1]);
+							if (value.startsWith("(")) {
+								kmdiff_f.setAnnotation(GlobalConstants.FORWARD_MEMDIFF_STRING + "=" + value);
+							} else {
+								double [] Kmdiff = Utility.getEquilibrium(value);
+								kmdiff_f.setValue(Kmdiff[0]);
+								kmdiff_r.setValue(Kmdiff[1]);
+							}
 						}
 					} else if (prop.equals(GlobalConstants.PROMOTER_COUNT_STRING)) {
 						Species species = gcm.getSBMLDocument().getModel().getSpecies(id);
 						if (species!=null) {
-							species.setInitialAmount(Double.parseDouble(value));
+							if (value.startsWith("(")) {
+								species.appendAnnotation(","+GlobalConstants.PROMOTER_COUNT_STRING + "=" + value);
+							} else {
+								species.setInitialAmount(Double.parseDouble(value));
+							}
 						}
 					} else if (prop.equals(GlobalConstants.RNAP_BINDING_STRING)) {
 						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("Production_"+id);
@@ -858,9 +863,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								ko_r = reaction.getKineticLaw().createLocalParameter();
 								ko_r.setId(GlobalConstants.REVERSE_RNAP_BINDING_STRING);
 							}
-							double [] Ko = Utility.getEquilibrium(value);
-							ko_f.setValue(Ko[0]);
-							ko_r.setValue(Ko[1]);
+							if (value.startsWith("(")) {
+								ko_f.setAnnotation(GlobalConstants.FORWARD_RNAP_BINDING_STRING + "=" + value);
+							} else {
+								double [] Ko = Utility.getEquilibrium(value);
+								ko_f.setValue(Ko[0]);
+								ko_r.setValue(Ko[1]);
+							}
 						}
 					} else if (prop.equals(GlobalConstants.ACTIVATED_RNAP_BINDING_STRING)) {
 						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("Production_"+id);
@@ -875,9 +884,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								kao_r = reaction.getKineticLaw().createLocalParameter();
 								kao_r.setId(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING);
 							}
-							double [] Kao = Utility.getEquilibrium(value);
-							kao_f.setValue(Kao[0]);
-							kao_r.setValue(Kao[1]);
+							if (value.startsWith("(")) {
+								kao_f.setAnnotation(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING + "=" + value);
+							} else {
+								double [] Kao = Utility.getEquilibrium(value);
+								kao_f.setValue(Kao[0]);
+								kao_r.setValue(Kao[1]);
+							}
 						}
 					} else if (prop.equals(GlobalConstants.OCR_STRING)) {
 						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("Production_"+id);
@@ -887,7 +900,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								ko = reaction.getKineticLaw().createLocalParameter();
 								ko.setId(GlobalConstants.OCR_STRING);
 							}
-							ko.setValue(Double.parseDouble(value));
+							if (value.startsWith("(")) {
+								ko.setAnnotation(GlobalConstants.OCR_STRING + "=" + value);
+							} else {
+								ko.setValue(Double.parseDouble(value));
+							}
 						}
 					} else if (prop.equals(GlobalConstants.KBASAL_STRING)) {
 						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("Production_"+id);
@@ -897,7 +914,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								kb = reaction.getKineticLaw().createLocalParameter();
 								kb.setId(GlobalConstants.KBASAL_STRING);
 							}
-							kb.setValue(Double.parseDouble(value));
+							if (value.startsWith("(")) {
+								kb.setAnnotation(GlobalConstants.KBASAL_STRING + "=" + value);
+							} else {
+								kb.setValue(Double.parseDouble(value));
+							}
 						}
 					} else if (prop.equals(GlobalConstants.ACTIVATED_STRING)) {
 						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("Production_"+id);
@@ -907,7 +928,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								ka = reaction.getKineticLaw().createLocalParameter();
 								ka.setId(GlobalConstants.ACTIVATED_STRING);
 							}
-							ka.setValue(Double.parseDouble(value));
+							if (value.startsWith("(")) {
+								ka.setAnnotation(GlobalConstants.ACTIVATED_STRING + "=" + value);
+							} else {
+								ka.setValue(Double.parseDouble(value));
+							}
 						}
 					} else if (prop.equals(GlobalConstants.STOICHIOMETRY_STRING)) {
 						Reaction reaction = gcm.getSBMLDocument().getModel().getReaction("Production_"+id);
@@ -917,9 +942,17 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								np = reaction.getKineticLaw().createLocalParameter();
 								np.setId(GlobalConstants.STOICHIOMETRY_STRING);
 							}
-							np.setValue(Double.parseDouble(value));
+							if (value.startsWith("(")) {
+								np.setAnnotation(GlobalConstants.STOICHIOMETRY_STRING + "=" + value);
+							} else {
+								np.setValue(Double.parseDouble(value));
+							}
 							for (int i = 0; i<reaction.getNumProducts(); i++) {
-								reaction.getProduct(i).setStoichiometry(Double.parseDouble(value));
+								if (value.startsWith("(")) {
+									reaction.getProduct(i).setStoichiometry(1.0);
+								} else {
+									reaction.getProduct(i).setStoichiometry(Double.parseDouble(value));
+								}
 							}
 						}
 					} else if (prop.equals(GlobalConstants.COOPERATIVITY_STRING)) {
@@ -960,7 +993,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 										nc.setId(GlobalConstants.COOPERATIVITY_STRING + "_" + sourceId + "_a");
 									}
 								}
-								nc.setValue(Double.parseDouble(value));
+								if (value.startsWith("(")) {
+									nc.setAnnotation(GlobalConstants.COOPERATIVITY_STRING + "=" + value);
+								} else {
+									nc.setValue(Double.parseDouble(value));
+								}
 							}
 						} else {
 							reaction = gcm.getSBMLDocument().getModel().getReaction("Complex_"+complexId);
@@ -971,7 +1008,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 									nc = reaction.getKineticLaw().createLocalParameter();
 									nc.setId(GlobalConstants.COOPERATIVITY_STRING + "_" + sourceId);
 								}
-								nc.setValue(Double.parseDouble(value));
+								if (value.startsWith("(")) {
+									nc.setAnnotation(GlobalConstants.COOPERATIVITY_STRING + "=" + value);
+								} else {
+									nc.setValue(Double.parseDouble(value));
+								}
 							}
 						}
 					} else if (prop.equals(GlobalConstants.KACT_STRING)) {
@@ -998,9 +1039,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								ka_r = reaction.getKineticLaw().createLocalParameter();
 								ka_r.setId(GlobalConstants.REVERSE_KACT_STRING.replace("_","_" + sourceId + "_"));
 							}
-							double [] Ka = Utility.getEquilibrium(value);
-							ka_f.setValue(Ka[0]);
-							ka_r.setValue(Ka[1]);
+							if (value.startsWith("(")) {
+								ka_f.setAnnotation(GlobalConstants.FORWARD_KACT_STRING + "=" + value);
+							} else {
+								double [] Ka = Utility.getEquilibrium(value);
+								ka_f.setValue(Ka[0]);
+								ka_r.setValue(Ka[1]);
+							}
 						}
 					} else if (prop.equals(GlobalConstants.KREP_STRING)) {
 						String promoterId = null;
@@ -1026,16 +1071,25 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 								kr_r = reaction.getKineticLaw().createLocalParameter();
 								kr_r.setId(GlobalConstants.REVERSE_KREP_STRING.replace("_","_" + sourceId + "_"));
 							}
-							double [] Kr = Utility.getEquilibrium(value);
-							kr_f.setValue(Kr[0]);
-							kr_r.setValue(Kr[1]);
+							if (value.startsWith("(")) {
+								kr_f.setAnnotation(GlobalConstants.FORWARD_KREP_STRING + "=" + value);
+							} else {
+								double [] Kr = Utility.getEquilibrium(value);
+								kr_f.setValue(Kr[0]);
+								kr_r.setValue(Kr[1]);
+							}
 						}
 					}
 				}
 				else {
-					id = update.split(" ")[0];
-					String value = update.split(" ")[1].trim();
-					gcm.setParameter(id, value);
+					String [] splits = update.split(" ");
+					id = splits[0];
+					String value = splits[1].trim();
+					if (splits[splits.length - 2].equals("Sweep")) {
+						gcm.setParameter(id, value, splits[splits.length-1]);
+					} else {
+						gcm.setParameter(id, value, null);
+					}
 				}
 			}
 		}
@@ -1384,8 +1438,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 			
 			if (gcm.getGrid().isEnabled() == false) {
 				tab.addTab("Species", speciesPanel);
-				//tab.addTab("Promoters", promoterPanel);
 				tab.addTab("Reactions", reactionPanel);
+			} else {
+				tab.addTab("Grid Species", speciesPanel);
 			}
 			
 			tab.addTab("Parameters", parametersPanel);
@@ -1394,27 +1449,22 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		else {
 			this.schematic = new Schematic(gcm, biosim, this, true, null,compartmentPanel,reactionPanel,compartmentList);
 			tab.addTab("Schematic", schematic);
-			//if (gcm.getSBMLDocument().getModel().getNumCompartments() > 1) {
-				//if (!gcm.getGrid().isEnabled()) 
 			tab.addTab("Compartments", compPanel);
-			//}
+			if (gcm.getGrid().isEnabled()) {
+				tab.addTab("Grid Species", speciesPanel);
+			}
 			tab.addTab("Parameters", parametersPanel);
-		}
-		
-		if (gcm.getGrid().isEnabled()) {
-			
-			tab.addTab("Grid Species", speciesPanel);
 		}
 		
 		Functions functionPanel = new Functions(gcm.getSBMLDocument(),usedIDs,dirty);
 		Units unitPanel = new Units(biosim,gcm.getSBMLDocument(),usedIDs,dirty);
-		JPanel defnPanel = new JPanel(new BorderLayout());
-		defnPanel.add(mainPanelNorth, "North");
-		defnPanel.add(functionPanel,"Center");
-		defnPanel.add(unitPanel,"South");
-		if (!gcm.getGrid().isEnabled()) {
-			tab.addTab("Definitions", defnPanel);
-		}
+		//JPanel defnPanel = new JPanel(new BorderLayout());
+		//defnPanel.add(mainPanelNorth, "North");
+		//defnPanel.add(functionPanel,"Center");
+		//defnPanel.add(unitPanel,"South");
+		//tab.addTab("Definitions", defnPanel);
+		tab.addTab("Functions", functionPanel);
+		tab.addTab("Units", unitPanel);
 		
 		if (gcm.getSBMLDocument().getLevel() < 3) {
 			CompartmentTypes compTypePanel = new CompartmentTypes(biosim,gcm.getSBMLDocument(),usedIDs,dirty);
@@ -1432,15 +1482,11 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		functionPanel.setPanels(initialsPanel, rulesPanel);
 		speciesPanel.setPanels(initialsPanel, rulesPanel);
 		reactionPanel.setPanels(initialsPanel, rulesPanel);
-		if (!gcm.getGrid().isEnabled()) {
-			tab.addTab("Rules", rulesPanel);
-		}
+		tab.addTab("Rules", rulesPanel);
 		
 		Events eventPanel = new Events(biosim,gcm.getSBMLDocument(),usedIDs,dirty);
-		if (!gcm.getGrid().isEnabled()) {
-			tab.addTab("Constraints", propPanel);
-			tab.addTab("Events", eventPanel);
-		}
+		tab.addTab("Constraints", propPanel);
+		tab.addTab("Events", eventPanel);
 		setLayout(new BorderLayout());
 		if (paramsOnly) {
 			add(parametersPanel, BorderLayout.CENTER);
@@ -1476,11 +1522,13 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		
 		parameters = new PropertyList("Parameter List");
 		editInit = new EditButton("Edit Parameter", parameters);
-		// parameters.addAllItem(gcm.getParameters().keySet());
 		parameters.addAllItem(generateParameters());
-		initPanel = Utility.createPanel(this, "Model Generation Parameters", parameters, null, null, editInit);
-		//paramPanel.add(initPanel, "Center");
 		parametersPanel.setPanels(initialsPanel, rulesPanel);
+		Constraints consPanel = new Constraints(gcm.getSBMLDocument(),usedIDs,dirty);
+		propPanel.add(consPanel, "Center");
+		// parameters.addAllItem(gcm.getParameters().keySet());
+		//initPanel = Utility.createPanel(this, "Model Generation Parameters", parameters, null, null, editInit);
+		//paramPanel.add(initPanel, "Center");
 		//paramPanel.add(parametersPanel, "South");
 		
 		/*
@@ -1499,8 +1547,6 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		initPanel = Utility.createPanel(this, "CSL Properties", conditions, addInit, removeInit, editInit);
 		propPanel.add(initPanel, "Center");
 		*/
-		Constraints consPanel = new Constraints(gcm.getSBMLDocument(),usedIDs,dirty);
-		propPanel.add(consPanel, "Center");
 		//propPanel.add(consPanel, "South");
 	}
 
@@ -1650,7 +1696,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 				if (!update.contains("/")) {
 					id = update.split(" ")[0];
 					String value = update.split(" ")[1].trim();
-					gcm.setParameter(id, value);
+					gcm.setParameter(id, value, null);
 				}
 			}
 		}

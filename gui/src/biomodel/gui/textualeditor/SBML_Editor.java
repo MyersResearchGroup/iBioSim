@@ -128,7 +128,7 @@ public class SBML_Editor extends JPanel {
 				model.setId(modelID);
 				save(false, "", true, true);
 			}
-			SBMLutilities.addRandomFunctions(document);
+			//SBMLutilities.addRandomFunctions(document);
 		}
 		else {
 			document = new SBMLDocument(Gui.SBML_LEVEL, Gui.SBML_VERSION);

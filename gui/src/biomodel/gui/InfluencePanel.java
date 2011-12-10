@@ -183,7 +183,13 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		} else {
 			field.setEnabled(false);
 		}
-		if (nc != null && !defaultValue.equals(""+nc.getValue())) {
+		if (nc != null && nc.isSetAnnotation() && 
+				nc.getAnnotationString().contains(GlobalConstants.COOPERATIVITY_STRING)) {
+			String sweep = nc.getAnnotationString().replace("<annotation>"+GlobalConstants.COOPERATIVITY_STRING+"=","")
+					.replace("</annotation>","");
+			field.setValue(sweep);
+			field.setCustom();
+		} else if (nc != null && !defaultValue.equals(""+nc.getValue())) {
 			field.setValue(""+nc.getValue());
 			field.setCustom();
 		}
@@ -224,7 +230,13 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		} else {
 			field.setEnabled(false);
 		}
-		if (kr_f != null && !defaultValue.equals(kr_f.getValue()+"/"+kr_r.getValue())) {
+		if (kr_f != null && kr_f.isSetAnnotation() && 
+				kr_f.getAnnotationString().contains(GlobalConstants.FORWARD_KREP_STRING)) {
+			String sweep = kr_f.getAnnotationString().replace("<annotation>"+GlobalConstants.FORWARD_KREP_STRING+"=","")
+					.replace("</annotation>","");
+			field.setValue(sweep);
+			field.setCustom();
+		} else if (kr_f != null && !defaultValue.equals(kr_f.getValue()+"/"+kr_r.getValue())) {
 			field.setValue(kr_f.getValue()+"/"+kr_r.getValue());
 			field.setCustom();
 		}
@@ -265,7 +277,13 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		} else {
 			field.setEnabled(false);
 		}
-		if (ka_f != null && !defaultValue.equals(ka_f.getValue()+"/"+ka_r.getValue())) {
+		if (ka_f != null && ka_f.isSetAnnotation() && 
+				ka_f.getAnnotationString().contains(GlobalConstants.FORWARD_KACT_STRING)) {
+			String sweep = ka_f.getAnnotationString().replace("<annotation>"+GlobalConstants.FORWARD_KACT_STRING+"=","")
+					.replace("</annotation>","");
+			field.setValue(sweep);
+			field.setCustom();
+		} else if (ka_f != null && !defaultValue.equals(ka_f.getValue()+"/"+ka_r.getValue())) {
 			field.setValue(ka_f.getValue()+"/"+ka_r.getValue());
 			field.setCustom();
 		}
@@ -356,23 +374,36 @@ public class InfluencePanel extends JPanel implements ActionListener {
 				if (typeBox.getSelectedItem().equals(GlobalConstants.REPRESSION)) {
 					LocalParameter nc = production.getKineticLaw().createLocalParameter();
 					nc.setId(GlobalConstants.COOPERATIVITY_STRING +  "_" + regulator + "_r");
-					nc.setValue(Double.parseDouble(f.getValue()));
+					if (f.getValue().startsWith("(")) {
+						nc.setAnnotation(GlobalConstants.COOPERATIVITY_STRING + "=" + f.getValue());
+						nc.setValue(1.0);
+					} else {
+						nc.setValue(Double.parseDouble(f.getValue()));
+					}
 				} else if (typeBox.getSelectedItem().equals(GlobalConstants.ACTIVATION)) {
 					LocalParameter nc = production.getKineticLaw().createLocalParameter();
 					nc.setId(GlobalConstants.COOPERATIVITY_STRING +  "_" + regulator + "_a");
-					nc.setValue(Double.parseDouble(f.getValue()));
+					if (f.getValue().startsWith("(")) {
+						nc.setAnnotation(GlobalConstants.COOPERATIVITY_STRING + "=" + f.getValue());
+						nc.setValue(1.0);
+					} else {
+						nc.setValue(Double.parseDouble(f.getValue()));
+					}
 				} else if (typeBox.getSelectedItem().equals(GlobalConstants.COMPLEX)) {
-					//LocalParameter nc = production.getKineticLaw().createLocalParameter();
-					//nc.setId(GlobalConstants.COOPERATIVITY_STRING +  "_" + regulator);
-					//nc.setValue(Double.parseDouble(f.getValue()));
 					CoopStr = f.getValue();
 				}
 			} 
 			f = fields.get(GlobalConstants.KREP_STRING);
 			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 				if (typeBox.getSelectedItem().equals(GlobalConstants.REPRESSION)) {
-					double [] Kr = Utility.getEquilibrium(f.getValue());
+					double [] Kr;
 					LocalParameter p = production.getKineticLaw().createLocalParameter();
+					if (f.getValue().startsWith("(")) {
+						Kr = Utility.getEquilibrium("1.0/1.0");
+						p.setAnnotation(GlobalConstants.FORWARD_KREP_STRING+"="+f.getValue());
+					} else {
+						Kr = Utility.getEquilibrium(f.getValue());
+					}
 					p.setId(GlobalConstants.FORWARD_KREP_STRING.replace("_","_" + regulator + "_"));
 					p.setValue(Kr[0]);
 					p = production.getKineticLaw().createLocalParameter();
@@ -383,8 +414,14 @@ public class InfluencePanel extends JPanel implements ActionListener {
 			f = fields.get(GlobalConstants.KACT_STRING);
 			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 				if (typeBox.getSelectedItem().equals(GlobalConstants.ACTIVATION)) {
-					double [] Ka = Utility.getEquilibrium(f.getValue());
+					double [] Ka;
 					LocalParameter p = production.getKineticLaw().createLocalParameter();
+					if (f.getValue().startsWith("(")) {
+						Ka = Utility.getEquilibrium("1.0/1.0");
+						p.setAnnotation(GlobalConstants.FORWARD_KACT_STRING+"="+f.getValue());
+					} else {
+						Ka = Utility.getEquilibrium(f.getValue());
+					}
 					p.setId(GlobalConstants.FORWARD_KACT_STRING.replace("_","_" + regulator + "_"));
 					p.setValue(Ka[0]);
 					p = production.getKineticLaw().createLocalParameter();

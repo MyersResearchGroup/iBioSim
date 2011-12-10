@@ -135,7 +135,7 @@ public class BioModel {
 		c.setSize(1);
 		c.setSpatialDimensions(3);
 		c.setConstant(true);
-		SBMLutilities.addRandomFunctions(sbml);
+		//SBMLutilities.addRandomFunctions(sbml);
 		loadDefaultParameters();
 		sbmlFile = modelId + ".xml";
 		sbml.enablePackage(LayoutExtension.getXmlnsL3V1V1(), "layout", true);
@@ -730,7 +730,7 @@ public class BioModel {
 			kd = Double.parseDouble(property.getProperty(GlobalConstants.KDECAY_STRING));
 		} 
 		if (kd != 0) {
-			createDegradationReaction(s,kd);
+			createDegradationReaction(s,kd,null);
 		} 
 		if (property.containsKey(GlobalConstants.TYPE) && 
 			property.getProperty(GlobalConstants.TYPE).contains("diffusible")) {
@@ -1047,15 +1047,26 @@ public class BioModel {
 			product.setConstant(true);		
 		}
 		r.createKineticLaw();
-		double [] Kc = Utility.getEquilibrium(KcStr); 
-		if (Kc[0] >= 0) { 	
-			KineticLaw k = r.getKineticLaw();
+		if (KcStr != null && KcStr.startsWith("(")) {
+			KineticLaw k = r.createKineticLaw();
 			LocalParameter p = k.createLocalParameter();
 			p.setId(GlobalConstants.FORWARD_KCOMPLEX_STRING);
-			p.setValue(Kc[0]);
+			p.setValue(1.0);
+			p.setAnnotation(GlobalConstants.FORWARD_KCOMPLEX_STRING+"="+KcStr);
 			p = k.createLocalParameter();
 			p.setId(GlobalConstants.REVERSE_KCOMPLEX_STRING);
-			p.setValue(Kc[1]);
+			p.setValue(1.0);
+		} else {
+			double [] Kc = Utility.getEquilibrium(KcStr); 
+			if (Kc[0] >= 0) { 	
+				KineticLaw k = r.createKineticLaw();
+				LocalParameter p = k.createLocalParameter();
+				p.setId(GlobalConstants.FORWARD_KCOMPLEX_STRING);
+				p.setValue(Kc[0]);
+				p = k.createLocalParameter();
+				p.setId(GlobalConstants.REVERSE_KCOMPLEX_STRING);
+				p.setValue(Kc[1]);
+			}
 		}
 		createComplexKineticLaw(r);
 		return r;
@@ -1220,14 +1231,24 @@ public class BioModel {
 			reactant.setConstant(true);
 		}
 		KineticLaw k = reaction.createKineticLaw();
-		double [] kmdiff = Utility.getEquilibrium(kmdiffStr);
-		if (kmdiff[0] >= 0) {
+		if (kmdiffStr != null && kmdiffStr.startsWith("(")) {
 			LocalParameter p = k.createLocalParameter();
 			p.setId(GlobalConstants.FORWARD_MEMDIFF_STRING);
-			p.setValue(kmdiff[0]);
+			p.setValue(1.0);
+			p.setAnnotation(GlobalConstants.FORWARD_MEMDIFF_STRING+"="+kmdiffStr);
 			p = k.createLocalParameter();
 			p.setId(GlobalConstants.REVERSE_MEMDIFF_STRING);
-			p.setValue(kmdiff[1]);
+			p.setValue(1.0);
+		} else {
+			double [] kmdiff = Utility.getEquilibrium(kmdiffStr);
+			if (kmdiff[0] >= 0) {
+				LocalParameter p = k.createLocalParameter();
+				p.setId(GlobalConstants.FORWARD_MEMDIFF_STRING);
+				p.setValue(kmdiff[0]);
+				p = k.createLocalParameter();
+				p.setId(GlobalConstants.REVERSE_MEMDIFF_STRING);
+				p.setValue(kmdiff[1]);
+			}
 		}
 		k.setMath(SBMLutilities.myParseFormula(GlobalConstants.FORWARD_MEMDIFF_STRING+"*"+s+"-"+
 				GlobalConstants.REVERSE_MEMDIFF_STRING));
@@ -1258,7 +1279,7 @@ public class BioModel {
 		return reaction;
 	}
 	
-	public Reaction createDegradationReaction(String s,double kd) {
+	public Reaction createDegradationReaction(String s,double kd,String sweep) {
 		Reaction reaction = sbml.getModel().getReaction("Degradation_"+s);
 		if (reaction==null) {
 			reaction = sbml.getModel().createReaction();
@@ -1277,10 +1298,13 @@ public class BioModel {
 			reactant.setConstant(true);
 		} 
 		KineticLaw k = reaction.createKineticLaw();
-		if (kd > 0) {
+		if (kd > 0 || sweep != null) {
 			LocalParameter p = k.createLocalParameter();
 			p.setId("kd");
 			p.setValue(kd);
+			if (sweep != null) {
+				p.setAnnotation(GlobalConstants.KDECAY_STRING+"="+sweep);
+			} 
 		}
 		k.setMath(SBMLutilities.myParseFormula("kd*"+s));
 
@@ -1304,7 +1328,6 @@ public class BioModel {
 			ModifierSpeciesReference modifier = r.createModifier();
 			modifier.setSpecies(s);
 			modifier.setAnnotation("promoter");
-			k = r.createKineticLaw();
 			Species mRNA = sbml.getModel().createSpecies();
 			mRNA.setId(s+"_mRNA");
 			mRNA.setInitialAmount(0.0);
@@ -1316,19 +1339,20 @@ public class BioModel {
 			product.setSpecies(mRNA.getId());
 			product.setStoichiometry(1.0);
 			product.setConstant(true);
-		}
-		k = r.getKineticLaw();
-		if (ka != null) {
-			LocalParameter p = k.createLocalParameter();
-			p.setId(GlobalConstants.ACTIVATED_STRING);
-			p.setValue(Double.parseDouble(ka));
-		} 		
+		} 
+		k = r.createKineticLaw();
 		if (np != null) {
 			LocalParameter p = k.createLocalParameter();
 			p.setId(GlobalConstants.STOICHIOMETRY_STRING);
-			p.setValue(Double.parseDouble(np));
+			double npVal = 1.0;
+			if (np.startsWith("(")) {
+				p.setAnnotation(GlobalConstants.STOICHIOMETRY_STRING+"="+np);
+			} else {
+				npVal = Double.parseDouble(np);
+			}
+			p.setValue(npVal);
 			for (long i = 0; i < r.getNumProducts(); i++) {
-				r.getProduct(i).setStoichiometry(Double.parseDouble(np));
+				r.getProduct(i).setStoichiometry(npVal);
 			}
 		} else {
 			for (long i = 0; i < r.getNumProducts(); i++) {
@@ -1338,16 +1362,43 @@ public class BioModel {
 		if (ko != null) {
 			LocalParameter p = k.createLocalParameter();
 			p.setId(GlobalConstants.OCR_STRING);
-			p.setValue(Double.parseDouble(ko));
+			if (ko.startsWith("(")) {
+				p.setAnnotation(GlobalConstants.OCR_STRING+"="+ko);
+				p.setValue(1.0);
+			} else {
+				p.setValue(Double.parseDouble(ko));
+			}
 		} 							
 		if (kb != null) {
 			LocalParameter p = k.createLocalParameter();
 			p.setId(GlobalConstants.KBASAL_STRING);
-			p.setValue(Double.parseDouble(kb));
+			if (kb.startsWith("(")) {
+				p.setAnnotation(GlobalConstants.KBASAL_STRING+"="+kb);
+				p.setValue(1.0);
+			} else {
+				p.setValue(Double.parseDouble(kb));
+			}
 		} 
-		if (KoStr != null) {
-			double [] Ko = Utility.getEquilibrium(KoStr);
+		if (ka != null) {
 			LocalParameter p = k.createLocalParameter();
+			p.setId(GlobalConstants.ACTIVATED_STRING);
+			if (ka.startsWith("(")) {
+				p.setAnnotation(GlobalConstants.ACTIVATED_STRING+"="+ka);
+				p.setValue(1.0);
+			} else {
+				p.setValue(Double.parseDouble(ka));
+			}
+		} 		
+		if (KoStr != null) {
+			double [] Ko;
+			LocalParameter p = k.createLocalParameter();
+			if (KoStr.startsWith("(")) {
+				p.setAnnotation(GlobalConstants.FORWARD_RNAP_BINDING_STRING+"="+KoStr);
+				p.setValue(1.0);
+				Ko = Utility.getEquilibrium("1.0/1.0");
+			} else {
+				Ko = Utility.getEquilibrium(KoStr);
+			}
 			p.setId(GlobalConstants.FORWARD_RNAP_BINDING_STRING);
 			p.setValue(Ko[0]);
 			p = k.createLocalParameter();
@@ -1355,8 +1406,15 @@ public class BioModel {
 			p.setValue(Ko[1]);
 		} 							
 		if (KaoStr != null) {
-			double [] Kao = Utility.getEquilibrium(KaoStr);
+			double [] Kao;
 			LocalParameter p = k.createLocalParameter();
+			if (KaoStr.startsWith("(")) {
+				p.setAnnotation(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING+"="+KaoStr);
+				p.setValue(1.0);
+				Kao = Utility.getEquilibrium("1.0/1.0");
+			} else {
+				Kao = Utility.getEquilibrium(KoStr);
+			}
 			p.setId(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING);
 			p.setValue(Kao[0]);
 			p = k.createLocalParameter();
@@ -3450,10 +3508,14 @@ public class BioModel {
 		*/
 	}
 
-	public void setParameter(String parameter, String value) {
+	public void setParameter(String parameter, String value, String sweep) {
 		//globalParameters.put(parameter, value);
 		if (sbml != null) { 
-			sbml.getModel().getParameter(parameter).setValue(Double.parseDouble(value));
+			if (value.startsWith("(")) {
+				sbml.getModel().getParameter(parameter).setAnnotation(value);
+			} else {
+				sbml.getModel().getParameter(parameter).setValue(Double.parseDouble(value));
+			}
 		} 
 		//parameters.put(parameter, value);
 	}

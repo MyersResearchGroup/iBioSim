@@ -66,19 +66,27 @@ public class Functions extends JPanel implements ActionListener, MouseListener {
 		editFunction = new JButton("Edit Function");
 		functions = new JList();
 		ListOf listOfFunctions = model.getListOfFunctionDefinitions();
-		String[] funcs = new String[(int) model.getNumFunctionDefinitions()];
+		int count = 0;
 		for (int i = 0; i < model.getNumFunctionDefinitions(); i++) {
 			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
-			funcs[i] = function.getId() + " ( ";
+			if (!SBMLutilities.isSpecialFunction(function.getId())) count++;
+		}
+		String[] funcs = new String[count];
+		count = 0;
+		for (int i = 0; i < model.getNumFunctionDefinitions(); i++) {
+			FunctionDefinition function = (FunctionDefinition) listOfFunctions.get(i);
+			if (SBMLutilities.isSpecialFunction(function.getId())) continue;
+			funcs[count] = function.getId() + " ( ";
 			for (long j = 0; j < function.getNumArguments(); j++) {
 				if (j != 0) {
-					funcs[i] += ", ";
+					funcs[count] += ", ";
 				}
-				funcs[i] += SBMLutilities.myFormulaToString(function.getArgument(j));
+				funcs[count] += SBMLutilities.myFormulaToString(function.getArgument(j));
 			}
 			if (function.isSetMath()) {
-				funcs[i] += " ) = " + SBMLutilities.myFormulaToString(function.getBody());
+				funcs[count] += " ) = " + SBMLutilities.myFormulaToString(function.getBody());
 			}
+			count++;
 		}
 		String[] oldFuncs = funcs;
 		try {
