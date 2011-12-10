@@ -81,7 +81,12 @@ public class PromoterPanel extends JPanel {
 		field = new PropertyField(GlobalConstants.PROMOTER_COUNT_STRING, 
 				gcm.getParameter(GlobalConstants.PROMOTER_COUNT_STRING), origString, 
 				defaultValue, formatString, paramsOnly, origString, false);
-		if (!defaultValue.equals(""+promoter.getInitialAmount())) {
+		if (promoter.isSetAnnotation() && promoter.getAnnotationString().contains(GlobalConstants.PROMOTER_COUNT_STRING)) {
+			String annotation = promoter.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
+			String sweep = annotation.substring(annotation.indexOf(GlobalConstants.PROMOTER_COUNT_STRING)+3);
+			field.setValue(sweep);
+			field.setCustom();
+		} else if (!defaultValue.equals(""+promoter.getInitialAmount())) {
 			field.setValue(""+promoter.getInitialAmount());
 			field.setCustom();
 		}
@@ -113,7 +118,13 @@ public class PromoterPanel extends JPanel {
 		if (production != null) {
 			LocalParameter ko_f = production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_RNAP_BINDING_STRING);
 			LocalParameter ko_r = production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING);
-			if (ko_f != null && ko_r != null && !defaultValue.equals(ko_f.getValue()+"/"+ko_r.getValue())) {
+			if (ko_f != null && ko_f.isSetAnnotation() && 
+					ko_f.getAnnotationString().contains(GlobalConstants.FORWARD_RNAP_BINDING_STRING)) {
+				String sweep = ko_f.getAnnotationString().replace("<annotation>"+GlobalConstants.FORWARD_RNAP_BINDING_STRING+"=","")
+						.replace("</annotation>","");
+				field.setValue(sweep);
+				field.setCustom();
+			} else if (ko_f != null && ko_r != null && !defaultValue.equals(ko_f.getValue()+"/"+ko_r.getValue())) {
 				field.setValue(ko_f.getValue()+"/"+ko_r.getValue());
 				field.setCustom();
 			}
@@ -146,7 +157,13 @@ public class PromoterPanel extends JPanel {
 		if (production != null) {
 			LocalParameter kao_f = production.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING);
 			LocalParameter kao_r = production.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING);
-			if (kao_f != null && kao_r != null && !defaultValue.equals(kao_f.getValue()+"/"+kao_r.getValue())) {
+			if (kao_f != null && kao_f.isSetAnnotation() && 
+					kao_f.getAnnotationString().contains(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING)) {
+				String sweep = kao_f.getAnnotationString().replace("<annotation>"+GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING+"=","")
+						.replace("</annotation>","");
+				field.setValue(sweep);
+				field.setCustom();
+			} else if (kao_f != null && kao_r != null && !defaultValue.equals(kao_f.getValue()+"/"+kao_r.getValue())) {
 				field.setValue(kao_f.getValue()+"/"+kao_r.getValue());
 				field.setCustom();
 			}
@@ -171,10 +188,16 @@ public class PromoterPanel extends JPanel {
 			formatString = Utility.SWEEPstring;
 		}
 		field = new PropertyField(GlobalConstants.OCR_STRING, gcm.getParameter(GlobalConstants.OCR_STRING),
-				origString, defaultValue, Utility.NUMstring, paramsOnly, origString, false);
+				origString, defaultValue, formatString, paramsOnly, origString, false);
 		if (production != null) {
 			LocalParameter ko = production.getKineticLaw().getLocalParameter(GlobalConstants.OCR_STRING);
-			if (ko != null && !defaultValue.equals(ko.getValue()+"")) {
+			if (ko != null && ko.isSetAnnotation() && 
+					ko.getAnnotationString().contains(GlobalConstants.OCR_STRING)) {
+				String sweep = ko.getAnnotationString().replace("<annotation>"+GlobalConstants.OCR_STRING+"=","")
+						.replace("</annotation>","");
+				field.setValue(sweep);
+				field.setCustom();
+			} else if (ko != null && !defaultValue.equals(ko.getValue()+"")) {
 				field.setValue(ko.getValue()+"");
 				field.setCustom();
 			}	
@@ -201,7 +224,13 @@ public class PromoterPanel extends JPanel {
 				origString, defaultValue, Utility.SWEEPstring, paramsOnly, origString, false);
 		if (production != null) {
 			LocalParameter kb = production.getKineticLaw().getLocalParameter(GlobalConstants.KBASAL_STRING);
-			if (kb != null && !defaultValue.equals(kb.getValue()+"")) {
+			if (kb != null && kb.isSetAnnotation() && 
+					kb.getAnnotationString().contains(GlobalConstants.KBASAL_STRING)) {
+				String sweep = kb.getAnnotationString().replace("<annotation>"+GlobalConstants.KBASAL_STRING+"=","")
+						.replace("</annotation>","");
+				field.setValue(sweep);
+				field.setCustom();
+			} else if (kb != null && !defaultValue.equals(kb.getValue()+"")) {
 				field.setValue(kb.getValue()+"");
 				field.setCustom();
 			}	
@@ -228,7 +257,13 @@ public class PromoterPanel extends JPanel {
 				origString, defaultValue, formatString, paramsOnly, origString, false);
 		if (production != null) {
 			LocalParameter ka = production.getKineticLaw().getLocalParameter(GlobalConstants.ACTIVATED_STRING);
-			if (ka != null && !defaultValue.equals(ka.getValue()+"")) {
+			if (ka != null && ka.isSetAnnotation() && 
+					ka.getAnnotationString().contains(GlobalConstants.ACTIVATED_STRING)) {
+				String sweep = ka.getAnnotationString().replace("<annotation>"+GlobalConstants.ACTIVATED_STRING+"=","")
+						.replace("</annotation>","");
+				field.setValue(sweep);
+				field.setCustom();
+			} else if (ka != null && !defaultValue.equals(ka.getValue()+"")) {
 				field.setValue(ka.getValue()+"");
 				field.setCustom();
 			}	
@@ -255,7 +290,13 @@ public class PromoterPanel extends JPanel {
 				origString, defaultValue, formatString, paramsOnly, origString, false);
 		if (production != null) {
 			LocalParameter np = production.getKineticLaw().getLocalParameter(GlobalConstants.STOICHIOMETRY_STRING);
-			if (np != null && !defaultValue.equals(np.getValue()+"")) {
+			if (np != null && np.isSetAnnotation() && 
+					np.getAnnotationString().contains(GlobalConstants.STOICHIOMETRY_STRING)) {
+				String sweep = np.getAnnotationString().replace("<annotation>"+GlobalConstants.STOICHIOMETRY_STRING+"=","")
+						.replace("</annotation>","");
+				field.setValue(sweep);
+				field.setCustom();
+			} else if (np != null && !defaultValue.equals(np.getValue()+"")) {
 				field.setValue(np.getValue()+"");
 				field.setCustom();
 			}	
@@ -344,7 +385,14 @@ public class PromoterPanel extends JPanel {
 				promoter.setId(id);
 				promoter.setName(fields.get(GlobalConstants.NAME).getValue());
 			}
-			promoter.setInitialAmount(Double.parseDouble(fields.get(GlobalConstants.PROMOTER_COUNT_STRING).getValue()));
+			promoter.setAnnotation(GlobalConstants.TYPE+"="+GlobalConstants.PROMOTER);
+			PropertyField f = fields.get(GlobalConstants.PROMOTER_COUNT_STRING);
+			if (f.getValue().startsWith("(")) {
+				promoter.setInitialAmount(1.0);
+				promoter.appendAnnotation(","+GlobalConstants.PROMOTER_COUNT_STRING + "=" + f.getValue());
+			} else {
+				promoter.setInitialAmount(Double.parseDouble(f.getValue()));
+			}
 			String kaStr = null;
 			production.getKineticLaw().removeLocalParameter(GlobalConstants.STOICHIOMETRY_STRING);
 			production.getKineticLaw().removeLocalParameter(GlobalConstants.OCR_STRING);
@@ -354,7 +402,7 @@ public class PromoterPanel extends JPanel {
 			production.getKineticLaw().removeLocalParameter(GlobalConstants.REVERSE_RNAP_BINDING_STRING);
 			production.getKineticLaw().removeLocalParameter(GlobalConstants.FORWARD_ACTIVATED_RNAP_BINDING_STRING);
 			production.getKineticLaw().removeLocalParameter(GlobalConstants.REVERSE_ACTIVATED_RNAP_BINDING_STRING);
-			PropertyField f = fields.get(GlobalConstants.ACTIVATED_STRING);
+			f = fields.get(GlobalConstants.ACTIVATED_STRING);
 			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
 				kaStr = f.getValue();
 			}

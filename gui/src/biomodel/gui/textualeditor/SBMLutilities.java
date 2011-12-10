@@ -82,13 +82,14 @@ public class SBMLutilities {
 	public static ArrayList<String> getInvalidVariables(SBMLDocument document, String formula, String arguments, boolean isFunction) {
 		ArrayList<String> validVars = new ArrayList<String>();
 		ArrayList<String> invalidVars = new ArrayList<String>();
-		ListOf sbml = document.getModel().getListOfFunctionDefinitions();
-		for (int i = 0; i < document.getModel().getNumFunctionDefinitions(); i++) {
+		Model model = document.getModel();
+		ListOf sbml = model.getListOfFunctionDefinitions();
+		for (int i = 0; i < model.getNumFunctionDefinitions(); i++) {
 			validVars.add(((FunctionDefinition) sbml.get(i)).getId());
 		}
 		if (!isFunction) {
-			sbml = document.getModel().getListOfSpecies();
-			for (int i = 0; i < document.getModel().getNumSpecies(); i++) {
+			sbml = model.getListOfSpecies();
+			for (int i = 0; i < model.getNumSpecies(); i++) {
 				validVars.add(((Species) sbml.get(i)).getId());
 			}
 		}
@@ -99,18 +100,18 @@ public class SBMLutilities {
 			}
 		}
 		else {
-			sbml = document.getModel().getListOfCompartments();
-			for (int i = 0; i < document.getModel().getNumCompartments(); i++) {
+			sbml = model.getListOfCompartments();
+			for (int i = 0; i < model.getNumCompartments(); i++) {
 				if (document.getLevel() > 2 || ((Compartment) sbml.get(i)).getSpatialDimensions() != 0) {
 					validVars.add(((Compartment) sbml.get(i)).getId());
 				}
 			}
-			sbml = document.getModel().getListOfParameters();
-			for (int i = 0; i < document.getModel().getNumParameters(); i++) {
+			sbml = model.getListOfParameters();
+			for (int i = 0; i < model.getNumParameters(); i++) {
 				validVars.add(((Parameter) sbml.get(i)).getId());
 			}
-			sbml = document.getModel().getListOfReactions();
-			for (int i = 0; i < document.getModel().getNumReactions(); i++) {
+			sbml = model.getListOfReactions();
+			for (int i = 0; i < model.getNumReactions(); i++) {
 				Reaction reaction = (Reaction) sbml.get(i);
 				validVars.add(reaction.getId());
 				ListOf sbml2 = reaction.getListOfReactants();
@@ -160,7 +161,31 @@ public class SBMLutilities {
 				}
 				catch (Exception e1) {
 					if (!validVars.contains(splitLaw[i])) {
-						invalidVars.add(splitLaw[i]);
+						if (splitLaw[i].equals("uniform")) {
+							createFunction(model, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
+						} else if (splitLaw[i].equals("uniform")) {
+							createFunction(model, "normal", "Normal distribution", "lambda(m,s,m)");
+						} else if (splitLaw[i].equals("exponential")) {
+							createFunction(model, "exponential", "Exponential distribution", "lambda(l,1/l)");
+						} else if (splitLaw[i].equals("gamma")) {
+							createFunction(model, "gamma", "Gamma distribution", "lambda(a,b,a*b)");
+						} else if (splitLaw[i].equals("lognormal")) {
+							createFunction(model, "lognormal", "Lognormal distribution", "lambda(z,s,exp(z+s^2/2))");
+						} else if (splitLaw[i].equals("chisq")) {
+							createFunction(model, "chisq", "Chi-squared distribution", "lambda(nu,nu)");
+						} else if (splitLaw[i].equals("laplace")) {
+							createFunction(model, "laplace", "Laplace distribution", "lambda(a,0)");
+						} else if (splitLaw[i].equals("cauchy")) {
+							createFunction(model, "cauchy", "Cauchy distribution", "lambda(a,a)");
+						} else if (splitLaw[i].equals("poisson")) {
+							createFunction(model, "poisson", "Poisson distribution", "lambda(mu,mu)");
+						} else if (splitLaw[i].equals("binomial")) {
+							createFunction(model, "binomial", "Binomial distribution", "lambda(p,n,p*n)");
+						} else if (splitLaw[i].equals("bernoulli")) {
+							createFunction(model, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
+						} else {
+							invalidVars.add(splitLaw[i]);
+						}
 					}
 				}
 			}
@@ -533,6 +558,21 @@ public class SBMLutilities {
 		}
 		return false;
 	}
+	
+	public static Boolean isSpecialFunction(String functionId) {
+		if (functionId.equals("uniform")) return true;
+		else if (functionId.equals("normal")) return true;
+		else if (functionId.equals("exponential")) return true;
+		else if (functionId.equals("gamma")) return true;
+		else if (functionId.equals("lognormal")) return true;
+		else if (functionId.equals("chisq")) return true;
+		else if (functionId.equals("laplace")) return true;
+		else if (functionId.equals("cauchy")) return true;
+		else if (functionId.equals("poisson")) return true;
+		else if (functionId.equals("binomial")) return true;
+		else if (functionId.equals("bernoulli")) return true;
+		return false;
+	}
 
 	public static ArrayList<String> CreateListOfUsedIDs(SBMLDocument document) {
 		ArrayList<String> usedIDs = new ArrayList<String>();
@@ -545,6 +585,17 @@ public class SBMLutilities {
 		for (int i = 0; i < model.getNumFunctionDefinitions(); i++) {
 			usedIDs.add(((FunctionDefinition) ids.get(i)).getId());
 		}
+		usedIDs.add("uniform");
+		usedIDs.add("normal");
+		usedIDs.add("exponential");
+		usedIDs.add("gamma");
+		usedIDs.add("lognormal");
+		usedIDs.add("chisq");
+		usedIDs.add("laplace");
+		usedIDs.add("cauchy");
+		usedIDs.add("poisson");
+		usedIDs.add("binomial");
+		usedIDs.add("bernoulli");
 		ids = model.getListOfUnitDefinitions();
 		for (int i = 0; i < model.getNumUnitDefinitions(); i++) {
 			usedIDs.add(((UnitDefinition) ids.get(i)).getId());

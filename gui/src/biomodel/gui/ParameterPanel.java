@@ -15,6 +15,9 @@ import main.Gui;
 
 
 public class ParameterPanel extends JPanel {
+	
+	private static final long serialVersionUID = 1L;
+	
 	public ParameterPanel(String totalSelected, PropertyList parameterList,
 			BioModel gcm, boolean paramsOnly, BioModel refGCM, ModelEditor gcmEditor) {
 		super(new GridLayout(1, 2));

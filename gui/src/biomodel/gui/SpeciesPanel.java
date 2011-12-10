@@ -338,7 +338,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					gcm.getParameter(GlobalConstants.INITIAL_STRING), origString, defaultValue,
 					Utility.SWEEPstring + "|" + Utility.CONCstring, paramsOnly, origString, false);
 			fields.put(GlobalConstants.INITIAL_STRING, field);
-			if (species.isSetInitialAmount() &&	!defaultValue.equals("" + species.getInitialAmount())) {
+			if (species.isSetAnnotation() && species.getAnnotationString().contains(GlobalConstants.INITIAL_STRING)) {
+				String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
+				String sweep = annotation.substring(annotation.indexOf(GlobalConstants.INITIAL_STRING)+3);
+				field.setValue(sweep);
+				field.setCustom();
+			} else if (species.isSetInitialAmount() &&	!defaultValue.equals("" + species.getInitialAmount())) {
 				field.setValue("" + species.getInitialAmount());
 				field.setCustom();
 			} else if (species.isSetInitialConcentration() && !defaultValue.equals("["+species.getInitialConcentration()+"]")) {
@@ -385,7 +390,12 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				formatString, paramsOnly, origString, false);
 		if (degradation != null) {
 			LocalParameter kd = degradation.getKineticLaw().getLocalParameter(GlobalConstants.KDECAY_STRING);
-			if (kd != null && !defaultValue.equals(""+kd.getValue())) {
+			if (kd != null && kd.isSetAnnotation() && kd.getAnnotationString().contains(GlobalConstants.KDECAY_STRING)) {
+				String sweep = kd.getAnnotationString().replace("<annotation>"+GlobalConstants.KDECAY_STRING+"=","")
+						.replace("</annotation>","");
+				field.setValue(sweep);
+				field.setCustom();
+			} else if (kd != null && !defaultValue.equals(""+kd.getValue())) {
 				field.setValue(""+kd.getValue());
 				field.setCustom();
 			}
@@ -448,7 +458,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		if (complex != null) {
 			LocalParameter kc_f = complex.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_KCOMPLEX_STRING);
 			LocalParameter kc_r = complex.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_KCOMPLEX_STRING);
-			if (kc_f != null && kc_r != null && !defaultValue.equals(kc_f.getValue()+"/"+kc_r.getValue())) {
+			if (kc_f != null && kc_f.isSetAnnotation() && 
+					kc_f.getAnnotationString().contains(GlobalConstants.FORWARD_KCOMPLEX_STRING)) {
+				String sweep = kc_f.getAnnotationString().replace("<annotation>"+GlobalConstants.FORWARD_KCOMPLEX_STRING+"=","")
+						.replace("</annotation>","");
+				field.setValue(sweep);
+				field.setCustom();
+			} else if (kc_f != null && kc_r != null && !defaultValue.equals(kc_f.getValue()+"/"+kc_r.getValue())) {
 				field.setValue(kc_f.getValue()+"/"+kc_r.getValue());
 				field.setCustom();
 			}
@@ -479,7 +495,13 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		if (diffusion != null) {
 			LocalParameter kmdiff_f = diffusion.getKineticLaw().getLocalParameter(GlobalConstants.FORWARD_MEMDIFF_STRING);
 			LocalParameter kmdiff_r = diffusion.getKineticLaw().getLocalParameter(GlobalConstants.REVERSE_MEMDIFF_STRING);
-			if (kmdiff_f != null && kmdiff_r != null && !defaultValue.equals(kmdiff_f.getValue()+"/"+kmdiff_r.getValue())) {
+			if (kmdiff_f != null && kmdiff_f.isSetAnnotation() && 
+					kmdiff_f.getAnnotationString().contains(GlobalConstants.FORWARD_MEMDIFF_STRING)) {
+				String sweep = kmdiff_f.getAnnotationString().replace("<annotation>"+GlobalConstants.FORWARD_MEMDIFF_STRING+"=","")
+						.replace("</annotation>","");
+				field.setValue(sweep);
+				field.setCustom();
+			} else if (kmdiff_f != null && kmdiff_r != null && !defaultValue.equals(kmdiff_f.getValue()+"/"+kmdiff_r.getValue())) {
 				field.setValue(kmdiff_f.getValue()+"/"+kmdiff_r.getValue());
 				field.setCustom();
 			}
@@ -806,7 +828,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 						} 
 						else if (Utility.isValid(f.getValue(), Utility.CONCstring)) {
 							species.setInitialConcentration(Double.parseDouble(f.getValue().substring(1,f.getValue().length()-1)));
-						} 
+						} else {
+							String speciesType = typeBox.getSelectedItem().toString();
+							species.setAnnotation(GlobalConstants.TYPE + "=" + speciesType+","+GlobalConstants.INITIAL_STRING+"="+f.getValue());
+						}
 					} else {
 						if (refGCM.getSBMLDocument().getModel().getSpecies(selected).isSetInitialAmount()) {
 							species.setInitialAmount(refGCM.getSBMLDocument().getModel().getSpecies(selected).getInitialAmount());
@@ -819,24 +844,26 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			}
 			String speciesType = typeBox.getSelectedItem().toString();
 			
-			double kd = -1;
-			PropertyField f = fields.get(GlobalConstants.KDECAY_STRING);
-			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
-				kd = Double.parseDouble(f.getValue());
-			}
 			if (degradation != null && !specDegradable.isSelected()) {
 				gcm.removeReaction(degradation.getId());
 			} else if (specDegradable.isSelected()) {
-				gcm.createDegradationReaction(selected, kd);		
+				PropertyField f = fields.get(GlobalConstants.KDECAY_STRING);
+				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
+					if (f.getValue().startsWith("(")) {
+						gcm.createDegradationReaction(selected, 1.0, f.getValue());		
+					} else {
+						gcm.createDegradationReaction(selected, Double.parseDouble(f.getValue()), null);		
+					}
+				}
 			} 
-			String kmdiffStr = null;
-			f = fields.get(GlobalConstants.MEMDIFF_STRING);
-			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
-				kmdiffStr = f.getValue();
-			}
 			if (diffusion != null && !specDiffusible.isSelected()) {
 				gcm.removeReaction(diffusion.getId());
 			} else if (specDiffusible.isSelected()) {
+				String kmdiffStr = null;
+				PropertyField f = fields.get(GlobalConstants.MEMDIFF_STRING);
+				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
+					kmdiffStr = f.getValue();
+				}
 				gcm.createDiffusionReaction(selected, kmdiffStr);		
 			} 
 			if (constitutive != null && !specConstitutive.isSelected()) {
@@ -844,22 +871,24 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 			} else if (specConstitutive.isSelected()) {
 				gcm.createConstitutiveReaction(selected);		
 			} 
-			String KcStr = null;
-			f = fields.get(GlobalConstants.KCOMPLEX_STRING);
-			if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
-				KcStr = f.getValue();
-			}
 			if (complex != null) {
+				String KcStr = null;
+				PropertyField f = fields.get(GlobalConstants.KCOMPLEX_STRING);
+				if (f.getState() == null || f.getState().equals(f.getStates()[1])) {
+					KcStr = f.getValue();
+				}
 				gcm.createComplexReaction(selected, KcStr);
 			}
 			
-			String annotation = GlobalConstants.TYPE + "=" + speciesType;
-			// Add SBOL properties
-			for (SbolField sf : sbolFields.values()) {
-				if (!sf.getText().equals(""))
-					annotation += "," + sf.getType() + "=" + sf.getText();
+			if (!paramsOnly) {
+				String annotation = GlobalConstants.TYPE + "=" + speciesType;
+				// Add SBOL properties
+				for (SbolField sf : sbolFields.values()) {
+					if (!sf.getText().equals(""))
+						annotation += "," + sf.getType() + "=" + sf.getText();
+				}
+				species.setAnnotation(annotation);
 			}
-			species.setAnnotation(annotation);
 			
 			if (selected != null && !selected.equals(newSpeciesID)) {
 				
@@ -868,11 +897,6 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 				}
 				
 				gcm.changeSpeciesName(selected, newSpeciesID);
-				// TODO: REMOVED 
-				/*
-				((DefaultListModel) conditions.getModel()).clear();
-				conditions.addAllItem(gcm.getConditions());
-				*/
 				((DefaultListModel) components.getModel()).clear();
 
 				for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
