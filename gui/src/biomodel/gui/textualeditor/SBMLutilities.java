@@ -183,6 +183,14 @@ public class SBMLutilities {
 							createFunction(model, "binomial", "Binomial distribution", "lambda(p,n,p*n)");
 						} else if (splitLaw[i].equals("bernoulli")) {
 							createFunction(model, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
+						} else if (splitLaw[i].equals("PG")) {
+							createFunction(model, "PG", "Globally Property", "lambda(t,x,or(not(t),x))");
+						} else if (splitLaw[i].equals("PF")) {
+							createFunction(model, "PF", "Eventually Property", "lambda(t,x,or(not(t),not(x)))");
+						} else if (splitLaw[i].equals("PU")) {
+							createFunction(model, "PG", "Globally Property", "lambda(t,x,or(not(t),x))");
+							createFunction(model, "PF", "Eventually Property", "lambda(t,x,or(not(t),not(x)))");
+							createFunction(model, "PU", "Until Property", "lambda(t,x,y,or(PG(t,x),PF(t,y)))");
 						} else {
 							invalidVars.add(splitLaw[i]);
 						}
@@ -571,6 +579,9 @@ public class SBMLutilities {
 		else if (functionId.equals("poisson")) return true;
 		else if (functionId.equals("binomial")) return true;
 		else if (functionId.equals("bernoulli")) return true;
+		else if (functionId.equals("PG")) return true;
+		else if (functionId.equals("PF")) return true;
+		else if (functionId.equals("PU")) return true;
 		return false;
 	}
 
@@ -596,6 +607,9 @@ public class SBMLutilities {
 		usedIDs.add("poisson");
 		usedIDs.add("binomial");
 		usedIDs.add("bernoulli");
+		usedIDs.add("PG");
+		usedIDs.add("PF");
+		usedIDs.add("PU");
 		ids = model.getListOfUnitDefinitions();
 		for (int i = 0; i < model.getNumUnitDefinitions(); i++) {
 			usedIDs.add(((UnitDefinition) ids.get(i)).getId());
