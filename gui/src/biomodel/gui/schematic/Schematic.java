@@ -994,6 +994,73 @@ public class Schematic extends JPanel implements ActionListener {
 							if (SBMLutilities.variableInUse(gcm.getSBMLDocument(), cell.getId(), false, true, false)) {
 								doNotRemove = true;
 							}
+						} else if (type == GlobalConstants.PROMOTER){
+							if (SBMLutilities.variableInUse(gcm.getSBMLDocument(), cell.getId(), false, true, false)) {
+								doNotRemove = true;
+							}
+						} else if (type == GlobalConstants.REACTION){
+							if (SBMLutilities.variableInUse(gcm.getSBMLDocument(), cell.getId(), false, true, false)) {
+								doNotRemove = true;
+							}
+						} else if(type == GlobalConstants.REACTION_EDGE) {
+							mxCell source = (mxCell)cell.getSource();
+							mxCell target = (mxCell)cell.getTarget();
+							if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
+								(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+								Reaction r = gcm.getSBMLDocument().getModel().getReaction((String)cell.getValue());
+								ListOf reactants = r.getListOfReactants();
+								for (int i = 0; i < r.getNumReactants(); i++) {
+									SpeciesReference s = (SpeciesReference)reactants.get(i);
+									if (s.getSpecies().equals(source.getId())) {
+										if (s.isSetId() && 
+												SBMLutilities.variableInUse(gcm.getSBMLDocument(), s.getId(), false, true, false)) {
+											doNotRemove = true;
+										}
+										break;
+									}
+								} 
+								ListOf products = r.getListOfProducts();
+								for (int i = 0; i < r.getNumProducts(); i++) {
+									SpeciesReference s = (SpeciesReference)products.get(i);
+									if (s.getSpecies().equals(target.getId())) {
+										if (s.isSetId() && 
+												SBMLutilities.variableInUse(gcm.getSBMLDocument(), s.getId(), false, true, false)) {
+											doNotRemove = true;
+										}
+										break;
+									}
+								}
+							} 
+							else if ((graph.getCellType(source) == GlobalConstants.SPECIES) &&
+								(graph.getCellType(target) == GlobalConstants.REACTION)) {
+								Reaction r = gcm.getSBMLDocument().getModel().getReaction(target.getId());
+								ListOf reactants = r.getListOfReactants();
+								for (int i = 0; i < r.getNumReactants(); i++) {
+									SpeciesReference s = (SpeciesReference)reactants.get(i);
+									if (s.getSpecies().equals(source.getId())) {
+										if (s.isSetId() && 
+												SBMLutilities.variableInUse(gcm.getSBMLDocument(), s.getId(), false, true, false)) {
+											doNotRemove = true;
+										}
+										break;
+									}
+								}
+							} 
+							else if ((graph.getCellType(source) == GlobalConstants.REACTION) &&
+								(graph.getCellType(target) == GlobalConstants.SPECIES)) {
+								Reaction r = gcm.getSBMLDocument().getModel().getReaction(source.getId());
+								ListOf products = r.getListOfProducts();
+								for (int i = 0; i < r.getNumProducts(); i++) {
+									SpeciesReference s = (SpeciesReference)products.get(i);
+									if (s.getSpecies().equals(target.getId())) {
+										if (s.isSetId() && 
+												SBMLutilities.variableInUse(gcm.getSBMLDocument(), s.getId(), false, true, false)) {
+											doNotRemove = true;
+										}
+										break;
+									}
+								}
+							}
 						}
 						if (doNotRemove) {
 							gcm2sbml.refresh();
