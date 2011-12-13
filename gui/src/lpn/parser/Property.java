@@ -1,5 +1,6 @@
 package lpn.parser;
-
+import lpn.gui.LHPNEditor;
+import main.Gui;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
@@ -18,7 +19,9 @@ public class Property{
 	private String root;
 	private String separator;
 	
-	public void property() {
+	public void property(String root2, String separator2) {
+		root=root2;
+		separator = separator2;
 		try {
 		String propertyId = JOptionPane.showInputDialog(frame, "Enter the SVA property name:", "Model ID", JOptionPane.PLAIN_MESSAGE);
 		System.out.println(propertyId);
@@ -116,7 +119,7 @@ public class Property{
 							
 						}
 						else if(Pattern.matches("\\w+"+"\\[~>\\w+\\]", currProp[j])){
-							System.out.println("\n hello");
+							//System.out.println("\n hello");
 							String[] enablingCond = currProp[j].split("\\]");
 							lpn.addTransition("t" + numTransitions);
 							numTransitions++;
@@ -127,9 +130,9 @@ public class Property{
 							numPlaces++;
 							lpn.addMovement("t"+(numTransitions-1), "p" +(numPlaces-1)); 
 						}
-						//else if(){
-							
-						//}
+						else if(Pattern.matches("intersect", currProp[j])){
+							System.out.println("\n hello");
+						}
 					}
 					//if(Pattern.matches("\\|->", currprop[i])){
 						
@@ -147,6 +150,9 @@ public class Property{
 		}
 			
 			lpn.save(root + separator +lpnFile);
+			//Gui tree = new Gui(true, false, false);
+			//tree.addToTree(lpnFile.getName());
+			
 		}
 		
 		}
