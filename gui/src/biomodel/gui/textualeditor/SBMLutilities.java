@@ -1455,4 +1455,27 @@ public class SBMLutilities {
 			f.setMath(libsbml.parseFormula(formula));
 		}
 	}
+	
+
+	public static boolean isBoolean(SBMLDocument document, ASTNode node) {
+	  if (node == null) {
+	    return false;
+	  } else if ( node.isBoolean() ) {
+	    return true;
+	  } else if (node.getType() == libsbml.AST_FUNCTION) {
+	    FunctionDefinition fd = document.getModel().getFunctionDefinition( node.getName() );
+	    if (fd != null && fd.isSetMath()) {
+	      return isBoolean( document, fd.getMath().getRightChild() );
+	    } else {
+	      return false;
+	    }
+	  } else if (node.getType() == libsbml.AST_FUNCTION_PIECEWISE) {
+	    for (int c = 0; c < node.getNumChildren(); c += 2) {
+	      if ( !isBoolean( document, node.getChild(c) ) ) return false;
+	    }
+	    return true;
+	  }
+	  return false;
+	}
+
 }
