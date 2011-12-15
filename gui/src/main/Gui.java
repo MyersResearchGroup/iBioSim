@@ -8080,7 +8080,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						}
 						JTabbedPane simTab = new JTabbedPane();
 						simTab.addMouseListener(this);
-						AbstPane lhpnAbstraction = new AbstPane(root, gcmFile, log, this, false, false);
+						AbstPane lhpnAbstraction = null;
+						if (gcmFile.contains(".lpn")) {
+							lhpnAbstraction = new AbstPane(root, gcmFile, log, this, false, false);
+						}
 						AnalysisView reb2sac;
 						if (gcmFile.contains(".lpn")) {
 							reb2sac = new AnalysisView(sbmlLoadFile, getAFile, root, this, split[split.length - 1].trim(), log, simTab, openFile, gcmFile,
