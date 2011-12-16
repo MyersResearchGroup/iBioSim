@@ -67,15 +67,7 @@ public class SimulatorSSADirect extends Simulator{
 		if (noEventsFlag == false)
 			handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
 		
-		while (currentTime <= timeLimit) {
-			
-			//if the user cancels the simulation
-			if (cancelFlag == true) {
-				
-				JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled",
-						"Canceled", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
+		while (currentTime < timeLimit) {
 			
 			//if a constraint fails
 			if (constraintFailureFlag == true) {
@@ -185,7 +177,7 @@ public class SimulatorSSADirect extends Simulator{
 					currentTime = triggeredEventQueue.peek().fireTime;
 			}
 			
-			while (currentTime > printTime && printTime <= timeLimit) {
+			while (currentTime > printTime && printTime < timeLimit) {
 				
 				try {
 					printToTSD(printTime);

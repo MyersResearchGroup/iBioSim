@@ -163,7 +163,10 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JMenuItem openProj; // The open menu item
 	private JMenuItem pref; // The preferences menu item
 	private JMenuItem graph; // The graph menu item
-	private JMenuItem probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf, exportPng, exportSvg, exportTsd, exportSBML, exportSBOL;
+	private JMenuItem probGraph, exportCsv, exportDat, exportEps, exportJpg, exportPdf, exportPng, exportSvg, exportTsd, 
+	exportSBML, exportSBOL, exportAvi, exportMp4;
+	
+	private JMenu exportDataMenu, exportMovieMenu, exportImageMenu;
 
 	private String root; // The root directory
 
@@ -174,7 +177,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private JToolBar toolbar; // Tool bar for common options
 
 	private JButton saveButton, runButton, refreshButton, saveasButton, checkButton, exportButton; // Tool
-	
+
 	// Bar
 	// options
 
@@ -399,6 +402,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		edit = new JMenu("Edit");
 		importMenu = new JMenu("Import");
 		exportMenu = new JMenu("Export");
+		exportDataMenu = new JMenu("Data");
+		exportImageMenu = new JMenu("Image");
+		exportMovieMenu = new JMenu("Movie");
 		newMenu = new JMenu("New");
 		view = new JMenu("View");
 		viewModel = new JMenu("Model");
@@ -479,6 +485,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportPng = new JMenuItem("PNG");
 		exportSvg = new JMenuItem("SVG");
 		exportTsd = new JMenuItem("TSD");
+		exportAvi = new JMenuItem("AVI");
+		exportMp4 = new JMenuItem("MP4");
 		save = new JMenuItem("Save");
 		if (async) {
 			saveModel = new JMenuItem("Save Learned LPN");
@@ -561,6 +569,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportPng.addActionListener(this);
 		exportSvg.addActionListener(this);
 		exportTsd.addActionListener(this);
+		exportAvi.addActionListener(this);
+		exportMp4.addActionListener(this);
 		graph.addActionListener(this);
 		probGraph.addActionListener(this);
 		save.addActionListener(this);
@@ -732,6 +742,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportPng.setEnabled(false);
 		exportSvg.setEnabled(false);
 		exportTsd.setEnabled(false);
+		exportAvi.setEnabled(false);
+		exportMp4.setEnabled(false);
 		newGCMModel.setEnabled(false);
 		newGridModel.setEnabled(false);
 		newSBMLModel.setEnabled(false);
@@ -854,17 +866,23 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			// importMenu.add(importSpice);
 		}
 		file.add(exportMenu);
+		exportMenu.add(exportDataMenu);
+		exportMenu.add(exportImageMenu);
+		exportMenu.add(exportMovieMenu);
 		exportMenu.add(exportSBML);
 		exportMenu.add(exportSBOL);
 		exportMenu.addSeparator();
-		exportMenu.add(exportTsd);
-		exportMenu.add(exportCsv);
-		exportMenu.add(exportDat);
-		exportMenu.add(exportEps);
-		exportMenu.add(exportJpg);
-		exportMenu.add(exportPdf);
-		exportMenu.add(exportPng);
-		exportMenu.add(exportSvg);
+		
+		exportDataMenu.add(exportTsd);
+		exportDataMenu.add(exportCsv);
+		exportDataMenu.add(exportDat);
+		exportImageMenu.add(exportEps);
+		exportImageMenu.add(exportJpg);
+		exportImageMenu.add(exportPdf);
+		exportImageMenu.add(exportPng);
+		exportImageMenu.add(exportSvg);
+		exportMovieMenu.add(exportAvi);
+		exportMovieMenu.add(exportMp4);
 		file.addSeparator();
 		help.add(manual);
 		if (System.getProperty("os.name").toLowerCase().startsWith("mac os")) {
@@ -2331,6 +2349,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else if (comp instanceof JTabbedPane) {
 				((Graph) ((JTabbedPane) comp).getSelectedComponent()).export(0);
 			}
+			else if (comp instanceof ModelEditor) {				
+				((ModelEditor) comp).saveSchematic();
+			}
 		}
 		else if (e.getSource() == exportPdf) {
 			Component comp = tab.getSelectedComponent();
@@ -2366,6 +2387,24 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			}
 			else if (comp instanceof JTabbedPane) {
 				((Graph) ((JTabbedPane) comp).getSelectedComponent()).export(7);
+			}
+		}
+		else if (e.getSource() == exportAvi) {
+			
+			Component comp = tab.getSelectedComponent();
+			
+			if (comp instanceof MovieContainer) {
+				
+				((MovieContainer) comp).outputMovie();
+			}
+		}
+		else if (e.getSource() == exportMp4) {
+			
+			Component comp = tab.getSelectedComponent();
+			
+			if (comp instanceof MovieContainer) {
+				
+				((MovieContainer) comp).outputMovie();
 			}
 		}
 		else if (e.getSource() == about) {
@@ -4061,7 +4100,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 
-
 	private void importLPN() {
 		File importFile;
 		Preferences biosimrc = Preferences.userRoot();
@@ -4324,11 +4362,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							if (i != -1) {
 								tab.remove(i);
 							}
+							
 							ModelEditor gcm2sbml = new ModelEditor(root + separator, f.getName(), this, log, false, null, null, null, false);
 							addTab(f.getName().replace(".gcm",".xml"), gcm2sbml, "GCM Editor");
 							addToTree(f.getName().replace(".gcm",".xml"));
-							if (grid == true)
+							if (grid == true) {
 								gcm2sbml.launchGridPanel();
+								gcm2sbml.rebuildGui();
+							}
 						}
 					}
 				}
@@ -8144,7 +8185,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 						simTab.addTab("Histogram", probGraph);
 						simTab.getComponentAt(simTab.getComponents().length - 1).setName("ProbGraph");
 						addTab(split[split.length - 1], simTab, null);
-
 					}
 				}
 			}
@@ -8269,14 +8309,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			popup.add(exportCsv);
-			popup.add(exportDat);
-			popup.add(exportEps);
-			popup.add(exportJpg);
-			popup.add(exportPdf);
-			popup.add(exportPng);
-			popup.add(exportSvg);
-			popup.add(exportTsd);
+//			popup.add(exportCsv);
+//			popup.add(exportDat);
+//			popup.add(exportEps);
+//			popup.add(exportJpg);
+//			popup.add(exportPdf);
+//			popup.add(exportPng);
+//			popup.add(exportSvg);
+//			popup.add(exportTsd);
 			if (popup.getComponentCount() != 0) {
 				popup.show(mainPanel, mainPanel.getMousePosition().x, mainPanel.getMousePosition().y);
 			}
@@ -8696,11 +8736,22 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	}
 
 	public void updateViews(String updatedFile) {
+		
 		for (int i = 0; i < tab.getTabCount(); i++) {
-			String tab = this.tab.getTitleAt(i);
+			String tab = this.tab.getTitleAt(i);	
+			
+			if (this.tab.getComponentAt(i).getName().equals("GCM Editor")) {
+			
+				//this is so that the grid species list gets updated if there's a diffusibility change
+				ModelEditor modelEditor = (ModelEditor) this.tab.getComponentAt(i);
+				modelEditor.getGCM().updateGridSpecies(updatedFile.replace(".gcm",""));				
+				modelEditor.getSpeciesPanel().refreshSpeciesPanel(modelEditor.getGCM().getSBMLDocument());
+			}
+			
 			String properties = root + separator + tab + separator + tab + ".sim";
 			String properties2 = root + separator + tab + separator + tab + ".lrn";
 			if (new File(properties).exists()) {
+				
 				String check = "";
 				try {
 					Scanner s = new Scanner(new File(properties));
@@ -8715,7 +8766,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 				if (check.equals(updatedFile)) {
 					JTabbedPane sim = ((JTabbedPane) (this.tab.getComponentAt(i)));
+					
 					for (int j = 0; j < sim.getTabCount(); j++) {
+						
 						// String tabName = sim.getComponentAt(j).getName();
 						// boolean b =
 						// sim.getComponentAt(j).getName().equals("ModelViewMovie");
@@ -8752,7 +8805,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							sim.setComponentAt(j + 1, ((SBML_Editor) (sim.getComponentAt(j))).getElementsPanel());
 							sim.getComponentAt(j + 1).setName("");
 						}
-						else if (sim.getComponentAt(j).getName().equals("GCM Editor")) {
+						else if (sim.getComponentAt(j).getName().equals("GCM Editor")) {							
+							
 							new File(properties).renameTo(new File(properties.replace(".sim", ".temp")));
 							try {
 								boolean dirty = ((ModelEditor) (sim.getComponentAt(j))).isDirty();
@@ -8779,6 +8833,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 							((ModelEditor) (sim.getComponentAt(j))).setElementsPanel(elementsPanel);
 							
 							for (int k = 0; k < sim.getTabCount(); k++) {
+								
 								if (sim.getComponentAt(k) instanceof MovieContainer) {
 
 									// display the schematic and reload the grid
@@ -8791,6 +8846,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			if (new File(properties2).exists()) {
+				
 				String check = "";
 				try {
 					Properties p = new Properties();
@@ -8956,6 +9012,9 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportMenu.setEnabled(false);
 		exportSBML.setEnabled(false);
 		exportSBOL.setEnabled(false);
+		exportDataMenu.setEnabled(false);
+		exportImageMenu.setEnabled(false);
+		exportMovieMenu.setEnabled(false);
 		exportCsv.setEnabled(false);
 		exportDat.setEnabled(false);
 		exportEps.setEnabled(false);
@@ -8964,6 +9023,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		exportPng.setEnabled(false);
 		exportSvg.setEnabled(false);
 		exportTsd.setEnabled(false);
+		exportAvi.setEnabled(false);
+		exportMp4.setEnabled(false);
 		saveAsVerilog.setEnabled(false);
 		viewCircuit.setEnabled(false);
 		viewSG.setEnabled(false);
@@ -8988,6 +9049,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			exportMenu.setEnabled(true);
 			exportSBML.setEnabled(true);
 			exportSBOL.setEnabled(true);
+			exportImageMenu.setEnabled(true);
+			exportJpg.setEnabled(true);
 		}
 		else if (comp instanceof SbolBrowser) {
 			// save.setEnabled(true);
@@ -9018,16 +9081,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			saveAs.setEnabled(true);
 			refresh.setEnabled(true);
 			exportMenu.setEnabled(true);
+			exportImageMenu.setEnabled(true);
 			if (((Graph) comp).isTSDGraph()) {
+				exportDataMenu.setEnabled(true);
 				exportCsv.setEnabled(true);
 				exportDat.setEnabled(true);
 				exportTsd.setEnabled(true);
 			}
-			else {
-				exportCsv.setEnabled(false);
-				exportDat.setEnabled(false);
-				exportTsd.setEnabled(false);
-			}
+//			else {
+//				exportCsv.setEnabled(false);
+//				exportDat.setEnabled(false);
+//				exportTsd.setEnabled(false);
+//			}
 			exportEps.setEnabled(true);
 			exportJpg.setEnabled(true);
 			exportPdf.setEnabled(true);
@@ -9036,7 +9101,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 		else if (comp instanceof JTabbedPane) {
 			Component component = ((JTabbedPane) comp).getSelectedComponent();
-			Component learnComponent = null;
+			Component learnComponent = null;			
 			Boolean learn = false;
 			Boolean learnLHPN = false;
 			for (String s : new File(root + separator + tab.getTitleAt(tab.getSelectedIndex())).list()) {
@@ -9084,16 +9149,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				saveAs.setEnabled(true);
 				refresh.setEnabled(true);
 				exportMenu.setEnabled(true);
+				exportImageMenu.setEnabled(true);
 				if (((Graph) component).isTSDGraph()) {
+					exportDataMenu.setEnabled(true);
 					exportCsv.setEnabled(true);
 					exportDat.setEnabled(true);
 					exportTsd.setEnabled(true);
 				}
-				else {
-					exportCsv.setEnabled(false);
-					exportDat.setEnabled(false);
-					exportTsd.setEnabled(false);
-				}
+//				else {
+//					exportCsv.setEnabled(false);
+//					exportDat.setEnabled(false);
+//					exportTsd.setEnabled(false);
+//				}
 				exportEps.setEnabled(true);
 				exportJpg.setEnabled(true);
 				exportPdf.setEnabled(true);
@@ -9110,7 +9177,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				saveButton.setEnabled(true);
 				runButton.setEnabled(true);
 				save.setEnabled(true);
-				run.setEnabled(true);
+				run.setEnabled(true);				
+			}
+			else if (component instanceof MovieContainer) {
+				exportMenu.setEnabled(true);
+				exportMovieMenu.setEnabled(true);
+				exportAvi.setEnabled(true);
+				exportMp4.setEnabled(true);
 			}
 			else if (component instanceof ModelEditor) {
 				saveButton.setEnabled(true);

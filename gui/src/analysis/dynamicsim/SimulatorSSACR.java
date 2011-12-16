@@ -104,14 +104,6 @@ public class SimulatorSSACR extends Simulator{
 		
 		while (currentTime < timeLimit) {
 			
-			//if the user cancels the simulation
-			if (cancelFlag == true) {
-				
-				JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled",
-						"Canceled", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			
 			//if a constraint fails
 			if (constraintFailureFlag == true) {
 				
@@ -622,12 +614,12 @@ public class SimulatorSSACR extends Simulator{
 		
 		setupNewRun(0, newRun);
 		
-		setupArrays();
 		try {
 			setupSpecies();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		setupInitialAssignments();
 		setupParameters();
 		setupRules();

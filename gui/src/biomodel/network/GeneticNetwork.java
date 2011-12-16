@@ -23,10 +23,12 @@ import main.Gui;
 import main.util.MutableString;
 
 import org.sbml.libsbml.KineticLaw;
+import org.sbml.libsbml.LocalParameter;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.Parameter;
 import org.sbml.libsbml.Reaction;
 import org.sbml.libsbml.SBMLDocument;
+import org.sbml.libsbml.SBMLReader;
 import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
@@ -658,6 +660,39 @@ public class GeneticNetwork {
 				document.getModel().getCompartment(i).setAnnotation(node);
 			}		
 		}		
+		
+		for (String componentID : components) {
+			
+			SBMLReader sbmlReader = new SBMLReader();
+			Model compModel = sbmlReader.readSBMLFromFile(properties.getPath() + 
+					properties.getModelFileName(componentID)).getModel();
+			
+			//update the kmdiff values
+			for (int j = 0; j < compModel.getNumReactions(); ++j) {
+				
+				if (compModel.getReaction(j).getId().contains("MembraneDiffusion")) {
+					
+					Reaction reaction = compModel.getReaction(j);
+					
+					LocalParameter kmdiff_r = reaction.getKineticLaw().getLocalParameter("kmdiff_r");
+					LocalParameter kmdiff_f = reaction.getKineticLaw().getLocalParameter("kmdiff_f");
+					String speciesID = reaction.getReactant(0).getSpecies();
+					
+					Parameter parameter_r = new Parameter(kmdiff_r);
+					Parameter parameter_f = new Parameter(kmdiff_f);
+					
+					parameter_r.setId(componentID + "__" + speciesID + "__kmdiff_r");
+					parameter_f.setId(componentID + "__" + speciesID + "__kmdiff_f");
+					parameter_r.setName("Reverse membrane diffusion rate");
+					parameter_f.setName("Forward membrane diffusion rate");
+					parameter_r.setConstant(true);
+					parameter_f.setConstant(true);
+					
+					document.getModel().addParameter(parameter_r);
+					document.getModel().addParameter(parameter_f);
+				}
+			}
+		}
 	}
 	
 	/**
