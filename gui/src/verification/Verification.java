@@ -2,6 +2,9 @@ package verification;
 
 import javax.swing.*;
 
+import verification.platu.project.Project;
+import verification.platu.stategraph.StateGraph;
+
 import biomodel.gui.PropertyList;
 import biomodel.util.Utility;
 
@@ -48,7 +51,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			listLabel;
 
 	public JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify,
-			vergate, orbits, search, trace, bdd, dbm, smt, lhpn, view, none,
+			vergate, orbits, search, trace, bdd, dbm, smt, untimedStateSearch, untimedPOR, lhpn, view, none,
 			simplify, abstractLhpn;
 
 	private JCheckBox abst, partialOrder, dot, verbose, graph, genrg,
@@ -190,6 +193,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			bdd = new JRadioButton("BDD");
 			dbm = new JRadioButton("DBM");
 			smt = new JRadioButton("SMT");
+			untimedStateSearch = new JRadioButton("UntimedStateSearch");
+			untimedPOR = new JRadioButton("UntimedPOR");
 			bdd.addActionListener(this);
 			dbm.addActionListener(this);
 			smt.addActionListener(this);
@@ -291,6 +296,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			timingMethodGroup.add(bdd);
 			timingMethodGroup.add(dbm);
 			timingMethodGroup.add(smt);
+			timingMethodGroup.add(untimedStateSearch);
+			timingMethodGroup.add(untimedPOR);
 		} else {
 			timingMethodGroup.add(untimed);
 			timingMethodGroup.add(geometric);
@@ -320,6 +327,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			timingRadioPanel.add(bdd);
 			timingRadioPanel.add(dbm);
 			timingRadioPanel.add(smt);
+			timingRadioPanel.add(untimedStateSearch);
+			timingRadioPanel.add(untimedPOR);
 		} else {
 			timingRadioPanel.add(untimed);
 			timingRadioPanel.add(geometric);
@@ -451,6 +460,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					} else if (load.getProperty("verification.timing.methods")
 							.equals("smt")) {
 						smt.setSelected(true);
+					} else if (load.getProperty("verification.timing.methods")
+							.equals("untimedStateSearch")) {
+						untimedStateSearch.setSelected(true);
+					} else if (load.getProperty("verification.timing.methods")
+							.equals("untimedPOR")) {
+						untimedPOR.setSelected(true);
+					
 					} else if (load.getProperty("verification.timing.methods")
 							.equals("lhpn")) {
 						lhpn.setSelected(true);
@@ -914,6 +930,38 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	}
 
 	public void run() {
+		copyFile();
+		String[] array = directory.split(separator);
+		String tempDir = "";
+		String lpnFile = "";
+		if (!verifyFile.endsWith("lpn")) {
+			String[] temp = verifyFile.split("\\.");
+			lpnFile = temp[0] + ".lpn";
+		} else {
+			lpnFile = verifyFile;
+		}
+		if (untimedStateSearch.isSelected()) {
+			LhpnFile lpn = new LhpnFile();
+			lpn.load(directory + separator + lpnFile);
+			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";			
+			Project untimedStateSearch = new Project(lpn);
+			StateGraph stateGraph = untimedStateSearch.search(false);
+			if (dot.isSelected()) {
+				stateGraph.outputStateGraph(directory + separator + graphFileName);				
+			}
+			return;
+		}
+		if (untimedPOR.isSelected()) {
+			LhpnFile lpn = new LhpnFile();
+			lpn.load(directory + separator + lpnFile);
+			String graphFileName = verifyFile.replace(".lpn", "") + "POR_sg.dot";
+			Project untimedStateSearchPOR = new Project(lpn);
+			StateGraph stateGraph = untimedStateSearchPOR.search(true);
+			if (dot.isSelected()) {
+				stateGraph.outputStateGraph(directory + separator + graphFileName);				
+			}
+			return;
+		}
 		long time1 = System.nanoTime();
 		File work = new File(directory);
 		/*
@@ -933,16 +981,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			}
 		}
 		*/
-		copyFile();
-		String[] array = directory.split(separator);
-		String tempDir = "";
-		String lpnFile = "";
-		if (!verifyFile.endsWith("lpn")) {
-			String[] temp = verifyFile.split("\\.");
-			lpnFile = temp[0] + ".lpn";
-		} else {
-			lpnFile = verifyFile;
-		}
 		try {
 			if (verifyFile.endsWith(".lpn")) {
 				Runtime.getRuntime().exec("atacs -llsl " + verifyFile, null,
@@ -1599,7 +1637,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					prop.setProperty("verification.timing.methods", "dbm");
 				} else if (smt.isSelected()) {
 					prop.setProperty("verification.timing.methods", "smt");
-				} else if (lhpn.isSelected()) {
+				} else if (untimedStateSearch.isSelected()) {
+					prop.setProperty("verification.timing.methods", "untimedStateSearch");
+				} else if (untimedPOR.isSelected()) {
+					prop.setProperty("verification.timing.methods", "untimedPOR");
+				}
+				else if (lhpn.isSelected()) {
 					prop.setProperty("verification.timing.methods", "lhpn");
 				} else {
 					prop.setProperty("verification.timing.methods", "view");
