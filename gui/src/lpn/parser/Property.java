@@ -36,6 +36,7 @@ public class Property{
 			int numTransitions = 0;
 			int numFailTransitions =0;
 			int numFailPlaces = 0;
+			int numIntersectTransitions = 0;
 			lpn.save(root + separator +lpnFile);
 			System.out.println(property);
 			//String delim1 = " (";
@@ -120,7 +121,16 @@ public class Property{
 						}
 						else if(Pattern.matches("\\w+"+"\\[~>\\w+\\]", currProp[j])){
 							//System.out.println("\n hello");
-							String[] enablingCond = currProp[j].split("\\]");
+							
+							if(currProp[j+1]=="intersect"){
+								lpn.addTransition("tInter" + numIntersectTransitions);
+								numIntersectTransitions++;	
+							}
+							lpn.addPlace("p"+numPlaces, false);
+							numPlaces++;
+							lpn.addMovement("tInter"+(numIntersectTransitions-1), "p" +(numPlaces-1)); 
+							//lpn.addMovement("t"+(numTransitions-1), "p" +(numPlaces-1)); 
+							String[] enablingCond = currProp[j].split("\\[");
 							lpn.addTransition("t" + numTransitions);
 							numTransitions++;
 							lpn.addInput(enablingCond[0], "false");
@@ -129,9 +139,63 @@ public class Property{
 							lpn.addPlace("p"+numPlaces, false);
 							numPlaces++;
 							lpn.addMovement("t"+(numTransitions-1), "p" +(numPlaces-1)); 
+							
+							lpn.addTransition("tFail" + numFailTransitions);
+							numFailTransitions++;
+							//lpn.addInput(enablingCond[0], "false");
+							lpn.addEnabling("tFail" +(numFailTransitions-1), "~"+enablingCond[0]);
+							lpn.addMovement("p"+(numPlaces-1), "tFail" +(numFailTransitions-1));
+							lpn.addPlace("pFail"+numFailPlaces, false);
+							numFailPlaces++;
+							lpn.addMovement("tFail"+(numFailTransitions-1), "pFail" +(numFailPlaces-1)); 
+							
+							if(currProp[j+1]=="intersect"){
+								lpn.addTransition("tInter" + numIntersectTransitions);
+								numIntersectTransitions++;	
+							}
+							
+							
 						}
 						else if(Pattern.matches("intersect", currProp[j])){
 							System.out.println("\n hello");
+							lpn.addPlace("p"+numPlaces, false);
+							numPlaces++;
+							lpn.addMovement("p"+(numPlaces-1), "tInter" +(numIntersectTransitions-1));
+							lpn.addTransition("tInter" + numIntersectTransitions);
+							numIntersectTransitions++;	
+							lpn.addMovement("p"+(numPlaces-1), "tInter" +(numIntersectTransitions-1));
+						}
+						else if(Pattern.matches("(\\w+)(\\[)(\\*)(\\d+)(\\:)(\\d+)(\\])", currProp[j])){
+							
+							System.out.println("\n hello");
+							lpn.addPlace("p"+numPlaces, false);
+							numPlaces++;
+							lpn.addMovement("tInter"+(numIntersectTransitions-1), "p" +(numPlaces-1)); 
+							String[] enablingCond = currProp[j].split("\\[");
+							lpn.addTransition("t" + numTransitions);
+							numTransitions++;
+							lpn.addInput(enablingCond[0], "false");
+							String[] enable = enablingCond[1].split("(\\*)");
+							String[] enable2 =enable[1].split("\\]");
+							String[] enable3 = enable2[0].split("\\:");
+							lpn.changeDelay("t"+(numTransitions-1), enable3[0]+","+enable3[1]);
+							lpn.addEnabling("t" +(numTransitions-1), enablingCond[0]);
+							lpn.addMovement("p"+(numPlaces-1), "t" +(numTransitions-1));
+							lpn.addPlace("p"+numPlaces, false);
+							numPlaces++;
+							lpn.addMovement("t"+(numTransitions-1), "p" +(numPlaces-1)); 
+							
+							lpn.addTransition("tFail" + numFailTransitions);
+							numFailTransitions++;
+							lpn.addInput(enablingCond[0], "false");
+							lpn.addEnabling("tFail" +(numFailTransitions-1), "~"+enablingCond[0]);
+							lpn.addMovement("p"+(numPlaces-1), "tFail" +(numFailTransitions-1));
+							lpn.addPlace("pFail"+numFailPlaces, false);
+							numFailPlaces++;
+							lpn.addMovement("pFail"+(numFailPlaces-1), "tFail" +(numFailTransitions-1));
+							
+							
+							
 						}
 					}
 					//if(Pattern.matches("\\|->", currprop[i])){
