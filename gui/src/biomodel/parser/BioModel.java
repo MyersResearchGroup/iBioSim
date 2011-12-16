@@ -2782,7 +2782,7 @@ public class BioModel {
 						}		
 					}
 					
-					removeGridSpecies(name, componentModelRef);
+					removeGridSpecies(componentModelRef);
 				}
 				else				
 					potentialGridSubmodel.setAnnotation("Count=" + --size);
@@ -2951,12 +2951,44 @@ public class BioModel {
 	private int creatingReactionID = 0;
 	
 	/**
-	 * removes the diffusible grid species from the model if the last component with those species was deleted
-	 * as they no longer exist in a component
+	 * creates/removes grid species if a file is updated
+	 * 
+	 * @param filename
+	 */
+	public void updateGridSpecies(String componentModelRef) {
+		
+		//loop through all components of this model ref
+		if (sbml.getModel().getParameter(componentModelRef + "__locations") != null) {
+			
+//			String[] locationsAnnotationSplit = 
+//				sbml.getModel().getParameter(componentModelRef + "__locations").getAnnotationString()
+//				.replace("<annotation>","").replace("</annotation>","").split("=");
+//			
+//			ArrayList<String> compartmentIDs = new ArrayList<String>();
+//			
+//			for (int i = 1; i < locationsAnnotationSplit.length - 1; ++i) {				
+//				compartmentIDs.add(((String[])locationsAnnotationSplit[i].split(","))[0].
+//						replace("[[","").replace("]]",""));
+//			}
+//			
+//			compartmentIDs.add(locationsAnnotationSplit[locationsAnnotationSplit.length - 1]
+//			.replace("[[","").replace("]]",""));
+//			
+//			for (String compartmentID : compartmentIDs) {
+				
+				removeGridSpecies(componentModelRef);
+				createGridSpecies("GRID__" + componentModelRef);
+			//}
+		}
+	}
+	
+	/**
+	 * removes the diffusible grid species from the model (but checks to make sure other submodels
+	 * don't have them first)
 	 * 
 	 * @param componentID
 	 */
-	public void removeGridSpecies(String componentID, String componentModelRef) {
+	public void removeGridSpecies(String componentModelRef) {
 		
 		//find the sbml file for the component
 		String externalModelID = 
@@ -2973,23 +3005,21 @@ public class BioModel {
 		
 		//check all species in the component for diffusibility
 		//if they're diffusible, they're candidates for being removed from the model
+		//also, if they're not diffusible and on the grid species list, they're candidates for removal
 		for (int speciesIndex = 0; speciesIndex < componentModel.getNumSpecies(); ++speciesIndex) {
 			
 			String speciesID = componentModel.getListOfSpecies().get(speciesIndex).getId();			
 			Reaction diffusionReaction = componentModel.getReaction("MembraneDiffusion_" + speciesID);
 			
 			if (diffusionReaction != null && diffusionReaction.isSetAnnotation() 
-					&& diffusionReaction.getAnnotationString().contains("Diffusion"))
+					&& diffusionReaction.getAnnotationString().contains("Diffusion")
+					|| sbml.getModel().getSpecies(speciesID) != null)
 				speciesToRemove.add(speciesID);
 		}
 		
 		//check all other submodels to make sure the species really should be removed
-		//(ie, they don't exist anywhere else)		
+		//(ie, they don't exist anywhere else)
 		for (int submodelIndex = 0; submodelIndex < sbmlCompModel.getNumSubmodels(); ++submodelIndex) {
-			
-			//only check the "GRID__" submodels
-			if (sbmlCompModel.getSubmodel(submodelIndex).getId().equals("__GRID_LOCATIONS__"))
-				continue;
 			
 			componentModelRef = sbmlCompModel.getSubmodel(submodelIndex).getModelRef();
 			
@@ -3019,8 +3049,9 @@ public class BioModel {
 		}
 		
 		//remove the grid species from the model
-		for (String specToRemove : speciesToRemove)
+		for (String specToRemove : speciesToRemove) {
 			sbml.getModel().removeSpecies(specToRemove);
+		}
 		
 		if (speciesToRemove.size() > 0)
 			removeGridSpeciesReactions(speciesToRemove);
@@ -3031,9 +3062,9 @@ public class BioModel {
 	 * 
 	 * @param componentID
 	 */
-	public void createGridSpecies(String componentID) {
+	public void createGridSpecies(String submodelID) {
 		
-		String componentModelRef = sbmlCompModel.getSubmodel(componentID).getModelRef();
+		String componentModelRef = sbmlCompModel.getSubmodel(submodelID).getModelRef();
 		
 		//find the sbml file for the component
 		String externalModelID = 
@@ -3982,14 +4013,20 @@ public class BioModel {
 				mainDoc.getModel().addSpecies(spec);
 			}
 		}
+		
 		for (int i = 0; i < m.getNumParameters(); i++) {
+			
 			Parameter p = m.getParameter(i);
 			String newName = compName + "__" + p.getId();
+			
 			updateVarId(false, p.getId(), newName, doc);
 			p.setId(newName);
 			boolean add = true;
+			
 			for (int j = 0; j < mainDoc.getModel().getNumParameters(); j++) {
+				
 				if (mainDoc.getModel().getParameter(j).getId().equals(p.getId())) {
+					
 					add = false;
 					Parameter param = mainDoc.getModel().getParameter(j);
 					if (!p.getName().equals(param.getName())) {

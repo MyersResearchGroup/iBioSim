@@ -129,6 +129,8 @@ public class ParameterPanel extends JPanel {
 				}
 			}
 			*/
+			System.err.println(newItem);
+			
 			parameterList.removeItem(totalSelected);
 			parameterList.addItem(newItem);
 			parameterList.setSelectedValue(newItem, true);

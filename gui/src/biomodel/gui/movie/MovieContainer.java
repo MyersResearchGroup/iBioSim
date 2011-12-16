@@ -535,7 +535,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	/**
 	 * creates an Movie using JPG frames of the simulation
 	 */
-	private void outputMovie() {
+	public void outputMovie() {
 		
 		String separator = "";
 		
@@ -595,7 +595,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	/**
 	 * creates a JPG of the current graph frame
 	 */
-	private void outputJPG() {
+	public void outputJPG() {
 		
 		String separator = "";
 		

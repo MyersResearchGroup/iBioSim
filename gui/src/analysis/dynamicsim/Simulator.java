@@ -3,12 +3,10 @@ package analysis.dynamicsim;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
 
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -34,9 +32,7 @@ import odk.lang.FastMath;
 import org.apache.commons.math.stat.descriptive.DescriptiveStatistics;
 
 import org.sbml.jsbml.ASTNode;
-import org.sbml.jsbml.Annotation;
 import org.sbml.jsbml.AssignmentRule;
-import org.sbml.jsbml.CallableSBase;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Constraint;
 import org.sbml.jsbml.Event;
@@ -58,9 +54,6 @@ import org.sbml.jsbml.Species;
 import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.text.parser.ParseException;
-
-
-
 
 public abstract class Simulator {
 
@@ -291,15 +284,6 @@ public abstract class Simulator {
 		}
 		
 		initializationTime = System.nanoTime() - initTime1;
-	}
-	
-	/**
-	 * cancels the simulation on the next iteration
-	 * called from outside the class when the user closes the progress bar dialog
-	 */
-	public void cancel() {
-		
-		cancelFlag = true;
 	}
 	
 	/**
@@ -1464,7 +1448,13 @@ public abstract class Simulator {
 						if (node.getLeftChild().getName().contains("kmdiff")) {
 							
 							String parameterName = node.getLeftChild().getName();
-							node.setVariable(model.getParameter(compartmentID + "__" + parameterName));							
+							//see if the species-specific one exists
+							//if it doesn't, use the default
+							//you'll need to parse the species name from the reaction id, probably
+							
+							String speciesID = reactionID.replace("MembraneDiffusion_","");
+							
+							node.setVariable(model.getParameter(compartmentID + "__" + speciesID + "__" + parameterName));							
 							node.removeChild(0);
 						}
 						//this means it's a species, which we need to prepend with the row/col prefix
