@@ -11,20 +11,21 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.antlr.runtime.TokenStream;
-
+import verification.platu.lpn.DualHashMap;
+import verification.platu.lpn.io.Instance;
+import verification.platu.lpn.io.PlatuGrammarLexer;
+import verification.platu.lpn.io.PlatuInstLexer;
+import verification.platu.main.Options;
+import verification.platu.stategraph.*;
 import verification.platu.TimingAnalysis.*;
 import verification.platu.logicAnalysis.Analysis;
 import verification.platu.logicAnalysis.CompositionalAnalysis;
-import verification.platu.lpn.DualHashMap;
 import verification.platu.lpn.LPN;
 import verification.platu.lpn.LPNTranRelation;
-import verification.platu.lpn.io.Instance;
-import verification.platu.lpn.io.PlatuGrammarLexer;
 import verification.platu.lpn.io.PlatuGrammarParser;
-import verification.platu.lpn.io.PlatuInstLexer;
 import verification.platu.lpn.io.PlatuInstParser;
-import verification.platu.main.Options;
-import verification.platu.stategraph.*;
+import verification.platu.stategraph.State;
+import verification.platu.stategraph.StateGraph;
 
 public class Project {
 
@@ -38,11 +39,19 @@ public class Project {
 	protected LPNTranRelation lpnTranRelation = null;
 	
 	protected CompositionalAnalysis analysis = null;
-		      	
+  	
 	public Project() {
 		this.label = "";
 		this.designUnitSet = new ArrayList<StateGraph>(1);
-		lpnTranRelation = new LPNTranRelation(this.designUnitSet);
+		//lpnTranRelation = new LPNTranRelation(this.designUnitSet);
+	}
+  	
+	public Project(LhpnFile lpn) {
+		this.label = "";
+		this.designUnitSet = new ArrayList<StateGraph>(1);
+		StateGraph stateGraph = new StateGraph(lpn);
+		designUnitSet.add(stateGraph);
+		//stateGraph.printStates();
 	}
 
 	/**
@@ -85,7 +94,6 @@ public class Project {
 		for (int index = 0; index < lpnCnt; index++) {
 			LhpnFile curLpn = sgArray[index].getLpn();
 			StateGraph curSg = sgArray[index];
-			// TODO: (Done) get InitState should be created in StateGraph, not in LhpnFile.
 			initStateArray[index] = curSg.getInitState(); //curLpn.getInitState();
 			int[] curStateVector = initStateArray[index].getVector();
 			HashMap<String, String> outVars = curLpn.getAllOutputs();
@@ -96,17 +104,16 @@ public class Project {
 			
 		}
 
+		// TODO: (future) Need to adjust the transition vector as well?
 		// Adjust the value of the input variables in LPN in the initial state.
 		// Add the initial states into their respective LPN.
 		for (int index = 0; index < lpnCnt; index++) {
-			// TODO: (Done) need to change this to use our LPN 
 			StateGraph curLpn = sgArray[index];
 			initStateArray[index].update(varValMap, curLpn.getLpn().getVarIndexMap());
 			initStateArray[index] = curLpn.addState(initStateArray[index]);
 			
 		}		
 		
-
 		if (Options.getTimingAnalysisFlag()) {
 			new TimingAnalysis(sgArray); 
 			return;
@@ -150,6 +157,79 @@ public class Project {
 		}
 
 		return lpnSet;
+	}
+	
+	/**
+	 * Find the SG for the entire project where each project state is a tuple of
+	 * local states. The flag applyPOR gives the user an option to use partial order reduction during dfs search.
+	 * @param outputDotFile 
+	 * @return 
+	 * 
+	 */
+	public StateGraph search(boolean applyPOR) {	
+		validateInputs();
+//		
+//		if(Options.getSearchType().equals("compositional")){
+//    		this.analysis = new CompositionalAnalysis();
+//			
+//			if(Options.getParallelFlag()){
+//				this.analysis.parallelCompositionalFindSG(this.designUnitSet);
+//			}
+//			else{
+//				this.analysis.findReducedSG(this.designUnitSet);
+//			}
+//			
+//			return;
+//		}
+//	    
+		long start = System.currentTimeMillis(); 
+		int lpnCnt = designUnitSet.size();
+
+		/* Prepare search by placing LPNs in an array in the order of their indices.*/
+        StateGraph[] sgArray = new StateGraph[lpnCnt];
+        int idx = 0;
+		for (StateGraph du : designUnitSet) {
+			LhpnFile lpn = du.getLpn();
+			lpn.setIndex(idx++);
+			sgArray[lpn.getIndex()] = du;
+		}
+
+		// Initialize the project state
+		HashMap<String, Integer> varValMap = new HashMap<String, Integer>();
+		State[] initStateArray = new State[lpnCnt];
+		
+		for (int index = 0; index < lpnCnt; index++) {
+			LhpnFile curLpn = sgArray[index].getLpn();
+			StateGraph curSg = sgArray[index];
+			initStateArray[index] = curSg.getInitState(); //curLpn.getInitState();
+			int[] curStateVector = initStateArray[index].getVector();
+			HashMap<String, String> outVars = curLpn.getAllOutputs();
+			DualHashMap<String, Integer> VarIndexMap = curLpn.getVarIndexMap();
+			for(String var : outVars.keySet()) {
+				varValMap.put(var, curStateVector[VarIndexMap.getValue(var)]);
+			}
+			
+		}
+
+		// TODO: (future) Need to adjust the transition vector as well?
+		// Adjust the value of the input variables in LPN in the initial state.
+		// Add the initial states into their respective LPN.
+		for (int index = 0; index < lpnCnt; index++) {
+			StateGraph curLpn = sgArray[index];
+			initStateArray[index].update(varValMap, curLpn.getLpn().getVarIndexMap());
+			initStateArray[index] = curLpn.addState(initStateArray[index]);
+			
+		}		
+		
+		StateGraph stateGraph;
+		Analysis dfsStateExploration = new Analysis(sgArray, applyPOR);
+		stateGraph = dfsStateExploration.search_dfs(sgArray, initStateArray, applyPOR);
+		
+		long elapsedTimeMillis = System.currentTimeMillis() - start; 
+		float elapsedTimeSec = elapsedTimeMillis/1000F;
+		
+		System.out.println("---> total runtime: " + elapsedTimeSec + " sec\n");
+		return stateGraph;
 	}
 	
 	public void readLpn(List<String> fileList) {		
@@ -226,7 +306,7 @@ public class Project {
 			this.designUnitSet.add(instLpn.getStateGraph());
 		}
 		
-		// TODO: Is this really needed???
+		// TODO: (irrelevant) Is this really needed???
 		/*
 		for(StateGraph sg : this.designUnitSet){
 			sg.getLpn().setGlobals(this.designUnitSet);

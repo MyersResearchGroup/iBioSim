@@ -2,6 +2,8 @@ package verification.platu.project;
 
 import java.util.*;
 
+import lpn.parser.Transition;
+
 import verification.platu.lpn.*;
 import verification.platu.stategraph.*;
 
@@ -17,6 +19,12 @@ public class PrjState {
 	}
 	
 	public PrjState(final State[] other) {
+		stateArray = other;
+		father = null;
+		child = null;
+	}
+	
+	public PrjState(final State[] other, Transition newFiredTran, int newTranFiringCnt) {
 		stateArray = other;
 		father = null;
 		child = null;
