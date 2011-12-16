@@ -3385,14 +3385,28 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				}
 			}
 			else if (comp.getName().equals("Verification")) {
-				Component[] array = ((JPanel) comp).getComponents();
-				((Verification) array[0]).save();
-				new Thread((Verification) array[0]).start();
+				if (comp instanceof Verification) {
+					((Verification) comp).save();
+					new Thread((Verification) comp).start();
+				}
+				else {
+					// Not sure if this is necessary anymore
+					Component[] array = ((JPanel) comp).getComponents();
+					((Verification) array[0]).save();
+					new Thread((Verification) array[0]).start();
+				}
 			}
 			else if (comp.getName().equals("Synthesis")) {
-				Component[] array = ((JPanel) comp).getComponents();
-				((Synthesis) array[0]).save();
-				new Thread((Synthesis) array[0]).start();
+				if (comp instanceof Synthesis) {
+					((Synthesis) comp).save();
+					new Thread((Synthesis) comp).start();
+				}
+				else {
+					// Not sure if this is necessary anymore
+					Component[] array = ((JPanel) comp).getComponents();
+					((Synthesis) array[0]).save();
+					new Thread((Synthesis) array[0]).start();
+				}
 			}
 		}
 		else if (e.getActionCommand().equals("refresh")) {
