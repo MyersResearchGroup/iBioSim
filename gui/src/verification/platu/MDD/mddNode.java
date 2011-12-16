@@ -2,10 +2,10 @@ package verification.platu.MDD;
 
 import java.util.*;
 
-import verification.platu.lpn.LPN;
-import verification.platu.lpn.LPNTran;
-import verification.platu.project.Project;
-import verification.platu.stategraph.*;
+import lpn.parser.Transition;
+
+import verification.platu.stategraph.State;
+import verification.platu.stategraph.StateGraph;
 
 public class mddNode {
 	static int blockSize = 8;
@@ -436,10 +436,10 @@ public class mddNode {
 //		HashMap<State, State> curLocalStateSet = localStateSets[this.level];
 		nextSetArray[this.level].addLast(curState); 
 
-		LinkedList<LPNTran> curEnabled = curLpn.getEnabled(curState);
-		LinkedList<LPNTran> localTranSet = new LinkedList<LPNTran>();
+		LinkedList<Transition> curEnabled = curLpn.getEnabled(curState);
+		LinkedList<Transition> localTranSet = new LinkedList<Transition>();
 		if(curEnabled != null) {
-			for(LPNTran firedTran : curEnabled) 
+			for(Transition firedTran : curEnabled) 
 				if(firedTran.local()==true) 
 					localTranSet.addLast(firedTran);
 		}
@@ -456,7 +456,7 @@ public class mddNode {
 		
 		HashSet<State> curLocalNewStates = new HashSet<State>();
 		Stack<State> stateStack = new Stack<State>();
-		Stack<LinkedList<LPNTran>> enabledStack = new Stack<LinkedList<LPNTran>>();
+		Stack<LinkedList<Transition>> enabledStack = new Stack<LinkedList<Transition>>();
 		
 		stateStack.push(curState);
 		enabledStack.push(localTranSet);
@@ -464,10 +464,11 @@ public class mddNode {
 
 		while(stateStack.size() != 0) {
 			curState = stateStack.pop();
-			LinkedList<LPNTran> curLocalEnabled = enabledStack.pop();
-			for(LPNTran tran2fire : curLocalEnabled) {
+			LinkedList<Transition> curLocalEnabled = enabledStack.pop();
+			for(Transition tran2fire : curLocalEnabled) {
 				//System.out.println("tran2fire = " + tran2fire.getLabel() + " in  curlocalState = " + curState.getLabel());
-				State nextState = tran2fire.fire(curLpnArray[tran2fire.getLpn().getIndex()], curState); 
+				// TODO: Need to fix this.
+				State nextState = null; //tran2fire.fire(curLpnArray[tran2fire.getLpn().getIndex()], curState); 
 				
 //				System.out.println("1 nextLocalState = " + nextState.getLabel());
 				if(curLocalNewStates.contains(nextState) == true)
@@ -476,9 +477,10 @@ public class mddNode {
 //				System.out.println("2 nextLocalState = " + nextState.getLabel());
 
 				curEnabled = curLpn.getEnabled(curState);
-				LinkedList<LPNTran> nextEnabled = curLpn.getEnabled(nextState);
+				LinkedList<Transition> nextEnabled = curLpn.getEnabled(nextState);
 				
-				LPNTran disabledTran = tran2fire.disablingError(curEnabled, nextEnabled);
+				// TODO: Need to fix this.
+				Transition disabledTran = null; //tran2fire.disablingError(curEnabled, nextEnabled);
 				if(disabledTran != null) {
 					System.err.println("Verification failed: disabling error: " 
 							+ disabledTran.getFullLabel()  + " is disabled by "
@@ -493,9 +495,9 @@ public class mddNode {
 				int nextArrayIdx = nextState.getIndex() >> mddNode.arrayIdxoffset;				
 				this.addSucc(nextBlkIdx, nextArrayIdx, succ);
 
-				LinkedList<LPNTran> nextLocalEnabled = new LinkedList<LPNTran>();
+				LinkedList<Transition> nextLocalEnabled = new LinkedList<Transition>();
 				boolean nonLocalNext = false;
-				for(LPNTran tran : nextEnabled) {
+				for(Transition tran : nextEnabled) {
 					if(tran.local()==true)
 						nextLocalEnabled.addLast(tran);
 					else

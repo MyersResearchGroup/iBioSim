@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import lpn.parser.Transition;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
 
@@ -16,8 +17,8 @@ import verification.platu.stategraph.StateGraph;
  */
 public class LPNTranRelation {
 	private List<StateGraph> designUnitSet = null;
-	private Map<LPNTran, Set<LPNTran>> transitiveDependence = new HashMap<LPNTran, Set<LPNTran>>();  // type 1 transitive
-	private Map<LPNTran, Set<LPNTran>> interleavingDependence = new HashMap<LPNTran, Set<LPNTran>>();  // type 2 interleaving
+	private Map<Transition, Set<Transition>> transitiveDependence = new HashMap<Transition, Set<Transition>>();  // type 1 transitive
+	private Map<Transition, Set<Transition>> interleavingDependence = new HashMap<Transition, Set<Transition>>();  // type 2 interleaving
 //	public Map<LPNTran, Set<LPNTran>> case2 = new HashMap<LPNTran, Set<LPNTran>>();
 	
 	public LPNTranRelation(List<StateGraph> designUnitSet){
@@ -35,15 +36,15 @@ public class LPNTranRelation {
 		for(StateGraph sg : this.designUnitSet){
 			//for(State currentState : sg.reachable()){
 			for(State currentState : sg.getStateSet()) {
-				Set<Entry<LPNTran, State>> stateTranSet = sg.getOutgoingTrans(currentState);
+				Set<Entry<Transition, State>> stateTranSet = sg.getOutgoingTrans(currentState);
 				if(stateTranSet == null) continue;
 				
-				for(Entry<LPNTran, State> stateTran: stateTranSet){
+				for(Entry<Transition, State> stateTran: stateTranSet){
 					State startState = currentState;
 					State endState = stateTran.getValue();
-					LPNTran lpnTran = stateTran.getKey();
+					Transition lpnTran = stateTran.getKey();
 					
-					//TODO: only get enabled trans from lpn or input transitions also?
+					//TODO: (original) only get enabled trans from lpn or input transitions also?
 					LpnTranList currentEnabledTransitions = sg.getEnabled(startState);
 		        	LpnTranList nextEnabledTransitions = sg.getEnabled(endState);
 		        	
@@ -53,13 +54,13 @@ public class LPNTranRelation {
 		        	current_minus_next.remove(lpnTran);
 		        	
 		        	// type 2
-		        	for(LPNTran disabledTran: current_minus_next){
+		        	for(Transition disabledTran: current_minus_next){
 		        		// t1 -> t2
 		        		if(interleavingDependence.containsKey(lpnTran)){
 		        			interleavingDependence.get(lpnTran).add(disabledTran);
 		        		}
 		        		else{
-		        			Set<LPNTran> tranSet = new HashSet<LPNTran>();
+		        			Set<Transition> tranSet = new HashSet<Transition>();
 		        			tranSet.add(disabledTran);
 		    				interleavingDependence.put(lpnTran, tranSet);
 		        		}
@@ -68,7 +69,7 @@ public class LPNTranRelation {
 		        			interleavingDependence.get(disabledTran).add(lpnTran);
 		        		}
 		        		else{
-		        			Set<LPNTran> tranSet = new HashSet<LPNTran>();
+		        			Set<Transition> tranSet = new HashSet<Transition>();
 		        			tranSet.add(lpnTran);
 		    				interleavingDependence.put(disabledTran, tranSet);
 		        		}
@@ -79,13 +80,13 @@ public class LPNTranRelation {
 		        	next_minus_current.removeAll(currentEnabledTransitions);
 		        	
 		        	// type 1
-		        	for(LPNTran enabledTran: next_minus_current){
+		        	for(Transition enabledTran: next_minus_current){
 	        			// t1 -> t2
 		        		if(transitiveDependence.containsKey(lpnTran)){
 		        			transitiveDependence.get(lpnTran).add(enabledTran);
 		        		}
 		        		else{
-		        			Set<LPNTran> tranSet = new HashSet<LPNTran>();
+		        			Set<Transition> tranSet = new HashSet<Transition>();
 		        			tranSet.add(enabledTran);
 		    				transitiveDependence.put(lpnTran, tranSet);
 		        		}
@@ -93,7 +94,7 @@ public class LPNTranRelation {
 		        	
 		        	LpnTranList remainEnabled = currentEnabledTransitions;
 		        	remainEnabled.removeAll(current_minus_next);
-		        	for(LPNTran remainTran : remainEnabled){
+		        	for(Transition remainTran : remainEnabled){
 		        		State s1 = sg.getNextState(currentState, remainTran);
 		        		if(s1 == null) continue;
 		        		
@@ -110,7 +111,7 @@ public class LPNTranRelation {
 			        			interleavingDependence.get(lpnTran).add(remainTran);
 			        		}
 			        		else{
-			        			Set<LPNTran> tranSet = new HashSet<LPNTran>();
+			        			Set<Transition> tranSet = new HashSet<Transition>();
 			        			tranSet.add(remainTran);
 			        			interleavingDependence.put(lpnTran, tranSet);
 			        		}
@@ -119,7 +120,7 @@ public class LPNTranRelation {
 			        			interleavingDependence.get(remainTran).add(lpnTran);
 			        		}
 			        		else{
-			        			Set<LPNTran> tranSet = new HashSet<LPNTran>();
+			        			Set<Transition> tranSet = new HashSet<Transition>();
 			        			tranSet.add(lpnTran);
 			        			interleavingDependence.put(remainTran, tranSet);
 			        		}
@@ -144,7 +145,7 @@ public class LPNTranRelation {
      * and the value is a list of LPNTran which have transitive dependence.
      * @return Map transitiveDependence entry set
      */
-	public Set<Entry<LPNTran, Set<LPNTran>>> getDependentTrans(){
+	public Set<Entry<Transition, Set<Transition>>> getDependentTrans(){
 		return this.transitiveDependence.entrySet();
 	}
 	
@@ -153,7 +154,7 @@ public class LPNTranRelation {
      * and the value is a list of LPNTran which have interleaving dependence.
      * @return Map interleavingDependence entry set
      */
-	public Set<Entry<LPNTran, Set<LPNTran>>> getInterleavingTrans(){
+	public Set<Entry<Transition, Set<Transition>>> getInterleavingTrans(){
 		return this.interleavingDependence.entrySet();
 	}
 }

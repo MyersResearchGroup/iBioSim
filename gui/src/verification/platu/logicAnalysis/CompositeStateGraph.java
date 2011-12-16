@@ -11,7 +11,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import verification.platu.lpn.LPNTran;
+import lpn.parser.Transition;
+
 import verification.platu.main.Main;
 import verification.platu.main.Options;
 import verification.platu.stategraph.State;
@@ -34,12 +35,13 @@ public class CompositeStateGraph {
 		this.stateMap = stateMap;
 	}
 	
-	public List<LPNTran> getEnabled(CompositeState currentState){
-		Set<LPNTran> lpnTranSet = new HashSet<LPNTran>(currentState.numOutgoingTrans());
-		List<LPNTran> enabled = new ArrayList<LPNTran>(currentState.numOutgoingTrans());
+	public List<Transition> getEnabled(CompositeState currentState){
+		Set<Transition> lpnTranSet = new HashSet<Transition>(currentState.numOutgoingTrans());
+		List<Transition> enabled = new ArrayList<Transition>(currentState.numOutgoingTrans());
 		
 		for(CompositeStateTran stTran : currentState.getOutgoingStateTranList()){
-			LPNTran lpnTran = stTran.getLPNTran();
+			// TODO: (future) Fix stTran.getLPNTran().
+			Transition lpnTran = null; //stTran.getLPNTran();
 			if(lpnTranSet.add(lpnTran))
 				enabled.add(lpnTran);
 		}
@@ -51,7 +53,7 @@ public class CompositeStateGraph {
 		return this.indexStateMap.get(index);
 	}
 	
-	public CompositeStateTran addStateTran(CompositeState currentState, CompositeState nextState, LPNTran lpnTran){
+	public CompositeStateTran addStateTran(CompositeState currentState, CompositeState nextState, lpn.parser.Transition lpnTran){
 		CompositeStateTran stateTran = new CompositeStateTran(currentState, nextState, lpnTran);
 		
 		CompositeStateTran tmpTran = this.stateTranMap.get(stateTran);
@@ -66,7 +68,7 @@ public class CompositeStateGraph {
 		return stateTran;
 	}
 	
-	public CompositeStateTran addStateTran(int currentStateIndex, int nextStateIndex, LPNTran lpnTran){
+	public CompositeStateTran addStateTran(int currentStateIndex, int nextStateIndex, Transition lpnTran){
 		CompositeState currentState = this.indexStateMap.get(currentStateIndex);
 		CompositeState nextState = this.indexStateMap.get(nextStateIndex);
 		CompositeStateTran stateTran = new CompositeStateTran(currentState, nextState, lpnTran);
@@ -190,10 +192,10 @@ public class CompositeStateGraph {
 				currentCompositeState = tempState;
 			}
 			
-			Set<Entry<LPNTran, State>> stateSet = sg.getOutgoingTrans(currentState);
-			for(Entry<LPNTran, State> stateTran : stateSet){
+			Set<Entry<Transition, State>> stateSet = sg.getOutgoingTrans(currentState);
+			for(Entry<Transition, State> stateTran : stateSet){
 				State nextState = stateTran.getValue();
-				LPNTran lpnTran = stateTran.getKey();
+				Transition lpnTran = stateTran.getKey();
 				int[] nextStateArray = new int[1];
 				nextStateArray[0] = nextState.getIndex();
 				
@@ -294,7 +296,7 @@ public class CompositeStateGraph {
     	for(CompositeState currentState : this.stateMap.keySet()){
     		for(CompositeStateTran stateTran : currentState.getOutgoingStateTranList()){
     			CompositeState nextState = this.indexStateMap.get(stateTran.getNextState());
-    			LPNTran lpnTran = stateTran.getLPNTran();
+    			Transition lpnTran = stateTran.getLPNTran();
 //    			System.out.println("  " + nextState.getIndex());
     			graph.println("  \"" + currentState.getIndex() + "\" " + " -> " + "\"" + nextState.getIndex() + "\"" + " [label=\"" + lpnTran.getFullLabel() + "\"]");
     		}

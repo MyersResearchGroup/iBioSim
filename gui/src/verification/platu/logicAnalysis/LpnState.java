@@ -4,6 +4,7 @@ package verification.platu.logicAnalysis;
 import java.util.*;
 
 import lpn.parser.LhpnFile;
+import lpn.parser.Transition;
 
 import verification.platu.common.PlatuObj;
 import verification.platu.lpn.LPN;
@@ -18,7 +19,7 @@ public class LpnState extends PlatuObj {
     
     private LhpnFile lpn;
     private State state;
-    private HashSet<LPNTran> enabledSet;
+    private HashSet<Transition> enabledSet;
     int index;
     
     
@@ -30,10 +31,10 @@ public class LpnState extends PlatuObj {
         this.index = -1;
     }
 
-    public LpnState(final LhpnFile lhpnFile, final State newState, final HashSet<LPNTran> newEnabledSet) {
+    public LpnState(final LhpnFile lhpnFile, final State newState, final HashSet<Transition> lpnEnabledSet) {
     	this.lpn = lhpnFile;
     	this.state = newState;
-    	this.enabledSet = newEnabledSet;
+    	this.enabledSet = lpnEnabledSet;
     }
     
     public void setLpn(final LhpnFile thisLpn) {
@@ -107,7 +108,7 @@ public class LpnState extends PlatuObj {
         return this.state;
     }
 
-    public HashSet<LPNTran> getEnabled() {
+    public HashSet<Transition> getEnabled() {
     	return this.enabledSet;
     }
 }

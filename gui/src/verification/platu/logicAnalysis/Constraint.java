@@ -4,29 +4,32 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import lpn.parser.LhpnFile;
+import lpn.parser.Transition;
+
 import verification.platu.expression.VarNode;
 import verification.platu.lpn.DualHashMap;
-import verification.platu.lpn.LPN;
-import verification.platu.lpn.LPNTran;
 import verification.platu.stategraph.State;
 
 public class Constraint{
-	private LPN lpn;
+	private LhpnFile lpn;
 	final private int[] interfaceValues;
-	final private LPNTran lpnTransition;
+	final private Transition lpnTransition;
 	final private int[] vector;
 	List<VarNode> variableList = new ArrayList<VarNode>(1);
 	List<Integer> valueList = new ArrayList<Integer>(1);
 	private int hashVal = -1;
 
-	public Constraint(State start, State end, LPNTran tran, LPN dstLpn) {
-	    this.lpnTransition = tran;
-		this.lpn = tran.getLpn();
+	public Constraint(State start, State end, Transition firedTran, Transition lpn2) {
+	    this.lpnTransition = firedTran;
+	    this.lpn = firedTran.getLpn();
+		//this.lpn = firedTran.getLpn();
 		this.vector = start.getVector();
 
 		int[] endVector = end.getVector();
 //		int index = dstLpn.getInterfaceIndex(this.lpn.getLabel());
-		int[] thisIndex = dstLpn.getOtherIndexArray(this.lpn.ID-1);
+		// TODO: (temp) Need to find out what ID is.
+		int[] thisIndex = null; // lpn2.getOtherIndexArray(this.lpn.ID-1);
 		DualHashMap<String, Integer> varIndexMap = this.lpn.getVarIndexMap();
 
 		this.interfaceValues = new int[thisIndex.length];
@@ -36,7 +39,9 @@ public class Constraint{
 			if(this.vector[varIndex] != endVector[varIndex]){
 				String variable = varIndexMap.getKey(varIndex);
 				this.valueList.add(endVector[varIndex]);
-				this.variableList.add(dstLpn.getVarNodeMap().get(variable));
+				// TODO: (temp) need to replace getVarNodeMap.
+				this.variableList.add(null);
+				//this.variableList.add(lpn2.getVarNodeMap().get(variable));
 			}
 		}
 
@@ -71,7 +76,7 @@ public class Constraint{
 	/**
      * @return LPN where the constraint was generated.
      */
-	public LPN getLpn(){
+	public LhpnFile getLpn(){
 		return this.lpn;
 	}
 
@@ -85,7 +90,7 @@ public class Constraint{
 	/**
      * @return LPNTran applied.
      */
-    public LPNTran getLpnTransition(){
+    public Transition getLpnTransition(){
     	return this.lpnTransition;
     }
 

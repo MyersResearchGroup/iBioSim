@@ -2,7 +2,9 @@ package verification.platu.TimingAnalysis;
 
 import java.util.*;
 
+import lpn.parser.Transition;
 import verification.platu.lpn.*;
+import verification.platu.lpn.LpnTranList;
 
 /*
  * This class implements the POSET algorithm in C Myers's book, section 7.5.
@@ -10,9 +12,9 @@ import verification.platu.lpn.*;
 public class Poset {
 	public static final int INFINITY = verification.platu.common.Common.INFINITY;
 
-	protected HashMap<LPNTran, HashSet<LPNTran>> causalityFwd;
-	protected HashMap<LPNTran, LPNTran> causalityBwd;
-	protected DualHashMap<LPNTran, Integer> tranIdxMap;
+	protected HashMap<Transition, HashSet<Transition>> causalityFwd;
+	protected HashMap<Transition, Transition> causalityBwd;
+	protected DualHashMap<Transition, Integer> tranIdxMap;
 	protected DBM dbm;
 	
 	public Poset() {
@@ -22,42 +24,42 @@ public class Poset {
 		dbm = null;
 	}
 	
-	public void initialize(LPNTran firedTran, LpnTranList[] nextEnabledArray) {
-		causalityFwd = new HashMap<LPNTran, HashSet<LPNTran>>();
-		causalityBwd = new HashMap<LPNTran, LPNTran>();
-		HashSet<LPNTran> enabledSet = new HashSet<LPNTran>();
+	public void initialize(Transition firedTran, LpnTranList[] nextEnabledArray) {
+		causalityFwd = new HashMap<Transition, HashSet<Transition>>();
+		causalityBwd = new HashMap<Transition, Transition>();
+		HashSet<Transition> enabledSet = new HashSet<Transition>();
 		for(int i = 0; i < nextEnabledArray.length; i++)
 			if(nextEnabledArray[i] != null)
-				for(LPNTran tran : nextEnabledArray[i]) {
+				for(Transition tran : nextEnabledArray[i]) {
 					enabledSet.add(tran);
 					this.causalityBwd.put(tran, firedTran);
 				}
 		this.causalityFwd.put(firedTran, enabledSet);
 		
-		this.tranIdxMap = new DualHashMap<LPNTran, Integer>();
+		this.tranIdxMap = new DualHashMap<Transition, Integer>();
 		this.tranIdxMap.insert(firedTran, this.tranIdxMap.size());
 				
 		this.dbm = new DBM(1);
 	}
 	
-	public Poset update(LPNTran firedTran, LpnTranList[] curEnabledArray, LpnTranList[] nextEnabledArray) {
+	public Poset update(Transition firedTran, LpnTranList[] curEnabledArray, LpnTranList[] nextEnabledArray) {
 		Poset newPoset = new Poset();
 				
-		newPoset.tranIdxMap = new DualHashMap<LPNTran, Integer>();
+		newPoset.tranIdxMap = new DualHashMap<Transition, Integer>();
 		for(int i = 0; i < this.tranIdxMap.size(); i++) {
-			LPNTran tran = this.tranIdxMap.getKey(i);
+			Transition tran = this.tranIdxMap.getKey(i);
 			newPoset.tranIdxMap.insert(tran, i);
 		}
 		
-		newPoset.causalityBwd = (HashMap<LPNTran, LPNTran>) this.causalityBwd.clone();
-		newPoset.causalityFwd = new HashMap<LPNTran, HashSet<LPNTran>>();
+		newPoset.causalityBwd = (HashMap<Transition, Transition>) this.causalityBwd.clone();
+		newPoset.causalityFwd = new HashMap<Transition, HashSet<Transition>>();
 		DBM dbmCopy = new DBM(this.dbm.dimension() + 1);
 
 		for(int i = 0; i < this.tranIdxMap.size(); i++) {
-			LPNTran curTran = newPoset.tranIdxMap.getKey(i);
-			HashSet<LPNTran> curEnabledSet = this.causalityFwd.get(curTran);
+			Transition curTran = newPoset.tranIdxMap.getKey(i);
+			HashSet<Transition> curEnabledSet = this.causalityFwd.get(curTran);
 			if(curEnabledSet==null) {
-				System.out.println("*** LPNTran does not exist in causalityFwd");
+				System.out.println("*** Transition does not exist in causalityFwd");
 				System.exit(0);
 			}
 			newPoset.causalityFwd.put(curTran, (HashSet)curEnabledSet.clone());
@@ -72,18 +74,18 @@ public class Poset {
 		 */
 		
 		// Find the new enabled transition due to firedTran.
-		HashSet<LPNTran> curEnabledSet = new HashSet<LPNTran>();
-		HashSet<LPNTran> newEnabledSet = new HashSet<LPNTran>();
+		HashSet<Transition> curEnabledSet = new HashSet<Transition>();
+		HashSet<Transition> newEnabledSet = new HashSet<Transition>();
 		
 		for(int i = 0; i < curEnabledArray.length; i++) {
 			if(curEnabledArray[i] != null) 
-				for(LPNTran tran : curEnabledArray[i])
+				for(Transition tran : curEnabledArray[i])
 					curEnabledSet.add(tran);
 		}
 		
 		for(int i = 0; i < nextEnabledArray.length; i++) {
 			if(nextEnabledArray[i] != null) 
-				for(LPNTran tran : nextEnabledArray[i])
+				for(Transition tran : nextEnabledArray[i])
 					if(curEnabledSet.contains(tran) == false) {
 						newEnabledSet.add(tran);
 						newPoset.causalityBwd.put(tran, firedTran);
@@ -96,13 +98,14 @@ public class Poset {
 		// Add the firedTran into newPoset, and set its time separations with other transitions in newPoset.
 		int firedTranIdx = newPoset.tranIdxMap.getValue(firedTran);
 		for(int i = 0; i < newPoset.tranIdxMap.size(); i++) {
-			LPNTran prevTran = newPoset.tranIdxMap.getKey(i);
+			Transition prevTran = newPoset.tranIdxMap.getKey(i);
 			if(prevTran == firedTran) continue;
 			
 			HashSet prevEnabledSet = newPoset.causalityFwd.get(prevTran);
 			if(prevEnabledSet.contains(firedTran) == true) {
-				dbmCopy.assign(firedTranIdx, i, firedTran.getDelayUB());
-				dbmCopy.assign(i, firedTranIdx, -firedTran.getDelayLB());
+				// TODO: Get upper and lower bounds for our LPN?
+				//dbmCopy.assign(firedTranIdx, i, firedTran.getDelayUB());
+				//dbmCopy.assign(i, firedTranIdx, -firedTran.getDelayLB());
 			}
 			else {
 				dbmCopy.assign(i, firedTranIdx, INFINITY);
@@ -115,8 +118,8 @@ public class Poset {
 		/*
 		 * Projecting the useless transitions from newPoset.
 		 */
-		LPNTran firedEnabling = newPoset.causalityBwd.get(firedTran);
-		HashSet<LPNTran> firedSiblings = newPoset.causalityFwd.get(firedEnabling);
+		Transition firedEnabling = newPoset.causalityBwd.get(firedTran);
+		HashSet<Transition> firedSiblings = newPoset.causalityFwd.get(firedEnabling);
 		firedSiblings.remove(firedTran);
 		
 //		System.out.println("tranIdxMap");
@@ -125,9 +128,9 @@ public class Poset {
 //			System.out.print(thisTran.getFullLabel()+", ");
 //		}
 //		System.out.println("");
-		HashSet<LPNTran> uselessTranSet = new HashSet<LPNTran>();
+		HashSet<Transition> uselessTranSet = new HashSet<Transition>();
 		for(int i = 0; i < newPoset.tranIdxMap.size(); i++) {
-			LPNTran thisTran = newPoset.tranIdxMap.getKey(i);
+			Transition thisTran = newPoset.tranIdxMap.getKey(i);
 //			HashSet<LPNTran> thisEnabledSet = newPoset.causalityFwd.get(thisTran);
 //			boolean useless = true;
 //			System.out.print(thisTran.getFullLabel() + " : ");
@@ -145,23 +148,23 @@ public class Poset {
 				}
 		}
 		
-		for(LPNTran uselessTran : uselessTranSet) {
-			HashSet<LPNTran> uselessTranEnabled = newPoset.causalityFwd.get(uselessTran);
-			for(LPNTran tran : uselessTranEnabled) {
+		for(Transition uselessTran : uselessTranSet) {
+			HashSet<Transition> uselessTranEnabled = newPoset.causalityFwd.get(uselessTran);
+			for(Transition tran : uselessTranEnabled) {
 				newPoset.causalityBwd.remove(tran);
 			}
 			newPoset.causalityFwd.remove(uselessTran);
 		}
 		
-		DualHashMap<LPNTran, Integer> newTranIdxMap = new DualHashMap<LPNTran, Integer>();
+		DualHashMap<Transition, Integer> newTranIdxMap = new DualHashMap<Transition, Integer>();
 		for(int i = 0; i < newPoset.tranIdxMap.size(); i++) {
-			LPNTran tran_i = newPoset.tranIdxMap.getKey(i);
+			Transition tran_i = newPoset.tranIdxMap.getKey(i);
 			if(uselessTranSet.contains(tran_i) == false) {
 				newTranIdxMap.insert(tran_i, newTranIdxMap.size());
 			}
 		}
 			
-		DualHashMap<LPNTran, Integer> oldTranIdxMap = newPoset.tranIdxMap;
+		DualHashMap<Transition, Integer> oldTranIdxMap = newPoset.tranIdxMap;
 		newPoset.tranIdxMap = newTranIdxMap;
 		
 		/*
@@ -169,10 +172,10 @@ public class Poset {
 		 */
 		newPoset.dbm = new DBM(newPoset.tranIdxMap.size());
 		for(int new_i = 0; new_i < newPoset.tranIdxMap.size(); new_i++) {
-			LPNTran new_tran_i = newPoset.tranIdxMap.getKey(new_i);
+			Transition new_tran_i = newPoset.tranIdxMap.getKey(new_i);
 			int old_i = oldTranIdxMap.getValue(new_tran_i);
 			for(int new_j = 0; new_j < newPoset.tranIdxMap.size(); new_j++) {
-				LPNTran new_tran_j = newPoset.tranIdxMap.getKey(new_j);
+				Transition new_tran_j = newPoset.tranIdxMap.getKey(new_j);
 				int old_j = oldTranIdxMap.getValue(new_tran_j);
 				newPoset.dbm.assign(new_i, new_j, dbmCopy.value(old_i, old_j));
 				newPoset.dbm.assign(new_j, new_i, dbmCopy.value(old_j, old_i));				
@@ -185,9 +188,9 @@ public class Poset {
 	/*
 	 * Return the time separation between two transitions as defined in this Poset.
 	 */
-	public int getTimeSep(LPNTran tran_i, LPNTran tran_j) {
-		LPNTran enablingTran_i = this.causalityBwd.get(tran_i);
-		LPNTran enablingTran_j = this.causalityBwd.get(tran_j);
+	public int getTimeSep(Transition tran_i, Transition tran_j) {
+		Transition enablingTran_i = this.causalityBwd.get(tran_i);
+		Transition enablingTran_j = this.causalityBwd.get(tran_j);
 		int i = this.tranIdxMap.getValue(enablingTran_i);
 		int j = this.tranIdxMap.getValue(enablingTran_j);
 		return this.dbm.value(i, j);

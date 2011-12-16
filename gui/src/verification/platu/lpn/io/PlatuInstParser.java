@@ -4,21 +4,20 @@
     
     import java.util.StringTokenizer;
     import java.io.File;
+    import verification.platu.lpn.io.Instance;
     import java.util.Map.Entry;
     import java.util.HashMap;
     import java.util.HashSet;
     import java.util.LinkedList;
     import java.util.Queue;
-
-import verification.platu.expression.*;
-import verification.platu.lpn.DualHashMap;
+    import verification.platu.lpn.*;
+    import verification.platu.lpn.DualHashMap;
+    import verification.platu.lpn.VarExpr;
+    import verification.platu.lpn.VarExprList;
+    import verification.platu.expression.*;   
 import verification.platu.lpn.LPN;
 import verification.platu.lpn.LPNTran;
 import verification.platu.lpn.LpnTranList;
-import verification.platu.lpn.VarExpr;
-import verification.platu.lpn.VarExprList;
-import verification.platu.lpn.VarSet;
-import verification.platu.lpn.io.Instance;
 import verification.platu.project.Project;
 import verification.platu.stategraph.StateGraph;
 
@@ -2098,7 +2097,7 @@ public class PlatuInstParser extends Parser {
 
                     match(input,75,FOLLOW_75_in_arrayDecl920); 
 
-                    				//TODO: initialize array
+                    				//TODO: (original) initialize array
                     				int dimensions = dimensionList.size();
                     			
 
@@ -3441,7 +3440,7 @@ public class PlatuInstParser extends Parser {
                        						}
                        					}
                        					
-                       					//TODO: array to array assignment
+                       					//TODO: (original) array to array assignment
                        					
                        				}else if(ArrayNode.class.isAssignableFrom(node2.getClass())){
                        					System.err.println("error on line " + var2.getLine() + ": variable " + (var2!=null?var2.getText():null) + " is an array");
