@@ -30,7 +30,7 @@ public class Main {
 //    	System.out.println("isWindows: " + isWindows);
 //    }
     
-    //TODO: use thread pool
+    //TODO: (original) use thread pool
     public static ExecutorService exec = Executors.newFixedThreadPool(PROCESSORS);
     
     // options

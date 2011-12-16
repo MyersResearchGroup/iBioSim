@@ -626,7 +626,8 @@ public class PlatuGrammarParser extends Parser {
             				
             				lpn.addAllInputTrans(inputTranList);
             				lpn.addAllOutputTrans(outputTranList);
-            	            lpn.setVarIndexMap(VarIndexMap);         
+            	            lpn.setVarIndexMap(VarIndexMap);      
+            	            // TODO: (temp) Hack here. May not use this in the future.
             	            (logic3!=null?logic3.lpnTranSet:null).setLPN(lpn);     
             	            prj.getDesignUnitSet().add(lpn.getStateGraph());
             	            

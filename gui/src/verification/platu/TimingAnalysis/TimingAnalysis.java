@@ -3,12 +3,14 @@ package verification.platu.TimingAnalysis;
 import java.util.*;
 
 import lpn.parser.LhpnFile;
-import verification.platu.logicAnalysis.*;
+import lpn.parser.Transition;
 import verification.platu.lpn.DualHashMap;
+import verification.platu.project.PrjState;
+import verification.platu.logicAnalysis.*;
+import verification.platu.logicAnalysis.Analysis;
 import verification.platu.lpn.LPN;
 import verification.platu.lpn.LPNTran;
 import verification.platu.lpn.LpnTranList;
-import verification.platu.project.PrjState;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
 
@@ -33,7 +35,7 @@ public class TimingAnalysis {
 		// Initialize the project state
 		HashMap<String, Integer> varValMap = new HashMap<String, Integer>();
 		State[] initStateArray = new State[ArraySize];
-		ArrayList<LinkedList<LPNTran>> enabledList = new ArrayList<LinkedList<LPNTran>>(
+		ArrayList<LinkedList<Transition>> enabledList = new ArrayList<LinkedList<Transition>>(
 				1);
 		for (int index = 0; index < ArraySize; index++) {
 			LhpnFile curLpn = SgArray[index].getLpn();
@@ -51,13 +53,12 @@ public class TimingAnalysis {
 		// Adjust the value of the input variables in LPN in the initial state.
 		for (int index = 0; index < ArraySize; index++) {
 			StateGraph curLpn = SgArray[index];
-			// TODO: (Done) change to use our LPN
 			initStateArray[index].update(varValMap, curLpn.getLpn().getVarIndexMap());
 			initStateArray[index] = curLpn.addState(initStateArray[index]);
 			enabledList.add(index, curLpn.getEnabled(initStateArray[index]));
 		}
 
-		if (Analysis.deadLock(SgArray, initStateArray) == true) {
+		if (Analysis.deadLock(SgArray, initStateArray, false, null, null, null) == true) {
 			System.err
 					.println("Verification failed: deadlock in the initial state.");
 			return;
@@ -69,7 +70,7 @@ public class TimingAnalysis {
 		PrjState curPrjState = new PrjState(initStateArray);
 		stateTrace.add(curPrjState);
 
-		LinkedList<LPNTran> traceCex = new LinkedList<LPNTran>();
+		LinkedList<Transition> traceCex = new LinkedList<Transition>();
 
 		/*
 		 * Timing analysis by DFS
@@ -79,9 +80,9 @@ public class TimingAnalysis {
 		// this.search_dfs_split_zone(SgArray, initStateArray);
 
 		while (traceCex != null && traceCex.size() > 0) {
-			LPNTran lpnTran = traceCex.removeFirst();
+			Transition lpnTran = traceCex.removeFirst();
 			System.out.println(lpnTran.getLpn().getLabel() + " : "
-					+ lpnTran.getLabel());
+					+ lpnTran.getName());
 		}
 
 		System.out.println("Modules' local states: ");
@@ -145,7 +146,7 @@ public class TimingAnalysis {
 		 * Compute the untimed enabled transition arrays in the initial state
 		 */
 		LpnTranList[] initEnabledArray = new LpnTranList[arraySize];
-		ArrayList<LinkedList<LPNTran>> enabledArrayList = new ArrayList<LinkedList<LPNTran>>();
+		ArrayList<LinkedList<Transition>> enabledArrayList = new ArrayList<LinkedList<Transition>>();
 		for (int i = 0; i < arraySize; i++) {
 			LpnTranList tmp = lpnList[i].getEnabled(initStateArray[i]);
 			initEnabledArray[i] = tmp;
@@ -164,7 +165,7 @@ public class TimingAnalysis {
 		 */
 		LpnTranList initTimedEnabled = new LpnTranList();
 		for (int i = 0; i < arraySize; i++) {
-			for (LPNTran tran : initEnabledArray[i])
+			for (Transition tran : initEnabledArray[i])
 				if (initZone.checkTiming(tran) == true)
 					initTimedEnabled.addLast(tran);
 		}
@@ -245,11 +246,11 @@ public class TimingAnalysis {
 				continue main_while_loop;
 			}
 
-			LPNTran firedTran = curTimedEnabled.removeLast();
+			Transition firedTran = curTimedEnabled.removeLast();
 
 			// System.out.println("firedTran " + firedTran.getFullLabel());
-
-			State[] nextStateArray = firedTran.fire(lpnList, curStateArray);
+			// TODO: fire has been moved to StateGraph. 
+			State[] nextStateArray = null;//firedTran.fire(lpnList, curStateArray);
 			tranFiringCnt++;
 
 			LpnTranList[] curEnabledArray = new LpnTranList[arraySize];
@@ -305,7 +306,7 @@ public class TimingAnalysis {
 			LpnTranList nextTimedEnabled = new LpnTranList();
 			for (int i = 0; i < arraySize; i++) {
 				LpnTranList tmp = nextEnabledArray[i];
-				for (LPNTran tran : tmp) {
+				for (Transition tran : tmp) {
 					if (nextZone.checkTiming(tran) == true)
 						nextTimedEnabled.addLast(tran);
 				}
@@ -314,8 +315,9 @@ public class TimingAnalysis {
 			/*
 			 * Check disabling error
 			 */
-			LPNTran disabledTran = firedTran.disablingError(curTimedEnabled,
-					nextTimedEnabled);
+			// TODO: disablingError was moved to StateGraph.
+			Transition disabledTran = null;//firedTran.disablingError(curTimedEnabled,
+			//		nextTimedEnabled);
 			if (disabledTran != null) {
 				System.out.println("---> Disabling Error: "
 						+ disabledTran.getFullLabel() + " is disabled by "
@@ -476,7 +478,7 @@ public class TimingAnalysis {
 		 * Compute the untimed enabled transition arrays in the initial state
 		 */
 		LpnTranList[] initEnabledArray = new LpnTranList[arraySize];
-		ArrayList<LinkedList<LPNTran>> enabledArrayList = new ArrayList<LinkedList<LPNTran>>();
+		ArrayList<LinkedList<Transition>> enabledArrayList = new ArrayList<LinkedList<Transition>>();
 		for (int i = 0; i < arraySize; i++) {
 			LpnTranList tmp = lpnList[i].getEnabled(initStateArray[i]);
 			initEnabledArray[i] = tmp;
@@ -495,7 +497,7 @@ public class TimingAnalysis {
 		 */
 		LpnTranList initTimedEnabled = new LpnTranList();
 		for (int i = 0; i < arraySize; i++) {
-			for (LPNTran tran : initEnabledArray[i])
+			for (Transition tran : initEnabledArray[i])
 				if (initZone.checkTiming(tran) == true)
 					initTimedEnabled.addLast(tran);
 		}
@@ -581,7 +583,7 @@ public class TimingAnalysis {
 				continue main_while_loop;
 			}
 
-			LPNTran firedTran = curTimedEnabled.removeLast();
+			Transition firedTran = curTimedEnabled.removeLast();
 
 //			for(int i = 0; i < curStateArray.length; i++)
 //				System.out.print(curStateArray[i] + ", ");
@@ -589,7 +591,8 @@ public class TimingAnalysis {
 //			System.out.println("firedTran " + firedTran.getFullLabel());
 
 			int curIndex = firedTran.getLpn().getIndex();
-			State[] nextStateArray = firedTran.fire(lpnList, curStateArray);
+			// TODO: fire has been moved to StateGraph.
+			State[] nextStateArray = null; //firedTran.fire(lpnList, curStateArray);
 			tranFiringCnt++;
 
 			LpnTranList[] curEnabledArray = new LpnTranList[arraySize];
@@ -645,7 +648,7 @@ public class TimingAnalysis {
 			LpnTranList nextTimedEnabled = new LpnTranList();
 			for (int i = 0; i < arraySize; i++) {
 				LpnTranList tmp = nextEnabledArray[i];
-				for (LPNTran tran : tmp) {
+				for (Transition tran : tmp) {
 					if (nextZone.checkTiming(tran) == true)
 						nextTimedEnabled.addLast(tran);
 				}
@@ -654,8 +657,9 @@ public class TimingAnalysis {
 			/*
 			 * Check disabling error
 			 */
-			LPNTran disabledTran = firedTran.disablingError(curTimedEnabled,
-					nextTimedEnabled);
+			// TODO: disablingError was moved to StateGraph.
+			Transition disabledTran = null;//firedTran.disablingError(curTimedEnabled,
+			//		nextTimedEnabled);
 			if (disabledTran != null) {
 				System.out.println("---> Disabling Error: "
 						+ disabledTran.getFullLabel() + " is disabled by "

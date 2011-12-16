@@ -1,19 +1,13 @@
 package verification.platu.por1;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
+import lpn.parser.Transition;
 
 import verification.platu.expression.VarNode;
-import verification.platu.lpn.LPN;
-import verification.platu.lpn.LPNTran;
-import verification.platu.lpn.LpnTranList;
 import verification.platu.stategraph.StateGraph;
 
 /**
@@ -25,37 +19,37 @@ import verification.platu.stategraph.StateGraph;
 
 public class SearchDepFromLPN {
 	
-	private HashMap<LPNTran, HashSet<LPNTran>> indepTranSet = new HashMap<LPNTran, HashSet<LPNTran>>();
-	private HashMap<LPNTran, HashSet<LPNTran>> interleavingSet = new HashMap<LPNTran, HashSet<LPNTran>>();
-	private HashSet<LPNTran> interleavingTrans = new HashSet<LPNTran>();
+	private HashMap<Transition, HashSet<Transition>> indepTranSet = new HashMap<Transition, HashSet<Transition>>();
+	private HashMap<Transition, HashSet<Transition>> interleavingSet = new HashMap<Transition, HashSet<Transition>>();
+	private HashSet<Transition> interleavingTrans = new HashSet<Transition>();
 	
-    public HashMap<LPNTran, HashSet<LPNTran>> getIndepSet()
+    public HashMap<Transition, HashSet<Transition>> getIndepSet()
     {
     	return this.indepTranSet;
     }
-    public HashSet<LPNTran> getAllInterleavingTrans()
+    public HashSet<Transition> getAllInterleavingTrans()
     {
     	return this.interleavingTrans;
     }
-    public HashMap<LPNTran, HashSet<LPNTran>> getInterleavingSet()
+    public HashMap<Transition, HashSet<Transition>> getInterleavingSet()
     {
     	return this.interleavingSet;
     }
     
     public void setIndep(StateGraph[] lpnList)
     {
-    	// TODO: change to use our LPN transitions
+    	// TODO: (future) change to use our LPN transitions
     	int number = 0;
     	/*
     	for(StateGraph sg : lpnList)
     		number = number + sg.getLpn().getTransitions().size();
     	*/
-    	LPNTran[] wholeSet = new LPNTran[number];
+    	Transition[] wholeSet = new Transition[number];
     	/*
     	int i=0;
     	for(StateGraph sg : lpnList)
     	{
-    		for(LPNTran tran : sg.getLpn().getTransitions())
+    		for(Transition tran : sg.getLpn().getTransitions())
     		{
     			wholeSet[i] = tran;
     			i++;
@@ -91,20 +85,20 @@ public class SearchDepFromLPN {
 	 * @param t2
 	 * @param LPNTransSet
 	 */
-    private void addTran(LPNTran t1,LPNTran t2,HashMap<LPNTran, HashSet<LPNTran>> LPNTransSet)
+    private void addTran(Transition t1,Transition t2,HashMap<Transition, HashSet<Transition>> LPNTransSet)
     {
-    	HashSet<LPNTran> t1_dep = LPNTransSet.get(t1);
+    	HashSet<Transition> t1_dep = LPNTransSet.get(t1);
     	if(t1_dep == null)
     	{
-    		t1_dep = new HashSet<LPNTran>();
+    		t1_dep = new HashSet<Transition>();
     		LPNTransSet.put(t1, t1_dep);
     	}
     	t1_dep.add(t2);
     	
-    	HashSet<LPNTran> t2_dep = LPNTransSet.get(t2);
+    	HashSet<Transition> t2_dep = LPNTransSet.get(t2);
     	if(t2_dep == null)
     	{
-    		t2_dep = new HashSet<LPNTran>();
+    		t2_dep = new HashSet<Transition>();
     		LPNTransSet.put(t2, t2_dep);
     	}
     	t2_dep.add(t1);
@@ -118,7 +112,7 @@ public class SearchDepFromLPN {
 	 * @param wholeSet
 	 * @return
 	 */
-	private int checkDep(LPNTran t1, LPNTran t2, LPNTran[] wholeSet)
+	private int checkDep(Transition t1, Transition t2, Transition[] wholeSet)
 	{
 		int flag = 0;	
 		//in same LPN
@@ -171,12 +165,14 @@ public class SearchDepFromLPN {
 	 * @param t2
 	 * @return
 	 */
-	private boolean ConditionCommonPreset(LPNTran t1, LPNTran t2)
+	private boolean ConditionCommonPreset(Transition t1, Transition t2)
 	{
 		boolean flag = false;
-		for(int i : t1.getPreSet())
+		// TODO: (future) Hack here. Created tmp to get rid of all errors
+		int[] tmp = null;
+		for(int i : tmp)//t1.getPreSet())
 		{
-			for(int j: t2.getPreSet())
+			for(int j: tmp) //t2.getPreSet())
 			{
 				if(i==j)
 				{
@@ -196,16 +192,20 @@ public class SearchDepFromLPN {
 	 * @param t2
 	 * @return
 	 */
-	private boolean ConditionPrePost(LPNTran t1, LPNTran t2)
+	private boolean ConditionPrePost(Transition t1, Transition t2)
 	{
 		boolean flag = false;
-		for(int i : t2.getPreSet())
+		// TODO: (future) Hack here. Created tmp to get rid of all errors
+		int[] tmp = null;
+		for(int i : tmp)//t2.getPreSet())
 		{
+			/*
 			if(t1.getPostSet().contains(i))
 			{
 				flag = true;
 				break;
 			}
+			*/
 		}		
 		return flag;
 	}
@@ -215,12 +215,14 @@ public class SearchDepFromLPN {
 	 * @param t2
 	 * @return
 	 */
-	private boolean ConditionSameAssignVar(LPNTran t1, LPNTran t2)
+	private boolean ConditionSameAssignVar(Transition t1, Transition t2)
 	{
 		boolean flag = false;	
-		for(VarNode var1 : t1.getAssignedVar())
+		// TODO: (future) Hack here. Created tmp to get rid of all errors
+		VarNode[] tmp = null;
+		for(VarNode var1 : tmp)//t1.getAssignedVar())
 		{
-			for(VarNode var2 : t2.getAssignedVar())
+			for(VarNode var2 : tmp) // t2.getAssignedVar())
 			{
 				if(var2.getName() == var1.getName())
 				{
@@ -239,15 +241,19 @@ public class SearchDepFromLPN {
 	 * @param t2
 	 * @return
 	 */
-	private boolean ConditionSuppAssign(LPNTran t1, LPNTran t2)
+	private boolean ConditionSuppAssign(Transition t1, Transition t2)
 	{
 		boolean flag = false;
-		for(VarNode var1 : t1.getAssignedVar())
+		// TODO: (future) Hack here. Created tmp to get rid of all errors
+		VarNode[] tmp = null;
+		for(VarNode var1 : tmp)//t1.getAssignedVar())
 		{
+			/*
 			if(t2.getSupportVar().contains(var1.getName()))
 			{
 				flag = true;break;
 			}
+			*/
 		}
 		return flag;
 	}
@@ -259,28 +265,34 @@ public class SearchDepFromLPN {
 	 * @param set
 	 * @return
 	 */
-	private boolean ConditionChangeThirdTrans(LPNTran t1, LPNTran t2, LPNTran[] wholeSet)
+	private boolean ConditionChangeThirdTrans(Transition t1, Transition t2, Transition[] wholeSet)
 	{
 		boolean flag = false;
-		for(LPNTran t3 : wholeSet)
+		for(Transition t3 : wholeSet)
 		{
 			if(t3 != t1 && t3 != t2)
 			{
 				boolean flag_1 = false;
 				boolean flag_2 = false;
-				for(VarNode var : t1.getAssignedVar())
+				// TODO: (future) Hack here. Created tmp to get rid of all errors
+				VarNode[] tmp = null;
+				for(VarNode var : tmp)//t1.getAssignedVar())
 				{
+					/*
 					if(t3.getSupportVar().contains(var.getName()))
 					{
 						flag_1 = true;break;
 					}
+					*/
 				}
-				for(VarNode var : t2.getAssignedVar())
+				for(VarNode var : tmp) //t2.getAssignedVar())
 				{
+					/*
 					if(t3.getSupportVar().contains(var.getName()))
 					{
 						flag_2 = true;break;
 					}
+					*/
 				}
 				if(flag_1 == true && flag_2 == true)
 				{
@@ -293,25 +305,25 @@ public class SearchDepFromLPN {
 		return flag;
 	}
 	
-	private void setInterleavingTrans(HashMap<LPNTran, HashSet<LPNTran>> interleavingSet)
+	private void setInterleavingTrans(HashMap<Transition, HashSet<Transition>> interleavingSet)
 	{
 		Iterator in = interleavingSet.entrySet().iterator();  
 		while(in.hasNext())
 		{
 			Map.Entry me = (Map.Entry)in.next();
-			LPNTran key = (LPNTran)me.getKey();
-			Set<LPNTran> value = (Set<LPNTran>)me.getValue();
+			Transition key = (Transition)me.getKey();
+			Set<Transition> value = (Set<Transition>)me.getValue();
 			
 			interleavingTrans.add(key);
 			Iterator bb = value.iterator();
 			while(bb.hasNext())
 			{
-				interleavingTrans.add((LPNTran)bb.next());
+				interleavingTrans.add((Transition)bb.next());
 			}	
 		}
 	}
 	
-	public void printMap(HashMap<LPNTran, HashSet<LPNTran>> tranSet)
+	public void printMap(HashMap<Transition, HashSet<Transition>> tranSet)
 	{
 		//long number = 0;
 		Iterator it = tranSet.keySet().iterator();
@@ -321,14 +333,14 @@ public class SearchDepFromLPN {
 		}
 		while(it.hasNext())
 		{
-			LPNTran key = (LPNTran)it.next();
-			HashSet<LPNTran> value = tranSet.get(key);
+			Transition key = (Transition)it.next();
+			HashSet<Transition> value = tranSet.get(key);
 			System.out.print(key.getFullLabel()+"   " );
 			Iterator bb = value.iterator();
 			while(bb.hasNext())
 			{
 				//number++;
-				System.out.print(((LPNTran)bb.next()).getFullLabel()+",");
+				System.out.print(((Transition)bb.next()).getFullLabel()+",");
 			}
 			System.out.println();
 		}

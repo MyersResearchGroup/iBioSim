@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import lpn.parser.Transition;
+
 import verification.platu.lpn.LPN;
 import verification.platu.lpn.LPNTran;
 import verification.platu.lpn.LPNTranRelation;
@@ -12,11 +14,11 @@ import verification.platu.stategraph.StateGraph;
 
 public class AmpleSet {
 	
-	private HashSet<LPNTran> allInterleavingTrans = new HashSet<LPNTran>();
-	private HashMap<LPNTran, HashSet<LPNTran>> interleavingSet = new HashMap<LPNTran, HashSet<LPNTran>>();
-	private HashMap<LPNTran, HashSet<LPNTran>> indepTranSet = new HashMap<LPNTran, HashSet<LPNTran>>();
+	private HashSet<Transition> allInterleavingTrans = new HashSet<Transition>();
+	private HashMap<Transition, HashSet<Transition>> interleavingSet = new HashMap<Transition, HashSet<Transition>>();
+	private HashMap<Transition, HashSet<Transition>> indepTranSet = new HashMap<Transition, HashSet<Transition>>();
 	
-	public HashMap<LPNTran,HashSet<LPNTran>> getIndepTranSet_FromState(StateGraph[] lpnList,
+	public HashMap<Transition,HashSet<Transition>> getIndepTranSet_FromState(StateGraph[] lpnList,
 			                                                           LPNTranRelation lpnTranRelation)
    {
 		SearchDepFromState sg = new SearchDepFromState(lpnList,lpnTranRelation);
@@ -26,7 +28,7 @@ public class AmpleSet {
 		return indepTranSet;
    }
 	
-	public HashMap<LPNTran,HashSet<LPNTran>> getIndepTranSet_FromLPN(StateGraph[] lpnList)
+	public HashMap<Transition, HashSet<Transition>> getIndepTranSet_FromLPN(StateGraph[] lpnList)
     {
 		SearchDepFromLPN sg = new SearchDepFromLPN();
         sg.setIndep(lpnList);
@@ -36,8 +38,8 @@ public class AmpleSet {
 		return indepTranSet;
     }
 	
-	public LpnTranList generateAmpleTranSet(LinkedList<LPNTran>[] enabledArray,
-            HashMap<LPNTran,HashSet<LPNTran>> allIndepSet)
+	public LpnTranList generateAmpleTranSet(LinkedList<Transition>[] enabledArray,
+            HashMap<Transition,HashSet<Transition>> allIndepSet)
 	{
 		LpnTranList ampleSet = new LpnTranList();
 		LpnTranList enableTranSet = this.getEnableTranSet(enabledArray);
@@ -65,7 +67,7 @@ public class AmpleSet {
 			return ampleSet;
 	}
 	
-	public LpnTranList generateAmpleTranSet(LpnTranList enableTranSet,HashMap<LPNTran,HashSet<LPNTran>> allIndepSet)
+	public LpnTranList generateAmpleTranSet(LpnTranList enableTranSet,HashMap<Transition,HashSet<Transition>> allIndepSet)
 	{
 		LpnTranList ampleSet = new LpnTranList();
 		if(enableTranSet.size()==0)
@@ -99,25 +101,25 @@ public class AmpleSet {
 	 * @return
 	 */
 	private LpnTranList getSubset_noInterleaving(LpnTranList enableTranSet,
-			                                    HashMap<LPNTran,HashSet<LPNTran>> indepTranSet)
+			                                    HashMap<Transition,HashSet<Transition>> indepTranSet)
 	{
 		LpnTranList set1 = new LpnTranList();
 		LpnTranList set2 = new LpnTranList();
 
 		//partition set1 and set2
-		for(LPNTran tran : enableTranSet)
+		for(Transition tran : enableTranSet)
 		{
 			if(set1.isEmpty())
 				set1.add(tran);
 			else
 			{
-				HashSet<LPNTran> indep_tran = indepTranSet.get(tran);
+				HashSet<Transition> indep_tran = indepTranSet.get(tran);
 				if(indep_tran == null)
 					set1.add(tran);
 				else
 				{
 					boolean dep_flag = false;
-					for(LPNTran t : set1)
+					for(Transition t : set1)
 					{
 						if(!indep_tran.contains(t))
 						{
@@ -152,15 +154,15 @@ public class AmpleSet {
 	 */
 		private LpnTranList getSubset_withInterleaving1(LpnTranList interleavingEnabledSet,
 													   LpnTranList enableTranSet,
-				                                       HashMap<LPNTran,HashSet<LPNTran>> indepTranSet,
-				                                       HashMap<LPNTran, HashSet<LPNTran>> interleavingSet)
+				                                       HashMap<Transition,HashSet<Transition>> indepTranSet,
+				                                       HashMap<Transition, HashSet<Transition>> interleavingSet)
 		{
 			LpnTranList subset = new LpnTranList();
 			LpnTranList set1 = new LpnTranList();
 			LpnTranList set2 = new LpnTranList();
 
 			//partition to 3 part      
-			for(LPNTran tran : enableTranSet)
+			for(Transition tran : enableTranSet)
 			{
 				if(interleavingEnabledSet.contains(tran))
 					continue;
@@ -169,13 +171,13 @@ public class AmpleSet {
 					set1.add(tran);
 				else
 				{
-					HashSet<LPNTran> indep_tran = indepTranSet.get(tran);
+					HashSet<Transition> indep_tran = indepTranSet.get(tran);
 					if(indep_tran == null)
 						set1.add(tran);
 					else
 					{
 						boolean dep_flag = false;
-						for(LPNTran t : set1)
+						for(Transition t : set1)
 						{
 							if(!indep_tran.contains(t))
 							{
@@ -203,7 +205,7 @@ public class AmpleSet {
 			else//indep is empty
 			{
 				//System.out.println("there is no independent transition");
-//				for(LPNTran tran : interleavingEnabledSet)
+//				for(Transition tran : interleavingEnabledSet)
 //					set1.add(tran);
 //				return set1;
 				subset = this.subset_indepIsEmpty(interleavingEnabledSet, interleavingSet, indepTranSet);
@@ -218,19 +220,19 @@ public class AmpleSet {
  * @return
  */
 	private LpnTranList subset_indepIsEmpty(LpnTranList interleavingEnabledSet,
-									       HashMap<LPNTran, HashSet<LPNTran>> interleavingSet,
-										   HashMap<LPNTran,HashSet<LPNTran>> allIndepSet)
+									       HashMap<Transition, HashSet<Transition>> interleavingSet,
+										   HashMap<Transition,HashSet<Transition>> allIndepSet)
 	{
 		
 		LpnTranList ready_interleaving = new LpnTranList();
 
 		// if there exist interleaving pair
-		for(LPNTran tran1 : interleavingEnabledSet)
+		for(Transition tran1 : interleavingEnabledSet)
 		{
-			HashSet<LPNTran> inter_setTran1 = interleavingSet.get(tran1);
+			HashSet<Transition> inter_setTran1 = interleavingSet.get(tran1);
 			boolean noExist = false;
 			//System.out.println("inter_setTran1.size():"+inter_setTran1.size());
-			for(LPNTran inter : inter_setTran1)
+			for(Transition inter : inter_setTran1)
 			{
 				if(!interleavingEnabledSet.contains(inter))
 				{
@@ -241,14 +243,14 @@ public class AmpleSet {
 			if(!noExist)
 			{
 				ready_interleaving.add(tran1);
-				for(LPNTran inter : inter_setTran1)
+				for(Transition inter : inter_setTran1)
 					ready_interleaving.add(inter);
 				break;
 			}
 		}
 		/*
 		System.out.print("ready_interleaving:");
-		for(LPNTran trans : ready_interleaving)
+		for(Transition trans : ready_interleaving)
 			System.out.print(trans.getFullLabel()+",");
 		System.out.println();
 		*/
@@ -277,16 +279,16 @@ public class AmpleSet {
 	{
 		LpnTranList set1 = new LpnTranList();
 		LpnTranList set2 = new LpnTranList();
-		for(LPNTran tran : interleavingEnabledSet)
+		for(Transition tran : interleavingEnabledSet)
 		{
 			if(set1.isEmpty())
 				set1.add(tran);
 			else
 			{
 				boolean interleaving = false;
-				for(LPNTran setTran : set1)
+				for(Transition setTran : set1)
 				{
-					HashSet<LPNTran> inter_setTran = interleavingSet.get(setTran);
+					HashSet<Transition> inter_setTran = interleavingSet.get(setTran);
 					if(inter_setTran.contains(tran))
 					{
 						interleaving = true;
@@ -312,13 +314,13 @@ public class AmpleSet {
 	 * @param interleavingSet
 	 * @return
 	 */
-	private LpnTranList getInterleavingEnabledSet(LpnTranList enableTranSet, HashSet<LPNTran> interleavingSet)
+	private LpnTranList getInterleavingEnabledSet(LpnTranList enableTranSet, HashSet<Transition> interleavingSet)
 	{
 		LpnTranList interleavingEnabledSet = new LpnTranList();
 		//System.out.println("interleavingSet.size():"+interleavingSet.size());
 		if(interleavingSet != null)
 		{
-			for(LPNTran tran : enableTranSet)
+			for(Transition tran : enableTranSet)
 			{
 				if(interleavingSet.contains(tran))
 					interleavingEnabledSet.add(tran);
@@ -327,7 +329,7 @@ public class AmpleSet {
 		return interleavingEnabledSet;
 	}
 	
-	private LpnTranList getEnableTranSet(LinkedList<LPNTran>[] enabledList)
+	private LpnTranList getEnableTranSet(LinkedList<Transition>[] enabledList)
 	{
 		LpnTranList enableTranSet = new LpnTranList();
 		for (int index = 0; index < enabledList.length; index++) 
@@ -335,7 +337,7 @@ public class AmpleSet {
     		//System.out.println("index:"+index);
 			if(enabledList[index].size()!=0)
 			{
-				for(LPNTran t: enabledList[index])
+				for(Transition t: enabledList[index])
 					enableTranSet.add(t);
 			}
     	}

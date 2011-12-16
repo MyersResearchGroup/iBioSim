@@ -1,50 +1,62 @@
 package verification.platu.lpn;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import lpn.parser.LhpnFile;
-import verification.platu.expression.VarNode;
+import lpn.parser.Transition;
 
-final public class LpnTranList extends LinkedList<LPNTran> {
+final public class LpnTranList extends LinkedList<Transition> {
 
-    private LPN lpn;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private LhpnFile lpn;
 
     public LpnTranList() {
         super();
     }
 
-    public LpnTranList(Collection<? extends LPNTran> lpnt) {
+    public LpnTranList(Collection<? extends Transition> lpnt) {
         super(lpnt);
     }
 
     public LpnTranList(final int i) {
     }
 
-    public LPNTran get(LPNTran lpnt) {
+    public Transition get(Transition lpnt) {
+    	/*
         for (LPNTran t : this) {
             if (lpnt.getLabel() == t.getLabel()) {
                 return t;
             }
         }
         return null;
+        */
+    	// TODO: (check) if getLabel is equivalent to getName
+    	for (Transition t: this) {
+    		if (lpnt.getName() == t.getName()) {
+    			return t;
+    		}
+    	}
+    	return null;
     }
 
     /**
      * @return the lpn
      */
-    public LPN getLpn() {
+    public LhpnFile getLpn() {
         return lpn;
     }
 
     /**
      * @param lpn2 the lpn to set
      */
-    public void setLPN(LPN lpn2) {
+    public void setLPN(LhpnFile lpn2) {
         this.lpn = lpn2;
-        for (LPNTran t : this) {
+        for (Transition t : this) {
             t.setLpn(lpn2);
         }
     }
@@ -52,9 +64,9 @@ final public class LpnTranList extends LinkedList<LPNTran> {
     @Override
     public String toString() {
         String ret = "";
-        Iterator<LPNTran> it = this.iterator();
+        Iterator<Transition> it = this.iterator();
         while (it.hasNext()) {
-            ret += it.next().getLabel();
+            ret += it.next().getName();
             if (it.hasNext()) {
                 ret += ", ";
             }
@@ -67,6 +79,8 @@ final public class LpnTranList extends LinkedList<LPNTran> {
         return new LpnTranList(this);
     }
     
+    // TODO: (check) copy has been rewritten.
+    /*
     public LpnTranList copy(HashMap<String, VarNode> variables){
     	LpnTranList copy = new LpnTranList();
     	for(LPNTran lpnTran : this){
@@ -75,4 +89,22 @@ final public class LpnTranList extends LinkedList<LPNTran> {
     	
     	return copy;
     }
+    */
+    public LpnTranList copy() {
+    	LpnTranList copy = new LpnTranList();
+    	for (Transition lpnTran: this) {
+    		copy.add(lpnTran);
+    	}
+    	return copy;
+    }
+
+	public void setLPN(LPN lpn2) {
+		// TODO: (temp) Hack here. This is used to get rid of erros in PlatuGrammearParser.
+		
+	}
+
+	public void add(LPNTran transition4) {
+		// TODO: (temp) Hack here. This is used to get rid of erros in PlatuGrammearParser.
+		
+	}
 }

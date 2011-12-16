@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import lpn.parser.Transition;
+
 import verification.platu.lpn.LPN;
 import verification.platu.lpn.LPNTran;
 import verification.platu.lpn.LPNTranRelation;
@@ -21,12 +23,12 @@ import verification.platu.stategraph.StateGraph;
 
 public class SearchDepFromState {
 	
-	private Set<Entry<LPNTran, Set<LPNTran>>> initialDepTrans;
-	private Set<Entry<LPNTran, Set<LPNTran>>> initialInterleavingTrans;
+	private Set<Entry<Transition, Set<Transition>>> initialDepTrans;
+	private Set<Entry<Transition, Set<Transition>>> initialInterleavingTrans;
 	
-	private HashSet<LPNTran> interleavingTrans = new HashSet<LPNTran>();
-	private HashMap<LPNTran, HashSet<LPNTran>> indepTranSet = new HashMap<LPNTran, HashSet<LPNTran>>();
-	private HashMap<LPNTran, HashSet<LPNTran>> interleavingSet = new HashMap<LPNTran, HashSet<LPNTran>>();
+	private HashSet<Transition> interleavingTrans = new HashSet<Transition>();
+	private HashMap<Transition, HashSet<Transition>> indepTranSet = new HashMap<Transition, HashSet<Transition>>();
+	private HashMap<Transition, HashSet<Transition>> interleavingSet = new HashMap<Transition, HashSet<Transition>>();
 	
 	
 	public SearchDepFromState(StateGraph[] lpnList,LPNTranRelation lpnTranRelation)
@@ -58,17 +60,17 @@ public class SearchDepFromState {
 	
 	}
 	
-	public HashMap<LPNTran, HashSet<LPNTran>> getIndepTranSet()
+	public HashMap<Transition, HashSet<Transition>> getIndepTranSet()
 	{
 		return this.indepTranSet;
 	}
 	
-	public HashSet<LPNTran> getInterleavingTrans()
+	public HashSet<Transition> getInterleavingTrans()
 	{
 		return this.interleavingTrans;
 	}
 	
-	public HashMap<LPNTran, HashSet<LPNTran>> getInterleavingSet()
+	public HashMap<Transition, HashSet<Transition>> getInterleavingSet()
 	{
 		return this.interleavingSet;
 	}
@@ -82,9 +84,11 @@ public class SearchDepFromState {
 	{
 		lpnTranRelation.findCompositionalDependencies();
 		//get individual dependent
-		initialDepTrans = lpnTranRelation.getDependentTrans();
+		// TODO: (future) Need to fix this.
+		initialDepTrans = null; //lpnTranRelation.getDependentTrans();
 		//get interleaving
-		initialInterleavingTrans = lpnTranRelation.getInterleavingTrans();
+		// TODO: (future) Need to fix this.
+		initialInterleavingTrans = null;// lpnTranRelation.getInterleavingTrans();
 		this.setInterleavingSet(initialInterleavingTrans);
 		
 //		System.out.println("print original depTranSet");
@@ -94,42 +98,42 @@ public class SearchDepFromState {
 		
 	}
 	
-	private void setInterleavingTrans(Set<Entry<LPNTran, Set<LPNTran>>> initialInterleavingTrans)
+	private void setInterleavingTrans(Set<Entry<Transition, Set<Transition>>> initialInterleavingTrans)
 	{
 		Iterator in = initialInterleavingTrans.iterator();  
 		while(in.hasNext())
 		{
 			Map.Entry me = (Map.Entry)in.next();
-			LPNTran key = (LPNTran)me.getKey();
-			Set<LPNTran> value = (Set<LPNTran>)me.getValue();
+			Transition key = (Transition)me.getKey();
+			Set<Transition> value = (Set<Transition>)me.getValue();
 			
 			interleavingTrans.add(key);
 			Iterator bb = value.iterator();
 			while(bb.hasNext())
 			{
-				interleavingTrans.add((LPNTran)bb.next());
+				interleavingTrans.add((Transition)bb.next());
 			}	
 		}
 	}
-	private void setInterleavingSet(Set<Entry<LPNTran, Set<LPNTran>>> initialInterleavingTrans)
+	private void setInterleavingSet(Set<Entry<Transition, Set<Transition>>> initialInterleavingTrans)
 	{
 		Iterator in = initialInterleavingTrans.iterator();  
 		while(in.hasNext())
 		{
 			Map.Entry me = (Map.Entry)in.next();
-			LPNTran key = (LPNTran)me.getKey();
-			Set<LPNTran> value = (Set<LPNTran>)me.getValue();
+			Transition key = (Transition)me.getKey();
+			Set<Transition> value = (Set<Transition>)me.getValue();
 			
-			HashSet<LPNTran> key_inter = this.interleavingSet.get(key);
+			HashSet<Transition> key_inter = this.interleavingSet.get(key);
 			if(key_inter == null)
 			{
-				key_inter = new HashSet<LPNTran>();
+				key_inter = new HashSet<Transition>();
 				this.interleavingSet.put(key, key_inter);
 			}
 			Iterator bb = value.iterator();
 			while(bb.hasNext())
 			{
-				key_inter.add((LPNTran)bb.next());
+				key_inter.add((Transition)bb.next());
 			}
 		}
 	}
@@ -144,7 +148,7 @@ public class SearchDepFromState {
 		LpnTranList allTran = new LpnTranList();
 		for(StateGraph sg : lpnList)
 		{
-			// TODO: need to user our transitions.
+			// TODO: (future) need to user our transitions.
 			/*
 			LpnTranList trans = sg.getLpn().getTransitions();
 			for(LPNTran tran: trans)
@@ -154,15 +158,15 @@ public class SearchDepFromState {
 			*/
 		}
 		//save to indepTranSet
-		for(LPNTran key: allTran)
+		for(Transition key: allTran)
 		{
-			HashSet<LPNTran> value = indepTranSet.get(key);
+			HashSet<Transition> value = indepTranSet.get(key);
 			if(value == null)
 			{
-				value = new HashSet<LPNTran>();
+				value = new HashSet<Transition>();
 				indepTranSet.put(key, value);
 			}
-			for(LPNTran t: allTran)
+			for(Transition t: allTran)
 			{
 				if(t!=key)
 					value.add(t);
@@ -170,18 +174,18 @@ public class SearchDepFromState {
 		}
 	}
 	
-	private void reduceIndepTrans(Set<Entry<LPNTran, Set<LPNTran>>> initialDepTrans)
+	private void reduceIndepTrans(Set<Entry<Transition, Set<Transition>>> initialDepTrans)
 	{
 		Iterator it = initialDepTrans.iterator();
 		while(it.hasNext())
 		{
 			Map.Entry me = (Map.Entry)it.next();
-			LPNTran key = (LPNTran)me.getKey();
-			Set<LPNTran> value = (Set<LPNTran>)me.getValue();
+			Transition key = (Transition)me.getKey();
+			Set<Transition> value = (Set<Transition>)me.getValue();
 			Iterator itor = value.iterator();
 			while(itor.hasNext())
 			{
-				LPNTran tran = (LPNTran)itor.next();
+				Transition tran = (Transition)itor.next();
 				//reduce indep
 				this.reduceIndepSet_pair(key, tran);
 				this.reduceIndepSet_pair(tran, key);
@@ -194,15 +198,15 @@ public class SearchDepFromState {
 	 * @param key
 	 * @param tran
 	 */
-	private void reduceIndepSet_pair(LPNTran key, LPNTran tran)
+	private void reduceIndepSet_pair(Transition key, Transition tran)
 	{
-		HashSet<LPNTran> value = indepTranSet.get(key);
+		HashSet<Transition> value = indepTranSet.get(key);
 		if(value != null)
 		{
 			Iterator it = value.iterator();
 			while(it.hasNext())
 			{
-				LPNTran object = (LPNTran)it.next();
+				Transition object = (Transition)it.next();
 				if(object == tran)
 				{
 					value.remove(object);
@@ -212,7 +216,7 @@ public class SearchDepFromState {
 		}
 	}
 	
-	public void printMap(HashMap<LPNTran, HashSet<LPNTran>> tranSet)
+	public void printMap(HashMap<Transition, HashSet<Transition>> tranSet)
 	{
 		long number = 0;
 		Iterator it = tranSet.keySet().iterator();
@@ -222,21 +226,21 @@ public class SearchDepFromState {
 		}
 		while(it.hasNext())
 		{
-			LPNTran key = (LPNTran)it.next();
-			HashSet<LPNTran> value = tranSet.get(key);
+			Transition key = (Transition)it.next();
+			HashSet<Transition> value = tranSet.get(key);
 			System.out.print(key.getFullLabel()+"   " );
 			Iterator bb = value.iterator();
 			while(bb.hasNext())
 			{
 				number++;
-				System.out.print(((LPNTran)bb.next()).getFullLabel()+",");
+				System.out.print(((Transition)bb.next()).getFullLabel()+",");
 			}
 			System.out.println();
 		}
 		System.out.println("number"+number);
 	}
 	
-	public void printSet(Set<Entry<LPNTran, Set<LPNTran>>> tranSet)
+	public void printSet(Set<Entry<Transition, Set<Transition>>> tranSet)
 	{
 		Iterator in = tranSet.iterator();  
 		if(!in.hasNext())
@@ -246,13 +250,13 @@ public class SearchDepFromState {
 		while(in.hasNext())
 		{
 			Map.Entry me = (Map.Entry)in.next();
-			LPNTran key = (LPNTran)me.getKey();
-			Set<LPNTran> value = (Set<LPNTran>)me.getValue();
+			Transition key = (Transition)me.getKey();
+			Set<Transition> value = (Set<Transition>)me.getValue();
 			System.out.print(key.getFullLabel()+"   " );
 			Iterator bb = value.iterator();
 			while(bb.hasNext())
 			{
-				System.out.print(((LPNTran)bb.next()).getFullLabel()+",");
+				System.out.print(((Transition)bb.next()).getFullLabel()+",");
 			}
 			System.out.println();
 		}

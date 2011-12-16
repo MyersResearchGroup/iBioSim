@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lpn.parser.LhpnFile;
+import lpn.parser.Transition;
 import verification.platu.expression.VarNode;
 import verification.platu.lpn.LPN;
 import verification.platu.lpn.LPNTran;
@@ -66,7 +67,7 @@ public class CompositionalThread extends Thread{
 		LhpnFile srcLpn = srcSG.getLpn();
 		LhpnFile lpn = sg.getLpn();
 		
-		// TODO: need to add getThisIndexArray in LhpnFile. ID has been added.
+		// TODO: (future)need to add getThisIndexArray in LhpnFile. 
 		/*
 		int[] thisIndexList = lpn.getThisIndexArray(srcLpn.ID);
 		int[] otherIndexList = lpn.getOtherIndexArray(srcLpn.ID);
@@ -114,7 +115,7 @@ public class CompositionalThread extends Thread{
 		oldConstraintSet.clear();
 		
 		LhpnFile srcLpn = srcSG.getLpn();
-		// TODO: (?) need to update for our LPN
+		// TODO: (future) need to update for our LPN
 		/*
 		for(Constraint newConstraint : sg.getNewConstraintSet()){
 			if(newConstraint.getLpn() != srcLpn) continue;
@@ -181,7 +182,7 @@ public class CompositionalThread extends Thread{
 
 //    	StateTran stTran = new StateTran(compatibleState, constraintTran, state);
 
-		LPNTran constraintTran = c.getLpnTransition();
+		Transition constraintTran = c.getLpnTransition();
 //		constraintTran.synchronizedAddStateTran(compatibleState, nextState);
 //    	sg.addEnabledTran(compatibleState, constraintTran);
     	newTransitions++;

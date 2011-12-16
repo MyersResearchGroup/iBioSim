@@ -1,14 +1,17 @@
 package verification.platu.lpn;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import verification.platu.expression.ArrayElement;
 import verification.platu.expression.ArrayNode;
 import verification.platu.expression.VarNode;
-import verification.platu.lpn.VarType;
 import verification.platu.project.Project;
-import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
 
 public class LPN {
@@ -93,11 +96,13 @@ public class LPN {
         }
 
         // Adjust the visibility of lpn transitions.
-        for (LPNTran curTran : transitions) {
+        // TODO: (temp) Hack here, but no problem as LPN.java will go away.
+        ArrayList<LPNTran> transitionsTemp = null;
+		for (LPNTran curTran : transitionsTemp) { //transitions) {
             curTran.initialize(this, outputs);
         }
         
-        // TODO: Hack here, but no problem as LPN.java will go away.
+        // TODO: (temp) Hack here, but no problem as LPN.java will go away.
         this.stateGraph = null; //new StateGraph(this);
     }
     
@@ -121,11 +126,13 @@ public class LPN {
         }
         
         // Adjust the visibility of lpn transitions.
-        for (LPNTran curTran : transitions) {
+        // TODO: (temp) Hack here, but no problem as LPN.java will go away.
+        ArrayList<LPNTran> transitionsTemp = null;
+        for (LPNTran curTran : transitionsTemp) {
             curTran.initialize(this, outputs);
         }
         
-        // TODO: Hack here, but no problem as LPN.java will go away.
+        // TODO: (temp) Hack here, but no problem as LPN.java will go away.
         this.stateGraph = null;  // new StateGraph(this);
     }
 
@@ -151,7 +158,8 @@ public class LPN {
         }
         
         // copy transitions
-        LpnTranList transitions = this.transitions.copy(varNodeMap);
+        // TODO: (temp) Hack here, but no problem as LPN.java will go away.
+        LpnTranList transitions = null; //this.transitions.copy(varNodeMap);
 
         // copy varIndexMap
         DualHashMap<String, Integer> varIndexMap = this.varIndexMap.clone();
@@ -182,14 +190,15 @@ public class LPN {
     				for(VarNode element : ((ArrayNode)var).getVariableList()){
     					addList.add(element.getName());
     				}
-    				
-    				for(LPNTran lpnTran : this.transitions){
+    			    // TODO: (temp) Hack here, but no problem as LPN.java will go away.
+    		        ArrayList<LPNTran> transitionsTemp = null;
+    				for(LPNTran lpnTran : transitionsTemp) {//this.transitions){
     	    			for(VarNode assignedVar : lpnTran.getAssignedVar()){
     		        		if(ArrayElement.class.isAssignableFrom(assignedVar.getClass()) && ((ArrayElement)assignedVar).getArray() == var){
     		        			this.addOutputTran(lpnTran);
     		        			lpnTran.setLocalFlag(false);
     		        			for(StateGraph sg : designUnitSet){
-    		        				// TODO: broken but okay depracting this class
+    		        				// TODO: (temp) broken but okay depracting this class
     		        				/*
     		        				LPN dstLpn = sg.getLpn();
     	    	    				if(dstLpn == this) continue;
@@ -203,14 +212,16 @@ public class LPN {
     	        	}
     			}
     			else{
-	    			for(LPNTran lpnTran : this.transitions){
+    			     // TODO: (temp) Hack here, but no problem as LPN.java will go away.
+    		        ArrayList<LPNTran> transitionsTemp = null;
+	    			for(LPNTran lpnTran : transitionsTemp) {//this.transitions){
 	    	    		if(lpnTran.getAssignedVar().contains(var)){
 	    	    			System.out.println(output);
 	    	    			this.addOutputTran(lpnTran);
 	    	    			lpnTran.setLocalFlag(false);
 	    	    			
 	    	    			for(StateGraph sg : designUnitSet){
-		        				// TODO: broken but okay depracting this class
+		        				// TODO: (temp) broken but okay depracting this class
 	    	    				/*
 	    	    				LPN dstLpn = sg.getLpn();
 	    	    				if(dstLpn == this) continue;
@@ -231,7 +242,6 @@ public class LPN {
     
     public LPN instantiate(String label){
     	LPN newLpn = this.clone();
-    	// TODO: (Done) Moved getInitState() to StateGraph and changed to use our LPN. 
     	int[] currentVector = null;//newLpn.getInitState().getVector();
     	newLpn.setLabel(label);
 //    	StateGraph sg = (StateGraph) newLpn;
@@ -337,7 +347,6 @@ public class LPN {
     }
     
     public void connect(String outputVar, LPN dstLpn, String inputVar){
-    	// TODO: (Done) Moved getInitState() to StateGraph and changed to use our LPN.
     	int[] initVector = null; // this.getInitState().getVector();
     	
     	// change outputVar to an output if not already
@@ -354,7 +363,9 @@ public class LPN {
     		// put in outputTranList if not already
     		// put in dstLpn's inputTranList
     		// set as non local
-    	for(LPNTran lpnTran : this.transitions){
+        // TODO: (temp) Hack here, but no problem as LPN.java will go away.
+        ArrayList<LPNTran> transitionsTemp = null;
+    	for(LPNTran lpnTran : transitionsTemp) {//this.transitions){
     		if(lpnTran.getAssignedVar().contains(outputVarNode)){
     			this.addOutputTran(lpnTran);
     			dstLpn.addInputTran(lpnTran);
@@ -435,8 +446,9 @@ public class LPN {
 	    		
 	    		outputVarNode = outputVarList.get(i);
 	    		outputVarNode.setType(VarType.OUTPUT);
-
-	    		for(LPNTran lpnTran : this.transitions){
+	    		
+	    	    // TODO: (temp) Hack here, but no problem as LPN.java will go away.
+	    		for(LPNTran lpnTran : transitionsTemp) {//this.transitions){
 	    			for(VarNode assignedVar : lpnTran.getAssignedVar()){
 		        		if(ArrayElement.class.isAssignableFrom(assignedVar.getClass()) && ((ArrayElement)assignedVar).getArray() == outputArray){
 		        			this.addOutputTran(lpnTran);
@@ -675,8 +687,9 @@ public class LPN {
     
     public LpnTranList getOutputTrans() {
         LpnTranList outputTranSet = new LpnTranList();
-
-        for (LPNTran curTran : this.transitions) {
+        // TODO: (temp) Hack here, but no problem as LPN.java will go away.
+        ArrayList<LPNTran> transitionsTemp = null;
+        for (LPNTran curTran : transitionsTemp) {// this.transitions) {
             HashSet<VarNode> assignedVars = curTran.getAssignedVar();
             for (VarNode var : assignedVars) {
                 if (this.outputs.contains(var.getName()) == true) {
@@ -708,7 +721,6 @@ public class LPN {
     /**
     @return the InitState
      */
-    // TODO: (Done) Moved getInitState() to StateGraph, and changed to use our LPN.
     /*
     public State getInitState() {	
     	// create initial vector

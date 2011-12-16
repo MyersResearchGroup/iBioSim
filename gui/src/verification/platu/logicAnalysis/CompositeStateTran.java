@@ -1,20 +1,21 @@
 package verification.platu.logicAnalysis;
 
+import lpn.parser.Transition;
 import verification.platu.lpn.LPNTran;
 
 public class CompositeStateTran {
 	private int nextState = 0;
 	private int currentState = 0;
-	private LPNTran lpnTransition = null;
+	private Transition lpnTransition = null;
 	private boolean visible = false;
 	
-	public CompositeStateTran(CompositeState currentState, CompositeState nextState, LPNTran lpnTransition){
+	public CompositeStateTran(CompositeState currentState, CompositeState nextState, Transition lpnTran){
 		this.currentState = currentState.getIndex();
 		this.nextState = nextState.getIndex();
-		this.lpnTransition = lpnTransition;
+		this.lpnTransition = lpnTran;
 	}
 	
-	public CompositeStateTran(int currentState, int nextState, LPNTran lpnTransition){
+	public CompositeStateTran(int currentState, int nextState, Transition lpnTransition){
 		this.currentState = currentState;
 		this.nextState = nextState;
 		this.lpnTransition = lpnTransition;
@@ -36,7 +37,7 @@ public class CompositeStateTran {
 		this.nextState = nxtState;
 	}
 	
-	public void setLpnTran(LPNTran lpnTran){
+	public void setLpnTran(Transition lpnTran){
 		this.lpnTransition = lpnTran;
 	}
 	
@@ -48,7 +49,7 @@ public class CompositeStateTran {
 		return this.nextState;
 	}
 	
-	public LPNTran getLPNTran(){
+	public Transition getLPNTran(){
 		return this.lpnTransition;
 	}
 

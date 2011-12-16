@@ -1,5 +1,7 @@
 package verification.platu.lpn;
 
+import verification.platu.expression.Expression;
+import verification.platu.expression.VarNode;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -8,10 +10,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
-import lpn.parser.LhpnFile;
 import verification.platu.TimingAnalysis.Zone1;
-import verification.platu.expression.Expression;
-import verification.platu.expression.VarNode;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
 
@@ -131,6 +130,7 @@ public class LPNTran {
     	return this.supportSet;
     }
 
+    // TODO: (done) Moved to StateGraph.
 	/**
 	 * Check if firing 'fired_transition' causes a disabling error.
 	 * @param current_enabled_transitions
@@ -432,7 +432,7 @@ public class LPNTran {
      * @param curLpnIndex
      * @return
      */
-    // TODO: (?) Move fire to StateGraph
+    // TODO: (done) Moved fire to StateGraph
     public State[] fire(final StateGraph[] curSgArray, final int[] curStateIdxArray) {
     	State[] stateArray = new State[curSgArray.length];
     	for(int i = 0; i < curSgArray.length; i++)
@@ -441,7 +441,7 @@ public class LPNTran {
     	return this.fire(curSgArray, stateArray);
     }
     
- // TODO: (?) Move fire to StateGraph
+ // TODO: (done) Moved fire to StateGraph
     public State[] fire(final StateGraph[] curSgArray, final State[] curStateArray) {
     	int thisLpnIndex = this.getLpn().getIndex(); 
     	State[] nextStateArray = curStateArray.clone();
@@ -475,11 +475,12 @@ public class LPNTran {
 		nextStateArray[this.lpn.getIndex()] = nextState;
         for(LPN curLpn : this.dstLpnList) {
         	int curIdx = curLpn.getIndex();
-    		State newState = curSgArray[curIdx].getNextState(curStateArray[curIdx], this);
+        	// TODO: (temp) Hack here.  Probably LPNTran.java will go away.
+    		State newState = null; //curSgArray[curIdx].getNextState(curStateArray[curIdx], this);
     		if(newState != null) 
         		nextStateArray[curIdx] = newState;
         	else {
-        		// TODO: may not need to be updated, but could change to use our var index map
+        		// TODO: (done) may not need to be updated, but could change to use our var index map
         		/*
         		State newOther = curStateArray[curIdx].update(vvSet, curSgArray[curIdx].getLpn().getVarIndexMap());
         		if (newOther == null)
@@ -497,13 +498,13 @@ public class LPNTran {
         return nextStateArray;
     }
     
-    // TODO: (?) Move fire to StateGraph    
+    // TODO: (done) Moved fire to StateGraph    
     public State fire(final StateGraph thisSg, final State curState) {  		
     	// Search for and return cached next state first. 
 //    	if(this.nextStateMap.containsKey(curState) == true)
 //    		return (State)this.nextStateMap.get(curState);
-    	
-    	State nextState = thisSg.getNextState(curState, this);
+    	// TODO: (temp) Hack here.  Probably LPNTran.java will go away.
+    	State nextState = null; // thisSg.getNextState(curState, this);
     	if(nextState != null)
     		return nextState;
     	
@@ -543,8 +544,7 @@ public class LPNTran {
             int newValue = (int) s.getExpr().evaluate(curVector);
             newVectorArray[s.getVar().getIndex(curVector)] = newValue;
         }
-        
-        //TODO: Commented out the old code.
+                
         State newState = null; //= thisSg.addState(new State(this.lpn, curNewMarking, newVectorArray));
         
         int[] newVector = newState.getVector();
@@ -554,8 +554,8 @@ public class LPNTran {
         		System.exit(1);
         	}
         }
-		
-		thisSg.addStateTran(curState, this, newState);
+		// TODO: (temp) Hack here.  Probably LPNTran.java will go away.
+		//thisSg.addStateTran(curState, this, newState);
 		return newState;
     }
 	
@@ -568,7 +568,7 @@ public class LPNTran {
     	this.dstLpnList.add(lpn);
     }
     
-    // TODO: (?) Move constrFire to StateGraph  
+    // TODO: (done) Move constrFire to StateGraph  
     public State constrFire(final State curState) {
     	// Marking update
         int[] curOldMarking = curState.getMarking();
@@ -615,8 +615,8 @@ public class LPNTran {
             newVectorArray[s.getVar().getIndex(curVector)] = newValue;
         }
         
-        //TODO: Commented out the old code.
-        State newState = null; //= new State(this.lpn, curNewMarking, newVectorArray);
+        //TODO: (temp) Hack here. Probably LPNTran.java will go away.
+        State newState = null; //new State(this.lpn, curNewMarking, newVectorArray);
         
         int[] newVector = newState.getVector();
 		for(Expression e : assertions){

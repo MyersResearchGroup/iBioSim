@@ -2,7 +2,9 @@ package verification.platu.TimingAnalysis;
 
 import java.util.*;
 
+import lpn.parser.Transition;
 import verification.platu.lpn.*;
+import verification.platu.lpn.LpnTranList;
 
 public class Zone1 {
 	public static final int INFINITY = verification.platu.common.Common.INFINITY;
@@ -12,7 +14,7 @@ public class Zone1 {
     //public static HashMap<DBM, DBM> dbmCache = null;
     public static HashMap<LinkedList<Integer>, LinkedList<Integer>> timeSepTbl = null;
 
-	DualHashMap<LPNTran, Integer> enabledSet;
+	DualHashMap<Transition, Integer> enabledSet;
 	private DBM dbm;
 	//HashMap<LinkedList<LPNTran>, Integer> timeSep;
 
@@ -36,7 +38,7 @@ public class Zone1 {
 		//timeSep = otherZone.timeSep;
 	}
 	
-	public Zone1(DualHashMap<LPNTran, Integer> newEnabledSet, DBM newDbm) {
+	public Zone1(DualHashMap<Transition, Integer> newEnabledSet, DBM newDbm) {
 		this.enabledSet = newEnabledSet;
 		this.dbm = newDbm;
 	}
@@ -45,11 +47,11 @@ public class Zone1 {
 	 * Generate a new zone from a poset.
 	 */
 	public Zone1(Poset curPoset, LpnTranList[] nextEnabledArray) {		
-		this.enabledSet = new DualHashMap<LPNTran, Integer>();
+		this.enabledSet = new DualHashMap<Transition, Integer>();
 		int arraySize = nextEnabledArray.length;
 		int lpnTranCnt = 0;
 		for(int i = 0; i < arraySize; i++) {
-			for(LPNTran tran : nextEnabledArray[i]) {
+			for(Transition tran : nextEnabledArray[i]) {
 				this.enabledSet.insert(tran, lpnTranCnt+1);
 				lpnTranCnt++;
 			}
@@ -58,7 +60,7 @@ public class Zone1 {
 		/*
 		 * Caching the enabled transition set.
 		 */
-		DualHashMap<LPNTran, Integer> newEnabledSet = Zone1.enabledArrayCache.get(this.enabledSet);
+		DualHashMap<Transition, Integer> newEnabledSet = Zone1.enabledArrayCache.get(this.enabledSet);
 		if (newEnabledSet == null)
 			Zone1.enabledArrayCache.put(this.enabledSet, this.enabledSet);
 		else
@@ -67,11 +69,12 @@ public class Zone1 {
 		this.dbm = new DBM(lpnTranCnt + 1);
 
 		for (int i = 1; i <= lpnTranCnt; i++) {
-			LPNTran tran_i = this.enabledSet.getKey(i);
-			this.dbm.assign(0, i, tran_i.getDelayUB());
+			Transition tran_i = this.enabledSet.getKey(i);
+			// TODO: Get the upper bound of our LPN delay
+			//this.dbm.assign(0, i, tran_i.getDelayUB());
 			this.dbm.assign(i, 0, 0);
 			for (int j = 1; j <= lpnTranCnt; j++) {
-				LPNTran tran_j = this.enabledSet.getKey(j);
+				Transition tran_j = this.enabledSet.getKey(j);
 				if(tran_i == tran_j)
 					continue;
 				if(curPoset != null)
@@ -87,8 +90,9 @@ public class Zone1 {
 		 */
 		int newLpnTranCnt = this.enabledSet.size();
 		for(int i = 1; i <= newLpnTranCnt; i++) {
-			LPNTran tran = this.enabledSet.getKey(i);
-			int premax = tran.getDelayUB()==INFINITY ? tran.getDelayLB() : tran.getDelayUB();
+			Transition tran = this.enabledSet.getKey(i);
+			// TODO: Get the upper/lower bound of our LPN delay
+			int premax = 3;//tran.getDelayUB()==INFINITY ? tran.getDelayLB() : tran.getDelayUB();
 			int delta = this.dbm.value(i, 0) + premax;
 			if(delta >= 0)
 				continue;
@@ -104,13 +108,15 @@ public class Zone1 {
 		
 		LinkedList<Integer> fixup = new LinkedList<Integer>();
 		for(int i = 1; i <= newLpnTranCnt; i++) {
-			LPNTran tran_i = this.enabledSet.getKey(i);
-			int premax_i = tran_i.getDelayUB()==INFINITY ? tran_i.getDelayLB() : tran_i.getDelayUB();
+			Transition tran_i = this.enabledSet.getKey(i);
+			// TODO: Get the upper/lower bound of our LPN delay
+			int premax_i = 3; //tran_i.getDelayUB()==INFINITY ? tran_i.getDelayLB() : tran_i.getDelayUB();
 			if(this.dbm.value(0, i) > premax_i) {
 				int t = premax_i;
 				for(int j = 1; j <= newLpnTranCnt; j++) {
-					LPNTran tran_j = this.enabledSet.getKey(j);
-					int premax_j = tran_j.getDelayUB()==INFINITY ? tran_j.getDelayLB() : tran_j.getDelayUB();
+					Transition tran_j = this.enabledSet.getKey(j);
+					// TODO: Get the upper/lower bound of our LPN delay
+					int premax_j = 3; //tran_j.getDelayUB()==INFINITY ? tran_j.getDelayLB() : tran_j.getDelayUB();
 					int min = this.dbm.value(0, j) < premax_j ? this.dbm.value(0, j) : premax_j;
 					int new_max = min - this.dbm.value(i, j);
 					if(new_max > t)
@@ -158,11 +164,11 @@ public class Zone1 {
 	 * @param initEnSet
 	 */
 	final public void initialize(LpnTranList[] initEnabledArray) {
-		this.enabledSet = new DualHashMap<LPNTran, Integer>();
+		this.enabledSet = new DualHashMap<Transition, Integer>();
 		int arraySize = initEnabledArray.length;
 		int lpnTranCnt = 0;
 		for(int i = 0; i < arraySize; i++) {
-			for(LPNTran tran : initEnabledArray[i]) {
+			for(Transition tran : initEnabledArray[i]) {
 				this.enabledSet.insert(tran, lpnTranCnt+1);
 				lpnTranCnt++;
 			}
@@ -171,7 +177,7 @@ public class Zone1 {
 		/*
 		 * Caching the enabled transition set.
 		 */
-		DualHashMap<LPNTran, Integer> newEnabledSet = Zone1.enabledArrayCache.get(this.enabledSet);
+		DualHashMap<Transition, Integer> newEnabledSet = Zone1.enabledArrayCache.get(this.enabledSet);
 		if(newEnabledSet==null)
 			Zone1.enabledArrayCache.put(this.enabledSet, this.enabledSet);
 		else
@@ -180,8 +186,9 @@ public class Zone1 {
 		this.dbm = new DBM(lpnTranCnt+1);
 		
 		for(int y = 1; y <= lpnTranCnt; y++) {
-			LPNTran curTran = this.enabledSet.getKey(y);
-			this.dbm.assign(0, y, curTran.getDelayUB());
+			Transition curTran = this.enabledSet.getKey(y);
+			// TODO: Get the upper/lower bound of our LPN delay
+			//this.dbm.assign(0, y, curTran.getDelayUB());
 		}
 	}
 
@@ -197,14 +204,14 @@ public class Zone1 {
 	 * @param nextEnabledList
 	 * @param curModuleTranSet
 	 */
-	public Zone1 update(LPNTran firedTran, LpnTranList[] nextEnabledArray) {
+	public Zone1 update(Transition firedTran, LpnTranList[] nextEnabledArray) {
 		Zone1 newZone = new Zone1();
 		
-		newZone.enabledSet = new DualHashMap<LPNTran, Integer>();
+		newZone.enabledSet = new DualHashMap<Transition, Integer>();
 		int arraySize = nextEnabledArray.length;
 		int nextLpnTranCnt = 0;
 		for(int i = 0; i < arraySize; i++) {
-			for(LPNTran tran : nextEnabledArray[i]) {
+			for(Transition tran : nextEnabledArray[i]) {
 				newZone.enabledSet.insert(tran, nextLpnTranCnt+1);
 				nextLpnTranCnt++;
 			}	
@@ -213,7 +220,7 @@ public class Zone1 {
 		/*
 		 * Caching the enabled transition set.
 		 */
-		DualHashMap<LPNTran, Integer> newEnabledSet = Zone1.enabledArrayCache.get(newZone.enabledSet);
+		DualHashMap<Transition, Integer> newEnabledSet = Zone1.enabledArrayCache.get(newZone.enabledSet);
 		if(newEnabledSet==null)
 			Zone1.enabledArrayCache.put(newZone.enabledSet, newZone.enabledSet);
 		else
@@ -230,7 +237,8 @@ public class Zone1 {
 		 * Restrict zone w.r.t firedTran, and canonialize it.
 		 */
 		int new_x = this.enabledSet.getValue(firedTran);
-		curDbmCopy.restrict(new_x, firedTran.getDelayLB());
+		// TODO: Get the upper/lower bound of our LPN delay
+		//curDbmCopy.restrict(new_x, firedTran.getDelayLB());
 		curDbmCopy.canonicalize();
 		
 		//System.out.println("update 1 \n" + curDbmCopy);
@@ -243,7 +251,7 @@ public class Zone1 {
 		for(int x = 0; x <= curLpnTranCnt; x++) {
 			new_x = 0;
 			if(x>0) {
-				LPNTran tran_x = this.enabledSet.getKey(x);
+				Transition tran_x = this.enabledSet.getKey(x);
 				if(newZone.enabledSet.containsKey(tran_x) == false || tran_x==firedTran)
 					continue;
 				new_x = newZone.enabledSet.getValue(tran_x);
@@ -251,7 +259,7 @@ public class Zone1 {
 			for(int y = 0; y <= curLpnTranCnt; y++) {
 				int new_y = 0;
 				if(y > 0) {
-					LPNTran tran_y = this.enabledSet.getKey(y);
+					Transition tran_y = this.enabledSet.getKey(y);
 					if(newZone.enabledSet.containsKey(tran_y)==false || tran_y==firedTran)
 						continue;
 					new_y = newZone.enabledSet.getValue(tran_y);
@@ -267,10 +275,10 @@ public class Zone1 {
 		/*
 		 * For every enabled transitions in the nextState, advance its timer to DelayUB, and canonicalize.
 		 */
-		LinkedList<LPNTran> newTranList = new LinkedList<LPNTran>();
+		LinkedList<Transition> newTranList = new LinkedList<Transition>();
 		int newLpnTranCnt = newZone.enabledSet.size();
 		for(int y = 1; y <= newLpnTranCnt; y++) {
-			LPNTran tran_y = newZone.enabledSet.getKey(y);
+			Transition tran_y = newZone.enabledSet.getKey(y);
 
 			if(this.enabledSet.containsKey(tran_y)==false || tran_y == firedTran) {
 				newTranList.addLast(tran_y);
@@ -282,10 +290,10 @@ public class Zone1 {
 		 * those that are newly enabled in the next state.
 		 */
 		curLpnTranCnt = this.enabledSet.size();
-		for(LPNTran newTran : newTranList) {
+		for(Transition newTran : newTranList) {
 			int new_i = newZone.enabledSet.getValue(newTran);
 			for(int j = 1; j <= curLpnTranCnt; j++) {
-				LPNTran tran_j = this.enabledSet.getKey(j);
+				Transition tran_j = this.enabledSet.getKey(j);
 				if(newZone.enabledSet.containsKey(tran_j) == false)
 					continue;
 				int new_j = newZone.enabledSet.getValue(tran_j);
@@ -299,10 +307,11 @@ public class Zone1 {
 		/*
 		 * For every enabled transitions in the nextState, advance its timer to DelayUB, and canonicalize.
 		 */
-		HashMap<LPNTran, Integer> newTranSet = new HashMap<LPNTran, Integer>();
+		HashMap<Transition, Integer> newTranSet = new HashMap<Transition, Integer>();
 		for(int y = 1; y <= newLpnTranCnt; y++) {
-			LPNTran tran_y = newZone.enabledSet.getKey(y);
-			newZone.dbm.assign(0, y, tran_y.getDelayUB());
+			Transition tran_y = newZone.enabledSet.getKey(y);
+			// TODO: Get the upper/lower bound of our LPN delay
+			//newZone.dbm.assign(0, y, tran_y.getDelayUB());
 			newTranSet.put(tran_y, y);
 			if(this.enabledSet.containsKey(tran_y)==false || tran_y == firedTran) {
 				newTranList.addLast(tran_y);
@@ -319,8 +328,9 @@ public class Zone1 {
 		 * Zone normalization
 		 */
 		for(int i = 1; i <= newLpnTranCnt; i++) {
-			LPNTran tran = newZone.enabledSet.getKey(i);
-			int premax = tran.getDelayUB()==INFINITY ? tran.getDelayLB() : tran.getDelayUB();
+			Transition tran = newZone.enabledSet.getKey(i);
+			// TODO: Get the upper/lower bound of our LPN delay
+			int premax = 3; //tran.getDelayUB()==INFINITY ? tran.getDelayLB() : tran.getDelayUB();
 			int delta = newZone.dbm.value(i, 0) + premax;
 			if(delta >= 0)
 				continue;
@@ -336,13 +346,15 @@ public class Zone1 {
 		
 		LinkedList<Integer> fixup = new LinkedList<Integer>();
 		for(int i = 1; i <= newLpnTranCnt; i++) {
-			LPNTran tran_i = newZone.enabledSet.getKey(i);
-			int premax_i = tran_i.getDelayUB()==INFINITY ? tran_i.getDelayLB() : tran_i.getDelayUB();
+			Transition tran_i = newZone.enabledSet.getKey(i);
+			// TODO: Get the upper/lower bound of our LPN delay
+			int premax_i = 3; //tran_i.getDelayUB()==INFINITY ? tran_i.getDelayLB() : tran_i.getDelayUB();
 			if(newZone.dbm.value(0, i) > premax_i) {
 				int t = premax_i;
 				for(int j = 1; j <= newLpnTranCnt; j++) {
-					LPNTran tran_j = newZone.enabledSet.getKey(j);
-					int premax_j = tran_j.getDelayUB()==INFINITY ? tran_j.getDelayLB() : tran_j.getDelayUB();
+					Transition tran_j = newZone.enabledSet.getKey(j);
+					// TODO: Get the upper/lower bound of our LPN delay
+					int premax_j = 3; //tran_j.getDelayUB()==INFINITY ? tran_j.getDelayLB() : tran_j.getDelayUB();
 					int min = newZone.dbm.value(0, j) < premax_j ? newZone.dbm.value(0, j) : premax_j;
 					int new_max = min - newZone.dbm.value(i, j);
 					if(new_max > t)
@@ -377,7 +389,7 @@ public class Zone1 {
 		int arraySize = enabledArray.length;
         Zone1[] subZoneArray = new Zone1[arraySize];
         
-        HashMap<LinkedList<LPNTran>, Integer> timeSepSet = new HashMap<LinkedList<LPNTran>, Integer>();
+        HashMap<LinkedList<Transition>, Integer> timeSepSet = new HashMap<LinkedList<Transition>, Integer>();
         
         /*
          * Create the local zones and initialize their local enabledSet.
@@ -389,10 +401,10 @@ public class Zone1 {
         	}
         	
     		Zone1 curSubZone = new Zone1();
-    		curSubZone.enabledSet = new DualHashMap<LPNTran, Integer>();
+    		curSubZone.enabledSet = new DualHashMap<Transition, Integer>();
     		int tranIdx = 1;
-    		LPNTran curFirstTran = enabledArray[curIdx].getFirst();
-    		for(LPNTran curTran : enabledArray[curIdx]) 
+    		Transition curFirstTran = enabledArray[curIdx].getFirst();
+    		for(Transition curTran : enabledArray[curIdx]) 
     			curSubZone.enabledSet.insert(curTran, tranIdx++);
     		
     		/*
@@ -403,7 +415,7 @@ public class Zone1 {
     		for(int x = 0; x <= localDim; x++) {
     			int g_x = 0;
     			if(x > 0) {
-    				LPNTran x_tran = curSubZone.enabledSet.getKey(x);
+    				Transition x_tran = curSubZone.enabledSet.getKey(x);
     				g_x = this.enabledSet.getValue(x_tran);
     			}
         		for(int y = 0; y <= localDim; y++) {
@@ -412,7 +424,7 @@ public class Zone1 {
         			
         			int g_y = 0;
         			if(y > 0) {
-        				LPNTran y_tran = curSubZone.enabledSet.getKey(y);
+        				Transition y_tran = curSubZone.enabledSet.getKey(y);
         				g_y = this.enabledSet.getValue(y_tran);
         			}
         			
@@ -469,9 +481,9 @@ public class Zone1 {
 					continue;
 				
 				boolean first_j = true;
-				for(LPNTran tran_i : enabledArray[i]) {
+				for(Transition tran_i : enabledArray[i]) {
 					int m_i = this.enabledSet.getValue(tran_i);
-					for(LPNTran tran_j : enabledArray[j]) {
+					for(Transition tran_j : enabledArray[j]) {
 						int m_j = this.enabledSet.getValue(tran_j);
 //						if(first_j) {
 //							first_j = false;
@@ -512,8 +524,9 @@ public class Zone1 {
 	 * 
 	 * @param initEnSet
 	 */
-	public boolean checkTiming(LPNTran curTran) {
-		int curTranDelayLB = curTran.getDelayLB();
+	public boolean checkTiming(Transition curTran) {
+		// TODO: Get the upper/lower bound of our LPN delay
+		int curTranDelayLB = 3; // curTran.getDelayLB();
 		if (curTranDelayLB == 0) {
             return true;
         }
@@ -533,7 +546,7 @@ public class Zone1 {
 		return this.dbm.subset(other.dbm);
 	}
 	
-	public DualHashMap<LPNTran, Integer> getEnabledSet() {
+	public DualHashMap<Transition, Integer> getEnabledSet() {
 		return this.enabledSet;
 	}
 	
