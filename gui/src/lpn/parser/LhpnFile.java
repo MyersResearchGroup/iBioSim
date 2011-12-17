@@ -22,6 +22,8 @@ public class LhpnFile {
 	protected HashMap<String, Transition> transitions;
 
 	protected HashMap<String, Place> places;
+	
+	protected HashMap<String, Integer> placesIndices;
 
 	protected HashMap<String, Variable> booleans;
 
@@ -54,8 +56,10 @@ public class LhpnFile {
 		integers = new HashMap<String, Variable>();
 		variables = new ArrayList<Variable>();
 		properties = new ArrayList<String>();
+		// TODO: (temp) Set the index of LPN to 0.
+		index = 0;
 	}
-
+	
 	public LhpnFile() {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
@@ -70,8 +74,9 @@ public class LhpnFile {
 		integers = new HashMap<String, Variable>();
 		variables = new ArrayList<Variable>();
 		properties = new ArrayList<String>();
+		index = 0;
 	}
-
+	
 	public void save(String filename) {
 		try {
 			String file = filename;
@@ -242,6 +247,7 @@ public class LhpnFile {
 				}
 				buffer.append("\n");
 			}
+			// TODO: (?) Need to save placesIndices? 
 			if (!booleans.isEmpty()) {
 				flag = false;
 				for (i = 0; i < boolOrder.size(); i++) {
@@ -608,7 +614,9 @@ public class LhpnFile {
 	}
 
 	public void addTransition(String name) {
-		Transition trans = new Transition(name, variables, this);
+		//Transition trans = new Transition(name, variables, this);
+		// TODO: (temp) Set the local flag to true
+		Transition trans = new Transition(name, index++, variables, this, true);
 		transitions.put(name, trans);
 	}
 
@@ -803,6 +811,14 @@ public class LhpnFile {
 		return transitionList;
 	}
 	
+	public Transition[] getAllTransitions() {
+		Transition[] allTransitions = new Transition[transitions.size()];
+		for (String t: transitions.keySet()) {
+			allTransitions[transitions.get(t).getIndex()] = transitions.get(t);
+		}
+		return allTransitions;
+	}
+	
 	public ArrayList<String> getTransitionListArrayList() {
 		ArrayList<String> transitionList = new ArrayList<String>(transitions.size());
 		int i = 0;
@@ -894,7 +910,7 @@ public class LhpnFile {
 		return placeList;
 	}
 	
-	public ArrayList<String> getPlaceListArrayList() {
+	public ArrayList<String> getAllPlaces() {
 		ArrayList<String> placeList = new ArrayList<String>(places.size());
 		int i = 0;
 		for (String t: places.keySet()) {
@@ -902,7 +918,20 @@ public class LhpnFile {
 		}
 		return placeList;
 	}
-
+	
+	// TODO: (temp) Create a hash map between the names and index of all places
+	/*
+	public HashMap<String, Integer> createPlaceIndexList() {
+		HashMap<String, Integer> placeIndexList = new HashMap<String, Integer>();
+		int i = 0;
+		for (String placeName : places.keySet()) {
+			placeIndexList.put(placeName, i);
+			i++;
+		}
+		return placeIndexList;
+	}
+	*/
+	
 	public Place getPlace(String place) {
 		return places.get(place);
 	}
@@ -927,6 +956,27 @@ public class LhpnFile {
 		}
 	}
 
+	public int[] getPresetIndex(String name) {
+		if (isTransition(name)) {
+			int[] preset = new int[transitions.get(name).getPreset().length];
+			int i = 0;
+			for (Place p : transitions.get(name).getPreset()) {
+				preset[i++] = this.getAllPlaces().indexOf(p.getName());
+			}
+			return preset;
+		}
+		else if (places.containsKey(name)) {
+			int[] preset = new int[places.get(name).getPreset().length];
+			int i = 0;
+			for (Transition t : places.get(name).getPreset()) {
+				preset[i++] = t.getIndex();
+			}
+			return preset;
+		} else {
+			return null;
+		}
+	}
+	
 	public String[] getPostset(String name) {
 		if (isTransition(name)) {
 			String[] postset = new String[transitions.get(name).getPostset().length];
@@ -946,7 +996,29 @@ public class LhpnFile {
 			return null;
 		}
 	}
-
+	
+	public int[] getPostsetIndex(String name) {
+		if (isTransition(name)) {
+			int[] postset = new int[transitions.get(name).getPostset().length];
+			int i = 0;
+			for (Place p : transitions.get(name).getPostset()) {
+				if (this.getAllPlaces().contains(p.getName()))
+					postset[i++] = this.getAllPlaces().indexOf(p.getName());
+			}
+			return postset;
+		}
+		else if (places.containsKey(name)) {
+			int[] postset = new int[places.get(name).getPostset().length];
+			int i = 0;
+			for (Transition t : places.get(name).getPostset()) {
+				postset[i++] = t.getIndex();
+			}
+			return postset;
+		} else {
+			return null;
+		}
+	}
+	
 	public String[] getControlFlow() {
 		ArrayList<String> movements = new ArrayList<String>();
 		for (Transition t : transitions.values()) {
@@ -965,11 +1037,48 @@ public class LhpnFile {
 		return array;
 	}
 
+	public boolean[] getInitEnabledTranArray(int[] initialVector) {
+		boolean[] initEnabledTrans = new boolean[getAllTransitions().length];
+		for (int i=0; i< getAllTransitions().length; i++) {
+			Transition transition = getAllTransitions()[i];
+			Place[] tranPreset = transitions.get(transition.getName()).getPreset(); 
+			String tranName = transition.getName();
+			boolean presetNotMarked = false;
+			if (getPreset(tranName) != null && getPreset(tranName).length != 0) {
+				for (int j=0; j<tranPreset.length; j++) {
+					if (!tranPreset[j].isMarked()) {
+						initEnabledTrans[i] = false;
+						presetNotMarked = true;
+						break;
+					}
+				}
+			}
+			if (presetNotMarked) {
+				presetNotMarked = false;
+				continue;
+			}
+			else {
+				if (getEnablingTree(tranName) != null && getEnablingTree(tranName).evaluateExpr(getAllVarsAndValues(initialVector)) == 0.0) {
+					initEnabledTrans[i] = false;
+					continue;
+				}
+				else if (getTransitionRateTree(tranName) != null && getTransitionRateTree(tranName).evaluateExpr(getAllVarsAndValues(initialVector)) == 0.0) {
+					initEnabledTrans[i] = false;
+					continue;
+				}
+				else {
+					initEnabledTrans[i] = true;
+				}
+			}			
+		}
+		return initEnabledTrans;
+	}
+	
 	public boolean getInitialMarking(String place) {
 		return places.get(place).isMarked();
 	}
 
-	public int[] getInitalMarkingsArray() {
+	public int[] getInitialMarkingsArray() {
 		int[] initialMarkings = new int[this.getPlaceList().length];
 		int i = 0;
 		for (String place : this.getPlaceList()) {
@@ -979,6 +1088,7 @@ public class LhpnFile {
 			else {
 				initialMarkings[i] = 0;
 			}
+			i++;
 		}
 		return initialMarkings;
 	}
@@ -993,15 +1103,27 @@ public class LhpnFile {
 	}
 	
 	public DualHashMap<String, Integer> getVarIndexMap() {
-		DualHashMap<String, Integer> varIndexMap = new DualHashMap<String, Integer>(variables.size());
 		int i = 0;
+		HashMap<String, Integer> varIndexHashMap = new HashMap<String, Integer>();
 		for (Variable v: variables) {
-			varIndexMap.put(v.getName(), i);
+			varIndexHashMap.put(v.getName(), i);
 			i++;
 		}
+		DualHashMap<String, Integer> varIndexMap = new DualHashMap<String, Integer>(varIndexHashMap, variables.size());
 		return varIndexMap;
 	}
-
+	
+	public HashMap<String, String> getAllVarsAndValues(int[] varValueVector) {
+		DualHashMap<String, Integer> varIndexMap = getVarIndexMap();
+		HashMap<String, String> varToValueMap = new HashMap<String, String>();
+		// varValue is map between variable names and their values. 
+		for (int i = 0; i < varValueVector.length; i++) {
+			String var = varIndexMap.getKey(i);
+			varToValueMap.put(var, varValueVector[i] + "");
+		}	
+		return varToValueMap;
+	}
+	
 	public Variable getVariable(String name) {
 		if (isBoolean(name)) {
 			return booleans.get(name);
@@ -1178,7 +1300,11 @@ public class LhpnFile {
 			return null;
 	}
 	
-	// This method converts all variable values (boolean, continuous and integer) to int.
+	/** 
+	 * This method converts all variable values (boolean, continuous and integer) to int.
+	 * @param var
+	 * @return
+	 */
 	public int getInitVector(String var) {
 		if (isBoolean(var)) {
 			if(booleans.get(var).getInitValue().equals("true"))
