@@ -3,6 +3,8 @@ package lpn.parser;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 
 public class Transition {
@@ -46,10 +48,39 @@ public class Transition {
 	private HashMap<String, ExprTree> rateAssignTrees;
 
 	private LhpnFile lhpn;
+	
+	private int index;
+	
+	// TODO: (temp) Set local here.
+	private boolean local = true;
+	
+	private int[] presetIndex;
+	
+	private int[] postsetIndex;
+	
+	// TODO: Sort LPNs that share variables in the assignedVarSet of this transition. 
+	public List<LhpnFile> dstLpnList = new ArrayList<LhpnFile>();
 
 	public Transition(String name, ArrayList<Variable> variables, LhpnFile lhpn) {
 		this.name = name;
 		this.lhpn = lhpn;
+		preset = new ArrayList<Place>();
+		postset = new ArrayList<Place>();
+		boolAssignments = new HashMap<String, String>();
+		boolAssignTrees = new HashMap<String, ExprTree>();
+		intAssignments = new HashMap<String, String>();
+		intAssignTrees = new HashMap<String, ExprTree>();
+		contAssignments = new HashMap<String, String>();
+		contAssignTrees = new HashMap<String, ExprTree>();
+		rateAssignments = new HashMap<String, String>();
+		rateAssignTrees = new HashMap<String, ExprTree>();
+	}
+	
+	public Transition(String name, int index, ArrayList<Variable> variables, LhpnFile lhpn, boolean local) {
+		this.name = name;
+		this.lhpn = lhpn;
+		this.index = index;
+		this.local = local;
 		preset = new ArrayList<Place>();
 		postset = new ArrayList<Place>();
 		boolAssignments = new HashMap<String, String>();
@@ -187,6 +218,10 @@ public class Transition {
 	public void setFail(boolean fail) {
 		this.fail = fail;
 	}
+	
+	public void setIndex(int idx) {
+    	this.index = idx;
+    }
 
 	public void setPersistent(boolean persistent) {
 		this.persistent = persistent;
@@ -235,6 +270,10 @@ public class Transition {
 		return false;
 	}
 
+	public int getIndex() {
+    	return this.index;
+    }
+	
 	public String getName() {
 		return name;
 	}
@@ -316,10 +355,21 @@ public class Transition {
 				}
 			}
 		}
-		return conflictSet;
-		
-		
+		return conflictSet;	
 	}
+	
+	public Set<Integer> getConflictSetTransIndices() {
+		Set<Integer> conflictSet = new HashSet<Integer>();
+		for (Place p : getPreset()) {
+			for (Transition t : p.getPostset()) {
+				if (!this.toString().equals(t.toString())) {
+					conflictSet.add(t.getIndex());
+				}
+			}
+		}
+		return conflictSet;	
+	}
+
 
 	public String getEnabling() {
 		return enabling;
@@ -679,4 +729,50 @@ public class Transition {
 	public void changeName(String newName) {
 		name = newName;
 	}
+
+	// TODO: (Check) Methods below are copied from LPNTran.
+    /**
+     * @return LPN object containing this LPN transition.
+     */
+    public LhpnFile getLpn() {
+        return lhpn;
+    }
+
+	/**
+     * @param lpn - Associated LPN containing this LPN transition.
+     */
+	public void setLpn(LhpnFile lpn) {
+        this.lhpn = lpn;
+    }
+
+	public boolean local() {
+		// TODO (!) Returns true if LPNTran only modifies non-output variables.
+		return true;
+	}
+	
+	public List<LhpnFile> getDstLpnList(){
+    	return this.dstLpnList;
+    }
+    
+    public void addDstLpn(LhpnFile lpn){
+    	this.dstLpnList.add(lpn);
+    }
+    
+    public String getFullLabel() {
+    	return this.lhpn.getLabel() + ":" + this.name;
+    }
+
+	public Transition disablingError(LinkedList<Transition> curEnabled_l,
+			LinkedList<Transition> nextEnabled) {
+		// TODO (??) Search for disabled transitions
+		return null;
+	}
+
+
+	/* Maybe copy method below is not needed.
+	public Transition copy(HashMap<String, VarNode> variables){
+    	return new Transition(this.name, this.index, this.preset, this.postset, this.enablingGuard.copy(variables), 
+    			this.assignments.copy(variables), this.delayLB, this.delayUB, this.local);
+    }
+	*/
 }

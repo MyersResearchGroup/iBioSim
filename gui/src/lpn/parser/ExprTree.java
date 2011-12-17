@@ -4189,7 +4189,8 @@ public class ExprTree {
 						|| variables.get(variable).toLowerCase().equals(
 								"unknown"))
 					return Double.NaN;
-				if (variables.get(variable).toLowerCase().equals("true")) {
+				if (variables.get(variable).toLowerCase().equals("true") ||
+					variables.get(variable).equals("1")) {
 					return 1.0;
 				} else {
 					return 0.0;
