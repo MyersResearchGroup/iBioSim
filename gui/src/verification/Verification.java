@@ -4,6 +4,7 @@ import javax.swing.*;
 
 import verification.platu.project.Project;
 import verification.platu.stategraph.StateGraph;
+import verification.timed_state_exploration.StateExploration;
 
 import biomodel.gui.PropertyList;
 import biomodel.util.Utility;
@@ -13,6 +14,7 @@ import java.awt.event.*;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -52,7 +54,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	public JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify,
 			vergate, orbits, search, trace, bdd, dbm, smt, untimedStateSearch, untimedPOR, lhpn, view, none,
-			simplify, abstractLhpn;
+			simplify, abstractLhpn, dbm2;
 
 	private JCheckBox abst, partialOrder, dot, verbose, graph, genrg,
 			timsubset, superset, infopt, orbmatch, interleav, prune, disabling,
@@ -193,11 +195,13 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			bdd = new JRadioButton("BDD");
 			dbm = new JRadioButton("DBM");
 			smt = new JRadioButton("SMT");
+			dbm2 = new JRadioButton("DBM2");
 			untimedStateSearch = new JRadioButton("UntimedStateSearch");
 			untimedPOR = new JRadioButton("UntimedPOR");
 			bdd.addActionListener(this);
 			dbm.addActionListener(this);
 			smt.addActionListener(this);
+			dbm2.addActionListener(this);
 		}
 		lhpn = new JRadioButton("LPN");
 		view = new JRadioButton("View");
@@ -296,6 +300,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			timingMethodGroup.add(bdd);
 			timingMethodGroup.add(dbm);
 			timingMethodGroup.add(smt);
+			timingMethodGroup.add(dbm2);
 			timingMethodGroup.add(untimedStateSearch);
 			timingMethodGroup.add(untimedPOR);
 		} else {
@@ -327,6 +332,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			timingRadioPanel.add(bdd);
 			timingRadioPanel.add(dbm);
 			timingRadioPanel.add(smt);
+			timingRadioPanel.add(dbm2);
 			timingRadioPanel.add(untimedStateSearch);
 			timingRadioPanel.add(untimedPOR);
 		} else {
@@ -1003,6 +1009,14 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		lhpnFile.load(directory + separator + lpnFile);
 		Abstraction abstraction = lhpnFile.abstractLhpn(this);
 		String abstFilename;
+		if(dbm2.isSelected())
+		{
+			try {
+				verification.timed_state_exploration.StateExploration.findStateGraph(lhpnFile, directory+separator, lpnFile);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		}
 		if (lhpn.isSelected()) {
 			abstFilename = (String) JOptionPane.showInputDialog(this,
 					"Please enter the file name for the abstracted LPN.",

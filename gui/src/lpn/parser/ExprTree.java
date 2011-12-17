@@ -4410,5 +4410,20 @@ public class ExprTree {
 	private static final int END_OF_STRING = 2;
 
 	private static final int INFIN = 2147483647;
+	
+	public String getOp()
+	{
+		return op;
+	}
+	
+	public ExprTree getLeftChild()
+	{
+		return r1;
+	}
+	
+	public ExprTree getRightChild()
+	{
+		return r2;
+	}
 
 }
