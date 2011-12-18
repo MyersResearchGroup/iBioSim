@@ -404,7 +404,7 @@ public class StateGraph {
         }
     	
     	if(enabledSetTbl.containsKey(curState) == true){
-    		printCurState(curState);
+    		//printCurState(curState);
             return (LpnTranList)enabledSetTbl.get(curState).clone();
         }
     	
@@ -418,7 +418,7 @@ public class StateGraph {
                 	curEnabled.addFirst(tran);
              } 
         }
-        printCurState(curState);
+        //printCurState(curState);
         
         this.enabledSetTbl.put(curState, curEnabled);
         return curEnabled;
@@ -467,13 +467,13 @@ public class StateGraph {
         }
         // Apply POR with traceback here.
         HashSet<Integer> ready = new HashSet<Integer>();
-        //System.out.println("********************");
-		//System.out.println("Begin POR:");
+//        System.out.println("********************");
+//		System.out.println("Begin POR:");
         ready = partialOrderReduction(curState, curEnabledIndices, applyPOR, disable, disableByStealingToken, enable); 
-        //printIntegerSet(curEnabledIndices, "Enabled set");
-        //printIntegerSet(ready, "Ready set");
-        //System.out.println("End POR");
-		//System.out.println("********************");
+//        printIntegerSet(curEnabledIndices, "Enabled set");
+//        printIntegerSet(ready, "Ready set");
+//        System.out.println("End POR");
+//		System.out.println("********************");
         Object[] readyArray = ready.toArray();
         for (int i=0; i < readyArray.length; i++) {      	
         	Transition tran = this.lpn.getAllTransitions()[(Integer) readyArray[i]];
@@ -554,6 +554,7 @@ public class StateGraph {
 		return dependent;
 	}
 
+	@SuppressWarnings("unchecked")
 	private HashSet<Integer> getNecessarySet(State curState,
 			Integer tran, HashSet<Integer> dependent,
 			HashSet<Integer> curEnabled,
@@ -1001,6 +1002,10 @@ public class StateGraph {
     	boolean[] enabledTranAfterFiring = enabledTranBeforeFiring.clone();
 		// firedTran is disabled
         enabledTranAfterFiring[firedTran.getIndex()] = false;
+        for (Iterator<Integer> conflictIter = firedTran.getConflictSetTransIndices().iterator(); conflictIter.hasNext();) {
+        	Integer curConflictingTranIndex = conflictIter.next();
+        	enabledTranAfterFiring[curConflictingTranIndex] = false;
+        }
         // find newly enabled transition(s) based on the updated markings and variables
         for (Transition tran : this.lpn.getAllTransitions()) {
         	boolean needToUpdate = true;
