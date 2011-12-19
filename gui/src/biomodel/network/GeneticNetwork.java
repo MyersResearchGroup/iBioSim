@@ -678,8 +678,8 @@ public class GeneticNetwork {
 					LocalParameter kmdiff_f = reaction.getKineticLaw().getLocalParameter("kmdiff_f");
 					String speciesID = reaction.getReactant(0).getSpecies();
 					
-					Parameter parameter_r = new Parameter(kmdiff_r);
-					Parameter parameter_f = new Parameter(kmdiff_f);
+					Parameter parameter_r = document.getModel().createParameter();
+					Parameter parameter_f = document.getModel().createParameter();
 					
 					parameter_r.setId(componentID + "__" + speciesID + "__kmdiff_r");
 					parameter_f.setId(componentID + "__" + speciesID + "__kmdiff_f");
@@ -687,9 +687,8 @@ public class GeneticNetwork {
 					parameter_f.setName("Forward membrane diffusion rate");
 					parameter_r.setConstant(true);
 					parameter_f.setConstant(true);
-					
-					document.getModel().addParameter(parameter_r);
-					document.getModel().addParameter(parameter_f);
+					parameter_r.setValue(kmdiff_r.getValue());
+					parameter_f.setValue(kmdiff_f.getValue());
 				}
 			}
 		}

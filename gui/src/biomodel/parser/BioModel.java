@@ -3103,7 +3103,7 @@ public class BioModel {
 				newSpecies.setBoundaryCondition(specToAdd.getBoundaryCondition());
 				newSpecies.setConstant(specToAdd.getConstant());
 				newSpecies.setHasOnlySubstanceUnits(specToAdd.getHasOnlySubstanceUnits());
-				newSpecies.setCompartment(specToAdd.getCompartment());
+				newSpecies.setCompartment(getEnclosingCompartment());
 			}
 		}
 		
