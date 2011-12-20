@@ -6950,13 +6950,13 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				if (LPN2SBML) {
 					popup.add(createAnalysis);
 				}
+				if (atacs || lema) {
+					popup.add(createVerification);
+				}
 				if (lema) {
 					popup.add(createLearn);
 					popup.addSeparator();
 					popup.add(viewModel);
-				}
-				if (atacs || lema) {
-					popup.add(createVerification);
 				}
 				// popup.add(createAnalysis); // TODO
 				// popup.add(viewStateGraph);
