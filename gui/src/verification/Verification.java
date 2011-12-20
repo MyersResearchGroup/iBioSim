@@ -192,12 +192,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			bap.addActionListener(this);
 			baptdc.addActionListener(this);
 		} else {
+			untimedStateSearch = new JRadioButton("Untimed");
+			untimedPOR = new JRadioButton("UntimedPOR");
 			bdd = new JRadioButton("BDD");
 			dbm = new JRadioButton("DBM");
 			smt = new JRadioButton("SMT");
 			dbm2 = new JRadioButton("DBM2");
-			untimedStateSearch = new JRadioButton("UntimedStateSearch");
-			untimedPOR = new JRadioButton("UntimedPOR");
 			bdd.addActionListener(this);
 			dbm.addActionListener(this);
 			smt.addActionListener(this);
@@ -297,12 +297,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		abstractionGroup.add(simplify);
 		abstractionGroup.add(abstractLhpn);
 		if (lema) {
+			timingMethodGroup.add(untimedStateSearch);
+			timingMethodGroup.add(untimedPOR);
 			timingMethodGroup.add(bdd);
 			timingMethodGroup.add(dbm);
 			timingMethodGroup.add(smt);
 			timingMethodGroup.add(dbm2);
-			timingMethodGroup.add(untimedStateSearch);
-			timingMethodGroup.add(untimedPOR);
 		} else {
 			timingMethodGroup.add(untimed);
 			timingMethodGroup.add(geometric);
@@ -329,12 +329,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		abstractionPanel.add(abstractLhpn);
 		timingRadioPanel.add(timingMethod);
 		if (lema) {
+			timingRadioPanel.add(untimedStateSearch);
+			timingRadioPanel.add(untimedPOR);
 			timingRadioPanel.add(bdd);
 			timingRadioPanel.add(dbm);
 			timingRadioPanel.add(smt);
 			timingRadioPanel.add(dbm2);
-			timingRadioPanel.add(untimedStateSearch);
-			timingRadioPanel.add(untimedPOR);
 		} else {
 			timingRadioPanel.add(untimed);
 			timingRadioPanel.add(geometric);
