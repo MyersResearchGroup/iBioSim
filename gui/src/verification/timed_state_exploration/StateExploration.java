@@ -86,6 +86,8 @@ public class StateExploration {
 			
 			
 		printDotFile(statesFound, dotFile);
+		dotFile.close();
+		logFile.close();
 		
 	}
 	
