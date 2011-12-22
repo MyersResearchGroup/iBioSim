@@ -225,7 +225,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 
 	private String[] BioModelIds = null;
 
-	private JMenuItem copy, rename, delete, save, saveAs, saveSBOL, saveSchematic, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog, viewCoverage,
+	private JMenuItem copy, rename, delete, save, saveAs, saveSBOL, check, run, refresh, viewCircuit, viewRules, viewTrace, viewLog, viewCoverage,
 			viewLHPN, saveModel, saveAsVerilog, viewSG, viewModGraph, viewLearnedModel, viewModBrowser, createAnal, createLearn, createSbml,
 			createSynth, createVer, close, closeAll;
 
@@ -502,7 +502,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		run = new JMenuItem("Save and Run");
 		check = new JMenuItem("Save and Check");
 		saveSBOL = new JMenuItem("Save SBOL");
-		saveSchematic = new JMenuItem("Print Schematic");
 		refresh = new JMenuItem("Refresh");
 		viewCircuit = new JMenuItem("Circuit");
 		viewRules = new JMenuItem("Production Rules");
@@ -576,7 +575,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		save.addActionListener(this);
 		saveAs.addActionListener(this);
 		saveSBOL.addActionListener(this);
-		saveSchematic.addActionListener(this);
 		run.addActionListener(this);
 		check.addActionListener(this);
 		refresh.addActionListener(this);
@@ -599,7 +597,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		save.setActionCommand("save");
 		saveAs.setActionCommand("saveas");
 		saveSBOL.setActionCommand("saveSBOL");
-		saveSchematic.setActionCommand("saveSchematic");
 		run.setActionCommand("run");
 		check.setActionCommand("check");
 		refresh.setActionCommand("refresh");
@@ -631,7 +628,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else {
 			check.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_K, ShortCutKey));
 			saveSBOL.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, ShortCutKey | KeyEvent.ALT_MASK));
-			saveSchematic.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, ShortCutKey | KeyEvent.ALT_MASK));
 			refresh.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5, 0));
 			newGCMModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, ShortCutKey));
 			newGridModel.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_G, ShortCutKey | KeyEvent.ALT_MASK));
@@ -764,7 +760,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		saveModel.setEnabled(false);
 		saveAs.setEnabled(false);
 		saveSBOL.setEnabled(false);
-		saveSchematic.setEnabled(false);
 		run.setEnabled(false);
 		check.setEnabled(false);
 		refresh.setEnabled(false);
@@ -835,7 +830,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		else {
 			file.addSeparator();
 			file.add(refresh);
-			file.add(saveSchematic);
 		}
 		if (lema) {
 			file.add(saveModel);
@@ -2308,12 +2302,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				((ModelEditor) comp).saveSBOL();
 			}
 		}
-		else if (e.getSource() == saveSchematic) {
-			Component comp = tab.getSelectedComponent();
-			if (comp instanceof ModelEditor) {
-				((ModelEditor) comp).saveSchematic();
-			}
-		}
 		else if (e.getSource() == exportCsv) {
 			Component comp = tab.getSelectedComponent();
 			if (comp instanceof Graph) {
@@ -2393,18 +2381,18 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			
 			Component comp = tab.getSelectedComponent();
 			
-			if (comp instanceof MovieContainer) {
+			if (comp instanceof JTabbedPane) {
 				
-				((MovieContainer) comp).outputMovie();
+				((MovieContainer) ((JTabbedPane) comp).getSelectedComponent()).outputMovie("avi");
 			}
 		}
 		else if (e.getSource() == exportMp4) {
 			
 			Component comp = tab.getSelectedComponent();
 			
-			if (comp instanceof MovieContainer) {
+			if (comp instanceof JTabbedPane) {
 				
-				((MovieContainer) comp).outputMovie();
+				((MovieContainer) ((JTabbedPane) comp).getSelectedComponent()).outputMovie("mp4");
 			}
 		}
 		else if (e.getSource() == about) {
@@ -9019,7 +9007,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		save.setEnabled(false);
 		saveAs.setEnabled(false);
 		saveSBOL.setEnabled(false);
-		saveSchematic.setEnabled(false);
 		saveModel.setEnabled(false);
 		run.setEnabled(false);
 		check.setEnabled(false);
@@ -9058,7 +9045,6 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			save.setEnabled(true);
 			saveAs.setEnabled(true);
 			saveSBOL.setEnabled(true);
-			saveSchematic.setEnabled(true);
 			check.setEnabled(true);
 			exportMenu.setEnabled(true);
 			exportSBML.setEnabled(true);
