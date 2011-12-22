@@ -2,6 +2,7 @@ package biomodel.gui.movie;
 
 
 import main.Gui;
+import main.util.ExampleFileFilter;
 import main.util.Utility;
 import main.util.dataparser.TSDParser;
 
@@ -20,6 +21,7 @@ import com.google.gson.Gson;
 
 import java.awt.BorderLayout;
 import java.awt.Cursor;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -41,6 +43,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
@@ -70,19 +73,18 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private TSDParser parser;
 	private Timer playTimer;
 	private MovieScheme movieScheme;
-	private int initialSliderValue;
 	
 	private boolean isUIInitialized;
 	private boolean isDirty = false;
 	private String outputFilename = "";
 	
 	//movie toolbar/UI elements
+	private JToolBar movieToolbar;
 	private JButton fileButton;
 	private JButton playPauseButton;
 	private JButton rewindButton;
 	private JButton singleStepButton;
 	private JButton clearButton;
-	private JToggleButton movieButton;
 	private JSlider slider;
 	
 	
@@ -211,89 +213,32 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 */
 	private void addPlayUI(){
 		// Add the bottom menu bar
-		JToolBar mt = new JToolBar();
+		movieToolbar = new JToolBar();
 		
 		fileButton = Utils.makeToolButton("", "choose_simulation_file", "Choose Simulation", this);
-		mt.add(fileButton);
+		movieToolbar.add(fileButton);
 		
 		clearButton = Utils.makeToolButton("", "clearAppearances", "Clear Appearances", this);
-		mt.add(clearButton);
+		movieToolbar.add(clearButton);
 		
-		movieButton = new JToggleButton("Make Movie");
-		movieButton.addActionListener(new ActionListener() {
-
-			public void actionPerformed(ActionEvent event) {
-				
-				if (movieButton.isSelected()) {
-					
-					if(parser == null){
-						JOptionPane.showMessageDialog(Gui.frame, "Must first choose a simulation file.");
-						movieButton.setSelected(false);
-					} 
-					else {
-
-						outputFilename = Utility.browse(Gui.frame, null, null, JFileChooser.FILES_ONLY, "Save Movie", -1);
-						
-						if (outputFilename == null || outputFilename.length() == 0) {
-							
-							movieButton.setSelected(false);
-							return;
-						}
-						
-						movieButton.setText("Stop Movie");
-						pause();
-						playPauseButtonPress();
-						initialSliderValue = slider.getValue();
-						
-						//disable all buttons and stuff
-						fileButton.setEnabled(false);
-						playPauseButton.setEnabled(false);
-						rewindButton.setEnabled(false);
-						singleStepButton.setEnabled(false);
-						clearButton.setEnabled(false);
-						slider.setEnabled(false);
-					}
-				}
-				else {
-					
-					movieButton.setSelected(false);
-					movieButton.setText("Make Movie");
-					
-					//remove all image files
-					removeJPGs();
-					pause();
-					slider.setValue(0);					
-					
-					//enable the buttons and stuff
-					fileButton.setEnabled(true);
-					playPauseButton.setEnabled(true);
-					rewindButton.setEnabled(true);
-					singleStepButton.setEnabled(true);
-					clearButton.setEnabled(true);
-					slider.setEnabled(true);
-				}			
-			}
-		});
-		//mt.add(movieButton);
-		
-		mt.addSeparator();
+		movieToolbar.addSeparator();
 		
 		rewindButton = Utils.makeToolButton("movie" + File.separator + "rewind.png", "rewind", "Rewind", this);
-		mt.add(rewindButton);
+		movieToolbar.add(rewindButton);
 
 		singleStepButton = Utils.makeToolButton("movie" + File.separator + "single_step.png", "singlestep", "Single Step", this);
-		mt.add(singleStepButton);
+		movieToolbar.add(singleStepButton);
 		
 		playPauseButton = Utils.makeToolButton("movie" + File.separator + "play.png", "playpause", "Play", this);
-		mt.add(playPauseButton);
+		movieToolbar.add(playPauseButton);
 			
 		slider = new JSlider(SwingConstants.HORIZONTAL, 0, 100, 0);
 		slider.setSnapToTicks(true);
-		mt.add(slider);
+		movieToolbar.add(slider);
 		
-		mt.setFloatable(false);
+		movieToolbar.setFloatable(false);
 
-		this.add(mt, BorderLayout.SOUTH);
+		this.add(movieToolbar, BorderLayout.SOUTH);
 	}
 	
 	/**
@@ -302,8 +247,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 */
 	public void reloadGrid() {
 		
-		schematic.reloadGrid();
-		
+		schematic.reloadGrid();		
 	}
 	
 	
@@ -408,42 +352,10 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 */
 	private void nextFrame(){
 		
-//		//if the user wants output, print it to file
-//		if (movieButton.isSelected() && slider.getValue() > 0) {
-//			
-//			//un-zoom so that the frames print properly
-//			schematic.getGraph().getView().setScale(1.0);
-//			
-//			outputJPG(slider.getValue() - initialSliderValue);
-//						
-//			//if the simulation ends, generate the Movie file using ffmpeg
-//			//also, remove all of the image files created
-//			if (slider.getValue() + 1 >= slider.getMaximum()){
-//				
-//				//outputMovie();
-//				
-//				movieButton.setSelected(false);
-//				movieButton.setText("Make Movie");
-//				
-//				//remove all image files
-//				pause();
-//				slider.setValue(0);					
-//				
-//				//enable the buttons and stuff
-//				fileButton.setEnabled(true);
-//				playPauseButton.setEnabled(true);
-//				rewindButton.setEnabled(true);
-//				singleStepButton.setEnabled(true);
-//				clearButton.setEnabled(true);
-//				slider.setEnabled(true);
-//			}
-//		}
-		
 		slider.setValue(slider.getValue()+1);
 		
-		if (slider.getValue() >= slider.getMaximum()){			
+		if (slider.getValue() >= slider.getMaximum())		
 			pause();
-		}
 		
 		updateVisuals(true, slider.getValue());
 	}
@@ -554,6 +466,46 @@ public class MovieContainer extends JPanel implements ActionListener {
 			
 			pause();
 			
+			int startFrame = 0;
+			int endFrame = parser.getNumSamples() - 1;
+			
+			//get the start/end frames from the user
+			JPanel tilePanel;
+			JTextField startFrameChooser;
+			JTextField endFrameChooser;
+			
+			//panel that contains grid size options
+			tilePanel = new JPanel(new GridLayout(3, 2));
+			this.add(tilePanel, BorderLayout.SOUTH);
+
+			tilePanel.add(new JLabel("Start Frame"));
+			startFrameChooser = new JTextField("0");
+			tilePanel.add(startFrameChooser);
+			
+			tilePanel.add(new JLabel("End Frame"));
+			endFrameChooser = new JTextField(String.valueOf(parser.getNumSamples() - 1));
+			tilePanel.add(endFrameChooser);
+			
+			String[] options = {GlobalConstants.OK, GlobalConstants.CANCEL};
+			
+			boolean error = true;
+			
+			while (error) {
+			
+				int okCancel = JOptionPane.showOptionDialog(Gui.frame, tilePanel, "Select Frames",
+						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+		
+				//if the user clicks "ok" on the panel
+				if (okCancel == JOptionPane.OK_OPTION) {
+					
+					startFrame = Integer.valueOf(startFrameChooser.getText());
+					endFrame = Integer.valueOf(endFrameChooser.getText());
+					
+					if (endFrame < parser.getNumSamples() && startFrame >= 0)
+						error = false;
+				}
+			}
+			
 			//disable all buttons and stuff
 			fileButton.setEnabled(false);
 			playPauseButton.setEnabled(false);
@@ -562,23 +514,22 @@ public class MovieContainer extends JPanel implements ActionListener {
 			clearButton.setEnabled(false);
 			slider.setEnabled(false);
 			
-			int startFrame = 0;
-			int endFrame = parser.getNumSamples();
-			
 			//un-zoom so that the frames print properly
 			schematic.getGraph().getView().setScale(1.0);
 			
 			JPanel button = new JPanel();
 			JPanel progressPanel = new JPanel(new BorderLayout());
 			JLabel label = new JLabel("Creating movie . . .");
+			JPanel frameText = new JPanel();
 			JButton cancel = new JButton("Cancel");
 			JFrame progressFrame = new JFrame("Progress");
 			
 			JProgressBar movieProgress = new JProgressBar(0, 100);
 			movieProgress.setStringPainted(true);
 			movieProgress.setValue(0);
+			frameText.add(label);
 			button.add(cancel);
-			progressPanel.add(label, "North");
+			progressPanel.add(frameText, "North");
 			progressPanel.add(movieProgress, "Center");
 			progressPanel.add(button, "South");
 			
@@ -599,6 +550,29 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 * creates a JPG of the current graph frame
 	 */
 	public void outputJPG(int fileNumber) {
+		
+		//this prompts to save the current frame somewhere
+		if (fileNumber == -1) {
+			
+			JFileChooser fc = new JFileChooser("Save Schematic");
+			fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+			
+			ExampleFileFilter jpgFilter = new ExampleFileFilter();
+			jpgFilter.addExtension("jpg");
+			jpgFilter.setDescription("Image Files");		
+			
+			fc.addChoosableFileFilter(jpgFilter);
+			fc.setAcceptAllFileFilterUsed(false);
+			fc.setFileFilter(jpgFilter);
+			
+			int returnVal = fc.showDialog(Gui.frame, "Save Schematic");
+			
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+				
+	            File file = fc.getSelectedFile();
+	            schematic.outputFrame(file.getAbsoluteFile().toString());
+	        }
+		}
 		
 		String separator = "";
 		
@@ -762,7 +736,9 @@ public class MovieContainer extends JPanel implements ActionListener {
 		return gcm;
 	}
 
-	
+	/**
+	 * class to allow running the movie file creation in a separate thread
+	 */
 	private class MovieProgress implements Runnable {
 		
 		private JProgressBar progressBar;
@@ -787,10 +763,10 @@ public class MovieContainer extends JPanel implements ActionListener {
 				
 				updateVisuals(false, currentFrame);
 				
-				//frame numbers need to start at 000
+				//frame numbers need to start at 001
 				outputJPG(currentFrame - startFrame);
 				
-				progressBar.setValue((int) (100 * currentFrame / ((endFrame - 1) - startFrame)));
+				progressBar.setValue((int) (100 * (currentFrame - startFrame) / (endFrame - startFrame)));
 			}
 			
 			String separator = "";
@@ -859,7 +835,17 @@ public class MovieContainer extends JPanel implements ActionListener {
 			
 			//close the frame
 			progressFrame.dispose();
+			
+			//enable the movie controls again
+			fileButton.setEnabled(true);
+			playPauseButton.setEnabled(true);
+			rewindButton.setEnabled(true);
+			singleStepButton.setEnabled(true);
+			clearButton.setEnabled(true);
+			slider.setEnabled(true);
+			
+			addPlayUI();
 		}
 	}
-	
+
 }
