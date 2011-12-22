@@ -18,8 +18,8 @@ import biomodel.util.GlobalConstants;
 
 import com.google.gson.Gson;
 
-
 import java.awt.BorderLayout;
+import java.awt.Cursor;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -35,8 +35,11 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.JSlider;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
@@ -271,7 +274,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 				}			
 			}
 		});
-		mt.add(movieButton);
+		//mt.add(movieButton);
 		
 		mt.addSeparator();
 		
@@ -319,7 +322,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 			} 
 			else {
 				slider.setValue(0);
-				updateVisuals();
+				updateVisuals(true, slider.getValue());
 			}
 		}
 		else if(command.equals("playpause")){
@@ -405,36 +408,36 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 */
 	private void nextFrame(){
 		
-		//if the user wants output, print it to file
-		if (movieButton.isSelected() && slider.getValue() > 0) {
-			
-			//un-zoom so that the frames print properly
-			schematic.getGraph().getView().setScale(1.0);
-			
-			outputJPG();
-						
-			//if the simulation ends, generate the Movie file using ffmpeg
-			//also, remove all of the image files created
-			if (slider.getValue() + 1 >= slider.getMaximum()){
-				
-				outputMovie();
-				
-				movieButton.setSelected(false);
-				movieButton.setText("Make Movie");
-				
-				//remove all image files
-				pause();
-				slider.setValue(0);					
-				
-				//enable the buttons and stuff
-				fileButton.setEnabled(true);
-				playPauseButton.setEnabled(true);
-				rewindButton.setEnabled(true);
-				singleStepButton.setEnabled(true);
-				clearButton.setEnabled(true);
-				slider.setEnabled(true);
-			}
-		}
+//		//if the user wants output, print it to file
+//		if (movieButton.isSelected() && slider.getValue() > 0) {
+//			
+//			//un-zoom so that the frames print properly
+//			schematic.getGraph().getView().setScale(1.0);
+//			
+//			outputJPG(slider.getValue() - initialSliderValue);
+//						
+//			//if the simulation ends, generate the Movie file using ffmpeg
+//			//also, remove all of the image files created
+//			if (slider.getValue() + 1 >= slider.getMaximum()){
+//				
+//				//outputMovie();
+//				
+//				movieButton.setSelected(false);
+//				movieButton.setText("Make Movie");
+//				
+//				//remove all image files
+//				pause();
+//				slider.setValue(0);					
+//				
+//				//enable the buttons and stuff
+//				fileButton.setEnabled(true);
+//				playPauseButton.setEnabled(true);
+//				rewindButton.setEnabled(true);
+//				singleStepButton.setEnabled(true);
+//				clearButton.setEnabled(true);
+//				slider.setEnabled(true);
+//			}
+//		}
 		
 		slider.setValue(slider.getValue()+1);
 		
@@ -442,20 +445,18 @@ public class MovieContainer extends JPanel implements ActionListener {
 			pause();
 		}
 		
-		updateVisuals();
+		updateVisuals(true, slider.getValue());
 	}
 	
 	/**
 	 * updates the visual appearance of cells on the graph (ie, species, components, etc.)
 	 * gets called when the timer ticks
 	 */
-	private void updateVisuals(){
+	private void updateVisuals(boolean refresh, int frameIndex) {
 		
 		if(parser == null){
 			throw new Error("NoSimFileChosen");
 		}
-		
-		int frameIndex = slider.getValue();
 		
 		if(frameIndex < 0 || frameIndex > parser.getNumSamples()-1){
 			throw new Error("Invalid slider value! It is outside the data range!");
@@ -468,8 +469,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 			
 			//make sure this species has data in the TSD file
 			if (speciesTSData.containsKey(speciesID)) {
-				
-				System.err.println(speciesID);
 				
 				//get the component's appearance and send it to the graph for updating
 				MovieAppearance speciesAppearance = 
@@ -529,73 +528,77 @@ public class MovieContainer extends JPanel implements ActionListener {
 			}			
 		}
 		
-		schematic.getGraph().refresh();	
+		if (refresh)
+			schematic.getGraph().refresh();	
 	}
 
 	/**
 	 * creates an Movie using JPG frames of the simulation
 	 */
-	public void outputMovie() {
+	public void outputMovie(String movieFormat) {
 		
-		String separator = "";
-		
-		if (File.separator.equals("\\"))
-			separator = "\\\\";
-		else
-			separator = File.separator;
-		
-		String path = "";
-		String movieName = "";
+		if (parser == null){
+			
+			JOptionPane.showMessageDialog(Gui.frame, "You must first choose a simulation (tsd) file.");
+			return;
+		}
+		else {
 
-		if (outputFilename.contains(separator)) {
+			if (movieFormat.equals("mp4"))
+				outputFilename = Utility.browse(Gui.frame, null, null, JFileChooser.FILES_ONLY, "Save MP4", -1);
+			else if (movieFormat.equals("avi"))
+				outputFilename = Utility.browse(Gui.frame, null, null, JFileChooser.FILES_ONLY, "Save AVI", -1);
 			
-			path = outputFilename.substring(0, outputFilename.lastIndexOf(separator));
-			movieName = outputFilename.substring(outputFilename.lastIndexOf(separator)+1, outputFilename.length());
+			if (outputFilename == null || outputFilename.length() == 0)
+				return;
+			
+			pause();
+			
+			//disable all buttons and stuff
+			fileButton.setEnabled(false);
+			playPauseButton.setEnabled(false);
+			rewindButton.setEnabled(false);
+			singleStepButton.setEnabled(false);
+			clearButton.setEnabled(false);
+			slider.setEnabled(false);
+			
+			int startFrame = 0;
+			int endFrame = parser.getNumSamples();
+			
+			//un-zoom so that the frames print properly
+			schematic.getGraph().getView().setScale(1.0);
+			
+			JPanel button = new JPanel();
+			JPanel progressPanel = new JPanel(new BorderLayout());
+			JLabel label = new JLabel("Creating movie . . .");
+			JButton cancel = new JButton("Cancel");
+			JFrame progressFrame = new JFrame("Progress");
+			
+			JProgressBar movieProgress = new JProgressBar(0, 100);
+			movieProgress.setStringPainted(true);
+			movieProgress.setValue(0);
+			button.add(cancel);
+			progressPanel.add(label, "North");
+			progressPanel.add(movieProgress, "Center");
+			progressPanel.add(button, "South");
+			
+			progressFrame.getContentPane().add(progressPanel);
+			progressFrame.setLocationRelativeTo(null);
+			progressFrame.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+			progressFrame.pack();
+			progressFrame.setVisible(true);
+			
+			MovieProgress printMovieFrames = 
+				new MovieProgress(movieProgress, startFrame, endFrame, movieFormat, progressFrame);
+			
+			new Thread(printMovieFrames).start();
 		}
-		
-		if (movieName.contains(".")) {
-			movieName = movieName.substring(0, movieName.indexOf("."));
-		}
-		
-		String args = "";
-		
-		//if we're on windows, add "cmd" to the front of the command line argument
-		if (System.getProperty("os.name").contains("Windows")) {
-			
-			args += "cmd ";
-		}
-		
-		//args for ffmpeg
-		args +=
-			"ffmpeg " + "-y " +
-			"-r " + "5 " +
-			"-b " + "5000k " +
-			"-i " + reb2sac.getRootPath() + separator + "%09d.jpg " +
-			path + separator + movieName + ".mp4";
-		//run ffmpeg to generate the Movie movie file
-		try {					
-			Process p = Runtime.getRuntime().exec(args, null, new File(reb2sac.getRootPath()));
-			
-			String line = "";
-			
-		    BufferedReader input =
-		    	new BufferedReader(new InputStreamReader(p.getErrorStream()));
-		    
-		    while ((line = input.readLine()) != null) {
-		    	biosim.log.addText(line);
-		    }				    
-		    
-		    removeJPGs();    
-		} 
-		catch (IOException e) {
-			e.printStackTrace();
-		}		
 	}
 	
 	/**
 	 * creates a JPG of the current graph frame
 	 */
-	public void outputJPG() {
+	public void outputJPG(int fileNumber) {
 		
 		String separator = "";
 		
@@ -604,7 +607,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		else
 			separator = File.separator;
 		
-		String filenum = String.format("%09d", slider.getValue() - initialSliderValue);			
+		String filenum = String.format("%09d", fileNumber);			
 		schematic.outputFrame(reb2sac.getRootPath() + separator + filenum  + ".jpg");
 	}
 	
@@ -759,4 +762,104 @@ public class MovieContainer extends JPanel implements ActionListener {
 		return gcm;
 	}
 
+	
+	private class MovieProgress implements Runnable {
+		
+		private JProgressBar progressBar;
+		private int startFrame, endFrame;
+		private String movieFormat;
+		private JFrame progressFrame;
+		
+		public MovieProgress(JProgressBar progressBar, 
+				int startFrame, int endFrame, String movieFormat, JFrame progressFrame) {
+			
+			this.progressBar = progressBar;
+			this.startFrame = startFrame;
+			this.endFrame = endFrame;
+			this.movieFormat = movieFormat;
+			this.progressFrame = progressFrame;
+		}		
+		
+		public void run() {
+			
+			//output all frames without updating the schematic's image
+			for (int currentFrame = startFrame; currentFrame < endFrame; ++currentFrame) {
+				
+				updateVisuals(false, currentFrame);
+				
+				//frame numbers need to start at 000
+				outputJPG(currentFrame - startFrame);
+				
+				progressBar.setValue((int) (100 * currentFrame / ((endFrame - 1) - startFrame)));
+			}
+			
+			String separator = "";
+			
+			if (File.separator.equals("\\"))
+				separator = "\\\\";
+			else
+				separator = File.separator;
+			
+			String path = "";
+			String movieName = "";
+
+			if (outputFilename.contains(separator)) {
+				
+				path = outputFilename.substring(0, outputFilename.lastIndexOf(separator));
+				movieName = outputFilename.substring(outputFilename.lastIndexOf(separator)+1, outputFilename.length());
+			}
+			
+			if (movieName.contains("."))
+				movieName = movieName.substring(0, movieName.indexOf("."));
+			
+			String args = "";
+			
+			//if we're on windows, add "cmd" to the front of the command line argument
+			if (System.getProperty("os.name").contains("Windows"))				
+				args += "cmd ";
+			
+			if (movieFormat.equals("mp4")) {				
+				//args for ffmpeg
+				args +=
+					"ffmpeg " + "-y " +
+					"-r " + "5 " +
+					"-b " + "5000k " +
+					"-i " + reb2sac.getRootPath() + separator + "%09d.jpg " +
+					path + separator + movieName + ".mp4";
+			}		
+			else if (movieFormat.equals("avi")) {
+				//args for ffmpeg
+				args +=
+					"ffmpeg " + "-y " +
+					"-r " + "5 " +
+					"-vcodec " + "copy " +
+					"-b " + "5000k " +
+					"-i " + reb2sac.getRootPath() + separator + "%09d.jpg " +
+					path + separator + movieName + ".avi";
+			}		
+			
+			//run ffmpeg to generate the movie file
+			try {
+				Process p = Runtime.getRuntime().exec(args, null, new File(reb2sac.getRootPath()));
+				
+				String line = "";
+				
+			    BufferedReader input =
+			    	new BufferedReader(new InputStreamReader(p.getErrorStream()));
+			    
+			    while ((line = input.readLine()) != null) {
+			    	biosim.log.addText(line);
+			    }				    
+			    
+			    removeJPGs();    
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			//close the frame
+			progressFrame.dispose();
+		}
+	}
+	
 }

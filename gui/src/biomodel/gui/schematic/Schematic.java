@@ -1963,6 +1963,12 @@ public class Schematic extends JPanel implements ActionListener {
 		BufferedImage image = mxCellRenderer.createBufferedImage(graph, null,
 			      1, Color.WHITE, true, paddedGraphBounds);
 		
+		//put these back where they were
+		paddedGraphBounds.setWidth(paddedGraphBounds.getWidth() - 80);
+		paddedGraphBounds.setHeight(paddedGraphBounds.getHeight() - 80);
+		paddedGraphBounds.setX(paddedGraphBounds.getX() + 40);
+		paddedGraphBounds.setY(paddedGraphBounds.getY() + 40);
+		
 		try {
 			ImageIO.write(image, "jpg", out);
 		} 

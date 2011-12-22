@@ -687,8 +687,16 @@ public class GeneticNetwork {
 					parameter_f.setName("Forward membrane diffusion rate");
 					parameter_r.setConstant(true);
 					parameter_f.setConstant(true);
-					parameter_r.setValue(kmdiff_r.getValue());
-					parameter_f.setValue(kmdiff_f.getValue());
+					
+					if (kmdiff_r == null) {
+						
+						parameter_r.setValue(compModel.getParameter("kmdiff_r").getValue());
+						parameter_f.setValue(compModel.getParameter("kmdiff_f").getValue());
+					}
+					else {
+						parameter_r.setValue(kmdiff_r.getValue());
+						parameter_f.setValue(kmdiff_f.getValue());
+					}
 				}
 			}
 		}
