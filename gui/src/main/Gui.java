@@ -2335,7 +2335,11 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				((Graph) comp).export(0);
 			}
 			else if (comp instanceof JTabbedPane) {
-				((Graph) ((JTabbedPane) comp).getSelectedComponent()).export(0);
+				
+				if (((JTabbedPane) comp).getSelectedComponent().getName().equals("ModelViewMovie"))
+					((MovieContainer) ((JTabbedPane) comp).getSelectedComponent()).outputJPG(-1);
+				else				
+					((Graph) ((JTabbedPane) comp).getSelectedComponent()).export(0);
 			}
 			else if (comp instanceof ModelEditor) {				
 				((ModelEditor) comp).saveSchematic();
@@ -9184,6 +9188,8 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				exportMovieMenu.setEnabled(true);
 				exportAvi.setEnabled(true);
 				exportMp4.setEnabled(true);
+				exportImageMenu.setEnabled(true);
+				exportJpg.setEnabled(true);
 			}
 			else if (component instanceof ModelEditor) {
 				saveButton.setEnabled(true);
