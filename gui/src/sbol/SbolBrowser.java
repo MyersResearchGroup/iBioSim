@@ -33,10 +33,7 @@ public class SbolBrowser extends JPanel {
 		
 		org.sbolstandard.core.Collection lib = SbolUtility.loadXML(filePath);
 		if (lib != null) {
-			String mySeparator = File.separator;
-			if (mySeparator.equals("\\"))
-				mySeparator = "\\\\";
-			String fileId = filePath.substring(filePath.lastIndexOf(mySeparator) + 1, filePath.length());
+			String fileId = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
 			libMap.put(fileId + "/" + lib.getDisplayId(), lib);
 
 			constructBrowser(libMap, "");
@@ -60,10 +57,8 @@ public class SbolBrowser extends JPanel {
 		for (String filePath : sbolFiles) {
 			org.sbolstandard.core.Collection lib = SbolUtility.loadXML(filePath);
 			if (lib != null) {
-				String mySeparator = File.separator;
-				if (mySeparator.equals("\\"))
-					mySeparator = "\\\\";
-				libMap.put(filePath.substring(filePath.lastIndexOf(mySeparator) + 1, filePath.length()) + "/" + lib.getDisplayId(), lib);
+				String fileId = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
+				libMap.put(fileId + "/" + lib.getDisplayId(), lib);
 			}
 		}
 		
