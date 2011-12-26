@@ -299,7 +299,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		TreeModel tree = getGui().getFileTree().tree.getModel();
 		for (int i = 0; i < tree.getChildCount(tree.getRoot()); i++) {
 			String fileName = tree.getChild(tree.getRoot(), i).toString();
-			if (fileName.endsWith("sbol"))
+			if (fileName.endsWith(".sbol"))
 				filePaths.add(getGui().getRoot() + File.separator + fileName);
 		}
 		return filePaths;

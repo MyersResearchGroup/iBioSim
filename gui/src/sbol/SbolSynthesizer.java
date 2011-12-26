@@ -43,10 +43,7 @@ public class SbolSynthesizer {
 			org.sbolstandard.core.Collection lib = SbolUtility.loadXML(filePath);
 			if (lib == null)
 				return false;
-			String mySeparator = File.separator;
-			if (mySeparator.equals("\\"))
-				mySeparator = "\\\\";
-			fileLibMap.put(filePath.substring(filePath.lastIndexOf(mySeparator) + 1, filePath.length()) + "/" + lib.getDisplayId(), lib);
+			fileLibMap.put(filePath.substring(filePath.lastIndexOf(File.separator) + 1) + "/" + lib.getDisplayId(), lib);
 		}
 		if (fileLibMap.size() == 0) {
 			JOptionPane.showMessageDialog(Gui.frame, "No SBOL files are found in project.", 
@@ -62,11 +59,8 @@ public class SbolSynthesizer {
 	}
 	
 	public void exportSbol(String targetFilePath) {
-		String mySeparator = File.separator;
-		if (mySeparator.equals("\\"))
-			mySeparator = "\\\\";
-		String targetFileId = targetFilePath.substring(targetFilePath.lastIndexOf(mySeparator) + 1, targetFilePath.length());
-		String targetPath = targetFilePath.substring(0, targetFilePath.lastIndexOf(mySeparator));
+		String targetFileId = targetFilePath.substring(targetFilePath.lastIndexOf(File.separator) + 1);
+		String targetPath = targetFilePath.substring(0, targetFilePath.lastIndexOf(File.separator));
 		Object[] targets = new Object[1];
 		targets[0] = targetFileId;
 		if (!new File(targetFilePath).exists()) {

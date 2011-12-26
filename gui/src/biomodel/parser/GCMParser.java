@@ -438,12 +438,17 @@ public class GCMParser {
 	}
 	
 	public SbolSynthesizer buildSbolSynthesizer() {
+		SBMLDocument sbml = gcm.flattenGCM();		
+		if (sbml == null) return null;
+		return buildTopLevelSbolSynthesizer(sbml);
+	}
+	
+	public SbolSynthesizer buildTopLevelSbolSynthesizer(SBMLDocument sbml) {
 		speciesList = new HashMap<String, SpeciesInterface>();
 		promoterList = new HashMap<String, Promoter>();
 		complexMap = new HashMap<String, ArrayList<Influence>>();
 		partsMap = new HashMap<String, ArrayList<Influence>>();
 
-		SBMLDocument sbml = gcm.getSBMLDocument();
 		for (long i=0; i<sbml.getModel().getNumSpecies(); i++) {
 			Species species = sbml.getModel().getSpecies(i);
 			if (!species.isSetAnnotation() || 

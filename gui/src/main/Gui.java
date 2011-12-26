@@ -3730,7 +3730,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			newModel("Spice Circuit", ".cir");
 		}
 		else if (e.getSource().equals(importSbol)) {
-			importFile("SBOL", ".rdf");
+			importFile("SBOL", ".sbol");
 		}
 		// if the import sbml menu item is selected
 		else if (e.getSource() == importSbml) {
@@ -4558,7 +4558,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 		}
 		String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY, "Import " + fileType, -1);
-		if (filename.length() > 1 && !filename.substring(filename.length() - 4, filename.length()).equals(extension)) {
+		if (filename.length() > 1 && !filename.endsWith(extension)) {
 			JOptionPane.showMessageDialog(frame, "You must select a valid " + fileType + " file to import.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -5398,7 +5398,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 									((ModelEditor) tab.getComponentAt(i)).reload(rename.substring(0, rename.length() - 4));
 									tab.setTitleAt(i, rename);
 								}
-								else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")) {
+								else if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbol")) {
 									tab.setTitleAt(i, rename);
 								}
 								else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".lpn")) {
@@ -5676,13 +5676,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	private void openSBOL() {
 		String filePath = tree.getFile();
 		String fileName = "";
-		String mySeparator = File.separator;
-		int spacer = 1;
-		if (mySeparator.equals("\\")) {
-			mySeparator = "\\\\";
-			spacer = 2;
-		}
-		fileName = filePath.substring(filePath.lastIndexOf(mySeparator) + spacer);
+		fileName = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
 		int i = getTab(fileName);
 		if (i != -1) {
 			tab.setSelectedIndex(i);
@@ -6679,7 +6673,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				popup.add(delete);
 				*/
 			}
-			else if (tree.getFile().length() > 3 && tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")) {
+			else if (tree.getFile().length() > 4 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbol")) {
 				JMenuItem view = new JMenuItem("View");
 				view.addActionListener(this);
 				view.addMouseListener(this);
@@ -7295,7 +7289,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".gcm")) {
 				openGCM(false);
 			}
-			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf")) {
+			else if (tree.getFile().length() >= 5 && tree.getFile().substring(tree.getFile().length() - 5).equals(".sbol")) {
 				openSBOL();
 			}
 			else if (tree.getFile().length() >= 4 && tree.getFile().substring(tree.getFile().length() - 4).equals(".vhd")) {
@@ -9348,8 +9342,14 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 				viewModel.setEnabled(true);
 			}
 			else if (tree.getFile().length() > 3
-					&& (tree.getFile().substring(tree.getFile().length() - 4).equals(".rdf") || tree.getFile().substring(tree.getFile().length() - 4)
-							.equals(".grf"))) {
+					&& tree.getFile().substring(tree.getFile().length() - 4)
+							.equals(".grf")) {
+				copy.setEnabled(true);
+				rename.setEnabled(true);
+				delete.setEnabled(true);
+			}
+			else if (tree.getFile().length() > 4
+					&& tree.getFile().substring(tree.getFile().length() - 5).equals(".sbol")) {
 				copy.setEnabled(true);
 				rename.setEnabled(true);
 				delete.setEnabled(true);

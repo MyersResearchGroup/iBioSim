@@ -50,10 +50,7 @@ public class SbolUtility {
 			JOptionPane.showMessageDialog(Gui.frame, "There was an error parsing a SBOL file.", "Parsing Error",
 					JOptionPane.ERROR_MESSAGE);
 		}
-		String mySeparator = File.separator;
-		if (mySeparator.equals("\\"))
-			mySeparator = "\\\\";
-		String fileId = filePath.substring(filePath.lastIndexOf(mySeparator) + 1, filePath.length());
+		String fileId = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
 		if (isLibraryValid(lib, fileId))
 			return lib;
 		else
