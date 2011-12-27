@@ -488,52 +488,6 @@ public class GeneticNetwork {
 				
 				document.getModel().getReaction(i).setAnnotation("");
 			}
-			
-//			//replace the row/col offsets annotations with proper annotations
-//			//loop through reactants and products			
-//			for (int j = 0; j < document.getModel().getReaction(i).getNumReactants(); ++j) {
-//				
-//				if (document.getModel().getReaction(i).getReactant(j).getAnnotationString().contains("rowOffset") &&
-//						document.getModel().getReaction(i).getReactant(j).getAnnotationString().contains("array") == false) {
-//					
-//					String[] annotationString = document.getModel().getReaction(i)
-//					.getReactant(j).getAnnotationString().replace("<annotation>","").replace("</annotation>","")
-//					.split("=");
-//					int rowOffset = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace(",",""));
-//					int colOffset = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0]);
-//					
-//					XMLAttributes attr = new XMLAttributes();
-//					attr.add("xmlns:array", "http://www.fakeuri.com");
-//					attr.add("array:rowOffset", String.valueOf(rowOffset));
-//					attr.add("array:colOffset", String.valueOf(colOffset));
-//					XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);					
-//					document.getModel().getReaction(i).getReactant(j).setAnnotation(node);
-//				}
-//			}
-//			
-//			for (int j = 0; j < document.getModel().getReaction(i).getNumProducts(); ++j) {
-//				
-//				if (document.getModel().getReaction(i).getProduct(j).getAnnotationString().contains("rowOffset") &&
-//						document.getModel().getReaction(i).getReactant(j).getAnnotationString().contains("array") == false) {
-//					
-//					String[] annotationString = document.getModel().getReaction(i)
-//					.getProduct(j).getAnnotationString().replace("<annotation>","").replace("</annotation>","")
-//					.split("=");
-//					int rowOffset = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace(",",""));
-//					int colOffset = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0]);
-//					
-//					XMLAttributes attr = new XMLAttributes();
-//					attr.add("xmlns:array", "http://www.fakeuri.com");
-//					attr.add("array:rowOffset", String.valueOf(rowOffset));
-//					attr.add("array:colOffset", String.valueOf(colOffset));
-//					XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);					
-//					document.getModel().getReaction(i).getProduct(j).setAnnotation(node);
-//				}
-//			}				
-				
-//				document.getModel().getReaction(i).setAnnotation("numRowsLower=0, numRowsUpper=" +
-//						(properties.getGrid().getNumRows() - 1) + ", numColsLower=0, numColsUpper=" +
-//						(properties.getGrid().getNumCols() - 1));
 		}
 		
 		//replace all Type=Grid occurences with more complete information
@@ -541,10 +495,6 @@ public class GeneticNetwork {
 			
 			if (document.getModel().getSpecies(i).getAnnotationString() != null &&
 					document.getModel().getSpecies(i).getAnnotationString().contains("Type=Grid")) {
-				
-//				document.getModel().getSpecies(i).setAnnotation("numRowsLower=0, numRowsUpper=" +
-//						(properties.getGrid().getNumRows() - 1) + ", numColsLower=0, numColsUpper=" +
-//						(properties.getGrid().getNumCols() - 1));
 				
 				XMLAttributes attr = new XMLAttributes();
 				attr.add("xmlns:array", "http://www.fakeuri.com");

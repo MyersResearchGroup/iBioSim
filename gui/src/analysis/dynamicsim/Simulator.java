@@ -1377,7 +1377,7 @@ public abstract class Simulator {
 		
 		//ARRAYED REACTION BUSINESS
 		//if a reaction has arrayed species
-		//new reactions that are implicit are created and added to the model
+		//new reactions that are implicit are created and added to the model		
 		
 		ArrayList<Reaction> reactionsToAdd = new ArrayList<Reaction>();
 		ArrayList<String> reactionsToRemove = new ArrayList<String>();
@@ -1441,7 +1441,9 @@ public abstract class Simulator {
 					ArrayList<ASTNode> get2DArrayElementNodes = new ArrayList<ASTNode>();
 					
 					getSatisfyingNodes(newReaction.getKineticLaw().getMath(), 
-							"get2DArrayElement", get2DArrayElementNodes);
+							"get2DArrayElement", get2DArrayElementNodes);	
+					
+					boolean reactantBool = false;
 					
 					//replace the get2darrayelement stuff with the proper explicit species/parameters
 					for (ASTNode node : get2DArrayElementNodes) {
@@ -1470,18 +1472,23 @@ public abstract class Simulator {
 						//this means it's a species, which we need to prepend with the row/col prefix
 						else {
 							
-							//product
-							if (node.getLeftChild().getName().contains("_product")) {
+							if (node.getChildCount() > 0 &&
+									model.getParameter(node.getLeftChild().getName()) == null) {
 								
-								node.setVariable(model.getSpecies(
-										"ROW" + row + "_COL" + col + "__" + node.getLeftChild().getName().replace("_product","")));
-							}
-							//reactant
-							else {
-								
-								node.setVariable(model.getSpecies(
-										compartmentID + "__" + node.getLeftChild().getName().replace("_reactant","")));
-							}								
+								//reactant
+								if (reactantBool == true) {
+									
+									node.setVariable(model.getSpecies(
+											"ROW" + row + "_COL" + col + "__" + node.getLeftChild().getName()));
+								}
+								//product
+								else {
+									
+									node.setVariable(model.getSpecies(
+											compartmentID + "__" + node.getLeftChild().getName()));
+									reactantBool = true;
+								}
+							}						
 								
 							for (int i = 0; i < node.getChildCount(); ++i)
 								node.removeChild(i);
@@ -1511,7 +1518,7 @@ public abstract class Simulator {
 						newProduct.setSpecies("ROW" + row + "_COL" + col + "__" + newProduct.getSpecies());
 						newProduct.setAnnotation(null);
 						newReaction.addProduct(newProduct);
-					}					
+					}
 					
 					if (newReaction.getKineticLaw().getLocalParameter("i") != null)
 						newReaction.getKineticLaw().removeLocalParameter("i");
@@ -1573,7 +1580,8 @@ public abstract class Simulator {
 						for (ASTNode headNode : get2DArrayElementNodes) {
 							
 							//make sure it's a reactant node
-							if (headNode.getChildCount() > 0 && headNode.getLeftChild().getName().contains("_reactant") == true) {
+							if (headNode.getChildCount() > 0 &&
+									model.getParameter(headNode.getLeftChild().getName()) == null) {
 								
 								reactantHeadNode = headNode;
 								break;
@@ -1611,8 +1619,7 @@ public abstract class Simulator {
 					for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
 						
 						
-					}
-					
+					}					
 					
 					//loop through all products
 					for (SpeciesReference product : reaction.getListOfProducts()) {
@@ -1622,6 +1629,7 @@ public abstract class Simulator {
 						int colOffset = 0;
 						
 						ASTNode productHeadNode = null;
+						boolean productBool = false;
 						
 						//go through the get2DArrayElement nodes and find the one corresponding to the reactant
 						//this isn't going to work for membrane diffusion because of the reverse _r
@@ -1629,7 +1637,9 @@ public abstract class Simulator {
 						for (ASTNode headNode : get2DArrayElementNodes) {
 							
 							//make sure it's a product node
-							if (headNode.getChildCount() > 0 && headNode.getLeftChild().getName().contains("_product") == true) {
+							//only the product has children, as the reactant's children get deleted
+							if (headNode.getChildCount() > 0 &&
+									model.getParameter(headNode.getLeftChild().getName()) == null) {
 								
 								productHeadNode = headNode;
 								break;
