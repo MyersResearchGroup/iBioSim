@@ -3129,7 +3129,7 @@ public class BioModel {
 			if (decayRate > 0) {
 				
 				//this is the mathematical expression for the decay
-				String isDecayExpression = decayString + "* get2DArrayElement(" + speciesID + "_reactant, i, j)";
+				String isDecayExpression = decayString + "* get2DArrayElement(" + speciesID + ", i, j)";
 				
 				SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);
 				r.addReactant(reactant);
@@ -3205,8 +3205,8 @@ public class BioModel {
 				
 					//this is the rate times the current species minus the rate times the neighbor species
 					String diffusionExpression = 
-						diffusionString + " * " + "get2DArrayElement(" + speciesID + "_reactant, i, j)" + "-"
-						+ diffusionString + " * " + "get2DArrayElement(" + speciesID + "_product, i " 
+						diffusionString + " * " + "get2DArrayElement(" + speciesID + ", i, j)" + "-"
+						+ diffusionString + " * " + "get2DArrayElement(" + speciesID + ", i " 
 						+ String.valueOf(neighborRowIndexOffset) + ", j " + String.valueOf(neighborColIndexOffset) + ")";
 
 					//reactant is current outer species					
@@ -3262,8 +3262,9 @@ public class BioModel {
 			kl = r.createKineticLaw();
 			
 			//this is the rate times the inner species minus the rate times the outer species
-			String membraneDiffusionExpression = "get2DArrayElement(kmdiff_f, i, j) * get2DArrayElement(" + speciesID + "_reactant, i, j" +
-			") - get2DArrayElement(kmdiff_r, i, j) * get2DArrayElement(" + speciesID + "_product, i, j" + ")";
+			String membraneDiffusionExpression = "get2DArrayElement(kmdiff_f, i, j) * get2DArrayElement(" 
+				+ speciesID + ", i, j" + ") - get2DArrayElement(kmdiff_r, i, j) * get2DArrayElement(" 
+				+ speciesID + ", i, j" + ")";
 
 			//reactant is inner/submodel species
 			SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);			
