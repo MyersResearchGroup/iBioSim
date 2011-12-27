@@ -231,9 +231,10 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
 			Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
 			comps.add(submodel.getId() + " " + submodel.getModelRef() + " " + gcm.getComponentPortMap(submodel.getId()));
+			this.getGCM().updateGridSpecies(submodel.getModelRef());
 		}
 		components.removeAllItem();
-		components.addAllItem(comps);	
+		components.addAllItem(comps);
 		
 		reloadParameters();
 		if (paramsOnly) {
@@ -1429,7 +1430,9 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
 			Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
 			components.addItem(submodel.getId() + " " + submodel.getModelRef() + " " + gcm.getComponentPortMap(submodel.getId()));
+			this.getGCM().updateGridSpecies(submodel.getModelRef());
 		}
+		this.getSpeciesPanel().refreshSpeciesPanel(gcm.getSBMLDocument());
 		JPanel componentsPanel = Utility.createPanel(this, "Components", components, addInit, removeInit, editInit);
 		mainPanelCenterCenter.add(componentsPanel);
 		

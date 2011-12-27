@@ -679,14 +679,14 @@ public abstract class Simulator {
 			}
 			else if (nodeName.equals("get2DArrayElement")) {
 				
-				int leftIndex = node.getChild(1).getInteger();
-				int rightIndex = node.getChild(2).getInteger();
-				String speciesName = "ROW" + leftIndex + "_COL" + rightIndex + "__" + node.getChild(0).getName();
-				
-				//check bounds
-				//if species exists, return its value/amount
-				if (variableToValueMap.containsKey(speciesName))
-					return variableToValueMap.get(speciesName);
+//				int leftIndex = node.getChild(1).getInteger();
+//				int rightIndex = node.getChild(2).getInteger();
+//				String speciesName = "ROW" + leftIndex + "_COL" + rightIndex + "__" + node.getChild(0).getName();
+//				
+//				//check bounds
+//				//if species exists, return its value/amount
+//				if (variableToValueMap.containsKey(speciesName))
+//					return variableToValueMap.get(speciesName);
 			}
 			else if (node.getType().equals(org.sbml.jsbml.ASTNode.Type.NAME_TIME)) {
 				
@@ -1394,6 +1394,7 @@ public abstract class Simulator {
 			ArrayList<Integer> membraneDiffusionCols = new ArrayList<Integer>();
 			ArrayList<String> membraneDiffusionCompartments = new ArrayList<String>();
 			
+			//MEMBRANE DIFFUSION REACTIONS
 			//if it's a membrane diffusion reaction it'll have the appropriate locations as an annotation
 			//so parse them and store them in the above arraylists
 			if (reactionID.contains("MembraneDiffusion")) {
@@ -1448,33 +1449,46 @@ public abstract class Simulator {
 						if (node.getLeftChild().getName().contains("kmdiff")) {
 							
 							String parameterName = node.getLeftChild().getName();
+							
 							//see if the species-specific one exists
 							//if it doesn't, use the default
 							//you'll need to parse the species name from the reaction id, probably
 							
 							String speciesID = reactionID.replace("MembraneDiffusion_","");
 							
-							node.setVariable(model.getParameter(compartmentID + "__" + speciesID + "__" + parameterName));							
-							node.removeChild(0);
+							if (model.getParameter(compartmentID + "__" + speciesID + "__" + parameterName) == null)
+								node.setVariable(model.getParameter(parameterName));
+							else							
+								node.setVariable(model.getParameter(compartmentID + "__" + speciesID + "__" + parameterName));	
+							
+							for (int i = 0; i < node.getChildCount(); ++i)
+								node.removeChild(i);
+							
+							for (int i = 0; i < node.getChildCount(); ++i)
+								node.removeChild(i);
 						}
 						//this means it's a species, which we need to prepend with the row/col prefix
 						else {
 							
 							//product
-							if (node.getLeftChild().getName().contains("_p")) {
+							if (node.getLeftChild().getName().contains("_product")) {
 								
 								node.setVariable(model.getSpecies(
-										"ROW" + row + "_COL" + col + "__" + node.getLeftChild().getName().replace("_p","")));
+										"ROW" + row + "_COL" + col + "__" + node.getLeftChild().getName().replace("_product","")));
 							}
 							//reactant
 							else {
 								
 								node.setVariable(model.getSpecies(
-										compartmentID + "__" + node.getLeftChild().getName().replace("_r","")));
+										compartmentID + "__" + node.getLeftChild().getName().replace("_reactant","")));
 							}								
 								
-							node.removeChild(0);
-						}						
+							for (int i = 0; i < node.getChildCount(); ++i)
+								node.removeChild(i);
+							
+							for (int i = 0; i < node.getChildCount(); ++i)
+								node.removeChild(i);
+						}
 					}
 					
 					//loop through reactants
@@ -1499,11 +1513,18 @@ public abstract class Simulator {
 						newReaction.addProduct(newProduct);
 					}					
 					
+					if (newReaction.getKineticLaw().getLocalParameter("i") != null)
+						newReaction.getKineticLaw().removeLocalParameter("i");
+					
+					if (newReaction.getKineticLaw().getLocalParameter("j") != null)
+						newReaction.getKineticLaw().removeLocalParameter("j");
+					
 					reactionsToAdd.add(newReaction);
 					++membraneDiffusionIndex;
 				}
 			}
 			
+			//NON-MEMBRANE DIFFUSION REACTIONS
 			//check to see if the (non-membrane-diffusion) reaction has arrayed species
 			//right now i'm only checking the first reactant species, due to a bad assumption
 			//about the homogeneity of the arrayed reaction (ie, if one species is arrayed, they all are)
@@ -1533,6 +1554,7 @@ public abstract class Simulator {
 					//get the nodes to alter
 					ArrayList<ASTNode> get2DArrayElementNodes = new ArrayList<ASTNode>();
 					
+					//return the head node of the get2DArrayElement function
 					getSatisfyingNodes(newReaction.getKineticLaw().getMath(), 
 							"get2DArrayElement", get2DArrayElementNodes);
 					
@@ -1540,42 +1562,49 @@ public abstract class Simulator {
 					for (SpeciesReference reactant : reaction.getListOfReactants()) {
 						
 						//find offsets
+						//the row offset is in the kinetic law via i
+						//the col offset is in the kinetic law via j
 						int rowOffset = 0;
 						int colOffset = 0;
 						
-						String[] annotationString = reactant.getAnnotationString().split("=");
-												
-						rowOffset = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
-						colOffset = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
+						ASTNode reactantHeadNode = null;
 						
-						//alter the kinetic law to so that it has the correct indexes as children for the
-						//get2DArrayElement function
-						ASTNode arrayChild1 = new ASTNode();
-						arrayChild1.setValue(row + rowOffset);
-						
-						ASTNode arrayChild2 = new ASTNode();
-						arrayChild2.setValue(col + colOffset);
-						
-						//adjust the node so that the get2DArrayElement function knows where to find the
-						//relevant species amount
-						for (ASTNode node : get2DArrayElementNodes) {
+						//go through the get2DArrayElement nodes and find the one corresponding to the reactant
+						for (ASTNode headNode : get2DArrayElementNodes) {
 							
-							//make sure that the node is a reactant and not a modifier
-							//if it is a reactant, add the appropriate indexes as children								
-							if (node.getLeftChild().getName().contains("_r")) {
+							//make sure it's a reactant node
+							if (headNode.getChildCount() > 0 && headNode.getLeftChild().getName().contains("_reactant") == true) {
 								
-								node.getLeftChild().setName(node.getLeftChild().getName().replace("_r",""));
-								node.addChild(arrayChild1);
-								node.addChild(arrayChild2);
+								reactantHeadNode = headNode;
+								break;
 							}
 						}
+						
+						if (reactantHeadNode.getChild(1).getType().name().equals("PLUS"))							
+							rowOffset = reactantHeadNode.getChild(1).getRightChild().getInteger();
+						else if (reactantHeadNode.getChild(1).getType().name().equals("MINUS"))							
+							rowOffset = -1 * reactantHeadNode.getChild(1).getRightChild().getInteger();
+						
+						if (reactantHeadNode.getChild(2).getType().name().equals("PLUS"))							
+							colOffset = reactantHeadNode.getChild(2).getRightChild().getInteger();
+						else if (reactantHeadNode.getChild(2).getType().name().equals("MINUS"))							
+							colOffset = -1 * reactantHeadNode.getChild(2).getRightChild().getInteger();
 						
 						//create a new reactant and add it to the new reaction
 						SpeciesReference newReactant = new SpeciesReference();
 						newReactant = reactant.clone();
-						newReactant.setSpecies("ROW" + row + "_COL" + col + "__" + newReactant.getSpecies());
+						newReactant.setSpecies("ROW" + (row + rowOffset) + "_COL" + (col + colOffset) + "__" + newReactant.getSpecies());
 						newReactant.setAnnotation(null);
 						newReaction.addReactant(newReactant);
+						
+						//put this reactant in place of the get2DArrayElement function call
+						for (int i = 0; i < reactantHeadNode.getChildCount(); ++i)
+							reactantHeadNode.removeChild(i);
+						
+						for (int i = 0; i < reactantHeadNode.getChildCount(); ++i)
+							reactantHeadNode.removeChild(i);
+						
+						reactantHeadNode.setVariable(newReactant.getSpeciesInstance());
 					}// end looping through reactants
 					
 					//loop through all modifiers
@@ -1592,10 +1621,31 @@ public abstract class Simulator {
 						int rowOffset = 0;
 						int colOffset = 0;
 						
-						String[] annotationString = product.getAnnotationString().split("=");
-						rowOffset = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
-						colOffset = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
+						ASTNode productHeadNode = null;
 						
+						//go through the get2DArrayElement nodes and find the one corresponding to the reactant
+						//this isn't going to work for membrane diffusion because of the reverse _r
+						//you need to change the _r/_p to _reactant and _product
+						for (ASTNode headNode : get2DArrayElementNodes) {
+							
+							//make sure it's a product node
+							if (headNode.getChildCount() > 0 && headNode.getLeftChild().getName().contains("_product") == true) {
+								
+								productHeadNode = headNode;
+								break;
+							}
+						}
+						
+						if (productHeadNode.getChild(1).getType().name().equals("PLUS"))							
+							rowOffset = productHeadNode.getChild(1).getRightChild().getInteger();
+						else if (productHeadNode.getChild(1).getType().name().equals("MINUS"))							
+							rowOffset = -1 * productHeadNode.getChild(1).getRightChild().getInteger();
+						
+						if (productHeadNode.getChild(2).getType().name().equals("PLUS"))							
+							colOffset = productHeadNode.getChild(2).getRightChild().getInteger();
+						else if (productHeadNode.getChild(2).getType().name().equals("MINUS"))							
+							colOffset = -1 * productHeadNode.getChild(2).getRightChild().getInteger();
+											
 						//don't create reactions with products that don't exist 
 						if (row + rowOffset < reactantDimensions.numRowsLower || 
 								col + colOffset < reactantDimensions.numColsLower ||
@@ -1606,35 +1656,29 @@ public abstract class Simulator {
 							break;
 						}
 						
-						//alter the kinetic law to so that it has the correct indexes as children for the
-						//get2DArrayElement function
-						ASTNode arrayChild1 = new ASTNode();
-						arrayChild1.setValue(row + rowOffset);
-						
-						ASTNode arrayChild2 = new ASTNode();
-						arrayChild2.setValue(col + colOffset);
-						
-						//adjust the node so that the get2DArrayElement function knows where to find the
-						//relevant species amount
-						for (ASTNode node : get2DArrayElementNodes) {
-							
-							//make sure that the node is a product and not a modifier
-							//if it is a product, add the appropriate indexes as children
-							if (node.getLeftChild().getName().contains("_p")) {
-								
-								node.getLeftChild().setName(node.getLeftChild().getName().replace("_p",""));
-								node.addChild(arrayChild1);
-								node.addChild(arrayChild2);
-							}
-						}
-						
 						//create a new product and add it to the new reaction
 						SpeciesReference newProduct = new SpeciesReference();
 						newProduct = product.clone();
 						newProduct.setSpecies("ROW" + (row + rowOffset) + "_COL" + (col + colOffset) + "__" + newProduct.getSpecies());
 						newProduct.setAnnotation(null);
 						newReaction.addProduct(newProduct);
+						
+						//put this reactant in place of the get2DArrayElement function call
+						for (int i = 0; i < productHeadNode.getChildCount(); ++i)
+							productHeadNode.removeChild(i);
+						
+						//put this reactant in place of the get2DArrayElement function call
+						for (int i = 0; i < productHeadNode.getChildCount(); ++i)
+							productHeadNode.removeChild(i);					
+						
+						productHeadNode.setVariable(newProduct.getSpeciesInstance());
 					} //end looping through products
+					
+					if (newReaction.getKineticLaw().getLocalParameter("i") != null)
+						newReaction.getKineticLaw().removeLocalParameter("i");
+					
+					if (newReaction.getKineticLaw().getLocalParameter("j") != null)
+						newReaction.getKineticLaw().removeLocalParameter("j");
 					
 					if (abort == false)
 						reactionsToAdd.add(newReaction);
