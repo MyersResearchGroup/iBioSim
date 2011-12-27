@@ -401,7 +401,8 @@ public class GeneticNetwork {
 	}
 
 	/**
-	 * turns the incomplete membrane diffusion reactions into a membrane diffusion reaction array with full information
+	 * does lots of formatting -- mostly to bring the model into compliance with JSBML and to replace
+	 * the Type=Grid annotation with better information
 	 * 
 	 * @param document
 	 */
@@ -416,116 +417,68 @@ public class GeneticNetwork {
 				membraneDiffusionReactions.add(document.getModel().getReaction(i));
 		}
 		
-		//map from membrane diffusion species ID to the locations/indices valid for that ID
-		HashMap<String, ArrayList<String> > speciesIDToLocationListMap = new HashMap<String, ArrayList<String> >();
-		HashMap<String, ArrayList<String> > speciesIDToComponentListMap = new HashMap<String, ArrayList<String> >();
-		
-		//old non-arrayed membrane diffusion reactions that are being replaced
-		HashSet<String> reactionsToRemoveSet = new HashSet<String>();
-		
 		//turn the individual membrane diffusion reactions into arrays for each species
 		for (Reaction membraneDiffusionReaction : membraneDiffusionReactions) {
 			
 			String reactionID = membraneDiffusionReaction.getId();
 			
-			reactionsToRemoveSet.add(reactionID);
+			ArrayList<String> validSubmodels = new ArrayList<String>();
 			
-			reactionID = reactionID.replace("MembraneDiffusion","_");
-			String[] reactionIDParts = reactionID.split("____");
-			
-			String compartmentID = reactionIDParts[0];
-			String speciesID = reactionIDParts[1];
-			
-			//take off the top compartment of the species ID
-			speciesID = speciesID.substring(speciesID.indexOf("__") + 2, speciesID.length());
-			
-			if (speciesIDToLocationListMap.containsKey(speciesID) == false)
-				speciesIDToLocationListMap.put(speciesID, new ArrayList<String>());	
-			
-			if (speciesIDToComponentListMap.containsKey(speciesID) == false)
-				speciesIDToComponentListMap.put(speciesID, new ArrayList<String>());	
-			
-			//get the row and column of this compartment
-			int row = properties.getSubmodelRow(compartmentID);
-			int col = properties.getSubmodelCol(compartmentID);
-			
-			speciesIDToLocationListMap.get(speciesID).add("(" + row + "," + col + ")");
-			speciesIDToComponentListMap.get(speciesID).add(compartmentID);
-		}		
-		
-		//remove the old reactions
-		for (String reactionToRemove : reactionsToRemoveSet)
-			document.getModel().removeReaction(reactionToRemove);
-		
-		//now go through the hashmap and create the array of reactions
-		for (String speciesID : speciesIDToLocationListMap.keySet()) {
-			
-			//this is the list of locations where a membrane diffusion reaction exists for this species
-			ArrayList<String> diffusionLocations = speciesIDToLocationListMap.get(speciesID);
-			ArrayList<String> components = speciesIDToComponentListMap.get(speciesID);
-			//String diffusionLocationAnnotation = "";
-			
-			XMLAttributes attr = new XMLAttributes();
-			attr.add("xmlns:array", "http://www.fakeuri.com");
-			
-			int componentIndex = 0;
-			
-			for (String diffusionLocation : diffusionLocations) {
+			//loop through submodels to see if they have this same membrane diffusion reaction ID
+			for (int submodelIndex = 0; submodelIndex < properties.getSBMLCompModel().getNumSubmodels(); ++submodelIndex) {
 				
-				attr.add("array:" + components.get(componentIndex), diffusionLocation);
-				
-//				if (diffusionLocationAnnotation.length() > 0)
-//					diffusionLocationAnnotation += ", ";
-//				
-//				diffusionLocationAnnotation += diffusionLocation;
-				
-				++componentIndex;
+				if (properties.getSBMLCompModel().getSubmodel(submodelIndex).getModel().getReaction(reactionID) != null)
+					validSubmodels.add(properties.getSBMLCompModel().getSubmodel(submodelIndex).getId());				
 			}
 			
+			membraneDiffusionReaction.setAnnotation("");
+			
+			//now go through this list of valid submodels, find their locations, and add those to the reaction's annotation
+			for (String validSubmodelID : validSubmodels) {
+				
+				validSubmodelID = validSubmodelID.replace("GRID__","");				
+				
+				if (membraneDiffusionReaction.getAnnotationString().length() > 0)
+					membraneDiffusionReaction.appendAnnotation(", " + 
+						properties.getSBMLDocument().getModel().getParameter(validSubmodelID + "__locations").getAnnotationString()
+						.replace("<annotation>","").replace("</annotation>","").replace("Type=Grid","").trim());
+				else 
+					membraneDiffusionReaction.setAnnotation( 
+							properties.getSBMLDocument().getModel().getParameter(validSubmodelID + "__locations").getAnnotationString()
+							.replace("<annotation>","").replace("</annotation>","").replace("Type=Grid","").trim());
+			}
+			
+			//fix the array annotation that as just created
+					
+			String reactionAnnotation = membraneDiffusionReaction.getAnnotationString();
+			ArrayList<String> components = new ArrayList<String>();
+			
+			//find all components in the annotation
+			for (int j = 0; j < reactionAnnotation.length(); ++j) {
+				
+				if (reactionAnnotation.charAt(j) == '[' &&
+						reactionAnnotation.charAt(j+1) == '[') {
+					
+					String componentID = "";
+					
+					for (j = j + 2; reactionAnnotation.charAt(j) != ']'; ++j)
+						componentID += reactionAnnotation.charAt(j);
+					
+					components.add(componentID);
+				}				
+			}
+			
+			//replace the annotation with a better-formatted version (for jsbml)				
+			XMLAttributes attr = new XMLAttributes();				
+			attr.add("xmlns:array", "http://www.fakeuri.com");
+			
+			for (String componentID : components)
+				attr.add("array:" + componentID, "(" + properties.getSubmodelRow(componentID) + "," +
+						properties.getSubmodelCol(componentID) + ")");
+			
 			XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
-			
-			//create the new membrane diffusion reaction array for this species
-			Reaction membraneDiffusionReaction = Utility.Reaction("MembraneDiffusion_" + speciesID);
-			
 			membraneDiffusionReaction.setAnnotation(node);
-			membraneDiffusionReaction.setCompartment(document.getModel().getCompartment(0).getId());
-			membraneDiffusionReaction.setReversible(true);
-			membraneDiffusionReaction.setFast(false);
-			
-			//add reactant and product
-			SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);
-			
-			attr = new XMLAttributes();
-			attr.add("xmlns:array", "http://www.fakeuri.com");
-			attr.add("array:rowOffset", "0");
-			attr.add("array:colOffset", "0");
-			node = new XMLNode(new XMLTriple("array","","array"), attr);
-			reactant.setAnnotation(node);
-			
-			//reactant.setAnnotation("rowOffset=0, colOffset=0");
-			SpeciesReference product = Utility.SpeciesReference(speciesID, 1);
-			
-			attr = new XMLAttributes();
-			attr.add("xmlns:array", "http://www.fakeuri.com");
-			attr.add("array:rowOffset", "0");
-			attr.add("array:colOffset", "0");
-			node = new XMLNode(new XMLTriple("array","","array"), attr);
-			product.setAnnotation(node);
-			
-			//product.setAnnotation("rowOffset=0, colOffset=0");
-			
-			membraneDiffusionReaction.addReactant(reactant);
-			membraneDiffusionReaction.addProduct(product);
-			
-			KineticLaw kl = membraneDiffusionReaction.createKineticLaw();
-			String klExpression = "get2DArrayElement(kmdiff_f) * get2DArrayElement(" + speciesID + "_r" +
-				") - get2DArrayElement(kmdiff_r) * get2DArrayElement(" + speciesID + "_p" + ")";
-			
-			kl.setFormula(klExpression);
-			
-			Utility.addReaction(document, membraneDiffusionReaction);			
 		}
-		
 		
 		//replace all Type=Grid occurences with more complete information
 		for (int i = 0; i < document.getModel().getNumReactions(); ++i) {
@@ -536,48 +489,47 @@ public class GeneticNetwork {
 				document.getModel().getReaction(i).setAnnotation("");
 			}
 			
-			//replace the row/col offsets annotations with proper annotations
-			//loop through reactants and products
-			
-			for (int j = 0; j < document.getModel().getReaction(i).getNumReactants(); ++j) {
-				
-				if (document.getModel().getReaction(i).getReactant(j).getAnnotationString().contains("rowOffset") &&
-						document.getModel().getReaction(i).getReactant(j).getAnnotationString().contains("array") == false) {
-					
-					String[] annotationString = document.getModel().getReaction(i)
-					.getReactant(j).getAnnotationString().replace("<annotation>","").replace("</annotation>","")
-					.split("=");
-					int rowOffset = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace(",",""));
-					int colOffset = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0]);
-					
-					XMLAttributes attr = new XMLAttributes();
-					attr.add("xmlns:array", "http://www.fakeuri.com");
-					attr.add("array:rowOffset", String.valueOf(rowOffset));
-					attr.add("array:colOffset", String.valueOf(colOffset));
-					XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);					
-					document.getModel().getReaction(i).getReactant(j).setAnnotation(node);
-				}
-			}
-			
-			for (int j = 0; j < document.getModel().getReaction(i).getNumProducts(); ++j) {
-				
-				if (document.getModel().getReaction(i).getProduct(j).getAnnotationString().contains("rowOffset") &&
-						document.getModel().getReaction(i).getReactant(j).getAnnotationString().contains("array") == false) {
-					
-					String[] annotationString = document.getModel().getReaction(i)
-					.getProduct(j).getAnnotationString().replace("<annotation>","").replace("</annotation>","")
-					.split("=");
-					int rowOffset = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace(",",""));
-					int colOffset = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0]);
-					
-					XMLAttributes attr = new XMLAttributes();
-					attr.add("xmlns:array", "http://www.fakeuri.com");
-					attr.add("array:rowOffset", String.valueOf(rowOffset));
-					attr.add("array:colOffset", String.valueOf(colOffset));
-					XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);					
-					document.getModel().getReaction(i).getProduct(j).setAnnotation(node);
-				}
-			}				
+//			//replace the row/col offsets annotations with proper annotations
+//			//loop through reactants and products			
+//			for (int j = 0; j < document.getModel().getReaction(i).getNumReactants(); ++j) {
+//				
+//				if (document.getModel().getReaction(i).getReactant(j).getAnnotationString().contains("rowOffset") &&
+//						document.getModel().getReaction(i).getReactant(j).getAnnotationString().contains("array") == false) {
+//					
+//					String[] annotationString = document.getModel().getReaction(i)
+//					.getReactant(j).getAnnotationString().replace("<annotation>","").replace("</annotation>","")
+//					.split("=");
+//					int rowOffset = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace(",",""));
+//					int colOffset = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0]);
+//					
+//					XMLAttributes attr = new XMLAttributes();
+//					attr.add("xmlns:array", "http://www.fakeuri.com");
+//					attr.add("array:rowOffset", String.valueOf(rowOffset));
+//					attr.add("array:colOffset", String.valueOf(colOffset));
+//					XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);					
+//					document.getModel().getReaction(i).getReactant(j).setAnnotation(node);
+//				}
+//			}
+//			
+//			for (int j = 0; j < document.getModel().getReaction(i).getNumProducts(); ++j) {
+//				
+//				if (document.getModel().getReaction(i).getProduct(j).getAnnotationString().contains("rowOffset") &&
+//						document.getModel().getReaction(i).getReactant(j).getAnnotationString().contains("array") == false) {
+//					
+//					String[] annotationString = document.getModel().getReaction(i)
+//					.getProduct(j).getAnnotationString().replace("<annotation>","").replace("</annotation>","")
+//					.split("=");
+//					int rowOffset = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace(",",""));
+//					int colOffset = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0]);
+//					
+//					XMLAttributes attr = new XMLAttributes();
+//					attr.add("xmlns:array", "http://www.fakeuri.com");
+//					attr.add("array:rowOffset", String.valueOf(rowOffset));
+//					attr.add("array:colOffset", String.valueOf(colOffset));
+//					XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);					
+//					document.getModel().getReaction(i).getProduct(j).setAnnotation(node);
+//				}
+//			}				
 				
 //				document.getModel().getReaction(i).setAnnotation("numRowsLower=0, numRowsUpper=" +
 //						(properties.getGrid().getNumRows() - 1) + ", numColsLower=0, numColsUpper=" +
@@ -637,17 +589,15 @@ public class GeneticNetwork {
 				attr.add("xmlns:array", "http://www.fakeuri.com");
 				
 				for (String componentID : components)
-//					attr.add("array:(" + properties.getSubmodelRow(componentID) + "," +
-//						properties.getSubmodelCol(componentID) + ")", "[[" + componentID + "]]");
 					attr.add("array:" + componentID, "(" + properties.getSubmodelRow(componentID) + "," +
 							properties.getSubmodelCol(componentID) + ")");
 				
 				XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
 				parameter.setAnnotation(node);
 			}
-		}		
+		}
 		
-		//convert the compartment annotations so that they can be preserved
+		//convert the compartment annotations so that they can be preserved in jsbml
 		for (int i = 0; i < document.getModel().getNumCompartments(); ++i) {
 			
 			if (document.getModel().getCompartment(i).getAnnotationString() != null &&
@@ -815,26 +765,13 @@ public class GeneticNetwork {
 			//if the species is more than one level below the grid or isn't diffusible, loop on
 			if (compartmentParts.length > 2 || 
 					!spec.isDiffusible())
-				continue;
-			
-			
-			
-			
-			
-			//TAG: ARRAYS
-			//CREATE OUTER SPECIES USING ARRAYS
-			
-			
+				continue;	
 			
 			
 			//FUNCTION CREATION
 			//create functions for getting an array element
 			SBMLutilities.createFunction(
-					document.getModel(), "get2DArrayElement", "get2DArrayElement", "lambda(a,b,a)");
-			
-			SBMLutilities.createFunction(
-					document.getModel(), "get1DArrayElement", "get1DArrayElement", "lambda(a,b,a)");
-			
+					document.getModel(), "get2DArrayElement", "get2DArrayElement", "lambda(a,a)");			
 			
 			String osID = "GRID__" + underlyingSpeciesID;
 			String osComp = topLevelCompartment;

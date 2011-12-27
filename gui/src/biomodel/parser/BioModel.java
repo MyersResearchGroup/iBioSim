@@ -1213,7 +1213,7 @@ public class BioModel {
 	}
 	
 	public Reaction createDiffusionReaction(String s,String kmdiffStr) {
-		Reaction reaction = sbml.getModel().getReaction("MembraneDiffusion_"+s);
+		Reaction reaction = sbml.getModel().getReaction("MembraneDiffusion_"+s);		
 		if (reaction==null) {
 			reaction = sbml.getModel().createReaction();
 			reaction.setId("MembraneDiffusion_"+s);
@@ -2775,14 +2775,17 @@ public class BioModel {
 				//then delete its grid species (if they exist) and the GRID__ submodel
 				if (size == 1) {
 					
+					//find the right submodel index to delete it
 					for (long i = 0; i < sbmlCompModel.getNumSubmodels(); i++) {
 						
-						if (sbmlCompModel.getSubmodel(i).getId().equals(gridSubmodelID)) {
+						if (sbmlCompModel.getSubmodel(i).getId().equals(gridSubmodelID))
 							sbmlCompModel.removeSubmodel(i);
-						}		
 					}
 					
+					//remove the grid species this submodel had and its locations parameter
+					sbml.getModel().removeParameter(locationParameterString);
 					removeGridSpecies(componentModelRef);
+					this.getSBMLComp().removeExternalModelDefinition(componentModelRef);
 				}
 				else				
 					potentialGridSubmodel.setAnnotation("Count=" + --size);
@@ -2959,26 +2962,9 @@ public class BioModel {
 		
 		//loop through all components of this model ref
 		if (sbml.getModel().getParameter(componentModelRef + "__locations") != null) {
-			
-//			String[] locationsAnnotationSplit = 
-//				sbml.getModel().getParameter(componentModelRef + "__locations").getAnnotationString()
-//				.replace("<annotation>","").replace("</annotation>","").split("=");
-//			
-//			ArrayList<String> compartmentIDs = new ArrayList<String>();
-//			
-//			for (int i = 1; i < locationsAnnotationSplit.length - 1; ++i) {				
-//				compartmentIDs.add(((String[])locationsAnnotationSplit[i].split(","))[0].
-//						replace("[[","").replace("]]",""));
-//			}
-//			
-//			compartmentIDs.add(locationsAnnotationSplit[locationsAnnotationSplit.length - 1]
-//			.replace("[[","").replace("]]",""));
-//			
-//			for (String compartmentID : compartmentIDs) {
 				
-				removeGridSpecies(componentModelRef);
-				createGridSpecies("GRID__" + componentModelRef);
-			//}
+			removeGridSpecies(componentModelRef);
+			createGridSpecies("GRID__" + componentModelRef);
 		}
 	}
 	
@@ -3121,13 +3107,13 @@ public class BioModel {
 		
 		//create functions for getting an array element
 		SBMLutilities.createFunction(
-				sbml.getModel(), "get2DArrayElement", "get2DArrayElement", "lambda(a,b,a)");
+				sbml.getModel(), "get2DArrayElement", "get2DArrayElement", "lambda(a,b,c,a)");
 		
 		for (Species newSpecies : newGridSpecies) {
 			
 			String speciesID = newSpecies.getId();
 			
-			//create array of degredation reactions
+			//create array of grid degredation reactions
 			String decayString = GlobalConstants.KECDECAY_STRING;
 			double decayRate = sbml.getModel().getParameter("kecd").getValue();
 				
@@ -3143,18 +3129,35 @@ public class BioModel {
 			if (decayRate > 0) {
 				
 				//this is the mathematical expression for the decay
-				String isDecayExpression = decayString + "* get2DArrayElement(" + speciesID + "_r)";
+				String isDecayExpression = decayString + "* get2DArrayElement(" + speciesID + "_reactant, i, j)";
 				
 				SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);
+				r.addReactant(reactant);
+				
+				LocalParameter i = new LocalParameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+				LocalParameter j = new LocalParameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
 				
 				XMLAttributes attr = new XMLAttributes();
 				attr.add("xmlns:array", "http://www.fakeuri.com");
-				attr.add("array:rowOffset", "0");
-				attr.add("array:colOffset", "0");
+				attr.add("array:min", "0");
+				attr.add("array:max", String.valueOf(this.getGrid().getNumRows()));
 				XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
-				reactant.setAnnotation(node);
 				
-				r.addReactant(reactant);
+				i.setAnnotation(node);
+				
+				attr = new XMLAttributes();
+				attr.add("xmlns:array", "http://www.fakeuri.com");
+				attr.add("array:min", "0");
+				attr.add("array:max", String.valueOf(this.getGrid().getNumCols()));
+				node = new XMLNode(new XMLTriple("array","","array"), attr);
+				
+				j.setAnnotation(node);
+				
+				i.setId("i");
+				j.setId("j");
+				
+				kl.addLocalParameter(i);
+				kl.addLocalParameter(j);
 				
 				//parameter: id="kd" value=isDecay (usually 0.0075) units="u_1_second_n1" (inverse seconds)
 				kl.addParameter(Utility.Parameter(decayString, decayRate, decayUnitString));
@@ -3175,20 +3178,19 @@ public class BioModel {
 			String diffComp = sbml.getModel().getCompartment(0).getId();
 			double kecdiff = sbml.getModel().getParameter("kecdiff").getValue();
 			
-			for (int i = 0; i < 4; ++i) {
+			for (int index = 0; index < 4; ++index) {
 				
 				String direction = "";
 				String neighborRowIndexOffset = "0";
 				String neighborColIndexOffset = "0";
 				
-				switch (i) {
+				switch (index) {
 				
-					case 0: {direction = "Above"; neighborRowIndexOffset = "-1"; neighborColIndexOffset = "0"; break;}						
-					case 1: {direction = "Below"; neighborRowIndexOffset = "1"; neighborColIndexOffset = "0"; break;}						
-					case 2: {direction = "Left"; neighborRowIndexOffset = "0"; neighborColIndexOffset = "-1"; break;}						
-					case 3: {direction = "Right"; neighborRowIndexOffset = "0"; neighborColIndexOffset = "1"; break;}			
+					case 0: {direction = "Above"; neighborRowIndexOffset = "- 1"; neighborColIndexOffset = "+ 0"; break;}						
+					case 1: {direction = "Below"; neighborRowIndexOffset = "+ 1"; neighborColIndexOffset = "+ 0"; break;}						
+					case 2: {direction = "Left"; neighborRowIndexOffset = "+ 0"; neighborColIndexOffset = "- 1"; break;}						
+					case 3: {direction = "Right"; neighborRowIndexOffset = "+ 0"; neighborColIndexOffset = "+ 1"; break;}			
 				}
-				
 				
 				//reversible between neighboring "outer" species
 				//this is the diffusion across the "medium" if you will
@@ -3203,32 +3205,42 @@ public class BioModel {
 				
 					//this is the rate times the current species minus the rate times the neighbor species
 					String diffusionExpression = 
-						diffusionString + " * " + "get2DArrayElement(" + speciesID + "_r" + ")" + "-"
-						+ diffusionString + " * " + "get2DArrayElement(" + speciesID + "_p" + ")";
+						diffusionString + " * " + "get2DArrayElement(" + speciesID + "_reactant, i, j)" + "-"
+						+ diffusionString + " * " + "get2DArrayElement(" + speciesID + "_product, i " 
+						+ String.valueOf(neighborRowIndexOffset) + ", j " + String.valueOf(neighborColIndexOffset) + ")";
 
 					//reactant is current outer species					
 					SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);
-					
-					XMLAttributes attr = new XMLAttributes();
-					attr.add("xmlns:array", "http://www.fakeuri.com");
-					attr.add("array:rowOffset", "0");
-					attr.add("array:colOffset", "0");
-					XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
-					reactant.setAnnotation(node);
-					
 					r.addReactant(reactant);
 					
 					//product is neighboring species
-					SpeciesReference product = Utility.SpeciesReference(speciesID, 1);
+					SpeciesReference product = Utility.SpeciesReference(speciesID, 1);					
+					r.addProduct(product);
+					
+					LocalParameter i = new LocalParameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+					LocalParameter j = new LocalParameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+					
+					XMLAttributes attr = new XMLAttributes();
+					attr.add("xmlns:array", "http://www.fakeuri.com");
+					attr.add("array:min", "0");
+					attr.add("array:max", String.valueOf(this.getGrid().getNumRows()));
+					XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
+					
+					i.setAnnotation(node);
 					
 					attr = new XMLAttributes();
 					attr.add("xmlns:array", "http://www.fakeuri.com");
-					attr.add("array:rowOffset", String.valueOf(neighborRowIndexOffset));
-					attr.add("array:colOffset", String.valueOf(neighborColIndexOffset));
+					attr.add("array:min", "0");
+					attr.add("array:max", String.valueOf(this.getGrid().getNumCols()));
 					node = new XMLNode(new XMLTriple("array","","array"), attr);
-					product.setAnnotation(node);
 					
-					r.addProduct(product);
+					j.setAnnotation(node);
+					
+					i.setId("i");
+					j.setId("j");
+					
+					kl.addLocalParameter(i);
+					kl.addLocalParameter(j);
 					
 					//parameters: id="kecdiff" value=kecdiff units="u_1_second_n1" (inverse seconds)
 					kl.addParameter(Utility.Parameter(diffusionString, kecdiff, diffusionUnitString));
@@ -3237,6 +3249,57 @@ public class BioModel {
 					Utility.addReaction(sbml, r);
 				}
 			}		
+			
+			//create array of membrane diffusion reactions
+			
+			String membraneDiffusionComp = sbml.getModel().getCompartment(0).getId();
+			
+			r = Utility.Reaction("MembraneDiffusion_" + speciesID);
+			r.setCompartment(membraneDiffusionComp);
+			r.setReversible(true);
+			r.setFast(false);
+			r.setAnnotation("Type=Grid");
+			kl = r.createKineticLaw();
+			
+			//this is the rate times the inner species minus the rate times the outer species
+			String membraneDiffusionExpression = "get2DArrayElement(kmdiff_f, i, j) * get2DArrayElement(" + speciesID + "_reactant, i, j" +
+			") - get2DArrayElement(kmdiff_r, i, j) * get2DArrayElement(" + speciesID + "_product, i, j" + ")";
+
+			//reactant is inner/submodel species
+			SpeciesReference reactant = Utility.SpeciesReference(speciesID, 1);			
+			r.addReactant(reactant);
+			
+			//product is outer species
+			SpeciesReference product = Utility.SpeciesReference(speciesID, 1);			
+			r.addProduct(product);
+			
+			LocalParameter i = new LocalParameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+			LocalParameter j = new LocalParameter(Gui.SBML_LEVEL, Gui.SBML_VERSION);
+			
+			XMLAttributes attr = new XMLAttributes();
+			attr.add("xmlns:array", "http://www.fakeuri.com");
+			attr.add("array:min", "0");
+			attr.add("array:max", String.valueOf(this.getGrid().getNumRows()));
+			XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
+			
+			i.setAnnotation(node);
+			
+			attr = new XMLAttributes();
+			attr.add("xmlns:array", "http://www.fakeuri.com");
+			attr.add("array:min", "0");
+			attr.add("array:max", String.valueOf(this.getGrid().getNumCols()));
+			node = new XMLNode(new XMLTriple("array","","array"), attr);
+			
+			j.setAnnotation(node);
+			
+			i.setId("i");
+			j.setId("j");
+			
+			kl.addLocalParameter(i);
+			kl.addLocalParameter(j);
+			
+			kl.setFormula(membraneDiffusionExpression);
+			Utility.addReaction(sbml, r);			
 		}
 	}
 	
@@ -3249,9 +3312,12 @@ public class BioModel {
 		for (String oldSpeciesID : oldGridSpecies) {
 			
 			//remove degredation reaction
-			String reactionID = "Degradation_" + oldSpeciesID;			
+			String reactionID = "Degradation_" + oldSpeciesID;
 			sbml.getModel().removeReaction(reactionID);
 			
+			//remove membrane diffusion reaction
+			reactionID = "MembraneDiffusion_" + oldSpeciesID;
+			sbml.getModel().removeReaction(reactionID);
 			
 			//remove diffusion reactions
 			for (int i = 0; i < 4; ++i) {
@@ -4049,6 +4115,10 @@ public class BioModel {
 		}
 		for (int i = 0; i < m.getNumReactions(); i++) {
 			org.sbml.libsbml.Reaction r = m.getReaction(i);
+			
+			if (r.getId().contains("MembraneDiffusion"))
+				continue;
+			
 			String newName = compName + "__" + r.getId();
 			updateVarId(false, r.getId(), newName, doc);
 			r.setId(newName);
