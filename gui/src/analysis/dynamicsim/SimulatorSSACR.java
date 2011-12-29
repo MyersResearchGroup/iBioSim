@@ -318,7 +318,7 @@ public class SimulatorSSACR extends Simulator{
 		rulesFlag = new MutableBoolean(false);
 		constraintsFlag = new MutableBoolean(false);
 		
-		setupArrays();
+		//setupArrays();
 		setupSpecies();
 		setupInitialAssignments();
 		setupParameters();
