@@ -3,6 +3,7 @@ package analysis.dynamicsim;
 import gnu.trove.map.hash.TObjectDoubleHashMap;
 
 import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -91,14 +92,11 @@ public abstract class Simulator {
 	protected HashMap<String, Boolean> speciesToIsBoundaryConditionMap = null;
 	protected HashMap<String, Boolean> speciesToIsConstantMap = null;
 	protected HashMap<String, Boolean> speciesToHasOnlySubstanceUnitsMap = null;
-	protected HashMap<String, Boolean> speciesToIsArrayedMap = null;
+	
 	protected TObjectDoubleHashMap<String> speciesToCompartmentSizeMap = null;
 	
 	//a linked (ordered) set of all species IDs, to allow easy access to their values via the variableToValue map
 	protected LinkedHashSet<String> speciesIDSet = null;
-	
-	//allows access to upper/lower row/col bounds for a species array
-	protected HashMap<String, SpeciesDimensions> arrayedSpeciesToDimensionsMap = null;
 	
 	//allows for access to species and parameter values from a variable ID
 	protected TObjectDoubleHashMap<String> variableToValueMap = null;
@@ -237,9 +235,9 @@ public abstract class Simulator {
 		numInitialAssignments = model.getNumInitialAssignments();
 		
 		//set initial capacities for collections (1.5 is used to multiply numReactions due to reversible reactions)
-		arrayedSpeciesToDimensionsMap = new HashMap<String, SpeciesDimensions>((int) numSpecies);
+		//arrayedSpeciesToDimensionsMap = new HashMap<String, SpeciesDimensions>((int) numSpecies);
 		speciesToAffectedReactionSetMap = new HashMap<String, HashSet<String> >((int) numSpecies);
-		speciesToIsArrayedMap = new HashMap<String, Boolean >((int) numSpecies);
+		//speciesToIsArrayedMap = new HashMap<String, Boolean >((int) numSpecies);
 		speciesToIsBoundaryConditionMap = new HashMap<String, Boolean>((int) numSpecies);
 		speciesToIsConstantMap = new HashMap<String, Boolean>((int) numSpecies);
 		speciesToHasOnlySubstanceUnitsMap = new HashMap<String, Boolean>((int) numSpecies);
@@ -1316,14 +1314,32 @@ public abstract class Simulator {
 	
 	/**
 	 * adds species and reactions to the model that are implicit in arrays
+	 * basically, it takes an arrayed model and flattens it
 	 */
-	protected void setupArrays() {
+	public static void setupArrays(String filename) {		
+		
+		//open the sbml file for writing
+		SBMLReader reader = new SBMLReader();
+		SBMLDocument document = null;
+		
+		try {
+			document = reader.readSBML(filename);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		Model model = document.getModel();		
+		
 				
 		//ARRAYED SPECIES BUSINESS
 		//create all new species that are implicit in the arrays and put them into the model		
 		
 		ArrayList<Species> speciesToAdd = new ArrayList<Species>();
 		ArrayList<String> speciesToRemove = new ArrayList<String>();
+		
+		HashMap<String, Boolean> speciesToIsArrayedMap = new HashMap<String, Boolean>();
+		HashMap<String, SpeciesDimensions> arrayedSpeciesToDimensionsMap = 
+			new HashMap<String, SpeciesDimensions>();
 		
 		for (Species species : model.getListOfSpecies()) {
 			
@@ -1347,8 +1363,10 @@ public abstract class Simulator {
 				numColsLower = Integer.valueOf(((String[])(annotationString[3].split(" ")))[0].replace("\"",""));
 				numColsUpper = Integer.valueOf(((String[])(annotationString[4].split(" ")))[0].replace("\"",""));
 				
-				arrayedSpeciesToDimensionsMap.put(speciesID, 
-						new SpeciesDimensions(numRowsLower, numRowsUpper, numColsLower, numColsUpper));
+				SpeciesDimensions speciesDimensions = 
+					new SpeciesDimensions(numRowsLower, numRowsUpper, numColsLower, numColsUpper);
+				
+				arrayedSpeciesToDimensionsMap.put(speciesID, speciesDimensions);
 				
 				//loop through all species in the array
 				//prepend the row/col information to create a new ID
@@ -1434,6 +1452,9 @@ public abstract class Simulator {
 					newReaction.setListOfProducts(new ListOf<SpeciesReference>());
 					newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
 					newReaction.setId("ROW" + row + "_COL" + col  + "__" + reactionID);
+					newReaction.setReversible(true);
+					newReaction.setFast(false);
+					newReaction.setCompartment(reaction.getCompartment());
 					
 					//alter the kinetic law to so that it has the correct indexes as children for the
 					//get2DArrayElement function
@@ -1558,6 +1579,14 @@ public abstract class Simulator {
 					newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
 					newReaction.setId("ROW" + row + "_COL" + col + "__" + reactionID);
 					
+					if (reactionID.contains("Degradation"))
+						newReaction.setReversible(false);
+					else
+						newReaction.setReversible(true);
+					
+					newReaction.setFast(false);
+					newReaction.setCompartment(reaction.getCompartment());
+					
 					//get the nodes to alter
 					ArrayList<ASTNode> get2DArrayElementNodes = new ArrayList<ASTNode>();
 					
@@ -1629,7 +1658,6 @@ public abstract class Simulator {
 						int colOffset = 0;
 						
 						ASTNode productHeadNode = null;
-						boolean productBool = false;
 						
 						//go through the get2DArrayElement nodes and find the one corresponding to the reactant
 						//this isn't going to work for membrane diffusion because of the reverse _r
@@ -1732,7 +1760,7 @@ public abstract class Simulator {
 		PrintStream p;
 		
 		try {
-			p = new PrintStream(new FileOutputStream("/home/beauregard/Desktop/output.xml"), true, "UTF-8");
+			p = new PrintStream(new FileOutputStream(filename), true, "UTF-8");
 			p.print(writer.writeSBMLToString(model.getSBMLDocument()));
 		} catch (Exception e) {
 			//e.printStackTrace();
@@ -1747,7 +1775,7 @@ public abstract class Simulator {
 	 * @param quarry string to search for
 	 * @param satisfyingNodes list of nodes that satisfy the condition
 	 */
-	protected void getSatisfyingNodes(ASTNode node, String quarry, ArrayList<ASTNode> satisfyingNodes) {
+	static void getSatisfyingNodes(ASTNode node, String quarry, ArrayList<ASTNode> satisfyingNodes) {
 		
 		if (node.isName() && node.getName().equals(quarry))
 			satisfyingNodes.add(node);
@@ -2124,23 +2152,4 @@ public abstract class Simulator {
 			doub = d;
 		}
 	}
-	
-	
-	//SPECIES DIMENSIONS INNER CLASS
-	protected class SpeciesDimensions {
-		
-		public int numRowsUpper;
-		public int numColsUpper;
-		public int numRowsLower;
-		public int numColsLower;
-		
-		public SpeciesDimensions(int rLower, int rUpper, int cLower, int cUpper) {
-			
-			numRowsUpper = rUpper;
-			numRowsLower = rLower;
-			numColsUpper = cUpper;
-			numColsLower = cLower;
-		}
-	}
-
 }

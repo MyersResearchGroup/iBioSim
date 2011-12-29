@@ -11,6 +11,7 @@ import javax.swing.*;
 
 
 import analysis.dynamicsim.DynamicGillespie;
+import analysis.dynamicsim.Simulator;
 import analysis.incrementalsim.GillespieSSAJavaSingleStep;
 import analysis.markov.BuildStateGraphThread;
 import analysis.markov.PerfromSteadyStateMarkovAnalysisThread;
@@ -1076,6 +1077,9 @@ public class Run implements ActionListener {
 					else if (biosimrc.get("biosim.sim.command", "").equals("")) {
 						time1 = System.nanoTime();
 						log.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename + "\n");
+						
+						Simulator.setupArrays(filename);
+						
 						reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile, null, work);
 					}
 					else {

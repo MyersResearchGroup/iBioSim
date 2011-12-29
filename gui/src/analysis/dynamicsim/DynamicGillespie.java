@@ -95,13 +95,6 @@ IMPLEMENTATION NOTES:
 	
 
 if the top node of a reversible reaction isn't a minus sign, then give an error and exit
-	--and there's some special time variable and whatnot
-
-
-EVALUATION NOTES:
-
-apparently minus can be non-binary?  (need to check this)
-	--maybe just unary and binary
 
 
 CONSTRAINTS:

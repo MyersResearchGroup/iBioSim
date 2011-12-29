@@ -227,7 +227,7 @@ public class SimulatorSSADirect extends Simulator{
 	private void initialize() 
 	throws IOException, XMLStreamException {	
 		
-		setupArrays();
+		//setupArrays();
 		setupSpecies();
 		setupInitialAssignments();
 		setupParameters();
@@ -358,7 +358,7 @@ public class SimulatorSSADirect extends Simulator{
 		
 		setupNewRun(0, newRun);
 		
-		setupArrays();
+		//setupArrays();
 		try {
 			setupSpecies();
 		} catch (IOException e) {
