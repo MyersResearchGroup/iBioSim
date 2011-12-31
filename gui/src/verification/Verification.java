@@ -53,10 +53,10 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			listLabel;
 
 	public JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify,
-			vergate, orbits, search, trace, bdd, dbm, smt, untimedStateSearch, untimedPOR, lhpn, view, none,
+			vergate, orbits, search, trace, bdd, dbm, smt, untimedStateSearch, lhpn, view, none,
 			simplify, abstractLhpn, dbm2;
 
-	private JCheckBox abst, partialOrder, dot, verbose, graph, genrg,
+	private JCheckBox abst, partialOrder, dot, verbose, graph, untimedPOR, genrg,
 			timsubset, superset, infopt, orbmatch, interleav, prune, disabling,
 			nofail, noproj, keepgoing, explpn, nochecks, reduction, newTab,
 			postProc, redCheck, xForm2, expandRate;
@@ -193,7 +193,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			baptdc.addActionListener(this);
 		} else {
 			untimedStateSearch = new JRadioButton("Untimed");
-			untimedPOR = new JRadioButton("UntimedPOR");
 			bdd = new JRadioButton("BDD");
 			dbm = new JRadioButton("DBM");
 			smt = new JRadioButton("SMT");
@@ -216,9 +215,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		dot = new JCheckBox("Dot");
 		verbose = new JCheckBox("Verbose");
 		graph = new JCheckBox("Show State Graph");
+		untimedPOR = new JCheckBox("Use Partial Orders");
 		dot.addActionListener(this);
 		verbose.addActionListener(this);
 		graph.addActionListener(this);
+		untimedPOR.addActionListener(this);
 		// Verification Algorithms
 		verify = new JRadioButton("Verify");
 		vergate = new JRadioButton("Verify Gates");
@@ -298,7 +299,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		abstractionGroup.add(abstractLhpn);
 		if (lema) {
 			timingMethodGroup.add(untimedStateSearch);
-			timingMethodGroup.add(untimedPOR);
 			timingMethodGroup.add(bdd);
 			timingMethodGroup.add(dbm);
 			timingMethodGroup.add(smt);
@@ -330,7 +330,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		timingRadioPanel.add(timingMethod);
 		if (lema) {
 			timingRadioPanel.add(untimedStateSearch);
-			timingRadioPanel.add(untimedPOR);
 			timingRadioPanel.add(bdd);
 			timingRadioPanel.add(dbm);
 			timingRadioPanel.add(smt);
@@ -354,6 +353,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		otherPanel.add(dot);
 		otherPanel.add(verbose);
 		otherPanel.add(graph);
+		otherPanel.add(untimedPOR);
 
 		preprocPanel.add(labelPane);
 		preprocPanel.add(scrollPane);
@@ -470,10 +470,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							.equals("untimedStateSearch")) {
 						untimedStateSearch.setSelected(true);
 					} else if (load.getProperty("verification.timing.methods")
-							.equals("untimedPOR")) {
-						untimedPOR.setSelected(true);
-					
-					} else if (load.getProperty("verification.timing.methods")
 							.equals("lhpn")) {
 						lhpn.setSelected(true);
 					} else {
@@ -505,6 +501,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (load.containsKey("verification.Graph")) {
 				if (load.getProperty("verification.Graph").equals("true")) {
 					graph.setSelected(true);
+				}
+			}
+			if (load.containsKey("verification.UntimedPOR")) {
+				if (load.getProperty("verification.UntimedPOR").equals("true")) {
+					untimedPOR.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.partial.order")) {
@@ -951,19 +952,15 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			lpn.load(directory + separator + lpnFile);
 			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";			
 			Project untimedStateSearch = new Project(lpn);
-			StateGraph stateGraph = untimedStateSearch.search(false);
-			if (dot.isSelected()) {
-				stateGraph.outputStateGraph(directory + separator + graphFileName);				
+			boolean usePOR = false;
+			if (untimedPOR.isSelected()) {
+				usePOR = true;
 			}
-			return;
-		}
-		if (untimedPOR.isSelected()) {
-			LhpnFile lpn = new LhpnFile();
-			lpn.load(directory + separator + lpnFile);
-			String graphFileName = verifyFile.replace(".lpn", "") + "POR_sg.dot";
-			Project untimedStateSearchPOR = new Project(lpn);
-			StateGraph stateGraph = untimedStateSearchPOR.search(true);
+			StateGraph stateGraph = untimedStateSearch.search(usePOR);
 			if (dot.isSelected()) {
+				if (usePOR) {
+					graphFileName = verifyFile.replace(".lpn", "") + "POR_sg.dot";
+				}			
 				stateGraph.outputStateGraph(directory + separator + graphFileName);				
 			}
 			return;
@@ -1653,10 +1650,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					prop.setProperty("verification.timing.methods", "smt");
 				} else if (untimedStateSearch.isSelected()) {
 					prop.setProperty("verification.timing.methods", "untimedStateSearch");
-				} else if (untimedPOR.isSelected()) {
-					prop.setProperty("verification.timing.methods", "untimedPOR");
-				}
-				else if (lhpn.isSelected()) {
+				} else if (lhpn.isSelected()) {
 					prop.setProperty("verification.timing.methods", "lhpn");
 				} else {
 					prop.setProperty("verification.timing.methods", "view");
@@ -1686,6 +1680,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				prop.setProperty("verification.Graph", "true");
 			} else {
 				prop.setProperty("verification.Graph", "false");
+			}
+			if (untimedPOR.isSelected()) {
+				prop.setProperty("verification.UntimedPOR", "true");
+			} else {
+				prop.setProperty("verification.UntimedPOR", "false");
 			}
 			if (verify.isSelected()) {
 				prop.setProperty("verification.algorithm", "verify");
