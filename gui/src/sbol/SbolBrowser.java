@@ -10,6 +10,7 @@ import org.sbolstandard.core.*;
 import biomodel.util.Utility;
 
 import java.io.*;
+import java.net.URI;
 
 import java.util.*;
 
@@ -26,18 +27,21 @@ public class SbolBrowser extends JPanel {
 	private String selection = "";
 	
 	//Constructor when browsing a single RDF file from the main gui
-	public SbolBrowser(String filePath, Gui gui) {
+	public SbolBrowser(Gui gui, String filePath) {
 		super(new BorderLayout());
 		
 		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
+		LinkedList<String> libURIs = new LinkedList<String>();
+		LinkedList<String> libIds = new LinkedList<String>();
+		HashMap<String, DnaComponent> compMap = new HashMap<String, DnaComponent>();
 		
-		org.sbolstandard.core.Collection lib = SbolUtility.loadXML(filePath);
-		if (lib != null) {
-			String fileId = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
-			libMap.put(fileId + "/" + lib.getDisplayId(), lib);
-
-			constructBrowser(libMap, "");
-
+		filePath = filePath.replace("\\\\", "\\");
+		
+		loadSbolFiles(gui.getSbolFiles(), libURIs, libIds, libMap, compMap, filePath);
+		
+		constructBrowser(libURIs, libIds, libMap, compMap, "");
+			
+		if (libMap.size() > 0) {
 			JPanel browserPanel = new JPanel();
 			browserPanel.add(selectionPanel, "North");
 			browserPanel.add(viewScroll, "Center");
@@ -45,7 +49,7 @@ public class SbolBrowser extends JPanel {
 			JTabbedPane browserTab = new JTabbedPane();
 			browserTab.add("SBOL Browser", browserPanel);
 			this.add(browserTab);
-			gui.addTab(fileId, this, null);
+			gui.addTab(filePath.substring(filePath.lastIndexOf(File.separator) + 1), this, null);
 		}
 	}
 	
@@ -54,16 +58,14 @@ public class SbolBrowser extends JPanel {
 		super(new GridLayout(2,1));
 		
 		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
-		for (String filePath : sbolFiles) {
-			org.sbolstandard.core.Collection lib = SbolUtility.loadXML(filePath);
-			if (lib != null) {
-				String fileId = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
-				libMap.put(fileId + "/" + lib.getDisplayId(), lib);
-			}
-		}
+		LinkedList<String> libURIs = new LinkedList<String>();
+		LinkedList<String> libIds = new LinkedList<String>();
+		HashMap<String, DnaComponent> compMap = new HashMap<String, DnaComponent>();
+		
+		loadSbolFiles(sbolFiles, libURIs, libIds, libMap, compMap, "");
 		
 		if (libMap.size() > 0) {
-			constructBrowser(libMap, filter);
+			constructBrowser(libURIs, libIds, libMap, compMap, filter);
 
 			this.add(selectionPanel);
 			this.add(viewScroll);
@@ -78,6 +80,23 @@ public class SbolBrowser extends JPanel {
 		}
 	}
 	
+	private void loadSbolFiles(HashSet<String> sbolFiles, LinkedList<String> libURIs, LinkedList<String> libIds, 
+			HashMap<String, org.sbolstandard.core.Collection> libMap, HashMap<String, DnaComponent> compMap, String browsePath) {
+		for (String filePath : sbolFiles) {
+			org.sbolstandard.core.Collection lib = SbolUtility.loadXML(filePath);
+			if (lib != null && lib.getDisplayId() != null) {
+				if (browsePath.equals("") || browsePath.equals(filePath)) {
+					libURIs.add(lib.getURI().toString());
+					libIds.add(lib.getDisplayId());
+				}
+				libMap.put(lib.getURI().toString(), lib);
+				for (DnaComponent dnac : lib.getComponents())
+					if (dnac.getDisplayId() != null)
+						compMap.put(dnac.getURI().toString(), dnac);
+			}
+		}
+	}
+	
 	private boolean browserOpen(String defaultSelection) {
 		boolean selectionValid;
 		do {
@@ -86,18 +105,10 @@ public class SbolBrowser extends JPanel {
 					"SBOL Browser", JOptionPane.YES_NO_OPTION,
 					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (option == JOptionPane.YES_OPTION) {
-				String[] libIds = libPanel.getSelectedIds();
-				String[] compIds = compPanel.getSelectedIds();
-				if (libIds.length > 0)
-					selection = libIds[0];
-				else {
-					selectionValid = false;
-					JOptionPane.showMessageDialog(Gui.frame, "No collection is selected.",
-							"Invalid Selection", JOptionPane.ERROR_MESSAGE);
-				}
+				String[] compIds = compPanel.getSelectedURIs();
 				if (compIds.length > 0)
-					selection = selection + "/" + compIds[0];
-				else if (libIds.length > 0) {
+					selection = compIds[0];
+				else {
 					selectionValid = false;
 					JOptionPane.showMessageDialog(Gui.frame, "No DNA component is selected.",
 							"Invalid Selection", JOptionPane.ERROR_MESSAGE);
@@ -110,7 +121,9 @@ public class SbolBrowser extends JPanel {
 		return false;
 	}
 	
-	private void constructBrowser(HashMap<String, org.sbolstandard.core.Collection> libMap, String filter) {
+	private void constructBrowser(LinkedList<String> libURIs, LinkedList<String> libIds, 
+			HashMap<String, org.sbolstandard.core.Collection> libMap, 
+			HashMap<String, DnaComponent> compMap, String filter) {
 		viewScroll.setMinimumSize(new Dimension(780, 400));
 		viewScroll.setPreferredSize(new Dimension(828, 264));
 //		viewScroll.setMinimumSize(new Dimension(552, 80));
@@ -119,11 +132,9 @@ public class SbolBrowser extends JPanel {
 		viewArea.setLineWrap(true);
 		viewArea.setEditable(false);
 		
-		HashMap<String, DnaComponent> compMap = new HashMap<String, DnaComponent>();
-		
 		compPanel = new DnaComponentPanel(compMap, viewArea);
 		libPanel = new LibraryPanel(libMap, compMap, viewArea, compPanel, filter);
-		libPanel.setLibraries(libMap.keySet());
+		libPanel.setLibraries(libIds, libURIs);
 		
 		selectionPanel.add(libPanel);
 		selectionPanel.add(compPanel);
