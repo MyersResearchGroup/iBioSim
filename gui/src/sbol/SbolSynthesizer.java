@@ -106,7 +106,7 @@ public class SbolSynthesizer {
 			// Set component URI
 			Calendar now = Calendar.getInstance();
 			try {
-				synthComp.setURI(new URI("async.ece.utah.edu/comp" + "_" + now.get(Calendar.MONTH) + "_" 
+				synthComp.setURI(new URI("http://www.async.ece.utah.edu#comp" + "_" + now.get(Calendar.MONTH) + "_" 
 				+ now.get(Calendar.DATE) + "_" + now.get(Calendar.YEAR) + "_" + now.get(Calendar.HOUR_OF_DAY) + "_" 
 						+ now.get(Calendar.MINUTE) + "_" + now.get(Calendar.SECOND) + "_" + now.get(Calendar.MILLISECOND)));
 			} catch (URISyntaxException e) {
