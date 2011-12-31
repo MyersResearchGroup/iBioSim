@@ -12,6 +12,7 @@ import java.util.*;
 
 public class DnaComponentPanel extends JPanel implements MouseListener {
 
+	private LinkedList<String> compURIs;
 	private HashMap<String, DnaComponent> compMap;
 	private JTextArea viewArea;
 	private JList compList = new JList();
@@ -36,26 +37,27 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 		this.add(componentScroll, "Center");
 	}
 	
-	public void setComponents(Set<String> compIds) {
+	public void setComponents(LinkedList<String> compIds, LinkedList<String> compURIs) {
+		this.compURIs = compURIs;
 		Object[] idObjects = compIds.toArray();
 		compList.setListData(idObjects);
 	}
 	
-	public String[] getSelectedIds() {
-		Object[] selected = compList.getSelectedValues();
-		String[] selectedIds = new String[selected.length];
-		for (int i = 0; i < selectedIds.length; i++)
-			selectedIds[i] = selected[i].toString();
-		return selectedIds;
+	public String[] getSelectedURIs() {
+		int[] selectedIndices = compList.getSelectedIndices();
+		String[] selectedURIs = new String[selectedIndices.length];
+		for (int i = 0; i < selectedURIs.length; i++)
+			selectedURIs[i] = compURIs.get(selectedIndices[i]).toString();
+		return selectedURIs;
 	}
 	
 	public void mouseClicked(MouseEvent e) {
 		if (e.getSource() == compList) {
 			viewArea.setText("");
-			String[] selectedIds = getSelectedIds();
-			for (String sid : selectedIds) {
-				if (compMap.containsKey(sid)) {
-					DnaComponent dnac = compMap.get(sid);
+			String[] selectedURIs = getSelectedURIs();
+			for (String compURI : selectedURIs) {
+				if (compMap.containsKey(compURI)) {
+					DnaComponent dnac = compMap.get(compURI);
 					
 					if (dnac.getName() != null && !dnac.getName().equals(""))
 						viewArea.append("Name:  " + dnac.getName() + "\n");
@@ -120,11 +122,14 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 	private String processAnnotations(SequenceAnnotation[] arraySA) {
 		String annotations = "";
 		for (int k = 0; k < arraySA.length; k++) {
-			annotations = annotations + arraySA[k].getSubComponent().getDisplayId();
+			DnaComponent subComponent = arraySA[k].getSubComponent();
+			if (subComponent != null) 
+				annotations = annotations + compMap.get(subComponent.getURI().toString()).getDisplayId();
+			else
+				annotations = annotations + "NA";
 			String sign = arraySA[k].getStrand();
-//			if (sign.equals("+"))
-//				sign = "";
 			annotations = annotations + " " + sign + arraySA[k].getBioStart() + " to " + sign + arraySA[k].getBioEnd() + ", "; 
+			
 		}
 		annotations = annotations.substring(0, annotations.length() - 2);
 		return annotations;

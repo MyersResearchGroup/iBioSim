@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Scanner;
 import java.util.prefs.Preferences;
@@ -76,6 +77,7 @@ import javax.swing.JViewport;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.tree.TreeModel;
 
 import analysis.AnalysisView;
 import analysis.Run;
@@ -5682,8 +5684,19 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			tab.setSelectedIndex(i);
 		}
 		else {
-			SbolBrowser browser = new SbolBrowser(filePath, this);
+			SbolBrowser browser = new SbolBrowser(this, filePath);
 		}
+	}
+	
+	public HashSet<String> getSbolFiles() {
+		HashSet<String> filePaths = new HashSet<String>();
+		TreeModel tree = getFileTree().tree.getModel();
+		for (int i = 0; i < tree.getChildCount(tree.getRoot()); i++) {
+			String fileName = tree.getChild(tree.getRoot(), i).toString();
+			if (fileName.endsWith(".sbol"))
+				filePaths.add(getRoot() + File.separator + fileName);
+		}
+		return filePaths;
 	}
 
 	private void openGraph() {

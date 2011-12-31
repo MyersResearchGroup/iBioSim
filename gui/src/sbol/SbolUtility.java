@@ -83,20 +83,20 @@ public class SbolUtility {
 		String compMessage = "";
 		String errorType = "";
 		if (fileId.equals("")) {
-			libMessage = "Collection is missing display ID.";
-			compMessage =  "DNA component from collection " + lib.getDisplayId() +" is missing display ID.";
-			errorType = "Invalid Collection";
+			libMessage = "Collection is missing URI.";
+			compMessage =  "DNA component from collection is missing URI.";
+			errorType = "Invalid SBOL";
 		} else {
-			libMessage = "Collection in file " + fileId + " may be missing display ID.";
-			compMessage =  "DNA component from collection " + lib.getDisplayId() + " in file " + fileId + " may be missing display ID.";
-			errorType = "Invalid File";
+			libMessage = "Collection in file " + fileId + " is missing URI.";
+			compMessage =  "DNA component in file " + fileId + " is missing display URI.";
+			errorType = "Invalid SBOL File";
 		}
-		if (lib.getDisplayId() == null) {
+		if (lib.getURI() == null) {
 			JOptionPane.showMessageDialog(Gui.frame, libMessage, errorType, JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
 		for (DnaComponent dnac : lib.getComponents())
-			if (dnac.getDisplayId() == null) {
+			if (dnac.getURI() == null) {
 				JOptionPane.showMessageDialog(Gui.frame, compMessage, errorType, JOptionPane.ERROR_MESSAGE);
 				return false;
 			}

@@ -444,15 +444,14 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	public void saveSBOL() {
 		GCMParser parser = new GCMParser(gcm, false);
 		SbolSynthesizer synthesizer = parser.buildSbolSynthesizer();
-		HashSet<String> sbolFiles = getSbolFiles();
-		if (synthesizer.loadLibraries(sbolFiles)) 
+		if (synthesizer.loadSbolFiles(getSbolFiles())) 
 			synthesizer.saveSbol(getPath());
 	}
 	
 	public void exportSBOL() {
 		GCMParser parser = new GCMParser(gcm, false);
 		SbolSynthesizer synthesizer = parser.buildSbolSynthesizer();
-		if (synthesizer.loadLibraries(getSbolFiles())) {
+		if (synthesizer.loadSbolFiles(getSbolFiles())) {
 			File lastFilePath;
 			Preferences biosimrc = Preferences.userRoot();
 			if (biosimrc.get("biosim.general.export_dir", "").equals("")) {
