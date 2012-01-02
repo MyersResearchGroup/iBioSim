@@ -35,6 +35,7 @@ public class SbolSynthesizer {
 	private HashSet<String> sourceCompURISet;
 	private CollectionImpl targetLib;
 	private boolean synthesizerOn;
+	private String time;
 	
 	public SbolSynthesizer(HashMap<String, Promoter> promoters) {
 		this.promoters = promoters;
@@ -62,11 +63,13 @@ public class SbolSynthesizer {
 	}	
 	
 	public void saveSbol(String targetPath) {
+		setTime();
 		Object[] targets = sbolFiles.toArray();
 		synthesizeDnaComponent(targetPath, targets);
 	}
 	
 	public void exportSbol(String targetFilePath) {
+		setTime();
 		String targetFileId = targetFilePath.substring(targetFilePath.lastIndexOf(File.separator) + 1);
 		String targetPath = targetFilePath.substring(0, targetFilePath.lastIndexOf(File.separator));
 		Object[] targets = new Object[1];
@@ -75,7 +78,7 @@ public class SbolSynthesizer {
 			CollectionImpl exportLib = new CollectionImpl();
 			exportLib.setDisplayId(targetFileId.substring(0, targetFileId.indexOf(".")));
 			try {
-				exportLib.setURI(new URI(targetFileId.substring(0, targetFileId.indexOf("."))));
+				exportLib.setURI(new URI("http://www.async.ece.utah.edu#col" + time));
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			}
@@ -105,10 +108,6 @@ public class SbolSynthesizer {
 				e1.printStackTrace();
 			}
 			// Set component URI
-			Calendar now = Calendar.getInstance();
-			String time = "_" + now.get(Calendar.MONTH) + "_" 
-					+ now.get(Calendar.DATE) + "_" + now.get(Calendar.YEAR) + "_" + now.get(Calendar.HOUR_OF_DAY) + "_" 
-					+ now.get(Calendar.MINUTE) + "_" + now.get(Calendar.SECOND) + "_" + now.get(Calendar.MILLISECOND);
 			try {
 				synthComp.setURI(new URI("http://www.async.ece.utah.edu#comp" + time));
 			} catch (URISyntaxException e) {
@@ -131,7 +130,7 @@ public class SbolSynthesizer {
 				for (String sourceCompURI : sourceCompURIs) 
 					if (synthesizerOn) {
 						addCount++;
-						position = addSubComponent(position, sourceCompURI, synthComp, addCount + time);
+						position = addSubComponent(position, sourceCompURI, synthComp, addCount);
 					}
 				if (synthesizerOn) {
 					// Export DNA component
@@ -248,7 +247,7 @@ public class SbolSynthesizer {
 		return sourceCompURIs;
 	}
 	
-	private int addSubComponent(int position, String sourceCompURI, DnaComponent synthComp, String countTime) {
+	private int addSubComponent(int position, String sourceCompURI, DnaComponent synthComp, int addCount) {
 		DnaComponent sourceComp = new DnaComponentImpl();
 		if (compMap.containsKey(sourceCompURI))
 			sourceComp = compMap.get(sourceCompURI);
@@ -258,16 +257,9 @@ public class SbolSynthesizer {
 					"DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
 		}
 		if (synthesizerOn) {
-			if (!targetURISet.contains(sourceCompURI)) {
-				//					DnaComponent strippedComp = new DnaComponentImpl();
-				//					try {
-				//						strippedComp.setURI(new URI(sourceCompURI));
-				//					} catch (URISyntaxException e) {
-				//						e.printStackTrace();
-				//					}
-				//					targetLib.addComponent(strippedComp);
-				targetLib.addComponent(sourceComp);
-			}
+			// Adds source component and all its subcomponents to target collection
+			addSubComponentHelper(sourceComp);
+			// Annotates newly synthesized DNA component with source component
 			if (sourceComp.getDnaSequence() != null && sourceComp.getDnaSequence().getNucleotides() != null 
 					&& sourceComp.getDnaSequence().getNucleotides().length() >= 1) {
 				SequenceAnnotation annot = new SequenceAnnotationImpl();
@@ -279,7 +271,7 @@ public class SbolSynthesizer {
 				synthComp.addAnnotation(annot);
 				position++;
 				try {
-					annot.setURI(new URI("http://www.async.ece.utah.edu#anno" + countTime));
+					annot.setURI(new URI("http://www.async.ece.utah.edu#anno" + addCount + time));
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				}
@@ -292,6 +284,17 @@ public class SbolSynthesizer {
 				synthComp.getDnaSequence().setNucleotides(synthComp.getDnaSequence().getNucleotides() + sourceComp.getDnaSequence().getNucleotides());
 		}
 		return position;
+	}
+	
+	// Recursively adds DNA component and annotated subcomponents to the target collection
+	private void addSubComponentHelper(DnaComponent dnac) {
+		if (!targetURISet.contains(dnac.getURI().toString()))
+			targetLib.addComponent(dnac);
+		if (dnac.getAnnotations() != null) 
+			for (SequenceAnnotation sa : dnac.getAnnotations()) 
+				if (sa.getSubComponent() != null)
+					addSubComponentHelper(sa.getSubComponent());
+			
 	}
 	
 //	private DnaComponent loadComponent(String sourceCompId, String sourceLibId, String sourceFileId) {
@@ -393,6 +396,13 @@ public class SbolSynthesizer {
 			return false;
 		} 
 		return true;
+	}
+	
+	private void setTime() {
+		Calendar now = Calendar.getInstance();
+		time = "_" + now.get(Calendar.MONTH) + "_" 
+				+ now.get(Calendar.DATE) + "_" + now.get(Calendar.YEAR) + "_" + now.get(Calendar.HOUR_OF_DAY) + "_" 
+				+ now.get(Calendar.MINUTE) + "_" + now.get(Calendar.SECOND) + "_" + now.get(Calendar.MILLISECOND);
 	}
 	
 //	private boolean checkOverwrite(String sourceId) {

@@ -63,22 +63,23 @@ public class Utility {
 						}
 					});
 				}
-				else if (approve.equals("Import SBOL")) {
+				else if (approve.equals("Import SBOL") || approve.equals("Export DNA Component")) {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 					fd.setFilenameFilter(new FilenameFilter() {
 						public boolean accept(File dir, String name) {
-							return name.endsWith(".sbol");
+//							return name.endsWith(".sbol");
+							return name.endsWith(".xml") || name.endsWith(".sbol");
 						}
 					});
 				}
-				else if (approve.equals("Export DNA Component")) {
-					fd = new FileDialog(frame, approve, FileDialog.LOAD);
-					fd.setFilenameFilter(new FilenameFilter() {
-						public boolean accept(File dir, String name) {
-							return name.endsWith(".sbol");
-						}
-					});
-				}
+//				else if (approve.equals("Export DNA Component")) {
+//					fd = new FileDialog(frame, approve, FileDialog.LOAD);
+//					fd.setFilenameFilter(new FilenameFilter() {
+//						public boolean accept(File dir, String name) {
+//							return name.endsWith(".sbol");
+//						}
+//					});
+//				}
 				else if (approve.equals("Import SBML")) {
 					fd = new FileDialog(frame, approve, FileDialog.LOAD);
 					fd.setFilenameFilter(new FilenameFilter() {
@@ -163,10 +164,9 @@ public class Utility {
 							selectedFile += ".pdf";
 						}
 					}
-					else if (approve.equals("Import SBOL") || (approve.equals("Export DNA Component"))) {
-						if (!selectedFile.endsWith(".sbol")) {
-							selectedFile += ".sbol";
-						}
+					else if (approve.equals("Import SBOL") || approve.equals("Export DNA Component")) {
+						if (!selectedFile.endsWith(".sbol") && !selectedFile.endsWith(".xml"))
+							selectedFile += ".xml";
 					}
 					else if (approve.equals("Import SBML") || (approve.equals("Export SMBL"))) {
 						if (!selectedFile.endsWith(".sbml") && !selectedFile.endsWith(".xml")) {
@@ -381,16 +381,11 @@ public class Utility {
 				}
 				retValue = fc.showDialog(frame, approve);
 			}
-			else if (approve.equals("Import SBOL")) {
+			else if (approve.equals("Import SBOL") || approve.equals("Export DNA Component")) {
 				fc.addChoosableFileFilter(sbolFilter);
+				fc.addChoosableFileFilter(xmlFilter);
 				fc.setAcceptAllFileFilterUsed(false);
-				fc.setFileFilter(sbolFilter);
-				retValue = fc.showDialog(frame, approve);
-			}
-			else if (approve.equals("Export DNA Component")) {
-				fc.addChoosableFileFilter(sbolFilter);
-				fc.setAcceptAllFileFilterUsed(false);
-				fc.setFileFilter(sbolFilter);
+				fc.setFileFilter(xmlFilter);
 				retValue = fc.showDialog(frame, approve);
 			}
 			else if (approve.equals("Import SBML")) {
@@ -514,11 +509,9 @@ public class Utility {
 						filename += ".avi";
 					}
 				}
-				else if (approve.equals("Export DNA Component")) {
-					if ((filename.length() < 5)
-							|| (!(filename.substring((filename.length() - 5), filename.length()).equals(".sbol")))) {
-						filename += ".sbol";
-					}
+				else if (approve.equals("Import SBOL") || approve.equals("Export DNA Component")) {
+					if (!filename.endsWith(".sbol") && !filename.endsWith(".xml"))
+						filename += ".xml";
 				}
 			}
 			return filename;

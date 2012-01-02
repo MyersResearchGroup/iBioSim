@@ -3732,7 +3732,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			newModel("Spice Circuit", ".cir");
 		}
 		else if (e.getSource().equals(importSbol)) {
-			importFile("SBOL", ".sbol");
+			importFile("SBOL", ".sbol", ".xml");
 		}
 		// if the import sbml menu item is selected
 		else if (e.getSource() == importSbml) {
@@ -3749,39 +3749,39 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		*/
 		// if the import vhdl menu item is selected
 		else if (e.getSource() == importVhdl) {
-			importFile("VHDL", ".vhd");
+			importFile("VHDL", ".vhd", ".vhd");
 		}
 		else if (e.getSource() == importS) {
-			importFile("Assembly", ".s");
+			importFile("Assembly", ".s", ".s");
 		}
 		else if (e.getSource() == importInst) {
-			importFile("Instruction", ".inst");
+			importFile("Instruction", ".inst", ".inst");
 		}
 		else if (e.getSource() == importLpn) {
 			importLPN();
 		}
 		else if (e.getSource() == importG) {
-			importFile("Petri Net", ".g");
+			importFile("Petri Net", ".g", ".g");
 		}
 		// if the import csp menu item is selected
 		else if (e.getSource() == importCsp) {
-			importFile("CSP", ".csp");
+			importFile("CSP", ".csp", ".csp");
 		}
 		// if the import hse menu item is selected
 		else if (e.getSource() == importHse) {
-			importFile("Handshaking Expansion", ".hse");
+			importFile("Handshaking Expansion", ".hse", ".hse");
 		}
 		// if the import unc menu item is selected
 		else if (e.getSource() == importUnc) {
-			importFile("Extended Burst State Machine", ".unc");
+			importFile("Extended Burst State Machine", ".unc", ".unc");
 		}
 		// if the import rsg menu item is selected
 		else if (e.getSource() == importRsg) {
-			importFile("Reduced State Graph", ".rsg");
+			importFile("Reduced State Graph", ".rsg", ".rsg");
 		}
 		// if the import spice menu item is selected
 		else if (e.getSource() == importSpice) {
-			importFile("Spice Circuit", ".cir");
+			importFile("Spice Circuit", ".cir", ".cir");
 		}
 		// if the Graph data menu item is clicked
 		else if (e.getSource() == graph) {
@@ -4550,7 +4550,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 		}
 	}
 
-	private void importFile(String fileType, String extension) {
+	private void importFile(String fileType, String extension1, String extension2) {
 		File importFile;
 		Preferences biosimrc = Preferences.userRoot();
 		if (biosimrc.get("biosim.general.import_dir", "").equals("")) {
@@ -4560,7 +4560,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			importFile = new File(biosimrc.get("biosim.general.import_dir", ""));
 		}
 		String filename = Utility.browse(frame, importFile, null, JFileChooser.FILES_ONLY, "Import " + fileType, -1);
-		if (filename.length() > 1 && !filename.endsWith(extension)) {
+		if (filename.length() > 1 && !filename.endsWith(extension1) && !filename.endsWith(extension2)) {
 			JOptionPane.showMessageDialog(frame, "You must select a valid " + fileType + " file to import.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
@@ -4569,6 +4569,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 			String[] file = filename.split(separator);
 			try {
 				file[file.length - 1] = file[file.length - 1].replaceAll("[^a-zA-Z0-9_.]+", "_");
+				file[file.length - 1] = file[file.length - 1].replaceAll(extension2, extension1);
 				if (checkFiles(root + separator + file[file.length - 1], filename.trim())) {
 					if (overwrite(root + separator + file[file.length - 1], file[file.length - 1])) {
 						FileOutputStream out = new FileOutputStream(new File(root + separator + file[file.length - 1]));
