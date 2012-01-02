@@ -74,11 +74,13 @@ public class InfluencePanel extends JPanel implements ActionListener {
 		} else {
 			//If no implicit promoters exist (e.g. there are only complex influences), 
 			//creates one to fall back on if influence type is changed to activation or repression
-			String[] impProms = gcm.getImplicitPromotersAsArray();
-			if (impProms.length == 0) {
-				gcm.createPromoter(null, 0, 0, false);
-				impProms = gcm.getImplicitPromotersAsArray();
-			}
+			// commented this out since we can't change the type of complex influence anyway and 
+			// the potentially hidden implicit promoter can cause problems when saving SBOL 
+//			String[] impProms = gcm.getImplicitPromotersAsArray();
+//			if (impProms.length == 0) {
+//				gcm.createPromoter(null, 0, 0, false);
+//				impProms = gcm.getImplicitPromotersAsArray();
+//			}
 			promoterBox = new JComboBox(gcm.getImplicitPromotersAsArray());
 			if (selection.contains(",")) {
 				promoterId = selection.substring(selection.indexOf(",")+1);

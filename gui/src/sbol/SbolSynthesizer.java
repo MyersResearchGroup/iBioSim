@@ -98,6 +98,7 @@ public class SbolSynthesizer {
 			synthComp.setDisplayId(input[1]);
 			synthComp.setName(input[2]);
 			synthComp.setDescription(input[3]);
+			// Set component type
 			try {
 				synthComp.addType(new URI("http://sbols.org/sbol.owl#engineered_region"));
 			} catch (URISyntaxException e1) {
@@ -105,10 +106,17 @@ public class SbolSynthesizer {
 			}
 			// Set component URI
 			Calendar now = Calendar.getInstance();
+			String time = "_" + now.get(Calendar.MONTH) + "_" 
+					+ now.get(Calendar.DATE) + "_" + now.get(Calendar.YEAR) + "_" + now.get(Calendar.HOUR_OF_DAY) + "_" 
+					+ now.get(Calendar.MINUTE) + "_" + now.get(Calendar.SECOND) + "_" + now.get(Calendar.MILLISECOND);
 			try {
-				synthComp.setURI(new URI("http://www.async.ece.utah.edu#comp" + "_" + now.get(Calendar.MONTH) + "_" 
-				+ now.get(Calendar.DATE) + "_" + now.get(Calendar.YEAR) + "_" + now.get(Calendar.HOUR_OF_DAY) + "_" 
-						+ now.get(Calendar.MINUTE) + "_" + now.get(Calendar.SECOND) + "_" + now.get(Calendar.MILLISECOND)));
+				synthComp.setURI(new URI("http://www.async.ece.utah.edu#comp" + time));
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+			// Set component sequence URI
+			try {
+				compSeq.setURI(new URI("http://www.async.ece.utah.edu#seq" + time));
 			} catch (URISyntaxException e) {
 				e.printStackTrace();
 			}
@@ -119,8 +127,12 @@ public class SbolSynthesizer {
 				for (String sourceCompURI : sourceCompURIs)
 					sourceCompURISet.add(sourceCompURI);
 				int position = 1;
-				for (String sourceCompURI : sourceCompURIs)
-					position = addSubComponent(position, sourceCompURI, synthComp);
+				int addCount = 0;
+				for (String sourceCompURI : sourceCompURIs) 
+					if (synthesizerOn) {
+						addCount++;
+						position = addSubComponent(position, sourceCompURI, synthComp, addCount + time);
+					}
 				if (synthesizerOn) {
 					// Export DNA component
 					targetLib.addComponent(synthComp);
@@ -190,9 +202,9 @@ public class SbolSynthesizer {
 	private LinkedList<String> loadSourceCompURIs() {
 		LinkedList<String> sourceCompURIs = new LinkedList<String>();
 		for (Promoter p : promoters.values()) {
-			if (synthesizerOn ) {
+			if (synthesizerOn) {
 				String sbolPromoter = p.getPromoter();
-				if (sbolPromoter != null)
+				if (sbolPromoter != null && !sbolPromoter.equals(""))
 					sourceCompURIs.add(sbolPromoter);
 				else {
 					synthesizerOn = false;
@@ -202,7 +214,7 @@ public class SbolSynthesizer {
 				for (SpeciesInterface s : p.getOutputs()) {
 					if (synthesizerOn) {
 						String sbolRbs = s.getRBS();
-						if (sbolRbs != null)
+						if (sbolRbs != null && !sbolRbs.equals(""))
 							sourceCompURIs.add(sbolRbs);
 						else {
 							synthesizerOn = false;
@@ -212,7 +224,7 @@ public class SbolSynthesizer {
 					}
 					if (synthesizerOn) {
 						String sbolOrf = s.getORF();
-						if (sbolOrf != null)
+						if (sbolOrf != null && !sbolOrf.equals(""))
 							sourceCompURIs.add(sbolOrf);
 						else {
 							synthesizerOn = false;
@@ -223,7 +235,7 @@ public class SbolSynthesizer {
 				}
 				if (synthesizerOn) {
 					String sbolTerminator = p.getTerminator();
-					if (sbolTerminator != null)
+					if (sbolTerminator != null && !sbolTerminator.equals(""))
 						sourceCompURIs.add(sbolTerminator);
 					else {
 						synthesizerOn = false;
@@ -236,31 +248,48 @@ public class SbolSynthesizer {
 		return sourceCompURIs;
 	}
 	
-	private int addSubComponent(int position, String sourceCompURI, DnaComponent synthComp) {
+	private int addSubComponent(int position, String sourceCompURI, DnaComponent synthComp, String countTime) {
+		DnaComponent sourceComp = new DnaComponentImpl();
+		if (compMap.containsKey(sourceCompURI))
+			sourceComp = compMap.get(sourceCompURI);
+		else {
+			synthesizerOn = false;
+			JOptionPane.showMessageDialog(Gui.frame, "Component with URI " + sourceCompURI + " is not found in project SBOL files.",
+					"DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
+		}
 		if (synthesizerOn) {
-			DnaComponent sourceComp = new DnaComponentImpl();
-			if (compMap.containsKey(sourceCompURI))
-				sourceComp = compMap.get(sourceCompURI);
-			else {
-				synthesizerOn = false;
-				JOptionPane.showMessageDialog(Gui.frame, "Component with URI " + sourceCompURI + " is not found in project SBOL files.",
-						"DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
+			if (!targetURISet.contains(sourceCompURI)) {
+				//					DnaComponent strippedComp = new DnaComponentImpl();
+				//					try {
+				//						strippedComp.setURI(new URI(sourceCompURI));
+				//					} catch (URISyntaxException e) {
+				//						e.printStackTrace();
+				//					}
+				//					targetLib.addComponent(strippedComp);
+				targetLib.addComponent(sourceComp);
 			}
-			if (synthesizerOn) {
-				if (!targetURISet.contains(sourceCompURI)) {
-//					DnaComponent strippedComp = new DnaComponentImpl();
-//					try {
-//						strippedComp.setURI(new URI(sourceCompURI));
-//					} catch (URISyntaxException e) {
-//						e.printStackTrace();
-//					}
-//					targetLib.addComponent(strippedComp);
-					targetLib.addComponent(sourceComp);
+			if (sourceComp.getDnaSequence() != null && sourceComp.getDnaSequence().getNucleotides() != null 
+					&& sourceComp.getDnaSequence().getNucleotides().length() >= 1) {
+				SequenceAnnotation annot = new SequenceAnnotationImpl();
+				annot.setBioStart(position);
+				position += sourceComp.getDnaSequence().getNucleotides().length() - 1;
+				annot.setBioEnd(position);
+				annot.setStrand("+");
+				annot.setSubComponent(sourceComp);
+				synthComp.addAnnotation(annot);
+				position++;
+				try {
+					annot.setURI(new URI("http://www.async.ece.utah.edu#anno" + countTime));
+				} catch (URISyntaxException e) {
+					e.printStackTrace();
 				}
-				position = annotate(sourceComp, synthComp, position);
-				if (synthesizerOn)
-					synthComp.getDnaSequence().setNucleotides(synthComp.getDnaSequence().getNucleotides() + sourceComp.getDnaSequence().getNucleotides());
-			}
+			} else {
+				synthesizerOn = false;
+				JOptionPane.showMessageDialog(Gui.frame, "DNA Component " + sourceComp.getDisplayId() + " has no DNA sequence.", 
+						"Invalid DNA Sequence", JOptionPane.ERROR_MESSAGE);
+			}	
+			if (synthesizerOn)
+				synthComp.getDnaSequence().setNucleotides(synthComp.getDnaSequence().getNucleotides() + sourceComp.getDnaSequence().getNucleotides());
 		}
 		return position;
 	}
@@ -354,25 +383,6 @@ public class SbolSynthesizer {
 //			return sourceComp;
 //		}
 //	}
-	
-	private int annotate(DnaComponent sourceComp, DnaComponent synthComp, int position) {
-		if (sourceComp.getDnaSequence() != null && sourceComp.getDnaSequence().getNucleotides() != null 
-				&& sourceComp.getDnaSequence().getNucleotides().length() >= 1) {
-			SequenceAnnotation annot = new SequenceAnnotationImpl();
-			annot.setBioStart(position);
-			position += sourceComp.getDnaSequence().getNucleotides().length() - 1;
-			annot.setBioEnd(position);
-			annot.setStrand("+");
-			annot.setSubComponent(sourceComp);
-			synthComp.addAnnotation(annot);
-			position++;
-		} else {
-			synthesizerOn = false;
-			JOptionPane.showMessageDialog(Gui.frame, "DNA Component " + sourceComp.getDisplayId() + " has no DNA sequence.", 
-					"Invalid DNA Sequence", JOptionPane.ERROR_MESSAGE);
-		}	
-		return position;
-	}
 	
 	private boolean isSourceIdValid(String sourceId) {
 		if (sourceId.equals("")) {

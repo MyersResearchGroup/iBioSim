@@ -126,7 +126,7 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 			if (subComponent != null) 
 				annotations = annotations + compMap.get(subComponent.getURI().toString()).getDisplayId();
 			else
-				annotations = annotations + "NA";
+				annotations = annotations + "NA"; 
 			String sign = arraySA[k].getStrand();
 			annotations = annotations + " " + sign + arraySA[k].getBioStart() + " to " + sign + arraySA[k].getBioEnd() + ", "; 
 			
