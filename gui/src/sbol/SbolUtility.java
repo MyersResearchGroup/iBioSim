@@ -17,6 +17,7 @@ import org.sbolstandard.xml.*;
 public class SbolUtility {
 
 	public static CollectionImpl loadXML(String filePath) {
+		String fileId = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
 		Parser p = new Parser();
 		CollectionImpl lib = null;
 //		try {
@@ -34,8 +35,9 @@ public class SbolUtility {
 		try {
 			scanner = new Scanner(new FileInputStream(new File(filePath)));
 		} catch (FileNotFoundException e) {
-			JOptionPane.showMessageDialog(Gui.frame, "SBOL file is not found.", "File Not Found",
+			JOptionPane.showMessageDialog(Gui.frame, "SBOL file " + fileId + " is not found.", "File Not Found",
 					JOptionPane.ERROR_MESSAGE);
+			return null;
 		}
 		try {
 			while (scanner.hasNextLine()){
@@ -47,10 +49,10 @@ public class SbolUtility {
 		try {
 			lib = p.parse(text.toString());
 		} catch (JAXBException e) {
-			JOptionPane.showMessageDialog(Gui.frame, "There was an error parsing a SBOL file.", "Parsing Error",
+			JOptionPane.showMessageDialog(Gui.frame, "There was an error parsing SBOL file " + fileId + ".", "Parsing Error",
 					JOptionPane.ERROR_MESSAGE);
+			return null;
 		}
-		String fileId = filePath.substring(filePath.lastIndexOf(File.separator) + 1);
 		if (isLibraryValid(lib, fileId))
 			return lib;
 		else
