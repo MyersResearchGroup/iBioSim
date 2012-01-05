@@ -83,24 +83,43 @@ public class SbolUtility {
 	public static boolean isLibraryValid(org.sbolstandard.core.Collection lib, String fileId) {
 		String libMessage = "";
 		String compMessage = "";
+		String annoMessage = "";
+		String seqMessage = "";
 		String errorType = "";
 		if (fileId.equals("")) {
 			libMessage = "Collection is missing URI.";
-			compMessage =  "DNA component from collection is missing URI.";
+			compMessage =  "DNA component is missing URI.";
+			annoMessage = "Sequence annotation is missing URI.";
+			seqMessage = "DNA sequence is missing URI.";
 			errorType = "Invalid SBOL";
 		} else {
 			libMessage = "Collection in file " + fileId + " is missing URI.";
-			compMessage =  "DNA component in file " + fileId + " is missing display URI.";
+			compMessage =  "DNA component in file " + fileId + " is missing URI.";
+			annoMessage = "Sequence annotation in file " + fileId + " is missing URI.";
+			seqMessage = "DNA sequence in file " + fileId + " is missing URI.";
 			errorType = "Invalid SBOL File";
 		}
-		if (lib.getURI() == null) {
+		if (lib.getURI() == null || lib.getURI().toString().equals("")) {
 			JOptionPane.showMessageDialog(Gui.frame, libMessage, errorType, JOptionPane.ERROR_MESSAGE);
 			return false;
 		}
-		for (DnaComponent dnac : lib.getComponents())
-			if (dnac.getURI() == null) {
-				JOptionPane.showMessageDialog(Gui.frame, compMessage, errorType, JOptionPane.ERROR_MESSAGE);
-				return false;
+		if (lib.getComponents() != null)
+			for (DnaComponent dnac : lib.getComponents()) {
+				if (dnac.getURI() == null || dnac.getURI().toString().equals("")) {
+					JOptionPane.showMessageDialog(Gui.frame, compMessage, errorType, JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
+				if (dnac.getAnnotations() != null) {
+					for (SequenceAnnotation sa : dnac.getAnnotations())
+						if (sa.getURI() == null || sa.getURI().toString().equals("")) {
+							JOptionPane.showMessageDialog(Gui.frame, annoMessage, errorType, JOptionPane.ERROR_MESSAGE);
+							return false;
+						}
+				}
+				if (dnac.getDnaSequence() != null && (dnac.getDnaSequence().getURI() == null || dnac.getDnaSequence().getURI().toString().equals(""))) {
+					JOptionPane.showMessageDialog(Gui.frame, seqMessage, errorType, JOptionPane.ERROR_MESSAGE);
+					return false;
+				}
 			}
 		return true;
 	}

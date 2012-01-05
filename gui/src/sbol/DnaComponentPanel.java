@@ -14,12 +14,17 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 
 	private LinkedList<String> compURIs;
 	private HashMap<String, DnaComponent> compMap;
+	private HashMap<String, SequenceAnnotation> annoMap;
+	private HashMap<String, DnaSequence> seqMap;
 	private JTextArea viewArea;
 	private JList compList = new JList();
 	
-	public DnaComponentPanel(HashMap<String, DnaComponent> compMap, JTextArea viewArea) {
+	public DnaComponentPanel(HashMap<String, DnaComponent> compMap, HashMap<String, SequenceAnnotation> annoMap, 
+			HashMap<String, DnaSequence> seqMap, JTextArea viewArea) {
 		super(new BorderLayout());
 		this.compMap = compMap;
+		this.annoMap = annoMap;
+		this.seqMap = seqMap;
 		this.viewArea = viewArea;
 		
 		compList.addMouseListener(this);
@@ -69,10 +74,16 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 					else 
 						viewArea.append("Description:  NA\n");
 					
-					if (dnac.getAnnotations() != null && dnac.getAnnotations().size() > 0) {
-						viewArea.append("Annotations:  ");
-						SequenceAnnotation[] sortedSA = sortAnnotations(dnac.getAnnotations());
+					LinkedList<SequenceAnnotation> unsortedSA = new LinkedList<SequenceAnnotation>();
+					if (dnac.getAnnotations() != null) {
+						for (SequenceAnnotation sa : dnac.getAnnotations())
+							if (annoMap.containsKey(sa.getURI().toString()))
+								unsortedSA.add(annoMap.get(sa.getURI().toString()));
+					}
+					if (unsortedSA.size() > 0) {
+						SequenceAnnotation[] sortedSA = sortAnnotations(unsortedSA);
 						String annotations = processAnnotations(sortedSA);
+						viewArea.append("Annotations:  ");
 						viewArea.append(annotations + "\n");
 					} else 
 						viewArea.append("Annotations:  NA\n");
@@ -87,7 +98,7 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 					else
 						viewArea.append("NA\n");
 					
-					if (dnac.getDnaSequence() != null && dnac.getDnaSequence().getNucleotides() != null && !dnac.getDnaSequence().getNucleotides().equals(""))
+					if (dnac.getDnaSequence() != null && seqMap.containsKey(dnac.getDnaSequence().getURI().toString()))
 						viewArea.append("DNA Sequence:  " + dnac.getDnaSequence().getNucleotides() + "\n");
 					else
 						viewArea.append("DNA Sequence:  NA\n");
@@ -98,7 +109,7 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 		} 
 	}
 	
-	private SequenceAnnotation[] sortAnnotations(java.util.Collection<SequenceAnnotation> unsortedSA) {
+	private SequenceAnnotation[] sortAnnotations(LinkedList<SequenceAnnotation> unsortedSA) {
 		SequenceAnnotation[] sortedSA = new SequenceAnnotation[unsortedSA.size()];
 		int n = 0;
 		for (SequenceAnnotation sa : unsortedSA) {

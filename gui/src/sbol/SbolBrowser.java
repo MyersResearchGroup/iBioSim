@@ -34,12 +34,14 @@ public class SbolBrowser extends JPanel {
 		LinkedList<String> libURIs = new LinkedList<String>();
 		LinkedList<String> libIds = new LinkedList<String>();
 		HashMap<String, DnaComponent> compMap = new HashMap<String, DnaComponent>();
+		HashMap<String, SequenceAnnotation> annoMap = new HashMap<String, SequenceAnnotation>();
+		HashMap<String, DnaSequence> seqMap = new HashMap<String, DnaSequence>();
 		
 		filePath = filePath.replace("\\\\", "\\");
 		
-		loadSbolFiles(gui.getSbolFiles(), libURIs, libIds, libMap, compMap, filePath);
+		loadSbolFiles(gui.getSbolFiles(), libURIs, libIds, libMap, compMap, annoMap, seqMap, filePath);
 		
-		constructBrowser(libURIs, libIds, libMap, compMap, "");
+		constructBrowser(libURIs, libIds, libMap, compMap, annoMap, seqMap, "");
 			
 		if (libMap.size() > 0) {
 			JPanel browserPanel = new JPanel();
@@ -61,11 +63,13 @@ public class SbolBrowser extends JPanel {
 		LinkedList<String> libURIs = new LinkedList<String>();
 		LinkedList<String> libIds = new LinkedList<String>();
 		HashMap<String, DnaComponent> compMap = new HashMap<String, DnaComponent>();
+		HashMap<String, SequenceAnnotation> annoMap = new HashMap<String, SequenceAnnotation>();
+		HashMap<String, DnaSequence> seqMap = new HashMap<String, DnaSequence>();
 		
-		loadSbolFiles(sbolFiles, libURIs, libIds, libMap, compMap, "");
+		loadSbolFiles(sbolFiles, libURIs, libIds, libMap, compMap, annoMap, seqMap, "");
 		
 		if (libMap.size() > 0) {
-			constructBrowser(libURIs, libIds, libMap, compMap, filter);
+			constructBrowser(libURIs, libIds, libMap, compMap, annoMap, seqMap, filter);
 
 			this.add(selectionPanel);
 			this.add(viewScroll);
@@ -81,18 +85,36 @@ public class SbolBrowser extends JPanel {
 	}
 	
 	private void loadSbolFiles(HashSet<String> sbolFiles, LinkedList<String> libURIs, LinkedList<String> libIds, 
-			HashMap<String, org.sbolstandard.core.Collection> libMap, HashMap<String, DnaComponent> compMap, String browsePath) {
+			HashMap<String, org.sbolstandard.core.Collection> libMap, HashMap<String, DnaComponent> compMap, 
+			HashMap<String, SequenceAnnotation> annoMap, HashMap<String, DnaSequence> seqMap, String browsePath) {
 		for (String filePath : sbolFiles) {
 			org.sbolstandard.core.Collection lib = SbolUtility.loadXML(filePath);
-			if (lib != null && lib.getDisplayId() != null) {
-				if (browsePath.equals("") || browsePath.equals(filePath)) {
-					libURIs.add(lib.getURI().toString());
-					libIds.add(lib.getDisplayId());
+			if (lib != null) {
+				if (lib.getDisplayId() != null && !lib.getDisplayId().equals("")) {
+					if (browsePath.equals("") || browsePath.equals(filePath)) {
+						libURIs.add(lib.getURI().toString());
+						libIds.add(lib.getDisplayId());
+					}
+					if (!libMap.containsKey(lib.getURI().toString()))
+						libMap.put(lib.getURI().toString(), lib);
 				}
-				libMap.put(lib.getURI().toString(), lib);
-				for (DnaComponent dnac : lib.getComponents())
-					if (dnac.getDisplayId() != null)
-						compMap.put(dnac.getURI().toString(), dnac);
+				if (lib.getComponents() != null)
+					for (DnaComponent dnac : lib.getComponents()) {
+						if (dnac.getDisplayId() != null && !dnac.getDisplayId().equals("") 
+								&& !compMap.containsKey(dnac.getURI().toString()))
+							compMap.put(dnac.getURI().toString(), dnac);
+						if (dnac.getAnnotations() != null)
+							for (SequenceAnnotation sa : dnac.getAnnotations()) {
+								Integer start = Integer.valueOf(sa.getBioStart());
+								Integer end = Integer.valueOf(sa.getBioEnd());
+								if (start != null && end != null && !annoMap.containsKey(sa.getURI().toString()))
+									annoMap.put(sa.getURI().toString(), sa);
+							}
+						if (dnac.getDnaSequence() != null && dnac.getDnaSequence().getNucleotides() != null
+								&& !dnac.getDnaSequence().getNucleotides().equals("")
+								&& !seqMap.containsKey(dnac.getDnaSequence().getURI().toString()))
+							seqMap.put(dnac.getDnaSequence().getURI().toString(), dnac.getDnaSequence());
+					}
 			}
 		}
 	}
@@ -122,8 +144,8 @@ public class SbolBrowser extends JPanel {
 	}
 	
 	private void constructBrowser(LinkedList<String> libURIs, LinkedList<String> libIds, 
-			HashMap<String, org.sbolstandard.core.Collection> libMap, 
-			HashMap<String, DnaComponent> compMap, String filter) {
+			HashMap<String, org.sbolstandard.core.Collection> libMap, HashMap<String, DnaComponent> compMap, 
+			HashMap<String, SequenceAnnotation> annoMap, HashMap<String, DnaSequence> seqMap, String filter) {
 		viewScroll.setMinimumSize(new Dimension(780, 400));
 		viewScroll.setPreferredSize(new Dimension(828, 264));
 //		viewScroll.setMinimumSize(new Dimension(552, 80));
@@ -132,7 +154,7 @@ public class SbolBrowser extends JPanel {
 		viewArea.setLineWrap(true);
 		viewArea.setEditable(false);
 		
-		compPanel = new DnaComponentPanel(compMap, viewArea);
+		compPanel = new DnaComponentPanel(compMap, annoMap, seqMap, viewArea);
 		libPanel = new LibraryPanel(libMap, compMap, viewArea, compPanel, filter);
 		libPanel.setLibraries(libIds, libURIs);
 		
