@@ -41,7 +41,7 @@ public class SbolBrowser extends JPanel {
 		
 		loadSbolFiles(gui.getSbolFiles(), libURIs, libIds, libMap, compMap, annoMap, seqMap, filePath);
 		
-		constructBrowser(libURIs, libIds, libMap, compMap, annoMap, seqMap, "");
+		constructBrowser(libURIs, libIds, libMap, compMap, annoMap, seqMap, new HashSet<String>());
 			
 		if (libMap.size() > 0) {
 			JPanel browserPanel = new JPanel();
@@ -56,7 +56,7 @@ public class SbolBrowser extends JPanel {
 	}
 	
 	//Constructor when browsing RDF file subsets for SBOL to GCM association
-	public SbolBrowser(HashSet<String> sbolFiles, String filter, String defaultSelection) {
+	public SbolBrowser(HashSet<String> sbolFiles, Set<String> filter, String defaultSelection) {
 		super(new GridLayout(2,1));
 		
 		HashMap<String, org.sbolstandard.core.Collection> libMap = new HashMap<String, org.sbolstandard.core.Collection>();
@@ -91,7 +91,7 @@ public class SbolBrowser extends JPanel {
 			org.sbolstandard.core.Collection lib = SbolUtility.loadXML(filePath);
 			if (lib != null) {
 				if (lib.getDisplayId() != null && !lib.getDisplayId().equals("")) {
-					if (browsePath.equals("") || browsePath.equals(filePath)) {
+					if ((browsePath.equals("") || browsePath.equals(filePath)) && !libURIs.contains(lib.getURI().toString())) {
 						libURIs.add(lib.getURI().toString());
 						libIds.add(lib.getDisplayId());
 					}
@@ -145,7 +145,7 @@ public class SbolBrowser extends JPanel {
 	
 	private void constructBrowser(LinkedList<String> libURIs, LinkedList<String> libIds, 
 			HashMap<String, org.sbolstandard.core.Collection> libMap, HashMap<String, DnaComponent> compMap, 
-			HashMap<String, SequenceAnnotation> annoMap, HashMap<String, DnaSequence> seqMap, String filter) {
+			HashMap<String, SequenceAnnotation> annoMap, HashMap<String, DnaSequence> seqMap, Set<String> filter) {
 		viewScroll.setMinimumSize(new Dimension(780, 400));
 		viewScroll.setPreferredSize(new Dimension(828, 264));
 //		viewScroll.setMinimumSize(new Dimension(552, 80));
