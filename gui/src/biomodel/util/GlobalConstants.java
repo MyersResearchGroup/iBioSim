@@ -94,7 +94,7 @@ public class GlobalConstants {
 	public static final String SBOL_PROMOTER = "sbolPromoter";
 	public static final String SBOL_TERMINATOR = "sbolTerminator";
 	public static final String SBOL_RBS = "sbolRBS";
-	public static final String SBOL_ORF = "sbolORF";
+	public static final String SBOL_ORF = "sbolCDS";
 	
 	public static final String BIO = "biochem";
 	public static final String ACTIVATION = "activation";

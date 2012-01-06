@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.net.URI;
 import java.util.HashSet;
+import java.util.Set;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -96,7 +97,7 @@ public class SbolField extends JPanel implements ActionListener {
 				for (DnaComponent dnac : lib.getComponents())
 					if (sourceCompURI.equals(dnac.getURI().toString())) {
 						for (URI uri : dnac.getTypes())
-							if (uri.getFragment().equals(typeConverter(sbolType)))
+							if (typeConverter(sbolType).contains(uri.getFragment()))
 								return true;
 						Utility.createErrorMessage("Invalid GCM to SBOL Association", "DNA component with URI " + sourceCompURI
 								+ " is not a " + sbolLabel.getText() + ".");
@@ -117,21 +118,26 @@ public class SbolField extends JPanel implements ActionListener {
 		} 
 	}
 	
-	private String typeConverter(String sbolType) {
-		if (sbolType.equals(GlobalConstants.SBOL_ORF))
-			return "ORF";
-		else if (sbolType.equals(GlobalConstants.SBOL_PROMOTER))
-			return "promoter";
-		else if (sbolType.equals(GlobalConstants.SBOL_RBS))
-			return "RBS";
-		else if (sbolType.equals(GlobalConstants.SBOL_TERMINATOR))
-			return "terminator";
-		return "";
+	private Set<String> typeConverter(String sbolType) {
+		Set<String> types = new HashSet<String>();
+		if (sbolType.equals(GlobalConstants.SBOL_ORF)) {
+			types.add("SO_0000316"); // CDS
+		} else if (sbolType.equals(GlobalConstants.SBOL_PROMOTER)) {
+			types.add("SO_0000167"); // promoter
+			types.add("SO_0001203"); // RNA_polymerase_promoter
+		} else if (sbolType.equals(GlobalConstants.SBOL_RBS)) {
+			types.add("SO_0000139"); // ribosome_entry_site
+		} else if (sbolType.equals(GlobalConstants.SBOL_TERMINATOR)) {
+			types.add("SO_0000141"); // terminator
+			types.add("SO_0000614"); // bacterial_terminator
+			
+		}
+		return types;
 	}
 	
 	private void setLabel(String sbolType) {
 		if (sbolType.equals(GlobalConstants.SBOL_ORF))
-			sbolLabel = new JLabel("SBOL Open Reading Frame");
+			sbolLabel = new JLabel("SBOL Coding Sequence");
 		else if (sbolType.equals(GlobalConstants.SBOL_PROMOTER))
 			sbolLabel = new JLabel("SBOL Promoter");
 		else if (sbolType.equals(GlobalConstants.SBOL_RBS))

@@ -90,7 +90,7 @@ public class DnaComponentPanel extends JPanel implements MouseListener {
 					viewArea.append("Types:  ");
 					String types = "";
 					for (URI uri : dnac.getTypes()) {
-						if (!uri.getFragment().equals("SequenceFeature"))
+//						if (!uri.getFragment().equals("SequenceFeature"))
 							types = types + uri.getFragment() + ", ";
 					}
 					if (types.length() > 0)

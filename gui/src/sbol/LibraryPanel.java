@@ -18,10 +18,10 @@ public class LibraryPanel extends JPanel implements MouseListener {
 	private JTextArea viewArea;
 	private DnaComponentPanel compPanel;
 	private JList libList = new JList();
-	private String filter;
+	private Set<String> filter;
 	
 	public LibraryPanel(HashMap<String, org.sbolstandard.core.Collection> libMap, HashMap<String, DnaComponent> compMap, 
-			JTextArea viewArea, DnaComponentPanel compPanel, String filter) {
+			JTextArea viewArea, DnaComponentPanel compPanel, Set<String> filter) {
 		super(new BorderLayout());
 		this.libMap = libMap;
 		this.compMap = compMap;
@@ -73,8 +73,8 @@ public class LibraryPanel extends JPanel implements MouseListener {
 	
 	public void displaySelected() {
 		String[] selectedURIs = getSelectedURIs();
-		String[] compIds = new String[compMap.size()];
-		String[] compURIs = new String[compMap.size()];
+		LinkedList<String> compIds = new LinkedList<String>();
+		LinkedList<String> compURIs = new LinkedList<String>();
 		int n = 0;
 		if (selectedURIs[0] != null) {
 			org.sbolstandard.core.Collection lib = libMap.get(selectedURIs[0]);
@@ -87,60 +87,56 @@ public class LibraryPanel extends JPanel implements MouseListener {
 			else
 				viewArea.append("Description:  NA\n\n");
 
-			for (DnaComponent dnac : lib.getComponents()) {
-				dnac = compMap.get(dnac.getURI().toString());
-				if (filter.equals("") || filterFeature(dnac, filter)) {
-					compIds[n] = dnac.getDisplayId();
-					compURIs[n] = dnac.getURI().toString();
-					n++;
-				}
-			}
-		} else {
-			for (String libURI : libURIs) 
-				for (DnaComponent dnac : libMap.get(libURI).getComponents()) {
+			for (DnaComponent dnac : lib.getComponents()) 
+				if (!compURIs.contains(dnac.getURI().toString())) {
 					dnac = compMap.get(dnac.getURI().toString());
-					if (filter.equals("") || filterFeature(dnac, filter)) {
-						compIds[n] = dnac.getDisplayId();
-						compURIs[n] = dnac.getURI().toString();
+					if (filter.size() == 0 || filterFeature(dnac, filter)) {
+						compIds.add(dnac.getDisplayId());
+						compURIs.add(dnac.getURI().toString());
 						n++;
 					}
 				}
+		} else {
+			for (String libURI : libURIs) 
+				for (DnaComponent dnac : libMap.get(libURI).getComponents()) 
+					if (!compURIs.contains(dnac.getURI().toString())) {
+						dnac = compMap.get(dnac.getURI().toString());
+						if (filter.size() == 0 || filterFeature(dnac, filter)) {
+							compIds.add(dnac.getDisplayId());
+							compURIs.add(dnac.getURI().toString());
+							n++;
+						}
+					}
 		}
 		LinkedList<LinkedList<String>> sortedResult = lexoSort(compIds, compURIs, n);
 		compPanel.setComponents(sortedResult.get(0), sortedResult.get(1));
 	}
 	
 	//Sorts first m entries of string array lexographically
-	private LinkedList<LinkedList<String>> lexoSort(String[] sortingArray, String[] companionArray, int m) {
+	private LinkedList<LinkedList<String>> lexoSort(LinkedList<String> sortingList, LinkedList<String> companionList, int m) {
 		for (int j = 1; j < m; j++) {
-			String key = sortingArray[j];
-			String companionKey = companionArray[j];
+			String key = sortingList.get(j);
+			String companionKey = companionList.get(j);
 			int i = j - 1;
-			while (i >= 0 && sortingArray[i].compareTo(key) > 0) {
-				sortingArray[i + 1] = sortingArray[i];
-				companionArray[i + 1] = companionArray[i];
+			while (i >= 0 && sortingList.get(i).compareTo(key) > 0) {
+				sortingList.set(i + 1, sortingList.get(i));
+				companionList.set(i + 1, companionList.get(i));
 				i = i - 1;
 			}
-			sortingArray[i + 1] = key;
-			companionArray[i + 1] = companionKey;
+			sortingList.set(i + 1, key);
+			companionList.set(i + 1, companionKey);
 		}
-		LinkedList<String> sorted = new LinkedList<String>();
-		LinkedList<String> companionSorted = new LinkedList<String>();
 		LinkedList<LinkedList<String>> sortedResult = new LinkedList<LinkedList<String>>();
-		for (int n = 0; n < m; n++) {
-			sorted.add(sortingArray[n]);
-			companionSorted.add(companionArray[n]);
-		}
-		sortedResult.add(sorted);
-		sortedResult.add(companionSorted);
+		sortedResult.add(sortingList);
+		sortedResult.add(companionList);
 		return sortedResult;
 	}
 	
-	private boolean filterFeature(DnaComponent dnac, String filter) {
-		HashSet<String> types = new HashSet<String>();
+	private boolean filterFeature(DnaComponent dnac, Set<String> filter) {
  		for (URI uri : dnac.getTypes()) 
-			types.add(uri.getFragment());
- 		return types.contains(filter);
+			if (filter.contains(uri.getFragment()))
+				return true;
+ 		return false;
 	}
 
 	public void mouseEntered(MouseEvent e) {
