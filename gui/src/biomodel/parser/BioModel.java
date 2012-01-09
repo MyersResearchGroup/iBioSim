@@ -12,11 +12,8 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1911,7 +1908,7 @@ public class BioModel {
 		if (submodelID == null) {
 			
 			int count = 1;
-			submodelID = "C" + count;			
+			submodelID = "C" + count;
 			
 			while (sbml.getModel().getParameter(extId + "__locations") != null) {
 				
@@ -1922,6 +1919,12 @@ public class BioModel {
 						.getAnnotationString().contains("[[" + submodelID + "]]") == false)
 					break;
 			}
+			
+			while (this.getSBMLCompModel().getSubmodel(submodelID) != null) {
+				
+				++count;
+				submodelID = "C" + count;
+			}			
 		}
 		
 		//if the submodel is on a grid
