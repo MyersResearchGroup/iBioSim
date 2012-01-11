@@ -38,12 +38,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	private static final long serialVersionUID = 3181014495993143825L;
 
-	//private JTextField amountTerm; // Amount for termination condition
+	// private JTextField amountTerm; // Amount for termination condition
 
 	/*
 	 * Buttons for adding and removing conditions and species
 	 */
-	//private JButton addIntSpecies, removeIntSpecies, editIntSpecies, addTermCond, removeTermCond, clearIntSpecies, clearTermCond;
+	// private JButton addIntSpecies, removeIntSpecies, editIntSpecies,
+	// addTermCond, removeTermCond, clearIntSpecies, clearTermCond;
 
 	/*
 	 * Radio Buttons that represent the different abstractions
@@ -61,15 +62,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	/*
 	 * Added interesting species and termination conditions
 	 */
-	//private JList terminations;
+	// private JList terminations;
 
-	//private JList termCond; // List of species in sbml file
+	// private JList termCond; // List of species in sbml file
 
-	//private JLabel spLabel, speciesLabel; // Labels for interesting species
+	// private JLabel spLabel, speciesLabel; // Labels for interesting species
 
-	//private JPanel speciesPanel;
+	// private JPanel speciesPanel;
 
-	//private ArrayList<ArrayList<Component>> speciesInt;
+	// private ArrayList<ArrayList<Component>> speciesInt;
 
 	/*
 	 * Text fields for changes in the abstraction
@@ -91,7 +92,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	/*
 	 * List of interesting species
 	 */
-	//private Object[] allSpecies = new Object[0];
+	// private Object[] allSpecies = new Object[0];
 
 	private Object[] preAbstractions = new Object[0];
 
@@ -102,7 +103,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	/*
 	 * List of species with termination conditions
 	 */
-	//private Object[] termConditions = new Object[0];
+	// private Object[] termConditions = new Object[0];
 
 	private JComboBox simulators; // Combo Box for possible simulators
 
@@ -115,49 +116,49 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	 */
 	private JLabel rapidLabel1, rapidLabel2, qssaLabel, maxConLabel;
 
-	//private JComboBox availSpecies; // species for SSA
+	// private JComboBox availSpecies; // species for SSA
 
-	//private JList ssa, sad; // list of ssa
+	// private JList ssa, sad; // list of ssa
 
-	//private JTextField time; // time for ssa
+	// private JTextField time; // time for ssa
 
-	//private JTextField TCid; // id for sad
+	// private JTextField TCid; // id for sad
 
-	//private JTextField desc; // description for sad
+	// private JTextField desc; // description for sad
 
-	//private JTextField cond; // condition for sad
+	// private JTextField cond; // condition for sad
 
-	//private JTextField ssaModNum; // number that the ssa is changed by
+	// private JTextField ssaModNum; // number that the ssa is changed by
 
-	//private JComboBox ssaMod; // amount to mod the ssa species by
+	// private JComboBox ssaMod; // amount to mod the ssa species by
 
-	//private JButton addSSA, editSSA, removeSSA; // Buttons for editing SSA
+	// private JButton addSSA, editSSA, removeSSA; // Buttons for editing SSA
 
-	//private JButton addSAD, editSAD, removeSAD; // Buttons for editing SAD
+	// private JButton addSAD, editSAD, removeSAD; // Buttons for editing SAD
 
-	//private JButton newSSA; // Buttons for SSA file
+	// private JButton newSSA; // Buttons for SSA file
 
-	//private JButton newSAD; // Buttons for SAD file
+	// private JButton newSAD; // Buttons for SAD file
 
-	//private JLabel timeLabel; // Label for SSA
+	// private JLabel timeLabel; // Label for SSA
 
-	//private JLabel idLabel; // ID label for SAD
+	// private JLabel idLabel; // ID label for SAD
 
-	//private JLabel descLabel; // Description label for SAD
+	// private JLabel descLabel; // Description label for SAD
 
-	//private JLabel condLabel; // Condition label for SAD
+	// private JLabel condLabel; // Condition label for SAD
 
-	//private Object[] ssaList, sadList; // array for ssa/sad JList
+	// private Object[] ssaList, sadList; // array for ssa/sad JList
 
-	//private JList properties; // JList for properties
+	// private JList properties; // JList for properties
 
-	//private JTextField prop, value; // text areas for properties
+	// private JTextField prop, value; // text areas for properties
 
-	//private JButton addProp, editProp, removeProp, newProp; // buttons for
+	// private JButton addProp, editProp, removeProp, newProp; // buttons for
 
 	// properties
 
-	//private Object[] props; // array for properties JList
+	// private Object[] props; // array for properties JList
 
 	private String sbmlFile, root; // sbml file and root directory
 
@@ -242,9 +243,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	private JTextField backgroundField;
 
 	private String selectedMarkovSim = null;
-	
-	private ArrayList<String> interestingSpecies = null;	
-	
+
+	private ArrayList<String> interestingSpecies = null;
 
 	/**
 	 * This is the constructor for the GUI. It initializes all the input fields,
@@ -253,8 +253,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	 * 
 	 * @param modelFile
 	 */
-	public AnalysisView(String sbmlFile, String sbmlProp, String root, Gui biomodelsim, String simName, Log log, JTabbedPane simTab, String open,
-			String modelFile, AbstPane lhpnAbstraction, ArrayList<String> defaultInterestingSpecies) {
+	public AnalysisView(String sbmlFile, String sbmlProp, String root, Gui biomodelsim, String simName, Log log,
+			JTabbedPane simTab, String open, String modelFile, AbstPane lhpnAbstraction,
+			ArrayList<String> defaultInterestingSpecies) {
 		if (File.separator.equals("\\")) {
 			separator = "\\\\";
 		}
@@ -263,7 +264,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 
 		this.interestingSpecies = new ArrayList<String>();
-		
+
 		this.biomodelsim = biomodelsim;
 		this.sbmlFile = sbmlFile;
 		this.sbmlProp = sbmlProp;
@@ -278,28 +279,19 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		this.modelFile = tempArray[tempArray.length - 1];
 
 		/*
-		SBMLDocument document = Gui.readSBML(sbmlFile);
-		Model model = document.getModel();
-		ArrayList<String> listOfSpecs = new ArrayList<String>();
-		if (model != null) {
-			ListOf listOfSpecies = model.getListOfSpecies();
-			for (int i = 0; i < model.getNumSpecies(); i++) {
-				Species species = (Species) listOfSpecies.get(i);
-				listOfSpecs.add(species.getId());
-			}
-		}
-		allSpecies = listOfSpecs.toArray();
-		for (int i = 1; i < allSpecies.length; i++) {
-			String index = (String) allSpecies[i];
-			int j = i;
-			while ((j > 0) && ((String) allSpecies[j - 1]).compareToIgnoreCase(index) > 0) {
-				allSpecies[j] = allSpecies[j - 1];
-				j = j - 1;
-			}
-			allSpecies[j] = index;
-		}
-        */
-		
+		 * SBMLDocument document = Gui.readSBML(sbmlFile); Model model =
+		 * document.getModel(); ArrayList<String> listOfSpecs = new
+		 * ArrayList<String>(); if (model != null) { ListOf listOfSpecies =
+		 * model.getListOfSpecies(); for (int i = 0; i < model.getNumSpecies();
+		 * i++) { Species species = (Species) listOfSpecies.get(i);
+		 * listOfSpecs.add(species.getId()); } } allSpecies =
+		 * listOfSpecs.toArray(); for (int i = 1; i < allSpecies.length; i++) {
+		 * String index = (String) allSpecies[i]; int j = i; while ((j > 0) &&
+		 * ((String) allSpecies[j - 1]).compareToIgnoreCase(index) > 0) {
+		 * allSpecies[j] = allSpecies[j - 1]; j = j - 1; } allSpecies[j] =
+		 * index; }
+		 */
+
 		// Creates the input fields for the changes in abstraction
 		Preferences biosimrc = Preferences.userRoot();
 		String[] odeSimulators = new String[6];
@@ -479,65 +471,49 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		// Creates the interesting species JList intSpecies = new JList();
 		// species = new JList();
 		/*
-		spLabel = new JLabel("Available Species:");
-		speciesLabel = new JLabel("Interesting Species:");
-		JPanel speciesHolder = new JPanel(new BorderLayout());
-		JPanel listOfSpeciesLabelHolder = new JPanel(new GridLayout(1, 2));
-		JPanel listOfSpeciesHolder = new JPanel(new GridLayout(1, 2));
-		JScrollPane scroll = new JScrollPane();
-		JScrollPane scroll1 = new JScrollPane();
-		scroll.setMinimumSize(new Dimension(260, 200));
-		scroll.setPreferredSize(new Dimension(276, 132));
-		// scroll.setViewportView(species);
-		scroll1.setMinimumSize(new Dimension(260, 200));
-		scroll1.setPreferredSize(new Dimension(276, 132));
-		// scroll1.setViewportView(intSpecies);
-		addIntSpecies = new JButton("Add Species");
-		editIntSpecies = new JButton("Edit Species");
-		removeIntSpecies = new JButton("Remove Species");
-		clearIntSpecies = new JButton("Clear Species");
-		listOfSpeciesLabelHolder.add(spLabel);
-		listOfSpeciesHolder.add(scroll1);
-		listOfSpeciesLabelHolder.add(speciesLabel);
-		listOfSpeciesHolder.add(scroll);
-		speciesHolder.add(listOfSpeciesLabelHolder, "North");
-		speciesHolder.add(listOfSpeciesHolder, "Center");
-		JPanel buttonHolder = new JPanel();
-		buttonHolder.add(addIntSpecies);
-		buttonHolder.add(editIntSpecies);
-		buttonHolder.add(removeIntSpecies);
-		buttonHolder.add(clearIntSpecies);
-		speciesHolder.add(buttonHolder, "South");
-		// intSpecies.setEnabled(false);
-		// species.setEnabled(false);
-		// intSpecies.addMouseListener(this);
-		// species.addMouseListener(this);
-		spLabel.setEnabled(false);
-		speciesLabel.setEnabled(false);
-		addIntSpecies.setEnabled(false);
-		editIntSpecies.setEnabled(false);
-		removeIntSpecies.setEnabled(false);
-		addIntSpecies.addActionListener(this);
-		editIntSpecies.addActionListener(this);
-		removeIntSpecies.addActionListener(this);
-		clearIntSpecies.setEnabled(false);
-		clearIntSpecies.addActionListener(this);
-		speciesPanel = new JPanel();
-		JPanel sP = new JPanel();
-		((FlowLayout) sP.getLayout()).setAlignment(FlowLayout.LEFT);
-		sP.add(speciesPanel);
-		JScrollPane sPScroll = new JScrollPane();
-		sPScroll.setMinimumSize(new Dimension(260, 200));
-		sPScroll.setPreferredSize(new Dimension(276, 132));
-		sPScroll.setViewportView(sP);
-//		JLabel interestingLabel = new JLabel("Interesting Species:");
-//		JPanel interestingPanel = new JPanel(new BorderLayout());
-//		interestingPanel.add(interestingLabel, "North");
-//		interestingPanel.add(sPScroll, "Center");
-		speciesInt = new ArrayList<ArrayList<Component>>();
-//		createInterestingSpeciesPanel();
-	    */
-		
+		 * spLabel = new JLabel("Available Species:"); speciesLabel = new
+		 * JLabel("Interesting Species:"); JPanel speciesHolder = new JPanel(new
+		 * BorderLayout()); JPanel listOfSpeciesLabelHolder = new JPanel(new
+		 * GridLayout(1, 2)); JPanel listOfSpeciesHolder = new JPanel(new
+		 * GridLayout(1, 2)); JScrollPane scroll = new JScrollPane();
+		 * JScrollPane scroll1 = new JScrollPane(); scroll.setMinimumSize(new
+		 * Dimension(260, 200)); scroll.setPreferredSize(new Dimension(276,
+		 * 132)); // scroll.setViewportView(species); scroll1.setMinimumSize(new
+		 * Dimension(260, 200)); scroll1.setPreferredSize(new Dimension(276,
+		 * 132)); // scroll1.setViewportView(intSpecies); addIntSpecies = new
+		 * JButton("Add Species"); editIntSpecies = new JButton("Edit Species");
+		 * removeIntSpecies = new JButton("Remove Species"); clearIntSpecies =
+		 * new JButton("Clear Species"); listOfSpeciesLabelHolder.add(spLabel);
+		 * listOfSpeciesHolder.add(scroll1);
+		 * listOfSpeciesLabelHolder.add(speciesLabel);
+		 * listOfSpeciesHolder.add(scroll);
+		 * speciesHolder.add(listOfSpeciesLabelHolder, "North");
+		 * speciesHolder.add(listOfSpeciesHolder, "Center"); JPanel buttonHolder
+		 * = new JPanel(); buttonHolder.add(addIntSpecies);
+		 * buttonHolder.add(editIntSpecies); buttonHolder.add(removeIntSpecies);
+		 * buttonHolder.add(clearIntSpecies); speciesHolder.add(buttonHolder,
+		 * "South"); // intSpecies.setEnabled(false); //
+		 * species.setEnabled(false); // intSpecies.addMouseListener(this); //
+		 * species.addMouseListener(this); spLabel.setEnabled(false);
+		 * speciesLabel.setEnabled(false); addIntSpecies.setEnabled(false);
+		 * editIntSpecies.setEnabled(false); removeIntSpecies.setEnabled(false);
+		 * addIntSpecies.addActionListener(this);
+		 * editIntSpecies.addActionListener(this);
+		 * removeIntSpecies.addActionListener(this);
+		 * clearIntSpecies.setEnabled(false);
+		 * clearIntSpecies.addActionListener(this); speciesPanel = new JPanel();
+		 * JPanel sP = new JPanel(); ((FlowLayout)
+		 * sP.getLayout()).setAlignment(FlowLayout.LEFT); sP.add(speciesPanel);
+		 * JScrollPane sPScroll = new JScrollPane(); sPScroll.setMinimumSize(new
+		 * Dimension(260, 200)); sPScroll.setPreferredSize(new Dimension(276,
+		 * 132)); sPScroll.setViewportView(sP); // JLabel interestingLabel = new
+		 * JLabel("Interesting Species:"); // JPanel interestingPanel = new
+		 * JPanel(new BorderLayout()); // interestingPanel.add(interestingLabel,
+		 * "North"); // interestingPanel.add(sPScroll, "Center"); speciesInt =
+		 * new ArrayList<ArrayList<Component>>(); //
+		 * createInterestingSpeciesPanel();
+		 */
+
 		// Creates some abstraction options
 		JPanel advancedGrid = new JPanel(new GridLayout(2, 4));
 		advanced = new JPanel(new BorderLayout());
@@ -569,7 +545,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		advAbs.add(absHolder, "Center");
 		advAbs.add(advancedGrid, "South");
 		advanced.add(advAbs, "North");
-//		advanced.add(interestingPanel, "Center");
+		// advanced.add(interestingPanel, "Center");
 
 		// Sets up the radio buttons for Abstraction and Nary
 		JLabel choose = new JLabel("Abstraction:");
@@ -698,328 +674,193 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 		// Creates the termination conditions tab
 		/*
-		termCond = new JList();
-		terminations = new JList();
-		addTermCond = new JButton("Add Condition");
-		removeTermCond = new JButton("Remove Condition");
-		clearTermCond = new JButton("Clear Conditions");
-		addTermCond.addActionListener(this);
-		removeTermCond.addActionListener(this);
-		clearTermCond.addActionListener(this);
-		amountTerm = new JTextField("0.0", 15);
-		JLabel spLabel2 = new JLabel("Available Species:");
-		JLabel specLabel = new JLabel("Termination Conditions:");
-		JScrollPane scroll2 = new JScrollPane();
-		scroll2.setMinimumSize(new Dimension(260, 200));
-		scroll2.setPreferredSize(new Dimension(276, 132));
-		scroll2.setViewportView(termCond);
-		JScrollPane scroll3 = new JScrollPane();
-		scroll3.setMinimumSize(new Dimension(260, 200));
-		scroll3.setPreferredSize(new Dimension(276, 132));
-		scroll3.setViewportView(terminations);
-		JPanel mainTermCond = new JPanel(new BorderLayout());
-		JPanel termCondPanel = new JPanel(new GridLayout(1, 2));
-		JPanel speciesPanel = new JPanel(new GridLayout(1, 2));
-		ge = new JRadioButton(">=");
-		gt = new JRadioButton(">");
-		eq = new JRadioButton("=");
-		le = new JRadioButton("<=");
-		lt = new JRadioButton("<");
-		ButtonGroup condition = new ButtonGroup();
-		condition.add(gt);
-		condition.add(ge);
-		condition.add(eq);
-		condition.add(le);
-		condition.add(lt);
-		gt.setSelected(true);
-		JPanel termOptionsPanel = new JPanel(new BorderLayout());
-		JPanel termSelectionPanel = new JPanel();
-		JPanel termButtonPanel = new JPanel();
-		termSelectionPanel.add(gt);
-		termSelectionPanel.add(ge);
-		termSelectionPanel.add(eq);
-		termSelectionPanel.add(le);
-		termSelectionPanel.add(lt);
-		termSelectionPanel.add(amountTerm);
-		termButtonPanel.add(addTermCond);
-		termButtonPanel.add(removeTermCond);
-		termButtonPanel.add(clearTermCond);
-		termOptionsPanel.add(termSelectionPanel, "North");
-		termOptionsPanel.add(termButtonPanel, "South");
-		speciesPanel.add(spLabel2);
-		speciesPanel.add(specLabel);
-		termCondPanel.add(scroll2);
-		termCondPanel.add(scroll3);
-		termCond.addMouseListener(this);
-		terminations.addMouseListener(this);
-		mainTermCond.add(speciesPanel, "North");
-		mainTermCond.add(termCondPanel, "Center");
-		mainTermCond.add(termOptionsPanel, "South");
-
-		JPanel sadTermCondPanel = new JPanel(new BorderLayout());
-		newSAD = new JButton("Clear Conditions");
-		newSAD.setEnabled(false);
-		newSAD.addActionListener(this);
-		usingSAD = new JCheckBox("Use Termination Conditions");
-		usingSAD.setSelected(false);
-		usingSAD.addActionListener(this);
-		sad = new JList();
-		sad.setEnabled(false);
-		sad.addMouseListener(this);
-		sadList = new Object[0];
-		JScrollPane scroll9 = new JScrollPane();
-		scroll9.setMinimumSize(new Dimension(260, 200));
-		scroll9.setPreferredSize(new Dimension(276, 132));
-		scroll9.setViewportView(sad);
-		JPanel sadAddPanel = new JPanel(new BorderLayout());
-		JPanel sadAddPanel1 = new JPanel();
-		JPanel sadAddPanel3 = new JPanel();
-		idLabel = new JLabel("ID: ");
-		idLabel.setEnabled(false);
-		TCid = new JTextField(10);
-		TCid.setEnabled(false);
-		descLabel = new JLabel("Description: ");
-		descLabel.setEnabled(false);
-		desc = new JTextField(20);
-		desc.setEnabled(false);
-		condLabel = new JLabel("Condition: ");
-		condLabel.setEnabled(false);
-		cond = new JTextField(35);
-		cond.setEnabled(false);
-		sadAddPanel1.add(idLabel);
-		sadAddPanel1.add(TCid);
-		sadAddPanel1.add(descLabel);
-		sadAddPanel1.add(desc);
-		sadAddPanel1.add(condLabel);
-		sadAddPanel1.add(cond);
-		addSAD = new JButton("Add Condition");
-		addSAD.setEnabled(false);
-		addSAD.addActionListener(this);
-		editSAD = new JButton("Edit Condition");
-		editSAD.setEnabled(false);
-		editSAD.addActionListener(this);
-		removeSAD = new JButton("Remove Condition");
-		removeSAD.setEnabled(false);
-		removeSAD.addActionListener(this);
-		sadAddPanel3.add(addSAD);
-		sadAddPanel3.add(editSAD);
-		sadAddPanel3.add(removeSAD);
-		sadAddPanel3.add(newSAD);
-		sadAddPanel.add(sadAddPanel1, "North");
-		sadAddPanel.add(sadAddPanel3, "South");
-		sadTermCondPanel.add(usingSAD, "North");
-		sadTermCondPanel.add(scroll9, "Center");
-		sadTermCondPanel.add(sadAddPanel, "South");
-		if (new File(root + separator + simName + separator + "termCond.sad").exists()) {
-			try {
-				BufferedReader input = new BufferedReader(new FileReader(root + separator + simName + separator + "termCond.sad"));
-				// + load.getProperty("computation.analysis.sad.path")));
-				String read = input.readLine();
-				while (read != null) {
-					String[] TCid = read.split(" ");
-					String desc = input.readLine();
-					String cond = input.readLine();
-					String add = TCid[1] + "; " + desc.substring(8, desc.length() - 2) + "; " + cond.substring(7, cond.indexOf(';'));
-					JList addSAD = new JList();
-					Object[] adding = { add };
-					addSAD.setListData(adding);
-					addSAD.setSelectedIndex(0);
-					sadList = Utility.add(sadList, sad, addSAD, false, null, null, null, null, null, null, this);
-					// sadFile.append("" + (char) read);
-					read = input.readLine();
-					read = input.readLine();
-				}
-				sad.setListData(sadList);
-				input.close();
-			}
-			catch (Exception e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to load termination condition file!", "Error Loading File",
-						JOptionPane.ERROR_MESSAGE);
-			}
-		}
-
-		// Creates the ssa with user defined species level update feature tab
-		JPanel ssaPanel = new JPanel(new BorderLayout());
-		newSSA = new JButton("Clear Data Points");
-		newSSA.setEnabled(false);
-		newSSA.addActionListener(this);
-		usingSSA = new JCheckBox("Use User Defined Data");
-		usingSSA.setSelected(false);
-		usingSSA.addActionListener(this);
-		ssa = new JList();
-		ssa.setEnabled(false);
-		ssa.addMouseListener(this);
-		ssaList = new Object[0];
-		JScrollPane scroll5 = new JScrollPane();
-		scroll5.setMinimumSize(new Dimension(260, 200));
-		scroll5.setPreferredSize(new Dimension(276, 132));
-		scroll5.setViewportView(ssa);
-		JPanel ssaAddPanel = new JPanel(new BorderLayout());
-		JPanel ssaAddPanel1 = new JPanel();
-		JPanel ssaAddPanel2 = new JPanel();
-		JPanel ssaAddPanel3 = new JPanel();
-		timeLabel = new JLabel("At time step: ");
-		timeLabel.setEnabled(false);
-		time = new JTextField(15);
-		time.setEnabled(false);
-		availSpecies = new JComboBox();
-		availSpecies.setEnabled(false);
-		String[] mod = new String[5];
-		mod[0] = "goes to";
-		mod[1] = "is added by";
-		mod[2] = "is subtracted by";
-		mod[3] = "is multiplied by";
-		mod[4] = "is divided by";
-		ssaMod = new JComboBox(mod);
-		ssaMod.setEnabled(false);
-		ssaModNum = new JTextField(15);
-		ssaModNum.setEnabled(false);
-		ssaAddPanel1.add(timeLabel);
-		ssaAddPanel1.add(time);
-		ssaAddPanel1.add(availSpecies);
-		ssaAddPanel2.add(ssaMod);
-		ssaAddPanel2.add(ssaModNum);
-		addSSA = new JButton("Add Data Point");
-		addSSA.setEnabled(false);
-		addSSA.addActionListener(this);
-		editSSA = new JButton("Edit Data Point");
-		editSSA.setEnabled(false);
-		editSSA.addActionListener(this);
-		removeSSA = new JButton("Remove Data Point");
-		removeSSA.setEnabled(false);
-		removeSSA.addActionListener(this);
-		ssaAddPanel3.add(addSSA);
-		ssaAddPanel3.add(editSSA);
-		ssaAddPanel3.add(removeSSA);
-		ssaAddPanel3.add(newSSA);
-		ssaAddPanel.add(ssaAddPanel1, "North");
-		ssaAddPanel.add(ssaAddPanel2, "Center");
-		ssaAddPanel.add(ssaAddPanel3, "South");
-		ssaPanel.add(usingSSA, "North");
-		ssaPanel.add(scroll5, "Center");
-		ssaPanel.add(ssaAddPanel, "South");
-		if (new File(root + separator + simName + separator + "user-defined.dat").exists()) {
-			String getData = "";
-			try {
-				Scanner scan = new Scanner(new File(root + separator + simName + separator + "user-defined.dat"));
-				while (scan.hasNextLine()) {
-					String get = scan.nextLine();
-					if (get.split(" ").length == 3) {
-						if (scan.hasNextLine()) {
-							getData += get + "\n";
-						}
-						else {
-							getData += get;
-						}
-					}
-					else {
-						JOptionPane
-								.showMessageDialog(Gui.frame, "Unable to load user defined file!", "Error Loading File", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-				}
-			}
-			catch (Exception e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to load user defined file!", "Error Loading File", JOptionPane.ERROR_MESSAGE);
-			}
-			if (!getData.equals("")) {
-				ssaList = getData.split("\n");
-				ArrayList<String> sortName = new ArrayList<String>();
-				for (int i = 0; i < ssaList.length; i++) {
-					sortName.add(((String) ssaList[i]).split(" ")[1]);
-				}
-				int in, out;
-				for (out = 1; out < sortName.size(); out++) {
-					String temp = sortName.get(out);
-					String temp2 = (String) ssaList[out];
-					in = out;
-					while (in > 0 && sortName.get(in - 1).compareToIgnoreCase(temp) > 0) {
-						sortName.set(in, sortName.get(in - 1));
-						ssaList[in] = ssaList[in - 1];
-						--in;
-					}
-					sortName.set(in, temp);
-					ssaList[in] = temp2;
-				}
-				ArrayList<Double> sort = new ArrayList<Double>();
-				for (int i = 0; i < ssaList.length; i++) {
-					sort.add(Double.parseDouble(((String) ssaList[i]).split(" ")[0]));
-				}
-				for (out = 1; out < sort.size(); out++) {
-					double temp = sort.get(out);
-					String temp2 = (String) ssaList[out];
-					in = out;
-					while (in > 0 && sort.get(in - 1) > temp) {
-						sort.set(in, sort.get(in - 1));
-						ssaList[in] = ssaList[in - 1];
-						--in;
-					}
-					sort.set(in, temp);
-					ssaList[in] = temp2;
-				}
-			}
-			else {
-				ssaList = new Object[0];
-			}
-			ssa.setListData(ssaList);
-			ssa.setEnabled(true);
-			timeLabel.setEnabled(true);
-			time.setEnabled(true);
-			availSpecies.setEnabled(true);
-			ssaMod.setEnabled(true);
-			ssaModNum.setEnabled(true);
-			addSSA.setEnabled(true);
-			editSSA.setEnabled(true);
-			removeSSA.setEnabled(true);
-		}
-		
-		// Creates tab for adding properties
-		propertiesPanel = new JPanel(new BorderLayout());
-		JPanel propertiesPanel1 = new JPanel(new BorderLayout());
-		JPanel propertiesPanel2 = new JPanel(new BorderLayout());
-		JPanel propertiesInput = new JPanel();
-		JPanel propertiesButtons = new JPanel();
-		JLabel propLabel = new JLabel("Option:");
-		JLabel valueLabel = new JLabel("Value:");
-		properties = new JList();
-		properties.addMouseListener(this);
-		JScrollPane scroll6 = new JScrollPane();
-		scroll6.setMinimumSize(new Dimension(260, 200));
-		scroll6.setPreferredSize(new Dimension(276, 132));
-		scroll6.setViewportView(properties);
-		props = new Object[0];
-		prop = new JTextField(20);
-		value = new JTextField(20);
-		addProp = new JButton("Add Option");
-		addProp.addActionListener(this);
-		editProp = new JButton("Edit Option");
-		editProp.addActionListener(this);
-		removeProp = new JButton("Remove Option");
-		removeProp.addActionListener(this);
-		newProp = new JButton("Clear Options");
-		newProp.addActionListener(this);
-		propertiesInput.add(propLabel);
-		propertiesInput.add(prop);
-		propertiesInput.add(valueLabel);
-		propertiesInput.add(value);
-		propertiesButtons.add(addProp);
-		propertiesButtons.add(editProp);
-		propertiesButtons.add(removeProp);
-		propertiesButtons.add(newProp);
-		propertiesPanel2.add(propertiesInput, "Center");
-		propertiesPanel2.add(propertiesButtons, "South");
-		propertiesPanel1.add(scroll6, "Center");
-		propertiesPanel.add(propertiesPanel1, "Center");
-		propertiesPanel.add(propertiesPanel2, "South");
-		termCond.setListData(allSpecies);
-		int rem = availSpecies.getItemCount();
-		for (int i = 0; i < rem; i++) {
-			availSpecies.removeItemAt(0);
-		}
-		for (int i = 0; i < allSpecies.length; i++) {
-			availSpecies.addItem(((String) allSpecies[i]).replace(" ", "_"));
-		}
-		*/
+		 * termCond = new JList(); terminations = new JList(); addTermCond = new
+		 * JButton("Add Condition"); removeTermCond = new
+		 * JButton("Remove Condition"); clearTermCond = new
+		 * JButton("Clear Conditions"); addTermCond.addActionListener(this);
+		 * removeTermCond.addActionListener(this);
+		 * clearTermCond.addActionListener(this); amountTerm = new
+		 * JTextField("0.0", 15); JLabel spLabel2 = new
+		 * JLabel("Available Species:"); JLabel specLabel = new
+		 * JLabel("Termination Conditions:"); JScrollPane scroll2 = new
+		 * JScrollPane(); scroll2.setMinimumSize(new Dimension(260, 200));
+		 * scroll2.setPreferredSize(new Dimension(276, 132));
+		 * scroll2.setViewportView(termCond); JScrollPane scroll3 = new
+		 * JScrollPane(); scroll3.setMinimumSize(new Dimension(260, 200));
+		 * scroll3.setPreferredSize(new Dimension(276, 132));
+		 * scroll3.setViewportView(terminations); JPanel mainTermCond = new
+		 * JPanel(new BorderLayout()); JPanel termCondPanel = new JPanel(new
+		 * GridLayout(1, 2)); JPanel speciesPanel = new JPanel(new GridLayout(1,
+		 * 2)); ge = new JRadioButton(">="); gt = new JRadioButton(">"); eq =
+		 * new JRadioButton("="); le = new JRadioButton("<="); lt = new
+		 * JRadioButton("<"); ButtonGroup condition = new ButtonGroup();
+		 * condition.add(gt); condition.add(ge); condition.add(eq);
+		 * condition.add(le); condition.add(lt); gt.setSelected(true); JPanel
+		 * termOptionsPanel = new JPanel(new BorderLayout()); JPanel
+		 * termSelectionPanel = new JPanel(); JPanel termButtonPanel = new
+		 * JPanel(); termSelectionPanel.add(gt); termSelectionPanel.add(ge);
+		 * termSelectionPanel.add(eq); termSelectionPanel.add(le);
+		 * termSelectionPanel.add(lt); termSelectionPanel.add(amountTerm);
+		 * termButtonPanel.add(addTermCond);
+		 * termButtonPanel.add(removeTermCond);
+		 * termButtonPanel.add(clearTermCond);
+		 * termOptionsPanel.add(termSelectionPanel, "North");
+		 * termOptionsPanel.add(termButtonPanel, "South");
+		 * speciesPanel.add(spLabel2); speciesPanel.add(specLabel);
+		 * termCondPanel.add(scroll2); termCondPanel.add(scroll3);
+		 * termCond.addMouseListener(this); terminations.addMouseListener(this);
+		 * mainTermCond.add(speciesPanel, "North");
+		 * mainTermCond.add(termCondPanel, "Center");
+		 * mainTermCond.add(termOptionsPanel, "South");
+		 * 
+		 * JPanel sadTermCondPanel = new JPanel(new BorderLayout()); newSAD =
+		 * new JButton("Clear Conditions"); newSAD.setEnabled(false);
+		 * newSAD.addActionListener(this); usingSAD = new
+		 * JCheckBox("Use Termination Conditions"); usingSAD.setSelected(false);
+		 * usingSAD.addActionListener(this); sad = new JList();
+		 * sad.setEnabled(false); sad.addMouseListener(this); sadList = new
+		 * Object[0]; JScrollPane scroll9 = new JScrollPane();
+		 * scroll9.setMinimumSize(new Dimension(260, 200));
+		 * scroll9.setPreferredSize(new Dimension(276, 132));
+		 * scroll9.setViewportView(sad); JPanel sadAddPanel = new JPanel(new
+		 * BorderLayout()); JPanel sadAddPanel1 = new JPanel(); JPanel
+		 * sadAddPanel3 = new JPanel(); idLabel = new JLabel("ID: ");
+		 * idLabel.setEnabled(false); TCid = new JTextField(10);
+		 * TCid.setEnabled(false); descLabel = new JLabel("Description: ");
+		 * descLabel.setEnabled(false); desc = new JTextField(20);
+		 * desc.setEnabled(false); condLabel = new JLabel("Condition: ");
+		 * condLabel.setEnabled(false); cond = new JTextField(35);
+		 * cond.setEnabled(false); sadAddPanel1.add(idLabel);
+		 * sadAddPanel1.add(TCid); sadAddPanel1.add(descLabel);
+		 * sadAddPanel1.add(desc); sadAddPanel1.add(condLabel);
+		 * sadAddPanel1.add(cond); addSAD = new JButton("Add Condition");
+		 * addSAD.setEnabled(false); addSAD.addActionListener(this); editSAD =
+		 * new JButton("Edit Condition"); editSAD.setEnabled(false);
+		 * editSAD.addActionListener(this); removeSAD = new
+		 * JButton("Remove Condition"); removeSAD.setEnabled(false);
+		 * removeSAD.addActionListener(this); sadAddPanel3.add(addSAD);
+		 * sadAddPanel3.add(editSAD); sadAddPanel3.add(removeSAD);
+		 * sadAddPanel3.add(newSAD); sadAddPanel.add(sadAddPanel1, "North");
+		 * sadAddPanel.add(sadAddPanel3, "South");
+		 * sadTermCondPanel.add(usingSAD, "North");
+		 * sadTermCondPanel.add(scroll9, "Center");
+		 * sadTermCondPanel.add(sadAddPanel, "South"); if (new File(root +
+		 * separator + simName + separator + "termCond.sad").exists()) { try {
+		 * BufferedReader input = new BufferedReader(new FileReader(root +
+		 * separator + simName + separator + "termCond.sad")); // +
+		 * load.getProperty("computation.analysis.sad.path"))); String read =
+		 * input.readLine(); while (read != null) { String[] TCid =
+		 * read.split(" "); String desc = input.readLine(); String cond =
+		 * input.readLine(); String add = TCid[1] + "; " + desc.substring(8,
+		 * desc.length() - 2) + "; " + cond.substring(7, cond.indexOf(';'));
+		 * JList addSAD = new JList(); Object[] adding = { add };
+		 * addSAD.setListData(adding); addSAD.setSelectedIndex(0); sadList =
+		 * Utility.add(sadList, sad, addSAD, false, null, null, null, null,
+		 * null, null, this); // sadFile.append("" + (char) read); read =
+		 * input.readLine(); read = input.readLine(); }
+		 * sad.setListData(sadList); input.close(); } catch (Exception e1) {
+		 * JOptionPane.showMessageDialog(Gui.frame,
+		 * "Unable to load termination condition file!", "Error Loading File",
+		 * JOptionPane.ERROR_MESSAGE); } }
+		 * 
+		 * // Creates the ssa with user defined species level update feature tab
+		 * JPanel ssaPanel = new JPanel(new BorderLayout()); newSSA = new
+		 * JButton("Clear Data Points"); newSSA.setEnabled(false);
+		 * newSSA.addActionListener(this); usingSSA = new
+		 * JCheckBox("Use User Defined Data"); usingSSA.setSelected(false);
+		 * usingSSA.addActionListener(this); ssa = new JList();
+		 * ssa.setEnabled(false); ssa.addMouseListener(this); ssaList = new
+		 * Object[0]; JScrollPane scroll5 = new JScrollPane();
+		 * scroll5.setMinimumSize(new Dimension(260, 200));
+		 * scroll5.setPreferredSize(new Dimension(276, 132));
+		 * scroll5.setViewportView(ssa); JPanel ssaAddPanel = new JPanel(new
+		 * BorderLayout()); JPanel ssaAddPanel1 = new JPanel(); JPanel
+		 * ssaAddPanel2 = new JPanel(); JPanel ssaAddPanel3 = new JPanel();
+		 * timeLabel = new JLabel("At time step: ");
+		 * timeLabel.setEnabled(false); time = new JTextField(15);
+		 * time.setEnabled(false); availSpecies = new JComboBox();
+		 * availSpecies.setEnabled(false); String[] mod = new String[5]; mod[0]
+		 * = "goes to"; mod[1] = "is added by"; mod[2] = "is subtracted by";
+		 * mod[3] = "is multiplied by"; mod[4] = "is divided by"; ssaMod = new
+		 * JComboBox(mod); ssaMod.setEnabled(false); ssaModNum = new
+		 * JTextField(15); ssaModNum.setEnabled(false);
+		 * ssaAddPanel1.add(timeLabel); ssaAddPanel1.add(time);
+		 * ssaAddPanel1.add(availSpecies); ssaAddPanel2.add(ssaMod);
+		 * ssaAddPanel2.add(ssaModNum); addSSA = new JButton("Add Data Point");
+		 * addSSA.setEnabled(false); addSSA.addActionListener(this); editSSA =
+		 * new JButton("Edit Data Point"); editSSA.setEnabled(false);
+		 * editSSA.addActionListener(this); removeSSA = new
+		 * JButton("Remove Data Point"); removeSSA.setEnabled(false);
+		 * removeSSA.addActionListener(this); ssaAddPanel3.add(addSSA);
+		 * ssaAddPanel3.add(editSSA); ssaAddPanel3.add(removeSSA);
+		 * ssaAddPanel3.add(newSSA); ssaAddPanel.add(ssaAddPanel1, "North");
+		 * ssaAddPanel.add(ssaAddPanel2, "Center");
+		 * ssaAddPanel.add(ssaAddPanel3, "South"); ssaPanel.add(usingSSA,
+		 * "North"); ssaPanel.add(scroll5, "Center"); ssaPanel.add(ssaAddPanel,
+		 * "South"); if (new File(root + separator + simName + separator +
+		 * "user-defined.dat").exists()) { String getData = ""; try { Scanner
+		 * scan = new Scanner(new File(root + separator + simName + separator +
+		 * "user-defined.dat")); while (scan.hasNextLine()) { String get =
+		 * scan.nextLine(); if (get.split(" ").length == 3) { if
+		 * (scan.hasNextLine()) { getData += get + "\n"; } else { getData +=
+		 * get; } } else { JOptionPane .showMessageDialog(Gui.frame,
+		 * "Unable to load user defined file!", "Error Loading File",
+		 * JOptionPane.ERROR_MESSAGE); return; } } } catch (Exception e1) {
+		 * JOptionPane.showMessageDialog(Gui.frame,
+		 * "Unable to load user defined file!", "Error Loading File",
+		 * JOptionPane.ERROR_MESSAGE); } if (!getData.equals("")) { ssaList =
+		 * getData.split("\n"); ArrayList<String> sortName = new
+		 * ArrayList<String>(); for (int i = 0; i < ssaList.length; i++) {
+		 * sortName.add(((String) ssaList[i]).split(" ")[1]); } int in, out; for
+		 * (out = 1; out < sortName.size(); out++) { String temp =
+		 * sortName.get(out); String temp2 = (String) ssaList[out]; in = out;
+		 * while (in > 0 && sortName.get(in - 1).compareToIgnoreCase(temp) > 0)
+		 * { sortName.set(in, sortName.get(in - 1)); ssaList[in] = ssaList[in -
+		 * 1]; --in; } sortName.set(in, temp); ssaList[in] = temp2; }
+		 * ArrayList<Double> sort = new ArrayList<Double>(); for (int i = 0; i <
+		 * ssaList.length; i++) { sort.add(Double.parseDouble(((String)
+		 * ssaList[i]).split(" ")[0])); } for (out = 1; out < sort.size();
+		 * out++) { double temp = sort.get(out); String temp2 = (String)
+		 * ssaList[out]; in = out; while (in > 0 && sort.get(in - 1) > temp) {
+		 * sort.set(in, sort.get(in - 1)); ssaList[in] = ssaList[in - 1]; --in;
+		 * } sort.set(in, temp); ssaList[in] = temp2; } } else { ssaList = new
+		 * Object[0]; } ssa.setListData(ssaList); ssa.setEnabled(true);
+		 * timeLabel.setEnabled(true); time.setEnabled(true);
+		 * availSpecies.setEnabled(true); ssaMod.setEnabled(true);
+		 * ssaModNum.setEnabled(true); addSSA.setEnabled(true);
+		 * editSSA.setEnabled(true); removeSSA.setEnabled(true); }
+		 * 
+		 * // Creates tab for adding properties propertiesPanel = new JPanel(new
+		 * BorderLayout()); JPanel propertiesPanel1 = new JPanel(new
+		 * BorderLayout()); JPanel propertiesPanel2 = new JPanel(new
+		 * BorderLayout()); JPanel propertiesInput = new JPanel(); JPanel
+		 * propertiesButtons = new JPanel(); JLabel propLabel = new
+		 * JLabel("Option:"); JLabel valueLabel = new JLabel("Value:");
+		 * properties = new JList(); properties.addMouseListener(this);
+		 * JScrollPane scroll6 = new JScrollPane(); scroll6.setMinimumSize(new
+		 * Dimension(260, 200)); scroll6.setPreferredSize(new Dimension(276,
+		 * 132)); scroll6.setViewportView(properties); props = new Object[0];
+		 * prop = new JTextField(20); value = new JTextField(20); addProp = new
+		 * JButton("Add Option"); addProp.addActionListener(this); editProp =
+		 * new JButton("Edit Option"); editProp.addActionListener(this);
+		 * removeProp = new JButton("Remove Option");
+		 * removeProp.addActionListener(this); newProp = new
+		 * JButton("Clear Options"); newProp.addActionListener(this);
+		 * propertiesInput.add(propLabel); propertiesInput.add(prop);
+		 * propertiesInput.add(valueLabel); propertiesInput.add(value);
+		 * propertiesButtons.add(addProp); propertiesButtons.add(editProp);
+		 * propertiesButtons.add(removeProp); propertiesButtons.add(newProp);
+		 * propertiesPanel2.add(propertiesInput, "Center");
+		 * propertiesPanel2.add(propertiesButtons, "South");
+		 * propertiesPanel1.add(scroll6, "Center");
+		 * propertiesPanel.add(propertiesPanel1, "Center");
+		 * propertiesPanel.add(propertiesPanel2, "South");
+		 * termCond.setListData(allSpecies); int rem =
+		 * availSpecies.getItemCount(); for (int i = 0; i < rem; i++) {
+		 * availSpecies.removeItemAt(0); } for (int i = 0; i <
+		 * allSpecies.length; i++) { availSpecies.addItem(((String)
+		 * allSpecies[i]).replace(" ", "_")); }
+		 */
 
 		this.setLayout(new BorderLayout());
 		this.add(mainTabbedPanel, "Center");
@@ -1081,16 +922,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		// Marks default interesting species
 		/*
-		if (defaultInterestingSpecies != null) {
-			for (int i = 0; i < speciesInt.size(); i++) {
-				if (defaultInterestingSpecies.contains(((JTextField) speciesInt.get(i).get(1)).getText())
-						&& !((JCheckBox) speciesInt.get(i).get(0)).isSelected()) {
-					speciesInt.get(i).get(0).setEnabled(true);
-					((JCheckBox) speciesInt.get(i).get(0)).doClick();
-				}
-			}
-		}
-		*/
+		 * if (defaultInterestingSpecies != null) { for (int i = 0; i <
+		 * speciesInt.size(); i++) { if
+		 * (defaultInterestingSpecies.contains(((JTextField)
+		 * speciesInt.get(i).get(1)).getText()) && !((JCheckBox)
+		 * speciesInt.get(i).get(0)).isSelected()) {
+		 * speciesInt.get(i).get(0).setEnabled(true); ((JCheckBox)
+		 * speciesInt.get(i).get(0)).doClick(); } } }
+		 */
 	}
 
 	/**
@@ -1101,12 +940,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		// if the none Radio Button is selected
 		change = true;
 		if (e.getSource() == none) {
-			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
-					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, none,
-					rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2,
-					qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel,
-					postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, 
-					addPostAbs, rmPostAbs, editPostAbs, lhpn);
+			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel,
+					minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
+					interval, simulators, simulatorsLabel, explanation, description, none, rapid1, rapid2, qssa,
+					maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs,
+					postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs,
+					rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
 			if (modelFile.contains(".lpn") || modelFile.contains(".s") || modelFile.contains(".inst")) {
 				markov.setEnabled(true);
 				lhpn.setEnabled(true);
@@ -1132,12 +971,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		// if the abstraction Radio Button is selected
 		else if (e.getSource() == abstraction) {
-			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
-					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, none,
-					rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2,
-					qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel,
-					postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, 
-					addPostAbs, rmPostAbs, editPostAbs, lhpn);
+			Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel,
+					minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel,
+					interval, simulators, simulatorsLabel, explanation, description, none, rapid1, rapid2, qssa,
+					maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs,
+					postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs,
+					rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
 			if (modelFile.contains(".lpn")) {
 				markov.setEnabled(true);
 				lhpn.setEnabled(true);
@@ -1163,11 +1002,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		// if the nary Radio Button is selected
 		else if (e.getSource() == nary) {
-			Button_Enabling.enableNary(ODE, monteCarlo, markov, seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel,
-					absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, 
-					rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel,
-					fileStem, fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs,
-					rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, gcmEditor);
+			Button_Enabling.enableNary(ODE, monteCarlo, markov, seed, seedLabel, runs, runsLabel, minStepLabel,
+					minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
+					simulators, simulatorsLabel, explanation, description, rapid1, rapid2, qssa, maxCon, rapidLabel1,
+					rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs, postAbs,
+					preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs,
+					editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, gcmEditor);
 			if (!sbml.isSelected() && !xhtml.isSelected() && !dot.isSelected() && runFiles) {
 				append.setEnabled(true);
 				concentrations.setEnabled(true);
@@ -1189,9 +1029,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		// if the ODE Radio Button is selected
 		else if (e.getSource() == ODE) {
-			Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel,
-					limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-					postAbs, abstraction);
+			Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
+					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					explanation, description, fileStem, fileStemLabel, postAbs, abstraction);
 			append.setEnabled(true);
 			concentrations.setEnabled(true);
 			genRuns.setEnabled(true);
@@ -1199,9 +1039,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		// if the monteCarlo Radio Button is selected
 		else if (e.getSource() == monteCarlo) {
-			Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
-					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, fileStem,
-					fileStemLabel, postAbs, abstraction, nary);
+			Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
+					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					explanation, description, fileStem, fileStemLabel, postAbs, abstraction, nary);
 			if (runFiles) {
 				append.setEnabled(true);
 				concentrations.setEnabled(true);
@@ -1223,9 +1063,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		// if the markov Radio Button is selected
 		else if (e.getSource() == markov) {
-			Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel,
-					limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-					gcmEditor, postAbs, modelFile);
+			Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
+					errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					explanation, description, fileStem, fileStemLabel, gcmEditor, postAbs, modelFile);
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
@@ -1233,9 +1073,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		// if the sbml Radio Button is selected
 		else if (e.getSource() == sbml) {
-			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
-					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-					abstraction, loopAbs, postAbs);
+			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
+					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					explanation, description, fileStem, fileStemLabel, abstraction, loopAbs, postAbs);
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
@@ -1244,9 +1084,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		// if the dot Radio Button is selected
 		else if (e.getSource() == dot) {
-			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
-					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-					abstraction, loopAbs, postAbs);
+			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
+					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					explanation, description, fileStem, fileStemLabel, abstraction, loopAbs, postAbs);
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
@@ -1255,9 +1095,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		// if the xhtml Radio Button is selected
 		else if (e.getSource() == xhtml) {
-			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
-					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-					abstraction, loopAbs, postAbs);
+			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
+					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					explanation, description, fileStem, fileStemLabel, abstraction, loopAbs, postAbs);
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
@@ -1266,9 +1106,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		// if the lhpn Radio Button is selected
 		else if (e.getSource() == lhpn) {
-			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
-					limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
-					abstraction, loopAbs, postAbs);
+			Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
+					step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
+					explanation, description, fileStem, fileStemLabel, abstraction, loopAbs, postAbs);
 			append.setEnabled(false);
 			concentrations.setEnabled(false);
 			genRuns.setEnabled(false);
@@ -1298,19 +1138,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		// }
 		// if the add termination conditions button is clicked
 		/*
-		else if (e.getSource() == addTermCond) {
-			termConditions = Utility.add(termConditions, terminations, termCond, true, amountTerm, ge, gt, eq, lt, le, this);
-		}
-		// if the remove termination conditions button is clicked
-		else if (e.getSource() == removeTermCond) {
-			termConditions = Utility.remove(terminations, termConditions);
-		}
-		// if the clear termination conditions button is clicked
-		else if (e.getSource() == clearTermCond) {
-			termConditions = new Object[0];
-			terminations.setListData(termConditions);
-		}
-		*/
+		 * else if (e.getSource() == addTermCond) { termConditions =
+		 * Utility.add(termConditions, terminations, termCond, true, amountTerm,
+		 * ge, gt, eq, lt, le, this); } // if the remove termination conditions
+		 * button is clicked else if (e.getSource() == removeTermCond) {
+		 * termConditions = Utility.remove(terminations, termConditions); } //
+		 * if the clear termination conditions button is clicked else if
+		 * (e.getSource() == clearTermCond) { termConditions = new Object[0];
+		 * terminations.setListData(termConditions); }
+		 */
 		// if the simulators combo box is selected
 		else if (e.getSource() == simulators) {
 			if (simulators.getItemCount() == 0) {
@@ -1389,7 +1225,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				absErr.setEnabled(false);
 			}
 			else if (((String) simulators.getSelectedItem()).contains("gillespie")) {
-				description.setText("Gillespie's direct method");
+				description.setText("Gillespie's Direct method");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);
@@ -1415,6 +1251,15 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
+			else if (simulators.getSelectedItem().equals("mp-bifurcation")) {
+				description.setText("iSSA (Mean Path) with Bifurcation Detection");
+				minStep.setEnabled(true);
+				minStepLabel.setEnabled(true);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
+			}
 			else if (simulators.getSelectedItem().equals("mp-adaptive")) {
 				description.setText("iSSA (Mean Path Adaptive)");
 				minStep.setEnabled(true);
@@ -1424,8 +1269,26 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				errorLabel.setEnabled(false);
 				absErr.setEnabled(false);
 			}
+			else if (simulators.getSelectedItem().equals("mp-adaptive-bifurcation")) {
+				description.setText("iSSA (Mean Path Adaptive) with Bifurcation Detection");
+				minStep.setEnabled(true);
+				minStepLabel.setEnabled(true);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
+			}
 			else if (simulators.getSelectedItem().equals("mp-event")) {
 				description.setText("iSSA (Mean Path Event)");
+				minStep.setEnabled(true);
+				minStepLabel.setEnabled(true);
+				step.setEnabled(true);
+				stepLabel.setEnabled(true);
+				errorLabel.setEnabled(false);
+				absErr.setEnabled(false);
+			}
+			else if (simulators.getSelectedItem().equals("mp-event-bifurcation")) {
+				description.setText("iSSA (Mean Path Event) with Bifurcation Detection");
 				minStep.setEnabled(true);
 				minStepLabel.setEnabled(true);
 				step.setEnabled(true);
@@ -1535,7 +1398,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			String stem = "";
 			if (!fileStem.getText().trim().equals("")) {
 				if (!(stemPat.matcher(fileStem.getText().trim()).matches())) {
-					JOptionPane.showMessageDialog(Gui.frame, "A file stem can only contain letters, numbers, and underscores.", "Invalid File Stem",
+					JOptionPane.showMessageDialog(Gui.frame,
+							"A file stem can only contain letters, numbers, and underscores.", "Invalid File Stem",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -1548,9 +1412,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							SBML_Editor sbml = ((SBML_Editor) (biomodelsim.getTab().getComponentAt(i)));
 							if (sbml.isDirty()) {
 								Object[] options = { "Yes", "No" };
-								int value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save changes to " + sbmlEditor.getRefFile()
-										+ " before running the simulation?", "Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-										null, options, options[0]);
+								int value = JOptionPane
+										.showOptionDialog(Gui.frame,
+												"Do you want to save changes to " + sbmlEditor.getRefFile()
+														+ " before running the simulation?", "Save Changes",
+												JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+												options[0]);
 								if (value == JOptionPane.YES_OPTION) {
 									sbml.save(true, stem, true, ignoreSweep);
 								}
@@ -1560,9 +1427,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							ModelEditor gcm = ((ModelEditor) (biomodelsim.getTab().getComponentAt(i)));
 							if (gcm.isDirty()) {
 								Object[] options = { "Yes", "No" };
-								int value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save changes to " + sbmlEditor.getRefFile()
-										+ " before running the simulation?", "Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-										null, options, options[0]);
+								int value = JOptionPane
+										.showOptionDialog(Gui.frame,
+												"Do you want to save changes to " + sbmlEditor.getRefFile()
+														+ " before running the simulation?", "Save Changes",
+												JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+												options[0]);
 								if (value == JOptionPane.YES_OPTION) {
 									gcm.save("gcm");
 								}
@@ -1576,9 +1446,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							ModelEditor gcm = ((ModelEditor) (biomodelsim.getTab().getComponentAt(i)));
 							if (gcm.isDirty()) {
 								Object[] options = { "Yes", "No" };
-								int value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save changes to " + gcmEditor.getRefFile()
-										+ " before running the simulation?", "Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-										null, options, options[0]);
+								int value = JOptionPane
+										.showOptionDialog(Gui.frame,
+												"Do you want to save changes to " + gcmEditor.getRefFile()
+														+ " before running the simulation?", "Save Changes",
+												JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+												options[0]);
 								if (value == JOptionPane.YES_OPTION) {
 									gcm.save("gcm");
 								}
@@ -1590,9 +1463,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							SBML_Editor sbml = ((SBML_Editor) (biomodelsim.getTab().getComponentAt(i)));
 							if (sbml.isDirty()) {
 								Object[] options = { "Yes", "No" };
-								int value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save changes to " + gcmEditor.getSBMLFile()
-										+ " before running the simulation?", "Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-										null, options, options[0]);
+								int value = JOptionPane
+										.showOptionDialog(Gui.frame,
+												"Do you want to save changes to " + gcmEditor.getSBMLFile()
+														+ " before running the simulation?", "Save Changes",
+												JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+												options[0]);
 								if (value == JOptionPane.YES_OPTION) {
 									sbml.save(true, stem, true, ignoreSweep);
 								}
@@ -1606,9 +1482,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							LHPNEditor lpn = ((LHPNEditor) (biomodelsim.getTab().getComponentAt(i)));
 							if (lpn.isDirty()) {
 								Object[] options = { "Yes", "No" };
-								int value = JOptionPane.showOptionDialog(Gui.frame, "Do you want to save changes to " + modelFile
-										+ " before running the simulation?", "Save Changes", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-										null, options, options[0]);
+								int value = JOptionPane
+										.showOptionDialog(Gui.frame, "Do you want to save changes to " + modelFile
+												+ " before running the simulation?", "Save Changes",
+												JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options,
+												options[0]);
 								if (value == JOptionPane.YES_OPTION) {
 									lpn.save();
 								}
@@ -1634,7 +1512,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					abst.abstractSTG(false);
 					abst.save(root + separator + simName + separator + modelFile);
 					if (transientProperties != null && !((String) transientProperties.getSelectedItem()).equals("none")) {
-						t1.BuildTemplate(root + separator + simName + separator + modelFile, ((String) transientProperties.getSelectedItem()));
+						t1.BuildTemplate(root + separator + simName + separator + modelFile,
+								((String) transientProperties.getSelectedItem()));
 					}
 					else {
 						t1.BuildTemplate(root + separator + simName + separator + modelFile, "");
@@ -1648,7 +1527,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						t1.BuildTemplate(root + separator + modelFile, "");
 					}
 				}
-				t1.setFilename(root + separator + simName + separator + stem + separator + modelFile.replace(".lpn", ".xml"));
+				t1.setFilename(root + separator + simName + separator + stem + separator
+						+ modelFile.replace(".lpn", ".xml"));
 				t1.outputSBML();
 				if (!stem.equals("")) {
 					new File(root + separator + simName + separator + stem).mkdir();
@@ -1675,574 +1555,309 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		// if the using ssa check box is clicked
 		/*
-		else if (e.getSource() == usingSSA) {
-			if (usingSSA.isSelected()) {
-				newSSA.setEnabled(true);
-				usingSSA.setSelected(true);
-				description.setEnabled(false);
-				explanation.setEnabled(false);
-				simulators.setEnabled(false);
-				simulatorsLabel.setEnabled(false);
-				ODE.setEnabled(false);
-				if (ODE.isSelected()) {
-					ODE.setSelected(false);
-					monteCarlo.setSelected(true);
-					Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
-							limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, usingSSA, fileStem,
-							fileStemLabel, postAbs, abstraction, nary);
-					if (runFiles) {
-						append.setEnabled(true);
-						concentrations.setEnabled(true);
-						genRuns.setEnabled(true);
-						report.setEnabled(true);
-						if (append.isSelected()) {
-							limit.setEnabled(false);
-							interval.setEnabled(false);
-							limitLabel.setEnabled(false);
-							intervalLabel.setEnabled(false);
-						}
-						else {
-							limit.setEnabled(true);
-							interval.setEnabled(true);
-							limitLabel.setEnabled(true);
-							intervalLabel.setEnabled(true);
-						}
-					}
-				}
-				markov.setEnabled(false);
-				if (markov.isSelected()) {
-					markov.setSelected(false);
-					monteCarlo.setSelected(true);
-					Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
-							limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, usingSSA, fileStem,
-							fileStemLabel, postAbs, abstraction, nary);
-					if (runFiles) {
-						append.setEnabled(true);
-						concentrations.setEnabled(true);
-						genRuns.setEnabled(true);
-						report.setEnabled(true);
-						if (append.isSelected()) {
-							limit.setEnabled(false);
-							interval.setEnabled(false);
-							limitLabel.setEnabled(false);
-							intervalLabel.setEnabled(false);
-						}
-						else {
-							limit.setEnabled(true);
-							interval.setEnabled(true);
-							limitLabel.setEnabled(true);
-							intervalLabel.setEnabled(true);
-						}
-					}
-				}
-				ssa.setEnabled(true);
-				timeLabel.setEnabled(true);
-				time.setEnabled(true);
-				availSpecies.setEnabled(true);
-				ssaMod.setEnabled(true);
-				ssaModNum.setEnabled(true);
-				addSSA.setEnabled(true);
-				editSSA.setEnabled(true);
-				removeSSA.setEnabled(true);
-				// for (int i = 0; i < ssaList.length; i++)
-				// addToIntSpecies(((String) ssaList[i]).split(" ")[1]);
-			}
-			else {
-				description.setEnabled(true);
-				explanation.setEnabled(true);
-				simulators.setEnabled(true);
-				simulatorsLabel.setEnabled(true);
-				newSSA.setEnabled(false);
-				usingSSA.setSelected(false);
-				ssa.setEnabled(false);
-				timeLabel.setEnabled(false);
-				time.setEnabled(false);
-				availSpecies.setEnabled(false);
-				ssaMod.setEnabled(false);
-				ssaModNum.setEnabled(false);
-				addSSA.setEnabled(false);
-				editSSA.setEnabled(false);
-				removeSSA.setEnabled(false);
-				if (!nary.isSelected()) {
-					ODE.setEnabled(true);
-				}
-				else {
-					markov.setEnabled(true);
-				}
-			}
-		}
-		// if the using sad check box is clicked
-		else if (e.getSource() == usingSAD) {
-			if (usingSAD.isSelected()) {
-				sad.setEnabled(true);
-				newSAD.setEnabled(true);
-				usingSAD.setSelected(true);
-				idLabel.setEnabled(true);
-				TCid.setEnabled(true);
-				descLabel.setEnabled(true);
-				desc.setEnabled(true);
-				condLabel.setEnabled(true);
-				cond.setEnabled(true);
-				addSAD.setEnabled(true);
-				editSAD.setEnabled(true);
-				removeSAD.setEnabled(true);
-
-				for (int i = 0; i < sadList.length; i++) {
-					String[] get = ((String) sadList[i]).split(";");
-					String cond = get[2];
-					cond = cond.replace('>', ' ');
-					cond = cond.replace('<', ' ');
-					cond = cond.replace('=', ' ');
-					cond = cond.replace('&', ' ');
-					cond = cond.replace('|', ' ');
-					cond = cond.replace('+', ' ');
-					cond = cond.replace('-', ' ');
-					cond = cond.replace('*', ' ');
-					cond = cond.replace('/', ' ');
-					cond = cond.replace('#', ' ');
-					cond = cond.replace('%', ' ');
-					cond = cond.replace('@', ' ');
-					cond = cond.replace('(', ' ');
-					cond = cond.replace(')', ' ');
-					cond = cond.replace('!', ' ');
-					get = cond.split(" ");
-					// for (int j = 0; j < get.length; j++)
-					// if (get[j].length() > 0)
-					// if ((get[j].charAt(0) != '0') && (get[j].charAt(0) !=
-					// '1')
-					// && (get[j].charAt(0) != '2') && (get[j].charAt(0) != '3')
-					// && (get[j].charAt(0) != '4') && (get[j].charAt(0) != '5')
-					// && (get[j].charAt(0) != '6') && (get[j].charAt(0) != '7')
-					// && (get[j].charAt(0) != '8') && (get[j].charAt(0) !=
-					// '9')) {
-					// addToIntSpecies(get[j]);
-					// }
-				}
-			}
-			else {
-				sad.setEnabled(false);
-				newSAD.setEnabled(false);
-				usingSAD.setSelected(false);
-				idLabel.setEnabled(false);
-				TCid.setEnabled(false);
-				descLabel.setEnabled(false);
-				desc.setEnabled(false);
-				condLabel.setEnabled(false);
-				cond.setEnabled(false);
-				addSAD.setEnabled(false);
-				editSAD.setEnabled(false);
-				removeSAD.setEnabled(false);
-			}
-		}
-		// if the add ssa button is clicked
-		else if (e.getSource() == addSSA) {
-			double time = 0;
-			int mod = 0;
-			try {
-				time = Double.parseDouble(this.time.getText().trim());
-			}
-			catch (Exception e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "You must enter a real " + "number into the time text field!", "Time Must Be A Real Number",
-						JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			try {
-				mod = Integer.parseInt(ssaModNum.getText().trim());
-			}
-			catch (Exception e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "You must enter an integer " + "into the amount change text field!",
-						"Amount Change Must Be An Integer", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			String modify;
-			if (ssaMod.getSelectedItem().equals("goes to")) {
-				modify = "=";
-			}
-			else if (ssaMod.getSelectedItem().equals("is added by")) {
-				modify = "+";
-			}
-			else if (ssaMod.getSelectedItem().equals("is subtracted by")) {
-				modify = "-";
-			}
-			else if (ssaMod.getSelectedItem().equals("is multiplied by")) {
-				modify = "*";
-			}
-			else {
-				modify = "/";
-			}
-			if (availSpecies.getSelectedItem() == null) {
-				JOptionPane.showMessageDialog(Gui.frame, "You must select a model for simulation " + "in order to add a user defined condition.",
-						"Select A Model For Simulation", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			// addToIntSpecies((String) availSpecies.getSelectedItem());
-			String add = time + " " + availSpecies.getSelectedItem() + " " + modify + mod;
-			boolean done = false;
-			for (int i = 0; i < ssaList.length; i++) {
-				String[] get = ((String) ssaList[i]).split(" ");
-				if (get[0].equals(time + "") && get[1].equals(availSpecies.getSelectedItem() + "")) {
-					ssaList[i] = add;
-					done = true;
-				}
-			}
-			if (!done) {
-				JList addSSA = new JList();
-				Object[] adding = { add };
-				addSSA.setListData(adding);
-				addSSA.setSelectedIndex(0);
-				ssaList = Utility.add(ssaList, ssa, addSSA, false, null, null, null, null, null, null, this);
-				int[] index = ssa.getSelectedIndices();
-				ssaList = Utility.getList(ssaList, ssa);
-				ssa.setSelectedIndices(index);
-				ArrayList<String> sortName = new ArrayList<String>();
-				for (int i = 0; i < ssaList.length; i++) {
-					sortName.add(((String) ssaList[i]).split(" ")[1]);
-				}
-				int in, out;
-				for (out = 1; out < sortName.size(); out++) {
-					String temp = sortName.get(out);
-					String temp2 = (String) ssaList[out];
-					in = out;
-					while (in > 0 && sortName.get(in - 1).compareToIgnoreCase(temp) > 0) {
-						sortName.set(in, sortName.get(in - 1));
-						ssaList[in] = ssaList[in - 1];
-						--in;
-					}
-					sortName.set(in, temp);
-					ssaList[in] = temp2;
-				}
-				ArrayList<Double> sort = new ArrayList<Double>();
-				for (int i = 0; i < ssaList.length; i++) {
-					sort.add(Double.parseDouble(((String) ssaList[i]).split(" ")[0]));
-				}
-				for (out = 1; out < sort.size(); out++) {
-					double temp = sort.get(out);
-					String temp2 = (String) ssaList[out];
-					in = out;
-					while (in > 0 && sort.get(in - 1) > temp) {
-						sort.set(in, sort.get(in - 1));
-						ssaList[in] = ssaList[in - 1];
-						--in;
-					}
-					sort.set(in, temp);
-					ssaList[in] = temp2;
-				}
-			}
-			ssa.setListData(ssaList);
-		}
-		// if the add sad button is clicked
-		else if (e.getSource() == addSAD) {
-			SBMLDocument document = Gui.readSBML(sbmlFile);
-			Model model = document.getModel();
-			ArrayList<String> listOfSpecs = new ArrayList<String>();
-			ArrayList<String> listOfReacs = new ArrayList<String>();
-			if (model != null) {
-				ListOf listOfSpecies = model.getListOfSpecies();
-				for (int i = 0; i < model.getNumSpecies(); i++) {
-					Species species = (Species) listOfSpecies.get(i);
-					listOfSpecs.add(species.getId());
-				}
-				ListOf listOfReactions = model.getListOfReactions();
-				for (int i = 0; i < model.getNumReactions(); i++) {
-					Reaction reaction = (Reaction) listOfReactions.get(i);
-					listOfReacs.add(reaction.getId());
-				}
-			}
-			TermCond TCparser = new TermCond(false);
-			int result = TCparser.ParseTermCond(listOfSpecs, listOfReacs, cond.getText().trim());
-			if (result == 0) {
-				String add = TCid.getText().trim() + "; " + desc.getText().trim() + "; " + cond.getText().trim();
-				JList addSAD = new JList();
-				Object[] adding = { add };
-				addSAD.setListData(adding);
-				addSAD.setSelectedIndex(0);
-				TCid.setText("");
-				desc.setText("");
-				cond.setText("");
-				sadList = Utility.add(sadList, sad, addSAD, false, null, null, null, null, null, null, this);
-				sad.setListData(sadList);
-			}
-			else if (result == 1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Syntax error in the termination condition!", "Syntax Error", JOptionPane.ERROR_MESSAGE);
-			}
-		}
-		// if the edit ssa button is clicked
-		else if (e.getSource() == editSSA) {
-			if (ssa.getSelectedIndex() != -1) {
-				String[] get = ((String) ssaList[ssa.getSelectedIndex()]).split(" ");
-				JPanel ssaAddPanel = new JPanel(new BorderLayout());
-				JPanel ssaAddPanel1 = new JPanel();
-				JPanel ssaAddPanel2 = new JPanel();
-				JLabel timeLabel = new JLabel("At time step: ");
-				JTextField time = new JTextField(15);
-				time.setText(get[0]);
-				String filename = sbmlFile;
-				SBMLDocument document = Gui.readSBML(filename);
-				Model model = document.getModel();
-				ArrayList<String> listOfSpecs = new ArrayList<String>();
-				if (model != null) {
-					ListOf listOfSpecies = model.getListOfSpecies();
-					for (int i = 0; i < model.getNumSpecies(); i++) {
-						Species species = (Species) listOfSpecies.get(i);
-						listOfSpecs.add(species.getId());
-					}
-				}
-				Object[] list = listOfSpecs.toArray();
-				for (int i = 1; i < list.length; i++) {
-					String index = (String) list[i];
-					int j = i;
-					while ((j > 0) && ((String) list[j - 1]).compareToIgnoreCase(index) > 0) {
-						list[j] = list[j - 1];
-						j = j - 1;
-					}
-					list[j] = index;
-				}
-				JComboBox availSpecies = new JComboBox();
-				for (int i = 0; i < list.length; i++) {
-					availSpecies.addItem(((String) list[i]).replace(" ", "_"));
-				}
-				availSpecies.setSelectedItem(get[1]);
-				String[] mod = new String[5];
-				mod[0] = "goes to";
-				mod[1] = "is added by";
-				mod[2] = "is subtracted by";
-				mod[3] = "is multiplied by";
-				mod[4] = "is divided by";
-				JComboBox ssaMod = new JComboBox(mod);
-				if (get[2].substring(0, 1).equals("=")) {
-					ssaMod.setSelectedItem("goes to");
-				}
-				else if (get[2].substring(0, 1).equals("+")) {
-					ssaMod.setSelectedItem("is added by");
-				}
-				else if (get[2].substring(0, 1).equals("-")) {
-					ssaMod.setSelectedItem("is subtracted by");
-				}
-				else if (get[2].substring(0, 1).equals("*")) {
-					ssaMod.setSelectedItem("is multiplied by");
-				}
-				else if (get[2].substring(0, 1).equals("/")) {
-					ssaMod.setSelectedItem("is divided by");
-				}
-				JTextField ssaModNum = new JTextField(15);
-				ssaModNum.setText(get[2].substring(1));
-				ssaAddPanel1.add(timeLabel);
-				ssaAddPanel1.add(time);
-				ssaAddPanel1.add(availSpecies);
-				ssaAddPanel2.add(ssaMod);
-				ssaAddPanel2.add(ssaModNum);
-				ssaAddPanel.add(ssaAddPanel1, "North");
-				ssaAddPanel.add(ssaAddPanel2, "Center");
-				String[] options = { "Save", "Cancel" };
-				int value = JOptionPane.showOptionDialog(Gui.frame, ssaAddPanel, "Edit User Defined Data", JOptionPane.YES_NO_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				if (value == JOptionPane.YES_OPTION) {
-					double time1 = 0;
-					int mod1 = 0;
-					try {
-						time1 = Double.parseDouble(time.getText().trim());
-					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(Gui.frame, "You must enter a real number " + "into the time text field!",
-								"Time Must Be A Real Number", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-					try {
-						mod1 = Integer.parseInt(ssaModNum.getText().trim());
-					}
-					catch (Exception e1) {
-						JOptionPane.showMessageDialog(Gui.frame, "You must enter an integer " + "into the amount change text field!",
-								"Amount Change Must Be An Integer", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-					String modify;
-					if (ssaMod.getSelectedItem().equals("goes to")) {
-						modify = "=";
-					}
-					else if (ssaMod.getSelectedItem().equals("is added by")) {
-						modify = "+";
-					}
-					else if (ssaMod.getSelectedItem().equals("is subtracted by")) {
-						modify = "-";
-					}
-					else if (ssaMod.getSelectedItem().equals("is multiplied by")) {
-						modify = "*";
-					}
-					else {
-						modify = "/";
-					}
-					if (availSpecies.getSelectedItem() == null) {
-						JOptionPane.showMessageDialog(Gui.frame, "You must select a model for simulation "
-								+ "in order to add a user defined condition.", "Select A Model For Simulation", JOptionPane.ERROR_MESSAGE);
-						return;
-					}
-					// addToIntSpecies((String) availSpecies.getSelectedItem());
-					ssaList[ssa.getSelectedIndex()] = time1 + " " + availSpecies.getSelectedItem() + " " + modify + mod1;
-					int[] index = ssa.getSelectedIndices();
-					ssa.setListData(ssaList);
-					ssaList = Utility.getList(ssaList, ssa);
-					ssa.setSelectedIndices(index);
-					ArrayList<String> sortName = new ArrayList<String>();
-					for (int i = 0; i < ssaList.length; i++) {
-						sortName.add(((String) ssaList[i]).split(" ")[1]);
-					}
-					int in, out;
-					for (out = 1; out < sortName.size(); out++) {
-						String temp = sortName.get(out);
-						String temp2 = (String) ssaList[out];
-						in = out;
-						while (in > 0 && sortName.get(in - 1).compareToIgnoreCase(temp) > 0) {
-							sortName.set(in, sortName.get(in - 1));
-							ssaList[in] = ssaList[in - 1];
-							--in;
-						}
-						sortName.set(in, temp);
-						ssaList[in] = temp2;
-					}
-					ArrayList<Double> sort = new ArrayList<Double>();
-					for (int i = 0; i < ssaList.length; i++) {
-						sort.add(Double.parseDouble(((String) ssaList[i]).split(" ")[0]));
-					}
-					for (out = 1; out < sort.size(); out++) {
-						double temp = sort.get(out);
-						String temp2 = (String) ssaList[out];
-						in = out;
-						while (in > 0 && sort.get(in - 1) > temp) {
-							sort.set(in, sort.get(in - 1));
-							ssaList[in] = ssaList[in - 1];
-							--in;
-						}
-						sort.set(in, temp);
-						ssaList[in] = temp2;
-					}
-					ssa.setListData(ssaList);
-					ArrayList<Integer> count = new ArrayList<Integer>();
-					for (int i = 0; i < ssaList.length; i++) {
-						String[] remove = ((String) ssaList[i]).split(" ");
-						if (remove[0].equals(time1 + "") && remove[1].equals(availSpecies.getSelectedItem() + "")) {
-							count.add(i);
-						}
-					}
-					if (count.size() > 1) {
-						boolean done = false;
-						for (int i : count) {
-							String[] remove = ((String) ssaList[i]).split(" ");
-							if (!remove[2].equals(modify + mod1) && !done) {
-								ssa.setSelectedIndex(i);
-								ssaList = Utility.remove(ssa, ssaList);
-								index = ssa.getSelectedIndices();
-								// ssaList = Buttons.getList(ssaList, ssa);
-								ssa.setSelectedIndices(index);
-								done = true;
-							}
-						}
-						if (!done) {
-							ssa.setSelectedIndex(count.get(0));
-							ssaList = Utility.remove(ssa, ssaList);
-							index = ssa.getSelectedIndices();
-							// ssaList = Buttons.getList(ssaList, ssa);
-							ssa.setSelectedIndices(index);
-						}
-					}
-				}
-			}
-		}
-		// if the edit sad button is clicked
-		else if (e.getSource() == editSAD) {
-			if (sad.getSelectedIndex() != -1) {
-				String[] get = ((String) sadList[sad.getSelectedIndex()]).split(";");
-				JPanel sadAddPanel = new JPanel(new BorderLayout());
-				JPanel sadAddPanel0 = new JPanel();
-				JPanel sadAddPanel1 = new JPanel();
-				JPanel sadAddPanel2 = new JPanel();
-				JLabel idLabel = new JLabel("ID: ");
-				JTextField TCid = new JTextField(10);
-				TCid.setText(get[0].trim());
-				JLabel descLabel = new JLabel("Description: ");
-				JTextField desc = new JTextField(20);
-				desc.setText(get[1].trim());
-				JLabel condLabel = new JLabel("Condition: ");
-				JTextField cond = new JTextField(35);
-				cond.setText(get[2].trim());
-				sadAddPanel0.add(idLabel);
-				sadAddPanel0.add(TCid);
-				sadAddPanel1.add(descLabel);
-				sadAddPanel1.add(desc);
-				sadAddPanel2.add(condLabel);
-				sadAddPanel2.add(cond);
-				sadAddPanel.add(sadAddPanel0, "North");
-				sadAddPanel.add(sadAddPanel1, "Center");
-				sadAddPanel.add(sadAddPanel2, "South");
-				String[] options = { "Save", "Cancel" };
-				int value = JOptionPane.showOptionDialog(Gui.frame, sadAddPanel, "Edit Termination Condition", JOptionPane.YES_NO_OPTION,
-						JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
-				if (value == JOptionPane.YES_OPTION) {
-					SBMLDocument document = Gui.readSBML(sbmlFile);
-					Model model = document.getModel();
-					ArrayList<String> listOfSpecs = new ArrayList<String>();
-					ArrayList<String> listOfReacs = new ArrayList<String>();
-					if (model != null) {
-						ListOf listOfSpecies = model.getListOfSpecies();
-						for (int i = 0; i < model.getNumSpecies(); i++) {
-							Species species = (Species) listOfSpecies.get(i);
-							listOfSpecs.add(species.getId());
-						}
-						ListOf listOfReactions = model.getListOfReactions();
-						for (int i = 0; i < model.getNumReactions(); i++) {
-							Reaction reaction = (Reaction) listOfReactions.get(i);
-							listOfReacs.add(reaction.getId());
-						}
-					}
-					TermCond TCparser = new TermCond(false);
-					int result = TCparser.ParseTermCond(listOfSpecs, listOfReacs, cond.getText().trim());
-					if (result == 0) {
-						sadList[sad.getSelectedIndex()] = TCid.getText().trim() + "; " + desc.getText().trim() + "; " + cond.getText().trim();
-						int[] index = sad.getSelectedIndices();
-						sad.setListData(sadList);
-						sadList = Utility.getList(sadList, sad);
-						sad.setSelectedIndices(index);
-						sad.setListData(sadList);
-					}
-					else if (result == 1) {
-						JOptionPane.showMessageDialog(Gui.frame, "Syntax error in the termination condition!", "Syntax Error",
-								JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
-		}
-		// if the edit option button is clicked
-		else if (e.getSource() == editProp) {
-			if (properties.getSelectedIndex() != -1) {
-				String[] get = ((String) props[properties.getSelectedIndex()]).split("=");
-				JPanel OptAddPanel = new JPanel(new BorderLayout());
-				JPanel OptAddPanel0 = new JPanel();
-				JPanel OptAddPanel1 = new JPanel();
-				JLabel OptionLabel = new JLabel("Option: ");
-				JTextField Option = new JTextField(20);
-				Option.setText(get[0].trim());
-				JLabel ValueLabel = new JLabel("Value: ");
-				JTextField Value = new JTextField(20);
-				Value.setText(get[1].trim());
-				OptAddPanel0.add(OptionLabel);
-				OptAddPanel0.add(Option);
-				OptAddPanel1.add(ValueLabel);
-				OptAddPanel1.add(Value);
-				OptAddPanel.add(OptAddPanel0, "North");
-				OptAddPanel.add(OptAddPanel1, "Center");
-				String[] options = { "Save", "Cancel" };
-				int value = JOptionPane.showOptionDialog(Gui.frame, OptAddPanel, "Edit Option", JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
-						null, options, options[0]);
-				if (value == JOptionPane.YES_OPTION) {
-					props[properties.getSelectedIndex()] = Option.getText().trim() + "=" + Value.getText().trim();
-					int[] index = properties.getSelectedIndices();
-					properties.setListData(props);
-					props = Utility.getList(props, properties);
-					properties.setSelectedIndices(index);
-					properties.setListData(props);
-				}
-			}
-		}
-		*/
+		 * else if (e.getSource() == usingSSA) { if (usingSSA.isSelected()) {
+		 * newSSA.setEnabled(true); usingSSA.setSelected(true);
+		 * description.setEnabled(false); explanation.setEnabled(false);
+		 * simulators.setEnabled(false); simulatorsLabel.setEnabled(false);
+		 * ODE.setEnabled(false); if (ODE.isSelected()) {
+		 * ODE.setSelected(false); monteCarlo.setSelected(true);
+		 * Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel,
+		 * minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
+		 * limitLabel, limit, intervalLabel, interval, simulators,
+		 * simulatorsLabel, explanation, description, usingSSA, fileStem,
+		 * fileStemLabel, postAbs, abstraction, nary); if (runFiles) {
+		 * append.setEnabled(true); concentrations.setEnabled(true);
+		 * genRuns.setEnabled(true); report.setEnabled(true); if
+		 * (append.isSelected()) { limit.setEnabled(false);
+		 * interval.setEnabled(false); limitLabel.setEnabled(false);
+		 * intervalLabel.setEnabled(false); } else { limit.setEnabled(true);
+		 * interval.setEnabled(true); limitLabel.setEnabled(true);
+		 * intervalLabel.setEnabled(true); } } } markov.setEnabled(false); if
+		 * (markov.isSelected()) { markov.setSelected(false);
+		 * monteCarlo.setSelected(true); Button_Enabling.enableMonteCarlo(seed,
+		 * seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
+		 * errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
+		 * simulators, simulatorsLabel, explanation, description, usingSSA,
+		 * fileStem, fileStemLabel, postAbs, abstraction, nary); if (runFiles) {
+		 * append.setEnabled(true); concentrations.setEnabled(true);
+		 * genRuns.setEnabled(true); report.setEnabled(true); if
+		 * (append.isSelected()) { limit.setEnabled(false);
+		 * interval.setEnabled(false); limitLabel.setEnabled(false);
+		 * intervalLabel.setEnabled(false); } else { limit.setEnabled(true);
+		 * interval.setEnabled(true); limitLabel.setEnabled(true);
+		 * intervalLabel.setEnabled(true); } } } ssa.setEnabled(true);
+		 * timeLabel.setEnabled(true); time.setEnabled(true);
+		 * availSpecies.setEnabled(true); ssaMod.setEnabled(true);
+		 * ssaModNum.setEnabled(true); addSSA.setEnabled(true);
+		 * editSSA.setEnabled(true); removeSSA.setEnabled(true); // for (int i =
+		 * 0; i < ssaList.length; i++) // addToIntSpecies(((String)
+		 * ssaList[i]).split(" ")[1]); } else { description.setEnabled(true);
+		 * explanation.setEnabled(true); simulators.setEnabled(true);
+		 * simulatorsLabel.setEnabled(true); newSSA.setEnabled(false);
+		 * usingSSA.setSelected(false); ssa.setEnabled(false);
+		 * timeLabel.setEnabled(false); time.setEnabled(false);
+		 * availSpecies.setEnabled(false); ssaMod.setEnabled(false);
+		 * ssaModNum.setEnabled(false); addSSA.setEnabled(false);
+		 * editSSA.setEnabled(false); removeSSA.setEnabled(false); if
+		 * (!nary.isSelected()) { ODE.setEnabled(true); } else {
+		 * markov.setEnabled(true); } } } // if the using sad check box is
+		 * clicked else if (e.getSource() == usingSAD) { if
+		 * (usingSAD.isSelected()) { sad.setEnabled(true);
+		 * newSAD.setEnabled(true); usingSAD.setSelected(true);
+		 * idLabel.setEnabled(true); TCid.setEnabled(true);
+		 * descLabel.setEnabled(true); desc.setEnabled(true);
+		 * condLabel.setEnabled(true); cond.setEnabled(true);
+		 * addSAD.setEnabled(true); editSAD.setEnabled(true);
+		 * removeSAD.setEnabled(true);
+		 * 
+		 * for (int i = 0; i < sadList.length; i++) { String[] get = ((String)
+		 * sadList[i]).split(";"); String cond = get[2]; cond =
+		 * cond.replace('>', ' '); cond = cond.replace('<', ' '); cond =
+		 * cond.replace('=', ' '); cond = cond.replace('&', ' '); cond =
+		 * cond.replace('|', ' '); cond = cond.replace('+', ' '); cond =
+		 * cond.replace('-', ' '); cond = cond.replace('*', ' '); cond =
+		 * cond.replace('/', ' '); cond = cond.replace('#', ' '); cond =
+		 * cond.replace('%', ' '); cond = cond.replace('@', ' '); cond =
+		 * cond.replace('(', ' '); cond = cond.replace(')', ' '); cond =
+		 * cond.replace('!', ' '); get = cond.split(" "); // for (int j = 0; j <
+		 * get.length; j++) // if (get[j].length() > 0) // if ((get[j].charAt(0)
+		 * != '0') && (get[j].charAt(0) != // '1') // && (get[j].charAt(0) !=
+		 * '2') && (get[j].charAt(0) != '3') // && (get[j].charAt(0) != '4') &&
+		 * (get[j].charAt(0) != '5') // && (get[j].charAt(0) != '6') &&
+		 * (get[j].charAt(0) != '7') // && (get[j].charAt(0) != '8') &&
+		 * (get[j].charAt(0) != // '9')) { // addToIntSpecies(get[j]); // } } }
+		 * else { sad.setEnabled(false); newSAD.setEnabled(false);
+		 * usingSAD.setSelected(false); idLabel.setEnabled(false);
+		 * TCid.setEnabled(false); descLabel.setEnabled(false);
+		 * desc.setEnabled(false); condLabel.setEnabled(false);
+		 * cond.setEnabled(false); addSAD.setEnabled(false);
+		 * editSAD.setEnabled(false); removeSAD.setEnabled(false); } } // if the
+		 * add ssa button is clicked else if (e.getSource() == addSSA) { double
+		 * time = 0; int mod = 0; try { time =
+		 * Double.parseDouble(this.time.getText().trim()); } catch (Exception
+		 * e1) { JOptionPane.showMessageDialog(Gui.frame,
+		 * "You must enter a real " + "number into the time text field!",
+		 * "Time Must Be A Real Number", JOptionPane.ERROR_MESSAGE); return; }
+		 * try { mod = Integer.parseInt(ssaModNum.getText().trim()); } catch
+		 * (Exception e1) { JOptionPane.showMessageDialog(Gui.frame,
+		 * "You must enter an integer " + "into the amount change text field!",
+		 * "Amount Change Must Be An Integer", JOptionPane.ERROR_MESSAGE);
+		 * return; } String modify; if
+		 * (ssaMod.getSelectedItem().equals("goes to")) { modify = "="; } else
+		 * if (ssaMod.getSelectedItem().equals("is added by")) { modify = "+"; }
+		 * else if (ssaMod.getSelectedItem().equals("is subtracted by")) {
+		 * modify = "-"; } else if
+		 * (ssaMod.getSelectedItem().equals("is multiplied by")) { modify = "*";
+		 * } else { modify = "/"; } if (availSpecies.getSelectedItem() == null)
+		 * { JOptionPane.showMessageDialog(Gui.frame,
+		 * "You must select a model for simulation " +
+		 * "in order to add a user defined condition.",
+		 * "Select A Model For Simulation", JOptionPane.ERROR_MESSAGE); return;
+		 * } // addToIntSpecies((String) availSpecies.getSelectedItem()); String
+		 * add = time + " " + availSpecies.getSelectedItem() + " " + modify +
+		 * mod; boolean done = false; for (int i = 0; i < ssaList.length; i++) {
+		 * String[] get = ((String) ssaList[i]).split(" "); if
+		 * (get[0].equals(time + "") &&
+		 * get[1].equals(availSpecies.getSelectedItem() + "")) { ssaList[i] =
+		 * add; done = true; } } if (!done) { JList addSSA = new JList();
+		 * Object[] adding = { add }; addSSA.setListData(adding);
+		 * addSSA.setSelectedIndex(0); ssaList = Utility.add(ssaList, ssa,
+		 * addSSA, false, null, null, null, null, null, null, this); int[] index
+		 * = ssa.getSelectedIndices(); ssaList = Utility.getList(ssaList, ssa);
+		 * ssa.setSelectedIndices(index); ArrayList<String> sortName = new
+		 * ArrayList<String>(); for (int i = 0; i < ssaList.length; i++) {
+		 * sortName.add(((String) ssaList[i]).split(" ")[1]); } int in, out; for
+		 * (out = 1; out < sortName.size(); out++) { String temp =
+		 * sortName.get(out); String temp2 = (String) ssaList[out]; in = out;
+		 * while (in > 0 && sortName.get(in - 1).compareToIgnoreCase(temp) > 0)
+		 * { sortName.set(in, sortName.get(in - 1)); ssaList[in] = ssaList[in -
+		 * 1]; --in; } sortName.set(in, temp); ssaList[in] = temp2; }
+		 * ArrayList<Double> sort = new ArrayList<Double>(); for (int i = 0; i <
+		 * ssaList.length; i++) { sort.add(Double.parseDouble(((String)
+		 * ssaList[i]).split(" ")[0])); } for (out = 1; out < sort.size();
+		 * out++) { double temp = sort.get(out); String temp2 = (String)
+		 * ssaList[out]; in = out; while (in > 0 && sort.get(in - 1) > temp) {
+		 * sort.set(in, sort.get(in - 1)); ssaList[in] = ssaList[in - 1]; --in;
+		 * } sort.set(in, temp); ssaList[in] = temp2; } }
+		 * ssa.setListData(ssaList); } // if the add sad button is clicked else
+		 * if (e.getSource() == addSAD) { SBMLDocument document =
+		 * Gui.readSBML(sbmlFile); Model model = document.getModel();
+		 * ArrayList<String> listOfSpecs = new ArrayList<String>();
+		 * ArrayList<String> listOfReacs = new ArrayList<String>(); if (model !=
+		 * null) { ListOf listOfSpecies = model.getListOfSpecies(); for (int i =
+		 * 0; i < model.getNumSpecies(); i++) { Species species = (Species)
+		 * listOfSpecies.get(i); listOfSpecs.add(species.getId()); } ListOf
+		 * listOfReactions = model.getListOfReactions(); for (int i = 0; i <
+		 * model.getNumReactions(); i++) { Reaction reaction = (Reaction)
+		 * listOfReactions.get(i); listOfReacs.add(reaction.getId()); } }
+		 * TermCond TCparser = new TermCond(false); int result =
+		 * TCparser.ParseTermCond(listOfSpecs, listOfReacs,
+		 * cond.getText().trim()); if (result == 0) { String add =
+		 * TCid.getText().trim() + "; " + desc.getText().trim() + "; " +
+		 * cond.getText().trim(); JList addSAD = new JList(); Object[] adding =
+		 * { add }; addSAD.setListData(adding); addSAD.setSelectedIndex(0);
+		 * TCid.setText(""); desc.setText(""); cond.setText(""); sadList =
+		 * Utility.add(sadList, sad, addSAD, false, null, null, null, null,
+		 * null, null, this); sad.setListData(sadList); } else if (result == 1)
+		 * { JOptionPane.showMessageDialog(Gui.frame,
+		 * "Syntax error in the termination condition!", "Syntax Error",
+		 * JOptionPane.ERROR_MESSAGE); } } // if the edit ssa button is clicked
+		 * else if (e.getSource() == editSSA) { if (ssa.getSelectedIndex() !=
+		 * -1) { String[] get = ((String)
+		 * ssaList[ssa.getSelectedIndex()]).split(" "); JPanel ssaAddPanel = new
+		 * JPanel(new BorderLayout()); JPanel ssaAddPanel1 = new JPanel();
+		 * JPanel ssaAddPanel2 = new JPanel(); JLabel timeLabel = new
+		 * JLabel("At time step: "); JTextField time = new JTextField(15);
+		 * time.setText(get[0]); String filename = sbmlFile; SBMLDocument
+		 * document = Gui.readSBML(filename); Model model = document.getModel();
+		 * ArrayList<String> listOfSpecs = new ArrayList<String>(); if (model !=
+		 * null) { ListOf listOfSpecies = model.getListOfSpecies(); for (int i =
+		 * 0; i < model.getNumSpecies(); i++) { Species species = (Species)
+		 * listOfSpecies.get(i); listOfSpecs.add(species.getId()); } } Object[]
+		 * list = listOfSpecs.toArray(); for (int i = 1; i < list.length; i++) {
+		 * String index = (String) list[i]; int j = i; while ((j > 0) &&
+		 * ((String) list[j - 1]).compareToIgnoreCase(index) > 0) { list[j] =
+		 * list[j - 1]; j = j - 1; } list[j] = index; } JComboBox availSpecies =
+		 * new JComboBox(); for (int i = 0; i < list.length; i++) {
+		 * availSpecies.addItem(((String) list[i]).replace(" ", "_")); }
+		 * availSpecies.setSelectedItem(get[1]); String[] mod = new String[5];
+		 * mod[0] = "goes to"; mod[1] = "is added by"; mod[2] =
+		 * "is subtracted by"; mod[3] = "is multiplied by"; mod[4] =
+		 * "is divided by"; JComboBox ssaMod = new JComboBox(mod); if
+		 * (get[2].substring(0, 1).equals("=")) {
+		 * ssaMod.setSelectedItem("goes to"); } else if (get[2].substring(0,
+		 * 1).equals("+")) { ssaMod.setSelectedItem("is added by"); } else if
+		 * (get[2].substring(0, 1).equals("-")) {
+		 * ssaMod.setSelectedItem("is subtracted by"); } else if
+		 * (get[2].substring(0, 1).equals("*")) {
+		 * ssaMod.setSelectedItem("is multiplied by"); } else if
+		 * (get[2].substring(0, 1).equals("/")) {
+		 * ssaMod.setSelectedItem("is divided by"); } JTextField ssaModNum = new
+		 * JTextField(15); ssaModNum.setText(get[2].substring(1));
+		 * ssaAddPanel1.add(timeLabel); ssaAddPanel1.add(time);
+		 * ssaAddPanel1.add(availSpecies); ssaAddPanel2.add(ssaMod);
+		 * ssaAddPanel2.add(ssaModNum); ssaAddPanel.add(ssaAddPanel1, "North");
+		 * ssaAddPanel.add(ssaAddPanel2, "Center"); String[] options = { "Save",
+		 * "Cancel" }; int value = JOptionPane.showOptionDialog(Gui.frame,
+		 * ssaAddPanel, "Edit User Defined Data", JOptionPane.YES_NO_OPTION,
+		 * JOptionPane.PLAIN_MESSAGE, null, options, options[0]); if (value ==
+		 * JOptionPane.YES_OPTION) { double time1 = 0; int mod1 = 0; try { time1
+		 * = Double.parseDouble(time.getText().trim()); } catch (Exception e1) {
+		 * JOptionPane.showMessageDialog(Gui.frame,
+		 * "You must enter a real number " + "into the time text field!",
+		 * "Time Must Be A Real Number", JOptionPane.ERROR_MESSAGE); return; }
+		 * try { mod1 = Integer.parseInt(ssaModNum.getText().trim()); } catch
+		 * (Exception e1) { JOptionPane.showMessageDialog(Gui.frame,
+		 * "You must enter an integer " + "into the amount change text field!",
+		 * "Amount Change Must Be An Integer", JOptionPane.ERROR_MESSAGE);
+		 * return; } String modify; if
+		 * (ssaMod.getSelectedItem().equals("goes to")) { modify = "="; } else
+		 * if (ssaMod.getSelectedItem().equals("is added by")) { modify = "+"; }
+		 * else if (ssaMod.getSelectedItem().equals("is subtracted by")) {
+		 * modify = "-"; } else if
+		 * (ssaMod.getSelectedItem().equals("is multiplied by")) { modify = "*";
+		 * } else { modify = "/"; } if (availSpecies.getSelectedItem() == null)
+		 * { JOptionPane.showMessageDialog(Gui.frame,
+		 * "You must select a model for simulation " +
+		 * "in order to add a user defined condition.",
+		 * "Select A Model For Simulation", JOptionPane.ERROR_MESSAGE); return;
+		 * } // addToIntSpecies((String) availSpecies.getSelectedItem());
+		 * ssaList[ssa.getSelectedIndex()] = time1 + " " +
+		 * availSpecies.getSelectedItem() + " " + modify + mod1; int[] index =
+		 * ssa.getSelectedIndices(); ssa.setListData(ssaList); ssaList =
+		 * Utility.getList(ssaList, ssa); ssa.setSelectedIndices(index);
+		 * ArrayList<String> sortName = new ArrayList<String>(); for (int i = 0;
+		 * i < ssaList.length; i++) { sortName.add(((String)
+		 * ssaList[i]).split(" ")[1]); } int in, out; for (out = 1; out <
+		 * sortName.size(); out++) { String temp = sortName.get(out); String
+		 * temp2 = (String) ssaList[out]; in = out; while (in > 0 &&
+		 * sortName.get(in - 1).compareToIgnoreCase(temp) > 0) {
+		 * sortName.set(in, sortName.get(in - 1)); ssaList[in] = ssaList[in -
+		 * 1]; --in; } sortName.set(in, temp); ssaList[in] = temp2; }
+		 * ArrayList<Double> sort = new ArrayList<Double>(); for (int i = 0; i <
+		 * ssaList.length; i++) { sort.add(Double.parseDouble(((String)
+		 * ssaList[i]).split(" ")[0])); } for (out = 1; out < sort.size();
+		 * out++) { double temp = sort.get(out); String temp2 = (String)
+		 * ssaList[out]; in = out; while (in > 0 && sort.get(in - 1) > temp) {
+		 * sort.set(in, sort.get(in - 1)); ssaList[in] = ssaList[in - 1]; --in;
+		 * } sort.set(in, temp); ssaList[in] = temp2; }
+		 * ssa.setListData(ssaList); ArrayList<Integer> count = new
+		 * ArrayList<Integer>(); for (int i = 0; i < ssaList.length; i++) {
+		 * String[] remove = ((String) ssaList[i]).split(" "); if
+		 * (remove[0].equals(time1 + "") &&
+		 * remove[1].equals(availSpecies.getSelectedItem() + "")) {
+		 * count.add(i); } } if (count.size() > 1) { boolean done = false; for
+		 * (int i : count) { String[] remove = ((String) ssaList[i]).split(" ");
+		 * if (!remove[2].equals(modify + mod1) && !done) {
+		 * ssa.setSelectedIndex(i); ssaList = Utility.remove(ssa, ssaList);
+		 * index = ssa.getSelectedIndices(); // ssaList =
+		 * Buttons.getList(ssaList, ssa); ssa.setSelectedIndices(index); done =
+		 * true; } } if (!done) { ssa.setSelectedIndex(count.get(0)); ssaList =
+		 * Utility.remove(ssa, ssaList); index = ssa.getSelectedIndices(); //
+		 * ssaList = Buttons.getList(ssaList, ssa);
+		 * ssa.setSelectedIndices(index); } } } } } // if the edit sad button is
+		 * clicked else if (e.getSource() == editSAD) { if
+		 * (sad.getSelectedIndex() != -1) { String[] get = ((String)
+		 * sadList[sad.getSelectedIndex()]).split(";"); JPanel sadAddPanel = new
+		 * JPanel(new BorderLayout()); JPanel sadAddPanel0 = new JPanel();
+		 * JPanel sadAddPanel1 = new JPanel(); JPanel sadAddPanel2 = new
+		 * JPanel(); JLabel idLabel = new JLabel("ID: "); JTextField TCid = new
+		 * JTextField(10); TCid.setText(get[0].trim()); JLabel descLabel = new
+		 * JLabel("Description: "); JTextField desc = new JTextField(20);
+		 * desc.setText(get[1].trim()); JLabel condLabel = new
+		 * JLabel("Condition: "); JTextField cond = new JTextField(35);
+		 * cond.setText(get[2].trim()); sadAddPanel0.add(idLabel);
+		 * sadAddPanel0.add(TCid); sadAddPanel1.add(descLabel);
+		 * sadAddPanel1.add(desc); sadAddPanel2.add(condLabel);
+		 * sadAddPanel2.add(cond); sadAddPanel.add(sadAddPanel0, "North");
+		 * sadAddPanel.add(sadAddPanel1, "Center");
+		 * sadAddPanel.add(sadAddPanel2, "South"); String[] options = { "Save",
+		 * "Cancel" }; int value = JOptionPane.showOptionDialog(Gui.frame,
+		 * sadAddPanel, "Edit Termination Condition", JOptionPane.YES_NO_OPTION,
+		 * JOptionPane.PLAIN_MESSAGE, null, options, options[0]); if (value ==
+		 * JOptionPane.YES_OPTION) { SBMLDocument document =
+		 * Gui.readSBML(sbmlFile); Model model = document.getModel();
+		 * ArrayList<String> listOfSpecs = new ArrayList<String>();
+		 * ArrayList<String> listOfReacs = new ArrayList<String>(); if (model !=
+		 * null) { ListOf listOfSpecies = model.getListOfSpecies(); for (int i =
+		 * 0; i < model.getNumSpecies(); i++) { Species species = (Species)
+		 * listOfSpecies.get(i); listOfSpecs.add(species.getId()); } ListOf
+		 * listOfReactions = model.getListOfReactions(); for (int i = 0; i <
+		 * model.getNumReactions(); i++) { Reaction reaction = (Reaction)
+		 * listOfReactions.get(i); listOfReacs.add(reaction.getId()); } }
+		 * TermCond TCparser = new TermCond(false); int result =
+		 * TCparser.ParseTermCond(listOfSpecs, listOfReacs,
+		 * cond.getText().trim()); if (result == 0) {
+		 * sadList[sad.getSelectedIndex()] = TCid.getText().trim() + "; " +
+		 * desc.getText().trim() + "; " + cond.getText().trim(); int[] index =
+		 * sad.getSelectedIndices(); sad.setListData(sadList); sadList =
+		 * Utility.getList(sadList, sad); sad.setSelectedIndices(index);
+		 * sad.setListData(sadList); } else if (result == 1) {
+		 * JOptionPane.showMessageDialog(Gui.frame,
+		 * "Syntax error in the termination condition!", "Syntax Error",
+		 * JOptionPane.ERROR_MESSAGE); } } } } // if the edit option button is
+		 * clicked else if (e.getSource() == editProp) { if
+		 * (properties.getSelectedIndex() != -1) { String[] get = ((String)
+		 * props[properties.getSelectedIndex()]).split("="); JPanel OptAddPanel
+		 * = new JPanel(new BorderLayout()); JPanel OptAddPanel0 = new JPanel();
+		 * JPanel OptAddPanel1 = new JPanel(); JLabel OptionLabel = new
+		 * JLabel("Option: "); JTextField Option = new JTextField(20);
+		 * Option.setText(get[0].trim()); JLabel ValueLabel = new
+		 * JLabel("Value: "); JTextField Value = new JTextField(20);
+		 * Value.setText(get[1].trim()); OptAddPanel0.add(OptionLabel);
+		 * OptAddPanel0.add(Option); OptAddPanel1.add(ValueLabel);
+		 * OptAddPanel1.add(Value); OptAddPanel.add(OptAddPanel0, "North");
+		 * OptAddPanel.add(OptAddPanel1, "Center"); String[] options = { "Save",
+		 * "Cancel" }; int value = JOptionPane.showOptionDialog(Gui.frame,
+		 * OptAddPanel, "Edit Option", JOptionPane.YES_NO_OPTION,
+		 * JOptionPane.PLAIN_MESSAGE, null, options, options[0]); if (value ==
+		 * JOptionPane.YES_OPTION) { props[properties.getSelectedIndex()] =
+		 * Option.getText().trim() + "=" + Value.getText().trim(); int[] index =
+		 * properties.getSelectedIndices(); properties.setListData(props); props
+		 * = Utility.getList(props, properties);
+		 * properties.setSelectedIndices(index); properties.setListData(props);
+		 * } } }
+		 */
 		else if ((e.getSource() == addPreAbs) || (e.getSource() == addLoopAbs) || (e.getSource() == addPostAbs)) {
 			JPanel addAbsPanel = new JPanel(new BorderLayout());
 			JComboBox absList = new JComboBox();
@@ -2300,8 +1915,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			absList.addItem("stop-flag-generator");
 			addAbsPanel.add(absList, "Center");
 			String[] options = { "Add", "Cancel" };
-			int value = JOptionPane.showOptionDialog(Gui.frame, addAbsPanel, "Add abstraction method", JOptionPane.YES_NO_OPTION,
-					JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+			int value = JOptionPane.showOptionDialog(Gui.frame, addAbsPanel, "Add abstraction method",
+					JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 			if (value == JOptionPane.YES_OPTION) {
 				if (e.getSource() == addPreAbs) {
 					Utility.add(preAbs, absList.getSelectedItem());
@@ -2325,64 +1940,38 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		// if the remove ssa button is clicked
 		/*
-		else if (e.getSource() == removeSSA) {
-			ssaList = Utility.remove(ssa, ssaList);
-		}
-		// if the remove sad button is clicked
-		else if (e.getSource() == removeSAD) {
-			sadList = Utility.remove(sad, sadList);
-		}
-		// if the new ssa button is clicked
-		else if (e.getSource() == newSSA) {
-			ssaList = new Object[0];
-			ssa.setListData(ssaList);
-			ssa.setEnabled(true);
-			timeLabel.setEnabled(true);
-			time.setEnabled(true);
-			availSpecies.setEnabled(true);
-			ssaMod.setEnabled(true);
-			ssaModNum.setEnabled(true);
-			addSSA.setEnabled(true);
-			editSSA.setEnabled(true);
-			removeSSA.setEnabled(true);
-		}
-		// if the new sad button is clicked
-		else if (e.getSource() == newSAD) {
-			sadList = new Object[0];
-			sad.setListData(sadList);
-			TCid.setText("");
-			desc.setText("");
-			cond.setText("");
-		}
-		// if the new sad button is clicked
-		else if (e.getSource() == newProp) {
-			props = new Object[0];
-			properties.setListData(props);
-			prop.setText("");
-			value.setText("");
-		}
-		// if the remove properties button is clicked
-		else if (e.getSource() == removeProp) {
-			props = Utility.remove(properties, props);
-		}
-		// if the add properties button is clicked
-		else if (e.getSource() == addProp) {
-			if (prop.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Enter a option into the option field!", "Must Enter an Option", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			if (value.getText().trim().equals("")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Enter a value into the value field!", "Must Enter a Value", JOptionPane.ERROR_MESSAGE);
-				return;
-			}
-			String add = prop.getText().trim() + "=" + value.getText().trim();
-			JList addPropery = new JList();
-			Object[] adding = { add };
-			addPropery.setListData(adding);
-			addPropery.setSelectedIndex(0);
-			props = Utility.add(props, properties, addPropery, false, null, null, null, null, null, null, this);
-		}
-		*/
+		 * else if (e.getSource() == removeSSA) { ssaList = Utility.remove(ssa,
+		 * ssaList); } // if the remove sad button is clicked else if
+		 * (e.getSource() == removeSAD) { sadList = Utility.remove(sad,
+		 * sadList); } // if the new ssa button is clicked else if
+		 * (e.getSource() == newSSA) { ssaList = new Object[0];
+		 * ssa.setListData(ssaList); ssa.setEnabled(true);
+		 * timeLabel.setEnabled(true); time.setEnabled(true);
+		 * availSpecies.setEnabled(true); ssaMod.setEnabled(true);
+		 * ssaModNum.setEnabled(true); addSSA.setEnabled(true);
+		 * editSSA.setEnabled(true); removeSSA.setEnabled(true); } // if the new
+		 * sad button is clicked else if (e.getSource() == newSAD) { sadList =
+		 * new Object[0]; sad.setListData(sadList); TCid.setText("");
+		 * desc.setText(""); cond.setText(""); } // if the new sad button is
+		 * clicked else if (e.getSource() == newProp) { props = new Object[0];
+		 * properties.setListData(props); prop.setText(""); value.setText(""); }
+		 * // if the remove properties button is clicked else if (e.getSource()
+		 * == removeProp) { props = Utility.remove(properties, props); } // if
+		 * the add properties button is clicked else if (e.getSource() ==
+		 * addProp) { if (prop.getText().trim().equals("")) {
+		 * JOptionPane.showMessageDialog(Gui.frame,
+		 * "Enter a option into the option field!", "Must Enter an Option",
+		 * JOptionPane.ERROR_MESSAGE); return; } if
+		 * (value.getText().trim().equals("")) {
+		 * JOptionPane.showMessageDialog(Gui.frame,
+		 * "Enter a value into the value field!", "Must Enter a Value",
+		 * JOptionPane.ERROR_MESSAGE); return; } String add =
+		 * prop.getText().trim() + "=" + value.getText().trim(); JList
+		 * addPropery = new JList(); Object[] adding = { add };
+		 * addPropery.setListData(adding); addPropery.setSelectedIndex(0); props
+		 * = Utility.add(props, properties, addPropery, false, null, null, null,
+		 * null, null, null, this); }
+		 */
 		else if (e.getSource() == append) {
 			if (append.isSelected()) {
 				limit.setEnabled(false);
@@ -2422,34 +2011,28 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				}
 			}
 			catch (Exception e1) {
-				JOptionPane.showMessageDialog(Gui.frame, "Unable to restore time limit and print interval.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Unable to restore time limit and print interval.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
 		}
 		/*
-		else if (e.getActionCommand().contains("box")) {
-			int num = Integer.parseInt(e.getActionCommand().substring(3)) - 1;
-			if (!((JCheckBox) speciesInt.get(num).get(0)).isSelected()) {
-				for (int i = 2; i < speciesInt.get(num).size(); i++) {
-					speciesInt.get(num).get(i).setEnabled(false);
-				}
-			}
-			else {
-				if (gcmEditor == null
-						|| !(gcmEditor.getGCM().getBiochemicalSpecies().contains(((JTextField) speciesInt.get(num).get(1)).getText()) || gcmEditor
-								.getGCM().getInputSpecies().contains(((JTextField) speciesInt.get(num).get(1)).getText()))) {
-					for (int i = 2; i < speciesInt.get(num).size(); i++) {
-						speciesInt.get(num).get(i).setEnabled(true);
-					}
-				}
-			}
-		}
-		else if (e.getActionCommand().contains("text")) {
-			int num = Integer.parseInt(e.getActionCommand().substring(4)) - 1;
-			editNumThresholds(num);
-			speciesPanel.revalidate();
-			speciesPanel.repaint();
-		}
-		*/
+		 * else if (e.getActionCommand().contains("box")) { int num =
+		 * Integer.parseInt(e.getActionCommand().substring(3)) - 1; if
+		 * (!((JCheckBox) speciesInt.get(num).get(0)).isSelected()) { for (int i
+		 * = 2; i < speciesInt.get(num).size(); i++) {
+		 * speciesInt.get(num).get(i).setEnabled(false); } } else { if
+		 * (gcmEditor == null ||
+		 * !(gcmEditor.getGCM().getBiochemicalSpecies().contains(((JTextField)
+		 * speciesInt.get(num).get(1)).getText()) || gcmEditor
+		 * .getGCM().getInputSpecies().contains(((JTextField)
+		 * speciesInt.get(num).get(1)).getText()))) { for (int i = 2; i <
+		 * speciesInt.get(num).size(); i++) {
+		 * speciesInt.get(num).get(i).setEnabled(true); } } } } else if
+		 * (e.getActionCommand().contains("text")) { int num =
+		 * Integer.parseInt(e.getActionCommand().substring(4)) - 1;
+		 * editNumThresholds(num); speciesPanel.revalidate();
+		 * speciesPanel.repaint(); }
+		 */
 	}
 
 	/**
@@ -2471,19 +2054,22 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			timeLimit = Double.parseDouble(limit.getText().trim());
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Time Limit Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Time Limit Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
 			if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
 				printInterval = Double.parseDouble(interval.getText().trim());
 				if (printInterval < 0) {
-					JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Positive Number Into The Print Interval Field.", "Error",
+					JOptionPane.showMessageDialog(Gui.frame,
+							"Must Enter A Positive Number Into The Print Interval Field.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
 				else if (printInterval == 0 && !((String) intervalLabel.getSelectedItem()).contains("Minimum")) {
-					JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Positive Number Into The Print Interval Field.", "Error",
+					JOptionPane.showMessageDialog(Gui.frame,
+							"Must Enter A Positive Number Into The Print Interval Field.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -2491,7 +2077,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			else {
 				printInterval = Integer.parseInt(interval.getText().trim());
 				if (printInterval <= 0) {
-					JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Positive Number Into The Number of Steps Field.", "Error",
+					JOptionPane.showMessageDialog(Gui.frame,
+							"Must Enter A Positive Number Into The Number of Steps Field.", "Error",
 							JOptionPane.ERROR_MESSAGE);
 					return;
 				}
@@ -2499,12 +2086,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		catch (Exception e1) {
 			if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Print Interval Field.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Print Interval Field.",
+						"Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			else {
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Number Of Steps Field.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Number Of Steps Field.",
+						"Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 		}
@@ -2513,8 +2101,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			timeStep = Double.MAX_VALUE;
 		}
 		else if (step.getText().trim().equals("inf") && sim.equals("euler")) {
-			JOptionPane
-					.showMessageDialog(Gui.frame, "Cannot Select An Infinite Time Step With Euler Simulation.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Cannot Select An Infinite Time Step With Euler Simulation.",
+					"Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		else {
@@ -2525,7 +2113,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			}
 			catch (Exception e1) {
 				// if (step.isEnabled()) {
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Time Step Field.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Time Step Field.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 				// }
 				return;
 			}
@@ -2534,8 +2123,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			minTimeStep = Double.parseDouble(minStep.getText().trim());
 		}
 		catch (Exception e1) {
-			JOptionPane
-					.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Minimum Time Step Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Minimum Time Step Field.",
+					"Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -2545,7 +2134,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		catch (Exception e1) {
 			// if (absErr.isEnabled()) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Absolute Error Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Absolute Error Field.",
+					"Error", JOptionPane.ERROR_MESSAGE);
 			// }
 			return;
 		}
@@ -2561,7 +2151,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Random Seed Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Random Seed Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		Preferences biosimrc = Preferences.userRoot();
@@ -2569,14 +2160,16 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			// if (runs.isEnabled()) {
 			run = Integer.parseInt(runs.getText().trim());
 			if (run < 0) {
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Positive Integer Into The Runs Field." + "\nProceding With Default:   "
-						+ biosimrc.get("biosim.sim.runs", ""), "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Positive Integer Into The Runs Field."
+						+ "\nProceding With Default:   " + biosimrc.get("biosim.sim.runs", ""), "Error",
+						JOptionPane.ERROR_MESSAGE);
 				run = Integer.parseInt(biosimrc.get("biosim.sim.runs", ""));
 			}
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Positive Integer Into The Runs Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Positive Integer Into The Runs Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		if (!runs.isEnabled()) {
@@ -2617,8 +2210,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The" + " Rapid Equilibrium Condition 1 Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The"
+					+ " Rapid Equilibrium Condition 1 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -2627,8 +2220,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The" + " Rapid Equilibrium Condition 2 Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The"
+					+ " Rapid Equilibrium Condition 2 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -2637,7 +2230,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The QSSA Condition Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The QSSA Condition Field.",
+					"Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -2646,8 +2240,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Max" + " Concentration Threshold Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Max"
+					+ " Concentration Threshold Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		if (none.isSelected() && ODE.isSelected()) {
@@ -2711,38 +2305,29 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			selectedButtons = "abs_lhpn";
 		}
 		/*
-		try {
-			FileOutputStream out = new FileOutputStream(new File(root + separator + outDir + separator + "user-defined.dat"));
-			int[] indecies = ssa.getSelectedIndices();
-			ssaList = Utility.getList(ssaList, ssa);
-			ssa.setSelectedIndices(indecies);
-			String save = "";
-			for (int i = 0; i < ssaList.length; i++) {
-				if (i == ssaList.length - 1) {
-					save += ssaList[i];
-				}
-				else {
-					save += ssaList[i] + "\n";
-				}
-			}
-			byte[] output = save.getBytes();
-			out.write(output);
-			out.close();
-			if (save.trim().equals("")) {
-				new File(root + separator + outDir + separator + "user-defined.dat").delete();
-			}
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to save user defined file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		*/
+		 * try { FileOutputStream out = new FileOutputStream(new File(root +
+		 * separator + outDir + separator + "user-defined.dat")); int[] indecies
+		 * = ssa.getSelectedIndices(); ssaList = Utility.getList(ssaList, ssa);
+		 * ssa.setSelectedIndices(indecies); String save = ""; for (int i = 0; i
+		 * < ssaList.length; i++) { if (i == ssaList.length - 1) { save +=
+		 * ssaList[i]; } else { save += ssaList[i] + "\n"; } } byte[] output =
+		 * save.getBytes(); out.write(output); out.close(); if
+		 * (save.trim().equals("")) { new File(root + separator + outDir +
+		 * separator + "user-defined.dat").delete(); } } catch (Exception e1) {
+		 * JOptionPane.showMessageDialog(Gui.frame,
+		 * "Unable to save user defined file!", "Error Saving File",
+		 * JOptionPane.ERROR_MESSAGE); return; }
+		 */
 		int cut = 0;
 		String simProp = sbmlProp;
 		boolean saveTopLevel = false;
 		if (!direct.equals(".")) {
-			simProp = simProp.substring(0, simProp.length() - simProp.split(separator)[simProp.split(separator).length - 1].length()) + direct
-					+ separator + simProp.substring(simProp.length() - simProp.split(separator)[simProp.split(separator).length - 1].length());
+			simProp = simProp.substring(0, simProp.length()
+					- simProp.split(separator)[simProp.split(separator).length - 1].length())
+					+ direct
+					+ separator
+					+ simProp.substring(simProp.length()
+							- simProp.split(separator)[simProp.split(separator).length - 1].length());
 			saveTopLevel = true;
 		}
 		String[] getFilename = simProp.split(separator);
@@ -2815,7 +2400,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		double runTime;
 		if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
 			if (simulators.getSelectedItem().equals("mpde") || simulators.getSelectedItem().equals("mp")
-					|| simulators.getSelectedItem().equals("mp-adaptive") || simulators.getSelectedItem().equals("mp-event")) {
+					|| simulators.getSelectedItem().equals("mp-bifurcation")
+					|| simulators.getSelectedItem().equals("mp-adaptive")
+					|| simulators.getSelectedItem().equals("mp-adaptive-bifurcation")
+					|| simulators.getSelectedItem().equals("mp-event")
+					|| simulators.getSelectedItem().equals("mp-event-bifurcation")) {
 				// double test = printInterval / timeStep;
 				// double error = test - ((int) test);
 				// if (error > 0.0001) {
@@ -2855,7 +2444,11 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		else {
 			if (simulators.getSelectedItem().equals("mpde") || simulators.getSelectedItem().equals("mp")
-					|| simulators.getSelectedItem().equals("mp-adaptive") || simulators.getSelectedItem().equals("mp-event")) {
+					|| simulators.getSelectedItem().equals("mp-bifurcation")
+					|| simulators.getSelectedItem().equals("mp-adaptive")
+					|| simulators.getSelectedItem().equals("mp-adaptive-bifurcation")
+					|| simulators.getSelectedItem().equals("mp-event")
+					|| simulators.getSelectedItem().equals("mp-event-bifurcation")) {
 				// steps = (int) (printInterval);
 				runTime = timeLimit;
 				// progress = new JProgressBar(0, (int) timeLimit);
@@ -2913,13 +2506,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		Run runProgram = new Run(this);
 		cancel.addActionListener(runProgram);
 		biomodelsim.getExitButton().addActionListener(runProgram);
-		//saveSAD(outDir);
-		runProgram.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, absError,
-				".", rndSeed, run, intSpecies, printer_id, printer_track_quantity, simProp.split(separator), selectedButtons, this, simProp,
-				rap1, rap2, qss, con, preAbs, loopAbs, postAbs, lhpnAbstraction);
-		//int[] indecies = properties.getSelectedIndices();
-		//props = Utility.getList(props, properties);
-		//properties.setSelectedIndices(indecies);
+		// saveSAD(outDir);
+		runProgram.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval,
+				minTimeStep, timeStep, absError, ".", rndSeed, run, intSpecies, printer_id, printer_track_quantity,
+				simProp.split(separator), selectedButtons, this, simProp, rap1, rap2, qss, con, preAbs, loopAbs,
+				postAbs, lhpnAbstraction);
+		// int[] indecies = properties.getSelectedIndices();
+		// props = Utility.getList(props, properties);
+		// properties.setSelectedIndices(indecies);
 		try {
 			Properties getProps = new Properties();
 			FileInputStream load = new FileInputStream(new File(propName));
@@ -2941,7 +2535,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					String[] searchForRunFiles = new File(root + separator + outDir).list();
 					int start = 1;
 					for (String s : searchForRunFiles) {
-						if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(root + separator + outDir + separator + s).isFile()) {
+						if (s.length() > 3 && s.substring(0, 4).equals("run-")
+								&& new File(root + separator + outDir + separator + s).isFile()) {
 							String getNumber = s.substring(4, s.length());
 							String number = "";
 							for (int i = 0; i < getNumber.length(); i++) {
@@ -2954,8 +2549,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							}
 							start = Math.max(Integer.parseInt(number), start);
 						}
-						else if (s.length() > 3 && new File(root + separator + outDir + separator + s).isFile()
-								&& (s.equals("mean.tsd") || s.equals("standard_deviation.tsd") || s.equals("variance.tsd"))) {
+						else if (s.length() > 3
+								&& new File(root + separator + outDir + separator + s).isFile()
+								&& (s.equals("mean.tsd") || s.equals("standard_deviation.tsd") || s
+										.equals("variance.tsd"))) {
 							new File(root + separator + outDir + separator + s).delete();
 						}
 					}
@@ -2964,7 +2561,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				else {
 					String[] searchForRunFiles = new File(root + separator + outDir).list();
 					for (String s : searchForRunFiles) {
-						if (s.length() > 3 && s.substring(0, 4).equals("run-") && new File(root + separator + outDir + separator + s).isFile()) {
+						if (s.length() > 3 && s.substring(0, 4).equals("run-")
+								&& new File(root + separator + outDir + separator + s).isFile()) {
 							new File(root + separator + outDir + separator + s).delete();
 						}
 					}
@@ -2989,12 +2587,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			}
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to add properties to property file.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to add properties to property file.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		if (monteCarlo.isSelected() || ODE.isSelected()) {
 			File[] files = new File(root + separator + outDir).listFiles();
 			for (File f : files) {
-				if (f.getName().contains("mean.") || f.getName().contains("standard_deviation.") || f.getName().contains("variance.")) {
+				if (f.getName().contains("mean.") || f.getName().contains("standard_deviation.")
+						|| f.getName().contains("variance.")) {
 					f.delete();
 				}
 			}
@@ -3002,72 +2602,58 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		int exit;
 		if (!direct.equals(".")) {
 			/*
-			if (gcmEditor != null) {
-				try {
-					FileInputStream source = new FileInputStream(new File(root + separator + modelFile));
-					FileOutputStream destination = new FileOutputStream(new File(root + separator + simName + separator + direct + separator
-							+ modelFile));
-					int read = source.read();
-					while (read != -1) {
-						destination.write(read);
-						read = source.read();
-					}
-					source.close();
-					destination.close();
-				}
-				catch (Exception e) {
-				}
-			}
-			*/
+			 * if (gcmEditor != null) { try { FileInputStream source = new
+			 * FileInputStream(new File(root + separator + modelFile));
+			 * FileOutputStream destination = new FileOutputStream(new File(root
+			 * + separator + simName + separator + direct + separator +
+			 * modelFile)); int read = source.read(); while (read != -1) {
+			 * destination.write(read); read = source.read(); } source.close();
+			 * destination.close(); } catch (Exception e) { } }
+			 */
 			String lpnProperty = "";
 			if (transientProperties != null) {
 				if (!((String) transientProperties.getSelectedItem()).equals("none")) {
 					lpnProperty = ((String) transientProperties.getSelectedItem());
 				}
 			}
-			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, Gui.frame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, root
-					+ separator + simName, nary, 1, intSpecies, log, 
-					biomodelsim, simTab, root, progress, simName + " " + direct, gcmEditor, direct, timeLimit, runTime, modelFile, lhpnAbstraction,
-					abstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label);
+			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, Gui.frame, ODE, monteCarlo, sim, printer_id,
+					printer_track_quantity, root + separator + simName, nary, 1, intSpecies, log, biomodelsim, simTab,
+					root, progress, simName + " " + direct, gcmEditor, direct, timeLimit, runTime, modelFile,
+					lhpnAbstraction, abstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed,
+					refresh, label);
 		}
 		else {
 			/*
-			if (gcmEditor != null) {
-				try {
-					FileInputStream source = new FileInputStream(new File(root + separator + modelFile));
-					FileOutputStream destination = new FileOutputStream(new File(root + separator + simName + separator + modelFile));
-					int read = source.read();
-					while (read != -1) {
-						destination.write(read);
-						read = source.read();
-					}
-					source.close();
-					destination.close();
-				}
-				catch (Exception e) {
-				}
-			}
-			*/
+			 * if (gcmEditor != null) { try { FileInputStream source = new
+			 * FileInputStream(new File(root + separator + modelFile));
+			 * FileOutputStream destination = new FileOutputStream(new File(root
+			 * + separator + simName + separator + modelFile)); int read =
+			 * source.read(); while (read != -1) { destination.write(read); read
+			 * = source.read(); } source.close(); destination.close(); } catch
+			 * (Exception e) { } }
+			 */
 			String lpnProperty = "";
 			if (transientProperties != null) {
 				if (!((String) transientProperties.getSelectedItem()).equals("none")) {
 					lpnProperty = ((String) transientProperties.getSelectedItem());
 				}
 			}
-			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, Gui.frame, ODE, monteCarlo, sim, printer_id, printer_track_quantity, root
-					+ separator + simName, nary, 1, intSpecies, log, 
-					biomodelsim, simTab, root, progress, simName, gcmEditor, null, timeLimit, runTime, modelFile, lhpnAbstraction, abstraction,
-					lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label);
+			exit = runProgram.execute(simProp, sbml, dot, xhtml, lhpn, Gui.frame, ODE, monteCarlo, sim, printer_id,
+					printer_track_quantity, root + separator + simName, nary, 1, intSpecies, log, biomodelsim, simTab,
+					root, progress, simName, gcmEditor, null, timeLimit, runTime, modelFile, lhpnAbstraction,
+					abstraction, lpnProperty, absError, timeStep, printInterval, run, rndSeed, refresh, label);
 		}
-		if (nary.isSelected() && gcmEditor == null && !sim.contains("markov-chain-analysis") && !lhpn.isSelected() && exit == 0) {
+		if (nary.isSelected() && gcmEditor == null && !sim.contains("markov-chain-analysis") && !lhpn.isSelected()
+				&& exit == 0) {
 			String d = null;
 			if (!direct.equals(".")) {
 				d = direct;
 			}
-			new Nary_Run(this, ge, gt, eq, lt, le, simulators, simProp.split(separator), simProp, sbml, dot, xhtml, lhpn, nary, ODE,
-					monteCarlo, timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, root + separator
-							+ simName, rndSeed, run, printer_id, printer_track_quantity, intSpecies, rap1, rap2, qss, con, log, 
-					root + separator + outDir + separator + "user-defined.dat", biomodelsim, simTab, root, d, modelFile, abstraction,
+			new Nary_Run(this, ge, gt, eq, lt, le, simulators, simProp.split(separator), simProp, sbml, dot, xhtml,
+					lhpn, nary, ODE, monteCarlo, timeLimit, ((String) (intervalLabel.getSelectedItem())),
+					printInterval, minTimeStep, timeStep, root + separator + simName, rndSeed, run, printer_id,
+					printer_track_quantity, intSpecies, rap1, rap2, qss, con, log, root + separator + outDir
+							+ separator + "user-defined.dat", biomodelsim, simTab, root, d, modelFile, abstraction,
 					lhpnAbstraction, absError);
 		}
 		running.setCursor(null);
@@ -3128,19 +2714,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			// editInterstingSpecies();
 			// }
 			/*
-			if (e.getSource() == termCond) {
-				termConditions = Utility.add(termConditions, terminations, termCond, true, amountTerm, ge, gt, eq, lt, le, this);
-			}
-			else if (e.getSource() == terminations) {
-				termConditions = Utility.remove(terminations, termConditions);
-			}
-			else if (e.getSource() == ssa) {
-				editSSA.doClick();
-			}
-			else if (e.getSource() == properties) {
-				props = Utility.remove(properties, props);
-			}
-			*/
+			 * if (e.getSource() == termCond) { termConditions =
+			 * Utility.add(termConditions, terminations, termCond, true,
+			 * amountTerm, ge, gt, eq, lt, le, this); } else if (e.getSource()
+			 * == terminations) { termConditions = Utility.remove(terminations,
+			 * termConditions); } else if (e.getSource() == ssa) {
+			 * editSSA.doClick(); } else if (e.getSource() == properties) {
+			 * props = Utility.remove(properties, props); }
+			 */
 		}
 	}
 
@@ -3183,7 +2764,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			timeLimit = Double.parseDouble(limit.getText().trim());
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Time Limit Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Time Limit Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -3196,12 +2778,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		catch (Exception e1) {
 			if (((String) intervalLabel.getSelectedItem()).contains("Print Interval")) {
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Print Interval Field.", "Error",
-						JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Print Interval Field.",
+						"Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			else {
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Number Of Steps Field.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Number Of Steps Field.",
+						"Error", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 		}
@@ -3214,8 +2797,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			}
 			catch (Exception e1) {
 				if (step.isEnabled()) {
-					JOptionPane
-							.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Time Step Field.", "Error", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Time Step Field.",
+							"Error", JOptionPane.ERROR_MESSAGE);
 				}
 				return;
 			}
@@ -3225,7 +2808,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		catch (Exception e1) {
 			if (minStep.isEnabled()) {
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Time Step Field.", "Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Time Step Field.", "Error",
+						JOptionPane.ERROR_MESSAGE);
 			}
 			return;
 		}
@@ -3236,7 +2820,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		catch (Exception e1) {
 			// if (absErr.isEnabled()) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Absolute Error Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The Absolute Error Field.",
+					"Error", JOptionPane.ERROR_MESSAGE);
 			// }
 			return;
 		}
@@ -3246,21 +2831,23 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Random Seed Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Random Seed Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
 			// if (runs.isEnabled()) {
 			run = Integer.parseInt(runs.getText().trim());
 			if (run < 0) {
-				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Positive Integer Into The Runs Field." + "\nProceding With Default:  1",
-						"Error", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Positive Integer Into The Runs Field."
+						+ "\nProceding With Default:  1", "Error", JOptionPane.ERROR_MESSAGE);
 				run = 1;
 			}
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Positive Integer Into The Runs Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Positive Integer Into The Runs Field.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		String printer_id;
@@ -3274,9 +2861,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		if (concentrations.isSelected()) {
 			printer_track_quantity = "concentration";
 		}
-		//int[] index = terminations.getSelectedIndices();
-		//String[] termCond = Utility.getList(termConditions, terminations);
-		//terminations.setSelectedIndices(index);
+		// int[] index = terminations.getSelectedIndices();
+		// String[] termCond = Utility.getList(termConditions, terminations);
+		// terminations.setSelectedIndices(index);
 		// index = species.getSelectedIndices();
 		String[] intSpecies = getInterestingSpecies();
 		// if (none.isSelected()) {
@@ -3300,8 +2887,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The" + " Rapid Equilibrium Condition 1 Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The"
+					+ " Rapid Equilibrium Condition 1 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -3310,8 +2897,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The" + " Rapid Equilibrium Condition 2 Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The"
+					+ " Rapid Equilibrium Condition 2 Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -3320,7 +2907,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The QSSA Condition Field.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter A Real Number Into The QSSA Condition Field.",
+					"Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		try {
@@ -3329,8 +2917,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			// }
 		}
 		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Max" + " Concentration Threshold Field.", "Error",
-					JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Must Enter An Integer Into The Max"
+					+ " Concentration Threshold Field.", "Error", JOptionPane.ERROR_MESSAGE);
 			return;
 		}
 		if (none.isSelected() && ODE.isSelected()) {
@@ -3394,32 +2982,19 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			selectedButtons = "abs_lhpn";
 		}
 		/*
-		try {
-			FileOutputStream out = new FileOutputStream(new File(root + separator + simName + separator + "user-defined.dat"));
-			int[] indecies = ssa.getSelectedIndices();
-			ssaList = Utility.getList(ssaList, ssa);
-			ssa.setSelectedIndices(indecies);
-			String save = "";
-			for (int i = 0; i < ssaList.length; i++) {
-				if (i == ssaList.length - 1) {
-					save += ssaList[i];
-				}
-				else {
-					save += ssaList[i] + "\n";
-				}
-			}
-			byte[] output = save.getBytes();
-			out.write(output);
-			out.close();
-			if (save.trim().equals("")) {
-				new File(root + separator + simName + separator + "user-defined.dat").delete();
-			}
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to save user defined file!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-		*/
+		 * try { FileOutputStream out = new FileOutputStream(new File(root +
+		 * separator + simName + separator + "user-defined.dat")); int[]
+		 * indecies = ssa.getSelectedIndices(); ssaList =
+		 * Utility.getList(ssaList, ssa); ssa.setSelectedIndices(indecies);
+		 * String save = ""; for (int i = 0; i < ssaList.length; i++) { if (i ==
+		 * ssaList.length - 1) { save += ssaList[i]; } else { save += ssaList[i]
+		 * + "\n"; } } byte[] output = save.getBytes(); out.write(output);
+		 * out.close(); if (save.trim().equals("")) { new File(root + separator
+		 * + simName + separator + "user-defined.dat").delete(); } } catch
+		 * (Exception e1) { JOptionPane.showMessageDialog(Gui.frame,
+		 * "Unable to save user defined file!", "Error Saving File",
+		 * JOptionPane.ERROR_MESSAGE); return; }
+		 */
 		Run runProgram = new Run(this);
 		int cut = 0;
 		String[] getFilename = sbmlProp.split(separator);
@@ -3452,13 +3027,14 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		// JOptionPane.ERROR_MESSAGE);
 		// }
 		log.addText("Creating properties file:\n" + propName + "\n");
-		//saveSAD(simName);
-		runProgram.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval, minTimeStep, timeStep, absError,
-				".", rndSeed, run, intSpecies, printer_id, printer_track_quantity, sbmlProp.split(separator), selectedButtons, this, sbmlProp,
-				rap1, rap2, qss, con, preAbs, loopAbs, postAbs,lhpnAbstraction);
-		//int[] indecies = properties.getSelectedIndices();
-		//props = Utility.getList(props, properties);
-		//properties.setSelectedIndices(indecies);
+		// saveSAD(simName);
+		runProgram.createProperties(timeLimit, ((String) (intervalLabel.getSelectedItem())), printInterval,
+				minTimeStep, timeStep, absError, ".", rndSeed, run, intSpecies, printer_id, printer_track_quantity,
+				sbmlProp.split(separator), selectedButtons, this, sbmlProp, rap1, rap2, qss, con, preAbs, loopAbs,
+				postAbs, lhpnAbstraction);
+		// int[] indecies = properties.getSelectedIndices();
+		// props = Utility.getList(props, properties);
+		// properties.setSelectedIndices(indecies);
 		try {
 			Properties getProps = new Properties();
 			FileInputStream load = new FileInputStream(new File(propName));
@@ -3480,38 +3056,27 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			store.close();
 		}
 		catch (Exception e) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to add properties to property file.", "Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to add properties to property file.", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 		change = false;
 	}
 
 	/*
-	public void saveSAD(String outDir) {
-		try {
-			int[] indecies = sad.getSelectedIndices();
-			sadList = Utility.getList(sadList, sad);
-			if (sadList.length == 0)
-				return;
-			FileOutputStream out = new FileOutputStream(new File(root + separator + outDir + separator + "termCond.sad"));
-			sad.setSelectedIndices(indecies);
-			String save = "";
-			for (int i = 0; i < sadList.length; i++) {
-				String[] get = ((String) sadList[i]).split(";");
-				save += "term " + get[0].trim() + " {\n";
-				save += "  desc \"" + get[1].trim() + "\";\n";
-				save += "  cond " + get[2].trim() + ";\n";
-				save += "}\n";
-			}
-			byte[] output = save.getBytes();
-			out.write(output);
-			out.close();
-		}
-		catch (Exception e1) {
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to save termination conditions!", "Error Saving File", JOptionPane.ERROR_MESSAGE);
-			return;
-		}
-	}
-	*/
+	 * public void saveSAD(String outDir) { try { int[] indecies =
+	 * sad.getSelectedIndices(); sadList = Utility.getList(sadList, sad); if
+	 * (sadList.length == 0) return; FileOutputStream out = new
+	 * FileOutputStream(new File(root + separator + outDir + separator +
+	 * "termCond.sad")); sad.setSelectedIndices(indecies); String save = ""; for
+	 * (int i = 0; i < sadList.length; i++) { String[] get = ((String)
+	 * sadList[i]).split(";"); save += "term " + get[0].trim() + " {\n"; save +=
+	 * "  desc \"" + get[1].trim() + "\";\n"; save += "  cond " + get[2].trim()
+	 * + ";\n"; save += "}\n"; } byte[] output = save.getBytes();
+	 * out.write(output); out.close(); } catch (Exception e1) {
+	 * JOptionPane.showMessageDialog(Gui.frame,
+	 * "Unable to save termination conditions!", "Error Saving File",
+	 * JOptionPane.ERROR_MESSAGE); return; } }
+	 */
 
 	/**
 	 * Loads the simulate options.
@@ -3531,121 +3096,157 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 					else if (key.equals("reb2sac.abstraction.method.0.1")) {
 						if (!load.getProperty("reb2sac.abstraction.method.0.1").equals("enzyme-kinetic-qssa-1")) {
-							loadProperties.add("reb2sac.abstraction.method.0.1=" + load.getProperty("reb2sac.abstraction.method.0.1"));
+							loadProperties.add("reb2sac.abstraction.method.0.1="
+									+ load.getProperty("reb2sac.abstraction.method.0.1"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.0.2")) {
-						if (!load.getProperty("reb2sac.abstraction.method.0.2").equals("reversible-to-irreversible-transformer")) {
-							loadProperties.add("reb2sac.abstraction.method.0.2=" + load.getProperty("reb2sac.abstraction.method.0.2"));
+						if (!load.getProperty("reb2sac.abstraction.method.0.2").equals(
+								"reversible-to-irreversible-transformer")) {
+							loadProperties.add("reb2sac.abstraction.method.0.2="
+									+ load.getProperty("reb2sac.abstraction.method.0.2"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.0.3")) {
-						if (!load.getProperty("reb2sac.abstraction.method.0.3").equals("multiple-products-reaction-eliminator")) {
-							loadProperties.add("reb2sac.abstraction.method.0.3=" + load.getProperty("reb2sac.abstraction.method.0.3"));
+						if (!load.getProperty("reb2sac.abstraction.method.0.3").equals(
+								"multiple-products-reaction-eliminator")) {
+							loadProperties.add("reb2sac.abstraction.method.0.3="
+									+ load.getProperty("reb2sac.abstraction.method.0.3"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.0.4")) {
-						if (!load.getProperty("reb2sac.abstraction.method.0.4").equals("multiple-reactants-reaction-eliminator")) {
-							loadProperties.add("reb2sac.abstraction.method.0.4=" + load.getProperty("reb2sac.abstraction.method.0.4"));
+						if (!load.getProperty("reb2sac.abstraction.method.0.4").equals(
+								"multiple-reactants-reaction-eliminator")) {
+							loadProperties.add("reb2sac.abstraction.method.0.4="
+									+ load.getProperty("reb2sac.abstraction.method.0.4"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.0.5")) {
-						if (!load.getProperty("reb2sac.abstraction.method.0.5").equals("single-reactant-product-reaction-eliminator")) {
-							loadProperties.add("reb2sac.abstraction.method.0.5=" + load.getProperty("reb2sac.abstraction.method.0.5"));
+						if (!load.getProperty("reb2sac.abstraction.method.0.5").equals(
+								"single-reactant-product-reaction-eliminator")) {
+							loadProperties.add("reb2sac.abstraction.method.0.5="
+									+ load.getProperty("reb2sac.abstraction.method.0.5"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.0.6")) {
 						if (!load.getProperty("reb2sac.abstraction.method.0.6").equals("dimer-to-monomer-substitutor")) {
-							loadProperties.add("reb2sac.abstraction.method.0.6=" + load.getProperty("reb2sac.abstraction.method.0.6"));
+							loadProperties.add("reb2sac.abstraction.method.0.6="
+									+ load.getProperty("reb2sac.abstraction.method.0.6"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.0.7")) {
 						if (!load.getProperty("reb2sac.abstraction.method.0.7").equals("inducer-structure-transformer")) {
-							loadProperties.add("reb2sac.abstraction.method.0.7=" + load.getProperty("reb2sac.abstraction.method.0.7"));
+							loadProperties.add("reb2sac.abstraction.method.0.7="
+									+ load.getProperty("reb2sac.abstraction.method.0.7"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.1.1")) {
-						if (!load.getProperty("reb2sac.abstraction.method.1.1").equals("modifier-structure-transformer")) {
-							loadProperties.add("reb2sac.abstraction.method.1.1=" + load.getProperty("reb2sac.abstraction.method.1.1"));
+						if (!load.getProperty("reb2sac.abstraction.method.1.1")
+								.equals("modifier-structure-transformer")) {
+							loadProperties.add("reb2sac.abstraction.method.1.1="
+									+ load.getProperty("reb2sac.abstraction.method.1.1"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.1.2")) {
 						if (!load.getProperty("reb2sac.abstraction.method.1.2").equals("modifier-constant-propagation")) {
-							loadProperties.add("reb2sac.abstraction.method.1.2=" + load.getProperty("reb2sac.abstraction.method.1.2"));
+							loadProperties.add("reb2sac.abstraction.method.1.2="
+									+ load.getProperty("reb2sac.abstraction.method.1.2"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.1")) {
-						if (!load.getProperty("reb2sac.abstraction.method.2.1").equals("operator-site-forward-binding-remover")) {
-							loadProperties.add("reb2sac.abstraction.method.2.1=" + load.getProperty("reb2sac.abstraction.method.2.1"));
+						if (!load.getProperty("reb2sac.abstraction.method.2.1").equals(
+								"operator-site-forward-binding-remover")) {
+							loadProperties.add("reb2sac.abstraction.method.2.1="
+									+ load.getProperty("reb2sac.abstraction.method.2.1"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.3")) {
-						if (!load.getProperty("reb2sac.abstraction.method.2.3").equals("enzyme-kinetic-rapid-equilibrium-1")) {
-							loadProperties.add("reb2sac.abstraction.method.2.3=" + load.getProperty("reb2sac.abstraction.method.2.3"));
+						if (!load.getProperty("reb2sac.abstraction.method.2.3").equals(
+								"enzyme-kinetic-rapid-equilibrium-1")) {
+							loadProperties.add("reb2sac.abstraction.method.2.3="
+									+ load.getProperty("reb2sac.abstraction.method.2.3"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.4")) {
 						if (!load.getProperty("reb2sac.abstraction.method.2.4").equals("irrelevant-species-remover")) {
-							loadProperties.add("reb2sac.abstraction.method.2.4=" + load.getProperty("reb2sac.abstraction.method.2.4"));
+							loadProperties.add("reb2sac.abstraction.method.2.4="
+									+ load.getProperty("reb2sac.abstraction.method.2.4"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.5")) {
 						if (!load.getProperty("reb2sac.abstraction.method.2.5").equals("inducer-structure-transformer")) {
-							loadProperties.add("reb2sac.abstraction.method.2.5=" + load.getProperty("reb2sac.abstraction.method.2.5"));
+							loadProperties.add("reb2sac.abstraction.method.2.5="
+									+ load.getProperty("reb2sac.abstraction.method.2.5"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.6")) {
 						if (!load.getProperty("reb2sac.abstraction.method.2.6").equals("modifier-constant-propagation")) {
-							loadProperties.add("reb2sac.abstraction.method.2.6=" + load.getProperty("reb2sac.abstraction.method.2.6"));
+							loadProperties.add("reb2sac.abstraction.method.2.6="
+									+ load.getProperty("reb2sac.abstraction.method.2.6"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.7")) {
 						if (!load.getProperty("reb2sac.abstraction.method.2.7").equals("similar-reaction-combiner")) {
-							loadProperties.add("reb2sac.abstraction.method.2.7=" + load.getProperty("reb2sac.abstraction.method.2.7"));
+							loadProperties.add("reb2sac.abstraction.method.2.7="
+									+ load.getProperty("reb2sac.abstraction.method.2.7"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.8")) {
 						if (!load.getProperty("reb2sac.abstraction.method.2.8").equals("modifier-constant-propagation")) {
-							loadProperties.add("reb2sac.abstraction.method.2.8=" + load.getProperty("reb2sac.abstraction.method.2.8"));
+							loadProperties.add("reb2sac.abstraction.method.2.8="
+									+ load.getProperty("reb2sac.abstraction.method.2.8"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.2.2")) {
 						if (!load.getProperty("reb2sac.abstraction.method.2.2").equals("dimerization-reduction")
-								&& !load.getProperty("reb2sac.abstraction.method.2.2").equals("dimerization-reduction-level-assignment")) {
-							loadProperties.add("reb2sac.abstraction.method.2.2=" + load.getProperty("reb2sac.abstraction.method.2.2"));
+								&& !load.getProperty("reb2sac.abstraction.method.2.2").equals(
+										"dimerization-reduction-level-assignment")) {
+							loadProperties.add("reb2sac.abstraction.method.2.2="
+									+ load.getProperty("reb2sac.abstraction.method.2.2"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.3.1")) {
-						if (!load.getProperty("reb2sac.abstraction.method.3.1").equals("kinetic-law-constants-simplifier")
-								&& !load.getProperty("reb2sac.abstraction.method.3.1").equals("reversible-to-irreversible-transformer")
-								&& !load.getProperty("reb2sac.abstraction.method.3.1").equals("nary-order-unary-transformer")) {
-							loadProperties.add("reb2sac.abstraction.method.3.1=" + load.getProperty("reb2sac.abstraction.method.3.1"));
+						if (!load.getProperty("reb2sac.abstraction.method.3.1").equals(
+								"kinetic-law-constants-simplifier")
+								&& !load.getProperty("reb2sac.abstraction.method.3.1").equals(
+										"reversible-to-irreversible-transformer")
+								&& !load.getProperty("reb2sac.abstraction.method.3.1").equals(
+										"nary-order-unary-transformer")) {
+							loadProperties.add("reb2sac.abstraction.method.3.1="
+									+ load.getProperty("reb2sac.abstraction.method.3.1"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.3.2")) {
-						if (!load.getProperty("reb2sac.abstraction.method.3.2").equals("kinetic-law-constants-simplifier")
-								&& !load.getProperty("reb2sac.abstraction.method.3.2").equals("modifier-constant-propagation")) {
-							loadProperties.add("reb2sac.abstraction.method.3.2=" + load.getProperty("reb2sac.abstraction.method.3.2"));
+						if (!load.getProperty("reb2sac.abstraction.method.3.2").equals(
+								"kinetic-law-constants-simplifier")
+								&& !load.getProperty("reb2sac.abstraction.method.3.2").equals(
+										"modifier-constant-propagation")) {
+							loadProperties.add("reb2sac.abstraction.method.3.2="
+									+ load.getProperty("reb2sac.abstraction.method.3.2"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.3.3")) {
 						if (!load.getProperty("reb2sac.abstraction.method.3.3").equals("absolute-inhibition-generator")) {
-							loadProperties.add("reb2sac.abstraction.method.3.3=" + load.getProperty("reb2sac.abstraction.method.3.3"));
+							loadProperties.add("reb2sac.abstraction.method.3.3="
+									+ load.getProperty("reb2sac.abstraction.method.3.3"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.3.4")) {
 						if (!load.getProperty("reb2sac.abstraction.method.3.4").equals("final-state-generator")) {
-							loadProperties.add("reb2sac.abstraction.method.3.4=" + load.getProperty("reb2sac.abstraction.method.3.4"));
+							loadProperties.add("reb2sac.abstraction.method.3.4="
+									+ load.getProperty("reb2sac.abstraction.method.3.4"));
 						}
 					}
 					else if (key.equals("reb2sac.abstraction.method.3.5")) {
 						if (!load.getProperty("reb2sac.abstraction.method.3.5").equals("stop-flag-generator")) {
-							loadProperties.add("reb2sac.abstraction.method.3.5=" + load.getProperty("reb2sac.abstraction.method.3.5"));
+							loadProperties.add("reb2sac.abstraction.method.3.5="
+									+ load.getProperty("reb2sac.abstraction.method.3.5"));
 						}
 					}
 					else if (key.equals("reb2sac.nary.order.decider")) {
 						if (!load.getProperty("reb2sac.nary.order.decider").equals("distinct")) {
-							loadProperties.add("reb2sac.nary.order.decider=" + load.getProperty("reb2sac.nary.order.decider"));
+							loadProperties.add("reb2sac.nary.order.decider="
+									+ load.getProperty("reb2sac.nary.order.decider"));
 						}
 					}
 					else if (key.equals("simulation.printer")) {
@@ -3655,10 +3256,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 					else if (key.equals("simulation.printer.tracking.quantity")) {
 						if (!load.getProperty("simulation.printer.tracking.quantity").equals("amount")) {
-							loadProperties.add("simulation.printer.tracking.quantity=" + load.getProperty("simulation.printer.tracking.quantity"));
+							loadProperties.add("simulation.printer.tracking.quantity="
+									+ load.getProperty("simulation.printer.tracking.quantity"));
 						}
 					}
-					else if (((String) key).length() > 27 && ((String) key).substring(0, 28).equals("reb2sac.interesting.species.")) {
+					else if (((String) key).length() > 27
+							&& ((String) key).substring(0, 28).equals("reb2sac.interesting.species.")) {
 					}
 					else if (key.equals("reb2sac.rapid.equilibrium.condition.1")) {
 					}
@@ -3700,25 +3303,20 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 					else if (key.equals("simulation.run.termination.decider")) {
 						/*
-						if (load.getProperty("simulation.run.termination.decider").equals("sad")) {
-							sad.setEnabled(true);
-							newSAD.setEnabled(true);
-							//usingSAD.setSelected(true);
-							idLabel.setEnabled(true);
-							TCid.setEnabled(true);
-							descLabel.setEnabled(true);
-							desc.setEnabled(true);
-							condLabel.setEnabled(true);
-							cond.setEnabled(true);
-							addSAD.setEnabled(true);
-							editSAD.setEnabled(true);
-							removeSAD.setEnabled(true);
-							// loadProperties.add(
-							// "simulation.run.termination.decider="
-							// + load.getProperty(
-							// "simulation.run.termination.decider"));
-						}
-						*/
+						 * if
+						 * (load.getProperty("simulation.run.termination.decider"
+						 * ).equals("sad")) { sad.setEnabled(true);
+						 * newSAD.setEnabled(true);
+						 * //usingSAD.setSelected(true);
+						 * idLabel.setEnabled(true); TCid.setEnabled(true);
+						 * descLabel.setEnabled(true); desc.setEnabled(true);
+						 * condLabel.setEnabled(true); cond.setEnabled(true);
+						 * addSAD.setEnabled(true); editSAD.setEnabled(true);
+						 * removeSAD.setEnabled(true); // loadProperties.add( //
+						 * "simulation.run.termination.decider=" // +
+						 * load.getProperty( //
+						 * "simulation.run.termination.decider")); }
+						 */
 					}
 					else if (key.equals("computation.analysis.sad.path")) {
 					}
@@ -3732,13 +3330,17 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 					else if (key.equals("file.stem")) {
 					}
-					else if (((String) key).length() > 36 && ((String) key).substring(0, 37).equals("simulation.run.termination.condition.")) {
+					else if (((String) key).length() > 36
+							&& ((String) key).substring(0, 37).equals("simulation.run.termination.condition.")) {
 					}
-					else if (((String) key).length() > 37 && ((String) key).substring(0, 38).equals("reb2sac.absolute.inhibition.threshold.")) {
+					else if (((String) key).length() > 37
+							&& ((String) key).substring(0, 38).equals("reb2sac.absolute.inhibition.threshold.")) {
 					}
-					else if (((String) key).length() > 27 && ((String) key).substring(0, 28).equals("reb2sac.concentration.level.")) {
+					else if (((String) key).length() > 27
+							&& ((String) key).substring(0, 28).equals("reb2sac.concentration.level.")) {
 					}
-					else if (((String) key).length() > 19 && ((String) key).substring(0, 20).equals("reb2sac.final.state.")) {
+					else if (((String) key).length() > 19
+							&& ((String) key).substring(0, 20).equals("reb2sac.final.state.")) {
 					}
 					else if (key.equals("reb2sac.analysis.stop.enabled")) {
 					}
@@ -3847,99 +3449,72 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					lhpnAbstraction.loopAbs.setListData(lhpnAbstraction.loopAbsModel.toArray());
 					lhpnAbstraction.postAbs.setListData(lhpnAbstraction.postAbsModel.toArray());
 				}
-				//props = loadProperties.toArray(props);
-				//properties.setListData(props);
+				// props = loadProperties.toArray(props);
+				// properties.setListData(props);
 				/*
-				String[] getFilename = openFile.split(separator);
-				int cut = 0;
-				for (int i = 0; i < getFilename[getFilename.length - 1].length(); i++) {
-					if (getFilename[getFilename.length - 1].charAt(i) == '.') {
-						cut = i;
-					}
-				}
-				String filename = "";
-				if (new File((openFile.substring(0, openFile.length() - getFilename[getFilename.length - 1].length()))
-						+ getFilename[getFilename.length - 1].substring(0, cut) + ".xml").exists()) {
-					filename = (openFile.substring(0, openFile.length() - getFilename[getFilename.length - 1].length()))
-							+ getFilename[getFilename.length - 1].substring(0, cut) + ".xml";
-				}
-				else if (new File((openFile.substring(0, openFile.length() - getFilename[getFilename.length - 1].length()))
-						+ getFilename[getFilename.length - 1].substring(0, cut) + ".sbml").exists()) {
-					filename = (openFile.substring(0, openFile.length() - getFilename[getFilename.length - 1].length()))
-							+ getFilename[getFilename.length - 1].substring(0, cut) + ".sbml";
-				}
-				try {
-					filename = sbmlFile;
-					ArrayList<String> listOfSpecs = new ArrayList<String>();
-					if (gcmEditor == null) {
-						SBMLDocument document = Gui.readSBML(filename);
-						Model model = document.getModel();
-						if (model != null) {
-							ListOf listOfSpecies = model.getListOfSpecies();
-							for (int i = 0; i < model.getNumSpecies(); i++) {
-								Species species = (Species) listOfSpecies.get(i);
-								listOfSpecs.add(species.getId());
-							}
-						}
-					}
-					else {
-						for (String species : gcmEditor.getGCM().getSpecies()) {
-							listOfSpecs.add(species);
-						}
-					}
-					allSpecies = listOfSpecs.toArray();
-					for (int i = 1; i < allSpecies.length; i++) {
-						
-						String index = (String) allSpecies[i];
-						
-						int j = i;
-						while ((j > 0) && ((String) allSpecies[j - 1]).compareToIgnoreCase(index) > 0) {
-							allSpecies[j] = allSpecies[j - 1];
-							j = j - 1;
-						}
-						allSpecies[j] = index;
-					}
-					// intSpecies.setListData(list);
-					//termCond.setListData(allSpecies);
-					//int rem = availSpecies.getItemCount();
-					for (int i = 0; i < rem; i++) {
-						availSpecies.removeItemAt(0);
-					}
-					for (int i = 0; i < allSpecies.length; i++) {
-						availSpecies.addItem(((String) allSpecies[i]).replace(" ", "_"));
-					}
-					String[] allSpecies = getAllSpecies();
-					String[] intSpecies = getInterestingSpecies();
-					createInterestingSpeciesPanel();
-					for (int i = 0; i < speciesInt.size(); i++) {
-						for (String s : intSpecies) {
-							if (s.contains(((JTextField) speciesInt.get(i).get(1)).getText() + " ")) {
-								((JCheckBox) speciesInt.get(i).get(0)).doClick();
-							}
-						}
-					}
-					for (int i = 0; i < allSpecies.length; i++) {
-						String[] split1 = allSpecies[i].split(" ");
-						if (split1.length > 1) {
-							editLine(i, split1[1]);
-						}
-					}
-					speciesPanel.revalidate();
-					speciesPanel.repaint();
-				}
-				catch (Exception e1) {
-				}
-					*/
+				 * String[] getFilename = openFile.split(separator); int cut =
+				 * 0; for (int i = 0; i < getFilename[getFilename.length -
+				 * 1].length(); i++) { if (getFilename[getFilename.length -
+				 * 1].charAt(i) == '.') { cut = i; } } String filename = ""; if
+				 * (new File((openFile.substring(0, openFile.length() -
+				 * getFilename[getFilename.length - 1].length())) +
+				 * getFilename[getFilename.length - 1].substring(0, cut) +
+				 * ".xml").exists()) { filename = (openFile.substring(0,
+				 * openFile.length() - getFilename[getFilename.length -
+				 * 1].length())) + getFilename[getFilename.length -
+				 * 1].substring(0, cut) + ".xml"; } else if (new
+				 * File((openFile.substring(0, openFile.length() -
+				 * getFilename[getFilename.length - 1].length())) +
+				 * getFilename[getFilename.length - 1].substring(0, cut) +
+				 * ".sbml").exists()) { filename = (openFile.substring(0,
+				 * openFile.length() - getFilename[getFilename.length -
+				 * 1].length())) + getFilename[getFilename.length -
+				 * 1].substring(0, cut) + ".sbml"; } try { filename = sbmlFile;
+				 * ArrayList<String> listOfSpecs = new ArrayList<String>(); if
+				 * (gcmEditor == null) { SBMLDocument document =
+				 * Gui.readSBML(filename); Model model = document.getModel(); if
+				 * (model != null) { ListOf listOfSpecies =
+				 * model.getListOfSpecies(); for (int i = 0; i <
+				 * model.getNumSpecies(); i++) { Species species = (Species)
+				 * listOfSpecies.get(i); listOfSpecs.add(species.getId()); } } }
+				 * else { for (String species : gcmEditor.getGCM().getSpecies())
+				 * { listOfSpecs.add(species); } } allSpecies =
+				 * listOfSpecs.toArray(); for (int i = 1; i < allSpecies.length;
+				 * i++) {
+				 * 
+				 * String index = (String) allSpecies[i];
+				 * 
+				 * int j = i; while ((j > 0) && ((String) allSpecies[j -
+				 * 1]).compareToIgnoreCase(index) > 0) { allSpecies[j] =
+				 * allSpecies[j - 1]; j = j - 1; } allSpecies[j] = index; } //
+				 * intSpecies.setListData(list);
+				 * //termCond.setListData(allSpecies); //int rem =
+				 * availSpecies.getItemCount(); for (int i = 0; i < rem; i++) {
+				 * availSpecies.removeItemAt(0); } for (int i = 0; i <
+				 * allSpecies.length; i++) { availSpecies.addItem(((String)
+				 * allSpecies[i]).replace(" ", "_")); } String[] allSpecies =
+				 * getAllSpecies(); String[] intSpecies =
+				 * getInterestingSpecies(); createInterestingSpeciesPanel(); for
+				 * (int i = 0; i < speciesInt.size(); i++) { for (String s :
+				 * intSpecies) { if (s.contains(((JTextField)
+				 * speciesInt.get(i).get(1)).getText() + " ")) { ((JCheckBox)
+				 * speciesInt.get(i).get(0)).doClick(); } } } for (int i = 0; i
+				 * < allSpecies.length; i++) { String[] split1 =
+				 * allSpecies[i].split(" "); if (split1.length > 1) {
+				 * editLine(i, split1[1]); } } speciesPanel.revalidate();
+				 * speciesPanel.repaint(); } catch (Exception e1) { }
+				 */
 				// species.setListData(new Object[0]);
-				//terminations.setListData(new Object[0]);
+				// terminations.setListData(new Object[0]);
 				if (load.getProperty("reb2sac.abstraction.method").equals("none")) {
 					none.setSelected(true);
-					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
-							stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-							explanation, description, none, rapid1, rapid2,
-							qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel,
-							preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs,
-							rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
+					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel,
+							minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit,
+							intervalLabel, interval, simulators, simulatorsLabel, explanation, description, none,
+							rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, fileStem,
+							fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel,
+							addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs,
+							editPostAbs, lhpn);
 					if (modelFile.contains(".lpn")) {
 						markov.setEnabled(true);
 						lhpn.setEnabled(true);
@@ -3947,12 +3522,13 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				}
 				else if (load.getProperty("reb2sac.abstraction.method").equals("abs")) {
 					abstraction.setSelected(true);
-					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
-							stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel,
-							explanation, description, none, rapid1, rapid2,
-							qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel,
-							preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs,
-							rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn);
+					Button_Enabling.enableNoneOrAbs(ODE, monteCarlo, markov, sbml, seed, seedLabel, runs, runsLabel,
+							minStepLabel, minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit,
+							intervalLabel, interval, simulators, simulatorsLabel, explanation, description, none,
+							rapid1, rapid2, qssa, maxCon, rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, fileStem,
+							fileStemLabel, preAbs, loopAbs, postAbs, preAbsLabel, loopAbsLabel, postAbsLabel,
+							addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs,
+							editPostAbs, lhpn);
 					if (modelFile.contains(".lpn")) {
 						markov.setEnabled(true);
 						lhpn.setEnabled(true);
@@ -3960,12 +3536,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				}
 				else {
 					nary.setSelected(true);
-					Button_Enabling.enableNary(ODE, monteCarlo, markov, seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step,
-							errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description,
-							rapid1, rapid2, qssa, maxCon, rapidLabel1,
-							rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs, postAbs,
-							preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs, addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs,
-							rmPostAbs, editPostAbs, lhpn, gcmEditor);
+					Button_Enabling.enableNary(ODE, monteCarlo, markov, seed, seedLabel, runs, runsLabel, minStepLabel,
+							minStep, stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
+							simulators, simulatorsLabel, explanation, description, rapid1, rapid2, qssa, maxCon,
+							rapidLabel1, rapidLabel2, qssaLabel, maxConLabel, fileStem, fileStemLabel, preAbs, loopAbs,
+							postAbs, preAbsLabel, loopAbsLabel, postAbsLabel, addPreAbs, rmPreAbs, editPreAbs,
+							addLoopAbs, rmLoopAbs, editLoopAbs, addPostAbs, rmPostAbs, editPostAbs, lhpn, gcmEditor);
 				}
 				if (load.containsKey("ode.simulation.absolute.error")) {
 					absErr.setText(load.getProperty("ode.simulation.absolute.error"));
@@ -4013,40 +3589,35 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					runs.setText(load.getProperty("monte.carlo.simulation.runs"));
 				}
 				/*
-				if (load.containsKey("simulation.run.termination.decider") && load.getProperty("simulation.run.termination.decider").equals("sad")) {
-					sad.setEnabled(true);
-					newSAD.setEnabled(true);
-					//usingSAD.setSelected(true);
-					idLabel.setEnabled(true);
-					TCid.setEnabled(true);
-					descLabel.setEnabled(true);
-					desc.setEnabled(true);
-					condLabel.setEnabled(true);
-					cond.setEnabled(true);
-					addSAD.setEnabled(true);
-					editSAD.setEnabled(true);
-					removeSAD.setEnabled(true);
-				}
-				*/
+				 * if (load.containsKey("simulation.run.termination.decider") &&
+				 * load
+				 * .getProperty("simulation.run.termination.decider").equals(
+				 * "sad")) { sad.setEnabled(true); newSAD.setEnabled(true);
+				 * //usingSAD.setSelected(true); idLabel.setEnabled(true);
+				 * TCid.setEnabled(true); descLabel.setEnabled(true);
+				 * desc.setEnabled(true); condLabel.setEnabled(true);
+				 * cond.setEnabled(true); addSAD.setEnabled(true);
+				 * editSAD.setEnabled(true); removeSAD.setEnabled(true); }
+				 */
 				if (load.containsKey("simulation.time.series.species.level.file")) {
-					//usingSSA.doClick();
+					// usingSSA.doClick();
 				}
 				else {
 					description.setEnabled(true);
 					explanation.setEnabled(true);
 					simulators.setEnabled(true);
 					simulatorsLabel.setEnabled(true);
-					//newSSA.setEnabled(false);
-					//usingSSA.setSelected(false);
-					//ssa.setEnabled(false);
-					//timeLabel.setEnabled(false);
-					//time.setEnabled(false);
-					//availSpecies.setEnabled(false);
-					//ssaMod.setEnabled(false);
-					//ssaModNum.setEnabled(false);
-					//addSSA.setEnabled(false);
-					//editSSA.setEnabled(false);
-					//removeSSA.setEnabled(false);
+					// newSSA.setEnabled(false);
+					// usingSSA.setSelected(false);
+					// ssa.setEnabled(false);
+					// timeLabel.setEnabled(false);
+					// time.setEnabled(false);
+					// availSpecies.setEnabled(false);
+					// ssaMod.setEnabled(false);
+					// ssaModNum.setEnabled(false);
+					// addSSA.setEnabled(false);
+					// editSSA.setEnabled(false);
+					// removeSSA.setEnabled(false);
 					if (!nary.isSelected()) {
 						ODE.setEnabled(true);
 					}
@@ -4088,9 +3659,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						if (load.containsKey("ode.simulation.min.time.step")) {
 							minStep.setText(load.getProperty("ode.simulation.min.time.step"));
 						}
-						Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
-								limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, 
-								fileStem, fileStemLabel, postAbs, abstraction);
+						Button_Enabling.enableODE(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel,
+								step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval, simulators,
+								simulatorsLabel, explanation, description, fileStem, fileStemLabel, postAbs,
+								abstraction);
 						if (load.containsKey("selected.simulator")) {
 							simulators.setSelectedItem(load.getProperty("selected.simulator"));
 						}
@@ -4105,9 +3677,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 							append.setEnabled(true);
 							// choose3.setEnabled(true);
 						}
-						Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel,
-								absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, 
-								fileStem, fileStemLabel, postAbs, abstraction, nary);
+						Button_Enabling.enableMonteCarlo(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
+								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
+								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
+								postAbs, abstraction, nary);
 						if (load.containsKey("selected.simulator")) {
 							simulators.setSelectedItem(load.getProperty("selected.simulator"));
 						}
@@ -4118,9 +3691,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("markov")) {
 						markov.setSelected(true);
-						Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel, absErr,
-								limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, 
-								fileStem, fileStemLabel, gcmEditor, postAbs, modelFile);
+						Button_Enabling.enableMarkov(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
+								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
+								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
+								gcmEditor, postAbs, modelFile);
 						if (load.containsKey("selected.simulator")) {
 							selectedMarkovSim = load.getProperty("selected.simulator");
 							simulators.setSelectedItem(selectedMarkovSim);
@@ -4129,30 +3703,34 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("SBML")) {
 						sbml.setSelected(true);
-						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel,
-								absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, fileStem,
-								fileStemLabel, abstraction, loopAbs, postAbs);
+						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
+								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
+								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
+								abstraction, loopAbs, postAbs);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("Network")) {
 						dot.setSelected(true);
-						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel,
-								absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, fileStem,
-								fileStemLabel, abstraction, loopAbs, postAbs);
+						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
+								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
+								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
+								abstraction, loopAbs, postAbs);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("Browser")) {
 						xhtml.setSelected(true);
-						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel,
-								absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, fileStem,
-								fileStemLabel, abstraction, loopAbs, postAbs);
+						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
+								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
+								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
+								abstraction, loopAbs, postAbs);
 						absErr.setEnabled(false);
 					}
 					else if (load.getProperty("reb2sac.simulation.method").equals("LPN")) {
 						lhpn.setSelected(true);
-						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep, stepLabel, step, errorLabel,
-								absErr, limitLabel, limit, intervalLabel, interval, simulators, simulatorsLabel, explanation, description, fileStem,
-								fileStemLabel, abstraction, loopAbs, postAbs);
+						Button_Enabling.enableSbmlDotAndXhtml(seed, seedLabel, runs, runsLabel, minStepLabel, minStep,
+								stepLabel, step, errorLabel, absErr, limitLabel, limit, intervalLabel, interval,
+								simulators, simulatorsLabel, explanation, description, fileStem, fileStemLabel,
+								abstraction, loopAbs, postAbs);
 						absErr.setEnabled(false);
 					}
 				}
@@ -4184,8 +3762,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 					getLists.add(load.getProperty("simulation.run.termination.condition." + i));
 					i++;
 				}
-				//termConditions = getLists.toArray();
-				//terminations.setListData(termConditions);
+				// termConditions = getLists.toArray();
+				// terminations.setListData(termConditions);
 				getLists = new ArrayList<String>();
 				i = 1;
 				while (load.containsKey("reb2sac.interesting.species." + i)) {
@@ -4207,39 +3785,31 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 				}
 				for (String s : getLists) {
 					String[] split1 = s.split(" ");
-						
-					//load the species and its thresholds into the list of interesting species
+
+					// load the species and its thresholds into the list of
+					// interesting species
 					String speciesAndThresholds = split1[0];
-					
+
 					if (split1.length > 1)
 						speciesAndThresholds += " " + split1[1];
-					
+
 					interestingSpecies.add(speciesAndThresholds);
-					
-					
+
 					/*
-					for (int j = 0; j < speciesInt.size(); j++) {
-						if (((JTextField) speciesInt.get(j).get(1)).getText().equals(split1[0])) {		
-							
-							if (!((JCheckBox) speciesInt.get(j).get(0)).isEnabled()) {
-								((JCheckBox) speciesInt.get(j).get(0)).setEnabled(true);
-								((JCheckBox) speciesInt.get(j).get(0)).doClick();
-								if (split1.length > 1) {
-									editLine(j, split1[1]);
-								}
-								for (int k = 0; k < speciesInt.get(j).size(); k++) {
-									((Component) speciesInt.get(j).get(k)).setEnabled(false);
-								}
-							}
-							else {
-								((JCheckBox) speciesInt.get(j).get(0)).doClick();
-								if (split1.length > 1) {
-									editLine(j, split1[1]);
-								}
-							}
-						}
-					}
-					*/
+					 * for (int j = 0; j < speciesInt.size(); j++) { if
+					 * (((JTextField)
+					 * speciesInt.get(j).get(1)).getText().equals(split1[0])) {
+					 * 
+					 * if (!((JCheckBox) speciesInt.get(j).get(0)).isEnabled())
+					 * { ((JCheckBox)
+					 * speciesInt.get(j).get(0)).setEnabled(true); ((JCheckBox)
+					 * speciesInt.get(j).get(0)).doClick(); if (split1.length >
+					 * 1) { editLine(j, split1[1]); } for (int k = 0; k <
+					 * speciesInt.get(j).size(); k++) { ((Component)
+					 * speciesInt.get(j).get(k)).setEnabled(false); } } else {
+					 * ((JCheckBox) speciesInt.get(j).get(0)).doClick(); if
+					 * (split1.length > 1) { editLine(j, split1[1]); } } } }
+					 */
 				}
 				// species.setListData(interestingSpecies);
 
@@ -4310,7 +3880,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		catch (Exception e1) {
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(Gui.frame, "Unable to load properties file!", "Error Loading Properties", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(Gui.frame, "Unable to load properties file!", "Error Loading Properties",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
@@ -4324,8 +3895,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		// int[] index = species.getSelectedIndices();
 		// species.setSelectedIndices(index);
-		return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id, outDir, "time", biomodelsim, open, log, null,
-				true, false);
+		return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id, outDir, "time",
+				biomodelsim, open, log, null, true, false);
 	}
 
 	public JButton getRunButton() {
@@ -4377,23 +3948,23 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 
 	public void setGcm(ModelEditor gcm) {
 		gcmEditor = gcm;
-		//updateSpeciesList();
+		// updateSpeciesList();
 		if (nary.isSelected()) {
 			lhpn.setEnabled(true);
 			// Disables thresholds for complex and input species
 			/*
-			ArrayList<String> complexSpecies = gcmEditor.getGCM().getBiochemicalSpecies();
-			ArrayList<String> inputSpecies = gcmEditor.getGCM().getInputSpecies();
-			for (int j = 0; j < speciesInt.size(); j++) {
-				if (((JCheckBox) speciesInt.get(j).get(0)).isSelected()
-						&& !complexSpecies.contains(((JTextField) speciesInt.get(j).get(1)).getText())
-						&& !inputSpecies.contains(((JTextField) speciesInt.get(j).get(1)).getText())) {
-					for (int i = 2; i < speciesInt.get(j).size(); i++) {
-						speciesInt.get(j).get(i).setEnabled(true);
-					}
-				}
-			}
-			*/
+			 * ArrayList<String> complexSpecies =
+			 * gcmEditor.getGCM().getBiochemicalSpecies(); ArrayList<String>
+			 * inputSpecies = gcmEditor.getGCM().getInputSpecies(); for (int j =
+			 * 0; j < speciesInt.size(); j++) { if (((JCheckBox)
+			 * speciesInt.get(j).get(0)).isSelected() &&
+			 * !complexSpecies.contains(((JTextField)
+			 * speciesInt.get(j).get(1)).getText()) &&
+			 * !inputSpecies.contains(((JTextField)
+			 * speciesInt.get(j).get(1)).getText())) { for (int i = 2; i <
+			 * speciesInt.get(j).size(); i++) {
+			 * speciesInt.get(j).get(i).setEnabled(true); } } }
+			 */
 		}
 		if (markov.isSelected()) {
 			simulators.removeAllItems();
@@ -4410,66 +3981,35 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	}
 
 	/*
-	public void updateSpeciesList() {
-		ArrayList<String> listOfSpecs = new ArrayList<String>();
-		if (gcmEditor == null) {
-			SBMLDocument document = Gui.readSBML(sbmlFile);
-			Model model = document.getModel();
-			if (model != null) {
-				ListOf listOfSpecies = model.getListOfSpecies();
-				for (int i = 0; i < model.getNumSpecies(); i++) {
-					Species species = (Species) listOfSpecies.get(i);
-					listOfSpecs.add(species.getId());
-				}
-			}
-		}
-		else {
-			for (String species : gcmEditor.getGCM().getSpecies()) {
-				listOfSpecs.add(species);
-			}
-		}
-		allSpecies = listOfSpecs.toArray();
-		for (int i = 1; i < allSpecies.length; i++) {
-			String index = (String) allSpecies[i];
-			int j = i;
-			while ((j > 0) && ((String) allSpecies[j - 1]).compareToIgnoreCase(index) > 0) {
-				allSpecies[j] = allSpecies[j - 1];
-				j = j - 1;
-			}
-			allSpecies[j] = index;
-		}
-		// intSpecies.setListData(list);
-		termCond.setListData(allSpecies);
-		int rem = availSpecies.getItemCount();
-		for (int i = 0; i < rem; i++) {
-			availSpecies.removeItemAt(0);
-		}
-		for (int i = 0; i < allSpecies.length; i++) {
-			availSpecies.addItem(((String) allSpecies[i]).replace(" ", "_"));
-		}
-		String[] allSpecies = getAllSpecies();
-		String[] intSpecies = getInterestingSpecies();
-		createInterestingSpeciesPanel();
-		for (int i = 0; i < speciesInt.size(); i++) {
-			for (String s : intSpecies) {
-				if (s.contains(((JTextField) speciesInt.get(i).get(1)).getText() + " ")) {
-					((JCheckBox) speciesInt.get(i).get(0)).doClick();
-				}
-			}
-		}
-		for (int i = 0; i < allSpecies.length; i++) {
-			String[] split1 = allSpecies[i].split(" ");
-			if (split1.length > 1) {
-				editLine(i, split1[1]);
-			}
-		}
-		speciesPanel.revalidate();
-		speciesPanel.repaint();
-	}
-	*/
+	 * public void updateSpeciesList() { ArrayList<String> listOfSpecs = new
+	 * ArrayList<String>(); if (gcmEditor == null) { SBMLDocument document =
+	 * Gui.readSBML(sbmlFile); Model model = document.getModel(); if (model !=
+	 * null) { ListOf listOfSpecies = model.getListOfSpecies(); for (int i = 0;
+	 * i < model.getNumSpecies(); i++) { Species species = (Species)
+	 * listOfSpecies.get(i); listOfSpecs.add(species.getId()); } } } else { for
+	 * (String species : gcmEditor.getGCM().getSpecies()) {
+	 * listOfSpecs.add(species); } } allSpecies = listOfSpecs.toArray(); for
+	 * (int i = 1; i < allSpecies.length; i++) { String index = (String)
+	 * allSpecies[i]; int j = i; while ((j > 0) && ((String) allSpecies[j -
+	 * 1]).compareToIgnoreCase(index) > 0) { allSpecies[j] = allSpecies[j - 1];
+	 * j = j - 1; } allSpecies[j] = index; } // intSpecies.setListData(list);
+	 * termCond.setListData(allSpecies); int rem = availSpecies.getItemCount();
+	 * for (int i = 0; i < rem; i++) { availSpecies.removeItemAt(0); } for (int
+	 * i = 0; i < allSpecies.length; i++) { availSpecies.addItem(((String)
+	 * allSpecies[i]).replace(" ", "_")); } String[] allSpecies =
+	 * getAllSpecies(); String[] intSpecies = getInterestingSpecies();
+	 * createInterestingSpeciesPanel(); for (int i = 0; i < speciesInt.size();
+	 * i++) { for (String s : intSpecies) { if (s.contains(((JTextField)
+	 * speciesInt.get(i).get(1)).getText() + " ")) { ((JCheckBox)
+	 * speciesInt.get(i).get(0)).doClick(); } } } for (int i = 0; i <
+	 * allSpecies.length; i++) { String[] split1 = allSpecies[i].split(" "); if
+	 * (split1.length > 1) { editLine(i, split1[1]); } }
+	 * speciesPanel.revalidate(); speciesPanel.repaint(); }
+	 */
 
 	public void setSim(String newSimName) {
-		sbmlProp = root + separator + newSimName + separator + sbmlFile.split(separator)[sbmlFile.split(separator).length - 1];
+		sbmlProp = root + separator + newSimName + separator
+				+ sbmlFile.split(separator)[sbmlFile.split(separator).length - 1];
 		simName = newSimName;
 	}
 
@@ -4482,100 +4022,76 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	}
 
 	/*
-	private void createInterestingSpeciesPanel() {
-//		speciesPanel.removeAll();
-//		speciesInt = new ArrayList<ArrayList<Component>>();
-//		speciesPanel.setLayout(new GridLayout(allSpecies.length + 1, 1));
-//		JPanel label = new JPanel(new GridLayout());
-//		label.add(new JLabel("Use"));
-//		label.add(new JLabel("Species"));
-//		label.add(new JLabel("Number Of Thresholds"));
-//		speciesPanel.add(label);
-//		int j = 0;
-//		for (Object s : allSpecies) {
-//			j++;
-//			JPanel sp = new JPanel(new GridLayout());
-//			ArrayList<Component> specs = new ArrayList<Component>();
-//			JCheckBox check = new JCheckBox();
-//			check.setSelected(false);
-//			specs.add(check);
-//			specs.add(new JTextField((String) s));
-//			String[] options = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15" };
-//			JComboBox combo = new JComboBox(options);
-//			combo.setEnabled(false);
-//			specs.add(combo);
-//			((JTextField) specs.get(1)).setEditable(false);
-//			sp.add(specs.get(0));
-//			((JCheckBox) specs.get(0)).addActionListener(this);
-//			((JCheckBox) specs.get(0)).setActionCommand("box" + j);
-//			sp.add(specs.get(1));
-//			sp.add(specs.get(2));
-//			((JComboBox) specs.get(2)).addActionListener(this);
-//			((JComboBox) specs.get(2)).setActionCommand("text" + j);
-//			speciesInt.add(specs);
-//			speciesPanel.add(sp);
-//		}
-	}
-	*/
+	 * private void createInterestingSpeciesPanel() { //
+	 * speciesPanel.removeAll(); // speciesInt = new
+	 * ArrayList<ArrayList<Component>>(); // speciesPanel.setLayout(new
+	 * GridLayout(allSpecies.length + 1, 1)); // JPanel label = new JPanel(new
+	 * GridLayout()); // label.add(new JLabel("Use")); // label.add(new
+	 * JLabel("Species")); // label.add(new JLabel("Number Of Thresholds")); //
+	 * speciesPanel.add(label); // int j = 0; // for (Object s : allSpecies) {
+	 * // j++; // JPanel sp = new JPanel(new GridLayout()); //
+	 * ArrayList<Component> specs = new ArrayList<Component>(); // JCheckBox
+	 * check = new JCheckBox(); // check.setSelected(false); //
+	 * specs.add(check); // specs.add(new JTextField((String) s)); // String[]
+	 * options = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11",
+	 * "12", "13", "14", "15" }; // JComboBox combo = new JComboBox(options); //
+	 * combo.setEnabled(false); // specs.add(combo); // ((JTextField)
+	 * specs.get(1)).setEditable(false); // sp.add(specs.get(0)); //
+	 * ((JCheckBox) specs.get(0)).addActionListener(this); // ((JCheckBox)
+	 * specs.get(0)).setActionCommand("box" + j); // sp.add(specs.get(1)); //
+	 * sp.add(specs.get(2)); // ((JComboBox)
+	 * specs.get(2)).addActionListener(this); // ((JComboBox)
+	 * specs.get(2)).setActionCommand("text" + j); // speciesInt.add(specs); //
+	 * speciesPanel.add(sp); // } }
+	 */
 
 	/*
-	private void editLine(int num, String thresholds) {
-		String[] thresh = thresholds.split(",");
-		ArrayList<Component> specs = speciesInt.get(num);
-		((JComboBox) specs.get(2)).setSelectedItem("" + thresh.length);
-		for (int i = 0; i < thresh.length; i++) {
-			((JTextField) specs.get(i + 3)).setText(thresh[i]);
-		}
-	}
-
-	private String getLine(int num) {
-		String line = "";
-		ArrayList<Component> specs = speciesInt.get(num);
-		int boxes = Integer.parseInt((String) ((JComboBox) specs.get(2)).getSelectedItem());
-		for (int i = 0; i < boxes; i++) {
-			line += ((JTextField) specs.get(i + 3)).getText() + ",";
-		}
-		if (line.equals("")) {
-			return "";
-		}
-		else {
-			return line.substring(0, line.length() - 1);
-		}
-	}
-	*/
+	 * private void editLine(int num, String thresholds) { String[] thresh =
+	 * thresholds.split(","); ArrayList<Component> specs = speciesInt.get(num);
+	 * ((JComboBox) specs.get(2)).setSelectedItem("" + thresh.length); for (int
+	 * i = 0; i < thresh.length; i++) { ((JTextField) specs.get(i +
+	 * 3)).setText(thresh[i]); } }
+	 * 
+	 * private String getLine(int num) { String line = ""; ArrayList<Component>
+	 * specs = speciesInt.get(num); int boxes = Integer.parseInt((String)
+	 * ((JComboBox) specs.get(2)).getSelectedItem()); for (int i = 0; i < boxes;
+	 * i++) { line += ((JTextField) specs.get(i + 3)).getText() + ","; } if
+	 * (line.equals("")) { return ""; } else { return line.substring(0,
+	 * line.length() - 1); } }
+	 */
 
 	public String[] getInterestingSpecies() {
-//		ArrayList<String> species = new ArrayList<String>();
-//		for (int i = 0; i < speciesInt.size(); i++) {
-//			if (((JCheckBox) speciesInt.get(i).get(0)).isSelected()) {
-//				
-//				//species ID
-//				String add = ((JTextField) speciesInt.get(i).get(1)).getText();
-//				
-//				//comma-separated threshold value
-//				String line = getLine(i);
-//				
-//				if (line.equals("")) {
-//					species.add(add);
-//				}
-//				else {
-//					species.add(add + " " + line);
-//				}
-//			}
-//		}
-//		
-//		return species.toArray(new String[0]);
-		
+		// ArrayList<String> species = new ArrayList<String>();
+		// for (int i = 0; i < speciesInt.size(); i++) {
+		// if (((JCheckBox) speciesInt.get(i).get(0)).isSelected()) {
+		//
+		// //species ID
+		// String add = ((JTextField) speciesInt.get(i).get(1)).getText();
+		//
+		// //comma-separated threshold value
+		// String line = getLine(i);
+		//
+		// if (line.equals("")) {
+		// species.add(add);
+		// }
+		// else {
+		// species.add(add + " " + line);
+		// }
+		// }
+		// }
+		//
+		// return species.toArray(new String[0]);
+
 		return interestingSpecies.toArray(new String[0]);
 	}
-	
+
 	public ArrayList<String> getInterestingSpeciesAsArrayList() {
 		return interestingSpecies;
 	}
-	
+
 	/**
-	 * adds a string with the species ID and its threshold values to
-	 * the arraylist of interesting species
+	 * adds a string with the species ID and its threshold values to the
+	 * arraylist of interesting species
 	 * 
 	 * @param speciesAndThresholds
 	 */
@@ -4589,10 +4105,10 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		}
 		interestingSpecies.add(speciesAndThresholds);
 	}
-	
+
 	/**
-	 * removes a string with the species ID and its threshold values from
-	 * the arraylist of interesting species
+	 * removes a string with the species ID and its threshold values from the
+	 * arraylist of interesting species
 	 * 
 	 * @param species
 	 */
@@ -4606,111 +4122,42 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	}
 
 	/*
-	private String[] getAllSpecies() {
-		ArrayList<String> species = new ArrayList<String>();
-		for (Object s : allSpecies) {
-			species.add((String) s);
-		}
-		for (int i = 0; i < speciesInt.size(); i++) {
-			String spec = ((JTextField) speciesInt.get(i).get(1)).getText();
-			if (species.contains(spec)) {
-				species.set(species.indexOf(spec), spec + " " + getLine(i));
-			}
-		}
-		String[] speciesArray = species.toArray(new String[0]);
-		for (int i = 1; i < speciesArray.length; i++) {
-			String index = (String) speciesArray[i];
-			int j = i;
-			while ((j > 0) && ((String) speciesArray[j - 1]).compareToIgnoreCase(index) > 0) {
-				speciesArray[j] = speciesArray[j - 1];
-				j = j - 1;
-			}
-			speciesArray[j] = index;
-		}
-		return speciesArray;
-	}
-
-	private void editNumThresholds(int num) {
-		try {
-			ArrayList<Component> specs = speciesInt.get(num);
-			Component[] panels = speciesPanel.getComponents();
-			int boxes = Integer.parseInt((String) ((JComboBox) specs.get(2)).getSelectedItem());
-			if ((specs.size() - 3) < boxes) {
-				for (int i = 0; i < boxes; i++) {
-					try {
-						specs.get(i + 3);
-					}
-					catch (Exception e1) {
-						JTextField temp = new JTextField("");
-						((JPanel) panels[num + 1]).add(temp);
-						specs.add(temp);
-					}
-				}
-			}
-			else {
-				try {
-					if (boxes > 0) {
-						while (true) {
-							specs.remove(boxes + 3);
-							((JPanel) panels[num + 1]).remove(boxes + 3);
-						}
-					}
-					else if (boxes == 0) {
-						while (true) {
-							specs.remove(3);
-							((JPanel) panels[num + 1]).remove(3);
-						}
-					}
-				}
-				catch (Exception e1) {
-				}
-			}
-			int max = 0;
-			for (int i = 0; i < speciesInt.size(); i++) {
-				max = Math.max(max, speciesInt.get(i).size());
-			}
-			if (((JPanel) panels[0]).getComponentCount() < max) {
-				for (int i = 0; i < max - 3; i++) {
-					try {
-						((JPanel) panels[0]).getComponent(i + 3);
-					}
-					catch (Exception e) {
-						((JPanel) panels[0]).add(new JLabel("Threshold " + (i + 1)));
-					}
-				}
-			}
-			else {
-				try {
-					while (true) {
-						((JPanel) panels[0]).remove(max);
-					}
-				}
-				catch (Exception e) {
-				}
-			}
-			for (int i = 1; i < panels.length; i++) {
-				JPanel sp = (JPanel) panels[i];
-				for (int j = sp.getComponentCount() - 1; j >= 3; j--) {
-					if (sp.getComponent(j) instanceof JLabel) {
-						sp.remove(j);
-					}
-				}
-				if (max > sp.getComponentCount()) {
-					for (int j = sp.getComponentCount(); j < max; j++) {
-						sp.add(new JLabel());
-					}
-				}
-				else {
-					for (int j = sp.getComponentCount() - 3; j >= max; j--) {
-						sp.remove(j);
-					}
-				}
-			}
-		}
-		catch (Exception e) {
-		}
-	}
-	*/
+	 * private String[] getAllSpecies() { ArrayList<String> species = new
+	 * ArrayList<String>(); for (Object s : allSpecies) { species.add((String)
+	 * s); } for (int i = 0; i < speciesInt.size(); i++) { String spec =
+	 * ((JTextField) speciesInt.get(i).get(1)).getText(); if
+	 * (species.contains(spec)) { species.set(species.indexOf(spec), spec + " "
+	 * + getLine(i)); } } String[] speciesArray = species.toArray(new
+	 * String[0]); for (int i = 1; i < speciesArray.length; i++) { String index
+	 * = (String) speciesArray[i]; int j = i; while ((j > 0) && ((String)
+	 * speciesArray[j - 1]).compareToIgnoreCase(index) > 0) { speciesArray[j] =
+	 * speciesArray[j - 1]; j = j - 1; } speciesArray[j] = index; } return
+	 * speciesArray; }
+	 * 
+	 * private void editNumThresholds(int num) { try { ArrayList<Component>
+	 * specs = speciesInt.get(num); Component[] panels =
+	 * speciesPanel.getComponents(); int boxes = Integer.parseInt((String)
+	 * ((JComboBox) specs.get(2)).getSelectedItem()); if ((specs.size() - 3) <
+	 * boxes) { for (int i = 0; i < boxes; i++) { try { specs.get(i + 3); }
+	 * catch (Exception e1) { JTextField temp = new JTextField(""); ((JPanel)
+	 * panels[num + 1]).add(temp); specs.add(temp); } } } else { try { if (boxes
+	 * > 0) { while (true) { specs.remove(boxes + 3); ((JPanel) panels[num +
+	 * 1]).remove(boxes + 3); } } else if (boxes == 0) { while (true) {
+	 * specs.remove(3); ((JPanel) panels[num + 1]).remove(3); } } } catch
+	 * (Exception e1) { } } int max = 0; for (int i = 0; i < speciesInt.size();
+	 * i++) { max = Math.max(max, speciesInt.get(i).size()); } if (((JPanel)
+	 * panels[0]).getComponentCount() < max) { for (int i = 0; i < max - 3; i++)
+	 * { try { ((JPanel) panels[0]).getComponent(i + 3); } catch (Exception e) {
+	 * ((JPanel) panels[0]).add(new JLabel("Threshold " + (i + 1))); } } } else
+	 * { try { while (true) { ((JPanel) panels[0]).remove(max); } } catch
+	 * (Exception e) { } } for (int i = 1; i < panels.length; i++) { JPanel sp =
+	 * (JPanel) panels[i]; for (int j = sp.getComponentCount() - 1; j >= 3; j--)
+	 * { if (sp.getComponent(j) instanceof JLabel) { sp.remove(j); } } if (max >
+	 * sp.getComponentCount()) { for (int j = sp.getComponentCount(); j < max;
+	 * j++) { sp.add(new JLabel()); } } else { for (int j =
+	 * sp.getComponentCount() - 3; j >= max; j--) { sp.remove(j); } } } } catch
+	 * (Exception e) { } }
+	 */
 
 	public Graph createProbGraph(String open) {
 		String outDir = root + separator + simName;
@@ -4720,8 +4167,8 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 		if (concentrations.isSelected()) {
 			printer_track_quantity = "concentration";
 		}
-		return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id, outDir, "time", biomodelsim, open, log, null,
-				false, false);
+		return new Graph(this, printer_track_quantity, simName + " simulation results", printer_id, outDir, "time",
+				biomodelsim, open, log, null, false, false);
 	}
 
 	public void run(ArrayList<AnalysisThread> threads, ArrayList<String> dirs, ArrayList<String> levelOne, String stem) {
@@ -4732,7 +4179,9 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 			catch (InterruptedException e) {
 			}
 		}
-		if (!dirs.isEmpty() && new File(root + separator + simName + separator + stem + dirs.get(0) + separator + "sim-rep.txt").exists()) {
+		if (!dirs.isEmpty()
+				&& new File(root + separator + simName + separator + stem + dirs.get(0) + separator + "sim-rep.txt")
+						.exists()) {
 			ArrayList<String> dataLabels = new ArrayList<String>();
 			ArrayList<ArrayList<Double>> data = new ArrayList<ArrayList<Double>>();
 			String spec = dirs.get(0).split("=")[0];
@@ -4746,11 +4195,12 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 						String suffix = d.replace(prefix, "");
 						ArrayList<String> vals = new ArrayList<String>();
 						try {
-							Scanner s = new Scanner(new File(root + separator + simName + separator + stem + d + separator + "sim-rep.txt"));
+							Scanner s = new Scanner(new File(root + separator + simName + separator + stem + d
+									+ separator + "sim-rep.txt"));
 							while (s.hasNextLine()) {
 								String[] ss = s.nextLine().split(" ");
-								if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination") && ss[3].equals("count:")
-										&& ss[4].equals("0")) {
+								if (ss[0].equals("The") && ss[1].equals("total") && ss[2].equals("termination")
+										&& ss[3].equals("count:") && ss[4].equals("0")) {
 								}
 								if (vals.size() == 0) {
 									for (String add : ss) {
@@ -4900,7 +4350,7 @@ public class AnalysisView extends JPanel implements ActionListener, Runnable, Mo
 	}
 
 	public void updateProperties() {
-		if (transientProperties != null	&& modelFile.contains(".lpn")) {
+		if (transientProperties != null && modelFile.contains(".lpn")) {
 			Object selected = transientProperties.getSelectedItem();
 			String[] props = new String[] { "none" };
 			LhpnFile lpn = new LhpnFile();
