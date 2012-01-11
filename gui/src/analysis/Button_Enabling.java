@@ -3,11 +3,9 @@ package analysis;
 import java.awt.Component;
 import java.util.*;
 
-
 import javax.swing.*;
 
 import biomodel.gui.ModelEditor;
-
 
 /**
  * This is the Button_Enabling class. It contains methods that enable and
@@ -24,14 +22,15 @@ public class Button_Enabling {
 	 * @param lhpn
 	 * @param gcmEditor
 	 */
-	public static void enableNoneOrAbs(JRadioButton ODE, JRadioButton monteCarlo, JRadioButton markov, JRadioButton sbml, JTextField seed,
-			JLabel seedLabel, JTextField runs, JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step,
-			JLabel errorLabel, JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
-			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JRadioButton none, 
-			JTextField rapid1, JTextField rapid2,
-			JTextField qssa, JTextField maxCon, JLabel rapidLabel1, JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel, 
-			JTextField fileStem, JLabel fileStemLabel, JList preAbs, JList loopAbs, JList postAbs, JLabel preAbsLabel,
-			JLabel loopAbsLabel, JLabel postAbsLabel, JButton addPreAbs, JButton rmPreAbs, JButton editPreAbs, JButton addLoopAbs, JButton rmLoopAbs,
+	public static void enableNoneOrAbs(JRadioButton ODE, JRadioButton monteCarlo, JRadioButton markov,
+			JRadioButton sbml, JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel,
+			JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
+			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
+			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JRadioButton none,
+			JTextField rapid1, JTextField rapid2, JTextField qssa, JTextField maxCon, JLabel rapidLabel1,
+			JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel, JTextField fileStem, JLabel fileStemLabel,
+			JList preAbs, JList loopAbs, JList postAbs, JLabel preAbsLabel, JLabel loopAbsLabel, JLabel postAbsLabel,
+			JButton addPreAbs, JButton rmPreAbs, JButton editPreAbs, JButton addLoopAbs, JButton rmLoopAbs,
 			JButton editLoopAbs, JButton addPostAbs, JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn) {
 		ODE.setEnabled(true);
 		monteCarlo.setEnabled(true);
@@ -54,18 +53,15 @@ public class Button_Enabling {
 			rmPostAbs.setEnabled(false);
 			editPostAbs.setEnabled(false);
 			/*
-			for (ArrayList<Component> comp : speciesInt) {
-				for (Component c : comp) {
-					c.setEnabled(false);
-				}
-			}
-			*/
-			//spLabel.setEnabled(false);
-			//speciesLabel.setEnabled(false);
-			//addIntSpecies.setEnabled(false);
-			//editIntSpecies.setEnabled(false);
-			//removeIntSpecies.setEnabled(false);
-			//clearIntSpecies.setEnabled(false);
+			 * for (ArrayList<Component> comp : speciesInt) { for (Component c :
+			 * comp) { c.setEnabled(false); } }
+			 */
+			// spLabel.setEnabled(false);
+			// speciesLabel.setEnabled(false);
+			// addIntSpecies.setEnabled(false);
+			// editIntSpecies.setEnabled(false);
+			// removeIntSpecies.setEnabled(false);
+			// clearIntSpecies.setEnabled(false);
 			maxConLabel.setEnabled(false);
 			maxCon.setEnabled(false);
 			qssaLabel.setEnabled(false);
@@ -105,22 +101,16 @@ public class Button_Enabling {
 			rmPostAbs.setEnabled(true);
 			editPostAbs.setEnabled(true);
 			/*
-			for (ArrayList<Component> comp : speciesInt) {
-				comp.get(0).setEnabled(true);
-				comp.get(1).setEnabled(true);
-				if (((JCheckBox) comp.get(0)).isSelected()) {
-					for (Component c : comp) {
-						c.setEnabled(true);
-					}
-				}
-			}
-			spLabel.setEnabled(true);
-			speciesLabel.setEnabled(true);
-			*/
-			//addIntSpecies.setEnabled(true);
-			//editIntSpecies.setEnabled(true);
-			//removeIntSpecies.setEnabled(true);
-			//clearIntSpecies.setEnabled(true);
+			 * for (ArrayList<Component> comp : speciesInt) {
+			 * comp.get(0).setEnabled(true); comp.get(1).setEnabled(true); if
+			 * (((JCheckBox) comp.get(0)).isSelected()) { for (Component c :
+			 * comp) { c.setEnabled(true); } } } spLabel.setEnabled(true);
+			 * speciesLabel.setEnabled(true);
+			 */
+			// addIntSpecies.setEnabled(true);
+			// editIntSpecies.setEnabled(true);
+			// removeIntSpecies.setEnabled(true);
+			// clearIntSpecies.setEnabled(true);
 			maxConLabel.setEnabled(true);
 			maxCon.setEnabled(true);
 			qssaLabel.setEnabled(true);
@@ -198,13 +188,15 @@ public class Button_Enabling {
 	 * @param gcmEditor
 	 * @param lhpn
 	 */
-	public static void enableNary(JRadioButton ODE, JRadioButton monteCarlo, JRadioButton markov, JTextField seed, JLabel seedLabel, JTextField runs,
-			JLabel runsLabel, JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr,
-			JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators, JLabel simulatorsLabel,
-			JLabel explanation, JLabel description, JTextField rapid1, JTextField rapid2, JTextField qssa, JTextField maxCon, JLabel rapidLabel1,
-			JLabel rapidLabel2, JLabel qssaLabel, JLabel maxConLabel, JTextField fileStem,
-			JLabel fileStemLabel, JList preAbs, JList loopAbs, JList postAbs, JLabel preAbsLabel, JLabel loopAbsLabel, JLabel postAbsLabel,
-			JButton addPreAbs, JButton rmPreAbs, JButton editPreAbs, JButton addLoopAbs, JButton rmLoopAbs, JButton editLoopAbs, JButton addPostAbs,
+	public static void enableNary(JRadioButton ODE, JRadioButton monteCarlo, JRadioButton markov, JTextField seed,
+			JLabel seedLabel, JTextField runs, JLabel runsLabel, JLabel minStepLabel, JTextField minStep,
+			JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel,
+			JTextField limit, JComboBox intervalLabel, JTextField interval, JComboBox simulators,
+			JLabel simulatorsLabel, JLabel explanation, JLabel description, JTextField rapid1, JTextField rapid2,
+			JTextField qssa, JTextField maxCon, JLabel rapidLabel1, JLabel rapidLabel2, JLabel qssaLabel,
+			JLabel maxConLabel, JTextField fileStem, JLabel fileStemLabel, JList preAbs, JList loopAbs, JList postAbs,
+			JLabel preAbsLabel, JLabel loopAbsLabel, JLabel postAbsLabel, JButton addPreAbs, JButton rmPreAbs,
+			JButton editPreAbs, JButton addLoopAbs, JButton rmLoopAbs, JButton editLoopAbs, JButton addPostAbs,
 			JButton rmPostAbs, JButton editPostAbs, JRadioButton lhpn, ModelEditor gcmEditor) {
 		ODE.setEnabled(false);
 		monteCarlo.setEnabled(true);
@@ -228,22 +220,16 @@ public class Button_Enabling {
 		rmPostAbs.setEnabled(false);
 		editPostAbs.setEnabled(false);
 		/*
-		for (ArrayList<Component> comp : speciesInt) {
-			comp.get(0).setEnabled(true);
-			comp.get(1).setEnabled(true);
-			if (((JCheckBox) comp.get(0)).isSelected()) {
-				for (Component c : comp) {
-					c.setEnabled(true);
-				}
-			}
-		}
-		spLabel.setEnabled(true);
-		speciesLabel.setEnabled(true);
-		*/
-		//addIntSpecies.setEnabled(true);
-		//editIntSpecies.setEnabled(true);
-		//removeIntSpecies.setEnabled(true);
-		//clearIntSpecies.setEnabled(true);
+		 * for (ArrayList<Component> comp : speciesInt) {
+		 * comp.get(0).setEnabled(true); comp.get(1).setEnabled(true); if
+		 * (((JCheckBox) comp.get(0)).isSelected()) { for (Component c : comp) {
+		 * c.setEnabled(true); } } } spLabel.setEnabled(true);
+		 * speciesLabel.setEnabled(true);
+		 */
+		// addIntSpecies.setEnabled(true);
+		// editIntSpecies.setEnabled(true);
+		// removeIntSpecies.setEnabled(true);
+		// clearIntSpecies.setEnabled(true);
 		maxConLabel.setEnabled(true);
 		maxCon.setEnabled(true);
 		qssaLabel.setEnabled(true);
@@ -283,8 +269,11 @@ public class Button_Enabling {
 			simulators.addItem("Gillespie SSA-Direct (Java)");
 			simulators.addItem("mpde");
 			simulators.addItem("mp");
+			simulators.addItem("mp-bifurcation");
 			simulators.addItem("mp-adaptive");
+			simulators.addItem("mp-adaptive-bifurcation");
 			simulators.addItem("mp-event");
+			simulators.addItem("mp-event-bifurcation");
 			simulators.addItem("emc-sim");
 			simulators.addItem("bunker");
 			simulators.addItem("nmc");
@@ -331,10 +320,11 @@ public class Button_Enabling {
 	/**
 	 * This static method enables and disables the required fields for ODE.
 	 */
-	public static void enableODE(JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel, JLabel minStepLabel, JTextField minStep,
-			JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
-			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, 
-			JTextField fileStem, JLabel fileStemLabel, JList postAbs, JRadioButton abstraction) {
+	public static void enableODE(JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel,
+			JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
+			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
+			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JTextField fileStem,
+			JLabel fileStemLabel, JList postAbs, JRadioButton abstraction) {
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
 		runs.setEnabled(true);
@@ -376,10 +366,11 @@ public class Button_Enabling {
 	 * @param fileStemLabel
 	 * @param fileStem
 	 */
-	public static void enableMonteCarlo(JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel, JLabel minStepLabel,
-			JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel, JTextField limit,
-			JComboBox intervalLabel, JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description,
-			JTextField fileStem, JLabel fileStemLabel, JList postAbs, JRadioButton abstraction, JRadioButton nary) {
+	public static void enableMonteCarlo(JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel,
+			JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
+			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
+			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JTextField fileStem,
+			JLabel fileStemLabel, JList postAbs, JRadioButton abstraction, JRadioButton nary) {
 		seed.setEnabled(true);
 		seedLabel.setEnabled(true);
 		runs.setEnabled(true);
@@ -406,8 +397,11 @@ public class Button_Enabling {
 		simulators.addItem("Gillespie SSA-Direct (Java)");
 		simulators.addItem("mpde");
 		simulators.addItem("mp");
+		simulators.addItem("mp-bifurcation");
 		simulators.addItem("mp-adaptive");
+		simulators.addItem("mp-adaptive-bifurcation");
 		simulators.addItem("mp-event");
+		simulators.addItem("mp-event-bifurcation");
 		simulators.addItem("emc-sim");
 		simulators.addItem("bunker");
 		simulators.addItem("nmc");
@@ -427,10 +421,11 @@ public class Button_Enabling {
 	 * 
 	 * @param modelFile
 	 */
-	public static void enableMarkov(JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel, JLabel minStepLabel, JTextField minStep,
-			JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel,
-			JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, 
-			JTextField fileStem, JLabel fileStemLabel, ModelEditor gcmEditor, JList postAbs, String modelFile) {
+	public static void enableMarkov(JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel,
+			JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
+			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
+			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JTextField fileStem,
+			JLabel fileStemLabel, ModelEditor gcmEditor, JList postAbs, String modelFile) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
@@ -469,10 +464,11 @@ public class Button_Enabling {
 	 * This static method enables and disables the required fields for sbml,
 	 * dot, and xhtml.
 	 */
-	public static void enableSbmlDotAndXhtml(JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel, JLabel minStepLabel,
-			JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel, JTextField absErr, JLabel limitLabel, JTextField limit,
-			JComboBox intervalLabel, JTextField interval, JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description,
-			JTextField fileStem, JLabel fileStemLabel, JRadioButton abstraction, JList loopAbs, JList postAbs) {
+	public static void enableSbmlDotAndXhtml(JTextField seed, JLabel seedLabel, JTextField runs, JLabel runsLabel,
+			JLabel minStepLabel, JTextField minStep, JLabel stepLabel, JTextField step, JLabel errorLabel,
+			JTextField absErr, JLabel limitLabel, JTextField limit, JComboBox intervalLabel, JTextField interval,
+			JComboBox simulators, JLabel simulatorsLabel, JLabel explanation, JLabel description, JTextField fileStem,
+			JLabel fileStemLabel, JRadioButton abstraction, JList loopAbs, JList postAbs) {
 		seed.setEnabled(false);
 		seedLabel.setEnabled(false);
 		runs.setEnabled(false);
