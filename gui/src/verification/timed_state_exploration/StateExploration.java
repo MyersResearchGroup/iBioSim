@@ -75,8 +75,10 @@ public class StateExploration {
 			throws FileNotFoundException
 	{
 		// Create the printStreams for the dot file and log file.
-		PrintStream dotFile = new PrintStream(directory + fileName.replace("lpn", "dot"));
-		PrintStream logFile = new PrintStream(directory + fileName.replace("lpn", "txt"));
+		
+		String name = fileName.replace("lpn", "txt");
+		
+		PrintStream logFile = new PrintStream(directory + name);
 		
 		
 		
@@ -84,10 +86,12 @@ public class StateExploration {
 		//ArrayDeque<LPNState> statesFound = exploreStateGraph(lpn, logFile);
 		Collection<LPNState> statesFound = exploreStateGraph(lpn, logFile);
 			
-			
+		logFile.close();
+		
+		//PrintStream dotFile = new PrintStream(directory + fileName.replace("lpn", "dot"));
+		PrintStream dotFile = new PrintStream(directory + "Graphof" + name.replace("txt", "dot"));
 		printDotFile(statesFound, dotFile);
 		dotFile.close();
-		logFile.close();
 		
 	}
 	
