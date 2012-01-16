@@ -103,7 +103,7 @@ public class SbolSynthesizer {
 			synthComp.setDescription(input[3]);
 			// Set component type
 			try {
-				synthComp.addType(new URI("http://sbols.org/sbol.owl#engineered_region"));
+				synthComp.addType(new URI("http://sbols.org/sbol.owl#SO_0000804"));
 			} catch (URISyntaxException e1) {
 				e1.printStackTrace();
 			}
