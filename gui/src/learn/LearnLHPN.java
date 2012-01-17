@@ -474,7 +474,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 			reqdVarsL.add(new Variable(s));
 			thresholds.put(s, new ArrayList<Double>());
 		}
-		// System.out.println("Hey :"+variablesList.size());
+		
 		try {
 			FileInputStream in = new FileInputStream(new File(directory
 					+ separator + lrnFile));
@@ -3065,7 +3065,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				/*	if (!prevFail){ // for the last genuine rate-calculating region of the trace; this may not be required if the trace is incomplete.trace data may not necessarily end at a region endpt
 						duration[binStartPoint] = data.get(0).get(data.get(0).size()-1)	- data.get(0).get(binStartPoint);
 					}*/ 
-			}
+			} //System.out.println("Rates :"+rates);
 		} catch (NullPointerException e){
 			e.printStackTrace();
 			JOptionPane.showMessageDialog(Gui.frame,
@@ -3818,6 +3818,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		for (int i=0; i<reqdVarsL.size(); i++){
 			//Object obj = Collections.min(data.get(reqdVarIndices.get(i)));
 			Object obj = Collections.min(data.get(i+1));
+			//System.out.println("Object :"+obj);
 			extrema.put(reqdVarsL.get(i).getName(),new Double[2]);
 			extrema.get(reqdVarsL.get(i).getName())[0] = Double.parseDouble(obj.toString());
 			//obj = Collections.max(data.get(reqdVarIndices.get(i)));
@@ -4284,11 +4285,6 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 		pathLengthVar = Integer.parseInt(pathLengthVarG.getText().trim());
 		int[][] bins = new int[reqdVarsL.size()][data.get(0).size()];
 		for (int i = 0; i < reqdVarsL.size(); i++) {
-			//	for (int j = 1; j < varNames.size(); j++) {
-			//		if (reqdVarsL.get(i).getName().equalsIgnoreCase(varNames.get(j))) {
-			// System.out.println(reqdVarsL.get(i) + " matched "+
-			// varNames.get(j) + " i = " + i + " j = " + j);
-			//			reqdVarIndices.add(j);
 			String currentVar = reqdVarsL.get(i).getName();
 			for (int k = 0; k < data.get(i+1).size(); k++) {
 				ArrayList<Double> thresh = localThresholds.get(currentVar);
@@ -4370,30 +4366,7 @@ public class LearnLHPN extends JPanel implements ActionListener, Runnable, ItemL
 				duration[binStartPoint] = data.get(0).get(data.get(0).size()-1)	- data.get(0).get(binStartPoint);
 			}
 		}
-		/*
-			try {
-				logFile = new File(directory + separator + "tmp.log");
-				logFile.createNewFile();
-				out = new BufferedWriter(new FileWriter(logFile));
-				for (int i = 0; i < (data.get(0).size()); i++) {
-					for (int j = 0; j < reqdVarsL.size(); j++) {
-						//k = reqdVarIndices.get(j);
-						out.write(data.get(j+1).get(i) + " ");// + bins[j][i] + " " +
-						// rates[j][i] + " ");
-					}
-					for (int j = 0; j < reqdVarsL.size(); j++) {
-						out.write(bins[j][i] + " ");
-					}
-					for (int j = 0; j < reqdVarsL.size(); j++) {
-						out.write(rates[j][i] + " ");
-					}
-					out.write(duration[i] + " ");
-					out.write("\n");
-				}
-				out.close();
-			} catch (IOException e) {
-				System.out.println("Log file couldn't be opened for writing rates and bins ");
-			}*/
+		
 		return rates;
 	}
 

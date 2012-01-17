@@ -1669,8 +1669,7 @@ public class LhpnFile {
 			}
 		} else {
 			if (varOrder.size() != 0) {
-				System.out
-						.println("WARNING: Boolean variables have not been initialized.");
+				System.out.println("WARNING: Boolean variables have not been initialized.");
 				for (i = 0; i < varOrder.size(); i++) {
 					if (i < inLength) {
 						addInput(varOrder.getProperty(i.toString()), "unknown");
