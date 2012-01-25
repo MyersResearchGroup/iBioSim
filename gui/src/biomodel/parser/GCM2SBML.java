@@ -1014,6 +1014,7 @@ public class GCM2SBML {
 				}
 			}
 			gcm.updateLayoutDimensions();
+			gcm.buildGrid(numRows, numCols);
 			gcm.setGridSize(numRows,numCols);
 			gcm.createCompPlugin();
 			for (String s : components.keySet()) {
