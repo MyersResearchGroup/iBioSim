@@ -82,8 +82,10 @@ public class PrintDecaySpeciesVisitor extends AbstractPrintVisitor {
 	@Override
 	public void visitBaseSpecies(BaseSpecies specie) {
 		
+		/*
 		if (specie.getId().contains("__") == false)
 			return;
+		*/
 		
 		loadValues(specie);
 		String compartment = checkCompartments(specie.getId());
