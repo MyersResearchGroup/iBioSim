@@ -854,6 +854,8 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					} else {
 						gcm.createDegradationReaction(selected, Double.parseDouble(f.getValue()), null);		
 					}
+				} else {
+					gcm.createDegradationReaction(selected, -1, null);		
 				}
 			} 
 			if (diffusion != null && !specDiffusible.isSelected()) {
