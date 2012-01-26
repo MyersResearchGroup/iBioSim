@@ -3917,6 +3917,9 @@ public class BioModel {
 			String newName = compName + "__" + c.getId();
 			updateVarId(false, c.getId(), newName, doc);
 			c.setId(newName);
+			if (c.isSetMetaId()) {
+				c.setMetaId(compName + "__" + c.getMetaId());
+			}
 			boolean add = true;
 			for (int j = 0; j < mainDoc.getModel().getNumCompartmentTypes(); j++) {
 				if (mainDoc.getModel().getCompartmentType(j).getId().equals(c.getId())) {
@@ -3938,6 +3941,9 @@ public class BioModel {
 				updateVarId(false, c.getId(), compName + "__" + c.getId(), doc);
 				compartments.remove(c.getId());
 				c.setId(compName + "__" + c.getId());
+				if (c.isSetMetaId()) {
+					c.setMetaId(compName + "__" + c.getMetaId());
+				}
 			}
 			else {
 				if (topComp.equals("")) {
@@ -3983,6 +3989,9 @@ public class BioModel {
 			String newName = compName + "__" + s.getId();
 			updateVarId(false, s.getId(), newName, doc);
 			s.setId(newName);
+			if (s.isSetMetaId()) {
+				s.setMetaId(compName + "__" + s.getMetaId());
+			}
 			boolean add = true;
 			for (int j = 0; j < mainDoc.getModel().getNumSpeciesTypes(); j++) {
 				if (mainDoc.getModel().getSpeciesType(j).getId().equals(s.getId())) {
@@ -4017,6 +4026,9 @@ public class BioModel {
 				gcm.changePromoterName(spec.getId(), newName);
 			} else {
 				gcm.changeSpeciesName(spec.getId(), newName);
+			}
+			if (spec.isSetMetaId()) {
+				spec.setMetaId(compName + "__" + spec.getMetaId());
 			}
 			//updateVarId(true, spec.getId(), newName, doc);
 			//spec.setId(newName);
@@ -4091,6 +4103,9 @@ public class BioModel {
 			
 			updateVarId(false, p.getId(), newName, doc);
 			p.setId(newName);
+			if (p.isSetMetaId()) {
+				p.setMetaId(compName + "__" + p.getMetaId());
+			}
 			boolean add = true;
 			
 			for (int j = 0; j < mainDoc.getModel().getNumParameters(); j++) {
@@ -4126,6 +4141,9 @@ public class BioModel {
 			String newName = compName + "__" + r.getId();
 			updateVarId(false, r.getId(), newName, doc);
 			r.setId(newName);
+			if (r.isSetMetaId()) {
+				r.setMetaId(compName + "__" + r.getMetaId());
+			}
 			boolean add = true;
 			for (int j = 0; j < mainDoc.getModel().getNumReactions(); j++) {
 				if (mainDoc.getModel().getReaction(j).getId().equals(r.getId())) {
@@ -4284,10 +4302,16 @@ public class BioModel {
 		for (int i = 0; i < m.getNumInitialAssignments(); i++) {
 			InitialAssignment init = (InitialAssignment) m.getListOfInitialAssignments().get(i);
 			mainDoc.getModel().addInitialAssignment(init);
+			if (init.isSetMetaId()) {
+				init.setMetaId(compName + "__" + init.getMetaId());
+			}
 		}
 		for (int i = 0; i < m.getNumRules(); i++) {
 			org.sbml.libsbml.Rule r = m.getRule(i);
 			mainDoc.getModel().addRule(r);
+			if (r.isSetMetaId()) {
+				r.setMetaId(compName + "__" + r.getMetaId());
+			}
 		}
 		for (int i = 0; i < m.getNumConstraints(); i++) {
 			Constraint constraint = (Constraint) m.getListOfConstraints().get(i);
@@ -4311,6 +4335,9 @@ public class BioModel {
 			String newName = compName + "__" + event.getId();
 			updateVarId(false, event.getId(), newName, doc);
 			event.setId(newName);
+			if (event.isSetMetaId()) {
+				event.setMetaId(compName + "__" + event.getMetaId());
+			}
 			for (int j = 0; j < mainDoc.getModel().getNumEvents(); j++) {
 				if (mainDoc.getModel().getEvent(j).getId().equals(event.getId())) {
 					org.sbml.libsbml.Event e = mainDoc.getModel().getEvent(j);
@@ -4365,6 +4392,9 @@ public class BioModel {
 			}
 			if (add) {
 				u.setId(newName);
+				if (u.isSetMetaId()) {
+					u.setMetaId(compName + "__" + u.getMetaId());
+				}
 				mainDoc.getModel().addUnitDefinition(u);
 			}
 		}
@@ -4377,6 +4407,9 @@ public class BioModel {
 				}
 			}
 			if (add) {
+				if (f.isSetMetaId()) {
+					f.setMetaId(compName + "__" + f.getMetaId());
+				}
 				mainDoc.getModel().addFunctionDefinition(f);
 			}
 		}
