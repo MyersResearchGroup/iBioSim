@@ -163,7 +163,7 @@ public class SBMLutilities {
 					if (!validVars.contains(splitLaw[i])) {
 						if (splitLaw[i].equals("uniform")) {
 							createFunction(model, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
-						} else if (splitLaw[i].equals("uniform")) {
+						} else if (splitLaw[i].equals("normal")) {
 							createFunction(model, "normal", "Normal distribution", "lambda(m,s,m)");
 						} else if (splitLaw[i].equals("exponential")) {
 							createFunction(model, "exponential", "Exponential distribution", "lambda(l,1/l)");
