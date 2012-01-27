@@ -3,6 +3,7 @@ package lpn.parser;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -51,15 +52,12 @@ public class Transition {
 	
 	private int index;
 	
-	// TODO: (temp) Set local here.
-	private boolean local = true;
-	
-	private int[] presetIndex;
-	
-	private int[] postsetIndex;
+	private boolean sticky;
+
+	private boolean local;
 	
 	// TODO: Sort LPNs that share variables in the assignedVarSet of this transition. 
-	public List<LhpnFile> dstLpnList = new ArrayList<LhpnFile>();
+	private List<LhpnFile> dstLpnList = new ArrayList<LhpnFile>();
 
 	public Transition(String name, ArrayList<Variable> variables, LhpnFile lhpn) {
 		this.name = name;
@@ -74,6 +72,7 @@ public class Transition {
 		contAssignTrees = new HashMap<String, ExprTree>();
 		rateAssignments = new HashMap<String, String>();
 		rateAssignTrees = new HashMap<String, ExprTree>();
+		sticky = false;
 	}
 	
 	public Transition(String name, int index, ArrayList<Variable> variables, LhpnFile lhpn, boolean local) {
@@ -91,6 +90,7 @@ public class Transition {
 		contAssignTrees = new HashMap<String, ExprTree>();
 		rateAssignments = new HashMap<String, String>();
 		rateAssignTrees = new HashMap<String, ExprTree>();
+		sticky = false;
 	}
 
 	public Transition() {
@@ -746,8 +746,15 @@ public class Transition {
     }
 
 	public boolean local() {
-		// TODO (!) Returns true if LPNTran only modifies non-output variables.
-		return true;
+		// Returns true if LPNTran only modifies non-output variables.
+		boolean isLocal = true;
+		for (Iterator<String> assignVarsIter = this.getAssignments().keySet().iterator(); assignVarsIter.hasNext();) {
+			if (!this.getLpn().getAllInternals().keySet().contains(assignVarsIter.next())) {
+				isLocal = false;
+				break;
+			}
+		}
+		return isLocal;
 	}
 	
 	public List<LhpnFile> getDstLpnList(){
@@ -762,12 +769,69 @@ public class Transition {
     	return this.lhpn.getLabel() + ":" + this.name;
     }
 
-	public Transition disablingError(LinkedList<Transition> curEnabled_l,
-			LinkedList<Transition> nextEnabled) {
-		// TODO (??) Search for disabled transitions
+    /**
+	 * Check if firing 'fired_transition' causes a disabling error.
+	 * @param current_enabled_transitions
+	 * @param next_enabled_transitions
+	 * @return
+	 */
+	public Transition disablingError(final LinkedList<Transition> current_enabled_transitions,
+			LinkedList<Transition> next_enabled_transitions) {
+		if (current_enabled_transitions == null || current_enabled_transitions.size()==0)
+			return null;
+		for(Transition curTran : current_enabled_transitions) {
+			boolean disabled = true;
+			if (next_enabled_transitions != null && next_enabled_transitions.size()!=0) {
+				for(Transition nextTran : next_enabled_transitions) {
+					if(curTran == nextTran) {
+						disabled = false;
+						break;
+					}
+				}
+			}
+			if (disabled == true) {
+//				if(this.sharePreSet(curTran) == false)
+//				  return curTran;
+				for (Iterator<String> confIter = this.getConflictSetTransNames().iterator(); confIter.hasNext();) { 
+					String tran = confIter.next();
+					if (curTran.getConflictSetTransNames().contains(tran))
+						return curTran;
+				}
+			}
+		}
 		return null;
 	}
 
+	public void setSticky(boolean sticky) {
+		this.sticky = sticky;
+	}
+	
+	public boolean isSticky() {
+		return this.sticky;
+	}
+
+	public void setDstLpnList(LhpnFile curLPN) {
+		String[] allVars = curLPN.getVariables();
+		boolean foundLPN = false;
+		if (this.getAssignments() != null) {
+			Set<String> assignedVars = this.getAssignments().keySet();  
+			for (Iterator<String> assignedVarsIter = assignedVars.iterator(); assignedVarsIter.hasNext();) {
+				String curVar = assignedVarsIter.next();
+				for (int i=0; i<allVars.length; i++) {
+					if (curVar.equals(allVars[i]) && !this.dstLpnList.contains(curLPN)) {
+						this.dstLpnList.add(curLPN);
+						foundLPN = true;
+						break;
+					}
+				}
+				if (foundLPN) 
+					break;
+			}
+			
+		}
+		
+		
+	}
 
 	/* Maybe copy method below is not needed.
 	public Transition copy(HashMap<String, VarNode> variables){
