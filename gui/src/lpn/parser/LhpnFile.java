@@ -1114,12 +1114,23 @@ public class LhpnFile {
 	}
 	
 	public HashMap<String, String> getAllVarsAndValues(int[] varValueVector) {
-		DualHashMap<String, Integer> varIndexMap = getVarIndexMap();
+		DualHashMap<String, Integer> varIndexMap = this.getVarIndexMap();
 		HashMap<String, String> varToValueMap = new HashMap<String, String>();
 		// varValue is map between variable names and their values. 
 		for (int i = 0; i < varValueVector.length; i++) {
 			String var = varIndexMap.getKey(i);
 			varToValueMap.put(var, varValueVector[i] + "");
+		}	
+		return varToValueMap;
+	}
+	
+	public HashMap<String, Integer> getAllVarsWithValues(int[] varValueVector) {
+		DualHashMap<String, Integer> varIndexMap = this.getVarIndexMap();
+		HashMap<String, Integer> varToValueMap = new HashMap<String, Integer>();
+		// varValue is map between variable names and their values. 
+		for (int i = 0; i < varValueVector.length; i++) {
+			String var = varIndexMap.getKey(i);
+			varToValueMap.put(var, varValueVector[i]);
 		}	
 		return varToValueMap;
 	}
