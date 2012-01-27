@@ -56,6 +56,17 @@ public class Abstraction extends LhpnFile {
 		variables = lhpn.variables;
 		properties = lhpn.properties;
 	}
+	
+	public Abstraction(LhpnFile lhpn) {
+		super(lhpn.log);
+		transitions = lhpn.transitions;
+		places = lhpn.places;
+		booleans = lhpn.booleans;
+		continuous = lhpn.continuous;
+		integers = lhpn.integers;
+		variables = lhpn.variables;
+		properties = lhpn.properties;
+	}
 
 	public void abstractSTG(boolean print) {
 		long start = System.nanoTime();
@@ -2639,7 +2650,73 @@ public class Abstraction extends LhpnFile {
 		return change;
 	}
 
-	private boolean divideProcesses() {
+//	public boolean divideProcesses() {
+//		for (Transition t : transitions.values()) { // Add all transitions to
+//			// process structure
+//			process_trans.put(t, 0);
+//		}
+//		for (String v : booleans.keySet()) { // / Add All variables to process
+//			// structure
+//			process_write.put(v, 0);
+//			process_read.put(v, 0);
+//		}
+//		for (String v : continuous.keySet()) {
+//			process_write.put(v, 0);
+//			process_read.put(v, 0);
+//		}
+//		for (String v : integers.keySet()) {
+//			process_write.put(v, 0);
+//			process_read.put(v, 0);
+//		}
+//		Integer i = 1; // The total number of processes
+//		Integer process = 1; // The active process number
+//		while (process_trans.containsValue(0)) {
+//			Transition new_proc = new Transition(); // Find a transition that is
+//			// not part of a process
+//			for (Transition t : process_trans.keySet()) {
+//				if (process_trans.get(t) == 0) {
+//					new_proc = t;
+//					break;
+//				}
+//			}
+//			boolean flag = false; // Make sure that it is not part of a process
+//			for (Place p : new_proc.getPreset()) {
+//				if (!flag) // Check the preset to see if it is part of a process
+//					for (Transition t : p.getPreset()) {
+//						if (!flag)
+//							if (process_trans.get(t) != 0) {
+//								flag = true;
+//								process = process_trans.get(t);
+//								break;
+//							}
+//					}
+//			}
+//			if (!flag) // Check the postset to see if it is part of a process
+//				for (Place p : new_proc.getPostset()) {
+//					if (!flag)
+//						for (Transition t : p.getPostset()) {
+//							if (!flag)
+//								if (process_trans.get(t) != 0) {
+//									flag = true;
+//									process = process_trans.get(t);
+//									break;
+//								}
+//						}
+//				}
+//			if (!flag) {
+//				i++; // Increment the process counter if it is not part of a
+//				// process
+//				process = i;
+//			}
+//			if (!addTransProcess(new_proc, process))
+//				return false;
+//		}
+//		assignVariableProcess();
+//		return true;
+//	}
+	
+	// Modified divideProcesses
+	public boolean divideProcesses() {
 		for (Transition t : transitions.values()) { // Add all transitions to
 			// process structure
 			process_trans.put(t, 0);
@@ -2703,8 +2780,12 @@ public class Abstraction extends LhpnFile {
 		assignVariableProcess();
 		return true;
 	}
+	
+	public HashMap<Transition, Integer> getProcessTrans() {
+		return process_trans;
+	}
 
-	private void assignVariableProcess() {
+	public void assignVariableProcess() {
 		for (Transition t : transitions.values()) { // For each
 			// transition with assignments
 			HashMap<String, String> assignments = t.getAssignments();
@@ -2746,7 +2827,7 @@ public class Abstraction extends LhpnFile {
 		}
 	}
 
-	private boolean addTransProcess(Transition trans, Integer proc) {
+	public boolean addTransProcess(Transition trans, Integer proc) {
 		process_trans.put(trans, proc); // Add the current transition to the
 		// process
 		for (Place p : trans.getPostset()) {
