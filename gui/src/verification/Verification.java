@@ -1,16 +1,16 @@
 package verification;
 
-import javax.swing.*;
-
-import verification.platu.project.Project;
-import verification.platu.stategraph.StateGraph;
-import verification.timed_state_exploration.StateExploration;
-
-import biomodel.gui.PropertyList;
-import biomodel.util.Utility;
-
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.AWTError;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,14 +22,43 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Properties;
-import java.util.prefs.Preferences;
-import java.util.regex.*;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Properties;
+import java.util.Set;
+import java.util.prefs.Preferences;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JProgressBar;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import lpn.parser.Abstraction;
 import lpn.parser.LhpnFile;
-import main.*;
+import lpn.parser.Place;
+import lpn.parser.Transition;
+import main.Gui;
+import main.Log;
+import verification.platu.logicAnalysis.LpnProcess;
+import verification.platu.project.Project;
+import verification.platu.stategraph.StateGraph;
+import biomodel.gui.PropertyList;
+import biomodel.util.Utility;
 
 
 
@@ -46,7 +75,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 	private static final long serialVersionUID = -5806315070287184299L;
 
 	private JButton save, run, viewCircuit, viewTrace, viewLog, addComponent,
-			removeComponent, addSFile;
+			removeComponent, addSFile, addLPN, removeLPN;
 
 	private JLabel algorithm, timingMethod, timingOptions, otherOptions,
 			otherOptions2, compilation, bddSizeLabel, advTiming, abstractLabel,
@@ -56,12 +85,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			vergate, orbits, search, trace, bdd, dbm, smt, untimedStateSearch, lhpn, view, none,
 			simplify, abstractLhpn, dbm2;
 
-	private JCheckBox abst, partialOrder, dot, verbose, graph, untimedPOR, genrg,
+	private JCheckBox abst, partialOrder, dot, verbose, graph, untimedPOR, decomposeLPN, multipleLPNs, genrg,
 			timsubset, superset, infopt, orbmatch, interleav, prune, disabling,
 			nofail, noproj, keepgoing, explpn, nochecks, reduction, newTab,
 			postProc, redCheck, xForm2, expandRate;
 
-	private JTextField bddSize, backgroundField, componentField, preprocStr;
+	private JTextField bddSize, backgroundField, componentField;
 	
 	private JList sList;
 	
@@ -76,7 +105,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	private boolean change, atacs, lema;
 
-	private PropertyList componentList;
+	private PropertyList componentList, lpnList;
 
 	private AbstPane abstPane;
 
@@ -143,6 +172,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		oldBdd = bddSize.getText();
 		componentField = new JTextField("");
 		componentList = new PropertyList("");
+		lpnList = new PropertyList("");
 
 		abstractLabel = new JLabel("Abstraction:");
 		algorithm = new JLabel("Verification Algorithm:");
@@ -216,10 +246,14 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		verbose = new JCheckBox("Verbose");
 		graph = new JCheckBox("Show State Graph");
 		untimedPOR = new JCheckBox("Use Partial Orders");
+		decomposeLPN = new JCheckBox("Decompose LPN into modules");
+		multipleLPNs = new JCheckBox("Multiple LPNs");
 		dot.addActionListener(this);
 		verbose.addActionListener(this);
 		graph.addActionListener(this);
 		untimedPOR.addActionListener(this);
+		decomposeLPN.addActionListener(this);
+		multipleLPNs.addActionListener(this);
 		// Verification Algorithms
 		verify = new JRadioButton("Verify");
 		vergate = new JRadioButton("Verify Gates");
@@ -280,6 +314,16 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				componentList, addComponent, removeComponent, null);
 		constraints.gridx = 0;
 		constraints.gridy = 1;
+		
+		// LPN List
+		addLPN = new JButton("Add LPN");
+		removeLPN = new JButton("Remove LPN");
+		//divideLPN1 = new JButton("Divide LPN into Modules");
+		GridBagConstraints gridBagConstraints = new GridBagConstraints();
+		JPanel LPNPanel = Utility.createPanel(this, "LPNs",
+				lpnList, addLPN, removeLPN, null);
+		gridBagConstraints.gridx = 0;
+		gridBagConstraints.gridy = 1;
 
 		abstractionGroup = new ButtonGroup();
 		timingMethodGroup = new ButtonGroup();
@@ -354,6 +398,8 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		otherPanel.add(verbose);
 		otherPanel.add(graph);
 		otherPanel.add(untimedPOR);
+		otherPanel.add(decomposeLPN);
+		otherPanel.add(multipleLPNs);
 
 		preprocPanel.add(labelPane);
 		preprocPanel.add(scrollPane);
@@ -417,6 +463,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				componentList.addItem(load.getProperty("verification.compList"
 						+ i.toString()));
 				i++;
+			}
+			Integer k = 0;
+			while (load.containsKey("verification.lpnList" + k.toString())) {
+				lpnList.addItem(load.getProperty("verification.lpnList" + k.toString()));
+				k++;
 			}
 			if (load.containsKey("verification.abstraction")) {
 				if (load.getProperty("verification.abstraction").equals("none")) {
@@ -506,6 +557,16 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			if (load.containsKey("verification.UntimedPOR")) {
 				if (load.getProperty("verification.UntimedPOR").equals("true")) {
 					untimedPOR.setSelected(true);
+				}
+			}
+			if (load.containsKey("verification.DecomposeLPN")) {
+				if (load.getProperty("verification.DecomposeLPN").equals("true")) {
+					decomposeLPN.setSelected(true);
+				}
+			}
+			if (load.containsKey("verification.MultipleLPNs")) {
+				if (load.getProperty("verification.MultipleLPN").equals("true")) {
+					multipleLPNs.setSelected(true);
 				}
 			}
 			if (load.containsKey("verification.partial.order")) {
@@ -837,6 +898,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		if (verifyFile.endsWith(".vhd")) {
 			basicOptions.add(componentPanel);
 		}
+		if (verifyFile.endsWith(".lpn")) {
+			basicOptions.add(LPNPanel);
+		}
 		basicOptions.setLayout(new BoxLayout(basicOptions, BoxLayout.Y_AXIS));
 		basicOptions.add(Box.createVerticalGlue());
 
@@ -933,9 +997,91 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				JOptionPane.showMessageDialog(this, "Invalid filename entered.",
 						"Error", JOptionPane.ERROR_MESSAGE);
 			}
+		} else if (e.getSource() == addLPN) {
+			String[] lpnFiles = new File(root).list();
+			ArrayList<String> tempFiles = new ArrayList<String>();
+			for (int i = 0; i < lpnFiles.length; i++) {
+				if (lpnFiles[i].endsWith(".lpn")
+						&& !lpnFiles[i].equals(sourceFileNoPath)) {
+					tempFiles.add(lpnFiles[i]);
+				}
+			}
+			lpnFiles = new String[tempFiles.size()];
+			for (int i = 0; i < lpnFiles.length; i++) {
+				lpnFiles[i] = tempFiles.get(i);
+			}
+			String filename = (String) JOptionPane.showInputDialog(this, "",
+					"Select LPN", JOptionPane.PLAIN_MESSAGE, null,
+					lpnFiles, lpnFiles[0]);
+			if (filename != null) {
+				String[] lpns = lpnList.getItems();
+				boolean contains = false;
+				for (int i = 0; i < lpns.length; i++) {
+					if (lpns[i].equals(filename)) {
+						contains = true;
+					}
+				}
+				if (!filename.endsWith(".lpn")) {
+					JOptionPane.showMessageDialog(Gui.frame,
+							"You must select a valid LPN file.", "Error",
+							JOptionPane.ERROR_MESSAGE);
+					return;
+				} else if (new File(directory + separator + filename).exists()
+						|| filename.equals(sourceFileNoPath) || contains) {
+					JOptionPane
+							.showMessageDialog(
+									Gui.frame,
+									"This lpn is already contained in this tool.",
+									"Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				lpnList.addItem(filename);
+				return;
+			}
 		}
+		else if (e.getSource() == removeLPN) {
+			if (lpnList.getSelectedValue() != null) {
+				String selected = lpnList.getSelectedValue().toString();
+				lpnList.removeItem(selected);
+				new File(directory + separator + selected).delete();
+			}
+		}
+//		else if (e.getSource() == divideLPN1) {
+//			if (lpnList.getSelectedValue() != null && lpnList.getSelectedValues().length == 1) {
+//				HashMap<Transition, Integer> allProcessTrans = new HashMap<Transition, Integer>();
+//				for (int i=0; i < lpnList.getSelectedValues().length; i++) {
+//					 String curLPNname = (String) lpnList.getSelectedValues()[i];
+//					 LhpnFile curLPN = new LhpnFile();
+//					 curLPN.load(directory + separator + curLPNname);
+//					 // create an Abstraction object to get all processes in one LPN
+//					 Abstraction abs = curLPN.abstractLhpn(this);
+//					 abs.divideProcesses();
+//					 allProcessTrans.putAll(
+//							 (HashMap<Transition, Integer>)abs.getProcessTrans().clone());
+//				}
+//				printAllProcesses(allProcessTrans);
+//				
+//			}
+//			else if (lpnList.getSelectedValue() != null && lpnList.getSelectedValues().length != 1) {
+//				JOptionPane.showMessageDialog(
+//						Gui.frame,
+//						"Only one LPN is allowed to be divided each time",
+//						"Error", JOptionPane.ERROR_MESSAGE);				
+//			}
+//		}
 	}
 
+	private void printAllProcesses(HashMap<Transition, Integer> allProcessTrans) {		
+		System.out.println("~~~~~~~~~~Begin~~~~~~~~~");
+		Set<Transition> allTransitions = allProcessTrans.keySet();
+		for (Iterator<Transition> allTransIter = allTransitions.iterator(); allTransIter.hasNext();) {
+			Transition curTran = allTransIter.next();			
+			System.out.println(curTran.getName() + "\t" + allProcessTrans.get(curTran));
+		}
+		System.out.println("~~~~~~~~~~End~~~~~~~~~");
+	}
+
+	@SuppressWarnings("unchecked")
 	public void run() {
 		copyFile();
 		String[] array = directory.split(separator);
@@ -950,21 +1096,107 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		if (untimedStateSearch.isSelected()) {
 			LhpnFile lpn = new LhpnFile();
 			lpn.load(directory + separator + lpnFile);
-			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";			
-			Project untimedStateSearch = new Project(lpn);
-			boolean usePOR = false;
-			if (untimedPOR.isSelected()) {
-				usePOR = true;
+			if (!decomposeLPN.isSelected() && !multipleLPNs.isSelected() && lpnList.getSelectedValue() == null) {			
+				Project untimedStateSearch = new Project(lpn);
+				if (untimedPOR.isSelected()) {
+					StateGraph stateGraph = untimedStateSearch.searchWithPOR();
+					if (dot.isSelected()) {
+						String graphFileName = verifyFile.replace(".lpn", "") + "POR_sg.dot";			
+						stateGraph.outputStateGraph(directory + separator + graphFileName);				
+					}
+				}
+				else {
+					// The full state graph is created for only one LPN.
+					StateGraph[] stateGraphArray = untimedStateSearch.search();
+					String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
+					if (stateGraphArray.length > 1) {
+						JOptionPane.showMessageDialog(
+								Gui.frame,
+								"Mutiple state graphs should not be produced.",
+								"Error", JOptionPane.ERROR_MESSAGE);		
+						
+					}
+					else {
+						if (dot.isSelected()) {
+							stateGraphArray[0].outputStateGraph(directory + separator + graphFileName);  
+						}
+					}
+				}
+				return;
 			}
-			StateGraph stateGraph = untimedStateSearch.search(usePOR);
-			if (dot.isSelected()) {
-				if (usePOR) {
-					graphFileName = verifyFile.replace(".lpn", "") + "POR_sg.dot";
-				}			
-				stateGraph.outputStateGraph(directory + separator + graphFileName);				
+			else if (!untimedPOR.isSelected() && !multipleLPNs.isSelected() && decomposeLPN.isSelected() && lpnList.getSelectedValue() == null) {
+				 //TODO: Decompose the current LPN into modules, save them in the current directory (under verification view), and display them. 
+				 HashMap<Transition, Integer> allProcessTrans = new HashMap<Transition, Integer>();
+				 // create an Abstraction object to get all processes in one LPN
+				 Abstraction abs = lpn.abstractLhpn(this);
+				 abs.divideProcesses();
+				 allProcessTrans.putAll((HashMap<Transition, Integer>)abs.getProcessTrans().clone());
+				 HashMap<Integer, LpnProcess> processMap = new HashMap<Integer, LpnProcess>();
+				 for (Iterator<Transition> tranIter = allProcessTrans.keySet().iterator(); tranIter.hasNext();) {
+					Transition curTran = tranIter.next();
+					Integer procId = allProcessTrans.get(curTran);
+					if (!processMap.containsKey(procId)) {
+						LpnProcess newProcess = new LpnProcess(procId);
+						newProcess.addTranToProcess(curTran);
+						if (curTran.getPreset() != null) {
+							Place[] preset = curTran.getPreset();
+							for (Place p : preset) {
+								newProcess.addPlaceToProcess(p);
+							}
+						}
+						processMap.put(procId, newProcess);
+					}
+					else {
+						LpnProcess curProcess = processMap.get(procId);
+						curProcess.addTranToProcess(curTran);
+						if (curTran.getPreset() != null) {
+							Place[] preset = curTran.getPreset();
+							for (Place p : preset) {
+								curProcess.addPlaceToProcess(p);
+							}
+						}
+						
+					}
+				}
+				
+				return;
 			}
-			return;
+			else if (!decomposeLPN.isSelected() && multipleLPNs.isSelected() && lpnList.getSelectedValues().length > 0) {
+				// User has already hand-picked the LPNs. Send the batch of LPNs to the dfs search. 
+				ArrayList<LhpnFile> selectedLPNs = new ArrayList<LhpnFile>();
+				selectedLPNs.add(lpn);
+				for (int i=0; i < lpnList.getSelectedValues().length; i++) {
+					 String curLPNname = (String) lpnList.getSelectedValues()[i];
+					 LhpnFile curLPN = new LhpnFile();
+					 curLPN.load(directory + separator + curLPNname);
+					 selectedLPNs.add(curLPN);
+				}
+				Project untimedStateSearch = new Project(selectedLPNs);
+				if (untimedPOR.isSelected()) {
+					JOptionPane.showMessageDialog(
+							Gui.frame,
+							"Partial order reductions can only be performed on a single LPN",
+							"Error", JOptionPane.ERROR_MESSAGE);
+					return;
+				}
+				StateGraph[] stateGraphArray = untimedStateSearch.search();
+				if (dot.isSelected()) {
+					for (int i=0; i<stateGraphArray.length; i++) {
+						String graphFileName = stateGraphArray[i].getLpn().getLabel() + "_sg.dot";
+						stateGraphArray[i].outputStateGraph(directory + separator + graphFileName);
+					}
+				}
+				return;
+			}
+			else if (!untimedPOR.isSelected() && !decomposeLPN.isSelected() && multipleLPNs.isSelected() && lpnList.getSelectedValues().length < 1) {
+				JOptionPane.showMessageDialog(
+						Gui.frame,
+						"Please select at least 1 more LPN.",
+						"Error", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
 		}
+			
 		long time1 = System.nanoTime();
 		File work = new File(directory);
 		/*
@@ -1130,6 +1362,27 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							JOptionPane.ERROR_MESSAGE);
 				}
 			}
+			for (String s : lpnList.getItems()) {
+				try {
+					FileInputStream in = new FileInputStream(new File(root
+							+ separator + s));
+					FileOutputStream out = new FileOutputStream(new File(
+							directory + separator + s));
+					int read = in.read();
+					while (read != -1) {
+						out.write(read);
+						read = in.read();
+					}
+					in.close();
+					out.close();
+				} catch (IOException e1) {
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(Gui.frame,
+							"Cannot update the file " + s + ".", "Error",
+							JOptionPane.ERROR_MESSAGE);
+				}
+			}
+			
 			String options = "";
 			// BDD Linkspace Size
 			if (!bddSize.getText().equals("") && !bddSize.getText().equals("0")) {
@@ -1614,6 +1867,19 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							components[i]);
 				}
 			}
+			String[] lpns = lpnList.getItems();
+			if (lpns.length == 0) {
+				for (Object s : prop.keySet()) {
+					if (s.toString().startsWith("verification.lpnList")) {
+						prop.remove(s);
+					}
+				}
+			} else {
+				for (Integer i = 0; i < lpns.length; i++) {
+					prop.setProperty("verification.lpnList" + i.toString(),
+							lpns[i]);
+				}
+			}
 			if (none.isSelected()) {
 				prop.setProperty("verification.abstraction", "none");
 			} else if (simplify.isSelected()) {
@@ -1685,6 +1951,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				prop.setProperty("verification.UntimedPOR", "true");
 			} else {
 				prop.setProperty("verification.UntimedPOR", "false");
+			}
+			if (decomposeLPN.isSelected()) {
+				prop.setProperty("verification.DecomposeLPN", "true");
+			} else {
+				prop.setProperty("verification.DecomposeLPN", "false");
 			}
 			if (verify.isSelected()) {
 				prop.setProperty("verification.algorithm", "verify");
@@ -1886,6 +2157,27 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				e1.printStackTrace();
 				JOptionPane.showMessageDialog(Gui.frame,
 						"Cannot add the selected component.", "Error",
+						JOptionPane.ERROR_MESSAGE);
+			}
+		}
+		for (String s : lpnList.getItems()) {
+			try {
+				new File(directory + separator + s).createNewFile();
+				FileInputStream in = new FileInputStream(new File(root
+						+ separator + s));
+				FileOutputStream out = new FileOutputStream(new File(directory
+						+ separator + s));
+				int read = in.read();
+				while (read != -1) {
+					out.write(read);
+					read = in.read();
+				}
+				in.close();
+				out.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+				JOptionPane.showMessageDialog(Gui.frame,
+						"Cannot add the selected LPN.", "Error",
 						JOptionPane.ERROR_MESSAGE);
 			}
 		}
