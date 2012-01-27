@@ -53,12 +53,12 @@ public class TimingAnalysis {
 		// Adjust the value of the input variables in LPN in the initial state.
 		for (int index = 0; index < ArraySize; index++) {
 			StateGraph curLpn = SgArray[index];
-			initStateArray[index].update(varValMap, curLpn.getLpn().getVarIndexMap());
+			initStateArray[index].update(curLpn,varValMap, curLpn.getLpn().getVarIndexMap());
 			initStateArray[index] = curLpn.addState(initStateArray[index]);
 			enabledList.add(index, curLpn.getEnabled(initStateArray[index]));
 		}
 
-		if (Analysis.deadLock(SgArray, initStateArray, false, null, null, null) == true) {
+		if (Analysis.deadLock(SgArray, initStateArray) == true) {
 			System.err
 					.println("Verification failed: deadlock in the initial state.");
 			return;
