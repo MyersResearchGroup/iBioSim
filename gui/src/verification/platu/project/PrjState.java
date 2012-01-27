@@ -2,6 +2,7 @@ package verification.platu.project;
 
 import java.util.*;
 
+import lpn.parser.LhpnFile;
 import lpn.parser.Transition;
 
 import verification.platu.lpn.*;
@@ -93,14 +94,24 @@ public class PrjState {
 		return line;
 //            return toList(stateArray).toString();
 	}
-	public void print(final LPN[] lpnList) {
+//	public void print(final LPN[] lpnList) {
+//		for(int i = 0; i < stateArray.length; i++) {
+//			System.out.print(i +": ");
+//			stateArray[i].print(lpnList[i].getVarIndexMap());
+//			System.out.println();
+//		}
+//	}
+	
+	public void print(final LhpnFile[] lpnList) {
 		for(int i = 0; i < stateArray.length; i++) {
-			System.out.print(i +": ");
-			stateArray[i].print(lpnList[i].getVarIndexMap());
+			System.out.println(lpnList[i].getLabel() + ".lpn" +": ");
+			//stateArray[i].print(lpnList[i].getVarIndexMap());
+			stateArray[i].print(lpnList[i]);
 			System.out.println();
 		}
 	}
-          public static final Collection<Object> toList(Object[] arr) {
+	
+    public static final Collection<Object> toList(Object[] arr) {
         Set<Object> l = new HashSet<Object>(1);
         l.addAll(Arrays.asList(arr));
         return l;
