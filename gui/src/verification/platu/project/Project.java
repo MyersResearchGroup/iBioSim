@@ -43,7 +43,7 @@ public class Project {
 	public Project() {
 		this.label = "";
 		this.designUnitSet = new ArrayList<StateGraph>(1);
-		//lpnTranRelation = new LPNTranRelation(this.designUnitSet);
+		lpnTranRelation = new LPNTranRelation(this.designUnitSet);
 	}
   	
 	public Project(LhpnFile lpn) {
@@ -54,26 +54,36 @@ public class Project {
 		//stateGraph.printStates();
 	}
 
+	public Project(ArrayList<LhpnFile> lpns) {
+		this.label = "";
+		this.designUnitSet = new ArrayList<StateGraph>(lpns.size());
+		for (int i=0; i<lpns.size(); i++) {
+			LhpnFile lpn = lpns.get(i);
+			StateGraph stateGraph = new StateGraph(lpn);
+			designUnitSet.add(stateGraph);
+		}		
+	}
+
 	/**
 	 * Find the SG for the entire project where each project state is a tuple of
 	 * local states
 	 * 
 	 */
-	public void search() {	
+	public StateGraph[] search() {	
 		validateInputs();
 		
-		if(Options.getSearchType().equals("compositional")){
-    		this.analysis = new CompositionalAnalysis();
-			
-			if(Options.getParallelFlag()){
-				this.analysis.parallelCompositionalFindSG(this.designUnitSet);
-			}
-			else{
-				this.analysis.findReducedSG(this.designUnitSet);
-			}
-			
-			return;
-		}
+//		if(Options.getSearchType().equals("compositional")){
+//    		this.analysis = new CompositionalAnalysis();
+//			
+//			if(Options.getParallelFlag()){
+//				this.analysis.parallelCompositionalFindSG(this.designUnitSet);
+//			}
+//			else{
+//				this.analysis.findReducedSG(this.designUnitSet);
+//			}
+//			
+//			return;
+//		}
 	    
 		long start = System.currentTimeMillis(); 
 		int lpnCnt = designUnitSet.size();
@@ -96,11 +106,12 @@ public class Project {
 			StateGraph curSg = sgArray[index];
 			initStateArray[index] = curSg.getInitState(); //curLpn.getInitState();
 			int[] curStateVector = initStateArray[index].getVector();
-			HashMap<String, String> outVars = curLpn.getAllOutputs();
-			DualHashMap<String, Integer> VarIndexMap = curLpn.getVarIndexMap();
-			for(String var : outVars.keySet()) {
-				varValMap.put(var, curStateVector[VarIndexMap.getValue(var)]);
-			}
+			varValMap = curLpn.getAllVarsWithValues(curStateVector);
+//			HashMap<String, String> vars = curLpn.getAllOutputs();//curLpn.getAllOutputs();
+//			DualHashMap<String, Integer> VarIndexMap = curLpn.getVarIndexMap();
+//			for(String var : vars.keySet()) {
+//				varValMap.put(var, curStateVector[VarIndexMap.getValue(var)]);
+//			}
 			
 		}
 
@@ -108,32 +119,36 @@ public class Project {
 		// Adjust the value of the input variables in LPN in the initial state.
 		// Add the initial states into their respective LPN.
 		for (int index = 0; index < lpnCnt; index++) {
-			StateGraph curLpn = sgArray[index];
-			initStateArray[index].update(varValMap, curLpn.getLpn().getVarIndexMap());
-			initStateArray[index] = curLpn.addState(initStateArray[index]);
-			
+			StateGraph curSg = sgArray[index];
+			initStateArray[index].update(curSg, varValMap, curSg.getLpn().getVarIndexMap());
+			initStateArray[index] = curSg.addState(initStateArray[index]);			
 		}		
 		
-		if (Options.getTimingAnalysisFlag()) {
-			new TimingAnalysis(sgArray); 
-			return;
-		}
-		else if(!Options.getTimingAnalysisFlag()) {
-			Analysis tmp = new Analysis(sgArray, initStateArray, lpnTranRelation, Options.getSearchType());
-			// Analysis tmp = new Analysis(lpnList, curStateArray,
-			// lpnTranRelation, "dfs_por");
-			//Analysis tmp = new Analysis(modArray, initStateArray, lpnTranRelation, "dfs");
-			//Analysis tmp = new Analysis(modArray, initStateArray, lpnTranRelation, "dfs_noDisabling");
-		}
-		else {
-			System.out.println("---> Error: wrong value for option 'timingAnalysis'");
-			return;
-		}
+//		if (Options.getTimingAnalysisFlag()) {
+//			new TimingAnalysis(sgArray); 
+//			return;
+//		}
+//		else if(!Options.getTimingAnalysisFlag()) {
+//			Analysis tmp = new Analysis(sgArray, initStateArray, lpnTranRelation, Options.getSearchType());
+//			// Analysis tmp = new Analysis(lpnList, curStateArray,
+//			// lpnTranRelation, "dfs_por");
+//			//Analysis tmp = new Analysis(modArray, initStateArray, lpnTranRelation, "dfs");
+//			//Analysis tmp = new Analysis(modArray, initStateArray, lpnTranRelation, "dfs_noDisabling");
+//		}
+//		else {
+//			System.out.println("---> Error: wrong value for option 'timingAnalysis'");
+//			return;
+//		}
+		
+		Analysis dfsStateExploration = new Analysis(sgArray);
+		StateGraph[] stateGraphArray = dfsStateExploration.search_dfs(sgArray, initStateArray);
 		
 		long elapsedTimeMillis = System.currentTimeMillis() - start; 
 		float elapsedTimeSec = elapsedTimeMillis/1000F;
 		
 		System.out.println("---> total runtime: " + elapsedTimeSec + " sec\n");
+		
+		return stateGraphArray;
 	}
 
 	public Set<LPN> readLpn(final String src_file) {
@@ -166,7 +181,7 @@ public class Project {
 	 * @return 
 	 * 
 	 */
-	public StateGraph search(boolean applyPOR) {	
+	public StateGraph searchWithPOR() {	
 		validateInputs();
 //		
 //		if(Options.getSearchType().equals("compositional")){
@@ -203,12 +218,12 @@ public class Project {
 			StateGraph curSg = sgArray[index];
 			initStateArray[index] = curSg.getInitState(); //curLpn.getInitState();
 			int[] curStateVector = initStateArray[index].getVector();
-			HashMap<String, String> outVars = curLpn.getAllOutputs();
-			DualHashMap<String, Integer> VarIndexMap = curLpn.getVarIndexMap();
-			for(String var : outVars.keySet()) {
-				varValMap.put(var, curStateVector[VarIndexMap.getValue(var)]);
-			}
-			
+			varValMap = curLpn.getAllVarsWithValues(curStateVector);
+//			DualHashMap<String, Integer> VarIndexMap = curLpn.getVarIndexMap();
+//			HashMap<String, String> outVars = curLpn.getAllOutputs();		
+//			for(String var : outVars.keySet()) {
+//				varValMap.put(var, curStateVector[VarIndexMap.getValue(var)]);
+//			}
 		}
 
 		// TODO: (future) Need to adjust the transition vector as well?
@@ -216,14 +231,14 @@ public class Project {
 		// Add the initial states into their respective LPN.
 		for (int index = 0; index < lpnCnt; index++) {
 			StateGraph curLpn = sgArray[index];
-			initStateArray[index].update(varValMap, curLpn.getLpn().getVarIndexMap());
+			initStateArray[index].update(curLpn, varValMap, curLpn.getLpn().getVarIndexMap());
 			initStateArray[index] = curLpn.addState(initStateArray[index]);
 			
 		}		
 		
 		StateGraph stateGraph;
-		Analysis dfsStateExploration = new Analysis(sgArray, applyPOR);
-		stateGraph = dfsStateExploration.search_dfs(sgArray, initStateArray, applyPOR);
+		Analysis dfsStateExplorationWithPOR = new Analysis(sgArray);
+		stateGraph = dfsStateExplorationWithPOR.search_dfsWithPOR(sgArray, initStateArray);
 		
 		long elapsedTimeMillis = System.currentTimeMillis() - start; 
 		float elapsedTimeSec = elapsedTimeMillis/1000F;
