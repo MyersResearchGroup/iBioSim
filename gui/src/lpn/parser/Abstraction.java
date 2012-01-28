@@ -27,7 +27,10 @@ public class Abstraction extends LhpnFile {
 	private ArrayList<String> newestIntVars = new ArrayList<String>();
 
 	private AbstPane abstPane;
-
+	
+	public Abstraction() {
+		
+	}
 	public Abstraction(Log log, Verification pane) {
 		super(log);
 		this.abstPane = pane.getAbstPane();
@@ -2748,14 +2751,37 @@ public class Abstraction extends LhpnFile {
 			boolean flag = false; // Make sure that it is not part of a process
 			for (Place p : new_proc.getPreset()) {
 				if (!flag) // Check the preset to see if it is part of a process
-					for (Transition t : p.getPreset()) {
-						if (!flag)
-							if (process_trans.get(t) != 0) {
-								flag = true;
-								process = process_trans.get(t);
-								break;
+					if (p.getPreset().length == 0) {
+						if (new_proc.hasConflictSet()) {
+							for (Transition conflict : new_proc.getConflictSet()) {
+								if (process_trans.get(conflict) != 0) {
+									flag = true;
+									process = process_trans.get(conflict);
+									break;
+								}
 							}
+						}
 					}
+					else {
+						for (Transition t : p.getPreset()) {
+							if (!flag)
+								if (process_trans.get(t) != 0) {
+									flag = true;
+									process = process_trans.get(t);
+									break;
+								}
+								if (process_trans.get(t) == 0 && t.hasConflictSet()) {
+									for (Transition conflict : t.getConflictSet()) {
+										if (process_trans.get(conflict) != 0) {
+											flag = true;
+											process = process_trans.get(conflict);
+											break;
+										}
+									}
+								}
+						}
+					}
+					
 			}
 			if (!flag) // Check the postset to see if it is part of a process
 				for (Place p : new_proc.getPostset()) {
@@ -2781,7 +2807,7 @@ public class Abstraction extends LhpnFile {
 		return true;
 	}
 	
-	public HashMap<Transition, Integer> getProcessTrans() {
+	public HashMap<Transition, Integer> getTransWithProcIDs() {
 		return process_trans;
 	}
 
@@ -2826,11 +2852,11 @@ public class Abstraction extends LhpnFile {
 			}
 		}
 	}
-
-	public boolean addTransProcess(Transition trans, Integer proc) {
-		process_trans.put(trans, proc); // Add the current transition to the
+	
+	public boolean addTransProcess(Transition tran, Integer proc) {
+		process_trans.put(tran, proc); // Add the current transition to the
 		// process
-		for (Place p : trans.getPostset()) {
+		for (Place p : tran.getPostset()) {
 			for (Transition t : p.getPostset()) {
 				if (process_trans.get(t) == 0)
 					addTransProcess(t, proc); // Add the postset of the
@@ -2842,20 +2868,78 @@ public class Abstraction extends LhpnFile {
 				}
 			}
 		}
-		for (Place p : trans.getPreset()) {
-			for (Transition t : p.getPreset()) {
-				if (process_trans.get(t) == 0)
-					addTransProcess(t, proc); // Add the preset of the
-				// transition to the same process recursively
-				else if (process_trans.get(t) != proc) {
-					System.out
-							.println("Error: Multiple Process Labels Added to the Same Transition");
-					return false;
+		for (Place p : tran.getPreset()) {
+			if (p.getPreset().length == 0) {
+				if (tran.hasConflictSet()) {
+					for (Transition conflict : tran.getConflictSet()) {
+						if (process_trans.get(conflict) != 0 && process_trans.get(conflict) != proc) {
+							System.out
+							.println("Error: Conflicting transitions are labeled as different process transitions.");
+							return false;
+						}
+						if (process_trans.get(conflict) == 0) {
+							addTransProcess(conflict, proc);
+						}
+					}
+				}					
+			}
+			else {
+				for (Transition t : p.getPreset()) {
+					if (process_trans.get(t) == 0)
+						if (!t.hasConflictSet())
+							addTransProcess(t, proc); // Add the preset of the transition to the same process recursively
+						else {
+							for (Transition conflict : tran.getConflictSet()) {
+								if (process_trans.get(conflict) != 0 && process_trans.get(conflict) != proc) {
+									System.out
+									.println("Error: Conflicting transitions are labeled as different process transitions.");
+									return false;
+								}
+								if (process_trans.get(conflict) == 0) {
+									addTransProcess(conflict, proc);
+								}
+							}
+						}
+					else if (process_trans.get(t) != proc) {
+						System.out
+								.println("Error: Multiple Process Labels Added to the Same Transition");
+						return false;
+					}
 				}
 			}
 		}
 		return true;
 	}
+
+//	public boolean addTransProcess(Transition trans, Integer proc) {
+//		process_trans.put(trans, proc); // Add the current transition to the
+//		// process
+//		for (Place p : trans.getPostset()) {
+//			for (Transition t : p.getPostset()) {
+//				if (process_trans.get(t) == 0)
+//					addTransProcess(t, proc); // Add the postset of the
+//				// transition to the same process recursively
+//				else if (process_trans.get(t) != proc) {
+//					System.out
+//							.println("Error: Multiple Process Labels Added to the Same Transition");
+//					return false;
+//				}
+//			}
+//		}
+//		for (Place p : trans.getPreset()) {
+//			for (Transition t : p.getPreset()) {
+//				if (process_trans.get(t) == 0)
+//					addTransProcess(t, proc); // Add the preset of the
+//				// transition to the same process recursively
+//				else if (process_trans.get(t) != proc) {
+//					System.out
+//							.println("Error: Multiple Process Labels Added to the Same Transition");
+//					return false;
+//				}
+//			}
+//		}
+//		return true;
+//	}
 
 	private boolean replace(Transition trans, String var, ExprTree expr) {
 		boolean flag = false;
