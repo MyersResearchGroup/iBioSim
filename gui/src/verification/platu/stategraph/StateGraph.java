@@ -853,7 +853,7 @@ public class StateGraph {
 			}
 		}
 		*/
-		nextStateArray[this.lpn.getIndex()] = nextState;
+		nextStateArray[thisLpnIndex] = nextState;
 //    	// TODO: (original) currently this function is not implemented correctly
 		if(firedTran.local()==true) {
 //    		nextStateArray[thisLpnIndex] = curSgArray[thisLpnIndex].addState(nextState);
@@ -891,7 +891,7 @@ public class StateGraph {
 //			firedTran.getDstLpnList().add(this.lpn);
 		for(LhpnFile curLPN : firedTran.getDstLpnList()) {
         	int curIdx = curLPN.getIndex();
-			System.out.println("Checking " + curLPN.getLabel() + " " + curIdx);
+//			System.out.println("Checking " + curLPN.getLabel() + " " + curIdx);
     		State newState = curSgArray[curIdx].getNextState(curStateArray[curIdx], firedTran);
     		if(newState != null) {
     			nextStateArray[curIdx] = newState;
@@ -904,9 +904,9 @@ public class StateGraph {
         			State cachedOther = curSgArray[curIdx].addState(newOther);
 					//nextStateArray[curIdx] = newOther;
             		nextStateArray[curIdx] = cachedOther;
-        			System.out.println("ADDING TO " + curIdx + ":\n" + curStateArray[curIdx].getIndex() + ":\n" +
-        					curStateArray[curIdx].print() + firedTran.getName() + "\n" + 
-        					cachedOther.getIndex() + ":\n" + cachedOther.print());
+//        			System.out.println("ADDING TO " + curIdx + ":\n" + curStateArray[curIdx].getIndex() + ":\n" +
+//        					curStateArray[curIdx].print() + firedTran.getName() + "\n" + 
+//        					cachedOther.getIndex() + ":\n" + cachedOther.print());
             		curSgArray[curIdx].addStateTran(curStateArray[curIdx], firedTran, cachedOther);
         		}   		
         	}
