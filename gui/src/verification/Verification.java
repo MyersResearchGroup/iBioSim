@@ -1125,12 +1125,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				return;
 			}
 			else if (!untimedPOR.isSelected() && !multipleLPNs.isSelected() && decomposeLPN.isSelected() && lpnList.getSelectedValue() == null) {
-				 //TODO: Decompose the current LPN into modules, save them in the current directory (under verification view), and display them. 
+				 //TODO: Decompose the current LPN into modules, save them in the current directory (under verification view), and display them.
 				 HashMap<Transition, Integer> allProcessTrans = new HashMap<Transition, Integer>();
 				 // create an Abstraction object to get all processes in one LPN
 				 Abstraction abs = lpn.abstractLhpn(this);
 				 abs.divideProcesses();
-				 allProcessTrans.putAll((HashMap<Transition, Integer>)abs.getProcessTrans().clone());
+				 allProcessTrans.putAll((HashMap<Transition, Integer>)abs.getTransWithProcIDs().clone());
 				 HashMap<Integer, LpnProcess> processMap = new HashMap<Integer, LpnProcess>();
 				 for (Iterator<Transition> tranIter = allProcessTrans.keySet().iterator(); tranIter.hasNext();) {
 					Transition curTran = tranIter.next();
@@ -1154,10 +1154,17 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 							for (Place p : preset) {
 								curProcess.addPlaceToProcess(p);
 							}
-						}
-						
+						}			
 					}
 				}
+//				System.out.println("~~~~~~~~~processes~~~~~~~~~~");
+//				for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
+//					Integer curProcId = processMapIter.next();
+//					LpnProcess curProcess = processMap.get(curProcId);
+//					curProcess.print();					
+//				}
+//				System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+				
 				
 				return;
 			}
