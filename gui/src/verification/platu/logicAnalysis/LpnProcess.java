@@ -1,18 +1,16 @@
 package verification.platu.logicAnalysis;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Random;
 
-import verification.platu.lpn.DualHashMap;
-
-import lpn.parser.LhpnFile;
+import lpn.parser.Abstraction;
 import lpn.parser.Place;
 import lpn.parser.Transition;
+import verification.platu.lpn.DualHashMap;
 
-public class LpnProcess extends LhpnFile {
+public class LpnProcess extends Abstraction {
 	
 	private LinkedList<Transition> processTrans = new LinkedList<Transition>();
 	private LinkedList<Place> processPlaces = new LinkedList<Place>();
@@ -22,7 +20,7 @@ public class LpnProcess extends LhpnFile {
 		id = procId;
 	}
 	
-	private int getLpnProcessId() {
+	private int getProcessId() {
 		return id;
 	}
 
@@ -39,6 +37,7 @@ public class LpnProcess extends LhpnFile {
 	 * sufficient to break the cycle. However, Floyd’s all-pairs shortest-path algorithm (binary) is used to find additional transition(s) that can
 	 * help to cut the cycle(s).
 	 */
+	@SuppressWarnings("unchecked")
 	public void assignStickyTransitions() {
 		// Assign transition(s) with marked post to be sticky
 		for (Place p : processPlaces) {
@@ -60,7 +59,6 @@ public class LpnProcess extends LhpnFile {
 				}
 			}
 		}		
-		@SuppressWarnings("unchecked")
 		LinkedList<Transition> processTransCopy = (LinkedList<Transition>) processTrans.clone();
 		LinkedList<Transition> transToRemove = new LinkedList<Transition>();
 		DualHashMap<Transition, Integer> tranIndexInMatrixMap = new DualHashMap<Transition, Integer>();
@@ -138,12 +136,34 @@ public class LpnProcess extends LhpnFile {
 
 	public void printProcWithStickyTrans() {
 		System.out.println("*******Sticky Transitions*******");
-		System.out.println("Process ID:" + this.getLpnProcessId());
+		System.out.println("Process ID:" + this.getProcessId());
 		for (int i=0; i < this.processTrans.size(); i++) {
 			if (processTrans.get(i).isSticky()) {
 				System.out.println(processTrans.get(i).getName());
 			}
 		}
 		System.out.println("********************");
+	}
+
+	public void print() {
+		System.out.print("Process ID: " + this.getProcessId() + "\t");
+		LinkedList<Transition> trans = this.getProcessTransitions();
+		for (Iterator<Transition> transIter = trans.iterator(); transIter.hasNext();) {
+			System.out.print(transIter.next() + " ");
+		}
+		LinkedList<Place> places = this.getProcessPlaces();
+		for (Iterator<Place> placesIter = places.iterator(); placesIter.hasNext();) {
+			System.out.print(placesIter.next() + " ");
+		}
+		System.out.print("\n");
+	}
+
+	private LinkedList<Place> getProcessPlaces() {
+		return processPlaces;
+	}
+
+	private LinkedList<Transition> getProcessTransitions() {
+		return processTrans;
+		
 	}
 }
