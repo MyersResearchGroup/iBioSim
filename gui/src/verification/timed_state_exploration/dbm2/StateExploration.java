@@ -1,12 +1,12 @@
-package verification.timed_state_exploration;
+package verification.timed_state_exploration.dbm2;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.util.*;
 
-import verification.timed_state_exploration.LPNTransitionState.IllegalTransitionFireException;
-import verification.timed_state_exploration.LPNTranslator.UnsafeLPNException;
+import verification.timed_state_exploration.dbm2.LPNTransitionState.IllegalTransitionFireException;
+import verification.timed_state_exploration.dbm2.LPNTranslator.UnsafeLPNException;
 import lpn.parser.*;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;

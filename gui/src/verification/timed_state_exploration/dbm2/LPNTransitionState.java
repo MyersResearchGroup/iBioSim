@@ -1,4 +1,4 @@
-package verification.timed_state_exploration;
+package verification.timed_state_exploration.dbm2;
 
 import java.util.*;
 

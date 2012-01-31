@@ -1354,10 +1354,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		if(dbm2.isSelected())
 		{
 			try {
-				verification.timed_state_exploration.StateExploration.findStateGraph(lhpnFile, directory+separator, lpnFile);
+				verification.timed_state_exploration.dbm2.StateExploration.findStateGraph(lhpnFile, directory+separator, lpnFile);
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
+			
+			return;
 		}
 		if (lhpn.isSelected()) {
 			abstFilename = (String) JOptionPane.showInputDialog(this,
