@@ -23,6 +23,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
@@ -50,11 +51,12 @@ import javax.swing.JTextField;
 
 import lpn.parser.Abstraction;
 import lpn.parser.LhpnFile;
+import lpn.parser.LpnProcess;
 import lpn.parser.Place;
 import lpn.parser.Transition;
+import lpn.parser.Variable;
 import main.Gui;
 import main.Log;
-import verification.platu.logicAnalysis.LpnProcess;
 import verification.platu.project.Project;
 import verification.platu.stategraph.StateGraph;
 import biomodel.gui.PropertyList;
@@ -1129,7 +1131,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				 HashMap<Transition, Integer> allProcessTrans = new HashMap<Transition, Integer>();
 				 // create an Abstraction object to get all processes in one LPN
 				 Abstraction abs = lpn.abstractLhpn(this);
-				 abs.divideProcesses();
+				 abs.decomposeLpnIntoProcesses();				 
 				 allProcessTrans.putAll((HashMap<Transition, Integer>)abs.getTransWithProcIDs().clone());
 				 HashMap<Integer, LpnProcess> processMap = new HashMap<Integer, LpnProcess>();
 				 for (Iterator<Transition> tranIter = allProcessTrans.keySet().iterator(); tranIter.hasNext();) {
@@ -1157,6 +1159,92 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						}			
 					}
 				}
+				HashMap<String, ArrayList<Integer>> allProcessRead = abs.getProcessRead(); 
+				HashMap<String, ArrayList<Integer>> allProcessWrite = abs.getProcessWrite();
+				for (Iterator<String> processReadIter = allProcessRead.keySet().iterator(); 
+						processReadIter.hasNext();) {
+					String curRead = processReadIter.next();
+					if (allProcessRead.get(curRead).size() == 1 
+							&& allProcessWrite.get(curRead).size() == 1) {
+						if (allProcessRead.get(curRead).equals(allProcessWrite.get(curRead))) {
+							// variable is read and written only by one process
+							Integer curProcessID = allProcessRead.get(curRead).get(0); 
+							ArrayList<Variable> processInternal = processMap.get(curProcessID).getProcessInternal();
+							if (!processInternal.contains(abs.getVariable(curRead)))
+								processInternal.add(abs.getVariable(curRead));
+						}
+						else {
+							// variable is read in one process and written by another
+							Integer curProcessID = allProcessRead.get(curRead).get(0); 
+							ArrayList<Variable> processInput = processMap.get(curProcessID).getProcessInput();
+							if (!processInput.contains(abs.getVariable(curRead)))
+								processInput.add(abs.getVariable(curRead));
+							curProcessID = allProcessWrite.get(curRead).get(0);
+							ArrayList<Variable> processOutput = processMap.get(curProcessID).getProcessOutput();
+							if (!processOutput.contains(abs.getVariable(curRead)))
+								processOutput.add(abs.getVariable(curRead));
+						}
+						
+					}
+					else if (allProcessRead.get(curRead).size() > 1 || allProcessWrite.get(curRead).size() > 1) {
+						ArrayList<Integer> readList = allProcessRead.get(curRead);
+						ArrayList<Integer> writeList = allProcessWrite.get(curRead);
+						ArrayList<Integer> alreadyAssignedAsOutput = new ArrayList<Integer>();
+						for (int i=0; i<writeList.size(); i++) {
+							Integer curProcessID = writeList.get(i);
+							ArrayList<Variable> processOutput = processMap.get(curProcessID).getProcessOutput();
+							if (!processOutput.contains(abs.getVariable(curRead)))
+								processOutput.add(abs.getVariable(curRead));
+							if (!alreadyAssignedAsOutput.contains(curProcessID))
+								alreadyAssignedAsOutput.add(curProcessID);
+						}
+						readList.removeAll(alreadyAssignedAsOutput);
+						for (int i=0; i<readList.size(); i++) {
+							Integer curProcessID = readList.get(i);
+							ArrayList<Variable> processInput = processMap.get(curProcessID).getProcessInput();
+							if (!processInput.contains(abs.getVariable(curRead)))
+									processInput.add(abs.getVariable(curRead));
+						}
+					}
+					else if (allProcessWrite.get(curRead).size() == 0) {
+						// variable is only read, but never written
+						if (allProcessRead.get(curRead).size() == 1) {
+							// variable is read locally
+							Integer curProcessID = allProcessRead.get(curRead).get(0); 
+							ArrayList<Variable> processInternal = processMap.get(curProcessID).getProcessInternal();
+							if (!processInternal.contains(abs.getVariable(curRead)))
+								processInternal.add(abs.getVariable(curRead)); 			
+						}
+						else if (allProcessRead.get(curRead).size() > 1) {
+							// variable is read globally by multiple processes
+							for (int i=0; i < allProcessRead.get(curRead).size(); i++) {
+								Integer curProcessID = allProcessRead.get(curRead).get(i);
+								ArrayList<Variable> processInput = processMap.get(curProcessID).getProcessInput();
+								if (!processInput.contains(abs.getVariable(curRead)))
+									processInput.add(abs.getVariable(curRead));
+							}
+						}
+					}
+					else if (allProcessRead.get(curRead).size() == 0) {
+						// variable is only written, but never read
+						if (allProcessWrite.get(curRead).size() == 1) {
+							// variable is written locally
+							Integer curProcessID = allProcessWrite.get(curRead).get(0); 
+							ArrayList<Variable> processInternal = processMap.get(curProcessID).getProcessInternal();
+							if (!processInternal.contains(abs.getVariable(curRead)))
+								processInternal.add(abs.getVariable(curRead)); 	
+						}
+						if (allProcessWrite.get(curRead).size() > 1) {
+							// variable is written globally by multiple processes
+							for (int i=0; i < allProcessWrite.get(curRead).size(); i++) {
+								Integer curProcessID = allProcessWrite.get(curRead).get(i);
+								ArrayList<Variable> processInput = processMap.get(curProcessID).getProcessInput();
+								if (!processInput.contains(abs.getVariable(curRead)))
+									processInput.add(abs.getVariable(curRead));
+							}
+						}
+					}
+				}		
 //				System.out.println("~~~~~~~~~processes~~~~~~~~~~");
 //				for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
 //					Integer curProcId = processMapIter.next();
@@ -1165,6 +1253,24 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 //				}
 //				System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 				
+				if (verbose.isSelected()) {
+					// TODO: save each process as individual LPNs
+					// create a method to coalesce an array of processes into one LPN. 
+					for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
+						Integer curProcId = processMapIter.next();
+						LpnProcess curProcess = processMap.get(curProcId);
+						LhpnFile lpnProc = new LhpnFile();
+						for (int i=0; i< curProcess.getProcessPlaces().size(); i++) {
+							Place p = curProcess.getProcessPlaces().get(i);
+							lpnProc.addPlace(p.getName(), p.isMarked());
+						}
+						for (int i=0; i< curProcess.getProcessInput().size(); i++) {
+							Variable var = curProcess.getProcessInput().get(i);
+							
+						}
+						
+					}
+				}
 				
 				return;
 			}
