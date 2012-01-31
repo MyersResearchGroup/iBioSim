@@ -19,6 +19,10 @@ public class Abstraction extends LhpnFile {
 	private HashMap<String, Integer> process_write = new HashMap<String, Integer>();
 
 	private HashMap<String, Integer> process_read = new HashMap<String, Integer>();
+	
+	private HashMap<String, ArrayList<Integer>> processWrite = new HashMap<String, ArrayList<Integer>>();
+	
+	private HashMap<String, ArrayList<Integer>> processRead = new HashMap<String, ArrayList<Integer>>();
 
 	private ArrayList<Transition> read = new ArrayList<Transition>();
 
@@ -2653,73 +2657,7 @@ public class Abstraction extends LhpnFile {
 		return change;
 	}
 
-//	public boolean divideProcesses() {
-//		for (Transition t : transitions.values()) { // Add all transitions to
-//			// process structure
-//			process_trans.put(t, 0);
-//		}
-//		for (String v : booleans.keySet()) { // / Add All variables to process
-//			// structure
-//			process_write.put(v, 0);
-//			process_read.put(v, 0);
-//		}
-//		for (String v : continuous.keySet()) {
-//			process_write.put(v, 0);
-//			process_read.put(v, 0);
-//		}
-//		for (String v : integers.keySet()) {
-//			process_write.put(v, 0);
-//			process_read.put(v, 0);
-//		}
-//		Integer i = 1; // The total number of processes
-//		Integer process = 1; // The active process number
-//		while (process_trans.containsValue(0)) {
-//			Transition new_proc = new Transition(); // Find a transition that is
-//			// not part of a process
-//			for (Transition t : process_trans.keySet()) {
-//				if (process_trans.get(t) == 0) {
-//					new_proc = t;
-//					break;
-//				}
-//			}
-//			boolean flag = false; // Make sure that it is not part of a process
-//			for (Place p : new_proc.getPreset()) {
-//				if (!flag) // Check the preset to see if it is part of a process
-//					for (Transition t : p.getPreset()) {
-//						if (!flag)
-//							if (process_trans.get(t) != 0) {
-//								flag = true;
-//								process = process_trans.get(t);
-//								break;
-//							}
-//					}
-//			}
-//			if (!flag) // Check the postset to see if it is part of a process
-//				for (Place p : new_proc.getPostset()) {
-//					if (!flag)
-//						for (Transition t : p.getPostset()) {
-//							if (!flag)
-//								if (process_trans.get(t) != 0) {
-//									flag = true;
-//									process = process_trans.get(t);
-//									break;
-//								}
-//						}
-//				}
-//			if (!flag) {
-//				i++; // Increment the process counter if it is not part of a
-//				// process
-//				process = i;
-//			}
-//			if (!addTransProcess(new_proc, process))
-//				return false;
-//		}
-//		assignVariableProcess();
-//		return true;
-//	}
-	
-	// Modified divideProcesses
-	public boolean divideProcesses() {
+	private boolean divideProcesses() {
 		for (Transition t : transitions.values()) { // Add all transitions to
 			// process structure
 			process_trans.put(t, 0);
@@ -2736,6 +2674,58 @@ public class Abstraction extends LhpnFile {
 		for (String v : integers.keySet()) {
 			process_write.put(v, 0);
 			process_read.put(v, 0);
+		}
+		Integer i = 1; // The total number of processes
+		Integer process = 1; // The active process number
+		while (process_trans.containsValue(0)) {
+			Transition new_proc = new Transition(); // Find a transition that is
+			// not part of a process
+			for (Transition t : process_trans.keySet()) {
+				if (process_trans.get(t) == 0) {
+					new_proc = t;
+					break;
+				}
+			}
+			boolean flag = false; // Make sure that it is not part of a process
+			for (Place p : new_proc.getPreset()) {
+				if (!flag) // Check the preset to see if it is part of a process
+					for (Transition t : p.getPreset()) {
+						if (!flag)
+							if (process_trans.get(t) != 0) {
+								flag = true;
+								process = process_trans.get(t);
+								break;
+							}
+					}
+			}
+			if (!flag) // Check the postset to see if it is part of a process
+				for (Place p : new_proc.getPostset()) {
+					if (!flag)
+						for (Transition t : p.getPostset()) {
+							if (!flag)
+								if (process_trans.get(t) != 0) {
+									flag = true;
+									process = process_trans.get(t);
+									break;
+								}
+						}
+				}
+			if (!flag) {
+				i++; // Increment the process counter if it is not part of a
+				// process
+				process = i;
+			}
+			if (!addTransProcess(new_proc, process))
+				return false;
+		}
+		assignVariableProcess();
+		return true;
+	}
+	
+	public boolean decomposeLpnIntoProcesses() {
+		for (Transition t : transitions.values()) { // Add all transitions to
+			// process structure
+			process_trans.put(t, 0);
 		}
 		Integer i = 1; // The total number of processes
 		Integer process = 1; // The active process number
@@ -2803,14 +2793,22 @@ public class Abstraction extends LhpnFile {
 			if (!addTransProcess(new_proc, process))
 				return false;
 		}
-		assignVariableProcess();
+		assignProcessVariables();
 		return true;
 	}
 	
 	public HashMap<Transition, Integer> getTransWithProcIDs() {
 		return process_trans;
 	}
-
+	
+	public HashMap<String,ArrayList<Integer>> getProcessRead() {
+		return processRead;
+	}
+	
+	public HashMap<String, ArrayList<Integer>> getProcessWrite() {
+		return processWrite;
+	}
+	
 	public void assignVariableProcess() {
 		for (Transition t : transitions.values()) { // For each
 			// transition with assignments
@@ -2847,6 +2845,80 @@ public class Abstraction extends LhpnFile {
 						process_read.put(v, process_trans.get(t));
 					} else {
 						process_read.put(v, -1);
+					}
+				}
+			}
+		}
+	}
+	
+	// This method uses process_trans constructed by decomposeLpnIntoProcesses().
+	public void assignProcessVariables() {
+		for (String v : booleans.keySet()) { // / Add All variables to process
+			// structure
+			processWrite.put(v, new ArrayList<Integer>());
+			processRead.put(v, new ArrayList<Integer>());
+		}
+		for (String v : continuous.keySet()) {
+			processWrite.put(v, new ArrayList<Integer>());
+			processRead.put(v, new ArrayList<Integer>());
+		}
+		for (String v : integers.keySet()) {
+			processWrite.put(v, new ArrayList<Integer>());
+			processRead.put(v, new ArrayList<Integer>());
+		}
+		
+		for (Transition t : transitions.values()) { // For each
+			// transition with assignments
+			HashMap<String, String> assignments = t.getAssignments();
+			HashMap<String, ExprTree> assignTrees = t.getAssignTrees();
+			for (String v : assignments.keySet()) { // The variables assigned on
+				// each transition
+				if ((processWrite.get(v).isEmpty())
+						|| (processWrite.get(v).size() == 1
+								&& processWrite.get(v).get(0).equals(process_trans.get(t)))) {
+					ArrayList<Integer> processIDSet = new ArrayList<Integer>(1);
+					processIDSet.add(process_trans.get(t));
+					processWrite.put(v, processIDSet); 
+					// variable locally written to a process
+				} else {
+					ArrayList<Integer> processIDSet = processWrite.get(v);
+					processIDSet.add(process_trans.get(t));
+					processWrite.put(v, processIDSet); 
+					//variable as globally written
+				}
+			}
+			for (ExprTree e : assignTrees.values()) {
+				for (String v : e.getVars()) {
+					if ((processRead.get(v).isEmpty())
+							|| (processRead.get(v).size() == 1
+									&& processRead.get(v).get(0).equals(process_trans.get(t)))) {
+						ArrayList<Integer> processIDSet = new ArrayList<Integer>(1);
+						processIDSet.add(process_trans.get(t));
+						processRead.put(v, processIDSet); 
+						// variable locally read
+					} else {
+						ArrayList<Integer> processIDSet = processRead.get(v);
+						processIDSet.add(process_trans.get(t));
+						processRead.put(v, processIDSet); 
+						// variable globally read
+					}
+				}
+			}
+			ExprTree e = t.getEnablingTree();
+			if (e != null) {
+				for (String v : e.getVars()) {
+					if ((processRead.get(v).isEmpty())
+						|| (processRead.get(v).size() == 1
+							&& (processRead.get(v).get(0).equals(process_trans.get(t))))) {
+						ArrayList<Integer> processIDSet = new ArrayList<Integer>();
+						processIDSet.add(process_trans.get(t));
+						processRead.put(v, processIDSet); 
+						// variable locally read
+					} else {
+						ArrayList<Integer> processIDSet = processRead.get(v);
+						processIDSet.add(process_trans.get(t));
+						processRead.put(v, processIDSet); 
+						// variable globally read
 					}
 				}
 			}
@@ -2911,6 +2983,7 @@ public class Abstraction extends LhpnFile {
 		return true;
 	}
 
+    // Oridiginal version. It assigns conflicting transitions with more than 1 process IDs (incorrect). 
 //	public boolean addTransProcess(Transition trans, Integer proc) {
 //		process_trans.put(trans, proc); // Add the current transition to the
 //		// process
