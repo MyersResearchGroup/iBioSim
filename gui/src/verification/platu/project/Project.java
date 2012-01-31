@@ -176,7 +176,7 @@ public class Project {
 	
 	/**
 	 * Find the SG for the entire project where each project state is a tuple of
-	 * local states. The flag applyPOR gives the user an option to use partial order reduction during dfs search.
+	 * local states. Use partial order reduction during dfs search.
 	 * @param outputDotFile 
 	 * @return 
 	 * 
@@ -238,7 +238,7 @@ public class Project {
 		
 		StateGraph stateGraph;
 		Analysis dfsStateExplorationWithPOR = new Analysis(sgArray);
-		stateGraph = dfsStateExplorationWithPOR.search_dfsWithPOR(sgArray, initStateArray);
+		stateGraph = dfsStateExplorationWithPOR.search_dfsPORSingleLpn(sgArray, initStateArray);
 		
 		long elapsedTimeMillis = System.currentTimeMillis() - start; 
 		float elapsedTimeSec = elapsedTimeMillis/1000F;
