@@ -1,0 +1,40 @@
+// This file contains zones for testing.
+// The format has start to indicate the beginning of a zone definition.
+// The next line has the activated timers. This is a string of positive
+// integers separated by spaces. A '#' sign indicates no timers are enabled.
+// The next lines describe the matrix. One line per row and each row
+// is a string of integers separated by spaces.
+// The word 'end' is used to indicate the end of the definition.
+// Lines starting with '//' are comments and anything between
+// the words 'start' and 'end' will be ignored.
+// Example
+//
+// start
+// 3 5
+// 0  0 3 4
+// 0  0 2 2
+// -1 0 0 0
+// -2 0 0 0
+// end
+//
+// Describes a zone with two timers 3 and 5. The delay of 3 is [1, 3] and the delay for 5
+// is [2, 4]. The DBM is
+// 0 2 2
+// 0 0 0
+// 0 0 0.
+//
+// Example
+// #
+// start
+// 
+// 0 0
+// 0 0
+// end
+//
+// Describes a zone with only the zeroth timer.
+
+start
+#
+0 0
+0 0
+end
