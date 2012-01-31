@@ -1,9 +1,7 @@
 package lpn.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Random;
 import verification.platu.lpn.DualHashMap;
 
@@ -59,8 +57,8 @@ public class LpnProcess extends LhpnFile {
 				}
 			}
 		}		
-		LinkedList<Transition> processTransCopy = (LinkedList<Transition>) processTrans.clone();
-		LinkedList<Transition> transToRemove = new LinkedList<Transition>();
+		ArrayList<Transition> processTransCopy = (ArrayList<Transition>) processTrans.clone();
+		ArrayList<Transition> transToRemove = new ArrayList<Transition>();
 		DualHashMap<Transition, Integer> tranIndexInMatrixMap = new DualHashMap<Transition, Integer>();
 		int index = -1;
 		for (Iterator<Transition> processTransCopyIter = processTransCopy.iterator(); processTransCopyIter.hasNext();) {
