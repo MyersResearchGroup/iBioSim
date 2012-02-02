@@ -712,6 +712,16 @@ public class Zone {
 	}
 	
 	/**
+	 * Overrides the clone method from Object.
+	 */
+	public Zone clone()
+	{
+		
+		// TODO: Finish.
+		return null;
+	}
+	
+	/**
 	 * The DiagonalNonZeroException extends the java.lang.RuntimerExpcetion. 
 	 * The intention is for this exception to be thrown is a Zone has a non zero
 	 * entry appear on the diagonal.
