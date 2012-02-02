@@ -140,6 +140,13 @@ public class Project {
 //			return;
 //		}
 		
+		/* Entry point for the timed analysis. */
+		if(Options.getTimingAnalysisFlag())
+		{
+			System.out.print("Wow, wow.");
+			return new StateGraph[0];
+		}
+		
 		Analysis dfsStateExploration = new Analysis(sgArray);
 		StateGraph[] stateGraphArray = dfsStateExploration.search_dfs(sgArray, initStateArray);
 		
