@@ -57,6 +57,7 @@ import lpn.parser.Transition;
 import lpn.parser.Variable;
 import main.Gui;
 import main.Log;
+import verification.platu.main.Options;
 import verification.platu.project.Project;
 import verification.platu.stategraph.StateGraph;
 import biomodel.gui.PropertyList;
@@ -85,7 +86,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 
 	public JRadioButton untimed, geometric, posets, bag, bap, baptdc, verify,
 			vergate, orbits, search, trace, bdd, dbm, smt, untimedStateSearch, lhpn, view, none,
-			simplify, abstractLhpn, dbm2;
+			simplify, abstractLhpn, dbm2, splitZone;
 
 	private JCheckBox abst, partialOrder, dot, verbose, graph, untimedPOR, decomposeLPN, multipleLPNs, genrg,
 			timsubset, superset, infopt, orbmatch, interleav, prune, disabling,
@@ -229,10 +230,12 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			dbm = new JRadioButton("DBM");
 			smt = new JRadioButton("SMT");
 			dbm2 = new JRadioButton("DBM2");
+			splitZone = new JRadioButton("Split Zone");
 			bdd.addActionListener(this);
 			dbm.addActionListener(this);
 			smt.addActionListener(this);
 			dbm2.addActionListener(this);
+			splitZone.addActionListener(this);
 		}
 		lhpn = new JRadioButton("LPN");
 		view = new JRadioButton("View");
@@ -345,6 +348,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		abstractionGroup.add(abstractLhpn);
 		if (lema) {
 			timingMethodGroup.add(untimedStateSearch);
+			timingMethodGroup.add(splitZone);
 			timingMethodGroup.add(bdd);
 			timingMethodGroup.add(dbm);
 			timingMethodGroup.add(smt);
@@ -376,6 +380,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		timingRadioPanel.add(timingMethod);
 		if (lema) {
 			timingRadioPanel.add(untimedStateSearch);
+			timingRadioPanel.add(splitZone);
 			timingRadioPanel.add(bdd);
 			timingRadioPanel.add(dbm);
 			timingRadioPanel.add(smt);
@@ -1358,6 +1363,44 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
+			
+			return;
+		}
+		
+		/**
+		 * If the splitZone option (labeled "Split Zone") is selected,
+		 * run the timed analysis.
+		 */
+		if(splitZone.isSelected())
+		{
+			LhpnFile lpn = new LhpnFile();
+			lpn.load(directory + separator + lpnFile);
+			Project timedStateSearch = new Project(lpn);
+			
+			// The full state graph is created for only one LPN.
+			
+			/**
+			 * This is what selects the timing analysis.
+			 * The method setTimingAnalysisType sets a static variable
+			 * in the Options class that is queried by the search method.
+			 */
+			Options.setTimingAnalsysisType("zone");
+			StateGraph[] stateGraphArray = timedStateSearch.search();
+			String graphFileName = verifyFile.replace(".lpn", "") + "_sg.dot";
+			if (stateGraphArray.length > 1) {
+				JOptionPane.showMessageDialog(
+						Gui.frame,
+						"Mutiple state graphs should not be produced.",
+						"Error", JOptionPane.ERROR_MESSAGE);		
+
+			}
+			else {
+				if (dot.isSelected()) {
+					stateGraphArray[0].outputStateGraph(directory + separator + graphFileName);  
+				}
+			}
+			
+			Options.setTimingAnalsysisType("off");
 			
 			return;
 		}
