@@ -131,7 +131,9 @@ public class Options {
     		timingAnalysisType = timing;
     	}
     	else if (timing.equals("off")){
-    		
+    		// Alteration by Andrew N. Fisher
+    		timingAnalysisFlag = false;
+    		timingAnalysisType = "off";
     	}
     	else{
     		System.out.println("warning: invalid TIMING_ANALYSIS option - default is \"off\"");
