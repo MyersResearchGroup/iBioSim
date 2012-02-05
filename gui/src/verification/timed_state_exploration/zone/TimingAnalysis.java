@@ -30,8 +30,8 @@ public class TimingAnalysis extends Analysis{
 	int stack_depth = 0;
 	int max_stack_depth = 0;
 	
-	public StateGraph[] search_dfs(final StateGraph[] sgList, final State[] initStateArray) {
-		System.out.println("---> calling function search_dfs");
+	public StateGraph[] search_dfs_timed(final StateGraph[] sgList, final State[] initStateArray) {
+		System.out.println("---> calling function search_dfs_timed");
 				
 		double peakUsedMem = 0;
 		double peakTotalMem = 0;
