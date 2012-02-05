@@ -167,6 +167,8 @@ public class Zone {
 	private Zone()
 	{
 			// TODO : Finish by initializing the member variables.
+		_matrix = new int[0][0];
+		_indexToTimer = new int[0];
 	}
 	
 	/**
@@ -543,7 +545,7 @@ public class Zone {
 	 */
 	private void recononicalize()
 	{
-		// TODO : Check if finish.
+		// TODO : Check if finished.
 		
 		for(int k=0; k<dbmSize(); k++)
 		{
@@ -575,8 +577,8 @@ public class Zone {
 	 */
 	public boolean exceedsLowerBoundbyTransitionIndex(int timer)
 	{
-		// TODO : Finish.
-		return false;
+		// TODO : Check if finished.
+		return exceedsLowerBoundbydbmIndex(Arrays.binarySearch(_indexToTimer, timer));
 	}
 	
 	/**
@@ -588,8 +590,12 @@ public class Zone {
 	 */
 	public boolean exceedsLowerBoundbydbmIndex(int index)
 	{
-		// TODO: Finish.
-		return false;
+		// TODO: Check if finished.
+		
+		// Note : Make sure that the lower bound is stored as a negative number
+		// and that the inequality is correct.
+		return _matrix[0][dbmIndexToMatrixIndex(index)] <=
+			_matrix[1][dbmIndexToMatrixIndex(index)];
 	}
 	
 	/**
@@ -601,8 +607,8 @@ public class Zone {
 	 */
 	public Zone fireTransitionbyTransitionIndex(int timer)
 	{
-		// TODO: Finish.
-		return null;
+		// TODO: Check if finish.
+		return fireTransitionbydbmIndex(Arrays.binarySearch(_indexToTimer, timer));
 	}
 	
 	/**
@@ -716,9 +722,23 @@ public class Zone {
 	 */
 	public Zone clone()
 	{
+		// TODO: Check if finished.
 		
-		// TODO: Finish.
-		return null;
+		Zone clonedZone = new Zone();
+		
+		for(int i=0; i<this.matrixSize(); i++)
+		{
+			for(int j=0; j<this.matrixSize(); j++)
+			{
+				clonedZone._matrix[i][j] = this._matrix[i][j];
+			}
+		}
+		
+		clonedZone._indexToTimer = Arrays.copyOf(_indexToTimer, _indexToTimer.length);
+		
+		clonedZone._hashCode = this._hashCode;
+		
+		return clonedZone;
 	}
 	
 	/**
