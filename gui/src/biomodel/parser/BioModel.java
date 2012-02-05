@@ -3911,6 +3911,7 @@ public class BioModel {
 		SBMLDocument mainDoc = mainGCM.getSBMLDocument();
 		SBMLDocument doc = gcm.getSBMLDocument();
 		Model m = doc.getModel();
+		doc.setSBMLNamespacesAndOwn(mainDoc.getSBMLNamespaces());
 		
 		for (int i = 0; i < m.getNumCompartmentTypes(); i++) {
 			org.sbml.libsbml.CompartmentType c = m.getCompartmentType(i);
@@ -4092,6 +4093,7 @@ public class BioModel {
 				}
 			}
 			if (add) {
+				//spec.setSBMLNamespacesAndOwn(mainDoc.getModel().getSBMLNamespaces());
 				mainDoc.getModel().addSpecies(spec);
 			}
 		}
