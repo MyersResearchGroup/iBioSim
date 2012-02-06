@@ -93,6 +93,10 @@ public class Variable {
 		return port;
 	}
 	
+	public String getType() {
+		return type;
+	}
+	
 	public void setPort(String newPort) {
 		port = newPort;
 	}
