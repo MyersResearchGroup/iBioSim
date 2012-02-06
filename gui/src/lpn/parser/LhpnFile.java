@@ -17,13 +17,13 @@ import verification.platu.lpn.DualHashMap;
 
 public class LhpnFile {
 
-	private String separator;
+	protected String separator;
 
 	protected HashMap<String, Transition> transitions;
 
 	protected HashMap<String, Place> places;
 	
-	protected HashMap<String, Integer> placesIndices;
+	//protected HashMap<String, Integer> placesIndices;
 
 	protected HashMap<String, Variable> booleans;
 
@@ -247,7 +247,6 @@ public class LhpnFile {
 				}
 				buffer.append("\n");
 			}
-			// TODO: (?) Need to save placesIndices? 
 			if (!booleans.isEmpty()) {
 				flag = false;
 				for (i = 0; i < boolOrder.size(); i++) {
@@ -630,6 +629,10 @@ public class LhpnFile {
 		}
 		transitions.put(name, trans);
 	}
+	
+	public void addTransition(Transition t) {
+		transitions.put(t.getName(), t);
+	}
 
 	public void addPlace(String name, Boolean ic) {
 		Place place = new Place(name, ic);
@@ -665,6 +668,19 @@ public class LhpnFile {
 			variables.add(var);
 		}
 	}
+	
+	public void addInput(String name, String type, String ic) {
+		Variable var = new Variable(name, type, ic, Variable.INPUT);
+		if (type.equals("boolean"))
+			booleans.put(name, var);
+		else if (type.equals("integer"))
+			integers.put(name, var);
+		else if (type.equals("continuous"))
+			continuous.put(name, var);
+		if (!variables.contains(var)) {
+			variables.add(var);
+		}
+	}
 
 	public void addOutput(String name, String ic) {
 		Variable var = new Variable(name, "boolean", ic, Variable.OUTPUT);
@@ -673,6 +689,33 @@ public class LhpnFile {
 			variables.add(var);
 		}
 	}
+	
+	public void addOutput(String name, String type, String ic) {
+		Variable var = new Variable(name, type, ic, Variable.OUTPUT);
+		if (type.equals("boolean"))
+			booleans.put(name, var);
+		else if (type.equals("integer"))
+			integers.put(name, var);
+		else if (type.equals("continuous"))
+			continuous.put(name, var);
+		if (!variables.contains(var)) {
+			variables.add(var);
+		}
+	}
+	
+	public void addInternal(String name, String type, String ic) {
+		Variable var = new Variable(name, type, ic, Variable.INTERNAL);
+		if (type.equals("boolean"))
+			booleans.put(name, var);
+		else if (type.equals("integer"))
+			integers.put(name, var);
+		else if (type.equals("continuous"))
+			continuous.put(name, var);
+		if (!variables.contains(var)) {
+			variables.add(var);
+		}
+	}
+	
 	
 	public void addBoolean(String name, String ic) {
 		Variable var = new Variable(name, "boolean", ic);
@@ -2190,5 +2233,7 @@ public class LhpnFile {
 	private static final String BOOLEAN_TRANS = "<(\\S+?)=\\[(\\S*?)\\]>";
 
 	private static final String BOOLEAN_ASSIGN = "([^:]+?):=(.+)";
+
+	
 
 }
