@@ -13,15 +13,15 @@ import verification.platu.project.PrjState;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
 
-public class TimingAnalysis extends Analysis{
+public class Analysis_Timed extends Analysis{
 
-	public TimingAnalysis(StateGraph[] lpnList, State[] initStateArray,
+	public Analysis_Timed(StateGraph[] lpnList, State[] initStateArray,
 			LPNTranRelation lpnTranRelation, String method) {
 		super(lpnList, initStateArray, lpnTranRelation, method);
 		// TODO Auto-generated constructor stub
 	}
 
-	public TimingAnalysis(StateGraph[] lpnList) {
+	public Analysis_Timed(StateGraph[] lpnList) {
 		super(lpnList);
 		// TODO Auto-generated constructor stub
 	}
