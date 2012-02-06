@@ -1,6 +1,7 @@
 package lpn.parser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 import verification.platu.lpn.DualHashMap;
@@ -18,7 +19,7 @@ public class LpnProcess extends LhpnFile {
 		id = procId;
 	}
 	
-	private int getProcessId() {
+	public int getProcessId() {
 		return id;
 	}
 
@@ -137,7 +138,7 @@ public class LpnProcess extends LhpnFile {
 		System.out.println("Process ID:" + this.getProcessId());
 		for (int i=0; i < this.processTrans.size(); i++) {
 			if (processTrans.get(i).isSticky()) {
-				System.out.println(processTrans.get(i).getName());
+				System.out.println(processTrans.get(i).getName() + " " + processTrans.get(i).getIndex());
 			}
 		}
 		System.out.println("********************");
@@ -196,6 +197,43 @@ public class LpnProcess extends LhpnFile {
 	
 	public ArrayList<Variable> getProcessInternal() {
 		return processInternal;
+	}
+	
+	public ArrayList<Variable> getProcessVariables() {
+		ArrayList<Variable> variables = new ArrayList<Variable>();
+		variables.addAll(processInput);
+		variables.addAll(processOutput);
+		variables.addAll(processInternal);
+		return variables;
+	}
+
+	public LhpnFile buildLPN(LhpnFile lpnProc) {
+		// Places
+		for (int i=0; i< this.getProcessPlaces().size(); i++) {
+			Place p = this.getProcessPlaces().get(i);
+			lpnProc.addPlace(p.getName(), p.isMarked());
+		}
+		// Transitions
+		for (int i=0; i< this.getProcessTransitions().size(); i++) {
+			Transition t = this.getProcessTransitions().get(i);
+			lpnProc.addTransition(t);
+		}
+		// Inputs
+		for (int i=0; i< this.getProcessInput().size(); i++) {
+			Variable var = this.getProcessInput().get(i);
+			lpnProc.addInput(var.getName(), var.getType(), var.getInitValue());
+		}
+		// Outputs
+		for (int i=0; i< this.getProcessOutput().size(); i++) {
+			Variable var = this.getProcessOutput().get(i);
+			lpnProc.addOutput(var.getName(), var.getType(), var.getInitValue());
+		}
+		// Internal
+		for (int i=0; i< this.getProcessInternal().size(); i++) {
+			Variable var = this.getProcessInternal().get(i);
+			lpnProc.addInternal(var.getName(), var.getType(), var.getInitValue());
+		}
+		return lpnProc;
 	}
 	
 }
