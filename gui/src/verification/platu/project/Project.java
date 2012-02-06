@@ -26,6 +26,8 @@ import verification.platu.lpn.io.PlatuGrammarParser;
 import verification.platu.lpn.io.PlatuInstParser;
 import verification.platu.stategraph.State;
 import verification.platu.stategraph.StateGraph;
+import verification.timed_state_exploration.zone.Analysis_Timed;
+import verification.timed_state_exploration.zone.StateGraph_timed;
 
 public class Project {
 
@@ -35,6 +37,9 @@ public class Project {
 	 * 2. The indices of all design units are sequential starting from 0. 
 	 * */
 	protected List<StateGraph> designUnitSet;
+	
+	/* The list for timing analysis */
+	protected List<StateGraph_timed> designUnitTimedSet;
 	
 	protected LPNTranRelation lpnTranRelation = null;
 	
@@ -52,6 +57,35 @@ public class Project {
 		StateGraph stateGraph = new StateGraph(lpn);
 		designUnitSet.add(stateGraph);
 		//stateGraph.printStates();
+	}
+	
+	/**
+	 * If the OptionsFlag is false, then this constructor is identical to
+	 * Poject(LhpnFile lpn). If the OptionsFlag is true, this constructor uses
+	 * StateGraph_timed objects.
+	 * @param lpn
+	 * 			The lpn under consideration.
+	 * @param OptionsFlag
+	 * 			True for timing analysis and false otherwise. The option should match
+	 * 			Options.getTimingAnalysisFlag().
+	 */
+	public Project(LhpnFile lpn, boolean OptionsFlag)
+	{
+		if(Options.getTimingAnalysisFlag())
+		{
+			this.label = "";
+			this.designUnitSet = new ArrayList<StateGraph>(0);
+			this.designUnitTimedSet = new ArrayList<StateGraph_timed>(1);
+			StateGraph_timed stategraph = new StateGraph_timed(lpn);
+			designUnitTimedSet.add(stategraph);
+		}
+		else
+		{
+			this.label = "";
+			this.designUnitSet = new ArrayList<StateGraph>(1);
+			StateGraph stateGraph = new StateGraph(lpn);
+			designUnitSet.add(stateGraph);
+		}
 	}
 
 	public Project(ArrayList<LhpnFile> lpns) {
@@ -95,6 +129,17 @@ public class Project {
 			LhpnFile lpn = du.getLpn();
 			lpn.setIndex(idx++);
 			sgArray[lpn.getIndex()] = du;
+		}
+		
+		// If timing, then created the sgArray with StateGraph_timed objects.
+		if(Options.getTimingAnalysisFlag())
+		{
+			for(StateGraph du : this.designUnitTimedSet)
+			{
+				LhpnFile lpn = du.getLpn();
+				lpn.setIndex(idx++);
+				sgArray[lpn.getIndex()] = du;
+			}
 		}
 
 		// Initialize the project state
@@ -143,7 +188,8 @@ public class Project {
 		/* Entry point for the timed analysis. */
 		if(Options.getTimingAnalysisFlag())
 		{
-			System.out.print("Wow, wow.");
+			Analysis_Timed dfsTimedStateExploration = new Analysis_Timed(sgArray);
+			dfsTimedStateExploration.search_dfs_timed(sgArray, initStateArray);
 			return new StateGraph[0];
 		}
 		
