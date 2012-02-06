@@ -55,6 +55,7 @@ import lpn.parser.LpnProcess;
 import lpn.parser.Place;
 import lpn.parser.Transition;
 import lpn.parser.Variable;
+import lpn.parser.LpnComponentList;
 import main.Gui;
 import main.Log;
 import verification.platu.main.Options;
@@ -1132,7 +1133,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				return;
 			}
 			else if (!untimedPOR.isSelected() && !multipleLPNs.isSelected() && decomposeLPN.isSelected() && lpnList.getSelectedValue() == null) {
-				 //TODO: Decompose the current LPN into modules, save them in the current directory (under verification view), and display them.
 				 HashMap<Transition, Integer> allProcessTrans = new HashMap<Transition, Integer>();
 				 // create an Abstraction object to get all processes in one LPN
 				 Abstraction abs = lpn.abstractLhpn(this);
@@ -1250,31 +1250,29 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						}
 					}
 				}		
-//				System.out.println("~~~~~~~~~processes~~~~~~~~~~");
-//				for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
-//					Integer curProcId = processMapIter.next();
-//					LpnProcess curProcess = processMap.get(curProcId);
-//					curProcess.print();					
-//				}
-//				System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+				System.out.println("~~~~~~~~~processes~~~~~~~~~~");
+				for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
+					Integer curProcId = processMapIter.next();
+					LpnProcess curProcess = processMap.get(curProcId);
+					curProcess.print();					
+				}
+				System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 				
-				if (verbose.isSelected()) {
-					// TODO: save each process as individual LPNs
-					// create a method to coalesce an array of processes into one LPN. 
+				if (verbose.isSelected()) { 
+//					Store each process as individual LPN.
 					for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
 						Integer curProcId = processMapIter.next();
-						LpnProcess curProcess = processMap.get(curProcId);
+						LpnProcess curProcess = processMap.get(curProcId);						
 						LhpnFile lpnProc = new LhpnFile();
-						for (int i=0; i< curProcess.getProcessPlaces().size(); i++) {
-							Place p = curProcess.getProcessPlaces().get(i);
-							lpnProc.addPlace(p.getName(), p.isMarked());
-						}
-						for (int i=0; i< curProcess.getProcessInput().size(); i++) {
-							Variable var = curProcess.getProcessInput().get(i);
-							
-						}
-						
+						lpnProc = curProcess.buildLPN(lpnProc);
+						lpnProc.save(root + separator + lpn.getLabel() + "_proc" + curProcId + ".lpn");
+						//lpnProc.save(directory + separator + lpn.getLabel() + curProcId + ".lpn");
 					}
+					
+//					// Coalesce an array of processes into one LPN component.
+//					Integer maxNumProcInOneComp = 2; //1;// = processMap.keySet().size();
+//					LpnComponentList componentList = new LpnComponentList(maxNumProcInOneComp, processMap);					
+//					componentList.buildComponents(processMap, directory, lpn.getLabel());
 				}
 				
 				return;
