@@ -73,18 +73,18 @@ public class Translator {
 		createFunction(m, "BITXOR", "Bitwise AND", "lambda(a,b,a*b)");
 		createFunction(m, "mod", "Modular", "lambda(a,b,a-floor(a/b)*b)");
 		createFunction(m, "and", "Logical AND", "lambda(a,b,a*b)");
-		createFunction(m, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
-		createFunction(m, "normal", "Normal distribution", "lambda(m,s,m)");
-		createFunction(m, "exponential", "Exponential distribution", "lambda(l,1/l)");
-		createFunction(m, "gamma", "Gamma distribution", "lambda(a,b,a*b)");
-		createFunction(m, "lognormal", "Lognormal distribution", "lambda(z,s,exp(z+s^2/2))");
-		createFunction(m, "chisq", "Chi-squared distribution", "lambda(nu,nu)");
-		createFunction(m, "laplace", "Laplace distribution", "lambda(a,0)");
-		createFunction(m, "cauchy", "Cauchy distribution", "lambda(a,a)");
-		createFunction(m, "rayleigh", "Rayleigh distribution", "lambda(s,s*sqrt(pi/2))");
-		createFunction(m, "poisson", "Poisson distribution", "lambda(mu,mu)");
-		createFunction(m, "binomial", "Binomial distribution", "lambda(p,n,p*n)");
-		createFunction(m, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
+//		createFunction(m, "uniform", "Uniform distribution", "lambda(a,b,(a+b)/2)");
+//		createFunction(m, "normal", "Normal distribution", "lambda(m,s,m)");
+//		createFunction(m, "exponential", "Exponential distribution", "lambda(l,1/l)");
+//		createFunction(m, "gamma", "Gamma distribution", "lambda(a,b,a*b)");
+//		createFunction(m, "lognormal", "Lognormal distribution", "lambda(z,s,exp(z+s^2/2))");
+//		createFunction(m, "chisq", "Chi-squared distribution", "lambda(nu,nu)");
+//		createFunction(m, "laplace", "Laplace distribution", "lambda(a,0)");
+//		createFunction(m, "cauchy", "Cauchy distribution", "lambda(a,a)");
+//		createFunction(m, "rayleigh", "Rayleigh distribution", "lambda(s,s*sqrt(pi/2))");
+//		createFunction(m, "poisson", "Poisson distribution", "lambda(mu,mu)");
+//		createFunction(m, "binomial", "Binomial distribution", "lambda(p,n,p*n)");
+//		createFunction(m, "bernoulli", "Bernoulli distribution", "lambda(p,p)");
 		
 		// translate from lhpn to sbml
 		// ----variables -> parameters-----	
@@ -94,8 +94,7 @@ public class Translator {
 				if (lhpn.isContinuous(v) || lhpn.isInteger(v)){
 					Parameter var = m.createParameter(); 
 					var.setConstant(false);
-					var.setId(v);
-					
+					var.setId(v);				
 					Pattern initVarIsIntPattern = Pattern.compile(Int);
 					Matcher initVarIsIntMatcher = initVarIsIntPattern.matcher(initVal);
 					boolean initVarIsInt = initVarIsIntMatcher.matches();
