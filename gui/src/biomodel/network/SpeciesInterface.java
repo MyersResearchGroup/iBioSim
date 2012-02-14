@@ -100,14 +100,6 @@ public interface SpeciesInterface extends VisitableSpecies {
 	
 	public void setInitialConcentration(double concentration);
 	
-	public String getRBS();
-	
-	public void setRBS(String RBS);
-	
-	public String getORF();
-	
-	public void setORF(String ORF);
-	
 	public double getDecay();
 	
 	public void setDecay(double kd);

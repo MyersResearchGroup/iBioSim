@@ -58,38 +58,6 @@ public class SbolField extends JPanel implements ActionListener {
 	public boolean isValidText() {
 		if (sbolText.getText().equals(""))
 			return true;
-//		else if (Utility.isValid(sbolText.getText(), Utility.SBOLFIELDstring)) {
-//			String fileId = sbolText.getText().split("/")[0];
-//			String libId = sbolText.getText().split("/")[1];
-//			String compId = sbolText.getText().split("/")[2];
-//			Collection lib = SbolUtility.loadXML(gcmEditor.getPath() + File.separator + fileId);
-//			boolean libMatch = false;
-//			boolean compMatch = false;
-//			if (lib != null && lib.getDisplayId().equals(libId)) {
-//				libMatch = true;
-//				for (DnaComponent dnac : lib.getComponents()) {
-//					if (dnac.getDisplayId().equals(compId)) {
-//						compMatch = true;
-//						for (URI uri : dnac.getTypes()) {
-//							if (uri.getFragment().equals(typeConverter(sbolType)))
-//								return true;
-//						}
-//					}
-//				}
-//			}
-//			if (lib != null) {
-//				if (!libMatch)
-//					Utility.createErrorMessage("Invalid GCM to SBOL Association", "Collection " + libId + " is not found in file " + fileId + ".");
-//				else if (!compMatch)
-//					Utility.createErrorMessage("Invalid GCM to SBOL Association", "DNA component " + compId + " is not found in collection " +
-//							libId + " from file " + fileId + ".");
-//				else
-//					Utility.createErrorMessage("Invalid GCM to SBOL Association", "DNA component " + compId + " is not a " + sbolLabel.getText() + ".");
-//			}
-//			return false;
-//		} else
-//			Utility.createErrorMessage("Invalid GCM to SBOL Association", "Associations must follow pattern file ID/collection ID/DNA component ID.");
-//			return false;
 		else {
 			String sourceCompURI = sbolText.getText();
 			for (String filePath : gcmEditor.getSbolFiles()) {
@@ -97,7 +65,8 @@ public class SbolField extends JPanel implements ActionListener {
 				for (DnaComponent dnac : lib.getComponents())
 					if (sourceCompURI.equals(dnac.getURI().toString())) {
 						for (URI uri : dnac.getTypes())
-							if (typeConverter(sbolType).contains(uri.getFragment()))
+							if (sbolType.equals(GlobalConstants.SBOL_DNA_COMPONENT) || 
+									SbolUtility.typeConverter(sbolType).contains(uri.getFragment()))
 								return true;
 						Utility.createErrorMessage("Invalid GCM to SBOL Association", "DNA component with URI " + sourceCompURI
 								+ " is not a " + sbolLabel.getText() + ".");
@@ -113,30 +82,15 @@ public class SbolField extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		if (e.getActionCommand().equals("associateSBOL")) {
 			HashSet<String> sbolFiles = gcmEditor.getSbolFiles();
-			SbolBrowser browser = new SbolBrowser(sbolFiles, typeConverter(sbolType), sbolText.getText());
+			SbolBrowser browser = new SbolBrowser(sbolFiles, SbolUtility.typeConverter(sbolType), sbolText.getText());
 			sbolText.setText(browser.getSelection());
 		} 
 	}
 	
-	private Set<String> typeConverter(String sbolType) {
-		Set<String> types = new HashSet<String>();
-		if (sbolType.equals(GlobalConstants.SBOL_ORF)) {
-			types.add("SO_0000316"); // CDS
-		} else if (sbolType.equals(GlobalConstants.SBOL_PROMOTER)) {
-			types.add("SO_0000167"); // promoter
-			types.add("SO_0001203"); // RNA_polymerase_promoter
-		} else if (sbolType.equals(GlobalConstants.SBOL_RBS)) {
-			types.add("SO_0000139"); // ribosome_entry_site
-		} else if (sbolType.equals(GlobalConstants.SBOL_TERMINATOR)) {
-			types.add("SO_0000141"); // terminator
-			types.add("SO_0000614"); // bacterial_terminator
-			
-		}
-		return types;
-	}
-	
 	private void setLabel(String sbolType) {
-		if (sbolType.equals(GlobalConstants.SBOL_ORF))
+		if (sbolType.equals(GlobalConstants.SBOL_DNA_COMPONENT))
+			sbolLabel = new JLabel("SBOL DNA Component");
+		else if (sbolType.equals(GlobalConstants.SBOL_ORF))
 			sbolLabel = new JLabel("SBOL Coding Sequence");
 		else if (sbolType.equals(GlobalConstants.SBOL_PROMOTER))
 			sbolLabel = new JLabel("SBOL Promoter");

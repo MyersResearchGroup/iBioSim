@@ -19,9 +19,9 @@ public class ComplexSpecies extends AbstractSpecies {
 		
 		concentration = s.getInitialConcentration();
 		
-		RBS = s.getRBS();
-		
-		ORF = s.getORF();
+//		RBS = s.getRBS();
+//		
+//		ORF = s.getORF();
 		
 		Kc = s.getKc();
 		

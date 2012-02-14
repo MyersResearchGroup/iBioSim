@@ -543,15 +543,20 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		setFieldEnablings();
 		
 		if (!paramsOnly) {
+			// Panel for mapping SBOL DNA component
+			SbolField componentField = new SbolField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor);
+			sbolFields.put(GlobalConstants.SBOL_DNA_COMPONENT, componentField);
+			grid.add(componentField);
+			
 			// Panel for associating SBOL RBS element
-			SbolField RBS_Field = new SbolField(GlobalConstants.SBOL_RBS, gcmEditor);
-			sbolFields.put(GlobalConstants.SBOL_RBS, RBS_Field);			
-			grid.add(RBS_Field);
+//			SbolField RBS_Field = new SbolField(GlobalConstants.SBOL_RBS, gcmEditor);
+//			sbolFields.put(GlobalConstants.SBOL_RBS, RBS_Field);			
+//			grid.add(RBS_Field);
 			
 			// Panel for associating SBOL ORF element
-			SbolField ORF_Field = new SbolField(GlobalConstants.SBOL_ORF, gcmEditor);
-			sbolFields.put(GlobalConstants.SBOL_ORF, ORF_Field);
-			grid.add(ORF_Field);
+//			SbolField ORF_Field = new SbolField(GlobalConstants.SBOL_ORF, gcmEditor);
+//			sbolFields.put(GlobalConstants.SBOL_ORF, ORF_Field);
+//			grid.add(ORF_Field);
 
 			String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
 			String [] annotations = annotation.split(",");
@@ -560,14 +565,18 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 					String [] type = annotations[i].split("=");
 					typeBox.setSelectedItem(type[1]);
 				}
-				if (annotations[i].startsWith(GlobalConstants.SBOL_RBS)) {
-					String [] sbolRBS = annotations[i].split("=");
-					RBS_Field.setText(sbolRBS[1]);
+				if (annotations[i].startsWith(GlobalConstants.SBOL_DNA_COMPONENT)) {
+					String [] sbolComponent = annotations[i].split("=");
+					componentField.setText(sbolComponent[1]);
 				}
-				if (annotations[i].startsWith(GlobalConstants.SBOL_ORF)) {
-					String [] sbolORF = annotations[i].split("=");
-					ORF_Field.setText(sbolORF[1]);
-				}
+//				if (annotations[i].startsWith(GlobalConstants.SBOL_RBS)) {
+//					String [] sbolRBS = annotations[i].split("=");
+//					RBS_Field.setText(sbolRBS[1]);
+//				}
+//				if (annotations[i].startsWith(GlobalConstants.SBOL_ORF)) {
+//					String [] sbolORF = annotations[i].split("=");
+//					ORF_Field.setText(sbolORF[1]);
+//				}
 			}
 		}
 			

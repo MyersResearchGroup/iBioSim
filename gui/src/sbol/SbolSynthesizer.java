@@ -9,6 +9,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
+import java.util.Collection;
 
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -21,14 +23,16 @@ import main.Gui;
 import org.sbolstandard.core.*;
 import org.sbolstandard.xml.*;
 
-import biomodel.network.Promoter;
-import biomodel.network.SpeciesInterface;
+//import biomodel.network.Promoter;
+//import biomodel.network.SpeciesInterface;
+import biomodel.network.SynthesisNode;
 import biomodel.util.GlobalConstants;
 import biomodel.util.Utility;
 
 public class SbolSynthesizer {
 	
-	private HashMap<String, Promoter> promoters;
+//	private HashMap<String, Promoter> promoters;
+	private Collection<SynthesisNode> synNodes;
 	private HashSet<String> sbolFiles;
 	private HashMap<String, DnaComponent> compMap;
 	private HashSet<String> targetURISet;
@@ -37,8 +41,10 @@ public class SbolSynthesizer {
 	private boolean synthesizerOn;
 	private String time;
 	
-	public SbolSynthesizer(HashMap<String, Promoter> promoters) {
-		this.promoters = promoters;
+//	public SbolSynthesizer(HashMap<String, Promoter> promoters) {
+	public SbolSynthesizer(Collection<SynthesisNode> synNodes) {
+//		this.promoters = promoters;
+		this.synNodes = synNodes;
 	}
 	
 	public boolean loadSbolFiles(HashSet<String> sbolFiles) {
@@ -161,7 +167,6 @@ public class SbolSynthesizer {
 		inputPanel.add(new JLabel("Description"));
 		inputPanel.add(descripText);
 
-//		String targetLibId = "";
 		String targetFileId = "";
 		for (int i = 0; i < 4; i++)
 			input[i] = "";
@@ -198,53 +203,90 @@ public class SbolSynthesizer {
 		return input;
 	}
 	
+	// Recursively walks synthesis node graph and loads associated SBOL DNA component URIs (no preference when graph branches)
+	// Starts at synthesis nodes containing URIs for SBOL promoters
+	// Stops at nodes containing URIs for other promoters or previously visited nodes
 	private LinkedList<String> loadSourceCompURIs() {
-		LinkedList<String> sourceCompURIs = new LinkedList<String>();
-		for (Promoter p : promoters.values()) {
-			if (synthesizerOn) {
-				String sbolPromoter = p.getPromoter();
-				if (sbolPromoter != null && !sbolPromoter.equals(""))
-					sourceCompURIs.add(sbolPromoter);
-				else {
+		Set<String> filter = SbolUtility.typeConverter(GlobalConstants.SBOL_PROMOTER);
+		Set<SynthesisNode> promoterNodes = new HashSet<SynthesisNode>();
+		Set<String> promoterNodeIds = new HashSet<String>();
+		
+		for (SynthesisNode synNode : synNodes) {
+			if (synthesizerOn) 
+				if (compMap.containsKey(synNode.getSbolURI())) {
+					DnaComponent sourceComp = compMap.get(synNode.getSbolURI());
+					for (URI uri : sourceComp.getTypes())
+						if (filter.contains(uri.getFragment())) {
+							promoterNodes.add(synNode);
+							promoterNodeIds.add(synNode.getId());
+						}
+				} else if (synNode.getSbolURI() != null) {
 					synthesizerOn = false;
-					JOptionPane.showMessageDialog(Gui.frame, "Promoter " + p.getId() + " has no SBOL promoter assocation.",
-							"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(Gui.frame, "Component with URI " + synNode.getSbolURI() +
+							" is not found in project SBOL files.", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
 				}
-				for (SpeciesInterface s : p.getOutputs()) {
-					if (synthesizerOn) {
-						String sbolRbs = s.getRBS();
-						if (sbolRbs != null && !sbolRbs.equals(""))
-							sourceCompURIs.add(sbolRbs);
-						else {
-							synthesizerOn = false;
-							JOptionPane.showMessageDialog(Gui.frame, "Species " + s.getId() + " has no SBOL RBS assocation.",
-									"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-					if (synthesizerOn) {
-						String sbolOrf = s.getORF();
-						if (sbolOrf != null && !sbolOrf.equals(""))
-							sourceCompURIs.add(sbolOrf);
-						else {
-							synthesizerOn = false;
-							JOptionPane.showMessageDialog(Gui.frame, "Species " + s.getId() + " has no SBOL ORF assocation.",
-									"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
-						}
-					}
-				}
-				if (synthesizerOn) {
-					String sbolTerminator = p.getTerminator();
-					if (sbolTerminator != null && !sbolTerminator.equals(""))
-						sourceCompURIs.add(sbolTerminator);
-					else {
-						synthesizerOn = false;
-						JOptionPane.showMessageDialog(Gui.frame, "Promoter " + p.getId() + " has no SBOL terminator assocation.",
-								"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-			}
 		}
+		LinkedList<String> sourceCompURIs = new LinkedList<String>();
+		Set<String> visitedNodeIds;
+		for (SynthesisNode promoterNode : promoterNodes) {
+			visitedNodeIds = new HashSet<String>(promoterNodeIds);
+			loadSourceCompURIsHelper(promoterNode, sourceCompURIs, visitedNodeIds);
+		}
+//		for (Promoter p : promoters.values()) {
+//			if (synthesizerOn) {
+//				String sbolPromoter = p.getSbolPromoter();
+//				if (sbolPromoter != null && !sbolPromoter.equals(""))
+//					sourceCompURIs.add(sbolPromoter);
+//				else {
+//					synthesizerOn = false;
+//					JOptionPane.showMessageDialog(Gui.frame, "Promoter " + p.getId() + " has no SBOL promoter assocation.",
+//							"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
+//				}
+//				for (SpeciesInterface s : p.getOutputs()) {
+//					if (synthesizerOn) {
+//						String sbolRbs = s.getRBS();
+//						if (sbolRbs != null && !sbolRbs.equals(""))
+//							sourceCompURIs.add(sbolRbs);
+//						else {
+//							synthesizerOn = false;
+//							JOptionPane.showMessageDialog(Gui.frame, "Species " + s.getId() + " has no SBOL RBS assocation.",
+//									"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
+//						}
+//					}
+//					if (synthesizerOn) {
+//						String sbolOrf = s.getORF();
+//						if (sbolOrf != null && !sbolOrf.equals(""))
+//							sourceCompURIs.add(sbolOrf);
+//						else {
+//							synthesizerOn = false;
+//							JOptionPane.showMessageDialog(Gui.frame, "Species " + s.getId() + " has no SBOL ORF assocation.",
+//									"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
+//						}
+//					}
+//				}
+//				if (synthesizerOn) {
+//					String sbolTerminator = p.getTerminator();
+//					if (sbolTerminator != null && !sbolTerminator.equals(""))
+//						sourceCompURIs.add(sbolTerminator);
+//					else {
+//						synthesizerOn = false;
+//						JOptionPane.showMessageDialog(Gui.frame, "Promoter " + p.getId() + " has no SBOL terminator assocation.",
+//								"Invalid GCM to SBOL Association", JOptionPane.ERROR_MESSAGE);
+//					}
+//				}
+//			}
+//		}
 		return sourceCompURIs;
+	}
+	
+	// Recursive helper method for walking synthesis node graph and loading associated SBOL DNA component URIs
+	private void loadSourceCompURIsHelper(SynthesisNode synNode, LinkedList<String> sourceCompURIs, Set<String> visitedNodeIds) {
+		sourceCompURIs.add(synNode.getSbolURI());
+		for (SynthesisNode nextNode : synNode.getNextNodes())
+			if (!visitedNodeIds.contains(nextNode.getId())) {
+				visitedNodeIds.add(nextNode.getId());
+				loadSourceCompURIsHelper(nextNode, sourceCompURIs, visitedNodeIds);
+			}
 	}
 	
 	private int addSubComponent(int position, String sourceCompURI, DnaComponent synthComp, int addCount) {
@@ -297,96 +339,6 @@ public class SbolSynthesizer {
 			
 	}
 	
-//	private DnaComponent loadComponent(String sourceCompId, String sourceLibId, String sourceFileId) {
-//		HashSet<String> fileSet = new HashSet<String>();
-//		HashSet<String> libSet = new HashSet<String>();
-//		for (String s : fileLibMap.keySet()) {
-//			fileSet.add(s.split("/")[0]);
-//			libSet.add(s.split("/")[1]);
-//		}
-//		if (fileLibMap.containsKey(sourceFileId + "/" + sourceLibId)) {
-//			for (DnaComponent dnac : fileLibMap.get(sourceFileId + "/" + sourceLibId).getComponents()) {
-//				if (dnac.getDisplayId().equals(sourceCompId)) 
-//					return dnac;
-//			}
-//		}
-//		synthesizerOn = false;
-//		if (!fileSet.contains(sourceFileId))
-//			JOptionPane.showMessageDialog(Gui.frame, "File " + sourceFileId + " is not found in project.", 
-//					"File Not Found", JOptionPane.ERROR_MESSAGE);
-//		else if (!libSet.contains(sourceLibId))
-//			JOptionPane.showMessageDialog(Gui.frame, "Collection " + sourceLibId + " is not found in file "+ sourceFileId + ".", 
-//					"Collection Not Found", JOptionPane.ERROR_MESSAGE);
-//		else
-//			JOptionPane.showMessageDialog(Gui.frame, "DNA component " + sourceCompId + " is not found in collection " + sourceLibId
-//			        + " from file " + sourceFileId + ".", "DNA Component Not Found", JOptionPane.ERROR_MESSAGE);
-//		return null;
-//	}
-	
-//	private DnaComponent resolveIdClash(DnaComponent sourceComp) {
-//		int option;
-//		String sourceCompId = sourceComp.getDisplayId();
-//		boolean overwriteMode = false;
-//		if (isAnnotation(sourceCompId)) {
-//			String[] options = {"Change ID", "Use Existing", "Cancel"};
-//			option = JOptionPane.showOptionDialog(Gui.frame, "Collection " + targetLib.getDisplayId() + " already contains DNA component " 
-//					+ sourceCompId + ".  Would you like to change display ID for incoming " + sourceCompId + " or use existing " + sourceCompId + "?", 
-//					"ID Clash", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
-//		} else {
-//			overwriteMode = true;
-//			String[] options = {"Change ID", "Overwrite", "Cancel"};
-//			option = JOptionPane.showOptionDialog(Gui.frame, "Collection " + targetLib.getDisplayId() + " already contains DNA component " 
-//					+ sourceCompId + ".  Would you like to change display ID for incoming " + sourceCompId + " or overwrite existing " 
-//					+ sourceCompId + "?", 
-//					"ID Clash", JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
-//		}
-//		if (option == 0) {
-//			sourceComp = renameId(sourceComp);
-//		} else if (option == 1) {
-//			if (overwriteMode)
-//				deleteComponent(sourceCompId);
-//			else {
-//				for (DnaComponent dnac : targetLib.getComponents()) {
-//					if (dnac.getDisplayId().equals(sourceCompId)) {
-//						sourceComp = dnac;
-//					}
-//				}
-//			}
-//		} else 
-//			synthesizerOn = false;
-//		return sourceComp;
-//	}
-	
-//	private DnaComponent renameId(DnaComponent sourceComp) {
-//		String renameId;
-//		do {
-//			renameId = JOptionPane.showInputDialog(Gui.frame, "Enter new display ID:", "Display ID", JOptionPane.PLAIN_MESSAGE);
-//			if (renameId == null)
-//				break;
-//			if (!sourceComp.getDisplayId().equals(renameId) && sourceCompURISet.contains(renameId))
-//				JOptionPane.showMessageDialog(Gui.frame, "Collection would contain another DNA component with the chosen ID.",
-//						"Invalid ID", JOptionPane.ERROR_MESSAGE);
-//		} while ((!sourceComp.getDisplayId().equals(renameId) && sourceCompURISet.contains(renameId)) || !isSourceIdValid(renameId));
-//		if (renameId != null) {
-//			sourceCompURISet.remove(sourceComp.getDisplayId());
-//			sourceCompURISet.add(renameId);
-//			DnaComponent renameComp = new DnaComponentImpl();
-//			renameComp.setDisplayId(renameId);
-//			if (sourceComp.getName() != null)
-//				renameComp.setName(sourceComp.getName());
-//			if (sourceComp.getDescription() != null)
-//				renameComp.setDescription(sourceComp.getDescription());
-//			if (sourceComp.getDnaSequence() != null)
-//				renameComp.setDnaSequence(sourceComp.getDnaSequence());
-//			for (URI uri : sourceComp.getTypes())
-//				renameComp.addType(uri);
-//			return renameComp;
-//		} else {
-//			synthesizerOn = false;
-//			return sourceComp;
-//		}
-//	}
-	
 	private boolean isSourceIdValid(String sourceId) {
 		if (sourceId.equals("")) {
 			JOptionPane.showMessageDialog(Gui.frame, "Chosen ID is blank.", "Invalid ID", JOptionPane.ERROR_MESSAGE);
@@ -404,44 +356,5 @@ public class SbolSynthesizer {
 				+ now.get(Calendar.DATE) + "_" + now.get(Calendar.YEAR) + "_" + now.get(Calendar.HOUR_OF_DAY) + "_" 
 				+ now.get(Calendar.MINUTE) + "_" + now.get(Calendar.SECOND) + "_" + now.get(Calendar.MILLISECOND);
 	}
-	
-//	private boolean checkOverwrite(String sourceId) {
-//		if (isAnnotation(sourceId)) {
-//			JOptionPane.showMessageDialog(Gui.frame, "Collection " + targetLib.getDisplayId() 
-//					+ " already contains DNA component " + sourceId + ".", "ID Clash", JOptionPane.ERROR_MESSAGE);
-//			return false;
-//		} else {
-//			String[] options = { "Ok", "Cancel" };
-//			int option = JOptionPane.showOptionDialog(Gui.frame, "Collection " + targetLib.getDisplayId() 
-//					+ " already contains DNA component " + sourceId + ".  Would you like to overwrite?",
-//					"ID Clash", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE, null, options, options[0]);
-//			if (option == JOptionPane.YES_OPTION) {
-//				deleteComponent(sourceId);
-//				return true;
-//			} else
-//				return false;
-//		}
-//	}
-	
-//	private boolean isAnnotation(String compId) {
-//		for (DnaComponent dnac : targetLib.getComponents())
-//			for (SequenceAnnotation sa : dnac.getAnnotations())
-//				if (sa.getSubComponent().getDisplayId().equals(compId))
-//					return true;
-//		return false;
-//	}
-//	
-//	private void deleteComponent(String compId) {
-//		CollectionImpl editedLib = new CollectionImpl();
-//		editedLib.setDisplayId(targetLib.getDisplayId());
-//		if (targetLib.getName() != null)
-//			editedLib.setName(targetLib.getName());
-//		if (targetLib.getDescription() != null)
-//			editedLib.setDescription(targetLib.getDescription());
-//		for (DnaComponent dnac : targetLib.getComponents())
-//			if (!dnac.getDisplayId().equals(compId))
-//				editedLib.addComponent(dnac);
-//		targetLib = editedLib;
-//	}
 	
 }

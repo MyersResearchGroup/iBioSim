@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 import javax.swing.JOptionPane;
 import javax.xml.bind.JAXBException;
@@ -13,6 +15,8 @@ import main.Gui;
 
 import org.sbolstandard.core.*;
 import org.sbolstandard.xml.*;
+
+import biomodel.util.GlobalConstants;
 
 public class SbolUtility {
 
@@ -74,12 +78,12 @@ public class SbolUtility {
 		}
 	}
 	
-	//Use to check if newly created collection is valid
+	// Use to check if newly created collection is valid
 	public static boolean isLibraryValid(org.sbolstandard.core.Collection lib) {
 		return isLibraryValid(lib, "");
 	}
 	
-	//Use to check if collection loaded from file is valid
+	// Use to check if collection loaded from file is valid
 	public static boolean isLibraryValid(org.sbolstandard.core.Collection lib, String fileId) {
 		String libMessage = "";
 		String compMessage = "";
@@ -122,6 +126,24 @@ public class SbolUtility {
 				}
 			}
 		return true;
+	}
+	
+	// Converts global constant SBOL type to corresponding set of SO types
+	public static Set<String> typeConverter(String sbolType) {
+		Set<String> types = new HashSet<String>();
+		if (sbolType.equals(GlobalConstants.SBOL_ORF)) {
+			types.add("SO_0000316"); // CDS
+		} else if (sbolType.equals(GlobalConstants.SBOL_PROMOTER)) {
+			types.add("SO_0000167"); // promoter
+			types.add("SO_0001203"); // RNA_polymerase_promoter
+		} else if (sbolType.equals(GlobalConstants.SBOL_RBS)) {
+			types.add("SO_0000139"); // ribosome_entry_site
+		} else if (sbolType.equals(GlobalConstants.SBOL_TERMINATOR)) {
+			types.add("SO_0000141"); // terminator
+			types.add("SO_0000614"); // bacterial_terminator
+			
+		}
+		return types;
 	}
 	
 }
