@@ -88,10 +88,10 @@ public class SpeciesPanel extends JPanel implements ActionListener {
 		else {
 			
 			if (gcm.getSBMLDocument().getLevel() > 2) {
-				grid = new JPanel(new GridLayout(16,1));
+				grid = new JPanel(new GridLayout(15,1));
 			} 
 			else {
-				grid = new JPanel(new GridLayout(15,1));
+				grid = new JPanel(new GridLayout(14,1));
 			}
 		}
 		
