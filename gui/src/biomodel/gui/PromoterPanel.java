@@ -304,28 +304,38 @@ public class PromoterPanel extends JPanel {
 		fields.put(GlobalConstants.STOICHIOMETRY_STRING, field);
 		add(field);		
 		
-		// Panel for associating SBOL promoter element
+		
 		if (!paramsOnly) {
-			SbolField Prom_Field = new SbolField(GlobalConstants.SBOL_PROMOTER, gcmEditor);
-			sbolFields.put(GlobalConstants.SBOL_PROMOTER, Prom_Field);
-			add(Prom_Field);
+			// Panel for mapping SBOL DNA component
+			SbolField componentField = new SbolField(GlobalConstants.SBOL_DNA_COMPONENT, gcmEditor);
+			sbolFields.put(GlobalConstants.SBOL_DNA_COMPONENT, componentField);
+			add(componentField);
+			
+			// Panel for associating SBOL promoter element
+//			SbolField Prom_Field = new SbolField(GlobalConstants.SBOL_PROMOTER, gcmEditor);
+//			sbolFields.put(GlobalConstants.SBOL_PROMOTER, Prom_Field);
+//			add(Prom_Field);
 		
 			// Panel for associating SBOL terminator element
-			SbolField Term_Field = new SbolField(GlobalConstants.SBOL_TERMINATOR, gcmEditor);
-			sbolFields.put(GlobalConstants.SBOL_TERMINATOR, Term_Field);
-			add(Term_Field);
+//			SbolField Term_Field = new SbolField(GlobalConstants.SBOL_TERMINATOR, gcmEditor);
+//			sbolFields.put(GlobalConstants.SBOL_TERMINATOR, Term_Field);
+//			add(Term_Field);
 
 			String annotation = promoter.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
 			String [] annotations = annotation.split(",");
 			for (int i=0;i<annotations.length;i++) {
-				if (annotations[i].startsWith(GlobalConstants.SBOL_PROMOTER)) {
-					String [] sbolRBS = annotations[i].split("=");
-					Prom_Field.setText(sbolRBS[1]);
+				if (annotations[i].startsWith(GlobalConstants.SBOL_DNA_COMPONENT)) {
+					String [] sbolComponent = annotations[i].split("=");
+					componentField.setText(sbolComponent[1]);
 				}
-				if (annotations[i].startsWith(GlobalConstants.SBOL_TERMINATOR)) {
-					String [] sbolORF = annotations[i].split("=");
-					Term_Field.setText(sbolORF[1]);
-				}
+//				if (annotations[i].startsWith(GlobalConstants.SBOL_PROMOTER)) {
+//					String [] sbolRBS = annotations[i].split("=");
+//					Prom_Field.setText(sbolRBS[1]);
+//				}
+//				if (annotations[i].startsWith(GlobalConstants.SBOL_TERMINATOR)) {
+//					String [] sbolORF = annotations[i].split("=");
+//					Term_Field.setText(sbolORF[1]);
+//				}
 			}
 		}
 

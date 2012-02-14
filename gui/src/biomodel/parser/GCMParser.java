@@ -7,10 +7,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Set;
 
 
+import org.sbml.libsbml.ASTNode;
+import org.sbml.libsbml.KineticLaw;
+import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Reaction;
+import org.sbml.libsbml.Rule;
 import org.sbml.libsbml.SBMLDocument;
 import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
@@ -25,6 +32,7 @@ import biomodel.network.Influence;
 import biomodel.network.Promoter;
 import biomodel.network.SpasticSpecies;
 import biomodel.network.SpeciesInterface;
+import biomodel.network.SynthesisNode;
 import biomodel.util.GlobalConstants;
 
 import sbol.SbolSynthesizer;
@@ -93,6 +101,8 @@ public class GCMParser {
 		complexMap = new HashMap<String, ArrayList<Influence>>();
 		partsMap = new HashMap<String, ArrayList<Influence>>();
 
+		// Need to first parse all species that aren't promoters before parsing promoters
+		// since latter process refers to the species list
 		for (long i=0; i<sbml.getModel().getNumSpecies(); i++) {
 			Species species = sbml.getModel().getSpecies(i);
 			if (!species.isSetAnnotation() || 
@@ -142,17 +152,17 @@ public class GCMParser {
 		p.setId(promoter.getId());
 		promoterList.put(promoter.getId(), p);
 		p.setInitialAmount(promoter.getInitialAmount());
-		String annotation = promoter.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
-		String [] annotations = annotation.split(",");
-		for (int i=0;i<annotations.length;i++) {
-			if (annotations[i].startsWith(GlobalConstants.SBOL_PROMOTER)) {
-				String [] type = annotations[i].split("=");
-				p.setPromoter(type[1]);
-			} else if (annotations[i].startsWith(GlobalConstants.SBOL_TERMINATOR)) {
-				String [] type = annotations[i].split("=");
-				p.setTerminator(type[1]);
-			}  
-		}
+//		String annotation = promoter.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
+//		String [] annotations = annotation.split(",");
+//		for (int i=0;i<annotations.length;i++) {
+//			if (annotations[i].startsWith(GlobalConstants.SBOL_PROMOTER)) {
+//				String [] type = annotations[i].split("=");
+//				p.setSbolPromoter(type[1]);
+//			} else if (annotations[i].startsWith(GlobalConstants.SBOL_TERMINATOR)) {
+//				String [] type = annotations[i].split("=");
+//				p.setTerminator(type[1]);
+//			}  
+//		}
 		String component = "";
 		if (promoter.getId().contains("__")) {
 			component = promoter.getId().substring(0,promoter.getId().lastIndexOf("__")+2);
@@ -322,19 +332,19 @@ public class GCMParser {
 		
 		String annotation = species.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
 		String [] annotations = annotation.split(",");
-		for (int i=0;i<annotations.length;i++) {
+		for (int i=0;i<annotations.length;i++) 
 			if (annotations[i].startsWith(GlobalConstants.TYPE)) {
 				String [] type = annotations[i].split("=");
 				speciesIF.setType(type[1]);
-			} else if (annotations[i].startsWith(GlobalConstants.SBOL_RBS)) {
-				String [] type = annotations[i].split("=");
-				speciesIF.setRBS(type[1]);
-			} else if (annotations[i].startsWith(GlobalConstants.SBOL_ORF)) {
-				String [] type = annotations[i].split("=");
-				speciesIF.setORF(type[1]);
-			}  
-		}
-		
+			}
+//			} else if (annotations[i].startsWith(GlobalConstants.SBOL_RBS)) {
+//				String [] type = annotations[i].split("=");
+//				speciesIF.setRBS(type[1]);
+//			} else if (annotations[i].startsWith(GlobalConstants.SBOL_ORF)) {
+//				String [] type = annotations[i].split("=");
+//				speciesIF.setORF(type[1]);
+//			}  
+//		}
 		if (species.isSetInitialAmount()) {
 			speciesIF.setInitialAmount(species.getInitialAmount());
 		} else if (species.isSetInitialConcentration()) {
@@ -415,26 +425,199 @@ public class GCMParser {
 				infl.setInput(input);
 				infl.setOutput(output);
 				//Maps complex species to complex formation influences of which they're outputs
-				ArrayList<Influence> complexInfl = null;
+				ArrayList<Influence> complexInfluences = null;
 				if (complexMap.containsKey(output)) {
-					complexInfl = complexMap.get(output);
+					complexInfluences = complexMap.get(output);
 				} else { 
-					complexInfl = new ArrayList<Influence>();
-					complexMap.put(output, complexInfl);
+					complexInfluences = new ArrayList<Influence>();
+					complexMap.put(output, complexInfluences);
 				}
-				complexInfl.add(infl);
+				complexInfluences.add(infl);
 				//Maps part species to complex formation influences of which they're inputs
-				complexInfl = null;
+				complexInfluences = null;
 				if (partsMap.containsKey(input)) {
-					complexInfl = partsMap.get(input);
+					complexInfluences = partsMap.get(input);
 				} else { 
-					complexInfl = new ArrayList<Influence>();
-					partsMap.put(input, complexInfl);
+					complexInfluences = new ArrayList<Influence>();
+					partsMap.put(input, complexInfluences);
 				}
-				complexInfl.add(infl);
+				complexInfluences.add(infl);
 			} 
 			sbml.getModel().removeReaction(complex.getId());
 		}
+	}
+	
+	public void parsePromoterSbol(Model sbmlModel, Species sbmlPromoter) {
+		// Create synthesis node corresponding to sbml promoter 
+		String sbolUri = "";
+		String [] annotations = sbmlPromoter.getAnnotationString().replace("<annotation>","").replace("</annotation>","").split(",");
+		for (int i=0; i < annotations.length; i++) 
+			if (annotations[i].startsWith(GlobalConstants.SBOL_DNA_COMPONENT)) 
+				sbolUri = annotations[i].split("=")[1];
+		SynthesisNode synNode;
+		if (!sbolUri.equals(""))
+			synNode = new SynthesisNode(sbmlPromoter.getId(), sbolUri);
+		else
+			synNode = new SynthesisNode(sbmlPromoter.getId());
+		synMap.put(sbmlPromoter.getId(), synNode);
+		// Determine if promoter belongs to a component
+		String component = "";
+		if (sbmlPromoter.getId().contains("__")) {
+			component = sbmlPromoter.getId().substring(0, sbmlPromoter.getId().lastIndexOf("__")+2);
+		}
+		// Connect synthesis node for promoter to synthesis nodes for its products
+		// Remove promoter production reaction from sbml
+		Reaction production = sbmlModel.getModel().getReaction(component + "Production_" + sbmlPromoter.getId());
+		if (production != null) {
+			for (long i = 0; i < production.getNumProducts(); i++) {
+				synNode.addNextNode(synMap.get(production.getProduct(i).getSpecies()));
+			}
+			sbmlModel.getModel().removeReaction(production.getId());
+		}
+	}
+	
+	public void parseReactionSbol(Reaction sbmlReaction) {
+		// Create synthesis node corresponding to sbml reaction
+		String sbolUri = "";
+		String [] annotations = sbmlReaction.getAnnotationString().replace("<annotation>","").replace("</annotation>","").split(",");
+		for (int i = 0; i < annotations.length; i++) 
+			if (annotations[i].startsWith(GlobalConstants.SBOL_DNA_COMPONENT)) 
+				sbolUri = annotations[i].split("=")[1];
+		SynthesisNode synNode;
+		if (!sbolUri.equals(""))
+			synNode = new SynthesisNode(sbmlReaction.getId(), sbolUri);
+		else
+			synNode = new SynthesisNode(sbmlReaction.getId());
+		synMap.put(sbmlReaction.getId(), synNode);
+		// Connect synthesis node for reaction to synthesis nodes for its products
+		for (long i = 0; i < sbmlReaction.getNumReactants(); i++)
+			synMap.get(sbmlReaction.getReactant(i).getSpecies()).addNextNode(synNode);
+		// Connect synthesis nodes for reactants, modifiers to synthesis node for reaction
+		for (long i = 0; i < sbmlReaction.getNumModifiers(); i++)
+			synMap.get(sbmlReaction.getModifier(i).getSpecies()).addNextNode(synNode);
+		for (long i = 0; i < sbmlReaction.getNumProducts(); i++) 
+			synNode.addNextNode(synMap.get(sbmlReaction.getProduct(i).getSpecies()));
+		// Map parameters to reactions in which they appear for use in connecting synthesis nodes
+		KineticLaw kl = sbmlReaction.getKineticLaw();
+		for (long i = 0; i < kl.getNumParameters(); i++) {
+			if (!paramInputMap.containsKey(kl.getParameter(i).getName()))
+				paramInputMap.put(kl.getParameter(i).getName(), new HashSet<String>());
+			paramInputMap.get(kl.getParameter(i).getName()).add(sbmlReaction.getId());
+		}
+	}
+	
+	public void parseRuleSbol(Rule sbmlRule) {
+		// Create synthesis node corresponding to sbml rule
+		String sbolUri = "";
+		String [] annotations = sbmlRule.getAnnotationString().replace("<annotation>","").replace("</annotation>","").split(",");
+		for (int i=0; i < annotations.length; i++) 
+			if (annotations[i].startsWith(GlobalConstants.SBOL_DNA_COMPONENT)) 
+				sbolUri = annotations[i].split("=")[1];
+		SynthesisNode synNode;
+		if (!sbolUri.equals(""))
+			synNode = new SynthesisNode(sbmlRule.getId(), sbolUri);
+		else
+			synNode = new SynthesisNode(sbmlRule.getId());
+		// Connect synthesis nodes for input species to synthesis node for rule
+		// or maps input parameters to rules in which they're inputs
+		for (String input : parseRuleHelper(sbmlRule.getMath())) {
+			if (synMap.containsKey(input))
+				synMap.get(input).addNextNode(synNode);
+			else {
+				if (!paramInputMap.containsKey(input))
+					paramInputMap.put(input, new HashSet<String>());
+				paramInputMap.get(input).add(sbmlRule.getId());
+			}
+		}
+		// Connects synthesis node for rule to synthesis node for its output species
+		// or maps output parameter to rule
+		String output = sbmlRule.getVariable();
+		if (output != null) {
+			if (synMap.containsKey(output))
+				synNode.addNextNode(synMap.get(output));
+			else {
+				if (!paramOutputMap.containsKey(output))
+					paramOutputMap.put(output, new HashSet<String>());
+				paramOutputMap.get(output).add(sbmlRule.getId());
+			}
+		}
+	}
+	
+	public LinkedList<String> parseRuleHelper(ASTNode astNode) {
+		LinkedList<String> inputs = new LinkedList<String>();
+		for (long i = 0; i < astNode.getNumChildren(); i++) {
+			ASTNode childNode = astNode.getChild(i);
+			if (!childNode.isOperator() && !childNode.isNumber())
+				inputs.add(childNode.getName());
+			inputs.addAll(parseRuleHelper(childNode));
+		}
+		return inputs;
+	}
+	
+	public void parseSpeciesSbol(Model sbmlModel, Species sbmlSpecies) {
+		// Create synthesis node corresponding to sbml species
+		String sbolUri = "";
+		String [] annotations = sbmlSpecies.getAnnotationString().replace("<annotation>","").replace("</annotation>","").split(",");
+		for (int i=0; i < annotations.length; i++) 
+			if (annotations[i].startsWith(GlobalConstants.SBOL_DNA_COMPONENT)) 
+				sbolUri = annotations[i].split("=")[1];
+		SynthesisNode synNode;
+		if (!sbolUri.equals(""))
+			synNode = new SynthesisNode(sbmlSpecies.getId(), sbolUri);
+		else
+			synNode = new SynthesisNode(sbmlSpecies.getId());
+		synMap.put(sbmlSpecies.getId(), synNode);
+		// Determine if species belongs to a gcm component
+		String component = "";
+		if (sbmlSpecies.getId().contains("__")) {
+			component = sbmlSpecies.getId().substring(0, sbmlSpecies.getId().lastIndexOf("__") + 2);
+		}
+		// Remove species degradation reaction from sbml
+		Reaction degradation = sbmlModel.getReaction(component + "Degradation_" + sbmlSpecies.getId());
+		if (degradation != null)
+			sbmlModel.removeReaction(degradation.getId());
+		// Remove species diffusion reaction from sbml
+		Reaction diffusion = sbmlModel.getReaction(component + "MembraneDiffusion_" + sbmlSpecies.getId());
+		if (diffusion != null)
+			sbmlModel.removeReaction(diffusion.getId());
+		// Remove species constitutive production reaction from sbml
+		Reaction constitutive = sbmlModel.getReaction(component + "Constitutive_" + sbmlSpecies.getId());
+		if (constitutive != null)
+			sbmlModel.removeReaction(constitutive.getId());
+		// Build complex map for use in connecting synthesis nodes
+		// Remove species complex formation reaction from sbml
+		Reaction complexFormation = sbmlModel.getReaction(component + "Complex_" + sbmlSpecies.getId());
+		if (complexFormation != null) {
+			for (long i = 0; i < complexFormation.getNumReactants(); i++) {
+				Influence infl = new Influence();		
+				String input = complexFormation.getReactant(i).getSpecies();
+				String output = complexFormation.getProduct(0).getSpecies();
+				infl.setInput(input);
+				//Maps complex species to complex formation influences of which they're outputs
+				ArrayList<Influence> complexInfluences = null;
+				if (complexMap.containsKey(output)) {
+					complexInfluences = complexMap.get(output);
+				} else { 
+					complexInfluences = new ArrayList<Influence>();
+					complexMap.put(output, complexInfluences);
+				}
+				complexInfluences.add(infl);
+			} 
+			sbmlModel.getModel().removeReaction(complexFormation.getId());
+		}
+	}
+	
+	public void connectMappedSynthesisNodes() {
+		// Connect synthesis nodes for species that form complexes
+		for (String complexId : complexMap.keySet())
+			for (Influence infl : complexMap.get(complexId))
+				synMap.get(infl.getInput()).addNextNode(synMap.get(complexId));
+		// Connect synthesis nodes for rules to synthesis nodes for rules or reactions on the basis of shared parameters
+		for (String param : paramInputMap.keySet())
+			if (paramOutputMap.containsKey(param)) 
+				for (String origin : paramOutputMap.get(param))
+					for (String destination : paramInputMap.get(param))
+						synMap.get(origin).addNextNode(synMap.get(destination));
 	}
 	
 	public SbolSynthesizer buildSbolSynthesizer() {
@@ -444,26 +627,38 @@ public class GCMParser {
 	}
 	
 	public SbolSynthesizer buildTopLevelSbolSynthesizer(SBMLDocument sbml) {
-		speciesList = new HashMap<String, SpeciesInterface>();
-		promoterList = new HashMap<String, Promoter>();
-		complexMap = new HashMap<String, ArrayList<Influence>>();
-		partsMap = new HashMap<String, ArrayList<Influence>>();
-
-		for (long i=0; i<sbml.getModel().getNumSpecies(); i++) {
-			Species species = sbml.getModel().getSpecies(i);
-			if (!species.isSetAnnotation() || 
-					!species.getAnnotationString().contains(GlobalConstants.TYPE+"="+GlobalConstants.PROMOTER))
-				parseSpeciesData(sbml,species);
-			
-		}
-		for (long i=0; i<sbml.getModel().getNumSpecies(); i++) {
-			Species species = sbml.getModel().getSpecies(i);
-			if (species.isSetAnnotation() && 
-					species.getAnnotationString().contains(GlobalConstants.TYPE+"="+GlobalConstants.PROMOTER)) 
-				parsePromoterData(sbml,species);
-		}
 		
-		SbolSynthesizer synthesizer = new SbolSynthesizer(promoterList);
+		synMap = new HashMap<String, SynthesisNode>(); // initialize map of model element IDs to synthesis nodes
+		complexMap = new HashMap<String, ArrayList<Influence>>();
+		paramInputMap = new HashMap<String, Set<String>>();  // initialize map of parameters to reactions in which they appear
+		paramOutputMap = new HashMap<String, Set<String>>(); // initialize map of parameters to rules for which they're outputs
+		Model sbmlModel = sbml.getModel();
+
+		// Create and connect synthesis nodes for species and promoters
+		// Note that all non-promoter species must be parsed first since parsePromoterSbol may refer to them
+		// when connecting synthesis nodes
+		for (long i = 0 ; i < sbmlModel.getNumSpecies(); i++) {
+			Species sbmlSpecies = sbmlModel.getSpecies(i);
+			if (!sbmlSpecies.isSetAnnotation() || 
+					!sbmlSpecies.getAnnotationString().contains(GlobalConstants.TYPE + "=" + GlobalConstants.PROMOTER)) 
+				parseSpeciesSbol(sbmlModel, sbmlSpecies);
+		}
+		for (long i = 0 ; i < sbmlModel.getNumSpecies(); i++) {
+			Species sbmlSpecies = sbmlModel.getSpecies(i);
+			if (sbmlSpecies.isSetAnnotation() && 
+					sbmlSpecies.getAnnotationString().contains(GlobalConstants.TYPE + "=" + GlobalConstants.PROMOTER)) 
+				parsePromoterSbol(sbmlModel, sbmlSpecies);
+		}
+		// Create and connect synthesis nodes for reactions not auto-generated by iBioSim
+		for (long i = 0 ; i < sbmlModel.getNumReactions(); i++) {
+			parseReactionSbol(sbmlModel.getReaction(i));
+		}
+		for (long i = 0; i < sbmlModel.getNumRules(); i++) {
+			parseRuleSbol(sbmlModel.getRule(i));
+		}
+		// Finishes connecting synthesis nodes in accordance with various maps (see above)
+		connectMappedSynthesisNodes();
+		SbolSynthesizer synthesizer = new SbolSynthesizer(synMap.values());
 		return synthesizer;
 	}
 
@@ -480,6 +675,9 @@ public class GCMParser {
 	private HashMap<String, Promoter> promoterList;
 	private HashMap<String, ArrayList<Influence>> complexMap;
 	private HashMap<String, ArrayList<Influence>> partsMap;
+	private HashMap<String, SynthesisNode> synMap;
+	private HashMap<String, Set<String>> paramInputMap;
+	private HashMap<String, Set<String>> paramOutputMap;
 
 	private BioModel gcm = null;
 

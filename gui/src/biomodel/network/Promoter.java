@@ -42,22 +42,6 @@ public class Promoter {
 	public void setId(String id) {
 		this.id = id;
 	}
-	
-	public String getPromoter() {
-		return promoter;
-	}
-	
-	public void setPromoter(String promoter) {
-		this.promoter = promoter;
-	}
-	
-	public String getTerminator() {
-		return terminator;
-	}
-	
-	public void setTerminator(String terminator) {
-		this.terminator = terminator;
-	}
 
 	public double getInitialAmount() {
 		return amount;
@@ -312,10 +296,6 @@ public class Promoter {
 	protected String id = "";
 	
 	protected double amount;
-	
-	protected String promoter = "";
-	
-	protected String terminator = "";
 	
 	protected double ka;
 	

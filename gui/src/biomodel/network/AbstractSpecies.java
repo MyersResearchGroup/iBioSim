@@ -133,22 +133,6 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 		this.type = type;
 	}
 	
-	public String getRBS() {
-		return RBS;
-	}
-	
-	public void setRBS(String RBS) {
-		this.RBS = RBS;
-	}
-	
-	public String getORF() {
-		return ORF;
-	}
-	
-	public void setORF(String ORF) {
-		this.ORF = ORF;
-	}
-	
 	public double getInitialAmount() {
 		/*
 		if (getProperty(GlobalConstants.INITIAL_STRING) != null &&
@@ -330,10 +314,6 @@ public abstract class AbstractSpecies implements SpeciesInterface {
 	protected double amount;
 	
 	protected double concentration;
-	
-	protected String RBS;
-	
-	protected String ORF;
 	
 	protected double[] Kc;
 	
