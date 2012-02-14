@@ -37,7 +37,7 @@ public class PromoterPanel extends JPanel {
 	
 	public PromoterPanel(String selected, BioModel gcm, boolean paramsOnly, BioModel refGCM, 
 			ModelEditor gcmEditor) {
-		super(new GridLayout(paramsOnly?7:11, 1));
+		super(new GridLayout(paramsOnly?7:10, 1));
 		this.selected = selected;
 		this.gcm = gcm;
 		this.paramsOnly = paramsOnly;
