@@ -3,22 +3,78 @@ package lpn.parser;
 import java.util.HashMap;
 
 public class Vertex {
-	public final Integer processID;
-	private HashMap<Integer, Edge> adjacencies; 
+	public final Integer componentID;
+	private HashMap<Integer, Edge> adjacencies;
+	private Edge edgeToMostConnectedNeighbor; 
+	private int numVariables;
+	private int bestNetGain;
 	
-	public Vertex(Integer process_id) {
-		this.processID = process_id;
+	public Vertex(Integer componentID, int numVariables) {
+		this.componentID = componentID;
+		this.numVariables = numVariables;
 		adjacencies = new HashMap<Integer, Edge>();
+		bestNetGain = MinusINF;
 	}
 
 	public HashMap<Integer, Edge> getAdjacencies() {
 		return this.adjacencies;
 	}
 	
-//	public Integer getHighestEdgeWeight() {
-//		for (Edge e : adjacencies.values()) {
-//			
-//		}
-//		return null;
-//	}
+	/**
+	 * This method calculates the best net gain when coalesce this vertex with one of its neighbor vertices.
+	 * The net gain is calculated as follows: net gain = (# internal variables created after coalescing) - (# remaining global variables
+	 * of the target process after coalescing). The term "internal" and "global" are defined here with respect to the coalesced component. 
+	 * @param maxNumVarsInOneComp 
+	 * @return
+	 */	
+	public int calculateBestNetGain(int maxNumVarsInOneComp) {
+		for (Integer i : adjacencies.keySet()){
+			Edge e = adjacencies.get(i);
+			Vertex targetVertex = e.target;
+			int numInternal = e.getWeight(); // e is the shared edge between this vertex and the target vertex.
+//			if (numInternal + this.getNumInternalVars() + targetVertex.getNumInternalVars() > maxNumVarsInOneComp) {
+			if (this.getNumVars() + targetVertex.getNumVars() - numInternal > maxNumVarsInOneComp) {
+				System.out.println("^^^^^^^^^^^^^^^^^^^^^^^");
+				System.out.println("Component " + this.componentID + " has " + this.getNumVars() + " variable(s).");
+				System.out.println("Component " + targetVertex.componentID + " has " + targetVertex.getNumVars() + " variable(s).");
+				bestNetGain = MinusINF;
+				System.out.println("(" + this.componentID + " <- " 
+						+ targetVertex.componentID + ")" + " bestNetGain = " + bestNetGain);
+				System.out.println("vvvvvvvvvvvvvvvvvvvvvvv");
+			}
+			else {
+				int numRemainGlobal = targetVertex.getAllEdgesWeights() - e.getWeight();
+				if (bestNetGain < numInternal - numRemainGlobal) {
+					bestNetGain = numInternal - numRemainGlobal;
+					edgeToMostConnectedNeighbor = e; 
+				}
+				System.out.println("(" + this.componentID + " <- " 
+						+ targetVertex.componentID + ")" + " bestNetGain = " + bestNetGain);
+			}
+			
+		}
+		return bestNetGain;
+	}
+	
+	private int getNumVars() {
+		return numVariables;
+	}
+	
+	public int getBestNetGain() {
+		return bestNetGain;
+	}
+	
+	private int getAllEdgesWeights() {
+		int allEdgesWeights = 0;
+		for (Edge e : adjacencies.values()) {
+			allEdgesWeights = allEdgesWeights + e.getWeight();
+		}		
+		return allEdgesWeights;
+	}
+
+	public static int MinusINF = -2147483648;
+	
+	public Vertex getMostConnectedNeighbor() {
+		return edgeToMostConnectedNeighbor.target;
+	}
 }
