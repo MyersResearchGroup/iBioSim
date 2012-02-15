@@ -50,6 +50,7 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import lpn.parser.Abstraction;
+import lpn.parser.Component;
 import lpn.parser.LhpnFile;
 import lpn.parser.LpnProcess;
 import lpn.parser.Place;
@@ -252,7 +253,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 		verbose = new JCheckBox("Verbose");
 		graph = new JCheckBox("Show State Graph");
 		untimedPOR = new JCheckBox("Use Partial Orders");
-		decomposeLPN = new JCheckBox("Decompose LPN into modules");
+		decomposeLPN = new JCheckBox("Decompose LPN into components");
 		multipleLPNs = new JCheckBox("Multiple LPNs");
 		dot.addActionListener(this);
 		verbose.addActionListener(this);
@@ -1257,22 +1258,26 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					curProcess.print();					
 				}
 				System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
-				
+				// Coalesce an array of processes into one LPN component.
+				Integer maxNumVarsInOneComp = 22; //30; //1;// = processMap.keySet().size();
+				LpnComponentList componentList = new LpnComponentList(maxNumVarsInOneComp);					
+				componentList.buildComponents(processMap, directory, lpn.getLabel());
 				if (verbose.isSelected()) { 
-//					Store each process as individual LPN.
-					for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
-						Integer curProcId = processMapIter.next();
-						LpnProcess curProcess = processMap.get(curProcId);						
-						LhpnFile lpnProc = new LhpnFile();
-						lpnProc = curProcess.buildLPN(lpnProc);
-						lpnProc.save(root + separator + lpn.getLabel() + "_proc" + curProcId + ".lpn");
-						//lpnProc.save(directory + separator + lpn.getLabel() + curProcId + ".lpn");
+////				Store each process as individual LPN.
+//					for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
+//						Integer curProcId = processMapIter.next();
+//						LpnProcess curProcess = processMap.get(curProcId);						
+//						LhpnFile lpnProc = new LhpnFile();
+//						lpnProc = curProcess.buildLPN(lpnProc);
+//						lpnProc.save(root + separator + lpn.getLabel() + "_proc" + curProcId + ".lpn");
+//						//lpnProc.save(directory + separator + lpn.getLabel() + curProcId + ".lpn");
+//					}
+					HashMap<Integer, Component> compMap = componentList.getComponentMap();
+					for (Component comp : compMap.values()) {
+						LhpnFile lpnComp = new LhpnFile();
+						lpnComp = comp.buildLPN(lpnComp);
+						lpnComp.save(root + separator + lpn.getLabel() + "_comp" + comp.getComponentId() + ".lpn");
 					}
-					
-//					// Coalesce an array of processes into one LPN component.
-//					Integer maxNumProcInOneComp = 2; //1;// = processMap.keySet().size();
-//					LpnComponentList componentList = new LpnComponentList(maxNumProcInOneComp, processMap);					
-//					componentList.buildComponents(processMap, directory, lpn.getLabel());
 				}
 				
 				return;
