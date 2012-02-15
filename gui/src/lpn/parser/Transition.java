@@ -780,6 +780,8 @@ public class Transition {
 		if (current_enabled_transitions == null || current_enabled_transitions.size()==0)
 			return null;
 		for(Transition curTran : current_enabled_transitions) {
+			if (curTran == this)
+				continue;
 			boolean disabled = true;
 			if (next_enabled_transitions != null && next_enabled_transitions.size()!=0) {
 				for(Transition nextTran : next_enabled_transitions) {
