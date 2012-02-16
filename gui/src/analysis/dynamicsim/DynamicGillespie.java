@@ -1,7 +1,4 @@
 package analysis.dynamicsim;
-
-import java.io.IOException;
-
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
@@ -63,14 +60,14 @@ public class DynamicGillespie {
 //				System.gc();
 		}
 		
-		if (cancelFlag == false) {
-			
-			try {
-				simulator.printStatisticsTSD();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+//		if (cancelFlag == false) {
+//			
+//			try {
+//				simulator.printStatisticsTSD();
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
 	}
 	
 	/**
@@ -83,6 +80,8 @@ public class DynamicGillespie {
 			
 			JOptionPane.showMessageDialog(Gui.frame, "Simulation Canceled",
 					"Canceled", JOptionPane.ERROR_MESSAGE);
+			
+			simulator.cancel();
 			
 			cancelFlag = true;
 		}

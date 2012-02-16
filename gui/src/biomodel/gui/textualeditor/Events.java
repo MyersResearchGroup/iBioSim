@@ -115,7 +115,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		int index = events.getSelectedIndex();
 		JPanel eventPanel = new JPanel(new BorderLayout());
 		// JPanel evPanel = new JPanel(new GridLayout(2, 2));
-		JPanel evPanel = new JPanel(new GridLayout(8, 2));
+		JPanel evPanel = new JPanel(new GridLayout(9, 2));
 		JLabel IDLabel = new JLabel("ID:");
 		JLabel NameLabel = new JLabel("Name:");
 		JLabel triggerLabel = new JLabel("Trigger:");
@@ -124,6 +124,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		JLabel assignTimeLabel = new JLabel("Use values at trigger time:");
 		JLabel persistentTriggerLabel = new JLabel("Trigger is persistent:");
 		JLabel initialTriggerLabel = new JLabel("Trigger initially true:");
+		JLabel dynamicProcessLabel = new JLabel("Dynamic Process:");
+		
 		JTextField eventID = new JTextField(12);
 		JTextField eventName = new JTextField(12);
 		JTextField eventTrigger = new JTextField(12);
@@ -132,6 +134,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		JCheckBox assignTime = new JCheckBox("");
 		JCheckBox persistentTrigger = new JCheckBox("");
 		JCheckBox initialTrigger = new JCheckBox("");
+		JComboBox dynamicProcess = new JComboBox(new String[] {"none","Division","Death"});
+		
 		JPanel eventAssignPanel = new JPanel(new BorderLayout());
 		JPanel addEventAssign = new JPanel();
 		JButton addAssignment = new JButton("Add Assignment");
@@ -243,6 +247,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		evPanel.add(persistentTrigger);
 		evPanel.add(initialTriggerLabel);
 		evPanel.add(initialTrigger);
+		evPanel.add(dynamicProcessLabel);
+		evPanel.add(dynamicProcess);
 		eventPanel.add(evPanel, "North");
 		eventPanel.add(eventAssignPanel, "South");
 		Object[] options = { option, "Cancel" };
@@ -383,6 +389,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 				}
 			}
 			if (!error) {
+				//edit event
 				if (option.equals("OK")) {
 					events.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 					String[] ev = new String[events.getModel().getSize()];
@@ -483,6 +490,7 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 						}
 					}
 				}
+				//add event
 				else {
 					JList add = new JList();
 					org.sbml.libsbml.Event e = document.getModel().createEvent();
@@ -526,6 +534,19 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 								break;
 						}
 					}
+					//check for dynamic process
+					if (!error) {
+						
+						if (((String)dynamicProcess.getSelectedItem()).equals("Division")) {
+						
+							e.setAnnotation("Division");
+						}
+						else if (((String)dynamicProcess.getSelectedItem()).equals("Death")) {
+							
+							e.setAnnotation("Death");
+						}
+					}
+					
 					Object[] adding = { e.getId() };
 					// Object[] adding = {
 					// myFormulaToString(e.getTrigger().getMath()) };

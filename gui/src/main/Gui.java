@@ -8669,6 +8669,7 @@ public class Gui implements MouseListener, ActionListener, MouseMotionListener, 
 	*/
 
 	public boolean updateOpenGCM(String gcmName) {
+		
 		for (int i = 0; i < tab.getTabCount(); i++) {
 			String tab = this.tab.getTitleAt(i);
 			if (gcmName.equals(tab)) {

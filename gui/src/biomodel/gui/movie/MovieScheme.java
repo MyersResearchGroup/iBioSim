@@ -416,12 +416,32 @@ public class MovieScheme {
 	 * @param cellType
 	 * @return the appearance at
 	 */
-	public MovieAppearance getAppearance(String cellID, String cellType, 
-			int frameIndex, HashMap<String, ArrayList<Double>> speciesTSData) {
+	public MovieAppearance createAppearance(String cellID, String cellType, 
+			HashMap<String, Double> speciesTSData) {
 		
 		HashMap<String, Scheme> cellSchemes = getSchemesWithinCell(cellID, cellType);
 		
-		if (cellSchemes.size() <= 0) return null;
+		String oldCellID = cellID;
+		
+		//this denotes a dynamically created compartment
+		//so take its appearance from its ancestor if the user hasn't specified the appearance explicitly
+		if (cellSchemes.size() <= 0 && cellID.contains("_of_")) {
+			
+			//find the first ancestor with a scheme and use that as the scheme
+			while (cellSchemes.size() <= 0 && cellID.contains("_of_")) {
+				
+				cellID = cellID.substring(cellID.indexOf("_of_") + 4, cellID.length());
+				cellSchemes = getSchemesWithinCell(cellID, cellType);
+			}
+		}
+		
+		String newCellID = cellID;
+		
+		//don't use the ancestor's appearance, only its scheme
+		cellID = oldCellID;
+		
+		if (cellSchemes.size() <= 0) 
+			return null;
 		else if (cellSchemes.size() == 1) {
 			
 			//if there's just one scheme, use the frame index and the scheme
@@ -430,17 +450,19 @@ public class MovieScheme {
 			Map.Entry<String, Scheme> cellScheme = cellSchemes.entrySet().iterator().next();
 			
 			String speciesID = cellScheme.getKey();
+			
+			//if we're using the scheme of an ancestor, use the child's species ID
+			speciesID = speciesID.replace(newCellID, cellID);
+			
 			int min = cellScheme.getValue().getMin();
 			int max = cellScheme.getValue().getMax();
 			GradientPaint colorGradient = cellScheme.getValue().getColorGradient();
 			boolean opacityState = cellScheme.getValue().getOpacityState();
-			boolean sizeState = cellScheme.getValue().getSizeState();	
+			boolean sizeState = cellScheme.getValue().getSizeState();
+			double speciesValue = 0.0;
 			
-			if (speciesTSData.get(speciesID) == null)
-				return null;
-			
-			//number of molecules at this time instance
-			double speciesValue = speciesTSData.get(speciesID).get(frameIndex);
+			if (speciesTSData.containsKey(speciesID))
+				speciesValue = speciesTSData.get(speciesID);
 			
 			//how far along this value is on the gradient spectrum of min to max
 			double gradientValue = (double)((speciesValue - min) / (max - min));
@@ -465,12 +487,7 @@ public class MovieScheme {
 				GradientPaint colorGradient = cellScheme.getValue().getColorGradient();
 				boolean opacityState = cellScheme.getValue().getOpacityState();
 				boolean sizeState = cellScheme.getValue().getSizeState();
-				
-				if (speciesTSData.get(speciesID) == null)
-					continue;
-				
-				//number of molecules at this time instance
-				double speciesValue = speciesTSData.get(speciesID).get(frameIndex);
+				double speciesValue = speciesTSData.get(speciesID);
 				
 				//how far along this value is on the gradient spectrum of min to max
 				double gradientValue = (double)((speciesValue - min) / (max - min));

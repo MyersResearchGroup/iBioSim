@@ -18,7 +18,7 @@ import main.Gui;
 import main.util.MutableBoolean;
 import odk.lang.FastMath;
 
-public class SimulatorSSACR extends Simulator{	
+public class SimulatorSSACR extends Simulator {
 	
 	//allows for access to a group number from a reaction ID
 	private TObjectIntHashMap<String> reactionToGroupMap = null;
@@ -57,7 +57,7 @@ public class SimulatorSSACR extends Simulator{
 				progress, printInterval, initializationTime);
 		
 		try {
-			initialize();
+			initialize(randomSeed);
 		} catch (IOException e2) {
 			e2.printStackTrace();
 		} catch (XMLStreamException e2) {
@@ -95,6 +95,8 @@ public class SimulatorSSACR extends Simulator{
 		long step5Time = 0;
 		long step6Time = 0;
 		
+		TObjectIntHashMap<String> reactionToTimesFired = new TObjectIntHashMap<String>();
+		
 		currentTime = 0.0;
 		double printTime = -0.00001;
 		
@@ -102,7 +104,7 @@ public class SimulatorSSACR extends Simulator{
 		if (noEventsFlag == false)
 			handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
 		
-		while (currentTime < timeLimit) {
+		while (currentTime < timeLimit && cancelFlag == false) {
 			
 			//if a constraint fails
 			if (constraintFailureFlag == true) {
@@ -130,9 +132,7 @@ public class SimulatorSSACR extends Simulator{
 				}
 			}
 			
-			//TSD PRINTING
-			//print to TSD if the next print interval arrives
-			//this obviously prints the previous timestep's data
+			//prints the initial (time == 0) data
 			if (currentTime >= printTime) {
 				
 				if (printTime < 0)
@@ -145,12 +145,11 @@ public class SimulatorSSACR extends Simulator{
 					e.printStackTrace();
 				}
 				
-				printTime += printInterval;
+				printTime += printInterval;					
 			}
 			
 			//update progress bar
-			progress.setValue((int)((currentTime / timeLimit) * 100.0));			
-			
+			progress.setValue((int)((currentTime / timeLimit) * 100.0));		
 			
 			//STEP 1: generate random numbers
 			
@@ -199,7 +198,7 @@ public class SimulatorSSACR extends Simulator{
 			String selectedReactionID = selectReaction(selectedGroup, r3, r4);
 			
 			//step3bTime += System.nanoTime() - step3bInitial;
-			
+				
 			
 			
 			//STEP 4: perform selected reaction and update species counts
@@ -261,9 +260,26 @@ public class SimulatorSSACR extends Simulator{
 				}
 				
 				printTime += printInterval;
+				
+//				//duplicate a random component
+//				if (currentTime < 30) {
+//					
+//					int compIndex = 0;
+//					int compNum = (int) (randomNumberGenerator.nextDouble() * componentToLocationMap.size());
+//					String compName = "";
+//					
+//					for (String compID : componentToLocationMap.keySet()) {
+//						if (compIndex == compNum)
+//							{compName = compID; break;}
+//						++compIndex;
+//					}
+//					
+//					duplicateComponent(compName);
+//				}
 			}
 			
 		} //end simulation loop
+		
 		
 //		System.err.println("total time: " + String.valueOf((initializationTime + System.nanoTime() - 
 //				initTime2 - initTime3) / 1e9f));
@@ -275,20 +291,23 @@ public class SimulatorSSACR extends Simulator{
 //		System.err.println("total step 5 time: " + String.valueOf(step5Time / 1e9f));
 //		System.err.println("total step 6 time: " + String.valueOf(step6Time / 1e9f));
 		
-		//print the final species counts
-		try {
-			printToTSD(printTime);
-		} 
-		catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		try {
-			bufferedTSDWriter.write(')');
-			bufferedTSDWriter.flush();
-		} 
-		catch (IOException e1) {
-			e1.printStackTrace();
+		if (cancelFlag == false) {
+			
+			//print the final species counts
+			try {
+				printToTSD(printTime);
+			} 
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			try {
+				bufferedTSDWriter.write(')');
+				bufferedTSDWriter.flush();
+			} 
+			catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 
@@ -303,7 +322,7 @@ public class SimulatorSSACR extends Simulator{
 	 * @throws IOException
 	 * @throws XMLStreamException
 	 */
-	private void initialize() 
+	private void initialize(long randomSeed) 
 	throws IOException, XMLStreamException {
 		
 		reactionToGroupMap = new TObjectIntHashMap<String>((int) (numReactions * 1.5));
@@ -318,8 +337,8 @@ public class SimulatorSSACR extends Simulator{
 		rulesFlag = new MutableBoolean(false);
 		constraintsFlag = new MutableBoolean(false);
 		
-		//setupArrays();
-		setupSpecies();
+		setupArrays();		
+		setupSpecies();		
 		setupInitialAssignments();
 		setupParameters();
 		setupRules();
@@ -342,12 +361,67 @@ public class SimulatorSSACR extends Simulator{
 		
 		
 		//STEP 0A: calculate initial propensities (including the total)		
-		calculateInitialPropensities();
+		setupReactions();
 		
 		//STEP OB: create and populate initial groups		
 		createAndPopulateInitialGroups();
 		
 		setupEvents();
+		
+		setupForOutput(randomSeed, 1);
+		
+		setupGrid();
+		
+		HashSet<String> comps = new HashSet<String>();
+		comps.addAll(componentToLocationMap.keySet());
+		
+//		for (String componentID : comps)
+//			duplicateComponent(componentID);
+		
+		bufferedTSDWriter.write("(" + "\"" + "time" + "\"");
+		
+		for (String speciesID : speciesIDSet) {
+			
+			bufferedTSDWriter.write(", \"" + speciesID + "\"");
+		}
+		
+		//print compartment location IDs
+		for (String componentLocationID : componentToLocationMap.keySet()) {
+			
+			String locationX = componentLocationID + "__locationX";
+			String locationY = componentLocationID + "__locationY";
+			
+			bufferedTSDWriter.write(", \"" + locationX + "\", \"" + locationY + "\"");
+		}
+		
+		bufferedTSDWriter.write("),\n");
+		
+//		for (String reactionID : reactionToPropensityMap.keySet()) {
+//			
+//			if (reactionToPropensityMap.get(reactionID) > 0) {
+//			
+//				System.err.println(reactionID);
+//				
+//				try {
+//					System.err.println(ASTNode.formulaToString(reactionToFormulaMap.get(reactionID)));
+//				} catch (SBMLException e) {
+//					e.printStackTrace();
+//				}				
+//				
+//				System.err.println(reactionToPropensityMap.get(reactionID));
+//				
+//				System.err.println();
+//				System.err.println();
+//			}
+//		}
+//		
+//		for (String variableID : variableToValueMap.keySet()) {
+//			
+//			System.err.println(variableID);
+//			System.err.println(variableToValueMap.get(variableID));
+//			System.err.println();
+//			System.err.println();
+//		}
 	}
 	
 	/**
@@ -416,6 +490,14 @@ public class SimulatorSSACR extends Simulator{
 			
 			nonemptyGroupSet.add(groupNum);
 		}
+	}
+	
+	/**
+	 * cancels the current run
+	 */
+	protected void cancel() {
+	
+		cancelFlag = true;
 	}
 	
 	/**
@@ -612,8 +694,6 @@ public class SimulatorSSACR extends Simulator{
 	 */
 	protected void setupForNewRun(int newRun) {
 		
-		setupNewRun(0, newRun);
-		
 		try {
 			setupSpecies();
 		} catch (IOException e) {
@@ -646,12 +726,22 @@ public class SimulatorSSACR extends Simulator{
 			constraintsFlag.setValue(false);
 		
 		//STEP 0A: calculate initial propensities (including the total)		
-		calculateInitialPropensities();
+		setupReactions();
 		
 		//STEP OB: create and populate initial groups		
 		createAndPopulateInitialGroups();
 		
 		setupEvents();
+		
+		setupForOutput(0, newRun);
+	}
+	
+	/**
+	 * updates the groups
+	 */
+	protected void updateAfterDynamicChanges() {
+		
+		reassignAllReactionsToGroups();
 	}
 	
 	/**
@@ -787,11 +877,8 @@ public class SimulatorSSACR extends Simulator{
 			
 			double newPropensity = 0.0;
 			
-			if (notEnoughMoleculesFlag == false) {
-				
+			if (notEnoughMoleculesFlag == false)
 				newPropensity = evaluateExpressionRecursive(reactionToFormulaMap.get(affectedReactionID));
-				//newPropensity = CalculatePropensityIterative(affectedReactionID);
-			}
 			
 			if (newPropensity > 0.0 && newPropensity < minPropensity) {
 				

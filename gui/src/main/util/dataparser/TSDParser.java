@@ -146,6 +146,7 @@ public class TSDParser extends DataParser {
 						counter++;
 						dataPoints++;
 						if (cha == ')') {
+							
 							if (dataPoints > species.size()) {
 								JOptionPane.showMessageDialog(component, "Time point includes more data than number of species", "Extra Data",
 										JOptionPane.ERROR_MESSAGE);

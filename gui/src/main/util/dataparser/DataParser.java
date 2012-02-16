@@ -150,6 +150,19 @@ public class DataParser {
 		}
 		return out;
 	}
+	
+	/**
+	 * gets a speciesToValue hashmap for a particular frame
+	 * @param frameIndex
+	 * @return
+	 */
+	public HashMap<String, Double> getHashMap(int frameIndex) {
+		HashMap<String, Double> out = new HashMap<String, Double>();
+		for (int i = 0; i < data.size(); i++) {
+			out.put(species.get(i), data.get(i).get(frameIndex));
+		}
+		return out;
+	}
 
 	/**
 	 * A helper function. Read a file into a string. Thanks to erickson at

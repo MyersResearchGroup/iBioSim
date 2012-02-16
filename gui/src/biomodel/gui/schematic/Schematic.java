@@ -861,7 +861,7 @@ public class Schematic extends JPanel implements ActionListener {
 								
 								//if there isn't a TSDParser, the user hasn't selected
 								//a TSD file to simulate
-								if (movieContainer.getTSDParser() == null)
+								if (movieContainer.getTSDParser() == null && movieContainer.getDTSDParser() == null)
 									JOptionPane.showMessageDialog(Gui.frame, "You must choose a simulation file before editing component properties.");
 								else {
 									if (cell != null)
@@ -874,7 +874,10 @@ public class Schematic extends JPanel implements ActionListener {
 					if (cell != null) {
 						
 						bringUpEditorForCell(cell);
-						graph.buildGraph();
+						
+						if (editable)
+							graph.buildGraph();
+						
 						gcm.makeUndoPoint();
 					}
 				}
@@ -962,6 +965,9 @@ public class Schematic extends JPanel implements ActionListener {
 		graph.addListener(mxEvent.CELLS_REMOVED, new mxEventSource.mxIEventListener() {
 			
 			public void invoke(Object arg0, mxEventObject event) {
+				
+				if (graph.dynamic == true)
+					return;
 					
 				// if the graph isn't being built and this event
 				// comes through, remove all the cells from the 
@@ -1192,6 +1198,7 @@ public class Schematic extends JPanel implements ActionListener {
 									
 							//if there's a grid, remove the component from the grid as well
 							if (grid.isEnabled()) {
+								
 								grid.eraseNode(cell.getId(), gcm);
 								gcm2sbml.getSpeciesPanel().refreshSpeciesPanel(gcm.getSBMLDocument());
 							}
@@ -1227,12 +1234,15 @@ public class Schematic extends JPanel implements ActionListener {
 		
 			public void invoke(Object arg0, mxEventObject event) {
 				
+				if (graph.dynamic == true)
+					return;
+				
 				//if the graph is building, ignore the creation of edges.
 				//also, if we're on a grid, no influences are allowed
-				if(graph.isBuilding == false){
+				if (graph.isBuilding == false) {
 					
 					// if the user tries to add anything in simulation mode, stop them.
-					if(editable == false){
+					if (editable == false) {
 						graph.buildGraph();
 						return;
 					}
@@ -1773,7 +1783,7 @@ public class Schematic extends JPanel implements ActionListener {
 			//if in analysis view, bring up the movie options
 			else{
 				
-				if(movieContainer.getTSDParser() == null)
+				if (movieContainer.getTSDParser() == null && movieContainer.getDTSDParser() == null)
 					JOptionPane.showMessageDialog(Gui.frame, 
 							"You must choose a simulation file before editing component properties.");
 				else {
@@ -1790,7 +1800,9 @@ public class Schematic extends JPanel implements ActionListener {
 		}
 		
 		// refresh everything.
-		graph.buildGraph();
+		if (editable)
+			graph.buildGraph();
+		
 		drawGrid();
 	}
 	
