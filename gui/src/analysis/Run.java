@@ -1078,7 +1078,7 @@ public class Run implements ActionListener {
 						time1 = System.nanoTime();
 						log.addText("Executing:\nreb2sac --target.encoding=" + sim + " " + filename + "\n");
 						
-						Simulator.setupArrays(filename);
+						Simulator.expandArrays(filename);
 						
 						reb2sac = exec.exec("reb2sac --target.encoding=" + sim + " " + theFile, null, work);
 					}

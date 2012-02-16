@@ -25,6 +25,8 @@ import main.util.MutableString;
 import org.sbml.jsbml.ASTNode;
 import org.sbml.jsbml.ListOf;
 import org.sbml.jsbml.ModifierSpeciesReference;
+import org.sbml.libsbml.Event;
+import org.sbml.libsbml.EventAssignment;
 import org.sbml.libsbml.KineticLaw;
 import org.sbml.libsbml.LocalParameter;
 import org.sbml.libsbml.Model;
@@ -35,12 +37,15 @@ import org.sbml.libsbml.SBMLReader;
 import org.sbml.libsbml.SBMLWriter;
 import org.sbml.libsbml.Species;
 import org.sbml.libsbml.SpeciesReference;
+import org.sbml.libsbml.Submodel;
 import org.sbml.libsbml.Unit;
 import org.sbml.libsbml.UnitDefinition;
 import org.sbml.libsbml.XMLAttributes;
 import org.sbml.libsbml.XMLNode;
 import org.sbml.libsbml.XMLTriple;
 import org.sbml.libsbml.libsbml;
+
+import com.lowagie.text.Document;
 
 import biomodel.gui.Grid;
 import biomodel.gui.textualeditor.SBMLutilities;
@@ -431,8 +436,12 @@ public class GeneticNetwork {
 			//loop through submodels to see if they have this same membrane diffusion reaction ID
 			for (int submodelIndex = 0; submodelIndex < properties.getSBMLCompModel().getNumSubmodels(); ++submodelIndex) {
 				
-				if (properties.getSBMLCompModel().getSubmodel(submodelIndex).getModel().getReaction(reactionID) != null)
-					validSubmodels.add(properties.getSBMLCompModel().getSubmodel(submodelIndex).getId());				
+				SBMLReader sbmlReader = new SBMLReader();
+				Model submodel = sbmlReader.readSBMLFromFile(properties.getPath() + 
+						properties.getSBMLCompModel().getSubmodel(submodelIndex).getModelRef() + ".xml").getModel();
+				
+				if (submodel.getReaction(reactionID) != null)
+					validSubmodels.add(submodel.getId());				
 			}
 			
 			membraneDiffusionReaction.setAnnotation("");
@@ -452,9 +461,98 @@ public class GeneticNetwork {
 							.replace("<annotation>","").replace("</annotation>","").replace("Type=Grid","").trim());
 			}
 			
-			//fix the array annotation that as just created
+			//fix the array annotation that was just created
 					
 			String reactionAnnotation = membraneDiffusionReaction.getAnnotationString();
+			ArrayList<String> components = new ArrayList<String>();
+			
+			//find all components in the annotation
+			for (int j = 0; j < reactionAnnotation.length(); ++j) {
+				
+				if (reactionAnnotation.charAt(j) == '[' &&
+						reactionAnnotation.charAt(j+1) == '[') {
+					
+					String componentID = "";
+					
+					for (j = j + 2; reactionAnnotation.charAt(j) != ']'; ++j)
+						componentID += reactionAnnotation.charAt(j);
+					
+					components.add(componentID);
+				}				
+			}
+			
+			//replace the annotation with a better-formatted version (for jsbml)				
+			XMLAttributes attr = new XMLAttributes();	
+			attr.add("xmlns:array", "http://www.fakeuri.com");
+			
+			for (String componentID : components)
+				attr.add("array:" + componentID, "(" + properties.getSubmodelRow(componentID) + "," +
+						properties.getSubmodelCol(componentID) + ")");
+			
+			XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
+			membraneDiffusionReaction.setAnnotation(node);
+		}
+		
+		ArrayList<Event> dynamicEvents = new ArrayList<Event>();
+		
+		//look through all submodels for dynamic events
+		for (int submodelIndex = 0; submodelIndex < properties.getSBMLCompModel().getNumSubmodels(); 
+		++submodelIndex) {
+			
+			SBMLReader sbmlReader = new SBMLReader();
+			Model submodel = sbmlReader.readSBMLFromFile(properties.getPath() + 
+					properties.getSBMLCompModel().getSubmodel(submodelIndex).getModelRef() + ".xml").getModel();
+			
+			//find all individual dynamic events (within submodels)
+			for (int i = 0; i < submodel.getNumEvents(); ++i) {
+				
+				Event event = submodel.getEvent(i);
+				
+				if (event.getAnnotationString().length() > 0 && (
+						event.getAnnotationString().contains("Division") ||
+						event.getAnnotationString().contains("Death"))) {
+					
+					if (event.getAnnotationString().contains("Division"))
+						event.setId(submodel.getId() + "__Division__" + event.getId());
+					else if (event.getAnnotationString().contains("Death"))
+						event.setId(submodel.getId() + "__Death__" + event.getId());
+					
+					dynamicEvents.add(event);
+				}
+			}
+		}
+		
+		//make arrays out of the dynamic events (for the top-level model)
+		for (Event dynEvent : dynamicEvents) {
+						
+			document.getModel().addEvent(dynEvent.cloneObject());			
+			Event dynamicEvent = document.getModel().getEvent(dynEvent.getId());
+			
+			String submodelID = ((String[])dynamicEvent.getId().split("__"))[0];
+			
+			dynamicEvent.setId(dynamicEvent.getId().replace(submodelID + "__",""));
+			dynamicEvent.setAnnotation(", " + 
+				properties.getSBMLDocument().getModel().getParameter(submodelID + "__locations").getAnnotationString()
+				.replace("<annotation>","").replace("</annotation>","").trim());
+			
+			EventAssignment evAssignment = document.getModel().createEventAssignment();
+			evAssignment.setVariable(submodelID + "_size");
+			org.sbml.libsbml.ASTNode divisionMath = SBMLutilities.myParseFormula(submodelID + "_size" + "+1");
+			org.sbml.libsbml.ASTNode deathMath = SBMLutilities.myParseFormula(submodelID + "_size" + "-1");
+			
+			//if it's division, add a division event assignment
+			if (dynamicEvent.getId().contains("Division__")) {
+				
+				evAssignment.setMath(divisionMath);
+				dynamicEvent.addEventAssignment(evAssignment);
+			}
+			else if (dynamicEvent.getId().contains("Death__")) {
+				
+				evAssignment.setMath(deathMath);
+				dynamicEvent.addEventAssignment(evAssignment);
+			}
+		
+			String reactionAnnotation = dynamicEvent.getAnnotationString();
 			ArrayList<String> components = new ArrayList<String>();
 			
 			//find all components in the annotation
@@ -481,8 +579,9 @@ public class GeneticNetwork {
 						properties.getSubmodelCol(componentID) + ")");
 			
 			XMLNode node = new XMLNode(new XMLTriple("array","","array"), attr);
-			membraneDiffusionReaction.setAnnotation(node);
+			dynamicEvent.setAnnotation(node);
 		}
+		
 		
 		//replace all Type=Grid occurences with more complete information
 		for (int i = 0; i < document.getModel().getNumReactions(); ++i) {

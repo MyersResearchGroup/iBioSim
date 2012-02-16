@@ -8,6 +8,7 @@ import java.awt.Rectangle;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.sbml.libsbml.Parameter;
 
@@ -17,8 +18,6 @@ import biomodel.parser.BioModel;
 import com.mxgraph.model.mxCell;
 
 import biomodel.util.GlobalConstants;
-
-
 
 
 /**
@@ -461,6 +460,17 @@ public class Grid {
 		return selectedNodes;
 	}
 
+	/**
+	 * updates and node's rectangle
+	 * 
+	 * @param compID
+	 * @param rectangle
+	 */
+	public void setNodeRectangle(String compID, Rectangle rectangle) {
+		
+		getNodeFromCompID(compID).setRectangle(rectangle);
+	}
+	
 	
 	//INFORMATION RETRIEVAL METHODS
 	
@@ -571,6 +581,30 @@ public class Grid {
 		return false;
 	}
 
+	/**
+	 * returns the component ID that occupies a location
+	 * 
+	 * @param row
+	 * @param col
+	 * @return
+	 */
+	public String getCompIDFromLocation(int row, int col) {
+		
+		return grid.get(row).get(col).getComponent();
+	}
+	
+	/**
+	 * returns the boolean occupancy state of a grid location
+	 * 
+	 * @param row
+	 * @param col
+	 * @return
+	 */
+	public boolean getOccupancyFromLocation(int row, int col) {
+	
+		return grid.get(row).get(col).isOccupied();
+	}
+	
 	
 	//GRID UPDATING METHODS
 	
@@ -708,6 +742,139 @@ public class Grid {
 		//put the components onto the grid and update hash maps and update the graph
 		refreshComponents();
 	}
+	
+	/**
+	 * called when component locations change
+	 * puts components in their proper locations
+	 * 
+	 * @param componentToLocationMap
+	 */
+	public void updateComponentLocations(HashMap<String, Point> componentToLocationMap) {
+		
+		for (int row = 0; row < numRows; ++row) {
+			for (int col = 0; col < numCols; ++col) {
+				
+				grid.get(row).get(col).setComponent("none");
+				grid.get(row).get(col).setOccupied(false);
+			}
+		}		
+		
+		//now go through the updated list of components and put them in the proper spot
+		for (Map.Entry<String, Point> componentAndLocation : componentToLocationMap.entrySet()) {
+			
+			GridNode node = grid.get((int) componentAndLocation.getValue().getX())
+			.get((int) componentAndLocation.getValue().getY());
+			
+			node.setComponent(componentAndLocation.getKey());
+			node.setOccupied(true);
+			node.setRow((int) componentAndLocation.getValue().getX());
+			node.setCol((int) componentAndLocation.getValue().getY());
+		}
+	}
+	
+	/**
+	 * changes the grid size to a new number of rows/cols
+	 * and repopulates the grid
+	 * this is used during dynamic simulation playback
+	 * 
+	 * @param rows
+	 * @param cols
+	 */
+	public void resetGrid(int rows, int cols) {
+		
+//		int currentNumRows = this.numRows;
+//		int currentNumCols = this.numCols;
+//		int newNumRows = rows;
+//		int newNumCols = cols;
+//		int numRowsToAdd = newNumRows - currentNumRows;
+//		int numColsToAdd = newNumCols - currentNumCols;
+//		
+//		//growing the grid rows
+//		if (numRowsToAdd > 0) {
+//			
+//			//add new rows up to the new number of columns
+//			for (int row = currentNumRows; row < newNumRows; ++row) {
+//				
+//				//allocate grid nodes for the new rows
+//				//note: this could be small than the old size
+//				//but that doesn't matter
+//				grid.add(new ArrayList<GridNode>(newNumCols));
+//				
+//				for (int col = 0; col < newNumCols; ++col) {
+//					
+//					grid.get(row).add(new GridNode());
+//					grid.get(row).get(col).setRow(row);
+//					grid.get(row).get(col).setCol(col);
+//				}
+//			}
+//		}
+//		//shrinking the grid rows
+//		else if (numRowsToAdd < 0) {
+//			
+//			//go from the new last row to the prior last row
+//			//erase all of the nodes (which clears them and erases the components from the gcm)
+//			for (int row = newNumRows; row < currentNumRows; ++row) {				
+//				for (int col = 0; col < currentNumCols; ++col) {
+//					
+//					grid.get(row).get(col).clear();
+//				}				
+//			}
+//			
+//			//change this so that the columns aren't added with length past the proper number of rows
+//			currentNumRows = newNumRows;
+//		}
+//		
+//		//growing the grid cols
+//		if (numColsToAdd > 0) {
+//			
+//			//add new columns up to the current number of rows
+//			for (int row = 0; row < currentNumRows; ++row) {
+//				
+//				//allocate grid nodes for the new columns
+//				grid.add(new ArrayList<GridNode>(numColsToAdd));
+//				
+//				for (int col = 0; col < newNumCols; ++col) {
+//					
+//					grid.get(row).add(new GridNode());
+//					grid.get(row).get(col).setRow(row);
+//					grid.get(row).get(col).setCol(col);
+//				}				
+//			}
+//		}
+//		//shrinking the grid cols
+//		else if (numColsToAdd < 0) {
+//			
+//			//go from the new last col to the prior last col
+//			//erase all of the nodes (which clears them and erases the components from the gcm)
+//			for (int row = 0; row < currentNumRows; ++row) {				
+//				for (int col = newNumCols; col < currentNumCols; ++col) {
+//					
+//					grid.get(row).get(col).clear();
+//				}				
+//			}
+//		}
+		
+		this.numRows = rows;
+		this.numCols = cols;
+		
+		grid = new ArrayList<ArrayList<GridNode> >(numRows);
+		
+		//clear the grid of its components
+		for (int row = 0; row < numRows; ++row) {
+			
+			grid.add(new ArrayList<GridNode>(numCols));
+			
+			for (int col = 0; col < numCols; ++col) {
+				
+				grid.get(row).add(new GridNode());
+				
+				grid.get(row).get(col).setComponent("none");
+				grid.get(row).get(col).setOccupied(false);
+			}			
+		}
+	}
+	
+	
 	
 	
 	//PRIVATE

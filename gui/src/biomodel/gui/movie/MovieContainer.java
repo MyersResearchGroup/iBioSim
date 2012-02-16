@@ -4,9 +4,11 @@ package biomodel.gui.movie;
 import main.Gui;
 import main.util.ExampleFileFilter;
 import main.util.Utility;
+import main.util.dataparser.DTSDParser;
 import main.util.dataparser.TSDParser;
 
 import analysis.AnalysisView;
+import biomodel.gui.Grid;
 import biomodel.gui.ModelEditor;
 import biomodel.gui.movie.SerializableScheme;
 import biomodel.gui.schematic.ListChooser;
@@ -22,6 +24,7 @@ import com.google.gson.Gson;
 import java.awt.BorderLayout;
 import java.awt.Cursor;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.BufferedReader;
@@ -30,8 +33,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -44,7 +47,6 @@ import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.Timer;
@@ -66,11 +68,12 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private static final long serialVersionUID = 1L;
 	
 	private Schematic schematic;
-	private AnalysisView reb2sac;
+	private AnalysisView analysisView;
 	private BioModel gcm;
 	private Gui biosim;
-	private ModelEditor gcm2sbml;
+	private ModelEditor modelEditor;
 	private TSDParser parser;
+	private DTSDParser dynamicParser;
 	private Timer playTimer;
 	private MovieScheme movieScheme;
 	
@@ -87,6 +90,10 @@ public class MovieContainer extends JPanel implements ActionListener {
 	private JButton clearButton;
 	private JSlider slider;
 	
+	private int numTimePoints = 0;
+	
+	private boolean dynamic = false;
+	
 	
 	/**
 	 * constructor
@@ -96,7 +103,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 * @param biosim
 	 * @param gcm2sbml
 	 */
-	public MovieContainer(AnalysisView reb2sac_, BioModel gcm, Gui biosim, ModelEditor gcm2sbml){
+	public MovieContainer(AnalysisView reb2sac_, BioModel gcm, Gui biosim, ModelEditor gcm2sbml) {
 		
 		super(new BorderLayout());
 		
@@ -106,8 +113,8 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		this.gcm = gcm;
 		this.biosim = biosim;
-		this.reb2sac = reb2sac_;
-		this.gcm2sbml = gcm2sbml;
+		this.analysisView = reb2sac_;
+		this.modelEditor = gcm2sbml;
 		this.movieScheme = new MovieScheme();
 		
 		this.playTimer = new Timer(0, playTimerEventHandler);
@@ -124,21 +131,21 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 * @param directoryName directory for search for files in
 	 * @return TSD filenames within the directory
 	 */
-	private Vector<Object> recurseTSDFiles(String directoryName){
+	private Vector<Object> recurseTSDFiles(String directoryName) {
 		
 		Vector<Object> filenames = new Vector<Object>();
 		
 		filenames.add(new File(directoryName).getName());
 		
-		for (String s : new File(directoryName).list()){
+		for (String s : new File(directoryName).list()) {
 			
 			String fullFileName = directoryName + File.separator + s;
 			File f = new File(fullFileName);
 			
-			if(s.endsWith(".tsd") && f.isFile()){
+			if (s.endsWith(".tsd") || s.endsWith(".dtsd") && f.isFile()) {
 				filenames.add(s);
 			}
-			else if(f.isDirectory()){
+			else if (f.isDirectory()) {
 				filenames.add(recurseTSDFiles(fullFileName));
 			}
 		}
@@ -151,15 +158,15 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 * 
 	 * @throws ListChooser.EmptyListException
 	 */
-	private void prepareTSDFile(){
+	private void prepareTSDFile() {
 		
 		pause();
 	
 		// if simID is present, go up one directory.
-		String simPath = reb2sac.getSimPath();
-		String simID = reb2sac.getSimID();
+		String simPath = analysisView.getSimPath();
+		String simID = analysisView.getSimID();
 		
-		if(!simID.equals("")){
+		if (!simID.equals("")) {
 			simPath = new File(simPath).getParent();
 		}
 		
@@ -167,28 +174,39 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		String filename;
 		
-		try{
+		try {
 			filename = TreeChooser.selectFromTree(Gui.frame, filenames, "Choose a simulation file");
 		}
-		catch(TreeChooser.EmptyTreeException e){
+		catch(TreeChooser.EmptyTreeException e) {
+			
 			JOptionPane.showMessageDialog(Gui.frame, "Sorry, there aren't any simulation files. Please simulate then try again.");
 			return;
 		}
 		
-		if(filename == null)
+		if (filename == null)
 			return;
 		
-		String fullFilePath = reb2sac.getRootPath() + filename;
-		this.parser = new TSDParser(fullFilePath, false);
+		String fullFilePath = analysisView.getRootPath() + filename;
 		
-		slider.setMaximum(parser.getNumSamples()-1);
+		if (fullFilePath.contains(".dtsd")) {
+			
+			dynamic = true;
+			dynamicParser = new DTSDParser(fullFilePath.replace(".tsd", ".dtsd"));
+			numTimePoints = dynamicParser.getNumSamples();
+		}
+		else {
+			parser = new TSDParser(fullFilePath, false);		
+			numTimePoints = parser.getNumSamples();
+		}
+		
+		slider.setMaximum(numTimePoints - 1);
 		slider.setValue(0);
 		
-		biosim.log.addText(fullFilePath + " loaded. " + 
-				String.valueOf(parser.getData().size()) +
-				" rows of data loaded.");
+//		biosim.log.addText(fullFilePath + " loaded. " + 
+//				String.valueOf(parser.getData().size()) +
+//				" rows of data loaded.");
 		
-		loadPreferences();
+		//loadPreferences();
 	}
 	
 	
@@ -197,13 +215,13 @@ public class MovieContainer extends JPanel implements ActionListener {
 	/**
 	 * displays the schematic and the movie UI
 	 */
-	public void display(){
+	public void display() {
 		
 		schematic.display();
 
-		if(isUIInitialized == false){
-			this.addPlayUI();
+		if (isUIInitialized == false) {
 			
+			this.addPlayUI();			
 			isUIInitialized = true;
 		}
 	}
@@ -211,7 +229,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	/**
 	 * adds the toolbar at the bottom
 	 */
-	private void addPlayUI(){
+	private void addPlayUI() {
 		// Add the bottom menu bar
 		movieToolbar = new JToolBar();
 		
@@ -250,6 +268,15 @@ public class MovieContainer extends JPanel implements ActionListener {
 		schematic.reloadGrid();		
 	}
 	
+	/**
+	 * sets up the grid so that it animates dynamically properly
+	 */
+	public void setupDynamicGrid() {
+		
+		Point gridSize = new Point(dynamicParser.getNumRows(), dynamicParser.getNumCols());
+		gcm.getGrid().resetGrid((int) gridSize.getX(), (int) gridSize.getY());
+	}
+	
 	
 	//EVENT METHODS
 	
@@ -260,8 +287,9 @@ public class MovieContainer extends JPanel implements ActionListener {
 
 		String command = event.getActionCommand();
 		
-		if(command.equals("rewind")){
-			if(parser == null){
+		if (command.equals("rewind")) {
+			
+			if (parser == null && dynamicParser == null) {
 				JOptionPane.showMessageDialog(Gui.frame, "Must first choose a simulation file.");
 			} 
 			else {
@@ -269,26 +297,30 @@ public class MovieContainer extends JPanel implements ActionListener {
 				updateVisuals(true, slider.getValue());
 			}
 		}
-		else if(command.equals("playpause")){
-			if(parser == null){
-				JOptionPane.showMessageDialog(Gui.frame, "Must first choose a simulation file.");
+		else if (command.equals("playpause")) {
+			if (parser == null && dynamicParser == null) {
+				JOptionPane.showMessageDialog(Gui.frame, "Please choose a simulation file.");
 			} 
 			else {
 				playPauseButtonPress();
 			}
 		}
-		else if(command.equals("singlestep")){
-			if(parser == null){
-				JOptionPane.showMessageDialog(Gui.frame, "Must first choose a simulation file.");
+		else if (command.equals("singlestep")) {
+			if (parser == null && dynamicParser == null) {
+				JOptionPane.showMessageDialog(Gui.frame, "Please choose a simulation file.");
 			} 
 			else {
 				nextFrame();
 			}
 		}
-		else if(command.equals("choose_simulation_file")){
+		else if (command.equals("choose_simulation_file")) {
+			
 			prepareTSDFile();
+			
+			if (dynamic == true)
+				setupDynamicGrid();
 		}
-		else if(command.equals("clearAppearances")){
+		else if (command.equals("clearAppearances")) {
 			
 			movieScheme.clearAppearances();
 			schematic.getGraph().buildGraph();
@@ -298,7 +330,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 			throw new Error("Unrecognized command '" + command + "'!");
 		}
 	}
-	
 	
 	/**
 	 * event handler for when the timer ticks
@@ -318,11 +349,11 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 * Called whenever the play/pause button is pressed, or when the system needs to 
 	 * pause the movie (such as at the end)
 	 */
-	private void playPauseButtonPress(){
+	private void playPauseButtonPress() {
 		
 		if(mode == PAUSED){
 			
-			if(slider.getValue() >= slider.getMaximum()-1)
+			if (slider.getValue() >= slider.getMaximum()-1)
 				slider.setValue(0);
 			
 			playTimer.setDelay(FRAME_DELAY_MILLISECONDS);
@@ -341,18 +372,18 @@ public class MovieContainer extends JPanel implements ActionListener {
 	/**
 	 * calls playpausebuttonpress to pause the movie
 	 */
-	private void pause(){
+	private void pause() {
 		
-		if(mode == PLAYING)
+		if (mode == PLAYING)
 			playPauseButtonPress();
 	}
 	
 	/**
 	 * advances the movie to the next frame
 	 */
-	private void nextFrame(){
+	private void nextFrame() {
 		
-		slider.setValue(slider.getValue()+1);
+		slider.setValue(slider.getValue() + 1);
 		
 		if (slider.getValue() >= slider.getMaximum())		
 			pause();
@@ -366,61 +397,127 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 */
 	private void updateVisuals(boolean refresh, int frameIndex) {
 		
-		if(parser == null){
+		if (parser == null && dynamicParser == null)
 			throw new Error("NoSimFileChosen");
-		}
 		
-		if(frameIndex < 0 || frameIndex > parser.getNumSamples()-1){
-			throw new Error("Invalid slider value! It is outside the data range!");
-		}
+		if (frameIndex < 0 || frameIndex > numTimePoints - 1)
+			throw new Error("Invalid slider value. It's outside the data range.");
 		
-		HashMap<String, ArrayList<Double>> speciesTSData = parser.getHashMap();
+		HashMap<String, Double> speciesTSData = new HashMap<String, Double>();
+		HashSet<String> componentList = new HashSet<String>();
 		
-		//loop through the species and set their appearances
-		for (String speciesID : gcm.getSpecies()) {
+		if (dynamic == true) {
+
+			Grid grid = gcm.getGrid();
+			grid.updateComponentLocations(dynamicParser.getComponentToLocationMap(frameIndex));
+			speciesTSData = dynamicParser.getSpeciesToValueMap(frameIndex);
+			componentList.addAll(dynamicParser.getComponentToLocationMap(frameIndex).keySet());
 			
-			//make sure this species has data in the TSD file
-			if (speciesTSData.containsKey(speciesID)) {
+//			//find new components
+//			if (frameIndex > 0) {
+//				
+//				HashSet<String> newComponents = new HashSet<String>();
+//				
+//				HashSet<String> componentsNow = 
+//					new HashSet<String>(dynamicParser.getComponentToLocationMap(frameIndex).keySet());
+//				HashSet<String> componentsBefore = 
+//					new HashSet<String>(dynamicParser.getComponentToLocationMap(frameIndex - 1).keySet());
+//				
+//				for (String compID : componentsNow) {
+//					
+//					if (componentsBefore.contains(compID) == false) {
+//						
+//						//find the scheme to use for this component
+//						newComponents.add(compID);
+//						System.err.println(compID);
+//					}
+//				}
+//				
+//				System.err.println();
+//			}
 				
-				//get the component's appearance and send it to the graph for updating
-				MovieAppearance speciesAppearance = 
-					movieScheme.getAppearance(speciesID, GlobalConstants.SPECIES, frameIndex, speciesTSData);
+			
+			
+			
+			//update the graph by resetting the grid cells and component cells
+			schematic.getGraph().updateGrid();
+		}
+		else {
+		
+			speciesTSData = parser.getHashMap(frameIndex);
+			
+			//find all the components
+			for (long i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); i++) {
 				
-				if (speciesAppearance != null)
-					schematic.getGraph().setSpeciesAnimationValue(speciesID, speciesAppearance);
+				if (gcm.getSBMLDocument().getModel().getParameter(i).getId().contains("__locations")) {
+					
+					String[] splitAnnotation = gcm.getSBMLDocument().getModel().getParameter(i)
+					.getAnnotationString().replace("<annotation>","")
+					.replace("</annotation>","").replace("]]","").replace("[[","").split("=");
+				
+					//loop through all components in the locations parameter array
+					for (int j = 1; j < splitAnnotation.length; ++j) {
+						
+						splitAnnotation[j] = splitAnnotation[j].trim();
+						int commaIndex = splitAnnotation[j].indexOf(',');
+						
+						if (commaIndex > 0)
+							splitAnnotation[j] = splitAnnotation[j].substring(0, splitAnnotation[j].indexOf(','));
+						
+						String submodelID = splitAnnotation[j];
+						
+						componentList.add(submodelID);
+					}
+				}
+				//if there isn't a locations parameter, look at the submodel IDs
+				else {
+					
+					//look through the submodel IDs for component IDs
+					for (int j = 0; j < gcm.getSBMLCompModel().getNumSubmodels(); ++j) {						
+						
+						String submodelID = gcm.getSBMLCompModel().getSubmodel(j).getId();
+						
+						if (submodelID.contains("GRID__") == false)
+							componentList.add(submodelID);
+					}					
+				}
 			}
-		}
-		
-		//loop through the components and set their appearances
-		for (long i = 0; i < gcm.getSBMLDocument().getModel().getNumParameters(); i++) {
 			
-			if (gcm.getSBMLDocument().getModel().getParameter(i).getId().contains("__locations")) {
+			//loop through the species and set their appearances
+			for (String speciesID : speciesTSData.keySet()) {
 				
-				String[] splitAnnotation = gcm.getSBMLDocument().getModel().getParameter(i)
-				.getAnnotationString().replace("<annotation>","")
-				.replace("</annotation>","").replace("]]","").replace("[[","").split("=");
-			
-				//loop through all components in the locations parameter array
-				for (int j = 1; j < splitAnnotation.length; ++j) {
+				if (speciesID.equals("time") || speciesID.contains("__location"))
+					continue;
+				
+				//make sure this species has data in the TSD file
+				if (speciesTSData.containsKey(speciesID)) {
 					
-					splitAnnotation[j] = splitAnnotation[j].trim();
-					int commaIndex = splitAnnotation[j].indexOf(',');
-					
-					if (commaIndex > 0)
-						splitAnnotation[j] = splitAnnotation[j].substring(0, splitAnnotation[j].indexOf(','));
-					
-					String submodelID = splitAnnotation[j];
+					MovieAppearance speciesAppearance = null;
 					
 					//get the component's appearance and send it to the graph for updating
-					MovieAppearance compAppearance = 
-						movieScheme.getAppearance(submodelID, GlobalConstants.COMPONENT, frameIndex, speciesTSData);
+					if (speciesTSData.get(speciesID) != null) {
+						
+						speciesAppearance = 
+							movieScheme.createAppearance(speciesID, GlobalConstants.SPECIES, speciesTSData);
+					}
 					
-					if (compAppearance != null)
-						schematic.getGraph().setComponentAnimationValue(submodelID, compAppearance);
+					if (speciesAppearance != null)
+						schematic.getGraph().setSpeciesAnimationValue(speciesID, speciesAppearance);
 				}
 			}
 		}
 		
+		//loop through component IDs and set their appearances
+		for (String componentID : componentList) {
+		
+			//get the component's appearance and send it to the graph for updating
+			MovieAppearance compAppearance = 
+				movieScheme.createAppearance(componentID, GlobalConstants.COMPONENT, speciesTSData);
+			
+			if (compAppearance != null)
+				schematic.getGraph().setComponentAnimationValue(componentID, compAppearance);
+		}
+			
 		//if there's a grid to set the appearance of
 		if (gcm.getGrid().isEnabled()) {
 			
@@ -432,7 +529,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 					
 					//get the component's appearance and send it to the graph for updating
 					MovieAppearance gridAppearance = 
-						movieScheme.getAppearance(gridID, GlobalConstants.GRID_RECTANGLE, frameIndex, speciesTSData);
+						movieScheme.createAppearance(gridID, GlobalConstants.GRID_RECTANGLE, speciesTSData);
 					
 					if (gridAppearance != null)
 						schematic.getGraph().setGridRectangleAnimationValue(gridID, gridAppearance);
@@ -441,7 +538,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 		}
 		
 		if (refresh)
-			schematic.getGraph().refresh();	
+			schematic.getGraph().refresh();
 	}
 
 	/**
@@ -449,7 +546,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	 */
 	public void outputMovie(String movieFormat) {
 		
-		if (parser == null){
+		if (parser == null && dynamicParser == null){
 			
 			JOptionPane.showMessageDialog(Gui.frame, "You must first choose a simulation (tsd) file.");
 			return;
@@ -467,7 +564,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 			pause();
 			
 			int startFrame = 0;
-			int endFrame = parser.getNumSamples() - 1;
+			int endFrame = numTimePoints - 1;
 			
 			//get the start/end frames from the user
 			JPanel tilePanel;
@@ -483,7 +580,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 			tilePanel.add(startFrameChooser);
 			
 			tilePanel.add(new JLabel("End Frame"));
-			endFrameChooser = new JTextField(String.valueOf(parser.getNumSamples() - 1));
+			endFrameChooser = new JTextField(String.valueOf(numTimePoints - 1));
 			tilePanel.add(endFrameChooser);
 			
 			String[] options = {GlobalConstants.OK, GlobalConstants.CANCEL};
@@ -501,7 +598,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 					startFrame = Integer.valueOf(startFrameChooser.getText());
 					endFrame = Integer.valueOf(endFrameChooser.getText());
 					
-					if (endFrame < parser.getNumSamples() && startFrame >= 0)
+					if (endFrame < numTimePoints && startFrame >= 0)
 						error = false;
 				}
 			}
@@ -582,7 +679,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 			separator = File.separator;
 		
 		String filenum = String.format("%09d", fileNumber);			
-		schematic.outputFrame(reb2sac.getRootPath() + separator + filenum  + ".jpg");
+		schematic.outputFrame(analysisView.getRootPath() + separator + filenum  + ".jpg");
 	}
 	
 	/**
@@ -602,7 +699,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 	    	
 	    	String jpgNumString = String.format("%09d", jpgNum);				    	
 	    	String jpgFilename = 
-	    		reb2sac.getRootPath() + separator + jpgNumString + ".jpg";
+	    		analysisView.getRootPath() + separator + jpgNumString + ".jpg";
 		    File jpgFile = new File(jpgFilename);
 		    
 		    if (jpgFile != null && jpgFile.exists() && jpgFile.canWrite())
@@ -653,13 +750,13 @@ public class MovieContainer extends JPanel implements ActionListener {
 		
 		biosim.log.addText("file saved to " + fullPath);
 		
-		this.gcm2sbml.saveParams(false, "", true);
+		this.modelEditor.saveParams(false, "", true);
 	}
 
 	/**
 	 * loads the preferences file if it exists and stores its values into the movieScheme object.
 	 */
-	public void loadPreferences(){
+	public void loadPreferences() {
 		
 		// load the prefs file if it exists
 		String fullPath = getPreferencesFullPath();
@@ -671,29 +768,27 @@ public class MovieContainer extends JPanel implements ActionListener {
 		catch (IOException e) {
 		}
 		
-		if(json == null){
+		if (json == null) {
 			
-			if (movieScheme == null ||
-					movieScheme.getAllSpeciesSchemes().length == 0)
+			if (movieScheme == null || movieScheme.getAllSpeciesSchemes().length == 0)
 				movieScheme = new MovieScheme();
 		}
-		else{
+		else {
 			
 			Gson gson = new Gson();
 			
-			try{
+			try {
 				
 				SerializableScheme[] speciesSchemes = gson.fromJson(json, SerializableScheme[].class);
 				
 				//if there's already a scheme, keep it
-				if (movieScheme == null ||
-						movieScheme.getAllSpeciesSchemes().length == 0) {
+				if (movieScheme == null || movieScheme.getAllSpeciesSchemes().length == 0) {
 					
 					movieScheme = new MovieScheme();
 					movieScheme.populate(speciesSchemes, parser.getSpecies());
-				}				
+				}
 			}
-			catch(Exception e){
+			catch(Exception e) {
 				biosim.log.addText("An error occured trying to load the preferences file " + fullPath + " ERROR: " + e.toString());
 			}
 		}
@@ -702,7 +797,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 
 	//GET/SET METHODS
 	
-	public boolean getIsDirty(){
+	public boolean getIsDirty() {
 		return isDirty;
 	}
 	
@@ -710,16 +805,25 @@ public class MovieContainer extends JPanel implements ActionListener {
 		isDirty = value;
 	}
 	
+	public boolean getDynamic() {
+		return dynamic;
+	}
+	
+	public DTSDParser getDTSDParser() {
+		return dynamicParser;
+	}
+	
 	public TSDParser getTSDParser() {
 		return parser;
 	}
 
 	public ModelEditor getGCM2SBMLEditor() {
-		return gcm2sbml;
+		return modelEditor;
 	}
 	
-	private String getPreferencesFullPath(){
-		String path = reb2sac.getSimPath();
+	private String getPreferencesFullPath() {
+		
+		String path = analysisView.getSimPath();
 		String fullPath = path + File.separator + "schematic_preferences.json";
 		return fullPath;
 	}
@@ -736,6 +840,13 @@ public class MovieContainer extends JPanel implements ActionListener {
 		return gcm;
 	}
 
+	public int getFrameIndex() {
+		return slider.getValue();
+	}
+	
+	
+	//MOVIEPROGRESS INNER CLASS
+	
 	/**
 	 * class to allow running the movie file creation in a separate thread
 	 */
@@ -800,7 +911,7 @@ public class MovieContainer extends JPanel implements ActionListener {
 					"ffmpeg " + "-y " +
 					"-r " + "5 " +
 					"-b " + "5000k " +
-					"-i " + reb2sac.getRootPath() + separator + "%09d.jpg " +
+					"-i " + analysisView.getRootPath() + separator + "%09d.jpg " +
 					path + separator + movieName + ".mp4";
 			}		
 			else if (movieFormat.equals("avi")) {
@@ -810,13 +921,13 @@ public class MovieContainer extends JPanel implements ActionListener {
 					"-r " + "5 " +
 					"-vcodec " + "copy " +
 					"-b " + "5000k " +
-					"-i " + reb2sac.getRootPath() + separator + "%09d.jpg " +
+					"-i " + analysisView.getRootPath() + separator + "%09d.jpg " +
 					path + separator + movieName + ".avi";
 			}		
 			
 			//run ffmpeg to generate the movie file
 			try {
-				Process p = Runtime.getRuntime().exec(args, null, new File(reb2sac.getRootPath()));
+				Process p = Runtime.getRuntime().exec(args, null, new File(analysisView.getRootPath()));
 				
 				String line = "";
 				
@@ -847,5 +958,4 @@ public class MovieContainer extends JPanel implements ActionListener {
 			addPlayUI();
 		}
 	}
-
 }

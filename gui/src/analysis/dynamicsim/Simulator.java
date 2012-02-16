@@ -2,19 +2,20 @@ package analysis.dynamicsim;
 
 import gnu.trove.map.hash.TObjectDoubleHashMap;
 
+import java.awt.Point;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.PriorityQueue;
 
 import javax.swing.JOptionPane;
@@ -25,6 +26,7 @@ import flanagan.math.Fmath;
 import flanagan.math.PsRandom;
 
 import main.Gui;
+import main.util.dataparser.DTSDParser;
 import main.util.dataparser.DataParser;
 import main.util.dataparser.TSDParser;
 
@@ -57,16 +59,12 @@ import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.text.parser.ParseException;
 
 public abstract class Simulator {
-
 	
 	//SBML model
 	protected Model model = null;
 	
 	//generates random numbers based on the xorshift method
 	protected XORShiftRandom randomNumberGenerator = null;
-	
-	//allows for access to a SBML Reaction object from a reaction ID
-	protected HashMap<String, Reaction> reactionToSBMLReactionMap = null;
 	
 	//allows for access to a propensity from a reaction ID
 	protected TObjectDoubleHashMap<String> reactionToPropensityMap = null;
@@ -81,16 +79,11 @@ public abstract class Simulator {
 	//allows for access to a kinetic formula tree from a reaction
 	protected HashMap<String, ASTNode> reactionToFormulaMap = null;
 	
-	//allows for access to a kinetic formula tree from a reaction
-	//this is used for iterative evaluation
-	protected HashMap<String, ArrayDeque<ASTNode> > reactionToFormulaMap2 = null;
-	
 	//allows for access to a set of reactions that a species is in (as a reactant or modifier) from a species ID
 	protected HashMap<String, HashSet<String> > speciesToAffectedReactionSetMap = null;
 	
 	//allows for access to species booleans from a species ID
 	protected HashMap<String, Boolean> speciesToIsBoundaryConditionMap = null;
-	protected HashMap<String, Boolean> speciesToIsConstantMap = null;
 	protected HashMap<String, Boolean> speciesToHasOnlySubstanceUnitsMap = null;
 	
 	protected TObjectDoubleHashMap<String> speciesToCompartmentSizeMap = null;
@@ -131,10 +124,22 @@ public abstract class Simulator {
 	//allows for access to the set of constraints that a variable affects
 	protected HashMap<String, HashSet<ASTNode> > variableToAffectedConstraintSetMap = null;
 	
-	protected HashMap<String, Boolean> variableToIsInConstraintMap = null;	
+	protected HashMap<String, Boolean> variableToIsInConstraintMap = null;
+	protected HashMap<String, Boolean> variableToIsConstantMap = null;
 	
 	//compares two events based on fire time and priority
 	protected EventComparator eventComparator = new EventComparator();
+	
+	//allows access to a component's location on the grid from its ID
+	protected LinkedHashMap<String, Point> componentToLocationMap = null;
+	
+	//allows access to a component's set of reactions from its ID
+	protected HashMap<String, HashSet<String> > componentToReactionSetMap = null;
+	
+	//allows access to a component's set of variables (species and parameters) from its ID
+	protected HashMap<String, HashSet<String> > componentToVariableSetMap = null;
+	
+	protected HashMap<String, HashSet<String> > componentToEventSetMap = null;
 	
 	//propensity variables
 	protected double totalPropensity = 0.0;
@@ -168,7 +173,15 @@ public abstract class Simulator {
 	protected long numConstraints;
 	protected int numInitialAssignments;
 	
+	protected int minRow = 0;
+	protected int minCol = 0;
+	protected int maxRow = 0;
+	protected int maxCol = 0;
 	
+	//true means the model is dynamic
+	protected boolean dynamicBoolean = false;
+
+	PsRandom prng = new PsRandom();
 	
 	/**
 	 * does lots of initialization
@@ -196,8 +209,6 @@ public abstract class Simulator {
 		this.progress = progress;
 		this.printInterval = printInterval;
 		this.outputDirectory = outputDirectory;
-		
-		setupNewRun(randomSeed, 1);
 		
 		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = null;
@@ -235,11 +246,9 @@ public abstract class Simulator {
 		numInitialAssignments = model.getNumInitialAssignments();
 		
 		//set initial capacities for collections (1.5 is used to multiply numReactions due to reversible reactions)
-		//arrayedSpeciesToDimensionsMap = new HashMap<String, SpeciesDimensions>((int) numSpecies);
 		speciesToAffectedReactionSetMap = new HashMap<String, HashSet<String> >((int) numSpecies);
-		//speciesToIsArrayedMap = new HashMap<String, Boolean >((int) numSpecies);
 		speciesToIsBoundaryConditionMap = new HashMap<String, Boolean>((int) numSpecies);
-		speciesToIsConstantMap = new HashMap<String, Boolean>((int) numSpecies);
+		variableToIsConstantMap = new HashMap<String, Boolean>((int) (numSpecies + numParameters));
 		speciesToHasOnlySubstanceUnitsMap = new HashMap<String, Boolean>((int) numSpecies);
 		speciesToCompartmentSizeMap = new TObjectDoubleHashMap<String>((int) numSpecies);
 		speciesIDSet = new LinkedHashSet<String>((int) numSpecies);
@@ -249,8 +258,11 @@ public abstract class Simulator {
 		reactionToSpeciesAndStoichiometrySetMap = new HashMap<String, HashSet<StringDoublePair> >((int) (numReactions * 1.5));	
 		reactionToReactantStoichiometrySetMap = new HashMap<String, HashSet<StringDoublePair> >((int) (numReactions * 1.5));
 		reactionToFormulaMap = new HashMap<String, ASTNode>((int) (numReactions * 1.5));
-		//reactionToFormulaMap2 = new HashMap<String, ArrayDeque<ASTNode> >((int) (numReactions * 1.5));
-		reactionToSBMLReactionMap = new HashMap<String, Reaction>((int) numReactions);
+		
+		componentToLocationMap = new LinkedHashMap<String, Point>();
+		componentToReactionSetMap = new HashMap<String, HashSet<String> >();
+		componentToVariableSetMap = new HashMap<String, HashSet<String> >();
+		componentToEventSetMap = new HashMap<String, HashSet<String> >();
 		
 		if (numEvents > 0) {
 			
@@ -285,216 +297,779 @@ public abstract class Simulator {
 	}
 	
 	/**
+	 * calculates the initial propensity of a single reaction
+	 * also does some initialization stuff
+	 * 
+	 * @param reactionID
+	 * @param reactionFormula
+	 * @param reversible
+	 * @param reactantsList
+	 * @param productsList
+	 * @param modifiersList
+	 */
+	private void setupSingleReaction(String reactionID, ASTNode reactionFormula, boolean reversible, 
+			ListOf<SpeciesReference> reactantsList, ListOf<SpeciesReference> productsList, 
+			ListOf<ModifierSpeciesReference> modifiersList) {
+		
+		boolean notEnoughMoleculesFlagFd = false;
+		boolean notEnoughMoleculesFlagRv = false;
+		boolean notEnoughMoleculesFlag = false;
+		
+		//if it's a reversible reaction
+		//split into a forward and reverse reaction (based on the minus sign in the middle)
+		//and calculate both propensities
+		if (reversible == true) {
+			
+			reactionToSpeciesAndStoichiometrySetMap.put(reactionID + "_fd", new HashSet<StringDoublePair>());
+			reactionToSpeciesAndStoichiometrySetMap.put(reactionID + "_rv", new HashSet<StringDoublePair>());
+			reactionToReactantStoichiometrySetMap.put(reactionID + "_fd", new HashSet<StringDoublePair>());
+			reactionToReactantStoichiometrySetMap.put(reactionID + "_rv", new HashSet<StringDoublePair>());
+			
+			for (SpeciesReference reactant : reactantsList) {
+				
+				String reactantID = reactant.getSpecies();
+				double reactantStoichiometry = reactant.getStoichiometry();
+				
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_fd").add(
+						new StringDoublePair(reactantID, -reactantStoichiometry));
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_rv").add(
+						new StringDoublePair(reactantID, reactantStoichiometry));
+				reactionToReactantStoichiometrySetMap.get(reactionID + "_fd").add(
+						new StringDoublePair(reactantID, reactantStoichiometry));
+				
+				//as a reactant, this species affects the reaction's propensity in the forward direction
+				speciesToAffectedReactionSetMap.get(reactantID).add(reactionID + "_fd");
+				
+				//make sure there are enough molecules for this species
+				//(in the reverse direction, molecules aren't subtracted, but added)
+				if (variableToValueMap.get(reactantID) < reactantStoichiometry)
+					notEnoughMoleculesFlagFd = true;
+			}
+			
+			for (SpeciesReference product : productsList) {
+				
+				String productID = product.getSpecies();
+				double productStoichiometry = product.getStoichiometry();
+				
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_fd").add(
+						new StringDoublePair(productID, productStoichiometry));
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_rv").add(
+						new StringDoublePair(productID, -productStoichiometry));
+				reactionToReactantStoichiometrySetMap.get(reactionID + "_rv").add(
+						new StringDoublePair(productID, productStoichiometry));
+				
+				//as a product, this species affects the reaction's propensity in the reverse direction
+				speciesToAffectedReactionSetMap.get(productID).add(reactionID + "_rv");
+				
+				//make sure there are enough molecules for this species
+				//(in the forward direction, molecules aren't subtracted, but added)
+				if (variableToValueMap.get(productID) < productStoichiometry)
+					notEnoughMoleculesFlagRv = true;
+			}
+			
+			for (ModifierSpeciesReference modifier : modifiersList) {
+				
+				String modifierID = modifier.getSpecies();
+				
+				String forwardString = "", reverseString = "";
+				
+				try {
+					forwardString = ASTNode.formulaToString(reactionFormula.getLeftChild());
+					reverseString = ASTNode.formulaToString(reactionFormula.getRightChild());
+				} 
+				catch (SBMLException e) {
+					e.printStackTrace();
+				}
+				
+				//check the kinetic law to see which direction the modifier affects the reaction's propensity
+				if (forwardString.contains(modifierID))
+					speciesToAffectedReactionSetMap.get(modifierID).add(reactionID + "_fd");
+			
+				if (reverseString.contains(modifierID))
+					speciesToAffectedReactionSetMap.get(modifierID).add(reactionID + "_rv");
+			}				
+			
+			double propensity;
+			
+			reactionToFormulaMap.put(reactionID + "_rv", reactionFormula.getRightChild());
+			reactionToFormulaMap.put(reactionID + "_fd", reactionFormula.getLeftChild());
+			
+			//calculate forward reaction propensity
+			if (notEnoughMoleculesFlagFd == true)
+				propensity = 0.0;
+			else {
+				//the left child is what's left of the minus sign
+				propensity = evaluateExpressionRecursive(reactionFormula.getLeftChild());
+				
+				if (propensity < minPropensity && propensity > 0) 
+					minPropensity = propensity;
+				else if (propensity > maxPropensity) 
+					maxPropensity = propensity;
+				
+				totalPropensity += propensity;
+			}
+			
+			reactionToPropensityMap.put(reactionID + "_fd", propensity);
+			
+			//calculate reverse reaction propensity
+			if (notEnoughMoleculesFlagRv == true)
+				propensity = 0.0;
+			else {
+				//the right child is what's right of the minus sign
+				propensity = evaluateExpressionRecursive(reactionFormula.getRightChild());
+				
+				if (propensity < minPropensity && propensity > 0) 
+					minPropensity = propensity;
+				else if (propensity > maxPropensity) 
+					maxPropensity = propensity;
+				
+				totalPropensity += propensity;
+			}
+			
+			reactionToPropensityMap.put(reactionID + "_rv", propensity);
+		}
+		//if it's not a reversible reaction
+		else {
+			
+			reactionToSpeciesAndStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
+			reactionToReactantStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
+			
+			for (SpeciesReference reactant : reactantsList) {
+				
+				String reactantID = reactant.getSpecies();
+				double reactantStoichiometry = reactant.getStoichiometry();
+				
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
+						new StringDoublePair(reactantID, -reactantStoichiometry));
+				reactionToReactantStoichiometrySetMap.get(reactionID).add(
+						new StringDoublePair(reactantID, reactantStoichiometry));
+				
+				//as a reactant, this species affects the reaction's propensity
+				speciesToAffectedReactionSetMap.get(reactantID).add(reactionID);
+				
+				//make sure there are enough molecules for this species
+				if (variableToValueMap.get(reactantID) < reactantStoichiometry)
+					notEnoughMoleculesFlag = true;
+			}
+			
+			for (SpeciesReference product : productsList) {
+				
+				reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
+						new StringDoublePair(product.getSpecies(), product.getStoichiometry()));
+				
+				//don't need to check if there are enough, because products are added
+			}
+			
+			for (ModifierSpeciesReference modifier : modifiersList) {
+				
+				String modifierID = modifier.getSpecies();
+				
+				//as a modifier, this species affects the reaction's propensity
+				speciesToAffectedReactionSetMap.get(modifierID).add(reactionID);
+			}
+			
+			reactionToFormulaMap.put(reactionID, reactionFormula);
+			
+			double propensity;
+			
+			if (notEnoughMoleculesFlag == true)
+				propensity = 0.0;
+			else {
+			
+				//calculate propensity
+				propensity = evaluateExpressionRecursive(reactionFormula);
+				
+				if (propensity < minPropensity && propensity > 0) 
+					minPropensity = propensity;
+				if (propensity > maxPropensity) 
+					maxPropensity = propensity;
+				
+				totalPropensity += propensity;
+			}
+			
+			reactionToPropensityMap.put(reactionID, propensity);
+		}
+	}	
+	
+	/**
 	 * calculates the initial propensities for each reaction in the model
 	 * 
 	 * @param numReactions the number of reactions in the model
 	 */
-	protected void calculateInitialPropensities() {
+	protected void setupReactions() {
 		
 		//loop through all reactions and calculate their propensities
 		for (Reaction reaction : model.getListOfReactions()) {
 			
 			String reactionID = reaction.getId();
-			KineticLaw reactionKineticLaw = reaction.getKineticLaw();
-			ASTNode reactionFormula = reactionKineticLaw.getMath();
-			boolean notEnoughMoleculesFlagFd = false;
-			boolean notEnoughMoleculesFlagRv = false;
-			boolean notEnoughMoleculesFlag = false;
-			
-			reactionToSBMLReactionMap.put(reactionID, reaction);
+			ASTNode reactionFormula = reaction.getKineticLaw().getMath();
 						
-			//if it's a reversible reaction
-			//split into a forward and reverse reaction (based on the minus sign in the middle)
-			//and calculate both propensities
-			if (reaction.getReversible()) {
-				
-				reactionToSpeciesAndStoichiometrySetMap.put(reactionID + "_fd", new HashSet<StringDoublePair>());
-				reactionToSpeciesAndStoichiometrySetMap.put(reactionID + "_rv", new HashSet<StringDoublePair>());
-				reactionToReactantStoichiometrySetMap.put(reactionID + "_fd", new HashSet<StringDoublePair>());
-				reactionToReactantStoichiometrySetMap.put(reactionID + "_rv", new HashSet<StringDoublePair>());
-				
-				for (int a = 0; a < reaction.getNumReactants(); ++a) {
-					
-					SpeciesReference reactant = reaction.getReactant(a);
-					String reactantID = reactant.getSpecies();
-					double reactantStoichiometry = reactant.getStoichiometry();
-					
-					reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_fd").add(
-							new StringDoublePair(reactantID, -reactantStoichiometry));
-					reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_rv").add(
-							new StringDoublePair(reactantID, reactantStoichiometry));
-					reactionToReactantStoichiometrySetMap.get(reactionID + "_fd").add(
-							new StringDoublePair(reactantID, reactantStoichiometry));
-					
-					//as a reactant, this species affects the reaction's propensity in the forward direction
-					speciesToAffectedReactionSetMap.get(reactantID).add(reactionID + "_fd");
-					
-					//make sure there are enough molecules for this species
-					//(in the reverse direction, molecules aren't subtracted, but added)
-					if (variableToValueMap.get(reactantID) < reactantStoichiometry)
-						notEnoughMoleculesFlagFd = true;
-				}
-				
-				for (int a = 0; a < reaction.getNumProducts(); ++a) {
-					
-					SpeciesReference product = reaction.getProduct(a);
-					String productID = product.getSpecies();
-					double productStoichiometry = product.getStoichiometry();
-					
-					reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_fd").add(
-							new StringDoublePair(productID, productStoichiometry));
-					reactionToSpeciesAndStoichiometrySetMap.get(reactionID + "_rv").add(
-							new StringDoublePair(productID, -productStoichiometry));
-					reactionToReactantStoichiometrySetMap.get(reactionID + "_rv").add(
-							new StringDoublePair(productID, productStoichiometry));
-					
-					//as a product, this species affects the reaction's propensity in the reverse direction
-					speciesToAffectedReactionSetMap.get(productID).add(reactionID + "_rv");
-					
-					//make sure there are enough molecules for this species
-					//(in the forward direction, molecules aren't subtracted, but added)
-					if (variableToValueMap.get(productID) < productStoichiometry)
-						notEnoughMoleculesFlagRv = true;
-				}
-				
-				for (int a = 0; a < reaction.getNumModifiers(); ++a) {
-					
-					String modifierID = reaction.getModifier(a).getSpecies();
-					
-					String forwardString = "", reverseString = "";
-					
-					try {
-						forwardString = ASTNode.formulaToString(reactionFormula.getLeftChild());
-						reverseString = ASTNode.formulaToString(reactionFormula.getRightChild());
-					} 
-					catch (SBMLException e) {
-						e.printStackTrace();
-					}
-					
-					//check the kinetic law to see which direction the modifier affects the reaction's propensity
-					if (forwardString.contains(modifierID))
-						speciesToAffectedReactionSetMap.get(modifierID).add(reactionID + "_fd");
-				
-					if (reverseString.contains(modifierID))
-						speciesToAffectedReactionSetMap.get(modifierID).add(reactionID + "_rv");
-				}				
-				
-				double propensity;
-				
-				reactionToFormulaMap.put(reactionID + "_rv", reactionFormula.getRightChild());
-				//reactionToFormulaMap2.put(reactionID + "_rv", GetPrefixQueueFromASTNode(reactionFormula.getRightChild()));
-				reactionToFormulaMap.put(reactionID + "_fd", reactionFormula.getLeftChild());
-				//reactionToFormulaMap2.put(reactionID + "_fd", GetPrefixQueueFromASTNode(reactionFormula.getLeftChild()));
-				
-				//calculate forward reaction propensity
-				if (notEnoughMoleculesFlagFd == true)
-					propensity = 0.0;
-				else {
-					//the left child is what's left of the minus sign
-					propensity = evaluateExpressionRecursive(reactionFormula.getLeftChild());
-					//propensity = CalculatePropensityIterative(reactionID + "_fd");
-					
-					if (propensity < minPropensity && propensity > 0) 
-						minPropensity = propensity;
-					else if (propensity > maxPropensity) 
-						maxPropensity = propensity;
-					
-					totalPropensity += propensity;
-				}
-				
-				reactionToPropensityMap.put(reactionID + "_fd", propensity);
-				
-				//calculate reverse reaction propensity
-				if (notEnoughMoleculesFlagRv == true)
-					propensity = 0.0;
-				else {
-					//the right child is what's right of the minus sign
-					propensity = evaluateExpressionRecursive(reactionFormula.getRightChild());
-					//propensity = CalculatePropensityIterative(reactionID + "_rv");
-					
-					if (propensity < minPropensity && propensity > 0) 
-						minPropensity = propensity;
-					else if (propensity > maxPropensity) 
-						maxPropensity = propensity;
-					
-					totalPropensity += propensity;
-				}
-				
-				reactionToPropensityMap.put(reactionID + "_rv", propensity);
-			}
-			//if it's not a reversible reaction
-			else {
-				
-				reactionToSpeciesAndStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
-				reactionToReactantStoichiometrySetMap.put(reactionID, new HashSet<StringDoublePair>());
-				
-				for (int a = 0; a < reaction.getNumReactants(); ++a) {
-					
-					SpeciesReference reactant = reaction.getReactant(a);
-					String reactantID = reactant.getSpecies();
-					double reactantStoichiometry = reactant.getStoichiometry();
-					
-					reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
-							new StringDoublePair(reactantID, -reactantStoichiometry));
-					reactionToReactantStoichiometrySetMap.get(reactionID).add(
-							new StringDoublePair(reactantID, reactantStoichiometry));
-					
-					//as a reactant, this species affects the reaction's propensity
-					speciesToAffectedReactionSetMap.get(reactantID).add(reactionID);
-					
-					//make sure there are enough molecules for this species
-					if (variableToValueMap.get(reactantID) < reactantStoichiometry)
-						notEnoughMoleculesFlag = true;
-				}
-				
-				for (int a = 0; a < reaction.getNumProducts(); ++a) {
-					
-					SpeciesReference product = reaction.getProduct(a);
-					
-					reactionToSpeciesAndStoichiometrySetMap.get(reactionID).add(
-							new StringDoublePair(product.getSpecies(), product.getStoichiometry()));
-					
-					//don't need to check if there are enough, because products are added
-				}
-				
-				for (int a = 0; a < reaction.getNumModifiers(); ++a) {
-					
-					String modifierID = reaction.getModifier(a).getSpecies();
-					
-					//as a modifier, this species affects the reaction's propensity
-					speciesToAffectedReactionSetMap.get(modifierID).add(reactionID);
-				}
-				
-				reactionToFormulaMap.put(reactionID, reactionFormula);				
-				//reactionToFormulaMap2.put(reactionID, GetPrefixQueueFromASTNode(reactionFormula));
-				
-				double propensity;
-				
-				if (notEnoughMoleculesFlag == true)
-					propensity = 0.0;
-				else {
-				
-					//calculate propensity
-					propensity = evaluateExpressionRecursive(reactionFormula);
-					//propensity = CalculatePropensityIterative(reactionID);
-					
-					if (propensity < minPropensity && propensity > 0) 
-						minPropensity = propensity;
-					if (propensity > maxPropensity) 
-						maxPropensity = propensity;
-					
-					totalPropensity += propensity;
-				}
-				
-				reactionToPropensityMap.put(reactionID, propensity);
-			}
+			setupSingleReaction(reactionID, reactionFormula, reaction.getReversible(), 
+					reaction.getListOfReactants(), reaction.getListOfProducts(), reaction.getListOfModifiers());
 		}
 	}
 
 	/**
+	 * replaces ROWX_COLY with ROWA_COLB in a kinetic law
+	 * this has to be done without re-parsing the formula string because the row/col
+	 * values can be negative, which gets parsed incorrectly
+	 * 
+	 * @param node
+	 * @param oldString
+	 * @param newString
+	 */
+	private void alterNode(ASTNode node, String oldString, String newString) {
+		
+		if (node.isName() && node.getName().contains(oldString)) {
+			node.setVariable(model.getSpecies(newString + "__" + node.getName().split("__")[1]));
+		}
+		else {
+			for (ASTNode childNode : node.getChildren())
+				alterNode(childNode, oldString, newString);
+		}
+	}
+	
+	/**
+	 * cancels the current run
+	 */
+	protected abstract void cancel();
+	
+	/**
 	 * clears data structures for new run
 	 */
 	protected abstract void clear();
+	
+	/**
+	 * uses an existing component to create a new component and update data structures and the simulation state
+	 * this is used for "birth" events in dynamic models
+	 * 
+	 * @param componentID
+	 */
+	protected void duplicateComponent(String parentComponentID) {
+		
+		//determine new component ID
+		int componentNumber = componentToReactionSetMap.size() + 1;
+		String childComponentID = "C" + String.valueOf(componentNumber);
+		
+		while (componentToReactionSetMap.keySet().contains(childComponentID) == true) {
+			
+			++componentNumber;
+			childComponentID = "C" + String.valueOf(componentNumber);
+		}
+		
+		childComponentID = childComponentID + "_of_" + parentComponentID;
+		
+		//determine new component location
+		//choose a random direction and place the component adjacent to the parent
+		//if that space is occupied, all components get moved over to make room
+		Point parentLocation = componentToLocationMap.get(parentComponentID);
+		Point childLocation = (Point) parentLocation.clone();
+		
+		HashSet<Integer> newRows = new HashSet<Integer>();
+		HashSet<Integer> newCols = new HashSet<Integer>();
+		
+		//0 = left, 1 = right, 2 = above, 3 = below
+		int randomDirection = (int) (randomNumberGenerator.nextDouble() * 4.0);
+			
+		switch (randomDirection) {
+		
+			case 0: childLocation.y -= 1; break;
+			case 1: childLocation.y += 1; break;
+			case 2: childLocation.x -= 1; break;
+			case 3: childLocation.x += 1; break;
+		}
+		
+		//if this place is taken, make room by moving the cells in the way
+		if (componentToLocationMap.containsValue(childLocation)) {
+			
+			Point emptyLocation = (Point) childLocation.clone();
+			HashSet<Point> locationsToMove = new HashSet<Point>();
+			
+			while (componentToLocationMap.containsValue(emptyLocation) == true) {
+				
+				locationsToMove.add((Point) emptyLocation.clone());
+				
+				switch (randomDirection) {
+				
+					case 0: emptyLocation.y -= 1; break;
+					case 1: emptyLocation.y += 1; break;
+					case 2: emptyLocation.x -= 1; break;
+					case 3: emptyLocation.x += 1; break;		
+				}
+			}
+			
+			LinkedHashMap<String, Point> componentToLocationMapCopy = 
+				(LinkedHashMap<String, Point>) componentToLocationMap.clone();
+			
+			//move the cells that are in the way
+			for (Map.Entry<String, Point> componentAndLocation : componentToLocationMapCopy.entrySet()) {
+				
+				String compID = componentAndLocation.getKey();
+				
+				if (locationsToMove.contains(componentAndLocation.getValue())) {
+					
+					switch (randomDirection) {
+					
+						case 0: componentToLocationMap.get(compID).y -= 1; break;
+						case 1: componentToLocationMap.get(compID).y += 1; break;
+						case 2: componentToLocationMap.get(compID).x -= 1; break;
+						case 3: componentToLocationMap.get(compID).x += 1; break;		
+					}
+										
+					//keep track of min row/col and max row/col so you know the bounds of the grid
+					if ((int) componentToLocationMap.get(compID).getX() < minRow) {
+						minRow = (int) componentToLocationMap.get(compID).getX();
+						newRows.add(minRow);
+					}
+					else if ((int) componentToLocationMap.get(compID).getX() > maxRow) {
+						maxRow = (int) componentToLocationMap.get(compID).getX();
+						newRows.add(maxRow);
+					}
+					if ((int) componentToLocationMap.get(compID).getY() < minCol) {
+						minCol = (int) componentToLocationMap.get(compID).getY();
+						newCols.add(minCol);
+					}
+					else if ((int) componentToLocationMap.get(compID).getY() > maxCol) {
+						maxCol = (int) componentToLocationMap.get(compID).getY();
+						newCols.add(maxCol);
+					}
+				}
+			}
+		}
+		
+		componentToLocationMap.put(childComponentID, childLocation);
+		
+		//keep track of min row/col and max row/col so you know the bounds of the grid
+		if ((int) childLocation.getX() < minRow) {
+			minRow = (int) childLocation.getX();
+			newRows.add(minRow);
+		}
+		else if ((int) childLocation.getX() > maxRow) {
+			maxRow = (int) childLocation.getX();
+			newRows.add(maxRow);
+		}
+		if ((int) childLocation.getY() < minCol) {
+			minCol = (int) childLocation.getY();
+			newCols.add(minCol);
+		}
+		else if ((int) childLocation.getY() > maxCol) {
+			maxCol = (int) childLocation.getY();
+			newCols.add(maxCol);
+		}
+		
+		HashSet<String> underlyingSpeciesIDs = new HashSet<String>();
+		HashSet<String> newGridSpeciesIDs = new HashSet<String>();
+		
+		for (String speciesID : speciesIDSet) {
+		
+			//find the grid species
+			if (speciesID.contains("ROW") && speciesID.contains("COL") && speciesID.contains("__")) {
+				underlyingSpeciesIDs.add(speciesID.split("__")[1]);
+			}
+		}
+
+		//if there are new rows or cols added to the grid
+		//add new grid species reactions
+		if (newRows.size() > 0) {
+			
+			for (int newRow : newRows) {
+			
+				//create new grid species for this new row
+				for (int col = minCol; col <= maxCol; ++col) {
+					
+					for (String underlyingSpeciesID : underlyingSpeciesIDs) {
+						
+						String newID = "ROW" + newRow + "_COL" + col + "__" + underlyingSpeciesID;
+						newGridSpeciesIDs.add(newID);
+						
+						Species gridSpecies = null;
+						
+						//find a grid species to take values from
+						for (Species species : model.getListOfSpecies()) {
+							
+							if (species.getId().contains("__" + underlyingSpeciesID) && species.getId().contains("ROW") 
+									&& species.getId().contains("COL"))
+								gridSpecies = species;
+						}
+						
+						Species newSpecies = gridSpecies.clone();
+						newSpecies.setId(newID);
+						
+						//add new grid species to the model (so that altering the kinetic law through jsbml can work)
+						model.addSpecies(newSpecies);
+						
+						//add a new species to the simulation data structures
+						setupSingleSpecies(gridSpecies, newID);
+						variableToValueMap.put(newID, 0);
+					}
+				}
+			}
+		}
+		
+		if (newCols.size() > 0) {
+			
+			for (int newCol : newCols) {
+			
+				//create new grid species for this new col
+				for (int row = minRow; row <= maxRow; ++row) {
+					
+					for (String underlyingSpeciesID : underlyingSpeciesIDs) {
+						
+						String newID = "ROW" + row + "_COL" + newCol + "__" + underlyingSpeciesID;
+						newGridSpeciesIDs.add(newID);
+						
+						Species gridSpecies = null;
+						
+						//find a grid species to take values from
+						for (Species species : model.getListOfSpecies()) {
+							
+							if (species.getId().contains("__" + underlyingSpeciesID) && species.getId().contains("ROW") 
+									&& species.getId().contains("COL"))
+								gridSpecies = species;
+						}
+						
+						Species newSpecies = gridSpecies.clone();
+						newSpecies.setId(newID);
+						
+						//add new grid species to the model (so that altering the kinetic law through jsbml can work)
+						model.addSpecies(newSpecies);
+						
+						//add a new species to the simulation data structures
+						setupSingleSpecies(gridSpecies, newID);
+						variableToValueMap.put(newID, 0);
+					}
+				}
+			}
+		}
+		
+		//create new grid diffusion and degradation reactions for the new grid species
+		for (String speciesID : newGridSpeciesIDs) {
+			
+			String[] splitID = speciesID.split("_");
+			
+			int row = Integer.valueOf(splitID[0].replace("ROW",""));
+			int col = Integer.valueOf(splitID[1].replace("COL",""));
+			
+			ArrayList<Point> neighborLocations = new ArrayList<Point>();
+			
+			neighborLocations.add(new Point(row+1,col)); //right
+			neighborLocations.add(new Point(row,col+1)); //below
+			neighborLocations.add(new Point(row-1,col)); //left
+			neighborLocations.add(new Point(row,col-1)); //above
+			
+			String underlyingSpeciesID = speciesID.split("__")[1];
+			ASTNode newNode = new ASTNode();
+			
+			//find a forward grid diffusion reaction with this underlying species to take values from
+			for (Map.Entry<String, ASTNode> reactionAndFormula : reactionToFormulaMap.entrySet()) {
+				
+				String reactionID = reactionAndFormula.getKey();
+				
+				if (reactionID.contains("Diffusion_" + underlyingSpeciesID + "_Below") 
+						|| reactionID.contains("Diffusion_" + underlyingSpeciesID + "_Above")
+						|| reactionID.contains("Diffusion_" + underlyingSpeciesID + "_Left")
+						|| reactionID.contains("Diffusion_" + underlyingSpeciesID + "_Right")
+						&& reactionID.contains("_fd")) {
+					
+					newNode = reactionAndFormula.getValue().clone();
+					newNode.getRightChild().setVariable(model.getSpecies(speciesID));
+				}
+			}
+			
+			int directionIndex = 0;
+			
+			for (Point neighborLocation : neighborLocations) {
+				
+				int nRow = (int) neighborLocation.getX();
+				int nCol = (int) neighborLocation.getY();
+				String neighborID = "ROW" + nRow + "_COL" + nCol + "__" + underlyingSpeciesID;
+				
+				String fdString = "", rvString = "";
+				
+				switch (directionIndex) {
+				
+				case 0: fdString = "Right"; rvString = "Left"; break;
+				case 1: fdString = "Below"; rvString = "Above"; break;
+				case 2: fdString = "Left"; rvString = "Right"; break;
+				case 3: fdString = "Above"; rvString = "Below"; break;				
+				}
+				
+				if (speciesIDSet.contains(neighborID)) {
+					
+					//create forward reaction if it doesn't exist already as a reverse reaction from a neighbor
+					if (reactionToPropensityMap.containsKey("ROW" + nRow + "_COL" + nCol 
+							+ "_Diffusion_" + underlyingSpeciesID + "_" + rvString + "_rv") == false) {
+						
+						Reaction fdReaction = model.createReaction("ROW" + row + "_COL" + col + "_Diffusion_" 
+								+ underlyingSpeciesID + "_" + fdString + "_fd");
+						KineticLaw fdKineticLaw = model.createKineticLaw();
+						fdKineticLaw.setMath(newNode.clone());
+						fdReaction.setKineticLaw(fdKineticLaw);
+						fdReaction.addReactant(new SpeciesReference(model.getSpecies(speciesID)));
+						fdReaction.addProduct(new SpeciesReference(model.getSpecies(neighborID)));
+						
+						setupLocalParameters(fdReaction.getKineticLaw(), fdReaction.getId());
+						setupSingleReaction(fdReaction.getId(), fdReaction.getKineticLaw().getMath(), false,
+								fdReaction.getListOfReactants(), fdReaction.getListOfProducts(), fdReaction.getListOfModifiers());
+					}
+					
+					//create the reverse reaction if it doesn't already exist as the reverse reaction from a neighbor
+					if (reactionToPropensityMap.containsKey("ROW" + nRow + "_COL" + nCol 
+							+ "_Diffusion_" + underlyingSpeciesID + "_" + rvString + "_fd") == false) {
+						
+						//alter kinetic law for reverse reaction
+						newNode.getRightChild().setVariable(model.getSpecies(neighborID));
+						
+						//create reverse reaction
+						Reaction rvReaction = model.createReaction("ROW" + row + "_COL" + col + "_Diffusion_" 
+								+ underlyingSpeciesID + "_" + fdString + "_rv");
+						KineticLaw rvKineticLaw = model.createKineticLaw();
+						rvKineticLaw.setMath(newNode.clone());
+						rvReaction.setKineticLaw(rvKineticLaw);
+						rvReaction.addProduct(new SpeciesReference(model.getSpecies(speciesID)));
+						rvReaction.addReactant(new SpeciesReference(model.getSpecies(neighborID)));
+	
+						setupLocalParameters(rvReaction.getKineticLaw(), rvReaction.getId());
+						setupSingleReaction(rvReaction.getId(), rvReaction.getKineticLaw().getMath(), false,
+								rvReaction.getListOfReactants(), rvReaction.getListOfProducts(), rvReaction.getListOfModifiers());
+					}
+				}
+				
+				++directionIndex;
+			}
+			
+			ASTNode degradationNode = new ASTNode();
+
+			//create degradation reaction for each grid species
+			//find a grid degradation reaction to copy from
+			for (Map.Entry<String, ASTNode> reactionAndFormula : reactionToFormulaMap.entrySet()) {
+				
+				String reactionID = reactionAndFormula.getKey();
+				
+				if (reactionID.contains("Degradation_" + underlyingSpeciesID)) {
+					
+					degradationNode = reactionAndFormula.getValue().clone();
+					degradationNode.getRightChild().setVariable(model.getSpecies(speciesID));
+					break;
+				}
+			}
+			
+			Reaction degReaction = model.createReaction("ROW" + row + "_COL" + col + "Degradation_" 
+					+ underlyingSpeciesID);
+			KineticLaw degKineticLaw = model.createKineticLaw();
+			degKineticLaw.setMath(degradationNode.clone());
+			degReaction.setKineticLaw(degKineticLaw);
+			degReaction.addReactant(new SpeciesReference(model.getSpecies(speciesID)));
+			
+			setupLocalParameters(degReaction.getKineticLaw(), degReaction.getId());
+			setupSingleReaction(degReaction.getId(), degReaction.getKineticLaw().getMath(), false,
+					degReaction.getListOfReactants(), degReaction.getListOfProducts(), degReaction.getListOfModifiers());
+		}
+		
+		//DUPLICATE VARIABLES and alter them to coincide with the new ID
+		
+		HashSet<String> childComponentVariableSet = new HashSet<String>();
+		
+		for (String parentVariableID : componentToVariableSetMap.get(parentComponentID)) {
+			
+			String childVariableID = parentVariableID.replace(parentComponentID, childComponentID);
+			childComponentVariableSet.add(childVariableID);
+			
+			//this means it's a species
+			if (speciesIDSet.contains(parentVariableID)) {
+				
+				if (speciesToHasOnlySubstanceUnitsMap.get(parentVariableID) == false)
+					speciesToCompartmentSizeMap.put(childVariableID, speciesToCompartmentSizeMap.get(parentVariableID));
+				
+				speciesToAffectedReactionSetMap.put(childVariableID, new HashSet<String>(20));
+				speciesToIsBoundaryConditionMap.put(childVariableID, speciesToIsBoundaryConditionMap.get(parentVariableID));
+				variableToIsConstantMap.put(childVariableID, variableToIsConstantMap.get(parentVariableID));
+				speciesToHasOnlySubstanceUnitsMap.put(childVariableID, speciesToHasOnlySubstanceUnitsMap.get(parentVariableID));
+				speciesIDSet.add(childVariableID);
+				
+				//divide the parent species amount by two
+				variableToValueMap.put(childVariableID, variableToValueMap.get(parentVariableID) / 2);
+				variableToValueMap.put(parentVariableID, variableToValueMap.get(parentVariableID) / 2);
+			}
+			//this means it's a parameter
+			else {
+				
+				variableToValueMap.put(childVariableID, variableToValueMap.get(parentVariableID));
+			}
+		}
+		
+		componentToVariableSetMap.put(childComponentID, childComponentVariableSet);	
+		
+		
+		//DUPLICATE REACTIONS and alter them to coincide with the new ID
+		
+		HashSet<String> childReactionSet = new HashSet<String>();
+		
+		for (String parentReactionID : componentToReactionSetMap.get(parentComponentID)) {
+			
+			String parentReactionFormula = "";
+			String childReactionID = parentReactionID.replace(parentComponentID, childComponentID);
+			
+			childReactionSet.add(childReactionID);
+			
+			try {
+				parentReactionFormula = reactionToFormulaMap.get(parentReactionID).toFormula();
+			} catch (SBMLException e) {
+				e.printStackTrace();
+			}
+			
+			ASTNode childFormulaNode = reactionToFormulaMap.get(parentReactionID).clone();
+			
+			try {
+				
+				String childReactionFormula = parentReactionFormula.replace(parentComponentID, childComponentID);
+				
+				if (parentReactionID.contains("MembraneDiffusion")) {
+					
+					String parentRowCol = "ROW" + (int) parentLocation.getX() + "_" + "COL" + (int) parentLocation.getY();
+					String childRowCol = "ROW" + (int) childLocation.getX() + "_" + "COL" + (int) childLocation.getY();
+					
+					alterNode(childFormulaNode, parentRowCol, childRowCol);
+				}
+				else
+					childFormulaNode = ASTNode.parseFormula(childReactionFormula);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			
+			reactionToSpeciesAndStoichiometrySetMap.put(childReactionID, new HashSet<StringDoublePair>());
+			reactionToReactantStoichiometrySetMap.put(childReactionID, new HashSet<StringDoublePair>());
+			
+			boolean notEnoughMoleculesFlag = false;
+			
+			//add species/stoichiometry pairs for this new reaction
+			for (StringDoublePair parentSpeciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap.get(parentReactionID)) {
+				
+				double childStoichiometry = parentSpeciesAndStoichiometry.doub;
+				String childSpeciesID = parentSpeciesAndStoichiometry.string.replace(parentComponentID, childComponentID);
+				
+				reactionToSpeciesAndStoichiometrySetMap.get(childReactionID)
+				.add(new StringDoublePair(childSpeciesID, childStoichiometry));
+				
+				if (speciesToAffectedReactionSetMap.containsKey(parentSpeciesAndStoichiometry.string))						
+					speciesToAffectedReactionSetMap.get(childSpeciesID).add(childReactionID);
+				
+				//make sure there are enough molecules for this species
+				//(if the molecule is a reactant -- if it's a product then it's being added)
+				if (variableToValueMap.get(childSpeciesID) < childStoichiometry && 
+						reactionToReactantStoichiometrySetMap.get(parentReactionID).contains(childSpeciesID))
+					notEnoughMoleculesFlag = true;
+			}
+			
+			//add reactant/stoichiometry pairs for this new reactions
+			for (StringDoublePair parentReactantStoichiometry : reactionToReactantStoichiometrySetMap.get(parentReactionID)) {
+				
+				double childStoichiometry = parentReactantStoichiometry.doub;
+				String childSpeciesID = parentReactantStoichiometry.string.replace(parentComponentID, childComponentID);	
+				
+				reactionToReactantStoichiometrySetMap.get(childReactionID).add(
+						new StringDoublePair(childSpeciesID, childStoichiometry));
+			}
+			
+			reactionToFormulaMap.put(childReactionID, childFormulaNode);
+			
+			double propensity;
+			
+			if (notEnoughMoleculesFlag == true)
+				propensity = 0.0;
+			else {
+			
+				//calculate propensity
+				propensity = evaluateExpressionRecursive(childFormulaNode);
+				
+				if (propensity < minPropensity && propensity > 0) 
+					minPropensity = propensity;
+				if (propensity > maxPropensity) 
+					maxPropensity = propensity;
+				
+				totalPropensity += propensity;
+			}
+			
+			reactionToPropensityMap.put(childReactionID, propensity);	
+		}
+		
+		componentToReactionSetMap.put(childComponentID, childReactionSet);
+		
+		//update propensities for the parent reactions, as their species values may have changed
+		updatePropensities(componentToReactionSetMap.get(parentComponentID));
+		
+		updateAfterDynamicChanges();
+		
+		
+		//DUPLICATE EVENTS
+		
+		HashSet<String> childEventSet = new HashSet<String>();
+		
+		for (String parentEventID : componentToEventSetMap.get(parentComponentID)) {
+			
+			String childEventID = parentEventID.replace(parentComponentID, childComponentID);
+			
+			untriggeredEventSet.add(childEventID);
+			childEventSet.add(childEventID);
+			
+			//hashmaps that allow for access to event information from the event's id
+			eventToPriorityMap.put(childEventID, eventToPriorityMap.get(parentEventID));
+			eventToDelayMap.put(childEventID, eventToDelayMap.get(parentEventID).clone());
+			eventToHasDelayMap.put(childEventID, eventToHasDelayMap.get(parentEventID));
+			eventToTriggerPersistenceMap.put(childEventID, eventToTriggerPersistenceMap.get(parentEventID));
+			eventToUseValuesFromTriggerTimeMap.put(childEventID, eventToUseValuesFromTriggerTimeMap.get(parentEventID));
+			eventToTriggerMap.put(childEventID, eventToTriggerMap.get(parentEventID).clone());
+			eventToTriggerInitiallyTrueMap.put(childEventID, eventToTriggerInitiallyTrueMap.get(parentEventID));
+			eventToPreviousTriggerValueMap.put(childEventID, eventToTriggerInitiallyTrueMap.get(childEventID));
+			
+			HashSet<Object> assignmentSetMap = new HashSet<Object>();
+			
+			for (Object assignment : eventToAssignmentSetMap.get(parentEventID)) {
+				
+				String variableID = ((EventAssignment) assignment).getVariable();
+				
+				if (variableToEventSetMap.containsKey(variableID) == false)
+					variableToEventSetMap.put(variableID, new HashSet<String>());
+				
+				variableToEventSetMap.get(variableID).add(childEventID);
+				
+				EventAssignment ea = ((EventAssignment)assignment).clone();
+				ea.setVariable(((EventAssignment)assignment).getVariable()
+						.replace(parentComponentID, childComponentID));
+				try {
+					ea.setFormula(((EventAssignment)assignment).getFormula()
+							.replace(parentComponentID, childComponentID));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+				
+				assignmentSetMap.add(ea);				
+				
+				if (speciesToAffectedReactionSetMap.containsKey(variableID)) {
+					
+					eventToAffectedReactionSetMap.put(childEventID, new HashSet<String>());
+					eventToAffectedReactionSetMap.get(childEventID).addAll(
+							speciesToAffectedReactionSetMap.get(variableID));
+				}
+			}
+			
+			eventToAssignmentSetMap.put(childEventID, assignmentSetMap);
+		}
+		
+		componentToEventSetMap.put(childComponentID, childEventSet);
+	}
+	
+	/**
+	 * erases all traces of a component (ie, its reactions and species and parameters, etc) and updates data structures
+	 * and the simulation state
+	 * used for "death" events in dynamic models
+	 * 
+	 * @param componentID
+	 */
+	protected void eraseComponent(String componentID) {
+		
+		
+	}
 	
 	/**
 	 * calculates an expression using a recursive algorithm
@@ -609,32 +1184,22 @@ public abstract class Simulator {
 				double lowerBound = FastMath.min(leftChildValue, rightChildValue);
 				double upperBound = FastMath.max(leftChildValue, rightChildValue);
 				
-				PsRandom prng = new PsRandom();
-				
 				return prng.nextDouble(lowerBound, upperBound);
 			}
 			else if (nodeName.equals("exponential")) {
 				
-				PsRandom prng = new PsRandom();
-				
 				return prng.nextExponential(evaluateExpressionRecursive(node.getLeftChild()), 1);
 			}
 			else if (nodeName.equals("gamma")) {
-				
-				PsRandom prng = new PsRandom();
 				
 				return prng.nextGamma(1, evaluateExpressionRecursive(node.getLeftChild()), 
 						evaluateExpressionRecursive(node.getRightChild()));
 			}
 			else if (nodeName.equals("chisq")) {
 				
-				PsRandom prng = new PsRandom();
-				
 				return prng.nextChiSquare((int) evaluateExpressionRecursive(node.getLeftChild()));
 			}
 			else if (nodeName.equals("lognormal")) {
-				
-				PsRandom prng = new PsRandom();
 				
 				return prng.nextLogNormal(evaluateExpressionRecursive(node.getLeftChild()), 
 						evaluateExpressionRecursive(node.getRightChild()));
@@ -645,32 +1210,22 @@ public abstract class Simulator {
 			}
 			else if (nodeName.equals("cauchy")) {
 				
-				PsRandom prng = new PsRandom();
-				
 				return prng.nextLorentzian(0, evaluateExpressionRecursive(node.getLeftChild()));
 			}
 			else if (nodeName.equals("poisson")) {
 				
-				PsRandom prng = new PsRandom();
-				
 				return prng.nextPoissonian(evaluateExpressionRecursive(node.getLeftChild()));
 			}
 			else if (nodeName.equals("binomial")) {
-				
-				PsRandom prng = new PsRandom();
 				
 				return prng.nextBinomial(evaluateExpressionRecursive(node.getLeftChild()),
 						(int) evaluateExpressionRecursive(node.getRightChild()));
 			}
 			else if (nodeName.equals("bernoulli")) {
 				
-				PsRandom prng = new PsRandom();
-				
 				return prng.nextBinomial(evaluateExpressionRecursive(node.getLeftChild()), 1);
 			}
 			else if (nodeName.equals("normal")) {
-				
-				PsRandom prng = new PsRandom();
 				
 				return prng.nextGaussian(evaluateExpressionRecursive(node.getLeftChild()),
 						evaluateExpressionRecursive(node.getRightChild()));	
@@ -690,8 +1245,10 @@ public abstract class Simulator {
 				
 				return currentTime;
 			}
-			else
+			else {
+								
 				return variableToValueMap.get(node.getName());
+			}
 		}
 		
 		//operators/functions with two children
@@ -870,455 +1427,12 @@ public abstract class Simulator {
 	}
 
 	/**
-	 * returns a set of all the reactions that the recently performed reaction affects
-	 * "affect" means that the species updates will change the affected reaction's propensity
-	 * 
-	 * @param selectedReactionID the reaction that was recently performed
-	 * @return the set of all reactions that the performed reaction affects the propensity of
-	 */
-	protected HashSet<String> getAffectedReactionSet(String selectedReactionID, final boolean noAssignmentRulesFlag) {
-		
-		HashSet<String> affectedReactionSet = new HashSet<String>(20);
-		affectedReactionSet.add(selectedReactionID);
-		
-		//loop through the reaction's reactants and products
-		for (StringDoublePair speciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap.get(selectedReactionID)) {
-			
-			String speciesID = speciesAndStoichiometry.string;
-			affectedReactionSet.addAll(speciesToAffectedReactionSetMap.get(speciesID));
-			
-			//if the species is involved in an assignment rule then it its changing may affect a reaction's propensity
-			if (noAssignmentRulesFlag == false && variableToIsInAssignmentRuleMap.get(speciesID)) {
-				
-				//this assignment rule is going to be evaluated, so the rule's variable's value will change
-				for (AssignmentRule assignmentRule : variableToAffectedAssignmentRuleSetMap.get(speciesID)) {
-				
-					affectedReactionSet.addAll(speciesToAffectedReactionSetMap
-							.get(assignmentRule.getVariable()));
-				}
-			}
-		}
-		
-		return affectedReactionSet;
-	}
-	
-	/**
-	 * kind of a hack to mingle doubles and booleans for the expression evaluator
-	 * 
-	 * @param value the double to be translated to a boolean
-	 * @return the translated boolean value
-	 */
-	protected boolean getBooleanFromDouble(double value) {
-		
-		if (value == 0.0) 
-			return false;
-		else 
-			return true;
-	}
-	
-	/**
-	 * kind of a hack to mingle doubles and booleans for the expression evaluator
-	 * 
-	 * @param value the boolean to be translated to a double
-	 * @return the translated double value
-	 */
-	protected double getDoubleFromBoolean(boolean value) {
-		
-		if (value == true)
-			return 1.0;
-		else 
-			return 0.0;
-	}
-
-	/**
-	 * updates the event queue and fires events and so on
-	 * @param currentTime the current time in the simulation
-	 */
-	protected void handleEvents(final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
-		
-		HashSet<String> triggeredEvents = new HashSet<String>();
-		
-		//loop through all untriggered events
-		//if any trigger, evaluate the fire time(s) and add them to the queue
-		for (String untriggeredEventID : untriggeredEventSet) {
-			
-			//if the trigger evaluates to true
-			if (getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap.get(untriggeredEventID))) == true) {
-				
-				//skip the event if it's initially true and this is time == 0
-				if (currentTime == 0.0 && eventToTriggerInitiallyTrueMap.get(untriggeredEventID) == true)
-					continue;
-				
-				//switch from false to true must happen
-				if (eventToPreviousTriggerValueMap.get(untriggeredEventID) == true)
-					continue;
-				
-				triggeredEvents.add(untriggeredEventID);
-				
-				//if assignment is to be evaluated at trigger time, evaluate it and replace the ASTNode assignment
-				if (eventToUseValuesFromTriggerTimeMap.get(untriggeredEventID) == true)	{
-					
-					//temporary hashset of evaluated assignments
-					HashSet<Object> evaluatedAssignments = new HashSet<Object>();
-					
-					for (Object evAssignment : eventToAssignmentSetMap.get(untriggeredEventID)) {
-						
-						EventAssignment eventAssignment = (EventAssignment) evAssignment;
-						evaluatedAssignments.add(new StringDoublePair(
-								eventAssignment.getVariable(), evaluateExpressionRecursive(eventAssignment.getMath())));
-					}
-					
-					double fireTime = currentTime;
-					
-					if (eventToHasDelayMap.get(untriggeredEventID) == true)
-						fireTime += evaluateExpressionRecursive(eventToDelayMap.get(untriggeredEventID));
-							
-					triggeredEventQueue.add(new EventToFire(
-							untriggeredEventID, evaluatedAssignments, fireTime));
-				}
-				else {
-					
-					double fireTime = currentTime;
-					
-					if (eventToHasDelayMap.get(untriggeredEventID) == true)
-						fireTime += evaluateExpressionRecursive(eventToDelayMap.get(untriggeredEventID));
-				
-					triggeredEventQueue.add(new EventToFire(
-							untriggeredEventID, eventToAssignmentSetMap.get(untriggeredEventID), fireTime));
-				}				
-			}
-		}
-		
-		//remove recently triggered events from the untriggered set
-		//when they're fired, they get put back into the untriggered set
-		untriggeredEventSet.removeAll(triggeredEvents);
-	}
-		
-	/**
-	 * fires events
-	 * 
-	 * @param noAssignmentRulesFlag
-	 * @param noConstraintsFlag
-	 */
-	protected HashSet<String> fireEvents(final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
-		
-		//temporary set of events to remove from the triggeredEventQueue
-		HashSet<String> untriggeredEvents = new HashSet<String>();
-		
-		//loop through all triggered events
-		//if they aren't persistent and the trigger is no longer true
-		//remove from triggered queue and put into untriggered set
-		for (EventToFire triggeredEvent : triggeredEventQueue) {
-			
-			String triggeredEventID = triggeredEvent.eventID;
-			
-			//if the trigger evaluates to false and the trigger isn't persistent
-			if (eventToTriggerPersistenceMap.get(triggeredEventID) == false && 
-					getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap.get(triggeredEventID))) == false) {
-				
-				untriggeredEvents.add(triggeredEventID);
-				eventToPreviousTriggerValueMap.put(triggeredEventID, false);
-			}
-		}
-		
-		triggeredEventQueue.removeAll(untriggeredEvents);
-		
-		//loop through untriggered events
-		//if the trigger is no longer true
-		//set the previous trigger value to false
-		for (String untriggeredEventID : untriggeredEventSet) {
-			
-			if (getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap.get(untriggeredEventID))) == false)
-				eventToPreviousTriggerValueMap.put(untriggeredEventID, false);			
-		}
-		
-		//these are sets of things that need to be re-evaluated or tested due to the event firing
-		HashSet<String> affectedReactionSet = new HashSet<String>();
-		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
-		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
-		
-		//set of fired events to add to the untriggered set
-		HashSet<String> firedEvents = new HashSet<String>();
-		
-		//fire all events whose fire time is less than the current time	
-		while (triggeredEventQueue.size() > 0 && triggeredEventQueue.peek().fireTime <= currentTime) {
-			
-			EventToFire eventToFire = triggeredEventQueue.poll();
-			String eventToFireID = eventToFire.eventID;
-			affectedReactionSet.addAll(eventToAffectedReactionSetMap.get(eventToFireID));
-			
-			firedEvents.add(eventToFireID);
-			eventToPreviousTriggerValueMap.put(eventToFireID, true);
-			
-			//execute all assignments for this event
-			for (Object eventAssignment : eventToFire.eventAssignmentSet) {
-				
-				String variable;
-				double assignmentValue;
-				
-				if (eventToUseValuesFromTriggerTimeMap.get(eventToFireID) == true)	{
-				
-					variable = ((StringDoublePair) eventAssignment).string;
-					assignmentValue = ((StringDoublePair) eventAssignment).doub;
-				}
-				//assignment needs to be evaluated
-				else {
-					
-					variable = ((EventAssignment) eventAssignment).getVariable();
-					assignmentValue = evaluateExpressionRecursive(((EventAssignment) eventAssignment).getMath());
-				}
-				
-				//update the species, but only if it's not a constant
-				if (speciesToIsConstantMap.get(variable) == false) {
-					
-					if (speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
-						variableToValueMap.put(variable, 
-								(int)(assignmentValue / speciesToCompartmentSizeMap.get(variable)));				
-					else				
-						variableToValueMap.put(variable, assignmentValue);
-				}
-				
-				//if this variable that was just updated is part of an assignment rule (RHS)
-				//then re-evaluate that assignment rule
-				if (noAssignmentRulesFlag == false && variableToIsInAssignmentRuleMap.get(variable) == true) 
-					affectedAssignmentRuleSet.addAll(variableToAffectedAssignmentRuleSetMap.get(variable));
-				
-				if (noConstraintsFlag == false && variableToIsInConstraintMap.get(variable) == true)
-					affectedConstraintSet.addAll(variableToAffectedConstraintSetMap.get(variable));
-			}
-		}
-		
-		//add the fired events back into the untriggered set
-		//this allows them to trigger/fire again later
-		untriggeredEventSet.addAll(firedEvents);
-		
-		if (affectedAssignmentRuleSet.size() > 0)
-			performAssignmentRules(affectedAssignmentRuleSet);
-		
-		if (affectedConstraintSet.size() > 0) {
-			
-			if (testConstraints(affectedConstraintSet) == false)
-				constraintFailureFlag = true;
-		}
-		
-		return affectedReactionSet;
-	}
-	
-	/**
-	 * performs assignment rules that may have changed due to events or reactions firing
-	 * 
-	 * @param affectedAssignmentRuleSet the set of assignment rules that have been affected
-	 */
-	protected void performAssignmentRules(HashSet<AssignmentRule> affectedAssignmentRuleSet) {
-		
-		for (AssignmentRule assignmentRule : affectedAssignmentRuleSet) {
-			
-			String variable = assignmentRule.getVariable();
-			
-			//update the species count (but only if the species isn't constant)
-			if (speciesToIsConstantMap.get(variable) == false) {
-				
-				if (speciesToHasOnlySubstanceUnitsMap.get(variable) == false) {
-					variableToValueMap.put(variable, 
-							(int)(evaluateExpressionRecursive(assignmentRule.getMath()) / speciesToCompartmentSizeMap.get(variable)));
-				}
-				else
-					variableToValueMap.put(variable, evaluateExpressionRecursive(assignmentRule.getMath()));
-			}
-		}
-	}
-	
-	/**
-	 * updates reactant/product species counts based on their stoichiometries
-	 * 
-	 * @param selectedReactionID the reaction to perform
-	 */
-	protected void performReaction(String selectedReactionID, final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
-		
-		//these are sets of things that need to be re-evaluated or tested due to the reaction firing
-		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
-		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
-		
-		//loop through the reaction's reactants and products and update their amounts
-		for (StringDoublePair speciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap.get(selectedReactionID)) {
-			
-			double stoichiometry = speciesAndStoichiometry.doub;
-			String speciesID = speciesAndStoichiometry.string;
-			
-			//update the species count if the species isn't a boundary condition or constant
-			//note that the stoichiometries are earlier modified with the correct +/- sign
-			if (speciesToIsBoundaryConditionMap.get(speciesID) == false &&
-					speciesToIsConstantMap.get(speciesID) == false) {
-				
-				if (speciesToHasOnlySubstanceUnitsMap.get(speciesID) == false)
-					variableToValueMap.adjustValue(speciesID, 
-							(int)(stoichiometry / speciesToCompartmentSizeMap.get(speciesID)));				
-				else				
-					variableToValueMap.adjustValue(speciesID, stoichiometry);
-			}
-			
-			//if this variable that was just updated is part of an assignment rule (RHS)
-			//then re-evaluate that assignment rule
-			if (noAssignmentRulesFlag == false && variableToIsInAssignmentRuleMap.get(speciesID) == true)
-				affectedAssignmentRuleSet.addAll(variableToAffectedAssignmentRuleSetMap.get(speciesID));
-			
-			if (noConstraintsFlag == false && variableToIsInConstraintMap.get(speciesID) == true)
-				affectedConstraintSet.addAll(variableToAffectedConstraintSetMap.get(speciesID));
-		}
-		
-		if (affectedAssignmentRuleSet.size() > 0)
-			performAssignmentRules(affectedAssignmentRuleSet);
-		
-		if (affectedConstraintSet.size() > 0) {
-			
-			if (testConstraints(affectedConstraintSet) == false)
-				constraintFailureFlag = true;
-		}
-	}
-	
-	/**
-	 * appends the current species states to the TSD file
-	 * 
-	 * @throws IOException 
-	 */
-	protected void printToTSD(double printTime) throws IOException {
-		
-		bufferedTSDWriter.write('(');
-		
-		String commaSpace = "";
-		
-		//print the current time
-		bufferedTSDWriter.write(printTime + ", ");
-		
-		//loop through the speciesIDs and print their current value to the file
-		for (String speciesID : speciesIDSet) {
-			
-			bufferedTSDWriter.write(commaSpace + (int) variableToValueMap.get(speciesID));
-			commaSpace = ", ";
-		}		
-		
-		bufferedTSDWriter.write(")");
-	}
-	
-	/**
-	 * parses TSD files for all runs and prints mean and standard deviation TSDs
-	 * 
-	 * @throws IOException
-	 */
-	protected void printStatisticsTSD() throws IOException {
-		
-		//the last run is the number of runs
-		int numRuns = currentRun;
-		
-		HashMap<String, ArrayList<DescriptiveStatistics> > speciesStatistics = 
-			new HashMap<String, ArrayList<DescriptiveStatistics> >();
-		
-		ArrayList<String> allSpecies = new ArrayList<String>();
-		
-		//store the TSD data for analysis
-		for (int run = 1; run <= numRuns; ++run) {
-			
-			TSDParser tsdParser = new TSDParser(outputDirectory + "run-" + run + ".tsd" , false);
-			allSpecies = tsdParser.getSpecies();
-			
-			HashMap<String, ArrayList<Double> > runStatistics = tsdParser.getHashMap();
-			
-			for (int speciesIndex = 0; speciesIndex < allSpecies.size(); ++speciesIndex) {
-			
-				String species = allSpecies.get(speciesIndex);
-				
-				for (int index = 0; index < runStatistics.get(species).size(); ++index) {
-					
-					Double speciesData = runStatistics.get(species).get(index);
-					
-					if (speciesStatistics.size() <= speciesIndex)
-						speciesStatistics.put(species, new ArrayList<DescriptiveStatistics>());
-					
-					if (speciesStatistics.get(species).size() <= index)
-						speciesStatistics.get(species).add(new DescriptiveStatistics());
-					
-					speciesStatistics.get(species).get(index).addValue(speciesData.doubleValue());
-				}
-			}
-		}
-		
-		DataParser statsParser = new DataParser(null, null);
-		ArrayList<ArrayList<Double> > meanTSDData = new ArrayList<ArrayList<Double> >();		
-		
-		//calculate and print the mean tsd
-		for (String species : allSpecies) {
-			
-			ArrayList<Double> speciesData = new ArrayList<Double>();
-			
-			for (int index = 0; index < speciesStatistics.get(species).size(); ++index)
-				speciesData.add(speciesStatistics.get(species).get(index).getMean());
-			
-			meanTSDData.add(speciesData);
-		}
-		
-		statsParser.setData(meanTSDData);
-		statsParser.setSpecies(allSpecies);
-		statsParser.outputTSD(outputDirectory + "mean.tsd");
-		
-		//calculate and print the standard deviation tsd
-		ArrayList<ArrayList<Double> > standardDeviationTSDData = new ArrayList<ArrayList<Double> >();
-		
-		for (String species : allSpecies) {
-			
-			ArrayList<Double> speciesData = new ArrayList<Double>();
-			
-			if (species.equals("time")) {
-				
-				for (int index = 0; index < speciesStatistics.get(species).size(); ++index)
-					speciesData.add(speciesStatistics.get(species).get(index).getMean());
-			}
-			else {
-				
-				for (int index = 0; index < speciesStatistics.get(species).size(); ++index)
-					speciesData.add(speciesStatistics.get(species).get(index).getStandardDeviation());
-			}
-			
-			standardDeviationTSDData.add(speciesData);
-		}
-		
-		statsParser.setData(standardDeviationTSDData);
-		statsParser.setSpecies(allSpecies);
-		statsParser.outputTSD(outputDirectory + "standard_deviation.tsd");		
-		
-		
-		//calculate and print the variance tsd
-		ArrayList<ArrayList<Double> > varianceTSDData = new ArrayList<ArrayList<Double> >();
-		
-		for (String species : allSpecies) {
-			
-			ArrayList<Double> speciesData = new ArrayList<Double>();
-			
-			if (species.equals("time")) {
-				
-				for (int index = 0; index < speciesStatistics.get(species).size(); ++index)
-					speciesData.add(speciesStatistics.get(species).get(index).getMean());
-			}
-			else {
-				
-				for (int index = 0; index < speciesStatistics.get(species).size(); ++index)
-					speciesData.add(speciesStatistics.get(species).get(index).getVariance());
-			}
-			
-			varianceTSDData.add(speciesData);
-		}
-		
-		statsParser.setData(varianceTSDData);
-		statsParser.setSpecies(allSpecies);
-		statsParser.outputTSD(outputDirectory + "variance.tsd");
-	}
-	
-	/**
 	 * adds species and reactions to the model that are implicit in arrays
 	 * basically, it takes an arrayed model and flattens it
 	 */
-	public static void setupArrays(String filename) {		
+	public static void expandArrays(String filename) {
 		
-		//open the sbml file for writing
+		//open the sbml file for reading/writing
 		SBMLReader reader = new SBMLReader();
 		SBMLDocument document = null;
 		
@@ -1451,7 +1565,7 @@ public abstract class Simulator {
 					newReaction.setListOfReactants(new ListOf<SpeciesReference>());
 					newReaction.setListOfProducts(new ListOf<SpeciesReference>());
 					newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
-					newReaction.setId("ROW" + row + "_COL" + col  + "__" + reactionID);
+					newReaction.setId(compartmentID  + "__" + reactionID);
 					newReaction.setReversible(true);
 					newReaction.setFast(false);
 					newReaction.setCompartment(reaction.getCompartment());
@@ -1577,7 +1691,7 @@ public abstract class Simulator {
 					newReaction.setListOfReactants(new ListOf<SpeciesReference>());
 					newReaction.setListOfProducts(new ListOf<SpeciesReference>());
 					newReaction.setListOfModifiers(new ListOf<ModifierSpeciesReference>());
-					newReaction.setId("ROW" + row + "_COL" + col + "__" + reactionID);
+					newReaction.setId("ROW" + row + "_COL" + col + "_" + reactionID);
 					
 					if (reactionID.contains("Degradation"))
 						newReaction.setReversible(false);
@@ -1659,9 +1773,7 @@ public abstract class Simulator {
 						
 						ASTNode productHeadNode = null;
 						
-						//go through the get2DArrayElement nodes and find the one corresponding to the reactant
-						//this isn't going to work for membrane diffusion because of the reverse _r
-						//you need to change the _r/_p to _reactant and _product
+						//go through the get2DArrayElement nodes and find the one corresponding to the product
 						for (ASTNode headNode : get2DArrayElementNodes) {
 							
 							//make sure it's a product node
@@ -1768,6 +1880,67 @@ public abstract class Simulator {
 	}
 	
 	/**
+	 * returns a set of all the reactions that the recently performed reaction affects
+	 * "affect" means that the species updates will change the affected reaction's propensity
+	 * 
+	 * @param selectedReactionID the reaction that was recently performed
+	 * @return the set of all reactions that the performed reaction affects the propensity of
+	 */
+	protected HashSet<String> getAffectedReactionSet(String selectedReactionID, final boolean noAssignmentRulesFlag) {
+		
+		HashSet<String> affectedReactionSet = new HashSet<String>(20);
+		affectedReactionSet.add(selectedReactionID);
+		
+		//loop through the reaction's reactants and products
+		for (StringDoublePair speciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap.get(selectedReactionID)) {
+			
+			String speciesID = speciesAndStoichiometry.string;
+			affectedReactionSet.addAll(speciesToAffectedReactionSetMap.get(speciesID));
+			
+			//if the species is involved in an assignment rule then it its changing may affect a reaction's propensity
+			if (noAssignmentRulesFlag == false && variableToIsInAssignmentRuleMap.get(speciesID)) {
+				
+				//this assignment rule is going to be evaluated, so the rule's variable's value will change
+				for (AssignmentRule assignmentRule : variableToAffectedAssignmentRuleSetMap.get(speciesID)) {
+				
+					affectedReactionSet.addAll(speciesToAffectedReactionSetMap
+							.get(assignmentRule.getVariable()));
+				}
+			}
+		}
+		
+		return affectedReactionSet;
+	}
+	
+	/**
+	 * kind of a hack to mingle doubles and booleans for the expression evaluator
+	 * 
+	 * @param value the double to be translated to a boolean
+	 * @return the translated boolean value
+	 */
+	protected boolean getBooleanFromDouble(double value) {
+		
+		if (value == 0.0) 
+			return false;
+		else 
+			return true;
+	}
+	
+	/**
+	 * kind of a hack to mingle doubles and booleans for the expression evaluator
+	 * 
+	 * @param value the boolean to be translated to a double
+	 * @return the translated double value
+	 */
+	protected double getDoubleFromBoolean(boolean value) {
+		
+		if (value == true)
+			return 1.0;
+		else 
+			return 0.0;
+	}
+
+	/**
 	 * recursively puts the nodes that have the same name as the quarry string passed in into the arraylist passed in
 	 * so, the entire tree is searched through, which i don't think is possible with the jsbml methods
 	 * 
@@ -1786,43 +1959,1097 @@ public abstract class Simulator {
 	}
 	
 	/**
+	 * updates the event queue and fires events and so on
+	 * @param currentTime the current time in the simulation
+	 */
+	protected void handleEvents(final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
+		
+		HashSet<String> triggeredEvents = new HashSet<String>();
+		
+		//loop through all untriggered events
+		//if any trigger, evaluate the fire time(s) and add them to the queue
+		for (String untriggeredEventID : untriggeredEventSet) {
+			
+			//if the trigger evaluates to true
+			if (getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap.get(untriggeredEventID))) == true) {
+				
+				//skip the event if it's initially true and this is time == 0
+				if (currentTime == 0.0 && eventToTriggerInitiallyTrueMap.get(untriggeredEventID) == true)
+					continue;
+				
+				//switch from false to true must happen
+				if (eventToPreviousTriggerValueMap.get(untriggeredEventID) == true)
+					continue;
+				
+				triggeredEvents.add(untriggeredEventID);
+				
+				//if assignment is to be evaluated at trigger time, evaluate it and replace the ASTNode assignment
+				if (eventToUseValuesFromTriggerTimeMap.get(untriggeredEventID) == true)	{
+					
+					//temporary hashset of evaluated assignments
+					HashSet<Object> evaluatedAssignments = new HashSet<Object>();
+					
+					for (Object evAssignment : eventToAssignmentSetMap.get(untriggeredEventID)) {
+						
+						EventAssignment eventAssignment = (EventAssignment) evAssignment;
+						evaluatedAssignments.add(new StringDoublePair(
+								eventAssignment.getVariable(), evaluateExpressionRecursive(eventAssignment.getMath())));
+					}
+					
+					double fireTime = currentTime;
+					
+					if (eventToHasDelayMap.get(untriggeredEventID) == true)
+						fireTime += evaluateExpressionRecursive(eventToDelayMap.get(untriggeredEventID));
+							
+					triggeredEventQueue.add(new EventToFire(
+							untriggeredEventID, evaluatedAssignments, fireTime));
+				}
+				else {
+					
+					double fireTime = currentTime;
+					
+					if (eventToHasDelayMap.get(untriggeredEventID) == true)
+						fireTime += evaluateExpressionRecursive(eventToDelayMap.get(untriggeredEventID));
+									
+					triggeredEventQueue.add(new EventToFire(
+							untriggeredEventID, eventToAssignmentSetMap.get(untriggeredEventID), fireTime));
+				}				
+			}
+		}
+		
+		//remove recently triggered events from the untriggered set
+		//when they're fired, they get put back into the untriggered set
+		untriggeredEventSet.removeAll(triggeredEvents);
+	}
+		
+	/**
+	 * fires events
+	 * 
+	 * @param noAssignmentRulesFlag
+	 * @param noConstraintsFlag
+	 */
+	protected HashSet<String> fireEvents(final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
+		
+		//temporary set of events to remove from the triggeredEventQueue
+		HashSet<String> untriggeredEvents = new HashSet<String>();
+		
+		//loop through all triggered events
+		//if they aren't persistent and the trigger is no longer true
+		//remove from triggered queue and put into untriggered set
+		for (EventToFire triggeredEvent : triggeredEventQueue) {
+			
+			String triggeredEventID = triggeredEvent.eventID;
+			
+			//if the trigger evaluates to false and the trigger isn't persistent
+			if (eventToTriggerPersistenceMap.get(triggeredEventID) == false && 
+					getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap.get(triggeredEventID))) == false) {
+				
+				untriggeredEvents.add(triggeredEventID);
+				eventToPreviousTriggerValueMap.put(triggeredEventID, false);
+			}
+		}
+		
+		triggeredEventQueue.removeAll(untriggeredEvents);
+		
+		//loop through untriggered events
+		//if the trigger is no longer true
+		//set the previous trigger value to false
+		for (String untriggeredEventID : untriggeredEventSet) {
+			
+			if (getBooleanFromDouble(evaluateExpressionRecursive(eventToTriggerMap.get(untriggeredEventID))) == false)
+				eventToPreviousTriggerValueMap.put(untriggeredEventID, false);			
+		}
+		
+		//these are sets of things that need to be re-evaluated or tested due to the event firing
+		HashSet<String> affectedReactionSet = new HashSet<String>();
+		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
+		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
+		
+		//set of fired events to add to the untriggered set
+		HashSet<String> firedEvents = new HashSet<String>();
+		
+		//fire all events whose fire time is less than the current time	
+		while (triggeredEventQueue.size() > 0 && triggeredEventQueue.peek().fireTime <= currentTime) {
+			
+			EventToFire eventToFire = triggeredEventQueue.poll();
+			String eventToFireID = eventToFire.eventID;
+			affectedReactionSet.addAll(eventToAffectedReactionSetMap.get(eventToFireID));
+			
+			firedEvents.add(eventToFireID);
+			eventToPreviousTriggerValueMap.put(eventToFireID, true);
+			
+			//execute all assignments for this event
+			for (Object eventAssignment : eventToFire.eventAssignmentSet) {
+				
+				String variable;
+				double assignmentValue;
+				
+				if (eventToUseValuesFromTriggerTimeMap.get(eventToFireID) == true)	{
+				
+					variable = ((StringDoublePair) eventAssignment).string;
+					assignmentValue = ((StringDoublePair) eventAssignment).doub;
+				}
+				//assignment needs to be evaluated
+				else {
+					
+					variable = ((EventAssignment) eventAssignment).getVariable();
+					assignmentValue = evaluateExpressionRecursive(((EventAssignment) eventAssignment).getMath());
+				}
+				
+				//update the species, but only if it's not a constant
+				if (variableToIsConstantMap.get(variable) == false) {
+					
+					if (eventToFire.eventID.contains("__Division__")) {
+						
+						String compartmentID = ((String[])eventToFire.eventID.split("__"))[0];
+						duplicateComponent(compartmentID);
+					}
+						
+					if (speciesToHasOnlySubstanceUnitsMap.get(variable) != null && 
+							speciesToHasOnlySubstanceUnitsMap.get(variable) == false)
+						variableToValueMap.put(variable, 
+								(int)(assignmentValue / speciesToCompartmentSizeMap.get(variable)));				
+					else				
+						variableToValueMap.put(variable, assignmentValue);
+				}
+				
+				//if this variable that was just updated is part of an assignment rule (RHS)
+				//then re-evaluate that assignment rule
+				if (noAssignmentRulesFlag == false && variableToIsInAssignmentRuleMap.get(variable) == true) 
+					affectedAssignmentRuleSet.addAll(variableToAffectedAssignmentRuleSetMap.get(variable));
+				
+				if (noConstraintsFlag == false && variableToIsInConstraintMap.get(variable) == true)
+					affectedConstraintSet.addAll(variableToAffectedConstraintSetMap.get(variable));
+			}
+		}
+		
+		//add the fired events back into the untriggered set
+		//this allows them to trigger/fire again later
+		untriggeredEventSet.addAll(firedEvents);
+		
+		if (affectedAssignmentRuleSet.size() > 0)
+			performAssignmentRules(affectedAssignmentRuleSet);
+		
+		if (affectedConstraintSet.size() > 0) {
+			
+			if (testConstraints(affectedConstraintSet) == false)
+				constraintFailureFlag = true;
+		}
+		
+		return affectedReactionSet;
+	}
+	
+	/**
+	 * performs assignment rules that may have changed due to events or reactions firing
+	 * 
+	 * @param affectedAssignmentRuleSet the set of assignment rules that have been affected
+	 */
+	protected void performAssignmentRules(HashSet<AssignmentRule> affectedAssignmentRuleSet) {
+		
+		for (AssignmentRule assignmentRule : affectedAssignmentRuleSet) {
+			
+			String variable = assignmentRule.getVariable();
+			
+			//update the species count (but only if the species isn't constant)
+			if (variableToIsConstantMap.get(variable) == false) {
+				
+				if (speciesToHasOnlySubstanceUnitsMap.get(variable) == false) {
+					variableToValueMap.put(variable, 
+							(int)(evaluateExpressionRecursive(assignmentRule.getMath()) / speciesToCompartmentSizeMap.get(variable)));
+				}
+				else
+					variableToValueMap.put(variable, evaluateExpressionRecursive(assignmentRule.getMath()));
+			}
+		}
+	}
+	
+	/**
+	 * updates reactant/product species counts based on their stoichiometries
+	 * 
+	 * @param selectedReactionID the reaction to perform
+	 */
+	protected void performReaction(String selectedReactionID, final boolean noAssignmentRulesFlag, final boolean noConstraintsFlag) {
+		
+		//these are sets of things that need to be re-evaluated or tested due to the reaction firing
+		HashSet<AssignmentRule> affectedAssignmentRuleSet = new HashSet<AssignmentRule>();
+		HashSet<ASTNode> affectedConstraintSet = new HashSet<ASTNode>();
+		
+		//loop through the reaction's reactants and products and update their amounts
+		for (StringDoublePair speciesAndStoichiometry : reactionToSpeciesAndStoichiometrySetMap.get(selectedReactionID)) {
+			
+			double stoichiometry = speciesAndStoichiometry.doub;
+			String speciesID = speciesAndStoichiometry.string;
+			
+			//update the species count if the species isn't a boundary condition or constant
+			//note that the stoichiometries are earlier modified with the correct +/- sign
+			if (speciesToIsBoundaryConditionMap.get(speciesID) == false &&
+					variableToIsConstantMap.get(speciesID) == false) {
+				
+				if (speciesToHasOnlySubstanceUnitsMap.get(speciesID) == false)
+					variableToValueMap.adjustValue(speciesID, 
+							(int)(stoichiometry / speciesToCompartmentSizeMap.get(speciesID)));				
+				else				
+					variableToValueMap.adjustValue(speciesID, stoichiometry);
+			}
+			
+			//if this variable that was just updated is part of an assignment rule (RHS)
+			//then re-evaluate that assignment rule
+			if (noAssignmentRulesFlag == false && variableToIsInAssignmentRuleMap.get(speciesID) == true)
+				affectedAssignmentRuleSet.addAll(variableToAffectedAssignmentRuleSetMap.get(speciesID));
+			
+			if (noConstraintsFlag == false && variableToIsInConstraintMap.get(speciesID) == true)
+				affectedConstraintSet.addAll(variableToAffectedConstraintSetMap.get(speciesID));
+		}
+		
+		if (affectedAssignmentRuleSet.size() > 0)
+			performAssignmentRules(affectedAssignmentRuleSet);
+		
+		if (affectedConstraintSet.size() > 0) {
+			
+			if (testConstraints(affectedConstraintSet) == false)
+				constraintFailureFlag = true;
+		}
+	}
+	
+	/**
+	 * appends the current species states to the TSD file
+	 * 
+	 * @throws IOException 
+	 */
+	protected void printToTSD(double printTime) throws IOException {
+		
+		String commaSpace = "";
+		
+		//dynamic printing requires re-printing the species values each time step
+		if (printTime > 0.0 && dynamicBoolean == true) {
+		
+			bufferedTSDWriter.write("(\"time\"");
+			
+			commaSpace = ", ";
+			
+			//print the species IDs
+			for (String speciesID : speciesIDSet)
+				bufferedTSDWriter.write(commaSpace + "\"" + speciesID + "\"");
+			
+			//print compartment location IDs
+			for (String componentLocationID : componentToLocationMap.keySet()) {
+				
+				String locationX = componentLocationID + "__locationX";
+				String locationY = componentLocationID + "__locationY";
+				
+				bufferedTSDWriter.write(commaSpace + "\"" + locationX + "\", \"" + locationY + "\"");
+			}			
+			
+			bufferedTSDWriter.write("),\n");
+		
+		}
+		
+		bufferedTSDWriter.write("(");
+		
+		commaSpace = "";
+		
+		//print the current time
+		bufferedTSDWriter.write(printTime + ", ");
+		
+		//loop through the speciesIDs and print their current value to the file
+		for (String speciesID : speciesIDSet) {
+			
+			bufferedTSDWriter.write(commaSpace + (int) variableToValueMap.get(speciesID));
+			commaSpace = ", ";
+		}
+		
+		//print component location values
+		for (String componentID : componentToLocationMap.keySet()) {
+			bufferedTSDWriter.write(commaSpace + (int) componentToLocationMap.get(componentID).getX());
+			bufferedTSDWriter.write(commaSpace + (int) componentToLocationMap.get(componentID).getY());
+		}
+		
+		bufferedTSDWriter.write(")");
+	}
+	
+	/**
+	 * parses TSD files for all runs and prints mean and standard deviation TSDs
+	 * 
+	 * @throws IOException
+	 */
+	protected void printStatisticsTSD() throws IOException {
+		
+		//the last run is the number of runs
+		int numRuns = currentRun;
+		
+		HashMap<String, ArrayList<DescriptiveStatistics> > speciesStatistics = 
+			new HashMap<String, ArrayList<DescriptiveStatistics> >();
+		
+		ArrayList<String> allSpecies = new ArrayList<String>();
+		
+		//store the TSD data for analysis
+		for (int run = 1; run <= numRuns; ++run) {
+			
+			DTSDParser dtsdParser = new DTSDParser(outputDirectory + "run-" + run + ".dtsd");
+			
+			TSDParser tsdParser = new TSDParser(outputDirectory + "run-" + run + ".tsd" , false);
+			allSpecies = tsdParser.getSpecies();
+			
+			HashMap<String, ArrayList<Double> > runStatistics = tsdParser.getHashMap();
+			
+			for (int speciesIndex = 0; speciesIndex < allSpecies.size(); ++speciesIndex) {
+			
+				String species = allSpecies.get(speciesIndex);
+				
+				for (int index = 0; index < runStatistics.get(species).size(); ++index) {
+					
+					Double speciesData = runStatistics.get(species).get(index);
+					
+					if (speciesStatistics.size() <= speciesIndex)
+						speciesStatistics.put(species, new ArrayList<DescriptiveStatistics>());
+					
+					if (speciesStatistics.get(species).size() <= index)
+						speciesStatistics.get(species).add(new DescriptiveStatistics());
+					
+					speciesStatistics.get(species).get(index).addValue(speciesData.doubleValue());
+				}
+			}
+		}
+		
+		DataParser statsParser = new DataParser(null, null);
+		ArrayList<ArrayList<Double> > meanTSDData = new ArrayList<ArrayList<Double> >();		
+		
+		//calculate and print the mean tsd
+		for (String species : allSpecies) {
+			
+			ArrayList<Double> speciesData = new ArrayList<Double>();
+			
+			for (int index = 0; index < speciesStatistics.get(species).size(); ++index)
+				speciesData.add(speciesStatistics.get(species).get(index).getMean());
+			
+			meanTSDData.add(speciesData);
+		}
+		
+		statsParser.setData(meanTSDData);
+		statsParser.setSpecies(allSpecies);
+		statsParser.outputTSD(outputDirectory + "mean.tsd");
+		
+		//calculate and print the standard deviation tsd
+		ArrayList<ArrayList<Double> > standardDeviationTSDData = new ArrayList<ArrayList<Double> >();
+		
+		for (String species : allSpecies) {
+			
+			ArrayList<Double> speciesData = new ArrayList<Double>();
+			
+			if (species.equals("time")) {
+				
+				for (int index = 0; index < speciesStatistics.get(species).size(); ++index)
+					speciesData.add(speciesStatistics.get(species).get(index).getMean());
+			}
+			else {
+				
+				for (int index = 0; index < speciesStatistics.get(species).size(); ++index)
+					speciesData.add(speciesStatistics.get(species).get(index).getStandardDeviation());
+			}
+			
+			standardDeviationTSDData.add(speciesData);
+		}
+		
+		statsParser.setData(standardDeviationTSDData);
+		statsParser.setSpecies(allSpecies);
+		statsParser.outputTSD(outputDirectory + "standard_deviation.tsd");		
+		
+		
+		//calculate and print the variance tsd
+		ArrayList<ArrayList<Double> > varianceTSDData = new ArrayList<ArrayList<Double> >();
+		
+		for (String species : allSpecies) {
+			
+			ArrayList<Double> speciesData = new ArrayList<Double>();
+			
+			if (species.equals("time")) {
+				
+				for (int index = 0; index < speciesStatistics.get(species).size(); ++index)
+					speciesData.add(speciesStatistics.get(species).get(index).getMean());
+			}
+			else {
+				
+				for (int index = 0; index < speciesStatistics.get(species).size(); ++index)
+					speciesData.add(speciesStatistics.get(species).get(index).getVariance());
+			}
+			
+			varianceTSDData.add(speciesData);
+		}
+		
+		statsParser.setData(varianceTSDData);
+		statsParser.setSpecies(allSpecies);
+		statsParser.outputTSD(outputDirectory + "variance.tsd");
+	}
+	
+	/**
+	 * puts array stuff into data structures to be used during simulation
+	 */
+	protected void setupArrays() throws IOException {
+				
+		//ARRAYED SPECIES BUSINESS
+		//create all new species that are implicit in the arrays and put them into the model	
+		
+		ArrayList<String> speciesToRemove = new ArrayList<String>();
+		ArrayList<Species> speciesToAdd = new ArrayList<Species>();
+		
+		HashMap<String, Boolean> speciesToIsArrayedMap = new HashMap<String, Boolean>();
+		HashMap<String, SpeciesDimensions> arrayedSpeciesToDimensionsMap = 
+			new HashMap<String, SpeciesDimensions>();
+		
+		for (Species species : model.getListOfSpecies()) {
+			
+			String speciesID = species.getId();
+			
+			//check to see if the species is arrayed			
+			if (species.getAnnotationString().isEmpty() == false) {
+				
+				speciesToIsArrayedMap.put(speciesID, true);
+				speciesToRemove.add(speciesID);
+				
+				int numRowsLower = 0;
+				int numColsLower = 0;
+				int numRowsUpper = 0;
+				int numColsUpper = 0;
+				
+				String[] annotationString = species.getAnnotationString().split("=");
+				
+				numRowsLower = Integer.valueOf(((String[])(annotationString[1].split(" ")))[0].replace("\"",""));
+				numRowsUpper = Integer.valueOf(((String[])(annotationString[2].split(" ")))[0].replace("\"",""));
+				numColsLower = Integer.valueOf(((String[])(annotationString[3].split(" ")))[0].replace("\"",""));
+				numColsUpper = Integer.valueOf(((String[])(annotationString[4].split(" ")))[0].replace("\"",""));
+				
+				minRow = numRowsLower;
+				maxRow = numRowsUpper;
+				minCol = numColsLower;
+				maxCol = numColsUpper;
+				
+				SpeciesDimensions speciesDimensions = 
+					new SpeciesDimensions(numRowsLower, numRowsUpper, numColsLower, numColsUpper);
+				
+				arrayedSpeciesToDimensionsMap.put(speciesID, speciesDimensions);
+				
+				//loop through all species in the array
+				//prepend the row/col information to create a new ID
+				for (int row = numRowsLower; row <= numRowsUpper; ++row) {
+					for (int col = numColsLower; col <= numColsUpper; ++col) {
+						
+						speciesID = "ROW" + row + "_COL" + col + "__" + species.getId();
+						
+						setupSingleSpecies(species, speciesID);
+						
+						//the species need to be added to the model so that JSBML can process
+						//the speciesreferences in the kinetic laws of the new reactions						
+						Species newSpecies = new Species();
+						newSpecies = species.clone();
+						newSpecies.setMetaId(speciesID);
+						newSpecies.setId(speciesID);
+						newSpecies.setAnnotation(null);
+						
+						speciesToAdd.add(newSpecies);
+						//speciesToRemove.add(speciesID);
+					}
+				}
+			}
+			else
+				speciesToIsArrayedMap.put(speciesID, false);
+		} //end species for loop
+		
+		for (Species specToAdd : speciesToAdd)
+			model.addSpecies(specToAdd);
+		
+		
+		//ARRAYED EVENTS BUSINESS
+		//you can probably just clone it a bunch of times and change the species IDs for the compartments in the annotation
+		//and you don't need the size+1 event assignment, either
+		
+		ArrayList<String> eventsToRemove = new ArrayList<String>();
+		
+		for (Event event : model.getListOfEvents()) {
+			
+			if (event.getAnnotationString().contains("array")) {
+				
+				eventsToRemove.add(event.getId());
+				
+				String annotationString = event.getAnnotationString().replace("<annotation>","").
+				replace("</annotation>","").replace("\"","");
+				String[] splitAnnotation = annotationString.split("array:");
+				ArrayList<String> eventCompartments = new ArrayList<String>();
+				
+				splitAnnotation[splitAnnotation.length - 2] = ((String[])splitAnnotation[splitAnnotation.length - 2].split("xmlns:"))[0];
+				
+				for (int i = 2; i < splitAnnotation.length - 1; ++i) {
+					
+					String compartmentID = ((String[])splitAnnotation[i].split("="))[0];
+					eventCompartments.add(compartmentID);
+				}
+				
+				//loop through all compartments and create an event for each one
+				for (String compartmentID : eventCompartments) {
+					
+					Event newEvent = new Event();
+					newEvent.setVersion(event.getVersion());
+					newEvent.setLevel(event.getLevel());
+					newEvent.setId(compartmentID + "__" + event.getId());
+					newEvent.setTrigger(event.getTrigger().clone());
+					
+					if (event.isSetPriority())
+						newEvent.setPriority(event.getPriority().clone());
+					
+					if (event.isSetDelay())
+						newEvent.setDelay(event.getDelay().clone());
+					
+					newEvent.setUseValuesFromTriggerTime(event.getUseValuesFromTriggerTime());
+					
+					ArrayList<String> eventAssignmentsToRemove = new ArrayList<String>();
+					
+					for (EventAssignment eventAssignment : event.getListOfEventAssignments()) {
+						
+						EventAssignment ea = eventAssignment.clone();
+						ea.setMath(eventAssignment.getMath().clone());
+						ea.setVariable(eventAssignment.getVariable());
+						newEvent.addEventAssignment(ea);
+					}
+					
+					for (EventAssignment eventAssignment : newEvent.getListOfEventAssignments()) {
+						
+						if (eventAssignment.getVariable().contains("_size")) {
+							
+							eventAssignmentsToRemove.add(eventAssignment.getVariable());
+							continue;
+						}
+							
+						eventAssignment.setVariable(compartmentID + "__" + eventAssignment.getVariable());
+					}
+					
+					for (String eaToRemove : eventAssignmentsToRemove)
+						newEvent.removeEventAssignment(eaToRemove);
+					
+					setupSingleEvent(newEvent);
+				}
+			}
+		}	
+		
+		
+		//ARRAYED REACTION BUSINESS
+		//if a reaction has arrayed species
+		//new reactions that are implicit are created and added to the model	
+		
+		ArrayList<String> reactionsToRemove = new ArrayList<String>();
+		
+		for (Reaction reaction : model.getListOfReactions()) {
+			
+			String reactionID = reaction.getId();
+			
+			//if reaction itself is arrayed
+			if (reaction.getAnnotationString().isEmpty() == false) {				
+			}
+			
+			ArrayList<Integer> membraneDiffusionRows = new ArrayList<Integer>();
+			ArrayList<Integer> membraneDiffusionCols = new ArrayList<Integer>();
+			ArrayList<String> membraneDiffusionCompartments = new ArrayList<String>();
+			
+			//MEMBRANE DIFFUSION REACTIONS
+			//if it's a membrane diffusion reaction it'll have the appropriate locations as an annotation
+			//so parse them and store them in the above arraylists
+			if (reactionID.contains("MembraneDiffusion")) {
+				
+				String annotationString = reaction.getAnnotationString().replace("<annotation>","").
+					replace("</annotation>","").replace("\"","");
+				String[] splitAnnotation = annotationString.split("array:");
+				
+				splitAnnotation[splitAnnotation.length - 2] = ((String[])splitAnnotation[splitAnnotation.length - 2].split("xmlns:"))[0];
+				
+				for (int i = 2; i < splitAnnotation.length - 1; ++i) {
+					
+					String compartmentID = ((String[])splitAnnotation[i].split("="))[0];
+					String row = ((String[])((String[])splitAnnotation[i].split("="))[1].split(","))[0].replace("(","");
+					String col = ((String[])((String[])splitAnnotation[i].split("="))[1].split(","))[1].replace(")","");
+					
+					membraneDiffusionRows.add(Integer.valueOf(row.trim()));
+					membraneDiffusionCols.add(Integer.valueOf(col.trim()));
+					membraneDiffusionCompartments.add(compartmentID);
+				}
+				
+				int membraneDiffusionIndex = 0;
+				
+				reactionsToRemove.add(reaction.getId());
+				reaction.setAnnotation(null);
+				
+				//loop through all appropriate row/col pairs and create a membrane diffusion reaction for each one
+				for (String compartmentID : membraneDiffusionCompartments) {
+					
+					int row = membraneDiffusionRows.get(membraneDiffusionIndex);
+					int col = membraneDiffusionCols.get(membraneDiffusionIndex);
+					
+					String newReactionID = compartmentID  + "__" + reactionID;
+					KineticLaw newReactionKineticLaw = reaction.getKineticLaw().clone();
+					ASTNode newReactionFormula = newReactionKineticLaw.getMath();
+					boolean reversible = true;
+					ListOf<SpeciesReference> reactantsList = new ListOf<SpeciesReference>();
+					ListOf<SpeciesReference> productsList = new ListOf<SpeciesReference>();
+					ListOf<ModifierSpeciesReference> modifiersList = new ListOf<ModifierSpeciesReference>();
+					
+					reactantsList.setVersion(reaction.getVersion());
+					reactantsList.setLevel(reaction.getLevel());
+					productsList.setVersion(reaction.getVersion());
+					productsList.setLevel(reaction.getLevel());
+					modifiersList.setVersion(reaction.getVersion());
+					modifiersList.setLevel(reaction.getLevel());
+					
+					//alter the kinetic law to so that it has the correct indexes as children for the
+					//get2DArrayElement function
+					
+					//get the nodes to alter (that are arguments for the get2DArrayElement method)
+					ArrayList<ASTNode> get2DArrayElementNodes = new ArrayList<ASTNode>();
+					
+					getSatisfyingNodes(newReactionFormula, "get2DArrayElement", get2DArrayElementNodes);
+					
+					boolean reactantBool = false;
+					
+					//replace the get2darrayelement stuff with the proper explicit species/parameters
+					for (ASTNode node : get2DArrayElementNodes) {
+												
+						if (node.getLeftChild().getName().contains("kmdiff")) {
+							
+							String parameterName = node.getLeftChild().getName();
+							
+							String speciesID = reactionID.replace("MembraneDiffusion_","");
+							
+							if (model.getParameter(compartmentID + "__" + speciesID + "__" + parameterName) == null)
+								node.setVariable(model.getParameter(parameterName));
+							else							
+								node.setVariable(model.getParameter(compartmentID + "__" + speciesID + "__" + parameterName));	
+							
+							for (int i = 0; i < node.getChildCount(); ++i)
+								node.removeChild(i);
+							
+							for (int i = 0; i < node.getChildCount(); ++i)
+								node.removeChild(i);
+						}
+						//this means it's a species, which we need to prepend with the row/col prefix
+						else {
+							
+							if (node.getChildCount() > 0 &&
+									model.getParameter(node.getLeftChild().getName()) == null) {
+								
+								//reactant
+								if (reactantBool == true) {
+									
+									node.setVariable(model.getSpecies(
+											"ROW" + row + "_COL" + col + "__" + node.getLeftChild().getName()));
+								}
+								//product
+								else {
+									
+									node.setVariable(model.getSpecies(
+											compartmentID + "__" + node.getLeftChild().getName()));
+									reactantBool = true;
+								}
+							}
+								
+							for (int i = 0; i < node.getChildCount(); ++i)
+								node.removeChild(i);
+							
+							for (int i = 0; i < node.getChildCount(); ++i)
+								node.removeChild(i);
+						}
+					}
+					
+					//loop through reactants
+					for (SpeciesReference reactant : reaction.getListOfReactants()) {
+						
+						Species species = model.getSpecies(compartmentID + "__" + reactant.getSpecies());
+						
+						SpeciesReference sr = new SpeciesReference(species);								
+						sr.setVersion(reaction.getVersion());
+						sr.setLevel(reaction.getLevel());
+						
+						//this species hasn't been setup yet because it isn't a grid species
+						setupSingleSpecies(species, species.getId());
+						speciesToRemove.add(species.getId());
+						
+						//these parameters need to be setup because they're not local parameters
+						setupSingleParameter(model.getParameter(compartmentID + "__" + reactant.getSpecies() + "__kmdiff_r"));
+						setupSingleParameter(model.getParameter(compartmentID + "__" + reactant.getSpecies() + "__kmdiff_f"));
+						
+						reactantsList.add(sr);
+					}
+					
+					//loop through products
+					for (SpeciesReference product : reaction.getListOfProducts()) {
+						
+						SpeciesReference sr = new SpeciesReference(
+								model.getSpecies("ROW" + row + "_COL" + col + "__" + product.getSpecies()));
+						sr.setVersion(reaction.getVersion());
+						sr.setLevel(reaction.getLevel());
+						
+						productsList.add(sr);
+					}
+					
+					if (newReactionKineticLaw.getLocalParameter("i") != null)
+						newReactionKineticLaw.removeLocalParameter("i");
+					
+					if (newReactionKineticLaw.getLocalParameter("j") != null)
+						newReactionKineticLaw.removeLocalParameter("j");
+					
+					setupLocalParameters(newReactionKineticLaw, newReactionID);
+					
+					//initialize and calculate the propensity of this new membrane diffusion reaction
+					setupSingleReaction(newReactionID, newReactionFormula, reversible, 
+							reactantsList, productsList, modifiersList);
+					
+					++membraneDiffusionIndex;
+				}
+			}
+			
+			
+			
+			//NON-MEMBRANE DIFFUSION REACTIONS
+			//check to see if the (non-membrane-diffusion) reaction has arrayed species
+			//right now i'm only checking the first reactant species, due to a bad assumption
+			//about the homogeneity of the arrayed reaction (ie, if one species is arrayed, they all are)
+			else if (reaction.getNumReactants() > 0 &&
+					speciesToIsArrayedMap.get(reaction.getReactant(0).getSpeciesInstance().getId()) == true) {
+				
+				reactionsToRemove.add(reaction.getId());
+				
+				//get the reactant dimensions, which tells us how many new reactions are going to be created
+				SpeciesDimensions reactantDimensions = 
+					arrayedSpeciesToDimensionsMap.get(reaction.getReactant(0).getSpeciesInstance().getId());
+				
+				boolean abort = false;
+				
+				//loop through all of the new formerly-implicit reactants
+				for (int row = reactantDimensions.numRowsLower; row <= reactantDimensions.numRowsUpper; ++row) {
+				for (int col = reactantDimensions.numColsLower; col <= reactantDimensions.numColsUpper; ++col) {
+					
+					String newReactionID = "ROW" + row + "_COL" + col  + "_" + reactionID;
+					KineticLaw newReactionKineticLaw = reaction.getKineticLaw().clone();
+					ASTNode newReactionFormula = newReactionKineticLaw.getMath().clone();
+					boolean reversible = false;
+					ListOf<SpeciesReference> reactantsList = new ListOf<SpeciesReference>();
+					ListOf<SpeciesReference> productsList = new ListOf<SpeciesReference>();
+					ListOf<ModifierSpeciesReference> modifiersList = new ListOf<ModifierSpeciesReference>();
+					
+					reactantsList.setVersion(reaction.getVersion());
+					reactantsList.setLevel(reaction.getLevel());
+					productsList.setVersion(reaction.getVersion());
+					productsList.setLevel(reaction.getLevel());
+					modifiersList.setVersion(reaction.getVersion());
+					modifiersList.setLevel(reaction.getLevel());
+					
+					//get the nodes to alter
+					ArrayList<ASTNode> get2DArrayElementNodes = new ArrayList<ASTNode>();
+					
+					//return the head node of the get2DArrayElement function
+					getSatisfyingNodes(newReactionFormula, "get2DArrayElement", get2DArrayElementNodes);
+					
+					//loop through all reactants
+					for (SpeciesReference reactant : reaction.getListOfReactants()) {
+						
+						//find offsets
+						//the row offset is in the kinetic law via i
+						//the col offset is in the kinetic law via j
+						int rowOffset = 0;
+						int colOffset = 0;
+						
+						ASTNode reactantHeadNode = null;
+						
+						//go through the get2DArrayElement nodes and find the one corresponding to the reactant
+						for (ASTNode headNode : get2DArrayElementNodes) {
+							
+							//make sure it's a reactant node
+							if (headNode.getChildCount() > 0 &&
+									model.getParameter(headNode.getLeftChild().getName()) == null) {
+								
+								reactantHeadNode = headNode;
+								break;
+							}
+						}
+						
+						if (reactantHeadNode.getChild(1).getType().name().equals("PLUS"))							
+							rowOffset = reactantHeadNode.getChild(1).getRightChild().getInteger();
+						else if (reactantHeadNode.getChild(1).getType().name().equals("MINUS"))							
+							rowOffset = -1 * reactantHeadNode.getChild(1).getRightChild().getInteger();
+						
+						if (reactantHeadNode.getChild(2).getType().name().equals("PLUS"))				
+							colOffset = reactantHeadNode.getChild(2).getRightChild().getInteger();
+						else if (reactantHeadNode.getChild(2).getType().name().equals("MINUS"))				
+							colOffset = -1 * reactantHeadNode.getChild(2).getRightChild().getInteger();
+						
+						SpeciesReference sr = new SpeciesReference(model.getSpecies(
+								"ROW" + (row + rowOffset) + "_COL" + (col + colOffset) + "__" + reactant.getSpecies()));
+						sr.setLevel(reaction.getLevel());
+						sr.setVersion(reaction.getVersion());
+						
+						reactantsList.add(sr);
+						
+						//put this reactant in place of the get2DArrayElement function call
+						for (int i = 0; i < reactantHeadNode.getChildCount(); ++i)
+							reactantHeadNode.removeChild(i);
+						
+						for (int i = 0; i < reactantHeadNode.getChildCount(); ++i)
+							reactantHeadNode.removeChild(i);
+						
+						reactantHeadNode.setVariable(model.getSpecies(
+								"ROW" + (row + rowOffset) + "_COL" + (col + colOffset) + "__" + reactant.getSpecies()));
+					}// end looping through reactants
+					
+					//loop through all modifiers
+					for (ModifierSpeciesReference modifier : reaction.getListOfModifiers()) {
+						
+						
+					}					
+					
+					//loop through all products
+					for (SpeciesReference product : reaction.getListOfProducts()) {
+						
+						//find offsets
+						int rowOffset = 0;
+						int colOffset = 0;
+						
+						ASTNode productHeadNode = null;
+						
+						//go through the get2DArrayElement nodes and find the one corresponding to the product
+						for (ASTNode headNode : get2DArrayElementNodes) {
+							
+							//make sure it's a product node
+							//only the product has children, as the reactant's children get deleted
+							if (headNode.getChildCount() > 0 &&
+									model.getParameter(headNode.getLeftChild().getName()) == null) {
+								
+								productHeadNode = headNode;
+								break;
+							}
+						}
+						
+						if (productHeadNode.getChild(1).getType().name().equals("PLUS"))							
+							rowOffset = productHeadNode.getChild(1).getRightChild().getInteger();
+						else if (productHeadNode.getChild(1).getType().name().equals("MINUS"))							
+							rowOffset = -1 * productHeadNode.getChild(1).getRightChild().getInteger();
+						
+						if (productHeadNode.getChild(2).getType().name().equals("PLUS"))							
+							colOffset = productHeadNode.getChild(2).getRightChild().getInteger();
+						else if (productHeadNode.getChild(2).getType().name().equals("MINUS"))							
+							colOffset = -1 * productHeadNode.getChild(2).getRightChild().getInteger();
+											
+						//don't create reactions with products that don't exist 
+						if ((row + rowOffset) < reactantDimensions.numRowsLower || 
+								(col + colOffset) < reactantDimensions.numColsLower ||
+								(row + rowOffset) > reactantDimensions.numRowsUpper ||
+								(col + colOffset) > reactantDimensions.numColsUpper) {
+							
+							abort = true;
+							break;
+						}
+						
+						SpeciesReference sr = new SpeciesReference(model.getSpecies("ROW" + (row + rowOffset) + "_COL" + (col + colOffset) 
+								+ "__" + product.getSpecies()));
+						sr.setLevel(reaction.getLevel());
+						sr.setVersion(reaction.getVersion());
+						
+						productsList.add(sr);						
+						
+						//put this reactant in place of the get2DArrayElement function call
+						for (int i = 0; i < productHeadNode.getChildCount(); ++i)
+							productHeadNode.removeChild(i);
+						
+						//put this reactant in place of the get2DArrayElement function call
+						for (int i = 0; i < productHeadNode.getChildCount(); ++i)
+							productHeadNode.removeChild(i);
+						
+						productHeadNode.setVariable(model.getSpecies("ROW" + (row + rowOffset) + "_COL" + (col + colOffset) 
+								+ "__" + product.getSpecies()));
+					} //end looping through products
+					
+					if (abort == false) {
+						
+						if (newReactionKineticLaw.getLocalParameter("i") != null)
+							newReactionKineticLaw.removeLocalParameter("i");
+						
+						if (newReactionKineticLaw.getLocalParameter("j") != null)
+							newReactionKineticLaw.removeLocalParameter("j");
+						
+						//this isn't a reversible reaction; only take the left side
+						if (newReactionID.contains("Degradation") == false) {
+							newReactionFormula = newReactionFormula.getLeftChild();
+							newReactionKineticLaw.setMath(newReactionFormula);
+						}
+						
+						setupLocalParameters(newReactionKineticLaw, newReactionID);
+						
+						//initialize and calculate the propensity of this new reaction
+						setupSingleReaction(newReactionID, newReactionFormula, reversible, 
+								reactantsList, productsList, modifiersList);
+					}
+					else
+						abort = false;
+				}
+				}
+				
+			}
+		}// end looping through reactions
+		
+		//remove stuff so that it isn't used in subsequent setup
+		
+		ListOf<Reaction> allReactions = model.getListOfReactions();
+		
+		//remove original array reaction(s)
+		for (String reactionToRemove : reactionsToRemove)
+			allReactions.remove(reactionToRemove);
+		
+		model.setListOfReactions(allReactions);
+		
+		ListOf<Species> allSpecies = model.getListOfSpecies();
+		
+		//remove the original array species from the model
+		for (String speciesID : speciesToRemove) {
+			allSpecies.remove(speciesID);
+		}
+		
+		model.setListOfSpecies(allSpecies);
+		
+		ListOf<Event> allEvents = model.getListOfEvents();
+		
+		//remove original array event(s)
+		for (String eventToRemove : eventsToRemove) {
+			allEvents.remove(eventToRemove);
+		}
+		
+		model.setListOfEvents(allEvents);
+	}
+	
+	/**
+	 * creates hashmaps for representing and keeping track of a grid (of cells)
+	 */
+	protected void setupGrid() {
+		
+		//go through all reaction IDs and group them by compartment ID
+		for (String reactionID : reactionToPropensityMap.keySet()) {
+			
+			if (reactionID.contains("__") == false)
+				continue;
+			
+			//this will leave us with compartmentID or stuff_compartmentID
+			String componentID = ((String[])reactionID.split("__"))[0];
+			
+			//if there's an underscore, remove everything before it to leave the compartmentID
+			String[] splitReactionID = componentID.split("_");
+			componentID = splitReactionID[splitReactionID.length - 1];
+			
+			//the location of the component can be parsed from the membrane diffusion reaction product
+			if (reactionID.contains("MembraneDiffusion")) {
+				
+				String productID = "";
+				
+				for (StringDoublePair sdp : reactionToSpeciesAndStoichiometrySetMap.get(reactionID)) {
+					
+					if (sdp.string.contains("ROW") && sdp.string.contains("COL"))
+						productID = sdp.string;
+				}
+				
+				String[] locationInfo = 
+					((String[])productID.split("__"))[0].split("_");
+				
+				int row = Integer.valueOf(locationInfo[0].replace("ROW",""));
+				int col = Integer.valueOf(locationInfo[1].replace("COL",""));
+				
+				componentToLocationMap.put(componentID, new Point(row, col));
+			}				
+			
+			if (componentToReactionSetMap.containsKey(componentID) == false)
+				componentToReactionSetMap.put(componentID, new HashSet<String>());
+			
+			componentToReactionSetMap.get(componentID).add(reactionID);
+		}
+		
+		
+		//go through the species and parameters and group them by compartment ID
+		for (String variableID : variableToValueMap.keySet()) {
+			
+			if (variableID.contains("__") == false)
+				continue;
+			
+			//this will leave us with compartmentID or stuff_compartmentID
+			String componentID = ((String[])variableID.split("__"))[0];
+			
+			//if there's an underscore, remove everything before it to leave the compartmentID
+			String[] splitVariableID = componentID.split("_");
+			componentID = splitVariableID[splitVariableID.length - 1];		
+			
+			if (componentToVariableSetMap.containsKey(componentID) == false)
+				componentToVariableSetMap.put(componentID, new HashSet<String>());
+		
+			componentToVariableSetMap.get(componentID).add(variableID);
+		}
+		
+		//go through events and group them by compartment ID
+		if (eventToDelayMap != null) {
+			
+			for (String eventID : eventToDelayMap.keySet()) {
+				
+				if (eventID.contains("__") == false)
+					continue;
+				
+				String componentID = ((String[])eventID.split("__"))[0];
+				
+				//if there's an underscore, remove everything before it to leave the compartmentID
+				String[] splitEventID = componentID.split("_");
+				componentID = splitEventID[splitEventID.length - 1];
+				
+				if (componentToEventSetMap.containsKey(componentID) == false)
+					componentToEventSetMap.put(componentID, new HashSet<String>());
+				
+				componentToEventSetMap.get(componentID).add(eventID);			
+			}
+		}
+	}
+	
+	/**
+	 * sets up a single species
+	 * 
+	 * @param species
+	 * @param speciesID
+	 */
+	private void setupSingleSpecies(Species species, String speciesID) {
+		
+		if (speciesIDSet.contains(speciesID))
+			return;
+		
+		variableToValueMap.put(speciesID, species.getInitialAmount());
+		
+		if (numRules > 0)
+			variableToIsInAssignmentRuleMap.put(speciesID, false);
+		
+		if (numConstraints > 0)
+			variableToIsInConstraintMap.put(speciesID, false);
+		
+		if (species.hasOnlySubstanceUnits() == false)
+			speciesToCompartmentSizeMap.put(speciesID, species.getCompartmentInstance().getSize());
+		
+		speciesToAffectedReactionSetMap.put(speciesID, new HashSet<String>(20));
+		speciesToIsBoundaryConditionMap.put(speciesID, species.isBoundaryCondition());
+		variableToIsConstantMap.put(speciesID, species.isConstant());
+		speciesToHasOnlySubstanceUnitsMap.put(speciesID, species.hasOnlySubstanceUnits());
+		speciesIDSet.add(speciesID);
+	}
+	
+	/**
 	 * puts species-related information into data structures
 	 * 
 	 * @throws IOException
 	 */
 	protected void setupSpecies() throws IOException {
 		
-		bufferedTSDWriter.write("(" + "\"" + "time" + "\"" + ", ");
-		
-		String commaSpace = "";
-		
 		//add values to hashmap for easy access to species amounts
 		for (Species species : model.getListOfSpecies()) {
 			
-			String speciesID = species.getId();
+			//skip the grid species as these have already been setup
+			if (species.getId().contains("ROW") && species.getId().contains("COL") && species.getId().contains("__"))
+				continue;
 
-			variableToValueMap.put(speciesID, species.getInitialAmount());
-			
-			if (numRules > 0)
-				variableToIsInAssignmentRuleMap.put(speciesID, false);
-			
-			if (numConstraints > 0)
-				variableToIsInConstraintMap.put(speciesID, false);
-			
-			if (species.hasOnlySubstanceUnits() == false)
-				speciesToCompartmentSizeMap.put(speciesID, species.getCompartmentInstance().getSize());
-			
-			speciesToAffectedReactionSetMap.put(speciesID, new HashSet<String>(20));
-			speciesToIsBoundaryConditionMap.put(speciesID, species.isBoundaryCondition());
-			speciesToIsConstantMap.put(speciesID, species.isConstant());
-			speciesToHasOnlySubstanceUnitsMap.put(speciesID, species.hasOnlySubstanceUnits());
-			speciesIDSet.add(speciesID);
-			
-			bufferedTSDWriter.write(commaSpace + "\"" + speciesID + "\"");
-			commaSpace = ", ";
+			setupSingleSpecies(species, species.getId());
 		}
-		
-		bufferedTSDWriter.write("),\n");
 	}
 
 	/**
@@ -1853,6 +3080,62 @@ public abstract class Simulator {
 		
 		performAssignmentRules(allAssignmentRules);
 	}
+	
+	/**
+	 * sets up the local parameters in a single kinetic law
+	 * 
+	 * @param kineticLaw
+	 * @param reactionID
+	 */
+	private void setupLocalParameters(KineticLaw kineticLaw, String reactionID) {
+		
+		for (LocalParameter localParameter : kineticLaw.getListOfLocalParameters()) {
+			
+			String parameterID = "";
+			
+			//the parameters don't get reset after each run, so don't re-do this prepending
+			if (localParameter.getId().contains(reactionID + "_") == false)					
+				parameterID = reactionID + "_" + localParameter.getId();
+			else 
+				parameterID = localParameter.getId();
+							
+			String oldParameterID = localParameter.getId();
+			variableToValueMap.put(parameterID, localParameter.getValue());
+						
+			//alter the local parameter ID so that it goes to the local and not global value
+			localParameter.setId(parameterID);
+			
+			//for some reason, changing the local parameter sometimes changes the kinetic law instances
+			//of that parameter id, so those ones are fine and ignore them
+			if (kineticLaw.getFormula().contains(parameterID) == false) {
+			
+				try {
+					kineticLaw.setFormula(kineticLaw.getFormula().replace(oldParameterID, parameterID));
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	/**
+	 * sets up a single (non-local) parameter
+	 * 
+	 * @param parameter
+	 */
+	private void setupSingleParameter(Parameter parameter) {
+		
+		String parameterID = parameter.getId();
+		
+		variableToValueMap.put(parameterID, parameter.getValue());
+		variableToIsConstantMap.put(parameterID, parameter.getConstant());
+		
+		if (numRules > 0)
+			variableToIsInAssignmentRuleMap.put(parameterID, false);
+		
+		if (numConstraints > 0)
+			variableToIsInConstraintMap.put(parameterID, false);
+	}
 
 	/**
 	 * puts parameter-related information into data structures
@@ -1862,35 +3145,8 @@ public abstract class Simulator {
 		//add local parameters
 		for (Reaction reaction : model.getListOfReactions()) {
 			
-			KineticLaw kineticLaw = reaction.getKineticLaw();
-			
-			for (LocalParameter localParameter : kineticLaw.getListOfLocalParameters()) {
-				
-				String parameterID = "";
-				
-				//the parameters don't get reset after each run, so don't re-do this prepending
-				if (localParameter.getId().contains(reaction.getId() + "_") == false)					
-					parameterID = reaction.getId() + "_" + localParameter.getId();
-				else 
-					parameterID = localParameter.getId();
-								
-				String oldParameterID = localParameter.getId();
-				variableToValueMap.put(parameterID, localParameter.getValue());
-				
-				//alter the local parameter ID so that it goes to the local and not global value
-				localParameter.setId(parameterID);
-				
-				//for some reason, changing the local parameter sometimes changes the kinetic law instances
-				//of that parameter id, so those ones are fine and ignore them
-				if (kineticLaw.getFormula().contains(parameterID) == false) {
-				
-					try {
-						kineticLaw.setFormula(kineticLaw.getFormula().replace(oldParameterID, parameterID));
-					} catch (ParseException e) {
-						e.printStackTrace();
-					}
-				}
-			}
+			KineticLaw kineticLaw = reaction.getKineticLaw();			
+			setupLocalParameters(kineticLaw, reaction.getId());
 		}
 		
 		//add values to hashmap for easy access to global parameter values
@@ -1898,15 +3154,7 @@ public abstract class Simulator {
 		//same hashmap is okay
 		for (Parameter parameter : model.getListOfParameters()) {
 			
-			String parameterID = parameter.getId();
-			
-			variableToValueMap.put(parameterID, parameter.getValue());
-			
-			if (numRules > 0)
-				variableToIsInAssignmentRuleMap.put(parameterID, false);
-			
-			if (numConstraints > 0)
-				variableToIsInConstraintMap.put(parameterID, false);
+			setupSingleParameter(parameter);
 		}
 		
 		//add compartment sizes in
@@ -1983,7 +3231,63 @@ public abstract class Simulator {
 	}
 
 	/**
-	 * puts event-related informatino into data structures
+	 * sets up a single event
+	 * 
+	 * @param event
+	 */
+	protected void setupSingleEvent(Event event) {
+		
+		String eventID = event.getId();
+		
+		//these events are what determines if a model is dynamic or not
+		if (eventID.contains("Division__") || eventID.contains("Death__"))
+			dynamicBoolean = true;
+		
+		if (event.isSetPriority())
+			eventToPriorityMap.put(eventID, evaluateExpressionRecursive(event.getPriority().getMath()));
+		
+		if (event.isSetDelay()) {
+			
+			eventToDelayMap.put(eventID, event.getDelay().getMath());
+			eventToHasDelayMap.put(eventID, true);
+		}
+		else
+			eventToHasDelayMap.put(eventID, false);
+		
+		eventToTriggerMap.put(eventID, event.getTrigger().getMath());
+		eventToTriggerInitiallyTrueMap.put(eventID, event.getTrigger().isInitialValue());
+		eventToPreviousTriggerValueMap.put(eventID, event.getTrigger().isInitialValue());
+		eventToTriggerPersistenceMap.put(eventID, event.getTrigger().getPersistent());
+		eventToUseValuesFromTriggerTimeMap.put(eventID, event.isUseValuesFromTriggerTime());
+		eventToAssignmentSetMap.put(eventID, new HashSet<Object>());
+		eventToAffectedReactionSetMap.put(eventID, new HashSet<String>());
+		
+		untriggeredEventSet.add(eventID);
+		
+		for (EventAssignment assignment : event.getListOfEventAssignments()) {
+			
+			String variableID = assignment.getVariable();
+			
+			eventToAssignmentSetMap.get(eventID).add(assignment);
+			
+			if (variableToEventSetMap.containsKey(variableID) == false)
+				variableToEventSetMap.put(variableID, new HashSet<String>());
+			
+			variableToEventSetMap.get(variableID).add(eventID);
+			
+			//if the variable is a species, add the reactions it's in
+			//to the event to affected reaction hashmap, which is used
+			//for updating propensities after an event fires
+			if (speciesToAffectedReactionSetMap.containsKey(variableID)) {
+				
+				eventToAffectedReactionSetMap.get(eventID).addAll(
+						speciesToAffectedReactionSetMap.get(variableID));
+			}					
+		}
+	}
+	
+	/**
+	 * puts event-related information into data structures
 	 */
 	protected void setupEvents() {
 		
@@ -1992,46 +3296,7 @@ public abstract class Simulator {
 		//so that the speciesToAffectedReactionSetMap is populated
 		for (Event event : model.getListOfEvents()) {
 			
-			String eventID = event.getId();
-			
-			if (event.isSetPriority())
-				eventToPriorityMap.put(eventID, evaluateExpressionRecursive(event.getPriority().getMath()));
-			
-			if (event.isSetDelay()) {
-				
-				eventToDelayMap.put(eventID, event.getDelay().getMath());
-				eventToHasDelayMap.put(eventID, true);
-			}
-			else
-				eventToHasDelayMap.put(eventID, false);
-			
-			eventToTriggerMap.put(eventID, event.getTrigger().getMath());
-			eventToTriggerInitiallyTrueMap.put(eventID, event.getTrigger().isInitialValue());
-			eventToPreviousTriggerValueMap.put(eventID, event.getTrigger().isInitialValue());
-			eventToTriggerPersistenceMap.put(eventID, event.getTrigger().getPersistent());
-			eventToUseValuesFromTriggerTimeMap.put(eventID, event.isUseValuesFromTriggerTime());
-			eventToAssignmentSetMap.put(eventID, new HashSet<Object>());
-			eventToAffectedReactionSetMap.put(eventID, new HashSet<String>());
-			
-			untriggeredEventSet.add(eventID);
-			
-			for (EventAssignment assignment : event.getListOfEventAssignments()) {
-				
-				String variableID = assignment.getVariable();
-				
-				eventToAssignmentSetMap.get(eventID).add(assignment);					
-				variableToEventSetMap.put(variableID, new HashSet<String>());
-				variableToEventSetMap.get(variableID).add(eventID);
-				
-				//if the variable is a species, add the reactions it's in
-				//to the event to affected reaction hashmap, which is used
-				//for updating propensities after an event fires
-				if (speciesToAffectedReactionSetMap.containsKey(variableID)) {
-					
-					eventToAffectedReactionSetMap.get(eventID).addAll(
-							speciesToAffectedReactionSetMap.get(variableID));
-				}					
-			}
+			setupSingleEvent(event);
 		}
 	}
 	
@@ -2047,14 +3312,20 @@ public abstract class Simulator {
 	 * @param currentRun
 	 * @throws IOException
 	 */
-	protected void setupNewRun(long randomSeed, int currentRun) {
+	protected void setupForOutput(long randomSeed, int currentRun) {
 		
 		this.currentRun = currentRun;
 		
 		randomNumberGenerator = new XORShiftRandom(randomSeed);
 		
 		try {
-			TSDWriter = new FileWriter(outputDirectory + "run-" + currentRun + ".tsd");
+			
+			String extension = ".tsd";
+			
+			if (dynamicBoolean == true)
+				extension = ".dtsd";
+			
+			TSDWriter = new FileWriter(outputDirectory + "run-" + currentRun + extension);
 			bufferedTSDWriter = new BufferedWriter(TSDWriter);
 			bufferedTSDWriter.write('(');
 		} catch (IOException e) {
@@ -2087,8 +3358,60 @@ public abstract class Simulator {
 		
 		return false;
 	}
-
 	
+	/**
+	 * is called after duplicateComponent or deleteComponent is called
+	 */
+	protected abstract void updateAfterDynamicChanges();
+	
+	/**
+	 * updates the propensities of the reaction set passed in
+	 * 
+	 * @param reactionSet
+	 */
+	private void updatePropensities(HashSet<String> reactionSet) {
+		
+		for (String reactionID : reactionSet) {
+			
+			boolean notEnoughMoleculesFlag = false;
+			
+			HashSet<StringDoublePair> reactantStoichiometrySet = 
+				reactionToReactantStoichiometrySetMap.get(reactionID);
+			
+			//check for enough molecules for the reaction to occur
+			for (StringDoublePair speciesAndStoichiometry : reactantStoichiometrySet) {
+				
+				String speciesID = speciesAndStoichiometry.string;
+				double stoichiometry = speciesAndStoichiometry.doub;
+				
+				//if there aren't enough molecules to satisfy the stoichiometry
+				if (variableToValueMap.get(speciesID) < stoichiometry) {
+					notEnoughMoleculesFlag = true;
+					break;
+				}
+			}
+			
+			double newPropensity = 0.0;
+			
+			if (notEnoughMoleculesFlag == false)
+				newPropensity = evaluateExpressionRecursive(reactionToFormulaMap.get(reactionID));
+			
+			if (newPropensity > 0.0 && newPropensity < minPropensity)
+				minPropensity = newPropensity;
+			
+			if (newPropensity > maxPropensity)
+				maxPropensity = newPropensity;
+			
+			double oldPropensity = reactionToPropensityMap.get(reactionID);
+			
+			//add the difference of new v. old propensity to the total propensity
+			totalPropensity += newPropensity - oldPropensity;
+			
+			reactionToPropensityMap.put(reactionID, newPropensity);	
+		}
+		
+		
+	}
 	
 	//EVENT TO FIRE INNER CLASS
 	/**

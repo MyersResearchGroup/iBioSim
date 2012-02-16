@@ -105,13 +105,13 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		scroll3.setViewportView(parameters);
 		ListOf listOfParameters = model.getListOfParameters();
 		String[] params = new String[(int) model.getNumParameters()];
-		int locationParametersCount = 0;
+		int notIncludedParametersCount = 0;
 		
 		for (int i = 0; i < model.getNumParameters(); i++) {
 			Parameter parameter = (Parameter) listOfParameters.get(i);
 			
-			if (parameter.getId().contains("_locations"))
-				++locationParametersCount;
+			if (parameter.getId().contains("_locations") || parameter.getId().contains("_size"))
+				++notIncludedParametersCount;
 			
 			/*
 			 * if (parameter.isSetUnits()) { params[i] = parameter.getId() + " "
@@ -143,12 +143,12 @@ public class Parameters extends JPanel implements ActionListener, MouseListener 
 		//take out the location parameters from the parameter list
 		String[] paramsCopy = params;
 		
-		if (locationParametersCount > 0)
-			params = new String[paramsCopy.length - locationParametersCount];
+		if (notIncludedParametersCount > 0)
+			params = new String[paramsCopy.length - notIncludedParametersCount];
 		
 		for (int i = 0; i < paramsCopy.length; ++i) {
 			
-			if (paramsCopy[i].contains("_locations"))
+			if (paramsCopy[i].contains("_locations") || paramsCopy[i].contains("_size"))
 				continue;
 			else				
 				params[i] = paramsCopy[i];

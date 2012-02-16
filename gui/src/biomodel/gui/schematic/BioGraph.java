@@ -4,6 +4,7 @@
 package biomodel.gui.schematic;
 
 
+import java.awt.Rectangle;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -18,7 +19,6 @@ import javax.swing.JOptionPane;
 
 import org.sbml.libsbml.CompartmentGlyph;
 import org.sbml.libsbml.Layout;
-import org.sbml.libsbml.LineSegment;
 import org.sbml.libsbml.Model;
 import org.sbml.libsbml.ModifierSpeciesReference;
 import org.sbml.libsbml.Reaction;
@@ -33,6 +33,7 @@ import main.Gui;
 //import javax.xml.bind.JAXBElement.GlobalScope;
 
 
+import biomodel.gui.Grid;
 import biomodel.gui.movie.MovieAppearance;
 import biomodel.parser.BioModel;
 import biomodel.util.GlobalConstants;
@@ -73,6 +74,7 @@ public class BioGraph extends mxGraph {
 	// only bother the user about bad promoters once. 
 	//This should be improved to happen once per GCM file if this will be a common error.
 	public boolean isBuilding = false;
+	public boolean dynamic = false;
 	
 	// Keep track of how many elements did not have positioning info.
 	// This allows us to stack them in the topleft corner until they
@@ -130,7 +132,7 @@ public class BioGraph extends mxGraph {
 	 * Builds the graph based on the internal representation
 	 * @return
 	 */	
-	public boolean buildGraph(){
+	public boolean buildGraph() {
 		
 		this.isBuilding = true;
 
@@ -221,7 +223,7 @@ public class BioGraph extends mxGraph {
 			if (comp.contains("GRID__"))
 				continue;
 			
-			if(createGraphComponentFromModel(comp))
+			if (createGraphComponentFromModel(comp))
 				needsPositioning = true;
 		}
 		
@@ -972,13 +974,17 @@ public class BioGraph extends mxGraph {
 					
 					CellValueObject cvo = new CellValueObject(id, "Rectangle", null);
 					
-					Object vertex = this.insertVertex(this.getDefaultParent(), id, cvo, currX, currY, gridWidth, gridHeight);
+					mxGeometry geometry = new mxGeometry(currX, currY, gridWidth, gridHeight);
+					mxCell vertex = new mxCell(cvo, geometry, null);
+
+					vertex.setId(id);
+					vertex.setVertex(true);
+					vertex.setConnectable(false);
+					vertex.setStyle("GRID_RECTANGLE");
 					
-					mxCell cell = (mxCell)vertex;
-					cell.setConnectable(false);
-					cell.setStyle("GRID_RECTANGLE");
+					addCell(vertex, this.defaultParent);
 					
-					gridRectangleToMxCellMap.put(id, cell);
+					gridRectangleToMxCellMap.put(id, vertex);
 				}
 			}
 		}
@@ -1208,6 +1214,56 @@ public class BioGraph extends mxGraph {
 		cell.setGeometry(new mxGeometry(x, y, width, height));
 		return needsPositioning;
 	}
+	
+	/**
+	 * redraws the grid components
+	 */
+	public void updateGrid() {
+		
+		dynamic = true;
+		
+		this.removeCells(this.getChildCells(this.getDefaultParent(), true, true));
+		
+		gridRectangleToMxCellMap.clear();
+		addGridCells();
+		
+		componentsToMxCellMap.clear();
+		
+		Grid grid = gcm.getGrid();
+		double gridWidth = grid.getGridGeomWidth();
+		double gridHeight = grid.getGridGeomHeight();
+		
+		componentsToMxCellMap.clear();
+		
+		//ADD COMPONENTS
+		for (int row = 0; row < grid.getNumRows(); ++row) {
+			for (int col = 0; col < grid.getNumCols(); ++col) {
+				
+				if (grid.getOccupancyFromLocation(row, col) == true) {
+					
+					double currX = 15 + col*gridWidth;
+					double currY = 15 + row*gridHeight;
+					
+					String compID = grid.getCompIDFromLocation(row, col);
+					
+					grid.setNodeRectangle(compID, new Rectangle((int) currX, (int) currY, (int) gridWidth, (int) gridHeight));
+					
+					Rectangle componentRectangle = grid.getSnapRectangleFromCompID(compID);
+					
+					CellValueObject compcvo = new CellValueObject(compID, "Component", null);
+					
+					mxCell compCell = (mxCell) this.insertVertex(this.getDefaultParent(), compID, compcvo, 
+							componentRectangle.getX(), componentRectangle.getY(), 
+							componentRectangle.getWidth(), componentRectangle.getHeight());
+					compCell.setConnectable(false);
+					compCell.setStyle("GRIDCOMPARTMENT");
+					
+					componentsToMxCellMap.put(compID, compCell);
+				}					
+			}
+		}
+	}
+	
 	
 	
 	//GET METHODS
@@ -1838,7 +1894,10 @@ public class BioGraph extends mxGraph {
 	/**
 	 * 
 	 */
-	public void setSpeciesAnimationValue(String species, MovieAppearance appearance){
+	public void setSpeciesAnimationValue(String species, MovieAppearance appearance) {
+		
+		System.err.println(species + "  " + appearance.color);
+		System.err.println(componentsToMxCellMap.keySet());
 		
 		mxCell cell = this.speciesToMxCellMap.get(species);
 		setCellAnimationValue(cell, appearance);
@@ -1847,7 +1906,7 @@ public class BioGraph extends mxGraph {
 	/**
 	 * 
 	 */
-	public void setComponentAnimationValue(String component, MovieAppearance appearance){
+	public void setComponentAnimationValue(String component, MovieAppearance appearance) {
 		
 		mxCell cell = this.componentsToMxCellMap.get(component);
 		setCellAnimationValue(cell, appearance);
@@ -1865,9 +1924,9 @@ public class BioGraph extends mxGraph {
 	 * @param appearance
 	 * @param properties
 	 */
-	private void setCellAnimationValue(mxCell cell, MovieAppearance appearance){
+	private void setCellAnimationValue(mxCell cell, MovieAppearance appearance) {
 		
-		if(appearance == null)
+		if (appearance == null)
 			return;
 		
 		// color

@@ -11,7 +11,7 @@ import main.Gui;
 import main.util.MutableBoolean;
 import odk.lang.FastMath;
 
-public class SimulatorSSADirect extends Simulator{
+public class SimulatorSSADirect extends Simulator {
 	
 	private static Long initializationTime = new Long(0);
 	
@@ -67,7 +67,7 @@ public class SimulatorSSADirect extends Simulator{
 		if (noEventsFlag == false)
 			handleEvents(noAssignmentRulesFlag, noConstraintsFlag);
 		
-		while (currentTime < timeLimit) {
+		while (currentTime < timeLimit && cancelFlag == false) {
 			
 			//if a constraint fails
 			if (constraintFailureFlag == true) {
@@ -199,19 +199,22 @@ public class SimulatorSSADirect extends Simulator{
 //		System.err.println("total step 4 time: " + String.valueOf(step4Time / 1e9f));
 //		System.err.println("total step 5 time: " + String.valueOf(step5Time / 1e9f));
 		
-		//print the final species counts
-		try {
-			printToTSD(printTime);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		try {
-			bufferedTSDWriter.write(')');
-			bufferedTSDWriter.flush();
-		} 
-		catch (IOException e1) {
-			e1.printStackTrace();
+		if (cancelFlag == false) {
+			
+			//print the final species counts
+			try {
+				printToTSD(printTime);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			try {
+				bufferedTSDWriter.write(')');
+				bufferedTSDWriter.flush();
+			} 
+			catch (IOException e1) {
+				e1.printStackTrace();
+			}
 		}
 	}
 	
@@ -255,11 +258,18 @@ public class SimulatorSSADirect extends Simulator{
 		
 		
 		//STEP 0: calculate initial propensities (including the total)		
-		calculateInitialPropensities();
+		setupReactions();
 		
 		setupEvents();
 	}
 
+	/**
+	 * 
+	 */
+	protected void updateAfterDynamicChanges() {
+		
+	}
+	
 	/**
 	 * updates the propensities of the reactions affected by the recently performed reaction
 	 * @param affectedReactionSet the set of reactions affected by the recently performed reaction
@@ -332,6 +342,13 @@ public class SimulatorSSADirect extends Simulator{
 		return selectedReaction;		
 	}
 
+	/**
+	 * cancels the current run
+	 */
+	protected void cancel() {
+	
+		cancelFlag = true;
+	}
 	
 	/**
 	 * clears data structures for new run
@@ -350,20 +367,19 @@ public class SimulatorSSADirect extends Simulator{
 		}
 	}
 
-
 	/**
 	 * does minimized initalization process to prepare for a new run
 	 */
 	protected void setupForNewRun(int newRun) {
 		
-		setupNewRun(0, newRun);
-		
 		//setupArrays();
+		
 		try {
 			setupSpecies();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		setupInitialAssignments();
 		setupParameters();
 		setupRules();
@@ -389,9 +405,11 @@ public class SimulatorSSADirect extends Simulator{
 			constraintsFlag.setValue(false);
 		
 		//STEP 0A: calculate initial propensities (including the total)		
-		calculateInitialPropensities();
+		setupReactions();
 		
 		setupEvents();
+		
+		setupForOutput(0, newRun);
 	}
 	
 }

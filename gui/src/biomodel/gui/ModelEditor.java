@@ -1426,11 +1426,39 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		EditButton addInit = new EditButton("Add Component", components);
 		RemoveButton removeInit = new RemoveButton("Remove Component", components);
 		EditButton editInit = new EditButton("Edit Component", components);
+		
 		for (long i = 0; i < gcm.getSBMLCompModel().getNumSubmodels(); i++) {
+			
 			Submodel submodel = gcm.getSBMLCompModel().getSubmodel(i);
-			components.addItem(submodel.getId() + " " + submodel.getModelRef() + " " + gcm.getComponentPortMap(submodel.getId()));
+			String locationAnnotationString = "";
+			
+			//if the submodel is gridded, then get the component names from the locations parameter
+			if (gcm.getSBMLDocument().getModel().getParameter(submodel.getId().replace("GRID__","") + "__locations") != null) {
+					
+				locationAnnotationString = 
+						gcm.getSBMLDocument().getModel()
+						.getParameter(submodel.getId().replace("GRID__","") + "__locations")
+						.getAnnotationString().replace("<annotation>","").replace("</annotation>","");
+			
+				String[] compIDs = locationAnnotationString.split("=");
+				
+				for (int j = 0; j < compIDs.length; ++j) {
+					
+					if (compIDs[j].contains("[[")) {
+						
+						compIDs[j] = compIDs[j].split(",")[0].replace("[[","").replace("]]","");
+						
+						components.addItem(compIDs[j] + " " + 
+								submodel.getModelRef() + " " + gcm.getComponentPortMap(compIDs[j]));
+					}
+				}
+			}
+			else			
+				components.addItem(submodel.getId() + " " + submodel.getModelRef() + " " + gcm.getComponentPortMap(submodel.getId()));
+			
 			this.getGCM().updateGridSpecies(submodel.getModelRef());
 		}
+		
 		this.getSpeciesPanel().refreshSpeciesPanel(gcm.getSBMLDocument());
 		JPanel componentsPanel = Utility.createPanel(this, "Components", components, addInit, removeInit, editInit);
 		mainPanelCenterCenter.add(componentsPanel);
@@ -2021,18 +2049,25 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 	}
 	
 	public String launchComponentPanel(String id){
+		
 		BioModel refGCM = null;
+		
 		if (paramsOnly) {
 			refGCM = new BioModel(path);
 			refGCM.load(path + separator + refFile);
 		}
+		
 		// TODO: This is a messy way to do things. We set the selected component in the list
 		// and then call displayChooseComponentDialog(). This makes for tight coupling with the
 		// component list.
-		for(int i=0; i<this.components.getModel().getSize(); i++){
+		for (int i = 0; i < this.components.getModel().getSize(); i++) {
+			
 			String componentsListRow = this.components.getModel().getElementAt(i).toString();
 			String componentsListId = componentsListRow.split(" ")[0];
-			if(componentsListId.equals(id)){
+			
+			System.err.println(componentsListId + "   " + id);
+			
+			if (componentsListId.equals(id)) {
 				this.components.setSelectedIndex(i);
 				break;
 			}

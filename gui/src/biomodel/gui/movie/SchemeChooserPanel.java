@@ -100,7 +100,13 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 		this.movieContainer = movieContainer;
 		this.movieScheme = movieContainer.getMovieScheme();
 		this.startColor = Color.black;
-		this.allSpecies = movieContainer.getTSDParser().getSpecies();
+		this.allSpecies = new ArrayList<String>();
+		
+		if (movieContainer.getDynamic() == true)
+			this.allSpecies.addAll(movieContainer.getDTSDParser()
+					.getSpeciesToValueMap(movieContainer.getFrameIndex()).keySet());
+		else
+			this.allSpecies = movieContainer.getTSDParser().getSpecies();
 		
 		this.colorsArray = new Color[] {this.getBackground(), Color.green, Color.red, Color.blue, Color.cyan, 
 			Color.magenta, Color.pink, Color.yellow, Color.orange};
@@ -125,6 +131,10 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 			//(eg, C4__S1 will become S1 if cellID is C4)
 			for (String species : allSpecies) {
 				
+				//these shouldn't be included
+				if (species.contains("__location") || species.equals("time"))
+					continue;
+				
 				String[] speciesParts = species.split("__");
 				
 				//if there's a component or grid location prefix, strip it
@@ -135,7 +145,6 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 					if (speciesParts[0].contains(cellID)) {
 						
 						cellSpecies.add(speciesIDNoPrefix);
-						
 						Scheme speciesScheme = movieScheme.getSpeciesScheme(species);
 						
 						//finds the species appearance information and adds text indicators
@@ -313,7 +322,7 @@ public class SchemeChooserPanel extends JPanel implements ActionListener {
 	public void updateMovieScheme() {
 		
 		//get the data that the user selected/input
-		Color selectedColor = (Color)colorChooser.getSelectedItem();
+		Color selectedColor = (Color) colorChooser.getSelectedItem();
 		String opacityState = opacityChooser.getSelectedItem().toString();
 		String sizeState = sizeChooser.getSelectedItem().toString();
 		String speciesID = cellID;
