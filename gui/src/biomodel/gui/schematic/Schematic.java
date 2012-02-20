@@ -864,8 +864,9 @@ public class Schematic extends JPanel implements ActionListener {
 								if (movieContainer.getTSDParser() == null && movieContainer.getDTSDParser() == null)
 									JOptionPane.showMessageDialog(Gui.frame, "You must choose a simulation file before editing component properties.");
 								else {
-									if (cell != null)
+									if (cell != null) {
 										SchemeChooserPanel.showSchemeChooserPanel(cell.getId(), movieContainer);
+									}
 								}
 							}
 						}
