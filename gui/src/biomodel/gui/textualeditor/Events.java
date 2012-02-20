@@ -167,6 +167,12 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 					selectedID = event.getId();
 					eventName.setText(event.getName());
 					eventTrigger.setText(SBMLutilities.myFormulaToString(event.getTrigger().getMath()));
+					
+					if (event.getAnnotationString().contains("Division"))
+						dynamicProcess.setSelectedItem("Division");
+					else if (event.getAnnotationString().contains("Death"))
+						dynamicProcess.setSelectedItem("Death");
+					
 					if (event.isSetDelay()) {
 						ASTNode delay = event.getDelay().getMath();
 						if ((delay.getType() == libsbml.AST_FUNCTION) && (delay.getName().equals("priority"))) {

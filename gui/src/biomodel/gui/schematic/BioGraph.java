@@ -1250,6 +1250,9 @@ public class BioGraph extends mxGraph {
 					
 					Rectangle componentRectangle = grid.getSnapRectangleFromCompID(compID);
 					
+					if (compID.length() > 10)
+						compID = compID.substring(0,9) + "...";
+					
 					CellValueObject compcvo = new CellValueObject(compID, "Component", null);
 					
 					mxCell compCell = (mxCell) this.insertVertex(this.getDefaultParent(), compID, compcvo, 
@@ -1475,7 +1478,7 @@ public class BioGraph extends mxGraph {
 			y = (unpositionedSpeciesComponentCount%10) * (GlobalConstants.DEFAULT_SPECIES_HEIGHT + 10);
 		}
 		
-		String truncGCM = modelFileName.replace(".gcm", "");
+		String truncGCM = modelFileName.replace(".xml", "");
 		String truncID = "";
 		
 		//if the id is too long, truncate it
@@ -1932,14 +1935,14 @@ public class BioGraph extends mxGraph {
 		// color
 		String newStyle = cell.getStyle() + ";";
 		
-		if(appearance.color != null){
+		if (appearance.color != null) {
 			
 			newStyle += mxConstants.STYLE_FILLCOLOR + "=" + Integer.toHexString(appearance.color.getRGB()) + ";";
 			newStyle += mxConstants.STYLE_OPACITY + "=" + 75;
 		}
 		
 		// opacity
-		if(appearance.opacity != null){
+		if (appearance.opacity != null) {
 			
 			newStyle += ";";
 			
@@ -1947,11 +1950,11 @@ public class BioGraph extends mxGraph {
 			newStyle += mxConstants.STYLE_OPACITY + "=" + String.valueOf(op);
 		}
 		
-		if(newStyle != null)
+		if (newStyle != null)
 			cell.setStyle(newStyle);
 		
 		// size
-		if(appearance.size != null){
+		if (appearance.size != null) {
 
 			double x = 0;
 			double y = 0;
