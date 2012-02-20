@@ -4010,7 +4010,7 @@ public class BioModel {
 		SBMLDocument mainDoc = mainGCM.getSBMLDocument();
 		SBMLDocument doc = gcm.getSBMLDocument();
 		Model m = doc.getModel();
-		doc.setSBMLNamespacesAndOwn(mainDoc.getSBMLNamespaces());
+		//doc.setSBMLNamespacesAndOwn(mainDoc.getSBMLNamespaces());
 		
 		for (int i = 0; i < m.getNumCompartmentTypes(); i++) {
 			org.sbml.libsbml.CompartmentType c = m.getCompartmentType(i);

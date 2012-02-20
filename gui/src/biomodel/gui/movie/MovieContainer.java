@@ -413,32 +413,6 @@ public class MovieContainer extends JPanel implements ActionListener {
 			speciesTSData = dynamicParser.getSpeciesToValueMap(frameIndex);
 			componentList.addAll(dynamicParser.getComponentToLocationMap(frameIndex).keySet());
 			
-//			//find new components
-//			if (frameIndex > 0) {
-//				
-//				HashSet<String> newComponents = new HashSet<String>();
-//				
-//				HashSet<String> componentsNow = 
-//					new HashSet<String>(dynamicParser.getComponentToLocationMap(frameIndex).keySet());
-//				HashSet<String> componentsBefore = 
-//					new HashSet<String>(dynamicParser.getComponentToLocationMap(frameIndex - 1).keySet());
-//				
-//				for (String compID : componentsNow) {
-//					
-//					if (componentsBefore.contains(compID) == false) {
-//						
-//						//find the scheme to use for this component
-//						newComponents.add(compID);
-//						System.err.println(compID);
-//					}
-//				}
-//				
-//				System.err.println();
-//			}
-				
-			
-			
-			
 			//update the graph by resetting the grid cells and component cells
 			schematic.getGraph().updateGrid();
 		}

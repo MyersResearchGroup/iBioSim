@@ -530,6 +530,51 @@ public abstract class Simulator {
 	}
 	
 	/**
+	 * recursively finds all variable nodes and prepends a string to the variable
+	 * 
+	 * @param node
+	 * @param toPrepend
+	 */
+	private void prependToVariableNodes(ASTNode node, String toPrepend) {
+		
+		if (node.isName()) {
+			
+			//only prepend to species and parameters
+			if (model.getSpecies(toPrepend + node.getName()) != null)
+				node.setVariable(model.getSpecies(toPrepend + node.getName()));
+			else if (model.getParameter(toPrepend + node.getName()) != null)
+				node.setVariable(model.getParameter(toPrepend + node.getName()));
+		}
+		else {
+			for (ASTNode childNode : node.getChildren())
+				prependToVariableNodes(childNode, toPrepend);
+		}
+	}
+	
+	/**
+	 * recursively finds all variable nodes and prepends a string to the variable
+	 * static version
+	 * 
+	 * @param node
+	 * @param toPrepend
+	 */
+	private static void prependToVariableNodes(ASTNode node, String toPrepend, Model model) {
+		
+		if (node.isName()) {
+			
+			//only prepend to species and parameters
+			if (model.getSpecies(toPrepend + node.getName()) != null)
+				node.setVariable(model.getSpecies(toPrepend + node.getName()));
+			else if (model.getParameter(toPrepend + node.getName()) != null)
+				node.setVariable(model.getParameter(toPrepend + node.getName()));
+		}
+		else {
+			for (ASTNode childNode : node.getChildren())
+				prependToVariableNodes(childNode, toPrepend, model);
+		}
+	}
+	
+	/**
 	 * cancels the current run
 	 */
 	protected abstract void cancel();
@@ -543,9 +588,10 @@ public abstract class Simulator {
 	 * uses an existing component to create a new component and update data structures and the simulation state
 	 * this is used for "birth" events in dynamic models
 	 * 
-	 * @param componentID
+	 * @param parentComponentID
+	 * @param eventID the ID of the division event that just fired
 	 */
-	protected void duplicateComponent(String parentComponentID) {
+	protected void duplicateComponent(String parentComponentID, String eventID) {
 		
 		//determine new component ID
 		int componentNumber = componentToReactionSetMap.size() + 1;
@@ -881,15 +927,48 @@ public abstract class Simulator {
 				if (speciesToHasOnlySubstanceUnitsMap.get(parentVariableID) == false)
 					speciesToCompartmentSizeMap.put(childVariableID, speciesToCompartmentSizeMap.get(parentVariableID));
 				
+				//the speciesToAffectedReactionSetMap gets filled-in later
 				speciesToAffectedReactionSetMap.put(childVariableID, new HashSet<String>(20));
 				speciesToIsBoundaryConditionMap.put(childVariableID, speciesToIsBoundaryConditionMap.get(parentVariableID));
 				variableToIsConstantMap.put(childVariableID, variableToIsConstantMap.get(parentVariableID));
 				speciesToHasOnlySubstanceUnitsMap.put(childVariableID, speciesToHasOnlySubstanceUnitsMap.get(parentVariableID));
 				speciesIDSet.add(childVariableID);
 				
-				//divide the parent species amount by two
-				variableToValueMap.put(childVariableID, variableToValueMap.get(parentVariableID) / 2);
-				variableToValueMap.put(parentVariableID, variableToValueMap.get(parentVariableID) / 2);
+				//divide the parent species amount by two by default
+				//unless there is an event assignment or if the species is constant/bc			
+				if (variableToIsConstantMap.get(parentVariableID) == true ||
+						speciesToIsBoundaryConditionMap.get(parentVariableID)) {
+					
+					variableToValueMap.put(childVariableID, variableToValueMap.get(parentVariableID));
+				}
+				else {
+					
+					//go through the event assignments to find ones that affect this particular species
+					//this is used to determine, via species quantity conservation, how much the daughter cell gets
+					HashSet<Object> assignmentSetMap = this.eventToAssignmentSetMap.get(eventID);
+					boolean setInAssignment = false;
+					
+					for (Object assignment : assignmentSetMap) {
+						
+						if (((EventAssignment) assignment).getVariable().equals(parentVariableID)) {
+						
+							double totalAmount = variableToValueMap.get(parentVariableID);
+							double afterEventAmount = evaluateExpressionRecursive(((EventAssignment) assignment).getMath());
+							double childAmount = totalAmount - afterEventAmount;
+							
+							variableToValueMap.put(childVariableID, childAmount);
+							variableToValueMap.put(parentVariableID, afterEventAmount);
+							
+							setInAssignment = true;
+						}
+					}
+				
+					if (setInAssignment == false) {
+						
+						variableToValueMap.put(childVariableID, variableToValueMap.get(parentVariableID) / 2);
+						variableToValueMap.put(parentVariableID, variableToValueMap.get(parentVariableID) / 2);
+					}
+				}
 			}
 			//this means it's a parameter
 			else {
@@ -1022,6 +1101,11 @@ public abstract class Simulator {
 			eventToTriggerInitiallyTrueMap.put(childEventID, eventToTriggerInitiallyTrueMap.get(parentEventID));
 			eventToPreviousTriggerValueMap.put(childEventID, eventToTriggerInitiallyTrueMap.get(childEventID));
 			
+			//the parent event should be reset as well, as division creates two new things
+			//not an old and a new
+			untriggeredEventSet.add(parentEventID);
+			eventToPreviousTriggerValueMap.put(parentEventID, eventToTriggerInitiallyTrueMap.get(parentEventID));
+			
 			HashSet<Object> assignmentSetMap = new HashSet<Object>();
 			
 			for (Object assignment : eventToAssignmentSetMap.get(parentEventID)) {
@@ -1033,9 +1117,10 @@ public abstract class Simulator {
 				
 				variableToEventSetMap.get(variableID).add(childEventID);
 				
-				EventAssignment ea = ((EventAssignment)assignment).clone();
+				EventAssignment ea = ((EventAssignment)assignment).clone();				
 				ea.setVariable(((EventAssignment)assignment).getVariable()
 						.replace(parentComponentID, childComponentID));
+				
 				try {
 					ea.setFormula(((EventAssignment)assignment).getFormula()
 							.replace(parentComponentID, childComponentID));
@@ -1505,6 +1590,82 @@ public abstract class Simulator {
 		//add new row/col species to the model
 		for (Species species : speciesToAdd)
 			model.addSpecies(species);
+		
+		//ARRAYED EVENTS BUSINESS
+		
+		ArrayList<String> eventsToRemove = new ArrayList<String>();
+		ArrayList<Event> eventsToAdd = new ArrayList<Event>();
+		
+		for (Event event : model.getListOfEvents()) {
+			
+			if (event.getAnnotationString().contains("array")) {
+				
+				eventsToRemove.add(event.getId());
+				
+				String annotationString = event.getAnnotationString().replace("<annotation>","").
+				replace("</annotation>","").replace("\"","");
+				String[] splitAnnotation = annotationString.split("array:");
+				ArrayList<String> eventCompartments = new ArrayList<String>();
+				
+				splitAnnotation[splitAnnotation.length - 2] = ((String[])splitAnnotation[splitAnnotation.length - 2].split("xmlns:"))[0];
+				
+				for (int i = 2; i < splitAnnotation.length - 1; ++i) {
+					
+					String compartmentID = ((String[])splitAnnotation[i].split("="))[0];
+					eventCompartments.add(compartmentID);
+				}
+				
+				//loop through all compartments and create an event for each one
+				for (String compartmentID : eventCompartments) {
+					
+					Event newEvent = new Event();
+					newEvent.setVersion(event.getVersion());
+					newEvent.setLevel(event.getLevel());
+					newEvent.setId(compartmentID + "__" + event.getId());
+					newEvent.setTrigger(event.getTrigger().clone());
+					
+					if (event.isSetPriority())
+						newEvent.setPriority(event.getPriority().clone());
+					
+					if (event.isSetDelay())
+						newEvent.setDelay(event.getDelay().clone());
+					
+					newEvent.setUseValuesFromTriggerTime(event.getUseValuesFromTriggerTime());
+					
+					ArrayList<String> eventAssignmentsToRemove = new ArrayList<String>();
+					
+					for (EventAssignment eventAssignment : event.getListOfEventAssignments()) {
+						
+						EventAssignment ea = eventAssignment.clone();
+						ea.setMath(eventAssignment.getMath().clone());
+						ea.setVariable(eventAssignment.getVariable());
+						newEvent.addEventAssignment(ea);
+					}
+					
+					for (EventAssignment eventAssignment : newEvent.getListOfEventAssignments()) {
+						
+						if (eventAssignment.getVariable().contains("_size")) {
+							
+							eventAssignmentsToRemove.add(eventAssignment.getVariable());
+							continue;
+						}
+							
+						eventAssignment.setVariable(compartmentID + "__" + eventAssignment.getVariable());
+						
+						//prepends the compartment ID to all variables in the event assignment
+						prependToVariableNodes(eventAssignment.getMath(), compartmentID + "__", model);
+					}
+					
+					for (String eaToRemove : eventAssignmentsToRemove)
+						newEvent.removeEventAssignment(eaToRemove);
+					
+					eventsToAdd.add(newEvent);
+				}
+			}
+		}
+		
+		for (Event eventToAdd : eventsToAdd)
+			model.addEvent(eventToAdd);
 		
 		
 		//ARRAYED REACTION BUSINESS
@@ -2102,7 +2263,7 @@ public abstract class Simulator {
 					if (eventToFire.eventID.contains("__Division__")) {
 						
 						String compartmentID = ((String[])eventToFire.eventID.split("__"))[0];
-						duplicateComponent(compartmentID);
+						duplicateComponent(compartmentID, eventToFire.eventID);
 					}
 						
 					if (speciesToHasOnlySubstanceUnitsMap.get(variable) != null && 
@@ -2459,8 +2620,6 @@ public abstract class Simulator {
 		
 		
 		//ARRAYED EVENTS BUSINESS
-		//you can probably just clone it a bunch of times and change the species IDs for the compartments in the annotation
-		//and you don't need the size+1 event assignment, either
 		
 		ArrayList<String> eventsToRemove = new ArrayList<String>();
 		
@@ -2519,6 +2678,9 @@ public abstract class Simulator {
 						}
 							
 						eventAssignment.setVariable(compartmentID + "__" + eventAssignment.getVariable());
+						
+						//prepends the compartment ID to all variables in the event assignment
+						prependToVariableNodes(eventAssignment.getMath(), compartmentID + "__");
 					}
 					
 					for (String eaToRemove : eventAssignmentsToRemove)
