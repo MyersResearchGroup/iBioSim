@@ -1514,7 +1514,7 @@ public class ModelEditor extends JPanel implements ActionListener, MouseListener
 		reactionPanel.setPanels(initialsPanel, rulesPanel);
 		tab.addTab("Rules", rulesPanel);
 		
-		Events eventPanel = new Events(biosim,gcm.getSBMLDocument(),usedIDs,dirty);
+		Events eventPanel = new Events(biosim,gcm.getSBMLDocument(),usedIDs,dirty,gcm);
 		tab.addTab("Constraints", propPanel);
 		tab.addTab("Events", eventPanel);
 		setLayout(new BorderLayout());

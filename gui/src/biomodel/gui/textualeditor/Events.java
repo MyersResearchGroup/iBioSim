@@ -27,6 +27,8 @@ import main.util.Utility;
 
 import org.sbml.libsbml.*;
 
+import biomodel.parser.BioModel;
+
 
 /**
  * This is a class for creating SBML events.
@@ -51,14 +53,17 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	private MutableBoolean dirty;
 
 	private Gui biosim;
+	
+	private BioModel bioModel;
 
 	/* Create event panel */
-	public Events(Gui biosim, SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty) {
+	public Events(Gui biosim, SBMLDocument document, ArrayList<String> usedIDs, MutableBoolean dirty, BioModel gcm) {
 		super(new BorderLayout());
 		this.document = document;
 		this.usedIDs = usedIDs;
 		this.biosim = biosim;
 		this.dirty = dirty;
+		this.bioModel = gcm;
 		Model model = document.getModel();
 		addEvent = new JButton("Add Event");
 		removeEvent = new JButton("Remove Event");
@@ -105,7 +110,8 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 	/**
 	 * Creates a frame used to edit events or create new ones.
 	 */
-	private void eventEditor(Gui biosim, String option, JList events, SBMLDocument document, ArrayList<String> usedIDs, JList eventAssign) {
+	private void eventEditor(Gui biosim, String option, JList events, 
+			SBMLDocument document, ArrayList<String> usedIDs, JList eventAssign) {
 		String[] origAssign = null;
 		String[] assign = new String[0];
 		if (option.equals("OK") && events.getSelectedIndex() == -1) {
@@ -135,6 +141,11 @@ public class Events extends JPanel implements ActionListener, MouseListener {
 		JCheckBox persistentTrigger = new JCheckBox("");
 		JCheckBox initialTrigger = new JCheckBox("");
 		JComboBox dynamicProcess = new JComboBox(new String[] {"none","Division","Death"});
+		
+		if (bioModel != null && bioModel.IsWithinCompartment() == false) {
+			dynamicProcess.setEnabled(false);
+			dynamicProcess.setSelectedItem("none");
+		}
 		
 		JPanel eventAssignPanel = new JPanel(new BorderLayout());
 		JPanel addEventAssign = new JPanel();

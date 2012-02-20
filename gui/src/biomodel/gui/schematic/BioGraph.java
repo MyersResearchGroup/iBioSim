@@ -1250,18 +1250,24 @@ public class BioGraph extends mxGraph {
 					
 					Rectangle componentRectangle = grid.getSnapRectangleFromCompID(compID);
 					
-					if (compID.length() > 10)
+					String fullCompID = compID;
+					
+					if (compID.contains("_of_"))
+						compID = compID.split("_")[0];
+					
+					if (compID.length() > 10) {
 						compID = compID.substring(0,9) + "...";
+					}					
 					
 					CellValueObject compcvo = new CellValueObject(compID, "Component", null);
 					
-					mxCell compCell = (mxCell) this.insertVertex(this.getDefaultParent(), compID, compcvo, 
+					mxCell compCell = (mxCell) this.insertVertex(this.getDefaultParent(), fullCompID, compcvo, 
 							componentRectangle.getX(), componentRectangle.getY(), 
 							componentRectangle.getWidth(), componentRectangle.getHeight());
 					compCell.setConnectable(false);
 					compCell.setStyle("GRIDCOMPARTMENT");
 					
-					componentsToMxCellMap.put(compID, compCell);
+					componentsToMxCellMap.put(fullCompID, compCell);
 				}					
 			}
 		}
@@ -1898,9 +1904,6 @@ public class BioGraph extends mxGraph {
 	 * 
 	 */
 	public void setSpeciesAnimationValue(String species, MovieAppearance appearance) {
-		
-		System.err.println(species + "  " + appearance.color);
-		System.err.println(componentsToMxCellMap.keySet());
 		
 		mxCell cell = this.speciesToMxCellMap.get(species);
 		setCellAnimationValue(cell, appearance);
