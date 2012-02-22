@@ -952,7 +952,7 @@ public class BioModel {
 		}
 		extModel.setId(extId);
 		extModel.setSource("file://" + prop.getProperty("gcm").replace(".gcm",".xml"));
-		if (prop.getProperty("compartment").equals("true")) {
+		if (prop.containsKey("compartment") && prop.getProperty("compartment").equals("true")) {
 			extModel.setAnnotation("compartment");
 		} else {
 			extModel.unsetAnnotation();

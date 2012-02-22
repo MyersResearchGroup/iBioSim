@@ -249,10 +249,10 @@ public class AbstractionEngine {
 							r.addModifier(Utility.ModifierSpeciesReference(activator));
 						}
 						if (sbmlMode) {
-							promRate += "+(ka__" + activator + "_" + promoter.getId() + "*((Ka__"
-									+ activator + "_" + promoter.getId() + "*RNAP*" + expression
+							promRate += "+(ka__" + activator + "_" + promoter.getId() + "*RNAP*((Ka__"
+									+ activator + "_" + promoter.getId() + "*" + expression
 									+ ")^nc__" + activator + "_" + promoter.getId() + "))";
-							actBottom += "+((Ka__" + activator + "_" + promoter.getId() + "*RNAP*"
+							actBottom += "+(RNAP*(Ka__" + activator + "_" + promoter.getId() + "*"
 									+ expression + ")^nc__" + activator + "_" + promoter.getId()
 									+ ")";
 							kl.addParameter(Utility.Parameter("nc__" + activator + "_"
@@ -264,9 +264,9 @@ public class AbstractionEngine {
 											.getMoleTimeParameter(1)));
 						}
 						else {
-							promRate += "+(" + ka + "*((" + Ka + "*" + RNAP + "*" + expression
+							promRate += "+(" + ka + "*" + RNAP + "*((" + Ka + "*" + expression
 									+ ")^" + nc + "))";
-							actBottom += "+((" + Ka + "*" + RNAP + "*" + expression + ")^" + nc
+							actBottom += "+(" + RNAP + "*" + "(" + Ka + "*" + expression + ")^" + nc
 									+ ")";
 						}
 					}
