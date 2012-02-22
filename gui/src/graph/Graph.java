@@ -1753,7 +1753,7 @@ public class Graph extends JPanel implements ActionListener, MouseListener, Char
 						for (String getFile2 : new File(outDir + separator + file + separator + getFile).list()) {
 							if ((getFile2.length() > 3
 									&& (getFile2.substring(getFile2.length() - 4).equals("." + printer_id.substring(0, printer_id.length() - 8))))
-									|| (getFile2.length() > 4 && getFile.substring(getFile.length() - 5).equals(".dtsd"))) {
+									|| (getFile2.length() > 4 && getFile2.substring(getFile2.length() - 5).equals(".dtsd"))) {
 								addIt = true;
 							}
 						}
