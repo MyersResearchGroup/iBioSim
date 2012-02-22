@@ -438,7 +438,7 @@ public class Run implements ActionListener {
 			Gui biomodelsim, JTabbedPane simTab, String root, JProgressBar progress,
 			String simName, ModelEditor gcmEditor, String direct, double timeLimit, double runTime, String modelFile,
 			AbstPane abstPane, JRadioButton abstraction, String lpnProperty, double absError, double timeStep,
-			double printInterval, int runs, long rndSeed, boolean refresh, JLabel progressLabel) {
+			double printInterval, int runs, long rndSeed, boolean refresh, JLabel progressLabel, JFrame running) {
 		Runtime exec = Runtime.getRuntime();
 		int exitValue = 255;
 		while (outDir.split(separator)[outDir.split(separator).length - 1].equals(".")) {
@@ -1059,7 +1059,7 @@ public class Run implements ActionListener {
 						dynSim = new DynamicGillespie("cr");
 						String SBMLFileName = directory + separator + theFile;
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
-								timeStep, rndSeed, progress, printInterval, runs, progressLabel);						
+								timeStep, rndSeed, progress, printInterval, runs, progressLabel, running);						
 						exitValue = 0;
 						
 						return exitValue;
@@ -1069,7 +1069,7 @@ public class Run implements ActionListener {
 						dynSim = new DynamicGillespie("direct");					
 						String SBMLFileName = directory + separator + theFile;
 						dynSim.simulate(SBMLFileName, outDir + separator, timeLimit, 
-								timeStep, rndSeed, progress, printInterval, runs, progressLabel);						
+								timeStep, rndSeed, progress, printInterval, runs, progressLabel, running);						
 						exitValue = 0;
 						
 						return exitValue;

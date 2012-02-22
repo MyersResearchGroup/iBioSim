@@ -51,27 +51,37 @@ public class DataParser {
 			BufferedWriter out = new BufferedWriter(new FileWriter(filename));
 			out.write("(");
 			out.write("(");
+			
 			if (species.size() > 0) {
 				out.write("\"" + species.get(0) + "\"");
 			}
+			
 			for (int i = 1; i < species.size(); i++) {
 				out.write(",\"" + species.get(i) + "\"");
 			}
+			
 			out.write(")");
+			
 			for (int i = 0; i < data.get(0).size(); i++) {
+				
 				out.write(",(");
+				
 				if (data.size() > 0) {
 					out.write("" + data.get(0).get(i));
 				}
+				
 				for (int j = 1; j < data.size(); j++) {
 					out.write("," + data.get(j).get(i));
 				}
+				
 				out.write(")");
 			}
+			
 			out.write(")");
 			out.close();
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			JOptionPane.showMessageDialog(component, "Error Outputting Data Into A TSD File!", "Error Outputting Data", JOptionPane.ERROR_MESSAGE);
 		}
 	}

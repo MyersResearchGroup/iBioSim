@@ -323,7 +323,12 @@ public class MovieContainer extends JPanel implements ActionListener {
 		else if (command.equals("clearAppearances")) {
 			
 			movieScheme.clearAppearances();
-			schematic.getGraph().buildGraph();
+			
+			if (dynamic == true)
+				schematic.getGraph().updateGrid();
+			else
+				schematic.getGraph().buildGraph();
+			
 			this.setIsDirty(true);
 		}
 		else{

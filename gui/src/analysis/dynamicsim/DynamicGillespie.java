@@ -1,4 +1,8 @@
 package analysis.dynamicsim;
+import java.awt.Dimension;
+import java.io.IOException;
+
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
@@ -27,7 +31,7 @@ public class DynamicGillespie {
 	
 	public void simulate(String SBMLFileName, String outputDirectory, double timeLimit, 
 			double maxTimeStep, long randomSeed, JProgressBar progress, double printInterval, 
-			int runs, JLabel progressLabel) {
+			int runs, JLabel progressLabel, JFrame running) {
 		
 		try {
 			
@@ -47,7 +51,8 @@ public class DynamicGillespie {
 			if (cancelFlag == true)
 				break;
 			
-			progressLabel.setText(progressLabel.getText().replace(" (" + (run-1) + ")","") + " (" + run + ")");
+			progressLabel.setText(progressLabel.getText().replace(" (" + (run - 1) + ")","") + " (" + run + ")");
+			running.setMinimumSize(new Dimension((progressLabel.getText().length() * 10) + 30, (int) running.getSize().getHeight()));
 	
 			simulator.simulate();
 			simulator.clear();
@@ -60,14 +65,17 @@ public class DynamicGillespie {
 //				System.gc();
 		}
 		
-//		if (cancelFlag == false) {
-//			
-//			try {
-//				simulator.printStatisticsTSD();
-//			} catch (IOException e) {
-//				e.printStackTrace();
-//			}
-//		}
+		if (cancelFlag == false) {
+			
+			progressLabel.setText("Generating Statistics . . .");
+			running.setMinimumSize(new Dimension(200,100));
+			
+			try {
+				simulator.printStatisticsTSD();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	/**
