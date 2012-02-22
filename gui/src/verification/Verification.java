@@ -1300,11 +1300,6 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				LpnComponentList componentList = new LpnComponentList(maxNumVarsInOneComp);					
 				componentList.buildComponents(processMap, directory, lpn.getLabel());
 				HashMap<Integer, Component> compMap = componentList.getComponentMap();
-//				if (compMap.size() == 1 && componentList.getSharedCompVarsMap().size() == 0) {
-//					// Only one component (The original LPN is not decomposed at all.)
-//					lpn.save(root + separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + "0.lpn");
-//					return;
-//				}
 				for (Component comp : compMap.values()) {
 					LhpnFile lpnComp = new LhpnFile();
 					lpnComp = comp.buildLPN(lpnComp);
