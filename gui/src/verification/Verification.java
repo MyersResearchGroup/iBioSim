@@ -37,6 +37,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -1133,7 +1134,7 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				}
 				return;
 			}
-			else if (!untimedPOR.isSelected() && !multipleLPNs.isSelected() && decomposeLPN.isSelected() && lpnList.getSelectedValue() == null) {
+			else if (!untimedPOR.isSelected() && !multipleLPNs.isSelected() && decomposeLPN.isSelected() && verbose.isSelected() && lpnList.getSelectedValue() == null) {
 				 HashMap<Transition, Integer> allProcessTrans = new HashMap<Transition, Integer>();
 				 // create an Abstraction object to get all processes in one LPN
 				 Abstraction abs = lpn.abstractLhpn(this);
@@ -1251,35 +1252,63 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 						}
 					}
 				}		
-				System.out.println("~~~~~~~~~processes~~~~~~~~~~");
+				// Find the least number of variables in each process
+				int leastNumVarsInOneProcess = lpn.getVariables().length;
 				for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
 					Integer curProcId = processMapIter.next();
 					LpnProcess curProcess = processMap.get(curProcId);
-					curProcess.print();					
+					if (curProcess.getProcessVarSize() < leastNumVarsInOneProcess) {
+						leastNumVarsInOneProcess = curProcess.getProcessVarSize();
+					}		
 				}
-				System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 				// Coalesce an array of processes into one LPN component.
-				Integer maxNumVarsInOneComp = 22; //30; //1;// = processMap.keySet().size();
+				JPanel mainPanel = new JPanel(new BorderLayout());
+				JPanel maxVarsPanel = new JPanel();
+				JTextField maxVarsText = new JTextField(3);
+				maxVarsText.setText("" + lpn.getVariables().length);
+				maxVarsPanel.add(new JLabel("Enter the maximal number of variables allowed in one component:"));
+				maxVarsPanel.add(maxVarsText);
+				mainPanel.add("North", new JLabel("total number of variables in this LPN: " + lpn.getVariables().length));
+				mainPanel.add("Center", maxVarsPanel);
+				
+				Object[] options = {"Run", "Cancel"};
+				int optionRtVal = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Assign the maximal number of variables in one component", 
+							JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				if (optionRtVal == 1) {
+					// Cancel
+					return;
+				}
+				Integer maxNumVarsInOneComp = Integer.parseInt(maxVarsText.getText().trim());;
+				if (leastNumVarsInOneProcess >= maxNumVarsInOneComp) {
+					// The original LPN is decomposed into processes.
+					// Store each process as individual LPN.
+					for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
+						Integer curProcId = processMapIter.next();
+						LpnProcess curProcess = processMap.get(curProcId);						
+						LhpnFile lpnProc = new LhpnFile();
+						lpnProc = curProcess.buildLPN(lpnProc);
+						lpnProc.save(root + separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + curProcId + ".lpn");
+						//lpnProc.save(directory + separator + lpn.getLabel() + curProcId + ".lpn");
+					}
+					JOptionPane.showMessageDialog(
+							Gui.frame,
+							"The entered maximal number of variables in one component is too small. The LPN was decomposed into processes.",
+							"Warning", JOptionPane.WARNING_MESSAGE);
+					return;
+				}
 				LpnComponentList componentList = new LpnComponentList(maxNumVarsInOneComp);					
 				componentList.buildComponents(processMap, directory, lpn.getLabel());
-				if (verbose.isSelected()) { 
-////				Store each process as individual LPN.
-//					for (Iterator<Integer> processMapIter = processMap.keySet().iterator(); processMapIter.hasNext();) {
-//						Integer curProcId = processMapIter.next();
-//						LpnProcess curProcess = processMap.get(curProcId);						
-//						LhpnFile lpnProc = new LhpnFile();
-//						lpnProc = curProcess.buildLPN(lpnProc);
-//						lpnProc.save(root + separator + lpn.getLabel() + "_proc" + curProcId + ".lpn");
-//						//lpnProc.save(directory + separator + lpn.getLabel() + curProcId + ".lpn");
-//					}
-					HashMap<Integer, Component> compMap = componentList.getComponentMap();
-					for (Component comp : compMap.values()) {
-						LhpnFile lpnComp = new LhpnFile();
-						lpnComp = comp.buildLPN(lpnComp);
-						lpnComp.save(root + separator + lpn.getLabel() + "_comp" + comp.getComponentId() + ".lpn");
-					}
-				}
-				
+				HashMap<Integer, Component> compMap = componentList.getComponentMap();
+//				if (compMap.size() == 1 && componentList.getSharedCompVarsMap().size() == 0) {
+//					// Only one component (The original LPN is not decomposed at all.)
+//					lpn.save(root + separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + "0.lpn");
+//					return;
+//				}
+				for (Component comp : compMap.values()) {
+					LhpnFile lpnComp = new LhpnFile();
+					lpnComp = comp.buildLPN(lpnComp);
+					lpnComp.save(root + separator + lpn.getLabel() + "_decomp" + maxNumVarsInOneComp + "vars" + comp.getComponentId() + ".lpn");		
+				}	
 				return;
 			}
 			else if (!decomposeLPN.isSelected() && multipleLPNs.isSelected() && lpnList.getSelectedValues().length > 0) {
