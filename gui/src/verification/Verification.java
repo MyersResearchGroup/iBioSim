@@ -1268,8 +1268,9 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 				maxVarsText.setText("" + lpn.getVariables().length);
 				maxVarsPanel.add(new JLabel("Enter the maximal number of variables allowed in one component:"));
 				maxVarsPanel.add(maxVarsText);
-				mainPanel.add("North", new JLabel("total number of variables in this LPN: " + lpn.getVariables().length));
-				mainPanel.add("Center", maxVarsPanel);
+				mainPanel.add("North", new JLabel("number of variables in this LPN: " + lpn.getVariables().length));
+				mainPanel.add("Center", new JLabel("number of variables in the smallest process: " + leastNumVarsInOneProcess));
+				mainPanel.add("South", maxVarsPanel);
 				
 				Object[] options = {"Run", "Cancel"};
 				int optionRtVal = JOptionPane.showOptionDialog(Gui.frame, mainPanel, "Assign the maximal number of variables in one component", 
