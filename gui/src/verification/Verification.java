@@ -1017,10 +1017,11 @@ public class Verification extends JPanel implements ActionListener, Runnable {
 					tempFiles.add(lpnFiles[i]);
 				}
 			}
-			Arrays.sort(tempFiles.toArray());
-			lpnFiles = new String[tempFiles.size()];
+			Object[] tempFilesArray = tempFiles.toArray();
+			Arrays.sort(tempFilesArray);
+			lpnFiles = new String[tempFilesArray.length];
 			for (int i = 0; i < lpnFiles.length; i++) {
-				lpnFiles[i] = tempFiles.get(i);
+				lpnFiles[i] = (String) tempFilesArray[i];
 			}
 			String filename = (String) JOptionPane.showInputDialog(this, "",
 					"Select LPN", JOptionPane.PLAIN_MESSAGE, null,
