@@ -78,7 +78,7 @@ public class LpnComponentList extends LhpnFile{
 		while (!quitCoalesing) {
 			printNumProcesses();
 			LpnComponentGraph componentGraph = new LpnComponentGraph(sharedCompVarsMap, compMap, maxNumVarsInOneComp);
-			String graphFileName = lpnFileName + "_componentGraph" + iter + ".dot";
+			String graphFileName = lpnFileName + maxNumVarsInOneComp + "Vars" + "_compGraph" + iter + ".dot";
 			componentGraph.outputDotFile(directory + separator + graphFileName);	
 			Vertex vertexToCoalesce = componentGraph.selectVerticesToCoalesce();
 			if (vertexToCoalesce != null) {
@@ -138,6 +138,8 @@ public class LpnComponentList extends LhpnFile{
 		ArrayList<Variable> coalescedOutputs = coalescedComp.getOutputs();
 		ArrayList<Variable> coalescedInputs = coalescedComp.getInputs();
 		ArrayList<Variable> sharedVariables = getSharedVariables(comp1, comp2);
+		ArrayList<Place> coalescedPlaces = coalescedComp.getComponentPlaces();
+		ArrayList<Transition> coalescedTrans = coalescedComp.getCompTransitions();
 		comp1.getInputs().removeAll(sharedVariables);
 		comp2.getInputs().removeAll(sharedVariables);
 		comp1.getOutputs().removeAll(sharedVariables);
@@ -149,10 +151,12 @@ public class LpnComponentList extends LhpnFile{
 		coalescedInputs.addAll(comp2.getInputs());
 		coalescedOutputs.addAll(comp1.getOutputs());
 		coalescedOutputs.addAll(comp2.getOutputs());
+		coalescedPlaces.addAll(comp1.getComponentPlaces());
+		coalescedPlaces.addAll(comp2.getComponentPlaces());
+		coalescedTrans.addAll(comp1.getCompTransitions());
+		coalescedTrans.addAll(comp2.getCompTransitions());
+		
 		// Update sharedCompVarsMap
-//		ArrayList<Integer> sharedCompIds = new ArrayList<Integer>(2);
-//		sharedCompIds.add(comp1.getComponentId());
-//		sharedCompIds.add(comp2.getComponentId());
 		for (Variable sharedVar : sharedCompVarsMap.keySet()) {
 			if (sharedCompVarsMap.get(sharedVar).contains(comp1.getComponentId())) {
 				sharedCompVarsMap.get(sharedVar).remove(comp1.getComponentId());
@@ -222,5 +226,9 @@ public class LpnComponentList extends LhpnFile{
 	
 	public HashMap<Integer, Component> getComponentMap() {
 		return compMap;
+	}
+	
+	public HashMap<Variable,ArrayList<Integer>> getSharedCompVarsMap() {
+		return sharedCompVarsMap;
 	}
 }
